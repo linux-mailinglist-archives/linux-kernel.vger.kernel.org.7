@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-680064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44CFAD3FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:00:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F109AD3FD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C6D189CDBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:00:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8793A2D6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE0423BD1D;
-	Tue, 10 Jun 2025 17:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E22E242D9B;
+	Tue, 10 Jun 2025 17:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GDdzoc8u"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bVG20vhx"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295E7236424
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72401EBA09
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749574825; cv=none; b=Ux4XlRB9zb/5w3mDNxFR5GQb7lZ93Xe/9CiftFo7xwQRR1hvTO/Mf8Mv37BoXYm+/XnB+blzdRXngleP5cxZH+xJ8cUr/IfCFbJ5P1pFXI3NqoX45nMYsJMNBb0enhY4Y4+uhj6aY/+1HTsVIQ05y9puWvvtBFuB4cWKg4Hglt0=
+	t=1749574892; cv=none; b=sliwlLRCDUBxJRnfLfhaBJMTVGL4Veeao5Va+jATwOsBAg+afYd18zHMtAJENqAkQXUKItjycaaFOBqrDEHRWYzgJY044GuYbGif6xih5lWMh20y1wjPKVwGPSwdAIb+TV7FTYEJxSiQdSGC1zDyLVjWj7Xm/bllP7QqXPJ+2Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749574825; c=relaxed/simple;
-	bh=9hsZLaU75BjpRptkuBvMUF48vhmBMkkHos8UoQfVNSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bqhyl3l4UR+UnTTrRAOu2LTFVFREHYGiIPOsQhdyFg1iUasllbwiZCXScrUd67irGAEOyUN++hGnxgSj6TZwTfGBy+T5YqZx2rOHAf7gBIUP9daFiaUbfj8lS1Iro1+xV8Zi0fFoNCfAcF9EiUDAjFgFSJq03JB1ePpGwdiiku0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GDdzoc8u; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70a57a8ffc3so56276377b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:00:23 -0700 (PDT)
+	s=arc-20240116; t=1749574892; c=relaxed/simple;
+	bh=ahXm0c4rtJ92rxuI7mSW9/ZW29+20fL7IwSWH1turAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1rH+4pi9OerCk26s3sSBb2vgmbq9yLLaRBB9ew+SPsFQLbY8oUH7T151Nmi9eC1aCaWWjye9tsxH6Pn8DnPb1i6YF7VHGxiCNueeTUYgD9MNHiORPksny1fyvEhXa8Rq7gaqV2D4THjCQ9vKdnJ9dDdGz7b9QC5x8oMo2ElyrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bVG20vhx; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-234bfe37cccso70201545ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:01:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749574823; x=1750179623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1CpWx/dhcYFHrMuRqfMn/uLf3NBOzEdKJ7PHmZdNdWs=;
-        b=GDdzoc8uhjLl6JwBSuN5YC3n9rQuDV6eetXL8fboZoAwwNU8v6RbI8tzjTHQbsgz6p
-         Rpw+wubCKLyybh34zofSSdocA27Qp1n2m8EfLx//uNaAHLmU1WY4+ebDVCy0pyfDmBvV
-         nCxhqrYpCjsABgRaKCq8vS4Tvw/FJFikPEEI4=
+        d=broadcom.com; s=google; t=1749574891; x=1750179691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GEfizgcdloDSHEfL4nwI4ypLmP1PdRkcy++iUoXBHOc=;
+        b=bVG20vhxWFQxGqPNh89PpFGHOmFF751kMt+1023Cii2iCBYhUS1X+1W2FCfi3Z3GFr
+         i0HnjgDZesRwvUHtstuviUNNPbKgmUkpVb1AHXM/uHdMabbn/MI0HD7G3GdNskzFcA1z
+         5dhC1x/czaLEMYCtwxf+Q2/SLXE7Y5o7R2Vow=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749574823; x=1750179623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1CpWx/dhcYFHrMuRqfMn/uLf3NBOzEdKJ7PHmZdNdWs=;
-        b=jatlpgly44gd5mKcW+Shbk/rWe9ujiVAhZiPiNLvfE8jW0LcGWJU3gzvcIxbxgbMCm
-         dZLQZN31hS9xAiTXcruhB7iScQgVX7COF69dtaEO39NCr1Dl/uVm40vL/bvUJIZZX/XE
-         zkt6e1nHWIbcldg3hU+enA4djfyZfzU5PkO/vwB3NxMPualQRs1OmTooGhNrjkcdkBEv
-         g2XDCr02IWEEGhzNK+/AONSXA6pE7nYKlSgWQU4wVQlhePgBFbI686Oom8YKSZZ/ojPQ
-         woc9Hg2G8DaNBEFIxGL7J9hK077LO3SJ1G2PurhWBaltw2ayqTf5Wt9N+9zhGFWRJLMD
-         9EZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXi61QaE13A+0NPuos7Lq5zvX9971hbZIU8KpYMctNRUVn821F3TZgAjzzJ6fGsDPOlRD+TFWiYN0b1X0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLd8w2y6JLNwOxBqgKYEk6nzM8g2bS4pLzGVdGfhRGYQ1yNgfH
-	dprd68ORYDJ3CJYoQ+ZdjK8lNqlJyTHZsyZF6SZ0sKUHxNWhpw9BP3xm1U0N2BDBBgBu8L1S4ha
-	S38d9LtO25WIQ7T4I54vrcj7OGg02kRmE7myrpKMx
-X-Gm-Gg: ASbGncuSiPgCDWqQsCCKkQgNOB2rlTDf4ySdwG7XSd5ZXiJmudPD4Z7itm4qaCNrXq3
-	CyjfKjdY2nLQeHHtZqlTNOZydK2l2WvIFtJwuOCZnbmkY6ycbE6ig2tbEWXU+cMhEN+NQJBiKnS
-	JS/c17ikQQ0s81wBQ6rrKWoF2LceFiTshWIdtlqgSMjY6EY8UmEqCf3Q==
-X-Google-Smtp-Source: AGHT+IE00ce8xDusfDQD3NtC4YowjQLIoj1ZSjHEA05wiN/p3V0Le4pgsgSFjs0cflbETy+V51Wu5cNchYcgN7AsnTw=
-X-Received: by 2002:a05:690c:4906:b0:70c:d322:872c with SMTP id
- 00721157ae682-711409e4d32mr2975947b3.1.1749574821564; Tue, 10 Jun 2025
- 10:00:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749574891; x=1750179691;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GEfizgcdloDSHEfL4nwI4ypLmP1PdRkcy++iUoXBHOc=;
+        b=wHIcYVt4XMlL/crHt50TTLIta9IeFPnPVVwNcO8D/yFr/kaAV8AS8fxug6GjRxggCL
+         qAPmL0+yVZLYi7k/wQjENGL1w6tboOLbUdI2phCu4ToVFT7Fvj5g6ZKf8RXUX8IGGUGg
+         sMq4lXzB5oj05eOA4MXzGTNUYP0cFvpPnJftzj7L//p/ml9FlinYuzE7JwMgrZki3Gij
+         VcL7HUXkyJw8TKogAEFpws3V3NaxtGio//dXnbu6asP+qTu3ax4meakgYOb+NI3pKnc2
+         G5Xr+wzysKwJkxZWkGTwgdeTo86HWgYKie/3IDgJj3fNPd6N2pivzh0mm7mCJGuPWBmc
+         drQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBoH5bEoYk8b/AnWrYe8negJo1zdgPcTWgO7cWP82Ail5gpox8jciNPuF6FGwL/0M+1fK3RhAiVZIGfeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFNhhtm8WsuHAy4nAOH1ji9pmOQy5e3iDd5rWgVT+w3sE6KEuG
+	kdeaoYrUkQ09nxobdiR0ntJLsp8P7gEnIl/ulbRPFyJhxQT8D1SsW8ksexSivDqGGw==
+X-Gm-Gg: ASbGncvFF3TAP7+9ndbsp+cgyFfRqwCt+RUUXBeSf6cNVYhiJlB9MCN8p52dd5jd04S
+	y7vhGI61yrae6LtNUjsC66xvmGAjNk/eFfe4LJ7UKJguU+Cu+hM1oQ8aXZGgFer5hMrkGZBgO1Q
+	ylTQKzYPWA7THoI/oYEPJHGEbeZp0Ij4SQhLedE1rBDkDPUNrVGbyyCppwEfzHhyCjCTaF/euNz
+	8JNs5mYVx+DjOJv+tUuf0Rro+CqbkoVk13kH30Whz6+1XqkgHXp5kOWxlgrQRIc9mZpifgpO+89
+	k9n7c2sW8vj7g6a+sZyXVWlb9aIw00Zdru2xecDI1Bm+LQLh4uChaSfyNu0u2avYgpD3dgfmA62
+	3/rL7kISFDLc1ty4sNCbaKipB2YZaN9o/5r0y
+X-Google-Smtp-Source: AGHT+IEDsXiBlVA7FVMENTeGgQdvLlZXNAQiUGUTlJkIvmv4c11p25UNxrdKTp1DzYF1z74E2FJZ3g==
+X-Received: by 2002:a17:903:32c8:b0:235:e1d6:4e45 with SMTP id d9443c01a7336-23641b1a245mr413505ad.25.1749574889444;
+        Tue, 10 Jun 2025 10:01:29 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236037ae33dsm73023625ad.206.2025.06.10.10.01.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 10:01:27 -0700 (PDT)
+Message-ID: <4c580225-a1d5-48cb-80dd-14759134baba@broadcom.com>
+Date: Tue, 10 Jun 2025 10:01:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610153748.1858519-1-tmichalec@google.com>
-In-Reply-To: <20250610153748.1858519-1-tmichalec@google.com>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Tue, 10 Jun 2025 10:00:10 -0700
-X-Gm-Features: AX0GCFuwttqkyiSf7Z-Y9KrGw93dCiqxmCXC4gASs51y4epRMY_H18lbkfSbcSA
-Message-ID: <CANFp7mXZXSJLYTO+2rkn+W6ki_hnzBPJ6s8MwtFFeyPqLbzQ1g@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: cros_ec_typec: Defer probe on missing EC parent
-To: Tomasz Michalec <tmichalec@google.com>
-Cc: Benson Leung <bleung@chromium.org>, Jameson Thies <jthies@google.com>, 
-	Andrei Kuchynski <akuchynski@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Guenter Roeck <groeck@chromium.org>, Konrad Adamczyk <konrada@google.com>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	chromeos-krk-upstreaming@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] mailbox: Add support for bcm74110
+To: Justin Chen <justin.chen@broadcom.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: conor+dt@kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ krzk+dt@kernel.org, robh@kernel.org, jassisinghbrar@gmail.com
+References: <20250602222311.2940850-1-justin.chen@broadcom.com>
+ <20250602222311.2940850-3-justin.chen@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250602222311.2940850-3-justin.chen@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 10, 2025 at 8:39=E2=80=AFAM Tomasz Michalec <tmichalec@google.c=
-om> wrote:
->
-> If cros_typec_probe is called before EC device is registered,
-> cros_typec_probe will fail. It may happen when cros-ec-typec.ko is
-> loaded before EC bus layer module (e.g. cros_ec_lpcs.ko,
-> cros_ec_spi.ko).
->
-> Return -EPROBE_DEFER when cros_typec_probe doesn't get EC device, so
-> the probe function can be called again after EC device is registered.
->
-> Signed-off-by: Tomasz Michalec <tmichalec@google.com>
-> ---
->  drivers/platform/chrome/cros_ec_typec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/c=
-hrome/cros_ec_typec.c
-> index 7678e3d05fd3..f437b594055c 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -1272,8 +1272,8 @@ static int cros_typec_probe(struct platform_device =
-*pdev)
->
->         typec->ec =3D dev_get_drvdata(pdev->dev.parent);
->         if (!typec->ec) {
-> -               dev_err(dev, "couldn't find parent EC device\n");
-> -               return -ENODEV;
-> +               dev_warn(dev, "couldn't find parent EC device\n");
-> +               return -EPROBE_DEFER;
->         }
->
->         platform_set_drvdata(pdev, typec);
-> --
-> 2.50.0.rc0.604.gd4ff7b7c86-goog
->
+On 6/2/25 15:23, Justin Chen wrote:
+> The bcm74110 mailbox driver is used to communicate with
+> a co-processor for various power management and firmware
+> related tasks.
+> 
+> Signed-off-by: Justin Chen <justin.chen@broadcom.com>
 
-Reviewed-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
