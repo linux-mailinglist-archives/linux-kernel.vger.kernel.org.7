@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-679433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EEAAD363F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:32:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C73AD3638
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F0B167616
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B331774FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C608229344C;
-	Tue, 10 Jun 2025 12:32:00 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92D1293B73;
-	Tue, 10 Jun 2025 12:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E232292933;
+	Tue, 10 Jun 2025 12:31:55 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.168.213])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E128929292D;
+	Tue, 10 Jun 2025 12:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.168.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558720; cv=none; b=Y43etQbcuRGvS16EpAhAFeIx5H/KmDxKAIHKZ7lcDr+pj4R6rFSV1T3WlfT7UTdRV8IOZ8boUBmXDJeg7G1TLj+SlJHppBXV//8fyOlu2so75QizcRYKK2gi+cQTuexiSza/IiiBQmaw40vmg7Ac2/Ho0qyXbCP7Rd3xjLMkBaI=
+	t=1749558715; cv=none; b=RvRJGXfHaz9U2V6tZGnnyZj8cOTe5afly7j8uibkAKm8+BvE5wnbaJ7dCXgrqgjwwwFAFxk2KYhb+kr23E5LzWRCze4Zj7QvVFdifwTMrX8etKU5xaljsVyNlat3GANMC0Z+DKkIONVRNyvpYz5LThxJUXVkrmF7raPCQCPmqQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558720; c=relaxed/simple;
-	bh=7v/zlhp7+OGVQ+ZMGrXfSLvf+WdwyiNeJ7Bslhc74HM=;
+	s=arc-20240116; t=1749558715; c=relaxed/simple;
+	bh=DfMZmPpxm8c+PoVae4yYnaM8SKklNxIdOLbeTQUzA9Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vB1o0eFT7odTaQqNIMju0tC0YW7qNy8y1JbM7XrUi4aMbPHdXgTOeiHm5YITJl+qR/tuD0MlZj/hhK7VzFlVkXmHYQFiC4Zk4AMDrmvF59/Z6hMOLQhiM+3KfXJnt3VFYeFm7Czl1UMCwbad0+VYDV6KVKlBL/6s7xw9zXJWDuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.21.223
+	 MIME-Version:Content-Type; b=uUfqciaiitnYbHC6LsnqBPSt2cKPF8e5o/0Mrrv+wXuPFWmMybMaFEAuI0eQsYt+WdyBxpGmcyYYEFh3K/zuHpf/J5xdpFtK/GlZSPPTrHQqFCnluhlP4Ug8BylnTaqisa20m6mm4AIrVIgzZ5VnO2w1YQZ3rylNmm2coodvcLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=52.229.168.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
 Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app1 (Coremail) with SMTP id HgEQrAB3fBSmJUhoaGfICg--.23713S2;
+	by app1 (Coremail) with SMTP id HgEQrACHjBSmJUhoZGfICg--.25494S2;
 	Tue, 10 Jun 2025 20:31:34 +0800 (CST)
 Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wB3Ykl1JUhobC0mAA--.19171S6;
-	Tue, 10 Jun 2025 20:31:15 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____wB3Ykl1JUhobC0mAA--.19171S7;
+	Tue, 10 Jun 2025 20:31:29 +0800 (CST)
 From: Dongliang Mu <dzm91@hust.edu.cn>
 To: alexs@kernel.org,
 	si.yanteng@linux.dev,
@@ -39,9 +39,9 @@ To: alexs@kernel.org,
 	Dongliang Mu <dzm91@hust.edu.cn>
 Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] docs/zh_CN: update the translation of process/2.Process.rst
-Date: Tue, 10 Jun 2025 20:30:29 +0800
-Message-ID: <5e43fda6c7e3597e9e11192f959df65e9de57e7a.1749557444.git.dzm91@hust.edu.cn>
+Subject: [PATCH 5/5] docs/zh_CN: update the translation of process/5.Posting.rst
+Date: Tue, 10 Jun 2025 20:30:30 +0800
+Message-ID: <ce5603d746e1d64847f572660ea7bc38fcbf74ef.1749557444.git.dzm91@hust.edu.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1749557444.git.dzm91@hust.edu.cn>
 References: <cover.1749557444.git.dzm91@hust.edu.cn>
@@ -53,11 +53,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAB3fBSmJUhoaGfICg--.23713S2
+X-CM-TRANSID:HgEQrACHjBSmJUhoZGfICg--.25494S2
 Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryDur45Ww1UAw45GFW5trb_yoW8CF4kpF
-	y7Krn7Ka1xt3Z5C3y7G3yxWF1UGayxCay3Kr47t3WvqF1ayws2qrsxtr9Yg3yaqr93Aayk
-	WF1ayrWI9ryIvw7anT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WryfZrykCryDtF4DCF17ZFb_yoW8tF4UpF
+	9FkrZ7JayxJ3W2kr1xKFW7X3WUG3ZrGay3Kr1xKa1fXrn5Kay0v3yYyasYgFZ0grySyayj
+	vrsIqrWUuryDZ37anT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmIb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
 	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
 	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
@@ -74,40 +74,47 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7WryDur45Ww1UAw45GFW5trb_yoW8CF4kpF
 	WIevJa73UjIFyTuYvjxUVoGHUUUUU
 X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Update to commit 413e775efaec ("Documentation: fix links to mailing list
-services")
+Update to commit 4e6b7141d169 ("docs: clarify rules wrt tagging other
+people")
 
 scripts/checktransupdate.py reports:
 
-Documentation/translations/zh_CN/process/2.Process.rst
-commit 413e775efaec ("Documentation: fix links to mailing list services")
-1 commits needs resolving in total
+Documentation/translations/zh_CN/process/5.Posting.rst
+commit 4e6b7141d169 ("docs: clarify rules wrt tagging other people")
+commit 9734b3e753ad ("docs: 5.Posting: mentioned Suggested-by: tag")
+2 commits needs resolving in total
 
 Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
- Documentation/translations/zh_CN/process/2.Process.rst | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ .../translations/zh_CN/process/5.Posting.rst          | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/translations/zh_CN/process/2.Process.rst b/Documentation/translations/zh_CN/process/2.Process.rst
-index e68c9de0f7f8..31b0e2c994f6 100644
---- a/Documentation/translations/zh_CN/process/2.Process.rst
-+++ b/Documentation/translations/zh_CN/process/2.Process.rst
-@@ -292,12 +292,11 @@ Quilt 是一个补丁管理系统，而不是源代码管理系统。它不会
- 一个潜在的危险，他们可能会被一堆电子邮件淹没、违反Linux列表上使用的约定，
- 或者两者兼而有之。
+diff --git a/Documentation/translations/zh_CN/process/5.Posting.rst b/Documentation/translations/zh_CN/process/5.Posting.rst
+index 6c83a8f40310..ce37cf6a60e2 100644
+--- a/Documentation/translations/zh_CN/process/5.Posting.rst
++++ b/Documentation/translations/zh_CN/process/5.Posting.rst
+@@ -177,10 +177,21 @@
  
--大多数内核邮件列表都在vger.kernel.org上运行；主列表位于：
-+大多数内核邮件列表都托管在 kernel.org；主列表位于：
+  - Reported-by: 指定报告此补丁修复的问题的用户；此标记用于表示感谢。
  
--        http://vger.kernel.org/vger-lists.html
-+        https://subspace.kernel.org
++ - Suggested-by: 表示该补丁思路由所提及的人提出，确保其创意贡献获得认可。
++   这有望激励他们在未来继续提供帮助。
++
+  - Cc：指定某人收到了补丁的副本，并有机会对此发表评论。
  
--不过，也有一些列表托管在别处；其中一些列表位于
--redhat.com/mailman/listinfo。
-+其他地方也有邮件列表；请查看 MAINTAINERS 文件，获取与特定子系统相关的列表。
+ 在补丁中添加标签时要小心：只有Cc:才适合在没有指定人员明确许可的情况下添加。
  
- 当然，内核开发的核心邮件列表是linux-kernel。这个列表是一个令人生畏的地方：
- 每天的信息量可以达到500条，噪音很高，谈话技术性很强，且参与者并不总是表现出
++在补丁中添加上述标签时需谨慎，因为除了 Cc:、Reported-by: 和 Suggested-by:，
++所有其他标签都需要被提及者的明确许可。对于这三个标签，若根据 lore 归档或提交
++历史记录，相关人员使用该姓名和电子邮件地址为 Linux 内核做出过贡献，则隐含许可
++已足够 -- 对于 Reported-by: 和 Suggested-by:，需确保报告或建议是公开进行的。
++请注意，从这个意义上讲，bugzilla.kernel.org 属于公开场合，但其使用的电子邮件地址
++属于私人信息；因此，除非相关人员曾在早期贡献中使用过这些邮箱，否则请勿在标签中
++公开它们。
++
+ 寄送补丁
+ --------
+ 
 -- 
 2.43.0
 
