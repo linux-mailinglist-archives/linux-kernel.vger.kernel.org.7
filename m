@@ -1,58 +1,48 @@
-Return-Path: <linux-kernel+bounces-679708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB006AD3AC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52217AD3AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 722223AB203
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:11:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46FF33A5353
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5AA2C17B6;
-	Tue, 10 Jun 2025 14:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF0A2D1F42;
+	Tue, 10 Jun 2025 14:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="DUWCLDCO"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H66g9FuX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352852C032C;
-	Tue, 10 Jun 2025 14:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749564500; cv=pass; b=fQ8Xsp7mgUWGVYsKvcJM2o3OaNbpx698gD0nRDJR5y1pxYOlZOm6pLCM0RX3Na44bIFKKe4yWfl65eFdbtc2s1vYnKvq7ceMLbH2lrTj1v6dd4zEkjxXDmjRECS8k1wcCSQykqMsTfV/YPEqNwbxBhPkrg3EFNkZwebIi/oRKqg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749564500; c=relaxed/simple;
-	bh=GlLD9lmSupTF1tQ9d3y/DBOdYdF2PR6kUC+TcQRAaoo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EIGJ4zlVhcjOoD8UtKQ7x4O1qTPqLBejuU1C7NVS++BaeWYJPQ+ReKpdJcLG49FJb7FtEHwtg87rqnlI1Uvck71n7+o9CjkrZaW4/VDJ2rw3cflCrIvu8byLzoUiWCH/eCYkYNImiDh/bMX0bcmTAZL71QlacicQ0qfqDYyTNmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=DUWCLDCO; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749564473; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JX3mWogYehTYtVJdVmY+UzzvF446RpE/P+y4RIe/MhfEwXWKyknYvJsugJZTds547PQB/hPlS9ho3ejufts25aFKqztcqjN3VI9tq+/9D4wKYR4eZ2KI7+OzEyaLhN1+AbxfbWLcfWlhs5tI35kqDxqUkks3y+wQWWaGoxnhVAA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749564473; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8VQasU47Fo9+menKFJwxiTlb3u0Ug7mzOiL+ShPS+BE=; 
-	b=Qx9AHUJ41xRYeOm4zNqJAqc/diELcfIlLKRY5AyrrXI5GbEZ/f6hiAXmy7qmab0++inHvfYR07EqEC9raBb6VK/UuFYaicF6iYQ0qmcIVinf3NN4T00alSJBa2QUIdiJoSWbUWWCjKkFGNnve9qMZ4lQlBxpZVlaP++WrNQ/YsQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749564473;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=8VQasU47Fo9+menKFJwxiTlb3u0Ug7mzOiL+ShPS+BE=;
-	b=DUWCLDCONptNaHpFe+ARreVDDr5GUnk+ewKYZbQqZjzqEfSBZw1folva4DCJqK0t
-	Nb/yZ1iiOu3wkHuVDxcUS9iZALpz3+tFcZr8YMNqQGawwjHi27aQVODzSj0k8V0fJuH
-	lT/Wdl/VaN1z308+X16EKJK2lJ2lldC1GFeyEuz0=
-Received: by mx.zohomail.com with SMTPS id 1749564471829701.9243237338251;
-	Tue, 10 Jun 2025 07:07:51 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Tue, 10 Jun 2025 16:07:12 +0200
-Subject: [PATCH v4 4/4] arm64: dts: rockchip: enable USB on Sige5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4592D1907;
+	Tue, 10 Jun 2025 14:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749564566; cv=none; b=VDaQvp5tlbvumHidbp2fVp1wmjsfLphpRC6hAkepBVv835hwAn9KiXBVtfI2bDDe1rzwX1nE/4mwDeKY0mzUNlvA2HVNXB1LVjTbskgShQcH3kiRRSS9Ev7KbkUofiZxIiGcXhG4LxS13NAVejcg9++ahQJ2Gj0RzgnRU5Eoy0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749564566; c=relaxed/simple;
+	bh=kEJw6Yz+PbyCAGGeLMC2ZoLRfBLryhgl1OeBDrRe6KI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fSE6rcFGJBIEMP5QfajGC4UCldGmqcL7eEI6yWs1Hn0S8ibJfOJwaqTmb/W0efWhrrJ+rMcgD7aAQq03P8accGzupiQQtUVtmYL4h6ji3cs4L9pKS1ullRruJn0vF0D3WITYi+5071HuVcMIqdFEDEIcFIb3O8mRiBGIZMINgKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H66g9FuX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA5F9C4CEF7;
+	Tue, 10 Jun 2025 14:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749564566;
+	bh=kEJw6Yz+PbyCAGGeLMC2ZoLRfBLryhgl1OeBDrRe6KI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=H66g9FuX4it5jQvyGO6Myd9Badtm8kBoIqm//4zpV7A6Z7NhEYd6VdAPo9dtx6HwK
+	 E1gPCr/vPP6741kIntPZ5UEtIz3VV6gSdIsyLH44pL0hA7dDGiQkN5OoWYj2WB9asS
+	 Qn53YBw6QufbVePVnEJGK1EmcQsZikDZgi2dLpp1TtdJiZEUDgKjGkjrGBzwNO77cV
+	 Fjj0KTRzlDkiVTeE911L9/IZ+C3WyBDd2FEPRN2UizGsEfJtDU6W3LmH3eoDcf5pAY
+	 ueiJSyKofpVG3yc4rIh0JSyKths2AFyPbZGCt9rZBE/2e1H7oljHJCE9wYZYnhnbM0
+	 siozKKuqj2Q1Q==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 10 Jun 2025 15:07:44 +0100
+Subject: [PATCH] selftests/mm: Check for YAMA ptrace_scope configuraiton
+ before modifying it
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,237 +51,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-rk3576-sige5-usb-v4-4-7e7f779619c1@collabora.com>
-References: <20250610-rk3576-sige5-usb-v4-0-7e7f779619c1@collabora.com>
-In-Reply-To: <20250610-rk3576-sige5-usb-v4-0-7e7f779619c1@collabora.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Frank Wang <frank.wang@rock-chips.com>
-Cc: Alexey Charkov <alchark@gmail.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Message-Id: <20250610-selftest-mm-enable-yama-v1-1-0097b6713116@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAC88SGgC/x3MQQrCMBBG4auUWTuQhMZFr1JcxMxfHWiiZIoop
+ XdvcPkt3tvJ0BRG07BTw0dNX7XDXwbKz1QfYJVuCi5Ed3WRDeuywTYuhVHTfQX/Ukns4+hzkCC
+ ShXr9blj0+z/Pt+M4Ab2NkNppAAAA
+X-Change-ID: 20250605-selftest-mm-enable-yama-1541c2d2ddcd
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1466; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=kEJw6Yz+PbyCAGGeLMC2ZoLRfBLryhgl1OeBDrRe6KI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoSDyTLbHsa8+9FhNsMO43U0pIyehvHB3d+gNzxjuf
+ atPdTiyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaEg8kwAKCRAk1otyXVSH0PuvB/
+ 4oIMm+Dp7pGcPbyUvbIy4xKEl4EwRxrOTTkBL4iGPoJQxZelSlYzE6fianUPloojhiapKAeBiabRDm
+ JEfPYrN3S8i/iFzdl6+hTA43aoTtZPWu7eq6uy3WyHe4Aj3GZ/nkTSJTEqSufhxP319Yml+NLTDlMZ
+ D1ByyKeM3JwJ+OpZV7n1nz47gCjDMOrUufXIa2kGjIDrFt4hhL4cO+Ig1xsoJ2V7zmYeZlPYuDbBGi
+ G3X2u/hUHicG8fXj8TMWWA5i42+GfG+QMhhKnCgJtcG7/dL8O0/TOxgeGTsVwQFUWV6vLkYMb+PUH3
+ BUgluAZ58AwkzHSZMDU7IvlTk3SsjW
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The ArmSoM Sige5 has several USB ports: a Type-A USB 3 port (USB2 lines
-going through a hub), a Type-A USB 2.0 port (also going through a hub),
-a Type-C DC input port that has absolutely no USB data connection and a
-Type-C port with USB3.2 Gen1x1 that's also the maskrom programming port.
+When running the memfd_secret test run_vmtests.sh unconditionally tries
+to confgiure the YAMA LSM's ptrace_scope configuration, leading to an error
+if YAMA is not in the running kernel:
 
-Enable these ports, and set the device role to be host for the host
-ports.
+# ./run_vmtests.sh: line 432: /proc/sys/kernel/yama/ptrace_scope: No such file or directory
+# # ----------------------
+# # running ./memfd_secret
+# # ----------------------
 
-The data capable Type-C USB port uses a fusb302 for data role switching.
+Check that this file is present before trying to write to it.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+The indentation here is a bit odd, and it doesn't seem great that we
+configure but don't restore ptrace_scope.
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 160 +++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+ tools/testing/selftests/mm/run_vmtests.sh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-index b09e789c75c47fec7cf7e9810ab0dcca32d9404a..a2b6cdf0e0b949a9df946606efedfbc747f99975 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-@@ -205,6 +205,33 @@ vcc_3v3_ufs_s0: regulator-vcc-ufs-s0 {
- 		regulator-max-microvolt = <3300000>;
- 		vin-supply = <&vcc_5v0_sys>;
- 	};
-+
-+	vcc_5v0_typec0: regulator-vcc-5v0-typec0 {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_otg0_pwren>;
-+		regulator-name = "vcc_5v0_typec0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc_5v0_device>;
-+	};
-+	vcc_5v0_usbhost: regulator-vcc-5v0-usbhost {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_host_pwren>;
-+		regulator-name = "vcc_5v0_usbhost";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc_5v0_device>;
-+	};
-+};
-+
-+&combphy1_psu {
-+	status = "okay";
- };
+diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+index dddd1dd8af14..33fc7fafa8f9 100755
+--- a/tools/testing/selftests/mm/run_vmtests.sh
++++ b/tools/testing/selftests/mm/run_vmtests.sh
+@@ -429,7 +429,9 @@ CATEGORY="vma_merge" run_test ./merge
  
- &combphy0_ps {
-@@ -643,6 +670,58 @@ regulator-state-mem {
- &i2c2 {
- 	status = "okay";
+ if [ -x ./memfd_secret ]
+ then
+-(echo 0 > /proc/sys/kernel/yama/ptrace_scope 2>&1) | tap_prefix
++if [ -f /proc/sys/kernel/yama/ptrace_scope ]; then
++	(echo 0 > /proc/sys/kernel/yama/ptrace_scope 2>&1) | tap_prefix
++fi
+ CATEGORY="memfd_secret" run_test ./memfd_secret
+ fi
  
-+	usbc0: typec-portc@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA5 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbc0_interrupt>;
-+		vbus-supply = <&vcc_5v0_typec0>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			/* fusb302 supports PD Rev 2.0 Ver 1.2 */
-+			pd-revision = /bits/ 8 <0x2 0x0 0x1 0x2>;
-+			power-role = "source";
-+			source-pdos = <PDO_FIXED(5000, 2000,
-+						 PDO_FIXED_USB_COMM | PDO_FIXED_DATA_SWAP)>;
-+
-+			altmodes {
-+				displayport {
-+					svid = /bits/ 16 <0xff01>;
-+					vdo = <0xffffffff>;
-+				};
-+			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					usbc0_hs_ep: endpoint {
-+						remote-endpoint = <&usb_drd0_hs_ep>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					usbc0_ss_ep: endpoint {
-+						remote-endpoint = <&usb_drd0_ss_ep>;
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					usbc0_dp_ep: endpoint {
-+						remote-endpoint = <&usbdp_phy_ep>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	hym8563: rtc@51 {
- 		compatible = "haoyu,hym8563";
- 		reg = <0x51>;
-@@ -729,6 +808,24 @@ pcie_reset: pcie-reset {
- 			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
- 		};
- 	};
-+
-+	usb {
-+		usb_host_pwren: usb-host-pwren {
-+			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		usb_otg0_pwren: usb-otg0-pwren {
-+			rockchip,pins = <4 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		usbc0_interrupt: usbc0-interrupt {
-+			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+		usbc0_sbu1: usbc0-sbu1 {
-+			rockchip,pins = <2 RK_PA6 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+		usbc0_sbu2: usbc0-sbu2 {
-+			rockchip,pins = <2 RK_PA7 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+	};
- };
- 
- &sai1 {
-@@ -770,11 +867,74 @@ &sdmmc {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	phy-supply = <&vcc_5v0_usbhost>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0m0_xfer>;
- 	status = "okay";
- };
- 
-+&usb_drd0_dwc3 {
-+	usb-role-switch;
-+	dr_mode = "otg";
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			usb_drd0_hs_ep: endpoint {
-+				remote-endpoint = <&usbc0_hs_ep>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			usb_drd0_ss_ep: endpoint {
-+				remote-endpoint = <&usbc0_ss_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&usb_drd1_dwc3 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usbdp_phy {
-+	mode-switch;
-+	orientation-switch;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc0_sbu1 &usbc0_sbu2>;
-+	sbu1-dc-gpios = <&gpio2 RK_PA6 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio2 RK_PA7 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+
-+	port {
-+		usbdp_phy_ep: endpoint {
-+			remote-endpoint = <&usbc0_dp_ep>;
-+		};
-+	};
-+};
-+
- &vop {
- 	status = "okay";
- };
 
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250605-selftest-mm-enable-yama-1541c2d2ddcd
+
+Best regards,
 -- 
-2.49.0
+Mark Brown <broonie@kernel.org>
 
 
