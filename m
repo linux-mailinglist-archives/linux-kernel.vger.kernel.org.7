@@ -1,177 +1,138 @@
-Return-Path: <linux-kernel+bounces-678641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3019FAD2C0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFFAAD2C12
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834CE16C694
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6424616C539
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF55C25CC70;
-	Tue, 10 Jun 2025 03:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7FB1A23B0;
+	Tue, 10 Jun 2025 03:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LSUZJxjg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2mZqPak"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83159460;
-	Tue, 10 Jun 2025 03:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D9F9460
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749524596; cv=none; b=sYkevT6kck1uUgkqQ/Waw2H3v4dGfPX6BdxNCigosovjD9cLDluBGJu4nofZOhUJy3P52Pu3uDUZPY3UxEpkhv5dlDXhR4xjNI0b8rxBEqCbwXWsoGGk7O7AphrBRnsR2HI/5h/3OTmsJY+DWx4DyLAnTRjCk3g3lz9+LgsyXyE=
+	t=1749524665; cv=none; b=G8+VHAi0oPS6AwOt5pv1n/7SdfrCoy3XNpKsD25pj8D+ANVfb30ogUyTcAeSlp+wWqmPi45G3freAeWDXv9jZZ7yWTGNlgj6Z3yMrgH9JQD1gX4ig7AK0SNp8ONXXHcEmIhQfRb9DUtZBEfThQwUgYzWx7UkKFLouSvtd+h4T1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749524596; c=relaxed/simple;
-	bh=3dKk6SPl34eNEsYEw8G4Gkc3qv2CKIVl9VFP4C0w/Vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bVFam0uXi3wsAIiebWrnHbjuk34lZm6yHGy6N6WqURZzXxgkPXCmqQBmfed/AslkjeMHfHiNHCuvEQi+bgJPTPhGvGYqLmoz6QKNtpv+L6p0reU37l6xQmTWkulS4DHjHcehVXcSI1c5fo6b062bN44Ih/d/CeeaoD6AQKTKqjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LSUZJxjg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559JDIXY007352;
-	Tue, 10 Jun 2025 03:03:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ArfNvnxR4/D58nIc1VUnd+S5AAkbAYFa23X9JAICe2Y=; b=LSUZJxjgh7L35jxv
-	qSv11Yd70mXhRsrqLwoICVuj1VyDHxzzadpJgwBOYy2rRetP0FeOO0xB4Gcx08IT
-	hH7W7qTVwxTSLEE72NS0tmGhnAOHEePRZWRxGZ9Iys4pNSn6oK+/j9ZaTJhTz2rZ
-	4I+HnHdsnxBzrmDa6TkfTE7cjjaADcv6oCsXf8OMhDsRZn2Z4U5WkNSPJEcFbpz8
-	4IhJ2V2FkGVkKktsN4g3iXX80laWFZ6VWcbpk3Re8QGwtaUvWCmMb0qfViiNxBMK
-	9rQ+ZFb5yIbxaVY4nbZCNfFAA5oCsnYNmYdOKXwab0mlo8j6/WsBO28d5Oa+JrYY
-	d3wHXg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474eqcfrhy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Jun 2025 03:03:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55A3310h026094
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Jun 2025 03:03:01 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Jun 2025
- 20:02:59 -0700
-Message-ID: <de532ef3-6f24-40dd-9a92-6f2e6c3b4ff5@quicinc.com>
-Date: Tue, 10 Jun 2025 11:02:56 +0800
+	s=arc-20240116; t=1749524665; c=relaxed/simple;
+	bh=Sb0o9rWVXROjN959mgSf0zkMP9TqDqECGwDeHOFfN4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KP5dDFhSr11AI2cIP3xy5Zv/e74ugClztnMIO3/evdUTg3rC6mdWdE2SVgyjluGKyjp4J9DO2uHq69D0n9lZncJ2YlHjOhWRhmFhZdPuyb71Ph651QQD2MzPuZf79N6HMgfxc6GHrbWnOG6k/dJlN65BKSqtqq1SVM1HtK8F4tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2mZqPak; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6fad4e6d949so28022446d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 20:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749524663; x=1750129463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sb0o9rWVXROjN959mgSf0zkMP9TqDqECGwDeHOFfN4w=;
+        b=O2mZqPakKZxeR0mPHukDN2ELkOdhrQVD0I8LVe6xWjBxKQX14v/zrexUMv/tL1gsIM
+         JsY+yPDkIqWEHBKBo/NFRRmLLbUeMsA15AwYpZm4piB/KXeIn4um7KAFHa4yP0tMtFir
+         wpOM/WDyA/w/6o47W/wT+DiGYrE5G346eNVojtRHCvi9UH7MEXMN4CIlUE6ySs1bDPLx
+         JmYN6bNDssyxPmGAA9Z8B3Ds7AZUc+vg4VcE+/cxurZuijI/KJmqSRoR70vQHSNte7LZ
+         5qsdfWgbEujPcuBrlw6mrhoAWdCFyToOfNd6SCcW2UUM8IbW2hiJLRggGoR7f/RVtjJK
+         Uzfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749524663; x=1750129463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sb0o9rWVXROjN959mgSf0zkMP9TqDqECGwDeHOFfN4w=;
+        b=F4A/1ekYAVHJMSmA0sOJyEAL5u5oB6mkK26JDvbut8+RvfBEafnA+PZIq2nqixmA2L
+         Op9v9WwlX3iDsflWzSBR8VIrbowwTckAq8LLEs/+A6BrLfFxd3hQ5YwzyVXHUtbDL0V4
+         +OmTdr/tvPGN2rKsIXFBKv1wo1cWbTOQtZsZKi2E6py02iiaBaCW2jGeynjEf/PDnKh5
+         4D1Unc0qunLPcvfl2DjyvGFd3nYgNjT8OE+mtkmKIQ5DFZw2SvULsMJYeav3iHHJWoSH
+         GtXwPl9WOPXgefOncwK5Zd/rovW33b8stx8NOH1Byqk3qRZaEVPZdZHGBDOpMyFEJt/f
+         GKMQ==
+X-Gm-Message-State: AOJu0Yx6v9G9NC7fSCAM1H+myEr1rHT2xP9/1BjvS30ZizW+tociXNIz
+	26gwMhffMsOGmNKboG+yCxmkcv1M4AyylGt8Q1T09iDnz6V+ezxq8BvqPFGMb44hB4YlJUWWMMc
+	u44NmZbPDxqAGhMmzWsPgRx2TzVNL9GSafYXiTEc=
+X-Gm-Gg: ASbGncvKrjYS6w5JilvyHcdVmXVgBLf9k1h8bc+iYbK5HB/xDBd+QXal0C8dNwrGb7c
+	ZgrZgxzm2B8s90MNARm1tgNpp1HUBh+CapcfnQ25T4Vcqfp+2wjFnW8mA5EiVj7B18d36n9YT1S
+	8L1OWseMfEfOFNnVAk1+LpLSk3SqLO/VL3c4zCr/HVr1mgzTJYJQTd
+X-Google-Smtp-Source: AGHT+IGvXG9MNWp2SNxIusTV8GenuzPm8gpU75as1bf2eTo4avog4w0okQk+qmFmUg4gGYsnhB/4RKbhsYgOSBH9dxI=
+X-Received: by 2002:ad4:5ba4:0:b0:6fb:14:5e82 with SMTP id 6a1803df08f44-6fb08f8d348mr215003186d6.29.1749524662796;
+ Mon, 09 Jun 2025 20:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-next 2/2] wifi: ath11k: support usercase-specific
- firmware overrides
-To: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>, <jjohnson@kernel.org>,
-        <johannes@sipsolutions.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <ath11k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250522013444.1301330-1-miaoqing.pan@oss.qualcomm.com>
- <20250522013444.1301330-3-miaoqing.pan@oss.qualcomm.com>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20250522013444.1301330-3-miaoqing.pan@oss.qualcomm.com>
+References: <20250609103535.780069-1-marco.crivellari@suse.com> <20250609103535.780069-3-marco.crivellari@suse.com>
+In-Reply-To: <20250609103535.780069-3-marco.crivellari@suse.com>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Tue, 10 Jun 2025 11:04:11 +0800
+X-Gm-Features: AX0GCFuY64oK3QesZTujjIJTYAGxiMPxpDC-fjXAg6ASZi71gUnWRyBmNAZJ-D4
+Message-ID: <CAJhGHyBVWDKXfMLT3LBKFUu9ot2uRk=1xLebGf_Grh_j1_VOSg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] Workqueue: add system_dfl_wq
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDAyMiBTYWx0ZWRfX9+ysD0Ci7QQa
- 6h6vgZsUOMgnSNbYlreF5c2GZGSevioggPg1QlNQkh8IO4bIr2GC2XKwYbnHjvCg998jIDKB8i/
- gcknhQqLqLhMYdvsGXs5k0prfec4EB8EQnD2Yv6kXONabzl4cR8KMFk4zICvnPtRt7EraoFrqgA
- J/CrtGk4u/mF2BDtJ1RdtbfuEZ2SswxyBqOTuSpL0KtO+q31MQpf2gWgLQlynrvWMgmrj/drIk0
- RqOhC7f50CY9k1QzgcoZQvFV8hrVdHDXTIgDYqScApfSLcKRKqlTV/2acmR2SgFVgS6dyEot/xQ
- l2/5iBqec0lfvvGZQhzUeCh4Y0n7eIEG7aCi9r4Q6DUORZwUWuE47yqQBX1iwowNYD/4YZtO4Tw
- 8gA/nCzDV7bzE/ibi4q4E7wDE8Vy7XZdD+bRXxaWT0sRM7K1LMRtVHejoLsmTzJuSy58+4Bb
-X-Authority-Analysis: v=2.4 cv=Q7TS452a c=1 sm=1 tr=0 ts=6847a066 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=J7dR-uFlIZdojmd15SYA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: fRCW05m_DI0nbHLbYFxvVi1U4fBhkiW3
-X-Proofpoint-ORIG-GUID: fRCW05m_DI0nbHLbYFxvVi1U4fBhkiW3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_01,2025-06-09_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=824
- bulkscore=0 clxscore=1011 lowpriorityscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506100022
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 9, 2025 at 6:35=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
+>
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+>
+> This lack of consistentcy cannot be addressed without refactoring the API=
+.
+>
+> system_unbound_wq should be the default workqueue so as not to enforce
+> locality constraints for random work whenever it's not required.
+>
+> Adding system_dfl_wq to encourage its use when unbound work should be use=
+d.
+>
+> queue_work() / queue_delayed_work() / mod_delayed_work() will now use the
+> new unbound wq: whether the user still use the old wq a warn will be
+> printed along with a wq redirect to the new one.
+>
+> The old system_unbound_wq will be kept for a few release cycles.
+>
+
+Hello, Macro
+
+What is the reason for removing system_unbound_wq? I believe system_unbound=
+_wq
+is a perfectly appropriate and descriptive name for its callers. I=E2=80=99=
+m not opposed
+to system_dfl_wq as long as it will be an alias for system_unbound_wq (or e=
+ven
+system_percpu_wq, if that can be configured at boot time by sysadim).
 
 
-
-On 5/22/2025 9:34 AM, Miaoqing Pan wrote:
-> Introduce 'firmware-name' property to allow end-users and/or integrators to
-> decide which usecase-specific firmware to run on the WCN6855. This is
-> necessary due to resource limitations such as memory capacity and CPU
-> capability, or performance and power optimization for different application
-> scenarios.
-> 
-> Currently, there are two firmwares, both files can be executed
-> interchangeably.
-> For example:
-> 
-> - ath11k/WCN6855/hw2.0/amss.bin,
->   ath11k/WCN6855/hw2.0/m3.bin
->   ath11k/WCN6855/hw2.0/board-2.bin
-> 
-> - ath11k/WCN6855/hw2.0/nfa765/amss.bin,
->   ath11k/WCN6855/hw2.0/nfa765/m3.bin
->   ath11k/WCN6855/hw2.0/board-2.bin
-> 
-> The former is the default firmware, suitable for most WiFi 6 STA functions.
-> The latter adds support for commercial-quality SAP and optimizes power
-> consumption for IoT applications. And both use the same BDF/regdb data
-> within the main board-2.bin.
-> 
-> Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04479-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
-> 
-> Signed-off-by: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
-> ---
->  drivers/net/wireless/ath/ath11k/core.h | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
-> index 339d4fca1ed5..67b3b6d898fa 100644
-> --- a/drivers/net/wireless/ath/ath11k/core.h
-> +++ b/drivers/net/wireless/ath/ath11k/core.h
-> @@ -17,6 +17,7 @@
->  #include <linux/average.h>
->  #include <linux/firmware.h>
->  #include <linux/suspend.h>
-> +#include <linux/of.h>
->  
->  #include "qmi.h"
->  #include "htc.h"
-> @@ -1320,8 +1321,16 @@ static inline void ath11k_core_create_firmware_path(struct ath11k_base *ab,
->  						    const char *filename,
->  						    void *buf, size_t buf_len)
->  {
-> -	snprintf(buf, buf_len, "%s/%s/%s", ATH11K_FW_DIR,
-> -		 ab->hw_params.fw.dir, filename);
-> +	const char *fw_name = NULL;
-> +
-> +	of_property_read_string(ab->dev->of_node, "firmware-name", &fw_name);
-> +
-> +	if (fw_name && strncmp(filename, "board", 5))
-> +		snprintf(buf, buf_len, "%s/%s/%s/%s", ATH11K_FW_DIR,
-> +			 ab->hw_params.fw.dir, fw_name, filename);
-> +	else
-> +		snprintf(buf, buf_len, "%s/%s/%s", ATH11K_FW_DIR,
-> +			 ab->hw_params.fw.dir, filename);
->  }
->  
->  static inline const char *ath11k_bus_str(enum ath11k_bus bus)
-
-Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
+If anyone feels that the term "unbound" in WORK_CPU_UNBOUND is not aligned =
+with
+the "unbound" in system_unbound_wq, I acknowledge that concern. In that cas=
+e,
+I would prefer to rename WORK_CPU_UNBOUND to WORK_CPU_UNSPECIFIC.
 
 
+Many structures and functions underlying system_unbound_wq already use 'unb=
+ound'
+in their names, so simply renaming system_unbound_wq does not increase
+consistentcy.
+
+Thanks
+Lai
 
