@@ -1,79 +1,86 @@
-Return-Path: <linux-kernel+bounces-679887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E85AD3D30
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:31:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEFCAD3D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99D177B095E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E083A7AFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D304B24728B;
-	Tue, 10 Jun 2025 15:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21C5247298;
+	Tue, 10 Jun 2025 15:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y9z1JJwC"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E7/7CAy/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E374247287
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F16239E84
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749568960; cv=none; b=SoqgrQJ6LALRY1rjWyILmDpL4HycBATsvA7IdK9q+vpPCvaoZhyvSRg3hXPWe76yzM+gzNYFvp3qzXNR2OfXbIT7RBZATZiXVfSV5FVl6v9fONMOwd1osSe54vBHxchMYIiC/n82US8yk3Wv2IGnGRj1EXFBXR0IdhJi+7X6TQg=
+	t=1749568980; cv=none; b=HtO0p7fblohr/irKWCtSPCbY3WusKv/Hly3vjsFwgWD0XtgLggaoAd9IOvE7IWpHXSnz9OIZ9sCaFPON862gnegE9pAIgUb1BVq5qVW7UF5TuRHPZwADldmNZVCNq3CQvIKbRRs0xftAgj9BJqutqCbjAJ2XNbVn1K22n+xyfbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749568960; c=relaxed/simple;
-	bh=hchnrIDBJ/edKu4zAm3y3cqjcujUW60/YPHrwJKD/zQ=;
+	s=arc-20240116; t=1749568980; c=relaxed/simple;
+	bh=ZgS9YhjNsHBJl3Lvr4F9rM8TY19/yblIcAWcsduVrow=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bm4jXqOZdpeFqG6fgUN0v1apEMtb2p3K3XZmpnU27UZVk/RDz0XlEKX6TzJfeWRcBTsU3ulhQ7UXLuIC7O6GH9XSVxf8dZQpZPjxLV838afTHWlLGx9/FMjobuSCMeVgoObYzaaoz1x9kATWv9BhudgeewdxCLaToStRvXlObLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y9z1JJwC; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72c09f8369cso1616853a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749568957; x=1750173757; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WgqBcp898rtX5fY8nnMSJASni1KQNJz9k+MA5T3aUho=;
-        b=y9z1JJwC5WJwde8QMX/hl1Q0JYszJMx8ANeOgfamkQXUvKtvP+ldu2qs+TNvxPWST2
-         MthGnz2ecGVpoQv45pT9FUSxB1Xgh/AQVh1819B+why9An7DxWfs6N6k91GUV+nc/bXx
-         cRvN9GactFc2dSIgVzkxAYM6wsJduwFVhJ1E76GUIeUP27HtpDfYlMjTFriis9GN/beV
-         2jcqT4a7JBU3MY3rTSJqX8JpqWoKmRxh7nqE0qHtqof/F1W8Zf9hbhwAkYNwEfyEesUe
-         Z0vVTPPfkyeK7zrAXtT95BWCT7iyPn14W3gEw0JP+bHOg97tC9SWr2WuejIJSgFKf2tb
-         RU3w==
+	 In-Reply-To:Content-Type; b=NZk9ZmPRPu405fwVMfEJMG/DBfveMnpoChELV1kP8DogsGEKA3e37TckoCdMQtBlMfya4QVfDwuraR6Ihne8izNe4cjF5tmEy+lZqRFmxE2JRYqSUFAje2kZkndGAwvv5jSm+132AVyIHrIsZ46RpoVuJNYU0mDTxIWkKEnVJ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E7/7CAy/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A9ZTK0009897
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:22:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e114YZ488PyX5H8bdxjDah+KG/E0gP9d9huL6plo+H8=; b=E7/7CAy/wq7H5+zD
+	WnX8GlFw5fc5XZz1GaHLYnYgQYBlw9d7t/vvCNU7Ata6F2W7hZH0G0VEIhquY2FU
+	emqXoMl/Neq2Y2P20jr6UP58GPTSGEQTRyVhBaY40i64cCTKaKjFrJHksSQKQ/nh
+	xmeey4Z9nUX7NnAxMu5mXnjcmyyWyz8a6KvpNTZEkc2y4kLsbhsNfJenKcheklFV
+	Cct2stKsbtxIFebaJiPoNLcJ/samSt32ueGQbzbctSgy1KWp1/cUVNlu6Gq282+a
+	rAE/hFxC+WZtaIK/orhKBpYxaK/7zm1dGI6A6AZsVLuLSV5qt12sqNh8Cjh6ewCF
+	0wyToA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d1221dm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:22:57 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7391d68617cso4873644b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:22:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749568957; x=1750173757;
+        d=1e100.net; s=20230601; t=1749568976; x=1750173776;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WgqBcp898rtX5fY8nnMSJASni1KQNJz9k+MA5T3aUho=;
-        b=feLGwAa2zUkrLFLdlBYQFiJUaU5Lbidwj/GLpTiY2BrOLJavTxarEiglBFvy/KGznR
-         oVEqPOif7fNiWOzgOPu3lrwldH9WoUdSJbHgmKiJ1oq8x9FUxE/B33KJylvPOoi3cRQj
-         mHDn3ECnVKLGa9zwXLbwdDfyyuO+AMC1m6pYnsnqe9TonIikCO5upgfZwMVb6T0f8JHr
-         G0BHxMe7fvrqM8TyKo9NJY2pkzglBDB2U/jO5VP0NEpItg8VHa/PM4KW+Xg0DlQZCp3n
-         HPELczC+MJOxoc47J3x6oQnTzCBHasayZyCe6TE4AFsDhWu8EJvTGJEDKIBa//sKvG2O
-         xbGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUExDz1AeX3DPK2KuCiNto4BqZBWU/pOdh/p5BdyQCubQ7TwKayrXt3TIMM3XYGW1VPg7MCLmNGdi3aTkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYuJt26XnFp72lbwXVRB2ZBwl7GV0kcQQivTbMZjsTdtPkiM82
-	Bgbyr9gVMqaSr5aQGlKTFzGsvwjwZlXE3+E3sAUTNsmA9aLZo1+rQ/IfKZiloVNNDQ4=
-X-Gm-Gg: ASbGncs7EdXtjn8kFZuxxpU79h3mSsQSzn0LOz5eH0zj1yn/pWh4HUNJzjqXrXt/JWv
-	gkgtFIvyfc25QvFZxeDAo0+GC5TtycpFgf+vzPjD+KXccdABdEhanVRuF+95Hd555xQoFjXcXkd
-	XgkistWNOOH+C0nFYCmoI1SPU1L8lBg1ngDsOh7TUiEzk4lrnLWcZLTYcDMrduJNn2nNJ1QBfKP
-	7QjpqSgfgW2+zXFW0swfyVH3zriQ2X9i8Jmi6gRrRA1HLYA8P4TG2B4pPWcAxqx1ZplT/3Qt78u
-	RHl9B7hfPZvNROfM2mFbFhnkRxt2McnodkHcIpfFS8UArpSCzY2hYMJeVHjgDms8f+7AhsC06oc
-	bcpc60ZubYfIPsEvtR9Fjq1CCki8yVKsDAebc
-X-Google-Smtp-Source: AGHT+IHxpTUjNC23qJnebWthwoWgqhpyFQhhpZJFRkAkLQNVpExAu309GNzss51U4GPATJs9EjhXDg==
-X-Received: by 2002:a05:6808:3a05:b0:408:e711:9aa with SMTP id 5614622812f47-40a56b7e0e3mr2114950b6e.37.1749568957142;
-        Tue, 10 Jun 2025 08:22:37 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:a49:6255:d8db:1aea? ([2600:8803:e7e4:1d00:a49:6255:d8db:1aea])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7388a08979csm2044314a34.62.2025.06.10.08.22.36
+        bh=e114YZ488PyX5H8bdxjDah+KG/E0gP9d9huL6plo+H8=;
+        b=UlAUULhYxIAOtaQuK6nVk0hlIRsZag4rBV1E0PqtgJscpx/nWAPFv/2fSjXVO5cbV4
+         e2rlXdrVjM022nRapN07Xg+//wUjEsmTd+sZ6go2PaUiyPDLxE2LoC9XHrfsHIGHVM2L
+         TtTrQo78n8cJ3ykN8x5dVsegmGiiirpJLYTwMvewIz/mV6bRCLLaKtHRS3DWeaDcoPea
+         L9IQzDMAtCCDUgx7n/YOPeHu4k3QAX8wgtMrSpkxo4ZgaWef/HKz0kqvwHYL+C5Q5n7j
+         +1jZp+kCux/Np4BOl+VIlHVj9IJ7Wb7VZfHvbW2uRjJm0uiwbWjD4U1JYCjCSO+1m8Aw
+         26dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjpIBQXfwHveC1wsQQBImlBViqq28KgPmlmJtMJsQIKycxa3zpaul48HQhiTIe8KVWUHh9+i4bgKVOe+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk+JjJtWBnuc01nbQjLzlqRKyKjdm8kMNJabe+sLBom6plii31
+	70QbjdchYwxzQPMguvWw8ualq3BpNqkOJypNQUlH8oJQVSiibaCQndLw2dVNQNCM8r7BuCuMxkH
+	DVEpVKSXzQkAQLGZii+fWxQusCBZQupX9+iVhdbm6PGqBkCBIDW6L35DlIQX3Md6Torw=
+X-Gm-Gg: ASbGncv7tVfJ9cQ+aJDZy+ZyQsWN3mbq/C/acYpK4/IFReDqF2lyO4SRJKWLeCETBPz
+	CACsxYoMEgtmELdWRP+z6kfmkfewiodKGU3QBPzoHsH/YDJ4q4zmsC1Er6NubJK3uq25TJEHibq
+	ozCxL6DkmB4hUakXzwThw3pkeK6BXIIONBEHeelZKUvV+wZlXtJiTOg75G4dLElSV1G2uxQJjJO
+	V1/KV2haHONivVkbkGaxjgdgDDGHCITQwHALBBXt9FY5AKUVY8VvdA5Wnwm3u+903DGljKcAvq3
+	kw0CPuSDOi+xQdsx2fIFxC/1KQCnvpGFjs1vtNJOCmIltGfcswFgaKsSEaLxhpvJw5SAzteQ
+X-Received: by 2002:a05:6a20:6a05:b0:21a:cc71:2894 with SMTP id adf61e73a8af0-21f7696b725mr5956496637.17.1749568975805;
+        Tue, 10 Jun 2025 08:22:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRW9TAgrPxwCJk/o8eP9DoS0GIWBXXYaSbfoHboYL0uaKLdt5ZmSeDkSVqNYVQEjp5EHKv7w==
+X-Received: by 2002:a05:6a20:6a05:b0:21a:cc71:2894 with SMTP id adf61e73a8af0-21f7696b725mr5956462637.17.1749568975426;
+        Tue, 10 Jun 2025 08:22:55 -0700 (PDT)
+Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af7aa6esm7780346b3a.59.2025.06.10.08.22.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 08:22:36 -0700 (PDT)
-Message-ID: <db78ac20-9b58-49d1-ba38-cc269eaff254@baylibre.com>
-Date: Tue, 10 Jun 2025 10:22:36 -0500
+        Tue, 10 Jun 2025 08:22:55 -0700 (PDT)
+Message-ID: <c0bea584-10d1-4afa-a80d-594179f3a734@oss.qualcomm.com>
+Date: Tue, 10 Jun 2025 09:22:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,120 +88,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: adding support for PAC194X
-To: Marius.Cristea@microchip.com, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- broonie@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250606093929.100118-1-marius.cristea@microchip.com>
- <20250606093929.100118-2-marius.cristea@microchip.com>
- <92c36ad9-5f8e-4ba7-9af4-9cb640f0aa5c@baylibre.com>
- <d364524bad53f5c665071287f55a96e28dc9b231.camel@microchip.com>
+Subject: Re: linux-next: semantic conflict between the drm-misc tree and
+ Linus' tree
+To: Lukas Wunner <lukas@wunner.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Krzysztof Wilczy??ski <kwilczynski@kernel.org>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250610124809.1e1ff0cd@canb.auug.org.au>
+ <aEeqkw670ZcuDdZO@wunner.de>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <d364524bad53f5c665071287f55a96e28dc9b231.camel@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+In-Reply-To: <aEeqkw670ZcuDdZO@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: sZy8Jv1ibeWwLyAhLnr9Obj53bm_UkHP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDEyMyBTYWx0ZWRfX0FrmBjgGJBUP
+ yOVJpOYdDqIj2kl5Z+3jCUpOUPahYBhnRG91Ymt6hnLERuCQkseP3t4UUa+e1viJ7aUMETVaySk
+ 5i2fWSHpZiFAAx71MZDGlVjACH/vR8y6cRxq/1T1byXMjll6E/H93JM/490J4Jsz89/8N/vYI6e
+ Etlx+i5C43chqpqoC9y3q1w7Ob0pcyx0ggFMSFU79e340gmA1Vg1jd3xT/TY54jBTfI6bphus3Z
+ SlbdNNBzuhMiAqHr1EEpFx9TQGzIyBZ8+aIF83y97ahyEgyYHBlnvFOSi+QaO+5B9kQ2kXEgua3
+ Otiblvhv/+RweeBo9NvCaipniAdgZsoE3NMbSjexzHX5n6n+iC0tlY0x0MQ8Ie76TnaZTZv1dYf
+ cuiNjx/jpxGOxzqhxt770lFQFGubn4yzKmdM5Dj/guYRHYRlg+KqqcPSsJabVuJ8ljxSEKEy
+X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=68484dd1 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=Ho3n10bA_UD04d3nvKkA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: sZy8Jv1ibeWwLyAhLnr9Obj53bm_UkHP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506100123
 
-On 6/10/25 9:46 AM, Marius.Cristea@microchip.com wrote:
-> Hi David,
-> 
->    Thank you for the feedback. Please see my comments below...
-> 
-
-...
-
->>> +  interrupts:
->>> +    maxItems: 2
->>> +
->>> +  interrupt-names:
+On 6/9/2025 9:46 PM, Lukas Wunner wrote:
+> On Tue, Jun 10, 2025 at 12:48:09PM +1000, Stephen Rothwell wrote:
+>> After merging the drm-misc tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
 >>
->> Needs minItems: 1 if we want to allow a single named interrupt.
+>> drivers/accel/qaic/qaic_ras.c: In function 'decode_ras_msg':
+>> drivers/accel/qaic/qaic_ras.c:325:17: error: implicit declaration of function 'pci_printk'; did you mean 'pci_intx'? [-Wimplicit-function-declaration]
+>>    325 |                 pci_printk(level, qdev->pdev, "RAS event.\nClass:%s\nDescription:%s %s %s\nError Threshold for this report %d\nSyndrome:\n    0x%llx\n    0x%llx\n    0x%llx\n    0x%llx\n    0x%llx\n    0x%llx\n    0x%llx\n    0x%llx\n",
+>>        |                 ^~~~~~~~~~
+>>        |                 pci_intx
 >>
-> the driver as it is right now it doesn't support any interrupt. I was
-> thinking to add them here, just in case there will be a request to be
-> added later.
-> 
-
-Making the bindings complete even if the driver isn't using it
-yet is the right thing to do. :-)
-
-I meant allowing just a single interrupt wired up though. So it
-doesn't matter how the driver would handle it.
-
-> 
->>> +    description:
->>> +      alert1 indicates a HIGH or LOW limit was exceeded.
->>> +      alert2 indicates a THERM limit was exceeded.
->>> +    items:
->>> +      - const: alert1
->>> +      - const: alert2
->>> +
+>> Caused by commit
 >>
-
-...
-
->>> +
->>> +      microchip,vbus-half-range:
->>> +        $ref: /schemas/types.yaml#/definitions/flag
->>> +        description: |
->>> +          In order to increase measurement resolution and keeping
->>> the same
->>> +          number the of bits the device has a configurable VBUS
->>> full range scale
->>> +          (FSR). The range should be set by hardware design and it
->>> should not be
->>> +          changed during runtime. The bipolar capability for VBUS
->>> enables
->>> +          accurate offset measurement and correction.
->>> +          The VBUS could be configured into the following full
->>> scale range:
->>> +            - VBUS has unipolar 0V to 32V FSR (default) for
->>> PAC195X or 0V to 9V
->>> +              (default) for PAC194X.
->>> +            - VBUS has bipolar -32V to 32V FSR for PAC195X or -9V
->>> to 9V for
->>> +              PAC194X. The actual range is limited to about -200
->>> mV due to the
->>> +              impact of the ESD structures.
->>> +            - VBUS has bipolar -16V to 16V FSR for PAC195X or -
->>> 4.5V to 4.5V for
->>> +              PAC194X. The actual range is limited to about -200
->>> mV due to the
->>> +              impact of the ESD structures.
->>> +
->>> +      microchip,vbus-bipolar:
->>> +        $ref: /schemas/types.yaml#/definitions/flag
->>> +        description:
->>> +          If provided, the channel is to be used in bipolar mode.
->>> The
->>> +          actual range is limited to about -200 mV due to the
->>> impact of the ESD
->>> +          structures.
->>> +
+>>    c11a50b170e7 ("accel/qaic: Add Reliability, Accessibility, Serviceability (RAS)")
 >>
->> Using Jonathan's suggestion from v2 to just have a single property
->> with 3 different
->> ranges to chose from seems simpler that this. It would only require
->> one property
->> and would be self-documenting. The description could be shortened to
->> just a couple
->> of lines.
+>> interacting with commit
+>>
+>>    1c8a0ed2043c ("PCI: Remove unused pci_printk()")
+>>
+>> from Linus' tree (in v6.16-rc1).
+>>
+>> As a fix up patch would be a bit of a mess, I have used the drm-misc
+>> tree from next-20250606 for today.
 > 
-> I was thinking to add the range for this property, but it looks (for me
-> at least) more complicated from the checking point of view. The driver
-> is supporting two family of devices that has, each, 3 different voltage
-> range as an input.
+> The simplest fix is to use dev_printk() and replace qdev->pdev with
+> &qdev->pdev->dev.
+
+Ick. I agree, this is the quick fix. I'll implement it and try to get 
+-next unblocked ASAP.
+
+> The PCI core already contains one occurrence of dev_printk() in
+> drivers/pci/tlp.c (introduced this cycle - 82013ff394ea).
 > 
-
-Usually, having a consistent binding for the same thing among similar
-devices is more important than how easy it is to implement in the driver.
-
-Since this seems to be a common pattern, we could probably justify an
-iio_property_match_ranges() helper function that would simplify the
-implementation in drivers that would need to use such a property. Then
-in each driver it would just be a matter of making a static const array
-lookup table of ranges for each device and calling the helper function.
+> Additionally drivers/pci/aer.c goes so far as to define a custom
+> aer_printk() for lack of a pci_printk().
+> 
+> drivers/pci/controller/dwc/pcie-tegra194.c contains further
+> occurrences of dev_printk() which could use pci_printk() instead.
+> 
+> Those occurrences suggest that the removal of pci_printk() was
+> perhaps uncalled for.
+> 
+> Thanks,
+> 
+> Lukas
 
 
