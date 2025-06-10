@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-680448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB4DAD458E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 710CAAD4592
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1EA189A2ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9997C1899AB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD9E2874EA;
-	Tue, 10 Jun 2025 22:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9040288C8A;
+	Tue, 10 Jun 2025 22:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Q5FmwdCP"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Y/HS4efw"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE4B264A7C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABBC288C37
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749593007; cv=none; b=ayharq9b0qrx3gW1zX5AbMpBHGm6YN8r/jFA29TLnjOKubfPoUSrDa7fDjLORLmUr2rlF6u3X4LO22ln014S0uej0DbyXTgHcom+qk3uI+r7PuHgxn4i1WkK/7TWEVMDqS/X3eYCNbR+LgEara8NiRPLUjBCeHW7KTsyjDdYMdY=
+	t=1749593039; cv=none; b=OOqA+9gwii77m+fiwwLDlp7dvLXJ6a4hlaT+WQ/pbdEqsWv6aBucgMpKQexN7GcIndEx+ZKpHV93OPxBDpxnTWBvO/SQ22bebqsMNKFPtSC2NViMr0dyiRd0mp5FaJsjZbo8iqnIcsPb5XHKe6vf0ITjOyXT6jk6O5H/+xKcBPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749593007; c=relaxed/simple;
-	bh=lAzkbZRsiYkiAFt594FQ0xW8AjZBW060MmReVLZSPEU=;
+	s=arc-20240116; t=1749593039; c=relaxed/simple;
+	bh=AQuSBUl4POx87aC0pz2dJ7RudtiNWawkc/IXHTTTSDI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=avkWqnwG+01x6QnEPAVQPKHSdy+iire46MJRJnuegyJmtmf0JCZ99jDytPmDzlnjFhl9hvsjDeXI1DT9CALzbXXmCzDF4BVpApmK4mipz6tlsn9juTORgL9EjMTveyjdC8cgK7K/dgZu9KCo6dlKr3iT6kOSx48bngR/Nptjkog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Q5FmwdCP; arc=none smtp.client-ip=209.85.214.182
+	 In-Reply-To:Content-Type; b=B1bGM4++SkBjQffkfUa/sSJ/h+/FPM8YjLVEg9IsN0fB4Y2F/T2/wi6u5tkeSkMujq0TjOoM0qS/uOPqqbs+A0ha5zBtXx6fwyOweuCAMxGTsQRV3q/Au9KomHoadt8pf8mgzD+6ZzqzQn2oOjFd8PBysQ2D6vNf/gS7/g8QiS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Y/HS4efw; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-236377f00easo16846265ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:03:25 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-747fba9f962so292470b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1749593005; x=1750197805; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1749593037; x=1750197837; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CiAybgJTvUHDDHI0zOr7gnQJrjAwYePwjmyhAIO9NUc=;
-        b=Q5FmwdCPIB7iYeFN13TCbC1Nhv+q+y+Ccn3o54uV/9r00OOTtv9PPtiNPNSDTANKVi
-         t00lgGZnwEjb9s8vFqwEtPVyeMASvnBvzTVsRjIeKxEI7vfgpkkIUm6vDs98bhhVk7rV
-         vw/5IE0WUCBTBCWUeINqb1qXqpa4oOP3LST/k=
+        bh=2HKAV4+QmX8qJ/5iVivDCfl+K8vVhwbVWIjZHILmwUw=;
+        b=Y/HS4efwsydpSzsBiCpBA2XRLSTV9mK2bmDXxdkFjk2NZB61wWPNGdcM6NCpzm3WQ/
+         +GhelhmUGq7+jN40iM8ReXhhhBCHP9hKMKhem6KM+07zJJCK0MVk1bEkm5mUCs/536HV
+         /8n9oRhXPiToLvMPFEhnxHXmdLAgpDb+OV6G4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749593005; x=1750197805;
+        d=1e100.net; s=20230601; t=1749593037; x=1750197837;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CiAybgJTvUHDDHI0zOr7gnQJrjAwYePwjmyhAIO9NUc=;
-        b=kcxIlXEjgjjZNSxRAkyCiFood8ksSH82FoVsYxh66AF8ioJjLs9fkU72CpISk7QKbP
-         afpBSY1D7aYe/gCQyHGsIuaMFXLUOfJ7+RS1BnxiG1PrG9XKPDYwnxkedzPVfrjZLUsi
-         LQu3CzpC3KmqMOO16TcNfI4RkMBfvev/G+IqKwZrc2htLo/IstWSJzcWXA82hGwN9eHV
-         itFYiRPmBkyRt7Uz2Vzz/ZD6cSHQTWcGSZqjDQsYdNW+d/wpNxUfSjoBTf439b41C+L5
-         //o4IUR0dNxz7qmip8Szq33g3Gc1wnO+VTVvgqMILJH1Rk1N8lPJOphN+4dAT50haq8q
-         hAnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfRXkPPwyLDTn5nJDw1wo/bm8C9pHYuhIfuj+k2a+icEg3DoLHz/m0/iBxNo6gApIFs9Qc7bYBjQw4hjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvNzRhbQnkKtMdso/O4wS2FXWoff2juhiaOuHtkCcjUev1b44+
-	w/KpN1lH1BD7+FIhvjOdkFX7q2o53WJtzTg49mYr90zArbO+cJbZ1sq5MALRCieKeA==
-X-Gm-Gg: ASbGncsMu33Fxt9IsPlH5dHPNZBIDZu+XKBE+NMOF//OU/nTdBoEpoGkk74IGLk1xp3
-	wt9nCSSZ3G3ZKYyFCMJ1qZATQuY1qb/Dm+B25Rg+oMdH25KFn5vRTgBz8QiBmNqvQy8AkbyTgrq
-	1l+q4WTy+4un7YGR9JnLoA8WhG0sEj10MrYwQmf/v+KAzU4co076U1dDE38VVgxrvCun2nceHIZ
-	voiq3uxjYtp2cSZ6glmvinzMDT7KnxrEa9pxVuApZG9qsYwo4VN8JWvyVj9lWwtQYCaNR83b5b1
-	hhZCGHCI9eTatw9ieJXdZk/vL3SINRnkpO7L1uJ9RPO/0mTd36Mxg57ZhBmGohKrelmzghMVvwu
-	8w+rWj3oAzcjXRVHC+C6dP3NqTmOVSLybq38gz9A=
-X-Google-Smtp-Source: AGHT+IHTZUfe9NgQX4fBB9+qXz05x3tkcD4vBuXAHP7YeCeJw7eNzZ9CYK40gUkuN3RyfnzZ7PjnFw==
-X-Received: by 2002:a17:903:41cf:b0:235:a9b:21e0 with SMTP id d9443c01a7336-2364255bc96mr6670475ad.0.1749593004825;
-        Tue, 10 Jun 2025 15:03:24 -0700 (PDT)
+        bh=2HKAV4+QmX8qJ/5iVivDCfl+K8vVhwbVWIjZHILmwUw=;
+        b=hZb3wPHD/H3qZA8kkwYeALmMzTYCjqsjTIlGUftFNIjTx91A/0iX+JYfSizlB0gmNQ
+         oRUingnJRXJesIqAguIGD1HQArxunZLr0XhnLzXFDys6jGoJyR3bRL+KN6vTO/PQTt2Z
+         GAiwOctMZS/U8a6h/79nFKLeuuqtiDKEoSbTtxxP6syZZpkNBoXzz7PKsGj00EqJ6IIT
+         jeYC0JDNAcb9IZNzcEikEXfUP5T6gf/Run2yT7B8abTdO4d6fItHrClsbDluT3Kej8yR
+         pjQVlTWUmogs9b/96bEt3EkjPrY7dcaB7WRCiBaIRU/03C2jvGtYHhBsuCFAt0yEhh3Z
+         XF7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWgn0Ylhk+j+Z5tsjn8HPqqGdivzzshS9BBWfRX6TbijPbDj6tCAU4vsgFnrGHZIPy1UWRdGKVpaCIeF+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWosake/hx4TTIEER/bKbZjg8fyt6GIOBxUYfYJKfUgtu54kMW
+	aULB/w8UUMUP4TfkssqgbtWTYFuu4YjECBY9L3IEfDyo6WhksAH3tGIIi56ugOE2BQ==
+X-Gm-Gg: ASbGncteLm/M+s4gmB4crPDiGEmo7GgAca6hU1+Wg67I2ZZaEQPMPp3lmQ+3pk3RX+P
+	7raw6fQeMSPKvUVh0oL5yoRh0Kz80BJ02nrz4Wl7odIcLmKwi1ova0odIDLHOEugR8DeJOz/GZp
+	3zELVy69vN+s+LXbd0DmhoiHGj1Ej8cGr97/R1ItotLKEL0WPWg/2m1hBvYSKOhKJSWAhA1vXRH
+	Jbae0BA1hspg/miAGoTcqznpd0ucfGJvw5NalyApP9WS1ttxSsgUHnQH9OLD7nVLZ0rr10Ltv6T
+	YmSvl63HGTl2aICcS7uLbnGgfbRpcdKVE5OQMeIDPK6n7r12tUyulTn0BuBTGWMJJd0HO6yv/96
+	CEHdHq+CIaBHdqtASRH7y6DCVVfck
+X-Google-Smtp-Source: AGHT+IEIXuOZsMuSoYb7hNyiQAFPY8BACk5AsaFz6nHTA8M6q+uL6HODxkPFfsAfvjEVf9+iPCaqeA==
+X-Received: by 2002:a05:6a00:2d26:b0:73d:fdd9:a55 with SMTP id d2e1a72fcca58-7486d351d34mr1345772b3a.8.1749593036803;
+        Tue, 10 Jun 2025 15:03:56 -0700 (PDT)
 Received: from [10.69.66.4] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236034065edsm75206445ad.185.2025.06.10.15.03.23
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b083abcsm8220869b3a.92.2025.06.10.15.03.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 15:03:24 -0700 (PDT)
-Message-ID: <21c6abaf-b208-4cc0-874f-42bceed5c1b7@broadcom.com>
-Date: Tue, 10 Jun 2025 15:03:22 -0700
+        Tue, 10 Jun 2025 15:03:56 -0700 (PDT)
+Message-ID: <5de9e799-bc01-4fa2-8b99-1e54c7007963@broadcom.com>
+Date: Tue, 10 Jun 2025 15:03:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,8 +78,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] net: bcmasp: Utilize napi_complete_done()
- return value
+Subject: Re: [PATCH net-next 2/2] net: bcmasp: enable GRO software interrupt
+ coalescing by default
 To: Florian Fainelli <florian.fainelli@broadcom.com>, netdev@vger.kernel.org
 Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -88,22 +88,20 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  <bcm-kernel-feedback-list@broadcom.com>,
  open list <linux-kernel@vger.kernel.org>
 References: <20250610173835.2244404-1-florian.fainelli@broadcom.com>
- <20250610173835.2244404-2-florian.fainelli@broadcom.com>
+ <20250610173835.2244404-3-florian.fainelli@broadcom.com>
 Content-Language: en-US
 From: Justin Chen <justin.chen@broadcom.com>
-In-Reply-To: <20250610173835.2244404-2-florian.fainelli@broadcom.com>
+In-Reply-To: <20250610173835.2244404-3-florian.fainelli@broadcom.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 6/10/25 10:38 AM, Florian Fainelli wrote:
-> Make use of the return value from napi_complete_done(). This allows
-> users to use the gro_flush_timeout and napi_defer_hard_irqs sysfs
-> attributes for configuring software interrupt coalescing.
+> Utilize netdev_sw_irq_coalesce_default_on() to provide conservative
+> default settings for GRO software interrupt coalescing.
 > 
 > Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
 Reviewed-by: Justin Chen <justin.chen@broadcom.com>
-
 
