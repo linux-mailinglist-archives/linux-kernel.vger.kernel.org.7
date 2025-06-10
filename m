@@ -1,316 +1,519 @@
-Return-Path: <linux-kernel+bounces-679418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0D1AD3616
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:23:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115EAAD361B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90D5C7A3D50
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA703A87F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2114290DBE;
-	Tue, 10 Jun 2025 12:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D0E291872;
+	Tue, 10 Jun 2025 12:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4augsdW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nsc0vSqA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB4428EA45;
-	Tue, 10 Jun 2025 12:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA10223300;
+	Tue, 10 Jun 2025 12:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558207; cv=none; b=tqjgcKJgXMbVBjEfH/lyXvDoUJkXcjYoAZjWo5egV/8X8uAU0nGuZsQqbquR9LyBCBPzfrATdoMD0BIgB8g3CWT9Kn92ZHQHOP8H8sBj7MriKG8VXv3dS5PDPxNuSS7lgcomz+Mi9uVrrZYKMtFbbAvLAu7mBh5vhKfNHTPc7aE=
+	t=1749558347; cv=none; b=BAoaw6q0+oyk1NqHMD6UULhuQUBFO1A6EIFW1Ct48oqDgAeyML2UqTxzoP6fiDIWBbYJKGvmGZFqQ2dfrCi+EOTUvZQxSz0bmo8oCg2heyQWXqeSbfe3Xeer44NSYBReb0FWwQCBIEoZ0pYoKHyp2qkAMPjlpz0hobMsqX0f5C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558207; c=relaxed/simple;
-	bh=oc//4EYy1ffqYnSH/0jpWmK1cIoIKuNwXMQerwUzNjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2U/vlCYcyWkqbSSgGNC3C/BT+XZOD0QYQNMLAhnEHmfuQyY4t+ZQqCJXsvHxu7lzpS9KxoMnf3JCl7OVy5m2eUr9hTyiLwSu25jA+12fL7YAEZI6PepUbIUEZhk9w56dkPE3gdJ2dly4zKIxW2EnkMEG0Z20x/NpbUtgbEa6eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4augsdW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A8FC4CEF1;
-	Tue, 10 Jun 2025 12:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749558207;
-	bh=oc//4EYy1ffqYnSH/0jpWmK1cIoIKuNwXMQerwUzNjQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s4augsdWAzQGzGe5ecGB3QeaSvaCP6tGpt8U/v5vLjwmzThp1+OGVjnRBmvsmSqEN
-	 d/LIbVnFCnuxy1hOopR79rvNVEiuQBFviXZLAhz6h5sVbDgmbsdBqdAJdXsJDB6C0r
-	 VySvsGyhnwGnP06404JRXfQG9k4yhiarAhVmDx/Rurn9fEGII66kXUemxxolChqlpm
-	 W7eSN5OHY4V0k/nBXLKmwqWyl2nXdDY997AnO5yYl60LwLNhUflwOBVZlxU9/N9nY8
-	 6VDf96/oZufcNXUfsKXPWbeBZOS+zYSzSBYUhiqHCWiLCE91LIQbAxnImUDBuywjPN
-	 v9rbVfGygNUlQ==
-Date: Tue, 10 Jun 2025 14:23:24 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Xiongfeng Wang <wangxiongfeng2@huawei.com>, rcu@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH 2/2] rcu: Fix lockup when RCU reader used while IRQ
- exiting
-Message-ID: <aEgjvGkYB0RoQFvg@localhost.localdomain>
-References: <20250609180125.2988129-1-joelagnelf@nvidia.com>
- <20250609180125.2988129-2-joelagnelf@nvidia.com>
+	s=arc-20240116; t=1749558347; c=relaxed/simple;
+	bh=Lk7JoDQrZ0/UQMHU+Ln9htqSR5uzrBFly6X/T3kczlg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FdaKNvQkq+NoIrXF0Tq1yXJbcqJdlbtVc9uCLtph5EOekr2Y2biA/WFT4Z1rshyTZzGaMbWme76uHjmxYduRA80WhqLUrE0nAXi1HiDs2JsCapGBy5byHsFgZ9Xc43csqXY7dzP4bQZ0r88MNP+8O2YQNWwMhqe+WKy7vn/3F9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nsc0vSqA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c31:1c42:8df0:5885:c778:1335])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B0CEA22B;
+	Tue, 10 Jun 2025 14:25:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1749558335;
+	bh=Lk7JoDQrZ0/UQMHU+Ln9htqSR5uzrBFly6X/T3kczlg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=nsc0vSqAXfKKGxb45QmkyFXGLeA76p6f/lYF3slCLC77HKseNnSxQNGrMGtLWP1me
+	 p4G+xwmAhyYE5AzPWnTqsQXOXdtX8fecJ3jb7MY6z29iNIk5x4iZMtByOHnpqSzvA+
+	 jlAkbbacucfl9AZ2G5yJrRLyvaUunl03webndiNM=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Date: Tue, 10 Jun 2025 17:55:27 +0530
+Subject: [PATCH v4] media: rockchip: rkisp1: Add support for Wide Dynamic
+ Range
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609180125.2988129-2-joelagnelf@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250610-wdr-latest-v4-1-b69d0ac17ce9@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIADYkSGgC/z2N22oDMQwFf2XxcxdWtuRLfqXkQbbkxtBc6t02g
+ ZB/r5tAXwRzYEZ3s2pvuprddDddf9razqcB+DaZcuDTh85NBhu7WFo8LPNV+vzJm67bTC5Azsx
+ OMZghXLrWdnvG3vcv7vr1PZrbazQX3sphFHeTDRawWEa/aHIuJo0QUWpNQKjJI3omrfHZ/bcgC
+ FERK1VgiS6Na5HA5+xScAEzEwhj+bMyrzqX8/HYtiGm8TC7wIw1usJks9RUwAtJhCwCjhATmv3
+ j8Qv/JjTpFAEAAA==
+X-Change-ID: 20250610-wdr-latest-5371bbaa3e47
+To: Dafna Hirschfeld <dafna@fastmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Stefan Klug <stefan.klug@ideasonboard.com>, 
+ Paul Elder <paul.elder@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=20922;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=Lk7JoDQrZ0/UQMHU+Ln9htqSR5uzrBFly6X/T3kczlg=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBoSCRAMFDAt3Ui9YnNSmQk8YbWGE7rKHd+c1mUg
+ rjKmrmDI2qJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaEgkQAAKCRBD3pH5JJpx
+ RUrBD/9Bys887WlG1XF5RjxlypVRhyuTrT8MRpbfpOvzcuBNScrqSyYpd/TdH2jUXbe2Q6Z8B9k
+ MovxKJ+XRJ7BJ/vz3OaEqrYjidaZiJ2PQnpZfqqYSulAkf64hCUtUG+vexwp1Rp06S9Pxybzi2I
+ Uqe/3DjmX2Recs753HrjmW5mbWlYS71KOIzRUygWtbqxTFKrg0fsS+lNgI9vv+loZph3fCsJnUP
+ kT6jshYLjYeUA+3PmCIFegLYmXfsp3y8iozs+VIBNNPbmgh/PkUrqkpgdDdhhOfY7Is6nDyGcA8
+ 7BNjESr+gm15Gda/j24xV3BML1gxErzur0k6O/6BuojAxYCzr9Z+jBSO8LhFc73KH1H7CGG2h2T
+ xutKF1RcTtIDKnuJXbvKAOrtiL6yAuTxNRYXN2To6b7iCqqs7xhi6sKRTFheGOazXJ1KXPTqBYr
+ OFVoEPu3864xoeMu/88uSj3mxYuvl3IH/7omNb59Lv/Vs2nKX/3a9Ni9n44n1bKI3ORKZuTLZwo
+ 24IsYweKxFmnD+5wap5lc/BqNfcRSHvUxOd07FSoeJ2uhRX9VfYWkh8TGz1Ndvte0zl+vgIkqml
+ jlM2pdTD16RNzqvbjLmRsbPf063F8/U213Aj3CMfiOgbZ9yHai/TgESkCN3PvcWHdEOzD7lDWYX
+ GR0BZDeWy9twNTw==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Le Mon, Jun 09, 2025 at 02:01:24PM -0400, Joel Fernandes a écrit :
-> During rcu_read_unlock_special(), if this happens during irq_exit(), we
-> can lockup if an IPI is issued. This is because the IPI itself triggers
-> the irq_exit() path causing a recursive lock up.
-> 
-> This is precisely what Xiongfeng found when invoking a BPF program on
-> the trace_tick_stop() tracepoint As shown in the trace below. Fix by
-> using context-tracking to tell us if we're still in an IRQ.
-> context-tracking keeps track of the IRQ until after the tracepoint, so
-> it cures the issues.
-> 
-> irq_exit()
->   __irq_exit_rcu()
->     /* in_hardirq() returns false after this */
->     preempt_count_sub(HARDIRQ_OFFSET)
->     tick_irq_exit()
->       tick_nohz_irq_exit()
-> 	    tick_nohz_stop_sched_tick()
-> 	      trace_tick_stop()  /* a bpf prog is hooked on this trace point */
-> 		   __bpf_trace_tick_stop()
-> 		      bpf_trace_run2()
-> 			    rcu_read_unlock_special()
->                               /* will send a IPI to itself */
-> 			      irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
-> 
-> A simple reproducer can also be obtained by doing the following in
-> tick_irq_exit(). It will hang on boot without the patch:
-> 
->   static inline void tick_irq_exit(void)
->   {
->  +	rcu_read_lock();
->  +	WRITE_ONCE(current->rcu_read_unlock_special.b.need_qs, true);
->  +	rcu_read_unlock();
->  +
-> 
-> While at it, add some comments to this code.
-> 
-> Reported-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> Closes: https://lore.kernel.org/all/9acd5f9f-6732-7701-6880-4b51190aa070@huawei.com/
-> Tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+RKISP supports a basic Wide Dynamic Range (WDR) module since the first
+iteration (v1.0) of the ISP. Add support for enabling and configuring it
+using extensible parameters.
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Also, to ease programming, switch to using macro variables for defining
+the tonemapping curve register addresses.
 
-Just a few remarks:
+Reviewed-by: Stefan Klug <stefan.klug@ideasonboard.com>
+Tested-by: Stefan Klug <stefan.klug@ideasonboard.com>
+Reviewed-by: Paul Elder <paul.elder@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Changes in v4:
+- Fix RKISP1_EXT_PARAMS_MAX_SIZE to include the size of `struct
+  rkisp1_ext_params_wdr_config` (reported by Stefan offline)
+- Kept R-by and T-by tags intact as this is a trivial fix
+- Link to v3: https://lore.kernel.org/linux-media/20250523-supported-params-and-wdr-v3-3-7283b8536694@ideasonboard.com/
 
-> ---
->  kernel/rcu/tree_plugin.h | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 3c0bbbbb686f..53d8b3415776 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -653,6 +653,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
->  		struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
->  		struct rcu_node *rnp = rdp->mynode;
->  
-> +		// In cases where the RCU-reader is boosted, we'd attempt deboost sooner than
-> +		// later to prevent inducing latency to other RT tasks. Also, expedited GPs
-> +		// should not be delayed too much. Track both these needs in expboost.
->  		expboost = (t->rcu_blocked_node && READ_ONCE(t->rcu_blocked_node->exp_tasks)) ||
->  			   (rdp->grpmask & READ_ONCE(rnp->expmask)) ||
->  			   (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
-> @@ -670,10 +673,15 @@ static void rcu_read_unlock_special(struct task_struct *t)
->  			// Also if no expediting and no possible deboosting,
->  			// slow is OK.  Plus nohz_full CPUs eventually get
->  			// tick enabled.
-> +			//
-> +			// Also prevent doing this if context-tracking thinks
-> +			// we're handling an IRQ (including when we're exiting
-> +			// one -- required to prevent self-IPI deadloops).
->  			set_tsk_need_resched(current);
->  			set_preempt_need_resched();
->  			if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
-> -			    expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu)) {
-> +			    expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu) &&
-> +			    !ct_in_irq()) {
->  				// Get scheduler to re-evaluate and call hooks.
->  				// If !IRQ_WORK, FQS scan will eventually IPI.
->  				if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
-> --
+Patches 1-2 from Stefan's v3 series have already been picked, so skipped
+those here
+---
+ .../media/platform/rockchip/rkisp1/rkisp1-params.c | 93 ++++++++++++++++++++
+ .../media/platform/rockchip/rkisp1/rkisp1-regs.h   | 99 ++++++----------------
+ include/uapi/linux/rkisp1-config.h                 | 95 ++++++++++++++++++++-
+ 3 files changed, 212 insertions(+), 75 deletions(-)
 
-Looking at the irq work handling here:
-
-* What is the point of ->defer_qs_iw_pending ? If the irq work is already
-  queued, it won't be requeued because the irq work code already prevent from
-  that.
-
-* CONFIG_PREEMPT_RT && !CONFIG_RCU_STRICT_GRACE_PERIOD would queue a lazy irq
-  work but still raise a hardirq to wake up softirq to handle it. It's pointless
-  because there is nothing to execute in softirq, all we care about is the
-  hardirq.
-  Also since the work is empty it might as well be executed in hard irq, that
-  shouldn't induce more latency in RT.
-
-* Empty hard irq work raised to trigger something on irq exit also exist
-  elsewhere (see nohz_full_kick_func()). Would it make sense to have that
-  implemented in irq_work.c instead and trigger that through a simple
-  irq_work_kick()?
-
-And then this would look like (only built-tested):
-
-diff --git a/include/linux/irq_work.h b/include/linux/irq_work.h
-index 136f2980cba3..4149ed516524 100644
---- a/include/linux/irq_work.h
-+++ b/include/linux/irq_work.h
-@@ -57,6 +57,9 @@ static inline bool irq_work_is_hard(struct irq_work *work)
- bool irq_work_queue(struct irq_work *work);
- bool irq_work_queue_on(struct irq_work *work, int cpu);
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
+index 4db0ca8d86db04a5d40733f823bb6a20c548d084..f1585f8fa0f478304f74317fd9dd09199c94ec82 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
+  */
  
-+bool irq_work_kick(void);
-+bool irq_work_kick_on(int cpu);
-+
- void irq_work_tick(void);
- void irq_work_sync(struct irq_work *work);
++#include <linux/bitfield.h>
+ #include <linux/math.h>
+ #include <linux/string.h>
  
-diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-index 73f7e1fd4ab4..383a3e9050d9 100644
---- a/kernel/irq_work.c
-+++ b/kernel/irq_work.c
-@@ -181,6 +181,22 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
- #endif /* CONFIG_SMP */
+@@ -60,6 +61,7 @@ union rkisp1_ext_params_config {
+ 	struct rkisp1_ext_params_afc_config afc;
+ 	struct rkisp1_ext_params_compand_bls_config compand_bls;
+ 	struct rkisp1_ext_params_compand_curve_config compand_curve;
++	struct rkisp1_ext_params_wdr_config wdr;
+ };
+ 
+ enum rkisp1_params_formats {
+@@ -1348,6 +1350,73 @@ rkisp1_compand_compress_config(struct rkisp1_params *params,
+ 				       arg->x);
  }
  
-+static void kick_func(struct irq_work *work)
++static void rkisp1_wdr_config(struct rkisp1_params *params,
++			      const struct rkisp1_cif_isp_wdr_config *arg)
 +{
++	unsigned int i;
++	u32 value;
++
++	value = rkisp1_read(params->rkisp1, RKISP1_CIF_ISP_WDR_CTRL)
++	      & ~(RKISP1_CIF_ISP_WDR_USE_IREF |
++		  RKISP1_CIF_ISP_WDR_COLOR_SPACE_SELECT |
++		  RKISP1_CIF_ISP_WDR_CR_MAPPING_DISABLE |
++		  RKISP1_CIF_ISP_WDR_USE_Y9_8 |
++		  RKISP1_CIF_ISP_WDR_USE_RGB7_8 |
++		  RKISP1_CIF_ISP_WDR_DISABLE_TRANSIENT |
++		  RKISP1_CIF_ISP_WDR_RGB_FACTOR_MASK);
++
++	/* Colorspace and chrominance mapping */
++	if (arg->use_rgb_colorspace)
++		value |= RKISP1_CIF_ISP_WDR_COLOR_SPACE_SELECT;
++
++	if (!arg->use_rgb_colorspace && arg->bypass_chroma_mapping)
++		value |= RKISP1_CIF_ISP_WDR_CR_MAPPING_DISABLE;
++
++	/* Illumination reference */
++	if (arg->use_iref) {
++		value |= RKISP1_CIF_ISP_WDR_USE_IREF;
++
++		if (arg->iref_config.use_y9_8)
++			value |= RKISP1_CIF_ISP_WDR_USE_Y9_8;
++
++		if (arg->iref_config.use_rgb7_8)
++			value |= RKISP1_CIF_ISP_WDR_USE_RGB7_8;
++
++		if (arg->iref_config.disable_transient)
++			value |= RKISP1_CIF_ISP_WDR_DISABLE_TRANSIENT;
++
++		value |= FIELD_PREP(RKISP1_CIF_ISP_WDR_RGB_FACTOR_MASK,
++				    min(arg->iref_config.rgb_factor,
++					RKISP1_CIF_ISP_WDR_RGB_FACTOR_MAX));
++	}
++
++	rkisp1_write(params->rkisp1, RKISP1_CIF_ISP_WDR_CTRL, value);
++
++	/* RGB and Luminance offsets */
++	value = FIELD_PREP(RKISP1_CIF_ISP_WDR_RGB_OFFSET_MASK,
++			   arg->rgb_offset)
++	      | FIELD_PREP(RKISP1_CIF_ISP_WDR_LUM_OFFSET_MASK,
++			   arg->luma_offset);
++	rkisp1_write(params->rkisp1, RKISP1_CIF_ISP_WDR_OFFSET, value);
++
++	/* DeltaMin */
++	value = FIELD_PREP(RKISP1_CIF_ISP_WDR_DMIN_THRESH_MASK,
++			   arg->dmin_thresh)
++	      | FIELD_PREP(RKISP1_CIF_ISP_WDR_DMIN_STRENGTH_MASK,
++			   min(arg->dmin_strength,
++			       RKISP1_CIF_ISP_WDR_DMIN_STRENGTH_MAX));
++	rkisp1_write(params->rkisp1, RKISP1_CIF_ISP_WDR_DELTAMIN, value);
++
++	/* Tone curve */
++	for (i = 0; i < RKISP1_CIF_ISP_WDR_CURVE_NUM_DY_REGS; i++)
++		rkisp1_write(params->rkisp1, RKISP1_CIF_ISP_WDR_TONECURVE(i),
++			     arg->tone_curve.dY[i]);
++	for (i = 0; i < RKISP1_CIF_ISP_WDR_CURVE_NUM_COEFF; i++)
++		rkisp1_write(params->rkisp1, RKISP1_CIF_ISP_WDR_TONECURVE_YM(i),
++			     arg->tone_curve.ym[i] &
++				     RKISP1_CIF_ISP_WDR_TONE_CURVE_YM_MASK);
 +}
 +
-+static DEFINE_PER_CPU(struct irq_work, kick_work) = IRQ_WORK_INIT_HARD(kick_func);
-+
-+bool irq_work_kick(void)
+ static void
+ rkisp1_isp_isr_other_config(struct rkisp1_params *params,
+ 			    const struct rkisp1_params_cfg *new_params)
+@@ -2005,6 +2074,25 @@ static void rkisp1_ext_params_compand_compress(struct rkisp1_params *params,
+ 				      RKISP1_CIF_ISP_COMPAND_CTRL_COMPRESS_ENABLE);
+ }
+ 
++static void rkisp1_ext_params_wdr(struct rkisp1_params *params,
++				  const union rkisp1_ext_params_config *block)
 +{
-+	return irq_work_queue(this_cpu_ptr(&kick_work));
++	const struct rkisp1_ext_params_wdr_config *wdr = &block->wdr;
++
++	if (wdr->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
++		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_WDR_CTRL,
++					RKISP1_CIF_ISP_WDR_CTRL_ENABLE);
++		return;
++	}
++
++	rkisp1_wdr_config(params, &wdr->config);
++
++	if ((wdr->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE) &&
++	    !(params->enabled_blocks & BIT(wdr->header.type)))
++		rkisp1_param_set_bits(params, RKISP1_CIF_ISP_WDR_CTRL,
++				      RKISP1_CIF_ISP_WDR_CTRL_ENABLE);
 +}
 +
-+bool irq_work_kick_on(int cpu)
-+{
-+	return irq_work_queue_on(per_cpu_ptr(&kick_work, cpu), cpu);
-+}
+ typedef void (*rkisp1_block_handler)(struct rkisp1_params *params,
+ 			     const union rkisp1_ext_params_config *config);
+ 
+@@ -2118,6 +2206,11 @@ static const struct rkisp1_ext_params_handler {
+ 		.group		= RKISP1_EXT_PARAMS_BLOCK_GROUP_OTHERS,
+ 		.features	= RKISP1_FEATURE_COMPAND,
+ 	},
++	[RKISP1_EXT_PARAMS_BLOCK_TYPE_WDR] = {
++		.size		= sizeof(struct rkisp1_ext_params_wdr_config),
++		.handler	= rkisp1_ext_params_wdr,
++		.group		= RKISP1_EXT_PARAMS_BLOCK_GROUP_OTHERS,
++	},
+ };
+ 
+ static void rkisp1_ext_params_config(struct rkisp1_params *params,
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
+index 139177db9c6daf08ff42f09a26c91b414f5d18c8..fbeb186cde0d5cb2418e8fff04d50068ae483594 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
+@@ -703,6 +703,27 @@
+ #define RKISP1_CIF_ISP_COMPAND_CTRL_SOFT_RESET_FLAG	BIT(2)
+ #define RKISP1_CIF_ISP_COMPAND_CTRL_BLS_ENABLE		BIT(3)
+ 
++/* WDR */
++/* ISP_WDR_CTRL */
++#define RKISP1_CIF_ISP_WDR_CTRL_ENABLE			BIT(0)
++#define RKISP1_CIF_ISP_WDR_COLOR_SPACE_SELECT		BIT(1)
++#define RKISP1_CIF_ISP_WDR_CR_MAPPING_DISABLE		BIT(2)
++#define RKISP1_CIF_ISP_WDR_USE_IREF			BIT(3)
++#define RKISP1_CIF_ISP_WDR_USE_Y9_8			BIT(4)
++#define RKISP1_CIF_ISP_WDR_USE_RGB7_8			BIT(5)
++#define RKISP1_CIF_ISP_WDR_DISABLE_TRANSIENT		BIT(6)
++#define RKISP1_CIF_ISP_WDR_RGB_FACTOR_MASK		GENMASK(11, 8)
++#define RKISP1_CIF_ISP_WDR_RGB_FACTOR_MAX		8U
++/* ISP_WDR_TONE_CURVE_YM */
++#define RKISP1_CIF_ISP_WDR_TONE_CURVE_YM_MASK		GENMASK(12, 0)
++/* ISP_WDR_OFFSET */
++#define RKISP1_CIF_ISP_WDR_RGB_OFFSET_MASK		GENMASK(11, 0)
++#define RKISP1_CIF_ISP_WDR_LUM_OFFSET_MASK		GENMASK(27, 16)
++/* ISP_WDR_DELTAMIN */
++#define RKISP1_CIF_ISP_WDR_DMIN_THRESH_MASK		GENMASK(11, 0)
++#define RKISP1_CIF_ISP_WDR_DMIN_STRENGTH_MASK		GENMASK(20, 16)
++#define RKISP1_CIF_ISP_WDR_DMIN_STRENGTH_MAX		16U
 +
- bool irq_work_needs_cpu(void)
- {
- 	struct llist_head *raised, *lazy;
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index a9a811d9d7a3..b33888071e41 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -191,7 +191,6 @@ struct rcu_data {
- 					/*  during and after the last grace */
- 					/* period it is aware of. */
- 	struct irq_work defer_qs_iw;	/* Obtain later scheduler attention. */
--	bool defer_qs_iw_pending;	/* Scheduler attention pending? */
- 	struct work_struct strict_work;	/* Schedule readers for strict GPs. */
+ /* =================================================================== */
+ /*                            CIF Registers                            */
+ /* =================================================================== */
+@@ -1295,82 +1316,12 @@
  
- 	/* 2) batch handling */
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 3c0bbbbb686f..0c7b7c220b46 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -619,17 +619,6 @@ notrace void rcu_preempt_deferred_qs(struct task_struct *t)
- 	rcu_preempt_deferred_qs_irqrestore(t, flags);
- }
+ #define RKISP1_CIF_ISP_WDR_BASE			0x00002a00
+ #define RKISP1_CIF_ISP_WDR_CTRL			(RKISP1_CIF_ISP_WDR_BASE + 0x00000000)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_1		(RKISP1_CIF_ISP_WDR_BASE + 0x00000004)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_2		(RKISP1_CIF_ISP_WDR_BASE + 0x00000008)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_3		(RKISP1_CIF_ISP_WDR_BASE + 0x0000000c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_4		(RKISP1_CIF_ISP_WDR_BASE + 0x00000010)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_0	(RKISP1_CIF_ISP_WDR_BASE + 0x00000014)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_1	(RKISP1_CIF_ISP_WDR_BASE + 0x00000018)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_2	(RKISP1_CIF_ISP_WDR_BASE + 0x0000001c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_3	(RKISP1_CIF_ISP_WDR_BASE + 0x00000020)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_4	(RKISP1_CIF_ISP_WDR_BASE + 0x00000024)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_5	(RKISP1_CIF_ISP_WDR_BASE + 0x00000028)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_6	(RKISP1_CIF_ISP_WDR_BASE + 0x0000002c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_7	(RKISP1_CIF_ISP_WDR_BASE + 0x00000030)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_8	(RKISP1_CIF_ISP_WDR_BASE + 0x00000034)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_9	(RKISP1_CIF_ISP_WDR_BASE + 0x00000038)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_10	(RKISP1_CIF_ISP_WDR_BASE + 0x0000003c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_11	(RKISP1_CIF_ISP_WDR_BASE + 0x00000040)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_12	(RKISP1_CIF_ISP_WDR_BASE + 0x00000044)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_13	(RKISP1_CIF_ISP_WDR_BASE + 0x00000048)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_14	(RKISP1_CIF_ISP_WDR_BASE + 0x0000004c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_15	(RKISP1_CIF_ISP_WDR_BASE + 0x00000050)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_16	(RKISP1_CIF_ISP_WDR_BASE + 0x00000054)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_17	(RKISP1_CIF_ISP_WDR_BASE + 0x00000058)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_18	(RKISP1_CIF_ISP_WDR_BASE + 0x0000005c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_19	(RKISP1_CIF_ISP_WDR_BASE + 0x00000060)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_20	(RKISP1_CIF_ISP_WDR_BASE + 0x00000064)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_21	(RKISP1_CIF_ISP_WDR_BASE + 0x00000068)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_22	(RKISP1_CIF_ISP_WDR_BASE + 0x0000006c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_23	(RKISP1_CIF_ISP_WDR_BASE + 0x00000070)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_24	(RKISP1_CIF_ISP_WDR_BASE + 0x00000074)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_25	(RKISP1_CIF_ISP_WDR_BASE + 0x00000078)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_26	(RKISP1_CIF_ISP_WDR_BASE + 0x0000007c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_27	(RKISP1_CIF_ISP_WDR_BASE + 0x00000080)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_28	(RKISP1_CIF_ISP_WDR_BASE + 0x00000084)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_29	(RKISP1_CIF_ISP_WDR_BASE + 0x00000088)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_30	(RKISP1_CIF_ISP_WDR_BASE + 0x0000008c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_31	(RKISP1_CIF_ISP_WDR_BASE + 0x00000090)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_32	(RKISP1_CIF_ISP_WDR_BASE + 0x00000094)
++#define RKISP1_CIF_ISP_WDR_TONECURVE(n)		(RKISP1_CIF_ISP_WDR_BASE + 0x00000004 + (n) * 4)
++#define RKISP1_CIF_ISP_WDR_TONECURVE_YM(n)	(RKISP1_CIF_ISP_WDR_BASE + 0x00000014 + (n) * 4)
+ #define RKISP1_CIF_ISP_WDR_OFFSET		(RKISP1_CIF_ISP_WDR_BASE + 0x00000098)
+ #define RKISP1_CIF_ISP_WDR_DELTAMIN		(RKISP1_CIF_ISP_WDR_BASE + 0x0000009c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_1_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000a0)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_2_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000a4)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_3_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000a8)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_4_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000ac)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_0_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000b0)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_1_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000b4)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_2_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000b8)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_3_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000bc)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_4_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000c0)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_5_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000c4)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_6_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000c8)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_7_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000cc)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_8_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000d0)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_9_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000d4)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_10_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000d8)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_11_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000dc)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_12_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000e0)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_13_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000e4)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_14_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000e8)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_15_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000ec)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_16_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000f0)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_17_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000f4)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_18_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000f8)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_19_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x000000fc)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_20_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000100)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_21_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000104)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_22_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000108)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_23_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x0000010c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_24_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000110)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_25_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000114)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_26_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000118)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_27_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x0000011c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_28_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000120)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_29_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000124)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_30_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000128)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_31_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x0000012c)
+-#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_32_SHD	(RKISP1_CIF_ISP_WDR_BASE + 0x00000130)
++#define RKISP1_CIF_ISP_WDR_TONECURVE_SHD(n)	(RKISP1_CIF_ISP_WDR_BASE + 0x000000a0 + (n) * 4)
++#define RKISP1_CIF_ISP_WDR_TONECURVE_YM_SHD(n)	(RKISP1_CIF_ISP_WDR_BASE + 0x000000b0 + (n) * 4)
  
--/*
-- * Minimal handler to give the scheduler a chance to re-evaluate.
-- */
--static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
--{
--	struct rcu_data *rdp;
--
--	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
--	rdp->defer_qs_iw_pending = false;
--}
--
+ #define RKISP1_CIF_ISP_HIST_BASE_V12		0x00002c00
+ #define RKISP1_CIF_ISP_HIST_CTRL_V12		(RKISP1_CIF_ISP_HIST_BASE_V12 + 0x00000000)
+diff --git a/include/uapi/linux/rkisp1-config.h b/include/uapi/linux/rkisp1-config.h
+index 5ca4d5961c5b6e5a5ca392b7d68aae66e282fc2f..3b060ea6eed71b87d79abc8401eae4e9c9f5323a 100644
+--- a/include/uapi/linux/rkisp1-config.h
++++ b/include/uapi/linux/rkisp1-config.h
+@@ -169,6 +169,13 @@
+  */
+ #define RKISP1_CIF_ISP_COMPAND_NUM_POINTS	64
+ 
++/*
++ * Wide Dynamic Range
++ */
++#define RKISP1_CIF_ISP_WDR_CURVE_NUM_INTERV	32
++#define RKISP1_CIF_ISP_WDR_CURVE_NUM_COEFF	(RKISP1_CIF_ISP_WDR_CURVE_NUM_INTERV + 1)
++#define RKISP1_CIF_ISP_WDR_CURVE_NUM_DY_REGS	4
++
  /*
-  * Handle special cases during rcu_read_unlock(), such as needing to
-  * notify RCU core processing or task having blocked during the RCU
-@@ -673,18 +662,10 @@ static void rcu_read_unlock_special(struct task_struct *t)
- 			set_tsk_need_resched(current);
- 			set_preempt_need_resched();
- 			if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
--			    expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu)) {
-+			    expboost && cpu_online(rdp->cpu)) {
- 				// Get scheduler to re-evaluate and call hooks.
- 				// If !IRQ_WORK, FQS scan will eventually IPI.
--				if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
--				    IS_ENABLED(CONFIG_PREEMPT_RT))
--					rdp->defer_qs_iw = IRQ_WORK_INIT_HARD(
--								rcu_preempt_deferred_qs_handler);
--				else
--					init_irq_work(&rdp->defer_qs_iw,
--						      rcu_preempt_deferred_qs_handler);
--				rdp->defer_qs_iw_pending = true;
--				irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
-+				irq_work_kick();
- 			}
- 		}
- 		local_irq_restore(flags);
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index c527b421c865..84170656334d 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -377,14 +377,6 @@ static bool can_stop_full_tick(int cpu, struct tick_sched *ts)
- 	return true;
- }
+  * Measurement types
+  */
+@@ -889,6 +896,72 @@ struct rkisp1_cif_isp_compand_curve_config {
+ 	__u32 y[RKISP1_CIF_ISP_COMPAND_NUM_POINTS];
+ };
  
--static void nohz_full_kick_func(struct irq_work *work)
--{
--	/* Empty, the tick restart happens on tick_nohz_irq_exit() */
--}
--
--static DEFINE_PER_CPU(struct irq_work, nohz_full_kick_work) =
--	IRQ_WORK_INIT_HARD(nohz_full_kick_func);
--
++/**
++ * struct rkisp1_cif_isp_wdr_tone_curve - Tone mapping curve definition for WDR.
++ *
++ * @dY: the dYn increments for horizontal (input) axis of the tone curve.
++ *      each 3-bit dY value represents an increment of 2**(value+3).
++ *      dY[0] bits 0:2 is increment dY1, bit 3 unused
++ *      dY[0] bits 4:6 is increment dY2, bit 7 unused
++ *      ...
++ *      dY[0] bits 28:30 is increment dY8, bit 31 unused
++ *      ... and so on till dY[3] bits 28:30 is increment dY32, bit 31 unused.
++ * @ym: the Ym values for the vertical (output) axis of the tone curve.
++ *      each value is 13 bit.
++ */
++struct rkisp1_cif_isp_wdr_tone_curve {
++	__u32 dY[RKISP1_CIF_ISP_WDR_CURVE_NUM_DY_REGS];
++	__u16 ym[RKISP1_CIF_ISP_WDR_CURVE_NUM_COEFF];
++};
++
++/**
++ * struct rkisp1_cif_isp_wdr_iref_config - Illumination reference config for WDR.
++ *
++ * Use illumination reference value as described below, instead of only the
++ * luminance (Y) value for tone mapping and gain calculations:
++ * IRef = (rgb_factor * RGBMax_tr + (8 - rgb_factor) * Y)/8
++ *
++ * @rgb_factor: defines how much influence the RGBmax approach has in
++ *              comparison to Y (valid values are 0..8).
++ * @use_y9_8: use Y*9/8 for maximum value calculation along with the
++ *            default of R, G, B for noise reduction.
++ * @use_rgb7_8: decrease RGBMax by 7/8 for noise reduction.
++ * @disable_transient: disable transient calculation between Y and RGBY_max.
++ */
++struct rkisp1_cif_isp_wdr_iref_config {
++	__u8 rgb_factor;
++	__u8 use_y9_8;
++	__u8 use_rgb7_8;
++	__u8 disable_transient;
++};
++
++/**
++ * struct rkisp1_cif_isp_wdr_config - Configuration for wide dynamic range.
++ *
++ * @tone_curve: tone mapping curve.
++ * @iref_config: illumination reference configuration. (when use_iref is true)
++ * @rgb_offset: RGB offset value for RGB operation mode. (12 bits)
++ * @luma_offset: luminance offset value for RGB operation mode. (12 bits)
++ * @dmin_thresh: lower threshold for deltaMin value. (12 bits)
++ * @dmin_strength: strength factor for deltaMin. (valid range is 0x00..0x10)
++ * @use_rgb_colorspace: use RGB instead of luminance/chrominance colorspace.
++ * @bypass_chroma_mapping: disable chrominance mapping (only valid if
++ *                         use_rgb_colorspace = 0)
++ * @use_iref: use illumination reference instead of Y for tone mapping
++ *            and gain calculations.
++ */
++struct rkisp1_cif_isp_wdr_config {
++	struct rkisp1_cif_isp_wdr_tone_curve tone_curve;
++	struct rkisp1_cif_isp_wdr_iref_config iref_config;
++	__u16 rgb_offset;
++	__u16 luma_offset;
++	__u16 dmin_thresh;
++	__u8 dmin_strength;
++	__u8 use_rgb_colorspace;
++	__u8 bypass_chroma_mapping;
++	__u8 use_iref;
++};
++
+ /*---------- PART2: Measurement Statistics ------------*/
+ 
+ /**
+@@ -1059,6 +1132,7 @@ struct rkisp1_stat_buffer {
+  * @RKISP1_EXT_PARAMS_BLOCK_TYPE_COMPAND_BLS: BLS in the compand block
+  * @RKISP1_EXT_PARAMS_BLOCK_TYPE_COMPAND_EXPAND: Companding expand curve
+  * @RKISP1_EXT_PARAMS_BLOCK_TYPE_COMPAND_COMPRESS: Companding compress curve
++ * @RKISP1_EXT_PARAMS_BLOCK_TYPE_WDR: Wide dynamic range
+  */
+ enum rkisp1_ext_params_block_type {
+ 	RKISP1_EXT_PARAMS_BLOCK_TYPE_BLS,
+@@ -1081,6 +1155,7 @@ enum rkisp1_ext_params_block_type {
+ 	RKISP1_EXT_PARAMS_BLOCK_TYPE_COMPAND_BLS,
+ 	RKISP1_EXT_PARAMS_BLOCK_TYPE_COMPAND_EXPAND,
+ 	RKISP1_EXT_PARAMS_BLOCK_TYPE_COMPAND_COMPRESS,
++	RKISP1_EXT_PARAMS_BLOCK_TYPE_WDR,
+ };
+ 
+ #define RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
+@@ -1463,6 +1538,23 @@ struct rkisp1_ext_params_compand_curve_config {
+ 	struct rkisp1_cif_isp_compand_curve_config config;
+ } __attribute__((aligned(8)));
+ 
++/**
++ * struct rkisp1_ext_params_wdr_config - RkISP1 extensible params
++ *                                       Wide dynamic range config
++ *
++ * RkISP1 extensible parameters WDR block.
++ * Identified by :c:type:`RKISP1_EXT_PARAMS_BLOCK_TYPE_WDR`
++ *
++ * @header: The RkISP1 extensible parameters header, see
++ *	    :c:type:`rkisp1_ext_params_block_header`
++ * @config: WDR configuration, see
++ *	    :c:type:`rkisp1_cif_isp_wdr_config`
++ */
++struct rkisp1_ext_params_wdr_config {
++	struct rkisp1_ext_params_block_header header;
++	struct rkisp1_cif_isp_wdr_config config;
++} __attribute__((aligned(8)));
++
  /*
-  * Kick this CPU if it's full dynticks in order to force it to
-  * re-evaluate its dependency on the tick and restart it if necessary.
-@@ -396,7 +388,7 @@ static void tick_nohz_full_kick(void)
- 	if (!tick_nohz_full_cpu(smp_processor_id()))
- 		return;
+  * The rkisp1_ext_params_compand_curve_config structure is counted twice as it
+  * is used for both the COMPAND_EXPAND and COMPAND_COMPRESS block types.
+@@ -1487,7 +1579,8 @@ struct rkisp1_ext_params_compand_curve_config {
+ 	sizeof(struct rkisp1_ext_params_afc_config)			+\
+ 	sizeof(struct rkisp1_ext_params_compand_bls_config)		+\
+ 	sizeof(struct rkisp1_ext_params_compand_curve_config)		+\
+-	sizeof(struct rkisp1_ext_params_compand_curve_config))
++	sizeof(struct rkisp1_ext_params_compand_curve_config)		+\
++	sizeof(struct rkisp1_ext_params_wdr_config))
  
--	irq_work_queue(this_cpu_ptr(&nohz_full_kick_work));
-+	irq_work_kick();
- }
- 
- /*
-@@ -408,7 +400,7 @@ void tick_nohz_full_kick_cpu(int cpu)
- 	if (!tick_nohz_full_cpu(cpu))
- 		return;
- 
--	irq_work_queue_on(&per_cpu(nohz_full_kick_work, cpu), cpu);
-+	irq_work_kick_on(cpu);
- }
- 
- static void tick_nohz_kick_task(struct task_struct *tsk)
+ /**
+  * enum rksip1_ext_param_buffer_version - RkISP1 extensible parameters version
 
-  
-  
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250610-wdr-latest-5371bbaa3e47
+prerequisite-patch-id: 27214c2a460e93389e8184dff9154e96446a5ef8
+prerequisite-patch-id: 17d55cd2dfd10839d1024516bb397374ba51da4c
+
+Best regards,
 -- 
-Frederic Weisbecker
-SUSE Labs
+Jai Luthra <jai.luthra@ideasonboard.com>
+
 
