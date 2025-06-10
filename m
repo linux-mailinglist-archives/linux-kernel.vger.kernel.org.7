@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-679653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D755AD39CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8E3AD39C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA511887FFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 905C818813C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8773A29AB16;
-	Tue, 10 Jun 2025 13:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDEA29A327;
+	Tue, 10 Jun 2025 13:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjSrb2mA"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NHwoO76x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAED29AB10;
-	Tue, 10 Jun 2025 13:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D5A29CB52
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749563160; cv=none; b=e13P5bwMF9T4TmctmmBwwBkfdOoekQlNv67pQqKug4xmlQIvXaH6kJ7QHn8RaLBTex3QYYlKNTkmyCNjTNYOQRc0NyGwcqmaTqXssbWeLIUX2biV0xVfgVv5w3MUqYqilGHo/zdRG5x71G5Zx1J77Kj1apZBQUiEMIeoMHttaFk=
+	t=1749563151; cv=none; b=OWOzL9nn6v+wKouKEsX+TUiV7UDCD9rc6YdWx5CQlp33Tla/aNc8UZqTXuPqP9sc9IYSAI0hTCNGVorLCIp5hn6KCHLmj6s3P7hq6uhUpNBhiBT/kOeTg5Fnle9SeyFsJp/+yHnYAWzzTNSn06e5PlMsu3axrN+QT6VIpmTJP1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749563160; c=relaxed/simple;
-	bh=/Aqo6eZT8yO3l/bSFL2DWbLRnUJ/G9BOeA6amkvZLD0=;
+	s=arc-20240116; t=1749563151; c=relaxed/simple;
+	bh=tIkOcJFE+rafh2MgqZmDWTromNT6mSUqQ5PDBWtf60c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p46csxwuG2qREx1Cc1MxhAOm7IBAgf+3QW4DDoSrE7fwDi2Lq4UteA75MIaY+u1JB3zpu91KQko6oCEK9z3cK5arw+j/b6UoKU2ymFmyW7fvWWIx2zNFYrlnGuWezZNiMYJ8d4/7ElqFKtFPn4o+4Hb6stqkP55dskQo2fT+c6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjSrb2mA; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2c49373c15so3784130a12.3;
-        Tue, 10 Jun 2025 06:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749563158; x=1750167958; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WiSre9WglDpmIK4O0YsNl0nRwFB834XrXov3VRpC0FA=;
-        b=BjSrb2mAirr4zu/vBMgHw2xQMs451HyXMgsng55Zza1+qXNuOQSGIRrrubCvUaRZ8L
-         1FbjpLPqDdGF+IhdDY6qUx+wQnlBvc2D2nJJHG/LjmG45EP28MC+K2JbiYQmMuaI6lMv
-         1E7fvYptMLU9QygpgZqsZP7xzIcNdY9vNRS041DJqOsrz+8q7psWj04zgGNdu0CFjJdB
-         Vxnr5TvVPRKdOC+/crWhVCEuwOdTc+k68PZGcI1M8jEyi/His+C8XrrvaCFPWHaFMgbU
-         V0BW6pA/iwIq/iSbWuq73MBYNiQ6RZ0jaWgpOjNnSYEivyqEhpaYSDEnrJ6nXziFMW/c
-         DNxg==
+	 In-Reply-To:To:Cc; b=Xaz+iggVc0aKXTKE37h7fSOywvnlfvUuncHVs80Z+gxti7VYqhjluQDfLzDyI32Tve4TU+xxh66QPyWTlcp2HUFEH2DibvVNyiCUL3CKZ1oMO32Q0I6ObidS9XY0qKk4ldv+cN8ppTbouLnCzfUw7oA8Vb8hzyfM0utyXpaD+Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NHwoO76x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A7Enav001104
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:45:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2zlECPsipiGdH8hAfvBAtz4pKbhBRjMIfShCSx4B4p4=; b=NHwoO76xuGCplsPO
+	n6eZn6zhoCdsTXeuLhU9dbNFeg/Z9BE/ysOdyKzKHPKhQAaG480qlC/r5TLKXJZt
+	Lv34ptHv4+dg3chJE1VuPZQikcQLWEYx2qecf+h8Kzg4g36/1B1OBEHA/n+LhEjq
+	GeFAC3NTUNGdg6d+FPbTjj1c80lp61S1dZxc8YDWc9Va4FjULMqUikpe+sLXSPXV
+	eLgFF6tJFaYCrB/BMmVVcRnW1sVmnkDbik35XImP4YQWk89JOnF3vjrby/NOPSiu
+	H0AX0k14BscfIUVbSa7BJ81atUdC4yQpwQBlJakAbMLBIbXsYO9TxUa95Nvhyx2m
+	Gi10Tw==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 475v2tc9uq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:45:48 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b0e0c573531so3362526a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:45:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749563158; x=1750167958;
+        d=1e100.net; s=20230601; t=1749563147; x=1750167947;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WiSre9WglDpmIK4O0YsNl0nRwFB834XrXov3VRpC0FA=;
-        b=rKRStE25/p+E4zNdhCWlxKthh7gS+yzpzJ+rqnQxS3onQDORVFaxQ+I8XObEhrDmTF
-         cSm25MuUWoBTOBywzslxa1UZRb3/L79Ohw7RZa1OJSB+rwqfTDZBAnud8WLD52fiDjD9
-         DLBIDj0zWLzSuJK4a71GOoWWm0E4KNxKDLPxa80fE0bzBsl/7FgrS1Qpp0lfUjH8n3pw
-         ENNO40700ZotdfgU4hGgEmD0i7QGP22QPXCY4Yw9gqc2jNElHiDEeIvHllu6wKpL3buC
-         5khISIE/JDpk6usNpFB10k+6uXQmqVoQcRJR0JWGd3WAfbfIgcuqyd+XAZcb+KF1d8HG
-         q+eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN712qqyLAhz+ZJkN7mLTJjK8JKJz2gUqYfwrOWG25Vdqp6ysDL1pNOuKoygBLC4MvtHTuvWCX35Y1wD+W@vger.kernel.org, AJvYcCV8y83AjvcdvZ+qpqqvQY1ojxj9YBi1wxJs2dl4JB3nP9PYz+J1rT3Hu7bjLx6awVvKF/G/uq3j8sqn@vger.kernel.org, AJvYcCVNSObA8ULT04b/yN7P+BJRaiVBKxh61DgYP0WVXOL5XWhrh4fp3tYyKhLf95gjCxMIP1Yz1MJeQKIl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLLl06spI4j53hhFAzQARRzlv7HYPJppyjO/q8dzp4GJuPTL4W
-	gQUcOK0PgEB7n8SjsTBqcqs3OUqvP9kTt6LviFQvgvWNWc04KYl9REzF
-X-Gm-Gg: ASbGncsgwjlp/qZ+/uqxh73Kpe9B0Mun6EZhRUk6ByC/9yVOmeWxW+q82x+XEUeb9Iv
-	YmYI3TMCyLMAYyBW26QyYqx4XpGiQhaqD8zRkc7UvX0k+/z9MOmWRdikk9MD2cC6q08EWmjkKPr
-	+JYkZCHcSAe6FhM6loOjllbja6S/5GAsn2pp5NXd8r+wvGLJGK6q96J1mZQdu8VUVrcYjHtKQop
-	jPxIBfuMMltCKKtBncW8aPslmEKdDZvjDRb+Xq9ZehcP4pCLPG3NMR0gx7jssCIeqqWX8I6pE3/
-	JkO+qD2mO+9kG1nq2NFbV4pmlFK6lEcRlIq3PlS1Eu33e64i4dCahAt5H6FCsCiJ
-X-Google-Smtp-Source: AGHT+IEPves9Z9ZVq/mhz6mgJlmIUE39OoniHpiNwnWv3yeacikEIo4HPGvzJFKEY0HfioUekMexVA==
-X-Received: by 2002:a17:90b:1dc1:b0:312:e9bd:5d37 with SMTP id 98e67ed59e1d1-313472b5a14mr24196363a91.6.1749563157475;
-        Tue, 10 Jun 2025 06:45:57 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-31349f32df7sm7288522a91.15.2025.06.10.06.45.52
+        bh=2zlECPsipiGdH8hAfvBAtz4pKbhBRjMIfShCSx4B4p4=;
+        b=Z6Ddup3XSTaxJkiDHI62CBR8RoHADSwLvMfJ5Bx6iHtlk3CuXJINYfH/WlpdStbayi
+         b3AKI7ER6L+aPUD5dGRQkey885aigDMP9tsIwtqBJMK/ifd//mpsKW9Gem9E+TJgF6Kx
+         NMVjYrguZ73uDFhumYr0c/1F8VnOz4Ew87cK7+GKTbrtVsSIliTOMwv+jUAjdx6SR3C+
+         AkAH+iFug5gIqTwkaX6D668iMKjMU2ktWoJkZVQ1ZchiXlKYvbHs5rJQ9uibOQtNp12h
+         baUHOr5LUr6NFU49pZylCBVX//z/r9tXDnpg6dVaJ3IfzA965kJL026icRme/KjbhDeb
+         JYWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUM/E3R9y2Na98dRj3QdMQO50+kNwdk1Gyde8TUEmtX5lTW1zMx2oMM9E5StHc3uecp8SeOeyIUZm+aQgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx35YTCjq1f3kR56jgxP8g7pvYV6jftNiUJlxmkT0DrrOTEOxG+
+	khPe8sGmcLeaMV5sduFtG4BrU29O1eDSEdzuUv6uj4HjTFctUzjzeETFl4QSJ5RilUZwEQ80ePw
+	/BpNpERu/Ps1mzDVR/dnUy+crktT722CxBdl6W1Ux9fPtosQ/VH9Px7CyH8ucNWSIl9U=
+X-Gm-Gg: ASbGncvpM3EbedeKZvzCqbCyAqqpU2B8BELYszXkLY/6ZrIgr4iPF1Azaxddl824PO3
+	UrQLrur3imqEMeJ9TN+HMTTbwilvXenwvIsKlads2l29qkkx1C+KFBZSwG4F/IKspUSDpjxCA0E
+	s7UaoDbbOvHu5ycsNvgzjNAretSzhlIEtmpw6tjHxt+6REQeJdBM0cK8D6T+g3DIPlxwXD7GFDb
+	j+k626WPIjeP0AhweHR8PAQlNqQaQC/uO+qqna6v3lAOjprDCIJR4Z+dXr5qGaEmiG8jzQWCxn1
+	IFDfxyV0p+xr5/vbuXYSXz40UyY+vWwVLchrrWvDwdt2gvNECFFEQfYKpmNtyH9ZeOYybEMjmzr
+	Duz0HzFin0wk2cHmPmwB9Ba8ZxU0aVcxVSnC5tUaSYGk8oFPMaOxdtKM3yA==
+X-Received: by 2002:a05:6a20:9144:b0:218:96ad:720d with SMTP id adf61e73a8af0-21f78b00d19mr3904179637.1.1749563146836;
+        Tue, 10 Jun 2025 06:45:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFbD2yzkEoSMKz5KaTlc9zIq3cjy7BteG1YQFBVwOSU21N2znKNGceH1ZhcbWzlMysruW16gQ==
+X-Received: by 2002:a05:6a20:9144:b0:218:96ad:720d with SMTP id adf61e73a8af0-21f78b00d19mr3904127637.1.1749563146353;
+        Tue, 10 Jun 2025 06:45:46 -0700 (PDT)
+Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ee70085sm5858107a12.25.2025.06.10.06.45.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 06:45:57 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Tue, 10 Jun 2025 21:45:20 +0800
-Subject: [PATCH v2 1/9] dt-bindings: i2c: apple,i2c: Document Apple A7-A11,
- T2 compatibles
+        Tue, 10 Jun 2025 06:45:45 -0700 (PDT)
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Date: Tue, 10 Jun 2025 19:15:21 +0530
+Subject: [PATCH v5 5/5] arm64: dts: qcom: ipq5424: add support to get
+ watchdog bootstatus from IMEM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,60 +92,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
-References: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
-In-Reply-To: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Andi Shyti <andi.shyti@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Nick Chan <towinchenmi@gmail.com>
+Message-Id: <20250610-wdt_reset_reason-v5-5-2d2835160ab5@oss.qualcomm.com>
+References: <20250610-wdt_reset_reason-v5-0-2d2835160ab5@oss.qualcomm.com>
+In-Reply-To: <20250610-wdt_reset_reason-v5-0-2d2835160ab5@oss.qualcomm.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=959; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=/Aqo6eZT8yO3l/bSFL2DWbLRnUJ/G9BOeA6amkvZLD0=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBoSDcLMj5ZKRfP6FDNrg/uoHt0VE03NHDCCsm/L
- tjy7gyFgTGJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaEg3CwAKCRABygi3psUI
- JON+D/9mWe1wzDkLw5zxCc17gmi0oLsWgTp/gp4uIg7bRtRXS2I8RHG3l15Ne96FHKoIVpycAsS
- Pm6XUB3Q4j7RgkL1X7IDSkzaJNK/nV67mFAuF7LtR6DQ/dqhniNCCzQt/3osg9oMYBPwBl400A9
- hdYDWAneazlwNY0LU6UQYdE1y2a0wv5V8QEpib6iW8V5C1CpmCE/BC9X9o63x78K38UAnLIr2qR
- 8NygF5muZixISiWMFY73C3UpfxH/4paxsnqGJ0SiexIucrhKfGV7oEvHPYL+UlBYKeRsHrxNJ7B
- ooCaaDzNhzbKCcmTd6pMNrunOvoz+0OnA2OHT8F6im5h6Bz5hForG2hwBdi5jY29KE2wkBMJArX
- gJDJ2Mr95ON9GJuRra5EwENT/zJVTHsyPzDr/fe1GLgyDHhGXv1j937k4lNKJXsWlWtQOigxNzR
- c/Jjl5mgiUQA/x3nRh/jN8PGl47MAQvOvp3IVmgmSOl7yOO0K+6KSzIQny5dzs7HcNTik28NfwZ
- hNLHp8fNGqEuXlGN5K2qds1wvnubCOM3tvrjFS02nbDJbc06ybYjXSHx4Ud0PUuYrMmdXPem8Fa
- H7CDbAdAyxBaV4n4oHyWBTxIvfB2Nilu5711+drKFj8tUFhLkQ/HoqH3JtvuHZl3F1fdX8XpxB+
- Fn+WFJk5dw9uSkQ==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749563123; l=1331;
+ i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
+ h=from:subject:message-id; bh=tIkOcJFE+rafh2MgqZmDWTromNT6mSUqQ5PDBWtf60c=;
+ b=FuSWMbgkxF7ijEzeW9B9JbFHZuz/cLrnIeEaDoB8zMVARjDfERKmd8wt8S5/Wgq/izDiMzNms
+ yU2NllYj5OuC2ITF6ituhkXvPBSZACsViUzQXxuCVVFdjjQAeefc0ZD
+X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Proofpoint-GUID: Svq7rbsyjGuaHi46zD2cEcCw0jJ4hVMo
+X-Authority-Analysis: v=2.4 cv=GoxC+l1C c=1 sm=1 tr=0 ts=6848370c cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=WbeaI0-OC7IQdSlKmUMA:9
+ a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-ORIG-GUID: Svq7rbsyjGuaHi46zD2cEcCw0jJ4hVMo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDEwOCBTYWx0ZWRfX0DJMre6647RB
+ 7xaqdIGw9ikGtluLZgNTadMBu62GPaLNVqHbMYQ0XLOqIU06PJFNfU4phSc3SYxc8TcV5NQZW43
+ 7rgiet14at1DBC/8V8zKF3a5u5NXEUL7jHbLmRF4iVLzDnt9p/yN/DSTVnBW0AjjT3gWGZCQ6Qd
+ qmfQXZqFrDjhQercp+i0odfMncaw/AuC0j08MifcFsqMrsIk2KWNejJNVcx9oXGvO4834LmHywS
+ QayZvOE23hJHjHVeqEybC/tBo/AM1QllpTqyimWOpKqtQDY/FXYuW4g60rf6WM9vF7xFMtBtV3S
+ NgGWKwRwJDkGr0/pK4PcIuRvhnJ9Wx77SsOuXmXNWqrIguHRmo/xdCvQ5lyWbG0IHmjY0Nr6lzM
+ lE3uSEyTbbVWr4g6iZiFF6SAAemlJJ+25hEdkVY0PrAO3563hgho11O+EERDBaVpdCSY5gDV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=932 adultscore=0 impostorscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506100108
 
-The I2C controllers found on Apple A7-A11, T2 SoCs are compatible with
-the existing driver so add their per-SoC compatibles.
+Add the "sram" property to the watchdog device node to enable
+retrieval of the system restart reason from IMEM, populated by XBL.
+Parse this information in the watchdog driver and update the bootstatus
+sysFS if the restart was triggered by a watchdog timeout.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 ---
- Documentation/devicetree/bindings/i2c/apple,i2c.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes in v5:
+	- Rename the property 'qcom,imem' to 'sram'
+Changes in v4:
+	- New patch
+---
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/apple,i2c.yaml b/Documentation/devicetree/bindings/i2c/apple,i2c.yaml
-index 077d2a539c832ea8dbf28d2f9b436cbee6fb5d8c..fed3e1b8c43f67b8f5a19e5c1e046b0e17ab8017 100644
---- a/Documentation/devicetree/bindings/i2c/apple,i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/apple,i2c.yaml
-@@ -22,6 +22,11 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - apple,s5l8960x-i2c
-+          - apple,t7000-i2c
-+          - apple,s8000-i2c
-+          - apple,t8010-i2c
-+          - apple,t8015-i2c
-           - apple,t8103-i2c
-           - apple,t8112-i2c
-           - apple,t6000-i2c
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+index 7fdc003f210e5a69944b00361a16fbdf58f39801..1d5f943b3aa6be1c1bb7b74d9d44c8e1755678a4 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+@@ -485,6 +485,7 @@ watchdog@f410000 {
+ 			reg = <0 0x0f410000 0 0x1000>;
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_EDGE_RISING>;
+ 			clocks = <&sleep_clk>;
++			sram = <&imem 0x7b0 0x5>;
+ 		};
+ 
+ 		qusb_phy_1: phy@71000 {
+@@ -591,7 +592,7 @@ ssphy_0: phy@7d000 {
+ 			status = "disabled";
+ 		};
+ 
+-		sram@8600000 {
++		imem: sram@8600000 {
+ 			compatible = "qcom,ipq5424-imem", "syscon", "simple-mfd";
+ 			reg = <0 0x08600000 0 0x1c000>;
+ 			ranges = <0 0 0x08600000 0x1c000>;
 
 -- 
-2.49.0
+2.34.1
 
 
