@@ -1,180 +1,134 @@
-Return-Path: <linux-kernel+bounces-679900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 606C1AD3D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:35:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD55FAD3D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B991BA4A04
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 634C93ABB21
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CB9254AEC;
-	Tue, 10 Jun 2025 15:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303FF24293B;
+	Tue, 10 Jun 2025 15:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="z//Pr8FT"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTpMfumv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7DC248893;
-	Tue, 10 Jun 2025 15:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A3D248F50;
+	Tue, 10 Jun 2025 15:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569099; cv=none; b=F5YOiQ2K4tOd/mySRrJE3BbRC0TpRaQyK8sXdFsGhhuy9YLXMOR6veVhP6P7u21yxeShY7Uf0f14gvEVE5Tn0tYxBLoqKURdfje7jzb+XxN5OupwT0bJajeooPcA3KZykJFpaTn4go9cElK2USNq6raHfOrTYUEjzYbLIuTkXmA=
+	t=1749569017; cv=none; b=TGOE5DId7AzW1+LGCN+Z6xNjPOyHfhjnR2ydxKpo0jpt/mpgeQrpbMsucdQ2Cwnu0UKXhuZ7A4smQAV0BYxhh1nvdqhEV0q9EbxyYXew25WJpMNA+RAL137n+Ju2tkqK8KduA4YflGpkC47s1GrjFAWipIfUj/cIH3lUOSjSO/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569099; c=relaxed/simple;
-	bh=cyPwXUOsCqtXLic90dMMlNKmMSOKR5wptLkmHu2OR/E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e6RlLdnqp4OtvQwRJ4ywVqEFSmt4sEC1OQeJzIzWSSQt/+ph0+POegzeriaiX9ZOsc5Pjujq83hhWmCf2m2K/BFx5MwuGLX0xy7wz1mvoE5ObJzDlqw0P5CuTfFUbYUNKeJX9BLI3hb1Z8p0WL02cGm2IE43P85gbiWrPBfezUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=z//Pr8FT; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55AF2ajh008882;
-	Tue, 10 Jun 2025 17:24:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	iRwS5y+6+ListVV+cfmEY7D708flMTRs7UfPH9JgUtw=; b=z//Pr8FTUgK5fhQS
-	LDClSELw6xrfVI8qqFOjd5vg1DI0uZJ46O+CNCYz3tnpr6kwqJzm0k6FAFIiGOwc
-	zBxFkYeku5SvKibqNo+KsTUvNwxun9u57aqxYvxnqQp14qRWBQw/16qrjZtxvbfN
-	evlgIOa6602atbj+SgcxV8+zcM5LViVbp23mpAjLmk1KElUyon/HxhBsV/znhXwB
-	M8xvc9aQCun1EYBdqOa2QNjMABmmBT61qOA0M0o8fosClZER4nlqYsjhElXPDIOB
-	vlePucM04lnuuEhAajr8SVFqUR6RO2wXkkw5B6j/cCfbRaVUR78CNQuE5LRBdQWi
-	RMhs5w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474aume5ng-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Jun 2025 17:24:45 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6114040053;
-	Tue, 10 Jun 2025 17:23:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AA782B79BB8;
-	Tue, 10 Jun 2025 17:23:15 +0200 (CEST)
-Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
- 2025 17:23:15 +0200
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antonio Borneo <antonio.borneo@foss.st.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCH v2 5/5] dt-bindings: pinctrl: stm32: Add missing blank lines
-Date: Tue, 10 Jun 2025 17:23:09 +0200
-Message-ID: <20250610152309.299438-6-antonio.borneo@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250610152309.299438-1-antonio.borneo@foss.st.com>
-References: <20250610152309.299438-1-antonio.borneo@foss.st.com>
+	s=arc-20240116; t=1749569017; c=relaxed/simple;
+	bh=GdC3hbu2lBWJrq1c5FNhywQS8uf44LJI+yaHMwNtUZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nhvA2Ic36b8XOJdGzMUvfBG2YvnChzeZPfJPPJG4f17Fn/vHJty+FpU25WoWxeS/wvO/ulUCktyboLu5TA6mpLkPtWlyhm0IMj5zkCrAnMMzNEXn3+Hfnn2Ess5mU0hp9miZ0TmnYbQ8jvnO7N7eGrl0IEFTvdVBG/ly93/38aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTpMfumv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBF9C4CEED;
+	Tue, 10 Jun 2025 15:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749569017;
+	bh=GdC3hbu2lBWJrq1c5FNhywQS8uf44LJI+yaHMwNtUZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YTpMfumv//WkKeU1pjfa4/ARYTp4er7sYZcbWH7Qgd06JSTvoaaIHYhvfyV+OsRxe
+	 KlD8ovmvs9jUneKVjEbQDT47TlVjrD+OWWBAXgl/QLAhgxu8jpyrQgIYSNb/AYIfVo
+	 j9kLNX5UZ4TTUVtAn9cBmjIK4UTTWyT6FbUjk7eodk0Hmks8lKuGonOfGsOotLGu9J
+	 4Ch1Rc44Zy/t9sG0UhEZ5Sjqoc9R33EQ5+n9c0p6RuhlUZ+jylbx/+TgiM5Xv33iPO
+	 WhT/r9Ntl0xzsZVZUR2PCoYdHhCLAdkUAFJZlAflyHLada9PrrTsc7zQNzdTumIozf
+	 1fPqbyu51psrQ==
+Date: Tue, 10 Jun 2025 16:23:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] dt bindings: PCI: brcmstb: Include cable-modem SoCs
+Message-ID: <20250610-satin-wages-2ae29a2a3520@spud>
+References: <20250609221710.10315-1-james.quinlan@broadcom.com>
+ <20250609221710.10315-2-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZDyAQUps/4oIxyh6"
+Content-Disposition: inline
+In-Reply-To: <20250609221710.10315-2-james.quinlan@broadcom.com>
 
-Separate the properties through a blank line.
 
-Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
----
- .../bindings/pinctrl/st,stm32-pinctrl.yaml      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+--ZDyAQUps/4oIxyh6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-index 5d17d6487ae9c..961161c2ab62b 100644
---- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-@@ -32,13 +32,16 @@ properties:
- 
-   '#address-cells':
-     const: 1
-+
-   '#size-cells':
-     const: 1
- 
-   ranges: true
-+
-   pins-are-numbered:
-     $ref: /schemas/types.yaml#/definitions/flag
-     deprecated: true
-+
-   hwlocks: true
- 
-   interrupts:
-@@ -67,22 +70,29 @@ patternProperties:
-     additionalProperties: false
-     properties:
-       gpio-controller: true
-+
-       '#gpio-cells':
-         const: 2
-+
-       interrupt-controller: true
-       '#interrupt-cells':
-         const: 2
- 
-       reg:
-         maxItems: 1
-+
-       clocks:
-         maxItems: 1
-+
-       resets:
-         maxItems: 1
-+
-       gpio-line-names: true
-+
-       gpio-ranges:
-         minItems: 1
-         maxItems: 16
-+
-       ngpios:
-         description:
-           Number of available gpios in a bank.
-@@ -187,18 +197,25 @@ patternProperties:
- 
-           bias-disable:
-             type: boolean
-+
-           bias-pull-down:
-             type: boolean
-+
-           bias-pull-up:
-             type: boolean
-+
-           drive-push-pull:
-             type: boolean
-+
-           drive-open-drain:
-             type: boolean
-+
-           output-low:
-             type: boolean
-+
-           output-high:
-             type: boolean
-+
-           slew-rate:
-             description: |
-               0: Low speed
--- 
-2.34.1
+On Mon, Jun 09, 2025 at 06:17:04PM -0400, Jim Quinlan wrote:
+> Add four Broadcom Cable Modem SoCs to the compatibility list.
 
+In your commit messages, you should mention why these devices are not
+capable of using fallbacks.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+>=20
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/D=
+ocumentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> index c4f9674e8695..5a7b0ed9464d 100644
+> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> @@ -15,6 +15,9 @@ properties:
+>        - enum:
+>            - brcm,bcm2711-pcie # The Raspberry Pi 4
+>            - brcm,bcm2712-pcie # Raspberry Pi 5
+> +          - brcm,bcm3162-pcie # Broadcom DOCSIS 4.0 CMTS w/ 64b ARM
+> +          - brcm,bcm3390-pcie # Broadcom DOCSIS 3.1 CM w/ 32b ARM
+> +          - brcm,bcm3392-pcie # Broadcom DOCSIS 3.1 CM w/ 64b ARM
+>            - brcm,bcm4908-pcie
+>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
+>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
+> @@ -23,6 +26,7 @@ properties:
+>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
+>            - brcm,bcm7445-pcie # Broadcom 7445 Arm
+>            - brcm,bcm7712-pcie # Broadcom STB sibling of Rpi 5
+> +          - brcm,bcm33940-pcie # Broadcom DOCSIS 4.0 CM w/ 64b ARM
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.43.0
+>=20
+
+--ZDyAQUps/4oIxyh6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEhN8wAKCRB4tDGHoIJi
+0tmAAQDHXwi683jRmX1Bx3NVDFjzYk9W0gkH+7s8QG2OnV8LrAEA133Af6pObKAg
+bs044xuxHkN8aohFLG72Xi6Q3IdYyQ0=
+=Bkpe
+-----END PGP SIGNATURE-----
+
+--ZDyAQUps/4oIxyh6--
 
