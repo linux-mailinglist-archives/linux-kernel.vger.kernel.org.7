@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-679250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79F7AD33D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:38:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F134BAD33D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8D018834F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:39:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA9C1884E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169928CF43;
-	Tue, 10 Jun 2025 10:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ls1ObZqB"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7944928030F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C0328C853;
+	Tue, 10 Jun 2025 10:39:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4326D28030F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749551919; cv=none; b=H9LDQDReL68PuAH2ipNzrBdd+VzYABgodqshuBmXLrHglr4PQrENLisU/P+95Zdpl5JjFqU/JpTc24UaTXnQRGsEi5j+UenvOJ4QT152B+qpOcrmu4RoUpjfmaEdicAyjVV+jRy36clmPH1Wo+35SScwgtRZBn88HfG4RL0M/TU=
+	t=1749551982; cv=none; b=L60LqZFgKxhL16Il6NvkErdbruBJUKTQynZQtAZAylCmKFG9uw41mHdkIdcWxLKjWHLEW7o7LIZsRUFX2ewy9oiwQ81hPRDj5WJcFNzHbS3qM/0J3ptDqk42tuvXjHRyeT5JHoCvJVAztzkVrcyykaE7p02nGxMAZW2E4t/U6eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749551919; c=relaxed/simple;
-	bh=RtnMrmlXV9IDEuAe0xQcKNhw7/57Ldi7nJ2CsDZvIAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rnN/EWERIm311JjYYqi9dar1Tg9K22Wpees6foTloiU30c50msLYbaiWTBPVmkEXzLtnA/VMXeFGNoe+lnqf+oDpigLoiuH26ahZDKiybpf4J/2dG17j9jZ52pcNcOj1iHP8Yhky5f2FKfb7dQA0kLOqtY5bQMpdQWp/DeAoJnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ls1ObZqB; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b26df8f44e6so5287299a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749551918; x=1750156718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kXIjHn7dVanx/dh81apv7WxrCAGv0rouoOBBRWo8fJs=;
-        b=ls1ObZqBfoxEafiiAoRs4Viiowa2d76sy5WJIukUbGDOIK3bvdp0EoYxTWXHzNS2Dc
-         7TGdF6aL/8ex7qvc6bnSBTqDmaibQftspx7KJT34IJYyR5biZeO4DmWhSTqWSz8CA58g
-         MyQB3B7+hjuQqza1bnVFIsTFUyWO6c9eyGTLiRuhjiCn4vJd0FqrjUga2XoX56PWpj5G
-         wd9rgoyAYeFIoelk4ndyx7aNzxW763TyjNUAFKqGHwiC6QcIqNXhwjrup5LbjI8Ima1C
-         quYHOtasy133AaO3NTuH38jzagiYAt0NJkUUVyFMGO4LFQC+LQP7r3+53WvzLdwC6v6s
-         48Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749551918; x=1750156718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kXIjHn7dVanx/dh81apv7WxrCAGv0rouoOBBRWo8fJs=;
-        b=mn86RI1iKlg6hhf8ybvPOw9kpeNwwCXQdzKqL8ygNYGREofaGg2cFmk6E4hrXelLvq
-         1YxZhDO5KBWgM9IQz3wb2AZqG0RoJ7U4+jIHyYKYEhNVRFKs7XuEGa40/80v9opzf6b+
-         IjR+j+qFj1kNNrZITqr3u5LeWTK05jOxezUIQPYwiBcVPjy8j9D9w8YUik/X3ZiOPtBz
-         FvvnOOzPrkwouoetUJa4nAQVPDrXPuy+uecKf89HtZdwjDZMcWJKedbUinWbw9KQmhaI
-         Bck1rtzhagn44ii5G8SuAkqHoIKKbsHMTmr+Z2TdYq9CEZn1+0QJ5YXNw2G42nwX5eRX
-         pOpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpNNaoQX9J3WaR+TF3nYpLqppdLzHYfeYDqU7axoO3Ydp+65jTOFArjAjp1fK3vBSVgyF0EgKFtnbi3ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXPdy48UR02HZZq9JSQGTL0IPiCVBwZlNMuCH+DSaxJSys6LcJ
-	3XkkX/CSYgmjjnWuOAj7cjFg7tefKNd5lOwnyNFRwcaQOS84NxHwjS/JRTjbF5tmR4E=
-X-Gm-Gg: ASbGncvDwZCGVE2v8xMh4SHJMJ1pt9RdIfgSHVXh3PADXNXg3ti7acVIKaGgm4sT9On
-	6TbXLZ9Jff6M0bFES9k4xP0srOOpKwDIuJCNdlSxlgMiTgaRPQ61ivJK/+jlK4FEehYtl50aNFz
-	rj/yR/cIZJGk8XIkL/HGUOnAsG9wgY1P686+c0SwS0Y9Ixk5CMZU0UkNDbB+1yS3CsURhyaqd6t
-	zvbYRPlH2hkByYDeFy2J21tK4OHZJRPweyQMy5NRcSlGM9Xoh9hZHCzrkLebVnq1UArx6tJZEV9
-	mSWAOuM0QRf5eZtrikp4XiF5vp37QmXcZYLdVF49hm/ksaU3KUXauC+wHJT0p88=
-X-Google-Smtp-Source: AGHT+IEYxgFtuUO8rprFJtHGGMBI2ccjNlWeNIyHcQi7l22B1BFH/M5F5SPjP82SwQlO1/YYkJuhcw==
-X-Received: by 2002:a05:6a20:c991:b0:215:dbb0:2a85 with SMTP id adf61e73a8af0-21ee14c3a23mr26299879637.0.1749551917806;
-        Tue, 10 Jun 2025 03:38:37 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ee70730sm6573730a12.22.2025.06.10.03.38.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 03:38:37 -0700 (PDT)
-Date: Tue, 10 Jun 2025 16:08:34 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Yury Norov <yury.norov@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] rust: cpu: Introduce CpuId abstraction
-Message-ID: <20250610103834.iqwuozp6mrgz2i5v@vireshk-i7>
-References: <cover.1749463570.git.viresh.kumar@linaro.org>
- <f10910c7585f5556869ea6f34b64d4136b8d5581.1749463570.git.viresh.kumar@linaro.org>
- <CANiq72=WpuGELzLbH-fxdOeJy9fiDFwatz6ynERDh=HP2z2MBw@mail.gmail.com>
- <20250610100025.e2jadqzlmimyq4rh@vireshk-i7>
- <CANiq72=dKx22CksQ_r7XuTrufTCh8ty-aAicPwFX62Q4JeAVTw@mail.gmail.com>
- <CANiq72=uZLZ-ddUpyhPA8Kn-4DRKDgYT00wzc+zDRLOX3kv+dA@mail.gmail.com>
+	s=arc-20240116; t=1749551982; c=relaxed/simple;
+	bh=cUDwS84gwYX1k3VE2aUeyen1cx0WC4M7idhBd6NbVaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kenaxpq5MEYaNR3bhTexAO+Viave+SRFM0XI7Q/HTwHGawZmO66HnXQf/dPDjIDBjqKxB3czufL4No46mrDwq2wEfpfbcRMjUzRo3FwtYKf+BpKzV1JellaWD7By5yskaKaSVzn2ktA4op9BMMYcoTYBrqg4sadV5gm/oiGnbv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E698169C;
+	Tue, 10 Jun 2025 03:39:20 -0700 (PDT)
+Received: from [10.163.32.103] (unknown [10.163.32.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E93173F673;
+	Tue, 10 Jun 2025 03:39:35 -0700 (PDT)
+Message-ID: <b20a6309-ae31-496d-a1ad-61ea358ad7a9@arm.com>
+Date: Tue, 10 Jun 2025 16:09:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANiq72=uZLZ-ddUpyhPA8Kn-4DRKDgYT00wzc+zDRLOX3kv+dA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/9] coresight: Avoid enable programming clock
+ duplicately
+To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250609-arm_cs_fix_clock_v3_public-v3-0-423b3f1f241d@arm.com>
+ <20250609-arm_cs_fix_clock_v3_public-v3-6-423b3f1f241d@arm.com>
+ <b30fc361-a04f-4a48-b8e2-f7c2da213e6c@arm.com>
+ <20250609171413.GO8020@e132581.arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250609171413.GO8020@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10-06-25, 12:21, Miguel Ojeda wrote:
-> I meant "for your files", I meant, sorry.
+
+
+On 09/06/25 10:44 PM, Leo Yan wrote:
+> On Mon, Jun 09, 2025 at 05:58:34PM +0100, Suzuki Kuruppassery Poulose wrote:
 > 
-> i.e. it takes some work to guide people and help them get their patch
-> setup right etc., so it can be often quite more work than just doing
-> it oneself. So it is understandable if a maintainer doesn't want
-> those.
+> [...]
+> 
+>>>   static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
+>>>   {
+>>> -	struct clk *pclk;
+>>> +	struct clk *pclk = NULL;
+>>> -	pclk = devm_clk_get_enabled(dev, "apb_pclk");
+>>> -	if (IS_ERR(pclk))
+>>> -		pclk = devm_clk_get_enabled(dev, "apb");
+>>> +	if (!dev_is_amba(dev)) {
+>>> +		pclk = devm_clk_get_enabled(dev, "apb_pclk");
+>>> +		if (IS_ERR(pclk))
+>>> +			pclk = devm_clk_get_enabled(dev, "apb");
+>>
+>> AMBA driver doesn't handle "apb" clock ? So we may need to retain that here
+>> ?
+> 
+> Here checks the condition "if (!dev_is_amba(dev))", it means the device
+> is not an AMBA device (e.g., a platform device), the APB clock is
+> enabled at here.
 
-Its perfectly fine and I am available to guide them and review patches
-:)
+Just exit early for AMBA devices when 'pclk' clock is still NULL ?
 
--- 
-viresh
+	if (dev_is_amba(dev))
+		return pclk;
+
+> 
+> Otherwise, for a AMBA device, the AMBA bus layer will help to enable
+> APB clock.
+> 
+>> Otherwise looks good to me.
+>>
+>> Suzuki
+>>> +	}
+>>>   	return pclk;
+>>>   }
+>>>
+>>
+
+
 
