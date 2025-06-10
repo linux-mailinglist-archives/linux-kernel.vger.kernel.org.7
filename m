@@ -1,175 +1,228 @@
-Return-Path: <linux-kernel+bounces-679973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BCAD3E5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9156AD3ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694673A6F27
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC7A178465
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A8E23C4FB;
-	Tue, 10 Jun 2025 16:08:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0596241671;
+	Tue, 10 Jun 2025 16:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="Zx+x9wFu"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEF912CDAE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717282397BF;
+	Tue, 10 Jun 2025 16:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749571687; cv=none; b=dPC0qhYY3gyFT3HzNI2Qe6O5yfBzUyzjn09+XQRIuEkMispkYGBKRT6v7YZmKjvO0jCTOhopv9KTR0DfvNOUGI8zGjk30K7Tjtuu2xxNqONcBrErsM7hLKcHPh4N7NMhOFY8BHJ1HZ46Y7WvrN8x+YFy5hBPxLwhm+HpUtddSOM=
+	t=1749572825; cv=none; b=eKVjsamkk5qFjDslw94mXUV5jpVPqjfh1M4pBzHB0nMmnM7nzY91Yj6faeevumpnay4aFmsN5KYAEnDk0Su/VS0Ml9xvYD9l5F9RBNs4N0iDyjenQxWy6eN7tgzGKCbn9a8+h4qJWLACKVjkf4xbqdfZ39KlHHcBsNJvaRQHeuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749571687; c=relaxed/simple;
-	bh=+zhwJJ9FdWL4/QCGNEb60Q5UhXjxkv80Id90K0Oqhs8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fp0nJ6rxOv7d/eDDV1e/eFG+C1SBTFsyrU8hEP4rkwoc9m4xOmvhFFLzyf+t1fLdsVzmnfcvggv1vhmuAtyiMxVBXzrCPTAYXXpEAQwhiHPQzXmJ0MrQyvwsRYmHnuhQPJ5ZV6OnbY0Prws9pECwiMbr2eGbcwcKCy3fL8EOAgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddd01c6f9bso40940295ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:08:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749571684; x=1750176484;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/m6ZY0KVLRGLOlyr0nZ5BNEJnDq2r1k8LmzdatenJ8=;
-        b=MsJyt6ol1j03zTTjppmBJ6Q7iI53c4HdAUxq+Ca1NPdgbu2Q3LTJ2eeasPri+WIw7c
-         EXHsYKRkOinfJSdzH8FcMJIqHvKLHWiqJzrFC670/TPlldHPAVBxw2uvFzQmP9f3Iso2
-         KODpRIZWQiFH/qBTIcaHAqQdIDlHLGwyFYVZ3T69KOkP782nlUmnlztpKBWEGvHhWAvs
-         LN/h4aNantz5jgsylXJ2x9YF4YphPBdb6+qw0MEj4Cu7gIFQFYaWY1sv6UsxrSaV/5rh
-         X5RpABLOickMtTLZeX1uAB8OD5OUyOjMsj7u0uCNMbATr4gKV3M9CEmT+tXK2703Z7AA
-         53GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNVI2EJNGfkAjm285IUvGByv72xWYvbn0cXxlKX+O9y1ueYjiZuFB3K8yXEpOxkbPEiTclAgfalj3C4CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxJ7jJO9UGkP2PXdK0f+zsQT5sn5aseEEQZUJ6sV0l6R64N24b
-	+xJ4kCQBcgv5296K5Fd2WekK+x7KJtrqAQmk9uWvzPjbYMH94k+NwjI31ZVd4z5SaQPzlbev7lD
-	2cGR4I7iUCIUyB+6V3k0VUkIoCH+9TOmYKaEe5tQn9DFgAzyVGnhk+lweC2Y=
-X-Google-Smtp-Source: AGHT+IGHM2NsfMd/xBuMAeVpZ5pzqG4HbxRtvaVEg+gM1unbVp+Mtx5s/n+hiTuHBurvTxQacl8rs11wGiHN6qg3bGcUhTBX4u0k
+	s=arc-20240116; t=1749572825; c=relaxed/simple;
+	bh=pP870zDIb4r8/GKNFbLgcL7hSOEnmBLb98cd8Mk2W+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HC6LSAdDlseHSN2eA1NgrCS1miYBrS9RZh7iRIzcUJtGGtpYNvOadxyYfmwgbnCxTWxNingJzC7+uY82K/UiDBkWYwiWgCTqgco6AgMF1iWD5osjk4oQIgY2nksp9xzICN1V6UslXK00LoOOxI40AXR53TAJznify1RwA9nB8tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=Zx+x9wFu; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=b5iUreELVegy9zHBLef9My826vz+Z0wQpOMG0HkMqNI=; b=Zx+x9wFup5B/cIpstJOFGa6QEN
+	jfuaZeWYR0IOtDff9kcLB4pJg+INasINrLkTh3Wco6dpTAw2kWatYoFBa4vLkOYCa3OihE0d95eH8
+	PZd202c3M06/f0tWaj+Y9mwAGRbBKwZyc0QaijNYJzBzRU5f85jO7kL9V+0xdSoCG7t1qRzFsBLKO
+	qfk62JwPSZLN8qmIQFwpqbpJvX2Alt2mW6+oVETRwgEmlRAdFFk6wnmAuUSAXiiT95IsRoJuFMA1m
+	6Nw8yg2jYgwgRkKm9nuSmPDfwW1SYO+Ih3deP3szcz4C3KhDKqL4HBA8HobgW7L7ssR7R9kUAV925
+	/aOfXqiw==;
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1uP1WD-00087U-1S;
+	Tue, 10 Jun 2025 18:08:09 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1uP1WC-0000Vb-0M;
+	Tue, 10 Jun 2025 18:08:08 +0200
+Message-ID: <5016f963-90ea-4dfd-bf7b-c4a5565af70c@iogearbox.net>
+Date: Tue, 10 Jun 2025 18:08:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1688:b0:3dd:e6b2:1078 with SMTP id
- e9e14a558f8ab-3ddec8a1f15mr46880385ab.6.1749571684452; Tue, 10 Jun 2025
- 09:08:04 -0700 (PDT)
-Date: Tue, 10 Jun 2025 09:08:04 -0700
-In-Reply-To: <20250610154730.1113-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68485864.050a0220.33aa0e.035d.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] INFO: task hung in futex_hash_allocate
-From: syzbot <syzbot+d6156c54e546fe8502c0@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: Fix RCU usage in
+ bpf_get_cgroup_classid_curr helper
+To: Charalampos Mitrodimas <charmitro@posteo.net>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Feng Yang <yangfeng@kylinos.cn>,
+ Tejun Heo <tj@kernel.org>, Network Development <netdev@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ syzbot+b4169a1cfb945d2ed0ec@syzkaller.appspotmail.com
+References: <20250608-rcu-fix-task_cls_state-v1-1-2a2025b4603b@posteo.net>
+ <CAADnVQLxaxVpCaK90FfePOKMLpH=axaK3gDwVZLp0L1+fNxgtA@mail.gmail.com>
+ <9eae82be-0900-44ea-b105-67fadc7d480d@iogearbox.net>
+ <CAADnVQK_k4ReDwS_urGtJPQ1SXaHdrGWYxJGd-QK=tAn60p4vw@mail.gmail.com>
+ <87wm9jy623.fsf@posteo.net>
+ <CAADnVQ+mzrDH+8S=ddDCtyo6YUO4dUUsAS88Jza93pDQ2K3Bng@mail.gmail.com>
+ <87tt4nzjbq.fsf@posteo.net>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <87tt4nzjbq.fsf@posteo.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27664/Tue Jun 10 10:41:04 2025)
 
-Hello,
+On 6/10/25 5:51 PM, Charalampos Mitrodimas wrote:
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>> On Tue, Jun 10, 2025 at 8:23 AM Charalampos Mitrodimas
+>> <charmitro@posteo.net> wrote:
+>>> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>>>> On Tue, Jun 10, 2025 at 5:58 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>>>>> On 6/9/25 5:51 PM, Alexei Starovoitov wrote:
+>>>>>> On Sun, Jun 8, 2025 at 8:35 AM Charalampos Mitrodimas
+>>>>>> <charmitro@posteo.net> wrote:
+>>>>>>>
+>>>>>>> The commit ee971630f20f ("bpf: Allow some trace helpers for all prog
+>>>>>>> types") made bpf_get_cgroup_classid_curr helper available to all BPF
+>>>>>>> program types.  This helper used __task_get_classid() which calls
+>>>>>>> task_cls_state() that requires rcu_read_lock_bh_held().
+>>>>>>>
+>>>>>>> This triggers an RCU warning when called from BPF syscall programs
+>>>>>>> which run under rcu_read_lock_trace():
+>>>>>>>
+>>>>>>>     WARNING: suspicious RCU usage
+>>>>>>>     6.15.0-rc4-syzkaller-g079e5c56a5c4 #0 Not tainted
+>>>>>>>     -----------------------------
+>>>>>>>     net/core/netclassid_cgroup.c:24 suspicious rcu_dereference_check() usage!
+>>>>>>>
+>>>>>>> Fix this by replacing __task_get_classid() with task_cls_classid()
+>>>>>>> which handles RCU locking internally using regular rcu_read_lock() and
+>>>>>>> is safe to call from any context.
+>>>>>>>
+>>>>>>> Reported-by: syzbot+b4169a1cfb945d2ed0ec@syzkaller.appspotmail.com
+>>>>>>> Closes: https://syzkaller.appspot.com/bug?extid=b4169a1cfb945d2ed0ec
+>>>>>>> Fixes: ee971630f20f ("bpf: Allow some trace helpers for all prog types")
+>>>>>>> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+>>>>>>> ---
+>>>>>>>    net/core/filter.c | 2 +-
+>>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/net/core/filter.c b/net/core/filter.c
+>>>>>>> index 30e7d36790883b29174654315738e93237e21dd0..3b3f81cf674dde7d2bd83488450edad4e129bdac 100644
+>>>>>>> --- a/net/core/filter.c
+>>>>>>> +++ b/net/core/filter.c
+>>>>>>> @@ -3083,7 +3083,7 @@ static const struct bpf_func_proto bpf_msg_pop_data_proto = {
+>>>>>>>    #ifdef CONFIG_CGROUP_NET_CLASSID
+>>>>>>>    BPF_CALL_0(bpf_get_cgroup_classid_curr)
+>>>>>>>    {
+>>>>>>> -       return __task_get_classid(current);
+>>>>>>> +       return task_cls_classid(current);
+>>>>>>>    }
+>>>>>>
+>>>>>> Daniel added this helper in
+>>>>>> commit 5a52ae4e32a6 ("bpf: Allow to retrieve cgroup v1 classid from v2 hooks")
+>>>>>> with intention to use it from networking hooks.
+>>>>>>
+>>>>>> But task_cls_classid() has
+>>>>>>           if (in_interrupt())
+>>>>>>                   return 0;
+>>>>>>
+>>>>>> which will trigger in softirq and tc hooks.
+>>>>>> So this might break Daniel's use case.
+>>>>>
+>>>>> Yeap, we cannot break tc(x) BPF programs. It probably makes sense to have
+>>>>> a new helper implementation for the more generic, non-networking case which
+>>>>> then internally uses task_cls_classid().
+>>>>
+>>>> Instead of forking the helper I think we can :
+>>>> rcu_read_lock_bh_held() || rcu_read_lock_held()
+>>>> in task_cls_state().
+>>>
+>>> I tested your suggestion with,
+>>>
+>>>    rcu_read_lock_bh_held() || rcu_read_lock_held()
+>>>
+>>> but it still triggers the RCU warning because BPF syscall programs use
+>>> rcu_read_lock_trace().
+>>>
+>>> Adding rcu_read_lock_trace_held() fixes it functionally but triggers a
+>>> checkpatch warning:
+>>>
+>>>    WARNING: use of RCU tasks trace is incorrect outside BPF or core RCU code
+>>
+>> It's safe to ignore checkpatch in this case.
+> 
+> If that is the case I'll move forward with this. It was my initial fix
+> for this[1] anyway, but checkpatch made me change it.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in futex_hash_allocate
+Agree that one is better!
 
-INFO: task syz.0.81:6865 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc1-syzkaller-gf09079bd04a9-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.81        state:D stack:29288 pid:6865  tgid:6864  ppid:6537   task_flags:0x400040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5396 [inline]
- __schedule+0x116a/0x5de0 kernel/sched/core.c:6785
- __schedule_loop kernel/sched/core.c:6863 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6878
- futex_hash_allocate+0xd16/0xf10 kernel/futex/core.c:1619
- futex_hash_prctl+0x1f4/0x650 kernel/futex/core.c:1759
- __do_sys_prctl+0x171f/0x24c0 kernel/sys.c:2825
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f06a038e929
-RSP: 002b:00007f06a12b6038 EFLAGS: 00000246 ORIG_RAX: 000000000000009d
-RAX: ffffffffffffffda RBX: 00007f06a05b5fa0 RCX: 00007f06a038e929
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 000000000000004e
-RBP: 00007f06a0410b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f06a05b5fa0 R15: 00007ffc811c5c98
- </TASK>
+> [1]: https://github.com/charmitro/linux/commit/e5c42d49bfb967c3c35f536971f397492d2f46bf
 
-Showing all locks held in the system:
-3 locks held by kworker/u8:1/13:
-1 lock held by rcu_preempt/16:
- #0: ffff8880b853bdd8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x29/0x130 kernel/sched/core.c:606
-1 lock held by khungtaskd/31:
- #0: ffffffff8e3c46c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e3c46c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e3c46c0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6770
-2 locks held by kworker/u8:8/3529:
-1 lock held by klogd/5195:
-2 locks held by getty/5596:
- #0: ffff8880361ca0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc1-syzkaller-gf09079bd04a9-dirty #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xf70/0x12c0 kernel/hung_task.c:470
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.16.0-rc1-syzkaller-gf09079bd04a9-dirty #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: bat_events batadv_nc_worker
-RIP: 0010:__lock_release kernel/locking/lockdep.c:5567 [inline]
-RIP: 0010:lock_release+0x10b/0x2f0 kernel/locking/lockdep.c:5892
-Code: 8d ff ff 48 85 c0 0f 84 47 01 00 00 8b 50 24 85 d2 0f 85 ae 01 00 00 66 83 78 22 1f 76 0c 66 83 68 22 20 66 83 78 22 1f 77 3c <8b> 54 24 0c 41 89 96 e8 0a 00 00 48 8b 00 49 89 86 e0 0a 00 00 41
-RSP: 0018:ffffc90000ac7ae0 EFLAGS: 00000093
-RAX: ffff888143ad2940 RBX: ffffffff8e3c46c0 RCX: ffffc90000ac7aec
-RDX: 0000000000000000 RSI: ffffffff8e3c46c0 RDI: ffff888143ad2940
-RBP: 00000000000000df R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8b492035
-R13: 0000000000000206 R14: ffff888143ad1e00 R15: 0000000000000003
-FS:  0000000000000000(0000) GS:ffff888124a62000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4c3ce51f98 CR3: 000000007572e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- rcu_lock_release include/linux/rcupdate.h:341 [inline]
- rcu_read_unlock include/linux/rcupdate.h:871 [inline]
- batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:412 [inline]
- batadv_nc_worker+0x89a/0x1030 net/batman-adv/network-coding.c:719
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
-Tested on:
-
-commit:         f09079bd Merge tag 'powerpc-6.16-2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cb4d70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c4c8362784bb7796
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6156c54e546fe8502c0
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12534d70580000
-
+Thanks,
+Daniel
 
