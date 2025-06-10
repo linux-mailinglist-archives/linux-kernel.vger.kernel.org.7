@@ -1,179 +1,175 @@
-Return-Path: <linux-kernel+bounces-679929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9C7AD3DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:43:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A591AD3DCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2451694BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8DB3A20FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82725238144;
-	Tue, 10 Jun 2025 15:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CD0230BF5;
+	Tue, 10 Jun 2025 15:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GrR5F2nQ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSJhr4RF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0275013C8F3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1B1211A1E;
+	Tue, 10 Jun 2025 15:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749570068; cv=none; b=F0tAI0WxYlMlNnUJtVI/clAGeUAAd1Jp7kH2CCz7sEgnGPHvonhBWQDy9k0uTYNlUYWUdlJiAi+s4tY/a2665xmxsP9JCRRKmsQL85wnxq166hz6kFpjLq43n06JNfkh+jAnR0sUakMHFftNHVGwTo6wbyDUapiN63dS7pYNaz8=
+	t=1749570121; cv=none; b=LGcsF3ECnir8Ul7U0Gsn1hhkB03TrzhmTvqmunjwFnbNuI9uLZHbfniv8xqGEYqPgvmPOW9wJblRN5iRtuSenKQhetOQJXRFTfQP235mrWRCwUIQUI/3V7RX4FQk37JuGoXr2pKPc412XZmjBuZs5NeO4GVTTJpGsOq8Td2cqCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749570068; c=relaxed/simple;
-	bh=AtvJGadDdNn2deN/jM5ACKLSrWLu0JL74f9Qzw/g/es=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ttr1uXRsvpRRlxwl4k7mTpwxnvWL9dawfdWVU5oKOFAJSEBJ1g43Ip1fujxUEX3jhePrd8Z8ggSL/4NrUzy55y6xj3XA3p9J776aTtAJKntX85Ni84oxyGAsZG5S/9PfrL3op0RZagYvhc1yZdamDcuUB9xXqduZ91pgGiRAE6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GrR5F2nQ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45024721cbdso48582485e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749570065; x=1750174865; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NueDFP08WvW+DK8xODEP+iBtJMi/d11N9xPcU6ggTQE=;
-        b=GrR5F2nQmmCUBoB8VHMASx9bhK4i8+xMUeNjG59vNtuqnQJn++1s0e8WHg+j1Iui3I
-         lBVKuXiAqawKR5WHOiGcW2gcEFuHWemQf8CDQbRlHutX8XqttfHT043r/8SgjGSCfqoQ
-         VWm04OEt8ajTG+cy0Jxvm40LsRCk4DRPkz8ziVCndbCh3v+q/AnnrrSlsoZoM2YkD9YR
-         8spYCyNiapspFxYs5LzlzXMZR4hyMv4wU7SWNoVsIhaLGFpaVSRHG+nou4ALSlTa86kE
-         4cMKjRgXCIw4cTeHaAsWnzbEkkDH2+xnrGVJem63ygCqUBxIBXmurUZwfZ/ePjoXKR2/
-         QbuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749570065; x=1750174865;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NueDFP08WvW+DK8xODEP+iBtJMi/d11N9xPcU6ggTQE=;
-        b=cNARXE4rG7JFzEQ9lprHMD6rrHXnMAXap7jOSNIr69+/Spb7b8dG1p/3tdlupdysEp
-         Xf/okmv7NE7nxlvbsggfsXstliTbgZbHm9xRPZti2NxuHOzVgZ24BdyYvuNldJoL4pjU
-         +OkR/kxE00MPjFVpZp86X+mMFSv8KVrAmRZFEU07YghtB5UCmOWdQ85N+Kfi8u6Wv6tz
-         MH0jqunPVQPt+vCnhBEsUy6gXY7uxgacTtz5GrG5VT0LTwAETVETgtDxlYdSpVq+pIzO
-         mjDlgMXhG4K2W7favADKV6iY1w15XEq0GxihHqR/4RJO8U1DD6b4hrZ6RTckOdl6f18X
-         +yYg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5J5TqVZHl0G5W5lCEoTOwB0bym66fM4qDttXS8xMocK5Uc9a5jAR1o+0noqobayFtrstk/ioQnQ08hbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOToD8LaY5cgI+68XbfSvYuRGK6hk0IlVdxSSjButQLu5JOUsQ
-	TtQrIDa85AovCc2qZyHvLMg4W+bBcRy7N0OGg0bxUONxl9SrvS7ixfhEFvABYt2Xqqw=
-X-Gm-Gg: ASbGnct39w8J/ypa0e6Y0aNCtGWxMin9gHMmhEbUs2e/dIQ6Qi0Cn0AHD5pOJGYgPDE
-	VUg7XNAQBN5SNQLjC6NEP1igzpj2MZHW6te+MjX9un9XnEH3s8PErcmSSHtb5FLQs+rVqDGyGk0
-	rHtJFjXoJFH7dq/em3ynMQ6ltVThz0JSXjnCyVb2pffsvzaDH7hyTJKlEXmheAXlNSVM27ZmtXM
-	iDUiWzEeYT09tnad3QNSTkbWaLjrtdf9RxhJWUitWmf89lc9sXj1+hZpIl65GSy1NVtnwU7f77t
-	l+IC40bwSlCcmKmCkFMqziZkI2N3Ag8BEwcWikSJ3qa1id6YdFmBn0oqThlKcumI3tI=
-X-Google-Smtp-Source: AGHT+IE8vZWJXPJwa+gVU82KDy8mY6qQldYKeCEubTj2bvtmDCPRe0/J0ElfWijiPtS/DHNqS1NHVQ==
-X-Received: by 2002:a05:600c:3b8f:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-4531ddeac16mr32168275e9.6.1749570065317;
-        Tue, 10 Jun 2025 08:41:05 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5322ab413sm12488670f8f.23.2025.06.10.08.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 08:41:04 -0700 (PDT)
-Message-ID: <9852a22a-1a09-4559-9775-2ccbb44c43c0@linaro.org>
-Date: Tue, 10 Jun 2025 16:41:04 +0100
+	s=arc-20240116; t=1749570121; c=relaxed/simple;
+	bh=eEXAvPCSdlDVm0vDSvoWviXhEnVX240x3wlBNcfcZfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTwfQqvxuRcZKP+0gZgLOEMRjXdGHioGVIVW59ws0CH/XtzAh1ZKkFjIU4mv3qfIVkTnbpowJTyM+6ME2as4V/V+4Vod57L077tNyK4UXtFEEpczEusscz5mzN4TT+VXkJlr3g9HY48WIvEAA9WhhQx+Mi/sO/MNXgs1hPEHJsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSJhr4RF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05FE7C4CEED;
+	Tue, 10 Jun 2025 15:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749570121;
+	bh=eEXAvPCSdlDVm0vDSvoWviXhEnVX240x3wlBNcfcZfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mSJhr4RFHyNxXQhRIp9c3TAV+6fFyMjQg5SXsXlsXfcpWbOjM0IA1yYP6xKsRIg9m
+	 mwGDxWwZWgQHWA3m0BcFdX/xgQ/gegOCprIFlx9JbwhsILbu+Q1VHBCNV4qEyxLUAW
+	 ZzsbLVCbz/oap/yxMhm+wx5g4etdJ6kB8kg1McVL3tsxudzm3iaYtc01gFHtrYHWWG
+	 WQwWUUu5/SBWmd1126H4iccoDYVWWSN3wAX5t+tbvRY+dysYPH5Lm/Ra/cf37GAoEu
+	 VT2PSz5zFQ+5I8Ic1qVgo8LFQmK1YHcep6KdbhBHcPJDs9vMw5QQ1cn/osNGVpk6Qw
+	 b1ZVdO9DdjRow==
+Date: Tue, 10 Jun 2025 08:41:58 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, live-patching@vger.kernel.org, 
+	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
+	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
+	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
+	Puranjay Mohan <puranjay@kernel.org>
+Subject: Re: [PATCH v2 59/62] livepatch/klp-build: Introduce klp-build script
+ for generating livepatch modules
+Message-ID: <rizzd27l4t4yyvkzupn7ngjtfz7rzajr7cfsonmmyijhelrxv6@zp4uav5bwejl>
+References: <cover.1746821544.git.jpoimboe@kernel.org>
+ <10ccbeb0f4bcd7d0a10cc9b9bd12fdc4894f83ee.1746821544.git.jpoimboe@kernel.org>
+ <aEdQNbqg2YMBFB8H@redhat.com>
+ <7uriarhovgf3fp7tiidwklopqqk34ybk6fnhu6kncwtjgz2ni6@2z7m42t4oerw>
+ <aEeTAa9qwCSdK9AD@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: James Clark <james.clark@linaro.org>
-Subject: Re: [PATCH 1/4] spi: spi-fsl-dspi: Clear completion counter before
- initiating transfer
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
- <20250609-james-nxp-spi-dma-v1-1-2b831e714be2@linaro.org>
- <20250610113423.zztoyabv4qzsaawt@skbuf>
-Content-Language: en-US
-In-Reply-To: <20250610113423.zztoyabv4qzsaawt@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aEeTAa9qwCSdK9AD@redhat.com>
 
-
-
-On 10/06/2025 12:34 pm, Vladimir Oltean wrote:
-> On Mon, Jun 09, 2025 at 04:32:38PM +0100, James Clark wrote:
->> In target mode, extra interrupts can be received between the end of a
->> transfer and halting the module if the host continues sending more data.
+On Mon, Jun 09, 2025 at 10:05:53PM -0400, Joe Lawrence wrote:
+> On Mon, Jun 09, 2025 at 04:59:37PM -0700, Josh Poimboeuf wrote:
+> > On Mon, Jun 09, 2025 at 05:20:53PM -0400, Joe Lawrence wrote:
+> > > If you touch sound/soc/sof/intel/, klp-build will error out with:
+> > > 
+> > >   Building patch module: livepatch-unCVE-2024-58012.ko
+> > >   ERROR: modpost: module livepatch-unCVE-2024-58012 uses symbol hda_dai_config from namespace SND_SOC_SOF_INTEL_HDA_COMMON, but does not import it.
+> > >   ERROR: modpost: module livepatch-unCVE-2024-58012 uses symbol hdac_bus_eml_sdw_map_stream_ch from namespace SND_SOC_SOF_HDA_MLINK, but does not import it.
+> > >   make[2]: *** [scripts/Makefile.modpost:145: /home/jolawren/src/centos-stream-10/klp-tmp/kmod/Module.symvers] Error 1
+> > >   make[1]: *** [/home/jolawren/src/centos-stream-10/Makefile:1936: modpost] Error 2
+> > >   make: *** [Makefile:236: __sub-make] Error 2
+> > > 
+> > > since the diff objects do not necessarily carry forward the namespace
+> > > import.
+> > 
+> > Nice, thanks for finding that.  I completely forgot about export
+> > namespaces.
+> > 
+> > Can you send me the patch for testing?  Is this the default centos10
+> > config?
+> > 
 > 
-> Presumably you mean not just any extra interrupts can be received, but
-> specifically CMDTCF, since that triggers the complete(&dspi->xfer_done)
-> call. Other interrupt sources are masked in XSPI mode and should be
-> irrelevant.
+> Yeah, cs-10 sets CONFIG_NAMESPACES=y.
 > 
+> The hack I posted earlier abused modinfo to get the namespaces.  You
+> could just dump the import_ns= strings in the .modinfo section with
+> readelf like (lightly tested):
 
-Yes complete(&dspi->xfer_done) is called so CMDTCF is set. For example 
-in one case of underflow I get SPI_SR = 0xca8b0450, which is these flags:
+Sorry, I wasn't clear, I meant the original .patch for recreating the
+issue.  But that's ok, I think the below fix should work.
 
-   TCF, TXRXS, TFUF, TFFF, CMDTCF, RFOF, RFDF, CMDFFF
+This is basically the same approach as yours, but in klp-diff.  It copies
+from the patched object instead of the orig object in case the patch
+needs to add an IMPORT_NS().
 
-Compared to a successful transfer I get 0xc2830330:
+I also experimented with reading the namespaces from Module.symvers, and
+then adding them on demand for exported symbols in clone_symbol().  But
+this is simpler.
 
-   TCF, TXRXS,       TFFF, CMDTCF,       RFDF, CMDFFF
-
->> If the interrupt from this occurs after the reinit_completion() then the
->> completion counter is left at a non-zero value. The next unrelated
->> transfer initiated by userspace will then complete immediately without
->> waiting for the interrupt or writing to the RX buffer.
->>
->> Fix it by resetting the counter before the transfer so that lingering
->> values are cleared. This is done after clearing the FIFOs and the
->> status register but before the transfer is initiated, so no interrupts
->> should be received at this point resulting in other race conditions.
-> 
-> Sorry, I don't have a lot of experience with the target mode, and when I
-> introduced the XSPI FIFO mode, I didn't take target mode into consideration.
-> 
-> The question is, does the module support XSPI FIFO writes in target
-> mode? In the LS1028A reference manual, I see PUSHR_SLAVE has the upper
-> 16 bits (for the command) hidden, specifically there is no CTAS field
-> there that would point to one of the CTARE0/CTARE1 registers.
-> Cross-checking with the S32G3 RM, I see nothing fundamentally different.
-> 
-> I am surprised, given this fact, that the CMDTCF interrupt would fire at
-> all in target mode.
-> 
-
-
-It's working in my testing where I've forced it to XSPI mode instead of 
-DMA mode on S32G3. I assume the command is blank because in target mode 
-CTAR0 (aka CTAR0_SLAVE) is always used regardless of the frame.
-
-CTARE0 isn't explicitly relabeled like CTAR0, but this paragraph states 
-that CTARE0 is used:
-
-   50.4.3.2 Slave mode
-
-   ... The SPI Slave mode transfer attributes are configured in the CTAR0
-   and CTARE0 registers ...
-
-Any transfers smaller than the FIFO are working in interrupt mode, 
-although larger ones are problematic because there isn't enough time to 
-reload the FIFOs while the host is still sending (hence the error I 
-added in patch 4).
-
-Polling mode isn't working at all because it has a timeout which gets 
-hit and returns -ETIMEDOUT before the host sends anything. Although I 
-added the check there for consistency and for catching host mode errors.
-
->>
->> Fixes: 4f5ee75ea171 ("spi: spi-fsl-dspi: Replace interruptible wait queue with a simple completion")
-> 
-> To be clear, if you ran 'git bisect' to track down this issue, it
-> wouldn't have pointed you to this commit, would it?
-
-I didn't test it no, but I did assume that the wake_up_interruptible() 
-that got replaced wasn't vulnerable to this same issue. Because the 
-spurious wake_up_interruptible() would be "lost", and a fresh one from 
-the next transfer would have been required to proceed past the 
-wait_event_interruptible().
-
-Whereas wait_for_completion() is just a counter so it has the memory 
-problem explained in the commit message.
-
+diff --git a/tools/objtool/klp-diff.c b/tools/objtool/klp-diff.c
+index a1c72824f442..3139f1ebacce 100644
+--- a/tools/objtool/klp-diff.c
++++ b/tools/objtool/klp-diff.c
+@@ -1490,6 +1490,51 @@ static int create_klp_sections(struct elfs *e)
+ 	return 0;
+ }
+ 
++/*
++ * Copy all .modinfo import_ns= tags to ensure all namespaced exported symbols
++ * can be accessed via normal relocs.
++ */
++static int copy_import_ns(struct elfs *e)
++{
++	struct section *patched_sec, *out_sec = NULL;
++	char *import_ns, *data_end;
++
++	patched_sec = find_section_by_name(e->patched, ".modinfo");
++	if (!patched_sec)
++		return 0;
++
++	import_ns = patched_sec->data->d_buf;
++	if (!import_ns)
++		return 0;
++
++	for (data_end = import_ns + sec_size(patched_sec);
++	     import_ns < data_end;
++	     import_ns += strlen(import_ns) + 1) {
++
++		import_ns = memmem(import_ns, data_end - import_ns, "import_ns=", 10);
++		if (!import_ns)
++			return 0;
++
++		if (!out_sec) {
++			out_sec = find_section_by_name(e->out, ".modinfo");
++			if (!out_sec) {
++				out_sec = elf_create_section(e->out, ".modinfo", 0,
++							     patched_sec->sh.sh_entsize,
++							     patched_sec->sh.sh_type,
++							     patched_sec->sh.sh_addralign,
++							     patched_sec->sh.sh_flags);
++				if (!out_sec)
++					return -1;
++			}
++		}
++
++		if (!elf_add_data(e->out, out_sec, import_ns, strlen(import_ns) + 1))
++			return -1;
++	}
++
++	return 0;
++}
++
+ int cmd_klp_diff(int argc, const char **argv)
+ {
+ 	struct elfs e = {0};
+@@ -1539,6 +1584,9 @@ int cmd_klp_diff(int argc, const char **argv)
+ 	if (create_klp_sections(&e))
+ 		return -1;
+ 
++	if (copy_import_ns(&e))
++		return -1;
++
+ 	if  (elf_write(e.out))
+ 		return -1;
+ 
 
