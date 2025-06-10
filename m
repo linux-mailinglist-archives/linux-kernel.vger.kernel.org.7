@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-679636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422A3AD3985
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:40:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27861AD398E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F350316B201
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B67A11635B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDA728A3E0;
-	Tue, 10 Jun 2025 13:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AABA25B30D;
+	Tue, 10 Jun 2025 13:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Chl/Ylha"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aKKh7GD6"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF88246BC0;
-	Tue, 10 Jun 2025 13:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEA212CDAE
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749562636; cv=none; b=VyQwid3PNnw7Xdsp6sowHNcw3/ZbslRX+SA62T4wL9Kj9bONqEvzD/iJxiRIV74q6EqKim6qH3JeZIydWAjvAdddHRNb3VeX8sU9Qxzag2+vuFqmfu5VIuqF3AgMbeMwq/FkKDmEwoNTx0cn6LOeevbjq2HfU1Ec0tdlONJ3M+k=
+	t=1749562682; cv=none; b=Ziy5NRmXz+k7ccBddUf+2aaZhFsPHwHe06cpJd8b46c+W7ySxHhjfVAc/GFJo3aXzTDgpfWj6acVURWvp+N72Zph60xIuPEqMlk40N8YNHRuZ209Yx+Olh/xIWfwKlHUCgPOElqRbf88TPasq7ruOFFFHbjVSofSLbYuZMre/Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749562636; c=relaxed/simple;
-	bh=FXI2MAeHUinlbQb7gSHVXNf8DUYi8tYUEMJCn9PAC5o=;
+	s=arc-20240116; t=1749562682; c=relaxed/simple;
+	bh=AhPf0HPlWCa0aJD35+a4IfqIt8OKABnu+k8qfBCHN9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t12WoE/b87LS63k6nI/9ccjPfljQ2+hbynYnbTHE6O7aqd8mqINHQ02FFM5TLNzDE+r4dxy4CCRpbsT1tywddQVsv0xUSqEecPYUc3fevdVeZ2fYSyI3Xl/3aFvFxu5QS2NAfTKsJvWDflZ9Jf21+XbHm1rLxLq18Te/HV8O4EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Chl/Ylha; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=1NzR2rxPnpJMPP1YD7GZH2AVOTPhR96TImD7BWPOQN8=; b=Chl/YlhauFGOETLTvPnRnWBjfy
-	opTuncHILIemQPoRR7xSy319pBTxdofO0pGDv6D+Z/u0Nvp5k9X1CFLysi57iB8hf1EwyZE8JtVKb
-	qg2JLB0m1lye2E0nK2XnmciBR+kXGD0YalsfOrzvgwKrdrjuoIwYZ6x7SmRmeJ86S7lve2d5YL26Z
-	ifNFah2Z6Azx4cfPkthqawLP44c8oSJugAVCgkX8HHVhlvtAtNPrTZMb1+c2OA9EEWE/ZGBmSncza
-	GqrystEeMZHiuD/pdlwvBhq4XCRj+bXeudUZP8ZhrYZisNgT95QfAqx82riWKQMfAXy6sPama9g4a
-	UDyzxdgQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOzA5-00000006zyQ-1iAC;
-	Tue, 10 Jun 2025 13:37:09 +0000
-Date: Tue, 10 Jun 2025 06:37:09 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: wangtao <tao.wangtao@honor.com>, Christoph Hellwig <hch@infradead.org>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"kraxel@redhat.com" <kraxel@redhat.com>,
-	"vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"amir73il@gmail.com" <amir73il@gmail.com>,
-	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
-	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
-	"jstultz@google.com" <jstultz@google.com>,
-	"tjmercier@google.com" <tjmercier@google.com>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"wangbintian(BintianWang)" <bintian.wang@honor.com>,
-	yipengxiang <yipengxiang@honor.com>,
-	liulu 00013167 <liulu.liu@honor.com>,
-	hanfeng 00012985 <feng.han@honor.com>
-Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Message-ID: <aEg1BZj-HzbgWKsx@infradead.org>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
- <aD72alIxu718uri4@infradead.org>
- <5d36abace6bf492aadd847f0fabc38be@honor.com>
- <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
- <aEZkjA1L-dP_Qt3U@infradead.org>
- <761986ec0f404856b6f21c3feca67012@honor.com>
- <d86a677b-e8a7-4611-9494-06907c661f05@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjSJ8cqGMUEuIX6CZ02ZpFi5zhlGG10nfRO2YigvqnjbGujIgzRWo/+NAUuE2Zr16wz7F6N0wdDW6lL6tL1Y4UjUwT55BqRnsk/W+a//O41qnb7iZgO8w1VcjbBHxqD+VAQWyeJNdZ2lmnMGn4h3KObabmUsQ3q2bysal/CqjL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aKKh7GD6; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 10 Jun 2025 09:37:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749562667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kbrE13Z6Z8RsWUrcqg26zEiS4673dzviRDejxhOoIyU=;
+	b=aKKh7GD65rmNR9h/MOTdkZQ8+wMS0zf742dSYvcPsjvZDGFCIGIcuMQbgNV7uQT3QZAyO6
+	wgOtaYX9dBCZdCIz2WyFuM2Cf+YAU7WUmWhq02opYls3gni2zvKAWjr2HBAdt2DAyfu/s7
+	3zm+jMepc3qgZqrOdJT2wAJU7ztwLPI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Thomas Bertschinger <tahbertschinger@gmail.com>, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] bcachefs: ioctl: avoid stack overflow warning
+Message-ID: <okwdyhfmx6qocem3ckgvt3jhdglyjav7tdrjzgquugj3kkolvn@ontqnranltb6>
+References: <20250610092413.2640349-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d86a677b-e8a7-4611-9494-06907c661f05@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250610092413.2640349-1-arnd@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jun 10, 2025 at 12:52:18PM +0200, Christian König wrote:
-> >> dma_addr_t/len array now that the new DMA API supporting that has been
-> >> merged.  Is there any chance the dma-buf maintainers could start to kick this
-> >> off?  I'm of course happy to assist.
+On Tue, Jun 10, 2025 at 11:24:04AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Work on that is already underway for some time.
+> Multiple ioctl handlers individually use a lot of stack space, and clang chooses
+> to inline them into the bch2_fs_ioctl() function, blowing through the warning
+> limit:
 > 
-> Most GPU drivers already do sg_table -> DMA array conversion, I need
-> to push on the remaining to clean up.
-
-Do you have a pointer?
-
-> >> Yes, that's really puzzling and should be addressed first.
-> > With high CPU performance (e.g., 3GHz), GUP (get_user_pages) overhead
-> > is relatively low (observed in 3GHz tests).
+> fs/bcachefs/chardev.c:655:6: error: stack frame size (1032) exceeds limit (1024) in 'bch2_fs_ioctl' [-Werror,-Wframe-larger-than]
+>   655 | long bch2_fs_ioctl(struct bch_fs *c, unsigned cmd, void __user *arg)
 > 
-> Even on a low end CPU walking the page tables and grabbing references
-> shouldn't be that much of an overhead.
-
-Yes.
-
+> By marking the largest two of them as noinline_for_stack, no indidual code path
+> ends up using this much, which avoids the warning and reduces the possible
+> total stack usage in the ioctl handler.
 > 
-> There must be some reason why you see so much CPU overhead. E.g.
-> compound pages are broken up or similar which should not happen in
-> the first place.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-pin_user_pages outputs an array of PAGE_SIZE (modulo offset and shorter
-last length) array strut pages unfortunately.  The block direct I/O
-code has grown code to reassemble folios from them fairly recently
-which did speed up some workloads.
+Applied, thanks
 
-Is this test using the block device or iomap direct I/O code?  What
-kernel version is it run on?
-
+> ---
+>  fs/bcachefs/chardev.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/bcachefs/chardev.c b/fs/bcachefs/chardev.c
+> index 2d38466eddfd..fde3c2380e28 100644
+> --- a/fs/bcachefs/chardev.c
+> +++ b/fs/bcachefs/chardev.c
+> @@ -399,7 +399,7 @@ static long bch2_ioctl_data(struct bch_fs *c,
+>  	return ret;
+>  }
+>  
+> -static long bch2_ioctl_fs_usage(struct bch_fs *c,
+> +static noinline_for_stack long bch2_ioctl_fs_usage(struct bch_fs *c,
+>  				struct bch_ioctl_fs_usage __user *user_arg)
+>  {
+>  	struct bch_ioctl_fs_usage arg = {};
+> @@ -469,7 +469,7 @@ static long bch2_ioctl_query_accounting(struct bch_fs *c,
+>  }
+>  
+>  /* obsolete, didn't allow for new data types: */
+> -static long bch2_ioctl_dev_usage(struct bch_fs *c,
+> +static noinline_for_stack long bch2_ioctl_dev_usage(struct bch_fs *c,
+>  				 struct bch_ioctl_dev_usage __user *user_arg)
+>  {
+>  	struct bch_ioctl_dev_usage arg;
+> -- 
+> 2.39.5
+> 
 
