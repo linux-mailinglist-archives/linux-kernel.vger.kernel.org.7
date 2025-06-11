@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-682492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EA0AD6100
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:18:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DEDAD6108
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2293B1679CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:18:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C527A7C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A423A24DD0C;
-	Wed, 11 Jun 2025 21:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C8125333E;
+	Wed, 11 Jun 2025 21:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VHjZDJc/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RRR0bdHH"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D3C24A067
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 21:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D1024CEE8
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 21:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749676627; cv=none; b=cT2f6E/S3+QfCzPnuMA+jkpzy8IZK3E8ab0tn26NwR21WFIla9gLhkTvTANI2ejDmxD6rojBbEUN7AfEUxntHYRDzD0VFshaI/j2O89N3Vs1+xLp8QkU7a2+1teYQY63DIujaNpsUxgDCuD1JDNfIAM05Nzoziu6nQPGybxO4Qg=
+	t=1749676629; cv=none; b=FS3IAPFn5csTpBpt+8JDxgzN4vaIWP2g14J4ahLNScbtL8A00Gb8uNKTI4iES7+cQI5AvTuBl0kTyyzloxo3ETRobyibM9gEBXKB9R5ZFAjZQ3GeXYeLRXCJWb0qEkXmpsIniVnB5RU5+bWU/DpHvmsbXINNGVOIDUgK+TH6sjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749676627; c=relaxed/simple;
-	bh=x3k8bhvleSPHVSZM+Hu9CVZnDZNGJdDQHXfon2q0JNg=;
+	s=arc-20240116; t=1749676629; c=relaxed/simple;
+	bh=E1J5NvWvWAj9PK8Bj/QCV4SungXm4iyN66KAsLSKFdw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EVtLbMp/bxBH0JF/zlsZi93ZKJeI/w+xYXB1yJjN9wfhgn66htpA+F590KBJB/U+IAQv2WHK9ogIbh0QpkBKADlNz+FhFnLOKkIrFLNzlESzBrQcxTsbmLuukJ+6HprSi5a5IsInlpm2NzTEK9XJ9dEQGc2lzkSbONR0NLP9G30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--afranji.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VHjZDJc/; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=d9Ww7FFY3Co3sQT/oUqSgq4DfbiCXVDLNO+az8/qfCTcXYzOrfPkjJMKWEGaG87lmA1s6LteIwnLHClqbhuDA34RrVkbrqaVOPbsOPUdNJ2T0UYbqCyKwWV/I2np8o0iFUfazkb0JGZkXhrxI45l2YBmb1LoiW9CIb36htDCDrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--afranji.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RRR0bdHH; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--afranji.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31327b2f8e4so245431a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:17:06 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-234906c5e29so2985345ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749676625; x=1750281425; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1749676627; x=1750281427; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUa6MDoTcZ9fiqDL9aF0ZXv2kKdfYnDn1hf7TqaAmz0=;
-        b=VHjZDJc/Y9l5PmFrsPGNW0CrFoJrgplwW4NKLlbpdBvuuXcmBYULslJjEF+GoMewGQ
-         +Aqu1AO26tF6a17cxBGSyLHESlIfPqxO2+B6yJjo1PSTb9EOXv94hPs2SVhHIVDL4dBk
-         yXb6sfISfTN3+Manx9zRaE19yAaY9YxLzfVnhQFcNe30Qqt6FRGJ0JIgjgmDGghUVFtL
-         m91vgS/E1MecHtVe9iffuR88v6ItkxopCZ1hp5t4og2R/HLp4Ty3Fbj8p96UMonnTbeq
-         gnY+w3WuT3Ef/tHVjwO36pgQqhLaFfJr1fdeR7lVfaQVDZWghD8sMEIqshDktCe6tply
-         pMvA==
+        bh=QRxvuTFismoVMH6kpT5Sxdu0Bq/4xhAKlCPWJnUhYZA=;
+        b=RRR0bdHHF6eDnTUFrWPl04OZfdCXYpLxNz4Nd+3TbL2dyZZ5k9iv1uBJvnVZk04q+M
+         2M9tKoVhSTcHhGYgWn41jI8AmN1AUssmutEtp4Cj7qvYzI8K0Te/68aI2qjfHt7JziBs
+         hDsO8zr5AiAo5UDAncgM0DpZAq8EoiT+BIOoU0anA7duhZdyadEOJK2nOhh3khXPjXqM
+         LezVO3ikWz87q1BRpArrBuLvk363hxKNPjv85lYFHyTEN2V3FhcOm1bZkN8iUxZvw1Fj
+         cJsAAGJJHZ+rJ2hMQmyqfEtG/K3j6TwsdsYeTY1gzEPS/r9lKsoKZfgyLWnXPIaefYvP
+         toGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749676625; x=1750281425;
+        d=1e100.net; s=20230601; t=1749676627; x=1750281427;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUa6MDoTcZ9fiqDL9aF0ZXv2kKdfYnDn1hf7TqaAmz0=;
-        b=OENjzO3dvBgi6WikQn/xWGj/f1zdHPQZw7e5XthV5bGwncsJLWwRvLkP+MycvXIeb+
-         rf2NPBZIBuIuR1ziPcMv2f5vFV2F5CDkc5KfhvO7vSOne3SB/3d7NoHnS+oLdrZHuxv5
-         bnulAUq+d3nF0w83pIod8kBgE2WUQEb/k+CY5X+bHt8lxg/4q7bBn6YtoY9mdRxF8ens
-         RGvgOa70QFnTaVOe6o1blp6A8vRl4oDf+KBuVH9gQnZ6V2qnkRTOVBdqJZkpUPUnmjoZ
-         L8Wc/nwWs1gJtgxjhmCfiPnZcBPHiAyEqfOpOfF8iTHaOuBmGN+TqusAVRbhkRspAiEd
-         fY0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWYKequWthbpo+XYfzjYqM+CjgXgRYHzIKALOl5+Ljo2kpRj5ElTukRWm1Tad3/a4eFXDR08LeUFJMrBk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN75Vla/OkAwkz3LtU8+MbsfkdavkLtu1tXKcYCAkNiT/NZlf9
-	7nRl6/kWKHYpapWD6QlYMGHczkN6bTLL9NALX2iZCaQmzE5HtCHtHiXqZy6IlLFOp8lnhbpKGSA
-	JM/YD73xRkw==
-X-Google-Smtp-Source: AGHT+IFvw3e8kSlOft2Aa67tR4tbWriXJAz6qMW5rx2kfDteHiCjVlYUYiTe4hevdIc3/x6NCe31w22UVNJM
-X-Received: from pjoo4.prod.google.com ([2002:a17:90b:5824:b0:30a:7da4:f075])
- (user=afranji job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b87:b0:311:d05c:936
- with SMTP id 98e67ed59e1d1-313bfbf521fmr1449542a91.17.1749676625477; Wed, 11
- Jun 2025 14:17:05 -0700 (PDT)
-Date: Wed, 11 Jun 2025 21:16:33 +0000
+        bh=QRxvuTFismoVMH6kpT5Sxdu0Bq/4xhAKlCPWJnUhYZA=;
+        b=n5GlRfp6VnMhSJClYGItKPk+6Y1uta1OYNk1rb+Bytwgk7KhOlU0yd9UnHpa9P1Dk5
+         OP5/p9Dz0fRFppdV4q4IQolzs2XPmFSOI1fCp7vUIbqjdPgTrOJ5CrZfBCAd0DAbifsI
+         hL9DrgxQYP1HmJ1r30Lh5fG3QmA3vQutolEzovWD78D7jFrQXJtHLFJCImGXxerF5J5G
+         4Deg2N/w70RXfQ+Bw6PqXrxn0IA0n12QwypieZQteCGaqX8Otca7x+Bbd7DNrIDXRb6H
+         7Y6AZnvOmjUj0QxXkUZUHSLyYDb6dvqE3NsRwDnzQVc8zKmNkRnf3p/qxZ9bBzx4E0ho
+         oQ+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzz383oXic3l1iiYzkRN5cPNzszDxY07+bIsq3S+MRgVnKUo6cl0UVhTURu8nkGVlf75iTnbANieMNmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlxd20CqDcTx3u3K8v9vmni+MVfrcfcfzxdyJ4rBt01Sx5/pag
+	rSSGotz8uluy+0GR29BH0V8p2WGv3RaQ6P/GJT2Dw0Ohl5erL0RxdR93sS90qMqs4E8VXrvlwE+
+	sQQcyfGTE5A==
+X-Google-Smtp-Source: AGHT+IGH5noWtFNaTsbN875vKa4LJH+6nipS2I+HvnDRFXrBbmRj/sTqaIhQjDr9GIyLPz+Si3nAHutYaq+4
+X-Received: from pldg6.prod.google.com ([2002:a17:903:3a86:b0:235:6d5:688b])
+ (user=afranji job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4d0:b0:235:27b6:a891
+ with SMTP id d9443c01a7336-2364ca469aamr16477225ad.28.1749676627115; Wed, 11
+ Jun 2025 14:17:07 -0700 (PDT)
+Date: Wed, 11 Jun 2025 21:16:34 +0000
 In-Reply-To: <cover.1749672978.git.afranji@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1749672978.git.afranji@google.com>
 X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <b3b61de3224f17792bb26e0e9bcf267cf4ebbcc7.1749672978.git.afranji@google.com>
-Subject: [RFC PATCH v2 06/10] KVM: TDX: Add core logic for TDX intra-host migration
+Message-ID: <75edc2c08a63316135ddf59d0961f1fadbe2e264.1749672978.git.afranji@google.com>
+Subject: [RFC PATCH v2 07/10] KVM: selftests: Refactor userspace_mem_region
+ creation out of vm_mem_add
 From: Ryan Afranji <afranji@google.com>
 To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
 Cc: sagis@google.com, bp@alien8.de, chao.p.peng@linux.intel.com, 
@@ -88,224 +89,215 @@ Cc: sagis@google.com, bp@alien8.de, chao.p.peng@linux.intel.com,
 	Ryan Afranji <afranji@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Sagi Shahar <sagis@google.com>
+Refactor the creation and committing of userspace_mem_region to their
+own functions so that they can reused by future TDX migration functions.
 
-Adds the core logic for transferring state between source and
-destination TDs during intra-host migration.
-
-Signed-off-by: Sagi Shahar <sagis@google.com>
-Co-developed-by: Ryan Afranji <afranji@google.com>
 Signed-off-by: Ryan Afranji <afranji@google.com>
 ---
- arch/x86/kvm/vmx/tdx.c | 193 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 192 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 147 +++++++++++++--------
+ 1 file changed, 89 insertions(+), 58 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 4582f94175b7..268aca28d878 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -3534,9 +3534,200 @@ static __always_inline bool tdx_finalized(struct kvm *kvm)
- 	return tdx_kvm->state == TD_STATE_RUNNABLE;
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 2b442639ee2d..3c131718b81a 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -974,50 +974,47 @@ void vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot, uint32_t flags
+ 		    errno, strerror(errno));
  }
  
-+#define MAX_APIC_VECTOR 256
+-
+-/* FIXME: This thing needs to be ripped apart and rewritten. */
+-void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+-		uint64_t guest_paddr, uint32_t slot, uint64_t npages,
+-		uint32_t flags, int guest_memfd, uint64_t guest_memfd_offset)
++static struct userspace_mem_region *vm_mem_region_alloc(struct kvm_vm *vm,
++								uint64_t guest_paddr,
++								uint32_t slot,
++								size_t npages,
++								uint32_t flags)
+ {
+-	int ret;
+ 	struct userspace_mem_region *region;
+-	size_t backing_src_pagesz = get_backing_src_pagesz(src_type);
+-	size_t mem_size = npages * vm->page_size;
+-	size_t alignment;
+ 
+ 	TEST_REQUIRE_SET_USER_MEMORY_REGION2();
+ 
+ 	TEST_ASSERT(vm_adjust_num_guest_pages(vm->mode, npages) == npages,
+-		"Number of guest pages is not compatible with the host. "
+-		"Try npages=%d", vm_adjust_num_guest_pages(vm->mode, npages));
++		    "Number of guest pages is not compatible with the host. "
++		    "Try npages=%d", vm_adjust_num_guest_pages(vm->mode, npages));
+ 
+ 	TEST_ASSERT((guest_paddr % vm->page_size) == 0, "Guest physical "
+-		"address not on a page boundary.\n"
+-		"  guest_paddr: 0x%lx vm->page_size: 0x%x",
+-		guest_paddr, vm->page_size);
++		    "address not on a page boundary.\n"
++		    "  guest_paddr: 0x%lx vm->page_size: 0x%x",
++		    guest_paddr, vm->page_size);
+ 	TEST_ASSERT((((guest_paddr >> vm->page_shift) + npages) - 1)
+-		<= vm->max_gfn, "Physical range beyond maximum "
+-		"supported physical address,\n"
+-		"  guest_paddr: 0x%lx npages: 0x%lx\n"
+-		"  vm->max_gfn: 0x%lx vm->page_size: 0x%x",
+-		guest_paddr, npages, vm->max_gfn, vm->page_size);
++		    <= vm->max_gfn, "Physical range beyond maximum "
++		    "supported physical address,\n"
++		    "  guest_paddr: 0x%lx npages: 0x%lx\n"
++		    "  vm->max_gfn: 0x%lx vm->page_size: 0x%x",
++		    guest_paddr, npages, vm->max_gfn, vm->page_size);
+ 
+ 	/*
+ 	 * Confirm a mem region with an overlapping address doesn't
+ 	 * already exist.
+ 	 */
+ 	region = (struct userspace_mem_region *) userspace_mem_region_find(
+-		vm, guest_paddr, (guest_paddr + npages * vm->page_size) - 1);
++			vm, guest_paddr,
++			(guest_paddr + npages * vm->page_size) - 1);
+ 	if (region != NULL)
+ 		TEST_FAIL("overlapping userspace_mem_region already "
+-			"exists\n"
+-			"  requested guest_paddr: 0x%lx npages: 0x%lx "
+-			"page_size: 0x%x\n"
+-			"  existing guest_paddr: 0x%lx size: 0x%lx",
+-			guest_paddr, npages, vm->page_size,
+-			(uint64_t) region->region.guest_phys_addr,
+-			(uint64_t) region->region.memory_size);
++			  "exists\n"
++			  "  requested guest_paddr: 0x%lx npages: 0x%lx "
++			  "page_size: 0x%x\n"
++			  "  existing guest_paddr: 0x%lx size: 0x%lx",
++			  guest_paddr, npages, vm->page_size,
++			  (uint64_t) region->region.guest_phys_addr,
++			  (uint64_t) region->region.memory_size);
+ 
+ 	/* Confirm no region with the requested slot already exists. */
+ 	hash_for_each_possible(vm->regions.slot_hash, region, slot_node,
+@@ -1026,19 +1023,73 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 			continue;
+ 
+ 		TEST_FAIL("A mem region with the requested slot "
+-			"already exists.\n"
+-			"  requested slot: %u paddr: 0x%lx npages: 0x%lx\n"
+-			"  existing slot: %u paddr: 0x%lx size: 0x%lx",
+-			slot, guest_paddr, npages,
+-			region->region.slot,
+-			(uint64_t) region->region.guest_phys_addr,
+-			(uint64_t) region->region.memory_size);
++			  "already exists.\n"
++			  "  requested slot: %u paddr: 0x%lx npages: 0x%lx\n"
++			  "  existing slot: %u paddr: 0x%lx size: 0x%lx",
++			  slot, guest_paddr, npages,
++			  region->region.slot,
++			  (uint64_t) region->region.guest_phys_addr,
++			  (uint64_t) region->region.memory_size);
+ 	}
+ 
+ 	/* Allocate and initialize new mem region structure. */
+ 	region = calloc(1, sizeof(*region));
+ 	TEST_ASSERT(region != NULL, "Insufficient Memory");
+-	region->mmap_size = mem_size;
 +
-+static int tdx_migrate_vcpus(struct kvm *dst, struct kvm *src)
-+{
-+	struct kvm_vcpu *src_vcpu;
-+	struct kvm_tdx *dst_tdx;
-+	unsigned long i;
++	region->unused_phy_pages = sparsebit_alloc();
++	if (vm_arch_has_protected_memory(vm))
++		region->protected_phy_pages = sparsebit_alloc();
++	sparsebit_set_num(region->unused_phy_pages,
++			  guest_paddr >> vm->page_shift, npages);
++	region->region.slot = slot;
++	region->region.flags = flags;
++	region->region.guest_phys_addr = guest_paddr;
++	region->region.memory_size = npages * vm->page_size;
 +
-+	dst_tdx = to_kvm_tdx(dst);
++	region->mmap_start = NULL;
++	region->mmap_size = 0;
++	region->host_mem = NULL;
++	region->fd = -1;
 +
-+	kvm_for_each_vcpu(i, src_vcpu, src)
-+		tdx_flush_vp_on_cpu(src_vcpu);
-+
-+	/* Copy per-vCPU state. */
-+	kvm_for_each_vcpu(i, src_vcpu, src) {
-+		struct vcpu_tdx *dst_tdx_vcpu, *src_tdx_vcpu;
-+		struct kvm_lapic_state src_lapic_state;
-+		struct kvm_vcpu *dst_vcpu;
-+		u64 apic_base;
-+		u32 vector;
-+		int ret;
-+
-+		src_tdx_vcpu = to_tdx(src_vcpu);
-+		dst_vcpu = kvm_get_vcpu(dst, i);
-+		dst_tdx_vcpu = to_tdx(dst_vcpu);
-+
-+		dst_vcpu->cpu = -1;
-+
-+		/* Destination vCPU initialization skipped so do it here. */
-+		apic_base = APIC_DEFAULT_PHYS_BASE | LAPIC_MODE_X2APIC |
-+			(kvm_vcpu_is_reset_bsp(dst_vcpu) ?
-+			 MSR_IA32_APICBASE_BSP : 0);
-+		if (kvm_apic_set_base(dst_vcpu, apic_base, true))
-+			return -EINVAL;
-+
-+		/* Copy lapic state. */
-+		ret = kvm_apic_get_state(src_vcpu, &src_lapic_state);
-+		if (ret)
-+			return -EINVAL;
-+
-+		ret = kvm_apic_set_state(dst_vcpu, &src_lapic_state);
-+		if (ret)
-+			return -EINVAL;
-+
-+		/*
-+		 * pi_desc stores state of posted interrupts for VMs which are
-+		 * processed by pcpu during VM entry/runtime. For
-+		 * non-confidential VMs, this storage is synchronized to vcpu
-+		 * state using set_lapic_state(sync_pir_to_virr).
-+		 *
-+		 * For TDX VMs, KVM doesn't have access to virtual lapic page,
-+		 * so in order to preserve the interrupt state, copy over
-+		 * pi_desc contents to destination VM during copyless migration.
-+		 */
-+		dst_tdx_vcpu->vt = src_tdx_vcpu->vt;
-+		for (vector = 0; vector < MAX_APIC_VECTOR; vector++) {
-+			if (pi_test_pir(vector, &src_tdx_vcpu->vt.pi_desc)) {
-+				__vmx_deliver_posted_interrupt(
-+						dst_vcpu,
-+						&dst_tdx_vcpu->vt.pi_desc,
-+						vector);
-+			}
-+		}
-+
-+		/* Copy non-TDX vCPU state. */
-+		memcpy(dst_vcpu->arch.regs, src_vcpu->arch.regs,
-+		       NR_VCPU_REGS * sizeof(src_vcpu->arch.regs[0]));
-+
-+		dst_vcpu->arch.regs_avail = src_vcpu->arch.regs_avail;
-+		dst_vcpu->arch.regs_dirty = src_vcpu->arch.regs_dirty;
-+		dst_vcpu->arch.tsc_offset = dst_tdx->tsc_offset;
-+		dst_vcpu->arch.guest_state_protected =
-+			src_vcpu->arch.guest_state_protected;
-+		dst_vcpu->arch.xfd_no_write_intercept =
-+			src_vcpu->arch.xfd_no_write_intercept;
-+		dst_vcpu->arch.tsc_offset = dst_tdx->tsc_offset;
-+
-+		/* Copy TD structures. */
-+		dst_tdx_vcpu->vp.tdvpr_page = src_tdx_vcpu->vp.tdvpr_page;
-+		dst_tdx_vcpu->vp.tdcx_pages = src_tdx_vcpu->vp.tdcx_pages;
-+
-+		td_vmcs_write64(dst_tdx_vcpu, POSTED_INTR_DESC_ADDR,
-+				__pa(&dst_tdx_vcpu->vt.pi_desc));
-+
-+		/* Copy current vCPU status. */
-+		dst_tdx_vcpu->ext_exit_qualification =
-+			src_tdx_vcpu->ext_exit_qualification;
-+		dst_tdx_vcpu->exit_gpa = src_tdx_vcpu->exit_gpa;
-+		dst_tdx_vcpu->vp_enter_args = src_tdx_vcpu->vp_enter_args;
-+		dst_tdx_vcpu->vp_enter_ret = src_tdx_vcpu->vp_enter_ret;
-+		dst_tdx_vcpu->guest_entered = src_tdx_vcpu->guest_entered;
-+		dst_tdx_vcpu->map_gpa_next = src_tdx_vcpu->map_gpa_next;
-+		dst_tdx_vcpu->map_gpa_end = src_tdx_vcpu->map_gpa_end;
-+
-+		/* Copy mirror EPT tables. */
-+		vcpu_load(dst_vcpu);
-+		if (kvm_mmu_move_mirror_pages_from(dst_vcpu, src_vcpu)) {
-+			vcpu_put(dst_vcpu);
-+			return -EINVAL;
-+		}
-+		vcpu_put(dst_vcpu);
-+
-+		dst_vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
-+		dst_tdx_vcpu->state = VCPU_TD_STATE_INITIALIZED;
-+
-+		/*
-+		 * Set these source's vCPU migrated structures to NULL to avoid
-+		 * freeing them during source VM shutdown.
-+		 */
-+		src_tdx_vcpu->vp.tdvpr_page = NULL;
-+		src_tdx_vcpu->vp.tdcx_pages = NULL;
-+	}
-+
-+	return 0;
++	return region;
 +}
 +
- static int tdx_migrate_from(struct kvm *dst, struct kvm *src)
- {
--	return -EINVAL;
-+	struct kvm_tdx *src_tdx, *dst_tdx;
-+	bool charged = false;
++static void userspace_mem_region_commit(struct kvm_vm *vm,
++					struct userspace_mem_region *region)
++{
 +	int ret;
 +
-+	src_tdx = to_kvm_tdx(src);
-+	dst_tdx = to_kvm_tdx(dst);
++	region->region.userspace_addr = (uintptr_t) region->host_mem;
++	ret = __vm_ioctl(vm, KVM_SET_USER_MEMORY_REGION2, &region->region);
++	TEST_ASSERT(ret == 0, "KVM_SET_USER_MEMORY_REGION2 IOCTL failed,\n"
++		    "  rc: %i errno: %i\n"
++		    "  slot: %u flags: 0x%x\n"
++		    "  guest_phys_addr: 0x%lx size: 0x%lx guest_memfd: %d",
++		    ret, errno, region->region.slot, region->region.flags,
++		    (uint64_t) region->region.guest_phys_addr,
++		    (uint64_t) region->region.memory_size,
++		    region->region.guest_memfd);
 +
-+	ret = -EINVAL;
++	/* Add to quick lookup data structures */
++	vm_userspace_mem_region_gpa_insert(&vm->regions.gpa_tree, region);
++	vm_userspace_mem_region_hva_insert(&vm->regions.hva_tree, region);
++	hash_add(vm->regions.slot_hash, &region->slot_node,
++		 region->region.slot);
++}
 +
-+	if (src_tdx->state != TD_STATE_RUNNABLE) {
-+		pr_warn("Cannot migrate from a non finalized VM\n");
-+		goto abort;
-+	}
++/* FIXME: This thing needs to be ripped apart and rewritten. */
++void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
++		uint64_t guest_paddr, uint32_t slot, uint64_t npages,
++		uint32_t flags, int guest_memfd, uint64_t guest_memfd_offset)
++{
++	int ret;
++	struct userspace_mem_region *region;
++	size_t backing_src_pagesz = get_backing_src_pagesz(src_type);
++	size_t mem_size = npages * vm->page_size;
++	size_t alignment;
 +
-+	/* Transfer miscellaneous cgroup. */
-+	dst_tdx->misc_cg = get_current_misc_cg();
-+	if (dst_tdx->misc_cg != src_tdx->misc_cg) {
-+		ret = misc_cg_try_charge(MISC_CG_RES_TDX, dst_tdx->misc_cg, 1);
-+		if (ret)
-+			goto abort_dst_cgroup;
-+		charged = true;
-+	}
-+
-+	dst_tdx->hkid = src_tdx->hkid;
-+
-+	/* Copy VM data. */
-+	dst_tdx->attributes = src_tdx->attributes;
-+	dst_tdx->xfam = src_tdx->xfam;
-+	dst_tdx->tsc_offset = src_tdx->tsc_offset;
-+	dst_tdx->tsc_multiplier = src_tdx->tsc_multiplier;
-+	dst_tdx->nr_premapped = src_tdx->nr_premapped;
-+	dst_tdx->wait_for_sept_zap = src_tdx->wait_for_sept_zap;
-+	dst_tdx->kvm.arch.gfn_direct_bits = src_tdx->kvm.arch.gfn_direct_bits;
-+
-+	/* Copy TD structures. */
-+	dst_tdx->td.tdcs_nr_pages = src_tdx->td.tdcs_nr_pages;
-+	dst_tdx->td.tdcx_nr_pages = src_tdx->td.tdcx_nr_pages;
-+	dst_tdx->td.tdr_page = src_tdx->td.tdr_page;
-+	dst_tdx->td.tdcs_pages = src_tdx->td.tdcs_pages;
-+
-+	/* Copy per-vCPU state. */
-+	ret = tdx_migrate_vcpus(dst, src);
-+	if (ret)
-+		goto late_abort;
-+
-+	dst->mem_attr_array.xa_head = src->mem_attr_array.xa_head;
-+	src->mem_attr_array.xa_head = NULL;
-+
-+	dst_tdx->state = TD_STATE_RUNNABLE;
-+
-+	/*
-+	 * Set these source's vCPU migrated structures to NULL to avoid
-+	 * freeing them during source VM shutdown.
-+	 */
-+	src_tdx->hkid = -1;
-+	src_tdx->td.tdr_page = NULL;
-+	src_tdx->td.tdcs_pages = NULL;
-+
-+	return 0;
-+
-+late_abort:
-+	/*
-+	 * If we aborted after the state transfer already started, the src VM
-+	 * is no longer valid.
-+	 */
-+	kvm_vm_dead(src);
-+
-+abort_dst_cgroup:
-+	if (charged)
-+		misc_cg_uncharge(MISC_CG_RES_TDX, dst_tdx->misc_cg, 1);
-+	put_misc_cg(dst_tdx->misc_cg);
-+	dst_tdx->misc_cg = NULL;
-+abort:
-+	dst_tdx->hkid = -1;
-+	dst_tdx->td.tdr_page = 0;
-+	return ret;
- }
++	region = vm_mem_region_alloc(vm, guest_paddr, slot, npages,
++					     flags);
  
- int tdx_vm_move_enc_context_from(struct kvm *kvm, struct kvm *src_kvm)
+ #ifdef __s390x__
+ 	/* On s390x, the host address must be aligned to 1M (due to PGSTEs) */
+@@ -1058,6 +1109,8 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 
+ 	TEST_ASSERT_EQ(guest_paddr, align_up(guest_paddr, backing_src_pagesz));
+ 
++	region->mmap_size = mem_size;
++
+ 	/* Add enough memory to align up if necessary */
+ 	if (alignment > 1)
+ 		region->mmap_size += alignment;
+@@ -1117,29 +1170,7 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 		region->region.guest_memfd = -1;
+ 	}
+ 
+-	region->unused_phy_pages = sparsebit_alloc();
+-	if (vm_arch_has_protected_memory(vm))
+-		region->protected_phy_pages = sparsebit_alloc();
+-	sparsebit_set_num(region->unused_phy_pages,
+-		guest_paddr >> vm->page_shift, npages);
+-	region->region.slot = slot;
+-	region->region.flags = flags;
+-	region->region.guest_phys_addr = guest_paddr;
+-	region->region.memory_size = npages * vm->page_size;
+-	region->region.userspace_addr = (uintptr_t) region->host_mem;
+-	ret = __vm_ioctl(vm, KVM_SET_USER_MEMORY_REGION2, &region->region);
+-	TEST_ASSERT(ret == 0, "KVM_SET_USER_MEMORY_REGION2 IOCTL failed,\n"
+-		"  rc: %i errno: %i\n"
+-		"  slot: %u flags: 0x%x\n"
+-		"  guest_phys_addr: 0x%lx size: 0x%lx guest_memfd: %d",
+-		ret, errno, slot, flags,
+-		guest_paddr, (uint64_t) region->region.memory_size,
+-		region->region.guest_memfd);
+-
+-	/* Add to quick lookup data structures */
+-	vm_userspace_mem_region_gpa_insert(&vm->regions.gpa_tree, region);
+-	vm_userspace_mem_region_hva_insert(&vm->regions.hva_tree, region);
+-	hash_add(vm->regions.slot_hash, &region->slot_node, slot);
++	userspace_mem_region_commit(vm, region);
+ 
+ 	/* If shared memory, create an alias. */
+ 	if (region->fd >= 0) {
 -- 
 2.50.0.rc1.591.g9c95f17f64-goog
 
