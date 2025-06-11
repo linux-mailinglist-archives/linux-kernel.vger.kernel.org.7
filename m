@@ -1,115 +1,227 @@
-Return-Path: <linux-kernel+bounces-681789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859EBAD575A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:37:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFF5AD575C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06D63A1C82
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128233A5596
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F512951CA;
-	Wed, 11 Jun 2025 13:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JZkjaTAJ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E584128BAAB;
+	Wed, 11 Jun 2025 13:37:44 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601E128C037
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABADB2857CF;
+	Wed, 11 Jun 2025 13:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749648976; cv=none; b=TgOGye5M/XLnvU/H+5zFe89ZpvfaFOyMerFNmJJxaK2tTSJo2hBtGgXH5pXPwQdIQOyG2UYgE50drZxmMwzaed4WeDZFdXU5GNJJGUNkSGt5B0PAeuTaUaLtivqyOnzZHUnVVyRsw3PqUdnjAoDs3cR8r6DCbxJC5+ObatEfzsU=
+	t=1749649064; cv=none; b=jIydv1zJOVsT+gvY4KkcuVHSWyZMLFG6tT5V/OZ/IbsebJG6KIXoVa+SjKLhfhBGvFRmiipmMuooiag3uCFSJYqiBrEN0TEgMif86OnwmCJ6iijRGHqlAx+JgKq2izrMtg5esO69OfkF2PtVbZmR9RGMiZayxsaKnwVjvbFbDXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749648976; c=relaxed/simple;
-	bh=foDRggao2pYcHMNl7l0j332jRkRfHwDtkPEVvxWcYTU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TFAfVjCgkDif5yQwE1+qvziulB/TyGaJSMAnIiZnKivVSURp9kyr8teqAYMLC9R1XLN421cOVQJ4l6zTk+XBYifiCcGP+tK7qfksiE/J+SEat+YC1+CYM0GPESOmtqoIJSo01dbRwKUOd2tshue0p0nLHFUls1oRD8L9t08qTbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JZkjaTAJ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311a6b43ed7so5734190a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749648975; x=1750253775; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfAxzbGHD1h7TlrrEjy4MuzNkN+FBi/cByX4hDugIdQ=;
-        b=JZkjaTAJPRExhm+qzaIRd057+uWePXge5soBiXCJFpkLa6MJjCucWUKiQmPZU/Z00P
-         6CkCchj78HOqUPa+qWBqoNLPCI73TKkl8fH3rRYUMuxuHr9PCMV8c5vrtsPs245UUVEV
-         AGi8eApPJiOW4BSvy9eLVUeygAle/KsggAhvZVo20odOv3PJrtr09HLgd+mttKDdp4D7
-         ARzX9N+MREisLfbsiDgy87RJjG9DNzHSi4gxkw9KgTFg6eKQB/v/3DDK36Q3P7yO8Q25
-         4x7F5hSVrE2HsGNsiS9CAveyYM5YkOHUbZN9SJrts3Wzx+q/Nhye0CMoNMuKD7Y8E3O7
-         fvOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749648975; x=1750253775;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfAxzbGHD1h7TlrrEjy4MuzNkN+FBi/cByX4hDugIdQ=;
-        b=hamyqynoP34FPDVlMiXDW5ZcVQLre5z6SwKNKZj7OqfgGkbj3/SPlBoZxYJEx142QZ
-         MTdBGeKCXXjQTaLgmiA18ly0RWHHGLUueft8/luID5xyDO9/BB80uPV22tE4/1N70Wyh
-         reiVq5tPcvdbTxH40ublzOb6qTH9pTO2ZZ3I879EZfcIS73m9emsQHkwF+ar4vyLedDL
-         GjKigjmfKdNCdo2wuQRnPfcbFFIpRQ4PUHiYINC4fbEX8g4eNeQE8GlQnbtQldnic1mP
-         y0G6EinWtFKlLvFTUQAF1XLKJrwRIx5DF6DIO7YFUo9vZrMAAM5XZq35mnSND49t6XXU
-         OZfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWko8mbwdwPuJDAKLYFHzGqOMZgFSf5R17wmeErOSKm0DIj0+IR2+yGozNCCBmSNwwHF4YBifpabpD9C18=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6HucEBLIb2dr4tpRWEEAjDo3gj246TSWPEUzrpU9e1N88SRsD
-	WiKxglBhV3UY1AXRcp3PbNcjuElXWKsj9M+Y2q4iNNeh1zgRTat48pXp9uJ7VQugfNh0Sqrc++a
-	ndKuhyQ==
-X-Google-Smtp-Source: AGHT+IEtDBdONPbDClDPpRyEekyTLdny9CD7x9lmInSpyvD3kQD1fk5WL1GDHKdOdV56nwFKWh9s2QlP4bg=
-X-Received: from pjqq12.prod.google.com ([2002:a17:90b:584c:b0:312:ea08:fa64])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3506:b0:313:14b5:2538
- with SMTP id 98e67ed59e1d1-313af21d130mr4589060a91.35.1749648974702; Wed, 11
- Jun 2025 06:36:14 -0700 (PDT)
-Date: Wed, 11 Jun 2025 06:36:13 -0700
-In-Reply-To: <31c4ab96-55bf-4f80-a6fd-3478cc1d1117@linux.intel.com>
+	s=arc-20240116; t=1749649064; c=relaxed/simple;
+	bh=LlinO4DQVDm6Z0yBVcBfYI1ybTL41BszC99Grakd+uA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iLQ4NzLqVjlz3C+BJ6A8r5oIQTuSSIRkribiaXKG8326jo/MDYunA9Vdcab98qTQ4tD1OMvAAhG0vA+uFdP/iAL7U+/yU5wZERA+YSjEreUEvDWG1VDd2DWC9eX97+m5Lc4MBe38sNcGRppnGHGF+tYHVLIgVUAM1UNOjRNnnHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bHRXq1JY4z6DB2C;
+	Wed, 11 Jun 2025 21:37:15 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 83C221405E2;
+	Wed, 11 Jun 2025 21:37:39 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 11 Jun
+ 2025 15:37:38 +0200
+Date: Wed, 11 Jun 2025 14:37:37 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Alistair Francis <alistair@alistair23.me>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lukas@wunner.de>, <linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
+	<rust-for-linux@vger.kernel.org>, <akpm@linux-foundation.org>,
+	<boqun.feng@gmail.com>, <bjorn3_gh@protonmail.com>,
+	<wilfred.mallawa@wdc.com>, <aliceryhl@google.com>, <ojeda@kernel.org>,
+	<alistair23@gmail.com>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
+	<gary@garyguo.net>, <alex.gaynor@gmail.com>, <benno.lossin@proton.me>
+Subject: Re: [RFC v2 00/20] lib: Rust implementation of SPDM
+Message-ID: <20250611143737.00005e21@huawei.com>
+In-Reply-To: <20250227030952.2319050-1-alistair@alistair23.me>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250610021422.1214715-1-binbin.wu@linux.intel.com>
- <20250610021422.1214715-5-binbin.wu@linux.intel.com> <936ccea77b474fbad1bde799ee92139356f91c5f.camel@intel.com>
- <aEh0oGeh96n9OvCT@google.com> <31c4ab96-55bf-4f80-a6fd-3478cc1d1117@linux.intel.com>
-Message-ID: <aEmGTZbMpZhtlkIh@google.com>
-Subject: Re: [RFC PATCH 4/4] KVM: TDX: Check KVM exit on KVM_HC_MAP_GPA_RANGE
- when TD finalize
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Jiewen Yao <jiewen.yao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Tony Lindgren <tony.lindgren@intel.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Kirill Shutemov <kirill.shutemov@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Jun 11, 2025, Binbin Wu wrote:
-> On 6/11/2025 3:58 AM, Sean Christopherson wrote:
-> > On Tue, Jun 10, 2025, Rick P Edgecombe wrote:
-> > > It seems like the reasoning could be just to shrink the possible configurations
-> > > KVM has to think about, and that we only have the option to do this now before
-> > > the ABI becomes harder to change.
-> > > 
-> > > Did you need any QEMU changes as a result of this patch?
-> > > 
-> > > Wait, actually I think the patch is wrong, because KVM_CAP_EXIT_HYPERCALL could
-> > > be called again after KVM_TDX_FINALIZE_VM. In which case userspace could get an
-> > > exit unexpectedly. So should we drop this patch?
-> > Yes, drop it.
-> > 
-> So, when the TDX guest calls MapGPA and KVM finds userspace doesn't opt-in
-> KVM_HC_MAP_GPA_RANGE, just return error to userspace?
+On Thu, 27 Feb 2025 13:09:32 +1000
+Alistair Francis <alistair@alistair23.me> wrote:
 
-Why can't KVM just do what it already does, and return an error to the guest?
+> Security Protocols and Data Models (SPDM) [1] is used for authentication,
+> attestation and key exchange. SPDM is generally used over a range of
+> transports, such as PCIe, MCTP/SMBus/I3C, ATA, SCSI, NVMe or TCP.
+> 
+> From the kernels perspective SPDM is used to authenticate and attest devices.
+> In this threat model a device is considered untrusted until it can be verified
+> by the kernel and userspace using SPDM. As such SPDM data is untrusted data
+> that can be mallicious.
+> 
+> The SPDM specification is also complex, with the 1.2.1 spec being almost 200
+> pages and the 1.3.0 spec being almost 250 pages long.
+> 
+> As such we have the kernel parsing untrusted responses from a complex
+> specification, which sounds like a possible exploit vector. This is the type
+> of place where Rust excels!
+> 
+> This series implements a SPDM requester in Rust.
+> 
+> This is very similar to Lukas' implementation [2]. This series includes patches
+> and files from Lukas' C SPDM implementation, which isn't in mainline.
+> 
+> This is a standalone series and doesn't depend on Lukas' implementation, although
+> we do still rely on Lukas' crypto preperation patches, not all of which are
+> upstream yet.
+> 
+> To help with maintaining compatibility it's designed in a way to match Lukas'
+> design and the state struct stores the same information, although in a Rust
+> struct instead of the original C one.
+> 
+> This series doesn't expose the data to userspace (except for a single sysfs
+> bool) to avoid the debate about how to do that. I'm planning to do that in
+> the future though.
+> 
+> This series is based on the latest rust-next tree.
+> 
+> This seris depends on the Untrusted abstraction work [4].
+> 
+> This seris also depends on the recent bindgen support for static inlines  [5].
+> 
+> The entire tree can be seen here: https://github.com/alistair23/linux/tree/alistair/spdm-rust
+> 
+> based-on: https://lore.kernel.org/rust-for-linux/20240925205244.873020-1-benno.lossin@proton.me/
+> based-on: https://lore.kernel.org/rust-for-linux/20250107035058.818539-1-alistair@alistair23.me/
 
-	if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
-		ret = TDVMCALL_STATUS_INVALID_OPERAND;
-		goto error;
-	}
+Hi Alastair,
+
+I've completely failed to find time to actually pick up enough rust to review
+this :(  Also failed to find anyone else who has the rust skills and enough of
+the background.
+
+Ideally I'll get up to speed at some point, but in the meantime wanted to revisit
+the question of whether we want to go this way from day 1 rather than trying to
+deal with C version and later this?
+
+What's your current thoughts?  I know Lukas mentioned he was going to spin a
+new version shortly (in one of the TSM threads) so are we waiting on that?
+
+For now I'm going to take this off my review queue. Sorry!
+
+Jonathan
+
+
+
+> 
+> 1: https://www.dmtf.org/standards/spdm
+> 2: https://lore.kernel.org/all/cover.1719771133.git.lukas@wunner.de/
+> 3: https://github.com/l1k/linux/commits/spdm-future/
+> 4: https://lore.kernel.org/rust-for-linux/20240925205244.873020-1-benno.lossin@proton.me/
+> 5: https://lore.kernel.org/rust-for-linux/20250107035058.818539-1-alistair@alistair23.me/
+> 
+> v2:
+>  - Drop support for Rust and C implementations
+>  - Include patches from Lukas to reduce series deps
+>  - Large code cleanups based on more testing
+>  - Support support for authentication
+> 
+> Alistair Francis (12):
+>   lib: rspdm: Initial commit of Rust SPDM
+>   lib: rspdm: Support SPDM get_version
+>   lib: rspdm: Support SPDM get_capabilities
+>   lib: rspdm: Support SPDM negotiate_algorithms
+>   lib: rspdm: Support SPDM get_digests
+>   lib: rspdm: Support SPDM get_certificate
+>   crypto: asymmetric_keys - Load certificate parsing early in boot
+>   KEYS: Load keyring and certificates early in boot
+>   PCI/CMA: Support built in X.509 certificates
+>   lib: rspdm: Support SPDM certificate validation
+>   rust: allow extracting the buffer from a CString
+>   lib: rspdm: Support SPDM challenge
+> 
+> Jonathan Cameron (1):
+>   PCI/CMA: Authenticate devices on enumeration
+> 
+> Lukas Wunner (7):
+>   X.509: Make certificate parser public
+>   X.509: Parse Subject Alternative Name in certificates
+>   X.509: Move certificate length retrieval into new helper
+>   certs: Create blacklist keyring earlier
+>   PCI/CMA: Validate Subject Alternative Name in certificates
+>   PCI/CMA: Reauthenticate devices on reset and resume
+>   PCI/CMA: Expose in sysfs whether devices are authenticated
+> 
+>  Documentation/ABI/testing/sysfs-devices-spdm |   31 +
+>  MAINTAINERS                                  |   14 +
+>  certs/blacklist.c                            |    4 +-
+>  certs/system_keyring.c                       |    4 +-
+>  crypto/asymmetric_keys/asymmetric_type.c     |    2 +-
+>  crypto/asymmetric_keys/x509_cert_parser.c    |    9 +
+>  crypto/asymmetric_keys/x509_loader.c         |   38 +-
+>  crypto/asymmetric_keys/x509_parser.h         |   40 +-
+>  crypto/asymmetric_keys/x509_public_key.c     |    2 +-
+>  drivers/pci/Kconfig                          |   13 +
+>  drivers/pci/Makefile                         |    4 +
+>  drivers/pci/cma.asn1                         |   41 +
+>  drivers/pci/cma.c                            |  272 +++++
+>  drivers/pci/doe.c                            |    5 +-
+>  drivers/pci/pci-driver.c                     |    1 +
+>  drivers/pci/pci-sysfs.c                      |    3 +
+>  drivers/pci/pci.c                            |   12 +-
+>  drivers/pci/pci.h                            |   15 +
+>  drivers/pci/pcie/err.c                       |    3 +
+>  drivers/pci/probe.c                          |    1 +
+>  drivers/pci/remove.c                         |    1 +
+>  include/keys/asymmetric-type.h               |    2 +
+>  include/keys/x509-parser.h                   |   55 +
+>  include/linux/oid_registry.h                 |    3 +
+>  include/linux/pci-doe.h                      |    4 +
+>  include/linux/pci.h                          |   16 +
+>  include/linux/spdm.h                         |   39 +
+>  lib/Kconfig                                  |   16 +
+>  lib/Makefile                                 |    2 +
+>  lib/rspdm/Makefile                           |   11 +
+>  lib/rspdm/consts.rs                          |  135 +++
+>  lib/rspdm/lib.rs                             |  180 +++
+>  lib/rspdm/req-sysfs.c                        |   97 ++
+>  lib/rspdm/state.rs                           | 1037 ++++++++++++++++++
+>  lib/rspdm/sysfs.rs                           |   28 +
+>  lib/rspdm/validator.rs                       |  489 +++++++++
+>  rust/bindgen_static_functions                |    5 +
+>  rust/bindings/bindings_helper.h              |    7 +
+>  rust/kernel/error.rs                         |    3 +
+>  rust/kernel/str.rs                           |    5 +
+>  40 files changed, 2587 insertions(+), 62 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-devices-spdm
+>  create mode 100644 drivers/pci/cma.asn1
+>  create mode 100644 drivers/pci/cma.c
+>  create mode 100644 include/keys/x509-parser.h
+>  create mode 100644 include/linux/spdm.h
+>  create mode 100644 lib/rspdm/Makefile
+>  create mode 100644 lib/rspdm/consts.rs
+>  create mode 100644 lib/rspdm/lib.rs
+>  create mode 100644 lib/rspdm/req-sysfs.c
+>  create mode 100644 lib/rspdm/state.rs
+>  create mode 100644 lib/rspdm/sysfs.rs
+>  create mode 100644 lib/rspdm/validator.rs
+> 
+
 
