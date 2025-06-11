@@ -1,353 +1,318 @@
-Return-Path: <linux-kernel+bounces-682190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6C8AD5CD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B40AAAD5D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56973A7320
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E733A8A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E56A1A317A;
-	Wed, 11 Jun 2025 17:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E2122154F;
+	Wed, 11 Jun 2025 17:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dQQAzsRC"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011026.outbound.protection.outlook.com [52.101.70.26])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqegZcop"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38562036EC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749661549; cv=fail; b=MnrolMYnPZ01IZCGGEftd/3rOB7FZZmlflPsYVrJdEWJzZdB22uNDnUH9t6BWLrXSA19WkoR4aJFe5tJYM2g16QZb+Qnl5hCXxIxl7GNXZRszFUGjJ/piZZBotYNWzYRCk0+vDB6A8WA+omsnzCfTVzSScDwfV13WCtcLzoh2o4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749661549; c=relaxed/simple;
-	bh=O4HW15ReJt5KLeMTtn8/cJyZtL20+wYFNN/d/z4blJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Hdj8mT6ykyaNO/SRYp1NoBQjY78uAOvaknRXwZitO6plAHtJ0v9N4U77DlyNgy3ypnbHk4/zKwRXzq0gQ5Vglfu5pVtD1SkTpX9n7NuH6p2oYSM7csGzTCJHuRbwNcRdo5pFbxfYoH5JdHh4wPhmXiAUbCEAMFnbnWoPyAMOKS0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dQQAzsRC; arc=fail smtp.client-ip=52.101.70.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bO1M+Ghs6kUgjSU3AZc54defPAE7ED0BGrRarvMAtrwfZHURhJWgwVuA/FgAopuP/JiPdMxHs2Epcoyexjts8Rk0TDCqgzfqKVA/NPQoV7kXNnc3GrzlgYwKgxN96t8P4B9wOaZE2d721iPBPZnGxDWaT8q0wtJdtz4prZe7lXKXkc0LJKx4lF6+RHpVomJkZKQ1h/Kmjpj0bqWs7sydeDFD+svmJZ2SZgKSgBTA6XG9jO9NOWrmVAhmtVdQl/djh6hclS3xur9vHAMaGRxNT/jBDRGM87j/OnFq+RBzIaTbIFIgOTPu68/wLD4bXBjcdJEoYPkNzSCinOyS5C7Gog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WkAYxN8kU8vovdIVY+aRlndIL66vmK7xp5nTggrEEwo=;
- b=ZagrlDzZXH44LnVgbcIAtoV6C2WzzaCv+GLOawOgDWT6sD7QwHjqqOvjM/SEa40jJQW//A1rmbBPxeKWFM7I2xS4yxfapvZvI0oB4wWFGxRiMbxn6IWshfjxeoIh3dkc8pLLSUBQW3AOVW2NH6O+ERyf6czpiUxIgKjyDhhmNJpYPi9whJOmIIQBXdf5S4aoUpMyYOGLjMpRQUX1hiqmJqhEaq/0ivooxKWjsJlD/OifYm6YU45BlOYVTqV9iawtr+WM5qQ2WkM89kw9nIYhWWhqS63S632beUW3p27GF3eqoYHxE5f2gwoXpuMPgI3/xwWMdO9RpaP91A6gl+BKqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WkAYxN8kU8vovdIVY+aRlndIL66vmK7xp5nTggrEEwo=;
- b=dQQAzsRCbfAdIFw0q0uD5oAFtMO05zNEMliJjSx1lPys2LeVwPjPh/2jjl5I4687Mmzto72/StVlxcSxw4Iz5XRx4t+yC72NZBeyQJVZ/oVDPkCaRyjkJ4IDDtse4ZGkIkqS/tPTRuQ2OT93csgWnZ8GybktIOMfb7O5vYabzqI6Oh3RL6rJWeIn/H9s2Qbrf2m4QQiX/73rWV/+dj3nOGYKZDy0Wfvi3NGmJkEtXvAhbvmxkGRxkDOXmHlfgVX3fpAVbzvibjrPVwsC3+pz5x0TN4HJkoCfPObIthdNz3T7+DHoT1nYvD7jWu3LAfgByoWfx7Df/L5OT/je2zEj3Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10455.eurprd04.prod.outlook.com (2603:10a6:150:1c8::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.31; Wed, 11 Jun
- 2025 17:05:43 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8813.024; Wed, 11 Jun 2025
- 17:05:43 +0000
-Date: Wed, 11 Jun 2025 13:05:34 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: jk@codeconstruct.com.au, alexandre.belloni@bootlin.com,
-	aniketmaurya@google.com, jarkko.nikula@linux.intel.com,
-	Shyam-sundar.S-k@amd.com, wsa+renesas@sang-engineering.com,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	BMC-SW@aspeedtech.com, elbadrym@google.com, romlem@google.com
-Subject: Re: [PATCH] i3c: ast2600: Generate T-bits to terminate IBI storm
-Message-ID: <aEm3Xr7Oj1wjASUT@lizhi-Precision-Tower-5810>
-References: <20250611040203.487734-1-billy_tsai@aspeedtech.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611040203.487734-1-billy_tsai@aspeedtech.com>
-X-ClientProxiedBy: SJ0PR05CA0157.namprd05.prod.outlook.com
- (2603:10b6:a03:339::12) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134CB1EFFB0;
+	Wed, 11 Jun 2025 17:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749662357; cv=none; b=JdZJ89Ilce1CESp39aR4knFuZCB/C928DULnkVKt3l/VSbkrWlzkSbCZjs8L1wH31s2MJt29uylxVPLz5hSKInRV/DMGH/ZUIro0OWysZdIIvcnMrb/Zj5tzhFc1K+BcccBNv7DtzfMlXuREI80UUTpC8QLNyEDHWFda+zkd82k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749662357; c=relaxed/simple;
+	bh=wdoxxnbHnR7jv8G5kRmuYMy39Ah7zHHXKWL63SoKeWQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q90rhct+halzRyT2Bm/O2b4gsceCMMr/2ikr2P1QRPPO1YFTeejtoQt1KR0hnUJAUjrDel7q6tyY/Rc3fyyjCVLEf9Q1GCfHhTS0GA/Ih1Ry2IVxGCnfsN1O4A5qESXBQf8Un2ODqVr15ui25/KtGhFM1OKmMWWxwiA65FyqETw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqegZcop; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1E26C4CEE3;
+	Wed, 11 Jun 2025 17:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749662356;
+	bh=wdoxxnbHnR7jv8G5kRmuYMy39Ah7zHHXKWL63SoKeWQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=sqegZcopY3lCxFwmYkixbr+CFAZk0mW6+l4riQrMwHHlJ+AQ+KNjvEIz+91ru7Rjp
+	 NU6yR69xEaVe+39h/STbjqEoVzWzQ1MdjoTiXeMncg/lxsT6X4iOQ1AC475nJAJHwU
+	 J/INf++0Ojr7ceABiG3iU9dYpEeWY0qeFxFbHjmtmKGykU1K3Voja95W6wsdS15Tjl
+	 kr8ANVdGSOyv4CbCWRknTzaXfjGaFZExlVjS25kJm1eMrsHAaH8QxKdSGi5kjpjmGH
+	 7/0WjfRl63v06m1/SR87rSgIa9ocOLYV5hOtZ7OX32EmTwl/enB15HwVIVx+1NoV3A
+	 Oar3rBaauZPeQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E74BC71131;
+	Wed, 11 Jun 2025 17:19:16 +0000 (UTC)
+From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
+Subject: [PATCH v8 00/13] media: rockchip: add a driver for the rockchip
+ camera interface
+Date: Wed, 11 Jun 2025 19:06:45 +0200
+Message-Id: <20240220-rk3568-vicap-v8-0-9d9cbc4b524d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10455:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0f4033b-a9a5-4dbe-e39c-08dda90a3336
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9wvv9JEEWxVid2P+h5/0iYtOajRkl0gKhsujbCBw75xidf4Fy4tUBj5hyBCE?=
- =?us-ascii?Q?YJ94Z91F8woe5l2wjod4riFjgOsr3nMjQJo7l/ueY0Gq7cJApvtE/KuN8O5z?=
- =?us-ascii?Q?kzKwfgmdJ/K2CqpkPOwjCJnrOTt3AOL/SSo0kvIjYG38zmzUuHCWfG6fH0BO?=
- =?us-ascii?Q?wvoOh/NFyNiofhsjX/NNc3dvG9E3VNtrFYOoTpZdzk2Jyqs0/jSTwORY6DDE?=
- =?us-ascii?Q?DXJ+fRaWVNDdic3QUTzYJOPBVP8dqahqZ6hZctAolfoWZqzyCsulAGslOLlD?=
- =?us-ascii?Q?3LE4V6JwUbMvvGoKEJ2klSElMccxA+3SjU5l5x7d5ZnrkoVYnTp4l+9CHNwk?=
- =?us-ascii?Q?oKeS1WYXTQnRjqG1LU9CWVkrG0S673yJ8Q63kgbsenhYopAVYxkzFbuMUhpD?=
- =?us-ascii?Q?0kgtbo0jDWLOmb1h6CD2hSvbI5MIZNKs+w0lxgctvdeFSY6Bi0d7csMUHPu5?=
- =?us-ascii?Q?SoNtDFWiv6b5qvb0MKbXVBsHTTxi+vkiD2RcSKCVRLzrYLwMXplhbHddkJlp?=
- =?us-ascii?Q?Q51ut3y1V2HYGHi5I2aeYczM3L4KHQ+9jmBuUhasib01P3R0sYxLurKfzjnE?=
- =?us-ascii?Q?SFR3Wv6YH/6Y9Xp4jpffjcjmPWb86H1t/zWu3phP4UbbjOqB0R4kTsrL0ThR?=
- =?us-ascii?Q?0/e77lG++Qub3TyOfgJfqp6W9xQXR1v0UfY6e7HlJSF6fkPom0j3i+BODz5Y?=
- =?us-ascii?Q?NxUMJBFlKAf4uNYa4gHgG8Xmn8rBhNYYt8nLD1Jdg1R/GEv0WeAL+OfURI5s?=
- =?us-ascii?Q?3EJAEgAddwbjrDdBegCOb0TGOQdRZgJ1qOgBi+92kuPf2mdy7YneN9XlDy8Q?=
- =?us-ascii?Q?lEGcQ4/VEgLBLck07PZWvLwV4d0M1c9DnzyQ0FZE4ON0ud94qHtfsF4v0fyd?=
- =?us-ascii?Q?h9pO/7UhoM1mM7wh1do7mGhSujw5qUCvw2W3l9Wz0g3hdMdSpf1EiJ5VDXll?=
- =?us-ascii?Q?U1m23qMXmVWHOURdwqONDMeH147+Z/F83F5zSn9Ex/Wc7Aknb26hOzBjm0kq?=
- =?us-ascii?Q?EWSRdlez5r6+K8fYyhWbyP/8pGjRmOJlE+NZ90G61Q1mNsl5s07a0Sulie1E?=
- =?us-ascii?Q?3+NoFpOANtCskVVvDB20fmsGtlFk23z4CQF/t5GtBzzJ5rnuz/BtUlALmcMN?=
- =?us-ascii?Q?Siz9syNdGwkxzHXfm/uZGCU4QmrFu1RyHjvK6K5NooFCINoTZLwa7mC9IdUJ?=
- =?us-ascii?Q?F50leNzUVbvmBybPC2lsBumTufDdiq9No4DHSE6iTnJWCDEHlKRIAmrrnR0o?=
- =?us-ascii?Q?N9J2CR4ISjnQydoNzVoQ723LIn/yjSjN8eBeABGoOa33iyDf0o0XLSYTcfmr?=
- =?us-ascii?Q?pwqYOGbhw5fBB1hcs8MK2DdKUcdYwh8sqa4DCxthZeE/N/ZlZuOGgh+aIV8a?=
- =?us-ascii?Q?JG4t+c8vU8zoNN060p1qlGgbjPG/vngalTlR6WCDZ5mleJ/v39fbaP1rBNW2?=
- =?us-ascii?Q?+zoJWeDOeqwpRY6CI/8U8s/jmHQ3Mc/U2a3K0OVb3BVj1p+K62DOOQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BORBqnHDGcFtOMtyGUuc1QbSQL5UMYshy1meYJWvzMmm+5ArEytJy+Cc7rNq?=
- =?us-ascii?Q?MO6Lny7BN41ShD5SU01vJuFzTGwuxbT2IFA2lpGAINi/Rxj08qJiyOCfjPdM?=
- =?us-ascii?Q?ngEIqJ6cu/84OVyJ+Gkpii0eomVamVSIrrIbvp7hE3NtTuT32khGSzGrlFpv?=
- =?us-ascii?Q?sp0E7+yJb84gX1xjWrtZqI8Luy+QZv6V5UQFmAPh11xKQPpNFl/yX90yrkRR?=
- =?us-ascii?Q?+dxsdVwJxuaU7eG6CtNbYuFq5ucekHWWkkstR0uWcMswy6oOhdwYNOf+BzT0?=
- =?us-ascii?Q?tLg/eksulilD8k1Jqydt11BWs28dnfejDvxsmsoM2BdeKoxDv410yvQRaP+d?=
- =?us-ascii?Q?NZBCwfdfd9W2c1ltL15UEjC60hnnTnCQOyu57iRmrhnmA490wjfqEp6YGaD/?=
- =?us-ascii?Q?avyzorcgZNEqzmxJAP16Vohobcoirni/2NTRPnysFKFQ6bpGoXfdPY5ljEGw?=
- =?us-ascii?Q?2nnmrDXLMB0pH7WCadE/fp25de51qUS0VQcPNnIGmXu59XTdFkBzTCrmyKBl?=
- =?us-ascii?Q?tnPaywDfpT2gCRxzPuvlqgfedEcB4U0xCAUjLdSYYT8fg3q5ph52IYYn0LXZ?=
- =?us-ascii?Q?WDThsSFHgaQSwlEOLiCsRZ+QYw65zGKmm6y5b0c7hR4QasLM/TDamouOx9Y0?=
- =?us-ascii?Q?aqD+BGEZxdWv7lftcQsp1OMxtcN8iYNYwx6bbfSO5VQ5ArFjWnWuHK/KalP6?=
- =?us-ascii?Q?UPuX7QobRwd8vNppGHLRdkqTN0CFf+UKTygCE3Khx0PxXQdiER8MClqPgZw7?=
- =?us-ascii?Q?7rkfRY0xuojdW+Zcd08GmPxDRUBYKVzNN3uytTD3r0EftiobVkbqs2EsoId3?=
- =?us-ascii?Q?1Pxylv03qEFkCu5Nqzl8gFyE0q5jXk8OpKoZw+8YCZmzvsUjEbn14avM2twg?=
- =?us-ascii?Q?n+KSzEdD6i0Gywtqrd08EJDTejIPInnCc9lokzqStdSu4dXHpGHK45a1xbw4?=
- =?us-ascii?Q?9QEaDbcP67QTmC82lxfDLipsXcPtX7rURQfhnm0X2lsoE150gtDwN2oxwvyr?=
- =?us-ascii?Q?8/LWBhg6Bq7DsWqgXNlw4LKxht50+HcEJNWyXkMRktB1iBYJZRyN9ACBi8/A?=
- =?us-ascii?Q?etJse7uOA3ZiW2gvWcbc7/6LguDWV2vOEFlvWK59dPF54qYrSznL6OnwJUs5?=
- =?us-ascii?Q?x4dff3Z7Ee87R303RFAxKbHgh438ie4fy1hR/M4aD1XoIfbImT4xWpV8vGiG?=
- =?us-ascii?Q?+qtI5KgraNZWUAU5qleDVXokDO9yh+fiRw9e0K5SaiBRwcyOa7Ylqf8CTfTD?=
- =?us-ascii?Q?+gjXj8UqSmXuEgPLPpJmuyNUJxpmSGoO8z883OVbh9x3W2GBbFukH2YalpSf?=
- =?us-ascii?Q?rTrYw0OKmlw44g5G/lQUor6rZg+YLwQJv5tUXw37WNAFeHLZy2G/NOM5qSZ5?=
- =?us-ascii?Q?OfRKMdkZFy9cQe/8+2NAraIZUaa9yNJj6sV6s76x/qyufCdInN4N+moX9CHG?=
- =?us-ascii?Q?1ukpEkn+hWfT+ibWp1h+itLUFe7GE8dp1CA2tGpwibRSGQh+WiaFaVP71vyv?=
- =?us-ascii?Q?eJBVKX7yGfK9+lPruZTqYn9TGai7/U1n0Frefo8C3JsccMW8o0YGbe0Rqv45?=
- =?us-ascii?Q?/upSbK6geQuCERObydyrfPn1abWwrhIfFolcgXwR?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0f4033b-a9a5-4dbe-e39c-08dda90a3336
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 17:05:43.3540
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GHPMN6Xyu3HP6B+6/ogksf8FLliVpW6LTcY/a7Yb/GSPBNdaiVcgZ3eByppq73qo6opLa3A/hIVcPlNHdbNYAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10455
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKW3SWgC/33Ry07DMBAF0F+pvMbV+BmbVf8DsfCTWLRx5VQGV
+ OXfcVpBCUq7vLbm3JHmjMZQUhjR8+aMSqhpTHloQT1tkOvN8BZw8i0jCpQDpYDLOxNS4ZqcOWK
+ rLYtaUxE5R23EmjFgW8zg+nnoEHqfcCVs/juWENPnperlteU+jadcvi7Nlcyvt5IqscKnfExu2
+ VcJBkylAkOikRzs7iPv43Xr7RBOaIYr/cUIJd19jDbMEs+Vis6BZ6sY+8EEUJD3MdYwqT2JRAf
+ hOKxi/A9G9H2MNyxokBLABGbXMXHD2KPNRMNi6xNUMB6ZW8Xk8gBLQTbB0yiiDYEIQXYu7/fG5
+ mK2Lh+uQPcI6BrQCUWi19IwZv4D0zR9A0z3cSCKAgAA
+To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gerald Loacker <gerald.loacker@wolfvision.net>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Markus Elfring <Markus.Elfring@web.de>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Kever Yang <kever.yang@rock-chips.com>, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Collabora Kernel Team <kernel@collabora.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Alexander Shiyan <eagle.alexander923@gmail.com>, 
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Mehdi Djait <mehdi.djait@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749661609; l=10377;
+ i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
+ bh=wdoxxnbHnR7jv8G5kRmuYMy39Ah7zHHXKWL63SoKeWQ=;
+ b=8OzbOSeCsaI+6VJgCUIzx/RvzgtZFVA47bgBKzNczNcoV9gr7hGkrJWTorFLDsTqeyTj9aZk4
+ kWY2xqorzD+ABIT9ca/a6ywJJaYrOu1VbxuhjZdBdPxtJoQah4x+sIZ
+X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
+ pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
+X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
+ with auth_id=371
+X-Original-From: Michael Riesch <michael.riesch@collabora.com>
+Reply-To: michael.riesch@collabora.com
 
-On Wed, Jun 11, 2025 at 12:02:03PM +0800, Billy Tsai wrote:
-> Under certain conditions, such as when an IBI interrupt is received and
-> SDA remains high after the address phase,
+Habidere,
 
-Can you descript more clear?
+This series introduces support for the Rockchip Camera Interface (CIF),
+which is featured in many Rockchip SoCs in different variations.
+For example, the PX30 Video Input Processor (VIP) is able to receive
+video data via the Digital Video Port (DVP, a parallel data interface)
+and transfer it into system memory using a double-buffering mechanism
+called ping-pong mode.
+The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+DVP and a MIPI CSI-2 receiver that can receive video data independently
+(both using the ping-pong scheme).
+The different variants may have additional features, such as scaling
+and/or cropping.
+Finally, the RK3588 VICAP unit constitutes an essential piece of the
+camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+units, and a data path multiplexer (to scaler units, to ISP, ...).
 
-Generally IBI happen at below two case
-1. SDA pull down by target
-2. Address arbitration happen
+The v8 of the series adds a media controller centric V4L2 device driver
+for the Rockchip CIF with
+ - support for the PX30 VIP (not tested, though, due to the lack of HW)
+ - support for the RK3568 VICAP, including
+    - capturing frames from the DVP
+    - capturing frames from the MIPI CSI-2 receiver
+ - abstraction for the ping-pong scheme to allow for future extensions
+ - abstraction for the INTERFACE and CROP parts to allow for future
+   extensions
+ - initial support for different virtual channels (not tested, though,
+   due to the lack of HW)
+and a V4L2 subdevice driver for the Rockchip MIPI CSI-2 Receiver.
 
-Then Host send out ACK,  according to your descrpition, look like host
-NACK target IBI request.
+The patches are functional and have been tested successfully on a
+custom RK3568 board including the ITE Tech. IT6801 HDMI receiver and
+the Sony IMX415 image sensor as subdevices attached to the DVP and the
+MIPI CSI-2 receiver, respectively.
+The IT6801 driver still needs some loving care but shall be submitted
+as well at some point.
 
-> the I3C controller will enter
-> an infinite loop attempting to read data until a T-bit is detected.
+However, several features are not yet addressed, such as
+ - support for the RK3588 variant (-> first success achieved, patches
+   need some cleanup and shall be submitted separately)
+ - support for the MUX/SCALE/TOISP block in the RK3588 VICAP (which
+   provides the base for image processing on the RK3588)
+ - support for the scaling unit in the PX30 (-> cannot do due to the
+   lack of HW)
+ - support for the interface to the Rockchip ISP in the RK3568
+   (-> cannot do, latest information from Rockchip points out there
+   IS NO HW CONNECTION BETWEEN VICAP AND ISP ON RK3568)
 
-BCR/DCR have indicate IBI mandatory data length. You should know how many
-data need be read according to IBI won's target address. Why relay on T-bit,
-which just is used for when target have less data than what expected.
+Looking forward to your comments!
 
-> This commit addresses the issue by generating a fake T-bit to terminate
-> the IBI storm when the received IBI data length exceeds the maximum
-> allowable IBI payload.
+To: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Théo Lebrun <theo.lebrun@bootlin.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Gerald Loacker <gerald.loacker@wolfvision.net>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+To: Kever Yang <kever.yang@rock-chips.com>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Collabora Kernel Team <kernel@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>
+To: Alexander Shiyan <eagle.alexander923@gmail.com>
+To: Val Packett <val@packett.cool>
+To: Rob Herring <robh@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 
-Add empty line here.
+Changes in v8:
+- rebased onto v6.16-rc1
+- fixed RKCIF_MIPI_MAX value in rkcif-common.h
+- fixed rkcsi Kconfig (kernel test robot)
+- sorted rkcsi DT bindings document properly, completed example
+  (Krzysztof)
+- squashed the defconfig patches (Krzysztof), dropped Bryan's R-b
+- Link to v7: https://lore.kernel.org/r/20240220-rk3568-vicap-v7-0-7581fd96a33a@collabora.com
 
-> This issue cannot be resolved using the abort function, as it is
-> ineffective when the I3C FSM is in the Servicing IBI Transfer (0xE) or
-> Clock Extension (0x12) states.
+Changes in v7:
+- moved MIPI CSI-2 receiver driver into separate directory (Laurent)
+- rkcsi: fixed return values (Bryan)
+- rkcsi: fixed v4l2_get_link_freq to use pad instead of control
+  handler (Sakari)
+- rkcsi: added data-lanes property (Mehdi)
+- rkcif: fixed formatting (Bryan)
+- fixed "int" -> "unsigned int" in all for loops (Sakari)
+- rkcif-stream: fixed minimum number of required buffers (Mehdi)
+- rkcif-stream: used guards for the spinlock (Markus and Mehdi)
+- rkcif-stream: made driver less noisy with dev_dbg (Mehdi)
+- rkcif-stream: fixed issues detected by v4l2-compliance (Mehdi)
+- rkcif-dvp-capture: fixed return value propagation in _register()
+  (Mehdi)
+- removed stray "phy-names" from required properties (Rob's bot)
+- Link to v6: https://lore.kernel.org/r/20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com
 
-why ineffective?
+Changes in v6:
+- rebased onto v6.15-rc1
+- renamed "MIPI CSI HOST" -> "MIPI CSI RECEIVER" (Laurent)
+- s/@wolfvision.net/@collabora.com where appropriate
+- renamed DVP delay property and moved it to the endpoint (Sakari)
+- implemented DT review comments (Krzysztof and Sakari)
+- implemented driver review comments (Sakari)
+- fixed issues raised by media-ci (yet again)
+- added documentation including a RK3568 topology (new patch 1)
+  (Sakari)
+- added patch that enables rkcif in the defconfig (new patch 9)
+- Link to v5: https://lore.kernel.org/r/20250306-v6-8-topic-rk3568-vicap-v5-0-f02152534f3c@wolfvision.net
 
-Frank
->
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-> ---
->  drivers/i3c/master/ast2600-i3c-master.c | 60 +++++++++++++++++++++++++
->  drivers/i3c/master/dw-i3c-master.c      | 14 ++++++
->  drivers/i3c/master/dw-i3c-master.h      |  9 ++++
->  3 files changed, 83 insertions(+)
->
-> diff --git a/drivers/i3c/master/ast2600-i3c-master.c b/drivers/i3c/master/ast2600-i3c-master.c
-> index e05e83812c71..6ac0122474d0 100644
-> --- a/drivers/i3c/master/ast2600-i3c-master.c
-> +++ b/drivers/i3c/master/ast2600-i3c-master.c
-> @@ -33,11 +33,28 @@
->  #define AST2600_I3CG_REG1_SA_EN			BIT(15)
->  #define AST2600_I3CG_REG1_INST_ID_MASK		GENMASK(19, 16)
->  #define AST2600_I3CG_REG1_INST_ID(x)		(((x) << 16) & AST2600_I3CG_REG1_INST_ID_MASK)
-> +#define AST2600_I3CG_REG1_SCL_SW_MODE_OE	BIT(20)
-> +#define AST2600_I3CG_REG1_SCL_OUT_SW_MODE_VAL	BIT(21)
-> +#define AST2600_I3CG_REG1_SCL_IN_SW_MODE_VAL	BIT(23)
-> +#define AST2600_I3CG_REG1_SDA_SW_MODE_OE	BIT(24)
-> +#define AST2600_I3CG_REG1_SDA_OUT_SW_MODE_VAL	BIT(25)
-> +#define AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL	BIT(27)
-> +#define AST2600_I3CG_REG1_SCL_IN_SW_MODE_EN	BIT(28)
-> +#define AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN	BIT(29)
-> +#define AST2600_I3CG_REG1_SCL_OUT_SW_MODE_EN	BIT(30)
-> +#define AST2600_I3CG_REG1_SDA_OUT_SW_MODE_EN	BIT(31)
->
->  #define AST2600_DEFAULT_SDA_PULLUP_OHMS		2000
->
->  #define DEV_ADDR_TABLE_IBI_PEC			BIT(11)
->
-> +#define IBI_QUEUE_STATUS		0x18
-> +#define PRESENT_STATE			0x54
-> +#define   CM_TFR_STS			GENMASK(13, 8)
-> +#define     CM_TFR_STS_MASTER_SERV_IBI	0xe
-> +#define   SDA_LINE_SIGNAL_LEVEL		BIT(1)
-> +#define   SCL_LINE_SIGNAL_LEVEL		BIT(0)
-> +
->  struct ast2600_i3c {
->  	struct dw_i3c_master dw;
->  	struct regmap *global_regs;
-> @@ -117,9 +134,52 @@ static void ast2600_i3c_set_dat_ibi(struct dw_i3c_master *i3c,
->  	}
->  }
->
-> +static bool ast2600_i3c_fsm_exit_serv_ibi(struct dw_i3c_master *dw)
-> +{
-> +	u32 state;
-> +
-> +	/*
-> +	 * Clear the IBI queue to enable the hardware to generate SCL and
-> +	 * begin detecting the T-bit low to stop reading IBI data.
-> +	 */
-> +	readl(dw->regs + IBI_QUEUE_STATUS);
-> +	state = FIELD_GET(CM_TFR_STS, readl(dw->regs + PRESENT_STATE));
-> +	if (state == CM_TFR_STS_MASTER_SERV_IBI)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +static void ast2600_i3c_gen_tbits_in(struct dw_i3c_master *dw)
-> +{
-> +	struct ast2600_i3c *i3c = to_ast2600_i3c(dw);
-> +	bool is_idle;
-> +	int ret;
-> +
-> +	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-> +			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL,
-> +			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL);
-> +	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-> +			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN,
-> +			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN);
-> +
-> +	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-> +			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL, 0);
-> +	ret = readx_poll_timeout_atomic(ast2600_i3c_fsm_exit_serv_ibi, dw,
-> +					is_idle, is_idle, 0, 2000000);
-> +	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-> +			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN, 0);
-> +	if (ret)
-> +		dev_err(&dw->base.dev,
-> +			"Failed to exit the I3C fsm from %lx(MASTER_SERV_IBI): %d",
-> +			FIELD_GET(CM_TFR_STS, readl(dw->regs + PRESENT_STATE)),
-> +			ret);
-> +}
-> +
->  static const struct dw_i3c_platform_ops ast2600_i3c_ops = {
->  	.init = ast2600_i3c_init,
->  	.set_dat_ibi = ast2600_i3c_set_dat_ibi,
-> +	.gen_tbits_in = ast2600_i3c_gen_tbits_in,
->  };
->
->  static int ast2600_i3c_probe(struct platform_device *pdev)
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-> index 611c22b72c15..380e6a29c7b8 100644
-> --- a/drivers/i3c/master/dw-i3c-master.c
-> +++ b/drivers/i3c/master/dw-i3c-master.c
-> @@ -158,6 +158,14 @@
->  #define DATA_BUFFER_STATUS_LEVEL_TX(x)	((x) & GENMASK(7, 0))
->
->  #define PRESENT_STATE			0x54
-> +#define   CM_TFR_ST_STS			GENMASK(21, 16)
-> +#define     CM_TFR_ST_STS_HALT		0x13
-> +#define   CM_TFR_STS			GENMASK(13, 8)
-> +#define     CM_TFR_STS_MASTER_SERV_IBI	0xe
-> +#define     CM_TFR_STS_MASTER_HALT	0xf
-> +#define     CM_TFR_STS_SLAVE_HALT	0x6
-> +#define   SDA_LINE_SIGNAL_LEVEL		BIT(1)
-> +#define   SCL_LINE_SIGNAL_LEVEL		BIT(0)
->  #define CCC_DEVICE_STATUS		0x58
->  #define DEVICE_ADDR_TABLE_POINTER	0x5c
->  #define DEVICE_ADDR_TABLE_DEPTH(x)	(((x) & GENMASK(31, 16)) >> 16)
-> @@ -1393,6 +1401,8 @@ static void dw_i3c_master_handle_ibi_sir(struct dw_i3c_master *master,
->  	unsigned long flags;
->  	u8 addr, len;
->  	int idx;
-> +	bool terminate_ibi = false;
-> +	u32 state;
->
->  	addr = IBI_QUEUE_IBI_ADDR(status);
->  	len = IBI_QUEUE_STATUS_DATA_LEN(status);
-> @@ -1435,6 +1445,7 @@ static void dw_i3c_master_handle_ibi_sir(struct dw_i3c_master *master,
->  		dev_dbg_ratelimited(&master->base.dev,
->  				    "IBI payload len %d greater than max %d\n",
->  				    len, dev->ibi->max_payload_len);
-> +		terminate_ibi = true;
->  		goto err_drain;
->  	}
->
-> @@ -1450,6 +1461,9 @@ static void dw_i3c_master_handle_ibi_sir(struct dw_i3c_master *master,
->
->  err_drain:
->  	dw_i3c_master_drain_ibi_queue(master, len);
-> +	state = FIELD_GET(CM_TFR_STS, readl(master->regs + PRESENT_STATE));
-> +	if (terminate_ibi && state == CM_TFR_STS_MASTER_SERV_IBI)
-> +		master->platform_ops->gen_tbits_in(master);
->
->  	spin_unlock_irqrestore(&master->devs_lock, flags);
->  }
-> diff --git a/drivers/i3c/master/dw-i3c-master.h b/drivers/i3c/master/dw-i3c-master.h
-> index c5cb695c16ab..1da485e42e74 100644
-> --- a/drivers/i3c/master/dw-i3c-master.h
-> +++ b/drivers/i3c/master/dw-i3c-master.h
-> @@ -89,6 +89,15 @@ struct dw_i3c_platform_ops {
->  	 */
->  	void (*set_dat_ibi)(struct dw_i3c_master *i3c,
->  			    struct i3c_dev_desc *dev, bool enable, u32 *reg);
-> +	/*
-> +	 * Gerenating the fake t-bit (SDA low) to stop the IBI storm when the received
-> +	 * data length of IBI is larger than the maximum IBI payload.
-> +	 *
-> +	 * When an IBI is received and SDA remains high after the address phase, the i3c
-> +	 * controller may enter an infinite loop while trying to read data until the t-bit
-> +	 * appears
-> +	 */
-> +	void (*gen_tbits_in)(struct dw_i3c_master *i3c);
->  };
->
->  extern int dw_i3c_common_probe(struct dw_i3c_master *master,
-> --
-> 2.25.1
->
+Changes in v5:
+- fixed issues raised by media-ci
+- fixed dt bindings (comments by Rob and Sakari)
+- fixed probe on systems with no DVP in DT (comment by Alexander)
+- fixed error path in register offset calculation
+- split off MIPI CSI host driver into separate module (comment
+  by Mehdi)
+- added MODULE_DEVICE_TABLE() for both drivers (comment by Mehdi)
+- Link to v4: https://lore.kernel.org/r/20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net
+
+Changes in v4:
+- added support for the MIPI CSI-2 receiver (new patches 4, 6, 7, 10)
+- fixed asserts on stream stop
+- fixed register address lookup
+- fixed link validiation callback
+- fixed issues raised by Rob's bot, kernel test robot, and media-ci
+- Link to v3: https://lore.kernel.org/r/20250206-v6-8-topic-rk3568-vicap-v3-0-69d1f19e5c40@wolfvision.net
+
+Changes in v3:
+- renamed the driver "cif" -> "rkcif"
+- rebased onto v6.14-rc1
+- abstracted the generic INTERFACE+CROP part
+- addressed comments by Rob and Sakari
+- added V4L2 MPLANE formats to DVP
+- added patch that enables the RK3568 VICAP DVP on PF5 IO Expander
+- fixed formatting issues raised by media-ci bot
+- Link to v2: https://lore.kernel.org/r/20241217-v6-8-topic-rk3568-vicap-v2-0-b1d488fcc0d3@wolfvision.net
+
+Changes in v2:
+- merged with Mehdi's v13
+- refactored the complete driver towards a media controller centric driver
+- abstracted the generic ping-pong stream (can be used for DVP as well as for CSI-2)
+- switched to MPLANE API
+- added support for notifications
+- Link to v1: https://lore.kernel.org/r/20240220-v6-8-topic-rk3568-vicap-v1-0-2680a1fa640b@wolfvision.net
+
+---
+Mehdi Djait (2):
+      media: dt-bindings: add rockchip px30 vip
+      arm64: dts: rockchip: add the vip node to px30
+
+Michael Riesch (11):
+      Documentation: admin-guide: media: add rockchip camera interface
+      media: dt-bindings: video-interfaces: add defines for sampling modes
+      media: dt-bindings: add rockchip rk3568 vicap
+      media: dt-bindings: add rockchip rk3568 mipi csi-2 receiver
+      media: rockchip: add a driver for the rockchip camera interface
+      media: rockchip: add driver for mipi csi-2 receiver
+      media: rockchip: rkcif: add support for mipi csi-2 capture
+      arm64: defconfig: enable rockchip camera interface and mipi csi-2 receiver
+      arm64: dts: rockchip: add vicap node to rk356x
+      arm64: dts: rockchip: add mipi csi-2 receiver node to rk356x
+      arm64: dts: rockchip: enable vicap dvp on wolfvision pf5 io expander
+
+ .../admin-guide/media/rkcif-rk3568-vicap.dot       |  21 +
+ Documentation/admin-guide/media/rkcif.rst          |  83 ++
+ Documentation/admin-guide/media/v4l-drivers.rst    |   1 +
+ .../bindings/media/rockchip,px30-vip.yaml          | 122 +++
+ .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 124 +++
+ .../bindings/media/rockchip,rk3568-vicap.yaml      | 170 ++++
+ MAINTAINERS                                        |  17 +
+ arch/arm64/boot/dts/rockchip/px30.dtsi             |  12 +
+ .../rk3568-wolfvision-pf5-io-expander.dtso         |  20 +
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi      |  75 ++
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/media/platform/rockchip/Kconfig            |   2 +
+ drivers/media/platform/rockchip/Makefile           |   2 +
+ drivers/media/platform/rockchip/rkcif/Kconfig      |  18 +
+ drivers/media/platform/rockchip/rkcif/Makefile     |   7 +
+ .../platform/rockchip/rkcif/rkcif-capture-dvp.c    | 864 +++++++++++++++++++++
+ .../platform/rockchip/rkcif/rkcif-capture-dvp.h    |  24 +
+ .../platform/rockchip/rkcif/rkcif-capture-mipi.c   | 722 +++++++++++++++++
+ .../platform/rockchip/rkcif/rkcif-capture-mipi.h   |  22 +
+ .../media/platform/rockchip/rkcif/rkcif-common.h   | 236 ++++++
+ drivers/media/platform/rockchip/rkcif/rkcif-dev.c  | 302 +++++++
+ .../platform/rockchip/rkcif/rkcif-interface.c      | 425 ++++++++++
+ .../platform/rockchip/rkcif/rkcif-interface.h      |  30 +
+ drivers/media/platform/rockchip/rkcif/rkcif-regs.h | 154 ++++
+ .../media/platform/rockchip/rkcif/rkcif-stream.c   | 634 +++++++++++++++
+ .../media/platform/rockchip/rkcif/rkcif-stream.h   |  31 +
+ drivers/media/platform/rockchip/rkcsi/Kconfig      |  16 +
+ drivers/media/platform/rockchip/rkcsi/Makefile     |   3 +
+ drivers/media/platform/rockchip/rkcsi/rkcsi.c      | 735 ++++++++++++++++++
+ include/dt-bindings/media/video-interfaces.h       |   4 +
+ 30 files changed, 4878 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20240220-rk3568-vicap-b9b3f9925f44
+
+Best regards,
+-- 
+Michael Riesch <michael.riesch@collabora.com>
+
+
 
