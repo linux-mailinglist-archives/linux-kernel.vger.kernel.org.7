@@ -1,269 +1,127 @@
-Return-Path: <linux-kernel+bounces-681024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD4AAD4D7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B5AAD4DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222E53A536F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42B0E1BC080E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961C7227E84;
-	Wed, 11 Jun 2025 07:54:28 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1A729D19;
+	Wed, 11 Jun 2025 07:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g7rMibP0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB192D541D
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4AC2356C7;
+	Wed, 11 Jun 2025 07:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749628468; cv=none; b=pM/gjwd3QGEHiGzw/kKvBS+vztESDAuN3VU8aXDOubPD3ocFPGQ+o+nBmFEEYJMlBSIGj8tC8hjKtPAScnS5lPpBtCtu/UzEWW2dgK9kk6zxJ9llesjdMGi1BjHXJI70nY7UrHIrsLV8fLWiFKXMmR2EwrgZJgZUaKgygMtBiiA=
+	t=1749628550; cv=none; b=a9FAwpfh5W9UxbiagKN7NLsrhtINLv/gdf9H0/y+tu7fWSDqvqR9ZJOab7BEqOog6xWh/7txRIYcyxOIZP0S3+GKiMPtChG/oCmskbCuCWdassijXpDseADWXX6CGptbLjZzFsfyaS5i+dL7v1Mr2wHPM4K6WjiIPkUzsVBJVXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749628468; c=relaxed/simple;
-	bh=3H0UQgtmhB7s5GVr7AH/+nDg09vdY+kAsedIlrrz+FI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ULJivQFMwkvfHHmz8ugm0QuYc8vBZGyfK0PB/Zeth/kjWLyAhXTGnmuJ8c7r6oVqIjC8NvHp5Z7VCL/OikZpd30HnE/EiSf/kYc8sGWnpsu3tiknWaHgve2accNoRNO9fHFR9jfbBfHFNGX5yCmeGLy4YOxstDjfnlqmdgZjAnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bHHxC750YzYQvgY
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:54:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 036171A0C76
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:54:23 +0800 (CST)
-Received: from [10.174.99.169] (unknown [10.174.99.169])
-	by APP1 (Coremail) with SMTP id cCh0CgAHt3ctNkloq0SxOw--.22686S2;
-	Wed, 11 Jun 2025 15:54:22 +0800 (CST)
-Subject: Re: [PATCH 2/4] mm: swap: correctly use maxpages in swapon syscall to
- avoid potensial deadloop
-To: Kairui Song <ryncsn@gmail.com>
-Cc: akpm@linux-foundation.org, bhe@redhat.com, hannes@cmpxchg.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250522122554.12209-1-shikemeng@huaweicloud.com>
- <20250522122554.12209-3-shikemeng@huaweicloud.com>
- <CAMgjq7AcMtsS-EX0065jvucLR=YiAvPkjp+rmr=hfxyv9JVW5g@mail.gmail.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <e836546e-5146-40fe-5515-0a185b72bdb2@huaweicloud.com>
-Date: Wed, 11 Jun 2025 15:54:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749628550; c=relaxed/simple;
+	bh=4uFcfbX4N79oywxH3f10w8cbGt3GEjQ8hikeWJcknoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uVuNpukZQdTqnP3cJrS33w03uIHIOfeXlCWUjf2FlZE2ililGWh3vjPseSj8yQ7qbOZ44HUzVTq2yyZ4Q9LpNCzClsVE1aJG3jaw0Rm8FRCvcmkcThi146vDawXBU2B/F34O+l03DHHlkM0DBQqkdzmyttl0nvpfe8hnOgHsxlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g7rMibP0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B52J04009764;
+	Wed, 11 Jun 2025 07:55:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=s/xeX/ZHC2YFdCQvG289q3fjkClIi9
+	AGgxg09fdLCVg=; b=g7rMibP0MZ3FVdlNW3b2ZQseid6EtWfmh64lHnamWLN1/l
+	+XeQSDqCV9FKbJYjj3YIycKGJJiVSTXGpAJe5buIt79PSkG2vRe3PHpRkbaLHTGo
+	wtlMn36qJ886tcaLdoG4v7nd1XlEb4y66FocTh4qu3PM6KkHtEoW1D3t2Td8wMNM
+	5k/VeBkPSkyQEoxUWZBhVw3e+ytoa0I7UjWuMVmF8N1bYzQJQcE4SnWEFa/+p287
+	Iu/0xovM2eYv3R4d5PJhRbHAn7rR6XnFoR4AYs/7LLUiTkvodPU4kBFJUOE3Lb1B
+	Qy9cggmdVY0IMW0LAip5+whbpu3Z6Kjb2jZlG7aA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474dv7k1cw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 07:55:37 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55B4NCsU021908;
+	Wed, 11 Jun 2025 07:55:36 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47504yxstm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 07:55:36 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55B7tYvY54132994
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Jun 2025 07:55:34 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A84E82004F;
+	Wed, 11 Jun 2025 07:55:34 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7698D2004E;
+	Wed, 11 Jun 2025 07:55:34 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.133])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 11 Jun 2025 07:55:34 +0000 (GMT)
+Date: Wed, 11 Jun 2025 09:55:33 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Kbuild updates for v6.16-rc1
+Message-ID: <20250611075533.8102A57-hca@linux.ibm.com>
+References: <CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMgjq7AcMtsS-EX0065jvucLR=YiAvPkjp+rmr=hfxyv9JVW5g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAHt3ctNkloq0SxOw--.22686S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XF4xGFWrGr1xtryrGr13CFg_yoWxtw45pF
-	43WF1qkr4kGryIkw12va1DCry3Gw4fGF47Ja13JFyav3WDXrySgry8tr15Ca4xurn5JFyv
-	qr4vq347uas0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVb
-	kUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: iqjTWxYcFco5o65jSEyFjkTVSdRcA3mh
+X-Proofpoint-GUID: iqjTWxYcFco5o65jSEyFjkTVSdRcA3mh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDA2OCBTYWx0ZWRfX8eEF7+xFBqVR N90QTYiFjwpTByJTI0dawiV8yF+xD7JP1yJayZwWpZscV0qiWkEDPvsWk2yfs977SwFKxmKy+Qp lxScm5TPHyORJrfGtDYmNxKrsQ/MOvIhk6hVHNGB/tMGqa2I/NDnvXYvYdAD31+8d8Pj1wo2cld
+ Xn8aktyHspmMs/VcdrIqa1CMVWLkG3RbS9bDL0iee08/8/zeOKpAuTE+jbOsRl3W8+q0gNINs81 hpuqDWqnlFKIgD2J0oMf0zzfCJhT+ddUWEdxAcpXNZ+4guas1bgEInuIwkMO+L8IRFnkIdhMU3C FdE5U2zrhENL+5veiPCMHuqwA31jLKOn9h03+GvPJD5v2orRJHizxKHh+gxSfb5yrWG6rqgGDrb
+ pGi9OqekCvF/QuwTi/XWusSUCV6EdmIZu2XGq/bJu8G8DMQmCmeh5Vkif/0Fi8MTbdx5YN0y
+X-Authority-Analysis: v=2.4 cv=CfMI5Krl c=1 sm=1 tr=0 ts=6849367a cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=qGWf7Qon23mMiXRqvLsA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_03,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=878 adultscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506110068
 
+On Sun, Jun 08, 2025 at 01:41:18AM +0900, Masahiro Yamada wrote:
+> Kbuild updates for v6.16
+> 
+>  - Add support for the EXPORT_SYMBOL_GPL_FOR_MODULES() macro, which exports a
+>    symbol only to specified modules
+> 
+>  - Improve ABI handling in gendwarfksyms
+> 
+>  - Forcibly link lib-y objects to vmlinux even if CONFIG_MODULES=n
+> 
+>  - Add checkers for redundant or missing <linux/export.h> inclusion
 
+As you write in commit a934a57a42f6 ("scripts/misc-check: check missing
+#include <linux/export.h> when W=1") this adds now 4000+ extra warnings
+for W=1 builds, which makes such builds more or less useless for me.
 
-on 5/26/2025 1:08 AM, Kairui Song wrote:
-> On Thu, May 22, 2025 at 11:32 AM Kemeng Shi <shikemeng@huaweicloud.com> wrote:
->>
->> We use maxpages from read_swap_header() to initialize swap_info_struct,
->> however the maxpages might be reduced in setup_swap_extents() and the
->> si->max is assigned with the reduced maxpages from the
->> setup_swap_extents().
->>
->> Obviously, this could lead to memory waste as we allocated memory based on
->> larger maxpages, besides, this could lead to a potensial deadloop as
->> following:
->> 1) When calling setup_clusters() with larger maxpages, unavailable pages
->> within range [si->max, larger maxpages) are not accounted with
->> inc_cluster_info_page(). As a result, these pages are assumed available
->> but can not be allocated. The cluster contains these pages can be moved
->> to frag_clusters list after it's all available pages were allocated.
->> 2) When the cluster mentioned in 1) is the only cluster in frag_clusters
->> list, cluster_alloc_swap_entry() assume order 0 allocation will never
->> failed and will enter a deadloop by keep trying to allocate page from the
->> only cluster in frag_clusters which contains no actually available page.
->>
->> Call setup_swap_extents() to get the final maxpages before swap_info_struct
->> initialization to fix the issue.
->>
->> Fixes: 661383c6111a3 ("mm: swap: relaim the cached parts that got scanned")
->>
->> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->> ---
->>  mm/swapfile.c | 47 ++++++++++++++++++++---------------------------
->>  1 file changed, 20 insertions(+), 27 deletions(-)
->>
->> diff --git a/mm/swapfile.c b/mm/swapfile.c
->> index 75b69213c2e7..a82f4ebefca3 100644
->> --- a/mm/swapfile.c
->> +++ b/mm/swapfile.c
->> @@ -3141,43 +3141,30 @@ static unsigned long read_swap_header(struct swap_info_struct *si,
->>         return maxpages;
->>  }
->>
->> -static int setup_swap_map_and_extents(struct swap_info_struct *si,
->> -                                       union swap_header *swap_header,
->> -                                       unsigned char *swap_map,
->> -                                       unsigned long maxpages,
->> -                                       sector_t *span)
->> +static int setup_swap_map(struct swap_info_struct *si,
->> +                         union swap_header *swap_header,
->> +                         unsigned char *swap_map,
->> +                         unsigned long maxpages)
->>  {
->> -       unsigned int nr_good_pages;
->>         unsigned long i;
->> -       int nr_extents;
->> -
->> -       nr_good_pages = maxpages - 1;   /* omit header page */
->>
->> +       swap_map[0] = SWAP_MAP_BAD; /* omit header page */
->>         for (i = 0; i < swap_header->info.nr_badpages; i++) {
->>                 unsigned int page_nr = swap_header->info.badpages[i];
->>                 if (page_nr == 0 || page_nr > swap_header->info.last_page)
->>                         return -EINVAL;
->>                 if (page_nr < maxpages) {
->>                         swap_map[page_nr] = SWAP_MAP_BAD;
->> -                       nr_good_pages--;
->> +                       si->pages--;
->>                 }
->>         }
->>
->> -       if (nr_good_pages) {
->> -               swap_map[0] = SWAP_MAP_BAD;
->> -               si->max = maxpages;
->> -               si->pages = nr_good_pages;
->> -               nr_extents = setup_swap_extents(si, span);
->> -               if (nr_extents < 0)
->> -                       return nr_extents;
->> -               nr_good_pages = si->pages;
->> -       }
->> -       if (!nr_good_pages) {
->> +       if (!si->pages) {
->>                 pr_warn("Empty swap-file\n");
->>                 return -EINVAL;
->>         }
->>
->>
->> -       return nr_extents;
->> +       return 0;
->>  }
->>
->>  #define SWAP_CLUSTER_INFO_COLS                                         \
->> @@ -3217,7 +3204,7 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
->>          * Mark unusable pages as unavailable. The clusters aren't
->>          * marked free yet, so no list operations are involved yet.
->>          *
->> -        * See setup_swap_map_and_extents(): header page, bad pages,
->> +        * See setup_swap_map(): header page, bad pages,
->>          * and the EOF part of the last cluster.
->>          */
->>         inc_cluster_info_page(si, cluster_info, 0);
->> @@ -3354,6 +3341,15 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
->>                 goto bad_swap_unlock_inode;
->>         }
->>
->> +       si->max = maxpages;
->> +       si->pages = maxpages - 1;
->> +       nr_extents = setup_swap_extents(si, &span);
->> +       if (nr_extents < 0) {
->> +               error = nr_extents;
->> +               goto bad_swap_unlock_inode;
->> +       }
->> +       maxpages = si->max;
-> 
-Hello,
-> There seems to be a trivial problem here, previously the si->pages
-> will be seen by swap_activate after bad blocks have been counted and
-> si->pages means the actual available slots. But now si->pages will be
-> seen by swap_active as `maxpages - 1`.
-> 
-> One current side effect now is the span value will not be updated
-> properly so the pr_info in swap on may print a larger value, if the
-> swap header contains badblocks and swapfile is on nfs/cifs.
-Thanks for point this out. But I think the larger value is actually
-correct result.
-In summary, there are two kinds of swapfile_activate operations.
-1. Filesystem style: Treat all blocks logical continuity and find
-useable physical extents in logical range. In this way, si->pages
-will be actual useable physical blocks and span will be "1 +
-highest_block - lowest_block".
-2. Block device style: Treat all blocks physically continue and
-only one single extent is added. In this way, si->pages will be
-si->max and span will be "si->pages - 1".
-Actually, si->pages and si->max is only used in block device style
-and span value is set with si->pages. As a result, span value in
-block device style will become a larger value as you mentioned.
+Also the commit only describes what you want to achieve, but not why.
+I can only guess that you want to reduce header dependencies(?).
 
-I think larger value is correct based on:
-1. Span value in filesystem style is "1 + highest_block -
-lowest_block" which is the range cover all possible phisical blocks
-including the badblocks.
-2. For block device style, si->pages is the actual useable block
-number and is already in pr_info. The orignal span value before
-this patch is also refer to useable block number which is redundant
-in pr_info.
-> 
-> This should not be a problem but it's better to mention or add
-> comments about it
-I'd like to mention this change as a fix in changelog in next version.
-> 
-> And I think it's better to add a sanity check here to check if
-> si->pages still equal to si->max - 1,  setup_swap_map_and_extents /
-> setup_swap_map assumes the header section was already counted. This
-> also helps indicate the setup_swap_extents may shrink and modify these
-> two values.
-Sure, will add this in next version.
-> 
-> BTW, I was thinking that we should get rid of the whole extents design
-> after the swap table series is ready, so mTHP allocation will be
-> usable for swap over fs too.
-I also noticed this limitation but have not taken a deep look. Look
-forward to your solution in future.
-> 
->>         /* OK, set up the swap map and apply the bad block list */
->>         swap_map = vzalloc(maxpages);
->>         if (!swap_map) {
->> @@ -3365,12 +3361,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
->>         if (error)
->>                 goto bad_swap_unlock_inode;
->>
->> -       nr_extents = setup_swap_map_and_extents(si, swap_header, swap_map,
->> -                                               maxpages, &span);
->> -       if (unlikely(nr_extents < 0)) {
->> -               error = nr_extents;
->> +       error = setup_swap_map(si, swap_header, swap_map, maxpages);
->> +       if (error)
->>                 goto bad_swap_unlock_inode;
->> -       }
->>
->>         /*
->>          * Use kvmalloc_array instead of bitmap_zalloc as the allocation order might
->> --
->> 2.30.0
->>
-> 
-> Other than that:
-> 
-> Reviewed-by: Kairui Song <kasong@tencent.com>
-> 
-
+Don't get me wrong, I can address all of this trivial churn for s390, however
+enforcing so many extra warnings to everyone with W=1 builds doesn't look like
+the right approach to me.
 
