@@ -1,71 +1,108 @@
-Return-Path: <linux-kernel+bounces-682116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75A0AD5BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:20:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2160AD5BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A221BC3FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:18:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0471E182A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9454A1F150A;
-	Wed, 11 Jun 2025 16:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfKs4g6P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07151DF75C;
+	Wed, 11 Jun 2025 16:18:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13F31E5B7E;
-	Wed, 11 Jun 2025 16:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30131D5CDD;
+	Wed, 11 Jun 2025 16:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749658661; cv=none; b=AZhHuPQYMw9pVyYvr/zuCn6M8Zxt2zf+ITP9czaKxZMhl7tyiIdoWolzLZM4xHaRpt945JPy2qUJNKgx1qCVK/ZCx/HiLYUjs2EGHqbZFCQjBt9gn6gGhWo8NRojE1L52K/Ixf0fmkKWueUW9SkMx9IK52DW3M8pNryURjI9hyI=
+	t=1749658702; cv=none; b=mTHm6qfR8D3xE5w8nKTofVCIGTKP/8Ef6ojkzNTsn8IxqN8pD2mOKeBhmVsEn+Hna59uKtrRs0pXWDvbz08NK0L20+nrPu4Zlk4ZyngsKzzLfsZLnqNItyt7hYglfcFxcsUwSMWNBsGLrrtcMrj/iVXxs2iGf4Y78bIgSWKqmy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749658661; c=relaxed/simple;
-	bh=PWJ0jR69mYAAA4w/gRE9a2Qqaj62sM4IlA2LaHYXWkc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=YtFTP28Sb/hmA7nWrrt4I4tx5q3uEseIVQcDx/RPQkt8+MpUNvMHnuC6b0NYKMtu67cObHhUaX0pzWSNY9VcDXA/i8kxo74tUYIwEwOrYxr5RFH1Jl545wpbPWr5963XJ2kxTaq+/cIzv8WWabDpflJwfeHPmsX0b4GE6M3RX/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfKs4g6P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72755C4CEEA;
-	Wed, 11 Jun 2025 16:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749658660;
-	bh=PWJ0jR69mYAAA4w/gRE9a2Qqaj62sM4IlA2LaHYXWkc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qfKs4g6Pm51Xy7Uj+LzikdAv05syMwL0Kni8/llFEilJQ0MTGn4jYLA3Re19FcJaZ
-	 aMGkG5ZedR5eAbYn6DC8/kFRGeQzX0uQ+dQZAdIJvn1UlfjcdCAgbeTNQPxArsWE6Q
-	 YQWwQuDQyHXnpdHwOItK82KXVXLcB+eC4/zuG4rVbF99LVITWmE9qHzkUjUlHTYoRq
-	 PF8DgfrhRwSy9A2q1NIsgRcxIwkVcdhooRE164oFTVIp8YGYcxwUh/t77xgjdK2u/d
-	 vzttpOmNTDokzQ/o+tTBAmJcKv4661ThkLTa1jVtLkI9trstwiU21vGD7jAPef/lxR
-	 iDfUJixM0LWhg==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749658702; c=relaxed/simple;
+	bh=iCSp5O0s2s0EfwUP1NTze5TIzcnTBSIPTs27KJTso3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PbeA62LiPkQPM57kGazM30fJfn5qDXz8PXXDlM/iKNWU6JRzIQwzO1JNBn5yU/p3z46DUvISYkuB2gWqtjO2yjZyOYnfgJatyUwJZhxKq+KPjRx/SdMJQOwS8OhF6tUgfkEyK68Ru8Rtprv297cz++kfza9kqCspLqyczCha8nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 3A7681019BB;
+	Wed, 11 Jun 2025 16:18:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 8968C2002B;
+	Wed, 11 Jun 2025 16:18:16 +0000 (UTC)
+Date: Wed, 11 Jun 2025 12:18:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH] tracefs: Add d_delete to remove negative dentries
+Message-ID: <20250611121815.409d02f8@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250516081612.767559-4-sbellary@baylibre.com>
-References: <20250516081612.767559-1-sbellary@baylibre.com> <20250516081612.767559-4-sbellary@baylibre.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: clock: ti: add ti,autoidle.yaml reference
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Sukrut Bellary <sbellary@baylibre.com>, Tero Kristo <kristo@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Sukrut Bellary <sbellary@baylibre.com>
-Date: Wed, 11 Jun 2025 11:17:39 -0500
-Message-ID: <174965865961.7717.9630949658019778760@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 8968C2002B
+X-Rspamd-Server: rspamout08
+X-Stat-Signature: nxx4hwgkekwe4364xgixpp53aw6kig1o
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+NPhW+5xNRU0Cg4dInKx8FL3ulEJKb7L0=
+X-HE-Tag: 1749658696-732145
+X-HE-Meta: U2FsdGVkX1+OmWEOjLpUfkUPENEyZa7Ld0ag+7o5+MLZU0bP69ABNsG3+OMyyXaIyEIVqYuLa3DrGIfi4ggMYkVHJ/POShQMYHAZHMQ/ZagrKD1eS6HdvB30YmL5X/nYiVJZ9NhBw4VG+JkarTkcxxKBXMLg7C+Pq9FDtnQpcLNBSzbZObiIy7m5Yu5ruZU96helNJGaFvrjvv2Qr7f4zgRrPuxtkJniIMkTo4rnaV8CXlOmJ2KXg55GkL9qZYJLdl2a30IknWuWFAvqkFhbE6NgBwGRRZ7ngT9ebVuUJ4FW0K1Opu/QmkydvhAbr6bU5cTG+Ruz7QjPeP8uRD6d1yWTIOvO5484kSGHtiGaMMaNBT1w8enjOiX7J+vk4QkH/ZK+Ah6DtpOoMfYwBBganJ4jHddyQwtwUwnJadpAuVA8px25vts+Cmn8XjFjiTGL
 
-Quoting Sukrut Bellary (2025-05-16 03:16:12)
-> ti,divider-clock uses properties from ti,autoidle.
-> As we are converting autoidle binding to ti,autoidle.yaml, fix the refere=
-nce
-> here.
->=20
-> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
-> ---
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Applied to clk-next
+If a lookup in tracefs is done on a file that does not exist, it leaves a
+dentry hanging around until memory pressure removes it. But eventfs
+dentries should hang around as when their ref count goes to zero, it
+requires more work to recreate it. For the rest of the tracefs dentries,
+they hang around as their dentry is used as a descriptor for the tracing
+system. But if a file lookup happens for a file in tracefs that does not
+exist, it should be deleted.
+
+Add a .d_delete callback that checks if dentry->fsdata is set or not. Only
+eventfs dentries set fsdata so if it has content it should not be deleted
+and should hang around in the cache.
+
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ fs/tracefs/inode.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index a3fd3cc591bd..43f83fc9594f 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -465,9 +465,20 @@ static int tracefs_d_revalidate(struct inode *inode, const struct qstr *name,
+ 	return !(ei && ei->is_freed);
+ }
+ 
++static int tracefs_d_delete(const struct dentry *dentry)
++{
++	/*
++	 * We want to keep eventfs dentries around but not tracefs
++	 * ones. eventfs dentries have content in d_fsdata.
++	 * Use d_fsdata to determine if it's a eventfs dentry or not.
++	 */
++	return dentry->d_fsdata == NULL;
++}
++
+ static const struct dentry_operations tracefs_dentry_operations = {
+ 	.d_revalidate = tracefs_d_revalidate,
+ 	.d_release = tracefs_d_release,
++	.d_delete = tracefs_d_delete,
+ };
+ 
+ static int tracefs_fill_super(struct super_block *sb, struct fs_context *fc)
+-- 
+2.47.2
+
 
