@@ -1,110 +1,171 @@
-Return-Path: <linux-kernel+bounces-681713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2A3AD5643
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8F3AD565D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D443A849D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:00:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3EC21E1053
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8BC2836B5;
-	Wed, 11 Jun 2025 12:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3123028313F;
+	Wed, 11 Jun 2025 13:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fiwihM3u"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XC2ibfEc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CCC2882A0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAF027CCF3;
+	Wed, 11 Jun 2025 13:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749646799; cv=none; b=nCny/KJtxg7tUET69wyz7p1RlSDVb7ugmvTMrKtgfenzw4o2W7s8Lnf1Pq5V+T29UoyIwf1gkEV6QD/v3CxsmyBwKTQE11/xqiP7HKvyTwNB5bwdyAEzxA6JTwtAp2gOhRsPek30ppCwfbtQTEd11CKCtJnnCGAEe2dF6PkDPcU=
+	t=1749646918; cv=none; b=oGLMsMz/FeGy/HrX/o14EcXUGLS8CEb8B+kHRA+Us2k1jTV8oSvIqFMZELy6mb7ma9e/excXa5q0efVMCXrFn2NkTr4p2Ev/yQ7bL3lwHCtJ0bMH41oQeXrof6eKd6IEbAdcDwZlx8HFTsHGJ/DiHvD2Cnp58ufGRb54OfTqqJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749646799; c=relaxed/simple;
-	bh=v8Z/vKA0fxPPt/ujeHNmMfqYDx1WX1fjLOE4jps7+CI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uiWpOjhnUs+4WVtdcd5E9DZeEoEybynQBl+ONbhcg/SyUJgjIMrwHQci1qjjf8VCZr3ltsTV1XUIxzisMmEf0T6Xn9nBDzUfquq3q8xfbkcJn7q2Ok3X0x2GgimFVj7jrzhTsa2c9OJ5NThR4lxwW0wuwkTHpRvFlJUdO1qmj8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fiwihM3u; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2fb347b3e6so2703685a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749646797; x=1750251597; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXazK2HF4my4XG6ZGbxQCBlCRkeomngapDYtTTmub8k=;
-        b=fiwihM3uGTW67XYCxkIv9Q1b6BRCGkfNbz4pz+Eyzp9gAmDHiWYYmFW1sB210rYqS/
-         zWkbbQYQ1xteNBKtA1yAw0wOKZUOwna4TMDmPBkHoWqIdnPhU302SyDA+RVtlPlqDdep
-         0UrcqSRkSQZSOXamnvLW4LbtW/VHhKFyAdEC4VVG9aKlCrrZoICseSLALKUECbPOll0T
-         yVSkow7gPUe/856ORcCZ10tZ26nhAGox3+uqImooMEN/+5nl1f0jV1Tsb7d2oaJqy7Br
-         2/nlpAjnvwRv8NlseRc8/LufjoyDM1nnkYzjS1/JEe2RPgX+5w0xp3ndA9LW89QvqHto
-         IcAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749646797; x=1750251597;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXazK2HF4my4XG6ZGbxQCBlCRkeomngapDYtTTmub8k=;
-        b=NloLCbf6B60FtyMJJce+EVt8GGWxU01c47xKYH3e/zhxWOeLWBvB7VUIbhJk8iL8WO
-         G3AQAwU3lQA6JSAIz/KckesjDUd849pC+xOcj15JmNkgXCAUNaUyI7IUg8u0NAImXshV
-         HV5sZVm9PQSoGhsSkytkw8m6P/5nWsry+l+7dqDZYhLHpA5qLH+Mb2RZfPRE9YIbbpCK
-         m0+AFPmL70WlLHyjo6zZ5kWPsnNdxaBwbB5B333c7y6iO3IbSBkzDpwS52M36ytjEJHn
-         wmLn3UiyTbmhI1R+WZ8KMB6LxTZ1UzsQaBFGjAiRYwEH06uIT8m11TPizLsOjqu+gkwc
-         OqkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtDR16cmqKMqTclsylTc0s9z9+NnBTXIRfsoS46SH2QLBJshgicadn0T9Ga8JCb/nKaym8UeM/PcemXFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+4WOKYCJGySh27vYZc69RC/cGTWsDQ5nht2zKMu9HdY+fv/sk
-	lu9yronBwC70Eso961ZT6poMGZMTvp1CuJbmL5bolDdhPIHOqCOuSum5RBCgMapLlI6U8Rg0V97
-	NEXR5qw==
-X-Google-Smtp-Source: AGHT+IGJGSZ0FZaEs1WgpfcXAg046+B/RRdBjPKeuzwanqEb7D0UocarpzZb1ktPvq8lAj6zdIrLL6sExms=
-X-Received: from pfbna34.prod.google.com ([2002:a05:6a00:3e22:b0:741:8e1a:2d09])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6da3:b0:216:20de:52d9
- with SMTP id adf61e73a8af0-21f86645fd0mr4834462637.14.1749646797017; Wed, 11
- Jun 2025 05:59:57 -0700 (PDT)
-Date: Wed, 11 Jun 2025 05:59:54 -0700
-In-Reply-To: <20250611075533.8102A57-hca@linux.ibm.com>
+	s=arc-20240116; t=1749646918; c=relaxed/simple;
+	bh=wBGF3MH8wy3Irie1YSoRIMKpmvzTW1os8hg0quSGLqg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SmVGyCIgfZvSJ41/j+7ATdAOh28dxVS8OhhB6Kk8R9xHrBcxwaFANfN4/+Rdcsm3hWdBs1l/2aTdnX468WEVQNN9s5TVyo7vFAQst3ic6bAADxphnjNMfOPptvkArY8psIoZvKDlrcFwKWIAbt9QkNGa07UkB+fgT6R11HnvZhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XC2ibfEc; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749646917; x=1781182917;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=wBGF3MH8wy3Irie1YSoRIMKpmvzTW1os8hg0quSGLqg=;
+  b=XC2ibfEcJtSU7ZcoeHhcIqfCvR7aXu0mLOVMvJuLLc+OaCawQBRnblq5
+   4DcFogX4b9LsscvjBjAL3GBnG1cfz+ggVJuPCLuWUq2xOvikciM2ABSUo
+   0Pu8r5Z0gOHBO+Kz4uefDrnzpbCBFQB+cDK9nxP/Aq0kku/sNF0cusUZC
+   Ad1WS+Ol7rP8Vz5kzAH/XAaKW2vA8cM00DwWPNFibAzi4o/DTfICB15Rt
+   WgUTlIpaprfkHVb4W/3gxh27m76+9EKMD/JAknYQ9Ok+0z9ygFoUn0GLK
+   FiT584o7NfK72q3hiOcUoy8Ib5O0CqB1y985tp8XWG3jyrQUG30JrWeMs
+   w==;
+X-CSE-ConnectionGUID: PdlEDo3MS4edzkp4aEr0kw==
+X-CSE-MsgGUID: +axT6ppbQB2hfEtLTL818A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="62068105"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="62068105"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 06:01:57 -0700
+X-CSE-ConnectionGUID: wcrPaK8JSSKYPMryxyQUvA==
+X-CSE-MsgGUID: ejq+zzRyQDWfbzM1aZHdeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="184398869"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.183])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 06:01:54 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 11 Jun 2025 16:01:50 +0300 (EEST)
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 24/33] serial: 8250: extract serial8250_set_fcr()
+In-Reply-To: <20250611100319.186924-25-jirislaby@kernel.org>
+Message-ID: <5eba83d2-4273-7fad-529e-35b5e1e62bd5@linux.intel.com>
+References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-25-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com>
- <20250611075533.8102A57-hca@linux.ibm.com>
-Message-ID: <aEl9yiUdQLetv_T_@google.com>
-Subject: Re: [GIT PULL] Kbuild updates for v6.16-rc1
-From: Sean Christopherson <seanjc@google.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-1688731510-1749646910=:957"
 
-On Wed, Jun 11, 2025, Heiko Carstens wrote:
-> On Sun, Jun 08, 2025 at 01:41:18AM +0900, Masahiro Yamada wrote:
-> > Kbuild updates for v6.16
-> > 
-> >  - Add support for the EXPORT_SYMBOL_GPL_FOR_MODULES() macro, which exports a
-> >    symbol only to specified modules
-> > 
-> >  - Improve ABI handling in gendwarfksyms
-> > 
-> >  - Forcibly link lib-y objects to vmlinux even if CONFIG_MODULES=n
-> > 
-> >  - Add checkers for redundant or missing <linux/export.h> inclusion
-> 
-> As you write in commit a934a57a42f6 ("scripts/misc-check: check missing
-> #include <linux/export.h> when W=1") this adds now 4000+ extra warnings
-> for W=1 builds, which makes such builds more or less useless for me.
-> 
-> Also the commit only describes what you want to achieve, but not why.
-> I can only guess that you want to reduce header dependencies(?).
-> 
-> Don't get me wrong, I can address all of this trivial churn for s390, however
-> enforcing so many extra warnings to everyone with W=1 builds doesn't look like
-> the right approach to me.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-+1.  This seems like a recipe for an endless game of whack-a-mole.
+--8323328-1688731510-1749646910=:957
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
+
+> serial8250_do_set_termios() consists of many registers and up flags
+> settings. Extract all these into separate functions. This time, setting
+> of FCR.
+>=20
+> serial8250_do_set_termios() looks sane at this point.
+>=20
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+> ---
+>  drivers/tty/serial/8250/8250_port.c | 41 ++++++++++++++++++-----------
+>  1 file changed, 26 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/825=
+0/8250_port.c
+> index 0f16398cc86f..85b75ff0699e 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -2792,6 +2792,30 @@ static void serial8250_set_efr(struct uart_port *p=
+ort, struct ktermios *termios)
+>  =09serial_port_out(port, efr_reg, efr);
+>  }
+> =20
+> +static void serial8250_set_fcr(struct uart_port *port, struct ktermios *=
+termios)
+> +{
+> +=09struct uart_8250_port *up =3D up_to_u8250p(port);
+> +=09bool is_16750 =3D port->type =3D=3D PORT_16750;
+> +
+> +=09if (is_16750)
+> +=09=09serial_port_out(port, UART_FCR, up->fcr);
+> +
+> +=09/*
+> +=09 * LCR DLAB must be reset to enable 64-byte FIFO mode. If the FCR is =
+written without DLAB
+> +=09 * set, this mode will be disabled.
+> +=09 */
+> +=09serial_port_out(port, UART_LCR, up->lcr);
+> +
+> +=09if (is_16750)
+> +=09=09return;
+> +
+> +=09/* emulated UARTs (Lucent Venus 167x) need two steps */
+> +=09if (up->fcr & UART_FCR_ENABLE_FIFO)
+> +=09=09serial_port_out(port, UART_FCR, UART_FCR_ENABLE_FIFO);
+> +
+> +=09serial_port_out(port, UART_FCR, up->fcr);
+> +}
+> +
+>  void
+>  serial8250_do_set_termios(struct uart_port *port, struct ktermios *termi=
+os,
+>  =09=09          const struct ktermios *old)
+> @@ -2823,22 +2847,9 @@ serial8250_do_set_termios(struct uart_port *port, =
+struct ktermios *termios,
+>  =09serial8250_set_ier(port, termios);
+>  =09serial8250_set_efr(port, termios);
+>  =09serial8250_set_divisor(port, baud, quot, frac);
+> -
+> -=09/*
+> -=09 * LCR DLAB must be set to enable 64-byte FIFO mode. If the FCR
+> -=09 * is written without DLAB set, this mode will be disabled.
+> -=09 */
+> -=09if (port->type =3D=3D PORT_16750)
+> -=09=09serial_port_out(port, UART_FCR, up->fcr);
+> -
+> -=09serial_port_out(port, UART_LCR, up->lcr);=09/* reset DLAB */
+> -=09if (port->type !=3D PORT_16750) {
+> -=09=09/* emulated UARTs (Lucent Venus 167x) need two steps */
+> -=09=09if (up->fcr & UART_FCR_ENABLE_FIFO)
+> -=09=09=09serial_port_out(port, UART_FCR, UART_FCR_ENABLE_FIFO);
+> -=09=09serial_port_out(port, UART_FCR, up->fcr);=09/* set fcr */
+> -=09}
+> +=09serial8250_set_fcr(port, termios);
+>  =09serial8250_set_mctrl(port, port->mctrl);
+> +
+>  =09uart_port_unlock_irqrestore(port, flags);
+>  =09serial8250_rpm_put(up);
+> =20
+>=20
+--8323328-1688731510-1749646910=:957--
 
