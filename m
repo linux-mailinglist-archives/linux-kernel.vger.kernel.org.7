@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-681095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BF1AD4E64
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C41AD4E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CE18189B6B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CD61BC1205
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6510E23AB94;
-	Wed, 11 Jun 2025 08:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="cXeBc1fD"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A0623C507;
+	Wed, 11 Jun 2025 08:33:24 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD6C17736;
-	Wed, 11 Jun 2025 08:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AC82367C0;
+	Wed, 11 Jun 2025 08:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749630588; cv=none; b=QE6MV9KflixYkoBh61PIba/CRm/LeHGIoKfg0X9ROGvaFpEC+CGyUBG0ORcj5jn1AQhBjM3IlIDZCYodxW7I6ZLi02TlPFRlBqA5sEHelt178CrRxWj+WtqvrYmQJTGnfTtk+CWnCc7HRTTySYUsV8fP7fQd/Vmy6TbXYxHWYmA=
+	t=1749630804; cv=none; b=ktpF0913a1djQ7BaYEW0cpFEo6V1W95NcaV2ESd/nKEEhByamvJ4KbZ9xgE0wpxAIcFx7oknIOYdMc3GLLZf6vasvbJuJcVlH/LPljOclW3CBYeER7f/erJdJ63yVfMR7/prnhUqtkiWt1MKUz8YrLPtuwRDJhrkzTHRiDmn2SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749630588; c=relaxed/simple;
-	bh=K01kD1CXP4y2QvIDW79/rq2TlSMRwkIQQVW462JBFmA=;
+	s=arc-20240116; t=1749630804; c=relaxed/simple;
+	bh=9qIeq0lwD11SajOmjAAdep/mgqublORICUD/w+3z/6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkGM4km3JPvod+Kk8fi5L/2lbPRHRYyeA6Va1dd0M5S1sbtVmeSlytyyD+Hg4uOLHuu0I4QjQFnnzwNgVdQrnvXHeQBbeCkbroRq5El2OvUuNqPYcKIb12gdr3cQqQKdazQan1OjIOKIM8A2aTKdYH7xRLX1migTGeEQTsEE49Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=cXeBc1fD; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ahMwYnzAqR2ccux8pEM9neDBaxqHAvqHao7Hj/i4BgE=;
-	b=cXeBc1fDyuCnOgI1P/kEJBnpW0hvRhbh+DUKSFrRLqp798QPGZtjWM+AleqnS4
-	UdkB0yM0B0UpZBk9YL8Rbs0oTRvlDIO1pBFdLatlmPSDattVvdTbGkqcJedj5W18
-	NobAAPqqAYTnn4oMeK9oYqLLdhK5J4UYwTCPYMCAaytbY=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgA3180UPkloM8lpAA--.43803S3;
-	Wed, 11 Jun 2025 16:28:06 +0800 (CST)
-Date: Wed, 11 Jun 2025 16:28:04 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: carlos.song@nxp.com
-Cc: miquel.raynal@bootlin.com, Frank.Li@nxp.com,
-	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	conor.culhane@silvaco.com, linux-i3c@lists.infradead.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V4 3/3] arm64: dts: imx95: correct i3c node in imx95
-Message-ID: <aEk+FEq+Ivj5wfVW@dragon>
-References: <20250427083230.3325700-1-carlos.song@nxp.com>
- <20250427083230.3325700-4-carlos.song@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8BnZeWrJmExvXXTumjE1Qt+pKS8fTkoNECd1JSrbcifX5Us9qNUyncHy5/wKNkQGx03Wp09C5Yo9brX/r/X/KsIfzgReokhZNzfFSC2ve+RBwIAKM43PnEa/sa5IZfZPMFvB0Cnpumxm1ljL8QhhKmacRaIDv0gJWicpEreymo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 4Og5Og7SSIGKWX/AB5wX2A==
+X-CSE-MsgGUID: JVNGOMfMQjqyrWZmegSZ2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="62045192"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="62045192"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 01:33:22 -0700
+X-CSE-ConnectionGUID: YNrDiN87Sw+pTQCPf/h22w==
+X-CSE-MsgGUID: A7EgxSrITtOvetlXgx+cXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="152272493"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 01:28:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1uPGoj-00000005aKk-3uEg;
+	Wed, 11 Jun 2025 11:28:17 +0300
+Date: Wed, 11 Jun 2025 11:28:17 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 0/4] pinctrl: intel: use new GPIO line value setter
+ callbacks
+Message-ID: <aEk-ISpDdGv5EGJE@smile.fi.intel.com>
+References: <20250610-gpiochip-set-rv-pinctrl-intel-v1-0-d7a773ff864e@linaro.org>
+ <aEiVsrtfzK1rkgUI@smile.fi.intel.com>
+ <20250611043626.GD2063270@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,20 +67,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250427083230.3325700-4-carlos.song@nxp.com>
-X-CM-TRANSID:Ms8vCgA3180UPkloM8lpAA--.43803S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOKsjUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIBYBZmhJPhYL6gAA35
+In-Reply-To: <20250611043626.GD2063270@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Apr 27, 2025 at 04:32:30PM +0800, carlos.song@nxp.com wrote:
-> From: Carlos Song <carlos.song@nxp.com>
+On Wed, Jun 11, 2025 at 07:36:26AM +0300, Mika Westerberg wrote:
+> On Tue, Jun 10, 2025 at 11:29:38PM +0300, Andy Shevchenko wrote:
+> > On Tue, Jun 10, 2025 at 02:58:46PM +0200, Bartosz Golaszewski wrote:
+> > > Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+> > > values") added new line setter callbacks to struct gpio_chip. They allow
+> > > to indicate failures to callers. We're in the process of converting all
+> > > GPIO controllers to using them before removing the old ones. This series
+> > > converts all GPIO chips in intel pin control drivers.
+> > 
+> > I'll wait for Mika's Ack and apply, the material LGTM, thanks!
 > 
-> I.MX95 I3C only need two clocks so add clock fix. Add "nxp,imx95-i3c"
-> compatible string for all imx95 i3c nodes.
+> Looks good to me too,
 > 
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Applied, thanks!
+Pushed to my review and testing queue, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
