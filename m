@@ -1,179 +1,208 @@
-Return-Path: <linux-kernel+bounces-682346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A4BAD5EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:01:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76061AD5EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2631BC3180
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2747F1E06D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AE9283FE1;
-	Wed, 11 Jun 2025 19:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AF9283151;
+	Wed, 11 Jun 2025 19:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSVdE0v7"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoTMitiv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E29E283CA2;
-	Wed, 11 Jun 2025 19:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2CC18D;
+	Wed, 11 Jun 2025 19:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749668486; cv=none; b=WPgIB1/jdp6xHG+G3A9C2AqlP89m1JKnfN9axsON03lreLITwhIJ+7AUGhrdzDFdWGivSJ0r7BTxmgoS74K1LzjdCfhuwCHFY2C7zq2hDqtDGWAMUZbph98F9cEKXUf8gMTUJMy0m9a0yqZV+5UIAH9/WWp03S4BU0RmEctfXvI=
+	t=1749668463; cv=none; b=fTUAs+IFkdo7Emkg26j7lFJVdw7mx2+LOyoyUNaL5jd3hjB4qNuWQqSsxVkjzTl4LeJv5RTHmLXxR4ktss1jfkz3kIwH9XH7rQetopS7fKTgc43QTucHWHN0gGBxDGsVXkqKZ6Yv0kHAh08PP5tdvCgMhgt2uqOsETskcUPvl2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749668486; c=relaxed/simple;
-	bh=hfeyK/eTihwmpGVnQxX1pqhXZgt2fJWgCy74pCgGR4E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dOoZXjmRsvmg5lr5b/TamEBexMOGrdEKcQC6XlWc4CqTldYw++PzTE6nOQFSb+3E9OOVG4X//6/Yd3Nd3SfSJ6c6+d+2VC/vTNaoV6Uhyg4HAgHhD+0oBS6/ZsfrqvCFtMNV96ftaGjbhBCKIxE9ePYi3jTPSxi2r7irENFvKqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSVdE0v7; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-747abb3cd0bso972673b3a.1;
-        Wed, 11 Jun 2025 12:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749668484; x=1750273284; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZGyYXYc3SZhPlDKvAJZs+fBk6MmM4JqN/0ybuzC+cc=;
-        b=cSVdE0v7hSRFE8CX3luHIjIN7QUgIOIB67zdckBiVF4NpoOHZCa9gjrxw1LojGOzK7
-         pDwiuv9NfRfca5Xlbj6zekuqBC652sV+P7D4KNxI3dZ/ZEzuxe0Mu3HpFiBQhKJruyfP
-         EnYrtqiRmdApcatTpz0qZaHmR6CD2chRn/EKt3unllofLL8epnFCfEzf8JC7j2Gxvjh5
-         DFrgip/YM2JQGE29TnOEzcjCMABitMDz65/5hM9RijFM3N8ZRtBzEB0GX4fGEcET3n0B
-         qGuUtG5ypBT2SXupHR3/vrf2SpI0jzuZkUfKeUyO8y43aeSpGFrnRGToqBlKUMuZXAmt
-         f+Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749668484; x=1750273284;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kZGyYXYc3SZhPlDKvAJZs+fBk6MmM4JqN/0ybuzC+cc=;
-        b=PvkWqQE6x16dPQJXKdJnpf3tMYZzP89oTO3c1Zmc/XhZokCQ/K5DCjiQueWpz76p2D
-         LQXO8fWYxaGgqaUg1f6jAxCCplzaO7t7ADIWvirW6I0UTVsousrgO0MAaGiEdV1DQvnK
-         nqP6zSV5dKmJXHhOzLT7rtLeKmV+sRE9LUpklEEnKZvIH3eFkc3ANLY8dbQzgQexkRTs
-         v43l23jwrqDnvqdSXCtSMkWPWkhz4cfcUc/zUk4o6VND1FH6FxR5XSHYAF143uBZueuW
-         sT+K9UaKEeDXOm7s1GINlVlfSA5CxbpQNQHXbozPo7gZe7IH0TUV0Ppi9FwZm6MlPvTt
-         vxSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrsy6yjLW0hj0qId26fndCdceRWq4hLXB7Nbw2oDygcfcSoYQ4BckSDk1y1AwyzaxhqIRIV9wC7Zyi@vger.kernel.org, AJvYcCWR0TDoeylBhvOer/SK0GrOZJvwq9r5AapzcSvInBvOgu6l18GZPV6DwN1G/YenyYq6EhmHRrMH6inUoeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7EA6GROqH4QySpcREeJcNIpxvS9MWIRSWuh4uem0yQm1IiR8v
-	CHilznHDDsHED2zMTZWkRgdmvxkFpGEiLWnQXG9Xm4JN6rXMCP3Ubvgs
-X-Gm-Gg: ASbGncvclGI6Zynu5qfwFZLhoeu4LZHRpZdDaguRrrQzggBel3H2qauT6QM/mnzFtyz
-	MRxhqNFtUX7mo87woWjn2EEv6tqBHo9Eyfx/zeZweEobhB7P0QCqIqXSqTFsgFT9CibBrwJB8rv
-	dvRgtsYnvevL5AnuwE9JalLhRbJhnuh2q5Mm/Cw++mYnnVkgPutigvAJ6nrzmHP1STF43GU+sRP
-	chvQ9z/vloAnm8OSKo+O7AqNy9aGyJnX6HMaz0lE8zVyttjxQKmZ4A7aUyYtH+x0zx3XgkmCcgR
-	4OucxgyKY0c7HJQRxEqbmhpgkAyUJCWd8ntmlU60tOzlnuUorTFirL21ow2pCjOcNNVEydgFiHv
-	P
-X-Google-Smtp-Source: AGHT+IEMmil3asp25VvB9Lf6ITUkxC/JbPLatMIJdku5ioTE3FR6q5SQWOrizUA/z/Q7dClNFGB6kA==
-X-Received: by 2002:a05:6a20:244b:b0:218:1fa6:420e with SMTP id adf61e73a8af0-21f991040a6mr797761637.13.1749668483580;
-        Wed, 11 Jun 2025 12:01:23 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([2401:4900:8839:85c6:8863:1c9:9e9c:ef7d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f892f57sm8766759a12.66.2025.06.11.12.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 12:01:23 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: bhelgaas@google.com,
-	ilpo.jarvinen@linux.intel.com,
-	Jonathan.Cameron@huawei.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	kwilczynski@kernel.org,
-	mahesh@linux.ibm.com,
-	oohall@gmail.com,
-	karolina.stolarek@oracle.com,
-	lukas@wunner.de,
-	pandoh@google.com
-Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI/AER: Add Error Log in case when AER_MAX_MULTI_ERR_DEVICES limit hit during AER handling.
-Date: Thu, 12 Jun 2025 00:30:53 +0530
-Message-ID: <20250611190056.355878-1-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749668463; c=relaxed/simple;
+	bh=T20AKzyH88cJPUCj3BOJPy4j8u7rLv+QAbQ9fGnyO8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOCbWV4iNbbmv4qVPI0WlQ0tER1ywGQ1dyB7j8lB/+jDfmH4fZ79bzTEcu2depbaRfd0WxwQ7E7V8ZH8xaF9tSoKPmgWfsVP+XtMBuK3xxiPgkgc/fS44ZHgXXvBVBcVyQb7oPDdfBrvrsxNmvVwr2Evv1nmV1xkpbWj6p7b3ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoTMitiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D28E8C4CEE3;
+	Wed, 11 Jun 2025 19:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749668463;
+	bh=T20AKzyH88cJPUCj3BOJPy4j8u7rLv+QAbQ9fGnyO8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZoTMitivzFVvX1/SHbSqdBzz+PEQ3WhzD04HO6rbmaeqHm5g8nuhi/xmNzLNh+u/m
+	 G+qSfYcmMvrblKJnRmsnRhI4XagFnmf3QqllUq6FeGnzVaoAw+2cD89NkeoYBmy5U8
+	 uiLebT0uXk8OQgBzd39S1OYwowo1X/HwJDxhNXaBfDiUc1EosplND6jo90Ly99Mrim
+	 W2nhNSevb87PoHM+2AZwva8gpLsldrTQuNI6ytC8A/fUCpc5TD1wq1TE+K3EMY97SK
+	 EAnrYnc2VNqeaPPzjCrVUS+dYfu2vjoQVlYwXBZKJQ/qPo+Y1d3yw3AqTxrvLNPE9g
+	 ybibgaHAR387w==
+Date: Wed, 11 Jun 2025 16:01:00 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [BUG] perf tools: Build failure in v6.16-rc1
+Message-ID: <aEnSbBaFYgd4Gr9u@x1>
+References: <aEh6xO14wDSCFUDr@google.com>
+ <20250611092542.F4ooE2FL@linutronix.de>
+ <aEmBOO0bSJYSvX2i@x1>
+ <aEmY259Mx92D60KG@x1>
+ <20250611150615.FcVIIhgA@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611150615.FcVIIhgA@linutronix.de>
 
-When an error is detected at a PCIe device and the root port receives the
-error message, the threaded IRQ handler aer_isr traverses down the
-hierarchy from the root port and keeps on adding those pcie devices on
-which error has been recorded into the e_info->dev[] array for
-respective error handling and recovery. The e_info->dev[] array has size
-AER_MAX_MULTI_ERR_DEVICES which currently has been defined as 5.
-This change adds an error message in case this limit is hit.
-
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
-
-Testing:
-========
-Verified log in dmesg on QEMU.
-
-1. Following command created the required environment. As mentioned below a
-pcie-root-port and a virtio-net-pci device are used on a Q35 machine model.
-./qemu-system-x86_64 \
-	-M q35,accel=kvm \
-	-m 2G -cpu host -nographic \
-	-serial mon:stdio \
-	-kernel /home/akshayaj/pci/arch/x86/boot/bzImage \
-	-initrd /home/akshayaj/Embedded_System_Using_QEMU/rootfs/rootfs.cpio.gz \
-	-append "console=ttyS0 root=/ pci=pcie_scan_all" \
-	-device pcie-root-port,id=rp0,chassis=1,slot=1 \
-	-device virtio-net-pci,bus=rp0
-
-~ # mylspci -t
--[0000:00]-+-00.0
-           +-01.0
-           +-02.0
-           +-03.0-[01]----00.0
-           +-1f.0
-           +-1f.2
-           \-1f.3
-00:03.0--> pcie-root-port
-
-
-2. Kernel bzImage compiled with following changes:
-	2.1 CONFIG_PCIEAER=y in config
-	2.2 AER_MAX_MULTI_ERR_DEVICES set to 0
-	Since there is no pcie-testdev in QEMU, it is impossible to create
-	a 5-level hierarchy of PCIe devices in QEMU. So we simulate the
-	error scenario by changing the limit to 0.
-	2.3 Log added at the required place in aer.c.
-
-3. Both correctable and uncorrectable errors were injected on
-pcie-root-port via HMP command (pcie_aer_inject_error) in QEMU.
-HMP Command used are as follows:
-	3.1 pcie_aer_inject_error -c rp0 0x1
-	3.2 pcie_aer_inject_error -c rp0 0x40
-	3.3 pcie_aer_inject_error rp0 0x10
-
-Resulting dmesg:
-================
-[    0.380534] pcieport 0000:00:03.0: AER: enabled with IRQ 24
-[   55.729530] pcieport 0000:00:03.0: AER: Exceeded max allowed (0) addition of PCIe devices for AER handling
-[  225.484456] pcieport 0000:00:03.0: AER: Exceeded max allowed (0) addition of PCIe devices for AER handling
-[  356.976253] pcieport 0000:00:03.0: AER: Exceeded max allowed (0) addition of PCIe devices for AER handling
-
- drivers/pci/pcie/aer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 70ac66188367..3995a1db5699 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1039,7 +1039,8 @@ static int find_device_iter(struct pci_dev *dev, void *data)
- 		/* List this device */
- 		if (add_error_device(e_info, dev)) {
- 			/* We cannot handle more... Stop iteration */
--			/* TODO: Should print error message here? */
-+			pci_err(dev, "Exceeded max allowed (%d) addition of PCIe "
-+				"devices for AER handling\n", AER_MAX_MULTI_ERR_DEVICES);
- 			return 1;
- 		}
+On Wed, Jun 11, 2025 at 05:06:15PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-06-11 11:55:23 [-0300], Arnaldo Carvalho de Melo wrote:
+> > commit 8386dc356158fc50c55831c96b1248e01d112ebc
+> > Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Date:   Wed Jun 11 11:25:42 2025 +0200
+> > 
+> >     perf bench futex: Fix prctl include in musl libc
+> >     
+> >     Namhyung Kim reported:
+> >     
+> >       I've updated the perf-tools-next to v6.16-rc1 and found a build error
+> >       like below on alpine linux 3.18.
+> >     
+> >         In file included from bench/futex.c:6:
+> >         /usr/include/sys/prctl.h:88:8: error: redefinition of 'struct prctl_mm_map'
+> >            88 | struct prctl_mm_map {
+> >               |        ^~~~~~~~~~~~
+> >         In file included from bench/futex.c:5:
+> >         /linux/tools/include/uapi/linux/prctl.h:134:8: note: originally defined here
+> >           134 | struct prctl_mm_map {
+> >               |        ^~~~~~~~~~~~
+> >         make[4]: *** [/linux/tools/build/Makefile.build:86: /build/bench/futex.o] Error 1
+> >     
+> >       git bisect says it's the first commit introduced the failure.
+> >     
+> >     So your /usr/include/sys/prctl.h and
+> >     /linux/tools/include/uapi/linux/prctl.h both provide struct prctl_mm_map
+> >     but their include guard must be different.
+> >     
+> >     My /usr/include/sys/prctl.h is provided by glibc and contains the
+> >     prctl() declaration. It includes also linux/prctl.h.  The
+> >     tools/include/uapi/linux/prctl.h is the same as
+> >     /usr/include/linux/prctl.h.
+> >     
+> >     The /usr/include/sys/prctl.h on alpine linux is different. This is
+> >     probably coming from musl. It contains the PR_* definition and the
+> >     prctl() declaration.  So it clashes here because now the one struct is
+> >     available twice.
+> >     
+> >     The man page for prctl(2) says:
+> >     
+> >     |       #include <linux/prctl.h>  /* Definition of PR_* constants */
+> >     |       #include <sys/prctl.h>
+> >     
+> >     so musl doesn't follow this.
+> >     
+> >     So align with the other builds.
+> >     
+> >     Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> >     Reported-by: Namhyung Kim <namhyung@kernel.org>
+> >     Link: https://lore.kernel.org/r/20250611092542.F4ooE2FL@linutronix.de
  
--- 
-2.43.0
+> s/Link/Closes/
 
+ok
+ 
+> >     [ Remove one more in tools/perf/bench/futex-hash.c and conditionally define PR_FUTEX_HASH and friends ]
+> >     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > 
+> > diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
+> > index fdf133c9520f73a4..d2d6d7f3ea331c84 100644
+> > --- a/tools/perf/bench/futex-hash.c
+> > +++ b/tools/perf/bench/futex-hash.c
+> > @@ -18,7 +18,6 @@
+> >  #include <stdlib.h>
+> >  #include <linux/compiler.h>
+> >  #include <linux/kernel.h>
+> > -#include <linux/prctl.h>
+> >  #include <linux/zalloc.h>
+> >  #include <sys/time.h>
+> >  #include <sys/mman.h>
+> > diff --git a/tools/perf/bench/futex.c b/tools/perf/bench/futex.c
+> > index 26382e4d8d4ce2ff..4c4fee107e5912d5 100644
+> > --- a/tools/perf/bench/futex.c
+> > +++ b/tools/perf/bench/futex.c
+> > @@ -2,11 +2,18 @@
+> >  #include <err.h>
+> >  #include <stdio.h>
+> >  #include <stdlib.h>
+> > -#include <linux/prctl.h>
+> >  #include <sys/prctl.h>
+> >  
+> This is what I had locally and was waiting for confirmation.
+> 
+> >  #include "futex.h"
+> >  
+> > +#ifndef PR_FUTEX_HASH
+> > +#define PR_FUTEX_HASH                   78
+> > +# define PR_FUTEX_HASH_SET_SLOTS        1
+> > +# define FH_FLAG_IMMUTABLE              (1ULL << 0)
+> > +# define PR_FUTEX_HASH_GET_SLOTS        2
+> > +# define PR_FUTEX_HASH_GET_IMMUTABLE    3
+> > +#endif // PR_FUTEX_HASH
+> 
+> Is this needed? Aren't these defines coming from that local copy?
+
+So, these are, as you say, in the copied linux/prctl.h, but in musl libc
+we have:
+
+/tmp/perf-6.16.0-rc1 $ grep 'struct prctl_mm_map {' /usr/include/linux/prctl.h 
+struct prctl_mm_map {
+/tmp/perf-6.16.0-rc1 $ grep 'struct prctl_mm_map {' /usr/include/sys/prctl.h 
+struct prctl_mm_map {
+/tmp/perf-6.16.0-rc1 $
+
+And sys/prctl.h doesn't include linux/prctl.h, if we do it, we get
+multiple definitions for 'struct prctl_mm_map'.
+
+While in fedora (probably in all the others, haven't checked, but no
+failure on them from my last container set build tests):
+
+⬢ [acme@toolbx perf-tools]$ grep 'struct prctl_mm_map {' /usr/include/linux/prctl.h
+struct prctl_mm_map {
+⬢ [acme@toolbx perf-tools]$ grep 'struct prctl_mm_map {' /usr/include/sys/prctl.h
+⬢ [acme@toolbx perf-tools]$
+
+furthermore fedora's sys/prctl.h includes linux/prctl.h, while musl libc
+doesn't.
+
+I thought this would be something fixed in newer alpine versions, but
+no:
+
+toolsbuilder@five:~$ grep FAIL dm.log.old/summary 
+   5    19.53 alpine:3.16                   : FAIL gcc version 11.2.1 20220219 (Alpine 11.2.1_git20220219) 
+   6    20.83 alpine:3.17                   : FAIL gcc version 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+   7    13.94 alpine:3.18                   : FAIL gcc version 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+   8    16.60 alpine:3.19                   : FAIL gcc version 13.2.1 20231014 (Alpine 13.2.1_git20231014) 
+   9    15.72 alpine:3.20                   : FAIL gcc version 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+  10    16.38 alpine:3.22                   : FAIL gcc version 14.2.0 (Alpine 14.2.0) 
+  11    15.09 alpine:edge                   : FAIL gcc version 14.2.0 (Alpine 14.2.0) 
+toolsbuilder@five:~$
+
+So the easiest way out of this seems to be not to explicitely include
+linux/prctl.h and define the new stuff conditionally, as I did, right?
+
+- Arnaldo
+ 
+> >  void futex_set_nbuckets_param(struct bench_futex_parameters *params)
+> >  {
+> >  	unsigned long flags;
+> 
+> Sebastian
 
