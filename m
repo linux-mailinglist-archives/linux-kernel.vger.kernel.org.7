@@ -1,140 +1,181 @@
-Return-Path: <linux-kernel+bounces-681752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEEFAD56B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55740AD56B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48402178411
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:16:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5081786C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB117281358;
-	Wed, 11 Jun 2025 13:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE51288C00;
+	Wed, 11 Jun 2025 13:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BRqCiJC/"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="r2v2gk1R"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3836288CB9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C721288512
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749647708; cv=none; b=pnJQRX3wyedJaY7Bayke0dTNKkdTwQcLxpbmwYlMvXipVz8yFkZM5P/17sguiUMX1EkB/HSwXj2kWua8qtvpPEZPBhFymNr9ebo6NmPqfATlPhJ4KlqEV7gg4fsmG4GfG+KaNIaI74Io8briMcZBDBT3+cVaub+ssoqdiN1RTuk=
+	t=1749647736; cv=none; b=oKfE+jbjCcH4UF6Foug6TuP/58+a4AHW51xF7CVjwOVeKpUioFqtZDeLId/rX6XQZYGXvsbF1eBM5wjmFe+wI09Q/y4KXtepaJ6zAibTYxRhMg1oGGjHjGoEX5vRGJ2rLjNq6BkpW1QzYc9zkoa09ccJuxuxsQ1wB241nbeL63I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749647708; c=relaxed/simple;
-	bh=tLbPoPnRW0rdPQUBzg2TyznGxUv67v8X6d5+AGG7jj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SEcjYi8PE2Hw0iAy57lpzeGi8+6k7wZa9ICJc3CBtp1/wm9IVHcBt+2wMiiCBu4sKZOnwH5ovNfvuH/PTiud1xyDYWg6zoYEFYnCIhBIVce6kkTZFeAc0reKu8wmEfTkO7G0zGj3q/d/N2Cf6K3hCHcqM/oVWgJlINeumKtv0Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BRqCiJC/; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450dd065828so46478705e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:15:05 -0700 (PDT)
+	s=arc-20240116; t=1749647736; c=relaxed/simple;
+	bh=x4u3EZN+FRO07nkhS1GFPucsrVs1SEnvS+23bZ+Vu9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PWdnSoTkQvy+NNW2TKwEYEtiBwNwTH9YLznXZRSkZiB+Miruhh0d2MLaWPzBaYdQf3Avfxp+voOSZq3ochqtklhncl2QVpOJlNNlu2vbrH4DyyXQ9ZLxALb9CvYDEsmKtKKRJ3NMsrukaSaXpYe3lmQ7jud4xLUG0Y74PuZdxUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=r2v2gk1R; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a6f0bcdf45so50369431cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749647704; x=1750252504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1749647733; x=1750252533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lPUZPI4tBuk4J3QMbJJf2HlNXfqlGDxMUfNoYa/lU9E=;
-        b=BRqCiJC/ED7D/BnCt1SExf6DJ4Qlh9W4Wt9571YhEn7lPwdVZAuN7tMxM2/6fHoGQs
-         Sivb2Og8xm6DTIqlbIzUyCnUIwTC43RPSGUQE7MLKTxmSAiz/bqn24+nglW/8i4t7AIq
-         4HwGShV480CVTHyzcJMQ2TBCHMWH5Qneu2DXXO1dzQkRuCEMVscOCSxe8b4OyXVCMfql
-         NBZeH6oc+GVve9ea4nb74HC9lf4PQMheYJL6mCne46kihrTAAgDefD5naY7HvZfE5xxs
-         ZgpFvbiM5HKCvtbkawTJaO3rPuM2noWepIRnwN9TQjBkX5pzKmyNS5FT6fXkHwJxSzTR
-         d3nA==
+        bh=Bx+QJSwdqHmxmjJfWKsN6eCcQk7vmKe/DJTvo5pGcrg=;
+        b=r2v2gk1Rmz0C2ZXXU0jelvh1Tlpkg1VMPNfL7JVzjvsoSVf14TyJlVWQLArTqvK4iR
+         GMT5aBGHtOSaaP/c2YddR2rUdhh2JycUoWbNUdPgPxvoB2DBJWoaJXjN5jwjyVE3fpGs
+         72o2wjcN1+GCsiEGZTjrgb1GZCdwgnFpB/QCEHvCBFzWsNnPA52f8k+/kZfSKrLq7baJ
+         77/JyLHNpwR8QVCeOebNv1CEUxyt/PuUrFjnZhXYxEGb1qoCNiQ1KzUdyS4lfZf3Zo1r
+         LnvHOdckKUAyjgLblRps9aFDQDABlGlaBvi1bKWD5TdZYm5dMlgzLyi3P1/iKN9HbyA/
+         c9tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749647704; x=1750252504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749647733; x=1750252533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lPUZPI4tBuk4J3QMbJJf2HlNXfqlGDxMUfNoYa/lU9E=;
-        b=BNhPYiA578bsnaWFa2Nic6VFjWcCoKK0z2QZKVbjNm86QDoDmXuJ0j+CF9HzoCfJA1
-         GkCwdlVaSpCSf5imTk7/eh3QGUH2EzDDgvp06zGwjXeZGRwVDw64DCz4xIa7bXrmRinH
-         yiFuOtC9ym45YzgfgL5a6jJmhxtn+3u3Y9kNNk6XLXEbVJGZDXG1oXRtBovTbmDKniEx
-         hZfPK70jlTzTvXXYfdtAKPdHCU5ijUu3ojpKRyIXCGEI51ddCyfzR3hlvk06EV4fACav
-         K/T9e7dHb28yzwaYq+ea8hxnq7sYtqloBb2QEeWaOPcuJGkVYzCjDKXVy5GU3JcWPD0G
-         ODfQ==
-X-Gm-Message-State: AOJu0Yy1wKBhKxRm5NVkbNdBvomaxBbbjxp2uDGlCz/Zsa+90iSOFP7h
-	nKKiUHiTKwbdeCFTk0tlMhuiFQ9lILwDId41fYgmXsQ8vyUmk5Bubudkf8jYOtIWuBtxZ5601dh
-	O1kqDgH0=
-X-Gm-Gg: ASbGnctxjDeQF28v55AArLDCx1qDu0HWhfwJbWJYil/LluvWtUa+B28R1Uygv7wVp4Y
-	f5pViAhneO1PSinxuozqoiUOivfAoNoCOJpCOriWp28c5l9KyyUCt9drsuP3hsON0JDY+/xL43i
-	NdF2LhdtqULus7+Fk6Sg1vdwawb0WUlAW+LcU5fZmfkgzr7HZ5qtL4sHfNzVZX1f2GvXitHM4YK
-	UM1VSoZSU747Q5feCe3PQEPImAwp5GYMxIyVmCoKfL6yAJNKPc8arzKxfdyoxxAgljpdD83FHk5
-	dZr58DEb6HauaYYo2e6a54nLUu+ILfiNAT0u3uZyArISYypI0XeGeVTfCznK84fIMfeKManatm+
-	H
-X-Google-Smtp-Source: AGHT+IEDCQXxb6hkl/L+k5lu0tdnhu90d/ndcY03SjkvorXEs0B7lerwGmcwHVSlMoDBZzRju5rICw==
-X-Received: by 2002:a05:600d:3:b0:453:c39:d0a7 with SMTP id 5b1f17b1804b1-45325232fa5mr20984545e9.5.1749647703983;
-        Wed, 11 Jun 2025 06:15:03 -0700 (PDT)
-Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323b67ccsm15300103f8f.40.2025.06.11.06.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 06:15:03 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v3 9/9] [Doc] Workqueue: add WQ_PERCPU
-Date: Wed, 11 Jun 2025 15:14:38 +0200
-Message-ID: <20250611131438.651493-10-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250611131438.651493-1-marco.crivellari@suse.com>
-References: <20250611131438.651493-1-marco.crivellari@suse.com>
+        bh=Bx+QJSwdqHmxmjJfWKsN6eCcQk7vmKe/DJTvo5pGcrg=;
+        b=rrFS/1I+aJemU6dIPktf1qXdMNFRbmeJuWlR+blOp7m0NlvHFx9BvPTvS/cf8ineut
+         h9x6iGlhDoV+ky5FQ1jaO5G8/3pDIRHKrvKU5WTgcY1LmxVd34YetyUz4DWp8phJFypE
+         2+UEo531sM/Tp1ViLuyt/dGIL297KxAlJvAJ/7pqC4ivRAi7iWx90ECJg4/a4TihVaEN
+         znmbgRTGUTcJ6d1dU2PtWdsAQAiiIdfSm87MvPCtk+gvGTx8REzZ5a9gBwmgZ7Nqx6LH
+         xtf9+yCB8aplSEzIDD1mBSYREq+Nxcq1KtjzfDv6p+ZnQBzUmueADKqQbCPzg+pLh14V
+         Bt+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWiv9q+zuVSX+SixrcxltKHdouqm+1cGtwyfjXoHbXkYSU0aeSGbcC4C8mkTLQpjdE/5TQadgXDxv6QOxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIp2OphW5kDYE5DSf2Nx0TeXJcBNHM5gZVX8bAbuxCzEQ7Des0
+	P9kXdBzmDgRp90c8/yUlttEzQfDLAPYXfEywelxQ9oktVHd8KtagtmFupHcmIyNTS4nyD4bF0Y3
+	7vt82Kq9BjuTAFilzzduXXsAJaRl/wpCYmd8z/OjfMw==
+X-Gm-Gg: ASbGncvekbgk+aTNwBRuOIVYrNZ9Dp+tG15fq9kYb/vClpiVpgnRzVQ38tkaFeCPwLP
+	NlKtvswl+vAz0bAu44lQTjlN1adKthZXMW2fbrdbEeO7yKrWarihCDdn3aHJdOMc2+YJfk9IgYN
+	0VHpiSK3Tz7KKJkJbuqALDySqWLZ76dzNVag0Zwpxn
+X-Google-Smtp-Source: AGHT+IHkj+/aNhbEvJ86/UIGCIx4gF59E2n+BXlPkeJ7OIUIHWfiwDNSQWWRAB99p0osoYKzpjGZCD42Uxr3WOr2ynM=
+X-Received: by 2002:ac8:6904:0:b0:4a3:d015:38ae with SMTP id
+ d75a77b69052e-4a714bc0ca3mr46790171cf.23.1749647733254; Wed, 11 Jun 2025
+ 06:15:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250605171143.76963-1-pratyush@kernel.org> <aEKhF3HcrvG77Ogb@kernel.org>
+ <mafs0jz5osutx.fsf@kernel.org> <aEc30BoLE9HRxiZm@kernel.org>
+ <CA+CK2bAAbZjS2Og79xxLcDtNf-eM0up-8fwhd4fg_dp0j_TahA@mail.gmail.com>
+ <aEfGTXrsEL5-DuF1@kernel.org> <CA+CK2bDXOWzrTsNtbCCK2rabNysf0JFQT5VfAjYrX5oSoiLmSQ@mail.gmail.com>
+ <aEhgNU80Dr9iRwoD@kernel.org> <CA+CK2bD3n=JDuSsMGvsyMnVbPhGdhdf6zWFDa3KpzRGEXygdgQ@mail.gmail.com>
+ <mafs0qzzqo2bg.fsf@kernel.org>
+In-Reply-To: <mafs0qzzqo2bg.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 11 Jun 2025 09:14:55 -0400
+X-Gm-Features: AX0GCFvQtpuz31GBIWBQSIsnOG-xC0O1tIo1gpevWjl4XB1iep4R0wvTpWnG7zw
+Message-ID: <CA+CK2bBoMfJuUCV6sL80kwzYPnENnt7fDk2jRMPV0iPn1jCJdw@mail.gmail.com>
+Subject: Re: [PATCH] kho: initialize tail pages for higher order folios properly
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Alexander Graf <graf@amazon.com>, 
+	Changyuan Lyu <changyuanl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Michal Clapinski <mclapinski@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Workqueue documentation upgraded with the description
-of the new added flag, WQ_PERCPU.
+On Wed, Jun 11, 2025 at 9:06=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
+>
+> On Tue, Jun 10 2025, Pasha Tatashin wrote:
+>
+> >> > > I think it should be the other way around, KHO should depend on
+> >> > > !DEFERRED_STRUCT_PAGE_INIT.
+> >> >
+> >> > Agreed, and this is what I first tried, but that does not work, ther=
+e
+> >> > is some circular dependency breaking the build. If you feel
+> >> > adventurous you can try that :-)
+> >>
+> >> Hmm, weird, worked for me :/
+>
+> Worked for me as well.
+>
+> >
+> > I am super confused, it did not work for me over weekend, and now it
+> > is working. Even `make menuconfig` would not work. Anyways, I will put
+> > it in the appropriate place.
+> >
+> >>
+> >> > > > We will need to teah KHO to work with deferred struct page init.=
+ I
+> >> > > > suspect, we could init preserved struct pages and then skip over=
+ them
+> >> > > > during deferred init.
+> >> > >
+> >> > > We could, but with that would mean we'll run this before SMP and i=
+t's not
+> >> > > desirable. Also, init_deferred_page() for a random page requires
+> >> >
+> >> > We already run KHO init before smp_init:
+> >> > start_kernel() -> mm_core_init() -> kho_memory_init() ->
+> >> > kho_restore_folio() -> struct pages must be already initialized here=
+!
+> >> >
+> >> > While deferred struct pages are initialized:
+> >> > start_kernel() -> rest_init() -> kernel_init() ->
+> >> > kernel_init_freeable() -> page_alloc_init_late() ->
+> >> > deferred_init_memmap()
+> >> >
+> >> > If the number of preserved pages that is needed during early boot is
+> >> > relatively small, that it should not be an issue to pre-initialize
+> >> > struct pages for them before deferred struct pages are initialized. =
+We
+> >> > already pre-initialize some  "struct pages" that are needed during
+> >> > early boot before the reset are initialized, see deferred_grow_zone(=
+)
+> >>
+> >> deferred_grow_zone() takes a chunk in the beginning of uninitialized r=
+ange,
+> >> with kho we are talking about some random pages. If we preinit them ea=
+rly,
+> >> deferred_init_memmap() will overwrite them.
+> >
+> > Yes, this is why I am saying that we would need to skip the KHO
+> > initialized "struct pages" somehow during deferred initialization. If
+> > we create an ordered by PFN list of early-initialized KHO struct
+> > pages, skipping during deferred initialization could be done
+> > efficiently.
+>
+> Or keep things simple and don't use any KHO struct pages during early
+> init. You can access the page itself, just don't use its struct page.
+>
+> Currently the only user of kho_restore_folio() during init is
+> kho_memory_init(). The FDT is accessed by doing
+> phys_to_virt(kho_in.fdt_phys) anyway, so there is really no need for
+> restoring the folio so early. It can be done later, for example when LUO
+> does the finish event, to clean up and free the folio.
 
-Also the WQ_UNBOUND flag documentation has been integrated
+Good suggestion, however, KHO does not have any sophisticated users
+that we are going to be adding as part of the live update work in the
+future: IR, KVM, early VCPU threads, and so on. So, while today, this
+might work, in the future, I am not sure if we should expect struct
+pages are not accessed until after deferred initialization or simply
+fix it once and for all.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- Documentation/core-api/workqueue.rst | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Pasha
 
-diff --git a/Documentation/core-api/workqueue.rst b/Documentation/core-api/workqueue.rst
-index e295835fc116..ae63a648a51b 100644
---- a/Documentation/core-api/workqueue.rst
-+++ b/Documentation/core-api/workqueue.rst
-@@ -183,6 +183,12 @@ resources, scheduled and executed.
-   BH work items cannot sleep. All other features such as delayed queueing,
-   flushing and canceling are supported.
- 
-+``WQ_PERCPU``
-+  Work items queued to a per-cpu wq are bound to that specific CPU.
-+  This flag it's the right choice when cpu locality is important.
-+
-+  This flag is the complement of ``WQ_UNBOUND``.
-+
- ``WQ_UNBOUND``
-   Work items queued to an unbound wq are served by the special
-   worker-pools which host workers which are not bound to any
-@@ -200,6 +206,10 @@ resources, scheduled and executed.
-   * Long running CPU intensive workloads which can be better
-     managed by the system scheduler.
- 
-+  **Note:** This flag will be removed in future and all the work
-+  items that dosen't need to be bound to a specific CPU, should not
-+  use this flags.
-+
- ``WQ_FREEZABLE``
-   A freezable wq participates in the freeze phase of the system
-   suspend operations.  Work items on the wq are drained and no
--- 
-2.49.0
-
+>
+> --
+> Regards,
+> Pratyush Yadav
 
