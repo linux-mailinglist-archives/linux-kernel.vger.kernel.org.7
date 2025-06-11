@@ -1,133 +1,156 @@
-Return-Path: <linux-kernel+bounces-681528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697A2AD53DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:26:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35E7AD53E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3571884D0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CBB617A7F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193C025BEEB;
-	Wed, 11 Jun 2025 11:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27A22609FB;
+	Wed, 11 Jun 2025 11:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CTnPQHIR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaOa9g9y"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A902E6108;
-	Wed, 11 Jun 2025 11:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABE225BF06;
+	Wed, 11 Jun 2025 11:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749641168; cv=none; b=rBdFBsUf/3HcGIlB15KwSFTWPqgdhLj8JL4nULRzYYsawNM+pyKLiM5YYLy5815ogID/dmbIb6bzoJUr6qWthiXLjQzYkJfpGUXasVNVKdnjWBgN+izjComHBB+VGsreZ2FZxAv8pRIs+9d9EaYdB0gAXgl+dIiCv2LD1rH8800=
+	t=1749641340; cv=none; b=nzQ3YTkvNhulpNGtiNdiXlU2lWkwXK0i2ZIgJJCK5MCHJanKpb42VLVGhoaGp3ocWPeR2+fDX2RYuQLUmb8nEPXPr+hiC3jzuCXlW73wQcsPbwdiYKnV89lOuxF2gerkkoY99bAs7sSA174Btbg1XIUIeSkrLNXDzyYmsX13aLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749641168; c=relaxed/simple;
-	bh=2GfVP3Z9YcDigzZONt06cS6x+4ldhMcMNo3koUPT450=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jrELEcMcZE8uK+qo3vlzvQbOvoUwQQ1fkhJCDlsvGs3iBD4zlF5+/7QQRVzVLE7uVlcFOOjUfjo5xsGz7DI0JtOSYfo5GlI8SwxImyTxYyCNVXHdOxTLUdb7+HQRSwGBd7be4GCi0O5QA0Q41uHTZzouhJfOddK+keRJ0LGtwGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CTnPQHIR; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749641167; x=1781177167;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=2GfVP3Z9YcDigzZONt06cS6x+4ldhMcMNo3koUPT450=;
-  b=CTnPQHIR8YJ2MNRJHuAHzOGk3AksCB2aj/r361V6PY4nVuyXVh5dTsP7
-   mrMLPsYG1YB/UjhDVOo/Kf1pZ0u3WUWvHIavbI8B5n/frbmbm2dJPrEi+
-   jKqNdKHT+VGkAc77pFfKOsDmeXSQ7xHgJ6FDJSicqXlVpjexdYatyjd21
-   GuwwR+XssPjRy5z321jT0WJFrf7MSZ3C/mfjnpZAGwQ7jmSb2r6saj1dl
-   gQy56/BuigU97tDP9+EpoOmyBn48Fc/PCBy605WJ5j+JbYihpZg+ruAMr
-   EACOx2StGNOIqp7fSoa1QLMGwwbgsFKunloLYv0++SRtcKr15IX/2EoLM
-   A==;
-X-CSE-ConnectionGUID: 95yIAYKFQR6COTWX1XyqcA==
-X-CSE-MsgGUID: kGqALrGAQEGIG07RgawYaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51772672"
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="51772672"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 04:26:07 -0700
-X-CSE-ConnectionGUID: WDQ9oEjJQESrmQ9f+xgpmg==
-X-CSE-MsgGUID: SgwegByST9mmtk0IF6lBKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="151950817"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.183])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 04:26:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 11 Jun 2025 14:25:59 +0300 (EEST)
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-    Christophe Leroy <christophe.leroy@csgroup.eu>, 
-    linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 05/33] powerpc/powermac: remove unneeded tty includes
-In-Reply-To: <20250611100319.186924-6-jirislaby@kernel.org>
-Message-ID: <3bd8996c-b463-4b1d-cc45-2a84d47f6cd0@linux.intel.com>
-References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-6-jirislaby@kernel.org>
+	s=arc-20240116; t=1749641340; c=relaxed/simple;
+	bh=BFkoTQH80gn0XGOCGawAuDiVmIIV+UeV0+IN3DR1NnE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jCBInbUbS4HX4UT5yHZIztFB6gzOFjalvgvfz8KXnoNXmwkhMmDojBctQJPH1UZngsVCiw+ww8gUWRPrTFS0MC4uhty4tN4EMzVPSnYegN+7NsQ7Be5na4BEXRFyBVPXCEj9mbvYcan4PVoiFVUJeQTIlHGUJCyR7MmSKXarg14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aaOa9g9y; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3116db72bd7so7117142a91.2;
+        Wed, 11 Jun 2025 04:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749641338; x=1750246138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w5kLuTPe1ZjtYfZALE1yPZ1I7y31mtKy+cX6Moc8i2s=;
+        b=aaOa9g9ybve5arrce6zM6ZspQHcBOV2uu4/6xHzkgoIo9B6+2z3mZQKUH+VhwnwQjv
+         I3ZF06xC7D0Cos+K7PDdZcmAl0U/PmdfUIpUFeqXZ2rKhrDPBELucWYq/3ryKtMoCe5N
+         PwNXKiKq7/Ubbe8PSTeM6lUpWygRamkkUoLzQ8lePUPnoFLcSR+nuoi0hFAFCC5/rMXE
+         ZVRNYTxgWK0CV5ri5VJx9T8NDmzOvmWj7At2bJDh/5UY4gn+uNDs3Ezod56D+CZmIyMt
+         nGtI/8G5V4gfcyesCeuJdFqlWzm6sBLfsUv/b7b8gnd9ayzTRn2VoR+V9R4T6gzOchxx
+         Ag7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749641338; x=1750246138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w5kLuTPe1ZjtYfZALE1yPZ1I7y31mtKy+cX6Moc8i2s=;
+        b=oHKUTquyIO28v1wbyg2c42orc6uJzItVfjb31zyhmHLn7EdYJGR3onwLysrNgZVKJA
+         wTfuOjEGNa7R5zuB4yYW3pr1IXZhoQZ8UagQ23mLjiX2GVvXXHNCY4GtnAoAR6hhvQGQ
+         1aHMe1MYDaodZaR5hXXZnEvX1fGPbfS6sMQjSIPXGRniezyUokhKOmntMo4xcgN7x31t
+         vbFwlCBkItOVvRj3rFsrEL+73mNp4lmctEm4c6yGNJjEf4+nLS05MG3X0d4RFWGwDR9O
+         gYH6+ENP7mjJWfrHOsTIOTOlxvNCUHV8wbMuvIRoEMoPBPQP3erZOCeKlSI49R1Kyx3t
+         bsCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEWtE7hdqcPrB4TnYNI+veFhbGbSv1Q9R0cY1jDgFcksquGZZQKjM3eQWYpSgSJMsZJr4SLAhzLpaYWbaP@vger.kernel.org, AJvYcCVQZDkI7+wYDS/zZ2UlX+Xg4mLdIio8+QZg1F4QJvn1R3+SWoO9cfPjw9zBpQcNVLuJ6cXLJDN9J5XU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2TPtfXeSBU4ivUzjh84Lz06wadYm+ppIStr2qx/1zN+KR1uz+
+	zjX+Pe5P9vvGuOe1BKpBCnLrpl3SJ2ohA3dxJqZqDr2S4FMvrymnyTzC
+X-Gm-Gg: ASbGncuULT1Ot03BIDqY0LR1JoHT+GVuDn497KfvD3kcMmkqzkfEDpwkPuMyBqAzsBS
+	hB4jRienwWML9+hSFUDfcyf9hDj83uvE0n2afxCZapjxmRxnN8//TvQxHAtmQnbb7HLq//ZIYbF
+	SDDCwDnLKlRlFt4H77Nzgc94GJkjFWRUF4uOt636xwj2hSXdV9Fhv7IzWZfI6C8p2VvDd4Js4dT
+	rsmx/YSKP906cC7gpEgy+LEUcHtwibmnCPp/Nk6m6mHVRyJwU1RhbwbqRiCeXvYcQ+cxMhD5Nap
+	qplbC0WQbBw99ExkPE9j9DWPnwS61teeposi+JHUwgrmbCXjtlF04ye6pV/YZyZQZZglqej+VSl
+	ByqEr1BaLk5bz55vC+VYrBDeKSLge1sHkiosb2uLfXGvfvqH59udIier+agWgmObn2CnnwTkGtt
+	k=
+X-Google-Smtp-Source: AGHT+IGWw068vvXp3+yEPF8FPf8vG5yufFWpaOywJh8DgaLYGGbghT8z+gqFAOziW+6BeSzW7/P0rw==
+X-Received: by 2002:a17:90b:584d:b0:311:c939:c859 with SMTP id 98e67ed59e1d1-313af28d147mr4395082a91.30.1749641337938;
+        Wed, 11 Jun 2025 04:28:57 -0700 (PDT)
+Received: from jason-System-Product-Name.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313b1fee63asm1082246a91.3.2025.06.11.04.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 04:28:57 -0700 (PDT)
+From: Jason Hsu <jasonhell19@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	joel@jms.id.au,
+	andrew@codeconstruct.com.au,
+	patrick@stwcx.xyz,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: yang.chen@quantatw.com,
+	jerry.lin@quantatw.com,
+	Jason Hsu <jasonhell19@gmail.com>
+Subject: [PATCH v8 0/2] Add Meta(Facebook) Ventura BMC(AST2600)
+Date: Wed, 11 Jun 2025 19:26:48 +0800
+Message-Id: <20250611112650.595554-1-jasonhell19@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-291572204-1749641159=:957"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Add Linux device tree entry related to Meta(Facebook) Ventura specific
+devices connected to BMC(AST2600) SoC.
 
---8323328-291572204-1749641159=:957
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+---
+v1:
+    1. Create ventura dts file.
+    2. Add commit msg.
+    3. Use format-patch to generate patch.
+    4. Add subject prefixes matching the subsystem.
+---
+v2:
+    1. Modify email content.
+---
+v3:
+    1. Add mail list.
+---
+v4:
+    1. Apply git send-email --thread option.
+    2. Sort nodes in the dts alphanumerically.
+---
+v5:
+    1. Run scripts/checkpatch.pl and fix reported warnings.
+    2. Remove unnecessary 88E6393X CONFIG FRU.
+---
+v6:
+    1. Add a new stage for the DTS change.
+    2. Run scripts/checkpatch.pl and fix reported error.
+    3. Fix the issue in a separate patch.
+---
+v7:
+    1. Fix broken indentation in the device tree file.
+    2. Sort nodes alphabetically, then by address if equal.
+    3. Rename fan sensor nodes from 'hwmon' to 'fan-controller'.
+---
+v8:
+    1. This patch series has significant changes compared to
+       previous versions, and quite some time has passed since the last
+       submission.Therefore, previously received Acked-by/Reviewed-by/Tested-by
+       tags are not included in this version.
+       If needed, tags can be added again after review of thisnew version.
+---
+Signed-off-by: Jason Hsu <jasonhell19@gmail.com>
 
-On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
+Jason Hsu (2):
+  dt-bindings: arm: aspeed: add Meta Ventura board
+  ARM: dts: aspeed: ventura: add Meta Ventura BMC
 
-> All these includes must have been cut & pasted. The code does not use
-> any tty or vt functionality at all.
->=20
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> ---
->  arch/powerpc/platforms/powermac/setup.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platf=
-orms/powermac/setup.c
-> index e119ced05d10..eb092f293113 100644
-> --- a/arch/powerpc/platforms/powermac/setup.c
-> +++ b/arch/powerpc/platforms/powermac/setup.c
-> @@ -28,13 +28,11 @@
->  #include <linux/ptrace.h>
->  #include <linux/export.h>
->  #include <linux/user.h>
-> -#include <linux/tty.h>
->  #include <linux/string.h>
->  #include <linux/delay.h>
->  #include <linux/ioport.h>
->  #include <linux/major.h>
->  #include <linux/initrd.h>
-> -#include <linux/vt_kern.h>
->  #include <linux/console.h>
->  #include <linux/pci.h>
->  #include <linux/adb.h>
+ .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+ arch/arm/boot/dts/aspeed/Makefile             |    1 +
+ .../aspeed/aspeed-bmc-facebook-ventura.dts    | 1481 +++++++++++++++++
+ 3 files changed, 1483 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dts
 
-Seems true. I had to actually scan through the file as it does have some=20
-console related setup.
+--
+2.34.1
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-291572204-1749641159=:957--
 
