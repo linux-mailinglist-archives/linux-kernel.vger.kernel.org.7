@@ -1,136 +1,203 @@
-Return-Path: <linux-kernel+bounces-682534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD2DAD616C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2804FAD6162
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D283AB7E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:34:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04AC53AB656
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F0024468B;
-	Wed, 11 Jun 2025 21:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2614A242D98;
+	Wed, 11 Jun 2025 21:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="i0HX7Xye"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dgjocorr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6997E248888
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 21:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4FEA59;
+	Wed, 11 Jun 2025 21:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749677635; cv=none; b=pxrW82mojMhHRYz8psTjftFBaa65i9BCNGQdElQpSIUiNhUO6gc1421FzbdRd1XGYfOuMUw3xTnbk4CY81EbZ8zNFkECfTcdklZoimwiJPS8x6Ly34RtdqazWvcb8kKJKwCieHOdvxaaRTxVaUNh3x2muonZJDCsQuMtixDHjpg=
+	t=1749677608; cv=none; b=dlHkEZJ0BItvBQs0am0iNtBr78QA+uF0hA+/uNWlnMWnai31g3XEutqFASSgUACAcEkoK6drVg1R+VxyE0tguyrSsZYxPwZ7bERig7ziNLUgJ1PXZIf2muBh3vpSYoOKq1/gtfay+QVh0PrLbAmwtoCjaKNgVWsqZ9Ksta8MJ/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749677635; c=relaxed/simple;
-	bh=+UrdvpKib6PZ15hVhO/T6ICol7iFeKJg7nNENfElKdg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lEh75jaZ8E/Wy03hpj/9R3Xhyq/jb6Nfh1hz6Ez42xTJ7sIQP1CB1Kz+GiBdF+ZHSVK+MpUIYR2t4IplTDRQmq3k7OhtHJabH5DLGxqaU4dhMy35hPgSqtQ4DlPhUSfZcNH3nnSORqCqduyNBDTgEsSr1tRuCDlxkOHV1QS2yxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=i0HX7Xye; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-407aaace4daso149168b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749677632; x=1750282432; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8OTSXfEM4NzvQUr9h5Q4lURNoh1I+2//AZVGJRIuPek=;
-        b=i0HX7Xyeq3GOLWAIAqB2C9YDN5SoksCfwsYpgrMJuvhXyooi0O5LkpKrqZVdxGjKqD
-         K5siStGPAvRu6akKaxLbusA/PCEqB2ibFIO6Wzvm6LMCBqpe3tzX36ia7OlWE/fZsdQy
-         Df3Gpy2iHQ3zOXi3W2RAFfc7l47eIe9wUpXmh3hiu7gpM2fnb7QgtD+cIUU26BmGo27X
-         d6AzvQdtHSlD/jNRrZrWmODwmTSw9o88f30LwSOGxTDAYuIAnEF2Wj36NZD8LIarCStN
-         4VFPKAk7gv9LMkJcvHuBxT7/RFQW9wjcFMP0DlhHsK25aYqAFwjnI0NTf37Wx3S0em2i
-         ZTEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749677632; x=1750282432;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8OTSXfEM4NzvQUr9h5Q4lURNoh1I+2//AZVGJRIuPek=;
-        b=RQR5nH/k0VQmVlToMFq3hMeWsfKtajSb7StFQVNYupgRmwbScN1fWitTSFgL4xsiR0
-         qkHTxcoqVdLhN1p7ggM75wVqBajOSt/fpbO2/e0jjHLr3jBZ0lKL/Ko+0ZpSyEHw4Hw/
-         sUwvMl4W4zLieSGkq44wFVjJTJOVccR0gJgRIyRg9Lcc3ywj6TxBf02I/vBSQWpSFag5
-         xnqHi6dxtSIcGCt/6ZD2XLMlQ+5kI5FrQuF6xPl/PbYNT5OCIPriRJQR2q2ffDIEggP8
-         /TpJa1ajJc4/dMUigfGUQR7kNcOkqK3cA6mzk9ABnOOC6qL1toXTDTJpQH0BMeW7BSPW
-         K0HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfu3lpymGIsbPHZtQbfqcIzlvOnZ9GtEBwyt/rNxidi+JGzn5FFFILU5tGuEACvXgsUZQ2XI0KHW0EHl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt/jvRuKfYiRYPF7gjyTFy1nA2Ql8OgkIzN8Abu+K/Bpj51Xvn
-	Y5pkQtBRkC+sOaBdgEiPJO/0VYKtFdrw4xTm86QquIZBPoFbKDtf8rOvjdTl3HN2LT8=
-X-Gm-Gg: ASbGncu9F7+6dlHsNmFsauKYGGY0NElSBYZBw4XU5jA3YBgyld+ub479XJxKhk1ecuR
-	9r7fGJQ+GweXKxDZX1Ek1civaCftcvuhkKeAajhqXiFEYx5z1/e4lfV00x1yP0qOlRPBaj4iywP
-	SoeDheWYp+vmqaLS5Kgz/LjcVD6z0sjfKspnof4mIAkcw5NfyVZWeWTCr//Id0RY4z6r+4NU8Ml
-	Yfz6xZ5AR9X0Quwkvwep7PDeKmPFXhxrjurhfwPeKRQ956Ikjoyv8xPLYOSvnn314nG4xvEivfB
-	J4agCAVLzJg7cd2kTTLwqb7paHfb3vE5eVu9BppSRObtYTpfLQxnbFQVNXKSLaVWxb/x
-X-Google-Smtp-Source: AGHT+IHHvkHFsG56i79uH3ZJj0ZX2FQ7Uce2eVoVKngIj1ZD4gf1DWEsuu9YbaODZNdOFjLj6X/oSw==
-X-Received: by 2002:a05:6808:3510:b0:3fe:af0b:22f7 with SMTP id 5614622812f47-40a66a70dffmr413438b6e.11.1749677632567;
-        Wed, 11 Jun 2025 14:33:52 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a682fb0bdsm2262b6e.23.2025.06.11.14.33.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 14:33:51 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 11 Jun 2025 16:33:05 -0500
-Subject: [PATCH v3 5/5] iio: amplifiers: ada4250: use dev_err_probe()
+	s=arc-20240116; t=1749677608; c=relaxed/simple;
+	bh=WspaWX6ltyvacFoa8VcS7DEX6oFplc+kX3bMWPCvjH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=svbjnDH9eJ7BEqC66fxVdssxXBixZWnSwvFNa6soTaM10PxhgYw+lwCEEPVk8almDuY/sAeLwMSDCfHApUlG+Nci31G+rr637nFv4F71JPbXtHkygbhZqequdFnW8K82/IXbE9PR1GXd74aoXipFRGgrQp3qET7XAnyIJ0T1fa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dgjocorr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9301CC4CEE3;
+	Wed, 11 Jun 2025 21:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749677607;
+	bh=WspaWX6ltyvacFoa8VcS7DEX6oFplc+kX3bMWPCvjH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DgjocorrzyV6LlvqYeg47ovX2DinXNDpF12+GXVscQTnE68zu9B17SOx8+2GS3lKE
+	 GfwiQFWta0ITGkvZVPzcBph27PxWAqX6iIMB4P/IWj4z3TCnshCpERY8/HDuKFMlhz
+	 NL2ngBo5Ldpv3o8ZkZz0A/r44C0gPwfojlyOmsL7z3rQfclup1+mI4POxg9igIKFl1
+	 jGHmQOdrO7BlSMgDdePW1L42LHcUA8EU+HMWz5nx7/I8XIih0qqf5/VIueuYcZodiU
+	 qSdTJlkLVKwxcZcSsNd3BhIdbgFSmJxPA7Ez66yumFKoQXczh5H+G4EWiUF9Iv+jNt
+	 0sJqE528PodTQ==
+Date: Wed, 11 Jun 2025 18:33:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: "Falcon, Thomas" <thomas.falcon@intel.com>,
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+	"irogers@google.com" <irogers@google.com>
+Subject: Re: [PATCH 2/2 v3] perf top: populate PMU capabilities data in
+ perf_env
+Message-ID: <aEn2JVfsx8aVIe3t@x1>
+References: <20250513231813.13846-1-thomas.falcon@intel.com>
+ <20250513231813.13846-2-thomas.falcon@intel.com>
+ <a327dc2e5837a743a08403b5ad58dbe5e8c4f926.camel@intel.com>
+ <aEiUqtB9Zg9ZBQO6@x1>
+ <6445eecf1767aa7e4a64af2feed48075ac101a1c.camel@intel.com>
+ <aEnpFxn9DUz_usV0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-5-bf85ddea79f2@baylibre.com>
-References: <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-0-bf85ddea79f2@baylibre.com>
-In-Reply-To: <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-0-bf85ddea79f2@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Antoniu Miclaus <antoniu.miclaus@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=856; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=+UrdvpKib6PZ15hVhO/T6ICol7iFeKJg7nNENfElKdg=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoSfYwMFTQ8L5z5An13XpNpztYa/Fsr66xfTjAO
- aTNC8++IIaJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaEn2MAAKCRDCzCAB/wGP
- wMYCCACFpuIYSrVhrd9L04vPaIBden76mfr11q1AdvBFTtXXtj4AJawZ9JNmpDY+PjEqr2pdgP2
- 8HFjGcGdpEhu0C9femdF5pHA447DPZSo3DaVwB9Trmcxpe7AMvkwIu1JAt38FUwNGqTtfWclV1o
- XJIKiVnOLc1Dw33HdOC/BWUL0/z1epeigIVUTk6X7VkaGcwRUiIBHtkicx5uK3E6Zuqa5ZSNIWU
- 52C8AxvgCS7jcGO6ZgoPWw7mXBLBsGLWC6SO3cROfhu32SU0I6oaMKJGoNf8dFld5fwGawlWRue
- L1AjDSHH+p5SozGvPlfUUpsBlzdI2FQyh3KRNVUyX52ZyxXv
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEnpFxn9DUz_usV0@google.com>
 
-Use dev_err_probe() when returning an error in the probe function.
+On Wed, Jun 11, 2025 at 01:37:43PM -0700, Namhyung Kim wrote:
+> On Wed, Jun 11, 2025 at 07:00:04PM +0000, Falcon, Thomas wrote:
+> > On Tue, 2025-06-10 at 17:25 -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Mon, Jun 09, 2025 at 04:21:39PM +0000, Falcon, Thomas wrote:
+> > > > Ping?
+> > > > 
+> > > > Thanks,
+> > > > Tom
+> > > > 
+> > > > On Tue, 2025-05-13 at 18:18 -0500, Thomas Falcon wrote:
+> > > > > Calling perf top with branch filters enabled on Intel CPU's
+> > > > > with branch counters logging (A.K.A LBR event logging [1]) support
+> > > > > results in a segfault.
+> > > > > 
+> > > > > Thread 27 "perf" received signal SIGSEGV, Segmentation fault.
+> > > > > [Switching to Thread 0x7fffafff76c0 (LWP 949003)]
+> > > > > perf_env__find_br_cntr_info (env=0xf66dc0 <perf_env>, nr=0x0, width=0x7fffafff62c0) at util/env.c:653
+> > > > > 653			*width = env->cpu_pmu_caps ? env->br_cntr_width :
+> > > > > (gdb) bt
+> > > > >  #0  perf_env__find_br_cntr_info (env=0xf66dc0 <perf_env>, nr=0x0, width=0x7fffafff62c0) at util/env.c:653
+> > > > >  #1  0x00000000005b1599 in symbol__account_br_cntr (branch=0x7fffcc3db580, evsel=0xfea2d0, offset=12, br_cntr=8) at util/annotate.c:345
+> > > > >  #2  0x00000000005b17fb in symbol__account_cycles (addr=5658172, start=5658160, sym=0x7fffcc0ee420, cycles=539, evsel=0xfea2d0, br_cntr=8) at util/annotate.c:389
+> > > > >  #3  0x00000000005b1976 in addr_map_symbol__account_cycles (ams=0x7fffcd7b01d0, start=0x7fffcd7b02b0, cycles=539, evsel=0xfea2d0, br_cntr=8) at util/annotate.c:422
+> > > > >  #4  0x000000000068d57f in hist__account_cycles (bs=0x110d288, al=0x7fffafff6540, sample=0x7fffafff6760, nonany_branch_mode=false, total_cycles=0x0, evsel=0xfea2d0) at util/hist.c:2850
+> > > > >  #5  0x0000000000446216 in hist_iter__top_callback (iter=0x7fffafff6590, al=0x7fffafff6540, single=true, arg=0x7fffffff9e00) at builtin-top.c:737
+> > > > >  #6  0x0000000000689787 in hist_entry_iter__add (iter=0x7fffafff6590, al=0x7fffafff6540, max_stack_depth=127, arg=0x7fffffff9e00) at util/hist.c:1359
+> > > > >  #7  0x0000000000446710 in perf_event__process_sample (tool=0x7fffffff9e00, event=0x110d250, evsel=0xfea2d0, sample=0x7fffafff6760, machine=0x108c968) at builtin-top.c:845
+> > > > >  #8  0x0000000000447735 in deliver_event (qe=0x7fffffffa120, qevent=0x10fc200) at builtin-top.c:1211
+> > > > >  #9  0x000000000064ccae in do_flush (oe=0x7fffffffa120, show_progress=false) at util/ordered-events.c:245
+> > > > >  #10 0x000000000064d005 in __ordered_events__flush (oe=0x7fffffffa120, how=OE_FLUSH__TOP, timestamp=0) at util/ordered-events.c:324
+> > > > >  #11 0x000000000064d0ef in ordered_events__flush (oe=0x7fffffffa120, how=OE_FLUSH__TOP) at util/ordered-events.c:342
+> > > > >  #12 0x00000000004472a9 in process_thread (arg=0x7fffffff9e00) at builtin-top.c:1120
+> > > > >  #13 0x00007ffff6e7dba8 in start_thread (arg=<optimized out>) at pthread_create.c:448
+> > > > >  #14 0x00007ffff6f01b8c in __GI___clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+> > > > > 
+> > > > > The cause is that perf_env__find_br_cntr_info tries to access a
+> > > > > null pointer pmu_caps in the perf_env struct. A similar issue exists
+> > > > > for homogeneous core systems which use the cpu_pmu_caps structure.
+> > > > > 
+> > > > > Fix this by populating cpu_pmu_caps and pmu_caps structures with
+> > > > > values from sysfs when calling perf top with branch stack sampling
+> > > > > enabled.
+> > > > > 
+> > > > > [1], LBR event logging introduced here:
+> > > > > https://lore.kernel.org/all/20231025201626.3000228-5-kan.liang@linux.intel.com/
+> > > > > 
+> > > > > Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+> > > > > ---
+> > > > > v3: constify struct perf_pmu *pmu in __perf_env__read_core_pmu_caps()
+> > > > >     use perf_pmus__find_core_pmu() instead of perf_pmus__scan_core(NULL)
+> > > > > 
+> > > > > v2: update commit message with more meaningful stack trace from
+> > > > >     gdb and indicate that affected systems are limited to CPU's
+> > > > >     with LBR event logging support and that both hybrid and
+> > > > >     non-hybrid core systems are affected.
+> > > > > ---
+> > > > >  tools/perf/builtin-top.c |   8 +++
+> > > > >  tools/perf/util/env.c    | 114 +++++++++++++++++++++++++++++++++++++++
+> > > > >  tools/perf/util/env.h    |   1 +
+> > > > >  3 files changed, 123 insertions(+)
+> > > > > 
+> > > > > diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> > > > > index f9f31391bddb..c9d679410591 100644
+> > > > > --- a/tools/perf/builtin-top.c
+> > > > > +++ b/tools/perf/builtin-top.c
+> > > > > @@ -1729,6 +1729,14 @@ int cmd_top(int argc, const char **argv)
+> > > > >  	if (opts->branch_stack && callchain_param.enabled)
+> > > > >  		symbol_conf.show_branchflag_count = true;
+> > > > >  
+> > > > > +	if (opts->branch_stack) {
+> > > > > +		status = perf_env__read_core_pmu_caps(&perf_env);
+> > > > > +		if (status) {
+> > > > > +			pr_err("PMU capability data is not available\n");
+> > > > > +			goto out_delete_evlist;
+> > > > > +		}
+> > > > > +	}
+> > > > > +
+> > > > >  	sort__mode = SORT_MODE__TOP;
+> > > > >  	/* display thread wants entries to be collapsed in a different tree */
+> > > > >  	perf_hpp_list.need_collapse = 1;
+> > > > > diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+> > > > > index 36411749e007..6735786a1d22 100644
+> > > > > --- a/tools/perf/util/env.c
+> > > > > +++ b/tools/perf/util/env.c
+> > > > > @@ -416,6 +416,120 @@ static int perf_env__read_nr_cpus_avail(struct perf_env *env)
+> > > > >  	return env->nr_cpus_avail ? 0 : -ENOENT;
+> > > > >  }
+> > > > >  
+> > > > > +static int __perf_env__read_core_pmu_caps(const struct perf_pmu *pmu,
+> > > > > +					  int *nr_caps, char ***caps,
+> > > > > +					  unsigned int *max_branches,
+> > > > > +					  unsigned int *br_cntr_nr,
+> > > > > +					  unsigned int *br_cntr_width)
+> > > > > +{
+> > > > > +	struct perf_pmu_caps *pcaps = NULL;
+> > > > > +	char *ptr, **tmp;
+> > > > > +	int ret = 0;
+> > > > > +
+> > > > > +	*nr_caps = 0;
+> > > > > +	*caps = NULL;
+> > > > > +
+> > > > > +	if (!pmu->nr_caps)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	*caps = zalloc(sizeof(char *) * pmu->nr_caps);
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/amplifiers/ada4250.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> > > calloc?
 
-diff --git a/drivers/iio/amplifiers/ada4250.c b/drivers/iio/amplifiers/ada4250.c
-index d20ca410c506226fce7f172632d46b2ebb140a12..40f396ea906950ab79bf72cdb162794e95f76094 100644
---- a/drivers/iio/amplifiers/ada4250.c
-+++ b/drivers/iio/amplifiers/ada4250.c
-@@ -351,10 +351,8 @@ static int ada4250_probe(struct spi_device *spi)
- 	mutex_init(&st->lock);
+> > Thanks for reviewing. Is there a reason not to use zalloc here or is this related to using free
+> > instead of zfree later?
  
- 	ret = ada4250_init(st);
--	if (ret) {
--		dev_err(&spi->dev, "ADA4250 init failed\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret, "ADA4250 init failed\n");
+> Conceptually, zmalloc() = malloc() + memset() for a single entry.
+> calloc() would be more appropriate if you allocate multiple.
+
+Yes, the definition of calloc() is to alloc multiple entries and zero
+them, so no need for that explicit multiplication there.
+
+zalloc is just a malloc version that does the zeroing after allocation,
+like calloc does.
+
+zfree() is about removing references to areas of memory that are freed,
+so if someone uses that pointer that was freed(), it will deref NULL,
+not something that may be in use for something else.
+
+So its not pairing zmalloc() with zfree(), albeit that is common.
  
- 	return devm_iio_device_register(&spi->dev, indio_dev);
- }
-
--- 
-2.43.0
-
+- Arnaldo
 
