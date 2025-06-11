@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-681810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E08BAD57A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E5BAD57AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F233C17FF1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:55:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13FBB17F96B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C0628C2CA;
-	Wed, 11 Jun 2025 13:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED29C28BAB3;
+	Wed, 11 Jun 2025 13:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aS19zhAX"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lz5vG7H+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8474289E19
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55E528937E;
+	Wed, 11 Jun 2025 13:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749650102; cv=none; b=JCvrjIKunaAZ57vQ7Sc5u4HrPN8TSG69ebjtCBsZtDPP07x+jsLRonafq4JEw2vs3bRR7bfDCa7Q++Yy/dWanqnFAq8oFoFn5jgopRnIkt46wI26WW22ZGOnxGL23Iy5h7AWZ7mqIobfhUKK8W46VOBs0eO4lhkdXixVNxcYgUc=
+	t=1749650142; cv=none; b=HBUz2q+wbUe0++Rm80o9ETvzebJyeOJfLmjgwsEqKXu7kWzggJUKusmxCQYgqhkrBtT/fXWthHvTxgqlH7ISVaKM2a9I46K04vMzha8QDJUX5dQsSKhryR5rO5olCXwwUvq0DAyKeK853gWCM3lXSWQuJmgb9ZnrfKruihFO5i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749650102; c=relaxed/simple;
-	bh=4S/8XFifK+yslSu1vzucpvyrJRF9zLOqC5TSPFHxhbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mIu3QGIeQM0Pq0BnNCDr11bFnmGSEtBg6iiR/lP3PugSKd4vFnqWEaPKrAqS5xs9+ufFolgbKTgWB/fYmKPrvpE13rspz3USVieeSN0cm8Ygr0brFfMX/qqcR4by7Tyrc77bc/faWymcFNfUxNs0wmAdAsBk8gikUDa3aN/ZWtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aS19zhAX; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1749650142; c=relaxed/simple;
+	bh=IifNnRPlQTOlLPQoP4l2aK06ak5l7AOOpGK/E93CQEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LAXjk4iXVxsIq6MBWKxMO/oaHWfZ5TcQEJ+LmLtOVAh+3HdHvaYsYCHnodwQau8LIewXZXsiQ+xVWxfAvncM8jB4KX8zraw1S2oWXZO8HJQK3UGGLYiQwgpsgrnvwMt2sIPEQblunFmIrGRNS24vZPBpXmp7apn3Q0HEbPPdauM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lz5vG7H+; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so77277995e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:55:00 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so39622105e9.2;
+        Wed, 11 Jun 2025 06:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749650099; x=1750254899; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4S/8XFifK+yslSu1vzucpvyrJRF9zLOqC5TSPFHxhbQ=;
-        b=aS19zhAXhqVPSQSLjuaqCg/U+flmVfsZtOw3eHx9kQ5yJdPNiuTMds041WtJIitqLS
-         qslVtR7BETjRHOmfiwvZs0sFWAEpTVff0yeoHs87y1nUy5Juep3IFDpUKxI5lkkndkAU
-         EwH9hZzNe1i5TIuHJFrg8HJuLZqOgl1dZTxdlGTBQt0lXshiO3AhkPQ3KBP9SA5vKZur
-         FvrYRj0VY7cc+LpdcofzcwliiOqCd+d1TO/hd2yhyVSvx8Or+/GAa3nwUudxOarbaZ1B
-         yniBMf2aOsRwCnE42+3Y7mWozf8qo7/NEO0+7/CJLQZycypeIVlvdN2mGI2KWZHwMn+t
-         stQA==
+        d=gmail.com; s=20230601; t=1749650139; x=1750254939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwI5P3Q3ihOeLowm5FSpCJuMLkzkYQo2YbGk0t9yYTo=;
+        b=lz5vG7H+aHyV7HafRBRfQj5ZYRKXR1GW/0pA2upUlPqgCxaq5HOQ/U+x1tR/NSjLLD
+         YAUctI2vySqtdX+p8N3dhRgbbSoaFLLr8FD/5UgpWBM/yrKxOnYATCJyXLV+IstYK7GU
+         Pe8jJRN39rYrRysbWWrSdVOSkhdDYC8C1u4uhAsYS1pOaKFyyOPLtx8ZQ30+oO56M5Tg
+         Xx7f1Lz/oYs0dYxnU/+SIg/my1uB1ePMpdjlWRBgdtGpMz/4lkLZNB08+lxpohPVvgjl
+         MlreAX+aZdxM+HNGEh1m+JHp3ip/WxLdtFsnmjSpCnoJwtUGn8mIi8EMM2vE5zTklTXP
+         GSFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749650099; x=1750254899;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4S/8XFifK+yslSu1vzucpvyrJRF9zLOqC5TSPFHxhbQ=;
-        b=TL/NPo2mZOhJWuNBBht3TsWLMNXiUXGzNIxoyMUaqooD6yDRP/XPgROyP/jSdc8b/C
-         EOz+CUs11BrXJkiHctiSyk8hRtbsS1Kg9gDlq6I0sqGNgNnZhGv8pu1ngjKd5rZ9OQes
-         CMyiTloVZuuuVFhaHnQeLd5uw4vXxcUuoGhaa/woxNrECzNAembjVxgcQveoXvr0tIj8
-         jsfWwo022Wz0UKGzcDxzXNq5jTYcBIN7LpmrAQKqfovH9GS+ewlzME5lW++wEkAheA+a
-         MG3ZLgZegEjmfCYDcGhAVWh5N9HpoKphsDuhrIrR+9/I2hz0gpmbqq/SJq6/DTeV4BNI
-         jLuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlRceGj7c6BvtLTk7LqcLYkCM5rNsgW/rbxVObxPSYBo5VYDlknl0sP7SmJJrXbV+n6Lvcmj88BhpF530=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQJVKTZwOTC4gZz4cC7cVBmxJhUN+GUiz1zqLM1gG4GXwTsxjH
-	565izhaffVEH+Ym4tzcRRwt4yE2HIMvyJJFUANRzOvqVA+8BfmD41VFb/a9TbD2/
-X-Gm-Gg: ASbGncv4kYGWfh1G0XQIL/ifbNJ9gO/lERVyqdrZC0/evw/JnVVmyhQkdKrdtCGkK9S
-	XOQOpP8jBnUqoKU1FlCeUIrC1fmcuwWx11J64s7+g/ce1zmZMxRT9hKn8lVQ1/vcXUQqPuJAkag
-	NEAllTpHKV0IUXtVI6z+pjq2KIE8DINhOJKJQgdZJlktqbJyRfPPue1oIdnyCKf2pOhpmS/aCSY
-	2ECsiKiQeLhYUBh7gn0vbmZEhdsPs6DlVGsiHRqBdKyz7++n8RMUF/PB69omz3nSvIHIhBkMs46
-	6q+0Yep2eMrqnh/IfL8ZT9hkKwl4+BapBaQ5Tw3NIVzicgPPIjKFnTpyasFWdpijUUObGv0WtkY
-	9aQyaK3xBINiluViutESmRQMNcmTP
-X-Google-Smtp-Source: AGHT+IEfx5lcTAjpTKVYkVtz68rvsOX8fuO/lfe7x9bwH+UGnw8o8qGo8QSaJahQ86m80iS1g/9oWA==
-X-Received: by 2002:a05:600d:13:b0:43a:b0ac:b10c with SMTP id 5b1f17b1804b1-4532493d13dmr25411525e9.26.1749650099089;
-        Wed, 11 Jun 2025 06:54:59 -0700 (PDT)
-Received: from yuri-laptop.sca.unipi.it (opnsense-fib.sca.unipi.it. [131.114.30.34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532515cc42sm22042005e9.12.2025.06.11.06.54.58
+        d=1e100.net; s=20230601; t=1749650139; x=1750254939;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KwI5P3Q3ihOeLowm5FSpCJuMLkzkYQo2YbGk0t9yYTo=;
+        b=wB7ptbSJdDH3LwKc08hIPU6uE7628XBalhDVtcVcusqdn810ps28f4CM/7vuPACt4F
+         +XKvPcwJmlrsD/+j5ywCMEwBcXrrJ4wHEEtyVLyXizksb23bjYu5zblF+mCZ3idVBewb
+         OYInIhj3n/+JJL+Ha8N7brBARM4uxtJ3d0WpgC84LbilpR6tmK3xDmAabnsk7UPpnHw4
+         ivjEJ97Zl435UopZS6X40qmQKvvPMkBLIQEcxpBkSFBYwBKzzBDszFjLw3XmXv1oMQNO
+         ULJQPYbcN+6teuWUbfTdrjFG9GXbf8tKFauHaqM/xr3BJ4/TbURJ5yfcCwHFYKfKtSQV
+         nSXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjnwRpArldy94gdA4AeKy3XHiqEb+9fvd6NxI8joX0UOAAVKRqGl+OcUMHCFWoJw0rOd49bIlN9ErqqBM=@vger.kernel.org, AJvYcCVnarL05G2L7+ek+f633YBu7URLO3HWe7/yI3wF85myNCce8SBSXuDNQHN4aWljFBlHRUutBWx92eUF4WRoPXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX1VsseLl8lbWmfiBKYW/7oO9Q/FiQNN6c38pXMgfj2kXQIhAY
+	Zo7GqeyZAPNlet7eye6zaYarVnz1E44UnePThX2dxxc5fCSNujDCTcMoZSDh5MSWlYc=
+X-Gm-Gg: ASbGncsEGKKJjkeAmAtXFDNlslgIZ9XuHcxpUPDtoiJ8YxlIp/KouScY4A++SJYNRVH
+	4l1fkTlo4hXsuQ0KMkMxY52i8qDKHqaxsU2uJE6nHRdEHtezCpamsKZ5PN76ACvVYDkq/zuVF6R
+	x9X6/DgWyqRc0oo+Nq3FE8yGQsg5BHu/YJqJIv+P4uPen0bwB/Tpm93Ip7pbz0+rBQhBOZHHCmd
+	/RH6qujkERaauy58tzZahbYdIz1PoJnj6/W13XCnTjfzH/pprMbQmJa9a3TGEuNzXouTICgiaos
+	WSTotnN0EjU3+DoU2VEYH9BCtBiggKs0optiqkeP8KP2V5bZU1kEvDrMBNyh
+X-Google-Smtp-Source: AGHT+IGc2bG2Zj3o3WugCbZzNyfbrrgGT+HOzwOj9wWXwjW4xvK6DyhvCSnSahj1aZEAAbVLsrMn1w==
+X-Received: by 2002:a05:600c:3489:b0:441:d4e8:76c6 with SMTP id 5b1f17b1804b1-453248dc848mr35536005e9.30.1749650138776;
+        Wed, 11 Jun 2025 06:55:38 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4532522a543sm23383005e9.40.2025.06.11.06.55.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 06:54:58 -0700 (PDT)
-From: Yuri Andriaccio <yurand2000@gmail.com>
-To: juri.lelli@redhat.com
-Cc: bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	linux-kernel@vger.kernel.org,
-	luca.abeni@santannapisa.it,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com,
-	yuri.andriaccio@santannapisa.it
-Subject: Re: [RFC PATCH 5/9] sched/deadline: Hierarchical scheduling with DL on top of RT
-Date: Wed, 11 Jun 2025 15:54:56 +0200
-Message-ID: <20250611135456.61493-1-yurand2000@gmail.com>
+        Wed, 11 Jun 2025 06:55:38 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: rtlwifi: rtl8821ae: make the read-only array params static const
+Date: Wed, 11 Jun 2025 14:55:21 +0100
+Message-ID: <20250611135521.172521-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <aEfwxUyu54Y1EXJI@jlelli-thinkpadt14gen4.remote.csb>
-References: <aEfwxUyu54Y1EXJI@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Don't populate the read-only array params on the stack at run time,
+instead make it static const.
 
-thanks for your feedback.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> From changelog (and confirmed by changed lines), this patch might be doing too
-> many things at once and so it might be harder to review. Do you think it can
-> be split in smaller chunks?
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+index f4b232f038a9..14bd64ff3f88 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+@@ -3064,10 +3064,12 @@ static void _rtl8821ae_read_adapter_info(struct ieee80211_hw *hw, bool b_pseudo_
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
+ 	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
+-	int params[] = {RTL_EEPROM_ID, EEPROM_VID, EEPROM_DID,
+-			EEPROM_SVID, EEPROM_SMID, EEPROM_MAC_ADDR,
+-			EEPROM_CHANNELPLAN, EEPROM_VERSION, EEPROM_CUSTOMER_ID,
+-			COUNTRY_CODE_WORLD_WIDE_13};
++	static const int params[] = {
++		RTL_EEPROM_ID, EEPROM_VID, EEPROM_DID,
++		EEPROM_SVID, EEPROM_SMID, EEPROM_MAC_ADDR,
++		EEPROM_CHANNELPLAN, EEPROM_VERSION, EEPROM_CUSTOMER_ID,
++		COUNTRY_CODE_WORLD_WIDE_13
++	};
+ 	u8 *hwinfo;
+ 
+ 	if (b_pseudo_test) {
+-- 
+2.49.0
 
-I'm currently working on splitting this patch (and the patch 8) in smaller
-chunks as you suggested, adding changes bit by bit.
-
-I'll submit the updated version of the patchset for a RFC v2 as soon as I have
-it done.
-
-Have a nice day,
-Yuri
 
