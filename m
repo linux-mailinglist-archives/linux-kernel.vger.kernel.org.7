@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-680965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A53CAD4C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:15:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA25AD4C65
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1111893841
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:15:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FD417D920
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E21722D4C3;
-	Wed, 11 Jun 2025 07:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4AC21B8EC;
+	Wed, 11 Jun 2025 07:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f7JCeeMF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="EDsOoTdy"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE9622D9E0;
-	Wed, 11 Jun 2025 07:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC84DF49
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749626106; cv=none; b=oB/eLU4u0a6fLWz3RkGU5B9HMO9NHlpWHevRk90mMQestPL4MBamtjfYlcEKDzH60VpjbGrmuBzYt6b+/I+M80TWVeJs4Fr1EYLI/MOXPpfxu9TL0dSUfRIpGanUe4cbmdW7OvuQ6QEjuhFsEtSIeSl7Zh+ozoaTg1drn8V3OyI=
+	t=1749626148; cv=none; b=t5W9cz9+s7EOzWjml3CHJJDiSe8OE3MnEmF8gSOE2G1zP34iN/7I3nTqlyAsZ0/fiCr7sZFk5pttnn/0k6KsTUu75Srupbn63ANeLvAuoM/20lvjzoAfq8D/PdqAFAr16p50sRhnTbF7rhKzkQZnVNATlbatBlYKNAUQz1XU/nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749626106; c=relaxed/simple;
-	bh=LBuV2/MkPPLMESpMzqhuYZ2zgNvWeRWkWk8EU9VNXVw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SmtuN/rnQc1kWHMbhn0Rd4iEENp75HVUb62M2AePwmhMyjuwVxjBTt0ptgI04/1b3xSBS7jbBbox5gYPXEvNdWRICQnWWpimqjTKehq009KxB6jOQA7ylIH8XM9JgEHxhWC6iIMnlDBA3bVUh6+l73qFaZjjctfDIpVNyAuHv0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f7JCeeMF; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749626105; x=1781162105;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=LBuV2/MkPPLMESpMzqhuYZ2zgNvWeRWkWk8EU9VNXVw=;
-  b=f7JCeeMFEgyjCxoLkhzQTn9+g5jWo6JnHXQaRgz41nL5WJV4Z7DRaq/e
-   fdc9p0wcU5q3Hs/azDJfkYnXBnR34kZCgQh6uLnYPJ77WHYBGYMf/4kUJ
-   fna6P++g4tbm9CvPsHET7aIVis+KUrYqqL1VboimiWzdQdu/P7Au5oH2O
-   Ln5WsfT+392Vuv3lfsa19nlI0BT9Ih8aznha8LH9dAr6GjcNC6t8U2aak
-   WmKBCb8VIBpqiYEQxp/RKHeoozP5o1IBEgI64p5OIZBjGUAivGZfshAMi
-   tZeL4EEQde1LyJ1q+aaPXtKpMtUq99bIu+tu8BfsqQcONGgNZ/ATAr9Mn
-   Q==;
-X-CSE-ConnectionGUID: 3UznumaHTH6dAR9CdpWONg==
-X-CSE-MsgGUID: ZY8YMweDTwGWmrRt0EoPzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51747313"
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="51747313"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 00:15:05 -0700
-X-CSE-ConnectionGUID: JU3XRYaKR56sOKqNXnoqBQ==
-X-CSE-MsgGUID: b9Lg0LNyTAGkxPw6lX9asw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="177997213"
-Received: from unknown (HELO [10.238.0.239]) ([10.238.0.239])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 00:15:02 -0700
-Message-ID: <e86f6cd2-e2ed-4928-8a79-e162068d0f15@linux.intel.com>
-Date: Wed, 11 Jun 2025 15:14:59 +0800
+	s=arc-20240116; t=1749626148; c=relaxed/simple;
+	bh=bDw8lv6DNJsD9dchwMOlh8L211qeg1CfzJ2PVT3ZHbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jo+GiNhnXIq+65OBCsDhHg8oJOQePzF7G5y3mFZd/EW0VDgaGPm5EPdm1KmsH6cX9VXjZYHjavk1ZO44P9szMDPDHjhdA7yRm8jPXH+e2i74ypjVBTyV3UcRh0BhhzpjjWJy7Jb4KUSjMjD39mmldDwvH8wKOBWyvqwm05Qvmqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=EDsOoTdy; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e7d9d480e6cso4592099276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:15:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1749626146; x=1750230946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDw8lv6DNJsD9dchwMOlh8L211qeg1CfzJ2PVT3ZHbE=;
+        b=EDsOoTdywA3JGa2AL/9SYg8S0Nw+LIhDt0sx3uS/47ZQqersfDsCkjptM/GxIOX+RZ
+         P60q0CV7Yn29/sQ0VY6JOr5rrpZIA85lQqHw9pGmpvLxrkjDXuHzzVlbs5re7vezhLlH
+         g3JAoyI+oDwQTVKThlcdzkb0hNcSUKV9SNVgcBp4A0rT5QtbTFAWMJt+6q6f0rYzaUmE
+         qwD+sjtxzQu0vRw117E7aqJmcC2Q2EeDYq15EnloyxXaojhg+OpVxnHnnVnPyMEWB3N7
+         CH/lpRzOdrTnro3oTM3b2RdlKuzyKOYWpNcCU0vL9fRrS9ykx0BUiAzuAZrZmfnCqnn7
+         zFMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749626146; x=1750230946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bDw8lv6DNJsD9dchwMOlh8L211qeg1CfzJ2PVT3ZHbE=;
+        b=wgm6Dcig2jZbcnyEuYkXzdD/jlz1BYnanQ2DANDuUFFKGq5Wpm6wkBXPS8ScXpjfZz
+         3Q2GO2SSp47rxgK0N+8RlGT9NAZJNvRHvz+cLfkhBSZ/8I5pzKbG1yl6Y5Ex4vbmNwx2
+         ZL2B+dGl9Nt4x7dMT0M+ffQYfb7dINStqUlx9ojrxovnOMTt8128UWYcdykymSrtdTE1
+         n0EBbsabL+e4+gDUe/1PGnQnpEAz0qbvbBkmpTU/6nENF1xQgo49kunUvGnracyXvPzj
+         M2YWaFMSOaBViEihf+NSmd1E1KWRSxx9ueQeLUytOMUCEOCDQImG486FTMIY2f7boQ87
+         AXmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOuGQ+/OVqI7dsYj3G8PBoicoy0RcFwsWx2MKPhkDb2hsmnpC/dRvuTPHAVBb72a5AUYxGtUVqeGylHMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdBqQqSpxA9u08AXQnhP946gkoKM7V+fXz5AqYql1jrLoKBfnQ
+	tIlYfBQbDG1UXKbBH7qNhD6i+3mKrFlZCFwmfCxHclVobRtrdG7HbzD/RxVl8L5YDK8swe83CZZ
+	MtIrlzL6qfCVsg6NAR+8urUmqG103zKLMzc28CDlrE2453a/rMOYeZ9o=
+X-Gm-Gg: ASbGncvevhfE/XQRGcQHB+ca5WKDDyFYKQDt/n0K8DKFiCsTQjZyTfJq/skiD5wA83x
+	Ez3kffeW4DSeOOrlEEILtCFq38+NqYmBXbtsGTfMZXT5/oP3AumBo77eO1ZrZOnI7BYxJ6DLLCg
+	WNrhHoZvQxRITV5+1csUuxEPDA6RDAaffkq29VspVn2fAnlw==
+X-Google-Smtp-Source: AGHT+IEc+9hppzJUUw3dhryHx4clVFd5aDegC77U3+FbbfhX2RUu0BijR2nlmCbtsFlav7Da7Y/c1YmFqqH/eQyJEGw=
+X-Received: by 2002:a05:6902:2191:b0:e78:eb00:babc with SMTP id
+ 3f1490d57ef6-e81fd9b2f22mr3224045276.26.1749626145882; Wed, 11 Jun 2025
+ 00:15:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/32] KVM: SVM: Disable interception of SPEC_CTRL iff
- the MSR exists for the guest
-From: Binbin Wu <binbin.wu@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chao Gao <chao.gao@intel.com>,
- Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Francesco Lavra <francescolavra.fl@gmail.com>,
- Manali Shukla <Manali.Shukla@amd.com>
-References: <20250610225737.156318-1-seanjc@google.com>
- <20250610225737.156318-2-seanjc@google.com>
- <629e0dc3-49b4-45f5-aeaa-8a9109e81d14@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <629e0dc3-49b4-45f5-aeaa-8a9109e81d14@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250611031023.28769-1-nick.hu@sifive.com> <20250611031023.28769-2-nick.hu@sifive.com>
+ <9c429671-8409-4911-8559-73a069d66964@kernel.org>
+In-Reply-To: <9c429671-8409-4911-8559-73a069d66964@kernel.org>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Wed, 11 Jun 2025 15:15:34 +0800
+X-Gm-Features: AX0GCFt836Lo7RPXBqlCX9ju9k05WYmV2JoCwZYZlclqH9DiOrcuiHuFOhx2tAw
+Message-ID: <CAKddAkAyvRdAz9X_rCGgfdxD0Z_Q7sAt8e5nuJe7=s7G-Y3+AQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: power: Add SiFive Domain Management controllers
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: conor+dt@kernel.org, krzk+dt@kernel.org, Cyan Yang <cyan.yang@sifive.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 6/11/2025 12:38 PM, Binbin Wu wrote:
+On Wed, Jun 11, 2025 at 2:57=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 11/06/2025 05:10, Nick Hu wrote:
+> > SiFive Domain Management controller includes the following components
+> > - SiFive Tile Management Controller
+> > - SiFive Cluster Management Controller
+> > - SiFive Core Complex Management Controller
+> >
+> > These controllers control the clock and power domain of the
+> > corresponding domain.
+> >
+> > However, Since we don't have a SoC specific compatible string yet, so
+> > add '- {}' for the first entry [1][2].
 >
 >
-> On 6/11/2025 6:57 AM, Sean Christopherson wrote:
->> Disable interception of SPEC_CTRL when the CPU virtualizes (i.e. context
->> switches) SPEC_CTRL if and only if the MSR exists according to the vCPU's
->> CPUID model.  Letting the guest access SPEC_CTRL is generally benign, but
->> the guest would see inconsistent behavior if KVM happened to emulate an
->> access to the MSR.
->>
->> Fixes: d00b99c514b3 ("KVM: SVM: Add support for Virtual SPEC_CTRL")
->> Reported-by: Chao Gao <chao.gao@intel.com>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> ---
->>   arch/x86/kvm/svm/svm.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->> index 0ad1a6d4fb6d..21e745acebc3 100644
->> --- a/arch/x86/kvm/svm/svm.c
->> +++ b/arch/x86/kvm/svm/svm.c
->> @@ -1362,11 +1362,14 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
->>       svm_recalc_instruction_intercepts(vcpu, svm);
->>         /*
->> -     * If the host supports V_SPEC_CTRL then disable the interception
->> -     * of MSR_IA32_SPEC_CTRL.
->> +     * If the CPU virtualizes MSR_IA32_SPEC_CTRL, i.e. KVM doesn't need to
->> +     * manually context switch the MSR, immediately configure interception
->> +     * of SPEC_CTRL, without waiting for the guest to access the MSR.
->>        */
->>       if (boot_cpu_has(X86_FEATURE_V_SPEC_CTRL))
->> -        set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
->> +        set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL,
->> +                     guest_has_spec_ctrl_msr(vcpu),
->> +                     guest_has_spec_ctrl_msr(vcpu));
-> Side topic, not related to this patch directly.
+> But you must have Soc specific compatible strings. See previous discussio=
+n.
 >
-> Setting to 1 for set_msr_interception() means to disable interception.
-> The name of the function seems a bit counterintuitive to me.
-> Maybe some description for the function can help people not familiar with
-> SVM code without further checking the implementation?
+Maybe I'm missing something, but since we don't have a SoC-specific compati=
+ble
+string yet, I thought we agreed to include a `- {}` as the first
+entry, along with an
+explanation in both the commit message and comments [1].
 
-Oh, please ignore it.
+Links:
+- [1] https://lore.kernel.org/linux-riscv/c91d99c9-0ecb-4dcd-9beb-5a1e9fadc=
+619@kernel.org/
 
-A later patch in this patch set has handled it.
-
->
->
->>         if (kvm_vcpu_apicv_active(vcpu))
->>           avic_init_vmcb(svm, vmcb);
->
->
-
+> Best regards,
+> Krzysztof
 
