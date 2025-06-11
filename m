@@ -1,158 +1,235 @@
-Return-Path: <linux-kernel+bounces-681106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C1BAD4E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD97AD4EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51DA17CF70
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388F11886CBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB2924467F;
-	Wed, 11 Jun 2025 08:37:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C62A23DEB6;
+	Wed, 11 Jun 2025 08:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eKABDA52"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C669243969;
-	Wed, 11 Jun 2025 08:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76C723C8C9
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749631064; cv=none; b=UDLH53o2O9SWFnyM2azZBjjlw/VpuEUf4PBtHzH+69eqQ7dVoZmTasZG6YztxpTbgSkMASkBzF9jawQqSEAyY8sVGQRSkwR8+hrg6tSuuJmh4oSplgYLjWv34r5fsSa6CoLFQhfumtoLK5mkIJnQCHT1HzfyTlerEtwnNOpDHmk=
+	t=1749631344; cv=none; b=JDTvoQPh2ejaAqPgBWzsFVx3/wVWi83FnEaX8dZsEvo3f0NqycX1XEK/4D0yTa3uZwDog6viWPJwUMkkpsQalW+T9YHZYZLOoKzQ0DcMzsut0pC5675Fon6pDBZ4MPtgRTiYmi8VK4JXMXeeWEFqvxYjAEQSnk5zAmyanl6roIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749631064; c=relaxed/simple;
-	bh=YMXTcyMncS+OYLcYJJSBaiK//v5mGME8+PN5/+MBWsg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IrMQ7LJTTf2ak4OFfnXcSWQ8wBRsL4wSifLoX2TnLz1wR1mtS30o4mrXEgHkE81Zqz8TXowYzUYV40bXOqxSHEb4+DogBJyK42+B0EW1WOaKtJiKA/W7yoJkGP+L2SJuO8JONcCQjrfKD/pXjhZaF2KeYkryh4U2VtJdJlGX/Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bHJv80H56zKHN79;
-	Wed, 11 Jun 2025 16:37:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 60FF21A0AF7;
-	Wed, 11 Jun 2025 16:37:38 +0800 (CST)
-Received: from ultra.huawei.com (unknown [10.90.53.71])
-	by APP2 (Coremail) with SMTP id Syh0CgDHhGdRQEloV8o1PA--.29312S2;
-	Wed, 11 Jun 2025 16:37:38 +0800 (CST)
-From: Pu Lehui <pulehui@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	shuah@kernel.org,
-	lorenzo.stoakes@oracle.com
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pulehui@huawei.com
-Subject: [PATCH] selftests/mm: Use generic read_sysfs in thuge-gen test
-Date: Wed, 11 Jun 2025 08:40:11 +0000
-Message-Id: <20250611084011.1047132-1-pulehui@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749631344; c=relaxed/simple;
+	bh=JN6/3wMG7bR+MMBVKMBJOzeMXrSF5nsAX5Hl6KT6O6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=PbqOU4n7he3/F+VFRqBIghG3jGndqaqYRSAo3wANXbPu/mvpbm9jMC2cVB/eHOeypPXxaNKDgVDDA2QFXwgvf5D/zZST+cMHZ0qqVXN87yFKDjwRwNbJEFDyrzDIZql/SNXtzjCnWNVr7OeNC7r8SwtxnCFmRslujX1A77jydJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eKABDA52; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250611084220euoutp011712cf43b1c51eb9f288b1c374fb55c4~H8G8c6UX20286802868euoutp01R
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:42:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250611084220euoutp011712cf43b1c51eb9f288b1c374fb55c4~H8G8c6UX20286802868euoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749631340;
+	bh=8s5vFxR1V9KB58LvUJ18g2JnoUARTR5dGOv6Swwdcqg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=eKABDA52uJCgR/L3d9qNuIbaW4Rixx/M1DCjpGb8hTMXsvy8voYkLO21aqUZRDobq
+	 J+x7a1RCq1JerI6pO/pYbEgKpIIZYHn6KZKaL8haxRIZjBaoKhN7xfCDeoNQLMHeTi
+	 9P+MSw30GsrE7g6y2mqF6pPYqCixkkhR/9k7LjtY=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250611084219eucas1p1b1b445a9017d87f141561fa591847d7d~H8G78SWKX2272022720eucas1p1N;
+	Wed, 11 Jun 2025 08:42:19 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250611084217eusmtip2665432f3fe30a8e815516687a8972357~H8G5lenbh2869928699eusmtip2v;
+	Wed, 11 Jun 2025 08:42:17 +0000 (GMT)
+Message-ID: <4e53d612-534c-46b5-9746-a4a9814d41c3@samsung.com>
+Date: Wed, 11 Jun 2025 10:42:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Remove PFN_MAP, PFN_SPECIAL, PFN_SG_CHAIN and
+ PFN_SG_LAST
+To: David Hildenbrand <david@redhat.com>, Alistair Popple
+	<apopple@nvidia.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
+	gerald.schaefer@linux.ibm.com, dan.j.williams@intel.com, jgg@ziepe.ca,
+	willy@infradead.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+	jhubbard@nvidia.com, zhang.lyra@gmail.com, debug@rivosinc.com,
+	bjorn@kernel.org, balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+	John@groves.net
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <52b746ae-82cc-428e-8e88-a05a6b738cd0@redhat.com>
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDHhGdRQEloV8o1PA--.29312S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFWDCr4rXr1rWw48GFWDXFb_yoW8ury5pF
-	s3K34j93yxKr98GryUXFs8Wry5Ar4Dt3y0y397A34rZw1UJr9IgrZ7ZasrJa1kurZ7Wayf
-	Aay3Grsakr1UJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+X-CMS-MailID: 20250611084219eucas1p1b1b445a9017d87f141561fa591847d7d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250610161811eucas1p18de4ba7b320b6d6ff7da44786b350b6e
+X-EPHeader: CA
+X-CMS-RootMailID: 20250610161811eucas1p18de4ba7b320b6d6ff7da44786b350b6e
+References: <20250604032145.463934-1-apopple@nvidia.com>
+	<CGME20250610161811eucas1p18de4ba7b320b6d6ff7da44786b350b6e@eucas1p1.samsung.com>
+	<957c0d9d-2c37-4d5f-a8b8-8bf90cd0aedb@samsung.com>
+	<hczxxu3txopjnucjrttpcqtkkfnzrqh6sr4v54dfmjbvf2zcfs@ocv6gqddyavn>
+	<1daeaf4e-5477-40cb-bca0-e4cd5ad8a224@samsung.com>
+	<52b746ae-82cc-428e-8e88-a05a6b738cd0@redhat.com>
 
-From: Pu Lehui <pulehui@huawei.com>
+On 11.06.2025 10:23, David Hildenbrand wrote:
+> On 11.06.25 10:03, Marek Szyprowski wrote:
+>> On 11.06.2025 04:38, Alistair Popple wrote:
+>>> On Tue, Jun 10, 2025 at 06:18:09PM +0200, Marek Szyprowski wrote:
+>>>> On 04.06.2025 05:21, Alistair Popple wrote:
+>>>>> The PFN_MAP flag is no longer used for anything, so remove it.
+>>>>> The PFN_SG_CHAIN and PFN_SG_LAST flags never appear to have been
+>>>>> used so also remove them. The last user of PFN_SPECIAL was removed
+>>>>> by 653d7825c149 ("dcssblk: mark DAX broken, remove FS_DAX_LIMITED
+>>>>> support").
+>>>>>
+>>>>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>>>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>>>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>>>>> Cc: gerald.schaefer@linux.ibm.com
+>>>>> Cc: dan.j.williams@intel.com
+>>>>> Cc: jgg@ziepe.ca
+>>>>> Cc: willy@infradead.org
+>>>>> Cc: david@redhat.com
+>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>> Cc: nvdimm@lists.linux.dev
+>>>>> Cc: jhubbard@nvidia.com
+>>>>> Cc: hch@lst.de
+>>>>> Cc: zhang.lyra@gmail.com
+>>>>> Cc: debug@rivosinc.com
+>>>>> Cc: bjorn@kernel.org
+>>>>> Cc: balbirs@nvidia.com
+>>>>> Cc: lorenzo.stoakes@oracle.com
+>>>>> Cc: John@Groves.net
+>>>>>
+>>>>> ---
+>>>>>
+>>>>> Splitting this off from the rest of my series[1] as a separate 
+>>>>> clean-up
+>>>>> for consideration for the v6.16 merge window as suggested by 
+>>>>> Christoph.
+>>>>>
+>>>>> [1] - 
+>>>>> https://lore.kernel.org/linux-mm/cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com/
+>>>>> ---
+>>>>>     include/linux/pfn_t.h             | 31 
+>>>>> +++----------------------------
+>>>>>     mm/memory.c                       |  2 --
+>>>>>     tools/testing/nvdimm/test/iomap.c |  4 ----
+>>>>>     3 files changed, 3 insertions(+), 34 deletions(-)
+>>>> This patch landed in today's linux-next as commit 28be5676b4a3 ("mm:
+>>>> remove PFN_MAP, PFN_SPECIAL, PFN_SG_CHAIN and PFN_SG_LAST"). In my 
+>>>> tests
+>>>> I've noticed that it breaks operation of all RISC-V 64bit boards on my
+>>>> test farm (VisionFive2, BananaPiF3 as well as QEMU's Virt machine). 
+>>>> I've
+>>>> isolated the changes responsible for this issue, see the inline 
+>>>> comments
+>>>> in the patch below. Here is an example of the issues observed in the
+>>>> logs from those machines:
+>>> Thanks for the report. I'm really confused by this because this 
+>>> change should
+>>> just be removal of dead code - nothing sets any of the removed PFN_* 
+>>> flags
+>>> AFAICT.
+>>>
+>>> I don't have access to any RISC-V hardwdare but you say this 
+>>> reproduces under
+>>> qemu - what do you run on the system to cause the error? Is it just 
+>>> a simple
+>>> boot and load a module or are you running selftests or something else?
+>>
+>> It fails a simple boot test. Here is a detailed instruction how to
+>> reproduce this issue with the random Debian rootfs image found on the
+>> internet (tested on Ubuntu 22.04, with next-20250610
+>> kernel source):
+>
+> riscv is one of the archs where pte_mkdevmap() will *not* set the pte 
+> as special. (I
+> raised this recently in the original series, it's all a big mess)
+>
+> So, before this change here, pfn_t_devmap() would have returned 
+> "false" if only
+> PFN_DEV was set, now it would return "true" if only PFN_DEV is set.
+>
+> Consequently, in insert_pfn() we would have done a pte_mkspecial(), 
+> now we do a
+> pte_mkdevmap() -- again, which does not imply "special" on riscv.
+>
+> riscv selects CONFIG_ARCH_HAS_PTE_SPECIAL, so if !pte_special(), it's 
+> considered as
+> normal.
+>
+> Would the following fix your issue?
+>
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 8eba595056fe3..0e972c3493692 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -589,6 +589,10 @@ struct page *vm_normal_page(struct vm_area_struct 
+> *vma, unsigned long addr,
+>  {
+>         unsigned long pfn = pte_pfn(pte);
+>
+> +       /* TODO: remove this crap and set pte_special() instead. */
+> +       if (pte_devmap(pte))
+> +               return NULL;
+> +
+>         if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
+>                 if (likely(!pte_special(pte)))
+>                         goto check_pfn;
+> @@ -598,16 +602,6 @@ struct page *vm_normal_page(struct vm_area_struct 
+> *vma, unsigned long addr,
+>                         return NULL;
+>                 if (is_zero_pfn(pfn))
+>                         return NULL;
+> -               if (pte_devmap(pte))
+> -               /*
+> -                * NOTE: New users of ZONE_DEVICE will not set 
+> pte_devmap()
+> -                * and will have refcounts incremented on their struct 
+> pages
+> -                * when they are inserted into PTEs, thus they are 
+> safe to
+> -                * return here. Legacy ZONE_DEVICE pages that set 
+> pte_devmap()
+> -                * do not have refcounts. Example of legacy 
+> ZONE_DEVICE is
+> -                * MEMORY_DEVICE_FS_DAX type in pmem or virtio_fs 
+> drivers.
+> -                */
+> -                       return NULL;
+>
+>                 print_bad_pte(vma, addr, pte, NULL);
+>                 return NULL;
+>
+>
+> But, I would have thought the later patches in Alistairs series would 
+> sort that out
+> (where we remove pte_devmap() ... )
+>
+The above change fixes the issues observed on RISCV boards.
 
-As generic read_sysfs is available in vm_utils, let's
-use is in thuge-gen test.
-
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
----
- tools/testing/selftests/mm/thuge-gen.c | 37 +++++++-------------------
- 1 file changed, 9 insertions(+), 28 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/thuge-gen.c b/tools/testing/selftests/mm/thuge-gen.c
-index 95b6f043a3cb..e11dfbfa661b 100644
---- a/tools/testing/selftests/mm/thuge-gen.c
-+++ b/tools/testing/selftests/mm/thuge-gen.c
-@@ -77,40 +77,19 @@ void show(unsigned long ps)
- 	system(buf);
- }
- 
--unsigned long thuge_read_sysfs(int warn, char *fmt, ...)
-+unsigned long read_free(unsigned long ps)
- {
--	char *line = NULL;
--	size_t linelen = 0;
--	char buf[100];
--	FILE *f;
--	va_list ap;
- 	unsigned long val = 0;
-+	char buf[100];
- 
--	va_start(ap, fmt);
--	vsnprintf(buf, sizeof buf, fmt, ap);
--	va_end(ap);
-+	snprintf(buf, sizeof(buf),
-+		 "/sys/kernel/mm/hugepages/hugepages-%lukB/free_hugepages",
-+		 ps >> 10);
-+	read_sysfs(buf, &val);
- 
--	f = fopen(buf, "r");
--	if (!f) {
--		if (warn)
--			ksft_print_msg("missing %s\n", buf);
--		return 0;
--	}
--	if (getline(&line, &linelen, f) > 0) {
--		sscanf(line, "%lu", &val);
--	}
--	fclose(f);
--	free(line);
- 	return val;
- }
- 
--unsigned long read_free(unsigned long ps)
--{
--	return thuge_read_sysfs(ps != getpagesize(),
--			  "/sys/kernel/mm/hugepages/hugepages-%lukB/free_hugepages",
--			  ps >> 10);
--}
--
- void test_mmap(unsigned long size, unsigned flags)
- {
- 	char *map;
-@@ -173,6 +152,7 @@ void test_shmget(unsigned long size, unsigned flags)
- void find_pagesizes(void)
- {
- 	unsigned long largest = getpagesize();
-+	unsigned long shmmax_val = 0;
- 	int i;
- 	glob_t g;
- 
-@@ -195,7 +175,8 @@ void find_pagesizes(void)
- 	}
- 	globfree(&g);
- 
--	if (thuge_read_sysfs(0, "/proc/sys/kernel/shmmax") < NUM_PAGES * largest)
-+	read_sysfs("/proc/sys/kernel/shmmax", &shmmax_val);
-+	if (shmmax_val < NUM_PAGES * largest)
- 		ksft_exit_fail_msg("Please do echo %lu > /proc/sys/kernel/shmmax",
- 				   largest * NUM_PAGES);
- 
+Best regards
 -- 
-2.34.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
