@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-682345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C68AD5EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:01:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9E7AD5EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF451E09B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:01:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF9B17AB2BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B582E29B772;
-	Wed, 11 Jun 2025 19:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D2728851E;
+	Wed, 11 Jun 2025 19:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7d89dHb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/Sbp4qm"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F10B18D;
-	Wed, 11 Jun 2025 19:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4CA20127D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749668468; cv=none; b=kmnzdOK+kb6TrColUZA+DLCg+E4XJ3A4KUDI6kcAbq4+uUn2NwM1TQHMYeGKdwuf2cc2qBMh7f6cK0kgpePRamZW3RMUt194eM+UQ6Q3gxINi1NJf2U/+9reQPjm8DMlvLoCW1bUvVn9gsfOwQhce9Xmw8MUf5o20ICq4cJL5uY=
+	t=1749668688; cv=none; b=GCkcYcmBiUmmnhNre7VUmNFVLR2FUawdglfivy075G3/CJlA5g1TS+k+J4Q9w5OY/qfrcMlgoWJuO47KUCAqBynKK7VUb4hJP81oWFUyDL7kzcBR6tmp3MbymzDACYZ8WQjDUWmnwY5Cb++8SkHnqYP+i7DQu0j+Wh82GLeLs5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749668468; c=relaxed/simple;
-	bh=HEU4YutA9kG/s0/mba3Ytoq2491mLHZZ1L9DBov7nkM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AbBdgoQVtKqyrB8A3WBZNQwlTjiIYFlS1ofKxboHUe+tBVZj2qUBgwl7+LHi5LUD/Jd/xeLUs2iytxEf1vbxsaDlRaRAVZkFj0ax3chgk6IVhzKWaiccVBKUnTWs/Z44v2pY2wNXizM8xFw3TljAV6j+3rvmGL58Y1hKTDaiXtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7d89dHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F5D0C4CEEA;
-	Wed, 11 Jun 2025 19:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749668467;
-	bh=HEU4YutA9kG/s0/mba3Ytoq2491mLHZZ1L9DBov7nkM=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=s7d89dHbjMDYIEd1Gn4wI/fitFyYw4wUZNjZKDx64yneWUFCGbbWUgIBliO8RBCLl
-	 s+3mZuC5dTu99y8EHqyNt8pcLNhBIekbr7QiD7MkvGSPPhA3lp1R+XgewCLdpcW0en
-	 PhzRiFpANFU8jm83mTp0Hi8Bl3taTUCHLlZL9HF82U9zXwhG5h9e8njw3nCtiohzCu
-	 wlcU3EV2c9qR4I12+s/ho7t5CNIKd1rfO9SG69VFXa6rLpUolrkhM2xhmn856INgha
-	 yKmNhwggG9t1utPlyN5XcUzbJ4T4i3QBCqclNSlRF4CZXHYSt068+2LT4Yj77g3XUF
-	 HXq/tkc+MOlKw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94910C71136;
-	Wed, 11 Jun 2025 19:01:07 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Wed, 11 Jun 2025 21:01:01 +0200
-Subject: [PATCH RESEND] powerpc: dts: mpc8315erdb: Add GPIO controller node
+	s=arc-20240116; t=1749668688; c=relaxed/simple;
+	bh=+t8ACet9xqwRNJy9b8899wiD25b/003UaXpKZdUYUJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uiAxdG+f5bzkENHvOvUwf6pQpOZkUX/wG6BUoxqcnD9RNM0pRlgEScHhlw7E1+4QbrC5gWc11+A7hCG9R+MdQZ9xaRJFqfvqnO+AD41ObgakF9HRMErT7rN70aHV81did2M5bPVxE9atgoYYhSfWQ0DNalEiL2UPfTwPc/b+Q1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/Sbp4qm; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b1ff9b276c2so62707a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749668686; x=1750273486; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Yu2PImzFHGaLiTWdxu2ihmwRTn972j20R7GA0tijYc4=;
+        b=L/Sbp4qmhiLJrc5EZADLmfzNaIlDUr0hY7YliKl/Os9xnuFOVsOAxPb1GJP3/xPljD
+         F4EiL1NKg+6yT6u6lhASa1B+n/eN8nUpj55Ch88ewAjpNXNF5qbl7wRMZYdCCUcOqru1
+         zdnJCVHpuxonUj0gkpSlKWydxBJ6UmhaOtepp3MyQbDt1GAZN82E21LPnYIBuVzvwDuG
+         gcqiEQj3x/Ti8k5ovB5oOCfoWdcHU2cPqMazsaxgUdpeu72jqXY09A2l9ppP/vx6pEhf
+         mi3Nzb+iX8mtV2I6L8pPq5fc2XnGgKCLI6fjWojaiMyg/wQDuphRQdOugPT4yzzF2ORn
+         jP4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749668686; x=1750273486;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yu2PImzFHGaLiTWdxu2ihmwRTn972j20R7GA0tijYc4=;
+        b=S8uNH9LZeHD1kqI5TWL5zFJgknbDBi0XzbiwTT6lpoPnf+7C/KK+SA3TZtvxpQgOzi
+         vVGl8wJxw5n6bS5DV6hzPd/PdQkcjukyTKXS4fyABoMA7xZ11KFG7G0IucghLfWQjMUo
+         0a7PQFcb8EH/ZBduDH+66qqQ6XA0pB3t39dqUKXy8A+irN5wkzBFgvVFwkU1Ik2ZX1nA
+         BKhzTHFwirrNNM3ALFp9VPEdY1yOQdbVfGB7NUUotXF6g0wOW9M5dp8tEMehHRgCf0gD
+         xgR7yI8ali6FSqMudBwrT3twCAodOnq4IqZsLht+NCiR/+0idikFkp3xjiL+2iYAdt/S
+         MUBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+rdMDWORll5NaOHssZuClxz56D+GYfbUrNWAJXdiuzzYaROSdfD3sPvFYmM2t6UHRAOlV2buK4TCkrrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5vBa0C+gDCiQeIV8R4d+Z4qCM8q03BnhlCb2nSg/G40W8bIAc
+	5emUrSUmBxveHtytwRH44zglpiFTodFUuTNj8sCVlXliL+f7Fko3/rz7
+X-Gm-Gg: ASbGncvn/0Np248hPNQJAaIjP4pY0zW+iHxsNQ+YsVSsTzzSFjkCE8GgCeNw6D/6zNL
+	3gdXVDBzn/QzqHaZnBTumpm2mQamH6T8Wz/KXXLl/d1/ImqdYcbbRsl0o4ho81TJGnmZsJrT9KB
+	91Bod6hob95szkhpmLk6HZQZ//RSDuzKwz7otz5s5ju/JSlZzCh2XOcZ0eoeGOHUVq5u/lMLvjQ
+	PRe68NgxAlcwLxsOgPWiAdfuh16rIkb0FwsruKXYD7I8q7GzCBz608T/LTb40HwtivDnFqX+ZI+
+	0uw4R2Q2UsVn9gdk2Rd6KGR2P1uqL7evYqYijPyB80qp1Snlkuts2Ulo/lQy4Q==
+X-Google-Smtp-Source: AGHT+IHlKwUHlG5l5OkH/T5Emuq4G3wP5gvRvJQ20dNe+S3Lsa4RrQlO5tlqWQU83u4ZPK3w8pteOw==
+X-Received: by 2002:a17:90b:520f:b0:311:fc8b:31b5 with SMTP id 98e67ed59e1d1-313c069ede0mr408927a91.14.1749668685680;
+        Wed, 11 Jun 2025 12:04:45 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313b20112d4sm1859375a91.20.2025.06.11.12.04.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 12:04:44 -0700 (PDT)
+Date: Wed, 11 Jun 2025 15:04:42 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: John Stultz <jstultz@google.com>
+Cc: I Hsin Cheng <richard120310@gmail.com>, tglx@linutronix.de,
+	sboyd@kernel.org, linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] clocksource: Utilize cpumask_next_wrap() to shrink code
+ size
+Message-ID: <aEnTSuVy2Aq8jRk8@yury>
+References: <20250611104506.2270561-1-richard120310@gmail.com>
+ <CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250611-mpc-gpio-v1-1-02d1f75336e2@posteo.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749668466; l=1409;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=yIo4OMFzwIHk/Y7Ad7fIh7vacgPJLYwfWJ8zjzP38HI=;
- b=t2XtzKk2H7rwfNQdpvWOKJG4VX8BR/rxKH6Dz6UQMgVFtZru+BUuVAF8xZp/evmj28KZWpxgG
- JgO+ojw6KFlC8hwxoeHM7YdVVX7H+wqjB0xhsUl8KqDVM9xAD42Bznx
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+In-Reply-To: <CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com>
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On Wed, Jun 11, 2025 at 11:35:13AM -0700, John Stultz wrote:
+> On Wed, Jun 11, 2025 at 3:45 AM I Hsin Cheng <richard120310@gmail.com> wrote:
+> >
+> > Simplify the procedure of CPU random selection under
+> > "clocksource_verify_choose_cpus()" with "cpumask_next_wrap()". The
+> > logic is still the same but with this change it can shrink the code size
+> > by 18 bytes and increase readability.
+> >
+> > $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
+> > add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-18 (-18)
+> > Function                                     old     new   delta
+> > clocksource_verify_percpu                   1064    1046     -18
+> >
+> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> > ---
+> >  kernel/time/clocksource.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+> > index bb48498ebb5a..ab580873408b 100644
+> > --- a/kernel/time/clocksource.c
+> > +++ b/kernel/time/clocksource.c
+> > @@ -343,9 +343,7 @@ static void clocksource_verify_choose_cpus(void)
+> >          */
+> >         for (i = 1; i < n; i++) {
+> >                 cpu = get_random_u32_below(nr_cpu_ids);
+> > -               cpu = cpumask_next(cpu - 1, cpu_online_mask);
+> > -               if (cpu >= nr_cpu_ids)
+> > -                       cpu = cpumask_first(cpu_online_mask);
+> > +               cpu = cpumask_next_wrap(cpu - 1, cpu_online_mask);
+> >                 if (!WARN_ON_ONCE(cpu >= nr_cpu_ids))
+> >                         cpumask_set_cpu(cpu, &cpus_chosen);
+> >         }
+> 
+> I think Yury submitted the same change here recently:
+>   https://lore.kernel.org/lkml/20250607141106.563924-3-yury.norov@gmail.com/
+> 
+> Though, I think he has another iteration needed as Thomas had feedback
+> on the subject line.
+> 
+> The bloat-o-meter data is a nice inclusion here!
+> 
+> Yury: Would you be open to adapting I Hsin Cheng's commit message into
+> yours and adding them as co-author via the Co-developed-by: tag?
+> (Assuming I Hsin Cheng agrees - See
+> Documentation/process/submitting-patches.rst for how to do this
+> properly).
 
-The MPC8315E SoC and variants have a GPIO controller at IMMR + 0xc00.
-This node was previously missing from the device tree.
-
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
-A version of this patch was previously part of the series "powerpc:
-MPC83xx cleanup and LANCOM NWAPP2 board", but I'm splitting it out to
-reduce the size of that series.
----
- arch/powerpc/boot/dts/mpc8315erdb.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/powerpc/boot/dts/mpc8315erdb.dts b/arch/powerpc/boot/dts/mpc8315erdb.dts
-index e09b37d7489d01bfd16a26e9786868f630fa0262..a89cb3139ca8c3d4f22e43838a4b7d2dd5109aa5 100644
---- a/arch/powerpc/boot/dts/mpc8315erdb.dts
-+++ b/arch/powerpc/boot/dts/mpc8315erdb.dts
-@@ -6,6 +6,7 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
- 	compatible = "fsl,mpc8315erdb";
-@@ -358,6 +359,15 @@ pmc: power@b00 {
- 			interrupt-parent = <&ipic>;
- 			fsl,mpc8313-wakeup-timer = <&gtm1>;
- 		};
-+
-+		gpio: gpio-controller@c00 {
-+			compatible = "fsl,mpc8314-gpio";
-+			reg = <0xc00 0x100>;
-+			interrupts = <74 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-parent = <&ipic>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
- 	};
- 
- 	pci0: pci@e0008500 {
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250418-mpc-gpio-79dca9f70546
-
-Best regards,
--- 
-J. Neuschäfer <j.ne@posteo.net>
-
-
+Yeah, bloat-o-meter report is good enough to add co-developed-by tag.
+I Hsin, do you agree?
 
