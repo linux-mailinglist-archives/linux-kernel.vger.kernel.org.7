@@ -1,154 +1,161 @@
-Return-Path: <linux-kernel+bounces-681718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693F3AD5654
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9C7AD562A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8383A23E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:01:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87683A2AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7120327FB27;
-	Wed, 11 Jun 2025 13:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECE528368A;
+	Wed, 11 Jun 2025 12:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="QbPMM9gW"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SGKI4BwO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D9328136C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E64B273D6D;
+	Wed, 11 Jun 2025 12:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749646865; cv=none; b=mQGIuUSmyZ/htzRs6lqMJC6SvQeIVNu7IZ4BgoL6DeZM/NbhmmQjR8mPm+i4Phawl3cQ7Tc/MBQRQ8DKDk0ILNA9c9OUa7ILJy/Ve2kxpjVMsp/K5FehhmVKajJ8hLPMVD4YqTE0hG5DT5Ljjv7xseO3Em/ms5p0DjPDAUB0Gws=
+	t=1749646721; cv=none; b=U6gm+qVs/R/38GoNAmouRVwSnWK9pnWU3226D7kFCUevk1+V+/g/cRgXHEnsV4J+LkJ7OSKB4rF7MOCtWFBhHpdBnloV5exJBRzMyo4p8nQXA1pNyvFTT+VozAk6YAHEFf+IbXKfJmE55ttFj1D2/cO9DO7z3jscb6BTZivRKPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749646865; c=relaxed/simple;
-	bh=OUo46ask5zEdNnxgtDRLYOxKjqeZYpKbIvKQrOHiQr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ra3lp8BQ39yLAZoHigX9yk/M6esZGshyxMK3I0YTXckaB5zeeWyhr/bb0a7f9nkQtbcuWK3FYCOc7sxvf5WTbErsZc+hc8szJztuL3ApRKhQb3H75GoGuMztAUVZ9TW/anasq3DR2FUMFeoUQx3eIQ2ASLEw35iuDw4cZbXLlxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=QbPMM9gW; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ea292956so62935285ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749646864; x=1750251664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CSKx+jiwSQ8DJGzzvr3skZPVBhTTim+uSj665SiqoD0=;
-        b=QbPMM9gWoczJsDC0oLzWD3iFJK53GT6JRMtpLCBIDg+Ub+xFO9Jif9egm9lljW8vtR
-         rWcjApI4GscBPCBAOcRJ8G2HP0YMlc5tCZ6RBzf/SD7XRdiwQbiaGNdX+vNcUv+UwVYM
-         nnbFUE0yK8TjEh4/8+HlIDZjs+XVJsdOvYOf/JlO2Dk0aYZhUDpcia3u8+eUcNyubEdQ
-         lNLHYmg5zsXzQh7NeJS1MBPhJIJHuasHIiVBTxN2mzoImm4t6Mm0GAF6qFsdN4FCk5gl
-         KsMp1SOndgeKTghBNQKTTh0fiWiJcgFdkfekkyzZXiVZUP8gqbFJ4DWOvzhTx7IrVjRZ
-         HRng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749646864; x=1750251664;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CSKx+jiwSQ8DJGzzvr3skZPVBhTTim+uSj665SiqoD0=;
-        b=WuWxlWtUvUoi17DQwU+bxFp8Fb0P0XjmDnJDoyFe2huoOj4kyz5VVI+i506aKJ5X9I
-         G4mmTsoENEKBNCNmPjV04M3wZp/mJAadD9YLGkShBoyFLEv4qIOtC++6ImNAq9B7KTms
-         GHftzkG3bi7H7Fc9NDn3sJJxTkEhAAtsDL3ivNx9TQeLFIW7vdea1DVRnkxAf4JgLc9c
-         Ta3YWy6o12HIwppIMKNopnbiI1WGATYZnr47BvJOpgTyPcpS++VDjUF98yAtLbXexft4
-         GMlk53RtTsbWIsFZIMS0IjU3qInd3JwawduHHCoi1CTF+lrXVqUKo4klNSuxiIijekl4
-         C4bA==
-X-Forwarded-Encrypted: i=1; AJvYcCWx3hIUO9tlIG+aZ0znYIt0NesOzogg6Q7OvrOtfXySd2ipC/iqU+3W/30OTHM0G1jeARpfPCynfabvvwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3+RLMeWu/E18p8OoVJ8hQgpWJwFujks9C1B5JfKcKkmPgbmQ7
-	hqcrwNuTWHg65i+sFDgy9aTATb7HAT/ML18Who2FWTKJw7d8YDquAhFXhGCQngkdClg=
-X-Gm-Gg: ASbGncvFL2jr0gAN2rTDW+81R2xiXV7oSbqdS3MVngGURPAnz5ku7HndKu/KXplJPL9
-	4ISVci3zordqQrAhrecaz7CljXJcDnjhsBZ1DQJckF0Eeruaw/EqwrjyE2/IY2NQvHpboplZJ7Y
-	R0AEPN14M6eEVHxstUajMfyIZZzSf2u7Ox3IodAEoNdw1d6YXJCG09jSETedpK7MclV/PzLX7Sj
-	TYF8raGWYMhCFwRrLQe9K5P0KfRpKMKCMKcj/IuZN0yBJTOIrHotaCngtDfaW1UkkKZ6N4q5akd
-	ghI5t1bUzu92rR8fxwlPSbh+epqhy86MII7KM5GLqgNOoIy5fHXOr3H1V5OaKfQKlEJ34kDWnEr
-	YS0FshPnhns057Q/u83WZec2JYOLCgMN2
-X-Google-Smtp-Source: AGHT+IHRhbcivXCxN135O16ueeb4/aUJWfnS89ixSiurI5FZ7uV83frEUoZkuyXDNWNmUKyh7r0P9A==
-X-Received: by 2002:a17:902:c94d:b0:234:8c52:1f9b with SMTP id d9443c01a7336-23641b1553emr48488375ad.43.1749646862200;
-        Wed, 11 Jun 2025 06:01:02 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8a00:31a4:6520:3d67:ceb1:7c60:9098])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236030925e3sm86984115ad.53.2025.06.11.06.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 06:01:01 -0700 (PDT)
-From: Guodong Xu <guodong@riscstar.com>
-To: vkoul@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dlan@gentoo.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	p.zabel@pengutronix.de,
-	drew@pdp7.com,
-	emil.renner.berthing@canonical.com,
-	inochiama@gmail.com,
-	geert+renesas@glider.be,
-	tglx@linutronix.de,
-	hal.feng@starfivetech.com,
-	joel@jms.id.au,
-	duje.mihanovic@skole.hr
-Cc: guodong@riscstar.com,
-	elder@riscstar.com,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: [PATCH 8/8] riscv: defconfig: Enable MMP_PDMA support for SpacemiT K1 SoC
-Date: Wed, 11 Jun 2025 20:57:23 +0800
-Message-ID: <20250611125723.181711-9-guodong@riscstar.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250611125723.181711-1-guodong@riscstar.com>
-References: <20250611125723.181711-1-guodong@riscstar.com>
+	s=arc-20240116; t=1749646721; c=relaxed/simple;
+	bh=bjdrKjexsX9dGmwydNKwJmHNPIa3EItLfxeT5EPjBNo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sv6L0cdviaVDKibAHuPP9BVhNxgNYgvzeXmyWF6cJWtNqJQu44uRDwvlnAC+dSUBlVEsYERlHyvRP89nsY8UO+9qBMojqV23HrOrbtN5+Oy1Y9e5twlzkct43e4hN0TO5qMDNY5fCt3JDk/jURdcpwylu+6O6SQ1UexuHOWtx/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SGKI4BwO; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749646720; x=1781182720;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=bjdrKjexsX9dGmwydNKwJmHNPIa3EItLfxeT5EPjBNo=;
+  b=SGKI4BwOUtwwMGOkmBf2a/D/xhh5iZkO3Q5MIWARYXj6UExMGZD/JJd+
+   LrlMiRhiKaJDhDk/n7gwntgeYwLZvFQOuU5+mw8JewtMYYkXYANsd3I65
+   nl4HlLmneVHuWoBy6oWLU5cnMzlmYznkL2/GyA7EZ1JvDYpTlbEkflWO/
+   GWZYeJfe/WNJVC/67RzdfrkjgzsT+13NC5RdqlNjc9iVI2fWkIVdT/1I4
+   fCdvjtuxQ/eaDNMjeiVRoMfv/EDuMpN22vpWfvw938xsWIn2oCeM0QTkP
+   TsgPjyX1xkrw2lIqKWhp5FNbv53Fk3NJzb4iGJbNfnkX3mVm6NRyzg39i
+   Q==;
+X-CSE-ConnectionGUID: BmaH5YdRQB+rtzWZxM/tMw==
+X-CSE-MsgGUID: bvNcmIHjRUmx1shDzXQCmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51668205"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="51668205"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 05:58:38 -0700
+X-CSE-ConnectionGUID: eoVbkOfbTgekRsupGNYkbA==
+X-CSE-MsgGUID: 4G02qJICQFG8m4zwuBY0/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="152080248"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.183])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 05:58:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 11 Jun 2025 15:58:29 +0300 (EEST)
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 23/33] serial: 8250: extract serial8250_set_efr()
+In-Reply-To: <20250611100319.186924-24-jirislaby@kernel.org>
+Message-ID: <2b9d3171-6a71-ad9e-8a73-f07487f0ad6b@linux.intel.com>
+References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-24-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Enable CONFIG_MMP_PDMA in the riscv defconfig for SpacemiT K1 SoC boards
-like the BananaPI-F3 (BPI-F3) and the Sipeed LicheePi 3A.
+On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
 
-According to make savedefconfig, the position of CONFIG_DWMAC_THEAD=m
-should be in another place. It was updated in this patch.
+> serial8250_do_set_termios() consists of many registers and up flags
+> settings. Extract all these into separate functions. This time, setting
+> of EFR for UART_CAP_EFR ports.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> ---
+>  drivers/tty/serial/8250/8250_port.c | 43 +++++++++++++++++------------
+>  1 file changed, 25 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index 2c045a4369fc..0f16398cc86f 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -2768,6 +2768,30 @@ static void serial8250_set_ier(struct uart_port *port, struct ktermios *termios)
+>  	serial_port_out(port, UART_IER, up->ier);
+>  }
+>  
+> +static void serial8250_set_efr(struct uart_port *port, struct ktermios *termios)
+> +{
+> +	struct uart_8250_port *up = up_to_u8250p(port);
+> +	u8 efr_reg = UART_EFR;
+> +	u8 efr = 0;
+> +
+> +	if (!(up->capabilities & UART_CAP_EFR))
+> +		return;
+> +
+> +	/*
+> +	 * TI16C752/Startech hardware flow control.  FIXME:
+> +	 * - TI16C752 requires control thresholds to be set.
+> +	 * - UART_MCR_RTS is ineffective if auto-RTS mode is enabled.
+> +	 */
+> +	if (termios->c_cflag & CRTSCTS)
+> +		efr |= UART_EFR_CTS;
+> +
+> +	if (port->flags & UPF_EXAR_EFR)
 
-CONFIG_DWMAC_THEAD was initially introduced into riscv defconfig in
-commit 0207244ea0e7 ("riscv: defconfig: enable pinctrl and dwmac support
-for TH1520")
+I wonder if it is possible to trigger this at all? Only 8250_exar.c sets 
+this flag and does not contain have UART_CAP_EFR at all (nor uses 
+UPF_BOOT_AUTOCONF)??
 
-Signed-off-by: Guodong Xu <guodong@riscstar.com>
----
- arch/riscv/configs/defconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +		efr_reg = UART_XR_EFR;
+> +
+> +	serial_port_out(port, UART_LCR, UART_LCR_CONF_MODE_B);
+> +	serial_port_out(port, efr_reg, efr);
+> +}
+> +
+>  void
+>  serial8250_do_set_termios(struct uart_port *port, struct ktermios *termios,
+>  		          const struct ktermios *old)
+> @@ -2797,24 +2821,7 @@ serial8250_do_set_termios(struct uart_port *port, struct ktermios *termios,
+>  	uart_update_timeout(port, termios->c_cflag, baud);
+>  	serial8250_set_errors_and_ignores(port, termios);
+>  	serial8250_set_ier(port, termios);
+> -
+> -	if (up->capabilities & UART_CAP_EFR) {
+> -		unsigned char efr = 0;
+> -		/*
+> -		 * TI16C752/Startech hardware flow control.  FIXME:
+> -		 * - TI16C752 requires control thresholds to be set.
+> -		 * - UART_MCR_RTS is ineffective if auto-RTS mode is enabled.
+> -		 */
+> -		if (termios->c_cflag & CRTSCTS)
+> -			efr |= UART_EFR_CTS;
+> -
+> -		serial_port_out(port, UART_LCR, UART_LCR_CONF_MODE_B);
+> -		if (port->flags & UPF_EXAR_EFR)
+> -			serial_port_out(port, UART_XR_EFR, efr);
+> -		else
+> -			serial_port_out(port, UART_EFR, efr);
+> -	}
+> -
+> +	serial8250_set_efr(port, termios);
+>  	serial8250_set_divisor(port, baud, quot, frac);
+>  
+>  	/*
+> 
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 517cc4c99efc..83d0366194ba 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -134,6 +134,7 @@ CONFIG_MACB=y
- CONFIG_E1000E=y
- CONFIG_R8169=y
- CONFIG_STMMAC_ETH=m
-+CONFIG_DWMAC_THEAD=m
- CONFIG_MICREL_PHY=y
- CONFIG_MICROSEMI_PHY=y
- CONFIG_MOTORCOMM_PHY=y
-@@ -240,7 +241,7 @@ CONFIG_RTC_DRV_SUN6I=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_SUN6I=m
- CONFIG_DW_AXI_DMAC=y
--CONFIG_DWMAC_THEAD=m
-+CONFIG_MMP_PDMA=m
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_INPUT=y
 -- 
-2.43.0
+ i.
+
 
 
