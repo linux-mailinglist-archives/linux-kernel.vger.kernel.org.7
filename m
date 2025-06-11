@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-681446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06CBAD52B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 118DEAD52BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABEE3A6F58
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9DF3AAC97
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC96281532;
-	Wed, 11 Jun 2025 10:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D692820D8;
+	Wed, 11 Jun 2025 10:49:26 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B648A2820D8
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 10:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AC1283CB1
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 10:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749638964; cv=none; b=PHdPavHdrfUCZUxvS4YQPEizXRPbQBa34ER5QFtagtcPnPhY9Ahli0qMbhzOfuvEn0PB4LFhTiC4xg3mIL0aGm8JK8nGYtuMdTnsFMeFZMei+i+lgnW4+yttUbgWVJriRkwzhCdYQZk40NDK+hVXJ1ZLDrhCuloWpm7u0xYlA0c=
+	t=1749638966; cv=none; b=XhEpNGlW94ZJZFmTUhQnw12RztGxbXPrw27yie4nZp1++ISmFzYwjO/qMAgFDBn+XVjJcsI1WuNpJCLwcs/T9vzzxYgy/8Ic6p1Qhrpbzp6eLmLvvC0T9lt0nwTWlFsj7xYFlmNPM+4+PFrSopbTIKMZALHUK8OVbG3y6e/D/f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749638964; c=relaxed/simple;
-	bh=agoGXUs6Jt9hujfMYLYSSir3rt9ddFa9nUHdIfaNGrE=;
+	s=arc-20240116; t=1749638966; c=relaxed/simple;
+	bh=JVP6OfbAmASCiu3vKazYYbs14p39xHpdEiwaR6eOXCU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t2Cdan9wO0BoDYi5jWEOekUpJ6f9J+ApfFlqqstjrxuSv4xyOT5dbW/ekzZa2rFJWbKQy+H5rJSxwiRZRE/lOnqT5svCTEbsmJIApMCZXt/rLw2q0INV3PfSeNYRO8rB+nDrk4xSzmjFO84RwArj+lhGBMqX7WsEmN4MjFlsFC0=
+	 MIME-Version; b=g6sV1tVfum+6z7jxzMKLIoz1O4T/CdXsWHexR0WVa0IL4o3A3v6gfcOaGwpsnfCDbH3pAXZTuW/ZdvQ31ykKfSX/Rk1yN7zEJ7SeCguX9XtXCdsQJP16ZVdyxsXB1IHaBf9iCBDo0zs23N3z4g7YTqfK+hb3JzChp/Iz8Y9zQtE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F4461BC0;
-	Wed, 11 Jun 2025 03:49:02 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0C4115A1;
+	Wed, 11 Jun 2025 03:49:04 -0700 (PDT)
 Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5AA8C3F77D;
-	Wed, 11 Jun 2025 03:49:20 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 830B23F77D;
+	Wed, 11 Jun 2025 03:49:22 -0700 (PDT)
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -46,9 +46,9 @@ To: catalin.marinas@arm.com,
 Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 1/6] arm64: cpufeature: add FEAT_LSUI
-Date: Wed, 11 Jun 2025 11:49:11 +0100
-Message-Id: <20250611104916.10636-2-yeoreum.yun@arm.com>
+Subject: [PATCH 2/6] arm64/Kconfig: add LSUI Kconfig
+Date: Wed, 11 Jun 2025 11:49:12 +0100
+Message-Id: <20250611104916.10636-3-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250611104916.10636-1-yeoreum.yun@arm.com>
 References: <20250611104916.10636-1-yeoreum.yun@arm.com>
@@ -60,56 +60,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since Armv9.6, FEAT_LSUI supplies load/store instructions
-for privileged level to access user memory without clearing PSTATE.PAN bit.
-
-Add LSUI feature so that the unprevilieged load/store instrcutions
-could be used when kernel accesses user memory without clearing PSTATE.PAN bit.
+Since Armv9.6, FEAT_LSUI supplies the load/store instructions for
+previleged level to access to access user memory without clearing
+PSTATE.PAN bit.
+It's enough to add CONFIG_AS_HAS_LSUI only because the code for LUSI uses
+indiviual `.arch_extension` entries.
 
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 ---
- arch/arm64/kernel/cpufeature.c | 8 ++++++++
- arch/arm64/tools/cpucaps       | 1 +
- 2 files changed, 9 insertions(+)
+ arch/arm64/Kconfig | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index b34044e20128..d914982c7cee 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -278,6 +278,7 @@ static const struct arm64_ftr_bits ftr_id_aa64isar2[] = {
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 55fc331af337..20f360eef2ac 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -2237,6 +2237,13 @@ config ARM64_GCS
  
- static const struct arm64_ftr_bits ftr_id_aa64isar3[] = {
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR3_EL1_FPRCVT_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR3_EL1_LSUI_SHIFT, 4, ID_AA64ISAR3_EL1_LSUI_NI),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR3_EL1_FAMINMAX_SHIFT, 4, 0),
- 	ARM64_FTR_END,
- };
-@@ -3061,6 +3062,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.matches = has_pmuv3,
- 	},
- #endif
-+	{
-+		.desc = "Unprivileged Load Store Instructions (LSUI)",
-+		.capability = ARM64_HAS_LSUI,
-+		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.matches = has_cpuid_feature,
-+		ARM64_CPUID_FIELDS(ID_AA64ISAR3_EL1, LSUI, IMP)
-+	},
- 	{},
- };
+ endmenu # "v9.4 architectural features"
  
-diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-index 10effd4cff6b..d625f4987aa7 100644
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@ -59,6 +59,7 @@ HAS_TLB_RANGE
- HAS_VA52
- HAS_VIRT_HOST_EXTN
- HAS_WFXT
-+HAS_LSUI
- HAFT
- HW_DBM
- KVM_HVHE
++menu "v9.6 architectural features"
++
++config AS_HAS_LSUI
++	def_bool $(as-instr,.arch_extension lsui)
++
++endmenu # "v9.6 architectural features"
++
+ config ARM64_SVE
+ 	bool "ARM Scalable Vector Extension support"
+ 	default y
+@@ -2498,4 +2505,3 @@ endmenu # "CPU Power Management"
+ source "drivers/acpi/Kconfig"
+ 
+ source "arch/arm64/kvm/Kconfig"
+-
 -- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
