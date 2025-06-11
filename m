@@ -1,373 +1,303 @@
-Return-Path: <linux-kernel+bounces-681847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07A1AD5811
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:09:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B129AD57FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF7D188E84F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F38173367
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D3D28C2A2;
-	Wed, 11 Jun 2025 14:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A102928C017;
+	Wed, 11 Jun 2025 14:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdG/6GPF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecaT0xx1"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217B22882C5
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0372A44C63
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749650934; cv=none; b=Mla8wCJgwL1sOu8hKpgZijLibp9EJ6TgLUa8i9ELZFeEH4T4t8gEe0MNMVyLrTp5oo/h//w7gXMA2gJXAI+pGISCHhB+/u0I7uxOPF6iWcLADpi/x13ZcaMyyZoTQfzzUyirOQhefXByzkhOxKO6lhLZY4VvassxhprDCl+zhl4=
+	t=1749650637; cv=none; b=XysV893kY9b6BZ5EBqZk7tW7OCscWQfMGKeEkU86aWu822ymtgI6WOdZONlzy4WHUjJK5ON4rCHAZn1IxNmgiDvoLKQc/kVnOTdh+NNRuzVBbW7krRVlANVS6PO4z3yWCV6PWMrY+h8/Z40Mn4GHVEHFzNiygWgKLA4gffWUyQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749650934; c=relaxed/simple;
-	bh=fbXIQiswJaWMkMTaW2dr8b6K5p2U8TCNYwy2FdEVnIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d9K1eeJhHqm2FmJB8wgcE0Jc1F7munQ7PKZ6/kJBTenv9eC1zpaS+ARkOWIiW7ZKdnMU36dAqQEeVy35hzcvWdkEDYlxrt6ltEh0nHnjky4MevQc/IvgnmpU2FjvIb/fK/aLy6qN6ZPQ3Dfk0eN5/D7Q+2zNK9HfW8ZqEETZYo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdG/6GPF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749650927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O00w9NUXwe28lczeStTFDb6tJyisiybPqnPnGe9q4+Q=;
-	b=bdG/6GPFrv5hHwyoxoTYiMrA/dtC8FdgMZuuDjWR1NDtWNjGeMwi6dD55pSvgDrMWMxs29
-	nGJ8XphNzNYjH8OHEF+Db7nVX0FHWEmpVD26PFIPRlvnda5PPYatoUzvg+Cgmf1Uel1vES
-	9SjotAa72fOLHIOIIkWPDF04y3xMzJ4=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-jhMjis09PBaK14kqktIV9Q-1; Wed, 11 Jun 2025 10:08:28 -0400
-X-MC-Unique: jhMjis09PBaK14kqktIV9Q-1
-X-Mimecast-MFC-AGG-ID: jhMjis09PBaK14kqktIV9Q_1749650908
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-869e9667f58so1175706139f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:08:28 -0700 (PDT)
+	s=arc-20240116; t=1749650637; c=relaxed/simple;
+	bh=OzPB4GNYM+Tc520rN09+ufJ7Fcfmj7iSdvdWSRXE/Js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DIGZPykZ5iqJAEmAYRC8XhbGpbTLeGvUMBW+42TZ9/5MwSmwElgECHcpR9XudjE6g4aqBMs7pDEref96YsIs5xEhmn1UwyQueSw8B/W21S2kTwTEZHnREqnS8MtztXVAYRJxIBh+Vz2iySZOjRlRjvA8e5L/bwzMNztieUbkFk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecaT0xx1; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32a7a5ab797so52023711fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:03:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749650634; x=1750255434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/9xKEB3kc2TRwlYRrzySNb+uFlw3/FX6SdaA3l9rJuo=;
+        b=ecaT0xx1xJN6YTyu+fzrYrMoMlmvSdBFJ18OA0qKDYM361ppJ+Mo+DQgEC2JAoETqh
+         k7qvEbOmNKfib0cptzwYZwUaZnkW5XnW2lnkmxadWHzv7//a04LPZCj5UKFb18bQ1z6R
+         QUt7B5LmzbKp/OzAoV4tWgCmtPe7ajD3F/RU1JONF8mWqzgMBevgZe/9zFzqzpnPA0sO
+         gprWWZy9OV43UlFSpEyKeXXpJpjwAamzywCNDs3ewA9rF6Hm+5hO/bLLIhd7vW2K2teK
+         QWgdRKqvh95JwOie0KPes201Gjo7dP7JcBC/+vMTVyWPWxg0/g91Q/5vlSESaRiNNP5w
+         +rsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749650908; x=1750255708;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O00w9NUXwe28lczeStTFDb6tJyisiybPqnPnGe9q4+Q=;
-        b=UQ2awHp2h72ROxWoNsNkYMG/EzUEJYu7Qvc7JO9LUwA9o64tHj+9RJj2RCVH28m6AI
-         uSLkKcNXoeI4woDsnvjpsV9TRS4UXbWuz5tf86DOlZZPIKzsxGYI39v/Zy+GfsVJzNQo
-         KYP8Hr0ySjO5yM02W3Ff253B2zVIIGCM2qRLDlPygnsqaH7RN/fMnTL6WbS7Dl2B7+NS
-         HI4AjsOoMeS3PJiWQp4PRMTZsBKpF+RsnQRDvkcSP+SeuPeXS+pD9j7q6P+O5COBwbV6
-         Wyf8HNa4VHQEHrNL3JHGf6eV/szKQ16HOFjMJpqugAoyVnnO1plWSta+z82dYkFyoHw/
-         54Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWz6ymQabZOiwSXpJ1/rX//EjnoAZnbq6hSDyuStzKBZOHykoMP+vBACK7dRa5zniDBIHhjyhWJrSwbPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq7XcplkNaA5zve4JH8YGIZ9Io96L9LKrUhe+25O5AtAPlW8ZQ
-	H9ndRXhI1923Uub6e4dPlVxiTwOz9WTLD0Lu4+IYAtdIn3Fu0WYAsN/lZZ9cmrlnhq9F2hIZyeS
-	KYgjrWvxL9ohL/XyMcCjJ1dQPXlgMfRjEh1n/Yx6RLr+NiCHbtqJVU9POkGlBzSTf7g5h9dEyip
-	7x
-X-Gm-Gg: ASbGncuSfG+eW1rKsIWiFC3x+8LxnRrOXXdwlcOuE+LoxfS4PoV/bMRH0rQpIh2LSD8
-	QjRcVr1+Z/0sALat35edDJX4EcbRqERrx6O6J2A4Ue5bH8MwVJo2b6lrPtzaoMqfOfsMJhNduGu
-	sYVg3NjX8r/n+dRU3mOEvWgLUUt/db31gUB74PiUxQWReU/vcnxxKk0RAJbflOrd+1RqlHaPcn/
-	CkyNVt6l8h927g9F8kxNXkrjcPNvxjDl2uXSN7e+I1pkgCFMYTNesMZXU4P65hFrEgL94ndv6EI
-	wJVgClXbK2UXT5+tyCKQ5X9TZGCgFuw1m1I9oHybYW83
-X-Received: by 2002:a17:90b:5289:b0:313:14b5:2525 with SMTP id 98e67ed59e1d1-313af28fb8cmr5533010a91.35.1749650458209;
-        Wed, 11 Jun 2025 07:00:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjD5dEBHqYP+J40L6QO31gcp2UGI2QFVAzDC/8AtkH2FxqpBtJysXFpPQA+E4bADJ4VxXZmw==
-X-Received: by 2002:a05:6102:4191:b0:4e5:996d:f23c with SMTP id ada2fe7eead31-4e7bafaa30amr2764481137.20.1749650445776;
-        Wed, 11 Jun 2025 07:00:45 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ab8a19sm81555616d6.8.2025.06.11.07.00.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 07:00:45 -0700 (PDT)
-Message-ID: <43d9cb6e-1b8f-47b9-8c19-58fc7c74a71e@redhat.com>
-Date: Wed, 11 Jun 2025 16:00:41 +0200
+        d=1e100.net; s=20230601; t=1749650634; x=1750255434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/9xKEB3kc2TRwlYRrzySNb+uFlw3/FX6SdaA3l9rJuo=;
+        b=Y96Q/j67PUmrHRIdIIBcehSnuCN8CvbynW9PKx42p8uMEQwY1YMXZ7MksriCUZTs5S
+         ZQ08BbknDPeGirgMJrU1hx4EMoVAt1frhxMQdz3714NviqqQZ7nNqyVKb12g6sxMLWsi
+         0g8+CD0p6zQkS7yL3i8/7S3VUIxGnTLl2Lxvhm17SgW5ZXBSu62XX8HZdqfk1LOptSBR
+         WFkwSdPxENfGs3f37HHapmEXL7wyI8Oun9AzcruuAJ1yXETQ+ULH37FzallgeMHt4nbx
+         cHrS0Zyt9FUlRzlWbf61MgRg94ZODJj0zIdV7qQLdp5GaZVc/ceRgJmHLWwLwZq1EoTG
+         mhrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOjoPfqaWlArtnMw7s4rg7MseP6iho38F8wVw2VyUXs05cZzCDmqFFQiJyBPuDRUcFTfJ+O2VfHwfvexQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXwgqs0QSP4jZXVMkVhzlf5MKo9UAPacMD2hPGwNhAiLmljCxA
+	X7lCpgWr4x/f8hBk9I8yM511IYAJ34+ygq/EubM/43b8lZgc302wzlrdcJNG/5ZM4nKB5fcalJO
+	FlJy/LOfSKWHv20UpuSlBu41yxxGRtW8=
+X-Gm-Gg: ASbGncuR4bqA+7k4PsTAVp8MZFX+4nFbwdc5USYwAmG/zkc9x+r+cL3k9JnAdmeM1ur
+	dq0k/2EOkiVQZX+jjKKyxe3w0yb7l6BeE/Q+7hG26pkkh5dUShsYGWteXjEALSCE3lBsIcDr1oe
+	KXaQAAk4WpgHMcy58Ayq0pGE8qX2qM0FYL33IVYJvMDUcr8KzthlqNAcFtqcPwwv3LF53ls68/Q
+	aqftg==
+X-Google-Smtp-Source: AGHT+IH+gJe+BL6yCA7mEGder2oiUWhfY4G8pX6Nt7XDyy4GsjjjIXGrWNqCqgE9eotrFsyBSb7jcR3yYkMAQ0N7mWM=
+X-Received: by 2002:a2e:a781:0:b0:32a:83b5:34ba with SMTP id
+ 38308e7fff4ca-32b223b6f4bmr9396991fa.20.1749650632133; Wed, 11 Jun 2025
+ 07:03:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] mm: Optimize mremap() by PTE batching
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, peterx@redhat.com, ryan.roberts@arm.com,
- mingo@kernel.org, libang.li@antgroup.com, maobibo@loongson.cn,
- zhengqi.arch@bytedance.com, baohua@kernel.org, anshuman.khandual@arm.com,
- willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com,
- baolin.wang@linux.alibaba.com, ziy@nvidia.com, hughd@google.com
-References: <20250610035043.75448-1-dev.jain@arm.com>
- <20250610035043.75448-3-dev.jain@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250610035043.75448-3-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250607064444.4310-1-pranav.tyagi03@gmail.com> <87cybdp7to.ffs@tglx>
+In-Reply-To: <87cybdp7to.ffs@tglx>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Wed, 11 Jun 2025 19:33:39 +0530
+X-Gm-Features: AX0GCFsALrCD5nGDJIuDloqSPWlSSAfHKuZ-ZeZ9_L94K6dWGNOykGhECj18iEk
+Message-ID: <CAH4c4jLjSBxbd3bqkdgcCSWqXURratANgnbq9negrSU283xHpg@mail.gmail.com>
+Subject: Re: [PATCH] futex: don't leak robust_list pointer on exec race
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	linux-kernel@vger.kernel.org, jann@thejh.net, keescook@chromium.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10.06.25 05:50, Dev Jain wrote:
-> Use folio_pte_batch() to optimize move_ptes(). On arm64, if the ptes
-> are painted with the contig bit, then ptep_get() will iterate through all 16
-> entries to collect a/d bits. Hence this optimization will result in a 16x
-> reduction in the number of ptep_get() calls. Next, ptep_get_and_clear()
-> will eventually call contpte_try_unfold() on every contig block, thus
-> flushing the TLB for the complete large folio range. Instead, use
-> get_and_clear_full_ptes() so as to elide TLBIs on each contig block, and only
-> do them on the starting and ending contig block.
-> 
-> For split folios, there will be no pte batching; nr_ptes will be 1. For
-> pagetable splitting, the ptes will still point to the same large folio;
-> for arm64, this results in the optimization described above, and for other
-> arches (including the general case), a minor improvement is expected due to
-> a reduction in the number of function calls.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->   mm/mremap.c | 39 ++++++++++++++++++++++++++++++++-------
->   1 file changed, 32 insertions(+), 7 deletions(-)
-> 
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 180b12225368..18b215521ada 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -170,6 +170,23 @@ static pte_t move_soft_dirty_pte(pte_t pte)
->   	return pte;
->   }
->   
-> +static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigned long addr,
-> +		pte_t *ptep, pte_t pte, int max_nr)
-> +{
-> +	const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
-> +	struct folio *folio;
-> +
-> +	if (max_nr == 1)
-> +		return 1;
-> +
-> +	folio = vm_normal_folio(vma, addr, pte);
-> +	if (!folio || !folio_test_large(folio))
-> +		return 1;
-> +
-> +	return folio_pte_batch(folio, addr, ptep, pte, max_nr, flags, NULL,
-> +			       NULL, NULL);
-> +}
-> +
->   static int move_ptes(struct pagetable_move_control *pmc,
->   		unsigned long extent, pmd_t *old_pmd, pmd_t *new_pmd)
->   {
-> @@ -177,7 +194,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->   	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
->   	struct mm_struct *mm = vma->vm_mm;
->   	pte_t *old_ptep, *new_ptep;
-> -	pte_t pte;
-> +	pte_t old_pte, pte;
->   	pmd_t dummy_pmdval;
->   	spinlock_t *old_ptl, *new_ptl;
->   	bool force_flush = false;
-> @@ -185,6 +202,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
->   	unsigned long new_addr = pmc->new_addr;
->   	unsigned long old_end = old_addr + extent;
->   	unsigned long len = old_end - old_addr;
-> +	int max_nr_ptes;
-> +	int nr_ptes;
->   	int err = 0;
->   
->   	/*
-> @@ -236,14 +255,16 @@ static int move_ptes(struct pagetable_move_control *pmc,
->   	flush_tlb_batched_pending(vma->vm_mm);
->   	arch_enter_lazy_mmu_mode();
->   
-> -	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
-> -				   new_ptep++, new_addr += PAGE_SIZE) {
-> +	for (; old_addr < old_end; old_ptep += nr_ptes, old_addr += nr_ptes * PAGE_SIZE,
-> +		new_ptep += nr_ptes, new_addr += nr_ptes * PAGE_SIZE) {
->   		VM_WARN_ON_ONCE(!pte_none(*new_ptep));
->   
-> -		if (pte_none(ptep_get(old_ptep)))
-> +		nr_ptes = 1;
-> +		max_nr_ptes = (old_end - old_addr) >> PAGE_SHIFT;
-> +		old_pte = ptep_get(old_ptep);
-> +		if (pte_none(old_pte))
->   			continue;
->   
-> -		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
->   		/*
->   		 * If we are remapping a valid PTE, make sure
->   		 * to flush TLB before we drop the PTL for the
-> @@ -255,8 +276,12 @@ static int move_ptes(struct pagetable_move_control *pmc,
->   		 * the TLB entry for the old mapping has been
->   		 * flushed.
->   		 */
-> -		if (pte_present(pte))
-> +		if (pte_present(old_pte)) {
-> +			nr_ptes = mremap_folio_pte_batch(vma, old_addr, old_ptep,
-> +							 old_pte, max_nr_ptes);
->   			force_flush = true;
-> +		}
-> +		pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr_ptes, 0);
->   		pte = move_pte(pte, old_addr, new_addr);
->   		pte = move_soft_dirty_pte(pte);
->   
-> @@ -269,7 +294,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->   				else if (is_swap_pte(pte))
->   					pte = pte_swp_clear_uffd_wp(pte);
->   			}
-> -			set_pte_at(mm, new_addr, new_ptep, pte);
-> +			set_ptes(mm, new_addr, new_ptep, pte, nr_ptes);
+On Mon, Jun 9, 2025 at 3:15=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Sat, Jun 07 2025 at 12:14, Pranav Tyagi wrote:
+> > Previously, the get_robust_list() and compat_get_robust_list() syscalls
+> > used rcu_read_lock() to access the target task's robust list pointer.
+>
+> This is not previously. It's how the code is right now and you want to
+> describe the status as is.
+>
+> > However, rcu_read_lock() is not sufficient when the operation may sleep
+> > (e.g., locking or user-spaces access), nor does it prevent the task fro=
+m
+> > exiting while the syscall is in progress.
+>
+> 1) There is no sleeping operation in this code path.
+>
+> 2) Of course it does not prevent the task from exiting, it only prevents
+>    the task struct from being freed. But what's the actual problem with
+>    that?
+>
+>    task->robust_list contains the tasks robust list pointer even after
+>    the task exited.
+>
+> > This patch replaces rcu_read_lock() with
+>
+> git grep 'This patch' Documentation/process/
+>
+> > get_task_struct()/put_task_struct() to ensure the task is pinned during
+> > syscall execution prevent use-after-free.
+>
+> Which use after free? You fail to explain the actual problem in the
+> first place and then you describe a solution for the non explained
+> problem.
+>
+> > Additionally, the robust_list pointer can be modified during exec()
+> > causing a race condition if accessed concurrently.
+>
+> Sure, but what is the effect of that race condition?
+>
+> begin_new_exec() -> exec_mmap() -> exec_mm_release() ->
+> futex_exec_release()
+>
+> The latter sets task::robust_list to NULL. So this either sees the real
+> pointer or NULL. The actual problem is?
+>
+> A similar concurrency race exists between sys_get_robust_list() and
+> sys_set_robust_list(), no?
+>
+> > ... To fix this we
+>
+> We do nothing. See
+>
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#change=
+log
+>
+> > introduce down_read_killable(&exec_update_lock), a read lock on a
+> > rw_semaphore protecting signal_struct members that change during exec.
+>
+> > This read-write semaphore allows multiple concurrent readers of
+> > robust_list, while exec() takes the write lock to modify it, ensuring
+> > synchronization.
+>
+> Synchronization of what?
+>
+> > This prevents an attacker from determining the robust_list or
+> > compat_robust_list userspace pointer of a process created by executing
+> > a setuid binary. Such an attack could be performed by racing
+> > get_robust_list() with setuid execution. The impact of this issue is th=
+at
+> > the attacker could theoretically bypass ASLR when attacking setuid
+> > binaries.
+>
+> It can theoretically bypass ASLR. That's impressive given the fact that
+> there are a gazillion ways to do so.
+>
+> Now let me ask the obvious question. How is the new code so much more
+> protective?
+>
+> T1                                      T2
+>
+>                                         exit();
+> sys_get_robust_list(T2)
+>    lock();
+>                                         lock();
+>    head =3D T2->robust_list;
+>    unlock();
+>    copy_to_user(head);                  // T2 mops up
+>    ....
+>    return_to_user();
+>
+> T1 has the pointer, which is not longer valid. So what is this magic
+> serialization actually preventing?
+>
+> Surely not the fact that the robust list pointer of T2 can be invalid
+> immediately after T1 retrieved it.
+>
+> > Overall, this patch fixes a use-after-free and race condition by
+> > properly pinning the task and synchronizing access to robust_list,
+> > improving syscall safety and security.
+>
+> By handwaving....
+>
+> The real issue what Jann's original series is trying to address is that
+> the ptrace_may_access() check is racy against a concurrent exec(). But
+> that's nowhere mentionened in the above word salad.
+>
+> That said, I'm not opposed against the change per se, but it needs to
+> come with a proper explanation of the actual problem and a description
+> of the real world relevance of the issue in the existing code.
+>
 
+Hi,
 
-What I dislike is that some paths work on a single PTE, and we implicitly have to know
-that they don't apply for !pte_present.
+Thank you for the detailed feedback. I appreciate the time and
+insight you=E2=80=99ve shared, and I=E2=80=99ve learned a lot from it. I ho=
+pe you=E2=80=99ll kindly
+excuse the shortcomings in my initial changelog. I=E2=80=99m still new to k=
+ernel
+work and upstreaming. I understand that my changelog
+didn=E2=80=99t clearly convey the actual problem.
 
-Like
-	if (need_clear_uffd_wp && pte_marker_uffd_wp(pte))
+Does the revised version below address the concerns more effectively
+or does it still need a bit more seasoning?
 
-Will not get batched yet. And that is hidden inside the pte_marker_uffd_wp check ...
+"Currently, sys_get_robust_list() and compat_get_robust_list() perform a
+ptrace_may_access() check to verify if the calling task is allowed to
+query another task=E2=80=99s robust_list pointer. However, this check is ra=
+cy
+against a concurrent exec() in the target process.
 
-Should we properly separate both paths (present vs. !present), and while at it, do
-some more cleanups? I'm thinking of the following on top (only compile-tested)
+During exec(), a task's credentials and memory mappings can change, and
+the task may transition from a non-privileged binary to a privileged one
+(e.g., a setuid binary). If get_robust_list() performs ptrace_may_access()
+before this transition, it may wrongly allow access to sensitive
+information after the target becomes privileged.
 
+To address this, a read lock is taken on signal->exec_update_lock prior
+to invoking ptrace_may_access() and accessing the robust_list. This
+ensures that the target task's exec state remains stable during the
+check, allowing for consistent and synchronized validation of
+credentials."
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 18b215521adae..b88abf02b34e0 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -155,21 +155,6 @@ static void drop_rmap_locks(struct vm_area_struct *vma)
-                 i_mmap_unlock_write(vma->vm_file->f_mapping);
-  }
-  
--static pte_t move_soft_dirty_pte(pte_t pte)
--{
--       /*
--        * Set soft dirty bit so we can notice
--        * in userspace the ptes were moved.
--        */
--#ifdef CONFIG_MEM_SOFT_DIRTY
--       if (pte_present(pte))
--               pte = pte_mksoft_dirty(pte);
--       else if (is_swap_pte(pte))
--               pte = pte_swp_mksoft_dirty(pte);
--#endif
--       return pte;
--}
--
-  static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigned long addr,
-                 pte_t *ptep, pte_t pte, int max_nr)
-  {
-@@ -260,7 +245,6 @@ static int move_ptes(struct pagetable_move_control *pmc,
-                 VM_WARN_ON_ONCE(!pte_none(*new_ptep));
-  
-                 nr_ptes = 1;
--               max_nr_ptes = (old_end - old_addr) >> PAGE_SHIFT;
-                 old_pte = ptep_get(old_ptep);
-                 if (pte_none(old_pte))
-                         continue;
-@@ -277,24 +261,34 @@ static int move_ptes(struct pagetable_move_control *pmc,
-                  * flushed.
-                  */
-                 if (pte_present(old_pte)) {
-+                       max_nr_ptes = (old_end - old_addr) >> PAGE_SHIFT;
-                         nr_ptes = mremap_folio_pte_batch(vma, old_addr, old_ptep,
-                                                          old_pte, max_nr_ptes);
-                         force_flush = true;
--               }
--               pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr_ptes, 0);
--               pte = move_pte(pte, old_addr, new_addr);
--               pte = move_soft_dirty_pte(pte);
--
--               if (need_clear_uffd_wp && pte_marker_uffd_wp(pte))
--                       pte_clear(mm, new_addr, new_ptep);
--               else {
--                       if (need_clear_uffd_wp) {
--                               if (pte_present(pte))
--                                       pte = pte_clear_uffd_wp(pte);
--                               else if (is_swap_pte(pte))
-+
-+                       pte = get_and_clear_full_ptes(mm, old_addr, old_ptep,
-+                                                     nr_ptes, 0);
-+                       /*
-+                        * Moving present PTEs requires special care on some
-+                        * archs.
-+                        */
-+                       pte = move_pte(pte, old_addr, new_addr);
-+                       /* make userspace aware that this pte moved. */
-+                       pte = pte_mksoft_dirty(pte);
-+                       if (need_clear_uffd_wp)
-+                               pte = pte_clear_uffd_wp(pte);
-+                       set_ptes(mm, new_addr, new_ptep, pte, nr_ptes);
-+               } else if (need_clear_uffd_wp && pte_marker_uffd_wp(pte)) {
-+                       pte_clear(mm, old_addr, old_ptep);
-+               } else {
-+                       pte_clear(mm, old_addr, old_ptep);
-+                       if (is_swap_pte(pte)) {
-+                               if (need_clear_uffd_wp)
-                                         pte = pte_swp_clear_uffd_wp(pte);
-+                               /* make userspace aware that this pte moved. */
-+                               pte = pte_swp_mksoft_dirty(pte);
-                         }
--                       set_ptes(mm, new_addr, new_ptep, pte, nr_ptes);
-+                       set_pte_at(mm, new_addr, new_ptep, pte);
-                 }
-         }
-  
+> Let me look at the code.
+>
+> > diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
+> > index 4b6da9116aa6..27e44a304271 100644
+> > --- a/kernel/futex/syscalls.c
+> > +++ b/kernel/futex/syscalls.c
+> > @@ -53,31 +53,43 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
+> >       unsigned long ret;
+> >       struct task_struct *p;
+> >
+> > -     rcu_read_lock();
+> > -
+> > -     ret =3D -ESRCH;
+> > -     if (!pid)
+> > +     if (!pid) {
+> >               p =3D current;
+> > -     else {
+> > +             get_task_struct(p);
+> > +     } else {
+> > +             rcu_read_lock();
+> >               p =3D find_task_by_vpid(pid);
+> > +             /* pin the task to permit dropping the RCU read lock befo=
+re
+>
+> This is not networking code. So please use proper comment style:
+>
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#commen=
+t-style
+>
+> > +              * acquiring the semaphore
+> > +              */
+> > +             if (p)
+> > +                     get_task_struct(p);
+> > +             rcu_read_unlock();
+> >               if (!p)
+> > -                     goto err_unlock;
+> > +                     return -ESRCH;
+> >       }
+> >
+> > +     ret =3D down_read_killable(&p->signal->exec_update_lock);
+>
+> Lacks a comment explaining what this is actually protecting.
+>
+> >       if (put_user(sizeof(*head), len_ptr))
+> >               return -EFAULT;
+> >       return put_user(ptr_to_compat(head), head_ptr);
+> >
+> >  err_unlock:
+> > -     rcu_read_unlock();
+> > -
+> > +     up_read(&p->signal->exec_update_lock);
+> > +err_put:
+> > +     put_task_struct(p);
+> >       return ret;
+>
+> You really did not have a better idea than copying all of that logic
+> into the compat code?
 
+As I=E2=80=99m still learning, I wasn=E2=80=99t quite sure how to avoid
+duplication there. Would factoring out the common logic into a helper funct=
+ion
+be the right direction? I=E2=80=99d be grateful for your suggestion.
 
-Note that I don't know why we had the existing
-
--               if (need_clear_uffd_wp && pte_marker_uffd_wp(pte))
--                       pte_clear(mm, new_addr, new_ptep);
-
-
-I thought we would always expect that the destination pte is already pte_none() ?
-
--- 
-Cheers,
-
-David / dhildenb
-
+>
+> Thanks,
+>
+>         tglx
 
