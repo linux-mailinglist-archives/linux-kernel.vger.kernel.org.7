@@ -1,155 +1,175 @@
-Return-Path: <linux-kernel+bounces-681088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF230AD4E4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:27:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4E5AD4E43
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0307A1BC17DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708F83A6D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC9A23F41F;
-	Wed, 11 Jun 2025 08:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8491023A989;
+	Wed, 11 Jun 2025 08:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+MOKe+h"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LXs6iZSn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331BD23ED74;
-	Wed, 11 Jun 2025 08:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8BB239E7A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749630374; cv=none; b=H1R4OLa51ZkoG/BquqgVV94CREhpAOcg+y6f7aCME2R20RDt+ZCHGKmbQ0KwU65o6DVIP8aBnUSOAyC9QL7ZDagcF2sku0EwnDpcPiMgNUhUqjricn7KVLV+AnUnWkoD+SCH9jG9kPeOUcIrTkKnVO7uTNX/VxtDrtRSNK5+IRI=
+	t=1749630356; cv=none; b=tjBbIhLavpGnn8rogueKKZPNjZnfwgHGhS8JlsTychC8jjXQtiCnlgD66HKT69f6GIBrL59kxHvDmIVZZjJoaal/bZ4PQElva0lkqD2TKuZFbRAGmQ4Moe8Kq0MnzsWCjQQ8qn8pT1N+nOrwlRRQxa3E8EB7o4frPCshZ1u/Uu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749630374; c=relaxed/simple;
-	bh=QPbfhA2N9SqnbLhMOGWmza/oK+Yt7c/L2c7nhZXdhiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q2L1kivTlKI2P5M7YejMwVohiLV3uRt6Gzb7KS5xJxyb2zll5cJ70QN6GxZ8YMalrPEZXqzEPi4b7T0ABy6zv1bLKlQIS82If/4qdCDtgKvmsiqU/ImJaGa+RlSnsSkAWdZrBZbJp8ScdtnXb5/qHDowpwmOvdw2oVIaSsZLpKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+MOKe+h; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f0ad74483fso63622696d6.1;
-        Wed, 11 Jun 2025 01:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749630372; x=1750235172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9sxXUK96pkvyneP6wC9DeR8WotecX7CKM0gM4QRH/hc=;
-        b=g+MOKe+hYlMwDi1GLU8jYkYiExtUeyHlIOs25rFzBb1dfOl/knIDmZVF4F8VjA6bHL
-         67ztBcO91J84vncG1xwqwuwa54CblIOd2ozSlGemri31xV3yqxgPGCzpDIFC6INU3j9I
-         WxTE+pUK0v6GFvs1HQUKGgPMkghzyuT8xuONBWyOGJdOdREijSXp8ROirAbQl9pVAsmn
-         nVA2qXtL0/8r+oRqoPBaxnYGqeXjmxYmXh8Y71xRn9GvrNNVNVOzRQwVY9b3iHVqwEGP
-         g40gXfoUZry4EiVNTpuQdTLU/2jR7AYowjWoXZUZsRoBY8tl+wBZKfqFefSJMW3GY1IR
-         gwAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749630372; x=1750235172;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sxXUK96pkvyneP6wC9DeR8WotecX7CKM0gM4QRH/hc=;
-        b=sjCpSw7l67IBMcDVr70zUZ2kZ8r3BAcHhLkHSWnkd2iWTXgIQ8vasnlEHBxQYSkgi/
-         IWWqntSoeiTr7apcp2DmRfQnpzX0EyRu8IYwJZK67JXUQbH8LlMjxWSfpWmrOaD5D8kx
-         HZwg9B9IyrBT1dCGrDbj4u/kKUmZOE/JAotql8J0uYYkza42UuW5FOQoHzDq4B+W9S1d
-         qauCtaMS7+iAcy0D6wKRybBuXoN6dUSccs4EBuFa8Y5o2x7SxBvTmU20lng00zntKULl
-         FP+CETwSl4BPPpQ5XSA3mZfKhwZWWn4OGGWrAqtL9JMlQWztskGg30mZVTRBe9hP5ABT
-         VaTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW8uDrfNz767X2f1gpozbvDpomUVkVS/39YOa7EcEyR+GstvywyH1qrs3eOngaI98Zz8Pp0EoUA8ai9eE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi+PMuWCh3zkTtj8Y1CI8B9xzEFc+Wy4Cao+masfJIOSlTQuuO
-	IvIxWzv5/ZyvJ/SSNXctfuY39mzwXL9khEr93p9D12SUk3UK+Go6a5sJ
-X-Gm-Gg: ASbGnctYygVEYOJ6y0F2kNkB64az++NYJtYOeHM4XDHOuAPiUu9muYNdW3aft/8gR25
-	GyRk1xe4Zk3G8ytw5akz+QeCuDaE78GeWMaFh/VfSuPa2l9u0Bmo64o7raoXEprxNCf1NwcxJ/J
-	mJkIyTs+ftER5FgXfHdGUav+vtlRshOXQdVy6+3lH/6+OIp3j5vQZigF4vaOARPF8629t203t/1
-	JYjSHKfPdUFI5lnXwIMU2qdQd0Po8sIYeaBe5/JRooMLeH/ZbzfEMxCZPsqxGB3NmXSheqvha3d
-	ebpqnkOQ4l2k/XX7+dSfqqxbUjEwAE6h9G8GUMdnXddsBMUr
-X-Google-Smtp-Source: AGHT+IHitneo6m07KgIYEwdAH+xtCGs1vUPSxrM/i2Z8Pe/8lvVYhsuxoJ4yasaZr1lrb7/koSfGuw==
-X-Received: by 2002:a05:6214:da5:b0:6ed:df6:cdcd with SMTP id 6a1803df08f44-6fb2c36a381mr41319726d6.21.1749630372047;
-        Wed, 11 Jun 2025 01:26:12 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fb09b3648dsm78896886d6.107.2025.06.11.01.26.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 01:26:11 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Yu Yuan <yu.yuan@sjtu.edu.cn>,
-	Yixun Lan <dlan@gentoo.org>,
-	Ze Huang <huangze@whut.edu.cn>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH RFC 3/3] riscv: dts: sophgo: Add USB support for cv18xx
-Date: Wed, 11 Jun 2025 16:24:51 +0800
-Message-ID: <20250611082452.1218817-4-inochiama@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250611082452.1218817-1-inochiama@gmail.com>
-References: <20250611082452.1218817-1-inochiama@gmail.com>
+	s=arc-20240116; t=1749630356; c=relaxed/simple;
+	bh=/M1JwAKzlPUjoWCOB0zQr/w6AnetB2nAkdySB98E0/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=uROIcobBZFtLaIrxpEV9OMY8vDFfk+pbyPUoIQnZmMYxZWIFa3mbDxRsSlzx/seAQ23h3z74WRoyUVmOssBNeo8+shqrGMEHgA5tOJNwrmO1GTMYtn9Zi3eUCSpxLO3IPlXDFUh9RuAD6J2Sk0cvFZLLt/kcDrtAbTdR/Bhdz+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LXs6iZSn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749630353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KmDlhRl+3FWQEZoPrLJDhKHflCyw66NN2sT0bbeSs9s=;
+	b=LXs6iZSnGwDtNqiXjdLhviIzgM4PuAzjtTYVM0qDgntJqXJ0L18m9kWvZtZMll8/Pm+mZK
+	uPmyV4wmpNaiSyvpB9NBXTBlBRZ9eR5U+JNT4WRaG9h+a8o/m+wuUiSht2KeJg3jQrNlsY
+	qZTyP9BNI7Rn6UAAKOdsPmoJ4o3dzI4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-saj7WCcbNCKoo5SvrkaQjQ-1; Wed,
+ 11 Jun 2025 04:25:48 -0400
+X-MC-Unique: saj7WCcbNCKoo5SvrkaQjQ-1
+X-Mimecast-MFC-AGG-ID: saj7WCcbNCKoo5SvrkaQjQ_1749630347
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 551211956088;
+	Wed, 11 Jun 2025 08:25:46 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (unknown [10.72.112.181])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1F88630001B1;
+	Wed, 11 Jun 2025 08:25:39 +0000 (UTC)
+From: Baoquan He <bhe@redhat.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com,
+	coxu@redhat.com,
+	piliu@redhat.com,
+	pmenzel@molgen.mpg.de,
+	chenste@linux.microsoft.com,
+	Baoquan He <bhe@redhat.com>
+Subject: [PATCH v2] ima: add a knob ima= to make IMA be able to be disabled
+Date: Wed, 11 Jun 2025 16:25:35 +0800
+Message-ID: <20250611082535.127759-1-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-type: text/plain
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Add USB controller node for cv18xx and enable it for Huashan Pi.
+Kdump kernel doesn't need IMA functionality, and enabling IMA will cost
+extra memory. It would be very helpful to allow IMA to be disabled for
+kdump kernel.
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Hence add a knob ima=on|off here to allow turning IMA off in kdump
+kernel if needed.
+
+Note that this IMA disabling is only limited to kdump kernel, please don't
+abuse it in other kernel and thus serious consequences are caused.
+
+Signed-off-by: Baoquan He <bhe@redhat.com>
 ---
- arch/riscv/boot/dts/sophgo/cv180x.dtsi            | 14 ++++++++++++++
- arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts |  4 ++++
- 2 files changed, 18 insertions(+)
+v1->v2:
+- Improve patch log and doc description;
+- Make slight adjustment in code; 
+These are all made according to Mimi's great suggestions. 
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv180x.dtsi b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-index 65eceaa5d2f8..3ea3a1af103f 100644
---- a/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-@@ -428,5 +428,19 @@ dmac: dma-controller@4330000 {
- 			snps,data-width = <2>;
- 			status = "disabled";
- 		};
+ .../admin-guide/kernel-parameters.txt         |  5 ++++
+ security/integrity/ima/ima_main.c             | 26 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b3d62f4c370a..1de67b9c20b4 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2214,6 +2214,11 @@
+ 			different crypto accelerators. This option can be used
+ 			to achieve best performance for particular HW.
+ 
++	ima=		[IMA] Enable or disable IMA
++			Format: { "off" | "on" }
++			Default: "on"
++			Note that this is only limited to kdump kernel.
 +
-+		usb: usb@4340000 {
-+			compatible = "sophgo,cv1800-usb";
-+			reg = <0x04340000 0x10000>;
-+			clocks = <&clk CLK_AXI4_USB>, <&clk CLK_APB_USB>;
-+			clock-names = "otg", "utmi";
-+			g-np-tx-fifo-size = <32>;
-+			g-rx-fifo-size = <536>;
-+			g-tx-fifo-size = <768 512 512 384 128 128>;
-+			interrupts = <SOC_PERIPHERAL_IRQ(14) IRQ_TYPE_LEVEL_HIGH>;
-+			phys = <&usbphy>;
-+			phy-names = "usb2-phy";
-+			status = "disabled";
-+		};
- 	};
+ 	indirect_target_selection= [X86,Intel] Mitigation control for Indirect
+ 			Target Selection(ITS) bug in Intel CPUs. Updated
+ 			microcode is also required for a fix in IBPB.
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index f99ab1a3b0f0..c38f3881d72f 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -27,6 +27,7 @@
+ #include <linux/fs.h>
+ #include <linux/iversion.h>
+ #include <linux/evm.h>
++#include <linux/crash_dump.h>
+ 
+ #include "ima.h"
+ 
+@@ -38,11 +39,30 @@ int ima_appraise;
+ 
+ int __ro_after_init ima_hash_algo = HASH_ALGO_SHA1;
+ static int hash_setup_done;
++static int ima_disabled __ro_after_init;
+ 
+ static struct notifier_block ima_lsm_policy_notifier = {
+ 	.notifier_call = ima_lsm_policy_change,
  };
-diff --git a/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts b/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts
-index c7181ad99f32..f5a800f488fc 100644
---- a/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts
-+++ b/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts
-@@ -88,3 +88,7 @@ &sdhci1 {
- &uart0 {
- 	status = "okay";
- };
+ 
++static int __init ima_setup(char *str)
++{
++	if (!is_kdump_kernel()) {
++		pr_info("Warning: ima setup option only permitted in kdump");
++		return 1;
++	}
 +
-+&usb {
-+	status = "okay";
-+};
++	if (strncmp(str, "off", 3) == 0)
++		ima_disabled = 1;
++	else if (strncmp(str, "on", 2) == 0)
++		ima_disabled = 0;
++	else
++		pr_err("Invalid ima setup option: \"%s\" , please specify ima=on|off.", str);
++
++	return 1;
++}
++__setup("ima=", ima_setup);
++
+ static int __init hash_setup(char *str)
+ {
+ 	struct ima_template_desc *template_desc = ima_template_desc_current();
+@@ -1186,6 +1206,12 @@ static int __init init_ima(void)
+ {
+ 	int error;
+ 
++	/*Note that turning IMA off is only limited to kdump kernel.*/
++	if (ima_disabled && is_kdump_kernel()) {
++		pr_info("IMA functionality is disabled");
++		return 0;
++	}
++
+ 	ima_appraise_parse_cmdline();
+ 	ima_init_template_list();
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
 -- 
-2.49.0
+2.41.0
 
 
