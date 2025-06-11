@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-682517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500B6AD6142
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:27:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CECAD6146
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66A91E15BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:27:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743341BC12A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041D1242D98;
-	Wed, 11 Jun 2025 21:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11DD246BB2;
+	Wed, 11 Jun 2025 21:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElwcDGOa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="es1BCsef"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D89221294;
-	Wed, 11 Jun 2025 21:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF11E23E336;
+	Wed, 11 Jun 2025 21:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749677231; cv=none; b=Lh+huGkWUTcCB92T9lHwSm2Xy2R9Ec/P4qhe858UCYOMYIsw+bO3dPOOqcZyrS4RlCyXbHFfhEkUxklZhNVam9nObbz2o852Cs+AXL1IX2hPTblDhIA9pgf5h1FBK3NsGMd9OHRV+BmjrVCMQaPQO68dVeZXYW+w2kckJz60DiQ=
+	t=1749677261; cv=none; b=eZBx6ihXk9ryckS+Vqs9QO+3r7Pl3lZn4/XUksOIQyCIPb6sSyKmMZJcEpj9h1jDUvgNGZ/UUCOx2isEqLz6wh0R/ekgni6hcgshIaIT+BBn9cC2p+e+ibCn42xmY6FLp7SCFrzBajSL802RyuSIzEwA5ceG+TzpTdJvY9Wi+Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749677231; c=relaxed/simple;
-	bh=jUy8QAn0m9tzE07JAe76z+1J1MVw/EYMYYDN9ar6REQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Q7ti/pnSqM2K760TpcL8naYOlLHys6Qckh4bEbPBh4kHRWwbN0Zj9vRBNXv84cb5FytS0vTasP0klUIBAyyPUmFj+78HU8wFcRl3+WKPB+Gh/qol0xB9fwtF5nx0AvCoKl3AVvMiFaEr0/YsilOmq0QAyK+j4pmQCEeJVEm3/ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElwcDGOa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F4EC4CEE3;
-	Wed, 11 Jun 2025 21:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749677230;
-	bh=jUy8QAn0m9tzE07JAe76z+1J1MVw/EYMYYDN9ar6REQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ElwcDGOaoP8xjRrx1iWqhxRB0GclLdep88yUuSevxWZwQBpHqH4j0PGTqedCv44oO
-	 NafBTlU4LtgTqF5BZ6cAu+mziQtJk7ZMzn4SRdwjVy/vWyOGMsSBf9tZsaXoMpXwMp
-	 yJyZwx7dfo/AESHwHFJxJVR2iisk2Hs8d2m3aZhO6D75KyKwsSlETHFuLVIam9Rjrj
-	 L9bA3HbGDIorLGCfKinr5e/tMvFlnNUdW9tEUDD24vh3w8lk2I+IzpBZTGde9yJRQ1
-	 yHuVCUbCa9Ye0V44ziD5Uv4F9Xl7G7K+JW6CqFSKHuhN0ALuet1h/lfrWerNJQ4pvD
-	 u94pz5Q88JWqQ==
+	s=arc-20240116; t=1749677261; c=relaxed/simple;
+	bh=w/qE2pwetIGNkIlmcH5nt44JyP/Q8xHENA6U8HkjNTA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t1wXsc55mjK73gjiJ2qxy2nIzxjWu/KOE+BZ7vNib5pehsbEE/dgszOxuZLqjj3IRtOCgqdtFoHQhXKbP59bm3U4O+s7qXQOimyxYrRvMOGa5j4rmsMLA/ib+yBroMDwA4iPMKAuXCQ2pepeZNmGdT8AJgNW9c0mDXmXYWHzA3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=es1BCsef; arc=none smtp.client-ip=192.19.166.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id F0489C004E6C;
+	Wed, 11 Jun 2025 14:27:31 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com F0489C004E6C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1749677252;
+	bh=w/qE2pwetIGNkIlmcH5nt44JyP/Q8xHENA6U8HkjNTA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=es1BCsefq9/JOnotMXE2D1FfgIzV+L6z9S2gfBXJsO+/0nlylS5OhABg0tn32U8se
+	 qKGRlGKf7XLyEOQogNGj0AQTNJfIwM8lEpczQlojhc9QRHBq3rf7PD0DNS1GR3TDvX
+	 qPxaDZ5+84SiBAV95ggZ7MnwkxQGF/g+K9KKKsDk=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id CB6F91800051E;
+	Wed, 11 Jun 2025 14:27:31 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Justin Chen <justin.chen@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	bcm-kernel-feedback-list@broadcom.com (open list:BROADCOM ASP 2.0 ETHERNET DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next v2 0/2] net: bcmasp: add support for GRO
+Date: Wed, 11 Jun 2025 14:27:28 -0700
+Message-Id: <20250611212730.252342-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 11 Jun 2025 23:27:06 +0200
-Message-Id: <DAK0T99XTJ22.2FTHQGST9Y8IC@kernel.org>
-Cc: "Andreas Hindborg" <a.hindborg@kernel.org>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Jens Axboe"
- <axboe@kernel.dk>, "Fiona Behrens" <me@kloenk.dev>, "Christian Schrefl"
- <chrisi.schrefl@gmail.com>, <linux-block@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] change blanket impls for `[Pin]Init` and add one
- for `Result<T, E>`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250529081027.297648-1-lossin@kernel.org>
- <20250529081027.297648-2-lossin@kernel.org>
- <df637115-e0ce-45ae-a9b6-817ea7454bce@kernel.org>
-In-Reply-To: <df637115-e0ce-45ae-a9b6-817ea7454bce@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Jun 10, 2025 at 3:44 PM CEST, Danilo Krummrich wrote:
-> On 5/29/25 10:10 AM, Benno Lossin wrote:
->> Remove the error from the blanket implementations `impl<T, E> Init<T, E>
->> for T` (and also for `PinInit`). Add implementations for `Result<T, E>`.
->>=20
->> This allows one to easily construct (un)conditional failing
->> initializers. It also improves the compatibility with APIs that do not
->> use pin-init, because users can supply a `Result<T, E>` to a  function
->> taking an `impl PinInit<T, E>`.
->>=20
->> Suggested-by: Alice Ryhl <aliceryhl@google.com>
->> Link: https://github.com/Rust-for-Linux/pin-init/pull/62/commits/5861251=
-4b256c6f4a4a0718be25298410e67387a
->> [ Also fix a compile error in block. - Benno ]
->> Signed-off-by: Benno Lossin <lossin@kernel.org>
->> ---
->>=20
->> This patch is also needed by Danilo for initializing `Devres`
->> ergonomically.
->
-> For this purpose, can you please provide me with a signed tag for this on=
-e
-> please? Otherwise I can also add the explicit `Infallible` generics in a =
-few
-> places until next cycle.
+These two patches add support for GRO software interrupt coalescing,
+kudos to Zak for doing this on bcmgenet first.
 
-I rebased `pin-init-next` to have these two commits as the first two and
-will create a tag a bit later in the cycle when I'm sure that they are
-stable.
+before:
 
----
-Cheers,
-Benno
+00:03:31     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal
+%guest   %idle
+00:03:32     all    0.00    0.00    1.51    0.00    0.50    7.29    0.00 0.00   90.70
+
+after:
+
+00:02:35     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal
+%guest   %idle
+00:02:36     all    0.25    0.00    1.26    0.00    0.50    7.29    0.00 0.00   90.70
+
+Changes in v2:
+
+- corrected net_device variable in the scope
+
+Florian Fainelli (2):
+  net: bcmasp: Utilize napi_complete_done() return value
+  net: bcmasp: enable GRO software interrupt coalescing by default
+
+ drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
+
 
