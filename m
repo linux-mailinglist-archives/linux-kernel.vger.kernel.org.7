@@ -1,216 +1,353 @@
-Return-Path: <linux-kernel+bounces-682331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C1CAD5E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F0FAD5E98
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22D117376B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:53:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4846178B14
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA8325BF17;
-	Wed, 11 Jun 2025 18:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715AF26058A;
+	Wed, 11 Jun 2025 18:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="kVRmlsVZ"
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="XA7w2nDL"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D1BC8FE
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB41622B8AB
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749667979; cv=none; b=KDTg+M1meljzV4NliwVT71DCF2+npVjNTxmB+jtOKiW8PaCvYOlHjbjwEdK+hJ/CIYBsuvX5n1+6OJ+xhPagJ5z/4pJ87npfG5oZAAF03ApEWjIP9zqmcG38HoCF8jbOOas3NB56FYcdpEmdrYOvZhAOgd3HDHUyagTpylmzfBo=
+	t=1749668020; cv=none; b=EpNnowrc5/QdV16FnK4LXGw3IcXfLITwTrrkFkjeAFxcgyyvQM+IofhlSydZDnv5KKOgDKmjga0FulctKMShPltn40gEh7H9Vr7YCvdL98X3dJV9oUB+sBor8FZL/hGpPusSSyrilBHEWTkwMbZvbUOuxSiOHoUxsBDCw/0bt/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749667979; c=relaxed/simple;
-	bh=25JBJAgIXFS08dNDEiC8zvUMiqMQsQA6DbNmeCGj8r4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UO3Nbmio4mlu82x8KxiIi6Fx9DlQNf6Le3uIffXBje/0UyXTDmf21GWV/GVTmpFCDDwqNmdckpYK/jqqoBbx+3LaV2vvJ5gm6mGKADB6H1G4146IxlQDNacgncPS0D4lEUMG7IEnN8niGeAsAYdkNOOf1fJM0P7ww2chKC0NdXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=kVRmlsVZ; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so1263925e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1749667976; x=1750272776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1HvQOSloFUJuOvrTrxYnPItKpyHsMY9uuKArRqxCHV4=;
-        b=kVRmlsVZT3Vh5kzPXsgBfY+IfjSIuAh4Sq04GDwBioNqn7Hec4zXWsl1B3uB1+tdxy
-         5IQx09kaVVhJNj261dCKcvq77Ae41SkbUkB7n7cGeNETWhunrbCQOTf0SezYlj8qoHIK
-         8SFxSEkKiH4omrGezR9MxbtsyCTB2NTTAoEpA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749667976; x=1750272776;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1HvQOSloFUJuOvrTrxYnPItKpyHsMY9uuKArRqxCHV4=;
-        b=tMjMZF5vsibXc/oBqnAOLZT0qDZTLlDSaqDO1DmskfqhnhjGgoPDRpeBRgEkKDO6ib
-         f9AUPK8OK46b6Q8+6B3kYzmc94D53JSZZDcyag+hto+rbFn1QYs81rzqtqqHfKJaMaFm
-         stJeECRa4cQNSzNXiTNcoiK2GTeJxavE6JL29REZf0rGxZp2thLQ+MoTGVRdfj4RtiiC
-         /bJHoy7Tx+/xhmUun/DhEeVnO4PJjJWCSlddrT8ixEpjV4oQqraMtKX2Cw4aWYFJ34Dw
-         r7t78W1fYH+oc+3ArkExX9MqEn2Nje+NPy87R+bJ6MfnAB2x/twEWxZkjyLz7Gd6nCS/
-         8GwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP3XxLeaN8/9yuiquVlzlQS5DN1UuWEVBtsL+9VEAAkDsDZjDCCnnp2wnFW2lxTpAPvPtgHelwrIDLvPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCcUurea15I3KSQya5MnMdXlPfJmc1xYfUw1HjIlLXcsD8MWc4
-	P6Z04vwGY/RCBN35N7AKgwhH0iWXQTzl2xfD+1tdWsOEQOMo1imj40XNrXvzSQDKql0=
-X-Gm-Gg: ASbGncvUt4cM7oolScBVeKb6sJJq7Knp0c/YULRuq60hbf2OeTLYM17+rq8T7VhQFtY
-	BPH7a9vCFdsiS5BYHF4cn6fh6JULEly3ZlVjfQdFUUAZuodQ4tKecK1Slv9HPLUYVOrXN3olpOs
-	Z5Re0/BN5OPngsY1tgfqETiHM+mGheijahnFjbWgkg4Fml+S1cY5hQ3N9Y6LrvP4CdVec7RFr2c
-	7VUyqeW7czzzPOGf9SPfIuzHcM4XCjtq4ZlZ0dQYH8WABGMhwZtk0lRGGsPgxCv0XJKDYCgsjvJ
-	TlC2eWjIi41Iswv4RPragY5urTT/pn8hb7MM5VEuCPHlBOgMqJ0o3/itNUSMTAzg5OPab8Sh1w8
-	=
-X-Google-Smtp-Source: AGHT+IECkRlImHY4D8j9QVPAtH3CecusVeqTNVtqoND4Ebv/U5Jwpb3yWzuYMtckSVBGNvir12TCuw==
-X-Received: by 2002:a05:600c:5303:b0:442:f904:1305 with SMTP id 5b1f17b1804b1-4532c27bc4cmr5264645e9.6.1749667975579;
-        Wed, 11 Jun 2025 11:52:55 -0700 (PDT)
-Received: from [192.168.86.29] ([90.250.112.104])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532522669bsm28877195e9.35.2025.06.11.11.52.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 11:52:55 -0700 (PDT)
-Message-ID: <df2d4900-b543-47c4-977e-8604d2482744@citrix.com>
-Date: Wed, 11 Jun 2025 19:52:54 +0100
+	s=arc-20240116; t=1749668020; c=relaxed/simple;
+	bh=6PhEVxny/pNtFQ59Y3RQZ7Fspzsg+hSD3GfWX/lMYGE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GoilNZ3xq1AY60xiI0wp3E2qto0haHztTVnjX+JgEwJwVcQnFrgffsKUI6NTmNtha6SdKslExWA/5UrmJ/8fdkBdDcosFn8XGUh6WzPHLx7xcqm3ht19SfFArQhfyYIaxeUZEWjhBDB0ghHb68Hc6CWE3ncpHayfQG1F7NZO7fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=XA7w2nDL; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] x86/cpu: Mark Ice Lake model 7D and 9D as unreleased
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org
-Cc: tony.luck@intel.com, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
-References: <20250611-icelake-cleanup-v1-1-0f82472dbc8f@linux.intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20250611-icelake-cleanup-v1-1-0f82472dbc8f@linux.intel.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1749668005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z9Ngc8BFLZcajbvkbgoSnpknnsO3kDOod4k2hOKAQ5I=;
+	b=XA7w2nDLbTvEx2DxApU0fK4nBiU8wSbr+hOWKcheZi+I5vL2p1tRMzmQ4zETvZarA30gX9
+	A7nxAFeKZUHAegbKYh65W3CkhfCs5WkzYBbseRoWNJOXFtl0UENPifpx4MIzxju4WptBDV
+	EjC3t+hQfz4+Rbi7ml/qrb3IlLwssRRcNfOiDXiWoZgDELyVZ8+dtYuDfsFeaJLs4MfPi9
+	o+AqRrq36nZpBznuXub2sp4sMGTSe6EtAljk7xZi5U2RzZUuMS4FkpgB528/Gxlk/Rc/QO
+	Cg8T/L1ZkcfKUHKQL0EhF8b/XB4lfoKqhsho4z1wdp94O/VwLBTPuhtuFokDnQ==
+Content-Type: multipart/signed;
+ boundary=a2b9797885f3d11a998329b426c25f7c213f5b963f86d455ce2a3ec162a6;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 11 Jun 2025 20:53:17 +0200
+Message-Id: <DAJXJHLY2ITB.3IBN23DX0RO4Z@cknow.org>
+Cc: <linux-kernel@vger.kernel.org>, "Ingo Franzki" <ifranzki@linux.ibm.com>
+Subject: Re: [PATCH] crypto: testmgr - reinstate kconfig support for fast
+ tests only
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Eric Biggers" <ebiggers@kernel.org>, <linux-crypto@vger.kernel.org>,
+ "Herbert Xu" <herbert@gondor.apana.org.au>
+References: <20250611175525.42516-1-ebiggers@kernel.org>
+In-Reply-To: <20250611175525.42516-1-ebiggers@kernel.org>
+X-Migadu-Flow: FLOW_OUT
+
+--a2b9797885f3d11a998329b426c25f7c213f5b963f86d455ce2a3ec162a6
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 11/06/2025 7:00 pm, Pawan Gupta wrote:
-> These models were never officially released, but they made it into
-> intel-family.h. There is no evidence that these models are being used in
-> production. As a matter of fact, Intel's affected CPU list[1] does not
-> contain these models.
+I was about to respond to your reply, but I guess this may be a better
+fit for it. The TL;DR: version is this:
+
+If you think distros shouldn't enable it, as you initially clearly
+described and it seems to me you still think so, the right thing for
+distros to do, is to disable those test. Which in turn means the fast
+tests should not be reinstated (?).
+
+On Wed Jun 11, 2025 at 7:55 PM CEST, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 >
-> During CPU mitigations it gets confusing whether to include these models
-> with other Ice Lake models or not. Add the comment in the intel-family.h to
-> indicate that these models were never released. Also taint and warn about
-> these unreleased models, except when running as a guest.
+> Commit 698de822780f ("crypto: testmgr - make it easier to enable the
+> full set of tests") removed support for building kernels that run only
+> the "fast" set of crypto self-tests by default.  This assumed that
+> nearly everyone actually wanted the full set of tests, *if* they had
+> already chosen to enable the tests at all.
 >
-> [1] https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
+> Unfortunately, it turns out that both Debian and Fedora have the crypto
+> self-tests enabled in their production kernels, and they seem to want to
+
+I explicitly referenced https://bugs.debian.org/599441 as that was the
+only justification I found for enabling it.
+In it, on 2010-10-07 "Mario 'BitKoenig' Holbe" said:
+
+  I personally think (re)enabling these tests would be a way safer
+  default for a distribution kernel which runs on lots of different
+  hardware setups
+
+Before I looked up that bug, I had not heard of that person, so I don't
+know if they're a crypto expert or just a random person on the internet.
+It also doesn't say *why* they thought it would be a good idea to enable
+those tests.
+I have no idea what Fedora's reasoning was for enabling it. Maybe their
+reasons were sound; I think Debian's are rather thin (that I could
+find). And from ~ 15 years ago.
+
+> keep them enabled.  The full set of tests isn't great for that, since
+
+I think the 'new' description is(/was) great. A subject matter expert
+says/said "don't enable this on production kernels". I wish all Kconfig
+help texts were this clear :-)
+So based on the previous description, it seems wise that Debian (and
+Fedora) would update their kernel config and disable those test.
+
+In *my* update to 6.16-rc1, I only 'converted' to new names.
+A change to my kernel config (ie disable the tests) would be in a
+separate commit (with an appropriate commit msg).
+I hadn't done that yet as I was curious what the results would be.
+
+So "they seem to want to keep them enabled" seems a premature
+conclusion; at least wrt Debian and AFAICT.
+It's also possible that if/when people see the kernel warning, they'd
+file a new Debian bug to have it disabled.
+
+(I've made some contributions in the past, but) I am not part of
+Debian's kernel team, so I don't know what they will decide.
+=20
+I'll gladly leave it up to you if you still think reinstating the fast
+tests is worth it, but I felt a bit more context was warranted.
+
+Cheers,
+  Diederik
+
+> they take significantly longer to run and slow down the boot.
 >
-> Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> One issue is that the crypto self-tests are being (mis)used to meet FIPS
+> 140-3 pre-operational testing requirements.  But actually the more
+> fundamental issue is that the crypto/ subsystem has many buggy and
+> untested drivers for off-CPU hardware accelerators on rare platforms.
+> As a result, apparently in some cases the tests are actually being
+> relied on *in production kernels* to stop buggy drivers from being used.
+> I think this is kind of crazy (untested drivers should just not be
+> enabled at all), but that seems to be how things work currently.
+>
+> Thus, reintroduce a kconfig option that controls the level of testing.
+> Instead of the original CRYPTO_MANAGER_EXTRA_TESTS which was confusing
+> and disabled by default, go with CRYPTO_SELFTESTS_FULL which is enabled
+> by default (but dependent on CRYPTO_SELFTESTS, of course).
+>
+> Given the "production kernel" use cases, also remove the dependency on
+> DEBUG_KERNEL from CRYPTO_SELFTESTS.  It was introduced by
+> commit 40b9969796bf ("crypto: testmgr - replace
+> CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS") and wasn't present
+> on the original option.
+>
+> I also haven't reinstated all the #ifdefs in crypto/testmgr.c.  Instead,
+> just rely on the compiler to optimize out unused code.
+>
+> Fixes: 40b9969796bf ("crypto: testmgr - replace CRYPTO_MANAGER_DISABLE_TE=
+STS with CRYPTO_SELFTESTS")
+> Fixes: 698de822780f ("crypto: testmgr - make it easier to enable the full=
+ set of tests")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
-> Please scream if you believe that the assumptions made in this patch are
-> incorrect.
-> ---
->  arch/x86/include/asm/intel-family.h |  4 ++--
->  arch/x86/kernel/cpu/intel.c         | 12 ++++++++++++
->  2 files changed, 14 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-> index be10c188614fe24ad41e2e1912b8d5640c6ea171..948e0a057a9629dc57671e4c666b5f62e762d4bb 100644
-> --- a/arch/x86/include/asm/intel-family.h
-> +++ b/arch/x86/include/asm/intel-family.h
-> @@ -110,9 +110,9 @@
->  
->  #define INTEL_ICELAKE_X			IFM(6, 0x6A) /* Sunny Cove */
->  #define INTEL_ICELAKE_D			IFM(6, 0x6C) /* Sunny Cove */
-> -#define INTEL_ICELAKE			IFM(6, 0x7D) /* Sunny Cove */
-> +#define INTEL_ICELAKE			IFM(6, 0x7D) /* Sunny Cove, never released */
->  #define INTEL_ICELAKE_L			IFM(6, 0x7E) /* Sunny Cove */
-> -#define INTEL_ICELAKE_NNPI		IFM(6, 0x9D) /* Sunny Cove */
-> +#define INTEL_ICELAKE_NNPI		IFM(6, 0x9D) /* Sunny Cove, never released */
-
-These comments are fine, although I'd suggest ", not released in the end".
-
->  
->  #define INTEL_ROCKETLAKE		IFM(6, 0xA7) /* Cypress Cove */
->  
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index 076eaa41b8c81b2dd9be129d14dc7c8041eb2e79..b7eb8d5ee4351bf4a31e6a2792d24f7dbc0773ed 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -337,9 +337,21 @@ static void early_init_intel(struct cpuinfo_x86 *c)
->  		detect_tme_early(c);
+> This patch is targeting the crypto tree for 6.16.
+>
+>  crypto/Kconfig                 | 18 ++++++++++++++----
+>  crypto/testmgr.c               | 15 ++++++++++++---
+>  include/crypto/internal/simd.h |  6 ++++--
+>  lib/crypto/Makefile            |  2 +-
+>  4 files changed, 31 insertions(+), 10 deletions(-)
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index e9fee7818e270..8612ebf655647 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -174,20 +174,30 @@ config CRYPTO_USER
+>  	  Userspace configuration for cryptographic instantiations such as
+>  	  cbc(aes).
+> =20
+>  config CRYPTO_SELFTESTS
+>  	bool "Enable cryptographic self-tests"
+> -	depends on DEBUG_KERNEL
+>  	help
+>  	  Enable the cryptographic self-tests.
+> =20
+>  	  The cryptographic self-tests run at boot time, or at algorithm
+>  	  registration time if algorithms are dynamically loaded later.
+> =20
+> -	  This is primarily intended for developer use.  It should not be
+> -	  enabled in production kernels, unless you are trying to use these
+> -	  tests to fulfill a FIPS testing requirement.
+> +config CRYPTO_SELFTESTS_FULL
+> +	bool "Enable the full set of cryptographic self-tests"
+> +	depends on CRYPTO_SELFTESTS
+> +	default y
+> +	help
+> +	  Enable the full set of cryptographic self-tests for each algorithm.
+> +
+> +	  For development and pre-release testing, leave this as 'y'.
+> +
+> +	  If you're keeping the crypto self-tests enabled in a production
+> +	  kernel, you likely want to set this to 'n' to speed up the boot.  Thi=
+s
+> +	  will cause the "slow" tests to be skipped.  This may suffice for a
+> +	  quick sanity check of drivers and for FIPS 140-3 pre-operational self=
+-
+> +	  testing, but some issues can be found only by the full set of tests.
+> =20
+>  config CRYPTO_NULL
+>  	tristate "Null algorithms"
+>  	select CRYPTO_ALGAPI
+>  	select CRYPTO_SKCIPHER
+> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+> index 72005074a5c26..32f753d6c4302 100644
+> --- a/crypto/testmgr.c
+> +++ b/crypto/testmgr.c
+> @@ -43,17 +43,22 @@ MODULE_IMPORT_NS("CRYPTO_INTERNAL");
+> =20
+>  static bool notests;
+>  module_param(notests, bool, 0644);
+>  MODULE_PARM_DESC(notests, "disable all crypto self-tests");
+> =20
+> +#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+>  static bool noslowtests;
+>  module_param(noslowtests, bool, 0644);
+>  MODULE_PARM_DESC(noslowtests, "disable slow crypto self-tests");
+> =20
+>  static unsigned int fuzz_iterations =3D 100;
+>  module_param(fuzz_iterations, uint, 0644);
+>  MODULE_PARM_DESC(fuzz_iterations, "number of fuzz test iterations");
+> +#else
+> +#define noslowtests 1
+> +#define fuzz_iterations 0
+> +#endif
+> =20
+>  #ifndef CONFIG_CRYPTO_SELFTESTS
+> =20
+>  /* a perfect nop */
+>  int alg_test(const char *driver, const char *alg, u32 type, u32 mask)
+> @@ -317,13 +322,13 @@ struct testvec_config {
+> =20
+>  #define TESTVEC_CONFIG_NAMELEN	192
+> =20
+>  /*
+>   * The following are the lists of testvec_configs to test for each algor=
+ithm
+> - * type when the fast crypto self-tests are enabled.  They aim to provid=
+e good
+> - * test coverage, while keeping the test time much shorter than the full=
+ tests
+> - * so that the fast tests can be used to fulfill FIPS 140 testing requir=
+ements.
+> + * type when the "fast" crypto self-tests are enabled.  They aim to prov=
+ide good
+> + * test coverage, while keeping the test time much shorter than the "ful=
+l" tests
+> + * so that the "fast" tests can be enabled in a wider range of circumsta=
+nces.
+>   */
+> =20
+>  /* Configs for skciphers and aeads */
+>  static const struct testvec_config default_cipher_testvec_configs[] =3D =
+{
+>  	{
+> @@ -1181,18 +1186,22 @@ static void generate_random_testvec_config(struct=
+ rnd_state *rng,
+>  	WARN_ON_ONCE(!valid_testvec_config(cfg));
 >  }
->  
-> +static const struct x86_cpu_id unreleased_cpus[] = {
-> +	X86_MATCH_VFM(INTEL_ICELAKE,		0),
-> +	X86_MATCH_VFM(INTEL_ICELAKE_NNPI,	0),
-> +	{},
-> +};
-> +
->  static void bsp_init_intel(struct cpuinfo_x86 *c)
+> =20
+>  static void crypto_disable_simd_for_test(void)
 >  {
->  	resctrl_cpu_detect(c);
-> +
-> +	if (x86_match_cpu(unreleased_cpus) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
-> +		add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
-> +		WARN_ONCE(1, "WARNING: CPU family=0x%x, model=0x%x is unreleased, tainting\n",
-> +			  c->x86, c->x86_model);
-> +	}
+> +#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+>  	migrate_disable();
+>  	__this_cpu_write(crypto_simd_disabled_for_test, true);
+> +#endif
+>  }
+> =20
+>  static void crypto_reenable_simd_for_test(void)
+>  {
+> +#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+>  	__this_cpu_write(crypto_simd_disabled_for_test, false);
+>  	migrate_enable();
+> +#endif
+>  }
+> =20
+>  /*
+>   * Given an algorithm name, build the name of the generic implementation=
+ of that
+>   * algorithm, assuming the usual naming convention.  Specifically, this =
+appends
+> diff --git a/include/crypto/internal/simd.h b/include/crypto/internal/sim=
+d.h
+> index 7e7f1ac3b7fda..9e338e7aafbd9 100644
+> --- a/include/crypto/internal/simd.h
+> +++ b/include/crypto/internal/simd.h
+> @@ -42,13 +42,15 @@ void simd_unregister_aeads(struct aead_alg *algs, int=
+ count,
+>   * crypto_simd_usable() - is it allowed at this time to use SIMD instruc=
+tions or
+>   *			  access the SIMD register file?
+>   *
+>   * This delegates to may_use_simd(), except that this also returns false=
+ if SIMD
+>   * in crypto code has been temporarily disabled on this CPU by the crypt=
+o
+> - * self-tests, in order to test the no-SIMD fallback code.
+> + * self-tests, in order to test the no-SIMD fallback code.  This overrid=
+e is
+> + * currently limited to configurations where the "full" self-tests are e=
+nabled,
+> + * because it might be a bit too invasive to be part of the "fast" self-=
+tests.
+>   */
+> -#ifdef CONFIG_CRYPTO_SELFTESTS
+> +#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+>  DECLARE_PER_CPU(bool, crypto_simd_disabled_for_test);
+>  #define crypto_simd_usable() \
+>  	(may_use_simd() && !this_cpu_read(crypto_simd_disabled_for_test))
+>  #else
+>  #define crypto_simd_usable() may_use_simd()
+> diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+> index 3e79283b617d9..f9e44aac6619b 100644
+> --- a/lib/crypto/Makefile
+> +++ b/lib/crypto/Makefile
+> @@ -60,9 +60,9 @@ libsha256-y					:=3D sha256.o
+>  obj-$(CONFIG_CRYPTO_LIB_SHA256_GENERIC)		+=3D libsha256-generic.o
+>  libsha256-generic-y				:=3D sha256-generic.o
+> =20
+>  obj-$(CONFIG_MPILIB) +=3D mpi/
+> =20
+> -obj-$(CONFIG_CRYPTO_SELFTESTS)			+=3D simd.o
+> +obj-$(CONFIG_CRYPTO_SELFTESTS_FULL)		+=3D simd.o
+> =20
+>  obj-$(CONFIG_CRYPTO_LIB_SM3)			+=3D libsm3.o
+>  libsm3-y					:=3D sm3.o
+>
+> base-commit: aef17cb3d3c43854002956f24c24ec8e1a0e3546
 
-I don't think this is a useful change.
 
-What if Intel suddenly find there's a >50% gross market opportunity
-selling ICX-NNPI and release this model after all?  (Ok fine, unlikely,
-but the point stands).
+--a2b9797885f3d11a998329b426c25f7c213f5b963f86d455ce2a3ec162a6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What about unallocated model numbers?  What about A0 stepping of
-released models?  What about Cannon Lake which did technically ship to
-customers, but for most intents and purposes doesn't exist.
+-----BEGIN PGP SIGNATURE-----
 
-Calling these two out in isolation isn't helpful.
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaEnQnwAKCRDXblvOeH7b
+bj9mAP98h7N1N7UhiG7N/oWUjkZAFnUeL4ZDV1EjWptXXp12zQEA5CpLBrl9zQ70
+f2LcDH+l+KfOk78W1yjoGGMqCBPM/A8=
+=XUmy
+-----END PGP SIGNATURE-----
 
-~Andrew
+--a2b9797885f3d11a998329b426c25f7c213f5b963f86d455ce2a3ec162a6--
 
