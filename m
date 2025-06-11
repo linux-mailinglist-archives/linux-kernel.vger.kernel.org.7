@@ -1,198 +1,206 @@
-Return-Path: <linux-kernel+bounces-682612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EABAD6267
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DC7AD629F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162367AD8DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C65C1BC1A33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E224A054;
-	Wed, 11 Jun 2025 22:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B616E24BD03;
+	Wed, 11 Jun 2025 22:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQfdrNK/"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cu+hf2rs"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A237CDF49;
-	Wed, 11 Jun 2025 22:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9A2A59
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749681420; cv=none; b=t4lR7xU09EkAfZuBCjB8a3C8cAhxc1ZJ8I3QOMDfIvSAWZvX7fdBzJ5OHQAuCik6OJ2GFjlrDrwLwyM9Bcp+40BHGYY0x01uKm8xS3fQGAw4hZofemgmAaUFOyjG2txcfo6h6QjPStEIIxMjtfXEkkPkDltZKdpcUOcaYX2IILk=
+	t=1749681737; cv=none; b=th2u+xP6zN9mVXK+XlyYvU6MRlcvw9fVkgw/Mi4A6v/9eYizCGCF3p5+3xix9NzQmcZFYU2Da8mCo/uKwY8bVADU8iOz+uJHk8v4xJX7hKP3PrE9t8Q3g0LH5KuoksKRFRDfRAD9bsTWo+rGzNh4QyUTgnwcTfX60X/GuYM8m0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749681420; c=relaxed/simple;
-	bh=5f2E+EXc2DZqW2oloEm8WkZhdeV5+LJ4dcl1CoRMOg0=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TjU63BvjuaXbF7J9JYPSsMXJrt2uJPUtpUyPdkodT3AhNqDy/q6W4o+7QwPBhk2eidLS+zgQi9UhVYF60q2le0AwmzDHcNdhJvUVyk0s0S27n2PJ+dfgc31zhzZEYuuJJse0auC7yngRzdHmT0VImZL1XhkMbKs/1jvIqOhN8VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQfdrNK/; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso514492b3a.2;
-        Wed, 11 Jun 2025 15:36:58 -0700 (PDT)
+	s=arc-20240116; t=1749681737; c=relaxed/simple;
+	bh=yr3KMlpdAIDpFQpkD3xC/enXTLilJ1AAF5YBAl5/CHI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jx/RD6Zv/QLATkB/TVoVU9IvfSQ1+C4jBd+CKNzF79xEthHEZ46k7gU03E2J6JwY1JW3kvqmK5g6P4XoHvI1N+4/7yqmpPSWKXsQWVnZWp+gSZLhdtPCnCP9qpg+u5a6lX2b2NpqwrVRDuaAS/jUxehUUeAo0YCFPuoOL08hvZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cu+hf2rs; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4067ac8f6cdso245181b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749681418; x=1750286218; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hhf1uehRjhJs5pv4ny+0Okf/DqV+mB2pWhG99O6ENKM=;
-        b=TQfdrNK/xB86puW5hbroBeMBYJ07plLtHEdDCmhixNsIXYzRDQoVAgXoyIbWTEVkSE
-         JANnbz6MytiwiTagFgyBclmIZ4ppD+Tkgo9K/TbhV4cFrxO5OhgDvxAZ30Cs/QanoWbU
-         GDaFIGDlzQ5I1jxSbopl9Cxye/ksf9CBKhwlKz9wvtXK3LjBeSRBsm06AKLJdlK3Kf09
-         XRE904xc9XSuz4pcWFARpPf9zcymJUdSCVJsvACWlYhG51k8GM5xrsEBaXWzyToV8cgQ
-         9FoeKSlcHjIfeFoGOmkE/Nr2+QAJyZWTFvoDPSZj/eZpo7cEAwv15MxwIb2kwiw7FipV
-         7eMg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749681734; x=1750286534; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7BvPO14dME7rxPy0XG4Suixfv/o3vfcBS7p0YrP3lVs=;
+        b=cu+hf2rszaGDa4X21jSbPXKEUqKWBfxCYGybkwYMVkA9Sx8JrgQTruP7DXuVNAUO34
+         /X69GrKTeGu+xOqxtvu75uOklsphXIH+unS+Uv4Eg7N3Mdr0abHJmoPCDnwBNztyVFoZ
+         X4F1y5KodZxRjpK6x9aGhclgRkpRhDZnTu5ri3STXh0gmpUUuyB2/dzOMxKq0/4zRJ/q
+         4eJx1wO0JSeeCW5VrSoton7xTsweWTLvmsIjwm9ilYvZCSVNOkchiCK20N+DGzdA99q5
+         ROp9OIGp0Qodg/IN3glRUoMyijglO3FnPHMbqOb4qsuDjIythvHpWjbVNG9Se+yUbT4C
+         Loog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749681418; x=1750286218;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Hhf1uehRjhJs5pv4ny+0Okf/DqV+mB2pWhG99O6ENKM=;
-        b=K8Dz4dkKQkF6fj3d/rdwFfL5f3OcuRbsXhAy9vxTjBmFdUa2qb/EfYYkt9sqsj580k
-         L9LCVoXM4yIkQ3ppISqeuWTZu1nQj4pu38zVnNCWUh5e1Zoih8EXtHV+agTGl+NHtuon
-         ohE/MkpJIyf1a/Egxq3uXvXVl7B8V7dSmgt+lVJAPxAfZk/tgZjK0YXWCgZqhtqWnA3T
-         mofmH5QRaLS8M2MaraLDLSMW2Qi7yz3h8gKmG1TPvfaYPkv3ZaXxh54zey5i7N+yJErz
-         RiLSTMr73z0zq3DxD1VbWcJI+DGhOL8Hm5XsZeD/umVRxxfmLOWhDcUHYcfshk6YJBE0
-         veYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqARl7ZYGpFvV2Ed/EpbbRHpVCuMUMvTuNxhkd0WtBzejrOIc6igU8mmYenQFWQSLEhR3BPikXtxEFEZX5@vger.kernel.org, AJvYcCVWkMd+7kxs6FotXINQ0Mdz96Xpegwzux8Qx5OUmIVQfSAYeGshgvCgB1Fw0FeA9QEpeE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmtaPntukkx6it4V3r7isqF95Z+KFZCzTBXXs0FVQ6ka2syhvr
-	4Jv1a9lrUeD8Y8pTzz2LQVxkbMdF3JUzE9t3NkHJgAB2q8YKvF5GagKo
-X-Gm-Gg: ASbGncsxCNQ6mfoySKK56Gwk7cGTBpid/SC8R8beX7ucoA8w+HfmnFDvn9eMwgSuRxA
-	Dj5+wagw77WhT/G50K49kGi3x1kILI3RQto8/4PPagRCwrEO275yfD8Bm8EIEh/EwnK2NHsBwZh
-	zW+gGFKtR/UG/t5FfciddqSo5G32L+Ak7HT5eg7sLlmLVuasu92dwr/r0Das8mULyvqeLhDrFbb
-	W3c+YPJUm7ZRLEZoTimrAm3pD0tEcMh1k/EX/pWgvL1hCM/o4/xV8H66ZYPGootFAGzrXk/Nc4k
-	l4D7V/irw3mv6hguH3f24mG/sqPHLzVYMuONz2d4Nr477Uq4flPSv72HFSiardEx3TXAAAglg5d
-	pVSY+Si9qaYq3mJJ5l8mb
-X-Google-Smtp-Source: AGHT+IFUg1MKtIofsyQGj6cN0ii/Cuud84cId2ClEBQrDGWE4i/ezu24W10KwuWVwTNnzAYpfc4CcQ==
-X-Received: by 2002:a05:6a21:a45:b0:1f5:6e71:e55 with SMTP id adf61e73a8af0-21f866000c9mr7364924637.6.1749681417811;
-        Wed, 11 Jun 2025 15:36:57 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:b1d2:545:de25:d977? ([2620:10d:c090:500::7:d234])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488087a260sm97152b3a.17.2025.06.11.15.36.56
+        d=1e100.net; s=20230601; t=1749681734; x=1750286534;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7BvPO14dME7rxPy0XG4Suixfv/o3vfcBS7p0YrP3lVs=;
+        b=ph60/aL+izDZUZL/QWq81DP+7Xu+uym/R5Hm50eUJy5EULnO6RmjFZYwKLRzktOKur
+         a0DTOMcc3NXAE1huwYcsVAQDMVir0X3flKNY+lwF0oWBA00CmLsmIuAj/bCsKB3wpo6h
+         HtC9qkE3k3jisbQvh1N1gCzh6iU0zTQm1FRvKJGmD2RS5lG1y0h30ycp2T4u2oMmeQM3
+         Pit6JY3u+SIaHQl+rb6UTKX5l1KFfCBbaS8TFpEqhVZoy/KzrXcv9zSOo6WtocvcKxy7
+         hv+c///4OByrqBMYs9btjybGWBbXtC/BdmebmXXRS5uzzCKDjm+gp6j/3e5NN2L9KG3G
+         IU0A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9o2c6RfbFAhiHFs/XwZy5ts4M1wGO1mg8FWCtMA1zYt43lJibc586RcKKm5TWFjajKg/LHMWe+c0gzNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Zsy/NwlBVrSRLbhTT4KhWE/BNoC8H3J4Bm19wiOUxFGyEaoR
+	zSddwTxcnD8FrD9hjeda+oauqmviLRPBKi7R3FIpUPF4lXAHbqSAZOx5X9nzi2TLF+o=
+X-Gm-Gg: ASbGnct+G+gmK1Z+stBVSh0QqwXKVExW1xDlh26OBIv1tgmkFCalH3zYVH8iK7dZR5M
+	94OKUKzc9498tZqSzZ79lf98H4YhKLcQfj+jeXs+tRJCo4ktJwM5fYyeljLu7tLgXntuk+PJGTB
+	ZUhWRXppg7fbrtCI/75srBngNmFYO6aqZy3a6zCVnez7ovux5S1+J6akwzDTXXkFPSqK7EsIs53
+	GyHEd6ofoHA5dWTVosmahxcmFCkxgYpW19HU/J4MrZJC9Y56TxmuE25Rwjw3rOb3x/7OESDPP2F
+	ky4fWO/1dCIscmG8CSrailHS3GI5xpGM4HYSJrBk4eR5bIrtED6bk/pEZTAPGZygt8Ox
+X-Google-Smtp-Source: AGHT+IF44UK8AdQd6fFvDc21ilNMu4m0bVVIKOfl5xOOjYgMQm/xz/i3oLPfD33Zol0pZXaxSSar7w==
+X-Received: by 2002:a05:6808:4fe7:b0:3fc:7e1:a455 with SMTP id 5614622812f47-40a669c01efmr518853b6e.2.1749681734252;
+        Wed, 11 Jun 2025 15:42:14 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a682fbf05sm24684b6e.32.2025.06.11.15.42.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 15:36:57 -0700 (PDT)
-Message-ID: <19f50af28e3a90cbd24b2325da8025e47f221739.camel@gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Remove redundant
- free_verifier_state()/pop_stack()
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Luis Gerhorst <luis.gerhorst@fau.de>, Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko	 <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Song Liu	 <song@kernel.org>, Yonghong
- Song <yonghong.song@linux.dev>, KP Singh	 <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, bpf@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Wed, 11 Jun 2025 15:36:55 -0700
-In-Reply-To: <20250611211431.275731-1-luis.gerhorst@fau.de>
-References: <b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com>
-	 <20250611211431.275731-1-luis.gerhorst@fau.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Wed, 11 Jun 2025 15:42:12 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 00/28] iio: zero init stack with { } instead of memset()
+Date: Wed, 11 Jun 2025 17:38:52 -0500
+Message-Id: <20250611-iio-zero-init-stack-with-instead-of-memset-v1-0-ebb2d0a24302@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHwFSmgC/x3NQQrCMBBG4auUWTuQCVXBq4iLmEztjzSRTFBp6
+ d0NLr/NexuZVqjRZdio6huGkjvkMFCcQ34oI3WTd/7oTiIMFF61FkZGY2shPvmDNndb05C4TLz
+ oYtrYJfFplHDWeKcefFWd8P3Prrd9/wGWqNUmfAAAAA==
+X-Change-ID: 20250611-iio-zero-init-stack-with-instead-of-memset-0d12d41a7ecb
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Francesco Dolcini <francesco@dolcini.it>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+ =?utf-8?q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>, 
+ kernel@pengutronix.de, Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Roan van Dijk <roan@protonic.nl>, 
+ Tomasz Duszynski <tomasz.duszynski@octakon.com>, 
+ Jacopo Mondi <jacopo@jmondi.org>, 
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, 
+ Mudit Sharma <muditsharma.info@gmail.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ =?utf-8?q?Ond=C5=99ej_Jirman?= <megi@xff.cz>, 
+ Andreas Klinger <ak@it-klinger.de>, 
+ Petre Rodan <petre.rodan@subdimension.ro>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4170; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=yr3KMlpdAIDpFQpkD3xC/enXTLilJ1AAF5YBAl5/CHI=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoSgWAfjXY88M5ZYDZ+7DX9ossNW945JAucW1/v
+ jGUtSZ5M1eJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaEoFgAAKCRDCzCAB/wGP
+ wPuQB/9qvN9qaCT672/2gBbYyejlFF3k1/j6Gn/mB3Q9wXva2BfxWsvzY/aFxXDjRUixvEIYtHr
+ Aa2OgjvXXp8xeKaF9+2tuO3eZMkPIlIsGMSh8RlslM5ziujYyK74q8EbozYwpwlW1iEN+nhz2d2
+ veKGy321c5RC4/6ArZl7vHAkwa+0YbhQgUQMiL/p0G7uDdnZaPAOsMjP3qOZAFm5g5e6xP3QeuZ
+ NXEr3Fmbf7SKpE+P8cDfUrlyI0ktmNb2LmQCFLyFLxJcwfPz1+dMjbqnyCkB+OsBvSwWgo6eIed
+ GyVNvi0jVIHbMRsHldgnXbcgyInHxugOhj5ZAno4ZKQqOxLc
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Wed, 2025-06-11 at 23:14 +0200, Luis Gerhorst wrote:
-> This patch removes duplicated code.
->=20
-> Eduard points out [1]:
->=20
->     Same cleanup cycles are done in push_stack() and push_async_cb(),
->     both functions are only reachable from do_check_common() via
->     do_check() -> do_check_insn().
->=20
->     Hence, I think that cur state should not be freed in push_*()
->     functions and pop_stack() loop there is not needed.
->=20
-> This would also fix the 'symptom' for [2], but the issue also has a
-> simpler fix which was sent separately. This fix also makes sure the
-> push_*() callers always return an error for which
-> error_recoverable_with_nospec(err) is false. This is required because
-> otherwise we try to recover and access the stale `state`.
->=20
-> [1] https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.=
-camel@gmail.com/
-> [2] https://lore.kernel.org/all/68497853.050a0220.33aa0e.036a.GAE@google.=
-com/
->=20
-> Reported-by: Eduard Zingerman <eddyz87@gmail.com>
-> Link: https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69=
-a.camel@gmail.com/
-> Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-> ---
+Jonathan mentioned recently that he would like to get away from using
+memset() to zero-initialize stack memory in the IIO subsystem. And we
+have it on good authority that initializing a struct or array with = { }
+is the preferred way to do this in the kernel [1]. So here is a series
+to take care of that.
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+[1]: https://lore.kernel.org/linux-iio/202505090942.48EBF01B@keescook/
 
->  kernel/bpf/verifier.c | 26 +++++++++++---------------
->  1 file changed, 11 insertions(+), 15 deletions(-)
->=20
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index d3bff0385a55..fa147c207c4b 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -2066,10 +2066,10 @@ static struct bpf_verifier_state *push_stack(stru=
-ct bpf_verifier_env *env,
->  	}
->  	return &elem->st;
->  err:
-> -	free_verifier_state(env->cur_state, true);
-> -	env->cur_state =3D NULL;
-> -	/* pop all elements and return */
-> -	while (!pop_stack(env, NULL, NULL, false));
-> +	/* free_verifier_state() and pop_stack() loop will be done in
-> +	 * do_check_common(). Caller must return an error for which
-> +	 * error_recoverable_with_nospec(err) is false.
-> +	 */
+---
+David Lechner (28):
+      iio: accel: adxl372: use = { } instead of memset()
+      iio: accel: msa311: use = { } instead of memset()
+      iio: adc: dln2-adc: use = { } instead of memset()
+      iio: adc: mt6360-adc: use = { } instead of memset()
+      iio: adc: rockchip_saradc: use = { } instead of memset()
+      iio: adc: rtq6056: use = { } instead of memset()
+      iio: adc: stm32-adc: use = { } instead of memset()
+      iio: adc: ti-ads1015: use = { } instead of memset()
+      iio: adc: ti-ads1119: use = { } instead of memset()
+      iio: adc: ti-lmp92064: use = { } instead of memset()
+      iio: adc: ti-tsc2046: use = { } instead of memset()
+      iio: chemical: scd4x: use = { } instead of memset()
+      iio: chemical: scd30: use = { } instead of memset()
+      iio: chemical: sunrise_co2: use = { } instead of memset()
+      iio: dac: ad3552r: use = { } instead of memset()
+      iio: imu: inv_icm42600: use = { } instead of memset()
+      iio: imu: inv_mpu6050: use = { } instead of memset()
+      iio: light: bh1745: use = { } instead of memset()
+      iio: light: ltr501: use = { } instead of memset()
+      iio: light: opt4060: use = { } instead of memset()
+      iio: light: veml6030: use = { } instead of memset()
+      iio: magnetometer: af8133j: use = { } instead of memset()
+      iio: pressure: bmp280: use = { } instead of memset()
+      iio: pressure: mpl3115: use = { } instead of memset()
+      iio: pressure: mprls0025pa: use = { } instead of memset()
+      iio: pressure: zpa2326: use = { } instead of memset()
+      iio: proximity: irsd200: use = { } instead of memset()
+      iio: temperature: tmp006: use = { } instead of memset()
 
-Nit: I think these comments are unnecessary as same logic applies to many p=
-laces.
+ drivers/iio/accel/adxl372.c                       | 3 +--
+ drivers/iio/accel/msa311.c                        | 4 +---
+ drivers/iio/adc/dln2-adc.c                        | 4 +---
+ drivers/iio/adc/mt6360-adc.c                      | 3 +--
+ drivers/iio/adc/rockchip_saradc.c                 | 4 +---
+ drivers/iio/adc/rtq6056.c                         | 4 +---
+ drivers/iio/adc/stm32-adc.c                       | 3 +--
+ drivers/iio/adc/ti-ads1015.c                      | 4 +---
+ drivers/iio/adc/ti-ads1119.c                      | 4 +---
+ drivers/iio/adc/ti-lmp92064.c                     | 4 +---
+ drivers/iio/adc/ti-tsc2046.c                      | 3 +--
+ drivers/iio/chemical/scd30_core.c                 | 3 +--
+ drivers/iio/chemical/scd4x.c                      | 3 +--
+ drivers/iio/chemical/sunrise_co2.c                | 6 ++----
+ drivers/iio/dac/ad3552r.c                         | 3 +--
+ drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c | 5 ++---
+ drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c  | 5 ++---
+ drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c        | 4 +---
+ drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c        | 6 ++----
+ drivers/iio/light/bh1745.c                        | 4 +---
+ drivers/iio/light/ltr501.c                        | 4 +---
+ drivers/iio/light/opt4060.c                       | 4 +---
+ drivers/iio/light/veml6030.c                      | 4 +---
+ drivers/iio/magnetometer/af8133j.c                | 4 +---
+ drivers/iio/pressure/bmp280-core.c                | 5 +----
+ drivers/iio/pressure/mpl3115.c                    | 3 +--
+ drivers/iio/pressure/mprls0025pa_i2c.c            | 5 +----
+ drivers/iio/pressure/zpa2326.c                    | 4 +---
+ drivers/iio/proximity/irsd200.c                   | 3 +--
+ drivers/iio/temperature/tmp006.c                  | 4 +---
+ 30 files changed, 34 insertions(+), 85 deletions(-)
+---
+base-commit: 4c6073fec2fee4827fa0dd8a4ab4e6f7bbc05ee6
+change-id: 20250611-iio-zero-init-stack-with-instead-of-memset-0d12d41a7ecb
 
->  	return NULL;
->  }
-> =20
-> @@ -2838,10 +2838,10 @@ static struct bpf_verifier_state *push_async_cb(s=
-truct bpf_verifier_env *env,
->  	elem->st.frame[0] =3D frame;
->  	return &elem->st;
->  err:
-> -	free_verifier_state(env->cur_state, true);
-> -	env->cur_state =3D NULL;
-> -	/* pop all elements and return */
-> -	while (!pop_stack(env, NULL, NULL, false));
-> +	/* free_verifier_state() and pop_stack() loop will be done in
-> +	 * do_check_common(). Caller must return an error for which
-> +	 * error_recoverable_with_nospec(err) is false.
-> +	 */
->  	return NULL;
->  }
-> =20
-> @@ -22904,13 +22904,9 @@ static int do_check_common(struct bpf_verifier_e=
-nv *env, int subprog)
-> =20
->  	ret =3D do_check(env);
->  out:
-> -	/* check for NULL is necessary, since cur_state can be freed inside
-> -	 * do_check() under memory pressure.
-> -	 */
-> -	if (env->cur_state) {
-> -		free_verifier_state(env->cur_state, true);
-> -		env->cur_state =3D NULL;
-> -	}
-> +	WARN_ON_ONCE(!env->cur_state);
-> +	free_verifier_state(env->cur_state, true);
-> +	env->cur_state =3D NULL;
->  	while (!pop_stack(env, NULL, NULL, false));
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
-Nit: while at it, I'd push both free_verifier_state() and pop_stack()
-     into free_states() a few lines below.
-
->  	if (!ret && pop_log)
->  		bpf_vlog_reset(&env->log, 0);
->=20
-> base-commit: 1d251153a480fc7467d00a8c5dabc55cc6166c43
 
