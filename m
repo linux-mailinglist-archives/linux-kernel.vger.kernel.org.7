@@ -1,134 +1,180 @@
-Return-Path: <linux-kernel+bounces-681982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10766AD5A1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B610DAD59BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1DB1BC6A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4461D178D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16641AA1FE;
-	Wed, 11 Jun 2025 15:11:20 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6BC19D8A7;
+	Wed, 11 Jun 2025 15:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ku62Iyur"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92CF1DE4C5;
-	Wed, 11 Jun 2025 15:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA51D18C002
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654680; cv=none; b=ugxwzG/KnspItLRKZ15WUrLQhfcnegSwb0Bwor+WcTZjA2jGQxdxBZuoWe/kFc/CMkoteBkXQWcPhHpwjyWPh+R/W7YRX6aT+z3yAz34jBoMaOUfSYjWDeKLtoP7KkYxEUl/CBX151InjTi9usXCPmM+WLYfbJGr2BrY45RZR00=
+	t=1749654394; cv=none; b=e4cfp/FyAmRMqwth+X1wXkG/l3FiAV8I84i2yHolmGFSEuwKmXVPUN3t2nwtWJ2/L8xPbIg5R25RNj1zOG9s5nFcoJj+CwSOnAIDPqtt314X1KrKlSVX0gqb22mAsgk8ej71ZVTooi1UHqzTQniASnZFx2a7Wa/cJnn5a7lGr1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654680; c=relaxed/simple;
-	bh=iXwuaJziruMBD8hH71+MxDpo/qpQid2pIXQ49Opdlbw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SANbdOSw5QOpqnF277CIC4lwHCmSCjqwPmx40wdfP3LiUZbx5eNFh+M3iX8j1IDHQNpj5MuNnymT/vbG4lAuImTGBk9S/nYGICRdKYA9f59PFVbToTSlyLilyfFDAO4ya7fe55qsIyQq8WmyraWy/aHb6vKMwegdCJ/wsSxI8KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso11944692a12.3;
-        Wed, 11 Jun 2025 08:11:18 -0700 (PDT)
+	s=arc-20240116; t=1749654394; c=relaxed/simple;
+	bh=ajchxbU7+AMklteL9pZzSBbNZx9h7w3GcNr0Mwics1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eODO4FwS2txv8zmZWsp1LD7bOlPAV5YbeBj5G7ugkwEHkRqiSwnnE4JDidZFcXXScak67KojmYpHvAlwoQ+kh0KWBDuah9QUtbkXSc1qHfUobYGhcilTN2lVr9RuCKTyxgSwYHqyxV5LRXtAwTwFvr4/mzeeV5H6uykOLF8TTJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ku62Iyur; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BAndl3002628
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:06:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	77fKbdkYmtPlwXrxnM32o82p7ovrXrSQy4ozw1UOaUo=; b=ku62IyurvRzF4bk4
+	miTbSYf251eZWFjTfr6u4uUEDRIOVhUQFH131bvCOhz1uizHvyiGNOTU7ynprf+J
+	kB0XZbCw6RrLi5v4IKpF/bZdpbMBVPNr5s2WvBa0q+IGaASUwiiVEWW7IewbJp83
+	8EU3/2PTb6mKCS5Ox8dvEnI2EUaxsfGflGZeKcmO5kMR+ZgOIr2VkNEgYQZqYAui
+	+C8MfH8+btFfrKcV1sXLxVplJGc1Kokb02gIB70OniLMyh11sezM9VLFpDb4IcEO
+	BwZtcJcHRu4aZpXqT5auropA6UsThPHsU7KQsapqdhB7JX+h06NWKIFT+g7nEeHs
+	7I1Sxw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4778cwgqcp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:06:30 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d0976a24ceso21156385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:06:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749654677; x=1750259477;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cK7i3MrkzXyfeq++IoaxWfQU0vjfU+V91LzS9evvOHI=;
-        b=S6fOx6IVqI1xiUj/+r6PGPGcB6Vd19oY/GNJ+GdEsQUDq0PIkB+sIezMeqHRBlyb+p
-         QzM3qBkRebvGDwRqG0jSr7mRXU5ADpOurJ0IlK4SwRqs4IbfUqGr37RBJ8dtv/4VTumu
-         tU31aHV3QYDK9vwdTSbSSBOwuZMPRiI9XjIk+MfJ8EAqfzk4R2KwWpiluGxRXQBNPMQ+
-         4sRsjDysAd2pjNE9zF4DRnHjGIlch7zo+VkNQsV2Sh+nIPq01zfVW98JrGAgNbbvkuNQ
-         9VQXCRsUTsB7b5wrSVr7q+M95k4TlqCX4RZlqXrELKGoSi+uzvXtzt45YJlUrqS68F6I
-         B49g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSMzMv4Q9k6YHE3w8NJ+SIur5UXHeXZ9UX8hGJJEjTKx5F71AYHP+GYB8wJWC9HMfqTocqsVQLhVBEonA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPMPQuTj73ObwkuhstEvjqP+bvODtEbn+qICihjVCWsx0QTUWE
-	N5GuE7Dl44H+IKjccjMcn2Ysdj97fuspr+Uvrs5XOrUgtGNjN7hv7naQ
-X-Gm-Gg: ASbGncssu5y1+Kr+7aGRrJga0URcaMrGQvXQa4LUObVTPlld/6KzJ7MLkddr+GgFHYs
-	ZoUUiRX59s9XYnjNweBD2Hf5xaOT3qBdC/ExBmN9QIzzPeaS4u+DyKTwVfXe+g0S4COEiuvZoO1
-	gTIUOeoL3qd2H1yCxgDI+qWzQ94WwAkG4WO5fQhJJETsCrQrIDxJ4NgF49eyENHiMigwAF4HrP4
-	SJQE1FhQMZSj3B4wtmCKMGCw4ZDNKbWEGvA3l1r/lsPOMRhKvii2t3+FrE4kGMt+QLmcrpWt5eR
-	ebiINNAB7EdHIsFM25JlrXk/dzcQEnPTFC5vlCo2xczm00Gvt7iM
-X-Google-Smtp-Source: AGHT+IE8tCK4+befdr8xutY92sqMP6GffHLBtnlsqMWXRmN5HhDYZ7Th/K7ZTKqzWKNI3TOLwoJPFw==
-X-Received: by 2002:a05:6402:42d6:b0:608:3b9d:a1b with SMTP id 4fb4d7f45d1cf-60863ae566emr196180a12.19.1749654676627;
-        Wed, 11 Jun 2025 08:11:16 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:2::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-607783dcd63sm7535362a12.53.2025.06.11.08.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 08:11:16 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 11 Jun 2025 08:06:20 -0700
-Subject: [PATCH net-next 2/2] netdevsim: collect statistics at RX side
+        d=1e100.net; s=20230601; t=1749654390; x=1750259190;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=77fKbdkYmtPlwXrxnM32o82p7ovrXrSQy4ozw1UOaUo=;
+        b=SsBbsQAf9hzpcv1dEAFPIak9qJQushq9Q6s0M4PBDYMMw7BmljzuYcruURTcalK1Mf
+         X99sL5dPN0kG3nC5TD7T+qu90XjLyexM8wcAUXVtjFydMStDTTUa83rKiUzXH4DG3fBN
+         Huhl52Or37n+dSu+tby28wuhJ1EXm4ZjYTQhbDMsa1Tu2qg6xSaheMG92dHcPn43VLo/
+         zSRXRJQoyaXcBGEBWHpL4ZFbCRyiG4ebPpkNXbT+zWamLUMSPU9aNAKK+VG/qPb2mmS1
+         d+m/bUHEdQj+a9GEXj3jcDUVuTG/GMNN1rXCUcQ/KOwsuSRdLf6JP3PK5UkEiZX3vlmN
+         /aAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpouj6ZlE9bQX/UpF250eU9cD4Am/Ke6YZD16TvGXW15w69gOjswfGZncrvktHioEBXypNBXhst4Ntu6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIjfXMx11XvnZQvblUldRRWKCGoYxMl6w00B57HWbQE3Uiw5w6
+	pWsyoGTeditksQHLr/mkcebUQd1Tuj4C9dFC9WsNifs05hqWf6TWdhPpGeqpsBq0ZrQhKXnx18/
+	4fM3XjXB6m68Ca+EzpxRzM7LOA7s32aOjaDfuGg4YsQGGXZJ7dGIlRlzXCVDVDWUdHv8=
+X-Gm-Gg: ASbGncvZsUEu45DuLB7kwg/9mTiik7z0ErTp+BO8nM8Gn9I8jT6Jtb/onp68zUnbxyq
+	Ta9neGIBUADTbeGsxhw73O0XNVtXpbgNtS2Z4KjYifR1gG8F8mnOGlyEQ8ZdUFe33ul/ONX7Faz
+	vUCggpi/E0CTB0kpnVax/ZpZLNwJlW83qyD5HLwvQnVEmbpzXqKJkieMi4dI6mOjzQa5MqFF3ej
+	9RQ/uEtlKOen8QPE3GlhbPlokxlUv34ClDGbfCW1kuCYK4jL83bxKf2/ZdfN3QB5XupnbeVvSh8
+	EV9swiQJj/gOhOlSlcGMBw2QqwdBjs/c5TrCw8aMR7UUHytspCUch9lYPymzygTA0s2vBhE09kp
+	QhgM=
+X-Received: by 2002:a05:620a:2a04:b0:7d2:89c2:eddb with SMTP id af79cd13be357-7d3a87bfb10mr208044185a.2.1749654389704;
+        Wed, 11 Jun 2025 08:06:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFQcyeTIefOmtTUXQ/DK1/6HF+P0px0MJoBSIH1JUCYT215zZQycMHgB/rDMBR3Qjc3+Rx8g==
+X-Received: by 2002:a05:620a:2a04:b0:7d2:89c2:eddb with SMTP id af79cd13be357-7d3a87bfb10mr208041085a.2.1749654389233;
+        Wed, 11 Jun 2025 08:06:29 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade31cc25b7sm832539666b.66.2025.06.11.08.06.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jun 2025 08:06:27 -0700 (PDT)
+Message-ID: <9d966b32-d5ce-4262-b99e-900085648230@oss.qualcomm.com>
+Date: Wed, 11 Jun 2025 17:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/2] arm64: dts: qcom: ipq5018: Add tsens node
+To: george.moussalem@outlook.com, Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <lumag@kernel.org>
+References: <20250611-ipq5018-tsens-v12-0-a61374a5517d@outlook.com>
+ <20250611-ipq5018-tsens-v12-2-a61374a5517d@outlook.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250611-ipq5018-tsens-v12-2-a61374a5517d@outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-netdevsim_stat-v1-2-c11b657d96bf@debian.org>
-References: <20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org>
-In-Reply-To: <20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>, kernel-team@meta.com, 
- Breno Leitao <Leitao@debian.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1008; i=leitao@debian.org;
- h=from:subject:message-id; bh=iXwuaJziruMBD8hH71+MxDpo/qpQid2pIXQ49Opdlbw=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoSZyQiku65t6XjbatcRMxz6b9rKZYEo6yj3YuH
- Rp/QTqPhouJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaEmckAAKCRA1o5Of/Hh3
- baa4D/0ZdKbnJeXTIe8gzkIjRifIuiPoxNs0ASOKfwoTLCP4DWLYzllSt96IYlCCZgRIkg83YJe
- nmWEsYfIaLAxxwRBkMXNI68iEi2X0OFOBHJF8BuN+7MB+4vvpBFUYG2vdqxJgdkU5viT/MC0n26
- j/Xi0cR3lQ0slN9CYY9yid9Z9Btx9RSjyefZwqy3crppqseTUFn9Pm44zd43CRb4uTWYLTEPm22
- 0wDrngNB+iDstIcqyYOvrHb7Z0tRzBKELtm5TpGYovvz6tWvt//5P8TD7GTzGU8kmajsJ8LjA//
- AzMWpVMRXutzL4T/4fxy19ee8Z2La4sMkHzmkXs/IbSdBGrGagM+5qBRfDSQwwlsFkxQnu/UvXv
- 4pSyj9SHALf+NfX8YbnqyoCL7lzjvByhTiYqT8DPPqevW2OZahMWDRdD3EG4O5rKESj1PFhcP95
- r9xD9wJHaaqtG2MYm1yWwjexUED012GGtlnn8wCsXSyYyr4ZhwWLn6SlUPG5aSLDlw25jVDaqcg
- Slarmwzqf7TSLR+mPGCIroIhuONfs78AsTUCt/WSt0LgpkuPaE62hB84jVxnEt8RMqLBHUdN79o
- pJZRPhZ0mcRtYhZk/KmVWD9oqfDz8ews30r35IO+h7FdpStTzIKQuUQhRfgI7aB4lNuxsV7ZWuY
- aVP0QBNIddnCBhw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Authority-Analysis: v=2.4 cv=AaixH2XG c=1 sm=1 tr=0 ts=68499b76 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
+ a=UqCG9HQmAAAA:8 a=TIMhQzKtEeIAjNMpRogA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: PFkvls_OYmA1xLyFUffnAkT0dQbD-AOO
+X-Proofpoint-GUID: PFkvls_OYmA1xLyFUffnAkT0dQbD-AOO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEyNiBTYWx0ZWRfX+46YrD5syY3I
+ EcNJAabl3TtSFBzGdsTTZlIBexCJpHtQiv5a00sHggU/G+suwbxYYn4ihMurkOlYxE9+jycbiU/
+ 53ZG6SvVo9kQ5IpEc+qKhHXsrfS9fyMIS5oQQYVxLkQKsAabgV4I/PWjiWOmtTOEgKUWpBIxIer
+ /BTNd15A/nmuJVFmyP5W9mtqxpklZw2dHNmAEvL9dAGTLA7ukvWvEajuiQql7mS/kwKtSimf7Re
+ yPdAxHIoF2Ozgbo2ay/bdlgSpZIQqdiU2a2SDO3n5dR4rYCeUZHofxYfQxLkLbE+ZdGPxLGZmhv
+ uJrvbQSkEF3JiWSGKEGxuWXrcEN5ZqQru4cds0Xp8jNVIZqDygaCLpm7yrDWm2ACe7AhAvvtMmt
+ WXWyeDXo+CW1x0o1E/rJNBYnpW0v8DhJzmSBg5Vhkg5OSdBMOUQd6zZj+ZXfpMMjNzgWHsoS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
+ adultscore=0 clxscore=1015 priorityscore=1501 malwarescore=0 impostorscore=0
+ bulkscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506110126
 
-When the RX side of netdevsim was added, the RX statistics were missing,
-making the driver unusable for GenerateTraffic() test framework.
+On 6/11/25 11:33 AM, George Moussalem via B4 Relay wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> IPQ5018 has tsens V1.0 IP with 5 sensors, though 4 are in use.
+> There is no RPM, so tsens has to be manually enabled. Adding the tsens
+> and nvmem nodes and adding 4 thermal sensors (zones). The critical trip
+> temperature is set to 120'C with an action to reboot.
+> 
+> In addition, adding a cooling device to the CPU thermal zone which uses
+> CPU frequency scaling.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
 
-This patch adds proper statistics tracking on RX side, complementing the
-TX path.
+[...]
 
-Signed-off-by: Breno Leitao <Leitao@debian.org>
----
- drivers/net/netdevsim/netdev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> +		cpu-thermal {
+> +			polling-delay-passive = <0>;
 
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index 67871d31252fe..590cb5bb0d20b 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -39,12 +39,16 @@ MODULE_IMPORT_NS("NETDEV_INTERNAL");
- 
- static int nsim_napi_rx(struct nsim_rq *rq, struct sk_buff *skb)
- {
-+	struct net_device *dev = rq->napi.dev;
-+
- 	if (skb_queue_len(&rq->skb_queue) > NSIM_RING_SIZE) {
- 		dev_kfree_skb_any(skb);
-+		dev_dstats_rx_dropped(dev);
- 		return NET_RX_DROP;
- 	}
- 
- 	skb_queue_tail(&rq->skb_queue, skb);
-+	dev_dstats_rx_add(dev, skb->len);
- 	return NET_RX_SUCCESS;
- }
- 
+0 is also the default value for polling-delay-passive
 
--- 
-2.47.1
+
+> +			thermal-sensors = <&tsens 2>;
+> +
+> +			trips {
+> +				cpu-critical {
+> +					temperature = <120000>;
+> +					hysteresis = <2>;
+> +					type = "critical";
+> +				};
+> +
+> +				cpu_alert: cpu-passive {
+> +					temperature = <100000>;
+> +					hysteresis = <2>;
+
+that's 2 milicelcius, consider x1000
+
+Konrad
 
 
