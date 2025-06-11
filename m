@@ -1,329 +1,170 @@
-Return-Path: <linux-kernel+bounces-680831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE037AD4A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6DAAD4A59
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7EA03A6096
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A437217B7AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDB7227581;
-	Wed, 11 Jun 2025 05:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2CE225779;
+	Wed, 11 Jun 2025 05:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O796kNJQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpUZ9M3/"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3613020DD48;
-	Wed, 11 Jun 2025 05:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B817BB6;
+	Wed, 11 Jun 2025 05:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749618785; cv=none; b=azJwQ7PHVzRhamdeJEfIJy34jgIGlv+PUGh1ygsm9JYTo6LOtJpVzPP9ipuPQHJg9n4T87/UZg0o3LEGGMk+sTOjfy0WMd4pzndkznboSXceG0PhkqZjGM5TB6pcZ3RE2RHAEj/dWNKEVbd2RcUZOzQ55TW48SB/0gcjUkCVVGI=
+	t=1749618979; cv=none; b=iLZmsoIdOCH0s7/DlshIFWHYCEOFHY+7wMxUE6YCJeg/1WUfNAzV6IRHvy1TLPRW4qz+spFXo8bhrVMT32cJU/lQGn/mNEi8/QAIlP5Y8pVrreJ/jxydSmh6BCg869WGgMeLcx8iGX1/TMbWLVbre1GHYaDq/Xzi0Lr0U1LbSRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749618785; c=relaxed/simple;
-	bh=BkxTyX33gHEtjP2JawH8Psdf9hWjmqaryNkUQiqnx24=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a7pOXACfQ5zse/A69Ra2V7H1d4afetydmyvGzqb4WpTeCBXZDaI1sg4IoyOKEZ5QNthZGKcxgIv+Tglghq/+wfWQ24rMBayDvIdIKABLES9BtKoBXKG106FSs+OWW04VzvvCNLdZV2qOGh2IinKXPVkWmbYidUowsp1s5Xu6UJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O796kNJQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C30F6C4CEF2;
-	Wed, 11 Jun 2025 05:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749618784;
-	bh=BkxTyX33gHEtjP2JawH8Psdf9hWjmqaryNkUQiqnx24=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=O796kNJQxYSE4m7qAahv1pwhGygVxfUhZ/KhkNpaypoMt4RBH5Lw9mjK19MrVYfo2
-	 Iq/wz8ipzzXM+ND8LP/66ASI9ONG24solRtIQ6pmC7mT+YWvPnS7eeNnDmWvQPNzMY
-	 NGnAsHuPQVguCFT1WD9qs15O+9jnKJg220qicd+TyjUo4VU+sPM70fGKLxbptCfrJg
-	 8U177wPAw4SmLR+gd1qsHJrdkjdz16lbp0/reoZezErnFMNLPx/0X1a+iHruDCLgSP
-	 rrJyXSJxarMSvejRks9930BG7UWdBFTRfqESzakzn0vIIVNWNM/j+oW7XpIoQ4GhxZ
-	 3GdSIt2NXq6zg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35F5C71135;
-	Wed, 11 Jun 2025 05:13:04 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 11 Jun 2025 09:12:46 +0400
-Subject: [PATCH v11 2/2] arm64: dts: qcom: ipq5018: Add tsens node
+	s=arc-20240116; t=1749618979; c=relaxed/simple;
+	bh=wlCPxC6nysb+Pxhesmb97fuUGPr/QfECgPqmZ3FlWjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pwIQwDJWug/8SzqK871jTkH20Ep8nq7FgLpjOlot10/3W/+rp8Pn4x9xfDGKLp5NgysDxgVz+WPJpwgWu0MxNikID0faTWd/Ww6EL1Ygms3J26VUTBM+Ao7rHUMtKTFUx/HDKZDy4aY5P85JgRGpRcZAwpa+u5iYQZ3Lr+k/Nw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpUZ9M3/; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3ddc5084952so25050545ab.2;
+        Tue, 10 Jun 2025 22:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749618977; x=1750223777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NZesgBl46zE6tXS+j7KyjhCxsxKgNitfmh/eZ0BBEw4=;
+        b=WpUZ9M3/19VqiOhKB245R6IS8uqys4jDlXbIbRTHMwbRrIHQxNflRyE/sGquaFSaBY
+         g5ryNRRr7gyEXs9/f6AnNAWDgTEytjlHInSZomkIJTlrZCnMfPQ3dXTCLiYws6J9XcIH
+         4hndLa6z35hAXMxMO24s6wD3UDoEBXY8ZoINVcn7cIVoz4c/OBOSwzp7Z7bo0GW+c0bg
+         Le0/heEwRLJVlj4gV/6r/eUoIt2i/Qs7BbXIxazbHt23R/6xPViH4Gg5tyTllzTzCBS1
+         yGW1G+b/OwLo+/NU8pAA8Ngzvc/YQa43A6flOoWHzvkmwGShjtxhrwJpnDEkzhz9v58i
+         dDWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749618977; x=1750223777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NZesgBl46zE6tXS+j7KyjhCxsxKgNitfmh/eZ0BBEw4=;
+        b=Rn7Ab5XyElLKIBx/k4/Zyly9PzeuM10G3S8dwPqpBlbf+/CLG1RiEUhgN6LsGGjEG4
+         L9CFV+k8mBZ71WJrgR2HQmFY1t6B5BT1V4AzFXmhv9QX/QQmTtm6xjUm+IYmK08hPccr
+         vdZvAK3jO51ItL5dYuIHILK2Vqbn0Vv7uk/6BNrhtfKAro6B+T/6159FgJd+pH0ATE7Z
+         236H13LKUd/nfZVAHeX7CxDpT50iBVibGNQDh/BOODp0yOK0AWBAQZMphHyEEN2uzfh9
+         PUHmZxn+tOLDz8jXBhmeuEpb/iNUG70Y+OU8x44+8/olQBbwfeaHqGvzJCBFjzKwJsrB
+         kXvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbggO8V1hktwbw1PGOFLAD4pivr2lvKhSZYkCoBgZRxv/OCzmB4np7tIfQnDQwxk0HAwbiGinYZBWY8w==@vger.kernel.org, AJvYcCWdlrcnyxH+IkBn4PFQEOI0+FU6ZhWeTWKKCgSUsoUp9mNH4Mf5C1AUDNTGKUV6dCEKvvfe0cP4xvMD03nJL2Bq0U6A@vger.kernel.org, AJvYcCXFCt4imfUqgPV2YeN4p40/IHOhcsCUea+nW4s+ipmtTLfs5eNrIVdjxzjA07Pk+qTY9CcjYISxsmM7lYdH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4nPeVk22FPeVew283FGibTNMtenDpMGUF3lWbWWXCymJ20N0Q
+	qnElL3qABP/EuUob2D2RH+Q5DbNPgciV0kWmOabHUrBYNt0sA9b3idxmEqc7vWw5ILL/jb6RON7
+	xvZPM0nye7Z4goq/oNuwOBcZAfzf2xmc=
+X-Gm-Gg: ASbGncs6PzIlUU5Fivw+k1rgi9dvpoz8+8qxAUxXVzd2Rl/lm6ydJJ7PcWH2EKtSv0v
+	pcgJVZUTbZ44mtaIPd8Mj6PoRZdzD/GMJFBtFhWlfgeMI/ux8e7UMw6fBbEScXO+aRGgxgdDGui
+	i8e//nLmWznfRvpLwU7/vSwrDBcuSf/yra3BOmYvMl5Gk=
+X-Google-Smtp-Source: AGHT+IHQ182d3wwKSf9DtAyyoa6zoQyiigAylXfIEGJY0yChHhYFf6EZGcBQKjg3qJXH0CODyAvyDT8qQD7k3JAMoRA=
+X-Received: by 2002:a05:6e02:3b07:b0:3db:86fc:d328 with SMTP id
+ e9e14a558f8ab-3ddf4224b37mr23369385ab.5.1749618977137; Tue, 10 Jun 2025
+ 22:16:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-ipq5018-tsens-v11-2-266566bfd16a@outlook.com>
-References: <20250611-ipq5018-tsens-v11-0-266566bfd16a@outlook.com>
-In-Reply-To: <20250611-ipq5018-tsens-v11-0-266566bfd16a@outlook.com>
-To: Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- George Moussalem <george.moussalem@outlook.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749618782; l=5540;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=8VbrGnbVEEGlTeBi9Ev67z9HvHAIvHkO/H7Vls/aG78=;
- b=uOrwg1pLM1xnBOdSnqUhLxR/M9QsRaBVSVdexIJRe/jspGlxZe9X9D+Ky/iFCkoTrB9DS2Uoh
- 1QMLjyVpQXhBjoCEFc7DMSCUq4nLNgsG5mzSrx5QD6QiYB3nkLJ4WO0
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+References: <20250610004844.66688-5-kerneljasonxing@gmail.com> <202506102340.uo7QDaVk-lkp@intel.com>
+In-Reply-To: <202506102340.uo7QDaVk-lkp@intel.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Wed, 11 Jun 2025 13:15:40 +0800
+X-Gm-Features: AX0GCFvLGUUBleBgjthzU8tNmG3C8w7G2enscnE2vmODxHCKzCz7BeEkbxQED_o
+Message-ID: <CAL+tcoARvQVgd68HGoXXiK=+RSH12WQ_rc47B4rgtt2Eb05c0w@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] blktrace: use rbuf->stats.full as a drop indicator
+ in relayfs
+To: kernel test robot <lkp@intel.com>
+Cc: axboe@kernel.dk, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, 
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Jason Xing <kernelxing@tencent.com>, Yushan Zhou <katrinzhou@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On Wed, Jun 11, 2025 at 9:42=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Jason,
+>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on axboe-block/for-next]
+> [also build test WARNING on drm-i915/for-linux-next drm-i915/for-linux-ne=
+xt-fixes akpm-mm/mm-everything linus/master v6.16-rc1 next-20250610]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jason-Xing/relayfs=
+-abolish-prev_padding/20250610-085150
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block=
+.git for-next
+> patch link:    https://lore.kernel.org/r/20250610004844.66688-5-kerneljas=
+onxing%40gmail.com
+> patch subject: [PATCH v4 4/5] blktrace: use rbuf->stats.full as a drop in=
+dicator in relayfs
+> config: arc-randconfig-001-20250610
+> compiler: arc-linux-gcc (GCC) 12.4.0
+> reproduce (this is a W=3D1 build):
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202506102340.uo7QDaVk-lkp=
+@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+>    kernel/trace/blktrace.c: In function 'blk_dropped_read':
+> >> kernel/trace/blktrace.c:421:39: warning: format '%lu' expects argument=
+ of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsign=
+ed int'} [-Wformat=3D]
+>      421 |         snprintf(buf, sizeof(buf), "%lu\n", dropped);
+>          |                                     ~~^     ~~~~~~~
+>          |                                       |     |
+>          |                                       |     size_t {aka unsign=
+ed int}
+>          |                                       long unsigned int
+>          |                                     %u
 
-IPQ5018 has tsens V1.0 IP with 5 sensors, though 4 are in use.
-There is no RPM, so tsens has to be manually enabled. Adding the tsens
-and nvmem nodes and adding 4 thermal sensors (zones). The critical trip
-temperature is set to 120'C with an action to reboot.
+Well, I suppose I will fix it in the re-spin after receiving more
+comments so that I don't need to quickly respond to this minor issue.
 
-In addition, adding a cooling device to the CPU thermal zone which uses
-CPU frequency scaling.
+Thanks,
+Jason
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 182 ++++++++++++++++++++++++++++++++++
- 1 file changed, 182 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index 130360014c5e14c778e348d37e601f60325b0b14..defeb697c8d89686e3aaf2e6f7b6cb7493219336 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
- #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -39,6 +40,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&l2_0>;
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -49,6 +51,7 @@ cpu1: cpu@1 {
- 			next-level-cache = <&l2_0>;
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		l2_0: l2-cache {
-@@ -182,6 +185,117 @@ pcie0_phy: phy@86000 {
- 			status = "disabled";
- 		};
- 
-+		qfprom: qfprom@a0000 {
-+			compatible = "qcom,ipq5018-qfprom", "qcom,qfprom";
-+			reg = <0x000a0000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			tsens_mode: mode@249 {
-+				reg = <0x249 0x1>;
-+				bits = <0 3>;
-+			};
-+
-+			tsens_base1: base1@249 {
-+				reg = <0x249 0x2>;
-+				bits = <3 8>;
-+			};
-+
-+			tsens_base2: base2@24a {
-+				reg = <0x24a 0x2>;
-+				bits = <3 8>;
-+			};
-+
-+			tsens_s0_p1: s0-p1@24b {
-+				reg = <0x24b 0x2>;
-+				bits = <2 6>;
-+			};
-+
-+			tsens_s0_p2: s0-p2@24c {
-+				reg = <0x24c 0x1>;
-+				bits = <1 6>;
-+			};
-+
-+			tsens_s1_p1: s1-p1@24c {
-+				reg = <0x24c 0x2>;
-+				bits = <7 6>;
-+			};
-+
-+			tsens_s1_p2: s1-p2@24d {
-+				reg = <0x24d 0x2>;
-+				bits = <5 6>;
-+			};
-+
-+			tsens_s2_p1: s2-p1@24e {
-+				reg = <0x24e 0x2>;
-+				bits = <3 6>;
-+			};
-+
-+			tsens_s2_p2: s2-p2@24f {
-+				reg = <0x24f 0x1>;
-+				bits = <1 6>;
-+			};
-+
-+			tsens_s3_p1: s3-p1@24f {
-+				reg = <0x24f 0x2>;
-+				bits = <7 6>;
-+			};
-+
-+			tsens_s3_p2: s3-p2@250 {
-+				reg = <0x250 0x2>;
-+				bits = <5 6>;
-+			};
-+
-+			tsens_s4_p1: s4-p1@251 {
-+				reg = <0x251 0x2>;
-+				bits = <3 6>;
-+			};
-+
-+			tsens_s4_p2: s4-p2@254 {
-+				reg = <0x254 0x1>;
-+				bits = <0 6>;
-+			};
-+		};
-+
-+		tsens: thermal-sensor@4a9000 {
-+			compatible = "qcom,ipq5018-tsens";
-+			reg = <0x004a9000 0x1000>,
-+			      <0x004a8000 0x1000>;
-+
-+			nvmem-cells = <&tsens_mode>,
-+				      <&tsens_base1>,
-+				      <&tsens_base2>,
-+				      <&tsens_s0_p1>,
-+				      <&tsens_s0_p2>,
-+				      <&tsens_s1_p1>,
-+				      <&tsens_s1_p2>,
-+				      <&tsens_s2_p1>,
-+				      <&tsens_s2_p2>,
-+				      <&tsens_s3_p1>,
-+				      <&tsens_s3_p2>,
-+				      <&tsens_s4_p1>,
-+				      <&tsens_s4_p2>;
-+
-+			nvmem-cell-names = "mode",
-+					   "base1",
-+					   "base2",
-+					   "s0_p1",
-+					   "s0_p2",
-+					   "s1_p1",
-+					   "s1_p2",
-+					   "s2_p1",
-+					   "s2_p2",
-+					   "s3_p1",
-+					   "s3_p2",
-+					   "s4_p1",
-+					   "s4_p2";
-+
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "uplow";
-+			#qcom,sensors = <5>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+
- 		tlmm: pinctrl@1000000 {
- 			compatible = "qcom,ipq5018-tlmm";
- 			reg = <0x01000000 0x300000>;
-@@ -631,6 +745,74 @@ pcie@0 {
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <0>;
-+			thermal-sensors = <&tsens 2>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <120000>;
-+					hysteresis = <2>;
-+					type = "critical";
-+				};
-+
-+				cpu_alert: cpu-passive {
-+					temperature = <100000>;
-+					hysteresis = <2>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		gephy-thermal {
-+			polling-delay-passive = <0>;
-+			thermal-sensors = <&tsens 4>;
-+
-+			trips {
-+				gephy-critical {
-+					temperature = <120000>;
-+					hysteresis = <2>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		top-glue-thermal {
-+			polling-delay-passive = <0>;
-+			thermal-sensors = <&tsens 3>;
-+
-+			trips {
-+				top-glue-critical {
-+					temperature = <120000>;
-+					hysteresis = <2>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		ubi32-thermal {
-+			polling-delay-passive = <0>;
-+			thermal-sensors = <&tsens 1>;
-+
-+			trips {
-+				ubi32-critical {
-+					temperature = <120000>;
-+					hysteresis = <2>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-
--- 
-2.49.0
-
-
+>
+>
+> vim +421 kernel/trace/blktrace.c
+>
+>    413
+>    414  static ssize_t blk_dropped_read(struct file *filp, char __user *b=
+uffer,
+>    415                                  size_t count, loff_t *ppos)
+>    416  {
+>    417          struct blk_trace *bt =3D filp->private_data;
+>    418          size_t dropped =3D relay_stats(bt->rchan, RELAY_STATS_BUF=
+_FULL);
+>    419          char buf[16];
+>    420
+>  > 421          snprintf(buf, sizeof(buf), "%lu\n", dropped);
+>    422
+>    423          return simple_read_from_buffer(buffer, count, ppos, buf, =
+strlen(buf));
+>    424  }
+>    425
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
