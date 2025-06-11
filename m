@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-682599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEB8AD623A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:15:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6345AAD6229
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C4D17E964
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:15:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9FA47AC43A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A2624BD04;
-	Wed, 11 Jun 2025 22:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9962D248F65;
+	Wed, 11 Jun 2025 22:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Riee2BbW"
-Received: from sonic307-4.consmr.mail.sg3.yahoo.com (sonic307-4.consmr.mail.sg3.yahoo.com [106.10.241.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qnfSWhNE"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2529024A06E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E2E2475F2
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749680134; cv=none; b=E1A7t+d6DdKiq4KypGIRWPf07bAdo0fKDH6Ssy07R/ihu9B1mKIC3aquj/jxEdCRPCsW4zOP9W5+dxM14pGHD1VB+r3MzAaq4DKu02BzmC3UHZMifTPvVF3+YP3TRfQOkPpbXuMOkEXlSJJ8krNLddz/JQM3FiWnPycfJHbPOxI=
+	t=1749679564; cv=none; b=Fpf9MHh1oW0D8YZTh+lPEI92EIdJesZ9dktmoABI+gH50GqvLFdKMy1INLgjoYMFzeDqmkLzOaIK3iXOVVea2kkeMpfc3MkQmZH9iIU5mmCvKlJ/eFleBvfbNyLYUkEveruW3X61W1Z0SYrscHy5spB3BYf+8psb+RmmlJc/ej0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749680134; c=relaxed/simple;
-	bh=/0Vdo2n4vBWv00iFSktmhK52XeKrbW6rz6XK2gUH1Ws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OccR6cASx8+k564qVapf1fjEXZQkEMCiFiNRJ2O2wzBuiJJVrOGThpcGx8OWl802KoQmkhqZzeKhXjkKDmgzqM5ZH4/Gnx1OgNlpu5dQXRJwPXK7M0Yp33QxYdZirziQB6gQJnBtJXWFJGmTxQ35EhinfvkLVDrpXi/yFxGBQIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Riee2BbW; arc=none smtp.client-ip=106.10.241.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749680131; bh=Rn5w/P+M1tuc2960ReqD3yHmxZwhUR9NzbcqGhHPW7M=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=Riee2BbWYU88sdouwcgo3FSFNQzx8/AXn60d3WRUe6AThtVZxcihM/L6j7VjardPW6kPrjfFcTkJWwfGyLBkG+o5cxMTjpGkWEz1ru/ammcr4sWkW3zZ4//yeds90v/yctl/aALBscH2CGz+3jumBPwJVyGrsbZagiULY445MWsJ/Ohy4LQg3CA8dSljEKteV/i24VErpWvFNxegD1YTKe55FVcJr9rDS2g3CpINNyz6nR5TT5b7v/Q5llMVuBXeZx/b2D1MfEBka9WEvGS0MVx47kjxLyAnR6KOWVLmELW6L/pb9CKXiGEhGz2X3zWSqsphsQoEIGR0GTngf7suyA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749680131; bh=GTJ2tCSICHqtJpc2B4sx31IAsKSfnDkkMnALKhDeV0H=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qw+sQpoNccd9Rl3hkhaK0tRk+t7MfWDXMC4+3Y/OovCVBInH3Hussr18nvmcd7JZjNBOA1b2vv8Ei8w7vKN9LJn4pIHH9h6Bl9Odrwq0rY+UgPZ5bvlkxImc/IQmfhK4Bz9Zl9Mr32bnpiEY2BQmWw+5qbJGqlJbmHU5c/yjZ96CGkA4a7c8DOq+cyEaYk+yJ3FBjFoO5U/xuRGju78ROQ+J5P9Ohx3wRQgMZHHa8PYxOdfcoO901HFRy0jrueX4CxARPdXNF2zcgDspuMXggp5gEa2eC0elW6q11IFEgTT3gkedeml/drbbBUIM86OD5RZqyPxk6kfBhJRGJobkcQ==
-X-YMail-OSG: a.2tuGwVM1kfTLH6cec8WQUaPjVAFMdGc_qj0obGbzt8ygiI76p6JNr6G_t7TNU
- xGuN5cd9OoP7wXqGpGsp9X9ZpLcBbjDfzYqVBz_QHh9IE.29GFtDVbvjEnCdmMCkK6Z_LV1M9lY7
- Cm1dWqolJibkZSHRbGeqWxPJNL.6m2zdGykka4rcqAlejOlA3IPABXmixc_Ea0BIMYUgWINPBok7
- Fcm_ugku.30z8XXilYtUqN4J7cDq0dTBPS8QomNEfi5GupqZmQmQJGxUin2BD5RKQYKo7G3hsd7g
- IAldcfyTWeNTQWAorNfklhHBAx8jASU7j0.JmmJyUd35cpiJNjx06DnLBVtPCrnx.xfz5b2GnaYO
- VOAhw955azmutM.vZJmUA99CUDIE_Oa6FdFGgcuRviNQH4wx.HBZCXAHV7QUNArgzC4NEV6vbvT6
- upOpgG_iT4.g8VhnAsXpyEDAcM8Ml3ua0qlSyifZRJCEheSYAoB2V8f8LLpoO9iVxOzwJNd6i3WN
- oqQNq6Cm9C.7x8bSseYohwx4FEx6tf0ZPEr2G3Hra.QHeMpxBzDKa1VsskgsDjW9oPY46y3dysxq
- TQWRzYC_mh3PX._ac7a3LqI2bn1zsI.0uuHC9ZupasHF_PGCcROdrcfXGqvgvDapl_7z9J7Jka0h
- 30YCshIZCE2_88vQ4cri5LLBnKE8FB3S6ck0vlmk0NlFqB3mdGFdyLrUrZFJaHH_llf91s3MiI6h
- i1BpwNaZXpZvHJ2pI8wncO_cSHcSloQFeYSO2JD3Vp6OGZGtMWFA._mMxMUOLNlTN3Cv7bkNpvmI
- GdolRtY0kBO723j.995iZpv7h4FTmlTYL8.I5MlI8zs_RoToFlxG4cr_zvfqZze6plhPHOpiOY90
- Lv_gaJgvKj7IxBir8kSh5hcSweRV8V5Niq8Y1x08.Yp7C1D0YUTMNhDKFHxKmQbEFM1d6emeNRm6
- d51o2rlSNmd0afFhiFzq8nQH62blgpT2gYU.I7IRvxW3npQLWPrI6NmKwuJbBwx.bzAQAIureylV
- ptwFv1ziUygDfS001u4EU9UiqCp6rqCYRB4epJ4hPm0.DXBksKGhvsGj9vcv76lJo_.HjwXswVON
- lTYM6tXkDvK0PEnLH1OjFcUOAjMav6hMN1eMp25y_C89inUF2WNAIOLz7EBG87IzWBtp8CHqMiiF
- UriGno6HFimBoQ5VTnX9PtJhFoiNVD8TY.NJeAF73WxRoEgSDW8_PJCvhvi8jw.eg.e0629Zj1Yq
- 4OJt7g8tmVqytzi0kc1tN9gstyWPI3Z8MNTIqI6seWCu66AWgmSnwk42YOzs.ryZ5FFhhlVc9WTc
- 6BUHY3jALbge7ezobBp60qb1oZS2CnBDYHAsyA_UgWd5LHf7L2gGU_875oFZRm8qDLKhKJ_4qsQ4
- bVvnM0Etzinzlqjixt2YjHfrNPNJjb68gFoIpyrI6Bp71pra9P9afraiYnkR5mjuwF9chVErmN7y
- uGDV7nQ6U.bZmbqurg1Dtwh9jBswdrDx7Kua0IFGqUGYKmAA2OezdA.8whW5TaD85SI058LICV.A
- 6tloNepag8tY4m9VAvOCm9QP08JSYGacFwlvbXbyxdvdz18vNF6zAcMV.kYaoCDPyZeCQHO0Dvbb
- mK1R0dyhDGsBd7Wpqt0mC1.T1RqAWfnK05ulpVi3j6u8hB5PFuMMrWbIA73p8lczP5sdkC.oXueI
- kYZeHAYiVsPAPUkWRJscLs3sdUhm2nj_EfV5hrPSsjLZqwVjMXvRVZb1UJAj6S10U4VTBIniv76c
- 7xC5VUtYn0wfHKq8P1T5sPa6BDFjoJ_YHgFJrY5Xn4dFuIphUmF00ZcexwuxJ.uLK4EwE3PQ22Q0
- VUM2Lm7n8Sr75gmSkrpFw5yKA7Tyi2go4dysvxqvqFLaN7tywT5v9zub3OXfFrxL4SvL5ixv0kBW
- Ss5guBVKB8w_wxHsrJRA6Hhzky1Z7_LMlcHHEg2NRw33jPxt2O3vrQwV7mR7epJwfXAI..d80x8c
- CqPoh06oKAcpiLQvpcBwambQJGiSN3SNGVGsBrJmlvtTai2OFbc720uadlZC.u2qwOWPiWKTOBBX
- WQgE.DZb_.KMDL0vOKRduPadta6G9QAIuj1ImOqFrmJZsOdJCRfE_L.CiwZR9z91TZKklo3LI_Vn
- WqEanhCjtAZwkRGAN1mV0ACe6bVodKf97_FU4DydmxTI8rodceS.A.30HsqG79WmQTW6EP4l0Xho
- jBR0ry4.R9tv2_VjeSgwIGDNZJq_lr3Yziv_mhHn15vZiLUoo_fxgSVU9h176mEgnoQUIjB4IPxk
- 0aEP80XEW8CLsfoRTCFwjnn48kji2yUvip.MZ_oQvz9pcIoxWNdU-
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: d3e8ac7e-f1a1-4672-bbca-d7271f1c36cb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.sg3.yahoo.com with HTTP; Wed, 11 Jun 2025 22:15:31 +0000
-Received: by hermes--production-ne1-9495dc4d7-psbrp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2ed6d631eec321540bbe8aaca754edee;
-          Wed, 11 Jun 2025 21:53:10 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: sumanth.gavini@yahoo.com
-Cc: arjan@linux.intel.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@dominikbrodowski.net,
-	rjw@rjwysocki.net,
-	skhan@linuxfoundation.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v2] docs: ABI: Fix "diasble" to "disable"
-Date: Wed, 11 Jun 2025 16:53:06 -0500
-Message-ID: <20250611215306.2989590-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250523220238.455718-1-sumanth.gavini@yahoo.com>
-References: <20250523220238.455718-1-sumanth.gavini@yahoo.com>
+	s=arc-20240116; t=1749679564; c=relaxed/simple;
+	bh=lJcNb+m+LrHIPtdT6t16yrrQCjtNIkMPamXEoDgkxPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KR2YZ3X06OBI8qDTsIYDsceGCiCqoXN2YgPTtJqpw0GTdwSYQ4FP4Ttu/MAgFUlDkodw6qbjNtAc/TxcV8GYExPQTOveqyiQpm3rs6VgIM5rHbTjXcdKhPX83hV5n+8Ris0Woe1hNcRxULoJbjbtRKBtOGcHqoDJWVT1Wxugz70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qnfSWhNE; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a5ac8fae12so142711cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749679561; x=1750284361; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r6v+Lx00PogSpTLtqb8OpINwiWwlsYccfvqmwc9X17g=;
+        b=qnfSWhNEmnLo+96JaUmmKyqsLdGqWhy8YxkJqM2/p5rBgf2gomvE5Qbq+d10VBUAWY
+         cKVvqyMFEZ2lixu7OLK0bfANSBJ59cn2jXdxA2tLPaQkT4NMSLkGNvGT8MhlyR5Dr5LT
+         os9DykNyOMtxJDA6qbwukURoS8qtn9rS/RnfNrY/WdlBLBYMw1TELBiQN+x1/Ko2RzNT
+         c02IN2+VgykqwhHDK4kF01Nu7BfLlxK3FHxQw0RZRt+6z50gUSAXKDTPlPGzMA0yySnK
+         TlH7oZdEliBuEZRtC8yVBGDJ8wGbWwpm6e878mmiUyoBA8p71PrM8DIopTJv0npCwAJ2
+         Vcpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749679561; x=1750284361;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r6v+Lx00PogSpTLtqb8OpINwiWwlsYccfvqmwc9X17g=;
+        b=qqLKxozbF95Nse9ppQguv+xoZuESSLlmXSy+eRBzWKAxaVBcQByzp5M5N2u/2HufQN
+         iTbkUuxsd/ETaTeFMBEIc1w+nrSSADSwY9K35k9cBva3XcYlwcYSbJwAatapKR5P8qPB
+         L0fuf4xv2TazcdU8YYJCRfCwBuOAQ3Myt/oW6Cah+kAqvoICJV8VdvB5czK5cFaUfiPr
+         su2hHabr3p6iuHApniM3zAM1YnfRySDPAPmyjpU5ec6UaHpHg6e8d4kb2gZhFfsmJYj2
+         qU6on9b09naFN5kYGuv/hKbNMm1W2o7Q+607aqfkm7/J8l2JlHUEP5S9FutZkY9qSLfk
+         0TVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaYCSeLz5GwpDswnS3D0S5duhRe9S4IM8C8UTD+sgK+Q/v89OB273n6azYiJcBkN22czqZUOlfHNz2YPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJUHpkwyHA459LD2oEIoOOh7VJtB9f302LJrccxt2sKpjFcjPr
+	Fwv+SfwAOAIR8UMrs7xHci20HJZAYin3V6y5XeJdkL+lkpGtmCSLdmiGm9tjQw0qd5o1sNyuW3X
+	9JJAfp+/5LrYoC2cAkpE/IDhkNu68C5LV3ec9YMmP
+X-Gm-Gg: ASbGnctl7UM0wypFtgYLGyl4C9AnL14LoYMw8cHukIMDXUR8aPfMzMzCXFXqnd0RsI6
+	FtQeAikpIu2BYtjwmtTJQ77CDZb8WjIy3RPgekHkuYkvmNJAes0IExBYsSMtxuk0FYOH1icUD7I
+	jW93b7x4+vS+aqqWJwPT6qvnh6u5i/qGB1EFD5lLwhW5rh5g+dISU0K5Cxg0tIfLpVUeUHFGBJx
+	g==
+X-Google-Smtp-Source: AGHT+IEBY/UkjQXV1lMnORLfnY9FIZMyMUT3D+2LVLKUtBU9gMCFpZwOtsADD3cHrQ41s2NITvc+hR4EZITi3Ul7ziw=
+X-Received: by 2002:a05:622a:1882:b0:494:b4dd:bee9 with SMTP id
+ d75a77b69052e-4a7243a7933mr859111cf.24.1749679561232; Wed, 11 Jun 2025
+ 15:06:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250609184029.2634345-1-hramamurthy@google.com> <20250610182348.03069023@kernel.org>
+In-Reply-To: <20250610182348.03069023@kernel.org>
+From: Ziwei Xiao <ziweixiao@google.com>
+Date: Wed, 11 Jun 2025 15:05:50 -0700
+X-Gm-Features: AX0GCFuYF3MGPH4TMlK1EsMcjlLsjn5eZWHe_VzolC7pfg4XYeyAOBeZ_oIJfVw
+Message-ID: <CAG-FcCNg5BWcqTBcMA+WYHqFdG-htnYXDuXZ=S+QuwhugZ6fyA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 0/8] gve: Add Rx HW timestamping support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Harshitha Ramamurthy <hramamurthy@google.com>, netdev@vger.kernel.org, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com, jeroendb@google.com, 
+	andrew+netdev@lunn.ch, willemb@google.com, pkaligineedi@google.com, 
+	yyd@google.com, joshwash@google.com, shailend@google.com, linux@treblig.org, 
+	thostet@google.com, jfraker@google.com, richardcochran@gmail.com, 
+	jdamato@fastly.com, vadim.fedorenko@linux.dev, horms@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shuah,
-
-Just following up on my patch submitted on 2025-05-23 22:02  with subject "[[PATCH v2] docs: ABI: Fix "diasble" to "disable"]".
-
-Original message: https://lore.kernel.org/all/20250523220238.455718-1-sumanth.gavini@yahoo.com/
-
-Would you have any feedback on this change? I'd be happy to address any comments or concerns.
-
-Thank you for your time and consideration.
-
-Best regards,
-Sumanth Gavini
+On Tue, Jun 10, 2025 at 6:23=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Mon,  9 Jun 2025 18:40:21 +0000 Harshitha Ramamurthy wrote:
+> > This patch series add the support of Rx HW timestamping, which sends
+> > adminq commands periodically to the device for clock synchronization wi=
+th
+> > the nic.
+>
+> IIUC:
+>  - the driver will only register the PHC if timestamping is enabled
+>    (and unregister it when disabled),
+I checked around the other drivers and it looked like they would
+register the PHC when initializing the driver and keep it alive until
+destroying the driver. I can change it to be that way on V5.
+>  - there is no way to read the PHC from user space other than via
+>    packet timestamps,
+The ability to read the PHC from user space will be added in the
+future patch series when adding the actual PTP support. For this
+patch, it's adding the initial ptp to utilize the ptp_schedule_worker
+to read the NIC clock as suggested in the previous review comments.
+>  - the ethtool API does not report which PHC is associated with the
+>    NIC, presumably because the PHC is useless to the user space.
+>
+Thanks for pointing it out. I can add the phc_index info into the
+gve_get_ts_info on V5.
+> Do I understand that correctly? It's pretty unusual. Why not let user
+> read the clock?
+>
+> Why unregister the PHC? I understand that you may want to cancel
+> the quite aggressive timestamp refresh work, but why kill the whole
+> clock... Perhaps ptp_cancel_worker_sync() didn't exist when you wrote
+> this code?
+Will utilize ptp_cancel_worker_sync instead of unregistering the PHC
+every time on V5.
 
