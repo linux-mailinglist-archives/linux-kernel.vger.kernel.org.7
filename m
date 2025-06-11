@@ -1,450 +1,219 @@
-Return-Path: <linux-kernel+bounces-681023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F6AAD4D70
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2515AD4D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC7377A8102
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:50:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC097A5D86
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B654226CE4;
-	Wed, 11 Jun 2025 07:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C851C235355;
+	Wed, 11 Jun 2025 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bALVaXye"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="j/t+hwCP"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012058.outbound.protection.outlook.com [52.101.71.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E4A2D541D
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749628294; cv=none; b=eKaDnWOQV8jXTjahyTsCUQaTYfAFbbqX42qaKM761Dc7up0nCjr/mC0DAtXxNVU/0ITkJoxBIMmnA13/4Ymg9ofT25x6ufSVwAPSxoxhDCSrN/ziHV1J0OysNzeaYNpmNb5Pax4R5oav8CSmPw5xDl7hgCpnJm4BTwpsq51skKY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749628294; c=relaxed/simple;
-	bh=1AwsTNhg820s4TkmaqGYu4lvRYj8SK/8JETcTBE2Jeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GN0XyGZfBUNrQUHBlokLaH95kqnZkL1NsIGtna8N9nRFJlqEYSUkUYLpxBPWsoBdZBlF9DPyX/YTQ3XrXvNBZ2asoaRHIPRZmdrh+GfJ7MOkJF3m/2uuRo5jWF2h7nmBvvhWGd7A8Ixciswhd/KbKmV6aQPf4Xa2rzqwn9l9WK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bALVaXye; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a524caf77eso36280f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749628290; x=1750233090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mi+30Ooluj619fLFXIuMDlsnESWYjj85mXdtEqwcdX8=;
-        b=bALVaXyeqoRKG63YX+nduazU9gRRhnimRqYLZ3/k6mzE+3TEHAvNY185GH31kJYzFQ
-         b07fOTbl7//Jt1H2I3wemVksmEweLMbsgt8WsRX8sraJEzvXoiIml4xmR3HsKabNQdgz
-         EgFHZCuZSuBiLjelhxPnEkTK7xoscmyqz7f1Zpa0X0nc1m7AFyEShXQ16ki6ns1KUw/w
-         cHY1A3fr8ldVkycIpcYTT2bmBQsGqXIY2iet8Y2rGB9gmwKtpUjKRRbI7b7CRH5Wz7UT
-         nVPlb0wSS+tFTV8CDmdOuCwRTThkT9NBqQP9FF2r/HPaFHxTuwAKj7Lh8/qsAtvZxeAn
-         SHBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749628290; x=1750233090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mi+30Ooluj619fLFXIuMDlsnESWYjj85mXdtEqwcdX8=;
-        b=pc3eix4Q3vgICqgl4HTdXzSJ84ygI/i7KKeBL1gMn1FgKUZHE+OLSbTdNiMC0PScN0
-         jMCjG8lb/PMGYnbgC5qqz4yOtCqzBpGh67QokYOwghgM/vCjJ2dgXPBnDFMGXICnYCjH
-         oR0F/90spauWLmjs85QIbX4Vy4k6o1ODl6cXZJRg2iFxPrjqvkb9JTyntfNu1FA6gu+x
-         EkSBR2+zdWdWKrIe1Xo1J9uGIGkfTePpxAGdpcjFqJpHXm70gRQHJ1A6tHAoI8RlR0KA
-         k0k9xgldABj4bt8ab4GbKgBG5ZLoyLB9x3Qh5FNP8VAdlxoDPU+8CHcpVtglDNOrWrKt
-         gvRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeWT5W/8o+3z51C2kiWUD0fK1XRUobNyFrZbw7kWLH5AsyLcdlkEhy003pr9Z9O2318pG70oKMPG6EqbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlKd11kjw8uiabQ2mDwaoSnRslgOflNjcDfIihYeCrUsFT3E5P
-	cHBUtf32a/rrSwY6IHq55FOOjOBuRDaiine+nZ/1mHXSgWwPonz4y6zIHcQe04HYnyiDK1nXNeQ
-	9v1VdaeftUAaKzCUTATXrKnfXqZKaXWoyg2V2
-X-Gm-Gg: ASbGncv0jhLVk6aYVMioh8A597V79otlRqocTVFkF5ulpeva8dJju+m8zyKbUsCUOU4
-	SpnupRuujs+7I8us50+xMOkkKiMO/rOqjX8i8DCAleYPeECzWqoiaHFU9qUbZMkpdOSGM2XfNYf
-	WVAI095o3nlfLy8g4rGa/TMDja4TLFk4sf4dupqXRWMU8YbyXVlX4EjA4=
-X-Google-Smtp-Source: AGHT+IF92v4K1GmEkFd+Rw58ud0rgDTs0sVoI8keo+rm009PCl4Yaf3qX9GYrn/6TZxvtQ0VSDMHyAIlNrUXC0OKkb8=
-X-Received: by 2002:a5d:588a:0:b0:3a3:7049:f947 with SMTP id
- ffacd0b85a97d-3a55880427amr615920f8f.10.1749628290401; Wed, 11 Jun 2025
- 00:51:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A8C22ACFA;
+	Wed, 11 Jun 2025 07:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749628471; cv=fail; b=rjS4wa4JetQo3AUsygWsSQ8BHYVbgWfcnPiPLISgiK/27mA20F1qZoUXt2M/dyoDjxqunJn39TWTbP/Wde0AhaOTBwwztifxhE9CWYpzswIML1cL8/qJ3cWdtmM4k/isdwD/h6fZLxXgFUgECUtowNMwbBfe3djsIRd9AfDdFhk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749628471; c=relaxed/simple;
+	bh=1UWcKV20UeAZBooCibNBAqAJjkV1w18enL9dvXXG570=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=kEQnR7hcp4VU3E/RADoc8tulDCg6vvTQ91GR+2CRQSrJu65lab48rLO5ito1Li6Lh8ygYjXiEAYj3N/DQMm7LmZCwE1DW7SNUD5JMvZqzkcCkqO0OPQmDI5csjtVIxqcAMA1alCSp28oAh96Jv7KHN60JWItVn4wF5HoLLGSZWA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=j/t+hwCP; arc=fail smtp.client-ip=52.101.71.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ouU84yrazX0HidoNBo+LN4p5laFhgkOXitljn0tAHwYAXX1lMZnK3KF4ahd6aMQjWEqZf6pw5ihKfOuqKDeSEIsMA0rLWjZ2hqfF7KeuBrZRgV9gkPb/CDhPqd9pTlngglo9F4FuX/+WQK6JX1WJhEfgmBfi3WcdTURrxKfyz8RtSmeNwU8zpWNVw7UlbX5RdT0D6SWLW+pNy3cQPn8y/pxxw8Wc3wGKFGE/7OKfXMCT4NvBezOOuluX3+RzLf1dzO5C+SH5IJDvX5rbHZGxKJqOQE7IcYkM4qLODA4WmGQpdX1JqcclvaEZgoVmWEQnKmVp4Irfli6SnvRP+ukuIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EgvEy2Q8BwI3xsFk0r/tu3dySdzpYVgDUbHgRbct64Y=;
+ b=rnzz+zTLTW8EHIzDqxZD/TOcxjAPxKmcZFEKUldIdHemIvyasa23lC9TMRMJLqFYqFdAK/BKd83a6a/x6a2tuc+xSI8JOouAaDwtioZ5SnUYGAFHY1LtXtCEF6EU22p0fQmUtJT/0zUlaEWg4oBtipKIo3WQdPOoSkoxHJvrur44016er4JMcRGuQTIPV30jTimMtf1TfNNuCQzs7a9PeFfBj+AijO3JSueKBQGCTamzwVO+oLVYqs4XtD6FfF4eMEZ6FOmMY8pxQzkhpzs7QcmRN55gOfWxj6AKQqJsOFO0pryaM53A18ZHfaT0NvsdZI6MCsAUYpbVb2gQTZJz9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EgvEy2Q8BwI3xsFk0r/tu3dySdzpYVgDUbHgRbct64Y=;
+ b=j/t+hwCPsGZisL3LtCYrCoLPyt6NmN28FG7eR96LkqIT1rcjkhd9DC7fjYO4JvPyCuD191XKqouKdgoPphKTrmwtYk4rCI+a0HE5j/9oJ1OmIEwzpMdRs2jPFWEAV5rYo845TFhzK3YKoHNP5QvH00kCFYIOipXHEFnW5u0OSg4cJf4pLa9VLyiRN/TScfdady2jOY1J0GqX/y+6JDhjyenWSleNFKuNLjV4WBOXyKaYRlRlHf9dsljPaCNz8S/9s/MPnA35pekLH06eIXB/BW+Ha8NpxWXWu2v5QVFt7+bfVa+RY9Dgn+3Lw9Hce09ENfE1je3gasvsBWlE7MB0+w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DB9PR04MB8346.eurprd04.prod.outlook.com (2603:10a6:10:24d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Wed, 11 Jun
+ 2025 07:54:25 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8813.024; Wed, 11 Jun 2025
+ 07:54:25 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH 0/3] firmware: arm_scmi: perf/cpufreq: Enable notification
+ only if supported by platform
+Date: Wed, 11 Jun 2025 15:52:42 +0800
+Message-Id: <20250611-scmi-perf-v1-0-df2b548ba77c@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMs1SWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDM0ND3eLk3EzdgtSiNN1Eg5TUFItE00RjA2MloPqCotS0zAqwWdGxtbU
+ ALqHBa1sAAAA=
+X-Change-ID: 20250611-scmi-perf-a0ded8a5a303
+To: Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749628374; l=1170;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=1UWcKV20UeAZBooCibNBAqAJjkV1w18enL9dvXXG570=;
+ b=b31HGw7vcLczDloDefDQRg1dipfnsGU+4thLPcvgozaWSpOFyrDc08MD1NzpZv+0MNE3WqbgI
+ rAWPqoakiSSDfi/DsJitU110IwWihDzOd2U7XUboAqikuny4Hyi5aMS
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SG2PR04CA0209.apcprd04.prod.outlook.com
+ (2603:1096:4:187::12) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1749107920-17958-1-git-send-email-zhiguo.niu@unisoc.com>
- <aEhYfYrknbNzT8Or@google.com> <5c1da066-0c76-42f4-8c46-a99f60a900bf@kernel.org>
- <CAHJ8P3LNrSRT8hfbr=x5HvkQRGBSTpftPbd7NrfUdO-2LgSLfg@mail.gmail.com>
- <c36ab955-c8db-4a8b-a9d0-f07b5f426c3f@kernel.org> <CAHJ8P3+=LEbbj8bzh0N3HbPu=jVkRfkowbxqoT0PfCZtWbuRbg@mail.gmail.com>
-In-Reply-To: <CAHJ8P3+=LEbbj8bzh0N3HbPu=jVkRfkowbxqoT0PfCZtWbuRbg@mail.gmail.com>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Wed, 11 Jun 2025 15:51:19 +0800
-X-Gm-Features: AX0GCFtDpeJ8FFsyofnR27y0h-tuJvnp2d_cEHbNKqbnGcu3Mwefc1lZuTX2K3k
-Message-ID: <CAHJ8P3Lah5o60wJTb-H6Dng6sSrs8gY9cuFyw_1zAOAGfZMd_Q@mail.gmail.com>
-Subject: Re: [PATCH v3] f2fs: compress: fix UAF of f2fs_inode_info in f2fs_free_dic
-To: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com, baocong.liu@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB9PR04MB8346:EE_
+X-MS-Office365-Filtering-Correlation-Id: a426ddcb-869e-4a28-d923-08dda8bd2f0b
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZDVBVGhCV2FKNDJRd3Z1dHlGZ21PZlM3cG8rVThQVzI3aFB4RG5wR3RKMGZa?=
+ =?utf-8?B?OUo4UWRJN2NWUFc1cUNpVUd4Y3I4ckFURzYvaW1hQ3M1M0FPZHZuZHgxZWNl?=
+ =?utf-8?B?dWcrbC9sS0N2UlpxWHM1K2gxZndwWjJRbmJBa1lyc3o2V0V1N1h5UjZjcmkv?=
+ =?utf-8?B?NEQxWXhLRVNaVU93bjNCUHVEdllrVUxlMy9XTW9ob1JxM3ZGWEdZeEZvSjUr?=
+ =?utf-8?B?R21uQkNIN0hvWGw5aVJzUnR0R1FYZXI4eDlSaHJSc0tFQXFsWVM5ODNYbnVi?=
+ =?utf-8?B?RDJXeG56eEh2dUc4dnFtZ2FHa3FteExzSVIrYzNlRzRscUYrcDNlODE2ZW4r?=
+ =?utf-8?B?OFZwYU1URlI2dDZSdmFMQ3ZNcHgvTnFwRGlEVDYzT2VSVE9hc3RnM3hBVjZD?=
+ =?utf-8?B?MlBLbTdRcEh2Sy8vOEk1R29LUklaQjc5aGdzajJldmlPSml4NHB5YU1JcnpK?=
+ =?utf-8?B?SFUvcWJlU2tQUlJtUytPRVVCVzNCcTVTNVB3Q1BuYXRNbnVTSWtWZmNCVXY1?=
+ =?utf-8?B?YTlJUEtxZnJqaFVUV2xOVk9vM2lzcTJ2L2JLaWo3QWNPWThQSTR6b0xrcWZP?=
+ =?utf-8?B?R2MvYTFDTTV5U2tkK0xleXBxSVpLR2FybDRLWHNMcFExNVd5V2h3aFJvN09Y?=
+ =?utf-8?B?TVBZRWcyUXhabVM5SzJBT0tmWnFnWmZ5Y1F0dmkvSEhNVUtNRXk0SjdwWnZr?=
+ =?utf-8?B?cTFSQVIwczNOVll5OUNKUnQ5MjkxYXhCZFI4bWVnd0VSYW9XM29INkhSYmJK?=
+ =?utf-8?B?c056b1pQOVNDUHFCOFBIUVd6VmJ5NWhLdnpSYmRBTlMrOUFZOVpQNG5zanpo?=
+ =?utf-8?B?OERoTEpndmRCWTdsVmQwZDFPOHYwcnowbUpzVmlKa3Evb0VweFU1NERJTUdR?=
+ =?utf-8?B?QmkxelZzcng3ZGI5cFc4TDVVdGtmMldweEhQQ01qQ1NkQnJmOVphRHkzN3do?=
+ =?utf-8?B?bERtdStNUW90K2xnZm1haVQzTTQxSkpoMUdrMkNBTHhJOVFaeHR2VWJXRitM?=
+ =?utf-8?B?SGE2WjdTRVd6dElFaEpMT2xoc0hodFZQeFlYWWdmWWpQbjZPcmpWcldHSGRh?=
+ =?utf-8?B?Q2U3SUtzYW8vdE9Pc1lBMWlOMG9zelZLeWtreDA2c2tnYk5sVlJEM1RTK2FW?=
+ =?utf-8?B?SFd4UWFKTHdJSHFCb05CUTI3OHdQSTVyc0dVbk0xS1VvcCtNWGc3d0F4OFZE?=
+ =?utf-8?B?ZktOWXAzQUNnMTN6N1B1WGhIZC92TXpka29YeUNONWJnVmxyR2RZTHdTMWxK?=
+ =?utf-8?B?ajRpVHEyYUFJLzRtTWxvYUpjaHhHaTRBSGprQ0JGZ0R1NThtUkNNSW8xa0dQ?=
+ =?utf-8?B?blozRmptSCsxbUJ3ajIycW5nbFhsNEorcDJENFRyN0pXRlNmdEVHRzBRVWNS?=
+ =?utf-8?B?OURNckFSSUJHK0hmOXdaTFVKTk5aaTcyeU1POTM0RlBKZ0h4UVhMTUN5UTZq?=
+ =?utf-8?B?S2p4WmhjZW95TjBWMVVCZERiVHVYK3ZFNnBhTWtNbTFkTzd4L2x4WU11a0gw?=
+ =?utf-8?B?UTBabFBoQWVWRDhjYzljd0FPN3ZRcUk0S1MyWDBmak81NlRLN25pNSt0RnFz?=
+ =?utf-8?B?cmk3ZFJhZXlFVU52aDZFZlVDMTVFVFdkYzk1aXlVZUIrdjR5OWtYaDFwUGVi?=
+ =?utf-8?B?RjA4S0hKRGVpODZwUG53enhsZm9TTm1Nb0g4ckdFanliU0dMNVZ3UEdBKzF5?=
+ =?utf-8?B?Q21NNVFCR1hCL0poTWJrL0NyUENWSlJieGYvdjlkL3RIZzUzTFpRdmJvS3lk?=
+ =?utf-8?B?c3NQRXhDR3piSEJxQ3padG8rZnNZcUxEbUZwYjBlbDd6UUh4YmhvaFlvZm5l?=
+ =?utf-8?B?QXQzbmlIN2JUMGl1d0V6djh4cEJNUVF6c1FaWnBEbHZUUlArWTBQV1hVM1hH?=
+ =?utf-8?B?eXdIT3U4bE5TQlh1dHh1dTlLWDhZZWZRMm5obFNjUjV4OGlzYkRSZ2VlcVNu?=
+ =?utf-8?B?Uys4cG14WTNvaURTNkVRd1lGNWtjZjZOOFE1eUVncmNiczRISlBFNGYydGpP?=
+ =?utf-8?B?MGZ1cTVUMmNnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UWdsYUZRT2RRWlRBY3MvQTdrLzFLUy9oNmtqbWs2ZWp5aTJrbEVTbGZTcEpY?=
+ =?utf-8?B?T056OFF3NW1iTFhyb2xYWTdmM3JhQlJqbE5uNzZiNFBCZ3hXdkh6NS9TcXRw?=
+ =?utf-8?B?Y3VrTTVzUmJ3NWNEYjA5TmoxWmNNelFkR01GOGlmaDVwRS9mazBELzFjUmdl?=
+ =?utf-8?B?MndYSkVHekp2RUM5aTM2VGF5M1Yzc1RuSWpSVHVjQUh2NFJZOElpNVFzL0RM?=
+ =?utf-8?B?V3l0VTE4cHlIT0gyZVhxSnBxOG1nL0drcDR3dXIxN0hrc0tuVFYzbldJT0JU?=
+ =?utf-8?B?WnM5RWVoN0h5N2tHam9waGhQOUVBa0hGclpPeW8rY3B4U25Fd1lFSlNhVUNu?=
+ =?utf-8?B?S1RYYy9UQXNheDU2SnVodXZIbDR1cXRSRHFCNVJYeWtickxVbm93SGZ5ZG1o?=
+ =?utf-8?B?TUt6azg0QklYVno4RWFQWmFSUU9EaVh2TXQvc2txNTFMYVNiQnppOHNER2tv?=
+ =?utf-8?B?eEFkWXlRQXhPMHJiNHZrNllrdVVISEhlMTMxa0FXdWxJb3E1RkxiQlp5TE50?=
+ =?utf-8?B?OVpyUHRvdDRGTjJqYWxlZEVlTFNpMXhaV3drZU9jb1JBcnBrYzl0UG03VXVK?=
+ =?utf-8?B?c0NWRVdhdVFVZ1pRbHVDa0tFYXJvQUFhUXFBeUF2YmFwUDlISWVYYkwzVTdU?=
+ =?utf-8?B?VjRIZ1cvWU43OHJ2N0Uxbi9pbjQ3NlRhNzlQUXBSWXVpU0gzeWdycDRTMm1r?=
+ =?utf-8?B?S0QrK2JVS3FQMUorWXNRbEc4QzU5cVJjTkRTNmRJS2MwajA5VDFIZlVRcTRW?=
+ =?utf-8?B?RFF5QjhJVVROU1VxSVczY3JkTDhYbkN4UlhzNm5QU0ZHUDE2eCtveFJNdkdq?=
+ =?utf-8?B?cXVKSnpmVzRzY0FBMlRXWldKeTIydlFNWTZ3OTZtM1BsTVRrcUlzOVNYV1I2?=
+ =?utf-8?B?MDFvL0VsSzJXamJ6cFZUdHA2TU9pQlRSUU5GUXhRNEdrMGp3MWd6anRaM2RY?=
+ =?utf-8?B?UW9UVHZyUzV0MSttMzJYWldpUFg1TFMxQkVibDRYQzRsYXFjenlJemgxYXNq?=
+ =?utf-8?B?RklVcGsyZzVwRzhJek1zWXY2eG53TkV5bUNYQTNFWGo5K2VhbkZQNlMvUHg1?=
+ =?utf-8?B?amN3LzZSWUlnOUtmQzB2SnlxdUlSS0V1OFZtY0doVFIxc1pxWTRpTjNneDJG?=
+ =?utf-8?B?Z09hT004TElFUDBvTEozN0c2ZUE0TkpvMC9JM1VNVGNwd1JOa1lUMUdCR3Nt?=
+ =?utf-8?B?VWVxOTk5d1FNTzBpOVBWc2x4SjhjWVVXbm9RNExmeDlrRyt3WEJSYVVKQmlT?=
+ =?utf-8?B?aEt1dTUrUU5Yc291MnhyYVpvUkt6WGJLQktXVXlKTmV0NnhkN2QzSStvKy85?=
+ =?utf-8?B?WG9KT1dLY2RpRnFFeStoQ2dIV3Q0aklpL09XTm9Jb3FHSGtnS21rWW5FdFFq?=
+ =?utf-8?B?QnEwVTNPNlBOQzNwVitjejM2ZytzYmJSZjUrbDdwc2k1T2ZtVHloc29JSW53?=
+ =?utf-8?B?RXVCMlZRTFp4dlFDMHlOQ2h6MjBXTGo5Tk5wb3dRWmRKZjZodUduNk9UVG1v?=
+ =?utf-8?B?dm8rVkpvRVJUd1dQV29YdVVUTlIrMXdESmdsVTRGdm5TdGpySjh1YTZVYXQ0?=
+ =?utf-8?B?SUlPdFdNYk54U2xNUjh2OVBKa3RVRG9kNXV3QThsTTNONmZrUjk5SzlRRTh2?=
+ =?utf-8?B?ZGVTQWFJMVRYeWhVVHljZEJzWTRRdFR2cEYyOHZtMFFsN1o5MHdpZUFSN1o5?=
+ =?utf-8?B?c29PTW1MTENXdUZyU3h2TmFTZFJCWXZWTGhrcFJuZGZUcmwvRnlOYmhJbmZS?=
+ =?utf-8?B?RGZFTDRSektybEhvTkZwNkV5N2RCMUhuSkMxREJOZERRSEJ1enhFYU1SQks4?=
+ =?utf-8?B?cmpwQ1Zqd1VlUW1Sdm05NkxSZllKclpWOHlyNTFNRW43MmJLdW0xWS81b1ZX?=
+ =?utf-8?B?M2N6UGFCS0ZVUWFQUDV2azgyL2NBRUlJNnQwTGtlaG5PbjlyZkd6QUQ3RlJw?=
+ =?utf-8?B?UUxFRTNpS0RBNUtrT0pGZyt4MkpLSHFXMzJHdU00VzRLaFFxOTBjUW5NSy83?=
+ =?utf-8?B?Snlkd1VMZkxvbFlrajdITXRVM3JkK1lTcVZ1UVpKMFZRTTJtSUlpU09KemRm?=
+ =?utf-8?B?WTV6WUVTOWUyWExaNUV1ZzhtTWRpOXppTmpxTDhzNnc3K3RIQ1NmR1pkRDJG?=
+ =?utf-8?Q?eq92sSs/qFe+797+xqFlb5a2y?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a426ddcb-869e-4a28-d923-08dda8bd2f0b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 07:54:25.1099
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wd7+xYPducjmUSAhYPyOKlj4bafJeKAKrN0bwvQMzL0pbvzOVvw5EMgo9s/gAkh0f4P/I2BJTQGdkBZ4kjMftg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8346
 
-Zhiguo Niu <niuzhiguo84@gmail.com> =E4=BA=8E2025=E5=B9=B46=E6=9C=8811=E6=97=
-=A5=E5=91=A8=E4=B8=89 14:52=E5=86=99=E9=81=93=EF=BC=9A
->
-> Chao Yu <chao@kernel.org> =E4=BA=8E2025=E5=B9=B46=E6=9C=8811=E6=97=A5=E5=
-=91=A8=E4=B8=89 14:47=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On 6/11/25 14:41, Zhiguo Niu wrote:
-> > > Chao Yu <chao@kernel.org> =E4=BA=8E2025=E5=B9=B46=E6=9C=8811=E6=97=A5=
-=E5=91=A8=E4=B8=89 14:07=E5=86=99=E9=81=93=EF=BC=9A
-> > >>
-> > >> On 6/11/25 00:08, Jaegeuk Kim wrote:
-> > >>> Hi Zhiguo,
-> > >>>
-> > >>> This patch causes CPU hang when running fsstress on compressed/non-=
-compressed
-> > >>> files. Please check.
-> > >>
-> > >> Oh, seems it may cause below deadlock:
-> > >>
-> > >> CPU0
-> > >> process A
-> > >> - spin_lock(i_lock)
-> > >> software IRQ
-> > >> - end_io
-> > >>  - igrab
-> > >>   - spin_lock(i_lock)
-> > >>
-> > >> Thanks,
-> > > Hi Chao,
-> > > Thanks for pointing this out.
-> > > I have tested this patch locally about some basic cases before submis=
-sion.
-> > > So it seems that should use the following method  to solve this probl=
-em?
-> > > " store i_compress_algorithm/sbi in dic to avoid inode access?"
-> >
-> > Zhiguo,
-> >
-> > Yeah, I guess so.
-> Hi Chao,
-> OK, I will prepare it .
-> Thanks a lot.
-> >
-> > Thanks,
-> >
-> > > thanks=EF=BC=81
-> > >
-> > >
-> > >>
-> > >>>
-> > >>> On 06/05, Zhiguo Niu wrote:
-> > >>>> The decompress_io_ctx may be released asynchronously after
-> > >>>> I/O completion. If this file is deleted immediately after read,
-> > >>>> and the kworker of processing post_read_wq has not been executed y=
-et
-> > >>>> due to high workloads, It is possible that the inode(f2fs_inode_in=
-fo)
-> > >>>> is evicted and freed before it is used f2fs_free_dic.
-> > >>>>
-> > >>>>     The UAF case as below:
-> > >>>>     Thread A                                      Thread B
-> > >>>>     - f2fs_decompress_end_io
-> > >>>>      - f2fs_put_dic
-> > >>>>       - queue_work
-> > >>>>         add free_dic work to post_read_wq
-> > >>>>                                                    - do_unlink
-> > >>>>                                                     - iput
-> > >>>>                                                      - evict
-> > >>>>                                                       - call_rcu
-> > >>>>     This file is deleted after read.
-> > >>>>
-> > >>>>     Thread C                                 kworker to process po=
-st_read_wq
-> > >>>>     - rcu_do_batch
-> > >>>>      - f2fs_free_inode
-> > >>>>       - kmem_cache_free
-> > >>>>      inode is freed by rcu
-> > >>>>                                              - process_scheduled_w=
-orks
-> > >>>>                                               - f2fs_late_free_dic
-> > >>>>                                                - f2fs_free_dic
-> > >>>>                                                 - f2fs_release_dec=
-omp_mem
-> > >>>>                                       read (dic->inode)->i_compres=
-s_algorithm
-> > >>>>
-> > >>>> This patch use igrab before f2fs_free_dic and iput after free the =
-dic when dic free
-> > >>>> action is done by kworker.
-> > >>>>
-> > >>>> Cc: Daeho Jeong <daehojeong@google.com>
-> > >>>> Fixes: bff139b49d9f ("f2fs: handle decompress only post processing=
- in softirq")
-> > >>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> > >>>> Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
-> > >>>> ---
-> > >>>> v3: use igrab to replace __iget
-> > >>>> v2: use __iget/iput function
-> > >>>> ---
-> > >>>>  fs/f2fs/compress.c | 14 +++++++++-----
-> > >>>>  1 file changed, 9 insertions(+), 5 deletions(-)
-> > >>>>
-> > >>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> > >>>> index b3c1df9..729ad16 100644
-> > >>>> --- a/fs/f2fs/compress.c
-> > >>>> +++ b/fs/f2fs/compress.c
-> > >>>> @@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct d=
-ecompress_io_ctx *dic,
-> > >>>>  }
-> > >>>>
-> > >>>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
-> > >>>> -            bool bypass_destroy_callback);
-> > >>>> +            bool bypass_destroy_callback, bool late_free);
-> > >>>>
-> > >>>>  struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
-> > >>>>  {
-> > >>>> @@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(s=
-truct compress_ctx *cc)
-> > >>>>      return dic;
-> > >>>>
-> > >>>>  out_free:
-> > >>>> -    f2fs_free_dic(dic, true);
-> > >>>> +    f2fs_free_dic(dic, true, false);
-> > >>>>      return ERR_PTR(ret);
-> > >>>>  }
-> > >>>>
-> > >>>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
-> > >>>> -            bool bypass_destroy_callback)
-> > >>>> +            bool bypass_destroy_callback, bool late_free)
-> > >>>>  {
-> > >>>>      int i;
-> > >>>>
-> > >>>> @@ -1775,6 +1775,8 @@ static void f2fs_free_dic(struct decompress_=
-io_ctx *dic,
-> > >>>>      }
-> > >>>>
-> > >>>>      page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
-> > >>>> +    if (late_free)
-> > >>>> +            iput(dic->inode);
-> > >>>>      kmem_cache_free(dic_entry_slab, dic);
-> > >>>>  }
-> > >>>>
-> > >>>> @@ -1783,16 +1785,18 @@ static void f2fs_late_free_dic(struct work=
-_struct *work)
-> > >>>>      struct decompress_io_ctx *dic =3D
-> > >>>>              container_of(work, struct decompress_io_ctx, free_wor=
-k);
-> > >>>>
-> > >>>> -    f2fs_free_dic(dic, false);
-> > >>>> +    f2fs_free_dic(dic, false, true);
-> > >>>>  }
-> > >>>>
-> > >>>>  static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_t=
-ask)
-> > >>>>  {
-> > >>>>      if (refcount_dec_and_test(&dic->refcnt)) {
-> > >>>>              if (in_task) {
-> > >>>> -                    f2fs_free_dic(dic, false);
-> > >>>> +                    f2fs_free_dic(dic, false, false);
-> > >>>>              } else {
-> > >>>>                      INIT_WORK(&dic->free_work, f2fs_late_free_dic=
-);
-> > >>>> +                    /* use igrab to avoid inode is evicted simult=
-aneously */
-> > >>>> +                    f2fs_bug_on(F2FS_I_SB(dic->inode), !igrab(dic=
-->inode));
-> > >>>>                      queue_work(F2FS_I_SB(dic->inode)->post_read_w=
-q,
-> > >>>>                                      &dic->free_work);
-> > >>>>              }
-> > >>>> --
-> > >>>> 1.9.1
-> > >>
-> >
+PERFORMANCE_NOTIFY_LIMITS and PERFORMANCE_NOTIFY_LEVEL are optional
+commands. If use these commands on platforms that not support the two,
+there is error log:
+  SCMI Notifications - Failed to ENABLE events for key:13000008 !
+  scmi-cpufreq scmi_dev.4: failed to register for limits change notifier for domain 8
 
-Hi Chao,
+If platforms not support perf notification, saving some cpu cycles
+by introducing notify_supported ops.
 
-The patch is about as follows, because dic->sbi is used directly in
-f2fs_free_dic: page_array_free(dic->sbi, dic->tpages, dic->cluster_size);
-so there are two points I want to confirm:
-1. As a corresponding, the first parameter (inode) of page_array_alloc
-is need to modify to sbi or not ?
-2. As a corresponding, do we need to add the sbi field in compress_ctx
-so that page_array_alloc/free called
-in compress flow can use sbi directly?
-Thanks!
+While at here, patch 1 is a typo fix when doing the patchset.
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index b3c1df9..897d8ae 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -34,9 +34,8 @@ static void *page_array_alloc(struct inode *inode, int nr=
-)
-        return f2fs_kzalloc(sbi, size, GFP_NOFS);
- }
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Peng Fan (3):
+      firmware: arm_scmi: Fix typo for scmi_perf_proto_ops
+      firmware: arm_scmi: perf: Add notify_supported for scmi_perf_proto_ops
+      cpufreq: scmi-cpufreq: Enable perf limits notification only supported
 
--static void page_array_free(struct inode *inode, void *pages, int nr)
-+static void page_array_free(struct f2fs_sb_info *sbi, void *pages, int nr)
- {
--       struct f2fs_sb_info *sbi =3D F2FS_I_SB(inode);
-        unsigned int size =3D sizeof(struct page *) * nr;
+ drivers/cpufreq/scmi-cpufreq.c   | 25 ++++++++++++++++++-------
+ drivers/firmware/arm_scmi/perf.c | 37 +++++++++++++++++++------------------
+ include/linux/scmi_protocol.h    |  5 ++++-
+ 3 files changed, 41 insertions(+), 26 deletions(-)
+---
+base-commit: 19a60293b9925080d97f22f122aca3fc46dadaf9
+change-id: 20250611-scmi-perf-a0ded8a5a303
 
-        if (!pages)
-@@ -155,7 +154,7 @@ int f2fs_init_compress_ctx(struct compress_ctx *cc)
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
 
- void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
- {
--       page_array_free(cc->inode, cc->rpages, cc->cluster_size);
-+       page_array_free(F2FS_I_SB(cc->inode), cc->rpages, cc->cluster_size)=
-;
-        cc->rpages =3D NULL;
-        cc->nr_rpages =3D 0;
-        cc->nr_cpages =3D 0;
-@@ -716,7 +715,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
-                if (cc->cpages[i])
-                        f2fs_compress_free_page(cc->cpages[i]);
-        }
--       page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-+       page_array_free(F2FS_I_SB(cc->inode), cc->cpages, cc->nr_cpages);
-        cc->cpages =3D NULL;
- destroy_compress_ctx:
-        if (cops->destroy_compress_ctx)
-@@ -734,7 +733,7 @@ static void f2fs_release_decomp_mem(struct
-decompress_io_ctx *dic,
-
- void f2fs_decompress_cluster(struct decompress_io_ctx *dic, bool in_task)
- {
--       struct f2fs_sb_info *sbi =3D F2FS_I_SB(dic->inode);
-+       struct f2fs_sb_info *sbi =3D dic->sbi;
-        struct f2fs_inode_info *fi =3D F2FS_I(dic->inode);
-        const struct f2fs_compress_ops *cops =3D
-                        f2fs_cops[fi->i_compress_algorithm];
-@@ -1442,13 +1441,13 @@ static int f2fs_write_compressed_pages(struct
-compress_ctx *cc,
-        spin_unlock(&fi->i_size_lock);
-
-        f2fs_put_rpages(cc);
--       page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-+       page_array_free(F2FS_I_SB(cc->inode), cc->cpages, cc->nr_cpages);
-        cc->cpages =3D NULL;
-        f2fs_destroy_compress_ctx(cc, false);
-        return 0;
-
- out_destroy_crypt:
--       page_array_free(cc->inode, cic->rpages, cc->cluster_size);
-+       page_array_free(F2FS_I_SB(cc->inode), cic->rpages, cc->cluster_size=
-);
-
-        for (--i; i >=3D 0; i--) {
-                if (!cc->cpages[i])
-@@ -1469,7 +1468,7 @@ static int f2fs_write_compressed_pages(struct
-compress_ctx *cc,
-                f2fs_compress_free_page(cc->cpages[i]);
-                cc->cpages[i] =3D NULL;
-        }
--       page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-+       page_array_free(F2FS_I_SB(cc->inode), cc->cpages, cc->nr_cpages);
-        cc->cpages =3D NULL;
-        return -EAGAIN;
- }
-@@ -1499,7 +1498,7 @@ void f2fs_compress_write_end_io(struct bio *bio,
-struct page *page)
-                end_page_writeback(cic->rpages[i]);
-        }
-
--       page_array_free(cic->inode, cic->rpages, cic->nr_rpages);
-+       page_array_free(F2FS_I_SB(cic->inode), cic->rpages, cic->nr_rpages)=
-;
-        kmem_cache_free(cic_entry_slab, cic);
- }
-
-@@ -1637,7 +1636,7 @@ static int f2fs_prepare_decomp_mem(struct
-decompress_io_ctx *dic,
-                f2fs_cops[F2FS_I(dic->inode)->i_compress_algorithm];
-        int i;
-
--       if (!allow_memalloc_for_decomp(F2FS_I_SB(dic->inode), pre_alloc))
-+       if (!allow_memalloc_for_decomp(dic->sbi, pre_alloc))
-                return 0;
-
-        dic->tpages =3D page_array_alloc(dic->inode, dic->cluster_size);
-@@ -1670,10 +1669,9 @@ static int f2fs_prepare_decomp_mem(struct
-decompress_io_ctx *dic,
- static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
-                bool bypass_destroy_callback, bool pre_alloc)
- {
--       const struct f2fs_compress_ops *cops =3D
--               f2fs_cops[F2FS_I(dic->inode)->i_compress_algorithm];
-+       const struct f2fs_compress_ops *cops =3D
-f2fs_cops[dic->compress_algorithm];
-
--       if (!allow_memalloc_for_decomp(F2FS_I_SB(dic->inode), pre_alloc))
-+       if (!allow_memalloc_for_decomp(dic->sbi, pre_alloc))
-                return;
-
-        if (!bypass_destroy_callback && cops->destroy_decompress_ctx)
-@@ -1708,6 +1706,8 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct
-compress_ctx *cc)
-
-        dic->magic =3D F2FS_COMPRESSED_PAGE_MAGIC;
-        dic->inode =3D cc->inode;
-+       dic->sbi =3D sbi;
-+       dic->compress_algorithm =3D F2FS_I(cc->inode)->i_compress_algorithm=
-;
-        atomic_set(&dic->remaining_pages, cc->nr_cpages);
-        dic->cluster_idx =3D cc->cluster_idx;
-        dic->cluster_size =3D cc->cluster_size;
-@@ -1762,7 +1762,7 @@ static void f2fs_free_dic(struct decompress_io_ctx *d=
-ic,
-                                continue;
-                        f2fs_compress_free_page(dic->tpages[i]);
-                }
--               page_array_free(dic->inode, dic->tpages, dic->cluster_size)=
-;
-+               page_array_free(dic->sbi, dic->tpages, dic->cluster_size);
-        }
-
-        if (dic->cpages) {
-@@ -1771,10 +1771,10 @@ static void f2fs_free_dic(struct decompress_io_ctx =
-*dic,
-                                continue;
-                        f2fs_compress_free_page(dic->cpages[i]);
-                }
--               page_array_free(dic->inode, dic->cpages, dic->nr_cpages);
-+               page_array_free(dic->sbi, dic->cpages, dic->nr_cpages);
-        }
-
--       page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
-+       page_array_free(dic->sbi, dic->rpages, dic->nr_rpages);
-        kmem_cache_free(dic_entry_slab, dic);
- }
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9333a22b..da2137e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1536,6 +1536,7 @@ struct compress_io_ctx {
- struct decompress_io_ctx {
-        u32 magic;                      /* magic number to indicate
-page is compressed */
-        struct inode *inode;            /* inode the context belong to */
-+       struct f2fs_sb_info *sbi;       /* f2fs_sb_info pointer */
-        pgoff_t cluster_idx;            /* cluster index number */
-        unsigned int cluster_size;      /* page count in cluster */
-        unsigned int log_cluster_size;  /* log of cluster size */
-@@ -1576,6 +1577,7 @@ struct decompress_io_ctx {
-
-        bool failed;                    /* IO error occurred before
-decompression? */
-        bool need_verity;               /* need fs-verity verification
-after decompression? */
-+       unsigned char compress_algorithm;       /* backup algorithm type */
-        void *private;                  /* payload buffer for
-specified decompression algorithm */
-        void *private2;                 /* extra payload buffer */
-        struct work_struct verity_work; /* work to verify the
-decompressed pages */
 
