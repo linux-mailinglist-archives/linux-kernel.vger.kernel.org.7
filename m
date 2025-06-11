@@ -1,100 +1,78 @@
-Return-Path: <linux-kernel+bounces-682519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D9AAD6147
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DA1AD614A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F56D16CDD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148F83AB483
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F097624467B;
-	Wed, 11 Jun 2025 21:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB90442A8F;
+	Wed, 11 Jun 2025 21:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SuBhTbwA"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f7pE7J1Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE874236457;
-	Wed, 11 Jun 2025 21:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8CC242D84;
+	Wed, 11 Jun 2025 21:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749677260; cv=none; b=jpbIWWb4ZSMzBj+PYMqR358iyfoV8Ka6lZi18frg3EvbbGDZYF8fcN/ged0ebCOI6la+i/AnfAUfVpl0dLnHCiPgThp4csdHmTWXXzLeACtE2W/oMweGL/UQ/UyFGrBCCcHs28kQQLWt6ud2VGoausqgmbZi28iuVxdYxfvPRpY=
+	t=1749677346; cv=none; b=mss2RMUet6c1gvfXC83MB9tkC1VkVk3LjhuIil7sARWjx8Y7cf099gzjI0eP1v3nPBQVZP/8zt+BrU7qd/z8aqkTlBqBTAMJHWVJegFqtlBFcttr47BMi+TtZpc8mkM+McvlRAnnWFSIlZbZz1Ev12K27iYloUA34ng3W6OSrkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749677260; c=relaxed/simple;
-	bh=zhY1k/sLMn4MWgTbf/3hZAY4Z5DhtE0MLr/4MyfmzAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jVde4glo3mevWAjIr3LWnDw2kMKKgemYwsVb6znYQhQb2nOP6ro16V1BLE0m3sHY9ktkJnAhvx6f4ULo8DGsYNuY3/gaFOUM3CvNB+S8DCsn5+aUKIQ8i3iB87Ey9M/iwkaz0X/u8s+RjPEGcUhdMLQYrU//TZcMncoX67vepyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SuBhTbwA; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 69389C000C61;
-	Wed, 11 Jun 2025 14:27:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 69389C000C61
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1749677252;
-	bh=zhY1k/sLMn4MWgTbf/3hZAY4Z5DhtE0MLr/4MyfmzAc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SuBhTbwAdHVriXjE+upbYMpwh/lK3dzrOVhrdibZXpJYC3sCyWYykrABmOB0tDWDo
-	 VBlcp9V0NMnmmtemXv6YB6dRiNMBmy40ARGfynSlQ0J3yspcw2WQgVxXvrqNVzMKmk
-	 ESjWYeavhXin12FIslJan6dYld/daFIcKlyADnuA=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 18E8D1800051E;
-	Wed, 11 Jun 2025 14:27:32 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Justin Chen <justin.chen@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	bcm-kernel-feedback-list@broadcom.com (open list:BROADCOM ASP 2.0 ETHERNET DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next v2 2/2] net: bcmasp: enable GRO software interrupt coalescing by default
-Date: Wed, 11 Jun 2025 14:27:30 -0700
-Message-Id: <20250611212730.252342-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250611212730.252342-1-florian.fainelli@broadcom.com>
-References: <20250611212730.252342-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1749677346; c=relaxed/simple;
+	bh=VWqoiXH2JdNHFgQIgLtArNjcYrlDmkCix2JsN/3wK3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUNuFL429zkjquxwPsyPEEFcXSjKfH9AZcwbDYYQpTLfHRdAxQkTNz5Cs55Nv/WWDyOswavzDci4morRacO/FFbDhAJt1s0C0WeSrkjD1nuJO1Nqx9dHS5bBHdwdjUVO5vq3fHAw6DYc6Y4riSyKScx7c6pBrwtq4RtWNCpDrRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f7pE7J1Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20B1C4CEE3;
+	Wed, 11 Jun 2025 21:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749677344;
+	bh=VWqoiXH2JdNHFgQIgLtArNjcYrlDmkCix2JsN/3wK3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f7pE7J1ZjpemXgxYODwMuQZy+YBTX+3kllnmEqCbEXoXUQxJtHgw3469yVl0YXRCI
+	 WNnS1AI52ZXpB3EL6KAJEt4kctj2dGBhevK8ORF+8j6A2aI4Wl1XBFC52IYAm3pSYV
+	 Qvm/Gb+cO3Y/hNxm5hC9qS5UAprxECUTxmm8YycCzJ8GQCq2kZ9ZlI9nu2bm8b7Jn2
+	 WKxwRaJB0vhD/3FGhoX91MtSSBTtF3QeSMh46eISVlaecqPHAzSBBJLqU0ua+nEPl4
+	 b5cdB5CLGT4cHtlRB5p8bOBI1h5Hkx5lyiHxVYPrPpEem8+gtBidDFllEmPcQrG4jp
+	 jtT1HgT1zH6sw==
+Date: Wed, 11 Jun 2025 23:28:57 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Igor Korotin <igor.korotin.linux@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, rafael@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, lenb@kernel.org, wedsonaf@gmail.com,
+	viresh.kumar@linaro.org, alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: Re: [PATCH v5 4/6] rust: platform: Add ACPI match table support to
+ `Driver` trait
+Message-ID: <aEn1GbRJpUwMd7xc@cassiopeiae>
+References: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
+ <20250611175121.803370-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611175121.803370-1-igor.korotin.linux@gmail.com>
 
-Utilize netdev_sw_irq_coalesce_default_on() to provide conservative
-default settings for GRO software interrupt coalescing.
+On Wed, Jun 11, 2025 at 06:51:21PM +0100, Igor Korotin wrote:
+> @@ -162,7 +178,10 @@ pub trait Driver: Send {
+>      type IdInfo: 'static;
+>  
+>      /// The table of OF device ids supported by the driver.
+> -    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>>;
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Justin Chen <justin.chen@broadcom.com>
----
- drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-index 7dc28166d337..a6ea477bce3c 100644
---- a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-+++ b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-@@ -1279,6 +1279,8 @@ struct bcmasp_intf *bcmasp_interface_create(struct bcmasp_priv *priv,
- 	ndev->hw_features |= ndev->features;
- 	ndev->needed_headroom += sizeof(struct bcmasp_pkt_offload);
- 
-+	netdev_sw_irq_coalesce_default_on(ndev);
-+
- 	return intf;
- 
- err_free_netdev:
--- 
-2.34.1
-
+This change is fine, but it should be a separate patch.
 
