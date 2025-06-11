@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-682338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F3EAD5EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C664EAD5EAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D355F189A69D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F77E1750CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25B327E7F0;
-	Wed, 11 Jun 2025 18:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743FF283CA2;
+	Wed, 11 Jun 2025 18:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HIM5Fk3v"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XT6eiIWI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1AE1BE86E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E631D5CDD;
+	Wed, 11 Jun 2025 18:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749668126; cv=none; b=nijvgVk1MM/fZcJiR0xFyuGlN8ORxwb84uop35Vy05iCNbusLDAYc2764IvPIIrhshIkj91v5GfEc5PohpXWiQyhYRNSO5HykwXNWxi8xesUaDrlZpl0UGey+DSkPKNkrQXbO/tD6QX4sQQYjIrpDbrStyZ5cgiwuExoo9guZco=
+	t=1749668252; cv=none; b=EUtIfhxPBG93bn2F/ESj7/ixwpxkzzzft09PyN5ptnvXRM1M3Y5yebvBMnhc/d65dAdlbG7FY3h3Zk2d12RZMyhCkDbtY8RRhCkmYmGgNKA3IMHhmiqB06lJvawiZCfyoPASs7o6ctVmuCoUWc72cnBgS3oW0c3tkzSp1LRfqFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749668126; c=relaxed/simple;
-	bh=wp8HZyLOC3rXTiPmHjUFoTJefTT1msqGjMmKBtHfquk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cciwg2/bnEXOuefR9SZBdjydlxSHdFNEQlZGNR4bP3MGk0392pXJugYCpK7ijZQjvY33pNnI6Gfn06HbLPBSqtL3/NdD0MzHT8FGT0nkakmYAfgm1zq93P71c/NpW3wjyiUlXz6X9TYGKTA0Xf2mdp0g+WVmTt3OHIh0e9Olzjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HIM5Fk3v; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2ea83f382c3so71849fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749668124; x=1750272924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=beC8Z65uROnyx1+hT6aGH8wiIbVvPAr55ja+xnQ3O4M=;
-        b=HIM5Fk3vfRKh0lxCSAZeVDgIoHJVM+bp/0GwwlZ5JlZfDvUw9kxmQQ6TtVu3iTHQXv
-         uj1kTSGyOsdtRdPsdVzWTMKH/R0Ttwc93jaJHlVD7etAsGOGEr7RwdNL7VAJVuESDmVM
-         MzIWEnd1oIFAFn/J/mdcN6sEdVmCeAt+2XnBemqfn0lHukY/nscSvKzeUzhGJ8aJmYam
-         SvO/LxpU/HZbufUNbUuBRHJPq18szAnvypoxY1hV+/Y+7BPsnimA8EhcIsX6uWhsJEM7
-         n2khs4yOxMoTj5jf8RzAxMMP/nGNFIs+t6+YNHJDtSdrDiec3zXkB2ctVs7Dt8pSm6s3
-         E/vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749668124; x=1750272924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=beC8Z65uROnyx1+hT6aGH8wiIbVvPAr55ja+xnQ3O4M=;
-        b=eGAU2O+H8mrkEZbZWlxrtipUfCdHW4sNlm48Afc8pj2JL3FtX3G2XfIVmdv4wjAyg6
-         nkKDOqPHSSwxlqUvskvPDiGDQ9lcYtAbt2DeF/ylZSkFgl7BLhuy4MCsJOq6+1bmDR8F
-         qYKNJ9pYz0Ddrb+wItP0EZCdpyekApLqSyF7qGfRpL9FjUPRIHF+oQFePxg45ewz/ucH
-         zFc8uR70MvXkgqrFs03YSvBm8o24gVhGGfTu3tajRsLLLPxYLF2UBjmg7nOxxF85+YxD
-         uytIClPfXyGjEVLdLCuPEFqXiIgMYQ83ysCkrgGld/PBdn4cK2qsNLB9aCBbahyQAiwO
-         rh4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXjuSJAzUXWdeqZPH57mSABc82oAkCVyAyqlNpcRzGdWQKPhkShjtqEKiog4f1uxZCcZC+zjDwGLX6IrT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZm1RJ1jXmD+Pc0ob4CZtSBVP+7+fZyYi7Xdl1dBxZ+knreNBR
-	xAAhi7Xil4275Yt1C8J+xUsAdTidqOl+vwQ9y3J6W7s4PHIxrDA9ZnxUAz56hAXCstpl7+GxQ5i
-	c35ewMbmBeWVtA8tzyEzuaPpUeOTc9iroTSQHN6qs
-X-Gm-Gg: ASbGncsRmnpvxGPPiCOBih0Dzg43cfI6rxxL81eOjoRmLgpIpu0NjwEsKpBTKAU4zD3
-	msX8ByrXh1RBQFIS1ADlTQcuZ3AMdhKROsBKeM1AVOpLlWJkSgtTix0W5yF1dJm728lG3+GeUZH
-	i3m21GPSm+7eLUy/232CapIJnoGz6SYDxchKIP4tSUNnkBpiHUAt8dtT41CBX2anrOX9IP/eWod
-	w==
-X-Google-Smtp-Source: AGHT+IFm5koQ1am9XzCkDYWSKKHdTnpCmDx3ukx8uUs89uQXT6FQEXhC8vQNZ/zb7P0GTM6dRbspZekaaZ+IVXid7JU=
-X-Received: by 2002:a05:6870:9a21:b0:2a3:832e:5492 with SMTP id
- 586e51a60fabf-2ea96e50019mr2720181fac.25.1749668123822; Wed, 11 Jun 2025
- 11:55:23 -0700 (PDT)
+	s=arc-20240116; t=1749668252; c=relaxed/simple;
+	bh=FA4/cN74JMJAalmgbqNaeO1ru918vWjigUxWd4NER0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiIG/9MVGo5p0WLdUbDsvQEvj4SAWyTb+cDV1YSfal3HtBW+am713odabMNdC5OLkDWbGvH4dX+L+lgnv0gC96f9SWfyvLRdhYQrXIIkK+OeWDEZL2S6akmWx3dhu6iV3JJCW+rToQwso9k6THrhaNkEknkNUIVKkiDiO29rrq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XT6eiIWI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93CCEC4CEE3;
+	Wed, 11 Jun 2025 18:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749668252;
+	bh=FA4/cN74JMJAalmgbqNaeO1ru918vWjigUxWd4NER0Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XT6eiIWIMaG0Ss0mBqQm9OyIlONbS8GrNWdECj9HI8lh1+FNzsqnE35rx+2ZsnY1F
+	 aPxzJZwSezIa3QWVXRTpFTPLiUu0Opy22io2/TWDrnMlrvH5z5d4HC8FmoWdoc4Ry5
+	 m/JzQlN7MeZleb2DlnPfPTc/DzqdkC62QYl+A6zCNsQnGXBEzm/eCiZC2X9xt85X17
+	 rwlgUbt4b1fIki0Z8TwU8RYkMbc5aMQRPo93qexzpNZ3dkEkHlbRU78zxC2hdw98wE
+	 rhAsW2DowdlqmZa+6BYYnIjocCyvhSC4NYUQsa9fVburmAu+AfbANyrqmgSpf1oqE6
+	 DUmUH4rygfWMA==
+Date: Wed, 11 Jun 2025 11:57:27 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 3/3] vdso: Reject absolute relocations during build
+Message-ID: <20250611185727.GC2192624@ax162>
+References: <20250611-vdso-absolute-reloc-v3-0-47897d73784b@linutronix.de>
+ <20250611-vdso-absolute-reloc-v3-3-47897d73784b@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602135231.1615281-1-bqe@google.com> <20250602135231.1615281-5-bqe@google.com>
- <pXt1ZkjyScL3fnnuyw12MHGyxxDunKpUjhGl_tL4kg8FpobamrUohmzQyqMxtCPfgbUmmPl4ZE6wco8Yqs6aLD5jLTD5ZL-zeNo8wk0uKUM=@protonmail.com>
-In-Reply-To: <pXt1ZkjyScL3fnnuyw12MHGyxxDunKpUjhGl_tL4kg8FpobamrUohmzQyqMxtCPfgbUmmPl4ZE6wco8Yqs6aLD5jLTD5ZL-zeNo8wk0uKUM=@protonmail.com>
-From: Burak Emir <bqe@google.com>
-Date: Wed, 11 Jun 2025 20:55:12 +0200
-X-Gm-Features: AX0GCFusngWoMukaoowA3Y9KxP77OHDb2fRjiDbystdMuSVSbnZshuD95D1DnoM
-Message-ID: <CACQBu=UqBHD6XfVbjGfc+0i93TLJNrrHCrzHuzkd=vVU8H+RVQ@mail.gmail.com>
-Subject: Re: [PATCH v11 4/5] rust: add find_bit_benchmark_rust module.
-To: Pekka Ristola <pekkarr@protonmail.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>, Carlos LLama <cmllamas@google.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611-vdso-absolute-reloc-v3-3-47897d73784b@linutronix.de>
 
-On Thu, Jun 5, 2025 at 11:37=E2=80=AFPM Pekka Ristola <pekkarr@protonmail.c=
-om> wrote:
->
-> On Monday, June 2nd, 2025 at 16.53, Burak Emir <bqe@google.com> wrote:
-[...]
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index f9051ab610d5..3f826a73bdbf 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -2605,6 +2605,19 @@ config FIND_BIT_BENCHMARK
-> >
-> >         If unsure, say N.
-> >
-> > +config FIND_BIT_BENCHMARK_RUST
-> > +     tristate "Test find_bit functions in Rust"
-> > +     depends on CONFIG_RUST
->
-> The `CONFIG_` prefix should be removed.
+On Wed, Jun 11, 2025 at 11:22:14AM +0200, Thomas Weiﬂschuh wrote:
+> All vDSO code needs to be completely position independent.
+> Symbol references are marked as hidden so the compiler emits
+> PC-relative relocations. However there are cases where the compiler may
+> still emit absolute relocations, as they are valid in regular PIC DSO code.
+> These would be resolved by the linker and will break at runtime.
+> This has been observed on arm64 under some circumstances, see
+> commit 0c314cda9325 ("arm64: vdso: Work around invalid absolute relocations from GCC")
+> 
+> Introduce a build-time check for absolute relocations.
+> The check is done on the object files as the relocations will not exist
+> anymore in the final DSO. As there is no extension point for the
+> compilation of each object file, perform the validation in vdso_check.
+> 
+> Debug information can contain legal absolute relocations and readelf can
+> not print relocations from the .text section only. Make use of the fact
+> that all global vDSO symbols follow the naming pattern "vdso_u_".
+> 
+> Link: https://lore.kernel.org/lkml/aApGPAoctq_eoE2g@t14ultra/
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=120002
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-Done.
+I ran this through a few different architectures with LLVM=1 and did not
+see anything interesting.
 
-[...]
-> > diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-> > index 28c11e400d1e..9fefb2473099 100644
-> > --- a/rust/kernel/bitmap.rs
-> > +++ b/rust/kernel/bitmap.rs
-> > @@ -252,6 +252,20 @@ pub fn new(nbits: usize, flags: Flags) -> Result<S=
-elf, AllocError> {
-> >      pub fn len(&self) -> usize {
-> >          self.nbits
-> >      }
-> > +
-> > +    /// Fills this `Bitmap` with random bits.
-> > +    #[cfg(CONFIG_FIND_BIT_BENCHMARK_RUST)]
-> > +    pub fn fill_random(&mut self) {
-> > +        // SAFETY: `self.as_mut_ptr` points to either an array of the
-> > +        // appropriate length or one usize.
-> > +        unsafe {
-> > +            bindings::get_random_bytes(
-> > +                self.as_mut_ptr() as *mut ffi::c_void,
-> > +                usize::div_ceil(self.nbits, bindings::BITS_PER_LONG as=
- usize)
-> > +                    * bindings::BITS_PER_LONG as usize,
->
-> I think the second argument to `get_random_bytes` should be in bytes, not
-> bits. So it should be multiplied by "bytes per long", not "bits per long"=
-.
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-Thanks for catching this. At least I had memory safety in mind when I
-overflowed the buffer (facepalm)!
-Fixed.
+> ---
+>  lib/vdso/Makefile.include | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/lib/vdso/Makefile.include b/lib/vdso/Makefile.include
+> index cedbf15f80874d4bb27c097244bc5b11272f261c..04257d0f28c0ed324e31adbb68497181085752f8 100644
+> --- a/lib/vdso/Makefile.include
+> +++ b/lib/vdso/Makefile.include
+> @@ -12,7 +12,13 @@ c-getrandom-$(CONFIG_VDSO_GETRANDOM) := $(addprefix $(GENERIC_VDSO_DIR), getrand
+>  #
+>  # As a workaround for some GNU ld ports which produce unneeded R_*_NONE
+>  # dynamic relocations, ignore R_*_NONE.
+> +#
+> +# Also validate that no absolute relocations against global symbols are present
+> +# in the object files.
+>  quiet_cmd_vdso_check = VDSOCHK $@
 
-Cheers,
--- Burak
+I do not see VDSOCHK in the normal build log but I do see the check
+being executed with V=1. That's obviously an outstanding issue but
+figured it was worth mentioning.
+
+>        cmd_vdso_check = if $(READELF) -rW $@ | grep -v _NONE | grep -q " R_\w*_"; \
+>  		       then (echo >&2 "$@: dynamic relocations are not supported"; \
+> +			     rm -f $@; /bin/false); fi && \
+> +		       if $(READELF) -rW $(filter %.o, $(real-prereqs)) | grep -q " R_\w*_ABS.*vdso_u_"; \
+> +		       then (echo >&2 "$@: absolute relocations are not supported"; \
+>  			     rm -f $@; /bin/false); fi
+> 
+> -- 
+> 2.49.0
+> 
 
