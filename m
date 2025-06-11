@@ -1,383 +1,131 @@
-Return-Path: <linux-kernel+bounces-682371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F344AD5F24
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E0AAD5F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A643A6A9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107E53AA4F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEFF28936C;
-	Wed, 11 Jun 2025 19:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3952BD01E;
+	Wed, 11 Jun 2025 19:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ObvP1Gpa"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvRJrN+l"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B354A1EB36
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB481DFF7;
+	Wed, 11 Jun 2025 19:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749670675; cv=none; b=vA1J0KxTdk6rXO9IM9DFdKdatL2ntmjGhfWJJF9ZSXp5EzlOyVPjVRMPFlMEEIRAAMHQydmWOPQL9Cwh2seSN7F281sYriVFMA/B5SlvawGdf2SBaS3xoKzEGK7VamA73aKh9Eskpy8s5PIZumABIOv+5e/ulH9llyUV9yy+POg=
+	t=1749671272; cv=none; b=QXralo90SAY0+NBWeOuT7I3nzNliBJJFvdbkU0V4gD8RDizZ/VHQoqV9j1BoCCyCesWIv2N4xV0PwBsQkFwTrfPRfbmZFO9XxnFJlKa89m3rNhEeMKCqZ0lJ66GeHOGOvgBv7BsLGQe4WDEAJpbhXljDWxRMDT8JrdGJxJk1Yck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749670675; c=relaxed/simple;
-	bh=tMAoDht5z4t6rY2hzYFIF569a3Uqdm/sVnCxlCHgZBc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=i5fEZ0ndmsDl9NI6I/4bis+ub/HFm0BSITuVGjbRodqf/jGwI0Q87ve2fgvSbHhohGkiVXjGb8iHt2IriXfkv4Oc68mrjZ/DqbAIDeQELg+yEppouy3Q7TIJkZSeoOL9Yg7hgdnFHgOa/jyyxC/C4OO5bKejNiPP6OiEVl7VRO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ObvP1Gpa; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30a39fa0765so272037a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:37:53 -0700 (PDT)
+	s=arc-20240116; t=1749671272; c=relaxed/simple;
+	bh=Gqyo4fCstlkVEleXkAgPU9oWDNK+rPLjgHBpeirZILI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t5GB2s13CPEmHRUHbV580GIKTiJshVfASTyoeW+cugFx36rzB06ULBfRxDSPUcDh5Frz+kqsEO/4KPTsmush+RLrcngn6XMX5FirEuiDN1vAuJy31YvUr8hYjTeCXI9KrcBIcaQknplIspZjzbW9Ob70GR/fg2u1jF4KDiRuH0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvRJrN+l; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70e64b430daso1541787b3.3;
+        Wed, 11 Jun 2025 12:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749670673; x=1750275473; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XK9lqRMcWAUTITJdYLggpl8SfH/tOpT9RcjWLw+AB2Q=;
-        b=ObvP1GpaEi33odre/qgjefZnWCfwl7drY/e0Aoq9/jZqhUKISn7m7cye97xWuC8nZq
-         LrS5RkND1V8WFI5Sy8vU/yvdu2LkH6r37+ZjPJmbBl9LquOQChfmpDz/+bn/FpIAFSY1
-         qnGxd5KqXAZ3TxHkFX8dG9+KOMX+ZY8106Gxgcd3QT6xAFVlWEen2oVsRMGYRBeYehMm
-         z+3Gy80UAdH/udCeoZuYZlsMbobF3PMvFV6gej5LBHBhxZt4X/q5lWFJDSeq6lnwK6nf
-         KsUQo9NHiNTvjN+mDxM8lujnJfKaheoEqYL+5Klp6h/IHhzOeLjKtaBOyL3bBXP/P8p6
-         E0UQ==
+        d=gmail.com; s=20230601; t=1749671269; x=1750276069; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGAUWL2dZwy17PTD85xcsniFkQj8bTvYAj4X8J5pVic=;
+        b=JvRJrN+lctiwFV5ErCqxdjEe+ce3LEJtMSr/5VFgMSJDVtROKpeAmxLPaO2aC0Fi/R
+         KrE4sc44zIrO8KsZwhl3eghGf/yg+vZ8Ouot/O1sCk1IZ9buBoM/e8i6+MTMi3v/j7XW
+         +Axiz39EGZlOIA5qc7C9eLnqnVNwzJKD7Ptwsdx5DrnICTsDNARS6qi/Y0m2NkjwTKN+
+         7S5nOjhGrTtao3EhS8RmGJkZAIHos2cWiGs++7fp0uIeuapO+tZgdOMTceIrAihtIXI8
+         Ut2edLSKrDPWtvBzPsjZ1JLbW3ZK5FcYoWK3saz6tA44mc1YU47Sc5Yf7ODutNLSqrFh
+         PEGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749670673; x=1750275473;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XK9lqRMcWAUTITJdYLggpl8SfH/tOpT9RcjWLw+AB2Q=;
-        b=qrkrdyoe3+LY2DJkukxOXyy1X8cp9l/9UdYg5g25W/hNnAhVqj1tIP6tBQ8Bk1S9X9
-         aQcZDKfeP4zCSBWPXq+5MAUhFSsZ1EpLETyGKQzl97PWfb+pX1oO/nzLZoi21+Js2SWm
-         FJsN1RUS4qZLMPxUp7xgy52kHfymt9qUtiHbXkoI3IRoDrNsoxR2qdF6XBzEKSgaIuF2
-         51fcqVFHN8K9fHb5imjZGDd+SXoKsL/758/0fQXl5Vdx1zZIBgzomZnQPgZUhJXXkote
-         UECxxLg+at9kPEs+AYaIMVXjf0W8Hlcje02U+gM01uAi6/kMSeieX2u+Ypdi7/dvuVzT
-         wXPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXufGRoDgXi6L7I8JaMt2al1lDeuS1+Rlwgdg+TTL9v/jGQGdXbDD3UiFzXF9jOsBxRM8HQH5N327fUFF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDokZZRV0wcJCmzuB0K8MNOaujKQd1YkBSRRWXHYKCfeOA3NCn
-	E/rA0YUEhJLB/BXKh41pJJv5xfckG03vS8Rv3EGebp4cgCpbZGWRLZQo8vTAHmWKWGc4oY57oVe
-	Cl7wc6A==
-X-Google-Smtp-Source: AGHT+IFyOcDkrlCmf2wied79kN38rbCK3Hf3h7YdTs4dsyPIQs1bPUiiPwsRPA4+oQMF1pQQSH/rZhX1K6M=
-X-Received: from pjbeu6.prod.google.com ([2002:a17:90a:f946:b0:311:c20d:676d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d647:b0:311:ad7f:329f
- with SMTP id 98e67ed59e1d1-313af231f38mr5899772a91.31.1749670673167; Wed, 11
- Jun 2025 12:37:53 -0700 (PDT)
-Date: Wed, 11 Jun 2025 12:37:51 -0700
-In-Reply-To: <5fee2f3b-03de-442b-acaf-4591638c8bb5@redhat.com>
+        d=1e100.net; s=20230601; t=1749671269; x=1750276069;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TGAUWL2dZwy17PTD85xcsniFkQj8bTvYAj4X8J5pVic=;
+        b=e//iLtDbbAr7X6d/8P94FOsHisEzEGeEbUIlj2+qGZoGcdyELsAf/PtFCemJroYhcS
+         X3e6v8EsFIGeAl4W4mao+RR/w4oGxetMnhaHgXdhsGqAOLhEJImyB2zZMmBrqZDXFXjq
+         wBwlReseLoJJYBN+HbodrY70TcgMQ9byda7RFARPZki/K0bHzZxsfQZP5/l3979kqu3x
+         FMiprlAaEN80/AmJqu8DossSJxaKGrl5sCVgTSjxWOUWFIxFuwKMErdJjsI9616S87Tw
+         LwwwxC4pvJzXxzXLa/a0v+Nzc4CzHJymMxTshOhCzmumk90rB6hKaWLID5n0EyWAEpbx
+         W4ew==
+X-Forwarded-Encrypted: i=1; AJvYcCW2x/CthDbgwlV4Syz/LF7J7/4yT1lx5+lkZ8RAdVVhlGscmDNplN2ibhWlo/5WnBWPkyY2a2qtmYE=@vger.kernel.org, AJvYcCX5YEyXyhEpGyFDrldoqo3hWSaQyoYB+XlLjd3zTm9wnIZiMQ+ABLGvUL4jjsmH6LseHLuT0CyeBqbXffA4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2hP402rtd8LWskU4/OeA4rNkg2zpQbjwhzYU04yqf/+USoOGV
+	gamY1skafB0gPmaeXLbC8EBSbV3bc5EWAg6GAuKbuxKbvpIq0RH1/pJV
+X-Gm-Gg: ASbGnctN+ZKwe+bdh7GthVdxrIanC8GxoQWhB+qaFkhDjiVrau8zZM5RsxU+3ntWAig
+	/MvSaVe1d9PEXGcAeNuUqwkoDCC0MdJ3CiXMU/d2heXD+NYp/6PwIiq+tUD5f7SiojQzAEoSArk
+	2hi2HllFuJaT5WuI/n0/RdET2oAIQchJwA11zUS70mjtrgDoAMYnjPal4CFFL/znYRhM5eoCKhI
+	jI3QLDe/3GltEOuVG9MFZmj22rBFzAlmWTErZdaO2pxeaKJFwrBkXBeXR7t9XmPNm31Cal5zN0B
+	rRyXZ0LIpTLMXnI1eotmDJwILvey7zcwGnNu2jx6TFhctmwuwAfsHq9ddMQvVc532L/bet4rTlG
+	uKr6e
+X-Google-Smtp-Source: AGHT+IHLs4g2USl9/3mIyc4/NBHj2TilOt7w38tn6sLQ9Sanz7WX2m3aB8WGZ+BR2XHkEhceRYX7uQ==
+X-Received: by 2002:a05:690c:5c09:b0:70e:128c:3019 with SMTP id 00721157ae682-71150a897e3mr4593667b3.31.1749671269321;
+        Wed, 11 Jun 2025 12:47:49 -0700 (PDT)
+Received: from delta4.semfio.usp.br ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7115206130csm80587b3.1.2025.06.11.12.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 12:47:49 -0700 (PDT)
+From: Andrew Ijano <andrew.ijano@gmail.com>
+X-Google-Original-From: Andrew Ijano <andrew.lopes@alumni.usp.br>
+To: jic23@kernel.org
+Cc: andrew.lopes@alumni.usp.br,
+	gustavobastos@usp.br,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	jstephan@baylibre.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] iio: accel: sca3000: simplify by using newer infrastructure
+Date: Wed, 11 Jun 2025 16:39:18 -0300
+Message-ID: <20250611194648.18133-1-andrew.lopes@alumni.usp.br>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250611001018.2179964-1-xiaoyao.li@intel.com>
- <aEnGjQE3AmPB3wxk@google.com> <5fee2f3b-03de-442b-acaf-4591638c8bb5@redhat.com>
-Message-ID: <aEnbDya7OOXdO85q@google.com>
-Subject: Re: [PATCH] KVM: x86/mmu: Embed direct bits into gpa for KVM_PRE_FAULT_MEMORY
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, rick.p.edgecombe@intel.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, reinette.chatre@intel.com, 
-	kai.huang@intel.com, adrian.hunter@intel.com, isaku.yamahata@intel.com, 
-	Binbin Wu <binbin.wu@linux.intel.com>, tony.lindgren@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 11, 2025, Paolo Bonzini wrote:
-> On Wed, Jun 11, 2025 at 8:10=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > > +     direct_bits =3D 0;
-> > >       if (kvm_arch_has_private_mem(vcpu->kvm) &&
-> > >           kvm_mem_is_private(vcpu->kvm, gpa_to_gfn(range->gpa)))
-> > >               error_code |=3D PFERR_PRIVATE_ACCESS;
-> > > +     else
-> > > +             direct_bits =3D gfn_to_gpa(kvm_gfn_direct_bits(vcpu->kv=
-m));
-> >=20
-> > Eww.  It's bad enough that TDX bleeds it's mirror needs into common MMU=
- code,
-> > but stuffing vendor specific GPA bits in common code goes too far.  Act=
-ually,
-> > all of this goes too far.  There's zero reason any code outside of TDX =
-needs to
-> > *explicitly* care whether mirrors or "direct" MMUs have mandatory gfn b=
-its.
-> >=20
-> > Back to the main topic, KVM needs to have a single source of truth when=
- it comes
-> > to whether a fault is private and thus mirrored (or not).  Common KVM n=
-eeds to be
-> > aware of aliased GFN bits, but absolute nothing outside of TDX (includi=
-ng common
-> > VMX code) should be aware the mirror vs. "direct" (I hate that terminol=
-ogy; KVM
-> > has far, far too much history and baggage with "direct") is tied to the=
- existence
-> > and polarity of aliased GFN bits.
-> >=20
-> > To detect a mirror fault:
-> >=20
-> >   static inline bool kvm_is_mirror_fault(struct kvm *kvm, u64 error_cod=
-e)
-> >   {
-> >         return kvm_has_mirrored_tdp(kvm) &&
-> >                error_code & PFERR_PRIVATE_ACCESS;
-> >   }
-> >=20
-> > And for TDX, it should darn well explicitly track the shared GPA mask:
-> >=20
-> >   static bool tdx_is_private_gpa(struct kvm *kvm, gpa_t gpa)
-> >   {
-> >         /* For TDX the direct mask is the shared mask. */
-> >         return !(gpa & to_kvm_tdx(kvm)->shared_gpa_mask);
-> >   }
->=20
-> My fault - this is more similar, at least in spirit, to what
-> Yan and Xiaoyao had tested earlier:
->=20
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.h b/arch/x86/kvm/mmu/tdp_mmu.h
-> index 52acf99d40a0..209103bf0f30 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.h
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.h
-> @@ -48,7 +48,7 @@ static inline enum kvm_tdp_mmu_root_types
->  static inline struct kvm_mmu_page *tdp_mmu_get_root_for_fault(struct kvm=
-_vcpu *vcpu,
->  							      struct kvm_page_fault *fault)
->  {
-> -	if (unlikely(!kvm_is_addr_direct(vcpu->kvm, fault->addr)))
-> +	if (unlikely(fault->is_private))
->  		return root_to_sp(vcpu->arch.mmu->mirror_root_hpa);
->=20
-> and I instead proposed the version that you hate with such ardor.
->=20
-> My reasoning was that I preferred to have the pre-fault scenario "look li=
-ke"
-> what you get while the VM runs.
+The sca3000 driver is old and could be simplified by using newer
+infrastructure.
 
-Yes, 100% agreed.  I forgot fault->addr has the unmodified GPA, whereas fau=
-lt->gfn
-has the unaliased GFN. :-/
+Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
+Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
+Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
+---
+v4 -> v5:
+- break up the changes in three patches
+- replace error_ret labels by simple returns
+- use spi_w8r16be() for be16 reads
+- use guard(mutex) for handling mutex lock
 
-> > Outside of TDX, detecting mirrors, and anti-aliasing logic, the only us=
-e of
-> > kvm_gfn_direct_bits() is to constrain TDP MMU walks to the appropriate =
-gfn range.
-> > And for that, we can simply use kvm_mmu_page.gfn, with a kvm_x86_ops ho=
-ok to get
-> > the TDP MMU root GFN (root allocation is a slow path, the CALL+RET is a=
- non-issue).
-> >=20
-> > Compile tested only, and obviously needs to be split into multiple patc=
-hes.
->=20
-> Also obviously needs to be delayed to 6.17, since a working fix can be a
-> one line change. :)
+v3 -> v4:
+- clean the code and remove redundant operations
 
-Ya, definitely.
+v2 -> v3:
+- replace usages of internal read data helpers by spi helpers
 
-> (Plus your kvm_is_gfn_alias() test which should be
-> included anyway and independently).
->=20
-> What do you hate less between Yan's idea above and this patch? Just tell =
-me
-> and I'll handle posting v2.
+v1 -> v2:
+- simplify the return of the internal read data function
+---
+Andrew Ijano (3):
+  iio: accel: sca3000: replace error_ret labels by simple returns
+  iio: accel: sca3000: replace usages of internal read data helpers by
+    spi helpers
+  iio: accel: sca3000: use guard(mutex)() for handling mutex lock
 
-As much as it pains me, this version :-(
+ drivers/iio/accel/sca3000.c | 366 +++++++++++++-----------------------
+ 1 file changed, 133 insertions(+), 233 deletions(-)
 
-There are other things that rely on the GPA being "correct", e.g. walking t=
-he
-SPTEs in fast_page_fault().  So for a 6.16 fix, this is the safer and more =
-complete
-option.
+-- 
+2.49.0
 
-Ugh, and the whole tdp_mmu_get_root_for_fault() handling is broken.
-is_page_fault_stale() only looks at mmu->root.hpa, i.e. could theoretically=
- blow
-up if the shared root is somehow valid but the mirror root is not.  Probabl=
-y can't
-happen in practice, but it's ugly.
-
-Oof, and I've no idea what kvm_tdp_mmu_fast_pf_get_last_sptep() is doing.  =
-It
-says:
-
-	/* Fast pf is not supported for mirrored roots  */
-
-but I don't see anything that actually enforces that.
-
-So tdp_mmu_get_root_for_fault() should be a generic kvm_mmu_get_root_for_fa=
-ult(),
-and tdp_mmu_get_root() simply shouldn't exist.
-
-As for stuffing the correct GPA, with kvm_mmu_get_root_for_fault() being ge=
-neric
-and the root holding its gfn modifier, kvm_tdp_map_page() can simply OR in =
-the
-appropriate gfn (and maybe WARN if there's overlap?).
-
-Something like so (on top of the other untested blob):
-
------
- arch/x86/kvm/mmu/mmu.c     |  8 ++++++--
- arch/x86/kvm/mmu/spte.h    | 15 +++++++++++++++
- arch/x86/kvm/mmu/tdp_mmu.c | 10 +++++-----
- arch/x86/kvm/mmu/tdp_mmu.h | 21 ++-------------------
- 4 files changed, 28 insertions(+), 26 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 0228d49ac363..3bcc8d4848bd 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -3589,7 +3589,7 @@ static int fast_page_fault(struct kvm_vcpu *vcpu, str=
-uct kvm_page_fault *fault)
- 		u64 new_spte;
-=20
- 		if (tdp_mmu_enabled)
--			sptep =3D kvm_tdp_mmu_fast_pf_get_last_sptep(vcpu, fault->gfn, &spte);
-+			sptep =3D kvm_tdp_mmu_fast_pf_get_last_sptep(vcpu, fault, &spte);
- 		else
- 			sptep =3D fast_pf_get_last_sptep(vcpu, fault->addr, &spte);
-=20
-@@ -4682,7 +4682,7 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
- 				struct kvm_page_fault *fault)
- {
--	struct kvm_mmu_page *sp =3D root_to_sp(vcpu->arch.mmu->root.hpa);
-+	struct kvm_mmu_page *sp =3D kvm_mmu_get_root_for_fault(vcpu, fault);
-=20
- 	/* Special roots, e.g. pae_root, are not backed by shadow pages. */
- 	if (sp && is_obsolete_sp(vcpu->kvm, sp))
-@@ -4849,6 +4849,7 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct =
-kvm_page_fault *fault)
-=20
- int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 =
-*level)
- {
-+	struct kvm_mmu_page *root =3D __kvm_mmu_get_root_for_fault(vcpu, error_co=
-de);
- 	int r;
-=20
- 	/*
-@@ -4858,6 +4859,9 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa=
-, u64 error_code, u8 *level
- 	if (vcpu->arch.mmu->page_fault !=3D kvm_tdp_page_fault)
- 		return -EOPNOTSUPP;
-=20
-+	/* Comment goes here. */
-+	gpa |=3D gfn_to_gpa(root->gfn);
-+
- 	do {
- 		if (signal_pending(current))
- 			return -EINTR;
-diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-index 1e94f081bdaf..68e7979ac1fe 100644
---- a/arch/x86/kvm/mmu/spte.h
-+++ b/arch/x86/kvm/mmu/spte.h
-@@ -280,6 +280,21 @@ static inline bool is_mirror_sptep(tdp_ptep_t sptep)
- 	return is_mirror_sp(sptep_to_sp(rcu_dereference(sptep)));
- }
-=20
-+static inline struct kvm_mmu_page *__kvm_mmu_get_root_for_fault(struct kvm=
-_vcpu *vcpu,
-+								u64 error_code)
-+{
-+	if (unlikely(kvm_is_mirror_fault(vcpu->kvm, error_code)))
-+		return root_to_sp(vcpu->arch.mmu->mirror_root_hpa);
-+
-+	return root_to_sp(vcpu->arch.mmu->root.hpa);
-+}
-+
-+static inline struct kvm_mmu_page *kvm_mmu_get_root_for_fault(struct kvm_v=
-cpu *vcpu,
-+							      struct kvm_page_fault *fault)
-+{
-+	return __kvm_mmu_get_root_for_fault(vcpu, fault->error_code);
-+}
-+
- static inline bool is_mmio_spte(struct kvm *kvm, u64 spte)
- {
- 	return (spte & shadow_mmio_mask) =3D=3D kvm->arch.shadow_mmio_value &&
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 15daf4353ccc..ecfffc6fbb73 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1240,7 +1240,7 @@ static int tdp_mmu_split_huge_page(struct kvm *kvm, s=
-truct tdp_iter *iter,
-  */
- int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- {
--	struct kvm_mmu_page *root =3D tdp_mmu_get_root_for_fault(vcpu, fault);
-+	struct kvm_mmu_page *root =3D kvm_mmu_get_root_for_fault(vcpu, fault);
- 	struct kvm *kvm =3D vcpu->kvm;
- 	struct tdp_iter iter;
- 	struct kvm_mmu_page *sp;
-@@ -1967,15 +1967,15 @@ EXPORT_SYMBOL_GPL(kvm_tdp_mmu_gpa_is_mapped);
-  *
-  * WARNING: This function is only intended to be called during fast_page_f=
-ault.
-  */
--u64 *kvm_tdp_mmu_fast_pf_get_last_sptep(struct kvm_vcpu *vcpu, gfn_t gfn,
-+u64 *kvm_tdp_mmu_fast_pf_get_last_sptep(struct kvm_vcpu *vcpu,
-+					struct kvm_page_fault *fault,
- 					u64 *spte)
- {
--	/* Fast pf is not supported for mirrored roots  */
--	struct kvm_mmu_page *root =3D tdp_mmu_get_root(vcpu, KVM_DIRECT_ROOTS);
-+	struct kvm_mmu_page *root =3D kvm_mmu_get_root_for_fault(vcpu, fault);
- 	struct tdp_iter iter;
- 	tdp_ptep_t sptep =3D NULL;
-=20
--	for_each_tdp_pte(iter, vcpu->kvm, root, gfn, gfn + 1) {
-+	for_each_tdp_pte(iter, vcpu->kvm, root, fault->gfn, fault->gfn + 1) {
- 		*spte =3D iter.old_spte;
- 		sptep =3D iter.sptep;
- 	}
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.h b/arch/x86/kvm/mmu/tdp_mmu.h
-index 397309dfc73f..f75888474b73 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.h
-+++ b/arch/x86/kvm/mmu/tdp_mmu.h
-@@ -45,24 +45,6 @@ static inline enum kvm_tdp_mmu_root_types kvm_gfn_range_=
-filter_to_root_types(str
- 	return ret;
- }
-=20
--static inline struct kvm_mmu_page *tdp_mmu_get_root_for_fault(struct kvm_v=
-cpu *vcpu,
--							      struct kvm_page_fault *fault)
--{
--	if (unlikely(kvm_is_mirror_fault(vcpu->kvm, fault->error_code)))
--		return root_to_sp(vcpu->arch.mmu->mirror_root_hpa);
--
--	return root_to_sp(vcpu->arch.mmu->root.hpa);
--}
--
--static inline struct kvm_mmu_page *tdp_mmu_get_root(struct kvm_vcpu *vcpu,
--						    enum kvm_tdp_mmu_root_types type)
--{
--	if (unlikely(type =3D=3D KVM_MIRROR_ROOTS))
--		return root_to_sp(vcpu->arch.mmu->mirror_root_hpa);
--
--	return root_to_sp(vcpu->arch.mmu->root.hpa);
--}
--
- bool kvm_tdp_mmu_zap_leafs(struct kvm *kvm, gfn_t start, gfn_t end, bool f=
-lush);
- bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp);
- void kvm_tdp_mmu_zap_all(struct kvm *kvm);
-@@ -109,7 +91,8 @@ static inline void kvm_tdp_mmu_walk_lockless_end(void)
-=20
- int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
- 			 int *root_level);
--u64 *kvm_tdp_mmu_fast_pf_get_last_sptep(struct kvm_vcpu *vcpu, gfn_t gfn,
-+u64 *kvm_tdp_mmu_fast_pf_get_last_sptep(struct kvm_vcpu *vcpu,
-+					struct kvm_page_fault *fault,
- 					u64 *spte);
-=20
- #ifdef CONFIG_X86_64
-
-base-commit: 1abe48190d919c44e69aae17beb9e55d83db2303
---=20
 
