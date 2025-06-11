@@ -1,99 +1,256 @@
-Return-Path: <linux-kernel+bounces-681863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB26AD584C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:15:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24F1AD584D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6D3B3A2587
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D568E165256
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA7A29ACED;
-	Wed, 11 Jun 2025 14:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439982BD59B;
+	Wed, 11 Jun 2025 14:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCmuawCh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UOt6HpUk"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7969B2874EB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F0935897;
+	Wed, 11 Jun 2025 14:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749651292; cv=none; b=e4RP6IR4ezLLurjWq17Fqji9zwwLv62X8sGjRmghUwB+jHg7JVUabz11pGzzBpJYomOAjlvCuFw4i9pOJegrfiq/EZGSMa4oF+rQtzbAxyVZR1i5WL8ARSN4836lyPuyxMXxp90cRgRo86bc2j4a5TibA9CG/BqI0mGrJ41mSXY=
+	t=1749651305; cv=none; b=N79b60YC0aWP5ox+5MuLrC2fIegczqoO2SaGV/uIfX2T+ZbgZn8KexRl3VvRL6Mn5CNs1AXJ+xZJUodf4HPdoFiD1BWL+0mJE8wYaTAtC8TdZST4soxJ7BO1cbk6J7hs9M1lN7Jnw+8v9wW+0dXhhEMMPPHtnAk4+C6uvtWNAOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749651292; c=relaxed/simple;
-	bh=cRDHd0SMxDu8sH1wYotu8sGdz7yzIzox5QZKJm1LQHw=;
+	s=arc-20240116; t=1749651305; c=relaxed/simple;
+	bh=gPozdbI3xpmxAv+kXn407bfUh6hLjnr47SUlGsJ5RY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTo3cPJgzsEy14OjyjIH8yUAJhryqUsTFLpbZjPIUUpqnKBLcbAoZ+I4yX+R/2RMJgVF8AWdhrakmqCAXhvCekGiaPQlBNqAknG/oRazW6PXaMeduY7jYNrhsxjbe4Hc3EWSKy9Gb1a8lyOYM8g3Kg241BU0dsE8iiKqv9x3Bhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCmuawCh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27B6C4CEE3;
-	Wed, 11 Jun 2025 14:14:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749651292;
-	bh=cRDHd0SMxDu8sH1wYotu8sGdz7yzIzox5QZKJm1LQHw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LFdVMXxyUoUYqkdmaQ3g37f4JClsnxyScr9mlOcmDmk9vmqJwln4Cs6SjfDSjiF6DWioaWPQOsVLSVgJ214hz/Tb9Lh7oCcgG/5SBXgbHMPlykrVek3mbhl4O7AT/ttOpvmDMuFh0KOgw/3RApqthsD192oK/sF8bu0d9Ds1jag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UOt6HpUk; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 53EAC526;
+	Wed, 11 Jun 2025 16:14:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1749651293;
+	bh=gPozdbI3xpmxAv+kXn407bfUh6hLjnr47SUlGsJ5RY0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mCmuawChcdqRdwAkPm4jhPIy665Rxx6TdREd5RlZDR5ccoBbKUFGQpPO/Hgzy2J7+
-	 c1lwCZn9Ui/z0p+lFGcoDCxz9xmrsPIPPqDfUF4rzRRckdn0y9UKI1EwrR7aDa/+8/
-	 EtwxYhO27sfSo+he1rtJQNCuxu7bj9mWM1Oi+CDOxyOV2Z20SX1T0E3XafYUAi026y
-	 aEqteOH2s3eT/TYnHVUK3mifK+CD1DXRVmJ6Ik86vz5vP7mRZdnzHsWBWsflpgdjox
-	 H92WsTBhkMWzGQZVun7SIQ+kmv0GwF6xL/eJeer8bC24qfF1xIgi0OqsESU++2TsIF
-	 Sq82BLwmrIiRA==
-Date: Wed, 11 Jun 2025 15:14:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, pcc@google.com, will@kernel.org,
-	anshuman.khandual@arm.com, joey.gouly@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, frederic@kernel.org,
-	hardevsinh.palaniya@siliconsignals.io, samuel.holland@sifive.com,
-	palmer@rivosinc.com, charlie@rivosinc.com,
-	thiago.bauermann@linaro.org, bgray@linux.ibm.com,
-	tglx@linutronix.de, puranjay@kernel.org, david@redhat.com,
-	yang@os.amperecomputing.com, mbenes@suse.cz,
-	joel.granados@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/7] prtcl: introduce PR_MTE_STORE_ONLY
-Message-ID: <7f9d8b40-3e01-4d83-b6e8-0cb2cdeb8fd6@sirena.org.uk>
-References: <20250611094802.929332-1-yeoreum.yun@arm.com>
- <20250611094802.929332-3-yeoreum.yun@arm.com>
+	b=UOt6HpUk9flKVzBrV8edTT7seyKAKmte8Yfx+4gNSJ9azP9NzWTKbG/MmcfOLgDMX
+	 1rdkMDvcCLkiMrNuyccUiei49CSOPbo3TzWOuCHYOfESslReCu16XrFQBBpa6DcliV
+	 Wz/VZY3TuNfK79OPX5bo1LospmsQOFtdHjLUcmR8=
+Date: Wed, 11 Jun 2025 17:14:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Frank Li <Frank.li@nxp.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Robert Chiras <robert.chiras@nxp.com>,
+	"Guoniu.zhou" <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v4 04/13] media: nxp: imx8-isi: Use
+ devm_clk_bulk_get_all() to fetch clocks
+Message-ID: <20250611141449.GA24607@pendragon.ideasonboard.com>
+References: <20250408-8qxp_camera-v4-0-ef695f1b47c4@nxp.com>
+ <20250408-8qxp_camera-v4-4-ef695f1b47c4@nxp.com>
+ <20250421211438.GN17813@pendragon.ideasonboard.com>
+ <aBQZjFsExJh2uRfK@lizhi-Precision-Tower-5810>
+ <20250502155747.GB20093@pendragon.ideasonboard.com>
+ <aBylKcZyFInlKQAR@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WLkaznFp6D9YkjJU"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250611094802.929332-3-yeoreum.yun@arm.com>
-X-Cookie: No skis take rocks like rental skis!
+In-Reply-To: <aBylKcZyFInlKQAR@lizhi-Precision-Tower-5810>
 
+Hi Rob,
 
---WLkaznFp6D9YkjJU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, May 08, 2025 at 08:35:53AM -0400, Frank Li wrote:
+> On Fri, May 02, 2025 at 06:57:47PM +0300, Laurent Pinchart wrote:
+> > On Thu, May 01, 2025 at 09:02:04PM -0400, Frank Li wrote:
+> > > On Tue, Apr 22, 2025 at 12:14:38AM +0300, Laurent Pinchart wrote:
+> > > > On Tue, Apr 08, 2025 at 05:53:02PM -0400, Frank Li wrote:
+> > > > > Use devm_clk_bulk_get_all() helper to simplify clock handle code.
+> > > > >
+> > > > > No functional changes intended.
+> > > > >
+> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > > ---
+> > > > >  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 46 +++-------------------
+> > > > >  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  3 +-
+> > > > >  2 files changed, 6 insertions(+), 43 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> > > > > index ecfc95882f903..015350c6f2784 100644
+> > > > > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> > > > > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> > > > > @@ -275,11 +275,6 @@ static const struct mxc_isi_set_thd mxc_imx8_isi_thd_v1 = {
+> > > > >  	.panic_set_thd_v = { .mask = 0xf0000, .offset = 16, .threshold = 0x7 },
+> > > > >  };
+> > > > >
+> > > > > -static const struct clk_bulk_data mxc_imx8mn_clks[] = {
+> > > > > -	{ .id = "axi" },
+> > > > > -	{ .id = "apb" },
+> > > > > -};
+> > > > > -
+> > > > >  static const struct mxc_isi_plat_data mxc_imx8mn_data = {
+> > > > >  	.model			= MXC_ISI_IMX8MN,
+> > > > >  	.num_ports		= 1,
+> > > > > @@ -287,8 +282,6 @@ static const struct mxc_isi_plat_data mxc_imx8mn_data = {
+> > > > >  	.reg_offset		= 0,
+> > > > >  	.ier_reg		= &mxc_imx8_isi_ier_v1,
+> > > > >  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> > > > > -	.clks			= mxc_imx8mn_clks,
+> > > > > -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+> > > > >  	.buf_active_reverse	= false,
+> > > > >  	.gasket_ops		= &mxc_imx8_gasket_ops,
+> > > > >  	.has_36bit_dma		= false,
+> > > > > @@ -301,8 +294,6 @@ static const struct mxc_isi_plat_data mxc_imx8mp_data = {
+> > > > >  	.reg_offset		= 0x2000,
+> > > > >  	.ier_reg		= &mxc_imx8_isi_ier_v2,
+> > > > >  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> > > > > -	.clks			= mxc_imx8mn_clks,
+> > > > > -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+> > > > >  	.buf_active_reverse	= true,
+> > > > >  	.gasket_ops		= &mxc_imx8_gasket_ops,
+> > > > >  	.has_36bit_dma		= true,
+> > > > > @@ -315,8 +306,6 @@ static const struct mxc_isi_plat_data mxc_imx8ulp_data = {
+> > > > >  	.reg_offset		= 0x0,
+> > > > >  	.ier_reg		= &mxc_imx8_isi_ier_v2,
+> > > > >  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> > > > > -	.clks			= mxc_imx8mn_clks,
+> > > > > -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+> > > > >  	.buf_active_reverse	= true,
+> > > > >  	.has_36bit_dma		= false,
+> > > > >  };
+> > > > > @@ -328,8 +317,6 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
+> > > > >  	.reg_offset		= 0,
+> > > > >  	.ier_reg		= &mxc_imx8_isi_ier_v2,
+> > > > >  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> > > > > -	.clks			= mxc_imx8mn_clks,
+> > > > > -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+> > > > >  	.buf_active_reverse	= true,
+> > > > >  	.gasket_ops		= &mxc_imx93_gasket_ops,
+> > > > >  	.has_36bit_dma		= false,
+> > > > > @@ -386,7 +373,7 @@ static int mxc_isi_runtime_suspend(struct device *dev)
+> > > > >  {
+> > > > >  	struct mxc_isi_dev *isi = dev_get_drvdata(dev);
+> > > > >
+> > > > > -	clk_bulk_disable_unprepare(isi->pdata->num_clks, isi->clks);
+> > > > > +	clk_bulk_disable_unprepare(isi->num_clks, isi->clks);
+> > > > >
+> > > > >  	return 0;
+> > > > >  }
+> > > > > @@ -396,7 +383,7 @@ static int mxc_isi_runtime_resume(struct device *dev)
+> > > > >  	struct mxc_isi_dev *isi = dev_get_drvdata(dev);
+> > > > >  	int ret;
+> > > > >
+> > > > > -	ret = clk_bulk_prepare_enable(isi->pdata->num_clks, isi->clks);
+> > > > > +	ret = clk_bulk_prepare_enable(isi->num_clks, isi->clks);
+> > > > >  	if (ret) {
+> > > > >  		dev_err(dev, "Failed to enable clocks (%d)\n", ret);
+> > > > >  		return ret;
+> > > > > @@ -414,27 +401,6 @@ static const struct dev_pm_ops mxc_isi_pm_ops = {
+> > > > >   * Probe, remove & driver
+> > > > >   */
+> > > > >
+> > > > > -static int mxc_isi_clk_get(struct mxc_isi_dev *isi)
+> > > > > -{
+> > > > > -	unsigned int size = isi->pdata->num_clks
+> > > > > -			  * sizeof(*isi->clks);
+> > > > > -	int ret;
+> > > > > -
+> > > > > -	isi->clks = devm_kmemdup(isi->dev, isi->pdata->clks, size, GFP_KERNEL);
+> > > > > -	if (!isi->clks)
+> > > > > -		return -ENOMEM;
+> > > > > -
+> > > > > -	ret = devm_clk_bulk_get(isi->dev, isi->pdata->num_clks,
+> > > > > -				isi->clks);
+> > > > > -	if (ret < 0) {
+> > > > > -		dev_err(isi->dev, "Failed to acquire clocks: %d\n",
+> > > > > -			ret);
+> > > > > -		return ret;
+> > > > > -	}
+> > > > > -
+> > > > > -	return 0;
+> > > > > -}
+> > > > > -
+> > > > >  static int mxc_isi_probe(struct platform_device *pdev)
+> > > > >  {
+> > > > >  	struct device *dev = &pdev->dev;
+> > > > > @@ -457,11 +423,9 @@ static int mxc_isi_probe(struct platform_device *pdev)
+> > > > >  	if (!isi->pipes)
+> > > > >  		return -ENOMEM;
+> > > > >
+> > > > > -	ret = mxc_isi_clk_get(isi);
+> > > > > -	if (ret < 0) {
+> > > > > -		dev_err(dev, "Failed to get clocks\n");
+> > > > > -		return ret;
+> > > > > -	}
+> > > > > +	isi->num_clks = devm_clk_bulk_get_all(dev, &isi->clks);
+> > > >
+> > > > This prevents validating that the DT contains the expected clocks, which
+> > > > could cause hard to debug issues. Isn't it a problem ?
+> > >
+> > > It is checked by dt-binding. Now no warning by DTB_CHECK under arm64 freecale.
+> > > CHECK_DTB should be enough to find expected clocks.
+> >
+> > Yes, the DTB check will catch issues at build time, but the driver will
+> > not enforce that. I'm not sure if there's a clear policy here, and if
+> > ensuring at runtime in drivers that the expected clocks are present is
+> > considered as a good practice by the DT maintainers. Rob, Krzysztof,
+> > Conor, do you have an opinion ?
+> 
+> Rob:
+> 	can you comment this?
 
-On Wed, Jun 11, 2025 at 10:47:57AM +0100, Yeoreum Yun wrote:
-> PR_MTE_STORE_ONLY is used to restrict the MTE tag check for store
-> opeartion only.
+Rob, any comment on this ?
 
-Tested-by: Mark Brown <broonie@kernel.org>
+> Laurent:
+> 	Many driver already switch to devm_clk_bulk_get_all() such as qcom/imx6
+> pci drivers recently.
+> 
+> > > > > +	if (isi->num_clks < 0)
+> > > > > +		return dev_err_probe(dev, isi->num_clks, "Failed to get clocks\n");
+> > > > >
+> > > > >  	isi->regs = devm_platform_ioremap_resource(pdev, 0);
+> > > > >  	if (IS_ERR(isi->regs)) {
+> > > > > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> > > > > index e7534a80af7b4..bd3cfe5fbe063 100644
+> > > > > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> > > > > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> > > > > @@ -169,8 +169,6 @@ struct mxc_isi_plat_data {
+> > > > >  	const struct mxc_isi_ier_reg  *ier_reg;
+> > > > >  	const struct mxc_isi_set_thd *set_thd;
+> > > > >  	const struct mxc_gasket_ops *gasket_ops;
+> > > > > -	const struct clk_bulk_data *clks;
+> > > > > -	unsigned int num_clks;
+> > > > >  	bool buf_active_reverse;
+> > > > >  	bool has_36bit_dma;
+> > > > >  };
+> > > > > @@ -282,6 +280,7 @@ struct mxc_isi_dev {
+> > > > >
+> > > > >  	void __iomem			*regs;
+> > > > >  	struct clk_bulk_data		*clks;
+> > > > > +	int				num_clks;
+> > > > >  	struct regmap			*gasket;
+> > > > >
+> > > > >  	struct mxc_isi_crossbar		crossbar;
 
---WLkaznFp6D9YkjJU
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Regards,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJj1QACgkQJNaLcl1U
-h9Bw5Af/XdFp939N2wucEqYWmTgJRZo67n99s5HUufuQy9VuRp8hvczjeAs6Kkx4
-GxXiaPopZ8T4BbO4Dcg1jX/NcHqJn7JATKxyQqYXsxOZHD08QzPJhdNNakfX4DjO
-4/YbkM9X8uM+cI1kcyFsTHSpmkx5gppfZS9ZfKUoAPHEg8xlQVrWYjn9z+5bw/Q6
-5IWN57yGPSalnTxCOwC9w9tPRNpiDpoy4/1odxFGTmH6UsYABrfaprcBJjGm2t6O
-5SLrAW8VNJrnDbIezM92Zq3GEa2cLUUUJLs4mld5Z0gGbgL/XfJglpPzrfX0p7rl
-oN0TrmhTKHyH+xS48CG//DZ5mvzVqQ==
-=1ld8
------END PGP SIGNATURE-----
-
---WLkaznFp6D9YkjJU--
+Laurent Pinchart
 
