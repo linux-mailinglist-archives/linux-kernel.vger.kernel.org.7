@@ -1,252 +1,164 @@
-Return-Path: <linux-kernel+bounces-682410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0A9AD5F99
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39B5AD5F93
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907D71BC2BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582F53A5ADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D45C2BE7B3;
-	Wed, 11 Jun 2025 19:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5D22BD589;
+	Wed, 11 Jun 2025 19:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="0vdyDy4w"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="D7A71Bjy"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA8E2222CA;
-	Wed, 11 Jun 2025 19:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22E82222CA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749671850; cv=none; b=RIsVn7gkM5apxufQz+bQufBrtogpqErRVagIUm19fxHiPpYHXsJGoevtexykYACfFb0rbUOhyV+ai4hnYBbOs1+kloPIOWXu1v7Na8MRx69XlFfpfj36gFwXH1R3j3QIEFYrctHY9R3rnqvO795k0VKAJLmrTNWbZY5QdYUO9s4=
+	t=1749671844; cv=none; b=tTCKYW5vNO3J74HnQ/qopePYyVwyH+WI2P9m5XKRAfJHlXr5CPmc8+E4fVxEOfXTpoAfxRsSvFYHmrxm86wTW5DOJC0I/IK4yo86Q0+oDPUgionTvTQ7WKr+IMKZ+3Af85t0w8/PMoXx6qHKxyXD6ISOI21FU/7TUAY/FiIIt5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749671850; c=relaxed/simple;
-	bh=l+3eGtGFJPPGFfFCjxhEmKxENxAOs/hijlNpTuHUvQ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W2fyV5RZFvb5vLYb9dqqGl0KjpUMp0opRZ0H/kVGGTNJX55cy5TYCmG8mUykSUXW8W5mD7817bXe+IkRy0nEMhokLYpyl7NZL04XSJJtQbB5bbyHs8d0+cyJ389+dnxsc6xCMz6ZyjiQJRQ8+NOflwN6DleHWQ6fu6/aaNT3qBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=0vdyDy4w; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uPRZZ-00BIDl-4K; Wed, 11 Jun 2025 21:57:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector2; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
-	bh=g3P/b2xpkd5Ju2ZEi9PD/MpzldHWyAMly/rPPt2zMp4=; b=0vdyDy4w5DEKVG4vQ/baGS47cS
-	St3J+CbDkgG9+KuUpsqMHAiOIIsofDG+d1F4xW9EJXAcX/EgIZI55kbLU+jVWCNMxXOrR/JIEubnY
-	75ipr07E23f8+d9qn5bBKjBLH3qjsEOj46h8abjZdGVloRSY8dCnyky1RL8F3a1hfz5iXAPqkbpSf
-	lAkw1vd/v1QAjRJBDOvR+ZD/yxSKJ3wjzjn+2MeL7ZQcK7J0JET1taicdFl9arVnQ5hHTcqhw/kq1
-	ej4d2tXfyD99id4VJyVF0smc59cihC2Sm1LH+Fg/VE8s/jpfIwrmeXlIS78Q+ibAyOrpbHRVC9HfS
-	3yxlyouQ==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uPRZY-0004Bc-PC; Wed, 11 Jun 2025 21:57:20 +0200
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uPRZH-00BycS-Lv; Wed, 11 Jun 2025 21:57:03 +0200
-From: Michal Luczaj <mhal@rbox.co>
-Date: Wed, 11 Jun 2025 21:56:51 +0200
-Subject: [PATCH net-next v3 2/3] vsock/test: Introduce get_transports()
+	s=arc-20240116; t=1749671844; c=relaxed/simple;
+	bh=MRSz+bJbfUzOydfikZbpc57jTom13rxqR3u293vuQb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j8W6LaJ8w7zJ70/ynTzb8rd9dY1b3czZ9wlWu7q5sE1lN/n2ehMaGOGGY1EsfjZI87k09fbBcpx15PMZ+f0EImjDQsktzeLj/Pegsut7FCBz8iSdX9xqFLOIvs0ZKm6+nGif4Opcz8pE2ex9rR4SiDMLg+51ULIwWkKT0Mf5pVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=D7A71Bjy; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OwBx4LQLrUpRGjyqmky6VGtQ1FUpgs981MRRO546hPE=; b=D7A71BjykR/O4nQWgiqf6omVLq
+	NlOj3RWT5Aw6L3B7iNIybKuwhquuQRWQ2LAuOBqwXne6OMGZve0a1U1HjrWyb2zygGMHihXGwQXL6
+	a/z9/OsAZtJJdyURGxNerZpB3y+nxsNalVTbuLHNso9T6j0tlBKYr6LgE1mhRSMgYF0+b4qwzsKfk
+	VGikWvw9fr9nd6dlIYRM8N04cfHH4WgXs5zuXBsw2onTW1Yl4EKYxEUdHHfY1OtGR6wv3wTIW7rJ9
+	OOu+A6yos7PXGvmWR4Cc8rkwWh7CtOm2hfz21f1fFZjfZ++C51aKhx3LOYhR7JDGLBRpYx/SswxKz
+	1Nb22v5A==;
+Received: from [187.36.208.198] (helo=[192.168.1.111])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uPRZM-002Lal-KA; Wed, 11 Jun 2025 21:57:08 +0200
+Message-ID: <e7b4738a-6d7f-40ac-84bd-e88dd0432cdc@igalia.com>
+Date: Wed, 11 Jun 2025 16:57:00 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-vsock-test-inc-cov-v3-2-5834060d9c20@rbox.co>
-References: <20250611-vsock-test-inc-cov-v3-0-5834060d9c20@rbox.co>
-In-Reply-To: <20250611-vsock-test-inc-cov-v3-0-5834060d9c20@rbox.co>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/8] drm/vkms: Add support for ARGB16161616 formats
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, nicolejadeyee@google.com
+References: <20250530-b4-new-color-formats-v4-0-ef5f9f48376c@bootlin.com>
+ <20250530-b4-new-color-formats-v4-3-ef5f9f48376c@bootlin.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
+ /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
+ gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
+ SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
+ G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
+ AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
+ dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
+ P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
+ O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
+ GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
+ 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
+ FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
+ TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
+ Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
+ 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
+ LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
+ T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
+ wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
+ zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
+ it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
+ Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
+ uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
+ raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
+In-Reply-To: <20250530-b4-new-color-formats-v4-3-ef5f9f48376c@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Return a bitmap of registered vsock transports. As guesstimated by grepping
-/proc/kallsyms (CONFIG_KALLSYMS=y) for known symbols of type `struct
-vsock_transport`, or `struct virtio_transport` in case the vsock_transport
-is embedded within.
+On 5/30/25 11:05, Louis Chauvet wrote:
+> The formats XRGB16161616 and ARGB16161616 were already supported.
+> Add the support for:
+> - ABGR16161616
+> - XBGR16161616
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Note that the way `enum transport` and `transport_ksyms[]` are defined
-triggers checkpatch.pl:
+Reviewed-by: Maíra Canal <mcanal@igalia.com>
 
-util.h:11: ERROR: Macros with complex values should be enclosed in parentheses
-util.h:20: ERROR: Macros with complex values should be enclosed in parentheses
-util.h:20: WARNING: Argument 'symbol' is not used in function-like macro
-util.h:28: WARNING: Argument 'name' is not used in function-like macro
+Best Regards,
+- Maíra
 
-While commit 15d4734c7a58 ("checkpatch: qualify do-while-0 advice")
-suggests it is known that the ERRORs heuristics are insufficient, I can not
-find many other places where preprocessor is used in this
-checkpatch-unhappy fashion. Notable exception being bcachefs, e.g.
-fs/bcachefs/alloc_background_format.h. WARNINGs regarding unused macro
-arguments seem more common, e.g. __ASM_SEL in arch/x86/include/asm/asm.h.
-
-In other words, this might be unnecessarily complex. The same can be
-achieved by just telling human to keep the order:
-
-enum transport {
-	TRANSPORT_LOOPBACK = BIT(0),
-	TRANSPORT_VIRTIO = BIT(1),
-	TRANSPORT_VHOST = BIT(2),
-	TRANSPORT_VMCI = BIT(3),
-	TRANSPORT_HYPERV = BIT(4),
-	TRANSPORT_NUM = 5,
-};
-
- #define KSYM_ENTRY(sym) "d " sym "_transport"
-
-/* Keep `enum transport` order */
-static const char * const transport_ksyms[] = {
-	KSYM_ENTRY("loopback"),
-	KSYM_ENTRY("virtio"),
-	KSYM_ENTRY("vhost"),
-	KSYM_ENTRY("vmci"),
-	KSYM_ENTRY("vhs"),
-};
-
-Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: Michal Luczaj <mhal@rbox.co>
----
- tools/testing/vsock/util.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/vsock/util.h | 29 ++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
-
-diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
-index b7b3fb2221c1682ecde58cf12e2f0b0ded1cff39..803f1e075b62228c25f9dffa1eff131b8072a06a 100644
---- a/tools/testing/vsock/util.c
-+++ b/tools/testing/vsock/util.c
-@@ -7,6 +7,7 @@
-  * Author: Stefan Hajnoczi <stefanha@redhat.com>
-  */
- 
-+#include <ctype.h>
- #include <errno.h>
- #include <stdio.h>
- #include <stdint.h>
-@@ -23,6 +24,9 @@
- #include "control.h"
- #include "util.h"
- 
-+#define KALLSYMS_PATH		"/proc/kallsyms"
-+#define KALLSYMS_LINE_LEN	512
-+
- /* Install signal handlers */
- void init_signals(void)
- {
-@@ -854,3 +858,55 @@ void enable_so_linger(int fd, int timeout)
- 		exit(EXIT_FAILURE);
- 	}
- }
-+
-+static int __get_transports(void)
-+{
-+	char buf[KALLSYMS_LINE_LEN];
-+	const char *ksym;
-+	int ret = 0;
-+	FILE *f;
-+
-+	f = fopen(KALLSYMS_PATH, "r");
-+	if (!f) {
-+		perror("Can't open " KALLSYMS_PATH);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	while (fgets(buf, sizeof(buf), f)) {
-+		char *match;
-+		int i;
-+
-+		assert(buf[strlen(buf) - 1] == '\n');
-+
-+		for (i = 0; i < TRANSPORT_NUM; ++i) {
-+			if (ret & BIT(i))
-+				continue;
-+
-+			/* Match should be followed by '\t' or '\n'.
-+			 * See kallsyms.c:s_show().
-+			 */
-+			ksym = transport_ksyms[i];
-+			match = strstr(buf, ksym);
-+			if (match && isspace(match[strlen(ksym)])) {
-+				ret |= BIT(i);
-+				break;
-+			}
-+		}
-+	}
-+
-+	fclose(f);
-+	return ret;
-+}
-+
-+/* Return integer with TRANSPORT_* bit set for every (known) registered vsock
-+ * transport.
-+ */
-+int get_transports(void)
-+{
-+	static int tr = -1;
-+
-+	if (tr == -1)
-+		tr = __get_transports();
-+
-+	return tr;
-+}
-diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
-index 0afe7cbae12e5194172c639ccfbeb8b81f7c25ac..71895192cc02313bf52784e2f77aa3b0c28a0c94 100644
---- a/tools/testing/vsock/util.h
-+++ b/tools/testing/vsock/util.h
-@@ -3,8 +3,36 @@
- #define UTIL_H
- 
- #include <sys/socket.h>
-+#include <linux/bitops.h>
-+#include <linux/kernel.h>
- #include <linux/vm_sockets.h>
- 
-+/* All known vsock transports, see callers of vsock_core_register() */
-+#define KNOWN_TRANSPORTS(x)		\
-+	x(LOOPBACK, "loopback")		\
-+	x(VIRTIO, "virtio")		\
-+	x(VHOST, "vhost")		\
-+	x(VMCI, "vmci")			\
-+	x(HYPERV, "hvs")
-+
-+enum transport {
-+	TRANSPORT_COUNTER_BASE = __COUNTER__ + 1,
-+	#define x(name, symbol)		\
-+		TRANSPORT_##name = BIT(__COUNTER__ - TRANSPORT_COUNTER_BASE),
-+	KNOWN_TRANSPORTS(x)
-+	TRANSPORT_NUM = __COUNTER__ - TRANSPORT_COUNTER_BASE,
-+	#undef x
-+};
-+
-+static const char * const transport_ksyms[] = {
-+	#define x(name, symbol) "d " symbol "_transport",
-+	KNOWN_TRANSPORTS(x)
-+	#undef x
-+};
-+
-+static_assert(ARRAY_SIZE(transport_ksyms) == TRANSPORT_NUM);
-+static_assert(BITS_PER_TYPE(int) >= TRANSPORT_NUM);
-+
- /* Tests can either run as the client or the server */
- enum test_mode {
- 	TEST_MODE_UNSET,
-@@ -82,4 +110,5 @@ void setsockopt_timeval_check(int fd, int level, int optname,
- 			      struct timeval val, char const *errmsg);
- void enable_so_zerocopy_check(int fd);
- void enable_so_linger(int fd, int timeout);
-+int get_transports(void);
- #endif /* UTIL_H */
-
--- 
-2.49.0
+> ---
+>   drivers/gpu/drm/vkms/vkms_formats.c | 6 ++++++
+>   drivers/gpu/drm/vkms/vkms_plane.c   | 2 ++
+>   2 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index f5c52c3d10a3..95771bff5202 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -442,7 +442,9 @@ READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
+>   READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
+>   
+>   READ_LINE_le16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0])
+> +READ_LINE_le16161616(ABGR16161616_read_line, px, px[3], px[0], px[1], px[2])
+>   READ_LINE_le16161616(XRGB16161616_read_line, px, cpu_to_le16(0xFFFF), px[2], px[1], px[0])
+> +READ_LINE_le16161616(XBGR16161616_read_line, px, cpu_to_le16(0xFFFF), px[0], px[1], px[2])
+>   
+>   READ_LINE(RGB565_read_line, px, __le16, argb_u16_from_RGB565, px)
+>   
+> @@ -665,8 +667,12 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
+>   		return &BGRX8888_read_line;
+>   	case DRM_FORMAT_ARGB16161616:
+>   		return &ARGB16161616_read_line;
+> +	case DRM_FORMAT_ABGR16161616:
+> +		return &ABGR16161616_read_line;
+>   	case DRM_FORMAT_XRGB16161616:
+>   		return &XRGB16161616_read_line;
+> +	case DRM_FORMAT_XBGR16161616:
+> +		return &XBGR16161616_read_line;
+>   	case DRM_FORMAT_RGB565:
+>   		return &RGB565_read_line;
+>   	case DRM_FORMAT_NV12:
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index b7f498944c50..505847ec8508 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -22,7 +22,9 @@ static const u32 vkms_formats[] = {
+>   	DRM_FORMAT_RGBX8888,
+>   	DRM_FORMAT_BGRX8888,
+>   	DRM_FORMAT_XRGB16161616,
+> +	DRM_FORMAT_XBGR16161616,
+>   	DRM_FORMAT_ARGB16161616,
+> +	DRM_FORMAT_ABGR16161616,
+>   	DRM_FORMAT_RGB565,
+>   	DRM_FORMAT_NV12,
+>   	DRM_FORMAT_NV16,
+> 
 
 
