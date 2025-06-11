@@ -1,169 +1,232 @@
-Return-Path: <linux-kernel+bounces-681635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB78AD552E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:14:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE996AD553D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639C97AD9A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:13:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AF5917F8B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E75E27E7F0;
-	Wed, 11 Jun 2025 12:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69C227CB16;
+	Wed, 11 Jun 2025 12:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Edv1PjRq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ftFRl3nH"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07C027C144;
-	Wed, 11 Jun 2025 12:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C3B78F34;
+	Wed, 11 Jun 2025 12:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644078; cv=none; b=j/CaWHhSq4AHnijxufar/wpdMfsBV7o91D77sNlbIRDSHI7JBTIe5Fu4h4FIxICNq3wsPKi71ByfPTweg23gC5XZWrR70mg5y6bHnhYB7KPx2adBBlJlauTEVWK70AhbnVRV4OJvnuwzmKTuFqkPngjuxmc+ZnXQNwO7UEdbYZA=
+	t=1749644220; cv=none; b=hyQ5ZRKegvAK6p/wEWX+KvmTeLN77Rjf3uWUCZZEf7Z9snG8VxQwa1ta5IOYAw2WS9mzrIik96NG+zaFLmL9DEQ6muFGdRHxQ9wquLpaNrjRuvZV49Tt4goWviF1ckWlH6rWF8WuronK1HbT3QJmXgavDQ7ymIH70s6fmG4S69k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644078; c=relaxed/simple;
-	bh=FJ1AHEgMmhRXu6CGnQHlc/GRmFKNYpmO4gT7upoqODo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=X1oWY2vZDV33IuZ6GL6EgUXm9aPIGY+2jIYZy647t3AaKu3/EQGOyTI0rthHTLooHpKuy78Kuhmbmgnd4RyjQRRIHifVKoMqicJSlExD9jTlrE+Fg9KyFuA0HPL2nuRhhxnUF9lHABzNtS+j0jiHvKKTBouN6tf1Ub30/kI2IU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Edv1PjRq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CA4C4CEEE;
-	Wed, 11 Jun 2025 12:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749644078;
-	bh=FJ1AHEgMmhRXu6CGnQHlc/GRmFKNYpmO4gT7upoqODo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Edv1PjRqitKqfWC53D9UEbG5O7XatWHfY7eu+CVCezYUjI3iBlpiUxBWy9hpBq1Hi
-	 O1ZCBbV56G1rRrHGu22LJh5nGSOp5lyHWsjC6T287wv7lwRVjbRyjPOfLiZXH1LltK
-	 cARMxYQmV/wbB3nmtlqA9Akubigyrr7gNIu1LFSWDfi+mvit8EIB0rCMQgGta+L5Hn
-	 r43JxzN/IgcIkVdtPJnrFYuDYgwzqrMhshnPiaFdKb3jZSFZITCXcER5VXNDIVr1A/
-	 qeJrKq6C14kg1z1G0WmqEcuqy4UISfjKibFRO1t6myCj0+5+fZJcZS7YS616khN/Ak
-	 4vv72X4cGTt5g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Bjorn Helgaas" <bhelgaas@google.com>,
-  Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,  "Greg
- Kroah-Hartman"
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
-  "Tamir Duberstein" <tamird@gmail.com>,  "Viresh Kumar"
- <viresh.kumar@linaro.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-pci@vger.kernel.org>,
-  =?utf-8?Q?Ma=C3=ADra?=
- Canal <mcanal@igalia.com>
-Subject: Re: [PATCH v2] rust: types: add FOREIGN_ALIGN to ForeignOwnable
-In-Reply-To: <DAJOKFHW96XZ.2ANYSSFQO03ZL@kernel.org> (Benno Lossin's message
-	of "Wed, 11 Jun 2025 13:51:21 +0200")
-References: <20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org>
-	<HCd56HpzAlpsTZWbmM8R3IN8MCXWW-kpIjIt_K1D8ZFN6DLqIGmpNRJdle94PGpHYS86rmmhCPci9TajHZCCrw==@protonmail.internalid>
-	<DAIV6MJAJ5R0.3TZ4IC2KO9MOL@kernel.org> <87v7p3znz6.fsf@kernel.org>
-	<CAH5fLgi3B_Wyz2OzBLhHHgWrg7hboyFUcQe-+GUrrvXiX9di=w@mail.gmail.com>
-	<GHUD6hpYDty0s_oTLGC6owDPKqrNepeGOL9F-XlvY6G50K8Zptjp4f8kVVnyoTjf-E_0QVeHfmUUvcN-p1i24Q==@protonmail.internalid>
-	<DAJHVMM9DND0.2FM0FJYN0XEFV@kernel.org> <87jz5izhg3.fsf@kernel.org>
-	<WXoNAlTJvpteJEAZ3TkYKk2QWHBC0oID8Dy3AHGxLEwiZwBPdSLZB4MpdbObLtFvqiN9re3q6OQpiua2uiv1Hw==@protonmail.internalid>
-	<DAJOKFHW96XZ.2ANYSSFQO03ZL@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 11 Jun 2025 14:14:25 +0200
-Message-ID: <878qlyzd9a.fsf@kernel.org>
+	s=arc-20240116; t=1749644220; c=relaxed/simple;
+	bh=2fgo+DfYW6hkb8u8dSOtf7+gmhcII4bUlVTgpcygRbs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZZs53l41/2ypuMu81ckoH52AwzbdyCbcpNP6738wd1yFr+DY2Nj/Z/TYp4wV8wcxW0VnaCBxc5XnPLj9ryffH2k4C6qzLxuUTdL31GkHCbG0RaiV+yc3PNZJb9d1y6IPUEtVELn8UlbzSXaZozaeCNrmVI7xbqVsQyvHfw7x2rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ftFRl3nH; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1749644218; x=1781180218;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=B4ji9po20KtVxaeun/VeETG8Hky3+gtaCUe9OwsWfc0=;
+  b=ftFRl3nHGkMmMMGA7v/gX7WPNBMMKAEx8asCfi+Z9B/8WW3NJ7sfn2OF
+   1v9BE5XL5otu6rJyMUtOli5XVNalb2zRYw+BMZRPUsJrYWl5WNsigM7zK
+   sqERkvCrAixTX/JY4Bg5h15dSPGbO4mcicXyN32go0C/s6DtukOMc7PSm
+   d27W0BIod/AGP9yLp3Jr5vKbln9ri5eYsppRP6IbDYrI7SQsnV2q+olmT
+   EX+jV0a16Q7yY0+g4MopM9E9ejvwHI8YFsfSIUklS8WmIqFeE4j5U1NqY
+   qZ0S/2VPduyjraMDZuSg85eCLu8CoJotmG0CA61dKaxfcXEnvZeJ3ujna
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.16,227,1744070400"; 
+   d="scan'208";a="500409699"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 12:16:55 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:23515]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.1.131:2525] with esmtp (Farcaster)
+ id 59df4382-3cb2-4f51-a171-145e622f87ad; Wed, 11 Jun 2025 12:16:54 +0000 (UTC)
+X-Farcaster-Flow-ID: 59df4382-3cb2-4f51-a171-145e622f87ad
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 11 Jun 2025 12:16:54 +0000
+Received: from dev-dsk-abuehaze-1c-21d23c85.eu-west-1.amazon.com
+ (10.13.244.41) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14; Wed, 11 Jun 2025 12:16:48 +0000
+From: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
+To:
+CC: <abuehaze@amazon.com>, <stable@vger.kernel.org>, kernel test robot
+	<oliver.sang@intel.com>, Hagar Hemdan <hagarhem@amazon.com>, Shaoying Xu
+	<shaoyi@amazon.com>, Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin"
+	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Paolo Bonzini
+	<pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>, Keith Busch <kbusch@kernel.org>, "Christoph
+ Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<virtualization@lists.linux.dev>, <linux-nvme@lists.infradead.org>
+Subject: [PATCH] Revert "block: don't reorder requests in blk_add_rq_to_plug"
+Date: Wed, 11 Jun 2025 12:14:54 +0000
+Message-ID: <20250611121626.7252-1-abuehaze@amazon.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
+ EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-"Benno Lossin" <lossin@kernel.org> writes:
+This reverts commit e70c301faece15b618e54b613b1fd6ece3dd05b4.
 
-> On Wed Jun 11, 2025 at 12:43 PM CEST, Andreas Hindborg wrote:
->> "Benno Lossin" <lossin@kernel.org> writes:
->>
->>> On Tue Jun 10, 2025 at 4:15 PM CEST, Alice Ryhl wrote:
->>>> On Tue, Jun 10, 2025 at 4:10=E2=80=AFPM Andreas Hindborg <a.hindborg@k=
-ernel.org> wrote:
->>>>>
->>>>> "Benno Lossin" <lossin@kernel.org> writes:
->>>>>
->>>>> > On Tue Jun 10, 2025 at 1:30 PM CEST, Andreas Hindborg wrote:
->>>>> >> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
->>>>> >> index 22985b6f6982..0ccef6b5a20a 100644
->>>>> >> --- a/rust/kernel/types.rs
->>>>> >> +++ b/rust/kernel/types.rs
->>>>> >> @@ -21,15 +21,11 @@
->>>>> >>  ///
->>>>> >>  /// # Safety
->>>>> >>  ///
->>>>> >> -/// Implementers must ensure that [`into_foreign`] returns a poin=
-ter which meets the alignment
->>>>> >> -/// requirements of [`PointedTo`].
->>>>> >> -///
->>>>> >> -/// [`into_foreign`]: Self::into_foreign
->>>>> >> -/// [`PointedTo`]: Self::PointedTo
->>>>> >> +/// Implementers must ensure that [`Self::into_foreign`] returns =
-pointers aligned to
->>>>> >> +/// [`Self::FOREIGN_ALIGN`].
->>>>> >>  pub unsafe trait ForeignOwnable: Sized {
->>>>> >> -    /// Type used when the value is foreign-owned. In practical t=
-erms only defines the alignment of
->>>>> >> -    /// the pointer.
->>>>> >> -    type PointedTo;
->>>>> >> +    /// The alignment of pointers returned by `into_foreign`.
->>>>> >> +    const FOREIGN_ALIGN: usize;
->>>>> >>
->>>>> >>      /// Type used to immutably borrow a value that is currently f=
-oreign-owned.
->>>>> >>      type Borrowed<'a>;
->>>>> >> @@ -39,18 +35,20 @@ pub unsafe trait ForeignOwnable: Sized {
->>>>> >>
->>>>> >>      /// Converts a Rust-owned object to a foreign-owned one.
->>>>> >>      ///
->>>>> >> +    /// The foreign representation is a pointer to void. Aside fr=
-om the guarantees listed below,
->>>>> >
->>>>> > I feel like this reads better:
->>>>> >
->>>>> > s/guarantees/ones/
->>>>> >
->>>>> >> +    /// there are no other guarantees for this pointer. For examp=
-le, it might be invalid, dangling
->>>>> >
->>>>> > We should also mention that it could be null. (or is that assumption
->>>>> > wrong?)
->>>>>
->>>>> It is probably not going to be null, but it is allowed to. I can add =
-it.
->>>>>
->>>>> The list does not claim to be exhaustive, and a null pointer is just a
->>>>> special case of an invalid pointer.
->>>>
->>>> We probably should not allow null pointers. If we do, then
->>>> try_from_foreign does not make sense.
->>>
->>> That's a good point. Then let's add that as a safety requirement for the
->>> trait.
->>
->> I disagree. It does not matter for the safety of the trait.
->>
->> From the point of the user, the pointer is opaque and can be any value.
->> In fact, one could do a safe implementation where the returned value is
->> a key into some mapping structure. Probably not super fast, but the user
->> should not care.
->
-> Then we'll have to remove `try_from_foreign`.
+Commit <e70c301faece> ("block: don't reorder requests in
+blk_add_rq_to_plug") reversed how requests are stored in the blk_plug
+list, this had significant impact on bio merging with requests exist on
+the plug list. This impact has been reported in [1] and could easily be
+reproducible using 4k randwrite fio benchmark on an NVME based SSD without
+having any filesystem on the disk.
 
-Oh, I see. OK, it is a safety requirement. Should I just add it to this pat=
-ch?
+My benchmark is:
 
+    fio --time_based --name=benchmark --size=50G --rw=randwrite \
+	--runtime=60 --filename="/dev/nvme1n1" --ioengine=psync \
+	--randrepeat=0 --iodepth=1 --fsync=64 --invalidate=1 \
+	--verify=0 --verify_fatal=0 --blocksize=4k --numjobs=4 \
+	--group_reporting
 
-Best regards,
-Andreas Hindborg
+On 1.9TiB SSD(180K Max IOPS) attached to i3.16xlarge AWS EC2 instance.
 
+Kernel        |  fio (B.W MiB/sec)  | I/O size (iostat)
+--------------+---------------------+--------------------
+6.15.1        |   362               |  2KiB
+6.15.1+revert |   660 (+82%)        |  4KiB
+--------------+---------------------+--------------------
 
+I have run iostat while the fio benchmark was running and was able to
+see that the I/O size seen on the disk is shown as 2KB without this revert
+while it's 4KB with the revert. In the bad case the write bandwidth
+is capped at around 362MiB/sec which almost 2KiB * 180K IOPS so we are
+hitting the SSD Disk IOPS limit which is 180K. After the revert the I/O
+size has been doubled to 4KiB hence the bandwidth has been almost doubled
+as we no longer hit the Disk IOPS limit.
+
+I have done some tracing using bpftrace & bcc and was able to conclude that
+the reason behind the I/O size discrepancy with the revert is that this
+fio benchmark is subimitting each 4k I/O as 2 contiguous 2KB bios.
+
+In the good case each 2 bios are merged in a 4KB request that's then been
+submitted to the disk while in the bad case 2K bios are submitted to the
+disk without merging because blk_attempt_plug_merge() failed to merge
+them as seen below.
+
+**Without the revert**
+
+[12:12:28]
+r::blk_attempt_plug_merge():int:$retval
+         COUNT      EVENT
+         5618       $retval = 1
+         176578     $retval = 0
+
+**With the revert**
+
+[12:11:43]
+r::blk_attempt_plug_merge():int:$retval
+        COUNT      EVENT
+        146684     $retval = 0
+        146686     $retval = 1
+
+In blk_attempt_plug_merge() we are iterating ithrought the plug list
+from head to tail looking for a request with which we can merge the
+most recently submitted bio.
+
+With commit <e70c301faece> ("block: don't reorder requests in
+blk_add_rq_to_plug") the most recent request will be at the tail so
+blk_attempt_plug_merge() will fail because it tries to merge bio with
+the plug list head. In blk_attempt_plug_merge() we don't iterate across
+the whole plug list because as we exit the loop once we fail merging in
+blk_attempt_bio_merge().
+
+In commit <bc490f81731> ("block: change plugging to use a singly linked
+list") the plug list has been changed to single linked list so there's
+no way to iterate the list from tail to head which is the only way to
+mitigate the impact on bio merging if we want to keep commit <e70c301faece>
+("block: don't reorder requests in blk_add_rq_to_plug").
+
+Given that moving plug list to a single linked list was mainly for
+performance reason then let's revert commit <e70c301faece> ("block: don't
+reorder requests in blk_add_rq_to_plug") for now to mitigate the
+reported performance regression.
+
+[1] https://lore.kernel.org/lkml/202412122112.ca47bcec-lkp@intel.com/
+
+Cc: stable@vger.kernel.org      # 6.12
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Reported-by: Hagar  Hemdan <hagarhem@amazon.com>
+Reported-and-bisected-by: Shaoying Xu <shaoyi@amazon.com>
+Signed-off-by: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
+---
+ block/blk-mq.c             | 4 ++--
+ drivers/block/virtio_blk.c | 2 +-
+ drivers/nvme/host/pci.c    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index c2697db59109..28965cac19fb 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1394,7 +1394,7 @@ static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
+ 	 */
+ 	if (!plug->has_elevator && (rq->rq_flags & RQF_SCHED_TAGS))
+ 		plug->has_elevator = true;
+-	rq_list_add_tail(&plug->mq_list, rq);
++	rq_list_add_head(&plug->mq_list, rq);
+ 	plug->rq_count++;
+ }
+ 
+@@ -2846,7 +2846,7 @@ static void blk_mq_dispatch_plug_list(struct blk_plug *plug, bool from_sched)
+ 			rq_list_add_tail(&requeue_list, rq);
+ 			continue;
+ 		}
+-		list_add_tail(&rq->queuelist, &list);
++		list_add(&rq->queuelist, &list);
+ 		depth++;
+ 	} while (!rq_list_empty(&plug->mq_list));
+ 
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 7cffea01d868..7992a171f905 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -513,7 +513,7 @@ static void virtio_queue_rqs(struct rq_list *rqlist)
+ 		vq = this_vq;
+ 
+ 		if (virtblk_prep_rq_batch(req))
+-			rq_list_add_tail(&submit_list, req);
++			rq_list_add_head(&submit_list, req); /* reverse order */
+ 		else
+ 			rq_list_add_tail(&requeue_list, req);
+ 	}
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index f1dd804151b1..5f7da42f9dac 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1026,7 +1026,7 @@ static void nvme_queue_rqs(struct rq_list *rqlist)
+ 		nvmeq = req->mq_hctx->driver_data;
+ 
+ 		if (nvme_prep_rq_batch(nvmeq, req))
+-			rq_list_add_tail(&submit_list, req);
++			rq_list_add_head(&submit_list, req); /* reverse order */
+ 		else
+ 			rq_list_add_tail(&requeue_list, req);
+ 	}
+-- 
+2.47.1
 
 
