@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-682332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E380AD5E94
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA96AD5E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1C31E0BA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C9E1894408
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8A4224B09;
-	Wed, 11 Jun 2025 18:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7472BD015;
+	Wed, 11 Jun 2025 18:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sa+BkxyI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RS/PH5do"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7A71DF970;
-	Wed, 11 Jun 2025 18:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B542280CC8;
+	Wed, 11 Jun 2025 18:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749668010; cv=none; b=A8Ts9zllufVgEAFPgxE3mImhCnZTzRLnyGAStQ7FNZfFa/QjuSzMtZex10FoAj683lQPHEO+cBJ3YWHfzOFOlW60EdpnHdJc1p8zqki2ooUuaXa3sVD9av8+/N09yP4bIPvLCHhA/0k753Cs+qRxqYOa39mIZN9EGngvH41clCk=
+	t=1749668026; cv=none; b=EytjBeuEnsv9SvqHH2UBhua+HyY+X38aPa+RWpaNn0KVWerk9Bnu3lK3ua/WSbW6SgQWJg7OWHT6U3cVNdxR76TjxXgg6A6qhhTvSUFcO9f7hBr7siFGfJcvHIAoR+kLjeUejSvfSgTsE9QCs2i+4sQIYIGwB0Wz7+5DnouOllg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749668010; c=relaxed/simple;
-	bh=K7MhSkF7SxF7ufllQxHFuRdtuvoj4RRa+0bILj4Fgf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j5MKqOvzPGRTxsU1asQI1nec05tsUxfZtsUpbdzUAYv1a/rnbp8Bk3JRj+ivWML19Ww8GY+IZGh2y18NCRnPO/ujRouOxEqxNoQa7aoMyMKy5WsHX6GBvQMbhw45MBXuR/JK+x78G2oKiCLl6cVda8ADBpvDrkR96nc+vc3gZk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sa+BkxyI; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749668009; x=1781204009;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=K7MhSkF7SxF7ufllQxHFuRdtuvoj4RRa+0bILj4Fgf8=;
-  b=Sa+BkxyIvQkkGCI+pgKMS9PvZONrPcaDS8blFLHGICa7XgORdRGrFVcK
-   4keDZZualHmV56SIuUQD6DpIXr9rrVrvfhcj5sYIL3H6qcA9C/6nlBD6B
-   9E3MyCXMQW/p26zajQai9vPSo6oB7rxmBRZo22tOGRpA4xa9kF0FURKqv
-   QOLRMJt2knj4NT8r3eFBFu9LxY1kgBWQKXU2CoIwY0wxJh66SdfmZlLcQ
-   IB8RsoZJINpYgK6tcSMCjSGDSWJnlyvnjlH7w2Pe6qskaYnSR26mgJWKg
-   CQ2RJ2rz1u/33HzWHCBE+SFGgmvqe1Xg3RVDfgZQ/hsaaKyuXRehlHUe7
-   w==;
-X-CSE-ConnectionGUID: B8R67JbYS+yruamsA6hhnA==
-X-CSE-MsgGUID: elz9/HaJSU2lP4g7cH/RRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51922699"
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="51922699"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 11:53:26 -0700
-X-CSE-ConnectionGUID: PYxOXzNfTgqTZiUkuPjeCQ==
-X-CSE-MsgGUID: hRtrYbu6RxGkWIfQ0FGYLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="147159241"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 11:53:26 -0700
-Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 9A45C20B5736;
-	Wed, 11 Jun 2025 11:53:24 -0700 (PDT)
-Message-ID: <d8c64a21-ed4e-4d37-8d4b-9d3a9857b7fd@linux.intel.com>
-Date: Wed, 11 Jun 2025 14:53:23 -0400
+	s=arc-20240116; t=1749668026; c=relaxed/simple;
+	bh=P+1ESEkXYegBu8N1MnlcKmO5OEfHwJk5Zgtvhhg31BM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mf0hStbxLZiBY6lllwpuVc0cWKhHEN6tJbsOry4ACdkWRQTWg44JO654eyNHWmnIujzrBeeV5sqYM1uD/xNe+K3xPQLVaP2IS5Cu62480plq7KNlTa4ccPHjvr4SnIKqXGmZYehQVghaCZ2I8pfVQJ7HvDNWthf9dYpG5FB+NOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RS/PH5do; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B2A2BC4CEEA;
+	Wed, 11 Jun 2025 18:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749668025;
+	bh=P+1ESEkXYegBu8N1MnlcKmO5OEfHwJk5Zgtvhhg31BM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=RS/PH5doDrwbnyZqPxsZcVCPciWeJwpdFNx19lnMVxJc8+CMx3O/3mH93lYPg+GPf
+	 k9V7bdxJ/h8w34iEOEI68zJ658FJotLCXmS2ZTFbp+ycRKAAt3REgxl7LrcTkJFDI2
+	 s/c9dUp46L/brffM8loNI1xIkbm20yyBW0hznNnC52rlzD9w7tWuCjGOfH8fVmR1nb
+	 vwE6IyYTyx2TqAhCS5juSoUHkI4uDdDadOrrMcZfJOtwtX3Li9b2C32H+jlNX3Qbaw
+	 klGAAzT2//QuDzY3UXoqAowZpy1MbmXuO6/mkdTs1xCXYZOiDYU/WaFoeu/jXbB9ra
+	 iojL9mDkQrbvA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3A9C7113E;
+	Wed, 11 Jun 2025 18:53:45 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer
+ Kit support
+Date: Wed, 11 Jun 2025 13:53:36 -0500
+Message-Id: <20250611-p3452-v2-0-fd2679706c63@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [perf] crashing bug in icl_update_topdown_event
-To: Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>
-References: <352f0709-f026-cd45-e60c-60dfd97f73f3@maine.edu>
- <080706b6-ed21-540d-dfae-ae27d130d796@maine.edu>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <080706b6-ed21-540d-dfae-ae27d130d796@maine.edu>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALDQSWgC/y3MSwrCMBSF4a2UOzZy87JNR+5DOghpbC/YpiQSl
+ JK9G6vD/3D4dkg+kk/QNztEnylRWGuIUwNutuvkGY21QaDQqLlkm1RaMNSmxc5ZY4yE+t2iv9P
+ rcG5D7ZnSM8T3wWb+XX/CBbu/kDlDppxwfGy9khyv02LpcXZhgaGU8gGJpFkUmgAAAA==
+X-Change-ID: 20250513-p3452-059708ca9993
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749668025; l=858;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=P+1ESEkXYegBu8N1MnlcKmO5OEfHwJk5Zgtvhhg31BM=;
+ b=oT7g3x+h36TNbm8SOmmg4YmQkQRmE2LXcKu5p/zJBftIRo76QJh2flBI4+/SU21VLwNExTevo
+ iAK2PkA18Z4AWj4Lnl0LVpHQASK6B2s5WG42xys2bLNc3dsPMnwPQzp
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v2:
+- Fix usb power supply to align with downstream power tree
+- Control vdd_hdmi with gpio pa6 and delete unused vdd_hub_3v3 to avoid
+  conflicts
+- Link to v1: https://lore.kernel.org/r/20250608-p3452-v1-0-4c2c1d7e4310@gmail.com
 
+---
+Aaron Kling (2):
+      dt-bindings: arm: tegra: Document Jetson Nano Devkits
+      arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer Kit support
 
-On 2025-06-11 10:57 a.m., Vince Weaver wrote:
-> On Wed, 11 Jun 2025, Vince Weaver wrote:
-> 
->> Oops: general protection fault, maybe for address 0xffff89aeceab400: 0000
->> CPU: 23 UID: 0 PID: 0 Comm: swapper/23
->> Tainted: [W]=WARN
->> Hardware name: Dell Inc. Precision 9660/0VJ762
->> RIP: 0010:native_read_pmc+0x7/0x40
->> Code: cc e8 8d a9 01 00 48 89 03 5b cd cc cc cc cc 0f 1f ...
->> RSP: 000:fffb03100273de8 EFLAGS: 00010046
-> 
-> one additional note that's probably relevant, this is on a hybrid CPU 
-> machine, so CPUs 16-23 are atom cores that don't support topdown.
-> 
-> So the crash is probably because for whatever reason the kernel is trying 
-> to read topdown events on an unsupported core and triggering a GPF.
-> 
+ Documentation/devicetree/bindings/arm/tegra.yaml   |  5 ++
+ arch/arm64/boot/dts/nvidia/Makefile                |  2 +
+ arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts | 59 ++++++++++++++++++++++
+ 3 files changed, 66 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250513-p3452-059708ca9993
 
-It seems an regression from the f9bdf1f95339 ("perf/x86/intel: Avoid
-disable PMU if !cpuc->enabled in sample read").
-The commit merged the intel_pmu_auto_reload_read() and
-intel_pmu_read_topdown_event(). It's possible that a PEBS event 0x0400
-runs on a ATOM CPU. So the PERF_X86_EVENT_AUTO_RELOAD is set for the
-event. The is_topdown_event() also returns true.
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-Does the below patch help?
-It checks the PERF_X86_EVENT_TOPDOWN flag as well before invoking the
-topdown functions.
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index c60b6f199f51..67f80a683234 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2826,7 +2826,8 @@ static void intel_pmu_read_event(struct perf_event
-*event)
- 		 * If the PEBS counters snapshotting is enabled,
- 		 * the topdown event is available in PEBS records.
- 		 */
--		if (is_topdown_event(event) && !is_pebs_counter_event_group(event))
-+		if (is_topdown_count(event) && is_topdown_event(event) &&
-+		    !is_pebs_counter_event_group(event))
- 			static_call(intel_pmu_update_topdown_event)(event, NULL);
- 		else
- 			intel_pmu_drain_pebs_buffer();
-
-
-Thanks,
-Kan
 
 
