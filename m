@@ -1,115 +1,160 @@
-Return-Path: <linux-kernel+bounces-680945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5723AAD4C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CBAAD4C1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A375178F27
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7893A76CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E2F22CBE3;
-	Wed, 11 Jun 2025 06:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAB022CBE3;
+	Wed, 11 Jun 2025 06:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qsvLbKLJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WarEaKmc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPLZWO2k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473114B07A;
-	Wed, 11 Jun 2025 06:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CA41494A8;
+	Wed, 11 Jun 2025 06:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749624807; cv=none; b=tpFldqvYn97mRZf66F4QUosoPUnRCsDWxy9bqUlr/O8jQAzKAAs6hXKaiJOqa2SibqUhZfWhIgA90uWKJXA1gpMhPfTZvJWiARJ7QJM+zNkSEFHDMdrHTDb1IVzviQHbdYPuHoTgXzoi46oV1gkb1Fo+HcjTw+4zO0vTC55KFLc=
+	t=1749624962; cv=none; b=huMdwxmCrxdPdxezzj4m20c6htDGAWoy/R+I+VpRRQPFeF+Xn2htvWoDlhISzgsOUnH35iaLqcXG72PPC785DHobnQB52wJUQqs51fcwMoAeASDPxLmLDjVBwnulQAjVFKCWhshlS3jrAbhRuRVZsK1YvRN2T66Ws26W5g+NWjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749624807; c=relaxed/simple;
-	bh=2brzaQdI5K2BRfT9bqvgdFVDaKnfP2G7GR+inuAUFrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXNxmF1Ohtto4846YRI3HX8N4n+iP2ee6i+xPnUdEHtoQF7B4eE+sYkK7D5xmfrm0GdmpS6MwYSHV2mLYj3Sz2TpEEPcBtsUSxALspGTsTe6BsUJyBLaS4ufJ7FXSZxw0G9+kvwe67mJhuQK3Nktk0ZeDDMZT8YuefoNM7dr4bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qsvLbKLJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WarEaKmc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Jun 2025 08:53:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749624804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y93XEFwBv7AiJZNlzn/5hdQGj+mu2itce8t1/fii/Kw=;
-	b=qsvLbKLJ2GuF71ZMVepjRRclTjiuWvouRH3ObVQhMr1P+rntmHGpg8qiSKZbKe6NWP/edA
-	cLwFTK+gxgyevL+MEKPOHIefD5KpJF42QfGjB9IAk4o4RqgMLZXDeV9t0xmHb60FYiPeeE
-	9R0jlK0VX1Wuw65ITjqY4O9CX76BCtPXVDTfJKRkWzv2fiKhfI36sjIsDf/Ce4gnPIG0Um
-	XkgrUsWLdwQGDCepozKq0V2hObekhxaDeMtFRwWoZG0Yv5FVZQzVQTvORF90pb1VhZIKTE
-	+uutkSOE2Iiz2+e41Q28HY3+TsSzEZck595kyYpUsIE3ReHr/peCJaBO20T9JA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749624804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y93XEFwBv7AiJZNlzn/5hdQGj+mu2itce8t1/fii/Kw=;
-	b=WarEaKmcPCsakYLPxMnJQddxt0TBqAmGwqZZZ2S3/8oPKDzgZz0vxiflIHmopSZ0Hnr9Ui
-	CCYGPiBdTXmKHsAg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Shuah Khan <shuah@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Mark Brown <broonie@kernel.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 09/14] selftests: harness: Move teardown conditional
- into test metadata
-Message-ID: <20250611084548-a6bd87a7-6f35-490a-b613-5718250acf67@linutronix.de>
-References: <20250505-nolibc-kselftest-harness-v4-0-ee4dd5257135@linutronix.de>
- <20250505-nolibc-kselftest-harness-v4-9-ee4dd5257135@linutronix.de>
- <aEfVYQaid5uOHB+Y@nvidia.com>
- <20250610130817-253d2b2d-030a-4eda-91fc-3edb58a4f549@linutronix.de>
- <20250610120902.GB543171@nvidia.com>
- <aEh+DNmbZrqg6rHR@nvidia.com>
+	s=arc-20240116; t=1749624962; c=relaxed/simple;
+	bh=9xu7F9Un18ntXhzfrFPvaeitxgsg5unScCrEL0+lNHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SDmeVEkA11EeZndqcjKIQFsR/eRuEvn+338BvO1yqpNDVceM0/Kd4bBN19QiVKNNmUKLkapFfHmmBgeU+wdosYlva+kXQa8jXoPXa1JoeNgHKlChQQmIcmjJQnnjBGd/JgmKWvqU/GIvVUULiE5XYK6/3096sdfj3sUObns+pQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPLZWO2k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F24C4CEEE;
+	Wed, 11 Jun 2025 06:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749624962;
+	bh=9xu7F9Un18ntXhzfrFPvaeitxgsg5unScCrEL0+lNHI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BPLZWO2kq6hlqgVRNgP+wqFojvW28PmmcDYJyyx4ImqnL72ul43Y3XavbR231dR4F
+	 bUEdmacN+/yktDkLwn0cs/6ZYKn6KTmAdGn8/XBWLiHhAHxqaFip2LqmORnj/l0dGV
+	 6lU76fEeBkhZRNXUFXh8RjWzpYo2LZu0tyC5ZCs2BJKiVgMSN8bZOiRHflz7qAA6nG
+	 bRgjusHNshMmHsMH6fcoOVqkCplM401bRtccJ+9PorVr9WjcnDn1EeAAA2HgBfnU0E
+	 q8NHDD/W4+SMltnCOpu3aLbUhwL2Wzca02wYMsScdM4QFBWD69bNQD8mhDicNhb3EK
+	 ZKMlcKW+REU4A==
+Message-ID: <046810d9-c2f5-47b3-91c7-bdaceb4c6fc0@kernel.org>
+Date: Wed, 11 Jun 2025 08:55:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aEh+DNmbZrqg6rHR@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] ARM: dts: aspeed: Add device tree for Nvidia's
+ GB200 UT3.0b platform BMC
+To: Donald Shannon <donalds@nvidia.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: joel@jms.id.au, andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, etanous@nvidia.com
+References: <20250611013025.2898412-1-donalds@nvidia.com>
+ <20250611013025.2898412-2-donalds@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250611013025.2898412-2-donalds@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 10, 2025 at 11:48:44AM -0700, Nicolin Chen wrote:
-> On Tue, Jun 10, 2025 at 09:09:02AM -0300, Jason Gunthorpe wrote:
-> > On Tue, Jun 10, 2025 at 01:38:22PM +0200, Thomas Weißschuh wrote:
-> > > > ------------------------------------------------------------------
-> > > > #  RUN           iommufd_dirty_tracking.domain_dirty128M_huge.enforce_dirty ...
-> > > > # enforce_dirty: Test terminated unexpectedly by signal 11
-> > 
-> > Sig 11 is weird..
+On 11/06/2025 03:30, Donald Shannon wrote:
+> The GB200NVL UT3.0b BMC is an Aspeed Ast2600 based BMC
+> for Nvidia Blackwell GB200NVL platform.
+> Reference to Ast2600 SOC [1].
+> Reference to Blackwell GB200NVL Platform [2].
 > 
-> > > On another note, the selftest should use the kselftest_harness' ASSERT_*()
-> > > macros instead of plain assert().
-> > 
-> > IIRC the kselftest stuff explodes if you try to use it's assert
-> > functions within a fixture setup/teardown context.
-> > 
-> > I also wasn't able to reproduce this (x86 ubuntu 24 LTS OS) Maybe
-> > it is ARM specific, I think Nicolin is running on ARM..
+> Link: https://www.aspeedtech.com/server_ast2600/ [1]
+> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
 > 
-> Yes. And I was running with 64KB page size. I just quickly retried
-> with 4KB page size (matching x86), and all failed tests pass now.
+> Signed-off-by: Donald Shannon <donalds@nvidia.com>
+> ---
+> Changes v1 -> v2:
+>   - Changed phy-mode to rgmii-id [Lunn]
+>   - Removed redundant max-speed for mac0 [Lunn]
+>   - Fixed typo from gb200nvl to gb200 in Makefile
+> Changes v2 -> v3:
+>   - Fixed whitespace issues [Krzysztof]
+>   - Fixed schema validation issues from my end ( there are still issues with the aspeed dtsi file that are not related to this new dts) [Herring]
+>   - Reordered to follow style guide [Krzysztof]
+>   - Removed redundant status okays
+>   - Changed vcc to vdd for the power gating on the gpio expanders
+> Changes v3 -> v4:
+>   - Added changelog [Krzysztof]
+>   - Added nvidia,gb200-ut30b board binding [Krzysztof]
+>   - Removed unused imports
+>   - Reordered a couple other style guide violations
+>   - Added back in a couple needed "status okay"s
+> ---
+>  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+>  arch/arm/boot/dts/aspeed/Makefile             |    1 +
+>  .../aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts  | 1154 +++++++++++++++++
+>  3 files changed, 1156 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index a3736f134130..420fabf05b24 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
 
-That is very important to know. It should be mentioned in the report.
 
-So I tried to reproduce it. To get even the mmap() in the test to succeed I
-needed to also pass default_hugepagesz=2MiB.
-Also 1GiB of memory was not enough. 30GiB was however.
-But then the tests succeeds fine for me.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-So I'll need reproduction steps.
+You already got this comment, didn't you?
 
-
-Thomas
+Best regards,
+Krzysztof
 
