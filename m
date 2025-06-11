@@ -1,94 +1,120 @@
-Return-Path: <linux-kernel+bounces-680728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E9CAD48F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:53:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144A6AD4900
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28710189D02A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D787F17C2EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B002253F3;
-	Wed, 11 Jun 2025 02:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C48225766;
+	Wed, 11 Jun 2025 02:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b="bCYMm86s"
-Received: from out30-75.freemail.mail.aliyun.com (out30-75.freemail.mail.aliyun.com [115.124.30.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FraPMRfa"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A696B40849
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 02:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B03FEAC6;
+	Wed, 11 Jun 2025 02:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749610395; cv=none; b=HYsLXvHtLiUQY+9avcy820cvC1b3ohnOvmMCO9E0axS3rfXcFB9k3vUDjqLHykFbcIajSMpsM+3hTPI9K0uHuECrZdDFCmYU8sqbXWCVGGg+x8iCloJ7sixQ9ZkNhi87Kl1OC5oU0m2hEU12iUdRRv7kG60NzVypYXLx8nB3Ew0=
+	t=1749610653; cv=none; b=hCrpymwyraJ1oYFrOn/YduIA5UJC8jHfb97v7eFtwq73DDkHXy/bQz9RE/bDsQo3bz4CllWGkYRvi3McU3si30zLmux5z1WBIFgaW7CUi6pjYmlNu0C0HDxqLKqUff3TjteNXmzLMshrs694J5I2rU5EpZbSfYvh9IjJ+woJAs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749610395; c=relaxed/simple;
-	bh=SpQvXJc2e28PuzHGIhgJ36LX63O/nxiN9wXc0leIUp8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sWT6bNnul3QgImLUzlXqw6+spXeSgrvhrs+Qg/N2SkjX42uF6hoJ/fLn103wfdTWdzq3K24bvXi9bAg7E73PLj0u+LcDY5Eo+BYvxWAT61N+CjSEAqrPDmZfb2Ku8daAr5y+q5ds+TUEBgoZoQ15MigC55F3FlAmFAwfZVIyXqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com; spf=pass smtp.mailfrom=aliyun.com; dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b=bCYMm86s; arc=none smtp.client-ip=115.124.30.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliyun.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=aliyun.com; s=s1024;
-	t=1749610389; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=oh5qvsmzf9WNolSWybgX+O4V7CTdQmvoMYjXLIZyyL4=;
-	b=bCYMm86sB1zawm4i7ZS7YMRiwo/T8RMIeVkFLjK5bHbKAO6x6zm+4+EsKOKLRUb601BXEwEe0QWGPaetuA5NUkNiGCn93Y6hTvKcBJVfa4W/Omz848I+UBVIPQ33FAvm+mVKYe1I8LoG3DeV8FP3qrbPSZzK3YAzHY+it/1A4Ic=
-Received: from wdhh6.sugon.cn(mailfrom:wdhh6@aliyun.com fp:SMTPD_---0WdbIugO_1749610387 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Jun 2025 10:53:08 +0800
-From: Chaohai Chen <wdhh6@aliyun.com>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	=linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chaohai Chen <wdhh6@aliyun.com>
-Subject: [PATCH] scsi:core: Delete the boring judgment in sdev_evt_alloc()
-Date: Wed, 11 Jun 2025 10:53:04 +0800
-Message-Id: <20250611025304.206306-1-wdhh6@aliyun.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749610653; c=relaxed/simple;
+	bh=ftbRrev081YY708k/2HkfTQQMsecdpEbMiB+x4kF9Ec=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=EAwdSv1SEwXkR5T3tjxHbShDXb7EdfZmKNKIq8BSHgoTf3F2TmbKL0mZd9SJjbJqm+mpgR9p4Q+KaZAm3wtnrkv/ZwbdgPqUB8Q1padkc0R9+vr1nQkvO52ItDluwdRKH+ochaLabRWedsCh95ij7yFyuFu2opsSWCN7NDTMLTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FraPMRfa; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3292aad800aso4792341fa.0;
+        Tue, 10 Jun 2025 19:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749610650; x=1750215450; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k5/dKPGbzIpZPRhOJIYAIUAY23sahY1p0GkM5Dbi828=;
+        b=FraPMRfasMRsKi8S6wGwXMAlrzUCHdzRWYHzkki/JEbvAhwzAiYAaPqijhz8nLLr6Z
+         nW5bOp8p4PM/OlR8yYK9OHu+VnHnh6GZjUEw9a92ICBPtqmUNKmcZhApD08RpFWDmk0B
+         HHa1h3yJJcrVI5t/rxBUQrnYwP5o0zoX6ete26K0i8hUP2g2MJEnWSn4rqSSYlobBwKo
+         YmmRG94NBsXlYAS5vqhnHhdsILsnDAfFwoTBSGsAyOb65flfJ0DSgT76tAd4zohbv21t
+         x9EB2rzfhY3YizBry4YraKY538gcB4LO3+E2QUzCW4t3Mu5XB5/8ODRoouBgt8dGupPy
+         ZJfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749610650; x=1750215450;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k5/dKPGbzIpZPRhOJIYAIUAY23sahY1p0GkM5Dbi828=;
+        b=dYAXWNkupbR2Dia58D7TU1xuztXeprGrfzXn7hlhdI9TCmzwLGOVGDH+HNTZLyg1Kx
+         ZnYfHWZpWqZE8asJRLO8yr3gx+FDgkMMvBM8WuYrYa5KDNkqt6AENlt0f+rVCOWveZPv
+         3kmQTSZ7VG/qDTaimp/SX28aFdoJabPy1VaOhWoUrnfNR6QEkpChT9+t1dESVfedCQBm
+         jnb3eEUr4Nu/LKbjh/uMMgd1Dt4qJfSznmTUGT5JqO8qGc2Z2ORZYIGaL8016mL9MntL
+         oPPRI23OHY+lBZ6Jvt1EvlMd8zA61TMMQCH9LwDFyJ2Ynp1z+5otZSSIulLEOk3r9q4P
+         g+4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtzzThM4uzw3SrsmE604A6cA6VPXzqH1yVnQbh4BNX5p0BgagL2Yt/ke/rkWNMqQKwAMBNkKLXis3a9nh6@vger.kernel.org, AJvYcCX2MXUY3m9E0DUl64h1nX4HR9/mhundMn9NOnp8YyfUUpkaoR9l6fEuqtQpVoRCjVA1bQLxqCGEoDyegSH0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5P42e8ViyBsL7MK81ViHJWA9p6Swv5znmUXmxP/ZP/z58ANBe
+	XuXYQa6L7VG76OmfpSmqxAWNPwuEVL0LCoXc1EX5zWor1H5lVkeqJR1h0Yq1Si0obsTWgUkQgxU
+	ZlUc2ad+/z+P6uGsSRr0T9tJR5G03/g==
+X-Gm-Gg: ASbGncsBIL44rsd6iSrKpaV1hMDlNfj3/2ZVv8wa7pybbWIL9Jy0Q++sdwGo7YUlIwD
+	k/rzAOrKGzyVk2+GY2uIROUouAdyq7x4JD3qFkjMz6sGGOfq+ez14mdSWKza8GRtvxzQ4NGDJaE
+	CK2ZYZiz+8yHMgQ2q5LJd/3N9EuVNrVKWKvZFNcbDKzl7x023DrHTWjHFkM2aid1B3
+X-Google-Smtp-Source: AGHT+IEFNzBv8fZSBw4aZ1kXDaDWLmj7aUuxHZCWz3lfEOlNJgoEOiB4e0JsaAMYaDjUOLs41dCtCLk2PDK81AZCINc=
+X-Received: by 2002:a05:651c:210f:b0:326:cf84:63c4 with SMTP id
+ 38308e7fff4ca-32b210c657fmr5158651fa.1.1749610649747; Tue, 10 Jun 2025
+ 19:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: John <john.cs.hey@gmail.com>
+Date: Wed, 11 Jun 2025 10:57:17 +0800
+X-Gm-Features: AX0GCFt0cfSVXX65tmSyu3WNgHQ4OBUou2DiUUZrRdo_qtrgZDXAjeLg3uyGav4
+Message-ID: <CAP=Rh=P1fGXNWpy02ZfNaDaRVx-7i5sKzehHxjMn5s7puwTbtQ@mail.gmail.com>
+Subject: [Bug] INFO: task hung in bdev_getblk in Linux kernel v6.15
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Delte the boring judgment.
+Dear Linux Kernel Maintainers,
 
-Signed-off-by: Chaohai Chen <wdhh6@aliyun.com>
----
- drivers/scsi/scsi_lib.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+I hope this message finds you well.
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 144c72f0737a..7e7d5a04cfdf 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -2683,21 +2683,6 @@ struct scsi_event *sdev_evt_alloc(enum scsi_device_event evt_type,
- 	evt->evt_type = evt_type;
- 	INIT_LIST_HEAD(&evt->node);
- 
--	/* evt_type-specific initialization, if any */
--	switch (evt_type) {
--	case SDEV_EVT_MEDIA_CHANGE:
--	case SDEV_EVT_INQUIRY_CHANGE_REPORTED:
--	case SDEV_EVT_CAPACITY_CHANGE_REPORTED:
--	case SDEV_EVT_SOFT_THRESHOLD_REACHED_REPORTED:
--	case SDEV_EVT_MODE_PARAMETER_CHANGE_REPORTED:
--	case SDEV_EVT_LUN_CHANGE_REPORTED:
--	case SDEV_EVT_ALUA_STATE_CHANGE_REPORTED:
--	case SDEV_EVT_POWER_ON_RESET_OCCURRED:
--	default:
--		/* do nothing */
--		break;
--	}
--
- 	return evt;
- }
- EXPORT_SYMBOL_GPL(sdev_evt_alloc);
--- 
-2.34.1
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.15.
 
+Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
+
+Bug Location:
+
+Bug report: https://hastebin.com/share/xafazazeve.yaml
+
+Complete log: https://hastebin.com/share/wopivucivi.perl
+
+Entire kernel config:  https://hastebin.com/share/ajowibazak.ini
+
+Root Cause Analysis:
+
+The bug originates from bdev_getblk() in fs/buffer.c, where an invalid
+1024-byte block size is requested on a device with a 2048-byte logical
+block size. The function does not enforce block size consistency,
+leading to downstream allocation failure in
+ext4_reserve_inode_write(). This failure is not gracefully handled,
+resulting in a persistent hang of the writeback worker thread, I/O
+errors, and filesystem instability.
+
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
+
+Best regards,
+John
 
