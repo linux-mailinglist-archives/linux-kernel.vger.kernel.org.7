@@ -1,174 +1,113 @@
-Return-Path: <linux-kernel+bounces-682161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBF5AD5C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:40:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C42AD5C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D1B16E4F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC11C174D3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A32C2036EC;
-	Wed, 11 Jun 2025 16:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDAC21D001;
+	Wed, 11 Jun 2025 16:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="NguFvGIf"
-Received: from mx4.sberdevices.ru (mx4.sberdevices.ru [176.109.96.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0501C8632;
-	Wed, 11 Jun 2025 16:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.109.96.46
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GoxKTaUy"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D8820F078;
+	Wed, 11 Jun 2025 16:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749660006; cv=none; b=HNjaWCB4p6eL0yGidCS3l9RMb/6iiPDh0BJznaiethrL/ASVtXLNjxZVBbK8gHx4Xvg1a6qcmpypohrfpQ08fRg4n27IdCdeA9GfL1q1XbrBUJ8A4P0Vavs4cz9FK3wCoBiKMG90LTnrqX0jDO0IWfwBD5Mujds9WSTNt7v6Wh4=
+	t=1749659535; cv=none; b=Nv6oDSCqT4LQDCOnqy3JrbDlb7O3ZJf2tvKURCjyZJIhnxge1brcVJRCvbPhwdJKmDKroz9IHDEOvzMItgEEnvjT6RwzaIKMEoXtVBpevgBaWuMvuXi+XIkXkkVmMNepbn0F/iglE6mzzbCHOdxcR7PNMpalPbgGcPgwG0TYCbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749660006; c=relaxed/simple;
-	bh=jdwCrklGp8+sWWDiW7jW7zE4A5+X8nE4ppEx6ZGNNcQ=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=GJ99kJrAIFA1UF9UZgTXKHygFmgHfgnRgVJv4iN6v12+ygOAR8n/2A7aolnBxazO0WNtNLciHg6Fdmuch6xlbmi41z+1Z61roqE2N5E/fg+XRsXsC/yaTmI7RSczg6OPkPssiMHyWrMhhN2kPKz6ytLVNudhWfl+GSypRqUfARA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=NguFvGIf; arc=none smtp.client-ip=176.109.96.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-antispam-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx4.sberdevices.ru (Postfix) with ESMTP id B3E9640009;
-	Wed, 11 Jun 2025 19:31:54 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru B3E9640009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=post; t=1749659514;
-	bh=OwEpP8eYceRJZneNAm7UT6qBSzcUQ7h5XJGbYSL4PbI=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
-	b=NguFvGIfgegpZOnhKE9yZL+GHEuLnqg6oAHmkx5RDaYqPf6Oz5rd86f2rJHQd+hIu
-	 +uOm06QgwQoB8xltwdZcG1xpkFxRrXq63YPuV5UpawFozgn54ipT98ELONOfqk6zgY
-	 BSbnCe452e0IXEHypKOgkUs9vz6PVHcV+OKl7RGUcOvKD24m0eOvkaxmOydnE6epon
-	 0UJLmU6g/7E8Xge6QbH6vpXPNWRcFnbcO1/ySfD8GYMg1H7RWZhbO+BQ0yDMmlwdLt
-	 04Qyn5gBl9SgpBSDFFaiDzPkYkAErbJEc1eMzBYaF1QIn8Sm7s6u5BoWgsn6P8axIR
-	 qZjd9ztI+lfHg==
-Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
-	by mx4.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 11 Jun 2025 19:31:54 +0300 (MSK)
-Message-ID: <4e1578fb-c81d-fe9c-1aa1-26b6016866eb@salutedevices.com>
-Date: Wed, 11 Jun 2025 19:31:49 +0300
+	s=arc-20240116; t=1749659535; c=relaxed/simple;
+	bh=uHw15SEfgJhjk0plrbNOxwEmIEjDnYKRuTeithPcYq8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iv6eu635zCPT6CwLyocLWjYjw2oqv0pm40tX2sW579jOYSK5C1hXmtUBlLjHcjlwBm60PTLYCNN8kTOcQvwRVXFpi5yB+BmvoEvWIR2aV9CV2RfpehNa2CERmtdo1UyzeTchXk1fHRLgo+3UNCalL3CwnhfS+s4peZJupvEIzdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GoxKTaUy; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=lz
+	037P2kaVzqsQ34A3LWfibKKWlS33MGjH64LQLCkDA=; b=GoxKTaUyI0TGDHRVjK
+	FO5MnXiZN9U+cfNONyFVWapz6R2YTiLPpMe99tlriVS5PDO25mB4XKivEJ+0ilox
+	VB8tfhQVN5IaSg/wtyF5z8nipX46i2t1yH7u6aWRQBIkjqAR8Ddp1s94YPFERIqB
+	DpM8SBX3vWGxIrSNjiHxUc8dc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCnJjB8r0lofqUXHg--.21328S2;
+	Thu, 12 Jun 2025 00:31:57 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	bhelgaas@google.com,
+	mani@kernel.org,
+	kwilczynski@kernel.org
+Cc: robh@kernel.org,
+	jingoohan1@gmail.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH 08/13] PCI: dwc: Refactor rockchip to use dw_pcie_clear_and_set_dword()
+Date: Thu, 12 Jun 2025 00:31:54 +0800
+Message-Id: <20250611163154.860976-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Content-Language: en-US
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <oxffffaa@gmail.com>, <kernel@salutedevices.com>,
-	<linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Subject: [PATCH v1] Bluetooth: hci_sync: fix double free in
- 'hci_discovery_filter_clear()'
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-exch-cas-a-m2.sberdevices.ru (172.24.201.210) To
- p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Info: LuaCore: 62 0.3.62 e2af3448995f5f8a7fe71abf21bb23519d0f38c3, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 194026 [Jun 11 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/11 14:54:00 #27559328
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+X-CM-TRANSID:_____wCnJjB8r0lofqUXHg--.21328S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tw1rGr4Dtr1DJF1ruw18Grg_yoW8CrW5p3
+	y3Aa4akF4rJw4rua1kAa97ZF13ta9xAFW7JFZ3Gw1SqFy2k34DKF1YkFyaqF1xGr42vF1a
+	93yUt3yUZa13AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEnmiiUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWw1po2hJpj-hUQABsV
 
-Function 'hci_discovery_filter_clear()' frees 'uuids' array and then
-sets it to NULL. There is a tiny chance of the following race:
+Rockchip PCIe driver implements L0s capability enablement through
+explicit register read-modify-write. The current approach reads the
+LNKCAP register, modifies the ASPM_L0S bit, then writes back the
+value with DBI write protection handling.
 
-'hci_cmd_sync_work()'
+Refactor ASPM capability configuration using
+dw_pcie_clear_and_set_dword(). The helper combines bit manipulation with
+DBI protection in a single call, replacing three-step manual operations.
+This simplifies the capability setup flow and reduces code complexity.
 
- 'update_passive_scan_sync()'
+Adopting the standard helper improves maintainability by eliminating
+local variables and explicit bitwise operations. The change also ensures
+consistent handling of DBI write protection across capability modification
+functions.
 
-   'hci_update_passive_scan_sync()'
-
-     'hci_discovery_filter_clear()'
-       kfree(uuids);
-
-       <-------------------------preempted-------------------------------->
-                                           'start_service_discovery()'
-
-                                             'hci_discovery_filter_clear()'
-                                               kfree(uuids); // DOUBLE FREE
-
-       <-------------------------preempted-------------------------------->
-
-      uuids = NULL;
-
-To fix it let's add locking around call  'hci_update_passive_scan_sync()' in
-'update_passive_scan_sync()'. Otherwise the following backtrace fires:
-
-[ ] ------------[ cut here ]------------
-[ ] kernel BUG at mm/slub.c:547!
-[ ] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-[ ] CPU: 3 UID: 0 PID: 246 Comm: bluetoothd Tainted: G O 6.12.19-sdkernel #1
-[ ] Tainted: [O]=OOT_MODULE
-[ ] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ ] pc : __slab_free+0xf8/0x348
-[ ] lr : __slab_free+0x48/0x348
-...
-[ ] Call trace:
-[ ]  __slab_free+0xf8/0x348
-[ ]  kfree+0x164/0x27c
-[ ]  start_service_discovery+0x1d0/0x2c0
-[ ]  hci_sock_sendmsg+0x518/0x924
-[ ]  __sock_sendmsg+0x54/0x60
-[ ]  sock_write_iter+0x98/0xf8
-[ ]  do_iter_readv_writev+0xe4/0x1c8
-[ ]  vfs_writev+0x128/0x2b0
-[ ]  do_writev+0xfc/0x118
-[ ]  __arm64_sys_writev+0x20/0x2c
-[ ]  invoke_syscall+0x68/0xf0
-[ ]  el0_svc_common.constprop.0+0x40/0xe0
-[ ]  do_el0_svc+0x1c/0x28
-[ ]  el0_svc+0x30/0xd0
-[ ]  el0t_64_sync_handler+0x100/0x12c
-[ ]  el0t_64_sync+0x194/0x198
-[ ] Code: 8b0002e6 eb17031f 54fffbe1 d503201f (d4210000) 
-[ ] ---[ end trace 0000000000000000 ]---
-
-Cc: stable@vger.kernel.org
-Fixes: ad383c2c65a5 ("Bluetooth: hci_sync: Enable advertising when LL privacy is enabled")
-Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- net/bluetooth/hci_sync.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index e56b1cbedab90..61a9922eb820d 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -3167,7 +3167,15 @@ int hci_update_scan(struct hci_dev *hdev)
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index 93171a392879..e6bd9c54b164 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -194,15 +194,14 @@ static bool rockchip_pcie_link_up(struct dw_pcie *pci)
  
- static int update_passive_scan_sync(struct hci_dev *hdev, void *data)
+ static void rockchip_pcie_enable_l0s(struct dw_pcie *pci)
  {
--	return hci_update_passive_scan_sync(hdev);
-+	int ret;
-+
-+	hci_dev_lock(hdev);
-+
-+	ret = hci_update_passive_scan_sync(hdev);
-+
-+	hci_dev_unlock(hdev);
-+
-+	return ret;
- }
+-	u32 cap, lnkcap;
++	u32 cap;
  
- int hci_update_passive_scan(struct hci_dev *hdev)
+ 	/* Enable L0S capability for all SoCs */
+ 	cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+ 	if (cap) {
+-		lnkcap = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
+-		lnkcap |= PCI_EXP_LNKCAP_ASPM_L0S;
+ 		dw_pcie_dbi_ro_wr_en(pci);
+-		dw_pcie_writel_dbi(pci, cap + PCI_EXP_LNKCAP, lnkcap);
++		dw_pcie_clear_and_set_dword(pci, cap + PCI_EXP_LNKCAP,
++					    0, PCI_EXP_LNKCAP_ASPM_L0S);
+ 		dw_pcie_dbi_ro_wr_dis(pci);
+ 	}
+ }
 -- 
-2.30.1
+2.25.1
 
 
