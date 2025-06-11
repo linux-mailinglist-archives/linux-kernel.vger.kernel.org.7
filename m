@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-681690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C052AAD55F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:50:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4545AD55FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2097A81D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:49:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B76497A4F4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC8328314B;
-	Wed, 11 Jun 2025 12:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Wobpye/t"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EF6283CA3;
+	Wed, 11 Jun 2025 12:52:44 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6022113635E;
-	Wed, 11 Jun 2025 12:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3031A283142
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749646245; cv=none; b=P2yLRvxIlLD+hHGfpFHiYFSU6uyPFyl4368NBJpa7oieBu0alsjY+VJs0UpYxYQ+vWOWX5iWe2itM0QjTTLL9O8tIjt1BRpZQVH856YDPwehKuvkV/TqAV4nf6k5xzj4Y38l2mz2k4YFPsgMH2U4y8jVkAJLJLshCV0GuV/7NBg=
+	t=1749646363; cv=none; b=A8oRWsuzyqio4KKyDckC48kN6rOqNotddFiQzg/jINa9UN9RXpMFO1u22nOs0wBCV5orL8BeqNNGVU9hMdVqEkYztdxtx31NynZwhsCaH1Gy0AnysfjPgZlG5YV8Pa/L33ECg0jDzAqxEGapOwr+ZO5j7F/vOGJ4Jonw/4LOjOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749646245; c=relaxed/simple;
-	bh=a4Pe6Hrx1bmJT+ddJQdiMkCsR84XUPzU0+wqpELBmE4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZYhUGBCK5SG+Gko2oO5b3CIFGfPzBfZI6YuYjbXEQpKLcA6e8KYCVEf704I9wMkc3RpdJImoRLSq/d6wL07hf+5BL0GeMioKqDUGSN8zGFLO5K1yQ8N5xotIVo4JRifZhagdQFnjUM0kMvS1jQXg2dmvCbQFVcQ9/Xky9XPV0cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Wobpye/t; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DE47941ECC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1749646237; bh=a4Pe6Hrx1bmJT+ddJQdiMkCsR84XUPzU0+wqpELBmE4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Wobpye/tfQSWG2Ji0OTS32YWOvaq1VmgIsYRUYO4x8ntQ+kTDgq0vaPHrnttixcAV
-	 +yhxVyxLsO4XKAQfd+299rOQt+la03SDy9qA1TvmxZ/D7L/2nmpAT/xdw170imnbLl
-	 MyB1eMCswaUXq7W6OSg94oP/UikzkV/YOqP0a3nXjNCGiVMc+gBR0m0zpVsBf5srPB
-	 eEIkdBHX1a1Iwklq3ZvKL5MxRenFK1Lj+E/sK3QUO0DCZjFK8jqUqmfY+CkkKJaR04
-	 awqhKgF1hh/ncaoo0+pTaBusd4iVi83Lc1hmu7h9XfPotU23S3sffLwE/FszJaeU0F
-	 i9rojaGKfMgfw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id DE47941ECC;
-	Wed, 11 Jun 2025 12:50:36 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Hanne-Lotta =?utf-8?B?TcOkZW5ww6TDpA==?= <hannelotta@gmail.com>, Bagas
- Sanjaya
- <bagasdotme@gmail.com>, mchehab@kernel.org, ribalda@chromium.org,
- hverkuil@xs4all.nl, hljunggr@cisco.com, dave.jiang@intel.com,
- jgg@ziepe.ca, saeedm@nvidia.com, Jonathan.Cameron@huawei.com,
- ilpo.jarvinen@linux.intel.com, mario.limonciello@amd.com, W_Armin@gmx.de,
- mpearson-lenovo@squebb.ca, skhan@linuxfoundation.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2 1/4] docs: Improve grammar in Userspace API/DVB API
-In-Reply-To: <5dad612b-495b-4f1c-82ff-e8ed4ef34c07@gmail.com>
-References: <20250522115255.137450-1-hannelotta@gmail.com>
- <aDAOhl7gKhkcTEjk@archie.me>
- <5dad612b-495b-4f1c-82ff-e8ed4ef34c07@gmail.com>
-Date: Wed, 11 Jun 2025 06:50:36 -0600
-Message-ID: <87v7p230ir.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1749646363; c=relaxed/simple;
+	bh=p8EprR3dFzs7gZuXiSfEzwqS/zZdqhzcIe+QokfK/ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gkIpFO336A8nDzGjLB1UMR7vULdKl/lW7Dj7xlfVZS/eNefb5+pMZvPLgPE2kGnp4IN0rgj44wchtU/O+xaN45Mm9fd+lIB0MiMO9DlR9AWFvkKPIp/GiYJfWuBuOFZ8huR0/k9ZI1uXtbtdPsoqvTDe/gDtnFfx06yovnmoLf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bHQSM0KvHzRk2j;
+	Wed, 11 Jun 2025 20:48:19 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 549E11402ED;
+	Wed, 11 Jun 2025 20:52:32 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Jun 2025 20:52:32 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Jun 2025 20:52:31 +0800
+Message-ID: <426246e9-ccfe-40a7-81b6-a15ac1ee32e9@huawei.com>
+Date: Wed, 11 Jun 2025 20:52:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-dp 10/10] drm/hisilicon/hibmc: fix no showing problem
+ with loading hibmc manually
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
+References: <20250530095432.1206966-1-shiyongbang@huawei.com>
+ <20250530095432.1206966-11-shiyongbang@huawei.com>
+ <czs4ingsrnuaqlbn3f7ko65pzhydcuuiglyh5ksrpfcz5zur74@vzgzyjkcae63>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <czs4ingsrnuaqlbn3f7ko65pzhydcuuiglyh5ksrpfcz5zur74@vzgzyjkcae63>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-Hanne-Lotta M=C3=A4enp=C3=A4=C3=A4 <hannelotta@gmail.com> writes:
 
-> On 5/23/25 08:58, Bagas Sanjaya wrote:
-> What is the best way to send an update on this patch, now that patches=20
-> 3/4 and 4/4 have been applied, but 1/4 and 2/4 have not been applied?
->
-> Do I send v3 for the first two only?
+> On Fri, May 30, 2025 at 05:54:32PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> When using command rmmod and insmod, there is no showing in second time
+>> insmoding. Because DP controller won't send HPD signals, if connection
+>> doesn't change or controller isn't reset. So add reset before unreset
+>> in hibmc_dp_hw_init().
+>>
+>> Fixes: 94ee73ee3020 ("drm/hisilicon/hibmc: add dp hw moduel in hibmc driver")
+> Technically... yes and no. The function was written this way in that
+> commit, however HPD signals were not handled until the latter commit.
 
-Yes, it has been long enough that you resend the two unapplied patches.
-They are media-subsystem patches, so the media folks need to pick them
-up.
+Alright, can I put 2 commits here?
 
-Thanks,
 
-jon
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> index 4f93d60b932b..e1b9589ce639 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> @@ -172,13 +172,15 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+>>   	dp_dev->link.cap.lanes = 0x2;
+>>   	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
+>>   
+>> -	/* hdcp data */
+>> -	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
+>>   	/* int init */
+>>   	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
+>>   	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
+>>   	/* rst */
+>> +	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
+>> +	usleep_range(30, 50);
+>>   	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
+>> +	/* hdcp data */
+>> +	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
+> There are two independent changes here. Split them into two commits.
+
+Okay!
+
+
+>>   	/* clock enable */
+>>   	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
+>>   
+>> -- 
+>> 2.33.0
+>>
 
