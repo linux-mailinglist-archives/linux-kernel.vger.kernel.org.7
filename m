@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-681975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E1CAD59C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:11:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73630AD59F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5EB97AD28C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE7F016EEC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE36E1A317A;
-	Wed, 11 Jun 2025 15:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE481C6FFB;
+	Wed, 11 Jun 2025 15:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GpyO7Hvf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cromLVAR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BEF1A0BC5
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462CA1AAA11;
+	Wed, 11 Jun 2025 15:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654654; cv=none; b=iZI6C3HTviq+Zq3k/QYiTH5PfL3w3/gRtNnUgBUpAptmTWasgZb8XWD3C5ZWO0KDrhNMpCkxeiKCfVr05UYgv8dUiRvOh0Qh7KoboJeMm7sAab5Ihb7bY54GDTWkiSagceXrlENVerHN81HuWnNRDVKbmKjnXLzZs5f4bduJZ48=
+	t=1749654662; cv=none; b=tnKrTHaIbG+zf2Q4JUItCezoqUZeu+u9aPXxI/xIdM3dsLwqGWgFBQZreC1mhvmWNyB7y9IhF2nFKcINH9po4RU8GobrV9wGSAOcBhc+7ZiACEi81gSDzCzTdbtYKELoBowjDzVDl7jOC1r/6KOEIGamSHkbXLM+Tkdokvqa6ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654654; c=relaxed/simple;
-	bh=Pjstu6Va4x0vKiYuuaFhFC/BQAVykOlzMH43emz9AVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQ6rZrnN0Fzp4cJ73rwO+N2IJh5NXwNdbEG6c8jqGAQ0jMMfRAkNL7ggU3QPWH4l3DfFOgFQqFH+yb+JPya7om+Izi63EJD0H8BJsH2SObGnDZiPmo3VCKngaZ1jAkJjR7cSrG1cT16OuPLnNZ+GCVkc966/00lfa5vbTOU0mTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GpyO7Hvf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B9DEHg002500
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:10:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EOeuX/aj+lp4fPVoOPmoTV5VlHflQlkwIQ9s7HfwMKc=; b=GpyO7HvfCbutA4xN
-	BlStcmsVEMscAq+KcBwSyTyJ0lWvsJFQ2dDFb7jZRoouAJqwPP/tlEz0ucA/KFEW
-	30mLBVPa1IVZkBqubj6QcQwjgm3Q85joxB4VQMEkmjvaI7Roy68Q0uowMOgOxwKu
-	gxpzW+rHqvJwl/UE/PSEnNOGWeyD2RHjXw7EmxaI8IqnspJd8f3OhZmInvcM4s9l
-	9xjKB8E0DEDVhIK4YwDhbxM2vNcNpHThLjOn18qhtmRjrcGFO2UYXKX5BnNGr7Fx
-	t8OoNXJX+1FKYaEs/dNUFGy8TJ+NirKLegahCNveoTuMs2GXn8ROKh4bPLxH/nJB
-	g/F50Q==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dgxwnhf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:10:51 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d09b74dc4bso3996985a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:10:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749654650; x=1750259450;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOeuX/aj+lp4fPVoOPmoTV5VlHflQlkwIQ9s7HfwMKc=;
-        b=Ysv2dlH0nk3h43ZxUgkGnoeJ2r3WOCihFWcCX8zS3i3g314ET8ZapqSXHW9gp0C7NQ
-         zATUflRmfw//lWDiW/2MynOYQhXHmmKlC0S+DjFGtTK3l53kTh4IqqCj5+Jr0/jzPjM+
-         jpMbMli85RdM6fqiInJZp+cfcihArMTw0U9+WiajRJTZWcw0Gb3yq3gWP4I5wM1APAe1
-         dKTgwygpNfCX+ulAJAy03ijNr0IAafhdpsjTE0ikmVqrajUjzxNpqKnt443J3/1YRzY5
-         nnQirn/tsNVttcHzm4q82g6mCjr+at7Wo5xDZopakMK0EvDw2CDcf8MiulDVAz32YlFf
-         rOoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQxSQEnwBTdJrFJeBPBM/PIzorVi7TtqkyJ0QLqiBGiBKu5T1Tb2LU1HX+qIz5hx0lmNkAvLcNAzt6nGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6XlDWbox+6pniP7NqdFLhjhlV7Wuj/Z7loQE2uiHVL9mjDAoT
-	mcvUqy++qA+go8gGnwubk0RCXRLOln04NOgBAp249po9k357jKfONHsrYNAq5cDcyOK0BAP2nTy
-	Hvy5+UQWxmj43RM7Q4FHLstV2DXrV9D/idB2Hw6KwCcHk8BDhom2aRGDVrh3m7tchnaE=
-X-Gm-Gg: ASbGncuFSeo958MpVHopg1hH/wyN9imeNhVzOgflaTqp1D0V4qYfTZFy6sjLIDmIPNm
-	9Q2bA54CwNStM1a8GEbr5o6Xlgv3TN4JlBxKwjfH0wRWJQHhn4ovzkS19D4goW3Kgveb/GbJizx
-	AYi0Y7buI6vEA7f16rt35pe4D6hsk+DiQtHzLslkzkrba/HU2dY85knrUWNf0tyca5ajVAm812U
-	OMd4GSLVCoGSuhRvC2KR0Gpf9oyFPZgBehLW/RsnbRzeuLZAq+NYDbwcn3uBntXoIk53uDG7H7j
-	FDNJK1nDJSHrX54qHnO5p05zu9Evhlb2Zs7Q8EHc4wgY/jQ1SlheDqUSNP7hgwBHrs4fGlG7ivm
-	wvtY=
-X-Received: by 2002:a05:620a:2697:b0:7d0:a01f:fb88 with SMTP id af79cd13be357-7d3a87d5fb6mr205962985a.3.1749654650516;
-        Wed, 11 Jun 2025 08:10:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG4KmUm+Si2jLdnAkaak2AEgUiMJQSFe46yLWft0cIeucvk47Dt59m3jFWcF+h+kwotiqXkCQ==
-X-Received: by 2002:a05:620a:2697:b0:7d0:a01f:fb88 with SMTP id af79cd13be357-7d3a87d5fb6mr205960685a.3.1749654650017;
-        Wed, 11 Jun 2025 08:10:50 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc38d0bsm897828066b.120.2025.06.11.08.10.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 08:10:49 -0700 (PDT)
-Message-ID: <18fe2e1e-7bdd-4abc-9342-7644f94af4af@oss.qualcomm.com>
-Date: Wed, 11 Jun 2025 17:10:47 +0200
+	s=arc-20240116; t=1749654662; c=relaxed/simple;
+	bh=0eNt8o6GRVqaVnWen5UM1J8DZaaLXXFgahGl8ogtMRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHbbpxes2MGk/+dKTUhgdsVITAT702SLp+P3O9YMlXmzspw+5vqyUS0BgOhs42bPVWAKRRAHUce00bBXwGNuGk0jRwl5DL90rCSkvJNAtHgY/qV8zPdNSW7itSumaSQ7pZ4Gx+ta/yf24XkmpBmJpjq4g3QBPBcQeayNOsqY/+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cromLVAR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F4FC4CEEA;
+	Wed, 11 Jun 2025 15:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749654661;
+	bh=0eNt8o6GRVqaVnWen5UM1J8DZaaLXXFgahGl8ogtMRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cromLVAR1qxFyMoCOKE5oGSPqzKSaqGn+9NBMQA6qTg7T8pHuwQCCLno78vgsAVAh
+	 QZ7M9OtKBrMG173XinNt65nBlYcCWJIyxPNaamu9jFAvKKIsNVjVLt08GylSjxE3Bx
+	 q4ZCxABFuiq7xIMRr3m925QHFVjmL5/tQZoMxdFyTh9sCGyZcEuEGk9BQE0N+FKQqQ
+	 avQMmF8k8JKWsZ0rhi7yKaNz/0H0qL7TlU0Xmbu8mVkzxdsP3pGaawrJJd3AfYbnvp
+	 FYbBNPvqKutjrjG6nfa/mZ4jIeMi5hmfvIiYXd2G3aIYtmMjU9q/AnO94D1O+vRsIi
+	 DXEZJj5pjwSNg==
+Date: Wed, 11 Jun 2025 10:10:59 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: sm8450: Enable retention for usb controller
+ gdsc
+Message-ID: <ufhknluapvb24r7p6sykxmj34gtjp6s4mejitj7d67uf6hobdq@4braukg5loxr>
+References: <20250610092253.2998351-1-krishna.kurapati@oss.qualcomm.com>
+ <sy33khkakjxi66amjbuugnypjnegvd4z4dyfzvrp72qkuv3roh@dxaymdc6cfad>
+ <9b8ad81f-28e1-471e-a8fc-9e64578aaf4f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: x1e80100-hp-x14: remove unused
- i2c buses
-To: jens.glathe@oldschoolsolutions.biz,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250610-hp-x14-v3-0-35d5b50efae0@oldschoolsolutions.biz>
- <20250610-hp-x14-v3-2-35d5b50efae0@oldschoolsolutions.biz>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250610-hp-x14-v3-2-35d5b50efae0@oldschoolsolutions.biz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 1wIvnvg-5YvEP084G1wKLiO_ikWkqRjP
-X-Authority-Analysis: v=2.4 cv=HMbDFptv c=1 sm=1 tr=0 ts=68499c7b cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gxl3bz0cAAAA:8 a=EUspDBNiAAAA:8
- a=vdNxfUKwvXZ3YRcdAeoA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
- a=kiRiLd-pWN9FGgpmzFdl:22
-X-Proofpoint-ORIG-GUID: 1wIvnvg-5YvEP084G1wKLiO_ikWkqRjP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEyNyBTYWx0ZWRfXyHa7Rv8YcgTY
- CB8ZYXfGZsOeOX/foQMwVSrAkCnMjv52sO0zdSDacVnZLV2LqCMq0uD3tPL1YyzS5fQdFza0jb8
- zagMmJ9hD709CKmATQtiWjEP1i4JgAQ+csn3Qcqk8kgUVoINrAfhnVDgWESqtmrm7zJDQlS97yq
- f9o7Olkg8e+F21Ih9hCzDkdW8d5ncWAqbc9db+fcj9gnrjq/RsUuZTbWl1S7Np0XdekCIcEmt/w
- uss9qNkr337laec3T2VzEsdWARXz85xb1hkC/z+roYjta0X26tp+8dpVcVUKg2fNUD0TSGPNXIJ
- HgO/zhA5L+1bUIPAfp3xa4DiHP6T+EswMeHpb0LXQZs6/KBZVPDZgV6Bz3vloYJBs3e+38bB5vw
- f2Y7l0AzSJKkPH01D9PFIoMQcE8sVr2NXojoknGAzC4tAOnpU0GDgQkizqwDG8ZljnJS631j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=737 priorityscore=1501 impostorscore=0
- suspectscore=0 malwarescore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506110127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b8ad81f-28e1-471e-a8fc-9e64578aaf4f@oss.qualcomm.com>
 
-On 6/10/25 7:25 PM, Jens Glathe via B4 Relay wrote:
-> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+On Wed, Jun 11, 2025 at 10:35:36AM +0530, Krishna Kurapati wrote:
 > 
-> At least from Linux, these buses are not in use. Remove them from the dt.
 > 
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> ---
+> On 6/11/2025 9:12 AM, Bjorn Andersson wrote:
+> > On Tue, Jun 10, 2025 at 02:52:53PM +0530, Krishna Kurapati wrote:
+> > > When USB controller enters runtime suspend while operating in host
+> > > mode, then wakeup because of cable disconnect or a button press of
+> > > a headset causes the following kind of errors:
+> > > 
+> > > Error after button press on a connected headset :
+> > > 
+> > > [  355.309260] usb 1-1: reset full-speed USB device number 2 using xhci-hcd
+> > > [  355.725844] usb 1-1: device not accepting address 2, error -108
+> > > 
+> > > Error on removal of headset device from usb port:
+> > > 
+> > > [  157.563136] arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402
+> > > ,iova=0xd65504710, fsynr=0x100011, cbfrsynra=0x0, cb=6
+> > > [  157.574842] arm-smmu 15000000.iommu: FSR    = 00000402 [Format=2 TF],
+> > > SID=0x0
+> > > [  157.582181] arm-smmu 15000000.iommu: FSYNR0 = 00100011 [S1CBNDX=16 WNR
+> > > PLVL=1]
+> > > [  157.589610] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
+> > > [  157.596197] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
+> > > 
+> > > Enabling retention on usb controller GDSC fixes the above issues.
+> > > 
+> > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > ---
+> > > 
+> > > Note:
+> > > The above mentioned issues pop up after I enabled runtime suspend after
+> > > applying [1].
+> > > [1]: https://lore.kernel.org/all/20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com/
+> > > 
+> > 
+> > It makes sense that the BCR issue appears after the flattening of dwc3,
+> > but why would the suspend issue pop up?
+> > 
+> > The change matches what we do on many other platforms, but I've been
+> > hoping we either could drop the retention or clearly document why it's
+> > needed - so that we know if this should be on all or none of the SoCs.
+> > 
+> 
+> Sure, will try to root cause why we are seeing issues during suspend (on
+> sm8450) and come up with another patch.
+> 
+> But I remember on sc7280-herobrine (and IIRC while testing multiport on
+> sa8295), when gdsc was not in retention, after entering suspend, we would
+> see a disconnect and reconnect of connected peripherals during resume
+> (probably because controller was in off state during suspend). When I tested
+> with RET_ON in sc7280, I see the re-enumeration after resume never popped
+> up.
+> 
 
-if you're sure there's nothing interesting on them:
+Sounds very reasonable that we'd need to keep the IP block in retention
+for such use case. But if that's the case, then it sounds like we need
+this for every SoC that supports host mode (I presume host or OTG).
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+It would also likely imply that we ultimately would want a mechanism to
+toggle this behavior from dwc3-qcom to limit it to the times when we're
+in host mode, or perhaps even only when something is connected?
 
-Konrad
+If there are any power savings of turning the GDSC off, that is...
+
+Regards,
+Bjorn
+
+> Regards,
+> Krishna,
+> 
+> > Regards,
+> > Bjorn
+> > 
+> > >   drivers/clk/qcom/gcc-sm8450.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+> > > index 65d7d52bce03..f94da4a1c921 100644
+> > > --- a/drivers/clk/qcom/gcc-sm8450.c
+> > > +++ b/drivers/clk/qcom/gcc-sm8450.c
+> > > @@ -3141,7 +3141,7 @@ static struct gdsc usb30_prim_gdsc = {
+> > >   	.pd = {
+> > >   		.name = "usb30_prim_gdsc",
+> > >   	},
+> > > -	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.pwrsts = PWRSTS_RET_ON,
+> > >   };
+> > >   static struct clk_regmap *gcc_sm8450_clocks[] = {
+> > > -- 
+> > > 2.34.1
+> > > 
 
