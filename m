@@ -1,112 +1,142 @@
-Return-Path: <linux-kernel+bounces-681341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B8BAD5159
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:16:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858E4AD50EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8630B1E01CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ABE77AD847
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E27263C9F;
-	Wed, 11 Jun 2025 10:08:19 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE2126A081;
+	Wed, 11 Jun 2025 10:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Jxt6xsAg";
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Jxt6xsAg"
+Received: from mail.mleia.com (mleia.com [178.79.152.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6E4263C68;
-	Wed, 11 Jun 2025 10:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455626988E;
+	Wed, 11 Jun 2025 10:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749636499; cv=none; b=bAbQh9NCK8CsBHLx05+B+oyde/aRuUP6YXxZzbv/8tY97vuHwL8obSo7QTCQ0LUbzoQzuCy85r/xyEWmEScojLmOb57VT9uwNbtMt20+yF/3A0ZC3/y5Xbua4w6yZ3WBnBXAYXSA31HgtBKHTLTxcV9L6AUNxHfy2zsbzqnCIKg=
+	t=1749636220; cv=none; b=ZM+bBLFI/kXfanKCnFnv99Cfbm9862Fn8gGk36PU3TinWNorfISRvq/MRq47X7FGuvOd4s6q+gw3e6Bcvf1hDpPiA2Ga66DS47AGaspDsRcftAymyMrqzKdLS2OqyDsczMI6PP9a5sMkeMd9+SJTuriwiYjw2DhdCnBpMOfekdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749636499; c=relaxed/simple;
-	bh=RLqB1iQ7SrII3N8HkkeOdj1kfx6TbSgG6AN9Zp7FTB4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qIuS5vi8DwjwcdMBJslzKcXIOoZbtKpmZCmrvMRLgtttUdfmYl4GP41XldEGmjd1G4Bmp0+VL3cXNl9kHrReRrQVNpVVucIyJxIczWJV/yDF/C4hcLKxMToclsMG92Tt1t9GyHBvGn1LziXRXmKREQ4kfYno3Rns3QFSMQaKX+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from zq-Legion-Y7000.smartont.net (unknown [180.110.114.155])
-	by APP-01 (Coremail) with SMTP id qwCowADHPdy2U0lo4lS+BQ--.28065S2;
-	Wed, 11 Jun 2025 18:00:22 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: anup@brainfault.org,
-	ajones@ventanamicro.com,
-	atishp@atishpatra.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: [PATCH] RISC-V: KVM: Avoid re-acquiring memslot in kvm_riscv_gstage_map()
-Date: Wed, 11 Jun 2025 17:51:40 +0800
-Message-Id: <50989f0a02790f9d7dc804c2ade6387c4e7fbdbc.1749634392.git.zhouquan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749636220; c=relaxed/simple;
+	bh=ZELWje44IQXg+aqRqhMjZlzmAPP8bdbQVZYOFJq3M9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jPwi2aCIyJBP1/jIqYMSsWp8Nr9duv8gpVAemQ20wbc4cbKB/W0p2uqFUkaZL5QygGnPBAZiThvwXbnoBQoeAJSEtcrNJH3AkQCqNr7TC/7I86hGxHxIXbaonHK8R4aimiR3rAZt5kNkhSL1n7iO8/0W/1BQqDoJocRH8dKh3OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Jxt6xsAg; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Jxt6xsAg; arc=none smtp.client-ip=178.79.152.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1749635665; bh=ZELWje44IQXg+aqRqhMjZlzmAPP8bdbQVZYOFJq3M9g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jxt6xsAgMAOUb4jl76i3Cw/ob+3g27CDrEJ11UaNWweARmh3pASKr9vGVkS92IFac
+	 YPXA6hqSgGV5dnyifiEPzFxSuWmHwqtnnBorcndP4VXu30erdJBfP8YrJ46WtqkT2C
+	 ZB5SXynEGjYF90uyMsBkLTP7/K9tKTjfvpNQc65M4ZFGcmOJyetoZJbQyfgMTcccnC
+	 ovv/hF2800vFjHZenrXZ9Ib3Cs3634CyeipOu5H15sVoNWHX/j8qicu106Z5ZeHvjj
+	 l5CXC3vkbBXv/RUgPw6tOFDOWz5MZGDnaCREKgxUUUqRvZgLkdcVlwdN1MIjOJGq3p
+	 fGRPXfFbZHprg==
+Received: from mail.mleia.com (localhost [127.0.0.1])
+	by mail.mleia.com (Postfix) with ESMTP id 964313C153A;
+	Wed, 11 Jun 2025 09:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1749635665; bh=ZELWje44IQXg+aqRqhMjZlzmAPP8bdbQVZYOFJq3M9g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jxt6xsAgMAOUb4jl76i3Cw/ob+3g27CDrEJ11UaNWweARmh3pASKr9vGVkS92IFac
+	 YPXA6hqSgGV5dnyifiEPzFxSuWmHwqtnnBorcndP4VXu30erdJBfP8YrJ46WtqkT2C
+	 ZB5SXynEGjYF90uyMsBkLTP7/K9tKTjfvpNQc65M4ZFGcmOJyetoZJbQyfgMTcccnC
+	 ovv/hF2800vFjHZenrXZ9Ib3Cs3634CyeipOu5H15sVoNWHX/j8qicu106Z5ZeHvjj
+	 l5CXC3vkbBXv/RUgPw6tOFDOWz5MZGDnaCREKgxUUUqRvZgLkdcVlwdN1MIjOJGq3p
+	 fGRPXfFbZHprg==
+Message-ID: <2ae6aa29-ea42-4fdf-a0ae-8cd088c88786@mleia.com>
+Date: Wed, 11 Jun 2025 12:54:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADHPdy2U0lo4lS+BQ--.28065S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrW3trWfAFyrArWUXrW3GFg_yoW8JF43pF
-	4xCF1DCr4Fg3ZI9ry2k3Wv9a9xCa95W3Z7Cr4UGrWYqrsxtrySqws5W397ZF13Jr48XFWx
-	ZFn8XFWUZr4rGw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBSoAUUUUU=
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBgwKBmhJLhCtlQAAsh
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/17] pinctrl: Constify static 'pinctrl_desc'
+Content-Language: ru-RU
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Lars Persson <lars.persson@axis.com>, Damien Le Moal <dlemoal@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, Emil Renner Berthing <kernel@esmil.dk>,
+ Jianlong Huang <jianlong.huang@starfivetech.com>,
+ Hal Feng <hal.feng@starfivetech.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@axis.com,
+ linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250611-pinctrl-const-desc-v2-0-b11c1d650384@linaro.org>
+ <20250611-pinctrl-const-desc-v2-16-b11c1d650384@linaro.org>
+From: Vladimir Zapolskiy <vz@mleia.com>
+In-Reply-To: <20250611-pinctrl-const-desc-v2-16-b11c1d650384@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20250611_095425_660571_DE75DF41 
+X-CRM114-Status: UNSURE (   7.40  )
+X-CRM114-Notice: Please train this message. 
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+On 6/11/25 09:13, Krzysztof Kozlowski wrote:
+> The local static 'struct pinctrl_desc' is not modified, so can be made
+> const for code safety.
+> 
+> Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   drivers/pinctrl/berlin/berlin.c                    | 2 +-
+>   drivers/pinctrl/cirrus/pinctrl-cs42l43.c           | 2 +-
+>   drivers/pinctrl/mediatek/pinctrl-airoha.c          | 2 +-
+>   drivers/pinctrl/pinctrl-artpec6.c                  | 2 +-
+>   drivers/pinctrl/pinctrl-bm1880.c                   | 2 +-
+>   drivers/pinctrl/pinctrl-k210.c                     | 2 +-
+>   drivers/pinctrl/pinctrl-lpc18xx.c                  | 2 +-
 
-The caller has already passed in the memslot, and there are
-two instances `{kvm_faultin_pfn/mark_page_dirty}` of retrieving
-the memslot again in `kvm_riscv_gstage_map`, we can replace them
-with `{__kvm_faultin_pfn/mark_page_dirty_in_slot}`.
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
----
- arch/riscv/kvm/mmu.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+>   drivers/pinctrl/pinctrl-mlxbf3.c                   | 2 +-
+>   drivers/pinctrl/pinctrl-tb10x.c                    | 2 +-
+>   drivers/pinctrl/pinctrl-zynq.c                     | 2 +-
+>   drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 2 +-
+>   11 files changed, 11 insertions(+), 11 deletions(-)
+> 
 
-diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-index 1087ea74567b..f9059dac3ba3 100644
---- a/arch/riscv/kvm/mmu.c
-+++ b/arch/riscv/kvm/mmu.c
-@@ -648,7 +648,8 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
- 		return -EFAULT;
- 	}
- 
--	hfn = kvm_faultin_pfn(vcpu, gfn, is_write, &writable, &page);
-+	hfn = __kvm_faultin_pfn(memslot, gfn, is_write ? FOLL_WRITE : 0,
-+				&writable, &page);
- 	if (hfn == KVM_PFN_ERR_HWPOISON) {
- 		send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva,
- 				vma_pageshift, current);
-@@ -670,7 +671,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
- 		goto out_unlock;
- 
- 	if (writable) {
--		mark_page_dirty(kvm, gfn);
-+		mark_page_dirty_in_slot(kvm, memslot, gfn);
- 		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
- 				      vma_pagesize, false, true);
- 	} else {
--- 
-2.34.1
-
+--
+Best wishes,
+Vladimir
 
