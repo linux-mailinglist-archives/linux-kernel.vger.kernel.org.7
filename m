@@ -1,83 +1,80 @@
-Return-Path: <linux-kernel+bounces-681093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DDCAD4E5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:28:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BF1AD4E64
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD5F7A8FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CE18189B6B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2810A239E7A;
-	Wed, 11 Jun 2025 08:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6510E23AB94;
+	Wed, 11 Jun 2025 08:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCYgA5Oh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="cXeBc1fD"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799B5231825;
-	Wed, 11 Jun 2025 08:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD6C17736;
+	Wed, 11 Jun 2025 08:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749630474; cv=none; b=pXkEKumk6xF2CSOtYLLOfG0WWdXotXvAgsQMzZLJ0y6eesNbbbjUgTnKhxPDPSeH0Hvf/C2xPLtCO23aqw/Qj2n4olkhCqvXNRw5CGG74//UyqC4RUxOuoMB5UNwS7WPMmUtfDFY35BSGwoTk1UqzAzuGURKY0ytTsvnFndXmfE=
+	t=1749630588; cv=none; b=QE6MV9KflixYkoBh61PIba/CRm/LeHGIoKfg0X9ROGvaFpEC+CGyUBG0ORcj5jn1AQhBjM3IlIDZCYodxW7I6ZLi02TlPFRlBqA5sEHelt178CrRxWj+WtqvrYmQJTGnfTtk+CWnCc7HRTTySYUsV8fP7fQd/Vmy6TbXYxHWYmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749630474; c=relaxed/simple;
-	bh=jVJDP6VW2c8elIa1D16cOy8gn1EBmQkj2x9PgzSs7p4=;
+	s=arc-20240116; t=1749630588; c=relaxed/simple;
+	bh=K01kD1CXP4y2QvIDW79/rq2TlSMRwkIQQVW462JBFmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=seAiHM8hoOhcwRFw4/Cq+dBmV6ELDsAdIG/CajrOXTL8DCSOSNlpe073QpPeiqLwQYAIVfOTN30dwi57ODROYUKyyOYcnBEF41Rq4MzxpjyQAOBd239c242HQMp5wq3ZY0bBqm95+TSljG5F9s4jZ8FGOWWQxPKRJMlItl6yz1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCYgA5Oh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAAEC4CEEF;
-	Wed, 11 Jun 2025 08:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749630474;
-	bh=jVJDP6VW2c8elIa1D16cOy8gn1EBmQkj2x9PgzSs7p4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OCYgA5OhHA2wQU2VsOhqOj4L86jotUxPIBLlMqBdvs7v2ZTOaWk4sRm1mI1umJGRq
-	 zZLRN4I74yu5o9BiuWDaw+rnjtBgIMvdD0UQV5oFuQj5Fr1Uegz2rCOqoCjNtco///
-	 eGz5xPzMdeYHEoyyd3fk9fRKop2VhZ0zowt4hEO9po/tX8jctg8CQfd1m3fjMzNx4t
-	 tn1gEKvYWYBPNcKoWOZnfi7/ILFzZjq48BSdB1XQlXRgDUmbXXwIRN21IK9fXLV55s
-	 B4LBExtZSsWsFzY6UYR7QXBwRq1PAari20VmIeX8ASd3CmqkEYguWzitzE1iXVN/Sr
-	 6axg/cFccqiMg==
-Date: Wed, 11 Jun 2025 10:27:51 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Darren.Ye" <darren.ye@mediatek.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 08/10] ASoC: dt-bindings: mediatek,mt8196-afe: add
- audio AFE document
-Message-ID: <20250611-private-magnificent-asp-63ef5d@kuoka>
-References: <20250610092852.21986-1-darren.ye@mediatek.com>
- <20250610092852.21986-9-darren.ye@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkGM4km3JPvod+Kk8fi5L/2lbPRHRYyeA6Va1dd0M5S1sbtVmeSlytyyD+Hg4uOLHuu0I4QjQFnnzwNgVdQrnvXHeQBbeCkbroRq5El2OvUuNqPYcKIb12gdr3cQqQKdazQan1OjIOKIM8A2aTKdYH7xRLX1migTGeEQTsEE49Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=cXeBc1fD; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=ahMwYnzAqR2ccux8pEM9neDBaxqHAvqHao7Hj/i4BgE=;
+	b=cXeBc1fDyuCnOgI1P/kEJBnpW0hvRhbh+DUKSFrRLqp798QPGZtjWM+AleqnS4
+	UdkB0yM0B0UpZBk9YL8Rbs0oTRvlDIO1pBFdLatlmPSDattVvdTbGkqcJedj5W18
+	NobAAPqqAYTnn4oMeK9oYqLLdhK5J4UYwTCPYMCAaytbY=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgA3180UPkloM8lpAA--.43803S3;
+	Wed, 11 Jun 2025 16:28:06 +0800 (CST)
+Date: Wed, 11 Jun 2025 16:28:04 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: carlos.song@nxp.com
+Cc: miquel.raynal@bootlin.com, Frank.Li@nxp.com,
+	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	conor.culhane@silvaco.com, linux-i3c@lists.infradead.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V4 3/3] arm64: dts: imx95: correct i3c node in imx95
+Message-ID: <aEk+FEq+Ivj5wfVW@dragon>
+References: <20250427083230.3325700-1-carlos.song@nxp.com>
+ <20250427083230.3325700-4-carlos.song@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250610092852.21986-9-darren.ye@mediatek.com>
+In-Reply-To: <20250427083230.3325700-4-carlos.song@nxp.com>
+X-CM-TRANSID:Ms8vCgA3180UPkloM8lpAA--.43803S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOKsjUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIBYBZmhJPhYL6gAA35
 
-On Tue, Jun 10, 2025 at 05:27:25PM GMT, Darren.Ye wrote:
-> From: Darren Ye <darren.ye@mediatek.com>
+On Sun, Apr 27, 2025 at 04:32:30PM +0800, carlos.song@nxp.com wrote:
+> From: Carlos Song <carlos.song@nxp.com>
 > 
-> Add mt8196 audio AFE document.
+> I.MX95 I3C only need two clocks so add clock fix. Add "nxp,imx95-i3c"
+> compatible string for all imx95 i3c nodes.
 > 
-> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
-> ---
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
 
-
-I gave you detailed instruction last time. Did you read it or you
-decided to just ignore my review?
-
-Best regards,
-Krzysztof
+Applied, thanks!
 
 
