@@ -1,256 +1,257 @@
-Return-Path: <linux-kernel+bounces-682251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C465AD5D8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:55:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151A5AD5D92
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C188C168E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:55:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700543A8D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B79235C1E;
-	Wed, 11 Jun 2025 17:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791DF24502D;
+	Wed, 11 Jun 2025 17:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="mXzKDWdc";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="mXzKDWdc"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011013.outbound.protection.outlook.com [40.107.130.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXgLQzXV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479A97080E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.13
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749664533; cv=fail; b=NvabVCQhaekaP5aAx6sBxzKbSqcCQaLce0x00qPZXzihiZgkfbLAmr3Pxarj7e2P6ixHLf2W/flGz9Y84PFb+6EaEA4MMXwX6kgLYWgo0hQpdpFVKYjrAb+QG0nycKr3NUGO2aoE58NboXW8LGCR07G6AAxznsBlanYbS3rkL14=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749664533; c=relaxed/simple;
-	bh=wPXxZZKgb94wz/MJ6qmUqNS6GgSrCt7AZBECYBg8HKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AqvZN3keAzrPkVSw6GExmuHnYX81qOFnpH8xh8AnB1lV6Fixbu1QhShD3Zz6EMbhvfcF6JGZp1XUA8cnTvNEHBKn4Tx0fo7khEkGYpdnGpTWdOop1FB8AIPIUX/6rRjK0lrPqlPWrxomCxl7e7Vc4DOxdl9/ukZf+60feVqKiFg=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=mXzKDWdc; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=mXzKDWdc; arc=fail smtp.client-ip=40.107.130.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=bziPZm+mHrt6+ezAkNztm0T7rdSZlKhG7sZQ7+o2XSdThevCkQMR9mo5h4g/dFCudo3GEsYSEr/FSnytr2nwIQODMup2pvkybg7TPajcL3llHt6hEW39L/b+0xBhmN0mIKJoR/Zk0Mx2fEAKmocIdW9WbNddCcs5END6AOLu//esBbU0mFmrkxJ04XHP0z3Z8zHhpt+vX4a3DaKd8uBrbaeqyLYF1PVlnbBGh/QobRp1gC9III36bdqQ7dTnfJLW9wyfSLCHAT7/W9MTVjBIDAvSC7aewhi/39bcD4l3RMSfcc3Rrn8d6C4RkmOXSV+YMYOMT+TFwkyX+Z6os2ihzw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1nBIEXzsnId3yx5zvpvjoMJGfKhMYTZIRl+9ol8dabc=;
- b=gdV0k8ckuxPosQ3SqWhFrYxfZC25yu+kZaVkjurqRxnmBRUx+mlo0BGKB14XcATC7FwLJCwhjOAY6UecOeq+txTlVtpFYvWsLZw4VrqLGP9WY2w+pfW3SDUK5dN4ueJdV0VawX0xxwEbX+d2wniacrm1XeEmWri2wsVZnbJsC2+4Dqat4ZJf7vW2KhhM8dvr/bQQFCkF0DyRfSmDNrjOzaud13o4eOv5o2XgpzI5IEjDY5W4PTi6/pgwjyGqu3makeVfb7XBff3bMg75kA5lKsHRYJ008KNZBVOHkKgowxd4JC7s26MrYdKE46TTwKJi+bebeDhwUariHmGAxeYXiQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1nBIEXzsnId3yx5zvpvjoMJGfKhMYTZIRl+9ol8dabc=;
- b=mXzKDWdccRslyoI+aYghlxgkRYpV+Zy/M0BOGSoUbmG3Raor/S2NAwiFT0/PLEHD2l2xxwbRCKHqC0MZemTtFJX5yBkoW7kgDDKTlZJSErGodVASQKP1Gb8natLoOganKYHoUd9Cq38rVDAf3D6NlH0NXoqlcO6NT9jaANXNLXQ=
-Received: from AS4P192CA0014.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5da::14)
- by AS8PR08MB9337.eurprd08.prod.outlook.com (2603:10a6:20b:5a5::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.29; Wed, 11 Jun
- 2025 17:55:26 +0000
-Received: from AM4PEPF00025F9B.EURPRD83.prod.outlook.com
- (2603:10a6:20b:5da:cafe::79) by AS4P192CA0014.outlook.office365.com
- (2603:10a6:20b:5da::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.19 via Frontend Transport; Wed,
- 11 Jun 2025 17:55:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM4PEPF00025F9B.mail.protection.outlook.com (10.167.16.10) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8857.0
- via Frontend Transport; Wed, 11 Jun 2025 17:55:26 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ArtcIhyQjJfkG8/IVIZhmz26dsb/un8yeMBuGdu2lXD4/OB8mBN3bmKfrYuwP6c5L2fNDxT3niB7q9D/UkcR+zMPDrIqQ97FXRhN7ynny8MwyuInh4W+WFQdcLFakTErV/k+mjh0ITgJ5ZRPgIrwc042hZrKSlDg/wGs981H40BLXYZCG37AcKJxzMcEFTvSEivsZJWHsuIh8S9sn81D4RZg9V7deXwLGorqMD5oExECzZpbWQk+xbCoHA5DZjnouWvFpD9oZBYK511wEaG1QsMknNHao8ndKij2sD+cQ82RLpdXfwLarrpUv95JRK6omCl0OCqYJIWaRfw8JkKlmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1nBIEXzsnId3yx5zvpvjoMJGfKhMYTZIRl+9ol8dabc=;
- b=XFHE8+FwoH7YnqyVIvlYYKvlT1ELTUTrdqF51exeOMCgTEKSsI6REhOzUhz8o4EZRdAf4yU84ahM6ZFoU+rpe+Z2D7jwMrOSk/F22OZWr1EJUGk8cm9/XWzvlFZdfugzpWPAs8r1j/Dj8n4R2Uw08L42v6ofQD9aFFRm0ZaCtxDgC1OjVO7jg0EczKvFNKfOhT/IcdClEjmSsyjcOkxblg4MJz7xBYsh8c3TcayjkmS2f+fGKXfRpvJgD0UpppfLTch66u5bdxLm4BsIBgr8LQ4qXlwFGpE3Eb+Pql3gClup78KHzBBzEAHzqcbi1Tlt44ulsCGAEPCmtiNfC4xpKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1nBIEXzsnId3yx5zvpvjoMJGfKhMYTZIRl+9ol8dabc=;
- b=mXzKDWdccRslyoI+aYghlxgkRYpV+Zy/M0BOGSoUbmG3Raor/S2NAwiFT0/PLEHD2l2xxwbRCKHqC0MZemTtFJX5yBkoW7kgDDKTlZJSErGodVASQKP1Gb8natLoOganKYHoUd9Cq38rVDAf3D6NlH0NXoqlcO6NT9jaANXNLXQ=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by DB9PR08MB7676.eurprd08.prod.outlook.com
- (2603:10a6:10:37f::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.28; Wed, 11 Jun
- 2025 17:54:53 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.8835.018; Wed, 11 Jun 2025
- 17:54:53 +0000
-Date: Wed, 11 Jun 2025 18:54:50 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, ardb@kernel.org, frederic@kernel.org,
-	james.morse@arm.com, joey.gouly@arm.com,
-	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] arm64/Kconfig: add LSUI Kconfig
-Message-ID: <aEnC6img102ZygDy@e129823.arm.com>
-References: <20250611104916.10636-1-yeoreum.yun@arm.com>
- <20250611104916.10636-3-yeoreum.yun@arm.com>
- <86zfeecnog.wl-maz@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86zfeecnog.wl-maz@kernel.org>
-X-ClientProxiedBy: LO4P123CA0146.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:188::7) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FA0223DD7;
+	Wed, 11 Jun 2025 17:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749664606; cv=none; b=arypTYl4ZVvhkpWSGYx79/Q2j4DVrLxWr7X8RVom7umDGDKyENL7d2akfb6EF4JiamJl2gxp4SF+agzRIUppAGdLHzwuoJGAEXtcpbNk1KgRbLBseM3xYw+VMROxP5HCzbeqXUKpPh7yofVCnZt8JldUQh4QoZtBJ/6j5ne48PY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749664606; c=relaxed/simple;
+	bh=9UxSGzmrhJ12Y47WI59Uc32TrPJnAitCYA2IdeNdqcM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CyC1m0FgDS/wA2EGDgINVSbDKjSBilmC02QwSlQCHoKIp19PhO0K7A0BjUv7qG3DteOmO6aBSvjnU564EYfdBoaGkRFsk3dbDgUzcaiSoo2feBGBoaymfJjoL16CqE9t9TWNh1gZJg+h3aCv4tYbOpATkUu1Ry7x5UwQVrTPpMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXgLQzXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CCD2C4CEE3;
+	Wed, 11 Jun 2025 17:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749664606;
+	bh=9UxSGzmrhJ12Y47WI59Uc32TrPJnAitCYA2IdeNdqcM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rXgLQzXVB+LkCqepBidBmbMMObHgmyB8sfv0yzleYjJSUX7OZsQz6RAJBxi2tYyiU
+	 oudHjc95vj9UEYPSdtsrSb8sJWo1/itOUM/OUe+v7yCepBJ/7UcTJTRUszwxpBozgP
+	 tlek6fYLL2ZKxYEaIYONyuUReP5yTBqZNeMmlbY1cIeEreKfAC2p4b7aXbCIe6hzoT
+	 nL7u7/KnFvFfPv9/5ZHRRRogtW+XFbLSXOdqQK4HDV04h0j35fvlMnvag/EmFZ6vFq
+	 xoHrQWioO/6dZ8bOKh/NhXZw1PZZSwEZERvuibzjVoWyq0W2Phbpnmtge56pqitU+R
+	 67wt1Js1qSEqA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Ingo Franzki <ifranzki@linux.ibm.com>
+Subject: [PATCH] crypto: testmgr - reinstate kconfig support for fast tests only
+Date: Wed, 11 Jun 2025 10:55:25 -0700
+Message-ID: <20250611175525.42516-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|DB9PR08MB7676:EE_|AM4PEPF00025F9B:EE_|AS8PR08MB9337:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2192844d-ab32-4c93-88db-08dda9112554
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?7SAVl28wbG3fdWAjLj5hWpQnCpI5oA9HYe+8ndTvh46GRCG79rT3rKDqtAF5?=
- =?us-ascii?Q?8ql6EYKAOUyGguJjIvWqBW39yih6ctYD61Na8Zwa3BHk/mkfx3wDYQvqwqjz?=
- =?us-ascii?Q?gWLJ2uy8Vgi/jtpaQ7SIvQ2961mI7vcW+F08rfZ9Hx/SMUFETMhnMsKYAu55?=
- =?us-ascii?Q?5xXRPgqRZC6S1l9iG018WNVNzRP4fyiugfwliOhS6lBSFHq0tU6Z6ZDxMjtK?=
- =?us-ascii?Q?N+ck7IpV66VOZILJfFolR+wfP9fVQnmytkTre5VflQ/r03g4Rro7c2DaN46O?=
- =?us-ascii?Q?EoFSCp18RAchFhimhPeNUr0X9rL/C9iV/R/fXxWpCwvPjV4XwKeFbl3k2J21?=
- =?us-ascii?Q?qdIX4Zd1P+Xams2RZd5sA4UKmask2avtgigH0YPoMG7ZnC2VtH9waA8M6Fct?=
- =?us-ascii?Q?flKzAqNkXootE7mI2XH+zAfK1NbP1CXSWenDzz3YKNUWiWsCjmEgD8zPbZ/J?=
- =?us-ascii?Q?/NBjFx2KZU2u9yRjGdMjdkFOBeeEm+qBru972XlUYPFhFXiDeZSndsFQrgfb?=
- =?us-ascii?Q?2bhjBne+/n6ZJKKeP6yAtXod0cdWdaLCgQwP6MniKznsbWkuGkKsyNEkTz0s?=
- =?us-ascii?Q?LTE8dFGGYEkD+bE1keVPMEfCejTnUS7dS1W4AhDNeVa5FpIU7FqGXmQGDKA0?=
- =?us-ascii?Q?fk+O/5ip3aacRqDvkP3EucCEvy3vfTflwcaalk3pTKijQtxreY3rRvCpSMll?=
- =?us-ascii?Q?G0V62htNtLJnZhXSfuH+e0wuSnhCoUwZhKZpoCwOQNdo8VVINW2NhN7sZ5Wn?=
- =?us-ascii?Q?BSo3exvlXC2x1zAs7E83D8VpiVFTvEcJ7s5+k0K8/Un1NZUZBmbdXwBaZYdU?=
- =?us-ascii?Q?UFbmqeledL8QiD35bBJDuZkC+zqbxPyMpxUftAbFTd6TMj86ZoQjgWkzUyrG?=
- =?us-ascii?Q?BPWr65o4R+Ee/fox9AekywP0Sc4QFJ7bgvxz2hYOPieVYYZjGvvWDVfoA+9I?=
- =?us-ascii?Q?MROkYff1yZgTL1V18lyGtzRItuRoQJrAvgyPDcrZRRmc2yRyYjfIPSpMe1PL?=
- =?us-ascii?Q?d7NVSFhB9AhDsN9kB0ncBYfToCwbCpeu6E+hlS2fI+mU3U9tIhpthn1N11rT?=
- =?us-ascii?Q?MNUEiqkZnEs1MAZFdLvxFFZZMsZnzqSF5id+FhiPbYbJA5jjAHPgaSmfPKBn?=
- =?us-ascii?Q?RpNG8lEtdXEXKZTLC/UkZ2P9EEa7n4iOOOMP6K5YBWRYr6zu8P5L3UDP23/I?=
- =?us-ascii?Q?GjJ0+/KzppuuwZiiBGEB7lq9tESyj99lfn8vhhQUVMc1Dqi3LGycbPuA3RRn?=
- =?us-ascii?Q?tWgmbNGkzrUQt4F7cgfFySlAXMpDwuNLlhVmxXYbphg6CoucTTu2KhfN78T/?=
- =?us-ascii?Q?D1q0t/SuIykPlV8J8NbSgJqQ6MItcVig52WCZhz/ce3bWkO0WPIh+UiJalkd?=
- =?us-ascii?Q?8kP0FMOab3+LUSOZ0PuHAjvnhQJ5aBo+HJLpzaVqbHEgOdI/Rw=3D=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7676
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM4PEPF00025F9B.EURPRD83.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	33485efc-3bdb-49a7-0e9d-08dda91111df
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|14060799003|35042699022;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DHwDy0AQMdonuFWjCOa6qMIvF9gPsR29zOVlIFUJN1yacB9TR8F+tTAai8ub?=
- =?us-ascii?Q?u2nsLOIQ2rUvrZbsaRD7j+UTFiCYkUAqFdMyZXA2weaNib0HmfjcjGCNbkW+?=
- =?us-ascii?Q?z75SXbUKHSUTs8LGmzuHKhhxBOXDPM8HNgai01SnPC3umj5szaaAJfZ7Laqm?=
- =?us-ascii?Q?XPAMbzrmzevlsmWMAheJzwYpCgGgfhuPOenB8gpbL4LpnTTDnpg+Q0MgVRaT?=
- =?us-ascii?Q?AcrSRHkWIMjZnchpqKcSmzg5yrFqbrwktUetP1DwFxSimW3AtYZ18+U7tYif?=
- =?us-ascii?Q?/p3AC3hrIXTfsq6AARs2NQdUwFeYfJ1VnKj57QBlIttOkVt7HeaMKl1wpzBa?=
- =?us-ascii?Q?6Mqxu0hJ8yKW6XgsQrQZd5esTQIQuohjkcdhh5XGPLYwgUZFZvAgdsInLzRd?=
- =?us-ascii?Q?FgUTMffShqK/y1rlb9ZcziWMOCQoF9cz/7uSTxovs3sTzsEKZNvT4WWMw3vg?=
- =?us-ascii?Q?qyhZcfRAI5usl+W8kc9d8Ye+AwYEAYbgwgc8MOqe/Q92feENNk1jEEss5ejH?=
- =?us-ascii?Q?hcPvt4OJ8khd+r9+jWM2yWDYStYcXZTD0y0WRPzbSzNUsRupyJyWeWV0psCX?=
- =?us-ascii?Q?66TMnY2MxJ5/zsAEPyt8L6m0vOIy1N0Dv2TUl1B0ciBm6pRE3oaDXoEYEUbt?=
- =?us-ascii?Q?jEQAE5hBslnw+LUAJUMEtla+mVpQuWaHafK9cpcUOspozIvHGlPDZx2iaE1C?=
- =?us-ascii?Q?uCE0wi9c8zcONkR4HjTjLFOXEEbcSHcjCMM+6BVnO0ALysmOaGR2DHqH3iuk?=
- =?us-ascii?Q?lsqMubPL0tfPt7ME5ZbyA4NA2rW47qKbUJsl+0SRsPFb9vAhd5tLA+gSSn8a?=
- =?us-ascii?Q?T3rGHtkC30Crv6W76YRUMqxVrXR0iAK5+kbM9ds6RjHLZj0nXKtmoG+x+yAX?=
- =?us-ascii?Q?evmBUEaQneQnUYcKMX8CySnM2ukpmN/+rM/eb+6mFH53/gkVitADwh/dMWKd?=
- =?us-ascii?Q?KsxzDMbnJyL+D05rUjorCHgI6STu0MOn57Em3YfE+6HtJAz3AaPFefhUdphc?=
- =?us-ascii?Q?WN6+b5uYv27D+7kLuQRqzjPAA2Q9/7c7YFtTTEQaUREDOTIQEI6Zqr9zQkRA?=
- =?us-ascii?Q?I+ek6eWM4swI7BhnmBgt9TRBQE9lSlBlbT9hGLSlRZ/FBwSNuJyXhNBpl68a?=
- =?us-ascii?Q?OXQtvstqakxaxi6LLHBWta7XdkJxWjC2gu1eXMMiPlZTb/UbC56W3pGpR3G+?=
- =?us-ascii?Q?nMpIgzs6ea/DoEOz6pueTL1cn+Dxe0LOJoF+gmv3oDPubzmc1qCvL5GfWZHv?=
- =?us-ascii?Q?tnAICD+VZ+RA6XeXJNCZS5zyJAMRKbNCLI2HUE9dh3soNERS1tL3kay1HxxV?=
- =?us-ascii?Q?NVgWXKu/keJxPZ/nVSKiuuzllsqN8y8x2ciC+2lK96TKeapr+NU32SlRKRar?=
- =?us-ascii?Q?rhk3Y66pLG7Ci6vVWsn+tN7KsSSBlS3t+PNcn1pRGq2GiyqaL2OuAkwhOmxx?=
- =?us-ascii?Q?XNvbug7tYZ/111PUbBU3ZZST/Ea0DPSxrqH7noI/QXPtm571tcHd8Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(14060799003)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 17:55:26.1467
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2192844d-ab32-4c93-88db-08dda9112554
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F9B.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9337
+Content-Transfer-Encoding: 8bit
 
-Hi Marc,
+From: Eric Biggers <ebiggers@google.com>
 
-> On Wed, 11 Jun 2025 11:49:12 +0100,
-> Yeoreum Yun <yeoreum.yun@arm.com> wrote:
-> >
-> > Since Armv9.6, FEAT_LSUI supplies the load/store instructions for
-> > previleged level to access to access user memory without clearing
-> > PSTATE.PAN bit.
-> > It's enough to add CONFIG_AS_HAS_LSUI only because the code for LUSI uses
-> > indiviual `.arch_extension` entries.
-> >
-> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > ---
-> >  arch/arm64/Kconfig | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index 55fc331af337..20f360eef2ac 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -2237,6 +2237,13 @@ config ARM64_GCS
-> >
-> >  endmenu # "v9.4 architectural features"
-> >
-> > +menu "v9.6 architectural features"
-> > +
-> > +config AS_HAS_LSUI
-> > +	def_bool $(as-instr,.arch_extension lsui)
-> > +
-> > +endmenu # "v9.6 architectural features"
-> > +
-> >  config ARM64_SVE
-> >  	bool "ARM Scalable Vector Extension support"
-> >  	default y
-> > @@ -2498,4 +2505,3 @@ endmenu # "CPU Power Management"
-> >  source "drivers/acpi/Kconfig"
-> >
-> >  source "arch/arm64/kvm/Kconfig"
-> > -
->
-> Can you please document what toolchain versions have support for this?
->
-> Thanks,
+Commit 698de822780f ("crypto: testmgr - make it easier to enable the
+full set of tests") removed support for building kernels that run only
+the "fast" set of crypto self-tests by default.  This assumed that
+nearly everyone actually wanted the full set of tests, *if* they had
+already chosen to enable the tests at all.
 
-Okay. But here with comment or Is any other suggested place for this?
+Unfortunately, it turns out that both Debian and Fedora have the crypto
+self-tests enabled in their production kernels, and they seem to want to
+keep them enabled.  The full set of tests isn't great for that, since
+they take significantly longer to run and slow down the boot.
 
-Thanks.
+One issue is that the crypto self-tests are being (mis)used to meet FIPS
+140-3 pre-operational testing requirements.  But actually the more
+fundamental issue is that the crypto/ subsystem has many buggy and
+untested drivers for off-CPU hardware accelerators on rare platforms.
+As a result, apparently in some cases the tests are actually being
+relied on *in production kernels* to stop buggy drivers from being used.
+I think this is kind of crazy (untested drivers should just not be
+enabled at all), but that seems to be how things work currently.
 
---
-Sincerely,
-Yeoreum Yun
+Thus, reintroduce a kconfig option that controls the level of testing.
+Instead of the original CRYPTO_MANAGER_EXTRA_TESTS which was confusing
+and disabled by default, go with CRYPTO_SELFTESTS_FULL which is enabled
+by default (but dependent on CRYPTO_SELFTESTS, of course).
+
+Given the "production kernel" use cases, also remove the dependency on
+DEBUG_KERNEL from CRYPTO_SELFTESTS.  It was introduced by
+commit 40b9969796bf ("crypto: testmgr - replace
+CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS") and wasn't present
+on the original option.
+
+I also haven't reinstated all the #ifdefs in crypto/testmgr.c.  Instead,
+just rely on the compiler to optimize out unused code.
+
+Fixes: 40b9969796bf ("crypto: testmgr - replace CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS")
+Fixes: 698de822780f ("crypto: testmgr - make it easier to enable the full set of tests")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+
+This patch is targeting the crypto tree for 6.16.
+
+ crypto/Kconfig                 | 18 ++++++++++++++----
+ crypto/testmgr.c               | 15 ++++++++++++---
+ include/crypto/internal/simd.h |  6 ++++--
+ lib/crypto/Makefile            |  2 +-
+ 4 files changed, 31 insertions(+), 10 deletions(-)
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index e9fee7818e270..8612ebf655647 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -174,20 +174,30 @@ config CRYPTO_USER
+ 	  Userspace configuration for cryptographic instantiations such as
+ 	  cbc(aes).
+ 
+ config CRYPTO_SELFTESTS
+ 	bool "Enable cryptographic self-tests"
+-	depends on DEBUG_KERNEL
+ 	help
+ 	  Enable the cryptographic self-tests.
+ 
+ 	  The cryptographic self-tests run at boot time, or at algorithm
+ 	  registration time if algorithms are dynamically loaded later.
+ 
+-	  This is primarily intended for developer use.  It should not be
+-	  enabled in production kernels, unless you are trying to use these
+-	  tests to fulfill a FIPS testing requirement.
++config CRYPTO_SELFTESTS_FULL
++	bool "Enable the full set of cryptographic self-tests"
++	depends on CRYPTO_SELFTESTS
++	default y
++	help
++	  Enable the full set of cryptographic self-tests for each algorithm.
++
++	  For development and pre-release testing, leave this as 'y'.
++
++	  If you're keeping the crypto self-tests enabled in a production
++	  kernel, you likely want to set this to 'n' to speed up the boot.  This
++	  will cause the "slow" tests to be skipped.  This may suffice for a
++	  quick sanity check of drivers and for FIPS 140-3 pre-operational self-
++	  testing, but some issues can be found only by the full set of tests.
+ 
+ config CRYPTO_NULL
+ 	tristate "Null algorithms"
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_SKCIPHER
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 72005074a5c26..32f753d6c4302 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -43,17 +43,22 @@ MODULE_IMPORT_NS("CRYPTO_INTERNAL");
+ 
+ static bool notests;
+ module_param(notests, bool, 0644);
+ MODULE_PARM_DESC(notests, "disable all crypto self-tests");
+ 
++#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+ static bool noslowtests;
+ module_param(noslowtests, bool, 0644);
+ MODULE_PARM_DESC(noslowtests, "disable slow crypto self-tests");
+ 
+ static unsigned int fuzz_iterations = 100;
+ module_param(fuzz_iterations, uint, 0644);
+ MODULE_PARM_DESC(fuzz_iterations, "number of fuzz test iterations");
++#else
++#define noslowtests 1
++#define fuzz_iterations 0
++#endif
+ 
+ #ifndef CONFIG_CRYPTO_SELFTESTS
+ 
+ /* a perfect nop */
+ int alg_test(const char *driver, const char *alg, u32 type, u32 mask)
+@@ -317,13 +322,13 @@ struct testvec_config {
+ 
+ #define TESTVEC_CONFIG_NAMELEN	192
+ 
+ /*
+  * The following are the lists of testvec_configs to test for each algorithm
+- * type when the fast crypto self-tests are enabled.  They aim to provide good
+- * test coverage, while keeping the test time much shorter than the full tests
+- * so that the fast tests can be used to fulfill FIPS 140 testing requirements.
++ * type when the "fast" crypto self-tests are enabled.  They aim to provide good
++ * test coverage, while keeping the test time much shorter than the "full" tests
++ * so that the "fast" tests can be enabled in a wider range of circumstances.
+  */
+ 
+ /* Configs for skciphers and aeads */
+ static const struct testvec_config default_cipher_testvec_configs[] = {
+ 	{
+@@ -1181,18 +1186,22 @@ static void generate_random_testvec_config(struct rnd_state *rng,
+ 	WARN_ON_ONCE(!valid_testvec_config(cfg));
+ }
+ 
+ static void crypto_disable_simd_for_test(void)
+ {
++#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+ 	migrate_disable();
+ 	__this_cpu_write(crypto_simd_disabled_for_test, true);
++#endif
+ }
+ 
+ static void crypto_reenable_simd_for_test(void)
+ {
++#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+ 	__this_cpu_write(crypto_simd_disabled_for_test, false);
+ 	migrate_enable();
++#endif
+ }
+ 
+ /*
+  * Given an algorithm name, build the name of the generic implementation of that
+  * algorithm, assuming the usual naming convention.  Specifically, this appends
+diff --git a/include/crypto/internal/simd.h b/include/crypto/internal/simd.h
+index 7e7f1ac3b7fda..9e338e7aafbd9 100644
+--- a/include/crypto/internal/simd.h
++++ b/include/crypto/internal/simd.h
+@@ -42,13 +42,15 @@ void simd_unregister_aeads(struct aead_alg *algs, int count,
+  * crypto_simd_usable() - is it allowed at this time to use SIMD instructions or
+  *			  access the SIMD register file?
+  *
+  * This delegates to may_use_simd(), except that this also returns false if SIMD
+  * in crypto code has been temporarily disabled on this CPU by the crypto
+- * self-tests, in order to test the no-SIMD fallback code.
++ * self-tests, in order to test the no-SIMD fallback code.  This override is
++ * currently limited to configurations where the "full" self-tests are enabled,
++ * because it might be a bit too invasive to be part of the "fast" self-tests.
+  */
+-#ifdef CONFIG_CRYPTO_SELFTESTS
++#ifdef CONFIG_CRYPTO_SELFTESTS_FULL
+ DECLARE_PER_CPU(bool, crypto_simd_disabled_for_test);
+ #define crypto_simd_usable() \
+ 	(may_use_simd() && !this_cpu_read(crypto_simd_disabled_for_test))
+ #else
+ #define crypto_simd_usable() may_use_simd()
+diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+index 3e79283b617d9..f9e44aac6619b 100644
+--- a/lib/crypto/Makefile
++++ b/lib/crypto/Makefile
+@@ -60,9 +60,9 @@ libsha256-y					:= sha256.o
+ obj-$(CONFIG_CRYPTO_LIB_SHA256_GENERIC)		+= libsha256-generic.o
+ libsha256-generic-y				:= sha256-generic.o
+ 
+ obj-$(CONFIG_MPILIB) += mpi/
+ 
+-obj-$(CONFIG_CRYPTO_SELFTESTS)			+= simd.o
++obj-$(CONFIG_CRYPTO_SELFTESTS_FULL)		+= simd.o
+ 
+ obj-$(CONFIG_CRYPTO_LIB_SM3)			+= libsm3.o
+ libsm3-y					:= sm3.o
+
+base-commit: aef17cb3d3c43854002956f24c24ec8e1a0e3546
+-- 
+2.49.0
+
 
