@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-681230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F302AAD500B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:37:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183CEAD4FF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162E21897E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DBAB165AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81DE264F9F;
-	Wed, 11 Jun 2025 09:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3CC25F985;
+	Wed, 11 Jun 2025 09:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjP8eK0u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OR7Ccm7c"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE3B2641CC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 09:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F3925F961;
+	Wed, 11 Jun 2025 09:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749634424; cv=none; b=XHKaOK/OiyI6ItsVqJTHoTyFFua4eQfff4aG25Fyp2Zr27D41TtOncFFScfKkIaMtliBr2XE5BcrvV6Ljv7Tadb/8HI5jY4/XDEjr2IhBT3daGwwSI2JoGnqYG6ZIU6UPXXHzrnTq3sdUZW3iZnSvOf8QB/QHx2pzMJWTyV6r18=
+	t=1749634425; cv=none; b=Dy/8iXHU0VIhZkhQFux/xLmM42SV8ykogscPNzBRkeM2Z/ywVY4QSs66Wm14/RydQG5SPVie0YA3uaBAq/FM4LgbPiazSQ/IzBNi6mVVYvz/Olrcge38YCY7jZ4o29zO9/M/b4lGOy9qWNyFp+CaPVd8YakvHtex9JUYqt1nRx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749634424; c=relaxed/simple;
-	bh=dCxYhXgXkoUEmgozhBC3G0zLWKAepHqQDL8jsvt0uPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOLzgKhpLOfRrJb4pZjXQBY4OIJcvuTrDGrOgX03wvf4R85yOMmhMnzj5Oj1eaKverM5usVtCynJv/27A4IIJcWk2ho6HBJab2SNLkTVZ06HhzQd1lJUcynOq1oH0+L9GaBrRLSbq5GBU0J/UaBq8YWeHcNxRxFBQlZJhw4yrAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjP8eK0u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A122CC4CEF1;
-	Wed, 11 Jun 2025 09:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749634423;
-	bh=dCxYhXgXkoUEmgozhBC3G0zLWKAepHqQDL8jsvt0uPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MjP8eK0u553Rmcc4iup0emJYRA+W3FmA9kUZBpIAUv8hyBKhUMASw9CiNn4j5CvZw
-	 C4/Yc3KKIBvZnQ5+PugChPTPH6fDy4EeboidarhmIQuEZMUNXtrtimx4pZsKpTf7J/
-	 LJKJpC4jcAk84Xw4CFH0QRaNnH4tAhxxzIUxfjcDE1EyOnINKpnRh0qpoh4oKpXu+/
-	 wIjNFZ6lvdko5oJ4ULeZ/oDsmVvb7Xq7CvSrOIyuYusFpKeyyenPO5FnOlOIE1iXh0
-	 xclN8LqtjskAP/7DfVBKFXzZioC2AdfdlPd9hU7mR0fusgKWyOJ+ycB2ZROesYA+RK
-	 hfF3cOsNEqzWQ==
-Date: Wed, 11 Jun 2025 10:33:38 +0100
-From: Will Deacon <will@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
-	anshuman.khandual@arm.com, quic_zhenhuah@quicinc.com,
-	kevin.brodsky@arm.com, yangyicong@hisilicon.com, joey.gouly@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	david@redhat.com
-Subject: Re: [PATCH] arm64: Enable vmalloc-huge with ptdump
-Message-ID: <20250611093337.GB10885@willie-the-truck>
-References: <20250530082021.18182-1-dev.jain@arm.com>
- <d2b63b97-232e-4d2e-816b-71fd5b0ffcfa@arm.com>
- <832e84a9-4303-4e21-a88b-94395898fa3e@arm.com>
- <4202a03d-dacd-429c-91e6-81a5d05726a4@arm.com>
- <20250530123527.GA30463@willie-the-truck>
- <b223245d-c43c-4d3e-86d4-9fbfd90cfacf@arm.com>
- <20250530133625.GA30622@willie-the-truck>
- <6cd41ae9-303d-4eda-8d64-f7dba19eb106@arm.com>
- <33dd9ce3-f6ab-4054-9245-7338f06afbfd@arm.com>
+	s=arc-20240116; t=1749634425; c=relaxed/simple;
+	bh=34m+rAyPyibqJfcT7OFlHLh8GE8mK4kGKtxYmJ2ytc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kk6CeYv2yUAEPetvcp/5TpOI0GGXHIUNi9DuK4ypkV30Ka5yxCny65RO5ZaUJM7CAIg5oN7LXgp/DxL/9Ox9dsUX6mCZkydl+JHtpH5+Z9UHPWa+eBZ2nkdnSt07XxiKkjgGZTp1Zv8ax63Zq7YwqEGC9TQ1VoPA/cBrNjLl6FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OR7Ccm7c; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1749634422;
+	bh=34m+rAyPyibqJfcT7OFlHLh8GE8mK4kGKtxYmJ2ytc4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OR7Ccm7c3ax4tuKRbAp81y0hcQ+3ZxXFk5XZj+eBT4QchyCoZO86EcMYfp994k2V1
+	 gje+tgrGZkFOInv7MQCFimbMgf26iAfWcvODLUzqtHLiy2fY306uGzH4P6SfCCrF6q
+	 RaviSGrsFldE1v20sn6YPF0mBGD375tUyIptIGnhr/WrDzGiXhPmb5UVfZAXY2EMZB
+	 rTLgCXPGc75Fle7udyYeiiBmjccGlcqX4mc5ehRavfCct1uvHIYOVLLL0GMJ7s6ZCY
+	 +omlL2cH3iVrHMzPvn/22aUY7VXOFMhIXDC62J8B2ACULR8Peri/E3X7Phm4DaGlYF
+	 nyPk+ak70EecQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 65F8E17E1045;
+	Wed, 11 Jun 2025 11:33:40 +0200 (CEST)
+Message-ID: <85fc43ec-5d2a-4976-8343-ab348835145c@collabora.com>
+Date: Wed, 11 Jun 2025 11:33:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33dd9ce3-f6ab-4054-9245-7338f06afbfd@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/13] arm64: dts: mediatek: mt7988a-bpi-r4: add aliase
+ for ethernet
+To: Frank Wunderlich <linux@fw-web.de>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Georgi Djakov <djakov@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+ Jia-Wei Chang <jia-wei.chang@mediatek.com>,
+ Johnson Wang <johnson.wang@mediatek.com>, =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?=
+ <arinc.unal@arinc9.com>, Landen Chao <Landen.Chao@mediatek.com>,
+ DENG Qingfang <dqfext@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
+ Daniel Golle <daniel@makrotopia.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Felix Fietkau <nbd@nbd.name>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250608211452.72920-1-linux@fw-web.de>
+ <20250608211452.72920-12-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250608211452.72920-12-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 05, 2025 at 01:46:01PM +0530, Dev Jain wrote:
-> On 05/06/25 10:18 am, Dev Jain wrote:
-> > On 30/05/25 7:06 pm, Will Deacon wrote:
-> > > On Fri, May 30, 2025 at 02:11:36PM +0100, Ryan Roberts wrote:
-> > > > On 30/05/2025 13:35, Will Deacon wrote:
-> > > > > I really don't think we should be adding unconditional
-> > > > > locking overhead
-> > > > > to core mm routines purely to facilitate a rarely used debug option.
-> > > > > 
-> > > > > Instead, can we either adopt something like the RCU-like walk used by
-> > > > > fast GUP or stick the locking behind a static key that's only enabled
-> > > > > when a ptdump walk is in progress (a bit like how
-> > > > > hugetlb_vmemmap_optimize_folio() manipulates
-> > > > > hugetlb_optimize_vmemmap_key)?
-> > > > My sense is that the static key will be less effort and can be
-> > > > contained fully
-> > > > in arm64. I think we would need to enable the key around the call to
-> > > > ptdump_walk_pgd() in both ptdump_walk() and ptdump_check_wx().
-> > > > Then where Dev is
-> > > > currently taking the read lock, that would be contingent on the
-> > > > key being
-> > > > enabled and the unlock would be contingent on having taken the lock.
-> > > > 
-> > > > Does that sound like an acceptable approach?
-> > > Yup, and I think you'll probably need something like a synchronize_rcu()
-> > > when flipping the key to deal with any pre-existing page-table freers.
-> > 
-> > IIUC, you mean to say that we need to ensure any existing readers having
-> > a reference to the isolated table in pmd_free_pte_page and friend, have
-> > exited.
-> > But the problem is that we take an mmap_write_lock() around
-> > ptdump_walk_pgd() so
-> > this is a sleepable code path.
+Il 08/06/25 23:14, Frank Wunderlich ha scritto:
+> From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> The mmap_write_lock around ptdump_walk_pgd() is definitely restrictive. I
-> think that
+> Add aliase for gmacs to allow bootloader setting mac-adresses.
 > 
-> was put because ptdump is rarely used, I think we could have done
-> RCU-freeing of pagetables to
-> 
-> synchronize between ptdump and vmalloc pagetable lazy freeing/ hotunplug
-> pagetable freeing.
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 
-The other idea was to use a static key like the HVO code does, which
-shouldn't place any RCU requirements on the debug walk.
+s/aliase/aliases/g
 
-Will
+after which
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
 
