@@ -1,183 +1,157 @@
-Return-Path: <linux-kernel+bounces-681419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2186CAD5271
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:46:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D29BAD5273
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81ADC177DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1A5189A80A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814A127A115;
-	Wed, 11 Jun 2025 10:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F14E278162;
+	Wed, 11 Jun 2025 10:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VT8Cz+sW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I5y97M6f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719C276020;
-	Wed, 11 Jun 2025 10:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815672741A2;
+	Wed, 11 Jun 2025 10:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749638649; cv=none; b=IISw+HS1T68VYuThDt7qbaGfjO6yLjsoe0L2/kiQI7Rf8+O1f/To89Kp3KMtEPGO8aTAJhaJ4ZJNz4Jqx2pes+QCEswbSW/ISK+SiDq8s5oY6OYud0o71l7D2/yhoQJzl9l3SHvA3UexBzJ4EFlgowj0Th51SgOH4gW2fdI+7NE=
+	t=1749638645; cv=none; b=Q9x0nox6mcY5ZMdxCafyTo6whNmuePUJUlysWQqDEhMRtHC6/HOnd74nWw9N11IBm14cR/sqLqufHBAU/KOjCoMnqXnsbjtJrzQjBx7Fl9TJkJ78qm40ASXWptezTn0mBEGYDFd4aCUkPUsPrJiAiMWyZ9KklQauxVNc6WmFmXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749638649; c=relaxed/simple;
-	bh=6zOpQsJrpLb3UsZkVDsQWpXwzWjWZYG3MT/2cD8gNkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=alD/d/tpVvRAJ2n/mHESSZoZilSjzqmBuqhmOo54nQTfRpwysApr9BK3LJ+ljvFcbM0fmDUi5AbYv6ZrXrKAvRhcoCQpo4lhltqJK17b94eQVZhJUblnR0KVJJvTHgE89NUyo9Kp+9ZNjWPF3OnFAo7j3qc2YuKnLjbSoZc59Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VT8Cz+sW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B9DEcl009041;
-	Wed, 11 Jun 2025 10:43:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jnYVnCCIQqRVwZ0YnEAaW4qHmdsbA59VsqVppYJCjhs=; b=VT8Cz+sW6Y7G2nEf
-	2TjbuilfmbxyxsdNQwIkgy5SwQ0o1Ys/aXHu0vjGBMY+0vpytXqR9jD6aubo/SC5
-	bz6BFZd2Vq+IMnZN7jDJwR1b19AZY4XZDZ34UWfODiprKtEowsfFod6S/byGWaEc
-	a+TzsyZeWcD04ZsEK8dmZJOLQZlCdzvZx6PeN9c5NUCri9EneaVoThpiHiykyvrZ
-	KWEDpjZ9Y+YilPi0E9/EAW44wNhqMBM1v7JSW/Dyc0ahly2MFNkk+5CQqT7t9iEA
-	k2/W8zgEkHE2H3RoONJ7ZjPfQ981JiFA4VxpigAkPRR4QgVDcyahhcoJEQpfdAZE
-	cgl0Ag==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47753brknj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 10:43:56 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55BAhtSA030790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 10:43:55 GMT
-Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Jun
- 2025 03:43:52 -0700
-Message-ID: <bd9a0216-ea87-4eeb-ac7f-14fcf3202bc8@quicinc.com>
-Date: Wed, 11 Jun 2025 18:43:50 +0800
+	s=arc-20240116; t=1749638645; c=relaxed/simple;
+	bh=Y+E0RernoPBy6Uu3TI84qynsG952E7mhrc4IsFrLBMw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ssse8i2HAk3q3K5ZkH838PXXJ5HjkpIpEws16umrv3lXihK5Ss9xVtMwJExoofubFwfnYX2f3DWZsioQLayAMD1ISz3fMeY1zMTEOEzpq0txEoivL4DZwjarBQEK79/RpjqoICSrD81I1zGHY7cC67afdK9SCtKMQVdFD31cUlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I5y97M6f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F408C4CEF1;
+	Wed, 11 Jun 2025 10:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749638645;
+	bh=Y+E0RernoPBy6Uu3TI84qynsG952E7mhrc4IsFrLBMw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=I5y97M6f50cvQr9uKp0kUq+9BZMTImITmMRenueRNabxOzKVQyQnTLxbxmtTZxO5U
+	 MuDdYfxHemloZH4Cae0vXdincPivKew92K2fsYKBHvufaFJ/6hh27G0I3cVM3HsxR/
+	 12P5c9q3qgMr0wbH+6gYGusSngdMQNcdUaZ5O+VMO6WFUjTDstfcZjjKhCunYBUlR2
+	 iA/84eicv9QqagjXKqAOgVl4u17gVrqDc4fHejiYpneNgSaHf9RORlssoWb3SghNBz
+	 R27yj1lvJ5M7ad3VBUwV+z1ppAVFVDZFKOVd8PQjCyAgkHTt1rLqEelEff47K1kHdi
+	 y8iJweniGuBfQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Bjorn Helgaas" <bhelgaas@google.com>,
+  Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,  "Greg
+ Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  "Tamir Duberstein" <tamird@gmail.com>,  "Viresh Kumar"
+ <viresh.kumar@linaro.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-pci@vger.kernel.org>,
+  =?utf-8?Q?Ma=C3=ADra?=
+ Canal <mcanal@igalia.com>
+Subject: Re: [PATCH v2] rust: types: add FOREIGN_ALIGN to ForeignOwnable
+In-Reply-To: <DAJHVMM9DND0.2FM0FJYN0XEFV@kernel.org> (Benno Lossin's message
+	of "Wed, 11 Jun 2025 08:36:50 +0200")
+References: <20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org>
+	<HCd56HpzAlpsTZWbmM8R3IN8MCXWW-kpIjIt_K1D8ZFN6DLqIGmpNRJdle94PGpHYS86rmmhCPci9TajHZCCrw==@protonmail.internalid>
+	<DAIV6MJAJ5R0.3TZ4IC2KO9MOL@kernel.org> <87v7p3znz6.fsf@kernel.org>
+	<CAH5fLgi3B_Wyz2OzBLhHHgWrg7hboyFUcQe-+GUrrvXiX9di=w@mail.gmail.com>
+	<GHUD6hpYDty0s_oTLGC6owDPKqrNepeGOL9F-XlvY6G50K8Zptjp4f8kVVnyoTjf-E_0QVeHfmUUvcN-p1i24Q==@protonmail.internalid>
+	<DAJHVMM9DND0.2FM0FJYN0XEFV@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 11 Jun 2025 12:43:56 +0200
+Message-ID: <87jz5izhg3.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] coresight: add coresight Trace Network On Chip
- driver
-To: Leo Yan <leo.yan@arm.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250611-trace-noc-v9-0-4322d4cf8f4b@quicinc.com>
- <20250611-trace-noc-v9-2-4322d4cf8f4b@quicinc.com>
- <20250611100911.GT8020@e132581.arm.com>
-Content-Language: en-US
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-In-Reply-To: <20250611100911.GT8020@e132581.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDA5MiBTYWx0ZWRfX/aHZEud6azW3
- J5d1vgRVbBhVXURcxgs2SUzAUS+Kaczjlia00EcI0On2CZiwrNdC8GqT9iOxMTDngK/uAbBy4/a
- 3L118Z0C/uKv0k7kiePSwxsYVj58W/QfcBgASAUUXAwjXPR6mjszJTPYun8l+PVX9mr1CCA40Xr
- H48Eh/eTvQTilFUgWuz1Cm9ZbniR+rOtmmq7000GkbLbQxRy8Yf+FFruQ+d5itwpIWBGb9+Ao7D
- 0QF7X8EIahpu9mhwBn2nkmgdPTAumT3CLoJbc73UbrkZBo0UyD+1fuJ70FVBd522OmC4bwDfshL
- U4+hrKIUp473Wo3cvBHlW6xrrKQIAwtHJPCYbRXZCzjruJnlkVVJ6+6yW68lDhf1v/g4uS6Szsk
- weA+a2X6SnxbVYpwRl2wdyZCQjX6v8ZCEobmejInuOVq1HtrGq54wdPY+uDPbW/btJ0Rm2ST
-X-Proofpoint-GUID: Yuq0Gr20l7s92BO6MccC_SNRsmzTNsJr
-X-Proofpoint-ORIG-GUID: Yuq0Gr20l7s92BO6MccC_SNRsmzTNsJr
-X-Authority-Analysis: v=2.4 cv=SqOQ6OO0 c=1 sm=1 tr=0 ts=68495dec cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=7CQSdrXTAAAA:8 a=WxWR6bt4cCgWsqPF1WIA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_04,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506110092
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+"Benno Lossin" <lossin@kernel.org> writes:
+
+> On Tue Jun 10, 2025 at 4:15 PM CEST, Alice Ryhl wrote:
+>> On Tue, Jun 10, 2025 at 4:10=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
+nel.org> wrote:
+>>>
+>>> "Benno Lossin" <lossin@kernel.org> writes:
+>>>
+>>> > On Tue Jun 10, 2025 at 1:30 PM CEST, Andreas Hindborg wrote:
+>>> >> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>>> >> index 22985b6f6982..0ccef6b5a20a 100644
+>>> >> --- a/rust/kernel/types.rs
+>>> >> +++ b/rust/kernel/types.rs
+>>> >> @@ -21,15 +21,11 @@
+>>> >>  ///
+>>> >>  /// # Safety
+>>> >>  ///
+>>> >> -/// Implementers must ensure that [`into_foreign`] returns a pointe=
+r which meets the alignment
+>>> >> -/// requirements of [`PointedTo`].
+>>> >> -///
+>>> >> -/// [`into_foreign`]: Self::into_foreign
+>>> >> -/// [`PointedTo`]: Self::PointedTo
+>>> >> +/// Implementers must ensure that [`Self::into_foreign`] returns po=
+inters aligned to
+>>> >> +/// [`Self::FOREIGN_ALIGN`].
+>>> >>  pub unsafe trait ForeignOwnable: Sized {
+>>> >> -    /// Type used when the value is foreign-owned. In practical ter=
+ms only defines the alignment of
+>>> >> -    /// the pointer.
+>>> >> -    type PointedTo;
+>>> >> +    /// The alignment of pointers returned by `into_foreign`.
+>>> >> +    const FOREIGN_ALIGN: usize;
+>>> >>
+>>> >>      /// Type used to immutably borrow a value that is currently for=
+eign-owned.
+>>> >>      type Borrowed<'a>;
+>>> >> @@ -39,18 +35,20 @@ pub unsafe trait ForeignOwnable: Sized {
+>>> >>
+>>> >>      /// Converts a Rust-owned object to a foreign-owned one.
+>>> >>      ///
+>>> >> +    /// The foreign representation is a pointer to void. Aside from=
+ the guarantees listed below,
+>>> >
+>>> > I feel like this reads better:
+>>> >
+>>> > s/guarantees/ones/
+>>> >
+>>> >> +    /// there are no other guarantees for this pointer. For example=
+, it might be invalid, dangling
+>>> >
+>>> > We should also mention that it could be null. (or is that assumption
+>>> > wrong?)
+>>>
+>>> It is probably not going to be null, but it is allowed to. I can add it.
+>>>
+>>> The list does not claim to be exhaustive, and a null pointer is just a
+>>> special case of an invalid pointer.
+>>
+>> We probably should not allow null pointers. If we do, then
+>> try_from_foreign does not make sense.
+>
+> That's a good point. Then let's add that as a safety requirement for the
+> trait.
+
+I disagree. It does not matter for the safety of the trait.
+
+From the point of the user, the pointer is opaque and can be any value.
+In fact, one could do a safe implementation where the returned value is
+a key into some mapping structure. Probably not super fast, but the user
+should not care.
 
 
+Best regards,
+Andreas Hindborg
 
-On 6/11/2025 6:09 PM, Leo Yan wrote:
-> On Wed, Jun 11, 2025 at 04:59:47PM +0800, Yuanfang Zhang wrote:
->> Add a driver to support Coresight device Trace Network On Chip (TNOC),
->> which is an integration hierarchy integrating functionalities of TPDA
->> and funnels. It aggregates the trace and transports to coresight trace
->> bus.
->>
->> Compared to current configuration, it has the following advantages:
->> 1. Reduce wires between subsystems.
->> 2. Continue cleaning the infrastructure.
->> 3. Reduce Data overhead by transporting raw data from source to target.
->>
->>   +------------------------+                +-------------------------+
->>   | Video Subsystem        |                |Video Subsystem          |
->>   |       +-------------+  |                |       +------------+    |
->>   |       | Video TPDM  |  |                |       | Video TPDM |    |
->>   |       +-------------+  |                |       +------------+    |
->>   |            |           |                |              |          |
->>   |            v           |                |              v          |
->>   |   +---------------+    |                |        +-----------+    |
->>   |   | Video funnel  |    |                |        |Video TNOC |    |
->>   |   +---------------+    |                |        +-----------+    |
->>   +------------|-----------+                +------------|------------+
->>                |                                         |
->>                v-----+                                   |
->> +--------------------|---------+                         |
->> |  Multimedia        v         |                         |
->> |  Subsystem   +--------+      |                         |
->> |              |  TPDA  |      |                         v
->> |              +----|---+      |              +---------------------+
->> |                   |          |              |   Aggregator  TNOC  |
->> |                   |          |              +----------|----------+
->> |                   +--        |                         |
->> |                     |        |                         |
->> |                     |        |                         |
->> |              +------v-----+  |                         |
->> |              |  Funnel    |  |                         |
->> |              +------------+  |                         |
->> +----------------|-------------+                         |
->>                  |                                       |
->>                  v                                       v
->>       +--------------------+                    +------------------+
->>       |   Coresight Sink   |                    |  Coresight Sink  |
->>       +--------------------+                    +------------------+
->>
->>        Current Configuration                            TNOC
->>
->> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> 
-> I observed a merging conflict. I would suggest you sticking to the
-> coresight next branch for CoreSight related upstreaming. Please
-> rebase this patch on it.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/coresight/linux.git
-> branch: next
-> 
-> I also verified this patch with static checker smatch. With rebasing:
-> 
-> Reviewed-by: Leo Yan <leo.yan@arm.com>
-
-Done in next patch.
 
 
