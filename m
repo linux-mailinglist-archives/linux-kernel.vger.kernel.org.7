@@ -1,57 +1,95 @@
-Return-Path: <linux-kernel+bounces-680754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6D4AD494D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:27:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46290AD4957
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6E117A674
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:27:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF20B189D426
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162071B392B;
-	Wed, 11 Jun 2025 03:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B581A5BAC;
+	Wed, 11 Jun 2025 03:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vde01gqY"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCU1peVw"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0E413A3F2;
-	Wed, 11 Jun 2025 03:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBB66BFCE;
+	Wed, 11 Jun 2025 03:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749612434; cv=none; b=EqFrBp1Mfa/DaHrC6RT+uyJqiRxMJX5WLwslahwNK/dWULvwsm5NDtSe5GfxcPojAs2mpWRTgnYzkEihOFn/HM4yG9wA92JFvFWzCdNgxOL3KUUsL/vIZbe9ICp24nyvObMdz2jAPWP8bobnJeNU0sLYQ/x+c3BkInzvRpLxKQI=
+	t=1749612572; cv=none; b=k5jSk3sSFJuVIeXk3f6MjAFS0J7BT10wk+cAdW+7ePnWkuwiphDBLRdWTbRW/cdNsBp1z6o6Rjw7isWtkvjb0D9/tlwNA/U1xpwQP2UY5DRcknN2jONx5Xz8l2dNLsQCIzkWocz+RwS8yjhrCkIJxd6RWfryB4ceqGezzqUPjNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749612434; c=relaxed/simple;
-	bh=x/5yoshJpK/46vD6GnhsEJDVUCcaG30nZvgNrRAXwyI=;
+	s=arc-20240116; t=1749612572; c=relaxed/simple;
+	bh=ZmEIS0ewIEsyBe6SRYgcoDY9nHhjZrdFf9XsyDfIIxY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3p3AfiJKCnqc+wj57jjJAlQS0mR9pkur/ANu8d7eOM/Mw+JoA8gSCV6bDkVLpmlu84+JR+K4xbATvvmvRSsA7TanWTv1Ol3K39L7C1Cq5IRT0rykeiCc7zRxu+puS0/sEctdP05qf5L9aRhHr0Y0VOhuB3/WusDHNBO3h/Hoes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vde01gqY; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eT2mDlWcfi4vpC/fXERnSm4bvQLSkLGtiKJc/u+kRZI=; b=vde01gqYoLSiujMIH9TY8DaQXV
-	91hOwGVeBw99TB5LYiwlNiDnLqE4cr0r5pG7h47Y5m+bJMv8+d3edWk3mLhRgrS4Y6zTfZ9fJhG76
-	H6zxiUH9hJMq111yoirRM6JX5TFFBtzJo3aWJpt6Hm4yHouOIW8JWFOLjknaBW9Tzp/Dr04TvjTC8
-	4UG3VyHt4BK3Tx9wmG5DWPaAgRdOH4OXsu/HxLjXNt30zPIFBWV1Jj29pM//TuGip6n8S/OISShQ4
-	uBYwM8pgzK4eSGzZbNV11wFwkf8WJ5GNxTDP0NUsk1tftFhZd3GYA8vXy9UQc0FFzIUGkD79JSHNd
-	Kp7HNz5Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPC7M-00000008jgW-2eKW;
-	Wed, 11 Jun 2025 03:27:12 +0000
-Date: Tue, 10 Jun 2025 20:27:12 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: grwhyte@linux.microsoft.com
-Cc: linux-pci@vger.kernel.org, shyamsaini@linux.microsoft.com,
-	code@tyhicks.com, Okaya@kernel.org, bhelgaas@google.com,
+	 Content-Type:Content-Disposition:In-Reply-To; b=hW8n2B5e2rWU0ZBhZVjczyLoGaLdo8Gaqg/pOQULgILuLe8ogRx1i6aWrUQbRLBLr5VR0nsvrAmm5BjELI6eztu5S87fgpLz+eU7FPwdF+a5uy6pU1kC8mLm2jKV+kZOtl30CLoxANvPCBBHfis7J/QpB4dUjp76EDJ7UyWqIfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCU1peVw; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74800b81f1bso4808142b3a.1;
+        Tue, 10 Jun 2025 20:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749612570; x=1750217370; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=42bdD8KpWulugTYz5Jl9lO5/i14UE0R8FG/ItYTb/Cw=;
+        b=GCU1peVw7uygQjaG3+Pilgww8lT2rjfDtRGtrZTiISFuH6HnIeRGvDRvK/gINlUU/n
+         c6i7FUVpk9RoDmyLpT599/7mUIvf9kbkNniySFaYExpG2Fn2X6VXHM1BZbnEAg4kTL1Y
+         AzeDR2LvFGUovEGo9Eu4SKkbrGGVMTHm+dFDfw0oVDHfX33evk5ecWY4XT6QBmWRoMiO
+         1SrJFO7X+ER55q8ehuuhSeJWoEMbBzb09G1mnQFF/DdorK0ffOi0HqTP+n66AOz/aAIy
+         MpVNwFCRZ/2mxv/eQW3vQCd70Y4mz1yqkSx+3lHHp9hqDP526Mwsw0/qL6KPhxb5b4O8
+         aKig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749612570; x=1750217370;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=42bdD8KpWulugTYz5Jl9lO5/i14UE0R8FG/ItYTb/Cw=;
+        b=aJr7KiKOLlBpH3iOk2R/p/pxFjXUxFEHZXqs2LrEUiPmop64pldK3KyFmtZs1cJWjg
+         4e9mNBZvZYVIBdWXogYLkpcsHBGqgAmmcSxIaxK+FIX+p/Um/dxyVlI5DSbaRJW0fdXa
+         yCOcmxTgZqBlMeOYKWn64HZSQ1bVVivXpv3BqZaow2RPJ/nzrzEAhKC2EaT4Ru3OL39e
+         7WeKWemvgL32x9wK5LVBlK7nWY8G8eEIa8p412flHecKdlCdtBnTvfwHDvmmOcr8t9V0
+         +gXXi/pt+RnwM8LqawBBV3E6Lk878s1KsAo8fzU8+/ZELk1zHPiL03SH6FVaRDVY35f2
+         eo6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUy7wXSqYnPF0evEvOGLE8W372axLFkzDZPRDAFxKoXtFAXrtodRPbXt5cWeLEMrSlVJOM9eZGK@vger.kernel.org, AJvYcCV+K59Awf43xQZcHH42ELyZWg8qNbfqPsyIuf0UbsgLJ4liJG8P+or/wPEJSFMjz5rYyjOKYrVtQaxQSUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw36GxdNSNQzRQ6WjdqfoaskZI6/lV0zSwrpPVZmOWUuK5IFwlC
+	7s69RtQ35S28BZivqluDvGqHjRbcsRbOJjdVvoqQveodvGyu4aYTBzz5
+X-Gm-Gg: ASbGnctC0gBiuZkQE2Nm54aQ/YXl0q7tdXjwdk7mdl6l1cBreuvcph9qgYqMxVOUyqi
+	s7KRAkDP3M/9iqV52A4rp6JK9vpYv7ntgrspeGvPN+QdNol0N5dtHsH9i3juez1gw1KxjUfvlQv
+	Hnw79RyW4HKt6Mh1sU5IUPOb1sa/w561pULjakH9CC5/B5GCB2cYGr2oVXFsbBS9aInIXVwZMme
+	eZ16BCY9m2Vz6XU/S99nfGcRNeYmjadampUFgBuXK0ujUZIf1nrNGackzYZkzYcz1NivopRA2Nv
+	2Id4oV6R2x0KB+aekPEqTHyl198pJI8qOpkPTkHlO+pPaNYIFfWZBYLYEKY8Wtu7YCKQ6kCI7bY
+	oq3BRMQ==
+X-Google-Smtp-Source: AGHT+IGK6S2dXv+NJ8cZYRLHgfNM+hpO0P8zM0qGDSdEQ2oFP/EuSxTv9q/UxdtD6w+DUyf94PmblQ==
+X-Received: by 2002:a05:6a20:e608:b0:21f:545e:84f0 with SMTP id adf61e73a8af0-21f89145850mr1798661637.40.1749612569755;
+        Tue, 10 Jun 2025 20:29:29 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f791d30sm7557806a12.65.2025.06.10.20.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 20:29:29 -0700 (PDT)
+Date: Tue, 10 Jun 2025 20:29:26 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	Bar Shapira <bshapira@nvidia.com>,
+	Maciek Machnikowski <maciejm@nvidia.com>,
+	Wojtek Wasko <wwasko@nvidia.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Mahesh Bandewar <maheshb@google.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
-Message-ID: <aEj3kAy5bOXPA_1O@infradead.org>
-References: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
+Subject: Re: [RFC PATCH] ptp: extend offset ioctls to expose raw free-running
+ cycles
+Message-ID: <aEj4Fp05_lTdMgu3@hoboy.vegasvil.org>
+References: <20250610171905.4042496-1-cjubran@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,21 +98,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250610171905.4042496-1-cjubran@nvidia.com>
 
-On Wed, Jun 11, 2025 at 12:05:50AM +0000, grwhyte@linux.microsoft.com wrote:
-> From: Graham Whyte <grwhyte@linux.microsoft.com>
-> 
-> Add a new flr_delay member of the pci_dev struct to allow customization of
-> the delay after FLR for devices that do not support immediate readiness
-> or readiness time reporting. The main scenario this addresses is VF
-> removal and rescan during runtime repairs and driver updates, which,
-> if fixed to 100ms, introduces significant delays across multiple VFs.
-> These delays are unnecessary for devices that complete the FLR well
-> within this timeframe.
+On Tue, Jun 10, 2025 at 08:19:05PM +0300, Carolina Jubran wrote:
 
-Please work with the PCIe SIG to have a standard capability for this
-instead of piling up hacks like this quirk.
+> @@ -398,8 +423,14 @@ long ptp_ioctl(struct posix_clock_context *pccontext, unsigned int cmd,
+>  			break;
+>  		}
+>  		sts.clockid = extoff->clockid;
+> +		cycles = !!(extoff->rsv[0] & PTP_OFFSET_CYCLES);
+>  		for (i = 0; i < extoff->n_samples; i++) {
+> -			err = ptp->info->gettimex64(ptp->info, &ts, &sts);
+> +			if (cycles)
+> +				err = ptp->info->getcyclesx64(ptp->info, &ts,
+> +							      &sts);
+> +			else
+> +				err = ptp->info->gettimex64(ptp->info, &ts,
+> +							    &sts);
 
+ugh...
+
+> @@ -86,9 +111,15 @@
+>   *
+>   */
+>  struct ptp_clock_time {
+> -	__s64 sec;  /* seconds */
+> -	__u32 nsec; /* nanoseconds */
+> -	__u32 reserved;
+> +	union {
+> +		struct {
+> +			__s64 sec;  /* seconds */
+> +			__u32 nsec; /* nanoseconds */
+> +			__u32 reserved;
+> +		};
+> +		__u64 cycles;
+> +	};
+> +
+>  };
+
+This overloading of an ioctl with even more flags goes too far.
+Why not just add a new ioctl in a clean way?
+
+Thanks,
+Richard
 
