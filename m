@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-681506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0697DAD5399
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:17:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809DBAD5360
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E8A1889C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7331716D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2F12E6130;
-	Wed, 11 Jun 2025 11:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BA02E612B;
+	Wed, 11 Jun 2025 11:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rlhglbRt"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B992E6106;
-	Wed, 11 Jun 2025 11:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FB+OkxzF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A862E610B;
+	Wed, 11 Jun 2025 11:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749640359; cv=none; b=A2xwUOwgHKSWRy+DGUPS3UwDl19IvL6Q5Zq9KPM2R2c6JCnS58qIvbGpazxERVSRktkIfMj6bvtIDI+zRRQgGRW4ewArulBdgKfIEW9lI381+WrBZHZ0Vn/6j4VHbjfZi22DGtgmxvFxpjpb5gBaiU6ceZtbKe8RmCI+OtbnML8=
+	t=1749640377; cv=none; b=Oxu5AKrfFusWjyOtCX5reZPXpS8edG3cGNJ0fFzJugNAn0Z7r5/Kc8h5sMVWbwmnkyvIEogWSD2+OcPnXh+5NdhIONX5vZHJvmQot8Kz3maQqNxZwMS/GlqxgaFpHSGJL2DLFsppUczHWVboRbn7zYIG+39wsECOI7U52oqJt2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749640359; c=relaxed/simple;
-	bh=wOLHNC3mM1hvT6HYztFKZ2PDx4KcHzQ0D5Kk5tU14B4=;
+	s=arc-20240116; t=1749640377; c=relaxed/simple;
+	bh=cuL/gnq/gn/v2XXovLUaVPiE6Y9kxenTDBpAhcvSFog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMrYtLGuqYL6Dh/wznWfwEwAqG55qOkyKSupuoh3REf9NAsaTWpCqBgOcPoO2xCjFGFIseHg2eARy5W1h5N9nnBFYKAMu6tfn7vlyuA+/mZSebiRI7WkovgD4KEclIDtlCzi4ljFJ0CGiYTbF9tvHrdn/3lzIZunSnGKR86qnbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rlhglbRt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 9DA822115190; Wed, 11 Jun 2025 04:12:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9DA822115190
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1749640355;
-	bh=qWcwbrk1B9AwSLw+kibnueNoD1DZ6goIu7GiCM6Qlu0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6fWRcx1A/Dc2pfpUSl+e5+e2GIJNqt6MYHmeQfpKQYWXs4jQh8nZbx+pwAdgP6yXbmOzHCDSzIp0W6zZt6mEauE3KJW/eIZVnV9xfxicfpezIqypvLokEVr6g5i6ai0OaTMRxHyPiI2Hmtq6C5RaOf3ztc+GLM4Hji2c6gTS0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FB+OkxzF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E41C4CEEE;
+	Wed, 11 Jun 2025 11:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749640375;
+	bh=cuL/gnq/gn/v2XXovLUaVPiE6Y9kxenTDBpAhcvSFog=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rlhglbRtbt0Hbe+n51t1Jn72RUoWF3RpnwuZftUvtNku2mGleh3PsB7Ete2wnwVQX
-	 totONy0JEUXLVQ9Ik1KKGghpirw600tO8i8259mmKIVjMKnnA4WPgd/mExswV1pxYR
-	 18e7gfJe3yFADKmvYLOa41ksZ4zFzNef8IiwfWCA=
-Date: Wed, 11 Jun 2025 04:12:35 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>, Long Li <longli@microsoft.com>,
-	Shiraz Saleem <shirazsaleem@microsoft.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/6] Fix warning for missing export.h in Hyper-V drivers
-Message-ID: <20250611111235.GB31913@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20250611100459.92900-1-namjain@linux.microsoft.com>
+	b=FB+OkxzF/JTkIABV3hZpRIBuk3D+cl0hLPtR5s//hJ7x70YRGgWCw5cRt9djzjTKx
+	 NaPRoPJGUt7Qxwjv/+Hk2Gboyqg6TRSjdOJb5bmwQujFGTkHcHv9oe+u3zxRblOtFE
+	 a+LJD4KRpv2w5g7rKZQgjQOr2jpRr5j9Su+E4RBzrAt6xhRwkHxlDd5VRTDMJtuUvG
+	 X3WN1/q0ZFW/cQ4j+ufuMPcbCFFTV0e6kATr9sV9+w4qfbXk1kLX9uvuXefQwQ+KIs
+	 q8GYmBwxblMzQqbLVAX0A/GaTZbI+q6FaNPH4Z9QwdXvPNFepj1pzHgZMKOlgnFtBv
+	 fmC+G/lveDWsw==
+Date: Wed, 11 Jun 2025 12:12:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Da Xue <da@libre.computer>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>, Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [RFC] spi: expand bits_per_word_mask to 64 bits
+Message-ID: <b3d2a914-77be-4be6-bd43-cfaea7e450c9@sirena.org.uk>
+References: <20250611000516.1383268-1-da@libre.computer>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bucA20IzGsWOGyc7"
+Content-Disposition: inline
+In-Reply-To: <20250611000516.1383268-1-da@libre.computer>
+X-Cookie: No skis take rocks like rental skis!
+
+
+--bucA20IzGsWOGyc7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250611100459.92900-1-namjain@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Wed, Jun 11, 2025 at 03:34:53PM +0530, Naman Jain wrote:
-> When the kernel is compiled with W=1 option, a warning is reported
-> if a .c file exports a symbol but does not include export.h header
-> file. This warning was added in below patch, which merged recently:
-> commit a934a57a42f6 ("scripts/misc-check: check missing #include <linux/export.h> when W=1")
-> 
-> Fix this issue in Hyper-V drivers. This does not bring any
-> functional changes.
-> 
-> The one in drivers/hv/vmbus_drv.c is going to be fixed with 
-> https://lore.kernel.org/all/20250611072704.83199-2-namjain@linux.microsoft.com/
-> so it is not included in this series.
-> 
-> Naman Jain (6):
->   Drivers: hv: Fix warnings for missing export.h header inclusion
->   x86/hyperv: Fix warnings for missing export.h header inclusion
->   KVM: x86: hyper-v: Fix warnings for missing export.h header inclusion
->   clocksource: hyper-v: Fix warnings for missing export.h header
->     inclusion
->   PCI: hv: Fix warnings for missing export.h header inclusion
->   net: mana: Fix warnings for missing export.h header inclusion
-> 
->  arch/x86/hyperv/hv_init.c                       | 1 +
->  arch/x86/hyperv/irqdomain.c                     | 1 +
->  arch/x86/hyperv/ivm.c                           | 1 +
->  arch/x86/hyperv/nested.c                        | 1 +
->  arch/x86/kvm/hyperv.c                           | 1 +
->  arch/x86/kvm/kvm_onhyperv.c                     | 1 +
->  drivers/clocksource/hyperv_timer.c              | 1 +
->  drivers/hv/channel.c                            | 1 +
->  drivers/hv/channel_mgmt.c                       | 1 +
->  drivers/hv/hv_proc.c                            | 1 +
->  drivers/hv/mshv_common.c                        | 1 +
->  drivers/hv/mshv_root_hv_call.c                  | 1 +
->  drivers/hv/ring_buffer.c                        | 1 +
->  drivers/net/ethernet/microsoft/mana/gdma_main.c | 1 +
->  drivers/net/ethernet/microsoft/mana/mana_en.c   | 1 +
->  drivers/pci/controller/pci-hyperv-intf.c        | 1 +
->  16 files changed, 16 insertions(+)
-> 
-> 
-> base-commit: 475c850a7fdd0915b856173186d5922899d65686
-> -- 
-> 2.34.1
->
+On Tue, Jun 10, 2025 at 08:05:15PM -0400, Da Xue wrote:
 
-For the series,
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com> 
+> Most current controller IP support 64-bit words.
+> Update the mask to u64 from u32.
+
+The change looks broadly good, the only concern I have is making sure
+that the controllers are individually checked for support and impose any
+restrictions they need.
+
+--bucA20IzGsWOGyc7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJZLEACgkQJNaLcl1U
+h9DHHgf/dHG/rr6Bv2YtqYL+Ket5fd/hqjQ86KroqI0toxCmA1eE9KbCpJt6vXZc
+oJed5XwyXWhlOInKHxFal9yCkn2RDV3B8DI4XYOc4L+PXKJXFSsFu/Hcck+5Q1hr
+OWTFIVJVM8g082nL9ds4yHZgBXhuoA6om8/y3vLSSymOYV2r3muV9TLtuLi7RRvp
+cffMdI7ojL9FHwYhYl/q+9K/NBqP95o4pdPY8mCjJUhGGxJhr6PlhV3rRC/Xwsyc
+XCcE3aGY4vwURe2IhfiK+9ZIk+SnzaQ3lkdtdmAW5oaP6lE162f8hgLFjnDBegiH
+LVe9SYAWS++X3iV5XYI6XUvbTbkiYw==
+=7Xzl
+-----END PGP SIGNATURE-----
+
+--bucA20IzGsWOGyc7--
 
