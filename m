@@ -1,137 +1,154 @@
-Return-Path: <linux-kernel+bounces-682328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3302EAD5E8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:50:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D449AD5EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C43A1E072E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:50:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C84189B2F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28692777FD;
-	Wed, 11 Jun 2025 18:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0A321C9FE;
+	Wed, 11 Jun 2025 18:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gzLXoim6"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b="nvy3ywaK"
+Received: from mxout5.mail.janestreet.com (mxout5.mail.janestreet.com [64.215.233.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C60210F53
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05481A7AF7
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.215.233.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749667842; cv=none; b=IQDNd9gncjnyKweKFkAkZGurNqmG+q4Aff55zFZUSuqZiFzRsBiDP2mjy7pyc7Z83I+2f0vlJ8kscoRExctveCMus5hdhL/mua5e5mtPG6x8W1YvPND5mZKQQS7TbBtdQRbY1n3ZSvjg1CV2AM9HU7wUmz45PHsU7y8niKzn3Qw=
+	t=1749668160; cv=none; b=lAA3d4oTzwwIoOqxWOTBaPzQEdYNF/TxXR+lorGUW8GM2ctD9Jdo04tFKcWkwJJZ2/Pn5HuE/KKyB6cTgVOwfmM79jy6BRX6RxLjHogGQXqaJvyvz2YNZGCMrUO7woi6Hz4UBP4ZyvXt83AAERFeLMnLY9A/UUjj90oB+NdfuvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749667842; c=relaxed/simple;
-	bh=nSfjD6bMZBS4BmZBx5jpM03quxzAgEVRFOeFWsKppzc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JooRuTwh/BJeXQGzpW/I5bC1mGK20tJCR+hlQg6gZ0aIlSV6e/nl8ZBoZG446/TorGdk4Xk5f6dDlq4zv2U3xTZbBphRytp2Ic1d9Fp6SjgLzDXofiD3mnaAmxpMVtPcnl8QmDMFeXTzaZAJGltcGZaP1G/rGvJTOl0QoeQq4HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gzLXoim6; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2cc57330163so75138fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:50:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749667836; x=1750272636; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VfLSwwtWqu9qQ/BXRbsnm8G6Ja0ZcDCL6XYgy1oOSxM=;
-        b=gzLXoim60yzOv/Ze+/4YLOkW4YRipBB4Tu4AuW6IlXMkyBuVfMw9Nmh7VNuPfF2zpo
-         be1hDDl9UOKW3kB6EKdIN3mm/uzivw30+aAzLsCU/EeQGNEZXu+AqoTTjTNE4gqtqEs8
-         NrraQ/5FjYOn9dO7ASjDyJqmpldRumkmwazkvFuYIV9EguRlNi78ckzSqh9ofrMbxKN+
-         zrjKgFVSK6J0oilQKtZi58wf4DVuk+XqtdMVfrsp2GZ/HK48bAkmv1RomuiSKWQlKOVN
-         CVvbbwSubP9fbI+I4eSkQ0DU5jfFULZEd6MhSMAJJ8lbIYF332Xe/CoGAs+q30AkNFvG
-         okiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749667836; x=1750272636;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VfLSwwtWqu9qQ/BXRbsnm8G6Ja0ZcDCL6XYgy1oOSxM=;
-        b=jxAH9GxPkr3StMyu8aHaMGjvmRur7jI2tnm+1ZS3kTsD5c4RxCDR3ZnTzDb6Iv68AT
-         PyIJIiQPBIoQhAnxpKhDOlUZSv8F3I1yjFEHCc3LJYY08w57LxeSPVf7q1ox4R+y/Ekv
-         KXJlfeUG4ZMNDS648DTdhSzcryFqPTJGb1yyLiHqJCrECb6YvbAzW7jveu5PeQ1C6bM+
-         HfnsOdDNU98E2rQwXZg7o3suyKw4ZiR/A//FPyLvIVvt2hBPDAUfMSAvtVvknUHYk9kA
-         uy0UKKtAffURfJEafENi3kQgvA6DplSF6DVekQpvcY/Pz8A1Pf59tcrkxA90gqP5dVTH
-         GTnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkdIkkWlJvia0ZWYmnC904NpMGH4KnyayWaQp6IAM6nwGsj8FHFEG8z43HwspcF8G7yBtjcTmomsl80zQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+gEcZuyy2MYMM0hzPT+JRzx9DE954D4/YYvrR/icbSR79Z7Tr
-	S47s98LU7ZxWC69wGNXCX5OjaAgdplA/FRy9D/2v4XmgUBtKNBCuRc8UqwyO8I+u5+M=
-X-Gm-Gg: ASbGncsnMY9ufNfA7AcPjVA1gKL9M9B38qkVQI0zknEvqOqEk2gqK6w3R4Uwx4+VHkB
-	PL+7lmvM3vWo9UTAxM8Q64rXU0y21ZEHCyrU8s6ZLZ2XRCMbuJS/xZDwa4h62ItFPUmIR7lHBh2
-	YrUDLX6tJf9CuETnaf4PoGjikA7cRTnQ7YWBKYHcyCju00sj85Yt7ZWMqs2M7f2/5C7LIlnWXue
-	X0AGmsoXMRqEQYdqZX6YncNmiGOS0FnZMeAPX6hMbFeyv5PoGXcw7iJxAcD6o4IczKWM1l3gg9A
-	7xU0rDbE2E38YfPDB/cYJQkoik/nLRxRFPmOaHt7uEQI9ofB2EG87sl4FdCdZuyFacZv
-X-Google-Smtp-Source: AGHT+IHjYXz01Zl9sopL5Bo7WGyboaTC4cea8WBMM0dh6eeMLiHstHuEoKqxYD/qWOWCRh7nF1LZKA==
-X-Received: by 2002:a05:6870:1255:b0:2ea:7574:e243 with SMTP id 586e51a60fabf-2ea96c1a31emr2126324fac.9.1749667836342;
-        Wed, 11 Jun 2025 11:50:36 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ea06fe5784sm3009668fac.2.2025.06.11.11.50.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 11:50:35 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 11 Jun 2025 13:50:26 -0500
-Subject: [PATCH] gpio: virtuser: use gpiod_multi_set_value_cansleep()
+	s=arc-20240116; t=1749668160; c=relaxed/simple;
+	bh=uZMNI2eKpooRJpq5nrCE/LvN5FOfjLV2hWIZUyweVgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0+XxiExWLSrCX/j15zVpShIA7lQIQOQNEE2xr77RNbyfwF/A800Bsoqx3Wp5aL35GWxOmPt9bRYO1rVNhogbxh9NUI1KHutZJDR/mziCBAZvutXYlDei/e9RN4HPv0QbP6ezg4+lBYW2mQ+IZWFDgFiMJONmv02nDT2cyRgN5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=nvy3ywaK; arc=none smtp.client-ip=64.215.233.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=janestreet.com
+Date: Wed, 11 Jun 2025 14:50:31 -0400
+From: Nikhil Jha <njha@janestreet.com>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ 	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ 	Olga Kornievskaia <okorniev@redhat.com>,
+ 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ 	"David S. Miller" <davem@davemloft.net>,
+ 	Eric Dumazet <edumazet@google.com>,
+ 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ 	Simon Horman <horms@kernel.org>,
+ 	Steven Rostedt <rostedt@goodmis.org>,
+ 	Masami Hiramatsu <mhiramat@kernel.org>,
+ 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ 	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ 	netdev@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] fix gss seqno handling to be more rfc-compliant
+Message-ID: <20250611A18503192e946d6.njha@janestreet.com>
+References: <20250319-rfc2203-seqnum-cache-v2-0-2c98b859f2dd@janestreet.com>
+  <d78576c1-d743-4ec2-bf8c-d87603460ac1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-gpio-virtuser-use-gpiod_multi_set_value_cansleep-v1-1-43b4adf6c807@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAPHPSWgC/x2N2wrDIBBEfyXsc4U1vRj6KyWIxG26YI24KoWQf
- 6/kZeAMnJkdhDKTwHPYIVNj4S120JcBlo+LKyn2nWHE8Y4PrdWaeFONc6ndVD3OxttvDYWtULH
- NhUp2cVECUVJXj7cJ0ZjJIPTZlOnNv/PyNR/HH3RbZWqCAAAA
-X-Change-ID: 20250611-gpio-virtuser-use-gpiod_multi_set_value_cansleep-3d0480077870
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1159; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=nSfjD6bMZBS4BmZBx5jpM03quxzAgEVRFOeFWsKppzc=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoSc/zhZOmMebGMUbepV8a3eTCjZkLkJqsDG+FW
- kXqUnj+2MeJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaEnP8wAKCRDCzCAB/wGP
- wG+EB/0Q3zdJ06NySiiqCRQsp8x7sv6xy0yypu1OIPZ2sl36W8GmKXPriTkQLvwthDTA5x/xNcA
- jKOYBZkLcwESwA8rrIF363u7vs4eK1pajsjQkXmc/Wgweniel0rwLNzla+bN5XmIWtn/7/burXr
- a/9dBfjzBJN9K7gTT5V21T42cJLUQTQT7cUprzF5nyEG/0u1r/2d0I4gwNjPr6iCsXA8xKVQUNY
- mZIgpel6IqSlxxsqsNHZsdKAiAptY0NSaEoQ7Axbvs0whr32wve83G2XEHuYrugu7LEyLtU/sX8
- ttkXLSe9bJboRL43adockg7DJo05aHURPpT8iTVvIzJyra9W
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d78576c1-d743-4ec2-bf8c-d87603460ac1@oracle.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
+  s=waixah; t=1749667831;
+  bh=FpMbOeXSW5gqREJmu38NRaAciY+AIiBd4f7rjLts1EQ=;
+  h=Date:From:To:Cc:Subject:References:In-Reply-To;
+  b=nvy3ywaKM+HXjcbXegRqJJhPWpPema6thNJE0eI9STl3qqpqpdaXrG0RPEcTb6eLi
+  OuFY7Iq4Jo9smQZRj6nhny01S5wernP4efPDmtmCnXwnZ0SCPvRmjn+SGzZBmq77HG
+  DzaYSnlxiSHw13ZY1IL/DsX9E0N6VuqliCxJ1xlb5MSpcGNKDrWgT0TNC34L6aqtA/
+  0vlTLRSBQqCJ9XOQ4osz9zYEPUdSdnR6pEUtIjXbVoR9J62P4bezOZk9U8/YcgjV+5
+  vb/KSZaepYU7UBrFw14chpuFvmzUCwJbRVdFHC+OisEvyGoVCqhoZsKxlVk+Wvjf9z
+  22Ya9jACvP9Rg==
 
-Reduce verbosity by using gpiod_multi_set_value_cansleep() instead of
-gpiod_set_array_value_cansleep().
+On Thu, Mar 20, 2025 at 09:16:15AM -0400, Chuck Lever wrote:
+> On 3/19/25 1:02 PM, Nikhil Jha via B4 Relay wrote:
+> > When the client retransmits an operation (for example, because the
+> > server is slow to respond), a new GSS sequence number is associated with
+> > the XID. In the current kernel code the original sequence number is
+> > discarded. Subsequently, if a response to the original request is
+> > received there will be a GSS sequence number mismatch. A mismatch will
+> > trigger another retransmit, possibly repeating the cycle, and after some
+> > number of failed retries EACCES is returned.
+> > 
+> > RFC2203, section 5.3.3.1 suggests a possible solution... “cache the
+> > RPCSEC_GSS sequence number of each request it sends” and "compute the
+> > checksum of each sequence number in the cache to try to match the
+> > checksum in the reply's verifier." This is what FreeBSD’s implementation
+> > does (rpc_gss_validate in sys/rpc/rpcsec_gss/rpcsec_gss.c).
+> > 
+> > However, even with this cache, retransmits directly caused by a seqno
+> > mismatch can still cause a bad message interleaving that results in this
+> > bug. The RFC already suggests ignoring incorrect seqnos on the server
+> > side, and this seems symmetric, so this patchset also applies that
+> > behavior to the client.
+> > 
+> > These two patches are *not* dependent on each other. I tested them by
+> > delaying packets with a Python script hooked up to NFQUEUE. If it would
+> > be helpful I can send this script along as well.
+> > 
+> > Signed-off-by: Nikhil Jha <njha@janestreet.com>
+> > ---
+> > Changes since v1:
+> >  * Maintain the invariant that the first seqno is always first in
+> >    rq_seqnos, so that it doesn't need to be stored twice.
+> >  * Minor formatting, and resending with proper mailing-list headers so the
+> >    patches are easier to work with.
+> > 
+> > ---
+> > Nikhil Jha (2):
+> >       sunrpc: implement rfc2203 rpcsec_gss seqnum cache
+> >       sunrpc: don't immediately retransmit on seqno miss
+> > 
+> >  include/linux/sunrpc/xprt.h    | 17 +++++++++++-
+> >  include/trace/events/rpcgss.h  |  4 +--
+> >  include/trace/events/sunrpc.h  |  2 +-
+> >  net/sunrpc/auth_gss/auth_gss.c | 59 ++++++++++++++++++++++++++----------------
+> >  net/sunrpc/clnt.c              |  9 +++++--
+> >  net/sunrpc/xprt.c              |  3 ++-
+> >  6 files changed, 64 insertions(+), 30 deletions(-)
+> > ---
+> > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> > change-id: 20250314-rfc2203-seqnum-cache-52389d14f567
+> > 
+> > Best regards,
+> 
+> This seems like a sensible thing to do to me.
+> 
+> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> 
+> -- 
+> Chuck Lever
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/gpio/gpio-virtuser.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
-index eab6726953b4118dc0d72c2e37daeb9629040d11..a10eab7d2617e40cefb5f08e1211e9cb33035d0d 100644
---- a/drivers/gpio/gpio-virtuser.c
-+++ b/drivers/gpio/gpio-virtuser.c
-@@ -215,9 +215,7 @@ static int gpio_virtuser_set_array_value(struct gpio_descs *descs,
- 	struct gpio_virtuser_irq_work_context ctx;
- 
- 	if (!atomic)
--		return gpiod_set_array_value_cansleep(descs->ndescs,
--						      descs->desc,
--						      descs->info, values);
-+		return gpiod_multi_set_value_cansleep(descs, values);
- 
- 	gpio_virtuser_init_irq_work_context(&ctx);
- 	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_set_value_array_atomic);
+We've been running this patch for a while now and noticed a (very silly
+in hindsight) bug.
 
----
-base-commit: 19a60293b9925080d97f22f122aca3fc46dadaf9
-change-id: 20250611-gpio-virtuser-use-gpiod_multi_set_value_cansleep-3d0480077870
+maj_stat = gss_validate_seqno_mic(ctx, task->tk_rqstp->rq_seqnos[i], seq, p, len);
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+needs to be
+
+maj_stat = gss_validate_seqno_mic(ctx, task->tk_rqstp->rq_seqnos[i++], seq, p, len);
+
+Or the kernel gets stuck in a loop when you have more than two retries.
+I can resend this patch but I noticed it's already made its way into
+quite a few trees. Should this be a separate patch instead?
+
+- Nikhil
+
+
+
+
 
 
