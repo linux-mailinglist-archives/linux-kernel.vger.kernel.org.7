@@ -1,316 +1,196 @@
-Return-Path: <linux-kernel+bounces-682070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D0FAD5B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98655AD5B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B78B17B116
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E1983A5C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596D61E0083;
-	Wed, 11 Jun 2025 15:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166881EDA3A;
+	Wed, 11 Jun 2025 16:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVayobUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g70BU/zp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B101A8F82;
-	Wed, 11 Jun 2025 15:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1F81DF73C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 16:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749657588; cv=none; b=G7HceuA6XXg5UJZGyFwrcn5euhqpHzI3ERd106F0WQMpqK9jzrCkRbQIeuy+VHEUIE6IWrA8dIyFrUgXK4Dz+zuRqYmRDotKOqqgKyEa5huFZT31fBDC6+c8p6thN+ZT08bC/uzfZgxZqrjZMB8HlJo0fhUev5UJbFZsMTBfnAI=
+	t=1749657613; cv=none; b=OUHvz3NGxwvEM7Vr64ivyow/fV1JtILMDqHmSFKba5OewalMgQJbT1eL8XlOSrYJv0MOORbg3E79YUtr8H4A+E2mmCP9LR21+d4TO9ah5qUS9Yi/ZQb3ONduNgvHRgLoZhcAby0QnvTLJyawWCZgQ/PRwK8BsTOYrQ96KNDDaZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749657588; c=relaxed/simple;
-	bh=89BiTjHBE1lw2kMhVAJalnI8x+UkGxbeH28FkW7pcDE=;
+	s=arc-20240116; t=1749657613; c=relaxed/simple;
+	bh=IiDuuTRA2M2+3sZDk9eXLa4R/goATGNp2RX+nSQAtoY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JXwn4X0qz0E8aWhn0etX5nw6PnYZNXu8meprgD47tlUULZKk7X4oNqFhf+PTWge49xlMPmIzXN4C7qv4j4IbOoA/edAuUNE9TcKOxmyTPeCsfIqEZvQ2SrDBJ0dErijnOce3BQZqe2FpK3zpiDMiQptooBSnnD6f8KyZWw9xSL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVayobUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF130C4CEEA;
-	Wed, 11 Jun 2025 15:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749657587;
-	bh=89BiTjHBE1lw2kMhVAJalnI8x+UkGxbeH28FkW7pcDE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SVayobUVp3aRvF48EyWbLwH90CUS9XtWd6DT2NJPPfkvZi4/Ej9I43IKWun+HFcb0
-	 nRHltTxYcB6Qxfz61p7XckqnhXfyontfKCIS5mkY8AoLiPX9THBWd1JBhCK+fT8MMZ
-	 So91hBGYyqiJywryQwG23FzmWNoX+YFgmL1mzQ7o/Uj2TBCTh/j6xbjgGMzlK0GZHk
-	 A/Xeguy7nCljEZwEx+wlIvaq16xUqMQwqlEZ+QCyIFqLhc5aIQPHpgiZoakb9odsVT
-	 Z17Jukibctyn3iQJwUA2pW9TNYzuf0Va0YRhuRWZZLuWmO01nmPzeI7I/mhiR65gV+
-	 rCk7FwINZM5TQ==
-Date: Wed, 11 Jun 2025 16:59:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marius.Cristea@microchip.com, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- broonie@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	 MIME-Version:Content-Type; b=TJ6sKg5bHUEKxEnFZM6y/0zYoxm+pnO74DMEmjTB9d87gYw6Cu044fdPiMKnGYwowbtgzCA8kre24v2Odpn7DfOItg6pIVvI/wVL0l9GOjOvJD4I+vMY9EkvMFKUlWm2sWQA97syIVQacApENruo31cfmh4d+FyAPMhYix4Rk5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g70BU/zp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749657610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LWl4ZRI+eTYAyrnyoF354Y0MWsELzMtlOfF1z/VHP4s=;
+	b=g70BU/zpg4NE1GYetAfGl/8bHh3h9S1KaARa86XQbe0Jn1Vap7uM7Kf7VU179NN4a+ClvS
+	RhVYkTQ7WNe/RPJvBOho/9RMX1H9No9ajK/FJz7RKSe9fkEWagGxVyQZwEUxNCNlCa2Chh
+	WWKveApU9tJJR6ddjOv/+RPVND2QinI=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-6HT-xkhMMwKzXnLNY60-4g-1; Wed, 11 Jun 2025 12:00:07 -0400
+X-MC-Unique: 6HT-xkhMMwKzXnLNY60-4g-1
+X-Mimecast-MFC-AGG-ID: 6HT-xkhMMwKzXnLNY60-4g_1749657606
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3dd756e44bcso21855ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 09:00:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749657606; x=1750262406;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LWl4ZRI+eTYAyrnyoF354Y0MWsELzMtlOfF1z/VHP4s=;
+        b=ixIeKvn0m4HhmCn7iTjxYsDy30r83ZwpU/NEfgJ61lldbHB3jVz7j2RMWCt2oiQdAc
+         guCkBPiwp0sk++KZ9uYJvYSiuiUnIQq3oD2Vm7oNjIxZ6IjJXvWM6PS82viLkj41QhlU
+         sdtiSFP+7JN3AaIvyQgnoxI64ypbGn3LKX3z2nmdEkUPiJClJk9mkQtXgLjs6SalNxZG
+         i54BNHLG7ZNFcQdeFK2R2SLjEYQdEqbAUx351WjZnAjTrfhjRqHqp/m5tgm0j/cK6PSG
+         r3+skBByb2b54iMNaqRWywANQbQkZjl2P9SIYJbc33tt344mPHhpjldpPCMlPQcqxfSx
+         kFyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWR9cpWTAvWd1NWwTRbVAXAElgd5CU8G3vgZn+laK3dBFdqievwcH1bVI7DMNqeaZK6kAnTxVDW4m6Tfa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMNkCVj0kQ9AQaBU9WZpQVuXiPxPFfcMk77+CfTmLr4peLNjlN
+	8bNKt2q1WFJnZ3lU2Mndr5m7BWk/4UNC4UHabKAqcqHAXEdmJXOnKtqPm+VMOWVu/hmf3BBTzE0
+	CscQfXBaHXX84wk3WifP1BvJEQQ/OlFA/IwRL3K1MYgSSEJBye/xJgB328nzlC+xkAA==
+X-Gm-Gg: ASbGncvJXtvlOYqLmIHVAj5aXaGpAWuaspsqfuyruu23oAIO33OG9B+fgDrA1tkc7YJ
+	gXMpNQdr4T/ey6kGDYIkNC9MRpDeEfnVav6mwgOU1ah9aRuS6V1nAb14AESe5fyghif3lq+sGR2
+	J+2Kq2IoT/SQe0IDan/MlE1LvHnSgD5MwaLyIbl2ijz+8HAzi/gHVWjocpcVO7OH5rh1ZQFcTg5
+	3OSP6+N1kHGGjNGEm+gx1+fclhaUOcMa54kSu+MhdJoFqRX7U6EgvPfQXLqjTOa2Bd10bzcs9Ua
+	YZ6Ms/POdWUJS/pQRJT5srSjkA==
+X-Received: by 2002:a05:6602:1606:b0:875:a894:8343 with SMTP id ca18e2360f4ac-875bc3cce9amr143173239f.1.1749657606425;
+        Wed, 11 Jun 2025 09:00:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0gvvgK8mJjl2VAWjvOdFvpWcy2sB+ud7IQ/bdWVB5kYZmkmHpNEBhk66PrewRuy5I5Lbl+Q==
+X-Received: by 2002:a05:6602:1606:b0:875:a894:8343 with SMTP id ca18e2360f4ac-875bc3cce9amr143171539f.1.1749657606047;
+        Wed, 11 Jun 2025 09:00:06 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5012aaa23c6sm438160173.80.2025.06.11.09.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 09:00:04 -0700 (PDT)
+Date: Wed, 11 Jun 2025 10:00:02 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>, bhelgaas@google.com,
+ mario.limonciello@amd.com, rafael.j.wysocki@intel.com,
+ huang.ying.caritas@gmail.com, stern@rowland.harvard.edu,
+ linux-pci@vger.kernel.org, mike.ximing.chen@intel.com,
+ ahsan.atta@intel.com, suman.kumar.chakraborty@intel.com,
+ kvm@vger.kernel.org, linux-crypto@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: adc: adding support for PAC194X
-Message-ID: <20250611165939.45bb50ad@jic23-huawei>
-In-Reply-To: <3d95641d-c1c2-44bc-8478-c60734bcf420@baylibre.com>
-References: <20250606093929.100118-1-marius.cristea@microchip.com>
-	<20250606093929.100118-3-marius.cristea@microchip.com>
-	<1c7946f1-d712-4baa-8243-be6a55eec528@baylibre.com>
-	<1b8b10816d1f2f34724e77c68de869422d6c84b6.camel@microchip.com>
-	<3d95641d-c1c2-44bc-8478-c60734bcf420@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH v2] PCI: Explicitly put devices into D0 when
+ initializing - Bug report
+Message-ID: <20250611100002.1e14381a.alex.williamson@redhat.com>
+In-Reply-To: <56d0e247-8095-4793-a5a9-0b5cf2565b88@kernel.org>
+References: <aEl8J3kv6HAcAkUp@gcabiddu-mobl.ger.corp.intel.com>
+	<56d0e247-8095-4793-a5a9-0b5cf2565b88@kernel.org>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Jun 2025 11:11:32 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Wed, 11 Jun 2025 06:50:59 -0700
+Mario Limonciello <superm1@kernel.org> wrote:
 
-> On 6/10/25 10:07 AM, Marius.Cristea@microchip.com wrote:
-> > On Fri, 2025-06-06 at 12:02 -0500, David Lechner wrote: =20
->=20
-> ...
->=20
-> >>> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1944
-> >>> b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1944
-> >>> new file mode 100644
-> >>> index 000000000000..ae88eac354a4
-> >>> --- /dev/null
-> >>> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1944
-> >>> @@ -0,0 +1,17 @@
-> >>> +What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> >>> /sys/bus/iio/devices/iio:deviceX/slow_alert1_cfg
-> >>> +KernelVersion:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 6.16
-> >>> +Contact:=C2=A0=C2=A0=C2=A0=C2=A0 linux-iio@vger.kernel.org
-> >>> +Description:
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 A read/write property used to route, inside the PAC
-> >>> device, a specific ALERT
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 signal to the SLOW/ALERT1 pin. The SLOW/ALERT1 pin
-> >>> must be configured for the
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 ALERT function in order to control the device
-> >>> hardware pin (this is the default
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 functionality of the device hardware pin).
-> >>> +
-> >>> +What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> >>> /sys/bus/iio/devices/iio:deviceX/gpio_alert2_cfg
-> >>> +KernelVersion:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 6.16
-> >>> +Contact:=C2=A0=C2=A0=C2=A0=C2=A0 linux-iio@vger.kernel.org
-> >>> +Description:
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 A read/write property used to route, inside the PAC
-> >>> device, a specific ALERT
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 signal to the GPIO/ALERT2 hardware pin. The
-> >>> GPIO/ALERT2 pin must be configured
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 for ALERT function in order to control the device
-> >>> hardware pin (this is the
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 default functionality of the device hardware pin). =20
+> On 6/11/2025 5:52 AM, Cabiddu, Giovanni wrote:
+> > Hi Mario, Bjorn and Alex,
+> > 
+> > On Wed, Apr 23, 2025 at 11:31:32PM -0500, Mario Limonciello wrote:  
+> >> From: Mario Limonciello <mario.limonciello@amd.com>
 > >>
+> >> AMD BIOS team has root caused an issue that NVME storage failed to come
+> >> back from suspend to a lack of a call to _REG when NVME device was probed.
 > >>
-> >> What is the use case for needing these? In otherwords, why can't the
-> >> driver just
-> >> make best use of available resources as it sees fit?
-> >> =20
-> >=20
-> > Here inside the PAC the user could choose what limit to be routeed
-> > outside the chip. For sure, all of the limits could be routed to the
-> > same hardware pin, but there are some use cases where the user will
-> > want to connect that output pin to a safety hardware (e.g. over-current
-> > protection or over-voltage and over-current) and in this case we need a
-> > way to allow the user to do the setup.
-> >  =20
->=20
-> This sounds like it depends on what is wired to the alert pin, so sounds
-> like something that should be specified in the devicetree.
-
-Absolutely agree.
-
-These corners tend to be tricky to handle cleanly
-in either DT or userspace interfaces though and sometimes we've
-just decided not to be fully flexible to keep that sane.
-
->=20
-> I.e. in the devicetree, have a bool property microchip,alert1-is-safety
-> to indicate the ALERT1 pin is wired to the safety hardware. (It could
-> still be also wired as an interrupt input at the same time - or not,
-> doesn't really matter.)
->=20
-> Then, on the event attributes add a boolean "safety" attribute to allow
-> routing the signal to either the pin that was flagged as the safety pin
-> or not. This would allow the user to chose which signals control the
-> safety hardware at runtime without them having to know how the hardware
-> is actually wired up.
-
-I'd question if the use cases are such that it makes sense to expose the
-option to user space. Generally if you have a way to trigger a safety circu=
-it
-it's there for a reason and you want it always on for that reason (i.e.
-you might tweak exactly when a cut off on power usage fires, but you always
-do it on power usage).
-
-We probably want to propose a binding to he DT folk + take a look at
-what the ABI David suggests looks like in the driver. That's
-messy if it isn't double wired to the interrupt controller though as
-we then have events that never fire.
-
-
+> >> commit 112a7f9c8edbf ("PCI/ACPI: Call _REG when transitioning D-states")
+> >> added support for calling _REG when transitioning D-states, but this only
+> >> works if the device actually "transitions" D-states.
 > >>
-> >> ...
-> >> =20
-> >>> +static IIO_DEVICE_ATTR(in_current1_shunt_resistor, 0644,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pac1944_shunt_value_show,
-> >>> pac1944_shunt_value_store, 0);
-> >>> +static IIO_DEVICE_ATTR(in_current2_shunt_resistor, 0644,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pac1944_shunt_value_show,
-> >>> pac1944_shunt_value_store, 1);
-> >>> +static IIO_DEVICE_ATTR(in_current3_shunt_resistor, 0644,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pac1944_shunt_value_show,
-> >>> pac1944_shunt_value_store, 2);
-> >>> +static IIO_DEVICE_ATTR(in_current4_shunt_resistor, 0644,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pac1944_shunt_value_show,
-> >>> pac1944_shunt_value_store, 3); =20
+> >> commit 967577b062417 ("PCI/PM: Keep runtime PM enabled for unbound PCI
+> >> devices") added support for runtime PM on PCI devices, but never actually
+> >> 'explicitly' sets the device to D0.
 > >>
-> >> These are specified in the devicetree. Why are there also sysfs
-> >> attribtes? =20
-> >=20
-> > Yes, you could put a generic shunt resistor into the device tree but
-> > this resistor will have a tolerance. Because the end user could
-> > calibrate the system, it could also save the calculated/calibrated
-> > shunt resistor somewhere and restore that calibrated value each time
-> > the driver is loaded.
-> >  =20
->=20
-> If changing the resistor value changes the measured raw value, we
-> could probably use one of the existing standard calibration attributes
-> instead, like calibbias or calibscale.
-
-We have precedence for shunt resistor ABI for this reason, so I agree with
-David if we were starting from scratch (and it's a viable option to
-use the calibration attributes) but we can't drop the existing ABI
-and it does limited harm to carry on using it.
-
->=20
-> >  =20
+> >> To make sure that devices are in D0 and that platform methods such as
+> >> _REG are called, explicitly set all devices into D0 during initialization.
 > >>
-> >> =20
-> >>> +/* Available Sample Modes */
-> >>> +static const char * const pac1944_frequency_avail[] =3D {
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "1024_ADAP",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "256_ADAP",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "64_ADAP",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "8_ADAP",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "1024",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "256",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "64",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "8",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "single_shot_1x",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "single_shot_8x",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "fast",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 "burst",
-> >>> +}; =20
-> >> =20
-> >>> =20
-> > ... =20
-> >>> +
-> >>> +static const struct iio_chan_spec_ext_info pac1944_ext_info[] =3D {
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("sampling_frequency", IIO_SHARED_B=
-Y_ALL,
-> >>> &sampling_mode_enum),
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 {
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .name =3D "sampling_frequency_available",
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .shared =3D IIO_SHARED_BY_ALL,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .read =3D iio_enum_available_read,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .private =3D (uintptr_t)&sampling_mode_enum,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 },
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0 { }
-> >>> +}; =20
-> >>
-> >> sampling_frequency{_avialable} are already standard attributes in IIO
-> >> and is
-> >> defined to be a number in Hz. So we will need to find a way to make
-> >> this
-> >> work with the standard attribute (can use IIO_CHAN_INFO_SAMPLE_FREQ,
-> >> by the way).
-> >> And figure out how the other parts fit into other existing IIO
-> >> features. =20
-> >=20
-> > I can change to the standard attributes but I still have some question
-> > related to how to handle the ADAPTIVE sampling frequency that the chip
-> > supports and that it could be used to lower the power consumption of
-> > the chip.
+> >> Fixes: 967577b062417 ("PCI/PM: Keep runtime PM enabled for unbound PCI devices")
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >> ---  
+> > Through a bisect, we identified that this patch, in v6.16-rc1,
+> > introduces a regression on vfio-pci across all Intel QuickAssist (QAT)
+> > devices. Specifically, the ioctl VFIO_GROUP_GET_DEVICE_FD call fails
+> > with -EACCES.
+> > 
+> > Upon further investigation, the -EACCES appears to originate from the
+> > rpm_resume() function, which is called by pm_runtime_resume_and_get()
+> > within vfio_pci_core_enable(). Here is the exact call trace:
+> > 
+> >      drivers/base/power/runtime.c: rpm_resume()
+> >      drivers/base/power/runtime.c: __pm_runtime_resume()
+> >      include/linux/pm_runtime.h: pm_runtime_resume_and_get()
+> >      drivers/vfio/pci/vfio_pci_core.c: vfio_pci_core_enable()
+> >      drivers/vfio/pci/vfio_pci.c: vfio_pci_open_device()
+> >      drivers/vfio/vfio_main.c: device->ops->open_device()
+> >      drivers/vfio/vfio_main.c: vfio_df_device_first_open()
+> >      drivers/vfio/vfio_main.c: vfio_df_open()
+> >      drivers/vfio/group.c: vfio_df_group_open()
+> >      drivers/vfio/group.c: vfio_device_open_file()
+> >      drivers/vfio/group.c: vfio_group_ioctl_get_device_fd()
+> >      drivers/vfio/group.c: vfio_group_fops_unl_ioctl(..., VFIO_GROUP_GET_DEVICE_FD, ...)
+> > 
+> > Is this a known issue that affects other devices? Is there any ongoing
+> > discussion or fix in progress?
+> > 
+> > Thanks,
+> >   
+> 
+> This is the first I've heard about an issue with that patch.
+> 
+> Does setting the VFIO parameter disable_idle_d3 help?
+> 
+> If so; this feels like an imbalance of runtime PM calls in the VFIO 
+> stack that this patch exposed.
+> 
+> Alex, any ideas?
 
-Gah.  Second device to do something like this that we've seen this month.
-(ADXL313 does something similar when enough activity detection modes are
-turned on).  We don't have a good answer yet :(
+Does the device in question have a PM capability?  I note that
+4d4c10f763d7 makes the sequence:
 
-> >  =20
-> >> =20
->=20
-> From a quick look at one of the datasheets, it sounds like this
-> "adaptive" mode only applies when using an accumulator. And it doesn't
-> actually change the sample rate, but rather other factors, like scale
-> and the accumulator counter incitement. So it seems like it would be
-> a separate custom boolean attribute.
+       pm_runtime_forbid(&dev->dev);
+       pm_runtime_set_active(&dev->dev);
+       pm_runtime_enable(&dev->dev);
 
-Generally when I see this sort of thing my first instinct is hide it.
-What use is it for userspace to see that the frequency is changing?
-Maybe we just report the highest (or lowest?) frequency that might
-be going on?  Here it doesn't seem to be coupled to anything else
-though (unlikely the accelerometer) so I'm not sure how the driver
-would guess it makes sense to enable it?
+Dependent on the presence of a PM capability.  The PM capability is
+optional on SR-IOV VFs.  This feels like a bug in the original patch,
+we should be able to use pm_runtime ops on a device without
+specifically checking if the device supports PCI PM.
 
->=20
-> Also, I noticed that the fast mode and burst mode make the sampling
-> frequency dependent on the number of enabled channels. So to handle
-> this, normally, that would mean that IIO_CHAN_INFO_SAMP_FREQ would
-> need to be IIO_SEPARATE rather than IIO_SHARED_BY_ALL.
->=20
-> But since these chips support can work both ways (there are modes
-> where sample rate doesn't depend on the number of channels enabled
-> and there are modes where it does), I'm not sure what the right way
-> to handle that would be here. Maybe Jonathan will have some suggestion?
+vfio-pci also has a somewhat unique sequence versus other drivers, we
+don't call pci_enable_device() until the user opens the device, but we
+want to put the device into low power before that occurs.  Historically
+PCI-core left device in an unknown power state between driver uses, so
+we've needed to manually move the device to D0 before calling
+pm_runtime_allow() and pm_runtime_put() (see
+vfio_pci_core_register_device()).  Possibly this is redundant now but
+we're using pci_set_power_state() which shouldn't interact with
+pm_runtime, so my initial guess is that we might be unbalanced because
+this is a VF w/o a PM capability and we've missed the expected
+pm_runtime initialization sequence.  Thanks,
 
-Oh goody a new way to stretch that already much stretched interface.
-It's actually more fun because it's not the sum of the number of channels
-for fast mode but 1 more than that.
-
-Given we can't do both ways of reporting it at the same time we will
-probably have to just do IIO_SHARED_BY_ALL.  We can only then report
-the effective sampling frequency as it is fixed in these modes (so
-we can't attempt to match a userspace request by cranking it down
-if there are fewer channels enabled or similar).
-
-So we need
-sampling_frequency_available where the fastest frequency presented
-changes depending on the enabled channels.  Lower values match
-the 8/64/256/1024 values however many are enabled.
-
-if sampling_frequency =3D=3D top value then we just change it if more
-channels are enabled.  ABI always allows for other attributes to
-change 'randomly' when you touch a different one.  That flexibility
-is a pain for users but necessary for cases like this :(
-
-I'm not sure how we pick between burst and fast mode though
-as seems to be about auto offset stuff.
-
-Jonathan
+Alex
 
 
