@@ -1,83 +1,133 @@
-Return-Path: <linux-kernel+bounces-682494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D677AAD6105
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60132AD6113
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B491659D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAD5816F1F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA0B252906;
-	Wed, 11 Jun 2025 21:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4BF24500A;
+	Wed, 11 Jun 2025 21:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crn5xSiM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VJSwI2gi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76B824EAAF;
-	Wed, 11 Jun 2025 21:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C804244663;
+	Wed, 11 Jun 2025 21:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749676629; cv=none; b=euINOYFPKbLaOFbvWYuV15dt1ae9UOP8L8QNFQ0SimBm7tibMKXAFuK6y5alVTDbm41QH55cYNc0k5/tGfEIgdoUcHyVN8mZ00idLsFqoMhLGUc0lqDQH1lhe2zafUldeWI8FXjVhHQ/6d5haQLesmEZ1yGlKnHHc7LSycUvXMk=
+	t=1749676673; cv=none; b=ZKFwVRgUaXiBVN4vriF/04yNt00cS01dGBOY8g5/fJ0nWt2RtK6ZjTNz3C5v+dAGPyNAZ5+FF41m81tanpJqeW6dG5yPbkieRb4TzyIWO4hz1uDDNRTLE5jD7sr651uaJ14100U+r7w3aHdmphBAD/AIBR/ApeTGM22aZauuWsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749676629; c=relaxed/simple;
-	bh=jm6YAMEI2w2bPtK1+XGUCqX2+AtqBcb2XwmANQwlY04=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kjhRO573DVwhui8ZNfU+10juTV6QPgnYDack0c0nQtezI9rch6cZFphuu8uhjiGGOQZjfcefng235SgDGe/mTKCt+r1Fbr35uRxWFV62erjvq2kN+Y/RaaRcTCEuSiHR2z72jA3UlI/CL9gnOAF7rbq0nphyG7t8a46t4p1nLAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crn5xSiM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2A7C4CEEA;
-	Wed, 11 Jun 2025 21:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749676629;
-	bh=jm6YAMEI2w2bPtK1+XGUCqX2+AtqBcb2XwmANQwlY04=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=crn5xSiMLRNCcCSCkkUgfe/DxNxgFUJK+XC0dZ4txcnO9MA64W44YX6b98zOd/tIS
-	 lrqLEAZyt+2f9FLZgqj9aHfW64mWEZL+bvvfxKEbxP85eFQ/nH3mIFo0jLBajqr6qY
-	 Wgdun6FOLVICUxKiyIb0PMsgR+15qkvfhtmB/o9M3C2lxQMrd/Q5iNMJFR2EPeA2LH
-	 azP09qsX6hKsa64CSztLRvoQwlfbgnol9XRPHMmC2DRTbt3eJIhPwJcUsBhSaQwnMP
-	 kFoveuLXe5ivnbyCRbf55BxW7qCR2DzmUcYKQTUK/APzp9QMzNy3pP8o1U9Y4Aq2PS
-	 3lTn53jlv4akA==
-Date: Wed, 11 Jun 2025 14:17:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: George Moussalem via B4 Relay
- <devnull+george.moussalem.outlook.com@kernel.org>
-Cc: george.moussalem@outlook.com, Andrew Lunn <andrew@lunn.ch>, Heiner
- Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Philipp
- Zabel <p.zabel@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 0/5] Add support for the IPQ5018 Internal GE PHY
-Message-ID: <20250611141707.7f4371a1@kernel.org>
-In-Reply-To: <20250610-ipq5018-ge-phy-v5-0-daa9694bdbd1@outlook.com>
-References: <20250610-ipq5018-ge-phy-v5-0-daa9694bdbd1@outlook.com>
+	s=arc-20240116; t=1749676673; c=relaxed/simple;
+	bh=S+LipCKWtqniA6VgzkhLx9Mj5Oe60IIUsMAQ1B//s/Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GHc7JUBK6mdhKBO9RCDZYgTiRGONhuX2CUnVt8bvsQqpBkU66VewdOXlK8yn7MiH7s/LiAFHFlYeJR+xEByRu7sLLL6fZzTsv0UaoqsFIdixNhrT8JBEusfyszp5jHJXTVBUna1hbM85uFY4wNTQ+8c12xnRpN07eH3TYhpZjT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VJSwI2gi; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749676672; x=1781212672;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=S+LipCKWtqniA6VgzkhLx9Mj5Oe60IIUsMAQ1B//s/Y=;
+  b=VJSwI2giPmAx+0exXoMaG+5K9OhP4TaekzWbMOcvenSYeinyjDl464oz
+   ppAWlF+AoOwe80S1VM5v6lQyofM5DpNNV7GPqocEW0iAY+RmU9GifCqy7
+   zFpms0yVf7VNwILgG2G865Auewt4+YPXz5XTptwL4WbBnIxmJk84vhIe+
+   AN9tc3fD94z4eXsGK5VBE+WUFvtnxRIqUDbalbadtLu4jcBMQJr1qDufv
+   MkSUjveZ/CiL9gqShEwMNlynicExzGFSawJ3oIpjd+auWVVr3/dAR/3Bm
+   dbeuRwmXl/LnQPoejZD+cFYSStOojbjujMKS9MSbl7Xg3yP47OhlByb1L
+   A==;
+X-CSE-ConnectionGUID: BkUpkPbGRlqTF8WOH/x7Jw==
+X-CSE-MsgGUID: QaPe45AHQgCEU5qQY13kDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51933720"
+X-IronPort-AV: E=Sophos;i="6.16,229,1744095600"; 
+   d="scan'208";a="51933720"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 14:17:51 -0700
+X-CSE-ConnectionGUID: AyUrXfxOQvWhfcZggceskg==
+X-CSE-MsgGUID: UF5g3Q3QTjGRe/vCcTgspg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,229,1744095600"; 
+   d="scan'208";a="178263481"
+Received: from unknown (HELO vcostago-mobl3) ([10.241.226.49])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 14:17:50 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Kristen Accardi <kristen.c.accardi@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Tom Zanussi <tom.zanussi@linux.intel.com>,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: iaa - Fix race condition when probing IAA devices
+In-Reply-To: <aEjnbdoqzLoMifRn@gondor.apana.org.au>
+References: <20250603235531.159711-1-vinicius.gomes@intel.com>
+ <aEjnbdoqzLoMifRn@gondor.apana.org.au>
+Date: Wed, 11 Jun 2025 14:17:49 -0700
+Message-ID: <878qlyugea.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Tue, 10 Jun 2025 12:37:54 +0400 George Moussalem via B4 Relay wrote:
-> The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
-> output pins that provide an MDI interface to either an external switch
-> in a PHY to PHY link architecture or directly to an attached RJ45
-> connector.
+Herbert Xu <herbert@gondor.apana.org.au> writes:
 
-Please repost just patches 2 and 3 for networking to merge (with 
-[PATCH net-next] in the subject). The other patches will be merged
-by other trees.
+> On Tue, Jun 03, 2025 at 04:55:31PM -0700, Vinicius Costa Gomes wrote:
+>>
+>> diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+>> index 23f585219fb4..2185c101bef3 100644
+>> --- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
+>> +++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+>> @@ -35,28 +35,39 @@ static unsigned int cpus_per_iaa;
+>>  
+>>  /* Per-cpu lookup table for balanced wqs */
+>>  static struct wq_table_entry __percpu *wq_table;
+>> +static DEFINE_SPINLOCK(wq_table_lock);
+>
+> This can be called in BH context so you need to disable BH when
+> taking the spinlock.
+>
+
+My tests with lockdep enabled must have missed something, will verify
+and fix this.
+
+>>  static struct idxd_wq *wq_table_next_wq(int cpu)
+>>  {
+>> -	struct wq_table_entry *entry = per_cpu_ptr(wq_table, cpu);
+>> +	struct wq_table_entry *entry;
+>> +	struct idxd_wq *wq;
+>> +	int id;
+>> +
+>> +	guard(spinlock)(&wq_table_lock);
+>> +
+>> +	entry = per_cpu_ptr(wq_table, cpu);
+>
+> You're taking a global spinlock around a per-cpu variable.  In that
+> case you might as well get rid of the per-cpu variable and use the
+> spinlock only.
+>
+
+From what I could gather, the idea of the per-cpu workqueue table ("map"
+really) is more to "spread" the workqueues to different CPUS than to
+reduce contention.
+
+If the question is more about the choice of using per-cpu variables, I
+can look for alternatives.
+
+> Cheers,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+
+Cheers,
 -- 
-pw-bot: cr
+Vinicius
 
