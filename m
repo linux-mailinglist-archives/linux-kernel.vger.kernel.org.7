@@ -1,100 +1,169 @@
-Return-Path: <linux-kernel+bounces-681633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DC1AD552B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:14:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB78AD552E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970231BC18F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:14:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639C97AD9A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A4027E1C0;
-	Wed, 11 Jun 2025 12:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E75E27E7F0;
+	Wed, 11 Jun 2025 12:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jypLM2ze"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Edv1PjRq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1A5236430;
-	Wed, 11 Jun 2025 12:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07C027C144;
+	Wed, 11 Jun 2025 12:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644054; cv=none; b=gtWJEL3sP3TWMQlzwStge/KgO5K2BdvCZT/0RWEudu5W398m/7Ew7wrj2D1nY056W8+zlTcCujtYC66Er3dPO2yNzQgFzdWn9trhsX2KBLMEEQCemkrU1eeo8IPT4jPmkQqfJVY0ROb4UtMr31VFJEfg7YKvRnVlVmb4lp2L7wA=
+	t=1749644078; cv=none; b=j/CaWHhSq4AHnijxufar/wpdMfsBV7o91D77sNlbIRDSHI7JBTIe5Fu4h4FIxICNq3wsPKi71ByfPTweg23gC5XZWrR70mg5y6bHnhYB7KPx2adBBlJlauTEVWK70AhbnVRV4OJvnuwzmKTuFqkPngjuxmc+ZnXQNwO7UEdbYZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644054; c=relaxed/simple;
-	bh=8W7y2ug/7YME7PexfXOiPUIhgjLNDFmxSgAqpvaKdEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLbRSYsA3SsU6vx7BQ0PGDsKYDVZ9WlUUaP1RvgS4Is105/9it/GPvdpdE1WDgiiOgCQGg04H+kOU54+/WxI0oJiDYDgyvdxI8lR8+F7hfKc6vGbRirByBoYKHWfzlq5h383MLbeOpJ1A9jZsDXJwo+IF0T87KcwpLvQRc/gj7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jypLM2ze; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A064C4CEF1;
-	Wed, 11 Jun 2025 12:14:13 +0000 (UTC)
+	s=arc-20240116; t=1749644078; c=relaxed/simple;
+	bh=FJ1AHEgMmhRXu6CGnQHlc/GRmFKNYpmO4gT7upoqODo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X1oWY2vZDV33IuZ6GL6EgUXm9aPIGY+2jIYZy647t3AaKu3/EQGOyTI0rthHTLooHpKuy78Kuhmbmgnd4RyjQRRIHifVKoMqicJSlExD9jTlrE+Fg9KyFuA0HPL2nuRhhxnUF9lHABzNtS+j0jiHvKKTBouN6tf1Ub30/kI2IU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Edv1PjRq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CA4C4CEEE;
+	Wed, 11 Jun 2025 12:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749644054;
-	bh=8W7y2ug/7YME7PexfXOiPUIhgjLNDFmxSgAqpvaKdEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jypLM2ze7j8YPZmlgol3splyOSTyUY06tVScc/UnutpEaakTmXWCMEsK9FI2XoHCC
-	 Ty3qaMoBueEyk0eWQIFLRGt5lPlJsfO5E0/xboOoP/Hqk59eOtgo11Vq3Ps4USYcDY
-	 wgoZCqsdHec51pavWnBUPc0pIodd29stmHHxfHOD1iO1QylZOTP82mFBgqnQGcxlr8
-	 h2tPPFOnzZbVGVs/Y7bcHEKw3InScxojSOC999YdXwQKZgmqPNC3egeLVgvjXd2xCs
-	 2bDipvYUMXWABjKyxYLSunuxYldLjNrPDRsov3ecvHZ1KFvDoI7AAyARiJIemli4Ko
-	 KTwYZO1XHCk1g==
-Date: Wed, 11 Jun 2025 13:14:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] selftests/mm: Convert some cow error reports to
- ksft_perror()
-Message-ID: <4ae56ed1-c25d-4ace-aeff-f97884246c41@sirena.org.uk>
-References: <20250610-selftest-mm-cow-tweaks-v1-0-43cd7457500f@kernel.org>
- <20250610-selftest-mm-cow-tweaks-v1-2-43cd7457500f@kernel.org>
- <e88999e6-8c79-4273-9f6f-df28d016cc6e@redhat.com>
+	s=k20201202; t=1749644078;
+	bh=FJ1AHEgMmhRXu6CGnQHlc/GRmFKNYpmO4gT7upoqODo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Edv1PjRqitKqfWC53D9UEbG5O7XatWHfY7eu+CVCezYUjI3iBlpiUxBWy9hpBq1Hi
+	 O1ZCBbV56G1rRrHGu22LJh5nGSOp5lyHWsjC6T287wv7lwRVjbRyjPOfLiZXH1LltK
+	 cARMxYQmV/wbB3nmtlqA9Akubigyrr7gNIu1LFSWDfi+mvit8EIB0rCMQgGta+L5Hn
+	 r43JxzN/IgcIkVdtPJnrFYuDYgwzqrMhshnPiaFdKb3jZSFZITCXcER5VXNDIVr1A/
+	 qeJrKq6C14kg1z1G0WmqEcuqy4UISfjKibFRO1t6myCj0+5+fZJcZS7YS616khN/Ak
+	 4vv72X4cGTt5g==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Bjorn Helgaas" <bhelgaas@google.com>,
+  Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,  "Greg
+ Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  "Tamir Duberstein" <tamird@gmail.com>,  "Viresh Kumar"
+ <viresh.kumar@linaro.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-pci@vger.kernel.org>,
+  =?utf-8?Q?Ma=C3=ADra?=
+ Canal <mcanal@igalia.com>
+Subject: Re: [PATCH v2] rust: types: add FOREIGN_ALIGN to ForeignOwnable
+In-Reply-To: <DAJOKFHW96XZ.2ANYSSFQO03ZL@kernel.org> (Benno Lossin's message
+	of "Wed, 11 Jun 2025 13:51:21 +0200")
+References: <20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org>
+	<HCd56HpzAlpsTZWbmM8R3IN8MCXWW-kpIjIt_K1D8ZFN6DLqIGmpNRJdle94PGpHYS86rmmhCPci9TajHZCCrw==@protonmail.internalid>
+	<DAIV6MJAJ5R0.3TZ4IC2KO9MOL@kernel.org> <87v7p3znz6.fsf@kernel.org>
+	<CAH5fLgi3B_Wyz2OzBLhHHgWrg7hboyFUcQe-+GUrrvXiX9di=w@mail.gmail.com>
+	<GHUD6hpYDty0s_oTLGC6owDPKqrNepeGOL9F-XlvY6G50K8Zptjp4f8kVVnyoTjf-E_0QVeHfmUUvcN-p1i24Q==@protonmail.internalid>
+	<DAJHVMM9DND0.2FM0FJYN0XEFV@kernel.org> <87jz5izhg3.fsf@kernel.org>
+	<WXoNAlTJvpteJEAZ3TkYKk2QWHBC0oID8Dy3AHGxLEwiZwBPdSLZB4MpdbObLtFvqiN9re3q6OQpiua2uiv1Hw==@protonmail.internalid>
+	<DAJOKFHW96XZ.2ANYSSFQO03ZL@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 11 Jun 2025 14:14:25 +0200
+Message-ID: <878qlyzd9a.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2u5g+dpnZc+yRuyy"
-Content-Disposition: inline
-In-Reply-To: <e88999e6-8c79-4273-9f6f-df28d016cc6e@redhat.com>
-X-Cookie: No skis take rocks like rental skis!
-
-
---2u5g+dpnZc+yRuyy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 02:10:20PM +0200, David Hildenbrand wrote:
-> On 10.06.25 16:13, Mark Brown wrote:
-> > This prints the errno and a string decode of it.
-> >=20
-> > Reported-by: David Hildenbrand <david@redhat.com>
->=20
-> Probably not "Reported-by". Did you mean "Suggested-by" like for the othe=
-rs?
+"Benno Lossin" <lossin@kernel.org> writes:
 
-Probably. I'm sure I was thinking something there but not sure what.
+> On Wed Jun 11, 2025 at 12:43 PM CEST, Andreas Hindborg wrote:
+>> "Benno Lossin" <lossin@kernel.org> writes:
+>>
+>>> On Tue Jun 10, 2025 at 4:15 PM CEST, Alice Ryhl wrote:
+>>>> On Tue, Jun 10, 2025 at 4:10=E2=80=AFPM Andreas Hindborg <a.hindborg@k=
+ernel.org> wrote:
+>>>>>
+>>>>> "Benno Lossin" <lossin@kernel.org> writes:
+>>>>>
+>>>>> > On Tue Jun 10, 2025 at 1:30 PM CEST, Andreas Hindborg wrote:
+>>>>> >> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>>>>> >> index 22985b6f6982..0ccef6b5a20a 100644
+>>>>> >> --- a/rust/kernel/types.rs
+>>>>> >> +++ b/rust/kernel/types.rs
+>>>>> >> @@ -21,15 +21,11 @@
+>>>>> >>  ///
+>>>>> >>  /// # Safety
+>>>>> >>  ///
+>>>>> >> -/// Implementers must ensure that [`into_foreign`] returns a poin=
+ter which meets the alignment
+>>>>> >> -/// requirements of [`PointedTo`].
+>>>>> >> -///
+>>>>> >> -/// [`into_foreign`]: Self::into_foreign
+>>>>> >> -/// [`PointedTo`]: Self::PointedTo
+>>>>> >> +/// Implementers must ensure that [`Self::into_foreign`] returns =
+pointers aligned to
+>>>>> >> +/// [`Self::FOREIGN_ALIGN`].
+>>>>> >>  pub unsafe trait ForeignOwnable: Sized {
+>>>>> >> -    /// Type used when the value is foreign-owned. In practical t=
+erms only defines the alignment of
+>>>>> >> -    /// the pointer.
+>>>>> >> -    type PointedTo;
+>>>>> >> +    /// The alignment of pointers returned by `into_foreign`.
+>>>>> >> +    const FOREIGN_ALIGN: usize;
+>>>>> >>
+>>>>> >>      /// Type used to immutably borrow a value that is currently f=
+oreign-owned.
+>>>>> >>      type Borrowed<'a>;
+>>>>> >> @@ -39,18 +35,20 @@ pub unsafe trait ForeignOwnable: Sized {
+>>>>> >>
+>>>>> >>      /// Converts a Rust-owned object to a foreign-owned one.
+>>>>> >>      ///
+>>>>> >> +    /// The foreign representation is a pointer to void. Aside fr=
+om the guarantees listed below,
+>>>>> >
+>>>>> > I feel like this reads better:
+>>>>> >
+>>>>> > s/guarantees/ones/
+>>>>> >
+>>>>> >> +    /// there are no other guarantees for this pointer. For examp=
+le, it might be invalid, dangling
+>>>>> >
+>>>>> > We should also mention that it could be null. (or is that assumption
+>>>>> > wrong?)
+>>>>>
+>>>>> It is probably not going to be null, but it is allowed to. I can add =
+it.
+>>>>>
+>>>>> The list does not claim to be exhaustive, and a null pointer is just a
+>>>>> special case of an invalid pointer.
+>>>>
+>>>> We probably should not allow null pointers. If we do, then
+>>>> try_from_foreign does not make sense.
+>>>
+>>> That's a good point. Then let's add that as a safety requirement for the
+>>> trait.
+>>
+>> I disagree. It does not matter for the safety of the trait.
+>>
+>> From the point of the user, the pointer is opaque and can be any value.
+>> In fact, one could do a safe implementation where the returned value is
+>> a key into some mapping structure. Probably not super fast, but the user
+>> should not care.
+>
+> Then we'll have to remove `try_from_foreign`.
 
---2u5g+dpnZc+yRuyy
-Content-Type: application/pgp-signature; name="signature.asc"
+Oh, I see. OK, it is a safety requirement. Should I just add it to this pat=
+ch?
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJcxEACgkQJNaLcl1U
-h9DfwQf/SzWod9RbWKqPK86WfL2gkBooCAQCzXdR56dwvobuGo/74De4ozPz/NNT
-5FRwmDEewKWDV6NVZ9v+J93OC4d1/owoecZ5hBPCAi39pYQ/3U0k2tYio8LklcUh
-o6zzMPaPtsXmVyZLqwCgdl69yFkAQNvdED1bjATnRDcI3rGzOXjXe6SGWS2LIQuS
-nxJecqJ/pqUaZRWdGawzl3b5GYfZtG+ujOKF7RNj5rd7geSqSrJaNa55p/cS3GpN
-nrPaIzZAdW01FenWBZ61RCSW2es+UZaXIfBO2G1b8nQgNz1ttUHCQ9Z2+3W/MEM/
-qRS9UCBJesVOoRXQJxynyDvGBrP/XA==
-=Xt5+
------END PGP SIGNATURE-----
+Best regards,
+Andreas Hindborg
 
---2u5g+dpnZc+yRuyy--
+
+
 
