@@ -1,91 +1,121 @@
-Return-Path: <linux-kernel+bounces-680638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F567AD47DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:30:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA65FAD47E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806B17AB4D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:28:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54E757ABA59
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFFD7262C;
-	Wed, 11 Jun 2025 01:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4978F4E;
+	Wed, 11 Jun 2025 01:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBU4i5CF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYGA0xzl"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D027C8CE
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 01:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB611EA65;
+	Wed, 11 Jun 2025 01:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749605398; cv=none; b=PDsJIW23ZJUVmhlJxFmFcwyr83g1iHcb8QNYzlt6lIvqqw+27WmKK53lN8zsqaj/xJVmpSGgrUpwuSmhuVoNufRYitTbgBj4p5FmmeQTo7RbbXa5D9sIoMc7Fe2gt7LHGg+p/vfrkSDMn6rwwc7bS2hmaqkxUEnpp84p7SvjdZA=
+	t=1749605499; cv=none; b=bL8xecHVju34MKcUdLWaQWyWeO45v52Tw9JKI3eJtO9ToLNVUpPkZCfopE9P9wmSDsIpiwILRE7sNQFMIAVrmbYF5TtAZkIkxpfBzLmxae5VYJwPbIjxUgoBlQR4dpsaCdZXJf4B+6TkOrUMqKJrlj3A06HKw1ZIGM0KicWkWuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749605398; c=relaxed/simple;
-	bh=r1RV6yWcPTMdXv7fcO+LFlOF0On2abCreVsMxm4BoXo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PEkMmtAq1fG6DSDl3v8aeDXcuzBF54fJHK4HFgST6K2SBDUX/+Zqg/AQkze0xjxh20hIOn3Stmbg0m4CzZjtAGUPGGcodXjvSeaFvijzRlo4NPTIAsjipVOETWfsw8PHOu726hR7ENy8nJCMw+m0kdQy+9O53Osdp+89tLqMxTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBU4i5CF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3A6EC4CEED;
-	Wed, 11 Jun 2025 01:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749605397;
-	bh=r1RV6yWcPTMdXv7fcO+LFlOF0On2abCreVsMxm4BoXo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jBU4i5CFrmBcAS/iwe2PgxqcewiXD1vFGdE3VUxmepKIju5h1vBe+VFJp5WTe8MUd
-	 rDsIFriUPwrZQOdQPBNCfuX0jZydOvM5qDiGEd/tHd+FzGzFbsSl8Qm/e04ljn69oR
-	 Dig6eQByqMlPJ4kffeQyG67e4/ccC0NzqSZr6YDdTMR1OMXD8cd6R6HRAIdfmkgYAp
-	 rHg5c6j/Xa/hnTbHzpLZ6IOX9M9Pc77wtuZpJ2VPNfVzGBUyc8WCOOm+tlQLOTM9Q5
-	 oawapUlxdvsoIVPxMFXB3erJnvGoKnrday+xzliO8fEJC78nMrkxrWT52POFguexqA
-	 Gfxb9cUU89Elg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C0839D6540;
-	Wed, 11 Jun 2025 01:30:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749605499; c=relaxed/simple;
+	bh=a5ZvgIfN3OKxFjLTf2AnMkbOIVrM7et3+35m+Z/toVQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OrJx2uKLULjLO3L8yxqwSSMATyGngmmKzjZbPJsbMPO93NatFz1OPGeWiEV/zokdpWrenU8yxIrHnvWk7B94C84j8E65UgFjILLlBAWk8iPSyWMqv4eeDuESj/2A7LzYtrv/h8IyZ8XMboFg3fITH7P5G1d2JF5Xss3LcqNRDs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYGA0xzl; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32add56e9ddso49589921fa.2;
+        Tue, 10 Jun 2025 18:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749605494; x=1750210294; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vraTKiNI8477CY05dFluHmdT9xg40IS+eMCdDurmLVQ=;
+        b=PYGA0xzlRcT3xxVYXJm4C4y0zk+yxCqAIwYuZRabKdQEjV+YJSWp8xiDRS5MWVm+8Y
+         JG2j+3MNmhu847j5I2jbZtuMmjgzjYxVGqwxNLypOB8gDHe15SuDXJq7fsUa0LeNvqgv
+         mDqCrnVbShHUAgYzmRgAJE+wLsjKF+AOIGELCvx5Shj9UZjopF/oG9+4wf99QI7EnZVm
+         GzL4MiTUkvyzlzxFNF8XTdlmYgfO+vloXig6aA26dFSyihImm1C+nJYW5eKsb57bso0T
+         h6o0s0NsITauGEWzr2ylwQesMsz2rd7F97+jt0lT3HOGHEr4FPI+wdpXzPVYbS6Vj2/d
+         5edA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749605494; x=1750210294;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vraTKiNI8477CY05dFluHmdT9xg40IS+eMCdDurmLVQ=;
+        b=BJG8dXfJ/s4aFWu25Wm4WsccTlm+nLH5QX+Fpv81f6v2yi4L5o1M6yf6qa2N3AWA0L
+         oskdJj2oOMyTFYgiNCdxh7/7i0IoOuGNV/an7leyg2CzN43G9GOb3mi4d8Jj3oSOpzqe
+         W6RTnM3Rd52AdAk14DklsBw+trypwv4c6R/Tkx5UDvK3f0srO91mmZwk3Brr14dv1RKE
+         kMGBZPHBvAMEfDKWATSLfb+O03dxM3Qc2/MHhyglQceQapDf6zK17TqAvyZnUEegCQR2
+         sMk/pavYvmwcxXrk5QT3xgkBryhVHDhQI4+E2iFEKBd7R9Fp7mfFAzRCPv5gKLfyiD7o
+         INwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdykWdP/9Czr/qLrDDK3Y12Od1edARSo5CgAPtZsGKamDrTcgMsT75wTb1SNQGz/P69qAOcCunDF74HpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkKI6P4nsJM1H8e3xFGuUykzm9vcoGCArJDpsS5J8uvK9k777U
+	gNPe3ymzUMsS5QPlSmyqGOPqnLOfbtg2CiumioiYFM75lEj8eehhdR4KHa5AVLuTnRzzWml1P4O
+	PkQkVKPY1ofA3O0J2dJZC4d8ob3pT5mFpO+c5
+X-Gm-Gg: ASbGnctBc7A4vAfiWJACVwoyfZyfFKiC9hlgdocTD/v8wlHgyDKbnecLx1ELC9TuGkb
+	KlulAfKDWG8fIoVAfuzl9ubidsAqg3BT+NCWJsJQPDa0d+yfXt91CGxQpFwCNaV5RXDpMU3wiWV
+	gZVK2n/REJXk8CGE7xOmHHQ0EGqjBeYj5zxGNjXyX9KJQie3KSMm+IwtXyoXG78g7OCpQhO5iQW
+	g7GIg==
+X-Google-Smtp-Source: AGHT+IE4rW7D/o8QA3IDLlv5DmCcDPwX0EnbcKt6buiNsiHyuUDZPtlMGLIrt5C7qvE23puW3c5nLgzUJcd/ebf9X7I=
+X-Received: by 2002:a2e:bc11:0:b0:32a:8bf4:3a81 with SMTP id
+ 38308e7fff4ca-32b22285b8dmr2578301fa.5.1749605493624; Tue, 10 Jun 2025
+ 18:31:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1 0/1] fix riscv runtime constant support
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <174960542825.2762376.5266886940672974555.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Jun 2025 01:30:28 +0000
-References: <20250530211422.784415-1-cmirabil@redhat.com>
-In-Reply-To: <20250530211422.784415-1-cmirabil@redhat.com>
-To: Charles Mirabile <cmirabil@redhat.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, charlie@rivosinc.com
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 10 Jun 2025 20:31:22 -0500
+X-Gm-Features: AX0GCFtn3fjSd3bm0PUue66pR4M9D8LAwg1yDVZX5nsDQ7DwECVdOQclinbY2h4
+Message-ID: <CAH2r5mt_wPk99ns95oV1tjo62VEmw+zCkoxY=8otNNhV=pnX1A@mail.gmail.com>
+Subject: [ANNOUNCE] cifs-utils release 7.4
+To: CIFS <linux-cifs@vger.kernel.org>, 
+	samba-technical <samba-technical@lists.samba.org>
+Cc: Pavel Shilovsky <piastryyy@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+A new update, version 7.4, of cifs-utils has been released today.
+Users of cifs-utils version 7.3 on older kernels are encouraged to
+update to 7.4 since it includes a fix for a mount problem with version
+7.3 of cifs-utils on older kernels when using namespaces.
 
-This patch was applied to riscv/linux.git (fixes)
-by Palmer Dabbelt <palmer@dabbelt.com>:
+Links:
 
-On Fri, 30 May 2025 17:14:21 -0400 you wrote:
-> I discovered that something broke basic booting on riscv64 for a nommu
-> kernel with a minimal configuration running on qemu between 6.13 and
-> current master. The symptom was that the kernel would hang and print
-> nothing instead of booting normally. I bisected my way to:
-> 
-> commit a44fb5722199 ("riscv: Add runtime constant support")
-> 
-> [...]
+webpage: https://wiki.samba.org/index.php/LinuxCIFS_utils
+tarball: https://download.samba.org/pub/linux-cifs/cifs-utils/
+git: git://git.samba.org/cifs-utils.git
+gitweb: http://git.samba.org/?p=cifs-utils.git;a=summary
 
-Here is the summary with links:
-  - [v1,1/1] riscv: fix runtime constant support for nommu kernels
-    https://git.kernel.org/riscv/c/8d90d9872eda
 
-You are awesome, thank you!
+Detailed list of changes since version 7.3 was released
+----------------------------------------------------------------
+Enzo Matsumiya (1):
+      mount.cifs: retry mount on -EINPROGRESS
+
+Henrique Carvalho (1):
+      cifs.upcall: correctly treat UPTARGET_UNSPECIFIED as UPTARGET_APP
+
+Paulo Alcantara (1):
+      cifs.upcall: fix memory leaks in check_service_ticket_exits()
+
+Pavel Shilovsky (1):
+      cifs-utils: bump version to 7.4
+
+Z. Liu (2):
+      getcifsacl, setcifsacl: use <libgen.h> for basename
+      cifscreds: use <libgen.h> for basename
+
+
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks,
 
-
+Steve
 
