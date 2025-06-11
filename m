@@ -1,232 +1,210 @@
-Return-Path: <linux-kernel+bounces-681639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE996AD553D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:17:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61DCAD5531
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AF5917F8B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78FB27A59CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69C227CB16;
-	Wed, 11 Jun 2025 12:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D069F27EC74;
+	Wed, 11 Jun 2025 12:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ftFRl3nH"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="fxKAQ6lx"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C3B78F34;
-	Wed, 11 Jun 2025 12:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B0C2E6102;
+	Wed, 11 Jun 2025 12:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644220; cv=none; b=hyQ5ZRKegvAK6p/wEWX+KvmTeLN77Rjf3uWUCZZEf7Z9snG8VxQwa1ta5IOYAw2WS9mzrIik96NG+zaFLmL9DEQ6muFGdRHxQ9wquLpaNrjRuvZV49Tt4goWviF1ckWlH6rWF8WuronK1HbT3QJmXgavDQ7ymIH70s6fmG4S69k=
+	t=1749644123; cv=none; b=VHgG3bhpYx1qs7a4b3jysLAKzzlxIokHUb2Gq29fNrcvnTDAjWiQK+yHdsIpQzHE4T/n0aQOHgdZ/ikzdSV3577iZQwf4z3Tnx2FFZiSSv+fa2gLUWzJkBs/KTYRFeKirwQUSYMWNQqME9Z5hnO7rQEfT7JI44fcxgettxivdE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644220; c=relaxed/simple;
-	bh=2fgo+DfYW6hkb8u8dSOtf7+gmhcII4bUlVTgpcygRbs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZZs53l41/2ypuMu81ckoH52AwzbdyCbcpNP6738wd1yFr+DY2Nj/Z/TYp4wV8wcxW0VnaCBxc5XnPLj9ryffH2k4C6qzLxuUTdL31GkHCbG0RaiV+yc3PNZJb9d1y6IPUEtVELn8UlbzSXaZozaeCNrmVI7xbqVsQyvHfw7x2rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ftFRl3nH; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1749644218; x=1781180218;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=B4ji9po20KtVxaeun/VeETG8Hky3+gtaCUe9OwsWfc0=;
-  b=ftFRl3nHGkMmMMGA7v/gX7WPNBMMKAEx8asCfi+Z9B/8WW3NJ7sfn2OF
-   1v9BE5XL5otu6rJyMUtOli5XVNalb2zRYw+BMZRPUsJrYWl5WNsigM7zK
-   sqERkvCrAixTX/JY4Bg5h15dSPGbO4mcicXyN32go0C/s6DtukOMc7PSm
-   d27W0BIod/AGP9yLp3Jr5vKbln9ri5eYsppRP6IbDYrI7SQsnV2q+olmT
-   EX+jV0a16Q7yY0+g4MopM9E9ejvwHI8YFsfSIUklS8WmIqFeE4j5U1NqY
-   qZ0S/2VPduyjraMDZuSg85eCLu8CoJotmG0CA61dKaxfcXEnvZeJ3ujna
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.16,227,1744070400"; 
-   d="scan'208";a="500409699"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 12:16:55 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:23515]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.1.131:2525] with esmtp (Farcaster)
- id 59df4382-3cb2-4f51-a171-145e622f87ad; Wed, 11 Jun 2025 12:16:54 +0000 (UTC)
-X-Farcaster-Flow-ID: 59df4382-3cb2-4f51-a171-145e622f87ad
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 11 Jun 2025 12:16:54 +0000
-Received: from dev-dsk-abuehaze-1c-21d23c85.eu-west-1.amazon.com
- (10.13.244.41) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14; Wed, 11 Jun 2025 12:16:48 +0000
-From: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
-To:
-CC: <abuehaze@amazon.com>, <stable@vger.kernel.org>, kernel test robot
-	<oliver.sang@intel.com>, Hagar Hemdan <hagarhem@amazon.com>, Shaoying Xu
-	<shaoyi@amazon.com>, Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin"
-	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>, Xuan Zhuo
-	<xuanzhuo@linux.alibaba.com>, Keith Busch <kbusch@kernel.org>, "Christoph
- Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<virtualization@lists.linux.dev>, <linux-nvme@lists.infradead.org>
-Subject: [PATCH] Revert "block: don't reorder requests in blk_add_rq_to_plug"
-Date: Wed, 11 Jun 2025 12:14:54 +0000
-Message-ID: <20250611121626.7252-1-abuehaze@amazon.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1749644123; c=relaxed/simple;
+	bh=FQrqMWHcqOYSzV0uJEVqzpxAbDwWYRMY89idJmr1ruM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mzo9NRq0/xE8PJzy3G4gRJRgYTbagNQ2tztMANi7Is0zD/1fU/TICJk1sg6mPMUIp0+1UH215/tAWJV1qozE2V18XbPak4pxZUIqaIiwatBQZNC3nSPLEGePcOeCMQguikrUs+BsDB4IBqYIOBvvaKNVqBjLuQqVrbYTPyS7u8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=fxKAQ6lx; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=xq24d1PFQ1Om8DHKsu9Y7WJ8vjCj2XxMm2DJZnzLc2I=; b=fxKAQ6lxrh1rLRfimuQ7BwYziF
+	mGufIwkUqLEKEYohk0a2/a1MWY0cOcs0WTtyCfgXAP3rl6B+UWPrxoXRMxlWqA1Jg+UCQlMH1DsVd
+	t5QhJCUURgvfTSx/MJkwP1IHljOekVNbSrVPyn6/XW/GXVOfB3hsDXRoHmofQi5cklH8=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:53988 helo=[192.168.0.218])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1uPKMJ-003Rdv-9u; Wed, 11 Jun 2025 14:15:11 +0200
+Message-ID: <f4ebc809-f30e-46aa-9f36-db98370ebe6e@emfend.at>
+Date: Wed, 11 Jun 2025 14:15:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: dw9714: add support for powerdown pin
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
+References: <20250611-dw9714-sd-v1-1-fb47ef5e736c@emfend.at>
+ <aElNcDTLEJTcJs2s@kekkonen.localdomain>
+Content-Language: de-DE
+From: Matthias Fend <matthias.fend@emfend.at>
+In-Reply-To: <aElNcDTLEJTcJs2s@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-This reverts commit e70c301faece15b618e54b613b1fd6ece3dd05b4.
+Hi Sakari,
 
-Commit <e70c301faece> ("block: don't reorder requests in
-blk_add_rq_to_plug") reversed how requests are stored in the blk_plug
-list, this had significant impact on bio merging with requests exist on
-the plug list. This impact has been reported in [1] and could easily be
-reproducible using 4k randwrite fio benchmark on an NVME based SSD without
-having any filesystem on the disk.
+thanks for your comments.
 
-My benchmark is:
+Am 11.06.2025 um 11:33 schrieb Sakari Ailus:
+> Hi Matthias,
+> 
+> Thanks for the patch.
+> 
+> On Wed, Jun 11, 2025 at 09:13:33AM +0200, Matthias Fend wrote:
+>> Add support for the powerdown pin (xSD), which can be used to put the VCM
+>> driver into power down mode. This is useful, for example, if the VCM
+>> driver's power supply cannot be controlled.
+>> The use of the powerdown pin is optional.
+> 
+> Please rewrap. Most editors can do it for you.
 
-    fio --time_based --name=benchmark --size=50G --rw=randwrite \
-	--runtime=60 --filename="/dev/nvme1n1" --ioengine=psync \
-	--randrepeat=0 --iodepth=1 --fsync=64 --invalidate=1 \
-	--verify=0 --verify_fatal=0 --blocksize=4k --numjobs=4 \
-	--group_reporting
+To me the message body looks line wrapped at 75 columns. The last 
+sentence on a new line. At least that is what was intended.
+So I think I'm missing something here. Can you please tell me what 
+exactly I should change?
 
-On 1.9TiB SSD(180K Max IOPS) attached to i3.16xlarge AWS EC2 instance.
+> 
+>>
+>> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+>> ---
+>>   drivers/media/i2c/Kconfig  |  2 +-
+>>   drivers/media/i2c/dw9714.c | 16 ++++++++++++++++
+>>   2 files changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+>> index e45ba127069fc0848f1a06ceb789efd3c222c008..e923daeec9c574c5b8c7014b9e83fcbad47866c0 100644
+>> --- a/drivers/media/i2c/Kconfig
+>> +++ b/drivers/media/i2c/Kconfig
+>> @@ -748,7 +748,7 @@ config VIDEO_AK7375
+>>   
+>>   config VIDEO_DW9714
+>>   	tristate "DW9714 lens voice coil support"
+>> -	depends on I2C && VIDEO_DEV
+>> +	depends on GPIOLIB && I2C && VIDEO_DEV
+>>   	select MEDIA_CONTROLLER
+>>   	select VIDEO_V4L2_SUBDEV_API
+>>   	select V4L2_ASYNC
+>> diff --git a/drivers/media/i2c/dw9714.c b/drivers/media/i2c/dw9714.c
+>> index 2ddd7daa79e28a2cde915b4173fa27e60d5a2b57..5b78c1848f80bc3e32df13d149f3865ff8defe6e 100644
+>> --- a/drivers/media/i2c/dw9714.c
+>> +++ b/drivers/media/i2c/dw9714.c
+>> @@ -2,6 +2,7 @@
+>>   // Copyright (c) 2015--2017 Intel Corporation.
+>>   
+>>   #include <linux/delay.h>
+>> +#include <linux/gpio/consumer.h>
+>>   #include <linux/i2c.h>
+>>   #include <linux/module.h>
+>>   #include <linux/pm_runtime.h>
+>> @@ -38,6 +39,7 @@ struct dw9714_device {
+>>   	struct v4l2_subdev sd;
+>>   	u16 current_val;
+>>   	struct regulator *vcc;
+>> +	struct gpio_desc *powerdown_gpio;
+>>   };
+>>   
+>>   static inline struct dw9714_device *to_dw9714_vcm(struct v4l2_ctrl *ctrl)
+>> @@ -151,11 +153,20 @@ static int dw9714_probe(struct i2c_client *client)
+>>   	if (IS_ERR(dw9714_dev->vcc))
+>>   		return PTR_ERR(dw9714_dev->vcc);
+>>   
+>> +	dw9714_dev->powerdown_gpio = devm_gpiod_get_optional(&client->dev,
+>> +							     "powerdown",
+>> +							     GPIOD_OUT_LOW);
+>> +	if (IS_ERR(dw9714_dev->powerdown_gpio))
+>> +		return dev_err_probe(&client->dev,
+>> +				     PTR_ERR(dw9714_dev->powerdown_gpio),
+>> +				     "could not get powerdown gpio\n");
+>> +
+>>   	rval = regulator_enable(dw9714_dev->vcc);
+>>   	if (rval < 0) {
+>>   		dev_err(&client->dev, "failed to enable vcc: %d\n", rval);
+>>   		return rval;
+>>   	}
+>> +	gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 0);
+> 
+> This seems to be redundant, you're already setting the GPIO low when
+> acquiring it. Typically the order is different, though: the regulator is
+> enabled first. Also related to the following comment.
 
-Kernel        |  fio (B.W MiB/sec)  | I/O size (iostat)
---------------+---------------------+--------------------
-6.15.1        |   362               |  2KiB
-6.15.1+revert |   660 (+82%)        |  4KiB
---------------+---------------------+--------------------
+Yes, that's right. I'll set the pin during initialization so that 
+power-down mode is active. So at least the sequence is always the same.
 
-I have run iostat while the fio benchmark was running and was able to
-see that the I/O size seen on the disk is shown as 2KB without this revert
-while it's 4KB with the revert. In the bad case the write bandwidth
-is capped at around 362MiB/sec which almost 2KiB * 180K IOPS so we are
-hitting the SSD Disk IOPS limit which is 180K. After the revert the I/O
-size has been doubled to 4KiB hence the bandwidth has been almost doubled
-as we no longer hit the Disk IOPS limit.
+> 
+>>   
+>>   	usleep_range(1000, 2000);
+>>   
+>> @@ -185,6 +196,7 @@ static int dw9714_probe(struct i2c_client *client)
+>>   	return 0;
+>>   
+>>   err_cleanup:
+>> +	gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 1);
+>>   	regulator_disable(dw9714_dev->vcc);
+> 
+> It'd be nice to have a single implementation of the power-on and power-off
+> sequences. Now there are two.
 
-I have done some tracing using bpftrace & bcc and was able to conclude that
-the reason behind the I/O size discrepancy with the revert is that this
-fio benchmark is subimitting each 4k I/O as 2 contiguous 2KB bios.
+Okay, will do so.
 
-In the good case each 2 bios are merged in a 4KB request that's then been
-submitted to the disk while in the bad case 2K bios are submitted to the
-disk without merging because blk_attempt_plug_merge() failed to merge
-them as seen below.
+Thanks,
+  ~Matthias
 
-**Without the revert**
-
-[12:12:28]
-r::blk_attempt_plug_merge():int:$retval
-         COUNT      EVENT
-         5618       $retval = 1
-         176578     $retval = 0
-
-**With the revert**
-
-[12:11:43]
-r::blk_attempt_plug_merge():int:$retval
-        COUNT      EVENT
-        146684     $retval = 0
-        146686     $retval = 1
-
-In blk_attempt_plug_merge() we are iterating ithrought the plug list
-from head to tail looking for a request with which we can merge the
-most recently submitted bio.
-
-With commit <e70c301faece> ("block: don't reorder requests in
-blk_add_rq_to_plug") the most recent request will be at the tail so
-blk_attempt_plug_merge() will fail because it tries to merge bio with
-the plug list head. In blk_attempt_plug_merge() we don't iterate across
-the whole plug list because as we exit the loop once we fail merging in
-blk_attempt_bio_merge().
-
-In commit <bc490f81731> ("block: change plugging to use a singly linked
-list") the plug list has been changed to single linked list so there's
-no way to iterate the list from tail to head which is the only way to
-mitigate the impact on bio merging if we want to keep commit <e70c301faece>
-("block: don't reorder requests in blk_add_rq_to_plug").
-
-Given that moving plug list to a single linked list was mainly for
-performance reason then let's revert commit <e70c301faece> ("block: don't
-reorder requests in blk_add_rq_to_plug") for now to mitigate the
-reported performance regression.
-
-[1] https://lore.kernel.org/lkml/202412122112.ca47bcec-lkp@intel.com/
-
-Cc: stable@vger.kernel.org      # 6.12
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Reported-by: Hagar  Hemdan <hagarhem@amazon.com>
-Reported-and-bisected-by: Shaoying Xu <shaoyi@amazon.com>
-Signed-off-by: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
----
- block/blk-mq.c             | 4 ++--
- drivers/block/virtio_blk.c | 2 +-
- drivers/nvme/host/pci.c    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index c2697db59109..28965cac19fb 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1394,7 +1394,7 @@ static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
- 	 */
- 	if (!plug->has_elevator && (rq->rq_flags & RQF_SCHED_TAGS))
- 		plug->has_elevator = true;
--	rq_list_add_tail(&plug->mq_list, rq);
-+	rq_list_add_head(&plug->mq_list, rq);
- 	plug->rq_count++;
- }
- 
-@@ -2846,7 +2846,7 @@ static void blk_mq_dispatch_plug_list(struct blk_plug *plug, bool from_sched)
- 			rq_list_add_tail(&requeue_list, rq);
- 			continue;
- 		}
--		list_add_tail(&rq->queuelist, &list);
-+		list_add(&rq->queuelist, &list);
- 		depth++;
- 	} while (!rq_list_empty(&plug->mq_list));
- 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 7cffea01d868..7992a171f905 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -513,7 +513,7 @@ static void virtio_queue_rqs(struct rq_list *rqlist)
- 		vq = this_vq;
- 
- 		if (virtblk_prep_rq_batch(req))
--			rq_list_add_tail(&submit_list, req);
-+			rq_list_add_head(&submit_list, req); /* reverse order */
- 		else
- 			rq_list_add_tail(&requeue_list, req);
- 	}
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index f1dd804151b1..5f7da42f9dac 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1026,7 +1026,7 @@ static void nvme_queue_rqs(struct rq_list *rqlist)
- 		nvmeq = req->mq_hctx->driver_data;
- 
- 		if (nvme_prep_rq_batch(nvmeq, req))
--			rq_list_add_tail(&submit_list, req);
-+			rq_list_add_head(&submit_list, req); /* reverse order */
- 		else
- 			rq_list_add_tail(&requeue_list, req);
- 	}
--- 
-2.47.1
+> 
+>>   	v4l2_ctrl_handler_free(&dw9714_dev->ctrls_vcm);
+>>   	media_entity_cleanup(&dw9714_dev->sd.entity);
+>> @@ -200,6 +212,7 @@ static void dw9714_remove(struct i2c_client *client)
+>>   
+>>   	pm_runtime_disable(&client->dev);
+>>   	if (!pm_runtime_status_suspended(&client->dev)) {
+>> +		gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 1);
+>>   		ret = regulator_disable(dw9714_dev->vcc);
+>>   		if (ret) {
+>>   			dev_err(&client->dev,
+>> @@ -234,6 +247,7 @@ static int __maybe_unused dw9714_vcm_suspend(struct device *dev)
+>>   		usleep_range(DW9714_CTRL_DELAY_US, DW9714_CTRL_DELAY_US + 10);
+>>   	}
+>>   
+>> +	gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 1);
+>>   	ret = regulator_disable(dw9714_dev->vcc);
+>>   	if (ret)
+>>   		dev_err(dev, "Failed to disable vcc: %d\n", ret);
+>> @@ -262,6 +276,8 @@ static int  __maybe_unused dw9714_vcm_resume(struct device *dev)
+>>   		dev_err(dev, "Failed to enable vcc: %d\n", ret);
+>>   		return ret;
+>>   	}
+>> +	gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 0);
+>> +
+>>   	usleep_range(1000, 2000);
+>>   
+>>   	for (val = dw9714_dev->current_val % DW9714_CTRL_STEPS;
+>>
+> 
 
 
