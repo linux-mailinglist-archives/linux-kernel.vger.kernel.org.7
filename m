@@ -1,99 +1,102 @@
-Return-Path: <linux-kernel+bounces-681104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B228AD4E83
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:34:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A7DAD4E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDAF23A739E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:33:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED9D67A3917
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39BE23D290;
-	Wed, 11 Jun 2025 08:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86EE23F404;
+	Wed, 11 Jun 2025 08:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3ULcI9I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWBzvIIf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAAE2367C0;
-	Wed, 11 Jun 2025 08:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B7023ED69;
+	Wed, 11 Jun 2025 08:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749630856; cv=none; b=qK5utb+Y26LazQyXuakjBwCgCXK0QrSzSQk7k2oMKgKFH1fNjIMKPT0/HkRmsX3ifjDXRXNtRxhdr10phli421L3SbXphfe7C5LwfS5f3Dc1Z7DEiw09hgCvszfMlyeOLdWxwy2HYRcIRwOT7NkGoSn9lqCcXTTXDPEkHSZ7bLU=
+	t=1749631066; cv=none; b=NM2ApETvMm328mUFBrhf/5WJxDsvEnY+k1AMEtnCqmm15lCAu2xIDHbvBtMK7ks/3l4rYJYn9ni4VWRZKj2W1AOx0D4PZaVPjOOutPH5I/ttmRUzmriPUoUQHMzAYrslcqMP1JHGzHZfQkGethy+Zx5jpi2tCZecZH1YTKaQlrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749630856; c=relaxed/simple;
-	bh=YjUuaMXRjj3yUKM1oXzB5tryE1JdcUrQb6CsDD4lW7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fu9VFRJgYw+FdM00O+qcUF2KpRBjoz9yxKRo0ebQiAoO3tE7G4Tt4vAM6hWnOpzqkwhnuehdLfVtY00HBsQyFpSaUhzS07u22Qjj9sZ4KTXILIZbxSVF9XHAwPN7nwZVKj9qxQU93jncPfM+hDvfJM0tIImzZK4q6T6GEevzSfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3ULcI9I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5311AC4CEEE;
-	Wed, 11 Jun 2025 08:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749630855;
-	bh=YjUuaMXRjj3yUKM1oXzB5tryE1JdcUrQb6CsDD4lW7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y3ULcI9IJyU/3l5FNnF21dookZoXpT0aM6QPxdT5KR4dj5+MwmuBef05fRcY7CvZK
-	 UeBU/WbML8g8V2ZL2h+sTSB8laoO7PDxiX6kvecKeUcl2IAD8GbCSkN9SavXl6WuY1
-	 4MeUMVGBJiaY3jt32AJp0OJWQoVnQ6JEEdcJiQXz2RsWlMl+HyL8g3Otn+G0/gdz/e
-	 eKJOq//e/kg3jeadV8QCPHBdmUKKIUSVGrkK1ULlLjfVMh6zbV28tPRlyVBMBK2u6V
-	 L7MgsqJc0Pbe0lggsEFkW89fWPIeryKYmGkJTIrzKXP7Vk2hBiIfNccbDW/7SsIYEg
-	 IaiTDLO+Cf+uQ==
-Date: Wed, 11 Jun 2025 10:34:13 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jammy Huang <jammy_huang@aspeedtech.com>
-Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: mailbox: Add ASPEED AST2700 series
- SoC
-Message-ID: <20250611-serval-of-immortal-novelty-055c93@kuoka>
-References: <20250610091026.49724-1-jammy_huang@aspeedtech.com>
- <20250610091026.49724-2-jammy_huang@aspeedtech.com>
+	s=arc-20240116; t=1749631066; c=relaxed/simple;
+	bh=dchvZ9Q+pyoa/JIkFMWnMjwIICKheJaebEAlKae+ubg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDeKcDci/+esCGi5WgR1WTXBr6po9KPN2aS0FF6O+vMl9Rb+x23z0DcjT3iy9NI1fin8q6Gr7PRTF35346tXs4XgcFZYsMqWwkVWURmtzZQw9fUdEs22Pc3z6PAcV5ji1P0i8EgnAnOjT0mzyhb0HGpeOAogvA5jjC7/SqXGszk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWBzvIIf; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749631065; x=1781167065;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dchvZ9Q+pyoa/JIkFMWnMjwIICKheJaebEAlKae+ubg=;
+  b=EWBzvIIf0Ul3aiN0WZXH6iMjHYp3KcL+vbFlg0Qhg2YZC4VTxrNoeii4
+   l1dfRA0RPfnUA8W1g1Bm9gRIjlGKtHvp+XYS8xhqxArw48DPNe4QjXBhi
+   Ot99/zYRhWo3p/NTZxXp9mIhQs76DHVnTsmTL40Z3waz2zR0BQ2rqGxFf
+   YHrjpFO4sHaEfpO0yUQXCgg6fWBB6COPpNBdqwsH3SU4GGJnKa1cJygn7
+   jzAC7ps4eZyKKe2u55acxTpEzD6iqz57WDg7uAgmXs5enlD2o7dPnmsGT
+   DZ0JTuZC1TMOhQO5fLa7gWdHXE1qA3X5Qd+kGe8fS1j7QvrNqXwtvDDQ5
+   w==;
+X-CSE-ConnectionGUID: JWABiwyHRuak1BcuGKJDvw==
+X-CSE-MsgGUID: ZzJ5sIzGTzaXWHH3+bep9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="50873310"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="50873310"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 01:37:44 -0700
+X-CSE-ConnectionGUID: IAhwMbZHRjaJoaIUwEfOZw==
+X-CSE-MsgGUID: jOCMjPSwR2qXKvf28beKbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="170296310"
+Received: from mylly.fi.intel.com (HELO [10.237.72.50]) ([10.237.72.50])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Jun 2025 01:37:40 -0700
+Message-ID: <2b0575b8-ff9f-44e7-8ad3-71e02c724c41@linux.intel.com>
+Date: Wed, 11 Jun 2025 11:37:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250610091026.49724-2-jammy_huang@aspeedtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] i2c: designware: Add quirk for Intel Xe
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Raag Jadav <raag.jadav@intel.com>, "Tauro, Riana" <riana.tauro@intel.com>,
+ "Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>,
+ "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+ intel-xe@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250610100311.2245871-1-heikki.krogerus@linux.intel.com>
+ <20250610100311.2245871-2-heikki.krogerus@linux.intel.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20250610100311.2245871-2-heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 10, 2025 at 05:10:25PM GMT, Jammy Huang wrote:
-> Introduce the mailbox module for AST27XX series SoC, which is responsible
-> for interchanging messages between asymmetric processors.
+On 6/10/25 1:03 PM, Heikki Krogerus wrote:
+> The regmap is coming from the parent also in case of Xe
+> GPUs. Reusing the Wangxun quirk for that.
 > 
-> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+> Originally-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 > ---
->  .../mailbox/aspeed,ast2700-mailbox.yaml       | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/aspeed,ast2700-mailbox.yaml
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-<form letter>
-This is an automated instruction, just in case, because many review
-tags are being ignored. If you know the process, just skip it entirely
-(please do not feel offended by me posting it here - no bad intentions
-intended, no patronizing, I just want to avoid wasted efforts). If you
-do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
-However, there's no need to repost patches *only* to add the tags. The
-upstream maintainer will do that for tags received on the version they
-apply.
-
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
-</form letter>
-
-Best regards,
-Krzysztof
-
+>   drivers/i2c/busses/i2c-designware-platdrv.c | 18 ++++++++++++------
+>   1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
