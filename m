@@ -1,105 +1,147 @@
-Return-Path: <linux-kernel+bounces-681659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617EFAD5583
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:27:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E19AD558F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518E6189221E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5BEB1726C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F4B27FD48;
-	Wed, 11 Jun 2025 12:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E4E2820D9;
+	Wed, 11 Jun 2025 12:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnzEgD9w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m4QutV/x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AC22E6102;
-	Wed, 11 Jun 2025 12:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE7127FD48;
+	Wed, 11 Jun 2025 12:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644851; cv=none; b=VvcYPbqPzBYey/mGFch68Ff/pPo6X+2gfao3eQioaZ/l4yL1OmpEcw5dt/4gWPPAI2YDqY+SL8iQb2QkXzfK2btfwGdQbepPascH/YEaz2/2HtV5SKgtzqbPbf9ml2p8yJKUwSUigiAf/3sLhFl5OLfw95yuUTKf98vFKR69bfk=
+	t=1749644980; cv=none; b=Vf+egodCiYOneu0cMhznlcoHvQWEjP/NeOehbRC7YcZtgUArerV2jt8YigXe/oh/uZ8NSwid3BD7Fn4WMs7m51fTKZO3BWSaQeFuAY5YZqABFwuEBxMoKXOtk8oCuC/Ux6G1uTylEjn7fp1cx2wpk44auJehRM0r3+V7w4szQYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644851; c=relaxed/simple;
-	bh=VarOxXQv873WZeOePrBSFiWHWwREU4KYRKEOJZm2ft8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afnxwVUGx1Mf4BZG1/VWUIlpqlG8mxhGVeGhjevE1sQ+OHaM8pP6kGzkiTfYJAMWdwooHIdn8ykXBY5BwIsJrHz2msHNex3IBAqC9DFxzMLetcTvEuzDdkDJLM3/jox0AFwtDip7iXrsHCc40FCvVzxb0fGGmNFd9NRDBvYAAko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnzEgD9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBFEBC4CEEE;
-	Wed, 11 Jun 2025 12:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749644851;
-	bh=VarOxXQv873WZeOePrBSFiWHWwREU4KYRKEOJZm2ft8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rnzEgD9wYy94tuU52DTucvNNzWEatNaRBB7xmDtwPxMnxZgwU22zmzRcih/2WPBKq
-	 Dgy43YBwmQHBRVokY5DFBkZeG0DvaPu1VBJ8IwkBFRoLurDkiEsHX8qI8pi1KaXpZp
-	 1lV9SgR0+N9dcE2BOpxYQ1soef4YG8JJX/7DCPll86aSBMvLhdI/SCKvnXal9egw+f
-	 Qf288vg86BnTQNHzWQ2KCPhKEENu3+YrDXnU1SwshaxcU+PyPDl9SW3e2GjwiZr48M
-	 0j+z9pN7+u1BARMhReH+EMUgTzryPbdGXRf0UZOIySClxZIjAQAISOhW1jyNQn1klS
-	 XctqA9VFIarEw==
-Date: Wed, 11 Jun 2025 13:27:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, pcc@google.com, will@kernel.org,
-	anshuman.khandual@arm.com, joey.gouly@arm.com,
-	yury.khrustalev@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	frederic@kernel.org, akpm@linux-foundation.org, surenb@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 8/9] kselftest/arm64/mte: refactor check_mmap_option
- test
-Message-ID: <0eda8416-b8b8-41e2-8d08-6dab1c1c3561@sirena.org.uk>
-References: <20250611094107.928457-1-yeoreum.yun@arm.com>
- <20250611094107.928457-9-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1749644980; c=relaxed/simple;
+	bh=8BwKFjsDsa8Zb8Ayr7RasbWSssCKt/ijSpC6aXZiHhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZOvqhlvrbvlXkzXT1H8lqnW+wT3zaGkyAg5Oul+O8UGJ6Vygn6qNUHR/Yv2BFoQAXWQtP5UkiPQuLA5uFgMuf0O2PDnpUuqh11YsUWVDHLuK6kkeWPF3LxrnpIHn5L69Q31N9eZAU4S4JeyF89X9zcg8E3RTSp9Sz9T27zHBnP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m4QutV/x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B9DEBG029570;
+	Wed, 11 Jun 2025 12:29:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lceMfIGYuCPCZ+W3coEkS0Ut+HidNJnVCjzT2QYpkyc=; b=m4QutV/xaKTpKISA
+	NOwmIrj73dsc3KE2A3orL22BZtxj66vP/LhJHNPXNSDxoCBhsfUWXRfqcHZmXJxc
+	NSHBVV5/ciMSesHHPlF2yiIhkZx5hZvwX1I6WB6Mm2SUA6b3iziXEM+X2Jz7XuNN
+	CxdkVsuTWXNq1SJ23PZHm7OSh12YcYZ4k5RipN/vzXCm9SttyJ9yG2hO2HrkBg0L
+	qrZ+YAZrIr+6OGdRfDjaoqfQtpf7TnQ70o+gaRmnzH0XbU2Z4UMwUji23leDIVTT
+	TjGdWt0RdRgmHmqHfu8I9L1VOw/66MAGtlhrov+yOeopM8mFUnSl2k+LDIwdI1lV
+	YciKMQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d124y0w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 12:29:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55BCT1Xi020022
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 12:29:01 GMT
+Received: from [10.216.28.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Jun
+ 2025 05:28:52 -0700
+Message-ID: <80dae86f-fb3b-4469-9322-7996811d33cc@quicinc.com>
+Date: Wed, 11 Jun 2025 17:58:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xoS+YBzfcBx+g2dq"
-Content-Disposition: inline
-In-Reply-To: <20250611094107.928457-9-yeoreum.yun@arm.com>
-X-Cookie: No skis take rocks like rental skis!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: defconfig: Enable X1P42100_GPUCC driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Akhil P Oommen
+	<akhilpo@oss.qualcomm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will
+ Deacon" <will@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean
+ Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry
+ Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+References: <20250611-x1p-adreno-v2-0-5074907bebbd@oss.qualcomm.com>
+ <20250611-x1p-adreno-v2-2-5074907bebbd@oss.qualcomm.com>
+ <810f7614-ed73-471e-bc5b-3305816737da@kernel.org>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <810f7614-ed73-471e-bc5b-3305816737da@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xvORiqpGvBtv2J1sNLJ6NcrW_sSxcy2e
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEwNyBTYWx0ZWRfX6S74eAHxepUr
+ DKO7C/ah9ofD43oLGaXM/WDQTt6dBTT4+CthKexuMHKsaRmv+IxRMl4kNygf9T8BldHdFVztYRl
+ XXWC2i9tmGleOrLnFh3oa/tLlFquN0K3KZ/XhM0rXUdf08GskL+L0+xQQoEAmHgTEIJIx8snut7
+ Wos9ulCOCB2QReriLLbHz3jFAlCYtRRnNv4NmLjSBz4NYR6oOmyKVsdn2NCQeq4JSvpN8s8z1Fi
+ ZpQELKsNK48FQvo338aE6WMnvNPsDzOkVqI/4MW3aghAAxUV/zU5KL8qPJuVe4KKQ1RIS9D4m4u
+ nILZ+yvWO5kNiUXjSaaM/NvFFtA68BY5b9X1VhhI5BUhJbq/DKBe/yVJXi/ztW7LLy+iHFF1e6y
+ Je67yY3fTdTwLBzAbT8skLYeVbZbMlG7HLYeVgq1N4G3CiODf+86ULL4PnbVGNsHDz4b/SAo
+X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=684976a4 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
+ a=cSTdfOdMco8EzcehTqUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: xvORiqpGvBtv2J1sNLJ6NcrW_sSxcy2e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 clxscore=1011 malwarescore=0 priorityscore=1501 mlxscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506110107
 
+On 6/11/2025 4:55 PM, Krzysztof Kozlowski wrote:
+> On 11/06/2025 13:15, Akhil P Oommen wrote:
+>> In order to enable GPU support in Snapdragon X1P42100
+>> (8 CPU core version found on Asus Zenbook A14 and other
+> 
+> There is no A14 upstream board DTS in next. Your commit msg should
+> provide rationale for this, e.g. which upstream boards use this driver.
+> 
 
---xoS+YBzfcBx+g2dq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Will replace "Asus Zenbook" with "X1P42100 CRD" which is supported upstream.
 
-On Wed, Jun 11, 2025 at 10:41:06AM +0100, Yeoreum Yun wrote:
-> Before add mtefar testcase on check_mmap_option.c,
-> refactor check_mmap_option:
->   - make testcase suite array with test options (mem_type, mte_sync type =
-and etc)
->     to use general testcase pattern
->=20
->   - generate each test case name acoording to test options.
+-Akhil.
 
-I didn't specifically check that all the tests are the same but assuming
-they are:
+> Best regards,
+> Krzysztof
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---xoS+YBzfcBx+g2dq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJdi0ACgkQJNaLcl1U
-h9DPxAf8CnBE6O1+B8YUArr53BhKE6sjRiy4cbtq4RUmuffXxC2JZbKPOEl/e6lV
-sbcz2vavI6MsUS9bULJ8Gk4SNQJhsuqhzdYaVdjpfCtoOcUQ94B2xXkPmrKyBoEM
-UIqbVr0b+oD9dCQirR2L7U6KbE4xwG2+7+1jNxGkzhtykBNqkvH3o25ZqeTwXgci
-nbDhB6NT13EVnlJHsYsyv2fNtdLpnBfjw3eD3lGBGN6q5BCcQiKtxKGeGDw0J/aC
-ILqkJgNo33mvMo7U+6wF0oAWV/HZpcOL7OPrtEQATkoPgu92FvPL1LhT39gE3XQW
-wLjATcW7vwncih6h6oxbuW28Pu0BCw==
-=SK6+
------END PGP SIGNATURE-----
-
---xoS+YBzfcBx+g2dq--
 
