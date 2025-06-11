@@ -1,147 +1,201 @@
-Return-Path: <linux-kernel+bounces-681663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E19AD558F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D814CAD5587
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5BEB1726C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B6F165167
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E4E2820D9;
-	Wed, 11 Jun 2025 12:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328327FD6D;
+	Wed, 11 Jun 2025 12:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m4QutV/x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KmLtBXWh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE7127FD48;
-	Wed, 11 Jun 2025 12:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149C32E6102;
+	Wed, 11 Jun 2025 12:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644980; cv=none; b=Vf+egodCiYOneu0cMhznlcoHvQWEjP/NeOehbRC7YcZtgUArerV2jt8YigXe/oh/uZ8NSwid3BD7Fn4WMs7m51fTKZO3BWSaQeFuAY5YZqABFwuEBxMoKXOtk8oCuC/Ux6G1uTylEjn7fp1cx2wpk44auJehRM0r3+V7w4szQYI=
+	t=1749644944; cv=none; b=myS9nyChyg3fqm9rRWPwvjr1ygjE1j9TrE5/AS4u4dauMNy40g3NJ360IEAn3fuIifTjUaw3qybqaQhpsofcBNnZgMUMsFBkMQ1CVIIWQtkW2VTpESRAWOYt/oD+4ERFJpH8X8DS0WDHjl95vlBosyXmU78X/v+XleC9t9Syjyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644980; c=relaxed/simple;
-	bh=8BwKFjsDsa8Zb8Ayr7RasbWSssCKt/ijSpC6aXZiHhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZOvqhlvrbvlXkzXT1H8lqnW+wT3zaGkyAg5Oul+O8UGJ6Vygn6qNUHR/Yv2BFoQAXWQtP5UkiPQuLA5uFgMuf0O2PDnpUuqh11YsUWVDHLuK6kkeWPF3LxrnpIHn5L69Q31N9eZAU4S4JeyF89X9zcg8E3RTSp9Sz9T27zHBnP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m4QutV/x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B9DEBG029570;
-	Wed, 11 Jun 2025 12:29:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lceMfIGYuCPCZ+W3coEkS0Ut+HidNJnVCjzT2QYpkyc=; b=m4QutV/xaKTpKISA
-	NOwmIrj73dsc3KE2A3orL22BZtxj66vP/LhJHNPXNSDxoCBhsfUWXRfqcHZmXJxc
-	NSHBVV5/ciMSesHHPlF2yiIhkZx5hZvwX1I6WB6Mm2SUA6b3iziXEM+X2Jz7XuNN
-	CxdkVsuTWXNq1SJ23PZHm7OSh12YcYZ4k5RipN/vzXCm9SttyJ9yG2hO2HrkBg0L
-	qrZ+YAZrIr+6OGdRfDjaoqfQtpf7TnQ70o+gaRmnzH0XbU2Z4UMwUji23leDIVTT
-	TjGdWt0RdRgmHmqHfu8I9L1VOw/66MAGtlhrov+yOeopM8mFUnSl2k+LDIwdI1lV
-	YciKMQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d124y0w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 12:29:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55BCT1Xi020022
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 12:29:01 GMT
-Received: from [10.216.28.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Jun
- 2025 05:28:52 -0700
-Message-ID: <80dae86f-fb3b-4469-9322-7996811d33cc@quicinc.com>
-Date: Wed, 11 Jun 2025 17:58:49 +0530
+	s=arc-20240116; t=1749644944; c=relaxed/simple;
+	bh=fRYRpEXR++aTPyaPcPtD2qWzS2enPVhOvKEvWcRfFGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jqTq1Shtamf4rmNt6YhvLXOfOLH3Z97fA/35IImPYFGiePmvBe0ox5e8Tg1dgi9vjsOtQ4cLQGKSF7cj11J+EGEuqGsIfzxuH33AsfFLy5XRi9fYK4tToTH3FOWqmuxVqv06VyIu8Ksa72IJqVEwvdtbPyzyZnr/cCmo3lGKSCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KmLtBXWh; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749644943; x=1781180943;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fRYRpEXR++aTPyaPcPtD2qWzS2enPVhOvKEvWcRfFGg=;
+  b=KmLtBXWhUKUZraDjxREeAEDnZdy9Z1hx8deQPbQK/XP2lSWtan4pIHGx
+   5YvglPRUIHh+PpapU1KySEmHzMx6GpPpIOkshxDBGfSk5SLLWL82m60za
+   1H44uu7CWqjG18wDY5gLyetEKIZZ8N1h6BM9xbVyDtAJEkmNOrjkkCHrV
+   QcwD3WnNgdm40ngKEX16xNFGYwzaUPNuIUV0/IT/xOSuTnN73dBmnG5Xq
+   rUce+3VXfQh0+Z+fk4H6HxBvjOIlludSu0FUGkvhC27l1ReVPRcouuSu0
+   MZ1tSb/1t/3D1bgZVZVC0v9o6/QIAvcH7pUZEYEFr/PnFW8ZiPz5FSYJZ
+   w==;
+X-CSE-ConnectionGUID: yOtpj79qRlmzsqBMsQ+FtQ==
+X-CSE-MsgGUID: sMmc2h+aQRyCsZYnAfYtnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="69225938"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="69225938"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 05:29:02 -0700
+X-CSE-ConnectionGUID: oWTZLb2CQeq6c17koXOY3Q==
+X-CSE-MsgGUID: EYEvX8S6S7m+lTPNE8bR9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="148096839"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.148])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 05:29:00 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 8A94A11FB50;
+	Wed, 11 Jun 2025 15:28:57 +0300 (EEST)
+Date: Wed, 11 Jun 2025 12:28:57 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH] media: dw9714: add support for powerdown pin
+Message-ID: <aEl2idu0E9EZIkpn@kekkonen.localdomain>
+References: <20250611-dw9714-sd-v1-1-fb47ef5e736c@emfend.at>
+ <aElNcDTLEJTcJs2s@kekkonen.localdomain>
+ <f4ebc809-f30e-46aa-9f36-db98370ebe6e@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: defconfig: Enable X1P42100_GPUCC driver
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Akhil P Oommen
-	<akhilpo@oss.qualcomm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will
- Deacon" <will@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean
- Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry
- Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth
- Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-References: <20250611-x1p-adreno-v2-0-5074907bebbd@oss.qualcomm.com>
- <20250611-x1p-adreno-v2-2-5074907bebbd@oss.qualcomm.com>
- <810f7614-ed73-471e-bc5b-3305816737da@kernel.org>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <810f7614-ed73-471e-bc5b-3305816737da@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xvORiqpGvBtv2J1sNLJ6NcrW_sSxcy2e
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEwNyBTYWx0ZWRfX6S74eAHxepUr
- DKO7C/ah9ofD43oLGaXM/WDQTt6dBTT4+CthKexuMHKsaRmv+IxRMl4kNygf9T8BldHdFVztYRl
- XXWC2i9tmGleOrLnFh3oa/tLlFquN0K3KZ/XhM0rXUdf08GskL+L0+xQQoEAmHgTEIJIx8snut7
- Wos9ulCOCB2QReriLLbHz3jFAlCYtRRnNv4NmLjSBz4NYR6oOmyKVsdn2NCQeq4JSvpN8s8z1Fi
- ZpQELKsNK48FQvo338aE6WMnvNPsDzOkVqI/4MW3aghAAxUV/zU5KL8qPJuVe4KKQ1RIS9D4m4u
- nILZ+yvWO5kNiUXjSaaM/NvFFtA68BY5b9X1VhhI5BUhJbq/DKBe/yVJXi/ztW7LLy+iHFF1e6y
- Je67yY3fTdTwLBzAbT8skLYeVbZbMlG7HLYeVgq1N4G3CiODf+86ULL4PnbVGNsHDz4b/SAo
-X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=684976a4 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
- a=cSTdfOdMco8EzcehTqUA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: xvORiqpGvBtv2J1sNLJ6NcrW_sSxcy2e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 clxscore=1011 malwarescore=0 priorityscore=1501 mlxscore=0
- adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506110107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4ebc809-f30e-46aa-9f36-db98370ebe6e@emfend.at>
 
-On 6/11/2025 4:55 PM, Krzysztof Kozlowski wrote:
-> On 11/06/2025 13:15, Akhil P Oommen wrote:
->> In order to enable GPU support in Snapdragon X1P42100
->> (8 CPU core version found on Asus Zenbook A14 and other
+Hi Matthias,
+
+On Wed, Jun 11, 2025 at 02:15:10PM +0200, Matthias Fend wrote:
+> Hi Sakari,
 > 
-> There is no A14 upstream board DTS in next. Your commit msg should
-> provide rationale for this, e.g. which upstream boards use this driver.
+> thanks for your comments.
 > 
+> Am 11.06.2025 um 11:33 schrieb Sakari Ailus:
+> > Hi Matthias,
+> > 
+> > Thanks for the patch.
+> > 
+> > On Wed, Jun 11, 2025 at 09:13:33AM +0200, Matthias Fend wrote:
+> > > Add support for the powerdown pin (xSD), which can be used to put the VCM
+> > > driver into power down mode. This is useful, for example, if the VCM
+> > > driver's power supply cannot be controlled.
+> > > The use of the powerdown pin is optional.
+> > 
+> > Please rewrap. Most editors can do it for you.
+> 
+> To me the message body looks line wrapped at 75 columns. The last sentence
+> on a new line. At least that is what was intended.
+> So I think I'm missing something here. Can you please tell me what exactly I
+> should change?
 
-Will replace "Asus Zenbook" with "X1P42100 CRD" which is supported upstream.
+It should look like this (i.e. the lines shouldn't be longer than 75 but
+also as long as that rule allows):
 
--Akhil.
+Add support for the powerdown pin (xSD), which can be used to put the VCM
+driver into power down mode. This is useful, for example, if the VCM
+driver's power supply cannot be controlled. The use of the powerdown pin is
+optional.
 
-> Best regards,
-> Krzysztof
+> 
+> > 
+> > > 
+> > > Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> > > ---
+> > >   drivers/media/i2c/Kconfig  |  2 +-
+> > >   drivers/media/i2c/dw9714.c | 16 ++++++++++++++++
+> > >   2 files changed, 17 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> > > index e45ba127069fc0848f1a06ceb789efd3c222c008..e923daeec9c574c5b8c7014b9e83fcbad47866c0 100644
+> > > --- a/drivers/media/i2c/Kconfig
+> > > +++ b/drivers/media/i2c/Kconfig
+> > > @@ -748,7 +748,7 @@ config VIDEO_AK7375
+> > >   config VIDEO_DW9714
+> > >   	tristate "DW9714 lens voice coil support"
+> > > -	depends on I2C && VIDEO_DEV
+> > > +	depends on GPIOLIB && I2C && VIDEO_DEV
+> > >   	select MEDIA_CONTROLLER
+> > >   	select VIDEO_V4L2_SUBDEV_API
+> > >   	select V4L2_ASYNC
+> > > diff --git a/drivers/media/i2c/dw9714.c b/drivers/media/i2c/dw9714.c
+> > > index 2ddd7daa79e28a2cde915b4173fa27e60d5a2b57..5b78c1848f80bc3e32df13d149f3865ff8defe6e 100644
+> > > --- a/drivers/media/i2c/dw9714.c
+> > > +++ b/drivers/media/i2c/dw9714.c
+> > > @@ -2,6 +2,7 @@
+> > >   // Copyright (c) 2015--2017 Intel Corporation.
+> > >   #include <linux/delay.h>
+> > > +#include <linux/gpio/consumer.h>
+> > >   #include <linux/i2c.h>
+> > >   #include <linux/module.h>
+> > >   #include <linux/pm_runtime.h>
+> > > @@ -38,6 +39,7 @@ struct dw9714_device {
+> > >   	struct v4l2_subdev sd;
+> > >   	u16 current_val;
+> > >   	struct regulator *vcc;
+> > > +	struct gpio_desc *powerdown_gpio;
+> > >   };
+> > >   static inline struct dw9714_device *to_dw9714_vcm(struct v4l2_ctrl *ctrl)
+> > > @@ -151,11 +153,20 @@ static int dw9714_probe(struct i2c_client *client)
+> > >   	if (IS_ERR(dw9714_dev->vcc))
+> > >   		return PTR_ERR(dw9714_dev->vcc);
+> > > +	dw9714_dev->powerdown_gpio = devm_gpiod_get_optional(&client->dev,
+> > > +							     "powerdown",
+> > > +							     GPIOD_OUT_LOW);
+> > > +	if (IS_ERR(dw9714_dev->powerdown_gpio))
+> > > +		return dev_err_probe(&client->dev,
+> > > +				     PTR_ERR(dw9714_dev->powerdown_gpio),
+> > > +				     "could not get powerdown gpio\n");
+> > > +
+> > >   	rval = regulator_enable(dw9714_dev->vcc);
+> > >   	if (rval < 0) {
+> > >   		dev_err(&client->dev, "failed to enable vcc: %d\n", rval);
+> > >   		return rval;
+> > >   	}
+> > > +	gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 0);
+> > 
+> > This seems to be redundant, you're already setting the GPIO low when
+> > acquiring it. Typically the order is different, though: the regulator is
+> > enabled first. Also related to the following comment.
+> 
+> Yes, that's right. I'll set the pin during initialization so that power-down
+> mode is active. So at least the sequence is always the same.
+> 
+> > 
+> > >   	usleep_range(1000, 2000);
+> > > @@ -185,6 +196,7 @@ static int dw9714_probe(struct i2c_client *client)
+> > >   	return 0;
+> > >   err_cleanup:
+> > > +	gpiod_set_value_cansleep(dw9714_dev->powerdown_gpio, 1);
+> > >   	regulator_disable(dw9714_dev->vcc);
+> > 
+> > It'd be nice to have a single implementation of the power-on and power-off
+> > sequences. Now there are two.
+> 
+> Okay, will do so.
 
+Please add a separate patch for this, before this one.
+
+-- 
+Regards,
+
+Sakari Ailus
 
