@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-681887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D3EAD5896
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415DEAD58AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03DD3A4628
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:23:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EE5E1897CF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044C02951A0;
-	Wed, 11 Jun 2025 14:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D1B2BD5A8;
+	Wed, 11 Jun 2025 14:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="fboq00SM"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="G/ZET1c7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SeD7Lcbb"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3DE288503
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF9A273D60;
+	Wed, 11 Jun 2025 14:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749651852; cv=none; b=CcesBg50ZFoZDfMAHGuG5IngYE/syLdyZSieTVEGY6bVKdnXJB9B5Zn2HNtfQnPH4QYKqmHsN2BaQR9ST4JotD49gxfkC6e49+v6cccVL6a4/GBg8kI+aPv9ns9rJ964JCVf7buRiHIdkX4QSgIhCnxkEuocaxjywxztIoLZnzY=
+	t=1749651877; cv=none; b=eEaPn3C0rIru/tnkJo1aJEcOXJQAVPbWxHJGDb2/WwWmUvTsn43gQcNjAVSblpGSAMptJq8YzQhe/B5/GlZnFHJcN29mp/4hPhh5mmU91ATVgomC0w5ZLtdgsviAV/6jbLU/BBAsjhYKIKUUz3mXj3OfgPD5gc7ShCMSXKVEPWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749651852; c=relaxed/simple;
-	bh=+n2wxlhNO/5kmSj5JkekXPG3vsLUDhvGncEIlxfIMF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mns9RFjF7kZXht0vH1f59n6puCrkWVJt7uHFEwfQrsDdr3Lf5gQ2rQnDkLMRCNwmA5/jPs8hB32G9UHwdfHZMAVfo1SpELHvOgdyVotxt/CSeRxL79ZOl0XPy3njVmSQIBYRCEWxO2W9H86ezcoLJjSGCog19FY2w4b4rBzOHpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=fboq00SM; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad8826c05f2so1281471066b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:24:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1749651848; x=1750256648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+n2wxlhNO/5kmSj5JkekXPG3vsLUDhvGncEIlxfIMF4=;
-        b=fboq00SMjpBc/dzR+nnXMmZDLpc4cY4Uk/8wUG0553GWJsGrpqT8xialuROWYUOgT/
-         3Ys48/I2I6OUa8vHn18KMVkvpHqzfgzRFKuiPNkQaAgPWRzcRRjYXGrxzy/S5CQvAkxQ
-         rnhfRmIr5HobqnCprThFMaaKeQG2s6sC6OREEwhCgIfEKPcnjILByz+aJKy29yOVXG/n
-         31s/8/p34/yBuXNJf5ZSB/WUrEtj7ypG5E44PUuHGp85T5r9BhHloI4qjR7rLLwlUnn/
-         fgCh+bk/DWCTTJS/F1FiAKF7Wy9F+VgSopHi05EfRKRWxWWJglD3tlP8vieJ33cpfMI1
-         y9jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749651848; x=1750256648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+n2wxlhNO/5kmSj5JkekXPG3vsLUDhvGncEIlxfIMF4=;
-        b=I2XNipfGiB+u+ZpRkxGCw2Ro79jfLg91heTLfIvhgC8h+m9PEn257B/mr3wVw5PkP3
-         CEQMUuzzLwxonGZKwwW/JtnQPSuD9yhSh0hSPbnhwXlOk1kXfyZzAApIAIkIAdqC2I3j
-         j2YF0M0Fcvtby6jB/Cj86Pp+bQSIJho7OeJAylbrdBakj41buQEt7gwKH/Bl4SVdV3qo
-         Fb+wNUPBDw7YhWfJj7iwM5x9rvpSU5AmslfaKqMfHydS2Zq7wYEZZSryGSz0UfBW5v0y
-         qyjGYiqtcjOfdhQgxHERgPrFlFYF9V9ciGJMAuTfxHllwIGPShczZYRucii22X7zcD8m
-         zgxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvYqFViG6Fd4azSKO4mmxQDR2MyHRyjhwmYFHB1Zl6fpUyuZteKmLgNxm5iZtBt+ET+zkOZ3SqCcr1yD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqQ0o5M8j2j+ckHRGhVD6BOpwccF9/+gz/1mDpwlaCLhkK68FO
-	56AwW0ZnK2Z6XgnRVAO80bJXbRDjNWoHZj84gDRnjAElRdpkr7EZ6rUXy29la+LAYGPxC1P8/fk
-	sBuYmVsjgFqJdmD9zrlimNkCoy5YZUOZUN/cjpVHL2w==
-X-Gm-Gg: ASbGncti+4OjbgGwi0p3/rIhHVR4VpiwL6wSq9VbWE11Z5VG24OSi9F+n0VKevU2zUW
-	F+rfwXr9CA/4kV/anUdsemYWVEpf5vM5XOu6iZB7Sn8XssZUW87CcP7rUZe4uSancBZITWGyUUj
-	JVLXq38HV4idYJdPfDLX2k81OQRZmFIZBuqfLHHzRmE6dlA3503PsxK+i0jwyjSzdE9sS/gHkd
-X-Google-Smtp-Source: AGHT+IHi3WuXVPV9hfbd1BQHgmHc2xgdYuuZf0M1hUFi8jc87uLtSAZ8i8Pv46mcKxcv8DLSc26FN718JaJ1toUbZkI=
-X-Received: by 2002:a17:907:c0c:b0:ad8:9466:3344 with SMTP id
- a640c23a62f3a-ade8c8993d1mr286839666b.43.1749651847859; Wed, 11 Jun 2025
- 07:24:07 -0700 (PDT)
+	s=arc-20240116; t=1749651877; c=relaxed/simple;
+	bh=EUvKzRW3jKjXOja8nGHEwok4l8x6iNu/m9wRjoGqUnI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BlyOMHz/18YDutfdJPcEK330r+Ke+RURPOryTFfzhoTWMOgtFCmEgtv9+FyoTfeUxbD+3D69cStlJZsIFWp0Qwqf4OlWuhV7G6wzM/DgLZCg85QHpE4WEPpIIIpu7HN7v9v0CZ3dKpe9mEVwhzxxDA/bvQn7Xad5baMu13r8THw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=G/ZET1c7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SeD7Lcbb; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 15FD12540241;
+	Wed, 11 Jun 2025 10:24:34 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 11 Jun 2025 10:24:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749651873;
+	 x=1749738273; bh=+ODIXdffxI+NiC6rP3Lj0Q8ZCzaWxLNsTJAoOGA2ZdI=; b=
+	G/ZET1c7ml8PM4cslNjpAZLiQn4RsbQXkvkBqWQiZSaDRo01dQmgyIwuDFEQjr0C
+	crS+WWB/4bvZhihhfXoKHJE11aedJ2d3KLlK7Cq0Q81sqm50Mi5++PgaW1hVQD3g
+	clX7gOz+YUFDY83i3r1S4MoiE9CgmZ78840TVTiSKgRbEeM/imPsPyyERONL/TiV
+	weP0xBLPBiEFb0D0uqyy0xiFDnsFIOWXH3NsuSIuNn5e/kgDrz6vRldVbWx1b8sG
+	ykvT2Xs/72lf8v1m/WLPLA2JOBZYvl/JCCuubRT0ZXo090kd01FWTnDtle19HfzU
+	6dQFZ/Tc55WhNIaKxpvwZA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749651873; x=
+	1749738273; bh=+ODIXdffxI+NiC6rP3Lj0Q8ZCzaWxLNsTJAoOGA2ZdI=; b=S
+	eD7LcbbTypHMh/Z7By6tRW7VQWRTwVsOKbdnMbTqsQRuYCVqH4SfLLXRUnm7q6JQ
+	5c9OI4IbTzvmJjj3nyCz1zjTDSvLghnNr47AnpyRCn9rEa61ENBED6kp852GA8Ne
+	k0+UEuV4Go+SW7RMkhyHVuysUDE6dZNM0fucQVOqadEbBuRBi9dXpvEGuVCuPuSL
+	XySHYVFKN8WR2HROM1UbjQfovDh0FWYK4UPUVqYAEXC0NLmefOegJ9Uu15kuq/lD
+	nHTMe2eANavL1waza4eQQHEGz2HrvlKgczjzW1qlf/5s7Ns8BG4loMYPLozzcGL/
+	u6nmBebVLiLC7Y6gkh67w==
+X-ME-Sender: <xms:oZFJaKbrv0d59G27HwIuQHfRfnjtdvU9g947UYljGpT2E6AwlgZong>
+    <xme:oZFJaNaVbHOJLZE3VXrgY__h52rtRVQ8tnlt8sVMZKunhJGybscsUwJz_mSXM_H_M
+    BeShoXKsTYmpMQVBt8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduvdegvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddv
+    geejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghsrghhihhrohihsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggr
+    thhiohhnrdhorhhgpdhrtghpthhtohephhgtrgeslhhinhhugidrihgsmhdrtghomhdprh
+    gtphhtthhopehlihhnuhigqdhksghuihhlugesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:oZFJaE9ogmB_Szdpw6Diucr8KuJDL0h-qBAbWRqgkW8BDMlGR1SzOQ>
+    <xmx:oZFJaMrP9DBo7zOvUkPub7pvqzf8h-O9VbQiBkAReILrLU-IrCkA8A>
+    <xmx:oZFJaFq5Z8Eakl5lW2CNOQ3bZNN99crdLc66qxwIo4yex3qZoKDWrA>
+    <xmx:oZFJaKRjj_VWwKLpXayCEf_B9wyiz3NCYOkEl2ktgCus_-xhCVqTpw>
+    <xmx:oZFJaO7Au_QSTd5C3-ZXCgE0Fguraeva6H5vReFI_I0x4cUHXOXBTbrA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 91800700064; Wed, 11 Jun 2025 10:24:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
- <878qmxsuy8.fsf@email.froward.int.ebiederm.org> <202505151451.638C22B@keescook>
- <87ecwopofp.fsf@email.froward.int.ebiederm.org> <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
- <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook>
- <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
- <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
- <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 11 Jun 2025 16:23:56 +0200
-X-Gm-Features: AX0GCFt-lvgulZZy51v1nQGdrw4LjdO7BhuMTAtxvy7UyojcjPOL_75VvfjJ_Cc
-Message-ID: <CAKPOu+-S5C59X8zW=6keYAsHecketOBzMbb3XXDnLTc0X1nBhA@mail.gmail.com>
-Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jann Horn <jannh@google.com>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	Richard Guy Briggs <rgb@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>, jmorris@namei.org, 
-	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org, 
-	Christian Brauner <christian@brauner.io>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: T11a455a1e4054318
+Date: Wed, 11 Jun 2025 16:24:13 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Heiko Carstens" <hca@linux.ibm.com>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Kbuild mailing list" <linux-kbuild@vger.kernel.org>
+Message-Id: <8992766a-cc96-40bb-b8c2-60931ad0f065@app.fastmail.com>
+In-Reply-To: 
+ <CAK7LNASSeuZWAXS6tDGL1T8S1N9fmg4DND616BL6uco4gnYFqA@mail.gmail.com>
+References: 
+ <CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com>
+ <20250611075533.8102A57-hca@linux.ibm.com>
+ <CAK7LNASSeuZWAXS6tDGL1T8S1N9fmg4DND616BL6uco4gnYFqA@mail.gmail.com>
+Subject: Re: [GIT PULL] Kbuild updates for v6.16-rc1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 2:19=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> Aside from a tested-by verification from Max, it looks like everyone
-> is satisfied with the v2 patch, yes?
+On Wed, Jun 11, 2025, at 15:32, Masahiro Yamada wrote:
+> On Wed, Jun 11, 2025 at 4:55=E2=80=AFPM Heiko Carstens <hca@linux.ibm.=
+com> wrote:
+>>
+>> Don't get me wrong, I can address all of this trivial churn for s390,=
+ however
+>> enforcing so many extra warnings to everyone with W=3D1 builds doesn'=
+t look like
+>> the right approach to me.
+>
+> This is what W=3D1 is for.
+> 0day bot detects a new W=3D1 warning, so we can avoid new warnings com=
+ing in.
+>
+> People do not know which headers should be included when.
+> So, this warning must exist at least until we can get rid of
+> #include <linux/export.h> from include/linux/module.h,
+> include/linux/linkage.h etc.
 
-Sorry for the delay. I tested Eric's v2 patch and it solves my
-problem. His patch is nearly identical to mine, it's only a bit more
-intrusive by removing the weird __is_setXid functions that never made
-sense. I welcome that; I wasn't confident enough to do that and tried
-to make the least intrusive patch.
+I think this makes sense in general, but the output here is
+excessive if it leads to users no longer wanting to enable W=3D1.
 
-Eric, I'm glad you changed your mind and no longer consider my work
-"pure nonsense" and "pointless".
+There are other warnings that I think should be enabled at the
+W=3D1 level (e.g. -Wformat-security) and eventually by default,
+but that are still too noisy at that level.
 
-But one problem remains: in the same email, you demanded evidence that
-userspace doesn't depend on the current behavior. However, in your
-patch description, you hand-waved that away by "I don't expect anyone
-to care". What happened to that?
+My own cutoff would be at a few hundred warnings in allmodconfig
+builds if there is an effort to reduce it further, but it seems
+that this one is still at a few thousand, which does not seem ok.
 
-Max
+     Arnd
 
