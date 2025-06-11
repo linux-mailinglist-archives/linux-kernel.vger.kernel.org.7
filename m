@@ -1,86 +1,66 @@
-Return-Path: <linux-kernel+bounces-681624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AD7AD5512
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:10:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7F9AD5514
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638A43AB93D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02D0516753A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF38827AC57;
-	Wed, 11 Jun 2025 12:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E016D283141;
+	Wed, 11 Jun 2025 12:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WuJ5YnUA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jTOyg9qS"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793F526E71A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87827280313;
+	Wed, 11 Jun 2025 12:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749643779; cv=none; b=le2iOkD2BVbOXxQi6wOy63RWCo/0qyaCYGH2ZXEVlr1Uu9kjP62uY424QSRIr4vpK0TJO0yj5BH/F4+2L1/H0QZ9SRhWRHDyregvduqPZoyNzWEI55knRTND8VXHJf/3KBvJxg6kvo+OHM67/TpAKKaLuU3gNoD4lFBOMGihpvU=
+	t=1749643784; cv=none; b=IjuROPf6qB2s+pTXdM3xfKsquYNhSJ/dJ2bTaj2wjx6hEKqm6CQGkoKVr25tD0n/0O0PatubrxN6hCFXSqKLFMNn3Pj8kewl9yiP9JWVNRpNv1klM2Fa8MI9Zd0iZp8jor4ELMxw2lf5gYJb3gjDNLUhUdsN9vvPl0JlDwAIN4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749643779; c=relaxed/simple;
-	bh=1tDMKePeUmlMiIU1QyuyQIKUTqBrro9ueLtZjcltcDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HH4PtPpKWKiUEnD8acIT3ePuVjkqJHTjzCFYzlbQ7AWAFgiTXyA4U7wzbJ/aabZ2oOuGgXWJCjHBM8uCLpRmRJpyiPnPmJ98LsBxHjxAPjteq5ZIlsfwKTBYTZWuTq1GwTqAllH4pUwpiAcp1NT8vNQYbh8oLXOJxty3b8/UVI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WuJ5YnUA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749643776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iJysvH6GbWyXgfkZNDFvCAJBKuXVqV66Rj7a/cAeTAI=;
-	b=WuJ5YnUAOPyrtP3bj0krsNLUfOpILrSTo7nBu8Vp95113LZw47dl3eSa3KHZYGSm7DTmpQ
-	BBkJecdlAVHG7lROqwnY1MrVwP6eFAoYfprfaC4wWfDHCMnOBllniWi/NFewIkVT2omxU6
-	m0lAmBYaUasOuRYvn3sa1dXYkYSlZ8I=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-eGKXCyn2NaGzpAXhzKPhrw-1; Wed, 11 Jun 2025 08:09:35 -0400
-X-MC-Unique: eGKXCyn2NaGzpAXhzKPhrw-1
-X-Mimecast-MFC-AGG-ID: eGKXCyn2NaGzpAXhzKPhrw_1749643775
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6faca0f2677so185778076d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:09:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749643775; x=1750248575;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iJysvH6GbWyXgfkZNDFvCAJBKuXVqV66Rj7a/cAeTAI=;
-        b=NtI3m3d2C5ltZPy4EBtJ0oOdLFBkhfBQoFyaAECUs342FgYGw9UFOLxPiSITj92s70
-         YU340a7RtZvQI0i2uWDfTAUOhBal4JhPDQ116cgO+8PuLpKOr8GGc5VQzQwmi0/1aGKt
-         U9q8etYUkr3W5BsP+8y84B+XzqDYU5AVlKzRURskaFnlTeoAOuayx4RSaYF0OFq0nH9k
-         Xm6bJLaP+t5w/nHw+7SVQceQ95lktbWc++ttaDkDMNSHggHhow88KtXuGjisz/jSSeNk
-         5fYEO2ufbmH/NFhwtsaWC0dV9wUxMxfnbNc0kF2XBDoYbtFMQ014Bwr/CIQGrtM62x+q
-         UG7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8feTayu439CAOWtr8FZScrtRgbWnXyWqw3ODcSW2GSXiOCESN5ayxJoec8Bq28Eq1GmWtSb1PQm/63Hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz3d1sLiVDcNL9ZK9BVlg1sFW8VB4+ZNPkfsswurV1ZW2vb+Nm
-	+dh160CeV58+v2fE3OJM4eQhXQuqJrDs7SNJyswtR1Msb/mpB5yqzZYmHxbKG3YvvWKuaWD9vIH
-	TznLSwPgAN13tX9xZH8DbU1ghtM43A9yLVwCAAlT6wXnAUmQIH+Wlcc+1cD+1dcigaQ==
-X-Gm-Gg: ASbGncuxskxigo7SutiqTctTWRbYwhAEBq4KRG1/TJKdQlPijHqGW18hjBORuBvlwEW
-	Z2+0W7Me18a/dnz7AQ5buYHXLOe7aIHAA8/vE+uMQiDVuqpbAJkT+bdBZ/xYuflhw3zqM71XtdG
-	b/G/WRk69e99Uiwr5F1gfV6R5BsfhM3JfkeHZuR8vz4oTcRud6iVMG5EMz+/i2WCiegYjCp/hen
-	LSfrxsO80Ng/Jc3sROer6IW8FWLuRKh1nukhcCcVJ2CVOSPgYh2cjIlexBba3PmDaUAOdqy928r
-	qW6RRkX/ocXJSsdoiLFdxKlBn4Anbz75mtzMuNA/5+Oy
-X-Received: by 2002:a05:6214:e4c:b0:6fa:cdc9:8af7 with SMTP id 6a1803df08f44-6fb2d0ccab9mr43232826d6.7.1749643774977;
-        Wed, 11 Jun 2025 05:09:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMaoMTIa642I8RwMNstQhFDRdz8wxzppBgakC5WZX1PvM5z/Ea1SbCR8D34tOHYLF9z4au/g==
-X-Received: by 2002:a05:6214:e4c:b0:6fa:cdc9:8af7 with SMTP id 6a1803df08f44-6fb2d0ccab9mr43232536d6.7.1749643774640;
-        Wed, 11 Jun 2025 05:09:34 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09b1ce20sm80729166d6.67.2025.06.11.05.09.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 05:09:34 -0700 (PDT)
-Message-ID: <a01bb9aa-eaa3-4de6-9ecd-8341fcfe265e@redhat.com>
-Date: Wed, 11 Jun 2025 14:09:32 +0200
+	s=arc-20240116; t=1749643784; c=relaxed/simple;
+	bh=8edYvABXWEyW4QyjYA/sihNI6vUS+2Ib7tvaC/2Cqqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E6CXoKTAIS/g7uy7b8kb53GgKRyzq0giLtSUjgdGa79u2NSufqygZeJWKCfAHKL8ayJR/v1eXRYOuO2J+BSrOC5aGM9WITOx2qwllWI7xgcJG9VcQv+AALGC7Q9tK5GcqAqQbMqqKEwd3ou7YWL5iBeH/qc7GkHdyIqLk8FPx8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jTOyg9qS; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1749643782; x=1781179782;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=8uWizOJisq3qvf+JalT9q9Tn4t52oR3ukVog/80wa+A=;
+  b=jTOyg9qS2Iip1E313QaNcMjgTVGriJoa+MPma+NObGnfyxMDfn2svhYO
+   MmUmgzKtSFhQogJT69bW4nPrg9gKpJMvkeB8EOmS7Fo7gXVxqxoYHga0R
+   cG+rbjEob4rTIDYEFNrc4U8iOysxQNgTN7c7e6rBcIl3nuMIi57raBk3N
+   aug0ljnSdCOxL40TwU3a7IxOVKPwJAH1CTYdg6Mv5G6mjWBDNCLlJmo/F
+   hQVzHnzfez2Np6oaAU9Dbf05X4VMIp8WxUN4C5zohptrlyBDztkyTUagg
+   DHj3D9xvd/5TeW80PaZinQVZJapJxMrhi9NX3j1fiQGHIUmcuA+cYGnyT
+   w==;
+X-IronPort-AV: E=Sophos;i="6.16,227,1744070400"; 
+   d="scan'208";a="210305053"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 12:09:39 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:27053]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.27.130:2525] with esmtp (Farcaster)
+ id 7a036aa7-dc10-479b-80c2-2a7384eb7725; Wed, 11 Jun 2025 12:09:38 +0000 (UTC)
+X-Farcaster-Flow-ID: 7a036aa7-dc10-479b-80c2-2a7384eb7725
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 11 Jun 2025 12:09:38 +0000
+Received: from [192.168.1.170] (10.106.82.32) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Wed, 11 Jun 2025
+ 12:09:36 +0000
+Message-ID: <dd851cab-eb22-40ae-b926-6f0eb1567299@amazon.com>
+Date: Wed, 11 Jun 2025 13:09:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,77 +68,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] kselftest/mm: Clarify errors for pipe()
-To: Mark Brown <broonie@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250610-selftest-mm-cow-tweaks-v1-0-43cd7457500f@kernel.org>
- <20250610-selftest-mm-cow-tweaks-v1-1-43cd7457500f@kernel.org>
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v3 4/6] KVM: guest_memfd: add support for userfaultfd
+ minor
+To: Peter Xu <peterx@redhat.com>
+CC: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <shuah@kernel.org>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <muchun.song@linux.dev>,
+	<hughd@google.com>, <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, <jack@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <jannh@google.com>,
+	<ryan.roberts@arm.com>, <david@redhat.com>, <jthoughton@google.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20250404154352.23078-1-kalyazin@amazon.com>
+ <20250404154352.23078-5-kalyazin@amazon.com> <aEiwvi-oqfTiyP3s@x1.local>
 Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250610-selftest-mm-cow-tweaks-v1-1-43cd7457500f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <aEiwvi-oqfTiyP3s@x1.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D001EUA002.ant.amazon.com (10.252.50.215) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On 10.06.25 16:13, Mark Brown wrote:
-> Specify that errors reported from pipe() failures are the result of
-> failures.
+
+
+On 10/06/2025 23:25, Peter Xu wrote:
+> On Fri, Apr 04, 2025 at 03:43:50PM +0000, Nikita Kalyazin wrote:
+>> Add support for sending a pagefault event if userfaultfd is registered.
+>> Only page minor event is currently supported.
+>>
+>> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+>> ---
+>>   virt/kvm/guest_memfd.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> index fbf89e643add..096d89e7282d 100644
+>> --- a/virt/kvm/guest_memfd.c
+>> +++ b/virt/kvm/guest_memfd.c
+>> @@ -4,6 +4,9 @@
+>>   #include <linux/kvm_host.h>
+>>   #include <linux/pagemap.h>
+>>   #include <linux/anon_inodes.h>
+>> +#ifdef CONFIG_KVM_PRIVATE_MEM
+>> +#include <linux/userfaultfd_k.h>
+>> +#endif /* CONFIG_KVM_PRIVATE_MEM */
+>>
+>>   #include "kvm_mm.h"
+>>
+>> @@ -380,6 +383,13 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+>>                kvm_gmem_mark_prepared(folio);
+>>        }
+>>
+>> +     if (userfaultfd_minor(vmf->vma) &&
+>> +         !(vmf->flags & FAULT_FLAG_USERFAULT_CONTINUE)) {
+>> +             folio_unlock(folio);
+>> +             filemap_invalidate_unlock_shared(inode->i_mapping);
+>> +             return handle_userfault(vmf, VM_UFFD_MINOR);
+>> +     }
+>> +
 > 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
+> Hmm, does guest-memfd (when with your current approach) at least needs to
+> define the new can_userfault() hook?
+> 
+> Meanwhile, we have some hard-coded lines so far, like:
+> 
+> mfill_atomic():
+>          if (!vma_is_shmem(dst_vma) &&
+>              uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE))
+>                  goto out_unlock;
+> 
+> I thought it would fail guest-memfd already on a CONTINUE request, and it
+> doesn't seem to be touched yet in this series.
+> 
+> I'm not yet sure how the test worked out without hitting things like it.
+> Highly likely I missed something.  Some explanations would be welcomed..
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Yes, I realised that I'd failed to post this part soon after I sent the 
+series, but I refrained from sending a new version because the upstream 
+consensus was to review/merge the mmap support in guest_memfd [1] before 
+continuing to build on top of it.  This is the missed part I planned to 
+include in the next version.  Sorry for the confusion.
 
--- 
-Cheers,
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 64551e8a55fb..080437fa7eab 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -221,8 +221,10 @@ static inline bool vma_can_userfault(struct 
+vm_area_struct *vma,
+  	if (vm_flags & VM_DROPPABLE)
+  		return false;
 
-David / dhildenb
+-	if (!vma->vm_ops->can_userfault ||
+-	    !vma->vm_ops->can_userfault(vma, VM_UFFD_MINOR))
++	if ((vm_flags & VM_UFFD_MINOR) &&
++	     (!vma->vm_ops ||
++	      !vma->vm_ops->can_userfault ||
++	      !vma->vm_ops->can_userfault(vma, VM_UFFD_MINOR)))
+  		return false;
+
+  	/*
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 0aa82c968e16..638360a78561 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -788,7 +788,9 @@ static __always_inline ssize_t mfill_atomic(struct 
+userfaultfd_ctx *ctx,
+  		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
+  					     src_start, len, flags);
+
+-	can_userfault = dst_vma->vm_ops->can_userfault &&
++	can_userfault =
++	    dst_vma->vm_ops &&
++	    dst_vma->vm_ops->can_userfault &&
+  	    dst_vma->vm_ops->can_userfault(dst_vma, __VM_UFFD_FLAGS);
+
+  	if (!vma_is_anonymous(dst_vma) && !can_userfault)
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 91ee5dd91c31..202b12dc4b6f 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -420,8 +420,15 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+  	return ret;
+  }
+
++static bool kvm_gmem_can_userfault(struct vm_area_struct *vma,
++				   unsigned long vm_flags)
++{
++	return vm_flags & VM_UFFD_MINOR;
++}
++
+  static const struct vm_operations_struct kvm_gmem_vm_ops = {
+-	.fault = kvm_gmem_fault,
++	.fault         = kvm_gmem_fault,
++	.can_userfault = kvm_gmem_can_userfault,
+  };
+
+  static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
+
+
+[1] https://lore.kernel.org/kvm/20250605153800.557144-1-tabba@google.com/
+
+> 
+> Thanks,
+> 
+>>        vmf->page = folio_file_page(folio, vmf->pgoff);
+>>
+>>   out_folio:
+>> --
+>> 2.47.1
+>>
+> 
+> --
+> Peter Xu
+> 
 
 
