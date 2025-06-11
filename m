@@ -1,161 +1,121 @@
-Return-Path: <linux-kernel+bounces-682141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1998AD5C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D402CAD5C27
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615DF1728F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB681E0F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7361E211499;
-	Wed, 11 Jun 2025 16:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAA8202F9F;
+	Wed, 11 Jun 2025 16:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CWejje5p"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7675C202C5A;
-	Wed, 11 Jun 2025 16:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJvLKc7I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638511F0E39;
+	Wed, 11 Jun 2025 16:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749659534; cv=none; b=h1+7bSdfmGuKr6Wy7Np9M+4BFjBwY/BNP5WbmtLXOO3LlvRcvgvPh+s7RLD3E+fX9NcYVCLeZX/wALcTXXBn29PUok94yyKDSr7BqEe9mVPdNkXuL281bvF7vTNJsJ2P2phIR9ZDRxJUHYAPI76UGDopkgGny8vNnOCyeO+Daxc=
+	t=1749659499; cv=none; b=LakKbJu9sqE64mpvVdSHD/QGc/75LotY9+Oy+aLEI43vO3ZTEouVI5VoKfi9P31xBeAnR94naBpneX62KzFIgX3BvzhDlooj5j15jS6T+qohS92iBfmj1nvhC9tJWgH2axxZUMDFGwpvH0bh0zNP1NV9atBxl3uXewASteJInCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749659534; c=relaxed/simple;
-	bh=pI0l0YSyaG+iu/wKlfA/GQax2jc8og3id13WIdSvnbE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EVu8o+oEJ50c3n6q6XfDhP+f9uIrIR4YLSD4kkLMKMtHzVLsM8Z4pWO8NCoXnxj7wYVze0lf2QNSUVzIRuSxBUEanKtnMeMsZCVMR9s9ILmTtXiGfXm1pl6ODXvpSW0wN2BmQvmp4KCNV/zzIzTRVngxkQubKk29t0n2yop8dFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CWejje5p; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=7u
-	2cvwu+TRfW10klrZP0lybKTwAtimvuf2CQdNrVCxs=; b=CWejje5p1woFj3jirr
-	vytfTZBRoGQHYeL3bLR5LwXkcDTFCfGHdPibGzyswdqzxE4XTbDrs/52vkLaWLrW
-	qKgD8nh95p0/gcoMK3LN8ViIEUye508Mp99KleS198eMKLe4S00ZV3LddO8QRdxR
-	J3+7bA2H45Ldqa/lCWvZ+IcgQ=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDXz_tar0loK8sqHw--.17208S2;
-	Thu, 12 Jun 2025 00:31:22 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	bhelgaas@google.com,
-	mani@kernel.org,
-	kwilczynski@kernel.org
-Cc: robh@kernel.org,
-	jingoohan1@gmail.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 04/13] PCI: dwc: Refactor imx6 to use dw_pcie_clear_and_set_dword()
-Date: Thu, 12 Jun 2025 00:31:21 +0800
-Message-Id: <20250611163121.860619-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749659499; c=relaxed/simple;
+	bh=wHBQRhTvoZjP5hYlhu6PAF/AqN1dtZGC7ByNEkL8uk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CCTwOECmEgbXP1aNt+SPdCcpWC5gjPsyQgYUZRwfpJWqCoCbajbDaKh17OoUxl5R2FAP0PcIUVBO4igcJN/oH18ahuZK54eEIy6oxay9+QOCEOBoYh3BN4kg8Um7gjN+x60ZDYxip3TyIlcMJPMJrTYqEtebQ51N+2L8x2P1CK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJvLKc7I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE8CC4CEF5;
+	Wed, 11 Jun 2025 16:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749659498;
+	bh=wHBQRhTvoZjP5hYlhu6PAF/AqN1dtZGC7ByNEkL8uk8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JJvLKc7IROMKKelWLCQtsFKYQEuV5DVSTk4jtVvozIZtXoYprNJfLZu4kKj6ondQd
+	 L2wjcqMql+MQcTw5uE2TroXEQgwmpm2W9elvE3eC8RVNpD03r4L6/XV7+eXYKuTvxF
+	 kiuHceMjoaWRZ3R8IRAyVFftX4aprswSeURh3o7iqGxixiDE1im3RTbixraRi6n/tB
+	 z3MX7iW6bSlCkF9FbB/DaLNAgkyD6/G2Hg9HH3Ok5/bngxo/GjSU/BU+idijJft85B
+	 6SnneFTyWbUXvepgpz8urF41dLIOx1omo4cwgtPVQm242RKA8ji0VxLS8ie1msRpvR
+	 o7U55sl3HkXdw==
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6fb0eb0f0fbso85456d6.1;
+        Wed, 11 Jun 2025 09:31:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUm/Y5+XONlilsbAmRz6jP7G7SKNRdjgSa1ecbeZLR4Tkl5UPJxa95NPg7cMFu1iWHFhqhDlsBSolskUKDo@vger.kernel.org, AJvYcCV92Bi7IGFFZASZr+s5IYIQmDjAZPGTrTw3PJoRPbe2kZ1Vft/p0VEhy8PCWF8jVDpfTF6pRYgqhUrLJP3NnTz3Bf15HOZ3@vger.kernel.org, AJvYcCVUv/dcnkIWyylkkmGfvFkxt9/0KzD5rVwue5fvmjOdEVWJgCEtqljYwEdP9Edb/igcrv8=@vger.kernel.org, AJvYcCVW+4ppSmsGGRQxIQGUNqqJMJboTczuILWrkbpYj7UD9P+S4YVPco3qyXaqDXs0WD5x+dqy5viiNaKQ9X9+2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQDFKZybw9e5Spxl364cF1ZG7pJo8EaJkrTHO4PkMisyIfVrjp
+	8dGpQF4tDfp5uTCeSSpt39vAZ2YM/4W/uhgzeZZnRaGnNuEvPKzDBsI7GH5HGZgjaKKeIiOByyb
+	syJGS0eH6rMoL4eIUi2pahpnGC3t8KC8=
+X-Google-Smtp-Source: AGHT+IHww/o74BxPrTUbg+/oYp3tE0Qny5VDLaUUtEl/gCVQ64aG0JYxPSDJ7sXz6hjpvQbWvubaQVRVtTW5qUDhHi8=
+X-Received: by 2002:a05:6214:500c:b0:6fa:fdf5:a604 with SMTP id
+ 6a1803df08f44-6fb347f3af5mr938296d6.12.1749659497922; Wed, 11 Jun 2025
+ 09:31:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXz_tar0loK8sqHw--.17208S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4UCFyxtw18XF48Xr1fZwb_yoWrGFykpa
-	y2vrnakF48JF4F9w4vya95XF13t3Z3CF4UGanrKwnaqFy2kr9rtayjy34ftFs7GFWjvryj
-	9w18tw47J3WYyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRHE_tUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxppo2hJrMxCHAAAsA
+References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+ <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com> <20250611.Bee1Iohoh4We@digikod.net>
+In-Reply-To: <20250611.Bee1Iohoh4We@digikod.net>
+From: Song Liu <song@kernel.org>
+Date: Wed, 11 Jun 2025 09:31:26 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+X-Gm-Features: AX0GCFsKHEibU3SwfO1PDkPH059MHGcDhjOXxl4R9bB8VLTrCd0m_aTAtlTdLGI
+Message-ID: <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
+	gnoack@google.com, m@maowtm.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-i.MX6 PCIe driver contains multiple read-modify-write sequences for
-link training and speed configuration. These operations manually handle
-bit masking and shifting to update specific fields in control registers,
-particularly for link capabilities and speed change initiation.
+On Wed, Jun 11, 2025 at 8:42=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+[...]
+> > We can probably call this __path_walk_parent() and make it static.
+> >
+> > Then we can add an exported path_walk_parent() that calls
+> > __path_walk_parent() and adds extra logic.
+> >
+> > If this looks good to folks, I can draft v4 based on this idea.
+>
+> This looks good but it would be better if we could also do a full path
+> walk within RCU when possible.
 
-Refactor link capability configuration and speed change handling using
-dw_pcie_clear_and_set_dword(). The helper simplifies LNKCAP modification
-by encapsulating bit clear/set operations and eliminates intermediate
-variables. For speed change control, replace explicit bit manipulation
-with direct register updates through the helper.
+I think we will need some callback mechanism for this. Something like:
 
-Adopting the standard interface reduces code complexity in link training
-paths and ensures consistent handling of speed-related bits. The change
-also prepares the driver for future enhancements to Gen3 link training
-by centralizing bit manipulation logic.
+for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rcu) {
+   if (!try_rcu)
+      goto ref_walk;
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+   __read_seqcount_begin();
+    /* rcu walk parents, from starting_path until root */
+   walk_rcu(starting_path, root, path) {
+    callback_fn(path, cb_data);
+  }
+  if (!read_seqcount_retry())
+    return xxx;  /* successful rcu walk */
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 5a38cfaf989b..3004e432f013 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -941,7 +941,6 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
- 	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
- 	struct device *dev = pci->dev;
- 	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
--	u32 tmp;
- 	int ret;
- 
- 	if (!(imx_pcie->drvdata->flags &
-@@ -956,10 +955,9 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
- 	 * bus will not be detected at all.  This happens with PCIe switches.
- 	 */
- 	dw_pcie_dbi_ro_wr_en(pci);
--	tmp = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
--	tmp &= ~PCI_EXP_LNKCAP_SLS;
--	tmp |= PCI_EXP_LNKCAP_SLS_2_5GB;
--	dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCAP, tmp);
-+	dw_pcie_clear_and_set_dword(pci, offset + PCI_EXP_LNKCAP,
-+				    PCI_EXP_LNKCAP_SLS,
-+				    PCI_EXP_LNKCAP_SLS_2_5GB);
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
- 	/* Start LTSSM. */
-@@ -972,18 +970,16 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
- 
- 		/* Allow faster modes after the link is up */
- 		dw_pcie_dbi_ro_wr_en(pci);
--		tmp = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
--		tmp &= ~PCI_EXP_LNKCAP_SLS;
--		tmp |= pci->max_link_speed;
--		dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCAP, tmp);
-+		dw_pcie_clear_and_set_dword(pci, offset + PCI_EXP_LNKCAP,
-+					    PCI_EXP_LNKCAP_SLS,
-+					    pci->max_link_speed);
- 
- 		/*
- 		 * Start Directed Speed Change so the best possible
- 		 * speed both link partners support can be negotiated.
- 		 */
--		tmp = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
--		tmp |= PORT_LOGIC_SPEED_CHANGE;
--		dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
-+		dw_pcie_clear_and_set_dword(pci, PCIE_LINK_WIDTH_SPEED_CONTROL,
-+					    0, PORT_LOGIC_SPEED_CHANGE);
- 		dw_pcie_dbi_ro_wr_dis(pci);
- 
- 		ret = imx_pcie_wait_for_speed_change(imx_pcie);
-@@ -1295,7 +1291,6 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
--	u32 val;
- 
- 	if (imx_pcie->drvdata->flags & IMX_PCIE_FLAG_8GT_ECN_ERR051586) {
- 		/*
-@@ -1310,9 +1305,8 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
- 		 * to 0.
- 		 */
- 		dw_pcie_dbi_ro_wr_en(pci);
--		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
--		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+		dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+					    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL, 0);
- 		dw_pcie_dbi_ro_wr_dis(pci);
- 	}
- }
--- 
-2.25.1
+ref_walk:
+  /* ref walk parents, from starting_path until root */
+   walk(starting_path, root, path) {
+    callback_fn(path, cb_data);
+  }
+  return xxx;
+}
 
+Personally, I don't like this version very much, because the callback
+mechanism is not very flexible, and it is tricky to use it in BPF LSM.
+
+Thanks,
+Song
 
