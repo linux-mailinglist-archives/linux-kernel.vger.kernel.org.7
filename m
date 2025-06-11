@@ -1,377 +1,126 @@
-Return-Path: <linux-kernel+bounces-681972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B752AAD59D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE65AD59F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579F51BC5B70
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBDD317EE03
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AD7192D70;
-	Wed, 11 Jun 2025 15:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAdY3x31"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C573B1AA1D9;
+	Wed, 11 Jun 2025 15:11:17 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5175F18C002;
-	Wed, 11 Jun 2025 15:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C441A9B4A;
+	Wed, 11 Jun 2025 15:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654415; cv=none; b=QfMvk2PQPtugtSpZWxVEJ3tiHWSdMh2U9b00Jqf5vYByZp6XwGZG+tsfkFKK74CBg2P8IjypLu4jkqSnBbpmSf9X2UsQh4kMv7Pv0RN1JN0nOc8vzpNiqDPTHyjyTkvd1YTU/YJNreUHnYMQuqmP30UCjMgnRhH6sBobYgE/NRs=
+	t=1749654677; cv=none; b=bRhVMaLVyzRy21U7UXLeGOjqeYLcJi+YQSNHlsZyKq0eq4+wdd06icAkd+s9b4Bu0Ed/pTxvGmJrM/L0JbzKL53HB9qTO3/TDkSiOdqPFVUyfKP6c0KwXY/fKLDWI94rfs7SXbGdMusazvWZ/rddj6DOwbKeCPRuAGLkgfHL/fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654415; c=relaxed/simple;
-	bh=jPhJqp12YmPheYt5k7tMyxHFPWQAYjyoax+vbBjRYCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2+MWH2uRuIWTIlF6LpSKBf9h/zgFpugsh5EMmrGk261s0k4umWMTu8B4HLJoVgM4gLjdSTh4BR+VK5iHH9sxgb3yiTTXkxq405VnEC4x5BG2nZdoS4JzjKx7w0z1b/KMLtZPXn9Xmli0FVnvIFgIUNVMBr9mDvex2alLF/EBeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAdY3x31; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1749654677; c=relaxed/simple;
+	bh=QYZg7OC73wHuXKtmlih1DkmRrxuzAFFmclhMxt2YyjI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ReabixMqVPL0VwmWeXS2qmFIUEPfzN/Uy0UKFXv902ANs773aKjEQGdI1+Ny7h6C11QMoWxOzVLh9Uz1fbyvL+iclEm97Wa/048w7Yfswef6T2QKQG5yukfs5sXwhiYU6ty7hFcy8ZFTfYpJLSApOTwn2IBmCU2I3JYTIPj4jxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7111c6b0f1dso697777b3.1;
-        Wed, 11 Jun 2025 08:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749654412; x=1750259212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tLHvyD7wJsO2e0WWywcAFLyk62IHbmBBYHcPAMpcN1g=;
-        b=HAdY3x31SQhNmmV/wsGABbzMvYmZwn2iWrEHDnz5nq0rT3tR+4HB2bdtR53h/xEWme
-         9ys5KXIquTB+SV5NtzO0iQSbnZpZAWmnoHiqjm3nM4/OAD01ttFJtEr65oAgSfQxdamX
-         roHml8YCTtPMMgixiAzflkMfXayy7EBsIi1t6WdEbvo7mFes+TQt7HYMXlpc68SP22vn
-         v66zR5oJGyI/joxv6h/s+5+6/K6gqraLlx1EAPcfO6I/hJFhxHmIodYJ2kUW9L3MPoeJ
-         FQ4hHuv2HQCUf5MJ6Vo5/bIpcXjWQQ8dl98s552bcqmMBAZC/173LRm4Nx2fqzLITiBf
-         Celg==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad883afdf0cso1236357666b.0;
+        Wed, 11 Jun 2025 08:11:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749654412; x=1750259212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tLHvyD7wJsO2e0WWywcAFLyk62IHbmBBYHcPAMpcN1g=;
-        b=L3M0QgM2pzQA0plwsQcPHdDj2C2B1NiuE6i22SncNS7EoEubb2iGtKw2b3C1qrsXe+
-         u9rWzaovnWKdZDX+wNFhdtZJKCiwKm2YrTnzCSU7a7JkrnZyd2mSswv1p0L8mFVd/BK7
-         xPt53YHrwLZa8HXIHMN8hKRXokilD1uiblWW2e8aQgYOoiJ/3u+ySy6w5tBICcIQ0MLb
-         C7VRtlcfvGFtx0LgaISEYL9Ootwdvkdhz+139B5oZVyMw99IvhKybMbOV22acCLYCGGD
-         VSQ4RUaiEMVehOjnUQ7lLeGegPhyRlWVd74ij3DLpkw0XEaFy1ouGir9b5PIXfPXk3KC
-         Jedw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtIdg8XqDcuH1sbDPyZd18mshWOF7NvGyVPUUOO1A5KLyugVvkyE8LttyrM6Hy553TcR/jwmyJAZXYQJxE@vger.kernel.org, AJvYcCVEJURIB0I4B3Y20pmYwXhiNs+e2OZrXJH4DGVpxLwjfGLEgCwCIfX++t0VyuqoWTxGcoFTctU4Gto=@vger.kernel.org, AJvYcCWvbq7UZNhzLk5VEsJAMff6Q6aZpcek3GlCogXMojUgYRKW0ZDKTbrxpmZgQcLOyJf8q6UOmdIn6Rz6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzV2c1w8NF5lI3UYfrnN8q0CL4cDIZrozkTS2JHEpPCqc8+TKr
-	MB+OcXWMK90kNg5/e7y1HzS6MLpS2iZXg+9Fu2Wa52R+/y3DbTB60MqiNP7E3TLtI7vf6X1pCEf
-	Mr8vAM3l7XpllLYkZ3RkQunZFEA1LpRc=
-X-Gm-Gg: ASbGnct72ws7iNRAlBpBgqPoMNLwV2DBeeARVK9s2tMnkOu1lAcuGDqpKEr6impVXaA
-	AAylJlWoHCiGh0bj/eNAsGjVi5ap4ODH/j6f08SeUkUPCnWkp7hJlmke7R7JluIbELY5/4pJclq
-	GZy8BwiyzOLdEWhuWkE1bDRfIDuq1UqyTJVfdv/FHQCJs=
-X-Google-Smtp-Source: AGHT+IFbQLnI2vz/oiNY1COQzxJhUVbqRGawrm/dMsYImtWVEPaoOknPmYCUXamI/DvWQoEzlduGx7o3Evn447cPeTs=
-X-Received: by 2002:a05:690c:6:b0:70e:2b16:da55 with SMTP id
- 00721157ae682-71140b0e06fmr20437497b3.8.1749654412061; Wed, 11 Jun 2025
- 08:06:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749654674; x=1750259474;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AJ2lKCXFp8kiCnCzSiICCirAMaRWwRTHTr4+7DJp1IY=;
+        b=Jx04atExBrZEbXfHXlx79poKK6pt81B1K4hzlzLLG4GRmGgiPiVFTiA6bTJhlQNdTl
+         zh79ZIWESNmunmhiuO5wsgf+5L01KCZlEPT8NFpHrtoRttqPo37s8d6Q58CuVI1osh0t
+         /3wZWLMlIsmBIo4OY1+nx7zGBrLiN7jqANaB6i0E+PXpTCSRPDbKcm/TlitBQ7bEhjde
+         Aw2RwPgOle56nSogkifuLJ4b0S0XqaPbceV5RNAo4n30wAt1gbmMKQCDhTIbSTlr4QF0
+         o7WbQ5IaRcr6pD+ErF0VwVlnNl9cj43QjdhqYbZ4QgT0ffOzZm1vgbBt1eCFVYoetOib
+         nCKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNr7tOuRzbFpvUvrEuB9HUSe1EXCrt4QQmU7JZbw0ZJ2foS8kBJQat20dRstqXSCdeaLpxsNMj7VZSrC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8H47xmh+0NhNyMCxEzAaIjqK2F8H5LEU0KG1PfsOkMwHEirRB
+	ropcCn7Hn2nQjlsXcG8S/rQrOT24GgBRJ3/ZREfPqFSgpUvZ7bctbu/C
+X-Gm-Gg: ASbGncu1qIJeuk8wJaHrnkMfI07u7SXYlx1OpBBtMf+xxSzQ5Dv50YRz7lhd+aZf2e2
+	C6TCQeR4bbG1hMVCDebyYCIqhJjDrbV+ayh+udafgls5zuzFnbsAAzhL0UxvPJzfJQCUFA47n63
+	GrXeiIQ6E7Kdo63IlsRc/RiK4DzQH+1V4CIt2NeqtwzABnojxdz4a9wy/pWzLrIo6kH+L/na/IK
+	1SOUvVMkE8FsGakLhqpDKX/+HTeRiQGcpT0+ZX+87xIdU1/x8O/dnTEnUYrUs8HmrFRwcnsoopX
+	hBrKVPWOuMGZPRi2cH1rvvjTCyN3JzcsHqcODnsdZi6XmSO7EkzKZA==
+X-Google-Smtp-Source: AGHT+IHI5c+ZEVZBbvejqx+icK9CTx/j8u+s0bPSpgBRWgTV5zROrBcyphLZBPLUWDnzI9zTAntN0w==
+X-Received: by 2002:a17:907:743:b0:ad2:52c3:2083 with SMTP id a640c23a62f3a-ade8c7db543mr321986666b.28.1749654673472;
+        Wed, 11 Jun 2025 08:11:13 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1db55f3dsm908657666b.60.2025.06.11.08.11.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 08:11:13 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next 0/2] netdevsim: implement RX statistics using
+ NETDEV_PCPU_STAT_DSTATS
+Date: Wed, 11 Jun 2025 08:06:18 -0700
+Message-Id: <20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250601172139.59156-1-l.rubusch@gmail.com> <20250601172139.59156-8-l.rubusch@gmail.com>
- <20250608170819.3de87f4e@jic23-huawei>
-In-Reply-To: <20250608170819.3de87f4e@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Wed, 11 Jun 2025 17:06:16 +0200
-X-Gm-Features: AX0GCFuTVi7RxGRPJfn0Gv9q-EHUvv0Eu_vNbspgREgDzgdXDG7ZneTmwMGfrBk
-Message-ID: <CAFXKEHaRupFmFQ9ixTT_3p_XaoorJP=y4asYjw3dSMpxXhbOwQ@mail.gmail.com>
-Subject: Re: [PATCH v4 07/11] iio: accel: adxl313: add activity sensing
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
-	lucas.p.stankus@gmail.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	bagasdotme@gmail.com, linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGubSWgC/x3MQQrCMBAF0KsMf91AEomQXEVEiv3qLBwlE0qh9
+ O6C7wBvh7MrHU12dK7q+jE0SZPg/prtyaALmiDHXOI5xWAcC1fX983HPEIttZaaE+OJmATfzod
+ u//AC4wjGbeB6HD+5sSBhagAAAA==
+X-Change-ID: 20250610-netdevsim_stat-95995921e03e
+To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>, kernel-team@meta.com, 
+ Breno Leitao <Leitao@debian.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1001; i=leitao@debian.org;
+ h=from:subject:message-id; bh=QYZg7OC73wHuXKtmlih1DkmRrxuzAFFmclhMxt2YyjI=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoSZyPU2cwM/MU5JPD9cu/f+RvpOFkoIYDyk0oH
+ qovIlk82m+JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaEmcjwAKCRA1o5Of/Hh3
+ beklD/9xoJFUPRXCjiWvuOuBEucm6JdWzgTpgDs8z3LaBNIxXLBrP/4+yOExKCdva/bhC+XNkny
+ +sDwb3RnMy76tMxNi853x0yqJr5uER7LYPIsqniEJmJd0RrAvEP0lhtqNBlWs0djsoCjdpxKfzJ
+ U3iMRowUF4usecMUVf2NM7awPQ9vZRIJeO8lgTmqB4mTovsOzw80it6TtmUhSX2rnyAk1ToXcer
+ 0VCeZWNtQn9qdrYzSOsgPMv8c9cPuKr+Dl8ou3gHY5BucJfyt94uZndKN3FMc+H5tMopPEvyyaV
+ 9nc1PtE4TA8YBD3f5Um3Y3MLxRpK4KsnHFbHZlPF9Zjj8shvOspHig/sqZRqKlOYqx7GqgqZQBG
+ WLCffCZumMJ0yMaPBiXlMaQ0SJ2YcqdAt5l8EmoP2fyy9nKjULMFm5tXrhEEkPcHQyBoNG/DzHQ
+ 6HrvOrF/XC35CxUlxXAvAkYVliBEHJLpJbtRd6Gtvji07zPjR9jQTANYhN3DQ9Cu/vnEo+qWig/
+ cagtUNL9eaIEDLjd2WyXBJymrx1ux8Rss0Mfw0xqZVMsYwot+BjXMVswfl8JZxH/eRywDNOE1cZ
+ eK+Es2u26EyORPWCBN8g4+bXjPYdnvNPEARwfQwLX+xgqdWSQr1tle/bcBjAzffddmCtPH9tqSB
+ jSmTHntkwYkmYug==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Sun, Jun 8, 2025 at 6:08=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Sun,  1 Jun 2025 17:21:35 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Add possibilities to set a threshold for activity sensing. Extend the
-> > interrupt handler to process activity interrupts. Provide functions to =
-set
-> > the activity threshold and to enable/disable activity sensing. Further =
-add
-> > a fake channel for having x, y and z axis anded on the iio channel.
-> >
-> > This is a preparatory patch. Some of the definitions and functions are
-> > supposed to be extended for inactivity later on.
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
->
-> Hi Lothar,
->
-> My main question from this read through is whether we need to be quite
-> so careful on disabling measurement when configuring events.  It is rathe=
-r
-> unusual if that is necessary and I'm not sure that's what the datasheet
-> is implying with the vague bit of advice.
->
-> >  static const unsigned long adxl313_scan_masks[] =3D {
-> > @@ -297,6 +331,68 @@ static int adxl313_read_freq_avail(struct iio_dev =
-*indio_dev,
-> >       }
-> >  }
-> >
-> > +static int adxl313_is_act_inact_en(struct adxl313_data *data,
-> > +                                enum adxl313_activity_type type)
-> > +{
-> > +     unsigned int axis_ctrl;
-> > +     unsigned int regval;
-> > +     int axis_en, int_en, ret;
-> > +
-> > +     ret =3D regmap_read(data->regmap, ADXL313_REG_ACT_INACT_CTL, &axi=
-s_ctrl);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     /* Check if axis for activity are enabled */
-> > +     if (type !=3D ADXL313_ACTIVITY)
->
-> As below - only one value possible, so don't check it.
->
-> > +             return 0;
-> > +
-> > +     axis_en =3D FIELD_GET(ADXL313_ACT_XYZ_EN, axis_ctrl);
-> > +
-> > +     /* The axis are enabled, now check if specific interrupt is enabl=
-ed */
-> > +     ret =3D regmap_read(data->regmap, ADXL313_REG_INT_ENABLE, &regval=
-);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     int_en =3D adxl313_act_int_reg[type] & regval;
-> > +
-> > +     return axis_en && int_en;
-> > +}
-> > +
-> > +static int adxl313_set_act_inact_en(struct adxl313_data *data,
-> > +                                 enum adxl313_activity_type type,
-> > +                                 bool cmd_en)
-> > +{
-> > +     unsigned int axis_ctrl;
-> > +     unsigned int threshold;
-> > +     int ret;
-> > +
-> > +     if (type !=3D ADXL313_ACTIVITY)
->
-> As the enum only has one value you can drop this check.
-> Obviously it's dropped in next patch anyway but better to never
-> introduce it.
->
-> > +             return 0;
-> > +
-> > +     axis_ctrl =3D ADXL313_ACT_XYZ_EN;
-> > +
-> > +     ret =3D adxl313_set_measure_en(data, false);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_assign_bits(data->regmap, ADXL313_REG_ACT_INACT_CT=
-L,
-> > +                              axis_ctrl, cmd_en);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_read(data->regmap, adxl313_act_thresh_reg[type], &=
-threshold);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_assign_bits(data->regmap, ADXL313_REG_INT_ENABLE,
-> > +                              adxl313_act_int_reg[type],
-> > +                              cmd_en && threshold);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return adxl313_set_measure_en(data, true);
-> > +}
-> > +
-> >  static int adxl313_read_raw(struct iio_dev *indio_dev,
-> >                           struct iio_chan_spec const *chan,
-> >                           int *val, int *val2, long mask)
-> > @@ -370,6 +466,113 @@ static int adxl313_write_raw(struct iio_dev *indi=
-o_dev,
-> >       }
-> >  }
->
-> > +
-> > +static int adxl313_read_event_value(struct iio_dev *indio_dev,
-> > +                                 const struct iio_chan_spec *chan,
-> > +                                 enum iio_event_type type,
-> > +                                 enum iio_event_direction dir,
-> > +                                 enum iio_event_info info,
-> > +                                 int *val, int *val2)
-> > +{
-> > +     struct adxl313_data *data =3D iio_priv(indio_dev);
-> > +     unsigned int act_threshold;
-> > +     int ret;
-> > +
-> > +     /* Measurement stays enabled, reading from regmap cache */
->
-> If it isn't safe to read whilst measurements are in progress (as opposed
-> to maybe getting a small variation in timing) then this seems more
-> fragile than I'd like (to future code changes for example).
->
-> Might need an explicit check on it being cached regcache_reg_cached()
-> for example though that is very rarely used which makes me dubious
-> about using it here.
->
->
-> > +
-> > +     if (type !=3D IIO_EV_TYPE_MAG)
-> > +             return -EINVAL;
-> > +
-> > +     if (info !=3D IIO_EV_INFO_VALUE)
-> > +             return -EINVAL;
-> > +
-> > +     switch (dir) {
-> > +     case IIO_EV_DIR_RISING:
-> > +             ret =3D regmap_read(data->regmap,
-> > +                               adxl313_act_thresh_reg[ADXL313_ACTIVITY=
-],
-> > +                               &act_threshold);
-> > +             if (ret)
-> > +                     return ret;
-> > +             *val =3D act_threshold * 15625;
-> > +             *val2 =3D MICRO;
-> > +             return IIO_VAL_FRACTIONAL;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +}
-> > +
-> > +static int adxl313_write_event_value(struct iio_dev *indio_dev,
-> > +                                  const struct iio_chan_spec *chan,
-> > +                                  enum iio_event_type type,
-> > +                                  enum iio_event_direction dir,
-> > +                                  enum iio_event_info info,
-> > +                                  int val, int val2)
-> > +{
-> > +     struct adxl313_data *data =3D iio_priv(indio_dev);
-> > +     unsigned int regval;
-> > +     int ret;
-> > +
-> > +     ret =3D adxl313_set_measure_en(data, false);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     if (type !=3D IIO_EV_TYPE_MAG)
-> > +             return -EINVAL;
-> > +
-> > +     if (info !=3D IIO_EV_INFO_VALUE)
-> > +             return -EINVAL;
-> > +
-> > +     /* Scale factor 15.625 mg/LSB */
-> > +     regval =3D DIV_ROUND_CLOSEST(MICRO * val + val2, 15625);
-> > +     switch (dir) {
-> > +     case IIO_EV_DIR_RISING:
-> > +             ret =3D regmap_write(data->regmap,
-> > +                                adxl313_act_thresh_reg[ADXL313_ACTIVIT=
-Y],
-> > +                                regval);
->
-> I'm surprised this can only be set with measurement disabled.
-> Maybe a spec reference.   It's common to tweak event values as events
-> come in and we generally don't have to stop data flow whilst we do.
->
-> There are a few specific bits where the datasheet suggests updating
-> them has unwanted side effects in measurement mode.  + there is a general
-> suggestion to do configuration before enabling measurement mode.
-> I don't see anything saying it is a problem for this register.
->
+The netdevsim driver previously lacked RX statistics support, which
+prevented its use with the GenerateTraffic() test framework, as this
+framework verifies traffic flow by checking RX byte counts.
 
-AFAIK there is no issue, nor a big side effect. Changing config
-registers might lead to initially wrong measurements. Just the first
-measurements might be wrong. I guess this could be a problem if the
-sensor had more features and, say, any kind of threshold for some
-event then triggered an event wrongly. In case of the ADXL313, there
-should not be such a risk. It's then rather about initial wrong
-measurements. (Exception: changing the FIFO modes, where turning to
-standby is explicitely recommended).
+This patch migrates netdevsim from its custom statistics collection to
+the NETDEV_PCPU_STAT_DSTATS framework, as suggested by Jakub. This
+change not only standardizes the statistics handling but also adds the
+necessary RX statistics support required by the test framework.
 
-Unfortunately, I could not recall the exact page in the datasheet, but
-it matched pretty much my observation also with the ADXL345. So, I'll
-give it a try and remove turning off measurement for the
-write_event_config()
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Breno Leitao (2):
+      netdevsim: migrate to dstats stats collection
+      netdevsim: collect statistics at RX side
 
+ drivers/net/netdevsim/netdev.c    | 37 ++++++++++---------------------------
+ drivers/net/netdevsim/netdevsim.h |  5 -----
+ 2 files changed, 10 insertions(+), 32 deletions(-)
+---
+base-commit: 0097c4195b1d0ca57d15979626c769c74747b5a0
+change-id: 20250610-netdevsim_stat-95995921e03e
 
-> > +             if (ret)
-> > +                     return ret;
-> > +             return adxl313_set_measure_en(data, true);
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +}
-> > +
-> >  static int adxl313_set_watermark(struct iio_dev *indio_dev, unsigned i=
-nt value)
-> >  {
-> >       struct adxl313_data *data =3D iio_priv(indio_dev);
-> > @@ -502,19 +705,32 @@ static int adxl313_fifo_push(struct iio_dev *indi=
-o_dev, int samples)
-> >
-> >  static int adxl313_push_event(struct iio_dev *indio_dev, int int_stat)
->
-> Ah. This does not also have events.  Still it's a mix, so maybe
-> adxl313_handle_interrupts() or something like that.
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
-I also could break it up into:
-- handle interrupt source register events
-- drain fifo watermark samples
-?
-
-> >  {
-> > +     s64 ts =3D iio_get_time_ns(indio_dev);
-> >       struct adxl313_data *data =3D iio_priv(indio_dev);
-> >       int samples;
-> > +     int ret =3D -ENOENT;
-> > +
-> > +     if (FIELD_GET(ADXL313_INT_ACTIVITY, int_stat)) {
-> > +             ret =3D iio_push_event(indio_dev,
-> > +                                  IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-> > +                                                     IIO_MOD_X_OR_Y_OR=
-_Z,
-> > +                                                     IIO_EV_TYPE_MAG,
-> > +                                                     IIO_EV_DIR_RISING=
-),
-> > +                                  ts);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> >
-> >       if (FIELD_GET(ADXL313_INT_WATERMARK, int_stat)) {
-> >               samples =3D adxl313_get_samples(data);
-> >               if (samples < 0)
-> >                       return samples;
-> >
-> > -             return adxl313_fifo_push(indio_dev, samples);
-> > +             ret =3D adxl313_fifo_push(indio_dev, samples);
-> >       }
-> >
-> >       /* Return error if no event data was pushed to the IIO channel. *=
-/
-> > -     return -ENOENT;
-> > +     return ret;
-> This handling works, but as Andy observed maybe the comment is now confus=
-ing
-> given ret is mostly not an error.  Perhaps put that where ret is declared
-> instead, or use a separate mask check at the start to quickly
-> error out if no bits that we handle are set.
-> >  }
-
-Yes. Andy also pointed out here. I already developed a feeling for
-"something's smelly" with this code, but cannot really think of a
-better approach. Actually it works, and for me it is somehow logical.
-Probably there are better ways to solve this situation in a cleaner
-way?
 
