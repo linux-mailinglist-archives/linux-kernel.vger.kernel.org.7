@@ -1,126 +1,274 @@
-Return-Path: <linux-kernel+bounces-680797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E7AAD49DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AF2AD49E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A310A17BD4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7761717CB06
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA2A20A5E5;
-	Wed, 11 Jun 2025 03:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AluZbev8"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B04A2253F3;
+	Wed, 11 Jun 2025 04:00:24 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9170C8FE;
-	Wed, 11 Jun 2025 03:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB6035962
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 04:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749614399; cv=none; b=oInLwA4/Hn4MHNHXYMElENngffNy2B1CemH2LW2uXeTx4NyWF+satmMk1LvZLHvA4yPCwSCs6OomXg+njyfhSJDD4zUI4CXFlRf2Lb2/QC7Ce0WUg33lZYiLo/ShwJ2W9lA4+hFsOKSFDRfSy7oYkHYH1tBHu1EjR/R+upls5Nk=
+	t=1749614423; cv=none; b=OJJE51OxaC1VT8Sc86fZtYd4Ny/2jwK6Ll6rh0jXMRl+2zS4+3+ONDDa6vW5tplQU4J+utUDGG1Lb9XhFAEkshNbyAwZJghfCXt1B82g+/Cl13jTh56vdJp1yq1CuVV3+qM1kSKh+DCcgGHcPCPJ0u9RsyLFI0aYwp7RpUoEUyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749614399; c=relaxed/simple;
-	bh=6Bv1xt+Ulsxs3ZANi+lB4WzocuIuNfvDq3Y/oLo/j/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPEJk88d0K4n00K5iA9ZJ42mAazhmElXPy3RGG04xuBJCWe9GLZOEVliYs2HWZAfzzvod+g4fU0wVLjhWxFb4VFMNoAG/uvVnkRYH5CMSDZTcq5CCxnXFoCg+1CladGgZGo7d4QQP1nHYL7dT6emIWTDmdnyn+Ge8UMTcL+iOrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AluZbev8; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5311cfb975aso311959e0c.1;
-        Tue, 10 Jun 2025 20:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749614396; x=1750219196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pj6z2aRKvHtITq4Z+f1qO93pmK8lNGG0j4aMXrIWEqE=;
-        b=AluZbev8p6LHon9Qi8g0JjsjoqMaio4KkXWWEOvLm+3dPNmNNDIDXXbrYVtRkMlSlI
-         6eovcKpfloO/PZX6jvC7TJ+4Tb3YXUBpqOwLEtiBVfdlu6qAxOrcssDnTCuJFXs+ZSrC
-         9hBlMhw25gxTpZYN0U17tlFADOdxfA+VffGsx3j5wiquURSKDFuRb+a60JDi+4ju3Kt9
-         5TiafS5iPCe/GaRNWthVof8zHht76GMuOS0431JFazLjwGdMA1Gm7YZjfhYjHSK+BIIa
-         a2KiMqZ3HSaXxZoRC2K0uYMa15inEfr2cq+SSN9jy7KHMxHtTsgIhaj+tjXGHEs7/QMe
-         pufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749614396; x=1750219196;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pj6z2aRKvHtITq4Z+f1qO93pmK8lNGG0j4aMXrIWEqE=;
-        b=X/qghanupnh5YQFNMQBzRKC60w65zmAXqBsg56RVYHeDT/ccAQZJTC4al058FJUSJe
-         lo6SrX9juEzJclTFPubamy83OsCib22xEkxA+8NuLyL4Q69/dbfoK/D7kEknun2suLiJ
-         orMJY+kqWOdevDkK/7g/4/Cfg9rZbVL/KLMMGUy8LYSzpys+S4BqsGv+RcRzsZo2RV9C
-         Lk98thJy8zSaqDxm/QhBCqE4F5T9F8urkayBgqG3wf0ruKLkuJXEKTaneAmPfk1F4Rqb
-         5pUz7rtKERplnM88hdEjr2edZhBgRbqZJQpk0d+jjb6jeRddvhR4uTQWHa95rGpF2xWw
-         6iAA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1veIsgzOZIYqfSJL6QiLttJKJFD+YQzwqKVS3WumeT0Z/uqPYrKagfjfds++n72Az87bZKmWuoROc6gg=@vger.kernel.org, AJvYcCVi/lus0nmY2/LuZYDzhQW0l0cdUegaiPuuF/a85qzLd/Om8li+oHJ0D8oxiURXZ3MC8ar07B5JLkzH@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmAkyvo6gT9e36XstEBy225u0OsspojkdG3wyeXjeAoPivdi/F
-	6mALoSGTTqyTprjb6pWkvplUSI4f1VpKXFVp3aEdh8aSFDRwsoCaGXoL
-X-Gm-Gg: ASbGnct2WW9s+pTkdzWJofwd6ZXT+P4x+9Obrzuv1rULD83kUiJhB9pjnbYGxbuqyMu
-	enUSzai8jJWLAGwQcq4SZFPVyVvSHM572orlnqUUYfZ7wVVL6q+inLCmwz2miM7XjZ6Piw2TGRx
-	3mJaz5G5ooxY3U+sP9p2wEjkD9QfbUxbKpuDFomClRv/ZSqd+29s/Kki5vJLge9LITYTUk3Rs4D
-	Wbnu6ElpDY/z5OxvKsjR8O6rHzlbs8Qb/PFXR777IHw/SfXKTVXrXZBZMCpLMma8t9FjP3ZOwhg
-	5qtD8qiz6idVGzq/1HlpOLGVqLj7IDGeeONUPajrYa+RGDgHDgT7kp+ih/V5
-X-Google-Smtp-Source: AGHT+IGUDa7JtBq2dvoPFRpR8Ucsyx6ySznxILJ7IulGOvVCBM169/ICR1GV4mTL56zEZimS2JYQug==
-X-Received: by 2002:a05:6122:119c:b0:52d:cc6f:81a2 with SMTP id 71dfb90a1353d-53121e8cdeamr1223105e0c.6.1749614396582;
-        Tue, 10 Jun 2025 20:59:56 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:5f6a::dead:c001])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53113c0ee7fsm2411261e0c.41.2025.06.10.20.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 20:59:55 -0700 (PDT)
-Date: Wed, 11 Jun 2025 00:59:48 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] PCI: pcie-rockchip: add bits for Target Link
- Speed in LCS_2
-Message-ID: <aEj_NDgaFJT-oceR@geday>
-References: <aEQb5kEOCJNQJMin@geday>
- <20250610200744.GA820589@bhelgaas>
- <aEj7-6fMGKSXQb3J@geday>
+	s=arc-20240116; t=1749614423; c=relaxed/simple;
+	bh=6hil3jme6RmuqIKWHKQsZ2pdj9ZHIGCX1CiT7H80zY0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=I0eZbB07pY7rHMut/rL5VItckTUqo08oj65XIOT4iczQaorO0ii4mfGue5MVE2UbX0WWqQNsPiWFbG3qJU/49X01TzxLAccaofmfFtPX2siOhSDbZLvtKZmkCs+EW9RWMJlNJGgbbC7DlnnB40NkSNNv+L7Q2Vzom5W6wu8ZxJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9453542c467811f0b29709d653e92f7d-20250611
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP
+	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_UNTRUSTED, SN_UNFAMILIAR
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:fad50d13-a218-43e3-b9cf-28ee8e40ef2d,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:5
+X-CID-INFO: VERSION:1.1.45,REQID:fad50d13-a218-43e3-b9cf-28ee8e40ef2d,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:5
+X-CID-META: VersionHash:6493067,CLOUDID:25766d04431907a701408f86e60b33d2,BulkI
+	D:250610171449T7G5X9KM,BulkQuantity:3,Recheck:0,SF:17|19|25|38|45|66|78|81
+	|82|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:
+	nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,AR
+	C:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
+X-UUID: 9453542c467811f0b29709d653e92f7d-20250611
+X-User: duanchenghao@kylinos.cn
+Received: from localhost.localdomain [(223.104.40.103)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1030593121; Wed, 11 Jun 2025 12:00:14 +0800
+From: Chenghao Duan <duanchenghao@kylinos.cn>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	yangtiezhu@loongson.cn,
+	hengqi.chen@gmail.com,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	linux-kernel@vger.kernel.org
+Cc: guodongtai@kylinos.cn,
+	duanchenghao@kylinos.cn,
+	youling.tang@linux.dev,
+	jianghaoran@kylinos.cn,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH v1 2/5] LoongArch: BPF: The operation commands needed to add a trampoline
+Date: Wed, 11 Jun 2025 11:59:49 +0800
+Message-Id: <20250611035952.111182-3-duanchenghao@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250611035952.111182-1-duanchenghao@kylinos.cn>
+References: <20250611035952.111182-1-duanchenghao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEj7-6fMGKSXQb3J@geday>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 11, 2025 at 12:46:10AM -0300, Geraldo Nascimento wrote:
-> Hi again Bjorn,
-> 
-> Your message reminded me of something that may be important.
-> 
-> During my debugging I had the mild impression L0s capability is not
-> being cleared from Link Capabilities Register in the presence of
-> "aspm-no-l0s" DT property.
-> 
-> I can't confirm it right now but I might revisit this later on. From
-> what I've seen it can only be cleared from inside the port init
-> in pcie-rockchip.c and does nothing in present form.
-> 
-> Not a clear, confirmable report but something to watch out for...
+Add instrctions:
+emit_NOP
+emit_BREAK
 
-Not correct. ASPM bit for L0s is being properly cleared according
-to my printk's.
+Add branch jump function:
+larch_insn_gen_beq
+larch_insn_gen_bne
 
-Should have checked before creating noise. Sorry.
-Geraldo Nascimento
+Add instruction copy function: larch_insn_text_copy
+The implementation of larch_insn_text_copy uses the fixmap
+FIX_TEXT_POKE0.
 
-> 
-> Regards,
-> Geraldo Nascimento
+Signed-off-by: George Guo <guodongtai@kylinos.cn>
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+---
+ arch/loongarch/include/asm/inst.h | 19 +++++++
+ arch/loongarch/kernel/inst.c      | 85 +++++++++++++++++++++++++++++++
+ 2 files changed, 104 insertions(+)
+
+diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/asm/inst.h
+index 3089785ca..dd6e07781 100644
+--- a/arch/loongarch/include/asm/inst.h
++++ b/arch/loongarch/include/asm/inst.h
+@@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction insn, struct pt_regs *regs);
+ int larch_insn_read(void *addr, u32 *insnp);
+ int larch_insn_write(void *addr, u32 insn);
+ int larch_insn_patch_text(void *addr, u32 insn);
++int larch_insn_text_copy(void *dst, void *src, size_t len);
+ 
+ u32 larch_insn_gen_nop(void);
+ u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
+@@ -511,6 +512,8 @@ u32 larch_insn_gen_lu12iw(enum loongarch_gpr rd, int imm);
+ u32 larch_insn_gen_lu32id(enum loongarch_gpr rd, int imm);
+ u32 larch_insn_gen_lu52id(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm);
+ u32 larch_insn_gen_jirl(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm);
++u32 larch_insn_gen_beq(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm);
++u32 larch_insn_gen_bne(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm);
+ 
+ static inline bool signed_imm_check(long val, unsigned int bit)
+ {
+@@ -778,6 +781,22 @@ static inline void emit_##NAME(union loongarch_instruction *insn,	\
+ 
+ DEF_EMIT_REG3SA2_FORMAT(alsld, alsld_op)
+ 
++#define DEF_EMIT_NOP(NAME)						\
++static inline void emit_##NAME(union loongarch_instruction *insn)	\
++{									\
++	insn->word = INSN_NOP;						\
++}
++
++DEF_EMIT_NOP(NOP)
++
++#define DEF_EMIT_BREAK(NAME)						\
++static inline void emit_##NAME(union loongarch_instruction *insn)	\
++{									\
++	insn->word = INSN_BREAK;					\
++}
++
++DEF_EMIT_BREAK(BREAK)
++
+ struct pt_regs;
+ 
+ void emulate_load_store_insn(struct pt_regs *regs, void __user *addr, unsigned int *pc);
+diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
+index 14d7d700b..a47dc3575 100644
+--- a/arch/loongarch/kernel/inst.c
++++ b/arch/loongarch/kernel/inst.c
+@@ -10,6 +10,33 @@
+ 
+ static DEFINE_RAW_SPINLOCK(patch_lock);
+ 
++static bool is_image_text(unsigned long addr)
++{
++	return core_kernel_text(addr);
++}
++
++static void  *patch_map(void *addr, int fixmap)
++{
++	unsigned long uintaddr = (uintptr_t)addr;
++	bool image = is_image_text(uintaddr);
++	struct page *page;
++	phys_addr_t phys;
++
++	if (image)
++		phys = __pa_symbol(addr);
++	else {
++		page = vmalloc_to_page(addr);
++	phys = page_to_phys(page) + offset_in_page(addr);
++	}
++
++	return (void *)set_fixmap_offset(fixmap, phys);
++}
++
++static void patch_unmap(int fixmap)
++{
++	clear_fixmap(fixmap);
++}
++
+ void simu_pc(struct pt_regs *regs, union loongarch_instruction insn)
+ {
+ 	unsigned long pc = regs->csr_era;
+@@ -218,6 +245,36 @@ int larch_insn_patch_text(void *addr, u32 insn)
+ 	return ret;
+ }
+ 
++int larch_insn_text_copy(void *dst, void *src, size_t len)
++{
++	unsigned long flags;
++	size_t wlen = 0;
++	size_t size;
++	void *waddr;
++	void *ptr;
++	int ret = 0;
++
++	raw_spin_lock_irqsave(&patch_lock, flags);
++	while (wlen < len) {
++		ptr = dst + wlen;
++		size = min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
++			     len - wlen);
++
++		waddr = patch_map(ptr, FIX_TEXT_POKE0);
++		ret = copy_to_kernel_nofault(waddr, src + wlen, size);
++		patch_unmap(FIX_TEXT_POKE0);
++
++		if (ret) {
++			pr_err("%s: operation failed\n", __func__);
++			break;
++		}
++		wlen += size;
++	}
++	raw_spin_unlock_irqrestore(&patch_lock, flags);
++
++	return ret;
++}
++
+ u32 larch_insn_gen_nop(void)
+ {
+ 	return INSN_NOP;
+@@ -336,3 +393,31 @@ u32 larch_insn_gen_jirl(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm)
+ 
+ 	return insn.word;
+ }
++
++u32 larch_insn_gen_beq(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm)
++{
++	union loongarch_instruction insn;
++
++	if ((imm & 3) || imm < -SZ_128K || imm >= SZ_128K) {
++		pr_warn("The generated beq instruction is out of range.\n");
++		return INSN_BREAK;
++	}
++
++	emit_beq(&insn, rd, rj, imm >> 2);
++
++	return insn.word;
++}
++
++u32 larch_insn_gen_bne(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm)
++{
++	union loongarch_instruction insn;
++
++	if ((imm & 3) || imm < -SZ_128K || imm >= SZ_128K) {
++		pr_warn("The generated bne instruction is out of range.\n");
++		return INSN_BREAK;
++	}
++
++	emit_bne(&insn, rj, rd, imm >> 2);
++
++	return insn.word;
++}
+-- 
+2.25.1
+
 
