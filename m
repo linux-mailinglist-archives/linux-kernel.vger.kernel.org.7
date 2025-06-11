@@ -1,51 +1,61 @@
-Return-Path: <linux-kernel+bounces-682421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610A3AD5FC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:04:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDC9AD6005
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10DB87A4BB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C75189CA84
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F8D2D0283;
-	Wed, 11 Jun 2025 20:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEFB23644D;
+	Wed, 11 Jun 2025 20:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBRpMs9q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="Ej6iqr6w"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4C2BDC2D;
-	Wed, 11 Jun 2025 20:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B2C1DE4CD
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 20:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749672180; cv=none; b=rbDrASWH1peq00w/IsV7XirbBWHU5mr8wvS+y8nhBjv5uIotyczKlZ4jZprPgi8vGRidC28NfVne7a+vY2eg6y7JexjTOgJ0t26SV2iYarakepPcOvCHm19YMDUsNCW+aJRXc45HIm5+rG0BF1rRRjiw8ocmV97qSrs/Y9DjTbw=
+	t=1749673612; cv=none; b=ApmtHWv33pD5HoKB+GE5HGaVnuaOqgK/YVgn1wSwa04dzXQhR3E8BZNzxw0QZkc1iSjZZmfAki01V8wCA+Moz7/7BXK1gQ7CNS6BSG7Ce3tYS22yJ7X8y254UJxSIx/qtIXSvDQ4N1kX2LdFbElbSd5ZsyqHeGkKC29gXSgH0sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749672180; c=relaxed/simple;
-	bh=UjvYRqjrtZPvhprK+jn7Vt31iFSNrReNe6hMrP9h1X8=;
+	s=arc-20240116; t=1749673612; c=relaxed/simple;
+	bh=eeQeEYKaHhYr+Maa1kLsJ5dq174xCMqjaPKqjE8uStE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RCXYYn5ZYRtMcKoPkWIdi8TKEfEhTU8fBb7TMfastbUHL91iBDjjq1qDl3rScbbfQkyZpqejGIQTLM4RJ+YSAgDcNbJrtsaC1rZ2nElhprfBcDeRx1m08TT+vbB9P0PV00h581ofGTzfBZoeap03vX2WiCrPd7WaNz5tkmfi+aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBRpMs9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C124C4CEEA;
-	Wed, 11 Jun 2025 20:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749672180;
-	bh=UjvYRqjrtZPvhprK+jn7Vt31iFSNrReNe6hMrP9h1X8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jBRpMs9qdDjEVPw9k7LZ2ZYOOAITlQiks6wNVpq7KpYPJbzJiZ6h/xknbEZUVXeA6
-	 XEmUg1MbMalFzeglS1pj+t4vXk/+QXNrn9uAE/QqgYIXNr/j20FEJBDE9PsW0DE5y+
-	 w8OJ5LZ0/xsZs9NQ3M+nxpWA7gq80c4tMDeMbYBpuvR4fS0Ej5kDfTM1kBqAkokFr0
-	 xukW4M04hRvWNaTkZLcz10dr6aSkVmhStAiXCwxks04PQiGBy8ZMC3i4fxtOIReNsB
-	 aw+Zr0WHi2RAYlGLSMuDQSAbGJB+jdV68TGb44VF2goJrL//+Dhup0eu9O+2AmvID7
-	 /NIP8bluPJv6A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52868C71136;
-	Wed, 11 Jun 2025 20:03:00 +0000 (UTC)
-From: Samuel Kayode via B4 Relay <devnull+samuel.kayode.savoirfairelinux.com@kernel.org>
-Date: Wed, 11 Jun 2025 16:03:03 -0400
-Subject: [PATCH v6 6/6] MAINTAINERS: add an entry for pf1550 mfd driver
+	 In-Reply-To:To:Cc; b=h6LB86J48fXmDS9kSzPgtjdRsQc2rhixl2lKWEu0u9PhX0/4ZVggPbZrg25C4yXQqa42dBWw7pvbvqfeigP/JU2PGNsOZbV1P0aOv/xpyUfznbbudMOGpXO6Nseb9gOx8J3UefFAVgxleqd99ikpR8g70c6WiIgvpbKeW/hTjLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=Ej6iqr6w; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uPRZX-00BKlx-5w
+	for linux-kernel@vger.kernel.org; Wed, 11 Jun 2025 21:57:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
+	bh=a5J8eYpVuE7o2VJSMjWSJdlZvj2jMI+mcwHoJe+gsJc=; b=Ej6iqr6w0DXcnV/u6mIfzp/bYV
+	WAtWU9WTzRV3+x0wEEuW/bHoqyPLrIy5YEzS1OTkrpM+TPGPJE/nk4IbtUVM8VCmV2FDcEwAqYoag
+	JLmTkiUmpyuHABMnfz3U/1fn8LrFgVF4dzWtPaualNEIC99dCLuDFvyVC7sIEDPid1aygZGcCwUF2
+	9vISyA9lWzkfq73DElyNxY3TBReJ+eRjtdW18yx2gFeDDieeK53TPlQ3l6GAS2vmJW1kPeaxn12Ez
+	8JibnISN1VLXl0fmkzXmBoK50JlpOxZ392wOYndyWWfIMquoxuKHFrhBbl4+91QEZSZ3KEGszlIDi
+	BISpl6sw==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uPRZW-0005E8-R3; Wed, 11 Jun 2025 21:57:19 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uPRZH-00BycS-BQ; Wed, 11 Jun 2025 21:57:03 +0200
+From: Michal Luczaj <mhal@rbox.co>
+Date: Wed, 11 Jun 2025 21:56:50 +0200
+Subject: [PATCH net-next v3 1/3] vsock/test: Introduce vsock_bind_try()
+ helper
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,76 +64,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-pf1550-v6-6-34f2ddfe045e@savoirfairelinux.com>
-References: <20250611-pf1550-v6-0-34f2ddfe045e@savoirfairelinux.com>
-In-Reply-To: <20250611-pf1550-v6-0-34f2ddfe045e@savoirfairelinux.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: imx@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
- Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, 
- Robin Gong <yibin.gong@nxp.com>, 
- Enric Balletbo i Serra <eballetbo@gmail.com>, 
- Samuel Kayode <samuel.kayode@savoirfairelinux.com>, 
- Abel Vesa <abelvesa@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Message-Id: <20250611-vsock-test-inc-cov-v3-1-5834060d9c20@rbox.co>
+References: <20250611-vsock-test-inc-cov-v3-0-5834060d9c20@rbox.co>
+In-Reply-To: <20250611-vsock-test-inc-cov-v3-0-5834060d9c20@rbox.co>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749672179; l=1098;
- i=samuel.kayode@savoirfairelinux.com; s=20250527;
- h=from:subject:message-id;
- bh=A2g1QBfQcrzU9z5M8QRFE0Nrt7Jq7rU2GZY3TiYW/3Y=;
- b=JLty8CjMJicQq1reFnjgmqLmWRGsUdUZlD70w5L2JJ3/RqbojqxbuEUJOX0m75y2zOKN/pV4s
- lyEuI8o+X63CZJH7qjkQDz0W/lu85XMSm4bI6Ix/uK/ycokLGQ2CEBF
-X-Developer-Key: i=samuel.kayode@savoirfairelinux.com; a=ed25519;
- pk=TPSQGQ5kywnnPyGs0EQqLajLFbdDu17ahXz8/gxMfio=
-X-Endpoint-Received: by B4 Relay for
- samuel.kayode@savoirfairelinux.com/20250527 with auth_id=412
-X-Original-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-Reply-To: samuel.kayode@savoirfairelinux.com
 
-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+Create a socket and bind() it. If binding failed, gracefully return an
+error code while preserving `errno`.
 
-Add MAINTAINERS entry for pf1550 PMIC.
+Base vsock_bind() on top of it.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
 ---
-v6:
- - Add imx mailing list
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/testing/vsock/util.c | 24 +++++++++++++++++++++---
+ tools/testing/vsock/util.h |  1 +
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 98201e1f4ab5908ff49d32d19275e123cedb4b66..5547fdafa7e1bb11903d5d5bef246c2e1a20fbca 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17853,6 +17853,17 @@ F:	Documentation/devicetree/bindings/clock/imx*
- F:	drivers/clk/imx/
- F:	include/dt-bindings/clock/imx*
+diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
+index 0c7e9cbcbc85cde9c8764fc3bb623cde2f6c77a6..b7b3fb2221c1682ecde58cf12e2f0b0ded1cff39 100644
+--- a/tools/testing/vsock/util.c
++++ b/tools/testing/vsock/util.c
+@@ -121,15 +121,17 @@ bool vsock_wait_sent(int fd)
+ 	return !ret;
+ }
  
-+NXP PF1550 PMIC MFD DRIVER
-+M:	Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-+L:	imx@lists.linux.dev
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/nxp,pf1550.yaml
-+F:	drivers/input/misc/pf1550-onkey.c
-+F:	drivers/mfd/pf1550.c
-+F:	drivers/power/supply/pf1550-charger.c
-+F:	drivers/regulator/pf1550-regulator.c
-+F:	include/linux/mfd/pfd1550.h
+-/* Create socket <type>, bind to <cid, port> and return the file descriptor. */
+-int vsock_bind(unsigned int cid, unsigned int port, int type)
++/* Create socket <type>, bind to <cid, port>.
++ * Return the file descriptor, or -1 on error.
++ */
++int vsock_bind_try(unsigned int cid, unsigned int port, int type)
+ {
+ 	struct sockaddr_vm sa = {
+ 		.svm_family = AF_VSOCK,
+ 		.svm_cid = cid,
+ 		.svm_port = port,
+ 	};
+-	int fd;
++	int fd, saved_errno;
+ 
+ 	fd = socket(AF_VSOCK, type, 0);
+ 	if (fd < 0) {
+@@ -138,6 +140,22 @@ int vsock_bind(unsigned int cid, unsigned int port, int type)
+ 	}
+ 
+ 	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa))) {
++		saved_errno = errno;
++		close(fd);
++		errno = saved_errno;
++		fd = -1;
++	}
 +
- NXP PF8100/PF8121A/PF8200 PMIC REGULATOR DEVICE DRIVER
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
++	return fd;
++}
++
++/* Create socket <type>, bind to <cid, port> and return the file descriptor. */
++int vsock_bind(unsigned int cid, unsigned int port, int type)
++{
++	int fd;
++
++	fd = vsock_bind_try(cid, port, type);
++	if (fd < 0) {
+ 		perror("bind");
+ 		exit(EXIT_FAILURE);
+ 	}
+diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
+index 5e2db67072d5053804a9bb93934b625ea78bcd7a..0afe7cbae12e5194172c639ccfbeb8b81f7c25ac 100644
+--- a/tools/testing/vsock/util.h
++++ b/tools/testing/vsock/util.h
+@@ -44,6 +44,7 @@ int vsock_connect(unsigned int cid, unsigned int port, int type);
+ int vsock_accept(unsigned int cid, unsigned int port,
+ 		 struct sockaddr_vm *clientaddrp, int type);
+ int vsock_stream_connect(unsigned int cid, unsigned int port);
++int vsock_bind_try(unsigned int cid, unsigned int port, int type);
+ int vsock_bind(unsigned int cid, unsigned int port, int type);
+ int vsock_bind_connect(unsigned int cid, unsigned int port,
+ 		       unsigned int bind_port, int type);
 
 -- 
 2.49.0
-
 
 
