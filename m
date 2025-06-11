@@ -1,100 +1,154 @@
-Return-Path: <linux-kernel+bounces-681800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32184AD578E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:51:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031D9AD57A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A363A3B71
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:51:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 942EE7AC773
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8D328B7ED;
-	Wed, 11 Jun 2025 13:51:28 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5332951A0;
+	Wed, 11 Jun 2025 13:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="a3CiH6h0"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB2A283CB8;
-	Wed, 11 Jun 2025 13:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF6628C2C1
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749649888; cv=none; b=pj4CpC0B+vPCmR7A9/v74uc/ASu6GQhJCTLmFw+fF3Hg6Ke5dGF23m3JwFWl8wsES6hHMPG+7eQcEXjGOHKT3Uq47zdVKCAA+xYsFpQcxO7kRQ3Wc6I3fuHw/+H48igihbVqNUyOqV/tsJ4gvtrsQKUAIES5PlGaI8Zx4DcIrI4=
+	t=1749650105; cv=none; b=FWX2UV7aTsJoy8Tt973+3PNe59N9k/jwpVK8FiQSVJBFkdtxwXBI5qvVCW7i+wKZEthZVun4yGA2dgqZYyD9Z8vikRuKpzwJNIfU/qbcVze00PDI/hwJLgXEq07Vo17MMZbJwPTMyj0DvnFbZ663IWQnOYT5scZ2HEfW/kauPUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749649888; c=relaxed/simple;
-	bh=yAlRVV0IYpPAr1Khu9WPG25QKxrpg+ulUL9ZM5P9qaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpz1ElXYCD6Nm1N3GXmwPW2NAnAAaffHG9LRYQ36onxUHP5q8PusGNFQK12UjUmhg7AiiqPH3EZbXHPc4W9Ix5XDFGf0JWvm3puL6z2sAqutAaShg/ZC1GnNfCbvphGQg7aUgYGQinLxuWnHpe2xvZUB7BJOuLrecX8nSIfdoTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.147.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 7C8C2340D31;
-	Wed, 11 Jun 2025 13:51:24 +0000 (UTC)
-Date: Wed, 11 Jun 2025 13:51:16 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Guodong Xu <guodong@riscstar.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
-	drew@pdp7.com, emil.renner.berthing@canonical.com,
-	inochiama@gmail.com, geert+renesas@glider.be, tglx@linutronix.de,
-	hal.feng@starfivetech.com, joel@jms.id.au, duje.mihanovic@skole.hr,
-	elder@riscstar.com, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH 7/8] dma: Kconfig: MMP_PDMA: Add support for ARCH_SPACEMIT
-Message-ID: <20250611135116-GYB125008@gentoo>
-References: <20250611125723.181711-1-guodong@riscstar.com>
- <20250611125723.181711-8-guodong@riscstar.com>
+	s=arc-20240116; t=1749650105; c=relaxed/simple;
+	bh=SVo3B24OwlGB4MegvwJiCx+gPz1XAKK8W690GqvITAQ=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NCRC084funA5xHZUmcL15Y1yKVs8CgKlLI4Lxhvv8SmFz8rk4Jp3FaVFYiqqo39r2nD65YFbqPotNwbX5cNYuikJmvdZ7ljP/OtAwN5qsxkvXsCQS6UwotLBLaUnPNkQ0Zm/8Wz1Qd5RGM8UHP/xJwKQ4SoqIA8MtfiFkRGNxJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=a3CiH6h0; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BCFOAP014824;
+	Wed, 11 Jun 2025 15:54:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	SVo3B24OwlGB4MegvwJiCx+gPz1XAKK8W690GqvITAQ=; b=a3CiH6h0cxGgTkgA
+	Aqee/5M/6dNuYYLxJdIVA+T0Im2/E65K7ptBXpADH0V+zNyZa3b8Qpv3rxV67eGR
+	mCO87tx4+jGIAHUiwJAeThs04F7Rk8GF35De9xoq1+ECrpydeANzzpD4pbY2b0IN
+	mjcwVS6eDOPTQTwd/DPfLJjwkRQHtWepwPiX3iEUt+aWUcTdrDO/ePYyEHnHwtwi
+	SIGHKSiRI8e2KB+VUWXYJhr67wWD47NYR7Nvd3a++wt9u0odcRes/VkTwpaU09ms
+	H+YeJmq+CCRjU53+AKY4FQYwNQYjiCBDMMi4DCSWkNqSa0VLl8dETa6DU7j8Nkqj
+	u3NJbA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474ajaa6d5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 15:54:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CE8EE40048;
+	Wed, 11 Jun 2025 15:52:56 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 00A94B12446;
+	Wed, 11 Jun 2025 15:51:46 +0200 (CEST)
+Received: from [192.168.8.15] (10.252.18.240) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Jun
+ 2025 15:51:44 +0200
+Message-ID: <a5e25ab7c595936f93198c9ac0b2e048a83f5b57.camel@foss.st.com>
+Subject: Re: [Linux-stm32] [PATCH] irqchip: Use dev_fwnode()
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+        "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, <imx@lists.linux.dev>,
+        Fabio Estevam
+	<festevam@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>, <tglx@linutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>
+Date: Wed, 11 Jun 2025 15:51:42 +0200
+In-Reply-To: <20250611104348.192092-10-jirislaby@kernel.org>
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+	 <20250611104348.192092-10-jirislaby@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611125723.181711-8-guodong@riscstar.com>
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
 
-Hi Guodong,
-  I'd suggest moving this patch after 4/8, as both of them should go
-via DMA susbystem tree, or simply squash them?
-
-On 20:57 Wed 11 Jun     , Guodong Xu wrote:
-> Extend the MMP_PDMA driver to support the SpacemiT architecture
-> by adding ARCH_SPACEMIT as a dependency in Kconfig.
-> 
-> This allows the driver to be built for SpacemiT-based platforms
-> alongside existing ARCH_MMP and ARCH_PXA architectures.
-> 
-> Signed-off-by: Guodong Xu <guodong@riscstar.com>
+On Wed, 2025-06-11 at 12:43 +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+>=20
+> So use the dev_fwnode() helper.
+>=20
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+>=20
 > ---
->  drivers/dma/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-> index db87dd2a07f7..fff70f66c773 100644
-> --- a/drivers/dma/Kconfig
-> +++ b/drivers/dma/Kconfig
-> @@ -451,7 +451,7 @@ config MILBEAUT_XDMAC
->  
->  config MMP_PDMA
->  	tristate "MMP PDMA support"
-> -	depends on ARCH_MMP || ARCH_PXA || COMPILE_TEST
-> +	depends on ARCH_MMP || ARCH_PXA || ARCH_SPACEMIT || COMPILE_TEST
->  	select DMA_ENGINE
->  	help
->  	  Support the MMP PDMA engine for PXA and MMP platform.
-> -- 
-> 2.43.0
-> 
-> 
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Tero Kristo <kristo@kernel.org>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> ---
+> =C2=A0drivers/irqchip/irq-imgpdc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
+> =C2=A0drivers/irqchip/irq-imx-irqsteer.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 2 +-
+> =C2=A0drivers/irqchip/irq-keystone.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0drivers/irqchip/irq-mvebu-pic.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
+> =C2=A0drivers/irqchip/irq-pruss-intc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 2 +-
+> =C2=A0drivers/irqchip/irq-renesas-intc-irqpin.c | 6 ++----
+> =C2=A0drivers/irqchip/irq-renesas-irqc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 2 +-
+> =C2=A0drivers/irqchip/irq-renesas-rza1.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 5 ++---
+> =C2=A0drivers/irqchip/irq-renesas-rzg2l.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 5 ++---
+> =C2=A0drivers/irqchip/irq-renesas-rzv2h.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 2 +-
+> =C2=A0drivers/irqchip/irq-stm32mp-exti.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 4 +---
 
--- 
-Yixun Lan (dlan)
+For drivers/irqchip/irq-stm32mp-exti.c
+Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+
+Thanks
+Antonio
+
 
