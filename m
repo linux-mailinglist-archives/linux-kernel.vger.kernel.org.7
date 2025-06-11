@@ -1,139 +1,205 @@
-Return-Path: <linux-kernel+bounces-681598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D305AAD54BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3018CAD54C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F6817A3C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:52:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F3CE3AAA86
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22BD27E7F0;
-	Wed, 11 Jun 2025 11:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/SNwwcB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE50283FC4;
-	Wed, 11 Jun 2025 11:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AB4262FDB;
+	Wed, 11 Jun 2025 11:53:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC6A25A344
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749642730; cv=none; b=Uv03F6ZUBT2Wpe1DLcvjQaZhj8Vjov7MetHsL6CKDDn/drvkPXeBcN9j0yaanVFlTcQJAtq9wDNovrplh50kZikx7FxZE2daNAmNnP/jUvfpkyjnPh1IF/3hIVQyJMqaZL76nlJ4N98uAfaPfcAsi8WCAN/xwViscpFDfnhiWz0=
+	t=1749642785; cv=none; b=QAVY8xGLoRT3BpikS14Qmh/Cy4x6W+VZ/SKgMJZ1ET/wao7WgsO+lnzHyGtuEOynbK6AsT0proWmLh8wLyBnmk+9fNnh4AOghy6bhYQNo7SaquujDjChLTtBDht0Y7CFUPGWvl/MSICMRW8t+kgucbCWUJOhM6zNTYvniq1rUYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749642730; c=relaxed/simple;
-	bh=yRUOxSzAEsyPznAdZauQ9KUp0U+dAFLZRw5w7dRb1dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tjGDRaG9C78Tfd/D8aaJJJ0NswSOpWMdA+4DS5JRnwo2o2akz/cGQET0VcivH4pyPV57TxTikSfeUwjJkMflGhlCLUXlVGmZOUmLtWlIBELyskea7ByU1E/swEiIR/2y6rDLd9/cteL7XVuZqwHsiSk9KXhNiTOJ39vW/yIgwhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/SNwwcB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2839CC4CEF1;
-	Wed, 11 Jun 2025 11:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749642730;
-	bh=yRUOxSzAEsyPznAdZauQ9KUp0U+dAFLZRw5w7dRb1dw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h/SNwwcBNVy9WtNXlS+ukaNk4kvWMnm+0H2icsJm2l8op+95XwndnLLAAdaGIHSDs
-	 y/TY/N+jwL35zg3VLajcV81s46l4LtnR0wOAy06FSGB0YU/pzWYq7j3rFnm6C83bsb
-	 RJadRfuSGrqtsWccFPDmg7mmc6NGV6c10ToYL9HY6AZIZ0ERpfISEz+YKHS3zGuf0V
-	 +kroL4LlvCBXC8yB8BkvhVoiHpJxBaejoyeAmGmVognLbg3EWqBvTCBQYuRN0c8x6b
-	 KUNQ8lH25jzqLtAnXacwSb+WAY+UfWV8oxKC3GEfOUvLsFXwv0sil1+VfUTSKFpwoT
-	 xVgS5LKryILQg==
-Date: Wed, 11 Jun 2025 12:52:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, pcc@google.com, will@kernel.org,
-	anshuman.khandual@arm.com, joey.gouly@arm.com,
-	yury.khrustalev@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	frederic@kernel.org, akpm@linux-foundation.org, surenb@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 5/9] kselftest/arm64/mte: check MTE_FAR feature is
- supported
-Message-ID: <916e2064-efa9-4b69-b561-51b0378158c0@sirena.org.uk>
-References: <20250611094107.928457-1-yeoreum.yun@arm.com>
- <20250611094107.928457-6-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1749642785; c=relaxed/simple;
+	bh=sJipJo+MtLn51jVIbl+mdvj6cXJVhBJaNM2xOHZT7UU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dxfzUz7mtVTm29ZdMVJJBZG9nXwYiq1cyOCB4LhLXqqyj2zQA1wG+ZLKz88XAzpGMp1OazT5cE4I8Xx0Qa44rTzmYi6vKnWPmfxPlcIartyB/oKi04FLorKQxd/7Oq1LyQGlC6RjVqIKVAiDIo0XAlG7XZvfUEb1apnDTdeq24M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFDA415A1;
+	Wed, 11 Jun 2025 04:52:42 -0700 (PDT)
+Received: from [10.57.28.131] (unknown [10.57.28.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C12823F673;
+	Wed, 11 Jun 2025 04:53:00 -0700 (PDT)
+Message-ID: <9e56971a-f025-4fce-8cc8-f7609bda3f49@arm.com>
+Date: Wed, 11 Jun 2025 12:52:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="akue2bSXBTy4Umo7"
-Content-Disposition: inline
-In-Reply-To: <20250611094107.928457-6-yeoreum.yun@arm.com>
-X-Cookie: No skis take rocks like rental skis!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] arm64/mm: Lift the cma address limit when
+ CONFIG_DMA_NUMA_CMA=y
+To: Feng Tang <feng.tang@linux.alibaba.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Yang Shi <yang@os.amperecomputing.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baruch Siach <baruch@tkos.co.il>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250521014701.73046-1-feng.tang@linux.alibaba.com>
+ <aEhnELJQLw8S8Bho@arm.com> <98c0b70a-0cbd-46fd-b481-7663905bb8dc@arm.com>
+ <aEkBOqvxXaVXU0fQ@U-2FWC9VHC-2323.local>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <aEkBOqvxXaVXU0fQ@U-2FWC9VHC-2323.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025-06-11 5:08 am, Feng Tang wrote:
+> Add Marek Szyprowski
+> 
+> Thanks Catalin and Robin for the comments and suggestions!
+> 
+> On Tue, Jun 10, 2025 at 08:46:38PM +0100, Robin Murphy wrote:
+>> On 2025-06-10 6:10 pm, Catalin Marinas wrote:
+>>> On Wed, May 21, 2025 at 09:47:01AM +0800, Feng Tang wrote:
+>>>> When porting an cma related usage from x86_64 server to arm64 server,
+>>>> the "cma=4G" setup failed on arm64, and the reason is arm64 has 4G (32bit)
+>>>> address limit for cma reservation.
+>>>>
+>>>> The limit is reasonable due to device DMA requirement, but for NUMA
+>>>> servers which have CONFIG_DMA_NUMA_CMA enabled, the limit is not required
+>>>> as that config already allows cma area to be reserved on different NUMA
+>>>> nodes whose memory very likely goes beyond 4G limit.
+>>>>
+>>>> Lift the cma limit for platform with such configuration.
+>>>
+>>> I don't think that's the right fix. Those devices that have a NUMA node
+>>> associated may be ok to address memory beyond 4GB. The default for
+>>> NUMA_NO_NODE devices is still dma_contiguous_default_area. I also don't
+>>> like to make such run-time decisions on the config option.
+>>
+>> Indeed, the fact that the kernel was built with the option enabled says
+>> nothing at all about the needs of whatever system we're actually running on,
+>> so that's definitely wrong. This one is also the kind of option which may
+>> well be enabled in a multi-platform distro kernel, since it only adds a tiny
+>> amount of code with no functional impact on systems which don't explicitly
+>> opt in, but offers a useful benefit to those which can and do.
+> 
+> Yep, the analysis from you two make sense to me. Will drop this patch.
+> 
+>> Furthermore, the justification doesn't add up at all - if the relevant
+>> devices could use the per-NUMA-node CMA areas, then... why not just have
+>> them use the per-NUMA-node CMA areas, no kernel change needed (and maybe a
+>> slight performance bonus too)? On the other hand, where those areas may or
+>> may not be allocated is entirely meaningless to NUMA_NO_NODE devices which
+>> wouldn't use them anyway.
+> 
+> The usage model ported from x86_64 is use "cma=4G@4G" in cmdline, and use
+> something like dma_alloc_from_continguous(NULL, 1 << 18, 18, false) to
+> get a huge buffer from 'dma_contiguous_default_area'
+> 
+> btw, I really like the 'numa_cma=' cmdline option, which helps our cma
+> usage a lot.
+> 
+>>> That said, maybe we should make the under-4G CMA allocation a best
+>>> effort. In the arch code, if that failed, attempt the allocation again
+>>> with a limit of 0 and maybe do a pr_notice() that CMA allocation in the
+>>> DMA zone failed.
+>>
+>> TBH given that the command-line parameter can specify placement as well as
+>> size, I think it would make a lot of sense to allow that to override the
+>> default limit provided by the arch code. That would give users the most
+>> flexibility, at the minor cost of having to accept the consequences if they
+>> do specify something which ends up not working for some devices. Otherwise I
+>> fear that any attempt to make the code itself cleverer will just lead down a
+>> rabbit-hole of trying to second-guess the user's intent - if the size
+>> doesn't fit the limit, who says it's right to increase the limit rather than
+>> reduce the size? And so on...
+> 
+> Strongly agree. Some platforms may have the 32bit limit, and many other
+> platforms which don't have to suffer from the limit. This kind of
+> flexibility should benefit users widely.
+> 
+> Something like below?
 
---akue2bSXBTy4Umo7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pretty much, although personally I wouldn't even bother with the message 
+- if the user has gone out of their way to override the default 
+behaviour on their system, then logically it's because they know what 
+that default is and why it didn't suit them, so it seems unlikely that 
+they need reminding of that in one particular subset of override 
+conditions. We still report the actual address where the CMA region ends 
+up being allocated, and that's what really matters in the end.
 
-On Wed, Jun 11, 2025 at 10:41:03AM +0100, Yeoreum Yun wrote:
-> --- a/tools/testing/selftests/arm64/mte/mte_common_util.c
-> +++ b/tools/testing/selftests/arm64/mte/mte_common_util.c
-> @@ -6,6 +6,7 @@
->  #include <signal.h>
->  #include <stdio.h>
->  #include <stdlib.h>
-> +#include <time.h>
->  #include <unistd.h>
+Thanks,
+Robin.
 
-Not sure why we'd be including time.h here?
-
-> =20
->  #include <linux/auxvec.h>
-> @@ -26,6 +27,7 @@
->  #define INIT_BUFFER_SIZE       256
-> =20
->  struct mte_fault_cxt cur_mte_cxt;
-> +bool mtefar_support;
-
-This is a non-static variable so won't have a defined default value...
-
-> @@ -273,6 +275,7 @@ void mte_initialize_current_context(int mode, uintptr=
-_t ptr, ssize_t range)
->  	cur_mte_cxt.fault_valid =3D false;
->  	cur_mte_cxt.trig_addr =3D ptr;
->  	cur_mte_cxt.trig_range =3D range;
+> ---
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 8df0dfaaca18..6a93ad3e024d 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -222,7 +222,12 @@ void __init dma_contiguous_reserve(phys_addr_t limit)
+>   	if (size_cmdline != -1) {
+>   		selected_size = size_cmdline;
+>   		selected_base = base_cmdline;
+> -		selected_limit = min_not_zero(limit_cmdline, limit);
 > +
->  	if (mode =3D=3D MTE_SYNC_ERR)
->  		cur_mte_cxt.trig_si_code =3D SEGV_MTESERR;
->  	else if (mode =3D=3D MTE_ASYNC_ERR)
-
-Unrelated whitespace change.
-
->  	if (!(hwcaps2 & HWCAP2_MTE))
->  		ksft_exit_skip("MTE features unavailable\n");
-> =20
-> +	if (hwcaps3 & HWCAP3_MTE_FAR)
-> +		mtefar_support =3D true;
+> +		selected_limit = limit_cmdline ?: limit;
+> +		if (limit_cmdline > limit)
+> +			pr_notice("User set cma limit [0x%llx] bigger than architectual value [0x%llx], will use the former\n",
+> +				limit_cmdline, limit);
 > +
+>   		if (base_cmdline + size_cmdline == limit_cmdline)
+>   			fixed = true;
+>   	} else {
+> 
+> 
+> Thanks,
+> Feng
+> 
+>>
+>> Thanks,
+>> Robin.
+>>
+>>>
+>>> Adding Robin in case he has a different view.
+>>>
+>>>> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+>>>> ---
+>>>>    arch/arm64/mm/init.c | 9 ++++++++-
+>>>>    1 file changed, 8 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>>>> index b99bf3980fc6..661758678cc4 100644
+>>>> --- a/arch/arm64/mm/init.c
+>>>> +++ b/arch/arm64/mm/init.c
+>>>> @@ -312,6 +312,7 @@ void __init arm64_memblock_init(void)
+>>>>    void __init bootmem_init(void)
+>>>>    {
+>>>>    	unsigned long min, max;
+>>>> +	phys_addr_t cma_limit;
+>>>>    	min = PFN_UP(memblock_start_of_DRAM());
+>>>>    	max = PFN_DOWN(memblock_end_of_DRAM());
+>>>> @@ -343,8 +344,14 @@ void __init bootmem_init(void)
+>>>>    	/*
+>>>>    	 * Reserve the CMA area after arm64_dma_phys_limit was initialised.
+>>>> +	 *
+>>>> +	 * When CONFIG_DMA_NUMA_CMA is enabled, system may have CMA reserved
+>>>> +	 * area in different NUMA nodes, which likely goes beyond the 32bit
+>>>> +	 * limit, thus use (PHYS_MASK+1) as cma limit.
+>>>>    	 */
+>>>> -	dma_contiguous_reserve(arm64_dma_phys_limit);
+>>>> +	cma_limit = IS_ENABLED(CONFIG_DMA_NUMA_CMA) ?
+>>>> +			(PHYS_MASK + 1) : arm64_dma_phys_limit;
+>>>> +	dma_contiguous_reserve(cma_limit);
+>>>>    	/*
+>>>>    	 * request_standard_resources() depends on crashkernel's memory being
+>>>> -- 
+>>>> 2.39.5 (Apple Git-154)
 
-=2E..this will only set mtefar_support if the hwcap is present, leaving it
-undefined if not.  If you just make this
-
-	mtefar_support =3D hwcap3 & HWCAP3_MTE_FAR
-
-that should avoid the issue.
-
---akue2bSXBTy4Umo7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJbeMACgkQJNaLcl1U
-h9AQegf9GTZEtRZRq4VmKPmCvxZbca11FXmJiCJXXo6fBei39grcVd813PQRHtP0
-4T87elMNY80ujcy8ezzOV84yn0gKXeVGxIdKXAgKoZJj3xtQvKOs8Nvpa3l7XRjX
-N9dGiKEoHwLAWWUGcyyzWIq6mUDVdXpqbV42FH934pnPfSlqv87fQUcP2bO72NB4
-3NvtdC34CgDvoE2VhftMgBw0tLXo3qX55Vg4otBsrb8xjNzMbPDQzj2EenzdndIG
-fIbbH1BRUjox+zP8fCXiHT/z2h5XV0b3sA+qudODfkZa3SPr89R4kDI5+sY5Bia1
-b3cPtWg1yqrTMk393FYfLdS3kL93fg==
-=THva
------END PGP SIGNATURE-----
-
---akue2bSXBTy4Umo7--
 
