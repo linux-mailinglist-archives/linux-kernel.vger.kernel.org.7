@@ -1,163 +1,155 @@
-Return-Path: <linux-kernel+bounces-681418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79BBAD526D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC885AD5421
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3463A8CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:45:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81B377A514B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486902797A3;
-	Wed, 11 Jun 2025 10:44:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C6A25BEEC;
+	Wed, 11 Jun 2025 11:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOFALx/3"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9EF23D2B1;
-	Wed, 11 Jun 2025 10:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4E123099C;
+	Wed, 11 Jun 2025 11:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749638648; cv=none; b=ZD5mWqLY7GIttPh2knYpx2orMWZAIvVD4zZO7+va+NI+5dCMYeKDp8ldbA7bln1ZbRjiAV+ym9YgXm+A+9z7AS5AE2/cYPjFX5KweDX9GAH2vLkZOuA2ZD+HrZvu7GWlFNpPxa9REtmiDm60XCyLYp7VgNm/u04fdaLaSLkUh1g=
+	t=1749641848; cv=none; b=TvUiziPlcF1tqXYW+l6inNVLUIzKiQwVzo5QB7lWH0ztmuw8ebDUV8JJFU6JPIk8pn0QFRZEcyDHSK1mD7hTObMx3M0kMlSRGasOFH/y39HEFHArXg9R+8tAJ5rtC+xT8z9ibWC1jLnMxOPM78Lzd2i5BCXIVWfvJEh0ZWYlXJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749638648; c=relaxed/simple;
-	bh=gJ9pvMHHMZdtyEHvI20T7HG10qF8I0VjoKUThkWAfKI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jRWprg3ur4VY0WGENNTtGIOvSDvPjg2VVIBJX5kbqao07TY4S0MKPh/MuljoVFwIUWFkniZo0Uwrn1GrZjkh8J7+yF4sOiwiCyOhHMi+3gUh20V4jv74ddfh4qUchmVqkXAR8MdDHDY570YckHn4UQyOxq+NDBNb+baTHGP4KgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bHMhT5gWYz6M50l;
-	Wed, 11 Jun 2025 18:43:37 +0800 (CST)
-Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
-	by mail.maildlp.com (Postfix) with ESMTPS id EEF651404FD;
-	Wed, 11 Jun 2025 18:44:01 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Jun 2025 12:44:01 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Wed, 11 Jun 2025 12:44:01 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Li Ming <ming.li@zohomail.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
-	<dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>
-CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] cxl/edac: Fix potential memory leak issues
-Thread-Topic: [PATCH 1/1] cxl/edac: Fix potential memory leak issues
-Thread-Index: AQHb2oIwmpZ4onuTlE2PS5sH4NovFbP9xXKg
-Date: Wed, 11 Jun 2025 10:44:01 +0000
-Message-ID: <d44aac6a202d4e1695a52ddc0e33a735@huawei.com>
-References: <20250611033542.96184-1-ming.li@zohomail.com>
-In-Reply-To: <20250611033542.96184-1-ming.li@zohomail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1749641848; c=relaxed/simple;
+	bh=t70ZVM9B9jXNQcg1tWA3G669RPWCqOTJ7o+RRmiouFQ=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=q+wx3bEuN2WEo+G2ZLnhcPatroeHaD8FdQwyXcEPrymRhNfN3NlCgfMHA3xLeHPhjFkv6pqfIs1tBvONX5uqy7tnwM8tHz/adnaXZhx7NBAql0fwsO9zzcp379ZVHySHnY082c+U+mUMIZxj+SWrGmrAvjzI1JLmP++AFs7O8pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jOFALx/3; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d3f72391so84844335e9.3;
+        Wed, 11 Jun 2025 04:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749641844; x=1750246644; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qR6faLEKEsL2HBhlXQ2T+G160lb/jVjJORZfNDkjTgo=;
+        b=jOFALx/3NWuRVfaopeyNQFLYmPvj9B36DvaxqLb5Ha/OXMT/cNnJuGY3TO8B+771Ko
+         bCPNG07E1CynoCDNAbGOgaoVvZ+++BWWvMtappW16ARnl5Ebe3Dx4KQUR93rJEuuUV8I
+         39/DUwCcY7heGZBH2uaQrrXblkApa+uLPrwUybl01+8+ywPbbQLY3EXBaLXJJDNK4qvh
+         XffmVMn30uMuTE+4Nv5cHdD6i36HiobAnNXxn6WjsrUW/mbaXAPKiQiwXIAyaisPYOSt
+         kRDmfnvZuDwzJ1hgScAqcgEbBBUqgcX3FEEvS6kh1XV4NHoXqmEnzcwzCIpYvpInSa3M
+         pEpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749641844; x=1750246644;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qR6faLEKEsL2HBhlXQ2T+G160lb/jVjJORZfNDkjTgo=;
+        b=rqzz6FBU4TPUWQD7XxGYreRLW6Gax44P9Vg3cY1n13KL/LsXeX8UPMGN7+HCentpbd
+         boTnQQ9LEgsAjLjzSBeeCZyjCgSfp8rSgbxOewxuBbpi33YbqGpO3MlqaTkwtn3gfbPg
+         NERxe3NPXNjEelzAmob1VX8SBSGPDwVV6YPNBE/USZ1/Ab34jxlZABRTSxrfgMUwkuDu
+         2EIVscIYhcq7t/urjMdoEu+3ZcJ8vi/V0HjfN0MhKoGS5m4V7Y+OrmXo8j0BrTEwu2/o
+         fDiTaQkPWGWTCTP7+jCWCbeDLAssoGjUuv8gm8mTRHzUEU08E4onevRCXZ5rAWKG91Op
+         /nqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1oy4K2k3qyNscNg9+GEGwEJY95dBoxSFqYJrnzj4CO2XDiwTuD7r3ZOZ70lqvSIdCHWhL9aSc@vger.kernel.org, AJvYcCXPONMxlnZhD8IlxqVjq2z5R5d7OKbvM/CQhaMne4IDuxyYfHjqdj30gAnsGDhpHFuA6R4Jockptvs3X38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWWRpon9GUTW+aWkZusoZ1A7oJ5cpETJ7VSDnr3j4UHVhMZxK/
+	vhUYTwJmRu+5FPxdCVR/iU6E6v/1Qi9XWurSX4IZI7+PD4oqDhiFitbS
+X-Gm-Gg: ASbGncsj9WbxZ6XrRRbxnqik5mJxxoycztl0KjmSJ5V9YQ8tLnkLh7Y0ytkpuW/Xr8n
+	syAPFL0LLxI3xE2Gn7DeAEJz+Wy2MYwV717Nf9T2DAC+Me3RL3vJ3esP+fPA7Af81muLe+pOGx1
+	G1C+hcs1ZLWLHLTGIBb8EvDSrVc6jVxpDzftPZt40QoEKvPRrsrWMUnFk/BR1j0g8fx4l2+xvOJ
+	IkrPpLQMea42KBrb4ilCN9XTUwD3CGOWuFfEEgqD6JX2CBBx/4snVPnM7jDmVnCTRlxSSWnnmja
+	Rrxp/ThGqyw0rIieuPJr50RHtgW2MVxXxovr4GvOguf8ionrhX6SoZrEJIgqWMQXFJSuq1jC7Lc
+	=
+X-Google-Smtp-Source: AGHT+IHUSDusP78EOPiscyfG6WpAmC3o9BMOaRGloOtLN/xk/Tr/sY0jXpO68pJur2TvBqN/0kmB+g==
+X-Received: by 2002:a05:600c:4687:b0:453:aca:4d05 with SMTP id 5b1f17b1804b1-4532a2e8b84mr462665e9.31.1749641844216;
+        Wed, 11 Jun 2025 04:37:24 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:acc4:f1bd:6203:c85f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532513e758sm18852815e9.5.2025.06.11.04.37.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 04:37:23 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  "Jonathan Corbet"
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Ignacio
+ Encinas Rubio" <ignacio@iencinas.com>,  "Marco Elver" <elver@google.com>,
+  "Shuah Khan" <skhan@linuxfoundation.org>,  Eric Dumazet
+ <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH 3/4] docs: netlink: don't ignore generated rst files
+In-Reply-To: <1cf12ab4c027cf27decf70a40aafdd0e2f669299.1749551140.git.mchehab+huawei@kernel.org>
+Date: Wed, 11 Jun 2025 11:44:09 +0100
+Message-ID: <m2a56epngm.fsf@gmail.com>
+References: <cover.1749551140.git.mchehab+huawei@kernel.org>
+	<1cf12ab4c027cf27decf70a40aafdd0e2f669299.1749551140.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
->-----Original Message-----
->From: Li Ming <ming.li@zohomail.com>
->Sent: 11 June 2025 04:36
->To: dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
->dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com=
-;
->ira.weiny@intel.com; dan.j.williams@intel.com; Shiju Jose
-><shiju.jose@huawei.com>
->Cc: linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org; Li Ming
-><ming.li@zohomail.com>
->Subject: [PATCH 1/1] cxl/edac: Fix potential memory leak issues
->
->In cxl_store_rec_gen_media() and cxl_store_rec_dram(), use kmemdup() to
->duplicate a cxl gen_media/dram event to store the event in a xarray by
->xa_store(). The cxl gen_media/dram event allocated by kmemdup() should be
->freed in the case that the xa_store() fails.
->
->Fixes: 0b5ccb0de1e2 ("cxl/edac: Support for finding memory operation
->attributes from the current boot")
->Signed-off-by: Li Ming <ming.li@zohomail.com>
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Thanks Ming for fixing.=20
+> Currently, the build system generates ReST files inside the
+> source directory. This is not a good idea, specially when
+> we have renames, as make clean won't get rid of them.
 
-Tested-by: Shiju Jose <shiju.jose@huawei.com>=20
-Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
+You're right that it's not a great idea, but it's the least bad option
+with sphinx because it only supports 1 source dir. It doesn't have the
+concept of a generated-sources dir and the alternative is to pollute the
+output dir. See e.g. https://docs.kernel.org/media.h.rst
 
->---
->base-commit: 87b42c114cdda76c8ad3002f2096699ad5146cb3 cxl/fixes
->---
-> drivers/cxl/core/edac.c | 10 ++++++----
-> 1 file changed, 6 insertions(+), 4 deletions(-)
+> As the first step to address the issue, stop ignoring those
+> files. This way, we can see exactly what has been produced
+> at build time inside $(srctree):
 >
->diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c index
->2cbc664e5d62..b4c5c23a45d4 100644
->--- a/drivers/cxl/core/edac.c
->+++ b/drivers/cxl/core/edac.c
->@@ -1086,13 +1086,13 @@ static void cxl_del_overflow_old_recs(struct xarra=
-y
->*rec_xarray)  int cxl_store_rec_gen_media(struct cxl_memdev *cxlmd, union
->cxl_event *evt)  {
-> 	struct cxl_mem_err_rec *array_rec =3D cxlmd->err_rec_array;
->-	struct cxl_event_gen_media *rec;
-> 	void *old_rec;
+>         Documentation/networking/netlink_spec/conntrack.rst
+>         Documentation/networking/netlink_spec/devlink.rst
+>         Documentation/networking/netlink_spec/dpll.rst
+>         Documentation/networking/netlink_spec/ethtool.rst
+>         Documentation/networking/netlink_spec/fou.rst
+>         Documentation/networking/netlink_spec/handshake.rst
+>         Documentation/networking/netlink_spec/index.rst
+>         Documentation/networking/netlink_spec/lockd.rst
+>         Documentation/networking/netlink_spec/mptcp_pm.rst
+>         Documentation/networking/netlink_spec/net_shaper.rst
+>         Documentation/networking/netlink_spec/netdev.rst
+>         Documentation/networking/netlink_spec/nfsd.rst
+>         Documentation/networking/netlink_spec/nftables.rst
+>         Documentation/networking/netlink_spec/nl80211.rst
+>         Documentation/networking/netlink_spec/nlctrl.rst
+>         Documentation/networking/netlink_spec/ovs_datapath.rst
+>         Documentation/networking/netlink_spec/ovs_flow.rst
+>         Documentation/networking/netlink_spec/ovs_vport.rst
+>         Documentation/networking/netlink_spec/rt_addr.rst
+>         Documentation/networking/netlink_spec/rt_link.rst
+>         Documentation/networking/netlink_spec/rt_neigh.rst
+>         Documentation/networking/netlink_spec/rt_route.rst
+>         Documentation/networking/netlink_spec/rt_rule.rst
+>         Documentation/networking/netlink_spec/tc.rst
+>         Documentation/networking/netlink_spec/tcp_metrics.rst
+>         Documentation/networking/netlink_spec/team.rst
 >
-> 	if (!IS_ENABLED(CONFIG_CXL_EDAC_MEM_REPAIR) || !array_rec)
-> 		return 0;
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/networking/netlink_spec/.gitignore | 1 -
+>  1 file changed, 1 deletion(-)
+>  delete mode 100644 Documentation/networking/netlink_spec/.gitignore
 >
->-	rec =3D kmemdup(&evt->gen_media, sizeof(*rec), GFP_KERNEL);
->+	struct cxl_event_gen_media *rec __free(kfree) =3D
->+		kmemdup(&evt->gen_media, sizeof(*rec), GFP_KERNEL);
-> 	if (!rec)
-> 		return -ENOMEM;
->
->@@ -1106,6 +1106,7 @@ int cxl_store_rec_gen_media(struct cxl_memdev
->*cxlmd, union cxl_event *evt)
->
-> 	cxl_del_expired_gmedia_recs(&array_rec->rec_gen_media, rec);
-> 	cxl_del_overflow_old_recs(&array_rec->rec_gen_media);
->+	retain_and_null_ptr(rec);
->
-> 	return 0;
-> }
->@@ -1114,13 +1115,13 @@
->EXPORT_SYMBOL_NS_GPL(cxl_store_rec_gen_media, "CXL");  int
->cxl_store_rec_dram(struct cxl_memdev *cxlmd, union cxl_event *evt)  {
-> 	struct cxl_mem_err_rec *array_rec =3D cxlmd->err_rec_array;
->-	struct cxl_event_dram *rec;
-> 	void *old_rec;
->
-> 	if (!IS_ENABLED(CONFIG_CXL_EDAC_MEM_REPAIR) || !array_rec)
-> 		return 0;
->
->-	rec =3D kmemdup(&evt->dram, sizeof(*rec), GFP_KERNEL);
->+	struct cxl_event_dram *rec __free(kfree) =3D
->+		kmemdup(&evt->dram, sizeof(*rec), GFP_KERNEL);
-> 	if (!rec)
-> 		return -ENOMEM;
->
->@@ -1134,6 +1135,7 @@ int cxl_store_rec_dram(struct cxl_memdev *cxlmd,
->union cxl_event *evt)
->
-> 	cxl_del_expired_dram_recs(&array_rec->rec_dram, rec);
-> 	cxl_del_overflow_old_recs(&array_rec->rec_dram);
->+	retain_and_null_ptr(rec);
->
-> 	return 0;
-> }
->--
->2.34.1
-
+> diff --git a/Documentation/networking/netlink_spec/.gitignore b/Documentation/networking/netlink_spec/.gitignore
+> deleted file mode 100644
+> index 30d85567b592..000000000000
+> --- a/Documentation/networking/netlink_spec/.gitignore
+> +++ /dev/null
+> @@ -1 +0,0 @@
+> -*.rst
 
