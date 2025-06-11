@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-682482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309F7AD60DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB85AD612B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F6E07A6211
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:12:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB419189FCEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C132BDC38;
-	Wed, 11 Jun 2025 21:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2332459FF;
+	Wed, 11 Jun 2025 21:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dE0mmlgJ"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="GB7QRGZ5"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFF11F7904;
-	Wed, 11 Jun 2025 21:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AC91BD9CE;
+	Wed, 11 Jun 2025 21:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749676434; cv=none; b=JTRVbGis5LmbiABX2DMXa3Isw9jyDPoiHzl9OAM/fiNNYXiXLOjTJUGjyyZXvsmvNziBoYxCZoBhy1ERaGF2VNlCfi6Od87xmdSgY57Jbe4IlpDZFhHSwnOKNhvPsfKGEWQa34n9b8FuIFLCrueKktF+dYek31MU2hFv8pHxJXk=
+	t=1749677039; cv=none; b=bulC0PajIt2khmUIQghsRSLVKqwkKS3fdZQKeKGs4Zg7ZWkBWYd/ej67pLHg8W8yyui0f+UVMzzzbxfSI9FyhX7JiFfnzGL0823U3MTj5SScqF7HF4WYXltBrTFkOFiv+weTDQhnnn8ZfgDaDqe0ZHq0RmBMfikUQCkeijfNU5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749676434; c=relaxed/simple;
-	bh=ayf4MxTJT3l5fo3kpVYbW6H4t8k6I/d2JD5oWmRS3lE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=paT1cVKN7Hw5wTZwGhm7Mmk/lyvNVd1IWsJPJZG7XECIU2hPK8ReOkXixZcuyb+bz0rhWzbSs+2yq14ytRQ8e095DFyyS6qzO5E6amPeGc31sw527lnbMD0fcRsNvUEz5JuYsPrhA8lbX83jzF4fHMXugC9hPySHcez/+QxxDwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dE0mmlgJ; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55BLD7hs1489819;
-	Wed, 11 Jun 2025 16:13:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1749676387;
-	bh=P+Ei0nVTdPkuikDxd53VFZwYxoc432vn+t6Xh2VDjE0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=dE0mmlgJbKsvhfBls2pR1EbemC7uEJZuES1EahQoc8L6WSOnP8d1R9evWoC6GzdP3
-	 oeZpSbqnZmO5dq24iQEK0m9FEziQiySjMvgU0x0naAIIDm3umuYzmD6IUgybyolKJc
-	 hG6C/5SmGkOAHrNVcr2M3+Jm9jQXsDOCg+Hx05JM=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55BLD7Iq1414936
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 11 Jun 2025 16:13:07 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 11
- Jun 2025 16:13:06 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 11 Jun 2025 16:13:06 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55BLD55v923069;
-	Wed, 11 Jun 2025 16:13:06 -0500
-Message-ID: <1d87fa3b-c3b9-44fd-9e61-7f1ffadcfb0c@ti.com>
-Date: Wed, 11 Jun 2025 16:13:05 -0500
+	s=arc-20240116; t=1749677039; c=relaxed/simple;
+	bh=t1zJH4Rmm4htAzj/dQwNCS9TEe1c1gCbgRoNZ2a76h4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pmjGXMk3QCKFgFTT68iAmRpIwKmw34sleU895c+CEsdg15rSKJJqlR+aB62ooiKlYt6qxQISHckIahuxK1gE55QH1o3NNUs9PUUuxiLBRZ9aJMVJtqnnEzk/047LEXygW8m46lQTewkpHDYyQocm1SSt3rmJW/RFsLiKtzgfQak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=GB7QRGZ5; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1749676562; bh=S2j0xHEZeQOTVtx7TJX88U0NbtEMbxvs08E3DcOiM3k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
+	 Subject;
+	b=GB7QRGZ5lNQDix0fSkRgtNjMUUycMz/UHj26osAKdXgqXZKpzhvC7+v9XyS8QmlYC
+	 azUB/LpaFU0XoJC/mJ0vbZ/D59tDhDxJBssj5jaqn1fbH695ZHK/xkgYdQIE7kK+sS
+	 N5j8WALlbhpLQrq98pYbzkDR7mjZlqOt+NDyWZyph3hi749A9BIreU1ETu6Pg/Pma7
+	 QZXaBnZdUvryQAzJbNaE60AG/8ryVYMTcyp52o6CfoGab8AYoxvbeVrnlVBXMvDLHI
+	 OyijBtu3r24T5wMOIZBqjwlbpMaG3cg0dUtM4NFqKqTy0xGay1OeXO7hnwnR+7souS
+	 uQpsPOkO1Iuxg==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bHdkB0q3Sz8sk1;
+	Wed, 11 Jun 2025 23:16:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3626:500:39da:8819:39bd:1255
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3626:500:39da:8819:39bd:1255])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX19Vu+9xQHHGMkmfqtW7CJMHQ2bOqLm6aCk=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bHdk70Msdz8spC;
+	Wed, 11 Jun 2025 23:15:58 +0200 (CEST)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Luis Gerhorst <luis.gerhorst@fau.de>
+Subject: [PATCH bpf-next] bpf: Remove redundant free_verifier_state()/pop_stack()
+Date: Wed, 11 Jun 2025 23:14:31 +0200
+Message-ID: <20250611211431.275731-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com>
+References: <b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm: omap2plus_defconfig: Enable TPS65219
- regulator
-To: Kory Maincent <kory.maincent@bootlin.com>,
-        Tony Lindgren
-	<tony@atomide.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Aaro Koskinen
-	<aaro.koskinen@iki.fi>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Kevin Hilman
-	<khilman@baylibre.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Russell King
-	<linux@armlinux.org.uk>
-CC: Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
- <20250609-bbg-v2-5-5278026b7498@bootlin.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250609-bbg-v2-5-5278026b7498@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On 6/9/25 10:43 AM, Kory Maincent wrote:
-> Enable the TPS65219 regulator in the defconfig, as the TPS65214
-> variant is used by the newly introduced BeagleBoard Green Eco board.
-> 
-> Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
->   arch/arm/configs/omap2plus_defconfig | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-> index 9f9780c8e62a..2ad669f7b202 100644
-> --- a/arch/arm/configs/omap2plus_defconfig
-> +++ b/arch/arm/configs/omap2plus_defconfig
+This patch removes duplicated code.
 
-Why omap2plus_defconfig? OMAP3 and newer are all ARMv7 and
-boards with those can/should use multi_v7_defconfig.
+Eduard points out [1]:
 
-OMAP1 and OMAP2 are the only devices that cannot use multi_v7_defconfig
-as they are not ARMv7. So I'd almost recommend we rename
-omap2plus_defconfig to just omap2_defconfig to avoid more confusion.
-Then we would have:
+    Same cleanup cycles are done in push_stack() and push_async_cb(),
+    both functions are only reachable from do_check_common() via
+    do_check() -> do_check_insn().
 
-OMAP1:  ARMv4/5: omap1_defconfig
-OMAP2:  ARMv6:   omap2_defconfig
-OMAP3+: ARMv7:   multi_v7_defconfig
+    Hence, I think that cur state should not be freed in push_*()
+    functions and pop_stack() loop there is not needed.
 
-Any issue with that I'm missing?
+This would also fix the 'symptom' for [2], but the issue also has a
+simpler fix which was sent separately. This fix also makes sure the
+push_*() callers always return an error for which
+error_recoverable_with_nospec(err) is false. This is required because
+otherwise we try to recover and access the stale `state`.
 
-Andrew
+[1] https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com/
+[2] https://lore.kernel.org/all/68497853.050a0220.33aa0e.036a.GAE@google.com/
 
-> @@ -385,6 +385,7 @@ CONFIG_TOUCHSCREEN_TSC2007=m
->   CONFIG_INPUT_MISC=y
->   CONFIG_INPUT_CPCAP_PWRBUTTON=m
->   CONFIG_INPUT_TPS65218_PWRBUTTON=m
-> +CONFIG_INPUT_TPS65219_PWRBUTTON=m
->   CONFIG_INPUT_TWL4030_PWRBUTTON=m
->   CONFIG_INPUT_UINPUT=m
->   CONFIG_INPUT_PALMAS_PWRBUTTON=m
-> @@ -454,6 +455,7 @@ CONFIG_MFD_TPS65217=y
->   CONFIG_MFD_TI_LP873X=y
->   CONFIG_MFD_TI_LP87565=y
->   CONFIG_MFD_TPS65218=y
-> +CONFIG_MFD_TPS65219=y
->   CONFIG_MFD_TPS65910=y
->   CONFIG_TWL6040_CORE=y
->   CONFIG_REGULATOR_CPCAP=y
-> @@ -470,6 +472,7 @@ CONFIG_REGULATOR_TPS65023=y
->   CONFIG_REGULATOR_TPS6507X=y
->   CONFIG_REGULATOR_TPS65217=y
->   CONFIG_REGULATOR_TPS65218=y
-> +CONFIG_REGULATOR_TPS65219=y
->   CONFIG_REGULATOR_TPS65910=y
->   CONFIG_REGULATOR_TWL4030=y
->   CONFIG_RC_CORE=m
-> 
+Reported-by: Eduard Zingerman <eddyz87@gmail.com>
+Link: https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com/
+Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+---
+ kernel/bpf/verifier.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index d3bff0385a55..fa147c207c4b 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2066,10 +2066,10 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
+ 	}
+ 	return &elem->st;
+ err:
+-	free_verifier_state(env->cur_state, true);
+-	env->cur_state = NULL;
+-	/* pop all elements and return */
+-	while (!pop_stack(env, NULL, NULL, false));
++	/* free_verifier_state() and pop_stack() loop will be done in
++	 * do_check_common(). Caller must return an error for which
++	 * error_recoverable_with_nospec(err) is false.
++	 */
+ 	return NULL;
+ }
+ 
+@@ -2838,10 +2838,10 @@ static struct bpf_verifier_state *push_async_cb(struct bpf_verifier_env *env,
+ 	elem->st.frame[0] = frame;
+ 	return &elem->st;
+ err:
+-	free_verifier_state(env->cur_state, true);
+-	env->cur_state = NULL;
+-	/* pop all elements and return */
+-	while (!pop_stack(env, NULL, NULL, false));
++	/* free_verifier_state() and pop_stack() loop will be done in
++	 * do_check_common(). Caller must return an error for which
++	 * error_recoverable_with_nospec(err) is false.
++	 */
+ 	return NULL;
+ }
+ 
+@@ -22904,13 +22904,9 @@ static int do_check_common(struct bpf_verifier_env *env, int subprog)
+ 
+ 	ret = do_check(env);
+ out:
+-	/* check for NULL is necessary, since cur_state can be freed inside
+-	 * do_check() under memory pressure.
+-	 */
+-	if (env->cur_state) {
+-		free_verifier_state(env->cur_state, true);
+-		env->cur_state = NULL;
+-	}
++	WARN_ON_ONCE(!env->cur_state);
++	free_verifier_state(env->cur_state, true);
++	env->cur_state = NULL;
+ 	while (!pop_stack(env, NULL, NULL, false));
+ 	if (!ret && pop_log)
+ 		bpf_vlog_reset(&env->log, 0);
+
+base-commit: 1d251153a480fc7467d00a8c5dabc55cc6166c43
+-- 
+2.49.0
+
 
