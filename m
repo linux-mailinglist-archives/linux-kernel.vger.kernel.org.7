@@ -1,96 +1,176 @@
-Return-Path: <linux-kernel+bounces-681060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E2CAD4DF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:10:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82CDAD4E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55E63A46CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08CFE17B57C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E144238172;
-	Wed, 11 Jun 2025 08:09:05 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7C5235BF0;
+	Wed, 11 Jun 2025 08:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/mRgMjx"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCB82356B3;
-	Wed, 11 Jun 2025 08:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A7712CD8B;
+	Wed, 11 Jun 2025 08:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749629344; cv=none; b=lISXHNtI/Ftbwbwl4ZZ6e7telmBWf4SaaKIkuCd09v9XlyMTyyAi04vFU0Hvuho5d4Ei6RDmEySPk/fXprv1xXg1gmLJTtHz3H3B7D192wxNocurYOjGLAaIHwOoAC2ezaoM36UawmOImkVXHApWBJ65k6oqPxad2o94fPWPCao=
+	t=1749629472; cv=none; b=YBXmu/I9FnVtjVONtA1tu2/oZvnkBQ+2HI9z6hD6ZtmlA0eCOREEkDuoAbG+eiXXAJZ4qUSTDjJPLlkYKExqJcq2c/+/W7iDzSEka4vRupYT9E4o8ChC3cZl7tMYAmWl2Rf88cyfWDdOELLViclUXOvDfqaF2J85RLamkUJx+I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749629344; c=relaxed/simple;
-	bh=bb/gYoBGqnnv8Qs7r02fycV4dkWTGnthEecbIoM/PwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgsLcgSA7M/DYPeGA/isRNd/n04m6mASkrNkN+IFbIFVVd6t3M4sQKQfIVlBKx5wSTDoikKF6GBZPAnzpQ3QKXQ/QIE+Prh+oJJuA2jMywab1B5RkDuYCXB0cXTMzczgJBb5Pz7L+DFfrIy1v7ZtMMG4nWrFAmXaRxiMDhKPLzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1749629472; c=relaxed/simple;
+	bh=kTkKSzhE3N+5xcKYpvA81X8dq2z+SsYne1oPzkYDPYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l7rXMMXW/UPHhfoyPoi1ZBZJ7jHdcOAkrpBrTas8ze0rffjWOA8BwQoxaPqmwSQqGUWBrQcDLOO6sJvITQ7eUMCffeDDFlbqbTWiiz/kP7M4gsb3bjC1vfuZb7YJOFlwYTUD3b3jxtBWr+NbDtF6BUzZ+l6nj0HsPAvB1BglcVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/mRgMjx; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acb5ec407b1so1135165866b.1;
-        Wed, 11 Jun 2025 01:09:03 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a4bb155edeso78642721cf.2;
+        Wed, 11 Jun 2025 01:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749629470; x=1750234270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ZZMQxOY3jdiUUlcRVmJEoq9jtCkBekBHkitKdRBzHk=;
+        b=f/mRgMjxXJXGU0fuUIHr+uiBE/h5oajUhTpxdALYhuVvN0A211gKduIa6w8QygutI+
+         mNRz/8aBhKu9N4/TnXfiG1/HHw3mMO15Gpyz16iqp+X6Ce9vVATl38pWlBcXE+LEcVUr
+         WST9rrY0YY5zaNJmjuRyKVqKkMKlBfjXtBgvSA5Y+stuYvpZ+SnvKYLCvtzqpvfs4fqn
+         V+qezkSo1hwu+5hjwCCkzerpSJABYcnbXXnH28BbgdY2+DH5HL9XRpk/tx1llb0LHc8O
+         lXWJuheMtWL7aSOxmXS3MtktC6Md9Jh2JhwE1okt8hSB02nyB0lXd7Hhvrp76gV3NVbj
+         1x5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749629341; x=1750234141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xGRU+Kv08xe5NBWzNvaRaFDet3u9/sA86Kboke4WJ9A=;
-        b=kHS9Tn5+qJl99lehQqT16FVawKmtjMAY5bA3SIdSISW3hO87UQApHy6qAhU08EXKhd
-         JFFk0cVdHhJ8/ekRcOXoCRtuPggdze42W2/JFDE+MlnlqBc5S+dLIDpvfgaEdHtDPNNx
-         YIa2rWjAUaKe1c/K/wyKTeQ9qeWRLSHJbUYJBNNPeM2zYEpM2LopDjg5dqsQN8hGqIj5
-         dUycMoWe1ELeAyjyCwpUZ/HcieeUn/C6l4hXuPEZ+FtiP7x8xUq11e9VY3vk8Cunv8nX
-         ynmDi0iBMIKONY/5Ime6n19p5hSGPcd5hAwPmHjufy/ZOMNK7RO3ZK5uCea68INt+9Uw
-         Zumw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBmg9H1DlrD3/tJVVAXow+Ipz0fPupTIwW1BU7dI11KuAQ6YI59GTEuEd89fWMQDRji9W+13W2BWNHjYUZb0a4@vger.kernel.org, AJvYcCVf/YqmSEOKDFgKRX9bhWi+Fk672fi+L9aYUm7YCgiJQ7jVwrtwiNujDTGjn7CkbXSmElT5RU/cX8T47K4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC6SY2geJoSFfNwkt6e50JDi3egI7rZEzJl6QQ5NEjJrViWMoh
-	ukv2WNc0T9dzmmaTYSfY3mOoqGUBshc1DKuAARnlilMGoKqig93f0v8v
-X-Gm-Gg: ASbGncsqkDHTTiakaRAu4WUZnD4l/JYyvLKy2ei8/ehzG8+a+qB0k6lxP9cn/cGT+ic
-	eYJ7Q2KToHz4szMmzCdAQgZsaxP6v9lxsGpkIcDA0PT1ALRTegP3KDKw3X+qm0B9NrRyLsBGNmS
-	oy3s6uGM5nh6NwexP1UuvvtHJnK2FpfIZkubjR1tFcwRteCW+Fw6e3W3Khr3DgaeDpaQNC6CMBO
-	61/z7J+WVfjHs4IvghFybbZTzGQ8bMhJOIB1uICB3ma5MOwswkpb5YS0cc9UoGQzwFT4pfDEyWD
-	4FYQp5M0vid88BQHA1eplEsp160kCsl+AIq7sgm4XkTtL4LeZYIiXksmJK1ZzX+g
-X-Google-Smtp-Source: AGHT+IGbQu5qlFUouSqkJhPj8jhxnrJC0Olr7Zwa5gMMOkWdUeanOk7UUb5kvt1BxjCg3bkg0oosmw==
-X-Received: by 2002:a17:907:9449:b0:ad2:2fa8:c0a7 with SMTP id a640c23a62f3a-ade8c76b521mr172874366b.21.1749629341249;
-        Wed, 11 Jun 2025 01:09:01 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc1c5besm845927466b.87.2025.06.11.01.09.00
+        d=1e100.net; s=20230601; t=1749629470; x=1750234270;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+ZZMQxOY3jdiUUlcRVmJEoq9jtCkBekBHkitKdRBzHk=;
+        b=qg4alkjX89iddAGZQw6W1cjrqDM/RJ1RIfU34xBecplDiEG4VR3emL+FEPOHEDVrHk
+         DN0aL2xh2NSddvUY0kReJEUvZ0LpATvwgEarYN3rCOeszrnM+NWQFi+w7fff0ebW/Nsv
+         xID95RTY9FfoUW7BU+7kwm+Kf2jchBTUuQnp9rqgV+38mko5ZPqBvuwM31DpJlJqYY9H
+         ur87XyGrQnogMEb9+zF3wflVUJyZtozrHxayEjVK1KMzEfCV2QzfQJqMuzy7snNkefvf
+         nj8+rknCkzRuJm1SItxy3r4HVb5Urt0QSxqY8QuSVhh6VvNl6NljQoxEQ7/mlZtFPxpH
+         etrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaOskUD3hNpG9WsVbQka7KjoHv9f0wgcVCuH2+HHniBYCvXGDhVdPSo8FS9F9xtmiqLbApeckU23HY@vger.kernel.org, AJvYcCXku4MJI5gn0J9fCelsH/54ElaCnmsMBQcgQBnkCrsAAeW6D6pWCJI+9/8ygiRZBwfjVrGnUHGQJMxSyAuf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzckKJAntWvi1pM9cDH3lQUCpnHLDKO/4Z/Y80C40XHBLNVs4B4
+	sjW+p9LpLbU28yctk6WsEzuaahztXOb3x6g1twCpQZz24vtZ+TDB9SD8
+X-Gm-Gg: ASbGnctjHQTHtbmccRZKmA4ebK/XGZ/F6D/6Wf1D1rNeKRnjJ+ymVDPaFZcsg+p9doV
+	+8XWhMKGAsoPQx+mYVik7hVjvWYdvYVGcL9vlE9FCMNHhpVHFBRcH0ElD2tyQqthdujVbungble
+	S9tU9+yMw/n/AQ8xS71ms0XiHi1BbZWnzmJSsVeGldmUjiN+YTP2Vm+VfU1ElA9l7K9IawC4XTb
+	i/Rafdu69261oY0eIzWEApxAEnixaGOx2XUAifg+f+18GWRFfBtvrVXvsIR6nEXAJFILxdMQWHA
+	FCaK6jFiXslqfc8PiCaSoayf8o2KKnpedjoyeL2vTQzvqwIq
+X-Google-Smtp-Source: AGHT+IGZnue+EG+14/hjDiRd+e4Wrn0+S+QrqOcOTcR+sr6Io4g4wyFZ6oXcvJFQ47foHvKNUa181w==
+X-Received: by 2002:a05:622a:1f0c:b0:494:959e:26a3 with SMTP id d75a77b69052e-4a713c41a06mr39119801cf.34.1749629470186;
+        Wed, 11 Jun 2025 01:11:10 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4a6f5c7a22esm57218951cf.54.2025.06.11.01.11.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 01:09:00 -0700 (PDT)
-Date: Wed, 11 Jun 2025 01:08:58 -0700
-From: Breno Leitao <leitao@debian.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next 0/7] netpoll: Untangle netconsole and netpoll
-Message-ID: <aEk5mv69Ha7xyvPV@gmail.com>
-References: <20250610-rework-v1-0-7cfde283f246@debian.org>
+        Wed, 11 Jun 2025 01:11:09 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v14 0/2] riscv: sophgo: add dmamux support for Sophgo CV1800/SG2000 SoCs
+Date: Wed, 11 Jun 2025 16:09:57 +0800
+Message-ID: <20250611081000.1187374-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610-rework-v1-0-7cfde283f246@debian.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 10, 2025 at 08:18:12AM -0700, Breno Leitao wrote:
->  drivers/net/netconsole.c                           | 137 ++++++++++++++++++++-
->  include/linux/netpoll.h                            |  10 +-
->  net/core/netpoll.c                                 | 136 +-------------------
->  tools/testing/selftests/drivers/net/Makefile       |   1 +
->  .../selftests/drivers/net/lib/sh/lib_netcons.sh    |  39 +++++-
->  .../selftests/drivers/net/netcons_cmdline.sh       |  52 ++++++++
->  6 files changed, 228 insertions(+), 147 deletions(-)
+As the syscon device of CV1800 have a usb phy subdevices. The
+binding of the syscon can not be complete without the usb phy
+is finished. As a result, the binding of syscon is removed
+and will be evolved in its original series after the usb phy
+binding is fully explored.
 
-I've just found that this current patchset didn't apply to
-net-next, thus, the NIPA tests didn't run. I will send a v2 soon. I do
-not plan to change anything, other than rebasing it.
+Changed from v13:
+1. rebase to v6.16-rc1
 
---breno
+Changed from v12:
+1. remove syscon header and use local offset instead.
+2. add COMPILE_TEST for coverage.
+
+Changed from v11:
+1. init all the field of the driver data.
+
+Changed from v10:
+1. binding: fixed binding id.
+
+Changed from v9:
+1. binding: rename to cv1800b-dmamux.
+2. binding: remove the unused formatting.
+
+Changed from v8:
+1. change compatible name from cv1800-dmamux to cv1800b-dmamux
+2. use guard to simpify spinlock process.
+
+Changed from v7:
+1. remove unused variable
+
+Changed from v6:
+1. fix copyright time.
+2. driver only output mapping info in when debugging.
+3. remove dma-master check in the driver init since the binding
+always require it.
+
+Changed from v5:
+1. remove dead binding header.
+2. make "reg" required so the syscon binding can have the same
+example node of the dmamux binding.
+
+Changed from v4:
+1. remove the syscon binding since it can not be complete (still
+lack some subdevices)
+2. add reg description for the binding,
+3. remove the fixed channel assign for dmamux binding
+3. driver adopt to the binding change. Now the driver allocates all the
+channel when initing and maps the request chan to the channel dynamicly.
+
+Changed from v3:
+1. fix dt-binding address issue.
+
+Changed from v2:
+1. add reg property of dmamux node in the binding of patch 2
+
+Changed from v1:
+1. fix wrong title of patch 2.
+
+Inochi Amaoto (2):
+  dt-bindings: dmaengine: Add dma multiplexer for CV18XX/SG200X series
+    SoC
+  dmaengine: add driver for Sophgo CV18XX/SG200X dmamux
+
+ .../bindings/dma/sophgo,cv1800b-dmamux.yaml   |  51 ++++
+ drivers/dma/Kconfig                           |   9 +
+ drivers/dma/Makefile                          |   1 +
+ drivers/dma/cv1800b-dmamux.c                  | 259 ++++++++++++++++++
+ 4 files changed, 320 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/sophgo,cv1800b-dmamux.yaml
+ create mode 100644 drivers/dma/cv1800b-dmamux.c
+
+--
+2.49.0
+
 
