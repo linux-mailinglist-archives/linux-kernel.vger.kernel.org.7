@@ -1,139 +1,92 @@
-Return-Path: <linux-kernel+bounces-682733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA9EAD63E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:36:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39E3AD63E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62D137AC3CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:35:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E017A2226
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EAB2580F9;
-	Wed, 11 Jun 2025 23:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B467E2C325B;
+	Wed, 11 Jun 2025 23:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rH0i8YIr"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="C6Cj8bkW"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716782C17A1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 23:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8B82063D2;
+	Wed, 11 Jun 2025 23:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749684974; cv=none; b=n7F0lJ6AwcVLP+IvcvC0whVYDGZPah2eqadOXWdNNmEt+ImCuohleQg/DjUBygBFzPyBs4SatNTNJzSVze3XULs3O/ADo+7JR58/k0Em/83m/bek8QpGWUZ49n3VIVbERnRDinAFcYNCisR0HVQubpncPxwYPw/ztLX+S2sCSjE=
+	t=1749684797; cv=none; b=t2efY9xPZZO/ml9ciS9IrJkzqHfQGYwxz9T7+SDlr8Z76HkPB/x/4j+pd3N1Nd48cyeVsn4TVILHg90virLqMKSkHrPGIyEQzLDGEpVyk3ftNitIkn/t8yHvLo1TFes5Yv7dkzHn/tt3UQtELp3R0VmgLRg/3JQAgzW5OTPtsjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749684974; c=relaxed/simple;
-	bh=jnoqpsnRou4yUAIKYd4Tc10EfUDP1xEmutztyHBeMwo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WLqYBylS5nl1L/xMVxe1b584rjmD/d+5Ih7hxy+wTd5WuH4SoLy6cZohTfBnkrK9pfOnQd6vjI6qVUPIxSxyOAc9PlzXgtRfeUR5HjeEaGJjz3aAhcXo6pxqhG8x15hizCHzc6RDaZp87kwB68cx9tXIy3TC9DS1kVp7UEXLeK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rH0i8YIr; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31315427249so404968a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 16:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749684973; x=1750289773; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fLRN1+7xUO97u+aruukoPK/pNq11GhEUvIp7GOuFZws=;
-        b=rH0i8YIr/GR2WhJF7atBAvHt91Z/gE0b+mekLvKFGB85abzxdCpL8XMH+K0vERTLbh
-         vFbMJ5Kr6aKOagBa6BihNfFFoQL7GHy2zs6Nse5Esxf7flIh5gd6ieFWvqEkEe2DYgRH
-         uAMYwEnHxrLYRDs9hLlvVuFPyb75ZrXEuLrFMQGknhb1nPoytTdKOpGOVyNQL9o4ftih
-         WmqREU9Hp7l6O26s/pLI72T7JLfeoMbfaLHY4pvqQ15eBmhm1becY5DiYzbnkpdG/ykr
-         6S0gEHXU37lQKedoPzN1ol2m8HuuPiKs5dU6Ud7Q66B4WASAoemd+E472ByINhhVLG2I
-         TP2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749684973; x=1750289773;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fLRN1+7xUO97u+aruukoPK/pNq11GhEUvIp7GOuFZws=;
-        b=Q9KgFj+frpviPjYRWXGleMm6Sv1vHyzdUG+G/IXwbMN96FW285SO61+WVerECqfC4Y
-         QRH46ruElFHH12UlQXnjGjJiK5wZ1ablVsHJU6fYA53DsrMfq28gJPpPu6WENnEcJ62S
-         yfGCTIMRIoZ21WDNj93ebMTowBDNk0YMhg3pahbEtez1a9cnDvpQSMtjh7RA2oHX+Gvp
-         4/KZiO0VjT47sQepCPwOTbC2JLDqibc5+IZBkZ+P7SB8pHbSg5y8PqOL7jl07QiVKEAB
-         dQPwps3G/UJhLKdaPzndyF0EVNlpFPG9neLDJocTFmu6mfzmm9HhAloaOw2/Ia1U+xkq
-         auyA==
-X-Gm-Message-State: AOJu0YzYFmEKAhJmI7WaCc6cao7rfdrQmuYdtbb1k6SrOZ+cwWg4b1c0
-	P26Awv8EcIcczntoR8TpTSA1iw40MT/B+uF3BvtQWx2jS/A5mgSZEKn84nQhYZBpRfslO5D5pxi
-	eSlg1dwVugIbD6TlN/YR86Jc7/QG4qbYR7oCKJMgIWJHSn4Q6VcPplyeLn0qci1LjuyRRBhUo9w
-	ckESC8swzCEQumYFXdIZglz4cfVT/3zWY/SdJ3t1PaN/gs
-X-Google-Smtp-Source: AGHT+IGWetIUGkcTAEE1BtWo62T13R2WKFcG1h+M6UoNF2rX+2iuTUZBeoyXT0ekM55mM5b0TePWuyplLqI=
-X-Received: from pjbqi5.prod.google.com ([2002:a17:90b:2745:b0:311:9b9e:5384])
- (user=ctshao job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5249:b0:301:9f62:a944
- with SMTP id 98e67ed59e1d1-313af22d449mr7778810a91.33.1749684972778; Wed, 11
- Jun 2025 16:36:12 -0700 (PDT)
-Date: Wed, 11 Jun 2025 16:32:16 -0700
+	s=arc-20240116; t=1749684797; c=relaxed/simple;
+	bh=KxDSgEHM4ioFOccU9g1WqhOEzXrb4amIpcHF7Ym5Zz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVHQEIYNRGsbh+V0wYwZ6iavU3/6hAnbMcJhdYclemGRSIh8hCTkuOT5FeuMDBl0Aai/ywKWMpEBrmhMR0OSInkYg9GrG1XwY6hMkPkg+aNhqi7uXCXzJL854fkawC0o/2TIPPq+bwDwLw+HVy6eOrSv338C4BAlPwefINwvR34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=C6Cj8bkW; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cet2GcpB4GwO674EqYvPDsp22UDjuD2QU2slqR1iU0o=; b=C6Cj8bkWnDXTpxo4VcCX8jFHrg
+	7QRxXNhbRCpUZqIqv3/9L8FH6cqDK6ispvMtKh1h30Z5GaYMmcefM9DCEky+SHsQvbCQn4PVenYta
+	q7AD2BBcnD/9mZ09Gvm4PmXRTWReVhtyVi+OfK+tMfKyVPNmvBkA/KGpwL3BalM2aKdLCy8e4gPGl
+	cSUJHsfjVIGPpx5yATOVybyigEKJy2JfJ3Za8VXjN592KO9FsIVsz/u0sWD40iygXFkdMBaYWQqol
+	+uT3t8+rVUNJp5CvDDkwcGOkP4lawwQ11jRlyo63u3BDi/nnyrrPVeqymlgePDJNJsBVNqgEJvUHc
+	tXNOpsfw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPUwM-00000007jzT-2QTq;
+	Wed, 11 Jun 2025 23:33:06 +0000
+Date: Thu, 12 Jun 2025 00:33:06 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, Kees Cook <kees@kernel.org>,
+	Joel Granados <joel.granados@kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	netfs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs/proc: take rcu_read_lock() in proc_sys_compare()
+Message-ID: <20250611233306.GA1647736@ZenIV>
+References: <20250611225848.1374929-1-neil@brown.name>
+ <20250611225848.1374929-3-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <20250611233239.3098064-1-ctshao@google.com>
-Subject: [PATCH v1] perf stat: Fix uncore aggregation number
-From: Chun-Tse Shao <ctshao@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Chun-Tse Shao <ctshao@google.com>, Ian Rogers <irogers@google.com>, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611225848.1374929-3-neil@brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Follow up:
-lore.kernel.org/CAP-5=fVDF4-qYL1Lm7efgiHk7X=_nw_nEFMBZFMcsnOOJgX4Kg@mail.gmail.com/
+On Thu, Jun 12, 2025 at 08:57:03AM +1000, NeilBrown wrote:
 
-The patch adds unit aggregation during evsel merge the aggregated uncore
-counters.
+> However there is no guarantee that this lock is held by d_same_name()
+> (the caller of ->d_compare).  In particularly d_alloc_parallel() calls
+> d_same_name() after rcu_read_unlock().
 
-Tested on a 2-socket machine with SNC3, uncore_imc_[0-11] and
-cpumask="0,120"
-Before:
-  perf stat -e clockticks -I 1000 --per-socket
-  #           time socket cpus             counts unit events
-       1.001085024 S0        1         9615386315      clockticks
-       1.001085024 S1        1         9614287448      clockticks
-  perf stat -e clockticks -I 1000 --per-node
-  #           time node   cpus             counts unit events
-       1.001029867 N0        1         3205726984      clockticks
-       1.001029867 N1        1         3205444421      clockticks
-       1.001029867 N2        1         3205234018      clockticks
-       1.001029867 N3        1         3205224660      clockticks
-       1.001029867 N4        1         3205207213      clockticks
-       1.001029867 N5        1         3205528246      clockticks
-After:
-  perf stat -e clockticks -I 1000 --per-socket
-  #           time socket cpus             counts unit events
-       1.001022937 S0       12         9621463177      clockticks
-       1.001022937 S1       12         9619804949      clockticks
-  perf stat -e clockticks -I 1000 --per-node
-  #           time node   cpus             counts unit events
-       1.001029867 N0        4         3206782080      clockticks
-       1.001029867 N1        4         3207025354      clockticks
-       1.001029867 N2        4         3207067946      clockticks
-       1.001029867 N3        4         3206871733      clockticks
-       1.001029867 N4        4         3206199005      clockticks
-       1.001029867 N5        4         3205525058      clockticks
+d_alloc_parallel() calls d_same_name() with dentry being pinned;
+if it's positive, nothing's going to happen to its inode,
+rcu_read_lock() or not.  It can go from negative to positive,
+but that's it.
 
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Chun-Tse Shao <ctshao@google.com>
----
- tools/perf/util/stat.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 355a7d5c8ab8..52266d773353 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -527,6 +527,7 @@ static int evsel__merge_aggr_counters(struct evsel *evsel, struct evsel *alias)
- 		struct perf_counts_values *aggr_counts_b = &ps_b->aggr[i].counts;
- 
- 		/* NB: don't increase aggr.nr for aliases */
-+		ps_a->aggr[i].nr += ps_b->aggr[i].nr;
- 
- 		aggr_counts_a->val += aggr_counts_b->val;
- 		aggr_counts_a->ena += aggr_counts_b->ena;
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
-
+Why is it needed?  We do care about possibly NULL inode (basically,
+when RCU dcache lookup runs into a dentry getting evicted right
+under it), but that's not relevant here.
 
