@@ -1,138 +1,197 @@
-Return-Path: <linux-kernel+bounces-681917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD67AD58FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:39:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5AFAD5912
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8330168A71
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37743A64BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929FC27815B;
-	Wed, 11 Jun 2025 14:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99E72BD5B6;
+	Wed, 11 Jun 2025 14:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YxpZXFvc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C2ErQNxJ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DINZXAat"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F6D230BFC;
-	Wed, 11 Jun 2025 14:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DABD2690F4;
+	Wed, 11 Jun 2025 14:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749652762; cv=none; b=IXgqG2jMfNnn8O4iNPg+Pna+LdUiV/4xgbMliEk3ogxb3DZpIwT5fXkjjG3JbukhEa7quKTH1OBJVqWbyuGqv5Iw6iyg8FBjvUCkzE03qd7X16sqID4wbYoCyFp41eEYKEHndiVDUfloKGxd864S5sBB3IT4sa23xfSLEFzI9Og=
+	t=1749652784; cv=none; b=HcfCmXh7m2f80j9aMfaPq0SJ/uguQ5nbz8aFBgQLeSCU5qClvFHQfwkVX71cXncV3DFNfUTMLDQvLGckBpMeNUIBefkkh/OrThcivCuUcQEDy9yy6p1WQhlsLw5lBxoZoTdIIiF8NTfXtDIoVh0oP/DvSn5o7RJZmYycjoK+wiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749652762; c=relaxed/simple;
-	bh=NT4yhlGXocscf1t4C1zlD9/UZuoRU9iB1+/1BodA9e8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=JgONqmCgSrtJw2R+bvEtpNGlOLFQEJ49N7K5UJJf48lIHwSBK7H//i71IRej95L4/nQXgIOm6B48sZB61Df0Ac6Kzun00WipuAXtZm7s5yVCgXrU8ffYQu7GZB6a4fv5lF1S22e1Lxx0A2RHzYGzdvorIcsyW1GZejZF5UCNk6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YxpZXFvc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C2ErQNxJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Jun 2025 14:39:16 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749652757;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mj4oYGVkdG1UcUnYYrQDLR7MSud5DamCI5zqztVORf4=;
-	b=YxpZXFvcLCZ0inU/DIOiYSpxWKqwmGabZh2VWIeghbdUd+8ibCw/jhXZwTirzU2B2xlHDv
-	ckXnli5tm8qKAP+qq019Nlbq55B8vNV++tNJlp7ZvFbAQNXCWp3cUGfjTtcb1ZmN9scv4A
-	Y5OXOaRlQFyp4GbrNgaU6LS10SKfEqX5LarYzhPe3cuXD+9N9N51iuZrhDtf5ZKyFPE4Dm
-	Sc5DfhCefY/84uNWZc2XaeLI/LFBemtWmRGJWpCr8eMWH45SoEO4g5+p6GFrLUNSqrL08o
-	CoK/EnO2nmTeR073b6c+/QL3PSDIWADB5POXHU/IJKIUCw/ls5yNURHh5Zq61w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749652757;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mj4oYGVkdG1UcUnYYrQDLR7MSud5DamCI5zqztVORf4=;
-	b=C2ErQNxJ38xU4NEcqL7ts5ylv+NG8Kduyygpodx/FwYrwuhYuMTjcl+z6JCOdbjZKXxcuk
-	BapDj9C3LW0Q0OAg==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/urgent] futex: Allow to resize the private local hash
-Cc: "Lai, Yi" <yi1.lai@linux.intel.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250602110027.wfqbHgzb@linutronix.de>
-References: <20250602110027.wfqbHgzb@linutronix.de>
+	s=arc-20240116; t=1749652784; c=relaxed/simple;
+	bh=aqypGgqD5Z1GVJzaOtiUWHGS5FYKgTtrDXNfRtBkNVI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kdKJXPYMaLL3PQ7OQ329m9CHruzzhAhpNckr7qfh9oDIKVV+UcPosCUHqvAfn98lESJMltfo42CgxaIlnyNOBxHiYBbNhv5gA7Np7Y98hDlPtrITwEdlJUPmt0URhfRIkXic+nft8M+z/zIMDMlZ+Rv7A35IciBSJaRiC3xI9L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DINZXAat; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BEdFdP010522;
+	Wed, 11 Jun 2025 14:39:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=+MbQXWPeLML3LfbjNcfAYDmrMVvqa
+	WCRa0dvaIisA3M=; b=DINZXAatO86U3hlxEdSrT/AP4kfGqwbv8Z1mx96Q+xSky
+	NUFxqnlhNeU/6oe8r5ac/21i04SUm9QKIYkjgWHF1Ob48GTI0oHECPLftLsLuNcl
+	9fAwju5rvZdy2//fWU4bwrB0yPywCSMnDvW7rYw4oEZePRXc0VKKq1BV2QE8oKW4
+	AVppmjRnHRYTAX7yCu6uGD7KXIbsfKBTYxjIpmEdjyNtKuCD6eT5sYTNi3Db4U4T
+	txhqfFGBAV80bIWiWiqLuIAXz6oNkLUqztPW2SN+IQrBsH3/B6rbzTDUZX76gHII
+	hxEk4eCthKZkHEH0L1nxqtkQfZlT6Rdi7dH+uo4Mw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4752xjxyhj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Jun 2025 14:39:37 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55BE1llZ021378;
+	Wed, 11 Jun 2025 14:39:36 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 474bvb0crr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Jun 2025 14:39:36 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55BEda1m013641;
+	Wed, 11 Jun 2025 14:39:36 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 474bvb0cr1-1;
+	Wed, 11 Jun 2025 14:39:35 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: mst@redhat.com, jasowang@redhat.com, michael.christie@oracle.com,
+        pbonzini@redhat.com, stefanha@redhat.com, eperezma@redhat.com,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, darren.kenny@oracle.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] vhost-scsi: Fix typos and formatting in comments and logs
+Date: Wed, 11 Jun 2025 07:39:21 -0700
+Message-ID: <20250611143932.2443796-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174965275618.406.11364856155202390038.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506110122
+X-Authority-Analysis: v=2.4 cv=K4AiHzWI c=1 sm=1 tr=0 ts=68499529 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=C3Wo5I0qEXIME_MCgsYA:9 cc=ntf awl=host:13206
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEyMyBTYWx0ZWRfX8QdIum7iYPdu YYxfQnC0Ddc5lXR1VFfIjnKFWFWa6IlT8vxweUYw9JAwjOqMVZXmRCoItNowjz7golvsFMwacEs 2f3DwTe2Pz42rKzoo3s6IYxD77lO/U+Vg5M3goHA+7ATb6tctCq8Ke9GpzVG8ZD94TeQhT1QcKF
+ APa9uwP+i2SEyr+orNNVQMJoSyd54OSmt0qkvqoCxV8aNCA0o9CyPKCw3scIH77mOreRUG9EheD NQ6YDfwsLqzdf9XeJM7nji2DFqDKmuguQlu8Qy6e2mIC2GVbpTVhWHEKEM6MpHaHiBt3ZEfiva0 0qPI42IKTcjse3iL5qIOd9D+YRIsXaWgX4KSLP5mNxdax8kGH+zZSBa7VrLIosBzwskfhmVo2PK
+ 3w4VLbWeCdIo8eTIYbeyUluhh33fQuc+DCIM7Ia+a2UR62vRK028V7gbCKWOX9/buTY2fyNU
+X-Proofpoint-ORIG-GUID: 72saJQB-Odq-BQtwRVcSZu6Kv3VxDEVK
+X-Proofpoint-GUID: 72saJQB-Odq-BQtwRVcSZu6Kv3VxDEVK
 
-The following commit has been merged into the locking/urgent branch of tip:
+This patch corrects several minor typos and formatting issues.
+Changes include:
 
-Commit-ID:     703b5f31aee5bda47868c09a3522a78823c1bb77
-Gitweb:        https://git.kernel.org/tip/703b5f31aee5bda47868c09a3522a78823c1bb77
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Mon, 02 Jun 2025 13:00:27 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 11 Jun 2025 16:26:44 +02:00
+Fixing misspellings like in comments
+- "explict" -> "explicit"
+- "infight" -> "inflight",
+- "with generate" -> "will generate"
 
-futex: Allow to resize the private local hash
+formatting in logs
+- Correcting log formatting specifier from "%dd" to "%d"
+- Adding a missing space in the sysfs emit string to prevent
+  misinterpreted output like "X86_64on ". changing to "X86_64 on "
+- Cleaning up stray semicolons in struct definition endings
 
-Once the global hash is requested there is no way back to switch back to
-the per-task private hash. This is checked at the begin of the function.
+These changes improve code readability and consistency.
+no functionality changes.
 
-It is possible that two threads simultaneously request the global hash
-and both pass the initial check and block later on the
-mm::futex_hash_lock. In this case the first thread performs the switch
-to the global hash. The second thread will also attempt to switch to the
-global hash and while doing so, accessing the nonexisting slot 1 of the
-struct futex_private_hash.
-This has been reported by Yi Lai.
-
-Verify under mm_struct::futex_phash that the global hash is not in use.
-
-Fixes: bd54df5ea7cad ("futex: Allow to resize the private local hash")
-Closes: https://lore.kernel.org/all/aDwDw9Aygqo6oAx+@ly-workstation/
-Reported-by: "Lai, Yi" <yi1.lai@linux.intel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250602110027.wfqbHgzb@linutronix.de
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
 ---
- kernel/futex/core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/vhost/scsi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index b652d2f..33b3643 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -1629,6 +1629,16 @@ again:
- 		mm->futex_phash_new = NULL;
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index c12a0d4e6386..508ff3b29f39 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -152,7 +152,7 @@ struct vhost_scsi_nexus {
+ struct vhost_scsi_tpg {
+ 	/* Vhost port target portal group tag for TCM */
+ 	u16 tport_tpgt;
+-	/* Used to track number of TPG Port/Lun Links wrt to explict I_T Nexus shutdown */
++	/* Used to track number of TPG Port/Lun Links wrt to explicit I_T Nexus shutdown */
+ 	int tv_tpg_port_count;
+ 	/* Used for vhost_scsi device reference to tpg_nexus, protected by tv_tpg_mutex */
+ 	int tv_tpg_vhost_count;
+@@ -311,12 +311,12 @@ static void vhost_scsi_init_inflight(struct vhost_scsi *vs,
  
- 		if (fph) {
-+			if (cur && !cur->hash_mask) {
-+				/*
-+				 * If two threads simultaneously request the global
-+				 * hash then the first one performs the switch,
-+				 * the second one returns here.
-+				 */
-+				free = fph;
-+				mm->futex_phash_new = new;
-+				return -EBUSY;
-+			}
- 			if (cur && !new) {
- 				/*
- 				 * If we have an existing hash, but do not yet have
+ 		mutex_lock(&vq->mutex);
+ 
+-		/* store old infight */
++		/* store old inflight */
+ 		idx = vs->vqs[i].inflight_idx;
+ 		if (old_inflight)
+ 			old_inflight[i] = &vs->vqs[i].inflights[idx];
+ 
+-		/* setup new infight */
++		/* setup new inflight */
+ 		vs->vqs[i].inflight_idx = idx ^ 1;
+ 		new_inflight = &vs->vqs[i].inflights[idx ^ 1];
+ 		kref_init(&new_inflight->kref);
+@@ -1249,7 +1249,7 @@ vhost_scsi_setup_resp_iovs(struct vhost_scsi_cmd *cmd, struct iovec *in_iovs,
+ 	if (!in_iovs_cnt)
+ 		return 0;
+ 	/*
+-	 * Initiator's normally just put the virtio_scsi_cmd_resp in the first
++	 * Initiators normally just put the virtio_scsi_cmd_resp in the first
+ 	 * iov, but just in case they wedged in some data with it we check for
+ 	 * greater than or equal to the response struct.
+ 	 */
+@@ -1457,7 +1457,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 		cmd = vhost_scsi_get_cmd(vq, tag);
+ 		if (IS_ERR(cmd)) {
+ 			ret = PTR_ERR(cmd);
+-			vq_err(vq, "vhost_scsi_get_tag failed %dd\n", ret);
++			vq_err(vq, "vhost_scsi_get_tag failed %d\n", ret);
+ 			goto err;
+ 		}
+ 		cmd->tvc_vq = vq;
+@@ -2609,7 +2609,7 @@ static int vhost_scsi_make_nexus(struct vhost_scsi_tpg *tpg,
+ 		return -ENOMEM;
+ 	}
+ 	/*
+-	 * Since we are running in 'demo mode' this call with generate a
++	 * Since we are running in 'demo mode' this call will generate a
+ 	 * struct se_node_acl for the vhost_scsi struct se_portal_group with
+ 	 * the SCSI Initiator port name of the passed configfs group 'name'.
+ 	 */
+@@ -2915,7 +2915,7 @@ static ssize_t
+ vhost_scsi_wwn_version_show(struct config_item *item, char *page)
+ {
+ 	return sysfs_emit(page, "TCM_VHOST fabric module %s on %s/%s"
+-		"on "UTS_RELEASE"\n", VHOST_SCSI_VERSION, utsname()->sysname,
++		" on "UTS_RELEASE"\n", VHOST_SCSI_VERSION, utsname()->sysname,
+ 		utsname()->machine);
+ }
+ 
+@@ -2983,13 +2983,13 @@ static int __init vhost_scsi_init(void)
+ 	vhost_scsi_deregister();
+ out:
+ 	return ret;
+-};
++}
+ 
+ static void vhost_scsi_exit(void)
+ {
+ 	target_unregister_template(&vhost_scsi_ops);
+ 	vhost_scsi_deregister();
+-};
++}
+ 
+ MODULE_DESCRIPTION("VHOST_SCSI series fabric driver");
+ MODULE_ALIAS("tcm_vhost");
+-- 
+2.47.1
+
 
