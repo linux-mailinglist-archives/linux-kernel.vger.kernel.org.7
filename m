@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-681299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858E4AD50EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:06:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58D4AD513B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ABE77AD847
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:04:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB784189B79A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE2126A081;
-	Wed, 11 Jun 2025 10:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F5C27603B;
+	Wed, 11 Jun 2025 10:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Jxt6xsAg";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Jxt6xsAg"
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCD3Jq5s"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455626988E;
-	Wed, 11 Jun 2025 10:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D07277815;
+	Wed, 11 Jun 2025 10:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749636220; cv=none; b=ZM+bBLFI/kXfanKCnFnv99Cfbm9862Fn8gGk36PU3TinWNorfISRvq/MRq47X7FGuvOd4s6q+gw3e6Bcvf1hDpPiA2Ga66DS47AGaspDsRcftAymyMrqzKdLS2OqyDsczMI6PP9a5sMkeMd9+SJTuriwiYjw2DhdCnBpMOfekdk=
+	t=1749636267; cv=none; b=ewSC6XX+nQMOEoWxD6dzWb9wIFU1MGIGnDBxBYQe7s1DkUVsrEpbtm5kXWj9jXGX4zFkcuo8OcMZH80EVlJfNXZIE3ft5/EcsVtWW9h2j4lwYDZV+0BM98wyYqr/s/m+ESLufdG1Y/ljPgc9qpjBx2Ibme86p4Tph13jDjrvV2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749636220; c=relaxed/simple;
-	bh=ZELWje44IQXg+aqRqhMjZlzmAPP8bdbQVZYOFJq3M9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPwi2aCIyJBP1/jIqYMSsWp8Nr9duv8gpVAemQ20wbc4cbKB/W0p2uqFUkaZL5QygGnPBAZiThvwXbnoBQoeAJSEtcrNJH3AkQCqNr7TC/7I86hGxHxIXbaonHK8R4aimiR3rAZt5kNkhSL1n7iO8/0W/1BQqDoJocRH8dKh3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Jxt6xsAg; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Jxt6xsAg; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1749635665; bh=ZELWje44IQXg+aqRqhMjZlzmAPP8bdbQVZYOFJq3M9g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jxt6xsAgMAOUb4jl76i3Cw/ob+3g27CDrEJ11UaNWweARmh3pASKr9vGVkS92IFac
-	 YPXA6hqSgGV5dnyifiEPzFxSuWmHwqtnnBorcndP4VXu30erdJBfP8YrJ46WtqkT2C
-	 ZB5SXynEGjYF90uyMsBkLTP7/K9tKTjfvpNQc65M4ZFGcmOJyetoZJbQyfgMTcccnC
-	 ovv/hF2800vFjHZenrXZ9Ib3Cs3634CyeipOu5H15sVoNWHX/j8qicu106Z5ZeHvjj
-	 l5CXC3vkbBXv/RUgPw6tOFDOWz5MZGDnaCREKgxUUUqRvZgLkdcVlwdN1MIjOJGq3p
-	 fGRPXfFbZHprg==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id 964313C153A;
-	Wed, 11 Jun 2025 09:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1749635665; bh=ZELWje44IQXg+aqRqhMjZlzmAPP8bdbQVZYOFJq3M9g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jxt6xsAgMAOUb4jl76i3Cw/ob+3g27CDrEJ11UaNWweARmh3pASKr9vGVkS92IFac
-	 YPXA6hqSgGV5dnyifiEPzFxSuWmHwqtnnBorcndP4VXu30erdJBfP8YrJ46WtqkT2C
-	 ZB5SXynEGjYF90uyMsBkLTP7/K9tKTjfvpNQc65M4ZFGcmOJyetoZJbQyfgMTcccnC
-	 ovv/hF2800vFjHZenrXZ9Ib3Cs3634CyeipOu5H15sVoNWHX/j8qicu106Z5ZeHvjj
-	 l5CXC3vkbBXv/RUgPw6tOFDOWz5MZGDnaCREKgxUUUqRvZgLkdcVlwdN1MIjOJGq3p
-	 fGRPXfFbZHprg==
-Message-ID: <2ae6aa29-ea42-4fdf-a0ae-8cd088c88786@mleia.com>
-Date: Wed, 11 Jun 2025 12:54:21 +0300
+	s=arc-20240116; t=1749636267; c=relaxed/simple;
+	bh=vQriXNo3SHn5ib9zXUnEsU0dOrTflBIOlZP+7FPjGEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MwHTg2yatASMjUbuuvnDL3zzeJGj8X4FLwcHvGpWxDIMtrIIOrOBPSiZrjxkKQq7B4l5vXc/o6XISMUsV57zo+Lu8qwljmGvKyOp1j+/xCWTQwbBMrehqzQ9EAMhzqD5c7k82uAzNYk2MyizQ7w8NSMHBhB/MH3r9ySkgL2itgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCD3Jq5s; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70e302191a3so48671897b3.2;
+        Wed, 11 Jun 2025 03:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749636264; x=1750241064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BYmk3ao9IlIY1c5axmE1MDDFLCqOCI5mOPbMZ778bEw=;
+        b=HCD3Jq5sYp5uomA3Bynly0hPJUsnMdJOMOWFUYn9LpB/n0IRiUaHTRnafV+ervRZ+2
+         I0RB9NSNKHGOti4lnZD31Dz/DHbJp9s9wiAnLYH1K+bXLeV3NmZYDQKozIzOoTi646sC
+         bN8jLpKwulD9CFhGX3b69q5ox5DzA77avaQabGxhwrktZJcqK1InLRzPEG6mJ0RUbFft
+         xGVue1FB84JRaS/0lFgTNpx33LZZ6dCrYjg39zBAYxwM/BpPcpAfmpeY8LJFzRNq4j9L
+         jfqBwcxnjTUfipGcUl6gmS0Aoe3kuMC7RbBegy3TDXW+2jnXHGBA4bNmRmtxE0lgA82d
+         qFMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749636264; x=1750241064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BYmk3ao9IlIY1c5axmE1MDDFLCqOCI5mOPbMZ778bEw=;
+        b=j/n5oyttlfUXnwUO8MN29iKv30NIxocCCPovwZePmBEOZwpuhhe7R0hi0OVUkIMa6s
+         GsdB527joSFA1esfsMZ+aw1aIpvkXgBMQ+YxMuP1bMBZPcZZEMLKc32X7vo9RWcPBRrj
+         9t39VP/lVBxapGslNQzMZAHnaSO2k76qFvpi7pZazKcd0+XosKFDBh/ccOba0SzaEtqK
+         dDr+nkweu5cdOBNe4zBOc4UQ96Bm098yjbRu0eqltWego3/bIpmFvwGERT/AL+Y/xkWx
+         TGwpt1DLgORSHBH9pusLhObwOj4Nz0v4bPOJGs+u0qanzpagNtnxOPLyDslX6G2iSZp5
+         OAXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNEnoVxdxJEfApkeLIdeCmpKs/PiAKlNgCKP+FYnVvRKX2paHPR448aPELW/L6717f70spUL6nOPKkSyI=@vger.kernel.org, AJvYcCXWCL2V/KoZnGLmrvE9W2aS+lAGl5p0zyq/Oa14qlKAJsteMj11HsF+ZhGoagC72XmI/vV89JyRlHsZdAEFL7bXng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycAsPKJBel3HzyCt8jUFLFOeqWqaA97uKtoVZchXK2U9CzucZT
+	GT886jJbE8r0LyrxdEDJUhmTeAQqZytRWiVzDX1IlamXJlxnKzKKChH0
+X-Gm-Gg: ASbGncsDjgmx9kvWaNAKdHT2SMQmvKFv7HFatoRmZbXhYQzKqiCHzgf+8RWEWpCe0pm
+	qNfKEHjHE6WTKio8JNqP6X+XMWyKmTpo379D9Vevf0YmADYKfyuuxDMps2Zo/wT/26kZYK6x/3P
+	1xYegz7YDISr1l8/kmIUYkdmGeUEP007hLPe7unXk7+nHmEwAdGeVZLvlPWvGQvuQbxOOVgG0iI
+	5CZov+JSsawxbUX4uK/5pHsY3Jc7za1HUYvGF3agb4OKlT7uSfXIcQQICVQkDaz0XjnhBJbmMaC
+	QlVF621q1aHRCuOtJtDHn294/ro+lhtH8kEvtl/w3hHZHR5Q9mA/0x3yPB9P+Wgc5PcQmsc=
+X-Google-Smtp-Source: AGHT+IG9ULc/QUke+pkGNG1SHYEwPl56L3q3ynnXmmvvYZEbBCDg6AMn8eZjEW88pM3xtW4L7aJQ5A==
+X-Received: by 2002:a05:690c:6f0d:b0:6f9:7a3c:1fe with SMTP id 00721157ae682-71140ad3b66mr36409907b3.23.1749636264320;
+        Wed, 11 Jun 2025 03:04:24 -0700 (PDT)
+Received: from Gentoo.localdomain ([37.19.198.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-710f9a1255bsm19356177b3.103.2025.06.11.03.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 03:04:23 -0700 (PDT)
+From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] tools:perf: Remove excess variable declarations
+Date: Wed, 11 Jun 2025 15:29:03 +0530
+Message-ID: <20250611100256.31089-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/17] pinctrl: Constify static 'pinctrl_desc'
-Content-Language: ru-RU
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Lars Persson <lars.persson@axis.com>, Damien Le Moal <dlemoal@kernel.org>,
- Michal Simek <michal.simek@amd.com>, Emil Renner Berthing <kernel@esmil.dk>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Hal Feng <hal.feng@starfivetech.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@axis.com,
- linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250611-pinctrl-const-desc-v2-0-b11c1d650384@linaro.org>
- <20250611-pinctrl-const-desc-v2-16-b11c1d650384@linaro.org>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20250611-pinctrl-const-desc-v2-16-b11c1d650384@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20250611_095425_660571_DE75DF41 
-X-CRM114-Status: UNSURE (   7.40  )
-X-CRM114-Notice: Please train this message. 
+Content-Transfer-Encoding: 8bit
 
-On 6/11/25 09:13, Krzysztof Kozlowski wrote:
-> The local static 'struct pinctrl_desc' is not modified, so can be made
-> const for code safety.
-> 
-> Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   drivers/pinctrl/berlin/berlin.c                    | 2 +-
->   drivers/pinctrl/cirrus/pinctrl-cs42l43.c           | 2 +-
->   drivers/pinctrl/mediatek/pinctrl-airoha.c          | 2 +-
->   drivers/pinctrl/pinctrl-artpec6.c                  | 2 +-
->   drivers/pinctrl/pinctrl-bm1880.c                   | 2 +-
->   drivers/pinctrl/pinctrl-k210.c                     | 2 +-
->   drivers/pinctrl/pinctrl-lpc18xx.c                  | 2 +-
+I thought array declaration might be done in the same line as assigning the value
+to it.
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+Hence, getting rid of extra steps of reiterating the array name.
 
->   drivers/pinctrl/pinctrl-mlxbf3.c                   | 2 +-
->   drivers/pinctrl/pinctrl-tb10x.c                    | 2 +-
->   drivers/pinctrl/pinctrl-zynq.c                     | 2 +-
->   drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 2 +-
->   11 files changed, 11 insertions(+), 11 deletions(-)
-> 
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ tools/perf/check-headers.sh | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index e9fab20e9330..d0029a109b6e 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -4,8 +4,7 @@
+ YELLOW='\033[0;33m'
+ NC='\033[0m' # No Color
+
+-declare -a FILES
+-FILES=(
++declare -a FILES=(
+   "include/uapi/linux/const.h"
+   "include/uapi/drm/drm.h"
+   "include/uapi/drm/i915_drm.h"
+@@ -73,8 +72,7 @@ FILES=(
+   "scripts/syscall.tbl"
+ )
+
+-declare -a SYNC_CHECK_FILES
+-SYNC_CHECK_FILES=(
++declare -a SYNC_CHECK_FILES=(
+   "arch/x86/include/asm/inat.h"
+   "arch/x86/include/asm/insn.h"
+   "arch/x86/lib/inat.c"
+@@ -86,8 +84,7 @@ SYNC_CHECK_FILES=(
+ # tables that then gets included in .c files for things like id->string syscall
+ # tables (and the reverse lookup as well: string -> id)
+
+-declare -a BEAUTY_FILES
+-BEAUTY_FILES=(
++declare -a BEAUTY_FILES=(
+   "arch/x86/include/asm/irq_vectors.h"
+   "arch/x86/include/uapi/asm/prctl.h"
+   "include/linux/socket.h"
 --
-Best wishes,
-Vladimir
+2.49.0
+
 
