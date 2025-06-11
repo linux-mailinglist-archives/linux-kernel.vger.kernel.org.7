@@ -1,377 +1,121 @@
-Return-Path: <linux-kernel+bounces-682302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366A3AD5E26
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:30:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EEFAD5E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026181BC0293
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:31:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70FE43A8C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610B020FA86;
-	Wed, 11 Jun 2025 18:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF69F225A59;
+	Wed, 11 Jun 2025 18:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xzMDeO2/"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l8Dt9Rca"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F22A1BF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0C1E8329
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749666652; cv=none; b=hEcGQySwVjleDj1jJBn0YFN4SCD3PkUJd5ic3dQ9Ek/Q5q9vLfWOi4401bbhVCxSZ/ixcV0O4WcOyBqA+bqa1gxKL9szwRma99+OvpU2rbJWvavEF/6AdBMLe1HNuuzjJ1y1qSJGWDNhnB2AI2d4DvQbX2j1mL7I/j0QzYqx5k8=
+	t=1749666683; cv=none; b=hImw3SkiziYvopGo/aTSYE/CDbNHEJkpUqqriKU+8l5N89QX50XcW/Y4gYF/z95Y2VCLdDdFnH1FSkZF1uxDro2rJva2A/9nRFe93WqSbrBFEiyu+QuGMwgtoQHscSVCO69sQrlc9+/Iy0W9NK8AL8MxSeFn7x36mLNMZ/rpakw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749666652; c=relaxed/simple;
-	bh=zkvhFn1dvwpij2C+2+79I7Odk3udbvUK4Cuuv6jZ/sM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pft1TggoND9ScICSvPWKl0Ahe1yxW2nGt2kp27ICBdWbpr2bP7MXlS6lAiXFRFoIYVIYqv3CQKp8qShA66zdPo3/6e2jAn9TuNYYJZ6GkWVtAHAGurVR6ws4OM5ZtKYf9pBSWDA7QCQ0nuWd+sojzPD/H2IE9XBw3NyMSl2YsuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xzMDeO2/; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so28315ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749666650; x=1750271450; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LUlFrf885uk7hWniA9ruK8KO9M4PebPn0BtPXR5B7Mc=;
-        b=xzMDeO2/D4dTBsAcah5vgkV5oyyA519exYMspKhDMC5MMz9Mx+J6TvXYWYEXk5saok
-         BDjfG61hiqLmNscLJny2igziXcpwgNDNDSJWD+7PnPIouYCmTf7EYLRmURkCbouS/u4s
-         lFkFJLoHKkMAFly3Hzd11xK6K3tEoSUND68UsLa2eKBrhDGhGhae62y2zXjYAQQLVZWa
-         Tsh7bvvRMpV4bAfOOk0dgQnWphN10+/ve2tOp0z0+V6NYaBe1Ca7DL+KHMLXYWCRzTFN
-         zZuYYpZUrL4LOl0TTwVVQBZaPWPT9EuQkQmjai8naJssWTJEngQ9Vl7uj0IOZGnE4zJI
-         sviw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749666650; x=1750271450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LUlFrf885uk7hWniA9ruK8KO9M4PebPn0BtPXR5B7Mc=;
-        b=V/Qd1k6eZntVFsQ520EMNCoM+7Hy6hSDasTxfeSmc8VmyxRKEWA+pl8NO8vID/7s0P
-         lR9J2zx81xp4L/4qvB3a1QVdsJkpTaw5OOOUiZuCJZq9fLgprnLARzfbtgDMQjDII/ua
-         IgkWulD5yFmL/Dqw+/WCZAebmedrDIKrF/QrpXtKc0nRxd0YxOel+VbMtqkre2DZv4Rj
-         OMUuDzHkT8Xr3cJtvSFFKuXe8wZIu9o8i9bYdOGEbn3PTPg18j0bOM4RnXhkhCAywwu6
-         xDZGgpR4FHcMv9Ij8rD/YD1aBRS/0cCiRWfjAh4I5jyO1sqQoQZJ/bK8Svr0RAn2hbNy
-         fQgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSVKZ7xxzRRvZapy6ylxUAmmYErKYCXRYn6mjZRRSmNEErY1DPSE0DEvxsWgHL1BG6XaArAAtXKKJipOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxivv0yxNgIL4kjNbjTiJgxhc1lTdVAYBR3CugwPn8s1GwaEzhD
-	e2exrTdFj6gTjj9+GehbpJPxlS7xrld7XPQZPZ1lkLMF5fVEuJ0QIF3h7h3LXP8QMcbJGnKZq1V
-	Zf+MsNijsNWVT44q0xr3Yi7WuYkf8pkGtNeIJ/MJa
-X-Gm-Gg: ASbGncuT/IpDj0wVdrRRNQPPwOQ068lVt/NuiZwf2IR5DrWsldOdaK/+O+4OcKKbF9v
-	wXTDEOmKY5xIih9w4JsfSgouPVf+9LwkziM7m7cFuGuWsRTN9kjIPDCm4Xtjeg4wnesWZTMaYq+
-	JIKrDo+nS9ZJA3YfPvjhURwsrrvapvex3mXjcs9l9dfYrGUB/qXUDa6wWfK1iw5OeUdekYg/zp
-X-Google-Smtp-Source: AGHT+IH/+QRsmw4yQlHvwXqxi/8a6kcY01H0TF3efMaj9RHNRIXHnvBFBU8jO4rnfXVJeDoBihVcBun5bRzKCqyEcDQ=
-X-Received: by 2002:a05:6e02:2292:b0:3da:7c33:509c with SMTP id
- e9e14a558f8ab-3ddfb312ed9mr130645ab.11.1749666649497; Wed, 11 Jun 2025
- 11:30:49 -0700 (PDT)
+	s=arc-20240116; t=1749666683; c=relaxed/simple;
+	bh=S60TJOieNNhcl84vGQWZwP64ryX/9wlMlWcVTejl6SY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OeOINVmDyHBhBHTz3N+hhwjQWj4RtqJRnWmaBkNFCFtALifRdqBVan2MIQbd+rXyIe1PviXSaRD9jF+c4Rf5z5Jg0FC8Loo75EqwaSuDvONh5TVSfYrXvVD7ouVkDv5BwEq5vTylSTuJ6+eFKEVM3VyHuzQ9m8MxCLZMFBt21R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l8Dt9Rca; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749666682; x=1781202682;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=S60TJOieNNhcl84vGQWZwP64ryX/9wlMlWcVTejl6SY=;
+  b=l8Dt9Rcagam0g7/VPx2b6DumJ8f3IOpjIeFeKko35b9YHxyNEH0yTAWU
+   EZofkyr58Lbdy6zvFDeSYviMaqZAPfyLqhlOxZ6pl4jyRh/Qe2tvM65Go
+   E9SjuYWuPeuUxX8bufasKTURrGgARf3GNKIxadszGPT6T1SpEY5HhYTYA
+   WCFN0JDmIyJfhVlet/IDsnsYTITZkNRxxRnvOC2LLoOZAztzhHNJwKP6o
+   m6pf+X2i4N3OPIcSK+6+X25jsoklFPrRshx/fRPD7QSWnN6/A7ch7TePq
+   jSg9T+ea1cK5BPL/3eTHxazFio4GlscNgz/1q75j+5u8F4quXN3ZHBVCR
+   Q==;
+X-CSE-ConnectionGUID: 6X4BraoKS22RKk/J2HMnKg==
+X-CSE-MsgGUID: O88sYufVQzedKrN9yBa+mA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51921300"
+X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
+   d="scan'208";a="51921300"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 11:31:21 -0700
+X-CSE-ConnectionGUID: 5Bao4j3uSeSwB1B56LcTbg==
+X-CSE-MsgGUID: tjZJ9gGjR0CsbxoO6fTZzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
+   d="scan'208";a="147269192"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 11 Jun 2025 11:31:18 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uPQEG-000AmG-2G;
+	Wed, 11 Jun 2025 18:31:16 +0000
+Date: Thu, 12 Jun 2025 02:31:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Subject: arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): Unevaluated
+ properties are not allowed ('compatible' was unexpected)
+Message-ID: <202506120218.E9g2Wz7A-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513231813.13846-1-thomas.falcon@intel.com>
- <20250513231813.13846-2-thomas.falcon@intel.com> <a327dc2e5837a743a08403b5ad58dbe5e8c4f926.camel@intel.com>
- <aEiTrRNyeqFsYwR6@google.com> <94612a9d92f4d3820e8c293b0e184ab11971bf36.camel@intel.com>
-In-Reply-To: <94612a9d92f4d3820e8c293b0e184ab11971bf36.camel@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 11 Jun 2025 11:30:38 -0700
-X-Gm-Features: AX0GCFtxRWButhz0X3DrX8soJFOSdnNuhj7TZWYTYYJcovCHYvEqaVc2ZT0qW24
-Message-ID: <CAP-5=fU9fz8-91eRH72r9GQYXOOoSQ9DZB9sJPZu5ZZOeu4QnQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v3] perf top: populate PMU capabilities data in perf_env
-To: "Falcon, Thomas" <thomas.falcon@intel.com>
-Cc: "namhyung@kernel.org" <namhyung@kernel.org>, 
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "acme@kernel.org" <acme@kernel.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, 
-	"Hunter, Adrian" <adrian.hunter@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"mark.rutland@arm.com" <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Jun 11, 2025 at 11:18=E2=80=AFAM Falcon, Thomas <thomas.falcon@inte=
-l.com> wrote:
->
-> On Tue, 2025-06-10 at 13:21 -0700, Namhyung Kim wrote:
-> > Hello,
-> >
-> > On Mon, Jun 09, 2025 at 04:21:39PM +0000, Falcon, Thomas wrote:
-> > > Ping?
-> >
-> > Sorry for the delay, I'll process the series as it's reviewed by Ian.
-> > Ian, it may clash with your perf_env cleanup though.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   aef17cb3d3c43854002956f24c24ec8e1a0e3546
+commit: f879ee2ce0d46327e90f61c5dc85fb13a740de10 dt-bindings: Reference opp-v1 schema in CPU schemas
+date:   7 weeks ago
+config: mips-randconfig-051-20250612 (https://download.01.org/0day-ci/archive/20250612/202506120218.E9g2Wz7A-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 8.5.0
+dtschema version: 2025.3.dev28+g49451a5
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250612/202506120218.E9g2Wz7A-lkp@intel.com/reproduce)
 
-Ack. Thanks Namhyung, I figured that would happen, Kan pointed out
-similar hence wanting the perf_env cleanup, I'll resolve the
-differences as and when.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506120218.E9g2Wz7A-lkp@intel.com/
 
-Thanks,
-Ian
+dtcheck warnings: (new ones prefixed by >>)
+   arch/mips/boot/dts/mti/sead3.dtb: cpus: cpu@0: 'cache-level' is a required property
+   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: cpus: '#address-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: cpus: '#size-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): compatible: ['mti,mips14KEc', 'mti,mips14Kc'] is too long
+   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): 'reg' is a required property
+   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
+>> arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): Unevaluated properties are not allowed ('compatible' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: interrupt-controller (mti,cpu-interrupt-controller): '#address-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/interrupt-controller/mti,cpu-interrupt-controller.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: /system-controller@1f000000: failed to match any schema with compatible: ['mti,sead3-fpga', 'syscon', 'simple-mfd']
+   arch/mips/boot/dts/mti/sead3.dtb: /system-controller@1f000000/poweroff: failed to match any schema with compatible: ['restart-poweroff']
+   arch/mips/boot/dts/mti/sead3.dtb: /system-controller@1f000200: failed to match any schema with compatible: ['mti,sead3-cpld', 'syscon', 'simple-mfd']
+   arch/mips/boot/dts/mti/sead3.dtb: system-controller@1f000200 (mti,sead3-cpld): 'led@10.0', 'led@10.1', 'led@10.2', 'led@10.3', 'led@10.4', 'led@10.5', 'led@10.6', 'led@10.7', 'led@18.0', 'led@18.1', 'led@18.2', 'led@18.3', 'led@18.4', 'led@18.5', 'led@18.6', 'led@18.7' do not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z0-9][a-zA-Z0-9#,+\\-._]{0,63}$', '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+   arch/mips/boot/dts/mti/sead3.dtb: led@10.0 (register-bit-led): $nodename:0: 'led@10.0' does not match '^led@[0-9a-f]+,[0-9a-f]{1,2}$'
+   	from schema $id: http://devicetree.org/schemas/leds/register-bit-led.yaml#
 
-> > Also note that please don't mix patch versions.  The 1/2 is v1 and 2/2
-> > v3 - it makes b4 confused.
-> >
-> > Thanks,
-> > Namhyung
->
-> Thanks!
->
-> Tom
->
-> >
-> > >
-> > > On Tue, 2025-05-13 at 18:18 -0500, Thomas Falcon wrote:
-> > > > Calling perf top with branch filters enabled on Intel CPU's
-> > > > with branch counters logging (A.K.A LBR event logging [1]) support
-> > > > results in a segfault.
-> > > >
-> > > > Thread 27 "perf" received signal SIGSEGV, Segmentation fault.
-> > > > [Switching to Thread 0x7fffafff76c0 (LWP 949003)]
-> > > > perf_env__find_br_cntr_info (env=3D0xf66dc0 <perf_env>, nr=3D0x0, w=
-idth=3D0x7fffafff62c0) at util/env.c:653
-> > > > 653                       *width =3D env->cpu_pmu_caps ? env->br_cn=
-tr_width :
-> > > > (gdb) bt
-> > > >  #0  perf_env__find_br_cntr_info (env=3D0xf66dc0 <perf_env>, nr=3D0=
-x0, width=3D0x7fffafff62c0) at util/env.c:653
-> > > >  #1  0x00000000005b1599 in symbol__account_br_cntr (branch=3D0x7fff=
-cc3db580, evsel=3D0xfea2d0, offset=3D12, br_cntr=3D8) at util/annotate.c:34=
-5
-> > > >  #2  0x00000000005b17fb in symbol__account_cycles (addr=3D5658172, =
-start=3D5658160, sym=3D0x7fffcc0ee420, cycles=3D539, evsel=3D0xfea2d0, br_c=
-ntr=3D8) at util/annotate.c:389
-> > > >  #3  0x00000000005b1976 in addr_map_symbol__account_cycles (ams=3D0=
-x7fffcd7b01d0, start=3D0x7fffcd7b02b0, cycles=3D539, evsel=3D0xfea2d0, br_c=
-ntr=3D8) at util/annotate.c:422
-> > > >  #4  0x000000000068d57f in hist__account_cycles (bs=3D0x110d288, al=
-=3D0x7fffafff6540, sample=3D0x7fffafff6760, nonany_branch_mode=3Dfalse, tot=
-al_cycles=3D0x0, evsel=3D0xfea2d0) at util/hist.c:2850
-> > > >  #5  0x0000000000446216 in hist_iter__top_callback (iter=3D0x7fffaf=
-ff6590, al=3D0x7fffafff6540, single=3Dtrue, arg=3D0x7fffffff9e00) at builti=
-n-top.c:737
-> > > >  #6  0x0000000000689787 in hist_entry_iter__add (iter=3D0x7fffafff6=
-590, al=3D0x7fffafff6540, max_stack_depth=3D127, arg=3D0x7fffffff9e00) at u=
-til/hist.c:1359
-> > > >  #7  0x0000000000446710 in perf_event__process_sample (tool=3D0x7ff=
-fffff9e00, event=3D0x110d250, evsel=3D0xfea2d0, sample=3D0x7fffafff6760, ma=
-chine=3D0x108c968) at builtin-top.c:845
-> > > >  #8  0x0000000000447735 in deliver_event (qe=3D0x7fffffffa120, qeve=
-nt=3D0x10fc200) at builtin-top.c:1211
-> > > >  #9  0x000000000064ccae in do_flush (oe=3D0x7fffffffa120, show_prog=
-ress=3Dfalse) at util/ordered-events.c:245
-> > > >  #10 0x000000000064d005 in __ordered_events__flush (oe=3D0x7fffffff=
-a120, how=3DOE_FLUSH__TOP, timestamp=3D0) at util/ordered-events.c:324
-> > > >  #11 0x000000000064d0ef in ordered_events__flush (oe=3D0x7fffffffa1=
-20, how=3DOE_FLUSH__TOP) at util/ordered-events.c:342
-> > > >  #12 0x00000000004472a9 in process_thread (arg=3D0x7fffffff9e00) at=
- builtin-top.c:1120
-> > > >  #13 0x00007ffff6e7dba8 in start_thread (arg=3D<optimized out>) at =
-pthread_create.c:448
-> > > >  #14 0x00007ffff6f01b8c in __GI___clone3 () at ../sysdeps/unix/sysv=
-/linux/x86_64/clone3.S:78
-> > > >
-> > > > The cause is that perf_env__find_br_cntr_info tries to access a
-> > > > null pointer pmu_caps in the perf_env struct. A similar issue exist=
-s
-> > > > for homogeneous core systems which use the cpu_pmu_caps structure.
-> > > >
-> > > > Fix this by populating cpu_pmu_caps and pmu_caps structures with
-> > > > values from sysfs when calling perf top with branch stack sampling
-> > > > enabled.
-> > > >
-> > > > [1], LBR event logging introduced here:
-> > > > https://lore.kernel.org/all/20231025201626.3000228-5-kan.liang@linu=
-x.intel.com/
-> > > >
-> > > > Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> > > > ---
-> > > > v3: constify struct perf_pmu *pmu in __perf_env__read_core_pmu_caps=
-()
-> > > >     use perf_pmus__find_core_pmu() instead of perf_pmus__scan_core(=
-NULL)
-> > > >
-> > > > v2: update commit message with more meaningful stack trace from
-> > > >     gdb and indicate that affected systems are limited to CPU's
-> > > >     with LBR event logging support and that both hybrid and
-> > > >     non-hybrid core systems are affected.
-> > > > ---
-> > > >  tools/perf/builtin-top.c |   8 +++
-> > > >  tools/perf/util/env.c    | 114 +++++++++++++++++++++++++++++++++++=
-++++
-> > > >  tools/perf/util/env.h    |   1 +
-> > > >  3 files changed, 123 insertions(+)
-> > > >
-> > > > diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-> > > > index f9f31391bddb..c9d679410591 100644
-> > > > --- a/tools/perf/builtin-top.c
-> > > > +++ b/tools/perf/builtin-top.c
-> > > > @@ -1729,6 +1729,14 @@ int cmd_top(int argc, const char **argv)
-> > > >   if (opts->branch_stack && callchain_param.enabled)
-> > > >           symbol_conf.show_branchflag_count =3D true;
-> > > >
-> > > > + if (opts->branch_stack) {
-> > > > +         status =3D perf_env__read_core_pmu_caps(&perf_env);
-> > > > +         if (status) {
-> > > > +                 pr_err("PMU capability data is not available\n");
-> > > > +                 goto out_delete_evlist;
-> > > > +         }
-> > > > + }
-> > > > +
-> > > >   sort__mode =3D SORT_MODE__TOP;
-> > > >   /* display thread wants entries to be collapsed in a different tr=
-ee */
-> > > >   perf_hpp_list.need_collapse =3D 1;
-> > > > diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-> > > > index 36411749e007..6735786a1d22 100644
-> > > > --- a/tools/perf/util/env.c
-> > > > +++ b/tools/perf/util/env.c
-> > > > @@ -416,6 +416,120 @@ static int perf_env__read_nr_cpus_avail(struc=
-t perf_env *env)
-> > > >   return env->nr_cpus_avail ? 0 : -ENOENT;
-> > > >  }
-> > > >
-> > > > +static int __perf_env__read_core_pmu_caps(const struct perf_pmu *p=
-mu,
-> > > > +                                   int *nr_caps, char ***caps,
-> > > > +                                   unsigned int *max_branches,
-> > > > +                                   unsigned int *br_cntr_nr,
-> > > > +                                   unsigned int *br_cntr_width)
-> > > > +{
-> > > > + struct perf_pmu_caps *pcaps =3D NULL;
-> > > > + char *ptr, **tmp;
-> > > > + int ret =3D 0;
-> > > > +
-> > > > + *nr_caps =3D 0;
-> > > > + *caps =3D NULL;
-> > > > +
-> > > > + if (!pmu->nr_caps)
-> > > > +         return 0;
-> > > > +
-> > > > + *caps =3D zalloc(sizeof(char *) * pmu->nr_caps);
-> > > > + if (!*caps)
-> > > > +         return -ENOMEM;
-> > > > +
-> > > > + tmp =3D *caps;
-> > > > + list_for_each_entry(pcaps, &pmu->caps, list) {
-> > > > +
-> > > > +         if (asprintf(&ptr, "%s=3D%s", pcaps->name, pcaps->value) =
-< 0) {
-> > > > +                 ret =3D -ENOMEM;
-> > > > +                 goto error;
-> > > > +         }
-> > > > +
-> > > > +         *tmp++ =3D ptr;
-> > > > +
-> > > > +         if (!strcmp(pcaps->name, "branches"))
-> > > > +                 *max_branches =3D atoi(pcaps->value);
-> > > > +
-> > > > +         if (!strcmp(pcaps->name, "branch_counter_nr"))
-> > > > +                 *br_cntr_nr =3D atoi(pcaps->value);
-> > > > +
-> > > > +         if (!strcmp(pcaps->name, "branch_counter_width"))
-> > > > +                 *br_cntr_width =3D atoi(pcaps->value);
-> > > > + }
-> > > > + *nr_caps =3D pmu->nr_caps;
-> > > > + return 0;
-> > > > +error:
-> > > > + while (tmp-- !=3D *caps)
-> > > > +         free(*tmp);
-> > > > + free(*caps);
-> > > > + *caps =3D NULL;
-> > > > + *nr_caps =3D 0;
-> > > > + return ret;
-> > > > +}
-> > > > +
-> > > > +int perf_env__read_core_pmu_caps(struct perf_env *env)
-> > > > +{
-> > > > + struct perf_pmu *pmu =3D NULL;
-> > > > + struct pmu_caps *pmu_caps;
-> > > > + int nr_pmu =3D 0, i =3D 0, j;
-> > > > + int ret;
-> > > > +
-> > > > + nr_pmu =3D perf_pmus__num_core_pmus();
-> > > > +
-> > > > + if (!nr_pmu)
-> > > > +         return -ENODEV;
-> > > > +
-> > > > + if (nr_pmu =3D=3D 1) {
-> > > > +         pmu =3D perf_pmus__find_core_pmu();
-> > > > +         if (!pmu)
-> > > > +                 return -ENODEV;
-> > > > +         ret =3D perf_pmu__caps_parse(pmu);
-> > > > +         if (ret < 0)
-> > > > +                 return ret;
-> > > > +         return __perf_env__read_core_pmu_caps(pmu, &env->nr_cpu_p=
-mu_caps,
-> > > > +                                               &env->cpu_pmu_caps,
-> > > > +                                               &env->max_branches,
-> > > > +                                               &env->br_cntr_nr,
-> > > > +                                               &env->br_cntr_width=
-);
-> > > > + }
-> > > > +
-> > > > + pmu_caps =3D zalloc(sizeof(*pmu_caps) * nr_pmu);
-> > > > + if (!pmu_caps)
-> > > > +         return -ENOMEM;
-> > > > +
-> > > > + while ((pmu =3D perf_pmus__scan_core(pmu)) !=3D NULL) {
-> > > > +         if (perf_pmu__caps_parse(pmu) <=3D 0)
-> > > > +                 continue;
-> > > > +         ret =3D __perf_env__read_core_pmu_caps(pmu, &pmu_caps[i].=
-nr_caps,
-> > > > +                                              &pmu_caps[i].caps,
-> > > > +                                              &pmu_caps[i].max_bra=
-nches,
-> > > > +                                              &pmu_caps[i].br_cntr=
-_nr,
-> > > > +                                              &pmu_caps[i].br_cntr=
-_width);
-> > > > +         if (ret)
-> > > > +                 goto error;
-> > > > +
-> > > > +         pmu_caps[i].pmu_name =3D strdup(pmu->name);
-> > > > +         if (!pmu_caps[i].pmu_name) {
-> > > > +                 ret =3D -ENOMEM;
-> > > > +                 goto error;
-> > > > +         }
-> > > > +         i++;
-> > > > + }
-> > > > +
-> > > > + env->nr_pmus_with_caps =3D nr_pmu;
-> > > > + env->pmu_caps =3D pmu_caps;
-> > > > +
-> > > > + return 0;
-> > > > +error:
-> > > > + for (i =3D 0; i < nr_pmu; i++) {
-> > > > +         for (j =3D 0; j < pmu_caps[i].nr_caps; j++)
-> > > > +                 free(pmu_caps[i].caps[j]);
-> > > > +         free(pmu_caps[i].caps);
-> > > > +         free(pmu_caps[i].pmu_name);
-> > > > + }
-> > > > + free(pmu_caps);
-> > > > + return ret;
-> > > > +}
-> > > > +
-> > > >  const char *perf_env__raw_arch(struct perf_env *env)
-> > > >  {
-> > > >   return env && !perf_env__read_arch(env) ? env->arch : "unknown";
-> > > > diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-> > > > index d90e343cf1fa..135a1f714905 100644
-> > > > --- a/tools/perf/util/env.h
-> > > > +++ b/tools/perf/util/env.h
-> > > > @@ -152,6 +152,7 @@ struct btf_node;
-> > > >
-> > > >  extern struct perf_env perf_env;
-> > > >
-> > > > +int perf_env__read_core_pmu_caps(struct perf_env *env);
-> > > >  void perf_env__exit(struct perf_env *env);
-> > > >
-> > > >  int perf_env__kernel_is_64_bit(struct perf_env *env);
-> > >
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
