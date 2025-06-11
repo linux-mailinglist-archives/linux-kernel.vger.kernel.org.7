@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-682170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0BEAD5C97
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:46:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A84AD5C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0922E7A9941
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4563A8CF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1CF204096;
-	Wed, 11 Jun 2025 16:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B432046A6;
+	Wed, 11 Jun 2025 16:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="irpbFja7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJR/8fYN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A6F198851;
-	Wed, 11 Jun 2025 16:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3971C8632;
+	Wed, 11 Jun 2025 16:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749660375; cv=none; b=WZPEjMjFxeEufEYWcxMH0BMLv5DdV8YzeWzcMaf5L1Pt4u79vbZPyQYQIX6c+GZda96dvsn5+WE0Ba9UImTBK6RkjUVH5erQCWt85I0z078SxDvyLuz5mlwdamk70ZyMzQZB1QgMc5+ZWqoQx4TwCt1xk0GDdwHz7T6m0A4qc2A=
+	t=1749660045; cv=none; b=OVqQHbTo9qtNvbHvZJoBeCrCwPb/L6OJEkXhXU8cs3O4bca2wWtVb0Upz0M6OYEMSUB51WdVEygoGJLWRvQhtBi6V6j53UYiIn42wUEKSsKRnqitilITDs50b13yZtlxl+qzP5eteEt6TuTVMxAYgSzvCQu8OpKu914w0zIXghc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749660375; c=relaxed/simple;
-	bh=pKsYBtZSzJFBNl3Ug9YmBQ3IUiKtUuYSnIdF26bHabc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXwzmHr9R3UdReRLFFVfbHbhkqG5ICImTf/rv4snF2ddOO29qoPXYG8BPu8GRS9lW6+SZWbhlz60zgBd0MlKksCieA3Rm/1Kde9stkLe4TN/g+MAapyLCocOWxLv/i0Q0aC6K7cPT1LFeovY4pVUTQkQf3V4sG8BkGBAcXQ12es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=irpbFja7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CBBC140E0184;
-	Wed, 11 Jun 2025 16:40:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id HV_N0c_jC9Zt; Wed, 11 Jun 2025 16:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1749660018; bh=pKsYBtZSzJFBNl3Ug9YmBQ3IUiKtUuYSnIdF26bHabc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=irpbFja7+nN5gvyS2dBJNnfdQwL4IoXZgjiKGGLCkJcpE9TxYIL5z0b7+08iJ7eyj
-	 U/RY7VNhGdx5pEbgv83Wezoniq6njA4/lg0ZSoOHGDjSc7MdQrhO3WeyfKZ95X5ccn
-	 ay2GHcf1IybVIuITZX35HLf8vBgYP9x5QkM9B/qTc7P9w9lq5d+UdzSDDsaRd6qkWR
-	 Dmsl/UeBkNbK7TEO1moiiINyst5slk/xHu795Qimo36MVG9yhyJ1heQ74GKT5zv05a
-	 Bl7GlviUC46ps3U+hTIJY+MUExTzg/3W1w3OGeSaqUc4ydckQNyfBgEE9DfXGLSSYM
-	 LNRks5cZ8S0mO8zFqGvWvTB7X/tfcX1/qDPCgidj1tauZ9IYYsfyYZepMJ6E1YzjNp
-	 E7d4iHuJSct9d7X91541CGB3xc74edzbKBcNRj/i3m8pDUSdcQ8u85MtPuxjB9cv/3
-	 g6ve3DI33PAcKME41rVwxCexyfANfY/yJD/J2E8zEDXxieV9l+Y5zpTSujPNpuX1kb
-	 NpY0IKffg3WvUdjAW9fasuRfN3gKsb5/Eh+F4nXnS8tO1H1aXCs9V4G4+K+WHRtIJs
-	 p2yCgzzZVc/CGT+yGLqmD8KEJTdzF6nShFXACuFIMRtvE9Ar34D7f1fLhl7o7UUvBK
-	 vwnNgKv3igW3O2XQ2M1XQrNo=
-Received: by mail.alien8.de (SuperMail on ZX Spectrum 128k, from userid 1005)
-	id ADED340E019C; Wed, 11 Jun 2025 16:40:18 +0000 (UTC)
-Date: Wed, 11 Jun 2025 16:40:18 +0000
-From: Borislav Petkov <bp@alien8.de>
-To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>
-Subject: Re: [PATCH] EDAC/synopsys: Clear the ecc counters at init
-Message-ID: <20250611164018.GAaEmxctC+ESUCvBNT@fat_crate.local>
-References: <20250528065650.27646-1-shubhrajyoti.datta@amd.com>
- <20250603090536.GCaD664IbJB5IoR06g@fat_crate.local>
- <SA1PR12MB894764756C6538EE985BDE24816CA@SA1PR12MB8947.namprd12.prod.outlook.com>
- <20250604093735.GAaEAT39KGW1KJDrjD@fat_crate.local>
- <SA1PR12MB89471067967E0A5F46CEE1DF8175A@SA1PR12MB8947.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1749660045; c=relaxed/simple;
+	bh=tdoCZ5WhTTd1H3icgbRTRkNnOgUeWkbsQeuTsnJniVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=P26YXR6POFgfByGFOHaLk/CkuSqTxxtQm/lp40uok+V61MUTxy/FiWOrKbs6C6dwR+qJ8nV+KmRWE3fbW4fNpCc18+QDDNMkfaq7wsEHFSRckL9NxxBQeMkIdfak3+PwZh+Hv6c4H7gZlI1zKVFXmJ5pk1f4Dpf7v7WGLns25ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJR/8fYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF65AC4CEE3;
+	Wed, 11 Jun 2025 16:40:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749660045;
+	bh=tdoCZ5WhTTd1H3icgbRTRkNnOgUeWkbsQeuTsnJniVg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oJR/8fYNHipE2xIaaWv92JuLsUciOnZjEF5d1JffwBH7rAxfibQ7xDRJT/ELdnWOM
+	 LbkyIaQKgosGFPgeh/rz0X4hjpWp2qi7WEkJCb2IviqxvaM7zwzzTwz1wuEorv2Yum
+	 iPNPKRJQ95Qc8zluyeLKFrts0OlZpzreI7sXOvzPzOmQCHd9eo/dGnrQLPpm+4Cu4m
+	 jEYjzw8GBf/crS1wfp1uFHDXASMi4ZgFkuQ/J9YU5SLkeWOPdn0sr8DWDjobYS52Gn
+	 GJfdaW1QWk+Pm+58v3lp0P3CPANdDtzovRV9dwlrVQl5WatALpxLYo+jYAChtCJvMU
+	 vqrHYgtywqMow==
+Date: Wed, 11 Jun 2025 09:40:44 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: unlock the superblock during iterate_supers_type
+Message-ID: <20250611164044.GF6138@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SA1PR12MB89471067967E0A5F46CEE1DF8175A@SA1PR12MB8947.namprd12.prod.outlook.com>
 
-On Wed, Jun 11, 2025 at 11:42:33AM +0000, Datta, Shubhrajyoti wrote:
-> However the registers for Zynqmp and Zynq is different to differentiate
-> Should the usage of quirk be fine code snippet below
+From: Darrick J. Wong <djwong@kernel.org>
 
-Right, please send a proper diff - it doesn't have to be tested yet and I'll
-finish massaging it.
+This function takes super_lock in shared mode, so it should release the
+same lock.
 
-Thx.
+Cc: <stable@vger.kernel.org> # v6.16-rc1
+Fixes: af7551cf13cf7f ("super: remove pointless s_root checks")
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ fs/super.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 21799e213fd747..80418ca8e215bb 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -964,8 +964,10 @@ void iterate_supers_type(struct file_system_type *type,
+ 		spin_unlock(&sb_lock);
+ 
+ 		locked = super_lock_shared(sb);
+-		if (locked)
++		if (locked) {
+ 			f(sb, arg);
++			super_unlock_shared(sb);
++		}
+ 
+ 		spin_lock(&sb_lock);
+ 		if (p)
 
