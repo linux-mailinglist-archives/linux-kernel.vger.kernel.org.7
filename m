@@ -1,178 +1,126 @@
-Return-Path: <linux-kernel+bounces-681039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89815AD4DB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:00:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0BCAD4DC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B99189C2FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C443A565E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03AF233707;
-	Wed, 11 Jun 2025 07:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD112356BA;
+	Wed, 11 Jun 2025 08:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hugvEqEl"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTUNRU5m"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF6FA923
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E05232785;
+	Wed, 11 Jun 2025 08:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749628792; cv=none; b=nJQVBLpIgly9pXWPf7mYc7BqdxJaV3GE4rz+VJkWV2xjiDvCdDhCNWUbb5XOPW1netWPUR7lg58IWagqWZYHKZaArmgfKvfP8f0ktqDUowjzT7fgt21v3Vf9m+kytK86OTzEPyaCAk2g9OFJylW9qpHfH3+C2SqjlWNQ2A2e+yM=
+	t=1749628938; cv=none; b=oTATrC7tZMk94BW0RWK7VAeHkfYVGQkMnJ8vw9Ljj0HytAG79LPxqxNGLipgC+cEre92k05ywUwqVWXJ9t2EwWctYAAIw/R67ayOXbm9ITPpiqxVPLRoeLP3YCoSDiiLDe6Nh1z/GALnZKSMGAwwwLon9x2d7JTLruw7DtTEv3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749628792; c=relaxed/simple;
-	bh=kI85mKNpCdxz1vPoZ/NGAywMpzEzXNJcAIFOxF8cIQc=;
+	s=arc-20240116; t=1749628938; c=relaxed/simple;
+	bh=NbzZlFbp9MilzY0lStFAU5C/JQNiGLwMk/T6fCIRSDY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kMP15mVi6+A8mAnM2Pqa0o59gPK3W5n6hNchuxCAZFfBr64o9x00aH7ZdlHKhdGfEQdt/01g8WmxHSqFkeKFtjtP+EZm/34OXB2bPxcfqqLzf+0np3zMqVNg7hTDo8Id5rFe4208Jy1A7bp1oUJvbP+80Tq5PPTCgBDvGtKKTnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hugvEqEl; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32934448e8bso55080201fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:59:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=BTghbnFk3w3twbxYUAmoYGKlLK5jX7IkSfMMnVhVgW5A2hD7cC6gPnG0i9fldb4cDtsRH7kbLSy3AWHzBxQi9EAIS06u8o8AdhzMhb7+3F/CYe9APyZd3dtLlGBNFc261sJ+sCntx93nuajq5jxAvIfbeR7JLXc5iZV5QL2riIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTUNRU5m; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70b684670e7so435597b3.2;
+        Wed, 11 Jun 2025 01:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749628788; x=1750233588; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ULDRRP8J1r9OalZxRSTmjUvWqANoUHadkiZtzLelOB4=;
-        b=hugvEqElUr79DiipV4+S1SVIv5BaHS7sMt1T5wfPEzS7nCjAy3GlJusJpJ7byfxJwe
-         18vK4QbySEIYA3VSF96q60QmcQpAuF2FJunVADIFSyVV8V0/HQVAQSKF76yiYhl//lgr
-         VLLeh9j7wD611reQVdIWEOVvhLj9En3Fw8Zjo=
+        d=gmail.com; s=20230601; t=1749628936; x=1750233736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NbzZlFbp9MilzY0lStFAU5C/JQNiGLwMk/T6fCIRSDY=;
+        b=fTUNRU5m5ng4jjt+Ci+Q8cwAr6a9TdP9cKcqX/iWF5YkaZ0xd7o0vghv2HH80hsv8q
+         5hT4LX6RbIhaQyvDy0ZLC5aklSB8XsXv8iuG8Th0eGDhPI9HK1Wvcg9GpwIcQHCxNKKR
+         ar2Z+Ur+aToXxlYFH4MmT5yIBLMRvH/L0HMp35MWn6ImC3kR8YhWfN4Y/rEueqMQkXmz
+         kH4JpOPIyEOp654pE6wu4+zetuaJ+sPqDV5uFIIeGc9Shw26VA9hQrXFi/rXG99fAyFh
+         a2LA4x5tH2sHSQcmcP3bnA4gANxHCxr9xWw2FrneA8XX5JseCTiT5AhzEalCX61qRBCS
+         CxRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749628788; x=1750233588;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ULDRRP8J1r9OalZxRSTmjUvWqANoUHadkiZtzLelOB4=;
-        b=szTiJLx0rsL9J6GuGAmquGP0kzRCNYV6NSEsRbkt+GozvihBOtjVwDMVwu91VWNc2T
-         Gf3O9J+YMYTIiVlQ5pqNQ8SIGAvp8KtHa958tt+Z2DDCwbTJrNlgJQIqDFgB4T6MkFEN
-         8RjPnD1pnUfndhwp66BNDSz9gsjhMz9oFpf6r+FpbqPzCmJvg01C+pNUPj6FyftbaMsW
-         GpFAZ2YV6C06+SCfzWQYKdgoHuxrr9miETha0HAAMqkAgZxpTkYfKIvznWDxHcQF8NUm
-         MAfceaBfFdbsmuxBD+OJH/0pN0vuHjizrjOlE/oO9M5WXOrGWNTqEo4SlRk0XP5ZfQAo
-         UFfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWs4PTP5MLZ4Yp4cv5KJF0uL536oYffz88GKC9vaEo59hxfM8neMIvZGJJaxEDfsqd5aaOSXyGEQFd+Cm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGbjr03e/oXrHErB2wm7f0ZM61QjEGVTL3WNBl64URTiQ+eA9M
-	TWcO5n9guBvazCIJVuiKSWzqGasyvqxeY5pntFPEq/Od6G5U0J7NGGkOFz4j16OLscvNoyGC0Pa
-	/uHU=
-X-Gm-Gg: ASbGnctobrAKUYJcQsWGjdLDauSjgTikRM/3ShlGCBVeKS2ffR4rTJBI5UeiObJmYEV
-	pAB2A9O03jIh9CjU2DrOPmnRfaeqRR5CJxpwtON/hfyYM6GV533Mq+SpUaTMparNrKrftE526a2
-	AriFphR7BgkRi9w9uDLznU6Izg8xtI3eiQokruJIAsihh8dfIB/f2PYiyP/52zbaQwXZHMF5A82
-	L/ZCRTGZSAG1Yc7zLpI5DHV8c985K7hbG3585uWfw7Gl7gTEoZlsuNB8YNI06Gti9emRsPtlRm/
-	AxqrHr6D0ISdg9WTK309Jzwa1ZWfKsRmHyhRSNboZSa5U0+fC7Nzze3CUXl5p58qHST2SIa0ye+
-	Ulh2CN2nbzBBvfe57bf+XjkOq
-X-Google-Smtp-Source: AGHT+IEY4C6/nyzdIGcNBaq/Gekk17L401Y5hhEvad9cCzlRBeQS9Kw1k6OjwdJscd2LZQkrx3HJmw==
-X-Received: by 2002:a2e:a582:0:b0:32a:6502:df44 with SMTP id 38308e7fff4ca-32b21e45019mr6419821fa.23.1749628788136;
-        Wed, 11 Jun 2025 00:59:48 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1b34742sm17731671fa.32.2025.06.11.00.59.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 00:59:47 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-551ed563740so7867484e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:59:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX763y/RZuYMLM2fLzy79gB37N27os82H5s5b01oSHM4NObZ1TSG8sOgn7stBwfBlkcSpXslZLMJzlTIE0=@vger.kernel.org
-X-Received: by 2002:a05:6512:3988:b0:553:2944:f3e with SMTP id
- 2adb3069b0e04-5539c1d6f11mr678921e87.51.1749628787314; Wed, 11 Jun 2025
- 00:59:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749628936; x=1750233736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NbzZlFbp9MilzY0lStFAU5C/JQNiGLwMk/T6fCIRSDY=;
+        b=ivo7gUmu7QTezobu8n+ajJ4RlmWWgSkhKTAIOUqgdCagUKgYjU/onrJr+8T/HKD7J3
+         F5JgHHK7B3HqF8gGDrIBn8Wqgx5H+uNn6/n6+gvA9rTV3tUXDpPqZ5DhVI2IvZ/WNTcQ
+         7W2opD9G/U+/9LQZOdIcxUY/ncOrPnTXn8z6GqijvGrqp71x7p4/1LwfiiopEkCcpWOC
+         GoIBwCX8eNQCy4Ou3RvCAR3PgoRrNyMdpD+Qht16vnWiRbZTbRlkpVL7Txrl5D1qUJnK
+         aT8L/3INFrd3N1Npeusob2v1OJEUiwGPI8/pGSnFMMa7+T8FR42M6grQ6KYQ9p78dIrP
+         O/VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQxRYEX3WGpQHJvpGmkgb/JyRlHPJFw6d1FEJ0QhG7cH+3PRz34eVvHqfJWZbVlar1O2x031hrRfE=@vger.kernel.org, AJvYcCV1Ql/GpNDDYfoYzZXaFuqtmIVMY1rHEyf+ew5PCXXRG7HLuggtfflfNwIZ+SKumH93qG0f/VbwcY1r7Yj2@vger.kernel.org, AJvYcCX8MJK1Qult3nLtslWpkkhyJ3iXJuWRFpHslwBw8gvmN0IOnAa6iAi4YM0LGu4ldBMMR8sXQ0HoA0ro@vger.kernel.org
+X-Gm-Message-State: AOJu0YygRgHdcq3ZuX31u/3FcHIcqxQyrTjpjjZRhFgrbsKIF26P/C7z
+	g90WtUNSPFvr9WHyVQVZW6b/1gduVlqMxi6t1SM50+0T+zI0TNMY5PXAfGeGilkQfcbhJczdM1c
+	zxMVpSjX8ys3lJVucMZlpfndFOen9dT8=
+X-Gm-Gg: ASbGncvJpDv0diPJTwt/mlGPNG/92KkWIwcX1U/cLtJpnDodx8xnqbaMzO3dn8EnY41
+	IrBMYg4d/lwrpbof/CanB4ind2euIuKPwsLiQIj0ZgB4wBExU1AH3AUgXi2TvcEiWQgUGCBLsdt
+	VEb7n1+YelNKk/yNi3jhtPnKzBwhe3zGmtWX0miHdjZJA=
+X-Google-Smtp-Source: AGHT+IEFQN794osZ3VLd59D7VBxAU+Dt7mNDu8xg/+i3oE7oOTCgB8eAAcKaTdrZtLq+eSw7UlLCbHhVIGHaQU/3ctk=
+X-Received: by 2002:a05:690c:39b:b0:70e:2d3d:acdd with SMTP id
+ 00721157ae682-71140b08a19mr13264007b3.9.1749628935967; Wed, 11 Jun 2025
+ 01:02:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org>
- <aeacb653-efb8-42ed-a7ed-3e7be31b8f9d@linux.microsoft.com>
- <CANiDSCviy5SjOwEcEM8_1gtvQzFUS3d=S6vFdvZzVqbif7NKfA@mail.gmail.com> <588d5a4b-72cf-4d2c-8eee-c4240ae067b5@linux.microsoft.com>
-In-Reply-To: <588d5a4b-72cf-4d2c-8eee-c4240ae067b5@linux.microsoft.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 11 Jun 2025 09:59:34 +0200
-X-Gmail-Original-Message-ID: <CANiDSCuGo4CAaM2qd1FviWoZ-y0Dg6BWYXHmsNOBsXmxZj=ndQ@mail.gmail.com>
-X-Gm-Features: AX0GCFuJ-OnqASEGSwJpRPA-DeamvypVOt4R7T55jGMIJ2aacHY0Bzr2ZdumOaY
-Message-ID: <CANiDSCuGo4CAaM2qd1FviWoZ-y0Dg6BWYXHmsNOBsXmxZj=ndQ@mail.gmail.com>
-Subject: Re: [PATCH] coccinelle: misc: secs_to_jiffies script: Create dummy report
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	Andrew Morton <akpm@linux-foundation.org>, cocci@inria.fr, linux-kernel@vger.kernel.org
+References: <20250601172139.59156-1-l.rubusch@gmail.com> <20250601172139.59156-3-l.rubusch@gmail.com>
+ <CAHp75VfitLPHZ=SUS-ME_fhJqCAwuDAzzN8yt1gq5Drvk7ySow@mail.gmail.com>
+In-Reply-To: <CAHp75VfitLPHZ=SUS-ME_fhJqCAwuDAzzN8yt1gq5Drvk7ySow@mail.gmail.com>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Wed, 11 Jun 2025 10:01:39 +0200
+X-Gm-Features: AX0GCFuMW4pSdI-CDsS_FlE9LXarn6flJ_PCzzRPHk9y6kKYvg48z-GqaNKYJlI
+Message-ID: <CAFXKEHY-X-vA_9pzZgYX_HPd2gexi7r8DJJ6cp+H9Px3WY42aQ@mail.gmail.com>
+Subject: Re: [PATCH v4 02/11] iio: accel: adxl313: introduce channel buffer
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, bagasdotme@gmail.com, linux-iio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Jun 2025 at 19:35, Easwar Hariharan
-<eahariha@linux.microsoft.com> wrote:
+Hi Andy,
+
+On Sun, Jun 1, 2025 at 9:08=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
-> On 6/10/2025 6:09 AM, Ricardo Ribalda wrote:
-> > Hi
+> On Sun, Jun 1, 2025 at 8:21=E2=80=AFPM Lothar Rubusch <l.rubusch@gmail.co=
+m> wrote:
 > >
-> > On Wed, 29 Jan 2025 at 18:38, Easwar Hariharan
-> > <eahariha@linux.microsoft.com> wrote:
-> >>
-> >> On 1/29/2025 12:06 AM, Ricardo Ribalda wrote:
-> >>> When running cocci in report mode, eg:
-> >>> $make coccicheck M="$dir" MODE=report
-> >>>
-> >>> It returns this error:
-> >>> virtual rule report not supported
-> >>> coccicheck failed
-> >>> make: *** [Makefile:251: __sub-make] Error 2
-> >>>
-> >>> Create a dummy rule to avoid this error and run the other cocci scripts.
-> >>>
-> >>> Fixes: 551dbd1ec7ff ("coccinelle: misc: add secs_to_jiffies script")
-> >>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >>> ---
-> >>>  scripts/coccinelle/misc/secs_to_jiffies.cocci | 6 ++++++
-> >>>  1 file changed, 6 insertions(+)
-> >>>
-> >>> diff --git a/scripts/coccinelle/misc/secs_to_jiffies.cocci b/scripts/coccinelle/misc/secs_to_jiffies.cocci
-> >>> index 8bbb2884ea5d..2d85dca16418 100644
-> >>> --- a/scripts/coccinelle/misc/secs_to_jiffies.cocci
-> >>> +++ b/scripts/coccinelle/misc/secs_to_jiffies.cocci
-> >>> @@ -10,6 +10,7 @@
-> >>>  //
-> >>>
-> >>>  virtual patch
-> >>> +virtual report
-> >>>
-> >>>  @depends on patch@ constant C; @@
-> >>>
-> >>> @@ -20,3 +21,8 @@ virtual patch
-> >>>
-> >>>  - msecs_to_jiffies(C * MSEC_PER_SEC)
-> >>>  + secs_to_jiffies(C)
-> >>> +
-> >>> +// Dummy rule for report mode that would otherwise be empty and make spatch
-> >>> +// fail ("No rules apply.")
-> >>> +@script:python depends on report@
-> >>> +@@
-> >>>
-> >>
-> >> Sorry about that, and thanks for the patch!
-> >>
-> >> FWIW,
-> >>
-> >> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> >
-> > I just checked on 6.16rc1 and it is still failing.
-> >
-> > Could we land this while Mark's series is under review?
-> >
-> > Thanks!
-> >
+> > Add a scan_mask and scan_index to the iio channel. The scan_index
 >
-> Can you provide a pointer to Mark's series? I actually just implemented a proper report and context mode
-> which I'm glad to send out.
+> IIO
+>
+> > prepares the buffer usage. According to the datasheet, the ADXL313
+> > uses 13 bit in full resolution. Add signedness, storage bits and
+>
+> bits
+> ...OR...
+> 13-bit wide data field
+>
+> > endianness.
 
-My bad, it was your series:
-https://lore.kernel.org/cocci/e06cb7f5-7aa3-464c-a8a1-2c7b9b6a29eb@web.de/
+As this is getting very annoying, I tried to set something up
+involving checkpatch, codespell and ispell. But I guess w/o
+grammatical checking. Just, in case, do I miss some simple tooling
+here, any suggestions?
 
-
+As a consequence, the alternative in the year 2025 is probably using
+chatGPT for the commit messages and we probably never will have this
+discussion anymore. Hum... ?
 
 >
-> Thanks,
-> Easwar (he/him)
-
-
-
--- 
-Ricardo Ribalda
+> --
+> With Best Regards,
+> Andy Shevchenko
 
