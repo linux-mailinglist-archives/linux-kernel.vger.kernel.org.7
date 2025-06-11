@@ -1,208 +1,223 @@
-Return-Path: <linux-kernel+bounces-680829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8E5AD4A4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEF1AD4A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F61017A2F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F89D17B782
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2A9224B08;
-	Wed, 11 Jun 2025 05:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A028227586;
+	Wed, 11 Jun 2025 05:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Bmw3YhiK"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T60vkEcj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0938F5B;
-	Wed, 11 Jun 2025 05:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361892236F7;
+	Wed, 11 Jun 2025 05:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749618688; cv=none; b=AeY2DbzlH5wle0klKAe2Qma736ObSA01mD3TNacWHM8TxQG9yekA23tgxqQYI0oS6U6IDCEiWDXR47eucRHLhtgG7cqfSDpv76W51mqH9Wu0BLqYJPnEAW1F62kKo1iTb618v/52W8URUq4jhjRu4WlR7GtqJDGFe3W/WRzEJpk=
+	t=1749618785; cv=none; b=Np8jKnhH1/UvOu7BLPWi9QBs0KTqqETlQ4wuup2aJiH9NM52GVSgXHZyOc7DbZhG8wqAXN4l0Pe9wYayPR9aLijUYdgkdD/VaWBgvepFUfIS7ad+5///h+qRCbGpBNg1WNnu9uFVDsR2MQRTlg0f9SwqHuuHUmnWVQYasuzB2Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749618688; c=relaxed/simple;
-	bh=RM5CpY0Enw/hyyNlyClEDl4qkSL++OqhZn2e9P/mW84=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RXiDJG8bhglJLkxy4E43XNWHTHo86nNzL8FmWPt40h452FZDWoc4mpyEgSOCT2CrG6RbdSzaK1/gBLmGbbrMn2LdmhEoUDRZXSHOdwp9LCnTf9XPVxVyDHD8CsBgkIqJFDuhu6HUo3CHXgzob1dIry0ImoyFglcMvTkyILTixvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Bmw3YhiK; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DD38C43B0F;
-	Wed, 11 Jun 2025 05:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1749618677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DoYbi3JELt9emY7SA7bGng9kPhfQuex7MkdinZ5Sc+4=;
-	b=Bmw3YhiKxOb3FffWRz1dwPZ6w587I+OLRgWmx4cZDpJz7xFfOSSdn3e+4WhHC4GsFAF9g4
-	pS7KaubaItkavkYVFNOArnEz8Wo7HvHADyDMdGtoJtWgCd2xbpSeBLBh5h40J/kRvLqHiI
-	istm7ikbbTOK1RHnWuqPCJ/qnoSLo5klrleLUAqMAQincYEvi3pubEtDWZtHRcw0HgEvN5
-	fskxm0hsz2HYtfpJ6oWwDa++w9OllXw2yYqz38T87aNa+T0SmHhgXqoHsu+/gyjrr3iR64
-	Wry1A2WXf4ltsDkdhoP7u8kpkIcvd82zQGeYcJOjpEuycaDnCJ+8gxh9qtV+4w==
-Date: Wed, 11 Jun 2025 07:11:14 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org, Kory
- Maincent <kory.maincent@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Simon Horman <horms@kernel.org>, Christian Marangi <ansuelsmth@gmail.com>,
- Lei Wei <quic_leiwei@quicinc.com>, Michal Simek <michal.simek@amd.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, Robert Hancock
- <robert.hancock@calian.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [net-next PATCH v6 06/10] net: pcs: Add Xilinx PCS driver
-Message-ID: <20250611071114.325fb630@fedora.home>
-In-Reply-To: <20250610233134.3588011-7-sean.anderson@linux.dev>
-References: <20250610233134.3588011-1-sean.anderson@linux.dev>
-	<20250610233134.3588011-7-sean.anderson@linux.dev>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1749618785; c=relaxed/simple;
+	bh=FZ77rZmKrowroBjfFiCTpiqeBpzxShU0u3fUrllz5rc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gPmiVrY51MrsL8eRYg/BDHFuYjNKGRMzSaQ3kl1hD7ru7jrTz/jhILrMMqtdnq1hPuB6B9RD31lVMdd5mz/4O1C9qpcnTGTo2+m3Y8gBhV/o+zzDjX87hvb/m/M2Igk52+VhhzQBaZMFucGvTNgDYNSgZmti9sSlZGYSzA1Tjj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T60vkEcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A2860C4CEEE;
+	Wed, 11 Jun 2025 05:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749618784;
+	bh=FZ77rZmKrowroBjfFiCTpiqeBpzxShU0u3fUrllz5rc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=T60vkEcjW3Ji7yHb76wuCLVsfLYxkVTT7KQ1I3TEr8FD//G/Vi46FxOFREMNcsb9/
+	 6Tik4xQQpUhWWfdH0rETrQu8gJ8c+3PWAFXsf8v6pyS6HPftowdxBd3CrIgMSpZGi6
+	 61shhB2OZJ7ElPC+YEM9XjlhFodlduSo6WIt2gb0VBWaE+LuR9Nc0b4VhWh4k8atRi
+	 c99taU0qb2b9CavoXohjQWGcSiaBkZC2HqlSYZAFVjH6S9kD7XsVXHfprhUDBQpDBr
+	 SI15vnMT6yhAoWB3mn09uLlDI/itdQog5L6EU41biLEXcUq9WGr4fmSSMkZSQuEsHm
+	 I5UTRXgbOHZUg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903A0C677C4;
+	Wed, 11 Jun 2025 05:13:04 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v11 0/2] Add support for IPQ5018 tsens
+Date: Wed, 11 Jun 2025 09:12:44 +0400
+Message-Id: <20250611-ipq5018-tsens-v11-0-266566bfd16a@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduudejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehsvggrnhdrrghnuggvrhhsohhnsehlihhnuhigrdguvghvpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvhesl
- hhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-B4-Tracking: v=1; b=H4sIAEwQSWgC/12PwQ6CMBBEf8X0bEm30EI9EcCjidGj8VChSKNQb
+ NFoDP9uxYt6nN3ZN7NP5JTVyqHF7ImsummnTecFwHyGykZ2R4V15QeIEspIRCKs+wsjkODBqc5
+ hHh1qweoqDCFG/qa3qtb3Cbjbe11b0+KhsUpOlGIbrzcgVlmSJCEvci44Y8CWQIuYZBnNRZHnN
+ P2xBZ1se1uBCHprqsBch7Mxp6A07Tuw0W4w9jE9cAPyzv105UD+uvo1BhxKIJJJyiNapt+w/Ti
+ OL7VNnDcQAQAA
+X-Change-ID: 20250404-ipq5018-tsens-64bf95fd3317
+To: Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749618782; l=5954;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=FZ77rZmKrowroBjfFiCTpiqeBpzxShU0u3fUrllz5rc=;
+ b=YiF93byp3tuckD8J//y9zG+sqcwWVOio+dOVJ+6UNAF9EyQs/Dr56aLYcmPkQsSwQ4gnE9Nve
+ GXJhWEew1rJCa49XjkxxENVjyLcEi1jDaa5CEn6UUXfsvhjCsOZ9814
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Hi Sean,
+IPQ5018 has tsens V1.0 IP with 5 sensors, of which 4 are in use,
+and 1 interrupt. There is no RPM present in the soc to do tsens early
+enable. Adding support for the same here.
 
-I only 
+Last patch series sent by Qualcomm dates back to Sep 22, 2023.
+Since I'm working on OpenWrt support for IPQ5018 based boards (routers)
+and Sricharan Ramabadhran <quic_srichara@quicinc.com> in below email
+confirmed this SoC is still active, I'm continuing the efforts to send
+patches upstream for Linux kernel support.
+https://lore.kernel.org/all/63dc4054-b1e2-4e7a-94e7-643beb26a6f3@quicinc.com/
 
-On Tue, 10 Jun 2025 19:31:30 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+[v11]
+	*) Dropped polling-delay property as its value of 0 is the default value
+	*) Removed comments for TM and SROT in tsens node
+	*) Replace underscore by hyphen in node name of top-glue-critical trip
+	*) Added cooling device using CPU freq scaling making use of the passive
+	   trip defined under the CPU trips
+	*) Make qcom,ipq5018-tsens a standalone compatible in the bindings as it
+	   should not use qcom,tsens-v1 as a fallback. This also fixes the issue
+	   reported by Rob's bot
 
-> This adds support for the Xilinx 1G/2.5G Ethernet PCS/PMA or SGMII device.
-> This is a soft device which converts between GMII and either SGMII,
-> 1000Base-X, or 2500Base-X. If configured correctly, it can also switch
-> between SGMII and 1000BASE-X at runtime. Thoretically this is also possible
-> for 2500Base-X, but that requires reconfiguring the serdes. The exact
-> capabilities depend on synthesis parameters, so they are read from the
-> devicetree.
-> 
-> This device has a c22-compliant PHY interface, so for the most part we can
-> just use the phylink helpers. This device supports an interrupt which is
-> triggered on autonegotiation completion. I'm not sure how useful this is,
-> since we can never detect a link down (in the PCS).
-> 
-> This device supports sharing some logic between different implementations
-> of the device. In this case, one device contains the "shared logic" and the
-> clocks are connected to other devices. To coordinate this, one device
-> registers a clock that the other devices can request.  The clock is enabled
-> in the probe function by releasing the device from reset. There are no othe
-> software controls, so the clock ops are empty.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> Changes in v6:
-> - Move axienet_pcs_fixup to AXI Ethernet commit
-> - Use an empty statement for next label
-> 
-> Changes in v5:
-> - Export get_phy_c22_id when it is used
-> - Expose bind attributes, since there is no issue in doing so
-> - Use MDIO_BUS instead of MDIO_DEVICE
-> 
-> Changes in v4:
-> - Re-add documentation for axienet_xilinx_pcs_get that was accidentally
->   removed
-> 
-> Changes in v3:
-> - Adjust axienet_xilinx_pcs_get for changes to pcs_find_fwnode API
-> - Call devm_pcs_register instead of devm_pcs_register_provider
-> 
-> Changes in v2:
-> - Add support for #pcs-cells
-> - Change compatible to just xlnx,pcs
-> - Drop PCS_ALTERA_TSE which was accidentally added while rebasing
-> - Rework xilinx_pcs_validate to just clear out half-duplex modes instead
->   of constraining modes based on the interface.
-> 
->  MAINTAINERS                  |   6 +
->  drivers/net/pcs/Kconfig      |  22 ++
->  drivers/net/pcs/Makefile     |   2 +
->  drivers/net/pcs/pcs-xilinx.c | 427 +++++++++++++++++++++++++++++++++++
->  drivers/net/phy/phy_device.c |   3 +-
->  include/linux/phy.h          |   1 +
->  6 files changed, 460 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/net/pcs/pcs-xilinx.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0ac6ba5c40cb..496513837921 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -27060,6 +27060,12 @@ L:	netdev@vger.kernel.org
->  S:	Orphan
->  F:	drivers/net/ethernet/xilinx/ll_temac*
->  
-> +XILINX PCS DRIVER
-> +M:	Sean Anderson <sean.anderson@linux.dev>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/net/xilinx,pcs.yaml
-> +F:	drivers/net/pcs/pcs-xilinx.c
-> +
->  XILINX PWM DRIVER
->  M:	Sean Anderson <sean.anderson@seco.com>
->  S:	Maintained
-> diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
-> index f42839a0c332..e0223914362b 100644
-> --- a/drivers/net/pcs/Kconfig
-> +++ b/drivers/net/pcs/Kconfig
-> @@ -52,4 +52,26 @@ config PCS_RZN1_MIIC
->  	  on RZ/N1 SoCs. This PCS converts MII to RMII/RGMII or can be set in
->  	  pass-through mode for MII.
->  
-> +config PCS_XILINX
-> +	tristate "Xilinx PCS driver"
-> +	default XILINX_AXI_EMAC
-> +	select COMMON_CLK
-> +	select GPIOLIB
-> +	select MDIO_BUS
-> +	select OF
-> +	select PCS
-> +	select PHYLINK
-> +	help
-> +	  PCS driver for the Xilinx 1G/2.5G Ethernet PCS/PMA or SGMII device.
-> +	  This device can either act as a PCS+PMA for 1000BASE-X or 2500BASE-X,
-> +	  or as a GMII-to-SGMII bridge. It can also switch between 1000BASE-X
-> +	  and SGMII dynamically if configured correctly when synthesized.
-> +	  Typical applications use this device on an FPGA connected to a GEM or
-> +	  TEMAC on the GMII side. The other side is typically connected to
-> +	  on-device gigabit transceivers, off-device SERDES devices using TBI,
-> +	  or LVDS IO resources directly.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pcs-xilinx.
-> +
->  endmenu
-> diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
-> index 35e3324fc26e..347afd91f034 100644
-> --- a/drivers/net/pcs/Makefile
-> +++ b/drivers/net/pcs/Makefile
-> @@ -10,3 +10,5 @@ obj-$(CONFIG_PCS_XPCS)		+= pcs_xpcs.o
->  obj-$(CONFIG_PCS_LYNX)		+= pcs-lynx.o
->  obj-$(CONFIG_PCS_MTK_LYNXI)	+= pcs-mtk-lynxi.o
->  obj-$(CONFIG_PCS_RZN1_MIIC)	+= pcs-rzn1-miic.o
-> +obj-$(CONFIG_PCS_ALTERA_TSE)	+= pcs-altera-tse.o
+[v10]
+	*) Rebased onto updated pull of master to resolve merge conflicts in the
+	   DTS patch
+	*) Link to v9: https://lore.kernel.org/all/DS7PR19MB88836DC6965515E12D70BB2C9DCC2@DS7PR19MB8883.namprd19.prod.outlook.com/
 
-There's something strange going-on here, as pcs-altera-tse was removed
-in v6.4 :)
+[v9]
+	*) Updated checks in tsens to more strictly evaluate for v2+ upon enabling
+	   v2 features as suggsted by Dmitry.
+	*) Split patch 3 into two, one to update conditional statements as
+	   mentioned above and the other to implement tsens IP v1 without RPM.
+	*) Added back Dmitry's RB tag on patch 6 which wasn't carried over
+	   from v7 to v8
+	*) Link to v8: https://lore.kernel.org/all/DS7PR19MB88833F7A9C8F4FC484977BA69DCD2@DS7PR19MB8883.namprd19.prod.outlook.com/
 
-> +obj-$(CONFIG_PCS_XILINX)	+= pcs-xilinx.o
+[v8]
+	*) Tsens V1 uses v1 interrupts and watchdog is not present (only on v2.3+).
+	   As such, replaced VER_1_X with VER_1_X_NO_RPM in conditons to ensure
+	   v1 interrupts are set and watchdog isn't enabled.
+	*) Tested on Linksys MX2000 and SPNMX56
+	*) Link to v7: https://lore.kernel.org/all/DS7PR19MB88831624F11516945C63400F9DC22@DS7PR19MB8883.namprd19.prod.outlook.com/
 
-Maxime
+[v7]
+	*) Updated cover letter
+	*) Replaced patch 3 with a new one to add support for tsens v1.0 with
+	   no RPM and removed Dmitry's 'Reviewed-by tag
+	*) Refactored patch 4 and split support for IPQ5018 from support for
+	   tsens v1.0 without RPM. As such, also removed Dmitry's RB tag.
+	*) Depends on patch 1 and 2 from patch series to add support for
+	   IQP5332 and IPQ5424 applied on Feb 11 2025:
+	   https://patchwork.kernel.org/project/linux-arm-msm/cover/20250210120436.821684-1-quic_mmanikan@quicinc.com/
+	*) Link to v6: https://lore.kernel.org/all/DS7PR19MB88838833C0A3BFC3C7FC481F9DC02@DS7PR19MB8883.namprd19.prod.outlook.com/
+
+[v6]
+	*) Include (this) cover letter
+	*) Picked up Dmitry's Reviewed-by tag on patch 5
+	*) Link to v5: https://lore.kernel.org/all/DS7PR19MB88832FDED68D3EBB0EE7E99F9DC72@DS7PR19MB8883.namprd19.prod.outlook.com/
+
+[v5]
+	*) Adjusted commit messages to indicate IPQ5018 has 5 sensors of
+	   which 4 are described and in use as per downstream driver and dts.
+	*) Padded addresses of tsens and qfprom nodes with leading zeros.
+	*) Link to v4: https://lore.kernel.org/all/DS7PR19MB8883BE38C2B500D03213747A9DC72@DS7PR19MB8883.namprd19.prod.outlook.com/
+
+[v4]
+	*) Documented ipq5018 in qcom,qfprom bindings
+	*) Constrained ipq5018-tsens to one interrupt with description
+	*) Added Rob's Acked-by tag
+	*) Added Dmitry's Reviewed-by tag
+	*) Fixed modpost warning: added __init to init_common
+	*) Sorted tsens nodes by address
+	*) Sorted thermal-zones nodes by name
+	*) Link to v3: https://lore.kernel.org/all/20230922115116.2748804-1-srichara@win-platform-upstream01.qualcomm.com/
+
+[v3]
+	*) Added the tsens-ipq5018 as  new binding without rpm
+	*) Added Dmitry's Reviewed tag
+	*) Fixed Dmitry's comments for error checks in init_ipq5018
+	*) Ordered the qfprom device node properties
+	*) Link to v2: https://lore.kernel.org/all/20230915121504.806672-1-quic_srichara@quicinc.com/
+
+[v2]
+	*) Sorted the compatible and removed example
+	*) Fixed the name for new tsens_feature
+	*) Used tsend_calibrate_common instead of legacy
+	   and addressed comments from Dmitry.
+	*) Squashed patch 3 & 4
+	*) Fixed node names, order and added qfprom cells
+            for points seprately
+	*) Squashed patch 6 & 7
+	*) Link to v1: https://lore.kernel.org/all/1693250307-8910-1-git-send-email-quic_srichara@quicinc.com/
+
+George Moussalem (2):
+  thermal: qcom: tsens: update conditions to strictly evaluate for IP
+    v2+
+  thermal: qcom: tsens: add support for tsens v1 without RPM
+
+Sricharan Ramabadhran (4):
+  dt-bindings: nvmem: Add compatible for IPQ5018
+  dt-bindings: thermal: qcom-tsens: Add ipq5018 compatible
+  thermal: qcom: tsens: Add support for IPQ5018 tsens
+  arm64: dts: qcom: ipq5018: Add tsens node
+
+ .../bindings/nvmem/qcom,qfprom.yaml           |   1 +
+ .../bindings/thermal/qcom-tsens.yaml          |   2 +
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 169 ++++++++++++++++++
+ drivers/thermal/qcom/tsens-v1.c               |  62 +++++++
+ drivers/thermal/qcom/tsens.c                  |  27 ++-
+ drivers/thermal/qcom/tsens.h                  |   4 +
+ 6 files changed, 256 insertions(+), 9 deletions(-)
+
+--
+2.48.1
+
+---
+---
+George Moussalem (1):
+      dt-bindings: thermal: qcom-tsens: make ipq5018 tsens standalone compatible
+
+Sricharan Ramabadhran (1):
+      arm64: dts: qcom: ipq5018: Add tsens node
+
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |   5 +-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 182 +++++++++++++++++++++
+ 2 files changed, 186 insertions(+), 1 deletion(-)
+---
+base-commit: afc582fb6563b8eb5cd73f9eca52e55da827567f
+change-id: 20250404-ipq5018-tsens-64bf95fd3317
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
+
 
