@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-681846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5090AD580D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:09:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF6FAD5815
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A13188856E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:09:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8585118825E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F32E6108;
-	Wed, 11 Jun 2025 14:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C413A298CDA;
+	Wed, 11 Jun 2025 14:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="t2GrVpYr"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S/radQfO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFC928688A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE56428D836
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749650929; cv=none; b=NeVWBEjAqEGZTjJhZP+e9eEo7y8g31qxE2uI3nDY0nzC85XPeE2O8NosTbUFpS8qW9t3R/0xuEkcmjhg7QOTZ0P4S5VHnOwGwoUOYQFE4l0EH8XL4fhPvqDu77OPjJes8vBXmh+D1xgpr/9Diay5X4DOvnLKyMc/LH9a/3x/W+4=
+	t=1749650944; cv=none; b=mom6Rt5RIzdfyKbIBufMEmbk0pv92Mbw3pISQMuVRJkm7TGvkeApX1mWmL4kUDxQ6UfdKcl8dVub0aKTHB3lI9t4zjpla1ZfARFpXJZLH+q/PcAzYny8Jw4H/6tWqpLk3ZvxqhbV+toilTnR/6ESsF2qc+5oGztci0KQ6R4GBpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749650929; c=relaxed/simple;
-	bh=BiUBiEP4mtMU0sgm8Ro7YfKxN/VojxVwmdYi69ZqhB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ct17xuINHCIpftsNgYM1k/pjs7EwK+C5UiW5Yhc7fByuz1ejkRHkyA3EICp9AxeIoDqAp1Cct0iBUJ9hJ9cAooi9XZ66KHcsrvq8CVP6vFqglCJYBM1G6ZFl10tPgBymBdXN4TMe4pcLNzwQBRyA0y1GiYIJkMyRBMyyBdYVg7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=t2GrVpYr; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d0976776dcso616925785a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:08:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1749650927; x=1750255727; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mkrF7hMJ7XIqcp+rcg2pb5auO8TVNGaEQdRmstp3lk=;
-        b=t2GrVpYrL+oG/AaxHYWVqZpUoYpSODEy3FSRfj/C8/nWn2UNlA28M1vafv3hocpPpu
-         seDv1piMkGh6MQ5KDtPmdKPrjCbP1qsiGB+PpbT27uiG8LSeBgmFYErT88g3up6ruDvW
-         QB3wgxg7ZzeVh+ZxK/YtXkFHOn5fsDmLc1oB3nijB4n2w64aF9Gr2QZb0A3PxUiAGOOs
-         r41LkQgD1hekQk2gWqQzRcTH87ZJZBM1i+r/zkZATU9VENy6QC8hf0SKU3HGMy3qxeX8
-         xU6oiksUZXU8lkMmUneNPnzgMfF4/QS1/V7HA5hBZ8s8FO8y/wQKv8cyuwTTN11Dz0D6
-         qcmA==
+	s=arc-20240116; t=1749650944; c=relaxed/simple;
+	bh=8umeUY4xnAvrUdO79d9nFVuoRb0TW5UYKKfEdyqbmqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NPiTWRYAtndBKgcD8SLS1xP62KIBQWqEJ3Tn/UiDzPref1/094tEzh6MIEhRRhuxN5gGndtnFp3JcBAxseDgCFNuDaJNipegPN8Lf6JY+2s5sbDthfx+U/XLfoltKS21yxuiwSZalX89+wYxEvKF3MGEz8+v1+jJX1XWXHtq+gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S/radQfO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B9DFto013448
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:09:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AmeztB2LHDf8SBdCFz8cnXw9fFkHuSmFpu3b1oz+irc=; b=S/radQfOA1lnYWMC
+	umTVhVPTtpR/WYV3I7GbshcAF6+vvSO/5+HvxkoJ6UpnlyLpaVqlUvNfehxsTloP
+	JIOqMpoYSMPCLi2CTRONkZUsbYp0bus0xN5WnDAO67wBlKDFkk7+a6iEgRsn0gqh
+	ZEq684Z0zlMjyQpBjnLQn7foY+N1p1WovErPDYuiOmTqi4Lg2oMJbLgF4ogbgxYL
+	Md7urulqHWZOixgJUq3EafRt03r5JK2KByQaCWl9oXWuByi+EZSCAe/kXYxAIu9/
+	Hd4bklruTlMnevr4A2rlhuoVrMLRDnG7ymFHdKyG0OJkJoPRvBP3h6ZrtGFhSvDW
+	FshRSQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 476fmnctv7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:09:01 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d0a9d20c2eso19952285a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:09:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749650927; x=1750255727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mkrF7hMJ7XIqcp+rcg2pb5auO8TVNGaEQdRmstp3lk=;
-        b=lEzwmmtKl7YDVOU8N5GCoLwDkQVLCZO3BZoJ1HJmmVGS5Vyn7EZ4TdSUdXfptas5Va
-         YiGr9eRPwcZBwlNRKX5iS6gjWf6o3orWH6+D0voPXyExk0LnJWVOXCXUW0qaVZd4Zp5d
-         mnwd8HmDhFzjGZIr2XrjHAVbjXUSAjki6RVnow9mTDQJL1pi+onVI/XBAJkvedO+n79a
-         T31X75/6/hJuOtlLz7kHtSAHiDLxvAIp0yRklYVZvYMbWxlec1rj5xFzP0MnVTKGJNUM
-         RCm50+ZGOxEhnWEbzHyhd83Z7DeZ4qAlBn2wuoiDx/1Xb1FjJzbb9bZDC8cIDzXnfcZc
-         Pqhg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+LfG0d9hAZN3U4esRze3hINaSfP++qu5ZM7kN+vUy0vYQixHxA2n51cNxTFkeFkejmy4fRuZswV1GzcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYuUUvQbP1LsHeEO22dUSdwyrV0Y3sFHajMCEsw3UsXQ6VLTIS
-	BToUyHEuVeIR5z8GeUC2Beks0AdLGPSS7phK488DHx9BvYYN6M4zQcQ8+oEsDa9r5A==
-X-Gm-Gg: ASbGncvM3M2pKr9jeZGDKnPmUVP3aREfsYsqVKhmjpBisRRF3v9HH7zLXYT0u8uHWV+
-	U4OgNVg7Gap8YbNShjddj//N+e+EaCzS5fXUT7RDXrnBWBONCIfgHS9w6UmsGiNtDVUt733jLo1
-	v8IKvRbOv4gYoxbpESds995kumn96nIuQOvspehl5rdp6rauA3dbo7yd//Z0s0XPFSfMgmuPjOK
-	CjEm7X/0eXM3DycuYjKx9YX9PBTcwNpAHbdC4e5U1FvvDeS4tZrJpTFNiz3XvzVqO25rS/kkhdy
-	Vw+jCKZuen1ggIhSAMNzhU5n38vuE80nk3uMiQF1FQehO2SjCDEw3UkXqE7BFIUD1m6K3HKxOVW
-	sHDGC
-X-Google-Smtp-Source: AGHT+IFSaTTLDfYx+UWWlDovaDt70hJSIR1Xh3wlmjJQPRnGgcY8c3QuDCpwsHT6wqBwpIU2/viMsA==
-X-Received: by 2002:a05:620a:f05:b0:7ca:f447:c676 with SMTP id af79cd13be357-7d3a887d47cmr524768785a.43.1749650924532;
-        Wed, 11 Jun 2025 07:08:44 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d25170613csm865441585a.6.2025.06.11.07.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 07:08:43 -0700 (PDT)
-Date: Wed, 11 Jun 2025 10:08:41 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Mihai Sain <mihai.sain@microchip.com>
-Cc: gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: ohci-at91: Use dynamic device name for OHCI HCD
- creation
-Message-ID: <afaf4c79-ccec-46ad-889c-e8347454c065@rowland.harvard.edu>
-References: <20250611075414.4239-2-mihai.sain@microchip.com>
+        d=1e100.net; s=20230601; t=1749650940; x=1750255740;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AmeztB2LHDf8SBdCFz8cnXw9fFkHuSmFpu3b1oz+irc=;
+        b=QbakKvpsRDmKnxKTsLaGM/TMqysd54LUls4FCw+Li0/XGz90wr2JGKHSCcxFBUvTtI
+         9eIDrz7rOKwqLQU/4z8arCvyivb7vdTm7hjvZmTZFnjXxPUyBuijGp9R/LzbVeuxxtUW
+         oa0LLAzKvsB68AqsB0P1ER2c05Rz7uKkfrLa4SD2vF5NxUQgVV/UrwqWltedJ1vet1oz
+         W9Z7Bel0wTWXdObuXiAxtFkCZzka0a7i972uqCKa8ZdhYmMLUJ4pAdDr/uGNpOc1mngM
+         bD6dJs37avBA3wVtYNEuqQd/hhHCQeLMZn1KRpTjCXZghu4DgVfG8pnsGAIde48grzv3
+         gcnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgrR2/MZKkSD75H5GEfJypcgnsgUHxi0qSYrisO0inkgpCs+2+6bqzY0gaUfROHH1ohHKADSr8GUQI9Ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz9saERGPQD662wDDscmlsQXdt+RfvNyGKJNftULRtlILnxrTi
+	Z2W59cyYmPndvZDm08UqdYyKj35edXCXSaMSg+xTm/6YJjuTyT3x9Dco9PtVkjpfXbZmUS6mgYI
+	WoUO60qO8S5wvGWmXKZcqiqxMGl1QRgSruhQzzM8XA3t7mvk1YUI9AB1xaBNCrR9R/rM=
+X-Gm-Gg: ASbGnctUSic4qcWeFWhrwo65k+WB2kyZ1FordyCcEnqztQUw2C0O20X48qjjsLGxqx5
+	cKBvuvXxtYK0oDB0VXc7QTlN6l0WlbcttqBHxiFW5vLQWFWiD/4fGljHqRPWCLzxeN24bq49HBR
+	HWE4gV08SS0IT03eI8saCjBJSptjOnOktgkq/0XfHO5E0jO1EF/46XGj7zWmbGa52L5oTLDMzGU
+	8EBa5XQrHuKF+TcojTNiWbBNq4wfUOpnfeNDJY2zPl8G/QoROSrLpLNcCNAilc7BBMvujXFUMlE
+	hcpB8+S1T10Kc4xrDsSiWDoDmdTK1jYl45hqCTrkcLhAz3AU0CGdP9I42WacdOFa7GJns37clz7
+	CGGg=
+X-Received: by 2002:a05:620a:2a04:b0:7d2:89c2:eddb with SMTP id af79cd13be357-7d3a87bfb10mr197099985a.2.1749650940506;
+        Wed, 11 Jun 2025 07:09:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9WowvqmmYPKWaY8pD6n8uaOQ+TKS/kPAXsLiaAzSif3KtKbjRfbYePG427VC/sE9AJip0tQ==
+X-Received: by 2002:a05:620a:2a04:b0:7d2:89c2:eddb with SMTP id af79cd13be357-7d3a87bfb10mr197097685a.2.1749650940051;
+        Wed, 11 Jun 2025 07:09:00 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc76feesm892015366b.147.2025.06.11.07.08.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jun 2025 07:08:59 -0700 (PDT)
+Message-ID: <74b017c2-7144-4446-969c-8502fb2cb74b@oss.qualcomm.com>
+Date: Wed, 11 Jun 2025 16:08:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611075414.4239-2-mihai.sain@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615: Enable TSENS support for
+ QCS615 SoC
+To: Gaurav Kohli <quic_gkohli@quicinc.com>, amitk@kernel.org,
+        daniel.lezcano@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, quic_manafm@quicinc.com
+References: <cover.1744955863.git.gkohli@qti.qualcomm.com>
+ <1758b5c2d839d40a9cb1dd17c734f36c279ac81c.1744955863.git.gkohli@qti.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <1758b5c2d839d40a9cb1dd17c734f36c279ac81c.1744955863.git.gkohli@qti.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: TqDpxCPew7Ob2rIdYgfVsCbh5_O4ERLl
+X-Proofpoint-GUID: TqDpxCPew7Ob2rIdYgfVsCbh5_O4ERLl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDExOCBTYWx0ZWRfX7U0FzFErYqIT
+ +1uixQ18vKlEP9NBPAaodavdYOtbpGDbWkF/oI1VRncot7VCpqr2+fgHPDWeZsZ6GSNcirB66Jt
+ xKxtK0CkJl2CAFYgBB2beqjeClKtwultAMfPoqfP/ltuCtddwNThbEqYs9qM/7w9/bGQcEMh/U6
+ OrXX3qduBUZrtAPdv4MCSo6Y9p9E6Sz6zKdpeEzA5wGKPl1zmSCoJU9SRyYui1dAQF7JkrDBZOj
+ 1uNtMO8dm8AbyiILC52ijq5Sez3HqnxgeabGm7lcwicCkNXb78CxcQaQinuTOSUebM+BWjc5BjI
+ DdZqUk0AbAhhEGjEPRAmyWUOVq3keZpIkpcP4IjvDmLCWHSZ/D9+HMuvFS6UFrMCLHhZ2fAKMwy
+ 0Be5npsaoYnQVHr3CwvFnfN2ZUjKFzsqS79YOxP6igL6rz7nuFzwDZpmvAMWfhHZ179o2Iz8
+X-Authority-Analysis: v=2.4 cv=K8wiHzWI c=1 sm=1 tr=0 ts=68498dfd cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=EH_knqGQgeMXXTF48UIA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxscore=0 mlxlogscore=870 phishscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506110118
 
-On Wed, Jun 11, 2025 at 10:54:15AM +0300, Mihai Sain wrote:
-> Use the dynamic device name instead of the hardcoded string "at91"
-> when creating the OHCI host controller driver.
-> This ensures that the device name is more flexible
-> and correctly reflects the actual device in the system.
-> This will be in sync with ehci at91 driver.
+On 6/11/25 8:37 AM, Gaurav Kohli wrote:
+> Add TSENS and thermal devicetree node for QCS615 SoC.
 > 
-> [root@sam9x75eb ~]$ dmesg | grep usb
-> [    1.464487] usb usb1: Manufacturer: Linux 6.16.0-rc1 ehci_hcd
-> [    1.470210] usb usb1: SerialNumber: 700000.usb-ehci
-> [    1.595683] usb usb2: Manufacturer: Linux 6.16.0-rc1 ohci_hcd
-> [    1.601406] usb usb2: SerialNumber: 600000.usb-ohci
-> 
-> [root@sam9x75eb ~]$ cat /proc/iomem | grep usb
-> 00600000-006fffff : 600000.usb-ohci usb-ohci@600000
-> 00700000-007fffff : 700000.usb-ehci usb-ehci@700000
+> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
+> ---
 
-Are these two outputs supposed to make some sort of point?  It would be 
-better to have a before-and-after comparison, so we can see what the 
-effect of the patch is.
+[...]
 
-Alan Stern
+> +	thermal-zones {
+> +		aoss-thermal {
+> +			thermal-sensors = <&tsens0 0>;
+> +
+> +			trips {
+> +				trip-point0 {
+> +					temperature = <110000>;
+> +					hysteresis = <5000>;
+> +					type = "passive";
+
+All of the passive trip points you added that aren't bound to any
+cooling devices should be critical instead (otherwise they're not
+doing anything)
+
+otherwise, looks good
+
+Konrad
 
