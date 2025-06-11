@@ -1,158 +1,189 @@
-Return-Path: <linux-kernel+bounces-681505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF967AD5345
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:11:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CFCAD535C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC0C1E1F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C471A16B9E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7502E613B;
-	Wed, 11 Jun 2025 11:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC27257453;
+	Wed, 11 Jun 2025 11:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E9eGK7eA"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="bfUeNl7I"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397C22E6112
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749640109; cv=none; b=rBmBSIjhXG4E2K8EKmiNU61K6nhHyyHQ8UPmIlio+zyg8lN8tBdWuNTFoswYN0BUreDOmDpamwoOHaHmYCfqhew3532hDiRA6b5kLpz0zeUp9Ii6kcezynxzVdjdfibwFoiPGtgWeDUcuxpG3MTq7jGmX8lkK+zReQNkEGrmNUI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749640109; c=relaxed/simple;
-	bh=nQJgpmtv7zcgAGtn8AlbcuWRPUUGIKAGBeLfuWQzNng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hmzSTeUC3MWuu8gwyZG1M3gyjBrms0ZZqqtlJOHBJZvF6Ppfsju7LRp14hvi+GNBjma/JA9JVxahH74YIek/ZOfW0Sb4EFUiLicc8j+6IfbBC5hIhp29UAtIPPWGQnLmI0Ep8yVczvJZ2FypoGyQihHUYSH7O72Kkl7WvxUuGVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E9eGK7eA; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so557553f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 04:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749640105; x=1750244905; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fltmcdJR5+uSFB/BOttsMheYiBXzeebgxnOpmYcK9IM=;
-        b=E9eGK7eA9VjjXtaaehngukszalr0LpFIRCtLfrNKmqPb01GtBKeGBNdeNJvohjQIyX
-         0WAsnJ/M8z8bg9ipmahD5NKeRlcqL+Asb6621D41MHW3hF/9ik9S/wO8nrCnf4ea7eVi
-         pom9YEuB8BaRj6rHwN0Fr4xWWzwNw+3GARTpKHKXhC53nGR8n2i/zMgASFF7n6Dtt4CY
-         pe7xbir/Y8TRCeVUBcPENZNcaafws3DoZmep8Aw/48cUC29SXEpCh/ZnmDW0d4kisBcO
-         GZ4jRTcS+KbFiWL+9Vf042lsFPrYZ0wCSJukFoYgRQhwJZC1h097h6RVEoMZDUCz7Loi
-         JuTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749640105; x=1750244905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fltmcdJR5+uSFB/BOttsMheYiBXzeebgxnOpmYcK9IM=;
-        b=TB94S9QWSw+z5aMYWZqYNhRljYm3nfBGqEx/OJtaim7kfojSPmgdUG8BEJUkPpmP/A
-         IiMJjYkKy6gFs6/wT+op9tHa1WUoUkTKhVSDn5Lc6U/UU1jFUntbANihCBwdKahmjje5
-         hMcSawt1/ROvC3xgSCP5kL6wPTrmaw5JHH/sACW2V0R9C39YbC5CddNq6/Rzr1e9IcMx
-         TaRmjGPmaC3OLNlUsJNlOab6/VFi3MPpY7KdKhdtB1b2igk3p02d3lhWatg1LSV80XgL
-         /0d1nYk1FKsBBv3dEOt3gLbFWywwZSCL5igBcVwARfWCYncFH50Jw1rfmDzFoGaPHfc/
-         AuNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVR9VMGMp9D6nw2/YdaffddS3OiPss/ac28/Zc2G2Sep1JQJGKSDf1+6BXPWRhbY8KxYvjrEMJcGAYA09I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp6W3WY8MnBrm/RR1+eQR3MWymtfcCPSV+HFjZJ/+ljkiAWz6B
-	7pQUpluLWAApDSCtIKp4qGvi6uBCeNAGGhIzJ6jRGQQNS17ksqhekygOk49t2nLtORZwIxo9UTs
-	F1OKIykgstbNH0SzhKHTSjQZ7zYADlTYlvPy/aqxC
-X-Gm-Gg: ASbGncvXKzTxkClCH58x1mIn/bzESrGEG9agUkiw9yxdc+a3vQusw4ZhRWd2BZ2bWna
-	mXXkE4QrirQXO2swxvpnJIqqB2DphrRM/bC3NTLVB1A82kI+rYjiLiOXeOuEga+66hS6dlJMssO
-	GRw5DO/1ykLVAyqRf6cNjuYMaQaIOqFi0b5SEIbtsS/Wh89qgmJp7ObuFOahAWxX5CAl+6CZe7W
-	/XfYNceYfD6
-X-Google-Smtp-Source: AGHT+IGbgTDC9R5k+26NNyosxwCjQqzml5rbQBFSYZpq9MUeODCnOy4mDCQ40C2g4MXpjTSoeBZdpdGGzwYy9Bv8Tos=
-X-Received: by 2002:a05:6000:230f:b0:3a4:e63d:2f2d with SMTP id
- ffacd0b85a97d-3a5581e7502mr2734468f8f.6.1749640105328; Wed, 11 Jun 2025
- 04:08:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0A82E6107;
+	Wed, 11 Jun 2025 11:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749640360; cv=pass; b=qX3V8hypHbB6ZoezQGaHzg9sHuon96VzyG2tqKwRs3B8YYz15Y7lcJtYIXsQh9eQqGPOfhOHnK71TZFUDKuRWKNAqrphBGkysajduRhf/A+2gRYVJ7jGHBmt0yqmEkiCKCa6GINAryVG1TctM6PwNKHbCrb9aq/8zIDZGT5RJXM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749640360; c=relaxed/simple;
+	bh=EefSXwOg6EnlDbaCsRdSPLkeXbRTPj72FblAFX989Pg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=krv01QXHZV0RgnCFYzOW1fIxo33kBb5HvYzPZ9qfUj/+iPZlqnpRu7c+9Eaups7N+ZslJwyjpAMItDP1gNTOFNfkalkwVeKtykzSeInoWTvOicbfGlo6fnae9z+mvbLnkgokZUxmOZytfpkYcxjJsH69LwCKhmiTfsNndPnIzXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=bfUeNl7I; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1749640329; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QG5faVQFbIILrQTW0ZBXfFI76UtWGMdYguxmkoNxLeYGZxz5CYct0Yx9iNLeae3/tCHH2I4N5a6bsxQ4mRDVLOBAlg/IZNk4PeTxILhhlr/u2hG/nICo8JhnfZa73EWj3mgeWLCpQLOQfNBv142DEpwNxQBscR6Rpe0r8P8wW4Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749640329; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YGZIHHTdUio4mkdGxDuE5j03JDM6UM0QavShcW0kz4s=; 
+	b=OJ4Q9V8NQwUR04DQtcMguwUsuXp0JconZeDK71kK+3VwSMwd78fbknjfvi5uSAH0v8UO8FZuG5s1UZhNPzRWtQW0erifIJEhOcYwZWf8q730GpGYjQmRQzJqSDy9nd7rmdw78CBZ0dJLkJpJbdwoeXBm4lY6rEYw6XENBFPJ09Q=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
+	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749640329;
+	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=YGZIHHTdUio4mkdGxDuE5j03JDM6UM0QavShcW0kz4s=;
+	b=bfUeNl7IIh2Pr0yrDjsQ+LpveA1vvUP5D3xOghqP6cidbjLzkL8vOt0OtQHTLlqM
+	pFooA2LJg3iteB8yqobdy0VEnFFKR130gk7YxuCBNZpKqLUMOFYjvhPax9hnDm73bJv
+	6OAMhPUge9VeaEgSM/kl1OC4xsXVfwjRAVNFLxSg=
+Received: by mx.zohomail.com with SMTPS id 1749640327308121.2139749325595;
+	Wed, 11 Jun 2025 04:12:07 -0700 (PDT)
+Message-ID: <8e551fad9bd1627b9ed6f20be7d88bdc3438d482.camel@collabora.com>
+Subject: Re: [PATCH v4 01/10] ASoC: mediatek: common: modify mtk afe
+ platform driver for mt8196
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+To: "Darren.Ye" <darren.ye@mediatek.com>, Liam Girdwood
+ <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>,
+ Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai <tiwai@suse.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
+Date: Wed, 11 Jun 2025 13:12:01 +0200
+In-Reply-To: <20250610092852.21986-2-darren.ye@mediatek.com>
+References: <20250610092852.21986-1-darren.ye@mediatek.com>
+	 <20250610092852.21986-2-darren.ye@mediatek.com>
+Organization: Collabora Ltd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605-pointed-to-v1-1-ee1e262912cc@kernel.org>
- <Was3UIiWcTBx58JEfoXMB908QEUOWeRMrekA9TD0VWTsA5KU20VwFE9Vo_xefwi_U4UOa5BggjbBby92lP96pg==@protonmail.internalid>
- <CAH5fLggzYQcMhcscuODR7cu__LLKAXhZ0A-tsBGc7gGyAA6Ofg@mail.gmail.com> <87ecvqzhcr.fsf@kernel.org>
-In-Reply-To: <87ecvqzhcr.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 11 Jun 2025 13:08:11 +0200
-X-Gm-Features: AX0GCFum2Poedya3OpC0KXmOTz2XUTZUwzK2xJUUdfTin56X1ZcOGgOs4wrlE0A
-Message-ID: <CAH5fLgjRd5S4owRrZS7ONeb=-Tzq+xQDtWtqii1tCgEoqzr+bw@mail.gmail.com>
-Subject: Re: [PATCH] rust: types: add FOREIGN_ALIGN to ForeignOwnable
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-On Wed, Jun 11, 2025 at 12:46=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->
-> "Alice Ryhl" <aliceryhl@google.com> writes:
->
-> > On Thu, Jun 5, 2025 at 10:00=E2=80=AFPM Andreas Hindborg <a.hindborg@ke=
-rnel.org> wrote:
-> >>
-> >> The current implementation of `ForeignOwnable` is leaking the type of =
-the
-> >> opaque pointer to consumers of the API. This allows consumers of the o=
-paque
-> >> pointer to rely on the information that can be extracted from the poin=
-ter
-> >> type.
-> >>
-> >> To prevent this, change the API to the version suggested by Maira
-> >> Canal (link below): Remove `ForeignOwnable::PointedTo` in favor of a
-> >> constant, which specifies the alignment of the pointers returned by
-> >> `into_foreign`.
-> >>
-> >> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> >> Suggested-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> >> Link: https://lore.kernel.org/r/20240309235927.168915-3-mcanal@igalia.=
-com
-> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> >
-> > One nit below. With that and things other folks mentioned fixed, you ma=
-y add:
-> >
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> >
-> >> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> >> index 22985b6f6982..025c619a2195 100644
-> >> --- a/rust/kernel/types.rs
-> >> +++ b/rust/kernel/types.rs
-> >> @@ -21,15 +21,11 @@
-> >>  ///
-> >>  /// # Safety
-> >>  ///
-> >> -/// Implementers must ensure that [`into_foreign`] returns a pointer =
-which meets the alignment
-> >> -/// requirements of [`PointedTo`].
-> >> -///
-> >> -/// [`into_foreign`]: Self::into_foreign
-> >> -/// [`PointedTo`]: Self::PointedTo
-> >> +/// Implementers must ensure that [`Self::into_foreign`] return point=
-ers with alignment that is an
-> >> +/// integer multiple of [`Self::FOREIGN_ALIGN`].
-> >
-> > We should require non-null:
->
-> What is your rationale for this?
+On Tue, 2025-06-10 at 17:27 +0800, Darren.Ye wrote:
+> From: Darren Ye <darren.ye@mediatek.com>
+>=20
+> Mofify the pcm pointer interface to support 64-bit address access.
+>=20
+> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
+> ---
+> =C2=A0.../mediatek/common/mtk-afe-platform-driver.c | 47 ++++++++++++----=
+-
+> --
+> =C2=A0.../mediatek/common/mtk-afe-platform-driver.h |=C2=A0 2 +
+> =C2=A02 files changed, 33 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+> b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+> index 6b6330583941..a86594dca2b7 100644
+> --- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+> +++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+> @@ -86,29 +86,44 @@ snd_pcm_uframes_t mtk_afe_pcm_pointer(struct
+> snd_soc_component *component,
+> =C2=A0	const struct mtk_base_memif_data *memif_data =3D memif->data;
+> =C2=A0	struct regmap *regmap =3D afe->regmap;
+> =C2=A0	struct device *dev =3D afe->dev;
+> -	int reg_ofs_base =3D memif_data->reg_ofs_base;
+> -	int reg_ofs_cur =3D memif_data->reg_ofs_cur;
+> -	unsigned int hw_ptr =3D 0, hw_base =3D 0;
+> -	int ret, pcm_ptr_bytes;
+> -
+> -	ret =3D regmap_read(regmap, reg_ofs_cur, &hw_ptr);
+> -	if (ret || hw_ptr =3D=3D 0) {
+> -		dev_err(dev, "%s hw_ptr err\n", __func__);
+> -		pcm_ptr_bytes =3D 0;
+> +	unsigned int hw_ptr_lower32 =3D 0, hw_ptr_upper32 =3D 0;
+> +	unsigned int hw_base_lower32 =3D 0, hw_base_upper32 =3D 0;
+> +	unsigned long long hw_ptr =3D 0, hw_base =3D 0;
+> +	int ret;
+> +	unsigned long long pcm_ptr_bytes =3D 0;
+> +
+> +	ret =3D regmap_read(regmap, memif_data->reg_ofs_cur,
+> &hw_ptr_lower32);
+> +	if (ret || hw_ptr_lower32 =3D=3D 0) {
+> +		dev_err(dev, "%s hw_ptr_lower32 err\n", __func__);
+> =C2=A0		goto POINTER_RETURN_FRAMES;
+> =C2=A0	}
+> =C2=A0
+> -	ret =3D regmap_read(regmap, reg_ofs_base, &hw_base);
+> -	if (ret || hw_base =3D=3D 0) {
+> -		dev_err(dev, "%s hw_ptr err\n", __func__);
+> -		pcm_ptr_bytes =3D 0;
+> -		goto POINTER_RETURN_FRAMES;
+> +	if (memif_data->reg_ofs_cur_msb) {
+> +		ret =3D regmap_read(regmap, memif_data-
+> >reg_ofs_cur_msb, &hw_ptr_upper32);
+> +		if (ret) {
+> +			dev_err(dev, "%s hw_ptr_upper32 err\n",
+> __func__);
+> +			goto POINTER_RETURN_FRAMES;
+> +		}
+> =C2=A0	}
+> =C2=A0
+> -	pcm_ptr_bytes =3D hw_ptr - hw_base;
+> +	ret =3D regmap_read(regmap, memif_data->reg_ofs_base,
+> &hw_base_lower32);
+> +	if (ret || hw_base_lower32 =3D=3D 0) {
+> +		dev_err(dev, "%s hw_base_lower32 err\n", __func__);
+> +		goto POINTER_RETURN_FRAMES;
+> +	}
+> +	if (memif_data->reg_ofs_base_msb) {
+> +		ret =3D regmap_read(regmap, memif_data-
+> >reg_ofs_base_msb, &hw_base_upper32);
+> +		if (ret) {
+> +			dev_err(dev, "%s hw_base_upper32 err\n",
+> __func__);
+> +			goto POINTER_RETURN_FRAMES;
+> +		}
+> +	}
+> +	hw_ptr =3D ((unsigned long long)hw_ptr_upper32 << 32) +
+> hw_ptr_lower32;
+> +	hw_base =3D ((unsigned long long)hw_base_upper32 << 32) +
+> hw_base_lower32;
+> =C2=A0
+> =C2=A0POINTER_RETURN_FRAMES:
+> -	return bytes_to_frames(substream->runtime, pcm_ptr_bytes);
+> +	pcm_ptr_bytes =3D MTK_WORD_SIZE_ALIGN(hw_ptr - hw_base);
+> +	return bytes_to_frames(substream->runtime,
+> (ssize_t)pcm_ptr_bytes);
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_GPL(mtk_afe_pcm_pointer);
+> =C2=A0
+> diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+> b/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+> index fcc923b88f12..9809e60db511 100644
+> --- a/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+> +++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+> @@ -12,6 +12,8 @@
+> =C2=A0#define AFE_PCM_NAME "mtk-afe-pcm"
+> =C2=A0extern const struct snd_soc_component_driver mtk_afe_pcm_platform;
+> =C2=A0
+> +#define MTK_WORD_SIZE_ALIGN(x) ((x) & (0xfffffffff0))
+> +
+> =C2=A0struct mtk_base_afe;
+> =C2=A0struct snd_pcm;
+> =C2=A0struct snd_soc_component;
 
-The rationale is that the implementation of XArray assumes that the
-pointers are non-null. If we allow null pointers, we will need to fix
-the XArray.
-
-Alice
+Tested-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> # on
+Mediatek Genio 510 EVK and Genio 1200 EVK
 
