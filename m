@@ -1,141 +1,185 @@
-Return-Path: <linux-kernel+bounces-681897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EFAD58B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:29:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2B6AD58C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA9516727B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB0A3A40D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3435E29ACC8;
-	Wed, 11 Jun 2025 14:28:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F3C28C017;
-	Wed, 11 Jun 2025 14:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74CA2BD00E;
+	Wed, 11 Jun 2025 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="Ar4jT8v4"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2496FBF;
+	Wed, 11 Jun 2025 14:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749652138; cv=none; b=i1/4BmTl2QbQ6tPiZ/4GeIK826g2pvLnaXokAARqtzvFn1AvF/1jJXpfMtps0eQem4JjKp4L6wy7oQDZHGSxPQbop3bfmVJWLxL7nvVp3UQ1TDMwH5b7a3Sy8QNA8omdFI6BcvufTvufoEmWDjQkqmX3QHZlQzyxzMHoJcM4zS4=
+	t=1749652215; cv=none; b=YW/KGUrufW0zibexfGrNg601jqqcv9lkUZZ3FnBaY/nDc8yZO7IRTdI+UKH0yEGx0VJi3nYFWyeSr3P97PDlURQd0QWxFz5+3tDtyo/oQ5kwZ0JAAhUcuHEleBYiaOHbuK5/m2VKovjLXkhg8dxY41nuGFFMqKmltUizf2ipQI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749652138; c=relaxed/simple;
-	bh=EY1GvCod1xS/lS7mriTNXRbI5lI8/SAVCHmM1jsz+0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uc3Ma9ImeZkcUx/qbj7P1CqFj1psZmTv9T0S7QadanIwSgFE9dV0Tn8NX2fchjKZoHWyvtJdGKKyAR5RR5Vxb3kg79eo+8p3PF88P1udMWQxziUOnYFpWVit7SMQ8rgnJv0b7LnsB2OIOM7hYQ5vWzvz6cJr12qYQa27hfg6AWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A1AD15A1;
-	Wed, 11 Jun 2025 07:28:36 -0700 (PDT)
-Received: from [10.57.28.131] (unknown [10.57.28.131])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB3DE3F673;
-	Wed, 11 Jun 2025 07:28:54 -0700 (PDT)
-Message-ID: <e2d856b7-0214-49ab-a4c5-4e6ee2541c6d@arm.com>
-Date: Wed, 11 Jun 2025 15:28:52 +0100
+	s=arc-20240116; t=1749652215; c=relaxed/simple;
+	bh=EK7Ua+XxuKwvJrhmcdD2Nx6g8d0iUYoZdRE24xUl+jE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gseb15KjH9VC6OrO5tBQ9+t6eTrKsgSGc9sPEZ+0FloGkNz6u6D+ImfdV8np3MXUbX8B6oWylg9WpJVEq13zYs/aaZu33Tpgo1MM5fMPmlrKKZpO2KVFKH/UA5Qv8SZdElfemet/MQJXzUPmxGTloLGlvNgNAA0n+lnBNmiNXEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=Ar4jT8v4; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id EFA7A3D88025;
+	Wed, 11 Jun 2025 10:30:10 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id 0AioK79u5rRX; Wed, 11 Jun 2025 10:30:10 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 282833D88026;
+	Wed, 11 Jun 2025 10:30:10 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 282833D88026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1749652210; bh=eeeRtpM133CZLAcaCizEee0AzA7tK+TGafIv/V4LQ30=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=Ar4jT8v4pSlyj4nT4qzvMjSYIucGPmKdEPusGXABGOWTJDX3a7isZV0EGfwfpRdYh
+	 9DoaqgfUss7mf8jTWWUn5BW5K3g8csexLmsUQp4IlaEKQytgP9CWB7N3gD6A55Cnm/
+	 G18MnZYuKVLlzeaOzoPodGFFKg3u4vgFOM6hz1xV9qNMJZ4a2toVOiUm2YeEzJSAD1
+	 AdvlWZSNa0l+ipI6y+8q7hgvykJwI4BcNgiSIMrbQUigD/d6WBZE6gsfil/dKZ06Zz
+	 YBSu1Sss2tzZdY+20EHy0NqoxDsQhJReFWEeqXmSAi/xWKb4mf4Inpi1sMGoqdJn3n
+	 lfVhoG1j5nXzg==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id Nreq9lvN9_Jw; Wed, 11 Jun 2025 10:30:09 -0400 (EDT)
+Received: from fedora (unknown [192.168.51.254])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id C8BFD3D88025;
+	Wed, 11 Jun 2025 10:30:09 -0400 (EDT)
+Date: Wed, 11 Jun 2025 10:30:08 -0400
+From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v5 5/6] power: supply: pf1550: add battery charger support
+Message-ID: <aEmS8N8gdz8-6GBD@fedora>
+References: <20250610-pf1550-v5-0-ed0d9e3aaac7@savoirfairelinux.com>
+ <20250610-pf1550-v5-5-ed0d9e3aaac7@savoirfairelinux.com>
+ <aEifg/+mIuVVm6El@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] swiotlb: iommu/dma: Move trace_swiotlb_bounced() into
- swiotlb_tbl_map_single()
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
- iommu@lists.linux.dev
-Cc: Christoph Hellwig <hch@infradead.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>
-References: <20250611100103.7b3c28c8@batman.local.home>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250611100103.7b3c28c8@batman.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEifg/+mIuVVm6El@lizhi-Precision-Tower-5810>
 
-On 2025-06-11 3:01 pm, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, Jun 10, 2025 at 05:11:31PM -0400, Frank Li wrote:
+> > +static void pf1550_chg_vbus_work(struct work_struct *work)
+> > +{
+> > +	struct pf1550_charger *chg = container_of(to_delayed_work(work),
+> > +						  struct pf1550_charger,
+> > +						  vbus_sense_work);
+> > +	unsigned int data;
+> > +	bool psy_changed = false;
+> > +
+> > +	if (!chg->charger)
+> > +		return;
+> > +
+> > +	if (regmap_read(chg->pf1550->regmap, PF1550_CHARG_REG_VBUS_SNS, &data)) {
+> > +		dev_err(chg->dev, "Read VBUS_SNS error.\n");
+> > +		return;
+> > +	}
+> > +
+> > +	mutex_lock(&chg->mutex);
+> > +
+> > +	if (data & PF1550_VBUS_UVLO) {
+> > +		chg->psy_desc.type = POWER_SUPPLY_TYPE_BATTERY;
+> > +		psy_changed = true;
+> > +		dev_dbg(chg->dev, "VBUS detached.\n");
+> > +	}
+> > +	if (data & PF1550_VBUS_IN2SYS)
+> > +		dev_dbg(chg->dev, "VBUS_IN2SYS_SNS.\n");
+> > +	if (data & PF1550_VBUS_OVLO)
+> > +		dev_dbg(chg->dev, "VBUS_OVLO_SNS.\n");
+> > +	if (data & PF1550_VBUS_VALID) {
+> > +		chg->psy_desc.type = POWER_SUPPLY_TYPE_MAINS;
+> > +		psy_changed = true;
+> > +		dev_dbg(chg->dev, "VBUS attached.\n");
+> > +	}
+> > +
+> > +	mutex_unlock(&chg->mutex);
 > 
-> I'm working on code that will warn when a tracepoint is defined but not
-> used. As the TRACE_EVENT() logic still creates all the code regardless if
-> something calls the trace_<event>() function. It wastes around 5K per trace
-> event (less for tracepoints).
-> 
-> But it seems that the code in drivers/iommu/dma-iommu.c does the opposite.
-> It calls the trace_swiotlb_bounced() tracepoint without it being defined.
-> The tracepoint is defined in kernel/dma/swiotlb.c when CONFIG_SWIOTLB is
-> defined, but this code exists when that config is not defined.
-> 
-> This now fails with my work because I have all the callers reference the
-> tracepoint that they will call.
-> 
-> Thanks to the kernel test robot, it found this:
-> 
->    https://lore.kernel.org/all/202506091015.7zd87kI7-lkp@intel.com/
-> 
-> Instead of calling trace_swiotlb_bounced() from drivers/iommu/dma-iommu.c
-> where it is useless when CONFIG_SWIOTLB is not defined, move the
-> tracepoint into swiotlb_tbl_map_single(). This also makes it consistent
-> with which memory is being traced (physical as supposed to dma address).
-
-Consistent with what? Certainly not the other callers which invoke the 
-tracepoint with phys_to_dma(orig_addr), but will now do so twice with 
-potentially different values. Arguably iommu-dma is already consistent 
-as things stand, since it does not support static address offsets 
-underneath IOMMU translation, and therefore orig_addr will always be 
-equal to phys_to_dma(orig_addr) anyway. The point of interest really is 
-in those other cases, where if there *were* a static DMA offset then 
-phys_to_dma(orig_addr) would actually be a pretty meaningless value 
-which is not used anywhere else and therefore not overly helpful to 
-trace - neither the recognisable PA of the underlying memory itself, nor 
-the actual DMA address which will be used subsequently, since at this 
-point that's yet to be allocated.
-
-> Fixes: ed18a46262be4 ("iommu/dma: Factor out a iommu_dma_map_swiotlb helper")
-
-It's a fair bit older than that, try a63c357b9fd5 ("iommu/dma: Trace 
-bounce buffer usage when mapping buffers") - looks like it's always just 
-been hopeful of being DCE'd.
+> not sure why need lock here, you just update chg->psy_desc.type?
+>
+It prevents concurrent access in this delayed work and in pf1550_reg_init.
+However, it's unlikely that the probe is still active during the first execution
+of the delayed work. So, i also think this mutex can be removed.
+> > +
+> > +	if (psy_changed)
+> > +		power_supply_changed(chg->charger);
+> > +}
+> > +
+> > +static irqreturn_t pf1550_charger_irq_handler(int irq, void *data)
+> > +{
+> > +	struct pf1550_charger *chg = data;
+> > +	struct device *dev = chg->dev;
+> > +	struct platform_device *pdev = to_platform_device(dev);
+> > +	int i, irq_type = -1;
+> > +
+> > +	for (i = 0; i < PF1550_CHARGER_IRQ_NR; i++)
+> > +		if (irq == platform_get_irq(pdev, i))
+> > +			irq_type = i;
+> > +
+> > +	switch (irq_type) {
+> > +	case PF1550_CHARG_IRQ_BAT2SOCI:
+> > +		dev_info(dev, "BAT to SYS Overcurrent interrupt.\n");
+> > +		break;
+> > +	case PF1550_CHARG_IRQ_BATI:
+> > +		schedule_delayed_work(&chg->bat_sense_work,
+> > +				      msecs_to_jiffies(10));
+> > +		break;
+> > +	case PF1550_CHARG_IRQ_CHGI:
+> > +		schedule_delayed_work(&chg->chg_sense_work,
+> > +				      msecs_to_jiffies(10));
+> > +		break;
+> > +	case PF1550_CHARG_IRQ_VBUSI:
+> > +		schedule_delayed_work(&chg->vbus_sense_work,
+> > +				      msecs_to_jiffies(10));
+> > +		break;
+> > +	case PF1550_CHARG_IRQ_THMI:
+> > +		dev_info(dev, "Thermal interrupt.\n");
+> > +		break;
+> > +	default:
+> > +		dev_err(dev, "unknown interrupt occurred.\n");
+> > +	}
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int pf1550_charger_probe(struct platform_device *pdev)
+> > +	mutex_init(&chg->mutex);
+...
+> > +
+> > +	INIT_DELAYED_WORK(&chg->vbus_sense_work, pf1550_chg_vbus_work);
+> > +	INIT_DELAYED_WORK(&chg->chg_sense_work, pf1550_chg_chg_work);
+> > +	INIT_DELAYED_WORK(&chg->bat_sense_work, pf1550_chg_bat_work);
+...
+> > +	ret = pf1550_reg_init(chg);
 
 Thanks,
-Robin.
-
-> Closes: https://lore.kernel.org/all/20250610202457.5a599336@gandalf.local.home/
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->   drivers/iommu/dma-iommu.c | 2 --
->   kernel/dma/swiotlb.c      | 2 ++
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index ea2ef53bd4fe..1935b360cc94 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -1153,8 +1153,6 @@ static phys_addr_t iommu_dma_map_swiotlb(struct device *dev, phys_addr_t phys,
->   		return (phys_addr_t)DMA_MAPPING_ERROR;
->   	}
->   
-> -	trace_swiotlb_bounced(dev, phys, size);
-> -
->   	phys = swiotlb_tbl_map_single(dev, phys, size, iova_mask(iovad), dir,
->   			attrs);
->   
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index abcf3fa63a56..c112f1d98861 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -1379,6 +1379,8 @@ phys_addr_t swiotlb_tbl_map_single(struct device *dev, phys_addr_t orig_addr,
->   	phys_addr_t tlb_addr;
->   	unsigned short pad_slots;
->   
-> +	trace_swiotlb_bounced(dev, orig_addr, mapping_size);
-> +
->   	if (!mem || !mem->nslabs) {
->   		dev_warn_ratelimited(dev,
->   			"Can not allocate SWIOTLB buffer earlier and can't now provide you with the DMA bounce buffer");
-
+Sam
 
