@@ -1,138 +1,170 @@
-Return-Path: <linux-kernel+bounces-681952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C243AD5980
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:03:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564A4AD5982
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B3D3A654B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C2616741A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8203B1925AB;
-	Wed, 11 Jun 2025 15:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfZVUgB5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0B1185920;
-	Wed, 11 Jun 2025 15:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108CA18FC84;
+	Wed, 11 Jun 2025 15:04:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BEB186295
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654207; cv=none; b=iMRpHEBQ0Je7LXyK2hgwROatc8qIKvGzosSNZTQnW4zpPqx6R38y9rK+cBbkw3/OFd/VOhadX8UEsa2goIIn7Z8u0qDcmmf7EvuTIXqgEJNxMzC1YVRnPhOTjRM0Twhhj/1B2clHFQNug6vIgcYBjSrhhamfPu33H+6wsTLma/o=
+	t=1749654264; cv=none; b=kLqfEtL4GhnqtymS1xb9fZl7BB9NC+i9NoMRvzfh8bMecr35ZSkAF3UIyCxbr5wItkX20uz9goDn+dn6CMtwMIdUMpQaNNPEAbLEjEeZBbRq7YAWWsaq0G350/rMZVzHzILzTh07RrSiCBYIbGPHQj3Kgq/UAmzdNvQCKbkBmCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654207; c=relaxed/simple;
-	bh=WLyNWYf5IcSY3WxP84heQHYPfpvQ58JTRkFiVKTi2uM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b4zeqI2YCNNJCk9FItV5/rwERUqIVyWe/Zc7Mi2IoAd96EYqijMYAO9M0zgNKCSgpssH3rh29CwXX8EwWD7dFxlufonQM5jWFbrexJY9rX0Ccg8AlhyK3NlBBXNmC4uHY9Sz0A6A9+FtT2Xy7YhQ24lBbENKJw6epQkYkf8fsfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfZVUgB5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E13C4CEE3;
-	Wed, 11 Jun 2025 15:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749654206;
-	bh=WLyNWYf5IcSY3WxP84heQHYPfpvQ58JTRkFiVKTi2uM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SfZVUgB5ZeAy5mtLSI8+wD9clA43KAFlxujPll6yOjNwux6F1FKL/ebETxgexXAlQ
-	 d/FNUCTjp6Yq/5vLRu7ztNSwKh2xvPSPFxuhrvW4mvtYVCF7DJny6OPYd8sC5pvUVE
-	 MQ/lSc5TTmaPdMqckddgbOr7xFcet/yUCxPwWfzeddj7TxANixgyOzc1X77jjGC7dk
-	 1cf6HWYJQuI3oFtKdhw1O8K/exQp+ZYzs/m31mryQF9cw7jgUi4jfMKheUaji97Kz4
-	 jgpvIItLlrCJReybJRikJFgKIRYO67Rs1wG+UBSY6270T3T59S25ve+lrVQ2SVBzuD
-	 75DilNsWkJJUA==
-Date: Wed, 11 Jun 2025 10:03:23 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: qcom: msm: mark certain pins as invalid for
- interrupts
-Message-ID: <3i6ni6jfq7vzij5cj4h35sy4ceegeekuv3lr5b3nmyqtheky6q@mlrspoyavfwt>
-References: <20250611143911.48501-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1749654264; c=relaxed/simple;
+	bh=D1U3niB/dKsdFA6zOIP6fSeecR/uZaA6D3MFlS9THIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TH56VsR7hW71APAK0H9SSbMhGpV9h0OrlHtuvyT7zCY1AhF1GlyfZ2T6Fx2c5mkPxh9sUqYlHNr4wSACeH/83I7ZoarWGqbCtw27GiqsqTZfz1l8QfUJq230WBlIUuvw7olRxBZBThdtiRKLdEZrvRh67gSeUU0At62VN9Y+dOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8952F15A1;
+	Wed, 11 Jun 2025 08:04:02 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E38D23F59E;
+	Wed, 11 Jun 2025 08:04:18 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	pcc@google.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	anshuman.khandual@arm.com,
+	joey.gouly@arm.com,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	frederic@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io,
+	samuel.holland@sifive.com,
+	palmer@rivosinc.com,
+	charlie@rivosinc.com,
+	thiago.bauermann@linaro.org,
+	bgray@linux.ibm.com,
+	tglx@linutronix.de,
+	puranjay@kernel.org,
+	david@redhat.com,
+	yang@os.amperecomputing.com,
+	mbenes@suse.cz,
+	joel.granados@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v6 0/7] support FEAT_MTE_STORE_ONLY feature
+Date: Wed, 11 Jun 2025 16:04:10 +0100
+Message-Id: <20250611150417.44850-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611143911.48501-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 11, 2025 at 04:39:11PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> When requesting pins whose intr_detection_width setting is not 1 or 2
-> for interrupts (for example by running `gpiomon -c 0 113` on RB2), we'll
-> hit a BUG() in msm_gpio_irq_set_type(). Potentially crashing the kernel
-> due to an invalid request from user-space is not optimal, so let's go
-> through the pins and mark those that would fail the check as invalid for
-> the irq chip as we should not even register them as available irqs.
-> 
+ARMv8.5 based processors introduce the Memory Tagging Extension (MTE) feature.
+MTE is built on top of the ARMv8.0 virtual address tagging TBI
+(Top Byte Ignore) feature and allows software to access a 4-bit
+allocation tag for each 16-byte granule in the physical address space.
+A logical tag is derived from bits 59-56 of the virtual
+address used for the memory access. A CPU with MTE enabled will compare
+the logical tag against the allocation tag and potentially raise an
+tag check fault on mismatch, subject to system registers configuration.
 
-I had to go dig into the code to understand why there is a problem with
-GPIO 113 on RB2 (i.e. UFS_RESET on SM6115)... I think it would have been
-better to document the actual reason for the problem, which is:
+Since ARMv8.9, FEAT_MTE_STORE_ONLY can be used to restrict raise of tag
+check fault on store operation only.
+For this, application can use PR_MTE_STORE_ONLY flag
+when it sets the MTE setting with prctl().
 
-"The UFS_RESET pin doesn't have interrupt logic, but is registered as a
-GPIO. Requesting the interrupt of this pin hits a BUG() in
-msm_gpio_irq_set_type() because intr_detection_width is invalid"
+This feature omits tag check for fetch/read operation.
+So it might be used not only debugging purpose but also be used
+in runtime requiring strong memory safty in normal env.
 
-> This function can be extended if we determine that there are more
-> corner-cases like this.
-> 
+Patch Sequences
+================
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Patch #1 adds cpufeature FEAT_MTE_STORE_ONLY
 
-Regards,
-Bjorn
+Patch #2 introduce new flag -- PR_MTE_STORE_ONLY
 
-> Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index f012ea88aa22c..77e0c2f023455 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1038,6 +1038,24 @@ static bool msm_gpio_needs_dual_edge_parent_workaround(struct irq_data *d,
->  	       test_bit(d->hwirq, pctrl->skip_wake_irqs);
->  }
->  
-> +static void msm_gpio_irq_init_valid_mask(struct gpio_chip *gc,
-> +					 unsigned long *valid_mask,
-> +					 unsigned int ngpios)
-> +{
-> +	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-> +	const struct msm_pingroup *g;
-> +	int i;
-> +
-> +	bitmap_fill(valid_mask, ngpios);
-> +
-> +	for (i = 0; i < ngpios; i++) {
-> +		g = &pctrl->soc->groups[i];
-> +		if (g->intr_detection_width != 1 &&
-> +		    g->intr_detection_width != 2)
-> +			clear_bit(i, valid_mask);
-> +	}
-> +}
-> +
->  static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->  {
->  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> @@ -1441,6 +1459,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
->  	girq->default_type = IRQ_TYPE_NONE;
->  	girq->handler = handle_bad_irq;
->  	girq->parents[0] = pctrl->irq;
-> +	girq->init_valid_mask = msm_gpio_irq_init_valid_mask;
->  
->  	ret = gpiochip_add_data(&pctrl->chip, pctrl);
->  	if (ret) {
-> -- 
-> 2.48.1
-> 
+Patch #3 support MTE_STORE_ONLY feature
+
+Patch #4 add HWCAP for MTE_STORE_ONLY
+
+Patch #5 adds mte store-only hwcap test
+
+Patch #6 preparation for adding mte store-only testcase
+
+Patch #7 adds mte store-only testcases
+
+Patch History
+================
+v5 to v6:
+  - fix testcase constant
+  - fix subject of Patch #5
+  - https://lore.kernel.org/all/20250611094802.929332-1-yeoreum.yun@arm.com/
+
+v4 to v5:
+  - rebase to v6.16-rc1
+  - refactor the check_mmap_options for STORE_ONLY testcases.
+  - https://lore.kernel.org/linux-arm-kernel/20250507154654.1937588-1-yeoreum.yun@arm.com/
+
+v3 to v4:
+  - separate cpufeature and hwcap commit.
+  - add mte store-only testcases in check_mmap_options
+  - https://lore.kernel.org/linux-arm-kernel/aApBk8eGA2Eo57fq@e129823.arm.com/
+
+v2 to v3:
+  - rebase to 6.15-rc1
+  - https://lore.kernel.org/linux-arm-kernel/20250403174701.74312-1-yeoreum.yun@arm.com/
+
+v1 to v2:
+  - add doc to elf_hwcaps.rst
+  - add MTE_STORE_ONLY hwcap test
+  - https://lore.kernel.org/linux-arm-kernel/20250403142707.26397-1-yeoreum.yun@arm.com/
+
+NOTE:
+  This patch based on https://lore.kernel.org/all/20250611135818.31070-1-yeoreum.yun@arm.com/
+
+Yeoreum Yun (7):
+  arm64/cpufeature: add MTE_STORE_ONLY feature
+  prctl: introduce PR_MTE_STORE_ONLY
+  arm64/kernel: support store-only mte tag check
+  arm64/hwcaps: add MTE_STORE_ONLY hwcaps
+  kselftest/arm64/abi: add MTE_STORE_ONLY feature hwcap test
+  kselftest/arm64/mte: preparation for mte store only test
+  kselftest/arm64/mte: add MTE_STORE_ONLY testcases
+
+ Documentation/arch/arm64/elf_hwcaps.rst       |   3 +
+ arch/arm64/include/asm/hwcap.h                |   1 +
+ arch/arm64/include/asm/processor.h            |   2 +
+ arch/arm64/include/uapi/asm/hwcap.h           |   1 +
+ arch/arm64/kernel/cpufeature.c                |   9 +
+ arch/arm64/kernel/cpuinfo.c                   |   1 +
+ arch/arm64/kernel/mte.c                       |  11 +-
+ arch/arm64/kernel/process.c                   |   6 +-
+ arch/arm64/tools/cpucaps                      |   1 +
+ include/uapi/linux/prctl.h                    |   2 +
+ tools/testing/selftests/arm64/abi/hwcap.c     |   6 +
+ .../selftests/arm64/mte/check_buffer_fill.c   |  10 +-
+ .../selftests/arm64/mte/check_child_memory.c  |   4 +-
+ .../arm64/mte/check_hugetlb_options.c         |   6 +-
+ .../selftests/arm64/mte/check_ksm_options.c   |   2 +-
+ .../selftests/arm64/mte/check_mmap_options.c  | 363 +++++++++++++++++-
+ .../testing/selftests/arm64/mte/check_prctl.c |  25 +-
+ .../arm64/mte/check_tags_inclusion.c          |   8 +-
+ .../selftests/arm64/mte/check_user_mem.c      |   2 +-
+ .../selftests/arm64/mte/mte_common_util.c     |  14 +-
+ .../selftests/arm64/mte/mte_common_util.h     |   3 +-
+ 21 files changed, 438 insertions(+), 42 deletions(-)
+
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
