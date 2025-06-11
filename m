@@ -1,108 +1,250 @@
-Return-Path: <linux-kernel+bounces-681651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41534AD5563
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:23:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97DEAD5569
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE72C17F786
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262521BC2E80
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2B627FD6E;
-	Wed, 11 Jun 2025 12:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821BA27FD7E;
+	Wed, 11 Jun 2025 12:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AgMQE4jt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmsX30+y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EB4276031;
-	Wed, 11 Jun 2025 12:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FDC22CBD0;
+	Wed, 11 Jun 2025 12:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644624; cv=none; b=FYokkZ0TxdHS2V3m/aYEpQFnebF59ALfVyZGAywciFjQDIpL3OAo66EnpnTwNRlWqBjS4AvvMp9wa40saX2rk12jyIqVlc9y/QMjBSGbkeYhUK902sIau71wasbQTp7MtNY2FFtz5K8sxJqZ50kJJL63SZPAwURjSaj9HCmk46g=
+	t=1749644661; cv=none; b=XIZAbHKo2io0F3B02lCZNZW8lrvavhvwwBOwSvGLNrVCLZAJfqNHCQTThRv+NfgL5QQ2DdsnX9pO8c0UhhwViAr3+pc3RNXstFH4WlIIB7Pd9fHF4AIEMDruNQbUoWtFFYnEB1oPXHgY3ZPtcVVgi9+sBm3aRhd6Dc1JLBoXeoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644624; c=relaxed/simple;
-	bh=qU0EWVOHmyfXZmfiha9iuQgF+i0AoLy669DcGhO9gIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hu63T0L8YCsXSk3zUkqaZ2PQ2+hnPhJsx1tXGp/GZpGJPKkd1EErQ1I0kRIiMmkzYHB0rFKB7V4DcVYks3ZQzEr8xpSvmtrIrdimj1wSDq1Jrp82MFs1r3NwD/462apatzKK5gKvlPg0rgO4StHR9Z5hzTi97DIM1Cj843E+zCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AgMQE4jt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1424EC4CEEE;
-	Wed, 11 Jun 2025 12:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1749644623;
-	bh=qU0EWVOHmyfXZmfiha9iuQgF+i0AoLy669DcGhO9gIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AgMQE4jtWqqtRUJxAK6BFIAAXJhbZkkrolQBU7+As75rDmuS0vyTQhCgUvTruVlHn
-	 43W3brK7eMurkPyu9Zp06nMoVqCTH2KjP3nHwwy2kLANVeX/HfM1p1cEmBYI6xHPe8
-	 WWOOlE1fHWTsu9YI2+yKj9bRzuDElqvFr/gaaM4s=
-Date: Wed, 11 Jun 2025 08:23:40 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Saravana Kannan <saravanak@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH] driver core: Prevent deferred probe loops
-Message-ID: <2025061147-squishier-oversleep-80cd@gregkh>
-References: <cb354fd2-bece-42ef-9213-de7512e80912@linux.dev>
- <20250610183459.3395328-1-sean.anderson@linux.dev>
- <CAGETcx-koKBvSXTHChYYF-qSU-r1cBUbLghJZcqtJOGQZjn3BA@mail.gmail.com>
- <a52c513c-ff93-4767-a370-3f7c562df7bd@linux.dev>
+	s=arc-20240116; t=1749644661; c=relaxed/simple;
+	bh=HktI37/DNEasblw5pBFr+wXSlVnkb1VCmOLWOfwxbbA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QC46fGTi+8UOZ8jrmLgh5xvlII4DeO1D+VOk8cLnNRMZbS91g8vQPYVIy1YZLxcT5D9yhHyEZnbAs1VQagOwr76HyaT+6lWFCYmrEWDhc3Mv/17dxZa3fLlHnH3V2C0bDYNtlz3fY9D4l94zF/dy7jLBa2AF7XJXtDQDSp7wsxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmsX30+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E54BC4CEEE;
+	Wed, 11 Jun 2025 12:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749644661;
+	bh=HktI37/DNEasblw5pBFr+wXSlVnkb1VCmOLWOfwxbbA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=kmsX30+yJAmTEQ2T/Do0NBj6OcyuV/J5ThkBUVxFbXbyMhDedCdOYm2Hl3boEzK5o
+	 Xm2TZ+lYAz75r9KrCv3pFQA4JTVuVFEocMlJr3Uie/iV9w7rbdQUDpjF8k8H4C3HMJ
+	 2x92Okb/RS27hjk/2S8YcjJpvJsbXE/nRc1Dn7i3y6CqEAIVvQgeluwNM/qnNwzF7F
+	 2FNvfi7+ccW6l2MQw8EpKI6kg9RJmFZI92KiE7QrLy28gJ/kzYrWrS/rypq4wiLFtV
+	 Qkq9rhD8WEm9GsTC4+8NBv04Qyrr41lY4dgmIANio6wznnCn8ylekt1Cz7wK6PNo/Z
+	 RJnXEJ1KKGVeg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Luis Chamberlain" <mcgrof@kernel.org>,  "Danilo
+ Krummrich" <dakr@kernel.org>,  "Nicolas Schier"
+ <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
+ Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,  "Fiona
+ Behrens" <me@kloenk.dev>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v12 2/3] rust: add parameter support to the `module!` macro
+In-Reply-To: <87plfazi13.fsf@kernel.org> (Andreas Hindborg's message of "Wed,
+	11 Jun 2025 12:31:20 +0200")
+References: <20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org>
+	<20250506-module-params-v3-v12-2-c04d80c8a2b1@kernel.org>
+	<D9PW1NI2S6FV.8LA53J87VCML@kernel.org> <87plfazi13.fsf@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 11 Jun 2025 14:24:08 +0200
+Message-ID: <87wm9ixy8n.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a52c513c-ff93-4767-a370-3f7c562df7bd@linux.dev>
+Content-Type: text/plain
 
-On Tue, Jun 10, 2025 at 07:44:27PM -0400, Sean Anderson wrote:
-> On 6/10/25 19:32, Saravana Kannan wrote:
-> > On Tue, Jun 10, 2025 at 11:35 AM Sean Anderson <sean.anderson@linux.dev> wrote:
-> >>
-> >> A deferred probe loop can occur when a device returns EPROBE_DEFER after
-> >> registering a bus with children:
-> > 
-> > This is a broken driver. A parent device shouldn't register child
-> > devices unless it is fully read itself. It's not logical to say the
-> > child devices are available, if the parent itself isn't fully ready.
-> > So, adding child devices/the bus should be the last thing done in the
-> > parent's probe function.
-> >
-> > I know there are odd exceptions where the parent depends on the child,
-> > so they might add the child a bit earlier in the probe
-> 
-> This is exactly the case here. So the bus probing cannot happen any
-> later than it already does.
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-Please fix the driver not to do this.
+> "Benno Lossin" <lossin@kernel.org> writes:
+>
+>> On Tue May 6, 2025 at 3:02 PM CEST, Andreas Hindborg wrote:
+>>> Add support for module parameters to the `module!` macro. Implement read
+>>> only support for integer types without `sysfs` support.
+>>>
+>>> Acked-by: Petr Pavlu <petr.pavlu@suse.com> # from modules perspective
+>>> Tested-by: Daniel Gomez <da.gomez@samsung.com>
+>>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>> ---
+>>>  rust/kernel/lib.rs           |   1 +
+>>>  rust/kernel/module_param.rs  | 204 +++++++++++++++++++++++++++++++++++++++++++
+>>>  rust/macros/helpers.rs       |  25 ++++++
+>>>  rust/macros/lib.rs           |  31 +++++++
+>>>  rust/macros/module.rs        | 195 ++++++++++++++++++++++++++++++++++++-----
+>>>  samples/rust/rust_minimal.rs |  10 +++
+>>
+>> I know this is already the 12th version, but I think this patch should
+>> be split into the module_param module introduction, proc-macro
+>> modifications and the sample changes.
+>>
+>
+> OK.
+>
+>> [...]
+>>
+>>> +/// Set the module parameter from a string.
+>>> +///
+>>> +/// Used to set the parameter value at kernel initialization, when loading
+>>> +/// the module or when set through `sysfs`.
+>>> +///
+>>> +/// See `struct kernel_param_ops.set`.
+>>> +///
+>>> +/// # Safety
+>>> +///
+>>> +/// - If `val` is non-null then it must point to a valid null-terminated string.
+>>> +///   The `arg` field of `param` must be an instance of `T`.
+>>
+>> This sentence is conveying the same (or at least similar) requirement as
+>> the bullet point below.
+>
+> Yes, you are right. At any rate the wording is wrong, a pointer cannot
+> "be an instance", it can point to one.
+>
+>>
+>>> +/// - `param.arg` must be a pointer to valid `*mut T` as set up by the
+>>> +///   [`module!`] macro.
+>>> +///
+>>> +/// # Invariants
+>>> +///
+>>> +/// Currently, we only support read-only parameters that are not readable
+>>> +/// from `sysfs`. Thus, this function is only called at kernel
+>>> +/// initialization time, or at module load time, and we have exclusive
+>>> +/// access to the parameter for the duration of the function.
+>>
+>> Why is this an Invariants section?
+>
+> Looks like a mistake, I'll change it to "# Note".
+>
+>>
+>>> +///
+>>> +/// [`module!`]: macros::module
+>>> +unsafe extern "C" fn set_param<T>(
+>>> +    val: *const kernel::ffi::c_char,
+>>> +    param: *const crate::bindings::kernel_param,
+>>> +) -> core::ffi::c_int
+>>> +where
+>>> +    T: ModuleParam,
+>>> +{
+>>> +    // NOTE: If we start supporting arguments without values, val _is_ allowed
+>>> +    // to be null here.
+>>> +    if val.is_null() {
+>>> +        // TODO: Use pr_warn_once available.
+>>> +        crate::pr_warn!("Null pointer passed to `module_param::set_param`");
+>>> +        return EINVAL.to_errno();
+>>> +    }
+>>> +
+>>> +    // SAFETY: By function safety requirement, val is non-null and
+>>> +    // null-terminated. By C API contract, `val` is live and valid for reads
+>>> +    // for the duration of this function.
+>>
+>> We shouldn't mention "C API contract" here and move the liveness
+>> requirement to the safety requirements of the function. Or change the
+>> safety requirements for this function to only be called from some
+>> specific C API.
+>
+> OK.
+>
+>>
+>>> +    let arg = unsafe { CStr::from_char_ptr(val) };
+>>> +
+>>> +    crate::error::from_result(|| {
+>>> +        let new_value = T::try_from_param_arg(arg)?;
+>>> +
+>>> +        // SAFETY: `param` is guaranteed to be valid by C API contract
+>>> +        // and `arg` is guaranteed to point to an instance of `T`.
+>>
+>> Ditto.
+>
+> OK.
+>
+>>
+>>> +        let old_value = unsafe { (*param).__bindgen_anon_1.arg as *mut T };
+>>> +
+>>> +        // SAFETY: `old_value` is valid for writes, as we have exclusive
+>>> +        // access. `old_value` is pointing to an initialized static, and
+>>> +        // so it is properly initialized.
+>>
+>> Why do we have exclusive access? Should be in the safety requirements.
+>
+> Will add this.
+>
+>>
+>>> +        unsafe { *old_value = new_value };
+>>> +        Ok(0)
+>>> +    })
+>>> +}
+>>
+>> [...]
+>>
+>>> +#[doc(hidden)]
+>>> +#[macro_export]
+>>> +/// Generate a static [`kernel_param_ops`](srctree/include/linux/moduleparam.h) struct.
+>>> +///
+>>> +/// # Examples
+>>> +///
+>>> +/// ```ignore
+>>> +/// make_param_ops!(
+>>> +///     /// Documentation for new param ops.
+>>> +///     PARAM_OPS_MYTYPE, // Name for the static.
+>>> +///     MyType // A type which implements [`ModuleParam`].
+>>> +/// );
+>>> +/// ```
+>>> +macro_rules! make_param_ops {
+>>> +    ($ops:ident, $ty:ty) => {
+>>> +        ///
+>>
+>> Spurious newline?
+>
+> Will remove.
+>
+>>
+>>> +        /// Static [`kernel_param_ops`](srctree/include/linux/moduleparam.h)
+>>> +        /// struct generated by `make_param_ops`
+>>
+>> Is it useful for this fact to be in the docs? I'd remove it.
+>
+> OK.
+>
 
-> > but in those cases, the parent's probe should still do all the checks
-> > ahead of time.
-> 
-> Such as what? How is the parent going to know the resource is missing
-> without checking for it?
->  
-> > Can you be more specific about the actual failure you are seeing?
-> 
-> MAC is looking for a PCS that's on its internal MDIO bus, but that PCS's
-> driver isn't loaded. The PCS has to be loaded at probe time because
-> phylink_create needs it, and phylink is necessary to register the
-> netdev. The latter situation is not ideal, but it would be quite a bit
-> of work to untangle.
+Clippy thinks it is useful:
 
-Please untangle, don't put stuff in the driver core for broken
-subsystems.  That is just pushing the maintaince of this from the driver
-authors to the driver core maintainers for the next 20+ years :(
+    error: missing documentation for a static
+      --> /home/aeh/src/linux-rust/module-params/rust/kernel/module_param.rs:182:9
+        |
+    182 |         pub static $ops: $crate::bindings::kernel_param_ops = $crate::bindings::kernel_param_ops {
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...
+    191 | make_param_ops!(PARAM_OPS_I8, i8);
+        | --------------------------------- in this macro invocation
+        |
 
-thanks,
+So either we need to `#[allow(missing_docs)]` or just add the line back. What do you prefer?
 
-greg k-h
+
+Best regards,
+Andreas Hindborg
+
+
 
