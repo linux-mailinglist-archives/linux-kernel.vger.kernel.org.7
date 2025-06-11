@@ -1,154 +1,147 @@
-Return-Path: <linux-kernel+bounces-682211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AABFAD5D19
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:22:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88789AD5CD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14A33A481B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2DBB166507
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE952BD5B6;
-	Wed, 11 Jun 2025 17:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B562139B6;
+	Wed, 11 Jun 2025 17:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEAaCDlL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="AdfQw0xm"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D47221F08;
-	Wed, 11 Jun 2025 17:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AACF2036EC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749662358; cv=none; b=oAG2Y6AxniW2xgYplJoo3tC+EYPmeizL8gugUsODWG/RNw/yOE5DbL8IgSKi/MagAAVcPMpDU0uodL3xP9vsctDjfY6tUIAU5H55o3UMIAy2ZmkGybJdx2YpJyW6JdCN/KRA8jlBVcq/z1rmJiePDypcr8mWDaRacZRfgILOGBc=
+	t=1749661707; cv=none; b=mFxq9fjPf3bGLOxrPPu2S66lLwrYgB1cd0pah3XM1TiGnr+dzP0W+LzB8DIx9KpFmUbQ71/tT1OmMiK0+v2d48A2ZTDgU5Q17YS1bJtP7Wq3mAZiLtniYF9oD4jxszExPrPR1qLYcI214YWd8UivqRLiURN5I4ArBZzkTfz+pbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749662358; c=relaxed/simple;
-	bh=rZujrf8cJQS+I89btYoSUMkKofWIINtOzhrn5MbArYQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gY4i1M0KAgDbZmQCNS9APyqBcMGpoxIFMibD789wemfHhbu+RdSgU0SPACZgka87O8g4YrWhsDJMdeJC5YbpQqWR1DmRVGxUczLQNWpcPQGzxwPQkgxF8u+ax1CQSDsOB0pSnpBn3pa+NfdPp/yoiSFk57mh2mNdP8KRT3LXZG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEAaCDlL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B8DD2C4AF14;
-	Wed, 11 Jun 2025 17:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749662357;
-	bh=rZujrf8cJQS+I89btYoSUMkKofWIINtOzhrn5MbArYQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IEAaCDlLl7NwSEEC9t2PMVQ8mmD9gUl7QqiL0PYuV2wz+frv8sy/D/R1FoGawMeYx
-	 2vTui0CnFjClLTMSWWBuOC5yGxavf8d3yKyhdwwpcYkVW9GWjuQLDr38Z00OlCJ+We
-	 hae/K3hddGXdPT/cCbn/dAltYYLXt9A67Nx1fHK86QID0F9yoTKje2Uyv+mc3vyDmd
-	 zrSd64AhtYWjlGBxJDQ3mLJ5y+GF4Zspm9OXL77GM/OI9yUR8DyOKVRmTSZAL9q7tv
-	 CUlo0KAJe27TsogYfdE1oih3nH+XHOMAfMZGPEgB4fZrEsFW6/ZEelC/uL49epUxP+
-	 DXEy40Ru/CjqA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E9FC71143;
-	Wed, 11 Jun 2025 17:19:17 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Wed, 11 Jun 2025 19:06:58 +0200
-Subject: [PATCH v8 13/13] arm64: dts: rockchip: enable vicap dvp on
- wolfvision pf5 io expander
+	s=arc-20240116; t=1749661707; c=relaxed/simple;
+	bh=kRrsCeAqTmErlKC0k5gaTGk9ZNHTyvFfX5wo9NjwhSA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pf5pSVnjulKRxPZ8GU8PpBrO0GWh76TxI50nPNLMEHcvsHajMqlzCKytS52mBNtQaRhg/TXDpIdoBJYKiRU2hNKWZqm87jm2Mcjqh2iz7K9A0ZQNcJVW/ixDHW+D5OOUuTQbileVHsigvDbo56JB/o8+mW5D4iZPF2fu4ZNXW0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=AdfQw0xm; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 70683240027
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:08:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net;
+	s=1984.ea087b; t=1749661697;
+	bh=kRrsCeAqTmErlKC0k5gaTGk9ZNHTyvFfX5wo9NjwhSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=AdfQw0xmrR3sSgDJdg8qjsLfg84fq37iQ6UNJWVn7knVezHi2CNfLvuE42O4Mlx+2
+	 ZuPdZe8Y8RCAIwc0Tq351VB4NDp7ynZZR4SC2TgeR0kV82nGdNKUO1XygJWWH2eH8Y
+	 xDKPfiJZaX17PJLlXzmbSnFob5VWDMceKimy83pOLOt2vngWU/bbQv1PezoE2+yyZQ
+	 lkzvThxdg8sfnzrPrz9fwrZCZ/UjeHREJDD9squVc7vXjauGTydgbpxHm3VC0dbSrm
+	 vcdmLwWpVs1gu1z7St/ztACI2VxfvJyOvCTcTK4/ZUQFVyp21W50tjzvPjyOq1617v
+	 WVMXGU92RIit1iIxJG/oOxM/ztFgQi+bgTXZr5bjfzQncKwgX+cJ+O76R3CRn5rY9f
+	 oqu+23MXaSepCVkjcAVzWbctCvx/GSSko3XENIEwuisKqQt2+5HvWf9EhrAbMhNa7h
+	 lZKGccL1tqCukMlVkAEvMCaTgdOmERyNcy60T5luKCO6zn+rncl
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4bHXDF0DwBz6v04;
+	Wed, 11 Jun 2025 19:08:12 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,  Martin KaFai Lau
+ <martin.lau@linux.dev>,  Daniel Borkmann <daniel@iogearbox.net>,  John
+ Fastabend <john.fastabend@gmail.com>,  Alexei Starovoitov
+ <ast@kernel.org>,  Andrii Nakryiko <andrii@kernel.org>,  Eduard Zingerman
+ <eddyz87@gmail.com>,  Song Liu <song@kernel.org>,  Yonghong Song
+ <yonghong.song@linux.dev>,  KP Singh <kpsingh@kernel.org>,  Stanislav
+ Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>,  Jiri Olsa
+ <jolsa@kernel.org>,  Feng Yang <yangfeng@kylinos.cn>,  Tejun Heo
+ <tj@kernel.org>,  Network Development <netdev@vger.kernel.org>,  LKML
+ <linux-kernel@vger.kernel.org>,  bpf <bpf@vger.kernel.org>,
+  syzbot+b4169a1cfb945d2ed0ec@syzkaller.appspotmail.com
+Subject: Re: [PATCH bpf-next v2] net: Fix RCU usage in task_cls_state() for
+ BPF programs
+In-Reply-To: <CAADnVQJu3fYTfdRTWxeB5hraqe3_Esm7cgKfO38nxodknABeHg@mail.gmail.com>
+References: <20250611-rcu-fix-task_cls_state-v2-1-1a7fc248232a@posteo.net>
+	<CAADnVQJu3fYTfdRTWxeB5hraqe3_Esm7cgKfO38nxodknABeHg@mail.gmail.com>
+Date: Wed, 11 Jun 2025 17:07:49 +0000
+Message-ID: <871prqyzoa.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240220-rk3568-vicap-v8-13-9d9cbc4b524d@collabora.com>
-References: <20240220-rk3568-vicap-v8-0-9d9cbc4b524d@collabora.com>
-In-Reply-To: <20240220-rk3568-vicap-v8-0-9d9cbc4b524d@collabora.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Gerald Loacker <gerald.loacker@wolfvision.net>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Markus Elfring <Markus.Elfring@web.de>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Collabora Kernel Team <kernel@collabora.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Alexander Shiyan <eagle.alexander923@gmail.com>, 
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Michael Riesch <michael.riesch@collabora.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749661609; l=1661;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=tkvGHWW1RXCremqXv1+qTo26zNWU0UHQFUaztf+p/DI=;
- b=m4uzKPsYmskzrSkjBV+s/F9eyoIMqAKlpsD3duVmiZLO5ydbSjtF9HRSv5ChbRco8M1n2QSOS
- 9aHAYs7+XS0Ac0nZ1J2D0hu3bDcljAq88OcvRs0qVgEOUauEaFxHByQ
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Michael Riesch <michael.riesch@collabora.com>
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-The Digital Video Port (DVP, the 16-bit variant) of the RK3568 VICAP
-is broken out to the PF5 mainboard expansion header.
-Enable it in the device tree overlay for the WolfVision PF5 IO
-Expander board.
+> On Wed, Jun 11, 2025 at 2:04=E2=80=AFAM Charalampos Mitrodimas
+> <charmitro@posteo.net> wrote:
+>>
+>> The commit ee971630f20f ("bpf: Allow some trace helpers for all prog
+>> types") made bpf_get_cgroup_classid_curr helper available to all BPF
+>> program types, not just networking programs.
+>>
+>> This helper calls __task_get_classid() which internally calls
+>> task_cls_state() requiring rcu_read_lock_bh_held(). This works in
+>> networking/tc context where RCU BH is held, but triggers an RCU
+>> warning when called from other contexts like BPF syscall programs that
+>> run under rcu_read_lock_trace():
+>>
+>>   WARNING: suspicious RCU usage
+>>   6.15.0-rc4-syzkaller-g079e5c56a5c4 #0 Not tainted
+>>   -----------------------------
+>>   net/core/netclassid_cgroup.c:24 suspicious rcu_dereference_check() usa=
+ge!
+>>
+>> Fix this by also accepting rcu_read_lock_trace_held() as a valid RCU
+>> context in the task_cls_state() function. This is safe because BPF
+>> programs are non-sleepable and task_cls_state() is only doing an RCU
+>> dereference to get the classid.
+>>
+>> Reported-by: syzbot+b4169a1cfb945d2ed0ec@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=3Db4169a1cfb945d2ed0ec
+>> Fixes: ee971630f20f ("bpf: Allow some trace helpers for all prog types")
+>> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+>> ---
+>> Changes in v2:
+>> - Fix RCU usage in task_cls_state() instead of BPF helper
+>> - Add rcu_read_lock_trace_held() check to accept trace RCU as valdi
+>>   context
+>> - Drop the approach of using task_cls_classid() which has in_interrupt()
+>>   check
+>> - Link to v1: https://lore.kernel.org/r/20250608-rcu-fix-task_cls_state-=
+v1-1-2a2025b4603b@posteo.net
+>> ---
+>>  net/core/netclassid_cgroup.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/core/netclassid_cgroup.c b/net/core/netclassid_cgroup.c
+>> index d22f0919821e931fbdedf5a8a7a2998d59d73978..df86f82d747ac40e99597d6f=
+2d921e8cc2834e64 100644
+>> --- a/net/core/netclassid_cgroup.c
+>> +++ b/net/core/netclassid_cgroup.c
+>> @@ -21,7 +21,8 @@ static inline struct cgroup_cls_state *css_cls_state(s=
+truct cgroup_subsys_state
+>>  struct cgroup_cls_state *task_cls_state(struct task_struct *p)
+>>  {
+>>         return css_cls_state(task_css_check(p, net_cls_cgrp_id,
+>> -                                           rcu_read_lock_bh_held()));
+>> +                                           rcu_read_lock_bh_held() ||
+>> +                                           rcu_read_lock_trace_held()));
+>
+> This is incomplete. It only addresses one particular syzbot report.
+> It needs to include rcu_read_lock_held() as well.
 
-Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-Reviewed-by: Gerald Loacker <gerald.loacker@wolfvision.net>
-Tested-by: Gerald Loacker <gerald.loacker@wolfvision.net>
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
----
- .../rockchip/rk3568-wolfvision-pf5-io-expander.dtso  | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+To which other report you are refering to?
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso b/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso
-index 048933de2943..8cfce71dd318 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso
-@@ -11,6 +11,7 @@
- #include <dt-bindings/clock/rk3568-cru.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/media/video-interfaces.h>
- #include <dt-bindings/pinctrl/rockchip.h>
- 
- &{/} {
-@@ -134,3 +135,22 @@ &usb2phy0_host {
- 	phy-supply = <&usb_host_vbus>;
- 	status = "okay";
- };
-+
-+&vicap {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&cif_clk &cif_dvp_clk &cif_dvp_bus16>;
-+	status = "okay";
-+};
-+
-+&vicap_dvp {
-+	vicap_dvp_input: endpoint {
-+		bus-type = <MEDIA_BUS_TYPE_BT656>;
-+		bus-width = <16>;
-+		pclk-sample = <MEDIA_PCLK_SAMPLE_DUAL_EDGE>;
-+		rockchip,dvp-clk-delay = <10>;
-+	};
-+};
-+
-+&vicap_mmu {
-+	status = "okay";
-+};
-
--- 
-2.39.5
-
-
+>
+> pw-bot: cr
 
