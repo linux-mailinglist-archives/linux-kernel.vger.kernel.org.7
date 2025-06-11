@@ -1,172 +1,377 @@
-Return-Path: <linux-kernel+bounces-681968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB89AD59C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B752AAD59D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66100188268E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579F51BC5B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388C21A9B40;
-	Wed, 11 Jun 2025 15:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AD7192D70;
+	Wed, 11 Jun 2025 15:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SdgNGd4N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kvLTiNMX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAdY3x31"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5230A95C;
-	Wed, 11 Jun 2025 15:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5175F18C002;
+	Wed, 11 Jun 2025 15:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654379; cv=none; b=iiCa3522pixpbsaICZQ+9UMIA0NBmHUqVaa/yDEsPuqfEUokMzerCfq4kR/7uXKzZCG6T/glm6RKryKmCMM1cq4fwFkoEsARtd9uNUD+j6qogSdmnUWPFGJFk4NbOtb/aPwBrr5pozjoh9qCzgfiVENpc12VYq4RVvmI8RkdBvk=
+	t=1749654415; cv=none; b=QfMvk2PQPtugtSpZWxVEJ3tiHWSdMh2U9b00Jqf5vYByZp6XwGZG+tsfkFKK74CBg2P8IjypLu4jkqSnBbpmSf9X2UsQh4kMv7Pv0RN1JN0nOc8vzpNiqDPTHyjyTkvd1YTU/YJNreUHnYMQuqmP30UCjMgnRhH6sBobYgE/NRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654379; c=relaxed/simple;
-	bh=aCkGDuI3v8qqrSp/lgc7mwahaXmCdy/S1VGipRF8Wjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bo4re0qTztKaW4vpeF7WYJoe0yUIRDsdA2OtQNojEkPjX21jmlSkAMP/qdb3DphRNHPUJJKhZgA5tOe9E/3DtV1uVQwoC6DlJO6d/Ka7Y0RQ0EHS0Y3r0HOaxRIShhFoBPtcP+hBK3z/g+S+BFKGtww6dOjwWoCNSXuNELK74YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SdgNGd4N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kvLTiNMX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Jun 2025 17:06:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749654376;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjvHM+RNwqsHkW9Rr7fWxpTn4Yk9ccBYDYjbQTaoxoE=;
-	b=SdgNGd4NoenkJU0zTfISKg+r4GdlotOifbGfmThZm7iV4vu6631Gpux2LHGXmGV2Nk+yMy
-	WN6om+l59PK0lK7a06k9wltbA+7hgQ7dyegODxm2gk/dTCtxKq+Cav037KCA8Kpc6gFZvV
-	nG5IKnT5PLFbHMRaeTvL2j/sUjgTiQgMTVrPQY02yez5q/L57T6HxkQbRRe32KFCtOShg4
-	Bqvjg0HXyHYD+5OaaS6gl1RHMAisqo51+QLHajmT402t1m/pAUtRC56+sYiq/38nATQGxQ
-	0P3iAdHtuNxl5bm/2ihUc31VpCZXBk1u7ctT618EeE++WBR3R5dAfdNuDGErnw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749654376;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjvHM+RNwqsHkW9Rr7fWxpTn4Yk9ccBYDYjbQTaoxoE=;
-	b=kvLTiNMXDmgiDh2qQ5KrRSD1PvbALQP7GHjr08YoOBL4x4djSk5rYljZ33UB798KTf7b5k
-	VwkJjEMeXMGAAlCw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [BUG] perf tools: Build failure in v6.16-rc1
-Message-ID: <20250611150615.FcVIIhgA@linutronix.de>
-References: <aEh6xO14wDSCFUDr@google.com>
- <20250611092542.F4ooE2FL@linutronix.de>
- <aEmBOO0bSJYSvX2i@x1>
- <aEmY259Mx92D60KG@x1>
+	s=arc-20240116; t=1749654415; c=relaxed/simple;
+	bh=jPhJqp12YmPheYt5k7tMyxHFPWQAYjyoax+vbBjRYCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n2+MWH2uRuIWTIlF6LpSKBf9h/zgFpugsh5EMmrGk261s0k4umWMTu8B4HLJoVgM4gLjdSTh4BR+VK5iHH9sxgb3yiTTXkxq405VnEC4x5BG2nZdoS4JzjKx7w0z1b/KMLtZPXn9Xmli0FVnvIFgIUNVMBr9mDvex2alLF/EBeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAdY3x31; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7111c6b0f1dso697777b3.1;
+        Wed, 11 Jun 2025 08:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749654412; x=1750259212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tLHvyD7wJsO2e0WWywcAFLyk62IHbmBBYHcPAMpcN1g=;
+        b=HAdY3x31SQhNmmV/wsGABbzMvYmZwn2iWrEHDnz5nq0rT3tR+4HB2bdtR53h/xEWme
+         9ys5KXIquTB+SV5NtzO0iQSbnZpZAWmnoHiqjm3nM4/OAD01ttFJtEr65oAgSfQxdamX
+         roHml8YCTtPMMgixiAzflkMfXayy7EBsIi1t6WdEbvo7mFes+TQt7HYMXlpc68SP22vn
+         v66zR5oJGyI/joxv6h/s+5+6/K6gqraLlx1EAPcfO6I/hJFhxHmIodYJ2kUW9L3MPoeJ
+         FQ4hHuv2HQCUf5MJ6Vo5/bIpcXjWQQ8dl98s552bcqmMBAZC/173LRm4Nx2fqzLITiBf
+         Celg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749654412; x=1750259212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tLHvyD7wJsO2e0WWywcAFLyk62IHbmBBYHcPAMpcN1g=;
+        b=L3M0QgM2pzQA0plwsQcPHdDj2C2B1NiuE6i22SncNS7EoEubb2iGtKw2b3C1qrsXe+
+         u9rWzaovnWKdZDX+wNFhdtZJKCiwKm2YrTnzCSU7a7JkrnZyd2mSswv1p0L8mFVd/BK7
+         xPt53YHrwLZa8HXIHMN8hKRXokilD1uiblWW2e8aQgYOoiJ/3u+ySy6w5tBICcIQ0MLb
+         C7VRtlcfvGFtx0LgaISEYL9Ootwdvkdhz+139B5oZVyMw99IvhKybMbOV22acCLYCGGD
+         VSQ4RUaiEMVehOjnUQ7lLeGegPhyRlWVd74ij3DLpkw0XEaFy1ouGir9b5PIXfPXk3KC
+         Jedw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtIdg8XqDcuH1sbDPyZd18mshWOF7NvGyVPUUOO1A5KLyugVvkyE8LttyrM6Hy553TcR/jwmyJAZXYQJxE@vger.kernel.org, AJvYcCVEJURIB0I4B3Y20pmYwXhiNs+e2OZrXJH4DGVpxLwjfGLEgCwCIfX++t0VyuqoWTxGcoFTctU4Gto=@vger.kernel.org, AJvYcCWvbq7UZNhzLk5VEsJAMff6Q6aZpcek3GlCogXMojUgYRKW0ZDKTbrxpmZgQcLOyJf8q6UOmdIn6Rz6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzV2c1w8NF5lI3UYfrnN8q0CL4cDIZrozkTS2JHEpPCqc8+TKr
+	MB+OcXWMK90kNg5/e7y1HzS6MLpS2iZXg+9Fu2Wa52R+/y3DbTB60MqiNP7E3TLtI7vf6X1pCEf
+	Mr8vAM3l7XpllLYkZ3RkQunZFEA1LpRc=
+X-Gm-Gg: ASbGnct72ws7iNRAlBpBgqPoMNLwV2DBeeARVK9s2tMnkOu1lAcuGDqpKEr6impVXaA
+	AAylJlWoHCiGh0bj/eNAsGjVi5ap4ODH/j6f08SeUkUPCnWkp7hJlmke7R7JluIbELY5/4pJclq
+	GZy8BwiyzOLdEWhuWkE1bDRfIDuq1UqyTJVfdv/FHQCJs=
+X-Google-Smtp-Source: AGHT+IFbQLnI2vz/oiNY1COQzxJhUVbqRGawrm/dMsYImtWVEPaoOknPmYCUXamI/DvWQoEzlduGx7o3Evn447cPeTs=
+X-Received: by 2002:a05:690c:6:b0:70e:2b16:da55 with SMTP id
+ 00721157ae682-71140b0e06fmr20437497b3.8.1749654412061; Wed, 11 Jun 2025
+ 08:06:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aEmY259Mx92D60KG@x1>
+References: <20250601172139.59156-1-l.rubusch@gmail.com> <20250601172139.59156-8-l.rubusch@gmail.com>
+ <20250608170819.3de87f4e@jic23-huawei>
+In-Reply-To: <20250608170819.3de87f4e@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Wed, 11 Jun 2025 17:06:16 +0200
+X-Gm-Features: AX0GCFuTVi7RxGRPJfn0Gv9q-EHUvv0Eu_vNbspgREgDzgdXDG7ZneTmwMGfrBk
+Message-ID: <CAFXKEHaRupFmFQ9ixTT_3p_XaoorJP=y4asYjw3dSMpxXhbOwQ@mail.gmail.com>
+Subject: Re: [PATCH v4 07/11] iio: accel: adxl313: add activity sensing
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
+	lucas.p.stankus@gmail.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	bagasdotme@gmail.com, linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-06-11 11:55:23 [-0300], Arnaldo Carvalho de Melo wrote:
-> commit 8386dc356158fc50c55831c96b1248e01d112ebc
-> Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Date:   Wed Jun 11 11:25:42 2025 +0200
-> 
->     perf bench futex: Fix prctl include in musl libc
->     
->     Namhyung Kim reported:
->     
->       I've updated the perf-tools-next to v6.16-rc1 and found a build error
->       like below on alpine linux 3.18.
->     
->         In file included from bench/futex.c:6:
->         /usr/include/sys/prctl.h:88:8: error: redefinition of 'struct prctl_mm_map'
->            88 | struct prctl_mm_map {
->               |        ^~~~~~~~~~~~
->         In file included from bench/futex.c:5:
->         /linux/tools/include/uapi/linux/prctl.h:134:8: note: originally defined here
->           134 | struct prctl_mm_map {
->               |        ^~~~~~~~~~~~
->         make[4]: *** [/linux/tools/build/Makefile.build:86: /build/bench/futex.o] Error 1
->     
->       git bisect says it's the first commit introduced the failure.
->     
->     So your /usr/include/sys/prctl.h and
->     /linux/tools/include/uapi/linux/prctl.h both provide struct prctl_mm_map
->     but their include guard must be different.
->     
->     My /usr/include/sys/prctl.h is provided by glibc and contains the
->     prctl() declaration. It includes also linux/prctl.h.  The
->     tools/include/uapi/linux/prctl.h is the same as
->     /usr/include/linux/prctl.h.
->     
->     The /usr/include/sys/prctl.h on alpine linux is different. This is
->     probably coming from musl. It contains the PR_* definition and the
->     prctl() declaration.  So it clashes here because now the one struct is
->     available twice.
->     
->     The man page for prctl(2) says:
->     
->     |       #include <linux/prctl.h>  /* Definition of PR_* constants */
->     |       #include <sys/prctl.h>
->     
->     so musl doesn't follow this.
->     
->     So align with the other builds.
->     
->     Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->     Reported-by: Namhyung Kim <namhyung@kernel.org>
->     Link: https://lore.kernel.org/r/20250611092542.F4ooE2FL@linutronix.de
+On Sun, Jun 8, 2025 at 6:08=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Sun,  1 Jun 2025 17:21:35 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Add possibilities to set a threshold for activity sensing. Extend the
+> > interrupt handler to process activity interrupts. Provide functions to =
+set
+> > the activity threshold and to enable/disable activity sensing. Further =
+add
+> > a fake channel for having x, y and z axis anded on the iio channel.
+> >
+> > This is a preparatory patch. Some of the definitions and functions are
+> > supposed to be extended for inactivity later on.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+>
+> Hi Lothar,
+>
+> My main question from this read through is whether we need to be quite
+> so careful on disabling measurement when configuring events.  It is rathe=
+r
+> unusual if that is necessary and I'm not sure that's what the datasheet
+> is implying with the vague bit of advice.
+>
+> >  static const unsigned long adxl313_scan_masks[] =3D {
+> > @@ -297,6 +331,68 @@ static int adxl313_read_freq_avail(struct iio_dev =
+*indio_dev,
+> >       }
+> >  }
+> >
+> > +static int adxl313_is_act_inact_en(struct adxl313_data *data,
+> > +                                enum adxl313_activity_type type)
+> > +{
+> > +     unsigned int axis_ctrl;
+> > +     unsigned int regval;
+> > +     int axis_en, int_en, ret;
+> > +
+> > +     ret =3D regmap_read(data->regmap, ADXL313_REG_ACT_INACT_CTL, &axi=
+s_ctrl);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* Check if axis for activity are enabled */
+> > +     if (type !=3D ADXL313_ACTIVITY)
+>
+> As below - only one value possible, so don't check it.
+>
+> > +             return 0;
+> > +
+> > +     axis_en =3D FIELD_GET(ADXL313_ACT_XYZ_EN, axis_ctrl);
+> > +
+> > +     /* The axis are enabled, now check if specific interrupt is enabl=
+ed */
+> > +     ret =3D regmap_read(data->regmap, ADXL313_REG_INT_ENABLE, &regval=
+);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     int_en =3D adxl313_act_int_reg[type] & regval;
+> > +
+> > +     return axis_en && int_en;
+> > +}
+> > +
+> > +static int adxl313_set_act_inact_en(struct adxl313_data *data,
+> > +                                 enum adxl313_activity_type type,
+> > +                                 bool cmd_en)
+> > +{
+> > +     unsigned int axis_ctrl;
+> > +     unsigned int threshold;
+> > +     int ret;
+> > +
+> > +     if (type !=3D ADXL313_ACTIVITY)
+>
+> As the enum only has one value you can drop this check.
+> Obviously it's dropped in next patch anyway but better to never
+> introduce it.
+>
+> > +             return 0;
+> > +
+> > +     axis_ctrl =3D ADXL313_ACT_XYZ_EN;
+> > +
+> > +     ret =3D adxl313_set_measure_en(data, false);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D regmap_assign_bits(data->regmap, ADXL313_REG_ACT_INACT_CT=
+L,
+> > +                              axis_ctrl, cmd_en);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D regmap_read(data->regmap, adxl313_act_thresh_reg[type], &=
+threshold);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D regmap_assign_bits(data->regmap, ADXL313_REG_INT_ENABLE,
+> > +                              adxl313_act_int_reg[type],
+> > +                              cmd_en && threshold);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return adxl313_set_measure_en(data, true);
+> > +}
+> > +
+> >  static int adxl313_read_raw(struct iio_dev *indio_dev,
+> >                           struct iio_chan_spec const *chan,
+> >                           int *val, int *val2, long mask)
+> > @@ -370,6 +466,113 @@ static int adxl313_write_raw(struct iio_dev *indi=
+o_dev,
+> >       }
+> >  }
+>
+> > +
+> > +static int adxl313_read_event_value(struct iio_dev *indio_dev,
+> > +                                 const struct iio_chan_spec *chan,
+> > +                                 enum iio_event_type type,
+> > +                                 enum iio_event_direction dir,
+> > +                                 enum iio_event_info info,
+> > +                                 int *val, int *val2)
+> > +{
+> > +     struct adxl313_data *data =3D iio_priv(indio_dev);
+> > +     unsigned int act_threshold;
+> > +     int ret;
+> > +
+> > +     /* Measurement stays enabled, reading from regmap cache */
+>
+> If it isn't safe to read whilst measurements are in progress (as opposed
+> to maybe getting a small variation in timing) then this seems more
+> fragile than I'd like (to future code changes for example).
+>
+> Might need an explicit check on it being cached regcache_reg_cached()
+> for example though that is very rarely used which makes me dubious
+> about using it here.
+>
+>
+> > +
+> > +     if (type !=3D IIO_EV_TYPE_MAG)
+> > +             return -EINVAL;
+> > +
+> > +     if (info !=3D IIO_EV_INFO_VALUE)
+> > +             return -EINVAL;
+> > +
+> > +     switch (dir) {
+> > +     case IIO_EV_DIR_RISING:
+> > +             ret =3D regmap_read(data->regmap,
+> > +                               adxl313_act_thresh_reg[ADXL313_ACTIVITY=
+],
+> > +                               &act_threshold);
+> > +             if (ret)
+> > +                     return ret;
+> > +             *val =3D act_threshold * 15625;
+> > +             *val2 =3D MICRO;
+> > +             return IIO_VAL_FRACTIONAL;
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +}
+> > +
+> > +static int adxl313_write_event_value(struct iio_dev *indio_dev,
+> > +                                  const struct iio_chan_spec *chan,
+> > +                                  enum iio_event_type type,
+> > +                                  enum iio_event_direction dir,
+> > +                                  enum iio_event_info info,
+> > +                                  int val, int val2)
+> > +{
+> > +     struct adxl313_data *data =3D iio_priv(indio_dev);
+> > +     unsigned int regval;
+> > +     int ret;
+> > +
+> > +     ret =3D adxl313_set_measure_en(data, false);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     if (type !=3D IIO_EV_TYPE_MAG)
+> > +             return -EINVAL;
+> > +
+> > +     if (info !=3D IIO_EV_INFO_VALUE)
+> > +             return -EINVAL;
+> > +
+> > +     /* Scale factor 15.625 mg/LSB */
+> > +     regval =3D DIV_ROUND_CLOSEST(MICRO * val + val2, 15625);
+> > +     switch (dir) {
+> > +     case IIO_EV_DIR_RISING:
+> > +             ret =3D regmap_write(data->regmap,
+> > +                                adxl313_act_thresh_reg[ADXL313_ACTIVIT=
+Y],
+> > +                                regval);
+>
+> I'm surprised this can only be set with measurement disabled.
+> Maybe a spec reference.   It's common to tweak event values as events
+> come in and we generally don't have to stop data flow whilst we do.
+>
+> There are a few specific bits where the datasheet suggests updating
+> them has unwanted side effects in measurement mode.  + there is a general
+> suggestion to do configuration before enabling measurement mode.
+> I don't see anything saying it is a problem for this register.
+>
 
-s/Link/Closes/
+AFAIK there is no issue, nor a big side effect. Changing config
+registers might lead to initially wrong measurements. Just the first
+measurements might be wrong. I guess this could be a problem if the
+sensor had more features and, say, any kind of threshold for some
+event then triggered an event wrongly. In case of the ADXL313, there
+should not be such a risk. It's then rather about initial wrong
+measurements. (Exception: changing the FIFO modes, where turning to
+standby is explicitely recommended).
 
->     [ Remove one more in tools/perf/bench/futex-hash.c and conditionally define PR_FUTEX_HASH and friends ]
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-> index fdf133c9520f73a4..d2d6d7f3ea331c84 100644
-> --- a/tools/perf/bench/futex-hash.c
-> +++ b/tools/perf/bench/futex-hash.c
-> @@ -18,7 +18,6 @@
->  #include <stdlib.h>
->  #include <linux/compiler.h>
->  #include <linux/kernel.h>
-> -#include <linux/prctl.h>
->  #include <linux/zalloc.h>
->  #include <sys/time.h>
->  #include <sys/mman.h>
-> diff --git a/tools/perf/bench/futex.c b/tools/perf/bench/futex.c
-> index 26382e4d8d4ce2ff..4c4fee107e5912d5 100644
-> --- a/tools/perf/bench/futex.c
-> +++ b/tools/perf/bench/futex.c
-> @@ -2,11 +2,18 @@
->  #include <err.h>
->  #include <stdio.h>
->  #include <stdlib.h>
-> -#include <linux/prctl.h>
->  #include <sys/prctl.h>
->  
-This is what I had locally and was waiting for confirmation.
+Unfortunately, I could not recall the exact page in the datasheet, but
+it matched pretty much my observation also with the ADXL345. So, I'll
+give it a try and remove turning off measurement for the
+write_event_config()
 
->  #include "futex.h"
->  
-> +#ifndef PR_FUTEX_HASH
-> +#define PR_FUTEX_HASH                   78
-> +# define PR_FUTEX_HASH_SET_SLOTS        1
-> +# define FH_FLAG_IMMUTABLE              (1ULL << 0)
-> +# define PR_FUTEX_HASH_GET_SLOTS        2
-> +# define PR_FUTEX_HASH_GET_IMMUTABLE    3
-> +#endif // PR_FUTEX_HASH
 
-Is this needed? Aren't these defines coming from that local copy?
+> > +             if (ret)
+> > +                     return ret;
+> > +             return adxl313_set_measure_en(data, true);
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +}
+> > +
+> >  static int adxl313_set_watermark(struct iio_dev *indio_dev, unsigned i=
+nt value)
+> >  {
+> >       struct adxl313_data *data =3D iio_priv(indio_dev);
+> > @@ -502,19 +705,32 @@ static int adxl313_fifo_push(struct iio_dev *indi=
+o_dev, int samples)
+> >
+> >  static int adxl313_push_event(struct iio_dev *indio_dev, int int_stat)
+>
+> Ah. This does not also have events.  Still it's a mix, so maybe
+> adxl313_handle_interrupts() or something like that.
 
->  void futex_set_nbuckets_param(struct bench_futex_parameters *params)
->  {
->  	unsigned long flags;
+I also could break it up into:
+- handle interrupt source register events
+- drain fifo watermark samples
+?
 
-Sebastian
+> >  {
+> > +     s64 ts =3D iio_get_time_ns(indio_dev);
+> >       struct adxl313_data *data =3D iio_priv(indio_dev);
+> >       int samples;
+> > +     int ret =3D -ENOENT;
+> > +
+> > +     if (FIELD_GET(ADXL313_INT_ACTIVITY, int_stat)) {
+> > +             ret =3D iio_push_event(indio_dev,
+> > +                                  IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
+> > +                                                     IIO_MOD_X_OR_Y_OR=
+_Z,
+> > +                                                     IIO_EV_TYPE_MAG,
+> > +                                                     IIO_EV_DIR_RISING=
+),
+> > +                                  ts);
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+> >
+> >       if (FIELD_GET(ADXL313_INT_WATERMARK, int_stat)) {
+> >               samples =3D adxl313_get_samples(data);
+> >               if (samples < 0)
+> >                       return samples;
+> >
+> > -             return adxl313_fifo_push(indio_dev, samples);
+> > +             ret =3D adxl313_fifo_push(indio_dev, samples);
+> >       }
+> >
+> >       /* Return error if no event data was pushed to the IIO channel. *=
+/
+> > -     return -ENOENT;
+> > +     return ret;
+> This handling works, but as Andy observed maybe the comment is now confus=
+ing
+> given ret is mostly not an error.  Perhaps put that where ret is declared
+> instead, or use a separate mask check at the start to quickly
+> error out if no bits that we handle are set.
+> >  }
+
+Yes. Andy also pointed out here. I already developed a feeling for
+"something's smelly" with this code, but cannot really think of a
+better approach. Actually it works, and for me it is somehow logical.
+Probably there are better ways to solve this situation in a cleaner
+way?
 
