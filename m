@@ -1,126 +1,181 @@
-Return-Path: <linux-kernel+bounces-682239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1ABAD5D64
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6029AD5D6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB25F171008
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE5C171F4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AA2224B09;
-	Wed, 11 Jun 2025 17:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF26235C1E;
+	Wed, 11 Jun 2025 17:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2WjWVwW"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWzVMf6s"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CCE17A2F3;
-	Wed, 11 Jun 2025 17:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FB12222BF;
+	Wed, 11 Jun 2025 17:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749663867; cv=none; b=h6MC5ZRFbFpAX7JTlN4V1mAQc8O0ZvrQIOzLDWQlpubR6Ecl+OAxy52PrVOt1DHR/sG1TEg8hCm1hzVtThH5jLDJlXSo9esX90IbNwMfNHj9P9RAB4Ccxf6jQxjRwDcGNJKMzIZbPLTb391fCDfXHvPF330RWmfjUTz4HU0Tyi4=
+	t=1749664110; cv=none; b=po57G+7hhnyxO+1edlvuDN5jJfjvrQoZGESksa+/aAqKQd+YFAxFqOtEjTOYsDQ3gN3UPeW9H0EYmPCv2NYS+/vDr/AoZip5AOnpOxEuXt62b/eLFZef5yFS4jx7gfKzKq+CJfCv/D3BpoxSguWDSHfbzfAXFKjAqn0QIIZoaWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749663867; c=relaxed/simple;
-	bh=wxRnIznPD14SyjaHIq6492HvK18W59ktwYnXxxaPDu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIvVHvjZu1pxZZ+4XkU67YW38DsG9IGK/cuYQYmIRCj57ql1wj6qk/QG1dVs8fmGY41wAg/PXJBvyXviqdDXxjnMiw0dW1OfQXkY/QJHj6AxUBOEL97YChuKGBep6/rM8eezfbcoEMwSn+BYApT+uycd4MCWGXnbYrsEwiusIGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2WjWVwW; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1749664110; c=relaxed/simple;
+	bh=kdiPdMh5+sRzNgtYRKj/S0sAtUte5v+zpvWVg0DO3wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mv4wyTSPNILOqSNPxZ1PmLgyendbjmIVa97yp0yf94erd+W9rFmgRgs8wrVuCJj0/iWplB+qRO4KOdGek1sZ7tIq/j+iuDskyAp8AXWU/NxHVp/2F/zckzSggGHVmkaVNiCeHTbumB3v2haGYPgH8LNXsVPV1xGFAT7GYaEkm8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWzVMf6s; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-234d3261631so968265ad.1;
-        Wed, 11 Jun 2025 10:44:25 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a503d9ef59so128832f8f.3;
+        Wed, 11 Jun 2025 10:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749663865; x=1750268665; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fATdB3ysd5Gc7mFVZxyvlUfXC/v/xKLNDS5jIKGi8YM=;
-        b=S2WjWVwWbI4LmKkQ0tZyNOh62C1usWXW3hdW9kw6DmRrhWEOhQ1Ir/umqiGuSLw+h9
-         +zXyP0IQ944HkGCvXlQT/7yM+fxEn3xSoFWuQOGemm/oucGc+EOeW8a+XjXpGN2hHOlu
-         GmYhkc7pQ9PbP0g3vK2ZlRxZFml1qsm9tkD0PK2EUfHHBElyJZF96C5PUK9YDW0hgGup
-         pMOkTdqJ/mqt74vGhJG/UJfDNqRq/gnczzpa/L0nHdVZlxn3Z+AR7rISUnZF6IJroORh
-         TukMvpS5l4FPKatcS+Ke6OsoQvK1FxXA0KHky9O9eME2L1o2EzZF3bz20N6QztNe16zk
-         7Mng==
+        d=gmail.com; s=20230601; t=1749664106; x=1750268906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5X6IDTVHTHpEsUSABa7MSKK8TKkDRNQdpFJlmd5FHY=;
+        b=OWzVMf6s6ieIQYLHaHb6ghg7Xx8IL2sFjoZGw798cylsvbkontJo7bpzQVrFEu4Yuq
+         iTOT/c2TIUt4xopwrqKsSA/oWVFA7D/4FGth21PIq2mDpzWfjdbZatc5dda/Q+KZQ/zK
+         r4kapflS0SPVyP2rn55Ki32gFjFcPAqYPnOH/Cy3LGATKlNxM+2LCU2/0Q+yQQJ/bfAm
+         x8YGJ/gy+Mnm3VidenQ9BgX12kRBpkJUcb8u+Gng6KL/QpH3Q6C3w19FiOIle2/f+OfW
+         PAQA2a88e/0ox4kX4XUrN84pLHq8NYxgubVDFizKWUAsbwj9iRpfbCRz9RYK6Y2O1lwO
+         rZYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749663865; x=1750268665;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fATdB3ysd5Gc7mFVZxyvlUfXC/v/xKLNDS5jIKGi8YM=;
-        b=g/j+x5Ik4hFZ/EdSYv7mC0PTflNLxCwv+sOpMuLV7ICiFd2d/Ua84cCJ1tHbP3lWAZ
-         C5v9Uaq30l3O34FxQd9fgEkgLalinxdg8dn5GjKCDsj0fcdJxo8ztpCDleQAa5SbAR3K
-         6ySH5N3j3Cau6/F7JKaDwLsIqQGxKt0tBUIhk65zgtBQlWMkLjkzMukolKCoXZShPK3r
-         eP6WekdFFkY23nSjsu00PqA7U8NRe3h7w7jwQlgT2XduxPLCY+2PVLCIS5Se88W6rUuB
-         Pw7q29SdsB8qeiVblwDcTd/FRULA6sZW3tCf+fDDbVkhTlvh4iRILlVUk92npZw9MBrs
-         g7Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQpOuXmCvNH9Tu/dWex+MqeiVpn8qizy04LrxoxVBF0ysrmRJjiHOkdanHKzkFLSV1B3iz1xQt/Dq/9JQ=@vger.kernel.org, AJvYcCWdEJxmuAsUMd5mPjn6vCqdiGP2P9Iwte480NRyq9FFkOZ46W0Ii5aFWna/u+oksUutRS1Hx7/iQbh5Zfg6@vger.kernel.org, AJvYcCXePcWJV+G5y60dqJj/YJ5YhO3oLYOpY3J+yJ6KWbzCYd1qPUprTdO4x3VNbrVAZOpAu3LP43M3WzCs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhpadtHpy2Lc2C0GUHpBhlL00hppidfVrywLZkC29ahFCXSgGC
-	2xaDau9aVRcO/0FBeZ3wMrmETW++rIvePJbByWf7iZPvgqIw2AJF1aMUkYpcEQ==
-X-Gm-Gg: ASbGncvWzetROTB3TM/oOpCuIAJVVb3ETL7EkbNvymWtPoQf551Dqfrib5+JS+BD9Pv
-	tzc0OFUc6xGIFoHIY3Rm6tgG6xC74OCdQ4lf3NsqLyPGXmt5Qff3AQDcbEBvIOsvWuSw8TSwJch
-	6gxDYCZeKiKBpT3tjka+CErwtbG62soOVmuJe/Nsoruy/dBqszv7K4bBfKLyF6AD8v8bzEdbXav
-	rjgsb43MfcOi2d4zbD4OvZJgk2mVMPPd95LeKzDeopgaOJNwNXaG4m3lyyzTVASI5KfgJvdSx8v
-	pG3BBB924fQsIjoqaNkB1SZnB0a/yvneTyd6QeSdVzzPwMRHGDvmc/J1mtPvfg==
-X-Google-Smtp-Source: AGHT+IHcTwwqbtfEoVMcnp+UYCcnkDILrvdfSoCYSoSBBvznRic2SHesMrX/Q+9ylgxTys0m4BPjxw==
-X-Received: by 2002:a17:902:f54b:b0:235:225d:3087 with SMTP id d9443c01a7336-2364ca853d1mr4988905ad.30.1749663864866;
-        Wed, 11 Jun 2025 10:44:24 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:cc6e:a0f4:a9c8:328])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2360341097fsm91030495ad.214.2025.06.11.10.44.23
+        d=1e100.net; s=20230601; t=1749664106; x=1750268906;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/5X6IDTVHTHpEsUSABa7MSKK8TKkDRNQdpFJlmd5FHY=;
+        b=YyZKE8/duq5Ok8fAQSy0YXB/WkBtcpJFtV35/64JiWv2oIb/PB/J41HeqenyLf/xiF
+         SpS9rs4OWHKXbRBxl2hZhsiS0mJlBJ0cv8t1W6xoFZ/YNNhNiAKQo8dzMMFWILsLBzUe
+         GDTyRLYXvOCmIeColvvKuUmQX046nTlH2dMQkvV3vLWLXOttHd2ZoWFXbo3SXbziIGUe
+         7FMnkq0XWGUiDJlLy5yjIT1wQyIZQQ3v2K+9TeczYLhV0KZkiAhZQcd6DT9fOIAD4WvH
+         +V0mddy3eJm4zOpaOBl2/F2Ksrt7ShQAoldGMrYIPXRBtltjNXHC32/KrGRKf+jqW46C
+         AKrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVK4+34hZQUGvJmneRwXv9FBnZiBpBoJDctJhGhFRkT5xl0AlK2a6x+b6kmzZwkPhyO8BSsQzR6y0y/@vger.kernel.org, AJvYcCWCbYsyzcbBKWh4VEKShGTNE3gxa48CMCR5HsQKU93CPBle70oWfdBG7NXW1ObG7AoV1yg/wZeEiMdOGx/5PoQ=@vger.kernel.org, AJvYcCXK6NtMT+L48jUDnWJ6UQ/ILzALnMiziVrNbHuoXn0R4G3tRD1uZ6rHNB94rFYrUm2o8FkKZz5lNq5iO9n1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGDo4yqCngu++yQKtuzL8PH8TpySugk7bX4twkvd5f3p36cyh0
+	HD3eOJ0fYwPDYtbBqcca4Kg1xspxPHOHS/SL9mQvZX5Sn9f4ek56w4pv
+X-Gm-Gg: ASbGncssNsoINbtMNvNRcNp0B8QZUrAafeVBXzOP6MJIHWdWlxeIU3lLtdwp0qVBk0Y
+	hIp5pmcFzdNMNYo4e2rI8Fp0Jf4OH96rToCQXGQKofckH+UbxHqlFfi5X/uEnNkiW7feORHKUkt
+	rSrgSFOn53w7AP7SFyBiacuX8BUdMLU0g8DLKPwq5xJtPPH8iHZAvYMT4ZNSTH+gxMfrSAVdb0f
+	X+GFhWY9US2ZYjmVKd2yNbo9i90VtogdqaGOxVufF64z1bgiDI903QTmUacGMr7FJh464nDjUNQ
+	InqCTGKe2FAcnZ9GGf+Vlh+aLiyoTaF+aBqbiwqylBAK0Dge6YPNjQS2ky7aaz77U0531mgvUbd
+	PaBM0ExYNGHQJkkRiGEK2YcVavlaK84S//jRF
+X-Google-Smtp-Source: AGHT+IEWahY4VTUQyB9OJcRC6ofG32cyzKi87gxJN/O8EUIgzlNL+d8o1qKXe//gLU6r8J4BUQxjGg==
+X-Received: by 2002:a5d:5f8b:0:b0:3a4:dd16:b287 with SMTP id ffacd0b85a97d-3a5586c9e06mr3087427f8f.19.1749664106429;
+        Wed, 11 Jun 2025 10:48:26 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532522a5f3sm29567945e9.38.2025.06.11.10.48.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 10:44:24 -0700 (PDT)
-Date: Wed, 11 Jun 2025 10:44:21 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Tomas Jurena <jurenatomas@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: tca6416-keypad - Add OF support for driver
- instantiation
-Message-ID: <meakn5o4tjnl55ykk5fvrpc3f7g4ov2gqfdsxzzy44p7zvrrit@53y6xkkhwcmx>
-References: <20250610154609.1382818-1-jurenatomas@gmail.com>
- <20250610181542.GA2396962-robh@kernel.org>
- <aEmp57H3Tk6DnJty@jurenat-workstationFai>
+        Wed, 11 Jun 2025 10:48:25 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v5 2/6] rust: driver: Consolidate `Adapter::of_id_info` methods using `#[cfg]`
+Date: Wed, 11 Jun 2025 18:46:18 +0100
+Message-ID: <20250611174618.802570-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
+References: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aEmp57H3Tk6DnJty@jurenat-workstationFai>
 
-On Wed, Jun 11, 2025 at 06:08:07PM +0200, Tomas Jurena wrote:
-> On Tue, Jun 10, 2025 at 01:15:42PM -0500, Rob Herring wrote:
-> > On Tue, Jun 10, 2025 at 05:46:10PM +0200, Tomáš Juřena wrote:
-> > > From: Tomas Jurena <jurenatomas@gmail.com>
-> > > 
-> > > Adds support for instantiating the tca6416-keypad driver via
-> > > Device Tree. If no platform data is present, the driver can now be
-> > > probed based on OF bindings.
-> > > 
-> > > A corresponding Device Tree binding document is added at:
-> > >   Documentation/devicetree/bindings/input/tca6416-keypad.yaml
-> > > 
-> > > This allows the driver to be used in systems that rely solely on the
-> > > Device Tree for hardware description, such as embedded ARM platforms.
-> > > 
-> > > Tested on Toradex Ixora 1.3A board and Apalis imx8 SOM.
-> > 
-> > We already have a GPIO driver for this chip. Would the 
-> > gpio-keys driver work here instead? Seems to work for 
-> > arch/arm/boot/dts/ti/omap/am3517-evm-ui.dtsi.
-> >
-> I was not aware of this. Anyway, I tested this today, and it seems to work just fine with my hardware. There is no need for this change from my side.
+Refactor the `of_id_info` methods in the `Adapter` trait to reduce
+duplication. Previously, the method had two versions selected
+via `#[cfg(...)]` and `#[cfg(not(...))]`. This change merges them into a
+single method by using `#[cfg]` blocks within the method body.
 
-I wonder if we should simply remove tca6416-keypad driver. I guess it
-was created before we has a gpio driver for this block.
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ rust/kernel/driver.rs | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
-Thanks.
-
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index ec9166cedfa7..cb62b75a0c0e 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -147,30 +147,32 @@ pub trait Adapter {
+     /// Returns the driver's private data from the matching entry in the [`of::IdTable`], if any.
+     ///
+     /// If this returns `None`, it means there is no match with an entry in the [`of::IdTable`].
+-    #[cfg(CONFIG_OF)]
+     fn of_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+-        let table = Self::of_id_table()?;
++        #[cfg(not(CONFIG_OF))]
++        {
++            let _ = dev;
++            return None;
++        }
+ 
+-        // SAFETY:
+-        // - `table` has static lifetime, hence it's valid for read,
+-        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
+-        let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), dev.as_raw()) };
++        #[cfg(CONFIG_OF)]
++        {
++            let table = Self::of_id_table()?;
+ 
+-        if raw_id.is_null() {
+-            None
+-        } else {
+-            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
+-            // does not add additional invariants, so it's safe to transmute.
+-            let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
++            // SAFETY:
++            // - `table` has static lifetime, hence it's valid for read,
++            // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
++            let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), dev.as_raw()) };
+ 
+-            Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
+-        }
+-    }
++            if raw_id.is_null() {
++                None
++            } else {
++                // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
++                // does not add additional invariants, so it's safe to transmute.
++                let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
+ 
+-    #[cfg(not(CONFIG_OF))]
+-    #[allow(missing_docs)]
+-    fn of_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
+-        None
++                Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
++            }
++        }
+     }
+ 
+     /// Returns the driver's private data from the matching entry of any of the ID tables, if any.
 -- 
-Dmitry
+2.43.0
+
 
