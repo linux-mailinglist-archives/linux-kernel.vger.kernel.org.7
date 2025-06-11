@@ -1,105 +1,86 @@
-Return-Path: <linux-kernel+bounces-682259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1282AD5D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635D4AD5D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60DE21737CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:58:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 492EC3A3CBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1054F248191;
-	Wed, 11 Jun 2025 17:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC62229B38;
+	Wed, 11 Jun 2025 17:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MND96yGu"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfVLEJGu"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AEB188CC9;
-	Wed, 11 Jun 2025 17:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66A5223DD7;
+	Wed, 11 Jun 2025 17:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749664707; cv=none; b=W24lNVw5t1bZDYP7nfysvMksOOX4NTHnCXhqq1PJ35UnP/LXtp+iop88vnrjHw8eX8qanzj+2AKvuqd6e1GPySqtpZjAHtGVq9iXVTzmumojyxTu74giJDKyODu8VmK60WTgkS5nTEi6whYf5WToPp9CLqzng9QgrkEe26xmprk=
+	t=1749664624; cv=none; b=Ljm9ZudOTLNugqI42L83M0u5feRjZMuM1PRrzCMC0NSNL4COlyb7N1Qi7rbjtDrJJItNc/h7T/DZ/BuXMPhM932jOV+af2J4yxsxFeKMze7y3MI2cxc8qR5hw7G98M37u1y67aMA3F+jtSZbn7vwrYBVYrTHILR0HS6GdMcUPM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749664707; c=relaxed/simple;
-	bh=5+kbWDXXq4IG8sDuXqes6a43G6RDWXt2POCGQmcpyOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=skiltTbEQGl4EeTgfpf8kiX4BvCEPJRsvlSG7hI1yQC8wJUrTJMezg/39PDzMsCjXZiJWVhNpPgBekGEhOLTAcQy2Kk6Wf5Cde/QEHEGkMrFrEZBTg3i/CWxechW8JQA2xrvAqqnZwYi+9HfbAL2f09etscAi9G+o0GJbRXT1G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MND96yGu; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1749664624; c=relaxed/simple;
+	bh=iKPTna4nKkfa8XyeeaeDDDGGxssnxNMy5Hly+3Y9s3c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D8wZgx/4I0aB8j7cwIAmBynPa0Lr/NVV33stavzQLfC4GTvRBeCQJuIfOS3686NWz6tfUyhZZ4gXkMVyCMcnIwkzDa4KvHi9dwjPDxyevhnRgNQQn0OXdUXdpxnbV4+oy8+JeOeajqp8zRXd8h+ba8rLDZ4z1DEXpbgNwiInyPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfVLEJGu; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cea01b9cso311295e9.0;
-        Wed, 11 Jun 2025 10:58:25 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5536b9be607so36968e87.0;
+        Wed, 11 Jun 2025 10:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749664704; x=1750269504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuauSSTqx1TDFESDgGFVyFslKTU+wwALp8k7RA41ffM=;
-        b=MND96yGuGsI/mxw1pkY2GBK/SYPyWN7LsLlV0QnwIvXzeTXpyyQt4hRVep5Gcfi8cW
-         1+t3DGg3YVo+W+s1GIo4uqiuonEOXMpmsrTkbrYSYomVBfdCIW5qdRMhs/0J/qqzPk9g
-         6iCmPy970p+8dUUBaSr5y+ABEodxcFyjhmJfK91qMntTVEeriYVzCYSOREFHoGj+8T5Z
-         cNjdUCzjOuXkLaVRgmQUkUwPiO7n863act+s1GsFILBTHXA3bqGtLna7bDqreiWIyvJS
-         dpnNRgFmlpkvnsZl0/TJbSBAcqarDEJnxaO53VnA+YJ9i/Vs3IxEemtAIVcw04pse/7i
-         UC6Q==
+        d=gmail.com; s=20230601; t=1749664621; x=1750269421; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ptaNBN0vV7LvzsN1JdzUNyN5uGL6NSic8/J0BeQprnQ=;
+        b=FfVLEJGuwNgyjhkGonq2dxn4FWYT/8fhl47/ZCrJ+7HxMOV1KTGLulNzIX5hFKw5Dc
+         uU6nWpKOM50Qa16LWj8E8CeuMObnHjr6s7at0NFvIk54GMARL1gibATxAycHNPcU64+a
+         g+M3jzOVwydsJddcu47+yahQyJ/634JrmFCMPSb455IMrnSH1sSDxyLKad/8ETjeLm6v
+         Y/DdtKIpzPH3+ahNDDHqgQc8TWwlH/CeKb0bZRmrvjgHdAZ60LzrmPXKo3yqs9SYd6+2
+         D3cQyGKZubuSiauZ5aiAV9CNOVqJaFXVk2Z6zPLRqFdiz+ne2PAlNVeu0Ao3a+a0yPq6
+         +wjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749664704; x=1750269504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iuauSSTqx1TDFESDgGFVyFslKTU+wwALp8k7RA41ffM=;
-        b=oMQ1dlmD5yeBUxQfffSHhfJi3GoVUyZllfKEYMHKU5nR+CVQJRdljquDxQ9x7sOpWX
-         Dd49QPo6XlCLkjTC+DOr81ACmcldfaxs+OQ0JKwXwU8sS7b4TkQzp/vv5nrW4KoDsm7r
-         nwDyjyuYpNxGbak5IBheMszFXNckgWmJbM2jh70kQM8gWJIa25DqwPyR0TilvB1Q14Qz
-         0UvaLKnf9KEx56KT872lH0gdXeh9EOEoJ7tK8V7kM/uUevI2qBRCs3O6YJYk6SSElOlA
-         VThB4LhLFQP/c/+krx70gXSBc4uqgx6mOhqmrCIwdRdClm0pjQtT9PVjUfWCoq62tMl5
-         6AeA==
-X-Forwarded-Encrypted: i=1; AJvYcCURbX4v3unlNzFNXOcoBqtQvGR9qAHq2nZgxIz/kB/bOS2K8mCJTbAXUJLhqHzGzvjyotjbLLjL3DFs6B3m@vger.kernel.org, AJvYcCUVeaWu6gp6GTa6WBBJfeidQCp1x5iM9mHy7YOA6gEOcx20x5rzWAPtME4UeOa7HLHzdcW+f+4rGWso@vger.kernel.org, AJvYcCW+kMXnnaRhsH+rKD/Nc85TT0vFBx271d7a9a4DFJc8hqAiY/U7/MT0KBSGWsNdwZBthINUkirtoi/LyrXTxDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeYlHRDLclxPFYDREImFZdSmNrJmDpeTNRjBXZYE5IdXIEa/Wl
-	UKCwC2ZgrTcAGSia3SDm9RVDSaxotD6CjMTko5txJj/Q4MWCAcjpZJzUa3famaJ+wHg=
-X-Gm-Gg: ASbGncvtQfD2CqKxyMoMHgqOdRozUfIhG2nZnKWLOWyI/4YgKmRCVG3qhnucsyPndcF
-	CcSQZR/LDwS2DG9tUVonmlQw6P437cMILlndf3yMkGNUCDCgC+9M3WTJG+P+D0tdBysHtvR/wdl
-	vTUL9O9sJb/nc4RgVEFR5exZ6B7ct374uZYyPWRWyOAc7pSBma1qWa6stvA+UtP6RYKydhlmx+w
-	TNALSlM75gzwFHbv0Nuh2p7YD5ONhtLZvLi/SDCkzd9C01N4TuBq2xJ3rLbfWeXt0NpTxBGFIhv
-	0LjkG55qhaIt2zfLLHsp7VOSD0TYshypQYZ+ZUKY3C04J6hkcgPhyMAjtSI+NAOilhNYmVqMsb9
-	9ar5m2knzs5s5PE9oR4z5Zk6DQ0iqrprVq6lw
-X-Google-Smtp-Source: AGHT+IEg0k970DGPt+HOeiv6kkgVg9C2xgXIHwMpy2WRypQIpwqG83M++zCuuFAXKTvjT5p9ZNVqEw==
-X-Received: by 2002:a05:600c:1c9e:b0:450:d4a6:799d with SMTP id 5b1f17b1804b1-4532b8c5807mr7781705e9.7.1749664703588;
-        Wed, 11 Jun 2025 10:58:23 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532513e27fsm28248385e9.1.2025.06.11.10.58.22
+        d=1e100.net; s=20230601; t=1749664621; x=1750269421;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ptaNBN0vV7LvzsN1JdzUNyN5uGL6NSic8/J0BeQprnQ=;
+        b=aCjsGIzNML9KowSotywQFwhxAdSEMiSfS4u6F3934wrIv4Ka65cgD+jux9wbiQtZkl
+         odLU/UiSS9dOriOQdN/+XnkmkqmxzqYywd1ATsDt3CRjYySUKSqIJWt1MGes4ZoRlI1V
+         D0RC+8KCdGP2COSGpdzN8imbnzTGsdqGjlUDhfEiP3U5qOH44ygaUd2lyVkiZIAm0UU4
+         n1i+iEH9J+LQ4josqFEDI3ns3TMiZ21WCamE7Tkqn8uj0QjVIcsqbPOuLU4kXY/WW1Ku
+         SDZJkdGimFmWHUNZWqukooXxa+ei2aPk/HUGJstaHMPF3J/4lgAfM9gmlfgQ8OK1jgMS
+         hHhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCjulknUS2lYW4522pV2A6KMq2yKRYOJl+//r3M6DIU6gsJRJVSHCYUEjLFJL27SxJl69H@vger.kernel.org, AJvYcCWQGFnWRw49xqbv6Mgw2zb3ZSG9Avat6l6CCmH5Am9DXT+2XigrpGUP4grRefnm7KNy4VfE6mKmhRyXkfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya4/Crr9KWGysTtrV8EY9avPz1VM/YthPRzrZUcB5fh5npFItY
+	BRj6J7wZgRAuhOcb+7G1mEK0oNAUG3J4da+VCKRCD9RFuyZX2tRKqaeq52t0WODZ
+X-Gm-Gg: ASbGncu+SIPv7JDnl3HO5/UXr97Wq2dIgr8A47YvBQwVIKLtAGjoT4ckWo/mBqdY9W1
+	/1vjC0KGnyIW911Rhb7vYsUTnZVxWgLQMkRL5/oLp9SdXv8eskRbwxMx+O+94Z9HFBmI1smd2xr
+	z5uiNQnb+RgM/cV+3i2lTNoJYibcJVnqDJeM+RfwnaT68CuAHKOfygiBbJnbUPeLQfnufVujmWZ
+	wTLMN719PuZGzAoLBy9h/nHmawQfAaodQgJGubjbkxPFN7HmNuaARN8y91m5SJlT6B6U9DoHUPU
+	v6zCrEMufAkrR4RvXFZzQ6nzoFT8lIJCjV1c54YSYn+e6U/VQqqF1AeKaiPw4E9CdkUm
+X-Google-Smtp-Source: AGHT+IE2zotykWid212DM/+eqjD9o7gy/Nqq1aeZIL17mTjbMqJ076cAsgdzsEyQbZVZMTihPc+Pmw==
+X-Received: by 2002:a05:6512:2304:b0:553:2c93:6140 with SMTP id 2adb3069b0e04-5539c0a047dmr1430683e87.9.1749664620436;
+        Wed, 11 Jun 2025 10:57:00 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5536772a899sm2003603e87.170.2025.06.11.10.56.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 10:58:23 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v5 6/6] samples: rust: add ACPI match table example to platform driver
-Date: Wed, 11 Jun 2025 18:56:20 +0100
-Message-ID: <20250611175620.804242-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
-References: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
+        Wed, 11 Jun 2025 10:56:59 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+	RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: [PATCH v2 1/2] rcu: Enable rcu_normal_wake_from_gp on small systems
+Date: Wed, 11 Jun 2025 19:56:57 +0200
+Message-Id: <20250611175658.91361-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,107 +89,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend the Rust sample platform driver to probe using device/driver name
-matching, OF ID table matching, or ACPI ID table matching.
+Automatically enable the rcu_normal_wake_from_gp parameter on
+systems with a small number of CPUs. The activation threshold
+is set to 16 CPUs.
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+This helps to reduce a latency of normal synchronize_rcu() API
+by waking up GP-waiters earlier and decoupling synchronize_rcu()
+callers from regular callback handling.
+
+A benchmark running 64 parallel jobs(system with 64 CPUs) invoking
+synchronize_rcu() demonstrates a notable latency reduction with the
+setting enabled.
+
+Latency distribution (microseconds):
+
+<default>
+ 0      - 9999   : 1
+ 10000  - 19999  : 4
+ 20000  - 29999  : 399
+ 30000  - 39999  : 3197
+ 40000  - 49999  : 10428
+ 50000  - 59999  : 17363
+ 60000  - 69999  : 15529
+ 70000  - 79999  : 9287
+ 80000  - 89999  : 4249
+ 90000  - 99999  : 1915
+ 100000 - 109999 : 922
+ 110000 - 119999 : 390
+ 120000 - 129999 : 187
+ ...
+<default>
+
+<rcu_normal_wake_from_gp>
+ 0      - 9999  : 1
+ 10000  - 19999 : 234
+ 20000  - 29999 : 6678
+ 30000  - 39999 : 33463
+ 40000  - 49999 : 20669
+ 50000  - 59999 : 2766
+ 60000  - 69999 : 183
+ ...
+<rcu_normal_wake_from_gp>
+
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- samples/rust/rust_driver_platform.rs | 71 +++++++++++++++++++++++++++-
- 1 file changed, 70 insertions(+), 1 deletion(-)
+ kernel/rcu/tree.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8b42b3cfb363..35d5067aa023 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -2,7 +2,7 @@
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e8a4b720d7d2..b88ceb35cebd 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1625,8 +1625,10 @@ static void rcu_sr_put_wait_head(struct llist_node *node)
+ 	atomic_set_release(&sr_wn->inuse, 0);
+ }
  
- //! Rust Platform driver sample.
- 
--use kernel::{c_str, device::Core, of, platform, prelude::*, types::ARef};
-+use kernel::{acpi, c_str, device::Core, of, platform, prelude::*, types::ARef};
- 
- struct SampleDriver {
-     pdev: ARef<platform::Device>,
-@@ -17,9 +17,78 @@ struct SampleDriver {
-     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
- );
- 
-+// ACPI match table test
-+//
-+// This demonstrates how to test an ACPI-based Rust platform driver using QEMU
-+// with a custom SSDT.
-+//
-+// Steps:
-+//
-+// 1. **Create an SSDT source file** (`ssdt.dsl`) with the following content:
-+//
-+//     ```asl
-+//     DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
-+//     {
-+//         Scope (\_SB)
-+//         {
-+//             Device (T432)
-+//             {
-+//                 Name (_HID, "TEST4321")  // ACPI hardware ID to match
-+//                 Name (_UID, 1)
-+//                 Name (_STA, 0x0F)        // Device present, enabled
-+//                 Name (_CRS, ResourceTemplate ()
-+//                 {
-+//                     Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
-+//                 })
-+//             }
-+//         }
-+//     }
-+//     ```
-+//
-+// 2. **Compile the table**:
-+//
-+//     ```sh
-+//     iasl -tc ssdt.dsl
-+//     ```
-+//
-+//     This generates `ssdt.aml`
-+//
-+// 3. **Run QEMU** with the compiled AML file:
-+//
-+//     ```sh
-+//     qemu-system-x86_64 -m 512M \
-+//         -enable-kvm \
-+//         -kernel path/to/bzImage \
-+//         -append "root=/dev/sda console=ttyS0" \
-+//         -hda rootfs.img \
-+//         -serial stdio \
-+//         -acpitable file=ssdt.aml
-+//     ```
-+//
-+//     Requirements:
-+//     - The `rust_driver_platform` must be present either:
-+//         - built directly into the kernel (`bzImage`), or
-+//         - available as a `.ko` file and loadable from `rootfs.img`
-+//
-+// 4. **Verify it worked** by checking `dmesg`:
-+//
-+//     ```
-+//     rust_driver_platform TEST4321:00: Probed with info: '0'.
-+//     ```
-+//
-+// This demonstrates ACPI table matching using a custom ID in QEMU with a minimal SSDT
+-/* Disabled by default. */
+-static int rcu_normal_wake_from_gp;
++/* Enable rcu_normal_wake_from_gp automatically on small systems. */
++#define WAKE_FROM_GP_CPU_THRESHOLD 16
 +
-+kernel::acpi_device_table!(
-+    ACPI_TABLE,
-+    MODULE_ACPI_TABLE,
-+    <SampleDriver as platform::Driver>::IdInfo,
-+    [(acpi::DeviceId::new(c_str!("TEST4321")), Info(0))]
-+);
-+
- impl platform::Driver for SampleDriver {
-     type IdInfo = Info;
-     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
++static int rcu_normal_wake_from_gp = -1;
+ module_param(rcu_normal_wake_from_gp, int, 0644);
+ static struct workqueue_struct *sync_wq;
  
-     fn probe(
-         pdev: &platform::Device<Core>,
+@@ -3239,7 +3241,7 @@ static void synchronize_rcu_normal(void)
+ 
+ 	trace_rcu_sr_normal(rcu_state.name, &rs.head, TPS("request"));
+ 
+-	if (!READ_ONCE(rcu_normal_wake_from_gp)) {
++	if (READ_ONCE(rcu_normal_wake_from_gp) < 1) {
+ 		wait_rcu_gp(call_rcu_hurry);
+ 		goto trace_complete_out;
+ 	}
+@@ -4843,6 +4845,12 @@ void __init rcu_init(void)
+ 	sync_wq = alloc_workqueue("sync_wq", WQ_MEM_RECLAIM, 0);
+ 	WARN_ON(!sync_wq);
+ 
++	/* Respect if explicitly disabled via a boot parameter. */
++	if (rcu_normal_wake_from_gp < 0) {
++		if (num_possible_cpus() <= WAKE_FROM_GP_CPU_THRESHOLD)
++			rcu_normal_wake_from_gp = 1;
++	}
++
+ 	/* Fill in default value for rcutree.qovld boot parameter. */
+ 	/* -After- the rcu_node ->lock fields are initialized! */
+ 	if (qovld < 0)
 -- 
-2.43.0
+2.39.5
 
 
