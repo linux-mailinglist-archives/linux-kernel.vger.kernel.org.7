@@ -1,218 +1,259 @@
-Return-Path: <linux-kernel+bounces-680998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375F5AD4D08
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C081AD4D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463597ACAEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA67317BEC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F2B231851;
-	Wed, 11 Jun 2025 07:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C8B23504C;
+	Wed, 11 Jun 2025 07:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQZIfjGz"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ztIvbMWq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9TOXAu3T"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F19E229B38
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C83A2206BE;
+	Wed, 11 Jun 2025 07:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749627381; cv=none; b=Sln5I7IWBO8EFgOdvxjNcKfCN5Vb/EFR8lCoYE/QXzCgm0swDFovpY7rcsisc0VDpvfNR3yRHTsHGw+LA4RBVerKDIMueQUhQn6xP2PCxGlFUejV4Ijn6uvI/kElF0WanDQZeUjXrsE319b8eHtDi0CTXitCNv8jBRS3Ob8IzHo=
+	t=1749627514; cv=none; b=p6wQG3OCH1gMuLQPxMfUvGa590OBLAKHgJRcVTAJhQXmRWSUoUPNmRKPAoUGMFp29taz9E/zO+JbuF1F6l7bQUfo8IwSvOi1nwk2T/j+vDD/ElvqAIrX1egYEajhvc3ZtlK4sK9IU4+peSZQrzs9WQKqCGv5p9xCc0Bm0F0kV6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749627381; c=relaxed/simple;
-	bh=XfopYv8ohE728Xi2gCeSUZEs6u6N1lsc0va5XJdhNd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bzByZ0XKZJQde37Omr0j578+CgfA0qO9x64wxsbJ2JHuwYfaiHW5lO5xXKqcYdQTo7ubHjOGYXr3J4FjQf8L5fdvr1lg6ZiXFfirA7cHhAehkT7EHMcEahbexRPeVtf2D035a4miVVW6T+aHfLyLGUvidP8YVbawkpiIk8sZIpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQZIfjGz; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23508d30142so79811465ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749627378; x=1750232178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lP9LxI7qONcXoTdRe9p4EMny84r1sepaW6Yqj2XZ3xs=;
-        b=OQZIfjGzIHAeH5qy5Yhy4fXsUb+29Hpg8Bofneqa12ytGnzj/fKNt8eOpohpcmKUq6
-         0vqEMCdQpOvGzbwuWsspeGN5AEgek57mXUnKKuz6NM9pzMevCEAfabU50iSBPL35O5KX
-         gUUHo+Syn/+WxR6pxvIOAWZQWMl6Qkcx3U0aWunxBk6kTu7D42wYg/x4IVmpT61FR04H
-         NT/WqOQlKo4XwthjxauHhOmv2gAqhc1S0N+FPN9yIYZWAGhUX6Jou4d4TiM+Z9XHi6po
-         E0uustQD6gj48tRVuPOI+pYpU/qWZCsh0kvAwBKr6XzzxBs2COUPa9AfLCbEMRKDCkW4
-         pJXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749627378; x=1750232178;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lP9LxI7qONcXoTdRe9p4EMny84r1sepaW6Yqj2XZ3xs=;
-        b=VJE8yyFuo8KFIuf1/QlraPlhhK9hzcbeXh5kjTvlVUGjv9ooQ7x9mzH/qDu6E9syBu
-         P+q06TlMXX8bfMBuW04fykyiRzwewDDE3bNkHT6ANMtlIBtVzuN/tWuWzdslOpsJsdQP
-         uOdVfroxHomXxbQ/XWhUyn/6QT6k5onnBbafg1T+nvHtc3Oc72Dgz66g59C6BL/KCLdJ
-         OvRKIZf7lmMHGrWO4BNjE3zniBdvYD9AN3RG38Tw4TffKUj/RESRpu4YW9BlR4JL30UM
-         NdkWu/7OyWZq+qnzWhLE6GftsMV2qpykrYzUEelAqsrBAhgQwSgSBU9DgCJxVHxey50m
-         Wuaw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4I4EgDrg/oyjiwxS6LCcCVdacrSLbctuuh+fxeFsQf+FsSeFDtf4q8uunsjv0vg+s8xYxqBFIpDp9vY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsdSZEv3q1cfftn+73dFw7An8BBWSKQu7hKkv7nvpVlWo+C3FI
-	igpH+url0lYuTtX4Aqn32xOTo4dmn/dYX1xlVkPuVVuhdFiT9TkdUJsJ
-X-Gm-Gg: ASbGncuM2xG/Qja7Nnq6PYevegAwyyr41JuuEMmh155g2n4WHSf3Ae/XKpjCm0jlrFX
-	vRPnYEpMMMH/oDMpdOkwaMGsw+VByxl/hKoUNMYX8Z6PCrJxGTUsd7Nu0+/wDV5m1Zh7YEFJmlC
-	UwjEEAKmn9GD/q+fQ1S/g6vd5zql4g+lFl4seOR/yIAGXW0PDt5FNVSKwCGWbSNOA29ZSZQMRHl
-	tyOF3SNvD//KUhy/jgMMMhnoI+4/tp24E0W+ef9f1Mj2XgZqMpLjaM+J5rIduAE1zNzFjgtFl0q
-	JNCE/j9l7KiNFbFuzB1rFuPntpWk1h4YOgoJucZJG5O1a+0cknPajEKy1bJtF/Ja/iyIOAXTC70
-	dk8H6FYtu2yRZPnZV
-X-Google-Smtp-Source: AGHT+IFNNhUjT+1QGSmPE5NgvvbvJ89c2dVTR659nK9UjRNnj478EreDAn07W7AdN0zsj4rdNl59mg==
-X-Received: by 2002:a17:903:22ce:b0:234:d679:72e9 with SMTP id d9443c01a7336-2364261fa43mr28896165ad.12.1749627377692;
-        Wed, 11 Jun 2025 00:36:17 -0700 (PDT)
-Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:52f2:ddbc:f858:ca43])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2360340fbffsm81526305ad.197.2025.06.11.00.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 00:36:17 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: jstultz@google.com
-Cc: tglx@linutronix.de,
-	sboyd@kernel.org,
-	linux-kernel@vger.kernel.org,
-	yurynorov@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	jserv@ccns.ncku.edu.tw,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [PATCH v3] clocksource: Replace loop within clocks_calc_mult_shift() with find_last_bit() for calculation of "sftacc"
-Date: Wed, 11 Jun 2025 15:36:08 +0800
-Message-ID: <20250611073608.2049793-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749627514; c=relaxed/simple;
+	bh=6UMiXcyoIq9M4FKEOo43nM5aQWsXH6QWlxEFJpS01j4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pvNjKDwsDYmlRGQiXDiZDzDN1qxf2yZp4heN2a1jIzm/UdKY27XFe8xfdkCmicQiqMfyryd15wVN9UkvAKbtde4PrZE6qhby6CjvW5LGGb4oMn+qaNh6JoKhINtufVcFGmktSvh6W5L6+hj7LkgA4Gx4fskU56jYA9M9jxWboTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ztIvbMWq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9TOXAu3T; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749627510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8zSLyZYo3ihzjC5JPibnrIQcHyWB1lKmlNba6ZPoZzI=;
+	b=ztIvbMWqVWSgNjkbrJXoKdI7hUTZHor6f97gBCi+H/iLxBYg6JO5/BI+B9zcvIxRoLLOPX
+	T2Y1WucFoQST4fiqptCky6bLHPiI8E0NbFHetjwuMDWTdJZZwdmKynlkOW48xg717w+SSO
+	e8aOiFRHgVpaArBdBObvDiAsFEiS++JST7XvcQk47x9zVLgiWFB+e4kfm9NXuFDxQuu2uW
+	9q7ChHh7VRWwY1fXeH5hhw7h+WPSlwCsgoPh9/nLnuiFhI3DvBqRJqbAugrRop9qZL2OOx
+	YHCsUkG2Z4iHUcZuMNgwzoVMO+GzxY+IDLFVKJMN549xFv9beiqoeMPm52i6Gg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749627510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8zSLyZYo3ihzjC5JPibnrIQcHyWB1lKmlNba6ZPoZzI=;
+	b=9TOXAu3TR8e8oxSGMK/Ns27pNDTHuN31oWDLNtT93C0RhlkuzZlo2KJQF2HU70uk+Sk6og
+	5xG+toq8rpm3sgDQ==
+Subject: [PATCH v3 00/16] kunit: Introduce UAPI testing framework
+Date: Wed, 11 Jun 2025 09:38:06 +0200
+Message-Id: <20250611-kunit-kselftests-v3-0-55e3d148cbc6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF4ySWgC/3WOzQrCMBAGX0VyNpJsNlY8+R7ioT9buyipJGmpl
+ L67TRGEqsdZmNlvFIE8UxDHzSg89Ry4dTOY7UaUTe6uJLmaWYAC1EpbeescR3kLdK8jhRik3UN
+ mihIVIohZe3iqeViS58vMDYfY+ufyodfpmmJWgTbfsV5LJfPCZOZQ2dxqOt3ZddG3joddRan/l
+ rM/MkKBFrA0hcpXclrTw2cBql8RSBGLWiPBIaurdWSaphdQFecDNgEAAA==
+X-Change-ID: 20241015-kunit-kselftests-56273bc40442
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ workflows@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Nicolas Schier <nicolas.schier@linux.dev>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749627510; l=7808;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=6UMiXcyoIq9M4FKEOo43nM5aQWsXH6QWlxEFJpS01j4=;
+ b=18VMEmLrljDcRsOhGwao/W03s2JLnOkTRGlPyVZ2UXmujK255AvlJ9B3925MhMULIPUW4p0IV
+ /2I5SrvLM4wD37E6h3AQ96/aSnhCRr/PmR9v2JjFVANaPos3sCpuTZf
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Utilize "find_last_bit()" in replacement of while loop counting
-for the decremenet of "sftacc". They're equivalent in computation result
-but the former is more effective.
+Currently testing of userspace and in-kernel API use two different
+frameworks. kselftests for the userspace ones and Kunit for the
+in-kernel ones. Besides their different scopes, both have different
+strengths and limitations:
 
-"find_last_bit()" will return the bit number of the last set bit of
-"tmp", which is 0-based index. Plus 1 to convert it into bit width as
-desired.
+Kunit:
+* Tests are normal kernel code.
+* They use the regular kernel toolchain.
+* They can be packaged and distributed as modules conveniently.
 
-Note that only the lowest 32 bits of "tmp" is taken into consideration
-of the operation, since it was already shifted right by 32 bits, the
-topmost 32 bits should remain 0, only the lowest 32 bits are possible to
-be non-zero.
+Kselftests:
+* Tests are normal userspace code
+* They need a userspace toolchain.
+  A kernel cross toolchain is likely not enough.
+* A fair amout of userland is required to run the tests,
+  which means a full distro or handcrafted rootfs.
+* There is no way to conveniently package and run kselftests with a
+  given kernel image.
+* The kselftests makefiles are not as powerful as regular kbuild.
+  For example they are missing proper header dependency tracking or more
+  complex compiler option modifications.
 
-This change is tested against a test script [1].
-Run the test 10 times for each version of implementation and take the
-average. The result shown that with this change, the operation overhead
-of "clocks_calc_mult_shift()" can be reduced around 99.7% .
+Therefore kunit is much easier to run against different kernel
+configurations and architectures.
+This series aims to combine kselftests and kunit, avoiding both their
+limitations. It works by compiling the userspace kselftests as part of
+the regular kernel build, embedding them into the kunit kernel or module
+and executing them from there. If the kernel toolchain is not fit to
+produce userspace because of a missing libc, the kernel's own nolibc can
+be used instead.
+The structured TAP output from the kselftest is integrated into the
+kunit KTAP output transparently, the kunit parser can parse the combined
+logs together.
 
------------------------------
-| old version | new version |
------------------------------
-|  11500.6 ns |       44 ns |
------------------------------
+Further room for improvements:
+* Call each test in its completely dedicated namespace
+* Handle additional test files besides the test executable through
+  archives. CPIO, cramfs, etc.
+* Compatibility with kselftest_harness.h (in progress)
+* Expose the blobs in debugfs
+* Provide some convience wrappers around compat userprogs
+* Figure out a migration path/coexistence solution for
+  kunit UAPI and tools/testing/selftests/
 
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+Output from the kunit example testcase, note the output of
+"example_uapi_tests".
+
+$ ./tools/testing/kunit/kunit.py run --kunitconfig lib/kunit example
+...
+Running tests with:
+$ .kunit/linux kunit.filter_glob=example kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[11:53:53] ================== example (10 subtests) ===================
+[11:53:53] [PASSED] example_simple_test
+[11:53:53] [SKIPPED] example_skip_test
+[11:53:53] [SKIPPED] example_mark_skipped_test
+[11:53:53] [PASSED] example_all_expect_macros_test
+[11:53:53] [PASSED] example_static_stub_test
+[11:53:53] [PASSED] example_static_stub_using_fn_ptr_test
+[11:53:53] [PASSED] example_priv_test
+[11:53:53] =================== example_params_test  ===================
+[11:53:53] [SKIPPED] example value 3
+[11:53:53] [PASSED] example value 2
+[11:53:53] [PASSED] example value 1
+[11:53:53] [SKIPPED] example value 0
+[11:53:53] =============== [PASSED] example_params_test ===============
+[11:53:53] [PASSED] example_slow_test
+[11:53:53] ======================= (4 subtests) =======================
+[11:53:53] [PASSED] procfs
+[11:53:53] [PASSED] userspace test 2
+[11:53:53] [SKIPPED] userspace test 3: some reason
+[11:53:53] [PASSED] userspace test 4
+[11:53:53] ================ [PASSED] example_uapi_test ================
+[11:53:53] ===================== [PASSED] example =====================
+[11:53:53] ============================================================
+[11:53:53] Testing complete. Ran 16 tests: passed: 11, skipped: 5
+[11:53:53] Elapsed time: 67.543s total, 1.823s configuring, 65.655s building, 0.058s running
+
+Based on v6.15-rc1.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
-Changelog:
+Changes in v3:
+- Reintroduce CONFIG_CC_CAN_LINK_STATIC
+- Enable CONFIG_ARCH_HAS_NOLIBC for m68k and SPARC
+- Properly handle 'clean' target for userprogs
+- Use ramfs over tmpfs to reduce dependencies
+- Inherit userprogs byte order and ABI from kernel
+- Drop now unnecessary "#ifndef NOLIBC"
+- Pick up review tags
+- Drop usage of __private in blob.h,
+  sparse complains and it is not really necessary
+- Fix execution on loongarch when using clang
+- Drop userprogs libgcc handling, it was ugly and is not yet necessary
+- Link to v2: https://lore.kernel.org/r/20250407-kunit-kselftests-v2-0-454114e287fd@linutronix.de
 
-v1 -> v2:
-	- Refine commit message to explain more about "why"
-	- Check the frequency of "clocks_calc_mult_shift()" get called,
-	  it's not in hotpath on my machine, refine the commit message
-to avoid overselling it
-	- Add comments for the code to explain the implementation in
-	  more detail
-	- Handle case for "tmp == 0" to avoid undefined behavior
-v2 -> v3:
-	- Use "find_last_bit()" instead of "__builtin_clz()"
-	- Convert the type of "tmp" to "const unsigned long *" when
-	  sending into the function
-	- Highlight in the comment that only the lowest 32 bits part
-	  of "tmp" is taken into consideration
+Changes in v2:
+- Rebase onto v6.15-rc1
+- Add documentation and kernel docs
+- Resolve invalid kconfig breakages
+- Drop already applied patch "kbuild: implement CONFIG_HEADERS_INSTALL for Usermode Linux"
+- Drop userprogs CONFIG_WERROR integration, it doesn't need to be part of this series
+- Replace patch prefix "kconfig" with "kbuild"
+- Rename kunit_uapi_run_executable() to kunit_uapi_run_kselftest()
+- Generate private, conflict-free symbols in the blob framework
+- Handle kselftest exit codes
+- Handle SIGABRT
+- Forward output also to kunit debugfs log
+- Install a fd=0 stdin filedescriptor
+- Link to v1: https://lore.kernel.org/r/20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de
 
-[1]:
-static int __init test_init(void)
-{
-    u32 mult, shift;
-    u32 from, to, maxsec;
-    ktime_t start_time, end_time, total_time;
-    pr_info("Starting clocks_calc_mult_shift simple test\n");
+---
+Thomas Weißschuh (16):
+      kbuild: userprogs: avoid duplicating of flags inherited from kernel
+      kbuild: userprogs: also inherit byte order and ABI from kernel
+      init: re-add CONFIG_CC_CAN_LINK_STATIC
+      kbuild: userprogs: add nolibc support
+      kbuild: introduce CONFIG_ARCH_HAS_NOLIBC
+      kbuild: doc: add label for userprogs section
+      kbuild: introduce blob framework
+      kunit: tool: Add test for nested test result reporting
+      kunit: tool: Don't overwrite test status based on subtest counts
+      kunit: tool: Parse skipped tests from kselftest.h
+      kunit: Always descend into kunit directory during build
+      kunit: qemu_configs: loongarch: Enable LSX/LSAX
+      kunit: Introduce UAPI testing framework
+      kunit: uapi: Add example for UAPI tests
+      kunit: uapi: Introduce preinit executable
+      kunit: uapi: Validate usability of /proc
 
-    start_time = ktime_get();
-    // Test with parameters from 1 to 1000
-    for (from = 1; from <= 1000; from += 100) {
-        for (to = 1; to <= 1000; to += 100) {
-            for (maxsec = 1; maxsec <= 10; maxsec++) {
-
-                clocks_calc_mult_shift(&mult, &shift, from, to, maxsec);
-            }
-        }
-    }
-
-    end_time = ktime_get();
-    total_time = ktime_to_ns(ktime_sub(end_time, start_time));
-
-    pr_info("Test completed\n");
-    pr_info("Total execution time: %lld ns \n", total_time);
-    return 0;
-}
-
-The test is running in the form of kernel module.
-The test machine is running ubuntu 24.04 on x86_64 machine with kernel
-version of v6.14.0, CPU type is AMD Ryzen 7 5700X3D 8-Core Processor.
-
-Hi John, Yury,
-
-Would you be so kind to give some suggestion/comments on how should the
-usage of "find_last_bit()" be here ? I'm not sure about whether the type
-conversion of "tmp" is appropriate, though compiler will pop out warnings
-if not doing so.
-
-Plus I'm thinking converting to another pointer type might might be correct
-when the endianess isn't guaranteed ? (or this endianess problem should be
-address and solved in filesystem layer ?)
+ Documentation/dev-tools/kunit/api/index.rst        |   5 +
+ Documentation/dev-tools/kunit/api/uapi.rst         |  12 +
+ Documentation/kbuild/makefiles.rst                 |  38 ++-
+ MAINTAINERS                                        |   2 +
+ Makefile                                           |   7 +-
+ include/kunit/uapi.h                               |  24 ++
+ include/linux/blob.h                               |  31 +++
+ init/Kconfig                                       |   7 +
+ lib/Makefile                                       |   4 -
+ lib/kunit/Kconfig                                  |  10 +
+ lib/kunit/Makefile                                 |  20 +-
+ lib/kunit/kunit-example-test.c                     |  15 ++
+ lib/kunit/kunit-example-uapi.c                     |  54 ++++
+ lib/kunit/uapi-preinit.c                           |  63 +++++
+ lib/kunit/uapi.c                                   | 294 +++++++++++++++++++++
+ scripts/Makefile.blobs                             |  19 ++
+ scripts/Makefile.build                             |   6 +
+ scripts/Makefile.clean                             |   2 +-
+ scripts/Makefile.userprogs                         |  13 +-
+ scripts/blob-wrap.c                                |  27 ++
+ tools/include/nolibc/Kconfig.nolibc                |  15 ++
+ tools/testing/kunit/kunit_parser.py                |  13 +-
+ tools/testing/kunit/kunit_tool_test.py             |   9 +
+ tools/testing/kunit/qemu_configs/loongarch.py      |   2 +
+ .../test_is_test_passed-failure-nested.log         |  10 +
+ .../test_data/test_is_test_passed-kselftest.log    |   3 +-
+ 26 files changed, 686 insertions(+), 19 deletions(-)
+---
+base-commit: f07a3558c4a5d76f3fea004075e5151c4516d055
+change-id: 20241015-kunit-kselftests-56273bc40442
 
 Best regards,
-I Hsin Cheng.
----
- kernel/time/clocksource.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 2a7802ec480c..651bed1a53e7 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -66,10 +66,20 @@ clocks_calc_mult_shift(u32 *mult, u32 *shift, u32 from, u32 to, u32 maxsec)
- 	 * range:
- 	 */
- 	tmp = ((u64)maxsec * from) >> 32;
--	while (tmp) {
--		tmp >>=1;
--		sftacc--;
--	}
-+
-+	/*
-+	 * Decrement "sftacc" by the number of bits needed to represent "tmp".
-+	 * Using "find_last_bit(&tmp, 32) + 1" to get the bit width:
-+	 * - find_last_bit(&tmp, 32) returns the bit number of the last set bit
-+	 * - Plus 1 to convert 0-based index into bit width as desired
-+	 *
-+	 * Note: Only the lowest 32 bits of "tmp" is taken into consideration,
-+	 *		 since it was already shifted right by 32 bits, the topmost 32
-+	 *		 bits are guaranteed to be 0.
-+	 *
-+	 */
-+	if (sftacc)
-+		sftacc -= (find_last_bit((const unsigned long *)&tmp, 32) + 1);
- 
- 	/*
- 	 * Find the conversion shift/mult pair which has the best
 -- 
-2.43.0
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
