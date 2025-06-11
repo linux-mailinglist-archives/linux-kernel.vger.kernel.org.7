@@ -1,207 +1,218 @@
-Return-Path: <linux-kernel+bounces-681132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECC7AD4EED
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:56:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931A5AD4F4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680D53A7FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51B04607C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E75C24468B;
-	Wed, 11 Jun 2025 08:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECF02620C6;
+	Wed, 11 Jun 2025 09:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTAE3pxw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZjStcvB"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509BD2BD11;
-	Wed, 11 Jun 2025 08:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C98E253953;
+	Wed, 11 Jun 2025 09:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749632147; cv=none; b=kDCw1TAHsK8gOqPq+q7r6X1Bliq9RUeLBCI1EGLnIQYF1Fmff8dD3CbsTmROMlDlFVTAKcmPgsVR+moGhBoIW53fXrvQCci4wPDrDlaUipWf9vFN/KcxHWRMIHO5mwj7I+mdtPvISzw3LNYd3CK8jKkWSN2YpUy3QVOyYutwVjw=
+	t=1749632538; cv=none; b=jm4YSvIiqKoxu+o5I4YuE+UhoptdMy8wUnp+03GzRtP1jFkiu2LkTjYrgV6isrM9lX8FGOLM6Hi6OKdhxQXiOaGdTVfn8D4czjXyd2WhsGvoVIVQA/zLgi4I+cRkCisfGE8qfW7dwpKFozOOYDXMGWzBAg7D4Dri74WXJoCU964=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749632147; c=relaxed/simple;
-	bh=6d/kwVtsJUb6UGpgzU7hhzpSd4al/5RJeq1TyB54wSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ROO/OkfohahKc3tRn0hLndIobUhqYWoYstuJfKIiC25hLGVVsuas0u/4u74WcLWPzvBo94B0xsyu1qBMb4+nRwBEnvpRXXPpg3m1LAtqI0zNm+Wm3jxUEHIgpe5/WMPsOOba4ih6S//aRK2k/jOI4sw7PFzhk2jQXrniVPgdAjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTAE3pxw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DD7C4CEEE;
-	Wed, 11 Jun 2025 08:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749632146;
-	bh=6d/kwVtsJUb6UGpgzU7hhzpSd4al/5RJeq1TyB54wSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BTAE3pxwvtwy4i4IfJxVZjwbEaCrCicfY+3E4hcOMddWrD/mECITAyNfVudOaIo30
-	 mP86ea8Hnv4ej7dXA08zjzos8wcnfJnGokEHDkXBzZh3foMZDPbMXlY774t7uP462u
-	 rDSwEv/YyF4xTeAMyiEuzywjLWxjzDxZ3z0KqWh9AhgMS4S6gdmVFsm2aCBGtqtZxZ
-	 yYMmYX89RKUOfhtFOeE+Fncm6xn4Kp3qVH57cDlaPrCfzEI5AgHytdzunab0YYNAqt
-	 +tdwjy9Jwz1q9qEMcZWJmF36fmpPnR+LHmHAQ4ImitSvIJ7R7DEZv3ABx6LURGcNkK
-	 Su7rRLQrw5Cfw==
-Date: Wed, 11 Jun 2025 10:55:44 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Peter Griffin <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 02/17] regulator: dt-bindings: add s2mpg10-pmic
- regulators
-Message-ID: <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
- <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
+	s=arc-20240116; t=1749632538; c=relaxed/simple;
+	bh=69jCf82ldxpTA0F6lOOd9iI+ILINtCcpDowM6KFnYV4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Krc9D4lU8kYl/zp0QqmLVc3QlXuA1OXOVamYwvFZ/F661I+1haVrI+6YsPxE4QlSYmQko9jioJHMdq643CVxMbMa/W8cwxNRPf4RlY5mo4vusZjHpNN3nscNG1ZrrrAMWq45FSMTh8yrU14poX+whDPlJ0dw3fhqSFNYILcmU1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZjStcvB; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74267c68c11so5149083b3a.0;
+        Wed, 11 Jun 2025 02:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749632536; x=1750237336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KVumx6ANM4ofeoun5RGa9xF2pUD3YLPwVEfUhUeDdMM=;
+        b=mZjStcvB22KqMzyGIjnpbPy6czqzMOoJ5itSbiBxoEano9e0xdj3ITJEGHYNLDhPCh
+         +rV98ZJgshhbHWRlrqWJ/iH5OdAEr/V2YUtBBDLcjydRZL4T76etL8VQVFV2NrNIbis0
+         vFGJiEecHS0n2TU6VxRn5a2vrxFF/9XYsf+J0Z7JcC4LSzorlJQ/rC+S+VozHQVF9mw3
+         jJ0RoHhOedzfuXigzF1wgKin4tqLKJSNA2Er5D+vR8P44ZIb1COLwFxb1IyqT+z9yhn3
+         P9her3Y76T5IntUNVazwuS7MCWucn+HDLQF1DPuhgcCQZmQwJovYk0pqWSiBKznvDG+9
+         AL4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749632536; x=1750237336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KVumx6ANM4ofeoun5RGa9xF2pUD3YLPwVEfUhUeDdMM=;
+        b=AkJhQpwaptM1EserU8qm3669+Lvc1ImdYIe9Ezv7hyYVhvXYYBhffno5RHNcqFlsji
+         UMnGsB0ouIGDPaj/4+XZH/lUoPUPwzvpxT5AS2qAAuGMXuSakT+x7ruFHOY8kv+ljvPO
+         gaqyTBzHSlE0ChRsEYS35GdzZtkKT3HK011+YtP2u5dJwWfwIbrlqoEvxfoS8yf3AnOV
+         fff7famdjlEe2uX6lvuqKA4JhSUOmi3PW4DBSq/dhR8GxnYwYE+niSi+qPB9xqzKj4ic
+         Sohu//UFILn7MYe34mGIbscsUJkSeNgI5Ejo1+XhASMkuazrGq9fmdtBZSeXoprwKDk0
+         KSyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqp3byDX92wQZHct96oaymCP5b5QoQIabOfYpANYkqm3/qRCPO17VWfl/UlK2/LTPxsZeEqJp/jyCZoA==@vger.kernel.org, AJvYcCVZZw0MKzYVF99Z2G+DUzI9s4sloGuTp6BlRPlSIgaatjJRucbZJqmjPBL29zUWT/u1dsHXPneqPILq/tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyks7Ubg6k09hLbpyZ9xJqzSjO7wUUNLZi1sLuC3NOslpZTYq9Z
+	j03mJ16k7sw4iqGgYOcUb1JDALie+hKxs+JVImAs1aloM4zGrKjLDaY9
+X-Gm-Gg: ASbGncssUYxeVpFi5ogI8wkXKxvtSeOHCO7pLkB86csE9R+wpaQAqqW+V9ofBrTWAyV
+	w8MAZyA0dzOuWB/DF2q2S1FXemJefzqJqTTZRJs1P838nxWzVPryKhZrJ8o/dHA9wPc1xgMpb+1
+	QQY0xgoCan0CuUyYwkGvx7Kv+Q08W4roycmg30BU5ka9Qeh/gIA0clzm/s1l8p9PpGrysmc8EWY
+	CVg0QAN/z4hIcsas52EkejQuL8blcpEM5/QEjGIPCcR/lbdlP6+m0Fp9VmTE7utm2FM2YuEGxbF
+	SYy96x7BE7IQLAJ+73+nhI8zsQ08D9cbQ48Wc3TI7wPoWNqOtRhFJlbpjxVp9lpg6vuxTc7Mv4x
+	IeCyG3w==
+X-Google-Smtp-Source: AGHT+IGtr23sa68iAszhUDocoEeLvcc3jYEb/xSciH3gOWIBfRirmfC+n7brf1bZ5/jlTnZaIngeVA==
+X-Received: by 2002:a05:6a00:b95:b0:740:9a4b:fb2a with SMTP id d2e1a72fcca58-7486fe7b34emr2915438b3a.20.1749632536109;
+        Wed, 11 Jun 2025 02:02:16 -0700 (PDT)
+Received: from localhost.localdomain ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af3ab94sm8681447b3a.31.2025.06.11.02.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 02:02:15 -0700 (PDT)
+From: Wang Jinchao <wangjinchao600@gmail.com>
+To: Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>
+Cc: Wang Jinchao <wangjinchao600@gmail.com>,
+	linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] md/raid1: Fix stack memory use after return in raid1_reshape
+Date: Wed, 11 Jun 2025 16:55:47 +0800
+Message-ID: <20250611090203.271488-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 06, 2025 at 04:02:58PM GMT, Andr=C3=A9 Draszik wrote:
-> The S2MPG10 PMIC is a Power Management IC for mobile applications with
-> buck converters, various LDOs, power meters, RTC, clock outputs, and
-> additional GPIO interfaces.
->=20
-> It has 10 buck and 31 LDO rails. Several of these can either be
-> controlled via software or via external signals, e.g. input pins
-> connected to a main processor's GPIO pins.
->=20
-> Add documentation related to the regulator (buck & ldo) parts like
-> devicetree definitions, regulator naming patterns, and additional
-> properties.
->=20
-> S2MPG10 is typically used as the main-PMIC together with an S2MPG11
-> PMIC in a main/sub configuration, hence the datasheet and the binding
-> both suffix the rails with an 'm'.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
-> v2:
-> - drop | (literal style mark) from samsung,ext-control-gpios
->   description
-> ---
->  .../regulator/samsung,s2mpg10-regulator.yaml       | 147 +++++++++++++++=
-++++++
->  MAINTAINERS                                        |   1 +
->  .../regulator/samsung,s2mpg10-regulator.h          |  48 +++++++
->  3 files changed, 196 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-=
-regulator.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
-0-regulator.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..82f2b06205e9bdb15cf90b1e8=
-96fe52c335c52c4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-regulat=
-or.yaml
-> @@ -0,0 +1,147 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg10-regulator.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S2MPG10 Power Management IC regulators
-> +
-> +maintainers:
-> +  - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> +
-> +description: |
-> +  This is part of the device tree bindings for the S2MG10 Power Manageme=
-nt IC
-> +  (PMIC).
-> +
-> +  The S2MPG10 PMIC provides 10 buck and 31 LDO regulators.
-> +
-> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
-> +  additional information and example.
-> +
-> +definitions:
-> +  s2mpg10-ext-control:
-> +    properties:
-> +      samsung,ext-control:
-> +        description: |
-> +          These rails can be controlled via one of several possible exte=
-rnal
-> +          (hardware) signals. If so, this property configures the signal=
- the PMIC
-> +          should monitor. For S2MPG10 rails where external control is po=
-ssible other
-> +          than ldo20m, the following values generally corresponding to t=
-he
-> +          respective on-chip pin are valid:
-> +            - 0 # S2MPG10_PCTRLSEL_ON - always on
-> +            - 1 # S2MPG10_PCTRLSEL_PWREN - PWREN pin
-> +            - 2 # S2MPG10_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKIN=
-G_CTRL
-> +            - 3 # S2MPG10_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
-> +            - 4 # S2MPG10_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in =
-MIMICKING_CTRL
-> +            - 5 # S2MPG10_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
-> +            - 6 # S2MPG10_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bi=
-t in MIMICKING_CTRL
-> +            - 7 # S2MPG10_PCTRLSEL_CPUCL1_EN - CPUCL1_EN pin
-> +            - 8 # S2MPG10_PCTRLSEL_CPUCL1_EN2 - CPUCL1_EN & PWREN pins
-> +            - 9 # S2MPG10_PCTRLSEL_CPUCL2_EN - CPUCL2_EN pin
-> +            - 10 # S2MPG10_PCTRLSEL_CPUCL2_EN2 - CPUCL2_E2 & PWREN pins
-> +            - 11 # S2MPG10_PCTRLSEL_TPU_EN - TPU_EN pin
-> +            - 12 # S2MPG10_PCTRLSEL_TPU_EN2 - TPU_EN & ~AP_ACTIVE_N pins
-> +            - 13 # S2MPG10_PCTRLSEL_TCXO_ON - TCXO_ON pin
-> +            - 14 # S2MPG10_PCTRLSEL_TCXO_ON2 - TCXO_ON & ~AP_ACTIVE_N pi=
-ns
-> +
-> +          For S2MPG10 ldo20m, the following values are valid
-> +            - 0 # S2MPG10_PCTRLSEL_LDO20M_ON - always on
+In the raid1_reshape function, newpool is
+allocated on the stack and assigned to conf->r1bio_pool.
+This results in conf->r1bio_pool.wait.head pointing
+to a stack address.
+Accessing this address later can lead to a kernel panic.
 
-No, use standard regulator properties - regulator-always-on
+Example access path:
 
+raid1_reshape()
+{
+	// newpool is on the stack
+	mempool_t newpool, oldpool;
+	// initialize newpool.wait.head to stack address
+	mempool_init(&newpool, ...);
+	conf->r1bio_pool = newpool;
+}
 
-> +            - 1 # S2MPG10_PCTRLSEL_LDO20M_EN_SFR - VLDO20M_EN & LDO20M_S=
-FR
-> +            - 2 # S2MPG10_PCTRLSEL_LDO20M_EN - VLDO20M_EN pin
-> +            - 3 # S2MPG10_PCTRLSEL_LDO20M_SFR - LDO20M_SFR in LDO_CTRL1 =
-register
-> +            - 4 # S2MPG10_PCTRLSEL_LDO20M_OFF - disable
+raid1_read_request() or raid1_write_request()
+{
+	alloc_r1bio()
+	{
+		mempool_alloc()
+		{
+			// if pool->alloc fails
+			remove_element()
+			{
+				--pool->curr_nr;
+			}
+		}
+	}
+}
 
-I don't think we allowed such property in the past. I don't get what is
-here the actual signal - you described registers in multiple places, not
-signals. Few of these duplicate standard properties, so this looks like
-exact copy of downstream which was doing exactly that way and that was
-exactly never upstreamed.
+mempool_free()
+{
+	if (pool->curr_nr < pool->min_nr) {
+		// pool->wait.head is a stack address
+		// wake_up() will try to access this invalid address
+		// which leads to a kernel panic
+		return;
+		wake_up(&pool->wait);
+	}
+}
 
+Fix:
+The solution is to avoid using a stack-based newpool.
+Instead, directly initialize conf->r1bio_pool.
 
-> +
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 14
-> +
-> +      samsung,ext-control-gpios:
+Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
+---
+v1 -> v2:
+- change subject
+- use mempool_init(&conf->r1bio_pool) instead of reinitializing the list on stack
+---
+ drivers/md/raid1.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
-enable-gpios
-
-
-> +        description:
-> +          For rails where external control is done via a GPIO, this opti=
-onal
-> +          property describes the GPIO line used.
-> +
-> +        maxItems: 1
-
-And this can be dropped.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 19c5a0ce5a40..f2436262092a 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -3366,7 +3366,7 @@ static int raid1_reshape(struct mddev *mddev)
+ 	 * At the same time, we "pack" the devices so that all the missing
+ 	 * devices have the higher raid_disk numbers.
+ 	 */
+-	mempool_t newpool, oldpool;
++	mempool_t oldpool;
+ 	struct pool_info *newpoolinfo;
+ 	struct raid1_info *newmirrors;
+ 	struct r1conf *conf = mddev->private;
+@@ -3375,9 +3375,6 @@ static int raid1_reshape(struct mddev *mddev)
+ 	int d, d2;
+ 	int ret;
+ 
+-	memset(&newpool, 0, sizeof(newpool));
+-	memset(&oldpool, 0, sizeof(oldpool));
+-
+ 	/* Cannot change chunk_size, layout, or level */
+ 	if (mddev->chunk_sectors != mddev->new_chunk_sectors ||
+ 	    mddev->layout != mddev->new_layout ||
+@@ -3408,26 +3405,33 @@ static int raid1_reshape(struct mddev *mddev)
+ 	newpoolinfo->mddev = mddev;
+ 	newpoolinfo->raid_disks = raid_disks * 2;
+ 
+-	ret = mempool_init(&newpool, NR_RAID_BIOS, r1bio_pool_alloc,
+-			   rbio_pool_free, newpoolinfo);
+-	if (ret) {
+-		kfree(newpoolinfo);
+-		return ret;
+-	}
+ 	newmirrors = kzalloc(array3_size(sizeof(struct raid1_info),
+-					 raid_disks, 2),
+-			     GFP_KERNEL);
++	raid_disks, 2),
++	GFP_KERNEL);
+ 	if (!newmirrors) {
+ 		kfree(newpoolinfo);
+-		mempool_exit(&newpool);
+ 		return -ENOMEM;
+ 	}
+ 
++	/* stop everything before switching the pool */
+ 	freeze_array(conf, 0);
+ 
+-	/* ok, everything is stopped */
++	/* backup old pool in case restore is needed */
+ 	oldpool = conf->r1bio_pool;
+-	conf->r1bio_pool = newpool;
++
++	ret = mempool_init(&conf->r1bio_pool, NR_RAID_BIOS, r1bio_pool_alloc,
++			   rbio_pool_free, newpoolinfo);
++	if (ret) {
++		kfree(newpoolinfo);
++		kfree(newmirrors);
++		mempool_exit(&conf->r1bio_pool);
++		/* restore the old pool */
++		conf->r1bio_pool = oldpool;
++		unfreeze_array(conf);
++		pr_err("md/raid1:%s: cannot allocate r1bio_pool for reshape\n",
++			mdname(mddev));
++		return ret;
++	}
+ 
+ 	for (d = d2 = 0; d < conf->raid_disks; d++) {
+ 		struct md_rdev *rdev = conf->mirrors[d].rdev;
+-- 
+2.43.0
 
 
