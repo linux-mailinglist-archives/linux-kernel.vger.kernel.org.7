@@ -1,124 +1,94 @@
-Return-Path: <linux-kernel+bounces-682013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A814AD5A78
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DF8AD5A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4521885E7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42FF2165477
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8B11A9B4A;
-	Wed, 11 Jun 2025 15:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jULf+8cM"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49911AAA2F;
+	Wed, 11 Jun 2025 15:22:44 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDECA198A08
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1F11632D7;
+	Wed, 11 Jun 2025 15:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749655322; cv=none; b=EfsYcpzziJFCs3kCCyyuKajNVzQJ2sQs7RMIoXJSCImgkokB0Jglob4HzaCYqXP8Dh6C0yGHwR6D3dPAi3mUAHkJ4TwOEcHHxaBPSrHb3JKkilgZchNUyOB1FA+sHA2i2moLmmNPFbyl7CCdj0DH0ubkyZzIKZNn66ZBGJB6JBQ=
+	t=1749655364; cv=none; b=leh3IJjDaR3cy3HKibTJxpl7Uc2l2VLCEwKYuPd/PRTEC+6dC+d0E0bLR7js5udII3dbYOiUpPlCyYXnOKZpWO3rko5UL11nuiFasIp4oMRChKg7axTf6rdcdaUVQk9OwnM76paEkxD0sMiabk3lHbA5nhKMoDyrn7gooHZ13TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749655322; c=relaxed/simple;
-	bh=n3FIuLuKqif1KExLRabmovZHhue7y0ojxGEe3NwRxXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvTR6dNIScafSlORCLmfW/ov2X/ceFGBl20nltUUAokHP/HV8xqUiKpzIT/WH81eRV0TAT1aaotgqwcO8p7HyBXjwPILrJ6JyOzERvAcJ8BhTCSlzP7J3u30wE3780qZo50pCFGeefJkqSaRbOLOFR+F13/GLQzmfeJkpFti5cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jULf+8cM; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2d4f8c42f49so562931fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749655319; x=1750260119; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ni1bRS8N4SwYP8j3tmW1ofRjVUzlSftGXXllzoEq6s=;
-        b=jULf+8cM6m/TbcfixaF0rhXbns9HlnuZDKCJTnNKdhMLUIgezCBMiH17zKcRf9A+WB
-         Ouz08KGx0yM3rbZsey4DUTLHK6vvITO6a1S919NXAknpX1bb16fPMDEtdYoNg7UIbfQY
-         BUkhoUfiUNKrkC6EkblFxu5ih9/uY5HbWLKy71S1V5VOtVS3TdokY0I7E2BlSQbBsuhN
-         D1Zt7ghWqtnuwIHcmV2aF7jpL68TObu9GFQnRFJt9DdgFm3lVUCH70UT9F/kx9hgwb67
-         j1ytpMePrxG5rq7TNLVp6l5RsjIWsrgELzEjRFh7SHA8P+yeJTkIrWO2bIISTl3dQGFb
-         gc+Q==
+	s=arc-20240116; t=1749655364; c=relaxed/simple;
+	bh=TW1ayCBNW5Vb+2luLmQ00rgDDT1bn12Np1BcZIBx7aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f1EMMTlbfhK17aB84Be7hmLIIk8FDPHHCgLdJc0x/bINvBKpRtvFVood1v+/X/QLF64oznmDkMOPPfa0kHrrJe/9N4WuBHhigXah1PNB/pHfr1wX+CDyXDNhyXvbsZBhMwl8WRCm0O3ZjRrj24MDjQ+JFLwb8nr+4FlVXbJt648=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-604f26055c6so1989670a12.1;
+        Wed, 11 Jun 2025 08:22:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749655319; x=1750260119;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ni1bRS8N4SwYP8j3tmW1ofRjVUzlSftGXXllzoEq6s=;
-        b=i1czc/6QH+kUA9uvOCtBra+BSXHXwSwGBFaU+Kg9RDCGMKHSsekLiD8JIRdNOs+3zh
-         6HOoOwGORMiHqAK2BCUhKllOwDy6yZHLcdCAx5YwD7SdunJ6JTkUFiecOXbsxMlaIMJa
-         z4nlR4Y3L7wER5ddL0n94TBEv64R583dQfr4YsTkhmIbXIZk4nL+vaCEcOtGmY56h2Gt
-         x7pwNc7tEwQjRYmBc3dHakQfZFmje+DPBiEX2MREQKTqBwq8zAG1aJkS2EC+L2c19M+y
-         MEYGgTqfc0z2CQk3npWh+KAx0rmzfx/V5HIeWWRW+YcaKbUxtJbVCcpz2SQi5JBe/BqI
-         ih0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvFzWqDjj1vKqRFt+WlqJ4dJuF08pwizYidCuUauBaJh7Dpo1pg9ww3Hn5Qlxw5jQp3NuPZLCdsCctAzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK2yHrdpHnYpwehckDvI1P9DKowERtWXdq4NXvV2b3G7ODn/7m
-	s7h6vyByzjPNaQx/zY657IkzXotDMGdtRWK4ZeI1jtTOCSmZWYUlke46zqif0GZBS6fPjUUQrgI
-	kS7sR
-X-Gm-Gg: ASbGncudDcCou3KLQ4QmUsUP4Di8hzIh/LA6JRlgkkD3a2y9UyYINCoTqrBbA7M/j2J
-	wLxO1NkFMV3bCk6plYnjov08uceAIZod5Pp4RdNpEDj/3DovCayIq7fEcg9PjSeLrqe01oMHV89
-	BAFRRVqKAZ/slpLE9BU7tl9XMCVYkYSMUijmHHM9RA75Y7M/01s++DKV/1FGiK9VCALt1KvfRlu
-	AnN6qosl2D3kv01A+qst6AWX1yGSQGbr0AF2R1TqxRPBCmEsU8K4+H2x1AQ5WX+RaN5o88wdTtT
-	scRD6VhrG6t8bzXTLs6+/o5ed9TGKv2n+ojLbvqZOW3kjtuk1nyu48cJ57CpgvtD44jDnUgOCXA
-	N+Zmh5ZzHtZQ8c6NbiLAVI/ryRBb66qbHhQ84
-X-Google-Smtp-Source: AGHT+IFMlCBuWrdSbRxuwu2djovc+7uWlkauXqh9E527VuU0BvMxRjpCUjzMoKCENhmWc+eyP/kJqA==
-X-Received: by 2002:a05:6871:4688:b0:2c1:4d18:383a with SMTP id 586e51a60fabf-2ea96314d03mr1622210fac.3.1749655318938;
-        Wed, 11 Jun 2025 08:21:58 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:eb6c:30d1:632b:494? ([2600:8803:e7e4:1d00:eb6c:30d1:632b:494])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ea072e5d0fsm2891474fac.24.2025.06.11.08.21.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 08:21:58 -0700 (PDT)
-Message-ID: <851b7d08-3e77-4344-97d1-9d60f1fb8762@baylibre.com>
-Date: Wed, 11 Jun 2025 10:21:56 -0500
+        d=1e100.net; s=20230601; t=1749655360; x=1750260160;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zSnJBPEx6odgfaU8N5kmsIPZPJwYZq/K2WTwH3zBoJA=;
+        b=MMd+0b/PXDPj0+j82KrgrpuNuDgmz4xdTbLB4w6KTHy+YJ4fOnjSGW6A/ajz95QpNp
+         9a1YrlXdLH21Zg/A2lDmPu+HMECAaZ0UMue7WTAhhTZwlSHnB77ZZrAVjTkOTv3qxSwh
+         0CkCAS5ijHsOgmATxIhqPH08jOacXzhn9oPkRJJTHpGd40MM+Y9PYyNobuu4owGilk6z
+         2apDRmfSzQvShA7cKYztaHunoYYrH8HNv2MvjiDOmpcT0KZNYCExPkY+8thdoBdzDqvx
+         pOEG+KEXuL4Uee8MFYPm78GpEz/fcack/uiSBmmrXJqmz4JrZ94UgOB45lqLEJ13fnOj
+         xMAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqrAhbL7Yl0wIxu3kpZRmFO07/BKy3Rz1j8cLzDzzyV4IEqiepzbzhZfloj0QsD4Ixku9ruZ7a@vger.kernel.org, AJvYcCVWbtHpBJWJMCIi3aUNQPxTrx9pOQhHDEO2bB97omKb5FU+F80xjnqCGlPKMXSBSuR148KwvowW2BYa3Uu1Pkaf@vger.kernel.org, AJvYcCVvyFsWkHxC9O7aFrGx26o4hPBzIWxREJQnpTp2/irLzGl6TtrgBFWWzPNnfeti0138lfy3EJU6IzKe+MBX@vger.kernel.org, AJvYcCWSpv/Cehu7HhYuhfJMym8COuwfoPw0tP0E72dDAIyyszrwwH+UOImmiRga0pZ6yklU4PYAwCuQ6ww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5FaQOxR/j+0+GNa4Kh8X9oqVuj5eTKSmfDieDonur4dN5t/P8
+	uP3Jh3QyyFXpPwzNRsGOUHYn9WGJjehBbMUQRl7FD1enhwotr/SKU48z
+X-Gm-Gg: ASbGncsw7WFfkAA6rMHMMin0m6HZofGeHvYnUbilVuk3r6kbRm3/83TvEIa21K8+iPC
+	OhW2HJfgG8GoGN6y3hJ4+B2m388NVNVJ7m4yX0iQCFGC3QjsdwOoa2pfTJ2T+e31PrZak6V/tO7
+	aNvq+Kc2dMcC+LZ4oAlbL9oDICAPdckmk1aLlUnzaftUf/mTK2WkL9Hc46B63mIJIene6ODujRI
+	dEL+b3kzFVIiPSl8ibpvSSNxxaPaaN3Sf1uui2DazSvrHH79iXOd8dApxJLv2GT7g6/jBgKpHDd
+	lpre2o/hYJsTbyYNKwSNSziIneiA6gc6DwifYy2ZOP3OdTqoDR79PQ==
+X-Google-Smtp-Source: AGHT+IG3vasi3xQDrC942RMkJzAr5DOPhWYhyEtc5CKb+1W1BKeUx1PM+YlMfA2JSV833lGzUJx/iw==
+X-Received: by 2002:a05:6402:40ce:b0:602:a0:1f2c with SMTP id 4fb4d7f45d1cf-60844ec0490mr3365625a12.9.1749655359752;
+        Wed, 11 Jun 2025 08:22:39 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-607fbbdaadbsm3995293a12.51.2025.06.11.08.22.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 08:22:39 -0700 (PDT)
+Date: Wed, 11 Jun 2025 08:22:37 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Gustavo Luiz Duarte <gustavold@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next 2/5] netconsole: implement configfs for
+ msgid_enabled
+Message-ID: <aEmfPfxxkB3FxIkx@gmail.com>
+References: <20250611-netconsole-msgid-v1-0-1784a51feb1e@gmail.com>
+ <20250611-netconsole-msgid-v1-2-1784a51feb1e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: ad7949: use spi_is_bpw_supported()
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Da Xue <da@libre.computer>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250611-iio-adc-ad7949-use-spi_is_bpw_supported-v1-1-c4e15bfd326e@baylibre.com>
- <aEmdhV0ATRuUeGaL@smile.fi.intel.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aEmdhV0ATRuUeGaL@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611-netconsole-msgid-v1-2-1784a51feb1e@gmail.com>
 
-On 6/11/25 10:15 AM, Andy Shevchenko wrote:
-> On Wed, Jun 11, 2025 at 10:04:58AM -0500, David Lechner wrote:
->> Use spi_is_bpw_supported() instead of directly accessing spi->controller
->> ->bits_per_word_mask. bits_per_word_mask may be 0, which implies that
->> 8-bits-per-word is supported. spi_is_bpw_supported() takes this into
->> account while spi_ctrl_mask == SPI_BPW_MASK(8) does not.
+On Wed, Jun 11, 2025 at 07:36:04AM -0700, Gustavo Luiz Duarte wrote:
+> Implement the _show and _store functions for the msgid_enabled configfs
+> attribute under userdata.
+> Set the sysdata_fields bit accordingly.
 > 
->> Closes: https://lore.kernel.org/linux-spi/c8b8a963-6cef-4c9b-bfef-dab2b7bd0b0f@sirena.org.uk/
-> 
-> Reported-by yourself. I'm wondering if the Closes adds a value in this case.
-> Otherwise I can do the same to maybe 10% of my patches, for instance. But
-> I don't think I put Closes tag on whatever improvement potential bug fix
-> I do report (read: notice) myself.
+> Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
 
-I included it so that Da Xue will know that this has been resolved and
-doesn't need to do anything more. Normally I would have not included
-it though.
-
-> 
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> 
-> Code wise LGTM,
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> 
-
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
