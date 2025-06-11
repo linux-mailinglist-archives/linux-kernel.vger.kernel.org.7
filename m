@@ -1,220 +1,178 @@
-Return-Path: <linux-kernel+bounces-681130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04CBAD4EE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1DDAD4EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C699C1BC1793
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAB391899B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CB32417D9;
-	Wed, 11 Jun 2025 08:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6ABF242D6F;
+	Wed, 11 Jun 2025 08:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+rzgP9G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ypb5VC8M"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73335136996;
-	Wed, 11 Jun 2025 08:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EC32405E4;
+	Wed, 11 Jun 2025 08:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749631963; cv=none; b=ZEo7dLK38YIHkKuM8yv4/bBnFOURioZpzNnj5XgAKF7DmwUGKKSx6CCNAhglst7g9V3CLjtRVl6MTLm5m6AdgIPLEmO3nhh/PSvoKecU5r/P+XhA965WZVFU/UNco5zcl2Nxnc85TwS3E5fdDl25uwFqG5KL3H/dVykPtrEVGJk=
+	t=1749632165; cv=none; b=q72Ft5LYgJ9M+BhwtPOb3uf7FS5jMKGUsb8Uy3cGWZBqV8OQZkqv+jMTEpsOjSn3JiY4NAeYZc4kwAFbEK74IR3ZsE+rKTm/XFZFUgEZ/eivs6LgBoUiBGOxy1snkK0SsWiQqcQ9WCcITENZ8EqPqRvN3Ms9w7ga7m0hb7sm6TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749631963; c=relaxed/simple;
-	bh=fA14+yQbBTNWTTTLTwDKlOFpxLOZyO3p8kAVr5QkUTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncDT6slDQA2z16BBSWqiPNM3yli+50aS3mpxaQ+7ndqdlG9k+qm3jY0UjPzeXRbSZsS7pQkRlN6OZwkxo4Ui5CN41X/6tUHVztrRYc0sf3RVgCm0XG6G/74roCphGeP9ia5U100lQckYqXs5wfF2zm1IPMK6mC8fdVrwOaBUXLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+rzgP9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B519CC4CEEE;
-	Wed, 11 Jun 2025 08:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749631962;
-	bh=fA14+yQbBTNWTTTLTwDKlOFpxLOZyO3p8kAVr5QkUTg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J+rzgP9GKMRCFYPB1kMXbx+rJW+H+c2Rmzvt0899go5VOmNppl4gAd7Xp1zMpQHIF
-	 06YDvHILjOF0tpIsUOjFcecrr6xBzVTiNxMbqe7dco5f/DufaWVUvRFKCW2X9rkLzV
-	 im8U8gUOm0TY7xUnqTGyA9jI9OnMDFBKj6y4XIbyIIDb64QME354rxwH2p8IiY4ung
-	 0U1E8+q+m+jwvRSPyTTiQJ/9kmABJ8Ed2y02oLynEFZX8lsBXSBkcQDlBtrSULt6dZ
-	 KaT1LO4DYAXEJB/oltBSR/jeNh3d1kDP/bQF2Gsd8Mlm5n9JAuO+gAVRKtNijt9xEE
-	 IzG3/pgRmIq6w==
-Date: Wed, 11 Jun 2025 10:52:37 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 3/4] man/man2/prctl.2, PR_FUTEX_HASH_GET_SLOTS.2const:
- Document PR_FUTEX_HASH_GET_SLOTS
-Message-ID: <k6m7trn4dr3g7yacpw3a6ze4nhcrdkfqmib75sbti4mtv53o3m@o523ifdqzikz>
-References: <20250602140104.2769223-1-bigeasy@linutronix.de>
- <20250602140104.2769223-4-bigeasy@linutronix.de>
+	s=arc-20240116; t=1749632165; c=relaxed/simple;
+	bh=0fXEzlKGR7uRK1gsrzE4/HNTgAhDwUJtxaGb1K0SYYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LQH8YtclwKVte484RUp5rtYGPXUkzPK975a9pdCcuu9XRy5PYO3F9olAfw7z5mn9saKKoIDlCHcupiRV0CJrMajN8r4SIRg/Jz8t6axjo/l5uvdP9APkVPPcQBLl6hLCGtTS0Pv8cT+zY47bBfZuKv04pzt2OIyvsXm/CUrFjHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ypb5VC8M; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-70cb9ae5479so353287b3.2;
+        Wed, 11 Jun 2025 01:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749632162; x=1750236962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jr7af8u/djfaVEFtDVz1sFAL1KZvVfAMjhhIxlcv8Us=;
+        b=Ypb5VC8MH95LAJz+WBdTW7hG2jDC3fjePE3L/tQL8mzp0lo7KPSy/98Ddpgnx8z7hA
+         acNxxfvEvOwkwppYEYNUriGNddB+wx0tDqVxQ9mOFCJ4lcI1+CxCwHsoSy7qQAjvC56T
+         EJz41U85IeSwWcV5y0qDYLMmEuxMWUoyGWr4rsxPV7B6ciogSVJxg3+IC8FFXWqKvOZP
+         G5GXAmH5C5YA+OVaBMw+NXi1RM/cQZNOSC3KPo1MS9vX2dW6HuowBJ6POgivLyNy/0A+
+         ygYCqzeEJlRggI1vb/vKs5Dvd3QIxzJ+zQye3sdb/0O95wlzBaFmXMFGVbIJCo4nmPS1
+         ERpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749632162; x=1750236962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jr7af8u/djfaVEFtDVz1sFAL1KZvVfAMjhhIxlcv8Us=;
+        b=GMFGk8N6CPVJDcl1Tact/L2IUBu07POzJ78pIr+T7+nGTJJvZuc3DnJQMFEc8CrQit
+         WQUUuKKkHrjKVRi4UNFmKEtVzKmgjG9Wbw5ZSjPnefYlmNZPXEP5pDjewj8NO22kIogN
+         XdyxBQwyiIv+CqMTb7lODo+ITdKXAIDSnJABoOCXird/OuuRPFaEigEn14Y7FzIBlBx2
+         SO30W0H8r1FDpwEw5YWSZkBgFb5p5eDSfQnzvVNCfqQmDur2oIMxh4bsFLUY1e0wVMK0
+         kND2eKqln153kVsEAB5mIHTliX93hcFCu7cio8zx20PH/zdXKEdxuvhuC5NGy/XAgw7D
+         RuRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUarD5coAMMQyu8KQpJETBkUTI/gGbgP8ALhr527Gy5HE7mrf2v+EKVyXkEs0BAKAOZIyAhnvs7kmVxTrY2@vger.kernel.org, AJvYcCUpF43ORCIC6l8JAljNbbOXI2nhIizmT6MyNclybGgR92NKgIf6ErkzazwkTtZ/7Un+0ZmYwOOuu5c=@vger.kernel.org, AJvYcCXEjRIwrm+d6nCgPwxmtXyrtKsj6llKf2uEy9tVgrtBGfpcWizIOLTOfuVSuBsu0F2iEDI1xWkp1vDC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbN3c2X84u6upRfvjF/Ok0cMjOvMPsCfHAtbZC3sqkpipjIW0A
+	88kgo5C7M5oIw+SnbIqlGmXeq8N5nerqf9UalD50IV28uxt8w4TM27owwo4RuWFocuKa0SfxH23
+	ZSa7knaprgvTgog6lzK3Ye1qw9TxkmXU=
+X-Gm-Gg: ASbGncuvCrG9gXOB5tO33j4HBjtM21sI/d12mJacV+4KIdjhngAjv4rpEbQexJ9tVfU
+	YJaReNsgall1r/wfX9ePn94yrP0C9GyWGMpulV2B27NNsmWI678SFDa51ck+wrJ9i6Rp2rbxddK
+	19KgfYSVLQXOQN5fbUHNen8xBx+J1FnfB7exfHHuMKVk8=
+X-Google-Smtp-Source: AGHT+IHQshvzaNfy3bNjdRFH2yuU1qV8IQJUoInmY8JcSy/11DFg74rdFUbgCEsdVvOxd36y+j03qwTnrUKK/Llr8YA=
+X-Received: by 2002:a05:690c:620a:b0:70f:7bea:5dd with SMTP id
+ 00721157ae682-71140b18ed9mr14745547b3.9.1749632162358; Wed, 11 Jun 2025
+ 01:56:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="a43a2w5iocg3orf6"
-Content-Disposition: inline
-In-Reply-To: <20250602140104.2769223-4-bigeasy@linutronix.de>
-
-
---a43a2w5iocg3orf6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250601172139.59156-1-l.rubusch@gmail.com> <20250601172139.59156-5-l.rubusch@gmail.com>
+ <20250608162738.407c7d20@jic23-huawei>
+In-Reply-To: <20250608162738.407c7d20@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Wed, 11 Jun 2025 10:55:26 +0200
+X-Gm-Features: AX0GCFtErc9t4ORFe67lg4US4jiRG_9OYZGh8UYacK5QGDW6gTjheKx4y-gYpF4
+Message-ID: <CAFXKEHZgvoHVigGcDOchkAsYcs_cpYzfXstRBa_OzS_LEkvNXg@mail.gmail.com>
+Subject: Re: [PATCH v4 04/11] iio: accel: adxl313: add function to enable measurement
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
+	lucas.p.stankus@gmail.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	bagasdotme@gmail.com, linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 3/4] man/man2/prctl.2, PR_FUTEX_HASH_GET_SLOTS.2const:
- Document PR_FUTEX_HASH_GET_SLOTS
-References: <20250602140104.2769223-1-bigeasy@linutronix.de>
- <20250602140104.2769223-4-bigeasy@linutronix.de>
-MIME-Version: 1.0
-In-Reply-To: <20250602140104.2769223-4-bigeasy@linutronix.de>
 
-Hi Sebastian,
+On Sun, Jun 8, 2025 at 5:27=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Sun,  1 Jun 2025 17:21:32 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Rework controlling measurement and standby of the sensor. Therefore,
+> > replace writing the register directly by encapsulating this and dealing
+> > with the return value in a separte function to enable and disable
+> > measurement. This will help to avoid redundant code in all locations
+> > where the sensor configuration needs to be adjusted, thus measurement w=
+ill
+> > be set to standby, in follow up patches.
+> >
+> > Further, reduce the control mask to only the measurement bit. The sleep=
+ bit
+> > actually controls a different behavior (not just putting the sensor to
+> > standby for configuration, but turning it into sleep mode) and it is no=
+t
+> > used so far. In consequence, there is no need to cover sleep bit and
+> > measurement with the same mask.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> This is a good bit to have as a precursor patch (as you have done)
+> because it is refactoring the existing code.  It doesn't stand on it's
+> own though given for now there is only one caller, so I won't pick it up
+> until the patch that uses it is ready to go.
+>
 
-On Mon, Jun 02, 2025 at 04:01:03PM +0200, Sebastian Andrzej Siewior wrote:
-> Reviewed-by: Alejandro Colomar <alx@kernel.org>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const | 37 ++++++++++++++++++++
->  man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const |  7 ++--
->  2 files changed, 40 insertions(+), 4 deletions(-)
->  create mode 100644 man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const
->=20
-> diff --git a/man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const b/man/man2const=
-/PR_FUTEX_HASH_GET_SLOTS.2const
-> new file mode 100644
-> index 0000000000000..f5c6380ef1fe7
-> --- /dev/null
-> +++ b/man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const
-> @@ -0,0 +1,37 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH PR_FUTEX_HASH_GET_SLOTS 2const (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +PR_FUTEX_HASH_GET_SLOTS
-> +\-
-> +return the size of the private hash
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
-> +.B #include <sys/prctl.h>
-> +.P
-> +.B int prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_SLOTS);
-> +.fi
-> +.SH DESCRIPTION
-> +Return the current size of the private hash.
-> +.SH RETURN VALUE
-> +A value of 0 means that a private hash has not been allocated
-> +and the global hash is in use.
-> +A value >0 specifies the size of the private hash.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 6.16.
-> +.SH SEE ALSO
-> +.BR prctl (2),
-> +.BR PR_FUTEX_HASH (2const),
-> +.BR PR_FUTEX_HASH_GET_IMMUTABLE (2const),
-> +.BR PR_FUTEX_HASH_SET_SLOTS (2const)
-> diff --git a/man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const b/man/man2const=
-/PR_FUTEX_HASH_SET_SLOTS.2const
-> index 1f08d1bb30485..531e3bcca112d 100644
-> --- a/man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const
-> +++ b/man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const
-> @@ -29,7 +29,7 @@ Specifies the size of private hash to allocate.
->  Use the global hash.
->  This is the behaviour used before 6.16.
->  The operation implies the
-> -.I FH_FLAG_IMMUTABLE
-> +.B FH_FLAG_IMMUTABLE
+So, I'll leave this patch (in case I might refrase the commit message,
+and I hope this is ok). I'm going to merge [v4 02/11] [v4 05/11] and
+[v4 06/11] for a v5. Let me know if I got this wrong.
 
-This seems like a rebase accident.  This does not belong in this patch.
-A few others below too.
-
-
-Cheers,
-Alex
-
->  flag.
->  .TP
->  .I >0
-> @@ -38,7 +38,7 @@ The value must be power of two and the lowest possible =
-value is 2.
->  The upper limit depends on the available memory in the system.
->  Each slot requires 64bytes of memory.
->  Kernels compiled with
-> -.I CONFIG_PROVE_LOCKING
-> +.B CONFIG_PROVE_LOCKING
->  will consume more than that.
->  .RE
->  .TP
-> @@ -46,7 +46,7 @@ will consume more than that.
->  .RS
->  The following flags can be specified:
->  .TP
-> -.I FH_FLAG_IMMUTABLE
-> +.B FH_FLAG_IMMUTABLE
->  The private hash can no longer be changed.
->  By using an immutable private hash
->  the kernel can avoid some accounting for the data structure.
-> @@ -54,7 +54,6 @@ This accounting is visible in benchmarks if many
->  .BR futex (2)
->  operations are invoked in parallel on different CPUs.
->  .RE
-> -.RE
->  .SH RETURN VALUE
->  On success,
->  0 is returned.
-> --=20
-> 2.49.0
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---a43a2w5iocg3orf6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhJQ9UACgkQ64mZXMKQ
-wqmPZA/+ImCMFAJMrWDbqxisqZab69+wzr6X27yUthBmvOrFHHFE0ABWX4YQsfsU
-wysNpPC1nGE8cDKBNOZKNQGnH0DlHsFTyI0cJH2Ssgw2wcJq+0zTbA2jQM1KSA1w
-RJ4WZ/1WfwsdPsFQGOkir+KvncSMHaKj0Rro61tPeWGVYTCy0YOFTDdMWAcq8Y4m
-wOEAqtkPQz4wfD+Irz1x/zmQSkYTRC4C9bKg91BVLR9emX+CgJJBSnJU17rclWN6
-aB4SJe8tB7SRoprowdbSieafvSfzrNxQurotmL3FNthsDWNPMJ3aQBTUaqI8tviM
-2ouZOiZ6FJUdjn8v7EMKfc6MFZR/+VIRwLCxQIi5lH0mm5lWbVmY7MYykr69t9Qd
-ONF+xj4vrumfNGjRMiApiicFf6vFnLTX3jqn+8XpOZrB4A//sGt0MGifPTodxcAx
-PPJOmBIfJv4M7dXdYSVJRJi/nBMEwr4SGdwGT3PBAcZ9TQ95AFiAllyHAJ70/Yr7
-2Cc9Jey8nHb4/dTm/BDxVp9wOy9MPC2axIC8KMHSu0QfCWm2SMMwLCMXywy5pP83
-OMOZO2GHH99lGl6sT5SLfHQL0CrfAAeuM00n9L05j9X8bQpOqqGCRqef8SYdZWMv
-M0WueqAWPLM+BeRb65uVGI2Y2UAi5xGts/Cv5WsX6Es+CG79gIY=
-=4dmv
------END PGP SIGNATURE-----
-
---a43a2w5iocg3orf6--
+> Jonathan
+>
+> > ---
+> >  drivers/iio/accel/adxl313.h      |  3 +--
+> >  drivers/iio/accel/adxl313_core.c | 10 +++++++---
+> >  2 files changed, 8 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/iio/accel/adxl313.h b/drivers/iio/accel/adxl313.h
+> > index fc937bdf83b6..9bf2facdbf87 100644
+> > --- a/drivers/iio/accel/adxl313.h
+> > +++ b/drivers/iio/accel/adxl313.h
+> > @@ -36,8 +36,7 @@
+> >  #define ADXL313_RATE_MSK             GENMASK(3, 0)
+> >  #define ADXL313_RATE_BASE            6
+> >
+> > -#define ADXL313_POWER_CTL_MSK                GENMASK(3, 2)
+> > -#define ADXL313_MEASUREMENT_MODE     BIT(3)
+> > +#define ADXL313_POWER_CTL_MSK                BIT(3)
+> >
+> >  #define ADXL313_RANGE_MSK            GENMASK(1, 0)
+> >  #define ADXL313_RANGE_MAX            3
+> > diff --git a/drivers/iio/accel/adxl313_core.c b/drivers/iio/accel/adxl3=
+13_core.c
+> > index 0c893c286017..6170c9daa30f 100644
+> > --- a/drivers/iio/accel/adxl313_core.c
+> > +++ b/drivers/iio/accel/adxl313_core.c
+> > @@ -63,6 +63,12 @@ bool adxl313_is_volatile_reg(struct device *dev, uns=
+igned int reg)
+> >  }
+> >  EXPORT_SYMBOL_NS_GPL(adxl313_is_volatile_reg, "IIO_ADXL313");
+> >
+> > +static int adxl313_set_measure_en(struct adxl313_data *data, bool en)
+> > +{
+> > +     return regmap_assign_bits(data->regmap, ADXL313_REG_POWER_CTL,
+> > +                               ADXL313_POWER_CTL_MSK, en);
+> > +}
+> > +
+> >  static int adxl312_check_id(struct device *dev,
+> >                           struct adxl313_data *data)
+> >  {
+> > @@ -410,9 +416,7 @@ static int adxl313_setup(struct device *dev, struct=
+ adxl313_data *data,
+> >       }
+> >
+> >       /* Enables measurement mode */
+> > -     return regmap_update_bits(data->regmap, ADXL313_REG_POWER_CTL,
+> > -                               ADXL313_POWER_CTL_MSK,
+> > -                               ADXL313_MEASUREMENT_MODE);
+> > +     return adxl313_set_measure_en(data, true);
+> >  }
+> >
+> >  /**
+>
 
