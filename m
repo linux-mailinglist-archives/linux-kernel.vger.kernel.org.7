@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-682260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE50AD5DA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:59:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44548AD5DAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835F21733BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3902173283
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE07323817D;
-	Wed, 11 Jun 2025 17:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF802686B9;
+	Wed, 11 Jun 2025 18:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmj68evR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B73B221260
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HktHWfx3"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D91244678;
+	Wed, 11 Jun 2025 18:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749664751; cv=none; b=r17HMMoYfcpS36lJCgM5uzO0sarVp+DPQ8wCTcqYMZq+d1JehpIfCiFoKubUC2pj5a4tCti1eDRh8mwnh1k+AU2xjlVsuP/CsFYpJlyPocLAG7F33N7L7O4ivb0ejMetmfT81HAkn7w9pPbG6Wp5LBwXJVfbiRFM8tetpYDAJpc=
+	t=1749664812; cv=none; b=gZm+YsYO2k08NZqkJHlYkO770Hg1x0F/lxNiIC5t6E9BhOdV7s0cNynGWobpaA+IGL34kUFqkTVqV7fWgVnqpF+MQ7VlIeTqxVUYItbm3l6yWkUgPOfciksC4fjbjQCTYUtHNynJDNocMUuPQp4UvCFKXHcIP3mFJOEEOM98p9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749664751; c=relaxed/simple;
-	bh=YfKUtnN3UtlVflQXWWmtqpHbqcPJk8dujyWLgspxH14=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nyslbdePYbCMCPuoTbg+APG9JJDijIAtaVKG16Q5FSY5/Zf2BtFbXyHuC4pchma3xuXdbLO7NBwLbKVGkqIn0Uz5aeogwJLk6sXtwOMN9ZfwEme7OGhVMOwsyZbOXr6E+EQ6C+eujcTOKZdyMsKyaE+mzXWYvniaEwTvl6P1DnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmj68evR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF00C4CEE3;
-	Wed, 11 Jun 2025 17:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749664749;
-	bh=YfKUtnN3UtlVflQXWWmtqpHbqcPJk8dujyWLgspxH14=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hmj68evRh3p59v9eQKJFU9r5V/Ic70b4L6ZQ0qygjLiziBjJ1y+1/TiXYp3bznMid
-	 RRstbH0IbmyIsDZNkmO8vbTghvcQ2ZurkdPo18wYneK1fKeqtHGAERESCXC3imMWhT
-	 2KfldYLCDH7h7jaNHQzdhUpRWVzxl/Xmj9e4J2wpFnDO13+PaS2Z9hwlewXI+e+uBQ
-	 LaCep07zL2nckb6NWjZnAubhDz12FbaYpfpdOkEOuwrBly//ES+tri4PC8chFBbc4E
-	 hTZhVmcafQO7DZ3H3CdfxGCs299+IEeOCAv6ZTGhZEHLsU+QaJZ6D0kUyr+gzmgW64
-	 mMWj6MkBKWo/g==
-From: SeongJae Park <sj@kernel.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jann Horn <jannh@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Lokesh Gidra <lokeshgidra@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Tangquan Zheng <zhengtangquan@oppo.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH v2] mm: madvise: use per_vma lock for MADV_FREE
-Date: Wed, 11 Jun 2025 10:59:07 -0700
-Message-Id: <20250611175907.197023-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250611104745.57405-1-21cnbao@gmail.com>
-References: 
+	s=arc-20240116; t=1749664812; c=relaxed/simple;
+	bh=KlnMCl+JWTR4vag+rTUNR+POorFEvuqAqbk1bhUtLk8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QWKPfJgUWvbeQeNIoaIc9E9FHFi3Qx+iEskc6YCHUUlKEescbEuUX9wmtds845SUrF7IEwF7IGStmbQ4bUJ4kfcNX46en8Ocnw/JksfcQdhuBlOc2W/MNF0xQ2BxMaFjD53COWWX/N7YGIUZpR1oDse6zoHQFKJcGWsO2Xe1sOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HktHWfx3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.225.229] (unknown [52.148.138.235])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C660C21151A2;
+	Wed, 11 Jun 2025 11:00:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C660C21151A2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1749664811;
+	bh=dbrvDIIvFK57NZQv781wDufNFlpQT1k9keSoeqSk8OU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=HktHWfx3nn4nLvQkFUEDVbFAWkz8jpDFYsSm9WzHht9i9jiwwCi+9lO2kg5FEBff1
+	 yXAqDbH1odWJUFdwQ4Krfg+iKt3I2Agn7yMg+LBpvTcfqON4QvLpaJgtaPDKcxLj7g
+	 6n4tx+1ycDVaF6DQtzWVmnyX4AOKrJPy/EO9x6tg=
+Message-ID: <6be766a4-c983-4316-a07b-fd96238191e4@linux.microsoft.com>
+Date: Wed, 11 Jun 2025 11:00:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Naman Jain <namjain@linux.microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, eahariha@linux.microsoft.com,
+ Roman Kisel <romank@linux.microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] Drivers: hv: Introduce mshv_vtl driver
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <20250611072704.83199-1-namjain@linux.microsoft.com>
+ <20250611072704.83199-3-namjain@linux.microsoft.com>
+ <2f2a252f-c2cb-40ee-a416-c07fd120dd49@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <2f2a252f-c2cb-40ee-a416-c07fd120dd49@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Jun 2025 22:47:45 +1200 Barry Song <21cnbao@gmail.com> wrote:
+On 6/11/2025 9:46 AM, Nuno Das Neves wrote:
+> On 6/11/2025 12:27 AM, Naman Jain wrote:
+>> Provide an interface for Virtual Machine Monitor like OpenVMM and its
+>> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
+>> Expose devices and support IOCTLs for features like VTL creation,
+>> VTL0 memory management, context switch, making hypercalls,
+>> mapping VTL0 address space to VTL2 userspace, getting new VMBus
+>> messages and channel events in VTL2 etc.
+>>
+>> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+>> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+>> Message-ID: <20250512140432.2387503-3-namjain@linux.microsoft.com>
+>> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>>  drivers/hv/Kconfig          |   23 +
+>>  drivers/hv/Makefile         |    7 +-
+>>  drivers/hv/mshv_vtl.h       |   52 +
+>>  drivers/hv/mshv_vtl_main.c  | 1783 +++++++++++++++++++++++++++++++++++
+>>  include/hyperv/hvgdk_mini.h |   81 ++
+>>  include/hyperv/hvhdk.h      |    1 +
+>>  include/uapi/linux/mshv.h   |   82 ++
+>>  7 files changed, 2028 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/hv/mshv_vtl.h
+>>  create mode 100644 drivers/hv/mshv_vtl_main.c
+>>
 
-> From: Barry Song <v-songbaohua@oppo.com>
-> 
-> MADV_FREE is another option, besides MADV_DONTNEED, for dynamic memory
-> freeing in user-space native or Java heap memory management. For example,
-> jemalloc can be configured to use MADV_FREE, and recent versions of the
-> Android Java heap have also increasingly adopted MADV_FREE. Supporting
-> per-VMA locking for MADV_FREE thus appears increasingly necessary.
-> 
-> We have replaced walk_page_range() with walk_page_range_vma(). Along with
-> the proposed madvise_lock_mode by Lorenzo, the necessary infrastructure is
-> now in place to begin exploring per-VMA locking support for MADV_FREE and
-> potentially other madvise using walk_page_range_vma().
-> 
-> This patch adds support for the PGWALK_VMA_RDLOCK walk_lock mode in
-> walk_page_range_vma(), and leverages madvise_lock_mode from
-> madv_behavior to select the appropriate walk_lock—either mmap_lock or
-> per-VMA lock—based on the context.
-> 
-> Because we now dynamically update the walk_ops->walk_lock field, we
-> must ensure this is thread-safe. The madvise_free_walk_ops is now
-> defined as a stack variable instead of a global constant.
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Lokesh Gidra <lokeshgidra@google.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Tangquan Zheng <zhengtangquan@oppo.com>
-> Cc: Qi Zheng <zhengqi.arch@bytedance.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+<snip>
 
-Acked-by: SeongJae Park <sj@kernel.org>
+> 
+> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
+Hi Nuno,
+
+In the future, please trim unnecessary context, example above, following 
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#use-trimmed-interleaved-replies-in-email-discussions
+
+"Similarly, please trim all unneeded quotations that aren’t relevant to your reply.
+This makes responses easier to find, and saves time and space. For more details see:
+ http://daringfireball.net/2007/07/on_top"
 
 Thanks,
-SJ
-
-[...]
+Easwar (he/him)
 
