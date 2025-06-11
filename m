@@ -1,94 +1,138 @@
-Return-Path: <linux-kernel+bounces-682000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C23DAD5A4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF2FAD5A31
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1BB91BC1EDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318B53A84F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CF61B4232;
-	Wed, 11 Jun 2025 15:15:26 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89F31FF1D5;
+	Wed, 11 Jun 2025 15:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="NmdnFXSF"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84E310A3E;
-	Wed, 11 Jun 2025 15:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91E1C6FE9;
+	Wed, 11 Jun 2025 15:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654926; cv=none; b=aG0WkVrc4bhToah/IRMegBjE4Ir9xPEHS4OeBPpwmvj0OtLP/TLtXvnruYU+jVGCJE0P6f1qo3xHETVQ2nfX2eEtjk2xm8cHRE3KrBL5eaY330na7KTzQUdFZuGWFpbZWjx+66wyncYeybDPiF3An5QyN33j0JADvuweZ4De2oc=
+	t=1749654935; cv=none; b=oVib80+z8c1N7CyQfhizrVpkCymegwhSp/dO+9C5MO40lB+bDypo/64esONHPlXOZyOQjfz+sXFu5wKb0FqUg129o4Y/x3+QdIaQggP8sWfomvNk968/8M6sqGd0MhLK6/j1ajlp5lMqtfUHzK7FI39ED1uYVYXPeNKWqDACM7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654926; c=relaxed/simple;
-	bh=Xra69tmZS3fpjJeBgHc+1iBGy9hoV7GWfvRxN9zoVv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImXv1IUVRbo4VElkRTKu32g4Ph1MaqPfw0qYiu9SI3DQ4W9k5apFlNicwtsM1D5WHtdEOVIwN3kF0GHx76yZBph32dXKs+t9A2Z7raalINqzE2pFTzU7JTZkV00aV3JNhpr710P24pwm8sSEHTeYtDTqVLHiSu1P0Pyq+NOnP7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: G542xsPTTw2gO9RUH7Pr9w==
-X-CSE-MsgGUID: CfArInyYQo6B/diLnnB29Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="62083977"
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="62083977"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 08:15:25 -0700
-X-CSE-ConnectionGUID: RqDJS5oZTUGG50MctG74ug==
-X-CSE-MsgGUID: aX1+3EfSR7K7nKqxctsySA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="184428915"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 08:15:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1uPNAb-00000005gIz-18f5;
-	Wed, 11 Jun 2025 18:15:17 +0300
-Date: Wed, 11 Jun 2025 18:15:17 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Da Xue <da@libre.computer>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7949: use spi_is_bpw_supported()
-Message-ID: <aEmdhV0ATRuUeGaL@smile.fi.intel.com>
-References: <20250611-iio-adc-ad7949-use-spi_is_bpw_supported-v1-1-c4e15bfd326e@baylibre.com>
+	s=arc-20240116; t=1749654935; c=relaxed/simple;
+	bh=/kJknUTKQ/4WpidAfHPn9U3Yq4PEwjxxr08pxsCbWCU=;
+	h=Subject:Message-ID:Date:MIME-Version:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Nxey/x3BSYzeWqeSD3cND1am8J/2LKrNmw1/sw1q0Urzr+ihZ1Fp3V3EoMApIpICqEu5dbMxK9Mg98Bwb4i28fwWXqjzqccIsMfz/8Fsw2/R9pIPEVW0ELnopdOXM+BkjffsuY6ZoEYSrf0skweLGcqCrZ99EewaFl6saNW6+zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=NmdnFXSF; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1749654934; x=1781190934;
+  h=message-id:date:mime-version:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:subject;
+  bh=LJdY97oBOFmkrzTZ00vwdAJipUoD7h4TKZBdAWF9EYs=;
+  b=NmdnFXSFeutXzfArxiZx08EHto6X5EAt4xTjcEGBnmKlN24uYOg5PjoX
+   6Fqrj0SDujuNYrt5h6loIGmZbc4n10RZKsvu+7C4yLn2uN6ZG4MD5Acg3
+   3Hi3kgArMPAeR7LjUzu45qaptagiL2nkm+aO7tRfvmFak4aicqbJFiFjT
+   lE1b+Qi3cCUvYYkQu7pU3oR+548sdGFSBGNCyvh9d43bDNkqcrs929cfk
+   /bDzcv9+rqW//i/YI+BBfsTd4AGsZ6LEMPwWb1wFgpURKJmY74dIroBM+
+   GnAjIiwDqqLYUuO4Lk8q21rVm0/BrOJoWzihuyN09TYIYY8BhECPW4oDJ
+   g==;
+X-IronPort-AV: E=Sophos;i="6.16,228,1744070400"; 
+   d="scan'208";a="754307810"
+Subject: Re: [PATCH] Revert "block: don't reorder requests in blk_add_rq_to_plug"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 15:15:31 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:5574]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.36.246:2525] with esmtp (Farcaster)
+ id e1a08913-2abb-4193-ad77-3ba6edd6ef77; Wed, 11 Jun 2025 15:15:29 +0000 (UTC)
+X-Farcaster-Flow-ID: e1a08913-2abb-4193-ad77-3ba6edd6ef77
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 11 Jun 2025 15:15:28 +0000
+Received: from [192.168.11.154] (10.106.82.32) by
+ EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 11 Jun 2025 15:15:27 +0000
+Message-ID: <f9976d55-f418-45b8-82ac-e0557e713b4c@amazon.com>
+Date: Wed, 11 Jun 2025 16:15:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611-iio-adc-ad7949-use-spi_is_bpw_supported-v1-1-c4e15bfd326e@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+To: Jens Axboe <axboe@kernel.dk>
+CC: <stable@vger.kernel.org>, kernel test robot <oliver.sang@intel.com>, Hagar
+ Hemdan <hagarhem@amazon.com>, Shaoying Xu <shaoyi@amazon.com>, "Michael S.
+ Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Paolo Bonzini
+	<pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>, Keith Busch <kbusch@kernel.org>, "Christoph
+ Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<virtualization@lists.linux.dev>, <linux-nvme@lists.infradead.org>
+References: <20250611121626.7252-1-abuehaze@amazon.com>
+ <ed33ffb7-31bf-490c-b1ae-304a6e4b9a0f@kernel.dk>
+Content-Language: en-US
+From: "Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>
+In-Reply-To: <ed33ffb7-31bf-490c-b1ae-304a6e4b9a0f@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D005EUB002.ant.amazon.com (10.252.51.103) To
+ EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-On Wed, Jun 11, 2025 at 10:04:58AM -0500, David Lechner wrote:
-> Use spi_is_bpw_supported() instead of directly accessing spi->controller
-> ->bits_per_word_mask. bits_per_word_mask may be 0, which implies that
-> 8-bits-per-word is supported. spi_is_bpw_supported() takes this into
-> account while spi_ctrl_mask == SPI_BPW_MASK(8) does not.
+On 11/06/2025 13:56, Jens Axboe wrote:
+> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
+> 
+> 
+> 
+> On 6/11/25 6:14 AM, Hazem Mohamed Abuelfotoh wrote:
+>> This reverts commit e70c301faece15b618e54b613b1fd6ece3dd05b4.
+>>
+>> Commit <e70c301faece> ("block: don't reorder requests in
+>> blk_add_rq_to_plug") reversed how requests are stored in the blk_plug
+>> list, this had significant impact on bio merging with requests exist on
+>> the plug list. This impact has been reported in [1] and could easily be
+>> reproducible using 4k randwrite fio benchmark on an NVME based SSD without
+>> having any filesystem on the disk.
+> 
+> Rather than revert this commit, why not just attempt a tail merge?
+> Something ala this, totally untested.
+> 
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 3af1d284add5..708ded67d52a 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -998,6 +998,10 @@ bool blk_attempt_plug_merge(struct request_queue *q, struct bio *bio,
+>          if (!plug || rq_list_empty(&plug->mq_list))
+>                  return false;
+> 
+> +       rq = plug->mq_list.tail;
+> +       if (rq->q == q)
+> +               return blk_attempt_bio_merge(q, rq, bio, nr_segs, false) == BIO_MERGE_OK;
+> +
+>          rq_list_for_each(&plug->mq_list, rq) {
+>                  if (rq->q == q) {
+>                          if (blk_attempt_bio_merge(q, rq, bio, nr_segs, false) ==
+> 
+> --
+> Jens Axboe
 
-> Closes: https://lore.kernel.org/linux-spi/c8b8a963-6cef-4c9b-bfef-dab2b7bd0b0f@sirena.org.uk/
-
-Reported-by yourself. I'm wondering if the Closes adds a value in this case.
-Otherwise I can do the same to maybe 10% of my patches, for instance. But
-I don't think I put Closes tag on whatever improvement potential bug fix
-I do report (read: notice) myself.
-
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-
-Code wise LGTM,
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+I thought about that solution before submitting the revert and I believe 
+it will help with the case we are discussing here  but what about the 
+case where we have raid disks for which we need to iterate the plug 
+list? In this case we will iterate the plug list from head to tail while 
+the most recent requests (where merging will likely happen) will be 
+closer to that tail so there will be additional overhead to iterate 
+through the whole plug list and I believe the revert will also be better 
+for this specific case unless I am missing something here :)
 
 
