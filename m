@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-680659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811B8AD4825
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE64AAD4829
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950F37AC580
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:40:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B9A3A7764
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0393149E13;
-	Wed, 11 Jun 2025 01:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ppZxc4ID"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EE2145B25
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 01:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCDF1714AC;
+	Wed, 11 Jun 2025 01:47:02 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D14C19A;
+	Wed, 11 Jun 2025 01:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749606110; cv=none; b=CStkQXz37/V5d9zme9dgoRmerQJHsgTMlkL2J5rI5WOKlFC4r4pQJxBc12rA8SO1kanawbjaX3fF4q6hg+pk13uq6V4p8hnLd/qGCqs/7t40xuJUYAZ2pP65KZF5ViKh8Hb5AkxzGdXl6y+YwKz7wYxR0/WFGpTsk0HOnyViYrA=
+	t=1749606422; cv=none; b=JXZhwoQdh6z8bpWDoLeJJLaET2eObzR9g22tqzrUrqF5temKLUjRXaK1Kfuexl94JSXp4Jkx90zAiPj8u/YcA4o5iDEkBoQhIe50949SU7aVImYb9RLBN0bVxZS0TIBkLngej1I7qQJ/JC260k4M6lKFf3otVzE2GFgOoGVUCss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749606110; c=relaxed/simple;
-	bh=2kNFgJvFiHWl25tdl5JVTyWrVYRncCS6MCCO8o0uDrQ=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=l/kFrWEHw3eKAwiF3+vYtP/z4i1bClYXcIoOuZzhJtGSdO3wS0keqkqPfn+t+zIHSmu5Ye1voOljjwxLSl2ImY+6aHuFQWZ7UC5awhX/LjF8uaI/yLdeIY54lSiz/ZTZRZaAw8uF2TjedX1Px3AO6IBhYaReoHgqaTuRNYyW0W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ppZxc4ID; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a58f79d6e9so67331851cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 18:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749606106; x=1750210906; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a0dVcb4mCq2bSSy46KTU9Gw7pSw3OfMXBWad0p0FySA=;
-        b=ppZxc4IDbRUpxdKr8t652woLHg1RyzQxv/RuyP2R96pEolTyaXs0QsjWTRDtS0/L5G
-         OujhCqUreOIEu+tkuhuKLcWeWrUq4MWT2PpN1BTtqqcuJZypUUzGoCpAx4hQWFheEUaK
-         r0QJBYGtGpYoywwBAzvMHAcVcZ9kHcjuI2MmdPVyf80JNxWQCQ6XDrI+cp5iFBOyzRB+
-         +XkxuTeQD8vSJjouarr8do/Ne9GMBkEdnOYtZYZfBtcCHHqSrFo6XwDIlDuUfTkwzes4
-         kUEn+eMpwvI1dwl13B2AmgxXt3LOXcaf7Jcasj+V4bD2OWkMtDEas86H3kCNVlq+I63n
-         dbbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749606106; x=1750210906;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a0dVcb4mCq2bSSy46KTU9Gw7pSw3OfMXBWad0p0FySA=;
-        b=Bt/8Ar5uVJ/22WPdqS8cPifP/8sff7j6BxkHArn37ZnB9aX4UDIcG3MjfO0WBPhr0B
-         786ftCbcIb/VTt0oWmktFQ/kTdh+OMFnxZBQd4pRFivu6jE5Pt/3e+lZzWIuvMSFpVe8
-         JLfvAIfXZCOV0L+pJh1FMCw6FotD7PvGxD5UGYabFQEGVeCpbGIeMjAHKNVZT+aBi8rV
-         5ECWKlH8ywU0vNI7Pvdq8iK/NXprCQ62UwUng0rnUSXlCDMe0iSSQRF+YaIv1DgzAXVN
-         /tkSh+ETmqyB3je4uo8YKWicsr8UxINBlB0+0Ue6uQIoqrIagCeYnApF3gC+4uwZUvf5
-         Qzug==
-X-Forwarded-Encrypted: i=1; AJvYcCVdK86Qa0lQiZ+WkKvMuuSpdvKU0YDNZEO8Jz0TH/DJQgaxmOHQ6jZnpOOjjdKidKAWhYLxWXq0l9xs12E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmPLYbPt01pJKLRIq3N+Ku0yr/aTEcHui1A+q0wlJyZF5fEOmy
-	jZtxk+V3r6V80UfC2hLZkJOUPa9AdvHhCbntHxF4/C/ntElqGi5TQcJNUQRJJ1RuTxI=
-X-Gm-Gg: ASbGncu927Gaee2+bGMh5pDPaGjco6sI1poQX0Lo3g7NTQXwMn/dPGp8PXtOQlFuq1F
-	MrNsO+gPssujorSf6UQynlHfHFBdXhpFB1yWodwKLN4k07K9rlbM/LCW3/sIDyxrA2BiPw8qV5Q
-	2xxzBmwW/l9EuIL8cxihvOIcrnOefircnubWPhqz/lRsXFL92Rdx3mddOK1ITeRJqLUx/gJ3Edx
-	FMVdht8wAnsgvgM7Z+mbM4djdmqBhanwMLuurLSRUiGWsALy+Y/6/FBHzmG9mB1/tZExdfaQnyn
-	buwvVqFsDnTxduCmpy8tK8iPeSxZunTszfH38lMKFrGon6Vp4x7Cga2pA+QBpzcgC5CUZMMR92I
-	UuIHyZi0Xpav0Tp5fzPLOQAYi
-X-Google-Smtp-Source: AGHT+IEQbrz7RwyiGN8V+7z64D4xdgmsviG8r/Zzdp8SlBm6YsYUWWHHm2ur+UN7w5AuSq1h89JPbA==
-X-Received: by 2002:a05:622a:2287:b0:494:a36c:ebd7 with SMTP id d75a77b69052e-4a713c35ff8mr32647061cf.34.1749606105997;
-        Tue, 10 Jun 2025 18:41:45 -0700 (PDT)
-Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a619865d36sm80410911cf.56.2025.06.10.18.41.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 18:41:45 -0700 (PDT)
-Date: Tue, 10 Jun 2025 21:41:44 -0400 (EDT)
-From: Nicolas Pitre <npitre@baylibre.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>
-cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] vt: add missing notification when switching back to text
- mode
-Message-ID: <9o5ro928-0pp4-05rq-70p4-ro385n21n723@onlyvoer.pbz>
+	s=arc-20240116; t=1749606422; c=relaxed/simple;
+	bh=zcNwtPl3Bu4wOJoWI9YqomflrSwr11gYivs7PCI9B8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bIdzaRODC6THn+1fYN8g23jJkkWNGw380cCp6qBB1JfCzfD12Jr/ykWuTNkYWD7lQRPVYUAqCaxdApqL7QJ3IpTwhSOG6zs9ZhR8yRY4mR1C40l/KyPbzDMuZVU1s/5s58648JcJ3NW4aXKWDc0J0F/5AFUnvj+aD1ceWbDtmlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8AxnOIM4EhonEITAQ--.11959S3;
+	Wed, 11 Jun 2025 09:46:52 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMCx7MQL4Eho0EoVAQ--.65102S2;
+	Wed, 11 Jun 2025 09:46:52 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xianglai Li <lixianglai@loongson.cn>
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/9] LoongArch: KVM: INTC: Enhancement about eiointc emulation
+Date: Wed, 11 Jun 2025 09:46:42 +0800
+Message-Id: <20250611014651.3042734-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCx7MQL4Eho0EoVAQ--.65102S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Programs using poll() on /dev/vcsa to be notified when VT changes occur
-were missing one case: the switch from gfx to text mode.
+This series fix five issues about kernel eiointc emulation list as
+follows:
+  1. The first patch fixes type forced assignment issue.
+  2. The second patch fixes interrupt route with physical cpu.
+  3. The third patch disables update property num_cpu and feature
+  4. The fourth patch adds validation check about num_cpu from user
+     space.
+  5. Overflow with array index when emulate register EIOINTC_ENABLE
+     writing operation.
 
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+Also there is code cleanup with kernel eiointc emulation.
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index ed39d9cb4432..62049ceb34de 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -4650,6 +4650,7 @@ void do_unblank_screen(int leaving_gfx)
- 	set_palette(vc);
- 	set_cursor(vc);
- 	vt_event_post(VT_EVENT_UNBLANK, vc->vc_num, vc->vc_num);
-+	notify_update(vc);
- }
- EXPORT_SYMBOL(do_unblank_screen);
- 
+---
+v2 ... v3:
+  1. Add prefix INTC: in title of every patch.
+  2. Fix array index overflow when emulate register EIOINTC_ENABLE
+     writing operation.
+  3. Add address alignment check with eiointc register access operation.
+
+v1 ... v2:
+  1. Add extra fix in patch 3 and patch 4, add num_cpu validation check
+  2. Name of stat information keeps unchanged, only move it from VM stat
+     to vCPU stat.
+---
+
+Bibo Mao (9):
+  LoongArch: KVM: INTC: Fix interrupt route update with eiointc
+  LoongArch: KVM: INTC: Check interrupt route from physical cpu
+  LoongArch: KVM: INTC: Disable update property num_cpu and feature
+  LoongArch: KVM: INTC: Check validation of num_cpu from user space
+  LoongArch: KVM: INTC: Avoid overflow with array index
+  LoongArch: KVM: INTC: Use standard bitops API with eiointc
+  LoongArch: KVM: INTC: Remove unused parameter len
+  LoongArch: KVM: INTC: Add stat information with kernel irqchip
+  LoongArch: KVM: INTC: Add address alignment check
+
+ arch/loongarch/include/asm/kvm_host.h |  12 +-
+ arch/loongarch/kvm/intc/eiointc.c     | 167 +++++++++++++++-----------
+ arch/loongarch/kvm/intc/ipi.c         |  28 +----
+ arch/loongarch/kvm/intc/pch_pic.c     |   4 +-
+ arch/loongarch/kvm/vcpu.c             |   8 +-
+ 5 files changed, 117 insertions(+), 102 deletions(-)
+
+
+base-commit: aef17cb3d3c43854002956f24c24ec8e1a0e3546
+-- 
+2.39.3
+
 
