@@ -1,144 +1,191 @@
-Return-Path: <linux-kernel+bounces-681755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBCAAD56BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:17:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4CCAD56C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF1147AAE28
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:16:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E970916B32C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AEF284B3A;
-	Wed, 11 Jun 2025 13:16:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1BA2874FE;
+	Wed, 11 Jun 2025 13:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="M17/FgXi"
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0164C277011;
-	Wed, 11 Jun 2025 13:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FFF78F43;
+	Wed, 11 Jun 2025 13:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749647812; cv=none; b=HS4RFzfuriUMjnxJvEhHcsZPBuj1xLhqDg7KxLiGei7ARCCtdtNYzqTcIPlmZlcZ6lEBA5azDkKekcVI25cNJk/3DnQRBwf/4eYRl+1L7jEFhXoSCcNgpWYIo7dI6WRAQvudXZpK3Iy+dTIQWTFWCF9jgIE/UM8OwUPNylkVkbA=
+	t=1749647908; cv=none; b=VPLRzMXhA97VVIbiNxcqyVGdrEAlzvyU6bPgPj8GktQ6DRGq2Zh69QjF/hOaUr/n9NP6z0VIqgNwxjUwhk1Vi5KPwuFbNkVVMC39u/RSls+KM2EnYAXR9t8Olvx07P8rpBqvlP3WPJkA0CN0JvilaS4HiBosneom5F3TFZ6zu3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749647812; c=relaxed/simple;
-	bh=mOA2uHhLVAJnM0AAacilOeTj2Muvi2Yo8XU4SD/q028=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hkugqz7QqoSv1wbpnRdCVB6tSiQ7jD/b5lL5kduCcripfM4IuQmVd0o2qMQ2OtACH+ioQNMJvawm6ziyqsBJ1Lr2c0KZb5b5KqNWSLHu23fo1XEJwXNBKp7ABFiLcufnP/RpVT0vRKD4/xugYpPXQp0kbh5eYNcnnvnfqU043VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bHR2t0p0Wz6JB2J;
-	Wed, 11 Jun 2025 21:14:46 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BAD2C1402F4;
-	Wed, 11 Jun 2025 21:16:38 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 11 Jun
- 2025 15:16:38 +0200
-Date: Wed, 11 Jun 2025 14:16:37 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Li Ming <ming.li@zohomail.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
-	<dan.j.williams@intel.com>, <shiju.jose@huawei.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] cxl/edac: Fix potential memory leak issues
-Message-ID: <20250611141637.0000546b@huawei.com>
-In-Reply-To: <20250611033542.96184-1-ming.li@zohomail.com>
-References: <20250611033542.96184-1-ming.li@zohomail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1749647908; c=relaxed/simple;
+	bh=3ImL6HcMMuEnuKo/YZNjhvWD+k67FXIGpUec8YR+upk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iJrT9Ziax3zyhhsWFsXm7xvSSn0zSXf2DH4pTYFdPJavb9r2/q0Qc9r/j2wJq6SJzqf+RwVPbFL7r4qu2+Rwoz1ao3roMDXifIhz6A1Nw1tc80qsjgDOwglmfrunRavrBxeVcX+JU9KuUIYONgclQPCxmRJq/4fY/+pZUAlzJuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=M17/FgXi; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id PLK1uaf7zSZTqPLK3uQEoa; Wed, 11 Jun 2025 15:17:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1749647827;
+	bh=gPwsajLBsNL8XA7/sk2C74g5jjpD7PSQHxW65bPJTD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=M17/FgXiTcdr7lS6G03JsO24EzLrPAbSaLdpabOS8KSO9ZEXvCwjxVSLQlhclwiey
+	 GU56llktfNWO77AIbtJnO0IAiggrUGmaiUzv8Xmkw2DgB0RpdGc07IBsV0w1nsbXu8
+	 fAXtlPWEo57EiI6hAVY6AQFCCwfdJ6BzRYW0kgC5C3yIIN6W5eFA9Fc3JLan2k8kHc
+	 egUAG7bVTwa/EvSd4aaAKk/s2n6UNuFr5HTZgzxV3+RLRh3GYkYM20NYmhzLtOoyO6
+	 HW0Pw9zzC3ok64XoPrHLF5ogesxujWXldaMR0SeWUqXPPz9UoJXWYF/7kr4W1ygWPl
+	 fGi2IavEa67Cw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 11 Jun 2025 15:17:07 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <e252f15f-ea80-4969-b754-82da5f9a7f56@wanadoo.fr>
+Date: Wed, 11 Jun 2025 22:16:52 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] net: can: mcp251x: use new GPIO line value setter
+ callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ "Chester A. Unal" <chester.a.unal@arinc9.com>,
+ Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
+References: <20250610-gpiochip-set-rv-net-v1-0-35668dd1c76f@linaro.org>
+ <20250610-gpiochip-set-rv-net-v1-3-35668dd1c76f@linaro.org>
+ <b2f87cff-3a81-482b-bfdd-389950b7ec8e@wanadoo.fr>
+ <CAMRc=MfCwz3BV15aATr_5er7wU=AmKV=Z=sHJyrjEvLwx2cMjQ@mail.gmail.com>
+ <b9ea7e0e-7dd1-460b-950a-083620dd52e9@wanadoo.fr>
+ <CAMRc=Mf4qupdJEm9mWPF3-B3hprn6AvP7Po2=aQYbaSvFf8OeA@mail.gmail.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <CAMRc=Mf4qupdJEm9mWPF3-B3hprn6AvP7Po2=aQYbaSvFf8OeA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Jun 2025 11:35:42 +0800
-Li Ming <ming.li@zohomail.com> wrote:
-
-> In cxl_store_rec_gen_media() and cxl_store_rec_dram(), use kmemdup() to
-> duplicate a cxl gen_media/dram event to store the event in a xarray by
-> xa_store(). The cxl gen_media/dram event allocated by kmemdup() should
-> be freed in the case that the xa_store() fails.
+On 11/06/2025 at 01:05, Bartosz Golaszewski wrote:
+> On Tue, Jun 10, 2025 at 5:48 PM Vincent Mailhol
+> <mailhol.vincent@wanadoo.fr> wrote:
+>>
+>> On 10/06/2025 at 23:05, Bartosz Golaszewski wrote:
+>>> On Tue, Jun 10, 2025 at 3:55 PM Vincent Mailhol
+>>> <mailhol.vincent@wanadoo.fr> wrote:
+>>>>
+>>>> On 10/06/2025 at 21:37, Bartosz Golaszewski wrote:
+>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>
+>>>>> struct gpio_chip now has callbacks for setting line values that return
+>>>>> an integer, allowing to indicate failures. Convert the driver to using
+>>>>> them.
+>>>>>
+>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>
+>>>> This does not match the address with which you sent the patch: brgl@bgdev.pl
+>>>>
+>>>>> ---
+>>>>>  drivers/net/can/spi/mcp251x.c | 16 ++++++++++------
+>>>>>  1 file changed, 10 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
+>>>>> index ec5c64006a16f703bc816983765584c5f3ac76e8..7545497d14b46c6388f3976c2bf7b9a99e959c1e 100644
+>>>>> --- a/drivers/net/can/spi/mcp251x.c
+>>>>> +++ b/drivers/net/can/spi/mcp251x.c
+>>>>> @@ -530,8 +530,8 @@ static int mcp251x_gpio_get_multiple(struct gpio_chip *chip,
+>>>>>       return 0;
+>>>>>  }
+>>>>>
+>>>>> -static void mcp251x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>>>>> -                          int value)
+>>>>> +static int mcp251x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>>>>> +                         int value)
+>>>>>  {
+>>>>>       struct mcp251x_priv *priv = gpiochip_get_data(chip);
+>>>>>       u8 mask, val;
+>>>>> @@ -545,9 +545,11 @@ static void mcp251x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>>>>>
+>>>>>       priv->reg_bfpctrl &= ~mask;
+>>>>>       priv->reg_bfpctrl |= val;
+>>>>> +
+>>>>> +     return 0;
+>>>>
+>>>> mcp251x_gpio_set() calls mcp251x_write_bits() which calls mcp251x_spi_write()
+>>>> which can fail.
+>>>>
+>>>> For this change to really make sense, the return value of mcp251x_spi_write()
+>>>> should be propagated all the way around.
+>>>>
+>>>
+>>> I don't know this code so I followed the example of the rest of the
+>>> codebase where the result of this function is never checked - even in
+>>> functions that do return values. I didn't know the reason for this and
+>>> so didn't want to break anything as I have no means of testing it.
+>>
+>> The return value of mcp251x_spi_write() is used in mcp251x_hw_reset(). In other
+>> locations, mcp251x_spi_write() is only used in functions which return void, so
+>> obviously, the return value is not checked.
+>>
 > 
-> Fixes: 0b5ccb0de1e2 ("cxl/edac: Support for finding memory operation attributes from the current boot")
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-Good fine but I'm not sure this is the best fix.
+> Wait, after a second look GPIO callbacks (including those that return
+> a value like request()) use mcp251x_write_bits() which has no return
+> value.
 
-> ---
-> base-commit: 87b42c114cdda76c8ad3002f2096699ad5146cb3 cxl/fixes
-> ---
->  drivers/cxl/core/edac.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
-> index 2cbc664e5d62..b4c5c23a45d4 100644
-> --- a/drivers/cxl/core/edac.c
-> +++ b/drivers/cxl/core/edac.c
-> @@ -1086,13 +1086,13 @@ static void cxl_del_overflow_old_recs(struct xarray *rec_xarray)
->  int cxl_store_rec_gen_media(struct cxl_memdev *cxlmd, union cxl_event *evt)
->  {
->  	struct cxl_mem_err_rec *array_rec = cxlmd->err_rec_array;
-> -	struct cxl_event_gen_media *rec;
->  	void *old_rec;
->  
->  	if (!IS_ENABLED(CONFIG_CXL_EDAC_MEM_REPAIR) || !array_rec)
->  		return 0;
->  
-> -	rec = kmemdup(&evt->gen_media, sizeof(*rec), GFP_KERNEL);
-> +	struct cxl_event_gen_media *rec __free(kfree) =
-> +		kmemdup(&evt->gen_media, sizeof(*rec), GFP_KERNEL);
->  	if (!rec)
->  		return -ENOMEM;
->  
-> @@ -1106,6 +1106,7 @@ int cxl_store_rec_gen_media(struct cxl_memdev *cxlmd, union cxl_event *evt)
->  
->  	cxl_del_expired_gmedia_recs(&array_rec->rec_gen_media, rec);
->  	cxl_del_overflow_old_recs(&array_rec->rec_gen_media);
-> +	retain_and_null_ptr(rec);
->  
->  	return 0;
->  }
-> @@ -1114,13 +1115,13 @@ EXPORT_SYMBOL_NS_GPL(cxl_store_rec_gen_media, "CXL");
->  int cxl_store_rec_dram(struct cxl_memdev *cxlmd, union cxl_event *evt)
->  {
->  	struct cxl_mem_err_rec *array_rec = cxlmd->err_rec_array;
-> -	struct cxl_event_dram *rec;
->  	void *old_rec;
->  
->  	if (!IS_ENABLED(CONFIG_CXL_EDAC_MEM_REPAIR) || !array_rec)
->  		return 0;
->  
-> -	rec = kmemdup(&evt->dram, sizeof(*rec), GFP_KERNEL);
-> +	struct cxl_event_dram *rec __free(kfree) =
-> +		kmemdup(&evt->dram, sizeof(*rec), GFP_KERNEL);
->  	if (!rec)
->  		return -ENOMEM;
->  
-> @@ -1134,6 +1135,7 @@ int cxl_store_rec_dram(struct cxl_memdev *cxlmd, union cxl_event *evt)
->  
->  	cxl_del_expired_dram_recs(&array_rec->rec_dram, rec);
->  	cxl_del_overflow_old_recs(&array_rec->rec_dram);
-> +	retain_and_null_ptr(rec);
+Yes. Read again my first message:
 
-I'd move this up to immediately after we hand it over to the xa successfully.
+  mcp251x_gpio_set() calls mcp251x_write_bits() which calls mcp251x_spi_write()
+  which can fail.
 
-Actually I'm not sure this is a good use of __free given we have a single
-error path to handle it in and have to manually release it in a different
-call to where it is passed to the xa_store() function.  Maybe better
-to just kfree in the error path.
+My point is that the grand father can fail.
 
+> It probably should propagate what mcp251x_spi_write() returns
 
->  
->  	return 0;
->  }
+Exactly what I asked for :)
 
+> but that's material for a different series.
+
+Why? Are you going to do this other series?
+
+If the answer is no, then please just do it here. Propagating the error in
+mcp251x_write_bits() is a three line change. Am I asking for too much?
+
+> The goal of this one is to
+> use the new setters treewide and drop the old ones from struct
+> gpio_chip.
+
+Yours sincerely,
+Vincent Mailhol
 
