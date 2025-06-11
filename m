@@ -1,133 +1,161 @@
-Return-Path: <linux-kernel+bounces-681704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC0EAD5626
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558B9AD5632
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F13F3A6CD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C4F1783DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601B284663;
-	Wed, 11 Jun 2025 12:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F82286425;
+	Wed, 11 Jun 2025 12:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3SNeEW8J"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="M9GyxUvn"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658F4283154
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E440F2857FB
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749646620; cv=none; b=KTH7fYzNf5xvh+M3cl8xX7g564E1wWHX7UOC7XaPrNiqvfxWYnR06EwPODl4hOzvC6WHOGrUCkvlbiVmR3SbfECgbKH2a14AzwJPnrzHJl02dDngS7JWnB6+ew70kP9vww4XBvrGPjjv3aBUkrUIb+GRRZnLFxdM1d0PoR/t/BA=
+	t=1749646747; cv=none; b=QvurkyDnfVN3LXOBj/hUwIRuYtQ7ebjMDEl9yeVnI51/8Jzp6hC9njzDik5osOUfQ6GvRiooyCPZPJhTlbb38tVVraYYgk3HRU3QXA0q0M7K/RROVvwMKpmDvDmzMGOcFzH8nMLzYj3bAzAAGZKUK0A/8xqbckZ14ofEeZNawko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749646620; c=relaxed/simple;
-	bh=WFBUbKMMnKHZdjkqyPfepwRYRaY3PMbvKPZrZUg2BWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VE8LcOzFaaQISFiK0iM7IloNM4ncV2WY78cQd9kmWJQxjQayE/RkZHUceZi22XN+Mrow0VnICZUcd8iUiIN4p1eRiNpIb1hIVHosfSEgwHZSEW3VDOoaLtOjZuU4g1cSnq0JCMBv2ytS/N0uRnyvB8kbg9HYQp4WujnzEOAHi7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3SNeEW8J; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3db7b3de375so55523405ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:56:58 -0700 (PDT)
+	s=arc-20240116; t=1749646747; c=relaxed/simple;
+	bh=c4q9hKJ0GfSD4cmrQLce0PPykLtXw5caieViAR29pPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C0CQLIvZQv00xZ3pM8TfZ3z7vDOhh9kYA26Y2sjSv1kv5KS5qdbNVa5NfG2FslDHQoFNSVoYYX55b2ivF0ynQpvye9r+Bu3lI+u9S3T+Vbyg/a3+hVAHkBjsIGsCwb1g2t/rjbsEfHyeRpAXEWAvpU0xVKOqQNcMT0BbFVkdZbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=M9GyxUvn; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2363616a1a6so18935125ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:59:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749646617; x=1750251417; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BPGWj6XVqoqMlOowKe5NeP45YX5gIMyOrC/TyjewJiI=;
-        b=3SNeEW8JE6h/oz8q6m6QF2ImTL+tlmycebGzUU801zIFrCEDkbol5VveffiMdaCcVr
-         DR4DtdLs0b+1vL/7V92uya5ywuKnyqGYVSg0ovhGxi0LJoY7dxjooMAxjnoIBEzQXMr+
-         qMeCgAww9N0HEgBHk0ug5O3IF+BFEyTe1ylZYv+Y826rZiB61Q2HaxeJnbGKLVKmd7gE
-         Aeg10w+4veLhgu4Nb+O8L6MkAU1TZQkC7AhlyIGuZtpexzE1kEY4l5aPG9Hz/W2teHnY
-         49kehI159q8ArkYpHFN9doyq3ao1juv/h8HlhUTH3p4/xVB/T2oRSBlwS1sUivjQy8Bs
-         7uQw==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749646744; x=1750251544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x4QOx+b/QncvHLv/sLMwOKnuymoyk68+Yx3qOBYw2f8=;
+        b=M9GyxUvn1UMaCwbbFLIX7weFVaLwLVo3/2bEe5sFY+FoeCLkX80ke1SKw4DpS0PMyG
+         etjxkmuPj4popWwpxtXxs9KIUgPNNfSeEQPaDIIkOIUKEmIAFnK24D4YgXCw5zrTmKHZ
+         zXqBS8FxrTpvdAK2PkchX4UrndepKANf2TNLtJuynfd3c+/t5QxGseMNaMKM7MJbA9+6
+         UG5M71JceK9nIqvWHzgBIg/J79IGYtPap6ohC883x1wZyH3jSg2BOywipySBRi04bX8U
+         BvMNCEleXtYG/3pipPlk9WmITlUq+0Vk+ER/dU2PthLLrEdGM/8KWO1Sw2DXDOHvF9C3
+         jsgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749646617; x=1750251417;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BPGWj6XVqoqMlOowKe5NeP45YX5gIMyOrC/TyjewJiI=;
-        b=ktfp996W4tBvnb4HjJDqW1Ys8m1/fK2MVV77IMBCiJPwWAunx83L0B6Ol2OkQTmRIv
-         iF5y6r00lqvvzhD/YYTYebFdPAe26B/KuaGYUesW9zwMrr5CQZ75/omj/q+VF3/b/d54
-         2igOTdaV+TI+nIvltK7wxf4WYDXqKWIYOU5TNvNm4Rvatpt2KfxaLgE5huP9Pg2YYkQH
-         2mjPOoJaWFxThPl4Xf0nyeuM2Jc9fSXNpTQ2/RLYyCNSeh6rekG9cPgfRqrrTrwLQXER
-         kmRZxmqurGco2iTu2RPen1LRtRmjyC+C9SlvUZqZViDBOwWrp8NfufobYLt9+crNLlG1
-         KODg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRuUuE6z69RYk5HhZzMoX40ReMhfRy2NUrsX34s4fdi0/PdLcT/20ANX0z6abU22xk4MN0ieP7UFoFkr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3BkLrIpmIQWlEyKXi7rO8Uwu6621e1oTTKJ/MDZNjl+SBcXdH
-	7XGmF+BfGnFQ50srO/2r+yu4J4c4LOxDCx04OYYShph50/s2SPJMRRiKYqLDo4LOhzc=
-X-Gm-Gg: ASbGncv5+AiVgVzRcwyu97aI20xjxlgxntKQCFcnFEJuMy0f+bfGFKBk/1A2pfKysNH
-	ls/6CZQ090YMr4LKoRcqkR2FCnUvmG4SoR7ICckQzcnTCLNT8x28OZXoPVcECAHbJ3eQ5YV+jRP
-	g5hatzvimz5O1EbZSjnYhJuNV26BLlL2q6MyVbVTxxglGZtRYSG3GpNJguwvWihTRCUBYlRlVJx
-	Jfr7WtTqkVKeb0450PZbjhpPDjD6xQQEG7Hj1XGfftIUSdU+XJkj7LBAKb2nj06FMlvjcnYdgLf
-	+es1p5Y1QtKKHfyg9qUKnd544t3/dpFjWQ6gx8AVFc+TinKx3uDQD5RdPfsijMW26tMsQA==
-X-Google-Smtp-Source: AGHT+IERz9UEhN3gPoO6s9ZO+TGganlwoJirBS1zd34gle1XGHdmdK7NOLrIX/f0q//+H5iwkCSLYQ==
-X-Received: by 2002:a05:6e02:12e8:b0:3d9:668c:a702 with SMTP id e9e14a558f8ab-3ddf4d5d68emr25015895ab.9.1749646617386;
-        Wed, 11 Jun 2025 05:56:57 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ddf4768c0dsm3851505ab.55.2025.06.11.05.56.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 05:56:56 -0700 (PDT)
-Message-ID: <ed33ffb7-31bf-490c-b1ae-304a6e4b9a0f@kernel.dk>
-Date: Wed, 11 Jun 2025 06:56:55 -0600
+        d=1e100.net; s=20230601; t=1749646744; x=1750251544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x4QOx+b/QncvHLv/sLMwOKnuymoyk68+Yx3qOBYw2f8=;
+        b=OSJ51CNP/etB9ovozWYaKulNVM1bJ0xx31mpK9733kP6Zh1v5jvsrY22sAdghf9NsG
+         jmIQwXhU28ciDFERgAi/NQCrW21RPE2KRH5NuSwVJhkFERuz9xxvgehQfZ9LYCGh1/GH
+         IE3N6d1Rdt2aqAiWYiiP5i5x5cCExUbjSqIY1u66EGAZssgUOsR5nNapX+VNGuVt3R9p
+         mFIv0bLlpVRYgQCdwlayAs5ryL70CixMv+cZP5Qy7NYXIZsAaUxJkgcFMOu0hPWrSFrc
+         A5/6QgBG/huXQ5n0A56iHMd5Emz6ZCfRN3Gy85vfaa7+x6Zd8hO8UNCYkeoGdf63GrEi
+         z1oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVM4kGiLNgAFiIiVg3GxlW2gIvYaHDEHUG+9Iw44UuOG0vjik7iN0729H+jdK1q07tG6/Gzco6Z0TlhD1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiObdrr3sHQDNdta08XrzIxPMEp0jc1KSyarsS+3lrVUKolAaT
+	hbGPNrO9xydmbmwITxxZjYnsR0h1TKprFzH9QMxShGAkh/XSta3jWLNUgwfJqHSXWgU=
+X-Gm-Gg: ASbGncuYbFyRWz6jNmpiUy8Tv1P2lCr10MwOgfVyKVIQzgkMr7d7eWTuhSh0R9uQIHR
+	B64Ejonak/b53zOMqwARmEtTlW0uaNBUoLR1GQ8qeinbtFUrwJKFcnJXiNidBFpOmqTeJZ8xR6l
+	kmtOSJi2c11i7uuapCghi8sCDOBtXkkMwTqOu2XTem2DAsYcLuj9jawpZoUMbbxj26rb5PD6zOW
+	qlNBG8rFSxfzVTOPGTvw8vJCoriLgluU/K/+1VcQh4tixDZ0hO0uX6qt7wJ3r8km0rpZbIYnfdf
+	ryxkIJD513BzYImnPHaAcAsQmfoSePoJDh/fEBstYas+4+8J5QeZieUW2ROTQ/THDRvnnVHpqdA
+	V9MToP3z06I41ZLpCx4jTlQ==
+X-Google-Smtp-Source: AGHT+IHeeQKbfAGNGeX62nkTUoAIUb+/0YEOPG1s+np4s8lIc4gcrO2OCn3QlplFdVVleQo4sYhIgw==
+X-Received: by 2002:a17:902:e74b:b0:234:f182:a759 with SMTP id d9443c01a7336-23641af07efmr51079475ad.28.1749646744203;
+        Wed, 11 Jun 2025 05:59:04 -0700 (PDT)
+Received: from localhost.localdomain ([2409:8a00:31a4:6520:3d67:ceb1:7c60:9098])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236030925e3sm86984115ad.53.2025.06.11.05.58.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 05:59:03 -0700 (PDT)
+From: Guodong Xu <guodong@riscstar.com>
+To: vkoul@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	drew@pdp7.com,
+	emil.renner.berthing@canonical.com,
+	inochiama@gmail.com,
+	geert+renesas@glider.be,
+	tglx@linutronix.de,
+	hal.feng@starfivetech.com,
+	joel@jms.id.au,
+	duje.mihanovic@skole.hr
+Cc: guodong@riscstar.com,
+	elder@riscstar.com,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: [PATCH 0/8] dma: mmp_pdma: Add SpacemiT K1 SoC support with 64-bit addressing
+Date: Wed, 11 Jun 2025 20:57:15 +0800
+Message-ID: <20250611125723.181711-1-guodong@riscstar.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "block: don't reorder requests in
- blk_add_rq_to_plug"
-To: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
-Cc: stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>,
- Hagar Hemdan <hagarhem@amazon.com>, Shaoying Xu <shaoyi@amazon.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-nvme@lists.infradead.org
-References: <20250611121626.7252-1-abuehaze@amazon.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250611121626.7252-1-abuehaze@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/11/25 6:14 AM, Hazem Mohamed Abuelfotoh wrote:
-> This reverts commit e70c301faece15b618e54b613b1fd6ece3dd05b4.
-> 
-> Commit <e70c301faece> ("block: don't reorder requests in
-> blk_add_rq_to_plug") reversed how requests are stored in the blk_plug
-> list, this had significant impact on bio merging with requests exist on
-> the plug list. This impact has been reported in [1] and could easily be
-> reproducible using 4k randwrite fio benchmark on an NVME based SSD without
-> having any filesystem on the disk.
+This series extends the existing MMP PDMA driver to support SpacemiT PDMA
+controllers with 64-bit addressing capabilities, as used in the K1 SoC.
 
-Rather than revert this commit, why not just attempt a tail merge?
-Something ala this, totally untested.
+The SpacemiT K1 SoC contains a PDMA controller that is largely compatible
+with the existing Marvell MMP PDMA, but adds support for 64-bit physical
+addressing through Long Physical Address Extension (LPAE) mode. This
+requires programming additional high address registers (DDADRH, DSADRH,
+DTADRH) and enabling the DCSR_LPAEEN control bit.
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 3af1d284add5..708ded67d52a 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -998,6 +998,10 @@ bool blk_attempt_plug_merge(struct request_queue *q, struct bio *bio,
- 	if (!plug || rq_list_empty(&plug->mq_list))
- 		return false;
- 
-+	rq = plug->mq_list.tail;
-+	if (rq->q == q)
-+		return blk_attempt_bio_merge(q, rq, bio, nr_segs, false) == BIO_MERGE_OK;
-+
- 	rq_list_for_each(&plug->mq_list, rq) {
- 		if (rq->q == q) {
- 			if (blk_attempt_bio_merge(q, rq, bio, nr_segs, false) ==
+The implementation maintains full backward compatibility with existing
+32-bit Marvell platforms while adding the necessary infrastructure for
+64-bit address handling through a flexible configuration-based approach.
+
+Key features added:
+- 64-bit DMA address support via LPAE mode
+- Platform-specific operation abstractions (mmp_pdma_ops)
+- Optional clock and reset controller support for modern SoCs
+- Device tree integration for SpacemiT K1 SoC and Banana Pi F3 board
+
+Testing:
+This patchset has been tested on SpacemiT K1-based Banana Pi F3 hardware
+to ensure the PDMA controller operates correctly with 64-bit addressing.
+Existing functionality on 32-bit platforms remains unchanged.
+
+This patchset is based on [spacemit/for-next]
+  base: https://github.com/spacemit-com/linux for-next
+Plus the reset controller driver, posted by Alex Elder (v10):
+https://lore.kernel.org/all/20250513215345.3631593-1-elder@riscstar.com/
+
+Guodong Xu (8):
+  dt-bindings: dma: marvell,mmp-dma: Add SpacemiT PDMA compatibility
+  dma: mmp_pdma: Add optional clock support
+  dma: mmp_pdma: Add optional reset controller support
+  dma: mmp_pdma: Add SpacemiT PDMA support with 64-bit addressing
+  riscv: dts: spacemit: Add dma bus and PDMA node for K1 SoC
+  riscv: dts: spacemit: Enable PDMA0 controller on Banana Pi F3
+  dma: Kconfig: MMP_PDMA: Add support for ARCH_SPACEMIT
+  riscv: defconfig: Enable MMP_PDMA support for SpacemiT K1 SoC
+
+ .../bindings/dma/marvell,mmp-dma.yaml         |  17 ++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |   4 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 234 ++++++++--------
+ arch/riscv/configs/defconfig                  |   3 +-
+ drivers/dma/Kconfig                           |   2 +-
+ drivers/dma/mmp_pdma.c                        | 249 +++++++++++++++---
+ 6 files changed, 370 insertions(+), 139 deletions(-)
 
 -- 
-Jens Axboe
+2.43.0
+
 
