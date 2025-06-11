@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-682311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B8EAD5E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072D4AD5E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D5C17C4B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78C517CA1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4CE27CCF3;
-	Wed, 11 Jun 2025 18:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D7E288CB9;
+	Wed, 11 Jun 2025 18:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="VB2T1mWi"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="IaFJ8l/q"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6562153E7
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97312225388
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749667045; cv=none; b=grZGIsFqe6S+TGc3urqMzqxogYuBzIy/KK6b5mQUI71//0WTCkVynKddrqYiEiV7TxiFJDKzrF2IiYw5iVC4ps/JjZGfkxF7lC151x6j74VETWkGilue/I4gf+UZUKXZddH1knuVCavnL6iEUYTk26PeyErPh9aVoLWsaL1K1iw=
+	t=1749667046; cv=none; b=XsfkicPxL1BukkCHGyab2RqrhCzvSKu8h5uwRgZi7cJ9lRbcdslRsV5IZpIpRWXVDwO4xWBQTfzLGgFwzZybGtdI0nZ76hNqcTHC9XhHQmvECuagIbO2cHugGVcVtM+Ov7tW4uAkD4mLUYEH7uI8KqFji/VWBUDoRGY5zGPudXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749667045; c=relaxed/simple;
-	bh=RyLIKNeJDHGcRQHXIaBVFM/PFmHB/hcFvEYioa32LRQ=;
+	s=arc-20240116; t=1749667046; c=relaxed/simple;
+	bh=VRd2k/Q/i3FDTIxyZfK84tJ4lV+Mf4e5ymoaKFQZRCs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y+SlnE5a7hj/1BFgtqRMcgjWypqNmabyA2LqSJ51whxzPkVzr2YfWqBNww6+hWy5WsY5o/h+da8HxZFMejaLt9vHwGgI/AWo32ZG58eg+FYAoA1Y13t2Kx0QyTwDDFkmHvc8nqhFyUYAVcUOVwDFel15e0nzo5COxI7fzwX8jP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=VB2T1mWi; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:To:Cc; b=WxPKWsmhFXS3IhbuJnk6Z1dt2LJVsPo8wNny2NB0w44POXHZ87zUUpXfF1OSbAGsDv+qn5Tmf2gG+hyVUjPOzbOOOaPhWfAyuY4z8Ytl1KKokAGdP5/lcmCUHuUw1T1A0PoLIJnC/N+MPqMYsLMkCZn841kJqcoQe9sRpY08JdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=IaFJ8l/q; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a54700a46eso198531f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:37:23 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a51d552de4so147303f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:37:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1749667042; x=1750271842; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1749667043; x=1750271843; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6/DWf3eFTS1FAKsBMmWgLu1g2vHF8byXbBX1nrqf/VM=;
-        b=VB2T1mWifQGJcLguGEC73P3aw+Ok5QvPAwB0qwbo4C7m1ahWrx+yILFuMXTkwqK9Vr
-         Ps1IQui43AjQB/n1Z9f+7HGWq6honuJ7HJDWjA45aKQBERpVVkVJS/PS6rlV3C1P5sl7
-         HxOnVWCxCGVJ8iePCamBxtWi6E/lkMIb/MuVNYLhohYXpeFJVsvpYWrQyAlgZwHVRxZU
-         K5CCcIAvTNPc8alozPrRdZMIZbEZ1DqYJBPnHYUYYVYC9KWxXVkQ7zskO/yYXGRLGKQx
-         7+pdtQKKovkbjpjoDc+EcfhYOZ6kN1m5j7IGsmG9mfXI44h8RqsIN2c0ZUSuGP18mJ9n
-         wVeA==
+        bh=f/axqm8k3/xlEItyAFlEMdzmmFWn3XyIBiwkuVUA9GE=;
+        b=IaFJ8l/qw3xgAcnyPN3GjYU+xik77kVDNYqfPwv+dyQYE8DKPsxb1iT6bMvDto98S3
+         KvscFzeqX7p5eVZvjBkkEoKZqDPHhgwjINU0o/Zirz2PldJ7kstaN3KbV6lrL5YkLWzB
+         qgMJWuUU159D1JSbDNXwkiY89evPhSmH7Xa5YExZak1Twi1tst7+SmC+0BL/X2LKSsFd
+         hRyVt2iaLDnrlOFcadMacurpLx2zdn/IPvpBDxx0iljUWHlix0LfKbbjkcpoR4rB2qMN
+         +Q42t0QORIkokBEe8CRazFl2AwT5AwcTTfqcE+jQRnQZm3eNSFynSg5WR3Ur04iXFeaQ
+         8Tdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749667042; x=1750271842;
+        d=1e100.net; s=20230601; t=1749667043; x=1750271843;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6/DWf3eFTS1FAKsBMmWgLu1g2vHF8byXbBX1nrqf/VM=;
-        b=NwUlXE9YwB7zgbtl//pPRmX3ilLgUppcs0n3Yz4/w9tl+s4U7TYG7KHLe/lpt2uPuS
-         rxHTekPemcdMe3H3a7cHp0iw22NK55eASU0xPS4mrfE35Q4dGcKkOR3/FHZsJzdnxN18
-         ESfT53h2//Ge3uscTb+G152B4wJWX9NabUN7Nf1oPqu1Snj4VDxjveZw2c1FRbIxPu16
-         1upOP6KhbpB/qnFoftQEbA0ZK7zDHjR5Du+3ObAL63NVvMjvYRapv5Uo89rTU1XUpYG0
-         6cO2w386OcMg7FgSZXAS2FNiAzlVRMC4IKvd6ZQ0wG+mXre8nAUncLd0IptncV8LskKn
-         OfAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9VC37e11bWEMhLRlx0KlAfTy1YaclvOiFm4mJfZ4vXcBxUUBwlleKUxalXQi774eFeNIR8IzBT8lV9R4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1YOohgjNYCk1EKioz9HDjtYYd0UJgtiGot0EqBCsG8wtm+YyW
-	5/GCEDPrd1rIAomnimcJ1w9MhYxuwOyRO5J4rPVC+NcS2Hf3KZyCo7rKQWlYf74t3kQ=
-X-Gm-Gg: ASbGncu23PoLMaTF2H1Tuq6mgbihu38CSr9Yy5e9wfKqhWktXLM9JpK20wco8i5ku7b
-	YYsMaYBTcJd1/FP1SPQoKELo5BMwwoWeJV6jGVS0MZJ2aLpnaU3uECjtieyh01iNTmLF1TFdJvs
-	2Z0XJIIqF9s8YlMHCJv+cD8nLxyY3nSVV9OXbW1NIaS43/6AX2oiHV1sx7j3UeTyMmbIukZlEMJ
-	IXAVWtwHOe+j5njbbNJgF9+FwFhJGj+ONDNjpRcldUNb9UYmvKG42FzJqmMU9YNmm/LN0nccgzO
-	LgAF4YNKxS47jvti3Y8MO6VlRvIPAI5d4nHBytT+dSOBvWVsUMAAQA==
-X-Google-Smtp-Source: AGHT+IEkF/dFZASIDjRh7yC2bAPt/if4YBRK41hg0H9/5YtD56ovdLDxPjw06Yoz2hJ3UEcOFPSVyQ==
-X-Received: by 2002:a05:6000:2204:b0:3a3:7593:818b with SMTP id ffacd0b85a97d-3a558695e91mr3797607f8f.21.1749667041968;
-        Wed, 11 Jun 2025 11:37:21 -0700 (PDT)
+        bh=f/axqm8k3/xlEItyAFlEMdzmmFWn3XyIBiwkuVUA9GE=;
+        b=v2diryhXgCm6Ui+AyxHl2IaXtTm1LtdQeA6HeMoHRYY8iBlZjSOgFVerP9mIZ+uOyQ
+         ILshM1TclftYo4r8FfcWTq0R0oVdN2PsF50Hc7qUrSkd5wL8OWsHpahanuVqkJE5zr3j
+         Rsg0Yd6Qp5gy5YPKNLgb8bwBNPVbbSZGaPhrb9TAeyIWfz8gD46B9sdP1UChjh6QzgW5
+         SLjPkTFYTF24OykVHr2U81Vxpo8vtwOxs3cNQbi+vHUGuiprQyB/5dyhOIbalusoLjqp
+         E/30AN1kh0sT8BP3ph0Hg/YyQLLwHVOvdMnOIJOuBJeFDLdcKlqORhILvvzRrAjjnZ93
+         DQyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcONN2SBninyyFjZms10Vk7OaMV5T0kkHzL3dHYy+XewjLriuh21AdsaZWkQXmT+ZUna42ucHSUitFANY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynH+B0/2k4fcCedHhPxsbwWRqouRTwwwzOtP7lbfDYLHs11Aok
+	h/MJU8G8r5NCtM7KuS1ENk441CQzVveKMZmhnP3LAixR2odGhqsZY1xcgl5YtQftIA0=
+X-Gm-Gg: ASbGncub03tIDAY1df6E1c+yen0rI1x034ThMPOhHyFWtrFJOouJBFnt31KZmozG86v
+	OpHhLLlljnYyB7UdTy89+MaK+ANMPrGatuVjjLhtVpNkBFRRDTA8Cv3VMTdXABGwxnE23mT5rCJ
+	wB853peMIwkeVIKvbzMOPVCmuB91b4Jf8aGCGiU3Pe/yUAaHLZz4iURpVd+OKjo+60KpsWtpTD/
+	ohRQ3NHZXRXQKj5j+3VRa46yPTyE+FdEv8TyKMKBLdXqo4jhb3CNHWDX2WDCE07x2CZqJn6X9gx
+	30wlaB0dHM/nVmQyFB4XyQF42srsPfFPnra9EHhHcp8FzYL6VvaI8g==
+X-Google-Smtp-Source: AGHT+IHy4y7hCn0YytWiolkQuGznWohvLW0swvm6O3+u87Ddu4wgBl0yE5V8jmp1ZcCdpnMkxt7mIA==
+X-Received: by 2002:a5d:584a:0:b0:3a5:2f23:376f with SMTP id ffacd0b85a97d-3a5606c83b4mr431761f8f.13.1749667042774;
+        Wed, 11 Jun 2025 11:37:22 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a5324364d4sm16119390f8f.55.2025.06.11.11.37.21
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a5324364d4sm16119390f8f.55.2025.06.11.11.37.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 11:37:21 -0700 (PDT)
+        Wed, 11 Jun 2025 11:37:22 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 11 Jun 2025 19:37:14 +0100
-Subject: [PATCH 2/4] media: tc358743: Increase FIFO trigger level to 374
+Date: Wed, 11 Jun 2025 19:37:15 +0100
+Subject: [PATCH 3/4] media: tc358743: Check I2C succeeded during probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-media-tc358743-v1-2-708556026f9d@raspberrypi.com>
+Message-Id: <20250611-media-tc358743-v1-3-708556026f9d@raspberrypi.com>
 References: <20250611-media-tc358743-v1-0-708556026f9d@raspberrypi.com>
 In-Reply-To: <20250611-media-tc358743-v1-0-708556026f9d@raspberrypi.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>, 
@@ -93,50 +93,101 @@ Cc: Maxime Ripard <mripard@redhat.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-The existing fixed value of 16 worked for UYVY 720P60 over
-2 lanes at 594MHz, or UYVY 1080P60 over 4 lanes. (RGB888
-1080P60 needs 6 lanes at 594MHz).
-It doesn't allow for lower resolutions to work as the FIFO
-underflows.
+The probe for the TC358743 reads the CHIPID register from
+the device and compares it to the expected value of 0.
+If the I2C request fails then that also returns 0, so
+the driver loads thinking that the device is there.
 
-374 is required for 1080P24 or 1080P30 UYVY over 2 lanes @
-972Mbit/s, but >374 means that the FIFO underflows on 1080P50
-UYVY over 2 lanes @ 972Mbit/s.
-
-Whilst it would be nice to compute it, the required information
-isn't published by Toshiba.
+Generally I2C communications are reliable so there is
+limited need to check the return value on every transfer,
+therefore only amend the one read during probe to check
+for I2C errors.
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/media/i2c/tc358743.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/media/i2c/tc358743.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
-index b87db3de20db..ddba8c392ead 100644
+index ddba8c392ead..4d3dc61a9b8b 100644
 --- a/drivers/media/i2c/tc358743.c
 +++ b/drivers/media/i2c/tc358743.c
-@@ -1972,8 +1972,19 @@ static int tc358743_probe_of(struct tc358743_state *state)
- 	state->pdata.refclk_hz = clk_get_rate(refclk);
- 	state->pdata.ddc5v_delay = DDC5V_DELAY_100_MS;
- 	state->pdata.enable_hdcp = false;
--	/* A FIFO level of 16 should be enough for 2-lane 720p60 at 594 MHz. */
--	state->pdata.fifo_level = 16;
-+	/*
-+	 * Ideally the FIFO trigger level should be set based on the input and
-+	 * output data rates, but the calculations required are buried in
-+	 * Toshiba's register settings spreadsheet.
-+	 * A value of 16 works with a 594Mbps data rate for 720p60 (using 2
-+	 * lanes) and 1080p60 (using 4 lanes), but fails when the data rate
-+	 * is increased, or a lower pixel clock is used that result in CSI
-+	 * reading out faster than the data is arriving.
-+	 *
-+	 * A value of 374 works with both those modes at 594Mbps, and with most
-+	 * modes on 972Mbps.
-+	 */
-+	state->pdata.fifo_level = 374;
- 	/*
- 	 * The PLL input clock is obtained by dividing refclk by pll_prd.
- 	 * It must be between 6 MHz and 40 MHz, lower frequency is better.
+@@ -114,7 +114,7 @@ static inline struct tc358743_state *to_state(struct v4l2_subdev *sd)
+ 
+ /* --------------- I2C --------------- */
+ 
+-static void i2c_rd(struct v4l2_subdev *sd, u16 reg, u8 *values, u32 n)
++static int i2c_rd(struct v4l2_subdev *sd, u16 reg, u8 *values, u32 n)
+ {
+ 	struct tc358743_state *state = to_state(sd);
+ 	struct i2c_client *client = state->i2c_client;
+@@ -140,6 +140,7 @@ static void i2c_rd(struct v4l2_subdev *sd, u16 reg, u8 *values, u32 n)
+ 		v4l2_err(sd, "%s: reading register 0x%x from 0x%x failed: %d\n",
+ 				__func__, reg, client->addr, err);
+ 	}
++	return err != ARRAY_SIZE(msgs);
+ }
+ 
+ static void i2c_wr(struct v4l2_subdev *sd, u16 reg, u8 *values, u32 n)
+@@ -196,15 +197,24 @@ static void i2c_wr(struct v4l2_subdev *sd, u16 reg, u8 *values, u32 n)
+ 	}
+ }
+ 
+-static noinline u32 i2c_rdreg(struct v4l2_subdev *sd, u16 reg, u32 n)
++static noinline u32 i2c_rdreg_err(struct v4l2_subdev *sd, u16 reg, u32 n,
++				  int *err)
+ {
++	int error;
+ 	__le32 val = 0;
+ 
+-	i2c_rd(sd, reg, (u8 __force *)&val, n);
++	error = i2c_rd(sd, reg, (u8 __force *)&val, n);
++	if (err)
++		*err = error;
+ 
+ 	return le32_to_cpu(val);
+ }
+ 
++static inline u32 i2c_rdreg(struct v4l2_subdev *sd, u16 reg, u32 n)
++{
++	return i2c_rdreg_err(sd, reg, n, NULL);
++}
++
+ static noinline void i2c_wrreg(struct v4l2_subdev *sd, u16 reg, u32 val, u32 n)
+ {
+ 	__le32 raw = cpu_to_le32(val);
+@@ -233,6 +243,13 @@ static u16 i2c_rd16(struct v4l2_subdev *sd, u16 reg)
+ 	return i2c_rdreg(sd, reg, 2);
+ }
+ 
++static int i2c_rd16_err(struct v4l2_subdev *sd, u16 reg, u16 *value)
++{
++	int err;
++	*value = i2c_rdreg_err(sd, reg, 2, &err);
++	return err;
++}
++
+ static void i2c_wr16(struct v4l2_subdev *sd, u16 reg, u16 val)
+ {
+ 	i2c_wrreg(sd, reg, val, 2);
+@@ -2092,6 +2109,7 @@ static int tc358743_probe(struct i2c_client *client)
+ 	struct tc358743_platform_data *pdata = client->dev.platform_data;
+ 	struct v4l2_subdev *sd;
+ 	u16 irq_mask = MASK_HDMI_MSK | MASK_CSI_MSK;
++	u16 chipid;
+ 	int err;
+ 
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+@@ -2123,7 +2141,8 @@ static int tc358743_probe(struct i2c_client *client)
+ 	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+ 
+ 	/* i2c access */
+-	if ((i2c_rd16(sd, CHIPID) & MASK_CHIPID) != 0) {
++	if (i2c_rd16_err(sd, CHIPID, &chipid) ||
++	    (chipid & MASK_CHIPID) != 0) {
+ 		v4l2_info(sd, "not a TC358743 on address 0x%x\n",
+ 			  client->addr << 1);
+ 		return -ENODEV;
 
 -- 
 2.34.1
