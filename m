@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-681272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF848AD5089
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308ABAD5093
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1967C3A91E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C18617FE47
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426C82571A0;
-	Wed, 11 Jun 2025 09:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D0C25F967;
+	Wed, 11 Jun 2025 09:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH9HkSN7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nmXCf9dP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B352AD2C;
-	Wed, 11 Jun 2025 09:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B532AD2C;
+	Wed, 11 Jun 2025 09:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749635436; cv=none; b=CHt42v4WLLlSg1hJ6/JR/sUCr0AwbvaGE0Onn6YqEpSIhRsDCguhaxSggLzmd0iIG5sH7dBVqKaVpZ0m8Y3g660l6QHJTU/mT+1OYHnmR2faP6oUyX/eR7tc6WIK6q+eTjo0usd+g1Ji2Aozlly8P9CmX7PZoZLI+FUAA0oMrHA=
+	t=1749635535; cv=none; b=Yeqidr59r2zgPtGZNKckWBz2j3j/v0hUilCD5gtb54M/ERab4alHGtw7D98+ZmlkMVk7/m4FysWYS9bbSRCRfK9wFly4z53k2+Dxp3s9g3x+fms8ONinNJUVjY1uCINgfMZfQQgkxCr20WPsK9ApFdpdQab6007bpF36lQsipDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749635436; c=relaxed/simple;
-	bh=d2odlYWuohn9vOz/r2rICK+nYWZ3BRx7kUUlYEimQdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+Rr2bTH+obDBg1MhhzbxvshcbwL6vR2b/ieX037pHrmuXwP7o6/zFrXd8HdwSrNWZiFqim5sY9aX6/Y2C2GOdIfKPKKpbcsW1fR/X41eKDIHkTQ3Aq9BHKm7lvunT9IalfYvEAkDSeCrlQPfXlr9H9v2EeVFoDIGglYvbLeTzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH9HkSN7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C62C4CEEE;
-	Wed, 11 Jun 2025 09:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749635436;
-	bh=d2odlYWuohn9vOz/r2rICK+nYWZ3BRx7kUUlYEimQdI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HH9HkSN7TdpRcuMfGp59qshneRzWUIuw/W7dm+Xi7gVIVsaJM2BcHTt0sG6bh/TLi
-	 TjjBSuCddjJufT9XJPl2o5rHD5w9OkipxWrVTrt3ymBtDhsXjLVZC95x7UMGLClCzE
-	 6tq7xPSbFFPgdvlL+Hv74b9pTHp6JTcKTpBaLej8wAUQQjzxRAE/edl8ahFulgD3Ye
-	 YFHpf/pxJAbvLCH/d6ejePF70oDVAveRdiXG7B4rASpzLL6qcqogYtZGyGhIUJ4EDO
-	 bPi3bnq1s7aFFkO1mwJCKYZynH8ExbkVJH25V+RoleS2X/a209FjGwNhoEXLG5WOua
-	 XsovYh6j4J/PQ==
-Date: Wed, 11 Jun 2025 11:50:31 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 1/4] man/man2/prctl.2,
- man/man2const/PR_FUTEX_HASH.2const: Document PR_FUTEX_HASH
-Message-ID: <hnghlt2dekdjb34vitzdu3w6zfkrlq64vetaqaj37rk5g4hu4h@m4cmds43h6av>
-References: <20250602140104.2769223-1-bigeasy@linutronix.de>
- <20250602140104.2769223-2-bigeasy@linutronix.de>
- <qgp2ueiyfwfd6t3fpwvnryrhnpy6rro5npsqjqzvkovhyawiyb@kl6igspxexqn>
- <20250611084716.xboKOTHN@linutronix.de>
+	s=arc-20240116; t=1749635535; c=relaxed/simple;
+	bh=fmPcNr5AAY+k0xHn5ajYpTwRMOitZ2SEYpt3CxdEDgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N6xsxvIZp2jq1gFOcRaJjytQOMUmMvEOwQJin/ciXI+i3i45nFUqGsk9EP5BsybnUeg4uOK18WLP2ll78pUeSQjsxocAuu0RJRdtiml1wjoEOEXmR2lYQkhiGJcVt5zXf9iTrZr59ZruSz0UsUvwrOYFNVlCpQkHrtnvfr5+cAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nmXCf9dP; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749635533; x=1781171533;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fmPcNr5AAY+k0xHn5ajYpTwRMOitZ2SEYpt3CxdEDgw=;
+  b=nmXCf9dPJjfnzkAIN+xFQlfYLD1t6wAy0D8x96GpiVJRNGoiLP6bruIs
+   Pa14M6rNfjZ3hrKQLDcZufTvB+pGejorL2XcnMA8epaIr26yBPe07TIza
+   BdPGzLD3+ydrF7yVODbOdah94UqdsB1l0uDEE7BnSN/VnDXDEZmZ1ScNI
+   5RxQpXI8ZOaG+iWl2UR/dNRZmYk36yPvjlNTNUd4RlG2Y/bwUPGq0tpXi
+   PZYt5cf2w6gn4DjaUbqXRMLEJyBNaOnIHeHEw15MICFKMQ70Zm+hWZsiP
+   9h5fsmjN7M0hpjad5iX5144ovYX+A6oEyOnN/wBv5RXjTDdJ05c1wfX7S
+   A==;
+X-CSE-ConnectionGUID: coYnner1ShKvEUlRG/yZvQ==
+X-CSE-MsgGUID: BxFYoPS8S1Sd+iXm48exzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51872623"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="51872623"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 02:52:13 -0700
+X-CSE-ConnectionGUID: iTGG/IBiQ92WWewtDjNs2A==
+X-CSE-MsgGUID: Ct6i9CPwQZGIRrDsZDR1bg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="184350709"
+Received: from opintica-mobl1 (HELO localhost.localdomain) ([10.245.245.146])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 02:52:08 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	kirill.shutemov@linux.intel.com,
+	kai.huang@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	binbin.wu@linux.intel.com,
+	isaku.yamahata@intel.com,
+	linux-kernel@vger.kernel.org,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com
+Subject: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
+Date: Wed, 11 Jun 2025 12:51:57 +0300
+Message-ID: <20250611095158.19398-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3oqy7dsarzc6vyet"
-Content-Disposition: inline
-In-Reply-To: <20250611084716.xboKOTHN@linutronix.de>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
+
+Hi
+
+Changes in V4:
+
+	Drop TDX_FLUSHVP_NOT_DONE change.  It will be done separately.
+	Use KVM_BUG_ON() instead of WARN_ON().
+	Correct kvm_trylock_all_vcpus() return value.
+
+Changes in V3:
+	Refer:
+            https://lore.kernel.org/r/aAL4dT1pWG5dDDeo@google.com
+
+	Remove KVM_BUG_ON() from tdx_mmu_release_hkid() because it would
+	trigger on the error path from __tdx_td_init()
+
+	Put cpus_read_lock() handling back into tdx_mmu_release_hkid()
+
+	Handle KVM_TDX_TERMINATE_VM in the switch statement, i.e. let
+	tdx_vm_ioctl() deal with kvm->lock
 
 
---3oqy7dsarzc6vyet
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 1/4] man/man2/prctl.2,
- man/man2const/PR_FUTEX_HASH.2const: Document PR_FUTEX_HASH
-References: <20250602140104.2769223-1-bigeasy@linutronix.de>
- <20250602140104.2769223-2-bigeasy@linutronix.de>
- <qgp2ueiyfwfd6t3fpwvnryrhnpy6rro5npsqjqzvkovhyawiyb@kl6igspxexqn>
- <20250611084716.xboKOTHN@linutronix.de>
-MIME-Version: 1.0
-In-Reply-To: <20250611084716.xboKOTHN@linutronix.de>
+The version 1 RFC:
 
-Hi Sebastian,
+	https://lore.kernel.org/all/20250313181629.17764-1-adrian.hunter@intel.com/
 
-On Wed, Jun 11, 2025 at 10:47:16AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-06-11 10:43:07 [+0200], Alejandro Colomar wrote:
-> > Hi Sebastian,
-> Hi,
->=20
-> > On Mon, Jun 02, 2025 at 04:01:01PM +0200, Sebastian Andrzej Siewior wro=
-te:
-> > > The prctl(PR_FUTEX_HASH) is queued for the v6.16 merge window.
-> > > Add some documentation of the interface.
-> > >=20
-> > > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> >=20
-> > LGTM, thanks!  Please let me know when this is merged into Linus's tree.
->=20
-> This is in v6.16-rc1 since last Monday. We do regression handling now
-> but I think it will stay. I can poke you once v6.16 is out in case we
-> need a last minute revert of this.
+listed 3 options and implemented option 2.  Sean replied with code for
+option 1, which tested out OK, so here it is plus a commit log.
 
-Thanks!
+It depends upon kvm_trylock_all_vcpus(kvm) which is now upstream:
 
-I've applied patch 1/4, with the following amendments:
-
-	diff --git i/man/man2const/PR_FUTEX_HASH.2const w/man/man2const/PR_FUTEX_H=
-ASH.2const
-	index 08511b183..b500c943b 100644
-	--- i/man/man2const/PR_FUTEX_HASH.2const
-	+++ w/man/man2const/PR_FUTEX_HASH.2const
-	@@ -53,14 +53,16 @@ .SH DESCRIPTION
-	 the kernel will allocate 16 hash slots
-	 once the first thread has been created.
-	 If the process continues to create threads,
-	-the kernel will try to resize the private hash based on the number of thr=
-eads
-	+the kernel will try to resize the private hash
-	+based on the number of threads
-	 and available CPUs in the system.
-	-The kernel will only increase the size and will make sure it does not exc=
-eed
-	-the size of the global hash.
-	+The kernel will only increase the size
-	+and will make sure
-	+it does not exceed the size of the global hash.
-	 .P
-	-The user can configure the size of the private
-	-hash which will also disable the
-	-automatic resize provided by the kernel.
-	+The user can configure the size of the private hash
-	+which will also
-	+disable the automatic resize provided by the kernel.
-	 .P
-	 The value in
-	 .I op
-
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3D243de1dbc9cf818fa71c97856cbaf88b9d255b44>
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e4a454ced74c0ac97c8bd32f086ee3ad74528780
 
 
-Cheers,
-Alex
+Sean Christopherson (1):
+      KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
 
---=20
-<https://www.alejandro-colomar.es/>
+ Documentation/virt/kvm/x86/intel-tdx.rst | 16 +++++++++++++++
+ arch/x86/include/uapi/asm/kvm.h          |  1 +
+ arch/x86/kvm/vmx/tdx.c                   | 34 ++++++++++++++++++++++++--------
+ 3 files changed, 43 insertions(+), 8 deletions(-)
 
---3oqy7dsarzc6vyet
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhJUWcACgkQ64mZXMKQ
-wqn8rA//dN6Sl+Qyjd5/9qDPrig4jxxKrBPBHk4lY39dYa2M6DPQpBP3TFO5rWXg
-lT4wA1mhUB65y2syN9rc/8N/biZiWvgygHsfisV4pbK0nBP34hv8JlFy2wbWxzbD
-fVmz0xhG6VblJKDU57w7b0PKG8FfgNld/gmvPG5l3OHqw/gU9Rmomd1ktd6m3ldl
-5C2gp3ZZbzyYNEYmhoGgFKb/dau9UQ9snNd66mYU9ybgAmqyKaBs/8iCQgyGUZyb
-Rq5aQxXnE1FpdSMXyzrqCjgZVR0Q+jg3A7b4hr0ee2Zu4zUeL+NB7yV4nMDDfkBX
-Iqitk4YYvsRgx6n45s79aHX8MRdJ7k0yRq4fRVFdilQcfii68n7lrGQIYYu/BWrt
-7HxTEGpE0MX56PDSganZpABnKgELh3KJQTCVZUBym2zheKQh5AtMgU+sqAlgOqAv
-YwAY4vB9nlV47GKYcFYN8ckKb3bDqFzC/BDy1BhRdIeu8lSpEevMBHSNeDXPleiP
-9mnsyl9liFHvwSbuG4FbXZPShLY6Jd9OW56OW39OvJuwwWfMTtjcPqVhJEbFfp6a
-/mRqv/8kKtgBoFTLjsYyh06NmhKTPqUIhzaYryE3X8VgMuBnEerbjH7TDCsc+0Sh
-zGG093WY4kHaIL7uG/W0UfbyJb4BPuYyKoXoqnfXP44liXQGK8g=
-=/cnx
------END PGP SIGNATURE-----
-
---3oqy7dsarzc6vyet--
+Regards
+Adrian
 
