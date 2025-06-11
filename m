@@ -1,214 +1,219 @@
-Return-Path: <linux-kernel+bounces-681046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D46AD4DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:04:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F348AD4DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1193A2330
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC93179186
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAE423ABAF;
-	Wed, 11 Jun 2025 08:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D882356A2;
+	Wed, 11 Jun 2025 08:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="aSI3qojW"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z/2HXK8q";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="con6Hdug"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED9C2397BE;
-	Wed, 11 Jun 2025 08:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749629037; cv=pass; b=R4E3oyuvOHqwHDfMCv0YbwQBFLpO2MDGeHoDuQmwB+VkPBWhnnFC+U11ufth1sjdVGdYu+BZq4P2YogUoL/4ETC4UlvSQK9PaEfEUSjK4cafKV44eJFZLH9yX9ctqF6b67OL1YV9PNggDKhUCWXOy36EMID/1vpLo1V0yGXc3bs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749629037; c=relaxed/simple;
-	bh=BDu5u8r6NxnLidcAlJTIjfUCAqMvyw4nnccApf0j0XQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LSJco3S1/MjIrNba+pViBA0lyv1QiIuoHtYHTiLM5otShcCCQDzxOKcb/Iywz/VZo862cCGozR2X41VBfnXeYJvWiC3IzoBv63EHmjrql8vPRpaQb5Yn2TS5nW0nDR84h46JH7YJw1vQ7etLFs/V4dmlhABtnPKpdkSEOyrKQzQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=aSI3qojW; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1749629000; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=f/EysTF9raz2svykPFGdFJNU0IzTEjVdFxmGmeU/aQfU8CN1sy44rS09KtiWuglUxWnKMoiv+G/MmPYBj3T6dEDxK28jtMXgV3Yym3XqarO5uB5rwClzYXP2ddZDwfRslCO9W5FtmXeDDKW5ynkkKIqqpPLsbCGgq5Zfz9ORHVA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749629000; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BDu5u8r6NxnLidcAlJTIjfUCAqMvyw4nnccApf0j0XQ=; 
-	b=MBvDXU7kP1xSkKZ/AUpiQb5D1kxynNrJfyuLn0ogVB6MmL8ftgS+VLiEIF3r0Igse3RhK5FXab65Ngg6iGfuc5htvD8/y7UqxUINNSa8G/NPnMuDpBnfiATr2f3GVW9Te7uKwpz80bi2mcKNrRaTPj9i/6VM55rRbwUAydkwbAI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749629000;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=BDu5u8r6NxnLidcAlJTIjfUCAqMvyw4nnccApf0j0XQ=;
-	b=aSI3qojW3+ygrOnzwqKDqEW4EykcF9gw4oGzptZ6aiZzD5aesD0pvK27g26NKROz
-	D27mwcNpcKsruAJKQkQovyVBqVAdNxb7iRQcwp1ZJ3+BUzSu9nzHcDrUgNt8OLwspjq
-	O59cvuKzQLikvCa7ZrA98RVG2nVUvozYqNScXJO1bwfwcJTJyTZu6ShK8G6Z/uvw6si
-	p9om+r8WxOS3SNJNQyZAabXgWDuVVdpcIk89BoiJcwL1zPfzQduqHbyO+Yi4MrYEgey
-	vmHbry7zvmuD/LIAPsuY8sPVmipArDZvyM46uD/QmL+eB36UkywDAGOHRP4aJmoE5Al
-	qqelW37hqw==
-Received: by mx.zohomail.com with SMTPS id 1749628998705473.0702499938236;
-	Wed, 11 Jun 2025 01:03:18 -0700 (PDT)
-Message-ID: <9ebe16a8d33e00c39c142748a1ea6fff96b9565a.camel@icenowy.me>
-Subject: Re: [PATCH net v2] dt-bindings: net: ethernet-controller: Add
- informative text about RGMII delays
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chaoyi Chen
- <chaoyi.chen@rock-chips.com>, Matthias Schiffer
- <matthias.schiffer@ew.tq-group.com>, Heiner Kallweit
- <hkallweit1@gmail.com>,  netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 11 Jun 2025 16:03:11 +0800
-In-Reply-To: <ba7b290d-0cd1-4809-822a-bfe902684d7e@lunn.ch>
-References: <20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch>
-	 <e4db4e6f0a5a42ceacacc925adbe13747a6f948e.camel@icenowy.me>
-	 <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
-	 <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
-	 <aEFmNMSvffMvNA8I@shell.armlinux.org.uk>
-	 <84c534f9dbfa7c82300863cd40e5a9b6e6e29411.camel@icenowy.me>
-	 <ba7b290d-0cd1-4809-822a-bfe902684d7e@lunn.ch>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0235222D79B;
+	Wed, 11 Jun 2025 08:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749629080; cv=none; b=SYWGV52stetCzBMZw8qZ37UHwlZZ2vIC+vMn4lJIitpypvz5OfuCrUelomycuBQalu+9r2hVqjlq05f6orBypyqgdo8HHUo86Ekz/9IIFeACx/vAtchx2XEM49LwOUzrfDih+ULsLh0AQoRGAGRCPkg3xt5jd1xtBLqsWUpvChU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749629080; c=relaxed/simple;
+	bh=3/Efkva65yPVo5qOxC3lVrHAJLXm7UCzGtHmQ4KXEhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7A8TsEah4GZqMFBgEqGq/NyGqM6d+PdlfyHDIrZLBP5zTByucmJbL1Eo64o5by4lcVpCwYN8e0VBlTZxmO5Gp3aZCwAkVQ3i2/vBh1NplYG9S6UcmI+kggPLKuxsgEHddD9W5Hdqa5VXeSg/flaEBF2vo6em/LIbi7KMpDHWsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z/2HXK8q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=con6Hdug; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 11 Jun 2025 10:04:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749629076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j2SKKUdPrZUXJA24/Q7m79DvirdquN66Z/YUL7hCSVY=;
+	b=Z/2HXK8qrXAErz0whT4G+v7b2AsxF/jbF8ZBGwtAPR4Rtvzj5bOKkweFBwqzhuXYe1DfyC
+	xR19ojZixIsNy/XrvoL8TT03yW1j/mFdnODEfWqxovfQz+5G3qgY61p4r39mHs6j+kWTpq
+	t3ylT38Yv6G4sC5z0jIB2+Q68cSFCa7afcm/uKANd7kVgY40iidiPp38XdcV0R0D9msY/x
+	FFA2xu3uOp4KAx5BkCMPkzblM3oC6sWQPc2kEYg1T5VTq5t6Dg2MbwbwevTFoA2CH/WlSN
+	fYNXAIc5yFzd35KxpWdJ/EmDIWMD7CxT240hIoIZUtdzmAYsrskcyfkqZ4fjWg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749629076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j2SKKUdPrZUXJA24/Q7m79DvirdquN66Z/YUL7hCSVY=;
+	b=con6HdugG6CXlKqO4IUFGqu2feEReKr7XM9huuYhJk3Oo8kGoFjmhuc8hZVrP7ssTLu6/d
+	jQ/rTkKMZ0A+s4Aw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, 
+	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Mark Brown <broonie@kernel.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 09/14] selftests: harness: Move teardown conditional
+ into test metadata
+Message-ID: <20250611093942-f6c65a06-c72a-4451-aa1e-8cb8de0d69cb@linutronix.de>
+References: <20250505-nolibc-kselftest-harness-v4-0-ee4dd5257135@linutronix.de>
+ <20250505-nolibc-kselftest-harness-v4-9-ee4dd5257135@linutronix.de>
+ <aEfVYQaid5uOHB+Y@nvidia.com>
+ <20250610130817-253d2b2d-030a-4eda-91fc-3edb58a4f549@linutronix.de>
+ <20250610120902.GB543171@nvidia.com>
+ <aEh+DNmbZrqg6rHR@nvidia.com>
+ <20250610234657.GO543171@nvidia.com>
+ <aEkqtfcOJDrxAAcs@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aEkqtfcOJDrxAAcs@nvidia.com>
 
-=E5=9C=A8 2025-06-05=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 15:48 +0200=EF=BC=
-=8CAndrew Lunn=E5=86=99=E9=81=93=EF=BC=9A
-> On Thu, Jun 05, 2025 at 06:51:43PM +0800, Icenowy Zheng wrote:
-> > =E5=9C=A8 2025-06-05=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 10:41 +0100=EF=
-=BC=8CRussell King (Oracle)=E5=86=99=E9=81=93=EF=BC=9A
-> > > On Thu, Jun 05, 2025 at 05:06:43PM +0800, Icenowy Zheng wrote:
-> > > > In addition, analyzing existing Ethernet drivers, I found two
-> > > > drivers
-> > > > with contradition: stmicro/stmmac/dwmac-qcom-ethqos.c and
-> > > > ti/icssg/icssg_prueth.c .
-> > > >=20
-> > > > The QCOM ETHQOS driver enables the MAC's TX delay if the
-> > > > phy_mode
-> > > > is
-> > > > rgmii or rgmii-rxid, and the PRU ETH driver, which works on
-> > > > some
-> > > > MAC
-> > > > with hardcoded TX delay, rejects rgmii and rgmii-rxid, and
-> > > > patches
-> > > > rgmii-id or rgmii-txid to remove the txid part.
-> > >=20
-> > > No, this is wrong.
-> > >=20
-> > > First, it does not reject any RGMII mode. See qcom_ethqos_probe()
-> > > and
-> > > the switch() in there. All four RGMII modes are accepted.
-> >=20
-> > Well my sentence have its subject switched here. I mean the TI PRU
-> > ETH
-> > driver is rejecting modes.
->=20
-> Which is theoretically fine. I've not looked at this driver in
-> particular, but there are some MACs were you cannot disable the
-> delay.
-> The MAC always imposes 2ns delay. That would mean a PCB which also
-> has
-> extra long clock lines is simply FUBAR, cannot work, and 'rgmii' is
-> invalid, so reject it.
+On Wed, Jun 11, 2025 at 12:05:25AM -0700, Nicolin Chen wrote:
+> On Tue, Jun 10, 2025 at 08:46:57PM -0300, Jason Gunthorpe wrote:
+> > On Tue, Jun 10, 2025 at 11:48:44AM -0700, Nicolin Chen wrote:
+> > > On Tue, Jun 10, 2025 at 09:09:02AM -0300, Jason Gunthorpe wrote:
+> > > > On Tue, Jun 10, 2025 at 01:38:22PM +0200, Thomas Weißschuh wrote:
+> > > > > > ------------------------------------------------------------------
+> > > > > > #  RUN           iommufd_dirty_tracking.domain_dirty128M_huge.enforce_dirty ...
+> > > > > > # enforce_dirty: Test terminated unexpectedly by signal 11
+> > > > 
+> > > > Sig 11 is weird..
+> > > 
+> > > > > On another note, the selftest should use the kselftest_harness' ASSERT_*()
+> > > > > macros instead of plain assert().
+> > > > 
+> > > > IIRC the kselftest stuff explodes if you try to use it's assert
+> > > > functions within a fixture setup/teardown context.
+> > > > 
+> > > > I also wasn't able to reproduce this (x86 ubuntu 24 LTS OS) Maybe
+> > > > it is ARM specific, I think Nicolin is running on ARM..
+> > > 
+> > > Yes. And I was running with 64KB page size. I just quickly retried
+> > > with 4KB page size (matching x86), and all failed tests pass now.
+> > 
+> > That's a weird thing to be sensitive too. Can you get a backtrace from
+> > the crash, what function/line is crashing?
+> 
+> I think I am getting what's going on. Here the harness code has a
+> parent process and a child process:
+> 
+> --------------------------------------------------------------
+> 428-            /* _metadata and potentially self are shared with all forks. */ \
+> 429:            child = fork(); \
+> 430:            if (child == 0) { \
+> 431-                    fixture_name##_setup(_metadata, self, variant->data); \
+> 432-                    /* Let setup failure terminate early. */ \
+> 433-                    if (_metadata->exit_code) \
+> 434-                            _exit(0); \
+> 435-                    *_metadata->no_teardown = false; \
+> 436-                    fixture_name##_##test_name(_metadata, self, variant->data); \
+> 437-                    _metadata->teardown_fn(false, _metadata, self, variant->data); \
+> 438-                    _exit(0); \
+> 439:            } else if (child < 0 || child != waitpid(child, &status, 0)) { \
+> 440-                    ksft_print_msg("ERROR SPAWNING TEST GRANDCHILD\n"); \
+> 441-                    _metadata->exit_code = KSFT_FAIL; \
+> 442-            } \
+> 443-            _metadata->teardown_fn(true, _metadata, self, variant->data); \
+> 444-            munmap(_metadata->no_teardown, sizeof(*_metadata->no_teardown)); \
+> 445-            _metadata->no_teardown = NULL; \
+> 446-            if (self && fixture_name##_teardown_parent) \
+> 447-                    munmap(self, sizeof(*self)); \
+> 448-            if (WIFEXITED(status)) { \
+> 449-                    if (WEXITSTATUS(status)) \
+> 450-                            _metadata->exit_code = WEXITSTATUS(status); \
+> 451-            } else if (WIFSIGNALED(status)) { \
+> 452-                    /* Forward signal to __wait_for_test(). */ \
+> 453-                    kill(getpid(), WTERMSIG(status)); \
+> 454-            } \
+> ....
+> 456-    static void wrapper_##fixture_name##_##test_name##_teardown( \
+> 457-            bool in_parent, struct __test_metadata *_metadata, \
+> 458-            void *self, const void *variant) \
+> 459-    { \
+> 460-            if (fixture_name##_teardown_parent == in_parent && \
+> 461-                            !__atomic_test_and_set(_metadata->no_teardown, __ATOMIC_RELAXED)) \
+> 462-                    fixture_name##_teardown(_metadata, self, variant); \
+> 463-    } \
+> --------------------------------------------------------------
+> 
+> I found there is a race between those two processes, resulting in
+> the teardown() not getting invoked: I added some ksft_print_msg()
+> calls in-between the lines to debug, those tests can pass mostly,
+> as teardown() got invoked.
+> 
+> I think the reason why those huge page cases fail is just because 
+> the huge version of setup() takes longer time..
 
-BTW I found that in some case the assumption of PHY-side delay being
-always better than MAC-side one is wrong -- modern MACs usually have
-adjustable delay line, but Realtek 8211-series PHYs have only on/off
-delay with a fixed 2ns value.
+Can you try to recreate this issue with changes to
+tools/testing/selftests/kselftest_harness/harness-selftest.c ?
 
->=20
-> > Well I am not sure, considering two examples I raised here (please
-> > note
-> > I am comparing QCOM ETHQOS and TI PRUETH two drivers, they have
-> > contrary handling of RGMII modes, and one matches the old binding
-> > document, one matches the new one).
->=20
-> Nope, i fully agree with Russell, the binding has not changed, just
-> the
-> words to explain the binding.
+> I haven't figured out a proper fix yet, but something smells bad:
+> 1) *no_teardown is set non-atomically, while both processes calls
+>    __atomic_test_and_set()
 
-Well I read about phy.rst, and I found my understanding of the old
-binding matches my understanding of phy.rst, but does not match the new
-binding.
+Does this make a difference?
 
->=20
-> Just for a minute, consider your interpretation of the old text is
-> wrong. Read the old text again and again, and see if you can find an
-> interpretation which is the same as the new text. If you do:
->=20
-> * It proves our point that describing what this means is hard, and
-> =C2=A0 developers will get it wrong.
->=20
-> * There is an interpretation of both the old and new where nothing
-> =C2=A0 changed.
->=20
-> * You have to be careful looking at drivers, because some percent of
-> =C2=A0 developers also interpreted it wrongly, and have broken
-> =C2=A0 implementations as a result.=C2=A0 You cannot say the binding mean=
-s X,
-> =C2=A0 not Y, because there is a driver using meaning X.
->=20
-> My hope with the new text is that it focuses on hardware, which is
-> what DT is about. You can look at the schematic, see if there is
-> extra
-> long clock lines or not, and then decided on 'rgmii-id' if there are
-> not, and 'rgmii' is there are. The rest then follows from that.
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 2925e47db995..89fb37a21d9d 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -410,7 +410,7 @@
+                /* Makes sure there is only one teardown, even when child forks again. */ \
+                _metadata->no_teardown = mmap(NULL, sizeof(*_metadata->no_teardown), \
+                        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0); \
+-               *_metadata->no_teardown = true; \
++               __atomic_store_n(_metadata->no_teardown, true, __ATOMIC_SEQ_CST); \
+                if (sizeof(*self) > 0) { \
+                        if (fixture_name##_teardown_parent) { \
+                                self = mmap(NULL, sizeof(*self), PROT_READ | PROT_WRITE, \
+@@ -429,7 +429,7 @@
+                        /* Let setup failure terminate early. */ \
+                        if (_metadata->exit_code) \
+                                _exit(0); \
+-                       *_metadata->no_teardown = false; \
++                       __atomic_store_n(_metadata->no_teardown, false, __ATOMIC_SEQ_CST); \
+                        fixture_name##_##test_name(_metadata, self, variant->data); \
+                        _metadata->teardown_fn(false, _metadata, self, variant->data); \
+                        _exit(0); \
+@@ -455,7 +455,7 @@
+                void *self, const void *variant) \
+        { \
+                if (fixture_name##_teardown_parent == in_parent && \
+-                               !__atomic_test_and_set(_metadata->no_teardown, __ATOMIC_RELAXED)) \
++                               !__atomic_test_and_set(_metadata->no_teardown, __ATOMIC_SEQ_CST)) \
+                        fixture_name##_teardown(_metadata, self, variant); \
+        } \
+        static struct __test_metadata *_##fixture_name##_##test_name##_object; \
 
-Well I think "rgmii-*" shouldn't exist at all, if focusing on hardware.
-I prefer only "rgmii" with properties describing the delay numbers.
+> 2) parent doesn't seem to wait for the setup() to complete..
 
->=20
-> And if you look at the questions i've been asking for the last year
-> or
-> more, i always start with, "Does the PCB have extra long clock
-> lines?".
->=20
-> > > The RGMII modes have been documented in
-> > > Documentation/networking/phy.rst
-> > > (Documentation/networking/phy.txt predating) since:
-> >=20
-> > I checked the document here, and it seems that it's against the
-> > changed
-> > binding document (it matches the original one):
-> >=20
-> > The phy.rst document says:
-> > ```
-> > * PHY_INTERFACE_MODE_RGMII: the PHY is not responsible for
-> > inserting
-> > any
-> > =C2=A0 internal delay by itself, it assumes that either the Ethernet MA=
-C
-> > (if
-> > capable)
-> > =C2=A0 or the PCB traces insert the correct 1.5-2ns delay
-> > ```
-> >=20
-> > The changed binding document says:
->=20
-> You are not reading it carefully enough. The binding describes
-> hardware, the board. phy.rst describes the phylib interface. They are
-> different.
+setup() is called in the child (L431) right before the testcase itself is
+called (L436). The parent waits for the child to exit (L439) before unmapping.
 
-Well I can't find the reason of phy-mode being so designed except for
-leaky abstraction from phylib.
+> 3) when parent runs faster than the child that is still running
+>    setup(), the parent unmaps the no_teardown and set it to NULL,
+>    then UAF in the child, i.e. signal 11?
 
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Andrew
+That should never happen as the waitpid() will block until the child running
+setup() and the testcase itself have exited.
 
+Does the issue also happen when you only execute a single testcase?
+$ ./iommufd -r iommufd_dirty_tracking.domain_dirty128M_huge.enforce_dirty
+
+
+Thomas
 
