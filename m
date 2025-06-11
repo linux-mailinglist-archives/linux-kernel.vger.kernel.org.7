@@ -1,212 +1,163 @@
-Return-Path: <linux-kernel+bounces-682152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50C1AD5C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:35:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE217AD5C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 320167AD1E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0E5D1775F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9222173D;
-	Wed, 11 Jun 2025 16:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6590020B7EA;
+	Wed, 11 Jun 2025 16:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="F52v95jE"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dB+LPFkp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7635D213E78;
-	Wed, 11 Jun 2025 16:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC31218591;
+	Wed, 11 Jun 2025 16:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749659645; cv=none; b=UXLKyRYuajp5gSd1gioyC1vziNP4RShxFvFptcmaxRNKUPaOJ9rvznrdFtxZxfE7/zR4vRsq2XX6u79smGUCOLUgLQmbPmdjOYUdWX+IpphB1oOdFs15xZeWDFwdyRz7o6bpVEJ+RBRLqkSE/OQH6rTXsofN7KNLrFQYChSPeXg=
+	t=1749659697; cv=none; b=pHMUBtjxAPWFbttpbhCYaHbqzl+AivQAR069yWZbIjNfVjEQ48mozOzFuIHEqBaZ2hxO/yUkxiPiU2TQTXjm0Y968XxcopFokzH+qTMM1KppGOIV5Jefb/nTB8r5h2cD7DQ7Q6on7+bfVWv2XKiDGeFk/T7zRUbH8WVVK/GWigY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749659645; c=relaxed/simple;
-	bh=9PghBU/VAIibPl4YWoEbxb+Vq7pSne0KImwxsb0T908=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vt5sqbI4Yc1U2KJAdaxvae2yhBAllk1QMjmuJ5iJAdXiDS5NfaHqVgu9e0F3DcOWES1t5CCHVfGo4KZjx0+EyIn4giDBi1ARG6XFO9F+6xdgoc4X+KvrsSHbE/Dbvsu1839zRA04tn8qiBaHphUWZmD3hdV+KWmbHuvM4UkEHro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=F52v95jE; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1749659639; bh=9PghBU/VAIibPl4YWoEbxb+Vq7pSne0KImwxsb0T908=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=F52v95jEqDy6RoNLRnD+RLUwn8rapwmQP5bV7oDh1HxNwcxULvniTMwfndx682YRT
-	 MTCQBDBihwuHwpSHRXc2MxGWGHxBw/GO+B2Nq91PstepJCNavA0ulIovZ32+NVgUti
-	 UEWVJG4QidcWOgCrJO7EqpFwGhYPnb7OQRtFT2mg=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Wed, 11 Jun 2025 18:33:18 +0200
-Subject: [PATCH v4 4/4] arm64: dts: qcom: sdm632-fairphone-fp3: Enable
- display and GPU
+	s=arc-20240116; t=1749659697; c=relaxed/simple;
+	bh=YnBjJCjZGkkrgSbru8fgRTSfROvOQq67aVGW6ZpVPgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MP/wI0hOM7COxBSajhZN4jX+WB8GjhWlK0LEA2krlKNbG3/wuQoAEEyUyreYDqQXTJ6HrgflE2ElCAv9d2NBhHheV0G3vQfdvC+suR8Jty0AZ2gk0fQdrexuiOKMfPzjZRGE/S54uvRrKw1DhHkQvd1ziCIX95iibAHN4TudoJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dB+LPFkp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A1BC4CEE3;
+	Wed, 11 Jun 2025 16:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749659695;
+	bh=YnBjJCjZGkkrgSbru8fgRTSfROvOQq67aVGW6ZpVPgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dB+LPFkpPB50dxO2SwKdjRyNRaC4GTJSF+jgfUyoydG4rqDU1/cAhbNfTSc4Zi6Df
+	 cV8hG9u7FZ6UAF7suixSuRhW4+uJrn7i3DRvt3R0wPygCK3FUGNKhxalSjH8aXsUPd
+	 pxWXAGsiEuQRHVLDEtNQkLeJJJu+Isfkoau6xj9RGtyfbdMSE9GH5KAjxfgOwqu/Oa
+	 4hTDzIFuHtOcc8hbq1nVmumB6UOvemPyeCnkPO3/L89aimaVaFZt4DFf0+Oge2dYJF
+	 k5oBFgO/bq0TEWR0qyGieLeOrCEvvx8lei1ZR18LWITEp/URmXPA/H89o8+Fsvy2UL
+	 XG9XKd3xyk6TA==
+Date: Wed, 11 Jun 2025 09:34:30 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: linux-crypto@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/7] crypto: testmgr - replace
+ CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS
+Message-ID: <20250611163430.GA1254@sol>
+References: <20250505203345.802740-1-ebiggers@kernel.org>
+ <20250505203345.802740-4-ebiggers@kernel.org>
+ <DAJOCL4UQWZ1.2CB0NH55US5EI@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-fp3-display-v4-4-ef67701e7687@lucaweiss.eu>
-References: <20250611-fp3-display-v4-0-ef67701e7687@lucaweiss.eu>
-In-Reply-To: <20250611-fp3-display-v4-0-ef67701e7687@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3280; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=9PghBU/VAIibPl4YWoEbxb+Vq7pSne0KImwxsb0T908=;
- b=owEBbQKS/ZANAwAKAXLYQ7idTddWAcsmYgBoSa/0dZklWpKiHcLeocBA55qVH330Y6VmwhQt1
- FME+LsNK16JAjMEAAEKAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCaEmv9AAKCRBy2EO4nU3X
- Vtc3D/sGEpreLVLjkNB9Q0671b/UlYCfku5noSUCU+kK7JT6IWI/st31bd33VQP8qe2xaXzKW+c
- feNsmmF25dB3Tht6FnF4xV4sTxFRyZF8H7+G1Tafw13AnX5NPFdKYvL1q7616wfl4GUFMzyqQhk
- mHyv2kvsbiRVCk0sN6pPgG6OL2ppAuGMGg/fbUQptmTsvavdLQw1ihufyr1H+PHyvNSOoyGsJeK
- OXCJ6EtKGXYgweQY3AYU6RfPjhOOp6qfdJBOr08b5LMhFrbP8Cl4+JHU2eqlAwTrUxgGU0MSY+n
- d9Z0U8dmr4md1mIj77Up5WdasPlZr+9QjEqtFsstvby5ouObwbgEdHpixy/FRIR50NFfA8iEsUO
- hDTZYyjlqbwZOSUGhIOS0hnwZhwO+j8r1Kx+X6I1BfKAr0PsQmbd9IkLEP8SDCk3RCLoal7Mxlo
- wjGoGCnVRiXTIOlRNr//IR8PWBmgzQ5xHRSIxruxZrHSJD/ou3IYB/l1Wyoqoeqw8ciZQhzJJKQ
- 6SNECSnMUNo7Z0swtCawhpZMEyqPXNTTGG/0W5kqqkx8ksh65xo8URojQEWfm1uad6oHQ0/OyyL
- n25vjtGumTJxc+eXAmgYdF7yG1SMZok+U58bkpJYeagmZlLKs3u82qmTTZKbZqQjluYfr1xzWgL
- URD3tSw0v8ZAAVw==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DAJOCL4UQWZ1.2CB0NH55US5EI@cknow.org>
 
-Add the description for the display panel found on this phone.
-Unfortunately the LCDB module on PMI632 isn't yet supported upstream so
-we need to use a dummy regulator-fixed in the meantime.
+On Wed, Jun 11, 2025 at 01:41:06PM +0200, Diederik de Haas wrote:
+> Hi Eric,
+> 
+> On Mon May 5, 2025 at 10:33 PM CEST, Eric Biggers wrote:
+> > The negative-sense of CRYPTO_MANAGER_DISABLE_TESTS is a longstanding
+> > mistake that regularly causes confusion.  Especially bad is that you can
+> > have CRYPTO=n && CRYPTO_MANAGER_DISABLE_TESTS=n, which is ambiguous.
+> >
+> > Replace CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS which has the
+> > expected behavior.
+> >
+> > The tests continue to be disabled by default.
+> > ---
+> >  <snip>
+> > diff --git a/crypto/Kconfig b/crypto/Kconfig
+> > index da352f1984ea..8f1353bbba18 100644
+> > --- a/crypto/Kconfig
+> > +++ b/crypto/Kconfig
+> >  <snip>
+> > @@ -171,20 +171,26 @@ config CRYPTO_USER
+> >  	select CRYPTO_MANAGER
+> >  	help
+> >  	  Userspace configuration for cryptographic instantiations such as
+> >  	  cbc(aes).
+> >  
+> > -config CRYPTO_MANAGER_DISABLE_TESTS
+> > -	bool "Disable run-time self tests"
+> > -	default y
+> > +config CRYPTO_SELFTESTS
+> > +	bool "Enable cryptographic self-tests"
+> > +	depends on DEBUG_KERNEL
+> >  	help
+> > -	  Disable run-time self tests that normally take place at
+> > -	  algorithm registration.
+> > +	  Enable the cryptographic self-tests.
+> > +
+> > +	  The cryptographic self-tests run at boot time, or at algorithm
+> > +	  registration time if algorithms are dynamically loaded later.
+> > +
+> > +	  This is primarily intended for developer use.  It should not be
+> > +	  enabled in production kernels, unless you are trying to use these
+> > +	  tests to fulfill a FIPS testing requirement.
+> 
+> I built a 6.16-rc1 kernel [1] and its config is based upon Debian's and
+> that has enabled CRYPTO_SELFTESTS [2] (due to Debian bug 599441 [3]).
+> 
+> I then installed it on 3 Rockchip based devices and booted into that.
+> 1. Radxa Rock 5B (rk3588)
+> 2. PINE64 Quartz64 Model B (rk3568)
+> 3. PINE64 RockPro64 (rk3399)
+> 
+> The full dmesg output for level 0-4 can be found at [4], [5] and [6]
+> 
+> The filtered dmesg output for Rock 5B:
+> ERROR:
+> [    0.709822] basic hdkf test(hmac(sha256)): failed to allocate transform: -2
+> WARNING:
 
-And with this done we can also enable the GPU and set the zap shader
-firmware path.
+https://lore.kernel.org/r/20250610191600.54994-1-ebiggers@kernel.org/ fixed the
+HKDF failure.  It was caused by a patch that changed initcall levels.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
- arch/arm64/boot/dts/qcom/msm8953.dtsi             |  2 +-
- arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 62 +++++++++++++++++++++++
- 2 files changed, 63 insertions(+), 1 deletion(-)
+> [    8.877288] alg: skcipher: skipping comparison tests for xctr-aes-ce because xctr(aes-generic) is unavailable
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index 273e79fb75695af1fd7a6f77273b95fe3b913fac..c5205d09c442e45e4a0cc3e6d8ff7d9d7bda0034 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -1147,7 +1147,7 @@ &bimc SLV_EBI RPM_ALWAYS_TAG>,
- 
- 			status = "disabled";
- 
--			zap-shader {
-+			gpu_zap_shader: zap-shader {
- 				memory-region = <&zap_shader_region>;
- 			};
- 
-diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-index 31ed26c31e6ea381a8942ccf569513df3300cdeb..55a45b528bd3f1bf9b6fe7882753338b43c62271 100644
---- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-@@ -36,6 +36,14 @@ key-volume-up {
- 		};
- 	};
- 
-+	/* Dummy regulator until PMI632 has LCDB VSP/VSN support */
-+	lcdb_dummy: regulator-lcdb-dummy {
-+		compatible = "regulator-fixed";
-+		regulator-name = "lcdb_dummy";
-+		regulator-min-microvolt = <5500000>;
-+		regulator-max-microvolt = <5500000>;
-+	};
-+
- 	vph_pwr: vph-pwr-regulator {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vph_pwr";
-@@ -44,6 +52,14 @@ vph_pwr: vph-pwr-regulator {
- 	};
- };
- 
-+&gpu {
-+	status = "okay";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/msm8953/fairphone/fp3/a506_zap.mbn";
-+};
-+
- &hsusb_phy {
- 	vdd-supply = <&pm8953_l3>;
- 	vdda-pll-supply = <&pm8953_l7>;
-@@ -87,6 +103,45 @@ &lpass {
- 	status = "okay";
- };
- 
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dsi0 {
-+	vdda-supply = <&pm8953_s3>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "djn,98-03057-6598b-i";
-+		reg = <0>;
-+
-+		reset-gpios = <&tlmm 61 GPIO_ACTIVE_LOW>;
-+
-+		iovcc-supply = <&pm8953_l6>;
-+		vsn-supply = <&lcdb_dummy>;
-+		vsp-supply = <&lcdb_dummy>;
-+
-+		pinctrl-0 = <&mdss_te_default>;
-+		pinctrl-names = "default";
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&mdss_dsi0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dsi0_out {
-+	data-lanes = <0 1 2 3>;
-+	remote-endpoint = <&panel_in>;
-+};
-+
-+&mdss_dsi0_phy {
-+	vcca-supply = <&pm8953_l3>;
-+	status = "okay";
-+};
-+
- &mpss {
- 	firmware-name = "qcom/msm8953/fairphone/fp3/mba.mbn",
- 			"qcom/msm8953/fairphone/fp3/modem.mbn";
-@@ -292,6 +347,13 @@ &tlmm {
- 	 * 135-138: fingerprint reader (SPI)
- 	 */
- 	gpio-reserved-ranges = <0 4>, <135 4>;
-+
-+	mdss_te_default: mdss-te-default-state {
-+		pins = "gpio24";
-+		function = "mdp_vsync";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
- };
- 
- &uart_0 {
+That's expected if you have CONFIG_CRYPTO_AES_ARM64_CE_BLK enabled but
+CONFIG_CRYPTO_XCTR disabled.  Some tests are skipped in that case.
 
--- 
-2.49.0
+> [   14.172991] alg: ahash: rk-sha1 export() overran state buffer on test vector 0, cfg="import/export"
+> [   14.202291] alg: ahash: rk-sha256 export() overran state buffer on test vector 0, cfg="import/export"
+> [   14.230887] alg: ahash: rk-md5 export() overran state buffer on test vector 0, cfg="import/export"
 
+That means the Rockchip crypto driver is broken.
+
+It may have been broken for a long time.  Hardly anyone ever tests the hardware
+crypto drivers, as they only work on very specific platforms and are often
+useless anyway.  The software crypto is much better tested and often faster.
+
+I don't think broken drivers like these should even be in the kernel at all.
+
+For now, you should just disable CONFIG_CRYPTO_DEV_ROCKCHIP.
+
+Anyway, the more interesting part of your email is that you pointed out that
+Debian has the crypto self-tests enabled, precisely in order to automatically
+disable buggy drivers like these.
+
+And actually Fedora does this too.
+
+This seems kind of crazy.  But unfortunately, the crypto/ philosophy seems to be
+to enable as many untested and buggy drivers as possible, then rely on them
+being (incompletely) self-tested in production.  So, aparently this is a thing.
+
+But of course the distros won't want to enable the full set of tests, which
+would slow down boot times significantly, but rather only the "fast" ones (as
+they were doing before)...
+
+So I'll send a patch that adds back a kconfig knob to run the fast tests only,
+which I had removed in commit 698de822780f.
+
+- Eric
 
