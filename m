@@ -1,214 +1,268 @@
-Return-Path: <linux-kernel+bounces-681669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E1BAD55AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:36:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE23AD55B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 179B13A60E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:35:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD243A6BDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE01027FB27;
-	Wed, 11 Jun 2025 12:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWrfTS+V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B2E283128;
+	Wed, 11 Jun 2025 12:36:39 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C51271446
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E3427E1CA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749645369; cv=none; b=sqg6LsXMcV3jFvovHICXYmjN7xBROTQnraDvq2p0HMGub3D0ZEsd02PNdbX86kpMl0zrt6XqEA9zlXwkksc2qUSjfQZky0QokLQW/mt91I2i3ytCg9pNRiRyidN5fi77T4GyE6YvFd8Pq0/FxJO8ZrBLqIzzkc19kp1WR9MIjQI=
+	t=1749645398; cv=none; b=TTAsdS7cY5AR6zW/wukzU/Lj00KJxmuZEY45vGyO7CbeESAbudYNOy4vMimXDiFa+Atw0tuYWS0A7mecVMVLA2XYzm44iEwe2+4ba/Hp/04z8BF04A7J4J9vh1XGwU+kNRntsbr4m81ahJEUQHQEq0IsEvL7gLbBymmGnwdCI/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749645369; c=relaxed/simple;
-	bh=DrBUTn44Zt4i4j2IzfBX9fV1hFit3GAeNfb3pYs26DY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEh+nyXYUQHNkMA89IxUBpT0C/6SgOcSoqlyBYNlAj2wtc0IzXRKpu0TC24+BErexMPNF4Rzv6/FTcYu3TiNDcT/FFAzsiCKze2Wgw6hBw4vVuMGJmns4H//ufAY69ZOo786cHBmfixGKP+exSsuVrG88M90UlkSpGhcxSTq/+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWrfTS+V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D95C4CEEE;
-	Wed, 11 Jun 2025 12:36:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749645369;
-	bh=DrBUTn44Zt4i4j2IzfBX9fV1hFit3GAeNfb3pYs26DY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OWrfTS+VIlBMUJjfxDheQ8gP/iGRNOF8GhLfUBIqzar3HF2vaB5C+UODE33eP2sGv
-	 9xO38o770X9mWUpRoi0mfc8QFpRVH54wwRtMkhKfCOF1hf1VSySHd8nqGWINEk7f5Q
-	 +3n0/bwSzUH1Di7AXaa69pZ37b+m9uzyjpe6Rl/hbGYeH5uksfgtg6BDIcHXre0IOa
-	 Qv6Ox54/6XQU4AKlNW2hMd+5ybRRQm8JvdSpbhNORX7oPgut0O5RQLX1UTwXY0eDmm
-	 l//FLaP0FrskCNoHf5QiILg0ysK0yGoxbYlC5VRoJjqKdXibfKVVmRO4gj6YYcYCRf
-	 TwJTpTC587wVw==
-Date: Wed, 11 Jun 2025 18:06:03 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-	Jerome Forissier <jerome.forissier@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] optee: ffa: fix sleep in atomic context
-Message-ID: <aEl4M0-xig8DbJvI@sumit-X1>
-References: <20250602120452.2507084-1-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1749645398; c=relaxed/simple;
+	bh=yKpCwjJaP90v4BwUK+lpsjNv+QBZ9GHAu+qY2CR45cM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f1EWQ+fUy5uDod84vl09ezhqPDtZh3Hsl8IonCAmZUOgDJVQ1/x3Ftiep1opkBQF8WJ3ERpNSwgxtj29FfOzwyZJt3N7xn00H5Z86kH3BLt4gPIgPSOn2IALlJW/CuycR4KvRI2GbqpX8tR3ovQ1gFFW//7ht0aFFH2T+jMKrF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddcfea00afso62262035ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:36:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749645396; x=1750250196;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Iw6ADe4CFHdktnmFDzNrIt1KISUCTDLdjZLC5ZGoeg4=;
+        b=HGh/82+C9hDMbR0dd9AvwwA0fOMo8/xqtMP6QEnTf4xAy87It2li076dvaDJtwrq7Z
+         JPRXkHcNnqnm7j3R75Cqwh2uFMhFHVhix0a/S/D84N0UvTaXR4A3NQbxVCAtAzOgvmr/
+         J1+lJcqPFqHvAyJEKigyyLAA4pVvSxXgYhGfuKRxyoH8SX8IQBq/KsQrX2GZtVmtYIBz
+         pxOL0KG8n8nWlSS0ZjYmHHIq3rCy0+v0v5Xn7BwK/XqrhIZkBMFmgJzrwc6zZLd8Wd3c
+         L930mvRJYEFdFjWa/+XxJ9noIZgPtzUQR/ysOzl/GowfFdlmH0BWl3Pw4qRzNdjXdxa2
+         9IqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUejUUxzcnzjHFnnqUh6o0HBY5UmK/UolcV4PdBTtLjscTzeJNeayQ8qcf9VWEr/WheDElXRnuhjr8qIGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE9zPdkEnLq28bx8LummS4Bf1lfOqOwYKADcWFAJGULQYLkkrP
+	3Dpgl7m3xdjLV3Zx8lajsQ7cmh5Bx7dcGDAnNdFKIr8De/agEICdzFruakZNzAuo/qMIOls/V+e
+	8rSd1tCKk8WSpyZKkWTKlDCMCEw4/NAyGcKHwqvqv07aBdpbs8gEjzq9eaaQ=
+X-Google-Smtp-Source: AGHT+IFJywhnA4l5/2x4KoI8aRAdVtqHWKeUISFEcnuPZGgCasiC9IRsERd6QXRsR0w/fJ/iPNAK+t5dbjGWuovJweIWBh3RsdJE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250602120452.2507084-1-jens.wiklander@linaro.org>
+X-Received: by 2002:a05:6e02:b44:b0:3dc:8bb8:28bf with SMTP id
+ e9e14a558f8ab-3ddf4256fbcmr37462665ab.5.1749645395804; Wed, 11 Jun 2025
+ 05:36:35 -0700 (PDT)
+Date: Wed, 11 Jun 2025 05:36:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68497853.050a0220.33aa0e.036a.GAE@google.com>
+Subject: [syzbot] [bpf?] KASAN: slab-use-after-free Read in do_check
+From: syzbot <syzbot+b5eb72a560b8149a1885@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 02, 2025 at 02:04:35PM +0200, Jens Wiklander wrote:
-> The OP-TEE driver registers the function notif_callback() for FF-A
-> notifications. However, this function is called in an atomic context
-> leading to errors like this when processing asynchronous notifications:
-> 
->  | BUG: sleeping function called from invalid context at kernel/locking/mutex.c:258
->  | in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 9, name: kworker/0:0
->  | preempt_count: 1, expected: 0
->  | RCU nest depth: 0, expected: 0
->  | CPU: 0 UID: 0 PID: 9 Comm: kworker/0:0 Not tainted 6.14.0-00019-g657536ebe0aa #13
->  | Hardware name: linux,dummy-virt (DT)
->  | Workqueue: ffa_pcpu_irq_notification notif_pcpu_irq_work_fn
->  | Call trace:
->  |  show_stack+0x18/0x24 (C)
->  |  dump_stack_lvl+0x78/0x90
->  |  dump_stack+0x18/0x24
->  |  __might_resched+0x114/0x170
->  |  __might_sleep+0x48/0x98
->  |  mutex_lock+0x24/0x80
->  |  optee_get_msg_arg+0x7c/0x21c
->  |  simple_call_with_arg+0x50/0xc0
->  |  optee_do_bottom_half+0x14/0x20
->  |  notif_callback+0x3c/0x48
->  |  handle_notif_callbacks+0x9c/0xe0
->  |  notif_get_and_handle+0x40/0x88
->  |  generic_exec_single+0x80/0xc0
->  |  smp_call_function_single+0xfc/0x1a0
->  |  notif_pcpu_irq_work_fn+0x2c/0x38
->  |  process_one_work+0x14c/0x2b4
->  |  worker_thread+0x2e4/0x3e0
->  |  kthread+0x13c/0x210
->  |  ret_from_fork+0x10/0x20
-> 
-> Fix this by adding work queue to process the notification in a
-> non-atomic context.
-> 
-> Fixes: d0476a59de06 ("optee: ffa_abi: add asynchronous notifications")
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> ---
->  drivers/tee/optee/ffa_abi.c       | 41 ++++++++++++++++++++++++-------
->  drivers/tee/optee/optee_private.h |  2 ++
->  2 files changed, 34 insertions(+), 9 deletions(-)
+Hello,
 
-Sounds reasonable fix to me, FWIW:
+syzbot found the following issue on:
 
-Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+HEAD commit:    19a60293b992 Add linux-next specific files for 20250611
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15472d70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76ed3656d7159e27
+dashboard link: https://syzkaller.appspot.com/bug?extid=b5eb72a560b8149a1885
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16af860c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=174db60c580000
 
--Sumit
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c453c11565fa/disk-19a60293.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4034ded42b2e/vmlinux-19a60293.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5355903cdb8f/bzImage-19a60293.xz
 
-> 
-> diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/optee/ffa_abi.c
-> index f3af5666bb11..f9ef7d94cebd 100644
-> --- a/drivers/tee/optee/ffa_abi.c
-> +++ b/drivers/tee/optee/ffa_abi.c
-> @@ -728,12 +728,21 @@ static bool optee_ffa_exchange_caps(struct ffa_device *ffa_dev,
->  	return true;
->  }
->  
-> +static void notif_work_fn(struct work_struct *work)
-> +{
-> +	struct optee_ffa *optee_ffa = container_of(work, struct optee_ffa,
-> +						   notif_work);
-> +	struct optee *optee = container_of(optee_ffa, struct optee, ffa);
-> +
-> +	optee_do_bottom_half(optee->ctx);
-> +}
-> +
->  static void notif_callback(int notify_id, void *cb_data)
->  {
->  	struct optee *optee = cb_data;
->  
->  	if (notify_id == optee->ffa.bottom_half_value)
-> -		optee_do_bottom_half(optee->ctx);
-> +		queue_work(optee->ffa.notif_wq, &optee->ffa.notif_work);
->  	else
->  		optee_notif_send(optee, notify_id);
->  }
-> @@ -817,9 +826,11 @@ static void optee_ffa_remove(struct ffa_device *ffa_dev)
->  	struct optee *optee = ffa_dev_get_drvdata(ffa_dev);
->  	u32 bottom_half_id = optee->ffa.bottom_half_value;
->  
-> -	if (bottom_half_id != U32_MAX)
-> +	if (bottom_half_id != U32_MAX) {
->  		ffa_dev->ops->notifier_ops->notify_relinquish(ffa_dev,
->  							      bottom_half_id);
-> +		destroy_workqueue(optee->ffa.notif_wq);
-> +	}
->  	optee_remove_common(optee);
->  
->  	mutex_destroy(&optee->ffa.mutex);
-> @@ -835,6 +846,13 @@ static int optee_ffa_async_notif_init(struct ffa_device *ffa_dev,
->  	u32 notif_id = 0;
->  	int rc;
->  
-> +	INIT_WORK(&optee->ffa.notif_work, notif_work_fn);
-> +	optee->ffa.notif_wq = create_workqueue("optee_notification");
-> +	if (!optee->ffa.notif_wq) {
-> +		rc = -EINVAL;
-> +		goto err;
-> +	}
-> +
->  	while (true) {
->  		rc = ffa_dev->ops->notifier_ops->notify_request(ffa_dev,
->  								is_per_vcpu,
-> @@ -851,19 +869,24 @@ static int optee_ffa_async_notif_init(struct ffa_device *ffa_dev,
->  		 * notifications in that case.
->  		 */
->  		if (rc != -EACCES)
-> -			return rc;
-> +			goto err_wq;
->  		notif_id++;
->  		if (notif_id >= OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE)
-> -			return rc;
-> +			goto err_wq;
->  	}
->  	optee->ffa.bottom_half_value = notif_id;
->  
->  	rc = enable_async_notif(optee);
-> -	if (rc < 0) {
-> -		ffa_dev->ops->notifier_ops->notify_relinquish(ffa_dev,
-> -							      notif_id);
-> -		optee->ffa.bottom_half_value = U32_MAX;
-> -	}
-> +	if (rc < 0)
-> +		goto err_rel;
-> +
-> +	return 0;
-> +err_rel:
-> +	ffa_dev->ops->notifier_ops->notify_relinquish(ffa_dev, notif_id);
-> +err_wq:
-> +	destroy_workqueue(optee->ffa.notif_wq);
-> +err:
-> +	optee->ffa.bottom_half_value = U32_MAX;
->  
->  	return rc;
->  }
-> diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
-> index dc0f355ef72a..9526087f0e68 100644
-> --- a/drivers/tee/optee/optee_private.h
-> +++ b/drivers/tee/optee/optee_private.h
-> @@ -165,6 +165,8 @@ struct optee_ffa {
->  	/* Serializes access to @global_ids */
->  	struct mutex mutex;
->  	struct rhashtable global_ids;
-> +	struct workqueue_struct *notif_wq;
-> +	struct work_struct notif_work;
->  };
->  
->  struct optee;
-> -- 
-> 2.43.0
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b5eb72a560b8149a1885@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in do_check+0xb388/0xe170 kernel/bpf/verifier.c:19756
+Read of size 1 at addr ffff88801deeef79 by task syz-executor672/5842
+
+CPU: 1 UID: 0 PID: 5842 Comm: syz-executor672 Not tainted 6.16.0-rc1-next-20250611-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xd2/0x2b0 mm/kasan/report.c:521
+ kasan_report+0x118/0x150 mm/kasan/report.c:634
+ do_check+0xb388/0xe170 kernel/bpf/verifier.c:19756
+ do_check_common+0x168d/0x20b0 kernel/bpf/verifier.c:22905
+ do_check_main kernel/bpf/verifier.c:22996 [inline]
+ bpf_check+0x1381e/0x19e50 kernel/bpf/verifier.c:24162
+ bpf_prog_load+0x1318/0x1930 kernel/bpf/syscall.c:2972
+ __sys_bpf+0x5f1/0x860 kernel/bpf/syscall.c:5978
+ __do_sys_bpf kernel/bpf/syscall.c:6085 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6083 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6083
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7586cdbeb9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2e683128 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7586cdbeb9
+RDX: 0000000000000094 RSI: 0000200000000840 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000006
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+Allocated by task 5842:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x230/0x3d0 mm/slub.c:4359
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ do_check_common+0x13f/0x20b0 kernel/bpf/verifier.c:22798
+ do_check_main kernel/bpf/verifier.c:22996 [inline]
+ bpf_check+0x1381e/0x19e50 kernel/bpf/verifier.c:24162
+ bpf_prog_load+0x1318/0x1930 kernel/bpf/syscall.c:2972
+ __sys_bpf+0x5f1/0x860 kernel/bpf/syscall.c:5978
+ __do_sys_bpf kernel/bpf/syscall.c:6085 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6083 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6083
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5842:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2381 [inline]
+ slab_free mm/slub.c:4643 [inline]
+ kfree+0x18e/0x440 mm/slub.c:4842
+ push_stack+0x247/0x3c0 kernel/bpf/verifier.c:2069
+ check_cond_jmp_op+0x1069/0x2340 kernel/bpf/verifier.c:16562
+ do_check_insn kernel/bpf/verifier.c:19621 [inline]
+ do_check+0x672c/0xe170 kernel/bpf/verifier.c:19755
+ do_check_common+0x168d/0x20b0 kernel/bpf/verifier.c:22905
+ do_check_main kernel/bpf/verifier.c:22996 [inline]
+ bpf_check+0x1381e/0x19e50 kernel/bpf/verifier.c:24162
+ bpf_prog_load+0x1318/0x1930 kernel/bpf/syscall.c:2972
+ __sys_bpf+0x5f1/0x860 kernel/bpf/syscall.c:5978
+ __do_sys_bpf kernel/bpf/syscall.c:6085 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6083 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6083
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88801deeef00
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 121 bytes inside of
+ freed 192-byte region [ffff88801deeef00, ffff88801deeefc0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1deee
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801a4413c0 ffffea00006fca40 dead000000000004
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 2954361175, free_ts 2954343552
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ alloc_slab_page mm/slub.c:2451 [inline]
+ allocate_slab+0x8a/0x3b0 mm/slub.c:2619
+ new_slab mm/slub.c:2673 [inline]
+ ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
+ __slab_alloc mm/slub.c:3949 [inline]
+ __slab_alloc_node mm/slub.c:4024 [inline]
+ slab_alloc_node mm/slub.c:4185 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_node_noprof+0x2fd/0x4e0 mm/slub.c:4334
+ kmalloc_node_noprof include/linux/slab.h:932 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3690 [inline]
+ __vmalloc_node_range_noprof+0x5a9/0x12f0 mm/vmalloc.c:3885
+ vmalloc_huge_node_noprof+0xb3/0xf0 mm/vmalloc.c:4001
+ vmalloc_huge include/linux/vmalloc.h:185 [inline]
+ alloc_large_system_hash+0x2b8/0x5e0 mm/mm_init.c:2515
+ posixtimer_init+0x140/0x270 kernel/time/posix-timers.c:1561
+ do_one_initcall+0x233/0x820 init/main.c:1274
+ do_initcall_level+0x137/0x1f0 init/main.c:1336
+ do_initcalls+0x69/0xd0 init/main.c:1352
+ kernel_init_freeable+0x3d9/0x570 init/main.c:1584
+ kernel_init+0x1d/0x1d0 init/main.c:1474
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
+ __kasan_populate_vmalloc mm/kasan/shadow.c:383 [inline]
+ kasan_populate_vmalloc+0x18a/0x1a0 mm/kasan/shadow.c:417
+ alloc_vmap_area+0xd51/0x1490 mm/vmalloc.c:2084
+ __get_vm_area_node+0x1f8/0x300 mm/vmalloc.c:3179
+ __vmalloc_node_range_noprof+0x301/0x12f0 mm/vmalloc.c:3845
+ vmalloc_huge_node_noprof+0xb3/0xf0 mm/vmalloc.c:4001
+ vmalloc_huge include/linux/vmalloc.h:185 [inline]
+ alloc_large_system_hash+0x2b8/0x5e0 mm/mm_init.c:2515
+ posixtimer_init+0x140/0x270 kernel/time/posix-timers.c:1561
+ do_one_initcall+0x233/0x820 init/main.c:1274
+ do_initcall_level+0x137/0x1f0 init/main.c:1336
+ do_initcalls+0x69/0xd0 init/main.c:1352
+ kernel_init_freeable+0x3d9/0x570 init/main.c:1584
+ kernel_init+0x1d/0x1d0 init/main.c:1474
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff88801deeee00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88801deeee80: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
+>ffff88801deeef00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff88801deeef80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff88801deef000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
