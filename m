@@ -1,163 +1,128 @@
-Return-Path: <linux-kernel+bounces-681787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA8FAD5753
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4715AAD5757
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CDD18873E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614671E0FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D228A1F0;
-	Wed, 11 Jun 2025 13:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB49829ACF1;
+	Wed, 11 Jun 2025 13:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2b7VoG4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DVgMGJU0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF42A288503
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE34528C037;
+	Wed, 11 Jun 2025 13:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749648951; cv=none; b=DVRQtbnttIWA0DJ6oQ1DlVLeq5KqJwfgddpDmX5p1Iy/ttXaV53lSaqhqAicpuRk9Sagu0kfgzubH+VeiBeJDfju5D42IoZkAH2a4+EIifSRlYKupEbuIsenT4Y0gvMg8B3F0FHUaXpCirL4iIQpr6HV6bA9YBLj4O8G714MKBE=
+	t=1749648994; cv=none; b=C5zjstb2lidWxf94a/8mvFvB/jn7k+ss+PLHIbTbINsswgrzSsWr4pxxW61/f7Xzx7Wxd9wYj0O37NYRqCxZPFv6ddzqHGYHfo6+O5EiNS2sY1Pf+NemYapINXkMf3PFcWGlEh/NgeInd8iFivhrjFwBHzw2qKUiAZMEAOKmO/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749648951; c=relaxed/simple;
-	bh=8X+6Dpb2majUF6w6aZsaAegNKHMP2ANt2g25xsiSY54=;
+	s=arc-20240116; t=1749648994; c=relaxed/simple;
+	bh=qxeEX+fpLYiFMxZjd8T8WFKqd8/tarfK/1nXUbP+oow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exEm6BtSP28VFiYLD6iJV9IykBi8l++98T+CyHo+PzrR4C9m+GojC3LXc14NDSrjbet+u6Zjkq8Zk0SBmm9ufK+8A/yYxP7d1TD2AKd2CUpDG+vuyKG1M/Z2rLzRtD1IKbk+xU21HUUr+a7M6mNqKxjyuY6dFGCEX+tCvuDXCZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2b7VoG4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C02C4CEEE;
-	Wed, 11 Jun 2025 13:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749648951;
-	bh=8X+6Dpb2majUF6w6aZsaAegNKHMP2ANt2g25xsiSY54=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a2b7VoG4KVqWAF+icCE2Z4hRUFIlu5OHHqYJ3oHZFr4R7WyyXukCtW9n+ox3tMs5a
-	 fBKESZmb07rlHHttjx1F4xhBLi+GI/wjGbkMeDrKI9rhP6MkomwzA7VRwrN/QQAcTB
-	 18NWQhj68drd91qGaVTUU24Kd4QLQ0SSQPFgT1cJ6yKyOWVUVLiCOwjzZHfDwrTaDu
-	 GGefcMkhiQ048C3/8M4NKoKylVohrYJ0mtxNcWkUhJ18XM6qc+9JDpkMF3+lcZz1Wx
-	 rGza2+RMTw7fo4GZRCPMqNE5CyCp3I5GFLIh/OIOpSRTDapMEIYZYTexFKBFUE205v
-	 1d6RTTMYa8e0A==
-Date: Wed, 11 Jun 2025 16:35:44 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Michal Clapinski <mclapinski@google.com>
-Subject: Re: [PATCH] kho: initialize tail pages for higher order folios
- properly
-Message-ID: <aEmGMNL9v9djgrGz@kernel.org>
-References: <aEKhF3HcrvG77Ogb@kernel.org>
- <mafs0jz5osutx.fsf@kernel.org>
- <aEc30BoLE9HRxiZm@kernel.org>
- <CA+CK2bAAbZjS2Og79xxLcDtNf-eM0up-8fwhd4fg_dp0j_TahA@mail.gmail.com>
- <aEfGTXrsEL5-DuF1@kernel.org>
- <CA+CK2bDXOWzrTsNtbCCK2rabNysf0JFQT5VfAjYrX5oSoiLmSQ@mail.gmail.com>
- <aEhgNU80Dr9iRwoD@kernel.org>
- <CA+CK2bD3n=JDuSsMGvsyMnVbPhGdhdf6zWFDa3KpzRGEXygdgQ@mail.gmail.com>
- <mafs0qzzqo2bg.fsf@kernel.org>
- <CA+CK2bBoMfJuUCV6sL80kwzYPnENnt7fDk2jRMPV0iPn1jCJdw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3j494GdEfFM+myfAyp1KgSww09c9Std2z4DlzRW+FVccuPOL8zPMBIBCkX1nQwzKGfxOVWxIptZA8Sjx0kqUPBrDXbITh9irD/WVft2V/24ysPIM1FojuaPgbNE07+8Sy8jDkWMkp2JuBov0mQEuqbiZ7EtG9VSaUvTXLA6JMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DVgMGJU0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vVK1lv1eg0ugU/Wlcq0qw8RSX2k3WrhR6fk/iNeFFPc=; b=DVgMGJU05gH/oIK5E5D9B47wVC
+	GIR3UdOd8V+Wd5k0QiTngzWgSaDshWYZqcxKeXPOgRgvN7NV/q6mfkM2faOnAzMEBNdMRH/wAYIvp
+	dZxers4Mp06vL74YaphTtZ+8PSeLS76pFIIro7UzfXnc0Ong0p1ps2qiJrDJOOtQYGcM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPLcV-00FOq5-P6; Wed, 11 Jun 2025 15:35:59 +0200
+Date: Wed, 11 Jun 2025 15:35:59 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Gal Pressman <gal@nvidia.com>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH net-next v12 00/13] Add support for PSE budget evaluation
+ strategy
+Message-ID: <78daedb4-afe7-429d-9447-a3f76ea65e16@lunn.ch>
+References: <20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com>
+ <8b3cdc35-8bcc-41f6-84ec-aee50638b929@redhat.com>
+ <71dc12de-410d-4c69-84c5-26c1a5b3fa6e@nvidia.com>
+ <20250609103622.7e7e471d@kmaincent-XPS-13-7390>
+ <f5fb49b6-1007-4879-956d-cead2b0f1c86@nvidia.com>
+ <20250609160346.39776688@kmaincent-XPS-13-7390>
+ <0ba3c459-f95f-483e-923d-78bf406554ea@nvidia.com>
+ <cfb35f07-7f35-4c1f-9239-5c35cc301fce@lunn.ch>
+ <b1b7b052-ceac-4119-9b72-ed8f4c1fbfe2@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bBoMfJuUCV6sL80kwzYPnENnt7fDk2jRMPV0iPn1jCJdw@mail.gmail.com>
+In-Reply-To: <b1b7b052-ceac-4119-9b72-ed8f4c1fbfe2@nvidia.com>
 
-On Wed, Jun 11, 2025 at 09:14:55AM -0400, Pasha Tatashin wrote:
-> On Wed, Jun 11, 2025 at 9:06 AM Pratyush Yadav <pratyush@kernel.org> wrote:
-> >
-> > On Tue, Jun 10 2025, Pasha Tatashin wrote:
-> >
-> > >> > > I think it should be the other way around, KHO should depend on
-> > >> > > !DEFERRED_STRUCT_PAGE_INIT.
-> > >> >
-> > >> > Agreed, and this is what I first tried, but that does not work, there
-> > >> > is some circular dependency breaking the build. If you feel
-> > >> > adventurous you can try that :-)
-> > >>
-> > >> Hmm, weird, worked for me :/
-> >
-> > Worked for me as well.
-> >
-> > >
-> > > I am super confused, it did not work for me over weekend, and now it
-> > > is working. Even `make menuconfig` would not work. Anyways, I will put
-> > > it in the appropriate place.
-> > >
-> > >>
-> > >> > > > We will need to teah KHO to work with deferred struct page init. I
-> > >> > > > suspect, we could init preserved struct pages and then skip over them
-> > >> > > > during deferred init.
-> > >> > >
-> > >> > > We could, but with that would mean we'll run this before SMP and it's not
-> > >> > > desirable. Also, init_deferred_page() for a random page requires
-> > >> >
-> > >> > We already run KHO init before smp_init:
-> > >> > start_kernel() -> mm_core_init() -> kho_memory_init() ->
-> > >> > kho_restore_folio() -> struct pages must be already initialized here!
-> > >> >
-> > >> > While deferred struct pages are initialized:
-> > >> > start_kernel() -> rest_init() -> kernel_init() ->
-> > >> > kernel_init_freeable() -> page_alloc_init_late() ->
-> > >> > deferred_init_memmap()
-> > >> >
-> > >> > If the number of preserved pages that is needed during early boot is
-> > >> > relatively small, that it should not be an issue to pre-initialize
-> > >> > struct pages for them before deferred struct pages are initialized. We
-> > >> > already pre-initialize some  "struct pages" that are needed during
-> > >> > early boot before the reset are initialized, see deferred_grow_zone()
-> > >>
-> > >> deferred_grow_zone() takes a chunk in the beginning of uninitialized range,
-> > >> with kho we are talking about some random pages. If we preinit them early,
-> > >> deferred_init_memmap() will overwrite them.
-> > >
-> > > Yes, this is why I am saying that we would need to skip the KHO
-> > > initialized "struct pages" somehow during deferred initialization. If
-> > > we create an ordered by PFN list of early-initialized KHO struct
-> > > pages, skipping during deferred initialization could be done
-> > > efficiently.
-> >
-> > Or keep things simple and don't use any KHO struct pages during early
-> > init. You can access the page itself, just don't use its struct page.
-> >
-> > Currently the only user of kho_restore_folio() during init is
-> > kho_memory_init(). The FDT is accessed by doing
-> > phys_to_virt(kho_in.fdt_phys) anyway, so there is really no need for
-> > restoring the folio so early. It can be done later, for example when LUO
-> > does the finish event, to clean up and free the folio.
+On Wed, Jun 11, 2025 at 09:05:01AM +0300, Gal Pressman wrote:
+> On 09/06/2025 18:12, Andrew Lunn wrote:
+> >> I think that in theory the userspace patches need to be posted together
+> >> with the kernel, from maintainer-netdev.rst:
+> >>
+> >> 	User space code exercising kernel features should be posted
+> >> 	alongside kernel patches. This gives reviewers a chance to see
+> >> 	how any new interface is used and how well it works.
+> >>
+> >> I am not sure if that's really the case though.
+> > 
+> > The ethtool Maintainer tends to wait to the end of the cycle to pick
+> > up all patches and then applies and releases a new ethtool binary. The
+> > same applies for iproute2. That means the CI tests are not capable of
+> > testing new features using ethtool. I'm also not sure if it needs a
+> > human to update the ethtool binary on the CI systems, and how active
+> > that human is. Could this be changed, sure, if somebody has the needed
+> > bandwidth.
+> > 
+> > Using the APIs directly via ynl python is possible in CI, since that
+> > is all in tree, as far as i know. However, ethtool is the primary user
+> > tool, so i do see having tests for it as useful. But they might need
+> > to wait for a cycle, or at least fail gracefully until the ethtool
+> > binary is updated.
 > 
-> Good suggestion, however, KHO does not have any sophisticated users
-> that we are going to be adding as part of the live update work in the
-> future: IR, KVM, early VCPU threads, and so on. So, while today, this
-> might work, in the future, I am not sure if we should expect struct
-> pages are not accessed until after deferred initialization or simply
-> fix it once and for all.
+> Thanks Andrew, so I interpret this as selftests should be added when the
+> userspace patches get accepted (or released?)? Not part of the original
+> kernel submission?
 
-KHO already accesses stuct page early and uses page->private for order.
-Since preserved memory is reserved in memblock, deferred init of struct
-pages won't touch those pages, we just need to make sure they are properly 
-initialized at some point. If we don't expect many kho_restore_folio()
-before page_alloc_init_late() we can use init_deferred_page() for early
-accesses.
- 
-> Pasha
-> 
-> >
-> > --
-> > Regards,
-> > Pratyush Yadav
+I personally would submit the tests at the same time, but make them
+gracefully fail when the ethtool binary is too old. As a reviewer,
+seeing the tests as well and the ethtool patches and the kernel code
+gives me a warm fuzzy feeling the overall quality is good, the new
+code is actually tested, etc and the code should be merged.
 
--- 
-Sincerely yours,
-Mike.
+     Andrew
 
