@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-680685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D8AD4861
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:10:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAD7AD4868
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210A61764E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96113A56DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCA4170A0B;
-	Wed, 11 Jun 2025 02:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="skPpYOvy"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4102E18BC3D;
+	Wed, 11 Jun 2025 02:11:11 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45B6146A68;
-	Wed, 11 Jun 2025 02:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAC3188A0E;
+	Wed, 11 Jun 2025 02:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749607823; cv=none; b=CFGAF57NxVf1W8e6dZpEwIugcd+U5NRRFxtEdBYpTf5AuqFdwfFN45KKR0p0KxqRj3dI2umTMdkdoR6kbSGJgKVmy5qwTxTExYnkogrRa3DiQthiP8ztUnvL2Y0Q9OTXyCYTxXJZSAgfwE+/jQmm7jS6EWPKan9rtXLAUhTUW/s=
+	t=1749607870; cv=none; b=ua8m4UvGEky5QdLVSmGPsNTrDD32Wi0kcrF7RRN6NTv7xuzqK5OyW34e6PoYUyqNoOO75My2N1SVKDnK+boMPUslIiMDCDm9q8y9bigI1EdbScOfNZDo2kKMk6zB+9qlQADZNTtaUW7HMDrVVbsqom01/Xnq9OkMhvjKJMty8qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749607823; c=relaxed/simple;
-	bh=bdajXBWMLVtUnv6iNJh0P+J15tqpBrKvq6lkhpeiVEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jC7Bt9gWJoUbmkCZpRk3xl5cl+YjL5Z9w39mW4iqRd5OVKYQt05d7dXZOSzY+uBYUBaE7MSQ7uqZGFR/fW57Bw3xkxjklQGFDCk+QWk+zg2ybWYyF+5AgVX1r01Jhuof6w+wZm1UQ/VkmJ5oh4GBhXUlbjllzu+YiS6M963FrQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=skPpYOvy; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SDQToI/TzBm/Nj78Pcmlye3TohvWIQtZzAcJDnoDzYg=; b=skPpYOvy2eBBN6tLwg0dNDQEJn
-	NQ2JFQT/4VsvMt/gV5snM86pd0Xqez6LDKgw/l7NDxFSBN825xr5M9eQ4i6Gte9aU7rf+W8aapUUI
-	CL5EdqyGjqW6t45pRLlgXaoBc1Y7gl0Z81bpV2xEBnSgKoLtFN5baj3P11E4gP3NJHhyWVOMBy1M6
-	+TT4AQIxEmp1Gka9XwYrJOwdWoZGGVIO/UiAm9koC6M1FocW8eLnOuSbK9EZSRjo9McRpLDM8WapV
-	HwdyASXU2ZM/IMiG+//FvjO+gNIFLlPcGWbEU1rcT+ejmaikyw0ezyMC4K6lGh0lGXGXUtVd/8nk5
-	q9WOQZWQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uPAug-00CEXL-1E;
-	Wed, 11 Jun 2025 10:10:03 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 11 Jun 2025 10:10:02 +0800
-Date: Wed, 11 Jun 2025 10:10:02 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: meenakshi.aggarwal@nxp.com
-Cc: gaurav.jain@nxp.com, davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: caam - Set DMA alignment explicitly
-Message-ID: <aEjlevVOgCMgBmq0@gondor.apana.org.au>
-References: <20250604101446.3993932-1-meenakshi.aggarwal@nxp.com>
+	s=arc-20240116; t=1749607870; c=relaxed/simple;
+	bh=V5UN5NhiNun71JzA8xAksH+w0p9JSGOBeaRrap2XsUI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=BDNfhOQqNiZRNa+oUkqqT6EZUj5oCTRJq8q2IrC6lOHgceWoxBhpazvRFaO/Vldhyp9spyouvKj/pD8R0vGUCw64I0HGF6BrC1/lQHzVQg+sTs2AeHq++DUXH0Sqj2lgadXtnYbvtHKR1muXNE16HOz11gaDibfBg4sUoGoBnTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bH8K31lSsz5B1Gv;
+	Wed, 11 Jun 2025 10:11:03 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 55B2AotE031617;
+	Wed, 11 Jun 2025 10:10:50 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 11 Jun 2025 10:10:52 +0800 (CST)
+Date: Wed, 11 Jun 2025 10:10:52 +0800 (CST)
+X-Zmail-TransId: 2af96848e5ac313-fd045
+X-Mailer: Zmail v1.0
+Message-ID: <202506111010521118VJaiO_pb0rD7b3daxqox@zte.com.cn>
+In-Reply-To: <6b9d5edf-7186-4d7b-814c-5c3f306c68db@kernel.org>
+References: 20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn,6b9d5edf-7186-4d7b-814c-5c3f306c68db@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604101446.3993932-1-meenakshi.aggarwal@nxp.com>
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <krzk@kernel.org>
+Cc: <ulf.hansson@linaro.org>, <changhuang.liang@starfivetech.com>,
+        <geert+renesas@glider.be>, <magnus.damm@gmail.com>, <heiko@sntech.de>,
+        <alim.akhtar@samsung.com>, <walker.chen@starfivetech.com>,
+        <sebastian.reichel@collabora.com>, <detlev.casanova@collabora.com>,
+        <finley.xiao@rock-chips.com>, <shawn.lin@rock-chips.com>,
+        <pgwipeout@gmail.com>, <qiu.yutan@zte.com.cn>,
+        <linux-pm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gcG1kb21haW46IFVzZSBzdHJfZW5hYmxlX2Rpc2FibGUtbGlrZSBoZWxwZXJz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 55B2AotE031617
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6848E5B7.000/4bH8K31lSsz5B1Gv
 
-On Wed, Jun 04, 2025 at 12:14:46PM +0200, meenakshi.aggarwal@nxp.com wrote:
-> From: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
-> 
-> Few DMA alignment were missed in the original patch.
-> 
-> Fixes: 4cb4f7c11dee ("crypto: caam - Set DMA alignment explicitly")
-> 
-> Signed-off-by: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
-> ---
->  drivers/crypto/caam/caamalg.c    | 22 +++++++++++-----------
->  drivers/crypto/caam/caamalg_qi.c |  4 ++--
->  2 files changed, 13 insertions(+), 13 deletions(-)
+>> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>> 
+>> Replace ternary (condition ? "enable" : "disable") syntax and ternary
+>> (condition ? "on" : "off") syntax with helpers from
+>> string_choices.h because:
+>> 1. Simple function call with one argument is easier to read.  Ternary
+>>    operator has three arguments and with wrapping might lead to quite
+>>    long code.
+>> 2. Is slightly shorter thus also easier to read.
+>> 3. It brings uniformity in the text - same string.
+>> 4. Allows deduping by the linker, which results in a smaller binary
+>>    file.
+>
+>So you just taken everything from the same my patch - even entire commit
+>subject and commit description - and sent it as yours?
+>
+>https://lore.kernel.org/all/20250114203547.1013010-1-krzysztof.kozlowski@linaro.org/
+>
+>oh my, if doing EXACTLY the same keep original authorship - the From and
+>Sob fields.
+>
+>Best regards,
+>Krzysztof
+Dear Krzysztof,
+Thank you for your suggestions. I have carefully read your advice and
+made adjustments to the patches accordingly. I used your patch as a
+reference standard, not just taking everything from the same your patch.
 
-Why does the request contexts need DMA alignment? There is no DMA memory
-in them:
+Based on your suggestion, I have consolidated the series of patches for
+the pmdomain driver into a single patch. Additionally, following
+@changhuang's suggestion, I have supplemented the patch for
+drivers/pmdomain/starfive/jh71xx-pmu.c.
 
-struct caam_skcipher_req_ctx {
-	struct skcipher_edesc *edesc;
-	struct skcipher_request fallback_req;
-};
+If there's anything inappropriate in this patch, I sincerely apologize.
 
-struct caam_aead_req_ctx {
-	struct aead_edesc *edesc;
-};
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Best regards,
+Mingyin
 
