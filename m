@@ -1,154 +1,175 @@
-Return-Path: <linux-kernel+bounces-681811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031D9AD57A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7BDAD5791
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 942EE7AC773
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF49189EA1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5332951A0;
-	Wed, 11 Jun 2025 13:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377542882A5;
+	Wed, 11 Jun 2025 13:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="a3CiH6h0"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="d0/+qU2W"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF6628C2C1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998082E6138
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749650105; cv=none; b=FWX2UV7aTsJoy8Tt973+3PNe59N9k/jwpVK8FiQSVJBFkdtxwXBI5qvVCW7i+wKZEthZVun4yGA2dgqZYyD9Z8vikRuKpzwJNIfU/qbcVze00PDI/hwJLgXEq07Vo17MMZbJwPTMyj0DvnFbZ663IWQnOYT5scZ2HEfW/kauPUA=
+	t=1749649921; cv=none; b=Z1XmVMHb+KpxMYEEZz9CBlgtDxqg8icILEJb/QGkSnnEvZC7GBKtcAn4wCKsT1YCG/WY5HLaEskRLd/XP51qzh27lpHTNnnt66SXdkr6xmaNdf8KHD6/0mFfGPvD5KtDliGjppmRJF7qaeHTRH3wFuEWJJn51dfqJkjbFbsqyvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749650105; c=relaxed/simple;
-	bh=SVo3B24OwlGB4MegvwJiCx+gPz1XAKK8W690GqvITAQ=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NCRC084funA5xHZUmcL15Y1yKVs8CgKlLI4Lxhvv8SmFz8rk4Jp3FaVFYiqqo39r2nD65YFbqPotNwbX5cNYuikJmvdZ7ljP/OtAwN5qsxkvXsCQS6UwotLBLaUnPNkQ0Zm/8Wz1Qd5RGM8UHP/xJwKQ4SoqIA8MtfiFkRGNxJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=a3CiH6h0; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BCFOAP014824;
-	Wed, 11 Jun 2025 15:54:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	SVo3B24OwlGB4MegvwJiCx+gPz1XAKK8W690GqvITAQ=; b=a3CiH6h0cxGgTkgA
-	Aqee/5M/6dNuYYLxJdIVA+T0Im2/E65K7ptBXpADH0V+zNyZa3b8Qpv3rxV67eGR
-	mCO87tx4+jGIAHUiwJAeThs04F7Rk8GF35De9xoq1+ECrpydeANzzpD4pbY2b0IN
-	mjcwVS6eDOPTQTwd/DPfLJjwkRQHtWepwPiX3iEUt+aWUcTdrDO/ePYyEHnHwtwi
-	SIGHKSiRI8e2KB+VUWXYJhr67wWD47NYR7Nvd3a++wt9u0odcRes/VkTwpaU09ms
-	H+YeJmq+CCRjU53+AKY4FQYwNQYjiCBDMMi4DCSWkNqSa0VLl8dETa6DU7j8Nkqj
-	u3NJbA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474ajaa6d5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 15:54:28 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CE8EE40048;
-	Wed, 11 Jun 2025 15:52:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 00A94B12446;
-	Wed, 11 Jun 2025 15:51:46 +0200 (CEST)
-Received: from [192.168.8.15] (10.252.18.240) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Jun
- 2025 15:51:44 +0200
-Message-ID: <a5e25ab7c595936f93198c9ac0b2e048a83f5b57.camel@foss.st.com>
-Subject: Re: [Linux-stm32] [PATCH] irqchip: Use dev_fwnode()
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Nishanth Menon <nm@ti.com>, Andrew Lunn <andrew@lunn.ch>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>, <imx@lists.linux.dev>,
-        Fabio Estevam
-	<festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>, <tglx@linutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>
-Date: Wed, 11 Jun 2025 15:51:42 +0200
-In-Reply-To: <20250611104348.192092-10-jirislaby@kernel.org>
-References: <20250611104348.192092-1-jirislaby@kernel.org>
-	 <20250611104348.192092-10-jirislaby@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1749649921; c=relaxed/simple;
+	bh=IQg6sE+GXGtuGT5EQ5comWisqQkhImYrlyIoJDnpRqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIVVRF8pc2UgnMHooJQAtE5UnWe2fATw3xOuSfMMf1ozNPuApwpKdtAJ6aCCl1PDjce4t82hfP07oWPtMklOCVK4f7LxLrI6yjcioscq4+LHFyUFRhG/fg8vg8yaJCeIGZjbKEnH/7urJAWu+10qwJNg6DVBKv7pehdIj1vYo0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=d0/+qU2W; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so81652425e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1749649918; x=1750254718; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vk07ZvZc5eFy3eUxLG9h1u7SCyvu16FN4Lb9FHyD5Yg=;
+        b=d0/+qU2WYrNGiH1HgXB1oVaVzBI9EiEZqgE2TwmKdPWzDv875VNcSXWG3pEcqf8tqj
+         YOCL4L7UWUXZidzAsc6oN2YOiuH0KTX1/FFrgTdTQCQh0xxOPA2kcq7Dq8U0CGcpQjR1
+         UVZ0LAZWB6bJGuXZ/YETZRBtBoAQ9EU8ekPdPHfLQoPEdPTNCDxvWTNpS7dnXyN4+3MP
+         brU0oqYbGIzwBImd08/KltmEXtqW0nZQ3SnU13BIUxIGD3scL8bVBdcVaZjwmznKKhSC
+         0Ok3/nfv9epU82Q4aSAOOulXWFMuZ0pnD5kL3Zla8e3xOllscCrZ4WnW0VSpOPjXhQ2E
+         5SSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749649918; x=1750254718;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vk07ZvZc5eFy3eUxLG9h1u7SCyvu16FN4Lb9FHyD5Yg=;
+        b=iQAv4OwWDgg8DX8zn3cmwP9+YVn2NOaaBJibl6II1+8PzhR2aHVHdvtV0J5UQJGTKj
+         Kdu/KoqhMzpPBNOgFWSIjHlrPiEkwzTnfuhd/4zkR+UlCKxprqKxXyh0okS8JxFVXi1T
+         4hrgDZ4+5nfx8ch5gfSAsgAbz4l3uPrX97dESjc/uhd5LbJ1VPoDZTEgkN50TRN0xfq4
+         oah9SAHUw5R09+WX6Td9DAL26KblY0ueLiBytTm+Ac9YjvWRZvdYXyNIqU79c8Cvy9lZ
+         cQVJFQDjR8TPN5tT/OJ00pS/eWF1DXiTbVwiK95SoRBED9H54fAa9845bx5hVzqCifsK
+         RDag==
+X-Forwarded-Encrypted: i=1; AJvYcCXznQ5nxxdXZizpnRS2uczBtKQgjLCik6JJDj6AFkfjh0yKSZYsylDxuUtB58TfoW9iws8oGUao/0zV7BA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWkGzKp0cUe0rjzjIeN6uwfmq0gxp8OqQY6erJcQKMhkLc1+4F
+	VbWaSuAocWxR4UehVPbjDrTyP9pNVIWTeNwHK3p9hE2e8b6wj/TgtPpVZ4XJZczYgoc=
+X-Gm-Gg: ASbGncsK9AT1QUzJEy+AhnlsUqmGHBRyfBXqoeQhdnExoHDAFOvn9G5lzhOQz/bhsLI
+	jpOk4+8PSSTyIl/r1uJG4vgsVii8NDAP2Cqu+5oGxzsHMFrIX04z6thR3vCLZ8KA3B8OJvodHrb
+	svQ4Jvm8mXGDSpZG5l6JsGYCtTniWxJDH31tbc4XnMbLlfWvNdu+Trzg3pLpUO1b2dOmyW684YM
+	jS38NkJLbJiN0GhL+xTfr9aWceUrPnqH95WUD8Orp20nVdsm/OdNLEfkwC5TMdpUCV3i7Av6RXE
+	D8jBZbQvvBL+sQ9ueByRRrfhNHCbvYO7HuE3SAaIqX0g9psC7lqUWT5+FN6IymhWyA0=
+X-Google-Smtp-Source: AGHT+IG9nZtd3+hc45FxaZnApDjwjY+12DSVJ111XehV5YK/VpAjb4ZvVhEVhVJntSmvf+qT+b6/nQ==
+X-Received: by 2002:a05:600c:83c6:b0:442:ccf0:41e6 with SMTP id 5b1f17b1804b1-45324879755mr36028615e9.3.1749649917743;
+        Wed, 11 Jun 2025 06:51:57 -0700 (PDT)
+Received: from MacBook-Air.local ([5.100.243.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45325191994sm21839805e9.29.2025.06.11.06.51.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 06:51:57 -0700 (PDT)
+Date: Wed, 11 Jun 2025 16:51:53 +0300
+From: Joe Damato <joe@dama.to>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	horms@kernel.org, jdamato@fastly.com, pkshih@realtek.com,
+	larry.chiu@realtek.com
+Subject: Re: [PATCH net-next 1/2] rtase: Link IRQs to NAPI instances
+Message-ID: <aEmJ-b8ogdb3U5M4@MacBook-Air.local>
+Mail-Followup-To: Joe Damato <joe@dama.to>,
+	Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, horms@kernel.org, jdamato@fastly.com,
+	pkshih@realtek.com, larry.chiu@realtek.com
+References: <20250610103334.10446-1-justinlai0215@realtek.com>
+ <20250610103334.10446-2-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610103334.10446-2-justinlai0215@realtek.com>
 
-On Wed, 2025-06-11 at 12:43 +0200, Jiri Slaby (SUSE) wrote:
-> irq_domain_create_simple() takes fwnode as the first argument. It can be
-> extracted from the struct device using dev_fwnode() helper instead of
-> using of_node with of_fwnode_handle().
->=20
-> So use the dev_fwnode() helper.
->=20
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
->=20
+On Tue, Jun 10, 2025 at 06:33:33PM +0800, Justin Lai wrote:
+> Link IRQs to NAPI instances with netif_napi_set_irq. This
+> information can be queried with the netdev-genl API.
+> 
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
 > ---
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Tero Kristo <kristo@kernel.org>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Cc: imx@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> ---
-> =C2=A0drivers/irqchip/irq-imgpdc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
-> =C2=A0drivers/irqchip/irq-imx-irqsteer.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 2 +-
-> =C2=A0drivers/irqchip/irq-keystone.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0drivers/irqchip/irq-mvebu-pic.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
-> =C2=A0drivers/irqchip/irq-pruss-intc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 2 +-
-> =C2=A0drivers/irqchip/irq-renesas-intc-irqpin.c | 6 ++----
-> =C2=A0drivers/irqchip/irq-renesas-irqc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 2 +-
-> =C2=A0drivers/irqchip/irq-renesas-rza1.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 5 ++---
-> =C2=A0drivers/irqchip/irq-renesas-rzg2l.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 5 ++---
-> =C2=A0drivers/irqchip/irq-renesas-rzv2h.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 2 +-
-> =C2=A0drivers/irqchip/irq-stm32mp-exti.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 4 +---
+>  .../net/ethernet/realtek/rtase/rtase_main.c   | 20 +++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> index 4d37217e9a14..a88af868da8c 100644
+> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> @@ -1871,6 +1871,18 @@ static void rtase_init_netdev_ops(struct net_device *dev)
+>  	dev->ethtool_ops = &rtase_ethtool_ops;
+>  }
+>  
+> +static void rtase_init_napi(struct rtase_private *tp)
+> +{
+> +	u16 i;
+> +
+> +	for (i = 0; i < tp->int_nums; i++) {
+> +		netif_napi_add(tp->dev, &tp->int_vector[i].napi,
+> +			       tp->int_vector[i].poll);
 
-For drivers/irqchip/irq-stm32mp-exti.c
-Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Maybe netif_napi_add_config can be used either in this patch or in an added
+3rd patch to this series to support persitent NAPI config?
 
-Thanks
-Antonio
+Otherwise:
 
+Reviewed-by: Joe Damato <joe@dama.to>
+
+> +		netif_napi_set_irq(&tp->int_vector[i].napi,
+> +				   tp->int_vector[i].irq);
+> +	}
+> +}
+> +
+>  static void rtase_reset_interrupt(struct pci_dev *pdev,
+>  				  const struct rtase_private *tp)
+>  {
+> @@ -1956,9 +1968,6 @@ static void rtase_init_int_vector(struct rtase_private *tp)
+>  	memset(tp->int_vector[0].name, 0x0, sizeof(tp->int_vector[0].name));
+>  	INIT_LIST_HEAD(&tp->int_vector[0].ring_list);
+>  
+> -	netif_napi_add(tp->dev, &tp->int_vector[0].napi,
+> -		       tp->int_vector[0].poll);
+> -
+>  	/* interrupt vector 1 ~ 3 */
+>  	for (i = 1; i < tp->int_nums; i++) {
+>  		tp->int_vector[i].tp = tp;
+> @@ -1972,9 +1981,6 @@ static void rtase_init_int_vector(struct rtase_private *tp)
+>  		memset(tp->int_vector[i].name, 0x0,
+>  		       sizeof(tp->int_vector[0].name));
+>  		INIT_LIST_HEAD(&tp->int_vector[i].ring_list);
+> -
+> -		netif_napi_add(tp->dev, &tp->int_vector[i].napi,
+> -			       tp->int_vector[i].poll);
+>  	}
+>  }
+>  
+> @@ -2206,6 +2212,8 @@ static int rtase_init_one(struct pci_dev *pdev,
+>  		goto err_out_del_napi;
+>  	}
+>  
+> +	rtase_init_napi(tp);
+> +
+>  	rtase_init_netdev_ops(dev);
+>  
+>  	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
+> -- 
+> 2.34.1
+> 
+> 
 
