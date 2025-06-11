@@ -1,189 +1,92 @@
-Return-Path: <linux-kernel+bounces-682562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89BEAD61B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:44:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754E4AD61AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BDD3AC52B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:42:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D578F3AC156
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F98259CB0;
-	Wed, 11 Jun 2025 21:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506E62505AC;
+	Wed, 11 Jun 2025 21:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0dwj1x7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUvJI7S5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9151F257449;
-	Wed, 11 Jun 2025 21:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA96E24729E;
+	Wed, 11 Jun 2025 21:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749678025; cv=none; b=JtvDNWcfUOLZZwWiYZT+b1jgvN5qzmw8UHr4fJYSVe2IKfrLm/J55AolO6+4Zk2ijkj/vArQUIGhhBmv9Cr5M+M8Dyi93DnNDQ1jIJW27gPWOWctxse9l7gJTJ0AXcBMJHGhGnb6KFoM6BnvZ9+LTmARYi+l+p0HOa+KfbmDNQI=
+	t=1749678008; cv=none; b=CVhujg4skSxcZbvQ721poF5I+fBCYpmv6OYYey3PqwZ2OWOgqpNcgAXL758zvvTex4R/Pe+Tx2N7Ke2mVURyYvERfoet3sRTggjexuLY2zeBFNMN3PwoIWvG3nl90najvhdyU9FIV4+ioFPbFQvQ5JLM46gEf/ISlwByudUu6rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749678025; c=relaxed/simple;
-	bh=f3ULnqeUNCfguIS7uPKUYOKOX1OGzPpp858gNE9M2lY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScjWMI4z21y9bAnyyx3mo8X0tyLUgvQCVH556Q5s4px8BTUXePmee6RmzrLxZDG383hNxrxmFasQ4UflZk0EpYuT8DzqoO/kUQA+U1ycOPEC0p8C+ZZCgFWrYTAshPyaQ+kCDGJT666H2plojJU1i3J4KitFsa5lBnEOGokZkrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0dwj1x7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF79C4CEE3;
-	Wed, 11 Jun 2025 21:40:24 +0000 (UTC)
+	s=arc-20240116; t=1749678008; c=relaxed/simple;
+	bh=Y+7SL6a/uxFt7I+KV9WCZREo8uPTpjZfddI9p4MFulM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=TNPGdASswUjjN6sg8acFS8UB+jjzjZRe6swlTcLS5tefAuvAOXVvQ5UT3zr+KlWBN+Gb4elrztONKCHQkY5YCi2Sm3qUngf3K7eo8aIo1/5SMh7Y6foTKCsspJp9zvlf2VM2/rroT5xtYaoFDOMmXHX3XuFXfqZ9L6aapEBxER0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUvJI7S5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225AEC4CEE3;
+	Wed, 11 Jun 2025 21:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749678025;
-	bh=f3ULnqeUNCfguIS7uPKUYOKOX1OGzPpp858gNE9M2lY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o0dwj1x75a/82eYbOmWFC/GxTSmvzPMQLtuzvRP7ESlPfavuaKCBQ3WHwMzlpArAU
-	 jEDm8ALPOQ9CSvT06RBPrxka6hfcuVHK/3/H6bUzZ3wwQv54FJirrHWCYXfXmtuGjc
-	 FOakJWLO6hMFtFwjjXKtdTXgrFTswNtU8QwkKXdslWCLSp4UoZf8RHm5o8HOxeUKUs
-	 17wSEKBKdUht1t6yVaMVKw4YC9G/2InSkyICk0y7i1u9GNTNxGx+NjciR2Zi9I2JrB
-	 InHV82NTpE7HmGYlIIQWCNI/3I1OzzhfatbDgbZucAup92/F5OUOZp0mcaOWtzONMA
-	 mue/MGwPQTqig==
-Date: Wed, 11 Jun 2025 23:40:22 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
-Message-ID: <fya3ewoofrazpwh725ms4yaw6faq6txjyhxkr7hpl5i4az2iq2@fvfpisv6hjml>
-References: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
- <CGME20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d@eucas1p1.samsung.com>
- <20250610-rust-next-pwm-working-fan-for-sending-v2-2-753e2955f110@samsung.com>
- <jbm3qvowi5vskhnjyqlp3xek36gzzqjt35m66eayxi6lmi525t@iefevopxjl53>
- <1d9bba9e-0f30-4039-812e-60b160271e6b@samsung.com>
+	s=k20201202; t=1749678008;
+	bh=Y+7SL6a/uxFt7I+KV9WCZREo8uPTpjZfddI9p4MFulM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=iUvJI7S5GJR10XfPc7psiaRJE6zOte5It8SuYmRBOFsKRfaQtt3mp+oT4JYRoG13W
+	 spgscnroKaG7h7Y3ligWv4j5DF80jd6EBRvhMQZsUjFaOc95VgSA04fd9uVu4L9XMm
+	 ikEZGmzH54wp8SrLLGsjc0e0ZA+1/d2zVFPvuUnFXdDTx1Tyx08oxLdE1LJOUNl/EH
+	 2IrFOR+O7EHpJzTIROxkKPUBhWfEkZFdgr7OVkA61o3KN3ZvIDNUrMYIC67uZ9PBJ0
+	 5/M1t4OezF2ZV6zbU8U5j8udBbEOgbK+5z5TuQwefHCiqf90OJzah/12CSznYmBIVS
+	 WDvYg5eBF8/6A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71989380DBE9;
+	Wed, 11 Jun 2025 21:40:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jsn4mudgmd7iaf66"
-Content-Disposition: inline
-In-Reply-To: <1d9bba9e-0f30-4039-812e-60b160271e6b@samsung.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/1] net: fman_memac: Don't use of_property_read_bool on
+ non-boolean property managed
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174967803798.3496159.17632265399572187192.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Jun 2025 21:40:37 +0000
+References: <20250610114057.414791-1-alexander.stein@ew.tq-group.com>
+In-Reply-To: <20250610114057.414791-1-alexander.stein@ew.tq-group.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: madalin.bucur@nxp.com, sean.anderson@seco.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux@armlinux.org.uk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 10 Jun 2025 13:40:56 +0200 you wrote:
+> 'managed' is a non-boolean property specified in ethernet-controller.yaml.
+> Since commit c141ecc3cecd7 ("of: Warn when of_property_read_bool() is
+> used on non-boolean properties") this raises a warning. Use the
+> replacement of_property_present() instead.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [1/1] net: fman_memac: Don't use of_property_read_bool on non-boolean property managed
+    https://git.kernel.org/netdev/net-next/c/7781c4f70305
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---jsn4mudgmd7iaf66
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
-MIME-Version: 1.0
-
-Hello Michal,
-
-On Wed, Jun 11, 2025 at 10:04:54PM +0200, Michal Wilczynski wrote:
-> On 6/11/25 08:58, Uwe Kleine-K=F6nig wrote:
-> > On Tue, Jun 10, 2025 at 02:52:50PM +0200, Michal Wilczynski wrote:
-> > Some comments use 2 and other 3 slashes. Does this have any semantic?
->=20
-> Yes, they have a semantic difference. /// denotes a documentation
-> comment that is processed by rustdoc to generate documentation, while //
-> is a regular implementation comment. The compiler is configured to
-> require documentation for public items (like structs and functions),
-> which is why /// is used on the struct definition.
-
-ok, thanks.
-
-> >> +        let period_ns =3D (period_cycles as u64)
-> >> +            .mul_div(time::NSEC_PER_SEC as u64, rate_hz as u64)
-> >> +            .unwrap_or(0);
-> >=20
-> > What does .unwrap_or(0) do? You need to round up in this mul_div
-> > operation.
->=20
-> The .unwrap_or(0) is to handle the case where the mul_div helper returns
-> None, which can happen if the divisor (rate_hz) is zero. In that case,
-
-It can *only* happen if rate_hz is zero? If we had
-clk_rate_exclusive_get() we could rely on rate_hz being non-zero.
-
-> the period  becomes 0. The mul_div helper is introduced in this commit
-> [1].
->=20
-> [1] - https://lore.kernel.org/all/20250609-math-rust-v1-v1-1-285fac00031f=
-@samsung.com/
->=20
-> >=20
-> >> +        let period_cycles =3D wf
-> >> +            .period_length_ns
-> >> +            .mul_div(rate_hz as u64, time::NSEC_PER_SEC as u64)
-> >> +            .ok_or(EINVAL)?;
-> >=20
-> > If period_length_ns is BIG, pick the biggest possible period_cycles
-> > value, not EINVAL.
->=20
-> In this case EINVAL mean the function would return EINVAL not
-> 'period_cycles' =3D EINVAL. This won't happen here since
-> time::NSEC_PER_SEC is a constant, so this won't return None. This is not
-> checking for overflow.
-
-OK, so this is only there to please the rust compiler, right?
-
-> >=20
-> >> +        if period_cycles > u32::MAX as u64 {
->=20
-> In here I could pick period_cycles =3D u32::MAX.
-
-indeed.
-
-> >=20
-> >> +        iomap.write32(ctrl, th1520_pwm_ctrl(hwpwm));
-> >> +        iomap.write32(wfhw.period_cycles, th1520_pwm_per(hwpwm));
-> >> +        iomap.write32(wfhw.duty_cycles, th1520_pwm_fp(hwpwm));
-> >> +        iomap.write32(wfhw.ctrl_val | PWM_CFG_UPDATE, th1520_pwm_ctrl=
-(hwpwm));
-> >> +
-> >> +        if !was_enabled {
-> >> +            iomap.write32(wfhw.ctrl_val | PWM_START, th1520_pwm_ctrl(=
-hwpwm));
-> >=20
-> > Can this be combined with the above write?
->=20
-> Per the TH1520 peripheral manual [2] (chapter 6.6.2.1), the PWM_START bit
-> should only be asserted when enabling the PWM for the first time, not
-> during a reconfiguration of an alreadyrunning channel. The separate if
-> statement is there to handle this specific hardware requirement.
-
-Yeah, I wondered if you could simplify that to (well, or make it a bit
-faster at least) using:
-
-	ctrl_val =3D wfhw.ctrl_val | PWM_CFG_UPDATE;
-        if !was_enabled {
-		ctrl_val |=3D PWM_START;
-	}
-	=09
-        iomap.write32(ctrl_val, th1520_pwm_ctrl(hwpwm));
-
-Best regards
-Uwe
-
---jsn4mudgmd7iaf66
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhJ98QACgkQj4D7WH0S
-/k4EkAgAhvwWW2nW8s8HaHEbsyoN1pxYS7AKIL2TIYDDDBwv/sOyrGxBNnfAHzTM
-2q8GZHrItPF3FwFOlf3OTK2aGKGNVH9YWL/uHKOdI/TFTq9YcFG/u/N+InLEugDY
-Hha0aNG2NG4Rd9mpvhxTz9I7a4U+CsGkDsXrqLPyBo5zwce83fVw/u6NEpY8VtVx
-GsHEJnOeL6BWhitn4QIt17CaJ/woggVwpr/qQ2TFPrYwD2hYFV1SH0oCBK/MRA7i
-nO+qS6g3GzNbxJTuUI8gxXESv1hzbKdfhCuzePY0tD2NcnZtZ3SAEE/LRrcyIy4E
-3OKJxYMmd2fQ27KRqV3aobmlMGliEQ==
-=jsDl
------END PGP SIGNATURE-----
-
---jsn4mudgmd7iaf66--
 
