@@ -1,50 +1,77 @@
-Return-Path: <linux-kernel+bounces-680804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737F9AD49E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC05AD49B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF2B1BC0028
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565DC3A6F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96081C862C;
-	Wed, 11 Jun 2025 04:02:14 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9436321B9C1;
+	Wed, 11 Jun 2025 03:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PzWE/LwE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C866801
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 04:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7D182B4;
+	Wed, 11 Jun 2025 03:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749614534; cv=none; b=O1Umwpzj9WIo1lHOLcW1rLgaPRccK7zSvzTqTxA9MCpMZ0nLm3/GYjkcyxayWZFnVBgd6aT+t4m+wskhmB8N094XJUq2S3qvT/bnM+jPDANz1hYTTFbg3cUuXCJVeQcLX3OSdY2CS46wuO60Wf24NrKMr+x1ODtpUwm1Bt60mPQ=
+	t=1749613741; cv=none; b=PNtifvpALCfxSV4teZKI/JC99nu1ajjLDkZIs7LZa2P974RGyoIAqANcC3ocQBxXITpAxsFoUUlAJLdB+By4ruji4KTsXwKyORxK4QX3IvwP/2KyXgha+WFc6lLDazkx6djH8nbMP6/U1+oP1/6tIRUvHumc3zc92x4POiPKMic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749614534; c=relaxed/simple;
-	bh=EK/C5QZx6UIntGR2yHyRghFeJqlqXVuHx9b/QiWvL7w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SIm3d/F+S2t4VNyckpswdwkRuXiCKKuEZIRHCjZEfO3JeezzMFcTpTgnYa+kPhO3zZz6dQ8B9470b4Y2jCVtJUTMpucYp2uc2T88cHrFZZ6N2nNTQXVkF0v8EaX7jvKGr82gKHrlwcyaLAJs3QtoyXKUiUGqJ3FFXesLd9t8Pzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 11 Jun
- 2025 12:02:03 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 11 Jun 2025 12:02:03 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: <jk@codeconstruct.com.au>, <alexandre.belloni@bootlin.com>,
-	<Frank.Li@nxp.com>, <aniketmaurya@google.com>, <billy_tsai@aspeedtech.com>,
-	<jarkko.nikula@linux.intel.com>, <Shyam-sundar.S-k@amd.com>,
-	<wsa+renesas@sang-engineering.com>, <linux-i3c@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <BMC-SW@aspeedtech.com>,
-	<elbadrym@google.com>, <romlem@google.com>
-Subject: [PATCH] i3c: ast2600: Generate T-bits to terminate IBI storm
-Date: Wed, 11 Jun 2025 12:02:03 +0800
-Message-ID: <20250611040203.487734-1-billy_tsai@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749613741; c=relaxed/simple;
+	bh=LSbcy9Fqxg5HNHH4TDFafpQj4yGx1SwPwfWd9FU8XCk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LTPs19vZrqXT6zyEJACGP3Tx7BeOCQqb5t1/1DDzIHaepO+m+CUm6IJlHQGhUc7W3QbhNczsxxo+x5VSnnRW82zuR1o5DJDF++qScKlul9lrPWH2QAHwevftODdRye3HC9AmMj6FUohxwlpaMiWOaKC+fMkal9gz3NrhH677UqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PzWE/LwE; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749613740; x=1781149740;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LSbcy9Fqxg5HNHH4TDFafpQj4yGx1SwPwfWd9FU8XCk=;
+  b=PzWE/LwE7dwAihJ5sVFwfpwNu6YN6UUdT+XUNWu/odoxRVD3RACZ9i5Z
+   7biMbMIWmf7wIonf8o9vL5YGo2/LkUXRM+8/VpwGFmL2MLrHN1xF+Rexx
+   CVNDb+yT7WMY8qV9lZNLeDEnH3Q8aEO120DT4Jc2/e9H3bkR4bM4pzoM9
+   Dr6NHRulQ3HJeGyQBvOW55OPrlkODQizMZKqmf/HhhkYMO67BP1rEkq8a
+   xeaBEHbFFToNKoiUH/P54VVtbN1k1KhfgRMKgVEyF2535/95bkTlYpIHF
+   UN7fIXsWFvvO/GWVP+g74XsUYVr7sUTB/ZeS94FWUDJD+82ijea2meZ9k
+   w==;
+X-CSE-ConnectionGUID: hYJ7TwKuSwuiKf7DYQWZww==
+X-CSE-MsgGUID: XA5KlGFfSLGZDjDzhBl0dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="63095717"
+X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
+   d="scan'208";a="63095717"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 20:49:00 -0700
+X-CSE-ConnectionGUID: FEetEAYVRjapRGsjrhqHNg==
+X-CSE-MsgGUID: 2zghLxYlSr+uR+cfcSSCCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
+   d="scan'208";a="150884020"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by fmviesa003.fm.intel.com with ESMTP; 10 Jun 2025 20:48:57 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jim Mattson <jmattson@google.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Das Sandipan <Sandipan.Das@amd.com>,
+	Shukla Manali <Manali.Shukla@amd.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [kvm-unit-tests PATCH] x86/pmu: Verify all available GP counters in check_counters_many()
+Date: Wed, 11 Jun 2025 07:58:42 +0000
+Message-ID: <20250611075842.20959-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,178 +79,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Under certain conditions, such as when an IBI interrupt is received and
-SDA remains high after the address phase, the I3C controller will enter
-an infinite loop attempting to read data until a T-bit is detected.
-This commit addresses the issue by generating a fake T-bit to terminate
-the IBI storm when the received IBI data length exceeds the maximum
-allowable IBI payload.
-This issue cannot be resolved using the abort function, as it is
-ineffective when the I3C FSM is in the Servicing IBI Transfer (0xE) or
-Clock Extension (0x12) states.
+The intent of check_counters_many() is to verify all available counters
+can count correctly at the same time. So an alternative event should be
+picked to verify the avaialbe GP counter instead of skiping the counter
+if the initial event is not available.
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 ---
- drivers/i3c/master/ast2600-i3c-master.c | 60 +++++++++++++++++++++++++
- drivers/i3c/master/dw-i3c-master.c      | 14 ++++++
- drivers/i3c/master/dw-i3c-master.h      |  9 ++++
- 3 files changed, 83 insertions(+)
+Please notice this patch is based on Sean's "x86: Add CPUID properties,
+ clean up related code" v2 patchset (https://lore.kernel.org/all/20250610195415.115404-1-seanjc@google.com/).
 
-diff --git a/drivers/i3c/master/ast2600-i3c-master.c b/drivers/i3c/master/ast2600-i3c-master.c
-index e05e83812c71..6ac0122474d0 100644
---- a/drivers/i3c/master/ast2600-i3c-master.c
-+++ b/drivers/i3c/master/ast2600-i3c-master.c
-@@ -33,11 +33,28 @@
- #define AST2600_I3CG_REG1_SA_EN			BIT(15)
- #define AST2600_I3CG_REG1_INST_ID_MASK		GENMASK(19, 16)
- #define AST2600_I3CG_REG1_INST_ID(x)		(((x) << 16) & AST2600_I3CG_REG1_INST_ID_MASK)
-+#define AST2600_I3CG_REG1_SCL_SW_MODE_OE	BIT(20)
-+#define AST2600_I3CG_REG1_SCL_OUT_SW_MODE_VAL	BIT(21)
-+#define AST2600_I3CG_REG1_SCL_IN_SW_MODE_VAL	BIT(23)
-+#define AST2600_I3CG_REG1_SDA_SW_MODE_OE	BIT(24)
-+#define AST2600_I3CG_REG1_SDA_OUT_SW_MODE_VAL	BIT(25)
-+#define AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL	BIT(27)
-+#define AST2600_I3CG_REG1_SCL_IN_SW_MODE_EN	BIT(28)
-+#define AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN	BIT(29)
-+#define AST2600_I3CG_REG1_SCL_OUT_SW_MODE_EN	BIT(30)
-+#define AST2600_I3CG_REG1_SDA_OUT_SW_MODE_EN	BIT(31)
- 
- #define AST2600_DEFAULT_SDA_PULLUP_OHMS		2000
- 
- #define DEV_ADDR_TABLE_IBI_PEC			BIT(11)
- 
-+#define IBI_QUEUE_STATUS		0x18
-+#define PRESENT_STATE			0x54
-+#define   CM_TFR_STS			GENMASK(13, 8)
-+#define     CM_TFR_STS_MASTER_SERV_IBI	0xe
-+#define   SDA_LINE_SIGNAL_LEVEL		BIT(1)
-+#define   SCL_LINE_SIGNAL_LEVEL		BIT(0)
-+
- struct ast2600_i3c {
- 	struct dw_i3c_master dw;
- 	struct regmap *global_regs;
-@@ -117,9 +134,52 @@ static void ast2600_i3c_set_dat_ibi(struct dw_i3c_master *i3c,
+ x86/pmu.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/x86/pmu.c b/x86/pmu.c
+index 3987311c..a6b0cfcc 100644
+--- a/x86/pmu.c
++++ b/x86/pmu.c
+@@ -457,18 +457,34 @@ static void check_fixed_counters(void)
  	}
  }
  
-+static bool ast2600_i3c_fsm_exit_serv_ibi(struct dw_i3c_master *dw)
++static struct pmu_event *get_one_event(int idx)
 +{
-+	u32 state;
++	int i;
 +
-+	/*
-+	 * Clear the IBI queue to enable the hardware to generate SCL and
-+	 * begin detecting the T-bit low to stop reading IBI data.
-+	 */
-+	readl(dw->regs + IBI_QUEUE_STATUS);
-+	state = FIELD_GET(CM_TFR_STS, readl(dw->regs + PRESENT_STATE));
-+	if (state == CM_TFR_STS_MASTER_SERV_IBI)
-+		return false;
++	if (pmu_arch_event_is_available(idx))
++		return &gp_events[idx % gp_events_size];
 +
-+	return true;
++	for (i = 0; i < gp_events_size; i++) {
++		if (pmu_arch_event_is_available(i))
++			return &gp_events[i];
++	}
++
++	return NULL;
 +}
 +
-+static void ast2600_i3c_gen_tbits_in(struct dw_i3c_master *dw)
-+{
-+	struct ast2600_i3c *i3c = to_ast2600_i3c(dw);
-+	bool is_idle;
-+	int ret;
-+
-+	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-+			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL,
-+			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL);
-+	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-+			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN,
-+			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN);
-+
-+	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-+			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_VAL, 0);
-+	ret = readx_poll_timeout_atomic(ast2600_i3c_fsm_exit_serv_ibi, dw,
-+					is_idle, is_idle, 0, 2000000);
-+	regmap_write_bits(i3c->global_regs, AST2600_I3CG_REG1(i3c->global_idx),
-+			  AST2600_I3CG_REG1_SDA_IN_SW_MODE_EN, 0);
-+	if (ret)
-+		dev_err(&dw->base.dev,
-+			"Failed to exit the I3C fsm from %lx(MASTER_SERV_IBI): %d",
-+			FIELD_GET(CM_TFR_STS, readl(dw->regs + PRESENT_STATE)),
-+			ret);
-+}
-+
- static const struct dw_i3c_platform_ops ast2600_i3c_ops = {
- 	.init = ast2600_i3c_init,
- 	.set_dat_ibi = ast2600_i3c_set_dat_ibi,
-+	.gen_tbits_in = ast2600_i3c_gen_tbits_in,
- };
+ static void check_counters_many(void)
+ {
++	struct pmu_event *evt;
+ 	pmu_counter_t cnt[48];
+ 	int i, n;
  
- static int ast2600_i3c_probe(struct platform_device *pdev)
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 611c22b72c15..380e6a29c7b8 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -158,6 +158,14 @@
- #define DATA_BUFFER_STATUS_LEVEL_TX(x)	((x) & GENMASK(7, 0))
+ 	for (i = 0, n = 0; n < pmu.nr_gp_counters; i++) {
+-		if (!pmu_arch_event_is_available(i))
++		evt = get_one_event(i);
++		if (!evt)
+ 			continue;
  
- #define PRESENT_STATE			0x54
-+#define   CM_TFR_ST_STS			GENMASK(21, 16)
-+#define     CM_TFR_ST_STS_HALT		0x13
-+#define   CM_TFR_STS			GENMASK(13, 8)
-+#define     CM_TFR_STS_MASTER_SERV_IBI	0xe
-+#define     CM_TFR_STS_MASTER_HALT	0xf
-+#define     CM_TFR_STS_SLAVE_HALT	0x6
-+#define   SDA_LINE_SIGNAL_LEVEL		BIT(1)
-+#define   SCL_LINE_SIGNAL_LEVEL		BIT(0)
- #define CCC_DEVICE_STATUS		0x58
- #define DEVICE_ADDR_TABLE_POINTER	0x5c
- #define DEVICE_ADDR_TABLE_DEPTH(x)	(((x) & GENMASK(31, 16)) >> 16)
-@@ -1393,6 +1401,8 @@ static void dw_i3c_master_handle_ibi_sir(struct dw_i3c_master *master,
- 	unsigned long flags;
- 	u8 addr, len;
- 	int idx;
-+	bool terminate_ibi = false;
-+	u32 state;
- 
- 	addr = IBI_QUEUE_IBI_ADDR(status);
- 	len = IBI_QUEUE_STATUS_DATA_LEN(status);
-@@ -1435,6 +1445,7 @@ static void dw_i3c_master_handle_ibi_sir(struct dw_i3c_master *master,
- 		dev_dbg_ratelimited(&master->base.dev,
- 				    "IBI payload len %d greater than max %d\n",
- 				    len, dev->ibi->max_payload_len);
-+		terminate_ibi = true;
- 		goto err_drain;
+ 		cnt[n].ctr = MSR_GP_COUNTERx(n);
+-		cnt[n].config = EVNTSEL_OS | EVNTSEL_USR |
+-			gp_events[i % gp_events_size].unit_sel;
++		cnt[n].config = EVNTSEL_OS | EVNTSEL_USR | evt->unit_sel;
+ 		n++;
  	}
- 
-@@ -1450,6 +1461,9 @@ static void dw_i3c_master_handle_ibi_sir(struct dw_i3c_master *master,
- 
- err_drain:
- 	dw_i3c_master_drain_ibi_queue(master, len);
-+	state = FIELD_GET(CM_TFR_STS, readl(master->regs + PRESENT_STATE));
-+	if (terminate_ibi && state == CM_TFR_STS_MASTER_SERV_IBI)
-+		master->platform_ops->gen_tbits_in(master);
- 
- 	spin_unlock_irqrestore(&master->devs_lock, flags);
- }
-diff --git a/drivers/i3c/master/dw-i3c-master.h b/drivers/i3c/master/dw-i3c-master.h
-index c5cb695c16ab..1da485e42e74 100644
---- a/drivers/i3c/master/dw-i3c-master.h
-+++ b/drivers/i3c/master/dw-i3c-master.h
-@@ -89,6 +89,15 @@ struct dw_i3c_platform_ops {
- 	 */
- 	void (*set_dat_ibi)(struct dw_i3c_master *i3c,
- 			    struct i3c_dev_desc *dev, bool enable, u32 *reg);
-+	/*
-+	 * Gerenating the fake t-bit (SDA low) to stop the IBI storm when the received
-+	 * data length of IBI is larger than the maximum IBI payload.
-+	 *
-+	 * When an IBI is received and SDA remains high after the address phase, the i3c
-+	 * controller may enter an infinite loop while trying to read data until the t-bit
-+	 * appears
-+	 */
-+	void (*gen_tbits_in)(struct dw_i3c_master *i3c);
- };
- 
- extern int dw_i3c_common_probe(struct dw_i3c_master *master,
+ 	for (i = 0; i < fixed_counters_num; i++) {
 -- 
-2.25.1
+2.43.0
 
 
