@@ -1,404 +1,203 @@
-Return-Path: <linux-kernel+bounces-681145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1749DAD4F14
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E044BAD4F38
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58A01BC18CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A7016E982
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64F025C703;
-	Wed, 11 Jun 2025 08:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45F125C6E5;
+	Wed, 11 Jun 2025 09:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFrw0z5Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oBoLnv6K"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB9025B676
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B16293443;
+	Wed, 11 Jun 2025 09:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749632367; cv=none; b=kum7zmJkjLSn8gvqPSPAKdMoh4gQaH5S5gOmsdr3mQ7sgCt43ulP08x1MehAKCmENmY6d0tzz1H6nvUPqlNfCK4HYFIs52MSpQ7fF/Xp5QwkDVYD/cOYaTEqtXdp+oeFf9TzLDDWguMK3ZUiBblgTVPFYVtME/zAUZfb6ks+VcM=
+	t=1749632448; cv=none; b=cjXDhV/NGIpt2F/sGVggdw4Qlk5L9HoamZnSEYgKydgVIm9B67BQPqMiU/xeVVwIXBC/YmbBY8j5nwGdcRaD6WUu2Jsbw0zjueMPvogUvaNGCyQVRW5s4p85wptnR4wXMbS8ZrFyPxTqiF5PotgnJSca8z7QNpANm8Ghl/QFNLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749632367; c=relaxed/simple;
-	bh=ue+31B2bG/IgKEzAtR1bURwIK+Rmq5NQ4YjRrVZ466s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mBgSU/GpP+Lm4irfoRTFoUQn+q8Zm0wM+375qpz4Vk7Px2dE72QmOuH4jr7PWDccpXqaSSmoTp4HQ1KYL8Pi6dWcCMDKD0zVsKM62F+jdFIpQ7yEwimSDmrOcWbQDn0wGSn2B/JNXwEKi4DdszImtXVZjCDCuc24TiS5HiAGpf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFrw0z5Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C84C4CEEE;
-	Wed, 11 Jun 2025 08:59:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749632367;
-	bh=ue+31B2bG/IgKEzAtR1bURwIK+Rmq5NQ4YjRrVZ466s=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=AFrw0z5Q8pmOz+yeoK37AD5kqStvJnpFyGDBnPcuntaXQ36GHdQcv/5i0nt+BwztX
-	 n+bWDRjGssYXXZzkcNRjhX5JH01C1X254U/HeYSM/OB9kDQNjua+sCU9W/mGVM1WEu
-	 gQ8ag+2H7bVr2o15HRBGNpLmhtEHnVVf2rsAZlBrqO6NrmSRA/BNBbLph6NrFulvR4
-	 DWv9RJ527bxuFb2DlygTIum3TWa8MnCdGEnQ986Dh9o4hh/SnNw37gcLiOzPJxOBSr
-	 wLeFTaDuHbQyHvZaaW8sc50ba2zxWbreSVDMqyNh/qzuWROQ/W2WUXm449GM3oG/DH
-	 zdpVg80f9n//A==
-Message-ID: <cf109a88-170a-496d-9df3-d56663d2e32a@kernel.org>
-Date: Wed, 11 Jun 2025 16:59:23 +0800
+	s=arc-20240116; t=1749632448; c=relaxed/simple;
+	bh=akM+M+oPQt1HA0jM4drJhZdXjLtVHf+La9CDawh1sVI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=VpAcIJxUdFdLJaMcd4nIj6LTWUHkj/n1ZqSZashq6oQeGvqWylvsLXtVz2Fr/W2lzu3YIOOMnn5usSYAAH7NlgM7mwN244xkGoV/J2E557/Vx7J1c1zXWy4D9sJRQ5Cy+qLiKKqFL2ER6bI3zpFaW+a5qBlQdoWxFkwx7qfpUhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oBoLnv6K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B89M8r022355;
+	Wed, 11 Jun 2025 09:00:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=NcLkPFlCCgEjf/9frLpBnT
+	l/E+oAWzqavoBgfIcs71I=; b=oBoLnv6KlbQ0sG8PZDPFFdUL18Vp0Nq+ofOdmf
+	evT5nkMMJKtK5eKdqwjzek3HM1k2Se1CLCjfQ7XXJIjlyYRPbtosgovl6uKuSGEb
+	1XcGi8DOOF8p7ITFVgYuiCpx6ZGk1Fk7xQwKNb9gsTyLg3b2ogRBNeeJLZ2VR4tv
+	hh8cseB2N6OR3AC+S5OSUETaX1ldhLDuQfIR+QzZQ34bq32Z16LhUrvnlV4YJF5x
+	BjeDIbWPTTrPKWkvAD75KsSZImxYarHiXV9YNsDH3zO7lLSQg1NB746tmGDVSs+Y
+	IAEvn77BKTw8r2MbZyC1X/HWq50QJzZxKQUV1Zq/p5DzASug==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ekpv0sr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 09:00:34 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55B90XGE010920
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 09:00:33 GMT
+Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 11 Jun 2025 02:00:29 -0700
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Subject: [PATCH v9 0/2] coresight: Add Coresight Trace Network On Chip
+ driver
+Date: Wed, 11 Jun 2025 16:59:45 +0800
+Message-ID: <20250611-trace-noc-v9-0-4322d4cf8f4b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com,
- baocong.liu@unisoc.com
-Subject: Re: [PATCH v3] f2fs: compress: fix UAF of f2fs_inode_info in
- f2fs_free_dic
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <1749107920-17958-1-git-send-email-zhiguo.niu@unisoc.com>
- <aEhYfYrknbNzT8Or@google.com>
- <5c1da066-0c76-42f4-8c46-a99f60a900bf@kernel.org>
- <CAHJ8P3LNrSRT8hfbr=x5HvkQRGBSTpftPbd7NrfUdO-2LgSLfg@mail.gmail.com>
- <c36ab955-c8db-4a8b-a9d0-f07b5f426c3f@kernel.org>
- <CAHJ8P3+=LEbbj8bzh0N3HbPu=jVkRfkowbxqoT0PfCZtWbuRbg@mail.gmail.com>
- <CAHJ8P3Lah5o60wJTb-H6Dng6sSrs8gY9cuFyw_1zAOAGfZMd_Q@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3Lah5o60wJTb-H6Dng6sSrs8gY9cuFyw_1zAOAGfZMd_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIFFSWgC/3WSy07DMBBFf6XyukZ+28OK/0As/JihXpBAUiJQl
+ X/HrUANSbu8I597RrZPbMSh4sgedyc24FTH2nctwH7H8iF2r8hraZkpoawwQvPjEDPyrs+cggo
+ u6TYNyNr59wGpfl26nl9aPtTx2A/fl+pJnqfMOGe0CMBTCIUbKJknFJb7RCIlJSkY//TxWXPt8
+ kPu39i5Z9IX9ncDv9hg0lxwaxJQUbFEgn/s/m9rKdeMJAmlkHcAaeszd32msRCciZS18Snc8dk
+ N4wF0ICxUwtZn7/psY7Unr2Umgwlv+qxUa4YUkvAiRUS79bmlLyxZd75P5bKTUQlP7rZPqTVDN
+ kLKEUEgbn3+6rNq+YMm39jiLJYUkwK48fbhyjrhlmxobNCawHipsl2x8zz/ADWXE9/cAgAA
+X-Change-ID: 20250403-trace-noc-f8286b30408e
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>
+CC: <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yuanfang Zhang
+	<quic_yuanfang@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749632429; l=3002;
+ i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
+ bh=akM+M+oPQt1HA0jM4drJhZdXjLtVHf+La9CDawh1sVI=;
+ b=3y6MlUrvYqRAQMJLSLhxMGC2e5Pgceh7ggaVvyN/D2WcceroCo3ymtWa2dw28DBHTon7jNjPm
+ G7Ql7YWxS9VCM7dcOCuxOX5/fpm28byXfPbPcLU6EJFH/d6lWtmGU/P
+X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
+ pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=JcO8rVKV c=1 sm=1 tr=0 ts=684945b2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=mTvmQVt1wvC56TrAcpsA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDA3NyBTYWx0ZWRfX2nZ/n7sPP6rR
+ 2+Rh2I7W+UN6y3lm9WSeHtr44FuQVX0tQzZI5wwC8orwTYp9QWgk22N/7KC/N0IZIazLmcuNv35
+ ThkSNk3c+8mhUX8Y6ELEX6OFLXXG+hdMJG5SKJOiS7FX2GQ3j1zTH7UDYZhZnAW9jF6GquSZVxH
+ iUWZWqNXm/Fbi4l1LuuY0cZZvzQ7a9sQUIHCDxKh5y3l4+20+GhdslRwqylrME9dyFHsxPil+ul
+ azGJS4DVlK3vpIE0VAqEerX6j5mPjD5ToCCPTuijMOFH3QzH7K1fW7HB1JgMRO/ATT7Epv3m//q
+ YAH+rhpYRAmAN5q5i7LazgqrXUODsSmRoZgPtQ++A1IBkTykw9WZwUvRQLJYHPoHS3SwOmfkYS3
+ 7/flwQm4xtdDDJ0tiIDpS+rmHnG+TDWhYvJ500GOeN/vb7chv7OpYdKa9DHNzdtS6CD2RJ1Y
+X-Proofpoint-GUID: Mue1ykSMt5nhkcmOsdE3y8uRlzdRZ7cp
+X-Proofpoint-ORIG-GUID: Mue1ykSMt5nhkcmOsdE3y8uRlzdRZ7cp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_03,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506110077
 
-On 6/11/25 15:51, Zhiguo Niu wrote:
-> Zhiguo Niu <niuzhiguo84@gmail.com> 于2025年6月11日周三 14:52写道：
->>
->> Chao Yu <chao@kernel.org> 于2025年6月11日周三 14:47写道：
->>>
->>> On 6/11/25 14:41, Zhiguo Niu wrote:
->>>> Chao Yu <chao@kernel.org> 于2025年6月11日周三 14:07写道：
->>>>>
->>>>> On 6/11/25 00:08, Jaegeuk Kim wrote:
->>>>>> Hi Zhiguo,
->>>>>>
->>>>>> This patch causes CPU hang when running fsstress on compressed/non-compressed
->>>>>> files. Please check.
->>>>>
->>>>> Oh, seems it may cause below deadlock:
->>>>>
->>>>> CPU0
->>>>> process A
->>>>> - spin_lock(i_lock)
->>>>> software IRQ
->>>>> - end_io
->>>>>  - igrab
->>>>>   - spin_lock(i_lock)
->>>>>
->>>>> Thanks,
->>>> Hi Chao,
->>>> Thanks for pointing this out.
->>>> I have tested this patch locally about some basic cases before submission.
->>>> So it seems that should use the following method  to solve this problem?
->>>> " store i_compress_algorithm/sbi in dic to avoid inode access?"
->>>
->>> Zhiguo,
->>>
->>> Yeah, I guess so.
->> Hi Chao,
->> OK, I will prepare it .
->> Thanks a lot.
->>>
->>> Thanks,
->>>
->>>> thanks！
->>>>
->>>>
->>>>>
->>>>>>
->>>>>> On 06/05, Zhiguo Niu wrote:
->>>>>>> The decompress_io_ctx may be released asynchronously after
->>>>>>> I/O completion. If this file is deleted immediately after read,
->>>>>>> and the kworker of processing post_read_wq has not been executed yet
->>>>>>> due to high workloads, It is possible that the inode(f2fs_inode_info)
->>>>>>> is evicted and freed before it is used f2fs_free_dic.
->>>>>>>
->>>>>>>     The UAF case as below:
->>>>>>>     Thread A                                      Thread B
->>>>>>>     - f2fs_decompress_end_io
->>>>>>>      - f2fs_put_dic
->>>>>>>       - queue_work
->>>>>>>         add free_dic work to post_read_wq
->>>>>>>                                                    - do_unlink
->>>>>>>                                                     - iput
->>>>>>>                                                      - evict
->>>>>>>                                                       - call_rcu
->>>>>>>     This file is deleted after read.
->>>>>>>
->>>>>>>     Thread C                                 kworker to process post_read_wq
->>>>>>>     - rcu_do_batch
->>>>>>>      - f2fs_free_inode
->>>>>>>       - kmem_cache_free
->>>>>>>      inode is freed by rcu
->>>>>>>                                              - process_scheduled_works
->>>>>>>                                               - f2fs_late_free_dic
->>>>>>>                                                - f2fs_free_dic
->>>>>>>                                                 - f2fs_release_decomp_mem
->>>>>>>                                       read (dic->inode)->i_compress_algorithm
->>>>>>>
->>>>>>> This patch use igrab before f2fs_free_dic and iput after free the dic when dic free
->>>>>>> action is done by kworker.
->>>>>>>
->>>>>>> Cc: Daeho Jeong <daehojeong@google.com>
->>>>>>> Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
->>>>>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>>>>>> Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
->>>>>>> ---
->>>>>>> v3: use igrab to replace __iget
->>>>>>> v2: use __iget/iput function
->>>>>>> ---
->>>>>>>  fs/f2fs/compress.c | 14 +++++++++-----
->>>>>>>  1 file changed, 9 insertions(+), 5 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->>>>>>> index b3c1df9..729ad16 100644
->>>>>>> --- a/fs/f2fs/compress.c
->>>>>>> +++ b/fs/f2fs/compress.c
->>>>>>> @@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
->>>>>>>  }
->>>>>>>
->>>>>>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
->>>>>>> -            bool bypass_destroy_callback);
->>>>>>> +            bool bypass_destroy_callback, bool late_free);
->>>>>>>
->>>>>>>  struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->>>>>>>  {
->>>>>>> @@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->>>>>>>      return dic;
->>>>>>>
->>>>>>>  out_free:
->>>>>>> -    f2fs_free_dic(dic, true);
->>>>>>> +    f2fs_free_dic(dic, true, false);
->>>>>>>      return ERR_PTR(ret);
->>>>>>>  }
->>>>>>>
->>>>>>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
->>>>>>> -            bool bypass_destroy_callback)
->>>>>>> +            bool bypass_destroy_callback, bool late_free)
->>>>>>>  {
->>>>>>>      int i;
->>>>>>>
->>>>>>> @@ -1775,6 +1775,8 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
->>>>>>>      }
->>>>>>>
->>>>>>>      page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
->>>>>>> +    if (late_free)
->>>>>>> +            iput(dic->inode);
->>>>>>>      kmem_cache_free(dic_entry_slab, dic);
->>>>>>>  }
->>>>>>>
->>>>>>> @@ -1783,16 +1785,18 @@ static void f2fs_late_free_dic(struct work_struct *work)
->>>>>>>      struct decompress_io_ctx *dic =
->>>>>>>              container_of(work, struct decompress_io_ctx, free_work);
->>>>>>>
->>>>>>> -    f2fs_free_dic(dic, false);
->>>>>>> +    f2fs_free_dic(dic, false, true);
->>>>>>>  }
->>>>>>>
->>>>>>>  static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
->>>>>>>  {
->>>>>>>      if (refcount_dec_and_test(&dic->refcnt)) {
->>>>>>>              if (in_task) {
->>>>>>> -                    f2fs_free_dic(dic, false);
->>>>>>> +                    f2fs_free_dic(dic, false, false);
->>>>>>>              } else {
->>>>>>>                      INIT_WORK(&dic->free_work, f2fs_late_free_dic);
->>>>>>> +                    /* use igrab to avoid inode is evicted simultaneously */
->>>>>>> +                    f2fs_bug_on(F2FS_I_SB(dic->inode), !igrab(dic->inode));
->>>>>>>                      queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
->>>>>>>                                      &dic->free_work);
->>>>>>>              }
->>>>>>> --
->>>>>>> 1.9.1
->>>>>
->>>
-> 
-> Hi Chao,
-> 
-> The patch is about as follows, because dic->sbi is used directly in
-> f2fs_free_dic: page_array_free(dic->sbi, dic->tpages, dic->cluster_size);
-> so there are two points I want to confirm:
-> 1. As a corresponding, the first parameter (inode) of page_array_alloc
-> is need to modify to sbi or not ?
-> 2. As a corresponding, do we need to add the sbi field in compress_ctx
-> so that page_array_alloc/free called
-> in compress flow can use sbi directly?
+The Trace Network On Chip (TNOC) is an integration hierarchy which is a
+hardware component that integrates the functionalities of TPDA and
+funnels. It collects trace from subsystems and transfers it to coresight
+sink.
 
-Zhiguo, both 1) and 2) changes look fine to me.
+In addition to the generic TNOC mentioned above, there is also a special type
+of TNOC called Interconnect TNOC. Unlike the generic TNOC, the Interconnect
+TNOC doesn't need ATID. Its primary function is to connect the source of
+subsystems to the Aggregator TNOC. Its driver is different from this patch and
+will describe it and upstream its driver separately.
 
-Thanks,
+Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+---
+Changes in v9:
+- Mention the binding is only for Aggregator TNOC.
+- Link to v8: https://lore.kernel.org/r/20250606-trace-noc-v8-0-833f94712c57@quicinc.com
 
-> Thanks!
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index b3c1df9..897d8ae 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -34,9 +34,8 @@ static void *page_array_alloc(struct inode *inode, int nr)
->         return f2fs_kzalloc(sbi, size, GFP_NOFS);
->  }
-> 
-> -static void page_array_free(struct inode *inode, void *pages, int nr)
-> +static void page_array_free(struct f2fs_sb_info *sbi, void *pages, int nr)
->  {
-> -       struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->         unsigned int size = sizeof(struct page *) * nr;
-> 
->         if (!pages)
-> @@ -155,7 +154,7 @@ int f2fs_init_compress_ctx(struct compress_ctx *cc)
-> 
->  void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
->  {
-> -       page_array_free(cc->inode, cc->rpages, cc->cluster_size);
-> +       page_array_free(F2FS_I_SB(cc->inode), cc->rpages, cc->cluster_size);
->         cc->rpages = NULL;
->         cc->nr_rpages = 0;
->         cc->nr_cpages = 0;
-> @@ -716,7 +715,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
->                 if (cc->cpages[i])
->                         f2fs_compress_free_page(cc->cpages[i]);
->         }
-> -       page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-> +       page_array_free(F2FS_I_SB(cc->inode), cc->cpages, cc->nr_cpages);
->         cc->cpages = NULL;
->  destroy_compress_ctx:
->         if (cops->destroy_compress_ctx)
-> @@ -734,7 +733,7 @@ static void f2fs_release_decomp_mem(struct
-> decompress_io_ctx *dic,
-> 
->  void f2fs_decompress_cluster(struct decompress_io_ctx *dic, bool in_task)
->  {
-> -       struct f2fs_sb_info *sbi = F2FS_I_SB(dic->inode);
-> +       struct f2fs_sb_info *sbi = dic->sbi;
->         struct f2fs_inode_info *fi = F2FS_I(dic->inode);
->         const struct f2fs_compress_ops *cops =
->                         f2fs_cops[fi->i_compress_algorithm];
-> @@ -1442,13 +1441,13 @@ static int f2fs_write_compressed_pages(struct
-> compress_ctx *cc,
->         spin_unlock(&fi->i_size_lock);
-> 
->         f2fs_put_rpages(cc);
-> -       page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-> +       page_array_free(F2FS_I_SB(cc->inode), cc->cpages, cc->nr_cpages);
->         cc->cpages = NULL;
->         f2fs_destroy_compress_ctx(cc, false);
->         return 0;
-> 
->  out_destroy_crypt:
-> -       page_array_free(cc->inode, cic->rpages, cc->cluster_size);
-> +       page_array_free(F2FS_I_SB(cc->inode), cic->rpages, cc->cluster_size);
-> 
->         for (--i; i >= 0; i--) {
->                 if (!cc->cpages[i])
-> @@ -1469,7 +1468,7 @@ static int f2fs_write_compressed_pages(struct
-> compress_ctx *cc,
->                 f2fs_compress_free_page(cc->cpages[i]);
->                 cc->cpages[i] = NULL;
->         }
-> -       page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-> +       page_array_free(F2FS_I_SB(cc->inode), cc->cpages, cc->nr_cpages);
->         cc->cpages = NULL;
->         return -EAGAIN;
->  }
-> @@ -1499,7 +1498,7 @@ void f2fs_compress_write_end_io(struct bio *bio,
-> struct page *page)
->                 end_page_writeback(cic->rpages[i]);
->         }
-> 
-> -       page_array_free(cic->inode, cic->rpages, cic->nr_rpages);
-> +       page_array_free(F2FS_I_SB(cic->inode), cic->rpages, cic->nr_rpages);
->         kmem_cache_free(cic_entry_slab, cic);
->  }
-> 
-> @@ -1637,7 +1636,7 @@ static int f2fs_prepare_decomp_mem(struct
-> decompress_io_ctx *dic,
->                 f2fs_cops[F2FS_I(dic->inode)->i_compress_algorithm];
->         int i;
-> 
-> -       if (!allow_memalloc_for_decomp(F2FS_I_SB(dic->inode), pre_alloc))
-> +       if (!allow_memalloc_for_decomp(dic->sbi, pre_alloc))
->                 return 0;
-> 
->         dic->tpages = page_array_alloc(dic->inode, dic->cluster_size);
-> @@ -1670,10 +1669,9 @@ static int f2fs_prepare_decomp_mem(struct
-> decompress_io_ctx *dic,
->  static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
->                 bool bypass_destroy_callback, bool pre_alloc)
->  {
-> -       const struct f2fs_compress_ops *cops =
-> -               f2fs_cops[F2FS_I(dic->inode)->i_compress_algorithm];
-> +       const struct f2fs_compress_ops *cops =
-> f2fs_cops[dic->compress_algorithm];
-> 
-> -       if (!allow_memalloc_for_decomp(F2FS_I_SB(dic->inode), pre_alloc))
-> +       if (!allow_memalloc_for_decomp(dic->sbi, pre_alloc))
->                 return;
-> 
->         if (!bypass_destroy_callback && cops->destroy_decompress_ctx)
-> @@ -1708,6 +1706,8 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct
-> compress_ctx *cc)
-> 
->         dic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
->         dic->inode = cc->inode;
-> +       dic->sbi = sbi;
-> +       dic->compress_algorithm = F2FS_I(cc->inode)->i_compress_algorithm;
->         atomic_set(&dic->remaining_pages, cc->nr_cpages);
->         dic->cluster_idx = cc->cluster_idx;
->         dic->cluster_size = cc->cluster_size;
-> @@ -1762,7 +1762,7 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
->                                 continue;
->                         f2fs_compress_free_page(dic->tpages[i]);
->                 }
-> -               page_array_free(dic->inode, dic->tpages, dic->cluster_size);
-> +               page_array_free(dic->sbi, dic->tpages, dic->cluster_size);
->         }
-> 
->         if (dic->cpages) {
-> @@ -1771,10 +1771,10 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
->                                 continue;
->                         f2fs_compress_free_page(dic->cpages[i]);
->                 }
-> -               page_array_free(dic->inode, dic->cpages, dic->nr_cpages);
-> +               page_array_free(dic->sbi, dic->cpages, dic->nr_cpages);
->         }
-> 
-> -       page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
-> +       page_array_free(dic->sbi, dic->rpages, dic->nr_rpages);
->         kmem_cache_free(dic_entry_slab, dic);
->  }
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 9333a22b..da2137e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1536,6 +1536,7 @@ struct compress_io_ctx {
->  struct decompress_io_ctx {
->         u32 magic;                      /* magic number to indicate
-> page is compressed */
->         struct inode *inode;            /* inode the context belong to */
-> +       struct f2fs_sb_info *sbi;       /* f2fs_sb_info pointer */
->         pgoff_t cluster_idx;            /* cluster index number */
->         unsigned int cluster_size;      /* page count in cluster */
->         unsigned int log_cluster_size;  /* log of cluster size */
-> @@ -1576,6 +1577,7 @@ struct decompress_io_ctx {
-> 
->         bool failed;                    /* IO error occurred before
-> decompression? */
->         bool need_verity;               /* need fs-verity verification
-> after decompression? */
-> +       unsigned char compress_algorithm;       /* backup algorithm type */
->         void *private;                  /* payload buffer for
-> specified decompression algorithm */
->         void *private2;                 /* extra payload buffer */
->         struct work_struct verity_work; /* work to verify the
-> decompressed pages */
+Changes in v8:
+- Add sysfs node to expose atid.
+- Link to v7: https://lore.kernel.org/r/20250523-trace-noc-v7-0-d65edbab2997@quicinc.com
+
+Changes in v7:
+- Move the content in header file into coresight-tnoc.c.
+- Use scoped_guard() to replace spin_lock().
+- Invoke coresight_trace_id_put_system_id() for registration failure.
+- Link to v6: https://lore.kernel.org/r/20250522-trace-noc-v6-0-f5a9bcae90ee@quicinc.com
+
+Changes in v6:
+- Add a newline after return statements.
+- Use 'x &= foo' to replace 'x = x & foo'.
+- Use 'x |= foo' to replace 'x = x | foo'.
+- Link to v5: https://lore.kernel.org/r/20250512-trace-noc-v5-0-f2ef070baee5@quicinc.com
+
+Changes in v5:
+- update cover-letter to describe the Interconnect TNOC.
+- Link to v4: https://lore.kernel.org/r/20250415-trace-noc-v4-0-979938fedfd8@quicinc.com
+
+Changes in v4:
+- Fix dt_binding warning.
+- update mask of trace_noc amba_id.
+- Modify driver comments.
+- rename TRACE_NOC_SYN_VAL to TRACE_NOC_SYNC_INTERVAL.
+- Link to v3: https://lore.kernel.org/r/20250411-trace-noc-v3-0-1f19ddf7699b@quicinc.com
+
+Changes in v3:
+- Remove unnecessary sysfs nodes.
+- update commit messages.
+- Use 'writel' instead of 'write_relaxed' when writing to the register for the last time.
+- Add trace_id ops.
+- Link to v2: https://lore.kernel.org/r/20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com
+
+Changes in v2:
+- Modified the format of DT binging file.
+- Fix compile warnings.
+- Link to v1: https://lore.kernel.org/r/46643089-b88d-49dc-be05-7bf0bb21f847@quicinc.com
+
+---
+Yuanfang Zhang (2):
+      dt-bindings: arm: Add device Trace Network On Chip definition
+      coresight: add coresight Trace Network On Chip driver
+
+ .../bindings/arm/qcom,coresight-tnoc.yaml          | 113 ++++++++++
+ drivers/hwtracing/coresight/Kconfig                |  13 ++
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-tnoc.c       | 242 +++++++++++++++++++++
+ 4 files changed, 369 insertions(+)
+---
+base-commit: a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
+change-id: 20250403-trace-noc-f8286b30408e
+
+Best regards,
+-- 
+Yuanfang Zhang <quic_yuanfang@quicinc.com>
 
 
