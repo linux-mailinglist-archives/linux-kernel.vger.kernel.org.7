@@ -1,371 +1,135 @@
-Return-Path: <linux-kernel+bounces-682398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90450AD5F7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:52:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB53AD5F7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE8F1BC38DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E785D1BC3919
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9682D5421;
-	Wed, 11 Jun 2025 19:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C392BD5B0;
+	Wed, 11 Jun 2025 19:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="andp8j+2"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrXTWMuN"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980132D322C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA95D221F1C;
+	Wed, 11 Jun 2025 19:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749671337; cv=none; b=BstspvpjmhDnrZ018Q08AeKZEJVw0VYF88WchxQAINVx51zE6o6KmSsjTTa91+yS4FnynQW7KRaoetNAxnYF/bV3oe+Iit4bB7IGArDNx34dkY4ZlWA58oFLpzSTPh32V5yAAGvtjsaXXMpSy/Ub2o+zgGl2IQR1Of9ecY6pfrc=
+	t=1749671495; cv=none; b=KEZNVumRuFDbFszZ51AVzC1IJuut1AH0xipC/IlMXcueYBxob2q4aOeSvygTqdXqPyeHm6BOn7qftDahuzE42DJlY2jpAUN6Vy1Nmm5m5RvdHOUc0x5KYoso5dLA+x2VPSJQ1bNwfn3nnV4Pk4ulHPpOALGVEkYAfKV8HdUUBUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749671337; c=relaxed/simple;
-	bh=7r+e/gPtaU35XspY/s7a3RF6t2VbrPmsekBgLng9xkk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aGaDcJm1IGWXzYdbbz4HRe+5GiANusb1NKoCXzmwEGRcPBt6ADBdZ6OaNbEVv2CFF7OwS6X+b1sq2X4SQusjaVXJ58O6YMk5q+TFxIxj+QvE1AZHVuJcwVmL0S9jIIhaurkczQH1nfMubk9+7slHk4+1hLEft8p/WLsNyQm/khY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=andp8j+2; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4532514dee8so1025825e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:48:55 -0700 (PDT)
+	s=arc-20240116; t=1749671495; c=relaxed/simple;
+	bh=X/OA1aXD+x1kt5nNgWcOiOS8Y92tVVSfC0Xz93AMSXc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fGtIYJBQELJMVB3HW74mK6FwczlrMq40e63u+DIRN/QW7X0iYWQ3pNGcHOOYH3E/qUlp8Bk/NMWy6LR0PpNqmN6dxo0rvTKpCHG6nkWUxhJH0V+P8AuAcgMddhS7L9f3jn20YB3EQjyopPEssySgEnZ0pk+H9b5FRjq2QRzu9tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrXTWMuN; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a54700a46eso253470f8f.1;
+        Wed, 11 Jun 2025 12:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749671334; x=1750276134; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9pRs28WspQzH/SRLE3R6WBHMAHBstLB5+bHF3bHf9GI=;
-        b=andp8j+2X1zeGnPzV/oQHnxyNtSSSua71EOHZzffLf5Oix1Uxz9G9TgBVIQbL5wgdM
-         wg/YbsmHPHsc1+yvNvx8qTTdBf5+56EHNMdS4bM6JmtnUtjberxzLaZJ4RR67yUsST9n
-         RV5YNTcuGFlm/yE6jF0bWfWQ7aUusjJnppf+1ze+kVy4FP0vs+d8YH078E2eLjgGVX+y
-         sV9FdEqHDWAqXPuKAKVv6RwvTooihATG3QfpNPK5zLWNSNIb8g6s2q9wqdKcOx7ot07z
-         urKKayGSGanQievU9ko8gjgnmUo5Uo3u0FAVX91BZqrgucRlbBNnga4Es2tVQ2LnYOV/
-         vXVQ==
+        d=gmail.com; s=20230601; t=1749671492; x=1750276292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JQzMghNz4SMc/jj8ZNDpIvLoMQsd+F/Mm9SKGgQM0Dg=;
+        b=SrXTWMuNKADkbaTmDXEOzjg3hBT3owisiPs58b3332j9ikLYYthd0Jpo3V2/3G89Pb
+         8GSxsv9S+SnCTMfcuilkHJdzOIli1xS9/r9ZhvLEVE+DTCPAANyBuCOr8MEmVhfJTi/n
+         t7fO9SybEoTTNh9qjCHj/oNGcT8KBiEnzpQNjms18ops0f5RFYvNVMYIJUVnD69kLTza
+         Ag1KMWIzs4qF4kxOhZEepCUESklrtWZQgr6oTJOYfg9KnNT5Hx6Pl6CNHVWI+qabX0Hj
+         zDAdDu1omNz1AjYpp24bIWYpMsHLjk/b8kO/SksDH6yPDev84lT264cPdGese7yMaJYG
+         fo5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749671334; x=1750276134;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9pRs28WspQzH/SRLE3R6WBHMAHBstLB5+bHF3bHf9GI=;
-        b=hGXiCrfDfOG6yn6j8wup6m25jlwGmETPju9qGlErBJpo8tDdfi8k9QsUZDuTi/sjBH
-         s3SlCnbynO+siv9zRgJPRk8r28ITIrMC375+5r07DZTA6escmdmjpx4uCD5WSv9pYVt/
-         2eZSdzXQ+p7D8eJmy11ykaNF9fZDLe/sxKLBYrjbIdgfFDN6+xQrlvVmfABRSzwBohWR
-         jEklS48COdGWMS21g8612IDHTsSXeq+E715DoAC/etJRa1rop14Gp/NA+ijBTWEiHA2s
-         UE5DmCG5+81uZaul2dpxK2efo4ql1Xeavq7E8jvSfK5TfxfpfUzQO30AbC7RRa8hWCkR
-         baMg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7MsjCHVhz6nRnJNbHrK26MVF2ITLWuEoS1SlmvWYNPCg2RHx4bOCTxQjPPNK4att0NMElv8wuxWys2RM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNWj3xww0X2qyEA41LHEmEiSB4tlQbynM+BuqfChNIBqw+XzG4
-	jKniCcofHzdpxK0RL47KofUJNdsVpHGOIt4RnuaYgJ36n7emrkstGPm3A+XsVY7zAiB7YQ==
-X-Google-Smtp-Source: AGHT+IEX4ldcxgJ/jWH3CZaeozWQLDJgL+BLcPDjq5o+aUZSu8+LT9qfWXhXXRaLCvUkuhjl0wckrn4=
-X-Received: from wmgg5.prod.google.com ([2002:a05:600d:5:b0:450:dd18:ef0a])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2089:b0:3a5:2fae:1348
- with SMTP id ffacd0b85a97d-3a558a42bd3mr3684475f8f.51.1749671334113; Wed, 11
- Jun 2025 12:48:54 -0700 (PDT)
-Date: Wed, 11 Jun 2025 19:48:38 +0000
-In-Reply-To: <20250611194840.877308-1-bqe@google.com>
+        d=1e100.net; s=20230601; t=1749671492; x=1750276292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JQzMghNz4SMc/jj8ZNDpIvLoMQsd+F/Mm9SKGgQM0Dg=;
+        b=EsTiJbh33ycicovKW+uneABEbOCEcNFRKkXFldCkjlFF0ubcunYw8eS1PsWhXwKpNn
+         8rJoQAVx7TyKie+G71b42YO6TanZbTI48UQy3lAKy60GpQRnfO605bV0xETASpHKnWuh
+         Pe9a/DKGDMjJtxhMzoCqPn8VSxq3LCZn1lEH+jnCRIqZKrVNAgvuuELg5NuofMCVPS/N
+         HQjAbE0reiq8LIuwsCDhwx06dw3dpkdA7FodfhMf5bLztyl1jxFN8A5aUCoPYvthOstW
+         dEr74olygQVgr20gakjtxr007sMz7PQmr+3fjyS+g2D9HhBewwe1cBrasZIZs/t/wnEU
+         +5Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVxIcjAC5K8EXlC1+3T6TkkNYUrKNJBKansWhIROjv3suLO9glMg1ypNXF+GtRFLKeHltyl/dz5InjYRy3k4JS@vger.kernel.org, AJvYcCWUkXQLRCQfTFqtm5xz7UMaFgbLgqVkCCHLSCAxrywRlPc2eV4Bn2Cp0p1Alu6W4dfWxARliP7DrQ5MfICU@vger.kernel.org, AJvYcCX5K1RlWzuUglHbOKXAO3Vlm50OP78qLFs2FD/d2N2TYyB6q4D7aji9E6UyNLXcvXPuMn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBP08Nxc2jtPRX6gD71n3srFWhhTYmpKLeUmiLpFVcT1TDMLL3
+	r/11upLfepHn3ggNeJVzKx1p8i4XqoC9uvCa8H0dLqvT3NyPgMrDqk5VPIhrIc264AC6DMfl6wH
+	fwNpQgFdRiG0DA1FYOL7bQsQqK1eQAoM=
+X-Gm-Gg: ASbGncuVb+8YJptp5+0TekWxz7gB6feAualKjULSLJHoeVKHmqXsQpEu78q15EEeQfl
+	ByFukQrY+dLDUU3DwB9g0lCc6ADyKNG/5Gw0VPxDqHlBvEPFKRfE0YqU8C1+Jh4XfJ6e22K1Bf6
+	bKDmQY4KRYGP0VkLtXOwR2rocS6Y/N6KyvcKSKmvr2gZE1wD++QjyQ+wF0ZeTWQdkADBvOy+Uz
+X-Google-Smtp-Source: AGHT+IHsMOspB6UuSIxOVa8i+vzccdKZaI+htNn9UjH3qwVgBZvxXthrfaJmH1ZHicGFh3pG6c73MfkN8aXZP5JK+T4=
+X-Received: by 2002:a05:6000:310a:b0:3a4:d53d:be20 with SMTP id
+ ffacd0b85a97d-3a558695d45mr3327455f8f.18.1749671492015; Wed, 11 Jun 2025
+ 12:51:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250611194840.877308-1-bqe@google.com>
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <20250611194840.877308-6-bqe@google.com>
-Subject: [PATCH v12 5/5] rust: add dynamic ID pool abstraction for bitmap
-From: Burak Emir <bqe@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
-	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
+MIME-Version: 1.0
+References: <20250608143623.25242-1-wangfushuai@baidu.com>
+In-Reply-To: <20250608143623.25242-1-wangfushuai@baidu.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 11 Jun 2025 12:51:21 -0700
+X-Gm-Features: AX0GCFv7vXXDLbAwxkRk67UWzs3RvlU2LBWLjvW30iGM-xMtg-Wi-MUDz_hGEmI
+Message-ID: <CAADnVQ+SSPhZNN05F2-MS_79Vhp+mSTWF3Ss1rcoWRnaDjFx+A@mail.gmail.com>
+Subject: Re: [PATCH] selftests/bpf: fix signedness bug in redir_partial()
+To: wangfushuai <wangfushuai@baidu.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Mykola Lysenko <mykolal@fb.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Shuah Khan <shuah@kernel.org>, Michal Luczaj <mhal@rbox.co>, 
+	Jakub Sitnicki <jakub@cloudflare.com>, Kui-Feng Lee <thinker.li@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a port of the Binder data structure introduced in commit
-15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-Rust.
+On Sun, Jun 8, 2025 at 7:38=E2=80=AFAM wangfushuai <wangfushuai@baidu.com> =
+wrote:
+>
+> When xsend() returns -1 (error), the check 'n < sizeof(buf)' incorrectly
+> treats it as success due to unsigned promotion. Explicitly check for -1
+> first.
+>
+> Fixes: a4b7193d8efd ("selftests/bpf: Add sockmap test for redirecting par=
+tial skb data")
+> Signed-off-by: wangfushuai <wangfushuai@baidu.com>
 
-Like drivers/android/dbitmap.h, the ID pool abstraction lets
-clients acquire and release IDs. The implementation uses a bitmap to
-know what IDs are in use, and gives clients fine-grained control over
-the time of allocation. This fine-grained control is needed in the
-Android Binder. We provide an example that release a spinlock for
-allocation and unit tests (rustdoc examples).
+Looks good, but please spell out your name as First Last
+in both From and Signed-off
 
-The implementation does not permit shrinking below capacity below
-BITS_PER_LONG.
+Also use [PATCH bpf-next] in subject
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
-Signed-off-by: Burak Emir <bqe@google.com>
----
- MAINTAINERS            |   1 +
- rust/kernel/id_pool.rs | 223 +++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |   1 +
- 3 files changed, 225 insertions(+)
- create mode 100644 rust/kernel/id_pool.rs
+pw-bot: cr
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 943d85ed1876..bc95d98f266b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4134,6 +4134,7 @@ R:	Yury Norov <yury.norov@gmail.com>
- S:	Maintained
- F:	lib/find_bit_benchmark_rust.rs
- F:	rust/kernel/bitmap.rs
-+F:	rust/kernel/id_pool.rs
- 
- BITOPS API
- M:	Yury Norov <yury.norov@gmail.com>
-diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-new file mode 100644
-index 000000000000..355a8ae93268
---- /dev/null
-+++ b/rust/kernel/id_pool.rs
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! Rust API for an ID pool backed by a [`Bitmap`].
-+
-+use crate::alloc::{AllocError, Flags};
-+use crate::bitmap::Bitmap;
-+
-+/// Represents a dynamic ID pool backed by a [`Bitmap`].
-+///
-+/// Clients acquire and release IDs from unset bits in a bitmap.
-+///
-+/// The capacity of the ID pool may be adjusted by users as
-+/// needed. The API supports the scenario where users need precise control
-+/// over the time of allocation of a new backing bitmap, which may require
-+/// release of spinlock.
-+/// Due to concurrent updates, all operations are re-verified to determine
-+/// if the grow or shrink is sill valid.
-+///
-+/// # Examples
-+///
-+/// Basic usage
-+///
-+/// ```
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
-+/// for i in 0..64 {
-+///   assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
-+/// }
-+///
-+/// pool.release_id(23);
-+/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-+///
-+/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-+/// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
-+/// pool.grow(resizer);
-+///
-+/// assert_eq!(pool.acquire_next_id(0), Some(64));
-+/// # Ok::<(), Error>(())
-+/// ```
-+///
-+/// Releasing spinlock to grow the pool
-+///
-+/// ```no_run
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::sync::{new_spinlock, SpinLock};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
-+///   let mut pool = guarded_pool.lock();
-+///   loop {
-+///     match pool.acquire_next_id(0) {
-+///       Some(index) => return Ok(index),
-+///       None => {
-+///         let alloc_request = pool.grow_request();
-+///         drop(pool);
-+///         let resizer = alloc_request.ok_or(AllocError)?.realloc(GFP_KERNEL)?;
-+///         pool = guarded_pool.lock();
-+///         pool.grow(resizer)
-+///       }
-+///     }
-+///   }
-+/// }
-+/// ```
-+pub struct IdPool {
-+    map: Bitmap,
-+}
-+
-+/// Indicates that an [`IdPool`] should change to a new target size.
-+pub struct ReallocRequest {
-+    num_ids: usize,
-+}
-+
-+/// Contains a [`Bitmap`] of a size suitable for reallocating [`IdPool`].
-+pub struct PoolResizer {
-+    new: Bitmap,
-+}
-+
-+impl ReallocRequest {
-+    /// Allocates a new backing [`Bitmap`] for [`IdPool`].
-+    ///
-+    /// This method only prepares reallocation and does not complete it.
-+    /// Reallocation will complete after passing the [`PoolResizer`] to the
-+    /// [`IdPool::grow`] or [`IdPool::shrink`] operation, which will check
-+    /// that reallocation still makes sense.
-+    pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
-+        let new = Bitmap::new(self.num_ids, flags)?;
-+        Ok(PoolResizer { new })
-+    }
-+}
-+
-+impl IdPool {
-+    /// Constructs a new [`IdPool`].
-+    ///
-+    /// [BITS_PER_LONG]: srctree/include/asm-generic/bitsperlong.h
-+    /// A capacity below [`BITS_PER_LONG`][BITS_PER_LONG] is adjusted to
-+    /// [`BITS_PER_LONG`][BITS_PER_LONG].
-+    #[inline]
-+    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
-+        let num_ids = core::cmp::max(num_ids, bindings::BITS_PER_LONG as usize);
-+        let map = Bitmap::new(num_ids, flags)?;
-+        Ok(Self { map })
-+    }
-+
-+    /// Returns how many IDs this pool can currently have.
-+    #[expect(clippy::len_without_is_empty)]
-+    #[inline]
-+    pub fn len(&self) -> usize {
-+        self.map.len()
-+    }
-+
-+    /// Returns a [`ReallocRequest`] if the [`IdPool`] can be shrunk, [`None`] otherwise.
-+    ///
-+    /// [BITS_PER_LONG]: srctree/include/asm-generic/bitsperlong.h
-+    /// The capacity of an [`IdPool`] cannot be shrunk below [`BITS_PER_LONG`][BITS_PER_LONG].
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+    /// use kernel::id_pool::{ReallocRequest, IdPool};
-+    ///
-+    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
-+    /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
-+    /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
-+    /// pool.shrink(resizer);
-+    /// assert_eq!(pool.len(), kernel::bindings::BITS_PER_LONG as usize);
-+    /// # Ok::<(), AllocError>(())
-+    /// ```
-+    #[inline]
-+    pub fn shrink_request(&self) -> Option<ReallocRequest> {
-+        let len = self.map.len();
-+        // Shrinking below [`BITS_PER_LONG`] is never possible.
-+        if len <= bindings::BITS_PER_LONG as usize {
-+            return None;
-+        }
-+        // Determine if the bitmap can shrink based on the position of
-+        // its last set bit. If the bit is within the first quarter of
-+        // the bitmap then shrinking is possible. In this case, the
-+        // bitmap should shrink to half its current size.
-+        let Some(bit) = self.map.last_bit() else {
-+            return Some(ReallocRequest {
-+                num_ids: bindings::BITS_PER_LONG as usize,
-+            });
-+        };
-+        if bit >= (len / 4) {
-+            return None;
-+        }
-+        let num_ids = core::cmp::max(bindings::BITS_PER_LONG as usize, len / 2);
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Shrinks pool by using a new [`Bitmap`], if still possible.
-+    #[inline]
-+    pub fn shrink(&mut self, mut resizer: PoolResizer) {
-+        // Between request to shrink that led to allocation of `resizer` and now,
-+        // bits may have changed.
-+        // Verify that shrinking is still possible. In case shrinking to
-+        // the size of `resizer` is no longer possible, do nothing,
-+        // drop `resizer` and move on.
-+        let Some(updated) = self.shrink_request() else {
-+            return;
-+        };
-+        if updated.num_ids > resizer.new.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Returns a [`ReallocRequest`] for growing this [`IdPool`], if possible.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be grown above [`i32::MAX`].
-+    #[inline]
-+    pub fn grow_request(&self) -> Option<ReallocRequest> {
-+        let num_ids = self.map.len() * 2;
-+        if num_ids > i32::MAX.try_into().unwrap() {
-+            return None;
-+        }
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Grows pool by using a new [`Bitmap`], if still necessary.
-+    ///
-+    /// The `resizer` arguments has to be obtained by calling [`Self::grow_request`]
-+    /// on this object and performing a [`ReallocRequest::realloc`].
-+    #[inline]
-+    pub fn grow(&mut self, mut resizer: PoolResizer) {
-+        // Between request to grow that led to allocation of `resizer` and now,
-+        // another thread may have already grown the capacity.
-+        // In this case, do nothing, drop `resizer` and move on.
-+        if resizer.new.len() <= self.map.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Acquires a new ID by finding and setting the next zero bit in the
-+    /// bitmap.
-+    ///
-+    /// Upon success, returns its index. Otherwise, returns [`None`]
-+    /// to indicate that a [`Self::grow_request`] is needed.
-+    #[inline]
-+    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
-+        let next_zero_bit = self.map.next_zero_bit(offset);
-+        if let Some(nr) = next_zero_bit {
-+            self.map.set_bit(nr);
-+        }
-+        next_zero_bit
-+    }
-+
-+    /// Releases an ID.
-+    #[inline]
-+    pub fn release_id(&mut self, id: usize) {
-+        self.map.clear_bit(id);
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 8c4161cd82ac..d7def807900a 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -54,6 +54,7 @@
- #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
- pub mod firmware;
- pub mod fs;
-+pub mod id_pool;
- pub mod init;
- pub mod io;
- pub mod ioctl;
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
-
+> ---
+>  tools/testing/selftests/bpf/prog_tests/sockmap_listen.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c b/to=
+ols/testing/selftests/bpf/prog_tests/sockmap_listen.c
+> index 1d98eee7a2c3..f1bdccc7e4e7 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+> @@ -924,6 +924,8 @@ static void redir_partial(int family, int sotype, int=
+ sock_map, int parser_map)
+>                 goto close;
+>
+>         n =3D xsend(c1, buf, sizeof(buf), 0);
+> +       if (n =3D=3D -1)
+> +               goto close;
+>         if (n < sizeof(buf))
+>                 FAIL("incomplete write");
+>
+> --
+> 2.36.1
+>
 
