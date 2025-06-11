@@ -1,51 +1,59 @@
-Return-Path: <linux-kernel+bounces-681281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D0BAD50A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:56:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89AA5AD50AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A617B1885485
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C23263A3E3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D2E25F980;
-	Wed, 11 Jun 2025 09:55:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0E22367A8
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 09:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9C32609C6;
+	Wed, 11 Jun 2025 09:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/6FMBTw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87D419924D;
+	Wed, 11 Jun 2025 09:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749635750; cv=none; b=QjDKyyq7KrjBMNs7PVJWTnvK+E6HqYa8LfIZXjis4RU62Az5F2QZGGddpLwFmNroPE4df3TtEWyHdcGlq9UW1YhfsJeJljonWrCZDTbSmZ6MNp8rm26edZOKW13qJ3RrfyBKh4pNbMhSKu82n6rEf2JSrFQQSPehniNYwCCXo/4=
+	t=1749635859; cv=none; b=HJy56u2hA08O/tYGWx6R4/WhLeuyvOL2KRolR0CmZ5osj9zwqyeNZiuXd4JIP6XZRdLX1kVyitoIyFKPAXLE3Ku4KUSAybCXv0gKL9w760QDAjPCfAjMRiXJQLwfAJgpwnkqU0k9nbnGRl0EueSOy6LxKBVC9w7jXgZhOj3pVXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749635750; c=relaxed/simple;
-	bh=jS4uqnsrbb0Bec/mD8kNEClOeTZSwS0qkXLSDWD/rBI=;
+	s=arc-20240116; t=1749635859; c=relaxed/simple;
+	bh=e6TS5O+g2JwrZ8I2ZOF2aYAJsjX+AZS4VpHURqwjnLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2+FhU+36qoQFFke5yGPaUQaPISJuVcmULDuxEiHSqCXb9KqzW6UDifCFVFub9wgXT/r8R87dumTfddvXmAWR1U4eJK5qSHqVoPwUQVAL+GGiifUg50gEFnQ5Mid1sZmCl1aZU2MSBPx7IL/DGIIWIedUoFXpfMsCkt0+xAR9mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B8841596;
-	Wed, 11 Jun 2025 02:55:29 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E54C3F673;
-	Wed, 11 Jun 2025 02:55:47 -0700 (PDT)
-Date: Wed, 11 Jun 2025 10:55:41 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] arm64/debug: Drop redundant DBG_MDSCR_* macros
-Message-ID: <aElRi0Usn8dH6O4m@J2N7QTR9R3>
-References: <20250610053128.4118784-1-anshuman.khandual@arm.com>
- <20250610053128.4118784-2-anshuman.khandual@arm.com>
- <aEhnzsXHfilVhJ1s@J2N7QTR9R3>
- <68d762d4-a755-4ede-976b-0616bf3aab28@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2dT9NDu7sX75kEYXEUTl9o3r6oOjySndrx4LgkNVksbaas/U0jZN99aA/sXMpa0H6Z6FCAQJO+KBH1wqxu8laUsNstc+pz0tIeN5Uo3kVROiFG/q7gwVHrJq+kVoVvCXSOzUYpIkV+y092Vq6aAmC9h1lrgKvc8ytwUbJcYIR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/6FMBTw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0735C4CEEE;
+	Wed, 11 Jun 2025 09:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749635858;
+	bh=e6TS5O+g2JwrZ8I2ZOF2aYAJsjX+AZS4VpHURqwjnLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n/6FMBTwIaQN2SRyM9vkcaCmosGcBtQJ+c5KUx2YCVnXFjDAKwf0hWKHhrni5xlbj
+	 dmklTuh3gfNT6cdQk/B4ISt7Gbtt+cfFSaFqiAGDp8HyX7WCSNCVQ+9ugGxnP8eCJU
+	 RB84oU9HHmsM/BCT0riqULfcimJiV4k55VpfsMyzIQtBTBIOQ6r0rATDg9sItv3kME
+	 lDhSusRlWoJCNI0V5+jLYHEcUpRwdl1seRedsQuzgP2OjF5L/g3RUkb1koXcnxHbbn
+	 J0HWHLacUxMOiUEiwjenshSVoafxRufNA8zPFF5Zme7COtU9+zqoGv9W/ABUjyGtGV
+	 21Y3/bjAhoqwg==
+Date: Wed, 11 Jun 2025 11:57:32 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
+	Dave Chinner <david@fromorbit.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCH v5 3/5] mm/readahead: Make space in struct file_ra_state
+Message-ID: <20250611-mitleid-ablief-1e7f1f03394d@brauner>
+References: <20250609092729.274960-1-ryan.roberts@arm.com>
+ <20250609092729.274960-4-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,54 +62,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <68d762d4-a755-4ede-976b-0616bf3aab28@arm.com>
+In-Reply-To: <20250609092729.274960-4-ryan.roberts@arm.com>
 
-On Wed, Jun 11, 2025 at 09:10:45AM +0530, Anshuman Khandual wrote:
+On Mon, Jun 09, 2025 at 10:27:25AM +0100, Ryan Roberts wrote:
+> We need to be able to store the preferred folio order associated with a
+> readahead request in the struct file_ra_state so that we can more
+> accurately increase the order across subsequent readahead requests. But
+> struct file_ra_state is per-struct file, so we don't really want to
+> increase it's size.
 > 
+> mmap_miss is currently 32 bits but it is only counted up to 10 *
+> MMAP_LOTSAMISS, which is currently defined as 1000. So 16 bits should be
+> plenty. Redefine it to unsigned short, making room for order as unsigned
+> short in follow up commit.
 > 
-> On 10/06/25 10:43 PM, Mark Rutland wrote:
-> > On Tue, Jun 10, 2025 at 11:01:27AM +0530, Anshuman Khandual wrote:
-> >> MDSCR_EL1 has already been defined in tools sysreg format and hence can be
-> >> used in all debug monitor related call paths. Subsequently all DBG_MDSCR_*
-> >> macros become redundant and hence can be dropped off completely. While here
-> >> convert all variables handling MDSCR_EL1 register as u64 which reflects its
-> >> true width as well.
-> > 
-> > I think that for now it'd be best to *only* change over to the
-> > generated MDSCR_EL1_* defintions, and leave the register sizes as-is.
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>  include/linux/fs.h |  2 +-
+>  mm/filemap.c       | 11 ++++++-----
+>  2 files changed, 7 insertions(+), 6 deletions(-)
 > 
-> I had tried doing that originally but without changing mdscr register size,
-> there is a build warning because MDSCR_EL1_MDE is defined as GENMASK(15, 15)
-> which is represented as 'long unsigned int'.
-> 
-> #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
-> 
-> arch/arm64/kernel/debug-monitors.c: In function ‘disable_debug_monitors’:
-> arch/arm64/kernel/debug-monitors.c:108:13: warning: conversion from ‘long unsigned int’ to ‘u32’ {aka ‘unsigned int’} changes value from ‘18446744073709518847’ to ‘4294934527’ [-Woverflow]
->   108 |   disable = ~MDSCR_EL1_MDE;
->       |             ^
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 05abdabe9db7..87e7d5790e43 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1052,7 +1052,7 @@ struct file_ra_state {
+>  	unsigned int size;
+>  	unsigned int async_size;
+>  	unsigned int ra_pages;
+> -	unsigned int mmap_miss;
+> +	unsigned short mmap_miss;
 
-Please mention that in the commit message. As-is, the commit message has
-no rationale for changing to u64.
-
-More generally, if you need to make a change to avoid a compiler
-warning, please describe that as part of the rationale.
-
-> MDSCR_EL1 is a 64 bit system register as per ARM DDI 0487 L.A (D24.3.20).
-> Representing it as u32 does not seem right irrespective of whether the
-> extended break point support is enabled or not. Besides even arm64 kvm
-> uses u64 for mdscr register.
-
-Sure, but that wasn't my complaint.
-
-My complaint was that it was a logically unrelated change, because you
-had provided no rationale as for why it was necessary to change to u64
-as a conseqeunce of changing to the generated MDSCR_EL1_* definitions.
-
-Please also note that *almost all* system registers have the
-"${REGISTER} is a 64-bit register wording", including things like DAIF,
-SPSel, etc. It's necessary to consider the context of use.
-
-Mark.
+Thanks for not making struct file grow!
 
