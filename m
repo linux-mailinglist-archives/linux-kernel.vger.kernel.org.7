@@ -1,195 +1,199 @@
-Return-Path: <linux-kernel+bounces-681654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD318AD556B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:24:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C85AD5573
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7515417F7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F022E1E02F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A62127FD6E;
-	Wed, 11 Jun 2025 12:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2592820D0;
+	Wed, 11 Jun 2025 12:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bDhvnbrL"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gYDy+ZM8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC6C276031
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEE3280300;
+	Wed, 11 Jun 2025 12:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644687; cv=none; b=pluL+mc/0FaaVg5bqUBZYJj4iahB4NNUchWXjgdrtlsqGTkw6pf0NS4+yMjEVRhvEi5I6iTGlAJTKdqeZPROM/2XkENC8qV0q4xzm+tlWDfEuuQBZYIXoP5cwUOPEPgB8PUFsm+LkP1Rt99ylIc2XQQKMK4ai3XxpNDjzyz0KN0=
+	t=1749644733; cv=none; b=E8EFdZVD+Q6xuEuUubxsSVqhcB72ljvN/t4bI3iDGJdnIk1xfJie3t2R86TB9Vq2veiUOesQwWtLJ2B8tgC2QMw/fjhaV+WnVQZarXznhBpE9HHo6LyHURC30BKviGFSgLWKERDYQAi6NirmCUyw8PCf6ZGmZzJsti7hfK4K/E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644687; c=relaxed/simple;
-	bh=R81Vn86n50s95m24RM0OKR5tanCo8I3XjpHOkclODVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J6991K3p1WscZ/LRx8kj1JxSCQP3FIC2m3Jkiir5yPw22402TRBb3AMHi3Ltvjycynbs1bpQqSSaImOHbT2d3z4sY2p2x5uR4hQnf7uP3hhXgdm9RI4tpxPRbUgP095Uac18S4HuArxlDKJt98HTNfcQV/Swf5qWzd8kqz3hHOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bDhvnbrL; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a53ee6fcd5so2371941f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749644684; x=1750249484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pntxaWNnDpEM2Le+70ckmhHLBJI/hmInZvYIpD60p58=;
-        b=bDhvnbrLizjuLIidAszNSvq6JXlta9/PC3M9ppkmwLwDOtyv7tOyj+3wTguQeCUtdz
-         uNukMWzx1xh/G3BMxbIZgI5gAFzSzgfhGgrQ9wz0bVEu09OHr8v89G9tyPSf5M24k0d6
-         yoYx37uXK+Bb6nYaaIfPNR7W1cYhcAQRfVWJiTZr0ZCmj9NEocIs5MvXmkPZuqEAJ+tl
-         SEH2rKrhhDrnEl8atA/5zczVSCNLjuJHfUiCr3b/aO7563yCLD81OWDyuuzYvOTnvAyQ
-         pRsSI6QZu5PhzkBGl6sEXYeJQt6+WcBAbgxsNkSnp1RDF8VEeP1MQbD+hCLJ1jzxT3b+
-         F2Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749644684; x=1750249484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pntxaWNnDpEM2Le+70ckmhHLBJI/hmInZvYIpD60p58=;
-        b=pUSJzbMlNRQUM5sQiAMfAg3SFL1sKGP5EC/p1MIzaG6BXZQfUVtyOrK08F+zbrQep8
-         hDdd0j8gn98vOaf+P3p2KUDWPUdb9dRVj+XCTispUC1/Dso+m/gcNYplRX4PZnr8QKMJ
-         jmak4yQo/jH+fO8YpwTDdknIIYGXaXpuBvPTecVLNOGyXgBdtEvvrWo/apF4QnsTZOjF
-         m/moFk1IDCDrviI8bBpjMMGcsm0lJdGp1ynu4/InhBwndDKjQFVizOeCeZG+40waInTR
-         5O52/4hdg1PCFFJsv4w5ZqXOu6KOwXgUozo/xAbBN0uU8/uNppb8I5BNFDChOq3w2MWe
-         39TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeWdfuFbBctb9ecd892JJCByAnADmUynwKzQsYzfti2A4M4eLMM/V0Ub/QlTxxRmBYa7GUuZYndkWik6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLvzEMusfaLqfqljumBd8iyUtTyqjG7L/5BkrJPEQrrsfB+3Ff
-	nTbHO0Br9IdoK3HnlAT1HkQKaN8RKMaCMy5H0W6IUkLFMJR+0b4OgkWBCqSQ3zWu63kcPAaqfVh
-	ngNSzGInr66t9pgMrLVeg6JSU3ayr1awglPFv0/sF
-X-Gm-Gg: ASbGncuW2/DvK8DeGKXia6t6zyz1yXpCOqU2517CiqpucXHhkEdlBMXZPpJSKOxqNn4
-	sDh6iSAcIkNpF/omffA0jY5A2xjFuvk+5Qoex5gss52JPhipNLRJJIPs88kdoSfKanzBv2sZSvb
-	IlpJqL7sRvUMeAGIdEWiIL6VEr0lUM6TAc9S00SMFr5qQpeR351m8djq3v2HS1fMLHrHdunRNsb
-	w==
-X-Google-Smtp-Source: AGHT+IHqqDzqPqrx+jJdaiStqcmQC5PY9s0h0hv9Nc7By7zX4EjpLulqZbtZUXuN16xlgP3QnLCnsqEL3ZVHwdnGryk=
-X-Received: by 2002:a05:6000:40ce:b0:3a4:f52d:8b05 with SMTP id
- ffacd0b85a97d-3a558af421bmr2451602f8f.35.1749644684234; Wed, 11 Jun 2025
- 05:24:44 -0700 (PDT)
+	s=arc-20240116; t=1749644733; c=relaxed/simple;
+	bh=mq5fQh6TxmI6S2ebT8lugj5Q9NravY0okjLw4RPOEH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K95staXafmM/IMl3xcNgqGCjEfGIjjGNZ5bBj2QtqKTFth5GTzieF6dwaEwy3dyhUh8RIixmycyzf3hLZD8jZU+dscWdE23p36Ap3vqIpMOHLAR6vEsOf8gl4+pWJJ9sIsrZ3g14/yzYtrf/sx53t5EOrHCsl1IQlIsz6jBrWCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gYDy+ZM8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B9DDrF023918;
+	Wed, 11 Jun 2025 12:24:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pGAuQJnCZRenSUKeUSJste/qOhgDi8yuC9MgXtEQqHA=; b=gYDy+ZM8lCRyvKb8
+	Y927Tqu4+0a16Mf2gDCVxhZfsUWS5YCE0iwHFZy79ojO1v5ENqTp3uLJv/Gb8cHK
+	dX+rqJioT+ndWZCbQBq2xZA2324/Uce0Z4PNyFMX29jyvhLAT/I1HMEXodVLEN3x
+	c45z59T9GTrijJd3hoWvOLkgnL+gJFkYhozjust+Ql9CRbCYCh2I9jcQEWZ6VXv8
+	5c9n+wNGZ+qt0pQ5/QtgvYTR5utTiAlUW1QXEUlJpzM0Ck0zxXDtvCStQDwjduha
+	arMy/gPTPJUJOxqkiFXoytpRBain2Z70mRSRHT6/N10L8uzVBYKGUQ27KDnaDYuH
+	ALHz4A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 475v2tfhvs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 12:24:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55BCOuWd012122
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 12:24:56 GMT
+Received: from [10.216.28.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Jun
+ 2025 05:24:48 -0700
+Message-ID: <d482653e-5c0e-4b03-98d6-2c898b445917@quicinc.com>
+Date: Wed, 11 Jun 2025 17:54:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org>
- <HCd56HpzAlpsTZWbmM8R3IN8MCXWW-kpIjIt_K1D8ZFN6DLqIGmpNRJdle94PGpHYS86rmmhCPci9TajHZCCrw==@protonmail.internalid>
- <DAIV6MJAJ5R0.3TZ4IC2KO9MOL@kernel.org> <87v7p3znz6.fsf@kernel.org>
- <CAH5fLgi3B_Wyz2OzBLhHHgWrg7hboyFUcQe-+GUrrvXiX9di=w@mail.gmail.com>
- <GHUD6hpYDty0s_oTLGC6owDPKqrNepeGOL9F-XlvY6G50K8Zptjp4f8kVVnyoTjf-E_0QVeHfmUUvcN-p1i24Q==@protonmail.internalid>
- <DAJHVMM9DND0.2FM0FJYN0XEFV@kernel.org> <87jz5izhg3.fsf@kernel.org>
- <WXoNAlTJvpteJEAZ3TkYKk2QWHBC0oID8Dy3AHGxLEwiZwBPdSLZB4MpdbObLtFvqiN9re3q6OQpiua2uiv1Hw==@protonmail.internalid>
- <DAJOKFHW96XZ.2ANYSSFQO03ZL@kernel.org> <878qlyzd9a.fsf@kernel.org>
-In-Reply-To: <878qlyzd9a.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 11 Jun 2025 14:24:31 +0200
-X-Gm-Features: AX0GCFsGrjiahNqXYN_wK3WpFvBjlZuqs41dAS1mQAczR2z1DIFyvKRDh3iJ50o
-Message-ID: <CAH5fLgiNikpTfm6nvyEJaEspPkMNRQSX2XmBXvXktpXQLutDPg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: types: add FOREIGN_ALIGN to ForeignOwnable
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: opp: adreno: Update regex of OPP
+ entry
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Akhil P Oommen
+	<akhilpo@oss.qualcomm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will
+ Deacon" <will@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean
+ Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry
+ Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+References: <20250611-x1p-adreno-v2-0-5074907bebbd@oss.qualcomm.com>
+ <20250611-x1p-adreno-v2-1-5074907bebbd@oss.qualcomm.com>
+ <492417fe-c086-4980-b108-0487bad08155@kernel.org>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <492417fe-c086-4980-b108-0487bad08155@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 19Wy04pcgBOYQabLMROi2WkoaX8g-IgR
+X-Authority-Analysis: v=2.4 cv=GoxC+l1C c=1 sm=1 tr=0 ts=68497599 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8
+ a=snIp_u72ujy8X2fHCcYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 19Wy04pcgBOYQabLMROi2WkoaX8g-IgR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEwNiBTYWx0ZWRfX8/VpQ35K3txV
+ 0LE/3vFvyiqLM1KGZhDyw53Hlk7CMoEbHrqhh0/DhZeXDc2YvHYAhicvpnujZyStWiy35n5K4rN
+ wX+m80mCGjHNIvl0Ry5I0BXYGwz2LJkpBnyDmGlIYSi7/tbFY8dMtk83X/vB6RgHmK5fw+8c0EZ
+ 1tBW63P14pVPPyK4NJNNqZllRWwtW5xPwNXQmYHRSX51BdA4l+o+AJAbmK+dYX6PkXgilZMY1YD
+ 97BZ15yjVYz+ddZTvlddufqXy/JvHXCV4meWLqWU0hFePNdgnlmBm6zvH61JLpWiSjEKeuSuerb
+ YAp5p1kVZMVHOG5K/h5A8NQ3RXIfacvN3HXqnu0oAnM2Cz9bgn65fbnu+MQSk5laoYL/BJ7jXq1
+ iJwZdswf/j6MgVIP9xJSsJ/e2KTjOb7Yy2aXssLnpEXAsVAq6Jf5HNnu93XhdMqpcd+ZfrTZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506110106
 
-On Wed, Jun 11, 2025 at 2:14=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
-> "Benno Lossin" <lossin@kernel.org> writes:
->
-> > On Wed Jun 11, 2025 at 12:43 PM CEST, Andreas Hindborg wrote:
-> >> "Benno Lossin" <lossin@kernel.org> writes:
-> >>
-> >>> On Tue Jun 10, 2025 at 4:15 PM CEST, Alice Ryhl wrote:
-> >>>> On Tue, Jun 10, 2025 at 4:10=E2=80=AFPM Andreas Hindborg <a.hindborg=
-@kernel.org> wrote:
-> >>>>>
-> >>>>> "Benno Lossin" <lossin@kernel.org> writes:
-> >>>>>
-> >>>>> > On Tue Jun 10, 2025 at 1:30 PM CEST, Andreas Hindborg wrote:
-> >>>>> >> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> >>>>> >> index 22985b6f6982..0ccef6b5a20a 100644
-> >>>>> >> --- a/rust/kernel/types.rs
-> >>>>> >> +++ b/rust/kernel/types.rs
-> >>>>> >> @@ -21,15 +21,11 @@
-> >>>>> >>  ///
-> >>>>> >>  /// # Safety
-> >>>>> >>  ///
-> >>>>> >> -/// Implementers must ensure that [`into_foreign`] returns a po=
-inter which meets the alignment
-> >>>>> >> -/// requirements of [`PointedTo`].
-> >>>>> >> -///
-> >>>>> >> -/// [`into_foreign`]: Self::into_foreign
-> >>>>> >> -/// [`PointedTo`]: Self::PointedTo
-> >>>>> >> +/// Implementers must ensure that [`Self::into_foreign`] return=
-s pointers aligned to
-> >>>>> >> +/// [`Self::FOREIGN_ALIGN`].
-> >>>>> >>  pub unsafe trait ForeignOwnable: Sized {
-> >>>>> >> -    /// Type used when the value is foreign-owned. In practical=
- terms only defines the alignment of
-> >>>>> >> -    /// the pointer.
-> >>>>> >> -    type PointedTo;
-> >>>>> >> +    /// The alignment of pointers returned by `into_foreign`.
-> >>>>> >> +    const FOREIGN_ALIGN: usize;
-> >>>>> >>
-> >>>>> >>      /// Type used to immutably borrow a value that is currently=
- foreign-owned.
-> >>>>> >>      type Borrowed<'a>;
-> >>>>> >> @@ -39,18 +35,20 @@ pub unsafe trait ForeignOwnable: Sized {
-> >>>>> >>
-> >>>>> >>      /// Converts a Rust-owned object to a foreign-owned one.
-> >>>>> >>      ///
-> >>>>> >> +    /// The foreign representation is a pointer to void. Aside =
-from the guarantees listed below,
-> >>>>> >
-> >>>>> > I feel like this reads better:
-> >>>>> >
-> >>>>> > s/guarantees/ones/
-> >>>>> >
-> >>>>> >> +    /// there are no other guarantees for this pointer. For exa=
-mple, it might be invalid, dangling
-> >>>>> >
-> >>>>> > We should also mention that it could be null. (or is that assumpt=
-ion
-> >>>>> > wrong?)
-> >>>>>
-> >>>>> It is probably not going to be null, but it is allowed to. I can ad=
-d it.
-> >>>>>
-> >>>>> The list does not claim to be exhaustive, and a null pointer is jus=
-t a
-> >>>>> special case of an invalid pointer.
-> >>>>
-> >>>> We probably should not allow null pointers. If we do, then
-> >>>> try_from_foreign does not make sense.
-> >>>
-> >>> That's a good point. Then let's add that as a safety requirement for =
-the
-> >>> trait.
-> >>
-> >> I disagree. It does not matter for the safety of the trait.
-> >>
-> >> From the point of the user, the pointer is opaque and can be any value=
-.
-> >> In fact, one could do a safe implementation where the returned value i=
-s
-> >> a key into some mapping structure. Probably not super fast, but the us=
-er
-> >> should not care.
-> >
-> > Then we'll have to remove `try_from_foreign`.
->
-> Oh, I see. OK, it is a safety requirement. Should I just add it to this p=
-atch?
+On 6/11/2025 4:50 PM, Krzysztof Kozlowski wrote:
+> On 11/06/2025 13:15, Akhil P Oommen wrote:
+>> Update regex to allow multi-worded OPP entry names.
+> 
+> Why would we want multi-worded? This needs to be explained here.
 
-Sure, this patch is fine.
+I took the new regex from "opp-v2-base.yaml" file, so I thought it was
+obvious enough. The requirement is that sometimes Adreno GPU may require
+variants of OPP entries with same frequency. As an example, we may want
+to vote different peak bandwidths in different SKUs for the same GPU
+frequency. So to denote this minor variation, we can add an integer
+suffix to the OPP entry name separated by '-'. An example from another
+patch in this series:
+
+ opp-666000000-0 {
+         opp-hz = /bits/ 64 <666000000>;
+         opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+         opp-peak-kBps = <8171875>;
+         qcom,opp-acd-level = <0xa82d5ffd>;
+         opp-supported-hw = <0xf>;
+ };
+
+ /* Only applicable for SKUs which has 666Mhz as Fmax */
+ opp-666000000-1 {
+         opp-hz = /bits/ 64 <666000000>;
+         opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+         opp-peak-kBps = <16500000>;
+         qcom,opp-acd-level = <0xa82d5ffd>;
+         opp-supported-hw = <0x10>;
+ };
+
+I will add this explanation in the commit text in the next revision.
+
+> 
+> 
+>>
+>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>> ---
+>>  Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+>> index a27ba7b663d456f964628a91a661b51a684de1be..bba95799919eb52d12afa42354ed909d0ef3c627 100644
+>> --- a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+>> @@ -23,7 +23,7 @@ properties:
+>>        const: operating-points-v2-adreno
+>>  
+>>  patternProperties:
+>> -  '^opp-[0-9]+$':
+>> +  '^opp(-?[0-9]+)*$':
+> 
+> Not correct regex. You allow "opp", "opp1" and all other unusual
+> variants. Commit does not explain what problem you are solving, so I
+> have no clue what you want here, but for sure opp1 is wrong.
+
+Just to confirm, would this be fine for the requirement I mentioned above?
+
+"'^opp(-[0-9]+)*$'"
+
+-Akhil.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
 
