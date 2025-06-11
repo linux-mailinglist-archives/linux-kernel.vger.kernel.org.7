@@ -1,218 +1,173 @@
-Return-Path: <linux-kernel+bounces-681168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931A5AD4F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E068AD4EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51B04607C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C00179BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECF02620C6;
-	Wed, 11 Jun 2025 09:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75ADF242D6D;
+	Wed, 11 Jun 2025 08:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZjStcvB"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MwDyGr3A"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C98E253953;
-	Wed, 11 Jun 2025 09:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5C023F43C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 08:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749632538; cv=none; b=jm4YSvIiqKoxu+o5I4YuE+UhoptdMy8wUnp+03GzRtP1jFkiu2LkTjYrgV6isrM9lX8FGOLM6Hi6OKdhxQXiOaGdTVfn8D4czjXyd2WhsGvoVIVQA/zLgi4I+cRkCisfGE8qfW7dwpKFozOOYDXMGWzBAg7D4Dri74WXJoCU964=
+	t=1749632241; cv=none; b=ZJ45NItjkJu4qmWRA+FTjLK6BQZ6EjYfCgWm7EaBMVaOPsOn5NpV2DRAiOmjIQAz+Vrrzpxc4ZZe6b4e0Km6qiXaKcByzhzej22FvtGBntBJ+spTS+kyTkBP2BAInnMoTmOeMAJ22gubhKywKm6mbuwnlLtvDmqXfTf0bsvAr70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749632538; c=relaxed/simple;
-	bh=69jCf82ldxpTA0F6lOOd9iI+ILINtCcpDowM6KFnYV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Krc9D4lU8kYl/zp0QqmLVc3QlXuA1OXOVamYwvFZ/F661I+1haVrI+6YsPxE4QlSYmQko9jioJHMdq643CVxMbMa/W8cwxNRPf4RlY5mo4vusZjHpNN3nscNG1ZrrrAMWq45FSMTh8yrU14poX+whDPlJ0dw3fhqSFNYILcmU1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZjStcvB; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74267c68c11so5149083b3a.0;
-        Wed, 11 Jun 2025 02:02:17 -0700 (PDT)
+	s=arc-20240116; t=1749632241; c=relaxed/simple;
+	bh=BOiBGegJRIsJAwhdaPg0kbdMQr6Mw/a7D38ClN94RqQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=clRkzV3vhJ5N0uiiAu50VtQtYa8eMSG6s9mxZmbS9/XebR5CwdfUAxjSaso9GfD8xK7IsoMnll8aJ1xILIqKQAyz/R9O/+Rhnp2YQ+LUPxOLg9cjfwVkQDYRCql+/f2xWnROlbwLn1lbjjVl4uEfiAAnR4/jC8ITwk0FUffAowM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MwDyGr3A; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e7b8112f4dso350920137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 01:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749632536; x=1750237336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KVumx6ANM4ofeoun5RGa9xF2pUD3YLPwVEfUhUeDdMM=;
-        b=mZjStcvB22KqMzyGIjnpbPy6czqzMOoJ5itSbiBxoEano9e0xdj3ITJEGHYNLDhPCh
-         +rV98ZJgshhbHWRlrqWJ/iH5OdAEr/V2YUtBBDLcjydRZL4T76etL8VQVFV2NrNIbis0
-         vFGJiEecHS0n2TU6VxRn5a2vrxFF/9XYsf+J0Z7JcC4LSzorlJQ/rC+S+VozHQVF9mw3
-         jJ0RoHhOedzfuXigzF1wgKin4tqLKJSNA2Er5D+vR8P44ZIb1COLwFxb1IyqT+z9yhn3
-         P9her3Y76T5IntUNVazwuS7MCWucn+HDLQF1DPuhgcCQZmQwJovYk0pqWSiBKznvDG+9
-         AL4g==
+        d=linaro.org; s=google; t=1749632238; x=1750237038; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DV9t5sYiI13RU+dfHyim24Ym/TfwiK76Thbl9i9KKag=;
+        b=MwDyGr3A2nzkrw0WRJBKyig3h5TX3soXhdOkju01GdrOlq89cqp7EZF7bwvhW3zHQn
+         f8fh+TyYQblpZem3RFnmCOML5n4EeSnNN5mqEEAFrhEFX2SC5dxbjUvdB/WnSavbbUkP
+         tVc/5VWCkpC2mx1k3DeBpIprw4aerWs3TJ4uxnFIYL4ZPiBis/Ju2eTYSkVggtXLr2vW
+         fX4khsooHai2GyWiKNDAkOiPxUE2wXBYQCJsdmq3zedEQAzzuMZ1NzFbpARyLTSCAx4c
+         CKewgbuyR3u7MIzmwrnZh4Roz7oCgTIzS7HwKmdFwuG9WgqJq50ow+otdbtHtBJm4vqz
+         qNSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749632536; x=1750237336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KVumx6ANM4ofeoun5RGa9xF2pUD3YLPwVEfUhUeDdMM=;
-        b=AkJhQpwaptM1EserU8qm3669+Lvc1ImdYIe9Ezv7hyYVhvXYYBhffno5RHNcqFlsji
-         UMnGsB0ouIGDPaj/4+XZH/lUoPUPwzvpxT5AS2qAAuGMXuSakT+x7ruFHOY8kv+ljvPO
-         gaqyTBzHSlE0ChRsEYS35GdzZtkKT3HK011+YtP2u5dJwWfwIbrlqoEvxfoS8yf3AnOV
-         fff7famdjlEe2uX6lvuqKA4JhSUOmi3PW4DBSq/dhR8GxnYwYE+niSi+qPB9xqzKj4ic
-         Sohu//UFILn7MYe34mGIbscsUJkSeNgI5Ejo1+XhASMkuazrGq9fmdtBZSeXoprwKDk0
-         KSyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqp3byDX92wQZHct96oaymCP5b5QoQIabOfYpANYkqm3/qRCPO17VWfl/UlK2/LTPxsZeEqJp/jyCZoA==@vger.kernel.org, AJvYcCVZZw0MKzYVF99Z2G+DUzI9s4sloGuTp6BlRPlSIgaatjJRucbZJqmjPBL29zUWT/u1dsHXPneqPILq/tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyks7Ubg6k09hLbpyZ9xJqzSjO7wUUNLZi1sLuC3NOslpZTYq9Z
-	j03mJ16k7sw4iqGgYOcUb1JDALie+hKxs+JVImAs1aloM4zGrKjLDaY9
-X-Gm-Gg: ASbGncssUYxeVpFi5ogI8wkXKxvtSeOHCO7pLkB86csE9R+wpaQAqqW+V9ofBrTWAyV
-	w8MAZyA0dzOuWB/DF2q2S1FXemJefzqJqTTZRJs1P838nxWzVPryKhZrJ8o/dHA9wPc1xgMpb+1
-	QQY0xgoCan0CuUyYwkGvx7Kv+Q08W4roycmg30BU5ka9Qeh/gIA0clzm/s1l8p9PpGrysmc8EWY
-	CVg0QAN/z4hIcsas52EkejQuL8blcpEM5/QEjGIPCcR/lbdlP6+m0Fp9VmTE7utm2FM2YuEGxbF
-	SYy96x7BE7IQLAJ+73+nhI8zsQ08D9cbQ48Wc3TI7wPoWNqOtRhFJlbpjxVp9lpg6vuxTc7Mv4x
-	IeCyG3w==
-X-Google-Smtp-Source: AGHT+IGtr23sa68iAszhUDocoEeLvcc3jYEb/xSciH3gOWIBfRirmfC+n7brf1bZ5/jlTnZaIngeVA==
-X-Received: by 2002:a05:6a00:b95:b0:740:9a4b:fb2a with SMTP id d2e1a72fcca58-7486fe7b34emr2915438b3a.20.1749632536109;
-        Wed, 11 Jun 2025 02:02:16 -0700 (PDT)
-Received: from localhost.localdomain ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af3ab94sm8681447b3a.31.2025.06.11.02.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 02:02:15 -0700 (PDT)
-From: Wang Jinchao <wangjinchao600@gmail.com>
-To: Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>
-Cc: Wang Jinchao <wangjinchao600@gmail.com>,
-	linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] md/raid1: Fix stack memory use after return in raid1_reshape
-Date: Wed, 11 Jun 2025 16:55:47 +0800
-Message-ID: <20250611090203.271488-1-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1749632238; x=1750237038;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DV9t5sYiI13RU+dfHyim24Ym/TfwiK76Thbl9i9KKag=;
+        b=YusD+vkHx09UAB6IrY96/XzOVP81dENYkYDouSaXIS9YimqRgPKZbjayXy3vOhKfx8
+         ECXdj5J4HrMWOmnpeIJykJQe6Svru27IVAgihszYOwPF9LHF1Y2Xjs6axMBZs5olblHt
+         LyJg3Gj9OhwlRUDaMmUGcnjZ3ZShydS5daLSUN8lfcYt/Ev2eEKb+a/bIPUct1j5h2cl
+         jDvONezBk0sGYkQSPzmlI5UvzEce39q5XbcdDmaCEQ7iYCJ+vpjLJXjERV9xf8dZc/cs
+         2Fmb1YOd7jQ9rupCoj+xXmBUKaSb4+j9KkOhCGxGLUmY4MRgxKaJpDu4/v2rgu9ZJbOt
+         Iu2g==
+X-Gm-Message-State: AOJu0YyIqIkjhBsysUgZCh3q4PKztmPrnWpT+d5XefZvWDRwE6GLnTji
+	1bpAfzVoTUBmu+tm3iNQdGOQoJcgkbismF0/kJsAqOvoaXcI/bJoqGg+ZBYt7f02d1JNLHKRgi7
+	3KGW5v0j1VE+pe5698AsuWTkCw9YEFja+uKnuvwPUxQ==
+X-Gm-Gg: ASbGnctwOW0YlExqzD9ObtULSr9jbXB+3SNNXzq9IaS5PPmL9wstOVATrYmRK3JLKEj
+	B63lxV4MuC4XiytqLgPyjT/AP88K2hue92LbBLpz8NODvMK+KATyyFIBofDlrVPrmOpqDT8vo0U
+	vELvnfQZVtqWpP9i70w/VdZbcN+lsxnS6tjaDsuwjwUlc94B78oEUsTQQdu8yYZOBoX/Uw9g6SY
+	mB1
+X-Google-Smtp-Source: AGHT+IFQXF+sKGFKqYzvIWVQbzE1S3LEQpj/qr+Mjs6PmUNCe9qyp66456X1HYoQ3EeWcUwMf1iYDwClQBMee+auP2M=
+X-Received: by 2002:a05:6102:2b8b:b0:4e5:a2bf:4fd6 with SMTP id
+ ada2fe7eead31-4e7bba95fc7mr1734093137.8.1749632238461; Wed, 11 Jun 2025
+ 01:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CA+G9fYuppX5LeRjOAZWsYRCs76PVbnv-TN_RrszhDsk=KregyA@mail.gmail.com>
+ <15979303.uLZWGnKmhe@diego> <CADYN=9L+Gao0w_CThNd96-yYbZDMZnwY7RvagCOdzUC4rKc-Ug@mail.gmail.com>
+In-Reply-To: <CADYN=9L+Gao0w_CThNd96-yYbZDMZnwY7RvagCOdzUC4rKc-Ug@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 11 Jun 2025 14:27:06 +0530
+X-Gm-Features: AX0GCFuVYEyn4auVNPUyj-VnDVcIp7H9e0QdsmhpYhaxmLWCVhksJEW8y_9TvVE
+Message-ID: <CA+G9fYvk7kBqDqPSxndxG2CxxVxhNrf4Easp-aYrR=UeTS1=eQ@mail.gmail.com>
+Subject: Re: next-20250610: arm64 No rule to make target rockchip rk3399-rockpro64-screen.dtso
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	Linux Regressions <regressions@lists.linux.dev>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Peter Robinson <pbrobinson@gmail.com>, krzk+dt@kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the raid1_reshape function, newpool is
-allocated on the stack and assigned to conf->r1bio_pool.
-This results in conf->r1bio_pool.wait.head pointing
-to a stack address.
-Accessing this address later can lead to a kernel panic.
+On Tue, 10 Jun 2025 at 17:07, Anders Roxell <anders.roxell@linaro.org> wrot=
+e:
+>
+> On Tue, 10 Jun 2025 at 13:22, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+> >
+> > Hi Naresh,
+>
+> Hi Heiko,
+>
+> >
+> > Am Dienstag, 10. Juni 2025, 12:25:31 Mitteleurop=C3=A4ische Sommerzeit =
+schrieb Naresh Kamboju:
+> > > Regression while building arm64 with the Linux next-20250610
+>
+> [...]
+>
+> > > https://storage.tuxsuite.com/public/linaro/lkft/builds/2yJ4IOQa1XxMqD=
+gmzjEl7VszYE9/build.log
+> > > * Build link:  https://storage.tuxsuite.com/public/linaro/lkft/builds=
+/2yJ4IOQa1XxMqDgmzjEl7VszYE9/
+> > > * Kernel config:
+> > > https://storage.tuxsuite.com/public/linaro/lkft/builds/2yJ4IOQa1XxMqD=
+gmzjEl7VszYE9/config
+> >
+> > thanks a lot for this notification.
+> >
+> > I'm surprised that overlay build at all when I built it yesterday.
+> > But yeah, the dtbs_install target really broke with that change.
+> >
+> > I've amended the commit now [0]
+>
+> Thank you for the quick fix.
+> I applied your patch and built it, it worked fine for me.
+>
+> I built it like this:
+> tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
+> --kconfig defconfig dtbs
+>
+> Tested-by: Anders Roxell <anders.roxell@linaro.org>
 
-Example access path:
+Thank you for providing the fix patch.
+I confirm that the reported build regression is no longer present in
+today=E2=80=99s Linux next-20250611 tag.
 
-raid1_reshape()
-{
-	// newpool is on the stack
-	mempool_t newpool, oldpool;
-	// initialize newpool.wait.head to stack address
-	mempool_init(&newpool, ...);
-	conf->r1bio_pool = newpool;
-}
+- Naresh
 
-raid1_read_request() or raid1_write_request()
-{
-	alloc_r1bio()
-	{
-		mempool_alloc()
-		{
-			// if pool->alloc fails
-			remove_element()
-			{
-				--pool->curr_nr;
-			}
-		}
-	}
-}
-
-mempool_free()
-{
-	if (pool->curr_nr < pool->min_nr) {
-		// pool->wait.head is a stack address
-		// wake_up() will try to access this invalid address
-		// which leads to a kernel panic
-		return;
-		wake_up(&pool->wait);
-	}
-}
-
-Fix:
-The solution is to avoid using a stack-based newpool.
-Instead, directly initialize conf->r1bio_pool.
-
-Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
----
-v1 -> v2:
-- change subject
-- use mempool_init(&conf->r1bio_pool) instead of reinitializing the list on stack
----
- drivers/md/raid1.c | 34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 19c5a0ce5a40..f2436262092a 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3366,7 +3366,7 @@ static int raid1_reshape(struct mddev *mddev)
- 	 * At the same time, we "pack" the devices so that all the missing
- 	 * devices have the higher raid_disk numbers.
- 	 */
--	mempool_t newpool, oldpool;
-+	mempool_t oldpool;
- 	struct pool_info *newpoolinfo;
- 	struct raid1_info *newmirrors;
- 	struct r1conf *conf = mddev->private;
-@@ -3375,9 +3375,6 @@ static int raid1_reshape(struct mddev *mddev)
- 	int d, d2;
- 	int ret;
- 
--	memset(&newpool, 0, sizeof(newpool));
--	memset(&oldpool, 0, sizeof(oldpool));
--
- 	/* Cannot change chunk_size, layout, or level */
- 	if (mddev->chunk_sectors != mddev->new_chunk_sectors ||
- 	    mddev->layout != mddev->new_layout ||
-@@ -3408,26 +3405,33 @@ static int raid1_reshape(struct mddev *mddev)
- 	newpoolinfo->mddev = mddev;
- 	newpoolinfo->raid_disks = raid_disks * 2;
- 
--	ret = mempool_init(&newpool, NR_RAID_BIOS, r1bio_pool_alloc,
--			   rbio_pool_free, newpoolinfo);
--	if (ret) {
--		kfree(newpoolinfo);
--		return ret;
--	}
- 	newmirrors = kzalloc(array3_size(sizeof(struct raid1_info),
--					 raid_disks, 2),
--			     GFP_KERNEL);
-+	raid_disks, 2),
-+	GFP_KERNEL);
- 	if (!newmirrors) {
- 		kfree(newpoolinfo);
--		mempool_exit(&newpool);
- 		return -ENOMEM;
- 	}
- 
-+	/* stop everything before switching the pool */
- 	freeze_array(conf, 0);
- 
--	/* ok, everything is stopped */
-+	/* backup old pool in case restore is needed */
- 	oldpool = conf->r1bio_pool;
--	conf->r1bio_pool = newpool;
-+
-+	ret = mempool_init(&conf->r1bio_pool, NR_RAID_BIOS, r1bio_pool_alloc,
-+			   rbio_pool_free, newpoolinfo);
-+	if (ret) {
-+		kfree(newpoolinfo);
-+		kfree(newmirrors);
-+		mempool_exit(&conf->r1bio_pool);
-+		/* restore the old pool */
-+		conf->r1bio_pool = oldpool;
-+		unfreeze_array(conf);
-+		pr_err("md/raid1:%s: cannot allocate r1bio_pool for reshape\n",
-+			mdname(mddev));
-+		return ret;
-+	}
- 
- 	for (d = d2 = 0; d < conf->raid_disks; d++) {
- 		struct md_rdev *rdev = conf->mirrors[d].rdev;
--- 
-2.43.0
-
+>
+>
+> Cheers,
+> Anders
+>
+> >, to change dtso to dtbo and ran the
+> > dtbs_install target sucessfully with that change.
+> >
+> > So on the next linux-next creation, this should hopefully be gone.
+> >
+> >
+> > Heiko
+> >
+> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchi=
+p.git/commit/?h=3Dv6.17-armsoc/dts64&id=3De14491aaa6ff598bbe9d462e44c01ac65=
+754f445
+> >
+> >
+> >
+> > >
+> > > ## Steps to reproduce
+> > >  - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
+> > > --kconfig defconfig
+> > >
+> > > --
+> > > Linaro LKFT
+> > > https://lkft.linaro.org
+> > >
+> >
+> >
+> >
+> >
 
