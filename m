@@ -1,189 +1,295 @@
-Return-Path: <linux-kernel+bounces-682196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B466AAD5CEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C6FAD5CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0203A84C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A5E3178961
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0FE202C5A;
-	Wed, 11 Jun 2025 17:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810DA21ADD6;
+	Wed, 11 Jun 2025 17:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="NSeA5sYT"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="wdxaolpv"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDE9153598;
-	Wed, 11 Jun 2025 17:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FB3215181
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749662209; cv=none; b=ZrFd5nlQz0RDaTZjp2igSjYX3zcLhksbuEPrneOY3gfeDhKv55+IfArRG0AZpBiFDe2Sge+U2b/aQkk4/KPWbf7DpkevUO4IdnvEofs7BgBQ+f1eM0iItg5tcNxo3nNOHBMsdhaQ8LXzXg9uYdnUCEW5EqND/MZZonE8ZzDpZwk=
+	t=1749661896; cv=none; b=Q41lI4BgmcUKwPea6ZT6hUaszJEvJWa6UwLLxlLyKJ73dXcP6nUmCGpSDtz6e65EkbWywan0zX6xz5KjuwOjEwxh0A5WsLqh3mgfoGYX8K81jRf6cYrBBR4Drf6yHwONdpVOP98MknOxW5GMLe56x9BANEsV7Ykjf2hAUu7IFE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749662209; c=relaxed/simple;
-	bh=wfGTFbVzrnm/eFJldsr80LKPWcoUnp2SqjZ2kKDQPrE=;
+	s=arc-20240116; t=1749661896; c=relaxed/simple;
+	bh=0rrg/j7xfhTAkqxbkBAoMJ5H3OvvTULkSZkoAyObnB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMRa/XIii4YyQ88JjCLfyeuSxkAVKIqa6u4C0cKkWWA0lutacX3IICM5uw7dneRClEpK2ClyTkbRiRQ8zVLnYbBK3kjLXsbcwaYT33cThr0M7Lw8e7vmtxCnsul128LilxWYggeWbDgHRtx5Q5qwDDWYXKCg5yEm+E7KHRrdNM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=NSeA5sYT; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1749662187; x=1750266987; i=christian@heusel.eu;
-	bh=OEGHZmIjk+ceUvrd8ghMlpfcoXbIaBBA/lq77JDDIEY=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=NSeA5sYTpdeUAXOW0nAdhxtbkzlC3k4Fzw/TwSOLKEvY0KseEvpHMXTcjyaEbmOI
-	 BZOxYLUoZcXVN/vETY7A3oXGXw1TztDsY3i33UHyPtUh2iE5Wg3gvffiU+Mjh+HOO
-	 3tjyB8FZMIdn7uKPoZ522RKbriaYWhB3djTTSpCpNU8n2be23R2STafDRRhaw09vR
-	 U++C9WsGgkJLgR5m8AVNjS4zlr5w4DpFf/ddHmZ4BqYNJxKDnjyf5g3w5ouMDkAR1
-	 g+SWEPDuxMDuIYF8q7ZvPlNds8B3J52wCEs3NmVSDbE4Hw5FtP4Q5F+kG0mtg3o9o
-	 odOKXaZBV4CNrM1spw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([89.244.90.56]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M890H-1uU3w91Y2N-00C4J0; Wed, 11 Jun 2025 19:10:26 +0200
-Date: Wed, 11 Jun 2025 19:10:24 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Kuniyuki Iwashima <kuni1840@gmail.com>
-Cc: davem@davemloft.net, difrost.kernel@gmail.com, dnaim@cachyos.org, 
-	edumazet@google.com, horms@kernel.org, kuba@kernel.org, kuniyu@amazon.com, 
-	linux-kernel@vger.kernel.org, mario.limonciello@amd.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, regressions@lists.linux.dev
-Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
-Message-ID: <b5628073-3d14-42a9-9b91-3ec31db8f7f9@heusel.eu>
-References: <58be003a-c956-494b-be04-09a5d2c411b9@heusel.eu>
- <20250611164339.2828069-1-kuni1840@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGPTiDQxYJC9FKuFcN5sabz5/c7Kqqi3Q+xrDo1+3zalAcm0mQ+uT5Z4bjBh60FYHfQTDSxrvj712cP15OxZnmsxJXamBLBxtAUlH0/E/rh/EkKgNhPCwimKrK8igM+/rjBRzjaGL9qiakMdyoLDdVefinBRH0DvJscZJaLBfJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=wdxaolpv; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7481600130eso175820b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 10:11:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1749661894; x=1750266694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DucyK9ccxpyapq2woQL0qei/WtX3FmKICxB9cQHabrs=;
+        b=wdxaolpvOcQk+DMpNJwKvcK/UgxQpXmPELZqGs2B6AhuzelhNhk+vPbWpsYWsTkoeR
+         0XTxjhFLnAJMq/KlT2Hn3ETh7upcddNvHBsEY3ZohKAEbPH90EUl3gnVfc1gPycCJBqL
+         i+1Dm9RQF5wEGWZp1vls4+O7QaCM0TjxnaZHs4/H/rG6ao0NeOL1CHeUCvA+buVlf35N
+         tXIy0UtbK3zyGFLMhF7xm1ywIKwfgu+C0Gsxsstg3uxCW9j48ObT58ppJ5zRU4Teb1/s
+         uThSX7ckXEfHPo0G2gVvNR/fxb4ENMdDgDga7SjEFszmZcg+Q0JtIWitpeMnnDy6sOJC
+         eUiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749661894; x=1750266694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DucyK9ccxpyapq2woQL0qei/WtX3FmKICxB9cQHabrs=;
+        b=IlaAJGnSt6pxVSQ2mw8aqcC3rTLmywairC7uI+DM3104rJLJ4qlxgTuzIY89dvg5Ak
+         f0Hht5TxPD0XqdAsyRdm1NsMC8SD4AUaWBbOe/uMxOB6icJ3mCovsd/afwQK3WY29pm8
+         i1YwruzKPlc6UGUfZcA1YcY0LjpZ9jXJzsBMbi0dXDvd602DI9Jio295A7HDXuq5GC2F
+         t5Y8FW4ZvTHy77uZkP6JUnwMYQVNEbasrOqHZLvoyM4JqNbF4mWvo4JtvtOSupQWKzh3
+         Gv/kFk3mHHsJ231xbtGYu6gLSRRZbVqDxoyKkjUzSgQ2k8hVsL/h8yLthiThwUpU6SpQ
+         7VIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1PZFc7b7z5xSGVXmgmHGIGPwdzCq1LCb0du59A+xW6fQeLYf3yF3rUZR5liyuz6OycLxLuX+6Rs7yVi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMFVgmWalkc7MQKC9b7jyUHw4Jh/eOwRcNv+BN16zAxZkXBSvF
+	DS8neBBfPvOJrxV/hsjlPP1Aub+MpJsqCqtoWZfgZXcz1wlPU2yoIIWJ3M+Vcq+fGj8=
+X-Gm-Gg: ASbGncufRdJhqqI79VPt8e0ETlG+oX4ub09+oNjmClUUOqLzZHD3Jk/O4Z5UHxfRQoM
+	aryS6pLyYBy6Vsub1FevUD6pAf51R+UTc0p6SbfwFJDGNIpv2rVKR2ICfsrGVSTAuhSDoqlONYb
+	HrCerYt2i1+zq/nz2ECNXXNQqsSoZ/rRNH50UqvpTwYIItjHdOK7510f8moVny4dEzKl3Eg9ajE
+	3twDDofeVcmYBFl5iuLMK6Fa5Kj1FPuBSxMcULfVhVxSlpD/U4SnFYUnCW8Q/p9uNU5OTdMVZ2i
+	37yJPKw5zEpsKKLaGDqnfCQFJERH+vv7VSuwkDmYZxPg8k01wLFjfKSzqWmcblhnq+Kq7bVppA=
+	=
+X-Google-Smtp-Source: AGHT+IHPKfiVh9BBq/DHFeVf8RX9T6viUqIN5WUKbWYGpanTpWtdV+/1EZm0Ddh9RKSSQMvhDeO7Ig==
+X-Received: by 2002:a05:6a21:998a:b0:1f5:9d5d:bcdd with SMTP id adf61e73a8af0-21f97753907mr937975637.1.1749661894141;
+        Wed, 11 Jun 2025 10:11:34 -0700 (PDT)
+Received: from x1 (97-120-245-201.ptld.qwest.net. [97.120.245.201])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b083f05sm9373821b3a.89.2025.06.11.10.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 10:11:33 -0700 (PDT)
+Date: Wed, 11 Jun 2025 10:11:31 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Rob Herring <robh@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3] dt-bindings: pmem: Convert binding to YAML
+Message-ID: <aEm4wztFPMY0KKC4@x1>
+References: <20250606184405.359812-4-drew@pdp7.com>
+ <20250609133241.GA1855507-robh@kernel.org>
+ <aEh17S0VPqakdsEg@x1>
+ <684993ad31c3_1e0a5129482@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pvxh2zg2om6kjmmk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250611164339.2828069-1-kuni1840@gmail.com>
-X-Provags-ID: V03:K1:aPP1kRugb8Gbyx5XYk0iGW9/YSGeRy4gHEeQocsJrZRUzb8N94G
- oyX59AnGy5Wq2qsKTEwEVjAlDWR91DGT0xIzcvbhOri8Fo9K6orhXeK6LBtGZdp+gBjaqww
- sJWFmqs2zRk0j25GnRA+RNVxNrUGtk2xjeEJKBEScUNUkgQa3SYgk02+F2yE26rZzjoXTfx
- tVT122yEqPzOywbLyBrIQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Vd/q57WHzcA=;3xgV+VQEIl1UmQAff2UJdyKnQZg
- 598rDFSzh0WCIeTMJQyI0Y1xPD3uoWW4Pe9t221k1UQyShH3qFUwSrE6myYNkSglqDv/B1ND+
- WlY+db1egCqkXIYHZrBNwNRN/FZ03H9YBVCB54Iuhy5Gh4D8n8VyEZYwnyMRUVWjDjoo8cgNK
- IbyBApAOQTIMRRL18b9If4id49UHqzPDetTGvILxV9jKjPm9G8G74+FE0VUn2rTB6E4aBTIR8
- T1aUmCNWspTrWO/GInkYWQIel2uxdk9iLQqPQWTj7oeAEJNwmN5n7D+1HLRF0mXp9UhGuiEpf
- LehYUpuWvXxfh+q3ktINSXZPldrP8Ktm9s8pcYsyQ+iGzW8XTpGb/vB/fZ+LXYut3yvCuf4HH
- hsdp6em8RtSjIrjYgT8Sbuy7SdtsA+NFxz9wd0keY94kKend0qljVD5VOd3riOy9w+hx8hf6E
- 8hS8OxkYlmHkFniNHsu5T8g/GqVAz3oulktRg7WWkxD/HKSi1mM2WHs9buUwnakYbgiLcDwb6
- +MjDG6MhczOzw2jsmZkoeR4o8qxNMvO6wBNyrts32d4gCnMm4VlskTenP8gYHp2R0VG1pQRcX
- wAUsIbpk6EaJtNPdJMY6j1MP4GZ1ebTA0bR7TbzzrKq4M48HteK+kZlXX7XvXwJaolNvSnsig
- lJlO5kxxpdsFr43QZgsfUbsyiQZ+9BjlcPRb/GxA09623Uqbbe5xYYlEdBW5QsLgDPD+ywPpr
- vSZwKNmvTnN0qrUjWL3g/zRQ5V8WO23f6dDZ429dXclLpHZJjsTKBu2aWK5EiHYoHvnZ/WsDS
- zMiUImZToJyOb8SVUIhoCya4OVoLsXtHbVyxq1EPqQDLjJINANIWbX10hkhVM1jkuXlfOxpQ9
- iauDiLfeNVEJqfEOTpw/bNvke3h0vQEakcIwul/VUj5Y5IH0FVrI0GR7i7aztuupt808HVak8
- pGROY4yV16/SjQfSUKp/7TtBMqq8V0K3355EzTCSlnTCmJF+WiWokD8rQQvk7SrjlnQHpFlb3
- /poHxUOpnuBeKgfghk8dwMoYLg/w+7R96i9pfguJuBpaXcAblIiYwm45yLKsONWa5kMeroDjs
- xHVpBE/Yf/LuiEkMvfDjkFFOzxnul/aS4eiacCfcZAwmW5D0DiwemcQDk2Yf1aoj5mrNQ7iO/
- cVOYaMOCOxPcvw9RYC6A/aTEr6Bdi3Fy4PRUWDrYBrA5eGLdOSbmorl0T9lMjuduYvQ4cJis4
- VDRnS+fe8ulOp8jpU22m8ngxJA1LcoCTZxHdrNo5EBTYxpHiXYVJtsJGpMDcxFvmFKmbmfZVB
- gt80m/CulhnRtem9roti9a57El+wg/DmDkxSqeKZtrWqXOgPQikGZc1eJ5JUWSSIcBPFfzzr6
- 6gqhF+sEUVlft+XGqUdjlvmcxlUt3hb2O8u9SSbt6m9OGxYnpf2GDKPOp0
+In-Reply-To: <684993ad31c3_1e0a5129482@iweiny-mobl.notmuch>
 
+On Wed, Jun 11, 2025 at 09:33:17AM -0500, Ira Weiny wrote:
+> Drew Fustini wrote:
+> > On Mon, Jun 09, 2025 at 08:32:41AM -0500, Rob Herring wrote:
+> > > On Fri, Jun 06, 2025 at 11:11:17AM -0700, Drew Fustini wrote:
+> > > > Convert the PMEM device tree binding from text to YAML. This will allow
+> > > > device trees with pmem-region nodes to pass dtbs_check.
+> > > > 
+> > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > Acked-by: Oliver O'Halloran <oohall@gmail.com>
+> > > > Signed-off-by: Drew Fustini <drew@pdp7.com>
+> > > > ---
+> > > > Dan/Dave/Vishal: does it make sense for this pmem binding patch to go
+> > > > through the nvdimm tree?
+> > > > 
+> > > > Note: checkpatch complains about "DT binding docs and includes should
+> > > > be a separate patch". Rob told me that this a false positive. I'm hoping
+> > > > that I can fix the false positive at some point if I can remember enough
+> > > > perl :)
+> > > > 
+> > > > v3:
+> > > >  - no functional changes
+> > > >  - add Oliver's Acked-by
+> > > >  - bump version to avoid duplicate message-id mess in v2 and v2 resend:
+> > > >    https://lore.kernel.org/all/20250520021440.24324-1-drew@pdp7.com/
+> > > > 
+> > > > v2 resend:
+> > > >  - actually put v2 in the Subject
+> > > >  - add Conor's Acked-by
+> > > >    - https://lore.kernel.org/all/20250520-refract-fling-d064e11ddbdf@spud/
+> > > > 
+> > > > v2:
+> > > >  - remove the txt file to make the conversion complete
+> > > >  - https://lore.kernel.org/all/20250520021440.24324-1-drew@pdp7.com/
+> > > > 
+> > > > v1:
+> > > >  - https://lore.kernel.org/all/20250518035539.7961-1-drew@pdp7.com/
+> > > > 
+> > > >  .../devicetree/bindings/pmem/pmem-region.txt  | 65 -------------------
+> > > >  .../devicetree/bindings/pmem/pmem-region.yaml | 49 ++++++++++++++
+> > > >  MAINTAINERS                                   |  2 +-
+> > > >  3 files changed, 50 insertions(+), 66 deletions(-)
+> > > >  delete mode 100644 Documentation/devicetree/bindings/pmem/pmem-region.txt
+> > > >  create mode 100644 Documentation/devicetree/bindings/pmem/pmem-region.yaml
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/pmem/pmem-region.txt b/Documentation/devicetree/bindings/pmem/pmem-region.txt
+> > > > deleted file mode 100644
+> > > > index cd79975e85ec..000000000000
+> > > > --- a/Documentation/devicetree/bindings/pmem/pmem-region.txt
+> > > > +++ /dev/null
+> > > > @@ -1,65 +0,0 @@
+> > > > -Device-tree bindings for persistent memory regions
+> > > > ------------------------------------------------------
+> > > > -
+> > > > -Persistent memory refers to a class of memory devices that are:
+> > > > -
+> > > > -	a) Usable as main system memory (i.e. cacheable), and
+> > > > -	b) Retain their contents across power failure.
+> > > > -
+> > > > -Given b) it is best to think of persistent memory as a kind of memory mapped
+> > > > -storage device. To ensure data integrity the operating system needs to manage
+> > > > -persistent regions separately to the normal memory pool. To aid with that this
+> > > > -binding provides a standardised interface for discovering where persistent
+> > > > -memory regions exist inside the physical address space.
+> > > > -
+> > > > -Bindings for the region nodes:
+> > > > ------------------------------
+> > > > -
+> > > > -Required properties:
+> > > > -	- compatible = "pmem-region"
+> > > > -
+> > > > -	- reg = <base, size>;
+> > > > -		The reg property should specify an address range that is
+> > > > -		translatable to a system physical address range. This address
+> > > > -		range should be mappable as normal system memory would be
+> > > > -		(i.e cacheable).
+> > > > -
+> > > > -		If the reg property contains multiple address ranges
+> > > > -		each address range will be treated as though it was specified
+> > > > -		in a separate device node. Having multiple address ranges in a
+> > > > -		node implies no special relationship between the two ranges.
+> > > > -
+> > > > -Optional properties:
+> > > > -	- Any relevant NUMA associativity properties for the target platform.
+> > > > -
+> > > > -	- volatile; This property indicates that this region is actually
+> > > > -	  backed by non-persistent memory. This lets the OS know that it
+> > > > -	  may skip the cache flushes required to ensure data is made
+> > > > -	  persistent after a write.
+> > > > -
+> > > > -	  If this property is absent then the OS must assume that the region
+> > > > -	  is backed by non-volatile memory.
+> > > > -
+> > > > -Examples:
+> > > > ---------------------
+> > > > -
+> > > > -	/*
+> > > > -	 * This node specifies one 4KB region spanning from
+> > > > -	 * 0x5000 to 0x5fff that is backed by non-volatile memory.
+> > > > -	 */
+> > > > -	pmem@5000 {
+> > > > -		compatible = "pmem-region";
+> > > > -		reg = <0x00005000 0x00001000>;
+> > > > -	};
+> > > > -
+> > > > -	/*
+> > > > -	 * This node specifies two 4KB regions that are backed by
+> > > > -	 * volatile (normal) memory.
+> > > > -	 */
+> > > > -	pmem@6000 {
+> > > > -		compatible = "pmem-region";
+> > > > -		reg = < 0x00006000 0x00001000
+> > > > -			0x00008000 0x00001000 >;
+> > > > -		volatile;
+> > > > -	};
+> > > > -
+> > > > diff --git a/Documentation/devicetree/bindings/pmem/pmem-region.yaml b/Documentation/devicetree/bindings/pmem/pmem-region.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..a4aa4ce3318b
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/pmem/pmem-region.yaml
+> > > > @@ -0,0 +1,49 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/pmem-region.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +maintainers:
+> > > > +  - Bjorn Helgaas <bhelgaas@google.com>
+> > > 
+> > > Drop Bjorn. He only did typo fixes on this.
+> > > 
+> > > > +  - Oliver O'Halloran <oohall@gmail.com>
+> > > > +
+> > > > +title: Persistent Memory Regions
+> > > > +
+> > > > +description: |
+> > > > +  Persistent memory refers to a class of memory devices that are:
+> > > > +
+> > > > +    a) Usable as main system memory (i.e. cacheable), and
+> > > > +    b) Retain their contents across power failure.
+> > > > +
+> > > > +  Given b) it is best to think of persistent memory as a kind of memory mapped
+> > > > +  storage device. To ensure data integrity the operating system needs to manage
+> > > > +  persistent regions separately to the normal memory pool. To aid with that this
+> > > > +  binding provides a standardised interface for discovering where persistent
+> > > > +  memory regions exist inside the physical address space.
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    const: pmem-region
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  volatile:
+> > > > +    description: |
+> > > 
+> > > Don't need '|' here.
+> > 
+> > Rob - Thanks for the feedback. Should I send a new revision with these
+> > two changes?
+> 
+> I can do a clean up as I have not sent to Linus yet.
+> 
+> Here are the changes if you approve I'll change it and push to linux-next.
+> 
+> Ira
+> 
+> diff --git a/Documentation/devicetree/bindings/pmem/pmem-region.yaml b/Documentation/devicetree/bindings/pmem/pmem-region.yaml
+> index a4aa4ce3318b..bd0f0c793f03 100644
+> --- a/Documentation/devicetree/bindings/pmem/pmem-region.yaml
+> +++ b/Documentation/devicetree/bindings/pmem/pmem-region.yaml
+> @@ -5,7 +5,6 @@ $id: http://devicetree.org/schemas/pmem-region.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  maintainers:
+> -  - Bjorn Helgaas <bhelgaas@google.com>
+>    - Oliver O'Halloran <oohall@gmail.com>
+>  
+>  title: Persistent Memory Regions
+> @@ -30,7 +29,7 @@ properties:
+>      maxItems: 1
+>  
+>    volatile:
+> -    description: |
+> +    description:
+>        Indicates the region is volatile (non-persistent) and the OS can skip
+>        cache flushes for writes
+>      type: boolean
 
---pvxh2zg2om6kjmmk
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
-MIME-Version: 1.0
+Thanks for fixing it up. That looks good to me.
 
-On 25/06/11 09:42AM, Kuniyuki Iwashima wrote:
-> From: Christian Heusel <christian@heusel.eu>
-> Date: Wed, 11 Jun 2025 13:46:01 +0200
-> > On 25/06/10 09:22PM, Jacek =C5=81uczak wrote:
-> > > Hi,
-> >=20
-> > Hey,
-> >=20
-> > > Bisection points to:
-> > > [3f84d577b79d2fce8221244f2509734940609ca6] af_unix: Inherit sk_flags
-> > > at connect().
-> >=20
-> > I'm also suffering from an issue that I have bisected to the same commi=
-t,
-> > although in a totally different environment and with other reproduction
-> > steps: For me the Xorg server crashes as soon as I re-plug my laptops
-> > power chord and afterwards I can only switch to a TTY to debug. No
-> > errors are logged in the dmesg.
-> >=20
-> > I can also confirm that reverting the patch on top of 6.16-rc1 fixes the
-> > issue for me (thanks for coming up with the revert to Naim from the
-> > CachyOS team!).
-> >=20
-> > My xorg version is 21.1.16-1 on Arch Linux and I have attached the
-> > revert, my xorg log from the crash and bisection log to this mail!
-> >=20
-> > I'll also CC a few of the netdev people that might have further insights
-> > for this issue!
-> >=20
-> > > Reverting entire SO_PASSRIGHTS fixes the issue.
->=20
-> Thanks for the report.
->=20
-> Could you test the diff below ?
-
-It seems like the patch you posted has fixed the issue for me, thanks
-for the lightning-fast answer!
-
-> look like some programs start listen()ing before setting
-> SO_PASSCRED or SO_PASSPIDFD and there's a small race window.
->=20
-> ---8<---
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index fd6b5e17f6c4..87439d7f965d 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1971,7 +1971,8 @@ static void unix_maybe_add_creds(struct sk_buff *sk=
-b, const struct sock *sk,
->  	if (UNIXCB(skb).pid)
->  		return;
-> =20
-> -	if (unix_may_passcred(sk) || unix_may_passcred(other)) {
-> +	if (unix_may_passcred(sk) || unix_may_passcred(other) ||
-> +	    !other->sk_socket) {
->  		UNIXCB(skb).pid =3D get_pid(task_tgid(current));
->  		current_uid_gid(&UNIXCB(skb).uid, &UNIXCB(skb).gid);
->  	}
-> ---8<---
-
-Have a great week everyone!
-Chris
-
---pvxh2zg2om6kjmmk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmhJuIAACgkQwEfU8yi1
-JYV8IQ/4q05ypgWVUCyUkdHVeTY4QNiayhgnfex9hX2ya3Qx2J4LoKoFGM2JYwF9
-v3xvC4HTqWC/fMIgwncD8wph10wpE1Mme1aHLP2iUK2J0eukv2nn5tNSgHFUtjiE
-V+b1yFbV1GNgp9AtNVfQun0oW0TVqu+GE2IE0PaaKJryIOhl0HEWrck5HpyYOnaO
-Oqs7B2fD8tQ43qngXLwQZEqGY1RKplndGJ9FvJtGrgwCYFlha638uj4tQm2yh7im
-4mHvWy0HQBe5VOvWoPwk37giAHZfx0NMpFqNzXAtsI4v6SLr38MRTjp9wctgfFvM
-OqFjuZkCVEjV7Qr3ZDMzJWgo4lMMgYmJ9SWvW0BfXWGN4Ym5Bw4KWoYyNCfW3s+r
-ZHZnoH2cDP8we2FHZhHa8w8dTy+VAerVE1QCoiwBOZrTAVcY5g3SIf+XAAYCbGRb
-BflcnGE9B5fZTYh7SgrjVInL6uOOn/5ouj23ZvukJlepaCKv5EvvZYeQ5NRgY9lp
-4YDEmuglyaRXUZGzYd+JUbRdcoxLV8xwPYYWYX//YRP8YCisYGADxMu/FtGaM0TS
-GpnW4SW1J++j9nAiAgLJW+R4XrLZkTxh1vfbSvLAb4OQDLynF/wzp8kR20GXc4V0
-uUusdclFornCeHctDA0p8NIA5qlItdJfiC30NPxyhlIyLOai8w==
-=RB66
------END PGP SIGNATURE-----
-
---pvxh2zg2om6kjmmk--
+Drew
 
