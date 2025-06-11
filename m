@@ -1,210 +1,103 @@
-Return-Path: <linux-kernel+bounces-680607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4E7AD4778
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:24:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549DBAD4772
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950E23A89F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197F73A83C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C821758B;
-	Wed, 11 Jun 2025 00:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OERa/DC2"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD4FBE6C;
+	Wed, 11 Jun 2025 00:23:37 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F15EC4;
-	Wed, 11 Jun 2025 00:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8192D540B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749601461; cv=none; b=cnkWNli/gN9ShUHExAj+9dXtPC/M/d4kVc9Yxqlh1MC1RSXLfhvUt1mvD5Idq3o4sayP906gZRx2JDm4JNmrYkmwhScQCxQlaASV5tYdWDk3yXzUHfCvkvCKOI0gxHJMPLJCbj5kVxpuzh9Fe0lGURoPJAOhv9IwumFSy5aHA6A=
+	t=1749601417; cv=none; b=Eu//me6tWxwyiGScW0pbhSu/nBL3UR1JitoOoFgG+JKRR8rH+aMzQKq+6OukDLoJ45aQgE9ubt6tqKsdsaphsmRbUnTWrm0qmKCfg75ZYHVO+pHczj32IDFcb25IK8ztqbaLP+DC4h+/GorsIueAWKftOEC7TfkVBZVVesYBCEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749601461; c=relaxed/simple;
-	bh=IVm0goz3CniBVUljGLrw4V1pfZi1rYq3L/LJlF3nFms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gmc1Chc1jq6v7KppqrdAXow/Xt9RbIKnxGr3QBTKDVnKMcZBQJ97c3HlER5ql/Ef+BWUzYgUaC2Y/tl0vtkKkPkKm9H9TEOadc/JMIP4sdFykjsiqK8mYr41+wREx6ThT2tFYYQPWmRTdJASWre6FZfCaCyhNe+UoKfXXONFPIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OERa/DC2; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=W5WmDo95Xn51VsMSBY51s9wgDJb9kKGLVAW/HIReidM=; b=OERa/DC2pVQ24dez9qLd4fEZXV
-	xbHcmzcTQIiAtuZgqOEVeEpVeYpbV0Ip9cqWX4Ltb9wXKFHxi0zdmbpa8fp8kRhVOrA0wqXPPhXuF
-	HvWoc2ZjeLyLgMR68HBCDjR+grb26BcZwMxn+ZjzjajnkXJPqf7A4MkTN1VFo+J5nKK3k3yBTVKga
-	3o9vK1gGOnmFxWkKRbpLsD3yKT7BuDuym7foawp7ahAP1CIyvu9I1VCmYzbUyKPIzhkovhRNsSfTE
-	gedhvIqaA1lRhfcwmhuq0BvQyM72DwQ626JIsaK5KtK6M9quPiwx+EgNAnt4pHLODLNqTSYEzSVbN
-	l9z8xQrQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uP9GH-000000022uX-1BI3;
-	Wed, 11 Jun 2025 00:24:13 +0000
-Message-ID: <f5b16bd6-01b6-45c0-9668-41ccf90445a3@infradead.org>
-Date: Tue, 10 Jun 2025 17:24:08 -0700
+	s=arc-20240116; t=1749601417; c=relaxed/simple;
+	bh=dvK1RdwWb1CQsf+37pV/ByhW/qenOogBXreLlC1KfCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eMCzUFRSXyaLWKVkyrI8ypsQTWYgkqyScX6CYecg7jk4C/w/FX2EHN10F7mFefxrkYrNoLoPl9mN9YJMRNDcFLz6s4xUQ+OKp8xfBi9nf+4E35+iR+o/id+bs1e7LwATMJ84HcFnSrB4UotKeZfOxUE9+H2TrlPTYJLLauRZkwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id D4FCD1612BD;
+	Wed, 11 Jun 2025 00:23:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 291AF20025;
+	Wed, 11 Jun 2025 00:23:26 +0000 (UTC)
+Date: Tue, 10 Jun 2025 20:24:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, iommu@lists.linux.dev
+Subject: [RFC][PATCH] iommu/dma: Do not call swiotlb tracepoint when not
+ defined
+Message-ID: <20250610202457.5a599336@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v6 03/10] net: pcs: Add subsystem
-To: Sean Anderson <sean.anderson@linux.dev>, netdev@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>
-Cc: Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- Kory Maincent <kory.maincent@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>, Simon Horman <horms@kernel.org>,
- Christian Marangi <ansuelsmth@gmail.com>, Lei Wei <quic_leiwei@quicinc.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-References: <20250610233134.3588011-1-sean.anderson@linux.dev>
- <20250610233134.3588011-4-sean.anderson@linux.dev>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250610233134.3588011-4-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 291AF20025
+X-Stat-Signature: uhqfc8ahmknazqw9ayr1uzuucf59k9iu
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/XhJVWvkRYvxlRf7t2Kf7y9hhbGWBZiCY=
+X-HE-Tag: 1749601406-69543
+X-HE-Meta: U2FsdGVkX1/fhFxzNrLk0/RbXv5SL2V3zCR9XcPPGui/aa1Hd6CqiYX7ePU1Dfryo9c3OvaDu4suarjYO+masLYrUWq+YsxFaiVWcuS0rQxXu9DJi8SVFs8+DFB/fhqsDLxlwDi572uX+Kt8iQWULL0EghBlP2Y13oPCK4oAgjOLBvuBJzLX75AeG8UHMwil4zCVfhxTMZwbDrE7VkIX9dvW+0z+J+Zz18snl+xYjqN+ZiDsvP/goWvQRxdb43U3ciffdBn6Jp3GfwGTSQx6FdEtdMHe5xGsPKA78kJLQ+xtY26onCezWc4bJflBj16tTE994bqS3Z9qbPzpuWpHh3nXMOWH+IPwKr5YlRKKsety72Uc2+Wpa0sww86I+kVMi2ew9gt8jkqqrzkrjoQg/QJ7RFWTTUfGprsJR9SsqTM=
 
-Hi,
 
+I'm working on code that will warn when a tracepoint is defined but not
+used. As the TRACE_EVENT() logic still creates all the code regardless if
+something calls the trace_<event>() function. It wastes around 5K per trace
+event (less for tracepoints).
 
-> diff --git a/Documentation/networking/pcs.rst b/Documentation/networking/pcs.rst
-> new file mode 100644
-> index 000000000000..4b41ba884160
-> --- /dev/null
-> +++ b/Documentation/networking/pcs.rst
-> @@ -0,0 +1,102 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=============
-> +PCS Subsystem
-> +=============
-> +
-> +The PCS (Physical Coding Sublayer) subsystem handles the registration and lookup
-> +of PCS devices. These devices contain the upper sublayers of the Ethernet
-> +physical layer, generally handling framing, scrambling, and encoding tasks. PCS
-> +devices may also include PMA (Physical Medium Attachment) components. PCS
-> +devices transfer data between the Link-layer MAC device, and the rest of the
-> +physical layer, typically via a serdes. The output of the serdes may be
-> +connected more-or-less directly to the medium when using fiber-optic or
-> +backplane connections (1000BASE-SX, 1000BASE-KX, etc). It may also communicate
-> +with a separate PHY (such as over SGMII) which handles the connection to the
-> +medium (such as 1000BASE-T).
-> +
-> +Looking up PCS Devices
-> +----------------------
-> +
-> +There are generally two ways to look up a PCS device. If the PCS device is
-> +internal to a larger device (such as a MAC or switch), and it does not share an
-> +implementation with an existing PCS, then it does not need to be registered with
-> +the PCS subsystem. Instead, you can populate a :c:type:`phylink_pcs`
-> +in your probe function. Otherwise, you must look up the PCS.
-> +
-> +If your device has a :c:type:`fwnode_handle`, you can add a PCS using the
-> +``pcs-handle`` property::
-> +
-> +    ethernet-controller {
-> +        // ...
-> +        pcs-handle = <&pcs>;
-> +        pcs-handle-names = "internal";
-> +    };
-> +
-> +Then, during your probe function, you can get the PCS using :c:func:`pcs_get`::
+But it seems that the code in drivers/iommu/dma-iommu.c does the opposite.
+It calls the trace_swiotlb_bounced() tracepoint without it being defined.
+The tracepoint is defined in kernel/dma/swiotlb.c when CONFIG_SWIOTLB is
+defined, but this code exists when that config is not defined.
 
-It's preferable to use                               PCS using pcs_get()::
-instead of the :c:func: notation to make the .rst file more human-readable.
-They produce the same generated output.
+This now fails with my work because I have all the callers reference the
+tracepoint that they will call.
 
-> +
-> +    mac->pcs = pcs_get(dev, "internal");
-> +    if (IS_ERR(mac->pcs)) {
-> +        err = PTR_ERR(mac->pcs);
-> +        return dev_err_probe(dev, "Could not get PCS\n");
-> +    }
-> +
-> +If your device doesn't have a :c:type:`fwnode_handle`, you can get the PCS
-> +based on the providing device using :c:func:`pcs_get_by_dev`. Typically, you
+Thanks to the kernel test robot, it found this:
 
-ditto.
+  https://lore.kernel.org/all/202506091015.7zd87kI7-lkp@intel.com/
 
-> +will create the device and bind your PCS driver to it before calling this
-> +function. This allows reuse of an existing PCS driver.
-> +
-> +Once you are done using the PCS, you must call :c:func:`pcs_put`.
+Currently, I made this patch and it makes it build. But I don't like the
+patch. It's in the middle of a function that has a lot of things called
+swiotlb which seems like the #ifdef should be around much more than the
+tracepoint hook that has no tracepoint attached to it.
 
-ditto.
+Hopefully someone else can make a proper patch. I will be pushing my work
+to linux-next during this cycle.
 
-> +
-> +Using PCS Devices
-> +-----------------
-> +
-> +To select the PCS from a MAC driver, implement the ``mac_select_pcs`` callback
-> +of :c:type:`phylink_mac_ops`. In this example, the PCS is selected for SGMII
-> +and 1000BASE-X, and deselected for other interfaces::
-> +
-> +    static struct phylink_pcs *mac_select_pcs(struct phylink_config *config,
-> +                                              phy_interface_t iface)
-> +    {
-> +        struct mac *mac = config_to_mac(config);
-> +
-> +        switch (iface) {
-> +        case PHY_INTERFACE_MODE_SGMII:
-> +        case PHY_INTERFACE_MODE_1000BASEX:
-> +            return mac->pcs;
-> +        default:
-> +            return NULL;
-> +        }
-> +    }
-> +
-> +To do the same from a DSA driver, implement the ``phylink_mac_select_pcs``
-> +callback of :c:type:`dsa_switch_ops`.
-> +
-> +Writing PCS Drivers
-> +-------------------
-> +
-> +To write a PCS driver, first implement :c:type:`phylink_pcs_ops`. Then,
-> +register your PCS in your probe function using :c:func:`pcs_register`. If you
-
-ditto
-
-> +need to provide multiple PCSs for the same device, then you can pass specific
-> +firmware nodes using :c:macro:`pcs_register_full`.
-> +
-> +You must call :c:func:`pcs_unregister` from your remove function. You can avoid
-
-ditto.
-
-> +this step by registering with :c:func:`devm_pcs_unregister`.
-> +
-> +API Reference
-> +-------------
-> +
-> +.. kernel-doc:: include/linux/phylink.h
-> +   :identifiers: phylink_pcs phylink_pcs_ops pcs_validate pcs_inband_caps
-> +      pcs_enable pcs_disable pcs_pre_config pcs_post_config pcs_get_state
-> +      pcs_config pcs_an_restart pcs_link_up pcs_disable_eee pcs_enable_eee
-> +      pcs_pre_init
-> +
-> +.. kernel-doc:: include/linux/pcs.h
-> +   :internal:
-> +
-> +.. kernel-doc:: drivers/net/pcs/core.c
-> +   :export:
-> +
-> +.. kernel-doc:: drivers/net/pcs/core.c
-> +   :internal:
-
-Thanks.
-
--- 
-~Randy
-
+Not-signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+---
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index ea2ef53bd4fe..7c0ada27e66f 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -1153,8 +1153,9 @@ static phys_addr_t iommu_dma_map_swiotlb(struct device *dev, phys_addr_t phys,
+ 		return (phys_addr_t)DMA_MAPPING_ERROR;
+ 	}
+ 
++#ifdef CONFIG_SWIOTLB
+ 	trace_swiotlb_bounced(dev, phys, size);
+-
++#endif
+ 	phys = swiotlb_tbl_map_single(dev, phys, size, iova_mask(iovad), dir,
+ 			attrs);
+ 
 
