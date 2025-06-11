@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-680591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD98AD4751
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA0AAD4754
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88945189D305
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0757B1622B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0481914A627;
-	Wed, 11 Jun 2025 00:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0C5170A37;
+	Wed, 11 Jun 2025 00:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FBdYXLxU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UONvifDn"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE8584D34
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3563713F434
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749600656; cv=none; b=mCUsuWR/2rxLA2/9r0fDWnPFBLRVpVhFWfbmMbdR/zG9+2Re2vMCbIPKpiSiubn3yrh9g92PPT2UNyQi3t6IjCspifnUls79kYtjyNqczKZskki84grabKFQpwi7ZWKGRldbJfbn+8HS5h/WVGOWmvHKAxoWYwUcZvNR5pFgYkQ=
+	t=1749600657; cv=none; b=l2N5JV6C/baGMXzpKzgQOs7XYFASMaORwUn3dBvvtNr3/RmXIsCNttYuGIn3I5uSjn/JXNbpWEP8dhTQZvd+xfrcWCfxSIBPd46RPM6TfkTU/C0p2BoPomX6Myv//TOjIc3Th7ydlF5OJGxyPqX3ug1ouSowK4Hfo5qScQ1wnZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749600656; c=relaxed/simple;
-	bh=fi0POvxipHtqzuBmBtdO+vOuVF1CdKjDHYYgzms+PmI=;
+	s=arc-20240116; t=1749600657; c=relaxed/simple;
+	bh=tIVAjv0R6pUZqeCBUMOqA6Hwa6RH3vUVAalxmKoMGQM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OXrkaM0Jnfb0RK78J/k3x54fdajhMAc9LG5HQ4HbE4qARdzNgH+cEcgRwVBtct268A62NT8D16Q3JJIn2NBFjLASfil4GcHycRIxNZu2GC/9QxXZ3SaoXMaBB+DxLSFggjetYPg/Fri9nInFeGgWIvUwu9+RmHUV3Fkb0v8PruA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FBdYXLxU; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=L9rDn1bNT44nBJDPevYF7PavbmN6CzxjYGFdupwoEN8B0OLAIj9Wm9ZJ1JFygIjIj8WvgCOC7nVTUDxdi8e+YHzn/FXr9zSHl3rofp/yZnWoiCQPr6+E3D7oWMUAQyLaP4lHKyYeqgCLwySwyojn0z+8WsotsrovxWgvxh6pu9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UONvifDn; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3138f5e8ff5so2369251a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:10:54 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3121cffd7e8so5032562a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:10:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749600654; x=1750205454; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1749600655; x=1750205455; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=hBjwKNBikKgFeXvQ1q5Ivd9CecF6t6Q9MZtjOeYYky8=;
-        b=FBdYXLxUjexGN9WeKSZ2ecIhfrizQ6wveOJNH+ZsAaIruwbgxCgjpsI0flq2xKfa98
-         11YaX4jgJfHh8uJMrMsyNQHFsguJvECRAOPURFonmQJOzrdqGH7IbAUN3c1UV5p4xGbF
-         YyiYr5Pwb2S8XRcEHx5JjCk6sezF8NekBnj0Iu+KzCpULI2FnN0HuOfJaXNvYMIjepqF
-         wh2EEpzu2IFPwVaFYTHP3l1QmLdszH/S7jMlItgsL8dWe917fSFxrYXJ6DKB6Ci/TkEh
-         FxbREDhH/swhMb1LhQdHhjUYvmScvms3rSJz+YBCQ4+FZWCnHmSLLKe85WFCRT6Z0yia
-         j4cA==
+        bh=zss/ktKZQOB/zxYHcr8l4OJbiGy6+R3+c8NDOsBeWew=;
+        b=UONvifDnMtjMIaxMJh9oZe3DF6FlKFGr4F//EyCbLN7vQx4FcCJF4Qlri85UcuhXvN
+         tnSFwmKBPwrC59Fb1j9s4s/w/YhzzG8XaSVUoFlNDxt/uFuDTD0J2ZR8t9Ka2xm7HouS
+         NgjNwqiW06s3RHXtO8LaH2264N0zMv1Cb2Tmk6Z1Z4o/uei3djKB0nbb0DuunwHlOmDn
+         GZaGChPglu3v/ihuijZJgDZbX80b69xDeWWakRHKiXFWfE/PYgQq0v0QWTja6ldPEdBD
+         6I9n94e2xFImzSz8U085n3rggC0q/anXrqiGvsWEEJXtTd0vtnCh1jObNFz85PO3t4Vh
+         7FDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749600654; x=1750205454;
+        d=1e100.net; s=20230601; t=1749600655; x=1750205455;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hBjwKNBikKgFeXvQ1q5Ivd9CecF6t6Q9MZtjOeYYky8=;
-        b=cwVBYS3/4vj0eiouBlyKTEgm0KZTqKMAPVtd72liQuiZ436ENHEyTDayGMH58sow/c
-         FXrBnC6IznVyR4wKEo04uRZfgwqiW7LQulSzN1bI23XihUiKnJJCeqqwZKaLtWNd4Exj
-         ++IbsMo19kq4CVE3cBLqzIsdVdd9diFUzXQ03GF3YYbS1S0KGmldhov36sLO3rt71qQl
-         85PrwhAs1HWvoNW1R2qt7iMukVOajRaSrrG+mJLzbQ42nkl24qmldJdLCk0pj8ssufHn
-         /rrvwWYS9pzOfBWjccYBQkxp06ttKs3wteRfSVDFTMnAt9u/U277m9Ptu2IovEucpIXV
-         zZ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWM7mQ3S+iDO27lPlZQ7tKzYNxG7im2xNKEA7/4/tX7VdFTkO9BOob2ry1nT+wyO4xcQv+pefmLGxRv2+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH6CYfQML4kKQS6yphkF+MTG1UO4MHoulgKIS+0ItyuExXrNkc
-	45XiB5djJUomiZke5q3Z955lJdBDQrenzjbQPhrZyO1lkiuy1MhbNI26M8Utiy9jTqTkvzq2WT5
-	Ft/LGEA==
-X-Google-Smtp-Source: AGHT+IED4B4s7Ytoor8mnhgXxSS0ZKiCE28nENLHgtxurTVkQjPNLlNungxBpASYaT+z3Y4fvBlDrrKUUDc=
-X-Received: from pjh3.prod.google.com ([2002:a17:90b:3f83:b0:2fc:2c9c:880])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4cc4:b0:312:26d9:d5b2
- with SMTP id 98e67ed59e1d1-313b1d9c310mr956755a91.0.1749600653718; Tue, 10
- Jun 2025 17:10:53 -0700 (PDT)
+        bh=zss/ktKZQOB/zxYHcr8l4OJbiGy6+R3+c8NDOsBeWew=;
+        b=WLCSBD6uQ9SbB3V8yW32R7+rEfwriVdlt5cOfQgKm85dqxYAQr+fPjLhJ7ZC9XEXQ8
+         FG2+nb30PzExJN3/i1qBGjnf7AJu7gD38xK+uZ5cS0rujNC/w+XsuPBkBIPs8e27jYIz
+         KqZMbrWFEIJGyXOLlvltdcmJIcOBtW2FsRIZx5O+tJdDqxpWLyDNgPcwP99zgUgC31Hc
+         j+6ngv1GD5Q9fRHS2Hq4FxkNkA5UVyaFpk6yx95YcJELU17RvjwUGfyiIivVvMRsToeJ
+         6vdvw+mFbN9i7aZgJt4HRLBoqNqUB/QFeh+XEjMs1kVCyuXoVOUfV822uFAwJHHPdFa0
+         PxpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmgghcJ5waVIDP23YonGr+DUsHwLMU6T5agQUHODtH4zsheqUmnvWdxiOMHAiehsJQ7qx5LHxtdjr7nlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDbMvAGsToTM31muz3wAZOukILolNmrNxCeoIreENCAB4BSodi
+	3efRlnReg7t22+q5GJlMqOU4TKLcOnAcfFGEASumt49eJbmWu7Qj7IditgqDgoA195BFfiyJkZB
+	5ikxyEw==
+X-Google-Smtp-Source: AGHT+IFPf4zAcxMmKYyJF/0q0QWOeyyNBeEfAEV8gqM1cGbYGy338sgO6izo7nZMoEiNEzX0yDZpDSCyFlg=
+X-Received: from pjbpx2.prod.google.com ([2002:a17:90b:2702:b0:313:230:89ed])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:384d:b0:311:f30b:c21
+ with SMTP id 98e67ed59e1d1-313af243a50mr1534626a91.26.1749600655513; Tue, 10
+ Jun 2025 17:10:55 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 10 Jun 2025 17:10:39 -0700
+Date: Tue, 10 Jun 2025 17:10:40 -0700
 In-Reply-To: <20250611001042.170501-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250611001042.170501-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.0.rc0.642.g800a2b2222-goog
-Message-ID: <20250611001042.170501-6-seanjc@google.com>
-Subject: [PATCH 5/8] KVM: MIPS: Stop adding virt/kvm to the arch include path
+Message-ID: <20250611001042.170501-7-seanjc@google.com>
+Subject: [PATCH 6/8] KVM: PPC: Stop adding virt/kvm to the arch include path
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
@@ -94,29 +94,29 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Thomas Huth <thuth@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Don't add virt/kvm to KVM MIPS' include path, the headers in virt/kvm are
+Don't add virt/kvm to KVM PPC's include path, the headers in virt/kvm are
 intended to be used only by other code in virt/kvm, i.e. are "private" to
-the core KVM code.  It's not clear that MIPS *ever* included a header from
+the core KVM code.  It's not clear that PPC *ever* included a header from
 virt/kvm, i.e. odds are good the "-Ivirt/kvm" was copied from a different
-architecture's Makefile when MIPS support was first added.
+architecture's Makefile when PPC support was first added.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/mips/kvm/Makefile | 2 +-
+ arch/powerpc/kvm/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/kvm/Makefile b/arch/mips/kvm/Makefile
-index 805aeea2166e..96a7cd21b140 100644
---- a/arch/mips/kvm/Makefile
-+++ b/arch/mips/kvm/Makefile
-@@ -4,7 +4,7 @@
+diff --git a/arch/powerpc/kvm/Makefile b/arch/powerpc/kvm/Makefile
+index 4bd9d1230869..1a575db2666e 100644
+--- a/arch/powerpc/kvm/Makefile
++++ b/arch/powerpc/kvm/Makefile
+@@ -3,7 +3,7 @@
+ # Makefile for Kernel-based Virtual Machine module
+ #
+ 
+-ccflags-y := -Ivirt/kvm -Iarch/powerpc/kvm
++ccflags-y := -Iarch/powerpc/kvm
  
  include $(srctree)/virt/kvm/Makefile.kvm
- 
--ccflags-y += -Ivirt/kvm -Iarch/mips/kvm
-+ccflags-y += -Iarch/mips/kvm
- 
- kvm-$(CONFIG_CPU_HAS_MSA) += msa.o
  
 -- 
 2.50.0.rc0.642.g800a2b2222-goog
