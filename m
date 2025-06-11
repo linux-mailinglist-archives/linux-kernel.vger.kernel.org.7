@@ -1,121 +1,354 @@
-Return-Path: <linux-kernel+bounces-682304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54EEFAD5E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:31:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4CFAD5E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70FE43A8C5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70DE17BF9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF69F225A59;
-	Wed, 11 Jun 2025 18:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F0523643F;
+	Wed, 11 Jun 2025 18:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l8Dt9Rca"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pp1YOKGU"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0C1E8329
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B725380
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749666683; cv=none; b=hImw3SkiziYvopGo/aTSYE/CDbNHEJkpUqqriKU+8l5N89QX50XcW/Y4gYF/z95Y2VCLdDdFnH1FSkZF1uxDro2rJva2A/9nRFe93WqSbrBFEiyu+QuGMwgtoQHscSVCO69sQrlc9+/Iy0W9NK8AL8MxSeFn7x36mLNMZ/rpakw=
+	t=1749666863; cv=none; b=spKUQO4DBi1vVCHg4AI4EH7xCx73+glAoC4RY4IIf/oEHNNgCqLLyU+8i0lMHrbVMYn6s1m/bnnss8MvSjZ780nN271nQyQBsEYGLK8lnjyT3zuZnRGc50vgG4cOZJYoA8OuslEoF2OHvLNYkYPxjYe7JAtWV8W9TOhMyXHlgyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749666683; c=relaxed/simple;
-	bh=S60TJOieNNhcl84vGQWZwP64ryX/9wlMlWcVTejl6SY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OeOINVmDyHBhBHTz3N+hhwjQWj4RtqJRnWmaBkNFCFtALifRdqBVan2MIQbd+rXyIe1PviXSaRD9jF+c4Rf5z5Jg0FC8Loo75EqwaSuDvONh5TVSfYrXvVD7ouVkDv5BwEq5vTylSTuJ6+eFKEVM3VyHuzQ9m8MxCLZMFBt21R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l8Dt9Rca; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749666682; x=1781202682;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=S60TJOieNNhcl84vGQWZwP64ryX/9wlMlWcVTejl6SY=;
-  b=l8Dt9Rcagam0g7/VPx2b6DumJ8f3IOpjIeFeKko35b9YHxyNEH0yTAWU
-   EZofkyr58Lbdy6zvFDeSYviMaqZAPfyLqhlOxZ6pl4jyRh/Qe2tvM65Go
-   E9SjuYWuPeuUxX8bufasKTURrGgARf3GNKIxadszGPT6T1SpEY5HhYTYA
-   WCFN0JDmIyJfhVlet/IDsnsYTITZkNRxxRnvOC2LLoOZAztzhHNJwKP6o
-   m6pf+X2i4N3OPIcSK+6+X25jsoklFPrRshx/fRPD7QSWnN6/A7ch7TePq
-   jSg9T+ea1cK5BPL/3eTHxazFio4GlscNgz/1q75j+5u8F4quXN3ZHBVCR
-   Q==;
-X-CSE-ConnectionGUID: 6X4BraoKS22RKk/J2HMnKg==
-X-CSE-MsgGUID: O88sYufVQzedKrN9yBa+mA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51921300"
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="51921300"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 11:31:21 -0700
-X-CSE-ConnectionGUID: 5Bao4j3uSeSwB1B56LcTbg==
-X-CSE-MsgGUID: tjZJ9gGjR0CsbxoO6fTZzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="147269192"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 11 Jun 2025 11:31:18 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uPQEG-000AmG-2G;
-	Wed, 11 Jun 2025 18:31:16 +0000
-Date: Thu, 12 Jun 2025 02:31:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): Unevaluated
- properties are not allowed ('compatible' was unexpected)
-Message-ID: <202506120218.E9g2Wz7A-lkp@intel.com>
+	s=arc-20240116; t=1749666863; c=relaxed/simple;
+	bh=GbW8vIi8sHcJtz0rWCiAkjJ9O24kUulgDNBzwNR5a/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEUh4w7c2bMDVAxlXaJm8DpMA32INhkneFzEo6dX8sM+6IfMVil+ix4Sf4k9X4iOpDH+FdgVEZ2EnZG1kuwST+4GA9ua2bts1Q4uM+/ASp5mR8kDvOkO4xjZZ8cO3VN4dH41n6uIpf15aE93/hrHGu4Nn+YOXzECEmWX3Wu04VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pp1YOKGU; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so28905ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:34:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749666861; x=1750271661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFEvHzR/X9XIwCUPCxEplfWyfIoa5hqq/0O3xWFKrL4=;
+        b=Pp1YOKGUbZWSDkWgxBL/u+Cy+U6A//PK/U/1NFVFWGs4+nk76LABWQN8QSChkS72Qh
+         /j0d3iC+qwfYjRuqg8UV3JgPxy3cvi+Wb9m2v3pvoi1ycDVE1/Drsqo4EqNIVe3TLaCq
+         gwvT1rI9aC1p0ay1tpLqAlQ2jQzRccX4p7iTHGcK+TRwDwbNYK42TybkZ9pUSBopsMHP
+         TDYVjCUoTKy0K/iMT9eTw6hZS2a1oEFCadmmKYhpsgLoL4WhJHrE9q5+J1WKt+yB0Jj6
+         6/Dxr5v4/Qr0ZRgU7S1hqj7Co7GQXEKBxU5R4iH/MCpfaUqcN5mGFYnwbDb18KNbxs+M
+         OldQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749666861; x=1750271661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oFEvHzR/X9XIwCUPCxEplfWyfIoa5hqq/0O3xWFKrL4=;
+        b=h1Y6TnHmOsdZr8NiTMpERkybkbefzUKguIdYAwuimtHwEhELUQmL8LQJtdtBP3KkSx
+         hEjc8slqgcxTbcCkYOF1E85OzNXAYNvi7LikzrskQLfBjgs61M5j3GTXC3RaBIQXhKZ7
+         1ZK/3vwIDTY512YX6O8Xlnp4vEp09MvWI6zHA3BGaoWDo+E+qTBGWkoeRikRrI3+XYaG
+         VeO6duyXaSM+Iv7V+MYDldmF6iKrCUNsVXKeIP8QEmXvwqsi8DXcp101ZLWsGyoKtyZD
+         W70DkVVBV+dbUaWiGyHPDFzQ7Vm9qsXFV2V3cXjQZJH3kGKc8+8gU3cZ5k5kRY3Y9b/+
+         /yLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4OLjnSi4hkSwPgQN6QiCvdmXmzn+sDUjny2UftmvXoYtcLthj/RHdISyrxhMeG7dV5pVaUSwDq6tlfzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDDNzT9IxmlfE7DcWW1nVLiiH8EnrbRSLH3EgRL5NnBCigWB6+
+	DiwH+SPaTdBbpqiHzhUa7NjUP5oCkF3NsncNBDhcFDocdt0OJAg9HtE4itiHNL7fce5P3lwQ3A1
+	wdVPK1a3JQoKvwW+OZvvK5JnBnrF+P2PWdG2U5xzC
+X-Gm-Gg: ASbGncudu9OYP1oMiqP/JtLWKbfXpy3bht/GK5diycCr7mvMii9uqfuF5sBr6BR2qey
+	uYp9enWVzpzQeUFNaEur6aBaYsCPXRpf56zPizEiuwoR/MlgfX2rxE3Td5jaPfVxo4agch8q52G
+	OabluNxuA/DL7Jom6e/ahUYbWg97gEqko/k71CENQnG0HbnROGqlZxw8KStkfthSSbw/8UptNU
+X-Google-Smtp-Source: AGHT+IHW3WD/+5EMCeUCm1LToMk4pqjQKTn5VJP1IfR9gBkY9l/ACbNUWe3Kj3oB3FFtojZ1X1P93xhG9i96lAN4U+Y=
+X-Received: by 2002:a05:6e02:218c:b0:3dd:f4d6:1bbb with SMTP id
+ e9e14a558f8ab-3ddfb30a850mr104465ab.3.1749666860570; Wed, 11 Jun 2025
+ 11:34:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250529044000.759937-1-irogers@google.com> <aEh3qcfleSr4B9j9@google.com>
+In-Reply-To: <aEh3qcfleSr4B9j9@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 11 Jun 2025 11:34:09 -0700
+X-Gm-Features: AX0GCFs-fQ3Dhl1mflJxLnE85HKM_UFcTuS6VEd2LnxZL2nYgK2a0dITob_fYAg
+Message-ID: <CAP-5=fUQ-9s2pzi1sLqonSOPAnhV+rsZL11bQcsco5_v7=TovQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/24] perf: Make code more generic with modern defaults
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Andi Kleen <ak@linux.intel.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Graham Woodward <graham.woodward@arm.com>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
+	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, Stephen Brennan <stephen.s.brennan@oracle.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Yujie Liu <yujie.liu@intel.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, 
+	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Matt Fleming <matt@readmodwrite.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, 
+	=?UTF-8?Q?Krzysztof_=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>, 
+	Zixian Cai <fzczx123@gmail.com>, Steve Clevenger <scclevenger@os.amperecomputing.com>, 
+	Ben Gainey <ben.gainey@arm.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	Martin Liska <martin.liska@hey.com>, =?UTF-8?Q?Martin_Li=C5=A1ka?= <m.liska@foxlink.cz>, 
+	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   aef17cb3d3c43854002956f24c24ec8e1a0e3546
-commit: f879ee2ce0d46327e90f61c5dc85fb13a740de10 dt-bindings: Reference opp-v1 schema in CPU schemas
-date:   7 weeks ago
-config: mips-randconfig-051-20250612 (https://download.01.org/0day-ci/archive/20250612/202506120218.E9g2Wz7A-lkp@intel.com/config)
-compiler: mips64-linux-gcc (GCC) 8.5.0
-dtschema version: 2025.3.dev28+g49451a5
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250612/202506120218.E9g2Wz7A-lkp@intel.com/reproduce)
+On Tue, Jun 10, 2025 at 11:21=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hi Ian,
+>
+> On Wed, May 28, 2025 at 09:39:36PM -0700, Ian Rogers wrote:
+> > This patch series combines:
+> > "perf: Default use of build IDs and improvements"
+> > https://lore.kernel.org/lkml/20250428213409.1417584-1-irogers@google.co=
+m/
+> > "Remove global perf_env"
+> > https://lore.kernel.org/lkml/20250527064153.149939-1-irogers@google.com=
+/
+> > "Generic weight struct, use env for sort key and header"
+> > https://lore.kernel.org/lkml/20250521135500.677508-1-irogers@google.com=
+/
+> > This is done as the last 2 series depend on each other and the
+> > cleanups in the 1st have the potential to conflict with them.
+> >
+> > "perf: Default use of build IDs and improvements"
+> >
+> > Build ID mmap2 events have been available since Linux v5.12 and avoid
+> > certain races. Enable these by default as discussed in:
+> > https://lore.kernel.org/linux-perf-users/CAP-5=3DfXP7jN_QrGUcd55_QH5J-Y=
+-FCaJ6=3DNaHVtyx0oyNh8_-Q@mail.gmail.com/
+> >
+> > The dso_id is used to indentify a DSO that may change by being
+> > overwritten. The inode generation isn't present in /proc/pid/maps and
+> > so was already only optionally filled in. With build ID mmap events
+> > the other major, minor and inode varialbes aren't filled in. Change
+> > the dso_id implementation to make optional values explicit, rather
+> > than injecting a dso_id we want to improve it during find operations,
+> > add the buildid to the dso_id for sorting and so that matching fails
+> > when build IDs vary between DSOs.
+> >
+> > Mark the callchain for buildids and not just the sample IP, fixing
+> > missing DSOs.
+> >
+> > Fix sample__for_each_callchain_node to populate the map even when
+> > symbols aren't computed.
+> >
+> > Other minor bits of build_id clean up.
+>
+> I've tried to pick the build-id part, but I got a build error like this:
+>
+>   util/probe-finder.c: In function 'find_probe_point_lazy':
+>   util/probe-finder.c:863:25: error: implicit declaration of function 'bu=
+ild_id__sprintf';
+>   did you mean 'build_id__snprintf'? [-Werror=3Dimplicit-function-declara=
+tion]
+>     863 |                         build_id__sprintf(&bid, sbuild_id);
+>         |                         ^~~~~~~~~~~~~~~~~
+>   --
+>   util/probe-event.c: In function '__show_line_range':
+>   util/probe-event.c:1093:17: error: implicit declaration of function 'bu=
+ild_id__sprintf';
+>   did you mean 'build_id__snprintf'? [-Werror=3Dimplicit-function-declara=
+tion]
+>    1093 |                 build_id__sprintf(&bid, sbuild_id);
+>         |                 ^~~~~~~~~~~~~~~~~
+>   tests/sdt.c: In function 'build_id_cache__add_file':
+>   tests/sdt.c:40:9: error: implicit declaration of function 'build_id__sp=
+rintf';
+>   did you mean 'build_id__snprintf'? [-Werror=3Dimplicit-function-declara=
+tion]
+>      40 |         build_id__sprintf(&bid, sbuild_id);
+>         |         ^~~~~~~~~~~~~~~~~
+>
+> >
+> > "Remove global perf_env"
+> >
+> > The global perf_env is used to hold host information, but it is also
+> > used as a fallback in a number of cases where the information may be
+> > bogus. Restructure the code so that the perf_env of the session is
+> > accessed. When necessary a locally scoped host perf_env is created and
+> > used.
+> >
+> > Cleaning up the inconsistency was requested by Kan Liang in:
+> > https://lore.kernel.org/lkml/c56c9e23-cf6e-4040-aee8-da13d5157dcf@linux=
+.intel.com/
+>
+> And I got some conflicts here.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506120218.E9g2Wz7A-lkp@intel.com/
+Sorry for the build breakage and conflicts, I'll send a v5 to address
+them but it'll try to hang on for Thomas' perf top change:
+https://lore.kernel.org/lkml/20250513231813.13846-2-thomas.falcon@intel.com=
+/
+so as to not also need a v6.
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/mips/boot/dts/mti/sead3.dtb: cpus: cpu@0: 'cache-level' is a required property
-   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: cpus: '#address-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: cpus: '#size-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): compatible: ['mti,mips14KEc', 'mti,mips14Kc'] is too long
-   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): 'reg' is a required property
-   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
->> arch/mips/boot/dts/mti/sead3.dtb: cpu@0 (mti,mips14KEc): Unevaluated properties are not allowed ('compatible' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: interrupt-controller (mti,cpu-interrupt-controller): '#address-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/interrupt-controller/mti,cpu-interrupt-controller.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: /system-controller@1f000000: failed to match any schema with compatible: ['mti,sead3-fpga', 'syscon', 'simple-mfd']
-   arch/mips/boot/dts/mti/sead3.dtb: /system-controller@1f000000/poweroff: failed to match any schema with compatible: ['restart-poweroff']
-   arch/mips/boot/dts/mti/sead3.dtb: /system-controller@1f000200: failed to match any schema with compatible: ['mti,sead3-cpld', 'syscon', 'simple-mfd']
-   arch/mips/boot/dts/mti/sead3.dtb: system-controller@1f000200 (mti,sead3-cpld): 'led@10.0', 'led@10.1', 'led@10.2', 'led@10.3', 'led@10.4', 'led@10.5', 'led@10.6', 'led@10.7', 'led@18.0', 'led@18.1', 'led@18.2', 'led@18.3', 'led@18.4', 'led@18.5', 'led@18.6', 'led@18.7' do not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z0-9][a-zA-Z0-9#,+\\-._]{0,63}$', '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-   arch/mips/boot/dts/mti/sead3.dtb: led@10.0 (register-bit-led): $nodename:0: 'led@10.0' does not match '^led@[0-9a-f]+,[0-9a-f]{1,2}$'
-   	from schema $id: http://devicetree.org/schemas/leds/register-bit-led.yaml#
+Thanks,
+Ian
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Please take a look, thanks!
+> Namhyung
+>
+> >
+> > "Generic weight struct, use env for sort key and header"
+> >
+> > The arch directory is a barrier to cross-platform development as files
+> > and behaviors within it are inherently platform specific. Sample
+> > parsing should be generic but the PERF_SAMPLE_WEIGHT_STRUCT handling
+> > was only present if building for x86 or powerpc. The sort key and
+> > headers should be specific to the session that is being executed and
+> > not to the machine perf is being run upon. These patches clean this
+> > and associated code up.
+> >
+> > v4: Shorten to "weight3" histogram and sample variable, but comment
+> >     its use (Namhyung). Fix evsel__env use in `perf trace` where no
+> >     session was present. Assert the session is never passed a NULL
+> >     host_env when there is no data file and its associated env.
+> >
+> > Ian Rogers (24):
+> >   perf callchain: Always populate the addr_location map when adding IP
+> >   perf build-id: Reduce size of "size" variable
+> >   perf build-id: Truncate to avoid overflowing the build_id data
+> >   perf build-id: Change sprintf functions to snprintf
+> >   perf build-id: Mark DSO in sample callchains
+> >   perf build-id: Ensure struct build_id is empty before use
+> >   perf dso: Move build_id to dso_id
+> >   perf jitdump: Directly mark the jitdump DSO
+> >   perf record: Make --buildid-mmap the default
+> >   perf session: Add accessor for session->header.env
+> >   perf session: Add an env pointer for the current perf_env
+> >   perf evlist: Change env variable to session
+> >   perf header: Clean up use of perf_env
+> >   perf test: Avoid use perf_env
+> >   perf session: Add host_env argument to perf_session__new
+> >   perf top: Make perf_env locally scoped
+> >   perf bench synthesize: Avoid use of global perf_env
+> >   perf machine: Explicitly pass in host perf_env
+> >   perf auxtrace: Pass perf_env from session through to mmap read
+> >   perf trace: Avoid global perf_env with evsel__env
+> >   perf env: Remove global perf_env
+> >   perf sample: Remove arch notion of sample parsing
+> >   perf test: Move PERF_SAMPLE_WEIGHT_STRUCT parsing to common test
+> >   perf sort: Use perf_env to set arch sort keys and header
+> >
+> >  tools/perf/arch/powerpc/util/Build            |   1 -
+> >  tools/perf/arch/powerpc/util/event.c          |  60 ------
+> >  tools/perf/arch/x86/include/arch-tests.h      |   1 -
+> >  tools/perf/arch/x86/tests/Build               |   1 -
+> >  tools/perf/arch/x86/tests/arch-tests.c        |   2 -
+> >  tools/perf/arch/x86/tests/sample-parsing.c    | 125 ------------
+> >  tools/perf/arch/x86/util/event.c              |  46 -----
+> >  tools/perf/bench/inject-buildid.c             |   2 +-
+> >  tools/perf/bench/synthesize.c                 |  30 +--
+> >  tools/perf/builtin-annotate.c                 |   6 +-
+> >  tools/perf/builtin-buildid-cache.c            |  22 +--
+> >  tools/perf/builtin-buildid-list.c             |  11 +-
+> >  tools/perf/builtin-c2c.c                      |  69 ++++---
+> >  tools/perf/builtin-diff.c                     |   2 +-
+> >  tools/perf/builtin-inject.c                   |  41 ++--
+> >  tools/perf/builtin-kallsyms.c                 |  21 +-
+> >  tools/perf/builtin-kmem.c                     |   2 +-
+> >  tools/perf/builtin-kvm.c                      |   4 +-
+> >  tools/perf/builtin-kwork.c                    |   2 +-
+> >  tools/perf/builtin-lock.c                     |   4 +-
+> >  tools/perf/builtin-mem.c                      |   2 +-
+> >  tools/perf/builtin-record.c                   |  63 +++---
+> >  tools/perf/builtin-report.c                   |  27 ++-
+> >  tools/perf/builtin-sched.c                    |   8 +-
+> >  tools/perf/builtin-script.c                   |  18 +-
+> >  tools/perf/builtin-stat.c                     |  23 +--
+> >  tools/perf/builtin-timechart.c                |   2 +-
+> >  tools/perf/builtin-top.c                      |  58 ++++--
+> >  tools/perf/builtin-trace.c                    |  38 ++--
+> >  tools/perf/include/perf/perf_dlfilter.h       |   2 +-
+> >  tools/perf/perf.c                             |   3 -
+> >  tools/perf/tests/code-reading.c               |   6 +-
+> >  tools/perf/tests/dlfilter-test.c              |  51 ++---
+> >  tools/perf/tests/dwarf-unwind.c               |  10 +-
+> >  tools/perf/tests/hists_cumulate.c             |   8 +-
+> >  tools/perf/tests/hists_filter.c               |   8 +-
+> >  tools/perf/tests/hists_link.c                 |   8 +-
+> >  tools/perf/tests/hists_output.c               |  10 +-
+> >  tools/perf/tests/mmap-thread-lookup.c         |   6 +-
+> >  tools/perf/tests/pe-file-parsing.c            |   2 +-
+> >  tools/perf/tests/sample-parsing.c             |  14 ++
+> >  tools/perf/tests/sdt.c                        |   2 +-
+> >  tools/perf/tests/symbols.c                    |  12 +-
+> >  tools/perf/tests/topology.c                   |  39 ++--
+> >  tools/perf/ui/browser.h                       |   4 +-
+> >  tools/perf/ui/browsers/header.c               |   4 +-
+> >  tools/perf/ui/browsers/hists.c                |   2 +-
+> >  tools/perf/util/amd-sample-raw.c              |   2 +-
+> >  tools/perf/util/arm-spe.c                     |   2 +-
+> >  tools/perf/util/auxtrace.c                    |  13 +-
+> >  tools/perf/util/auxtrace.h                    |   6 +-
+> >  tools/perf/util/bpf-event.c                   |   2 +-
+> >  tools/perf/util/branch.c                      |   2 +-
+> >  tools/perf/util/build-id.c                    |  63 +++---
+> >  tools/perf/util/build-id.h                    |   8 +-
+> >  tools/perf/util/data-convert-bt.c             |  16 +-
+> >  tools/perf/util/data-convert-json.c           |  36 ++--
+> >  tools/perf/util/debuginfo.c                   |   2 +-
+> >  tools/perf/util/disasm.c                      |   2 +-
+> >  tools/perf/util/dlfilter.c                    |   2 +-
+> >  tools/perf/util/dso.c                         | 111 ++++++-----
+> >  tools/perf/util/dso.h                         |  75 ++++----
+> >  tools/perf/util/dsos.c                        |  20 +-
+> >  tools/perf/util/env.c                         |   3 +-
+> >  tools/perf/util/env.h                         |   2 -
+> >  tools/perf/util/event.c                       |   2 +-
+> >  tools/perf/util/event.h                       |   5 -
+> >  tools/perf/util/evlist.h                      |   2 +-
+> >  tools/perf/util/evsel.c                       |  29 ++-
+> >  tools/perf/util/evsel.h                       |   1 +
+> >  tools/perf/util/header.c                      | 182 ++++++++++--------
+> >  tools/perf/util/hist.c                        |   4 +-
+> >  tools/perf/util/hist.h                        |   3 +-
+> >  tools/perf/util/intel-tpebs.c                 |   4 +-
+> >  tools/perf/util/jitdump.c                     |  21 +-
+> >  tools/perf/util/machine.c                     |  42 ++--
+> >  tools/perf/util/machine.h                     |   4 +-
+> >  tools/perf/util/map.c                         |  15 +-
+> >  tools/perf/util/map.h                         |   5 +-
+> >  tools/perf/util/probe-event.c                 |   8 +-
+> >  tools/perf/util/probe-file.c                  |   4 +-
+> >  tools/perf/util/probe-finder.c                |   3 +-
+> >  tools/perf/util/s390-cpumsf.c                 |   2 +-
+> >  tools/perf/util/sample-raw.c                  |   7 +-
+> >  tools/perf/util/sample-raw.h                  |   2 +-
+> >  tools/perf/util/sample.h                      |   6 +-
+> >  .../scripting-engines/trace-event-python.c    |   7 +-
+> >  tools/perf/util/session.c                     |  20 +-
+> >  tools/perf/util/session.h                     |   9 +-
+> >  tools/perf/util/sort.c                        |  95 +++++----
+> >  tools/perf/util/sort.h                        |   5 +-
+> >  tools/perf/util/symbol-minimal.c              |   2 +-
+> >  tools/perf/util/symbol.c                      |   7 +-
+> >  tools/perf/util/symbol_conf.h                 |   2 +-
+> >  tools/perf/util/synthetic-events.c            |  54 ++++--
+> >  tools/perf/util/thread.c                      |   8 +-
+> >  tools/perf/util/thread.h                      |   2 +-
+> >  tools/perf/util/tool.c                        |   2 +-
+> >  98 files changed, 919 insertions(+), 894 deletions(-)
+> >  delete mode 100644 tools/perf/arch/powerpc/util/event.c
+> >  delete mode 100644 tools/perf/arch/x86/tests/sample-parsing.c
+> >
+> > --
+> > 2.49.0.1204.g71687c7c1d-goog
+> >
 
