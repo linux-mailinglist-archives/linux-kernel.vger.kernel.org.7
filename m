@@ -1,93 +1,66 @@
-Return-Path: <linux-kernel+bounces-680774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B9BAD499E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C6EAD49B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42AE189CD7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:46:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6011886A6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92296218AC7;
-	Wed, 11 Jun 2025 03:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A0022652D;
+	Wed, 11 Jun 2025 03:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqEk1F2X"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="mkFa3OhC"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570B1182B4;
-	Wed, 11 Jun 2025 03:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280AF1FDA94;
+	Wed, 11 Jun 2025 03:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749613573; cv=none; b=OkCT6/PH4EF7P9b7VFbRyR6zZZz6FiFpx+7tQhaVEium2EqkQoO/+YjKSy8ZyK2P7PRqBrGl/XgVCa6DVUH/hvcxMumjjUaC/A1wY3SeduWSVzXGqIKtqbtkL4Tjs13wwKBLhRL6sqnAEzLrcN0S8Rtv3IqojyqGFmwbuJiI4QQ=
+	t=1749613615; cv=none; b=pmmKSTkKbNkoq5KHVD92Z1OHxs71Va3ChIADfDaZgCd42I/ii62XhRF5DJFvJjTv3zsGCTZ8Re3PL2Wl9PMxDObdWIAufJwy9dme9RAVJLq/beIQTuNaNmJbMbSi7ZlhwhEkK+KuXV1IgvySqhAEf2LBc0t+MCG0T2G+dtU6FfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749613573; c=relaxed/simple;
-	bh=SHCpUqf2sFrc2v6xjkUcGwxYgt9+plH2+LRllrC+TUQ=;
+	s=arc-20240116; t=1749613615; c=relaxed/simple;
+	bh=oxGGKo2SzS/d0PM18T3o9qSmS9kbEB5Ud4wDWF0Zsi4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Urh8iCGIasLIt84dgjxQ8yWZCgbrbhrxUwP6BH1SopBdf7rGfkrS7v6ytvyRM/SCQ+gaIRj//R7xNbRQdnQQAz2yjaqX2SQEbS54Keg+5rbdM1V1Z0AyLls4JFfJi4IWIHEeYVFm3f8m753fczT4SWJ71VfyasYh3K7SEAPUlhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqEk1F2X; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e7971effd6so1015582137.1;
-        Tue, 10 Jun 2025 20:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749613570; x=1750218370; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rg2tjw16mCCTcrpO92M+BgLFDyQbF8JC1z2OQxCbfIM=;
-        b=UqEk1F2X2UoSCMVfXth9I4GGZ1VHcwPqryh9yiYfNB6QvvxpWaCLIDjbhNve2EmPro
-         uU1wODfWhkOXNXDckvOplhYK1KJyCrZ2YYDXwOQ9FgAjv5tuILL89/1CFOriWnJVFHi/
-         eLsip6dLgy+OwP0ht3m7i8S2E8VSuPlsyG/6/uA9Ea6JFO9j3SY8wn3fAxG4+cCHTRAe
-         ZlNcPsOnf8Cf5EGjqMU9s3IfWx/IiNRNn1yWatmE+X/bU51GTmklv3AimiPf7+24NOla
-         y9TbJWN464Z4syByhGWAL7MHzVwf7r2n5Zk/8tYgH9juNB034YRDWDjCS5wK/dlkckC7
-         Pejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749613570; x=1750218370;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rg2tjw16mCCTcrpO92M+BgLFDyQbF8JC1z2OQxCbfIM=;
-        b=xHR21gzsEcGOXg/Vg8Ygpjh0hZWP+JoWBPKGJPX6A8X7rR5yKooCwbHEGUUIPmj9rN
-         Kp0Hgz/jLlzEaC8CWI/dxrNZ257j3A6YZyJLGw6tXGY0k7EHU5DpJBsyujy14TJsznPr
-         ApRZ+bJ9GejntnzwvoZsUnfjSqqWhhOEzQG7H08kx6lbopNFkiWR5Jl19Ovw4vpoqsQf
-         OvyjN87v58ZjTOOPEJz89Yx7/4KPIq/WdT0JLkkPa9CME4UJfzwhC1TnBtBrQaaV8I4D
-         eV0woN7v90s4S/mlwU2S6w6ZKfqU3abrZkQg0kbhkV/CUc6swR4y++dSF0DN5vX2hjW5
-         Ze0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZsfpKFUsjkvz3DCJHq91Z26BdB/g9vJcnjbtfBhDEcCX4yp9gI4h0/gVj330nJAbmYGNwykx+8kAs@vger.kernel.org, AJvYcCW8iUe12STIxTHVH4KQClw6/dfFR9y+3CirYJ4u0Iwpx6oUfz7EHtuilRLQ3emVhJ/i7nbVbguxiK6xp9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQaLB/IEMHSna9XZVkSprO9b+sQOwefkVcspbdZwuf09F5Ow/H
-	Tq7s9eBOOPeAnCVIIvWm08Mv6bDpHCnFJq7QhTAKAl2eQ3xjO3BlsBQn
-X-Gm-Gg: ASbGncsCvGdg9Tuzyh7WOmxMvZ6pyc3EWjsg3fBrUy0Hvik+euI7R665LZOL+Z9hs/y
-	tU4lP9lmxUiO3BEn8/iR3uyIodlOVcEh2W9EFh+VCwGP8Huzw3/kVBeh2cgWAp/546zOdNSERDL
-	9NHapb12PQ+HOfRUp4eqH87ipSf+Pbr8ZAnEtNgT2Yjl6wOWjxdoz/w9MTj3mkdNzORp9D/cwih
-	MBJX52l8k1dDDE6UKYhUukbJ4WIvBn8ira96LdAH8B6f+BBRG9mcCtLJ78W084MZf4U+GVziPL2
-	ajXCBqQWf0C6vcZk4LkUCsILFV5bNFpOWjiZnBQEdzIHOh0xlg==
-X-Google-Smtp-Source: AGHT+IEjJ0BsROh1VIAfqNoWerdFkJh/8W2zLPk0S0XAU/Gcu0vW6QlsW9Odcrm98+pKp5HWoPp/zw==
-X-Received: by 2002:a05:6102:f95:b0:4e7:3efd:ac76 with SMTP id ada2fe7eead31-4e7bba13384mr1443026137.8.1749613570087;
-        Tue, 10 Jun 2025 20:46:10 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:5ecc::dead:c001])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87eeae8551dsm2251922241.14.2025.06.10.20.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 20:46:09 -0700 (PDT)
-Date: Wed, 11 Jun 2025 00:46:03 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] PCI: pcie-rockchip: add bits for Target Link
- Speed in LCS_2
-Message-ID: <aEj7-6fMGKSXQb3J@geday>
-References: <aEQb5kEOCJNQJMin@geday>
- <20250610200744.GA820589@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9404hKc61Cb70k8Wqcr95ZVyRpk0jh3IRjVdtCsAoKNW2IynxySifQC8XbCZQ6nAwRe1WfHDmYXl0Y0jalqyxoE1+ccOi7cBVvRCQnaVcSEgpym+0exDoT/2SJjcIGO5qmjhh/Q59VUAvS8knHsHHRbtiomtLDLJutkKIOlgJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=mkFa3OhC; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=FaUxGj4VtfSrMWJ+tBWopr/w3bGCwOfzq4u3E//ODvI=; b=mkFa3OhC+Qo4uggq0lm+VesVgK
+	ws5RLDEtaTsq4bUYSBpul0obfyudjKCh/9tUf+YUaCcXdNPAIqDUATISwpCILd5hxw2B3ByCr7wZM
+	CiaXuBOcN1xsetLKjVg/ex3IbYABc3Uec4Yv02lkMzqtMm/rVW/x0qmK1tU3JDKqMd06vYQz6OL4H
+	wxzG2kV9vwkdEtrzGsOlS954o/HhO+YsgXgFbP+INSiUq1g1MwjULr6MpamQeCsQgax9LuV/VPcwE
+	+X61xGRTLI6NKWhWfIqnDiaZ0lgwTtuudG76/yMtoYPyPBMt1wZStvPLtENAGMHHmj8UXrtRyvHsw
+	Xs2BEJkg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uPCQJ-00CFcx-0o;
+	Wed, 11 Jun 2025 11:46:48 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 11 Jun 2025 11:46:47 +0800
+Date: Wed, 11 Jun 2025 11:46:47 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org, x86@kernel.org, ardb@kernel.org,
+	Jason@zx2c4.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH 07/16] crypto: sha512 - replace sha512_generic with
+ wrapper around SHA-512 library
+Message-ID: <aEj8J3ZIYEFp_XT4@gondor.apana.org.au>
+References: <20250611020923.1482701-8-ebiggers@kernel.org>
+ <aEjo6YZn59m5FnZ_@gondor.apana.org.au>
+ <20250611033957.GA1484147@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,38 +69,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250610200744.GA820589@bhelgaas>
+In-Reply-To: <20250611033957.GA1484147@sol>
 
-On Tue, Jun 10, 2025 at 03:07:44PM -0500, Bjorn Helgaas wrote:
-> On Sat, Jun 07, 2025 at 08:00:54AM -0300, Geraldo Nascimento wrote:
-> This stuff:
-> 
->   #define PCIE_RC_CONFIG_DCR              (PCIE_RC_CONFIG_BASE + 0xc4)
->   #define PCIE_RC_CONFIG_DCSR             (PCIE_RC_CONFIG_BASE + 0xc8)
->   #define PCIE_RC_CONFIG_LINK_CAP         (PCIE_RC_CONFIG_BASE + 0xcc)
->   #define PCIE_RC_CONFIG_LCS              (PCIE_RC_CONFIG_BASE + 0xd0)
->   #define PCIE_RC_CONFIG_LCS_2            (PCIE_RC_CONFIG_BASE + 0xf0)
-> 
-> *Looks* like it might be duplicates of:
-> 
->   #define PCI_EXP_DEVCAP          0x04    /* Device capabilities */
->   #define PCI_EXP_DEVCTL          0x08    /* Device Control */
->   #define PCI_EXP_LNKCAP          0x0c    /* Link Capabilities */
+On Tue, Jun 10, 2025 at 08:39:57PM -0700, Eric Biggers wrote:
+>
+> Do you have a concrete example (meaning, a specific driver) where this actually
+> matters?  Historically, export and import have always had to be paired for the
+> same transformation object, i.e. import was called only with the output of
+> export.  There is, and has never been, any test that tests otherwise.  This
+> seems like a brand new "requirement" that you've made up unnecessarily.
 
-Hi again Bjorn,
+It's not just drivers that may be using fallbacks, the ahash API
+code itself now relies on this to provide fallbacks for cases that
+drivers can't handle, such as linear addresses.
 
-Your message reminded me of something that may be important.
+I did add the testing for it, which revealed a few problems with
+s390 so it was reverted for 6.16.  But I will be adding it back
+after the s390 issues have been resolved.
+ 
+> I'll add export and import functions if you insist, but it seems pointless.
+>
+> Could you at least provide proper definitions for the legacy structs so that I
+> don't have to do pointer arithmetic to generate them?
 
-During my debugging I had the mild impression L0s capability is not
-being cleared from Link Capabilities Register in the presence of
-"aspm-no-l0s" DT property.
+Just expose the sha512 block functions and use them as is.  There
+is no need to do the export/import dance.
 
-I can't confirm it right now but I might revisit this later on. From
-what I've seen it can only be cleared from inside the port init
-in pcie-rockchip.c and does nothing in present form.
-
-Not a clear, confirmable report but something to watch out for...
-
-Regards,
-Geraldo Nascimento
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
