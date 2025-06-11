@@ -1,78 +1,64 @@
-Return-Path: <linux-kernel+bounces-681889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B43AD589A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:24:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F749AD58AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F9D3A5457
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:24:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952671664D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40C52BD035;
-	Wed, 11 Jun 2025 14:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7031829ACED;
+	Wed, 11 Jun 2025 14:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3ZTKswQ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IeXQ3vEl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02BD1E485;
-	Wed, 11 Jun 2025 14:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6889815B102;
+	Wed, 11 Jun 2025 14:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749651878; cv=none; b=FouxsjJVtaTsG4BSsav4XKLU6cFqKrA29ciidCFht7HlzWzz00V1GGKahHRtAk8Pl2MzF1xtJOQGJovxa5aur0WEHAEAQZZ0A1/magfrXqEINwGj4odfGecVsFK8WUTaByjDkGkfhPssZnXuQhGBbOXetajgRuaOS/ZzBPfDqz0=
+	t=1749651989; cv=none; b=QX9HdZJ94XrV6VfvxM6UnYNE5pmL+3kikYYAQLNrIC0lxIFSra8a21D7x9/8naUG++Y7D31oLk4dlCs+J4MWPKn6mOCQLjVH68v8loTJoFosu+/8tQGIBgv7snTf5ivhOJySCAY1KXlOAigj+qTB9JNnp+5nCOxG893+hdBTCjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749651878; c=relaxed/simple;
-	bh=zhuxC+KhjOVBwtC+ZikFTxVlNB4jrxhuaXaa+Xblpxs=;
+	s=arc-20240116; t=1749651989; c=relaxed/simple;
+	bh=2v0L3nIc6S0R6Cw8HMNJRjjjRiB2Ue8P/o1nFtAELTw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bwt9Djr4F3H3Xz74c3JUOEB1vP4DJ8wnUU3uQD1qYrcm8gdnDzINKGt/8f9VLWPDIWrCxhijtokhdA/XPk5JFtnYpIpv4BpiKU/4DpjEL4RTfXBMHLupYa04d7779ncjUNNK7hkE/Zgg1asvLNujHkQcxbg7bpIkrnuScBAXZjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3ZTKswQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-451d3f72391so87617065e9.3;
-        Wed, 11 Jun 2025 07:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749651874; x=1750256674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RTXKRBFGUAka08dub7+UBA5yiZf9fur0UOXcxOoy2sc=;
-        b=L3ZTKswQ5gCyfLURktJlabE68b4ktLtGrsOLVSGsn3ltwcsNMDcao4qi6ei7bDr/p6
-         9znCZxe78JZ5f9tv6L3RxqgLIbxdw7J7aMAnKDyacNy1hT29AOsQJhMQeXz+eCdv86sG
-         QLVcFa3TDmupxTiI2GiyyRmMKkUcjUQ3bSKHrzBUBdZDJmLT1qH89nSrP5LsWxkCHQA5
-         mNTXRM0GBgZFjc9COUguqZYyb+jXXF4gOHHoXsfLdSWOZPMJq6yh/BK2iFUV+CMDSnuB
-         0av/gY9jSovttr/wYx7TBH2SNWfBBxHyTDW5TcCu+JcaAurGNAwEKSd4jzz1PcyPYLWP
-         /ZDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749651874; x=1750256674;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RTXKRBFGUAka08dub7+UBA5yiZf9fur0UOXcxOoy2sc=;
-        b=mQmERdfe5B6ayEEsrsJJ9L6gcZbZ0/yWAlRPd6Yc5pAS/d8mxTp63nxOD6/AAptykO
-         ExWuK5iibIhct/ExlP7eCRphOAdluE6kfhSNxNDXJWPDHyGRfAObQczShzeBdAnDaJPY
-         bktPKLLjMTSCyQVDFzI7DnxBItUQaJNjL/cet78yBBiQZk6N8OdF3PmmuyzLjLujPi8B
-         8zF6bT4AL1I/HG2NNU+SRbS4ucQYOd48n7tIEVD4a4oe7C6EcGKs+sHk/aiJl4D+KRVE
-         H8aSXIHZyck1D+aOw0wr87b8PHcjtC/DOrxf6LXlrrg9qRktozIYuzcEd2bJTSQFFoUc
-         N0iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo936QnRflxbbvBf9CVnUtLdaPR4ZjP5N024t//zzIEZ6GpVXHzYLSTvZOXtPLdIa4fm/hYQFn@vger.kernel.org, AJvYcCVCdrfvZlg4nAT8QDm1aXkKX4DpT83BU1z0GZd/0vWylBKO7kGMAhHjO7rodGv4CJ+OQxI=@vger.kernel.org, AJvYcCWcDGfEN7hPR9Hs+clf4Ei21i+wXrBWWcr9Bhs805ZBbP/byQKrxUBLaN1DxEuCFohLh6cqR1iGhgPdzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7doMNuV5IXs8LKxwBCr56+etY6m7A7EWbHLwfXJ2hmGgNLvOH
-	YP06o6/PJvVUbzwB0ccMnA6oKf8M68gvGT3/XjTV2x08MrewiQabxgPV
-X-Gm-Gg: ASbGnctOqWXtDcykqLE2p+YQzWeDZZzCwyFXfb/7W/GDhoFPswcnbUzfhxJJdGFKmin
-	aTwRsDCCYaqywLyYYKJrckhfVopWyVEZ2uWk4my0Apza3KuouAWicIakwmFaBs51gDwWbFxDoah
-	YlRQy5vUnYdZ4GE51HuVw4IriDirTWN9e6YVbt/lOovtaBz1IB5QkMfulG0LPPrEODb87xT38H6
-	FSh5mpM7FDB7EdDT4LVaKmKlPCfuw8oFQcThcSZZVDXm692VA9FrCEY4RLqHdXQjzAnWePg+Q/p
-	GxyIMJ4ZGVrnb0YVigyfw9TW8XoEKm1UcfEkWSK923mINOlR9Qi+o0bZaAovXpNBWWOfdik=
-X-Google-Smtp-Source: AGHT+IHoeACtZ7Lq1d6rrqu6tvHRqZvx/wZr02IW/ChCWd4ssRnTymEzapp3q53gv8ZTjy+QowM5Nw==
-X-Received: by 2002:a05:600c:3586:b0:441:b3eb:574e with SMTP id 5b1f17b1804b1-4532b8c5658mr22745e9.5.1749651873795;
-        Wed, 11 Jun 2025 07:24:33 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.145.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323a8acasm15187999f8f.26.2025.06.11.07.24.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 07:24:33 -0700 (PDT)
-Message-ID: <8c7c1039-5b9c-4060-8292-87047dfd9845@gmail.com>
-Date: Wed, 11 Jun 2025 15:25:54 +0100
+	 In-Reply-To:Content-Type; b=pRMfuU9vlRuUmWVLuApB9VU2HXYJEcxmJvN8Ks2r3w73yqhAhy92wbK+keslTNYJBqnmel6nklzvk/m5CqU98ox5TIyY5Z/pFKvD5deW6v4zUkYSTZz62YjHUIWaUQXnKvp1JrAF9O3jrdJEi0jtQ43UvWeKftE3iNS9vCS5GDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IeXQ3vEl; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749651989; x=1781187989;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2v0L3nIc6S0R6Cw8HMNJRjjjRiB2Ue8P/o1nFtAELTw=;
+  b=IeXQ3vElvfx/xALRULpm/Vx2lO86BX/ZFwn4k3voPoheTqqrJHE5MsuT
+   gc4r4BaAf2I39grn7v6K/yuE8gPfYBvFw5A4t8S6GWAfU0TCKxNVv5Lr9
+   m8ayoMGCObQ7DZbNX7Ff8qLB50LQw2PNRCO+dYlJbAgITY9frua8aGxIb
+   mx/CmYRzmSiiUk1fHhnNz442otN1CBa54ElmXLAOBZixffbMRKZuSeLFz
+   j6VmzVNWV8MQLyORro/opuwHZuYge+jPOcFJIBXCW5Qrsr4HU2zfK3KlC
+   3/112rcDb18lXWzFhnnMzcgOgOYV/HZkad1XU73t1YZIewNUE1DpIzmXI
+   Q==;
+X-CSE-ConnectionGUID: yK8edSzKRYebq7MFDLm2GA==
+X-CSE-MsgGUID: EZ0Jv/0ZQj2PsMFkipy+eQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51882808"
+X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
+   d="scan'208";a="51882808"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 07:26:28 -0700
+X-CSE-ConnectionGUID: 9fU3IbJ6T92DkAvUOxVEgQ==
+X-CSE-MsgGUID: 9ygHyfExTwSGmKsPG1YP0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
+   d="scan'208";a="184416951"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 07:26:24 -0700
+Message-ID: <a7929151-0a1f-4349-99b5-186c187710ff@intel.com>
+Date: Wed, 11 Jun 2025 22:26:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,38 +66,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/9] Split netmem from struct page
-To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
- ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
- akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
- andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
- edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-References: <20250609043225.77229-1-byungchul@sk.com>
+Subject: Re: [RFC PATCH 4/4] KVM: TDX: Check KVM exit on KVM_HC_MAP_GPA_RANGE
+ when TD finalize
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>
+Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+ "Huang, Kai" <kai.huang@intel.com>, "Yao, Jiewen" <jiewen.yao@intel.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Lindgren, Tony" <tony.lindgren@intel.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Shutemov, Kirill" <kirill.shutemov@intel.com>
+References: <20250610021422.1214715-1-binbin.wu@linux.intel.com>
+ <20250610021422.1214715-5-binbin.wu@linux.intel.com>
+ <936ccea77b474fbad1bde799ee92139356f91c5f.camel@intel.com>
+ <aEh0oGeh96n9OvCT@google.com>
+ <31c4ab96-55bf-4f80-a6fd-3478cc1d1117@linux.intel.com>
+ <aEmGTZbMpZhtlkIh@google.com>
+ <ac62541b-185a-47aa-86a7-d4425a98699d@intel.com>
+ <f0d42c86e0b2fbad3fa3fdcdce214059b0581573.camel@intel.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250609043225.77229-1-byungchul@sk.com>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <f0d42c86e0b2fbad3fa3fdcdce214059b0581573.camel@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/9/25 05:32, Byungchul Park wrote:
-> Hi all,
+On 6/11/2025 10:04 PM, Edgecombe, Rick P wrote:
+> On Wed, 2025-06-11 at 22:01 +0800, Xiaoyao Li wrote:
+>>>> So, when the TDX guest calls MapGPA and KVM finds userspace doesn't opt-in
+>>>> KVM_HC_MAP_GPA_RANGE, just return error to userspace?
+>>>
+>>> Why can't KVM just do what it already does, and return an error to the
+>>> guest?
+>>
+>> Because GHCI requires it must be supported. No matter with the old GHCI
+>> that only allows <GetTdVmCallInfo> to succeed and the success of
+>> <GetTdVmCallInfo> means all the TDVMCALL leafs are support, or the
+>> proposed updated GHCI that defines <MapGpa> as one of the base API/leaf,
+>> and the base API must be supported by VMM.
+>>
+>> Binbin wants to honor it.
 > 
-> In this version, I'm posting non-controversial patches first.  I will
-> post the rest more carefully later.  In this version, no update has been
-> applied except excluding some patches from the previous version.  See
-> the changes below.
+> But KVM doesn't need to support all ways that userspace could meet the GHCI
+> spec. If userspace opts-in to the exit, they will meet the spec. If they
+> configure KVM differently then they wont, but this is their decision.
 
-fwiw, I tried it with net_iov (zcrx), it didn't blow up during a
-short test.
+I agree with you and Sean. And I'm trying to answer Sean's question on 
+behalf of Binbin.
 
--- 
-Pavel Begunkov
+Strictly speaking, KVM can be blamed for some reason. Because it is KVM 
+that returns success for <GetTdVmCallInfo> unconditionally when r12 == 0 
+  to report that all the (base) leafs are supported.
 
+But I totally agree with KVM cannot guarantee userspace will behave 
+correctly. Even with this patch that KVM mandates the userspace to 
+enable user exit of KVM_HC_MAP_GPA_RANGE, it's still possible for a 
+misbehaved userspace to error to TD guest on KVM_HC_MAP_GPA_RANGE and 
+breaks the semantics of successful <GetTdVmCallInfo>.
+
+So I'm with you and Sean.
 
