@@ -1,90 +1,177 @@
-Return-Path: <linux-kernel+bounces-682407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F661AD5F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93168AD5F9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DEFA3A6783
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C1A3A9C33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1374A221F1C;
-	Wed, 11 Jun 2025 19:57:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF69C2BD5A8;
+	Wed, 11 Jun 2025 19:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEOoeZ7g"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2DC276046
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7105EC8FE;
+	Wed, 11 Jun 2025 19:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749671826; cv=none; b=HLFA6OO6sbvzt+WJqRHVIuifRXNxtgQkhE0JUn805YQOxiDFzcDzLDGtzyJohIZVsK07rAWPAwqJhRdWfyJDqH71uOI3j4QpKL3k6WECI/WjgNImQpBPMXLblY9pEw8I26ccH2vWU2hUn8YtN5soH3wlR00yOR0f/S/M6TEVk+c=
+	t=1749671955; cv=none; b=djQER8+uH8uYEk0xz0T3xouvmQlBJNgQ9eC2+xM9Iw+m377H/frILjjReLwwnbO7iCi2ipGh8ChN/pmLwxzKHk23xFMKWFlp3yxuF6MGFmClu3lrDzfa7vuwvBqShSwOYhVXCzbYFmVgB9RkxAaj44YrBbEtHXwDkHqOMB6ItXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749671826; c=relaxed/simple;
-	bh=USvQ9wgruXH8TAOZtTOojRc6/1bENOZaHy0L6RZTwUY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=flD+0c1I1pQfzrynbhRyS9ZAG0hoFDG1CwIgtw/HvNIt1z2T4PvD4lrcUd4ADZgTbaJjK1ND4kiGpbxRzE3phjjYQFHrcFZqHWdLMq9pgub/3TWLdbAbOCByEIWahnIvk6JMmC5kC0x8br2oqKtATD1dyDu9q5blO0Pj3J9Ptvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so4426455ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:57:05 -0700 (PDT)
+	s=arc-20240116; t=1749671955; c=relaxed/simple;
+	bh=g5ZYbYOK1aUC0FTjWb74OVx65hmXOJFd6WWlyHG+nsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U6qPDbmCyFkmUneaqg0nNjqZiReQ2lwjQWFdzg/q/USIlAjlD4gI9+C8TKRsab0uuSO8DfEx71FtSGqAkjQSlLQ78YWtycD3h917olbEtU4dInFLJCvRy5RRo5LLyrrxgiT0R+tjdCrDOvWSlR1yi8Qonn7CrgwooDbFiD/fS60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEOoeZ7g; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70b684670e7so216857b3.2;
+        Wed, 11 Jun 2025 12:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749671952; x=1750276752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gxFme6q2BwhARk9P34NIeJ60XrHXGwqFtKOjSld0rp4=;
+        b=PEOoeZ7gaLVjb/OaWMqDSwuaNAoCif3iRcbQsq+R+wxKqSQ5+TO7zwvsocTyihgby3
+         Ek3Dzc2u2BNF17bUzsHGPWHgV918OOftsuBXRAryEhvu+MGjXZBEUWCPp56idHP5vHrO
+         RaZX2FwWY7v1ZcYxz+rhFC0zsnpjihr9MrUN+63D5hWELUkvEi/bzKcCNGgwVcZsvD34
+         6TJycGxwIWR5zGoVgB/CNG3wrZom8Lqt+3OMetJX+EP9fsLvKjaY5YHJSACKEZXZbiu1
+         /72tFYasPzjwIgplkNQSUs6YPEAtHt+YELew3x36ySgCzr9A6BU3aemekFz37XW+JJnu
+         E4aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749671824; x=1750276624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xybNtyXqtvfuU44a4ETAFvRrnFPUW0N0SWVp+5H5Olw=;
-        b=s2x/TpnRqOOyUo4iPBcTIfDVVDAk671+NfSMqX0TUB9OWnPz7Lj0lhUoS0cAGqV2MW
-         6iGcYkL+z951lkPispdLs1lSQsevy+6lti3wFkjn6oO43xJzHFYeaOE6H+DdfSnB7vjC
-         17SiWQAiyI+paIUyB7MMxz87kGK89ZuGks8yyPQR+Q37FUdwFvWefS/dlc31gMDT8I2R
-         pppipZHmGopqdGPkwjozEFTXOoC0BWYFMSPZS3DeQ5aDU5YBXwAgvWDnG1mt5wTQONtP
-         p7tdnBs/Lcu6uImASIhB04mO5f2XTKcMHL7X8exSfhYPe3OT/M8NkgDIwZRCz4lIAMq8
-         /wdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqHgtxfahBXG37guXDLRoCn2CcsFGdyZwIlJpaT7PB+iJZkP0TofuYIvHRH40x/wiu5ZU+lR8LOhb2ex4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt7hXX3up77NQmlurMVtLoaq/51YUSysFnAb6NTf3JKolsfKi6
-	iM4PbeOP/Y7nylOznmAT4cunRqbkAr1D+TPlED8FQH3qTMCfMTsp2q6ixwm77Nhqd7hOBj571qU
-	G1znF0q+TabnC2qHT8k/uR/hhh0yln3yBispIkI8grTObmVnPA2wP/SG5vBA=
-X-Google-Smtp-Source: AGHT+IGaOiMEFXv47KOXSshI967qhIWt3XATRcvi4libIu+B5QOc5/g0VNunN6fwcDRO92g7JVoZgVqKP45pyMNnH4AnwbsEZal0
+        d=1e100.net; s=20230601; t=1749671952; x=1750276752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gxFme6q2BwhARk9P34NIeJ60XrHXGwqFtKOjSld0rp4=;
+        b=m3FIQ3JHoWFZAa0mWPjsDhBkwaVZfGkGCL+YzuGze54LJuJH1zSOzAV92Fg1ZY/EFi
+         HOB6ePydVvvjUN8IGKglB/uCO3kcLJpCOftvct0Qn9Ezb/sIslCK+b9hye/s4DiveIdZ
+         uBhaPcTO6BD3DU3NZS8WJRxrq4AMq294czu3V/ejBRsJO3lWYoTZHAyIfKMDiEETPsch
+         W2bxNUVpaTkqbuk+GiV2Bcpf8jFxgJ59YFgHlbcWZg8m5ioMNWXvCyYz6Y0psMTfKn1W
+         9aoYTqbfVnbETPJD9mJaICM6LALKmD61VvuM9jdmPTM40rFb3abjQi3nlsXf2OGo96/o
+         gdGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBP3wUGfJuZgPMi22lmKcxDa4jqYUb0z+lvHAHKv/w1Jd6ArB0nC0TtDvP8ITPdxXKHM5S0NwHBhk=@vger.kernel.org, AJvYcCVjtezlUz0T70aepLpSsqeN2kfYvkuluTKRsH4NboER7rN7HWWWBhln2MlfKWZOkBa2GmGVyzAk8Rwg@vger.kernel.org, AJvYcCXGlhA9TU4YDNwi+RQtC/UkW8pbpsmKZVKxjg4DZPO6POIHsyJajQbcZsY8pdzEh5OgMAy6vip7tMuF0CKg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5hKmPz9q0+AHWG9bEJj2ZPsjOSgcIEl+n4d4bUVYeyQXKtKh1
+	699xe4jPv0I9gAjS4A/p1Cqcr5lhCP9rXHAjySrE7+hQpR2MGyYrXGbyYHBIDmUJo0EuCzmOkeL
+	lMd3xrjIOSUSKHJFhw1OXywEjQsRT8R0=
+X-Gm-Gg: ASbGncsuvAt9oCdqfyFNSulfzk5D2yjmdudSJLJP7/8usD8ATrEd9WH+jXJdZDLfYiz
+	5Byb89Po6QLeiO9LhXx+nDG0bdkGEs8cRvr0b6lLYwwNqXCU5MUevFuGOTo8FO+4QPN2NbEB9nT
+	QqX+Cw5r+Fyyw9wZJTlI7H1Oqqd5evURQHbTLzT4WqEt+4NpMGYj4ezg==
+X-Google-Smtp-Source: AGHT+IGgnTLD9FiBr75NlfKlcMt5VyjwhnQidVERWleFWbPgSYjaA7xYm8HM59m3DuvQF61FZiTrWS8pj8XuscbbkK0=
+X-Received: by 2002:a05:690c:60c4:b0:70e:86a2:9b3a with SMTP id
+ 00721157ae682-7114089c3cemr31099857b3.0.1749671952314; Wed, 11 Jun 2025
+ 12:59:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218a:b0:3dd:d6c2:51fb with SMTP id
- e9e14a558f8ab-3ddfa877098mr15583135ab.10.1749671824458; Wed, 11 Jun 2025
- 12:57:04 -0700 (PDT)
-Date: Wed, 11 Jun 2025 12:57:04 -0700
-In-Reply-To: <aEnVuzK7VhGSizWj@pc636>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6849df90.a70a0220.cc01e.058d.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] [rcu?] BUG: unable to handle kernel NULL
- pointer dereference in rcu_core (3)
-From: syzbot <syzbot+80e5d6f453f14a53383a@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, josh@joshtriplett.org, 
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, paulmck@kernel.org, 
-	rcu@vger.kernel.org, syzkaller-bugs@googlegroups.com, urezki@gmail.com
+References: <20250601172139.59156-1-l.rubusch@gmail.com> <20250601172139.59156-11-l.rubusch@gmail.com>
+ <20250608172317.63473b9b@jic23-huawei>
+In-Reply-To: <20250608172317.63473b9b@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Wed, 11 Jun 2025 21:58:36 +0200
+X-Gm-Features: AX0GCFskRJiUUFIn6P0la-7-85XS-DoiKPtts1BFZLCEPQ5xBxG18pp3MvgD2mg
+Message-ID: <CAFXKEHZj7nYOJA7Ztxh8xiOcPpwDNBzNyN830tiKL=7rL0fiug@mail.gmail.com>
+Subject: Re: [PATCH v4 10/11] iio: accel: adxl313: add AC coupled
+ activity/inactivity events
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
+	lucas.p.stankus@gmail.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	bagasdotme@gmail.com, linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Jonathan,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Sun, Jun 8, 2025 at 6:23=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Sun,  1 Jun 2025 17:21:38 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Add AC coupling activity and inactivity as MAG_ADAPTIVE events. This ad=
+ds
+> > up an additional set of threshold and period handles, verifies matching
+> > disabling functionality and extends setting the link bit to complementa=
+ry
+> > event configurations.
+> >
+> > This means, e.g. either ACTIVITY or ACTIVITY_AC can be enabled. The mos=
+t
+> > recent set will remain configured. Disabling ACTIVITY where ACTIVITY_AC=
+ was
+> > enabled is ignored, since it does not match (should be disabling
+> > ACTIVITY_AC). When INACTIVITY or INACTIVITY_AC is also enabled, the lin=
+k
+> > bit will be set. Note, having the link bit and auto-sleep in place acti=
+vity
+> > and inactivity indicate the power save state change and thus will only =
+be
+> > triggered once a state transition occurs. Since there is a separate AC =
+bit
+> > for ACTIVITY and for INACTIVITY, events can be linked independently fro=
+m
+> > each other i.e. ACTIVITY can be linked to INACTIVITY_AC for instance.
+> >
+> > When one of both is disabled, the link bit will be removed. Hence, the
+> > remaining event will not indicate a plain state change anymore, but occ=
+ur
+> > as a periodically triggered inactivity event or for each activity event
+> > above the threshold.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+>
+> Minor thought on rereading this.  If we don't have the link bit set
+> (and the paired event) the AC events are more accurately described as
+> MAG_REFERENCED as they are referenced simply to whatever acceleration
+> was going on when they were first enabled.   Only with the link bit
+> set (and the other event type enabled) are they actually adapting
+> (so MAG_ADAPTIVE).
+>
 
-Reported-by: syzbot+80e5d6f453f14a53383a@syzkaller.appspotmail.com
-Tested-by: syzbot+80e5d6f453f14a53383a@syzkaller.appspotmail.com
+Going by examples, I can follow you as practically I'm aware of the
+difference between a plain inactivity setup and a link-bit enabled
+inactivity(and activity) setup. Initially I thought of MAG and the
+AC-coupled equivalent being MAG_REFERENCED. By your explanation I
+understand why you preferred MAG_ADAPTIVE rather. But still all three
+configurations are possible.
 
-Tested on:
+My idea is, the driver implementation supports all cases in parallel,
+at least to a certain extent. I mean, at the current implementation
+someone can configure plain activity, or AC-coupled activity, or
+respectively, their inactivity equivalents - when both, an activity
+type together with an inactivity type are enabled, they will be linked
+counter events. I.e. "adaptive" - and auto-sleep will be turned on for
+the inactivity periods. Built on using just plain IIO API w/o custom
+API calls.
 
-commit:         488ef356 KEYS: Invert FINAL_PUT bit
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=129a660c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=713d218acd33d94
-dashboard link: https://syzkaller.appspot.com/bug?extid=80e5d6f453f14a53383a
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=170e460c580000
+Due to all the possible combinations, this comes at a certain
+complexity. In terms of configuration and for instance mapping to MAG,
+MAG_REFERNCED or MAG_ADAPTIVE. Here I rely on your feedback. On my
+side, I'll try to recycle the automation setup to verify registers are
+configured as I like them to be using the sysfs handles (that's btw
+the reason why I'm glad to have debugfs on board). So, if you tell me,
+to change it rather to MAG_REFERENCED, I'll do it, but then AC-coupled
+events will be all MAG_REFRENCED w/ or w/o link bit. Or we come up
+with a total different approach, like putting link-bit AC on
+MAG_ADAPTIVE and plain AC-coupled on MAG_REFERENCED, but then what
+about MAG events w/ or w/o link-bit? hmm, I think current approach
+seems to be a good compromise. Let me know what you think.
 
-Note: testing is done by a robot and is best-effort only.
+Best,
+L
+
+>
+> Maybe there is room to use that to ultimately control whether the
+> link bit is set or not (putting aside the power aspect of that).
+>
 
