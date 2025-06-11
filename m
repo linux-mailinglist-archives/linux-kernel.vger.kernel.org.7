@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-682644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D2CAD62F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C13AAD633D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B011E2025
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC12D1BC51E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC1C252288;
-	Wed, 11 Jun 2025 22:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5752E0B6C;
+	Wed, 11 Jun 2025 22:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c/5vkNUn"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ji1VIkVs"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7832367D5
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1023C2DECCE
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749682016; cv=none; b=RKpltLjNX6Iz9sqLO/+TcifoMs2HIEm635hwMZuO+Y3Fj1Oa850tX4xka7gciCLm2Kd8Bx5RqLvEXzkfXNaUyct8C/viVl97lbuqHERl5n9SVnddEUyK3hBDG6cPIozPqQYoB5vW0Ndl41lxiTBEh3l27O2YAtZdZ8csT2EYCbg=
+	t=1749682067; cv=none; b=nEXBU5300Enf9Gke9CXrjJeim+w9A1FJ3ZYNdtPrcIpy8AZnAnUsFHve9NzrOZNP7JSjnW3W7fJI+xOhq+UAEnQjoJm7sXApumUlZUl2I89hxqlcz808eWNtf+60qLAvYmJuYS+L+zuOLTbxbEItw4bb/TMnpv1VZWQHo0k7yjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749682016; c=relaxed/simple;
-	bh=LsYYgtbs5whnT9mSXJp1Eq53eFhWhrY5iX4DQHLYkd8=;
+	s=arc-20240116; t=1749682067; c=relaxed/simple;
+	bh=i3uXg88GrmDL02Ipc0Qdy2wwCTXE7sOzhUrq+EghysA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLmG5Mm1d0QX54KT9ZEDNr0EwKNgrUVzlo2JshN8+j5rVP79Aoi9llaw78TuJQAKfUEDQJ9h6bKZYHVI4O9EmkjlRMUMmDB22RyRN3hObzRvBdWnuxJTZyIYGxwLXZzu5c0O4sx+p45fqpocaBvj/b2UiS6DlJmSHhGg6NgvNWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c/5vkNUn; arc=none smtp.client-ip=209.85.214.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=rM0gSJamw64cqo9ztPz2OR7PPYpGfPC9nrqE3nKuOpCI+rvG9pZn9wCKsAG4MulRl7rTnZw0LI9iILfQl4de/4QlI/1r8CaG/ziVolXE5+JUgzLhL4m11rFVRd8E9/7xugkEZKweXFiKb/ljonsggCnU/t0hNi30+NIUgXDEJzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ji1VIkVs; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23633a6ac50so4256095ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:46:53 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2fd091f826so256360a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:47:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749682013; x=1750286813; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1749682064; x=1750286864; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dFx7aQNRgw8lJFWTh3MAUKZTG+gQu0E2L2N97DFRfu0=;
-        b=c/5vkNUnuyT1VAEl+ibRIrWtyOQK98TiGgvJm98P2tpwdEDxj+IPbhaIfPb1WdmFI0
-         xfGtrNi0mjN93WTSIvesM4xupcICDyu1GJF+QHTnO8g5BcB/AHNx9SpnQ/mjwJGQHWFI
-         vTohj/BMHjmLxv+W2ctFlMeHuPTvBTUlP3VN8=
+        bh=vtvuCkqBFYEZRyjG1H+yUqFCaACnLIwx9nH+82roXwU=;
+        b=Ji1VIkVsSKn91hMtWjBeRs69fVlC/81M9b0VkJt2obusM2t5WlIhJwST8Fxp9qFiM1
+         S51OhNCdia0Lep6POMXp5ozFYUqs6H4EBdax4VjslLbeX4mZzRVq2fcRW+JItQEbCaNN
+         MEJ1uPLoiJHHXomsP9hUaa2Nq5ki3iwwmWuzA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749682013; x=1750286813;
+        d=1e100.net; s=20230601; t=1749682064; x=1750286864;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dFx7aQNRgw8lJFWTh3MAUKZTG+gQu0E2L2N97DFRfu0=;
-        b=rtTEvkwIJ6SagMt0ITQuWkLxj+joDTjISUgZKWYBg07sggsvgUD29+JBi8k8o0CLU8
-         BEP6IngAHtyStUfZ1oihesjYtys3qZ+PTDSr7OaMH0KQEepHQAeyglsoncyy6/SBMhMp
-         Ldha2vqZ9X1eZ6kl9Olsf0dUvAwLnjdwLl0CYmsVVuMQvLl5llj7IJXYsvVBNn/7bvmp
-         rVUgjvdy/6qfhBoZwsDlG0Srt8WEoiVESvLj3yE6eiNw6SokGfNU29hRofiwxQvnQfRD
-         7BRMOn8nazQw03BMcotWrKe0X72+gWz1yMqKaC5GL34mBAgkdVr/Yj3AcymRM7fVwxRO
-         57yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5N0cJztppNmKNhxdAoq1Vqnukq3SFz/4Px3tjq+54R1cfYUgIoThQR9/uCK0BVSluSdNCMnEKK3A9Ksc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk/AMuNLjxi2QSSlx1wgmw/NPHDzGrfWqqt8iG1sFDrbWze8YR
-	r9x7foBDT9ZGuSJ5bywYBcEqbyuyMb2hRZ84F8PBCeeyD22w8UlkWEoKFcZvhscaYw==
-X-Gm-Gg: ASbGncuIEkQRuUZO82JavGb4nluW4UTOVAngD8X0f8HFNGEuSuH1U+Z9s2ZWLwAuWaF
-	K+xGP7wrTPYAm8QDjjWY3StoSKZMPZhkFC8G5ytKab5MOsV4dllGkgKEVgMMwh9dxJWvLue5YbB
-	sqaGTK44Hxxxpeolt1WzYH56AVPd5WZU07gt2+//aI2aNFZ3kwLLhtFcltB9U4PHjeSnqzHVmR/
-	WtQb+0uaDDDtQ5JPdOtrg4MVb1Jl9ARcUZ7UXvTEyZGrGWFuEaa/EP1wJBwwZBZUhGUNRXBsPeB
-	MULtVYWfCe6g8B1hmfR0DW+4nyekhvLRzRlen7BKUc0QO4OXzFvulBIMf3VScoRCfK23FqJNobi
-	QFwMKGWbWEwDX3f9yBZHEEl22
-X-Google-Smtp-Source: AGHT+IHfxQumAIvTnAC11qGewLlT2l+e661MXzd9Z0cWhYEeo+EYBK5deXOhCJDGROAteHYAv7Tqyw==
-X-Received: by 2002:a17:902:d550:b0:234:ed31:fc99 with SMTP id d9443c01a7336-23641abea95mr74422965ad.21.1749682013305;
-        Wed, 11 Jun 2025 15:46:53 -0700 (PDT)
+        bh=vtvuCkqBFYEZRyjG1H+yUqFCaACnLIwx9nH+82roXwU=;
+        b=RiP5HdQvgFOexyrYJoARJqa9+6Kk0u2VZDBPdqgEavceUSDWgqyUg2ihBPHvavO68j
+         BXxud/DXpg4jxruy29ScC7lZdEBQwdaCpdGzcJBRQa/2sGXmEMKnATW8OORybTThEZ1w
+         dFCLpdZrZcrRO0xnH5kUeRCRYRWN9zqN4c5kP31PenyztXoFle/HHtE6C1L2GJ/jkGxB
+         IogQc7lHau496n3yUWGG0G0iDQuP2syMM+0MnI3IdHUr9tqY7+c6VXeCbgQMIJd/bPTT
+         jOmzNHXH3LMDp7P3Dv0iSkAm42ciGZ1iS/+Dkoin0/ZfxmzOKeUPjl6mfJJ8JyenpdKE
+         7rfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWkiNW0a/oRlH+PuOBlzX+afKU8S5rRnffhWsiHMnlTpRcf14jnK1gb4sg3xV6bhPLdEHC3hTA9lmaNUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiklH6LEHQD7Y/M/ESy4FKnS+0j54hfZ9rpwaRSrzKypH66lG/
+	JyaNec/Nm3oZNz2CSibtNX0BrwEOxqMwxsk4envHHTxQAWz6n/iN4Z0W43edgw36xA==
+X-Gm-Gg: ASbGnctCycvGWCT3iQ2KHL2M30C8QQFs4pPon+v2jI95A9LpOCiy4dQ4GFqR+ZsEhle
+	spuEHuLRhTOR1oja7Fm/N+1z08sdCXgd3uGEmnsTEzKFZBHg9fLOBzZDNN7E2Wyd2504Ow9umSh
+	riC04nX6zrUxFos5ZH2qHVSYXRVKay8VyMaY8oqL0i9JLbU08zXHLSWamLsOUA0VFcHLHVJVZaP
+	vgCmJqNBnca5zAbqRakgiv6yZ5QShxS1DwvjwU4iLXczQ8LVkhquYu4YgSG3tl2gbsNn+nDClrX
+	Hro89ZlBuVdmC1e+YXlfdcXaCnWfFjvaZ6Dukp+DbxBcMobCxPUKXVpo66MydrBNjFNUzUcj7u2
+	YJm5gt6qqnFnO5ntIaDhHk6bQ
+X-Google-Smtp-Source: AGHT+IFHrwkXqx2Z3BILANYYSOX7LZROue9EeXw+W5JfDdbWlJ4+YUXrdt9TxJMVZXgYYIXDGyUMfA==
+X-Received: by 2002:a17:90a:d406:b0:2fa:1e56:5d82 with SMTP id 98e67ed59e1d1-313bfdcc12emr1461708a91.17.1749682064115;
+        Wed, 11 Jun 2025 15:47:44 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e14:7:e790:5956:5b47:d0a7])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2364e6fe4ffsm899915ad.147.2025.06.11.15.46.52
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-313c1bca4c7sm113244a91.3.2025.06.11.15.47.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 15:46:52 -0700 (PDT)
-Date: Wed, 11 Jun 2025 15:46:50 -0700
+        Wed, 11 Jun 2025 15:47:43 -0700 (PDT)
+Date: Wed, 11 Jun 2025 15:47:42 -0700
 From: Brian Norris <briannorris@chromium.org>
-To: Rafael Beims <rafael@beims.me>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Rafael Beims <rafael.beims@toradex.com>,
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
 	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH wireless-next v2] wifi: mwifiex: enable host mlme on sdio
- W8997 chipsets
-Message-ID: <aEoHWrBsMTBJ1rja@google.com>
-References: <20250530094711.915574-1-rafael@beims.me>
+	Jeff Chen <jeff.chen_1@nxp.com>, stable@vger.kernel.org
+Subject: Re: [PATCH wireless v2] Revert "wifi: mwifiex: Fix HT40 bandwidth
+ issue."
+Message-ID: <aEoHjudwZKs4YMls@google.com>
+References: <20250605130302.55555-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,35 +86,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250530094711.915574-1-rafael@beims.me>
+In-Reply-To: <20250605130302.55555-1-francesco@dolcini.it>
 
-On Fri, May 30, 2025 at 06:47:04AM -0300, Rafael Beims wrote:
-> From: Rafael Beims <rafael.beims@toradex.com>
+On Thu, Jun 05, 2025 at 03:03:02PM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
 > 
-> Enable the host MLME flag to allow supported W8997 chipsets to
-> use WPA3. This feature requires firmware support (V2 API key), which
-> the driver validates before activation.
+> This reverts commit 4fcfcbe457349267fe048524078e8970807c1a5b.
 > 
-> Tested using sdsd8997_combo_v4.bin from commit
-> 211fbc287a0b ("linux-firmware: Update FW files for MRVL SD8997 chips")
+> That commit introduces a regression, when HT40 mode is enabled,
+> received packets are lost, this was experience with W8997 with both
+> SDIO-UART and SDIO-SDIO variants. From an initial investigation the
+> issue solves on its own after some time, but it's not clear what is
+> the reason. Given that this was just a performance optimization, let's
+> revert it till we have a better understanding of the issue and a proper
+> fix.
 > 
-> [    5.956510] mwifiex_sdio mmc2:0001:1: info: FW download over, size 623352 bytes
-> ...
-> [    6.825456] mwifiex_sdio mmc2:0001:1: WLAN FW is active
-> ...
-> [   12.171950] mwifiex_sdio mmc2:0001:1: host_mlme: enable, key_api: 2
-> [   12.226206] mwifiex_sdio mmc2:0001:1: info: MWIFIEX VERSION: mwifiex 1.0 (16.68.1.p197)
-> 
-> root@verdin-imx8mm-14700070:~# strings /lib/firmware/mrvl/sdsd8997_combo_v4.bin |grep 16
-> $Id: w8997o-V4, RF878X, FP68_LINUX, 16.68.1.p197.1 $
-> 
-> Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
-> v2: improved commit message, add r-b francesco
-> v1: https://lore.kernel.org/all/20250521101950.1220793-1-rafael@beims.me/
+> Cc: Jeff Chen <jeff.chen_1@nxp.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 4fcfcbe45734 ("wifi: mwifiex: Fix HT40 bandwidth issue.")
+> Closes: https://lore.kernel.org/all/20250603203337.GA109929@francesco-nb/
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Thanks for the updated details.
+Johannes seems to have applied this already, but FWIW:
 
 Acked-by: Brian Norris <briannorris@chromium.org>
 
