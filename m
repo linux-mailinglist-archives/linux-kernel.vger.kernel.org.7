@@ -1,183 +1,129 @@
-Return-Path: <linux-kernel+bounces-681286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFC6AD50B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C82AD50B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5138F3A5B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55331894EEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7832609DC;
-	Wed, 11 Jun 2025 09:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pt38+DWz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4LZzS5CJ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE3B25E448;
-	Wed, 11 Jun 2025 09:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786DB2609F6;
+	Wed, 11 Jun 2025 09:59:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32C6239E72;
+	Wed, 11 Jun 2025 09:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749635897; cv=none; b=ThDUDh+97NxpF0/4GXc5q0LezdnaSK85Ke4WjjT2FmO1KIaYvJnVX522ZqOMH4e8wvbE935UL7YkKaObxB2aoGFFwE6J8oncnQDiMh5KFjdRn4XB/ty2XOMkCjrbFbksZSO95r5yk7YgJeTFSaV0z9xLxD7hTu7P/QT/cw5j80g=
+	t=1749635954; cv=none; b=PUa7ksOjmI9Hl6Ot77E+zLwzsfl8aydDihahUAkyilLT436Fml4gS8WbTmCFUFHDi9/ZxlYYu2+/Kq8FM6K44udr2Ld+8KdhIfofz8Zd7xv192ALjXAyGs4v/rsbDYFAYnQOvZ2k8vAXpJ9+utGmcOhGlMwSnL0GUy9uyuzsh80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749635897; c=relaxed/simple;
-	bh=5+i2/EWNbViCkVPeiMzFU7Jv1LYkaYEDVa3rG730Qxk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Dbx8t49nX+s/sz6woC0YX7K7HR75u8qF9UtgJAxqJcSZcNRLyXMcdywr/sB77lGA7R5ZdjWlTA8tzgtb2PkYqT3/QMz0CB8xK9G9ySW7XJSX1M61ls24eR1T2jzEDMDqckTmwwcUP/tDpjeZU7jysPVOrMPbp8mw2YvUq7vQb3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pt38+DWz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4LZzS5CJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749635893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mI4PIE4Rl9su7skrrttHJtvy1Xt8OOdFRmXaVBqjK3U=;
-	b=pt38+DWz4B4xlQ1Vb0DLz4c9IKSFP4YODMRN0skRDaGRdPNrj45n0Q0gfYYeh5YonOWtu0
-	s8CA2scyqiy3Z4wqPm+tr5QDPCw3TkseH1ZRfu+a/NXx/B7ikLzBY5vAWTa2l1EqbPJMWh
-	JYp5hXsxFrDGTilJEfTJHS+ZeZVSN0CO50oMWu3NPF34KCPSYHxipZwpKvQpJJK4Wos9iZ
-	t+hwpjAPBiCx3sXGyMuhse241P9xSP33aOhJCGbohMeCnWjp3fh0TShveq32mBXf2Zk5XW
-	AxHFhVWQ3gq6ouL+X6DVdcFOutRigPETTOLZ86OXcjKoCuQ1nmEv4jGtNMNBLA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749635893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mI4PIE4Rl9su7skrrttHJtvy1Xt8OOdFRmXaVBqjK3U=;
-	b=4LZzS5CJdHwsF65Xups3ByBOAlF6JwEtIjPtG/2nTTiTsYmGlVosUZDge4BOvf2DbBeFEl
-	CJt997vFSksPT5Bw==
-Date: Wed, 11 Jun 2025 11:58:06 +0200
-Subject: [PATCH] scsi: Don't use %pK through printk
+	s=arc-20240116; t=1749635954; c=relaxed/simple;
+	bh=HwXs6qp3W7EZHA1+yzvKN6nMOhRAgv4bEYIrYnnhwjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/sXy8AsghOHelsubfvbgYGNIYYzqjcZerTFFGhhYHmFQhbx9S6OY2BJDzoYciZGYeqwIi/k7Nwqk33lMQBImJqTatD9R9kkCyY85JmLZe6/UxoLxj9AhmPPBmuWZ7Dm9y8CAEQcIWaD1+NvZ4BM6q42GH4N2ixR1TQl/dI3bl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E2651596;
+	Wed, 11 Jun 2025 02:58:52 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 999603F673;
+	Wed, 11 Jun 2025 02:59:09 -0700 (PDT)
+Date: Wed, 11 Jun 2025 10:59:06 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
+	linux-kernel@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] KVM: selftests: Change MDSCR_EL1 register holding
+ variables as uint64_t
+Message-ID: <aElTaqOqzAi17H2b@J2N7QTR9R3>
+References: <20250610053128.4118784-1-anshuman.khandual@arm.com>
+ <20250610053128.4118784-3-anshuman.khandual@arm.com>
+ <864iwnedjk.wl-maz@kernel.org>
+ <9b378582-44eb-4fbb-a03a-40eb317daebd@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250611-restricted-pointers-scsi-v1-1-fe31bfbc4910@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAC1TSWgC/x3MMQqAMAxA0atIZgO1thS8ijhojZqllaSIIN7d4
- viG/x9QEiaFoXlA6GLlnCq6toF4zGkn5LUarLHeOONQSItwLLTimTkVEkWNyhj8Fnxnl7k3Dmp
- +Cm18/+txet8PM3Bu8WoAAAA=
-X-Change-ID: 20250404-restricted-pointers-scsi-75f7512ba304
-To: Yihang Li <liyihang9@huawei.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749635893; l=4899;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=5+i2/EWNbViCkVPeiMzFU7Jv1LYkaYEDVa3rG730Qxk=;
- b=3O0gnk2DQ38Rhu5KLB4YN45ir/OvuO/JvzTKhBr++7do1l1EdP8UIQkZyCzXlsKb+0PdocM4c
- hQRq9XUNx/dDLhUmMx/IkOBFcaV0ezqJ74tMqmiyQHQL+FYHe9rfe3x
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b378582-44eb-4fbb-a03a-40eb317daebd@arm.com>
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On Wed, Jun 11, 2025 at 09:15:10AM +0530, Anshuman Khandual wrote:
+> 
+> 
+> On 10/06/25 10:31 PM, Marc Zyngier wrote:
+> > On Tue, 10 Jun 2025 06:31:28 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> >>
+> >> Change MDSCR_EL1 register holding local variables as uint64_t that reflects
+> >> its true register width as well.
+> >>
+> >> Cc: Marc Zyngier <maz@kernel.org>
+> >> Cc: Oliver Upton <oliver.upton@linux.dev>
+> >> Cc: Joey Gouly <joey.gouly@arm.com>
+> >> Cc: kvm@vger.kernel.org
+> >> Cc: kvmarm@lists.linux.dev
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: linux-kselftest@vger.kernel.org
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Reviewed-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  tools/testing/selftests/kvm/arm64/debug-exceptions.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/tools/testing/selftests/kvm/arm64/debug-exceptions.c b/tools/testing/selftests/kvm/arm64/debug-exceptions.c
+> >> index c7fb55c9135b..e34963956fbc 100644
+> >> --- a/tools/testing/selftests/kvm/arm64/debug-exceptions.c
+> >> +++ b/tools/testing/selftests/kvm/arm64/debug-exceptions.c
+> >> @@ -140,7 +140,7 @@ static void enable_os_lock(void)
+> >>  
+> >>  static void enable_monitor_debug_exceptions(void)
+> >>  {
+> >> -	uint32_t mdscr;
+> >> +	uint64_t mdscr;
+> >>  
+> >>  	asm volatile("msr daifclr, #8");
+> >>  
+> >> @@ -223,7 +223,7 @@ void install_hw_bp_ctx(uint8_t addr_bp, uint8_t ctx_bp, uint64_t addr,
+> >>  
+> >>  static void install_ss(void)
+> >>  {
+> >> -	uint32_t mdscr;
+> >> +	uint64_t mdscr;
+> >>  
+> >>  	asm volatile("msr daifclr, #8");
+> >>  
+> > 
+> > Why change this in the place that matters *the least*?
+> > 
+> > arch/arm64/kernel/debug-monitors.c is full of 32bit manipulation of
+> > this register, and that's only one example of it. So if you are going
+> > to change this, please do it fully, not as a random change in a random
+> > file.
+> 
+> The first patch in this series changes mdscr system register to 64 bit
+> in the mentioned file (i.e arch/arm64/kernel/debug-monitors.c). 
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
+You did not Cc Marc on oatch 1 or the cover letter. KVM folk are only
+Cc'd on patch 2.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 6 +++---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 6 +++---
- drivers/scsi/scsi_debug.c              | 2 +-
- 3 files changed, 7 insertions(+), 7 deletions(-)
+Marc, for context the series is:
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 24cd172905f337896219efa3415a88ac871cd95c..4431698a5d78c2431fb967d8ef71c18be5e8a9be 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -2401,7 +2401,7 @@ static void slot_complete_v2_hw(struct hisi_hba *hisi_hba,
- 			slot_err_v2_hw(hisi_hba, task, slot, 2);
- 
- 		if (ts->stat != SAS_DATA_UNDERRUN)
--			dev_info(dev, "erroneous completion iptt=%d task=%pK dev id=%d CQ hdr: 0x%x 0x%x 0x%x 0x%x Error info: 0x%x 0x%x 0x%x 0x%x\n",
-+			dev_info(dev, "erroneous completion iptt=%d task=%p dev id=%d CQ hdr: 0x%x 0x%x 0x%x 0x%x Error info: 0x%x 0x%x 0x%x 0x%x\n",
- 				 slot->idx, task, sas_dev->device_id,
- 				 complete_hdr->dw0, complete_hdr->dw1,
- 				 complete_hdr->act, complete_hdr->dw3,
-@@ -2467,7 +2467,7 @@ static void slot_complete_v2_hw(struct hisi_hba *hisi_hba,
- 	spin_lock_irqsave(&task->task_state_lock, flags);
- 	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
- 		spin_unlock_irqrestore(&task->task_state_lock, flags);
--		dev_info(dev, "slot complete: task(%pK) aborted\n", task);
-+		dev_info(dev, "slot complete: task(%p) aborted\n", task);
- 		return;
- 	}
- 	task->task_state_flags |= SAS_TASK_STATE_DONE;
-@@ -2478,7 +2478,7 @@ static void slot_complete_v2_hw(struct hisi_hba *hisi_hba,
- 		spin_lock_irqsave(&device->done_lock, flags);
- 		if (test_bit(SAS_HA_FROZEN, &ha->state)) {
- 			spin_unlock_irqrestore(&device->done_lock, flags);
--			dev_info(dev, "slot complete: task(%pK) ignored\n",
-+			dev_info(dev, "slot complete: task(%p) ignored\n",
- 				 task);
- 			return;
- 		}
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index bc5d5356dd00710277e4b8877798f64c9674d5de..2f3d61abab3a66bf0b40a27b9411dc2cab1c44fc 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2409,7 +2409,7 @@ static void slot_complete_v3_hw(struct hisi_hba *hisi_hba,
- 
- 		if (slot_err_v3_hw(hisi_hba, task, slot)) {
- 			if (ts->stat != SAS_DATA_UNDERRUN)
--				dev_info(dev, "erroneous completion iptt=%d task=%pK dev id=%d addr=%016llx CQ hdr: 0x%x 0x%x 0x%x 0x%x Error info: 0x%x 0x%x 0x%x 0x%x\n",
-+				dev_info(dev, "erroneous completion iptt=%d task=%p dev id=%d addr=%016llx CQ hdr: 0x%x 0x%x 0x%x 0x%x Error info: 0x%x 0x%x 0x%x 0x%x\n",
- 					slot->idx, task, sas_dev->device_id,
- 					SAS_ADDR(device->sas_addr),
- 					dw0, dw1, complete_hdr->act, dw3,
-@@ -2470,7 +2470,7 @@ static void slot_complete_v3_hw(struct hisi_hba *hisi_hba,
- 	spin_lock_irqsave(&task->task_state_lock, flags);
- 	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
- 		spin_unlock_irqrestore(&task->task_state_lock, flags);
--		dev_info(dev, "slot complete: task(%pK) aborted\n", task);
-+		dev_info(dev, "slot complete: task(%p) aborted\n", task);
- 		return;
- 	}
- 	task->task_state_flags |= SAS_TASK_STATE_DONE;
-@@ -2481,7 +2481,7 @@ static void slot_complete_v3_hw(struct hisi_hba *hisi_hba,
- 		spin_lock_irqsave(&device->done_lock, flags);
- 		if (test_bit(SAS_HA_FROZEN, &ha->state)) {
- 			spin_unlock_irqrestore(&device->done_lock, flags);
--			dev_info(dev, "slot complete: task(%pK) ignored\n",
-+			dev_info(dev, "slot complete: task(%p) ignored\n",
- 				 task);
- 			return;
- 		}
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index aef33d1e346ab9ebf914effc7f94af22cada99ba..0847767d4d4361bf8ab27026aa2149b555e8ea4d 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -8770,7 +8770,7 @@ static int sdebug_add_store(void)
- 		dif_size = sdebug_store_sectors * sizeof(struct t10_pi_tuple);
- 		sip->dif_storep = vmalloc(dif_size);
- 
--		pr_info("dif_storep %u bytes @ %pK\n", dif_size,
-+		pr_info("dif_storep %u bytes @ %p\n", dif_size,
- 			sip->dif_storep);
- 
- 		if (!sip->dif_storep) {
+  https://lore.kernel.org/linux-arm-kernel/20250610053128.4118784-1-anshuman.khandual@arm.com/
 
----
-base-commit: f09079bd04a924c72d555cd97942d5f8d7eca98c
-change-id: 20250404-restricted-pointers-scsi-75f7512ba304
+... and I've asked Anshuman to better describe the rationale.
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+Mark.
 
