@@ -1,125 +1,167 @@
-Return-Path: <linux-kernel+bounces-680847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3E0AD4A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:37:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1293DAD4A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9D817B908
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:37:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 182DB7A8B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B4A22A7F1;
-	Wed, 11 Jun 2025 05:36:46 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289A82253E8;
+	Wed, 11 Jun 2025 05:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SXRSRZdE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6C6227B81
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D82236E5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749620206; cv=none; b=LewvN1OXmB9ax8bVrfiKSwGM9yxBl6uaNtjUJQWtO88mYD/g7gNynllfEXIZlf8wxhSDxtVObwdq+KY53qSss5M2MVAjqM4J9YdEWKWdXKOq6VfoXGfEcm0U5LJkVzIO2//oABZJnalaE/96losm9Qzw+LwhGZIj13YmGyY2itE=
+	t=1749620662; cv=none; b=pijuUNiYpNACmoBwCbAAnPp+JPcA/Pd/WodPPbd+UevxVRM6XrPRhit9FMNVIYW7nkRTxG7EWPzwT43PALBiqu6B1P4fLkkqV8U5IFcRxoQRwXxKXmuxY4DBiiJXYvhg/dXRytto9Rc/ZNZP59hMNjTK85lfJdktXzckWKmN280=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749620206; c=relaxed/simple;
-	bh=/HowC9kFKFSbycgjpOeF3oDREZHhIxzYt6lJ4cBZjNI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y2+6zXFcQM+IESbTJl6aXhF9DzmPiM4KsLfXVg0wjizMq/t6HcUA+qZX97K0wbt06wDLzGt9qgaP2ZdtfR6+peJ/J8Xh5gGgCqtdV4voNhzPVVb96WZ0bmDH9Xsv+a/gUjPe+I1U6zq4a4E1ta06uYHO1gddUyYxyvT9OULze98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 0b087856468611f0b29709d653e92f7d-20250611
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP, DN_TRUSTED
-	SRC_TRUSTED, SA_EXISTED, SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:1acf6f43-1cc6-4e0e-bd89-499e73413c62,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:5
-X-CID-INFO: VERSION:1.1.45,REQID:1acf6f43-1cc6-4e0e-bd89-499e73413c62,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:5
-X-CID-META: VersionHash:6493067,CLOUDID:715a3887ef34a629ff90b7f74980c6ac,BulkI
-	D:250611133640944RVAVP,BulkQuantity:0,Recheck:0,SF:17|19|25|38|45|66|78|81
-	|82|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS
-	:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,A
-	RC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 0b087856468611f0b29709d653e92f7d-20250611
-X-User: duanchenghao@kylinos.cn
-Received: from localhost.localdomain [(223.104.40.103)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1664631378; Wed, 11 Jun 2025 13:36:37 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Chenghao Duan <duanchenghao@kylinos.cn>,
-	George Guo <guodongtai@kylinos.cn>
-Subject: [PATCH v1 5/5] LoongArch: BPF: Update the code to rename validate_code to validate_ctx.
-Date: Wed, 11 Jun 2025 13:36:25 +0800
-Message-Id: <20250611053625.352091-6-duanchenghao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250611053625.352091-1-duanchenghao@kylinos.cn>
-References: <20250611035952.111182-3-duanchenghao@kylinos.cn>
- <20250611053625.352091-1-duanchenghao@kylinos.cn>
+	s=arc-20240116; t=1749620662; c=relaxed/simple;
+	bh=4bPODOzNV1J1Wag20WqHQpC7iwILRqUaFidO5fo7Wj8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SikpMv2pHDYD+BRMjii/eFy0etJVquflvw3MbJUvKmwSBJzJjwU9PvEaJ/yCma0KYQVmnxzv8wZFgs9A/lI3140snLyBjd15NjiEOy4R+DxphkeJIPVU/g8nbQRo6+gvNuvNnbzDBOmKl4jh6yi1Z4ujMg51HmKM/88PPr1nRnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SXRSRZdE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55AIPuMK027438
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:44:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Z2paThcjo4kV5rlHhG4CJt
+	0FpfCXVKHmPjNjUTqWvJw=; b=SXRSRZdEgdV0prrcKjzTTowChbnivKHrZeLDPb
+	WL7MhNdZGWFmcDVzAA4ABDh/Va9NzJdysQn/Dm4TvUjFni2GWj7nsOh9iWxMKVGU
+	o9NK3ZFP5knGhGE9DHyAR2W5QbGLZ8GyMBRoPzMcf6YEOpFLQawHrqrT+UsL4bR4
+	/bKZA2ZYXjy3IhdbRLl7tbI17s/J26UCcV7soTCGIA06akVZayXyZzJhGSWxccsT
+	AdAqQ+tIAdM29u/KlQvEgvrQWXXrrBfCEx4QRRROanC8TNBBnJFep6eeq3wny2UK
+	IW08dnWVRIxkk1BwlhW2wML3k5FRSSK68ffmS3dHdR5Q680Q==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4766mcmg8s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:44:19 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b26e4fe0c08so4014772a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:44:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749620658; x=1750225458;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z2paThcjo4kV5rlHhG4CJt0FpfCXVKHmPjNjUTqWvJw=;
+        b=kA4bXMRGcPQ4nKTfiY5iESqFBTqHeQss7h9sUOwwMg+EAZf7Azhf3X5qoiqKX9RBl6
+         XS8m2IqDwDl3kKxPUP3O+mMgdoNwwNiiv6NFeQe86HOcd3lIzjOjgN+gVGaU1DcUb4Np
+         6D8KQbA8LGxA4O8qA6ckFj3PavxRYPbRKE3DBwaMXFx0C35ew+wLA/cs71Cmqmusy8Uq
+         DEbGiHUiwOOg/C2lR5+4X7mVZxIacmGflM3vvViynY/eOVR8NPbLgUk5Ymp2D4HcYog+
+         MPLHqfUTo2xtmD5utakakLL3IWJy76qYPIzlx+yAJYg1wQqOJOcwmMXXE7welhMTFq5p
+         49fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxoadj4UfR1HSScSyCLKBsea8ANGQO6kJvxid5ECE4gEiYvmA0c4Sa2EWqm9gT/vjRUaB7Y0svGA5Wc68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjfTs7h9FXGCwvD+ribRJYw9NpEgOlgLqvO8qLqDChqhbKCt7H
+	EufqEaH9be2/Rioe5OFUfLYhVeVhxIHTU7rTwHdSeEDp6Ttb9IE7vcYzlJOyGq3pRpp3Ro/+PRQ
+	C6CP65r0gj4FEUqF7UJ1Vz/xoYDcrIFjnp7gnz1oP9yXtn9WsNFbdtNEnLWyb1tL4dZM=
+X-Gm-Gg: ASbGnct0KZNiCtBI+/WOY/H5ln1XlG0O5VFyHtaoU4jQuRPVckMakgOOf9vs3b9OQAT
+	azZmp/SSOdbUBFovhD6gh/9ULZmeHwwStE46FCzj3vy0dyyTjV56X1JL3VRZ5rlseiNN7wES3nl
+	OxLtr4Lr9PiModjed6XK6rt9eUQE+xthMUVi1mL53z8Bjx6UxBv4gA/FitPz1MwrQ5OFjjyxdV+
+	8iVnVwKeOyTGBQb4SawnHFtOYJvjn6m/pPyo+PDSc6ix3t3d91brVuwne68GKgJfThGBRZm99gP
+	oIR55HK7dq+9rxKheQ7D3gMf8qLDwJJR
+X-Received: by 2002:a05:6a20:2589:b0:21f:53a9:b72c with SMTP id adf61e73a8af0-21f86754dbemr3178021637.38.1749620658384;
+        Tue, 10 Jun 2025 22:44:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5RTYJPaD19g1+QKXGXvxhjvcmz9N0P/Wo4pkBLGPiOVS4sBLpqjPb8UTr/LDjbvr/4AnFYw==
+X-Received: by 2002:a05:6a20:2589:b0:21f:53a9:b72c with SMTP id adf61e73a8af0-21f86754dbemr3177998637.38.1749620657998;
+        Tue, 10 Jun 2025 22:44:17 -0700 (PDT)
+Received: from [10.213.111.143] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0eb0dasm8629697b3a.170.2025.06.10.22.44.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 22:44:17 -0700 (PDT)
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Date: Wed, 11 Jun 2025 11:13:44 +0530
+Subject: [PATCH] media: iris: Fix opp scaling of power domains
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250611-iris-opp-fix-v1-1-424caec41158@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAI8XSWgC/yWMQQ6CMBAAv9Ls2TVtSTHyFcOh1EX3AK27SEwIf
+ 6eR40wys4GSMCl0ZgOhlZXzXMFdDKR3nF+E/KwM3vpgg78hCyvmUnDkHzY0+nB3yTY+Qk2KUNX
+ /3aM/WejzrdfllDBEJUx5mnjpzNpeXYuSHPT7fgAkGRzpiwAAAA==
+X-Change-ID: 20250527-iris-opp-fix-3ef2591c032a
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749620655; l=1267;
+ i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
+ bh=4bPODOzNV1J1Wag20WqHQpC7iwILRqUaFidO5fo7Wj8=;
+ b=GW1VPWKI/sCUGw/lmdjcfb1/v1p4eeE2hxIHDUz6r0uc8ZG6Nh6B1h6ZjF1CXCVBjg7JskGvw
+ jcYo3SVzHEYBjKshveIrasbrGRIJ9GRxGQPohIyCG7g/J+DEMY0SQcC
+X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
+ pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
+X-Authority-Analysis: v=2.4 cv=T8KMT+KQ c=1 sm=1 tr=0 ts=684917b3 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=Bqk5Gw0CwUaqKlFR4NYA:9
+ a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: 2j2xA0KdJneNjNqrutgtWE3D7HVMKVQ3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDA0OSBTYWx0ZWRfX00u+lqEKp/PB
+ M9nYwih6svUkPpJjG7IBC8p5ZPFMxfcpxAOafOp9rMJT600VAYS34os/GIWJg2DmG6qfo3CZ/2+
+ z9emBu74mbzsRbIkN32aWvWpNy6ml4W+78ZYU4gYGLAFL6pRy55cZrCnwhdSYfQ6IhGk6BkXtHJ
+ zBpdg0ixtMrGad9pNoGL2+UNCS2UcG8Hfy2/7mL4Uh/KKxAhNKpHgsZcU0K0OezQoIeRmaA3CSw
+ OjFCictZK9ls4woWrtUfYa8kq013vYKBsReSY3bjyiV+y52MVJa40ty5J5wwYwB6COGgf0wb7xm
+ c2EYoQMiI8qWmkX3+M98/6A9/Xwam2E/Z0Uodn2KcgyHXhE07/b0NZ5Bj63ADcf8rb8CNpmGuPL
+ u/MKcmOqY3w9MpJf4vCJSoah+lugetr4LugY7Ty83xv012e1qFUv1OENZ5DqSaY9BEGVagPw
+X-Proofpoint-GUID: 2j2xA0KdJneNjNqrutgtWE3D7HVMKVQ3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_02,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506110049
 
-Update the code to rename validate_code to validate_ctx.
-validate_code is used to check the validity of code.
-validate_ctx is used to check both code validity and table entry
-correctness.
+Pass PD_FLAG_REQUIRED_OPP flag to allow opp framework to scale the rpmpd
+power domains.
 
-Signed-off-by: George Guo <guodongtai@kylinos.cn>
-Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 ---
- arch/loongarch/net/bpf_jit.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Found this issue while reviewing the Iris source and only compile tested.
+---
+ drivers/media/platform/qcom/iris/iris_probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index cdcb73f93..ee38a9824 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -1177,6 +1177,14 @@ static int validate_code(struct jit_ctx *ctx)
- 			return -1;
- 	}
+diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+index 9a7ce142f7007ffcda0bd422c1983f2374bb0d92..4e6e92357968d7419f114cc0ffa9b571bad19e46 100644
+--- a/drivers/media/platform/qcom/iris/iris_probe.c
++++ b/drivers/media/platform/qcom/iris/iris_probe.c
+@@ -53,7 +53,7 @@ static int iris_init_power_domains(struct iris_core *core)
+ 	struct dev_pm_domain_attach_data iris_opp_pd_data = {
+ 		.pd_names = core->iris_platform_data->opp_pd_tbl,
+ 		.num_pd_names = core->iris_platform_data->opp_pd_tbl_size,
+-		.pd_flags = PD_FLAG_DEV_LINK_ON,
++		.pd_flags = PD_FLAG_DEV_LINK_ON | PD_FLAG_REQUIRED_OPP,
+ 	};
  
-+	return 0;
-+}
-+
-+static int validate_ctx(struct jit_ctx *ctx)
-+{
-+	if (validate_code(ctx))
-+		return -1;
-+
- 	if (WARN_ON_ONCE(ctx->num_exentries != ctx->prog->aux->num_exentries))
- 		return -1;
- 
-@@ -1285,7 +1293,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	build_epilogue(&ctx);
- 
- 	/* 3. Extra pass to validate JITed code */
--	if (validate_code(&ctx)) {
-+	if (validate_ctx(&ctx)) {
- 		bpf_jit_binary_free(header);
- 		prog = orig_prog;
- 		goto out_offset;
+ 	ret = devm_pm_domain_attach_list(core->dev, &iris_pd_data, &core->pmdomain_tbl);
+
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250527-iris-opp-fix-3ef2591c032a
+
+Best regards,
 -- 
-2.25.1
+Akhil P Oommen <akhilpo@oss.qualcomm.com>
 
 
