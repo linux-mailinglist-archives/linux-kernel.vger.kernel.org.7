@@ -1,103 +1,121 @@
-Return-Path: <linux-kernel+bounces-681098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79025AD4E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:31:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49701AD4E76
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733053A6311
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D1D17643C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBDB23C4F9;
-	Wed, 11 Jun 2025 08:31:06 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94E323ED74;
+	Wed, 11 Jun 2025 08:32:15 +0000 (UTC)
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044C82367B0;
-	Wed, 11 Jun 2025 08:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F31D23E336;
+	Wed, 11 Jun 2025 08:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749630666; cv=none; b=KQe2g0WLKkssVHvXr4R9AWEyRjJq3cMzQrfd+kgZ4/dSNDfu9CmdhSYd14H7f8uqlZvFC+kN8K4TG7+HIqGxZq1GyC81rolOp5pINT0OiC6T6em+VksK22pZ0UOk/dVaNPhn+5puxjhJrzUbH+n/qU6oZwJdjf45GCYhBNU7s08=
+	t=1749630735; cv=none; b=S0TvTkYkpyY9QaLV0QPiqZeyTLIANXMAklApmsLgvyhMeBwC4E4kjTMwjyzTUDUgsjP4hIUOyRFHKPQqmtCVUyhCzM3f50XPZT5gMBFQ3QH4b8IxaRGpnYGgODtgqilGyphB2Qq9EYsAau+84qKObPhQlJhjT2VRNAuJV+DKDeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749630666; c=relaxed/simple;
-	bh=DXYIv+tycKjLbFi7q3acp8Gyp8fPNbFB5zSpGO5FcZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxrYnF6xAa1WU8EbdZKQncF8H1VP0o7+o34OO048P36ut1N6sFvPRexHDLDET3cCS2Lc7lWmmrGzKZ1vykL1X3SK1+06yxjLonZANkFqoSYWYyZ/jP1pEXS7lodD9DM+VNXM2iu40AZ5pjKPi//epKL/mJpb6eRUOiqJo6O+rCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: bJKmYaoVQm66gsy+4mK2EA==
-X-CSE-MsgGUID: 1HTFPgghS/y4LLPYfapgEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="69196515"
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="69196515"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 01:31:05 -0700
-X-CSE-ConnectionGUID: sF4xFUWzRrKOlPZNa1B/Fw==
-X-CSE-MsgGUID: iU87REBgRH6elOibkqUvLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="151901774"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 01:31:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1uPGrI-00000005aMS-316w;
-	Wed, 11 Jun 2025 11:30:56 +0300
-Date: Wed, 11 Jun 2025 11:30:56 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Da Xue <da@libre.computer>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>, Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org, greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [RFC] spi: expand bits_per_word_mask to 64 bits
-Message-ID: <aEk-wIJ8FY73NxQG@smile.fi.intel.com>
-References: <20250611000516.1383268-1-da@libre.computer>
+	s=arc-20240116; t=1749630735; c=relaxed/simple;
+	bh=PPynbfnkIjXxGpaTo686aW4m3QhtkxNND5E/kPM/9N4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D9YmqeEha9tV14u1LHI3pF2vIx7SoWWQlbMFxndXDKS5+zsyp9olgOnlekvICt5O9hMkOM3LZJo6drq/HV946lTcQawKZbygZtm7J6KNb/29SAdlDL8vHLYibM5ByFI08EoWJQR/Q2BZDwwrdoowGLL6ZV13Az55ghAX5w84yaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bHJmg5fsLz9tPJ;
+	Wed, 11 Jun 2025 10:32:03 +0200 (CEST)
+From: Lukas Timmermann <linux@timmermann.space>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@timmermann.space
+Subject: [PATCH v6 0/2] Support for Osram as3668 LED driver
+Date: Wed, 11 Jun 2025 10:31:49 +0200
+Message-ID: <20250611083151.22150-1-linux@timmermann.space>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611000516.1383268-1-da@libre.computer>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4bHJmg5fsLz9tPJ
 
-On Tue, Jun 10, 2025 at 08:05:15PM -0400, Da Xue wrote:
-> Most current controller IP support 64-bit words.
+This patch adds basic support for the as3668 driver IC via I2C interface. 
+The IC is capable of driving four individual LEDs up to 25.5mA per 
+channel. Hardware blinking would be theoretically possible, but this chip
+only supports a few set on/off-delays which makes using that feature 
+unfeasable, therefore my driver doesn't offer that capability. 
+It's intended applications is in mobile devices such as phones, 
+tablets and cameras. This driver was tested and is working on 
+a samsung-manta which is running postmarketOS with a near mainline kernel.
 
-"Most of the current controllers support..."
+Please note: This is my first suggested patch to the kernel. 
+checkpatch.pl runs without warnings or errors. 
+I've read the docs in regards to the led subsystem, 
+coding style and submission of patches, 
+but I'm still a bit unsure about the general workflow. 
 
-> Update the mask to u64 from u32.
+I will try my best.
 
->  drivers/iio/adc/ad7949.c         | 2 +-
->  drivers/spi/spi-dln2.c           | 2 +-
->  drivers/spi/spi-ingenic.c        | 2 +-
->  drivers/spi/spi-sh-msiof.c       | 2 +-
->  drivers/spi/spi.c                | 4 ++--
->  drivers/staging/greybus/spilib.c | 2 +-
->  include/linux/spi/altera.h       | 2 +-
->  include/linux/spi/spi.h          | 6 +++---
+Changes in v6:
+- Fixed missing error handling during init
+- Fixed missing newline in error messages
+- Fixed size calculation for memory allocation
+- Fixed error handling for memory allocation
+- Link to v5: https://lore.kernel.org/lkml/20250608231854.75668-1-linux@timmermann.space/
+Changes in v5:
+- Fixed debug and error messages using wrong format specifiers.
+- Fixed missing include bitwise.h.
+- Changed commit message for dt file to fit expected style.
+- Link to v4: https://lore.kernel.org/lkml/20250607215049.29259-1-linux@timmermann.space/
+Changes in v4:
+- Fixed some mistakes made in the dt file pointed out in v3.
+- Swapped dt and driver in patch series. DT now comes first.
+- Fixed errors in Kconfig due to last minute changes.
+- Added dt file into MAINTAINERS file.
+- Link to v3: https://lore.kernel.org/lkml/20250604225838.102910-2-linux@timmermann.space/
+Changes in v3:
+- Fixed an extra whitespace in the dt bindings documentation.
+- Sent patch to all related lists and maintainers.
+- Link to v2: https://lore.kernel.org/lkml/20250531120715.302870-4-linux@timmermann.space/
+Changes in v2:
+- Fixed reading led subnodes in dt incorrectly, 
+  which caused wrong numbering and a segfault when removing the driver module
+- Fixed calling of_property_read_u8 with an int, causing a compiler error
+- Added more error checking during writes to the i2c bus
+- Link to v1: https://lore.kernel.org/linux-leds/20250530184219.78085-3-linux@timmermann.space/
 
-I guess it would be nice to split on per-driver basis, starting from updating
-the SPI core. I counted 6 patches in such a case.
+Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+
+Lukas Timmermann (2):
+  dt-bindings: leds: Add new as3668 support
+  leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
+
+ .../devicetree/bindings/leds/ams,as3668.yaml  |  74 +++++++
+ MAINTAINERS                                   |   7 +
+ drivers/leds/Kconfig                          |  13 ++
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-as3668.c                    | 204 ++++++++++++++++++
+ 5 files changed, 299 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/ams,as3668.yaml
+ create mode 100644 drivers/leds/leds-as3668.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
