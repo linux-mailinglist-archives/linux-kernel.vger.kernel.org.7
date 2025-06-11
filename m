@@ -1,163 +1,129 @@
-Return-Path: <linux-kernel+bounces-682155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE217AD5C63
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD4FAD5C60
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0E5D1775F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:36:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187A7189FAC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6590020B7EA;
-	Wed, 11 Jun 2025 16:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52061FCFE2;
+	Wed, 11 Jun 2025 16:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dB+LPFkp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9CJ9dpp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC31218591;
-	Wed, 11 Jun 2025 16:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7FC1F91C8;
+	Wed, 11 Jun 2025 16:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749659697; cv=none; b=pHMUBtjxAPWFbttpbhCYaHbqzl+AivQAR069yWZbIjNfVjEQ48mozOzFuIHEqBaZ2hxO/yUkxiPiU2TQTXjm0Y968XxcopFokzH+qTMM1KppGOIV5Jefb/nTB8r5h2cD7DQ7Q6on7+bfVWv2XKiDGeFk/T7zRUbH8WVVK/GWigY=
+	t=1749659683; cv=none; b=syd2T5U2bd6j3nu4nh0+wizyqyFIKIgoNdfsinc8zHq2sqlajakuwJ65/iPduTzcyjOLREnrIzpdr66chBvzgKDYbWpQFPIYEAE20eOfeAFgtgvmKN8MswPiCtfmZDHNdL1jLyq+lLuSCjHPdMN73fbiDeRddFtD7GLXcZMX4RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749659697; c=relaxed/simple;
-	bh=YnBjJCjZGkkrgSbru8fgRTSfROvOQq67aVGW6ZpVPgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MP/wI0hOM7COxBSajhZN4jX+WB8GjhWlK0LEA2krlKNbG3/wuQoAEEyUyreYDqQXTJ6HrgflE2ElCAv9d2NBhHheV0G3vQfdvC+suR8Jty0AZ2gk0fQdrexuiOKMfPzjZRGE/S54uvRrKw1DhHkQvd1ziCIX95iibAHN4TudoJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dB+LPFkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A1BC4CEE3;
-	Wed, 11 Jun 2025 16:34:55 +0000 (UTC)
+	s=arc-20240116; t=1749659683; c=relaxed/simple;
+	bh=WBdEf0/HZqkhDmCcxbwgGvvd9cOJk0qwHZjEEgt/ZCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E6rxOsopTyLo+k/hdKExEVlPKdphk6XfaF1tBGOAPFs3hRcwrJ/pB5dvKQHahoelxamjJz5HPHvPt0lnCxWJ6cQBF7XBRVOjzfmyyrTn2g1A47/IpzfIaGVPnjAwoVi0jmzMchnvod/GZpiXIj1J4zBAX90YPbucsPk25sS6LKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9CJ9dpp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8C1C4CEEA;
+	Wed, 11 Jun 2025 16:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749659695;
-	bh=YnBjJCjZGkkrgSbru8fgRTSfROvOQq67aVGW6ZpVPgA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dB+LPFkpPB50dxO2SwKdjRyNRaC4GTJSF+jgfUyoydG4rqDU1/cAhbNfTSc4Zi6Df
-	 cV8hG9u7FZ6UAF7suixSuRhW4+uJrn7i3DRvt3R0wPygCK3FUGNKhxalSjH8aXsUPd
-	 pxWXAGsiEuQRHVLDEtNQkLeJJJu+Isfkoau6xj9RGtyfbdMSE9GH5KAjxfgOwqu/Oa
-	 4hTDzIFuHtOcc8hbq1nVmumB6UOvemPyeCnkPO3/L89aimaVaFZt4DFf0+Oge2dYJF
-	 k5oBFgO/bq0TEWR0qyGieLeOrCEvvx8lei1ZR18LWITEp/URmXPA/H89o8+Fsvy2UL
-	 XG9XKd3xyk6TA==
-Date: Wed, 11 Jun 2025 09:34:30 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-crypto@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/7] crypto: testmgr - replace
- CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS
-Message-ID: <20250611163430.GA1254@sol>
-References: <20250505203345.802740-1-ebiggers@kernel.org>
- <20250505203345.802740-4-ebiggers@kernel.org>
- <DAJOCL4UQWZ1.2CB0NH55US5EI@cknow.org>
+	s=k20201202; t=1749659682;
+	bh=WBdEf0/HZqkhDmCcxbwgGvvd9cOJk0qwHZjEEgt/ZCg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R9CJ9dpp9w5VDPPesK/5/rpC4lTAgov0Lz0m5tWPIwOM1a8pucz2AQJ+RuXpVd+8e
+	 eZ6LuqHLGtrCoDUyNmTpcDWZ5ccxi8xLL2VyhxtUaQaxz9ZL95NpwedI9bbEVyBaH3
+	 lI/i8QKLVE+L9hwXgUMLBUC589xACUwMBSGRO+c5vZdvnHOg2Pa/GijMw2RgcTYDy+
+	 0p8ZFhYrPxPQ6E9FaFC2nnBS5/+Y0G/qGfWs4MmauaK5rrGxb6tSaknwNxLXdUmb1o
+	 +xgBPkQci1eGdMYHTMdfX3VQce/ZOi5dvkf2zOu44OuvtgHnnGpw+2Axs5DpJFhsKS
+	 eqxai+HX0/7Qg==
+Date: Wed, 11 Jun 2025 17:34:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: Antonio Borneo <antonio.borneo@foss.st.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Andy Shevchenko <andy@kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>, Gatien Chevallier
+ <gatien.chevallier@foss.st.com>, "Lee Jones" <lee@kernel.org>,
+ <linux-iio@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH 2/5] iio: adc: stm32-dfsdm: Fix build warnings about
+ export.h
+Message-ID: <20250611173433.430c8eb4@jic23-huawei>
+In-Reply-To: <7600b151-0487-4cb9-ab6e-3cc9c6012bdf@foss.st.com>
+References: <20250610124855.269158-1-antonio.borneo@foss.st.com>
+	<20250610124855.269158-3-antonio.borneo@foss.st.com>
+	<7600b151-0487-4cb9-ab6e-3cc9c6012bdf@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DAJOCL4UQWZ1.2CB0NH55US5EI@cknow.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 11, 2025 at 01:41:06PM +0200, Diederik de Haas wrote:
-> Hi Eric,
+On Tue, 10 Jun 2025 15:05:16 +0200
+Fabrice Gasnier <fabrice.gasnier@foss.st.com> wrote:
+
+> On 6/10/25 14:48, Antonio Borneo wrote:
+> > After commit a934a57a42f6 ("scripts/misc-check: check missing #include
+> > <linux/export.h> when W=1") and commit 7d95680d64ac ("scripts/misc-check:
+> > check unnecessary #include <linux/export.h> when W=1") we get the build
+> > warnings with W=1:
+> > 
+> > drivers/iio/adc/stm32-dfsdm-adc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
+> > drivers/iio/adc/stm32-dfsdm-core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
+> > 
+> > Fix them.
+> > 
+> > Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>  
 > 
-> On Mon May 5, 2025 at 10:33 PM CEST, Eric Biggers wrote:
-> > The negative-sense of CRYPTO_MANAGER_DISABLE_TESTS is a longstanding
-> > mistake that regularly causes confusion.  Especially bad is that you can
-> > have CRYPTO=n && CRYPTO_MANAGER_DISABLE_TESTS=n, which is ambiguous.
-> >
-> > Replace CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS which has the
-> > expected behavior.
-> >
-> > The tests continue to be disabled by default.
+> Hi Antonio,
+> 
+> You can add my:
+> Acked-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Applied to the togreg branch of iio.git.
+
+Ta.
+
+> 
+> Thanks,
+> Fabrice
 > > ---
-> >  <snip>
-> > diff --git a/crypto/Kconfig b/crypto/Kconfig
-> > index da352f1984ea..8f1353bbba18 100644
-> > --- a/crypto/Kconfig
-> > +++ b/crypto/Kconfig
-> >  <snip>
-> > @@ -171,20 +171,26 @@ config CRYPTO_USER
-> >  	select CRYPTO_MANAGER
-> >  	help
-> >  	  Userspace configuration for cryptographic instantiations such as
-> >  	  cbc(aes).
+> >  drivers/iio/adc/stm32-dfsdm-adc.c  | 1 +
+> >  drivers/iio/adc/stm32-dfsdm-core.c | 1 +
+> >  2 files changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+> > index f583924eb16bb..c2d21eecafe79 100644
+> > --- a/drivers/iio/adc/stm32-dfsdm-adc.c
+> > +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+> > @@ -8,6 +8,7 @@
 > >  
-> > -config CRYPTO_MANAGER_DISABLE_TESTS
-> > -	bool "Disable run-time self tests"
-> > -	default y
-> > +config CRYPTO_SELFTESTS
-> > +	bool "Enable cryptographic self-tests"
-> > +	depends on DEBUG_KERNEL
-> >  	help
-> > -	  Disable run-time self tests that normally take place at
-> > -	  algorithm registration.
-> > +	  Enable the cryptographic self-tests.
-> > +
-> > +	  The cryptographic self-tests run at boot time, or at algorithm
-> > +	  registration time if algorithms are dynamically loaded later.
-> > +
-> > +	  This is primarily intended for developer use.  It should not be
-> > +	  enabled in production kernels, unless you are trying to use these
-> > +	  tests to fulfill a FIPS testing requirement.
-> 
-> I built a 6.16-rc1 kernel [1] and its config is based upon Debian's and
-> that has enabled CRYPTO_SELFTESTS [2] (due to Debian bug 599441 [3]).
-> 
-> I then installed it on 3 Rockchip based devices and booted into that.
-> 1. Radxa Rock 5B (rk3588)
-> 2. PINE64 Quartz64 Model B (rk3568)
-> 3. PINE64 RockPro64 (rk3399)
-> 
-> The full dmesg output for level 0-4 can be found at [4], [5] and [6]
-> 
-> The filtered dmesg output for Rock 5B:
-> ERROR:
-> [    0.709822] basic hdkf test(hmac(sha256)): failed to allocate transform: -2
-> WARNING:
+> >  #include <linux/dmaengine.h>
+> >  #include <linux/dma-mapping.h>
+> > +#include <linux/export.h>
+> >  #include <linux/iio/adc/stm32-dfsdm-adc.h>
+> >  #include <linux/iio/backend.h>
+> >  #include <linux/iio/buffer.h>
+> > diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
+> > index 041dc9ebc0482..47e2d1338e9e6 100644
+> > --- a/drivers/iio/adc/stm32-dfsdm-core.c
+> > +++ b/drivers/iio/adc/stm32-dfsdm-core.c
+> > @@ -8,6 +8,7 @@
+> >  
+> >  #include <linux/bitfield.h>
+> >  #include <linux/clk.h>
+> > +#include <linux/export.h>
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> >  #include <linux/interrupt.h>  
 
-https://lore.kernel.org/r/20250610191600.54994-1-ebiggers@kernel.org/ fixed the
-HKDF failure.  It was caused by a patch that changed initcall levels.
-
-> [    8.877288] alg: skcipher: skipping comparison tests for xctr-aes-ce because xctr(aes-generic) is unavailable
-
-That's expected if you have CONFIG_CRYPTO_AES_ARM64_CE_BLK enabled but
-CONFIG_CRYPTO_XCTR disabled.  Some tests are skipped in that case.
-
-> [   14.172991] alg: ahash: rk-sha1 export() overran state buffer on test vector 0, cfg="import/export"
-> [   14.202291] alg: ahash: rk-sha256 export() overran state buffer on test vector 0, cfg="import/export"
-> [   14.230887] alg: ahash: rk-md5 export() overran state buffer on test vector 0, cfg="import/export"
-
-That means the Rockchip crypto driver is broken.
-
-It may have been broken for a long time.  Hardly anyone ever tests the hardware
-crypto drivers, as they only work on very specific platforms and are often
-useless anyway.  The software crypto is much better tested and often faster.
-
-I don't think broken drivers like these should even be in the kernel at all.
-
-For now, you should just disable CONFIG_CRYPTO_DEV_ROCKCHIP.
-
-Anyway, the more interesting part of your email is that you pointed out that
-Debian has the crypto self-tests enabled, precisely in order to automatically
-disable buggy drivers like these.
-
-And actually Fedora does this too.
-
-This seems kind of crazy.  But unfortunately, the crypto/ philosophy seems to be
-to enable as many untested and buggy drivers as possible, then rely on them
-being (incompletely) self-tested in production.  So, aparently this is a thing.
-
-But of course the distros won't want to enable the full set of tests, which
-would slow down boot times significantly, but rather only the "fast" ones (as
-they were doing before)...
-
-So I'll send a patch that adds back a kconfig knob to run the fast tests only,
-which I had removed in commit 698de822780f.
-
-- Eric
 
