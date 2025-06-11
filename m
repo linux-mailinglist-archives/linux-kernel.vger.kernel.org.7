@@ -1,196 +1,139 @@
-Return-Path: <linux-kernel+bounces-681964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0972AD5993
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:06:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB3AAD59A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CBA1E007D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:06:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D8A3A2428
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA69C1BE86E;
-	Wed, 11 Jun 2025 15:05:25 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517751B4F1F;
+	Wed, 11 Jun 2025 15:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hiWnYlNV"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A2119A2A3;
-	Wed, 11 Jun 2025 15:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA601A0BF3;
+	Wed, 11 Jun 2025 15:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654325; cv=none; b=gG5QltTyeWDemWn0QUwnPIxaEfjxCIrJZpXvSImQ/LyuqXZHTurugMfBSpTk16icNqwTNQYTINrcA7yl/mLwF88gzX21ISRX27yhXj8dTqX/uIzXRps6UpmpqcrM+FRj/l/oz1Eg3xy2gZUc04un677A59shY8R/q0N44eAY6F8=
+	t=1749654347; cv=none; b=hmCqztkAJIaC3QaUOr7wiImQ+09MIndYoHFdfgIFCvYHSD4bamHjBAfFoWGY0UhTlzR1ae70ipIuV8ogAofTdivSqROthWJ47puKRZGmMmQ3w+GSYKb8lNPuF+E/X80qpM8VFTkj7lZ1bSi1oktJh+4rS3cjCQCi/xDLlPHhd8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654325; c=relaxed/simple;
-	bh=QjLClqRVz+CYv9XhfFqEgl6l63rKHLxQAkX0Xetgals=;
+	s=arc-20240116; t=1749654347; c=relaxed/simple;
+	bh=GN263RmwEk00x8lzbSkBIhabezE842uTAO7Z1eXmkSQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUv7jo4oZF1wYzxgTevD/ekv6SN3SWT8M43O3YL+n+6J63pqqteb2N4L1b2oyf/Hjmyjz1YunVnz/F9KVkTqjjPVaFIHdIk+MqJNy8+C+q8jfXrBaxu7fWanfQoihRInQ5a6DF1U2/vqedLEaEOBmAFjNpsG8LyyhcAfmwzGe/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: OhNPaFf7REWPC7v5kdZMKg==
-X-CSE-MsgGUID: qelceS6nRRyJHJd7f1xDgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="50908907"
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="50908907"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 08:05:23 -0700
-X-CSE-ConnectionGUID: AKVC6IMFTp+oftk7hDHREQ==
-X-CSE-MsgGUID: fakhjhUMQeeGy573vEOD8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,228,1744095600"; 
-   d="scan'208";a="178131513"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 08:05:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1uPN0u-00000005g9z-1arZ;
-	Wed, 11 Jun 2025 18:05:16 +0300
-Date: Wed, 11 Jun 2025 18:05:16 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
-	Michael.Hennerich@analog.com, bagasdotme@gmail.com,
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/11] iio: accel: adxl313: add activity sensing
-Message-ID: <aEmbLG0S5P7m35a-@smile.fi.intel.com>
-References: <20250601172139.59156-1-l.rubusch@gmail.com>
- <20250601172139.59156-8-l.rubusch@gmail.com>
- <CAHp75VemOXhpRp2hfDhvzi3y5j5oL-_0xMmWRWkwEtX7Ks5nMQ@mail.gmail.com>
- <CAFXKEHZcS2qpb1zp6kkQm_Pb-MxYHErpjD=q6huuLm1Nq=xjqA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hu840eQmnTbvnHUXHxKEmBxGotHRssTeVlWKpA5i9HHpdEJ/w+y8VqbxfUr+q6cjZiKof9axDAEE0RF6HQXCrdRmA8gM+/q0IqXwjVeBoBsVGksTtssVc5OsuhYPvX4/e+A4HdCwqVgKwnlvbT7PbI2yhm0P08uKu1XHMCsvnyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hiWnYlNV; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=J0ACVruKN2q4p/Qa6A04ZCMVXW2I9cmZiPjmdkppk/w=; b=hiWnYlNVjKoUvnmi4RKso3EEPZ
+	ulLWMWHDeFIaWd5hFTU5U0s1B2X8GyZi8bXfuBF6QT1ied369ZeJFqJktGfvw6+EHluP3SUzqKG/A
+	1kZGddH7MCe+zggdPa5VFROrxjAU+oZ6Z8AhGQYUa5U+0W+Y/LIYaxqnNo3dkO72pagk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPN0z-00FPmp-T6; Wed, 11 Jun 2025 17:05:21 +0200
+Date: Wed, 11 Jun 2025 17:05:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] dt-bindings: net: ethernet-controller: Add
+ informative text about RGMII delays
+Message-ID: <e08888ab-d190-4829-9aef-a8adef63b968@lunn.ch>
+References: <20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch>
+ <e4db4e6f0a5a42ceacacc925adbe13747a6f948e.camel@icenowy.me>
+ <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
+ <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
+ <aEFmNMSvffMvNA8I@shell.armlinux.org.uk>
+ <84c534f9dbfa7c82300863cd40e5a9b6e6e29411.camel@icenowy.me>
+ <ba7b290d-0cd1-4809-822a-bfe902684d7e@lunn.ch>
+ <9ebe16a8d33e00c39c142748a1ea6fff96b9565a.camel@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFXKEHZcS2qpb1zp6kkQm_Pb-MxYHErpjD=q6huuLm1Nq=xjqA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <9ebe16a8d33e00c39c142748a1ea6fff96b9565a.camel@icenowy.me>
 
-On Wed, Jun 11, 2025 at 04:49:34PM +0200, Lothar Rubusch wrote:
-> On Sun, Jun 1, 2025 at 9:38 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Sun, Jun 1, 2025 at 8:22 PM Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> BTW I found that in some case the assumption of PHY-side delay being
+> always better than MAC-side one is wrong -- modern MACs usually have
+> adjustable delay line, but Realtek 8211-series PHYs have only on/off
+> delay with a fixed 2ns value.
 
-...
+There is another email conversation last month about this. The RGMII
+standard says a 2ns delay is needed. If your hardware needs something
+other than 2ns, it is breaking the standard. It probably means
+somebody has been lazy and made a bad design. The PCB track lengths
+have not been balanced, or the MAC or PHY internal delays are poorly
+designed. Whatever, it is breaking the standard. We should not be
+encouraging such bad design by making it easy to work around broken
+designs.
 
-> > > +       int ret = -ENOENT;
-> > > +
-> > > +       if (FIELD_GET(ADXL313_INT_ACTIVITY, int_stat)) {
-> > > +               ret = iio_push_event(indio_dev,
-> > > +                                    IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-> > > +                                                       IIO_MOD_X_OR_Y_OR_Z,
-> > > +                                                       IIO_EV_TYPE_MAG,
-> > > +                                                       IIO_EV_DIR_RISING),
-> > > +                                    ts);
-> > > +               if (ret)
-> > > +                       return ret;
-> > > +       }
-> > >
-> > >         if (FIELD_GET(ADXL313_INT_WATERMARK, int_stat)) {
-> > >                 samples = adxl313_get_samples(data);
-> > >                 if (samples < 0)
-> > >                         return samples;
-> > >
-> > > -               return adxl313_fifo_push(indio_dev, samples);
-> > > +               ret = adxl313_fifo_push(indio_dev, samples);
-> >
-> > This is not needed...
+There is also another thread about Broadcom MAC/PHY combinations, and
+somebody doing tests and showing that combination is very robust to
+delays, it will happily work with 1ns or 3ns, not just 2.00ns.
+
+So in general, a fixed 2ns value should just work if you are
+compliment to the standard.
+
+> > > Well I am not sure, considering two examples I raised here (please
+> > > note
+> > > I am comparing QCOM ETHQOS and TI PRUETH two drivers, they have
+> > > contrary handling of RGMII modes, and one matches the old binding
+> > > document, one matches the new one).
+> > 
+> > Nope, i fully agree with Russell, the binding has not changed, just
+> > the
+> > words to explain the binding.
 > 
-> IMHO this will be needed, or shall be needed in the follow up context.
+> Well I read about phy.rst, and I found my understanding of the old
+> binding matches my understanding of phy.rst, but does not match the new
+> binding.
 
-Right, but wouldn't be better to update at the same time when this new context
-appears?
+So please quote the text, explain how you interpret it, and maybe we
+can then tell you how you have it wrong. Or i might admit that the
+text needs more work to remove more ambiguities.
 
-> The [going to be renamed] function push_events() shall evaluate the
-> interrupt status register for the events the driver can handle and
-> also eventually drain the FIFO in case of watermark. It shall
-> distinguish between failure, events / drain the FIFO which can be
-> handled, and events which cannot be handled so far. It's not a if /
-> else, there can be some event, and some fifo data. Therefore I'd like
-> not a simple return here, but init a ret var.
-> 
-> I interpreted your reviews, to change the particular implementation as
-> if there was just activity. Then in a follow up patch, rewrite it
-> again, now to distinguish just bewteen just activity and inactivity
-> e.g. by if/else. Eventually rewrite it by a third approach to
-> distinghish activity, inactivity, AC-coupled activity and AC-coupled
-> inactivity, might be now switch/case. Eventually you might complain
-> that my patches contain way too much modification of every line in
-> every patch.
-> 
-> I'd rather like to start right away with the final structure with just
-> the first element - e.g. "activity" - leads to results like the above.
-> Less churn among patches, but having just one element looks like
-> having taken an over-complicated approach.
-> 
-> Perhaps it's my patch split? Unsure, I tried to note in the commit message:
-> > This is a preparatory patch. Some of the definitions and functions are
-> > supposed to be extended for inactivity later on.
-> Perhaps it needs more feedback here?
-> 
-> Another example is seting up the read/write_event_config() or
-> read/write_event_value() functions. I mean, eventually this will
-> become a switch/case implementation. Of course with just one element
-> switch/case seems to be obvious overkill. Going by your advice, I
-> changed it to if(!..) return, it's definitely cleaner. Definitely in
-> the follow up patches this will be rewritten, though.
-> 
-> Please, let me know what is the best approach or what I can improve to
-> avoid such "ping pong patching" as you name it?
-> 
-> Might be that you're right here in this particular case, but then it
-> would be better to discuss the final structure, isn't it?
+> Well I think "rgmii-*" shouldn't exist at all, if focusing on hardware.
+> I prefer only "rgmii" with properties describing the delay numbers.
 
-Basically I use the following rule of thumb: I made an approach and look at
-the each patch separately and at the series as a whole (with the end result).
-If it's too much of rewriting (yes, I admit, that in some cases it's
-unavoidable to have some changes as we do feature-by-feature incremental
-changes), I try to rethink. Repeat, until the result looks good enough.
-I.o.w. you, as the author of this code, can propose something better based on
-your knowledge of the HW and vision of what you want at the end.
+As Russell said, we cannot easily change it without breaking
+systems. And i'm not convinced a new set of properties would be any
+better. Developers are often lazy. They try various things until it
+works and call it done. There are multiple ways of getting a MAC/PHY
+link to work given the available parameters, and there are multiple
+combination which works, but are not correct according to the
+definitions. I expect the same to be true for a new set of
+parameters. Laziness wins out over correctness.
 
-Yeah, this might require time and a few attempts which one can argue would be
-waste of time. But at least this is my personal experience and flow with my
-own patches.
+And the real issue is more subtle. Working incorrect implementations
+sometimes turn into broken incorrect implementations. We have seen
+cases where somebody correctly describes their hardware in DT and it
+did not work. Digging into the details, how the implementation was
+broken was found, and fixed, so that it correctly implemented DT, and
+made that correctly described board work. But in the process it broken
+lots of incorrectly described but working boards.
 
-> > >         }
-> > >
-> > >         /* Return error if no event data was pushed to the IIO channel. */
-> > > -       return -ENOENT;
-> > > +       return ret;
-> >
-> > ...and this looks wrong.
-> 
-> Well, as I said. Each separate if-condition (not just if-else), could
-> be ok or not. If ok, the function still shall continue, might be at
-> the end, also a watermark flag is in the status reg and the FIFO needs
-> to be drained. It also might be, that some event comes which the
-> driver does still not handle, but not necessarily an error
-> (missconfiguration). So, draining the FIFO helps in most cases to
-> bring a derailed sensor back on track. If not doing so, it silmply
-> stops working, you would need to turn off and on again, or even power
-> cycle the setup.
-> 
-> Probably you have a better idea here, but pls have a look into the
-> final setup. I really appreciate your feedbacks. I understand this is
-> a rather problematic part of the code. To me it makes sense like this,
-> but I'd highly appreciate your advice.
-
-I will do my best. Thanks for your patience!
-
-> > Before the case was clear, if we have no respective bit set in the
-> > int_stat, we return ENOENT. Now it depends on the other bit. If this
-> > is correct behaviour, it needs a comment.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	Andrew
 
