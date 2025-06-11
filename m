@@ -1,133 +1,113 @@
-Return-Path: <linux-kernel+bounces-681339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC327AD5153
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:15:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B86AD513D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA98C17FCD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:15:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390091BC0244
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B0027C857;
-	Wed, 11 Jun 2025 10:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE429267AF4;
+	Wed, 11 Jun 2025 10:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PHHyZWPV"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE42269B07;
-	Wed, 11 Jun 2025 10:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz9x0vgP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229292620E5;
+	Wed, 11 Jun 2025 10:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749636369; cv=none; b=WlVL0U1xS1gBlI/IR1FnECCBZYenXG+7YmUk8oB4TA1NK4XPZHjb50YYFBy5FsuBxGeSBluoOXOtiR+psDsWEtYv1dPIqj5VNIZ314SJLBM3G+cMKV8lBpaKRjRXUWbLwk6OO4FMuRV7NbyvttOrFh6pgnlhJ6oEfJ+COUtOpK0=
+	t=1749636312; cv=none; b=m6Gpm+eL+n3qevxqZprAFL15hMOJIex+HV8ikoE/V2OiMrzBmD4ibEjiEnaQ5XdOtAf7h/r9seQFc4TqmwRzBxRtSmo38Q5F5soeufVsgcvG2ImDy7YAViqlAf3wI5Le/T6fYu//gBHOVcb+Lhtukp90eaFXOqseGvnQPWROxlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749636369; c=relaxed/simple;
-	bh=VPToYgHTheKgSk91dnwnpEWxu/iIsLz1NQjpp/HoK9w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T51hUPL3JQRGSiAq1WSG2PQssSJYdNg0VO9cwVR5N/dEinW6iIG603bA6Das66aq3Z1wJiadJGJxPCk9a+il/33gVGQrfyorK1emZM+Ue5+cDnCQtmHATdxQ6lMxJ0ZSAIh6nG6eglEZgeNmorWEtjMzOt1Cq0VUDsE5a6w/wUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PHHyZWPV; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-RSFL4TU.corp.microsoft.com (unknown [167.220.238.139])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 39C1C2115195;
-	Wed, 11 Jun 2025 03:05:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 39C1C2115195
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1749636368;
-	bh=l9DJH+HH91jPT4Tylpz4H2GjnE02AKAT2ubUE2pzEro=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PHHyZWPVtEmfXi5vOF5F/eDDCnYGlmDYvN+YWlxT44TjhYZYGjibB/xPd/AxQy/gZ
-	 7ued2Ffk4pZ7jRhTeZ3Cx1mY3bNmcTNh04KOwmlKSbYDve8rHliQ1INHILM79AaJDZ
-	 mwaExEMIafpFxHeCbw1w2uxSdPURtYOmR5S6JimA=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Long Li <longli@microsoft.com>,
-	Shiraz Saleem <shirazsaleem@microsoft.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH 6/6] net: mana: Fix warnings for missing export.h header inclusion
-Date: Wed, 11 Jun 2025 15:34:59 +0530
-Message-Id: <20250611100459.92900-7-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250611100459.92900-1-namjain@linux.microsoft.com>
-References: <20250611100459.92900-1-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1749636312; c=relaxed/simple;
+	bh=gPaP3WMO/RLExljCqXnu0HKGZ3gE4EOR9JfvXxizfI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oGYJ4yvM/SvAA1x3onnDLBBuHSUxN7BBSG6iwBXEzRqf087NHJkflbes3JUFGVMu8HCHGdyQvurNYoU8jxTmd/kwGLKBjYszTNQHlW5pNRONJmToG6V20VK1bB9hE9SpQPaq2rCbQeRqQmzUN8kIvIWIiYBYMvDqTiCJ6WB0Ixo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz9x0vgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A8AC4CEEE;
+	Wed, 11 Jun 2025 10:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749636312;
+	bh=gPaP3WMO/RLExljCqXnu0HKGZ3gE4EOR9JfvXxizfI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mz9x0vgPlloUBypKgcgmt2mjSkqPYSOoGHVjZmP7Yv8KIOEI6Eu3meYJucSkiN13d
+	 +8V3DlRC9nacOJMZqzHsQCHTCp6KbTrO8nSIYykx5Rsl/yGzsF7K6Zcu8gi6ZpF4Cr
+	 3vC6SaTgwqIiCM3txQRb4OukbNP6lkAxKBpBjiaf7Wke5Fdq4EeKCmHU+EXmYJ8+XT
+	 hrINlG12Fn27HOZayF3IO7QaEcZzdqc6fK8eyoL37aiEi3ygI6ZT77nGQtgVJz4lDN
+	 rZuAuAOBl/eIXAyikuRsApL7TK0rhxiyaUNikxIGnUGKGmI5m90nqT+1EIVo0ow2C3
+	 cw8qWT9nCvgZQ==
+Date: Wed, 11 Jun 2025 12:05:07 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Collin Funk <collin.funk1@gmail.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
+	eggert@cs.ucla.edu, bug-gnulib@gnu.org
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
+Message-ID: <20250611-gepunktet-umkurven-5482b6f39958@brauner>
+References: <20250605164852.2016-1-stephen.smalley.work@gmail.com>
+ <CAHC9VhQ-f-n+0g29MpBB3_om-e=vDqSC3h+Vn_XzpK2zpqamdQ@mail.gmail.com>
+ <CAHC9VhRUqpubkuFFVCfiMN4jDiEhXQvJ91vHjrM5d9e4bEopaw@mail.gmail.com>
+ <87plfhsa2r.fsf@gmail.com>
+ <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
 
-Fix below warning in Hyper-V's MANA drivers that comes when kernel is
-compiled with W=1 option. Include export.h in driver files to fix it.
-* warning: EXPORT_SYMBOL() is used, but #include <linux/export.h>
-is missing
+On Tue, Jun 10, 2025 at 07:50:10PM -0400, Paul Moore wrote:
+> On Fri, Jun 6, 2025 at 1:39 AM Collin Funk <collin.funk1@gmail.com> wrote:
+> > Paul Moore <paul@paul-moore.com> writes:
+> > >> <stephen.smalley.work@gmail.com> wrote:
+> > >> >
+> > >> > commit 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always
+> > >> > include security.* xattrs") failed to reset err after the call to
+> > >> > security_inode_listsecurity(), which returns the length of the
+> > >> > returned xattr name. This results in simple_xattr_list() incorrectly
+> > >> > returning this length even if a POSIX acl is also set on the inode.
+> > >> >
+> > >> > Reported-by: Collin Funk <collin.funk1@gmail.com>
+> > >> > Closes: https://lore.kernel.org/selinux/8734ceal7q.fsf@gmail.com/
+> > >> > Reported-by: Paul Eggert <eggert@cs.ucla.edu>
+> > >> > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2369561
+> > >> > Fixes: 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always include security.* xattrs")
+> > >> >
+> > >> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > >> > ---
+> > >> >  fs/xattr.c | 1 +
+> > >> >  1 file changed, 1 insertion(+)
+> > >>
+> > >> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > >
+> > > Resending this as it appears that Stephen's original posting had a
+> > > typo in the VFS mailing list.  The original post can be found in the
+> > > SELinux archives:
+> > >
+> > > https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.work@gmail.com/
+> >
+> > Hi, responding to this message since it has the correct lists.
+> >
+> > I just booted into a kernel with this patch applied and confirm that it
+> > fixes the Gnulib tests that were failing.
+> >
+> > Reviewed-by: Collin Funk <collin.funk1@gmail.com>
+> > Tested-by: Collin Funk <collin.funk1@gmail.com>
+> >
+> > Thanks for the fix.
+> 
+> Al, Christian, are either of you going to pick up this fix to send to
+> Linus?  If not, any objection if I send this up?
 
-Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
----
- drivers/net/ethernet/microsoft/mana/gdma_main.c | 1 +
- drivers/net/ethernet/microsoft/mana/mana_en.c   | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 3504507477c6..019e32b60043 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -6,6 +6,7 @@
- #include <linux/pci.h>
- #include <linux/utsname.h>
- #include <linux/version.h>
-+#include <linux/export.h>
- 
- #include <net/mana/mana.h>
- 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index ccd2885c939e..faad1cb880f8 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -10,6 +10,7 @@
- #include <linux/filter.h>
- #include <linux/mm.h>
- #include <linux/pci.h>
-+#include <linux/export.h>
- 
- #include <net/checksum.h>
- #include <net/ip6_checksum.h>
--- 
-2.34.1
-
+It's been in vfs.fixes for some time already and it'll go out with the
+first round of post -rc1 fixes this week.
 
