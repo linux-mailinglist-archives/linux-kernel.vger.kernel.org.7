@@ -1,184 +1,154 @@
-Return-Path: <linux-kernel+bounces-681376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48843AD51E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:32:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2097DAD51DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4CB46041F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE0CA17FB28
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536F326B0A9;
-	Wed, 11 Jun 2025 10:30:07 +0000 (UTC)
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59F2264A65;
+	Wed, 11 Jun 2025 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fRSPguXx"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E8826AAA3;
-	Wed, 11 Jun 2025 10:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F8268C55
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 10:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749637806; cv=none; b=AGczJSjh6FlI1BMG1kLiEbCVduRAHqyuGt4okxWz43OZLzg0noZDkjc8oAk6MOr9WwQyEr7yvD0QTGsPsaPa4BzRwymdX5mBCuduVPXoJFNiksu7X7N6PaHVN0d0vL+r3a3D9fGdtjVlAFwM7NBVnPPeDmef1Lp7RZVkaOZvDdQ=
+	t=1749637797; cv=none; b=nHnd+qRiOTjofUAlkrofOxhSZ8fycnFPtyApHQTIhxQfCjrGi5uNoqPRmhq8i5PwlN/Zo6OeT0HEzbDl6SGZD7a6EfJhrMZ7q4T1M+LXSodlY22W2HZJmeFQDDPqVFDHq7iXUH5xqExfI7XK+Jv41IswziXwV+wlXCjAk+W1H7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749637806; c=relaxed/simple;
-	bh=R/L1yz/OFtaKsGYyJS6vXs8rb7mCAM3V5P4qgQyt1eg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u2kXIMM8/Mvc9J0dHZe8cwVKlwV387VWHKL+o2d1jW8pFKJR42tUIm1vFqEtz6pVLWC/yE0XMDIZqQbaV7xq0EZjIzsy4TpdbAOr1Qsz+NfoAV5TNLefPd+joNPbkB334mkN2DPw2PNBAuvoUsYsriropVY8ad5yubixrJuLkfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bHMNn6Z3sz9tQS;
-	Wed, 11 Jun 2025 12:30:01 +0200 (CEST)
-From: Remo Senekowitsch <remo@buenzli.dev>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Remo Senekowitsch <remo@buenzli.dev>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v8 9/9] samples: rust: platform: Add property read examples
-Date: Wed, 11 Jun 2025 12:29:08 +0200
-Message-ID: <20250611102908.212514-10-remo@buenzli.dev>
-In-Reply-To: <20250611102908.212514-1-remo@buenzli.dev>
-References: <20250611102908.212514-1-remo@buenzli.dev>
+	s=arc-20240116; t=1749637797; c=relaxed/simple;
+	bh=YlHXxMugl9yjOiNKeFUjiSUYbzIfe6d6gCIYXllOlIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BtSlYA+K0e2ttQm6q6VxrCH/l7/fIQeCaXH3TzIFqt+t2mF+8pj6RV2lsXMP3fiBzjEexJRPDphRpQ3ql7t3bfIDg0lUWdThW/7wzKxrORQmqXyqfIevmHjP1/gYqWKvRqlzch+PDERdZC233nZYAxjPy6hyZphM1L1bn2/xjOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fRSPguXx; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cdcd54ff-ff67-4ad8-8aa7-baa711928242@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749637792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vsD0r2ubczrvxe7E6Hz3oR1VDIOnDQXAzS4kwGFiDY0=;
+	b=fRSPguXxdP+bxFKXzw8IXPvBDS7PNhulrJ5AKNaVBxE/HU5Sy8+bASY2d9tYSO8RYqBZ9Y
+	OpqAXd/4ejqf/HgKyaGjLGSfkBizkMG/JrEgEFI7RHEL4hePKPX68ihcfBIQpWBtJrwZle
+	LX45PMC+xyaBy+CAu+fxUDRdbDXZk9s=
+Date: Wed, 11 Jun 2025 11:29:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bHMNn6Z3sz9tQS
+Subject: Re: [PATCH net-next v8 06/11] net: ti: prueth: Adds HW timestamping
+ support for PTP using PRU-ICSS IEP module
+To: Parvathi Pudi <parvathi@couthit.com>, danishanwar@ti.com,
+ rogerq@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, ssantosh@kernel.org,
+ richardcochran@gmail.com, s.hauer@pengutronix.de, m-karicheri2@ti.com,
+ glaroque@baylibre.com, afd@ti.com, saikrishnag@marvell.com,
+ m-malladi@ti.com, jacob.e.keller@intel.com, diogo.ivo@siemens.com,
+ javier.carrasco.cruz@gmail.com, horms@kernel.org, s-anna@ti.com,
+ basharath@couthit.com
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pratheesh@ti.com,
+ prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com, rogerq@ti.com,
+ krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
+References: <20250610105721.3063503-1-parvathi@couthit.com>
+ <20250610123245.3063659-7-parvathi@couthit.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250610123245.3063659-7-parvathi@couthit.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Add some example usage of the device property read methods for
-DT/ACPI/swnode properties.
+On 10/06/2025 13:32, Parvathi Pudi wrote:
+> From: Roger Quadros <rogerq@ti.com>
+> 
+> PRU-ICSS IEP module, which is capable of timestamping RX and
+> TX packets at HW level, is used for time synchronization by PTP4L.
+> 
+> This change includes interaction between firmware and user space
+> application (ptp4l) with required packet timestamps. The driver
+> initializes the PRU firmware with appropriate mode and configuration
+> flags. Firmware updates local registers with the flags set by driver
+> and uses for further operation. RX SOF timestamp comes along with
+> packet and firmware will rise interrupt with TX SOF timestamp after
+> pushing the packet on to the wire.
+> 
+> IEP driver is available in upstream and we are reusing for hardware
+> configuration for ICSSM as well. On top of that we have extended it
+> with the changes for AM57xx SoC.
+> 
+> Extended ethtool for reading HW timestamping capability of the PRU
+> interfaces.
+> 
+> Currently ordinary clock (OC) configuration has been validated with
+> Linux ptp4l.
+> 
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+> ---
+>   drivers/net/ethernet/ti/icssg/icss_iep.c      |  42 ++
+>   drivers/net/ethernet/ti/icssm/icssm_ethtool.c |  23 +
+>   drivers/net/ethernet/ti/icssm/icssm_prueth.c  | 443 +++++++++++++++++-
+>   drivers/net/ethernet/ti/icssm/icssm_prueth.h  |  11 +
+>   .../net/ethernet/ti/icssm/icssm_prueth_ptp.h  |  85 ++++
+>   5 files changed, 602 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_ptp.h
 
-Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
-Co-developed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
----
- drivers/of/unittest-data/tests-platform.dtsi |  3 +
- samples/rust/rust_driver_platform.rs         | 60 +++++++++++++++++++-
- 2 files changed, 62 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/of/unittest-data/tests-platform.dtsi b/drivers/of/unittest-data/tests-platform.dtsi
-index 4171f43cf01cc..50a51f38afb60 100644
---- a/drivers/of/unittest-data/tests-platform.dtsi
-+++ b/drivers/of/unittest-data/tests-platform.dtsi
-@@ -37,6 +37,9 @@ dev@100 {
- 			test-device@2 {
- 				compatible = "test,rust-device";
- 				reg = <0x2>;
-+
-+				test,u32-prop = <0xdeadbeef>;
-+				test,i16-array = /bits/ 16 <1 2 (-3) (-4)>;
- 			};
- 		};
- 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8b42b3cfb363a..c0abf78d0683b 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -2,7 +2,14 @@
- 
- //! Rust Platform driver sample.
- 
--use kernel::{c_str, device::Core, of, platform, prelude::*, types::ARef};
-+use kernel::{
-+    c_str,
-+    device::{self, Core},
-+    of, platform,
-+    prelude::*,
-+    str::CString,
-+    types::ARef,
-+};
- 
- struct SampleDriver {
-     pdev: ARef<platform::Device>,
-@@ -31,12 +38,63 @@ fn probe(
-             dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
-         }
- 
-+        Self::properties_parse(pdev.as_ref())?;
-+
-         let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
- 
-         Ok(drvdata.into())
-     }
- }
- 
-+impl SampleDriver {
-+    fn properties_parse(dev: &device::Device) -> Result {
-+        let fwnode = dev.fwnode().ok_or(ENOENT)?;
-+
-+        if let Ok(idx) =
-+            fwnode.property_match_string(c_str!("compatible"), c_str!("test,rust-device"))
-+        {
-+            dev_info!(dev, "matched compatible string idx = {}\n", idx);
-+        }
-+
-+        let name = c_str!("compatible");
-+        let prop = fwnode.property_read::<CString>(name).required_by(dev)?;
-+        dev_info!(dev, "'{name}'='{prop:?}'\n");
-+
-+        let name = c_str!("test,bool-prop");
-+        let prop = fwnode.property_read_bool(c_str!("test,bool-prop"));
-+        dev_info!(dev, "'{name}'='{prop}'\n");
-+
-+        if fwnode.property_present(c_str!("test,u32-prop")) {
-+            dev_info!(dev, "'test,u32-prop' is present\n");
-+        }
-+
-+        let name = c_str!("test,u32-optional-prop");
-+        let prop = fwnode.property_read::<u32>(name).or(0x12);
-+        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n",);
-+
-+        // A missing required property will print an error. Discard the error to
-+        // prevent properties_parse from failing in that case.
-+        let name = c_str!("test,u32-required-prop");
-+        let _ = fwnode.property_read::<u32>(name).required_by(dev);
-+
-+        let name = c_str!("test,u32-prop");
-+        let prop: u32 = fwnode.property_read(name).required_by(dev)?;
-+        dev_info!(dev, "'{name}'='{prop:#x}'\n");
-+
-+        let name = c_str!("test,i16-array");
-+        let prop: [i16; 4] = fwnode.property_read(name).required_by(dev)?;
-+        dev_info!(dev, "'{name}'='{prop:?}'\n");
-+        let len = fwnode.property_count_elem::<u16>(name)?;
-+        dev_info!(dev, "'{name}' length is {len}\n",);
-+
-+        let name = c_str!("test,i16-array");
-+        let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
-+        dev_info!(dev, "'{name}'='{prop:?}' (KVec)\n");
-+
-+        Ok(())
-+    }
-+}
-+
- impl Drop for SampleDriver {
-     fn drop(&mut self) {
-         dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver sample.\n");
--- 
-2.49.0
+> @@ -732,9 +949,22 @@ int icssm_emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+>   		src_addr += actual_pkt_len;
+>   	}
+>   
+> +	if (pkt_info->timestamp) {
+> +		src_addr = (void *)PTR_ALIGN((uintptr_t)src_addr,
+> +					   ICSS_BLOCK_SIZE);
+> +		dst_addr = &ts;
+> +		memcpy(dst_addr, src_addr, sizeof(ts));
+> +	}
+> +
+>   	if (!pkt_info->sv_frame) {
+>   		skb_put(skb, actual_pkt_len);
+>   
+> +		if (icssm_prueth_ptp_rx_ts_is_enabled(emac) &&
+> +		    pkt_info->timestamp) {
+> +			ssh = skb_hwtstamps(skb);
+> +			memset(ssh, 0, sizeof(*ssh));
+> +			ssh->hwtstamp = ns_to_ktime(ts);
+> +		}
+>   		/* send packet up the stack */
+>   		skb->protocol = eth_type_trans(skb, ndev);
+>   		netif_receive_skb(skb);
 
+Could you please explain why do you need to copy timestamp to a
+temporary variable if you won't use it in some cases? I believe these
+2 blocks should be placed under the last if condition and simplified a
+bit, like
+
++		if (icssm_prueth_ptp_rx_ts_is_enabled(emac) &&
++		    pkt_info->timestamp) {
++			src_addr = (void*)PTR_ALIGN((uintptr_t)src_addr,
++					   ICSS_BLOCK_SIZE);
++			memcpy(&ts, src_addr, sizeof(ts));
++			ssh = skb_hwtstamps(skb);
++			ssh->hwtstamp = ns_to_ktime(ts);
++		}
+
+This will avoid useless copy when the packet will be dropped anyway, WDYT?
 
