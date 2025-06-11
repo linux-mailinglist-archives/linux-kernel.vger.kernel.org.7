@@ -1,154 +1,190 @@
-Return-Path: <linux-kernel+bounces-682339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D449AD5EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:56:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6544AD5E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C84189B2F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 243067AD1ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0A321C9FE;
-	Wed, 11 Jun 2025 18:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFB125BEEF;
+	Wed, 11 Jun 2025 18:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b="nvy3ywaK"
-Received: from mxout5.mail.janestreet.com (mxout5.mail.janestreet.com [64.215.233.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mHcUFjk4"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05481A7AF7
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.215.233.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A04C8FE
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749668160; cv=none; b=lAA3d4oTzwwIoOqxWOTBaPzQEdYNF/TxXR+lorGUW8GM2ctD9Jdo04tFKcWkwJJZ2/Pn5HuE/KKyB6cTgVOwfmM79jy6BRX6RxLjHogGQXqaJvyvz2YNZGCMrUO7woi6Hz4UBP4ZyvXt83AAERFeLMnLY9A/UUjj90oB+NdfuvM=
+	t=1749667924; cv=none; b=qQlMC99D1EG7j48JjkUs47MK0v5ay0pbx83S0/1Gg8tPVeDBgS00dJJ8UhtP7traJVdW1fqO5hW6fEfu0cPpmD/aaCgSYzYi7DHV6e6Kj1KDLfXZdM0dlL0Ojswwde+XaztyFT5VW/Hgrb/DsDtMKXwMSgBQ83dKdqSlDkxciLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749668160; c=relaxed/simple;
-	bh=uZMNI2eKpooRJpq5nrCE/LvN5FOfjLV2hWIZUyweVgA=;
+	s=arc-20240116; t=1749667924; c=relaxed/simple;
+	bh=kAGN3q7sLnscFHDkYJjPpSRwEd31KZvcJj4sfQlPVbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0+XxiExWLSrCX/j15zVpShIA7lQIQOQNEE2xr77RNbyfwF/A800Bsoqx3Wp5aL35GWxOmPt9bRYO1rVNhogbxh9NUI1KHutZJDR/mziCBAZvutXYlDei/e9RN4HPv0QbP6ezg4+lBYW2mQ+IZWFDgFiMJONmv02nDT2cyRgN5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=nvy3ywaK; arc=none smtp.client-ip=64.215.233.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=janestreet.com
-Date: Wed, 11 Jun 2025 14:50:31 -0400
-From: Nikhil Jha <njha@janestreet.com>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- 	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- 	Olga Kornievskaia <okorniev@redhat.com>,
- 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- 	"David S. Miller" <davem@davemloft.net>,
- 	Eric Dumazet <edumazet@google.com>,
- 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- 	Simon Horman <horms@kernel.org>,
- 	Steven Rostedt <rostedt@goodmis.org>,
- 	Masami Hiramatsu <mhiramat@kernel.org>,
- 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- 	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- 	netdev@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] fix gss seqno handling to be more rfc-compliant
-Message-ID: <20250611A18503192e946d6.njha@janestreet.com>
-References: <20250319-rfc2203-seqnum-cache-v2-0-2c98b859f2dd@janestreet.com>
-  <d78576c1-d743-4ec2-bf8c-d87603460ac1@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=igF0kjcFXkEYkjZlbqmzei6XpyizDfvg0qZrdtYVGBWTebt2UNkhSoej50/7Psv/cp2q9/ozXen1Ebg9t8KfqCH2JWv1H2yy/wKd5iqBRzHKcpBiN508gCJA1izSetShyrqbad2pgsCq9NMbM5+xV02ALekwH1ySkiRGr4TDOgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mHcUFjk4; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-234fcadde3eso2209295ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749667922; x=1750272722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8dNFQR6DwLKSqb/lm3sm6C2D1H+3BGQbDVmpKSvZzQM=;
+        b=mHcUFjk4op1L+BgvtzxJxhJKysKKHGF77KA6QMcy+Zf7dgYAdDl3/DQTlMDqW3qgec
+         SnXIgK8YslRen62xgTEQGnEdHScsNbx4PlErRU5QOd+MUwrjudj9jbWXi/smJ6/i7N1+
+         mRS4kH/t4aEhiYrDa3RtlgB+6CgP3lxdjbmLs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749667922; x=1750272722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8dNFQR6DwLKSqb/lm3sm6C2D1H+3BGQbDVmpKSvZzQM=;
+        b=ApDZsi6ho0495NINDXCIhIX/JWq9tiIlLJpqjIMi3Q8OAO/1zWbTKtt3Irsqwq9jSc
+         u/e92xiOz/4NURKRsd5kjCJZhAaSzSuDuDGTq4HTtlcFXFXwuQlEX4bMb45CmokqXaJD
+         T8M6Lv6LN2jQLtexKLYMFM52QNnznq/fsfFv5OCDS/XQHVnYoCP6jAB1DJq4P3lQUNLR
+         yUl7EYUAGgKXdHmnYtShqBbZ1kQOQw2yYzgKn5yu8lUkwvxSC1Zrh/yD69SHEJyqZbMY
+         GqPBXAt4CpACD8wYVDuGgHeMBClmjYcEt9uvfljIwpI3rNKiFpQSGyX/AYrDkkFxkfqz
+         5G2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUjAiDrEcOT74GSkAn/+pwmhSuyWfiPL2zUVMy964rCFqAzWYZkrB5GnB18J6WJEdWN8k0qMLft6hD9lrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEDb2F1lJ2ObGomi/SPzd5kBklGHVje2g+hhzFXJYXmwcueo4r
+	EMG1Olre8+p1D7wi+lollB0V7Wg/0/Up5c2VHOh3JyOJfh5NzyaBiY52nRAT1peO5Q==
+X-Gm-Gg: ASbGncsbg+MBLAjUlAQ0X0aroHA5Tgq0ewWE8a7hvMhhuhweiLLJ3hAXGox9OmOem9N
+	rJWgUHLAFIs4aYj+RkjIOokiw3tk/+2+CXfpo1XSpt2dcBMzz2YytF9qsmlZ77O2eNo80qxPxnb
+	ZKfht28fOpkrlSuCioV892vWWwfvupu4LQv555DCPXbNXKoyWeVaH332aV1SG487y9n3r7QFERJ
+	zOcAst/eD0IHruVQWUWuXMlLaIg7vLwJ4rfxE0rB42nq1uP7BsevH8mZtM+E8olV4Cc5e9Mlnry
+	Zdls0B1D+TiLJIiyc4REX8bDXesOOQPYULAQ+2FdfhCBCVbBpEIKy5P5100ISvkb3Jq6jhq+GRP
+	NV0NpEAE18l4p/eZgzGSaGSVd
+X-Google-Smtp-Source: AGHT+IHqMz/HEa7jAGZc/vMx+phqOG6eS1CA4PRutdXQxxU79ck93w78bDAVkOgKJBW7oPDVqbXuPA==
+X-Received: by 2002:a17:903:1ae3:b0:234:b44c:d3c8 with SMTP id d9443c01a7336-2364d8cc78bmr2780605ad.37.1749667922285;
+        Wed, 11 Jun 2025 11:52:02 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:4ad1:78dc:7f25:dde3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23603410b4csm91615085ad.212.2025.06.11.11.52.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jun 2025 11:52:01 -0700 (PDT)
+Date: Wed, 11 Jun 2025 11:51:59 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	Tsai Sung-Fu <danielsftsai@google.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v2 1/2] genirq: Retain depth for managed IRQs across CPU
+ hotplug
+Message-ID: <aEnQT3PdjdNJGi25@google.com>
+References: <20250514201353.3481400-1-briannorris@chromium.org>
+ <20250514201353.3481400-2-briannorris@chromium.org>
+ <24ec4adc-7c80-49e9-93ee-19908a97ab84@gmail.com>
+ <aEcWTM3Y1roOf4Ph@google.com>
+ <CAMcHhXqq9DHgip3rr0=24Y-LEBq5n4rDrE6AsWyjyBmsS7s+-A@mail.gmail.com>
+ <aEiQitCsXq9XSBcZ@google.com>
+ <87qzzqojpt.ffs@tglx>
+ <87o6uuoe5j.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d78576c1-d743-4ec2-bf8c-d87603460ac1@oracle.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
-  s=waixah; t=1749667831;
-  bh=FpMbOeXSW5gqREJmu38NRaAciY+AIiBd4f7rjLts1EQ=;
-  h=Date:From:To:Cc:Subject:References:In-Reply-To;
-  b=nvy3ywaKM+HXjcbXegRqJJhPWpPema6thNJE0eI9STl3qqpqpdaXrG0RPEcTb6eLi
-  OuFY7Iq4Jo9smQZRj6nhny01S5wernP4efPDmtmCnXwnZ0SCPvRmjn+SGzZBmq77HG
-  DzaYSnlxiSHw13ZY1IL/DsX9E0N6VuqliCxJ1xlb5MSpcGNKDrWgT0TNC34L6aqtA/
-  0vlTLRSBQqCJ9XOQ4osz9zYEPUdSdnR6pEUtIjXbVoR9J62P4bezOZk9U8/YcgjV+5
-  vb/KSZaepYU7UBrFw14chpuFvmzUCwJbRVdFHC+OisEvyGoVCqhoZsKxlVk+Wvjf9z
-  22Ya9jACvP9Rg==
+In-Reply-To: <87o6uuoe5j.ffs@tglx>
 
-On Thu, Mar 20, 2025 at 09:16:15AM -0400, Chuck Lever wrote:
-> On 3/19/25 1:02 PM, Nikhil Jha via B4 Relay wrote:
-> > When the client retransmits an operation (for example, because the
-> > server is slow to respond), a new GSS sequence number is associated with
-> > the XID. In the current kernel code the original sequence number is
-> > discarded. Subsequently, if a response to the original request is
-> > received there will be a GSS sequence number mismatch. A mismatch will
-> > trigger another retransmit, possibly repeating the cycle, and after some
-> > number of failed retries EACCES is returned.
-> > 
-> > RFC2203, section 5.3.3.1 suggests a possible solution... “cache the
-> > RPCSEC_GSS sequence number of each request it sends” and "compute the
-> > checksum of each sequence number in the cache to try to match the
-> > checksum in the reply's verifier." This is what FreeBSD’s implementation
-> > does (rpc_gss_validate in sys/rpc/rpcsec_gss/rpcsec_gss.c).
-> > 
-> > However, even with this cache, retransmits directly caused by a seqno
-> > mismatch can still cause a bad message interleaving that results in this
-> > bug. The RFC already suggests ignoring incorrect seqnos on the server
-> > side, and this seems symmetric, so this patchset also applies that
-> > behavior to the client.
-> > 
-> > These two patches are *not* dependent on each other. I tested them by
-> > delaying packets with a Python script hooked up to NFQUEUE. If it would
-> > be helpful I can send this script along as well.
-> > 
-> > Signed-off-by: Nikhil Jha <njha@janestreet.com>
-> > ---
-> > Changes since v1:
-> >  * Maintain the invariant that the first seqno is always first in
-> >    rq_seqnos, so that it doesn't need to be stored twice.
-> >  * Minor formatting, and resending with proper mailing-list headers so the
-> >    patches are easier to work with.
-> > 
-> > ---
-> > Nikhil Jha (2):
-> >       sunrpc: implement rfc2203 rpcsec_gss seqnum cache
-> >       sunrpc: don't immediately retransmit on seqno miss
-> > 
-> >  include/linux/sunrpc/xprt.h    | 17 +++++++++++-
-> >  include/trace/events/rpcgss.h  |  4 +--
-> >  include/trace/events/sunrpc.h  |  2 +-
-> >  net/sunrpc/auth_gss/auth_gss.c | 59 ++++++++++++++++++++++++++----------------
-> >  net/sunrpc/clnt.c              |  9 +++++--
-> >  net/sunrpc/xprt.c              |  3 ++-
-> >  6 files changed, 64 insertions(+), 30 deletions(-)
-> > ---
-> > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> > change-id: 20250314-rfc2203-seqnum-cache-52389d14f567
-> > 
-> > Best regards,
+Hi Thomas,
+
+On Wed, Jun 11, 2025 at 10:50:32AM +0200, Thomas Gleixner wrote:
+> On Wed, Jun 11 2025 at 08:50, Thomas Gleixner wrote:
+> > On Tue, Jun 10 2025 at 13:07, Brian Norris wrote:
+> >> On Mon, Jun 09, 2025 at 08:19:58PM +0200, Aleksandrs Vinarskis wrote:
+> >>  
+> >>  void irq_startup_managed(struct irq_desc *desc)
+> >>  {
+> >> +	struct irq_data *d = irq_desc_get_irq_data(desc);
+> >> +
+> >>  	/*
+> >>  	 * Only start it up when the disable depth is 1, so that a disable,
+> >>  	 * hotunplug, hotplug sequence does not end up enabling it during
+> >>  	 * hotplug unconditionally.
+> >>  	 */
+> >>  	desc->depth--;
+> >> +	irqd_clr_managed_shutdown(d);
+> >
+> > If depth > 0, then it's still shutdown and the subsequent enable
+> > operation which brings it down to 0 will take care of it. So what are
+> > you trying to solve here?
 > 
-> This seems like a sensible thing to do to me.
+> I found the previous version which has an explanation for this. That
+
+Right, I didn't update and carry the explanations here, as I figured I'd
+format this all as proper patches after getting Alex's testing
+feedbabck. (I think I'll split to two patches, since there are two
+distinct bugs I'm fixing in here.)
+
+> makes sense. You really want this to be:
 > 
-> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> 	struct irq_data *d = irq_desc_get_irq_data(desc);
 > 
-> -- 
-> Chuck Lever
+>         /* Proper comment */
+> 	irqd_clr_managed_shutdown(d);
 
-Hi,
+Ack, will add a comment.
 
-We've been running this patch for a while now and noticed a (very silly
-in hindsight) bug.
+>   	/*
+>   	 * Only start it up when the disable depth is 1, so that a disable,
+>   	 * hotunplug, hotplug sequence does not end up enabling it during
+>   	 * hotplug unconditionally.
+>   	 */
+>   	desc->depth--;
+> 
+> ...
+> 
+> >>  	if (!desc->depth)
+> >>  		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
+> >>  }
+> >> diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
+> >> index f07529ae4895..755346ea9819 100644
+> >> --- a/kernel/irq/cpuhotplug.c
+> >> +++ b/kernel/irq/cpuhotplug.c
+> >> @@ -210,13 +210,6 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
+> >>  	    !irq_data_get_irq_chip(data) || !cpumask_test_cpu(cpu, affinity))
+> >>  		return;
+> >>  
+> >> -	/*
+> >> -	 * Don't restore suspended interrupts here when a system comes back
+> >> -	 * from S3. They are reenabled via resume_device_irqs().
+> >> -	 */
+> >> -	if (desc->istate & IRQS_SUSPENDED)
+> >> -		return;
+> >> -
+> >
+> > Huch? Care to read:
+> >
+> > a60dd06af674 ("genirq/cpuhotplug: Skip suspended interrupts when restoring affinity")
+> 
+> Never mind. After staring long enough at it, this should work because
+> suspend increments depth and shutdown does too.
 
-maj_stat = gss_validate_seqno_mic(ctx, task->tk_rqstp->rq_seqnos[i], seq, p, len);
+Yeah, that one definitely deserves an explanation :)
 
-needs to be
+I wrote out a commit message already, but didn't include it here yet, as
+I was only looking for testing. Sorry to have sent you staring so long
+at it.
 
-maj_stat = gss_validate_seqno_mic(ctx, task->tk_rqstp->rq_seqnos[i++], seq, p, len);
+One snippet:
 
-Or the kernel gets stuck in a loop when you have more than two retries.
-I can resend this patch but I noticed it's already made its way into
-quite a few trees. Should this be a separate patch instead?
+    This effectively reverts commit a60dd06af674 ("genirq/cpuhotplug: Skip
+    suspended interrupts when restoring affinity"), because it is replaced
+    by commit 788019eb559f ("genirq: Retain disable depth for managed
+    interrupts across CPU hotplug").
 
-- Nikhil
+IOW, the depth-tracking we added accomplishes the same goal as commit
+a60dd06af674, but including both causes further bugs/imbalances.
 
-
-
-
-
+Brian
 
