@@ -1,260 +1,198 @@
-Return-Path: <linux-kernel+bounces-680944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0F5AD4C11
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB70DAD4C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C06B189E7AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:53:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25DD188E77F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2E7227E84;
-	Wed, 11 Jun 2025 06:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E6522FDEE;
+	Wed, 11 Jun 2025 06:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKPaZy2s"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfiLb7qI"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636F32253FB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94949801;
+	Wed, 11 Jun 2025 06:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749624779; cv=none; b=NY72B+Pfud6ECECfOKjYVVsMSoE+DJtvfhSgN5LRlJiXj8MtCmBFQ1+w9blqTN8YFFGH3QZF6FAC5SW+q8+/lOEjqaeSLOHfUIaxWsewd08gWzC9fa/oKGLG6sGEcstxypC9/flSOEBlbA09vgYppDByVY8FzyQg6VtBPplVCWQ=
+	t=1749624808; cv=none; b=PU7mnG1IjtGaLypZLE8ayWG8DgDzyXgSv1RDkzaPWkEmdc9BBFaZlpr5NK30jidP/OXpVVrlVf0FCUpUx6tfIRLXTWuV642fpcDzInnOzqF7DB2MTmYVjU4Iaby1ibbiNp+BTOiXKvUFjoy0bPy/kEIwE1xTs1kho1DTT3O6XC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749624779; c=relaxed/simple;
-	bh=/CLLrIW5aQMUJNR9aLvDWLib2WpGEzBt04bGlUBvQpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WKsYw1vN7PBHSltUfOox7a6MOud8QdOjg/so5Cbd93QDuBTHvbECMjAsz2y6R0/TwjLfK0CToiDCk6+WzgnFi/2OLEKxT8eDONcC+WGPyHItqPpYHTOKG29eQLAZEUahn6xSUhcNCK3dheZlPj15ZnQ6ORLWXUgWm7IVIV0sZZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKPaZy2s; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1749624808; c=relaxed/simple;
+	bh=ywZhPZNxguASeXsz+ZQIEFvgkFGtFrdTHQm4EVnLuig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W25KRli/H8aEk3z96/tDRI7CXvmKwpCIZLsgXoKkrfiIYvAFl07BN7PfvFIHUsA0Khap/eRiqK2fZouhTNIrwEMmWwAfNk50oVaay16l09wr9NsjBSfMaSaXdH7A124R+qQ0zPsaceMY1Kfd4ZoOw2Eq/Hrn42z1VAEqMl7k8rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfiLb7qI; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a528e301b0so31120f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 23:52:57 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-747e41d5469so6729968b3a.3;
+        Tue, 10 Jun 2025 23:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749624776; x=1750229576; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ZcoFkVAiTRFqiOiNNWpiZEngLNxlokcj95V82V3k6w=;
-        b=YKPaZy2sGYDuokZ2viUJxW75BaPTK6L3XGkMe7z0vuxO07wJqZkZTIebOYP9Is2Z4o
-         ANc806h1CIftTdG0r4AkFVqXvNn0ksOYbWo4tT0bS+ovybFzTLSdwOA1VG1l8dY/7ZgF
-         h+nJSWTKr4qQ4pK/vM/S3/NJF7wdLSJhIFoMpE/outza35N6SFK4swfPiR3tXDxnMulW
-         +PzNNJz/syYnLSDFSNaqk0VdA8jZtupwkOQPho63OiNmZa7yHrZGqfw4fcAu5fAkJuy+
-         hJPAF1T5JkEUXRHR6smNlVcA/ZkCdUWCJCzwrwJ7hzcDCB+9zhWDXZ4c/tujicmRcSHb
-         /Ujg==
+        d=gmail.com; s=20230601; t=1749624805; x=1750229605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8uynCWGHOwgS7TJEhfsESrMpDq6SQHjOchuDKL6F0CQ=;
+        b=WfiLb7qI6NTUeAJTQMctO33eyyDS/89rafyPh2vHmfLq8Gxucy7ZtY+LG7VTs1HeSg
+         5PscoFZhfRrBu34m1Yj2eIvMPrzRkynKMK55+jjFWn7Hpao4kByhWH/TIZlNfVVYS0y7
+         giylwruHDb2R8aJANQG5VwKpw8Ix6Fgt/GHp6PuPDec/bRbfW4lKf3G9Gj3r015IPSJq
+         dd1JJsZTZBRaE5Mbp/uN46/RD7uz+e7Vq71Bv6rdqPufGwuO/KEcomYa7AIqSCPeNvTh
+         vMVyarLMrtvALat+nY+w66fY74c67XURQHGO8T/AFMN3x4PgvYY3fEAloy5eGf6R1u7G
+         2xew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749624776; x=1750229576;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ZcoFkVAiTRFqiOiNNWpiZEngLNxlokcj95V82V3k6w=;
-        b=V91o0OegcM+wk5ZYhDOCWsaI4Ce3cosd13fsfdlwipFsUN3SEes+spOHZUHcJhvrp9
-         YZVWCcjHME6b1UIsVKDW9iAqXrFT5DJngc47B6ZCYBLAkxKXiijjRW7gcl27gr3nnXK7
-         QvbXd9X8wOKjCsYa0VnefRpY2w4D2+sNMTtdntWgsnSdOjT/gvhztRtyK48+4y/x7HA9
-         f55D8Oxr+lpCD/wa7lTQMwz6FphD2c8x9RrHHcWB3GFgRZ9nhh+jVTiNTPsUvuNawYcx
-         FcH7UBNDXiS/g9cG3Cz5K8nwcYFBqnvvmEQlZKOLRhfG7T4oPgmfQsyLOn7ckQVHiMwa
-         rM0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXb6iM7VmE8mEmcsjqR0CRi7LKHNUp5YwmXl0651iX8vrJd4++IgXjhcYNtjqoGos5AqV6+pDpfBLogiVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTwhQgB2IpFQ+4Jp6haIf9Q6B9PTuYlkhzeV6zrMUPQlaervNE
-	+Xi7kXbUzXBWNsead3sIfyPjt0QWY5tDG1YEAo6vbp/04I7LUzcKgOee/4BtrAZr2wKLcKaERPx
-	pf7Aw0W3JPzRTgr3QhfQWz/KO4Z3292U=
-X-Gm-Gg: ASbGncufpGwpPMNVq1a55JrYrOsjac27vsJS4gpI2+i54gwHkcUrp6YGyLe7OFOM+Yc
-	p/w2w8EEFmRiBRb3gV1tFoCPcWxNvTsvQLwDknBDO+TBCzkjw5onUBESt0eyhF75da+C5R3a4nW
-	prJZfshUzreAoe/RfB4i3YvARM5OnG9shumhPs2oQByWpO
-X-Google-Smtp-Source: AGHT+IFZh6owmX7HkiRyf7we5O3Nj8AI3dd6DQRu2hcC5wXD5rSpVUk53mGX3UXq06FsnBnovOBbHjJ++ogCfyvGCfQ=
-X-Received: by 2002:a05:6000:2082:b0:3a4:da29:d13f with SMTP id
- ffacd0b85a97d-3a5586b89d0mr531578f8f.3.1749624775564; Tue, 10 Jun 2025
- 23:52:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749624805; x=1750229605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8uynCWGHOwgS7TJEhfsESrMpDq6SQHjOchuDKL6F0CQ=;
+        b=VqNnV6tP76th9U8OjLpsbRaG8LpIo/y1rhKPjdgcrS8rHpDFu97tM5G9uRhMufeQZ5
+         /4M3OL2wSozFoRu2M/HwD/26Hu9OD9rQ+LwroaY2hJTBNXE/QQRTBdPTlDa2qzoX4AOW
+         Ns/qWlx3HAqRydEjzsd+b7THY6ggW7cENLI+mqqfqrsg/WC76klVb3bAiGcqOfKw0XL3
+         51RbqKJntn8jWIt5vVtgosausl9jTLfd0VADD8rZflypgGOBGyevjR6d3/MOGzhtfdVy
+         kE03RqaMyxN5dg1zekIGMjANtN7kIKTXWpC88Gp1ji3biBsICs1BywwlgcZFwOy7AgCL
+         Pxkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaE1GwH6j/lNJnlQEy1KamrS/lZhvS7pmKPyUN3xp7SAhBTJ9Y2HDiNpJLqivl/E+fm3rPyzjFBTxv@vger.kernel.org, AJvYcCUrcHSiMNYdP2dyX7fmkflETk/VbYCXJzC10viqI6vfuxej/jNrVtcvlqodtRRuLDbYKjYdHMzL/VM=@vger.kernel.org, AJvYcCV7y4Z4xUbstVeLJTwlfh+h3RV80AZD1ZV5cjavTt5kN3qzxmkSl9fdjlPTgWiZalg/KE5oT+3+BN7c@vger.kernel.org, AJvYcCW6Y+WR+JDGdh0A1UDrd8TC16nQuCbTRluIvf44F42YNibmyOo06YELFkQtRTzpIn9HL9qZaRUk@vger.kernel.org, AJvYcCWWaXX59ZHYe31Y9cdnVTTpM7IjGfkiUzU+X/HwUMWogtgT793g7yDeZJXZ7KEk4R6p3vfAKtbECuI0pQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuySAt3XBZ2DBN9fBFTGIyfb/Sf2EenCDUfg6LPz6nxGoUSBBq
+	WhYgUv7SWb1i/V8NWEIF7O9aXmTEbwFzcU2rLXm1159KF8aTos/bpbgt
+X-Gm-Gg: ASbGncsDznjjD9axUIEx1CTht9zSCw3BiUylxfOkKDT/25acqm/MU9x8fsu0v9LYflZ
+	TzUKaYBeXcOOD7HfYgcbut2zcV9FJ7ftOnQFurBAyPp0ub+6sa2pWlKD3xTrrwM1rlNir5/GU0i
+	uJDAsvm6i0/uejjdEaLbYgWS62Z95ooCUsj8MaIfsPIQJnZP6tq8f1x2Dj7SonNbZyuW+MdXS9G
+	X70LXAEFQDNKiyO2irOr230V3reR4lwtMhBQi7Fzo5oZebHWgx4cFRQQW31nz+1J52wPSs4vWCH
+	3Yw9qs4uM8boZslYnKta0VbPJB10Q6NfaPLOmpGk418TGXnt326AUNKY5Uwx+Ki7Ez/L8LMB
+X-Google-Smtp-Source: AGHT+IHxP3vqYfSgJDfm/i4vg8P4K4JE3gMEHlJimyHW5aWR28HDA/MdfXXnCEmNEdnkpHVvNiNxmw==
+X-Received: by 2002:a05:6a00:88b:b0:740:5927:bb8b with SMTP id d2e1a72fcca58-7486ca942afmr2988582b3a.0.1749624804632;
+        Tue, 10 Jun 2025 23:53:24 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482f4aea59sm8146085b3a.81.2025.06.10.23.53.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 23:53:24 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 7FF5C420AA82; Wed, 11 Jun 2025 13:53:17 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux GPIO <linux-gpio@vger.kernel.org>,
+	Linux MTD <linux-mtd@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>,
+	Linux USB <linux-usb@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] Documentation: treewide: Replace remaining spinics links with lore
+Date: Wed, 11 Jun 2025 13:52:55 +0700
+Message-ID: <20250611065254.36608-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1749107920-17958-1-git-send-email-zhiguo.niu@unisoc.com>
- <aEhYfYrknbNzT8Or@google.com> <5c1da066-0c76-42f4-8c46-a99f60a900bf@kernel.org>
- <CAHJ8P3LNrSRT8hfbr=x5HvkQRGBSTpftPbd7NrfUdO-2LgSLfg@mail.gmail.com> <c36ab955-c8db-4a8b-a9d0-f07b5f426c3f@kernel.org>
-In-Reply-To: <c36ab955-c8db-4a8b-a9d0-f07b5f426c3f@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Wed, 11 Jun 2025 14:52:44 +0800
-X-Gm-Features: AX0GCFsgQsBYEedhmjPxxYOEFa7Lezd6IZoo4NA3srqISU4K_ypR7qGlMdQgg-g
-Message-ID: <CAHJ8P3+=LEbbj8bzh0N3HbPu=jVkRfkowbxqoT0PfCZtWbuRbg@mail.gmail.com>
-Subject: Re: [PATCH v3] f2fs: compress: fix UAF of f2fs_inode_info in f2fs_free_dic
-To: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com, baocong.liu@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4260; i=bagasdotme@gmail.com; h=from:subject; bh=ywZhPZNxguASeXsz+ZQIEFvgkFGtFrdTHQm4EVnLuig=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmear2blOVZfh2o9nz19OwMu1rOn3/5Z8w17D6iw3Em2 tXc0vtFRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACZS+YqRYekHr48HS9QE9XfJ XJkU2CZy7lnb8oq73SE/psyP6I+++oGR4fWWiv8MOULcQhw7Qxnv87X3rJl98/lSzUWfQ9oLC87 7sQAA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-Chao Yu <chao@kernel.org> =E4=BA=8E2025=E5=B9=B46=E6=9C=8811=E6=97=A5=E5=91=
-=A8=E4=B8=89 14:47=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 6/11/25 14:41, Zhiguo Niu wrote:
-> > Chao Yu <chao@kernel.org> =E4=BA=8E2025=E5=B9=B46=E6=9C=8811=E6=97=A5=
-=E5=91=A8=E4=B8=89 14:07=E5=86=99=E9=81=93=EF=BC=9A
-> >>
-> >> On 6/11/25 00:08, Jaegeuk Kim wrote:
-> >>> Hi Zhiguo,
-> >>>
-> >>> This patch causes CPU hang when running fsstress on compressed/non-co=
-mpressed
-> >>> files. Please check.
-> >>
-> >> Oh, seems it may cause below deadlock:
-> >>
-> >> CPU0
-> >> process A
-> >> - spin_lock(i_lock)
-> >> software IRQ
-> >> - end_io
-> >>  - igrab
-> >>   - spin_lock(i_lock)
-> >>
-> >> Thanks,
-> > Hi Chao,
-> > Thanks for pointing this out.
-> > I have tested this patch locally about some basic cases before submissi=
-on.
-> > So it seems that should use the following method  to solve this problem=
-?
-> > " store i_compress_algorithm/sbi in dic to avoid inode access?"
->
-> Zhiguo,
->
-> Yeah, I guess so.
-Hi Chao,
-OK, I will prepare it .
-Thanks a lot.
->
-> Thanks,
->
-> > thanks=EF=BC=81
-> >
-> >
-> >>
-> >>>
-> >>> On 06/05, Zhiguo Niu wrote:
-> >>>> The decompress_io_ctx may be released asynchronously after
-> >>>> I/O completion. If this file is deleted immediately after read,
-> >>>> and the kworker of processing post_read_wq has not been executed yet
-> >>>> due to high workloads, It is possible that the inode(f2fs_inode_info=
-)
-> >>>> is evicted and freed before it is used f2fs_free_dic.
-> >>>>
-> >>>>     The UAF case as below:
-> >>>>     Thread A                                      Thread B
-> >>>>     - f2fs_decompress_end_io
-> >>>>      - f2fs_put_dic
-> >>>>       - queue_work
-> >>>>         add free_dic work to post_read_wq
-> >>>>                                                    - do_unlink
-> >>>>                                                     - iput
-> >>>>                                                      - evict
-> >>>>                                                       - call_rcu
-> >>>>     This file is deleted after read.
-> >>>>
-> >>>>     Thread C                                 kworker to process post=
-_read_wq
-> >>>>     - rcu_do_batch
-> >>>>      - f2fs_free_inode
-> >>>>       - kmem_cache_free
-> >>>>      inode is freed by rcu
-> >>>>                                              - process_scheduled_wor=
-ks
-> >>>>                                               - f2fs_late_free_dic
-> >>>>                                                - f2fs_free_dic
-> >>>>                                                 - f2fs_release_decom=
-p_mem
-> >>>>                                       read (dic->inode)->i_compress_=
-algorithm
-> >>>>
-> >>>> This patch use igrab before f2fs_free_dic and iput after free the di=
-c when dic free
-> >>>> action is done by kworker.
-> >>>>
-> >>>> Cc: Daeho Jeong <daehojeong@google.com>
-> >>>> Fixes: bff139b49d9f ("f2fs: handle decompress only post processing i=
-n softirq")
-> >>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> >>>> Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
-> >>>> ---
-> >>>> v3: use igrab to replace __iget
-> >>>> v2: use __iget/iput function
-> >>>> ---
-> >>>>  fs/f2fs/compress.c | 14 +++++++++-----
-> >>>>  1 file changed, 9 insertions(+), 5 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> >>>> index b3c1df9..729ad16 100644
-> >>>> --- a/fs/f2fs/compress.c
-> >>>> +++ b/fs/f2fs/compress.c
-> >>>> @@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct dec=
-ompress_io_ctx *dic,
-> >>>>  }
-> >>>>
-> >>>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
-> >>>> -            bool bypass_destroy_callback);
-> >>>> +            bool bypass_destroy_callback, bool late_free);
-> >>>>
-> >>>>  struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
-> >>>>  {
-> >>>> @@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(str=
-uct compress_ctx *cc)
-> >>>>      return dic;
-> >>>>
-> >>>>  out_free:
-> >>>> -    f2fs_free_dic(dic, true);
-> >>>> +    f2fs_free_dic(dic, true, false);
-> >>>>      return ERR_PTR(ret);
-> >>>>  }
-> >>>>
-> >>>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
-> >>>> -            bool bypass_destroy_callback)
-> >>>> +            bool bypass_destroy_callback, bool late_free)
-> >>>>  {
-> >>>>      int i;
-> >>>>
-> >>>> @@ -1775,6 +1775,8 @@ static void f2fs_free_dic(struct decompress_io=
-_ctx *dic,
-> >>>>      }
-> >>>>
-> >>>>      page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
-> >>>> +    if (late_free)
-> >>>> +            iput(dic->inode);
-> >>>>      kmem_cache_free(dic_entry_slab, dic);
-> >>>>  }
-> >>>>
-> >>>> @@ -1783,16 +1785,18 @@ static void f2fs_late_free_dic(struct work_s=
-truct *work)
-> >>>>      struct decompress_io_ctx *dic =3D
-> >>>>              container_of(work, struct decompress_io_ctx, free_work)=
-;
-> >>>>
-> >>>> -    f2fs_free_dic(dic, false);
-> >>>> +    f2fs_free_dic(dic, false, true);
-> >>>>  }
-> >>>>
-> >>>>  static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_tas=
-k)
-> >>>>  {
-> >>>>      if (refcount_dec_and_test(&dic->refcnt)) {
-> >>>>              if (in_task) {
-> >>>> -                    f2fs_free_dic(dic, false);
-> >>>> +                    f2fs_free_dic(dic, false, false);
-> >>>>              } else {
-> >>>>                      INIT_WORK(&dic->free_work, f2fs_late_free_dic);
-> >>>> +                    /* use igrab to avoid inode is evicted simultan=
-eously */
-> >>>> +                    f2fs_bug_on(F2FS_I_SB(dic->inode), !igrab(dic->=
-inode));
-> >>>>                      queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
-> >>>>                                      &dic->free_work);
-> >>>>              }
-> >>>> --
-> >>>> 1.9.1
-> >>
->
+Long before introduction of lore.kernel.org, people would link
+to LKML threads on third-party archives (here spinics.net), which
+in some cases can be unreliable (as these were outside of
+kernel.org control). Replace links to them with lore counterparts
+(if any).
+
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/driver-api/gpio/driver.rst                    | 2 +-
+ Documentation/filesystems/ubifs-authentication.rst          | 2 +-
+ .../networking/device_drivers/ethernet/ti/cpsw.rst          | 6 +++---
+ Documentation/usb/gadget-testing.rst                        | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
+index ae433261e11a06..85d86f92c41ba7 100644
+--- a/Documentation/driver-api/gpio/driver.rst
++++ b/Documentation/driver-api/gpio/driver.rst
+@@ -750,7 +750,7 @@ compliance:
+ - Test your driver with the appropriate in-kernel real-time test cases for both
+   level and edge IRQs
+ 
+-* [1] http://www.spinics.net/lists/linux-omap/msg120425.html
++* [1] https://lore.kernel.org/r/1437496011-11486-1-git-send-email-bigeasy@linutronix.de/
+ * [2] https://lore.kernel.org/r/1443209283-20781-2-git-send-email-grygorii.strashko@ti.com
+ * [3] https://lore.kernel.org/r/1443209283-20781-3-git-send-email-grygorii.strashko@ti.com
+ 
+diff --git a/Documentation/filesystems/ubifs-authentication.rst b/Documentation/filesystems/ubifs-authentication.rst
+index 3d85ee88719a6c..106bb9c056f611 100644
+--- a/Documentation/filesystems/ubifs-authentication.rst
++++ b/Documentation/filesystems/ubifs-authentication.rst
+@@ -443,6 +443,6 @@ References
+ 
+ [DM-VERITY]          https://www.kernel.org/doc/Documentation/device-mapper/verity.rst
+ 
+-[FSCRYPT-POLICY2]    https://www.spinics.net/lists/linux-ext4/msg58710.html
++[FSCRYPT-POLICY2]    https://lore.kernel.org/r/20171023214058.128121-1-ebiggers3@gmail.com/
+ 
+ [UBIFS-WP]           http://www.linux-mtd.infradead.org/doc/ubifs_whitepaper.pdf
+diff --git a/Documentation/networking/device_drivers/ethernet/ti/cpsw.rst b/Documentation/networking/device_drivers/ethernet/ti/cpsw.rst
+index a88946bd188bae..d3e1304550439d 100644
+--- a/Documentation/networking/device_drivers/ethernet/ti/cpsw.rst
++++ b/Documentation/networking/device_drivers/ethernet/ti/cpsw.rst
+@@ -268,14 +268,14 @@ Example 1: One port tx AVB configuration scheme for target board
+ 
+ 	// Run your appropriate tools with socket option "SO_PRIORITY"
+ 	// to 3 for class A and/or to 2 for class B
+-	// (I took at https://www.spinics.net/lists/netdev/msg460869.html)
++	// (I took at https://lore.kernel.org/r/20171017010128.22141-1-vinicius.gomes@intel.com/)
+ 	./tsn_talker -d 18:03:73:66:87:42 -i eth0.100 -p3 -s 1500&
+ 	./tsn_talker -d 18:03:73:66:87:42 -i eth0.100 -p2 -s 1500&
+ 
+ 13) ::
+ 
+ 	// run your listener on workstation (should be in same vlan)
+-	// (I took at https://www.spinics.net/lists/netdev/msg460869.html)
++	// (I took at https://lore.kernel.org/r/20171017010128.22141-1-vinicius.gomes@intel.com/)
+ 	./tsn_listener -d 18:03:73:66:87:42 -i enp5s0 -s 1500
+ 	Receiving data rate: 39012 kbps
+ 	Receiving data rate: 39012 kbps
+@@ -555,7 +555,7 @@ Example 2: Two port tx AVB configuration scheme for target board
+ 20) ::
+ 
+ 	// run your listener on workstation (should be in same vlan)
+-	// (I took at https://www.spinics.net/lists/netdev/msg460869.html)
++	// (I took at https://lore.kernel.org/r/20171017010128.22141-1-vinicius.gomes@intel.com/)
+ 	./tsn_listener -d 18:03:73:66:87:42 -i enp5s0 -s 1500
+ 	Receiving data rate: 39012 kbps
+ 	Receiving data rate: 39012 kbps
+diff --git a/Documentation/usb/gadget-testing.rst b/Documentation/usb/gadget-testing.rst
+index 1998dc146c56fd..5f90af1fb57321 100644
+--- a/Documentation/usb/gadget-testing.rst
++++ b/Documentation/usb/gadget-testing.rst
+@@ -874,7 +874,7 @@ where uvc-gadget is this program:
+ 
+ with these patches:
+ 
+-	http://www.spinics.net/lists/linux-usb/msg99220.html
++	https://lore.kernel.org/r/1386675637-18243-1-git-send-email-r.baldyga@samsung.com/
+ 
+ host::
+ 
+
+base-commit: d3f825032091fc14c7d5e34bcd54317ae4246903
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
