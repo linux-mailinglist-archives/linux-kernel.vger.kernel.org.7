@@ -1,229 +1,112 @@
-Return-Path: <linux-kernel+bounces-681289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F6CAD50C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B8BAD5159
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4233A7444
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8630B1E01CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9015525E448;
-	Wed, 11 Jun 2025 10:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="shnj01YX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vFObAyz4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E27263C9F;
+	Wed, 11 Jun 2025 10:08:19 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20262219FC;
-	Wed, 11 Jun 2025 10:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6E4263C68;
+	Wed, 11 Jun 2025 10:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749636196; cv=none; b=obkFageBAAT+bpZAe1E27F34P4acJVzKHFWuYw658c5U87DWM6dM9mHMsqz+1y9U2rfQ/rNSisezKukVXy9ZjmqyoD533QnyCjQqkSSuStL98ftD93TfXvsVDSic/0fSyEPXnDOhzcSosJqpgqiRw02No0A/DWmd7T7i5UnJefY=
+	t=1749636499; cv=none; b=bAbQh9NCK8CsBHLx05+B+oyde/aRuUP6YXxZzbv/8tY97vuHwL8obSo7QTCQ0LUbzoQzuCy85r/xyEWmEScojLmOb57VT9uwNbtMt20+yF/3A0ZC3/y5Xbua4w6yZ3WBnBXAYXSA31HgtBKHTLTxcV9L6AUNxHfy2zsbzqnCIKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749636196; c=relaxed/simple;
-	bh=uv6wy8a8ri8Rk6Bv9uSd6J1RWk714HaZu7i2RogwTWk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JsGHsSz8AEAVw6ERBxAuhVWJxbS/0RkRpm60Ju59j4JpSrElJSe/ENoE+xTKNKpNHB8taSxyjEaPzIWfYoHcxqjANbCRZcS4SvYwxeRuiCrU9WnemTpg18A1WQjyYHoNZmMjWyGoTI4eG0F53NGPV1uqGz3MT9+5KpQKusho+rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=shnj01YX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vFObAyz4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749636193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qd1MN17pSqV3mr06IKYN/Y7X3TrqQO0v8MeldDeV3+M=;
-	b=shnj01YXoMPQV/NSl2bJpQ3ml67GgyrS1YNr2tIOSC3qubw7sMbZ5UvdnqUg/yihFyXeNR
-	a6Skmww9JUubnExvsxM9Cj8ijGwAZWlwdQ6HPbuj86mz94PpvMrrMQcoB8yIcF9ai05Gic
-	Uem9e3kBf42drnefdWOtb/qXF5YgA5DYL6PyGANJMgHLd52EzbiZp6noK9xzAp9I5BbqHr
-	cww4PS5uKPH+8lz2VQYBCRgABu+xKH+uL5vY09mw9U/Nyl/FlD3E3aipqyCekMKM3b1U6m
-	8v2+jX3ULwk5c/i6Xg7BzYS8JGtQsFKtrT9aXZOua5ei59mF4XSFXC7zXjsFLA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749636193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qd1MN17pSqV3mr06IKYN/Y7X3TrqQO0v8MeldDeV3+M=;
-	b=vFObAyz4Eg8tJr/G0EbW88dTSIp4y6yZ8QS7ntviywmgqKIsFPkbyd/mWEHZDjLXwHASB6
-	0BKsONt8X4f5jCBA==
-Date: Wed, 11 Jun 2025 12:03:06 +0200
-Subject: [PATCH] remoteproc: Don't use %pK through printk
+	s=arc-20240116; t=1749636499; c=relaxed/simple;
+	bh=RLqB1iQ7SrII3N8HkkeOdj1kfx6TbSgG6AN9Zp7FTB4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qIuS5vi8DwjwcdMBJslzKcXIOoZbtKpmZCmrvMRLgtttUdfmYl4GP41XldEGmjd1G4Bmp0+VL3cXNl9kHrReRrQVNpVVucIyJxIczWJV/yDF/C4hcLKxMToclsMG92Tt1t9GyHBvGn1LziXRXmKREQ4kfYno3Rns3QFSMQaKX+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.smartont.net (unknown [180.110.114.155])
+	by APP-01 (Coremail) with SMTP id qwCowADHPdy2U0lo4lS+BQ--.28065S2;
+	Wed, 11 Jun 2025 18:00:22 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH] RISC-V: KVM: Avoid re-acquiring memslot in kvm_riscv_gstage_map()
+Date: Wed, 11 Jun 2025 17:51:40 +0800
+Message-Id: <50989f0a02790f9d7dc804c2ade6387c4e7fbdbc.1749634392.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250611-restricted-pointers-remoteproc-v1-1-f059097ba663@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAFlUSWgC/x2NsQrDMAwFfyVorkFOnQz5ldDB2K+ththGMqUQ8
- u81He+Gu5MMKjDappMUHzGpZYC/TZTesbzgJA+mmeeFAwensK6SOrJrVUqH2nBH7Whak1vZR8Y
- asw93GpGmeMr3P9gf1/UDEBa2tnAAAAA=
-X-Change-ID: 20250404-restricted-pointers-remoteproc-601a0e6ad143
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Patrice Chotard <patrice.chotard@foss.st.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749636192; l=6773;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=uv6wy8a8ri8Rk6Bv9uSd6J1RWk714HaZu7i2RogwTWk=;
- b=Az5CsUZmbkGR7nFgWHJ3zKgy5Z09s5iwgKrK7a7reGGSVlRLX409vWQY3Exoa38q5Dn8b/LbR
- A5ncYngeULGC+jmzK7RNo0weBSqqpK5I2TSi5CY5r0Y0+jjyyE5oQzT
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-CM-TRANSID:qwCowADHPdy2U0lo4lS+BQ--.28065S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WrW3trWfAFyrArWUXrW3GFg_yoW8JF43pF
+	4xCF1DCr4Fg3ZI9ry2k3Wv9a9xCa95W3Z7Cr4UGrWYqrsxtrySqws5W397ZF13Jr48XFWx
+	ZFn8XFWUZr4rGw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBSoAUUUUU=
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBgwKBmhJLhCtlQAAsh
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-There are still a few users of %pK left, but these use it through seq_file,
-for which its usage is safe.
+The caller has already passed in the memslot, and there are
+two instances `{kvm_faultin_pfn/mark_page_dirty}` of retrieving
+the memslot again in `kvm_riscv_gstage_map`, we can replace them
+with `{__kvm_faultin_pfn/mark_page_dirty_in_slot}`.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
 ---
- drivers/remoteproc/omap_remoteproc.c     | 2 +-
- drivers/remoteproc/pru_rproc.c           | 2 +-
- drivers/remoteproc/remoteproc_core.c     | 2 +-
- drivers/remoteproc/remoteproc_virtio.c   | 2 +-
- drivers/remoteproc/st_slim_rproc.c       | 2 +-
- drivers/remoteproc/ti_k3_common.c        | 4 ++--
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 +-
- drivers/rpmsg/virtio_rpmsg_bus.c         | 2 +-
- 8 files changed, 9 insertions(+), 9 deletions(-)
+ arch/riscv/kvm/mmu.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 9c7182b3b0382da49f1ed666c289628cf2bd936c..9c9e9c3cf378b00cf2720b77f69179fd4e6daaef 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -1211,7 +1211,7 @@ static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
- 		oproc->mem[i].dev_addr = data->mems[i].dev_addr;
- 		oproc->mem[i].size = resource_size(res);
- 
--		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %pK da 0x%x\n",
-+		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
- 			data->mems[i].name, &oproc->mem[i].bus_addr,
- 			oproc->mem[i].size, oproc->mem[i].cpu_addr,
- 			oproc->mem[i].dev_addr);
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 4a4eb9c0b13354fee9803d38d09216fa28ad1c4e..842e4b6cc5f9fcd9654683da9ffc15e594824c78 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -1055,7 +1055,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 		pru->mem_regions[i].pa = res->start;
- 		pru->mem_regions[i].size = resource_size(res);
- 
--		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-+		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %p\n",
- 			mem_names[i], &pru->mem_regions[i].pa,
- 			pru->mem_regions[i].size, pru->mem_regions[i].va);
- 	}
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 81b2ccf988e852ac79cee375c7e3f118c2a4b41a..82567210052893a501e7591204af1feb07befb22 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -699,7 +699,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
- 		return -ENOMEM;
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index 1087ea74567b..f9059dac3ba3 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -648,7 +648,8 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+ 		return -EFAULT;
  	}
  
--	dev_dbg(dev, "carveout va %pK, dma %pad, len 0x%zx\n",
-+	dev_dbg(dev, "carveout va %p, dma %pad, len 0x%zx\n",
- 		va, &dma, mem->len);
+-	hfn = kvm_faultin_pfn(vcpu, gfn, is_write, &writable, &page);
++	hfn = __kvm_faultin_pfn(memslot, gfn, is_write ? FOLL_WRITE : 0,
++				&writable, &page);
+ 	if (hfn == KVM_PFN_ERR_HWPOISON) {
+ 		send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva,
+ 				vma_pageshift, current);
+@@ -670,7 +671,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+ 		goto out_unlock;
  
- 	if (mem->da != FW_RSC_ADDR_ANY && !rproc->domain) {
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 25a655f33ec0ed76b9a90dd31de244832d82c2a7..c5d46a87814905e306f6be1541f60f7a6db59e19 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -136,7 +136,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
- 	size = vring_size(num, rvring->align);
- 	memset(addr, 0, size);
- 
--	dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
-+	dev_dbg(dev, "vring%d: va %p qsz %d notifyid %d\n",
- 		id, addr, num, rvring->notifyid);
- 
- 	/*
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 5412beb0a69206385c1b3127ea45d0b77cd312c8..d083ecf02f5cf13d4332041cb0fada213de1f9ab 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -190,7 +190,7 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *
- 		}
- 	}
- 
--	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%zx va = 0x%pK\n",
-+	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%zx va = 0x%p\n",
- 		da, len, va);
- 
- 	return va;
-diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index d5dccc81d46040e4e384e773c474af814823c1c6..d4f20900f33bdd92a59c62d0a7b166c4ad66ed16 100644
---- a/drivers/remoteproc/ti_k3_common.c
-+++ b/drivers/remoteproc/ti_k3_common.c
-@@ -450,7 +450,7 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
- 		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
- 		kproc->mem[i].size = resource_size(res);
- 
--		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-+		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %p da 0x%x\n",
- 			data->mems[i].name, &kproc->mem[i].bus_addr,
- 			kproc->mem[i].size, kproc->mem[i].cpu_addr,
- 			kproc->mem[i].dev_addr);
-@@ -528,7 +528,7 @@ int k3_reserved_mem_init(struct k3_rproc *kproc)
- 			return -ENOMEM;
- 		}
- 
--		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-+		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %p da 0x%x\n",
- 			i + 1, &kproc->rmem[i].bus_addr,
- 			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
- 			kproc->rmem[i].dev_addr);
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index e34c04c135fc90354086de83ab4c648dfb77fdc4..ca5ff280d2dc2d5dd6976ec38233f586c9200bbe 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -1007,7 +1007,7 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
- 			return -ENOMEM;
- 		}
- 
--		dev_dbg(dev, "memory sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-+		dev_dbg(dev, "memory sram%d: bus addr %pa size 0x%zx va %p da 0x%x\n",
- 			i, &core->sram[i].bus_addr,
- 			core->sram[i].size, core->sram[i].cpu_addr,
- 			core->sram[i].dev_addr);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 4730b1c8b3228290ef0f6a8d7b70080c26315a87..484890b4a6a7442fe1e298bf43640c04202d4a56 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -901,7 +901,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 		goto vqs_del;
- 	}
- 
--	dev_dbg(&vdev->dev, "buffers: va %pK, dma %pad\n",
-+	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
- 		bufs_va, &vrp->bufs_dma);
- 
- 	/* half of the buffers is dedicated for RX */
-
----
-base-commit: f09079bd04a924c72d555cd97942d5f8d7eca98c
-change-id: 20250404-restricted-pointers-remoteproc-601a0e6ad143
-
-Best regards,
+ 	if (writable) {
+-		mark_page_dirty(kvm, gfn);
++		mark_page_dirty_in_slot(kvm, memslot, gfn);
+ 		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
+ 				      vma_pagesize, false, true);
+ 	} else {
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.34.1
 
 
