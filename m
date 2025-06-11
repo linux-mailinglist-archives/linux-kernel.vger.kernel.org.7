@@ -1,149 +1,187 @@
-Return-Path: <linux-kernel+bounces-680600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73549AD4765
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:17:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB332AD473A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17C527A444F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F101B1897951
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294CF101F2;
-	Wed, 11 Jun 2025 00:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604F53C38;
+	Wed, 11 Jun 2025 00:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dByUjmHo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oR3xB8Mr"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0177DEBE;
-	Wed, 11 Jun 2025 00:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340AD211F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 00:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749601010; cv=none; b=aQ5CoipfZWbhHFoxtWDqvs+RaS1H5jbvgHQu6GUExEveMFrptYTfgu9MtRwpNWnIaAzQ/9rtKPuJR7vgaNBAeolwnMk4KrL5m9HRw5UHLVy1DiAP4abQThWB0ss3EbvZ56ZRWF6C8LgdwotVU/HJjzwidOGBczvsdAUh/GhONfs=
+	t=1749600648; cv=none; b=cDNcxN059ZCBcmHQztmR068cKe+q1duT035NDzVFD7U/4aeJbJxAyE8bkF3G476eimW2wHqk0TjRl1jdx/rNo0s+HJWdLYQPLaslLId48qJ3sfrnHXuOChOYVuV4ANZLducx0oNlVBLPCTYk3WUZCtL2uUDk9FJhS97/7SdQO0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749601010; c=relaxed/simple;
-	bh=S40pI5W06xk884q2HvExFYi8n68iIjm/9A9TA1JDBk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JHTeFkpt/a2yY2IgAuimPYXghvWqkkQw9uAHjaP+CDdyDHCy655gHtmw+01DOSuqNS8zuAooR1Q8dxRGr+2rhiGdifqhwgE2W+v99gWc7lJH1vADZFv1IqM14oOLIP2I2H4Wqn1/ue8J6Xl+JAND7O4jdX05BBTn8lZ1/fnp2HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dByUjmHo; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749601009; x=1781137009;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=S40pI5W06xk884q2HvExFYi8n68iIjm/9A9TA1JDBk0=;
-  b=dByUjmHogDiQp0Q/3gFOh2kCGuuX5hP1PInYiRP2HhvwR8pZqw5TxHMg
-   76gwTVr3Hiqt31L63UKU+KyHAEOHcA0NqIovr6KsXjtcB8Gy72Wde5/hw
-   vljD7USx6S/jzahq/Pfm7ILnFxD1az/xmyLTBwKzkDDHhhKupmBoLMFoQ
-   6ebPKgTVo1s9/zPolZVfJRboqECuWMe+oiEbDyYdwNk1tnWyVwl32/Ht1
-   UBFDg3WIrkpRzvYOWkkOGHNBmipIQv+YnpvIVGUHFXNq+lTThzQ3j3MER
-   rreqqsU49U4821zBdRDeDCE+saQT1z/IFSdnu2hPvsUT/7vG6RSFEETms
-   Q==;
-X-CSE-ConnectionGUID: OLX097SLSnORjO9sYMJvcQ==
-X-CSE-MsgGUID: PZjoSyywT/qWH0a8Y5CHJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51644542"
-X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
-   d="scan'208";a="51644542"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 17:16:48 -0700
-X-CSE-ConnectionGUID: 0s0PpqsrRIeorsymB8zcIw==
-X-CSE-MsgGUID: P+ZmXgcDRYm0AIQrnw8Jng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
-   d="scan'208";a="151808058"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.48.52])
-  by orviesa003.jf.intel.com with ESMTP; 10 Jun 2025 17:16:45 -0700
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	rick.p.edgecombe@intel.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yan.y.zhao@intel.com,
-	reinette.chatre@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	isaku.yamahata@intel.com,
-	Binbin Wu <binbin.wu@linux.intel.com>,
-	tony.lindgren@linux.intel.com,
-	xiaoyao.li@intel.com
-Subject: [PATCH] KVM: x86/mmu: Embed direct bits into gpa for KVM_PRE_FAULT_MEMORY
-Date: Tue, 10 Jun 2025 20:10:18 -0400
-Message-ID: <20250611001018.2179964-1-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749600648; c=relaxed/simple;
+	bh=JQfMhNtkMh4Eskn6e+JLGabT20zk6Rt1P/kcDLiyXww=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Nj4t+ilS7o2DvzcB/HKa9NBvlv2E/OzWcjU0JnUhLERZCkj5eHeGyGgaaKsxgXX6LTnQdmqv8TG6fbR1nnqlUqYoJClUgrNgxLk1uuxfASWo3PPZ8P9P5rVL2ttLC04a9Larxwo/foSPEFVX4/BMEQDPgJOSS1fExJswGWQxOIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oR3xB8Mr; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311b6d25163so5171340a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749600645; x=1750205445; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KeHmPmMyMKJKT4alX9Roe+NB+CyhbaLAdm3PrWL3iJM=;
+        b=oR3xB8MrGIkLYNwtuC5Ffx4GgoJtgKHh8FxOESplBsDzWl708CBAzN1anMKLx2F3nf
+         XcdqZOPLPyw+jLsofgCA09loqhCWqjZ874qXH1rfX4e3EY+NstuBzcHAtzOHk7mot6zC
+         BpWUwhI2gJ6pY9ZVwj3RNn+UGDCpdQ79F8Cqe4Ys+CalwlJHP05jD9ToueHyZi+/+53B
+         5voMkqVERZugFxX7EQokQkMuC0ncj50AnopASPUq+snZLBkfOpe81kUVpq2UobKNwP+p
+         +mH89+K0CEI3YxxEXV4scpoHvZc4uHARrrafq9njfJRREH+6oP7a1hJabSyU/tlNDDHA
+         mAPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749600645; x=1750205445;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KeHmPmMyMKJKT4alX9Roe+NB+CyhbaLAdm3PrWL3iJM=;
+        b=UPxdEZNS1gDdX7nmrRDqZqqeWEUJSu/qeZHkX8n4yWLOV/MvUy0j6sEBxqOvrOhPOW
+         5CRTdh/OsC6xRXGlfzLNucA7mAFuuq+SlipyIvalijRO1E4aaeWbbznHhNIqyCItaXqi
+         Adb9pEMpccRLVL05EXWdxuTeJU2Pjlt3qjNXyHAD7rX9M7eQLffoPGu9XHYwhHQw4HsX
+         a+CxcLGoQaahMsH3wl7oc4vZ2Js62UAlN7WEMs/Waa+tzyusbUBkSsg1xiTj7Fh6bSsv
+         x+cDlF/mOhfYcUBJu4j6RiEW8GJc60eR8nmMq/fo3WB8WKfSb/5VXUboMjkxzQVypXJb
+         l2Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCDi6kY3pQVsMx1j4Cu9Mv+h/q1RMFmzoWc2YQ7sIbIhhh202O+1A9jHpGU5nz7JENzyX+mDbQwaXtwio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxgjMEr8G36DVeuQ4p1xHyBl8ylbHW1OwjJEPE1UqvVyyPQBcs
+	FcXnDgc5DKZG1grkhAmWxJJOhQXfWyssMy61kIiyoCmEo+O6QRZCfRE13zEeBGZ4M9+jnYeB5Jq
+	i2r3gqg==
+X-Google-Smtp-Source: AGHT+IF8oABFbuTKJ9GcUMp/LE7xUGa2l9YHKCqeYYF9+w27QVhniGaieMvIcJ7joDnc4dA30O9QnXDBack=
+X-Received: from pjz3.prod.google.com ([2002:a17:90b:56c3:b0:312:e914:4548])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec4:b0:311:9c9a:58d7
+ with SMTP id 98e67ed59e1d1-313b1fbe6admr808960a91.19.1749600645461; Tue, 10
+ Jun 2025 17:10:45 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 10 Jun 2025 17:10:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc0.642.g800a2b2222-goog
+Message-ID: <20250611001042.170501-1-seanjc@google.com>
+Subject: [PATCH 0/8] KVM: Remove include/kvm, standardize includes
+From: Sean Christopherson <seanjc@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Anish Ghulati <aghulati@google.com>, Colton Lewis <coltonlewis@google.com>, 
+	Thomas Huth <thuth@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+Kill off include/kvm (through file moves/renames), and standardize the set of
+KVM includes across all architectures.
 
-Bug[*] reported for TDX case when enabling KVM_PRE_FAULT_MEMORY in QEMU.
+This conflicts with Colton's partioned PMU series[1], but this should work as
+a nice prepatory cleanup for the partitioned PMU work (and hopefully can land
+sooner).
 
-It turns out that @gpa passed to kvm_mmu_do_page_fault() doesn't have
-shared bit set when the memory attribute of it is shared, and it leads
-to wrong root in tdp_mmu_get_root_for_fault().
+Note, these patches were originally posted as part of a much larger and more
+agressive RFC[1].  We've effectively abandoned upstreaming the multi-KVM idea,
+but I'm trying to (slowly) upstream the bits and pieces that I think/hope are
+generally beneficial.
 
-Fix it by embedding the direct bits in the gpa that is passed to
-kvm_tdp_map_page(), when the memory of the gpa is not private.
+[1] https://lore.kernel.org/all/20250602192702.2125115-1-coltonlewis@google.com
+[2] https://lore.kernel.org/all/20230916003118.2540661-1-seanjc@google.com
 
-[*] https://lore.kernel.org/qemu-devel/4a757796-11c2-47f1-ae0d-335626e818fd@intel.com/
+Anish Ghulati (1):
+  KVM: arm64: Move arm_{psci,hypercalls}.h to an internal KVM path
 
-Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Closes: https://lore.kernel.org/qemu-devel/4a757796-11c2-47f1-ae0d-335626e818fd@intel.com/
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
-we have selftests enhancement for TDX case of KVM_PRE_FAULT_MEMORY, but
-the plan is to post them on top of the TDX selftests [1] when they get
-upstream.
+Sean Christopherson (7):
+  KVM: arm64: Include KVM headers to get forward declarations
+  KVM: arm64: Move ARM specific headers in include/kvm to arch directory
+  KVM: Move include/kvm/iodev.h to include/linux as kvm_iodev.h
+  KVM: MIPS: Stop adding virt/kvm to the arch include path
+  KVM: PPC: Stop adding virt/kvm to the arch include path
+  KVM: s390: Stop adding virt/kvm to the arch include path
+  KVM: Standardize include paths across all architectures
 
-[1] https://lore.kernel.org/all/20250414214801.2693294-1-sagis@google.com/
----
- arch/x86/kvm/mmu/mmu.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ MAINTAINERS                                                | 1 -
+ .../arm64/include/asm/kvm_arch_timer.h                     | 2 ++
+ arch/arm64/include/asm/kvm_host.h                          | 7 +++----
+ include/kvm/arm_pmu.h => arch/arm64/include/asm/kvm_pmu.h  | 2 ++
+ .../kvm/arm_vgic.h => arch/arm64/include/asm/kvm_vgic.h    | 2 +-
+ arch/arm64/kvm/Makefile                                    | 2 --
+ arch/arm64/kvm/arch_timer.c                                | 5 ++---
+ arch/arm64/kvm/arm.c                                       | 6 +++---
+ {include => arch/arm64}/kvm/arm_hypercalls.h               | 0
+ {include => arch/arm64}/kvm/arm_psci.h                     | 0
+ arch/arm64/kvm/guest.c                                     | 2 +-
+ arch/arm64/kvm/handle_exit.c                               | 2 +-
+ arch/arm64/kvm/hyp/Makefile                                | 6 +++---
+ arch/arm64/kvm/hyp/include/hyp/switch.h                    | 4 ++--
+ arch/arm64/kvm/hyp/nvhe/switch.c                           | 4 ++--
+ arch/arm64/kvm/hyp/vhe/switch.c                            | 4 ++--
+ arch/arm64/kvm/hypercalls.c                                | 4 ++--
+ arch/arm64/kvm/pmu-emul.c                                  | 4 ++--
+ arch/arm64/kvm/psci.c                                      | 4 ++--
+ arch/arm64/kvm/pvtime.c                                    | 2 +-
+ arch/arm64/kvm/reset.c                                     | 3 +--
+ arch/arm64/kvm/trace_arm.h                                 | 2 +-
+ arch/arm64/kvm/trng.c                                      | 2 +-
+ arch/arm64/kvm/vgic/vgic-debug.c                           | 2 +-
+ arch/arm64/kvm/vgic/vgic-init.c                            | 2 +-
+ arch/arm64/kvm/vgic/vgic-irqfd.c                           | 2 +-
+ arch/arm64/kvm/vgic/vgic-kvm-device.c                      | 2 +-
+ arch/arm64/kvm/vgic/vgic-mmio-v2.c                         | 4 ++--
+ arch/arm64/kvm/vgic/vgic-mmio-v3.c                         | 4 ++--
+ arch/arm64/kvm/vgic/vgic-mmio.c                            | 6 +++---
+ arch/arm64/kvm/vgic/vgic-v2.c                              | 2 +-
+ arch/arm64/kvm/vgic/vgic-v3-nested.c                       | 3 +--
+ arch/arm64/kvm/vgic/vgic-v3.c                              | 2 +-
+ arch/loongarch/include/asm/kvm_eiointc.h                   | 2 +-
+ arch/loongarch/include/asm/kvm_ipi.h                       | 2 +-
+ arch/loongarch/include/asm/kvm_pch_pic.h                   | 2 +-
+ arch/mips/include/asm/kvm_host.h                           | 3 +--
+ arch/mips/kvm/Makefile                                     | 2 --
+ arch/powerpc/kvm/Makefile                                  | 2 --
+ arch/powerpc/kvm/mpic.c                                    | 2 +-
+ arch/riscv/kvm/Makefile                                    | 2 --
+ arch/riscv/kvm/aia_aplic.c                                 | 2 +-
+ arch/riscv/kvm/aia_imsic.c                                 | 2 +-
+ arch/s390/kvm/Makefile                                     | 2 --
+ arch/x86/kvm/Makefile                                      | 1 -
+ arch/x86/kvm/i8254.h                                       | 2 +-
+ arch/x86/kvm/ioapic.h                                      | 2 +-
+ arch/x86/kvm/irq.h                                         | 2 +-
+ arch/x86/kvm/lapic.h                                       | 2 +-
+ include/{kvm/iodev.h => linux/kvm_iodev.h}                 | 0
+ virt/kvm/Makefile.kvm                                      | 2 ++
+ virt/kvm/coalesced_mmio.c                                  | 3 +--
+ virt/kvm/eventfd.c                                         | 2 +-
+ virt/kvm/kvm_main.c                                        | 3 +--
+ 54 files changed, 64 insertions(+), 77 deletions(-)
+ rename include/kvm/arm_arch_timer.h => arch/arm64/include/asm/kvm_arch_timer.h (98%)
+ rename include/kvm/arm_pmu.h => arch/arm64/include/asm/kvm_pmu.h (99%)
+ rename include/kvm/arm_vgic.h => arch/arm64/include/asm/kvm_vgic.h (99%)
+ rename {include => arch/arm64}/kvm/arm_hypercalls.h (100%)
+ rename {include => arch/arm64}/kvm/arm_psci.h (100%)
+ rename include/{kvm/iodev.h => linux/kvm_iodev.h} (100%)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index cbc84c6abc2e..a4040578b537 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4896,6 +4896,7 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
- {
- 	u64 error_code = PFERR_GUEST_FINAL_MASK;
- 	u8 level = PG_LEVEL_4K;
-+	u64 direct_bits;
- 	u64 end;
- 	int r;
- 
-@@ -4910,15 +4911,18 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
- 	if (r)
- 		return r;
- 
-+	direct_bits = 0;
- 	if (kvm_arch_has_private_mem(vcpu->kvm) &&
- 	    kvm_mem_is_private(vcpu->kvm, gpa_to_gfn(range->gpa)))
- 		error_code |= PFERR_PRIVATE_ACCESS;
-+	else
-+		direct_bits = gfn_to_gpa(kvm_gfn_direct_bits(vcpu->kvm));
- 
- 	/*
- 	 * Shadow paging uses GVA for kvm page fault, so restrict to
- 	 * two-dimensional paging.
- 	 */
--	r = kvm_tdp_map_page(vcpu, range->gpa, error_code, &level);
-+	r = kvm_tdp_map_page(vcpu, range->gpa | direct_bits, error_code, &level);
- 	if (r < 0)
- 		return r;
- 
 
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+base-commit: 61374cc145f4a56377eaf87c7409a97ec7a34041
 -- 
-2.43.0
+2.50.0.rc0.642.g800a2b2222-goog
 
 
