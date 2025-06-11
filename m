@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-680938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE155AD4C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:49:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA58AD4C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7721D189CD03
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6483A6CC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4335A228CB2;
-	Wed, 11 Jun 2025 06:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C944A227B81;
+	Wed, 11 Jun 2025 06:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mU92wHiV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m2bIyOfr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JJdIKemE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3D4C133;
-	Wed, 11 Jun 2025 06:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D35AC133
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749624556; cv=none; b=f38DXC9Ck79739W+Z0spCmk9BT11/m5pcD+SAELkeqTedQwMFWK7sLczmxCNsi5Hd+frF0SnnRiWEefCDa3nqJgFQeIBUHh08gB8rIcuefocxsp0S4tNITcKlCwbhezxA+ad5zknHT9ET/ZHRiVMrNuJW0vXC/mGQnur7887cts=
+	t=1749624626; cv=none; b=MKEDCYsmy0VcvaZyyrTPklAyN+jcaAEVi/HhmMocQ+mTI00Xchys/OUy2VEhSEeX8qyUlPkP+tpdp4LXIIH3ZHuLplg8MGeFu+mvkvjdv3a2yZv/Jx+Sm8v+kYbXbefVsW4YhGwBCerfGa0lBakb8afJb8trLcarHrrKBx5I7tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749624556; c=relaxed/simple;
-	bh=FMyO1EmovbumXEl+OiTYuyUzT9z/yCBH7rYczUz94gc=;
-	h=Content-Type:Date:Message-Id:Subject:From:To:References:
-	 In-Reply-To; b=bRZf23RuBpPCIHwOgH63WMV3jXVsJgdU26MSGXZSuWivDfWs0dW60XBltsgrz3cKuYd/u+vU5R+3qFqWxh9Ru5Ft/jJWdiqPdiNLgkkgtiPmzHic6tc1ZC3ea+gdfqr+NMF2v1E9SCkPJjTxgMWBSq/pSaJBqt2s8nBdF6vChEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mU92wHiV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7566C4CEEE;
-	Wed, 11 Jun 2025 06:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749624554;
-	bh=FMyO1EmovbumXEl+OiTYuyUzT9z/yCBH7rYczUz94gc=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=mU92wHiV8pQgRnuittKr8tyKpv+KRITKdjTXqVhUdCd1U6UGvNR5xKmCjUvnqsaN2
-	 UncLT+z+CSgoqGV1i65FmgBZB+8HF90JOJEAjoz4b8zpOLdg88JfQKb80HxtJyge0k
-	 RskP5bvywhh2BnOhmjiH+pOvJzrA6bZXDSN09gsAhPlBnYOclAvDSi5nDRK9LASQ5y
-	 i2WfiVz1w4Vgdsz+1K6DVU8puXA6jvHKTVAhKUF/kvr1oA1Fgy6c/+T9VSOYhG+2Tq
-	 RYXvHM7TG7U6mLZLJxbVDhtHTtj1E/NBYeB/yhKpxIH3e1cWdGZIkcMYftCSkqr/bk
-	 rhKq6Zyn78hwA==
-Content-Type: multipart/signed;
- boundary=092bfdba70b2454870f72bac72348f01da7a4597ebda2c812354a0b1278b;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 11 Jun 2025 08:49:09 +0200
-Message-Id: <DAJI523999W0.GE2LHI6HQUPN@kernel.org>
-Subject: Re: [PATCH v3 1/3] mtd: spi-nor: sfdp: parse SFDP SST vendor map
- and register EUI addresses into NVMEM framework
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Manikandan Muralidharan"
- <manikandan.m@microchip.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
- <alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
- <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
- <vigneshr@ti.com>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-mtd@lists.infradead.org>
-X-Mailer: aerc 0.16.0
-References: <20250521070336.402202-1-manikandan.m@microchip.com>
- <20250521070336.402202-2-manikandan.m@microchip.com>
- <8caf71ab-8b3f-438a-8075-60dd01a7a448@linaro.org>
-In-Reply-To: <8caf71ab-8b3f-438a-8075-60dd01a7a448@linaro.org>
+	s=arc-20240116; t=1749624626; c=relaxed/simple;
+	bh=zbMt++xWMg4n/Zall9/2pW/vPi7/zSrvPAL3EDtmDY0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sRi8pTHHIeQUfhvNXG/wiIZANcbyqoaww5SJbcXcDe1tw7viilUV+uNZylxmj/pfPii8oo29BGrdCvWBYMxL19o+/akqSiz80HWxfcSZ6pbwhzYmbiBxwO3gkUDujVIBXJ3WDt9uHAJmo/R7d0wSk/W+fLXrHMBZTjrQrfO2+Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m2bIyOfr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JJdIKemE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749624622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x0fiKSrR3ukWqajPYBCK09iOBRkiHsShaARb7yP1dNk=;
+	b=m2bIyOfr8wkgSyB8kYSuKFqvDCaeEpevaPDX70TJfbnQ+vPv3U2U6bxo3V/6i72fTXdsOz
+	UU9oP12ZPkmleM0ySBH2zy5LaldM5qPAvR1WZvbpak0//5VcHjbC780xVn/LkeBJtrG/G7
+	m8IzkX54QJvlYphK46luSXi1uJfS8BwykcIaSd9PLBJ34lEryG2u55nXsgRjlvRqkSfXuD
+	MkFF6c241RcPWoUgnab0l69BvwIpObHXKpYkhLnxiaAxHhDuGgn/sVR23RhcTJF/pyD35h
+	Wnf1OdysqYEObgUxGoBKKpjQ0negtwwBltnzbmYknSoIW3WHLytzNuuYeQEInQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749624622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x0fiKSrR3ukWqajPYBCK09iOBRkiHsShaARb7yP1dNk=;
+	b=JJdIKemEB1WVFaOzLvk2IkoT3A69r5E9Ft37REJO5wiSwsPfCosOmE5iWjuJS3dBDhki56
+	sJmCuqts2X2p78AQ==
+To: Brian Norris <briannorris@chromium.org>, Aleksandrs Vinarskis
+ <alex.vinarskis@gmail.com>
+Cc: Tsai Sung-Fu <danielsftsai@google.com>, Douglas Anderson
+ <dianders@chromium.org>, linux-kernel@vger.kernel.org, Johan Hovold
+ <johan@kernel.org>
+Subject: Re: [PATCH v2 1/2] genirq: Retain depth for managed IRQs across CPU
+ hotplug
+In-Reply-To: <aEiQitCsXq9XSBcZ@google.com>
+References: <20250514201353.3481400-1-briannorris@chromium.org>
+ <20250514201353.3481400-2-briannorris@chromium.org>
+ <24ec4adc-7c80-49e9-93ee-19908a97ab84@gmail.com>
+ <aEcWTM3Y1roOf4Ph@google.com>
+ <CAMcHhXqq9DHgip3rr0=24Y-LEBq5n4rDrE6AsWyjyBmsS7s+-A@mail.gmail.com>
+ <aEiQitCsXq9XSBcZ@google.com>
+Date: Wed, 11 Jun 2025 08:50:22 +0200
+Message-ID: <87qzzqojpt.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
---092bfdba70b2454870f72bac72348f01da7a4597ebda2c812354a0b1278b
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Tue, Jun 10 2025 at 13:07, Brian Norris wrote:
+> On Mon, Jun 09, 2025 at 08:19:58PM +0200, Aleksandrs Vinarskis wrote:
+>  
+>  void irq_startup_managed(struct irq_desc *desc)
+>  {
+> +	struct irq_data *d = irq_desc_get_irq_data(desc);
+> +
+>  	/*
+>  	 * Only start it up when the disable depth is 1, so that a disable,
+>  	 * hotunplug, hotplug sequence does not end up enabling it during
+>  	 * hotplug unconditionally.
+>  	 */
+>  	desc->depth--;
+> +	irqd_clr_managed_shutdown(d);
 
-On Mon Jun 9, 2025 at 10:04 AM CEST, Tudor Ambarus wrote:
-> Hi,
->
-> On 5/21/25 8:03 AM, Manikandan Muralidharan wrote:
-> >  drivers/mtd/spi-nor/sfdp.c  | 161 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/mtd/spi-nor.h |   7 ++
-> >  2 files changed, 168 insertions(+)
->
-> Please find a way to move the vendor specific handling to a vendor file,
-> don't pollute the core drivers.
+If depth > 0, then it's still shutdown and the subsequent enable
+operation which brings it down to 0 will take care of it. So what are
+you trying to solve here?
 
-IIRC I've suggested to move the handling into the core, but it
-should be more generic, not handling any MAC address related things,
-but more like a framework/helper functions to expose anything
-related to SFDP.
+>  	if (!desc->depth)
+>  		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
+>  }
+> diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
+> index f07529ae4895..755346ea9819 100644
+> --- a/kernel/irq/cpuhotplug.c
+> +++ b/kernel/irq/cpuhotplug.c
+> @@ -210,13 +210,6 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
+>  	    !irq_data_get_irq_chip(data) || !cpumask_test_cpu(cpu, affinity))
+>  		return;
+>  
+> -	/*
+> -	 * Don't restore suspended interrupts here when a system comes back
+> -	 * from S3. They are reenabled via resume_device_irqs().
+> -	 */
+> -	if (desc->istate & IRQS_SUSPENDED)
+> -		return;
+> -
 
--michael
+Huch? Care to read:
 
-> In what concerns the nvmem idea, I find
-> it fine. Michael may comment more on it as I think he dealt with a
-> similar use case in the past.
->
-> Cheers,
-> ta
+a60dd06af674 ("genirq/cpuhotplug: Skip suspended interrupts when restoring affinity")
 
+Thanks,
 
---092bfdba70b2454870f72bac72348f01da7a4597ebda2c812354a0b1278b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaEkm5hIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/iH1gGA6wzFs0xl83MYYXUgMyMJ+YgGxuhLeTQ1
-qHmSAJKFMEM4cyx5fxuUV6FhRyQLNUA8AX9//HDdaQQEZBAfkBYcjQ/PXiEjSPFI
-ONNVhbjpadS+iOl+ejT4Mx7vZOxG+bgHAVU=
-=zgcm
------END PGP SIGNATURE-----
-
---092bfdba70b2454870f72bac72348f01da7a4597ebda2c812354a0b1278b--
+        tglx
 
