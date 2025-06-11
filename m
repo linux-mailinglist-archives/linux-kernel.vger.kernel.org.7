@@ -1,210 +1,131 @@
-Return-Path: <linux-kernel+bounces-681515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C411AD53B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357D5AD53F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B9E188A96A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:17:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53042188E73B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD16272E46;
-	Wed, 11 Jun 2025 11:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I50QKmE9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60AB2749C8;
+	Wed, 11 Jun 2025 11:29:44 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C01262FD9;
-	Wed, 11 Jun 2025 11:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3320F25BF06;
+	Wed, 11 Jun 2025 11:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749640573; cv=none; b=NGJ0/+caxUKeZLAopY16ZNuNIpHfFCGx6B4bcTtOBJQRnSkiCZyYpe1zHEze4bzkDMgo6zgShxfIfy71ju/7EKe7JekT8qzhVwA3wxd97QfQxx8KYELfdN9WWbZDyfkXC0XYdogtjqgr0d9d3m+zUFnEDqr9v4kUKzDILp35d8U=
+	t=1749641384; cv=none; b=lu2rLkJVNZCVelZWrme5bYvNs6ZyxKR/h/GxK0NSFLuInp5pGNntltnvoOpBoUT6GTFFAWUBAlPijoZhM0KJR93OOfCYO1fGjvrHjIbBJtt/47u4QjqZkQNThfJOIF8oN1KQSXTNM8p2ZzU4eeMB2KOsNVuQ+lYGzNe+9IRxdt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749640573; c=relaxed/simple;
-	bh=eEuprULSjDVVLT+zB/HbzjMEOf6OXIWRVXtO+cApelo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=V0Q+lGlhCb3gYGYqzH4cT0N8QybgHuHpFVR75s4vzY1HQ5CFoRwEorv5xJcV/72/Bk/9q2JcJyk0AKHBHkadKgqQE0AWK2uGPAHYLUF/Q0wgZESpYe3bkc6DoM60LkFJYWoTwhfZWA35nYFo+7Zm/BRY/o7KCf5MpyfHTQzsQTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I50QKmE9; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749640572; x=1781176572;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=eEuprULSjDVVLT+zB/HbzjMEOf6OXIWRVXtO+cApelo=;
-  b=I50QKmE9tEkgzxrIhQDj++G8iIzuObs0f9XwDqeInPFr8tfO2sCTdBI4
-   mm4RtHXoUYxukj3uCijrrU4/6lOwRoU20zjYf/JOcxho0j3sz19tgSSs3
-   D1sG8dWfJOMZrPoL+DiQ1Jvq9HcIrEJnb1Bltc4SzYTz3ABczqbKxy+XO
-   12eLwJIu07VT61I4bMaa3a2/Jp7tudB0eqjgVH8/nuimKvMrNZvjJju6F
-   c9eQpy4L0hkBLmJHkmshLGOuRUYHJCMaTqvcJGdiT+dYEfOsUAI24oGol
-   8GyVX5fJ7JEKHfTCWUe1wt5QrfaXfuDhnZmI87jHpqn7X5P2huYNzg3/g
-   g==;
-X-CSE-ConnectionGUID: E7ixhMAlSS+L4MRVh7sh7A==
-X-CSE-MsgGUID: Hti3FJ7LQ1uKTS3KBvnVKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51771628"
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="51771628"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 04:16:07 -0700
-X-CSE-ConnectionGUID: Oio9/DKCSBqXcbPQylrduw==
-X-CSE-MsgGUID: 8dq+FMXgTL+6hzXPi2hQyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="147044556"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.183])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 04:16:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 11 Jun 2025 14:15:59 +0300 (EEST)
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-    Christophe Leroy <christophe.leroy@csgroup.eu>, 
-    linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 02/33] powerpc/legacy_serial: cache serial port and info
- in add_legacy_port()
-In-Reply-To: <20250611100319.186924-3-jirislaby@kernel.org>
-Message-ID: <17b17aa3-dfd9-0e8d-b2a1-010637db29d7@linux.intel.com>
-References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-3-jirislaby@kernel.org>
+	s=arc-20240116; t=1749641384; c=relaxed/simple;
+	bh=LwJzZfwCzwooaWWIheJ4nFIMPjioADEPy417rmh7ndQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f4+EuJlNavvRoF81RNxcXuBzHOs1SWOKZ597HUDmaq5POFzKi0TV35IvGSQoCnM3ofxpuCyJc0wYdRfaMUNYpeCYNAmgi1P9IYFkojY6gVblVXkcUiTK/+CxFs2YZhvOpGHFhaGua2HSjAwtz9xBKYjuOlErsq/Wx6xDVk2Vrdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bHNjc29MfzKHNHl;
+	Wed, 11 Jun 2025 19:29:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id A432C1A13F3;
+	Wed, 11 Jun 2025 19:29:38 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP3 (Coremail) with SMTP id _Ch0CgAXacOXaElofvDPOw--.32023S4;
+	Wed, 11 Jun 2025 19:29:36 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 0/6] ext4: fix insufficient credits when writing back large folios
+Date: Wed, 11 Jun 2025 19:16:19 +0800
+Message-ID: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1944227453-1749640559=:957"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAXacOXaElofvDPOw--.32023S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFyfJF48JF43Zr45KFyDKFg_yoW8uryxpa
+	93G3WrG3yrZa47ZFZ3Xa1xGF1rGaykCr1UXr47tw1Dua9xuryxKFsFgF45KFyjyrZ3JFWj
+	qr1jyryDCFZ0y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Zhang Yi <yi.zhang@huawei.com>
 
---8323328-1944227453-1749640559=:957
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Changes since v1:
+ - Make the write-back process supports writing a partial folio if it
+   exits the mapping loop prematurely due to insufficient sapce or
+   journal credits, it also fix the potential stale data and
+   inconsistency issues.
+ - Fix the same issue regarding the allocation of blocks in
+   ext4_write_begin() and ext4_page_mkwrite() when delalloc is not
+   enabled.
 
-On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
+This series addresses the issue that Jan pointed out regarding large
+folios support for ext4[1]. The problem is that the credits calculation
+may insufficient in ext4_meta_trans_blocks() when allocating blocks
+during write back a sufficiently large and discontinuous folio, it
+doesn't involve the credits for updating bitmap and group descriptor
+block. However, if we fix this issue, it may lead to significant
+overestimation on the some filesystems with a lot of block groups.
 
-> Caching the port and info in local variables makes the code more compact
-> and easier to understand.
->=20
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: linuxppc-dev@lists.ozlabs.org
+The solution involves first ensure that the current journal transaction
+has enough credits when we mapping an extent during allocating blocks.
+Then if the credits reach the upper limit, exit the current mapping
+loop, submit the partial folio and restart a new transaction. Finally,
+fix the wrong credits calculation in ext4_meta_trans_blocks(). Please
+see the following patches for details.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+[1] https://lore.kernel.org/linux-ext4/ht54j6bvjmiqt62xmcveqlo7bmrunqs4ji7wikfteftdjijzek@7tz5gpejaoen/
 
---
- i.
+Thanks,
+Yi.
 
-> ---
->  arch/powerpc/kernel/legacy_serial.c | 52 ++++++++++++++---------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
->=20
-> diff --git a/arch/powerpc/kernel/legacy_serial.c b/arch/powerpc/kernel/le=
-gacy_serial.c
-> index 1da2f6e7d2a1..d9080189c28c 100644
-> --- a/arch/powerpc/kernel/legacy_serial.c
-> +++ b/arch/powerpc/kernel/legacy_serial.c
-> @@ -77,6 +77,8 @@ static int __init add_legacy_port(struct device_node *n=
-p, int want_index,
->  =09=09=09=09  phys_addr_t taddr, unsigned long irq,
->  =09=09=09=09  upf_t flags, int irq_check_parent)
->  {
-> +=09struct plat_serial8250_port *legacy_port;
-> +=09struct legacy_serial_info *legacy_info;
->  =09const __be32 *clk, *spd, *rs;
->  =09u32 clock =3D BASE_BAUD * 16;
->  =09u32 shift =3D 0;
-> @@ -110,16 +112,17 @@ static int __init add_legacy_port(struct device_nod=
-e *np, int want_index,
->  =09if (index >=3D legacy_serial_count)
->  =09=09legacy_serial_count =3D index + 1;
-> =20
-> +=09legacy_port =3D &legacy_serial_ports[index];
-> +=09legacy_info =3D &legacy_serial_infos[index];
-> +
->  =09/* Check if there is a port who already claimed our slot */
-> -=09if (legacy_serial_infos[index].np !=3D NULL) {
-> +=09if (legacy_info->np !=3D NULL) {
->  =09=09/* if we still have some room, move it, else override */
->  =09=09if (legacy_serial_count < MAX_LEGACY_SERIAL_PORTS) {
->  =09=09=09printk(KERN_DEBUG "Moved legacy port %d -> %d\n",
->  =09=09=09       index, legacy_serial_count);
-> -=09=09=09legacy_serial_ports[legacy_serial_count] =3D
-> -=09=09=09=09legacy_serial_ports[index];
-> -=09=09=09legacy_serial_infos[legacy_serial_count] =3D
-> -=09=09=09=09legacy_serial_infos[index];
-> +=09=09=09legacy_serial_ports[legacy_serial_count] =3D *legacy_port;
-> +=09=09=09legacy_serial_infos[legacy_serial_count] =3D *legacy_info;
->  =09=09=09legacy_serial_count++;
->  =09=09} else {
->  =09=09=09printk(KERN_DEBUG "Replacing legacy port %d\n", index);
-> @@ -127,36 +130,33 @@ static int __init add_legacy_port(struct device_nod=
-e *np, int want_index,
->  =09}
-> =20
->  =09/* Now fill the entry */
-> -=09memset(&legacy_serial_ports[index], 0,
-> -=09       sizeof(struct plat_serial8250_port));
-> +=09memset(legacy_port, 0, sizeof(*legacy_port));
->  =09if (iotype =3D=3D UPIO_PORT)
-> -=09=09legacy_serial_ports[index].iobase =3D base;
-> +=09=09legacy_port->iobase =3D base;
->  =09else
-> -=09=09legacy_serial_ports[index].mapbase =3D base;
-> -
-> -=09legacy_serial_ports[index].iotype =3D iotype;
-> -=09legacy_serial_ports[index].uartclk =3D clock;
-> -=09legacy_serial_ports[index].irq =3D irq;
-> -=09legacy_serial_ports[index].flags =3D flags;
-> -=09legacy_serial_ports[index].regshift =3D shift;
-> -=09legacy_serial_infos[index].taddr =3D taddr;
-> -=09legacy_serial_infos[index].np =3D of_node_get(np);
-> -=09legacy_serial_infos[index].clock =3D clock;
-> -=09legacy_serial_infos[index].speed =3D spd ? be32_to_cpup(spd) : 0;
-> -=09legacy_serial_infos[index].irq_check_parent =3D irq_check_parent;
-> +=09=09legacy_port->mapbase =3D base;
-> +
-> +=09legacy_port->iotype =3D iotype;
-> +=09legacy_port->uartclk =3D clock;
-> +=09legacy_port->irq =3D irq;
-> +=09legacy_port->flags =3D flags;
-> +=09legacy_port->regshift =3D shift;
-> +=09legacy_info->taddr =3D taddr;
-> +=09legacy_info->np =3D of_node_get(np);
-> +=09legacy_info->clock =3D clock;
-> +=09legacy_info->speed =3D spd ? be32_to_cpup(spd) : 0;
-> +=09legacy_info->irq_check_parent =3D irq_check_parent;
-> =20
->  =09if (iotype =3D=3D UPIO_TSI) {
-> -=09=09legacy_serial_ports[index].serial_in =3D tsi_serial_in;
-> -=09=09legacy_serial_ports[index].serial_out =3D tsi_serial_out;
-> +=09=09legacy_port->serial_in =3D tsi_serial_in;
-> +=09=09legacy_port->serial_out =3D tsi_serial_out;
->  =09}
-> =20
-> -=09printk(KERN_DEBUG "Found legacy serial port %d for %pOF\n",
-> -=09       index, np);
-> +=09printk(KERN_DEBUG "Found legacy serial port %d for %pOF\n", index, np=
-);
->  =09printk(KERN_DEBUG "  %s=3D%llx, taddr=3D%llx, irq=3D%lx, clk=3D%d, sp=
-eed=3D%d\n",
->  =09       (iotype =3D=3D UPIO_PORT) ? "port" : "mem",
->  =09       (unsigned long long)base, (unsigned long long)taddr, irq,
-> -=09       legacy_serial_ports[index].uartclk,
-> -=09       legacy_serial_infos[index].speed);
-> +=09       legacy_port->uartclk, legacy_info->speed);
-> =20
->  =09return index;
->  }
->=20
---8323328-1944227453-1749640559=:957--
+Zhang Yi (6):
+  ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
+  ext4: fix stale data if it bail out of the extents mapping loop
+  ext4: restart handle if credits are insufficient during allocating
+    blocks
+  ext4: correct the reserved credits for extent conversion
+  ext4/jbd2: reintroduce jbd2_journal_blocks_per_page()
+  ext4: fix insufficient credits calculation in ext4_meta_trans_blocks()
+
+ fs/ext4/ext4_jbd2.h  |   7 +++
+ fs/ext4/inode.c      | 118 ++++++++++++++++++++++++++++++++++++-------
+ fs/jbd2/journal.c    |   6 +++
+ include/linux/jbd2.h |   1 +
+ 4 files changed, 113 insertions(+), 19 deletions(-)
+
+-- 
+2.46.1
+
 
