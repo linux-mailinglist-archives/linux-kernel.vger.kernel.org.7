@@ -1,419 +1,235 @@
-Return-Path: <linux-kernel+bounces-681064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36880AD4E08
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:11:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1AEAD4DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AE43A23E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9177717BBD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9D7239E60;
-	Wed, 11 Jun 2025 08:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00AE236429;
+	Wed, 11 Jun 2025 08:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SB1C+Tik"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="xqcG5OVM"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF89238140;
-	Wed, 11 Jun 2025 08:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C2512CD8B;
+	Wed, 11 Jun 2025 08:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749629480; cv=none; b=R8mLtDaCM1JI+fwUSnD3L8HHAiMdo5+H4C2Tt5P1V1MhSoGJOpxkUkTLeYXD7nlqdCJSTPlLdV3NVAFDA9XxzPchVAeuS/bvx3Km21iAu9q35H7HUiZcoI9v2zHOT9C1uujrJ3lYvr2UbRSwPfbVDQ059rQjrYJ6D82j7ASbobY=
+	t=1749629415; cv=none; b=FGXLc2XW8LzJ+OYUVVlPLfUxW2OpWl5QFx+jPDMwtIa/N6O/QbC/WFCr9K5r87bAP8coFagEqCXBGrvYSE0BKKBs4ccs7j1/JipEeui5NkYwnu1Cfo+G5sF2NQxMWaIEE00GVwwDaSlXiiqI5QM1R7XFDdp2pwr67LiA8S56XiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749629480; c=relaxed/simple;
-	bh=wIra1MWBnEI/KsITvp3fLFz69pdc65cdIKDFZs1NPg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MmXSV45zg3bZWxOTUM9zMkmV3W7YTnwIajGP2LsPBHwwTqeI8YVYPFBLY+pLkMUF1RMweEvvLfxS706Iq6NUQZeiiwv9Fqk+5U5RRuDnuwzCGGyExKhLHHaeklrYE29DlUrg0lDCreO0vqLTXnTmx76GqtmXfJvBuNvna8dwkkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SB1C+Tik; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6ecf99dd567so78613076d6.0;
-        Wed, 11 Jun 2025 01:11:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749629477; x=1750234277; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gfE0nW/hFb6tBNeavOb+VIi0aPnkDiPh5uKKWZJ8u8M=;
-        b=SB1C+TikRCDPlaGyrRjJ2+0g/QTxKu6vHIHZ6KeTLfMOwFEgajKQNMJif0aEEm3kTU
-         MFLNks6Sf8INi+ZNeOdfYxvfng7jOnob/Lcgs94GHkVH9kBBCmjKFuq0EIVbDXu70f1/
-         kZFSEYKwkBUMf9hMPfN32rrV8jt1D5qdf1aAKmaQdIVWOUxDxxDo8v/3huXwGbAvvHbj
-         TBnSzbP1MrHar7UvTayRgotfniSSFB2CCrs25YlyE6P7h8BNSLT2GHic/am0e+/BP2Tx
-         1nJuzG4UTh+mmUz90uA/L9EAlNLHYFWxvLCCdga3fir5a12lYdMFpQzYybbsZc6QBj6v
-         q27g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749629477; x=1750234277;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gfE0nW/hFb6tBNeavOb+VIi0aPnkDiPh5uKKWZJ8u8M=;
-        b=UAklTVxZ4faSR/q4ftNmHnG26hVeByaaj/U8a5VeoFMUeenr+pkUilKP6a6Tdth3AM
-         Szpd45Ahch3mJg3/QZhKni8fJ/PyrYSc4iOhCqAW/WldjG4hkAhfq51BoezkmVcTOcTQ
-         G2VAFko2eeWSdowzpTbCktbvULrBYLFjPV3toEe8aQbnCa+w4QBcngWvomeAdiqFo3C7
-         +tKQ8OrHPy9vbBlc7B9YYx0/n5jzAymlcHci5cjoSHSOFeMNlpvuyRXV0+QJdxQi1Ym9
-         6tUdaA/A/SDwLDPyBlQri0PoPOabRvklkAZ6n8PKwqH7yvk37i03UmEamVvGxbWRbqiv
-         nlrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXceSDXBjY1CeM4vknItC6pHG0iH7VJNyEnWHxmyTXhPj/lfG0Pa7+eoBSQcNXvg0M/CKPkbAJANaqo3IC@vger.kernel.org, AJvYcCXFZhlPtDCuiEjUwHbA2yFKifGHpo7lUpB9AiiKEDPZFpJ3wDRVzDMD1r4wTN1lzVFCiAoNraEF7BEi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0bDMuVkhB5vToT/g/G+Wo84VimnR2eYSNCkkjjhrSsI5Q6p46
-	8uha3NnHtCl5q1nQi6s6MjsyAB72w+H8AiI0myCOYmllA5TdM60ohlX7
-X-Gm-Gg: ASbGncuHnZZwcm0IGFCAoCfGTFOF2q7h60PegRZEFT/oy82s2F+yc+uHmGxOGHKZSOf
-	9pwvSLdzV0GGLVen29Xkc9n4fT93VCdiz+FdF2PCApNcB8VkDZaHoBNgo1Pjda7MeazotYnE1l1
-	guCpfFNU319YW56koWkxKlrgYxaVZVt70CrhYaetaOPQJOA4KEz1MwdnkadHZkboEDkRtIgsecv
-	/1MRwfpFIK/BkfZsvH7jgLrzHW1WyOK07lwbPVa214uuG51cuZ4Rbz9/CFoCR665cZKcE3UGT11
-	bFNhnDxTNhPNe+vvQUuFjR0DTxY/uj6505PtrQ==
-X-Google-Smtp-Source: AGHT+IHJOgJ0+i6Fm4WsVk6l97AdazJZq4HORq5uZJ9u5vD7oiYxkJmbd9sBY+uytt5GSpvDEFY+hQ==
-X-Received: by 2002:a05:6214:2343:b0:6fa:9f9b:8df0 with SMTP id 6a1803df08f44-6fb2c365ccemr41834396d6.20.1749629476688;
-        Wed, 11 Jun 2025 01:11:16 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fb09b1ce2csm78828286d6.56.2025.06.11.01.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 01:11:16 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v14 2/2] dmaengine: add driver for Sophgo CV18XX/SG200X dmamux
-Date: Wed, 11 Jun 2025 16:09:59 +0800
-Message-ID: <20250611081000.1187374-3-inochiama@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250611081000.1187374-1-inochiama@gmail.com>
-References: <20250611081000.1187374-1-inochiama@gmail.com>
+	s=arc-20240116; t=1749629415; c=relaxed/simple;
+	bh=0TD+Te+EnncVRspXln2SukbmA0OLeKLM5C/ckAVZztE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=joJugFDwAJtu7fZMWXI1dEnfH/wUd3c+YG9ExCGW2lWW1hoAuzwSaxtjidVp/dfuXxVgwnDFEZdvIabHbZJC4vX/1PDyQH5drmqhximNzFfCkMo/1uzcG1j8gnNzisalGMUwgiWVBQtadpNDzQaAWkcTOViGUhN6CnAMtSwAHJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=xqcG5OVM; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [192.168.2.138] (cst-prg-45-116.cust.vodafone.cz [46.135.45.116])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 83EF316016B;
+	Wed, 11 Jun 2025 10:10:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1749629402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4rFoo6RFf3f3af4Ho4HRqf2Uwh5bvZe2+nsQbsMKIbA=;
+	b=xqcG5OVM79d+hLIWyJFRduP7nJvmm+vCTBxrrJqQyol2Oi2HCNs94SMs6EP5QvXtM1TL/T
+	pjKCqLiXHGMbKwy/g9fVgehLfituVEcLRe9/0t/eiYhKJacqdkzH8IW7JoLYee4nIKze1b
+	KfphvCKL4/MhBRF+B8zsQuIGd8OUGng=
+Message-ID: <72689fa4-cb6d-4299-be29-2b7990a1c365@ixit.cz>
+Date: Wed, 11 Jun 2025 10:10:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/7] Input: synaptics-rmi4 - add quirks for third party
+ touchscreen controllers
+From: David Heidelberg <david@ixit.cz>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Kaustabh Chakraborty <kauschluss@disroot.org>, Rob Herring
+ <robh@kernel.org>, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Vincent Huang <vincent.huang@tw.synaptics.com>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, Conor Dooley <conor+dt@kernel.org>
+References: <20250410-synaptics-rmi4-v5-0-b41bb90f78b9@ixit.cz>
+ <d9bac31d-ad73-4d40-9e6b-7397dd5f5b23@ixit.cz>
+Content-Language: en-US
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <d9bac31d-ad73-4d40-9e6b-7397dd5f5b23@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Sophgo CV18XX/SG200X use DW AXI CORE with a multiplexer for remapping
-its request lines. The multiplexer supports at most 8 request lines.
+Hello Dmitry,
 
-Add driver for Sophgo CV18XX/SG200X DMA multiplexer.
+is there anything else I should adjust to get these fixes merged?
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- drivers/dma/Kconfig          |   9 ++
- drivers/dma/Makefile         |   1 +
- drivers/dma/cv1800b-dmamux.c | 259 +++++++++++++++++++++++++++++++++++
- 3 files changed, 269 insertions(+)
- create mode 100644 drivers/dma/cv1800b-dmamux.c
+Thank you
+David
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index db87dd2a07f7..5d81e34f8e1f 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -572,6 +572,15 @@ config PLX_DMA
- 	  These are exposed via extra functions on the switch's
- 	  upstream port. Each function exposes one DMA channel.
- 
-+config SOPHGO_CV1800B_DMAMUX
-+	tristate "Sophgo CV1800/SG2000 series SoC DMA multiplexer support"
-+	depends on MFD_SYSCON
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  Support for the DMA multiplexer on Sophgo CV1800/SG2000
-+	  series SoCs.
-+	  Say Y here if your board have this soc.
-+
- config STE_DMA40
- 	bool "ST-Ericsson DMA40 support"
- 	depends on ARCH_U8500
-diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
-index ba9732644752..a54d7688392b 100644
---- a/drivers/dma/Makefile
-+++ b/drivers/dma/Makefile
-@@ -71,6 +71,7 @@ obj-$(CONFIG_PPC_BESTCOMM) += bestcomm/
- obj-$(CONFIG_PXA_DMA) += pxa_dma.o
- obj-$(CONFIG_RENESAS_DMA) += sh/
- obj-$(CONFIG_SF_PDMA) += sf-pdma/
-+obj-$(CONFIG_SOPHGO_CV1800B_DMAMUX) += cv1800b-dmamux.o
- obj-$(CONFIG_STE_DMA40) += ste_dma40.o ste_dma40_ll.o
- obj-$(CONFIG_SPRD_DMA) += sprd-dma.o
- obj-$(CONFIG_TXX9_DMAC) += txx9dmac.o
-diff --git a/drivers/dma/cv1800b-dmamux.c b/drivers/dma/cv1800b-dmamux.c
-new file mode 100644
-index 000000000000..e900d6595617
---- /dev/null
-+++ b/drivers/dma/cv1800b-dmamux.c
-@@ -0,0 +1,259 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 Inochi Amaoto <inochiama@gmail.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/cleanup.h>
-+#include <linux/module.h>
-+#include <linux/of_dma.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/llist.h>
-+#include <linux/regmap.h>
-+#include <linux/spinlock.h>
-+#include <linux/mfd/syscon.h>
-+
-+#define REG_DMA_CHANNEL_REMAP0		0x154
-+#define REG_DMA_CHANNEL_REMAP1		0x158
-+#define REG_DMA_INT_MUX			0x298
-+
-+#define DMAMUX_NCELLS			2
-+#define MAX_DMA_MAPPING_ID		42
-+#define MAX_DMA_CPU_ID			2
-+#define MAX_DMA_CH_ID			7
-+
-+#define DMAMUX_INTMUX_REGISTER_LEN	4
-+#define DMAMUX_NR_CH_PER_REGISTER	4
-+#define DMAMUX_BIT_PER_CH		8
-+#define DMAMUX_CH_MASk			GENMASK(5, 0)
-+#define DMAMUX_INT_BIT_PER_CPU		10
-+#define DMAMUX_CH_UPDATE_BIT		BIT(31)
-+
-+#define DMAMUX_CH_REGPOS(chid) \
-+	((chid) / DMAMUX_NR_CH_PER_REGISTER)
-+#define DMAMUX_CH_REGOFF(chid) \
-+	((chid) % DMAMUX_NR_CH_PER_REGISTER)
-+#define DMAMUX_CH_REG(chid) \
-+	((DMAMUX_CH_REGPOS(chid) * sizeof(u32)) + \
-+	 REG_DMA_CHANNEL_REMAP0)
-+#define DMAMUX_CH_SET(chid, val) \
-+	(((val) << (DMAMUX_CH_REGOFF(chid) * DMAMUX_BIT_PER_CH)) | \
-+	 DMAMUX_CH_UPDATE_BIT)
-+#define DMAMUX_CH_MASK(chid) \
-+	DMAMUX_CH_SET(chid, DMAMUX_CH_MASk)
-+
-+#define DMAMUX_INT_BIT(chid, cpuid) \
-+	BIT((cpuid) * DMAMUX_INT_BIT_PER_CPU + (chid))
-+#define DMAMUX_INTEN_BIT(cpuid) \
-+	DMAMUX_INT_BIT(8, cpuid)
-+#define DMAMUX_INT_CH_BIT(chid, cpuid) \
-+	(DMAMUX_INT_BIT(chid, cpuid) | DMAMUX_INTEN_BIT(cpuid))
-+#define DMAMUX_INT_MASK(chid) \
-+	(DMAMUX_INT_BIT(chid, 0) | \
-+	 DMAMUX_INT_BIT(chid, 1) | \
-+	 DMAMUX_INT_BIT(chid, 2))
-+#define DMAMUX_INT_CH_MASK(chid, cpuid) \
-+	(DMAMUX_INT_MASK(chid) | DMAMUX_INTEN_BIT(cpuid))
-+
-+struct cv1800_dmamux_data {
-+	struct dma_router	dmarouter;
-+	struct regmap		*regmap;
-+	spinlock_t		lock;
-+	struct llist_head	free_maps;
-+	struct llist_head	reserve_maps;
-+	DECLARE_BITMAP(mapped_peripherals, MAX_DMA_MAPPING_ID);
-+};
-+
-+struct cv1800_dmamux_map {
-+	struct llist_node node;
-+	unsigned int channel;
-+	unsigned int peripheral;
-+	unsigned int cpu;
-+};
-+
-+static void cv1800_dmamux_free(struct device *dev, void *route_data)
-+{
-+	struct cv1800_dmamux_data *dmamux = dev_get_drvdata(dev);
-+	struct cv1800_dmamux_map *map = route_data;
-+
-+	guard(spinlock_irqsave)(&dmamux->lock);
-+
-+	regmap_update_bits(dmamux->regmap,
-+			   DMAMUX_CH_REG(map->channel),
-+			   DMAMUX_CH_MASK(map->channel),
-+			   DMAMUX_CH_UPDATE_BIT);
-+
-+	regmap_update_bits(dmamux->regmap, REG_DMA_INT_MUX,
-+			   DMAMUX_INT_CH_MASK(map->channel, map->cpu),
-+			   DMAMUX_INTEN_BIT(map->cpu));
-+
-+	dev_dbg(dev, "free channel %u for req %u (cpu %u)\n",
-+		map->channel, map->peripheral, map->cpu);
-+}
-+
-+static void *cv1800_dmamux_route_allocate(struct of_phandle_args *dma_spec,
-+					  struct of_dma *ofdma)
-+{
-+	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
-+	struct cv1800_dmamux_data *dmamux = platform_get_drvdata(pdev);
-+	struct cv1800_dmamux_map *map;
-+	struct llist_node *node;
-+	unsigned long flags;
-+	unsigned int chid, devid, cpuid;
-+	int ret;
-+
-+	if (dma_spec->args_count != DMAMUX_NCELLS) {
-+		dev_err(&pdev->dev, "invalid number of dma mux args\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	devid = dma_spec->args[0];
-+	cpuid = dma_spec->args[1];
-+	dma_spec->args_count = 1;
-+
-+	if (devid > MAX_DMA_MAPPING_ID) {
-+		dev_err(&pdev->dev, "invalid device id: %u\n", devid);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (cpuid > MAX_DMA_CPU_ID) {
-+		dev_err(&pdev->dev, "invalid cpu id: %u\n", cpuid);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", 0);
-+	if (!dma_spec->np) {
-+		dev_err(&pdev->dev, "can't get dma master\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	spin_lock_irqsave(&dmamux->lock, flags);
-+
-+	if (test_bit(devid, dmamux->mapped_peripherals)) {
-+		llist_for_each_entry(map, dmamux->reserve_maps.first, node) {
-+			if (map->peripheral == devid && map->cpu == cpuid)
-+				goto found;
-+		}
-+
-+		ret = -EINVAL;
-+		goto failed;
-+	} else {
-+		node = llist_del_first(&dmamux->free_maps);
-+		if (!node) {
-+			ret = -ENODEV;
-+			goto failed;
-+		}
-+
-+		map = llist_entry(node, struct cv1800_dmamux_map, node);
-+		llist_add(&map->node, &dmamux->reserve_maps);
-+		set_bit(devid, dmamux->mapped_peripherals);
-+	}
-+
-+found:
-+	chid = map->channel;
-+	map->peripheral = devid;
-+	map->cpu = cpuid;
-+
-+	regmap_set_bits(dmamux->regmap,
-+			DMAMUX_CH_REG(chid),
-+			DMAMUX_CH_SET(chid, devid));
-+
-+	regmap_update_bits(dmamux->regmap, REG_DMA_INT_MUX,
-+			   DMAMUX_INT_CH_MASK(chid, cpuid),
-+			   DMAMUX_INT_CH_BIT(chid, cpuid));
-+
-+	spin_unlock_irqrestore(&dmamux->lock, flags);
-+
-+	dma_spec->args[0] = chid;
-+
-+	dev_dbg(&pdev->dev, "register channel %u for req %u (cpu %u)\n",
-+		chid, devid, cpuid);
-+
-+	return map;
-+
-+failed:
-+	spin_unlock_irqrestore(&dmamux->lock, flags);
-+	of_node_put(dma_spec->np);
-+	dev_err(&pdev->dev, "errno %d\n", ret);
-+	return ERR_PTR(ret);
-+}
-+
-+static int cv1800_dmamux_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *mux_node = dev->of_node;
-+	struct cv1800_dmamux_data *data;
-+	struct cv1800_dmamux_map *tmp;
-+	struct device *parent = dev->parent;
-+	struct regmap *regmap = NULL;
-+	unsigned int i;
-+
-+	if (!parent)
-+		return -ENODEV;
-+
-+	regmap = device_node_to_regmap(parent->of_node);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&data->lock);
-+	init_llist_head(&data->free_maps);
-+	init_llist_head(&data->reserve_maps);
-+
-+	for (i = 0; i <= MAX_DMA_CH_ID; i++) {
-+		tmp = devm_kmalloc(dev, sizeof(*tmp), GFP_KERNEL);
-+		if (!tmp) {
-+			/* It is OK for not allocating all channel */
-+			dev_warn(dev, "can not allocate channel %u\n", i);
-+			continue;
-+		}
-+
-+		init_llist_node(&tmp->node);
-+		tmp->channel = i;
-+		llist_add(&tmp->node, &data->free_maps);
-+	}
-+
-+	/* if no channel is allocated, the probe must fail */
-+	if (llist_empty(&data->free_maps))
-+		return -ENOMEM;
-+
-+	data->regmap = regmap;
-+	data->dmarouter.dev = dev;
-+	data->dmarouter.route_free = cv1800_dmamux_free;
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	return of_dma_router_register(mux_node,
-+				      cv1800_dmamux_route_allocate,
-+				      &data->dmarouter);
-+}
-+
-+static void cv1800_dmamux_remove(struct platform_device *pdev)
-+{
-+	of_dma_controller_free(pdev->dev.of_node);
-+}
-+
-+static const struct of_device_id cv1800_dmamux_ids[] = {
-+	{ .compatible = "sophgo,cv1800b-dmamux", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cv1800_dmamux_ids);
-+
-+static struct platform_driver cv1800_dmamux_driver = {
-+	.probe = cv1800_dmamux_probe,
-+	.remove = cv1800_dmamux_remove,
-+	.driver = {
-+		.name = "cv1800-dmamux",
-+		.of_match_table = cv1800_dmamux_ids,
-+	},
-+};
-+module_platform_driver(cv1800_dmamux_driver);
-+
-+MODULE_AUTHOR("Inochi Amaoto <inochiama@gmail.com>");
-+MODULE_DESCRIPTION("Sophgo CV1800/SG2000 Series SoC DMAMUX driver");
-+MODULE_LICENSE("GPL");
+On 03/05/2025 16:02, David Heidelberg wrote:
+> Kind ping on the series.
+> 
+> When the series is considered solid, it will improve Linux usability on 
+> lower-quality touchscreen replacements (including those from other 
+> vendors and models) outside of our Snapdragon 845 downstream fork.
+> 
+> Thank you
+> David
+> 
+> On 10/04/2025 16:28, David Heidelberg via B4 Relay wrote:
+>> With the growing popularity of running upstream Linux on mobile devices,
+>> we're beginning to run into more and more edgecases. The OnePlus 6 is a
+>> fairly well supported 2018 era smartphone, selling over a million units
+>> in it's first 22 days. With this level of popularity, it's almost
+>> inevitable that we get third party replacement displays, and as a
+>> result, replacement touchscreen controllers.
+>>
+>> The OnePlus 6 shipped with an extremely usecase specific touchscreen
+>> driver, it implemented only the bare minimum parts of the highly generic
+>> rmi4 protocol, instead hardcoding most of the register addresses.
+>> As a result, the third party touchscreen controllers that are often
+>> found in replacement screens, implement only the registers that the
+>> downstream driver reads from. They additionally have other restrictions
+>> such as heavy penalties on unaligned reads.
+>> This series attempts to implement the necessary workaround to support
+>> some of these chips with the rmi4 driver. Although it's worth noting
+>> that at the time of writing there are other unofficial controllers in
+>> the wild that don't work even with these patches.
+>> We have been shipping these patches in postmarketOS for the last several
+>> years, and they are known to not cause any regressions on the OnePlus
+>> 6/6T (with the official Synaptics controller), however I don't own any
+>> other rmi4 hardware to further validate this.
+>>
+>> ---
+>> Changes in v5:
+>> - Removed -i2c suffix from rmi4-s3706b-i2c (Krzysztof).
+>> - Link to v4: https://lore.kernel.org/r/20250402-synaptics-rmi4- 
+>> v4-0-1bb95959e564@ixit.cz
+>>
+>> Changes in v4:
+>> - Replaced patch "dt-bindings: input: syna,rmi4: document syna,pdt- 
+>> fallback-desc"
+>>    with patch documenting specific touchscreen model used in OnePlus 6 
+>> and 6T.
+>> - Fixed zero electrode return code (Dmitry).
+>> - Switched the duplicate detection algo to bitmap (Dmitry).
+>> - Optimized rmi_device_platform_data struct to avoid unnecessary
+>>    padding.
+>> - Changed fallback_size from int to unsigned int.
+>> - Changed SoB from nickname and old address (methanal 
+>> <baclofen@tuta.io>) to
+>>    Kaustabh Chakraborty <kauschluss@disroot.org>.
+>>    Verified ownership through the sdm845 chatroom on Matrix.
+>> - Link to v3: https://lore.kernel.org/r/20250308-synaptics-rmi4- 
+>> v3-0-215d3e7289a2@ixit.cz
+>>
+>> Changes in v3:
+>> - reworded dt-bindings property description
+>> - fixed the rmi_driver_of_probe definition for non device-tree builds.
+>> - fixed some indentation issues reported by checkpatch
+>> - change rmi_pdt_entry_is_valid() variable to unsigned
+>> - Link to v2: https://lore.kernel.org/all/20230929-caleb-rmi4-quirks- 
+>> v2-0-b227ac498d88@linaro.org
+>>
+>> Changes in v2:
+>> - Improve dt-bindings patch (thanks Rob)
+>> - Add missing cast in patch 5 to fix the pointer arithmetic
+>> - Link to v1: https://lore.kernel.org/r/20230929-caleb-rmi4-quirks- 
+>> v1-0-cc3c703f022d@linaro.org
+>>
+>> ---
+>> Caleb Connolly (1):
+>>        Input: synaptics-rmi4 - handle duplicate/unknown PDT entries
+>>
+>> David Heidelberg (1):
+>>        dt-bindings: input: syna,rmi4: Document syna,rmi4-s3706b
+>>
+>> Kaustabh Chakraborty (5):
+>>        Input: synaptics-rmi4 - f12: use hardcoded values for 
+>> aftermarket touch ICs
+>>        Input: synaptics-rmi4 - f55: handle zero electrode count
+>>        Input: synaptics-rmi4 - don't do unaligned reads in IRQ context
+>>        Input: synaptics-rmi4 - read product ID on aftermarket touch ICs
+>>        Input: synaptics-rmi4 - support fallback values for PDT 
+>> descriptor bytes
+>>
+>>   .../devicetree/bindings/input/syna,rmi4.yaml       |  11 +-
+>>   drivers/input/rmi4/rmi_driver.c                    | 124 +++++++++++ 
+>> ++++++----
+>>   drivers/input/rmi4/rmi_driver.h                    |  10 ++
+>>   drivers/input/rmi4/rmi_f01.c                       |  14 +++
+>>   drivers/input/rmi4/rmi_f12.c                       | 117 +++++++++++ 
+>> +++-----
+>>   drivers/input/rmi4/rmi_f55.c                       |   5 +
+>>   include/linux/rmi.h                                |   3 +
+>>   7 files changed, 234 insertions(+), 50 deletions(-)
+>> ---
+>> base-commit: f0a16f5363325cc8d9382471cdc7b654c53254c9
+>> change-id: 20250308-synaptics-rmi4-c832b2f73ceb
+>>
+>> Best regards,
+> 
+
 -- 
-2.49.0
+David Heidelberg
 
 
