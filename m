@@ -1,101 +1,137 @@
-Return-Path: <linux-kernel+bounces-681685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B676BAD55E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C53AD55E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D1317F04C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91AF17AA24
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAF127BF85;
-	Wed, 11 Jun 2025 12:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B982836A0;
+	Wed, 11 Jun 2025 12:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKIDC+Cl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ktla0cyV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01CF2E611B
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3564D230BCC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 12:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749645987; cv=none; b=RmqFETEyG5g56Mk+Z1FZsOSQ5UsjyxBzszronkBcMI1CP7kjT7OIxBNFype0IOm3K81XsFuqk9e+MNDFaPmFi3GrwrCEkFdiokfMtrDKEuOtB32NHfaKMp4zJTdRUq3AuyRJtHTaAHcrXyZdLMm1HJsh9oQb80tT1C9ER+6v38k=
+	t=1749646069; cv=none; b=UlZodyYhv2YPofV97FIlnNMwFGDBy34vebJNVFZtPCvtFjKa0zaG+UdHPJ7llD8B8v+f0V1DCa6HRg0IiUJmozkZNsWM3Zia/fcGnDczugqa78K0VxV09F0vQuC7e2oi6ubvX9jX2XFt+6qT6b/L3+mkb0f/3dLx0+cP56YQQTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749645987; c=relaxed/simple;
-	bh=Pb53XUnfjjR6lu6hoIuxvpaaA+sk6sa2o6bpiQWtwic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWA3nwvZ+9Dv/Rsigpi1l1n/lXfBvcCF16UJArzJW9aiNsjl5P19xZjRjl8mHpXofBqqWLNreHDnVqpoWSc6m4Nt7jHaX52aLFOn3oMzrAM9xEVGwAygwZ2sfHFLhvH1SR8xGVFImx3F9DJYV87dor8XErU6tNw4R+gvihxkV6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKIDC+Cl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD03C4CEEE;
-	Wed, 11 Jun 2025 12:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749645987;
-	bh=Pb53XUnfjjR6lu6hoIuxvpaaA+sk6sa2o6bpiQWtwic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sKIDC+ClSzn1Ua1TJS1YKb1AYW8i3qJyUvfyExo3patxL3XW7T+jXh5YussTiFqG2
-	 B43K9L8yvRhKp8m+Hep7MpWOK7L+/di665cuzZXcLomtNqckWVFJ4oXZempFM8xgHc
-	 QafHD1xrOPpKoKeXYnCbiNrcG/nchqCihZnDEIZPbUXAGVuOqibiX6QtGhJen8UO9b
-	 YoRj+EG0UKkMPJy3ueywu2zKBfqekHCeE+IA6LVP5T1riNBuFzZRNVXbm1jZ6mcFul
-	 0EbDrV4nrmrLZy4G3QUF8kzjxnoe9j1ULhujl1UGyGDmzZ4xJUHwHd/DDYyByMsZgT
-	 JjlepvcpcRamQ==
-Date: Wed, 11 Jun 2025 13:46:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, pcc@google.com, will@kernel.org,
-	anshuman.khandual@arm.com, joey.gouly@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, frederic@kernel.org,
-	hardevsinh.palaniya@siliconsignals.io, samuel.holland@sifive.com,
-	palmer@rivosinc.com, charlie@rivosinc.com,
-	thiago.bauermann@linaro.org, bgray@linux.ibm.com,
-	tglx@linutronix.de, puranjay@kernel.org, david@redhat.com,
-	yang@os.amperecomputing.com, mbenes@suse.cz,
-	joel.granados@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/7] tools/kselftest: add MTE_STORE_ONLY feature hwcap
- test
-Message-ID: <ea71432c-edbf-419a-bb5a-37da5b09caa0@sirena.org.uk>
-References: <20250611094802.929332-1-yeoreum.yun@arm.com>
- <20250611094802.929332-6-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1749646069; c=relaxed/simple;
+	bh=/UdgIEfPGpxPVHP9pNJ2R6tK1SiiUfPaiILmTmF7lZM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=A9twSLAptjCrHbGUGNr6y6z1PFym6iIoajj0t0t6iaD5hJYCu7xk6pG4U26feV7MgRNsL8s1zWz4tsHLJGiHvy4tfxZzjugGUoGSLn5bDIf98HHSDyNHyG0Nl64f5hr5eAHeyw06sAv/4bwPa7MphoWQdDe8MNgz1VZt+PoFQss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ktla0cyV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749646063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOZUcdwPpJq8280mP/9gOOLvCQ6Km8yMMBj0qUgppIo=;
+	b=Ktla0cyVDc75WWj6Sta1veLFPPOnyjjVRZDHxEle5q5JU5VICdn37jz4RnCl+hMcpq/jwy
+	b50uNV9hic8wMjKbs46O3JmEVvmu4Qfz89KBq8aNgTIR+2q/nDfXAmuuBLQqMRbmbyp1UW
+	pRoZfNF3jiX2Imns9EqauGUaqVhYvvM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52-A5W0CkDWNvWitneuHmTzsw-1; Wed, 11 Jun 2025 08:47:41 -0400
+X-MC-Unique: A5W0CkDWNvWitneuHmTzsw-1
+X-Mimecast-MFC-AGG-ID: A5W0CkDWNvWitneuHmTzsw_1749646060
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d3f03b74so39470825e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 05:47:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749646060; x=1750250860;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dOZUcdwPpJq8280mP/9gOOLvCQ6Km8yMMBj0qUgppIo=;
+        b=Rn8mQ9SCTYi/6ediA9ng+APw0+fmJKQmAsEbeOvZBPUZDQFAgN3RSdMWsUeq36dZai
+         G7i0qZG+HXxfKtEhAZzf8vgnorYY4bg14TrXAujqyw0WRG834Fu2xhbtjG5X80W+F9vg
+         GBo6MnbIjORanLyXraY+72HqeEHLQk4dYPfR1Cxp4kpKjoYlXEOK3pcKtcYMxPXzRv7+
+         TfyGWLIlCb0N8Xd5XLBw+yDOOq/ywu6jLkmkCqz4eBdCgrQ4I4RpgAnnoRbsBfnhhSqk
+         sdJ1HzvoYGpdlDoXy3lOGcNnZJzPcwrw9DUQ9+s7/laSgKgv6fqs9TfJDKlu/aQ6Z0rz
+         4cGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiusYPVhuFnd3iIHItLJyjy74bRdFDjFwun6txxSj0XJbkVH3IhdZwjo+BRrhIzUajmVgUbGOf8ZmzVMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5+3Hf/4JMT1XP/rPMXQb2jpEh3NYie5Y//ltEsU6x8onDPKyo
+	P8R56yc4CgjwKLX4sS/CNdA+hZW+q0a/IuGzssA+ymuel5KuX3LC3PvT95YQ0kQhvx9lMEznciL
+	QanV1wC0NmAVlNLrrxJKU1W2s41lvWk75Mqxwc999CZfrz/Dt2usdUh4qXVzoX/pjmaqF2XYLhQ
+	==
+X-Gm-Gg: ASbGnctfK+RrrdxO76B4pd9NmXVT9t9ZDAJf46eFRlg6qmdDRqA7NNiYUGPOHvShNPI
+	xqts+leVHd5uk9VXQK0o+Ryca7YowchRDDlJtbgRs1o/5fl1fPT4VG8q/iglXa/2oO90vB2T+OA
+	kZIs2UsT2paqzN2zIdJlUyyRVmMuKGitABzCZe/K+9R4w9XDZuzn1DDXxCdQOoWK8eSHHtWtZsS
+	TksDpL+H0Nw3S1hRyFUqpRI10A2dTA+ABv0UVmMIf44i9TJ2BnC5TvwjvM8UTvY1NPe9VrM26pe
+	29NX588A60FnysOcmVEfQLuEVCefC/ZBvUdPHMFwzddQwTad3U3VLneBQXzhuRHDwbjtvyCA9V+
+	46ZO8
+X-Received: by 2002:a05:600c:a09:b0:451:e394:8920 with SMTP id 5b1f17b1804b1-453248ca328mr24671725e9.27.1749646060080;
+        Wed, 11 Jun 2025 05:47:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqeJnbRJuLZibdCS6f26HyL1EoF9jTLnCUNvqq3xXvU+62w2OxfIQUklEpl/a8SECCwtJYpQ==
+X-Received: by 2002:a05:600c:a09:b0:451:e394:8920 with SMTP id 5b1f17b1804b1-453248ca328mr24671465e9.27.1749646059663;
+        Wed, 11 Jun 2025 05:47:39 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453252165c6sm20174345e9.29.2025.06.11.05.47.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 05:47:38 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: John Keeping <jkeeping@inmusicbrands.com>
+Cc: John Keeping <jkeeping@inmusicbrands.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/ssd130x: fix ssd132x_clear_screen() columns
+In-Reply-To: <20250611111307.1814876-1-jkeeping@inmusicbrands.com>
+References: <20250611111307.1814876-1-jkeeping@inmusicbrands.com>
+Date: Wed, 11 Jun 2025 14:47:37 +0200
+Message-ID: <87y0tycumu.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="N9Jq5vTIEkplfAUq"
-Content-Disposition: inline
-In-Reply-To: <20250611094802.929332-6-yeoreum.yun@arm.com>
-X-Cookie: No skis take rocks like rental skis!
+Content-Type: text/plain
 
+John Keeping <jkeeping@inmusicbrands.com> writes:
 
---N9Jq5vTIEkplfAUq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello John,
 
-On Wed, Jun 11, 2025 at 10:48:00AM +0100, Yeoreum Yun wrote:
-> add MTE_STORE_ONLY feature hwcap test.
+> The number of columns relates to the width, not the height.  Use the
+> correct variable.
+>
+> Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+> ---
+>  drivers/gpu/drm/solomon/ssd130x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/solomon/ssd130x.c b/drivers/gpu/drm/solomon/ssd130x.c
+> index dd2006d51c7a2..eec43d1a55951 100644
+> --- a/drivers/gpu/drm/solomon/ssd130x.c
+> +++ b/drivers/gpu/drm/solomon/ssd130x.c
+> @@ -974,7 +974,7 @@ static void ssd130x_clear_screen(struct ssd130x_device *ssd130x, u8 *data_array)
+>  
+>  static void ssd132x_clear_screen(struct ssd130x_device *ssd130x, u8 *data_array)
+>  {
+> -	unsigned int columns = DIV_ROUND_UP(ssd130x->height, SSD132X_SEGMENT_WIDTH);
+> +	unsigned int columns = DIV_ROUND_UP(ssd130x->width, SSD132X_SEGMENT_WIDTH);
+>  	unsigned int height = ssd130x->height;
+>  
 
-Subject line doesn't match the usual style, otherwise
+Ups, indeed. Thanks for fixing it!
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
---N9Jq5vTIEkplfAUq
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Best regards,
 
------BEGIN PGP SIGNATURE-----
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJepsACgkQJNaLcl1U
-h9Ds8Af+PUYw26pjKbOjxWOkTwg8nU84B6wNH+uwRAbw+spY9QrvZMFxOQQrAS+8
-IqFjS8WTVj4it9uLc8CaLN1vLnu7oCPpaXsEJiZQ4jrVQ1beIkvR+aBa4LPG0QRk
-ylsYfQK0L3QcpEOAwV8HelLPqstHExzZc3GAFmbpa9Ml8WMEw+4DnnCzbFO6UWOV
-I3Z7viptW8bgJgSXJR3uhhzDXi7hgUvT3TKATRyDgcp+NyWBxpevPnYiVWEhj6XX
-sHjHdZXP1JRVPZI9S9oA2yE8yw6B/CoJsHFWDZhAf2FMxwdK8n5iz0DZgzk7HljH
-UJZYVKNRSI63CtXo/bEOouObcSDI4A==
-=EHzP
------END PGP SIGNATURE-----
-
---N9Jq5vTIEkplfAUq--
 
