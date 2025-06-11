@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-681726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE1EAD566F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D790AAD567C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6D93A4B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEB416927E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB492836B5;
-	Wed, 11 Jun 2025 13:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E75286D77;
+	Wed, 11 Jun 2025 13:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x9PQQeTz"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCRACyj6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4702874F9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A885D286425
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749647140; cv=none; b=n7cohyw45MQzxtEci/i9wXSgP+6I5O/h2mkdsvMwcWW/88wK9F4hf1bCzspXrELmSoCwBTTJR66YjlbHmNzRD9nAk+yf92Sddh2sanjUnQiCFqSHSvpwb7IxMpTHJbIKcdg+5gn8+8KlmGOCOny1lkEsnN6mFfNF//GQk6qVHUo=
+	t=1749647174; cv=none; b=VMlegYI1yi/c8OmADdQ8+6YIgKtgvRx6iuApZyWW9pWIyCz7C2AVwuv5nr8UuUb1eyQh2tGOtQEWsZsKN19N7vYqEs1k3MFdMIGJKwvRMw0NxgF6aNx6OajybnLoDBQSBOySbZm9LKq3SD3ScuIKDctRNEo9Ud+koHmqAgjo/e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749647140; c=relaxed/simple;
-	bh=EjVY2ArlQ4qGt0K73z9GDztVoL7a90MNu70YfxiFca8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L8Ms3PlzRExSrcQYlpXGGv3sD3iz5HWFFcwFX37j4VrecTNjSWaWzf/Eb7+CPYa5BfZQbKjvkOlFuHJDgmWv4gfXKsMRsh3tgGGl8b6UozLtVH+Euw4Bx+5sZFpIcpcnH77mgNzjjqq9gvh++ki9ZN3dmr2pQXBiIK2cCxm4UOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x9PQQeTz; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so7929365e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 06:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749647136; x=1750251936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X3R09Iyu+oVEvrLJByqrLxu4/r9hm8EBVtdwnnJnPEk=;
-        b=x9PQQeTzy3IXKBRpR4zz1vRcjNz1UqBcdJnRxpRqPQ5BJ1zdDDk7rTCyplxj1ja7o7
-         H0IwxvhW8b0CoK1Zfi8vcwanQKReI02MnD7aO4/TL9Z9SxjIDQRfabRAJFtkIX5d0Z8B
-         DuKhD0WQVNSSdcYDzRHhXK4PDhpo/bCqW+62vcpiL2UQJzyye0Mca1nUxnQkufrucfXa
-         crx6NoAjLxi5rjLMTl54QAmnbw2ebUKNO51eVOBsX/w3yaAOTk2WIDHoHIRSj5QnMlvQ
-         87VmpEm0a1WZOUHmzk6W7o/o4JEfHDJOkmVBk4TorWNQWAbKMoExmg66UJToCijzyt0j
-         OcuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749647136; x=1750251936;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X3R09Iyu+oVEvrLJByqrLxu4/r9hm8EBVtdwnnJnPEk=;
-        b=YGD6BIMWOs83I+pLC9ZKVp9P8RXNXEuBGFINmp+k/erOaO9sM02mwonaffCQHwu0fg
-         Vim9YBXn92kOrphWNIy8VpSdee59XvE/RriAMXrUvUuHSp/KJ1UvoC9q/trgqHA/8NWv
-         x0++k0+xG/mHlM6rQ9NfTcbOcebGj7DtUz5BCMhbbrBNAcOrbaecUWJ8LkhK/XG/iwA4
-         shsaq5XPF0NH+SH0wQK1lt1h4UWe366aT4fSuPjhx2aINVmlyGXIcjpAgH1WIJUdVZmY
-         Mgz7/+Zs7cK1MdXNS221m6SgjzOQKPV0PY+9jruP6V3XJnbkvImZz1jjf2zE2vRARIbF
-         RAkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKYey5VDd2TJmN88kTJ7jvuGg5TjbWDQESjtmMGp02xqlInVIez/qz/MgWZy0JPx185POPbMP2oYcE7Gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7oC7vKIleRbys5b+5Vev/iV6EQukoCktvJdbEXHOboY94OJKR
-	byW+jmmehKm733gltDqotnW6Rq95k5+ctDfSBq9Jo6pcBxm+E39VkHfW5BhNadeEm9A=
-X-Gm-Gg: ASbGncvSV+hq9tGC/1lj36ivmVQs/sRQUSViV4b20i3MiaOwHtAtIspYqqyJfHB00Nx
-	EfZ4odb66iGgiy+K8PuOjukUQ3f2Ax5kTTzHxSnhzYI6F+Bq5UaHotlO/hppLtwdUdFtKh2TnWd
-	h87io5sF7eVagnCyVscn2DZdBDChO1oqgCzGNSNlsHeSuwE52ZieERtZHVpGw8NiyCczLSjZHQS
-	t2rSzPHcrw29D4tr7J0IwhHmYegNx9Hp3HtaLY9V+LFmdSsuiGyT8LVBT1FbC8c7MxSatutFZRO
-	Xz1tulS2rBzcm/5yddLI02xHQtP7/Ig9dnjpCws8ezW4SnGAuElYYy8rXUoaJf3aVRiBpJLoLdg
-	/itU9ChZusNC2rJ9z3qy1oiKNJNZm+9G2oTlyFr8ChRwlzzeejUzHm3dJ
-X-Google-Smtp-Source: AGHT+IE/+ZF0202H2gGrgjMZ/XMTAOBrohuHjeBubUtp7vBfdN9DADireHyArZ8FK4FEDHt2MkhIeg==
-X-Received: by 2002:a05:600c:314c:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-453240b0e39mr34289735e9.3.1749647136238;
-        Wed, 11 Jun 2025 06:05:36 -0700 (PDT)
-Received: from [192.168.1.105] (92-184-112-57.mobile.fr.orangecustomers.net. [92.184.112.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45325141397sm21364185e9.8.2025.06.11.06.05.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 06:05:36 -0700 (PDT)
-Message-ID: <0e1ae53e-e2a9-44ec-a59b-432bbf8d4b49@linaro.org>
-Date: Wed, 11 Jun 2025 16:05:34 +0300
+	s=arc-20240116; t=1749647174; c=relaxed/simple;
+	bh=EfalNR3PDNY/xJp/lHBiYvQkpmXJrUDUdS4YWf1xllw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TMvZIRFLhvNj8pw0gNf38CUfiJnenOLMZX2amtLVrCS7yXIWudMlJqQ+z+iN2HBNMPs8hZmbAJ2cL2Wyorxmc72RZC2+Lhi3RR6KU28km5/fw5X2nC27zAjbr7yVMEaOl200zmHy6MzWvmGArmnTOJ/XHJULE6eaabNa5g/EFMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCRACyj6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64DD7C4CEF3;
+	Wed, 11 Jun 2025 13:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749647174;
+	bh=EfalNR3PDNY/xJp/lHBiYvQkpmXJrUDUdS4YWf1xllw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=HCRACyj6aEf4dnGcjywhOK8Dl8sqsXVP98Sc28D6Vp3FdXAV1yR8nV7lw2Xq0QAja
+	 c6XYzCpzNS9ZFn8vfO17Ils8afPFrQjRDJXDzqot8B9PG3JQb4nilR51/eSfoqQUq8
+	 jzcBKaxoeIIM1oA10ODttFxBYr4CemZQf6p9Lz7O1K8xe4G8fD9GAZ06+9yXs4ef3d
+	 +jxsMLVjlRmum5eD0qYmY17wDTvTRk4A2aBbqdatoIzxv2aWO6PetwCTbTJCij1mWW
+	 p/Z7phbdkdGWYVoQmMXufNhW8KqgKu+xksURZLd3BmCVgGanofNMM1Lmtv4iJTBsEA
+	 /REcd+UZGNI2A==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Mike Rapoport <rppt@kernel.org>,  Pratyush Yadav <pratyush@kernel.org>,
+  Alexander Graf <graf@amazon.com>,  Changyuan Lyu <changyuanl@google.com>,
+  Andrew Morton <akpm@linux-foundation.org>,  Baoquan He <bhe@redhat.com>,
+  kexec@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  Michal Clapinski <mclapinski@google.com>
+Subject: Re: [PATCH] kho: initialize tail pages for higher order folios
+ properly
+In-Reply-To: <CA+CK2bD3n=JDuSsMGvsyMnVbPhGdhdf6zWFDa3KpzRGEXygdgQ@mail.gmail.com>
+References: <20250605171143.76963-1-pratyush@kernel.org>
+	<aEKhF3HcrvG77Ogb@kernel.org> <mafs0jz5osutx.fsf@kernel.org>
+	<aEc30BoLE9HRxiZm@kernel.org>
+	<CA+CK2bAAbZjS2Og79xxLcDtNf-eM0up-8fwhd4fg_dp0j_TahA@mail.gmail.com>
+	<aEfGTXrsEL5-DuF1@kernel.org>
+	<CA+CK2bDXOWzrTsNtbCCK2rabNysf0JFQT5VfAjYrX5oSoiLmSQ@mail.gmail.com>
+	<aEhgNU80Dr9iRwoD@kernel.org>
+	<CA+CK2bD3n=JDuSsMGvsyMnVbPhGdhdf6zWFDa3KpzRGEXygdgQ@mail.gmail.com>
+Date: Wed, 11 Jun 2025 15:06:11 +0200
+Message-ID: <mafs0qzzqo2bg.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dmaengine: mediatek: Fix a flag reuse error in
- mtk_cqdma_tx_status()
-To: Qiu-ji Chen <chenqiuji666@gmail.com>, sean.wang@mediatek.com,
- vkoul@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- baijiaju1990@gmail.com, stable@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20250606090017.5436-1-chenqiuji666@gmail.com>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <20250606090017.5436-1-chenqiuji666@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+On Tue, Jun 10 2025, Pasha Tatashin wrote:
 
+>> > > I think it should be the other way around, KHO should depend on
+>> > > !DEFERRED_STRUCT_PAGE_INIT.
+>> >
+>> > Agreed, and this is what I first tried, but that does not work, there
+>> > is some circular dependency breaking the build. If you feel
+>> > adventurous you can try that :-)
+>>
+>> Hmm, weird, worked for me :/
 
-On 6/6/25 12:00, Qiu-ji Chen wrote:
-> Fixed a flag reuse bug in the mtk_cqdma_tx_status() function.
-> 
-> Fixes: 157ae5ffd76a ("dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_status()")
-> Cc: stable@vger.kernel.org
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202505270641.MStzJUfU-lkp@intel.com/
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+Worked for me as well.
 
-Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
+>
+> I am super confused, it did not work for me over weekend, and now it
+> is working. Even `make menuconfig` would not work. Anyways, I will put
+> it in the appropriate place.
+>
+>>
+>> > > > We will need to teah KHO to work with deferred struct page init. I
+>> > > > suspect, we could init preserved struct pages and then skip over them
+>> > > > during deferred init.
+>> > >
+>> > > We could, but with that would mean we'll run this before SMP and it's not
+>> > > desirable. Also, init_deferred_page() for a random page requires
+>> >
+>> > We already run KHO init before smp_init:
+>> > start_kernel() -> mm_core_init() -> kho_memory_init() ->
+>> > kho_restore_folio() -> struct pages must be already initialized here!
+>> >
+>> > While deferred struct pages are initialized:
+>> > start_kernel() -> rest_init() -> kernel_init() ->
+>> > kernel_init_freeable() -> page_alloc_init_late() ->
+>> > deferred_init_memmap()
+>> >
+>> > If the number of preserved pages that is needed during early boot is
+>> > relatively small, that it should not be an issue to pre-initialize
+>> > struct pages for them before deferred struct pages are initialized. We
+>> > already pre-initialize some  "struct pages" that are needed during
+>> > early boot before the reset are initialized, see deferred_grow_zone()
+>>
+>> deferred_grow_zone() takes a chunk in the beginning of uninitialized range,
+>> with kho we are talking about some random pages. If we preinit them early,
+>> deferred_init_memmap() will overwrite them.
+>
+> Yes, this is why I am saying that we would need to skip the KHO
+> initialized "struct pages" somehow during deferred initialization. If
+> we create an ordered by PFN list of early-initialized KHO struct
+> pages, skipping during deferred initialization could be done
+> efficiently.
 
-> ---
-> V2:
-> Change the inner vc lock from spin_lock_irqsave() to spin_lock()
-> Thanks Eugen Hristev for helpful suggestion.
-> ---
->  drivers/dma/mediatek/mtk-cqdma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/mediatek/mtk-cqdma.c b/drivers/dma/mediatek/mtk-cqdma.c
-> index 47c8adfdc155..9f0c41ca7770 100644
-> --- a/drivers/dma/mediatek/mtk-cqdma.c
-> +++ b/drivers/dma/mediatek/mtk-cqdma.c
-> @@ -449,9 +449,9 @@ static enum dma_status mtk_cqdma_tx_status(struct dma_chan *c,
->  		return ret;
->  
->  	spin_lock_irqsave(&cvc->pc->lock, flags);
-> -	spin_lock_irqsave(&cvc->vc.lock, flags);
-> +	spin_lock(&cvc->vc.lock);
->  	vd = mtk_cqdma_find_active_desc(c, cookie);
-> -	spin_unlock_irqrestore(&cvc->vc.lock, flags);
-> +	spin_unlock(&cvc->vc.lock);
->  	spin_unlock_irqrestore(&cvc->pc->lock, flags);
->  
->  	if (vd) {
+Or keep things simple and don't use any KHO struct pages during early
+init. You can access the page itself, just don't use its struct page.
 
+Currently the only user of kho_restore_folio() during init is
+kho_memory_init(). The FDT is accessed by doing
+phys_to_virt(kho_in.fdt_phys) anyway, so there is really no need for
+restoring the folio so early. It can be done later, for example when LUO
+does the finish event, to clean up and free the folio.
+
+-- 
+Regards,
+Pratyush Yadav
 
