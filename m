@@ -1,172 +1,122 @@
-Return-Path: <linux-kernel+bounces-682506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB85AD612B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:24:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE6FAD60E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB419189FCEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:24:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45CF31E0CB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2332459FF;
-	Wed, 11 Jun 2025 21:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F6A23E336;
+	Wed, 11 Jun 2025 21:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="GB7QRGZ5"
-Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bp0W74Lh"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AC91BD9CE;
-	Wed, 11 Jun 2025 21:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E2F1A8F82
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 21:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749677039; cv=none; b=bulC0PajIt2khmUIQghsRSLVKqwkKS3fdZQKeKGs4Zg7ZWkBWYd/ej67pLHg8W8yyui0f+UVMzzzbxfSI9FyhX7JiFfnzGL0823U3MTj5SScqF7HF4WYXltBrTFkOFiv+weTDQhnnn8ZfgDaDqe0ZHq0RmBMfikUQCkeijfNU5k=
+	t=1749676566; cv=none; b=Ou1rZN6VRhqDJt/A6HetjIh7L028KNIdK3GoK15HBIqw2BcEtLomM68EXnMPEHhYLYvSH7PNqo/xSDhRSN3gUgyZUGC7TevfhxqI0GKD8e3Y0b+gLZ1CPovH5zxob00tZIMO606KPJPd1KGA6xNDky4mXzO1/zqd85ENlWVk9Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749677039; c=relaxed/simple;
-	bh=t1zJH4Rmm4htAzj/dQwNCS9TEe1c1gCbgRoNZ2a76h4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pmjGXMk3QCKFgFTT68iAmRpIwKmw34sleU895c+CEsdg15rSKJJqlR+aB62ooiKlYt6qxQISHckIahuxK1gE55QH1o3NNUs9PUUuxiLBRZ9aJMVJtqnnEzk/047LEXygW8m46lQTewkpHDYyQocm1SSt3rmJW/RFsLiKtzgfQak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=GB7QRGZ5; arc=none smtp.client-ip=131.188.11.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1749676562; bh=S2j0xHEZeQOTVtx7TJX88U0NbtEMbxvs08E3DcOiM3k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=GB7QRGZ5lNQDix0fSkRgtNjMUUycMz/UHj26osAKdXgqXZKpzhvC7+v9XyS8QmlYC
-	 azUB/LpaFU0XoJC/mJ0vbZ/D59tDhDxJBssj5jaqn1fbH695ZHK/xkgYdQIE7kK+sS
-	 N5j8WALlbhpLQrq98pYbzkDR7mjZlqOt+NDyWZyph3hi749A9BIreU1ETu6Pg/Pma7
-	 QZXaBnZdUvryQAzJbNaE60AG/8ryVYMTcyp52o6CfoGab8AYoxvbeVrnlVBXMvDLHI
-	 OyijBtu3r24T5wMOIZBqjwlbpMaG3cg0dUtM4NFqKqTy0xGay1OeXO7hnwnR+7souS
-	 uQpsPOkO1Iuxg==
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bHdkB0q3Sz8sk1;
-	Wed, 11 Jun 2025 23:16:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:3626:500:39da:8819:39bd:1255
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3626:500:39da:8819:39bd:1255])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX19Vu+9xQHHGMkmfqtW7CJMHQ2bOqLm6aCk=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bHdk70Msdz8spC;
-	Wed, 11 Jun 2025 23:15:58 +0200 (CEST)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Luis Gerhorst <luis.gerhorst@fau.de>
-Subject: [PATCH bpf-next] bpf: Remove redundant free_verifier_state()/pop_stack()
-Date: Wed, 11 Jun 2025 23:14:31 +0200
-Message-ID: <20250611211431.275731-1-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com>
-References: <b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com>
+	s=arc-20240116; t=1749676566; c=relaxed/simple;
+	bh=34l1hncorS8+nkL26ZB/15dqnRBpVywFqIADeqMlHMU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=vCkhu6IRsmREofBUyalXdZqXwwY8NT1FJPlYVNPuIkwwOb9jwd+sa6usMWETWbOhd0nL3sJcA/ni/xVejGF5BFW40iWZ/EztB/69KbfJdXIwDWvZhdEXba6Tn4DHRdTLIEd290I8E3M1yJvyBzsR6cPj5ZagIWscd/XWN+N1P+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bp0W74Lh; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250611211602euoutp02018c7cc5f521cc75ecaf1c28efef0e14~IGZA9ibz_0236402364euoutp02N
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 21:16:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250611211602euoutp02018c7cc5f521cc75ecaf1c28efef0e14~IGZA9ibz_0236402364euoutp02N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749676562;
+	bh=gJSx6fFWCab1L0dG4hF/wx4spo5Eingwx2AqpslewPk=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=bp0W74LhifQr+oDb85bFPnIvLOvQj11U4xNBK2Ctc3WQbNvMXWHlyVld+paX8aOnx
+	 jHUXOFqS4Gqc31gj9khxT2dS4yO5XFKlDvzNkeeaiVcPU7iuznz807UwDsOtlRhIGI
+	 wMx6yzURpEnZd1OPa2nu1tm7/icJkWPXwRhDOr4M=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250611211600eucas1p13784b73e9c0257e670846320bca0a2f9~IGY-b_FYG1491714917eucas1p1X;
+	Wed, 11 Jun 2025 21:16:00 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250611211558eusmtip17a546ce3e5256d611175ed66f1a5dc7a~IGY8xpr_31879718797eusmtip1c;
+	Wed, 11 Jun 2025 21:15:57 +0000 (GMT)
+Message-ID: <02e480b9-68eb-47e7-97f5-54e49d259f84@samsung.com>
+Date: Wed, 11 Jun 2025 23:15:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
+	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
+	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+	Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Language: en-US
+In-Reply-To: <1d9bba9e-0f30-4039-812e-60b160271e6b@samsung.com>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250611211600eucas1p13784b73e9c0257e670846320bca0a2f9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d
+X-EPHeader: CA
+X-CMS-RootMailID: 20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d
+References: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
+	<CGME20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d@eucas1p1.samsung.com>
+	<20250610-rust-next-pwm-working-fan-for-sending-v2-2-753e2955f110@samsung.com>
+	<jbm3qvowi5vskhnjyqlp3xek36gzzqjt35m66eayxi6lmi525t@iefevopxjl53>
+	<1d9bba9e-0f30-4039-812e-60b160271e6b@samsung.com>
 
-This patch removes duplicated code.
 
-Eduard points out [1]:
 
-    Same cleanup cycles are done in push_stack() and push_async_cb(),
-    both functions are only reachable from do_check_common() via
-    do_check() -> do_check_insn().
+On 6/11/25 22:04, Michal Wilczynski wrote:
+> 
+> 
+> On 6/11/25 08:58, Uwe Kleine-König wrote:
+>> Hello,
+>>
+>>
+>> What does .unwrap_or(0) do? You need to round up in this mul_div
+>> operation.
 
-    Hence, I think that cur state should not be freed in push_*()
-    functions and pop_stack() loop there is not needed.
+Yeah and I'm thinking that the helper needs to be updated or new one
+added like mul_div_round_up, to do the rounding
 
-This would also fix the 'symptom' for [2], but the issue also has a
-simpler fix which was sent separately. This fix also makes sure the
-push_*() callers always return an error for which
-error_recoverable_with_nospec(err) is false. This is required because
-otherwise we try to recover and access the stale `state`.
+> 
+> The .unwrap_or(0) is to handle the case where the mul_div helper returns
+> None, which can happen if the divisor (rate_hz) is zero. In that case,
+> the period  becomes 0. The mul_div helper is introduced in this commit
+> [1].
+> 
+> [1] - https://lore.kernel.org/all/20250609-math-rust-v1-v1-1-285fac00031f@samsung.com/
+> 
 
-[1] https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com/
-[2] https://lore.kernel.org/all/68497853.050a0220.33aa0e.036a.GAE@google.com/
 
-Reported-by: Eduard Zingerman <eddyz87@gmail.com>
-Link: https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com/
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
----
- kernel/bpf/verifier.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index d3bff0385a55..fa147c207c4b 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2066,10 +2066,10 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
- 	}
- 	return &elem->st;
- err:
--	free_verifier_state(env->cur_state, true);
--	env->cur_state = NULL;
--	/* pop all elements and return */
--	while (!pop_stack(env, NULL, NULL, false));
-+	/* free_verifier_state() and pop_stack() loop will be done in
-+	 * do_check_common(). Caller must return an error for which
-+	 * error_recoverable_with_nospec(err) is false.
-+	 */
- 	return NULL;
- }
- 
-@@ -2838,10 +2838,10 @@ static struct bpf_verifier_state *push_async_cb(struct bpf_verifier_env *env,
- 	elem->st.frame[0] = frame;
- 	return &elem->st;
- err:
--	free_verifier_state(env->cur_state, true);
--	env->cur_state = NULL;
--	/* pop all elements and return */
--	while (!pop_stack(env, NULL, NULL, false));
-+	/* free_verifier_state() and pop_stack() loop will be done in
-+	 * do_check_common(). Caller must return an error for which
-+	 * error_recoverable_with_nospec(err) is false.
-+	 */
- 	return NULL;
- }
- 
-@@ -22904,13 +22904,9 @@ static int do_check_common(struct bpf_verifier_env *env, int subprog)
- 
- 	ret = do_check(env);
- out:
--	/* check for NULL is necessary, since cur_state can be freed inside
--	 * do_check() under memory pressure.
--	 */
--	if (env->cur_state) {
--		free_verifier_state(env->cur_state, true);
--		env->cur_state = NULL;
--	}
-+	WARN_ON_ONCE(!env->cur_state);
-+	free_verifier_state(env->cur_state, true);
-+	env->cur_state = NULL;
- 	while (!pop_stack(env, NULL, NULL, false));
- 	if (!ret && pop_log)
- 		bpf_vlog_reset(&env->log, 0);
-
-base-commit: 1d251153a480fc7467d00a8c5dabc55cc6166c43
+Best regards,
 -- 
-2.49.0
-
+Michal Wilczynski <m.wilczynski@samsung.com>
 
