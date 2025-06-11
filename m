@@ -1,226 +1,233 @@
-Return-Path: <linux-kernel+bounces-681455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905CFAD52C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F74AD5321
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AC2D3AA441
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37A43B2349
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921022BDC24;
-	Wed, 11 Jun 2025 10:49:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCBC2BD59A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 10:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749638975; cv=none; b=ej96PyMbgzHzYW3z/wwJGQ4i6GmE6gj70wOIpLwfLfj1K15ONfH3loFL99phZ3gNVRx+p6SL68DA9eCMzvVN1xi8CtjiLfrrdVh0Q6BoS7B5sWMFcKgceqlS4fdzhUJMvOTy759S0Vmw/b2DFKp0JGJysVXUG4Al1xDAXZk9ITg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749638975; c=relaxed/simple;
-	bh=CCsMW2Y4vgWxPuHdWABQb40IsOOZLbjksJf8mcF8rtI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eFhaNltWdy9SDeFqcfFaPtWxpQMrOyo/T4NFZmDWr5blKhFHKCiF3Ew+tyD53SqD/lGwXI/ZWisTf7V9djNkfX1Vr1A/LVblNuQWKZP1v8BCg9R3kZL65nXWD8Ek6i32X5M6vhAiEk8wDg4eONinKodSNaYkszVv81pc040kr9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D05E1655;
-	Wed, 11 Jun 2025 03:49:13 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 389FD3F77D;
-	Wed, 11 Jun 2025 03:49:31 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	ardb@kernel.org,
-	frederic@kernel.org,
-	james.morse@arm.com,
-	joey.gouly@arm.com,
-	scott@os.amperecomputing.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 6/6] arm64/futex: support futex with FEAT_LSUI
-Date: Wed, 11 Jun 2025 11:49:16 +0100
-Message-Id: <20250611104916.10636-7-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250611104916.10636-1-yeoreum.yun@arm.com>
-References: <20250611104916.10636-1-yeoreum.yun@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6CD28368F;
+	Wed, 11 Jun 2025 10:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RlbRBjYf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710F52E6132;
+	Wed, 11 Jun 2025 10:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749639196; cv=fail; b=RCRXIpoGfyDYWpbkj6j6qtzemdf8qGyWSOalgDtM81oWV9MQAmdWGQ6Cokw4JioFBMvTDUgzR17Qs7cdHr0kDTfXaLnTKpRI20FZCEh5Wg5eWlEwHpix/444M/l8YL1xa8pQ4POsLuVC0tSCT+FoTky8CKaPMxGZpI+duCdichs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749639196; c=relaxed/simple;
+	bh=ENKxHrzGnbblJ7vkV1oXf5vnqxzYRz7IpP/TGRC2e6M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TYH3illBLoumyAZTMjQVa43GfMnT7CFWkP1ZamY7qyrsZ4kHYu9lsVW0OQe0dcCMiQ6naYzB43JRrTLje5A+pb9jIZv03AqRzhsLSXWgnJoCm3tZ3mFpD0XT2pcB2+2n18gmi+RUy5ySt8hrIKiu2ki/nWn7lAIR1H4BFyUK3j4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RlbRBjYf; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749639195; x=1781175195;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=ENKxHrzGnbblJ7vkV1oXf5vnqxzYRz7IpP/TGRC2e6M=;
+  b=RlbRBjYfgNBg9VvPpYU/mBdzJbYy86GtsBGiw6aAuRKB2v7nm8SCLWCp
+   VSOIKlC4VYSNSfPOIXxQNI1VPXuynah/I1nYsmKSUoh326wmvQCB9IT87
+   vqeuAWLCrLKS+V0pGNJXGBg9AGQhNAqs5DqPBuZZ75rEBUY2mJVCc85TM
+   pjRoXTcP74lhL/WhV5KfVciZP4hjkUbVsilYm0sFyBR/H8z6tc1IR2WcR
+   +tpb++wJ3hcl91RzhKyLYq0utHLJPdxbTJa0Q9Z2BlT9UxeZcOpkw0aWz
+   lyo7zeVGSifi+76FLldxcR8/F5HOaBNC+YnH4HDcuCgEldpfbYZenIU6K
+   Q==;
+X-CSE-ConnectionGUID: e7ioXjwXR3aSvBf0x5zGuA==
+X-CSE-MsgGUID: obNBWNM7Tvu8GZBcBA5l8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="63186396"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="63186396"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 03:53:13 -0700
+X-CSE-ConnectionGUID: o6+1R8IlTkShIfO34Arz0A==
+X-CSE-MsgGUID: HkQgyz+qSf+5S9PEhBeh5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
+   d="scan'208";a="147074701"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 03:53:14 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 11 Jun 2025 03:53:12 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 11 Jun 2025 03:53:12 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.74) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 11 Jun 2025 03:53:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Eaj24CXuHomsPy1x/X27OYYUFk1ivzbZcOxQi76NT4tj1ABlsjS/dnzw28N/gj6kYwgt6WTspyGzWjafePCni0/z8k820wDHfUGgC4grllgpcdiJGHfUyjlK3Mf2qjJRcxyXqbttroxjjTqHnr+WHXaQJmo+RtFZenJrOVfQ07TVU71O7YwPsa0atYhlUzHzCr3YFVRe8m6kch268I9Q0zGjVGPasU+cOEmvWbChjiavxsfxvlDB+HfQSK6iUwolztfZsRrI2MWT9Kh/euRD9weAgVHgzOfDc80IgwIRqkJxCmFD4mAFSXR+Vlp4sQXmwKALBHEHkqPSbocqsXv0eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GFQ2sEyEqiHUdtQbxFFh8g2eXJyBmVU5zCjANesWdRQ=;
+ b=e/m4K4qCxphXc3ANIRWqY4QqH9Q4HA3UX4ye3Lc6tZExHML4pjSInay7KUnOAgem9ZZ0sdyccDI2I1+pie4cw0NncOsnBfADgl1HcU7jpLlIkDsK9DTBzx5NPN1RyH6QObjK4+v7RjPKWnqmG/yqssXBaDBDaQ42I7em3jeApu6orzVKiIgzCP87FYQAZiWgDZV/wpYdTZMUfmD25gCn0M7WxBNpBrk1FZ+ZYNp25TXcQVCUSuI2DNjXNuZx3+jQ9SqKvr1/8rBuU/U+gQYGt5fSjfF8YQ/fi/L1PbY5VRTZuhc3yA6OkEheNojntMK4g+Gax0oqABRqlziz/ueT6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5057.namprd11.prod.outlook.com (2603:10b6:303:6c::15)
+ by MN0PR11MB5986.namprd11.prod.outlook.com (2603:10b6:208:371::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.26; Wed, 11 Jun
+ 2025 10:52:49 +0000
+Received: from CO1PR11MB5057.namprd11.prod.outlook.com
+ ([fe80::4610:6d6c:9af6:2548]) by CO1PR11MB5057.namprd11.prod.outlook.com
+ ([fe80::4610:6d6c:9af6:2548%6]) with mapi id 15.20.8835.018; Wed, 11 Jun 2025
+ 10:52:49 +0000
+Date: Wed, 11 Jun 2025 10:52:36 +0000
+From: Krzysztof Karas <krzysztof.karas@intel.com>
+To: Jeff Layton <jlayton@kernel.org>
+CC: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Jani
+ Nikula" <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Qasim Ijaz <qasdev00@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<intel-gfx@lists.freedesktop.org>
+Subject: Re: [PATCH v14 5/9] ref_tracker: allow pr_ostream() to print
+ directly to a seq_file
+Message-ID: <ykondzwgaqboegfuv27en5r6nnnrk3q3s5eu47tz2zu3dnpslv@ciw32vfj2vwc>
+"Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173,
+ 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316"
+References: <20250610-reftrack-dbgfs-v14-0-efb532861428@kernel.org>
+ <20250610-reftrack-dbgfs-v14-5-efb532861428@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20250610-reftrack-dbgfs-v14-5-efb532861428@kernel.org>
+X-ClientProxiedBy: WA1P291CA0011.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::8) To CO1PR11MB5057.namprd11.prod.outlook.com
+ (2603:10b6:303:6c::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5057:EE_|MN0PR11MB5986:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6b31704-1dc4-40a4-7c30-08dda8d61b1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QWt0Uk1pK0dQRXMzdVR3b2c1QmJyZkdMazV6bnFaeGZOdnJwUnNNYXNkR2VE?=
+ =?utf-8?B?MzJLQUlMZkt1Q3RGQTJtWDk5eGQxOVUyd0t2M2lQNW92VHlGc3FWL3YwV3M0?=
+ =?utf-8?B?aGNBL2VGQytKaWJwV0lUL25VQ3R6REtSMWZSY1dmMUlyUGJWeGt3OThBVVV0?=
+ =?utf-8?B?emd5MXpTSzJSZ09WakFSek04S1puNHB5RWtWS202TEdQbVd3Q1VOSGE3K0JH?=
+ =?utf-8?B?dkIrclVLZ0NIOTdnbTY2YU05bk92YS8xTVVybitxMWp2WFRJaGplYWIxK2sw?=
+ =?utf-8?B?S01xMklGWC94TmlGSTFYdUI3WTBzOU92N240Z3ZScTF5Q010SnZnS3BnN3la?=
+ =?utf-8?B?V0hSeTBHc1RXOWZJZWFPSVlSK3VUVWV0QVRpWXduSmpjdWlpMnc0TTBrdW5L?=
+ =?utf-8?B?WG9JTTVYNnhEOUExU09uMVpNY1dXa0ttMzJLdkwyWFZzVStOUnUvRk1yLzJN?=
+ =?utf-8?B?RmpRUThSalhzT2hnam1xOUlHcFZGVHpsbDBrTCsvOVpiSXNLRnBpazRDNkJK?=
+ =?utf-8?B?eUxCZ3BMZ0padDlJY0UvUWEzZW1BUER5d3c2OCtLb2lDWXVQUU5TSVZTOUh2?=
+ =?utf-8?B?aWpCRVRLcWt6TDRZaGFEb3ZSMjc5NU1sZWlxY21zVDVEcmZCL0d2Z3ZXRkox?=
+ =?utf-8?B?SkFOTHhHYm1wQ05aVnlpS2pXTEtXa1Q0MGdKOWlSODdyakg1LytTZThjYnY5?=
+ =?utf-8?B?bVg1c0UxVUJTWFBoTGNWK0drbVJOTS9BWTMxSENOM2h6Uk91M2hYdXdFNkJx?=
+ =?utf-8?B?aUNGVGYyclR1aWw0RDhzLzdsNjhEYVkrdUVPNlgzakxyaGY3NllHWFhESXZ4?=
+ =?utf-8?B?M0QxWlZEVjRmVHVsaXVxQkgvVTNiVzJuRGZYM3Z3V09PaTVVQXROZ0tYMUxq?=
+ =?utf-8?B?K3FESmdDZ25IVjVNN0FtRlRuRkFEdTJpcSsvMEUxV3hHZU9zSlZBMEE0b3JI?=
+ =?utf-8?B?YkhJc2lYU3crTjFUWDJuUGJSY1hSYTJhVlh2UXlIR1RxcXlJd3YzSDdnZ01U?=
+ =?utf-8?B?eU9zMTJUU3BLZnhES3VWSkliZG1OZGxiYTFWbC82VG94RldPWFMrbXp5Mzd1?=
+ =?utf-8?B?NG11NVMxM0hEY1FTODJ6MUZ5eXpmNUNsU0V6YVFFdGkxSkpKYytoTjlwVWpM?=
+ =?utf-8?B?U0ZNVTZnMGUySU1ERzhHY0d0OFdUUURvc095ZG83QUdsRXBMdnpkWDFtNXJB?=
+ =?utf-8?B?UkFpU1g4Zy90ZkNJM3VSNWRsNmhFRW12Wlp0a0FSekJ6VVlib3ZjSUwwbTJW?=
+ =?utf-8?B?S1VWQjFNaWRCb3FOdmtDdVdrZ0Y4S1VRRDAxbjBXb0JwTHkvSVpIWlk5dlJF?=
+ =?utf-8?B?c1lDVXkyaUE0VHQwWWNMT0k3dXA3TFZjNHJTSjNqSnRTNWYyeWo4WnR3cUFh?=
+ =?utf-8?B?Q2diWXhiM2N6TTYvS3VNdndGY1g3RmtKNmY0TUNJMFR5MGNnUG81UHdST3VK?=
+ =?utf-8?B?bmFlQ0VqblNXRW44ZmYwOVV1SHlhYnpMV1VhYnJwSTdoYWswTllxSnE5UFNm?=
+ =?utf-8?B?YUsrdEVpVitERDd2c3RwZFFBU0FMeWF5YXZMTmQyVFdxditUZ2w3Qi9BRGI0?=
+ =?utf-8?B?Nnd2d2dBZXlNLzd5V2ZHcFBQTklvMnFZWC9CaGtmVGZOd0FZVTNVWVE2TnN2?=
+ =?utf-8?B?UGRBaXFrbUg4VHc3Mkt1b1VvZDFtd21uc1B6bytSMUZrVWxXd0ZLY2Z4dzJ0?=
+ =?utf-8?B?WjJkK1dSVUp2N0dJdzdjbmh3eGMwUldjdFR2OWpjNS9XMkVnaUtQejFtVGp5?=
+ =?utf-8?B?amFaQ3AyNXNZZUgzM3ZRb2liWG5zdy9xSW5ia3d6WEJ2Nm4yVDkyMEpHOU1v?=
+ =?utf-8?B?d2d3VXMzRWtsMUI0a0dkOWJaL0dKbWNpU2VBN3YrcVNVdG95K240Y3dRY3c1?=
+ =?utf-8?B?bk9GbWM5S0RJVWZteFFRWjk5L3FMUzBJYnBHQkhmSXF2TDNYZy9laW5NSzhY?=
+ =?utf-8?Q?8RaarIjXD9s=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5057.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?KzRVanAvWWJ3Z2JWVVo4aDdNWDdjR2tVeXphd2lGUCsxRGRoclpNaFZjS1hG?=
+ =?utf-8?B?R0V1enRDMHhMczY2NjIyNWpaaGM2dUE3cXFBSW1UUlpJYmZxSmJoTi9zWWZl?=
+ =?utf-8?B?T2pxZTV6YlcvWHlNb3ZDSmtCdkZrZjRPUVBCc0RKY0VxUm9wcEtaNXFrOXpP?=
+ =?utf-8?B?bi9hTTNvWGdtTGpPYkpuY0xvZ2pwNDRBL0FBejVvWUNheEJHOWEzbXF1bVdv?=
+ =?utf-8?B?TGxmTlhDQ1Y2V3NEbHZZOGh6aVFMMFRsL29SazM1NlJhM1plN0NZOXhMbWlx?=
+ =?utf-8?B?TERqN1RzUml5bjBoUUNDczViVDZabkg4SDJsTkFSS0puZTFQbEdzNDE4TFFu?=
+ =?utf-8?B?bEhQdzFmWmxSenpuQVhxa252MVliQXJvNkRvUUx5V3NMWlhkV0ZWaVF0UVkv?=
+ =?utf-8?B?dXk4cE54ejcvNmRCN2cwSnVKTCs1OGUzZlI1M3dCa2hIOVlXSjlkck5HbDRt?=
+ =?utf-8?B?eEdUdVdXQmNrZ0E0TUN4dGswT1NDVU5uZDl5ZVB4SlVxbW5IcHZ3eTlpMit2?=
+ =?utf-8?B?VTNzVHRKaU4zNlc4NWNZUzVoNnFVYjdxZ0JWaXlpbTNCTW5lL3NzUm5acEpr?=
+ =?utf-8?B?Rllnem90QnJhejRVRHFkSU5iSWgyNmpwQy9mK2JCM3pHMmp2VWJ5cU1vNXNs?=
+ =?utf-8?B?N2RGS29uWERBNGFFb25BczRJcHErS0NzT2tPMGJ6U0hiaGVKaHgycy9mNDhj?=
+ =?utf-8?B?cmlzcmI0OWlZc1BydUhDNDB6ZWZoOVZqVUlRQlRtVm9xL1ZtR2lQUFhLT3F2?=
+ =?utf-8?B?c1N0QnZuZmJwRkNkMW5IcmNYOWNPRUVDYitwNzlzd0E0SkY2OGU2VUVWSkFE?=
+ =?utf-8?B?N3BORTN2aFF2SmMwYVV0ejRIVG1oZVFmYlJ5ZC9ONHZOdzcycUJjY3FOOVUy?=
+ =?utf-8?B?UFNockNYVnRNaDhtZWR6RUFGbjh2ejlWL0ZiVEVlQmhydXJJVHFQeldWQlhT?=
+ =?utf-8?B?WWlTLzJ0RzErcGxiOVVlZ3NJUzQyekFNRXFoQld2NGZIbHNpdXBiV1NqUmYz?=
+ =?utf-8?B?MnhhWHBBOVlHeXJNajFnbXB3UkdJQ2ZDMU45NlVZTTJOajhpRTEyNGFGUjY2?=
+ =?utf-8?B?NGh4Nk1oZFVCMmlhMjlNQmE5WWx2dnhrUFhGSjVVYUdlVE1SZlNxdUg2bGdG?=
+ =?utf-8?B?Wm5FOEROUkl3QkZmYjFCM3pRODJ6bTQ4SGhwSWdsMUJRN1hGdkdzWlV1OW5S?=
+ =?utf-8?B?L3pzeW9XMzFtRGtKS09wUXE3L1I1UURrQnF1SEFjdWI4M3dWMTVmS1JGdk9j?=
+ =?utf-8?B?blNwaGV1azdGT0phK2J4aHN4K0o4TDEwcE9SNWdmUVVYNk9LUm9XWEVOdmk5?=
+ =?utf-8?B?YXNJbFdqcjhicUw5T0xEL3NGcDZqQ0dtc09jWWFmajRvc3l6bmNpTFdSVTl0?=
+ =?utf-8?B?Wkpkc3R4ZmpSa0pvVFVWMDBqdHI1SEF3eEhYT1grRC8xVDE2c1A0dzJROE9Q?=
+ =?utf-8?B?RmpwNHhqYUExUlFqc0FUdzg4YW9CZmFCdjhIekJUU1RaN3YyOGJFS2lNM3ZQ?=
+ =?utf-8?B?MTJDSkdVZys0cWZ5NU93VVZjWGxIVjlxRnZML3V2VlhEdGdKcEdjelFaREpW?=
+ =?utf-8?B?cHhkTVRFUEV4RzU4L3Y4V1lRbWFMNms0UTc2TXJqWnJrUjNjZzdpWkFVYVMv?=
+ =?utf-8?B?aXJmazJvUU9jKzIrVk4rRE8zc2JaZW9tQnV2MjBBSWwxenpWYWt2RGxmY05D?=
+ =?utf-8?B?TkZieFVmTUQ4N09SOGp4U2g5cmxMcUVjYzI5bnI2SkhTNTFyNnpMWmJBd3NQ?=
+ =?utf-8?B?UTRTMEVtTU5qTXBJc3JhZjErNHI0OUltaXVTeUdTNWxiTXljaitWTlh6TlFj?=
+ =?utf-8?B?TktXbkJNR1RKckMzNVp0Z3RXcVgxYk9YdEczU0ZBTFNjWnpGckp2MzZkVUtm?=
+ =?utf-8?B?UWtPb2tmN3hkRjJBTVJkb3M4MW9wQ1IzREZHOUNmNmFIakxtMnh2OGRlajNK?=
+ =?utf-8?B?UUtOa1FCbUlNWXIydXZKYWRnZDVyWkMzMzlLbTlZanV3UmNyYy92V3piUHBn?=
+ =?utf-8?B?Yk1CRmhBUFJYZmhBOXMzTlpoZHZjT3dKQWp1dkFySTZaYUVYRlR4ZTdQbEs3?=
+ =?utf-8?B?d2ZTd2lHRERTbWVNemtLeHlyMzBrUTFDWG4vcDRsY2Yrc2hsNWRCS1E4SGM0?=
+ =?utf-8?B?Zmc2b0k3TWxFN3pxZUNwaUFxZUUrQnlTQ0FHTUNpdEtJSUhJdzZHOEVQdU9w?=
+ =?utf-8?B?eFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6b31704-1dc4-40a4-7c30-08dda8d61b1c
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5057.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 10:52:49.0979
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: N8sYtlu2LuA7H6+N3QHCONDEHbE/xP1wVnR5mirkhKaBrpiIWaVtKSkcy/F5pH9/Qo5rPO53W2QT8Vg+9oiVV7jxpRI3HpHTGV6ryz4EPbo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5986
+X-OriginatorOrg: intel.com
 
-Since Armv9.6, FEAT_LSUI supplies load/store unprevileged instructions
-for kernel to access user memory without clearing PSTATE.PAN.
+Hi Jeff,
 
-This patch makes futex use futex_atomic operations implemented with these
-instruction when cpu supports FEAT_LSUI otherwise they work with
-ldxr/stlxr with clearing PSTATE.PAN bit.
+> Allow pr_ostream to also output directly to a seq_file without an
+> intermediate buffer. The first caller of +ref_tracker_dir_seq_print()
+> will come in a later patch, so mark that __maybe_unused for now. That
+> designation will be removed once it is used.
+> 
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/futex.h | 99 +++++++++++-----------------------
- 1 file changed, 31 insertions(+), 68 deletions(-)
+Reviewed-by: Krzysztof Karas <krzysztof.karas@intel.com>
 
-diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-index bc06691d2062..ed4586776655 100644
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -9,71 +9,60 @@
- #include <linux/uaccess.h>
- 
- #include <asm/errno.h>
-+#include <asm/lsui.h>
- 
--#define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
--
--#define __futex_atomic_op(insn, ret, oldval, uaddr, tmp, oparg)		\
--do {									\
--	unsigned int loops = FUTEX_MAX_LOOPS;				\
--									\
--	uaccess_enable_privileged();					\
--	asm volatile(							\
--"	prfm	pstl1strm, %2\n"					\
--"1:	ldxr	%w1, %2\n"						\
--	insn "\n"							\
--"2:	stlxr	%w0, %w3, %2\n"						\
--"	cbz	%w0, 3f\n"						\
--"	sub	%w4, %w4, %w0\n"					\
--"	cbnz	%w4, 1b\n"						\
--"	mov	%w0, %w6\n"						\
--"3:\n"									\
--"	dmb	ish\n"							\
--	_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %w0)				\
--	_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %w0)				\
--	: "=&r" (ret), "=&r" (oldval), "+Q" (*uaddr), "=&r" (tmp),	\
--	  "+r" (loops)							\
--	: "r" (oparg), "Ir" (-EAGAIN)					\
--	: "memory");							\
--	uaccess_disable_privileged();					\
--} while (0)
-+#define FUTEX_ATOMIC_OP(op)										\
-+static __always_inline int										\
-+__futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
-+{									\
-+	return __lsui_ll_sc_u_body(futex_atomic_##op, oparg, uaddr, oval);					\
-+}
-+
-+FUTEX_ATOMIC_OP(add)
-+FUTEX_ATOMIC_OP(or)
-+FUTEX_ATOMIC_OP(and)
-+FUTEX_ATOMIC_OP(eor)
-+FUTEX_ATOMIC_OP(set)
-+
-+#undef FUTEX_ATOMIC_OP
-+
-+static __always_inline int
-+__futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	return __lsui_ll_sc_u_body(futex_cmpxchg, uaddr, oldval, newval, oval);
-+}
- 
- static inline int
- arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *_uaddr)
- {
--	int oldval = 0, ret, tmp;
--	u32 __user *uaddr = __uaccess_mask_ptr(_uaddr);
-+	int ret;
-+	u32 __user *uaddr;
- 
- 	if (!access_ok(_uaddr, sizeof(u32)))
- 		return -EFAULT;
- 
-+	uaddr = __uaccess_mask_ptr(_uaddr);
-+
- 	switch (op) {
- 	case FUTEX_OP_SET:
--		__futex_atomic_op("mov	%w3, %w5",
--				  ret, oldval, uaddr, tmp, oparg);
-+		ret = __futex_atomic_set(oparg, uaddr, oval);
- 		break;
- 	case FUTEX_OP_ADD:
--		__futex_atomic_op("add	%w3, %w1, %w5",
--				  ret, oldval, uaddr, tmp, oparg);
-+		ret = __futex_atomic_add(oparg, uaddr, oval);
- 		break;
- 	case FUTEX_OP_OR:
--		__futex_atomic_op("orr	%w3, %w1, %w5",
--				  ret, oldval, uaddr, tmp, oparg);
-+		ret = __futex_atomic_or(oparg, uaddr, oval);
- 		break;
- 	case FUTEX_OP_ANDN:
--		__futex_atomic_op("and	%w3, %w1, %w5",
--				  ret, oldval, uaddr, tmp, ~oparg);
-+		ret = __futex_atomic_and(~oparg, uaddr, oval);
- 		break;
- 	case FUTEX_OP_XOR:
--		__futex_atomic_op("eor	%w3, %w1, %w5",
--				  ret, oldval, uaddr, tmp, oparg);
-+		ret = __futex_atomic_eor(oparg, uaddr, oval);
- 		break;
- 	default:
- 		ret = -ENOSYS;
- 	}
- 
--	if (!ret)
--		*oval = oldval;
--
- 	return ret;
- }
- 
-@@ -81,40 +70,14 @@ static inline int
- futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *_uaddr,
- 			      u32 oldval, u32 newval)
- {
--	int ret = 0;
--	unsigned int loops = FUTEX_MAX_LOOPS;
--	u32 val, tmp;
- 	u32 __user *uaddr;
- 
- 	if (!access_ok(_uaddr, sizeof(u32)))
- 		return -EFAULT;
- 
- 	uaddr = __uaccess_mask_ptr(_uaddr);
--	uaccess_enable_privileged();
--	asm volatile("// futex_atomic_cmpxchg_inatomic\n"
--"	prfm	pstl1strm, %2\n"
--"1:	ldxr	%w1, %2\n"
--"	sub	%w3, %w1, %w5\n"
--"	cbnz	%w3, 4f\n"
--"2:	stlxr	%w3, %w6, %2\n"
--"	cbz	%w3, 3f\n"
--"	sub	%w4, %w4, %w3\n"
--"	cbnz	%w4, 1b\n"
--"	mov	%w0, %w7\n"
--"3:\n"
--"	dmb	ish\n"
--"4:\n"
--	_ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)
--	_ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)
--	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp), "+r" (loops)
--	: "r" (oldval), "r" (newval), "Ir" (-EAGAIN)
--	: "memory");
--	uaccess_disable_privileged();
--
--	if (!ret)
--		*uval = val;
- 
--	return ret;
-+	return __futex_cmpxchg(uaddr, oldval, newval, uval);
- }
- 
- #endif /* __ASM_FUTEX_H */
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Best Regards,
+Krzysztof
 
