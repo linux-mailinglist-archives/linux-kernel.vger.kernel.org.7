@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-680709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983BCAD48C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19E0AD48BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6047C188494E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CB43A5EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BFB1925AB;
-	Wed, 11 Jun 2025 02:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793C01779B8;
+	Wed, 11 Jun 2025 02:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="rsjzUJZD"
-Received: from esa4.hc1455-7.c3s2.iphmx.com (esa4.hc1455-7.c3s2.iphmx.com [68.232.139.117])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QWTckdSf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D7C17A2EE
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 02:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C8733E7;
+	Wed, 11 Jun 2025 02:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749608302; cv=none; b=rmYSXDgnRfNndPo/OWdsZpRKeQ2WLOg+Oc8llNNMFROSuc9KZ45oQVyq1eExYNl/dqiBdKmTeKmaLVZcP/Zzg7DsmERfPsspXd8qhBXwtMjAwSxDvYPjFozp6SYJcd+2N8PE90ZoxPWwD+vksKxE/pwhlspjHOtEVu1UGRV0zPw=
+	t=1749608194; cv=none; b=f6vTNve6h9oHitwpZyvURMaWPAWbnPH8XpvlQ1ZCCKy33ob1AAPP1wnFa5WgSd7GpOVIcP/SmUoRd9daFzxfD257zCwbu7sByg+qzEw4WoMlhyx7tO/ZDzUsxTWNdhGSFPgq4QsF+2Sukf3TavjX6lzYCfapOvQg2GHLE7lTUAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749608302; c=relaxed/simple;
-	bh=47FryM0n8vCaNjijOjTIR4zgLMY5SGBa2CfCuVDwt/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VzlS5zGg+ORx4YXELZBmhyXqEftFzUDc2BAAZ3iov545xLX3xBZNn/h1lniNtGTS42Em3ggNjuG/qC+Td5PLyMJe/wXK7Z/ar3jFkCdENKAQcgaBb04ubc1PHzcH3GWGQjezqKDcebKmLfCR6ymNUOhu2LB+weZF+X7ovy2PYMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com; spf=pass smtp.mailfrom=jp.fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=rsjzUJZD; arc=none smtp.client-ip=68.232.139.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jp.fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1749608300; x=1781144300;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=47FryM0n8vCaNjijOjTIR4zgLMY5SGBa2CfCuVDwt/0=;
-  b=rsjzUJZDNAnZvJRACvoIyj2YVcPCv9z5SaMLLY9ojVd/K7c9R/z0c+rG
-   sCPCm+HPs6haGRb5D7au7SDacx/olGbOSORIrDWbQwO9Zs8lfrddHAyRX
-   sPtIZ2bLQx7UmWHI8oD4kZqF0n3bCzQqXRheG29t3qlLarDtN+lEDqrRv
-   1FpelOa1Pw3atLWeKUpiwjsmUdLnngTAoXr2Q9sdfyjryMr+aEixnrPvV
-   A/ov6kKFLeqAO/LNx37q9hIy4IX2kq0lfIukApt+OnPCwX52L2d5PimCI
-   DDZhboB9YIAFb+5LO5ZJ9A28VPc9KuISE363KLfOo/8t35ra03gqxTp7r
+	s=arc-20240116; t=1749608194; c=relaxed/simple;
+	bh=mTHqiAgZeMLtBCLvmwMu/fW5j0K8s3oC04d1lP7v9t0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u3qLv8oJT0i5Dca65psBq/a105jpuf1bTZ8Chia4/tCGxCO8RpMEZrRM0SSXpYvRRuDGMM3UghyiD/mWC2NR7iMETuHDPxONqq4LLqgC9EtrVk44hRaqzwUKoKMlJUxSqu88fuFGIQHSsVjscOr4E877+s9Vxyiu3cMrWKrsXYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QWTckdSf; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749608194; x=1781144194;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mTHqiAgZeMLtBCLvmwMu/fW5j0K8s3oC04d1lP7v9t0=;
+  b=QWTckdSf0+zTpXSMoMDw4yCt5FYXUtYcnaFuHYMwmBvqgj/lJGxMUmio
+   jASq30uNtXczfZZJ4bAjz0QQqrq7VUETs4z0wVKaU74uOTCWkqeL9wRWa
+   eBDjiiadtpgVgI6EQ2RxjVkPhw9XFo7cHRRi74ViditLobbL9p4zDV/6g
+   JtxAmuhY9LzthwEQuGkQzFQtROGc+Y2zThgJJtxHXa4BMl2elU4v8G2KW
+   Y55KiFwqDQhHnLiSaz1yPfHBL9uaD+7/Wi2+2YkuXUCAcnDsoXEa3aH+k
+   oXI0I6uQ0E7kdNPg5hhCfeZvckBNni3ET+LVyMecyUS85Q24jZ742JrQv
    w==;
-X-CSE-ConnectionGUID: 9CWJdtVGTEC3ffwTGA3DQg==
-X-CSE-MsgGUID: 6Gk54wiNRoKicvJUmcGlCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="202795237"
-X-IronPort-AV: E=Sophos;i="6.16,226,1744038000"; 
-   d="scan'208";a="202795237"
-Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
-  by esa4.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 11:17:08 +0900
-Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
-	by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id 45D07E9ED3
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:17:05 +0900 (JST)
-Received: from oym-om1.fujitsu.com (oym-om1.o.css.fujitsu.com [10.85.58.161])
-	by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 1651FBF3C7
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:17:05 +0900 (JST)
-Received: from sm-x86-amd03.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by oym-om1.fujitsu.com (Postfix) with ESMTP id 153784007A495;
-	Wed, 11 Jun 2025 11:17:04 +0900 (JST)
-From: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Martin <dave.martin@arm.com>,
-	fenghuay@nvidia.com,
-	peternewman@google.com,
-	Babu Moger <Babu.Moger@amd.com>,
-	Borislav Petkov <bp@alien8.de>,
-	shameerali.kolothum.thodi@huawei.com,
-	bobo.shaobowang@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	baolin.wang@linux.alibaba.com,
-	lcherian@marvell.com,
-	amitsinght@marvell.com,
-	Ingo Molnar <mingo@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	H Peter Anvin <hpa@zytor.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	dfustini@baylibre.com,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 2/2] x86/resctrl: Optimize code in rdt_get_tree()
-Date: Wed, 11 Jun 2025 11:15:39 +0900
-Message-ID: <20250611021547.2766889-3-tan.shaopeng@jp.fujitsu.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250611021547.2766889-1-tan.shaopeng@jp.fujitsu.com>
-References: <20250611021547.2766889-1-tan.shaopeng@jp.fujitsu.com>
+X-CSE-ConnectionGUID: HJ3hl2rVSAOIdjyrCVqoEg==
+X-CSE-MsgGUID: 7pSLSYHxT/inQLw2NBgb/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="62354193"
+X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
+   d="scan'208";a="62354193"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 19:16:33 -0700
+X-CSE-ConnectionGUID: /DF9WnH4SEqSye6N3INR8g==
+X-CSE-MsgGUID: GU6JoQ0mRr6Tmd9QnwaJ2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
+   d="scan'208";a="146940889"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 19:16:30 -0700
+Message-ID: <b70b6803-b12b-420f-8a96-8cb0936773da@linux.intel.com>
+Date: Wed, 11 Jun 2025 10:16:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/32] KVM: SVM: Kill the VM instead of the host if MSR
+ interception is buggy
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chao Gao <chao.gao@intel.com>, Borislav Petkov <bp@alien8.de>,
+ Xin Li <xin@zytor.com>, Francesco Lavra <francescolavra.fl@gmail.com>,
+ Manali Shukla <Manali.Shukla@amd.com>
+References: <20250610225737.156318-1-seanjc@google.com>
+ <20250610225737.156318-7-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250610225737.156318-7-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Inconsistent context format. Optimize it,
-not only save a line and also make it easier to understand.
 
-Signed-off-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
----
- fs/resctrl/rdtgroup.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+On 6/11/2025 6:57 AM, Sean Christopherson wrote:
+> WARN and kill the VM instead of panicking the host if KVM attempts to set
+> or query MSR interception for an unsupported MSR.  Accessing the MSR
+> interception bitmaps only meaningfully affects post-VMRUN behavior, and
+> KVM_BUG_ON() is guaranteed to prevent the current vCPU from doing VMRUN,
+> i.e. there is no need to panic the entire host.
+>
+> Opportunistically move the sanity checks about their use to index into the
+> MSRPM, e.g. so that bugs only WARN and terminate the VM, as opposed to
+> doing that _and_ generating an out-of-bounds load.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/svm.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index c75977ca600b..7e39b9df61f1 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -824,11 +824,12 @@ static bool msr_write_intercepted(struct kvm_vcpu *vcpu, u32 msr)
+>  				      to_svm(vcpu)->msrpm;
+>  
+>  	offset    = svm_msrpm_offset(msr);
+> +	if (KVM_BUG_ON(offset == MSR_INVALID, vcpu->kvm))
+> +		return false;
+> +
+>  	bit_write = 2 * (msr & 0x0f) + 1;
+>  	tmp       = msrpm[offset];
+>  
+> -	BUG_ON(offset == MSR_INVALID);
+> -
+>  	return test_bit(bit_write, &tmp);
+>  }
+>  
+> @@ -854,12 +855,13 @@ static void set_msr_interception_bitmap(struct kvm_vcpu *vcpu, u32 *msrpm,
+>  		write = 0;
+>  
+>  	offset    = svm_msrpm_offset(msr);
+> +	if (KVM_BUG_ON(offset == MSR_INVALID, vcpu->kvm))
+> +		return;
+> +
+>  	bit_read  = 2 * (msr & 0x0f);
+>  	bit_write = 2 * (msr & 0x0f) + 1;
+>  	tmp       = msrpm[offset];
+>  
+> -	BUG_ON(offset == MSR_INVALID);
+> -
+>  	read  ? clear_bit(bit_read,  &tmp) : set_bit(bit_read,  &tmp);
+>  	write ? clear_bit(bit_write, &tmp) : set_bit(bit_write, &tmp);
+>  
 
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 1beb124e25f6..8bf87211eadb 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -2608,10 +2608,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 		goto out_root;
- 
- 	ret = schemata_list_create();
--	if (ret) {
--		schemata_list_destroy();
--		goto out_ctx;
--	}
-+	if (ret)
-+		goto out_schemata_free;
- 
- 	ret = closid_init();
- 	if (ret)
--- 
-2.43.5
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+
 
 
