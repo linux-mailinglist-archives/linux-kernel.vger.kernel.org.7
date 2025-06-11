@@ -1,105 +1,174 @@
-Return-Path: <linux-kernel+bounces-682139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BD0AD5C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:33:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBF5AD5C74
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7263A91CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D1B16E4F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A1F20766E;
-	Wed, 11 Jun 2025 16:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A32C2036EC;
+	Wed, 11 Jun 2025 16:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XDY8pA4H"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947C71FAC48;
-	Wed, 11 Jun 2025 16:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="NguFvGIf"
+Received: from mx4.sberdevices.ru (mx4.sberdevices.ru [176.109.96.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0501C8632;
+	Wed, 11 Jun 2025 16:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.109.96.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749659526; cv=none; b=odNi4vIDvRjc/++vn1Ty/2+Rb86RWsGl6pLVGdWSZNBEtzBrywjx2KkxAxyhKVKOLNorwzlXtE9aj19pmuP8TxS3egqCPuKbVZjICUXdYporck50EHJYMQw6kpFGEdtVmMkFg+GTew8OH83Ico1MFTmEcWVhJ8nzmGdxvgu9n6w=
+	t=1749660006; cv=none; b=HNjaWCB4p6eL0yGidCS3l9RMb/6iiPDh0BJznaiethrL/ASVtXLNjxZVBbK8gHx4Xvg1a6qcmpypohrfpQ08fRg4n27IdCdeA9GfL1q1XbrBUJ8A4P0Vavs4cz9FK3wCoBiKMG90LTnrqX0jDO0IWfwBD5Mujds9WSTNt7v6Wh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749659526; c=relaxed/simple;
-	bh=QsvVTVjEukMOXgp7vsAJHkEP4QuiyFrtI+Q8YTeyeFg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ltHLO/lkr9VNslcfXpmAJ3DUhsukHDoz1ywrbDYO08tel3uOSDvLH1aVQFrXO8KDZQeOKsDv7HPAh8smY5au7QOFhjLsr2NhOyy6IybNwTThgaLwR8N/jzc04miArAEbnBKJsNXX44Q62itENXDK3vwFeu8QrLkeElMgSMXjI8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XDY8pA4H; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=04
-	fcvJHUcanUs3BderAdxY1w8bpBTNk29ppsje+kwjk=; b=XDY8pA4HSyDJlEVYO0
-	28wYHxHSCstmbJV02GH3As5ubE4oX3jlKZbM5z8Nmxv9+AAJHu+S99yYoU98PHc3
-	At5Ix0TSdLazqYxxHn5+beY6sTpg4omF8xduhdlq4Reh3CziLjxKFqPex4IuF3Or
-	lcAKm5Hrs0V1Zjh4oS1P8iKK4=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wA3qEh1r0lo0Y1OHw--.15121S2;
-	Thu, 12 Jun 2025 00:31:50 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	bhelgaas@google.com,
-	mani@kernel.org,
-	kwilczynski@kernel.org
-Cc: robh@kernel.org,
-	jingoohan1@gmail.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 07/13] PCI: dwc: Refactor bt1 to use dw_pcie_clear_and_set_dword()
-Date: Thu, 12 Jun 2025 00:31:48 +0800
-Message-Id: <20250611163148.860884-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749660006; c=relaxed/simple;
+	bh=jdwCrklGp8+sWWDiW7jW7zE4A5+X8nE4ppEx6ZGNNcQ=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=GJ99kJrAIFA1UF9UZgTXKHygFmgHfgnRgVJv4iN6v12+ygOAR8n/2A7aolnBxazO0WNtNLciHg6Fdmuch6xlbmi41z+1Z61roqE2N5E/fg+XRsXsC/yaTmI7RSczg6OPkPssiMHyWrMhhN2kPKz6ytLVNudhWfl+GSypRqUfARA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=NguFvGIf; arc=none smtp.client-ip=176.109.96.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-antispam-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx4.sberdevices.ru (Postfix) with ESMTP id B3E9640009;
+	Wed, 11 Jun 2025 19:31:54 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru B3E9640009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=post; t=1749659514;
+	bh=OwEpP8eYceRJZneNAm7UT6qBSzcUQ7h5XJGbYSL4PbI=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
+	b=NguFvGIfgegpZOnhKE9yZL+GHEuLnqg6oAHmkx5RDaYqPf6Oz5rd86f2rJHQd+hIu
+	 +uOm06QgwQoB8xltwdZcG1xpkFxRrXq63YPuV5UpawFozgn54ipT98ELONOfqk6zgY
+	 BSbnCe452e0IXEHypKOgkUs9vz6PVHcV+OKl7RGUcOvKD24m0eOvkaxmOydnE6epon
+	 0UJLmU6g/7E8Xge6QbH6vpXPNWRcFnbcO1/ySfD8GYMg1H7RWZhbO+BQ0yDMmlwdLt
+	 04Qyn5gBl9SgpBSDFFaiDzPkYkAErbJEc1eMzBYaF1QIn8Sm7s6u5BoWgsn6P8axIR
+	 qZjd9ztI+lfHg==
+Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
+	by mx4.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 11 Jun 2025 19:31:54 +0300 (MSK)
+Message-ID: <4e1578fb-c81d-fe9c-1aa1-26b6016866eb@salutedevices.com>
+Date: Wed, 11 Jun 2025 19:31:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Content-Language: en-US
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <oxffffaa@gmail.com>, <kernel@salutedevices.com>,
+	<linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: [PATCH v1] Bluetooth: hci_sync: fix double free in
+ 'hci_discovery_filter_clear()'
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA3qEh1r0lo0Y1OHw--.15121S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zry8Xw4xCw48Gr45uF4xXrb_yoW8ArW7pa
-	9IkF92kF12ya1Y9a1Ut3Z7ZFyYgan5CayjgFn7Kw1IgF9Iyr9rWFyrKFy3trZxJr4Iqr1a
-	9w1UtFW7uan8ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRdsqLUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxNpo2hJrMxE4wAAsw
+X-ClientProxiedBy: p-exch-cas-a-m2.sberdevices.ru (172.24.201.210) To
+ p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Info: LuaCore: 62 0.3.62 e2af3448995f5f8a7fe71abf21bb23519d0f38c3, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 194026 [Jun 11 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/11 14:54:00 #27559328
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-Baikal-T1 PCIe driver contains a direct register write to initiate
-speed change during link training. The current implementation sets
-the PORT_LOGIC_SPEED_CHANGE bit via read-modify-write without using
-the standard bit manipulation helper.
+Function 'hci_discovery_filter_clear()' frees 'uuids' array and then
+sets it to NULL. There is a tiny chance of the following race:
 
-Replace manual bit set operation with dw_pcie_clear_and_set_dword() to
-enable speed change. The helper clearly expresses the intent to modify
-a specific bit while preserving others, eliminating the need for explicit
-read-before-write.
+'hci_cmd_sync_work()'
 
-Using the standardized interface improves consistency with other
-DesignWare drivers and reduces the risk of unintended bit modifications.
-The change also simplifies future updates to link training logic.
+ 'update_passive_scan_sync()'
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
+   'hci_update_passive_scan_sync()'
+
+     'hci_discovery_filter_clear()'
+       kfree(uuids);
+
+       <-------------------------preempted-------------------------------->
+                                           'start_service_discovery()'
+
+                                             'hci_discovery_filter_clear()'
+                                               kfree(uuids); // DOUBLE FREE
+
+       <-------------------------preempted-------------------------------->
+
+      uuids = NULL;
+
+To fix it let's add locking around call  'hci_update_passive_scan_sync()' in
+'update_passive_scan_sync()'. Otherwise the following backtrace fires:
+
+[ ] ------------[ cut here ]------------
+[ ] kernel BUG at mm/slub.c:547!
+[ ] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+[ ] CPU: 3 UID: 0 PID: 246 Comm: bluetoothd Tainted: G O 6.12.19-sdkernel #1
+[ ] Tainted: [O]=OOT_MODULE
+[ ] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ ] pc : __slab_free+0xf8/0x348
+[ ] lr : __slab_free+0x48/0x348
+...
+[ ] Call trace:
+[ ]  __slab_free+0xf8/0x348
+[ ]  kfree+0x164/0x27c
+[ ]  start_service_discovery+0x1d0/0x2c0
+[ ]  hci_sock_sendmsg+0x518/0x924
+[ ]  __sock_sendmsg+0x54/0x60
+[ ]  sock_write_iter+0x98/0xf8
+[ ]  do_iter_readv_writev+0xe4/0x1c8
+[ ]  vfs_writev+0x128/0x2b0
+[ ]  do_writev+0xfc/0x118
+[ ]  __arm64_sys_writev+0x20/0x2c
+[ ]  invoke_syscall+0x68/0xf0
+[ ]  el0_svc_common.constprop.0+0x40/0xe0
+[ ]  do_el0_svc+0x1c/0x28
+[ ]  el0_svc+0x30/0xd0
+[ ]  el0t_64_sync_handler+0x100/0x12c
+[ ]  el0t_64_sync+0x194/0x198
+[ ] Code: 8b0002e6 eb17031f 54fffbe1 d503201f (d4210000) 
+[ ] ---[ end trace 0000000000000000 ]---
+
+Cc: stable@vger.kernel.org
+Fixes: ad383c2c65a5 ("Bluetooth: hci_sync: Enable advertising when LL privacy is enabled")
+Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
 ---
- drivers/pci/controller/dwc/pcie-bt1.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ net/bluetooth/hci_sync.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-bt1.c b/drivers/pci/controller/dwc/pcie-bt1.c
-index 1340edc18d12..7cbaeeed033d 100644
---- a/drivers/pci/controller/dwc/pcie-bt1.c
-+++ b/drivers/pci/controller/dwc/pcie-bt1.c
-@@ -289,9 +289,8 @@ static int bt1_pcie_start_link(struct dw_pcie *pci)
- 	 * attempt to reach a higher bus performance (up to Gen.3 - 8.0 GT/s).
- 	 * This is required at least to get 8.0 GT/s speed.
- 	 */
--	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
--	val |= PORT_LOGIC_SPEED_CHANGE;
--	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+	dw_pcie_clear_and_set_dword(pci, PCIE_LINK_WIDTH_SPEED_CONTROL,
-+				    0, PORT_LOGIC_SPEED_CHANGE);
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index e56b1cbedab90..61a9922eb820d 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -3167,7 +3167,15 @@ int hci_update_scan(struct hci_dev *hdev)
  
- 	ret = regmap_read_poll_timeout(btpci->sys_regs, BT1_CCU_PCIE_PMSC, val,
- 				       BT1_CCU_PCIE_LTSSM_LINKUP(val),
+ static int update_passive_scan_sync(struct hci_dev *hdev, void *data)
+ {
+-	return hci_update_passive_scan_sync(hdev);
++	int ret;
++
++	hci_dev_lock(hdev);
++
++	ret = hci_update_passive_scan_sync(hdev);
++
++	hci_dev_unlock(hdev);
++
++	return ret;
+ }
+ 
+ int hci_update_passive_scan(struct hci_dev *hdev)
 -- 
-2.25.1
+2.30.1
 
 
