@@ -1,54 +1,67 @@
-Return-Path: <linux-kernel+bounces-681864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8523AD584F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:15:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5043AD5851
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26AB63A6F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:14:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B259A1651BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2CF2BD580;
-	Wed, 11 Jun 2025 14:15:05 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE94D28B7C7;
+	Wed, 11 Jun 2025 14:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8DzUkCV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A015D29ACED
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B49B43147;
+	Wed, 11 Jun 2025 14:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749651305; cv=none; b=PDx3Kv1M8KxmNMLgEn57eJy646s/K5uEh1ExWjyovRqPOMozkjR9lZDcxQ63pIUxAP5U1aG4+K8Iu4lnBlpUS6MAYxHHOY+S2OgC6cJkuZnRo9n3NDj9iG0JjpS+9mXtnoERqCDghf5nNoBrhZqT4QcdTMQxw+uKbWep1axeA7A=
+	t=1749651327; cv=none; b=rfxVg0aItKxyRyHTlunPfsA4r+B2JmlPHvF5/ibF6+kUix0Mkw6FEnZKzqgRamY/M2fuen+jfO3ccR2r78OeFlTBKRj1XUVzMTwDpp51pnts0FgM3gBMYbt5zAcDFCEnyVnnUsIbnjIrwk30A2xgl86zbrwBkBSpv7ADpYqeEUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749651305; c=relaxed/simple;
-	bh=pFxx+C/5QWV40QbrKzTdzefhgo5GIRyytsEQA9i/6/Q=;
+	s=arc-20240116; t=1749651327; c=relaxed/simple;
+	bh=jGzXWB7Z6lzbV8KChEUJK6VRbCA9SZ8qZoS2gYqKiaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s4FHEy+XZwSH9lI8Jc1bPBmeYf8YWFly3OKo01cy5CqPu58mQzhSkzr8HDbs8DuCRIkYgEpTE9b7GBtWCJ5eVMX2dntFYCE7a48Pbz6YcvZq3mgB/j4i76KspkPG3qon+d1KCHI0FGqug3nLQh9gS2F1ula6t+gj4zgkXmbczVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id ABE241D7240;
-	Wed, 11 Jun 2025 14:15:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 5C6D920033;
-	Wed, 11 Jun 2025 14:14:58 +0000 (UTC)
-Date: Wed, 11 Jun 2025 10:14:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, Ben Segall <bsegall@google.com>, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>, Juri
- Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, Thomas
- Gleinxer <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2] sched: Remove a preempt-disable section in
- rt_mutex_setprio()
-Message-ID: <20250611101457.13ea44f5@batman.local.home>
-In-Reply-To: <20250611090306.GA2273038@noisy.programming.kicks-ass.net>
-References: <20250610144700.uBK6RS95@linutronix.de>
-	<20250611090306.GA2273038@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=N0jhJYzYrOx1brdGyUj2ZGXKe7pZbWRJAvOonqmB3f5/s/ZlCLHXIWlUdlksJqGEG/n74WUatDldYHdlQhb7Rm1NjX44zfYlWAj1nWnhKOqOf5QZvEaUbhcfzLMdpGppRY3ymqg7FMM1/KeC7R91av1hJ9oAPW2+9GroNmeWFZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8DzUkCV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD517C4CEE3;
+	Wed, 11 Jun 2025 14:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749651326;
+	bh=jGzXWB7Z6lzbV8KChEUJK6VRbCA9SZ8qZoS2gYqKiaA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o8DzUkCV/ZoZNi8iSePEs+4VAAp7r4P4oOJk1UEfOiykLfTnYn6yOBuEECTEtANsP
+	 kb7AUIrZbC0nACt7vLuInaOtQt6TpGLGjytu+w2h4UtAqDTWI3NqqjO+bPR6p0c6ND
+	 9F/cTKnK2/Q/JGzlRG3CrTKCan34ABVz/g+YHNVU2ceBewCUIR52HOxNWofpLRXgw3
+	 VdExIH0pucJrFOnR0g9CuC6WK8hvUz12k+2NC+M5tbXbiqG4aI1v5/3n0MI6bmfTJT
+	 a5a1QqYq9iyihxOkZPtewTumep1qPq5M5VNsUtIpb/fauI4tiO9Q85M1eEV+NMne0G
+	 MpLBkAxPNSqdQ==
+Date: Wed, 11 Jun 2025 07:15:24 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Krzysztof
+ Karas <krzysztof.karas@intel.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Qasim Ijaz <qasdev00@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas.weissschuh@linutronix.de>
+Subject: Re: [PATCH v14 0/9] ref_tracker: add ability to register a debugfs
+ file for a ref_tracker_dir
+Message-ID: <20250611071524.45610986@kernel.org>
+In-Reply-To: <20250610-reftrack-dbgfs-v14-0-efb532861428@kernel.org>
+References: <20250610-reftrack-dbgfs-v14-0-efb532861428@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,36 +70,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 5C6D920033
-X-Stat-Signature: jfpkggf699s5uq3t8z8iukopfwho48gx
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/WvrBFQsv3gRwMyZGvufRM72PtMU2aDtY=
-X-HE-Tag: 1749651298-720991
-X-HE-Meta: U2FsdGVkX18MuulUrPufGWjBco2mf9EefcB2MFUtAED5qZCkZckI1+jdoixvFikw+D9j4rhy+pZAeE0Osm9OzscW+0mEoVxG3ZW/44EBCVBhNTRnx76SU8EDBidHUU/y/T/oCkfb0Y8vEL3gPp8Rq0mBxG8vbH7o6y7YISHIsWxjmNAu4oCEsjvrOIlBcIC+gHJ2n9AKKX+LBeIBCZ4bECKivTQNfnjvRNj6jN68a1IYnHUBKjdVM+3u1XUwUKBp1Yz6e2XkyLUGpRQ2Xr8HENiv96uOzIl0Bp981i0bGNcjh33uFXLmWgu3ArFpTHCb13yu3XgJ4kVJGAN1TL5kCh649f0AjS9hXRvOJEJYG/lo9MUox1YwQjJ0JfZqkxIGoXS0E9Vt+kIFOd8V43wfog==
 
-On Wed, 11 Jun 2025 11:03:06 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, 10 Jun 2025 10:59:20 -0400 Jeff Layton wrote:
+> For those just joining in, this series adds a new top-level
+> "ref_tracker" debugfs directory, and has each ref_tracker_dir register a
+> file in there as part of its initialization. It also adds the ability to
+> register a symlink with a more human-usable name that points to the
+> file, and does some general cleanup of how the ref_tracker object names
+> are handled.
 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -7292,14 +7292,10 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
-> >  
-> >  	check_class_changed(rq, p, prev_class, oldprio);
-> >  out_unlock:
-> > -	/* Avoid rq from going away on us: */
-> > -	preempt_disable();  
-> 
-> Perhaps add:
-> 
-> 	/* IRQs are still disabled */
-> 
-> or something to that effect such that it is obvious from reading the
-> code that dropping the lock will not enable preemption?
+Still has the lockdep problem. Please triple check that it's fixed
+before you post next version, the number of warnings this series
+generates is quite burdensome for our CI.
 
-Hmm, wouldn't lockdep_assert_irqs_disabled() be better than a comment.
-It lets people know that interrupts are disabled and when lockdep is
-enabled it also makes sure they are.
+[  440.139336][    C1] ================================
+[  440.139684][    C1] WARNING: inconsistent lock state
+[  440.140019][    C1] 6.15.0-virtme #1 Not tainted
+[  440.140360][    C1] --------------------------------
+[  440.140705][    C1] inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+[  440.141124][    C1] ksoftirqd/1/22 [HC0[0]:SC1[1]:HE1:SE0] takes:
+[  440.141541][    C1] ffffffffad243218 (&xa->xa_lock#8){+.?.}-{3:3}, at: xa_set_mark+0x73/0x120
+[  440.142146][    C1] {SOFTIRQ-ON-W} state was registered at:
+[  440.142485][    C1]   __lock_acquire+0x20b/0x7e0
+[  440.142832][    C1]   lock_acquire.part.0+0xb6/0x240
+[  440.143181][    C1]   _raw_spin_lock+0x33/0x40
+[  440.143521][    C1]   xa_store+0x1c/0x50
+[  440.143784][    C1]   ref_tracker_dir_debugfs+0x168/0x1b0
+[  440.144137][    C1]   init_net_debugfs+0x15/0x70
+[  440.144480][    C1]   do_one_initcall+0x8c/0x1e0
+[  440.144845][    C1]   do_initcalls+0x176/0x280
+[  440.145184][    C1]   kernel_init_freeable+0x22d/0x300
+[  440.145530][    C1]   kernel_init+0x20/0x200
+[  440.145871][    C1]   ret_from_fork+0x240/0x320
+[  440.146205][    C1]   ret_from_fork_asm+0x1a/0x30
+[  440.146545][    C1] irq event stamp: 5141102
+[  440.146886][    C1] hardirqs last  enabled at (5141102): [<ffffffffa96fa4ed>] _raw_spin_unlock_irqrestore+0x5d/0x80
+[  440.147613][    C1] hardirqs last disabled at (5141101): [<ffffffffa96fa1cb>] _raw_spin_lock_irqsave+0x5b/0x60
+[  440.148283][    C1] softirqs last  enabled at (5139838): [<ffffffffa6c8ef18>] handle_softirqs+0x358/0x620
+[  440.148883][    C1] softirqs last disabled at (5139843): [<ffffffffa6c8f41f>] run_ksoftirqd+0x3f/0x70
 
--- Steve
+https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/160722/1-mptcp-join-sh/stderr
+https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/160722/vm-crash-thr0-0
+-- 
+pw-bot: cr
 
