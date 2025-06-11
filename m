@@ -1,147 +1,218 @@
-Return-Path: <linux-kernel+bounces-681880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41447AD5894
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:24:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9911BAD588A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 16:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9C21BC4F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:22:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A10CD7AE280
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FAB26B2B3;
-	Wed, 11 Jun 2025 14:20:22 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7222BE7AB;
+	Wed, 11 Jun 2025 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R0sMUzby"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEAE296147;
-	Wed, 11 Jun 2025 14:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68B42BE7A5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 14:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749651622; cv=none; b=Uk0uM2GTP5dJuckIr1TlqAoWwCQEXgKnHmEEqf7UojmS8qqDBlQ15Glvp192ApzoQtfOaT8QKNKwTfAJ+j1g2nJhA3noYQ/uxUOB7kqyX2Awnon/XeDjSoVHyHyrTjLgVbYkiCa/w2DNpFnO1pQvmofnGOn2Mcq0RZenLVmTr+M=
+	t=1749651662; cv=none; b=eo4Lwv9+RVGQtzaJXA9oObuL5NgNpe/vj5gDw5UN5ue/sCDzj4dImGeSh92VXFkgdG8RwXJtliXtrlHWxBtNicib4J7fhTjkAm+iKCVS1Dy6ejQArE1dgazoqdjVW+5qI5ALBzzaQBJh3VLdyhVy4r2p/SCfPh03Q0J3rKNcRk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749651622; c=relaxed/simple;
-	bh=AG0Bs9vpCQ4T8QEl8ZO9vLvDMYsYLyqpe1wrOEo4RWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UpMlqxto+w0n2VpuA7E+ykiBsv1za8vKpg09NwgD2PB80NFom7ExV0LKDoGC7TjDxa2fmgkt9kVe4riCWAL8+oRPPwCbTBVbQzm+wyi8qmloLar614hijzsvylda9xA7N6bldiEel0LFF9YIBsyHRDvF42a5cHp4Fa1p/BTH/uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 529F780E2D;
-	Wed, 11 Jun 2025 14:20:16 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 95CCA20027;
-	Wed, 11 Jun 2025 14:20:11 +0000 (UTC)
-Date: Wed, 11 Jun 2025 10:20:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, Naresh Kamboju
- <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
- lkft-triage@lists.linaro.org, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd
- Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Anders
- Roxell <anders.roxell@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo  Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav  Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Subject: Re: [RFC PATCH 2/2] x86: alternative: Invalidate the cache for
- updated instructions
-Message-ID: <20250611102010.1bf7c264@batman.local.home>
-In-Reply-To: <20250611192610.6edf9713f6ee84c26f653ea5@kernel.org>
-References: <20250610234307.c675969e83ce53bb856e94d7@kernel.org>
-	<174956686826.1494782.11512582667456262594.stgit@mhiramat.tok.corp.google.com>
-	<20250610115030.0d60da65@gandalf.local.home>
-	<20250611192610.6edf9713f6ee84c26f653ea5@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749651662; c=relaxed/simple;
+	bh=tEXibwohiKNHCWkX7JniiQ7ZfUXlGD/79RnMkx3tqaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eE7NsHMAe+EwUWKU7XsT3O3CofbEpi2LSBek4zqefBisj1qGz/pEq3h9fz4Syf9LHAPiVqarfuE46AxyRcQDJ1bUEBcFj4T1MLSNtxUS85LrBuR4P8WFBYix84QDOEr1puV98hCKGS3AA4FLyPBceJ8MXN4BX9jYZSlLChquBoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R0sMUzby; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749651659;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C/ntzkpVyIcXdzoQL5rgGpdL1A4Z+ur0N0W3VcmJOj4=;
+	b=R0sMUzbyi9TxJfrd4h8JgHphqhWrEspdztkSbKNlo19cx/7Y0w1p5pYdGD+Pt1n0ANHzhc
+	JXHtCk5Edg4kGaq9CX90Kfq9WUkPyUoIbPd1Y/rsLxOElU2gk0PF02CyUCJtGzWAQK1N+7
+	G5InTrU7yq08caHijc2slf4IIpw7jh4=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-374-L674VLQ0PLGWQleSIgqfWA-1; Wed, 11 Jun 2025 10:20:58 -0400
+X-MC-Unique: L674VLQ0PLGWQleSIgqfWA-1
+X-Mimecast-MFC-AGG-ID: L674VLQ0PLGWQleSIgqfWA_1749651658
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fad34d3cd8so110884346d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 07:20:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749651658; x=1750256458;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C/ntzkpVyIcXdzoQL5rgGpdL1A4Z+ur0N0W3VcmJOj4=;
+        b=B8NUkS90E2IHv9Q48TQrFeHtGfPpCLjZrummI5Pr2uItT2PRbnoX0N32oMT6jTDWZo
+         zKX2yQZVarxEAslz4I07Fyizvi+GUFET4xzaWuMvaf5inuXmtsXZiDVDcky0dMQ0s4V6
+         6E2Xq58ibrljav5D0Yp46ldt8iKmHS+G75zwe/m5J1ZUEcXhlhc89cKvHfe/RAVWdKxB
+         C7G7kTAx7nNm3i9YvubrLizsu2bb3j9m//J57w4RBmMqcvuh6sl/CmlpDgyg5Xa6EwER
+         OA7dP/sTju/Y3j+1yc5FuFQGGvNX9o5J0zY6ziP0p0OMrFsvF/fxGlI1DcchPVeVg0/a
+         WPSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVElNZiFP324GyvsMmi3XXE24ySQN5s2lj0QE+nKT0L4EbDJpIraaWo9dY8zLhipMwpk+xDP6cNfYJ66Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD9oL48KELpe7rxUzwsb5YFG8iUlxa5whixTDqv+AOWcoAUkCw
+	sNEb5xxH6mdu2Z6lEj8zZ6THD76eZpVlLDBOryk/yRCT8COyRl0eKLlsx5acr0cjOCjiUYTdias
+	tXLqL+MJEePze2tOQaJ3aEzgcDxUcBmJBQHsnyz0/0hmJjdQE+hq3JmEwbs6YcsHaTw==
+X-Gm-Gg: ASbGncuXk09hPpViLLQ4gmUyFR58w4qJYP/7fQbzrHoug7oYX5MSeZZjhZW0ZuR0TMU
+	8fA5cfopkKCBFj945pmUuOz4ZNCcvwAfglIVYVj4hD4Y0yMWxoLftnqy0FUobX3u09Izc0WdhEl
+	cme2zVqzKFQFbqJzDXB4vOu/QaXw0lXLsHdGFjOOYnxpsuhZSJJp4acpmF818jXwDZwbenyr0l7
+	czr06xh7p0B7VxrbMCEgzllCa3t9Ej01kUanE4vLRdR7iRahKCdCf7iKE+M+tOXtfrOyKN+S7cK
+	DgIyk/cwALluT2QpzCCjw94ske21
+X-Received: by 2002:a05:6214:e87:b0:6f4:cb2e:25cc with SMTP id 6a1803df08f44-6fb2c375cbcmr53864586d6.32.1749651657764;
+        Wed, 11 Jun 2025 07:20:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQt/g4HB23CjbIbHN4akFe9MRSdw7e8RgKDMJzNZJ6k+6aUqN0eqJB/UJ1rAQJhrsDdwLVxA==
+X-Received: by 2002:a05:6214:e87:b0:6f4:cb2e:25cc with SMTP id 6a1803df08f44-6fb2c375cbcmr53864296d6.32.1749651657123;
+        Wed, 11 Jun 2025 07:20:57 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.148.235])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09b2a1fasm82526736d6.93.2025.06.11.07.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 07:20:56 -0700 (PDT)
+Date: Wed, 11 Jun 2025 16:20:49 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next v2 2/3] vsock/test: Introduce
+ get_transports()
+Message-ID: <lvduahetdnmshgo7tus7kezq6ddps5wjouefkmfwxkw7ckbhpg@nvjhai4xt5kl>
+References: <20250528-vsock-test-inc-cov-v2-0-8f655b40d57c@rbox.co>
+ <20250528-vsock-test-inc-cov-v2-2-8f655b40d57c@rbox.co>
+ <wzbyv7fvzgpf4ta775of6k4ozypnfe6szysvnz4odd3363ipsp@2v3h5w77cr7a>
+ <b4f3bc0d-9ff5-4271-be28-bbace27927bd@rbox.co>
+ <hxnugz3xrrn3ze2arcvjumvjqekvjfsrvd32wi7e3zgdagdaqb@cm3y6fipqdf3>
+ <adae2539-2a48-45c3-a340-e9ab3776941f@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 95CCA20027
-X-Stat-Signature: rhy6xig8f8wkqqnjpmmytqx9dmy49ou7
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19mYjjxbE8STn8J2hKAdlQENeelbUtZG70=
-X-HE-Tag: 1749651611-325749
-X-HE-Meta: U2FsdGVkX1/2aM+oDd68kNXfBzofjOaafPkaVS0pnksX1xew9r6cjHEwJ4izXAJYQbx8MTAV21VwjnOr1iZ69Pq7JftqNEf7NpShANf7/ykgE/TcSnX+UK00rN+ieIwcw9tGM7VkVKPD6QF/7nwAftGkk2wpD/lF6DTNOSS2udxOzMtbf6le4PPGlalfxyJBp24xMw3mtmYEL4me12gH7BoBVM50q7cFhI3cBbzfEqOY5l/dPUM8JMMk/0PSn4lNlrngkM4UnmOepWaeHbKiEYiyec8gIYPFtf+wtqDI8mfYq9MJ0UwxazkzaXGfMGu6PSYrkQSoNH8VHpq4mK7fBWwMQc3tRjxFTQ4e+Q5NoTl7gBHv8DAqHizWgdFeMRRR0jEhxrQ4Mbds7aCafjkDuw==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <adae2539-2a48-45c3-a340-e9ab3776941f@rbox.co>
 
+On Fri, Jun 06, 2025 at 09:51:29AM +0200, Michal Luczaj wrote:
+>On 6/5/25 12:46, Stefano Garzarella wrote:
+>> On Wed, Jun 04, 2025 at 09:10:19PM +0200, Michal Luczaj wrote:
+>>> On 6/4/25 11:07, Stefano Garzarella wrote:
+>>>> On Wed, May 28, 2025 at 10:44:42PM +0200, Michal Luczaj wrote:
+>>>>> +static int __get_transports(void)
+>>>>> +{
+>>>>> +	/* Order must match transports defined in util.h.
+>>>>> +	 * man nm: "d" The symbol is in the initialized data section.
+>>>>> +	 */
+>>>>> +	const char * const syms[] = {
+>>>>> +		"d loopback_transport",
+>>>>> +		"d virtio_transport",
+>>>>> +		"d vhost_transport",
+>>>>> +		"d vmci_transport",
+>>>>> +		"d hvs_transport",
+>>>>> +	};
+>>>>
+>>>> I would move this array (or a macro that define it), near the transport
+>>>> defined in util.h, so they are near and we can easily update/review
+>>>> changes.
+>>>>
+>>>> BTW what about adding static asserts to check we are aligned?
+>>>
+>>> Something like
+>>>
+>>> #define KNOWN_TRANSPORTS	\
+>>
+>> What about KNOWN_TRANSPORTS(_) ?
+>
+>Ah, yeah.
+>
+>>> 	_(LOOPBACK, "loopback")	\
+>>> 	_(VIRTIO, "virtio")	\
+>>> 	_(VHOST, "vhost")	\
+>>> 	_(VMCI, "vmci")		\
+>>> 	_(HYPERV, "hvs")
+>>>
+>>> enum transport {
+>>> 	TRANSPORT_COUNTER_BASE = __COUNTER__ + 1,
+>>> 	#define _(name, symbol)	\
+>>> 		TRANSPORT_##name = _BITUL(__COUNTER__ - TRANSPORT_COUNTER_BASE),
+>>> 	KNOWN_TRANSPORTS
+>>> 	TRANSPORT_NUM = __COUNTER__ - TRANSPORT_COUNTER_BASE,
+>>> 	#undef _
+>>> };
+>>>
+>>> static char * const transport_ksyms[] = {
+>>> 	#define _(name, symbol) "d " symbol "_transport",
+>>> 	KNOWN_TRANSPORTS
+>>> 	#undef _
+>>> };
+>>>
+>>> static_assert(ARRAY_SIZE(transport_ksyms) == TRANSPORT_NUM);
+>>>
+>>> ?
+>>
+>> Yep, this is even better, thanks :-)
+>
+>Although checkpatch complains:
+>
+>ERROR: Macros with complex values should be enclosed in parentheses
+>#105: FILE: tools/testing/vsock/util.h:11:
+>+#define KNOWN_TRANSPORTS(_)	\
+>+	_(LOOPBACK, "loopback")	\
+>+	_(VIRTIO, "virtio")	\
+>+	_(VHOST, "vhost")	\
+>+	_(VMCI, "vmci")		\
+>+	_(HYPERV, "hvs")
+>
+>BUT SEE:
+>
+>   do {} while (0) advice is over-stated in a few situations:
+>
+>   The more obvious case is macros, like MODULE_PARM_DESC, invoked at
+>   file-scope, where C disallows code (it must be in functions).  See
+>   $exceptions if you have one to add by name.
+>
+>   More troublesome is declarative macros used at top of new scope,
+>   like DECLARE_PER_CPU.  These might just compile with a do-while-0
+>   wrapper, but would be incorrect.  Most of these are handled by
+>   detecting struct,union,etc declaration primitives in $exceptions.
+>
+>   Theres also macros called inside an if (block), which "return" an
+>   expression.  These cannot do-while, and need a ({}) wrapper.
+>
+>   Enjoy this qualification while we work to improve our heuristics.
+>
+>ERROR: Macros with complex values should be enclosed in parentheses
+>#114: FILE: tools/testing/vsock/util.h:20:
+>+	#define _(name, symbol)	\
+>+		TRANSPORT_##name = BIT(__COUNTER__ - TRANSPORT_COUNTER_BASE),
+>
+>WARNING: Argument 'symbol' is not used in function-like macro
+>#114: FILE: tools/testing/vsock/util.h:20:
+>+	#define _(name, symbol)	\
+>+		TRANSPORT_##name = BIT(__COUNTER__ - TRANSPORT_COUNTER_BASE),
+>
+>WARNING: Argument 'name' is not used in function-like macro
+>#122: FILE: tools/testing/vsock/util.h:28:
+>+	#define _(name, symbol) "d " symbol "_transport",
+>
+>Is it ok to ignore this? FWIW, I see the same ERRORs due to similarly used
+>preprocessor directives in fs/bcachefs/alloc_background_format.h, and the
+>same WARNINGs about unused macro arguments in arch/x86/include/asm/asm.h
+>(e.g. __ASM_SEL).
 
-[ I just noticed that you continued on the thread without the x86 folks Cc ]
+It's just test, so I think it's fine to ignore, but please exaplain it 
+in the commit description with also references to other ERRORs/WARNINGs 
+like you did here. Let's see what net maintainers think.
 
-On Wed, 11 Jun 2025 19:26:10 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+Thanks,
+Stefano
 
-> On Tue, 10 Jun 2025 11:50:30 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Tue, 10 Jun 2025 23:47:48 +0900
-> > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> >   
-> > > Maybe one possible scenario is to hit the int3 after the third step
-> > > somehow (on I-cache).
-> > > 
-> > > ------
-> > > <CPU0>					<CPU1>
-> > > 					Start smp_text_poke_batch_finish().
-> > > 					Start the third step. (remove INT3)
-> > > 					on_each_cpu(do_sync_core)
-> > > do_sync_core(do SERIALIZE)
-> > > 					Finish the third step.
-> > > Hit INT3 (from I-cache)
-> > > 					Clear text_poke_array_refs[cpu0]
-> > > Start smp_text_poke_int3_handler()  
-> > 
-> > I believe your analysis is the issue here. The commit that changed the ref
-> > counter from a global to per cpu didn't cause the issue, it just made the
-> > race window bigger.
-> >   
-> 
-> Ah, OK. It seems more easier to explain. Since we use the
-> trap gate for #BP, it does not clear the IF automatically.
-> Thus there is a time window between executing INT3 on icache
-> (or already in the pipeline) and its handler disables
-> interrupts. If the IPI is received in the time window,
-> this bug happens.
-> 
-> <CPU0>					<CPU1>
-> 					Start smp_text_poke_batch_finish().
-> 					Start the third step. (remove INT3)
-> Hit INT3 (from icache/pipeline)
-> 					on_each_cpu(do_sync_core)
-> ----
-> do_sync_core(do SERIALIZE)
-> ----
-> 					Finish the third step.
-> Handle #BP including CLI
-> 					Clear text_poke_array_refs[cpu0]
-> preparing stack
-> Start smp_text_poke_int3_handler()
-> Failed to get text_poke_array_refs[cpu0]
-> 
-> In this case, per-cpu text_poke_array_refs will make a time
-> window bigger because clearing text_poke_array_refs is faster.
-> 
-> If this is correct, flushing cache does not matter (it
-> can make the window smaller.)
-> 
-> One possible solution is to send IPI again which ensures the
-> current #BP handler exits. It can make the window small enough.
-> 
-> Another solution is removing WARN_ONCE() from [1/2], which
-> means we accept this scenario, but avoid catastrophic result.
-
-If interrupts are enabled when the break point hits and just enters the
-int3 handler, does that also mean it can schedule?
-
-If that's the case, then we either have to remove the WARN_ONCE() or we
-would have to do something like a synchronize_rcu_tasks().
-
--- Steve
 
