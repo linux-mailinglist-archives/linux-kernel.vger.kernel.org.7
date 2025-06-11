@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-680817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFF0AD4A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:36:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401D0AD4A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9451798FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:36:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99B267ABE00
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5F11FDA8B;
-	Wed, 11 Jun 2025 04:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD34320B803;
+	Wed, 11 Jun 2025 04:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WtIBH74x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j5Hx88Ko"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEDB17E;
-	Wed, 11 Jun 2025 04:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BFC17E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 04:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749616591; cv=none; b=b/lrjzJtGxn92K/b5AEDU2XlW6wo1A/ytGc6LS/T/YbYNXdBcY53lseZUzEQHJD0vU68xRnSIuZuwWk3Fc4aXeTYKnH/HIeaB3O6u91sdikdW9QiAmyat+vbzsIzHtwk/1P9HREI5sQlH4KOfLw87aY67FRi3AC6ZIlW4KiGPBE=
+	t=1749616673; cv=none; b=G6+ARshmTqbkBtazZJDQeaFriedqyiTEfUuR8Gf9sghsL0zB/2mmKrquoyVrrpKEm09iBveXK1uNIVhLkkbOS0VQS7m0Rp74AJt+3Pvvjtt4O7OlnPqo5+Rl4sseVe34nlfiuVWQ4/tmNqjniIKfiSKnLvhc4VCSPFm3zwO/3Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749616591; c=relaxed/simple;
-	bh=tRxMqpkb2IwMUGM66RyACCozzCUvA/2oSPay/sQ/gUU=;
+	s=arc-20240116; t=1749616673; c=relaxed/simple;
+	bh=TfZ07W2uCkBNI9p2iHLuOlIUrxn9e1xYgknUoZFI+hE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fYhRnn+Zq/0bnjQMqXxztxMc5mFyFCy3cwfzA/WtfdmFF5dudyvYS6ybQo1bfg3FGioOEcIO4A9XxulWViBJpjSAcEMHKMIPZu7aNUdscV62CEhWl0zn7XfPDSZxgLzubjZ+lZL8mDXUjL1lBFT1pj3jUsX/s7JvimW9d2PyR98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WtIBH74x; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749616590; x=1781152590;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tRxMqpkb2IwMUGM66RyACCozzCUvA/2oSPay/sQ/gUU=;
-  b=WtIBH74xHLoE9LWC3Z/zu+h1JCz5+EQm6C7HZ+t9sSgwTlxVpkYqYT34
-   MuI+SKN5Zb+gHOhvVl94oIDceTl8VJ77Wlsl1ltNacc7qNxrzwR1vUjlF
-   z8G6p9BR1fkWeEgJTm0jfHp+5PjFldE0FG+z/HXo8dZH5lMdYpqNYPzP9
-   ntbktzaeGkkHMLlE2F7SfjUUaE4nB4kXTJF6jX1+6/vDI+qP/19M0gP5I
-   Qbr1n6n/PVriIRRUQlKXY7xJ32py90ieGUDSIlmgHgY3KoE2ptKiVRFPp
-   OsH35YVgejQSnDVRGFOedwrDlY7edu5QBgvaB79Uu2ZolWPZO/IbWYNeP
-   w==;
-X-CSE-ConnectionGUID: Zio0AEtpSdivxOYtcV+vPw==
-X-CSE-MsgGUID: R/o+t8OBQzyRHdmdu0GWbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="55408851"
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="55408851"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 21:36:29 -0700
-X-CSE-ConnectionGUID: 8LDedCyBTg2XwLId0sIpHQ==
-X-CSE-MsgGUID: 3f+y0SzxTp+dbaWrXWeVnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; 
-   d="scan'208";a="147973369"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 10 Jun 2025 21:36:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 6E9E2192; Wed, 11 Jun 2025 07:36:26 +0300 (EEST)
-Date: Wed, 11 Jun 2025 07:36:26 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 0/4] pinctrl: intel: use new GPIO line value setter
- callbacks
-Message-ID: <20250611043626.GD2063270@black.fi.intel.com>
-References: <20250610-gpiochip-set-rv-pinctrl-intel-v1-0-d7a773ff864e@linaro.org>
- <aEiVsrtfzK1rkgUI@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6XFTdXZu1EEQ68DlwOIOXaBc24aHHsjA8p0X/KKMkOkSMHsQpetwmyjstEQO3F2eiyIzHBs+xtwx3Wkhxjpj20IuyN71LNbBJRSu2vfy8Wb8TAmb15ZkMnNWpow1gc6pco5VEViiUYNmF8TYAyoC1/pWtmEOALke6e2fGK7+Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j5Hx88Ko; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-234fcadde3eso72947615ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 21:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749616671; x=1750221471; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FE1cAWbg11FBslkXTnrUJG3ETee3kwzfdEhvTNzCUjg=;
+        b=j5Hx88KoSICauE7LHZgBDDf1nljkDh7ihDMZDxP/b+tVds4tZhxR3UO9kgiPc246lG
+         xxeKvFlHn0ZCsMXEhJtAfaJBkgNY+3AHE89r+3J8Uy9pOXrm+EEimF73a9IcAtM+Vlm+
+         y7FIKusQXLROG4bdc7J8ASrAYoaVs7T6ZsMo0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749616671; x=1750221471;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FE1cAWbg11FBslkXTnrUJG3ETee3kwzfdEhvTNzCUjg=;
+        b=N6Bbko+pNPKVu6zFIzHz5rTgWRKvP5PIp9zgM3tHUekDSM03NliSfhc/r/+Rxg7Nva
+         g3+ogzCZi1rrsFwfdBKmvxC3Aobjf/pMh59YBeNfAsWDVvzjRQnj0IMXa1bM88DbcAPt
+         Xk20Gsjtj4iP26ZtTjXtyvk5LwuT3D6y8n3tmXlzmylhXK+WaL0YBroWWshC3VTbevgZ
+         hFQXxrsFBjN+5qCaPpCYB54cwks7ECnnubNWEmpu+1c7Pjs1b4lehh6Jc3yI3EmgjtPe
+         N61GJDFo8n6KiVlldcDNNHtw+dMhkrVPWVSwXkJSd4M9XR5b7Bz/UOUtyfa5fO4EuB0s
+         N7IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxDWx5vjBBVaSyV6OoysPgi63tIc8zdXb27CsQvGBRfxs1BdmtXCtGD9SMwOSTkE7ggjX6uhKjJdFfVSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdOQIdcnhCR5bJ2FYVAozOLv0GKIgFgyxCJrLhawVaV60HkLh8
+	E2ZvVHkqu3rDFZY6xG/qsWyYRAtqFeeUHsnW4g0PbVHDDS8Hp5033ga6GocCFoMcRQ==
+X-Gm-Gg: ASbGncvtmsNCL7cb8wHx7HSY0vHTkQyf4KF3wpecK8DeHsxSgMTA9jzCILLtZlKpVDP
+	lMiFCIxZ4VIRSh+wGmLpYt2dwXiObtNxtquCeBOux7JnuRU+KY2d9BjkTj6Xv4v6czZcgDK1tqQ
+	btIeRvLk4gvUa6a70fzSRHWSu7SamGeq2k+vcape8RrGV5nToA34NsVD8a+ftIHrzQVEXDLXa/w
+	vZZiEPTktf5aDviP5O4Pzmzr4P9CfA4Ln9fcSAiYY8vXqay+ISVlGHlFn3BYgLVLQRas4RXfq6O
+	8QqP3QnpYruo5w99976wiEH312IZYibk0AXVgJpzXzMYSkc2ege0qob1+mTLhAjCO1fjzG2UisC
+	u
+X-Google-Smtp-Source: AGHT+IFM8NgLpiLIoUkojJ3i2pht8cBR3G2XAm5m39HTWlGcYeBr0M+6D9ErnNi2+LitOkchPJZG1g==
+X-Received: by 2002:a17:903:32c1:b0:235:a9b:21e7 with SMTP id d9443c01a7336-23641b2654bmr26834905ad.48.1749616671102;
+        Tue, 10 Jun 2025 21:37:51 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:eac8:ff09:e566:df3a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603077eb7sm78450355ad.39.2025.06.10.21.37.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 21:37:50 -0700 (PDT)
+Date: Wed, 11 Jun 2025 13:37:46 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCHv2] wifi: ath11k: mark reset srng lists as uninitialized
+Message-ID: <74caimlaibla7rge2eoiubeesp6pz7e6u7ifvbw57t4e6q4qso@iypz4pqd7kpr>
+References: <20250529035708.3136232-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aEiVsrtfzK1rkgUI@smile.fi.intel.com>
+In-Reply-To: <20250529035708.3136232-1-senozhatsky@chromium.org>
 
-On Tue, Jun 10, 2025 at 11:29:38PM +0300, Andy Shevchenko wrote:
-> On Tue, Jun 10, 2025 at 02:58:46PM +0200, Bartosz Golaszewski wrote:
-> > Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
-> > values") added new line setter callbacks to struct gpio_chip. They allow
-> > to indicate failures to callers. We're in the process of converting all
-> > GPIO controllers to using them before removing the old ones. This series
-> > converts all GPIO chips in intel pin control drivers.
-> 
-> I'll wait for Mika's Ack and apply, the material LGTM, thanks!
+On (25/05/29 12:56), Sergey Senozhatsky wrote:
+> ath11k_hal_srng_deinit() frees rdp and wrp which are used
+> by srng lists.  Mark srng lists as not-initialized.  This
+> makes sense, for instance, when device fails to resume
+> and the driver calls ath11k_hal_srng_deinit() from
+> ath11k_core_reconfigure_on_crash().
+[..]
 
-Looks good to me too,
-
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Gentle ping.
 
