@@ -1,221 +1,429 @@
-Return-Path: <linux-kernel+bounces-680860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED4BAD4AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:05:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECA7AD4A5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 07:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 557BA3A5B07
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 06:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACF2189DDF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 05:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92732227EBE;
-	Wed, 11 Jun 2025 06:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1A9225779;
+	Wed, 11 Jun 2025 05:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TAhkmL9e"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="JU2PnlTc"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011070.outbound.protection.outlook.com [40.107.130.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3D0EEA8;
-	Wed, 11 Jun 2025 06:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202DD8F5B;
+	Wed, 11 Jun 2025 05:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749621914; cv=fail; b=F3EzG62q2Fdo4Kqll8g7k7tsCtNhG/AZYyKwU8T7exICfakuswxz54Bg7ZTrPuoB2rL30MMDjN3X5zWFJj1LQQwUo+f6Xk0jZpEdrH2HnXIzCkkXc21CUZTwObhORVa5AqDtnZAWcJgShFTxR2q2NAtO1ZRXzeWuwUpaffH1QjM=
+	t=1749619184; cv=fail; b=L49aOo1tE9UfpTegO0CrcpQEMidSJ/dhAg1CZGx6KyEi0TyygaWdrepFrpCPjUE5eBGNSHqszfI1xyvLGsU6foho++BkOuuHAUmf2yt2XEnTPZk2lMkxyLlgEScrXaL3DHc12JfVUW49DoJRtPF3cpK3on8WprR30fwFuiHY+lI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749621914; c=relaxed/simple;
-	bh=Na+iSy1XrvDAtIChN60c/ceAiZFZ2tLlvpg9JA+umR0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ob9SniDG26+cyl4OddUb3q8kVIxJ21jrAfvUkMLxEMe1HrW/cMakeGV6nZMerlsUFNXFbHNOIhRLpJj8T7lKlrTCAoHNWoSIFlePYfqsaHQCitYvQRrGAcUj6kU/HaNthHTrrJJ/7HRvZfcMedXU/LZD5/PYfIeHJeIPqoUVWY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TAhkmL9e; arc=fail smtp.client-ip=40.107.244.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1749619184; c=relaxed/simple;
+	bh=hJ4kX0l3hbeSaWbjeF2Q0DrUUZbRlEgNI2JPsVBWB/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TYQpWvNB8HvVE+TAdiYuQK+4JOt0MBcwN90oBGsH/f2O06/5MDqZg5KPdRIQ9dboARvpAJSmXaLxdGdOwBolgBWmTtCUjzM/fZml9k0pc2pCJHm/dV0RQpoOk0e2By+wxJwV+bkmBK2vA3UsisqICgspXNQkx74x0X9ns/0RktY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=JU2PnlTc; arc=fail smtp.client-ip=40.107.130.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y5Ubp4kqnLRZg5RFzg0tJKz4e+BXmhvCsupXd7ZHJHy5TU+NY8jfsMpS1lSeWxCfsU6JguJLhWOfoxq+sHE0OykGOe57nyNubfd/aXNwXiOHLZubA9MfArK1v25gQU3G/Ex8dl463awDH5JP6iJdpOUqb7uAlG0QvwuKYrLQSEi2o8vk63/z7Sk9WvXNwrq577puyrPaCehXVu3SEUnI4VhrN/242P2wzBRNe0felj+3zaDuOehEmx1cE3aWZJigyzPFhgmTv1hh9qKKxdhs/VhpCqckhRqaHH1QI0++U2jnHAxvmXYUa+3vDquIJnyxA59WCMYfGmT/CZJpmJTcag==
+ b=Xo5kTuMRvgT+G+cwOChI9fUPFInwRNR8s/4zlbGvRpC7asaEq4axDKS7XYulaY9w5tqoyMCkG2kdjddzHQTV8CBmwQ6Qt/XOs2iO+3duGH+M0IJP1WxFQlt3RyG9AelE21jYSHMwwZ0r5KcSMNc5OTqPxz8oM980SPuIsSvt9+gmZuCXeMmND7N49e5m9R33Wcyzu0IHOOz/FA3Mt3Q3YrnGPR9/ISdBbncTr5BQEnyP8MaS59eM5yrVEsOe0wd7EPauXtRhoKyjBqrfK3orXMUA41ObK7MiBxqenIGWqJEiXcr4nZvk2eV+eVZSHWr4y1R+xGwC+aqAaNLMSsKo8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3IoYfv0xh9/+8xCwDl8lE2YfWJsrpcYJf3Pf+bHFWNQ=;
- b=hBVtGlLS6ORIiVGyCHYWEG1mLb3W+DukcGDeE9tjuzl8qw1udEEd7+JbYG7DNPnnF3cQJu64tbWi+7+KjXpbd40ZEKD/I2/s1bB/egmnMxmfoffr8tGlPcdEPID41/T6qUs5delf78kn3QACHr6uKc13KySdMmOxtBmG854Koj8q/2O/VYt89cXyx+2fP5lUrKHBrO71rlhwfvAHkyvjZa8UBkxoEyzQ1gDHaM89hkZv3CLwCbQmneC/arsxArmmdOIePN0G2kENrM7ZwEn3FGI2CaRpCnHlQpOXm6sgJwUGqBzUD69cXhDJMl81bmdJOiO6INPHvutm2mffbBeOuA==
+ bh=iBj7NcUWYQZ5pPR8kQWFSyMltNLBOvOxNFkxlFkN0HU=;
+ b=hSjKaWeoiPXAkEp4938TNMI8izewpPfVTpxzFX42H+Sp30/4sraWvj/xz6uC2xuN8VDqV+zGrwgEUl5DanJjxq74PY4t4PxV7Q/q5H7q/O8oP6rBmFVJy4M6C+fnU0IrSVhVaRlEsKZvwVw4RXtuCK9QX/QBzTtzd98OVTklk6jd/S9iOsRMad91gNw1b4WAH5WMK8nO3kf6Ag+b5p5MdDxZ7KXCqMlOaHU7bJ7xI3eF023oiFQSGiBq+tf0y/UKUORla37uY4lEClGTtXdK+ey5773DhVfXVwC7jhDxQCoRAzyu5BjL4nSAEeOzHKpwQZD3dcA3+WuML3gepYl8+A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3IoYfv0xh9/+8xCwDl8lE2YfWJsrpcYJf3Pf+bHFWNQ=;
- b=TAhkmL9eHT8i/vfYKDyWHEHOEhU59cCmtgDYYecY1Z9OKTBUG7Q1iVdgFe/eEPIWz6SmdH3lVttLbwVtBpleNEmssH0WyrenKTmHXuA6NnU4QHVIUM62idD94sspQPeGh6CFOc4518atXKg+9zNaS0ERVYdSguy5msMTKXfnahHdGUAoOG5+6DbNOo670q5Tkt1lXrZAJbrfd/TEv9axalGvGeDggV5eAY5aPrfice+qc7Gb2Hrdw98avtlXuOoAzPzQWz9KnKw1V4aHrpmvsMpJrh8aunBqfZ5EE98YbH/WWttaoRiJGju2ST6XV2S0nfCpZAV5TiG50Bey6qZIfA==
+ bh=iBj7NcUWYQZ5pPR8kQWFSyMltNLBOvOxNFkxlFkN0HU=;
+ b=JU2PnlTchznvcqJVGtN4+0TWRKIfzZmeFxATqNxEXCfiiGeDu2ycSSzpHbvhrbbwD6Ggc+wX3X+N9EllAuTlpYG3fgwDwjgaO+y3RPZY/SDkiHRGYkkU3BdEQkZPHv2dUOts+cfmWGdsSfn2ci9Vf5iqABFJ6E/frDwaFi74j7eYjV8wlDbr9Vsq5OyeU7udIsK3oyQVRasXvUxTTHUtOegSk1wvkyRutY+aHv835w2kPW5FTVYk/t90Lco53gtdRTAdRKG2W9rxDwBt5m2WfTcmAnUaI4I7qJI2r+YMbwDv/Am1RxqbqXieWDRhJs9F1rgBR/mLe2pYz2+qQ/W19Q==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17)
- by DS7PR12MB8250.namprd12.prod.outlook.com (2603:10b6:8:db::12) with
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS4PR04MB9622.eurprd04.prod.outlook.com (2603:10a6:20b:4cc::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.38; Wed, 11 Jun
- 2025 06:05:10 +0000
-Received: from CH3PR12MB7500.namprd12.prod.outlook.com
- ([fe80::7470:5626:d269:2bf2]) by CH3PR12MB7500.namprd12.prod.outlook.com
- ([fe80::7470:5626:d269:2bf2%4]) with mapi id 15.20.8792.034; Wed, 11 Jun 2025
- 06:05:09 +0000
-Message-ID: <b1b7b052-ceac-4119-9b72-ed8f4c1fbfe2@nvidia.com>
-Date: Wed, 11 Jun 2025 09:05:01 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 00/13] Add support for PSE budget evaluation
- strategy
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Kory Maincent <kory.maincent@bootlin.com>, Paolo Abeni
- <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Donald Hunter <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com>
- <8b3cdc35-8bcc-41f6-84ec-aee50638b929@redhat.com>
- <71dc12de-410d-4c69-84c5-26c1a5b3fa6e@nvidia.com>
- <20250609103622.7e7e471d@kmaincent-XPS-13-7390>
- <f5fb49b6-1007-4879-956d-cead2b0f1c86@nvidia.com>
- <20250609160346.39776688@kmaincent-XPS-13-7390>
- <0ba3c459-f95f-483e-923d-78bf406554ea@nvidia.com>
- <cfb35f07-7f35-4c1f-9239-5c35cc301fce@lunn.ch>
-Content-Language: en-US
-From: Gal Pressman <gal@nvidia.com>
-In-Reply-To: <cfb35f07-7f35-4c1f-9239-5c35cc301fce@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0010.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:2::8)
- To CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Wed, 11 Jun
+ 2025 05:19:38 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8813.024; Wed, 11 Jun 2025
+ 05:19:38 +0000
+Date: Wed, 11 Jun 2025 14:29:39 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/2] drivers: remoteproc: Add C906L controller for Sophgo
+ CV1800B SoC
+Message-ID: <20250611062939.GA9120@nxa18884-linux>
+References: <20250609083803.GA13113@nxa18884-linux>
+ <184791843e98e0a0.ed7541b3db6a6586.57e5fabaf9bf62ee@Jude-Air.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <184791843e98e0a0.ed7541b3db6a6586.57e5fabaf9bf62ee@Jude-Air.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2P153CA0019.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::10) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7500:EE_|DS7PR12MB8250:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9e4a8e8-70e1-4f2b-1acd-08dda8adeb99
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS4PR04MB9622:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52cb52fb-effe-4a5a-8925-08dda8a78f35
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cnZuSEpBOFBJV3N3d0ViME9aejg5R09Yd2k0MzNUUTk5K1VONmZOclB0YWpU?=
- =?utf-8?B?MnExdEI3TnJPdnRBeWVQYWtWNTZlMDhPSm1NUklDM3ZyZmVuWFpKMzdrTDNt?=
- =?utf-8?B?UFJXRXp5ZENIbUJoQjFiRU8zSjBBS3J6d1paNUVlWGg3NTNlcW1lTjQ5NXNr?=
- =?utf-8?B?SkpvbTUrdDRHZWR3TzgrR0hKM0FFbnhiWDFYa2xaZ3RrQTVpUnZWNEsyQ3pp?=
- =?utf-8?B?alRmMFRFUlFya2hSQk9hMHBJSndUZXpsNTU3QVMrTUVZVi96SlFQK1IwbmpV?=
- =?utf-8?B?SUNMNUtJWUFPcnl1cW1ka3ptUWE0NHArTUd3bnhsVFFMSG54bmNCVitpdldr?=
- =?utf-8?B?NDlqcFl3c2hnaGhIL3M3eFRtMUpUZm96ellKSFE0aVNDVS9MR1VaYVJFZnFL?=
- =?utf-8?B?UERZWVhFZE80MzI2WDdFTE1yUWg1T3RSMHhLTnlUZ0FYaklhM2hOQjkwV1JS?=
- =?utf-8?B?Tkk0My9sZXRIQTgvUTFQcThWT0pBMGQrYm52NC9SNG9MYmJhWlAyeksxSkpY?=
- =?utf-8?B?SDRHVjNkQjNXNHBkZnA0TDFSRU10M0N3RnU1ekJzeUhXZjQ4Wm9sN2NENUxT?=
- =?utf-8?B?anB0SVo4bWphaEw2Wk9FSjJuUGJUNXpUNUZONWQvYWpwck9yQzI5VHVrYzNr?=
- =?utf-8?B?aG5ORWtIUG9NaVJDdHlZNTdzTlZyYTlJcXIyTXl6WHM1bW9nQzlKZC9SRDB0?=
- =?utf-8?B?SUU2SUFWendmV1BsWVZoS2J3eTZWRXErdlN1OElmd2ZCZFYzUDhNdG9rdkpk?=
- =?utf-8?B?bW40MEV4YkIwLzVTTEU3cEY3MFkxM0FVMDZ6R25mcU4wbDZla2ZyaUFLM2NN?=
- =?utf-8?B?QTdEeGxMZ0hJWXlqVVpHQnorZ01GVkphOW5jN3hGaisrKzZwaEQ3blkyQmVF?=
- =?utf-8?B?cEE5bGU3aTFRb1ZHWEtiS2ZCZEV3YWJSb3FwOVJDN2M5a1lqa0s4c1RrNXRQ?=
- =?utf-8?B?MFhYYjhtYkpCSEozSS9oUFJOekFLRk1PSHpYRm4zNXhadStKcmN0Y3lUSzZJ?=
- =?utf-8?B?YUJpcGJScysyaWZPSnpZOUQwYktRTWovb1lMS205Y2tOZzBtd1FiQXAxVERm?=
- =?utf-8?B?K0FGMlF4NDc0YUsybEpBWG80Mnd5NDcyU2ZQRDN3cmxyM0JYN2JCMnpUcUlI?=
- =?utf-8?B?WXJjTkhhM1VXNlFwT3RpeXRJeHJLQmJpeFNjUE53K1NOQ2wxeUg1djl3Tkta?=
- =?utf-8?B?eFplSCt0K0FTUmdmQ0F4YW9vd3R1SlFjSkZIaktaeEVobk9QU2JPVHRxZHVD?=
- =?utf-8?B?UEtvSDhPaFp6Sjg2eHVBNUNLTDBIOFZwWXRqZ1ZBejN5elVrOEdFMkNjbVEx?=
- =?utf-8?B?d1M1bCtnL0w5VmV3cFRhSG9ycGRWZXEyQkpDQlhzcTNoWS9Ua0ZxckJpVkFv?=
- =?utf-8?B?ZVdwTDJwRHhBb0UxaTBjQjN1UkFwS3RvV1k1Y0ZYalI5dm1QU2RrRzZlVkEw?=
- =?utf-8?B?KzBHWk1xMzA5Y2wzOGJJM0FLcjNZZGlWVzRlNkhKdnpFWkIvTWtORDB4Z3Ba?=
- =?utf-8?B?ZThidCs3SmVCbytCNGxKcGdERUlKaEVFdnlMSURNSzlYUFliZGI2SDMxN2Zs?=
- =?utf-8?B?d042Mk52cmdZWnAzTFhlQVo4TG5MYlFPWlB3VERkOWJONTdzaXVSd2lPallj?=
- =?utf-8?B?MjdsMnpYTjlQYWh5NEtJd2VrSTFReU91UlR4bmwyRnJNd1pJbDk5RWN2aWV1?=
- =?utf-8?B?aTNLR2JIUWMxYThVV1VpY0tReFNCWkdxVWx1aG9KWG9TYmoyS0I2M2FIeG9C?=
- =?utf-8?B?TVV5U1dmb1dYdHMrSDhWV0h3WWtwRVlKd0t1YWY3dHoyUkUrVUYxbk1HRGdl?=
- =?utf-8?B?MGJrVGdGaDhHMVJWS1lsZnZIMWZtaUdJWXJUQzBDRFgxQXpsNVZJbGRxTzZ5?=
- =?utf-8?B?SHBDbThlZkV4RURWdStOcm5NbjFGbGVyTktMcktHNzZrUUkrbE1VQTE4MnBC?=
- =?utf-8?Q?HwL5OkbbSKY=3D?=
+	=?us-ascii?Q?J1mWHJ3KALY92j+cuP+ib2Prl4ayH0l0iIBHRMgC/lHJd25wqQWjkUNOXjln?=
+ =?us-ascii?Q?3eeDSlzRQxZnpcHQ7URYReM6iq7e6IpIS1VFyncxKE2jqX41HynBaTwY4e2o?=
+ =?us-ascii?Q?tFXQzahv6ROQlwV1dXbybl9BBmvAXF8LG4garLSQ7Lv7T4VWQEN51di7XAg6?=
+ =?us-ascii?Q?jSpeqYX/asWo+esLQeN+gM4jRZd8b2qV21W4z/I2C/NPQEXle5ASmIjx6OAT?=
+ =?us-ascii?Q?JnsV6oetFY69yBhfyAauHHikpq6+N/U/iJUweiizSFz9sHIpAXkfcF//SSCs?=
+ =?us-ascii?Q?bSCADaraIYz6EWFZIkhkk95+e0rovRs/BZKVzliQRaokzfsqemAkdKEZl7Lf?=
+ =?us-ascii?Q?jzQ2a94CCR1gFZW35XcRT+0ID0VNxswYqe5QGx6c8yi4Z3vj1WRqIWZ3eEtK?=
+ =?us-ascii?Q?rwEBX8hY+abb7kGJTsWLAJ1O0OWYTPAO0y1CK29Hz+AsP5cRDG8ldExhtnoH?=
+ =?us-ascii?Q?lUCz0i3uIYkzz69AVRvjNUlrXLr/Z7dh0KF7I6EG1zkDq2MXh5GW4diD9tVs?=
+ =?us-ascii?Q?6h26nsD3Ir1G9gX6+F+cVXTAC9HexT88Jr/E0AO4Bl/2Z93i9grI30rZkYAg?=
+ =?us-ascii?Q?frJCv+i1DJRxdnKKBUgiXnDLi7Xz1Strq9xrPVrMdxFEAjx6GSk+P5eKg+Eu?=
+ =?us-ascii?Q?9Jlnzegtm21E+V19PtfE7SqS4dzB6Zf4sKZfjcgosgbg/5N1sPZ/j06e9kSl?=
+ =?us-ascii?Q?HPNjRaBAs2MTq1TUOdobUZwBbfIQact3NXp+6sAwotFdBfs7E38HATAZY/pF?=
+ =?us-ascii?Q?PoitY8VCMbshK0rFtg7dwQ5MIvc1dbTwqSbotUtGGZg2c1o+Lr+v6Go6jXGk?=
+ =?us-ascii?Q?q6Bw0/RCYHUTr21ChzzJgLN6Y8yuQ8teWobR9qBrVjHao2O1plR4trR9Y+El?=
+ =?us-ascii?Q?c3zUoPYCLujfVL9ASm3tYzFRKY7GK9ZbS98a5oimgMCsVwL5gPPLIa3g5Bs2?=
+ =?us-ascii?Q?b2fdmOvqg25WzuK+Rcc34m3Zmpmm8ZdWnsAhcF0qY28xy9cyFrV7Fw1NHy27?=
+ =?us-ascii?Q?bFr6HtlVFQf+7mWeyIvLSVsJRw8Bh/Qg2ilhudVMk3LujAtoTm3zIgkcbDc6?=
+ =?us-ascii?Q?hbOxTe1sUOSLMYg+BRTNSyILEV0bGXCqzkf1ypjXEqmntunCfB7ptdwyufaP?=
+ =?us-ascii?Q?dgGM2VZwbnak8rXiGboC4BFaCOsee0aYHiQfH+A46Fh8DiosG4Oo8SIdaEYQ?=
+ =?us-ascii?Q?zpmIlrigbJKSnYvjOg7eV86ODp0x0VuBpDR/nrFbKo2hykm4ztnoG0IIX9Uz?=
+ =?us-ascii?Q?RkaHDS/ANIiRetTqWsGwa/akTqC5L57ogNR5ZasQtWJscx60Qw/FhQxNrjeH?=
+ =?us-ascii?Q?pd8QQpqV+gUaVNBiGP/FFcYnkrXVC+/nTeKcRmk3jx5Xi+Gw6mjrt8ukvieY?=
+ =?us-ascii?Q?mno4OMvzp3UsP/w8D2iAlR+hYBaok5L0aJF25NPXwSuodfPsPZfeqpY5UPx1?=
+ =?us-ascii?Q?JlqcT8HTwhtj0yrRPapvBBnWOVbwff+sCENlPG3woqygfAIWDlpw5yNIkn2F?=
+ =?us-ascii?Q?IRNol2SpoMp7Pf8=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7500.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OFRkV24rOURIT2pkWTlBa2t3SUdPUyt3emFtWmo5bmFoZzFON2NnNy9VTUQw?=
- =?utf-8?B?SE1TUGpvZEZoWGorSHFEU0pDY0ZwWVd4TXRsNU5sbHNKNnJHSUQ2aFA5c1Q3?=
- =?utf-8?B?bWkrcGJ1RmxuVXNlU0tPREoxeGdNMjBTRTFOR1dCS1RKSzZXR2lWYm9VT2V2?=
- =?utf-8?B?dHovaFc4M2R1Y0d6ZlBRVlpBKzhNcXhIL1JpYVZtcmptWTZoVUJuc0xzVSs2?=
- =?utf-8?B?eW9oKzdLMldBeG45UFQvNk9obGRXdzFUbDNSV2xPQlZLSXUwN2dTR0lmOUwx?=
- =?utf-8?B?YXFMMkVhemxDQkdaSGNNVUo1eE5yZGlxSUdHMzBiNVFVVXdkUjZXYi83WjZY?=
- =?utf-8?B?b2RYQTEyUEp5TzhCdTZ4YWV0MU1PbjZrT3hObjZRc1U4SWM0b3U5Si9nRWF5?=
- =?utf-8?B?a1NVTzh6UDlGYmhaL0lrSUxkbis1TjlsUEI3c1lxQlMrNnlVdW9EMDNHdkRJ?=
- =?utf-8?B?TUY2NXZGQTkxSmFIN1AyckQ1VlhlaUwrY2ZHcllQL3pMYTI4RHJMaFpBMzJ5?=
- =?utf-8?B?NDVubFIrOEw5aWMxSEVNcnBwVW85bjAxOUxWay9iS0xCck5hMDk0bjhHbnpH?=
- =?utf-8?B?U2w2SzliYWI5MzVUMWFtVSsydmNzN0dYU1NUMElHMGJqV2xlTUVQM3dJZzJo?=
- =?utf-8?B?MDBZTDQ3bXdLS0Z3bDdOTWtsRWpoNzV5RCtid2hTMzFhM0ZvN1YyZE1NbS9w?=
- =?utf-8?B?ZTBML0VONkdMV3FLd2xkaUtxSnh3N1drSEpTbmJsUHJrMjJHMUhPU2wrMWdC?=
- =?utf-8?B?WWQ2YnVVZzBrT01QM0xQRURrS2lmYXp2NUdVN1dacmZIR2dCbnJJMk93SEJV?=
- =?utf-8?B?d3Q1dmxoSWtWMTBSaTkyZkhiM1JVZytnbzRDdlZGdDNQRkR5THFTd084T2g4?=
- =?utf-8?B?MmcxN0ViM3ZVVkJOWjNQSTh5b2VyMnpvekEwbzhhKzV0WFVpQnk5ZzhnNDN2?=
- =?utf-8?B?ZjYrQkR0eDhmc1VrdGRvNnRuVEMwWDNIVWlESHlMUjJyanFJbVkvTHVINVlV?=
- =?utf-8?B?Nlk2M2F3bzVIWUFqM1RIUDY3a2ZYYmQvdWVoN0o4dUw0RTBJdDNRM0ZKa29N?=
- =?utf-8?B?dkhFTkJncXZaSlU2Nk5iUHhkN05JRFp0WWZ6UU9KZmowQk1SazVCSzZOWTdS?=
- =?utf-8?B?dUhlWEx6RjZFUVYzOFQ0RFhXa1VBSGpLalNyNVlTdEc0VkZudVpJM1N6UFRJ?=
- =?utf-8?B?QUs2ejkvMW0xOWdhcVZreFdBeE11VTV3aFgvV2pVazBCY2ZVbXB4WVYyQ2E2?=
- =?utf-8?B?UC9tNFc0aU04U0hsNWxRTUxQU2hzNkw3MFZKWGRWQUJQUHlSakxINi9qdzdu?=
- =?utf-8?B?ZGVKN3lTSGorT3UybkpBSmUyeThFQnF1cXZOYWVkL2x2UnY0NCtoZnMwUE1l?=
- =?utf-8?B?NjZNQ3NyVXI0Mlp0L2lzTGMzWithTDhGOU9RTDZLRFB0WGcvMmVMTlo1bEMx?=
- =?utf-8?B?YzIwQVNpRWdrTlFmaGRHS0lpQjkyUjFsSkdmRnlseDJ5RWRrMG5oWFMyMnNq?=
- =?utf-8?B?dlgyVzI0aTdUYncvTW12bnVsaU5xUHg1ZlJJajk3cVkrdXJ4ZnN4bklOYnI4?=
- =?utf-8?B?TlpDcHJ1T2QyS1VpekRSanEzMm5nYWNoV25DWVRTQ1dNTTUzbVdNb3AxYitW?=
- =?utf-8?B?WGxkYWRZTnpabFNBVEl4aVJCcW9pa0hZNi9QSzFTZk4zcDRqYnRidnpLcE9y?=
- =?utf-8?B?bldSL3RBUEtMRkl0QWJRYUgyK3hOcVFHdE9pZE9PbVhicEJOQk5ocVpUTndQ?=
- =?utf-8?B?OHpESHFlM2h3TGhuUDJPeTF1UEltS0R3Zm5vcHhXZGdZSS9NWHlRVmxOQk5W?=
- =?utf-8?B?cXFrRTNkVVBhTEJjQ3FlTHNBeTB1NVFLSGF4TGtJZHlTUWNiRkRiM0ZuVWZP?=
- =?utf-8?B?NGc2eURldVVVVURwaWRCQzdSbjlXNWdINEZYRTBxbXk1ekRKLzRRWjMxdFF1?=
- =?utf-8?B?bTVNVjgxakJvQm1LbmF5V054OUVNVmRTL0dUQ3kyNHh6UnFIaVFOd041c05N?=
- =?utf-8?B?VWhpT2xFNGlOZXp4d0s1MXROSzIzWU0wU1RuNzZ5VnlSYTY4OUh3T1c5L2dJ?=
- =?utf-8?B?M2ZhVldaQTZ6WGx6V2RNbVhsTng0RWl3TVFCMHhaVXhZd2hMK1ZZMUFtN3J6?=
- =?utf-8?Q?HtIxQQHOrsd+iXFn4fEyVB35v?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9e4a8e8-70e1-4f2b-1acd-08dda8adeb99
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7500.namprd12.prod.outlook.com
+	=?us-ascii?Q?iVGP5W6kU25uU8IOZvIan8YMOkK4X+POFQ9t5w0TRYN7KYxpXgLojZ3zSuO9?=
+ =?us-ascii?Q?i8H7Eu+cUyKZ0xBn97UKVM5CdiZEdQbjZT/OVHdvlkyK7x7MsunrXuvo4SI9?=
+ =?us-ascii?Q?8r70qgDHyKxJ49fOgr3ctOXhA/gROwMXm2nsYz+uRvUtHvAuD4aP/jozJpgy?=
+ =?us-ascii?Q?gcPsYRh/ZoO0EiIs/zSsq3uiFNFVbfpBBf+SHesPwJe8djL3jT9GN7ZU3M11?=
+ =?us-ascii?Q?lSzxucC+Wyz8UOHGTDEwAhg2196tCTEQ2XUvlleT6flhkUXhat+jv4JZzpUj?=
+ =?us-ascii?Q?4F+sc5+Y0o1rsUUw49vQf9LcqGbFfJHiIMcusj8EOjIx/0cNKuBoMP+TMHgI?=
+ =?us-ascii?Q?lHWHZ1hEEYsO5sswD9JEc2VJMZGbYJT2KxgvMhbHdUmPJ5N5pOYApQyKZRMk?=
+ =?us-ascii?Q?Gi2X47hMwf3B9vxnzkzItAamuDWdALZAYFQ+SV9eTfehg9qTs3JJaPWeBhrr?=
+ =?us-ascii?Q?FNtqXjvES0kAFP1KocqoWwjJbQg6wASDa56ma4jcSx6hdWVvBWstMZod7vU3?=
+ =?us-ascii?Q?H2Rp9Yx8cf2t2NcigcwgMdkaXPkBKBY3HSZB+5aOvwEUDrNfecs0RLT0/AhH?=
+ =?us-ascii?Q?l+AjILg24S84dpAVp+fl69mzJmpPxJWVrA1fDOMfnGq4Q3U+e1/w/eVkSjk9?=
+ =?us-ascii?Q?r99CenVtut2e4dX8llZ7UTZnQjovVlLzouszl/8IW+DWCz+NnZ0GUzRyRvqL?=
+ =?us-ascii?Q?3EdhJrt0eNxHhkqzH8SJJKiSYE9Fs2hminWXfZGlj4MaeqgG9nIVtC+evRVd?=
+ =?us-ascii?Q?k/UIg2l4YWsP0nbK+Q0/TV6b+kVD9kgegZCBEuQ4V62ZUCd+Of3vPrCOq/oH?=
+ =?us-ascii?Q?VOegKs4TUtVOU8YGOCtwjMBJxN1+mn+xkVq4I3Gj5/TaP/4wND0PptN6ao5r?=
+ =?us-ascii?Q?Dzj5EJH98tg7jSqzVnSohN6n9vggjsn1jPLGryQmsUqIHYZcZBhWUgw+twqT?=
+ =?us-ascii?Q?MnYoxpw4yT6Z008C+KptOA191sfsMEDw6ntrhyL/msela8K7aLBBcGbulWf6?=
+ =?us-ascii?Q?GbJ/uB7akQOlT7uQlYqP0+pr3znvojPSHNUrqxKuaV+On9iWaTgWr+iECO+w?=
+ =?us-ascii?Q?JKa+GNRYAf+AmGcUL2JP+Cyhy8B/FvDDrF0obK1wCZLNYuvcFkie9FJD49k/?=
+ =?us-ascii?Q?8WgLopuByWU+kB96lRclCOiBygy+6bShx0N+njtoCY9vdiR1SAh3SskwxuWW?=
+ =?us-ascii?Q?F9jUsvQ+8vw+7wmFSQLEYDwOEqo/Ah27qjnhOy7WOHl/y3QQ/1lQUaa5dha+?=
+ =?us-ascii?Q?dzsCrikA5YD+Tjl7J/MtQWhs7Ilq+k++N09Fy0T8pEfoVGChPn8UCSKXDhrR?=
+ =?us-ascii?Q?Xjq/EHPEdKNvR+uWv3r3iEIc48MyUkfymWN72tmbRyyuKJ8F+3bTlz8KKu5s?=
+ =?us-ascii?Q?ezpW4WxwhjSZfC2oOz72ymB9oNy90EIXfDpJSMv6ZR/IEgFEYguxLosIWQ56?=
+ =?us-ascii?Q?cehn+q+62buc4WrgU6PzdrNB6ws3UDvST77ouKHSs7rTPVt/juGR0p69sCAO?=
+ =?us-ascii?Q?MmUU80SmSNTJXJJP4BKCgksh6RzKk4whZR1whns2E/6drS+Rvf8r1owdIj9I?=
+ =?us-ascii?Q?tLiT3NaL8MEMk1R9EBHAAT/3GiIYXnRhC2JFlQS5?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52cb52fb-effe-4a5a-8925-08dda8a78f35
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 06:05:09.5010
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 05:19:37.9569
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DBXRqms5rA4moza4Z3n/yh0goHKF93T9Pz56Alinel0zNwqEpYyBBU573G6x3dx5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8250
+X-MS-Exchange-CrossTenant-UserPrincipalName: BmAyMLzHVXtv/6gQF1mOLaz652oRinzHs6C8o2QmFN6L4FKXVxmOKziQlKCnbKw1HCqY4mpGfQbWMdlD+X1ucw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9622
 
-On 09/06/2025 18:12, Andrew Lunn wrote:
->> I think that in theory the userspace patches need to be posted together
->> with the kernel, from maintainer-netdev.rst:
->>
->> 	User space code exercising kernel features should be posted
->> 	alongside kernel patches. This gives reviewers a chance to see
->> 	how any new interface is used and how well it works.
->>
->> I am not sure if that's really the case though.
-> 
-> The ethtool Maintainer tends to wait to the end of the cycle to pick
-> up all patches and then applies and releases a new ethtool binary. The
-> same applies for iproute2. That means the CI tests are not capable of
-> testing new features using ethtool. I'm also not sure if it needs a
-> human to update the ethtool binary on the CI systems, and how active
-> that human is. Could this be changed, sure, if somebody has the needed
-> bandwidth.
-> 
-> Using the APIs directly via ynl python is possible in CI, since that
-> is all in tree, as far as i know. However, ethtool is the primary user
-> tool, so i do see having tests for it as useful. But they might need
-> to wait for a cycle, or at least fail gracefully until the ethtool
-> binary is updated.
+On Tue, Jun 10, 2025 at 03:42:57AM +0000, Junhui Liu wrote:
+>Hi Peng,
+>Thanks for your review.
+>
+>On 09/06/2025 16:43, Peng Fan wrote:
+>> On Sun, Jun 08, 2025 at 10:37:40AM +0800, Junhui Liu wrote:
+>>>Add initial support for the C906L remote processor found in the Sophgo
+>>>CV1800B SoC. The C906L is an asymmetric core typically used to run an
+>>>RTOS. This driver enables firmware loading and start/stop control of the
+>>>C906L processor via the remoteproc framework.
+>>>
+>>>The C906L and the main application processor can communicate through
+>>>mailboxes [1]. Support for mailbox-based functionality will be added in
+>>>a separate patch.
+>>>
+>>>Link: https://lore.kernel.org/linux-riscv/20250520-cv18xx-mbox-v4-0-fd4f1c676d6e@pigmoral.tech/ [1]
+>>>Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>>>---
+>>> drivers/remoteproc/Kconfig                |   9 ++
+>>> drivers/remoteproc/Makefile               |   1 +
+>>> drivers/remoteproc/sophgo_cv1800b_c906l.c | 233 ++++++++++++++++++++++++++++++
+>>> 3 files changed, 243 insertions(+)
+>>>
+>>>diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>>index 83962a114dc9fdb3260e6e922602f2da53106265..7b09a8f00332605ee528ff7c21c31091c10c2bf5 100644
+>>>--- a/drivers/remoteproc/Kconfig
+>>>+++ b/drivers/remoteproc/Kconfig
+>>>@@ -299,6 +299,15 @@ config RCAR_REMOTEPROC
+>>> 	  This can be either built-in or a loadable module.
+>>> 	  If compiled as module (M), the module name is rcar_rproc.
+>>> 
+>>>+config SOPHGO_CV1800B_C906L
+>>>+	tristate "Sophgo CV1800B C906L remoteproc support"
+>>>+	depends on ARCH_SOPHGO || COMPILE_TEST
+>>>+	help
+>>>+	  Say y here to support CV1800B C906L remote processor via the remote
+>>>+	  processor framework.
+>>>+
+>>>+	  It's safe to say N here.
+>>>+
+>>> config ST_REMOTEPROC
+>>> 	tristate "ST remoteproc support"
+>>> 	depends on ARCH_STI
+>>>diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>>index 1c7598b8475d6057a3e044b41e3515103b7aa9f1..3c1e9387491cedc9dda8219f1e9130a84538156f 100644
+>>>--- a/drivers/remoteproc/Makefile
+>>>+++ b/drivers/remoteproc/Makefile
+>>>@@ -33,6 +33,7 @@ obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
+>>> qcom_wcnss_pil-y			+= qcom_wcnss.o
+>>> qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
+>>> obj-$(CONFIG_RCAR_REMOTEPROC)		+= rcar_rproc.o
+>>>+obj-$(CONFIG_SOPHGO_CV1800B_C906L)	+= sophgo_cv1800b_c906l.o
+>>> obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+>>> obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+>>> obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+>>>diff --git a/drivers/remoteproc/sophgo_cv1800b_c906l.c b/drivers/remoteproc/sophgo_cv1800b_c906l.c
+>>>new file mode 100644
+>>>index 0000000000000000000000000000000000000000..f3c8d8fd4f796d0cf64f8ab0dd797e017b8e8be7
+>>>--- /dev/null
+>>>+++ b/drivers/remoteproc/sophgo_cv1800b_c906l.c
+>>>@@ -0,0 +1,233 @@
+>>>+// SPDX-License-Identifier: GPL-2.0-or-later
+>>>+/*
+>>>+ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
+>>>+ */
+>>>+
+>>>+#include <linux/mfd/syscon.h>
+>>>+#include <linux/module.h>
+>>>+#include <linux/of_device.h>
+>>>+#include <linux/of_reserved_mem.h>
+>>>+#include <linux/platform_device.h>
+>>>+#include <linux/remoteproc.h>
+>>>+#include <linux/reset.h>
+>>>+#include <linux/regmap.h>
+>>>+
+>>>+#include "remoteproc_internal.h"
+>>>+
+>>>+#define CV1800B_SYS_C906L_CTRL_REG	0x04
+>>>+#define   CV1800B_SYS_C906L_CTRL_EN	BIT(13)
+>> 
+>> Align the format.
+>> 
+>> '#include <linux/bits.h>' should be added for BIT
+>> 
+>
+>Will do in v2.
+>
+>>>+
+>>>+#define CV1800B_SYS_C906L_BOOTADDR_REG	0x20
+>>>+
+>>>+/**
+>>>+ * struct cv1800b_c906l - C906L remoteproc structure
+>>>+ * @dev: private pointer to the device
+>>>+ * @reset: reset control handle
+>>>+ * @rproc: the remote processor handle
+>>>+ * @syscon: regmap for accessing security system registers
+>>>+ */
+>>>+struct cv1800b_c906l {
+>>>+	struct device *dev;
+>>>+	struct reset_control *reset;
+>>>+	struct rproc *rproc;
+>>>+	struct regmap *syscon;
+>>>+};
+>>>+
+>>>+static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
+>>>+				   struct rproc_mem_entry *mem)
+>>>+{
+>>>+	void *va;
+>>>+
+>>>+	va = ioremap_wc(mem->dma, mem->len);
+>>>+	if (IS_ERR_OR_NULL(va))
+>> 
+>> Use "if (!va)"?
+>
+>Will do in v2.
+>
+>> 
+>>>+		return -ENOMEM;
+>>>+
+>>>+	/* Update memory entry va */
+>>>+	mem->va = va;
+>>>+
+>>>+	return 0;
+>>>+}
+>>>+
+>>>+static int cv1800b_c906l_mem_release(struct rproc *rproc,
+>>>+				     struct rproc_mem_entry *mem)
+>>>+{
+>>>+	iounmap(mem->va);
+>>>+
+>>>+	return 0;
+>>>+}
+>>>+
+>>>+static int cv1800b_c906l_add_carveout(struct rproc *rproc)
+>>>+{
+>>>+	struct device *dev = rproc->dev.parent;
+>>>+	struct device_node *np = dev->of_node;
+>>>+	struct of_phandle_iterator it;
+>>>+	struct rproc_mem_entry *mem;
+>>>+	struct reserved_mem *rmem;
+>>>+
+>>>+	/* Register associated reserved memory regions */
+>>>+	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+>>>+	while (of_phandle_iterator_next(&it) == 0) {
+>>>+		rmem = of_reserved_mem_lookup(it.node);
+>>>+		if (!rmem) {
+>>>+			of_node_put(it.node);
+>>>+			return -EINVAL;
+>>>+		}
+>> 
+>> Is there a need to handle vdev0buffer?
+>
+>I'll exclude it.
+>
+>> 
+>>>+
+>>>+		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)rmem->base,
+>>>+					   rmem->size, rmem->base,
+>>>+					   cv1800b_c906l_mem_alloc,
+>>>+					   cv1800b_c906l_mem_release,
+>>>+					   it.node->name);
+>>>+
+>>>+		if (!mem) {
+>>>+			of_node_put(it.node);
+>>>+			return -ENOMEM;
+>>>+		}
+>>>+
+>>>+		rproc_add_carveout(rproc, mem);
+>>>+	}
+>>>+
+>>>+	return 0;
+>>>+}
+>>>+
+>>>+static int cv1800b_c906l_prepare(struct rproc *rproc)
+>>>+{
+>>>+	struct cv1800b_c906l *priv = rproc->priv;
+>>>+	int ret;
+>>>+
+>>>+	ret = cv1800b_c906l_add_carveout(rproc);
+>>>+	if (ret)
+>>>+		return ret;
+>>>+
+>>>+	/*
+>>>+	 * This control bit must be set to enable the C906L remote processor.
+>>>+	 * Note that once the remote processor is running, merely clearing
+>>>+	 * this bit will not stop its execution.
+>>>+	 */
+>>>+	return regmap_update_bits(priv->syscon, CV1800B_SYS_C906L_CTRL_REG,
+>>>+				  CV1800B_SYS_C906L_CTRL_EN,
+>>>+				  CV1800B_SYS_C906L_CTRL_EN);
+>>>+}
+>>>+
+>>>+static int cv1800b_c906l_start(struct rproc *rproc)
+>>>+{
+>>>+	struct cv1800b_c906l *priv = rproc->priv;
+>>>+	u32 bootaddr[2];
+>>>+	int ret;
+>>>+
+>>>+	bootaddr[0] = lower_32_bits(rproc->bootaddr);
+>>>+	bootaddr[1] = upper_32_bits(rproc->bootaddr);
+>>>+
+>>>+	ret = regmap_bulk_write(priv->syscon, CV1800B_SYS_C906L_BOOTADDR_REG,
+>>>+				bootaddr, ARRAY_SIZE(bootaddr));
+>>>+	if (ret)
+>>>+		return ret;
+>>>+
+>>>+	return reset_control_deassert(priv->reset);
+>>>+}
+>>>+
+>>>+static int cv1800b_c906l_stop(struct rproc *rproc)
+>>>+{
+>>>+	struct cv1800b_c906l *priv = rproc->priv;
+>>>+
+>>>+	return reset_control_assert(priv->reset);
+>>>+}
+>>>+
+>>>+static int cv1800b_c906l_parse_fw(struct rproc *rproc,
+>>>+				  const struct firmware *fw)
+>>>+{
+>>>+	int ret;
+>>>+
+>>>+	ret = rproc_elf_load_rsc_table(rproc, fw);
+>>>+	if (ret == -EINVAL) {
+>>>+		dev_info(&rproc->dev, "No resource table in elf\n");
+>>>+		ret = 0;
+>>>+	}
+>>>+
+>>>+	return ret;
+>>>+}
+>>>+
+>>>+static const struct rproc_ops cv1800b_c906l_ops = {
+>>>+	.prepare = cv1800b_c906l_prepare,
+>>>+	.start = cv1800b_c906l_start,
+>>>+	.stop = cv1800b_c906l_stop,
+>>>+	.load = rproc_elf_load_segments,
+>>>+	.parse_fw = cv1800b_c906l_parse_fw,
+>>>+	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>>>+	.sanity_check = rproc_elf_sanity_check,
+>>>+	.get_boot_addr = rproc_elf_get_boot_addr,
+>> 
+>> Seems your setup does not support attach mode, so better add
+>> attach hook and return -ENOTSUPP?
+>
+>I checked the remoteproc framework code and found that the attach
+>function will only be called when 'rproc->state == RPROC_DETACHED', and
+>it seems that rproc->state will not be set to RPROC_DETACHED unless I do
+>so explicitly in the driver or an implemented detach function is called,
+>neither of which happens in this driver.
+>
+>Given this, do we still need to add an attach hook even though it will
+>not be called in practice?
 
-Thanks Andrew, so I interpret this as selftests should be added when the
-userspace patches get accepted (or released?)? Not part of the original
-kernel submission?
+There is no need, I overlooked RPROC_DETACHED
+
+Regards,
+Peng
 
