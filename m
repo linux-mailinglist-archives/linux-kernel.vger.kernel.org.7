@@ -1,189 +1,122 @@
-Return-Path: <linux-kernel+bounces-681974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6C7AD59E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:12:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE8CAD59D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697B93A5EFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:10:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF9BC7A1391
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 15:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A11925AB;
-	Wed, 11 Jun 2025 15:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041471A23B7;
+	Wed, 11 Jun 2025 15:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzTRS66C"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JScsLV/K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FE717B506;
-	Wed, 11 Jun 2025 15:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B891AAA11
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 15:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654632; cv=none; b=WsIaJIbI7hHoajSUddGv9Jg1EYNNKhSxdu3Vl469JuT8CBhoFqlu/scWmpXCDxtu584YxQNDVWdQHpDKrfFJyDOoZ4vfA7hGgmc/JguyIwO5K8+Tbhp66aO6G+lPbKJCYhXUg5bj1myVlsD+GKFqBJLUsXJXCzMgxP5oR3I2E8Y=
+	t=1749654658; cv=none; b=ZaUXGqd6tS5nM9+E1b1f44Ite8vDeq+Gy31TRj8qfJYj2BXSKN9NTkz3w8nnH30lrG3N7UknwwMBlXe0+JQstlWzcvC7P8PxR+YtGyluF/BrByUGcfDMpm0f3c8i614vlLl59c16RukwMMfWeCDePUqPhN+c3rPX8a9pSFG8JYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654632; c=relaxed/simple;
-	bh=6S8PHrg4XjEfujkT1575VWw1Fek905U7Rjg8vUvSE8U=;
+	s=arc-20240116; t=1749654658; c=relaxed/simple;
+	bh=J+Cb82L7O/BiPrcKvhRJcV6B/aNRdSmFiESgx/lMDDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgnzIeq0/aWIklhJB82FDe5UUnIEcOBoAw4e9S6w7piGkb8V5syKL1QbBI9R9fLhaC/aLnTZU9dxXNYrmvTMsXMnOl49QVYKrI8mZVKflIzUyd49uXAkebBFCli7/weVstLqhYxfomUGzW2Nw6gEIJaE+WZu4R4bdpZ+z2SjiN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzTRS66C; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450ce671a08so43850985e9.3;
-        Wed, 11 Jun 2025 08:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749654629; x=1750259429; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6S8PHrg4XjEfujkT1575VWw1Fek905U7Rjg8vUvSE8U=;
-        b=EzTRS66CXZ0Md9I1dSFjRQKlavFqkIgk1ocAWA6iZX6rk95TLLBKbAiCPGeQeSr7Na
-         w7BBPXlmIblzXIg93YCOUO6PNcIAyTk/F7vv/6C/6UUWjGW5LaplzbFp8FnC7JtamZst
-         dLHpvbuftXF4RmfDC1pzRLi5ptzOQA66o/7LPWHRwrafWXUwDBzpNicI8d6Uquegfa6F
-         V50jWMlLgemyjX7e0Ji76N3qU4rF4g1UP7W9B7XIppKd5busG9RvekfxL7DJCKfZNzjd
-         y1JLOx6oRHH4tpHEwpmajL5Ut6m2d+07fZZPH0fzSuPIhRvBHwgYls28EPnB1yim0KIR
-         AWsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749654629; x=1750259429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6S8PHrg4XjEfujkT1575VWw1Fek905U7Rjg8vUvSE8U=;
-        b=DOzPfqhatrjZa/g/0fwwkgiDbU4GKaHviys4I5ir/lJU37MvPJB4AsH+iGkq5AoU9x
-         76A1D+npRUVeFOW5xSpqj3mFv4y8UdtOUTCpuv6mf30t7trxi7RmKexm/sIttlLGAiNY
-         VeUj4sidgg+1iz9X0KB73qOZ/6/Csi+RawNf7hN6+4OTTEwCJRMpkARW0uXSpCrX9dM7
-         aMjzjELRupuKft8JUXBcOcCynbicfd7uTUmXgHoMLRRrsKbTZu4CxmB+C2QxJznUxT05
-         6rIPeaPqUy6+Kn+3u4ztXG66Clb2ZDh4z7J06WrGhPLABbDzAOsf8XHmNV66BPm05s0y
-         zjcA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Cy+DHpvOIO/XC4qAKwW1JFO9bPhHRKgo5HUoN4wYHQvagZk9wpgyIMiwq11CjgZdDHUbb/+sWlY98awa@vger.kernel.org, AJvYcCVtpQh6wxiTWiECXAQg4GFvnoxpkGoNNYskWqIOQ18lyWFhvcQ3EW3lSUCq1yfF9MwBPrfIupr7Ecq3@vger.kernel.org, AJvYcCXoAJSSM7pE6VuD1zn7ztJMf+QiWahAE+hhtT+I3OmZq1Xs5xZ8wQiyWllH38uFQ616DIeHcA4RYt/iwLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSQnPVCbO7lzW97+I9Jdff1NkH6ZhONZbnC3TafI9RVyTjBmzd
-	fmv4ZJVsjkBkYM825zds33JR6a+WLYAtog+fMOHUXqtdOTuV/JCAPZ2f
-X-Gm-Gg: ASbGnctZQ4ypcumodE0buoo6eegdISFZqDJHeBm1lWQFNEpioCZehfWM0wye4vNLPR9
-	dbN4wt0uiUoN2E/9gEZ5Ou2ISsWEXp6i6tV33FJgU+vm2ezB3G7qmz4mP9/s83Sn1H67yqAzSCL
-	19iLpkvwE91BZKgbkFmERAmYrqTSVlGoJynjF7Jl6/3JYbDWSM5rnFYnAEMV6JiW+w9tg64lVdw
-	Ytp8Z5TaBDbOYKw7q2bm7vPw5NTnzefdhA7U4CMu36ada/9VRwuQUTSv1mxgHVhq4svhRzLBulD
-	e+QsiVKgwiv/LNkThzQCcZSg98ON+XwBdNMXhPhceVTka6tcCyidMlHuZChbCtw1WwwMEOLW36l
-	/9uCkSyKvlmL7s4Gn+73R5dYtHDNuPPPW4BfARfuuVM3MJq/L
-X-Google-Smtp-Source: AGHT+IGV2tevVvnQ6RCHD0iJmFj1JTxfJOLQ/4g1Cwf7cPMViMXWr9d2Vxgox5m5bmrvt0G7XLIM4Q==
-X-Received: by 2002:a05:600c:3504:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-453248d3739mr29788245e9.25.1749654628570;
-        Wed, 11 Jun 2025 08:10:28 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323ad0c4sm15684910f8f.30.2025.06.11.08.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 08:10:27 -0700 (PDT)
-Date: Wed, 11 Jun 2025 17:10:25 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-Message-ID: <c3un5kjfepprcjddchqmecik27huepuxejs6vckuqb3dshrcba@s2jcf23au62n>
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
- <00f678ae-0b66-403c-bd53-6090e5920b1a@tecnico.ulisboa.pt>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAtVp4G2w6cI4e6/lHCLRwC6J9QARLFcOSe8taxI8Qlq3PSzW2CDHUu0L7M6brQljTMzQ9pyE9fG3aLgmsv86fVYu2SiiQ0udN3d6pdCkGuP5Fwsegn0O4X+7++O6KylYLkHn6pMyy24/IHXar4CPknp9fcshiRUu+nwKoOFmM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JScsLV/K; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749654656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lWkNewhRJ4wpEDm7PPC52E6cJKu2Um4iV+x8uvVQe/M=;
+	b=JScsLV/KtUrpiA0pnXR2BkEBSFZT7NmWqy+BJGT26Zg17L2fv8Tx3Rz/yLMwcgOQ+fOAeE
+	Zh5FGxkct/lSc1+7Jlisow85HN8IhPP3RkrnuYXNm6FpyU00lLIXNHT2cPRSWxk6rKBxhr
+	7bsPNkpxczW91F0VWBUaGTkouZI3PXU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-94-zveqg8ABN8KQBI07Ze_SoA-1; Wed,
+ 11 Jun 2025 11:10:49 -0400
+X-MC-Unique: zveqg8ABN8KQBI07Ze_SoA-1
+X-Mimecast-MFC-AGG-ID: zveqg8ABN8KQBI07Ze_SoA_1749654647
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 69F09195604F;
+	Wed, 11 Jun 2025 15:10:46 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.18])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4AFD11956087;
+	Wed, 11 Jun 2025 15:10:33 +0000 (UTC)
+Date: Wed, 11 Jun 2025 23:10:28 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
+Cc: stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>,
+	Hagar Hemdan <hagarhem@amazon.com>, Shaoying Xu <shaoyi@amazon.com>,
+	Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] Revert "block: don't reorder requests in
+ blk_add_rq_to_plug"
+Message-ID: <aEmcZLGtQFWMDDXZ@fedora>
+References: <20250611121626.7252-1-abuehaze@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eounn7ro2a5wiyxy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00f678ae-0b66-403c-bd53-6090e5920b1a@tecnico.ulisboa.pt>
+In-Reply-To: <20250611121626.7252-1-abuehaze@amazon.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+
+On Wed, Jun 11, 2025 at 12:14:54PM +0000, Hazem Mohamed Abuelfotoh wrote:
+> This reverts commit e70c301faece15b618e54b613b1fd6ece3dd05b4.
+> 
+> Commit <e70c301faece> ("block: don't reorder requests in
+> blk_add_rq_to_plug") reversed how requests are stored in the blk_plug
+> list, this had significant impact on bio merging with requests exist on
+> the plug list. This impact has been reported in [1] and could easily be
+> reproducible using 4k randwrite fio benchmark on an NVME based SSD without
+> having any filesystem on the disk.
+> 
+> My benchmark is:
+> 
+>     fio --time_based --name=benchmark --size=50G --rw=randwrite \
+> 	--runtime=60 --filename="/dev/nvme1n1" --ioengine=psync \
+> 	--randrepeat=0 --iodepth=1 --fsync=64 --invalidate=1 \
+> 	--verify=0 --verify_fatal=0 --blocksize=4k --numjobs=4 \
+> 	--group_reporting
+> 
+> On 1.9TiB SSD(180K Max IOPS) attached to i3.16xlarge AWS EC2 instance.
+> 
+> Kernel        |  fio (B.W MiB/sec)  | I/O size (iostat)
+> --------------+---------------------+--------------------
+> 6.15.1        |   362               |  2KiB
+> 6.15.1+revert |   660 (+82%)        |  4KiB
+> --------------+---------------------+--------------------
+
+I just run one quick test in my test VM, but can't reproduce it.
+
+Also be curious, why does writeback produce so many 2KiB bios?
 
 
---eounn7ro2a5wiyxy
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-MIME-Version: 1.0
+Thanks,
+Ming
 
-On Wed, Jun 11, 2025 at 01:04:14PM +0100, Diogo Ivo wrote:
->=20
->=20
-> On 6/10/25 10:05 AM, Thierry Reding wrote:
-> > On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
-> > > Hello,
-> > >=20
-> > > This series adds support for the NVJPG hardware accelerator found in =
-the
-> > > Tegra210 SoC.
-> > >=20
-> > > The kernel driver is essentially a copy of the NVDEC driver as both
-> > > engines are Falcon-based.
-> > >=20
-> > > For the userspace part I have written a Mesa Gallium backend [1] that,
-> > > while still very much experimental, works in decoding images with VA-=
-API.
-> > >=20
-> > > I have been using ffmpeg to call VA-API with the following command:
-> > >=20
-> > > ffmpeg -v verbose -hwaccel vaapi -hwaccel_device /dev/dri/renderD129 =
--i <input.jpg> -pix_fmt bgra -f fbdev /dev/fb0
-> > >=20
-> > > which decodes <input.jpg> and shows the result in the framebuffer.
-> > >=20
-> > > The firmware for the engine can be obtained from a Linux for Tegra
-> > > distribution.
-> >=20
-> > By the way, have you tried running this on anything newer than Tegra210?
-> > Given your progress on this, we can probably start thinking about
-> > submitting the binaries to linux-firmware.
->=20
-> Since I don't have access to other Tegra platforms I haven't been able
-> to test this driver there. For this I need help from someone with access
-> to more hardware, I can send a version that just adds the extra compatibl=
-es
-> and we could see if it works.
->=20
-> As for the firmwares that would be great!
-
-I think both of these are things that Mikko and I can help with.
-
-> > > Due to the way the Gallium implementation works for Tegra
-> > > the GPU also needs to be enabled.
-> >=20
-> > I wonder if maybe we can get rid of this requirement. While it's
-> > certainly nice to have the GPU enabled, there may be cases where using
-> > only the other engines may be advantageous. Originally when I had worked
-> > on VIC, I was looking at how it could be used for compositing without
-> > getting the GPU involved. That's something that Android devices tend(ed)
-> > to do because of the power savings that come with it.
->=20
-> Yes I think this is possible to do, it mainly has involves properly
-> handling the Gallium driver initialization. I'll take a look at it
-> before submitting the MR for the Gallium driver.
-
-Okay, great. But I think it's definitely something that we can defer if
-it's non-trivial.
-
-Thierry
-
---eounn7ro2a5wiyxy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhJnGEACgkQ3SOs138+
-s6F92Q//f6SU6icZGjpZAWYgaEic9DvE0zJTrIzfnl6VwUmSUi/tSCoe374MyNK/
-3onpN91p6PgcJbZgg93wbSc2hSgThPrn3Wxr6xVaAaCbEQ2cP3bzNTCI/q+oFrQn
-FaqjgYpSO0rSzqtTlanIqpPWJ6NEBvb411fmCycBR8sreSMGqDmyvZBgzRVhLWAb
-Pc93qJMc+fp3VjJ/M5tr0ffv7DimWH2f+9RyR7ydoYNZYvv+bHlcA03qNvkJZCPM
-ssDQ2pOwB7Ubg0GarzpNHdpoyeh+LfxViRowTvCtbeB+wFjeZyINSO2a6c1wYzzp
-rnov9B+i9akVFGZaHLkADP6FlNS6LQelzklja4Je9DPmptrtYQXFdQ+MawtH9slk
-ZTm8gSpA09Jq6HdNL6J9+pCRvxlVibGf7n7acD52dFAhEx779Si+8fuNMd3KQ8/O
-1+pYSGJEij/ZSuvwIEae/XNlkmXJhmDZ1vIek1bA8/JeYI7h0UmKy/x8lKsH8bz0
-J6RJehIvilKS5D9J8dTp3B9Xh6p2cfx3NWX9Pwzn+4SUbQ5pWnweoT3jErTpuJmM
-RwEzn2QCmsEGj32bn0v0iPj5IRlhGwlR/9SO8kZuRY0mf0AMRRS7O47wtfvbI3y8
-fxsJpInNhbqBw2tPhgHb/fDt+pjd7uS2NprQtm8IldzR7o4JpWc=
-=kiwA
------END PGP SIGNATURE-----
-
---eounn7ro2a5wiyxy--
 
