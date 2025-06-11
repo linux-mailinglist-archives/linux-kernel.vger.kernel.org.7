@@ -1,172 +1,144 @@
-Return-Path: <linux-kernel+bounces-682300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9231AAD5E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2C8AD5E2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174AE3A8142
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B8C3A92E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B59227586;
-	Wed, 11 Jun 2025 18:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6879236430;
+	Wed, 11 Jun 2025 18:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C4IJI/H6"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="ZwI5Ool5"
+Received: from rcdn-iport-2.cisco.com (rcdn-iport-2.cisco.com [173.37.86.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1506920DD75
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681AE1E8329;
+	Wed, 11 Jun 2025 18:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749666607; cv=none; b=Jv0IPcaemiBVXqtJEDw0LmZA/2lwW/qD6ahGTfpa79xOQNSxcolIiiYKrruiJvc9mRjABkjN+QtazOjFpGgRdticTwjgTbQq2very7JxqFxO609Xd9KTgHX0a0Ab75g3HcZG+Uij94OiVKq7dI7qllAKt/hwidLXMSTdD4mT5As=
+	t=1749666718; cv=none; b=QmQAPc00p+xWtmZhClPR0Ruuvjq9e3xFy9TMwfxwXkSfOejtaipgg7APUxZSXTIz/Wl5OK8kGVkxJRMWFwkMub1Gt87tOs2JxKh51MV9q9K40IoTORHQ0YufAZ0DN9WhF/0ammct40Mi3ZgrzqWecVbEhdz01tiF2rPzMA56+mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749666607; c=relaxed/simple;
-	bh=JiBEW9GnpC6nphMw1Nmi6/whGvQxkUqmaI4odvdQYMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PwoJDlWVn71YEESzy3iFMwXhaYP9pwq0Gkg7/f8q4bXVNKcpuZa12Jb6+skSMuv35izj5psKVWo5ciMdwJBJj80lILfwrG1GjF1I/JUrmzMjy+kD4C8x6ocRZxqT4yPyKymkL8cSZLNhyeb0S6PmQm4YKRBBIV/Mv/sMWWr2xUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C4IJI/H6; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d3f72391so981795e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:30:05 -0700 (PDT)
+	s=arc-20240116; t=1749666718; c=relaxed/simple;
+	bh=MnCr9OEVlQ7GknTARTds4npHpQMQRi/DiitUYHLyMJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L7Km6Lx7QvmUmeTzsFxetRwcD2GH7ackthP7krCEUlMTs3vTtuoYRMLX0SeUiq7e5+CTh19UrI3ZAGPSn2RJnbRd/AvB0dr2+R3EGbVKQCPPKBLKqdq42qIRiSADHf1CbL1vINHsohnJ7LFNS6XCID+FrKuJmbTKFASvjSp8VII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=ZwI5Ool5; arc=none smtp.client-ip=173.37.86.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749666604; x=1750271404; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZUFhp39dTZAMXovncJ1VhLVfSRWQwMXUrqA+mPJGfc=;
-        b=C4IJI/H6X0BPuMTp+YEnc+ZzqqQw2cQtwAPjVGxI7uAhgSUTBRsTlgODWAbeSDPPkM
-         PD8RI6xwxWn57OpalpNwedk/5DGfh/mQ5cIzGJ3QpU/NBS/VPavEZEUbGJ4s7/0MFYF6
-         tzE3AfQB5tTOnBQ5R6BMEJk8ZSxTRg+XRKm1FRiqCQ5aEJdURHAMbnmP4G4rNIVzV3BF
-         3+CMt75HUTW8KzZr6JTMbpxNb6/SPEsj2xR5Ey44RVjjxzWf4cQLAam6LmtvTkpBlmIy
-         J2NF0GnHCCs0/KJjlzD3mY98b1z7vR7kSMMmizt1IqhIw6umMv3cCMxPGYnDb3E8GSY1
-         bfaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749666604; x=1750271404;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kZUFhp39dTZAMXovncJ1VhLVfSRWQwMXUrqA+mPJGfc=;
-        b=eHkR8zpGUEriCfGHQPI+A9wxkFeTxMRJ058X4dtDLJFTzfNnnQMe9Ylr5rnVap1WDG
-         w45kbf0js4aR0zxErEP4eaWlVnb96R9uKPo8VG0Ed1B1+qShoakjBsftwBWN2zKjoi9C
-         +OhTLzd+mwfrtngfSUv0dXfADQIs4YumRouXPPVoBDKedhCInX1SXJJ9aOBNGEh+RImJ
-         ycXbpdLfMot+3mZu4sMDfSFYMR6SHvvlD5pnJeick6RpkL57ZAQC9SOIiNWU+3r0VGDr
-         l7nfj+qKROWWGqguE+ztzaMwfzj2lKVkQRc8buIQ1zZVBcTMuDz+hY+fj4zNGW4Y/yCM
-         eccQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMV//GAk5Rwu/4PbfNaChXP6CYheojbdWWTOGWx/t5CXpmvci4RQizoxpQyiqkuTb/n2GxMyKyBi1uXuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9bUUofgUGU5vrijCToqDAo53p6lEAs1hUOZ5AYZKRq/QSfpLd
-	yt/XOa9PHRdf4SP7dF0GvMUcNsBEV4uyCx00BB19UIvthWqLgRuCp7qZnBwJ2jbKX6w=
-X-Gm-Gg: ASbGncve14qmfR/ZHwT7/Fx7MS/f82PQ+IJOqU8jM/lVaff6LV5TWqHRadyINiNMlVO
-	QQfDo6PaDuaLGl23deTp6U1P/EBKqXi3KgQimXsreV2RBU0S54N5nQDrFksQXf8LEfbqPRgEk6n
-	gsQko+T/1LBiAZWmHSw8aGGignY160m4bfLSACLCS0hyEBTV8qLz9LzuQeswlbYnk1BJQyR0bOS
-	nqICE8tNVnMCNdp67q1atf+sSoyIce5pjq3xMtqXcKTM+4sRSPjZ66QvzAILxok9Zy4PNbL0SnH
-	IlgEJjZNX9wlS5q1D96kRwhBauLYjdw9ASarNoPaNhpv6wRAk5BVNanQgV3QdS3Fj5U=
-X-Google-Smtp-Source: AGHT+IEOnrEhGtLnO/aBJWRPFeQDku4c9EmVz/spaw65LaaOkpsBO4KbA6/7mK4y3l0ElS0ayRNSyw==
-X-Received: by 2002:a05:600c:6612:b0:453:8a6:d8de with SMTP id 5b1f17b1804b1-4532b8c5819mr8416435e9.1.1749666604214;
-        Wed, 11 Jun 2025 11:30:04 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a5323b6612sm15852258f8f.41.2025.06.11.11.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 11:30:03 -0700 (PDT)
-Date: Wed, 11 Jun 2025 21:29:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nathan Chancellor <nathan@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
-Subject: Re: selftests/filesystem: clang warning null passed to a callee that
- requires a non-null argument [-Wnonnull]
-Message-ID: <aEnLJ0CkfrHieKrG@stanley.mountain>
-References: <CA+G9fYt-CMBGCFxV5ziP98upkeK2LBxkZRo7-0XN1G+zLtWK4A@mail.gmail.com>
- <aEmzK5B4pbF5MZ6Y@stanley.mountain>
- <20250611175052.GA2307190@ax162>
+  d=cisco.com; i=@cisco.com; l=980; q=dns/txt;
+  s=iport01; t=1749666716; x=1750876316;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JPGvyzDxmu2hP40yELBEjF/T5i9eYvf8QiI2IbJNsD0=;
+  b=ZwI5Ool5XbvG4dZ0Z2H2XQRWp1Uiu0SyaT6qygGaWsJ1rPrUkJg2ePWN
+   YexPNivbOdOm/7Aj6a5HQkfZXNNxsfXPyjGwFj1tOm8B/MAZiI1W6U/nd
+   ESHB2bZi69HTic82NySvaiaZn4JaKLIbRw7KfQWynRkMcb7qN0aRGfKAI
+   bBXMBbE0u38b/0tL1vrZIjuIWyORRxqmriK8E6BtQDBcRXTLfbH6tnkO5
+   iwikHs8iPZN7opvCg87awc9HhgGKeotgdUpmQ6pFdcI0egSWkZd1krxaB
+   Y0BMzc+/XpyRqZJq7TnUOvZI06WoiFe2xNrsLUSymlaJozgTADcFkpX/8
+   g==;
+X-CSE-ConnectionGUID: hk1LNjcYS5OHifG8YQVOZw==
+X-CSE-MsgGUID: 6uluQsERS7iGcyBUhk5KJQ==
+X-IPAS-Result: =?us-ascii?q?A0AnAABcyklo/4sQJK1aHAEBAQEBAQcBARIBAQQEAQGBf?=
+ =?us-ascii?q?wcBAQsBgkqBUkMZMIxwhzSgOoElA1cPAQEBD1EEAQGFB4toAiY0CQ4BAgQBA?=
+ =?us-ascii?q?QEBAwIDAQEBAQEBAQEBAQELAQEFAQEBAgEHBYEOE4YIhl0rCwFGgVCDAoJvA?=
+ =?us-ascii?q?69xgXkzgQHeN4FugUkBjUxwhHcnFQaBSUSCUIE+b4FSgjiBBoV3BIMmFKEUS?=
+ =?us-ascii?q?IEeA1ksAVUTDQoLBwWBYwM1DAsuFW4yHYINhRmCEoQphl6ESStPhSGFBSRyD?=
+ =?us-ascii?q?wc9QAMLGA1IESw3FBsGPm4HmASDcIEOgQKBPqYAoQuEJaFTGjOqYZkEqTiBa?=
+ =?us-ascii?q?DyBWTMaCBsVgyJSGQ+OLRa7VSYyPAIHCwEBAwmQF4F9AQE?=
+IronPort-Data: A9a23:2kDw7K9Gqi5PxeQEVJiCDrUDUH+TJUtcMsCJ2f8bNWPcYEJGY0x3n
+ WYfXTjUb6mJYmDxKd4jPo3lpE5TusCEnYBrTgtopHtEQiMRo6IpJzg2wmQcns+2BpeeJK6yx
+ 5xGMrEsFOhtEDmE4E3ra+G7xZVF/fngbqLmD+LZMTxGSwZhSSMw4TpugOdRbrRA2bBVOCvT/
+ 4qsyyHjEAX9gWMsbDtNs/jrRC5H5ZwehhtJ5jTSWtgT1LPuvyF9JI4SI6i3M0z5TuF8dsamR
+ /zOxa2O5WjQ+REgELuNyt4XpWVTH9Y+lSDX4pZnc/DKbipq/0Te4Y5nXBYoUnq7vh3S9zxHJ
+ HqhgrTrIeshFvWkdO3wyHC0GQkmVUFN0OevzXRSLaV/wmWeG0YAzcmCA2k2PtQ83OR8MFoT0
+ twZJh9dXym9oNCplefTpulE3qzPLeHiOIcZ/3UlxjbDALN+G9bIQr7B4plT2zJYasJmRKmFI
+ ZFHL2MxKk2bMnWjOX9PYH46tOShnGX+dzRbgFmUvqEwpWPUyWSd1ZC2b4aKI4HUFJg9ckCw+
+ H/C4l3iLysha92wwiuvz3Kv28ztpHauMG4VPPjinhJwu3Wfz2pVAxQMTVa9vfSjokq/XdtFL
+ AoT4CVGhao/9kaDStj7Qg3+oXSB+BUbXrJ4FuQg9ACLjLLZ/wuDHWUCZjlbYdciuYk9QjlC/
+ l2MktXkCjxumKeYRXKU6vGfqjbaETIYM2IYfgceQAcF6sWlq4Y25jrLT9B+AOu2g8fzFDXY3
+ T+Htm49iq8VgMpN0L+0lXjDgjSxtt3SRRU0zhvYU3jj7Q5jYoOhIYuy5jDmAe1oJYKdSByF+
+ XMDgcXbtLpIBpCWnyvLS+IIdF2028u43PTnqQYHN/EcG/6FohZPoag4DOlCGXpU
+IronPort-HdrOrdr: A9a23:AEFlZ6lGAdWDl/p4AyTwxIUIc/zpDfIf3DAbv31ZSRFFG/FwWf
+ rDoB19726XtN9/Yh8dcLy7UpVoIkmslqKdg7NxAV7KZmCP01dAR7sM0WKN+VDdMhy73vJB1K
+ tmbqh1AMD9ABxHl8rgiTPIdurIuOPmzEht7t2uqEuEimpRGsVd0zs=
+X-Talos-CUID: =?us-ascii?q?9a23=3AKbeAfGi+GMw8C4oSKfVUYeU6njJucn6E6FHSKH6?=
+ =?us-ascii?q?DVEFJSbO6GW6pxoRWjJ87?=
+X-Talos-MUID: =?us-ascii?q?9a23=3AuYhoFgzcl5delUVTXQNSHUGyufmaqPqzDF00irg?=
+ =?us-ascii?q?8gJaFGidhEQqdj2mUYLZyfw=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.16,228,1744070400"; 
+   d="scan'208";a="374715695"
+Received: from alln-l-core-02.cisco.com ([173.36.16.139])
+  by rcdn-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 11 Jun 2025 18:30:46 +0000
+Received: from fedora.lan?044cisco.com (unknown [10.188.19.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kartilak@cisco.com)
+	by alln-l-core-02.cisco.com (Postfix) with ESMTPSA id 305B218000153;
+	Wed, 11 Jun 2025 18:30:45 +0000 (GMT)
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com,
+	djhawar@cisco.com,
+	gcboffa@cisco.com,
+	mkai2@cisco.com,
+	satishkh@cisco.com,
+	aeasi@cisco.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jmeneghi@redhat.com,
+	revers@redhat.com,
+	dan.carpenter@linaro.org,
+	Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH 1/5] scsi: fnic: Set appropriate logging level for log message
+Date: Wed, 11 Jun 2025 11:30:29 -0700
+Message-ID: <20250611183033.4205-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611175052.GA2307190@ax162>
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.188.19.134, [10.188.19.134]
+X-Outbound-Node: alln-l-core-02.cisco.com
 
-On Wed, Jun 11, 2025 at 10:50:52AM -0700, Nathan Chancellor wrote:
-> On Wed, Jun 11, 2025 at 07:47:39PM +0300, Dan Carpenter wrote:
-> > This seems like a Clang bug, right?  The test for _Nullable is reversed
-> > or something?
-> 
-> My copy of unistd.h has
-> 
->   /* Execute program relative to a directory file descriptor.  */
->   extern int execveat (int __fd, const char *__path, char *const __argv[],
->                        char *const __envp[], int __flags)
->       __THROW __nonnull ((2, 3));
-> 
-> so I think the warning is valid in this case. I will note that
-> tools/testing/selftests/exec/recursion-depth.c uses execve() with a NULL
-> argv and disables -Wnonnull so maybe that should happen for this test
-> case too? Or should that NULL be changed into a ""?
-> 
+Replace KERN_INFO with KERN_DEBUG for a log message.
 
-Oh, huh.  The man page for execveat() says _Nullable but the headerfile
-says the opposite.
+Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+Reviewed-by: Arun Easi <aeasi@cisco.com>
+Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+---
+ drivers/scsi/fnic/fnic_scsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
+index 7133b254cbe4..75b29a018d1f 100644
+--- a/drivers/scsi/fnic/fnic_scsi.c
++++ b/drivers/scsi/fnic/fnic_scsi.c
+@@ -1046,7 +1046,7 @@ static void fnic_fcpio_icmnd_cmpl_handler(struct fnic *fnic, unsigned int cq_ind
+ 		if (icmnd_cmpl->scsi_status == SAM_STAT_TASK_SET_FULL)
+ 			atomic64_inc(&fnic_stats->misc_stats.queue_fulls);
+ 
+-		FNIC_SCSI_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
++		FNIC_SCSI_DBG(KERN_DEBUG, fnic->host, fnic->fnic_num,
+ 				"xfer_len: %llu", xfer_len);
+ 		break;
+ 
+-- 
+2.47.1
 
-> > On Thu, Jun 05, 2025 at 05:41:01PM +0530, Naresh Kamboju wrote:
-> > > Regressions found on arm, arm64 and x86_64 building warnings with clang-20
-> > > and clang-nightly started from Linux next-20250603
-> > > 
-> > > Regressions found on arm, arm64 and x86_64
-> > >  - selftests/filesystem
-> > > 
-> > > Regression Analysis:
-> > >  - New regression? Yes
-> > >  - Reproducible? Yes
-> > > 
-> > > First seen on the next-20250603
-> > > Good: next-20250530
-> > > Bad:  next-20250603
-> > > 
-> > > Test regression: arm arm64 x86_64 clang warning null passed to a
-> > > callee that requires a non-null argument [-Wnonnull]
-> > > 
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > 
-> > > ## Build warnings
-> > > make[4]: Entering directory '/builds/linux/tools/testing/selftests/filesystems'
-> > >   CC       devpts_pts
-> > >   CC       file_stressor
-> > >   CC       anon_inode_test
-> > > anon_inode_test.c:45:37: warning: null passed to a callee that
-> > > requires a non-null argument [-Wnonnull]
-> > >    45 |         ASSERT_LT(execveat(fd_context, "", NULL, NULL,
-> > > AT_EMPTY_PATH), 0);
-> > >       |                                            ^~~~
-> > > 
-> > > ## Source
-> > > * Kernel version: 6.15.0-next-20250605
-> > > * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-> > > * Git sha: a0bea9e39035edc56a994630e6048c8a191a99d8
-> > > * Toolchain: Debian clang version 21.0.0
-> > > (++20250529012636+c474f8f2404d-1~exp1~20250529132821.1479)
-> > > 
-> > > ## Build
-> > > * Test log: https://qa-reports.linaro.org/api/testruns/28651387/log_file/
-> > > * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2xzM4wMl8SvuLKE3mw3csiuv3Jz/
-> > > * Kernel config:
-> > > https://storage.tuxsuite.com/public/linaro/lkft/builds/2xzM4wMl8SvuLKE3mw3csiuv3Jz/config
-> > > 
-> > > --
-> > > Linaro LKFT
-> > > https://lkft.linaro.org
 
