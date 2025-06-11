@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-682315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3311AD5E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051F3AD5E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E79E7A1A8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDE317C80D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 18:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC7E2777F9;
-	Wed, 11 Jun 2025 18:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AF4283FE1;
+	Wed, 11 Jun 2025 18:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="oWbv86TA"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="hEp2WiPD"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C8F227586
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181CD380
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749667057; cv=none; b=a15nez3fwUr0QTfQBzA8KqJ+Kc0OGJCAin/te6xt9y7k6l6g7H70Gzd2q8EE6rIO7GuXASPvCt9wvvgLib1B71yyK2jr68RcMKXhew7snamD6gbe56RXNdONGHYGNcw9NMuLrAFI1rxZyHCjKuLk8QKpnkYFTn2UEp05ubsrp7I=
+	t=1749667046; cv=none; b=KtvTkjT6pqY0vRCEKic1mY0ko1rN5M1IdlP738Qb5/QEQLuxrfLfKXm5yZ2w89wu83W6St2McaZBnxhIdKHXnmJKwnVYN4id9f2aOAvbMfK2qpnLjdabeOzzeZU7pIuCp9HxTcWrZjmPKy9BxjhgDYFPJZVTpFeZDBx1zur6rN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749667057; c=relaxed/simple;
-	bh=PtjcRg7r9dDYoDn4dMsR5Www73D4wiUbSHxe0flzOIw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qliZkL/QvQlillW4fv+Woo672nVysICMz9ezAlp9MLYpSa0l4o1HZBC1eZhU30zLXgjUn1/lsswmGJJBLypqbxJJw4CygZ7zXZlD0qQinzDiDBr4ztqyEAwbr3XVl3pF0OX3RYDaGUpiKIOk5UjCCFJ+/U1vnGbwwvB/nh8HRik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=oWbv86TA; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1749667046; c=relaxed/simple;
+	bh=i7gGdufPkSGRwB6IPZKAt6alZaKpalTRVeGTcHa0rDg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=O4GgwRQw19cK3IyCDIvFN85pJmpQChvpWv0C4ecVPZ2Hyc+S+4JZLq0EFevah1H9oS6GaXFYsZ7bTCMnynp1IsJa9rcQ+vSqGWhmSgM3e8NWk4At9tVFMpWZiezG1FnEQoiVl77gz7D+BxIw9kBU9VeVGAA0JPltFURly2rdjsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=hEp2WiPD; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so78052e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:37:33 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so188531f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1749667052; x=1750271852; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nxFfYw7Bh3J5bDd9GOMRnGuEy6auNfpZtx05LVWHCwg=;
-        b=oWbv86TAcjjWqjql0LfX9QROVQ7xKOTMls5t8Bp8QXAxRGMorqLvG3LvjdcW4r9m0q
-         7Ux+nbcoHsoe0zTTZhn3ctfEUzHUJE9nEaVwpifWGH/HPsdi60JhaYjJR0GHtQmYECbo
-         zSgoGr8qSfyu9oDX5OtO12tki0xIHKLHlSc/tcj8N64U80eXE0TD7qoMXrf/T6GgraID
-         +Kw1LwL1Y+w49nXv+wRDa5sb/H9pOrJSjuOGcggpmGXqdS5D/emxqiiNx+xeSHB8Kyif
-         gmDeI1Hn627uRIfBORmlDceutQA5I9NLWeybaFhsUWIg3hlt2Ya2Oxla8oGv2jps1PBt
-         kPxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749667052; x=1750271852;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=raspberrypi.com; s=google; t=1749667041; x=1750271841; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nxFfYw7Bh3J5bDd9GOMRnGuEy6auNfpZtx05LVWHCwg=;
-        b=Z+RNvjyttKQHKSSvMCfsnOrlPS6R7Da7KmFgwei9IgVavtwqj+eGb5DIbFXwZgv5hu
-         5uvs1G3HlbeiLpDY5I5jCPQ6cz2wgRNqIFih39VBMPt6HeNdm3RnGALyiaY1vEeH5cbg
-         Os9GinVj7ig5GHhln87sPsW69y6rSA9qJ6LIodtWS+aJrjujjga1Ka7K2fXXFBPeMehq
-         Uvkdu1e3a2TGK5IvL97HLlbQ/CZTswk0rFUHE+wqly67lYbCfYlljEgUBDhyzzAFcR1l
-         LwJqXcN4vKU84xUK5cPaKAEWUO294W/roA7g30oRD/NINtyCXvzY3PnkAsXwsaAh+Onv
-         Jzgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ6kguxGg/fJlOtUmfWoqCFV9F/vrb4D6cwuWYpmqE53JvZjCyGgaIOL+nphJUmitpmR3XppohSuu6X8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybbaOke+qWh4/hBHWgS+JOIxJw10tZFuqUTUpx3afROwkOJ2SJ
-	K4yKuFTJhifB26pN8GvKZxT6e6XWOUX3iLQ4W3gARaOa3o/wukwdR392YorbiAMwS+e2Uli/XIS
-	51XAW
-X-Gm-Gg: ASbGncuhd8FEHnkGwFNTP2V/DwNtJy7Or31Mc8wWWnYOQY/BUdNLHxk3WBdD7++y7g4
-	P+2fAF/OjdjHmQyizpnbIjhXhM9Nnv/QxFI7g5cxXOSZtzkrzDkS0rFs5YP0wXPVas3Z14sRLe4
-	saN6jDgpuN5tlCWRBb1GZqQxNhU30RjlLbjnQOwNGiE/Adg+vk9RXbHsR2xcmg2f0iWtGbunRSx
-	YzQqt42kMNtS+TQczpBGHK7AazglyAW3y1VF6C1CAZ4WGhOl/Qaa2ULs3oXfdRVmwGSum7SNDlf
-	RJmEF+D17xPXpuV7Hp+/RXcxJ53vhGSyn+xC4FhbbrW5r+XkQ5PyfA==
-X-Google-Smtp-Source: AGHT+IFzYupa7d+ONAjulOpVhh56Bqw1ABa6/j/qgq2ciZf4MuyCJ8C6ogS1IFGo/jjRE88dc+izmg==
-X-Received: by 2002:a05:6000:2c0f:b0:3a5:5149:ed1a with SMTP id ffacd0b85a97d-3a558a43b48mr3492897f8f.59.1749667040479;
-        Wed, 11 Jun 2025 11:37:20 -0700 (PDT)
+        bh=qgYBfY2UR29MQlCGcRFEVcrLVgS61xcAj8mfuW0laMQ=;
+        b=hEp2WiPDuXfZ9f3XhKZ/PJSBZrBA1nspeqUhsyJmy5UxhK3JvwnxnorzGAUDiGtpqW
+         BczdVAmQ0CQti+OxQiheFfcVUD01xKkFOpEnJ+10plYZYlBiqudX3EJ5iTXp+0ee9Bi7
+         u/ofqYX8t1SQLb6PswiU769wsxlvbsFAnUL4Y6T/9HHVAK7fHHlikFNK/2MpAovD9ZTZ
+         /cd3fNfVOPBabMdCOOQlYc2AyNXpeVaL+DNUZ5oUDfa8QODx401dpNRuYOTJnoTCqBmF
+         KqPESMzyIcDJm2+VmOvaH4XzlAerUj6xF+Zg6TlS+QScHM7S1/zpUSeDWr6pL1e0YSlp
+         4I+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749667041; x=1750271841;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qgYBfY2UR29MQlCGcRFEVcrLVgS61xcAj8mfuW0laMQ=;
+        b=URJ7jxLFT8soRnaed+rt9bSc94LxBkFXBdwE5oq3n/27nURxc5jOaPCdEFUb1SEtqx
+         GBb84E91YhAjBifQJflCxC+p84V79Q2vHmYCi42pL4biMDqQtFP1py/c6DWevKoAsfZw
+         02m0aLPCVb1Re/0TcVOoU93S+r8bqytMKEkXnJ1BrSqNBWj8xt8QZ0OuthlJ05baqTx0
+         lLGszrXikDbICCVaUfT31BzQIU7nvj8BSx4v95IqNttstOAOkE22yrjRfpFEyjBzGLhS
+         cD0fa7c0EWiBFssYBY5nF/QyBKQN+FDBTxQ1TYACHCIqmPBTrAoFbMUNifQEy7AVFF9s
+         9UpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGwF0D92wMSWcASroJcHPTtHs+nD4yM/KJV+glvXhEBGRf+js5TGiPVHjzB8o6o9YpfqB+Or1pGYbkhRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpPBzxDt33UHCvVl1cJjL4ZsMzglmWPkG+O50FKIcZT1TByOCn
+	o3b5eKhQHJpTtnzJ3CY4/kcHcgjIQhXrMAqHVKK9kM2cqVngVaCFYMvtgjTSAOX0pcylrwiKVdF
+	Ir5gM
+X-Gm-Gg: ASbGncvS88EYiTHC1Rc01owxRRgZwGpErRtxNiVhGXi7azqr4zbuKIzhxh4gD308qFN
+	FWz39eWTZu+d2xL3n3B5mj3KvmR780tjHg0BVKiDvVhgDn5hH/iLwO2IoDqWobUPlT3OXX914wl
+	o2fayXlpI1t1K14d2NhldoioOezmEn6ACjJUZVoc0mcnaCI51ergtd6EMb65Obi1038dtGtQl6Q
+	yX1wVKfTxilbzpT4ObtdiPWJ7nok4JIVg27Glb9Tk68h+fDeuBza24WU1wd1E0Edz8N5rRlbSta
+	lR8mJF4gvuiMzd7akpoltsRNgMiK28I0w5QNe34kPyP4TEu4jkWVTA==
+X-Google-Smtp-Source: AGHT+IHHT50NdMoz+n9TfRr2G7Tew6o4zd1nSosAD5QXIFC2jG2M1x+AHqx1qfPmXTcOGk2hed8jOw==
+X-Received: by 2002:a05:6000:26c5:b0:3a4:d0fe:428a with SMTP id ffacd0b85a97d-3a558a27540mr3799331f8f.28.1749667041208;
+        Wed, 11 Jun 2025 11:37:21 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a5324364d4sm16119390f8f.55.2025.06.11.11.37.19
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a5324364d4sm16119390f8f.55.2025.06.11.11.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 11 Jun 2025 11:37:20 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH 0/4] media: tc358743: Additional link freq, and better
- validation
-Date: Wed, 11 Jun 2025 19:37:12 +0100
-Message-Id: <20250611-media-tc358743-v1-0-708556026f9d@raspberrypi.com>
+Date: Wed, 11 Jun 2025 19:37:13 +0100
+Subject: [PATCH 1/4] media: tc358743: Add support for 972Mbit/s link freq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,9 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANjMSWgC/x3MQQqAIBBA0avIrBO0NKWrRAvTqWaRhUYE4d2Tl
- m/x/wsZE2GGgb2Q8KZMR6yQDQO/ubgip1ANrWi16KXkOwZy/PKdtkZ1XJiASjgr1eyhRmfChZ5
- /OE6lfLup0v1gAAAA
+Message-Id: <20250611-media-tc358743-v1-1-708556026f9d@raspberrypi.com>
+References: <20250611-media-tc358743-v1-0-708556026f9d@raspberrypi.com>
+In-Reply-To: <20250611-media-tc358743-v1-0-708556026f9d@raspberrypi.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Maxime Ripard <mripard@redhat.com>, 
@@ -94,52 +94,85 @@ Cc: Maxime Ripard <mripard@redhat.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-I've had these patches on our Raspberry Pi downstream kernel since
-I tried upstreaming them back in 2017 [1].
-Maxime's asked me to repost them as he's trying to use tc358743 with
-mainline in RGB mode[2], and is hitting exactly the problems I had
-written them to solve.
-
-The issue from that series of get_mbus_config passing the number of
-active data lanes has been resolved.
-
-With regard updating the FIFO trigger level, from the previous
-discussions[3]:
-- Cisco's use doesn't use OF and therefore is unaffected.
-- Philipp's original use case was only 720p60 and 1080p60 UYVY at
-  594Mbps.
-Both those modes still work with the updated trigger level, but
-I'm happy to revise and only use the new trigger level with the
-972Mbps data rate if that is deemed necessary.
-
-The final two patches are new but relatively trivial.
-The first makes probe fails if the hardware isn't present, and the
-second reports the right colorspace for the format.
-
-Hopefully that all makes sense.
-
-  Dave
-
-[1] https://lore.kernel.org/linux-media/cover.1505826082.git.dave.stevenson@raspberrypi.org/
-[2] https://lore.kernel.org/linux-media/20250606-roaring-blue-bat-a8b2aa@houat/
-[3] https://www.spinics.net/lists/linux-media/msg116360.html
+Adds register setups for running the CSI lanes at 972Mbit/s,
+which allows 1080P50 UYVY down 2 lanes.
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
-Dave Stevenson (4):
-      media: tc358743: Add support for 972Mbit/s link freq
-      media: tc358743: Increase FIFO trigger level to 374
-      media: tc358743: Check I2C succeeded during probe
-      media: tc358743: Return an appropriate colorspace from tc358743_set_fmt
+ drivers/media/i2c/tc358743.c | 48 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 34 insertions(+), 14 deletions(-)
 
- drivers/media/i2c/tc358743.c | 134 ++++++++++++++++++++++++++++---------------
- 1 file changed, 87 insertions(+), 47 deletions(-)
----
-base-commit: 8d441742cb6a1f1cf1d8f2c73339af27dddb7cf0
-change-id: 20250611-media-tc358743-07de40a814bc
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index 3d6703b75bfa..b87db3de20db 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -1993,6 +1993,7 @@ static int tc358743_probe_of(struct tc358743_state *state)
+ 	/*
+ 	 * The CSI bps per lane must be between 62.5 Mbps and 1 Gbps.
+ 	 * The default is 594 Mbps for 4-lane 1080p60 or 2-lane 720p60.
++	 * 972 Mbps allows 1080P50 UYVY over 2-lane.
+ 	 */
+ 	bps_pr_lane = 2 * endpoint.link_frequencies[0];
+ 	if (bps_pr_lane < 62500000U || bps_pr_lane > 1000000000U) {
+@@ -2006,23 +2007,42 @@ static int tc358743_probe_of(struct tc358743_state *state)
+ 			       state->pdata.refclk_hz * state->pdata.pll_prd;
+ 
+ 	/*
+-	 * FIXME: These timings are from REF_02 for 594 Mbps per lane (297 MHz
+-	 * link frequency). In principle it should be possible to calculate
++	 * FIXME: These timings are from REF_02 for 594 or 972 Mbps per lane
++	 * (297 MHz or 486 MHz link frequency).
++	 * In principle it should be possible to calculate
+ 	 * them based on link frequency and resolution.
+ 	 */
+-	if (bps_pr_lane != 594000000U)
++	switch (bps_pr_lane) {
++	default:
+ 		dev_warn(dev, "untested bps per lane: %u bps\n", bps_pr_lane);
+-	state->pdata.lineinitcnt = 0xe80;
+-	state->pdata.lptxtimecnt = 0x003;
+-	/* tclk-preparecnt: 3, tclk-zerocnt: 20 */
+-	state->pdata.tclk_headercnt = 0x1403;
+-	state->pdata.tclk_trailcnt = 0x00;
+-	/* ths-preparecnt: 3, ths-zerocnt: 1 */
+-	state->pdata.ths_headercnt = 0x0103;
+-	state->pdata.twakeup = 0x4882;
+-	state->pdata.tclk_postcnt = 0x008;
+-	state->pdata.ths_trailcnt = 0x2;
+-	state->pdata.hstxvregcnt = 0;
++		fallthrough;
++	case 594000000U:
++		state->pdata.lineinitcnt = 0xe80;
++		state->pdata.lptxtimecnt = 0x003;
++		/* tclk-preparecnt: 3, tclk-zerocnt: 20 */
++		state->pdata.tclk_headercnt = 0x1403;
++		state->pdata.tclk_trailcnt = 0x00;
++		/* ths-preparecnt: 3, ths-zerocnt: 1 */
++		state->pdata.ths_headercnt = 0x0103;
++		state->pdata.twakeup = 0x4882;
++		state->pdata.tclk_postcnt = 0x008;
++		state->pdata.ths_trailcnt = 0x2;
++		state->pdata.hstxvregcnt = 0;
++		break;
++	case 972000000U:
++		state->pdata.lineinitcnt = 0x1b58;
++		state->pdata.lptxtimecnt = 0x007;
++		/* tclk-preparecnt: 6, tclk-zerocnt: 40 */
++		state->pdata.tclk_headercnt = 0x2806;
++		state->pdata.tclk_trailcnt = 0x00;
++		/* ths-preparecnt: 6, ths-zerocnt: 8 */
++		state->pdata.ths_headercnt = 0x0806;
++		state->pdata.twakeup = 0x4268;
++		state->pdata.tclk_postcnt = 0x008;
++		state->pdata.ths_trailcnt = 0x5;
++		state->pdata.hstxvregcnt = 0;
++		break;
++	}
+ 
+ 	state->reset_gpio = devm_gpiod_get_optional(dev, "reset",
+ 						    GPIOD_OUT_LOW);
 
-Best regards,
 -- 
-Dave Stevenson <dave.stevenson@raspberrypi.com>
+2.34.1
 
 
