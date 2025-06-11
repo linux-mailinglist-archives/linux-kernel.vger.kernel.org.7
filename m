@@ -1,215 +1,83 @@
-Return-Path: <linux-kernel+bounces-682569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD09AD61C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:45:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701E1AD61A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 23:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A3C7AF0EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B74174FA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 21:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCB7246BD6;
-	Wed, 11 Jun 2025 21:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D079253B60;
+	Wed, 11 Jun 2025 21:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="zLEjSVtS"
-Received: from mx0b-00206402.pphosted.com (mx0b-00206402.pphosted.com [148.163.152.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ul/pH/Vd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A718E1FFC54;
-	Wed, 11 Jun 2025 21:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E95247298;
+	Wed, 11 Jun 2025 21:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749678315; cv=none; b=axdyTKkxTlU4uvu/xAXvxfVQXuLnspNONKBP85UEW0FynjfualiLxAfe+11MySxnRxsd6pmui3WnycquUDzhUiUw9HI9QHFXDSLZnFANy9wQWb6OciK5agi8VRyzHjxv39Wp3MftY1jqWlcjTeawPDZ52w0/heygvROYrMeIT3o=
+	t=1749678013; cv=none; b=XgaLdpl0j85F2NsvU/ganVyexo1H5onaLUDLQKCm8B5jFZIxkLsFdGjmAzVLSLBVXArddeRWPzq66hozkd9hSrW6dBvZe203CQok0amT0vAxwsRtikBzV5WEylLs1YuJTTLH3HkWFCMuLn2IzFhMQXqchmjC7j7V0ApO11RWyK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749678315; c=relaxed/simple;
-	bh=nqRO5OgebVyWIVOI2XgZ/jMVe1jj36qOOjMKRb8BlyM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OeFhgMJ21ak/rMvE2WHQTJA5SbCJBa1/T4MdHmC0flBPrxr/nbtPvAqAs7Z7Yo3/HWYxbewN5lZ6l1MTarS4iQOQHYuDiQiRH7DUU5FVxqkosQ7ykd9QICTuWuIOThu9hYpdYm0HA2IHEi1tyZhqHXYoAx3iaj/XH3ElewfL+70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=zLEjSVtS; arc=none smtp.client-ip=148.163.152.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
-Received: from pps.filterd (m0354653.ppops.net [127.0.0.1])
-	by mx0b-00206402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BKuhkN023871;
-	Wed, 11 Jun 2025 21:39:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	default; bh=M6eB7MOK4OEpwU3dAcNFsfMvjjyTtN+xja+AsNl5g44=; b=zLEj
-	SVtSK4TrHPJM0lt3e/3g2337w90IU+bXGurNwyHguwm5hh/RIGJVtVWekvEARze4
-	ytc13nylu4rjE+SfYc5PnSt/Iv2dPx9OFdUnbASBZsCLSLkj1wpjN3l+vUwPUZkY
-	QSiE2hDe9cY9Ivnq8iymVgRbnArK4t8jFtkZZfV6N1+KR743Pj154B6zG4mcuD3g
-	pJpL0g5KLPToYLqnKXudQoK3P7O0BKMU5iTEb5T8NYzGo1+J//V2YWvmFMW5jS/i
-	5gAU687G6iIl9A4ES/RKqBxFis8SkG9s+lGqNQ6G7KFXze35ZxBdXWzbKxNRd8zB
-	JyGlc9t/I9snb62Wfg==
-Received: from mail.crowdstrike.com (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
-	by mx0b-00206402.pphosted.com (PPS) with ESMTPS id 476ps7resm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 21:39:55 +0000 (GMT)
-Received: from ML-CTVHTF21DX.crowdstrike.sys (10.100.11.122) by
- 04WPEXCH007.crowdstrike.sys (10.100.11.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Jun 2025 21:39:50 +0000
-From: Slava Imameev <slava.imameev@crowdstrike.com>
-To: <qmo@kernel.org>
-CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-        <daniel@iogearbox.net>, <eddyz87@gmail.com>, <haoluo@google.com>,
-        <john.fastabend@gmail.com>, <jolsa@kernel.org>,
-        <justin.deschamp@crowdstrike.com>, <kpsingh@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <mark.fontana@crowdstrike.com>, <martin.lau@linux.dev>,
-        <mykolal@fb.com>, <sdf@fomichev.me>, <shuah@kernel.org>,
-        <slava.imameev@crowdstrike.com>, <song@kernel.org>,
-        <yonghong.song@linux.dev>
-Subject: Re: [PATCH bpf-next v2 2/2] selftests/bpf: Add test for bpftool access to read-only protected maps
-Date: Thu, 12 Jun 2025 07:39:47 +1000
-Message-ID: <20250611213947.21534-1-slava.imameev@crowdstrike.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <aaa49f30-d571-4c7e-8135-691252ebc3c2@kernel.org>
-References: <aaa49f30-d571-4c7e-8135-691252ebc3c2@kernel.org>
+	s=arc-20240116; t=1749678013; c=relaxed/simple;
+	bh=il4KkmPSp4Fb2vFI0Nud+eB0w5K1JXPkAcThSVRtqXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyxjSdBWVV8t8OTve+dAojY7i+UzhrWxecRjcWWaEZcOpT4MIjjl24eXMT4KuIGuDNDW2lBb34qXUu9pFXbQxa6YEolSHU2ldYFcYKqiGI4fxx4XZQ4/sPI3jVndvnGbhUkRtVZgPxAIfXZanY32exV6Bl6g1JhJXGr1dXbj1zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ul/pH/Vd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69DCBC4CEE3;
+	Wed, 11 Jun 2025 21:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749678013;
+	bh=il4KkmPSp4Fb2vFI0Nud+eB0w5K1JXPkAcThSVRtqXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ul/pH/VdW3zjV04CmcPn0dQwIY7Zk9GSrp2vtfUgtilxgvC0NaIWEanM7vv9CAIjs
+	 iGcajw86J/8O99xS9LFzhqevP4RNrowMSxAEBTk84F4S7S7yUM5pKN4txdfUz8omyL
+	 6eRcBX6BmLos5dBTApx6oT+W4xCZCCR+w46BI9OFf1ucEA9L7Img+JeXRAUDTM9LFJ
+	 Ye0u9tcIqrqgnJime/R6AYLrDlslp1I7UX0u/0kQq1KbC7Cf139EOjRGoUKVLRZvWq
+	 4Q9d/VoRqa4njOZG66QWUwO2H4XEcPMQSB8HI0YRzIfNU1NshrCX3TGfHgH+FC9K8u
+	 JeIBwGhVeI2fQ==
+Date: Wed, 11 Jun 2025 23:40:06 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Igor Korotin <igor.korotin.linux@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, rafael@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, lenb@kernel.org, wedsonaf@gmail.com,
+	viresh.kumar@linaro.org, alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: Re: [PATCH v5 5/6] rust: cpufreq: Remove unnecessary `of` dependency
+ in cpufreq example
+Message-ID: <aEn3tqAZ1U7AQBvb@cassiopeiae>
+References: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
+ <20250611175353.803835-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: 04WPEXCH006.crowdstrike.sys (10.100.11.70) To
- 04WPEXCH007.crowdstrike.sys (10.100.11.74)
-X-Disclaimer: USA
-X-Proofpoint-ORIG-GUID: CnKjQ_HD441G03lCLB0FU1hd5XguhixQ
-X-Proofpoint-GUID: CnKjQ_HD441G03lCLB0FU1hd5XguhixQ
-X-Authority-Analysis: v=2.4 cv=OeyYDgTY c=1 sm=1 tr=0 ts=6849f7ab cx=c_pps
- a=1d8vc5iZWYKGYgMGCdbIRA==:117 a=1d8vc5iZWYKGYgMGCdbIRA==:17
- a=EjBHVkixTFsA:10 a=6IFa9wvqVegA:10 a=47lfzmhVyG3JbEG8tnMA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDE4MyBTYWx0ZWRfXwl0j1zkJzs7+
- TpuuuLdNhMOZT2PXJRxiPXs61OMK7l7ziPy3cCJMsKncnrnpJ6P+aejJJVbr3coCH+PABQweB7m
- FhxDXc/UcC2JFoO/3/wLwlv97zqH1aryCef5n1jPmySROWSFKw03eCeW8xbJFwC0FU4LyiG7aAA
- pbG/2Y89tG3l8ssHb7z5x4T6PPUpuqI4tBKGDd2bo4R2UIpEcSHHak2bCToNQKYVxp2VJvTjBj2
- Q9SUc5rwI/xU8+N7fZ1M9LdKhwjRzQMDB+FkZEnJ4vGL0nacvhX58ThthSyrVz7cCxjgFdKHT0S
- gtwE+waOdlquDpoEu/HdgWHwhlZH7AMt9g/fX/BnMuUt3kgGbh31KVm2EvG2dIL/JY72nCeldn4
- dI7fXwZ0UD50KZfmLf/xp1K1a3oZ94a6biB25xqb4VgCtvlRdX2dNlBh4wsUSZEYUSrm3ThH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_09,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxlogscore=682 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- impostorscore=0 mlxscore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506110183
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611175353.803835-1-igor.korotin.linux@gmail.com>
 
-> > +	make -C tools/bpf/bpftool -s -j"$ncpus" OUTPUT="$output_dir"/ >/dev/null
-> > +	echo ... finished building bpftool
-> > +	cd "$pwd"
-> > +}
->
->
-> Given that you're reusing the BPF selftests infra, you shouldn't have to
-> rebuild bpftool as part of the test. It's already built from the
-> Makefile, and other tests just assume it's available already (see
-> test_bpftool.py, test_bpftool.sh).
-
-
-Agree, the build step will be removed for v3.
-
-
-> > +	# Test write access to the map
-> > +	if "$bpftool_path" map update name "$map_name" key $key value $value; then
-> > +		if [ "$write_should_succeed" = "true" ]; then
-> > +			echo "  Write access to $map_name succeeded as expected"
-> > +		else
-> > +			echo "  Write access to $map_name succeeded but should have failed"
-> > +			exit 1
-> > +		fi
-> > +	else
-> > +		if [ "$write_should_succeed" = "true" ]; then
-> > +			echo "  Write access to $map_name failed but should have succeeded"
-> > +			exit 1
-> > +		else
-> > +			echo "  Write access to $map_name failed as expected"
-> > +		fi
-> > +	fi
+On Wed, Jun 11, 2025 at 06:53:53PM +0100, Igor Korotin wrote:
+> Drop the explicit `use of` and `OF_ID_TABLE = None` assignment in the
+> cpufreq driver registration example.
 > 
-> 
-> Can we try to delete an item as well, please?
+> Since `Adapter::OF_ID_TABLE` now defaults to `None`, drivers that do
+> not require OpenFirmware matching no longer need to import `of` or
+> define the constant explicitly.
 
-I added an item deletion test to v3.
+This is slightly outside of the scope of this patch series and given that it
+doesn't add immediate value it's usually better to wait with such patches until
+the prerequisite is in Linus' tree.
 
-> > +
-> > +	# Pin the map to the BPF filesystem
-> > +	"$bpftool_path" map pin name "$map_name" "$pin_path"
-> > +	if [ -e "$pin_path" ]; then
-> > +		echo "  Successfully pinned $map_name to $pin_path"
-> > +	else
-> > +		echo "  Failed to pin $map_name"
-> > +		exit 1
-> > +	fi
-> > +
-> > +	# Test read access to the pinned map
-> > +	if "$bpftool_path" map lookup pinned "$pin_path" key $key; then
-> > +		echo "  Read access to pinned $map_name succeeded"
-> > +	else
-> > +		echo "  Read access to pinned $map_name failed"
-> > +		exit 1
-> > +	fi
-> > +
-> > +	# Test write access to the pinned map
-> > +	if "$bpftool_path" map update pinned "$pin_path" key $key value $value; then
-> > +		if [ "$write_should_succeed" = "true" ]; then
-> > +			echo "  Write access to pinned $map_name succeeded as expected"
-> > +		else
-> > +			echo "  Write access to pinned $map_name succeeded but should have failed"
-> > +			exit 1
-> > +		fi
-> > +	else
-> > +		if [ "$write_should_succeed" = "true" ]; then
-> > +			echo "  Write access to pinned $map_name failed but should have succeeded"
-> > +			exit 1
-> > +		else
-> > +			echo "  Write access to pinned $map_name failed as expected"
-> > +		fi
-> > +	fi
-> 
-> 
-> Maybe refactor lookup/update as a function that you can call before and
-> after pinning the map? (I don't mind much.)
-
-
-I changed it as suggested for v3.
-
-
-> > +check_bpffs() {
-> > +	if [ -z "$BPF_FS" ]; then
-> > +		echo "Could not run test without bpffs mounted"
-> 
-> 
-> Why not? Bpftool will attempt to mount it for you if it's not available
-> (create_and_mount_bpffs_dir()).
-> 
-> You could mount it manually to a specific location and unmount it during
->  the clean-up phase, if you wanted to be sure that the test doesn't have
-> any side effect on the filesystem.
-
-
-I made changes as suggested for v3.
-
-
-> > +# Load and attach the BPF programs to control maps access
-> > +"$BPFTOOL_PATH" prog loadall "$BPF_FILE_PATH" "$BPF_DIR"/prog autoattach
-> > +
-> > +# Test protected map (write should fail)
-> > +test_map_access "$PROTECTED_MAP_NAME" "false" "$BPFTOOL_PATH" "$BPF_DIR"
-> > +
-> > +# Test not protected map (write should succeed)
-> > +test_map_access "$NOT_PROTECTED_MAP_NAME" "true" "$BPFTOOL_PATH" "$BPF_DIR"
-> 
-> 
-> We could also test map creation here (possibly even with inner maps).
-
-I added a test for map-of-maps creation for v3.
-
-
+However, if Viresh is fine with the patch and with taking it through the
+driver-core tree and does not expect any conflicts, I'm fine picking it up.
 
