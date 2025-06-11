@@ -1,183 +1,186 @@
-Return-Path: <linux-kernel+bounces-682236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB21AD5D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:37:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3877AD5D5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDE2C7A7D04
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63479189B222
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6242A22422F;
-	Wed, 11 Jun 2025 17:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021C5224AFA;
+	Wed, 11 Jun 2025 17:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIZ28o44"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBFBvLJD"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B67E22256B;
-	Wed, 11 Jun 2025 17:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C24420C463;
+	Wed, 11 Jun 2025 17:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749663444; cv=none; b=DIJVu3TR5+OoJuN7EoPvoJ0HipzNKm0DIknuDSyiQqCFALCHmyb3jvYUGQWJJzVOyOvuoh69K98UH7WL/R7/MtQY4+oHtXnO/aNDplb4NuorU+FuC74Gditvp+OWNEeZEo3hvSMDlcfQqn7b0tbZI5atf11U2727U4kZTgtr12Q=
+	t=1749663761; cv=none; b=B1hbeHQwmM2QJqw9j4v+CBQ9z7NANFCQ77UVSLEyYhqrY9Ewrp1EWM2NQ3vrOzIDZL/kpASp5DVj7eUf9XOwT7wNaSEaQixk1D1L9tNKfqpoQTQHhWU6bdoggAjs8PAQBGFlGN/EpqDYp1xe3J4IG1IdaXmVOi2Db+gQrnYT3hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749663444; c=relaxed/simple;
-	bh=RxRvCCQAc09pOoApuwSOluUbk6YsmNSe3Pm4y3AeGQ4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ZMHjOIE/WI1/Qxvu5wVg2DotG5Ll9DdFKNkKkIqlhZP0phPzL0liVoUrkaSBlRe1qebFnedBtiRkQPc3kmDck1EMBiwRtq0kLBGFsOKOe9isfY2PaBb3SpZOety0/5HqoTbeaumciFx/CrB3hzOrkpjVr9fe11c5KvhB9W7tyFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIZ28o44; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1749663761; c=relaxed/simple;
+	bh=+7hlOHTGyzfkz6jFtb3mrOj0g8LJ223bjIPqkP9k6eU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UHC51MTVzzrzbvgCDIzrXD4TAlD6jf5230UyL1+lUgc83Yr6Ev+/T+b5uN+5xKMKVzuTuE6K7CkCVHnX4NM60x9hkLMq7GNwjS6bPxGGdTo6J0Vooo7X5Z5HzgfUgq1ICycs+8FJeB2O14pFlm1yPSJQROAGy0lHXEo2u2N0Cg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBFBvLJD; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b2f645eba5dso965142a12.1;
-        Wed, 11 Jun 2025 10:37:22 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so327945e9.1;
+        Wed, 11 Jun 2025 10:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749663442; x=1750268242; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Qdx+HUyFlvdHm+W6jgROnH/naTCj5dcAprpNX8qijoM=;
-        b=RIZ28o44vqnk5yw/ukh76PWP1Rjn6qAetcB7TPhQi/ZfeQMzhVzZmJd3XQw7FjTm0I
-         h6PT2PzgAwU0loONKUaz8bG/TPO6YcbIWB6uuipc2aNAckhGVruya3rN6vMcDn36dpwK
-         k3fJ5IizCjt5Bo+Kx0DhQNe1Gl6ND1zOwHrn+gqVZ1IePKZljp72fwepDnn6Z7EdZNsq
-         qHcC0OOU5ZaQ4Pfh2GZgzEmTsXMg9njrk3Xg1qI91PV+K71zDzCXqMjkE6SXVujlOJgj
-         DkDB7LPhclM9SeGniREcOGrbWRYqPzuxCm23/UEggC8pPPQLqr9mALk0O2RyYJkV9IZb
-         J9Gw==
+        d=gmail.com; s=20230601; t=1749663758; x=1750268558; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcxpZFPwbSvixcgtkq37B2t3qfcJWLChmp+3p260Tmc=;
+        b=BBFBvLJD1tMVCQzsikPij3LnQteTTJXv8c55BsV9Ar2PxxjedAs3zkYnHmQmIEcinB
+         hIpaT62KAQ7ir3CVUlkaH1FzlvsiR8g0a6yNtrPBXKgRJheOz9ouKUtTOJ2KnAJnm5S7
+         zWqSk3qj5sM479QHYgV1noOE5LJTYBvhQ298tJG02W+Z+YVl2ALGPlV0dxtvbMc38EFP
+         dcLZBVzLSPPLGA9OwNYElbiPaUtqK8m8pEJoeQihxES/lew1ch76a0nssBfJ/jLvs7bK
+         13vIv10/zPrTRF07hz+p63eRmcFRvXgfxmGp93SWaKl3/+57zPi1u9CpVxCD/SiVcBYp
+         uGzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749663442; x=1750268242;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qdx+HUyFlvdHm+W6jgROnH/naTCj5dcAprpNX8qijoM=;
-        b=CE37W+V282XT1CVKC0hgJYCnxZckUtbGCTAJsuAyeo4i1fcI1E8+ZaTaKUNqQSA0U9
-         FaepPYhHHvLb+8e3SVHPK2H0tlsPejG89L19gB3FpkwopTQabV+zxcS9MHQnORxtKDnZ
-         3fKyKrTZdfyvd84C5NC3Dwveh/BL3VWXtlUNulkQpGvN8Wuz7kyJ0aafXK+h2VhajDNC
-         CeeFHUMYFVtsevKj1GekDc6pXE5YlX1OUqVImqGC+M1dGox2mmzQHYyUAYXInqAAfivA
-         p5PW02DdYj/SVfOkb1+rQ+gBt0L2+99WWYuG14o0rDno6RZTzkIUkJh5IvcuFkWDNXGd
-         X9Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNdvLb5ZMQFiJ6uh15f0i/dfVoHEIpCMrL7Ve6MoMoLt1NfA/GiVJCKZFSleW41sRgMHvnsYDg@vger.kernel.org, AJvYcCW6Qk27FN9RaA/sL8Tt9YY3WJRZj1PpzdJnWWJZW5aGd/QmO+TTe4Nhv5Q5VcjL/e49Krl5YbV36UURjgEP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0QTXavSbf+r60iW8PoanVrmI2CnBPLCK75qjX6vG5qxpisMLD
-	Q+TDJdwpirKLwdUyuIYmIu1fpEZXdRbKquG7Qumt+UYULO04e8cR+bCL9tmsGE7+1j41eaRR0z8
-	BIgK+jloWCmMSwVHtBUNZC3yrvhrBJQk=
-X-Gm-Gg: ASbGncvl+6a90LYfGwB44rinUFmY+uxCIEdMZDoa3GSm1tLdnEfd9XHEF3Nmprpakdq
-	Bz/HNiwKmTshDKqJXifYZ/U+M7xhI06hEDH83nOn2aVCQU/v1UkE9mz3Sfze53AT0GZ0LFb6dN/
-	SDCowUumNLVLWFdXWrkkqFpMJ4T8yiKalRy2GwG0egQBdBEVa31EZwSB8=
-X-Google-Smtp-Source: AGHT+IEjycZwjuaydhb9hB5P8UQ/fl56j+Lznqu09ONsNgiSt1GEAvBLvUlmxXMXjPLZVddE5naJd/n3OlOMt2na/t4=
-X-Received: by 2002:a17:90b:534c:b0:30e:e9f1:8447 with SMTP id
- 98e67ed59e1d1-313bfd6eb45mr464488a91.4.1749663442245; Wed, 11 Jun 2025
- 10:37:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749663758; x=1750268558;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bcxpZFPwbSvixcgtkq37B2t3qfcJWLChmp+3p260Tmc=;
+        b=ONGt3iAAcYSbVpAI632cSrXAuNj5BEGX4RNx0ZFSPArmboIAi+nrRn4fALakE3aDQZ
+         avSTKfHTzcYoIUv0Ls5H4jF4cKgMtuUJ4ZYm0A7hu7bT86s/eXXXimGLWmFYZ3YTN4OI
+         uKs//E84FiREbPWbOeQ3U6PcEYHH+YZ7nq5JoehP8o72w307n2eodfWaxUeFNAKJq0BB
+         1+qJkMqsvBMD6t15zCFDUDsNd5LbQTSa8g+wq4rGRU0n6Ae78D1/cBMnElj9UGOkkbdj
+         LT9tOB0df63DUGZLDsaOyrcSHc0uBjV70qqE34QDyTm+NMNfpYMp08jK2CNXz8iyEqfY
+         J3Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF/UOIcmBRukTmM8uOcY956EhLfJZP265yNvM6M9TxoUk8i36p6PQiAEpjYhUSTpyYf+xCbazguciBQGOd@vger.kernel.org, AJvYcCUaVX1kIlQKpmDinnrkeyc3JM1VYfQIHZw42GD/efQjiLy3pdJ5F9So5Mp3wPmxHuIMLjKh2s0glyCu@vger.kernel.org, AJvYcCWjTmr1vgdVLCWx6qLUpDjJVc8Y/Io2/k+wsAtOOO0taEpf8mGLi0ygKdEyiFksa+JLmj1hfCv5vcL96tLcqwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmrJrJchEs7jwaT0pOHZpnyQvUgy3aBywumNABlKSajGWcta6O
+	VJ9VNjIDXTBDkKuVAO4+Ix63cyc8KyeaSK/wE6ajqPkT0a+29sO88Eto
+X-Gm-Gg: ASbGncuFykCc2zplqJ8ZsGBaQ0Dnkc92AqjYVewNPURbVHUaJW9s9b7JEWIwbfMqbXc
+	8Cmn171UO7ZYvlwzuqQqgXqCcZEJQ0QhAwlFrlCVOEMkQiplOCpQUJIuqoKtBKGNjTjyO9FPfly
+	lE93YbpVDz/inv+dbT33uMh/6m7Kndg9jNIV4N9SWjI6qMgJmywwcmsmkBv+BSATPaY0XgG9Dqd
+	CdtLqVtC0DSQyqEppCEg9oATYYTFBWI5wuGkPKmxlzqinUcOqRZOhHbePKS1sYhR+sZV67PPH5m
+	vKHc4lLx9lUomVHPv1vbDtoY91Mz2vUP7GOC80H5SHhNgli4EpOKkz+a2Dp9AzZq9wORXSatsJ3
+	mC8W4gYTimJ1PUR3IdHXoyQ7B36fUS32n9T8d
+X-Google-Smtp-Source: AGHT+IGqXKmrevR7joOVP5V2a+fTB0jNzy8eGMG+UQ0h+Xt8qIsJsAcR1SRGcesVEkYOMOAQuDf0AA==
+X-Received: by 2002:a05:600c:3496:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-453248f984cmr41545315e9.17.1749663757317;
+        Wed, 11 Jun 2025 10:42:37 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45325205053sm28137415e9.23.2025.06.11.10.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 10:42:36 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v5 0/6] rust: Add ACPI match table support for Rust drivers
+Date: Wed, 11 Jun 2025 18:40:33 +0100
+Message-ID: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Charlemagne Lasse <charlemagnelasse@gmail.com>
-Date: Wed, 11 Jun 2025 19:37:10 +0200
-X-Gm-Features: AX0GCFt6AMPMnfwGbDRevkngQ_776BKkCPArI8xqatqb4HBSG_M9g30Xnaqvjv4
-Message-ID: <CAFGhKbwVyxCwYSNrPaQ-GkuP008+uvDg-wNA5syWLLzODCfpcA@mail.gmail.com>
-Subject: locking/local_lock, mm: sparse warnings about shadowed variable
-To: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	LKML <linux-kernel@vger.kernel.org>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-rt-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-HI,
+This patch series introduces support for ACPI match tables in Rust 
+drivers.
 
-when I run `make C=2 mm/mlock.o CHECK="sparse -Wshadow"`, I get a lot of
+Currently, Rust abstractions support only Open Firmware (OF) device 
+matching. This series extends the driver model to support ACPI-based 
+matching, enabling Rust drivers to bind to ACPI-described devices.
 
-./include/linux/local_lock.h:88:1: warning: symbol 'l' shadows an earlier one
-./include/linux/local_lock.h:88:1: originally declared here
+Changes include:
+  - A new `acpi::DeviceId` abstraction for working with 
+   `struct acpi_device_id`.
+  - Updates to the core `Adapter` trait and `platform::Driver` to support
+    optional ACPI ID tables.
+  - A sample implementation in the Rust platform driver, demonstrating 
+    multi-bus matching.
 
-after commit
+This is especially useful for writing drivers that work across platforms 
+using both OF and ACPI.
 
-51339d99c0131bc0d16d378e9b05bc498d2967e2 is the first bad commit
-commit 51339d99c0131bc0d16d378e9b05bc498d2967e2
-Author: Alexei Starovoitov <ast@kernel.org>
-Date:   2025-04-02 19:55:14 -0700
+Tested using QEMU with a custom SSDT that creates an ACPI device matching
+the sample Rust platform driver.
 
-   locking/local_lock, mm: replace localtry_ helpers with local_trylock_t type
+Igor Korotin (6):
+  rust: acpi: add `acpi::DeviceId` abstraction
+  rust: driver: Consolidate `Adapter::of_id_info` methods using `#[cfg]`
+  rust: driver: Add ACPI id table support to Adapter trait
+  rust: platform: Add ACPI match table support to `Driver` trait
+  rust: cpufreq: Remove unnecessary `of` dependency in cpufreq example
+  samples: rust: add ACPI match table example to platform driver
 
-   Partially revert commit 0aaddfb06882 ("locking/local_lock: Introduce
-   localtry_lock_t").  Remove localtry_*() helpers, since localtry_lock()
-   name might be misinterpreted as "try lock".
+Changelog
+---------
+v5:
+ - Got rid of unnecessary consolidation of `Adapter::acpi_id_info` methods.
+   Instead, firstly made consolidation of `Adapter::of_id_info`, then
+   `Adapter::acpi_id_info` is added using the same pattern. 
+ - Set `Adapter::OF_ID_TABLE` and `Adapter::ACPI_ID_TABLE` as None by 
+   default. 
+ - Removed `Adapter::OF_ID_TABLE`/`Adapter::ACPI_ID_TABLE` initialization
+   example due to irrelevance.
+ - Removed extra `of` dependency and `Adapter::OF_ID_TABLE` initialization 
+   in cpufreq driver.
+ - Link to v4: https://lore.kernel.org/rust-for-linux/20250610145234.235005-1-igor.korotin.linux@gmail.com/
+v4:
+ - Fixed code example for `trait Adapter` in platform.rs 
+ - Fixed driver implementation example in rust_driver_platform.rs and moved
+   it to `trait Adapter` in platform.rs per Danilo Krummrich's suggestion.
+ - Consolidated `Adapter::of_id_info` and `Adapter::acpi_id_info` methods using
+   `#[cfg]` per Benno Lossin's suggestion.
+ - Link to v3: https://lore.kernel.org/rust-for-linux/20250606170341.3880941-1-igor.korotin.linux@gmail.com/
+v3:
+ - Removed fwnode type check in `Adapter::id_info` per Greg's and Danilo's
+   comments
+ - Removed `is_of_node` rust helper, due to unnecessity. 
+ - Fixed example code in `rust_driver_platform.rs` per Danilo's comment
+ - Added an instruction of testing ACPI using QEMU with a custom SSDT
+ - Fixed minor code formatting issues.
+ - Link to v2: https://lore.kernel.org/rust-for-linux/20250605161956.3658374-1-igor.korotin.linux@gmail.com/
+v2:
+ - Removed misleading comment in `acpi::DeviceID` implementation. 
+ - Removed unnecessary casting in `acpi::DeviceID::new`.
+ - Moved `pub mod acpi` to correct alphabetical position in `rust/kernel/lib.rs`.
+ - Link to v1: https://lore.kernel.org/rust-for-linux/20250530123815.1766726-1-igor.korotin.linux@gmail.com/
 
-   Introduce local_trylock[_irqsave]() helpers that only work with newly
-   introduced local_trylock_t type.  Note that attempt to use
-   local_trylock[_irqsave]() with local_lock_t will cause compilation
-   failure.
+ MAINTAINERS                          |  1 +
+ rust/bindings/bindings_helper.h      |  1 +
+ rust/kernel/acpi.rs                  | 61 +++++++++++++++++++++
+ rust/kernel/cpufreq.rs               |  3 +-
+ rust/kernel/driver.rs                | 81 +++++++++++++++++++++-------
+ rust/kernel/lib.rs                   |  1 +
+ rust/kernel/platform.rs              | 29 ++++++++--
+ samples/rust/rust_driver_platform.rs | 71 +++++++++++++++++++++++-
+ 8 files changed, 222 insertions(+), 26 deletions(-)
+ create mode 100644 rust/kernel/acpi.rs
 
-   Usage and behavior in !PREEMPT_RT:
 
-   local_lock_t lock;                     // sizeof(lock) == 0
-   local_lock(&lock);                     // preempt disable
-   local_lock_irqsave(&lock, ...);        // irq save
-   if (local_trylock_irqsave(&lock, ...)) // compilation error
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.43.0
 
-   local_trylock_t lock;                  // sizeof(lock) == 4
-   local_lock(&lock);                     // preempt disable, acquired = 1
-   local_lock_irqsave(&lock, ...);        // irq save, acquired = 1
-   if (local_trylock(&lock))              // if (!acquired) preempt
-disable, acquired = 1
-   if (local_trylock_irqsave(&lock, ...)) // if (!acquired) irq save,
-acquired = 1
-
-   The existing local_lock_*() macros can be used either with local_lock_t or
-   local_trylock_t.  With local_trylock_t they set acquired = 1 while
-   local_unlock_*() clears it.
-
-   In !PREEMPT_RT local_lock_irqsave(local_lock_t *) disables interrupts to
-   protect critical section, but it doesn't prevent NMI, so the fully
-   reentrant code cannot use local_lock_irqsave(local_lock_t *) for exclusive
-   access.
-
-   The local_lock_irqsave(local_trylock_t *) helper disables interrupts and
-   sets acquired=1, so local_trylock_irqsave(local_trylock_t *) from NMI
-   attempting to acquire the same lock will return false.
-
-   In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().  Map
-   local_trylock_irqsave() to preemptible spin_trylock().  When in hard IRQ
-   or NMI return false right away, since spin_trylock() is not safe due to
-   explicit locking in the underneath rt_spin_trylock() implementation.
-   Removing this explicit locking and attempting only "trylock" is undesired
-   due to PI implications.
-
-   The local_trylock() without _irqsave can be used to avoid the cost of
-   disabling/enabling interrupts by only disabling preemption, so
-   local_trylock() in an interrupt attempting to acquire the same lock will
-   return false.
-
-   Note there is no need to use local_inc for acquired variable, since it's a
-   percpu variable with strict nesting scopes.
-
-   Note that guard(local_lock)(&lock) works only for "local_lock_t lock".
-
-   The patch also makes sure that local_lock_release(l) is called before
-   WRITE_ONCE(l->acquired, 0).  Though IRQs are disabled at this point the
-   local_trylock() from NMI will succeed and local_lock_acquire(l) will warn.
-
-   Link: https://lkml.kernel.org/r/20250403025514.41186-1-alexei.starovoitov@gmail.com
-   Fixes: 0aaddfb06882 ("locking/local_lock: Introduce localtry_lock_t")
-   Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-   Acked-by: Vlastimil Babka <vbabka@suse.cz>
-   Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-   Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-   Cc: Daniel Borkman <daniel@iogearbox.net>
-   Cc: Linus Torvalds <torvalds@linuxfoundation.org>
-   Cc: Martin KaFai Lau <martin.lau@kernel.org>
-   Cc: Michal Hocko <mhocko@suse.com>
-   Cc: Peter Zijlstra <peterz@infradead.org>
-   Cc: Steven Rostedt <rostedt@goodmis.org>
-   Cc: Vlastimil Babka <vbabka@suse.cz>
-   Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-include/linux/local_lock.h          |  58 ++--------
-include/linux/local_lock_internal.h | 211 +++++++++++++++---------------------
-mm/memcontrol.c                     |  39 ++++---
-3 files changed, 116 insertions(+), 192 deletions(-)
-bisect found first bad commit
 
