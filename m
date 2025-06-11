@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-681691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA3FAD55F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C57AAD55FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 14:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 903671BC27D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC8C1BC2C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 12:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED83283141;
-	Wed, 11 Jun 2025 12:52:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DC12E611B;
-	Wed, 11 Jun 2025 12:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB54284682;
+	Wed, 11 Jun 2025 12:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzxtGcgj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77628283136;
+	Wed, 11 Jun 2025 12:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749646360; cv=none; b=j38siWr90ntewciwTiNqKWrB92IuhnrKLNTrBaTt/jE0sFNybqa0yO7Vm8ThsNL5CVa0sXlJEBpe4ctLj2SVPVf8pMRx4W4VNoI6pE3v0vGP3HyrwLtdDCAy//oz2XugL8cQ/NbnPgCK1rCltgfvtWPUD99cjPATJkFCteJNO0g=
+	t=1749646366; cv=none; b=iVJFqc3wvMSCU/ZeKnK7jYMFXPiIUlRTDgXt5xJ+DzouLr9CMhbXJ8azbRW8440kRpPXNTLg1cPjuACtlD4k76/ICDUG6+oXQmb6t3viqMh9wHZbZCXYaO7v9r+IeMYrE/DsEPXqnvdzMjlyEB5HWz1/jXoUk6xKqJi+NubdPBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749646360; c=relaxed/simple;
-	bh=8Y8aFpQ7P9CqeElr3wG1ncqhXpdcddPA6PvcJhmS7cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbapnJoqaP6B2BE/McFLvnpv3GI1c0fgq9cUXR4erA8EfBRmrsCO7uLWeSyVMtvl4BXS6iOMAy1X7zXRmCrN8OmjbqnB9qgTALL22IXlddBO91x0RIdwlUNryEDyZSW4PNXZVki8JjP63lqnOXak+wY4ST+GPd27XB1e2diyrhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA7B415A1;
-	Wed, 11 Jun 2025 05:52:16 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F2503F59E;
-	Wed, 11 Jun 2025 05:52:34 -0700 (PDT)
-Date: Wed, 11 Jun 2025 13:52:32 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: anirudh@anirudhrb.com, linux-arm-kernel@lists.infradead.org,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lpieralisi@kernel.org,
-	mark.rutland@arm.com
-Subject: Re: [PATCH] firmware: smccc: support both conduits for getting hyp
- UUID
-Message-ID: <20250611-wandering-juicy-magpie-ed7f46@sudeepholla>
-References: <20250605-kickass-cerulean-honeybee-aa0cba@sudeepholla>
- <20250610160656.11984-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1749646366; c=relaxed/simple;
+	bh=xS5CjjPOWei09By745+NFla9rsFISSD/pc+6jDHaYFc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nauqoEAIavqI7VGe5QkiSq+NLYyi/nP4KL10ROcb6VqIIarPnKFfnXAAyKyZdS/3Wd1TbguFYEPYLxGtTMbxnSkYrgb1bg8oTGpN74DlxBaWpbJBlud/m5dBHsNd8yhMDFi5Wznicsln7kwYlWzZrXLzcyaIjaUUUmFefnl3O10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzxtGcgj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 069EEC4CEF5;
+	Wed, 11 Jun 2025 12:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749646365;
+	bh=xS5CjjPOWei09By745+NFla9rsFISSD/pc+6jDHaYFc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SzxtGcgjtlqJTLeJJj91O7ONtIXqWBzum2CK7b8fc734uTwS/L0Zf0mKIVTOccSzL
+	 JdQtSzMqQoMgbKJBdoxIy76e8rb1iOfHr8I4hnAH4f+U4v1OwR7b3vddxiQagtLau0
+	 zr7mZY5sEIrdRYuVWjjLc9kYBN0zX13eHdUjYIbPJEvIQinHKxJg6aoHLQQuctZiRK
+	 Q/pF6itXmvvCicWAKSCZL/ChYpNfC6Ep8VKxq+mkkVg6UPn3JgEPNPXZ/t3y1E0JwM
+	 RJPhJHQ0j1t3ldqHeRZ5Izu+P6yiyaPvuLLarxg9pRTMRlEYdkF/DowSni9B5USMGs
+	 RHokKKcxx1rXQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uPKwc-005rNW-Jo;
+	Wed, 11 Jun 2025 13:52:42 +0100
+Date: Wed, 11 Jun 2025 13:52:41 +0100
+Message-ID: <8634c6e8yu.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] KVM: selftests: Change MDSCR_EL1 register holding variables as uint64_t
+In-Reply-To: <9b378582-44eb-4fbb-a03a-40eb317daebd@arm.com>
+References: <20250610053128.4118784-1-anshuman.khandual@arm.com>
+	<20250610053128.4118784-3-anshuman.khandual@arm.com>
+	<864iwnedjk.wl-maz@kernel.org>
+	<9b378582-44eb-4fbb-a03a-40eb317daebd@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250610160656.11984-1-romank@linux.microsoft.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jun 10, 2025 at 09:06:48AM -0700, Roman Kisel wrote:
-> > (sorry for the delay, found the patch in the spam 🙁)
+On Wed, 11 Jun 2025 04:45:10 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 > 
-> "b4" shows the the mail server used for the patch submission
-> doesn't pass the DKIM check, so finding the patch in the spam seems
-> expected :) Thanks for your help!
 > 
-
-Thought so looking at the header but I just have very basic knowledge
-there, so couldn't comment.
-
-> >
-> > On Wed, May 21, 2025 at 09:40:48AM +0000, Anirudh Rayabharam wrote:
-> >> From: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+> 
+> On 10/06/25 10:31 PM, Marc Zyngier wrote:
+> > On Tue, 10 Jun 2025 06:31:28 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 > >>
-> >> When Linux is running as the root partition under Microsoft Hypervisor
-> >> (MSHV) a.k.a Hyper-V, smc is used as the conduit for smc calls.
+> >> Change MDSCR_EL1 register holding local variables as uint64_t that reflects
+> >> its true register width as well.
 > >>
-> >> Extend arm_smccc_hypervisor_has_uuid() to support this usecase. Use
-> >> arm_smccc_1_1_invoke to retrieve and use the appropriate conduit instead
-> >> of supporting only hvc.
+> >> Cc: Marc Zyngier <maz@kernel.org>
+> >> Cc: Oliver Upton <oliver.upton@linux.dev>
+> >> Cc: Joey Gouly <joey.gouly@arm.com>
+> >> Cc: kvm@vger.kernel.org
+> >> Cc: kvmarm@lists.linux.dev
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: linux-kselftest@vger.kernel.org
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Reviewed-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  tools/testing/selftests/kvm/arm64/debug-exceptions.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
 > >>
-> >> Boot tested on MSHV guest, MSHV root & KVM guest.
-> >>
-> >
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> >
-> > Are they any dependent patches or series using this ? Do you plan to
-> > route it via KVM tree if there are any dependency. Or else I can push
-> > it through (arm-)soc tree. Let me know.
+> >> diff --git a/tools/testing/selftests/kvm/arm64/debug-exceptions.c b/tools/testing/selftests/kvm/arm64/debug-exceptions.c
+> >> index c7fb55c9135b..e34963956fbc 100644
+> >> --- a/tools/testing/selftests/kvm/arm64/debug-exceptions.c
+> >> +++ b/tools/testing/selftests/kvm/arm64/debug-exceptions.c
+> >> @@ -140,7 +140,7 @@ static void enable_os_lock(void)
+> >>  
+> >>  static void enable_monitor_debug_exceptions(void)
+> >>  {
+> >> -	uint32_t mdscr;
+> >> +	uint64_t mdscr;
+> >>  
+> >>  	asm volatile("msr daifclr, #8");
+> >>  
+> >> @@ -223,7 +223,7 @@ void install_hw_bp_ctx(uint8_t addr_bp, uint8_t ctx_bp, uint64_t addr,
+> >>  
+> >>  static void install_ss(void)
+> >>  {
+> >> -	uint32_t mdscr;
+> >> +	uint64_t mdscr;
+> >>  
+> >>  	asm volatile("msr daifclr, #8");
+> >>  
+> > 
+> > Why change this in the place that matters *the least*?
+> > 
+> > arch/arm64/kernel/debug-monitors.c is full of 32bit manipulation of
+> > this register, and that's only one example of it. So if you are going
+> > to change this, please do it fully, not as a random change in a random
+> > file.
 > 
-> Anirudh had been OOF for some time and would be for another
-> week iiuc so I thought I'd reply.
-> 
-> The patch this depends on is 13423063c7cb
-> ("arm64: kvm, smccc: Introduce and use API for getting hypervisor UUID"),
-> and this patch has already been pulled into the Linus'es tree.
-> 
+> The first patch in this series changes mdscr system register to 64 bit
+> in the mentioned file (i.e arch/arm64/kernel/debug-monitors.c).
 
-Had a quick look at the commit to refresh my memory and as you mentioned
-it is new feature. I was checking to see if this is a fix.
+Then please Cc me on the series, and not patches at random. Context matters.
 
-> As for routing, (arm-)soc should be good it appears as the change
-> is contained within the firmware drivers path. Although I'd trust more to your,
-> Arnd's or Wei's opinion than mine!
-> 
-
-I will queue this once I start collecting patches for v6.17 in 1/2 weeks'
-time, so expect silence until then 😄.
+	M.
 
 -- 
-Regards,
-Sudeep
+Without deviation from the norm, progress is not possible.
 
