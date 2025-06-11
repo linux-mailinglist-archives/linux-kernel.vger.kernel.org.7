@@ -1,133 +1,200 @@
-Return-Path: <linux-kernel+bounces-681197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E01AD4F9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69217AD4FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15E901BC0581
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4845118995CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E52C25F97D;
-	Wed, 11 Jun 2025 09:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C266925F7AD;
+	Wed, 11 Jun 2025 09:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GL6NHJdh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/7HqhDUo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="a+pYiCO4"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3373225C83E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 09:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749633748; cv=none; b=Ty89yuxg12pU+NlAArxJybpEVk3tBRjPd++sT7qNlTnp01s1/LDefSuvw8yppr9A32oCNHnnR2wKTtFz3+r4f3nB4mKMjAjLRFPdO3wuBaIgZtl62ZtsO8nsqn80KFwWmPrL6RHfjr29v8/fTqUAA0FR+nnnhsLKfW30Je3iBG8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749633748; c=relaxed/simple;
-	bh=mIAtGDHPvKeYdgafPU461SwU1pvMX0e9L3qKBEtEQp4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Usl1DhtXA819+VlCQs2O6MctH5ehvOEUQRGUnjdGrmoZ945Qe02VscXBdAXqnQz6ndPZ5wpK3guIxd0Tt4la9o3ncSE7LvrzDvKF6eAujxcytT2QSPU7USgr/+p8nJQOm4gFy+c82FZmYzJmW3z1LfAnv9wF2A8+4lxtER7Iftg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GL6NHJdh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/7HqhDUo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749633745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J0wTJl4RIVSFj/J21gRTDQ3w5OE3XK4ggTZJSCDLD2I=;
-	b=GL6NHJdh8oRCBHoc0pCvwGt+FMm6CmPZDaSPIyv0AwYaPhxb6cgvtH+x7vJMNVY1OvbVAI
-	0Fcd0Mg5z7ACVlsKkKr9GLrbmp/yN6erZB9Dqysrq4OJ5Wp5KOgoHP7NEjAup6dOP20C8+
-	Qj+nQ+46L5YgUEr8Cv78NgVN7B8FVAJZgeIQcMtleDiPCobxuF791zte11xQITQbB5DbJP
-	qEkaZ7pqplVdht4OWG2xF9S46mLE85l7rmEMx26hg5dh0fevA7HHj2iBN0hE4s6ycTm9M3
-	V7o+ysyNJ6bKBnaNaWJpGv8ctCgNrT1J8rRDGZC3cRjx3oxsP4gTKds75cdnJw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749633745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J0wTJl4RIVSFj/J21gRTDQ3w5OE3XK4ggTZJSCDLD2I=;
-	b=/7HqhDUo5GHztwH4u2uOVsaIcikw4P3TFVxK9YTQ1WvyeNbCBVTlHRglhhFUb3ok/wdW/N
-	137plfNu6ojVANAg==
-Date: Wed, 11 Jun 2025 11:22:14 +0200
-Subject: [PATCH v3 3/3] vdso: Reject absolute relocations during build
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DEE25E824;
+	Wed, 11 Jun 2025 09:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749633864; cv=pass; b=BBIEjtRzh2JZ8O8yZcE/ILH7XBSEVM1dqOxZrOpVxJ9vsbKPg2Vay8wludguRqAPAhKJ6TtriJ1QOhWmpBzYQI8yzxZBVcIAki8clZ/1m1sRq6AAf7u/dbyhNOSOnMRs94PHOvYOxFe0K2LHcU4OKtiSwsMDIS4MUEnKFqQo7Kw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749633864; c=relaxed/simple;
+	bh=VnSbD1P4ZjAZCmO2ADIJNQ7jUY0E3k9VW+EXMPbQOn4=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=MAEkIK1k/hP04EyQ4nkmGR32/BqxPyxf4MxDjS265+srTYhAhOjrop5SKdgNzss4ap6BUbEeeZ9pkE6QOKyxuzzE6Y5raEnubiqwYNX6X8pjs/yn/Ct2AVjRz/B65mR+oDDp8z7y6TT7Vw1H/E8hDI1D8RIuzJ1p+SIifpYyibU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=a+pYiCO4; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1749633823; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kO7V+IP0kjxzIQrvpS/6WXoN0TFYQnAdYvQGYN+M9EESRHDfLx2LCr1edGpmh9cjbvAT5xwjplUUPKz+umH5NtVuLrTULPRkrGqrV7In1UfBxOqixKddCXdCIgW3NaauDabDKpWYmoZTfURa2Di7RLaEpcuxpdYs5lRG0cOfqOc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749633823; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KzDcoJuyvrXRTjMEF0wU3nDIzXU2u1U4shVlfR4W+g0=; 
+	b=FE+KHIohmMpt4W6j3U8MwU1rB1n8R4l99wCSWzLGlsbxKUeyw9ZZze9ZOxdsUY/AYSoxbmBM7WfFx5sW3ZHAVzRNhe2uBX5hwN2IGwpBTrCrz4jpHiEpI7HWK3tUjBe7g3W4cki8S2aYUr0K8RRG3etZQ/chDm9qNKG7Q/N3VTY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749633823;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=KzDcoJuyvrXRTjMEF0wU3nDIzXU2u1U4shVlfR4W+g0=;
+	b=a+pYiCO4nqHRRMmAzxo1pgcIPNgGvRa5/G8eM0OyG/USjABXBKDmOp62M8xqS8bB
+	stmSILeijgOv1bjOGGKKYq7grIZS1kSuVn+yn/qK76nKny0gHR6FCgxnZF8X7UD9eH2
+	brtIG723Rdy5/3HT1CcNH7Ypk9dPzmd59RdcC/Kc=
+Received: by mx.zohomail.com with SMTPS id 1749633819809581.0689137008978;
+	Wed, 11 Jun 2025 02:23:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Chen Wang" <unicorn_wang@outlook.com>, 
+	"Bjorn Andersson" <andersson@kernel.org>, 
+	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
+	"Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Inochi Amaoto" <inochiama@gmail.com>, 
+	"Philipp Zabel" <p.zabel@pengutronix.de>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>
+In-Reply-To: <PN0P287MB22589781F2D49353E7C66C46FE75A@PN0P287MB2258.INDP287.PROD.OUTLOOK.COM>
+Cc: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>, 
+	<sophgo@lists.linux.dev>, <linux-kernel@vger.kernel.org>, 
+	<linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add C906L rproc for Sophgo
+	 CV1800B SoC
+Message-ID: <1847f2ae7cdd9de8.639eddc348629bd0.78776f2b552d9090@Jude-Air.local>
+Date: Wed, 11 Jun 2025 09:23:31 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250611-vdso-absolute-reloc-v3-3-47897d73784b@linutronix.de>
-References: <20250611-vdso-absolute-reloc-v3-0-47897d73784b@linutronix.de>
-In-Reply-To: <20250611-vdso-absolute-reloc-v3-0-47897d73784b@linutronix.de>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749633741; l=2264;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=mIAtGDHPvKeYdgafPU461SwU1pvMX0e9L3qKBEtEQp4=;
- b=saA8vG7G5+nuYZSAIasKPk5cLM4d6JKHzQ2YGvNfixdyOAnpwSO6H7XzKmIVedADkizpqv1bb
- jU+UQS4HuWOD3hih0qgzsdHbpqtAnSo8QNwysBfBekBxh9MTlcW2DV1
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-All vDSO code needs to be completely position independent.
-Symbol references are marked as hidden so the compiler emits
-PC-relative relocations. However there are cases where the compiler may
-still emit absolute relocations, as they are valid in regular PIC DSO code.
-These would be resolved by the linker and will break at runtime.
-This has been observed on arm64 under some circumstances, see
-commit 0c314cda9325 ("arm64: vdso: Work around invalid absolute relocations from GCC")
 
-Introduce a build-time check for absolute relocations.
-The check is done on the object files as the relocations will not exist
-anymore in the final DSO. As there is no extension point for the
-compilation of each object file, perform the validation in vdso_check.
 
-Debug information can contain legal absolute relocations and readelf can
-not print relocations from the .text section only. Make use of the fact
-that all global vDSO symbols follow the naming pattern "vdso_u_".
+On 11/06/2025 17:01, Chen Wang wrote:
+> On 2025/6/8 10:37, Junhui Liu wrote:
+>> Add C906L remote processor for CV1800B SoC, which is an asymmetric
+>> processor typically running RTOS.
+>=20
+> In the cover email, I saw that remoteproc also uses mailbox as the=20
+> underlying communication. So I guess some mailbox-related properties=20
+> will need to be added to the bindings? I suggest that these should be=20
+> determined before officially merging this bindings.
 
-Link: https://lore.kernel.org/lkml/aApGPAoctq_eoE2g@t14ultra/
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=120002
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- lib/vdso/Makefile.include | 6 ++++++
- 1 file changed, 6 insertions(+)
+Yes, thanks for your suggestion. I will try to add mailbox-related
+properties and functions in the bindings and driver in v2, since the
+mailbox driver has been merged. At the very least, I will ensure the
+mailbox-related properties are included in the bindings.
 
-diff --git a/lib/vdso/Makefile.include b/lib/vdso/Makefile.include
-index cedbf15f80874d4bb27c097244bc5b11272f261c..04257d0f28c0ed324e31adbb68497181085752f8 100644
---- a/lib/vdso/Makefile.include
-+++ b/lib/vdso/Makefile.include
-@@ -12,7 +12,13 @@ c-getrandom-$(CONFIG_VDSO_GETRANDOM) := $(addprefix $(GENERIC_VDSO_DIR), getrand
- #
- # As a workaround for some GNU ld ports which produce unneeded R_*_NONE
- # dynamic relocations, ignore R_*_NONE.
-+#
-+# Also validate that no absolute relocations against global symbols are present
-+# in the object files.
- quiet_cmd_vdso_check = VDSOCHK $@
-       cmd_vdso_check = if $(READELF) -rW $@ | grep -v _NONE | grep -q " R_\w*_"; \
- 		       then (echo >&2 "$@: dynamic relocations are not supported"; \
-+			     rm -f $@; /bin/false); fi && \
-+		       if $(READELF) -rW $(filter %.o, $(real-prereqs)) | grep -q " R_\w*_ABS.*vdso_u_"; \
-+		       then (echo >&2 "$@: absolute relocations are not supported"; \
- 			     rm -f $@; /bin/false); fi
+>=20
+> Thanks=EF=BC=8C
+>=20
+> Chen
+>=20
+>>
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>   .../bindings/remoteproc/sophgo,cv1800b-c906l.yaml  | 68 +++++++++++++++=
++++++++
+>>   1 file changed, 68 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-=
+c906l.yaml b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c90=
+6l.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..455e957dec01c16424c49ebe5=
+ef451883b0c3d4a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.y=
+aml
+>> @@ -0,0 +1,68 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/sophgo,cv1800b-c906l.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo C906L remote processor controller for CV1800B SoC
+>> +
+>> +maintainers:
+>> +  - Junhui Liu <junhui.liu@pigmoral.tech>
+>> +
+>> +description:
+>> +  Document the bindings for the C906L remoteproc component that loads an=
+d boots
+>> +  firmwares on the CV1800B SoC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,cv1800b-c906l
+>> +
+>> +  firmware-name:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>> +    description:
+>> +      The name of the firmware file to load for this remote processor, r=
+elative
+>> +      to the firmware search path (typically /lib/firmware/).
+>> +
+>> +  memory-region:
+>> +    description:
+>> +      Phandle to a reserved memory region that is used to load the firmw=
+are for
+>> +      this remote processor. The remote processor will use this memory r=
+egion
+>> +      as its execution memory.
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  sophgo,syscon:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      A phandle to the SEC_SYS region, used for configuration of the rem=
+ote processor.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - firmware-name
+>> +  - memory-region
+>> +  - resets
+>> +  - sophgo,syscon
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    reserved-memory {
+>> +        #address-cells =3D <1>;
+>> +        #size-cells =3D <1>;
+>> +        ranges;
+>> +
+>> +        c906l_mem: region@83f40000 {
+>> +            reg =3D <0x83f40000 0xc0000>;
+>> +            no-map;
+>> +        };
+>> +    };
+>> +
+>> +    c906l-rproc {
+>> +        compatible =3D "sophgo,cv1800b-c906l";
+>> +        firmware-name =3D "c906l-firmware.elf";
+>> +        memory-region =3D <&c906l_mem>;
+>> +        resets =3D <&rst 294>;
+>> +        sophgo,syscon =3D <&sec_sys>;
+>> +    };
+>>
 
--- 
-2.49.0
-
+--=20
+Best regards,
+Junhui Liu
 
