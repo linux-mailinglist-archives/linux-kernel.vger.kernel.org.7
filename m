@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-682439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CEEAD6007
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA01AD6013
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 22:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED911E0AE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:27:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2AA417DF7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 20:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1977D2BD5B3;
-	Wed, 11 Jun 2025 20:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9FD263F5E;
+	Wed, 11 Jun 2025 20:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ehjIFapJ"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIYDasS5"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E3E2528F3
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 20:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA815C0;
+	Wed, 11 Jun 2025 20:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749673617; cv=none; b=VDdn1AhjA2pEZLOUBTVRdb1v+OSzxRIN2FQIIFc73g59z9nYCaGyqNu7UvrL32QNpE70DrXvKqxRVF2ry0+klwODrEpEmDyqNvlnkc9mkoavFPzGzHVFqyTbUGAwpaF8jiKRAEAxdYleRIstbOJG81DB75G9IykPW0fnHHtr/oM=
+	t=1749673819; cv=none; b=ESnYzhZLQMdjXLjwhNKl3hrkRbkxmGsG1+51WWapXIrX68rFmgQQtV50wrZc0VckOWXgsSEmWpCTPftIylg5IM6jcVh0UryFIGr+DSsnskxYBn2JGZyOiSavu2Ryt3AKidWiC+fD/0BuYZr/WSC2PDexQo/ysk315xEfLiYHSQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749673617; c=relaxed/simple;
-	bh=4Nu0j98D6h/l9/aD/BI7DaWZwlDoKTZw120WkJ4+etI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mGDVf5GwdQTuCNg3ta66ECVIjAum0rL3nEW7ujdiWGZ/ma4mP3PPIbgtMJtXXyTxOUrOQ2zd5l6rsWtPT0Z0MRgcR/Eiulz3ker9BAWvRUA/DkBtuMqZT/qVu4r1EBrBo3XMacT2ITx0rwQUkofpeal+MhhBs+gNXYMPw461U5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ehjIFapJ; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2da3c572a0bso79493fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 13:26:54 -0700 (PDT)
+	s=arc-20240116; t=1749673819; c=relaxed/simple;
+	bh=4UtRKohkxqENpsYh8iGXRD6NETIX2qwRPWFjW0quexo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9YAL76VoVfAntEZwH/tmBAQbIzRAlCVJhQ16BqNmrse4eiZ9yuh1Ev7QZpHhvn6tgbFSlfHUriBPNVAV0Y4eYQvLQgzp+Rmc0+bV9JJB3nCtw4DcbiHoHNzgb9Pz341Xo/0wjp2PH9b4Fp71rmCbQnFF60hQ7OtZERdQvIlQwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIYDasS5; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-60ef850d590so100424eaf.3;
+        Wed, 11 Jun 2025 13:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749673613; x=1750278413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=clQc+ALpEbRfKWwmdYpg7fRgJck1oxl3hljPINdz/zY=;
-        b=ehjIFapJ/TrzlhYOp+hzujH6+IJIwVdx/w/dSRLa1CAgiTHgNWHYKvQtb14YhkZ9MS
-         JXhc+0AYGZ6M6QDw3ETTy9JC2cbVHtRlE/cUw2p7/Z5l0pK/4x/R8ai6BmbxPVa4gW5v
-         AoKRaNjgtaStufNvQdksSu2mNqOC6KDWMK9jZPNgGK+QdNMgwC6wZmXpeI4OjJv5jr0z
-         3AkR47vSa+ItP/oS9VEOQmncp+3ZY/FJvafCEuxkyBUnUtHB2qTWkD3ydNLmcO4j2lAR
-         vVyBU0lJj7lJOjFQ4NNvuEOr8wKRCI1G5q3iUM9Vj9R9e1o1eYxKCvg5IfTpiCnVMIoi
-         APcA==
+        d=gmail.com; s=20230601; t=1749673817; x=1750278617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pv5p8TJwxPf045PkEKfFQACVA3z/pX6ZOvkokNNKGr4=;
+        b=YIYDasS52RRwvN+3E0I3e1d1rSLtMz4r+NyO51MP7U/QZvH3cOUgQOQaq2Xfsjx3XA
+         mC31WCCPFRPMU2lr9uDzdO7hHa4yvtlx1QEiyzYAC8vFf+jquRfUpTfDzQpPLgwtZimT
+         r5aXgGGbEOa9yXvpQmOscnIozwYUC8VtUNRJj5P3O7OrmQf/XtDrcIyeymsGbtteS24M
+         CMO2wzoyZUr1CwvqOndRdOixs/GVmZn5R3R4KRQfskCsSMYJHlyluIe2wPryUsstTcaM
+         iOXJqil9WAtddDB40pViPBdA1lgGryr+tO4vfrSmnYWxTFqqOZx0x1UqyilFnErw2S9T
+         R3WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749673613; x=1750278413;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=clQc+ALpEbRfKWwmdYpg7fRgJck1oxl3hljPINdz/zY=;
-        b=THuv7WdVaznuLkDfpc7oug+GzLKJXMjDi0ezt/h2Gr5XhWJfOOJRT92Sc06OdkF6et
-         Uvi0pGCdoOaV2XEJoiNlgsgy+hW7DOGhsWrecsg+qMInRAEekTr27WY3X45KUAGruY5K
-         u2nT4p0XWMMpoD/ZWmX4XpbbbgUB2UO6XQ8tXcvWROXDnNy53hq2k9lwDRpMEhAWY61Z
-         UFUniHIx7mWvWFnQ8K5qsDg2TzKzNx8OriG7YgTc7ueE8XLM68N5f0oBJ5mEPwSl8gup
-         XUluNzuvYFghwh8D6UiYLR9QU9O5ruFZ1mDt9JZycs/S4IHRBAJifelzgEd7mmOUkKrn
-         tTHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVh1QataZmuS/I5N+Tnk+iUM1YpHR0O7ykeNrsw8VBrnT3YS+ZmEUs+G5+SqL6zPLOeZD7h9p3soIvot4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1bX2HhdN6/F6hoP054RXNvB5V0twka6VqyDVbDSNHwXDBUumd
-	IfvUbvepd/ArEohr/crp6Aoeidv4IEyyXjzn2KpZs2OdQmhKhAhVJmmrsxRHgd8TDu4=
-X-Gm-Gg: ASbGncsnAxeXGg2nJXnzdkjy9lUOsAA8o/wfcWscy2C6IobfbFOOvn7oMvqelPcjZGq
-	a4Id442D95sDabjAB66lf16YwXfVy/QfDedZpiKdairC9l4zUTthETZ2H6Af3ipGTt08+IPOgHo
-	e0TtYYYTfZFFBtWt9+YFsWt8TB1BYLhJvxgPRzjKCA3i0uyWmjBwunAYpZ7K+Ux6Hoz3Te/L+NY
-	jF+JqWGJLbKvtJsIk3pX0pEQXRpgjNipjCmOK6pTb2bq9pZkpxslmZafeYEC9khfgC/MwMmRJ6T
-	WTGfGftNdu3UbVEFr2gAEDN2ZwuLc0scTiDgWyXef94sLEG8c8hd4WIcQoiza23QTBeQYgkmF/v
-	ogvxrd8BbUvUA+uKEvqOo3QFAPUCv2tVR16l9icg=
-X-Google-Smtp-Source: AGHT+IHVTR6x7Iywr4DoILca74HC62mQNiOYdv89GViJJzcv39NMYjFI9UxLuEQSNiTRmXfbxbG8uQ==
-X-Received: by 2002:a05:6870:3644:b0:2c2:4090:9e8 with SMTP id 586e51a60fabf-2ea96e8b67cmr2383236fac.22.1749673613362;
-        Wed, 11 Jun 2025 13:26:53 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4753:719f:673f:547c? ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eab8df2448sm1925fac.23.2025.06.11.13.26.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 13:26:51 -0700 (PDT)
-Message-ID: <b4e3260d-ecf9-4a51-85c1-889d7741d287@baylibre.com>
-Date: Wed, 11 Jun 2025 15:26:50 -0500
+        d=1e100.net; s=20230601; t=1749673817; x=1750278617;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pv5p8TJwxPf045PkEKfFQACVA3z/pX6ZOvkokNNKGr4=;
+        b=MRNqV3hv/weROUAhZKnxwIPGzbhwEOZQdohl3ZWJKQBGcJH11nmEUb0fzBm+1OY5m+
+         h+CTwNDpKNvFvs2KZXYcjv4g3mG1aEJP5iwQYAEUQSrSsOTvEYsv4sr91eXk2PNZbvlX
+         K1x8EbvcgNUKCwf2/vP3rLB1b493ni8gBj3fil6QjvYBExfgQC3XkwxmpeHE1rGvloY7
+         qoXnJxlEBHlTWml6owgORjI2MSw439deQNDb6LBRyXVLteK9NCI0/WEuYMz8iDxCuaG8
+         YFDSuf5xUAM9hzlMCYmt/7OuQYp53khZsJXwp4rMXTL8fGW7x8b0AIrUgjmFkf6czpyL
+         zE7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfznnypHfolPrx8D+++SzFwbbOMJH134IveJStdzLTeYysADDYdUWbuI/80pEUXG6AsfjsP/ZP5NT6D8Y=@vger.kernel.org, AJvYcCXh0SYTJbGu+FE9CE6QIaSc2Ns1K7kEzyW/u1CNXOZrtGBLQw5ZFajhZZdULvrGxwA6GbXaaPGYsI4vN4darRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGS2kcLt1WiPDvJu90aEolptYgMNngzqlIFE6qgyOGfGWmV9hS
+	zvN48R4q+x/ifIEiTL5DTDOIszOodZ6n+MClGOjN96yKuk4G4oUNLQYg
+X-Gm-Gg: ASbGnct2+zBC0gni+yZiQ9ZRp8+7JHZeKyM1TVJtPPeaFo6TXwWSW+bKQxDsgH71DMM
+	4jtVy7JPdDhPeFAKEpV4ayvo7GZqBoD1eEXWLSKPX0/XZQa8jW0DsJ7HMnj4fh4mRRPs1/kCu77
+	y9etHcHCkjvzsWzWYJ124pvKU+NgwxBm6r1qIMNVHtvSy7toih943ssUevBIlv58yVHmSddv/fL
+	bam54eOLkceKJOMvnxdUNXEatQo3lk+zgHF0N7Ctj17srOcyNEa5khEeKrvRbZyJ3zmzXqQmG1V
+	s5mXZvxXiI3lVNcFcBdocyFLOkJqgcxf/Pzu1jUM5bpfQH09VHNNVILFxURDfwydN+wNaRHGUby
+	TMw+2mm1nk3ZwK2/91IwkXyymmjgygvTthQ==
+X-Google-Smtp-Source: AGHT+IEdW2GwwH7UlC82DZ8tArQruFrLKD9FvV+cJYxLDW8g1S5uaDlfI73iFWvbZTw8jio1Ez/bQA==
+X-Received: by 2002:a05:6820:1347:b0:610:dabc:f94c with SMTP id 006d021491bc7-610fbe42378mr832225eaf.2.1749673816935;
+        Wed, 11 Jun 2025 13:30:16 -0700 (PDT)
+Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
+        by smtp.googlemail.com with ESMTPSA id 006d021491bc7-610fd44cc85sm19129eaf.16.2025.06.11.13.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 13:30:16 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: jbaron@akamai.com,
+	jim.cromie@gmail.com,
+	daniel.almeida@collabora.com,
+	acourbot@nvidia.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	rostedt@goodmis.org,
+	andrewjballance@gmail.com
+Cc: viresh.kumar@linaro.org,
+	lina+kernel@asahilina.net,
+	tamird@gmail.com,
+	jubalh@iodoru.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/3] rust: add suppord for dynamic debug
+Date: Wed, 11 Jun 2025 15:29:49 -0500
+Message-ID: <20250611202952.1670168-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] bus: ts-nbus: use bitmap_set_value8()
-To: Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20250611-gpio-set-array-helper-v4-0-fb86a9b499ab@baylibre.com>
- <20250611-gpio-set-array-helper-v4-3-fb86a9b499ab@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250611-gpio-set-array-helper-v4-3-fb86a9b499ab@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/11/25 3:18 PM, David Lechner wrote:
-> Use bitmap_set_value8() instead of accessing the bitmap directly.
-> 
-> Accessing the bitmap directly is not considered good practice. We now
-> have a helper function that can be used instead, so let's use it.
-> 
-> The bitmap has to be zero-initialized now to avoid a compiler warning
-> since bitmap_set_value8() does read/modify/write rather than just the
-> write that this is replacing.
-> 
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> v4 changes:
-> - Fix typo s/get/set/ in commit message
-> - Zero-initialize the bitmap to avoid compiler warning
-> ---
->  drivers/bus/ts-nbus.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
-> index b4c9308caf0647a3261071d9527fffce77784af2..17540034e64a4e591ea61b0b4eef86a2081b02f5 100644
-> --- a/drivers/bus/ts-nbus.c
-> +++ b/drivers/bus/ts-nbus.c
-> @@ -10,6 +10,7 @@
->   * TS-4600 SoM.
->   */
->  
-> +#include <linux/bitmap.h>
->  #include <linux/bitops.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/kernel.h>
-> @@ -105,9 +106,9 @@ static void ts_nbus_set_direction(struct ts_nbus *ts_nbus, int direction)
->   */
->  static void ts_nbus_reset_bus(struct ts_nbus *ts_nbus)
->  {
-> -	DECLARE_BITMAP(values, 8);
-> +	DECLARE_BITMAP(values, 8) = { };
->  
-> -	values[0] = 0;
-> +	bitmap_set_value8(values, byte, 0);
+This patch series adds support for dynamic debug to the rust
+pr_debug! and dev_dbg! macros.
 
-I got distracted by an appointment and forgot to compile test before
-sending. :-(
+I have tested it and it and it does work but, there are a few
+differences between this and the c version (hence why this is a rfc).
 
-byte is undefined here. Will send v5 soon.
+rust does not have an equivlant to the C __func__ macro. so, for the
+time being this hard codes the function name to be the name of the
+macro e.g. "pr_debug!" and "dev_dbg!".
 
->  
->  	gpiod_multi_set_value_cansleep(ts_nbus->data, values);
->  	gpiod_set_value_cansleep(ts_nbus->csn, 0);
-> @@ -149,9 +150,9 @@ static int ts_nbus_read_byte(struct ts_nbus *ts_nbus, u8 *val)
->   */
->  static void ts_nbus_write_byte(struct ts_nbus *ts_nbus, u8 byte)
->  {
-> -	DECLARE_BITMAP(values, 8);
-> +	DECLARE_BITMAP(values, 8) = { };
->  
-> -	values[0] = byte;
-> +	bitmap_set_value8(values, byte, 8);
->  
->  	gpiod_multi_set_value_cansleep(ts_nbus->data, values);
->  }
-> 
+This uses the module_path! macro to get the module name, which will not
+be exactly the same as the c version if a kernel module contains multiple
+rust modules. e.g. it might be "kernel_module_name::rust_module_name".
+this does give a more accurate description of where the print statement
+is located but it exactly what the c version does.
+
+This patch series also had to make a small change to the static_branch!
+macro so that it allows keys that are nested multiple structs deep within
+a static variable. 
+
+Closes: https://github.com/Rust-for-Linux/linux/issues/453
+Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291565-Help/topic/Dynamic.20Debug.3F/with/519289668
+
+Andrew Ballance (3):
+  rust: static jump: add support for nested arguments
+  rust: device add support for dynamic debug to pr_debug!
+  rust: device add support for dynamic debug to dev_dbg!
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/device.rs           | 102 ++++++++++++++++++-
+ rust/kernel/jump_label.rs       |  10 +-
+ rust/kernel/print.rs            | 167 +++++++++++++++++++++++++++++++-
+ 4 files changed, 269 insertions(+), 11 deletions(-)
+
+-- 
+2.49.0
 
 
