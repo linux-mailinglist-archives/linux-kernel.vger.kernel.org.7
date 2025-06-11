@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-680656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783B3AD4808
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:39:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811B8AD4825
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 03:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D5317D830
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950F37AC580
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E83161310;
-	Wed, 11 Jun 2025 01:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0393149E13;
+	Wed, 11 Jun 2025 01:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N9YiNPQv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ppZxc4ID"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B57A4685;
-	Wed, 11 Jun 2025 01:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EE2145B25
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 01:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749605873; cv=none; b=DOnl7fskH6tHQC7xAIF2+eh/puxyMaPDgdqIedovZJhXGNKHvW79BS68Pj6jaOM5QQz54KMJ6qxO7Fo4Ra0lWOkH9tIbflhlpMEaIpBilIEWFTGfIhMJ+U4lBUFpPrkBIOKw9LxXqtTaC1NV0aMg5SvcnPKkuNF+zIUaVrzqM1U=
+	t=1749606110; cv=none; b=CStkQXz37/V5d9zme9dgoRmerQJHsgTMlkL2J5rI5WOKlFC4r4pQJxBc12rA8SO1kanawbjaX3fF4q6hg+pk13uq6V4p8hnLd/qGCqs/7t40xuJUYAZ2pP65KZF5ViKh8Hb5AkxzGdXl6y+YwKz7wYxR0/WFGpTsk0HOnyViYrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749605873; c=relaxed/simple;
-	bh=ySBIz6b+AevIn4XXj1S6nfSdPvS3hHtJOf0Uu8vKYPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8E0SFvckyaxAdjqP/NXKcae2cqPWMvGne/U+4qZ0cb4Dajtl6QmxC8H02vEBKAsUAe1LGU3cwRx7MPj6ic57PKrzqTq+phNc1bxYCqCsElNJLCM/aSUYE9Vr72RJP3HTyGlaP4YkwgRvPLmsDfxhPLIxwo2Uyh46W4iN1XwCZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N9YiNPQv; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749605871; x=1781141871;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ySBIz6b+AevIn4XXj1S6nfSdPvS3hHtJOf0Uu8vKYPI=;
-  b=N9YiNPQv8mFOTVM3auqCRYZYhSrM8SS+ZA5XOewkWY43oqQP2P2gdEE8
-   z0Ujl+sq5IRGVEI0uOBgorKWQgdx37S5z/fNNhJhnTrhYIjshWHIsvhtu
-   FQajQZlW9EKunRMahPMp4OjRtP3AkQIvbr/cpzorOTMO3e/UQ/NKqytur
-   HlBmn2x/PxF/mscinoBK1u9sF0wl//zV3a4y0b15HtoUhUWp8+6c2Cb4l
-   ViVaKA0ppR9cAWavf+dnzVye7dzV2cJkox/JvDYg+eY6XqB/oZrUZTzmg
-   EJuojD1skMu2jOrpkDYjVCjfqs9QqC1x5kqB0JlxfUXLldXmpoUuE3nS9
-   Q==;
-X-CSE-ConnectionGUID: rYElw3QYTpmIqkV5mqpXuA==
-X-CSE-MsgGUID: Mw31z7vbShq9DjkLuFSX2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="62772240"
-X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
-   d="scan'208";a="62772240"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 18:37:50 -0700
-X-CSE-ConnectionGUID: tI47WslSQxW58SsX+uvsBg==
-X-CSE-MsgGUID: XuMszIcAQWKlYt0mKb0M7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; 
-   d="scan'208";a="146915458"
-Received: from unknown (HELO [10.238.0.239]) ([10.238.0.239])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 18:37:47 -0700
-Message-ID: <671f2439-1101-4729-b206-4f328dc2d319@linux.intel.com>
-Date: Wed, 11 Jun 2025 09:37:45 +0800
+	s=arc-20240116; t=1749606110; c=relaxed/simple;
+	bh=2kNFgJvFiHWl25tdl5JVTyWrVYRncCS6MCCO8o0uDrQ=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=l/kFrWEHw3eKAwiF3+vYtP/z4i1bClYXcIoOuZzhJtGSdO3wS0keqkqPfn+t+zIHSmu5Ye1voOljjwxLSl2ImY+6aHuFQWZ7UC5awhX/LjF8uaI/yLdeIY54lSiz/ZTZRZaAw8uF2TjedX1Px3AO6IBhYaReoHgqaTuRNYyW0W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ppZxc4ID; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a58f79d6e9so67331851cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 18:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749606106; x=1750210906; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a0dVcb4mCq2bSSy46KTU9Gw7pSw3OfMXBWad0p0FySA=;
+        b=ppZxc4IDbRUpxdKr8t652woLHg1RyzQxv/RuyP2R96pEolTyaXs0QsjWTRDtS0/L5G
+         OujhCqUreOIEu+tkuhuKLcWeWrUq4MWT2PpN1BTtqqcuJZypUUzGoCpAx4hQWFheEUaK
+         r0QJBYGtGpYoywwBAzvMHAcVcZ9kHcjuI2MmdPVyf80JNxWQCQ6XDrI+cp5iFBOyzRB+
+         +XkxuTeQD8vSJjouarr8do/Ne9GMBkEdnOYtZYZfBtcCHHqSrFo6XwDIlDuUfTkwzes4
+         kUEn+eMpwvI1dwl13B2AmgxXt3LOXcaf7Jcasj+V4bD2OWkMtDEas86H3kCNVlq+I63n
+         dbbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749606106; x=1750210906;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a0dVcb4mCq2bSSy46KTU9Gw7pSw3OfMXBWad0p0FySA=;
+        b=Bt/8Ar5uVJ/22WPdqS8cPifP/8sff7j6BxkHArn37ZnB9aX4UDIcG3MjfO0WBPhr0B
+         786ftCbcIb/VTt0oWmktFQ/kTdh+OMFnxZBQd4pRFivu6jE5Pt/3e+lZzWIuvMSFpVe8
+         JLfvAIfXZCOV0L+pJh1FMCw6FotD7PvGxD5UGYabFQEGVeCpbGIeMjAHKNVZT+aBi8rV
+         5ECWKlH8ywU0vNI7Pvdq8iK/NXprCQ62UwUng0rnUSXlCDMe0iSSQRF+YaIv1DgzAXVN
+         /tkSh+ETmqyB3je4uo8YKWicsr8UxINBlB0+0Ue6uQIoqrIagCeYnApF3gC+4uwZUvf5
+         Qzug==
+X-Forwarded-Encrypted: i=1; AJvYcCVdK86Qa0lQiZ+WkKvMuuSpdvKU0YDNZEO8Jz0TH/DJQgaxmOHQ6jZnpOOjjdKidKAWhYLxWXq0l9xs12E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmPLYbPt01pJKLRIq3N+Ku0yr/aTEcHui1A+q0wlJyZF5fEOmy
+	jZtxk+V3r6V80UfC2hLZkJOUPa9AdvHhCbntHxF4/C/ntElqGi5TQcJNUQRJJ1RuTxI=
+X-Gm-Gg: ASbGncu927Gaee2+bGMh5pDPaGjco6sI1poQX0Lo3g7NTQXwMn/dPGp8PXtOQlFuq1F
+	MrNsO+gPssujorSf6UQynlHfHFBdXhpFB1yWodwKLN4k07K9rlbM/LCW3/sIDyxrA2BiPw8qV5Q
+	2xxzBmwW/l9EuIL8cxihvOIcrnOefircnubWPhqz/lRsXFL92Rdx3mddOK1ITeRJqLUx/gJ3Edx
+	FMVdht8wAnsgvgM7Z+mbM4djdmqBhanwMLuurLSRUiGWsALy+Y/6/FBHzmG9mB1/tZExdfaQnyn
+	buwvVqFsDnTxduCmpy8tK8iPeSxZunTszfH38lMKFrGon6Vp4x7Cga2pA+QBpzcgC5CUZMMR92I
+	UuIHyZi0Xpav0Tp5fzPLOQAYi
+X-Google-Smtp-Source: AGHT+IEQbrz7RwyiGN8V+7z64D4xdgmsviG8r/Zzdp8SlBm6YsYUWWHHm2ur+UN7w5AuSq1h89JPbA==
+X-Received: by 2002:a05:622a:2287:b0:494:a36c:ebd7 with SMTP id d75a77b69052e-4a713c35ff8mr32647061cf.34.1749606105997;
+        Tue, 10 Jun 2025 18:41:45 -0700 (PDT)
+Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a619865d36sm80410911cf.56.2025.06.10.18.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 18:41:45 -0700 (PDT)
+Date: Tue, 10 Jun 2025 21:41:44 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>
+cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] vt: add missing notification when switching back to text
+ mode
+Message-ID: <9o5ro928-0pp4-05rq-70p4-ro385n21n723@onlyvoer.pbz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/4] KVM: TDX: Exit to userspace for GetTdVmCallInfo
-To: Xiaoyao Li <xiaoyao.li@intel.com>, rick.p.edgecombe@intel.com,
- pbonzini@redhat.com, seanjc@google.com
-Cc: kvm@vger.kernel.org, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, tony.lindgren@intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com,
- mikko.ylinen@linux.intel.com, linux-kernel@vger.kernel.org,
- kirill.shutemov@intel.com, jiewen.yao@intel.com
-References: <20250610021422.1214715-1-binbin.wu@linux.intel.com>
- <20250610021422.1214715-4-binbin.wu@linux.intel.com>
- <ff5fd57a-9522-448c-9ab6-e0006cb6b2ee@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <ff5fd57a-9522-448c-9ab6-e0006cb6b2ee@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
+Programs using poll() on /dev/vcsa to be notified when VT changes occur
+were missing one case: the switch from gfx to text mode.
 
+Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
 
-On 6/10/2025 5:16 PM, Xiaoyao Li wrote:
-> On 6/10/2025 10:14 AM, Binbin Wu wrote:
->> Exit to userspace for TDG.VP.VMCALL<GetTdVmCallInfo> via a new KVM exit
->> reason to allow userspace to provide information about the support of
->> TDVMCALLs when r12 is 1 for the TDVMCALLs beyond the GHCI base API.
->>
->> GHCI spec defines the GHCI base TDVMCALLs: <GetTdVmCallInfo>, <MapGPA>,
->> <ReportFatalError>, <Instruction.CPUID>, <#VE.RequestMMIO>,
->> <Instruction.HLT>, <Instruction.IO>, <Instruction.RDMSR> and
->> <Instruction.WRMSR>. They must be supported by VMM to support TDX guests.
->>
->> For GetTdVmCallInfo
->> - When leaf (r12) to enumerate TDVMCALL functionality is set to 0,
->>    successful execution indicates all GHCI base TDVMCALLs listed above are
->>    supported.
->>
->>    Update the KVM TDX document with the set of the GHCI base APIs.
->>
->> - When leaf (r12) to enumerate TDVMCALL functionality is set to 1, it
->>    indicates the TDX guest is querying the supported TDVMCALLs beyond
->>    the GHCI base TDVMCALLs.
->>    Exit to userspace to let userspace set the TDVMCALL sub-function bit(s)
->>    accordingly to the leaf outputs.  KVM could set the TDVMCALL bit(s)
->>    supported by itself when the TDVMCALLs don't need support from userspace
->>    after returning from userspace and before entering guest. Currently, no
->>    such TDVMCALLs implemented, KVM just sets the values returned from
->>    userspace.
->>
->>    A new KVM exit reason KVM_EXIT_TDX_GET_TDVMCALL_INFO and its structure
->>    are added. Userspace is required to handle the exit reason as the initial
->>    support for TDX.
->
-> It doesn't look like a good and correct design.
->
-> Consider the case that userspace supports SetupEventNotifyInterrupt and returns bit 1 of leaf_output[0] as 1 to KVM, and KVM returns it to TD guest for TDVMCALL_GET_TD_VM_CALL_INFO. So TD guest treats it as SetupEventNotifyInterrupt is support. But when TD guest issues this TDVMCALL, KVM doesn't support the exit to userspace for this specific leaf and userspace doesn't have chance to handle it.
-Previously, I also had the idea of setting the information based on userspace's
-opt-ins.
-
-But for simplicity, this patch set doesn't adopt the opt-in mechanism for KVM
-exit reasons due to TDVMCALLs.
-
-To resolve the issue you mentions that userspace could set a bit that KVM
-doesn't support the exit to userspace, KVM could mask off the bit(s) not
-supported by KVM before returning back to guest.
-
-If we agree that it's the right time to have the opt-in, we could go the opt-in
-way and KVM could set the information based on userspace's opt-ins without
-exit to userspace for GetTdVmCallInfo.
-
-
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index ed39d9cb4432..62049ceb34de 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -4650,6 +4650,7 @@ void do_unblank_screen(int leaving_gfx)
+ 	set_palette(vc);
+ 	set_cursor(vc);
+ 	vt_event_post(VT_EVENT_UNBLANK, vc->vc_num, vc->vc_num);
++	notify_update(vc);
+ }
+ EXPORT_SYMBOL(do_unblank_screen);
+ 
 
