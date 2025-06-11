@@ -1,62 +1,105 @@
-Return-Path: <linux-kernel+bounces-682243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60845AD5D6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26674AD5D75
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 19:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A983A94DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFEB3A953E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 17:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4191244678;
-	Wed, 11 Jun 2025 17:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF811CBEAA;
+	Wed, 11 Jun 2025 17:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrO/KZ4X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSQGRtlV"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AB4224AFB;
-	Wed, 11 Jun 2025 17:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACEA1CF7AF;
+	Wed, 11 Jun 2025 17:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749664126; cv=none; b=ToU6s89YGhw7q+nyAjm9t82L8aORUkf1f+yo8IIaEsQaNPvQ/nrXYhjq/PXq6b+FduJuIs8R3R2+w+5OVmDNq9xK/nT3za2o+Uqc8IW9cPVmT82ejmzrFeQPFiQ4qfQ0twbLVnBfbX22Ob/kK73yvNHa8aS7pmaMaG/tBSYrcuk=
+	t=1749664255; cv=none; b=Q4tXuJOs1qzhvKKRDs0uzG+5tznrhgu0CZNGaRCukKSwpvUtFc55FB2r/fjC5456na1rAygT6OJydI/OyDRJ0edGP9MnJ9yagATsgZnuOQfBJuGRcWVnQ/gRj7qZfSMiErMAHzxkq51aCjBLfU+5jv0CXA02tGrRl6LNCLKfDaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749664126; c=relaxed/simple;
-	bh=mdRke/n+h17oYcItjGEfC78XXHJJ+uUBj3fjyng+SNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PRY0E4YOtY5XMprFxClljJBQy0qr7wH5c7/ZDkRVK48TePxewSC+DR43cK9hA6vLracbdT/+gluLk3an5+hMANCT2u4HHHM4e561RIS0HMbtbDmULMMVfmvizQyG5AedPMNDrloMj1H6CVqzueYYfpASiO32C93HM7zdmFiui2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrO/KZ4X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E188C4CEE3;
-	Wed, 11 Jun 2025 17:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749664126;
-	bh=mdRke/n+h17oYcItjGEfC78XXHJJ+uUBj3fjyng+SNc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rrO/KZ4XSxJbHYQfTB0C4g9pwyzSug6su284OKjlNblW79itf1yPSYJyA01pQLF0T
-	 Tq8wIYuz/fZWQO8tJhcN5AqyvVX9LpEbExyuT5nobgKw6OgBuTF1tAHbVr4AIgdDWC
-	 tzqYzAkr6+Us+CIEBIZ57iNZBSJLXf1girT0sH4gtcfbr8K2U+/eOzedDOfhnhEGQw
-	 wpfWF7O4QQqs+p/cKAefzXO59RScFa7NHd8P+UEdMZZae5XlxWGchZn+zHfzaY/xut
-	 2MxPMtXfWGH7ets7OBE8+HGRuGvN+F9vQW2l/FnozvW+hHrVQUsbiCyoteZtwqF9M2
-	 LMYrjNSgAnl+A==
-From: Danilo Krummrich <dakr@kernel.org>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
+	s=arc-20240116; t=1749664255; c=relaxed/simple;
+	bh=1Hy3ujJXBqxV9lfXBO++FN2/fZmpMCZpJfkWT5aJ4iQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S6ZsIuRgmdAVHbzeqJt7ZsRf1aP+v7LPMuLhHH0bAMSBng83+ZOJuduNHtxeIChBu6pbkSYSqedzgnetJ0cq+pSnqW68jQ34TWYcpMLf2w9Yaj5a/78jD6uLxhf45918RREOTKsvcVXM0QGfPEKUB+efW2ujrvzkWIChTs/HP18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSQGRtlV; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a503d9ef59so130184f8f.3;
+        Wed, 11 Jun 2025 10:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749664251; x=1750269051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f7KlnwZB+CxVWmAEV673+n7G11D71TLYbf9q51R/jMw=;
+        b=aSQGRtlVp15y590zOGhLrOTa9AG1LutadaePKtdJMJ3OCCPVGhraosTXwIHpSOvKFo
+         2g/LhyLJOJ0WFW7X7h60X/0AI7g/GFry6EaVWIRwHnPmZzuxSH96GYhWU1capO+Nyn3R
+         SKtcyyaS3L4+KEsYuxyNkVoi+FXcgRDlD3YfKI3YoK1lwhHGUSyu5rvFBAz0t2ZubW7d
+         K7MfXWC+3A7wx67EIOfg44K8oWn6yPdfvckoUueAYLTk+JiLLgRaWINq6R2JWNUXLFSW
+         c1dQECkXMGL8nILQOmr4OD8HdTeDiMSO+i6L1lvw1gAtuvao4VPPJlxPwLuJ/gHhqDOy
+         2gwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749664252; x=1750269052;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=f7KlnwZB+CxVWmAEV673+n7G11D71TLYbf9q51R/jMw=;
+        b=LvQBBw5HmLfZUXEPmZfuN40HC4T7ifneUfcJYn4+iEYOxa8fIp8gNOINXSCzSwLRh8
+         c3DBtiHxmPESGvnGcJm1kxdOfhqKbRbypFD68sYOgs+IYPqbLFStnbZA855mcQy15ngX
+         dYk4VlCT3PDyKBvDZUBmUfYL8sjTJ+UzT3hlHdVhRUVR6pIWXABKRfSE+KCV4R6cZkD7
+         pIVaXtzc2Lb3AzBpWKhNHghvcLrcrIHo6AGw6kOmmohVjP87MczV4eEf67V6DDv3tMWv
+         V6MbFnXg2hKuwGRIAEuqgInqBgs6acfmUSENbNkfCa0GxklaisjcN34oG7UPgisAOHzv
+         uiOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqw5H93k+j3WTrtkX/Pc1rg60rJ/2P0gackKOfNbOAccVZuwk9AS3AbO4PGV6fcotX66ydfBZdxT3QKycTcuQ=@vger.kernel.org, AJvYcCW9HNnAbXyywX/zBVQHHepcqlYhnkE+S+Xo5tTZxU4CBSfKeS/RPqS0JMrEuNTgXNu+g2L3a6qZ1XYj@vger.kernel.org, AJvYcCXbGgVW9l07Ps03TUicfSx99/yyu5LrsqlDRwmMZQKWA0BX2f8kOfSbdd49G4CJF1gIBldisW/hXDou8ECY@vger.kernel.org
+X-Gm-Message-State: AOJu0YypXQODh5IweWSANOeMflCwweb3jaRo7HYo0fI4uRZsmcDinTIw
+	iRDh5Pf9cU38goY8TllTpwo/vFrB+KPJ4wgBAS/5yRzIZvOHcY0WAqze
+X-Gm-Gg: ASbGncvWPNrw4zoedQO63RiQ5yWOIrNWv4yfEK4OpMtqscr+S3A5Jar2LMRYuWiZx88
+	R90FWFSPyQVBuxkTZaUUDWUVIf99/GBpoArhF+/Pu7o7Einag5rbtHR9htsJeb4xzBuJgVaqXv8
+	q1510lgSAum24NwaKMbvAEiwDdYJ85KC1BBlon1x+eOLdgmsY5sq0c4Zg48rLN1ab8JjRRpJfcf
+	iERHsUZNGLPidjgVxmY1WYCXfISuDh3OTCZthbZer6RY46zZRBsnkseUw/ItiyjT6iHpd0IQxgC
+	OMSxf1D+AvvoQ39nxO1WpoJNF/kIaCNu29JVVufrMhCzBV4uO0q6pUZy3OxA4Oc7q1IYEqwAYq5
+	+aRJCnG6aXys+OHYjShdYqrOwXElAt21KE47X
+X-Google-Smtp-Source: AGHT+IEPDg33JpYVf5j0B125l1p0dMB8jKVW3wBukaaW8ms6rL5iY2qDPIvs/t5k1jjA+Pax7owafg==
+X-Received: by 2002:a05:6000:2283:b0:3a5:2e9c:edb with SMTP id ffacd0b85a97d-3a558a1f6acmr3423559f8f.47.1749664251298;
+        Wed, 11 Jun 2025 10:50:51 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532461211sm15744491f8f.86.2025.06.11.10.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 10:50:50 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
 	gary@garyguo.net,
 	bjorn3_gh@protonmail.com,
 	benno.lossin@proton.me,
 	a.hindborg@kernel.org,
-	aliceryhl@google.com
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH] rust: devres: do not dereference to the internal Revocable
-Date: Wed, 11 Jun 2025 19:48:25 +0200
-Message-ID: <20250611174827.380555-1-dakr@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v5 3/6] rust: driver: Add ACPI id table support to Adapter trait
+Date: Wed, 11 Jun 2025 18:48:48 +0100
+Message-ID: <20250611174848.802947-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
+References: <20250611174034.801460-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,90 +108,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We can't expose direct access to the internal Revocable, since this
-allows users to directly revoke the internal Revocable without Devres
-having the chance to synchronize with the devres callback -- we have to
-guarantee that the internal Revocable has been fully revoked before
-the device is fully unbound.
+Extend the `Adapter` trait to support ACPI device identification.
 
-Hence, remove the corresponding Deref implementation and, instead,
-provide indirect accessors for the internal Revocable.
+This mirrors the existing Open Firmware (OF) support (`of_id_table`) and
+enables Rust drivers to match and retrieve ACPI-specific device data
+when `CONFIG_ACPI` is enabled.
 
-Note that we can still support Devres::revoke() by implementing the
-required synchronization (which would be almost identical to the
-synchronization in Devres::drop()).
+To avoid breaking compilation, a stub implementation of `acpi_id_table()`
+is added to the Platform adapter; the full implementation will be provided
+in a subsequent patch.
 
-Fixes: 76c01ded724b ("rust: add devres abstraction")
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
 ---
-This patch is based on [1].
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/driver.rs           | 41 ++++++++++++++++++++++++++++++++-
+ rust/kernel/platform.rs         |  6 ++++-
+ 3 files changed, 46 insertions(+), 2 deletions(-)
 
-[1] https://lore.kernel.org/lkml/20250603205416.49281-1-dakr@kernel.org/
----
- rust/kernel/devres.rs | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
-
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index dedb39d83cbe..d8bdf2bdb879 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -12,13 +12,11 @@
-     error::{Error, Result},
-     ffi::c_void,
-     prelude::*,
--    revocable::Revocable,
--    sync::{Arc, Completion},
-+    revocable::{Revocable, RevocableGuard},
-+    sync::{rcu, Arc, Completion},
-     types::ARef,
- };
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index bc494745f67b..dfb2dd500ef6 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -28,6 +28,7 @@
+  */
+ #include <linux/hrtimer_types.h>
  
--use core::ops::Deref;
--
- #[pin_data]
- struct DevresInner<T> {
-     dev: ARef<Device>,
-@@ -228,15 +226,22 @@ pub fn access<'a>(&'a self, dev: &'a Device<Bound>) -> Result<&'a T> {
-         // SAFETY: `dev` being the same device as the device this `Devres` has been created for
-         // proves that `self.0.data` hasn't been revoked and is guaranteed to not be revoked as
-         // long as `dev` lives; `dev` lives at least as long as `self`.
--        Ok(unsafe { self.deref().access() })
-+        Ok(unsafe { self.0.data.access() })
-     }
--}
++#include <linux/acpi.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_file.h>
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index cb62b75a0c0e..8389c122a047 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -6,7 +6,7 @@
+ //! register using the [`Registration`] class.
  
--impl<T> Deref for Devres<T> {
--    type Target = Revocable<T>;
-+    /// [`Devres`] accessor for [`Revocable::try_access`].
-+    pub fn try_access(&self) -> Option<RevocableGuard<'_, T>> {
-+        self.0.data.try_access()
+ use crate::error::{Error, Result};
+-use crate::{device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
++use crate::{acpi, device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
+ use core::pin::Pin;
+ use pin_init::{pin_data, pinned_drop, PinInit};
+ 
+@@ -141,6 +141,40 @@ pub trait Adapter {
+     /// The type holding driver private data about each device id supported by the driver.
+     type IdInfo: 'static;
+ 
++    /// The [`acpi::IdTable`] of the corresponding driver
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>>;
++
++    /// Returns the driver's private data from the matching entry in the [`acpi::IdTable`], if any.
++    ///
++    /// If this returns `None`, it means there is no match with an entry in the [`acpi::IdTable`].
++    fn acpi_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        #[cfg(not(CONFIG_ACPI))]
++        {
++            let _ = dev;
++            return None;
++        }
++
++        #[cfg(CONFIG_ACPI)]
++        {
++            let table = Self::acpi_id_table()?;
++
++            // SAFETY:
++            // - `table` has static lifetime, hence it's valid for read,
++            // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
++            let raw_id = unsafe { bindings::acpi_match_device(table.as_ptr(), dev.as_raw()) };
++
++            if raw_id.is_null() {
++                None
++            } else {
++                // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
++                // does not add additional invariants, so it's safe to transmute.
++                let id = unsafe { &*raw_id.cast::<acpi::DeviceId>() };
++
++                Some(table.info(<acpi::DeviceId as crate::device_id::RawDeviceId>::index(id)))
++            }
++        }
 +    }
 +
-+    /// [`Devres`] accessor for [`Revocable::try_access_with`].
-+    pub fn try_access_with<R, F: FnOnce(&T) -> R>(&self, f: F) -> Option<R> {
-+        self.0.data.try_access_with(f)
-+    }
+     /// The [`of::IdTable`] of the corresponding driver.
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>>;
  
--    fn deref(&self) -> &Self::Target {
--        &self.0.data
-+    /// [`Devres`] accessor for [`Revocable::try_access_with_guard`].
-+    pub fn try_access_with_guard<'a>(&'a self, guard: &'a rcu::Guard) -> Option<&'a T> {
-+        self.0.data.try_access_with_guard(guard)
+@@ -180,6 +214,11 @@ fn of_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+     /// If this returns `None`, it means that there is no match in any of the ID tables directly
+     /// associated with a [`device::Device`].
+     fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        let id = Self::acpi_id_info(dev);
++        if id.is_some() {
++            return id;
++        }
++
+         let id = Self::of_id_info(dev);
+         if id.is_some() {
+             return id;
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 5b21fa517e55..5923d29a0511 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -5,7 +5,7 @@
+ //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+ 
+ use crate::{
+-    bindings, container_of, device, driver,
++    acpi, bindings, container_of, device, driver,
+     error::{to_result, Result},
+     of,
+     prelude::*,
+@@ -94,6 +94,10 @@ impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
+         T::OF_ID_TABLE
      }
++
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
++        None
++    }
  }
  
-@@ -244,7 +249,7 @@ impl<T> Drop for Devres<T> {
-     fn drop(&mut self) {
-         // SAFETY: When `drop` runs, it is guaranteed that nobody is accessing the revocable data
-         // anymore, hence it is safe not to wait for the grace period to finish.
--        if unsafe { self.revoke_nosync() } {
-+        if unsafe { self.0.data.revoke_nosync() } {
-             // We revoked `self.0.data` before the devres action did, hence try to remove it.
-             if !DevresInner::remove_action(&self.0) {
-                 // We could not remove the devres action, which means that it now runs concurrently,
-
-base-commit: d0ba9ee1c7319e6bbc1f205aff8e31ebb547b571
+ /// Declares a kernel module that exposes a single platform driver.
 -- 
-2.49.0
+2.43.0
 
 
