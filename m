@@ -1,87 +1,119 @@
-Return-Path: <linux-kernel+bounces-680712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEAECAD48CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:20:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A064BAD48CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 04:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F79D188D920
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C7417B7C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 02:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31065165EFC;
-	Wed, 11 Jun 2025 02:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FE014B965;
+	Wed, 11 Jun 2025 02:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kte6d/wZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gf7zPpb1"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF9F4A0F;
-	Wed, 11 Jun 2025 02:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B20D286A9;
+	Wed, 11 Jun 2025 02:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749608402; cv=none; b=CHj5kQI/SGxsTDZeJLKiVL4PoT2N5MkvzAHdKLZXIz9DCXTcFjWvybGO3ay4mrmRxXldAIzOPcWc9z0GyRagE9yadpmrv5YcsBucwxqH7gMCukbZy90PB7a7qU89TOKvTIbutoXFyTCVc9wOz2y05+KLh58OzqQHhyo9tzYGyC0=
+	t=1749608543; cv=none; b=tXrDRdQlaQjRV1jWC9xjSIrnk3cyQUEdURBxY6Eq8w358dU1LPbaiYIUiriIHxWQ435fawnN9WslBOp52ChrtCkZq1Wl2SUIj75erwNkJRRziTO3leF2iT2bkGxGL17jN4gqGVw3UThCTYiBy0jE30hRB72FN0BBp+X20O7aaZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749608402; c=relaxed/simple;
-	bh=uV7LB5me5Ipfl0vRIQU42uYhgDD+Orq+kiYw389Ufsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLINq3WuKj7QMZGD3IMCgnaqUmA3uKzW/lOayg6ULUJ3azLBJu37DfDiGpV7BGclxiIVroMr53LYbQDiE9Db+KX4xdruicvGZg++LeJskUd2JyLnCXUL27AwsLmXe3/kkoJ4V5ZsunO/A8ZS6d2BW0d5GvAnWxRRtT1Tt/maAyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kte6d/wZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B40C4CEED;
-	Wed, 11 Jun 2025 02:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749608402;
-	bh=uV7LB5me5Ipfl0vRIQU42uYhgDD+Orq+kiYw389Ufsg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kte6d/wZ35xg7tLBmqdrbep/LadAF33nuWzZ3hNVZxuk8dSI5kELrdgyx4Bsc5+PD
-	 MLQ2YQj9pNXsnjP2PSgHijD344hTDotNKDTrVbfymkrfYEqRoCFoJHvFhZ8p7WEamv
-	 iE2dy308nODevXQIc4dtLixAcopdhzfetPOEimpYMk8AYEGx0ovrS5vYtdBUJGaZKo
-	 kxEccz4aVOu0omcUja7q4HzVpSyLaKoCIIaoN977XE++wRD5bSwwkeDjf3x54muD6u
-	 AXEOjcxGjd4Xj4JuMQL73on1hjFGhkj4RgHZxqyX3ej1AA9IXJaqTvSvvQVKiI0OCe
-	 21vCoGGk2zhsQ==
-Date: Wed, 11 Jun 2025 02:19:58 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Tomasz Michalec <tmichalec@google.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Andrei Kuchynski <akuchynski@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Konrad Adamczyk <konrada@google.com>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	chromeos-krk-upstreaming@google.com
-Subject: Re: [PATCH] platform/chrome: cros_ec_typec: Defer probe on missing
- EC parent
-Message-ID: <aEjnznB6dKqT5DYO@google.com>
-References: <20250610153748.1858519-1-tmichalec@google.com>
+	s=arc-20240116; t=1749608543; c=relaxed/simple;
+	bh=wZgm6b+aaYaDHSCtiEqey06T+bU5xLWsquPRNzTnwAY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PEsXhKS2Nj4K0W8LiHhOPN9j97nch7fvQ4+MyiCDpYc2CNWP5f2/5nxYSqrZJHeTT4/gyYvjegHS/ZAU1vSkMfJDmyauAIfgiwV999FGypkISHqxci8kl3LrYK1ZidjJvnr4EOG4Oki8z06ARI7DtsPxa3TovGSC3SVAY9DoA88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gf7zPpb1; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53118db57b4so417975e0c.2;
+        Tue, 10 Jun 2025 19:22:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749608541; x=1750213341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mDW7FpZdddVN8iP+dZ71T1ANA9fYJqbCRdgup6n4kvE=;
+        b=Gf7zPpb1XG8xDRJrVpNudpGv/ZXFFNLRcdaiNlwEV5Hi9VqY2iSyvt//s+RsTrZems
+         VJeEGjIRm+eZRkT2Q21wJiLxp0UWLnPc8CJKDKkRmmSX8zHe3dkH6mcrMd5lhDAKb0Qa
+         3qKQjENe5Dd6viqrvFmxvMTbHtiRAvk0owSZoCfD28c4wq6Dgqz9srwqK24OJzJMYUwv
+         /nlxA0e8jgqBVTHKKSXFBX+pzqO4uQD9+WP0tf22VoQFDvb3Pghvfgn62eJ0mHTNxhYt
+         uG5N0wjflbUAXyXMuH4GjbvSgRFpBQVsm7l/NwNl9Rum0QgiIDD3hj6SbIJ7xQWauXgT
+         OKUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749608541; x=1750213341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mDW7FpZdddVN8iP+dZ71T1ANA9fYJqbCRdgup6n4kvE=;
+        b=U9/l3bVQMF1SJVcBkqiRjteSK3QxxmWV1BB2P7SDahEZkGUyY4TFeDHhv2ab65j5pz
+         m/dCO2N3yH+gMd7C+h8ytYkr04DbPmsMMeZVy+BDqMCV93w+oWnNWx7uplhufwS5h1cz
+         fOQ6WxedenK19jbeOdYNx1GMwAWAtlXIkz7q0TEZiAW3pkIm7VxT9YXZm5NfOV6FKBQA
+         uz/4eocPt08D3Zikrwf4GbfU9FgslVqyRns6SrbaTv9qD1qLXuITTfSxTTu7bLsdorwu
+         SYuZi5cwwV/M1IdNDIyKhMptf9zhWCJyceHXg3QX8AA+WknIBN027KzM3n+XaitqFUxW
+         Xe7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFlWVou5gKIqClKLT8uFGcHxe1B8YcPM7flXau9mK0n/9nmgvo4pD0aCLwONmRUHG2PscCVJvumO0te3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx70KBTQqvK/4xcR31a6ksEhY1dSn74n7ISI4d1n9Jnec25zzIC
+	nkKI3S0GggJMPShTWtfw0cCtV1vpHuRsavP+02apObw5I+3JJNsatlaa
+X-Gm-Gg: ASbGnctLz8KtOwrh/2vfxZY7vCUvp3FXNE23gPhnyvDIjFgwpJQBejgDFVZwjz18uKJ
+	v1K9i4+v77D9ZRxe5T39ZQI8eV48N5nOht2oLHpSMcPlLQZ6JpSmnXSyy1YzpjAIlmE9AHdmxgD
+	tyHlsLBLJLyzqNvkNybjdAp1V7mmEFePphWp4fDgiKhot6OZtoFKaTej+D6tcBNlYSAGC3Dc/ME
+	ZRa+yAIqSGoVjPMsfMvTYwEofVXkfneg7OxdEoy/EScU2aSwegixd+v6/fEKT7CWURTJUhI/iW8
+	/rDszqVjeAli2SbzXwbjIjzXMN03wDSY8A+TGhSV+D9tbuwl2+zMsPsoR5wde6BKJCSegn3m
+X-Google-Smtp-Source: AGHT+IEyTeM/+4PiirQpXvijwrUccW8FXProX6fsljS4q8OsbpgRzIAF0sRJeAbEcq4CDfTy+7e7aw==
+X-Received: by 2002:a05:6122:1e06:b0:530:7747:80a7 with SMTP id 71dfb90a1353d-53122e17151mr1138216e0c.9.1749608540798;
+        Tue, 10 Jun 2025 19:22:20 -0700 (PDT)
+Received: from pop-os.. ([201.49.69.163])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5311f41fa07sm1340765e0c.4.2025.06.10.19.22.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 19:22:20 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: bhelgaas@google.com,
+	ngn@ngn.tf
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Subject: [RESEND PATCH] PCI: hotplug: remove resolved TODO
+Date: Tue, 10 Jun 2025 23:21:23 -0300
+Message-Id: <20250611022123.201839-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610153748.1858519-1-tmichalec@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 10, 2025 at 05:37:47PM +0200, Tomasz Michalec wrote:
-> If cros_typec_probe is called before EC device is registered,
-> cros_typec_probe will fail. It may happen when cros-ec-typec.ko is
-> loaded before EC bus layer module (e.g. cros_ec_lpcs.ko,
-> cros_ec_spi.ko).
-> 
-> Return -EPROBE_DEFER when cros_typec_probe doesn't get EC device, so
-> the probe function can be called again after EC device is registered.
-> 
-> [...]
+The commit 8ff4574cf73d ("PCI: cpcihp: Remove unused .get_power() and
+.set_power()") and commit 5b036cada481 ("PCI: cpcihp: Remove unused
+struct cpci_hp_controller_ops.hardware_test") is resolved this TODO.
 
-Applied to
+Remove this obsolete TODO notes.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/pci/hotplug/TODO | 4 ----
+ 1 file changed, 4 deletions(-)
 
-[1/1] platform/chrome: cros_ec_typec: Defer probe on missing EC parent
-      commit: 8866f4e557eba43e991f99711515217a95f62d2e
+diff --git a/drivers/pci/hotplug/TODO b/drivers/pci/hotplug/TODO
+index 92e6e20e8595..7397374af171 100644
+--- a/drivers/pci/hotplug/TODO
++++ b/drivers/pci/hotplug/TODO
+@@ -2,10 +2,6 @@ Contributions are solicited in particular to remedy the following issues:
+ 
+ cpcihp:
+ 
+-* There are no implementations of the ->hardware_test, ->get_power and
+-  ->set_power callbacks in struct cpci_hp_controller_ops.  Why were they
+-  introduced?  Can they be removed from the struct?
+-
+ * Returned code from pci_hp_add_bridge() is not checked.
+ 
+ cpqphp:
+-- 
+2.34.1
 
-Thanks!
 
