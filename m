@@ -1,210 +1,139 @@
-Return-Path: <linux-kernel+bounces-681600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA6FAD54C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D305AAD54BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 159357A903D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:52:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F6817A3C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A30284B2E;
-	Wed, 11 Jun 2025 11:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22BD27E7F0;
+	Wed, 11 Jun 2025 11:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="GoQZ5liL"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/SNwwcB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613AE27FD61;
-	Wed, 11 Jun 2025 11:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE50283FC4;
+	Wed, 11 Jun 2025 11:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749642749; cv=none; b=ZDShzbZm/Atm03GK68k+mJ63HJxf2Xj/zJWarwGtVNLB94NCBrk1Dr8M3yD/eGTgKZVT03aYXzRq2Oqm19Iv1TUU+W56ruB4lQV4pVYVFO6djUJOwxZGmiV9TZK/hOo/+Ok1EBCnwBQdYIvRRNR7LPNDJD6ZUYc8GQXhNQV9mKg=
+	t=1749642730; cv=none; b=Uv03F6ZUBT2Wpe1DLcvjQaZhj8Vjov7MetHsL6CKDDn/drvkPXeBcN9j0yaanVFlTcQJAtq9wDNovrplh50kZikx7FxZE2daNAmNnP/jUvfpkyjnPh1IF/3hIVQyJMqaZL76nlJ4N98uAfaPfcAsi8WCAN/xwViscpFDfnhiWz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749642749; c=relaxed/simple;
-	bh=KH/uGcpNKe59M/jW/2zmh03X9SdcLuGi4pvUOPA+2Ow=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OkSdQSYX//9/VNOVVUsryBA4v8JvYfgLZZAlbwVC60kg9t/w06gm3JKPNkILG2hG8ADlryKMhuB3HZzLfERk2zTQJe2Q3JSQo2/7r70vBgLJEjlW5+HwjJ3AOoE4aPnFUQav4RDwAOmZCuT3avLEAvMIA81WR3F5gVjFZQJ9/Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=GoQZ5liL; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B91kIT016838;
-	Wed, 11 Jun 2025 07:52:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=GMgjx
-	Ty8mOIqGeKQIWqHPAdxYMsS577jy6J6Gp+hMsY=; b=GoQZ5liL6xnURxbggqDUL
-	YkidED1I9PfboD/fhN15FksXihm8y3BuDKcUp2aoqmQ/nSmbE4lj39Eh9zhcmnEj
-	hQSCrbjhGIlCv/ZkhW8C0/kuNeVZ6yzPce33/A7sHt+jtbj73WrZ1cIfUG+sUp7I
-	oxpGrbAK2A8AI2Sz32Ep08xUbMrdeBiW4QjHCtAbNf+gEIXUIF7DBq9Ax4yVhmtj
-	kDc+KuoGKQkgtPZRDH+jSVVXcnuR+KTfcHYIRH3fKg+up2qyB0j3nzmwEsUH+fZl
-	6AAAQ0ahmwLsW/CZRpDbrxEfABbHGjCwO2ExnxleCqqK9/f5YUk4ajm8yArlL/At
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4776tdgvxa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 07:52:21 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55BBqKK4031772
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 11 Jun 2025 07:52:20 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 11 Jun
- 2025 07:52:20 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 11 Jun 2025 07:52:20 -0400
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55BBq5P2008952;
-	Wed, 11 Jun 2025 07:52:08 -0400
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: Jonathan Santos <Jonathan.Santos@analog.com>, <andy@kernel.org>,
-        <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>,
-        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <marcelo.schmitt1@gmail.com>, <linus.walleij@linaro.org>,
-        <brgl@bgdev.pl>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-        <jonath4nns@gmail.com>, <dlechner@baylibre.com>
-Subject: [PATCH v11 11/11] iio: adc: ad7768-1: add low pass -3dB cutoff attribute
-Date: Wed, 11 Jun 2025 08:52:03 -0300
-Message-ID: <804d66f1858014d7278aec3344d81c223661e878.1749569957.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1749569957.git.Jonathan.Santos@analog.com>
-References: <cover.1749569957.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1749642730; c=relaxed/simple;
+	bh=yRUOxSzAEsyPznAdZauQ9KUp0U+dAFLZRw5w7dRb1dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjGDRaG9C78Tfd/D8aaJJJ0NswSOpWMdA+4DS5JRnwo2o2akz/cGQET0VcivH4pyPV57TxTikSfeUwjJkMflGhlCLUXlVGmZOUmLtWlIBELyskea7ByU1E/swEiIR/2y6rDLd9/cteL7XVuZqwHsiSk9KXhNiTOJ39vW/yIgwhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/SNwwcB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2839CC4CEF1;
+	Wed, 11 Jun 2025 11:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749642730;
+	bh=yRUOxSzAEsyPznAdZauQ9KUp0U+dAFLZRw5w7dRb1dw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/SNwwcBNVy9WtNXlS+ukaNk4kvWMnm+0H2icsJm2l8op+95XwndnLLAAdaGIHSDs
+	 y/TY/N+jwL35zg3VLajcV81s46l4LtnR0wOAy06FSGB0YU/pzWYq7j3rFnm6C83bsb
+	 RJadRfuSGrqtsWccFPDmg7mmc6NGV6c10ToYL9HY6AZIZ0ERpfISEz+YKHS3zGuf0V
+	 +kroL4LlvCBXC8yB8BkvhVoiHpJxBaejoyeAmGmVognLbg3EWqBvTCBQYuRN0c8x6b
+	 KUNQ8lH25jzqLtAnXacwSb+WAY+UfWV8oxKC3GEfOUvLsFXwv0sil1+VfUTSKFpwoT
+	 xVgS5LKryILQg==
+Date: Wed, 11 Jun 2025 12:52:04 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, pcc@google.com, will@kernel.org,
+	anshuman.khandual@arm.com, joey.gouly@arm.com,
+	yury.khrustalev@arm.com, maz@kernel.org, oliver.upton@linux.dev,
+	frederic@kernel.org, akpm@linux-foundation.org, surenb@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 5/9] kselftest/arm64/mte: check MTE_FAR feature is
+ supported
+Message-ID: <916e2064-efa9-4b69-b561-51b0378158c0@sirena.org.uk>
+References: <20250611094107.928457-1-yeoreum.yun@arm.com>
+ <20250611094107.928457-6-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: vgMbvfqAqX-kArYpl0uX7CHp_vR_oTaR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEwMSBTYWx0ZWRfXyJ4XMfagPp8u
- YopnYcjE8oY+G5emYpQVghHy6t8dcrJfZLzKwb2Y3e0xIE+3gba0F63Kifozfx6M67kxX6JBbbF
- OoscrbUAeqayH6VfutFG60wmdBCN2R6LiX6itywXwd3iUuEgjqHpRlLfLzVk7/SK+pECXBJpTNz
- lC/V35d/S1vNETHWdjIW2kqNWJCSQxPG6QPWyzSzFEHP2SFQz28wQy7aQEs2bBCOpAvTKGzyIwN
- 0tiA1GzXfWeUCFdiFVhX8lndMb+8swjTbwAK50xJMqMIn4xXLFB6pjSJ0A/itr+oY4nA0jbVXB6
- TNkFpEGsKcn0ZtjnR+FKqo1ukYhyrwYwEYj3jeMLKYSnjrA45vfY5g5b3xFvpMrfQIzxNyUdel8
- qEXshWmNNhwtfSgMr+PWrcKqCPavvJUnXYEc9oLSolXq+Kt3o8iXfqJuq2+8uuRiLwX2zJ8V
-X-Authority-Analysis: v=2.4 cv=BezY0qt2 c=1 sm=1 tr=0 ts=68496df5 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=IpJZQVW2AAAA:8 a=UvUlGJLpmzXXuVQgGPIA:9
- a=IawgGOuG5U0WyFbmm1f5:22
-X-Proofpoint-ORIG-GUID: vgMbvfqAqX-kArYpl0uX7CHp_vR_oTaR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0
- adultscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506110101
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="akue2bSXBTy4Umo7"
+Content-Disposition: inline
+In-Reply-To: <20250611094107.928457-6-yeoreum.yun@arm.com>
+X-Cookie: No skis take rocks like rental skis!
 
-Ad7768-1 has a different -3db frequency multiplier depending on
-the filter type configured. The cutoff frequency also varies according
-to the current ODR.
 
-Add a readonly low pass -3dB frequency cutoff attribute to clarify to
-the user which bandwidth is being allowed depending on the filter
-configurations.
+--akue2bSXBTy4Umo7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
-v11 Changes:
-* Applied suggestions from Andy.
+On Wed, Jun 11, 2025 at 10:41:03AM +0100, Yeoreum Yun wrote:
+> --- a/tools/testing/selftests/arm64/mte/mte_common_util.c
+> +++ b/tools/testing/selftests/arm64/mte/mte_common_util.c
+> @@ -6,6 +6,7 @@
+>  #include <signal.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> +#include <time.h>
+>  #include <unistd.h>
 
-v10 Changes:
-* None
+Not sure why we'd be including time.h here?
 
-v9 Changes:
-* Rearranged new BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) to
-  make the diff look cleaner.
+> =20
+>  #include <linux/auxvec.h>
+> @@ -26,6 +27,7 @@
+>  #define INIT_BUFFER_SIZE       256
+> =20
+>  struct mte_fault_cxt cur_mte_cxt;
+> +bool mtefar_support;
 
-v8 Changes:
-* None
+This is a non-static variable so won't have a defined default value...
 
-v7 Changes:
-* None
+> @@ -273,6 +275,7 @@ void mte_initialize_current_context(int mode, uintptr=
+_t ptr, ssize_t range)
+>  	cur_mte_cxt.fault_valid =3D false;
+>  	cur_mte_cxt.trig_addr =3D ptr;
+>  	cur_mte_cxt.trig_range =3D range;
+> +
+>  	if (mode =3D=3D MTE_SYNC_ERR)
+>  		cur_mte_cxt.trig_si_code =3D SEGV_MTESERR;
+>  	else if (mode =3D=3D MTE_ASYNC_ERR)
 
-v6 Changes:
-* None
+Unrelated whitespace change.
 
-v5 Changes:
-* None
+>  	if (!(hwcaps2 & HWCAP2_MTE))
+>  		ksft_exit_skip("MTE features unavailable\n");
+> =20
+> +	if (hwcaps3 & HWCAP3_MTE_FAR)
+> +		mtefar_support =3D true;
+> +
 
-v4 Changes:
-* None
+=2E..this will only set mtefar_support if the hwcap is present, leaving it
+undefined if not.  If you just make this
 
-v3 Changes:
-* None
+	mtefar_support =3D hwcap3 & HWCAP3_MTE_FAR
 
-v2 Changes:
-* New patch in v2.
----
- drivers/iio/adc/ad7768-1.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+that should avoid the issue.
 
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-index 291ed801a8a0..e4716e20fcdf 100644
---- a/drivers/iio/adc/ad7768-1.c
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -152,6 +152,14 @@ enum ad7768_scan_type {
- 	AD7768_SCAN_TYPE_HIGH_SPEED,
- };
- 
-+/* -3dB cutoff frequency multipliers (relative to ODR) for each filter type. */
-+static const int ad7768_filter_3db_odr_multiplier[] = {
-+	[AD7768_FILTER_SINC5] = 204,		/* 0.204 */
-+	[AD7768_FILTER_SINC3] = 262,		/* 0.2617 */
-+	[AD7768_FILTER_SINC3_REJ60] = 262,	/* 0.2617 */
-+	[AD7768_FILTER_WIDEBAND] = 433,		/* 0.433 */
-+};
-+
- static const int ad7768_mclk_div_rates[] = {
- 	16, 8, 4, 2,
- };
-@@ -746,6 +754,7 @@ static const struct iio_chan_spec ad7768_channels[] = {
- 		.type = IIO_VOLTAGE,
- 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
- 		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-+					    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |
- 					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
- 		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
- 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-@@ -766,7 +775,7 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
- {
- 	struct ad7768_state *st = iio_priv(indio_dev);
- 	const struct iio_scan_type *scan_type;
--	int scale_uv, ret;
-+	int scale_uv, ret, temp;
- 
- 	scan_type = iio_get_current_scan_type(indio_dev, chan);
- 	if (IS_ERR(scan_type))
-@@ -804,6 +813,12 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
- 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
- 		*val = st->oversampling_ratio;
- 
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		temp = st->samp_freq * ad7768_filter_3db_odr_multiplier[st->filter_type];
-+		*val = DIV_ROUND_CLOSEST(temp, 1000);
-+
- 		return IIO_VAL_INT;
- 	}
- 
--- 
-2.34.1
+--akue2bSXBTy4Umo7
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhJbeMACgkQJNaLcl1U
+h9AQegf9GTZEtRZRq4VmKPmCvxZbca11FXmJiCJXXo6fBei39grcVd813PQRHtP0
+4T87elMNY80ujcy8ezzOV84yn0gKXeVGxIdKXAgKoZJj3xtQvKOs8Nvpa3l7XRjX
+N9dGiKEoHwLAWWUGcyyzWIq6mUDVdXpqbV42FH934pnPfSlqv87fQUcP2bO72NB4
+3NvtdC34CgDvoE2VhftMgBw0tLXo3qX55Vg4otBsrb8xjNzMbPDQzj2EenzdndIG
+fIbbH1BRUjox+zP8fCXiHT/z2h5XV0b3sA+qudODfkZa3SPr89R4kDI5+sY5Bia1
+b3cPtWg1yqrTMk393FYfLdS3kL93fg==
+=THva
+-----END PGP SIGNATURE-----
+
+--akue2bSXBTy4Umo7--
 
