@@ -1,223 +1,192 @@
-Return-Path: <linux-kernel+bounces-681583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F0DAD5482
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89241AD5497
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 13:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4D5188869F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F5A16EDC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5D4274671;
-	Wed, 11 Jun 2025 11:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCA4274671;
+	Wed, 11 Jun 2025 11:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sb37f9LJ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ajujWUeg"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFBB2E613D
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 11:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A7127C15B;
+	Wed, 11 Jun 2025 11:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749642609; cv=none; b=j5tH7IJC0AGcdJM9uzF63FUQ30LYLCrZy8pM/m9OAa8EN33/NKohs16JdfqV64ktsu96qKd7oR6N/16WDsBZYB4HKgGQTFXNwzvreBFGULT+U3JiBYSJ/ANNidIsVzmDWQoMMqRVoiCHoigVMjXaYnjeLjm88IqvIa0NGM9a9Es=
+	t=1749642639; cv=none; b=pnI2YijH7iM5z/o5umA0bH/JxXGgZEw8ZBgg8MITRT7nUuS7ILDV6WrJj5wdKfHXzltH2UJd61y255qHoA2+exnlz3ol87jwhWFwnxAq2k/C+7fgG6a54n4bHBekBi+5w8vlCfipnWHqiF3NESNSmYnAIpEZp42ZE90aIimg/s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749642609; c=relaxed/simple;
-	bh=CWu6A+I1LjwFmAU+PAVS8KxvwoMO5RZ75mLuP8WTIVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JqtBGAonkd3eBpGYy4Dl1jAkfcXOVSExnc3+R0IOx0+53zTpCENqYK0OtYDFQAlWgxlUdD6iQHBB2oo21cHzuSnZOClYITJK6CcfqIMGuAOZl2zX2hjeR/L1CtDAMg/R6OCNT64Jjv67g235lgkRukuO8o7bWuZ7+nqjCKYngtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sb37f9LJ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23649faf69fso83075ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 04:50:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749642607; x=1750247407; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yr1jR2n/3+iHKJOEuEz4EzcjD/8G3U4J0+bvzR27Ds4=;
-        b=Sb37f9LJlSx+VSo1tUG6kGvgPCAXzq3eauDw/pcaZ3+RLB+pJWMj9umz7EiaUXkAp0
-         sVQv1P5XIoAUvKSfv6J10v1lrg3p5grMzoyJ5wbCE74Cvqv0MPrYxtZPj3oxcNbv+lQB
-         G9TX8JcNOq87ENKZXJsFAhOBNCoidpap3nofnM1a8AVQsW0/Eujgfj+FFZOs2SwyfOXX
-         DbZ54WbxEOGyjdRonq/n/9jvO3Kn+XTXQLl1FFAdcwdIJM7AX6LZCVecr0bL1iA9LDIt
-         HnkwKMkRBp3ePGkUNxXLQpztdHsyFPygWt0WzFPYb/094pP1J4+SJtwjU2XiGBBG5mtF
-         c7wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749642607; x=1750247407;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yr1jR2n/3+iHKJOEuEz4EzcjD/8G3U4J0+bvzR27Ds4=;
-        b=G4AnUTOrJXFqD0DSSIDw6FNNTknkIUqcjIfaF4xAUMHFfIlKTuaUlZPWJ1BpUMRN5C
-         7mP/MiYiKFVa12B9WnudEe2E1LpiM1O1ljNgc/uVjNtyhIeoqv7FsWvlWPUoSS5VG1Q+
-         oRGP3AlVG0BgX7sOarlxboQK+gcbfCKlR7BV5p0+GjekEdAkD7lWsytySzpLTQxuS7C+
-         SNvCcAASR2uiNcCg75hA/N7fnjDTyxQ+dxrrwCgt32tTnODrUQ1UR4hURNjv4EKaVm9c
-         hZc7Wo//JcaaQtMesUx2yphzX6BOt+jtFUlhtijAEALhCN8i7tjq8QVsrbBVzE+JCaIM
-         OvJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5vD+zL4a55zOdOyQyzqwZk+RYKMT/KLi/3wY/WsdYzMNgd8nVjmbjzI4Nb3rMd5Z0lcWpOdE/bobnzYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4yYqmrfTv/3MVZqokje9ZW2FFdU7Vre+2VyGL1Qag1PKZqFVM
-	U+l3uAhpgy1/DZVKU3ObdgkvsYVE6izrjZPbux9d+0eInjGPwpugVXgT
-X-Gm-Gg: ASbGnctqL7Mt2izbIbKJDa7qZ2Jf3NSqNwcWNQqWtweHVAv3yQbYarD/det59gn3TaU
-	FJ1Xvm+lIb8K5eeJngzVre0ZAE5cEbaHrA/nm7wKc04PDyua9zCQJtlQCi3Wzp/Z7By8wQwYM5J
-	gwUnaAbO1QteVFl2+di0+h/LPFA0GuahnF+T/OgbV2GqFtFUEAPI9aZu57gZwcx6y1Lsfamaece
-	VpnNuBujIciu4Kn8CvnD3Bpiex9+mYGTtpfnY8h4y1n+YNMWf2NNA3tj06xbl4EQteQmOPdBoL4
-	S26taKDDduzvQBEAzK/ozv/OxYb/7kKSlbufoqqQ1Sn76ooYqblkuT762Ks06Q==
-X-Google-Smtp-Source: AGHT+IH0mXPNVgqbjYeHRojtDfwaw37TfHsCnjGPZ7Ak5dI5UXEfPx4VvV1LNaJqLCESUv+gq00Mdw==
-X-Received: by 2002:a17:903:1b10:b0:235:f143:9b07 with SMTP id d9443c01a7336-23641a8ac0emr42538815ad.5.1749642607279;
-        Wed, 11 Jun 2025 04:50:07 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fceb2sm85893185ad.96.2025.06.11.04.50.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 04:50:06 -0700 (PDT)
-Date: Wed, 11 Jun 2025 07:50:04 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: jstultz@google.com, tglx@linutronix.de, sboyd@kernel.org,
-	linux-kernel@vger.kernel.org, yurynorov@gmail.com,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	jserv@ccns.ncku.edu.tw
-Subject: Re: [PATCH v3] clocksource: Replace loop within
- clocks_calc_mult_shift() with find_last_bit() for calculation of "sftacc"
-Message-ID: <aEltbEpA7US9h8qN@yury>
-References: <20250611073608.2049793-1-richard120310@gmail.com>
+	s=arc-20240116; t=1749642639; c=relaxed/simple;
+	bh=ebe8Tuz8DE7gQOtWpXZpkLB02BYE+9+YR0GhKEYUZSc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hfCkyPWSbjULVwSkrXRD5t3l8rAVM8cN+FB+nOO91rVD2+PJxMvX8qocTvxOaD0LisUlOPnqRvJPetydBkOg9eKtzCOEhzcv+TGDA1v/Jq45SJyz+e7/HCBqgaG5BHG9AWT2RhL0J/v4coPBpw9lS7dXJFC0cc7Zg1lMCkLgdTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ajujWUeg; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55B91jvC016819;
+	Wed, 11 Jun 2025 07:50:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=VE22u
+	0diOqWsFtUiXqL3hLdC0gubeINoYtl1WrdryE0=; b=ajujWUeghaQCOg2DxYz3L
+	ZUlj2EGl8ZHC5Ej+QvLs1KxvKI9N8plcU2mlV3IOLnkTsSptfJVWpgnlxo7TUrBq
+	CWYpKQyDmP4xTIKfPloH4xcHGXmjs64FKxATTPwQmV8GXZpBNVFsfPKR4nmCRihF
+	jWXg6Pdz/W3YqGzTANlaYekcu5tZ47BRW0F5/sXgbKAui64kjS6CqN00UL+iFVAt
+	Z1pBvE00uhf0GDzAAPRedWuXa3F4CjKLUQOkYkSTtzg5yQL1tKKjeo10orLsh0wd
+	WAwzX6SQ95GgHzedzcwuJGJBr7TEnPcznQeMoODFL1XunwDm26mXNoPC/bO6N5sV
+	g==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4776tdgvnx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Jun 2025 07:50:31 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55BBoTVF031498
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 11 Jun 2025 07:50:30 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 11 Jun 2025 07:50:29 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 11 Jun 2025 07:50:29 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Wed, 11 Jun 2025 07:50:29 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55BBoEqe008908;
+	Wed, 11 Jun 2025 07:50:17 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <andy@kernel.org>,
+        <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>,
+        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <jonath4nns@gmail.com>, <dlechner@baylibre.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v11 03/11] dt-bindings: iio: adc: ad7768-1: Document GPIO controller
+Date: Wed, 11 Jun 2025 08:50:14 -0300
+Message-ID: <2ac34fc1e0b02886073ae0bb196c7e8d4d442c3f.1749569957.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1749569957.git.Jonathan.Santos@analog.com>
+References: <cover.1749569957.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611073608.2049793-1-richard120310@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: rQrrymto9AKfuOmYyLcOUW8hK2dr_-9c
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDEwMSBTYWx0ZWRfX1IWZfwGVO0mV
+ xVNGLmDM+rboRlvy5UalgUEjrNYdpX7PQzRnYqRfCglJz+f2FbL4d0Is4AU2pZ4v6eU9GLcvQje
+ HF/GQ027vSdFrmDm8P40soO6EUPR+4yy/YwcWa0QT9aRXhI9lMZMKRI9EwFPw0AU6AUsbQFgB8F
+ hAp0SBERqVeg1MTeBMrNGn5k5FvWpBTqXYxgui9CndU5oYhUHRvmw7UbhwkcqJ11mbC03x2oqbN
+ 9HtTdD9Otnwiu14Qj8H4f1kdPXMcclI2ZWamD+Z1gjJ2Vn8RYmePi7XK4yuYUaM7FwSSugD8sMu
+ HzO61ZFwXuuGi759woZImKc5h071CEywPNsVu9/yfDwB9bfXOW5J26VRYHW2Joi5b37zQ9Lg+u5
+ SH1vqn2xJJNjxSbPmfeX7wdlgnbv5iy4XE1zwf9fnZWOvT3N+9RWmRZJVuEEY1w7CKtlKSJ1
+X-Authority-Analysis: v=2.4 cv=BezY0qt2 c=1 sm=1 tr=0 ts=68496d87 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=6IFa9wvqVegA:10 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8
+ a=FDCdkw0c5cjSjuxHnEwA:9 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: rQrrymto9AKfuOmYyLcOUW8hK2dr_-9c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-11_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506110101
 
-On Wed, Jun 11, 2025 at 03:36:08PM +0800, I Hsin Cheng wrote:
-> Utilize "find_last_bit()" in replacement of while loop counting
-> for the decremenet of "sftacc". They're equivalent in computation result
-> but the former is more effective.
-> 
-> "find_last_bit()" will return the bit number of the last set bit of
-> "tmp", which is 0-based index. Plus 1 to convert it into bit width as
-> desired.
-> 
-> Note that only the lowest 32 bits of "tmp" is taken into consideration
-> of the operation, since it was already shifted right by 32 bits, the
-> topmost 32 bits should remain 0, only the lowest 32 bits are possible to
-> be non-zero.
-> 
-> This change is tested against a test script [1].
-> Run the test 10 times for each version of implementation and take the
-> average. The result shown that with this change, the operation overhead
-> of "clocks_calc_mult_shift()" can be reduced around 99.7% .
-> 
-> -----------------------------
-> | old version | new version |
-> -----------------------------
-> |  11500.6 ns |       44 ns |
-> -----------------------------
-> 
-> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> ---
-> Changelog:
-> 
-> v1 -> v2:
-> 	- Refine commit message to explain more about "why"
-> 	- Check the frequency of "clocks_calc_mult_shift()" get called,
-> 	  it's not in hotpath on my machine, refine the commit message
-> to avoid overselling it
-> 	- Add comments for the code to explain the implementation in
-> 	  more detail
-> 	- Handle case for "tmp == 0" to avoid undefined behavior
-> v2 -> v3:
-> 	- Use "find_last_bit()" instead of "__builtin_clz()"
-> 	- Convert the type of "tmp" to "const unsigned long *" when
-> 	  sending into the function
-> 	- Highlight in the comment that only the lowest 32 bits part
-> 	  of "tmp" is taken into consideration
-> 
-> [1]:
-> static int __init test_init(void)
-> {
->     u32 mult, shift;
->     u32 from, to, maxsec;
->     ktime_t start_time, end_time, total_time;
->     pr_info("Starting clocks_calc_mult_shift simple test\n");
-> 
->     start_time = ktime_get();
->     // Test with parameters from 1 to 1000
->     for (from = 1; from <= 1000; from += 100) {
->         for (to = 1; to <= 1000; to += 100) {
->             for (maxsec = 1; maxsec <= 10; maxsec++) {
-> 
->                 clocks_calc_mult_shift(&mult, &shift, from, to, maxsec);
->             }
->         }
->     }
-> 
->     end_time = ktime_get();
->     total_time = ktime_to_ns(ktime_sub(end_time, start_time));
-> 
->     pr_info("Test completed\n");
->     pr_info("Total execution time: %lld ns \n", total_time);
->     return 0;
-> }
-> 
-> The test is running in the form of kernel module.
-> The test machine is running ubuntu 24.04 on x86_64 machine with kernel
-> version of v6.14.0, CPU type is AMD Ryzen 7 5700X3D 8-Core Processor.
-> 
-> Hi John, Yury,
-> 
-> Would you be so kind to give some suggestion/comments on how should the
-> usage of "find_last_bit()" be here ? I'm not sure about whether the type
-> conversion of "tmp" is appropriate, though compiler will pop out warnings
-> if not doing so.
-> 
-> Plus I'm thinking converting to another pointer type might might be correct
-> when the endianess isn't guaranteed ? (or this endianess problem should be
-> address and solved in filesystem layer ?)
-> 
-> Best regards,
-> I Hsin Cheng.
-> ---
->  kernel/time/clocksource.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-> index 2a7802ec480c..651bed1a53e7 100644
-> --- a/kernel/time/clocksource.c
-> +++ b/kernel/time/clocksource.c
-> @@ -66,10 +66,20 @@ clocks_calc_mult_shift(u32 *mult, u32 *shift, u32 from, u32 to, u32 maxsec)
->  	 * range:
->  	 */
->  	tmp = ((u64)maxsec * from) >> 32;
-> -	while (tmp) {
-> -		tmp >>=1;
-> -		sftacc--;
-> -	}
-> +
-> +	/*
-> +	 * Decrement "sftacc" by the number of bits needed to represent "tmp".
-> +	 * Using "find_last_bit(&tmp, 32) + 1" to get the bit width:
-> +	 * - find_last_bit(&tmp, 32) returns the bit number of the last set bit
-> +	 * - Plus 1 to convert 0-based index into bit width as desired
-> +	 *
-> +	 * Note: Only the lowest 32 bits of "tmp" is taken into consideration,
-> +	 *		 since it was already shifted right by 32 bits, the topmost 32
-> +	 *		 bits are guaranteed to be 0.
-> +	 *
-> +	 */
-> +	if (sftacc)
-> +		sftacc -= (find_last_bit((const unsigned long *)&tmp, 32) + 1);
+The AD7768-1 ADC exports four bidirectional GPIOs accessible
+via register map.
 
-1. sftacc is known to be 32. Comparing against 0 is useless.
-2. Just use __fls():
-        if (tmp)
-                sftacc -=__fls(tmp) + 1;
+Document GPIO properties necessary to enable GPIO controller for this
+device.
 
->  
->  	/*
->  	 * Find the conversion shift/mult pair which has the best
-> -- 
-> 2.43.0
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+---
+v11 Changes:
+* none.
+
+v10 Changes:
+* none.
+
+v9 Changes:
+* none.
+
+v8 Changes:
+* none.
+
+v7 Changes:
+* none.
+
+v6 Changes:
+* none.
+
+v5 Changes:
+* none.
+
+v4 Changes:
+* none.
+
+v3 Changes:
+* none.
+
+v2 Changes:
+* New
+---
+ .../devicetree/bindings/iio/adc/adi,ad7768-1.yaml      | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+index 0e651820e2cf..89db6f56a379 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+@@ -70,6 +70,14 @@ properties:
+   "#io-channel-cells":
+     const: 1
+ 
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++    description: |
++      The first cell is for the GPIO number: 0 to 3.
++      The second cell takes standard GPIO flags.
++
+ required:
+   - compatible
+   - reg
+@@ -118,6 +126,8 @@ examples:
+             spi-max-frequency = <2000000>;
+             spi-cpol;
+             spi-cpha;
++            gpio-controller;
++            #gpio-cells = <2>;
+             vref-supply = <&adc_vref>;
+             interrupts = <25 IRQ_TYPE_EDGE_RISING>;
+             interrupt-parent = <&gpio>;
+-- 
+2.34.1
+
 
