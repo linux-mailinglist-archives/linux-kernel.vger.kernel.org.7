@@ -1,184 +1,95 @@
-Return-Path: <linux-kernel+bounces-681136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAF5AD4F01
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 10:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28EEAD4F16
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A531BC09E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 08:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79DDF17EE06
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53528244675;
-	Wed, 11 Jun 2025 08:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry/wUV//"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165C6255F5C;
+	Wed, 11 Jun 2025 08:59:59 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6E624339D;
-	Wed, 11 Jun 2025 08:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B040253347;
+	Wed, 11 Jun 2025 08:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749632276; cv=none; b=iLb3mFaK1T7OWuDlu0bItrgNbCb9RFFj/iuNMXrZ5UaKOm4ZAJU1ioA0pbstoNcp8dQq9H3db8Yv9KyGzV1z2VCM2Yl5pemGB4b/ebzjDMhp4VSnL3dTkrkXKc2mbq+hpeQhsikr2NdLPqW7g6uje8Dg4iazT2ncTV41cZiFgpc=
+	t=1749632398; cv=none; b=BoVx672Zyn/2Hw8/Omn4xpbDoHyf0qQ7MrPwg06J6vLYiVBbnLhuV8Lp/8351veUpPAx1AG8p4BHjRD1oSwUJSpAVm6z0oZc1umMpX2jkqBIEgMEgqYtdaQs6Cv1jSBkJ9nGPSsBIO4ToNERXcEhk0OvUnFyjYrsbjCpLid0NjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749632276; c=relaxed/simple;
-	bh=oCz3V+7ZTi4hFmVrBJWM7NCWZDfRFBK/IEiwC/HpnyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dkiVSZSjWnWs1rGRk7lUtG3Q8oTotxIVMKWYUpZpHlzToH+e6E1CJGwam+kQm27I6DaFcgA/gYhj3d/l4vEfjzAPgviyq/y8ZBAolBaVtOr7E9sbKx1yAWG44VeTbrW3nAewjJDdXsVHZxs4P8XO4qJnGcmahbgxSONXrU0lneo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry/wUV//; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE43C4CEEF;
-	Wed, 11 Jun 2025 08:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749632276;
-	bh=oCz3V+7ZTi4hFmVrBJWM7NCWZDfRFBK/IEiwC/HpnyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ry/wUV///yloc7ZH6Z3DbDtkoWmr7OVO/u0DivsYbyhoZBnaBorMu9v5hUhXBncNC
-	 YoxHmILhOHrEfJTJi0nHycFYs0UF0JcddVe3oB/pN4P7zz17WOTVk+KbvIOlNb9myu
-	 ZW0Hlant5vbqQnPMJDnN4ewgVxmw3geWBQP3BkyDtrq8zeJoh0mdV2luoHm9sOpnHT
-	 X5m/7JqIF5vcvfqNeYMeCUlvkque0Bc+1nmQ6L6uIEiAeJSQ2p+pKhiZVkJT52E0uS
-	 SuuZ1pg1RU391hCzzdzM67q0tYp1DfBLnKyVQ+5oMURIFdL5U+vYL3fzjeA77sX7wR
-	 Sfc8KkK5zWsIA==
-Date: Wed, 11 Jun 2025 10:57:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Peter Griffin <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 03/17] regulator: dt-bindings: add s2mpg11-pmic
- regulators
-Message-ID: <20250611-spectral-bullfrog-of-perfection-cb8e01@kuoka>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
- <20250606-s2mpg1x-regulators-v2-3-b03feffd2621@linaro.org>
+	s=arc-20240116; t=1749632398; c=relaxed/simple;
+	bh=7yls8RTqjCychy5J1UnejAVT7PgLZUjjuCxLZTqdq+Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ry3OvXBsDGQ67eZLrvIgb1g5ROlOhnf9H8NKBRlYLoecEAwvgwKZ+kjsmoQYAx8cCoyZlnpyFSNCZ6dBgZeT4FZpoE4mqhpXhLr/z2Yw1z7LXBmHIvedEYPqcvMSUg9rJARzdZef1OnY0M2cZcFk8m7H3nWw/Q6RWI3gTGEsU2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201613.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202506111658409031;
+        Wed, 11 Jun 2025 16:58:40 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ Jtjnmail201613.home.langchao.com (10.100.2.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 11 Jun 2025 16:58:41 +0800
+Received: from localhost.localdomain.com (10.94.12.179) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server id
+ 15.1.2507.39; Wed, 11 Jun 2025 16:58:40 +0800
+From: chuguangqing <chuguangqing@inspur.com>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jean-Baptiste Maneyrol
+	<jmaneyrol@invensense.com>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, chuguangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH 00/10] iio: convert to use maple tree register cache
+Date: Wed, 11 Jun 2025 16:58:28 +0800
+Message-ID: <20250611085838.4761-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250606-s2mpg1x-regulators-v2-3-b03feffd2621@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 2025611165840d1a31d0baf7bc2147b65058e4232cda9
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Fri, Jun 06, 2025 at 04:02:59PM GMT, Andr=C3=A9 Draszik wrote:
-> The S2MPG11 PMIC is a Power Management IC for mobile applications with
-> buck converters, various LDOs, power meters, and additional GPIO
-> interfaces. It typically complements an S2MPG10 PMIC in a main/sub
-> configuration as the sub-PMIC.
->=20
-> S2MPG11 has 12 buck, 1 buck-boost, and 15 LDO rails. Several of these
-> can either be controlled via software or via external signals, e.g.
-> input pins connected to a main processor's GPIO pins.
->=20
-> Add documentation related to the regulator (buck & ldo) parts like
-> devicetree definitions, regulator naming patterns, and additional
-> properties.
->=20
-> Since S2MPG11 is typically used as the sub-PMIC together with an
-> S2MPG10 as the main-PMIC, the datasheet and the binding both suffix the
-> rails with an 's'.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
-> Note: checkpatch suggests to update MAINTAINERS, but the new file is
-> covered already due to using a wildcard.
->=20
-> v2:
-> - fix commit message typos: s2mp1 -> s2mpg1
-> - mention GPIOs in commit message
-> ---
->  .../regulator/samsung,s2mpg11-regulator.yaml       | 150 +++++++++++++++=
-++++++
->  .../regulator/samsung,s2mpg10-regulator.h          |  18 +++
->  2 files changed, 168 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg11-=
-regulator.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
-1-regulator.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f2d596642501c197e2911ee3b=
-9caac189cf541a4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg11-regulat=
-or.yaml
-> @@ -0,0 +1,150 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg11-regulator.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S2MPG11 Power Management IC regulators
-> +
-> +maintainers:
-> +  - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> +
-> +description: |
-> +  This is part of the device tree bindings for the S2MG11 Power Manageme=
-nt IC
-> +  (PMIC).
-> +
-> +  The S2MPG11 PMIC provides 12 buck, 1 buck-boost, and 15 LDO regulators.
-> +
-> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
-> +  additional information and example.
-> +
-> +definitions:
-> +  s2mpg11-ext-control:
-> +    properties:
-> +      samsung,ext-control:
-> +        description: |
-> +          These rails can be controlled via one of several possible exte=
-rnal
-> +          (hardware) signals. If so, this property configures the signal=
- the PMIC
-> +          should monitor. The following values generally corresponding t=
-o the
-> +          respective on-chip pin are valid:
-> +            - 0 # S2MPG11_PCTRLSEL_ON - always on
+The maple tree register cache is based on a much more modern data structure
+than the rbtree cache and makes optimisation choices which are probably
+more appropriate for modern systems than those made by the rbtree cache.
 
-Use regulator-always-on
+chuguangqing (10):
+  iio: chemical: bme680: convert to use maple tree register cache
+  iio: dac: ad5380: convert to use maple tree register cache
+  iio: dac: bd79703: convert to use maple tree register cache
+  iio: health: afe4403: convert to use maple tree register cache
+  iio: health: afe4404: convert to use maple tree register cache
+  iio: imu: icm42600: convert to use maple tree register cache
+  iio: imu: bno055: convert to use maple tree register cache
+  iio: light: isl29028: convert to use maple tree register cache
+  iio: light: ltr501: convert to use maple tree register cache
+  iio: light: opt4060: convert to use maple tree register cache
 
-> +            - 1 # S2MPG11_PCTRLSEL_PWREN - PWREN pin
+ drivers/iio/chemical/bme680_core.c               | 2 +-
+ drivers/iio/dac/ad5380.c                         | 2 +-
+ drivers/iio/dac/rohm-bd79703.c                   | 2 +-
+ drivers/iio/health/afe4403.c                     | 2 +-
+ drivers/iio/health/afe4404.c                     | 2 +-
+ drivers/iio/imu/bno055/bno055.c                  | 2 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 4 ++--
+ drivers/iio/light/isl29028.c                     | 2 +-
+ drivers/iio/light/ltr501.c                       | 2 +-
+ drivers/iio/light/opt4060.c                      | 2 +-
+ 10 files changed, 11 insertions(+), 11 deletions(-)
 
-That's duplicating regulator in standby properties.
-
-> +            - 2 # S2MPG11_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKIN=
-G_CTRL
-> +            - 3 # S2MPG11_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
-> +            - 4 # S2MPG11_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in =
-MIMICKING_CTRL
-> +            - 5 # S2MPG11_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
-> +            - 6 # S2MPG11_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bi=
-t in MIMICKING_CTRL
-> +            - 7 # S2MPG11_PCTRLSEL_G3D_EN - G3D_EN pin
-> +            - 8 # S2MPG11_PCTRLSEL_G3D_EN2 - G3D_EN & ~AP_ACTIVE_N pins
-> +            - 9 # S2MPG11_PCTRLSEL_AOC_VDD - AOC_VDD pin
-> +            - 10 # S2MPG11_PCTRLSEL_AOC_RET - AOC_RET pin
-> +            - 11 # S2MPG11_PCTRLSEL_UFS_EN - UFS_EN pin
-
-Now I have doubts these are real signals. Are you saying that S2MPG11
-has a pin named UFS_EN (such pin on ballmap)?
-
-> +            - 12 # S2MPG11_PCTRLSEL_LDO13S_EN - VLDO13S_EN pin
-> +
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 12
-> +
-> +      samsung,ext-control-gpios:
-
-Same comments as previous patch.
-
-Best regards,
-Krzysztof
+-- 
+2.31.1
 
 
