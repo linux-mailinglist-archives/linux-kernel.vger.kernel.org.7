@@ -1,139 +1,97 @@
-Return-Path: <linux-kernel+bounces-681194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-681190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E507AD4F96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B43DAD4F8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 11:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176253A4D6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D216D3A56D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 09:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3013F2620CA;
-	Wed, 11 Jun 2025 09:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B923825E816;
+	Wed, 11 Jun 2025 09:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T670aH/F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0SOi2mUB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0dFS0Uv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAC325E816;
-	Wed, 11 Jun 2025 09:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB0A257427;
+	Wed, 11 Jun 2025 09:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749633613; cv=none; b=ecxeiVKxIw7Y7Q2FE9Nyz/aO7nIMSF5uiLHyy+l/oFvZnBWkB2TPkZVRNDSab3FarL1jSt/IZ99HUQF10qLrYQuilUKHK3Vas6wLx2x6nVcwbBHauvVvRRJRHoxoxLoEDRxcuShEBJxNMVjiZw8PHZPNglbno7Xr569rylOfgB8=
+	t=1749633599; cv=none; b=m2ChR7sUiGuYkYYJq46lBdMWjx5H0Ul+nZ7CdlWD87ER2QCOW2sT1pz1NFWJh0s9lSrTnVYH1V+Exjtqd7jmjtrDqqHQSxH8LTxZ8srqcpchG7JE7hb1N1VbMT+zI47bakNlU+vHm9oa3tT/+jQMIMIGKtLCQ7Ryw/WjjoqHi1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749633613; c=relaxed/simple;
-	bh=IZUBoDPDJVn6kZGguxb22ZJQbFB/Don4EW0i9D3f9kM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HqYIXLChISS91g2ZnqdWSBTjS/49wXIkyBthHxgx7INBjVdQ4vFodX4j/B1Jm4+ElEJLnVKQ0yOzE994Z4o9aEM/VgVD1gO7jzSgJ6dI2rJr9Yb2XD8ayywUmgz5O0dFsZFLbuz4v46PDCpoGdY9nd+MmsPBGk16YfaLqfDAhTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T670aH/F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0SOi2mUB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Jun 2025 09:20:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749633610;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xg8VDoiQasilCrJVdWOzVDyqJuvuup/lC46XCCU9ZdI=;
-	b=T670aH/FQvWMnRRStBaI7cZH81GrQ6sfgYnel4fgsbrQe+bMu9AmgK/WshqL/pNNdIPMYT
-	zBKEVWoC8KOd1pSNLc9aNpUsCh431R3EM3fQgr9KcC3Gyzlvxq4IkpUwJSGvXKFPo5Infj
-	Uo4Dh6Eg+/f823QgsunTtY4IOz5JTKHWTcB75Q4fs5p7r1QPHryj5q467pSeYbQRZ0hc7e
-	S9AmV1F2lVJgL0HDM8mADV54EMntBIS0hw6tcTG8ptyWib6hf0K7Tsz+kyE+JTqVCm1g7S
-	DvkSmyy3XrUO/pWVSkyQZjTjsOKGb72Ab+pRTOkyzy54AZL7ohs5aPvDHpvYng==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749633610;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xg8VDoiQasilCrJVdWOzVDyqJuvuup/lC46XCCU9ZdI=;
-	b=0SOi2mUBEafLeinnlfds3OSHnvxcTeNV1CIJBFR9qj1hJ8B096jiyqF9ts+6at2k9bpaUR
-	UwmdcEocQEbafoAg==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/urgent] selftests/futex: getopt() requires int as return value.
-Cc: Mark Brown <broonie@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250528085521.1938355-2-bigeasy@linutronix.de>
-References: <20250528085521.1938355-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1749633599; c=relaxed/simple;
+	bh=SsjVhZtp25wN95cEhnSvF9ElDiSrEwy9cEtdwpOiCls=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=dzht+2Z7ZGoktGyKtlrzU0te/mpsC7oAiTumvDHGjOeYhA9AfRyLKLIRIqRDXc32LP2sTEBzb85C59tbOUhcK+U877B8HVAJBqRvvCYSfVnAxLi+8Ck1hYfWHYAxg51WrmeyqxFKBln9IO1s4lrA0IkKmfW7btTm74engkFBZlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0dFS0Uv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C4CC4CEEE;
+	Wed, 11 Jun 2025 09:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749633598;
+	bh=SsjVhZtp25wN95cEhnSvF9ElDiSrEwy9cEtdwpOiCls=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=W0dFS0Uvsxpk9jc8Z531xEvlQetQQWY8pJcLsZnGWTEwdKgVToFeoLGuEszJ5Hi8A
+	 mI6SUN6RrTvFX+cKHUg/UX1QeQoDPkpS3YmFJ/H9+GlumNeadg0Q2sV9R3Z0/QrjKb
+	 00yV4VDNPMtlwyz7k9LsPiVlglVJbj0V9hC7YKU25F2hVmuFbVNxVoup+j0W7rEquq
+	 C2y29M4UEeql3WLwJsv0A4zSH5uw7DEpgGu21wKrQuK1y/0ERZgRXkEkLkBTlhHj1L
+	 53xgQ+Z3Wt0O7B3ZhkysJR3wYgDCxVZ/C5CgmiK5fno6sL+oI11SVruhyXfiPzuznU
+	 m6EEodgKGO86w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD0A39EFBB7;
+	Wed, 11 Jun 2025 09:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174963360947.406.3789042411341487780.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v5] macsec: MACsec SCI assignment for ES = 0
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174963362875.3234193.6995089216849003780.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Jun 2025 09:20:28 +0000
+References: <20250609072630.913017-1-carlos.fernandez@technica-engineering.de>
+In-Reply-To: 
+ <20250609072630.913017-1-carlos.fernandez@technica-engineering.de>
+To: Carlos Fernandez <carlos.fernandez@technica-engineering.de>
+Cc: sbhatta@marvell.com, Andreu.Montiel@technica-engineering.de,
+ sd@queasysnail.net, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ hannes@stressinduktion.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/urgent branch of tip:
+Hello:
 
-Commit-ID:     1a9dcf69c7a97e733aa2fc026db22f22928ca7b7
-Gitweb:        https://git.kernel.org/tip/1a9dcf69c7a97e733aa2fc026db22f22928ca7b7
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Wed, 28 May 2025 10:55:19 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 05 Jun 2025 14:37:58 +02:00
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-selftests/futex: getopt() requires int as return value.
+On Mon,  9 Jun 2025 09:26:26 +0200 you wrote:
+> According to 802.1AE standard, when ES and SC flags in TCI are zero,
+> used SCI should be the current active SC_RX. Current code uses the
+> header MAC address. Without this patch, when ES flag is 0 (using a
+> bridge or switch), header MAC will not fit the SCI and MACSec frames
+> will be discarted.
+> 
+> In order to test this issue, MACsec link should be stablished between
+> two interfaces, setting SC and ES flags to zero and a port identifier
+> different than one. For example, using ip macsec tools:
+> 
+> [...]
 
-Mark reported that futex_priv_hash fails on ARM64.
-It turns out that the command line parsing does not terminate properly
-and ends in the default case assuming an invalid option was passed.
+Here is the summary with links:
+  - [net,v5] macsec: MACsec SCI assignment for ES = 0
+    https://git.kernel.org/netdev/net/c/d9816ec74e6d
 
-Use an int as the return type for getopt().
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Closes: https://lore.kernel.org/all/31869a69-063f-44a3-a079-ba71b2506cce@sirena.org.uk/
-Fixes: 3163369407baf ("selftests/futex: Add futex_numa_mpol")
-Fixes: cda95faef7bcf ("selftests/futex: Add futex_priv_hash")
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250528085521.1938355-2-bigeasy@linutronix.de
----
- tools/testing/selftests/futex/functional/futex_numa_mpol.c | 2 +-
- tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-index 20a9d3e..564dbd0 100644
---- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-+++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
- 	struct futex32_numa *futex_numa;
- 	int mem_size, i;
- 	void *futex_ptr;
--	char c;
-+	int c;
- 
- 	while ((c = getopt(argc, argv, "chv:")) != -1) {
- 		switch (c) {
-diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-index 2dca18f..24a92dc 100644
---- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
-+++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
- 	pthread_mutexattr_t mutex_attr_pi;
- 	int use_global_hash = 0;
- 	int ret;
--	char c;
-+	int c;
- 
- 	while ((c = getopt(argc, argv, "cghv:")) != -1) {
- 		switch (c) {
 
