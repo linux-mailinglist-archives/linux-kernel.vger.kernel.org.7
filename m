@@ -1,150 +1,128 @@
-Return-Path: <linux-kernel+bounces-683513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AB7AD6E67
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53958AD6E6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787103B292F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43171BC47A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5521B2417C6;
-	Thu, 12 Jun 2025 10:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077C2246BD8;
+	Thu, 12 Jun 2025 10:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQguZbIa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPLGB5DC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DF9239E9A;
-	Thu, 12 Jun 2025 10:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D85246797;
+	Thu, 12 Jun 2025 10:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725626; cv=none; b=B9xzG4XOHiO2Rgqor9z0OMxPDro6iGBxLFeJctCMcgU4Zh8YRp9nxOy2+AUGxs+6XzOds2WOZkkMWukGfPSIy/lDyITLtIklwbij4q9l/HUhaXWh0NimmQSl2Q4tja4y2wkMigSDn/ZWOGoHPfT4dQw4LNPxw7FKvlm8/Q2bbDE=
+	t=1749725632; cv=none; b=KHKGze7DiAhdXUPhmVAGY5DtQNxSfI1HPkwqxzQERhrXC9WcNikZ/X5l2CAxtikKOED1awx3az1RO4AUD5xaAC01rQaX3S/N3FNUZo06INT6zSP3VucBUmVNLRTn2p9yQa7ZdrKToC+789YoDYLqUlmFnQokJZlQYAJgaChBr3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725626; c=relaxed/simple;
-	bh=sZeoq9ps8ZVyEKHp/T4XqREqroJAmXyuz96STiFIgrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zk6iULtK5suoz6aLCf3Uz4woT0JJe9dO8fek82idRAqvCMIIbMvVdHz7aIa+3+EiKMsxd5Na0ehtE8eZU37g/hXJWpJnD8L7UyAoDbHF/9glMUhS2JEf7CkwvNQ31M6VVXMeMv4FlNJD8TEXXX7YZvJFh2Vq/IPSIeT/8jCHNv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQguZbIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A815C4CEEA;
-	Thu, 12 Jun 2025 10:53:43 +0000 (UTC)
+	s=arc-20240116; t=1749725632; c=relaxed/simple;
+	bh=kLBLY/1VoxwlHEXQXPLtXWDGykTKRQSRy0gRlSA3/44=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=OAkJvlSHnf0fi234uj4aEprEMci0UFegKq5vLzqtRINrcrY11hsRyrybwmSVBAT0MAWTn1TpFYJ5kOd2I867+1SFq6/9zIHIyBuUDmPJDpQu8ftRtHeNrkeJb9aS9Mvb8tyPvprbCd46zwiZyWh206CifhCObxA2y+mLONqIdFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPLGB5DC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 789ECC4CEEA;
+	Thu, 12 Jun 2025 10:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749725626;
-	bh=sZeoq9ps8ZVyEKHp/T4XqREqroJAmXyuz96STiFIgrQ=;
+	s=k20201202; t=1749725632;
+	bh=kLBLY/1VoxwlHEXQXPLtXWDGykTKRQSRy0gRlSA3/44=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KQguZbIadn/9VTp1V36FvA5DyY8levgFtPFVh5nWEXR2vEXhhBgyFs2p79DSn2EEb
-	 z9sPBNNMmclRyaQflNNqLd59gqyQ9n+ItBTB87G7Zuhob0dOIpurp/UvJJGWG7jJGs
-	 JQzuSixiNbJFKYyiZmV9dpU/FjHpEBL0+9Bwxs0XT0oSlw9SpxyWTCw3kpGAIGTvIm
-	 5yOEiqcixsaR8evJwvAnionQ60gzOM9d28HDDGeAHZf45Zk/ixRdb3JNHJ2J73i0iD
-	 27WyxI/QM10myzWIQbBBPt/3EOgOJgra1N6XCqOsR8N9wYoHAd4qHh2W0C5k11FRnm
-	 GYKCuLCba2iRA==
-Date: Thu, 12 Jun 2025 11:53:41 +0100
-From: Lee Jones <lee@kernel.org>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Johan Adolfsson <johan.adolfsson@axis.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@axis.com
-Subject: Re: [PATCH RFC v4 1/2] leds: leds-lp50xx: Handle reg to get correct
- multi_index
-Message-ID: <20250612105341.GC381401@google.com>
-References: <20250526-led-fix-v4-0-33345f6c4a78@axis.com>
- <20250526-led-fix-v4-1-33345f6c4a78@axis.com>
- <2bb62450-df35-4063-ac5e-60bc1ef8f5e7@gmail.com>
+	b=pPLGB5DCggP6sVYRduvA5cFsFJ8EyHL7r38ZXnGPQQCnfYo2Ybo5BsSUhUjMVYmw/
+	 oUrqbv8lrTTXHVgjmkTMGmzDduNQdBJIPLuYMHBFuP6XuNRM9BrJLFKol8MQQKzRnp
+	 NR2m1dcjzO3cfp4AWt2c2RlSQp2EmP56FaLGm7ekYc4BxsK6CVfXcWT7ehOkOoQyP7
+	 AecsNaazSRvv0S0NjQAxQyQ3Jd00eLlzc+pIC6p17WbjDfokG0B+voHEQx1TMhvbR/
+	 1StxwJ4Kfni0KyhDjIZ3QeKdmIVCgBn9Vn4ZRnUj3bT6Wh6Z9kC/+usDJnIOO59udD
+	 I/y7cUpPqmRrg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2bb62450-df35-4063-ac5e-60bc1ef8f5e7@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Jun 2025 12:53:45 +0200
+Message-Id: <DAKHYVHNSO30.3SICBU2MAW9UL@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <chrisi.schrefl@gmail.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Ingo Molnar" <mingo@redhat.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, "Juri Lelli" <juri.lelli@redhat.com>,
+ "Vincent Guittot" <vincent.guittot@linaro.org>, "Dietmar Eggemann"
+ <dietmar.eggemann@arm.com>, "Steven Rostedt" <rostedt@goodmis.org>, "Ben
+ Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>, "Valentin
+ Schneider" <vschneid@redhat.com>
+Subject: Re: [PATCH 1/3] rust: completion: implement initial abstraction
+X-Mailer: aerc 0.20.1
+References: <20250603205416.49281-1-dakr@kernel.org>
+ <20250603205416.49281-2-dakr@kernel.org>
+ <DAKEM192U5RZ.3D00TOR520LRY@kernel.org> <aEqtexr4WwfU7rIP@pollux>
+In-Reply-To: <aEqtexr4WwfU7rIP@pollux>
 
-On Mon, 26 May 2025, Jacek Anaszewski wrote:
+On Thu Jun 12, 2025 at 12:35 PM CEST, Danilo Krummrich wrote:
+> On Thu, Jun 12, 2025 at 10:15:55AM +0200, Benno Lossin wrote:
+>> On Tue Jun 3, 2025 at 10:48 PM CEST, Danilo Krummrich wrote:
+>> > +    /// Signal all tasks waiting on this completion.
+>> > +    ///
+>> > +    /// This method wakes up all tasks waiting on this completion; af=
+ter this operation the
+>> > +    /// completion is permanently done.
+>> > +    pub fn complete_all(&self) {
+>> > +        // SAFETY: `self.as_raw()` is a pointer to a valid `struct co=
+mpletion`.
+>> > +        unsafe { bindings::complete_all(self.as_raw()) };
+>> > +    }
+>> > +
+>> > +    /// Wait for completion of a task.
+>> > +    ///
+>> > +    /// This method waits for the completion of a task; it is not int=
+erruptible and there is no
+>> > +    /// timeout.
+>>=20
+>> Another thing that we should document is weather this function returns
+>> immediately when `complete_all` was already called in the past.
+>
+> The details are all documented in [1], which is also linked in the module
+> documentation of this file.
+>
+> [1] https://docs.kernel.org/scheduler/completion.html
 
-> Hi Johan,
-> 
-> On 5/26/25 16:54, Johan Adolfsson wrote:
-> > mc_subled used for multi_index needs well defined array indexes,
-> > to guarantee the desired result, optionally use reg for that.
-> > 
-> > If devicetree child nodes is processed in random or reverse order
-> > you may end up with multi_index "blue green red" instead of the expected
-> > "red green blue".
-> > If user space apps uses multi_index to deduce how to control the leds
-> > they would most likely be broken without this patch if devicetree
-> > processing is reversed (which it appears to be).
-> > 
-> > arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts has reg set
-> > but I don't see how it can have worked without this change.
-> > 
-> > If reg is not set, the previous behavior is kept, index will be in
-> > the order nodes are processed.
-> 
-> This is a bug and I don't see any value in keeping buggy code.
-> Just expect reg to be present and make sure that all in-tree
-> dts files using these bindings use them in a proper way.
-> 
-> To not break existing users of stable releases, if any of them
-> implement DT subnodes without 'reg' property, we can just not mark this
-> commit with "Fixed" tag, so that it wasn't applied to stable releases.
-> Although I am not sure if we should not fix it there as well.
-> I'm leaving it to Lee.
+I dislike that we don't have the docs right there on the function.
+Following that link, there is also a lot of other stuff there that don't
+apply to Rust (eg initializing completions, and the
+wait_for_completion*() variants).
 
-We cannot assume that a patch won't end up in LTS just by omitting the
-Fixes: tag.  Sasha's AUTOSEL tooling it still likely to pick it up if we
-describe the commit as a fix, which we do and is correct.
+After a bit of reading, I found the part that I was looking for (by
+searching for `complete_all`...):
 
-I see no reason not to apply it.  If users are relying on broken
-semantics, then those should be fixed also.
+    A thread that wants to signal that the conditions for continuation have
+    been achieved calls `complete()` to signal exactly one of the waiters
+    that it can continue:
+   =20
+    ```c
+    void complete(struct completion *done)
+    ```
+   =20
+    ... or calls `complete_all()` to signal all current and future waiters:
+   =20
+    ```c
+    void complete_all(struct completion *done)
+    ```
 
-Is everyone happy with this patch as-is?
+Let's just put this information on the `complete_all` function.
 
-> > If reg is out of range, an error is returned.
-> > reg within led child nodes starts with 0, to map to the iout in each bank.
-> > 
-> > Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
-> > ---
-> >   drivers/leds/leds-lp50xx.c | 8 +++++++-
-> >   1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-> > index 02cb1565a9fb..8067aaa916bf 100644
-> > --- a/drivers/leds/leds-lp50xx.c
-> > +++ b/drivers/leds/leds-lp50xx.c
-> > @@ -476,6 +476,7 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
-> >   			return -ENOMEM;
-> >   		fwnode_for_each_child_node(child, led_node) {
-> > +			int multi_index = num_colors;
-> >   			ret = fwnode_property_read_u32(led_node, "color",
-> >   						       &color_id);
-> >   			if (ret) {
-> > @@ -483,8 +484,13 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
-> >   				dev_err(priv->dev, "Cannot read color\n");
-> >   				return ret;
-> >   			}
-> > +			ret = fwnode_property_read_u32(led_node, "reg", &multi_index);
-> > +			if (ret == 0 && multi_index >= LP50XX_LEDS_PER_MODULE) {
-> > +				dev_err(priv->dev, "reg %i out of range\n", multi_index);
-> > +				return -EINVAL;
-> > +			}
-> > -			mc_led_info[num_colors].color_index = color_id;
-> > +			mc_led_info[multi_index].color_index = color_id;
-> >   			num_colors++;
-> >   		}
-> > 
-> 
-> -- 
-> Best regards,
-> Jacek Anaszewski
-> 
-
--- 
-Lee Jones [李琼斯]
+---
+Cheers,
+Benno
 
