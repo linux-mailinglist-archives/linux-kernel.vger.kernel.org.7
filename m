@@ -1,143 +1,233 @@
-Return-Path: <linux-kernel+bounces-683776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D37AD71BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:25:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB616AD71B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5908F17846D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F56F1748FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D5F24A06A;
-	Thu, 12 Jun 2025 13:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3251F3FF8;
+	Thu, 12 Jun 2025 13:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYnMjsV0"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="RLGb6dDx"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA31C242D63;
-	Thu, 12 Jun 2025 13:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C649824678F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734707; cv=none; b=jJpnLuseY3YSi7e1X0VjCgk680Udt5nAODZthsp5LYgDD3D5gRbSNilcmoPpfuo0K55K+NdWY5Ew6++CBYDwMxuQnBIIkyzUCN+vy3jCQ7R5B0WUPoLwqjOac6EblNdHWJZ0KmZVe2oRrOi+s3xtUCiKYJEZROByUKz68ZwjCZc=
+	t=1749734701; cv=none; b=oufuxXTR0JphzYWJn8NubugI4NWWrozOjB3PdFvVEXhUpM7+45bvDh+aIXoPrKhcuT9kNUDJXL1K/VuLAjadgYo0IA3G8gTpGYff2O8EXt9btahSOeSjVH3yBpbgP6mU0CcuKomuLvSw0uYn8eaCdvEVxzyPuYDCPobtUILE6fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734707; c=relaxed/simple;
-	bh=IqqMPWUk2v+uBcqO5EM/Ty1qGKfeCbv7fRGmGpsEBz8=;
+	s=arc-20240116; t=1749734701; c=relaxed/simple;
+	bh=DU9IwlAABlRldQPF9GYrkO15wu6B5JwT0CWU4BnHJh8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bdkG1RN6I1G1DfAkIj/jG0FnKZoob1GY88Cp+D1GA17p6faMz5aroEzByfVSbjGFUYoLlbp9lAtHrC9tUJWusGS8HpW1r21v6jM+AlFf0qhBS2RfQdl7oMfRshD4Trd8GK26+A6L8AqLe7IioIVju5FRnlN+JYqsQZkFu8tXwNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYnMjsV0; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45310223677so7979515e9.0;
-        Thu, 12 Jun 2025 06:25:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=Oe+0mRdYkzl/8VrMJKj/yTfzR5cuov/CjLuNChZbA92TIjI1JvBayZpDVAbD4kuLGEP4endNHy42gzEhLiP04ePAhFnwx2CJbD/4VNBdzrreeb1r3gMo8wyIgjZQFzzmot0Hyn90cMW8NJa/MIsw+NuJZshT8nk+llrbnhiKda8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=RLGb6dDx; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3ddc5084952so4082805ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:24:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749734704; x=1750339504; darn=vger.kernel.org;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1749734699; x=1750339499; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BZMLBIoT9gJSSjfo3bjWT2EO/rqNo4VRFJWQeolqXMA=;
-        b=MYnMjsV0qKnRjk9/VCnD8eDK0E/q2b0JSo46N1zOBLELR1dt0fzgULEv+H8w6D1ZSl
-         fq4+IeofIasVEXLdXSsrSja3PCwes8qN/Qt7PSpp8OFS14lvVF8yifQ0pl5NFCa9Ld8g
-         HBFXkQBsdppT5NKgvr/hZnjKLl5voIBMH6wCSbz0cpKoFAl8ZTnJ5LbGDu/1XILaDQJD
-         fBnaSrTiGWVFDdC3ICcwem3D/LhS4NLDq7CbX1KCMvr5C51xp/bPx4QEQ5lJXNeR/SdP
-         n3y+LsD9uXLHvrOb2bgKi5SZSyWJOb6sNCf7bKIr6v2KSS5X6j2pKGvtl+/6FGOKHvy5
-         Et/Q==
+        bh=FhSPjmAyA8pIxhMtvIKhAFsTVRGm0gzw/fSyIMnZboY=;
+        b=RLGb6dDxc9Mq+a70HM4NPlyIqrUe4hwSH1OOv5M4TQecLRGnDH3Mk2owG/z10tjKZY
+         kbbcXv+X/gpv/R43r6fnWntRUQZCbKlDP2kyo42rUs4PyhVzPHKq7fyTniBCsHOdj7GN
+         ECmBiLdKYso6gIH33zRyFjGah5cTobXezo/r9SYXXF/F1q9WhFcH58IX0KPgXJ5PWcmz
+         UHtpcfU6JtiF9imz7/SQaL/KExuxECgc/e8XQah9pmj5+7/BqV8oek2pQL9Kj/jMS9DR
+         u8f0UUPliA4ug3pvaJXSrTDDqKDtnIEQaucW+I9ouk7WczRwTWi6qm131vpK+kac4z+0
+         FiTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749734704; x=1750339504;
+        d=1e100.net; s=20230601; t=1749734699; x=1750339499;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BZMLBIoT9gJSSjfo3bjWT2EO/rqNo4VRFJWQeolqXMA=;
-        b=VYN4nvCREMKY2TKtwdVdvbLQBYFu4voWy0O1bLBHc3VCKdhYtttlUW+OFGkDPU2/77
-         FOaYV5U7A41jNBAPjuGh0vpitkyQgDgBIp3CBEceVWXHxJep+o8bUjeh4SLsd/6uQn2v
-         n9r+QprQEIc6MvlOMPHRZBouWT19MAn92fL+blA2vpGJGwCuqba4X6uzbwiwvtGdyT4e
-         lwd9DbAMY+M9qq7q6XJ4hXY/ogpsDsoO2fmsOjZvIOFrJ8LyCVcHJ7i8X/iPbDSHBwoe
-         Az8/qnQNaW6cxVTbmwmKVRXIqdE1KYeG17DC3of/Md2WkvWYCKDDA3tsNutcpXnTx2pW
-         CLZw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Tz9y3nFdVsR+OUnCvelTbpFYnqY4sonADRR5KhrMrNuLh7mQlc0ng3PvJuzmTfhoi86qenMpB0JVbuQf@vger.kernel.org, AJvYcCX4g/JeEgpVtNetxA0YqaKOlHF5Tju81VjvFwF7zVmVaWU/MCK4Z2XMX+/eItB6bG5c3TG1nnCu80wd@vger.kernel.org, AJvYcCXMHjzFT3kDBT23W+dM5MDXvX0GH8DsTfqkfsy+2AyF5uPwydEyOB1hLw0OQv1igqQ60zNpeM850kkVDzmcwtLFJw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMSdHsWwhfNDgMiKKWAJ1xzBV4LwP4Gu8hLA13230lVHEGxlJ/
-	Gy5ESpKc3kSUitqDqIQw+mfW5QlALPyhznM2VV05I8/YLtkPzer7mrMNxPt9gqlL/dL+vtxMtZy
-	gTDCS5pVNhbbS6TVQJTbqLtpKk4TALF8=
-X-Gm-Gg: ASbGncsd/S/thsrtoiPfTJIqawvz5DZbp94ZloFhBghcf3XKVd0uQ34hb4WuUu1veWX
-	A1h2Hge2c8d5Kv+Mc3YHORiUTPnDpz4Z7BrwjlT9p7QjDqrE5EVA9hVBB3KWnbXTY+gDDcgP0zq
-	0r0BBfJ34xBjwLS6EDwfD4wmwc603jlwNwLpJN10/7m3iqYw==
-X-Google-Smtp-Source: AGHT+IGojv7wi+EXgUrJ1iAcaQXcq2yh/a6c2FWgiCP1FdZTWn9scfT0ormpQqL7u63zFto7esDU9JQ3yZ95W1IoapU=
-X-Received: by 2002:a05:6000:420e:b0:3a4:fcc3:4a14 with SMTP id
- ffacd0b85a97d-3a5612dc4edmr2358774f8f.34.1749734703859; Thu, 12 Jun 2025
- 06:25:03 -0700 (PDT)
+        bh=FhSPjmAyA8pIxhMtvIKhAFsTVRGm0gzw/fSyIMnZboY=;
+        b=iR0mVFmHgpVrBzeGcCQ8I1hGZK4bOyeeWCbZo3JJ7YKAMo0D5dS7ZaKxvLDcGcLi42
+         nAJCEmlnSBWBNI4R5FWyE6Rc4KCmCFaLn11eKTferWIDX+PtDvNpdscRDlfw7rRJ40ff
+         GeszSjYSuPD+qDL9WQT2y7BbVZk+2OKa9KyKLyOgGAm9zW79sl8d5jtjotP75X4eZ7gC
+         5YTY0c8OTZwNCBdcQDrlUvOA/yNn0mSM2Y+7Ek06DbuVGNXStLZDNdPYjaHf25AeXWhV
+         Cx1DyR1hubv/+zAN7v9YlZt51x9ikjXCJ3S7KmNDLNT+Dol1ONWsQ9SxkYYABOJ0SVB0
+         2Bag==
+X-Forwarded-Encrypted: i=1; AJvYcCUtYss2V72lbljXfFD0znyJ3O998S3ZXAAg8viyDtqLZl7hPaK1aO+HkbgHfH1e65xAlcfdMvFQ2VWpL4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3RZ0YK5eUbW9P5NsdOj+qMzrizZOZd3B3c6okjKzzC/TEA/JU
+	pIl541RIeb/9hc63zMhTrXVYkq9UC1dWjFTZ8axpM06ImsT4e4VLgBZVaDmxJgPFKIRNiTlIOPb
+	ZmW+LbsrgFVtH5e+LDaWVOxvrCZm+5LNg5nz+ifPZqA==
+X-Gm-Gg: ASbGncudhjw5oBd/sDsYwgJsZaDEUg4TOOnP5KTg/EbFaNjlFdTHBp1qponoQ7BjwgT
+	Sz6smJpsAoiEkyCr1blzDNeUgOn4XS/CDL/GDpNo91b4kSKj5R5TlxyL+nrSb304PP5p5Jk1ASY
+	9ERBvZfr1FTcMEahq4Im4Kyj4W7CTmaexIurCLaZ3FKsy1
+X-Google-Smtp-Source: AGHT+IEXc2HNwR+arC4fRPEFksycFniWaNbrCQxuAysOQziE7TtUqOEu/PfXdc7DJFVevcMFaqzNNcUrtmqmcHPi7Pg=
+X-Received: by 2002:a05:6e02:2611:b0:3db:86fc:d328 with SMTP id
+ e9e14a558f8ab-3ddfb57a71amr32260835ab.5.1749734698811; Thu, 12 Jun 2025
+ 06:24:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528140453.181851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250528140453.181851-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVa4axB+aKhH18KxK4DVafeix6wn407PEhMxV_6xfpraA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVa4axB+aKhH18KxK4DVafeix6wn407PEhMxV_6xfpraA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 12 Jun 2025 14:24:37 +0100
-X-Gm-Features: AX0GCFtWM9emtIyXyU7iiWJWdsMZ7qy_zlJ1u6yeICmsB6pfXTrDdlaHSfP6HUA
-Message-ID: <CA+V-a8stpis6RuFZ8X+g=nnQhQQNJN8X8kpma6kf2Hmi+3hf4w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable
- USB2.0 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250523101932.1594077-1-cleger@rivosinc.com> <20250523101932.1594077-13-cleger@rivosinc.com>
+In-Reply-To: <20250523101932.1594077-13-cleger@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 12 Jun 2025 18:54:46 +0530
+X-Gm-Features: AX0GCFtl3CrqRqD9KaNbf7iyN6PgsitR5osvCuOQHoEz6erXpTG9A6k-oITxB2E
+Message-ID: <CAAhSdy0C6adKeWmFadS2qeZgJu0VWEscncu7Wti==eCzjQgSsg@mail.gmail.com>
+Subject: Re: [PATCH v8 12/14] RISC-V: KVM: add SBI extension reset callback
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Deepak Gupta <debug@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Atish Patra <atishp@rivosinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+On Fri, May 23, 2025 at 3:52=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
+>
+> Currently, only the STA extension needed a reset function but that's
+> going to be the case for FWFT as well. Add a reset callback that can be
+> implemented by SBI extensions.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-Thank you for the review.
+Queued this patch for Linux-6.17
 
-On Thu, Jun 12, 2025 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, 28 May 2025 at 16:05, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Enable USB2.0 support on the RZ/V2N EVK board, CN2 connector on the EVK
-> > supports host/function operation.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-> > @@ -302,6 +317,16 @@ sd1-dat-cmd {
-> >                         slew-rate =3D <0>;
-> >                 };
-> >         };
-> > +
-> > +       usb20_pins: usb20 {
-> > +               ovc {
-> > +                       pinmux =3D  <RZV2N_PORT_PINMUX(9, 6, 14)>; /* O=
-VC */
->
-> Any specific reason why OVC needs "bias-pull-up" on RZ/V2H EVK, but
-> not on RZ/V2N EVK?
->
-On the RZ/V2N EVK for the USB20_OVRCUR pin we have R13110K0603 pullup
-resistor, this was missing on the earlier version of the RZ/V2H EVK
-due to which we saw false OC condition (as seen below). Said that the
-actual EVKs for RZ/V2H for which support is being added do have this
-pullup resistor. After testing I will post a patch to drop the
-`bias-pull-up` property from the RZ/V2H DTS (thanks for reminding me
-:-)).
+Thanks,
+Anup
 
-[    2.672424] usb usb3-port1: over-current condition
-[    2.792424] usb usb4-port1: over-current condition
-
-Cheers,
-Prabhakar
+> ---
+>  arch/riscv/include/asm/kvm_host.h     |  1 -
+>  arch/riscv/include/asm/kvm_vcpu_sbi.h |  2 ++
+>  arch/riscv/kvm/vcpu.c                 |  2 +-
+>  arch/riscv/kvm/vcpu_sbi.c             | 24 ++++++++++++++++++++++++
+>  arch/riscv/kvm/vcpu_sbi_sta.c         |  3 ++-
+>  5 files changed, 29 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
+vm_host.h
+> index 0e9c2fab6378..4fa02e082142 100644
+> --- a/arch/riscv/include/asm/kvm_host.h
+> +++ b/arch/riscv/include/asm/kvm_host.h
+> @@ -407,7 +407,6 @@ void __kvm_riscv_vcpu_power_on(struct kvm_vcpu *vcpu)=
+;
+>  void kvm_riscv_vcpu_power_on(struct kvm_vcpu *vcpu);
+>  bool kvm_riscv_vcpu_stopped(struct kvm_vcpu *vcpu);
+>
+> -void kvm_riscv_vcpu_sbi_sta_reset(struct kvm_vcpu *vcpu);
+>  void kvm_riscv_vcpu_record_steal_time(struct kvm_vcpu *vcpu);
+>
+>  #endif /* __RISCV_KVM_HOST_H__ */
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/a=
+sm/kvm_vcpu_sbi.h
+> index bcb90757b149..cb68b3a57c8f 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -57,6 +57,7 @@ struct kvm_vcpu_sbi_extension {
+>          */
+>         int (*init)(struct kvm_vcpu *vcpu);
+>         void (*deinit)(struct kvm_vcpu *vcpu);
+> +       void (*reset)(struct kvm_vcpu *vcpu);
+>  };
+>
+>  void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcpu, struct kvm_run *r=
+un);
+> @@ -78,6 +79,7 @@ bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu,=
+ int idx);
+>  int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run)=
+;
+>  void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
+>  void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
+> +void kvm_riscv_vcpu_sbi_reset(struct kvm_vcpu *vcpu);
+>
+>  int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu, unsigned long =
+reg_num,
+>                                    unsigned long *reg_val);
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 2259717e3b89..ec9f44545cea 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -96,7 +96,7 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
+>         vcpu->arch.hfence_tail =3D 0;
+>         memset(vcpu->arch.hfence_queue, 0, sizeof(vcpu->arch.hfence_queue=
+));
+>
+> -       kvm_riscv_vcpu_sbi_sta_reset(vcpu);
+> +       kvm_riscv_vcpu_sbi_reset(vcpu);
+>
+>         /* Reset the guest CSRs for hotplug usecase */
+>         if (loaded)
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index 3139f171c20f..50be079b5528 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -536,3 +536,27 @@ void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu=
+)
+>                 ext->deinit(vcpu);
+>         }
+>  }
+> +
+> +void kvm_riscv_vcpu_sbi_reset(struct kvm_vcpu *vcpu)
+> +{
+> +       struct kvm_vcpu_sbi_context *scontext =3D &vcpu->arch.sbi_context=
+;
+> +       const struct kvm_riscv_sbi_extension_entry *entry;
+> +       const struct kvm_vcpu_sbi_extension *ext;
+> +       int idx, i;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(sbi_ext); i++) {
+> +               entry =3D &sbi_ext[i];
+> +               ext =3D entry->ext_ptr;
+> +               idx =3D entry->ext_idx;
+> +
+> +               if (idx < 0 || idx >=3D ARRAY_SIZE(scontext->ext_status))
+> +                       continue;
+> +
+> +               if (scontext->ext_status[idx] !=3D KVM_RISCV_SBI_EXT_STAT=
+US_ENABLED ||
+> +                   !ext->reset)
+> +                       continue;
+> +
+> +               ext->reset(vcpu);
+> +       }
+> +}
+> +
+> diff --git a/arch/riscv/kvm/vcpu_sbi_sta.c b/arch/riscv/kvm/vcpu_sbi_sta.=
+c
+> index 5f35427114c1..cc6cb7c8f0e4 100644
+> --- a/arch/riscv/kvm/vcpu_sbi_sta.c
+> +++ b/arch/riscv/kvm/vcpu_sbi_sta.c
+> @@ -16,7 +16,7 @@
+>  #include <asm/sbi.h>
+>  #include <asm/uaccess.h>
+>
+> -void kvm_riscv_vcpu_sbi_sta_reset(struct kvm_vcpu *vcpu)
+> +static void kvm_riscv_vcpu_sbi_sta_reset(struct kvm_vcpu *vcpu)
+>  {
+>         vcpu->arch.sta.shmem =3D INVALID_GPA;
+>         vcpu->arch.sta.last_steal =3D 0;
+> @@ -156,6 +156,7 @@ const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_sta =
+=3D {
+>         .extid_end =3D SBI_EXT_STA,
+>         .handler =3D kvm_sbi_ext_sta_handler,
+>         .probe =3D kvm_sbi_ext_sta_probe,
+> +       .reset =3D kvm_riscv_vcpu_sbi_sta_reset,
+>  };
+>
+>  int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu,
+> --
+> 2.49.0
+>
 
