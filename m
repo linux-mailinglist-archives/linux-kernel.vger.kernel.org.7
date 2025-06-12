@@ -1,146 +1,176 @@
-Return-Path: <linux-kernel+bounces-683265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153D9AD6B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120C1AD6B3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78B2171178
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B1C3AB7BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F21223704;
-	Thu, 12 Jun 2025 08:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CD1202F79;
+	Thu, 12 Jun 2025 08:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EM6ptQYw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bi7pELAc"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4948B221268
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1A15E96
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749717890; cv=none; b=QjBi7nLKBAdd2XosfhGMairbXNEUuh3WibjilgrfaQ0beseBYD7ZrOeTfCL+XbCP6aBsRAycGgh87wWU0vbLugI3SCUaLAmMQW47tWsnUC7a5Mv0DSzgRBO+wfuCF17aGJNgANp2aYpI+VxLnq++9Bf/8X9GF0U6GkQ81eKxWms=
+	t=1749717961; cv=none; b=qagzr7br4CfjyNt0IlGZWYGBj0//Amb2GqAyM6xI6zuMGngCJx/Cc2mSkz8ZruoWwn8vzqn3MlITw3evVAzFymZEYx78u6S+uwXM24gUtv4vKVc26UnID6CKVZJJ4nx+f85NqFfIJlUGIfCmIV51ovPb91JoeNMVvyd89HkjMQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749717890; c=relaxed/simple;
-	bh=rNTbSvQjmtm36dJjYb+8KYjVtBDjiIzJsQLY4I9jU7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ETdU/nBgHEMOysdtUm6uLZrn/78wqJAfhORoTDOk14jFT8Dw6rrxa9mbppVPd3E6nQ4RjaD7MAHKkIRfQmAEzkWXqK0ighhsCykksO1XNru++agy8SHIqgrb4VlWA63IeRFz1ngtLLCRJXEFW8VoZ5uoN43Ti7o2wXQm1mUS+6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EM6ptQYw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749717888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rNTbSvQjmtm36dJjYb+8KYjVtBDjiIzJsQLY4I9jU7k=;
-	b=EM6ptQYwg4gUF//fntFrYJGlMRGSVRTXYCgZhe/tcCyYS+1jSOSpZKfYRklSOXLplibMkm
-	syC6NF+z4iV24E9zq0sHRBalOWSnm5Kdy3ObhQqEOcREnc+YPjQ0fxT/F9Wnb99CZgaYLS
-	7BJ7/qnakzp5WVHcexGsfbtTN0Wh0Jc=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-275-uzeOKAQcOXiNxEckCInngQ-1; Thu, 12 Jun 2025 04:44:45 -0400
-X-MC-Unique: uzeOKAQcOXiNxEckCInngQ-1
-X-Mimecast-MFC-AGG-ID: uzeOKAQcOXiNxEckCInngQ_1749717885
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e73290d75a8so1004287276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:44:45 -0700 (PDT)
+	s=arc-20240116; t=1749717961; c=relaxed/simple;
+	bh=N5wcwfcLu9AlsbJtqb6p3PuoyNM8HmZGrqcbr9Db6sc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U49sLON687v82KJuqKolOTLincnm/RAlCPlSbxaabkapG6WBaEqNA0BM3fW/mCbThRc5qfgRyz9XC+wH/lNTGZKJv7mLF/D0OaNmxjALpBJbQqCbs4WVkhM94giFY1K+EHWCftahxPQHvEg+bBqp/jnYJibQH38p+m6EcF4tXpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bi7pELAc; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74877ac9d42so540537b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749717959; x=1750322759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TpZLNWW0DOhsGzvSZThrO5Z24o9vsj5Ub5xo7XurfUA=;
+        b=bi7pELAcLeHocAyOixA7yk/JIqU2qOQ1iD9UIHCEYMhyYIKPqSoFaQYmwpRM8PwlNM
+         rBOWUffHCpse9GePdywFQ25luVlmVHEu83GsG2H7K6DShRCFjzr3SFuCHSTfXg8Ty9QD
+         gi5CDlW9P565XyHBzNn61rVuqDkWoL0Hzn8fA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749717885; x=1750322685;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1749717959; x=1750322759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rNTbSvQjmtm36dJjYb+8KYjVtBDjiIzJsQLY4I9jU7k=;
-        b=Qv11bUMVRejqwqxry1gkPbL3ljMuv1eLljaKtaH5odWvx3nhfAJZtSna6S1D0kAKbZ
-         dant9x8hoqTgFZ4+oYmHuJF7O2oKBjvgZ9aFS4OQqGOfuEhJvhGrEqKHaLyokonvY0kN
-         h4s55n10d25NSh1NkpM7aNdvnMBhkCpn+9d2Y8C/Eq0/CTzy78vDnKnrM3vsYLDFvrhh
-         eodKSsaG5HJejyOyRnr9HeSLXSiAb/5unXrFG3YdZVKd091MMNRkX7UCciBuHekexRKk
-         bpNeTVRO/sjFNxqSo/Qr3uSC/NTS7+mmWKbSJFv7UFnYGu+lB+lA6VA4Npe4nPldGAad
-         +Ttg==
-X-Forwarded-Encrypted: i=1; AJvYcCWw1iNnCHL/TvttgkcdnguoUXeWTzi1nF6YeYz5xyOef740Xa5/USCEXRb9tBxCcf/q5GllQuGeoWxgQMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNAEAq5ZfF5LXcDewlzChvpp8soP1mV6BdYH5JCgqRcUzIW4oD
-	9wUnVivXEZxgKsaWwgNcT1pf4VndS6bBAV88l2WarPi8jtJt2ja/oLeWROlWEV562cxgBCyyzaI
-	DpszTlQzhWAnpXjbG0YG+ei90xKrBmd/gCWKekPaGMzv6uZKjXqWemJo3GavIWD07rZp/xPxy0f
-	6oTs2IegM+woq0CS46wGUbZxpSfRrlw50lc+AxvKyt
-X-Gm-Gg: ASbGncuPTFsbLOqgTaoMDhfq2EKrKoR6J709Pns38p8A0RqzGNL7L8QZmU70mUigDPk
-	N2UtQ7XvfFo6Vy0OaUmMRf/g/xs8xC3HZZFTtoCDROzFUmsE0sEGfYJrrHbVwDOiPzJpzfUtO3s
-	f8QXtN
-X-Received: by 2002:a05:6902:2611:b0:e81:4e9d:9e79 with SMTP id 3f1490d57ef6-e81fe6b8b7amr9216276276.40.1749717885015;
-        Thu, 12 Jun 2025 01:44:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpO7imw7/y6hUBA3+X+9+644bvWl/2xN24NgD0/xASJ+Z1iQt0UZZ7qIi1/vJ8aGKQCfn0PwMZVX01PvmLRPE=
-X-Received: by 2002:a05:6902:2611:b0:e81:4e9d:9e79 with SMTP id
- 3f1490d57ef6-e81fe6b8b7amr9216251276.40.1749717884673; Thu, 12 Jun 2025
- 01:44:44 -0700 (PDT)
+        bh=TpZLNWW0DOhsGzvSZThrO5Z24o9vsj5Ub5xo7XurfUA=;
+        b=qHcg4bZO57dqV9TK+dgowfddUH50YMUgG7Wv2CTbnw2run+bZs8JsxrGI3sJj6eOn/
+         IAp7FF53OJsFyBktzqI8j6D0zgQAFB+qwhjYCxQfXcMGUNIfKsjwcRC171IzE57/0uqo
+         macV6awFra90KXVpTidJXZosYpMaLWRKcMtjchheNaEJ5+Ihj9foDPG5E2/kKDGvMOQm
+         GB7dw3UzNEVyEQxXWmvTPQ5KGirTK3qWDSUwUsbXFhH9IU+foQeuVajlsfwCl/T60Kz/
+         GB2ht03DN5cgjHcmK70t9wX4LJ2w4NIe2x0Y4NYRUj7/YpQtF7CBdloMze+g8+zwESt/
+         mKSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUph5UYZo5OFtBepQYJyDGKJEpMCkEOU/J1iML06A8sHIIJbmp8uG+quVyr7dNenVvC33jhm//ABnCXICs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0g6CT4w+xXn9SxXvwOBDPnkv9cEPyWhOk/QM5eTms+UT+j51x
+	CDpilT3Wfi2ND+5Jf/Rnm3EnXco+of9h/y2wHzXAYCjJKNwGHbmbHKxeiI+fljCgQA==
+X-Gm-Gg: ASbGncsrByWpalugFoeXXf2bqrmE49fq8kbaMMlpDV4ngPQ6ivD9P82V45kgTtMA7a0
+	XJfAdqVreRDYJtpIMuKAHRfS5cq8QELAz/0PYTCgAoDIWv+rPfGGwi5uVB8wWfGoVSMYNORFjSR
+	bRdJiVZdvAl/lBB9vvAKLqMAxQp0Lr7S6kl8TNYYZWGKYw8wLbNAosxY1XH2su6InMx8lN3R9uH
+	G3oibVeFb/4mUS2Avlj2ci+UEh3LA4SRc26hnq5dyipNtfQO8ujhg9Nf9Rs9uMe12zIdmHVLL6U
+	nh/N8j+9TaefbUTqRKJWnrg6TCiBnsPv5NTca+7BtP0SJkE95SJdKM/ZWf/JqKdGMPfPR6mGKYG
+	QsXdwxs+fdJ0=
+X-Google-Smtp-Source: AGHT+IH+WHMtXn8bwbKfQnFjtwXx1iGxMWnJkL+ndCJJX/b5xWKBlUyZSGGvyl1WSRHTr2d/Tewnww==
+X-Received: by 2002:a05:6a00:8593:b0:746:1e35:3307 with SMTP id d2e1a72fcca58-7487e22c268mr2650354b3a.14.1749717959076;
+        Thu, 12 Jun 2025 01:45:59 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:fcb5:79e0:99d6:8d5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74880a10152sm933200b3a.172.2025.06.12.01.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 01:45:58 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Baochen Qiang <quic_bqiang@quicinc.com>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv3] wifi: ath11k: clear initialized flag for deinit-ed srng lists
+Date: Thu, 12 Jun 2025 17:45:06 +0900
+Message-ID: <20250612084551.702803-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGxU2F6c7=M-jbBRXkU-iUfzNbUYAr9QApDvRVOAU6Q0zDsFGQ@mail.gmail.com>
- <20250612082102.995225-1-niuxuewei.nxw@antgroup.com>
-In-Reply-To: <20250612082102.995225-1-niuxuewei.nxw@antgroup.com>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Thu, 12 Jun 2025 10:44:33 +0200
-X-Gm-Features: AX0GCFs5PNoVhHhHZsKNXS6ADWJpjexmyZKqj4oyHShXjy9f_WC9YKjQLjFGOUk
-Message-ID: <CAGxU2F4JkO8zxDZg8nTYmCsg9DaaH58o5L+TBzZxo+3TnXbA9Q@mail.gmail.com>
-Subject: Re: [PATCH net] vsock/virtio: fix `rx_bytes` accounting for stream sockets
-To: Xuewei Niu <niuxuewei97@gmail.com>
-Cc: Oxffffaa@gmail.com, avkrasnov@salutedevices.com, davem@davemloft.net, 
-	edumazet@google.com, eperezma@redhat.com, horms@kernel.org, 
-	jasowang@redhat.com, kuba@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org, 
-	niuxuewei.nxw@antgroup.com, pabeni@redhat.com, stefanha@redhat.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Jun 2025 at 10:21, Xuewei Niu <niuxuewei97@gmail.com> wrote:
->
-> > On Thu, 12 Jun 2025 at 08:50, Xuewei Niu <niuxuewei97@gmail.com> wrote:
-> > >
-> > > > On Thu, Jun 12, 2025 at 01:32:01PM +0800, Xuewei Niu wrote:
-> > > > > No comments since last month.
-> > > > >
-> > > > > The patch [1], which adds SIOCINQ ioctl support for vsock, depends on this
-> > > > > patch. Could I get more eyes on this one?
-> > > > >
-> > > > > [1]: https://lore.kernel.org/lkml/bbn4lvdwh42m2zvi3rdyws66y5ulew32rchtz3kxirqlllkr63@7toa4tcepax3/#t
-> > > > >
-> > > > > Thanks,
-> > > > > Xuewei
-> > > >
-> > > > it's been in net for two weeks now, no?
-> > >
-> > > Umm sorry, I didn't check the date carefully, because there are several
-> > > ongoing patches. Next time I'll check it carefully. Sorry again.
-> > >
-> > > It looks like no one is paying attention to this patch. I am requesting
-> > > someone interested in vsock to review this. I'd appreciate that!
-> >
-> > Which patch do you mean?
-> >
-> > Thanks,
-> > Stefano
->
-> I am saying your patch, "vsock/virtio: fix `rx_bytes` accounting for stream
-> sockets".
->
-> Once this gets merged, I will send a new version of my patch to support
-> SIOCINQ ioctl. Thus, I can reuse `rx_bytes` to count unread bytes, as we
-> discussed.
+In a number of cases we see kernel panics on resume due
+to ath11k kernel page fault, which happens under the
+following circumstances:
 
-As Michael pointed out, it was merged several weeks ago in net tree,
-see https://lore.kernel.org/netdev/174827942876.985160.7017354014266756923.git-patchwork-notify@kernel.org/
-And it also landed in Linus tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=45ca7e9f0730ae36fc610e675b990e9cc9ca0714
+1) First ath11k_hal_dump_srng_stats() call
 
-So, I think you can go head with your patch, right?
+ Last interrupt received for each group:
+ ath11k_pci 0000:01:00.0: group_id 0 22511ms before
+ ath11k_pci 0000:01:00.0: group_id 1 14440788ms before
+ [..]
+ ath11k_pci 0000:01:00.0: failed to receive control response completion, polling..
+ ath11k_pci 0000:01:00.0: Service connect timeout
+ ath11k_pci 0000:01:00.0: failed to connect to HTT: -110
+ ath11k_pci 0000:01:00.0: failed to start core: -110
+ ath11k_pci 0000:01:00.0: firmware crashed: MHI_CB_EE_RDDM
+ ath11k_pci 0000:01:00.0: already resetting count 2
+ ath11k_pci 0000:01:00.0: failed to wait wlan mode request (mode 4): -110
+ ath11k_pci 0000:01:00.0: qmi failed to send wlan mode off: -110
+ ath11k_pci 0000:01:00.0: failed to reconfigure driver on crash recovery
+ [..]
 
-Please remember to target net-next, since it will be a new feature IIRC.
+2) At this point reconfiguration fails (we have 2 resets) and
+  ath11k_core_reconfigure_on_crash() calls ath11k_hal_srng_deinit()
+  which destroys srng lists.  However, it does not reset per-list
+  ->initialized flag.
 
-Thanks,
-Stefano
+3) Second ath11k_hal_dump_srng_stats() call sees stale ->initialized
+  flag and attempts to dump srng stats:
+
+ Last interrupt received for each group:
+ ath11k_pci 0000:01:00.0: group_id 0 66785ms before
+ ath11k_pci 0000:01:00.0: group_id 1 14485062ms before
+ ath11k_pci 0000:01:00.0: group_id 2 14485062ms before
+ ath11k_pci 0000:01:00.0: group_id 3 14485062ms before
+ ath11k_pci 0000:01:00.0: group_id 4 14780845ms before
+ ath11k_pci 0000:01:00.0: group_id 5 14780845ms before
+ ath11k_pci 0000:01:00.0: group_id 6 14485062ms before
+ ath11k_pci 0000:01:00.0: group_id 7 66814ms before
+ ath11k_pci 0000:01:00.0: group_id 8 68997ms before
+ ath11k_pci 0000:01:00.0: group_id 9 67588ms before
+ ath11k_pci 0000:01:00.0: group_id 10 69511ms before
+ BUG: unable to handle page fault for address: ffffa007404eb010
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+ PGD 100000067 P4D 100000067 PUD 10022d067 PMD 100b01067 PTE 0
+ Oops: 0000 [#1] PREEMPT SMP NOPTI
+ RIP: 0010:ath11k_hal_dump_srng_stats+0x2b4/0x3b0 [ath11k]
+ Call Trace:
+ <TASK>
+ ? __die_body+0xae/0xb0
+ ? page_fault_oops+0x381/0x3e0
+ ? exc_page_fault+0x69/0xa0
+ ? asm_exc_page_fault+0x22/0x30
+ ? ath11k_hal_dump_srng_stats+0x2b4/0x3b0 [ath11k (HASH:6cea 4)]
+ ath11k_qmi_driver_event_work+0xbd/0x1050 [ath11k (HASH:6cea 4)]
+ worker_thread+0x389/0x930
+ kthread+0x149/0x170
+
+Clear per-list ->initialized flag in ath11k_hal_srng_deinit().
+
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+
+v3:
+- updated commit message and subject line (Baochen Qiang)
+
+ drivers/net/wireless/ath/ath11k/hal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+index 8cb1505a5a0c..cab11a35f911 100644
+--- a/drivers/net/wireless/ath/ath11k/hal.c
++++ b/drivers/net/wireless/ath/ath11k/hal.c
+@@ -1346,6 +1346,10 @@ EXPORT_SYMBOL(ath11k_hal_srng_init);
+ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
+ {
+ 	struct ath11k_hal *hal = &ab->hal;
++	int i;
++
++	for (i = 0; i < HAL_SRNG_RING_ID_MAX; i++)
++		ab->hal.srng_list[i].initialized = 0;
+ 
+ 	ath11k_hal_unregister_srng_key(ab);
+ 	ath11k_hal_free_cont_rdp(ab);
+-- 
+2.50.0.rc1.591.g9c95f17f64-goog
 
 
