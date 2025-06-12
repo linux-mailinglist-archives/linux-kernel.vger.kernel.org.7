@@ -1,93 +1,140 @@
-Return-Path: <linux-kernel+bounces-682928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D9DAD6694
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6108AD65AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 802321796A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11EB17EE7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B7B1E5B68;
-	Thu, 12 Jun 2025 04:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF72E1C3C08;
+	Thu, 12 Jun 2025 02:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtOzaxSQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ewVXWC7R"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046471E5718;
-	Thu, 12 Jun 2025 04:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDFC1C32FF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 02:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749700872; cv=none; b=FMEsa8kW49d+pvhwOGk0q1b6sTclqno55Kbo4oWW+JbdkUxkVWEb0jLuvRxTynmB8WgkZsCM6VnNVuPlJJm7o89RQWrcVvUfyZz/tWrx6tTUDu9gsgmAZbGcYKYJaRNraJ0fPSLmFjYV1XqKGZPU1zRF3kDB5mR4IKkBU1y6U04=
+	t=1749695374; cv=none; b=VlWxRb+Qv2nnk52/J+yJ58vE7jyYnldRlX70hpKRHhlHCjgMcDIb2BCuKX3YuGMTxvbUgOkNTUNnEOEG3XUCPqX3waLos0NwiFuk+oiozLQW3y2ehfDWTC6FViyW7WDUPAAeWwABc23s2zpCaK3aA42Ew3JXGtYRynvQd8ltklE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749700872; c=relaxed/simple;
-	bh=oQ4osCgHbzemXS4dxxFdiShB4rZ0fXLkCLHJI3UQ/zY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IkIHwtDq2Mux/jXK7Wb6DjHVqBCva7UvSLfvbhABay7WVhdorNU+u349HEC3FupAaGnlqvlWRcisXmz0AS43i1H8F32DRVYCsN/ZK9tDQQ7pYsPhAkaT6ze6b9rW5AoCmQybgqnZj8jcjVJXBTn3vaBre3dzGS0xzxI6rCUghac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtOzaxSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A03C4CEF0;
-	Thu, 12 Jun 2025 04:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749700870;
-	bh=oQ4osCgHbzemXS4dxxFdiShB4rZ0fXLkCLHJI3UQ/zY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EtOzaxSQDyydkxX1KAIFi79hwUVZzSxAAXfSsnAjynZATN0HqUcr+YcrMVmVYd2sR
-	 zaJ1hHDgWxqJ1KQkTEyA3rVjc09k4zR/OoVHjP4K2+lUquhsaZm/+sJF0k8gOgXRnn
-	 RzXLhtJylaf7nYlk8mVcvk2l4QaeMXbHIXOCmrPM98cXMD5YjbkoP6aAbLFIPgXge2
-	 neLcBV2ZpU/djkGE1LJdU1z/seJCYYo9fcGJIPe9tAzt0c+53lG3SSY6OqGZYcYLJh
-	 PTZlNm/MUZ+kkMuxRxFiJ4vv7Cvlk9s56Sr3zNY2zf4D6APvSYbb6U1MjgmTsD3y+i
-	 5L4P8+GiC6akA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 0/4] clk: qcom: Add camera clock controller support for sc8180x
-Date: Wed, 11 Jun 2025 23:00:49 -0500
-Message-ID: <174970084200.547582.10866755491364924120.b4-ty@kernel.org>
+	s=arc-20240116; t=1749695374; c=relaxed/simple;
+	bh=UiR+4jj7Lezdi7ckAIhQ1hmMUd7C1uiRiYBWgV7z74w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sQFsM/OkADAYQLiF+vYhsSEXeXV2MejmJDAw1iJRFz++BkVqWjGDrWQQHzyovAXbsHrgo39Etr+vloJUjlDqk/rfTWJNRbZ2Ruht1D8psVeaqD3UizCzksVH6929ba8rK2dKEUU1mmFhfWxO/yOOUq08/lecfeK4PBpLlcQCrrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ewVXWC7R; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so403690f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:29:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749695370; x=1750300170; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wyJycTNJKqQAdQ4vv1MjI1ZDB2PA21sgOvxj6YC0ETM=;
+        b=ewVXWC7RK1FoHXMgNlYNRCYV84yypu5i/u05FEHnx7NH43xZwOUZEFacgOHhw+5E3+
+         FyS/t1cTwVib9RaD0VieonMXFIZaeelijGgR+bChQRZDeaECA83RlFuZFYXr20rRrBV2
+         V93OhqS+8jXN83sNceAd2CZ2ZqsvmsAgen2MaPy/AZK+t2L3AdclxaKHwR5aJVaeEQOT
+         0zaEnIRtvkPFB59Yx5OmmrtS9CaBi+KQxoWieTv1Es/mpVwtXS21JIaSQsjGmv/Acdne
+         59tamKdPID7DtHLvYk3SfDMoYaMcX4m91duRHxSu2jFvomIhANyFHJbvwsCujqEKoB6B
+         TzoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749695370; x=1750300170;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wyJycTNJKqQAdQ4vv1MjI1ZDB2PA21sgOvxj6YC0ETM=;
+        b=r2IJ2P0qn1r9+9vgaj8ZSA8e/dw5WLjO/ZhrXzn803ycGM51rdiPiQD46RJFWEbA1K
+         kjnVlG0ZY53aDDLFQ+07fb+dmPucCYWTnRFP4JGoZ1g9wcRtOOCplVjcsnFZQgJJNUJU
+         UUpz8N6BkZa9QgNivzdQEyESiQ7OrfT5+vtAN8IsUqBeF7wRFQ3qaZi5ThC+duC8vRR2
+         i4oTa8SJmvqCHV6LxE3u2CwL3Q3cNHgsWFGbylBLPSKFPkUtpBv/dW7N13RNssicJ6lY
+         zYWDvAAzHDkAoxciIUBWf/XJcDifvCknn2pPZmlNhqxMta7x/mkwnBgGptM6V1UyyTq7
+         kr6A==
+X-Gm-Message-State: AOJu0Yy6rVjqzJKR9Sr3mJg87CvhJjn/MNs58wVLfI3O/W3WC6P0cnVj
+	upc9j4w6LjxGyp4pp/lrHjrN86iWrt6SH2d0JJ7j4T1OHpO183IU9k6ksb9Mfr3XJV6388rZQiV
+	7Qfw=
+X-Gm-Gg: ASbGncuzKMi+iz0iyljoze8XmiVEHHyCzG0gjmpEL9Vcb0WfC4satKueyFWIzf2A4ZH
+	ubM+LTVz1Pxotxj5JmwU5JYo8zZaaa1qtZc+1ddQDq25EmWU9yHYd/7UvdbgpCls716FtezqLj+
+	IBQRHhToUD3G6+0KINb+wHHZAmyvFHKAml++TnTln7cLjHH0fhoRWhvknf4Ws8dVYabXnTmRvnt
+	nKCB+R3XrARuCz0Ti/rbIpxdS4dUSBvj1s269QlZHmpuVgrIPMdl5FxSrbxumQOIbuH8ptRPXSJ
+	C4Dy4EYDNwmJnNh/niJwo/4+7mMyY8lQ46WrpO23MLXBiJA+AqwXf85yttm5Yg==
+X-Google-Smtp-Source: AGHT+IEor0nUXVAnFPELZdkVN3Zon9NMN75gb7Dse9/hrs9o11jYQcVQVAHlt5QJB3hYaccylY2k3w==
+X-Received: by 2002:a05:6000:2dc4:b0:3a4:ef00:a7b9 with SMTP id ffacd0b85a97d-3a5586dcd53mr3812187f8f.12.1749695370135;
+        Wed, 11 Jun 2025 19:29:30 -0700 (PDT)
+Received: from localhost ([202.127.77.110])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-748809ebecesm296699b3a.138.2025.06.11.19.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 19:29:29 -0700 (PDT)
+From: Wei Gao <wegao@suse.com>
+To: linux-kernel@vger.kernel.org
+Cc: jack@suse.com,
+	linux-ext4@vger.kernel.org,
+	wegao@suse.com
+Subject: [PATCH] ext2: Handle fiemap on empty files to prevent EINVAL
+Date: Thu, 12 Jun 2025 10:28:55 -0400
+Message-ID: <20250612142855.2678267-1-wegao@suse.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250512-sc8180x-camcc-support-v4-0-8fb1d3265f52@quicinc.com>
-References: <20250512-sc8180x-camcc-support-v4-0-8fb1d3265f52@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Previously, ext2_fiemap would unconditionally apply "len = min_t(u64, len,
+i_size_read(inode));", When inode->i_size was 0 (for an empty file), this
+would reduce the requested len to 0. Passing len = 0 to iomap_fiemap could
+then result in an -EINVAL error, even for valid queries on empty files.
+The new validation logic directly references ext4_fiemap_check_ranges.
 
-On Mon, 12 May 2025 10:34:35 +0530, Satya Priya Kakitapalli wrote:
-> This series adds support for camera clock controller base driver,
-> bindings and DT support on sc8180x platform.
-> 
-> 
+Link: https://github.com/linux-test-project/ltp/issues/1246
+Signed-off-by: Wei Gao <wegao@suse.com>
+---
+ fs/ext2/inode.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-Applied, thanks!
-
-[4/4] arm64: dts: qcom: Add camera clock controller for sc8180x
-      commit: 277d48b2ab1e1150993ccb233156d0916b0cebd3
-
-Best regards,
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 30f8201c155f..e5cc61088f21 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -895,10 +895,30 @@ int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 len)
+ {
+ 	int ret;
++	u64 maxbytes;
+ 
+ 	inode_lock(inode);
+-	len = min_t(u64, len, i_size_read(inode));
++	maxbytes = inode->i_sb->s_maxbytes;
++
++	if (len == 0) {
++		ret = -EINVAL;
++		goto unlock_inode;
++	}
++
++	if (start > maxbytes) {
++		ret = -EFBIG;
++		goto unlock_inode;
++	}
++
++	/*
++	 * Shrink request scope to what the fs can actually handle.
++	 */
++	if (len > maxbytes || (maxbytes - len) < start)
++		len = maxbytes - start;
++
+ 	ret = iomap_fiemap(inode, fieinfo, start, len, &ext2_iomap_ops);
++
++unlock_inode:
+ 	inode_unlock(inode);
+ 
+ 	return ret;
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.49.0
+
 
