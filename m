@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-684042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3ADCAD753D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF70DAD7545
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB303B06B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB20018897C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7D827E7D2;
-	Thu, 12 Jun 2025 15:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56039274668;
+	Thu, 12 Jun 2025 15:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m74s/H9b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jm5Tqtx+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JVD8+Avq"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662F0279795;
-	Thu, 12 Jun 2025 15:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB45526D4C9;
+	Thu, 12 Jun 2025 15:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740628; cv=none; b=WzfBwLkBLUuOb5Vzqax3mCt1WPq+AHFtgQ5jAPtGv+/DbBveZXLvoarIOr5IghKmsUU4VxEtzdD8/kUeVokcX6IDnaqnQaG3mH39Jk81WmiLc3cI4F97Goe1QshcNJRKg6Ku1ghl185An1MbBBEta9/kSbM6F2hsRLZ3rD92NIo=
+	t=1749740728; cv=none; b=B1d1jcXXLNlSs5wTxA5e9W0n9aawnZ2XpyvYhXdwTHt2jDAZrGLDT79Grktm11bbeM7tc+p/hWKKva92opEClbGkrVUIs6h7AAo1VJjRbJsECQhwCqErVuSRd26jEdnS39icZTCSdEmopV+oaGFMHtw7Ikpe59t403YgTizp1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740628; c=relaxed/simple;
-	bh=ONyFbl7eR0QXU3CRaThaUkea18g1Bd2HJqzSu8H2F5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVwdg6vIKF1xXsMiRSIRaSzB79GN8FbI2279dR5cLXr4bZVv0UIU/i789xnTwkcMjU6ud8IPiiocrIjnabH8BvyyuiQf5hjjvmx+ygS6MpJYiWjKjyvJ5fBBg7+m5lQglVPKeM+ZPG43Lsnk4v8F6rpnFGFU46wxjIHEWRM3IUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m74s/H9b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65BDC4CEEB;
-	Thu, 12 Jun 2025 15:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749740627;
-	bh=ONyFbl7eR0QXU3CRaThaUkea18g1Bd2HJqzSu8H2F5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m74s/H9bViol79YmIelbep7cXyzEw47hdktzg1MN6vCsg0S24VQ/KqSDwpigubKeE
-	 i41PpwJYbao8dKkGyE2Qqe80rDBt1KLstr08lFXyM7NrBpY5+1GLMitIsyHPH9pCI1
-	 RYqA94+q4srgJ820hmzPT2j5D4utw51hYyphDzfmQ9/qugstzZiKxhOn3D8GrAvQ8j
-	 X4Jo/C2BGR8LyZw47KY7cK2I3lFCTccQP4dr8up2k8RWnzpbNifNYM9Yn3+F7UHZR0
-	 qapgcqmD42kiSJv9F9eFn76HvvhT8koJ4G37SFjrSwz0usnG0i9ighP1aKYvjTYnul
-	 8U9pYzGL/Kbhg==
-Date: Thu, 12 Jun 2025 08:03:47 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-	martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
- queue limits features
-Message-ID: <20250612150347.GK6138@frogsfrogsfrogs>
-References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
- <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
- <20250611060900.GA4613@lst.de>
- <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
- <20250612044744.GA12828@lst.de>
- <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
+	s=arc-20240116; t=1749740728; c=relaxed/simple;
+	bh=FrUyFoeakZ/6ELmKkHRpIQLhoYY54oaCXbP4semewDk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lOL+VTMQOFrjHt43JTNmuI41/ppszWTSj/YHubQnwbb10XWCVbYcm+E4KcUFqttL2bPgtf2akZFHxMZz+4/F48jboi+5poybcMZeDgS/ZMmeQum3dXQEd3Y0OrnBTRWdvb+f9EBeXLerm90udO2m6ON9wkVKTPed06gIpfZkL9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jm5Tqtx+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JVD8+Avq; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id D44AA13805C6;
+	Thu, 12 Jun 2025 11:05:23 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 11:05:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749740723;
+	 x=1749827123; bh=F2brnDyX2RdfWZaowl+U6ywciKsVMQieC6WvQHg1iV8=; b=
+	Jm5Tqtx+yk1k2lGRaFOeo2qQR4+VMyseQTEKG42iSTo9P6jMwKWKxgQ9Iwqk6iI8
+	lf4fGeCpzFFE+CgHlMxYSKP7zDq3J0XJU5nE3OnUbiUXlQNC9rb8DH2Oy3ZX5JcR
+	0NFR3yQVoi9d+qzJyiSgmqMxE8EJp5E1Rb2JejI7NSlWJ4Jrn18wiLF8okqYWsVa
+	RXMQrTG2ZS9n4vnc/LqLV5cp1n4H6Yyg4GQZ7HWrboQo3Vrsf94Q3IiSeDn1oFRQ
+	7yMjlxnr4iej+yMzGhOfwJY5T2QdSwL0ut1df66NsRC11gxZnzSi/3r+F7qa02ZJ
+	aRP74315z5Sz3fwtha7yUg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749740723; x=
+	1749827123; bh=F2brnDyX2RdfWZaowl+U6ywciKsVMQieC6WvQHg1iV8=; b=J
+	VD8+AvqEq1VJvmoypW5EPfC3mFllRnFuJEfEg4zHvXlMukjVmaSZhryCTQbm3eaA
+	0Fh1XLNxOMOhIWizIcdPuTeoA4MktyLzHHdnlhpx3ostDMYmEocxybbp9dHl6qfN
+	DA0/06CZPn/GDkq6ZDNm0U4RxAnktIvU2GA9jXGAvfT8GzpW+w68gNtkQdz6D/Cd
+	KjI8ayYWSu9P+dHHezgD47utUXkDoEQQrAtvDw9xBzSJduPsz/6ppYVwz3VnrqC9
+	Cl2OoM/RSaslVa2HtpTZWoTlB/h1sFP9WkMSvOGdqjF3R0ehRw+l6iKc5c9xpvLb
+	UKcROEiF0juumr9gIrtug==
+X-ME-Sender: <xms:s-xKaH34P9m8uz7hV427SUVGaDNUksqr_CYe9SDRYAHlDcO9vnyodQ>
+    <xme:s-xKaGE3r7qLnHcKobFcB0f3aQZuhWhKHKLHHKEqFwDl28BUN8EpOcenxen5G2urQ
+    0Dm-xaUlEnI6fWY89Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprh
+    gtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskh
+    hisehlihhnrghrohdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieek
+    khdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtsh
+    drihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhl
+    ihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotges
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:s-xKaH4SKAslg6GaVk3KwslqGGvlTgs9tgucsMNFsvLValYWOnOmlQ>
+    <xmx:s-xKaM1_uFV8rVSaGmZtdIio6EoSJJr8B3qXjtCAu64uAPCFj3L6TA>
+    <xmx:s-xKaKFcoBVn_K_jB5B61X_GRyU0rPYMVnwc0v4jMwnMUleLRlCsBQ>
+    <xmx:s-xKaN-y0st34moHmInI4RYu2-ubKc-ELP3A2tpmXDnj7iR1jrQnkA>
+    <xmx:s-xKaF9tXKePnpmYLrwW5E9xrOPmpcVk5d3Z3GQFRQ9tqykg9UqvMB_n>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 186A0700065; Thu, 12 Jun 2025 11:05:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
+X-ThreadId: T0983471eb64d6916
+Date: Thu, 12 Jun 2025 17:05:02 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Sven Peter" <sven@kernel.org>, "Janne Grunau" <j@jannau.net>,
+ asahi@lists.linux.dev, linux-samsung-soc@vger.kernel.org
+Message-Id: <b8783289-6670-4254-9049-786ae7cdd6a1@app.fastmail.com>
+In-Reply-To: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
+References: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] arm64: defconfig: Switch SOUND to module
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 07:20:45PM +0800, Zhang Yi wrote:
-> On 2025/6/12 12:47, Christoph Hellwig wrote:
-> > On Wed, Jun 11, 2025 at 03:31:21PM +0800, Zhang Yi wrote:
-> >>>> +/* supports unmap write zeroes command */
-> >>>> +#define BLK_FEAT_WRITE_ZEROES_UNMAP	((__force blk_features_t)(1u << 17))
-> >>>
-> >>>
-> >>> Should this be exposed through sysfs as a read-only value?
-> >>
-> >> Uh, are you suggesting adding another sysfs interface to expose
-> >> this feature?
-> > 
-> > That was the idea.  Or do we have another way to report this capability?
-> > 
-> 
-> Exposing this feature looks useful, but I think adding a new interface
-> might be somewhat redundant, and it's also difficult to name the new
-> interface. What about extend this interface to include 3 types? When
-> read, it exposes the following:
-> 
->  - none     : the device doesn't support BLK_FEAT_WRITE_ZEROES_UNMAP.
->  - enabled  : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, but the
->               BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is not set.
->  - disabled : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, and the
->               BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is set.
-> 
-> Users can write '0' and '1' to disable and enable this operation if it
-> is not 'none', thoughts?
+On Thu, Jun 12, 2025, at 15:44, Krzysztof Kozlowski wrote:
+> Sound drivers are not essential to boot boards or mount rootfs,
+> therefore in effort to reduce the size of kernel image (and boot images)
+> switch the ASoC drivers to modules to decrease the size:
+>
+>   vmlinux: 152864 kB -> 154528 kB
+>   Image: 39391 kB -> 39067 kB
+>
+> No difference in resulting include/generated/autoconf.h, except making
+> modules: SND_SOC_SAMSUNG, SND_SOC_SDCA_OPTIONAL, SND_SOC_APPLE_MCA,
+> SND_TIMER, SND_COMPRESS_OFFLOAD, SND_PCM, SND_SOC_SOF_OF and
+> SND_DMAENGINE_PCM.
+>
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> If patches are fine, I will take them via Samsung SoC.
 
-Perhaps it should reuse the enumeration pattern elsewhere in sysfs?
-For example,
+Nice find!
 
-# cat /sys/block/sda/queue/scheduler
-none [mq-deadline]
-# echo none > /sys/block/sda/queue/scheduler
-# cat /sys/block/sda/queue/scheduler
-[none] mq-deadline
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-(Annoying that this seems to be opencoded wherever it appears...)
-
---D
-
-> Best regards,
-> Yi.
-> 
-> 
+There are some nasty interactions between DRM drivers calling
+into sound drivers for HDMI audio, but I checked that this is fine
+here because of CONFIG_DRM=m.
 
