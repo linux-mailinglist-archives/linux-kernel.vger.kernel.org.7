@@ -1,220 +1,197 @@
-Return-Path: <linux-kernel+bounces-683430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF430AD6D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DEAAD6D59
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD4A1899E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:18:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214393A3411
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863FC2367BC;
-	Thu, 12 Jun 2025 10:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47B4228CA9;
+	Thu, 12 Jun 2025 10:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="chc6zCsu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yuSN7z6D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q8TprLYy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yuSN7z6D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q8TprLYy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3B4226CF8;
-	Thu, 12 Jun 2025 10:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4C93C1F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749723474; cv=none; b=ZXPpQu/SoKN0kVBr2x++sQE8wI+YBpnEnBQPIBm2CsBmbVZEVgokYPlR3Dzek5YUDAWiqsHqUlTndbl8LJXaGe1aVg/X9yIRMr9Csjiw5hRjQIsnT1NSE/iWVnL5XfbXkm3Ocx+0QsAlr+OS59oesvxCvGmuDFhkK94MdA1/WfI=
+	t=1749723463; cv=none; b=hfyIsLR2dQrhRh1+mbNgs8FLcixixwC60gKIyTLH4uGOvYDIBlfzxobcYHy3UQzJU3VYuQkgvmxKannMU2oCcn4ynsBM9TgR6C7vMzaK6kEnz+KD9n1yow1TYgtH6u4GkquIKP0oc3pV0KRxvW1qOht2usjJR+7pDHp5L+sBoi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749723474; c=relaxed/simple;
-	bh=+BliPsXwPp1tzPYnYrLgAAtN1tgEd4YGahC/jK8LdiY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=X9rJUQT9a0qMOG/Bcd8EYeu4AFYqjWraBUHFWn+9KHW5ZPMRWda5q2YQsP5LjBPjWYxjZrKLOfEvaRmN/o0FdSnh0mOBP60p1dIRu/Hd5/dLbIlVGvKgAHpAa4TP+82tufK2a3zoRxhFBF6hQe28pKn8EYQRZ5oCRvHGtHuRzWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=chc6zCsu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7NBKC019613;
-	Thu, 12 Jun 2025 10:17:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lf16w4NVY4QFBoi0NbZrCw3i1k1OJd9j7N2JsDbo4Ww=; b=chc6zCsur4MNYsD6
-	2UF3//5mFLKOUPrF+t5vssoT6MtoRqEyVvGeiwboIQlueS2I2NQgCGzEossKeW5l
-	DKCOjOfGiOzDuqbgivf9EgBBCnOrsuOlJUWbx6w8bJHpAl7r4SCIeGFTZh2g2Ztv
-	MN4qsgPsYkn/ETVaPA7Fpp3bv5EPTbmNf+LggP0WQazx92fIX4bbRTkdoFJU6vv1
-	3bRQEu83eY9QYFwilWXeNCVIiPfgVGbm9khwWAKIiEOiyOgwSOIDnvk8dFBbnNue
-	+3nXF/+8Sd6GE7bxOAdzvYWl+TMkCjoR6VuLZvyky38n/ftfiXGEVV4mgg+uCego
-	sAUlRg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474eqcr4b8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 10:17:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55CAHnib027484
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 10:17:49 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 12 Jun 2025 03:17:46 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Thu, 12 Jun 2025 15:47:21 +0530
-Subject: [PATCH v3 2/2] arm64: dts: qcom: qcs615: Add CPU scaling clock
- node
+	s=arc-20240116; t=1749723463; c=relaxed/simple;
+	bh=3VS2CXhVqpFrEmQU9HpV0X8mS7in4Erpbb/MLjMw30Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kyyhFVphV6P7liYC2GtHHKHcxxvlUAgpzw7ckrMXcbib70GKJ+SoK72tzcHwlWN7t3yuj6G0z8BzCOKBarAm1RPktpEybQBBuj6yLszqnU5ZeyHduXuRLkJId++OAMzm38giMvx8tq9x9Xcr1rk5QnO6HLEGNFdC7N73Ykncsyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yuSN7z6D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q8TprLYy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yuSN7z6D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q8TprLYy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out2.suse.de (Postfix) with ESMTP id A81151F7EC;
+	Thu, 12 Jun 2025 10:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749723459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V683jXcvBO/wNHAZuQXuIAcraBnYtRvfHmOlvfeKHUA=;
+	b=yuSN7z6DhLLed/W2OioNoE2AXN+M+85NxG1sRDtk5jG/P3iOQ+MRpHKEiQuOqsMV5kNdTS
+	eo5keclbNrj6Be3KaV+T7qKUJN78TyivfDTRU/5yU/63sVCITxV1yHtwmdCPl5ooBiADxD
+	2W2pSlfB54kzszBPRUksSNEWcdlgXO4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749723459;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V683jXcvBO/wNHAZuQXuIAcraBnYtRvfHmOlvfeKHUA=;
+	b=Q8TprLYymlMK5MppTEwWlQMn3nQMmWfTBB6lgrzTzx/K6ixAqeOk+7Zv9cyP36zuD72ozJ
+	WxUeKMMK0oAc0hDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749723459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V683jXcvBO/wNHAZuQXuIAcraBnYtRvfHmOlvfeKHUA=;
+	b=yuSN7z6DhLLed/W2OioNoE2AXN+M+85NxG1sRDtk5jG/P3iOQ+MRpHKEiQuOqsMV5kNdTS
+	eo5keclbNrj6Be3KaV+T7qKUJN78TyivfDTRU/5yU/63sVCITxV1yHtwmdCPl5ooBiADxD
+	2W2pSlfB54kzszBPRUksSNEWcdlgXO4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749723459;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V683jXcvBO/wNHAZuQXuIAcraBnYtRvfHmOlvfeKHUA=;
+	b=Q8TprLYymlMK5MppTEwWlQMn3nQMmWfTBB6lgrzTzx/K6ixAqeOk+7Zv9cyP36zuD72ozJ
+	WxUeKMMK0oAc0hDw==
+Date: Thu, 12 Jun 2025 12:17:39 +0200
+From: Jiri Bohac <jbohac@suse.cz>
+To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+	akpm@linux-foundation.org
+Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: [PATCH v5 3/5] kdump, documentation: describe craskernel CMA
+ reservation
+Message-ID: <aEqpQwUy6gqSiUkV@dwarf.suse.cz>
+References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250612-qcs615-mm-cpu-dt-v3-v3-2-721d5db70342@quicinc.com>
-References: <20250612-qcs615-mm-cpu-dt-v3-v3-0-721d5db70342@quicinc.com>
-In-Reply-To: <20250612-qcs615-mm-cpu-dt-v3-v3-0-721d5db70342@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA3OSBTYWx0ZWRfX/HWRp/i/W0BB
- gNbfI84BnXhXKXrhopZv4Wcl+gj7Tp5etwqxXMXvTvPizeg4E4UyXdDgHK6mmIsH5inHn+Vs86c
- +n+nHNdmO6FUS8Qn1124DCTiB6/2ESASQu6zzkbkkzhiMnmUaiDiNXpkybOhW0pRFB3nI2rKYBA
- 0qGMM7fRdP2ytAYVTD1g3jgkM1HQ1kWWnhHZdi43egwmmX3TcOqT9VcjXwQPT1ZbzbTLWFZV5ZQ
- 2NnDIQmnUIkePxjc+P1Zk25fphKfy91yKzYNFo+uw5o5hEsE8B874BEvaxGWp66BhIMZAKXj5V7
- 8XicFuDdBW6S+2MO9SSopKrcYgnOuDX4x5MVwcDUI8oFga7sgDMKI+y9ZpTXQ2ZD/I0lKPAjuvM
- ZSpfGBmUaKtwQt433Q9yVaMOq+RZCH6K64fugKUq8zXUL/wPCVg5ADq16W7xcdXtTeteTzCf
-X-Authority-Analysis: v=2.4 cv=Q7TS452a c=1 sm=1 tr=0 ts=684aa94e cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=glh6sAxJXOJWtZD9WfkA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: mH9bGoUARStwRe9buB3nBce9yZxQSwhc
-X-Proofpoint-ORIG-GUID: mH9bGoUARStwRe9buB3nBce9yZxQSwhc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=860
- bulkscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506120079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dwarf.suse.cz:mid,localhost:helo]
+X-Spam-Level: 
 
-Add cpufreq-hw node to support CPU frequency scaling.
+Describe the new crashkernel ",cma" suffix in Documentation/
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Jiri Bohac <jbohac@suse.cz>
 ---
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/admin-guide/kdump/kdump.rst     | 21 ++++++++++++++++++
+ .../admin-guide/kernel-parameters.txt         | 22 +++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index 5868a115dd802d4007b08739e8968d1428af397f..97be7aab27ea0f844511d1e10fe5319297c4f1ed 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -36,6 +36,8 @@ cpu0: cpu@0 {
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_0>;
-+			clocks = <&cpufreq_hw 0>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 			#cooling-cells = <2>;
+diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
+index 1f7f14c6e184..089665731509 100644
+--- a/Documentation/admin-guide/kdump/kdump.rst
++++ b/Documentation/admin-guide/kdump/kdump.rst
+@@ -311,6 +311,27 @@ crashkernel syntax
  
- 			l2_0: l2-cache {
-@@ -56,6 +58,8 @@ cpu1: cpu@100 {
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_100>;
-+			clocks = <&cpufreq_hw 0>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
+             crashkernel=0,low
  
- 			l2_100: l2-cache {
- 			      compatible = "cache";
-@@ -75,6 +79,8 @@ cpu2: cpu@200 {
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_200>;
-+			clocks = <&cpufreq_hw 0>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 
- 			l2_200: l2-cache {
- 			      compatible = "cache";
-@@ -94,6 +100,8 @@ cpu3: cpu@300 {
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_300>;
-+			clocks = <&cpufreq_hw 0>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 
- 			l2_300: l2-cache {
- 			      compatible = "cache";
-@@ -113,6 +121,8 @@ cpu4: cpu@400 {
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_400>;
-+			clocks = <&cpufreq_hw 0>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 
- 			l2_400: l2-cache {
- 			      compatible = "cache";
-@@ -132,6 +142,8 @@ cpu5: cpu@500 {
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_500>;
-+			clocks = <&cpufreq_hw 0>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 
- 			l2_500: l2-cache {
- 			      compatible = "cache";
-@@ -151,6 +163,8 @@ cpu6: cpu@600 {
- 			capacity-dmips-mhz = <1740>;
- 			dynamic-power-coefficient = <404>;
- 			next-level-cache = <&l2_600>;
-+			clocks = <&cpufreq_hw 1>;
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 			#cooling-cells = <2>;
- 
- 			l2_600: l2-cache {
-@@ -171,6 +185,8 @@ cpu7: cpu@700 {
- 			capacity-dmips-mhz = <1740>;
- 			dynamic-power-coefficient = <404>;
- 			next-level-cache = <&l2_700>;
-+			clocks = <&cpufreq_hw 1>;
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 
- 			l2_700: l2-cache {
- 			      compatible = "cache";
-@@ -3743,6 +3759,19 @@ usb_2_dwc3: usb@a800000 {
- 				maximum-speed = "high-speed";
- 			};
- 		};
++4) crashkernel=size,cma
 +
-+		cpufreq_hw: cpufreq@18323000 {
-+			compatible = "qcom,sc7180-cpufreq-hw", qcom,cpufreq-hw";
-+			reg = <0 0x18323000 0 0x1400>, <0 0x18325800 0 0x1400>;
-+			reg-names = "freq-domain0", "freq-domain1";
++	Reserve additional crash kernel memory from CMA. This reservation is
++	usable by the first system's userspace memory and kernel movable
++	allocations (memory balloon, zswap). Pages allocated from this memory
++	range will not be included in the vmcore so this should not be used if
++	dumping of userspace memory is intended and it has to be expected that
++	some movable kernel pages may be missing from the dump.
 +
-+			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
-+			clock-names = "xo", "alternate";
++	A standard crashkernel reservation, as described above, is still needed
++	to hold the crash kernel and initrd.
 +
-+			#freq-domain-cells = <1>;
-+			#clock-cells = <1>;
-+		};
++	This option increases the risk of a kdump failure: DMA transfers
++	configured by the first kernel may end up corrupting the second
++	kernel's memory.
 +
- 	};
++	This reservation method is intended for systems that can't afford to
++	sacrifice enough memory for standard crashkernel reservation and where
++	less reliable and possibly incomplete kdump is preferable to no kdump at
++	all.
++
+ Boot into System Kernel
+ -----------------------
+ 1) Update the boot loader (such as grub, yaboot, or lilo) configuration
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index ea81784be981..ee6be52dd8a5 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -983,6 +983,28 @@
+ 			0: to disable low allocation.
+ 			It will be ignored when crashkernel=X,high is not used
+ 			or memory reserved is below 4G.
++	crashkernel=size[KMG],cma
++			[KNL, X86] Reserve additional crash kernel memory from
++			CMA. This reservation is usable by the first system's
++			userspace memory and kernel movable allocations (memory
++			balloon, zswap). Pages allocated from this memory range
++			will not be included in the vmcore so this should not
++			be used if dumping of userspace memory is intended and
++			it has to be expected that some movable kernel pages
++			may be missing from the dump.
++
++			A standard crashkernel reservation, as described above,
++			is still needed to hold the crash kernel and initrd.
++
++			This option increases the risk of a kdump failure: DMA
++			transfers configured by the first kernel may end up
++			corrupting the second kernel's memory.
++
++			This reservation method is intended for systems that
++			can't afford to sacrifice enough memory for standard
++			crashkernel reservation and where less reliable and
++			possibly incomplete kdump is preferable to no kdump at
++			all.
  
- 	arch_timer: timer {
+ 	cryptomgr.notests
+ 			[KNL] Disable crypto self-tests
 
 -- 
-2.34.1
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
+
 
 
