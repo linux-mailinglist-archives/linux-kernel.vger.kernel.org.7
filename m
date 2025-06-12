@@ -1,243 +1,180 @@
-Return-Path: <linux-kernel+bounces-683680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16637AD70C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:50:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23127AD708C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFD81BC2CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41FA18862B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8274230BD9;
-	Thu, 12 Jun 2025 12:50:20 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58B2130E58;
+	Thu, 12 Jun 2025 12:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ncecoy/x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406F62F432C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4565C2F430C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749732620; cv=none; b=uqT2zoiSBuCPGqFj6OAJC180Ky8wJCxRotT6l27RrHdi5hFv/HQkCmS7O2rFPLHTL0GbzdJIwqTnsgUGItynj0dwmg5VA6UhhDZnoiwTzqj9d+cnto7o82HY1JagUSfKlIeSWStfPYwlcX+gIArO6LX99TS0ye6zUK+gl532d7E=
+	t=1749731795; cv=none; b=D9cTB0ho4GnHGFNy90ju89qsCaNa5RGliGIgrFn3Vu+R7J4dpC8ePtCuwgTdV1B1PIy70pU9rRhso9gXKVtugF2UD5bsFOPSb1HM0K6RwTJg6wOqmf5QLi34MoQ3PhfMEnARHaoLzu90XYjm2ZbSKO6M1uXjp6zzQZx2vgysoKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749732620; c=relaxed/simple;
-	bh=L8b/QLeJIXnlKLOGVkoYe0tolm8GIRa2a7BMRuL5oXE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVI8o+4TvpgelVQOvuDkNIBMRc0/lbC3VvDFWvb+ZpXm6fRF5gGnCEXqlsfFC1t7n/WyxOT/RNE7RCOI2kTpjPFz54upQwvdT3DqBvjr54gfmygBCqdz1L4dKjd2ALY6BYhn0LKgch0zuFw0crTe4V4IZKd/Kuy8HlGfYHUsLv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4bJ23T2ZqkzYkxQ8;
-	Thu, 12 Jun 2025 20:32:21 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
- 2025 20:34:44 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
- 2025 20:34:44 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-CC: <bo.wu@vivo.com>, <chao@kernel.org>, <jaegeuk@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bintian.wang@honor.com>,
-	<feng.han@honor.com>, <wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: continue to allocate pinned section when gc happens EAGAIN
-Date: Thu, 12 Jun 2025 20:34:44 +0800
-Message-ID: <20250612123444.1779509-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <f1b9209e-c2fb-4a53-8d15-a3e42dea8bca@kernel.org>
-References: <f1b9209e-c2fb-4a53-8d15-a3e42dea8bca@kernel.org>
+	s=arc-20240116; t=1749731795; c=relaxed/simple;
+	bh=0HnP0FEpzj7V4q4R8wW8B6GxRGKwBvsj9FPXBxQnZFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iiwa4Md+E3hQFqVE8Er8gGRMlVTaKE/Ko/yiNlxQm3crJX94QOqA1aC9WYvgNsdvjkgP3X8Y2PfCuTQ2mgN9fp9v2xKmBIbQdTlfWFGBFNOpNRQROAmJglxAdVRRVJuoZHx3Y8Xyj2nBmFd1T7MFrz37SPZmRtRg147+XtuogYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ncecoy/x; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749731792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4Bh4dX1JlKlhpTIcfeVbnBt6ZIPlXQjwiP+ROQ/J7Y8=;
+	b=Ncecoy/xWjibUna/AwcW19ZV48hUsoa10NNFe+ESTNoWQVQ3txDB1tUfR/CyWZI7EMxdkf
+	mNY//KUmQUhzTVoyGUUQ2UTyLW0OZjPNqE5GGuzaRYmGJJsKKfg4XB2tWFQLZqX1Bj6vCb
+	ptN4BceuyREJfPkY9XLgZrM8lm2jxTA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-127-gNZhPBBgNnuJc_KQbu_zrQ-1; Thu, 12 Jun 2025 08:36:30 -0400
+X-MC-Unique: gNZhPBBgNnuJc_KQbu_zrQ-1
+X-Mimecast-MFC-AGG-ID: gNZhPBBgNnuJc_KQbu_zrQ_1749731790
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f85f31d9so433173f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 05:36:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749731790; x=1750336590;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4Bh4dX1JlKlhpTIcfeVbnBt6ZIPlXQjwiP+ROQ/J7Y8=;
+        b=KBBMKto3DFjR/ZNjYPgAnPoq8HofL4gWJ7Vn3P0vCyr1T0a1cfYeINeo9oBi0ATZ2z
+         3Pv1/ljhhFtP3e5Lqr9EgpBYjEWJEQ8FXTg0c8Gu2r1u559p3/i/eAgLy1dDjVm9dkv6
+         tD5L6osCNfq2VQM6GXsyw5SRd9a6iQYZqpXyWRJxIcqHSx/TnwkOQm9R1AndKAXg2T/u
+         RMhDEJFGIvLIaP+sReiyUCmX+8ZFQgW3zciAIJlfVKsDaiWNh8JVBjjWVeCb8Pl/EllG
+         Pvf2IPvdJQjLOu+OYWIEDPE/JR+qvCbQerBhxnDBrPa2nu0F6wG+6SVm7KwCpqDomvC7
+         c3ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNMajGpSipO6gFXq0dfQFGX4z+wmVqAs8tCX6Tl0bzK5Fi/H9CYrDPvSN8W3/Nf5YvK8PwfcSGCW//S5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOcJ7PsXIp8fMqP/vN/T6nQGHfeU/REkfdVV9pqsjvniPo05Xu
+	lch2a858BDRZbw8hGhvtckJRlrMzJL14ZxRu5D/H48Rw9hLLdImrYNKGgGMFVSre5yFfbPadauS
+	VqDcetwYWyeUcuJ+N0BKp+dzdbhlg1dCLyovstGbOAdugBTEP383phX6p6+AoXOL39Q==
+X-Gm-Gg: ASbGnctJ02HpRdVogRtuV0huCY80S70m28yKwa9JlKvJWgnEKEaWN5ILdpwx1CXCCdc
+	ViUmNQMVHs2rCy2FBG1/P4a2TMI0n4STBQ/e9v1zToj0NpklQje8GhaCTSHbQP01t7dM8ooTnOs
+	J5PfpDL03V2kshhE0ACGNl59nzRKwWG+0ULbiW0GeDkqATy6TnxeNq3LEsWYXbXOpdHVQr6F1Fp
+	ozredgyk+oT7iOhKii77CDJ6YKsHzPfco5eEdpO55/AE0pViPJZAof+GSkRHqGxcnoQ6KRLUdJF
+	2kVNuWMzAdC4sOstU6TrdG6CuJnFYrdvuF8ckl7gnekZD8sRtgDTb3nbWv4IyW8eUCNixyw7I7c
+	WJLNBDTYaltcxb1q9W3es40fEN67vI7En+OCCLkW0HNMccHOUrA==
+X-Received: by 2002:a5d:64c5:0:b0:3a4:d700:f773 with SMTP id ffacd0b85a97d-3a5606a2f5amr2645494f8f.11.1749731789700;
+        Thu, 12 Jun 2025 05:36:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHP7GX8mmfHyy1XVyDTzaFoVHDRBqUqGtA2T6X6nOqxDvXWDpKckqBp/AufLCjgyp/gY7i0aQ==
+X-Received: by 2002:a5d:64c5:0:b0:3a4:d700:f773 with SMTP id ffacd0b85a97d-3a5606a2f5amr2645470f8f.11.1749731789304;
+        Thu, 12 Jun 2025 05:36:29 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2c:1e00:1e1e:7a32:e798:6457? (p200300d82f2c1e001e1e7a32e7986457.dip0.t-ipconnect.de. [2003:d8:2f2c:1e00:1e1e:7a32:e798:6457])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561b65b0dsm1909627f8f.95.2025.06.12.05.36.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 05:36:28 -0700 (PDT)
+Message-ID: <79b5314e-a8d6-401c-a3d5-242a5887f562@redhat.com>
+Date: Thu, 12 Jun 2025 14:36:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
- (10.68.31.243)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/pagewalk: Clean up folio_walk_start() by removing
+ expose_page
+To: peng li <peng8420.li@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250612120903.2678910-1-peng8420.li@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250612120903.2678910-1-peng8420.li@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On 6/12/25 11:27, wangzijie wrote:
-> > Wu Bo once mentioned a fallocate fail scenario in this link[1].
-> > After commit 3fdd89b452c2("f2fs: prevent writing without fallocate()
-> > for pinned files"), we cannot directly generate 4K size file and
-> > pin it, but we can still generate non-segment aligned pinned file:
-> > 
-> > touch test_file
-> > ./f2fs_io pinfile set test_file
-> > ./f2fs_io fallocate 0 0 8192 test_file
-> > truncate -s 4096 test_file
+On 12.06.25 14:09, peng li wrote:
+> The name expose_page is confusing to understand. From the code logic, it is
+> probably meant to express "belongs to the normal page and get offset from
+> the mapped page"?
+> Perhaps changing "expose_page" to "normal_mapped_page" can better express
+> its behavior? But perhaps its existence is meaningless, because fw->page
+> can be directly confirmed and obtained from the page type without the need
+> for a separate flag.
 > 
-> Well, shouldn't we avoid such case by adding check condition in setattr?
-
-Maybe like this?  
-
----
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6bd3de64f..2f6537d9c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1027,6 +1027,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct inode *inode = d_inode(dentry);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	int err;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	block_t sec_blks = CAP_BLKS_PER_SEC(sbi);
- 
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
- 		return -EIO;
-@@ -1047,6 +1049,11 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 			!IS_ALIGNED(attr->ia_size,
- 			F2FS_BLK_TO_BYTES(fi->i_cluster_size)))
- 			return -EINVAL;
-+		if (f2fs_is_pinned_file(inode) &&
-+			attr->ia_size < i_size_read(inode) &&
-+			!IS_ALIGNED(attr->ia_size,
-+			F2FS_BLK_TO_BYTES(sec_blks)));
-+			return -EINVAL;
- 	}
- 
- 	err = setattr_prepare(idmap, dentry, attr);
----
-
-> > 
-> > By doing this, pin+fallocate failure(gc happens EAGAIN but f2fs shows
-> > enough spare space) may occurs.
-> > 
-> > From message in commit 2e42b7f817ac("f2fs: stop allocating pinned sections
-> > if EAGAIN happens"), gc EAGAIN doesn't guarantee a free section, so we stop
-> > allocating. But after commit 48ea8b200414 ("f2fs: fix to avoid panic once 
-> > fallocation fails for pinfile"), we have a way to avoid panic caused by
-> > concurrent pinfile allocation run out of free section, so I think that we 
-> > can continue to allocate pinned section when gc happens EAGAIN. Even if we
-> > don't have free section, f2fs_allocate_pinning_section() can fail with ENOSPC.
+> Key changes:
+> 1. Remove expose_page and its conditional logic
+> 2. Always set fw->page when a valid page is found
+> 3. Add clarifying comments about offset calculation
+> 4. Initialize fw->page to NULL at PMD/PTE levels
 > 
-> What do you think of introduce /sys/fs/f2fs/<dev>/reserved_pin_section to
-> tune @needed parameter of has_not_enough_free_secs()? If we configure it
-> w/ zero, it can avoid f2fs_gc() before preallocation.
-> 
+> Signed-off-by: peng li <peng8420.li@gmail.com>
 > ---
->  fs/f2fs/f2fs.h  | 3 +++
->  fs/f2fs/file.c  | 5 ++---
->  fs/f2fs/super.c | 3 +++
->  fs/f2fs/sysfs.c | 9 +++++++++
->  4 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 785537576aa8..ffb15da570d7 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1731,6 +1731,9 @@ struct f2fs_sb_info {
->  	/* for skip statistic */
->  	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
-> 
-> +	/* free sections reserved for pinned file */
-> +	unsigned int reserved_pin_section;
-> +
->  	/* threshold for gc trials on pinned files */
->  	unsigned short gc_pin_file_threshold;
->  	struct f2fs_rwsem pin_sem;
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 696131e655ed..a909f79db178 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1887,9 +1887,8 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
->  			}
->  		}
-> 
-> -		if (has_not_enough_free_secs(sbi, 0, f2fs_sb_has_blkzoned(sbi) ?
-> -			ZONED_PIN_SEC_REQUIRED_COUNT :
-> -			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
-> +		if (has_not_enough_free_secs(sbi, 0,
-> +				sbi->reserved_pin_section)) {
->  			f2fs_down_write(&sbi->gc_lock);
->  			stat_inc_gc_call_count(sbi, FOREGROUND);
->  			err = f2fs_gc(sbi, &gc_control);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 57adeff5ef25..48b97a95fd63 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -4975,6 +4975,9 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	sbi->last_valid_block_count = sbi->total_valid_block_count;
->  	sbi->reserved_blocks = 0;
->  	sbi->current_reserved_blocks = 0;
-> +	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
-> +			ZONED_PIN_SEC_REQUIRED_COUNT :
-> +			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi));
->  	limit_reserve_root(sbi);
->  	adjust_unusable_cap_perc(sbi);
-> 
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 75134d69a0bd..51be7ffb38c5 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -824,6 +824,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->  		return count;
->  	}
-> 
-> +	if (!strcmp(a->attr.name, "reserved_pin_section")) {
-> +		if (t > GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))
-> +			return -EINVAL;
-> +		*ui = (unsigned int)t;
-> +		return count;
-> +	}
-> +
->  	*ui = (unsigned int)t;
-> 
->  	return count;
-> @@ -1130,6 +1137,7 @@ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
->  F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
->  #endif
->  F2FS_SBI_GENERAL_RW_ATTR(carve_out);
-> +F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
-> 
->  /* STAT_INFO ATTR */
->  #ifdef CONFIG_F2FS_STAT_FS
-> @@ -1323,6 +1331,7 @@ static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(last_age_weight),
->  	ATTR_LIST(max_read_extent_count),
->  	ATTR_LIST(carve_out),
-> +	ATTR_LIST(reserved_pin_section),
->  	NULL,
->  };
->  ATTRIBUTE_GROUPS(f2fs);
-> -- 
-> 2.49.0
-
-I think it's a good way to solve this problem. Thank you!
 
 
-> > 
-> > [1] https://lore.kernel.org/linux-f2fs-devel/20231030094024.263707-1-bo.wu@vivo.com/t/#u
-> > 
-> > Signed-off-by: wangzijie <wangzijie1@honor.com>
-> > ---
-> >  fs/f2fs/file.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 6bd3de64f..05c80d2b5 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -1859,7 +1859,7 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
-> >  			f2fs_down_write(&sbi->gc_lock);
-> >  			stat_inc_gc_call_count(sbi, FOREGROUND);
-> >  			err = f2fs_gc(sbi, &gc_control);
-> > -			if (err && err != -ENODATA) {
-> > +			if (err && err != -ENODATA && err != -EAGAIN) {
-> >  				f2fs_up_write(&sbi->pin_sem);
-> >  				goto out_err;
-> >  			}
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+I don't see the cleanup here, really.
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
