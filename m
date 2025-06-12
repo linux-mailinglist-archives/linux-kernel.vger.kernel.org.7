@@ -1,193 +1,110 @@
-Return-Path: <linux-kernel+bounces-684003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7D8AD74B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFE0AD74D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DDE3B7BA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB621896A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B586A26D4E9;
-	Thu, 12 Jun 2025 14:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C28A2701AE;
+	Thu, 12 Jun 2025 14:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3aMkbiX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeYAYC1p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1622B268C49;
-	Thu, 12 Jun 2025 14:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DFB26FA7E;
+	Thu, 12 Jun 2025 14:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739925; cv=none; b=u+vY035+zEY+7oYfh/wl0FliSo/TXlEV9soEBt8ahWxk5PUxiHAwvvvgs4NtH7I1r0wRhGQXlRCEovx+0PKKamsSPK0qe1vRJy4IeXDUlvWbPvbTcHtQ1qaiShx4zNSgde/09cSz+pbxSms8PiUCbGvqOSeIX6n9b/XgkVAw20k=
+	t=1749739941; cv=none; b=diW8ENv5UfyxTIDzKsTZd6mJSVVQrti0OTf8Tf+Oz9AaOGD5sfYneudjcVgrZNgsdD9fSiN9m6dBH0HvsXLv/JG/CEJWF0ihJUFoaOxDUPs0SQajQ1Fo0a30sjLFFd6MQiPZa630UfxuddoiEdD6qVemFvEF+CW0Bo3MmaCizTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739925; c=relaxed/simple;
-	bh=xsSP2aCmuKNeUb9/6TPkcxw0m7gqqcmC2Tvep0z1Mtg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rIdQ00VSvOFxOxm90TPDFAIvUk24J8PRcr8qR/ncZDLIbqaSNEljjHB79N4gvOsa7THK6TMCt3Mdgmr24Be1t7D1nbKb/uTP/NjETu4qX++L1h8RTCPI2P8N0o7sgishPYnwGimMcljsK2mnwX966b2DtQ3xYoVgw3QK7jVSooo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3aMkbiX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C0DBC4CEF1;
-	Thu, 12 Jun 2025 14:52:01 +0000 (UTC)
+	s=arc-20240116; t=1749739941; c=relaxed/simple;
+	bh=m6NyqVWcWAB8aZ/nz34ATunc9qSW/wqIr84I2Z9j8i0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=UxWIZJsR6XlCvd3n7x3DBb8tCzxptwXrkck5RExjq2m3ZrJ7q2bF9tHEeOGJfMvGnWCSIguwu7bMc1UHzKLnTlwCZJ8Bp5dSXqQduPMAXJ6A1Cqw8KWbFaBid1vntWxfRRIVyClSjDZ+CNhmpu8Z9DvYsTiwAPXIS/BVrAWV6xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeYAYC1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0121C4CEEA;
+	Thu, 12 Jun 2025 14:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749739924;
-	bh=xsSP2aCmuKNeUb9/6TPkcxw0m7gqqcmC2Tvep0z1Mtg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a3aMkbiXHsxMSliOnEGuZCYFTeOmtRjxDrk84ibpasOPQF05worvc0b5FJxBhMieg
-	 sUOV+syF/bNxGBEeciN74Pa8E1GLKoZhKvX3Z+cGBb4dEn9Aqi+StwGvesEYWcakmk
-	 Ao2Sb3cjAjDqCu1vEy1eSJ3TQMyOy22dqqPhmlCgbpmorOF9i4CGm0ASfr/KxXeDMV
-	 trA+YPdfjmrWvy2/nApcVsPQ78WO51LLd6o52Ck4+yJpL/1kVPr32usEbIIR66d8c3
-	 3SBLUAZSjoB8Zwm7txIlGHinXflA9OYhCRtoRE+qZb9iLZiMbBx8JvzbvzjGsNgD++
-	 3gJwFjH0/kFeQ==
-From: Danilo Krummrich <dakr@kernel.org>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 4/4] rust: devres: implement register_foreign_release()
-Date: Thu, 12 Jun 2025 16:51:41 +0200
-Message-ID: <20250612145145.12143-5-dakr@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612145145.12143-1-dakr@kernel.org>
-References: <20250612145145.12143-1-dakr@kernel.org>
+	s=k20201202; t=1749739941;
+	bh=m6NyqVWcWAB8aZ/nz34ATunc9qSW/wqIr84I2Z9j8i0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JeYAYC1pgOTLgRtJQR3ro4v2evFDxPvv7OltvZWSAFXXZ+ZiA/at2rRH9xdJ7vF97
+	 VJdO1LiOYdXjl5huYnGF9lJ5T0UfW2s/OmeDhw+DxTDhq9oSP17wuFALaZOWk0pNHi
+	 3/P/nSDT+R3NLsuqFpQHMvc2pceSxnbawpMU8L0AZbL6x2PsvGjaahoz7iHio6/xHA
+	 fQZ0TDQol/WMTztVVX3RKvTepsVgprKEOT1NNj/xDLdM1RrkyfFcDY3OASbC9FVW3o
+	 x0vQKXphjHf+WGhTQB1TKOEiLMVN7syh9AkTcoeH2pNhM0bcSBgflp5aX2Jcm1BDLD
+	 MvFiGhn+6l8tA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Jun 2025 16:52:15 +0200
+Message-Id: <DAKN1HO7WUXY.QS098VXTDICU@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Tamir Duberstein" <tamird@gmail.com>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] rust: types: require
+ `ForeignOwnable::into_foreign` return non-null
+X-Mailer: aerc 0.20.1
+References: <20250612-pointed-to-v3-0-b009006d86a1@kernel.org>
+ <20250612-pointed-to-v3-2-b009006d86a1@kernel.org>
+In-Reply-To: <20250612-pointed-to-v3-2-b009006d86a1@kernel.org>
 
-register_foreign_release() is useful when a device resource has
-associated data, but does not require the capability of accessing it or
-manually releasing it.
+On Thu Jun 12, 2025 at 3:09 PM CEST, Andreas Hindborg wrote:
+> The intended implementations of `ForeignOwnable` will not return null
+> pointers from `into_foreign`, as this would render the implementation of
+> `try_from_foreign` useless. Current users of `ForeignOwnable` rely on
+> `into_foreign` returning non-null pointers. So require `into_foreign` to
+> return non-null pointers.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/types.rs | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index c156808a78d3..63a2559a545f 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -43,6 +43,7 @@ pub unsafe trait ForeignOwnable: Sized {
+>      /// # Guarantees
+>      ///
+>      /// - Minimum alignment of returned pointer is [`Self::FOREIGN_ALIGN=
+`].
+> +    /// - The returned pointer is not null.
 
-If we would want to be able to access the device resource and release the
-device resource manually before the device is unbound, but still keep
-access to the associated data, we could implement it as follows.
+This also needs to be mentioned in the `Safety` section of this trait.
+Alternatively you can put "Implementers must ensure the guarantees on
+[`into_foreign`] are upheld." or similar.
 
-	struct Registration<T> {
-	   inner: Devres<RegistrationInner>,
-	   data: T,
-	}
-
-However, if we never need to access the resource or release it manually,
-register_foreign_release() is great optimization for the above, since it
-does not require the synchronization of the Devres type.
-
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/devres.rs | 80 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+Cheers,
+Benno
 
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index 4ee9037f4ad4..495dca6240fc 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -16,6 +16,7 @@
-     sync::{rcu, Completion},
-     types::{ARef, ForeignOwnable},
- };
-+use core::ops::Deref;
- 
- /// This abstraction is meant to be used by subsystems to containerize [`Device`] bound resources to
- /// manage their lifetime.
-@@ -303,3 +304,82 @@ pub fn register_foreign_boxed<T, E>(
- 
-     register_foreign(dev, data)
- }
-+
-+/// To be implemented by an object passed to [`register_foreign_release`].
-+pub trait Release {
-+    /// Called once the [`Device`] given to [`register_foreign_release`] is unbound.
-+    fn release(&self);
-+}
-+
-+impl<T: Release> Release for crate::sync::ArcBorrow<'_, T> {
-+    fn release(&self) {
-+        self.deref().release();
-+    }
-+}
-+
-+impl<T: Release> Release for Pin<&'_ T> {
-+    fn release(&self) {
-+        self.deref().release();
-+    }
-+}
-+
-+/// Consume the `data`, [`Release::release`] and [`Drop::drop`] `data` once `dev` is unbound.
-+///
-+/// # Examples
-+///
-+/// ```no_run
-+/// use kernel::{device::{Bound, Device}, devres, devres::Release, sync::Arc};
-+///
-+/// struct Registration<T> {
-+///     data: T,
-+/// }
-+///
-+/// impl<T> Registration<T> {
-+///     fn new(data: T) -> Result<Arc<Self>> {
-+///         // register (e.g. class device, IRQ, etc.)
-+///
-+///         Ok(Arc::new(Self { data }, GFP_KERNEL)?)
-+///     }
-+/// }
-+///
-+/// impl<T> Release for Registration<T> {
-+///     fn release(&self) {
-+///        // unregister
-+///     }
-+/// }
-+///
-+/// fn from_bound_context(dev: &Device<Bound>) -> Result {
-+///     let reg = Registration::new(0x42)?;
-+///
-+///     devres::register_foreign_release(dev, reg.clone())
-+/// }
-+/// ```
-+pub fn register_foreign_release<P>(dev: &Device<Bound>, data: P) -> Result
-+where
-+    P: ForeignOwnable,
-+    for<'a> P::Borrowed<'a>: Release,
-+{
-+    let ptr = data.into_foreign();
-+
-+    #[allow(clippy::missing_safety_doc)]
-+    unsafe extern "C" fn callback<P>(ptr: *mut kernel::ffi::c_void)
-+    where
-+        P: ForeignOwnable,
-+        for<'a> P::Borrowed<'a>: Release,
-+    {
-+        // SAFETY: `ptr` is the pointer to the `ForeignOwnable` leaked above and hence valid.
-+        unsafe { P::borrow(ptr.cast()) }.release();
-+
-+        // SAFETY: `ptr` is the pointer to the `ForeignOwnable` leaked above and hence valid.
-+        let _ = unsafe { P::from_foreign(ptr.cast()) };
-+    }
-+
-+    // SAFETY:
-+    // - `dev.as_raw()` is a pointer to a valid and bound device.
-+    // - `ptr` is a valid pointer the `ForeignOwnable` devres takes ownership of.
-+    to_result(unsafe {
-+        // `devm_add_action_or_reset()` also calls `callback` on failure, such that the
-+        // `ForeignOwnable` is released eventually.
-+        bindings::devm_add_action_or_reset(dev.as_raw(), Some(callback::<P>), ptr.cast())
-+    })
-+}
--- 
-2.49.0
+>      ///
+>      /// [`from_foreign`]: Self::from_foreign
+>      /// [`try_from_foreign`]: Self::try_from_foreign
 
 
