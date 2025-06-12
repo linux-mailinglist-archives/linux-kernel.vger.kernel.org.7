@@ -1,201 +1,135 @@
-Return-Path: <linux-kernel+bounces-683551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC237AD6ED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B630AD6EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BD23A4554
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 348D03ACE9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE78323A99F;
-	Thu, 12 Jun 2025 11:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MEDJOBfZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF9923C8DB;
+	Thu, 12 Jun 2025 11:20:03 +0000 (UTC)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DEE231853
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B333EC2;
+	Thu, 12 Jun 2025 11:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727133; cv=none; b=JyUVj9ZQIfm3N0OB1wFlnPanljktLfC1Npe9X7XHlF+R9nfspzxIDOxOwx7KfumgqqtdRxKAFpuIc6lI7/ctnLWNa8Uj6KjEUS7Ht/g1cQdl3hj5j2TMy8IrhcsP9Q/hSolSJAEJg5AEniqVs1tZv9xXDgurk19GpViJuu+eLT0=
+	t=1749727203; cv=none; b=Hs9wyQB98zYVW34++ZBJbgeumSGZLmQ1FQh574CNFq8ck5emEr2DVoh2XwtJkuHWO+kZkw9TQP1J4IybRJsKYnDdwKT2XSCaORPLXcYdspoSysnL8Ksntdv3mDq1Wl3QCeyGXxaWV3Jy/6l/SoLTNkbfWkBrwRVhQsEY40TMf1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727133; c=relaxed/simple;
-	bh=3JjbhQubAgFcC97e/UoQ9hKiqpfIzqZGcS7aEKOfAmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRIPOItC89/kjJ+eupA96Q093pZJWjhFB8GHY0NEeql88Z2t5xw+dbQ91gaAA0tb8yYTRJhctZeCxjniEcnXANDx4tj9Q6OsnUmySzsW5/SA08fU+owMN3DrfikcaQLPqRE5qFO2lPyw1VLHrg7WZ0sNJ2C7UzHxJKyKN2HPuSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MEDJOBfZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749727129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7T84xXSWCXYbJ0BcRNBZS+rZcumc2YBPF5dRlJgvCIQ=;
-	b=MEDJOBfZyG25IE+p9qjIS59GgUzgByWRoPy1D1fgNpNO+cP59QYEtDZVechHJB5DQFMpM8
-	re8e7LLCz0IdrByETtoZ6SXPVrVPdtB4M1bGonoOpg1aW0VnibXHgLzJ/YvrNyHNkFdv7D
-	TYfoE5asgSGvnCzDQdtgli5Pe43m4Y8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-oLHAgfETPii7mcF4IS4JBw-1; Thu,
- 12 Jun 2025 07:18:45 -0400
-X-MC-Unique: oLHAgfETPii7mcF4IS4JBw-1
-X-Mimecast-MFC-AGG-ID: oLHAgfETPii7mcF4IS4JBw_1749727124
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C725E1800292;
-	Thu, 12 Jun 2025 11:18:43 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.181])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34D00180045C;
-	Thu, 12 Jun 2025 11:18:41 +0000 (UTC)
-Date: Thu, 12 Jun 2025 19:18:37 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	coxu@redhat.com, piliu@redhat.com, pmenzel@molgen.mpg.de,
-	chenste@linux.microsoft.com
-Subject: Re: [PATCH v2] ima: add a knob ima= to make IMA be able to be
- disabled
-Message-ID: <aEq3jZp4Cbta8+Ms@MiWiFi-R3L-srv>
-References: <20250611082535.127759-1-bhe@redhat.com>
- <c1ad06ef84170633bdcc7f49b06d646ddbbdc763.camel@linux.ibm.com>
+	s=arc-20240116; t=1749727203; c=relaxed/simple;
+	bh=YqHsxaxpI8FsGsfWWK1FEDhyIw1Uvbz7gYjTt9gIXVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZh4eg6jtyRjI8f2EsAJC4XbxtzVZzJkx+Xe5wUhVO/BBf5VA8O1a1frcrt2NI7Pklk9UTqRBiqtCF4Hb+QD0vV9u/xU9nO0/m9PuKdMCxaed+oFIh2qzQxJ3iBx/EVqPLcnIKdmXQSSRX9Et5ZNzs+EbIehxekLtJgPph2OLRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-53133c3840dso106039e0c.0;
+        Thu, 12 Jun 2025 04:20:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749727199; x=1750331999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TD3QIUg5vFTzQEXDYZJibnSN+u3ERO545tprLcdmPQo=;
+        b=nj5GXQUy9YgA8abknxAamAaH1sKCAFAmT3HxeMFac3b40JqJQqf/twwM0tgyAYCr1Y
+         8JS2w4V/mKZOa4oDmvRhVZ7z+JSkFYOJN1BlQJXvpDgngZvE783fSXTPGQ9nuMxz/1G2
+         v9YsrY9Llc8NljM+Ol/iwl0qFHOw5p7KwP5hnDnCO/3ewhRCd2f+wC1BDwzJVwOb18ht
+         OYBUjgZOJMUXdf8Nv+mrb6QrQ/d66tQG6ozH2gMcukYE6X31nMK0XdHa7clQ3sIteVZt
+         k7cdfA9TQhoJe5HUgOEZJFryi5zzJ4pVaENTUPRi4/DZgOhYzBSUC8lHFwrHcloEruwD
+         xf+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqt1qoR7YQ7SdsXVGdeMl3LirBrrAg1k7JH2XySNZoL1vX3q4oUj20RrU2cerettWuVe4Ggt0ugXt0vDaRZ9rFLKQ=@vger.kernel.org, AJvYcCXMBTHHRkiQ2fgvhDNTwBJD0TRYTxJMVwPRxtjzOtRBHsU+S56fZaqnRpL3vtjmFD+nTiA+eG8z7YLa0Vo=@vger.kernel.org, AJvYcCXXhCpJmcYkrwfn/WJ2+z/b7C0pMUbRuu2Z+pOdRQ7tq/uoy7MT396uM0s4yv429Mr1X1R5QcFAnr5kMP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVPoy704n/vBYn/EPWE/arr/C6HWaXOJiPjwGi+M5syvV7DwmI
+	fyeZPI7L7FVSEvzBlTcQM3H6wo27LIoGlq/lPQlvseQ8bAuL6bDOHZQ599h/akoj
+X-Gm-Gg: ASbGncvw9XEcS4A/YwYn0lk4tU8Bin5i00EPf/Kspsxp685WX6YHRpMQb0GmMtalTIg
+	R0v6ltHytuaNCOyvjC26hipjJ6n016SqW9qpRpev6h1VLGAuhHQIVii2iLD7tftAprwsUTY7/8u
+	OYrLB1+cWqKAmIH2dmQjdy0PGNcQPuShHRRdIh8KAff0RHlT/t6AK+rIjTmgFg2+JuLZzrSBiHp
+	FxuN2u3lp2ObIbp5PxfbtGg6riUNkiEtyetBakbNi8B2qWGCAb6qRy2BUwfqFpTUCuMr5Anv8UB
+	yT1TDc22RPDcfHcN1ANG1tZzNQNRXaZhOlyyGV+09ZVNsmdmOkveQSArKLAcBHHF/b/BxUy9dKm
+	uyS5WDL63wTAKC/VBKQYOT1f0
+X-Google-Smtp-Source: AGHT+IF28ebF8Mg7CzSisDVubvhdnfj5OxKqmZy2OajHlscguj6cAa9QRfsaA5G8EIdpN59aphAKuA==
+X-Received: by 2002:a05:6122:1c1:b0:52a:ee1d:f7fd with SMTP id 71dfb90a1353d-5312227726cmr5129135e0c.8.1749727199067;
+        Thu, 12 Jun 2025 04:19:59 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5312f2ce812sm264785e0c.0.2025.06.12.04.19.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 04:19:58 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-87ee848a74bso214453241.2;
+        Thu, 12 Jun 2025 04:19:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbtXfJGvnSe2dlkjcIGPNwjzPHQsKzCjt+VRyaMqlOGB5vUWF71Kyq4yqlQM3Oi3QP7J9PXwbLUrJv7YMoX8D547U=@vger.kernel.org, AJvYcCX4r+WP9cTxo1o493VUdg9mIzX94nzn3DiNLWSZxHJWLpaxMI6GVFOtUNLzf2oslPSYhh8GIwvLC64hdP0=@vger.kernel.org, AJvYcCXfGvrOQXN83yADEVIewzy/i0JUNuebNsTiF7MzitmG/veJGAUUP5gXGmm6qpnUMv2AvZ2UmPfZ/x0fxpo=@vger.kernel.org
+X-Received: by 2002:a05:6102:c48:b0:4e4:5e11:6832 with SMTP id
+ ada2fe7eead31-4e7bae9d35emr6100563137.7.1749727198094; Thu, 12 Jun 2025
+ 04:19:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1ad06ef84170633bdcc7f49b06d646ddbbdc763.camel@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250611154445.123412-1-niklas.soderlund+renesas@ragnatech.se>
+ <20250611154445.123412-5-niklas.soderlund+renesas@ragnatech.se>
+ <20250611230412.GO24465@pendragon.ideasonboard.com> <20250612100112.GH330732@ragnatech.se>
+In-Reply-To: <20250612100112.GH330732@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 13:19:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVueS4Dhu0e5DJSEDD1Pt-3Ay3tmjs5Jm-5Z2xQXr4XVQ@mail.gmail.com>
+X-Gm-Features: AX0GCFu6xrIMQdM-0ntmPWVxsgReft2rzNEKQKIMX4TRdYgrZvSUQ6KwwPHdPFc
+Message-ID: <CAMuHMdVueS4Dhu0e5DJSEDD1Pt-3Ay3tmjs5Jm-5Z2xQXr4XVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] media: rcar-csi2: Add D-PHY support for V4H
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, linux-media@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/12/25 at 06:59am, Mimi Zohar wrote:
-> Hi Baoquan,
-> 
-> As discussed
-> https://lore.kernel.org/linux-integrity/aC6ezNcUZ%2FulKgpv@MiWiFi-R3L-srv/ the
-> Subject line should indicate disabling IMA is limited to kdump.
+On Thu, 12 Jun 2025 at 12:01, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> On 2025-06-12 02:04:12 +0300, Laurent Pinchart wrote:
+> > > --- a/drivers/media/platform/renesas/rcar-csi2.c
+> > > +++ b/drivers/media/platform/renesas/rcar-csi2.c
+> > > +   if (mbps >=3D 80) {
+> > > +           if (mbps >=3D 2560)
+> > > +                   val =3D 6;
+> > > +           else if (mbps >=3D 1280)
+> > > +                   val =3D 5;
+> > > +           else if (mbps >=3D 640)
+> > > +                   val =3D 4;
+> > > +           else if (mbps >=3D 320)
+> > > +                   val =3D 3;
+> > > +           else if (mbps >=3D 160)
+> > > +                   val =3D 2;
+> > > +           else if (mbps >=3D 80)
+> > > +                   val =3D 1;
+> >
+> > You could possibly replace this with
+> >
+> >               val =3D ilog2(mbps / 80) + 1;
+> >
+> > Up to you.
+>
+> I opted to keep it as is to make it easier to match with the datasheet.
+> The ilog2() is clever but I will never remember why it was used ;-)
 
-Oops, my bad, I forgot this one.
++1 for ilog2() ;-)
 
-> 
-> On Wed, 2025-06-11 at 16:25 +0800, Baoquan He wrote:
-> > Kdump kernel doesn't need IMA functionality, and enabling IMA will cost
-> > extra memory. It would be very helpful to allow IMA to be disabled for
-> > kdump kernel.
-> > 
-> > Hence add a knob ima=on|off here to allow turning IMA off in kdump
-> > kernel if needed.
-> > 
-> > Note that this IMA disabling is only limited to kdump kernel, please don't
-> > abuse it in other kernel and thus serious consequences are caused.
-> 
-> Remove the word 'only', here, and in other places.
+Gr{oetje,eeting}s,
 
-Sure, will udpate in all relevant places. Thanks.
+                        Geert
 
-> 
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> > v1->v2:
-> > - Improve patch log and doc description;
-> > - Make slight adjustment in code; 
-> > These are all made according to Mimi's great suggestions. 
-> > 
-> >  .../admin-guide/kernel-parameters.txt         |  5 ++++
-> >  security/integrity/ima/ima_main.c             | 26 +++++++++++++++++++
-> >  2 files changed, 31 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index b3d62f4c370a..1de67b9c20b4 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -2214,6 +2214,11 @@
-> >  			different crypto accelerators. This option can be used
-> >  			to achieve best performance for particular HW.
-> >  
-> > +	ima=		[IMA] Enable or disable IMA
-> > +			Format: { "off" | "on" }
-> > +			Default: "on"
-> > +			Note that this is only limited to kdump kernel.
-> 
-> Remove the word 'only' ->  Note that disabling IMA is limited to kdump kernel.
-> 
-> > +
-> >  	indirect_target_selection= [X86,Intel] Mitigation control for Indirect
-> >  			Target Selection(ITS) bug in Intel CPUs. Updated
-> >  			microcode is also required for a fix in IBPB.
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index f99ab1a3b0f0..c38f3881d72f 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -27,6 +27,7 @@
-> >  #include <linux/fs.h>
-> >  #include <linux/iversion.h>
-> >  #include <linux/evm.h>
-> > +#include <linux/crash_dump.h>
-> >  
-> >  #include "ima.h"
-> >  
-> > @@ -38,11 +39,30 @@ int ima_appraise;
-> >  
-> >  int __ro_after_init ima_hash_algo = HASH_ALGO_SHA1;
-> >  static int hash_setup_done;
-> > +static int ima_disabled __ro_after_init;
-> >  
-> >  static struct notifier_block ima_lsm_policy_notifier = {
-> >  	.notifier_call = ima_lsm_policy_change,
-> >  };
-> >  
-> > +static int __init ima_setup(char *str)
-> > +{
-> > +	if (!is_kdump_kernel()) {
-> > +		pr_info("Warning: ima setup option only permitted in kdump");
-> > +		return 1;
-> > +	}
-> > +
-> > +	if (strncmp(str, "off", 3) == 0)
-> > +		ima_disabled = 1;
-> > +	else if (strncmp(str, "on", 2) == 0)
-> > +		ima_disabled = 0;
-> > +	else
-> > +		pr_err("Invalid ima setup option: \"%s\" , please specify ima=on|off.", str);
-> > +
-> > +	return 1;
-> > +}
-> > +__setup("ima=", ima_setup);
-> > +
-> >  static int __init hash_setup(char *str)
-> >  {
-> >  	struct ima_template_desc *template_desc = ima_template_desc_current();
-> > @@ -1186,6 +1206,12 @@ static int __init init_ima(void)
-> >  {
-> >  	int error;
-> >  
-> > +	/*Note that turning IMA off is only limited to kdump kernel.*/
-> 
-> Remove the word "only"  -> Note that turning IMA off is intentionally limited to
-> kdump kernel."
-> 
-> > +	if (ima_disabled && is_kdump_kernel()) {
-> > +		pr_info("IMA functionality is disabled");
-> > +		return 0;
-> > +	}
-> > +
-> >  	ima_appraise_parse_cmdline();
-> >  	ima_init_template_list();
-> >  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> 
-> Mimi
-> 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
