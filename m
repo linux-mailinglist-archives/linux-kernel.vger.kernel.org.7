@@ -1,198 +1,333 @@
-Return-Path: <linux-kernel+bounces-683554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F584AD6EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:20:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B45AD6E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FA5B189F30A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:21:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6FBC7A2C4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6C923AB81;
-	Thu, 12 Jun 2025 11:20:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B2205AA3;
-	Thu, 12 Jun 2025 11:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA309246777;
+	Thu, 12 Jun 2025 10:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aO49gxay"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C4C23BCFA;
+	Thu, 12 Jun 2025 10:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727238; cv=none; b=eQq5fCHTiJCGspgYd5gtUORwI/w9LJaiagepKrhmZBd8agHAVaJDd2kHjjkVJipfp2h7u19HiiXiNK9vNNbUSXlYvux7QfxJzFA4TxjZHptG2kId8V2G5CCL0DcqEaGtBKlZqKto3ZKPcCwe0f260+ZxoHYE3JjUJ7tGQZYmJ5Q=
+	t=1749725499; cv=none; b=VDXZNrBqRj3/lqs4WCfZdZrrB/c7pqLABVImtm0YIOPCtDlM00mw6nSsBDYEIkKXuzSWH52T2YoNvSgAOrqg2IuVJphYbWcMxjKcgdU2rOj0+kAjG4L7p9zbDOqvsY+REAhGO7OdQpyiRe55RelNSa+Aohvto+6/GP+sufU/6AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727238; c=relaxed/simple;
-	bh=/ygZKh3s5HqSb8qbAOhYwxhMlcVBJh5c74wEX/ta2i0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p/pPm/1NLvKaJgxMI98sJNslo2FWyBXXqaCrwqubqVDlFyVvoEksLH/WsYAP0/9k5Alk8IJa1QArqT4I7B4Ox6PAqwlOL/+GbvHnPAev2R7ao3BR3wpXEEO2buzBlN2pIw9ns69MHNJz689yFYufrfOA63/rEuBCKhB+R4qoK94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bHzq30QBmz9st0;
-	Thu, 12 Jun 2025 12:51:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id A3wENeL0uxzI; Thu, 12 Jun 2025 12:51:26 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bHzq02dsNz9sqS;
-	Thu, 12 Jun 2025 12:51:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 560198B77B;
-	Thu, 12 Jun 2025 12:51:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id dOKdbpxMWGQb; Thu, 12 Jun 2025 12:51:24 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D6C308B769;
-	Thu, 12 Jun 2025 12:51:23 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	s=arc-20240116; t=1749725499; c=relaxed/simple;
+	bh=HKv+RczLAZ17iqylg22JlcAa16U8HVKbqtgbPN/3rrM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E+RGN6qPElqO4qZu9MANSmhjzQz3x76d171L3x/fcbzEpaRPjRbrWLijh+H0l4c6CS9AJTKNxbP3JuV+1pVl2xn6X+7syESGDQ0T8YnHiG+AUhdNVRNg0fztZcdk+t2rKQjxiMahXwVSM5iileMrzL2VLEiXGbL4BY569eDK/D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aO49gxay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E41BC4CEEE;
+	Thu, 12 Jun 2025 10:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749725498;
+	bh=HKv+RczLAZ17iqylg22JlcAa16U8HVKbqtgbPN/3rrM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aO49gxay9bAykPC0QZcmIl7XHKGGMrp1dwVKDmKPefGeezyBbVis/1s3ZqPtBkDN1
+	 ySK0Ocks5vOLZNXFVG45wYhjeEpDo74myMPibgFEjV20ISoa2cC0QItgO/tN1HOroV
+	 INN5vmR+CAnWaJpY1C3sNfIZvARifUgoOWV5ZGw3SZoNRHxgOAQu8E7O/TaAovQw7f
+	 A8DVpW269wF7sRO0VF5FYf3QtoGHUvCvw7H6bffEP0o8MTcWrjnq0kzNXS0ERCs8bI
+	 jDUVdQmAZ07fvUA8ADWHwMh1I7VqDllMzEeEyVhHtuWFt45kceBGgQwNuBBQREq++f
+	 CVE3bzopG+jRQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uPfWx-006DBO-DR;
+	Thu, 12 Jun 2025 11:51:35 +0100
+Date: Thu, 12 Jun 2025 11:51:34 +0100
+Message-ID: <86v7p1cjwp.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
 	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [RFC PATCH 3/3] ALSA: pcm: Convert snd_pcm_sync_ptr() to user_access_begin/user_access_end()
-Date: Thu, 12 Jun 2025 12:51:05 +0200
-Message-ID: <79b86a0618328ba1d0cb5cf4011fd73ac6900e8f.1749724478.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <7baa34d4046c7750799b11830d38a46f8b581765.1749724478.git.christophe.leroy@csgroup.eu>
-References: <7baa34d4046c7750799b11830d38a46f8b581765.1749724478.git.christophe.leroy@csgroup.eu>
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH V4 1/2] arm64/debug: Drop redundant DBG_MDSCR_* macros
+In-Reply-To: <ddc006af-3084-4fef-b822-144fb404bc8d@arm.com>
+References: <20250612033547.480952-1-anshuman.khandual@arm.com>
+	<20250612033547.480952-2-anshuman.khandual@arm.com>
+	<86wm9hcr14.wl-maz@kernel.org>
+	<ddc006af-3084-4fef-b822-144fb404bc8d@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749725467; l=5293; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=/ygZKh3s5HqSb8qbAOhYwxhMlcVBJh5c74wEX/ta2i0=; b=PPocy+3Fk/wKMN2l5HyfagLgzOH6RLcqhueK0sOBWR8sNcTdEeGAGRwHyryfleZhgQoulimwG owgwT/WKy9ZDMzrZT0EUSWmYgmipDbq6z90rLtNAlBOujPoR+h1b6zd
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Now that snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user()
-are converted to user_access_begin/user_access_end(),
-snd_pcm_sync_ptr_get_user() is more efficient than a raw get_user()
-followed by a copy_from_user(). And because copy_{to/from}_user() are
-generic functions focussed on transfer of big data blocks to/from user,
-snd_pcm_sync_ptr_put_user() is also more efficient for small amont of
-data.
+On Thu, 12 Jun 2025 11:24:04 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>=20
+>=20
+>=20
+> On 12/06/25 1:47 PM, Marc Zyngier wrote:
+> > On Thu, 12 Jun 2025 04:35:46 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> >>
+> >> MDSCR_EL1 has already been defined in tools sysreg format and hence ca=
+n be
+> >> used in all debug monitor related call paths. But using generated sysr=
+eg
+> >> definitions causes build warnings because there is a mismatch between =
+mdscr
+> >> variable (u32) and GENMASK() based masks (long unsigned int). Convert =
+all
+> >> variables handling MDSCR_EL1 register as u64 which also reflects its t=
+rue
+> >> width as well.
+> >>
+> >> ----------------------------------------------------------------------=
+----
+> >> arch/arm64/kernel/debug-monitors.c: In function =E2=80=98disable_debug=
+_monitors=E2=80=99:
+> >> arch/arm64/kernel/debug-monitors.c:108:13: warning: conversion from =
+=E2=80=98long
+> >> unsigned int=E2=80=99 to =E2=80=98u32=E2=80=99 {aka =E2=80=98unsigned =
+int=E2=80=99} changes value from
+> >> =E2=80=9818446744073709518847=E2=80=99 to =E2=80=984294934527=E2=80=99=
+ [-Woverflow]
+> >>   108 |   disable =3D ~MDSCR_EL1_MDE;
+> >>       |             ^
+> >> ----------------------------------------------------------------------=
+----
+> >>
+> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >> Cc: Will Deacon <will@kernel.org>
+> >> Cc: Mark Rutland <mark.rutland@arm.com>
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Reviewed-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  arch/arm64/include/asm/assembler.h      |  4 ++--
+> >>  arch/arm64/include/asm/debug-monitors.h |  6 ------
+> >>  arch/arm64/kernel/debug-monitors.c      | 22 +++++++++++-----------
+> >>  arch/arm64/kernel/entry-common.c        |  4 ++--
+> >>  4 files changed, 15 insertions(+), 21 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/a=
+sm/assembler.h
+> >> index ad63457a05c5..f229d96616e5 100644
+> >> --- a/arch/arm64/include/asm/assembler.h
+> >> +++ b/arch/arm64/include/asm/assembler.h
+> >> @@ -53,7 +53,7 @@
+> >>  	.macro	disable_step_tsk, flgs, tmp
+> >>  	tbz	\flgs, #TIF_SINGLESTEP, 9990f
+> >>  	mrs	\tmp, mdscr_el1
+> >> -	bic	\tmp, \tmp, #DBG_MDSCR_SS
+> >> +	bic	\tmp, \tmp, #MDSCR_EL1_SS
+> >>  	msr	mdscr_el1, \tmp
+> >>  	isb	// Take effect before a subsequent clear of DAIF.D
+> >>  9990:
+> >> @@ -63,7 +63,7 @@
+> >>  	.macro	enable_step_tsk, flgs, tmp
+> >>  	tbz	\flgs, #TIF_SINGLESTEP, 9990f
+> >>  	mrs	\tmp, mdscr_el1
+> >> -	orr	\tmp, \tmp, #DBG_MDSCR_SS
+> >> +	orr	\tmp, \tmp, #MDSCR_EL1_SS
+> >>  	msr	mdscr_el1, \tmp
+> >>  9990:
+> >>  	.endm
+> >> diff --git a/arch/arm64/include/asm/debug-monitors.h b/arch/arm64/incl=
+ude/asm/debug-monitors.h
+> >> index 8f6ba31b8658..1f37dd01482b 100644
+> >> --- a/arch/arm64/include/asm/debug-monitors.h
+> >> +++ b/arch/arm64/include/asm/debug-monitors.h
+> >> @@ -13,14 +13,8 @@
+> >>  #include <asm/ptrace.h>
+> >> =20
+> >>  /* Low-level stepping controls. */
+> >> -#define DBG_MDSCR_SS		(1 << 0)
+> >>  #define DBG_SPSR_SS		(1 << 21)
+> >> =20
+> >> -/* MDSCR_EL1 enabling bits */
+> >> -#define DBG_MDSCR_KDE		(1 << 13)
+> >> -#define DBG_MDSCR_MDE		(1 << 15)
+> >> -#define DBG_MDSCR_MASK		~(DBG_MDSCR_KDE | DBG_MDSCR_MDE)
+> >> -
+> >>  #define	DBG_ESR_EVT(x)		(((x) >> 27) & 0x7)
+> >> =20
+> >>  /* AArch64 */
+> >> diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/de=
+bug-monitors.c
+> >> index 58f047de3e1c..08f1d02507cd 100644
+> >> --- a/arch/arm64/kernel/debug-monitors.c
+> >> +++ b/arch/arm64/kernel/debug-monitors.c
+> >> @@ -34,7 +34,7 @@ u8 debug_monitors_arch(void)
+> >>  /*
+> >>   * MDSCR access routines.
+> >>   */
+> >> -static void mdscr_write(u32 mdscr)
+> >> +static void mdscr_write(u64 mdscr)
+> >>  {
+> >>  	unsigned long flags;
+> >>  	flags =3D local_daif_save();
+> >> @@ -43,7 +43,7 @@ static void mdscr_write(u32 mdscr)
+> >>  }
+> >>  NOKPROBE_SYMBOL(mdscr_write);
+> >> =20
+> >> -static u32 mdscr_read(void)
+> >> +static u64 mdscr_read(void)
+> >>  {
+> >>  	return read_sysreg(mdscr_el1);
+> >>  }
+> >> @@ -79,16 +79,16 @@ static DEFINE_PER_CPU(int, kde_ref_count);
+> >> =20
+> >>  void enable_debug_monitors(enum dbg_active_el el)
+> >>  {
+> >> -	u32 mdscr, enable =3D 0;
+> >> +	u64 mdscr, enable =3D 0;
+> >> =20
+> >>  	WARN_ON(preemptible());
+> >> =20
+> >>  	if (this_cpu_inc_return(mde_ref_count) =3D=3D 1)
+> >> -		enable =3D DBG_MDSCR_MDE;
+> >> +		enable =3D MDSCR_EL1_MDE;
+> >> =20
+> >>  	if (el =3D=3D DBG_ACTIVE_EL1 &&
+> >>  	    this_cpu_inc_return(kde_ref_count) =3D=3D 1)
+> >> -		enable |=3D DBG_MDSCR_KDE;
+> >> +		enable |=3D MDSCR_EL1_KDE;
+> >> =20
+> >>  	if (enable && debug_enabled) {
+> >>  		mdscr =3D mdscr_read();
+> >> @@ -100,16 +100,16 @@ NOKPROBE_SYMBOL(enable_debug_monitors);
+> >> =20
+> >>  void disable_debug_monitors(enum dbg_active_el el)
+> >>  {
+> >> -	u32 mdscr, disable =3D 0;
+> >> +	u64 mdscr, disable =3D 0;
+> >> =20
+> >>  	WARN_ON(preemptible());
+> >> =20
+> >>  	if (this_cpu_dec_return(mde_ref_count) =3D=3D 0)
+> >> -		disable =3D ~DBG_MDSCR_MDE;
+> >> +		disable =3D ~MDSCR_EL1_MDE;
+> >> =20
+> >>  	if (el =3D=3D DBG_ACTIVE_EL1 &&
+> >>  	    this_cpu_dec_return(kde_ref_count) =3D=3D 0)
+> >> -		disable &=3D ~DBG_MDSCR_KDE;
+> >> +		disable &=3D ~MDSCR_EL1_KDE;
+> >> =20
+> >>  	if (disable) {
+> >>  		mdscr =3D mdscr_read();
+> >> @@ -415,7 +415,7 @@ void kernel_enable_single_step(struct pt_regs *reg=
+s)
+> >>  {
+> >>  	WARN_ON(!irqs_disabled());
+> >>  	set_regs_spsr_ss(regs);
+> >> -	mdscr_write(mdscr_read() | DBG_MDSCR_SS);
+> >> +	mdscr_write(mdscr_read() | MDSCR_EL1_SS);
+> >>  	enable_debug_monitors(DBG_ACTIVE_EL1);
+> >>  }
+> >>  NOKPROBE_SYMBOL(kernel_enable_single_step);
+> >> @@ -423,7 +423,7 @@ NOKPROBE_SYMBOL(kernel_enable_single_step);
+> >>  void kernel_disable_single_step(void)
+> >>  {
+> >>  	WARN_ON(!irqs_disabled());
+> >> -	mdscr_write(mdscr_read() & ~DBG_MDSCR_SS);
+> >> +	mdscr_write(mdscr_read() & ~MDSCR_EL1_SS);
+> >>  	disable_debug_monitors(DBG_ACTIVE_EL1);
+> >>  }
+> >>  NOKPROBE_SYMBOL(kernel_disable_single_step);
+> >> @@ -431,7 +431,7 @@ NOKPROBE_SYMBOL(kernel_disable_single_step);
+> >>  int kernel_active_single_step(void)
+> >>  {
+> >>  	WARN_ON(!irqs_disabled());
+> >> -	return mdscr_read() & DBG_MDSCR_SS;
+> >> +	return mdscr_read() & MDSCR_EL1_SS;
+> >>  }
+> >>  NOKPROBE_SYMBOL(kernel_active_single_step);
+> >> =20
+> >> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entr=
+y-common.c
+> >> index 7c1970b341b8..171f93f2494b 100644
+> >> --- a/arch/arm64/kernel/entry-common.c
+> >> +++ b/arch/arm64/kernel/entry-common.c
+> >> @@ -344,7 +344,7 @@ static DEFINE_PER_CPU(int, __in_cortex_a76_erratum=
+_1463225_wa);
+> >> =20
+> >>  static void cortex_a76_erratum_1463225_svc_handler(void)
+> >>  {
+> >> -	u32 reg, val;
+> >> +	u64 reg, val;
+> >> =20
+> >>  	if (!unlikely(test_thread_flag(TIF_SINGLESTEP)))
+> >>  		return;
+> >> @@ -354,7 +354,7 @@ static void cortex_a76_erratum_1463225_svc_handler=
+(void)
+> >> =20
+> >>  	__this_cpu_write(__in_cortex_a76_erratum_1463225_wa, 1);
+> >>  	reg =3D read_sysreg(mdscr_el1);
+> >> -	val =3D reg | DBG_MDSCR_SS | DBG_MDSCR_KDE;
+> >> +	val =3D reg | MDSCR_EL1_SS | MDSCR_EL1_KDE;
+> >>  	write_sysreg(val, mdscr_el1);
+> >>  	asm volatile("msr daifclr, #8");
+> >>  	isb();
+> >=20
+> > Whilst you're at it, please also change the open-coded constant in
+> > __cpu_setup to MDSCR_EL1_TDCC.
+>=20
+> I believe you are suggesting about the following change, will fold
+> in the patch. But I guess 'mov' would still be preferred compared
+> to 'mov_q' as MDSCR_EL1_TDCC is a 32 bit constant (atleast the non
+> zero portion) ?
 
-So use snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user() in
-snd_pcm_sync_ptr() too.
+Digression: I'm not sure why you'd ever consider using mov_q for a
+single-bit constant, irrespective of where that bit is set. The mov
+instruction (and all the logical operations taking an immediate as a
+parameter) can encode any contiguous stream of 1s with an arbitrary
+rotation. See C6.2.247 and co.
 
-In order to have snd_pcm_mmap_status32 similar to snd_pcm_mmap_status,
-replace to tsamp_{sec/nsec} and audio_tstamp_{sec/nsec} by equivalent
-struct __snd_timespec.
+>=20
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -454,7 +454,7 @@ SYM_FUNC_START(__cpu_setup)
+>         dsb     nsh
+>=20
+>         msr     cpacr_el1, xzr                  // Reset cpacr_el1
+> -       mov     x1, #1 << 12                    // Reset mdscr_el1 and di=
+sable
+> +       mov     x1, MDSCR_EL1_TDCC              // Reset mdscr_el1 and di=
+sable
+>         msr     mdscr_el1, x1                   // access to the DCC from=
+ EL0
+>         reset_pmuserenr_el0 x1                  // Disable PMU access fro=
+m EL0
+>         reset_amuserenr_el0 x1                  // Disable AMU access fro=
+m EL0
 
-snd_pcm_ioctl_sync_ptr_buggy() is left as it is because the conversion
-wouldn't be straigh-forward do to the workaround it provides.
+Yes.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- sound/core/pcm_native.c | 52 +++++++++++++++++++----------------------
- 1 file changed, 24 insertions(+), 28 deletions(-)
+	M.
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 554352f546c9..31ddfdb0edfa 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -3077,11 +3077,11 @@ failed:										\
- 		goto failed;							\
- 	unsafe_put_user(__s.state, &__src->s.status.state, failed);		\
- 	unsafe_put_user(__s.hw_ptr, &__src->s.status.hw_ptr, failed);		\
--	unsafe_put_user(__s.tstamp.tv_sec, &__src->s.status.tstamp_sec, failed);\
--	unsafe_put_user(__s.tstamp.tv_nsec, &__src->s.status.tstamp_nsec, failed);		\
-+	unsafe_put_user(__s.tstamp.tv_sec, &__src->s.status.tstamp.tv_sec, failed);		\
-+	unsafe_put_user(__s.tstamp.tv_nsec, &__src->s.status.tstamp.tv_nsec, failed);		\
- 	unsafe_put_user(__s.suspended_state, &__src->s.status.suspended_state, failed);		\
--	unsafe_put_user(__s.audio_tstamp.tv_sec, &__src->s.status.audio_tstamp_sec, failed);	\
--	unsafe_put_user(__s.audio_tstamp.tv_nsec, &__src->s.status.audio_tstamp_nsec, failed);	\
-+	unsafe_put_user(__s.audio_tstamp.tv_sec, &__src->s.status.audio_tstamp.tv_sec, failed);	\
-+	unsafe_put_user(__s.audio_tstamp.tv_nsec, &__src->s.status.audio_tstamp.tv_nsec, failed);\
- 	unsafe_put_user(__c.appl_ptr, &__src->c.control.appl_ptr, failed);	\
- 	unsafe_put_user(__c.avail_min, &__src->c.control.avail_min, failed);	\
- 	err = 0;								\
-@@ -3094,45 +3094,43 @@ static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
- 			    struct snd_pcm_sync_ptr __user *_sync_ptr)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct snd_pcm_sync_ptr sync_ptr;
- 	volatile struct snd_pcm_mmap_status *status;
- 	volatile struct snd_pcm_mmap_control *control;
-+	u32 sflags;
-+	struct snd_pcm_mmap_control scontrol;
-+	struct snd_pcm_mmap_status sstatus;
- 	int err;
- 
--	memset(&sync_ptr, 0, sizeof(sync_ptr));
--	if (get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags)))
-+	if (snd_pcm_sync_ptr_get_user(sflags, scontrol, _sync_ptr))
- 		return -EFAULT;
--	if (copy_from_user(&sync_ptr.c.control, &(_sync_ptr->c.control), sizeof(struct snd_pcm_mmap_control)))
--		return -EFAULT;	
- 	status = runtime->status;
- 	control = runtime->control;
--	if (sync_ptr.flags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
-+	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
- 		err = snd_pcm_hwsync(substream);
- 		if (err < 0)
- 			return err;
- 	}
- 	scoped_guard(pcm_stream_lock_irq, substream) {
--		if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_APPL)) {
--			err = pcm_lib_apply_appl_ptr(substream,
--						     sync_ptr.c.control.appl_ptr);
-+		if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL)) {
-+			err = pcm_lib_apply_appl_ptr(substream, scontrol.appl_ptr);
- 			if (err < 0)
- 				return err;
- 		} else {
--			sync_ptr.c.control.appl_ptr = control->appl_ptr;
-+			scontrol.appl_ptr = control->appl_ptr;
- 		}
--		if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_AVAIL_MIN))
--			control->avail_min = sync_ptr.c.control.avail_min;
-+		if (!(sflags & SNDRV_PCM_SYNC_PTR_AVAIL_MIN))
-+			control->avail_min = scontrol.avail_min;
- 		else
--			sync_ptr.c.control.avail_min = control->avail_min;
--		sync_ptr.s.status.state = status->state;
--		sync_ptr.s.status.hw_ptr = status->hw_ptr;
--		sync_ptr.s.status.tstamp = status->tstamp;
--		sync_ptr.s.status.suspended_state = status->suspended_state;
--		sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
-+			scontrol.avail_min = control->avail_min;
-+		sstatus.state = status->state;
-+		sstatus.hw_ptr = status->hw_ptr;
-+		sstatus.tstamp = status->tstamp;
-+		sstatus.suspended_state = status->suspended_state;
-+		sstatus.audio_tstamp = status->audio_tstamp;
- 	}
--	if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_APPL))
-+	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
- 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
--	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
-+	if (snd_pcm_sync_ptr_put_user(sstatus, scontrol, _sync_ptr))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -3141,11 +3139,9 @@ struct snd_pcm_mmap_status32 {
- 	snd_pcm_state_t state;
- 	s32 pad1;
- 	u32 hw_ptr;
--	s32 tstamp_sec;
--	s32 tstamp_nsec;
-+	struct __snd_timespec tstamp;
- 	snd_pcm_state_t suspended_state;
--	s32 audio_tstamp_sec;
--	s32 audio_tstamp_nsec;
-+	struct __snd_timespec audio_tstamp;
- } __packed;
- 
- struct snd_pcm_mmap_control32 {
--- 
-2.47.0
-
+--=20
+Without deviation from the norm, progress is not possible.
 
