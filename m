@@ -1,153 +1,98 @@
-Return-Path: <linux-kernel+bounces-683153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B544AD69A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92757AD69C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F11169AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CD23A9AF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020DF22156F;
-	Thu, 12 Jun 2025 07:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="OrgM7fk2"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2DB220F50;
+	Thu, 12 Jun 2025 07:59:26 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA72745C;
-	Thu, 12 Jun 2025 07:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47FC21771F;
+	Thu, 12 Jun 2025 07:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749714972; cv=none; b=HyN3NXLJ3lZ6s6xQ6r9o5JOvViYK3A/ZC6lWg2LRsLsYl2g+pRBi5sKDPzFFht7U06WFV+ONF8g/c/UHownCP5OsAuQWvFdVpwlBca/Rk7VqUw3ViHWVX2GNyqVIcM++mkhQUGP098QnW3HNTfOdszezTxsbMG2pmOnie2586O4=
+	t=1749715166; cv=none; b=s3RXJDIaPF0jM0K8VX/eTaIp8FcZ4s4ksyLBPrUiqiHO4GHGiPkSFfuqwaDiiW2+25swM3DEmJ3C8Nesf2UO/fq4ssMVZk2dT5GT0pv/OGUNt3YrLLnezqBuesL3d9jhibfuSaPmfmM8Czu6lZenmeLf9NAtkrTo4hrXC3MzHf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749714972; c=relaxed/simple;
-	bh=SBa50iPVOuWP8XqFkMzDlTFFxDKtuzUJhnHSoJPWS0M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ehXGf+6xpm3chluUICjxu1/8+hwnPFlGR5nPWQ26FIgVDFOJ9YHviTV5HUq+yuvaaaPkr3ttjMOIXfS9Uuw9O0FyUtrHmWNtBuC5iG+I8kckQkiCOvOeUqQkEMKtB80kA+vDIm5gZXSTGOIK6PQwBKB1jEqObDW6bcHbK8qAc4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=OrgM7fk2; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1749714968;
-	bh=wEfLjsMWOcY/1xx1MExuBedf8lJgAMiB/kQuvYjhW5Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=OrgM7fk2giHneU0ZGmbu6sAUqh0o40hFWABuR8jC1UoQ6AMuK23qacFbdtW1PKj96
-	 J0bXtMXgXsKDTVzDwKYXcEhpLrP50g+ShbQsfkkMxa8o0+MRQA30dyAUdwx5bV5urY
-	 IEf9R48l50xXY7Sq8MyhKVgJFvd+e9IX2URjPXiU2FW5dMGPcsyhi1gppru8foPSMR
-	 cs/Lw/ZYLYUKVpgXJzzimXU+faACgixnOiAMf3b7c3eCIs4mUssVDrJARPgkLRM5H8
-	 biL1kpIltutmH3L2Qlyg4zbS7rHVSEFfcQ2dPEqyRAWfNJ8dI9lzlc3lU4jQ4xLde/
-	 K8HF2RX7ivetQ==
-Received: from [IPv6:2405:6e00:2427:47f7:b08d:7091:d46e:c806] (unknown [120.20.31.221])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EC56B65F91;
-	Thu, 12 Jun 2025 15:56:04 +0800 (AWST)
-Message-ID: <67c89ca729669f55e2659ad8070a154c59ef83db.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 1/1] ARM: dts: aspeed: Add device tree for Nvidia's
- GB200 UT3.0b platform BMC
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Donald Shannon <donalds@nvidia.com>, robh@kernel.org,
- krzk+dt@kernel.org,  conor+dt@kernel.org
-Cc: joel@jms.id.au, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, etanous@nvidia.com
-Date: Thu, 12 Jun 2025 17:26:03 +0930
-In-Reply-To: <20250611013025.2898412-2-donalds@nvidia.com>
-References: <20250611013025.2898412-1-donalds@nvidia.com>
-	 <20250611013025.2898412-2-donalds@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1749715166; c=relaxed/simple;
+	bh=tYh197tkZa5hHOKuUeE8HoOoivjmnDPiZOSGRonpliQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C0AzxRvIZde8o4XV545eXqiU9tcsmgL5D8JMSDAVI7/0hjebCAMIRb3mJrQEcBkftB7+VrQfXA2UndpbFQWm3QbL3mzLZFFFj53dCFavBUBzUeVeYWHGytpHEb+qIcrMipQxK86oyQqZn8MZkZPMexCpKIZ8CUot2lZt0LwvJ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <alexei.starovoitov@gmail.com>
+CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
+	<daniel@iogearbox.net>, <eddyz87@gmail.com>, <haoluo@google.com>,
+	<jakub@cloudflare.com>, <john.fastabend@gmail.com>, <jolsa@kernel.org>,
+	<kpsingh@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <martin.lau@linux.dev>, <mhal@rbox.co>,
+	<mykolal@fb.com>, <sdf@fomichev.me>, <shuah@kernel.org>, <song@kernel.org>,
+	<thinker.li@gmail.com>, <wangfushuai@baidu.com>, <yonghong.song@linux.dev>
+Subject: Re: [PATCH] selftests/bpf: fix signedness bug in redir_partial()
+Date: Thu, 12 Jun 2025 15:57:00 +0800
+Message-ID: <20250612075700.24193-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <CAADnVQ+SSPhZNN05F2-MS_79Vhp+mSTWF3Ss1rcoWRnaDjFx+A@mail.gmail.com>
+References: <CAADnVQ+SSPhZNN05F2-MS_79Vhp+mSTWF3Ss1rcoWRnaDjFx+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc7.internal.baidu.com (172.31.50.51) To
+ bjkjy-mail-ex22.internal.baidu.com (172.31.50.16)
+X-FEAS-Client-IP: 172.31.50.16
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hi Donald,
+>> When xsend() returns -1 (error), the check 'n < sizeof(buf)' incorrectly
+>> treats it as success due to unsigned promotion. Explicitly check for -1
+>> first.
+>>
+>> Fixes: a4b7193d8efd ("selftests/bpf: Add sockmap test for redirecting partial skb data")
+>> Signed-off-by: wangfushuai <wangfushuai@baidu.com>
+> 
+> Looks good, but please spell out your name as First Last
+> in both From and Signed-off
+> 
+> Also use [PATCH bpf-next] in subject
+> 
+> pw-bot: cr
 
-In addition to addressing Krzysztof's comments regarding checkpatch:
+Will fix and send v2 shortly. Thanks for the review!
 
-On Tue, 2025-06-10 at 18:30 -0700, Donald Shannon wrote:
-> The GB200NVL UT3.0b BMC is an Aspeed Ast2600 based BMC
-> for Nvidia Blackwell GB200NVL platform.
-
-Can you add some words contrasting this platform to the one submitted
-by Willie?
-
-https://lore.kernel.org/all/20250401153955.314860-3-wthai@nvidia.com/
-
-
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
->=20
-> Link: https://www.aspeedtech.com/server_ast2600/=C2=A0[1]
-> Link:
-> https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703=C2=A0[2]
->=20
-
-Please omit the blank line here so the Link: tags are part of the
-trailer.
-
-> Signed-off-by: Donald Shannon <donalds@nvidia.com>
-> ---
-> Changes v1 -> v2:
-> =C2=A0 - Changed phy-mode to rgmii-id [Lunn]
-> =C2=A0 - Removed redundant max-speed for mac0 [Lunn]
-> =C2=A0 - Fixed typo from gb200nvl to gb200 in Makefile
-> Changes v2 -> v3:
-> =C2=A0 - Fixed whitespace issues [Krzysztof]
-> =C2=A0 - Fixed schema validation issues from my end ( there are still
-> issues with the aspeed dtsi file that are not related to this new
-> dts) [Herring]
-> =C2=A0 - Reordered to follow style guide [Krzysztof]
-> =C2=A0 - Removed redundant status okays
-> =C2=A0 - Changed vcc to vdd for the power gating on the gpio expanders
-> Changes v3 -> v4:
-> =C2=A0 - Added changelog [Krzysztof]
-> =C2=A0 - Added nvidia,gb200-ut30b board binding [Krzysztof]
-> =C2=A0 - Removed unused imports
-> =C2=A0 - Reordered a couple other style guide violations
-> =C2=A0 - Added back in a couple needed "status okay"s
-> ---
-> =C2=A0.../bindings/arm/aspeed/aspeed.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
-> =C2=A0arch/arm/boot/dts/aspeed/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
-> =C2=A0.../aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts=C2=A0 | 1154
-> +++++++++++++++++
-> =C2=A03 files changed, 1156 insertions(+)
-> =C2=A0create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200=
--
-> ut30b.dts
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> index a3736f134130..420fabf05b24 100644
-> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> @@ -98,6 +98,7 @@ properties:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - inventec,starscream-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - inventec,transformer-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - jabil,rbp-bmc
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 - nvidia,gb200-ut30b
-
-For what it's worth, checkpatch reports at least the following:
-
-   167: WARNING: DT binding docs and includes should be a separate patch. S=
-ee: Documentation/devicetree/bindings/submitting-patches.rst
-   180: WARNING: added, moved or deleted file(s), does MAINTAINERS need upd=
-ating?
-   193: WARNING: DT compatible string "nvidia,gb200-ut30b" appears un-docum=
-ented -- check ./Documentation/devicetree/bindings/
-
-Thanks,
-
-Andrew
+--
+Regards,
+Wang
+ 
+>> ---
+>>  tools/testing/selftests/bpf/prog_tests/sockmap_listen.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+>> index 1d98eee7a2c3..f1bdccc7e4e7 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+>> @@ -924,6 +924,8 @@ static void redir_partial(int family, int sotype, int sock_map, int parser_map)
+>>                 goto close;
+>>
+>>         n = xsend(c1, buf, sizeof(buf), 0);
+>> +       if (n == -1)
+>> +               goto close;
+>>         if (n < sizeof(buf))
+>>                 FAIL("incomplete write");
+>>
+>> --
+>> 2.36.1
 
