@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-683009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1760AD67BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:14:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4464DAD67B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEAD87AA3BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375B81BC0788
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010821F4C8D;
-	Thu, 12 Jun 2025 06:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789B91EFF9F;
+	Thu, 12 Jun 2025 06:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="CcLJrhIV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F291F2B88
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ipd/oNAS"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD9B1DE2CC;
+	Thu, 12 Jun 2025 06:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749708771; cv=none; b=F1YMVj3dc5VjLcOVclkCJ+r+dp1ejBlQBCqlBdYOxdb4Et0aHY9j5S3ges2XXjDP/SGvL6vh92j/DkuflC6bu5UTc6wAJK3Ngm33lnjPNHHl1TrSfKVHKHzqS1/TPaQI4qRMKGELFpkgqlZAmfpXju1nU0s+DjlCSA8IbMKimmc=
+	t=1749708730; cv=none; b=lPLHXz1U3hCuCZ/bouyNL7eDjaQ0gEGO+8rQG3yiAsCPL9toASM8GqM711RsFau2bCZwPtjIt/B5NQZMcMF3q2YoNW33TcF6h91TTYmqwQZhLF6DomSDfPNtObcFuZhWiiftn8OgzEtcLXgwtQg0dzWdPSXaVkuxXVaXTq8DRfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749708771; c=relaxed/simple;
-	bh=0mNvayiA4tnzp8kDTCtTD6lvIrDP/VYeD+91qYRCn74=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=VPdRgcm/joNTSM2KPBg0yGfubSuivO5qY0qvZCLoLW0qsjIaGzp8lbiKXMowNcKYS9sz7l8nHY1tj0M2EntVHW4uOMcuNnsJHy/GdRL4yCn6/mM+1yDhdvQiUIdO99LsTTng1SQaP8aIjdUzK7S6K5fm0CW6Rf/p6azMw6WhTeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=CcLJrhIV reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=uqsR+yBXJaeE7Gc/RSa8YhyVSpecmvVTUqnfn/mFK0k=; b=C
-	cLJrhIVjF8wuN2+QsJ1M6HPkdsCWjG/xaKOhP6mySJWs7itSwCEKfpzaxPPYmU2z
-	abGKCLAUZAb6MqeVwYAbmjnbu3LIhs6m+VzFcMBNtBAc0WYI23PimHBp/g6wSUXX
-	cc37VpOttrVx/HfAp1WGwvCVZdlABqwEfFReyhHXzA=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-106 (Coremail) ; Thu, 12 Jun 2025 14:11:37 +0800
- (CST)
-Date: Thu, 12 Jun 2025 14:11:37 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Heiko Stuebner" <heiko@sntech.de>
-Cc: hjc@rock-chips.com, andy.yan@rock-chips.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re:[PATCH] drm/rockchip: vop2: fail cleanly if missing a primary
- plane for a video-port
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250610212748.1062375-1-heiko@sntech.de>
-References: <20250610212748.1062375-1-heiko@sntech.de>
-X-NTES-SC: AL_Qu2fC/ubt04i4SmdZ+kfmkcVgOw9UcO5v/Qk3oZXOJF8jCDp5y4hcHpTPUXy9sWDKyGinQiHTBd1y8NDfahcdIMob9tkaclLAvXdvK0Y9HVFTw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1749708730; c=relaxed/simple;
+	bh=hgp8ddGIYHXFPm3g8X4vAL9Gn7HJm3ckr03Yw3f2l18=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h2IzWZSS0nZ6BaH1+PWvtwyZzUX8WRT6FakID+nq7m6nvU1nlSI2JsV7f2ghJATc2JT6GjfLoD38hwfV1XtUOAPdSTd/fFYf/l5+a6hIdm7Dc+5RrF+Si9U5a5vuttWJnk/Xe+0Wuupy4Ow8nK0wFQfjEndKG6r+5Mq8/pJtvaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ipd/oNAS; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-73972a54919so605921b3a.3;
+        Wed, 11 Jun 2025 23:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749708728; x=1750313528; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TQ9qqpLYmxPOpnIwl79iRCmvXfUBKYDUG2VHDIH0aXs=;
+        b=Ipd/oNASTlDLIFghVR4spH0AeYI3B3AZW5boKrVKJbHlWtM2wDZqTJ8YyxUBRHRTqv
+         XCAdvn0TOuMVNzA7A3xyFXfUiHLgZgRPxBy0plrfbdXT/N70hTICVCRHlwBZWMiRmLkt
+         tp/wikMZ6WF3uWIOxTYwHg6A3d1YSrIh0E48a1sdxrd3O2LyuikHBA6cC5eo6h6Uv8/Z
+         mdlh4fT+mr6syNXaLgGsuKqPM6DSY9TCvswM6eSPRtXseXoYKvhCBshtUjqkCtTBcKK4
+         +GLo4nlPhFR+1ZOh1BuJ7LSiWKK+eceTwOM3AUSm7IZjwZ6Yp3jNJ4YR5qeSN6U+C4B8
+         pyRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749708728; x=1750313528;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TQ9qqpLYmxPOpnIwl79iRCmvXfUBKYDUG2VHDIH0aXs=;
+        b=X8cIoU1K3CDqH03dVPNwZ+yyhk4v3I5jfcJmujZRmaijxGiEmC7fh7vGuImNGdA+lq
+         fuVW43N3VAsBe69qtyI7O82+n0hvBXcUpzzz5ZXJUP+4sBaFM58ZPWt9NTJyb4Oenm17
+         DU09yiCjqd30awFI04b12FXOHjq8NS3X/EU8hJWLYVcEm0a1UqnBr8xUYnu38mv09ovV
+         7tack14amLyjrSMIeiJ8S4aHBTvfw4zMTg2lNnYtcmXUhVgE02TwMh70nOYmtL3xwBG9
+         BW4pP8ognk5iUvaq5aUTNKPBFSpIiwJum1Hkf8QtZ9vrXwMOTKwKdyip/dAXSRmqKTgn
+         FcVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkjol/j1vMp87TnwY1ddXkw0L5KsKVuPgfrKolT3zE6OG/AyuCbgL1HjENYMQZFlQ3X9wELl06K5qRw==@vger.kernel.org, AJvYcCWWWTWrZ/zep6UQHbIBbHnwO0p7cmCLUxqbaSCiPM7mg2EP4CZdBcf5zRFSt56aYSdfmLSeOrAAcrz+xNpuPuvXKmQC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0blw1mUQ7gsjWFlgmtmDpzXIVxj8YsNLUMwSCscSuVo6hOP4Z
+	KH+IZnCSPBpj6ZTtcVoct0pUfN/PdbmRp6Ck6zM10GpselqziJ6oRAM7
+X-Gm-Gg: ASbGncvUqdTRU1mU9t7cOzp04shK9nrBkJrLmYRh8m+WjpcHXFXrr6NpH0Hsvs3nFCY
+	2kvZj/QjNuaPfF2fmh2qGLxYRKZfFcVKb8UxOtaptCCOKm4Ej5sGcTCWESFx9tfz75IZs79Wiwd
+	zPmLIoMxEwHejqjf8/FBhU7TmnZmSsbpG5MwUXcBHnbsGVXRevLU9ISVya0mZzRudMfuFjGTMVW
+	/hFklkct66cVzVElFK9WiVFPTyV6GIAhs7nXRWbM6m0VlGLSvvZ3uCECOcLvB6rfPVuQUeZxAJt
+	Ex/K5Ki28aNpAiJFMVHixpfNF9hEpeTtY9+uk6XIzqsMmDaR0PRIiTxJelMbhq2+aOsWwvqnrkp
+	PdpcpW0jri9jOPR6ljJGoLt1Z
+X-Google-Smtp-Source: AGHT+IFitfSlNOwC9rOVk5DZWmWQGyxV9pnn4ulbBwucoX5R9+3FLRP3oV+y3rVi1LnHpOV5ir9cwg==
+X-Received: by 2002:a05:6a20:7354:b0:218:5954:128c with SMTP id adf61e73a8af0-21f9b8c1179mr2078458637.21.1749708728044;
+        Wed, 11 Jun 2025 23:12:08 -0700 (PDT)
+Received: from KERNELXING-MC1.tencent.com ([111.201.27.248])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488087a7e8sm631486b3a.25.2025.06.11.23.12.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 23:12:07 -0700 (PDT)
+From: Jason Xing <kerneljasonxing@gmail.com>
+To: axboe@kernel.dk,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Jason Xing <kernelxing@tencent.com>
+Subject: [PATCH v5 0/5] relayfs: misc changes
+Date: Thu, 12 Jun 2025 14:11:56 +0800
+Message-Id: <20250612061201.34272-1-kerneljasonxing@gmail.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4a19525.4f96.19762c3f163.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aigvCgD3H3Oab0pooEUaAA--.55529W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqB9qXmhKaNasWgABso
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-CkhpIEhlaWtv77yMCkF0IDIwMjUtMDYtMTEgMDU6Mjc6NDgsICJIZWlrbyBTdHVlYm5lciIgPGhl
-aWtvQHNudGVjaC5kZT4gd3JvdGU6Cj5FYWNoIHdpbmRvdyBvZiBhIHZvcDIgaXMgdXNhYmxlIGJ5
-IGEgc3BlY2lmaWMgc2V0IG9mIHZpZGVvIHBvcnRzLCBzbyB3aGlsZQo+YmluZGluZyB0aGUgdm9w
-Miwgd2UgbG9vayB0aHJvdWdoIHRoZSBsaXN0IG9mIGF2YWlsYWJsZSB3aW5kb3dzIHRyeWluZyB0
-bwo+ZmluZCBvbmUgZGVzaWduYXRlZCBhcyBwcmltYXJ5LXBsYW5lIGFuZCB1c2FibGUgYnkgdGhh
-dCBzcGVjaWZpYyBwb3J0Lgo+Cj5UaGUgY29kZSBsYXRlciB3YW50cyB0byB1c2UgZHJtX2NydGNf
-aW5pdF93aXRoX3BsYW5lcyB3aXRoIHRoYXQgZm91bmQKPnByaW1hcnkgcGxhbmUsIGJ1dCBub3Ro
-aW5nIGhhcyBjaGVja2VkIHNvIGZhciBpZiBhIHByaW1hcnkgcGxhbmUgd2FzCj5hY3R1YWxseSBm
-b3VuZC4KPgo+Rm9yIHdoYXRldmVyIHJlYXNvbiwgdGhlIHJrMzU3NiB2cDIgZG9lcyBub3QgaGF2
-ZSBhIHVzYWJsZSBwcmltYXJ5IHdpbmRvdwo+KGlmIHZwMCBpcyBhbHNvIGluIHVzZSkgd2hpY2gg
-YnJvdWdodCB0aGUgaXNzdWUgdG8gbGlnaHQgYW5kIGVuZGVkIGluIGEKPm51bGwtcG9pbnRlciBk
-ZXJlZmVyZW5jZSBmdXJ0aGVyIGRvd24uCj4KPkFzIHdlIGV4cGVjdCBhIHByaW1hcnktcGxhbmUg
-dG8gZXhpc3QgZm9yIGEgdmlkZW8tcG9ydCwgYWRkIGEgY2hlY2sgYXQKPnRoZSBlbmQgb2YgdGhl
-IHdpbmRvdy1pdGVyYXRpb24gYW5kIGZhaWwgcHJvYmluZyBpZiBub25lIHdhcyBmb3VuZC4KPgo+
-Rml4ZXM6IDYwNGJlODU1NDdjZSAoImRybS9yb2NrY2hpcDogQWRkIFZPUDIgZHJpdmVyIikKPlNp
-Z25lZC1vZmYtYnk6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+CgpSZXZpZXdlZC1i
-eTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2stY2hpcHMuY29tPgoKVGhhbmtzCgoKPi0tLQo+IGRy
-aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jIHwgNCArKysrCj4gMSBm
-aWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
-aXAvcm9ja2NoaXBfZHJtX3ZvcDIuYwo+aW5kZXggN2RkZjMxMWIzOGM2Li5hOGRjMmU1NTgxMmEg
-MTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIu
-Ywo+KysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMKPkBA
-IC0yNDI1LDYgKzI0MjUsMTAgQEAgc3RhdGljIGludCB2b3AyX2NyZWF0ZV9jcnRjcyhzdHJ1Y3Qg
-dm9wMiAqdm9wMikKPiAJCQkJYnJlYWs7Cj4gCQkJfQo+IAkJfQo+Kwo+KwkJaWYgKCF2cC0+cHJp
-bWFyeV9wbGFuZSkKPisJCQlyZXR1cm4gZGV2X2Vycl9wcm9iZShkcm0tPmRldiwgLUVOT0VOVCwK
-PisJCQkJCSAgICAgIm5vIHByaW1hcnkgcGxhbmUgZm9yIHZwICVkXG4iLCBpKTsKPiAJfQo+IAo+
-IAkvKiBSZWdpc3RlciBhbGwgdW51c2VkIHdpbmRvdyBhcyBvdmVybGF5IHBsYW5lICovCj4tLSAK
-PjIuNDcuMgo+Cg==
+From: Jason Xing <kernelxing@tencent.com>
+
+The series mostly focuses on the error counters which helps every user
+debug their own kernel module.
+
+---
+v5
+Link: https://lore.kernel.org/all/20250610004844.66688-1-kerneljasonxing@gmail.com/
+1. add Masami's reviewed-by in the first patch
+2. fix the wrong printk format specifiers in patch [4/5]
+
+v4
+Link: https://lore.kernel.org/all/20250518025734.61479-1-kerneljasonxing@gmail.com/
+1. add [1] as the firt/prep/clean-up commit in the series.
+2. the rest four patches are not touched, compared to v4.
+3. add Masami's reviewed-by tags for last four patches.
+[1]: https://lore.kernel.org/all/20250507134225.63248-1-kerneljasonxing@gmail.com/
+
+
+Jason Xing (5):
+  relayfs: abolish prev_padding
+  relayfs: support a counter tracking if per-cpu buffers is full
+  relayfs: introduce getting relayfs statistics function
+  blktrace: use rbuf->stats.full as a drop indicator in relayfs
+  relayfs: support a counter tracking if data is too big to write
+
+ drivers/gpu/drm/i915/gt/uc/intel_guc_log.c |  3 +-
+ drivers/net/wwan/iosm/iosm_ipc_trace.c     |  3 +-
+ drivers/net/wwan/t7xx/t7xx_port_trace.c    |  2 +-
+ include/linux/relay.h                      | 24 ++++++--
+ kernel/relay.c                             | 66 +++++++++++++++++-----
+ kernel/trace/blktrace.c                    | 22 +-------
+ 6 files changed, 77 insertions(+), 43 deletions(-)
+
+-- 
+2.43.5
+
 
