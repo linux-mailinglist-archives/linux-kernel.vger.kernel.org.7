@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-683932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525ACAD73BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:25:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC1AD73C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589823B0AFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:24:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793533B38E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FDF23D280;
-	Thu, 12 Jun 2025 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA53E22E3E3;
+	Thu, 12 Jun 2025 14:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="NTT0IDBi"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="FQof/u5+"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE62142048;
-	Thu, 12 Jun 2025 14:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783BE42048
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749738298; cv=none; b=lgXWC+sm3qtTXS3wgn2vHseB4PudUuORfdlcMdU1aL8ulT5i1H0OUT7vGxtn5SZ3gxgudaTSlOfQ2Pefa4GFwgu2KdWD7hsenAD8l3/Q7iLErxZ/G2vx0YV02ZxeTa4vVUZRJH77AO0CWP1sCf3YZTSLtB+9XdpzWa2tMaSBTQE=
+	t=1749738359; cv=none; b=fG6bbocNBWyDyY3NldR9abZbIegdaqgdh0D2Y3trVZEJIvPCW2t7f5+awS4JUr+hCsXroFFkF64+gGOYJmoIjS92AOqOmDoXdu9CRk5jiC8N9KS5TOjYiBLmtdH6SAWjjh0gZnYPUTx1S5mFcg0DmMCbiH3tvCza2FT2W6QOn0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749738298; c=relaxed/simple;
-	bh=n848NJ06tU1aMhvRmUA+JLpdZq1hoRv/nkLcBgujkYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYADbmsDiWza5zGNmTzd5WKSJhTwzbGtNTMX+oEffHZrmTiYak8qq91E3oqrPsZhAQ/ETKWwYFIeUjO36Y30m9X2sxwGZB14+aQ2fG0J0vsyclSjbGXuQ+PgRr0PmFeq8R7gRoY72RyJq9TWr1IZJgd2WZuNxY3KpPXio8n7lX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=NTT0IDBi; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=UzBNYBaVd/RU8dYmTTL3ZxJIMxETu61GMjP6ByBX5DU=; b=NTT0IDBi0d3Btt7DjWXLdE87DA
-	eWeujd+N+GTAh25pqbR8HXJH+FdqBKm46xQNazhZQWPEsd0m1V7igMgIgIEESA2tkyrzP0cCoVElQ
-	DE2ugNCUvQ5hn9TXsBr4/pf7KoXfLBMAJrQneOL+i2X96cuu+xb0uBJZ78IKmF/AuW8WXAetKNmh+
-	FuxHGMrAwYFmUIqbXftNhtiZs9S+ZqLGXv99SgcUzHgm6qXBpg9BJuYA02Q8TwKD8QJ30reGVjNO7
-	Bmcov35CgxbsxXbLGlVSGYHclUjxVZJs6nF1dEnGuSWcqaZFWcmtqK511ommXglgZrVvwVkPKMqbA
-	ke3Lg8ug==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uPirH-000ANH-0S;
-	Thu, 12 Jun 2025 16:24:47 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uPirG-000CPH-0f;
-	Thu, 12 Jun 2025 16:24:46 +0200
-Message-ID: <9098ff24-435e-4e5b-a865-f446de933257@iogearbox.net>
-Date: Thu, 12 Jun 2025 16:24:46 +0200
+	s=arc-20240116; t=1749738359; c=relaxed/simple;
+	bh=ApF8vBWEk/Mxf+COrA4pHzNgYDC969mE44V8IPsB400=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uR7nJOUdveyQKD6HoLRbzp5+/qBd11oFUBI0HO5uJbM4yhCo3TLLFnpPqm5TXnjF7q/0DABMFZ1+39xPspVHcBirYZVa9HddA0gGbHDS6MkXOVW0P75R57sRHt9SFnPIRYJYwrdTss9qWIToJWy0muiNau1GrXqpJqdCUw3zihM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=FQof/u5+; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-453066fad06so7981855e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1749738356; x=1750343156; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0dRuAS/zUdBPIbw/8bXhZ48yEMTP9V1WRvDJONrZWng=;
+        b=FQof/u5+XPWjd6NV2IFJb/4KDZU3/J7pgIEP2R1sm03mDbWsQ4WHEWrtxOQVcl4Ibv
+         rJnxh/tYt05LCn6V8Bm/IAag8/2NWnzyW1SlWlKnO75yTGINCuhKYdIQSD3Y/pngMnlq
+         tENBY5RAfxQxA0ZqJYMWat/DKSerPorUM5Dg0iHsDjt2+3gD29BAR/YzWDxbx1W3ivWs
+         OSUrDN540zZmnavTSsZKl8uBqycr4kinUPwXmBcMzMRYyqimR1C5pc2qBQrIDqofNwYT
+         KKnNLaV2ADfYozEk2iJmlVQXKfLffXPvz3w43joLsl84iurtthyLPnP2PigSqumFD3E0
+         aGug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749738356; x=1750343156;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0dRuAS/zUdBPIbw/8bXhZ48yEMTP9V1WRvDJONrZWng=;
+        b=mrBcXsy+vSl2qmAQZpYED9aqJYjGnHULiEEREmkWtNMYiqzqcap3XnOpsMSYPfud75
+         fVjzF9/leg6e9izRSh1ZBFgy8whNLuzjnxWpZSjvysPdkyDutywp+jxs7aWkZHvP5qYF
+         hNgfXvTtedtLzznUuVvEFOYNKfChfgUGTd6Pk5N6h9VcqrU6d2G4kxNFgkduMIa285z8
+         sJQcQMfi+WDUf0yVuYX57pzcMvflPZYoJp8MzBU5+YA3HDNS+xWpEGKe1QeJO6ranDGL
+         WNoaUMIwUqGGYVSPAZtKg90vMar93kTkdDElcdiI/9W2UFm0zeHjjaNlk1mM3ehmk0jF
+         JX6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUw2b5UPOpUacJ4j4qrFHD9/oENTJoYs+t8YU84JUxefW0vhPe/0HxGZejS0eA9kDw8JR1+pQAvMUvbSbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbCwXkXwF7pNM+gTeOiHuh6/M7QnlPKYAeSpjkzTGlv69yf8Y5
+	hZW1vPJFC4ZM1lumQ2mzxlqp59wXP+JRNZ5KaaWycRDmTXBIvUH5hUOV0VHu3dnqqvE=
+X-Gm-Gg: ASbGncuiWD9J5C2l9ORtqgkbQgNcnAUfBAjNOrW7qIhqxEWWRKkVTdmvQXagyqB+zlO
+	IqdtDJJZOs97lhbzzABOSRU7kXtznHmAsTSk4r8Ac9YL8LfGOeHh76bQB2GoPgs/OSPWBmA6d4H
+	G+DtsCQG/TM7N1b93MzIsN58fWwgYZv9F7LrWBH1M5K5kaVFxdracAQ97Tw8rHAAdUkyo9YiDTn
+	9iIYirATErM/MvaTNCbaTTW39WhztxYf+4GGL0rTH6xZ4iMvI7qfa767utMonxywIb2MaHEcjZL
+	pROvMCUr7PNaewg5u55LNLFHqp2/hJHPyNZpou1cXT5/cWJzMkSrD72bYdhK86An5YoupoJA
+X-Google-Smtp-Source: AGHT+IFvlefm01oYPM1h9ExnmLfkUHYFh6gyuhvhlTFDJV5yDSLIyUvQ0kWkWHYwVMpiGkMEole17Q==
+X-Received: by 2002:a05:6000:1887:b0:3a4:e672:deef with SMTP id ffacd0b85a97d-3a5586dc42dmr6618337f8f.36.1749738355672;
+        Thu, 12 Jun 2025 07:25:55 -0700 (PDT)
+Received: from MacBook-Air.local ([5.100.243.24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a56199a930sm2174154f8f.35.2025.06.12.07.25.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 07:25:55 -0700 (PDT)
+Date: Thu, 12 Jun 2025 17:25:52 +0300
+From: Joe Damato <joe@dama.to>
+To: Breno Leitao <leitao@debian.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH net-next 2/2] netdevsim: collect statistics at RX side
+Message-ID: <aErjcH3NPbdP7Usx@MacBook-Air.local>
+Mail-Followup-To: Joe Damato <joe@dama.to>,
+	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+References: <20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org>
+ <20250611-netdevsim_stat-v1-2-c11b657d96bf@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] potential negative index dereference fix in
- get_exec_path()
-To: Ruslan Semchenko <uncleruc2075@gmail.com>, bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, ast@kernel.org
-References: <20250612131816.1870-1-uncleruc2075@gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20250612131816.1870-1-uncleruc2075@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27666/Thu Jun 12 10:37:53 2025)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611-netdevsim_stat-v1-2-c11b657d96bf@debian.org>
 
-On 6/12/25 3:18 PM, Ruslan Semchenko wrote:
-> If readlink() fails, len will be -1, which can cause negative indexing
-> and undefined behavior. This patch ensures that len is set to 0 on
-> readlink failure, preventing such issues.
+On Wed, Jun 11, 2025 at 08:06:20AM -0700, Breno Leitao wrote:
+> When the RX side of netdevsim was added, the RX statistics were missing,
+> making the driver unusable for GenerateTraffic() test framework.
 > 
-> Signed-off-by: Ruslan Semchenko <uncleruc2075@gmail.com>
-
-Looks reasonable, thanks! When applying patch $subj can be tweaked into:
-
-   "tools/bpf_jit_disasm: Fix potential negative tpath index in get_exec_path()"
-
-(bpf-next tree is fine)
-
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-
+> This patch adds proper statistics tracking on RX side, complementing the
+> TX path.
+> 
+> Signed-off-by: Breno Leitao <Leitao@debian.org>
 > ---
->   tools/bpf/bpf_jit_disasm.c | 2 ++
->   1 file changed, 2 insertions(+)
+>  drivers/net/netdevsim/netdev.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/tools/bpf/bpf_jit_disasm.c b/tools/bpf/bpf_jit_disasm.c
-> index 1baee9e2aba9..5ab8f80e2834 100644
-> --- a/tools/bpf/bpf_jit_disasm.c
-> +++ b/tools/bpf/bpf_jit_disasm.c
-> @@ -45,6 +45,8 @@ static void get_exec_path(char *tpath, size_t size)
->   	assert(path);
->   
->   	len = readlink(path, tpath, size);
-> +	if (len < 0)
-> +		len = 0;
->   	tpath[len] = 0;
->   
->   	free(path);
+> diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+> index 67871d31252fe..590cb5bb0d20b 100644
+> --- a/drivers/net/netdevsim/netdev.c
+> +++ b/drivers/net/netdevsim/netdev.c
+> @@ -39,12 +39,16 @@ MODULE_IMPORT_NS("NETDEV_INTERNAL");
+>  
+>  static int nsim_napi_rx(struct nsim_rq *rq, struct sk_buff *skb)
+>  {
+> +	struct net_device *dev = rq->napi.dev;
+> +
+>  	if (skb_queue_len(&rq->skb_queue) > NSIM_RING_SIZE) {
+>  		dev_kfree_skb_any(skb);
+> +		dev_dstats_rx_dropped(dev);
+>  		return NET_RX_DROP;
+>  	}
+>  
+>  	skb_queue_tail(&rq->skb_queue, skb);
+> +	dev_dstats_rx_add(dev, skb->len);
+>  	return NET_RX_SUCCESS;
+>  }
 
+Hm, I was wondering: is it maybe better to add the stats code to nsim_poll or
+nsim_rcv instead?
+
+It "feels" like other drivers would be bumping RX stats in their NAPI poll
+function (which is nsim_poll, the naming of the functions is a bit confusing
+here), so it seems like netdevsim maybe should too?
 
