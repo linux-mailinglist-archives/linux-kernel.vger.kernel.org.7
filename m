@@ -1,156 +1,351 @@
-Return-Path: <linux-kernel+bounces-682886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AD9AD65DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:49:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5B9AD6615
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 05:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8205E189FFFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F20813A9BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE31D1DDC1B;
-	Thu, 12 Jun 2025 02:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBtW6R2Q"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFC91A2643;
+	Thu, 12 Jun 2025 03:16:49 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82AD28F1;
-	Thu, 12 Jun 2025 02:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C68A4A11
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 03:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749696533; cv=none; b=SatiBa71BU26S+WA0/jXOkZzcAV5CbCm+dDtNzwgsKOJgCu9CEiwr2GOKDFOZZOjsRa5upJPRH+I/U/VF2xeT1qcZWKW9LXSBcTFtlplcVku2X146YCQFBFFo3OrYQggUhY0fKxclzlJUm0x4Tu62zr47QBj93K5L2ryFAbUNbk=
+	t=1749698209; cv=none; b=eq14bqV4hxoeAXvN9+vm1y8AbPuGDjNqjHUEMOgmgcjT/UwnIrs7Ba3j3h00T09MS6V8RUDkncLG7aBIh1kvinidskJ/qEVuEcm7AjqYrijqswWqT84DL5WwvqT3lvrsqVn6QjO0QBYSu9b0PkwT93vYT6/TzDMHYqh80u+ipZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749696533; c=relaxed/simple;
-	bh=uOnIiEnqoE5mn6tpYF1c7GMhpFzVKgaFnmNewUSAzWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7lPkaYefP4W8UgmTbOrcg7zkM749gAqb9oARAGmjwuaWt3rmc/JwtKZ0vhaGi40lNw1f3LEkP9oY5wrcRSqlL8+eG6+HLXjH35TMCnZMjzLsE9jLeApm0e+AnHvWDsBPB3zFo4p/Gplcj47gZEl0wg/+CMJyoW916zIPBdi21Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBtW6R2Q; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7486ca9d396so391850b3a.1;
-        Wed, 11 Jun 2025 19:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749696531; x=1750301331; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahiOgmSZ189HLN8mvTYFQfG9zC9TWM2CIiM/X5I190M=;
-        b=hBtW6R2QRxfBPt+LLGGgK7sUF9Edswg7zSUiVxR9fxaeepSDt1MCwmBTlRC1lCMUzT
-         AIq5fLNZuUXES4cNXYtRn06c2CsFtgz9tD+Wjko0n/dauUfJN70OKIvV/gbylGEgakgw
-         nybrWltl52BJQgPzs/objccg+darBT/tPxoPR3GRi64saI2T+I1G40qBZRbWju0MQFdQ
-         Kjc3gV4ZIXezqvEG4MHmA38ZJ1MaJPku13szMGbpgshT9Bf/IZK6PatUzybE4bR7Wb32
-         oEXvQMKVIFyVfylkvezw1F54lQx5fKh8FqczJ3B4H7381Oc8m0yIYficL56LXzp/++WJ
-         IQGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749696531; x=1750301331;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ahiOgmSZ189HLN8mvTYFQfG9zC9TWM2CIiM/X5I190M=;
-        b=mzSxPodVTIcm+wlhtKU3GaENsu0qeTD3ldHdtJ53DBSsJV6KPGPFNvFfilKrQbzCWI
-         ouUsKHIA+tLRKOYlgGhQn5S/ETiWhPjSKo2sYN65+UPGvNt1tjmPepcynCyo+dLcNxKw
-         FPTxPOVOQxs69cx58B1O6XOO7K3dAVN2a/m6skhDMRz+ypgvntyC3/fIHKlapPxBL2js
-         2x8ZGxPZ7lKwwz+D8kov8W4PKNsRBmGSOqjj6wG4d9ruMZKH3Pmz5oESRPxyhRD56po7
-         oCaRsHfbIXwp9QCNd5e7YFeqP0A7ZfTDF17kHprvty6CDUosciXPDvuh+1Cxc4BJKUyq
-         GFlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbJw6UofpJ2N6b/vFA9ot6FGqsRfTHeyXhQu+m3P2/L48xs6uP4vryOGAO+iLVDKtCrjzk5FUuc7s+Rg==@vger.kernel.org, AJvYcCV/vaJV3DfMwEpL0r1D1ENDalKIfVCisiorp0/p0aAFdklIIOmWy5jkCVKj293JaVv9WvgP0tmdCp4=@vger.kernel.org, AJvYcCWGrshnJKs5rnm0Gc1pfJyN8pFd7fkez4WKoHlKCSs0IXPpzmrxb8HAoEI0JiY/x8xka98KqlIS93HZvus4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6udsMFzEP57ZEaR6z2jeVs+2iZNItZczN9QLs6v1SAaUtBr78
-	hDeUzFjaYoM/VOROGpYKjZ8UR4eICkdCltCm8qz54qmWTcHk/Fb6lZz7
-X-Gm-Gg: ASbGncub3GN2P8UfU7MIg1x+fHh2TCNewgM9eMv7NZaoXStFwKKNOBfKkEbjrp+YSTz
-	PCV2ytLydDH9TbpM6pPDhbY8W4pT0lcp6C+HmPHt8d9crL6hWg21aqJMIblH590ggPGrwAxGwT1
-	k5PtYbVsAK4sRbAPhCuQ5eKmsNlgdAPChEnyADF6zJfoqyipo7qr/YfvxmwQ1uUrXTjfIiMhOJf
-	puntMZxx+zNRH0myy4jQZTyBoFsAOkR3ZrAuiO92b2XGdl3BYvpsYmPY/e73/6Mp5q4kCNrOAa0
-	Zdt0H5knePsuFEgOAGapqjq5KD0N3deruabFSGS1KmFt5JSL9G/w9n4HU1qt+Q==
-X-Google-Smtp-Source: AGHT+IEPXTV4XHn9uDXHGaK/gbEBhU8EdhLwd5PI+auaZzZZJ3JyAqtwA3diSRBeECjUiD83gObbpw==
-X-Received: by 2002:a05:6a21:8dc8:b0:21f:5c9d:499a with SMTP id adf61e73a8af0-21f865baf0emr8969453637.4.1749696531007;
-        Wed, 11 Jun 2025 19:48:51 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748809d2ad2sm321652b3a.107.2025.06.11.19.48.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 19:48:49 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 51567424180B; Thu, 12 Jun 2025 09:48:47 +0700 (WIB)
-Date: Thu, 12 Jun 2025 09:48:47 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux ext4 <linux-ext4@vger.kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: Re: [PATCH] Documentation: ext4: atomic_writes: Remove
- cross-reference labels
-Message-ID: <aEpAD2jcemzvoJlQ@archie.me>
-References: <20250610091200.54075-2-bagasdotme@gmail.com>
- <20250611164800.GC6134@frogsfrogsfrogs>
- <87ikl21a5u.fsf@trenco.lwn.net>
- <aEoaJEhw5qHkd2_w@archie.me>
- <20250612010942.GJ6179@frogsfrogsfrogs>
+	s=arc-20240116; t=1749698209; c=relaxed/simple;
+	bh=sWoFWozHKTaF0WU46uVJnEcDppru2KkQ7fyi0DQiIsw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IphV5rlms6y7ooCpoklT1lr7SRPKHMU5BTZXl9K21SImB/O7PRq/A8QdknnOZs5Zr1ANClE+TSBdXr0qXnTQIzL9/JwEgfK9Bd4TlWaODMcOFJWtEImB2zd+0Iygyc/yggGKU6iutVGXZEb2elA8p/DLLx6Eo4vHaaN3lugUqCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1749697461-1eb14e386e395790001-xx1T2L
+Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx2.zhaoxin.com with ESMTP id yY0hS9Df4QX84M3m (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 12 Jun 2025 11:04:21 +0800 (CST)
+X-Barracuda-Envelope-From: AlanSong-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX2.zhaoxin.com
+ (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Thu, 12 Jun
+ 2025 11:04:21 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([::1]) by ZXSHMBX1.zhaoxin.com
+ ([fe80::2c07:394e:4919:4dc1%7]) with mapi id 15.01.2507.044; Thu, 12 Jun 2025
+ 11:04:21 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from DESKTOP-A4I8D8T.zhaoxin.com (10.32.65.156) by
+ ZXBJMBX02.zhaoxin.com (10.29.252.6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 12 Jun 2025 10:57:55 +0800
+From: AlanSong-oc <AlanSong-oc@zhaoxin.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <CobeChen@zhaoxin.com>, <TonyWWang-oc@zhaoxin.com>, <YunShen@zhaoxin.com>,
+	<GeorgeXue@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>, <HansHu@zhaoxin.com>,
+	AlanSong-oc <AlanSong-oc@zhaoxin.com>
+Subject: [PATCH RESEND] crypto: padlock-sha - Add support for Zhaoxin processor
+Date: Thu, 12 Jun 2025 10:55:18 +0800
+X-ASG-Orig-Subj: [PATCH RESEND] crypto: padlock-sha - Add support for Zhaoxin processor
+Message-ID: <20250612025516.368-1-AlanSong-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3EZ4Rlku9TfdJSmj"
-Content-Disposition: inline
-In-Reply-To: <20250612010942.GJ6179@frogsfrogsfrogs>
-
-
---3EZ4Rlku9TfdJSmj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ ZXBJMBX02.zhaoxin.com (10.29.252.6)
+X-Moderation-Data: 6/12/2025 11:04:20 AM
+X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
+X-Barracuda-Start-Time: 1749697461
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 8768
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.142737
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-On Wed, Jun 11, 2025 at 06:09:42PM -0700, Darrick J. Wong wrote:
-> On Thu, Jun 12, 2025 at 07:07:00AM +0700, Bagas Sanjaya wrote:
-> > On Wed, Jun 11, 2025 at 11:05:17AM -0600, Jonathan Corbet wrote:
-> > > Sphinx wants to snarf up every .rst file it sees, regardless of wheth=
-er
-> > > it is explicitly made part of the document tree.  So it will pick up
-> > > atomic_writes.rst separately from the include.
->=20
-> Does that mean that overview.rst doesn't need to include the other files
-> at all?
+For Zhaoxin processors, the XSHA1 instruction requires the total memory
+allocated at %rdi register must be 32 bytes, while the XSHA1 and
+XSHA256 instruction doesn't perform any operation when %ecx is zero.
 
-I think overview.rst can be turned into toctree index.
+Due to these requirements, the current padlock-sha driver does not work
+correctly with Zhaoxin processors. It cannot pass the self-tests and
+therefore does not activate the driver on Zhaoxin processors. This issue
+has been reported in Debian [1]. The self-tests fail with the
+following messages [2]:
 
->=20
-> > > This could be "fixed" by removing the .rst extension from the included
-> > > file.  But, since there is no use of the atomic_writes label to begin
-> > > with, it's better to just take it out.  The other fix, removing a cro=
-ss
-> > > reference, is not entirely ideal, but there is little text between the
-> > > label and the reference.
-> >=20
-> > So removing the labels looks good to you, right?
->=20
-> I don't care that much either way, but if sphinx is going to include
-> every rst file implicitly then maybe we just get rid of the explicit
-> includes?
+alg: shash: sha1-padlock-nano test failed (wrong result) on test vector 0, =
+cfg=3D"init+update+final aligned buffer"
+alg: self-tests for sha1 using sha1-padlock-nano failed (rc=3D-22)
+------------[ cut here ]------------
 
-OK then.
+alg: shash: sha256-padlock-nano test failed (wrong result) on test vector 0=
+, cfg=3D"init+update+final aligned buffer"
+alg: self-tests for sha256 using sha256-padlock-nano failed (rc=3D-22)
+------------[ cut here ]------------
 
-Thanks.
+This patch introduces new functions and data structures to properly meet
+the requirements of XSHA1 and XSHA256 instruction on Zhaoxin processors.
 
+[1] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D1103397
+[2] https://linux-hardware.org/?probe=3D271fabb7a4&log=3Ddmesg
+
+Signed-off-by: AlanSong-oc <AlanSong-oc@zhaoxin.com>
+---
+ drivers/crypto/padlock-sha.c | 169 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 157 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/crypto/padlock-sha.c b/drivers/crypto/padlock-sha.c
+index 329f60ad4..f980e08f6 100644
+--- a/drivers/crypto/padlock-sha.c
++++ b/drivers/crypto/padlock-sha.c
+@@ -99,6 +99,14 @@ static inline void padlock_output_block(uint32_t *src,
+ 		*dst++ =3D swab32(*src++);
+ }
+=20
++static inline void padlock_pad_block_zhaoxin(u8 *padded_data, size_t block=
+_size, u64 bit_len)
++{
++	memset(padded_data, 0, block_size);
++	padded_data[0] =3D 0x80;
++	for (int i =3D 0; i < 8 && bit_len; i++)
++		padded_data[block_size - 1 - i] =3D (bit_len >> (i * 8)) & 0xFF;
++}
++
+ static int padlock_sha_finup(struct shash_desc *desc, const u8 *in,
+ 			     unsigned int count, u8 *out)
+ {
+@@ -133,6 +141,37 @@ static int padlock_sha1_finup(struct shash_desc *desc,=
+ const u8 *in,
+ 	return 0;
+ }
+=20
++static int padlock_sha1_finup_zhaoxin(struct shash_desc *desc, const u8 *i=
+n,
++			      unsigned int count, u8 *out)
++{
++	struct sha1_state *state =3D padlock_shash_desc_ctx(desc);
++	u64 start =3D state->count;
++
++	if (start + count > ULONG_MAX)
++		return padlock_sha_finup(desc, in, count, out);
++
++	if (count =3D=3D 0) {
++		u8 buf[SHA1_BLOCK_SIZE + PADLOCK_ALIGNMENT - 1];
++		u8 *padded_data =3D PTR_ALIGN(&buf[0], PADLOCK_ALIGNMENT);
++		u64 bit_len =3D (start + count) * 8;
++
++		padlock_pad_block_zhaoxin(padded_data, SHA1_BLOCK_SIZE, bit_len);
++
++		asm volatile(".byte 0xf3,0x0f,0xa6,0xc8"
++			: "+S"(padded_data), "+D"(state)
++			: "a"((long)-1), "c"(1UL));
++	} else {
++		/* Process the input data in bytes, applying necessary padding */
++		asm volatile(".byte 0xf3,0x0f,0xa6,0xc8"
++			     :
++			     : "c"((unsigned long)start + count), "a"((unsigned long)start),
++			       "S"(in), "D"(state));
++	}
++
++	padlock_output_block(state->state, (uint32_t *)out, 5);
++	return 0;
++}
++
+ static int padlock_sha256_finup(struct shash_desc *desc, const u8 *in,
+ 				unsigned int count, u8 *out)
+ {
+@@ -155,6 +194,37 @@ static int padlock_sha256_finup(struct shash_desc *des=
+c, const u8 *in,
+ 	return 0;
+ }
+=20
++static int padlock_sha256_finup_zhaoxin(struct shash_desc *desc, const u8 =
+*in,
++				unsigned int count, u8 *out)
++{
++	struct sha256_state *state =3D padlock_shash_desc_ctx(desc);
++	u64 start =3D state->count;
++
++	if (start + count > ULONG_MAX)
++		return padlock_sha_finup(desc, in, count, out);
++
++	if (count =3D=3D 0) {
++		u8 buf[SHA256_BLOCK_SIZE + PADLOCK_ALIGNMENT - 1];
++		u8 *padded_data =3D PTR_ALIGN(&buf[0], PADLOCK_ALIGNMENT);
++		u64 bit_len =3D (start + count) * 8;
++
++		padlock_pad_block_zhaoxin(padded_data, SHA256_BLOCK_SIZE, bit_len);
++
++		asm volatile(".byte 0xf3,0x0f,0xa6,0xd0"
++			: "+S"(padded_data), "+D"(state)
++			: "a"((long)-1), "c"(1UL));
++	} else {
++		/* Process the input data in bytes, applying necessary padding */
++		asm volatile(".byte 0xf3,0x0f,0xa6,0xd0"
++			:
++			: "c"((unsigned long)start + count), "a"((unsigned long)start),
++			"S"(in), "D"(state));
++	}
++
++	padlock_output_block(state->state, (uint32_t *)out, 8);
++	return 0;
++}
++
+ static int padlock_init_tfm(struct crypto_shash *hash)
+ {
+ 	const char *fallback_driver_name =3D crypto_shash_alg_name(hash);
+@@ -258,6 +328,31 @@ static int padlock_sha1_update_nano(struct shash_desc =
+*desc,
+ 	return len;
+ }
+=20
++static int padlock_sha1_update_zhaoxin(struct shash_desc *desc,
++				    const u8 *src, unsigned int len)
++{
++	struct sha1_state *state =3D padlock_shash_desc_ctx(desc);
++	int blocks =3D len / SHA1_BLOCK_SIZE;
++
++	/* The xsha1 instruction requires a 32-byte buffer for execution for Zhao=
+xin processors */
++	u8 buf[32 + PADLOCK_ALIGNMENT - 1];
++	u8 *dst =3D PTR_ALIGN(&buf[0], PADLOCK_ALIGNMENT);
++
++	memcpy(dst, (u8 *)(state->state), SHA1_DIGEST_SIZE);
++
++	len -=3D blocks * SHA1_BLOCK_SIZE;
++	state->count +=3D blocks * SHA1_BLOCK_SIZE;
++
++	/* Process the input data in blocks, without applying padding */
++	asm volatile(".byte 0xf3,0x0f,0xa6,0xc8"
++			: "+S"(src), "+D"(dst)
++			: "a"((long)-1), "c"((unsigned long)blocks));
++
++	memcpy((u8 *)(state->state), dst, SHA1_DIGEST_SIZE);
++
++	return len;
++}
++
+ static int padlock_sha256_update_nano(struct shash_desc *desc, const u8 *s=
+rc,
+ 			  unsigned int len)
+ {
+@@ -316,6 +411,44 @@ static struct shash_alg sha256_alg_nano =3D {
+ 	}
+ };
+=20
++static struct shash_alg sha1_alg_zhaoxin =3D {
++	.digestsize =3D SHA1_DIGEST_SIZE,
++	.init       =3D padlock_sha1_init,
++	.update     =3D padlock_sha1_update_zhaoxin,
++	.finup      =3D padlock_sha1_finup_zhaoxin,
++	.export     =3D padlock_sha_export,
++	.import     =3D padlock_sha_import,
++	.descsize   =3D PADLOCK_SHA_DESCSIZE,
++	.statesize  =3D SHA1_STATE_SIZE,
++	.base       =3D {
++		.cra_name        =3D "sha1",
++		.cra_driver_name =3D "sha1-padlock-zhaoxin",
++		.cra_priority    =3D PADLOCK_CRA_PRIORITY,
++		.cra_flags       =3D CRYPTO_AHASH_ALG_BLOCK_ONLY | CRYPTO_AHASH_ALG_FINU=
+P_MAX,
++		.cra_blocksize   =3D SHA1_BLOCK_SIZE,
++		.cra_module      =3D THIS_MODULE,
++	}
++};
++
++static struct shash_alg sha256_alg_zhaoxin =3D {
++	.digestsize =3D SHA256_DIGEST_SIZE,
++	.init       =3D padlock_sha256_init,
++	.update     =3D padlock_sha256_update_nano,
++	.finup      =3D padlock_sha256_finup_zhaoxin,
++	.export     =3D padlock_sha_export,
++	.import     =3D padlock_sha_import,
++	.descsize   =3D PADLOCK_SHA_DESCSIZE,
++	.statesize  =3D sizeof(struct crypto_sha256_state),
++	.base       =3D {
++		.cra_name        =3D "sha256",
++		.cra_driver_name =3D "sha256-padlock-zhaoxin",
++		.cra_priority    =3D PADLOCK_CRA_PRIORITY,
++		.cra_flags       =3D CRYPTO_AHASH_ALG_BLOCK_ONLY | CRYPTO_AHASH_ALG_FINU=
+P_MAX,
++		.cra_blocksize   =3D SHA256_BLOCK_SIZE,
++		.cra_module      =3D THIS_MODULE,
++	}
++};
++
+ static const struct x86_cpu_id padlock_sha_ids[] =3D {
+ 	X86_MATCH_FEATURE(X86_FEATURE_PHE, NULL),
+ 	{}
+@@ -332,14 +465,21 @@ static int __init padlock_init(void)
+ 	if (!x86_match_cpu(padlock_sha_ids) || !boot_cpu_has(X86_FEATURE_PHE_EN))
+ 		return -ENODEV;
+=20
+-	/* Register the newly added algorithm module if on *
+-	* VIA Nano processor, or else just do as before */
+-	if (c->x86_model < 0x0f) {
+-		sha1 =3D &sha1_alg;
+-		sha256 =3D &sha256_alg;
++	if (c->x86 >=3D 0x07) {
++		/* Register the newly added algorithm module for Zhaoxin processors */
++		sha1 =3D &sha1_alg_zhaoxin;
++		sha256 =3D &sha256_alg_zhaoxin;
+ 	} else {
+-		sha1 =3D &sha1_alg_nano;
+-		sha256 =3D &sha256_alg_nano;
++		/* Register the newly added algorithm module if on
++		 * VIA Nano processor, or else just do as before
++		 */
++		if (c->x86_model < 0x0f) {
++			sha1 =3D &sha1_alg;
++			sha256 =3D &sha256_alg;
++		} else {
++			sha1 =3D &sha1_alg_nano;
++			sha256 =3D &sha256_alg_nano;
++		}
+ 	}
+=20
+ 	rc =3D crypto_register_shash(sha1);
+@@ -366,12 +506,17 @@ static void __exit padlock_fini(void)
+ {
+ 	struct cpuinfo_x86 *c =3D &cpu_data(0);
+=20
+-	if (c->x86_model >=3D 0x0f) {
+-		crypto_unregister_shash(&sha1_alg_nano);
+-		crypto_unregister_shash(&sha256_alg_nano);
++	if (c->x86 >=3D 0x07) {
++		crypto_unregister_shash(&sha1_alg_zhaoxin);
++		crypto_unregister_shash(&sha256_alg_zhaoxin);
+ 	} else {
+-		crypto_unregister_shash(&sha1_alg);
+-		crypto_unregister_shash(&sha256_alg);
++		if (c->x86_model >=3D 0x0f) {
++			crypto_unregister_shash(&sha1_alg_nano);
++			crypto_unregister_shash(&sha256_alg_nano);
++		} else {
++			crypto_unregister_shash(&sha1_alg);
++			crypto_unregister_shash(&sha256_alg);
++		}
+ 	}
+ }
+=20
 --=20
-An old man doll... just what I always wanted! - Clara
+2.34.1
 
---3EZ4Rlku9TfdJSmj
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaEpACgAKCRD2uYlJVVFO
-o7eOAQCdeMUtvQb2DPxQBBJkiVZfYB8zlwVecHaK5nJE1VUS1gEAtQ27FccaLbs2
-anyE3yTXXMGeHhBy5V+RkXLr2Dp8YQ8=
-=zJ3y
------END PGP SIGNATURE-----
-
---3EZ4Rlku9TfdJSmj--
 
