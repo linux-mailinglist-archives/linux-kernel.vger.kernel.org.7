@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-684023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FDAAD74F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:00:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A89AD7513
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B4B93B2F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3D9188951C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2143626A09E;
-	Thu, 12 Jun 2025 14:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+a9WpEd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8735E26FDA8;
+	Thu, 12 Jun 2025 14:59:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E07267F78
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DB02701B3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740334; cv=none; b=fTn+UVyIaIjthZeocBDkGQbCf+A446y7+F81BeC+/7Bk+n5aPfkxhqGEJQ0krpV6xlqm+CbCkZFibu4WaN2md75wOtDEGqKfHY/WEekUDeTA+y0YgyUc2sqduZgQqFlIg5V2+nGISaZ6Hre5RUsbUtiu7IiUx6Y6lRv7F7zkWTk=
+	t=1749740346; cv=none; b=ToRnI8mQivCq35iFYSic6KoM/OSJYT+LHwdf5vrx3frYFHg14wYMVPMAUy2SLToYxCLAMhki2m+u1upTMXrBGM86InqlKOx22CUDpsw17sBaq1CpQ+Lx8z48Q8zKpvyAlsuRTmH9gYmB5dBBN086HxvvZmKlMeOK8n9wTQPyYBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740334; c=relaxed/simple;
-	bh=LMZP3Iit/zo/pN1qqkBLVVhcxAYQH/mYPWspVWFPNvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oo73Mb3Al8Y38YhExfxZbhYY3OhsrD/QbyQnh4Igr/GeRZab8Ma93Bkbz88NigRiA7+yVMp4ls0OhwSW0SLj+VZFvqy8FcnXNGTLE/LjrY8shwCRwH/CgEcQqzQsZsO+Vwpu5jnDSWyb0J06JO3qocHclM+qP13TG0gCbIuvC+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+a9WpEd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2ACBC4CEEA;
-	Thu, 12 Jun 2025 14:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749740334;
-	bh=LMZP3Iit/zo/pN1qqkBLVVhcxAYQH/mYPWspVWFPNvY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=c+a9WpEdbRr0g1a4FBFoLtsmK3mSOqCYLNnCqrCLqLQdGlOyUHHHocSSZmWK4gxoH
-	 u+dgVq3sym19SZVpV6YtAQiRArAaFbLOzyAburzP5KTICGXzSfjAL4FLlJYh6JoP5/
-	 mRobzdJ5P+ImGv4T6m7ETJgNL7JsevwkT9b9NF1lrUTojSrS4oQdZmM0nZR9scdfQz
-	 SVS4xucHpWGBsH0hR7K3H1FyIGsjgZGWNYOHO6jXY1BWgU0u8ZnqwsgJkH6J/NVX/0
-	 tfu6pC2THdyGnHEFy3+Dywfgz5aJq0G1ZFDu/CQ4//3pgoykKfWjSI+HccAnWc6CQ9
-	 zwSyfxAEfF7OQ==
-Date: Thu, 12 Jun 2025 11:58:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Breno Leitao <leitao@debian.org>, Ian Rogers <irogers@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1 fyi] perf beauty: Update copy of linux/socket.h with the
- kernel sources
-Message-ID: <aErrK24XLUILFH_P@x1>
+	s=arc-20240116; t=1749740346; c=relaxed/simple;
+	bh=ZJhWfpILzLlDcso0xE4N+QABzMQhOOl2FbUEOU4VFw8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ya9rLkjMJ0oVVlXI/W/6uy3lAhHh6CAGOyN95XSzjyZQchCyPfZKCVkUvJ0rMrBiixRuoeF2IYoK2q9WrebEgVUIL16XiW+AG0sFGHbhutszkJKjtJFv5KWKU8zY77veiR1IKxK+k75APpKRpHLvvadn1/Zf+0S0BkTMqQVv2v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddc65f95b8so22122585ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:59:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749740343; x=1750345143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sOuni93krcVzrqUP8hSv6r9zVP8Vzg1n3zjGp8M4uxA=;
+        b=wA/2J8X/seOOJOtafNw1lvZ+wKMSz9VfAGgOywPNpmv9bgUFIj3rkz1hLyFxthDSuA
+         BbDJEgYktx7N+0rI9qqdEDoqdF+ea5Loy3wtW2HkRIhGSL06iMmzgFgqhlZ31/0659TI
+         b+iziLd4f3KyHdQJCaBTq2KkuqHOX4hqu9QDTnEMXvhvEfBx2hV4FX0Jld5HA6T9qSlq
+         pZd9TXQ8o71sF3yrogL/8S/+X1QqzP544OvV+NcTH+cX2kWLjDICrqMJXYIbocXUIFIi
+         vw0RUg9EWPqPS2ss9BU/pv4C4+1KgQfgioge/jzXhet3AOcIlue3l83gmxlS3PG2dnyf
+         9UEw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2TGq2aVR1NdLzguNA9KfMEp4tZqKnlMb1yVyhEl7RuS1lJn88SJY3DA3ZL53SL14ImxqxLoCwaPZ6pYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEyuKG0+mwHjFYy6zjyhGY0ciT1mAfSTRNm6a8Y6KV445Rg6Tg
+	aYkQc3/KB+ZFp8nB2hmVOR7BKvQyJkpCskgfpB0W2maqtgo9Ja0abujkPQltskNHAFhMN04vfQh
+	4f3GA0r1E0QfJ+zKXRrpp5mtFoi0i/ZQlPPkc2LGA7ezK7wm0u4KX3g5viX8=
+X-Google-Smtp-Source: AGHT+IGWrdfRPv6vUBq5+VE7qbsc40CR8IzZ0G5xPaE8pPhS5TDXjN/61aMhnCxyqJP9ZVTIdlS81r9qqFALVpj5KW+OAiUWrQOT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:1aa8:b0:3dd:d189:6511 with SMTP id
+ e9e14a558f8ab-3ddf43010a1mr94787295ab.21.1749740343737; Thu, 12 Jun 2025
+ 07:59:03 -0700 (PDT)
+Date: Thu, 12 Jun 2025 07:59:03 -0700
+In-Reply-To: <tencent_AF9E831B6F4B5F1B1A251EBA5ABBBA33E808@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <684aeb37.a00a0220.e7731.0037.GAE@google.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_listxattr
+From: syzbot <syzbot+4125590f2a9f5b3cdf43@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+Hello,
 
-Full explanation:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+Reported-by: syzbot+4125590f2a9f5b3cdf43@syzkaller.appspotmail.com
+Tested-by: syzbot+4125590f2a9f5b3cdf43@syzkaller.appspotmail.com
 
-See further details at:
+Tested on:
 
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+commit:         2c4a1f3f Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b4ed70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=162faeb2d1eaefb4
+dashboard link: https://syzkaller.appspot.com/bug?extid=4125590f2a9f5b3cdf43
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1524ed70580000
 
-To pick the changes in:
-
-  b1e904999542ad67 ("net: pass const to msg_data_left()")
-
-That don't result in any changes in the tables generated from that
-header.
-
-This silences this perf build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/perf/trace/beauty/include/linux/socket.h include/linux/socket.h
-
-Please see tools/include/uapi/README for details.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Breno Leitao <leitao@debian.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lore.kernel.org/r/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/include/linux/socket.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/trace/beauty/include/linux/socket.h b/tools/perf/trace/beauty/include/linux/socket.h
-index c3322eb3d6865d5e..3b262487ec06032b 100644
---- a/tools/perf/trace/beauty/include/linux/socket.h
-+++ b/tools/perf/trace/beauty/include/linux/socket.h
-@@ -168,7 +168,7 @@ static inline struct cmsghdr * cmsg_nxthdr (struct msghdr *__msg, struct cmsghdr
- 	return __cmsg_nxthdr(__msg->msg_control, __msg->msg_controllen, __cmsg);
- }
- 
--static inline size_t msg_data_left(struct msghdr *msg)
-+static inline size_t msg_data_left(const struct msghdr *msg)
- {
- 	return iov_iter_count(&msg->msg_iter);
- }
--- 
-2.49.0
-
+Note: testing is done by a robot and is best-effort only.
 
