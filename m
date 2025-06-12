@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-682949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5524AD66E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:44:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF77AD671D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B9277ABF32
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:43:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9AEB7A9C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 05:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE961DE4EC;
-	Thu, 12 Jun 2025 04:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DC11DF974;
+	Thu, 12 Jun 2025 05:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3Y6kHzx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHvdsVAK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0B71A3A80
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 04:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E442C1624EA;
+	Thu, 12 Jun 2025 05:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749703455; cv=none; b=kYAXJxjz+kuqnDlPy2QiGSqoX1SR1iQtG9D9VjQKwDJP1sc8+myUIVAZS29wZrf9QoDIdqUSMBZz/bZi/KDpO5bXZU1Q2sa66DyFmXvQr+GYk+Iy21zyUw8h9A6DVsL9b56QvEFA0TsrFgDkMNB9ghJkGem/LQu7abe0jbOzzOg=
+	t=1749705149; cv=none; b=IJjfbwEvpBx+ysMWhQvXVgzeIXTkbDV8U+PUtXf6m1YEjXsLWV5SHU6dO6XP+rPxymnbgIuooUfGpx3Lk5wkMbCgeYqMXrwyCLH85Liep8wlZ6SHFzptHQ6altLsSwn/8EZvUU0Tuw092iLWq3Vbyf54rJBmnsjjrFxErdMyRPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749703455; c=relaxed/simple;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pt+khz77YrmPTdCB2QABzWTnUys7x0bDuKJ5XQvxqaf3jX8buLXtaD9iKaMW3QRzhVOFoFZ+ulVCUP4fPMoQKatq5QiqWYq1+wLd3JlULbMJZUkH1kghwz/BznB9G6gbCbCMdIyzYSKdGIoTy/iNLERj2DFVI/rJJbN+SuJ7B9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3Y6kHzx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749703451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	b=i3Y6kHzxHc6XxjkRejfs5Z/n55MK5i+MSqQ4h+tC7ap/5f2PXSc1SRCHTamdkvBTGKYm8R
-	8TEx22dapyAwxJsi/cpDNnOQL1TsnmLkSbSxV5dRYqiTRIyBTwgh8Y8wOMVplVfsgqHjEB
-	ZihXXl4HtvgwC8cdPRf4fnS1kvRktTM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-211-Rqy1sf4PNNKlfeNWmV53CQ-1; Thu,
- 12 Jun 2025 00:44:06 -0400
-X-MC-Unique: Rqy1sf4PNNKlfeNWmV53CQ-1
-X-Mimecast-MFC-AGG-ID: Rqy1sf4PNNKlfeNWmV53CQ_1749703444
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE0831956086;
-	Thu, 12 Jun 2025 04:44:04 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 83726180045C;
-	Thu, 12 Jun 2025 04:44:02 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	rick.p.edgecombe@intel.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yan.y.zhao@intel.com,
-	reinette.chatre@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	isaku.yamahata@intel.com,
-	Binbin Wu <binbin.wu@linux.intel.com>,
-	tony.lindgren@linux.intel.com
-Subject: Re: [PATCH] KVM: x86/mmu: Embed direct bits into gpa for KVM_PRE_FAULT_MEMORY
-Date: Thu, 12 Jun 2025 00:44:00 -0400
-Message-ID: <20250612044400.151036-1-pbonzini@redhat.com>
-In-Reply-To: <20250611001018.2179964-1-xiaoyao.li@intel.com>
-References: 
+	s=arc-20240116; t=1749705149; c=relaxed/simple;
+	bh=Uk8NoJXMqKCQMySusUG8IkaskY8HP0DNCxqK77i8ox8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HC0qcinrj/XPFSfZ6w4JRGzJs+dAPqGI/AYjZT+QoYzJ9t7m3+/a1v2CMd2I7uWEc525ONKQeUPMI5/YKEpUa6rwwt2ISm2Uur90yLYcNedhPVGXyNv2letBoSJ4holaVNxPJBqwrxk6DqEhlCWYHvoZdA5QNVgWKr+KJhY7gWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHvdsVAK; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749705148; x=1781241148;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Uk8NoJXMqKCQMySusUG8IkaskY8HP0DNCxqK77i8ox8=;
+  b=iHvdsVAKLXDzCtbKrTw3alEI/R7O4x1eo3Q+9llS2UgoWwIPpmqBILkt
+   j78EAs6MnqKykDyVYZsnSVniuSlZDs9AUZBYX7Q1KDbgpGbkldyLCeeb3
+   9ujdRYa1prq97IC52cns+nE0WryR/Zhs3FIiLpM0R1i77ZJnM2dwgTuTK
+   tzVZaHUjJCk2bjwA34RkTIlwkvgdEWK22KdCJ8A+HrmHqPeGcvP1EmbRS
+   ax1lC1s7Lc+rFrXFeV1Tve2lCcDxqnHwaEbc4/NQjGp1DA0lr7XSctokG
+   QkZDfN7g3xRtlGShRjZTCz33QdYMyNidYYxdOoFu6OQqLbvdQDb8yh2/N
+   g==;
+X-CSE-ConnectionGUID: Ddgagn96Q0yieImEy6i2Yw==
+X-CSE-MsgGUID: MNCJ5OfAR4SfNb/rsGec5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51087453"
+X-IronPort-AV: E=Sophos;i="6.16,229,1744095600"; 
+   d="scan'208";a="51087453"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 22:12:27 -0700
+X-CSE-ConnectionGUID: G1DwcKiNSP6bUW3bbdKbyQ==
+X-CSE-MsgGUID: an/NkHhmRcKOY5ZIpStM4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,229,1744095600"; 
+   d="scan'208";a="178366806"
+Received: from wqiao.bj.intel.com ([10.238.158.145])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 22:12:24 -0700
+From: Qiao Wei <wei.qiao@intel.com>
+To: rafael@kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: rui.zhang@intel.com,
+	xiange.pi@intel.com,
+	lili.li@intel.com,
+	furong.zhou@intel.com,
+	Qiao Wei <wei.qiao@intel.com>
+Subject: [linux-drivers-review]  [PATCH] powercap: intel_rapl: Add support for Bartlett Lake platform
+Date: Thu, 12 Jun 2025 12:45:38 +0800
+Message-Id: <20250612044538.2970661-1-wei.qiao@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,11 +76,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Queued, thanks.
+Add support for Bartlett Lake platform to the RAPL common driver.
 
-Paolo
+Signed-off-by: Qiao Wei <wei.qiao@intel.com>
+---
+ drivers/powercap/intel_rapl_common.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+index e3be40adc0d7a..c0789df34b2f7 100644
+--- a/drivers/powercap/intel_rapl_common.c
++++ b/drivers/powercap/intel_rapl_common.c
+@@ -1261,6 +1261,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_RAPTORLAKE,		&rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,        &rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,	&rapl_defaults_core),
++	X86_MATCH_VFM(INTEL_BARTLETTLAKE,	&rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_METEORLAKE,		&rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_METEORLAKE_L,	&rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	&rapl_defaults_spr_server),
+-- 
+2.34.1
 
 
