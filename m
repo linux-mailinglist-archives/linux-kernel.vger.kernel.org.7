@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-684100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10360AD7616
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE316AD7621
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744461888CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5491E1890251
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A02DFA5B;
-	Thu, 12 Jun 2025 15:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B93A29DB92;
+	Thu, 12 Jun 2025 15:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8Zatx+E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XaiYzB2A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A182DFA2F;
-	Thu, 12 Jun 2025 15:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A01629DB9A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749741625; cv=none; b=q/hCh4S9dMzhDYCKUJx13XEPFwSVdeRbPmMg6ok+VEllRCyXKnSOnKD06qP3FHMwKYpfPxyxrUuGx1vurBAe3ExcjVhA3uVf9UDvoHP8TXBIZvPkjS2JiCAihKkLzAB9H9e0HQPeVnC7aUxEc2XB8Uwy4TYMhIe+0XDRImFPs0A=
+	t=1749741666; cv=none; b=jRSGvcVP8nEOW6uB9dqha5C5qMJSjxWX2gzoXZYcDcWRhAL5urLSfcP7XZOFqBeoKVwMB/sdiTAr8vWRk28FaYFyrz1CAsak2zCrdj/bh8oHxbti+FpVwSRcmsvhs5uMn5PcZdn/P0gyfUeaFf4boollh4r9qpK6ixv38os4OMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749741625; c=relaxed/simple;
-	bh=ohaM//YlfVRwFhoaU5seQ2zQya1SsMLpsL7jIG2uzMM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XByWcz81vtwRzZOZz2M2ViLZQm6BJgLANyY9swUMdeOxINUXzAHpgwyI+h58YGR8h7JTggWDxLRmXr9FVrcJpQpIOz3pLm3r+uZSxFoabHWFebdI2hwjdfTS3J968lYXKP5CTp6cYwMejHURtRg9F68ZG1AuMNlRGr6S9IWKF3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8Zatx+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A50C4CEEA;
-	Thu, 12 Jun 2025 15:20:25 +0000 (UTC)
+	s=arc-20240116; t=1749741666; c=relaxed/simple;
+	bh=wshbG/vQ6UX9QKzvPFllw/wGW4HRGOaCAzXepA4wqWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FA9BWYLVmt2jVTPQzUdzF0DJAnwfu6bF5CqDJP3Xjdm9g1mW6K/sawsTo5tnRLWQ8rPgAhlx2+2opmZ7emTD1QSAB/sAgMCiSd3G6pxXpV1mcByI09VAupxDDQATkis4ITblKnFz2wIG9jmh3XdrNmVIxVScmH/jUzP7qJQE3Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XaiYzB2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89ACBC4CEEA;
+	Thu, 12 Jun 2025 15:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749741625;
-	bh=ohaM//YlfVRwFhoaU5seQ2zQya1SsMLpsL7jIG2uzMM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=I8Zatx+E3gUhVhnMfLIlexkwthMcILemqJgU7RRCAf5wXXpWlQLUq9jlkjla9LJbE
-	 PGn6VD3+1H+Fz4H6cFCD/DObdJFze3u6XeQoentvcq2wUZ31UiVtQQKI2atiuZC492
-	 FCvWCk4bCEl2KH3RkxLtZ2svG2z7zq7oqmWUavi00pFnRKqOSihYv8Qh8YIqMgDYXv
-	 YfMeDAoSwLDhKjvy/NL7dk+FscV4Vz45ImFHUU74Z4FLUovLC47sZ0O1fGWyZU0SUd
-	 zSTGodEYFQnkSvSIM++3b/+NGK4jX/YmlJGQ/5DVhIBnLO2x/pW6KbASOkPm7ro82h
-	 8iOvrU88vPnwA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD8939EFFCF;
-	Thu, 12 Jun 2025 15:20:56 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1749741666;
+	bh=wshbG/vQ6UX9QKzvPFllw/wGW4HRGOaCAzXepA4wqWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XaiYzB2Af7RXh0Twpx+T1OBL4I2ke8snzfvGviZYp+JvsI80bLXqv1VwQ7/bZvCAB
+	 jizLTAUq6IHMdMIAuO0x67PXluwMf2ftZJNMOparAc6c+UshciGzVnPEpDNw/sVwkR
+	 ZPBrUrcdppmPGKgeJQHc9UkW8StOvC7G/0cn8iK+2eVUWiLznnW74BA+2oAQ89O/Gy
+	 2W0appmJNEt1/IrH8cz1kMuoc9pMa4Dl/JJPtYNlNMUDF4IZ+ek/ZgGGrjwzsj6Vzi
+	 ROXQfNq1C0bDEhqoDOPCn6t75lY9Th9OUowpOVsmqGOVfe00p/d12aL3fiTFh/yqgA
+	 fIK6za3tIWq5A==
+Date: Thu, 12 Jun 2025 16:20:59 +0100
+From: Will Deacon <will@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Rik van Riel <riel@surriel.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1] mm: Remove arch_flush_tlb_batched_pending() arch
+ helper
+Message-ID: <20250612152058.GE12912@willie-the-truck>
+References: <20250609103132.447370-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net/mlx5: HWS, Add error checking to
- hws_bwc_rule_complex_hash_node_get()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174974165549.4177214.8588898310621902880.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Jun 2025 15:20:55 +0000
-References: <aEmBONjyiF6z5yCV@stanley.mountain>
-In-Reply-To: <aEmBONjyiF6z5yCV@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: kliteyn@nvidia.com, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, cratiu@nvidia.com, mbloch@nvidia.com,
- vdogaru@nvidia.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609103132.447370-1-ryan.roberts@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 11 Jun 2025 16:14:32 +0300 you wrote:
-> Check for if ida_alloc() or rhashtable_lookup_get_insert_fast() fails.
+On Mon, Jun 09, 2025 at 11:31:30AM +0100, Ryan Roberts wrote:
+> Since commit 4b634918384c ("arm64/mm: Close theoretical race where stale
+> TLB entry remains valid"), all arches that use tlbbatch for reclaim
+> (arm64, riscv, x86) implement arch_flush_tlb_batched_pending() with a
+> flush_tlb_mm().
 > 
-> Fixes: 17e0accac577 ("net/mlx5: HWS, support complex matchers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> So let's simplify by removing the unnecessary abstraction and doing the
+> flush_tlb_mm() directly in flush_tlb_batched_pending(). This effectively
+> reverts commit db6c1f6f236d ("mm/tlbbatch: introduce
+> arch_flush_tlb_batched_pending()").
+> 
+> Suggested-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
-> v2: Add error checking for ida_alloc() and add cleanup.
-> 
-> [...]
+>  arch/arm64/include/asm/tlbflush.h | 11 -----------
+>  arch/riscv/include/asm/tlbflush.h |  1 -
+>  arch/riscv/mm/tlbflush.c          |  5 -----
+>  arch/x86/include/asm/tlbflush.h   |  5 -----
+>  mm/rmap.c                         |  2 +-
+>  5 files changed, 1 insertion(+), 23 deletions(-)
 
-Here is the summary with links:
-  - [v2,net] net/mlx5: HWS, Add error checking to hws_bwc_rule_complex_hash_node_get()
-    https://git.kernel.org/netdev/net/c/1619bdf4389c
+Thank you, Ryan!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Acked-by: Will Deacon <will@kernel.org>
 
+I assume this will go via akpm rather than the arch tree?
 
+Will
 
