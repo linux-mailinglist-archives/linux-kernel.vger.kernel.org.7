@@ -1,309 +1,200 @@
-Return-Path: <linux-kernel+bounces-684415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6FDAD7A89
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:02:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A712AD7A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A28853AE2C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:02:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389917B055B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0972DFA42;
-	Thu, 12 Jun 2025 18:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679972D1932;
+	Thu, 12 Jun 2025 18:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="DDgXrUPK"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sncyQV5y"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79252D1929;
-	Thu, 12 Jun 2025 18:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1C529B79A;
+	Thu, 12 Jun 2025 18:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749754778; cv=pass; b=AEEqWTsPK1L6GJWU4z7/sAO8qWedFAzf3RbQ0thEd9J3DmQJLOvooY0A1PSmHA56adya3Ir936cFAu5eYmXnCCkUzSTIC5XbWwmx7soDU0G7FMcCOY7gh+wT1augTZVO8jW+cASRMQiHLDmpjr81lZ7wRdIqQnOVpHxrYVAz6Lg=
+	t=1749754579; cv=fail; b=qaRfdQL5gIyz1g12ibA3xdoMFNreOgbQEuuGDWtbZdmCaujB6hBfmh3ognqEoKMMs7AQKaw0AeOgIMRybq1CdAa/HJyxxmWdamSLnPTNdXagUlK8tzfiS68eKXSBTyR+5L3fAlMJC+4d/b+lyPumWl1+z/Pf5kopDRS8Ms/zeg4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749754778; c=relaxed/simple;
-	bh=wcX+Wfaj0gTfp0zZGs8YAT0FXw3fOzCQLb5TGid27LA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TfDk4lXyOEX7QWuRUmFtA+MLGP+0ILqKF5IbZFFbPLwN/Rt2hJ0KSrUYUTa8TkkQ1BXRVnZKnKkxnRaewHmInk4yGVMwTCadhT/yPz07VjsKS2VhB+kB8yNR63VOZ7lH0eDilLJZxLFdfZtxxTkC7D3zR4bDOusL7aR41/AdsA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=DDgXrUPK; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749754718; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RJd7X5goRKjGOBIxXW7c4uXAGgYWji2MQpJlwYEhjsbX4SPwuShIklRKeuXrLP27ZphxmHFjn7VXad1T+WwaDvw5Dm5EpcNRR83F01Xb5azFBf8lkf8tk5Mpe4FtSLcZURPnHi0kaBrS22LhRObDrBg3NpoSvvMuxTioZC3GXBk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749754718; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qsCK1y2xYwi6CMHQWDQJlReeyR6tuopiwgdQe+eq94s=; 
-	b=cNxwzGHkmBFaWUJ2ZrtRoskNp0Y4sMRqUaQVsh8fyFTvG+8+KhZScIXjqHgzBjtSchH6lWBHfwl2rjhsYO3B/9VrqCtaO2rVkf/HJSszhZCrJ0UK1eRXLzDB4jzZT86377XUHRlzWJLB0ctlC0trkgFYaH6bnW73R5DF/Y6dhFQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749754718;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=qsCK1y2xYwi6CMHQWDQJlReeyR6tuopiwgdQe+eq94s=;
-	b=DDgXrUPKFJUPsoV1F7Qz1OH+cpY2/l4a4otcfQb/4j/3sO38/5RISWjl9SBGITRa
-	mX/7hJDoXpqhRnCw6CLZIvn5u5ziADVYK410WgDKp6X1Y7esf7ONqeV1oHfoQrVbjf1
-	xoVipAl8JpW2CUejNnW3lqMp7zB5SgCwygVdHALY=
-Received: by mx.zohomail.com with SMTPS id 1749754715941996.4656178955362;
-	Thu, 12 Jun 2025 11:58:35 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Thu, 12 Jun 2025 20:56:12 +0200
-Subject: [PATCH 10/20] drm/rockchip: dw_hdmi_qp: switch to HWORD_UPDATE
- macro
+	s=arc-20240116; t=1749754579; c=relaxed/simple;
+	bh=OmyDhv4ea/3dab+A3/4/YjFtbmq8XeyDvQgcCUbEUqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tRtVrUJx2wkuCz3qCmZQvxhAcTPzSfrv8/j3TMsqNPt521qUP5hfBCh3t6MSFOWavav/WTUKVGmJjbP2v9l/lc9NW210OWz78p2d7OhEYBLZHG/VITNinSTLHf5NhWNHZO9Rh0DYO9APfGWsiRQvsf47tJKVj+/KE/JpJU9D+/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sncyQV5y; arc=fail smtp.client-ip=40.107.223.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oPIyitMvIPgJRcY5tgFlAXBmwtEQTS2oBOlUIvUvLnGCcVFBVZR5iOJ/+d3NnREACOKNaIZOtO9LJp7iGS72Bu2pBANIOo1r0aC2TJxd5v5UUL2fkVcFErrG1gybDbmh8deMiqthYc8yA0h3ALIOxM6HDE0FQxHYz2/HZnkmLTyHgeIu4cAffj+lJB4j9pWwWTV/qwCytKsxM7xT8LYmTz49inFX0LQX4jurbWYXGkgmRnyBoDja0f0iPKubSoBvzApg9MqyAHHa73i0g714GPtJlSDLZG+h/xR8v4trwHailxyEkLDAGKfdmy73UvjfvTFMakdJdT4s4RQifxRZLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+K80TgxzigwFQ1VFDwUoTbojdefsO4qyvRZhyIv7U8U=;
+ b=D3QdPyZYztFtHWBDdWuWAPlbBWoMNwQaBQ9BfrkT0mEU+DbX4pmNwf2upG9gzTuS3RH56ZlDydA6E9pVk4ODb/ZOE3FgN2o/CFroTUrFFiKmNOrLroDlLH1xh+mhSAveMErdEwH3pWQKkuNGa/g/n59tPG3ftSlg2XdT6n2aFFNcUWGvyjzcyadELaiFQ3eO5EIX9gVIaqaoErIJU91LHpiwfDVrM5Zu7ruEuQ3Dk2JZKS2OHS1u8TUpFNiyDfjJeXZxKYBuocoWJ64Zy5OYVVnpET+50nC+4eZWnDks39QQtP6XVAV4ijJON8m+kZRRxuhfBbcwX/SPO2T+0FYpuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+K80TgxzigwFQ1VFDwUoTbojdefsO4qyvRZhyIv7U8U=;
+ b=sncyQV5yc67mxtnKRkzPARDqHum5sGGMGiOr5t/Yi5oROi6Bv+JffWejf51U98eTb5Nwbu6qbXkXIyOP5zUu4jCHfh9p7obgchwAIYMy/5CuT/ewoXQ/04IMHvZrAbQLr+QuFwPOaQCFyQbwQ6YX4YXtAqzxfp/CGhXi3qe4fI8QzC6GnP/wEcJezGBoZdUkOiGJf1XJRA4S3e1hpk3skI/FotILLAPk6FurAsLd90X4oph4LZr6i6slbI97eEpC3nE1LudeRjFsZpvA2ms2bQERZ4lsA7f0G/e2+04pgA6BqtcYcXEfrXiVatpHyPEA52ap9xQlHkey7YuJB5L5/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
+ by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9aa) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Thu, 12 Jun
+ 2025 18:56:15 +0000
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f%7]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
+ 18:56:14 +0000
+Date: Thu, 12 Jun 2025 15:56:13 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Shuah Khan <shuah@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Mark Brown <broonie@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 09/14] selftests: harness: Move teardown conditional
+ into test metadata
+Message-ID: <20250612185613.GX543171@nvidia.com>
+References: <aEoUhPYIAizTLADq@nvidia.com>
+ <20250611235117.GR543171@nvidia.com>
+ <aEp6tGUEFCQz1prh@nvidia.com>
+ <20250612135802.GU543171@nvidia.com>
+ <20250612162151-1fc97a6c-a1c9-4656-997e-fd02f5f9418b@linutronix.de>
+ <20250612145801.GV543171@nvidia.com>
+ <20250612171437-450fb7d6-c73a-47e3-9e1c-5c009cba7fe1@linutronix.de>
+ <20250612154242.GW543171@nvidia.com>
+ <aEsUGP8xPTDjG0ob@nvidia.com>
+ <aEsiJFku+wR9KxE8@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEsiJFku+wR9KxE8@nvidia.com>
+X-ClientProxiedBy: YT4PR01CA0071.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:111::12) To MW6PR12MB8663.namprd12.prod.outlook.com
+ (2603:10b6:303:240::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-byeword-update-v1-10-f4afb8f6313f@collabora.com>
-References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
-In-Reply-To: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
-To: Yury Norov <yury.norov@gmail.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Jaehoon Chung <jh80.chung@samsung.com>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Shreeya Patel <shreeya.patel@collabora.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Shawn Lin <shawn.lin@rock-chips.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
- MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, 
- linux-sound@vger.kernel.org, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|SJ5PPFF6E64BC2C:EE_
+X-MS-Office365-Filtering-Correlation-Id: da0a131e-fa95-46bb-1ef1-08dda9e2ce3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mGXtnKWT2YE1b6f5ZdrTy8TqKs5xzyo518ZbZZL1Lx3IJheMK1cE5GZpC2Ah?=
+ =?us-ascii?Q?VGoNHLclVJj74sJZKNk9obxmoTpr5jLGlUbOjqErxACdbkGwyk2chpxxnNvV?=
+ =?us-ascii?Q?kUgz4JSbj/Ks9amCW5GseiszzkcpeT3Y/PgGEjGFiM9J+ruw6lDR4YgdSlXJ?=
+ =?us-ascii?Q?6CU0Qyvgm3NDv6d9Zj9RnehDqai6jIWfrh4d5V4Gl3m4C3JrJE0OHJHPGnUG?=
+ =?us-ascii?Q?J2/uVlmNlJedpPxnhP4VZiGELuvOMZ8EY76Pl5iziUog+5iwHgTKznSL/uwK?=
+ =?us-ascii?Q?d8YM7AnRuSAGnlJCxTc6UU7XZY/TXlbVLRa0xDtS0S1q/zJHJT8vmCj4KWiZ?=
+ =?us-ascii?Q?NjVzzojtScxxtqXVXObCJ9MgVHMohrzH2Updhrz+drjENKDhSEHnfugE2hHQ?=
+ =?us-ascii?Q?q3NwGQQRd0zxuXk6ZVPYaemnFRcRpe032hkkgZs5HYrvTwQguHHJpUGqR6Df?=
+ =?us-ascii?Q?T1hxHXdbIIy7NTv6hv7DItcrUaiRPGiUVw+66ksRtDGxr3RxvDbjTXE4bUGq?=
+ =?us-ascii?Q?+HoOIQdU2JeLfLqAyirQJslcRSevhCEtoyY/DQmMdkwl6XSRA3gGJ2LpOaxL?=
+ =?us-ascii?Q?avCc7FA/RNvER/docmOCPh6FIVCSKJpXu7i+SnekJer0dllEDUJ0zZW0V7sO?=
+ =?us-ascii?Q?KAO0i1/cAdR2+U4zk9z5XclNz5zyPVusbCEF5PYq4dLeM4FBGp8SQY7XVce5?=
+ =?us-ascii?Q?ABJMxwXAT9ZZ7zpgAYARASDE+TXacEmBgMhQEDwr0Sx5t+shCxeifEb/VOhy?=
+ =?us-ascii?Q?p1Ar+TYOVfqaieBl0kRCOEr5CCtNhl6uqhwcM3kty/IHic0P1E9EYS4N14Eh?=
+ =?us-ascii?Q?mu1LlsBc67zEgN7L+gKiut+JGymXmr7hGbl5V4PHCKhbmuyN5ufijXs5NA76?=
+ =?us-ascii?Q?qTr0SBNqQcZp4Mcm6H7g3rtARNoJ7rpR+dwHNb8btr5Wsri/Dab9SMo0bxvU?=
+ =?us-ascii?Q?TxdL59bNUBJdPHao7lZ5YQkdqdAqv4hdLvcSdbtasOFaAWnJI2i7gajdaZQ+?=
+ =?us-ascii?Q?92CaSSKmcY9k8YNWbqj2LyrIWqVaUBy6xftc9imYzNdIIuVJ2+uUCOvYevqS?=
+ =?us-ascii?Q?GgCTlrCguAGYxKpyB6nWOC70s+kEg0vbzGWp3jRsloP+Uso0yfCrpiTPM+Qj?=
+ =?us-ascii?Q?ObpAILb40xERhHFfEtJWAZFH0PwNPfCcxUFDiqyZ2LoWWX1hi7bcRS1kVpJM?=
+ =?us-ascii?Q?vHYd4kchM/Mm/2HReD5KF6T4Tm+Hu8WjuWpMTZ6lCDx8l/8sN4NM/PFGaR/F?=
+ =?us-ascii?Q?WqFwUG9kBUKT880a7d3zk3lFvpwoTUf6WHatYINYzRGr2G58M3G/t6fSQN06?=
+ =?us-ascii?Q?QPbXfhgKCsbWwPJxnRfxYTHKadKu1gZKA3V3jZvaIkgyX/QqulkS/H6WBSvl?=
+ =?us-ascii?Q?v0C3OheQlA6kKaesCTGfpCKwSpObbMOKvNjxtFxokqorkNOATvaw2W6kDi9o?=
+ =?us-ascii?Q?VIeRh8uLxiU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LGlbi7e5Tlm33jS6DDgtq4ZROb+MQdyxAYyew1QoFR14W83nWIPPwOVEapiK?=
+ =?us-ascii?Q?hG3j7z6f1eOjTPM9DHaykZuEKWEpC/Fld1zYjyqCjrvTQol1FZV/LBQ2lzl4?=
+ =?us-ascii?Q?rnTBAOdsQNZv0jRQRKfqb2BWGdGh9QKm3QoUkIR4G5yFqZ30ecMUxYjr/x3H?=
+ =?us-ascii?Q?jyuFTTcO/k3GtKwfqisyNZHDiDYL+QzcB0DCqK2QyvO8jjnNmXY7w9B1pOJ7?=
+ =?us-ascii?Q?isA3wBHiAYsb6FJyo/ei4GGUlZZGRl4qxCA/plrj+w3XmD6mfx9Pef5RKTzG?=
+ =?us-ascii?Q?q7Khy4kJMlsx7z2gJMPLMFOJnxw5uBmn1b9BiAapT0GXL+Zp+Fsi/xEPt1QR?=
+ =?us-ascii?Q?0+tr7vJK7Y/nviq1qf0xRzmv8b+HmBmmiH7hgBkmQhrZYXHxTMwavuqGPs0B?=
+ =?us-ascii?Q?8SR4nqERZ5moLesBM7qSD0pQAz2QmnyFQvN7DfVKL6xi8aO+/xDY56ggn7oO?=
+ =?us-ascii?Q?p8OCkxHnL7gds9PfefnZ7s+GeJxcwI0VwMW2YG4jCc26hsJSp2m4evoJJMRD?=
+ =?us-ascii?Q?dpFpN4EWBjhIqrRAIqN4kBLMIgH1DkLgIFZ78k5w7/QxzCLpa/apOIziKjRf?=
+ =?us-ascii?Q?IjkymorrxMlB9WEZm9J7SgH2mr4d4YcaH8lhLzr0TrGqs7m9jmTTRS3UCCPW?=
+ =?us-ascii?Q?0l6fQ7JdDD5d1XF+hSKB7YbD9RubE3xf5Sq81v4wBODBSPkgVgVj/TQ5oCLV?=
+ =?us-ascii?Q?UuaS565JMPpEGIsgH8LenyTG7coREq9pKx3xtN0SR01WNFw46qyEqKejEzKU?=
+ =?us-ascii?Q?ew0mDlN8gftvi7Z7dNAao/Xtw55o+cUJc7MYpdzQsjLzmlFQgfMoIsEGMdcJ?=
+ =?us-ascii?Q?ujQuy+fcij39LmqekCIMC1aQYWe+eYfGenjDCcVNM5Q4bbBR8Z5ND62T+n5Y?=
+ =?us-ascii?Q?Nska8tr06uleEh6oK08t79qrV7cPhwmxMHUH+Mu5VtxYhGtzcbnLNjARqihy?=
+ =?us-ascii?Q?enD25YjQ+zc2JDpFUEysaRVrU2CkT09I3sOLmlF23rpQxFnAV+4x3i3F1nOx?=
+ =?us-ascii?Q?z5xwIA0yV231r0+vhr9KkNXNaO2fzbaQfktysDMNu3JEzc7DHzbwzsk+E7ZN?=
+ =?us-ascii?Q?JxHsc8CVj80fJsXFcuoGZElrK9y7jCBmVN5u70saLOFYexMLl7l1GvDE4RGf?=
+ =?us-ascii?Q?jigxbiel6cX3W5nUSJxcErQTAWRaurGfKXn4EQeS/7++wp2f4FKilULv2muQ?=
+ =?us-ascii?Q?HY8qr36NbrEPAzq2q6DqY/z7AtnZ0ML/FsSESlAZt+7xW+QHkvuOFtdomhdW?=
+ =?us-ascii?Q?wykR0O85z7QJ7oLYqZshgF4vOwaPSedO7lLodA1jQFZTQuT0C2YUTD3ZWYQe?=
+ =?us-ascii?Q?UO6JTNfe/wYWIv7LU18OV9XYlQDJuwP5IyUaGMHe3yK171rLjlKgEhsNmVxy?=
+ =?us-ascii?Q?SFjqa+5jut2AWCUJXb/mGIzofZ1CpvuDHcqD+I+CkvU2ktYzLLpG0o2nPng2?=
+ =?us-ascii?Q?yWbg+o7iv2ZwSGL8vd/z8D2Wr4bbWexLXVnYN3HU+jZwi9Rdydldj6cj2Ca9?=
+ =?us-ascii?Q?JJtTm+J+r7BXHJS2oSe7IeWG6xpMkUsROQCthmTwOKfxem+hwLXHwE+8uKZP?=
+ =?us-ascii?Q?K0PeF6Vkm9bRDimp5tIPOTvmJCw6h8j0p850Of41?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da0a131e-fa95-46bb-1ef1-08dda9e2ce3e
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 18:56:14.6242
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aKYK6NP4r//2GW8f1hvUiVuOaJ/GURnFLHIA+zVSmD7gGmlPtrRa4L3eM1tAnvgc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFF6E64BC2C
 
-The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-drivers that use constant masks.
+On Thu, Jun 12, 2025 at 11:53:24AM -0700, Nicolin Chen wrote:
+> @@ -2022,7 +2023,19 @@ FIXTURE_SETUP(iommufd_dirty_tracking)
+>         self->fd = open("/dev/iommu", O_RDWR);
+>         ASSERT_NE(-1, self->fd);
+> 
+> -       rc = posix_memalign(&self->buffer, HUGEPAGE_SIZE, variant->buffer_size);
+> +       if (variant->hugepages) {
+> +               /*
+> +                * Allocation must be aligned to the HUGEPAGE_SIZE, because the
+> +                * following mmap() will automatically align the length to be a
+> +                * multiple of the underlying huge page size. Failing to do the
+> +                * same at this allocation will result in a memory overwrite by
+> +                * the mmap().
+> +                */
+> +               size = __ALIGN_KERNEL(variant->buffer_size, HUGEPAGE_SIZE);
+> +       } else {
+> +               size = variant->buffer_size;
+> +       }
+> +       rc = posix_memalign(&self->buffer, HUGEPAGE_SIZE, size);
+>         if (rc || !self->buffer) {
+>                 SKIP(return, "Skipping buffer_size=%lu due to errno=%d",
+>                            variant->buffer_size, rc);
+> 
+> It can just upsize the allocation, i.e. the test case will only
+> use the first 64M or 128MB out of the reserved 512MB huge page.
 
-Replace this driver's HIWORD_UPDATE with the HWORD_UPDATE from
-bitfield.h. While at it, disambiguate the write GRF write to SOC_CON7 by
-splitting the definition into the individual bitflags. This is done
-because HWORD_UPDATE shifts the value for us according to the mask, so
-writing the mask to itself to enable two bits is no longer something
-that can be done. It should also not be done, because it hides the true
-meaning of those two individual bit flags.
+The MAP_HUGETLBFS is required that is the whole point of what it is
+doing..
 
-HDMI output with this patch has been tested on both RK3588 and RK3576.
-On the former, with both present HDMI connectors.
-
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 68 +++++++++++++-------------
- 1 file changed, 33 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-index 7d531b6f4c098c6c548788dad487ce4613a2f32b..0431913c2f71893638d1824d52836cc095e04551 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-@@ -7,6 +7,7 @@
-  * Author: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/gpio/consumer.h>
- #include <linux/mfd/syscon.h>
-@@ -66,7 +67,8 @@
- #define RK3588_HDMI1_HPD_INT_MSK	BIT(15)
- #define RK3588_HDMI1_HPD_INT_CLR	BIT(14)
- #define RK3588_GRF_SOC_CON7		0x031c
--#define RK3588_SET_HPD_PATH_MASK	GENMASK(13, 12)
-+#define RK3588_HPD_HDMI0_IO_EN_MASK	BIT(12)
-+#define RK3588_HPD_HDMI1_IO_EN_MASK	BIT(13)
- #define RK3588_GRF_SOC_STATUS1		0x0384
- #define RK3588_HDMI0_LEVEL_INT		BIT(16)
- #define RK3588_HDMI1_LEVEL_INT		BIT(24)
-@@ -80,7 +82,6 @@
- #define RK3588_HDMI0_GRANT_SEL		BIT(10)
- #define RK3588_HDMI1_GRANT_SEL		BIT(12)
- 
--#define HIWORD_UPDATE(val, mask)	((val) | (mask) << 16)
- #define HOTPLUG_DEBOUNCE_MS		150
- #define MAX_HDMI_PORT_NUM		2
- 
-@@ -185,11 +186,11 @@ static void dw_hdmi_qp_rk3588_setup_hpd(struct dw_hdmi_qp *dw_hdmi, void *data)
- 	u32 val;
- 
- 	if (hdmi->port_id)
--		val = HIWORD_UPDATE(RK3588_HDMI1_HPD_INT_CLR,
--				    RK3588_HDMI1_HPD_INT_CLR | RK3588_HDMI1_HPD_INT_MSK);
-+		val = (HWORD_UPDATE(RK3588_HDMI1_HPD_INT_CLR, 1) |
-+		       HWORD_UPDATE(RK3588_HDMI1_HPD_INT_MSK, 0));
- 	else
--		val = HIWORD_UPDATE(RK3588_HDMI0_HPD_INT_CLR,
--				    RK3588_HDMI0_HPD_INT_CLR | RK3588_HDMI0_HPD_INT_MSK);
-+		val = (HWORD_UPDATE(RK3588_HDMI0_HPD_INT_CLR, 1) |
-+		       HWORD_UPDATE(RK3588_HDMI0_HPD_INT_MSK, 0));
- 
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- }
-@@ -218,8 +219,8 @@ static void dw_hdmi_qp_rk3576_setup_hpd(struct dw_hdmi_qp *dw_hdmi, void *data)
- 	struct rockchip_hdmi_qp *hdmi = (struct rockchip_hdmi_qp *)data;
- 	u32 val;
- 
--	val = HIWORD_UPDATE(RK3576_HDMI_HPD_INT_CLR,
--			    RK3576_HDMI_HPD_INT_CLR | RK3576_HDMI_HPD_INT_MSK);
-+	val = (HWORD_UPDATE(RK3576_HDMI_HPD_INT_CLR, 1) |
-+	       HWORD_UPDATE(RK3576_HDMI_HPD_INT_MSK, 0));
- 
- 	regmap_write(hdmi->regmap, RK3576_IOC_MISC_CON0, val);
- 	regmap_write(hdmi->regmap, 0xa404, 0xffff0102);
-@@ -254,7 +255,7 @@ static irqreturn_t dw_hdmi_qp_rk3576_hardirq(int irq, void *dev_id)
- 
- 	regmap_read(hdmi->regmap, RK3576_IOC_HDMI_HPD_STATUS, &intr_stat);
- 	if (intr_stat) {
--		val = HIWORD_UPDATE(RK3576_HDMI_HPD_INT_MSK, RK3576_HDMI_HPD_INT_MSK);
-+		val = HWORD_UPDATE(RK3576_HDMI_HPD_INT_MSK, 1);
- 
- 		regmap_write(hdmi->regmap, RK3576_IOC_MISC_CON0, val);
- 		return IRQ_WAKE_THREAD;
-@@ -273,12 +274,12 @@ static irqreturn_t dw_hdmi_qp_rk3576_irq(int irq, void *dev_id)
- 	if (!intr_stat)
- 		return IRQ_NONE;
- 
--	val = HIWORD_UPDATE(RK3576_HDMI_HPD_INT_CLR, RK3576_HDMI_HPD_INT_CLR);
-+	val = HWORD_UPDATE(RK3576_HDMI_HPD_INT_CLR, 1);
- 	regmap_write(hdmi->regmap, RK3576_IOC_MISC_CON0, val);
- 	mod_delayed_work(system_wq, &hdmi->hpd_work,
- 			 msecs_to_jiffies(HOTPLUG_DEBOUNCE_MS));
- 
--	val = HIWORD_UPDATE(0, RK3576_HDMI_HPD_INT_MSK);
-+	val = HWORD_UPDATE(RK3576_HDMI_HPD_INT_MSK, 0);
- 	regmap_write(hdmi->regmap, RK3576_IOC_MISC_CON0, val);
- 
- 	return IRQ_HANDLED;
-@@ -293,11 +294,9 @@ static irqreturn_t dw_hdmi_qp_rk3588_hardirq(int irq, void *dev_id)
- 
- 	if (intr_stat) {
- 		if (hdmi->port_id)
--			val = HIWORD_UPDATE(RK3588_HDMI1_HPD_INT_MSK,
--					    RK3588_HDMI1_HPD_INT_MSK);
-+			val = HWORD_UPDATE(RK3588_HDMI1_HPD_INT_MSK, 1);
- 		else
--			val = HIWORD_UPDATE(RK3588_HDMI0_HPD_INT_MSK,
--					    RK3588_HDMI0_HPD_INT_MSK);
-+			val = HWORD_UPDATE(RK3588_HDMI0_HPD_INT_MSK, 1);
- 		regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- 		return IRQ_WAKE_THREAD;
- 	}
-@@ -315,20 +314,18 @@ static irqreturn_t dw_hdmi_qp_rk3588_irq(int irq, void *dev_id)
- 		return IRQ_NONE;
- 
- 	if (hdmi->port_id)
--		val = HIWORD_UPDATE(RK3588_HDMI1_HPD_INT_CLR,
--				    RK3588_HDMI1_HPD_INT_CLR);
-+		val = HWORD_UPDATE(RK3588_HDMI1_HPD_INT_CLR, 1);
- 	else
--		val = HIWORD_UPDATE(RK3588_HDMI0_HPD_INT_CLR,
--				    RK3588_HDMI0_HPD_INT_CLR);
-+		val = HWORD_UPDATE(RK3588_HDMI0_HPD_INT_CLR, 1);
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- 
- 	mod_delayed_work(system_wq, &hdmi->hpd_work,
- 			 msecs_to_jiffies(HOTPLUG_DEBOUNCE_MS));
- 
- 	if (hdmi->port_id)
--		val |= HIWORD_UPDATE(0, RK3588_HDMI1_HPD_INT_MSK);
-+		val |= HWORD_UPDATE(RK3588_HDMI1_HPD_INT_MSK, 0);
- 	else
--		val |= HIWORD_UPDATE(0, RK3588_HDMI0_HPD_INT_MSK);
-+		val |= HWORD_UPDATE(RK3588_HDMI0_HPD_INT_MSK, 0);
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- 
- 	return IRQ_HANDLED;
-@@ -338,14 +335,14 @@ static void dw_hdmi_qp_rk3576_io_init(struct rockchip_hdmi_qp *hdmi)
- {
- 	u32 val;
- 
--	val = HIWORD_UPDATE(RK3576_SCLIN_MASK, RK3576_SCLIN_MASK) |
--	      HIWORD_UPDATE(RK3576_SDAIN_MASK, RK3576_SDAIN_MASK) |
--	      HIWORD_UPDATE(RK3576_HDMI_GRANT_SEL, RK3576_HDMI_GRANT_SEL) |
--	      HIWORD_UPDATE(RK3576_I2S_SEL_MASK, RK3576_I2S_SEL_MASK);
-+	val = HWORD_UPDATE(RK3576_SCLIN_MASK, 1) |
-+	      HWORD_UPDATE(RK3576_SDAIN_MASK, 1) |
-+	      HWORD_UPDATE(RK3576_HDMI_GRANT_SEL, 1) |
-+	      HWORD_UPDATE(RK3576_I2S_SEL_MASK, 1);
- 
- 	regmap_write(hdmi->vo_regmap, RK3576_VO0_GRF_SOC_CON14, val);
- 
--	val = HIWORD_UPDATE(0, RK3576_HDMI_HPD_INT_MSK);
-+	val = HWORD_UPDATE(RK3576_HDMI_HPD_INT_MSK, 0);
- 	regmap_write(hdmi->regmap, RK3576_IOC_MISC_CON0, val);
- }
- 
-@@ -353,27 +350,28 @@ static void dw_hdmi_qp_rk3588_io_init(struct rockchip_hdmi_qp *hdmi)
- {
- 	u32 val;
- 
--	val = HIWORD_UPDATE(RK3588_SCLIN_MASK, RK3588_SCLIN_MASK) |
--	      HIWORD_UPDATE(RK3588_SDAIN_MASK, RK3588_SDAIN_MASK) |
--	      HIWORD_UPDATE(RK3588_MODE_MASK, RK3588_MODE_MASK) |
--	      HIWORD_UPDATE(RK3588_I2S_SEL_MASK, RK3588_I2S_SEL_MASK);
-+	val = HWORD_UPDATE(RK3588_SCLIN_MASK, 1) |
-+	      HWORD_UPDATE(RK3588_SDAIN_MASK, 1) |
-+	      HWORD_UPDATE(RK3588_MODE_MASK, 1) |
-+	      HWORD_UPDATE(RK3588_I2S_SEL_MASK, 1);
- 	regmap_write(hdmi->vo_regmap,
- 		     hdmi->port_id ? RK3588_GRF_VO1_CON6 : RK3588_GRF_VO1_CON3,
- 		     val);
- 
--	val = HIWORD_UPDATE(RK3588_SET_HPD_PATH_MASK, RK3588_SET_HPD_PATH_MASK);
-+	val = HWORD_UPDATE(RK3588_HPD_HDMI0_IO_EN_MASK, 1) |
-+	      HWORD_UPDATE(RK3588_HPD_HDMI1_IO_EN_MASK, 1);
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON7, val);
- 
- 	if (hdmi->port_id)
--		val = HIWORD_UPDATE(RK3588_HDMI1_GRANT_SEL, RK3588_HDMI1_GRANT_SEL);
-+		val = HWORD_UPDATE(RK3588_HDMI1_GRANT_SEL, 1);
- 	else
--		val = HIWORD_UPDATE(RK3588_HDMI0_GRANT_SEL, RK3588_HDMI0_GRANT_SEL);
-+		val = HWORD_UPDATE(RK3588_HDMI0_GRANT_SEL, 1);
- 	regmap_write(hdmi->vo_regmap, RK3588_GRF_VO1_CON9, val);
- 
- 	if (hdmi->port_id)
--		val = HIWORD_UPDATE(RK3588_HDMI1_HPD_INT_MSK, RK3588_HDMI1_HPD_INT_MSK);
-+		val = HWORD_UPDATE(RK3588_HDMI1_HPD_INT_MSK, 1);
- 	else
--		val = HIWORD_UPDATE(RK3588_HDMI0_HPD_INT_MSK, RK3588_HDMI0_HPD_INT_MSK);
-+		val = HWORD_UPDATE(RK3588_HDMI0_HPD_INT_MSK, 1);
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- }
- 
-
--- 
-2.49.0
-
+Jason
 
