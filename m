@@ -1,115 +1,99 @@
-Return-Path: <linux-kernel+bounces-683023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DD5AD67F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:25:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622C7AD67FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B45D7AD5CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14683ADCE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172B11F1538;
-	Thu, 12 Jun 2025 06:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356361F419A;
+	Thu, 12 Jun 2025 06:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KZ+J5YWL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4S1BLYr0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKL18zga"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1726F211F;
-	Thu, 12 Jun 2025 06:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A518211F;
+	Thu, 12 Jun 2025 06:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749709519; cv=none; b=cgeXdnxuqP2KcIOdxgF3s502SlJh2iT/zdXF0WCz07qNoa8hgylWW9VTn9tk7ZmSriWfsek8dBu3f6aweAt+HjWI7BBTC+kb8TyPr9E4vh78tj1m8pEi7WWaufigxGKiXUcGo/s1HM7IntYYMuwUTVQNwVR8QNEYmGXWxsYHKOI=
+	t=1749709547; cv=none; b=rx68tkwBttmXHVtMPoQrKTlPioYm7yKcpPWExQ/1wa82NjL62wyvISO5ULjItgvihERT8YvOo9neEfErwJdY3jDR02rkqPcm44CSwZL408O6JZxR7cdyak2ttKthKkyYoQ7lvMwcwWc9sWE5Gpu1VI269e2OV/Z/stdkpj156wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749709519; c=relaxed/simple;
-	bh=WbKlRgT6f7BkyMv2x9S6bRsCtZQ2+P+hdMNKp/TwS0E=;
+	s=arc-20240116; t=1749709547; c=relaxed/simple;
+	bh=M9CxTHdXT5WrEkUahJ2svzM+9WFZHYH6PnfsJfmp96g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J97RJycPQQWFw+GT9sBRyhx1JGmYDLL/sMGh8NZExM1VNwWeudYtloHITyBhhL6W+r5DQvYOO49WTipDFjlVadKOAB47e5XXS4n28mx32otbXQfchc/8srgx/QZmzjQ6Ag7U+da3RaRIR7UWC5cLkPKk5K4QqiPIUQ3ATJosFN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KZ+J5YWL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4S1BLYr0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 12 Jun 2025 08:25:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749709516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V4Ia2CoUtifdcfPDTm3n0fPYredAvQzKsRuLKfT/bPA=;
-	b=KZ+J5YWLgu5kKVteRk79rAVUYOXvqgSK7g6OSuiTul7gdxgMu3bMc7LuO1BXumBVsr1pC+
-	eG9FL8Z7pw3VqA+DHUXQMrdmQMNsqVwptCp+v+vHZVHFNx3CHBg6xAK2N4aRPCjgLBn6qQ
-	YwxuBgg/xZkh35cuYZ09+P4Gle9c2uTKVlrhloddEcwFBLgnCcaAz0JsUSZRpyj+ilxhTE
-	ExBRNe9BbaN6BIFsVmu524sNXLIneYEP6K9Nwt+bvhxotHSzyU8Ss/9pzfXf3/Wei5kTaS
-	r8QQ5CX/rAf6+nZ/Ffq9CnHx66CCN+pq3dvOygXitVVZdVb0tsfG9+5iKKn/mQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749709516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V4Ia2CoUtifdcfPDTm3n0fPYredAvQzKsRuLKfT/bPA=;
-	b=4S1BLYr0T06auupOZKo0dZLI/0PnJcP+JnH3IuBB2BOllyQ1pnA6AuyfpWjZ4eJmMii8uc
-	Zip7LyqZ4oPP7wDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [BUG] perf tools: Build failure in v6.16-rc1
-Message-ID: <20250612062514.EZS2cVlO@linutronix.de>
-References: <aEh6xO14wDSCFUDr@google.com>
- <20250611092542.F4ooE2FL@linutronix.de>
- <aEmBOO0bSJYSvX2i@x1>
- <aEmY259Mx92D60KG@x1>
- <20250611150615.FcVIIhgA@linutronix.de>
- <aEnSbBaFYgd4Gr9u@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Djh84M6tZ0v+3ps2c5Krk/3p82KW9ugH6QqAXm3tV6Ijt/r9O+8EUyMXBYY6T7z79YFdO8piN+5p6UCp2vfQahE/n421kkSpjhB9RAHHnKeTsfym0uGMr21EvqyP4gEmnmja9MX/8JGudaWULcDsOij6e29uODz861xIlI3r0sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKL18zga; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C556AC4CEEA;
+	Thu, 12 Jun 2025 06:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749709547;
+	bh=M9CxTHdXT5WrEkUahJ2svzM+9WFZHYH6PnfsJfmp96g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JKL18zgaAsvyau0vg8RznAF41pnRn29ke6AvxA2D7Mw7V5apl+KttEkVoHd6d/tnL
+	 Tuo1iauSla5SB1LKgm+CI852NO9cSM9ti1JUQsc/o7dMziPmdWh9ZdbdQ2+TqECf72
+	 tKe6h029giSgUjLMox+O2hYJKhtS6lMpSEfXLsJfJnNduiMUk/nc06zKPQ6Xuo/CLw
+	 gDfzldMCEdbHvb9VdubI943kkJgzbIHMo9wMyw6AZYo1x8aI4EOPR+sgVoGrwCPBtm
+	 IjKOYTe5ai8875DlouqZWShNo2Danpn8JLN4tG1KOtY8p69UDDT8P0t64FjMsOusx5
+	 x4gCYIr9ucEUA==
+Date: Wed, 11 Jun 2025 23:25:21 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Simon Richter <Simon.Richter@hogyros.de>
+Cc: linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250612062521.GA1838@sol>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
+ <20250612005914.GA546455@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aEnSbBaFYgd4Gr9u@x1>
+In-Reply-To: <20250612005914.GA546455@google.com>
 
-On 2025-06-11 16:01:00 [-0300], Arnaldo Carvalho de Melo wrote:
-> > Is this needed? Aren't these defines coming from that local copy?
->=20
-> So, these are, as you say, in the copied linux/prctl.h, but in musl libc
-> we have:
-right, I briefly forgot about musl.
-All good.
-=E2=80=A6
-> I thought this would be something fixed in newer alpine versions, but
-> no:
->=20
-> toolsbuilder@five:~$ grep FAIL dm.log.old/summary=20
->    5    19.53 alpine:3.16                   : FAIL gcc version 11.2.1 202=
-20219 (Alpine 11.2.1_git20220219)=20
->    6    20.83 alpine:3.17                   : FAIL gcc version 12.2.1 202=
-20924 (Alpine 12.2.1_git20220924-r4)=20
->    7    13.94 alpine:3.18                   : FAIL gcc version 12.2.1 202=
-20924 (Alpine 12.2.1_git20220924-r10)=20
->    8    16.60 alpine:3.19                   : FAIL gcc version 13.2.1 202=
-31014 (Alpine 13.2.1_git20231014)=20
->    9    15.72 alpine:3.20                   : FAIL gcc version 13.2.1 202=
-40309 (Alpine 13.2.1_git20240309)=20
->   10    16.38 alpine:3.22                   : FAIL gcc version 14.2.0 (Al=
-pine 14.2.0)=20
->   11    15.09 alpine:edge                   : FAIL gcc version 14.2.0 (Al=
-pine 14.2.0)=20
-> toolsbuilder@five:~$
->=20
-> So the easiest way out of this seems to be not to explicitely include
-> linux/prctl.h and define the new stuff conditionally, as I did, right?
+On Thu, Jun 12, 2025 at 12:59:14AM +0000, Eric Biggers wrote:
+> On Thu, Jun 12, 2025 at 09:21:26AM +0900, Simon Richter wrote:
+> > Hi,
+> > 
+> > On 6/12/25 05:58, Eric Biggers wrote:
+> > 
+> > > But
+> > > otherwise this style of hardware offload is basically obsolete and has
+> > > been superseded by hardware-accelerated crypto instructions directly on
+> > > the CPU as well as inline storage encryption (UFS/eMMC).
+> > 
+> > For desktop, yes, but embedded still has quite a few of these, for example
+> > the STM32 crypto offload engine
 
-Let me drop an email to alpine and check with them.
+By the way, I noticed you specifically mentioned STM32.  I'm not sure if you
+looked at the links I had in my commit message, but one of them
+(https://github.com/google/fscryptctl/issues/32) was actually for the STM32
+driver being broken and returning the wrong results, which broke filename
+encryption.  The user fixed the issue by disabling the STM32 driver, and they
+seemed okay with that.
 
-> - Arnaldo
+That doesn't sound like something useful, IMO.  It sounds more like something
+actively harmful to users.
 
-Sebastian
+Here's another one I forgot to mention:
+https://github.com/google/fscryptctl/issues/9
+
+I get blamed for these issues, because it's fscrypt that breaks.
+
+FWIW, here's what happens if you try to use the Intel QAT driver with dm-crypt:
+https://lore.kernel.org/r/CACsaVZ+mt3CfdXV0_yJh7d50tRcGcRZ12j3n6-hoX2cz3+njsg@mail.gmail.com/
+https://lore.kernel.org/r/0171515-7267-624-5a22-238af829698f@redhat.com/
+
+- Eric
 
