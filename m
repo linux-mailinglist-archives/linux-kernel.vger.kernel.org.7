@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-684196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E448AD778A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:07:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99E8AD7795
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 409B0188850E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C2F188CC1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D6F299920;
-	Thu, 12 Jun 2025 16:00:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052B019C560
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADB529A307;
+	Thu, 12 Jun 2025 16:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7DolH8a"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AFF21FF44;
+	Thu, 12 Jun 2025 16:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749744055; cv=none; b=hpR2K8DNLCDcfoiv/Kc/jCZT+7bCejxOZp/H2MJmafb/lFZvgg9LU3YhengMzq6jpbhUyEbxyWdMOPAMn29mjuy9RdThdbDDVEHsFZUXxQACgNWa7+6EqwstFUiF4lui8v/HMaPJepIPfur66SuILWvTxjXA3qaI3ggLbJz2e18=
+	t=1749744107; cv=none; b=lFaQgs5Yk2LE3W5w/fJYAH1H3w9N4VgL+fFkxV8xMBw1HEwoh3EFrAu8bb6oWwpnTpMiOM08REg/OxwyZRYn0sZHt3xZ5XvkcbL9KNqVSSJla6v93+1wryGKnOpk7bd1R5fETZOrIF/BCtDPO4IbPdgcyfBWhOwLGnfoS0AtyTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749744055; c=relaxed/simple;
-	bh=+lhjIRljPNF+vDzpCER5jBDQNCl4vIVi4E8v0yNukeE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R2H1HhBm6mC7xgXUeUXQpY76bGucAUUhDTDL1tEGscQDXIgndd2OkpcCL+SZru8w0vcCKXA2EVuUYCXmWmzh7nnXqNc4BmnQG44Vf6z+MKR3Gji+RN0kC2ho9hyAK2hxnEsUesxpKThORbyROUj4KHk1FEbKDSCx1sj7NUVHMXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D8F9153B;
-	Thu, 12 Jun 2025 09:00:33 -0700 (PDT)
-Received: from [10.57.84.35] (unknown [10.57.84.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96C423F66E;
-	Thu, 12 Jun 2025 09:00:52 -0700 (PDT)
-Message-ID: <066fa735-98ad-45f4-9316-b983d2e5a3d3@arm.com>
-Date: Thu, 12 Jun 2025 17:00:51 +0100
+	s=arc-20240116; t=1749744107; c=relaxed/simple;
+	bh=qPLi72+ijewVFMB9GpJlxlJPQWm+AQsjprKRy9tlzQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lu9JS6fxTEuNQJQ8IbzpjMCSi+sK5jDBCeZKhfWQIonLF1V4ohfrQ/L7IJmXUYjGcZBcMgT0oDlQbu4tcHsqR8HEivgQhBt6P5R3YMmQR4RG34mEfGkLNwVt1G1FvrJRrzNfBeG8FkNS1Lp+9X2wQup0GG1Zz4GjkT1ANnHwOeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7DolH8a; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d3f72391so15276845e9.3;
+        Thu, 12 Jun 2025 09:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749744104; x=1750348904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tAINP8jtfwBf9f7XazJfnbKKWrxfgv/Nz8lT6porDs0=;
+        b=R7DolH8aSJdu7hbU5hq0mlsUQz5fJO/woYrY5vxh51+CFjgHj8cgtuzFTxTfluDAUo
+         88eOlKMIOWytreTefzXVtapLegAajgaX8jS3E6JdL6A/oYc6MQaAWpipjfgQIdpv3Sps
+         SmVi7UeIcW7ZKqZ9GfI0bPkklJBYzEQyoa0YcuqGn4XyhlHjjjSt3KHAeaoW/FV61yg7
+         j9bl393ZPDgQ30xmmzo5N+p/uf2w5C2YnSrhsf0yW6LNmTGGf3nvdDWnc5p4O5Q8l2PB
+         EKPL3gzqiecDtURM+6m3YNoz+/NNRiH7n8kXrjf4HFoJdgpblYQHQDrWsnyuJxL4qTah
+         wnOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749744104; x=1750348904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tAINP8jtfwBf9f7XazJfnbKKWrxfgv/Nz8lT6porDs0=;
+        b=Wpg8STiQHROLzcKpYB6w0+1NeAkMLFsxwZjFrtqy/QNje2/wRp90BM5rEcjFzhLSas
+         JEduYfvrgBEN0bhQC/fj4nqZdwIZ8k5Ed8ynw611iAwZD9O5Hr3ccJiqSU3eIqT7/qk1
+         3Tg3sZWojAz8/3MnszduG3sh4z2muoFqKvJxcQIkSb26wCmMN5BufWRQMpiIikvaXvnj
+         KqJ4lBXxyJe80pgRFfR2EVeycoYf/5d6gW8nF6Fs6bIb2Mvvi9ypNJaReaktJzFmSpv5
+         k7PQrG+m/q+bBqJ168SJ9ARG5jV0fMLSWSBT0z3eVVYhKUCQciO4TaoLqETh/gwGOPP5
+         lZnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJDMiy8WrqEdX2xXgj9bqZzWc8fucnDzWxqroUfVLaFQUc+JRP+cjUJ5idA7BUM+W/fUSPmi5idSSD51N7PUI6U9JP@vger.kernel.org, AJvYcCUweeI+YJZdTr3bXA+koxQu1ST/D4gl+D1jSft6eTRDxO1xS+1PSCjSqKoKNFKyg8iJIzA=@vger.kernel.org, AJvYcCV2qlzH09LEKW3h/2in8pWcwsBZbcra1v83RKwcbrMH6kjdcXSWP4ZSgYAZlkBtiFxe8ZzayEC08TsH+M4o@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRyHAbpmhN5hTR4pJfXPFLTMS/lCHiWJIQeR5CL9zg4ZE3vEHs
+	MXgIX4Y8X8LOltK/3/EkCBBCMaHSd04m08JpgZNr0LZAWZ5i+4wCXI4b4lSTfYUICop5/7Iy6wP
+	lE0dVA6m00/LgpSIzPczFNaCcPBBddJ8=
+X-Gm-Gg: ASbGnctDtlO0orrtG4xgGKCxcMxdhTCryVWuxPsRxGH0Yt670YxYLLnGe7Y3VBQbSgN
+	fd7XZF2TA8RCDPGzm5OXg5blIJEZXM4W6/ILINyTzOhdEYJvL5FGKE7TNArU3boKBohOR8ZzPwZ
+	nuCeUA4xrgzNKQERcq1qSyexL8dPfyYjEsdYF9YOq3Pu3QkbAh4HlR3ZiS6hmcsrBWTGEINNiy
+X-Google-Smtp-Source: AGHT+IGZzhesiBoAhBd39t5QJYl1UUrRhXBUdg7MMGUvES7xlp8Qis/+Fs09ENPHIcLDadJQLNKz+xcAIjRafhGoUfU=
+X-Received: by 2002:a05:6000:2086:b0:3a4:e6c6:b8bf with SMTP id
+ ffacd0b85a97d-3a56080ac65mr3635985f8f.52.1749744103005; Thu, 12 Jun 2025
+ 09:01:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250606135654.178300-1-ryan.roberts@arm.com>
- <aEgeQCCzRt-B8_nW@arm.com> <3cad01ea-b704-4156-807e-7a83643917a8@arm.com>
- <aEhKSq0zVaUJkomX@arm.com> <b567a16a-8d80-4aab-84c2-21cbc6a6a35d@arm.com>
- <20250612145906.GB12912@willie-the-truck>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250612145906.GB12912@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250612115556.295103-1-chen.dylane@linux.dev> <20250612115556.295103-2-chen.dylane@linux.dev>
+In-Reply-To: <20250612115556.295103-2-chen.dylane@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 12 Jun 2025 09:01:32 -0700
+X-Gm-Features: AX0GCFv7_UZZ46DAKj75rcN0J8jggt3SPwfPN8e8DTpG5j9BIlDZGybtAdZ_wxQ
+Message-ID: <CAADnVQLbpO7PED01OVZXTLib_hBYzwpC5hFyR_WMCCx8obR1Hw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] bpf: Add show_fdinfo for kprobe_multi
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/06/2025 15:59, Will Deacon wrote:
-> On Tue, Jun 10, 2025 at 05:37:20PM +0100, Ryan Roberts wrote:
->> On 10/06/2025 16:07, Catalin Marinas wrote:
->>> On Tue, Jun 10, 2025 at 02:41:01PM +0100, Ryan Roberts wrote:
->>>> On 10/06/2025 13:00, Catalin Marinas wrote:
->>>>> On Fri, Jun 06, 2025 at 02:56:52PM +0100, Ryan Roberts wrote:
->>>>>> Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
->>>>>> provided a quick fix to ensure that lazy_mmu_mode continues to work when
->>>>>> CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
->>>>>> nest.
->>>>>>
->>>>>> The solution in that patch is the make the implementation tolerant to
->>>>>
->>>>> s/is the make/is to make/
->>>>>
->>>>>> nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
->>>>>> exit becomes a nop. But this sacrifices the optimization opportunity for
->>>>>> the remainder of the outer user.
->>>>> [...]
->>>>>> I wonder if you might be willing to take this for v6.16? I think its a neater
->>>>>> solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
->>>>>> lazy_mmu_mode to be nested") - which is already in Linus's master.
->>>>>>
->>>>>> To be clear, the current solution is safe, I just think this is much neater.
->>>>>
->>>>> Maybe better, though I wouldn't say much neater. One concern I have is
->>>>> about whether we'll get other such nesting in the future and we need to
->>>>> fix them in generic code. Here we control __kernel_map_pages() but we
->>>>> may not for other cases.
->>>>>
->>>>> Is it the fault of the arch code that uses apply_to_page_range() via
->>>>> __kernel_map_pages()? It feels like it shouldn't care about the lazy
->>>>> mode as that's some detail of the apply_to_page_range() implementation.
->>>>> Maybe this API should just allow nesting.
->>>>
->>>> I don't think it is possible to properly support nesting:
->>>>
->>>> enter_lazy_mmu
->>>>     for_each_pte {
->>>>         read/modify-write pte
->>>>
->>>>         alloc_page
->>>>             enter_lazy_mmu
->>>>                 make page valid
->>>>             exit_lazy_mmu
->>>>
->>>>         write_to_page
->>>>     }
->>>> exit_lazy_mmu
->>>>
->>>> This example only works because lazy_mmu doesn't support nesting. The "make page
->>>> valid" operation is completed by the time of the inner exit_lazy_mmu so that the
->>>> page can be accessed in write_to_page. If nesting was supported, the inner
->>>> exit_lazy_mmu would become a nop and write_to_page would explode.
->>>
->>> What I meant is for enter/exit_lazy_mmu to handle a kind of de-nesting
->>> themselves: enter_lazy_mmu would emit the barriers if already in lazy
->>> mode, clear pending (well, it doesn't need to do this but it may be
->>> easier to reason about in terms of flattening). exit_lazy_mmu also needs
->>> to emit the barriers but leave the lazy mode on if already on when last
->>> entered. This does need some API modifications to return the old mode on
->>> enter and get an argument for exit. But the correctness wouldn't be
->>> affected since exit_lazy_mmu still emits the barriers irrespective of
->>> the nesting level.
->>
->> Ahh I see what you mean now; exit always emits barriers but only the last exit
->> clears TIF_LAZY_MMU.
->>
->> I think that's much cleaner, but we are changing the API which needs changes to
->> all the arches and my attempt at [1] didn't really gain much enthusiasm.
-> 
-> To be honest, I don't think the proposal in this series is really
-> improving what we have. Either we support nested lazy mode or we don't;
-> having __kernel_map_pages() mess around with the lazy mmu state because
-> it somehow knows that set_memory_valid() is going to use it is fragile
-> and ugly.
-> 
-> So I'm incined to leave the current code as-is, unless we can remove it
-> in favour of teaching the core code how to handle it instead.
+On Thu, Jun 12, 2025 at 4:56=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> wr=
+ote:
+>
+> Show kprobe_multi link info with fdinfo, the info as follows:
+>
+> link_type:      kprobe_multi
+> link_id:        4
+> prog_tag:       279dd9c09dfbc757
+> prog_id:        30
+> type:   kprobe_multi
+> func_cnt:       8
+> missed: 0
+> addr:   0xffffffff81ecb1e0
 
-Yeah fair enough. I'm not going to have time to do the proper nesting support
-thing. But I'll see if I can find someone internally that I might be able to
-convince. If not, we'll just leave as is.
+fdinfo shouldn't print kernel addresses.
+It defeats kaslr
 
-> 
-> Cheers,
-> 
-> Will
-
+pw-bot: cr
 
