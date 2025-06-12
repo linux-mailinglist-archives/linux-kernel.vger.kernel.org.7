@@ -1,45 +1,79 @@
-Return-Path: <linux-kernel+bounces-683911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136B6AD737A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:18:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5CCAD7385
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386D33A5500
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B8F1886F13
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97629222568;
-	Thu, 12 Jun 2025 14:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA0023D2AE;
+	Thu, 12 Jun 2025 14:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pnZ52KGK"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZWc7a+aQ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172903596B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0F019049B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749737628; cv=none; b=M+ccFT3Gm38nxHcPqGA5BOP3FfylGowPcEMi4tlS5zRRH/RXvHUd+hHc33K17Eavrb74QP+BojiFZEFzMj9j1JceWePp02XtlTvfpVmxAiX1jMZkWWpFjHTx9iTXCkF1n20/0SGdEgeIzMMFWdlliYM9jJu8bOKdGTe6FRZSRqo=
+	t=1749737678; cv=none; b=VBzFTHhXk+5n/6n8sJYTZ0kiy79cWDiD5ULGkW2nkSWRvItCtELwMZkzxLg0gCwMUqwg23Ljq7zmy5/UJaAs2m5QWs556GcbempYxqe912loyjWMGFdk4bPbKm3Cls7CqwBHKmVdMgEBhjtKr8DPyS4GoylYEKv1j6268zukKRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749737628; c=relaxed/simple;
-	bh=5RtWkX1SlWGb0WwKUrK+vAVOVuW3zwGEiECx9XPR244=;
+	s=arc-20240116; t=1749737678; c=relaxed/simple;
+	bh=60WDQiWn4ERcM4sXmxu8hCFJPSCd2H/JsWpNpGO9EBs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Aa0l0RLDjCBW0vS4fBv07QA+Hood3prWa4/9Q+6I4eBhKIV7/8M+gGdYqhW9hrYLyNIQWob2m7rMdlHrrvronK8633KxO3Rns1s/Czos7CpNN2ZT0gSM8yHJv76AbPFLiUQltIwRtqxxf5biqSglmXGzs9G2Cm7/9WJZ5O89suw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pnZ52KGK; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749737622; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=8dSW0MWx250BT5PDHKGtg7MyrmkvYYx3NnjczjhuDu4=;
-	b=pnZ52KGK8IFZuOD8/bJv3kOJ4v2SMQPzddAiqFPx+MTclatjOa/cQV/wdJoi57JFQ2qOtmmTDcriuispo9q32Z1RQl5POPR77GzlkvTbATgi71WawI2xGHtyFjv4kEADfNA6vFzenDUxSQOaT1hFfAlJcWGq0AxRf2mQy0Jk/cA=
-Received: from 30.39.247.88(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdhHBU7_1749737621 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Jun 2025 22:13:41 +0800
-Message-ID: <519c59e6-20ef-4edf-88b8-a71f38cbd2de@linux.alibaba.com>
-Date: Thu, 12 Jun 2025 22:13:40 +0800
+	 In-Reply-To:Content-Type; b=Jqe1rxHvg3sS+sA2KHq8GfiWXDRuJbxT3hrS8PqSpiXaJ1kgvpvJwHMW/UgXj8MexgnALfS2pQwakiIlLe/cwMgYKuyiXxQ63v7a1PAmGfJZB0jovHatmJCxWfKNQzkyCG1ZjMDK1B9c7JLrpor3VaNGhhLdsafYkQXEFXMWQNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZWc7a+aQ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450dd065828so7603555e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749737674; x=1750342474; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J19QzIs1SpN2V+Z84587yjfC+A6S3Z0DqJUi8/rsIps=;
+        b=ZWc7a+aQHcTTvXzje3+dB4qw/TBms4ehHn53nXBEU3WJGPqi7w60eTsKpF8fcQxGIZ
+         Iox5Be8J+2c/nDpwqfmJ+ii2k0tiuD7IaQ1YFlMlvu9o0Ux9h1wNNt1NQ4QOfxpX85gc
+         YZrYkdqaPKbVA/sTC0QUHandbm024ofuExH0tBPBV32J6PeETfrirOm7OApkodq7jQr3
+         Nb3WF3Qfikwf2p/ZR6NQPTulQ99Am6j+dey+adTYJwDHne4VG+9HngY3WFc/Cl1ZLn+h
+         UVjbXNBYurr0/ahOKwndgA4Tc9wwwkcnqYKDQR/KKt9vqHBf4AaEgsZM3RREthzjiNoH
+         BGwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749737674; x=1750342474;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J19QzIs1SpN2V+Z84587yjfC+A6S3Z0DqJUi8/rsIps=;
+        b=hv+tb4EYcnOHFnnGefEvPgt81EmUxev4e/vHoiHSUfw0ahejTEd3aoD1GY84l2oDO+
+         F5kAam2PmcDeuzQbjUkgnt935KI1m4O08UZrCdBDzail8/PfOGZE3NdAlyHuUOhJoJ7j
+         wWXhCTT5X4OZBlE8hqSgjmFCT6Pyx0kRlJo6Rm0ABBvFo6ODa9n1+F1/phYWmhyVZw8N
+         r3tYQNr2B6lDhD2o1Hx8Dv8JuSwwufCV8pD9HqRt3/HYMWk1KQ9IwRDUN+oBBJLi1bAZ
+         OjgaQ32joKZLV/MNe54hmkEEcTVaq4kceykoLBx/EvRQOu7ll3TGwVbphq5BkqT6/MqC
+         F39A==
+X-Forwarded-Encrypted: i=1; AJvYcCVDOXsvFNeWvVET06jNy8Z4viLSsK/UAQ6CdgkOlVfIB1FlUbcYRpwCf2yCDbsCxG/mj/vh6qBQ2FXLaaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDIR/dYrEmjIuHocG9KE5M9aw+gF5O3S9t8kbc5q3n4uxjwdH8
+	d4dLHx5hoYmzqG0+wzEmA7cV20oxD9NxCQIVkkCOlZrAm3MwNRtoYRVtycZpbQpxmAE=
+X-Gm-Gg: ASbGncvRQLcLDhEcQL/BMh8eAYXjEaY+1m53fDYE4d+yMtKbYrvAtBF7/Qj2KUjRZIT
+	XAnXTOq69G+Pm4+jBoxEX3DAlLSS5QWtBOcOGKf6h9prjndMkGdTKfKBTzp70ZcKpQlSIc3B+Hi
+	DgWC6WQPArJlNWCn3c1lYzptlQKIi3bq7xvjA7VgrRjlFUvUg2QSiVSncF237EsIBIjjNZoSiZr
+	7q78ulvct/Rw8YxIrDLsKkeZNHxDLOaNv0MOzIJRQdFWUuao1KXzmZ4w3JqPNaGL0XXXwlIre7L
+	X7B3GXeEflZ9YHvPXk9j190Z62Tb0yADrTgpa8PnIxj1TdRGmMOOI0H/K6WQsP4U8biFVzCyFB/
+	r8g==
+X-Google-Smtp-Source: AGHT+IGMvfoiQPigVo7iO2Dw6iilpFxrDO4WGsQDGLouqfPnH55vE1SO0OF49/vNlZbAzHfxJoNlPQ==
+X-Received: by 2002:a5d:64c5:0:b0:3a4:d700:f773 with SMTP id ffacd0b85a97d-3a5606a2f5amr2978490f8f.11.1749737674171;
+        Thu, 12 Jun 2025 07:14:34 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a56198f827sm2077031f8f.29.2025.06.12.07.14.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 07:14:33 -0700 (PDT)
+Message-ID: <ad7e9aa7-74a3-449d-8ed9-cb270fd5c718@linaro.org>
+Date: Thu, 12 Jun 2025 15:14:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,161 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
- system-wide THP sysfs settings are disabled
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, ziy@nvidia.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
- <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
- <1ec368c4-c4d8-41ea-b8a3-7d1fdb3ec358@redhat.com>
- <2ff65f37-efa9-4e96-9cdf-534d63ff154e@linux.alibaba.com>
- <953596b2-8749-493d-97eb-a5d8995d9ef8@redhat.com>
- <97a67b74-d473-455e-a05e-c85fe45da008@linux.alibaba.com>
- <b8fe659e-8a84-4328-b6d6-6116c616cb3d@redhat.com>
- <ce58b08c-0ac1-4ec2-8ff6-cf8e651709b0@lucifer.local>
- <201a1cc4-93fc-48e3-aeab-759ba8c8a47c@lucifer.local>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <201a1cc4-93fc-48e3-aeab-759ba8c8a47c@lucifer.local>
+Subject: Re: [PATCH 2/4] spi: spi-fsl-dspi: Use non-coherent memory for DMA
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Frank Li <Frank.li@nxp.com>, Vladimir Oltean <olteanv@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
+ <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
+ <aEhMBsqlx9I4XqJS@lizhi-Precision-Tower-5810>
+ <de7142ac-f1a3-412f-9f00-502222b20165@app.fastmail.com>
+ <aEhVsrEk0qv+38r3@lizhi-Precision-Tower-5810>
+ <20250611090107.t35zatn47vetnvse@skbuf>
+ <c65c752a-5b60-4f30-8d51-9a903ddd55a6@linaro.org>
+ <20250612111514.rfb3gpmlilznrfxs@skbuf>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250612111514.rfb3gpmlilznrfxs@skbuf>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 2025/6/12 21:29, Lorenzo Stoakes wrote:
-> On Thu, Jun 12, 2025 at 02:27:06PM +0100, Lorenzo Stoakes wrote:
-> [snip]
+On 12/06/2025 12:15 pm, Vladimir Oltean wrote:
+> On Thu, Jun 12, 2025 at 12:05:26PM +0100, James Clark wrote:
+>> (No idea why it goes faster when it's under load, but I hope that can be
+>> ignored for this test)
 > 
->> I propose a compromise as I rather like your 'exclude never' negation bit.
->>
->> So:
->>
->> /* Strictly mask requested anonymous orders according to sysfs settings. */
->> static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
->>                  unsigned long tva_flags, unsigned long orders)
->> {
->>          const unsigned long always = READ_ONCE(huge_anon_orders_always);
->>          const unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
->>          const unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);;
->> 	const unsigned long never = ~(always | madvise | inherit);
->>          const bool inherit_enabled = hugepage_global_enabled();
->>
->> 	/* Disallow orders that are set to NEVER directly ... */
->> 	orders &= ~never;
->>
->> 	/* ... or through inheritance (global == NEVER). */
->> 	if (!inherit_enabled)
->> 		orders &= ~inherit;
->>
->> 	/*
->> 	 * Otherwise, we only enforce sysfs settings if asked. In addition,
->> 	 * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
->> 	 * is not set, we don't bother checking whether the VMA has VM_HUGEPAGE
->> 	 * set.
->> 	 */
->> 	if (!(tva_flags & TVA_ENFORCE_SYSFS))
->> 		return orders;
->>
->> 	if (hugepage_global_always())
->> 		return orders & (always | inherit);
->>
->> 	/* We already excluded never inherit above. */
->> 	if (vm_flags & VM_HUGEPAGE)
->> 		return orders & (always | madvise | inherit);
+> Might be because of dynamic CPU frequency scaling as done by the governor.
+> If the CPU utilization of spidev_test isn't high enough, the governor
+> will prefer lower CPU frequencies. You can try to repeat the test with
+> the "performance" governor and/or setting the min frequency equal to the
+> max one.
 > 
-> Of course... I immediately made a mistake... swap these two statements around. I
-> thought it'd be 'neater' to do the first one first, but of course it means
-> madvise (rather than inherit) orders don't get selected.
-> 
-> This WHOLE THING needs refactoring.
 
-Personally, I think the 'exclude never' logic becomes more complicated. 
-I made a simpler change without adding a new helper. What do you think?
+That doesn't seem to make a difference, I get the same results with 
+this. Even for the "fixed" DMA test results below there is a similar 
+small performance increase when stressing the system:
 
-static inline
-unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
-                                        unsigned long vm_flags,
-                                        unsigned long tva_flags,
-                                        unsigned long orders)
-{
-         /* Optimization to check if required orders are enabled early. */
-         if (vma_is_anonymous(vma)) {
-                 unsigned long mask = READ_ONCE(huge_anon_orders_always);
-                 bool huge_enforce = !(tva_flags & TVA_ENFORCE_SYSFS);
-                 bool has_madvise =  vm_flags & VM_HUGEPAGE;
+   # cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq
+   1300000
+   ...
 
-                 /*
-                  * if the user sets a sysfs mode of madvise and if 
-TVA_ENFORCE_SYSFS
-                  * is not set, we don't bother checking whether the VMA 
-has VM_HUGEPAGE
-                  * set.
-                  */
-                 if (huge_enforce || has_madvise)
-                         mask |= READ_ONCE(huge_anon_orders_madvise);
-                 if (hugepage_global_always() ||
-                     ((has_madvise || huge_enforce) && 
-hugepage_global_enabled()))
-                         mask |= READ_ONCE(huge_anon_orders_inherit);
+   # cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
+   1300000
+   ...
 
-                 orders &= mask;
-                 if (!orders)
-                         return 0;
-         }
+   # cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+   performance
+   ...
 
-         return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, 
-orders);
-}
+> That's why I don't like the DMA mode in DSPI, it's still CPU-bound,
+> because the DMA buffers are very small (you can only provide one TX FIFO
+> worth of data per DMA transfer, rather than the whole buffer).
+
+Is that right? The FIFO size isn't used in any of the DMA codepaths, it 
+looks like the whole DMA buffer is filled before initiating the 
+transfer. And we increase the buffer to 4k in this patchset to fully use 
+the existing allocation.
 
 > 
->>
->> 	return orders & always;
->> }
->>
->> What do you think?
->>
->>
->>> +       return orders;
->>> +}
->>> +
->>>   /**
->>>    * thp_vma_allowable_orders - determine hugepage orders that are allowed for vma
->>>    * @vma:  the vm area to check
->>> @@ -287,16 +323,8 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->>>                                         unsigned long orders)
->>>   {
->>>          /* Optimization to check if required orders are enabled early. */
->>> -       if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
->>> -               unsigned long mask = READ_ONCE(huge_anon_orders_always);
->>> -
->>> -               if (vm_flags & VM_HUGEPAGE)
->>> -                       mask |= READ_ONCE(huge_anon_orders_madvise);
->>> -               if (hugepage_global_always() ||
->>> -                   ((vm_flags & VM_HUGEPAGE) && hugepage_global_enabled()))
->>> -                       mask |= READ_ONCE(huge_anon_orders_inherit);
->>> -
->>> -               orders &= mask;
->>> +       if (vma_is_anonymous(vma)) {
->>> +               orders = __thp_mask_anon_orders(vm_flags, tva_flags, orders);
->>>                  if (!orders)
->>>                          return 0;
->>
->> I pointed out to Baolin that __thp_vma_allowable_orders() handles the orders ==
->> 0 case almost immediately so there's no need to do this, it just makes the code
->> noisier.
->>
->> I mean we _could_ keep it but I think it's better not to for cleanliness, what
->> do you think?
->>
->>>          }
->>>
->>>
->>> --
->>> Cheers,
->>>
->>> David / dhildenb
->>>
->>
+> FWIW, the XSPI FIFO performance should be higher.
+
+This leads me to realise a mistake in my original figures. My head was 
+stuck in target mode where we use DMA so I forgot to force DMA in host 
+mode to run the performance tests. The previous figures were all XSPI 
+mode and the small difference in performance could have been just down 
+to the layout of the code changing?
+
+Changing it to DMA mode gives figures that make much more sense:
+
+Coherent (4096 byte transfers): 6534 kbps
+Non-coherent:                   7347 kbps
+
+Coherent (16 byte transfers):    447 kbps
+Non-coherent:                    448 kbps
+
+
+Just for comparison running the same test in XSPI mode:
+
+4096 byte transfers:            2143 kbps
+16 byte transfers:               637 kbps
+
+
+So for small transfers XSPI is slightly better but for large ones DMA is 
+much better, with non-coherent memory giving another 800kbps gain. 
+Perhaps we could find the midpoint and then auto select the mode 
+depending on the size, but maybe there is latency to consider too which 
+could be important.
+
 
