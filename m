@@ -1,150 +1,121 @@
-Return-Path: <linux-kernel+bounces-683866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F6EFAD732A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:06:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A51AAD7324
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715B5188933D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:01:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F36C57A8BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5C2246BD5;
-	Thu, 12 Jun 2025 14:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTS+CL3G"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF6925BF00;
+	Thu, 12 Jun 2025 14:03:27 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4BC1514E4;
-	Thu, 12 Jun 2025 14:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BEC22157F;
+	Thu, 12 Jun 2025 14:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736880; cv=none; b=JPNMhsRmpYd9q9BW8V97ub58le1XTPV1Ub9lupd1AHLTKTxX9zoymSD+zdDuFfvHVUzbgLyS9ncqBrz8qF1wV8P2GT07jEtQ5wMJFaUT8kleF0jX+150UWvY2Y2B7xz94/YwiCfyYw9oRCLt+kMPb/i7/xC/2pZTW5XkcQIyNSU=
+	t=1749737006; cv=none; b=ZLYYmW4B2uG44LdJJ6ukA3V0tOd25YdVVVhrA7frWbQAdM8l5ylyRDm/yvpGXlqdZ8paUAtqbuJQ90Gvyn0H9oNtRtOf0G2snd0Nx7N895C1nR8nUCMhf8dHjP2CVkEg8WvM7dSsxT4lUK0OUK7xO580dUm6K/ZNHqe6UM+f2aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736880; c=relaxed/simple;
-	bh=YPxMTxw3oYrovaTdA0xeKAG6x+IDWmVWaIS2Zqn0zaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cx9LJkWM+UVT61CyIMy3SYz5nDTv64S8jZS5EBQKuDjdWrlmoQz1TD789xFb9aYbtJGs5Oaedj7pl2o3R0Pq7Iwqonw+uhghX/C+2YOj54ks/WcUzwUxr7Alm9fVUJnTO3qMg9PHt45J6cOwnEzvVnoR1qTLAr+dROl/fkV7BS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTS+CL3G; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-235f9ea8d08so10241075ad.1;
-        Thu, 12 Jun 2025 07:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749736878; x=1750341678; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WrUaDDGPJzFKUiQFGAoTVMOx8+jgdrUvU/jOz6JWMNw=;
-        b=UTS+CL3Gjh838bYLJBzKh2eeK/oG0HizVwk/p8sl8Xj8Om1xYTb5tAS5BDCHHc/I4j
-         fq/zUMGvOOGtBnJImBw+l60aqJTU0ydmxOY2xXip7N685CBdw3LWOTor0Nuybi3uaJNV
-         wqtrXNMdbjNpimT3syBfML+uFwT1TAypwB9hS7T1Mo2m4Z9va6XEakrtum6cCIf43RNv
-         9iWte9czJvvijbWnuQiyumZV9ETVWTg/WvHj/0fCuc0+53419GjMlltJJRtkMpBTyaM3
-         OjRrDoJNmVg3MgmA/yvuAmaE5CByotXHhY7ZFJyPT/v0bQ2OHqANcRG29lTGTzHvDVc7
-         SJYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749736878; x=1750341678;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WrUaDDGPJzFKUiQFGAoTVMOx8+jgdrUvU/jOz6JWMNw=;
-        b=CPFG6qyDZZBGwSO96tgyXHVRZIY79vXVMOaYY6pMJgmbzAjFm8v4DFY5QymTkPfK56
-         +sw2TC9RrzuwoTq1dRY7uUJPOuOiCd58nLhu+45TNuYu/Zv+c5oXPFbDz3iFC1zPLsKW
-         QzHyjW7vKX4MB4fIJdaK4kAT2v6wnWurdgTmH2Abk96odrmqOYQ4K4SIisLOOBbyaeql
-         QQ7mGY5tUV1up5VwvHa7k6Hn3M+8Z8ihTHqq+mUa/zk0BCqLNgq459XGVlj3Uek/veUW
-         nMtoZGvIlIk3YyRi1a6E9ZxP6/Gpm6/CpA1RiYQIwl2IG79BULBaoyZtVMgKybqdPEcr
-         ZxnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZ2AifQbPnpI026JI1EINjKXBSLMWzH4XoK7P87qL4cMnIEUGLklmK6P1/1zTSxMgo+oxOByLu6TZ@vger.kernel.org, AJvYcCUpmz/M8J/A6xTTMIr59rmtdOxzm++3ZHuZL2x5PlAyQqjSn/3Slbn5IRN94n985wIA69A1UiSoSJAwnQ==@vger.kernel.org, AJvYcCVGJcYa+RqR8XlLbsciFb3kL1Evj6c6/GsqGJLtRPWxzIR6bju8PqTgZH18VRmA4xH6XKEiGGvPZKwHBxXc@vger.kernel.org, AJvYcCW+6Cjdsp8I94WzlMZQzAvwWt8DNg1GLzVtfKib7xKEqOuY6cU27BLqSdV3bURxmpkCbXaQW2QnvBzk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUMtDMRjHTqsVepc6KsR5bnDiVZgNYBJbYjozlUyQOI7v5Bw4R
-	cJ7cbd/vT3OxbLAVyK/ltDmdRj1s+w0bBh2emPWvJOA+o8ybygtZTeeG
-X-Gm-Gg: ASbGncuavj2E90z1j9L4f/6rLtkghpyH2UCTN3EtSMThFHE4wmgVQiDEijgC5ibrtOl
-	t9KqA3XrnXc6TNSQ7bXWe1QPgyHMvNLTM97DIVp/12NboXFLKsh5lahTGfmeE4c4A5NVNyH+Gcn
-	Q6YJT327578ovzpAPndWHo3SCHGNAyDXl2wo6zdU1ley9HHfKzPRWlezk3mtcD7EPU6SA7A6WMy
-	PmcfQR0f2kSnmd5YeN7KfhT9bMNBXUBNQo8kF8prj7TdGiDxz/MI9d810Zs+GzF7Sd6M5+LC2q6
-	hwJUDAcqOjv58uTC20qH2d2V/FtQqiw1J+O4b9ITGOlX/nY94EP2fBGkxLMYxEptX3eU/RGIHt2
-	CgdpuwA==
-X-Google-Smtp-Source: AGHT+IG8MPbeD44xaQLw4mhm0dmlhPEtylSTie6+7pb/0KZ3veLVzkzsT+ldEJIwVLhZFtndrz6dYQ==
-X-Received: by 2002:a17:902:e74e:b0:234:8ec1:4af6 with SMTP id d9443c01a7336-23641b3291amr103085065ad.45.1749736877677;
-        Thu, 12 Jun 2025 07:01:17 -0700 (PDT)
-Received: from localhost ([2804:30c:4000:5900:b4c4:6073:1a92:4077])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2364e6d9c65sm14079355ad.111.2025.06.12.07.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 07:01:16 -0700 (PDT)
-Date: Thu, 12 Jun 2025 11:03:01 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ana-Maria Cusco <ana-maria.cusco@analog.com>, jic23@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Subject: Re: [PATCH v5 02/11] iio: adc: Add basic support for AD4170
-Message-ID: <aEreFQUZXsdsgBSm@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1749582679.git.marcelo.schmitt@analog.com>
- <48598c0753cccf515addbe85acba3f883ff8f036.1749582679.git.marcelo.schmitt@analog.com>
- <aEifWXPV1nsIyWbT@smile.fi.intel.com>
- <aEnvcaP2ZNPLhzXi@debian-BULLSEYE-live-builder-AMD64>
- <aErMgh6AKVStF4rQ@smile.fi.intel.com>
+	s=arc-20240116; t=1749737006; c=relaxed/simple;
+	bh=4Z63mMzRXQGf11Y/TbOm11xYKVHZZ2q9evEA63ZcDYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xo1RAP9rDJGa41x/1fHszXiM5eJ36e7rqx/o6Gl96TymfeU39W7qY25n8JV659i0RtLFtVrTTw7oo1LPZlhETOaEN4MBmpXHS7/ps65Jym7fave+0wB0fHNbKHQOZuWvPx7GEk5Hg4KfNM/wE9ReoquNENmsbGH5ue39c9IcqNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 181C3140C8F;
+	Thu, 12 Jun 2025 14:03:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 027DB17;
+	Thu, 12 Jun 2025 14:03:13 +0000 (UTC)
+Date: Thu, 12 Jun 2025 10:03:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-mm@kvack.org, x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, David Hildenbrand <david@redhat.com>,
+ Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] mm, x86/mm: Move creating the tlb_flush event back to x86
+ code
+Message-ID: <20250612100313.3b9a8b80@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aErMgh6AKVStF4rQ@smile.fi.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 027DB17
+X-Stat-Signature: a633aexr8assinwfnh58a1t5wtz17x14
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18C+o9UXjVaYLfXVFToL0QGqnozJG/773c=
+X-HE-Tag: 1749736993-720449
+X-HE-Meta: U2FsdGVkX19nUL9F8mZWNw+0MQ2nz2VkNz1X5YCpiQuSBsq9uh+KUxoAKhB5MUcc5h6RjHD+G5h0yQy7k2Us0ulvQkv+rh3UAN7WnG8Lb2grJSArNfqFjyxllkbiyIPcwy6cyN+ddxtnBWE6ID6ipVqvayImDHh3c3jDvRHcQZWAf3Djybp3gf/aL56oh25yZ03EEORZ4uj2Zpj2qNPT+74t/pGv+TreaTKs7VW6qT0hiovVztZAwdAwLpOnXYdX6YrFD13kBMcDloNpG7ccwAJMXvMebpvRRvBukQWn2pe9sXYt1T7skK7Qg9IUEd9N+p8eaLkCvqYlBKzf89GQX509Y7VtxBUh7HORsK1uO7qyqI5yt+bTw/BbXPNuzDjObl59oP53N6z9WDhTXIbGCj+9JZDhO99L
 
-On 06/12, Andy Shevchenko wrote:
-> On Wed, Jun 11, 2025 at 06:04:49PM -0300, Marcelo Schmitt wrote:
-> > On 06/11, Andy Shevchenko wrote:
-> > > On Tue, Jun 10, 2025 at 05:31:25PM -0300, Marcelo Schmitt wrote:
-> 
-> ...
-> 
-> > > > +	return spi_write(st->spi, st->tx_buf, size + 2);
-> > > 
-> > > ... + sizeof(reg) ?
-> > 
-> > The size of the specific ADC register is stored in the size variable.
-> > The result of sizeof(reg) can be different on different machines and will
-> > probably not be equal to the size of the register in the ADC chip.
-> 
-> Hmm... But shouldn't we have a variable type that respects the sizeof() of the
-> register in HW to keep it there? 2 is magic.
-> 
-I'll add a define for that constant.
-For clarification, there is a 2 byte instruction phase during which the driver
-sends the R/W flag and register address. After that, it sends the data to be
-written to the register. There are 1 byte, 2 byte, and 3 byte long registers.
-So, the total transfer length is 2 + reg size.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-...
-> 
-> > > > +	/* Assume AVSS at GND (0V) if not provided */
-> > > > +	st->vrefs_uv[AD4170_AVSS_SUP] = ret == -ENODEV ? 0 : -ret;
-> > > 
-> > > -ret ?!?!
-> > 
-> > That's because AVSS is never above system ground level (i.e. AVSS is either GND
-> > or a negative voltage). But we currently don't have support for reading negative
-> > voltages with the regulator framework. So, the current AD4170 support reads
-> > a positive value from the regulator, then inverts signal to make it negative :)
-> 
-> This needs a good comment and ideally a TODO item in the regulator framework.
-> (It might be easy to implement by adding a flag without changing the type of
->  the field, if it's unsigned.)
+Commit e73ad5ff2f76 ("mm, x86/mm: Make the batched unmap TLB flush API
+more generic") moved the trace_tlb_flush out of mm/rmap.c and back into
+x86 specific architecture, but it kept the include to the events/tlb.h
+file, even though it didn't use that event.
 
-I'll add a TODO mark and expand the comment in the driver.
-Not sure about sending a patch only adding a TODO to the regulator framework.
-Aren't developers expected to propose things?
-I'm anticipating 'talk is cheap, show me the code' coming.
+Then another commit came in and added more events to the mm/rmap.c file
+and moved the #define CREATE_TRACE_POINTS define from the x86 specific
+architecture to the generic mm/rmap.h file to create both the tlb_flush
+tracepoint and the new tracepoints.
 
+But since the tlb_flush tracepoint is only x86 specific, it now creates
+that tracepoint for all other architectures and this wastes approximately
+5K of text and meta data that will not be used.
 
-Thanks,
-Marcelo
+Remove the events/tlb.h from mm/rmap.c and add the define
+CREATE_TRACE_POINTS back in the x86 code.
+
+Fixes: 4cc79b3303f22 ("mm/migration: add trace events for base page and HugeTLB migrations")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Note, I will be adding code soon that will make unused events cause a warning.
+
+ arch/x86/mm/init.c | 1 +
+ mm/rmap.c          | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index 7456df985d96..f85313a8b5a9 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -34,6 +34,7 @@
+  * We need to define the tracepoints somewhere, and tlb.c
+  * is only compiled when SMP=y.
+  */
++#define CREATE_TRACE_POINTS
+ #include <trace/events/tlb.h>
+ 
+ #include "mm_internal.h"
+diff --git a/mm/rmap.c b/mm/rmap.c
+index fb63d9256f09..0bc00668970f 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -79,7 +79,6 @@
+ #include <asm/tlbflush.h>
+ 
+ #define CREATE_TRACE_POINTS
+-#include <trace/events/tlb.h>
+ #include <trace/events/migrate.h>
+ 
+ #include "internal.h"
+-- 
+2.47.2
+
 
