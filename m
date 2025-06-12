@@ -1,107 +1,110 @@
-Return-Path: <linux-kernel+bounces-683218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05919AD6A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:25:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A411AD6A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A75C7A36B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667221780D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B521920C031;
-	Thu, 12 Jun 2025 08:24:58 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BF2223321;
+	Thu, 12 Jun 2025 08:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElXkl7ay"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD1115573F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCB0222576;
+	Thu, 12 Jun 2025 08:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749716698; cv=none; b=CWEKCXp1VX/l/XiSQ4am+B8f4Fh+CYKMCRE8K9HNk5mG+C43/9ibm8+nuegljxblAI6hPg3x4s6oCox4AAAx+gZT28F8Vkra8cvaDo0ov9bqPB+bEVWWJEBkDaCfS/3SgMbg2zFD8eouIspy7xKNBXAqPxsZ4T9YFhtzFZz/Mrw=
+	t=1749716162; cv=none; b=XNMyO+1aX2f2j85GbYnYrt0qb0Pq1B316K4x5CSCTi+LqeAkB9FublO7R4ouV3hFB0ozZqciN/UEWEZWPMqd9fUxZPRwgCxgfsNzzxoXGz5t4+kkmkGpJGBib/0NiuTKhZ/dLW+dM8lqjsS3y0z7/Xo4P1P4N2g2eaqRZync8G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749716698; c=relaxed/simple;
-	bh=ubbW2XTd5xPgLYD/dBYJpM4b5Yor7UVXyRQkEw+cAek=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IhuV2JX8WUFUOcXwZT+BZAM/DQKHpgeR7ldbO7Iz56KqvE4tw2/2RJmYzkzE4bLNE9YyZkFONZSMkafBabGDQqA5qhrFvVflhYVGPB9bY9GF3171010tNacVhgMf1u3IuObbQfMadq6yJ6N+UMvyrA6gjknsiBI7DdQa6R3y8Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bHwTS3qrbz2Cdlr;
-	Thu, 12 Jun 2025 16:21:00 +0800 (CST)
-Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
-	by mail.maildlp.com (Postfix) with ESMTPS id 348ED18005F;
-	Thu, 12 Jun 2025 16:24:52 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by kwepemk200016.china.huawei.com
- (7.202.194.82) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
- 2025 16:24:51 +0800
-From: Yi Yang <yiyang13@huawei.com>
-To: <jpoimboe@kernel.org>, <peterz@infradead.org>, <mbenes@suse.cz>
-CC: <linux-kernel@vger.kernel.org>, <lujialin4@huawei.com>
-Subject: [PATCH] objtool: Fix memleak in disas_warned_funcs() and disas_funcs()
-Date: Thu, 12 Jun 2025 08:15:39 +0000
-Message-ID: <20250612081539.257339-1-yiyang13@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749716162; c=relaxed/simple;
+	bh=ecR8AAQgwILfljLPHk1Tr04bOTKmgHmuYykhJqIE55M=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=Sf9nbOO1pcnfnhipc11MykBAyClQjYOVaX5/d8Jqr5dcDj6U6WNagU+FAwSy2MObjg57S22UHpWyHhJtMzxlgQf+ePkD/4SMiK7MfVzb7hlJR1KA+5MFEZZGfJYvzAqWqsjLLTa8QF0UI3lKjfzDwwec7r424v/cjphVA3Foorg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElXkl7ay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72906C4CEEA;
+	Thu, 12 Jun 2025 08:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749716161;
+	bh=ecR8AAQgwILfljLPHk1Tr04bOTKmgHmuYykhJqIE55M=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ElXkl7ayFX0nyVj5sBPIdJzSQFOZ89rlsCiPEDMX+Gwb+Fggx2pUrJEGt1NJc/18W
+	 upKBpAE8ly4I3Was27a0JFBuvjzXH4hMV3J6G1+YkVM1Lr2Ie2GjWiHYfJpK5CE4B0
+	 ECE4Wiz2mLFBy4PXxwsHaRA4DcM6NWUya8gXCUTIzI22RGFWODFecbNtvdW26X6Ba4
+	 QgHp8yEn51noYr3yKx9MzNzmcO+wEHHav63su8Yz/bPNOqjbCMI+0FPw8xinpjVvpB
+	 UK46/nwhxHld7pViCCMNeTxuVvvTXLZKfRKCbWzi78gpLi3OR+S5GBPODl2p8SlBTj
+	 yVp7qq66NmcTw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemk200016.china.huawei.com (7.202.194.82)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Jun 2025 10:15:55 +0200
+Message-Id: <DAKEM192U5RZ.3D00TOR520LRY@kernel.org>
+Subject: Re: [PATCH 1/3] rust: completion: implement initial abstraction
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
+ <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <benno.lossin@proton.me>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <chrisi.schrefl@gmail.com>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Ingo
+ Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>, "Juri
+ Lelli" <juri.lelli@redhat.com>, "Vincent Guittot"
+ <vincent.guittot@linaro.org>, "Dietmar Eggemann"
+ <dietmar.eggemann@arm.com>, "Steven Rostedt" <rostedt@goodmis.org>, "Ben
+ Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>, "Valentin
+ Schneider" <vschneid@redhat.com>
+X-Mailer: aerc 0.20.1
+References: <20250603205416.49281-1-dakr@kernel.org>
+ <20250603205416.49281-2-dakr@kernel.org>
+In-Reply-To: <20250603205416.49281-2-dakr@kernel.org>
 
-Variable "cmd" and "funcs" which is allocated by malloc is not freed in
-all paths, fix this by freeing them after use.
+On Tue Jun 3, 2025 at 10:48 PM CEST, Danilo Krummrich wrote:
+> +    /// Signal all tasks waiting on this completion.
+> +    ///
+> +    /// This method wakes up all tasks waiting on this completion; after=
+ this operation the
+> +    /// completion is permanently done.
+> +    pub fn complete_all(&self) {
+> +        // SAFETY: `self.as_raw()` is a pointer to a valid `struct compl=
+etion`.
+> +        unsafe { bindings::complete_all(self.as_raw()) };
+> +    }
+> +
+> +    /// Wait for completion of a task.
+> +    ///
+> +    /// This method waits for the completion of a task; it is not interr=
+uptible and there is no
+> +    /// timeout.
 
-Fixes: ca653464dd09 ("objtool: Add verbose option for disassembling affected functions")
-Signed-off-by: Yi Yang <yiyang13@huawei.com>
+Another thing that we should document is weather this function returns
+immediately when `complete_all` was already called in the past.
+
 ---
- tools/objtool/check.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index f23bdda737aa..1e8a14e23d0e 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -4605,10 +4605,12 @@ static void disas_funcs(const char *funcs)
- 	/* real snprintf() */
- 	snprintf(cmd, size, objdump_str, cross_compile, objname, funcs);
- 	ret = system(cmd);
-+	free(cmd);
- 	if (ret) {
- 		WARN("disassembly failed: %d", ret);
- 		return;
- 	}
-+
- }
- 
- static void disas_warned_funcs(struct objtool_file *file)
-@@ -4629,6 +4631,7 @@ static void disas_warned_funcs(struct objtool_file *file)
- 				tmp = malloc(strlen(funcs) + strlen(sym->name) + 2);
- 				if (!tmp) {
- 					ERROR_GLIBC("malloc");
-+					free(funcs);
- 					return;
- 				}
- 				sprintf(tmp, "%s %s", funcs, sym->name);
-@@ -4638,8 +4641,10 @@ static void disas_warned_funcs(struct objtool_file *file)
- 		}
- 	}
- 
--	if (funcs)
-+	if (funcs) {
- 		disas_funcs(funcs);
-+		free(funcs);
-+	}
- }
- 
- struct insn_chunk {
--- 
-2.25.1
+> +    pub fn wait_for_completion(&self) {
+> +        // SAFETY: `self.as_raw()` is a pointer to a valid `struct compl=
+etion`.
+> +        unsafe { bindings::wait_for_completion(self.as_raw()) };
+> +    }
+> +}
+> +
+> +// SAFETY: `Completion` is safe to be send to any task.
+> +unsafe impl Send for Completion {}
+> +
+> +// SAFETY: `Completion` is safe to be accessed concurrently.
+> +unsafe impl Sync for Completion {}
 
 
