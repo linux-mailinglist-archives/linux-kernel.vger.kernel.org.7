@@ -1,107 +1,146 @@
-Return-Path: <linux-kernel+bounces-683263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88C0AD6B2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:43:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153D9AD6B39
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09ED3AB0B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78B2171178
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B239722156F;
-	Thu, 12 Jun 2025 08:43:48 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F21223704;
+	Thu, 12 Jun 2025 08:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EM6ptQYw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6A02147EA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4948B221268
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749717828; cv=none; b=I4C/9VJBi80iHxjAxG2LkBvAgGNIDpWnkD1KZkxdJKpH9/adMBSTjpS4cuCsWAjkCahhl/8YP5nZIlParRoad42VUjTCM1rcgdLqMhsROuzRRaJxbgWsNZyIPLRwn3fKsLF5FoZNLQcBxHijH/CYwtgVCsiukYx8z0lX+1l/YGk=
+	t=1749717890; cv=none; b=QjBi7nLKBAdd2XosfhGMairbXNEUuh3WibjilgrfaQ0beseBYD7ZrOeTfCL+XbCP6aBsRAycGgh87wWU0vbLugI3SCUaLAmMQW47tWsnUC7a5Mv0DSzgRBO+wfuCF17aGJNgANp2aYpI+VxLnq++9Bf/8X9GF0U6GkQ81eKxWms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749717828; c=relaxed/simple;
-	bh=8iaxqSPyLwyYc4p+UQKnDkBRPNeQrZuJ5qNr27px7kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvHpUHGaqTvfpLr8suP7Ms4Y8bWLShgH/YApXwYjJ2ZkwZKklg74r3/x+wOjcfrD9WuFopyX8vXgG+yDGajl8IUverJGGmDyC8150mBpqZOPLQKXlQZTKfn8R3r5AY9T+J/nQgmXRLrxnjS1rXvkIldbfdDOoOL9T7Silf37WDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uPdX3-0005C5-0f; Thu, 12 Jun 2025 10:43:33 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uPdX2-0035mI-2D;
-	Thu, 12 Jun 2025 10:43:32 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uPdX2-008pJu-1h;
-	Thu, 12 Jun 2025 10:43:32 +0200
-Date: Thu, 12 Jun 2025 10:43:32 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: scmi: Fix children encountered before parents
- case
-Message-ID: <aEqTNLTp0EzcC2aa@pengutronix.de>
-References: <20250612-clk-scmi-children-parent-fix-v2-1-125b26a311f6@pengutronix.de>
- <20250612-eccentric-fresh-bee-e52db4@sudeepholla>
+	s=arc-20240116; t=1749717890; c=relaxed/simple;
+	bh=rNTbSvQjmtm36dJjYb+8KYjVtBDjiIzJsQLY4I9jU7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ETdU/nBgHEMOysdtUm6uLZrn/78wqJAfhORoTDOk14jFT8Dw6rrxa9mbppVPd3E6nQ4RjaD7MAHKkIRfQmAEzkWXqK0ighhsCykksO1XNru++agy8SHIqgrb4VlWA63IeRFz1ngtLLCRJXEFW8VoZ5uoN43Ti7o2wXQm1mUS+6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EM6ptQYw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749717888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rNTbSvQjmtm36dJjYb+8KYjVtBDjiIzJsQLY4I9jU7k=;
+	b=EM6ptQYwg4gUF//fntFrYJGlMRGSVRTXYCgZhe/tcCyYS+1jSOSpZKfYRklSOXLplibMkm
+	syC6NF+z4iV24E9zq0sHRBalOWSnm5Kdy3ObhQqEOcREnc+YPjQ0fxT/F9Wnb99CZgaYLS
+	7BJ7/qnakzp5WVHcexGsfbtTN0Wh0Jc=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-uzeOKAQcOXiNxEckCInngQ-1; Thu, 12 Jun 2025 04:44:45 -0400
+X-MC-Unique: uzeOKAQcOXiNxEckCInngQ-1
+X-Mimecast-MFC-AGG-ID: uzeOKAQcOXiNxEckCInngQ_1749717885
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e73290d75a8so1004287276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:44:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749717885; x=1750322685;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rNTbSvQjmtm36dJjYb+8KYjVtBDjiIzJsQLY4I9jU7k=;
+        b=Qv11bUMVRejqwqxry1gkPbL3ljMuv1eLljaKtaH5odWvx3nhfAJZtSna6S1D0kAKbZ
+         dant9x8hoqTgFZ4+oYmHuJF7O2oKBjvgZ9aFS4OQqGOfuEhJvhGrEqKHaLyokonvY0kN
+         h4s55n10d25NSh1NkpM7aNdvnMBhkCpn+9d2Y8C/Eq0/CTzy78vDnKnrM3vsYLDFvrhh
+         eodKSsaG5HJejyOyRnr9HeSLXSiAb/5unXrFG3YdZVKd091MMNRkX7UCciBuHekexRKk
+         bpNeTVRO/sjFNxqSo/Qr3uSC/NTS7+mmWKbSJFv7UFnYGu+lB+lA6VA4Npe4nPldGAad
+         +Ttg==
+X-Forwarded-Encrypted: i=1; AJvYcCWw1iNnCHL/TvttgkcdnguoUXeWTzi1nF6YeYz5xyOef740Xa5/USCEXRb9tBxCcf/q5GllQuGeoWxgQMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNAEAq5ZfF5LXcDewlzChvpp8soP1mV6BdYH5JCgqRcUzIW4oD
+	9wUnVivXEZxgKsaWwgNcT1pf4VndS6bBAV88l2WarPi8jtJt2ja/oLeWROlWEV562cxgBCyyzaI
+	DpszTlQzhWAnpXjbG0YG+ei90xKrBmd/gCWKekPaGMzv6uZKjXqWemJo3GavIWD07rZp/xPxy0f
+	6oTs2IegM+woq0CS46wGUbZxpSfRrlw50lc+AxvKyt
+X-Gm-Gg: ASbGncuPTFsbLOqgTaoMDhfq2EKrKoR6J709Pns38p8A0RqzGNL7L8QZmU70mUigDPk
+	N2UtQ7XvfFo6Vy0OaUmMRf/g/xs8xC3HZZFTtoCDROzFUmsE0sEGfYJrrHbVwDOiPzJpzfUtO3s
+	f8QXtN
+X-Received: by 2002:a05:6902:2611:b0:e81:4e9d:9e79 with SMTP id 3f1490d57ef6-e81fe6b8b7amr9216276276.40.1749717885015;
+        Thu, 12 Jun 2025 01:44:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpO7imw7/y6hUBA3+X+9+644bvWl/2xN24NgD0/xASJ+Z1iQt0UZZ7qIi1/vJ8aGKQCfn0PwMZVX01PvmLRPE=
+X-Received: by 2002:a05:6902:2611:b0:e81:4e9d:9e79 with SMTP id
+ 3f1490d57ef6-e81fe6b8b7amr9216251276.40.1749717884673; Thu, 12 Jun 2025
+ 01:44:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612-eccentric-fresh-bee-e52db4@sudeepholla>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <CAGxU2F6c7=M-jbBRXkU-iUfzNbUYAr9QApDvRVOAU6Q0zDsFGQ@mail.gmail.com>
+ <20250612082102.995225-1-niuxuewei.nxw@antgroup.com>
+In-Reply-To: <20250612082102.995225-1-niuxuewei.nxw@antgroup.com>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Thu, 12 Jun 2025 10:44:33 +0200
+X-Gm-Features: AX0GCFs5PNoVhHhHZsKNXS6ADWJpjexmyZKqj4oyHShXjy9f_WC9YKjQLjFGOUk
+Message-ID: <CAGxU2F4JkO8zxDZg8nTYmCsg9DaaH58o5L+TBzZxo+3TnXbA9Q@mail.gmail.com>
+Subject: Re: [PATCH net] vsock/virtio: fix `rx_bytes` accounting for stream sockets
+To: Xuewei Niu <niuxuewei97@gmail.com>
+Cc: Oxffffaa@gmail.com, avkrasnov@salutedevices.com, davem@davemloft.net, 
+	edumazet@google.com, eperezma@redhat.com, horms@kernel.org, 
+	jasowang@redhat.com, kuba@kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org, 
+	niuxuewei.nxw@antgroup.com, pabeni@redhat.com, stefanha@redhat.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 12, 2025 at 09:29:16AM +0100, Sudeep Holla wrote:
-> On Thu, Jun 12, 2025 at 09:36:58AM +0200, Sascha Hauer wrote:
-> > When it comes to clocks with parents the SCMI clk driver assumes that
-> > parents are always initialized before their children which might not
-> > always be the case.
-> > 
-> > During initialization of the parent_data array we have:
-> > 
-> > 	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
-> > 
-> > hws[sclk->info->parents[i]] will not yet be initialized when children
-> > are encountered before their possible parents. Solve this by allocating
-> > all struct scmi_clk as an array first and populating all hws[] upfront.
-> > 
-> 
-> LGTM. I would like to add a note that we don't free individual scmi_clk
-> if for some reason it fails to setup. I can do that when I apply, just
-> checking if anyone has any objections. Please shout out if you have.
+On Thu, 12 Jun 2025 at 10:21, Xuewei Niu <niuxuewei97@gmail.com> wrote:
+>
+> > On Thu, 12 Jun 2025 at 08:50, Xuewei Niu <niuxuewei97@gmail.com> wrote:
+> > >
+> > > > On Thu, Jun 12, 2025 at 01:32:01PM +0800, Xuewei Niu wrote:
+> > > > > No comments since last month.
+> > > > >
+> > > > > The patch [1], which adds SIOCINQ ioctl support for vsock, depends on this
+> > > > > patch. Could I get more eyes on this one?
+> > > > >
+> > > > > [1]: https://lore.kernel.org/lkml/bbn4lvdwh42m2zvi3rdyws66y5ulew32rchtz3kxirqlllkr63@7toa4tcepax3/#t
+> > > > >
+> > > > > Thanks,
+> > > > > Xuewei
+> > > >
+> > > > it's been in net for two weeks now, no?
+> > >
+> > > Umm sorry, I didn't check the date carefully, because there are several
+> > > ongoing patches. Next time I'll check it carefully. Sorry again.
+> > >
+> > > It looks like no one is paying attention to this patch. I am requesting
+> > > someone interested in vsock to review this. I'd appreciate that!
+> >
+> > Which patch do you mean?
+> >
+> > Thanks,
+> > Stefano
+>
+> I am saying your patch, "vsock/virtio: fix `rx_bytes` accounting for stream
+> sockets".
+>
+> Once this gets merged, I will send a new version of my patch to support
+> SIOCINQ ioctl. Thus, I can reuse `rx_bytes` to count unread bytes, as we
+> discussed.
 
-Feel free to add that note. I should have added this myself since it's
-not entirely obvious that the devm_kfree() has to be removed with this
-patch.
+As Michael pointed out, it was merged several weeks ago in net tree,
+see https://lore.kernel.org/netdev/174827942876.985160.7017354014266756923.git-patchwork-notify@kernel.org/
+And it also landed in Linus tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=45ca7e9f0730ae36fc610e675b990e9cc9ca0714
 
-Sascha
+So, I think you can go head with your patch, right?
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Please remember to target net-next, since it will be a new feature IIRC.
+
+Thanks,
+Stefano
+
 
