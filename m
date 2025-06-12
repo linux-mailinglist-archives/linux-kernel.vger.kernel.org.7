@@ -1,133 +1,109 @@
-Return-Path: <linux-kernel+bounces-684013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FB8AD74BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC42AD74BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F16163C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:55:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C503B8452
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78392701B6;
-	Thu, 12 Jun 2025 14:53:29 +0000 (UTC)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57D2271447;
+	Thu, 12 Jun 2025 14:52:39 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C9326FDA9;
-	Thu, 12 Jun 2025 14:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9623F270575;
+	Thu, 12 Jun 2025 14:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740009; cv=none; b=K7K2gmGqa3ejaAIcM4TBYekUzVq2afN028R6ODwpMwU3OcY0uirwqm/MdT4yVwu+2qssxAJFZ4TAAQYkcn+Z94ea73cxo+2q+eqw8YCFZ6oyZqLiH98VTuIGHqhKIJdT2gMy08So+98DGWYGX8TuZenJpeLcuJ2dMDYXMv6OKjE=
+	t=1749739959; cv=none; b=iGjQsurIjx8TPKVR7sJyvbF57oqWIcmy/lInG9ybXOiSVXefxCV/YSdx/l8fGs/C/jdustDFv5fmobwtTdoEDHtB7PosSI+059ODKcq3X2J7Z3an5z9vkOrAcE5bQaXM+1ZkZbPyLjlKAUgxMaidlYgCGxXcUyUYGf1uqARNLJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740009; c=relaxed/simple;
-	bh=Z46/+1bEbzFmd4IlLZVdFclzKMNgK/pNVt4Y2XAb92I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tr01n6uOM9xxohqqIWkeZi0nQ5o68Wt9NcRD7Ap5EHUAwwBCu2GmV9X5ACC+h6U+52tfslDFgtvg/pb7FmtZpZrzQtH4HNT7oUxpbPSIlvRBEtxA4inVX9SslqIndy0na/K1tAzFYp+USWG+nsJB5Im501v1/grtwa0I/FiwvG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e770bb7b45so294234137.0;
-        Thu, 12 Jun 2025 07:53:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749740005; x=1750344805;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7x1d1vTJCh0XRTGcbKT1jF2AwaSX3xRvHIeZZnEYTPA=;
-        b=aeMG4SnLTMNsDdQXgvn0yiWyZVhhwz+uw9kMgNv1FsvN8DTLQLbpDm+VPoUtmZClQE
-         rgD7JNsmWST84ObVcIvB7fnH8AJlDf7dkqf81Cphj+SftTicU+t04QUOwPa0V4EmVSSK
-         soJMwwxs8P+xSSQJHXotDBPhYo+8pbrpF6+P132JwSWaQLmqFa+AYky3FrJmHaaagPvg
-         DcU5X64SmZk99wBPZvryvW3esGngrsCj+Lg5iX0XC+euGiR/gOJiS2l0F8m+XVr7v2uR
-         lFYtiGUpkPpQAfNvyK+0UmmyQNUv1CfL4EeV0oXI03sLFp3c+feQwstuYA0LvVQyc7nc
-         im6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV4F/6kBGkej55avODavwCYGLcA1/Y50I8o973WULOYeyVdLZTs2d+oW2JwBXyFYUmwhR0T+dClH5zK@vger.kernel.org, AJvYcCVgK1BzzD/msE3rtkkiWyEFK+V7zQp8qrnG7JGtLtLZ7RZramT26G8k4YnDrvCSy0oFRQhwy6IUqJZLmwOb@vger.kernel.org, AJvYcCVlN9a050deTHhxjAfELqTQXwoF91kCt+a6tp5oBIPfYR2WldlRgNf/If01ZNSzmVQhOjIXRwM7uSG1Mjn2H/B0+7E=@vger.kernel.org, AJvYcCVz3Hc2zkwAhuL2ELxBYNz2pupa7byUaziqspUUTvNXLmHFZ/6ArI532KYtG6GMBvk8QNUKZA1wp7B9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4pMmGVd+W/NnztnN3W1TWy7lkH9QHJSbdV4F8OqJaLXez6mKZ
-	qOpLuuHZHOj8dLL0jK6sPj8gx4u+CuAM+H4nO45TVTAfKzYpzRmoUocctHqGOoDo
-X-Gm-Gg: ASbGncvMlQv/aSc9MxE3jcld8bdExMkCcGHKGPxTiM3qYLjiEYosD/Z07eDmtQMNaFp
-	33cehI/8YOy66a3hhpFsYdkngrw5w6fSrgLemZEi9MzHZWSH/rHCVixDvPrPwT/KQ97sqbiecKp
-	bUMzbdHTOHgokh2EmAPozZyWYE246rvAMQIboDVUIOAstk1jYnZizpadDfzJp4mZmpT/98re8xg
-	rnXi8Tyl3V6+MlurXchNx+vbMIfINvcim3X4oszvdzgSSj1OFsEnLO2mJ2UqAWjHxxMLj/FRO3q
-	wn45yKi2Z0ClzfhEI3ySeifW3s2ENN5fgEfx8rJSNfxgQql9zgpepa942NP417ZprbFWJXNkY/F
-	aP/S6ey5pQRJVL4Zwe3WiKxIn
-X-Google-Smtp-Source: AGHT+IHNTEaD5MAYAS1XrNXevImlvWWqfgcOUd/i+I88jXPZE13e9nNIBOhdvn+4/Zk5cBzty9BsdA==
-X-Received: by 2002:a05:6102:41a0:b0:4ba:971a:41fd with SMTP id ada2fe7eead31-4e7ccd8a30bmr4525569137.19.1749740005004;
-        Thu, 12 Jun 2025 07:53:25 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e7d07d5642sm257908137.8.2025.06.12.07.53.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 07:53:24 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4e7b397cc2aso280563137.2;
-        Thu, 12 Jun 2025 07:53:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgCBVjETYr783K4eEaqbsOnauVPF1M+LvQ0Jk+I9Oz/CcQaYKqw7WzJFDFrj+sPP2Ke4mB+VQfx7vT@vger.kernel.org, AJvYcCUx8aNtcwXM0bhU5EJf7pHF8eP2tM0+eFAcXUwkIu9Tq/Qds+sQsMviOe35mp9uP63VrYDgQ3roKFxNkFSW@vger.kernel.org, AJvYcCWq8OLCkZ8pU4pcabnGDRAnsV1MSaS0Mnrb3gDjfeLs1QMynM3Z1EfBv+sBsymV/F/ejpNYzXhcLjauXeB9e8pfbd0=@vger.kernel.org, AJvYcCXfRxXcxIQiKu2EF8JlErngYdb1THpBsH9vx5Sr7JrjmSFxpi5yEhaRJnddtu6txfm+gcr5dJBfjBfT@vger.kernel.org
-X-Received: by 2002:a05:6102:5808:b0:4e7:b338:5352 with SMTP id
- ada2fe7eead31-4e7ccbf01fdmr4242757137.10.1749740004083; Thu, 12 Jun 2025
- 07:53:24 -0700 (PDT)
+	s=arc-20240116; t=1749739959; c=relaxed/simple;
+	bh=GqYAzQTTqOixsKkeHNFxk70fTgCxt/tudq0aJ4T0s2o=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=gyg9EozQ6Y183L7rNRn96ZNX7DT9diYejKV6rmC6Sr1bnkWFz0IRJudzVVnib4kEFEHwuptXzuQP0wu3Zy6zGSow6b3waPyC1DQxlMPTpkZ60anBAgP66gPvWPNlvLdq95N8Z/27LKjF1sVWOMk4UxoShu4gldYDTOFeagn4wnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 967A0BF42D;
+	Thu, 12 Jun 2025 14:52:34 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id A99CF20;
+	Thu, 12 Jun 2025 14:52:32 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uPjJg-00000001lPb-1eeF;
+	Thu, 12 Jun 2025 10:54:08 -0400
+Message-ID: <20250612145408.246703478@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 12 Jun 2025 10:53:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 3/4] PM: tracing: Hide device_pm_callback events under PM_SLEEP
+References: <20250612145310.563358597@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250609203656.333138-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250609203656.333138-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 16:53:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXbo7vytuCX0RW9w0PjPs9tWaNzuOAWCUrO7gF8xKC8Sw@mail.gmail.com>
-X-Gm-Features: AX0GCFvi9455CjPDjLvZYIZKJZiEyx6KQ3aIhyUXcJMYE57S6zBSPXwrVsAtHMg
-Message-ID: <CAMuHMdXbo7vytuCX0RW9w0PjPs9tWaNzuOAWCUrO7gF8xKC8Sw@mail.gmail.com>
-Subject: Re: [PATCH 8/8] arm64: dts: renesas: Add initial support for RZ/N2H EVK
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-Rspamd-Queue-Id: A99CF20
+X-Stat-Signature: fpyn74mhzgi6edsr6q5dyg95485qe48o
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19j43D1p8tely174eW3U7IK9BarJsJXwwI=
+X-HE-Tag: 1749739952-946871
+X-HE-Meta: U2FsdGVkX19Y+FZTAuN70shmtNMQh8PF2z5w7Al6e+s8ndEXUZ5waGRazYm5aCm2Wr9+0EzyzaKU8+39h43/bI6vwC1JF3awrJxUzixgqFB3CkY/vNKmEsPT/OV5hI4lu+/m0RfUj7nkgQJbHak4qGw+xUParAwYSnfDYmsnUA8nJAyD6BG+V0ytFtMXWmALmab5EFfBTUI5MdjZAAdTv/cWm6PKSm5M9NWf1SX25RHOP6PmO6myilu4l5HiqBpSf6h20aPkkJZ6xNU6nuhYc2en4NRWWwSTYaJqJxRD5a1I7uOniuYR3SvoNNigOYTMI1LKxCHOU2Q1hJiFGU31S+MkEnNyOtsQ3FRNqXap5c/U/vbNbY4d1XhRVHkiS/T/NNdisUq1KQZm54tC8qipcA==
 
-Hi Prabhakar,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Paul Barker <paul.barker.ct@bp.renesas.com>
->
-> Add an initial devicetree file for the Renesas RZ/N2H Evaluation Board
-> (EVK).
->
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The events device_pm_callback_start and device_pm_callback_end events are
+only called when CONFIG_PM_SLEEP is defined. As each event can take up to
+5K regardless if they are used or not, it's best not to define them when
+they are not used. Add #ifdef around these events when they are not used.
 
-Thanks for your patch!
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ include/trace/events/power.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-> --- a/arch/arm64/boot/dts/renesas/Makefile
-> +++ b/arch/arm64/boot/dts/renesas/Makefile
-> @@ -166,6 +166,7 @@ dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
->  dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h48-kakip.dtb
->
->  dtb-$(CONFIG_ARCH_R9A09G077) += r9a09g077m44-rzt2h-evk.dtb
-
-Please insert a blank line here, so group DTBs for the same SoC.
-
-> +dtb-$(CONFIG_ARCH_R9A09G087) += r9a09g087m44-rzn2h-evk.dtb
->
->  dtb-$(CONFIG_ARCH_RCAR_GEN3) += draak-ebisu-panel-aa104xd12.dtbo
->  dtb-$(CONFIG_ARCH_RCAR_GEN3) += salvator-panel-aa104xd12.dtbo
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-with the above fixed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+index a10ad300d660..5b1df5e1e092 100644
+--- a/include/trace/events/power.h
++++ b/include/trace/events/power.h
+@@ -212,6 +212,7 @@ TRACE_EVENT(cpu_frequency_limits,
+ 		  (unsigned long)__entry->cpu_id)
+ );
+ 
++#ifdef CONFIG_PM_SLEEP
+ TRACE_EVENT(device_pm_callback_start,
+ 
+ 	TP_PROTO(struct device *dev, const char *pm_ops, int event),
+@@ -260,6 +261,7 @@ TRACE_EVENT(device_pm_callback_end,
+ 	TP_printk("%s %s, err=%d",
+ 		__get_str(driver), __get_str(device), __entry->error)
+ );
++#endif
+ 
+ TRACE_EVENT(suspend_resume,
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
 
