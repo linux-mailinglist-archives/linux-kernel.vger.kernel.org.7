@@ -1,546 +1,313 @@
-Return-Path: <linux-kernel+bounces-683586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F893AD6F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:43:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32887AD6F45
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EDC17AF36
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C456F7A2B99
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E97A23AB86;
-	Thu, 12 Jun 2025 11:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE6E1A304A;
+	Thu, 12 Jun 2025 11:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z70n7kUo"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GaVkdnnQ"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2067.outbound.protection.outlook.com [40.107.92.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172251A304A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749728554; cv=none; b=STORpg1wlytQFkbKOnxHxJr1rNy3GCTGvkKQl/J1nXqYxPFpBD5J5wspP/whAeb0gptf9PY0EHJSZHmm+BgPXA16T/ePb5oFRBYmqfm+dUvzgfWtdvx/JPaFfUmPrUWm3DWD95XtrV7KiuVQVLd4Qdr1Se6ymKhxN5pvzJEWDO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749728554; c=relaxed/simple;
-	bh=uyh332o1pAPuEY2uH91QWERhySxOdcUopuo5d5VLyZY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LTsPmUa8DlzhTh7WdVI5KipX/JcLVepg1nudvPLEkTD5xuzhDr6rcNndZH6sz5GJoPOvxwJzKGA+9V1EEhTweMzCSJKM0bibHnG2nLsCsqICG9Xo2LNgZPMEfIeeO5AlFpOxe578e9myXJo8PeRMwRb6Um++z3VyiJJu1e84Bvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z70n7kUo; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-607bc9bbb8aso1003942a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 04:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749728550; x=1750333350; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ny50wxbGCl9/p7vQHYlJ5hEC+vKtyReCBNsYASuV5I=;
-        b=Z70n7kUom+T3xZMABB0IOL4BsbJofhTvbEgalQ2Rcjcdpj2u5SVRbSd4jsUj3nYDrN
-         Aw/qOWBsVZQgpRaVvKIHGZwM+2RMJo8Cv2p/2zuPq36ekZlvKh6gLPTtN9XXLRmZ9dke
-         ljDgChOCbJtEStUq6NPE0Beq1kg5ZZGBXTB7AG+0XVP+k6Q+9kDevYTeM2Boic9mkLlL
-         g3IrDmbBAVlxLd4VkdgWHJxUABKLmaJvC/eZHxd7ZP4pcN12rloGoH9mJSDUxThTBMgd
-         57K3lgIocP5WKqIS4+RZie97dfYAssShLFWLQfbZK5T1uNlzSAXp7vMo3Rzjj/478TBT
-         OKqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749728550; x=1750333350;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ny50wxbGCl9/p7vQHYlJ5hEC+vKtyReCBNsYASuV5I=;
-        b=JhAs1hW01ArxooyrMYHwfRVb4STB7kpJY5IO4gM7cHg8R4h7W171XcxV/hKjpxSGdy
-         3IlARfn4sFBAdT+iolg1Hb4DyTFi8xxBB/MFltvVN+9SpVrWC2E3ruEZQF+WpO5IrMUA
-         0l65DDg5G23dzLjrFM3m4Wc6d6IgSKOkW5R1nQS8kqgOoF/EvhAIUbvu2yrYRN7ErKJD
-         MhEtEVPvnFDXZSpZpZ7KiNQ7RESSe0P5yaMrsgFPFEOXmQYQ7cGzLwgnWODi2R6J5mvw
-         UYH5nCygFXVGY68ZK/LQcrutUKPtBoVySxotTmvJ7eHAG3i5F9e5mChjysp9f2XviWHm
-         TNAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCacEzWvVr0z67fppyCMYHQktVLG0NliicLiT2TE1ZES9h3jLSCkxsyH2UJ49lXyvg7hZ1y0B65G+AS2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaY94w52J4NIF7lV97vOSwmwrTT6yLs/uGezM1GtWmH+jUsaEY
-	uxa0GyLU0JkfPhsgn7IuVeR4eQdA1sVmOPByHCRp9RRBtpH4H3ZgJkUobJHhdSH+dfdlP5OyOGM
-	jR/N30aG0euCSi+VfuFGy/g==
-X-Google-Smtp-Source: AGHT+IHDD1UnNT+nvBQNPFZnom0wa4E2j3MQhNuNSWlQgOSnWJg+n1r0cAtiW4veuvHINkkCDUQd+Ll58aoDNRGI
-X-Received: from edvw21.prod.google.com ([2002:a05:6402:1295:b0:608:558a:1de1])
- (user=mclapinski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:13c9:b0:602:201:b46e with SMTP id 4fb4d7f45d1cf-60846baa5fcmr5909183a12.31.1749728550520;
- Thu, 12 Jun 2025 04:42:30 -0700 (PDT)
-Date: Thu, 12 Jun 2025 13:42:10 +0200
-In-Reply-To: <20250612114210.2786075-1-mclapinski@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480F12F4311;
+	Thu, 12 Jun 2025 11:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749728539; cv=fail; b=MNc4pxEUSTIyViG3h+ox3COSXIJ2jI4zwAwXIL0BmMtCBpJy5/IPvTDc0ybxM65EDfNmSnRl93uKciEsHNN6kplY67hFkODzpe8fSX4Xj3HzZ8pHXPGA36w6RnPyrxG6zuc35Vb0gKbWuJhmvo+XQ0/DwtrRss+btzmM/ErCdLY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749728539; c=relaxed/simple;
+	bh=6E/+2KJ2soz9R5HsGtzYP/DnVKCl7HTj/AyS2OJgp2A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tT/ws6iLCRISrwTzAy5glGyw5KPjE1+scnEww0Cc7iarwEKoQ5wkf4txIKorJBmRY8nFbBZhtiTf9LO7AZl2Mhvy7pfvbecQrmo6HxPmvC3llBU8L8UFrL8i3/NOjlugmzW7Tnslzq/TuvtbgJOV1vBPVtbKhn43/No2gq5cD9M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GaVkdnnQ; arc=fail smtp.client-ip=40.107.92.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q6lRp6CrbMu5HLl0yE5Na0Ip1GqzhG/Wq3JzGoPXtBv5o0287vP6Q3iXwbMI1Azjxc9s85a1Fyyh8HnWcqk6eiwdt+foz0Vu/oyJvL2ghQCKTFwdVlsvPu9r0pYYaNXor1V89wGWZitgwBxZlZJKSqFIva9J0E79VNNuBdiPPeTWRK47LmkKHSp92fyHNtnXhp55/P2DjZf4yWTPt1lsQs0NkEMnMDRONyc5OgiHLd3p9ApG/rdcHl0dN1Eog6ff9Njw5B5KXpQoaj66WKaWeCHyS3qeD/ID+GCwKNY/PtqbRVQTA6teQAoVhEMmmrBoDaFzq5dfifTr1A48JQYOnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6E/+2KJ2soz9R5HsGtzYP/DnVKCl7HTj/AyS2OJgp2A=;
+ b=GchFfKY9JXKVjjVnmWKyxhAolLzzdYI++r3Ow/vVjTcNqDZ8pfRsO++pSPwjnmP4ubAUhY1wmhiS4t8BJqT5fpNv+zmSOLH80VQDDRCfVlGgmbg++EHY28w3V7iGMKdfXGjMOKz8Nfs1GoSvjsIXUQ9xgpZqV/+IXqiHXZTnJMliR8x6qIM/zwk2zSWmnGLx66gePhI/XWWVmGfTng6UnOGzYlJ6V+/nvyC6aNmCpUuHMUm0ylVchA7kQRvbjItHyJtvTb0Taf8KeNdGePEycMHv27mTm4LJge8yfrLL73taaZDRjt3WktlHojmYFs3F6uIT3UAv3CUqeRek/vspMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6E/+2KJ2soz9R5HsGtzYP/DnVKCl7HTj/AyS2OJgp2A=;
+ b=GaVkdnnQ+7uspibR931YiVBOlq767RnMXMre3pRm5he3e834qhUINoRH8FVYOiDqYbpur0SijwRb86yvk/b2UaLo3wDcSeSMzewMa0hVJdt4jsOXKUpf5btfH8bOljvcIjQTgt/+u+kPoITl8zmQld2e6L+qHWP/Ix82ee1H7+0=
+Received: from SA1PR12MB8947.namprd12.prod.outlook.com (2603:10b6:806:386::7)
+ by CY8PR12MB7756.namprd12.prod.outlook.com (2603:10b6:930:85::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 11:42:13 +0000
+Received: from SA1PR12MB8947.namprd12.prod.outlook.com
+ ([fe80::8730:918c:b34b:d058]) by SA1PR12MB8947.namprd12.prod.outlook.com
+ ([fe80::8730:918c:b34b:d058%4]) with mapi id 15.20.8792.034; Thu, 12 Jun 2025
+ 11:42:13 +0000
+From: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>, "Simek,
+ Michal" <michal.simek@amd.com>, Tony Luck <tony.luck@intel.com>, James Morse
+	<james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Robert
+ Richter <rric@kernel.org>
+Subject: RE: [PATCH] EDAC/synopsys: Clear the ecc counters at init
+Thread-Topic: [PATCH] EDAC/synopsys: Clear the ecc counters at init
+Thread-Index:
+ AQHbz53DeAbkSv25gk2QG9HHGnijYrPxLhoAgAFcYQCAAD7kgIALCYOggABs6QCAATx3wA==
+Date: Thu, 12 Jun 2025 11:42:13 +0000
+Message-ID:
+ <SA1PR12MB894766DFAD90E9DB15A3268F8174A@SA1PR12MB8947.namprd12.prod.outlook.com>
+References: <20250528065650.27646-1-shubhrajyoti.datta@amd.com>
+ <20250603090536.GCaD664IbJB5IoR06g@fat_crate.local>
+ <SA1PR12MB894764756C6538EE985BDE24816CA@SA1PR12MB8947.namprd12.prod.outlook.com>
+ <20250604093735.GAaEAT39KGW1KJDrjD@fat_crate.local>
+ <SA1PR12MB89471067967E0A5F46CEE1DF8175A@SA1PR12MB8947.namprd12.prod.outlook.com>
+ <20250611164018.GAaEmxctC+ESUCvBNT@fat_crate.local>
+In-Reply-To: <20250611164018.GAaEmxctC+ESUCvBNT@fat_crate.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-06-12T11:32:57.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB8947:EE_|CY8PR12MB7756:EE_
+x-ms-office365-filtering-correlation-id: e5435b6b-8e19-411f-7bc6-08dda9a62c82
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?emFkVVVoSS9yZEV2T0pSUXNWL3pUYkFDVGpSWWRxZ3diTVdqNVRQd1BLTnlY?=
+ =?utf-8?B?K0x3QlErY1NwYjV1cFpaR1VidmJxWGJVWEJCL0dvOHJOSWlrU0kyVzNrZU5B?=
+ =?utf-8?B?R2ZQTURmd2hLeDZkS0dNN1g1ZVNDaCtrZDJQdk9xeXlvUC9tTjRiV2RXT2VO?=
+ =?utf-8?B?RjBTdHB1WVlPeEQzamdtQ0FubFJaWUUvUzA0SlppYmcrVmlIdEF0cnNPenZJ?=
+ =?utf-8?B?dW9uSW1IbEVsNWEzR2hyL0xsSHBSS0hvaUswMnhsbmhGL25EYytZV29pdmFC?=
+ =?utf-8?B?b2dWNGxKOCtBcFN5dENGa040NUs2MldGT2RraG1zdnE5aXhPK0Mra3VCeXRL?=
+ =?utf-8?B?TmdEMnRWT1cyb3p2ZkYxNUN6aUVpUVhQYXdaVkxvditZU0VDOTFUN2had2dr?=
+ =?utf-8?B?UjNUSVhTVVZhWmVSWjZTbml0TVRSMU1Ia3BRZEh6OXRrdHZkaXkrN3Y5TGZJ?=
+ =?utf-8?B?Ump3ZDVadmV2eEluSkdiSFZwT0ROUDRnUmFxNzdsb0lTRzdlNXJsQ2ZKd01U?=
+ =?utf-8?B?cVZBVXdyeVRGZ3NiUEhpQy9vYU5iVTNPVjJJcXAwb2R5cUdqcnpUNndLc05R?=
+ =?utf-8?B?dUtCd2ZJMCtNSHVJSHRCV3R2Y0dCa1ZIYWlCZnZOZTAybWVQcnNkcnErR0E4?=
+ =?utf-8?B?a2EvOEovZUdZZ0d5ZU5VdzR4OVR2ZFdQT2xoSTJ6T3RvZmRsMjk5dkxqdEFr?=
+ =?utf-8?B?NGhka3pNcmYwd0JDN3cvNVlWejQxK2wxQmdaWXBBK3NCQWlRbThQNWh1WE1S?=
+ =?utf-8?B?dXBUMW1tV1BVKzh4YjhUbllSMWFTQXpmblI4alZoUWNDZU5nbXBNbU5uOEJr?=
+ =?utf-8?B?NEJoVDFVTWVxbHd4VTJIdVg1TUFHazkzVnp1QXZiRjltUmVCdzIvVVNuVHA1?=
+ =?utf-8?B?OC9zRDVPRE82RGhIWHFXeXNRUEVONjg1QjdXbzRYYzdsL2lQaFc3TmFPcEhS?=
+ =?utf-8?B?dm1hc3loRCt3WUVUalRKZk9hT084YXhpb3VGRCswZzdRelZwVEpGbkhkNG85?=
+ =?utf-8?B?Q2tpeGw3N2RrMHpZVkFNMVlpVWRJQ1FJTEdKNWVDTUlBb011UHdRMlRrRFQz?=
+ =?utf-8?B?TE9iQ1NLTFg0TEFqcVJOZEhhMjUzQzZoRTkyYWlpZGxpdEp5MDEwUktRU0ZD?=
+ =?utf-8?B?MUJNTjhGY2V3NTkvQUpEUXFiajZPbjRFNXRmUDRrdW9aZDNuRU0wMFFqMERk?=
+ =?utf-8?B?UVAwZkp1M3VvUjF4QW5STzVoWndnYyttUzlIb0Y4L1dYU2xVNklabjRTblh0?=
+ =?utf-8?B?YkpJZjUrNFJnZWhMcmo5QTRDbklOOUgrOFZueURTRmYxUS9xeDljSndTcDQy?=
+ =?utf-8?B?bWlOS0VMc1F1SU9YeVZxZE1yVlBQQTJ3OVFpenVSVk5YdjhpcnFXRTk1bzh6?=
+ =?utf-8?B?d2NFZ1NCazQwSkFFYVdNbFBpREo2ZENXMC9iRXo2TFJ1eG00a1VZZDErTWhN?=
+ =?utf-8?B?dnJyWFVMcEZ5TGpUZkxtQjYyZGFsMzJyS3BMa3Z0S2gwc0Znam9YaThUWU1M?=
+ =?utf-8?B?RWg3VlI1bEp3QUgrZFBhUURtMEhhOVpOdW80c3QvRFN3SVRTazRmQi82L2lM?=
+ =?utf-8?B?VjZIVFNnYlV6TW5zZ0RDMW1HRVBkS2RNcitndUNYRnFZcTdHVE9QTmRrdzkv?=
+ =?utf-8?B?RHZwT2pDRm5nYUNGakNJU3Axd0xRbE9UNmIreVJvU0d2cHBlQURBSFFPTHVl?=
+ =?utf-8?B?WXA0bkhZTVc4UTJMRXhJOUwreUg4cTRjT3JMNng0aEJ5QU9JVFZQaFY2VjZX?=
+ =?utf-8?B?VDF0djIya3FML1FkRDlNVS9HQUlJa242TkZvR2FSa2NHTzQ4N1pHMFlza1pw?=
+ =?utf-8?B?MVppYnFFNkd1em5WODB3WEZhVTdFL0l2alZKVUVhc0k3andxcS9RWWRuVWpo?=
+ =?utf-8?B?a2tEUjdMSE1MYlhVYlRHMkpneUVZOGZLNW5VNWQxWVhYa1p0d2V4UWxoTGJG?=
+ =?utf-8?B?a0QzY2E5UEd0Q3RRbVZqbU1kbEdEeU9xSnBaaWQwVGMvWHRMb2JSKzV2bWcv?=
+ =?utf-8?B?MDBId0QyU0RBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8947.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?UzErWFFMejJNb2M3NXFtU3B5bll1ZEh0SzQ5MXBnV2l6QzVSbXVkMm5YN3dO?=
+ =?utf-8?B?c1hwdlYzTTBKekUvNXUwZHZYVHplTUZRWlF4bzZvSWJna1VPQ0RrVlN1dUxS?=
+ =?utf-8?B?VWovOWtQNVlYbjM0VjkzdnVnWXNNeXI0VmEyNGQzcjdjMk94YS9TOVZOeEdT?=
+ =?utf-8?B?TkxoQm0vNU5KUE9ObTNJL3dlQktNdzlFb1lQUTZudnBQRFphNkJvUktJKzZy?=
+ =?utf-8?B?dmNJUnZoZVNrM1lIdlNxcXd5SlowKzBja3lDcm9obGMvVTJJNEY2VjdxWnZQ?=
+ =?utf-8?B?NXY1Z05MVnNPWWhMblpJZ09GcUVrWU9TVyt3V0U3YTVWUGx6L2RRd1dYQzBO?=
+ =?utf-8?B?VG80UHRTcEl1bEJnVlVIa2VPUVBTQkh4SkJYSGNRM0JqbjRZTFU0UVhNYzZs?=
+ =?utf-8?B?a2FJc3FWNHZiUHRISWpuYSt5Y1lUWFhiZkNDZVRyQVNadERRa3pweFBiVkF4?=
+ =?utf-8?B?Y0JSRUlDZzV3Y2RzMFV3djY4WGs2Y29CcXB2R0lXNVVObUFobHRIZW5UOGUx?=
+ =?utf-8?B?MEtCTTYxK0tZS3NVMGw0bTJUTkFEckNXVk91c2o5MTY0OGpFN0VKYXd6SFQr?=
+ =?utf-8?B?UEFZMmhmclBGNUFNdkdxbmFOc0dRNFZ2U2d0TGpMMlpNRWx4aDZ6WFE5bHpL?=
+ =?utf-8?B?QUZxMGMxMjhuQnBPUTF2T2ExQWFKd3VPVDRyMUF0ZjUrOTlXeHVvUlZlZFoy?=
+ =?utf-8?B?UlIrT21ETjRKZFRwWjQxenB1cWgwTnNwUU4xV05ZOUJEVWZVTEYzaWhvRVpV?=
+ =?utf-8?B?Tk1IRGFHUkZ1SW80cTU2OFV2eVlta3pUUHNMMTZNYWNyZ0pEbkYvRk1RbS9T?=
+ =?utf-8?B?TEw1NEc4Sno2NWgvYkdWRmZDV0YyOW52ZTFOWFVISmZUbCtIV1ZGL2xwU1dE?=
+ =?utf-8?B?aGVJZGR0c3cwRzJiWCtjQ1RYVXlscXpaYmt6SXFaUDEyN2RlSzJwSFl3eTly?=
+ =?utf-8?B?dHlrVkNOMkpmc2JYeUEzbGYwUTdqb1VkcS9ZZTdmcjh4MEJwMW5iRWFGVzg5?=
+ =?utf-8?B?QytrQWZ5L21oUk5adVZFZGM2a1dTTFhPaVA5REpLNzJTQVlIMi8rNWFUcFFz?=
+ =?utf-8?B?T0NZNE1pN3pQZjVadGcyYUpMYUE0Unl5T3A0b0wwbFhLVTVzampwL0RaWTFl?=
+ =?utf-8?B?aEgyeTJLK2RQcEQvdSt0dEZ6enpVS1B5NnVVMlNkOVdaNVEydmhuODFFSUNK?=
+ =?utf-8?B?RWpuMEFQYkwwWkZRZmhiR1lPd0lCaXhvL2hRUFFUclpjcmc2SUFNNk50TTV2?=
+ =?utf-8?B?b0p6QmJlUDN2MTErRVNpcmxyeS90WW42TitEZDhHYkd6Z2NFUGZuTHIxZnVT?=
+ =?utf-8?B?MlpXblIxSXBlNUpoZlhwWTBhYlRTc0ZTV0JLckljVVFiMHZzMmxCeFZjR2dK?=
+ =?utf-8?B?aDFXK3JYWDBCS2ZLdWkydHg1RWp6dVpOMGVadlh3VzJOUzFXWk5jK1lXVjVn?=
+ =?utf-8?B?TUxFWEFMdVFBaEo4djRTZDBkTk9SMXdqalBjZ0V0ZjFxcERrM3JZZk1SYThz?=
+ =?utf-8?B?REVlUGp1SFlVK1d4UFoyREllaHVQOEZFWUlwZS9ENFZqMGlza3NZMUFlYXdz?=
+ =?utf-8?B?Unp4VnIwc1pNRWdtajc2YWo0aUE2dTVRenZlMzlDRWtKK2lHM2t2NmxtME1T?=
+ =?utf-8?B?dGFaaWw1VlpFZ01VcEVvZkdURTRiYUQvckkzNi9PMUMxWFZVb3o0ZzF1V2gy?=
+ =?utf-8?B?Z1I2YmZxYlE2RThZSTlQLzJScVhyMTBEOW00TmtiNGN3TUF0b2FLd2hManVs?=
+ =?utf-8?B?Q0JsWVVqL0xXaXhlYkhXQWhYRVJGdU5sNlF2T0ZCSTY0YlhDVXIzYXlBWFNK?=
+ =?utf-8?B?eTJBYk5lclJwaWlGMFRDa3BZWW1tYXY4SjdxNVh2RjlrTHd2cXBWR1F5M1Qv?=
+ =?utf-8?B?NWtTWDBWUWU3NEM1Q1hlT3FLVEh0bU0xbE95aGtMdUw1SnU3K1BpWjNyS0NX?=
+ =?utf-8?B?cEhBOWlaR3dJbW9iTktpeHlrRTBESGY0TWNJZmxBUFEvVWZ1UzE1MGNTYk94?=
+ =?utf-8?B?UnMvQzdTU3RubFg3YUZkQTIrTm4xYWZpOHlWTTd5MU5sZWVwazl1cU5CL0d2?=
+ =?utf-8?B?ZTF3S3VXNUpGVWdTZWVuWnBqeHNja2FLRlB0UTdneWw2Y1orMm9EMWJ5UGJa?=
+ =?utf-8?Q?EOU0=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250612114210.2786075-1-mclapinski@google.com>
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <20250612114210.2786075-3-mclapinski@google.com>
-Subject: [PATCH v3 2/2] libnvdimm: add nd_e820.pmem automatic devdax conversion
-From: Michal Clapinski <mclapinski@google.com>
-To: Jonathan Corbet <corbet@lwn.net>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, nvdimm@lists.linux.dev
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Thomas Huth <thuth@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Michal Clapinski <mclapinski@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8947.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5435b6b-8e19-411f-7bc6-08dda9a62c82
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2025 11:42:13.2356
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qR02os2opH9xPWC/3stPi1lFSBFb5P1EdP6yzlkQZs89UvxgYTCbVelRYDwN/rgdb1KYhGGa6bdUWJKcx6Fe3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7756
 
-Those devices will not have metadata blocks. The whole device will be
-accessible by the user.
-
-Changes include:
-1. Modified the nd_e820.pmem argument to include mode and align params.
-   They are saved in the nd_region_desc struct.
-2. When mode=devdax, invoke a new function nd_pfn_set_dax_defaults
-   instead of nd_pfn_validate. nd_pfn_validate validates the dax
-   signature and initializes data structes with the data from the
-   info-block. nd_pfn_set_dax_defaults just initializes the data
-   structures with some defaults and the alignment if provided in the
-   pmem arg. If the alignment is not provided, the maximum possible
-   alignment is applied.
-3. Extracted some checks to a new function nd_pfn_checks.
-4. Skipped requesting metadata area for our default dax devices.
-
-Signed-off-by: Michal Clapinski <mclapinski@google.com>
----
- .../admin-guide/kernel-parameters.txt         |   5 +-
- drivers/dax/pmem.c                            |   2 +-
- drivers/nvdimm/dax_devs.c                     |   5 +-
- drivers/nvdimm/e820.c                         |  62 ++++++-
- drivers/nvdimm/nd.h                           |   6 +
- drivers/nvdimm/pfn_devs.c                     | 158 +++++++++++++-----
- include/linux/libnvdimm.h                     |   3 +
- 7 files changed, 189 insertions(+), 52 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 63af03eb850e..bd2d1f3fb7d8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3849,13 +3849,16 @@
- 
- 	n2=		[NET] SDL Inc. RISCom/N2 synchronous serial card
- 
--	nd_e820.pmem=ss[KMG],nn[KMG]
-+	nd_e820.pmem=ss[KMG],nn[KMG][,mode=fsdax/devdax,align=aa[KMG]]
- 			Divide one e820 entry specified by memmap=x!ss
- 			(that is starting at ss) into pmem devices of size nn.
- 			There can be only one pmem parameter per one e820
- 			entry. The size of the e820 entry has to be divisible
- 			by the device size.
- 
-+			Named parameters are optional. Currently align affects
-+			only the devdax alignment.
-+
- 	netdev=		[NET] Network devices parameters
- 			Format: <irq>,<io>,<mem_start>,<mem_end>,<name>
- 			Note that mem_start is often overloaded to mean
-diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-index c8ebf4e281f2..2af9d51e73c0 100644
---- a/drivers/dax/pmem.c
-+++ b/drivers/dax/pmem.c
-@@ -39,7 +39,7 @@ static struct dev_dax *__dax_pmem_probe(struct device *dev)
- 	pfn_sb = nd_pfn->pfn_sb;
- 	offset = le64_to_cpu(pfn_sb->dataoff);
- 	nsio = to_nd_namespace_io(&ndns->dev);
--	if (!devm_request_mem_region(dev, nsio->res.start, offset,
-+	if (offset && !devm_request_mem_region(dev, nsio->res.start, offset,
- 				dev_name(&ndns->dev))) {
- 		dev_warn(dev, "could not reserve metadata\n");
- 		return ERR_PTR(-EBUSY);
-diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
-index 37b743acbb7b..52480c396bb2 100644
---- a/drivers/nvdimm/dax_devs.c
-+++ b/drivers/nvdimm/dax_devs.c
-@@ -113,7 +113,10 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
- 	pfn_sb = devm_kmalloc(dev, sizeof(*pfn_sb), GFP_KERNEL);
- 	nd_pfn = &nd_dax->nd_pfn;
- 	nd_pfn->pfn_sb = pfn_sb;
--	rc = nd_pfn_validate(nd_pfn, DAX_SIG);
-+	if (test_bit(ND_REGION_DEVDAX, &nd_region->flags))
-+		rc = nd_pfn_set_dax_defaults(nd_pfn);
-+	else
-+		rc = nd_pfn_validate(nd_pfn, DAX_SIG);
- 	dev_dbg(dev, "dax: %s\n", rc == 0 ? dev_name(dax_dev) : "<none>");
- 	if (rc < 0) {
- 		nd_detach_ndns(dax_dev, &nd_pfn->ndns);
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index 0cd2d739af70..4dd4ebcc3180 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -9,6 +9,7 @@
- #include <linux/module.h>
- #include <linux/numa.h>
- #include <linux/moduleparam.h>
-+#include <linux/parser.h>
- #include <linux/string.h>
- #include <linux/xarray.h>
- 
-@@ -49,8 +50,51 @@ module_param_cb(pmem, &pmem_param_ops, NULL, 0);
- 
- struct pmem_entry {
- 	unsigned long region_size;
-+	bool treat_as_devdax;
-+	unsigned long align;
- };
- 
-+static int parse_one_optional_pmem_param(struct pmem_entry *entry, char *p)
-+{
-+	int token;
-+	char *parse_end;
-+	substring_t args[MAX_OPT_ARGS];
-+
-+	enum {
-+		OPT_MODE_DEVDAX,
-+		OPT_MODE_FSDAX,
-+		OPT_ALIGN,
-+		OPT_ERR,
-+	};
-+
-+	static const match_table_t tokens = {
-+		{OPT_MODE_DEVDAX, "mode=devdax"},
-+		{OPT_MODE_FSDAX, "mode=fsdax"},
-+		{OPT_ALIGN, "align=%s"},
-+		{OPT_ERR, NULL}
-+	};
-+
-+	token = match_token(p, tokens, args);
-+	switch (token) {
-+	case OPT_MODE_DEVDAX:
-+		entry->treat_as_devdax = true;
-+		break;
-+	case OPT_MODE_FSDAX:
-+		break;
-+	case OPT_ALIGN:
-+		entry->align = memparse(args[0].from, &parse_end);
-+		if (parse_end == args[0].from || parse_end != args[0].to) {
-+			pr_err("Can't parse pmem align: %s\n", args[0].from);
-+			return -EINVAL;
-+		}
-+		break;
-+	default:
-+		pr_warn("Unexpected parameter: %s\n", p);
-+	}
-+
-+	return 0;
-+}
-+
- static int parse_one_pmem_arg(struct xarray *xarray, char *whole_arg)
- {
- 	int rc = -EINVAL;
-@@ -85,8 +129,11 @@ static int parse_one_pmem_arg(struct xarray *xarray, char *whole_arg)
- 		goto err;
- 	}
- 
--	while ((p = strsep(&char_iter, ",")) != NULL)
--		pr_warn("Unexpected parameter: %s\n", p);
-+	while ((p = strsep(&char_iter, ",")) != NULL) {
-+		rc = parse_one_optional_pmem_param(entry, p);
-+		if (rc)
-+			goto err;
-+	}
- 
- 	rc = xa_err(xa_store(xarray, start, entry, GFP_KERNEL));
- 	if (rc)
-@@ -107,7 +154,8 @@ static void e820_pmem_remove(struct platform_device *pdev)
- 	nvdimm_bus_unregister(nvdimm_bus);
- }
- 
--static int register_one_pmem(struct resource *res, struct nvdimm_bus *nvdimm_bus)
-+static int register_one_pmem(struct resource *res, struct nvdimm_bus *nvdimm_bus,
-+			     struct pmem_entry *entry)
- {
- 	struct nd_region_desc ndr_desc;
- 	int nid = phys_to_target_node(res->start);
-@@ -117,6 +165,10 @@ static int register_one_pmem(struct resource *res, struct nvdimm_bus *nvdimm_bus
- 	ndr_desc.numa_node = numa_map_to_online_node(nid);
- 	ndr_desc.target_node = nid;
- 	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-+	if (entry && entry->treat_as_devdax) {
-+		set_bit(ND_REGION_DEVDAX, &ndr_desc.flags);
-+		ndr_desc.provider_data = (void *)entry->align;
-+	}
- 	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
- 		return -ENXIO;
- 	return 0;
-@@ -138,7 +190,7 @@ static int e820_handle_one_entry(struct resource *res, void *data)
- 	entry = xa_load(walk_data->pmem_xarray, res->start);
- 
- 	if (!entry)
--		return register_one_pmem(res, walk_data->nvdimm_bus);
-+		return register_one_pmem(res, walk_data->nvdimm_bus, NULL);
- 
- 	if (entry_size % entry->region_size != 0) {
- 		pr_err("Entry size %lu is not divisible by region size %lu\n",
-@@ -149,7 +201,7 @@ static int e820_handle_one_entry(struct resource *res, void *data)
- 	res_local.start = res->start;
- 	res_local.end = res->start + entry->region_size - 1;
- 	while (res_local.end <= res->end) {
--		rc = register_one_pmem(&res_local, walk_data->nvdimm_bus);
-+		rc = register_one_pmem(&res_local, walk_data->nvdimm_bus, entry);
- 		if (rc)
- 			return rc;
- 
-diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-index 5ca06e9a2d29..d53393d9e027 100644
---- a/drivers/nvdimm/nd.h
-+++ b/drivers/nvdimm/nd.h
-@@ -571,6 +571,7 @@ struct device *nd_pfn_create(struct nd_region *nd_region);
- struct device *nd_pfn_devinit(struct nd_pfn *nd_pfn,
- 		struct nd_namespace_common *ndns);
- int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig);
-+int nd_pfn_set_dax_defaults(struct nd_pfn *nd_pfn);
- extern const struct attribute_group *nd_pfn_attribute_groups[];
- #else
- static inline int nd_pfn_probe(struct device *dev,
-@@ -593,6 +594,11 @@ static inline int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
- {
- 	return -ENODEV;
- }
-+
-+static inline int nd_pfn_set_dax_defaults(struct nd_pfn *nd_pfn)
-+{
-+	return -ENODEV;
-+}
- #endif
- 
- struct nd_dax *to_nd_dax(struct device *dev);
-diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-index cfdfe0eaa512..4fea24df6e56 100644
---- a/drivers/nvdimm/pfn_devs.c
-+++ b/drivers/nvdimm/pfn_devs.c
-@@ -438,6 +438,76 @@ static bool nd_supported_alignment(unsigned long align)
- 	return false;
- }
- 
-+static unsigned long nd_best_supported_alignment(unsigned long start,
-+						 unsigned long end)
-+{
-+	int i;
-+	unsigned long ret = 0, supported[MAX_NVDIMM_ALIGN] = { [0] = 0, };
-+
-+	nd_pfn_supported_alignments(supported);
-+	for (i = 0; supported[i]; i++)
-+		if (IS_ALIGNED(start, supported[i]) &&
-+		    IS_ALIGNED(end + 1, supported[i]))
-+			ret = supported[i];
-+		else
-+			break;
-+
-+	return ret;
-+}
-+
-+static int nd_pfn_checks(struct nd_pfn *nd_pfn, u64 offset,
-+			 unsigned long start_pad, unsigned long end_trunc)
-+{
-+	/*
-+	 * These warnings are verbose because they can only trigger in
-+	 * the case where the physical address alignment of the
-+	 * namespace has changed since the pfn superblock was
-+	 * established.
-+	 */
-+	struct nd_namespace_common *ndns = nd_pfn->ndns;
-+	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
-+	struct resource *res = &nsio->res;
-+	resource_size_t res_size = resource_size(res);
-+	unsigned long align = nd_pfn->align;
-+
-+	if (align > nvdimm_namespace_capacity(ndns)) {
-+		dev_err(&nd_pfn->dev, "alignment: %lx exceeds capacity %llx\n",
-+			align, nvdimm_namespace_capacity(ndns));
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (offset >= res_size) {
-+		dev_err(&nd_pfn->dev, "pfn array size exceeds capacity of %s\n",
-+			dev_name(&ndns->dev));
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if ((align && !IS_ALIGNED(res->start + offset + start_pad, align)) ||
-+	    !IS_ALIGNED(offset, PAGE_SIZE)) {
-+		dev_err(&nd_pfn->dev,
-+			"bad offset: %#llx dax disabled align: %#lx\n",
-+			offset, align);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (!IS_ALIGNED(res->start + start_pad, memremap_compat_align())) {
-+		dev_err(&nd_pfn->dev, "resource start misaligned\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (!IS_ALIGNED(res->end + 1 - end_trunc, memremap_compat_align())) {
-+		dev_err(&nd_pfn->dev, "resource end misaligned\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (offset >= (res_size - start_pad - end_trunc)) {
-+		dev_err(&nd_pfn->dev, "bad offset with small namespace\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * nd_pfn_validate - read and validate info-block
-  * @nd_pfn: fsdax namespace runtime state / properties
-@@ -450,10 +520,7 @@ static bool nd_supported_alignment(unsigned long align)
- int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
- {
- 	u64 checksum, offset;
--	struct resource *res;
- 	enum nd_pfn_mode mode;
--	resource_size_t res_size;
--	struct nd_namespace_io *nsio;
- 	unsigned long align, start_pad, end_trunc;
- 	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
- 	struct nd_namespace_common *ndns = nd_pfn->ndns;
-@@ -572,52 +639,53 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
- 		}
- 	}
- 
--	if (align > nvdimm_namespace_capacity(ndns)) {
--		dev_err(&nd_pfn->dev, "alignment: %lx exceeds capacity %llx\n",
--				align, nvdimm_namespace_capacity(ndns));
--		return -EOPNOTSUPP;
--	}
-+	return nd_pfn_checks(nd_pfn, offset, start_pad, end_trunc);
-+}
-+EXPORT_SYMBOL(nd_pfn_validate);
- 
--	/*
--	 * These warnings are verbose because they can only trigger in
--	 * the case where the physical address alignment of the
--	 * namespace has changed since the pfn superblock was
--	 * established.
--	 */
--	nsio = to_nd_namespace_io(&ndns->dev);
--	res = &nsio->res;
--	res_size = resource_size(res);
--	if (offset >= res_size) {
--		dev_err(&nd_pfn->dev, "pfn array size exceeds capacity of %s\n",
--				dev_name(&ndns->dev));
--		return -EOPNOTSUPP;
--	}
-+int nd_pfn_set_dax_defaults(struct nd_pfn *nd_pfn)
-+{
-+	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
-+	struct nd_namespace_common *ndns = nd_pfn->ndns;
-+	struct nd_region *nd_region = to_nd_region(nd_pfn->dev.parent);
-+	struct nd_namespace_io *nsio;
-+	struct resource *res;
-+	unsigned long align;
- 
--	if ((align && !IS_ALIGNED(res->start + offset + start_pad, align))
--			|| !IS_ALIGNED(offset, PAGE_SIZE)) {
--		dev_err(&nd_pfn->dev,
--				"bad offset: %#llx dax disabled align: %#lx\n",
--				offset, align);
--		return -EOPNOTSUPP;
--	}
-+	if (!pfn_sb || !ndns)
-+		return -ENODEV;
- 
--	if (!IS_ALIGNED(res->start + start_pad, memremap_compat_align())) {
--		dev_err(&nd_pfn->dev, "resource start misaligned\n");
--		return -EOPNOTSUPP;
--	}
-+	if (!is_memory(nd_pfn->dev.parent))
-+		return -ENODEV;
- 
--	if (!IS_ALIGNED(res->end + 1 - end_trunc, memremap_compat_align())) {
--		dev_err(&nd_pfn->dev, "resource end misaligned\n");
--		return -EOPNOTSUPP;
-+	if (nd_region->provider_data) {
-+		align = (unsigned long)nd_region->provider_data;
-+	} else {
-+		nsio = to_nd_namespace_io(&ndns->dev);
-+		res = &nsio->res;
-+		align = nd_best_supported_alignment(res->start, res->end);
-+		if (!align) {
-+			dev_err(&nd_pfn->dev, "init failed, resource misaligned\n");
-+			return -EOPNOTSUPP;
-+		}
- 	}
- 
--	if (offset >= (res_size - start_pad - end_trunc)) {
--		dev_err(&nd_pfn->dev, "bad offset with small namespace\n");
--		return -EOPNOTSUPP;
-+	memset(pfn_sb, 0, sizeof(*pfn_sb));
-+
-+	if (!nd_pfn->uuid) {
-+		nd_pfn->uuid = kmemdup(pfn_sb->uuid, 16, GFP_KERNEL);
-+		if (!nd_pfn->uuid)
-+			return -ENOMEM;
-+		nd_pfn->align = align;
-+		nd_pfn->mode = PFN_MODE_RAM;
- 	}
--	return 0;
-+
-+	pfn_sb->align = cpu_to_le64(nd_pfn->align);
-+	pfn_sb->mode = cpu_to_le32(nd_pfn->mode);
-+
-+	return nd_pfn_checks(nd_pfn, 0, 0, 0);
- }
--EXPORT_SYMBOL(nd_pfn_validate);
-+EXPORT_SYMBOL(nd_pfn_set_dax_defaults);
- 
- int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
- {
-@@ -704,7 +772,7 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
- 	};
- 	pgmap->nr_range = 1;
- 	if (nd_pfn->mode == PFN_MODE_RAM) {
--		if (offset < reserve)
-+		if (offset && offset < reserve)
- 			return -EINVAL;
- 		nd_pfn->npfns = le64_to_cpu(pfn_sb->npfns);
- 	} else if (nd_pfn->mode == PFN_MODE_PMEM) {
-@@ -729,7 +797,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
- 	struct nd_namespace_common *ndns = nd_pfn->ndns;
- 	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
- 	resource_size_t start, size;
--	struct nd_region *nd_region;
-+	struct nd_region *nd_region = to_nd_region(nd_pfn->dev.parent);
- 	unsigned long npfns, align;
- 	u32 end_trunc;
- 	struct nd_pfn_sb *pfn_sb;
-@@ -748,6 +816,9 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
- 	else
- 		sig = PFN_SIG;
- 
-+	if (test_bit(ND_REGION_DEVDAX, &nd_region->flags))
-+		return nd_pfn_set_dax_defaults(nd_pfn);
-+
- 	rc = nd_pfn_validate(nd_pfn, sig);
- 	if (rc == 0)
- 		return nd_pfn_clear_memmap_errors(nd_pfn);
-@@ -757,7 +828,6 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
- 	/* no info block, do init */;
- 	memset(pfn_sb, 0, sizeof(*pfn_sb));
- 
--	nd_region = to_nd_region(nd_pfn->dev.parent);
- 	if (nd_region->ro) {
- 		dev_info(&nd_pfn->dev,
- 				"%s is read-only, unable to init metadata\n",
-diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-index e772aae71843..a07f3f81975c 100644
---- a/include/linux/libnvdimm.h
-+++ b/include/linux/libnvdimm.h
-@@ -70,6 +70,9 @@ enum {
- 	/* Region was created by CXL subsystem */
- 	ND_REGION_CXL = 4,
- 
-+	/* Region is supposed to be treated as devdax */
-+	ND_REGION_DEVDAX = 5,
-+
- 	/* mark newly adjusted resources as requiring a label update */
- 	DPA_RESOURCE_ADJUSTED = 1 << 0,
- };
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
-
+W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
+Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3Yg
+PGJwQGFsaWVuOC5kZT4NCj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDExLCAyMDI1IDEwOjEwIFBN
+DQo+IFRvOiBEYXR0YSwgU2h1YmhyYWp5b3RpIDxzaHViaHJhanlvdGkuZGF0dGFAYW1kLmNvbT4N
+Cj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtZWRhY0B2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBnaXQgKEFN
+RC1YaWxpbngpIDxnaXRAYW1kLmNvbT47IFNpbWVrLCBNaWNoYWwNCj4gPG1pY2hhbC5zaW1la0Bh
+bWQuY29tPjsgVG9ueSBMdWNrIDx0b255Lmx1Y2tAaW50ZWwuY29tPjsgSmFtZXMgTW9yc2UNCj4g
+PGphbWVzLm1vcnNlQGFybS5jb20+OyBNYXVybyBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWJAa2Vy
+bmVsLm9yZz47DQo+IFJvYmVydCBSaWNodGVyIDxycmljQGtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0hdIEVEQUMvc3lub3BzeXM6IENsZWFyIHRoZSBlY2MgY291bnRlcnMgYXQgaW5p
+dA0KPg0KPiBDYXV0aW9uOiBUaGlzIG1lc3NhZ2Ugb3JpZ2luYXRlZCBmcm9tIGFuIEV4dGVybmFs
+IFNvdXJjZS4gVXNlIHByb3BlciBjYXV0aW9uDQo+IHdoZW4gb3BlbmluZyBhdHRhY2htZW50cywg
+Y2xpY2tpbmcgbGlua3MsIG9yIHJlc3BvbmRpbmcuDQo+DQo+DQo+IE9uIFdlZCwgSnVuIDExLCAy
+MDI1IGF0IDExOjQyOjMzQU0gKzAwMDAsIERhdHRhLCBTaHViaHJhanlvdGkgd3JvdGU6DQo+ID4g
+SG93ZXZlciB0aGUgcmVnaXN0ZXJzIGZvciBaeW5xbXAgYW5kIFp5bnEgaXMgZGlmZmVyZW50IHRv
+DQo+ID4gZGlmZmVyZW50aWF0ZSBTaG91bGQgdGhlIHVzYWdlIG9mIHF1aXJrIGJlIGZpbmUgY29k
+ZSBzbmlwcGV0IGJlbG93DQo+DQo+IFJpZ2h0LCBwbGVhc2Ugc2VuZCBhIHByb3BlciBkaWZmIC0g
+aXQgZG9lc24ndCBoYXZlIHRvIGJlIHRlc3RlZCB5ZXQgYW5kIEknbGwgZmluaXNoDQo+IG1hc3Nh
+Z2luZyBpdC4NCg0KDQpQbGVhc2UgZmluZCB0aGUgZGlmZiBiZWxvdw0KDQpkcml2ZXJzL2VkYWMv
+c3lub3BzeXNfZWRhYy5jIHwgODcgKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+DQogMSBmaWxlIGNoYW5nZWQsIDM0IGluc2VydGlvbnMoKyksIDUzIGRlbGV0aW9ucygtKQ0KDQpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9lZGFjL3N5bm9wc3lzX2VkYWMuYyBiL2RyaXZlcnMvZWRhYy9z
+eW5vcHN5c19lZGFjLmMNCmluZGV4IDVlZDMyYTMyOTljNC4uNzg5YWMyMWU4MDI4IDEwMDY0NA0K
+LS0tIGEvZHJpdmVycy9lZGFjL3N5bm9wc3lzX2VkYWMuYw0KKysrIGIvZHJpdmVycy9lZGFjL3N5
+bm9wc3lzX2VkYWMuYw0KQEAgLTMzNyw3ICszMzcsNiBAQCBzdHJ1Y3Qgc3lucHNfZWRhY19wcml2
+IHsNCiAgKiBAZ2V0X2Vycm9yX2luZm86ICAgIEdldCBFREFDIGVycm9yIGluZm8uDQogICogQGdl
+dF9tdHlwZTogICAgICAgICBHZXQgbXR5cGUuDQogICogQGdldF9kdHlwZTogICAgICAgICBHZXQg
+ZHR5cGUuDQotICogQGdldF9lY2Nfc3RhdGU6ICAgICBHZXQgRUNDIHN0YXRlLg0KICAqIEBnZXRf
+bWVtX2luZm86ICAgICAgR2V0IEVEQUMgbWVtb3J5IGluZm8NCiAgKiBAcXVpcmtzOiAgICAgICAg
+ICAgIFRvIGRpZmZlcmVudGlhdGUgSVBzLg0KICAqLw0KQEAgLTM0NSw3ICszNDQsNiBAQCBzdHJ1
+Y3Qgc3lucHNfcGxhdGZvcm1fZGF0YSB7DQogICAgICAgIGludCAoKmdldF9lcnJvcl9pbmZvKShz
+dHJ1Y3Qgc3lucHNfZWRhY19wcml2ICpwcml2KTsNCiAgICAgICAgZW51bSBtZW1fdHlwZSAoKmdl
+dF9tdHlwZSkoY29uc3Qgdm9pZCBfX2lvbWVtICpiYXNlKTsNCiAgICAgICAgZW51bSBkZXZfdHlw
+ZSAoKmdldF9kdHlwZSkoY29uc3Qgdm9pZCBfX2lvbWVtICpiYXNlKTsNCi0gICAgICAgYm9vbCAo
+KmdldF9lY2Nfc3RhdGUpKHZvaWQgX19pb21lbSAqYmFzZSk7DQogI2lmZGVmIENPTkZJR19FREFD
+X0RFQlVHDQogICAgICAgIHU2NCAoKmdldF9tZW1faW5mbykoc3RydWN0IHN5bnBzX2VkYWNfcHJp
+diAqcHJpdik7DQogI2VuZGlmDQpAQCAtNzIwLDUzICs3MTgsMzggQEAgc3RhdGljIGVudW0gZGV2
+X3R5cGUgenlucW1wX2dldF9kdHlwZShjb25zdCB2b2lkIF9faW9tZW0gKmJhc2UpDQogICAgICAg
+IHJldHVybiBkdDsNCiB9DQoNCi0vKioNCi0gKiB6eW5xX2dldF9lY2Nfc3RhdGUgLSBSZXR1cm4g
+dGhlIGNvbnRyb2xsZXIgRUNDIGVuYWJsZS9kaXNhYmxlIHN0YXR1cy4NCi0gKiBAYmFzZTogICAg
+ICBERFIgbWVtb3J5IGNvbnRyb2xsZXIgYmFzZSBhZGRyZXNzLg0KLSAqDQotICogR2V0IHRoZSBF
+Q0MgZW5hYmxlL2Rpc2FibGUgc3RhdHVzIG9mIHRoZSBjb250cm9sbGVyLg0KLSAqDQotICogUmV0
+dXJuOiB0cnVlIGlmIGVuYWJsZWQsIG90aGVyd2lzZSBmYWxzZS4NCi0gKi8NCi1zdGF0aWMgYm9v
+bCB6eW5xX2dldF9lY2Nfc3RhdGUodm9pZCBfX2lvbWVtICpiYXNlKQ0KLXsNCi0gICAgICAgZW51
+bSBkZXZfdHlwZSBkdDsNCi0gICAgICAgdTMyIGVjY3R5cGU7DQotDQotICAgICAgIGR0ID0genlu
+cV9nZXRfZHR5cGUoYmFzZSk7DQotICAgICAgIGlmIChkdCA9PSBERVZfVU5LTk9XTikNCi0gICAg
+ICAgICAgICAgICByZXR1cm4gZmFsc2U7DQoNCi0gICAgICAgZWNjdHlwZSA9IHJlYWRsKGJhc2Ug
+KyBTQ1JVQl9PRlNUKSAmIFNDUlVCX01PREVfTUFTSzsNCi0gICAgICAgaWYgKChlY2N0eXBlID09
+IFNDUlVCX01PREVfU0VDREVEKSAmJiAoZHQgPT0gREVWX1gyKSkNCi0gICAgICAgICAgICAgICBy
+ZXR1cm4gdHJ1ZTsNCi0NCi0gICAgICAgcmV0dXJuIGZhbHNlOw0KLX0NCi0NCi0vKioNCi0gKiB6
+eW5xbXBfZ2V0X2VjY19zdGF0ZSAtIFJldHVybiB0aGUgY29udHJvbGxlciBFQ0MgZW5hYmxlL2Rp
+c2FibGUgc3RhdHVzLg0KLSAqIEBiYXNlOiAgICAgIEREUiBtZW1vcnkgY29udHJvbGxlciBiYXNl
+IGFkZHJlc3MuDQotICoNCi0gKiBHZXQgdGhlIEVDQyBlbmFibGUvZGlzYWJsZSBzdGF0dXMgZm9y
+IHRoZSBjb250cm9sbGVyLg0KLSAqDQotICogUmV0dXJuOiBhIEVDQyBzdGF0dXMgYm9vbGVhbiBp
+LmUgdHJ1ZS9mYWxzZSAtIGVuYWJsZWQvZGlzYWJsZWQuDQotICovDQotc3RhdGljIGJvb2wgenlu
+cW1wX2dldF9lY2Nfc3RhdGUodm9pZCBfX2lvbWVtICpiYXNlKQ0KK3N0YXRpYyBib29sIGdldF9l
+Y2Nfc3RhdGUoc3RydWN0IHN5bnBzX2VkYWNfcHJpdiAqcHJpdikNCiB7DQogICAgICAgIGVudW0g
+ZGV2X3R5cGUgZHQ7DQotICAgICAgIHUzMiBlY2N0eXBlOw0KLQ0KLSAgICAgICBkdCA9IHp5bnFt
+cF9nZXRfZHR5cGUoYmFzZSk7DQotICAgICAgIGlmIChkdCA9PSBERVZfVU5LTk9XTikNCi0gICAg
+ICAgICAgICAgICByZXR1cm4gZmFsc2U7DQotDQotICAgICAgIGVjY3R5cGUgPSByZWFkbChiYXNl
+ICsgRUNDX0NGRzBfT0ZTVCkgJiBTQ1JVQl9NT0RFX01BU0s7DQotICAgICAgIGlmICgoZWNjdHlw
+ZSA9PSBTQ1JVQl9NT0RFX1NFQ0RFRCkgJiYNCi0gICAgICAgICAgICgoZHQgPT0gREVWX1gyKSB8
+fCAoZHQgPT0gREVWX1g0KSB8fCAoZHQgPT0gREVWX1g4KSkpDQotICAgICAgICAgICAgICAgcmV0
+dXJuIHRydWU7DQotDQotICAgICAgIHJldHVybiBmYWxzZTsNCisgICAgICAgdTMyIGVjY3R5cGUs
+IGNsZWFydmFsOw0KKw0KKyAgICAgICBpZiAoIXByaXYtPnBfZGF0YS0+cXVpcmtzKSB7DQorICAg
+ICAgICAgICAgICAgZHQgPSB6eW5xX2dldF9kdHlwZShwcml2LT5iYXNlYWRkcik7DQorICAgICAg
+ICAgICAgICAgaWYgKGR0ID09IERFVl9VTktOT1dOKQ0KKyAgICAgICAgICAgICAgICAgICAgICAg
+cmV0dXJuIGZhbHNlOw0KKw0KKyAgICAgICAgICAgICAgIGVjY3R5cGUgPSByZWFkbChwcml2LT5i
+YXNlYWRkciArIFNDUlVCX09GU1QpICYgU0NSVUJfTU9ERV9NQVNLOw0KKyAgICAgICAgICAgICAg
+IGlmIChlY2N0eXBlID09IFNDUlVCX01PREVfU0VDREVEICYmIGR0ID09IERFVl9YMikgew0KKyAg
+ICAgICAgICAgICAgICAgICAgICAgY2xlYXJ2YWwgPSBFQ0NfQ1RSTF9DTFJfQ0VfRVJSIHwgRUND
+X0NUUkxfQ0xSX1VFX0VSUjsNCisgICAgICAgICAgICAgICAgICAgICAgIHdyaXRlbChjbGVhcnZh
+bCwgcHJpdi0+YmFzZWFkZHIgKyBFQ0NfQ1RSTF9PRlNUKTsNCisgICAgICAgICAgICAgICAgICAg
+ICAgIHdyaXRlbCgweDAsIHByaXYtPmJhc2VhZGRyICsgRUNDX0NUUkxfT0ZTVCk7DQorICAgICAg
+ICAgICAgICAgfQ0KKyAgICAgICB9IGVsc2Ugew0KKyAgICAgICAgICAgICAgIGR0ID0genlucW1w
+X2dldF9kdHlwZShwcml2LT5iYXNlYWRkcik7DQorICAgICAgICAgICAgICAgaWYgKGR0ID09IERF
+Vl9VTktOT1dOKQ0KKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOw0KKw0KKyAg
+ICAgICAgICAgICAgIGVjY3R5cGUgPSByZWFkbChwcml2LT5iYXNlYWRkciArIEVDQ19DRkcwX09G
+U1QpICYgU0NSVUJfTU9ERV9NQVNLOw0KKyAgICAgICAgICAgICAgIGlmIChlY2N0eXBlID09IFND
+UlVCX01PREVfU0VDREVEICYmDQorICAgICAgICAgICAgICAgICAgIChkdCA9PSBERVZfWDIgfHwg
+ZHQgPT0gREVWX1g0IHx8IGR0ID09IERFVl9YOCkpIHsNCisgICAgICAgICAgICAgICAgICAgICAg
+IGNsZWFydmFsID0gcmVhZGwocHJpdi0+YmFzZWFkZHIgKyBFQ0NfQ0xSX09GU1QpIHwNCisgICAg
+ICAgICAgICAgICAgICAgICAgIEVDQ19DVFJMX0NMUl9DRV9FUlIgfCBFQ0NfQ1RSTF9DTFJfQ0Vf
+RVJSQ05UIHwNCisgICAgICAgICAgICAgICAgICAgICAgIEVDQ19DVFJMX0NMUl9VRV9FUlIgfCBF
+Q0NfQ1RSTF9DTFJfVUVfRVJSQ05UOw0KKyAgICAgICAgICAgICAgICAgICAgICAgd3JpdGVsKGNs
+ZWFydmFsLCBwcml2LT5iYXNlYWRkciArIEVDQ19DTFJfT0ZTVCk7DQorICAgICAgICAgICAgICAg
+fQ0KKyAgICAgICB9DQorICAgICAgIHJldHVybiB0cnVlOw0KIH0NCg0KIC8qKg0KQEAgLTkzNyw3
+ICs5MjAsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHN5bnBzX3BsYXRmb3JtX2RhdGEgenlucV9l
+ZGFjX2RlZiA9IHsNCiAgICAgICAgLmdldF9lcnJvcl9pbmZvID0genlucV9nZXRfZXJyb3JfaW5m
+bywNCiAgICAgICAgLmdldF9tdHlwZSAgICAgID0genlucV9nZXRfbXR5cGUsDQogICAgICAgIC5n
+ZXRfZHR5cGUgICAgICA9IHp5bnFfZ2V0X2R0eXBlLA0KLSAgICAgICAuZ2V0X2VjY19zdGF0ZSAg
+PSB6eW5xX2dldF9lY2Nfc3RhdGUsDQogICAgICAgIC5xdWlya3MgICAgICAgICA9IDAsDQogfTsN
+Cg0KQEAgLTk0NSw3ICs5MjcsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHN5bnBzX3BsYXRmb3Jt
+X2RhdGEgenlucW1wX2VkYWNfZGVmID0gew0KICAgICAgICAuZ2V0X2Vycm9yX2luZm8gPSB6eW5x
+bXBfZ2V0X2Vycm9yX2luZm8sDQogICAgICAgIC5nZXRfbXR5cGUgICAgICA9IHp5bnFtcF9nZXRf
+bXR5cGUsDQogICAgICAgIC5nZXRfZHR5cGUgICAgICA9IHp5bnFtcF9nZXRfZHR5cGUsDQotICAg
+ICAgIC5nZXRfZWNjX3N0YXRlICA9IHp5bnFtcF9nZXRfZWNjX3N0YXRlLA0KICNpZmRlZiBDT05G
+SUdfRURBQ19ERUJVRw0KICAgICAgICAuZ2V0X21lbV9pbmZvICAgPSB6eW5xbXBfZ2V0X21lbV9p
+bmZvLA0KICNlbmRpZg0KQEAgLTk2MCw3ICs5NDEsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHN5
+bnBzX3BsYXRmb3JtX2RhdGEgc3lub3BzeXNfZWRhY19kZWYgPSB7DQogICAgICAgIC5nZXRfZXJy
+b3JfaW5mbyA9IHp5bnFtcF9nZXRfZXJyb3JfaW5mbywNCiAgICAgICAgLmdldF9tdHlwZSAgICAg
+ID0genlucW1wX2dldF9tdHlwZSwNCiAgICAgICAgLmdldF9kdHlwZSAgICAgID0genlucW1wX2dl
+dF9kdHlwZSwNCi0gICAgICAgLmdldF9lY2Nfc3RhdGUgID0genlucW1wX2dldF9lY2Nfc3RhdGUs
+DQogICAgICAgIC5xdWlya3MgICAgICAgICA9IChERFJfRUNDX0lOVFJfU1VQUE9SVCB8IEREUl9F
+Q0NfSU5UUl9TRUxGX0NMRUFSDQogI2lmZGVmIENPTkZJR19FREFDX0RFQlVHDQogICAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgRERSX0VDQ19EQVRBX1BPSVNPTl9TVVBQT1JUDQpAQCAtMTM5MCwx
+MCArMTM3MCw2IEBAIHN0YXRpYyBpbnQgbWNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
+cGRldikNCiAgICAgICAgaWYgKCFwX2RhdGEpDQogICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9E
+RVY7DQoNCi0gICAgICAgaWYgKCFwX2RhdGEtPmdldF9lY2Nfc3RhdGUoYmFzZWFkZHIpKSB7DQot
+ICAgICAgICAgICAgICAgZWRhY19wcmludGsoS0VSTl9JTkZPLCBFREFDX01DLCAiRUNDIG5vdCBl
+bmFibGVkXG4iKTsNCi0gICAgICAgICAgICAgICByZXR1cm4gLUVOWElPOw0KLSAgICAgICB9DQoN
+CiAgICAgICAgbGF5ZXJzWzBdLnR5cGUgPSBFREFDX01DX0xBWUVSX0NISVBfU0VMRUNUOw0KICAg
+ICAgICBsYXllcnNbMF0uc2l6ZSA9IFNZTlBTX0VEQUNfTlJfQ1NST1dTOw0KQEAgLTE0MTMsNiAr
+MTM4OSwxMSBAQCBzdGF0aWMgaW50IG1jX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpDQogICAgICAgIHByaXYgPSBtY2ktPnB2dF9pbmZvOw0KICAgICAgICBwcml2LT5iYXNlYWRk
+ciA9IGJhc2VhZGRyOw0KICAgICAgICBwcml2LT5wX2RhdGEgPSBwX2RhdGE7DQorICAgICAgIGlm
+ICghZ2V0X2VjY19zdGF0ZShwcml2KSkgew0KKyAgICAgICAgICAgICAgIGVkYWNfcHJpbnRrKEtF
+Uk5fSU5GTywgRURBQ19NQywgIkVDQyBub3QgZW5hYmxlZFxuIik7DQorICAgICAgICAgICAgICAg
+Z290byBmcmVlX2VkYWNfbWM7DQorICAgICAgIH0NCisNCiAgICAgICAgc3Bpbl9sb2NrX2luaXQo
+JnByaXYtPnJlZ2xvY2spOw0KDQogICAgICAgIG1jX2luaXQobWNpLCBwZGV2KTsNCi0tDQoyLjE3
+LjENCg0KDQo+DQo+IFRoeC4NCg==
 
