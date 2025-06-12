@@ -1,359 +1,213 @@
-Return-Path: <linux-kernel+bounces-684276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC9DAD7884
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C22AD7887
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445AE3A1412
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606333A6AB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA7429B8DD;
-	Thu, 12 Jun 2025 16:50:13 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE19723E229;
+	Thu, 12 Jun 2025 16:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lsGrcJbA"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EBE19F13F;
-	Thu, 12 Jun 2025 16:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749747012; cv=none; b=Kr4UzZOXkq+Nnhm8qJh6dZFi9Ui9IP3y0yD04JeUKncUsFlU0rxj21i3/eV6hmPMEvqE+hgaJnFBI+pZwQaydg2ewrIAllHc2isEO+shdHN4GLKiIhKuTB2zxISvxtK+aPqysw6P8BbBEEkplD38t5MO06MvVDe9TZGjiom+iqQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749747012; c=relaxed/simple;
-	bh=y1pnc0K21RY6sKl7h4y4645XMHvqTAhb0rymQLHBub8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DSXTJCTR3zxdesNhuZfq1gcNL1icj6Cx12ABoh5PLbKLrum3W8AFrS9VenH/HlY84hvQBas1ZKBDDkXM2b2LvOn+1cyLgQAoA0/mSe4lh1O2JCUJ9BRqjlB6szuuJL95yq2s079KvezcASS4MeLC0IDLBp1KIJP3O3CaJNMdzaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so2751618a12.3;
-        Thu, 12 Jun 2025 09:50:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749747008; x=1750351808;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U0Tmty3UQpCA8vJk36D3Bw0wv8HVcit3KWDw+f7inaU=;
-        b=SOPg0e1UfetrzfV6zOU3xZg+4d6HyoEr4744e4MhvWWV0+rUGo4cxoSGU6coH2jkQ8
-         Xm9fSI9QiBub5M0a4hiDuxv6Jz7XVzUA64VdUJVUQwr10ZyByIjcR93UOc8H3jsQk8AQ
-         SStC6i46z835ECkeYVLJwSi2erUpirr3DVGYfRZmrVflqJFg+BRcj6ug2/Bp1sxkdUVm
-         pmwFxhwjm+10G/C+oD7RPhCgj4MXMA9eurFAgtCJUbXy9QSk+PPZzgK2KLQ44ZaD6eJd
-         TVGuvmICBtCwAXYRTWPi1FYSXpvCrqkmOCZBKfzAON5XJfOSV18zuxhqAvxjuAPzk1DS
-         lrUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwhcXyFqcWK0AVgtgSKboMqdSZBVHNbhsfSZguUb4XlQyMjjZYu8GP5UhJWdxHvKViqGGGpMmVB9JSTQkq96A=@vger.kernel.org, AJvYcCXigGnM9aMgox56zmySk+cOJ753zYCpIzspi4B3RIn41HOIZSXrLRzuQvJ3XGSJEjXNL+89hJns@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZwDCXBplJUrIM9Atmt2nxDQup7WZjtwcGn1L6cDPiMeben14I
-	bp5BMPPdIepMPDvZjQYvPU818SlbOU9JvhNTA6NCbxLCzxPaA4CKU2rd
-X-Gm-Gg: ASbGnctYxd9E61Ibha+TT/lKpQ1ME+o1rG/WAhmt7TukhiZVfGklBFZktSenqt1AuVD
-	Dl4NOLslj1CN/Ne1vPyHVfqzXYsseUZrcOJ86kdAMROhiuL7VK39znL2YQ/DctuMVXquDR0XNK/
-	Zvw75lNFxrkmRowdqujGiXTsiT3QHRdpgFtrMhnb/36V5j/xwKmajU8xpij0JZFXIe5D4zHM94G
-	Py4tbwAziIlrwbJ9e4x9hM+JAM8P17DDm32WJSGFbW8Ci7c2iXEnzEtV1UZL3JdQRVGIg87Hax9
-	YxG9Vu7btbUTdWHP5psuw8j+E5ZdXxJfC4dQi4RLBSolKgRBFPek
-X-Google-Smtp-Source: AGHT+IF3LMtcpwL937VNeRzfLL2J/62DAotrhEamawLJ2wUL4RZRoPr+Wfa7mtS4oOtpeIIgCo5Ccw==
-X-Received: by 2002:a05:6402:3508:b0:608:3f9c:c69d with SMTP id 4fb4d7f45d1cf-608af85f18amr578482a12.33.1749747007294;
-        Thu, 12 Jun 2025 09:50:07 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:2::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6086b1e249csm1411746a12.46.2025.06.12.09.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 09:50:06 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 12 Jun 2025 09:49:56 -0700
-Subject: [PATCH net-next RFC] selftests: net: add netpoll basic
- functionality test
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A2610E5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749747292; cv=fail; b=bBpcaqxJr0Ai+PeLjQ/mx0xA4TBfE7skIvT/VZMJ02kTc4wudGBL4fFp5YQLNC/BmSC4luzLNsCTPr6hWcRZ0txdxriD2XEvb4GtBsU/PErtMlQgICFIEU+NG+4LWH2l3UR42NqHAARgdre51JbSojIX23XAZ6kpNRiGw+rwDAo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749747292; c=relaxed/simple;
+	bh=tq0+CorXY9LeaTBzKM3gebWHMAwes2d95eenPyn2nks=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pVcMI0KQbVNkkAZGSfNOMs5PBuSz+H8kFcPA501PDsrAUzzV2HXmYRE1ModI0sK3qr7HEvPe/hoccLokA1M8OBPCs1cim3oStBsAT13IpGvY4EoHDkY958PzNNxdi7/Hi2FiLffwh0k0gqGZwx/l9VDcgReFg+X/F9ITk5o7jLo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lsGrcJbA; arc=fail smtp.client-ip=40.107.93.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yoiF+TetBguCGrxk7o+NQdejVQBNFLusdCywIlOLwTN7F7a31NvBydX4NBegI6cUwrJ0VQwxV2ngtxnEKQRDaPCDgUDXFv9eJTdntpbsbS78aPgmrzveAAks66jpCVNuBFZ6LP4edss5deL/voOZM6rjgxl/yRplbba2V1TQT6j7cyxS+acoPcHp31+sxx/gOTRUYAI2l2JJ/7sqjqyBgKFDJ6r+doJPfekbRjKgCR0cJ55X0ebwyW/47n5UzHtHXRVBtz+4fGvf+P2v0tJwm/NPCRNDdyHbAUaKo/7Go+uYrEcI3iinA364bZXpTWcBYXGRtfmzlJloIMw9ngwI7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7yClwftpvsqPrJuDZiQY/O1X+APvy68ZhTLY5lsOsWg=;
+ b=r5w7VrCJF3ownF3lKFQX34KLP+UNpZkfe8vd63wm7nGo0fuYqvScMbJwcDpJV+7icR0FJMVcXW8pFECfGZv5FMAApc+Dgb0D0OgSXrTfT9pb2VQrSJ7Pp5X2rUiKrZyPlzx5dXqlVvybKdxRrGpaVoZaSZlyZGMcFmZM+1LNqTXbITZSpJaX/xxbMMT3XihujRe9BQM1qFO5R3rFLovumltWXR2xHDNfw0DRorSJ7Qxwmq2AzlyDaW81zXpZe7KZdjdRX462IuCPl0JcaNqP/B7MJkoIV+XfKCtWMwHn8S7ekK/lm9m5qL0r0GKgZCAwXyw7gQXoUxOYTBDj1+nGXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7yClwftpvsqPrJuDZiQY/O1X+APvy68ZhTLY5lsOsWg=;
+ b=lsGrcJbA6phxdIyeGKhtz2GFTErjj9j6iMw6/vDx/qs6E7jyaH/TbBJ7oQ1qPCfLOlaL2obInyN1uiHNP2OAhaqsWwOewijOp6N0ks62rafZcVPFB6xB1riXLqTD1V8DSKQlDeAJrY1b5oHrc+ca+/grahnS9bpcsUDCt/mIj36aL7dLo2Stxevebo+NgdIChTG7cnmZjIyhCKFdd5loVtP3MGedj/0iYmzEZ2x4Lg60CUmqDWze1lD+ex/RgE/XCdPM1Xe9f7sZG4cxRhRrbllDpso6gwED8wYPFChi8B5MAGISsyCU+jTLbZ3DulL66Yq8oLKWdZMr5uFVMYM65A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA1PR12MB6650.namprd12.prod.outlook.com (2603:10b6:208:3a1::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 16:54:47 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.8792.034; Thu, 12 Jun 2025
+ 16:54:47 +0000
+Message-ID: <e68f33de-fdec-4448-840b-79f0d987b2a5@nvidia.com>
+Date: Thu, 12 Jun 2025 12:54:44 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/10] sched/ext: Add a DL server for sched_ext tasks
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+ Changwoo Min <changwoo@igalia.com>,
+ Luigi De Matteis <ldematteis123@gmail.com>
+References: <20250602180110.816225-1-joelagnelf@nvidia.com>
+ <20250602180110.816225-4-joelagnelf@nvidia.com>
+ <aD5Ai3xJdnV5SxG0@slm.duckdns.org>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aD5Ai3xJdnV5SxG0@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0219.namprd13.prod.outlook.com
+ (2603:10b6:208:2bf::14) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-netpoll_test-v1-1-4774fd95933f@debian.org>
-X-B4-Tracking: v=1; b=H4sIADMFS2gC/x3MQQrCQAwF0KuEv+7ATLQqsxV6ALciUtqogZKWm
- SCF0rsLvgO8DVWKSkWmDUW+WnU2ZEoNYfj09pagIzKBI7fxlDiY+DJP09OleujTgY8jx/Y8XNA
- QliIvXf/dHSYeTFanW3fFY99/47FqvGwAAAA=
-X-Change-ID: 20250612-netpoll_test-a1324d2057c8
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, ast@kernel.org, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9422; i=leitao@debian.org;
- h=from:subject:message-id; bh=y1pnc0K21RY6sKl7h4y4645XMHvqTAhb0rymQLHBub8=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoSwU9YX/FVcLUgswPPDuwuLa/agmYv4sW7k788
- i8cF/aSFL+JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaEsFPQAKCRA1o5Of/Hh3
- bdiGD/490fqDHJcwV6abFPs07jhgjyKiID36VuOD0Ib3bH3ddzsKxeyR8S+pbYEtysMYYqttCAO
- ozbto3ACBsOx59fHhq79m53gOu4DGpyUmvwh/tFZMErabNOKyYprdM6yOsCQll2FvB3KsVnWKw8
- SpDlx5RqlUrtIw6ohJrDmiV7L92liInnU5AXubLfny4KIoBjimqFR+Mlm+dqVDsl/O232oYuBFK
- 73gijC4yyyOLXNyhp4mZ27hdmW1ylENk/jyslpEaYlqe4cdkAlB7UQtYHld+CUVXHuxTY7SjTNf
- lbrmhxbSXqR7eUVzHmqBxptR8UXy2JtamTJYs/4Vn/K2uWcIkY7GOLvdqz1j4UfoiucZyrYnsnn
- pgYecP0T7frDi484i7M4KJ/2SyHUgzoZ4XBWTAj5lnlwGsIcBBGUUBquMdYL13SmepXMLGIY3Fh
- /vrol3QzOuQsCok5EmsZL79/bmZO/yvtVaUiIOKtsY0hcH2fLY3q3SUxMwwwylTF8lT6Ddbeez+
- kbYW+5ikLHP496MD+N7nYcr1YhGHzQ6u9i5+f4uR8IGCei/KX7va9q0LyTJlF6auw5503WFlySB
- xcV1TF5l8aEga6KSdTjSzKRHIqngM5SK1AcKoTkxCj2AmAwXd+NSom2KR13x3FfVyM7YYR5inKx
- kmONqduiXVuhkQw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB6650:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62e29873-3596-412f-5a86-08dda9d1d687
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NmNPYUkwRDJxd0pCTmVYUHZxbm9IZmZVVXB0SCs3cW5yS2pOVEl3UDBhbjZI?=
+ =?utf-8?B?ZkRSaHB0MjdSSzBNc1ZkM1MrYlRodXJRS0JMdHVHeWxpTkhtZXZPWjk4NEdS?=
+ =?utf-8?B?Y1h0UUtlVFpLbUJnb0ZjK0tIdktJSm9rMTEwMTA2VnROZWpuNk9OaW5Td2xa?=
+ =?utf-8?B?ZDBQZXhWY0k2ZEwvcGJCSkYxMmIrSE1jbW5sYWFtWVpHWXpkRkJSekVWeUE4?=
+ =?utf-8?B?VWdNYWZwUDFvaHNUdU04S1lkbUhEanBuRFRTT253UlpEcmV1alc3YnRiR0tx?=
+ =?utf-8?B?RldrVkcrRGt0RDZ0ZytZN3NVY1VoL1BDTUpzLzRpM20zZnJqOXlub3lEUFFh?=
+ =?utf-8?B?bUNYY3d0TU1IV3kxY3ZpalMvK2VqV0tRaUkvUTYxbmpLR1pVb0oyZ2piSzVz?=
+ =?utf-8?B?RHo2bGd2Tm1jbVBHVGZ6cVFhWEh5QUZMakZDVm5xcm9oclBqQ2ExdGJjR2hL?=
+ =?utf-8?B?U1M0b3pha3YxNHhGbjNndDRkQjdnNS9OTmpjcVFSZWtXcnAyTXlOZlNGOHB6?=
+ =?utf-8?B?U2QvcXkxM1hPVUU2MUQ0ZlBlYkY0dzlOK2RtM0dWM1R1cFB3ZFNyeVNOQ200?=
+ =?utf-8?B?NE5DYWhrNVNrbWs2VjZWakJ5aFNPTlFnWTkzUGtERnFrQmMwd2JjQ1Z1NWpE?=
+ =?utf-8?B?V1hDTEVCZ1pvSFE0V1M4ak1RVUJlREtnNTIzZVBZM2NoWUF3TXUyUFNZTUtW?=
+ =?utf-8?B?YjMyYnZWU2pUSS9kRW9xN2JWOFFRR04rRWNBYVllZEw4RkdTbjlDN0tqeUtx?=
+ =?utf-8?B?b0lKeG9NYzVPZG90TURmeHN1MXplNXBEdXQ3UDErTExRNzc3dUUyRm5KNFor?=
+ =?utf-8?B?cVczdHBjb0x2MVQvSVNEQmJPVUZYYlRpZnhOaTVHZ1JqT1dmamhmcUhyNmhz?=
+ =?utf-8?B?RHpidWRrZVIxWVNIRzdEUURXRDEzZTUrY0RTNkJ5R1g1dWFLbjVzalRXdTJl?=
+ =?utf-8?B?eW1WMUttT2VIYmhQeUxHb3NPOUdPVHdwY3A0MzRTK2tQOTNzTnAwVFJYTmps?=
+ =?utf-8?B?anVkMGtTV1lNdTNiTGhQTWlONnZMUXcwWnR2U1lWRkhGMEZ6WUdRU28yU1pU?=
+ =?utf-8?B?YmIweGF5MmFzcUUwaVBpRGtxVlVBeGVCT3Bmc0tZaEFaMTd1ZEZoTTJrVFl4?=
+ =?utf-8?B?SjhTaGR2b2l6d2tYZkhsbkdQQWI1VDhwbUYxR0NDQS9GbWQ0QXNhSngraU4z?=
+ =?utf-8?B?QTU3UGVNY0t2cXgrQkpOcW1RRjUzaWxvNkZiSExqbkJ0cU0vR0hPUW83Y1JL?=
+ =?utf-8?B?bjhiSGcyYjE5bWJwUXJsZDB1SVpTUVYwSUVQSkdwREJKaFhPY3hxMGYxLzZx?=
+ =?utf-8?B?RnowRmpkc0pMbDJ1NDltb2pOcnZuY0pmMktrbnkzMlBDTjlJTFRMazlzNEx5?=
+ =?utf-8?B?MXVGTFF1djczZ0xYWGtzSUtxN2NWd01OZmlidmFvWHhueGpTS211N0plTXJG?=
+ =?utf-8?B?ZWkzK0ZDK0JMcXlTQlFVOWVHZlZJL2tQMFZkTGVqNUt1YWZ1eDV3SW93MjAr?=
+ =?utf-8?B?MWNVUTV3WlFOc2Q5ZlhOUkNtOTdmaXJYTWZvYjVkdGdBOUpVenYvcGh3NWVE?=
+ =?utf-8?B?MlhtaWErWGkzcDQ5NHhEb3NuSXBERDNnanU2STIxUDBhYnNDK1E3US9IcVhE?=
+ =?utf-8?B?WmlxdlZYM1ZSTm9Ic0toRmtPQXp0eVhNMzJwazhmNWxYa1ZiQ3ZnNy94QURS?=
+ =?utf-8?B?TmV3b0ZDTXdPc2JtVk53bVBLaklLczEwYm9Nb1ByZ1prcUpqR0l2Z0VZNXYw?=
+ =?utf-8?B?MEZodkk0eDJndng1NU1HOVZIMVlCZGFMUDhNT2tTYjJDeCtFdkNqRmltdlds?=
+ =?utf-8?B?aFRVUUxsbktBYzJrdEJHM255dEc3dnRrYzY0a1VJQmF5L3BnVWQ1RngrUDBV?=
+ =?utf-8?B?czB2aWI0Rzk2ZS9QV2F0a1FPQUVjQVpMbFVpVE1xSzJjS0lZY05wZlowUFdq?=
+ =?utf-8?Q?OawNEbs/LDY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Mm0yL0xkbGU4UFZJcXBmYmQ4VWN1UmZXTmVZb3Nib21TUDR3UXdLNFVHYkt6?=
+ =?utf-8?B?U2t1NjA2bHdGZmFlZWlzdlZmVDAwR2srQStPdmhMajhFbURkWkM1UmVJb0RT?=
+ =?utf-8?B?SU1Qb3o0NlV0d1FheUxEQW9uZVdYZkp2UjBvRjIwRmU5Nk1IQ1NmTUdNNjIr?=
+ =?utf-8?B?SW9OYkhqWU5qUGRBSnlIMkJCWkcwemVWUVFHZ2c0Snlma1RibVc0TXZ3eGZr?=
+ =?utf-8?B?TVJJc2hXYjU2RmpSb0FBY3dNRmZxaGUwUmhpcEF4Sk1CZUpKV3RYbk1DandU?=
+ =?utf-8?B?L2dCK29sSStnZjdoU1k5TDd6UURsNEwxUitqazN0M0c1RUZFTUc2RkZuNGsv?=
+ =?utf-8?B?Y2hHZG80UDJxTGdEYStrSUhYcHFkNGZMZWxhR0xsY1ppb09yRndEZmU1bU11?=
+ =?utf-8?B?Y2VyWTNEWHNlR0REbjN1ZWhVcW1GaEtpUm1KbG5MSUV2STI0N0wwbEx0YVlv?=
+ =?utf-8?B?Uk53Qm9jbTBvdUZxZHRVYWlpSndsZk4zd0hUc1U5Yk5ucHR2M2FNdGtRYkhs?=
+ =?utf-8?B?ejBPUUtrK1dWUCtRUTViRUhyTWFRWEdyaWcrL1Q5NUd3UGpjM21lOGw5bTNm?=
+ =?utf-8?B?cnE5eXVYd2dtTHFRN3N2SnhLajdycTJXWU53LzI5bW5JV2FUd2hKa2loVmM3?=
+ =?utf-8?B?VmNDbmxUNXM3bkYxTGtkSjRmdjRzY0cwUDNNQnFpRzVxa0VXNXFWK0VHc3JC?=
+ =?utf-8?B?R2ZCVWNhLzZJK0tUcU5ZUjFIYW5ETlFNYzBySWhTYTBMWjJndGdPbVhVdlBj?=
+ =?utf-8?B?T1pvZFFTRjRyM0krTXl4MzRMNlVvK1VwNUJzMld2Qys1SVRyOTIwbC9wOWo1?=
+ =?utf-8?B?NTBPZWRpMjZjTWlnYlZJK1d5TEgxL3NQQzlXME54S0t5QzI0Um9FMU5PdnNM?=
+ =?utf-8?B?SXJoVkN1VWZYY29TNHNuZWY1MmpLZjFTZXUxYVYxVlowdmN3NjdDZXAyNGor?=
+ =?utf-8?B?NWhyTm5TU3lIQnJrakdHQ2hTL1Z5elFZRVoyYU5tbytZNlJ4Y3RaME1rRlJz?=
+ =?utf-8?B?THJyRlhaL25BWGQ4YUozSzZnTkxLU1lKN0VwRDlYUG9hUm1mc0VjK0tqWlFy?=
+ =?utf-8?B?QWpYMi9ZVVpJMlBrVUZBOUV4Uk5xL2dYS2VqSU11cWJWemM0RTVjR2hVZFNR?=
+ =?utf-8?B?VTVidGEvVzhoc3QxWG5sMDJYRDNZdGQyM0x3cDZPV3VJUUZMVVpPMlA3dWp4?=
+ =?utf-8?B?TGhSQmMyYTZnVXpFTG9ldEg3R1diSW16dlhJMXBpZlZZcno1cm1WOXZjQzJh?=
+ =?utf-8?B?MHl4TDl1TGdidXJ3dnpwSDNpK29rbUlCakQyczJNWGdHYlE2SHFwTUoxNlJy?=
+ =?utf-8?B?VWlJanBDWGlPVk5mSEcwTksydHZXa2VPQ0FobGYzSWxEZFJFdzVVVWozQmFq?=
+ =?utf-8?B?cmg3OGg0Y2Zub3hoc2cwQWttMlVSM3VOd0VLMURJVGltdjVRb1NibWdFbEhN?=
+ =?utf-8?B?cFBxQTdGRzUvalRqRmxOZmt3ZDcwQ2xFRUZIbURwcjlzc3gzWWl5WFZzejJQ?=
+ =?utf-8?B?ejgzNXQwRnh5YjE2YjZScWtSbEc2OUFod05XZnhwOXMxZ0JkZmFCWi85aGdo?=
+ =?utf-8?B?STFycmRlblFIQkNwdTJzdlQ5WDlYekgrNGxHRUNJaE5JMUVqK3pnOTRtT09C?=
+ =?utf-8?B?NGJ2L1BQaFJ4TGZFdnFGazN5dmI3ZFc4QWozQW5VNGFETFhkZmxVbTUxNm1R?=
+ =?utf-8?B?RTkrMWkzN3BwMXcwbXBzcFE5ZTlvVWN4WVJWbWs4alFzL3ZqUUVrUXJGQlMy?=
+ =?utf-8?B?STZINFRNVWhJRG1KNUtmRjJna3RsUXgzczZtY3pBWlRHNkZlTUg0NkhyQTNJ?=
+ =?utf-8?B?Y3ZsYTVWVm9iSmtZSVBxR1J2MkNqOEhQNnFzVXpMaW5rdFRvTXNMS1grWFpm?=
+ =?utf-8?B?L2t3a1dmRzFINlBuQ1Q0eEZ1L3hzUXdiUXNMUWdoMjQ2NFA2RVNIQWdpNTlS?=
+ =?utf-8?B?SjFkQzZKbDlXMXFKVGhWMHZlRUtTdEkzaE5WM2k0ZWhnWFp1aXZLeHZCbU5S?=
+ =?utf-8?B?Q3VzZDRYREZVa3M0RUdpTFFUai9QQmF0ajhUYVFuQUVWYncxN283dnVCMFV6?=
+ =?utf-8?B?ZytRR2Jka1c4MHc2Ty9ibmtuQTRBVVFiMndmVGdZeXNPOTBYNy96eVU0dFFU?=
+ =?utf-8?Q?nuRjq0pGl+p8SWTGz7dXvasxQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62e29873-3596-412f-5a86-08dda9d1d687
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 16:54:47.0439
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZC8APSJUqEOdhDHyVYreMLljgCfz4IUMB5E1FarKQMx/thyYt8Yl3LZyJ38Vhbp/CskLWXYJwlPPtaoG6BEcmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6650
 
-Add a basic selftest for the netpoll polling mechanism, specifically
-targeting the netpoll poll() side.
 
-The test creates a scenario where network transmission is running at
-maximum sppend, and netpoll needs to poll the NIC. This is achieved by:
 
-  1. Configuring a single RX/TX queue to create contention
-  2. Generating background traffic to saturate the interface
-  3. Sending netconsole messages to trigger netpoll polling
-  4. Using dynamic netconsole targets via configfs
+On 6/2/2025 8:23 PM, Tejun Heo wrote:
+> On Mon, Jun 02, 2025 at 02:00:59PM -0400, Joel Fernandes wrote:
+> ...
+>> @@ -2308,6 +2311,15 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int enq_flags
+>>  	if (enq_flags & SCX_ENQ_WAKEUP)
+>>  		touch_core_sched(rq, p);
+>>  
+>> +	if (rq->scx.nr_running == 1) {
+>> +		/* Account for idle runtime */
+>> +		if (!rq->nr_running)
+>> +			dl_server_update_idle_time(rq, rq->curr, &rq->ext_server);
+>> +
+>> +		/* Start dl_server if this is the first task being enqueued */
+>> +		dl_server_start(&rq->ext_server);
+>> +	}
+> The following patch from Peter isn't upstream yet but SCX probably should do
+> something similar. Otherwise, the start/stop overhead can become pretty
+> expensive:
+> 
+>  https://lore.kernel.org/all/20250520094538.086709102@infradead.org/
 
-The test validates a critical netpoll code path by monitoring traffic
-flow and ensuring netpoll_poll_dev() is called when the normal TX path
-is blocked. Perf probing confirms this test successfully triggers
-netpoll_poll_dev() in typical test runs.
+Right. If it is Ok with you, we can do that after this patchset can be merged,
+that way we can use the 'dl_server_idle' addition to 'sched_dl_entity', from
+that patch as well.
 
-This addresses a gap in netpoll test coverage for a path that is
-tricky for the network stack.
+thanks,
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Sending as an RFC for your appreciation, but it dpends on [1] which is
-stil under review. Once [1] lands, I will send this officially.
-
-Link: https://lore.kernel.org/all/20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org/ [1]
----
- tools/testing/selftests/drivers/net/Makefile       |   1 +
- .../testing/selftests/drivers/net/netpoll_basic.py | 201 +++++++++++++++++++++
- 2 files changed, 202 insertions(+)
-
-diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-index be780bcb73a3b..70d6e3a920b7f 100644
---- a/tools/testing/selftests/drivers/net/Makefile
-+++ b/tools/testing/selftests/drivers/net/Makefile
-@@ -15,6 +15,7 @@ TEST_PROGS := \
- 	netcons_fragmented_msg.sh \
- 	netcons_overflow.sh \
- 	netcons_sysdata.sh \
-+	netpoll_basic.py \
- 	ping.py \
- 	queues.py \
- 	stats.py \
-diff --git a/tools/testing/selftests/drivers/net/netpoll_basic.py b/tools/testing/selftests/drivers/net/netpoll_basic.py
-new file mode 100755
-index 0000000000000..8abdfb2b1eb6e
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/netpoll_basic.py
-@@ -0,0 +1,201 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# This test aims to evaluate the netpoll polling mechanism (as in netpoll_poll_dev()).
-+# It presents a complex scenario where the network attempts to send a packet but fails,
-+# prompting it to poll the NIC from within the netpoll TX side.
-+#
-+# This has been a crucial path in netpoll that was previously untested. Jakub
-+# suggested using a single RX/TX queue, pushing traffic to the NIC, and then sending
-+# netpoll messages (via netconsole) to trigger the poll. `perf` probing of netpoll_poll_dev()
-+# showed that this test indeed triggers netpoll_poll_dev() once or twice in 10 iterations.
-+
-+# Author: Breno Leitao <leitao@debian.org>
-+
-+import errno
-+import os
-+import random
-+import string
-+import time
-+
-+from lib.py import (
-+    ethtool,
-+    GenerateTraffic,
-+    ksft_exit,
-+    ksft_pr,
-+    ksft_run,
-+    KsftFailEx,
-+    KsftSkipEx,
-+    NetdevFamily,
-+    NetDrvEpEnv,
-+)
-+
-+NETCONSOLE_CONFIGFS_PATH = "/sys/kernel/config/netconsole"
-+REMOTE_PORT = 6666
-+LOCAL_PORT = 1514
-+# Number of netcons messages to send. I usually see netpoll_poll_dev()
-+# being called at least once in 10 iterations.
-+ITERATIONS = 10
-+DEBUG = False
-+
-+
-+def generate_random_netcons_name() -> str:
-+    """Generate a random name starting with 'netcons'"""
-+    random_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
-+    return f"netcons_{random_suffix}"
-+
-+
-+def get_stats(cfg: NetDrvEpEnv, netdevnl: NetdevFamily) -> dict[str, int]:
-+    """Get the statistics for the interface"""
-+    return netdevnl.qstats_get({"ifindex": cfg.ifindex}, dump=True)[0]
-+
-+
-+def set_single_rx_tx_queue(interface_name: str) -> None:
-+    """Set the number of RX and TX queues to 1 using ethtool"""
-+    try:
-+        # This don't need to be reverted, since interfaces will be deleted after test
-+        ethtool(f"-G {interface_name} rx 1 tx 1")
-+    except Exception as e:
-+        raise KsftSkipEx(
-+            f"Failed to configure RX/TX queues: {e}. Ethtool not available?"
-+        )
-+
-+
-+def create_netconsole_target(
-+    config_data: dict[str, str],
-+    target_name: str,
-+) -> None:
-+    """Create a netconsole dynamic target against the interfaces"""
-+    ksft_pr(f"Using netconsole name: {target_name}")
-+    try:
-+        ksft_pr(f"Created target directory: {NETCONSOLE_CONFIGFS_PATH}/{target_name}")
-+        os.makedirs(f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}", exist_ok=True)
-+    except OSError as e:
-+        if e.errno != errno.EEXIST:
-+            raise KsftFailEx(f"Failed to create netconsole target directory: {e}")
-+
-+    try:
-+        for key, value in config_data.items():
-+            if DEBUG:
-+                ksft_pr(f"Setting {key} to {value}")
-+            with open(
-+                f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}/{key}",
-+                "w",
-+                encoding="utf-8",
-+            ) as f:
-+                # Always convert to string to write to file
-+                f.write(str(value))
-+                f.close()
-+
-+        if DEBUG:
-+            # Read all configuration values for debugging
-+            for debug_key in config_data.keys():
-+                with open(
-+                    f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}/{debug_key}",
-+                    "r",
-+                    encoding="utf-8",
-+                ) as f:
-+                    content = f.read()
-+                    ksft_pr(
-+                        f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}/{debug_key} {content}"
-+                    )
-+
-+    except Exception as e:
-+        raise KsftFailEx(f"Failed to configure netconsole target: {e}")
-+
-+
-+def set_netconsole(cfg: NetDrvEpEnv, interface_name: str, target_name: str) -> None:
-+    """Configure netconsole on the interface with the given target name"""
-+    config_data = {
-+        "extended": "1",
-+        "dev_name": interface_name,
-+        "local_port": LOCAL_PORT,
-+        "remote_port": REMOTE_PORT,
-+        "local_ip": cfg.addr_v["4"] if cfg.addr_ipver == "4" else cfg.addr_v["6"],
-+        "remote_ip": (
-+            cfg.remote_addr_v["4"] if cfg.addr_ipver == "4" else cfg.remote_addr_v["6"]
-+        ),
-+        "remote_mac": "00:00:00:00:00:00",  # Not important for this test
-+        "enabled": "1",
-+    }
-+
-+    create_netconsole_target(config_data, target_name)
-+    ksft_pr(f"Created netconsole target: {target_name} on interface {interface_name}")
-+
-+
-+def delete_netconsole_target(name: str) -> None:
-+    """Delete a netconsole dynamic target"""
-+    target_path = f"{NETCONSOLE_CONFIGFS_PATH}/{name}"
-+    try:
-+        if os.path.exists(target_path):
-+            os.rmdir(target_path)
-+    except OSError as e:
-+        raise KsftFailEx(f"Failed to delete netconsole target: {e}")
-+
-+
-+def check_traffic_flowing(cfg: NetDrvEpEnv, netdevnl: NetdevFamily) -> int:
-+    """Check if traffic is flowing on the interface"""
-+    stat1 = get_stats(cfg, netdevnl)
-+    time.sleep(1)
-+    stat2 = get_stats(cfg, netdevnl)
-+    pkts_per_sec = stat2["rx-packets"] - stat1["rx-packets"]
-+    # Just make sure this will not fail even in slow/debug kernels
-+    if pkts_per_sec < 10:
-+        raise KsftFailEx(f"Traffic seems low: {pkts_per_sec}")
-+    if DEBUG:
-+        ksft_pr(f"Traffic per second {pkts_per_sec} ", pkts_per_sec)
-+
-+    return pkts_per_sec
-+
-+
-+def do_netpoll_flush(cfg: NetDrvEpEnv, netdevnl: NetdevFamily) -> None:
-+    """Print messages to the console, trying to trigger a netpoll poll"""
-+    for i in range(int(ITERATIONS)):
-+        pkts_per_s = check_traffic_flowing(cfg, netdevnl)
-+        with open("/dev/kmsg", "w", encoding="utf-8") as kmsg:
-+            kmsg.write(f"netcons test #{i}: ({pkts_per_s} packets/s)\n")
-+
-+
-+def test_netpoll(cfg: NetDrvEpEnv, netdevnl: NetdevFamily) -> None:
-+    """Test netpoll by sending traffic to the interface and then sending netconsole messages to trigger a poll"""
-+    target_name = generate_random_netcons_name()
-+    ifname = cfg.dev["ifname"]
-+    traffic = None
-+
-+    try:
-+        set_single_rx_tx_queue(ifname)
-+        traffic = GenerateTraffic(cfg)
-+        check_traffic_flowing(cfg, netdevnl)
-+        set_netconsole(cfg, ifname, target_name)
-+        do_netpoll_flush(cfg, netdevnl)
-+    finally:
-+        if traffic:
-+            traffic.stop()
-+        delete_netconsole_target(target_name)
-+
-+
-+def check_dependencies() -> None:
-+    """Check if the dependencies are met"""
-+    if not os.path.exists(NETCONSOLE_CONFIGFS_PATH):
-+        raise KsftSkipEx(
-+            f"Directory {NETCONSOLE_CONFIGFS_PATH} does not exist. CONFIG_NETCONSOLE_DYNAMIC might not be set."
-+        )
-+
-+
-+def main() -> None:
-+    """Main function to run the test"""
-+    check_dependencies()
-+    netdevnl = NetdevFamily()
-+    with NetDrvEpEnv(__file__, nsim_test=True) as cfg:
-+        ksft_run(
-+            [test_netpoll],
-+            args=(
-+                cfg,
-+                netdevnl,
-+            ),
-+        )
-+    ksft_exit()
-+
-+
-+if __name__ == "__main__":
-+    main()
-
----
-base-commit: 5d6d67c4cb10a4b4d3ae35758d5eeed6239afdc8
-change-id: 20250612-netpoll_test-a1324d2057c8
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
+ - Joel
 
 
