@@ -1,110 +1,167 @@
-Return-Path: <linux-kernel+bounces-683561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98301AD6EF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E82B6AD6EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052421898CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E1A1896E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D3323C51A;
-	Thu, 12 Jun 2025 11:24:06 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416E123C4EA;
+	Thu, 12 Jun 2025 11:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ntI1wtiH"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7FE22B5B8;
-	Thu, 12 Jun 2025 11:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE4723A99F;
+	Thu, 12 Jun 2025 11:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727446; cv=none; b=MoqWjgW4RR/61UPwdgi8dEoG7X3hRKKwT7Ve+qYVdnBPtAg/eXZaLVTkkPCIZK7LpzTqk4GMptMZx+thV29dM3W8gEWB1dtMiCx4KGesnBCKCXoPZgB5k/44lBhEpqMTN1gRJDOrGVkoZsSkXn0Cpr0akaoi/5gxqPcmmn5Jvgc=
+	t=1749727522; cv=none; b=tRyiDzPXQ7ws8A74qsaoct1IGbGLJbUsivmyjKWLQSA0ixcLCPEXWjSPnojO1+kM1QJCUkqIAya8J472c6cMr3dCQ2nUfngZDoRSSZXRqHgid+eFryeOAh8sYuDom/JujMkwB1iJbuaTYpuw8LZqZRoAM3UU3RzQamzLJq+Dchs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727446; c=relaxed/simple;
-	bh=b1dpQxEoPH0te7nskbJ5fWXIG13EjgExVWrw7POfxI4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=qWd865xircWKp8HJtw6jzxZ80de7nwscDwBg9Zi5MtKtF6FAhCM3xqn893K3LG/GbZK9E4bjlT7j1KmKM9Ww34vZIGkKtE0yr0BDCF/V6SmiBsyTZdnlNY3l2b9W8hI994WWZ5YnhQQnxAG7HLEVwOx1bSVXhPCKaF5IO06Py0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJ0Xg12mWzKHLvL;
-	Thu, 12 Jun 2025 19:24:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 79E811A01A2;
-	Thu, 12 Jun 2025 19:24:01 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCnC2DPuEpoYIcnPQ--.22416S3;
-	Thu, 12 Jun 2025 19:24:01 +0800 (CST)
-Subject: Re: [PATCH v2] md/raid1: Fix stack memory use after return in
- raid1_reshape
-To: Wang Jinchao <wangjinchao600@gmail.com>, Yu Kuai
- <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250611090203.271488-1-wangjinchao600@gmail.com>
- <5143c5c3-3a77-919f-0d38-8adb0e8923e9@huaweicloud.com>
- <06935480-a959-4e3f-8e41-286d7f54754a@gmail.com>
- <9c7d5e66-4f5f-b984-c291-f19c3d568b85@huaweicloud.com>
- <938b0969-cace-4998-8e4a-88d445c220b1@gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <8a876d8f-b8d1-46c0-d969-cbabb544eb03@huaweicloud.com>
-Date: Thu, 12 Jun 2025 19:23:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749727522; c=relaxed/simple;
+	bh=5VZRSU7JzGQqlG5ttPLxdMstrifHZf9JUKXSkh/CuJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cb7G4caIVMPM6/YPq2VTA73Jg0Kjp4zB7IpBJU9E0agBkoBR4WfMWjxNXIdqnfqz8JdbhoU3kW6Q/rc6h6mdPM6Mvcs8aSNTz+dfpXjFPg3DjBAMiR9ppYH54nFAgSt6oYIIo+aLbWwZNbNFf0zKCWgVNIJY4rUYaBvRRhb15+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ntI1wtiH; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CAA74e012275;
+	Thu, 12 Jun 2025 11:24:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=2AMC/bEjzv39eZGGnud64gi+zqY2Gy
+	6AQYpnVFQJ9NI=; b=ntI1wtiHn/hqxY+baL8YNU65U85XzX7YVO5tHLbxJGGqXh
+	2FK+Pmne7Iy+kz7fF6RIUTdTO40fJivDQkwesidYjpzrHNkuQu7TtZjtMSwnykAD
+	6tThwNvs735Yv2e+GHHZCX2fhqHddMGYRyOUdG0K7t5XFEoILBUafVp6K1BjsPWQ
+	b0lVDO3WhRp69dDsxbLkXfTnlwfzFLgPDLrcXdxeeQvlxGvgmYiEMtTnWks3Ih3y
+	kzCcOA5QrM2n48GsbCwCNnOjofjG6JDCgbPMmJmCAo/lGpGcmTfOxAtgJ1qEgNZj
+	klzn/ykODUW35LYBo6J1A7aD/NX/qauivvSvHSjA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474cxjjewp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 11:24:52 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55CBOpBR005609;
+	Thu, 12 Jun 2025 11:24:51 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474cxjjewn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 11:24:51 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55C9TMCs022352;
+	Thu, 12 Jun 2025 11:24:50 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4750504k9w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 11:24:50 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55CBOkgj25494242
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Jun 2025 11:24:46 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D0E720040;
+	Thu, 12 Jun 2025 11:24:46 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 70FCF2004B;
+	Thu, 12 Jun 2025 11:24:45 +0000 (GMT)
+Received: from osiris (unknown [9.87.144.171])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 12 Jun 2025 11:24:45 +0000 (GMT)
+Date: Thu, 12 Jun 2025 13:24:44 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Hao Ge <hao.ge@linux.dev>, Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Matt Turner <mattst88@gmail.com>, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-s390@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH 5/5] mm/alloc_tag: add the CONFIG_ARCH_NEEDS_WEAK_PER_CPU
+ macro when statically defining the percpu variable _shared_alloc_tag
+Message-ID: <20250612112444.10868E66-hca@linux.ibm.com>
+References: <cover.1749715979.git.gehao@kylinos.cn>
+ <adcd63180c9492361d929019c60ffa942255988a.1749715979.git.gehao@kylinos.cn>
+ <aEqWjSSLB3TPt9CH@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <938b0969-cace-4998-8e4a-88d445c220b1@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnC2DPuEpoYIcnPQ--.22416S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrW3Zr48Wr4rGF1fGr15urg_yoW3urXEkF
-	yqgrWIga4UX3Z7u343KF45XrZ8Ka18uryUCayUKFnxXFyvva9xuan2q34ftrWrWrWUJFn0
-	9r9ru3yfZwsagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbSfO7UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEqWjSSLB3TPt9CH@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Sv26n7mf3EWJevs8xBu8ADqXhqE1AM8t
+X-Proofpoint-GUID: CogFJVGLtjbrl2bCisizEvHCcJ_c4YH5
+X-Authority-Analysis: v=2.4 cv=fZWty1QF c=1 sm=1 tr=0 ts=684ab904 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=1XWaLZrsAAAA:8 a=uybNw-qwnAclyCFN39wA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA4NiBTYWx0ZWRfXzbs0KW3AiFNP hCFHSWNqOurrf3COjJlIlankl5U4ZnRZHhog94FLrN37KGhTrq8EhfTAhJNXuw3JeBWQmA2Uxee bbvmRBnsQa4Rt0jIdYxDOQWED70MMnvDBaNmNE7vAKAhA4UOWFZYRF87Zab/IFDqGmQxsrZbZfK
+ hU354BsC3OcmSAxGpxBNjwGPS/O2isOcDIOT3fo/TVI5rqnFCEz/FSdJDPT3rQdSMzF48FiP2Oa ChUJDM8sLnH/cNbZKwSbddQre0obvu9do2nnfvjZvI/8rj77f3D1H1jIjx0iVgBOBobBOTtaEE/ JlD9q/FEG8mjmEMmGRwlG7+1dHQbwQULSDCuj3ypfA1NtVmztc4+44lpVH5kT96RV0i5DnJxed8
+ 4onDv6HrjNpMeBJt5SK2NtAN8ZQ72DDetR9Ol1oD052pZJBvA9JaumbZ+QbVRPx86gXc2x6Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506120086
 
-Hi,
+On Thu, Jun 12, 2025 at 11:57:49AM +0300, Mike Rapoport wrote:
+> On Thu, Jun 12, 2025 at 04:27:30PM +0800, Hao Ge wrote:
+> > From: Hao Ge <gehao@kylinos.cn>
+> > 
+> > Recently discovered this entry while checking kallsyms on ARM64:
+> > ffff800083e509c0 D _shared_alloc_tag
+> > 
+> > If CONFIG_ARCH_NEEDS_WEAK_PER_CPU is not defined(it is only defined for
+> > s390 and alpha architectures),there's no need to statically define
+> > the percpu variable _shared_alloc_tag. As the number of CPUs
+> > increases,the wasted memory will grow correspondingly.
+> > 
+> > Enclose the definition of _shared_alloc_tag within the
+> > CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition.
+> > 
+> > Suggested-by: Suren Baghdasaryan <surenb@google.com>
+> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> > ---
+> >  lib/alloc_tag.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> > index c7f602fa7b23..14fd66f26e42 100644
+> > --- a/lib/alloc_tag.c
+> > +++ b/lib/alloc_tag.c
+> > @@ -24,8 +24,10 @@ static bool mem_profiling_support;
+> >  
+> >  static struct codetag_type *alloc_tag_cttype;
+> >  
+> > +#ifdef CONFIG_ARCH_NEEDS_WEAK_PER_CPU
+> 
+> It should be enough to add #ifdef ARCH_NEEDS_WEAK_PER_CPU here instead of
+> all the churn.
 
-在 2025/06/12 17:55, Wang Jinchao 写道:
-> Now that we have the same information, I prefer patch-v1 before 
-> refactoring raid1_reshape,
-> because it’s really simple (only one line) and clearer to show the 
-> backup and restore logic.
-> Another reason is that v2 freezes the RAID longer than v1.
-> Would you like me to provide a v3 patch combining the v2 explanation 
-> with the v1 diff?
-> Thanks for your reviewing.
+That won't work since ARCH_NEEDS_WEAK_PER_CPU is only defined if MODULE is
+also defined, which is not the case for core kernel code like lib/alloc_tag.c.
 
-I don't have preference here, feel free to do this.
-
-BTW, I feel raid1_reshape can be better coding with following：
-
-- covert r1bio_pool to use mempool_create_kmalloc_pool(use create
-instead of init to get rid of the werid assigment);
-- no need to reallocate pool_info;
-- convert raid1_info to use krealloc;
-
-Welcome if you are willing to, otherwise I'll find myself sometime.
-
-Thanks,
-Kuai
-
+As a side note: I'm wondering if s390 still needs ARCH_NEEDS_WEAK_PER_CPU due
+to all the compiler option changes we had recently. But that's a different
+story and independent of this series.
 
