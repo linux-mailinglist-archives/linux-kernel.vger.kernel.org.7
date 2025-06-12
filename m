@@ -1,119 +1,276 @@
-Return-Path: <linux-kernel+bounces-683098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C934AD68F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:25:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91EEAD68ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5035D1884F59
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:26:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7920F16EB98
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC3D21324E;
-	Thu, 12 Jun 2025 07:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C91E5B8A;
+	Thu, 12 Jun 2025 07:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LxVlust5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qjHdRBmR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CMMSupme";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qjHdRBmR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CMMSupme"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E8820D4E1
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A841EB1BF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749713136; cv=none; b=A935eVQhLgF1+IVZPlnGDGLKPTrnx/Q5I8T2v8Kv69eV6NThKHM/5IeoO0clwGpiEifo6pFDNWFM9iRB6+Syyz9Z6eb+eGbWrpU9Pw3PuA3DiHLGPIMPjbSMiGvv8owwEmlwJURgkhhkHXus23N0WxxiubXBNh4VtE4jFhJofi8=
+	t=1749713110; cv=none; b=Y8ZxGTdL0vE0rTeyeGA+thoAgc36dqmcWQGyFk9F8yDn4eGu/g8l7KdgeZi5VA0YtLkbkI3p8x51N8OyWS0uBMzeOWd6YqPmqywE5N08U0zTIixvazrsFNXAM+J5rFnaUZDbvEMq6FmNDjSo1J+BAZtDzHAXEZSvAhJXn+AaBmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749713136; c=relaxed/simple;
-	bh=ur9blTN+fSDyxSNvmsKgVelNyCknt1MsnEQUweyXk10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gZ1/4FYl3vDTGO53ZjgYKrYgXrRM4axvMnXm7gSlLwu8mX9z5cF0Xf1ioxPpMcIxQFy1w3HaCziIuKprT7+E+H5WSiMvX/yRrVxfla4bKtZAjn8CUKoxwWRIfOkhmQo1ZnRuU6UeXhFAWCrnGDrd9klYc0WoO3ECEVLn7HnXluI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LxVlust5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749713133;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1749713110; c=relaxed/simple;
+	bh=JVfMoimik0HVoEucow0mEOx9KNQX3ArpFK7hOiLPg/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ca0PdZDdP5qL2JcB3LqBG5jLXTqHg5UBeBzFtqPNCVy9DO5Q01ZZlI80VDTCsu4Wc03TlzHhvSp71ikJM2UO6Ger+r5EmcL++jRACE+uzNYYjKKf9yCkAvaAdfuANN3tYoGaP6SXCKjMOW+h+ku5QhW10dvh1+7tytxC76d/XPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qjHdRBmR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CMMSupme; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qjHdRBmR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CMMSupme; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 24601211D0;
+	Thu, 12 Jun 2025 07:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749713107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NIFNGdl55UNkNcCSJnLvJTDzJi2fG6iDBcZL44c6Epc=;
-	b=LxVlust5XAOgG1iIvqLkQOOONDikt8XJE7ZlQTdmgYlw0jFM6l+R7JVmFZdCCM79x1sudu
-	lrncj2F5lRobn3vEY/WX51bsMwosK/BG8m3BoATtiHxso9kV0hVrDKS4TPDbqgBpt9HNj4
-	Z7OSDw68eiSuYvV81Mq66PSYCTYat6s=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-M-cs-eR9PTOuq27mDuqclA-1; Thu, 12 Jun 2025 03:25:31 -0400
-X-MC-Unique: M-cs-eR9PTOuq27mDuqclA-1
-X-Mimecast-MFC-AGG-ID: M-cs-eR9PTOuq27mDuqclA_1749713131
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-311d670ad35so691838a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:25:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749713131; x=1750317931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NIFNGdl55UNkNcCSJnLvJTDzJi2fG6iDBcZL44c6Epc=;
-        b=rzQOJCd6lJ8EXnYk7ZQFgnZsZtHTpvIVC2OD86E4b1GiGNA6nLh9YJuEjSDyzw0kCd
-         lj9celxpORuhtRWtKIiYXyVJrF3ejMA9CF/3lD5GGDERCaLZRectN1Y7//6iLEeFz/Fv
-         B4W91kL/T1UL7lVtCw7pwu2at2GLmB8Cc4Hh8cYWJ/PbJtspv/KL32KEV+ki0b07zHi3
-         YTlXxch4I2S1pymP2b76SMyGHB3Cu+ZGkZ40ut2lxw21oo7PMRGSNh61HYLd+S9efzpu
-         4ftxg49qFjhUx0iZUOhvW7ASAy3RNkauZ3W4tydiS5w1AQNfXMFgWsgJedM9QGduxaLR
-         5O6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVlvrBTYchkHYyRiTr4nhBotreqzuDksgabLQ/mEv41EDlznZ5f82ld04VDShQygTzBD0JxNbZ+K7dR+50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUNyC+kcVVDApXpwlM4tEJGP/tEulvtu7ie0cZuTo3rfFy+FxR
-	2c2S0H9G389FjoWWG28trUw3nxyYTT0vgQ7n8GPTitlGUfUHG2UdWudEr59SC50xIfgDCWcI4KZ
-	0r1n/F6ZLoXxXaYoa3j6FCMosXbOXZusi5j6tHXnD0MTaCSNx6zInVEN1ATVnkatz5fe8LG3DuK
-	MuZyg1Vg5oVNiCqTVVSWOxP42EbpZBQQMkJC6Taqmt
-X-Gm-Gg: ASbGncsrTMBqI8jKRMdVQg8EujCQjO21p+lbNRwH2AT6hOl1LHl/Ktu5IkqCEnyTFqt
-	iZk0Q3bYibM0irV2mtN1w8uSuLAY3gmbSQvAEDk3yICnF0qwJCJBrXHAd6eaM0oZIihgI7d91+D
-	a9xw==
-X-Received: by 2002:a17:90b:3a86:b0:312:e9d:4002 with SMTP id 98e67ed59e1d1-313c08d2a7amr2927537a91.28.1749713130829;
-        Thu, 12 Jun 2025 00:25:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsn9cQekYcoWU3hmfR9nZcFgm5yG2fmnWGf0A0tOWhrHNUnC4LDJH9grLMX433snr/rMDLwZSQaKfwa5hMM/g=
-X-Received: by 2002:a17:90b:3a86:b0:312:e9d:4002 with SMTP id
- 98e67ed59e1d1-313c08d2a7amr2927511a91.28.1749713130441; Thu, 12 Jun 2025
- 00:25:30 -0700 (PDT)
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
+	b=qjHdRBmRxnhUwh7+X0EdINyLt2jJwiW7NNeIP70Sc2UA4gYS3JXXUMip8oKSnw4d/7oWn8
+	XzH1kfo162/VJfQHeR7M2FC7EbUB7Ql5qR8OulMMz1GZo5NlsSedOV7SX5rFX9JtJdbhrE
+	wW5HiNl+7pDlgA0PkKxb0saignEoxGw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749713107;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
+	b=CMMSupmeFjHp1XgbAgaYoRKEBgHLBhd2BU3lcTyt4IopnW5PW7m/Jvy4t4HPhOg+CicP/s
+	Dks+nNZFqumN5CAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749713107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
+	b=qjHdRBmRxnhUwh7+X0EdINyLt2jJwiW7NNeIP70Sc2UA4gYS3JXXUMip8oKSnw4d/7oWn8
+	XzH1kfo162/VJfQHeR7M2FC7EbUB7Ql5qR8OulMMz1GZo5NlsSedOV7SX5rFX9JtJdbhrE
+	wW5HiNl+7pDlgA0PkKxb0saignEoxGw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749713107;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
+	b=CMMSupmeFjHp1XgbAgaYoRKEBgHLBhd2BU3lcTyt4IopnW5PW7m/Jvy4t4HPhOg+CicP/s
+	Dks+nNZFqumN5CAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8C78139E2;
+	Thu, 12 Jun 2025 07:25:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8gIMKNKASmgYGgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 12 Jun 2025 07:25:06 +0000
+Message-ID: <370634b8-b872-4bdb-8514-4f011a4a1a46@suse.de>
+Date: Thu, 12 Jun 2025 09:25:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606115012.1331551-1-eperezma@redhat.com> <20250606115012.1331551-6-eperezma@redhat.com>
- <CACGkMEsoC9g5j+GDaQGaRdGZXaCorfgP7mdhsk3cOg4BFnCcpA@mail.gmail.com>
-In-Reply-To: <CACGkMEsoC9g5j+GDaQGaRdGZXaCorfgP7mdhsk3cOg4BFnCcpA@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Thu, 12 Jun 2025 09:24:54 +0200
-X-Gm-Features: AX0GCFvci-W3cksqXjkQxoSVAR1GDsfAe_M9pONGx-R3lnQEy3g31a2aAJARTwk
-Message-ID: <CAJaqyWe_R_59mm1i3UE=MmrVfYCQsqP5=EvHC6Ax234zibFZew@mail.gmail.com>
-Subject: Re: [RFC 5/6] vduse: reset group asid in reset
-To: Jason Wang <jasowang@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
-	linux-kernel@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel
+ memory framebuffers
+To: Michael Kelley <mhklinux@outlook.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: David Hildenbrand <david@redhat.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "deller@gmx.de" <deller@gmx.de>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "weh@microsoft.com" <weh@microsoft.com>, "hch@lst.de" <hch@lst.de>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <20250523161522.409504-1-mhklinux@outlook.com>
+ <20250523161522.409504-4-mhklinux@outlook.com>
+ <de0f2cb8-aed6-436f-b55e-d3f7b3fe6d81@redhat.com>
+ <SN6PR02MB41573C075152ECD8428CAF5ED46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <c0b91a50-d3e7-44f9-b9c5-9c3b29639428@suse.de>
+ <SN6PR02MB4157871127ED95AD24EDF96DD46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <9a93813c-4d7c-45ef-b5a2-0ad37e7a078a@suse.de>
+ <aEBcCjMWZJgbsRas@phenom.ffwll.local>
+ <SN6PR02MB415702B00D6D52B0EE962C98D46CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <154aa365-0e27-458c-b801-62fd1cbfa169@suse.de>
+ <SN6PR02MB4157F630284939E084486AFED46FA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB41579713B557A32674252865D475A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <SN6PR02MB41579713B557A32674252865D475A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de,outlook.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[outlook.com,ffwll.ch];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,ffwll.ch,gmx.de,microsoft.com,kernel.org,linux-foundation.org,lst.de,lists.freedesktop.org,vger.kernel.org,kvack.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Level: 
 
-On Thu, Jun 12, 2025 at 2:33=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
+Hi
+
+Am 12.06.25 um 01:18 schrieb Michael Kelley:
+> From: Michael Kelley Sent: Thursday, June 5, 2025 10:39 AM
+>> From: Thomas Zimmermann <tzimmermann@suse.de> Sent: Thursday, June 5, 2025
+>> 8:36 AM
+>>> Hi
+>>>
+>>> Am 04.06.25 um 23:43 schrieb Michael Kelley:
+>>> [...]
+>>>> Nonetheless, there's an underlying issue. A main cause of the difference
+>>>> is the number of messages to Hyper-V to update dirty regions. With
+>>>> hyperv_fb using deferred I/O, the messages are limited 20/second, so
+>>>> the total number of messages to Hyper-V is about 480. But hyperv_drm
+>>>> appears to send 3 messages to Hyper-V for each line of output, or a total of
+>>>> about 3,000,000 messages (~90K/second). That's a lot of additional load
+>>>> on the Hyper-V host, and it adds the 10 seconds of additional elapsed
+>>>> time seen in the guest. There also this ugly output in dmesg because the
+>>>> ring buffer for sending messages to the Hyper-V host gets full -- Hyper-V
+>>>> doesn't always keep up, at least not on my local laptop where I'm
+>>>> testing:
+>>>>
+>>>> [12574.327615] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12574.327684] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12574.327760] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12574.327841] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12597.016128] hyperv_sendpacket: 6211 callbacks suppressed
+>>>> [12597.016133] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12597.016172] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12597.016220] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> [12597.016267] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
+>>> *ERROR* Unable to send packet via vmbus; error -11
+>>>> hyperv_drm could be fixed to not output the ugly messages, but there's
+>>>> still the underlying issue of overrunning the ring buffer, and excessively
+>>>> hammering on the host. If we could get hyperv_drm doing deferred I/O, I
+>>>> would feel much better about going full-on with deprecating hyperv_fb.
+>>> I try to address the problem with the patches at
+>>>
+>>> https://lore.kernel.org/dri-devel/20250605152637.98493-1-
+>> tzimmermann@suse.de/
+>>> Testing and feedback is much appreciated.
+>>>
+>> Nice!
+>>
+>> I ran the same test case with your patches, and everything works well. The
+>> hyperv_drm numbers are now pretty much the same as the hyperv_fb
+>> numbers for both elapsed time and system CPU time -- within a few percent.
+>> For hyperv_drm, there's no longer a gap in the elapsed time and system
+>> CPU time. No errors due to the guest-to-host ring buffer being full. Total
+>> messages to Hyper-V for hyperv_drm are now a few hundred instead of 3M.
+>> The hyperv_drm message count is still a little higher than for hyperv_fb,
+>> presumably because the simulated vblank rate in hyperv_drm is higher than
+>> the 20 Hz rate used by hyperv_fb deferred I/O. But the overall numbers are
+>> small enough that the difference is in the noise. Question: what is the default
+>> value for the simulated vblank rate? Just curious ...
+>>
+> FYI, I'm seeing this message occasionally when running with your simulated
+> vblank code and hyperv_drm:
 >
-> On Fri, Jun 6, 2025 at 7:50=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redha=
-t.com> wrote:
-> >
-> > Is the expected behavior with vdpa_sim and mlx.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
+> [90920.128278] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] vblank timer overrun
 >
-> Should we squash this into patch 3?
+> "Occasionally" is about a dozen occurrences over the last day or so. I can't
+> yet correlate to any particular activity in the VM. The graphics console has
+> not been very busy.
+
+Thanks for the report. It can happen that the vblank timer is handled 
+late. It's not strictly an error as the whole thing is best-effort 
+anyway. Maybe the timeout could be adjusted.
+
+Best regards
+Thomas
+
+>
+> Michael
 >
 
-I agree, I'll do it for the next series. Thanks!
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
