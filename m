@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-683131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E973AD6969
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95BAAD6972
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4BEB7A936E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C4C3AEF7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D08F2144C7;
-	Thu, 12 Jun 2025 07:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9B922069F;
+	Thu, 12 Jun 2025 07:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XLE31jFq"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JGnb1JkT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8589280BEC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C4921FF2B;
+	Thu, 12 Jun 2025 07:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749714445; cv=none; b=FCC+CUWCz8sKqFuiE1X6vhLGTnK004P/bowSe5mlHQZzSxhdlPyiym7QQv0ugIOOFXQUQg4NeTzh8rofHLSy9ke8ewtHy9nxhvuKjjSPFYaNP7H38LFLtK/n+8WADHdo1tjQGAU9DN/IoTDmQFR9u4ty4h/XQzQI6YYgxotN2U8=
+	t=1749714530; cv=none; b=esFhdazeoa0EzK+RDx83ueookVTRcaU5nTf/um6QWMPMjeW74PJmW4c8Pp+7OuUN523cnPttJ16YGOS9k84tDUwQc3XpjqFTWYblY7+pWMR1rgsDBzo9V2eZEhfGMo1JjNsOepP/Gsn62JmWumPj1Cu5AawHljlhGOllPwflslI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749714445; c=relaxed/simple;
-	bh=fc6bfP0xgbtbQmbfYLX34eWUky+PFXXuaWFAKjBvay4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nvB5q4aS2JAV1louxWikm/74KdYbjvT9WQlk/APiFek6RwoEKWsP2FQwU+c8A+BimLIc6uYehTb5/+1yD9dPCRJI2PEBuDJ+MBt32nOtjNH5wudKHqI6nBBtTVmhZYMbPT12bhB5eMi9dyOqOUMr3uRyRWoP4oWzIZZMBhEU34o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XLE31jFq; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32a806ef504so5885441fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749714441; x=1750319241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WD2/H5DRIQn2qUXSHtWj5zcgfuXeOq1gBJm8OtnThSc=;
-        b=XLE31jFqhS2ZiVsl8xD2WYRzldVJSQxIZAs2xPF9ZznXQ81BFQ/sX9/WWj3EB58YZ7
-         TqZn4piRAK7TO+dyT1ReGWfWncrdjyuv98wQdTYwJz8rFG+BvhGbSUcXFLr377/MTE76
-         tobHCj57L5KYyKinjPCLWht2/JynnQzF8nyS7wsh3FbeoI3QHxPv4Zmf5fvf7UlCMBzN
-         40L44K0l8o9Xxj9v2ORwpWVdJYqi9NPsTI/2EWnf+Au43v3IFN2BldIdhNFdq671WDGO
-         Fa+Z8jqxiGZZUU6zeer8kCIfm1PO9ImpMoTyBc0+ipOcfccms/fbb9Bl0IyEFdWChwrI
-         4tIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749714441; x=1750319241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WD2/H5DRIQn2qUXSHtWj5zcgfuXeOq1gBJm8OtnThSc=;
-        b=FpcsZv+X1JM/psXYCPni1VySZq2RcDM/VUnlp3rtIIvX52gk00Geoz9lPPD2rSsy/p
-         w1D629gUqazusD1MHW/Qe2NwESEUv+vSNKD/2n1/YOHgEuHDl6+v3/56KJchGYHwgcis
-         1eUPWUbXj7+8aX2jZMx2Nga9RymdmmHIxAygEeyBhlgyBZFMQlmcnqriGWvYkuhBl3iD
-         Rr93yVhh8pihmboEJQYwN6Sy7USwdac+D8/OlgKdDg4LrN6ENHlcZiohhyEGvd3jg0px
-         aou2tJRZAV490GWagFOlBH0XpKzxDc0eS7fgROyzj5gW8KS6r8qCpGlaUUKDgtzqD1ad
-         ZPxQ==
-X-Gm-Message-State: AOJu0YxxZVYx/Lu69JXlpNPrAZrIhEi4S+efPi4OTBpSLg/DCdgqE5iO
-	h9OzF5cWhrKTSFyv3FXmGy3FgT1nY++kiy+vH61kEjcSpY0nqX50+KOOUJAw9TewfPDvevQTW+D
-	926lwMQ0ZRps9dUU0h+h2apg4+VReyYiITmUg+ep6xQ==
-X-Gm-Gg: ASbGnctKVUcisbqRDHm0n7CB2MAWY3NblCNN131jd18u6IVZMt/xa51MHYBd988NtSl
-	G3fRzfqkD9c4CoZpqqErkB2wx9KotI3JRp35dISFiV17RFZQU2mR2MJE6lvpxBVFg5M7dPzraVq
-	rYpdeQQH/dfoai8c872/Cb7hhN9iGmnwiXB8tHDngzkm9UKdsO+CwFXaWU1d9WezcihlKv7x2f4
-	j/l
-X-Google-Smtp-Source: AGHT+IEHaC0Jlu68E77dZWFt2uo6Ms70mzERgW2HTSHU45uJ9pkeuPurHtzvRIcJTAaiAlTUyhARN820Cq//8P/5SjA=
-X-Received: by 2002:a2e:a552:0:b0:32a:943d:e43 with SMTP id
- 38308e7fff4ca-32b326c56e7mr6013101fa.22.1749714441418; Thu, 12 Jun 2025
- 00:47:21 -0700 (PDT)
+	s=arc-20240116; t=1749714530; c=relaxed/simple;
+	bh=pGrWzWrpTEMKsYBNAeH/vQhaAU86ivNDkNoEIlv2dK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e6Nwaf5FufHEV7EcwLGIJ0/aDYOsCgOUD8jKshtFJeb1viqlVC+9oV+N98i/FsMYVF+bz+705DgBqF5f+wij9DgewGsUlA23brKlfvIWa04j6lUXr6gfH+vVKd8iaEmTISBZVIlb9kxIRK0sGymiJF/pvmgsQABrUSH4B8j9e3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JGnb1JkT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1749714526;
+	bh=pGrWzWrpTEMKsYBNAeH/vQhaAU86ivNDkNoEIlv2dK4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JGnb1JkTrhRE4lAyZDaBEsGAHx1F+prufkguqK3N+O+KmjNLCUIcOxcm2sqdVN+vv
+	 sjf3f17/UWcHfYmIxdJuZov1N3BG8LETCrvroKO83MclK4x6l70sw+cq1xJKrgQBsm
+	 tFg0pzly3ttHGPO66I2nSu8qIBSlZBK1sKNLj1f1bSUhZEV85GTj9zwUz+hIHELVyi
+	 8ARQo7lJWX3kmOLWc1pphgaZyv5tPF2TFqQPoWf6gQ2befgHBX4nObvKg2nfmzlEFs
+	 9SuinJxCcoIZxYTu7wRa6AaF1retQk+UEhGwhCBQaRkPH8cl0cyAOYxqy5X7FmRVwy
+	 2dmnTodz3GglQ==
+Received: from [192.168.1.90] (unknown [212.93.144.165])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id ADEB017E00A3;
+	Thu, 12 Jun 2025 09:48:45 +0200 (CEST)
+Message-ID: <644a7d9d-c2b4-412f-ab6c-860f5fae3676@collabora.com>
+Date: Thu, 12 Jun 2025 10:48:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611131438.651493-1-marco.crivellari@suse.com>
- <20250611131438.651493-2-marco.crivellari@suse.com> <aEntuUxOGU1DA7Fu@slm.duckdns.org>
-In-Reply-To: <aEntuUxOGU1DA7Fu@slm.duckdns.org>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Thu, 12 Jun 2025 09:47:10 +0200
-X-Gm-Features: AX0GCFuv68hn1XWuYdQ_AeP6QoRxbac7nMI3j4biPyCM70oo7w-ZnUqZAdEITnE
-Message-ID: <CAAofZF7ThUEqdg4sGe+LjxgH8VDn_BBVQqbagycGTQE1cECF6g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] Workqueue: add system_percpu_wq and system_dfl_wq
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ALSA: usb-audio: Convert comma to semicolon
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Chen Ni <nichen@iscas.ac.cn>, perex@perex.cz, tiwai@suse.com,
+ franta-linux@frantovo.cz, lina+kernel@asahilina.net, livvy@base.nu,
+ sstistrup@gmail.com, s@srd.tw, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250612060228.1518028-1-nichen@iscas.ac.cn>
+ <87ikl1v4cj.wl-tiwai@suse.de>
+ <b8f6fb15-cc77-41c5-b362-70cfd6be6f37@collabora.com>
+ <87ecvpv2mf.wl-tiwai@suse.de>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <87ecvpv2mf.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Yes, sorry, I messed up with the rebase.
-Already fixed for the new version.
+On 6/12/25 10:30 AM, Takashi Iwai wrote:
+> On Thu, 12 Jun 2025 09:22:36 +0200,
+> Cristian Ciocaltea wrote:
+>>
+>> On 6/12/25 9:52 AM, Takashi Iwai wrote:
+>>> On Thu, 12 Jun 2025 08:02:28 +0200,
+>>> Chen Ni wrote:
+>>>>
+>>>> Replace comma between expressions with semicolons.
+>>>>
+>>>> Using a ',' in place of a ';' can have unintended side effects.
+>>>> Although that is not the case here, it is seems best to use ';'
+>>>> unless ',' is intended.
+>>>>
+>>>> Found by inspection.
+>>>> No functional change intended.
+>>>> Compile tested only.
+>>>>
+>>>> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+>>>
+>>> Thanks, applied now.
+>>>
+>>> At the next time, though, it'd be appreciated if you can put the
+>>> proper Fixes tag.
+>>
+>> Considering this is not really a functional change, I think a 
+>> Fixes tag would trigger an unnecessary backport, wouldn't it?
+> 
+> If it were in the old released kernels, I wouldn't be bothered,
+> either.  But this is still in staging for the next, and having Fixes
+> tag will help to track if someone tries to backport patches.
+> Otherwise the code differs and may give conflicts in further
+> backports.
 
-Thanks.
+Oh, indeed, thanks for pointing this out!
 
-
-
-On Wed, Jun 11, 2025 at 10:57=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> On Wed, Jun 11, 2025 at 03:14:30PM +0200, Marco Crivellari wrote:
-> > -extern struct workqueue_struct *system_wq;
-> > +extern struct workqueue_struct *system_wq; /* use system_percpu_wq, th=
-is will be removed */
-> > +extern struct workqueue_struct *system_percpu_wq;
-> >  extern struct workqueue_struct *system_highpri_wq;
-> >  extern struct workqueue_struct *system_long_wq;
-> >  extern struct workqueue_struct *system_unbound_wq;
-> > +extern struct workqueue_struct *system_dfl_wq;
->
-> This patch is just adding the extern decls. Shouldn't these be created?
->
-> Thanks.
->
-> --
-> tejun
-
-
-
---
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
+Regards,
+Cristian
 
