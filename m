@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-684266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8D2AD7863
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EE1AD7866
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDCC3B0C31
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:38:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171C8188AF8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8919529A9C3;
-	Thu, 12 Jun 2025 16:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CD229AAEC;
+	Thu, 12 Jun 2025 16:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IIcrjN4n"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06A279D2;
-	Thu, 12 Jun 2025 16:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nnqA2QU0"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9052F4328;
+	Thu, 12 Jun 2025 16:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749746305; cv=none; b=jRLLlqtMVJEjUVtdfkt6m6yC305Nfeut9nTyC8nHgJW9o8p0nFIDoUIi+Y2nKGV1KnrmMJyw8gz5VWhqjJK5toAsQAFYt2QHexhi9Nqa/dSaBKUrNfVSkKIvYNXxbpDMh9y1gVKKYg7wBt+Ad0hzQsD3y0CC67Au20ZlT0h85k8=
+	t=1749746512; cv=none; b=HxXh/ATH6UKKy9LmGpsYfUgZqCJij8260xheVffJyqCBUIf65eLNU6sbo8ctXD73WTmRn2IWhHrQhdZFZ7jO9R/vyjBw2kSNsiK9fdAd6fTd4zhsEC3MAPrLtpXxzs9cjPVAn6vAzsS4XACsfMjEqtQYOWaLuJVMmzhd79wk7yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749746305; c=relaxed/simple;
-	bh=KYVFWLl+65htoJPS0/qLvXuh6nSvRnMY9ovcb5uW6m0=;
+	s=arc-20240116; t=1749746512; c=relaxed/simple;
+	bh=5t+OfqRxBNY0otd+hCK8+p6HJn7sVOoMugiU6orqbPU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjtInvEvou5SJ2lyngVtVscB4WvS1OID6DTgRYshq+UHjVi5jMqMVbUMe355+Fwrbn2pK+Z77pmd4bdwzTReDUPVbWpGBu3TO4WfmCXHkDuQnZ9LGHV3IrhqjBFXHZhd+HT6m05gNFiQWX6KqhcA7yvsA0+MXc6OlpEgFGXfrUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IIcrjN4n; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=aGDZFMgTvME7pRVCtWm3yOWZ2QscL3IKAWvsAAk139M=;
-	b=IIcrjN4nkiCHVp2PRnt30XAPgsQtIfdzPuaFiTlM+fEWNX18F7SO0buiTEe90y
-	ivoFZ7exTXyzah/BFVF+brf1qiW+cROvXXh4+vhwtF3rG0jJp0IRdD76dy7+i1l3
-	DE3mIbX+SqZcid284RprFFczakKEqtFMERhVeQWmWEX60=
-Received: from [192.168.71.94] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHLdFmAktoRwcuHw--.37158S2;
-	Fri, 13 Jun 2025 00:37:58 +0800 (CST)
-Message-ID: <e218509e-50f4-4c30-b52a-a53263ebe394@163.com>
-Date: Fri, 13 Jun 2025 00:37:57 +0800
+	 In-Reply-To:Content-Type; b=R6dLMhCOTq3GweOha1/1EeS+jgq14QioixpbzEduQvNaD9YaE1yeMoKO95ScUHpAoQnhZuXvMOLQLdbSON8rixD9v5itpd6dVJG1J0p06eo3/jCka9jruy3MYYVZqzJUySY4ubFKW8dh+4tU4BcsW8618PD5EYH7GyrNBDb9uRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nnqA2QU0; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.14.36] (unknown [70.37.26.35])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C08C5201C775;
+	Thu, 12 Jun 2025 09:41:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C08C5201C775
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1749746505;
+	bh=rAURiPYzIbhtzpwq01PbrWPnhV9LWw4IG8DX+DBis4Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nnqA2QU0+L6Ka+53mgsErhf9aWZLvAG5xLwXHN5bA3B4jzTCWA1ZnQq1u42dJXLEb
+	 cTwA5pvgcwMsRvkoQWw2tbnGY/9hanhK0QR8lgC8lFpkBHyqw7pQcYFq003Tzpdydr
+	 +BlL/6BByrj2Cfnn75jq8R2ZXTt6Xhh8pJcUu/pg=
+Message-ID: <57ad1095-89ba-4044-91ce-1ab37bcc79dd@linux.microsoft.com>
+Date: Thu, 12 Jun 2025 09:41:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,56 +48,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: tegra: Add missing kernel-doc for dma_dev member
-To: ldewangan@nvidia.com, andi.shyti@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com
-Cc: digetx@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, hans.zhang@cixtech.com
-References: <20250522163814.399630-1-18255117159@163.com>
+Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
+ shyamsaini@linux.microsoft.com, code@tyhicks.com, Okaya@kernel.org,
+ bhelgaas@google.com, linux-kernel@vger.kernel.org
+References: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
+ <aEj3kAy5bOXPA_1O@infradead.org> <aEku4RTXT-uitUSi@ryzen>
+ <1ccbaac5-7866-42f6-b324-cb9e851579e6@linux.microsoft.com>
+ <aEp0N2RNh1szW1Xy@infradead.org>
 Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250522163814.399630-1-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Graham Whyte <grwhyte@linux.microsoft.com>
+In-Reply-To: <aEp0N2RNh1szW1Xy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDHLdFmAktoRwcuHw--.37158S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7XFy7KF4xWFWkuFWDGw13XFb_yoW8Jr17pa
-	yxCFW0yw1Utayj93W7Xr4UurW5Jw4rXayUGwnIywnYvanxt34kJF12gFyruFs5Gr9Fvw4x
-	t3yUt3WfC3WjvFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRA9N3UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwhqo2hK-6FNOgAAsJ
 
-Hi all,
 
-Gentle ping.
 
-Best regards,
-Hans
+On 6/11/2025 11:31 PM, Christoph Hellwig wrote:
+> On Wed, Jun 11, 2025 at 01:08:21PM -0700, Graham Whyte wrote:
+>> We can ask our HW engineers to implement function readiness but we need
+>> to be able to support exiting products, hence why posting it as a quirk.
+> 
+> Your report sounds like it works perfectly fine, it's just that you
+> want to reduce the delay.  For that you'll need to stick to the standard
+> methods instead of adding quirks, which are for buggy hardware that does
+> not otherwise work.
 
-On 2025/5/23 00:38, Hans Zhang wrote:
-> Fix the kernel-doc warning by describing the 'dma_dev' member in
-> the tegra_i2c_dev struct.  This resolves the compilation warning:
-> 
-> drivers/i2c/busses/i2c-tegra.c:297: warning: Function parameter or struct member 'dma_dev' not described in 'tegra_i2c_dev'
-> 
-> Fixes: cdbf26251d3b ("i2c: tegra: Allocate DMA memory for DMA engine")
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 87976e99e6d0..07bb1e7e84cc 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -253,6 +253,7 @@ struct tegra_i2c_hw_feature {
->    * @dma_phys: handle to DMA resources
->    * @dma_buf: pointer to allocated DMA buffer
->    * @dma_buf_size: DMA buffer size
-> + * @dma_dev: DMA device used for transfers
->    * @dma_mode: indicates active DMA transfer
->    * @dma_complete: DMA completion notifier
->    * @atomic_mode: indicates active atomic transfer
-> 
-> base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+Bjorn, what would you recommend as next steps here?
 
 
