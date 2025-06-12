@@ -1,469 +1,302 @@
-Return-Path: <linux-kernel+bounces-683099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAA8AD6901
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:29:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12454AD6807
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70B3179B2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9237A7A07
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E6420E021;
-	Thu, 12 Jun 2025 07:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12E31F3BAE;
+	Thu, 12 Jun 2025 06:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSv5Szs+"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PPWCls6E"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95C079E1;
-	Thu, 12 Jun 2025 07:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553951F0E2D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749713347; cv=none; b=XdnOFnpjsWA3c+h6yO3W6chm2R2J9U9hkisFWDIJJFvu04teqPiZOvYSWqwzX6/e+QEtzlAsqWbLPlE9s2R2THEkkwQZH8++LjdFhNKXCGFye6ETVLpjcauM6VYOurmeIO4awUA/3wNIbr9almUxlnPIjDy1GqB56gxJNlR1PD4=
+	t=1749709881; cv=none; b=sTOgm9dQaGQENPF1wbQou5Y/ech8AJbuH4kNMeWPgDs8ncknWLZoQHNynZCzzcUrU/5OKG1X2D+sgCsfZXmpDlUGRFDLB9rAkGJwvxy384Rdm5XT01T9WLhiL/k9bfn+cTg7dea+VhoYeT7AokeKR9oFEYfdpIfohlNJNmMHnQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749713347; c=relaxed/simple;
-	bh=X0FTrp/R/lIegGoDUVzTjr6HANWCJx4bamhehvKO4eU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ND0+rCYSE8wa/4uddmaRfS47HYyFzt2qJi5iK7Rf0N4dvVKb0oZyI2DO19y/vw9woxoAaSEBI1Aolr6MPWn/twBkWVOBy21EG2/kN31R6FJj9EVUM/HRDq3cTKaqPTHoSSc7f3noevLcLf3Ad1d6wzrszWs9raILzfcUiJ9peZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSv5Szs+; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cf214200so5140035e9.1;
-        Thu, 12 Jun 2025 00:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749713344; x=1750318144; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=k5rsRc3oaJQ0aUQI/xHoM1EtK1DWZnKKYa3+PrwYcGA=;
-        b=aSv5Szs+ceRAQ0/Z867Yameq+S1edvF4FJsM0emjQLLnujCtVZn8iMjOsCn/U0rbXB
-         WDMS/FEB0toOxHJGcwnmk75WtbMD3rkUIMfVhneJHRK3L3eIUh73pjXHQc5cDooMi1I9
-         fs1HNLBjIj6CqWkcEzATVhyH1AOSZjPDoewsZ8i0pU4Vrygq8Rf+gM4eL9vO7juDZi1D
-         fBj6xt0Qw/l9gnvyJ6QQtc8AN3Rq9fpKqfI/qdnTiYrz7w5rxo/LjN0vWj8LzhjeIUAM
-         9FIF1sMYAV2W1Coc4VqFYmPw7ZLjVvK1M17dRtURuhljhFJK0YT0eS9meHGnVhJq/BKS
-         RbNA==
+	s=arc-20240116; t=1749709881; c=relaxed/simple;
+	bh=uVP9puXoIew/Ys15nmcdCzBtIRCr9QIJfdWgIpcR6wI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7+jUNSq5s2gt26dFwo2NyBeTG7dx9/CpULY0D5hwTC2xpfHJzOaWr/4T7c+RwBoBgqnOfIavhYSrA4WB2PWKfLCA2CJNCOHaXJJxl2I0lx8GZPyLe7k8Gg+UVsDSrum07vKpDWp6pfpJA1T4FGJ3yKHfSpqD68tWg+0tnxACNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PPWCls6E; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749709878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u3UuqHSkhoCWjsmKvKZgvB4q0ePA6YJ5VWAJGZfkLJg=;
+	b=PPWCls6EuOVxzAFB+j1IZ0fPpQBEWlxXEAsN28azayMSpndqgg0AA5KX/XTH7fAPUJ6klc
+	aNeDOp6+TCThUlSQlv6fEmVCd6P4FREx1g1VZi2cREvPid0KLWTjoT9zhlzw2BMkGUtqHl
+	Gz+Mnb23TPTTuG/W+gW/qIxOoISEhh8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-640-lrylldFFMD6Ed-d0yrcXNQ-1; Thu, 12 Jun 2025 02:31:16 -0400
+X-MC-Unique: lrylldFFMD6Ed-d0yrcXNQ-1
+X-Mimecast-MFC-AGG-ID: lrylldFFMD6Ed-d0yrcXNQ_1749709875
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-450d50eacafso2968005e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 23:31:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749713344; x=1750318144;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k5rsRc3oaJQ0aUQI/xHoM1EtK1DWZnKKYa3+PrwYcGA=;
-        b=Q8LkX4rf30mNH8oJbgKkyVI+XROVYBVEwtKPBaY1db0qw25cWYft+CoRY4MQyVSikG
-         Oba/9Le30aoRhaqIfEotBgjnLPgYJTPL0GwujK6Qg5HRzJm1i29/DjiPeFVHxBQFFJ5z
-         32hfehbPbSlK8Umhg0FVx5zME5jujEfJ/gxcVlafngfbvx4gaZTHG1k1aAYiVfMANIK/
-         4f6S3Wejw1KEV/OUFYwQ6EDyG0jyzA4Hi8qQ7EQ12Y9hnNeNvC6PV5+lFbOatEy0lUvQ
-         emVYT/YCGjZMLiBrQ42uGv/TDlUEB2mbxibiLCCkOlk8O4WQNrZ01HpliNdGxAUUyYg8
-         xNKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIX3uIfTGQUQ0DbQf5gPHshUfwXGPwYzgAYy6pouVQN5nS3yu//sxbsWUBd3zuqSori1XcoHJCDlX1QU4w@vger.kernel.org, AJvYcCXaCAdL/KXZfirKeGAetDZ4wl7l5GXWxnftmth1zoJn03F5xIofDbBREvqk7YKMrchT2sqgxKInVWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7WIJuGd/Mh9gfnblyiYn4/XuecqGD2dFk74EkqHUu4jyyxI4c
-	b9JEToT9xEgj2UpF2M1cKgVs2uMfNX0pbzgvlTnPXMaIXi2EylWq7MtC
-X-Gm-Gg: ASbGncu23bYzWvfbsix5qmpG3BRDm3TOkYHGuna6Iy152FuHi1YEbH1cWnUn+9EMBcY
-	ghwxyRp7LLhYDd9CUoDERm5Krf0vVja4gxlq0iKjLGpmLObYNIHZ+hOWiuTUSiuOzPqA2YlOtki
-	Tn007YAEO1qNh9aeJU0xOC848unpYlOhZiUevC47gveRTKsh2yxDoFdz/XHMkg8Fnd2C4711ATP
-	Sknbv22tEJ9pcYKKXeQkRRaxmOMWZkUzbyx7zjQdN2Zu7XXr/GQteYdpLF7uAiB940RMCimWVCF
-	YfQaB8qfVhyoDtVuPwuKCxuYnIdT1Otw9dAqcclGzUGbQAaE3yuRrrQaPSVN76uaunE8DPcPStn
-	MQyH4hks7ozputkma2f86tlBx1Wf+OA9Aitqn
-X-Google-Smtp-Source: AGHT+IEh8KrU6+FfhTEntGxofDae6xv4P3kTFmAzBGjC94QSPtuH4F1ePSrPaFbPyNtsQ5r0arMXSA==
-X-Received: by 2002:a05:6000:2086:b0:3a4:e6c6:b8bf with SMTP id ffacd0b85a97d-3a56080ac65mr1853632f8f.52.1749713343769;
-        Thu, 12 Jun 2025 00:29:03 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561b510dfsm1091528f8f.82.2025.06.12.00.29.02
+        d=1e100.net; s=20230601; t=1749709875; x=1750314675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u3UuqHSkhoCWjsmKvKZgvB4q0ePA6YJ5VWAJGZfkLJg=;
+        b=unU1RZQMLWGpXaAsg4QgB/uf6wIFHtEUR5CXGiZ0YsbpYznBzH8704wnDUdnuikKFH
+         oCuE6Vvkm2xg/Kb6yk+4KEmR8JsUz3xqEr0w1XgjBz7+Jab95raP2FjOpjb3eCsMIa8R
+         eH73O8was+hBalHX4Hy770U3pHIFG/SQcOcd4SxKKfGboUjmk5kflRbW+us6GX+/whv9
+         KMicaCHmO/GTM7Y8QjQ745ZK1Pd378GEPDCzaBjHjwPsOU+P2oRmPfpy9uUDhZlqsMQg
+         j3cl8/plQDGk26MRaUXNcs48eBxADZD4/PQS6lFmlQClSsjGdxIvDi3k1Gk2S/S65JaV
+         lvDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDNQol25+FJB/nGtWvaHs9NQ1bh3ANXE2qKEb0n/B0hUZlWVh6zALAVtXMXA+YXi0yq88vHyD2vXGKK8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwSDF81TagI1FohGonzceOBPCeMYYCnKgIPliAkK9cWezpU56Z
+	pAhDsGzmWRZ+oNJ65iAVFqeOAq18PFZKrKvS0B0RngPYKjt1gokHbmyH/Gdvr+bhCp8u5k920wR
+	PfUfl6FCmMXBC+DrCK+FsahMSZ9L3wX4nTixG8aeVRWXSXug/YAgHWMdHYO3SuglWjA==
+X-Gm-Gg: ASbGncvyp/jZz5AQ3B8UzXATmX+6TLs+8NGNxrnA5PbLm6fHEfs7xysft+mtdxJ0ReH
+	xy8Asb7tkCCy85pCPO1Jwv3CIrRIRRKajM1+UB3i5d5VCmi6URAYhl/cH7sJUGjajFF3TP2PFUL
+	5ODzr2uYBBRHn6uFR+5iFq23/gYDqRFcTkX7LvqXA/nnK68Mf/dWrDXjo7oC1h2tqpg81mWJ9xy
+	YqwaHul/jbn498ZeTlqU4MqfAFeuDQajNY2Co8mAbJHNTgzUKQAB5Wc2OEiAovgimVQXUhGzOEA
+	/aNJKNtdc93nOziY
+X-Received: by 2002:a05:600c:4f06:b0:453:608:a18b with SMTP id 5b1f17b1804b1-4532b28d858mr24218465e9.9.1749709875305;
+        Wed, 11 Jun 2025 23:31:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG42kNG+HqM89NPvBcNZFAzJ3Vn7GxaF9vIvrfn2F0Rh/ycFiYHni3pyzMMLUuiDLbmUb5Kuw==
+X-Received: by 2002:a05:600c:4f06:b0:453:608:a18b with SMTP id 5b1f17b1804b1-4532b28d858mr24218175e9.9.1749709874848;
+        Wed, 11 Jun 2025 23:31:14 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e24155bsm10020445e9.17.2025.06.11.23.31.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 00:29:03 -0700 (PDT)
-Message-ID: <84643f3fc87425e8c5019eede275791a20872b6b.camel@gmail.com>
-Subject: Re: [PATCH v5 2/3] iio: accel: sca3000: replace usages of internal
- read data helpers by spi helpers
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Andrew Ijano <andrew.ijano@gmail.com>, jic23@kernel.org
-Cc: andrew.lopes@alumni.usp.br, gustavobastos@usp.br, dlechner@baylibre.com,
-  nuno.sa@analog.com, andy@kernel.org, jstephan@baylibre.com, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 12 Jun 2025 07:29:35 +0100
-In-Reply-To: <20250611194648.18133-3-andrew.lopes@alumni.usp.br>
-References: <20250611194648.18133-1-andrew.lopes@alumni.usp.br>
-	 <20250611194648.18133-3-andrew.lopes@alumni.usp.br>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        Wed, 11 Jun 2025 23:31:14 -0700 (PDT)
+Date: Thu, 12 Jun 2025 02:31:12 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Cindy Lu <lulu@redhat.com>
+Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v11 3/3] vhost: Add configuration controls for vhost
+ worker's mode
+Message-ID: <20250612022053-mutt-send-email-mst@kernel.org>
+References: <20250609073430.442159-1-lulu@redhat.com>
+ <20250609073430.442159-4-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609073430.442159-4-lulu@redhat.com>
 
-On Wed, 2025-06-11 at 16:39 -0300, Andrew Ijano wrote:
-> Remove usages of sca3000_read_data() and sca3000_read_data_short()
-> functions, replacing it by spi_w8r8() and spi_w8r16be() helpers. Just
-> one case that reads large buffers is left using an internal helper.
->=20
-> This is an old driver that was not making full use of the newer
-> infrastructure.
->=20
-> Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
-> Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
-> Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
-> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+On Mon, Jun 09, 2025 at 03:33:09PM +0800, Cindy Lu wrote:
+> This patch introduces functionality to control the vhost worker mode:
+> 
+> - Add two new IOCTLs:
+>   * VHOST_SET_FORK_FROM_OWNER: Allows userspace to select between
+>     task mode (fork_owner=1) and kthread mode (fork_owner=0)
+>   * VHOST_GET_FORK_FROM_OWNER: Retrieves the current thread mode
+>     setting
+> 
+> - Expose module parameter 'fork_from_owner_default' to allow system
+>   administrators to configure the default mode for vhost workers
+> 
+> - Add KConfig option CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL to
+>   control the availability of these IOCTLs and parameter, allowing
+>   distributions to disable them if not needed
+> 
+> - The VHOST_NEW_WORKER functionality requires fork_owner to be set
+>   to true, with validation added to ensure proper configuration
+> 
+> Signed-off-by: Cindy Lu <lulu@redhat.com>
+
+
+getting there. yet something to improve.
+
 > ---
-
-Looks good. Just one comment from me...
-
-> =C2=A0drivers/iio/accel/sca3000.c | 166 +++++++++++++++------------------=
----
-> =C2=A01 file changed, 68 insertions(+), 98 deletions(-)
->=20
-> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index bfa8a3f5a92f..d41759c68fb4 100644
-> --- a/drivers/iio/accel/sca3000.c
-> +++ b/drivers/iio/accel/sca3000.c
-> @@ -281,24 +281,6 @@ static int sca3000_write_reg(struct sca3000_state *s=
-t, u8
-> address, u8 val)
-> =C2=A0	return spi_write(st->us, st->tx, 2);
-> =C2=A0}
-> =C2=A0
-
-...
-
->=20
-> =C2=A0static int sca3000_read_data(struct sca3000_state *st,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 u8 reg_address_high,
-> -			=C2=A0=C2=A0=C2=A0=C2=A0 u8 *rx,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 int len)
-> =C2=A0{
-> =C2=A0	int ret;
-> @@ -974,18 +948,15 @@ static int sca3000_read_data(struct sca3000_state *=
-st,
-> =C2=A0			.tx_buf =3D st->tx,
-> =C2=A0		}, {
-> =C2=A0			.len =3D len,
-> -			.rx_buf =3D rx,
-> +			.rx_buf =3D st->rx,
-> =C2=A0		}
-> =C2=A0	};
-> -
-> =C2=A0	st->tx[0] =3D SCA3000_READ_REG(reg_address_high);
+>  drivers/vhost/Kconfig      | 17 +++++++++++++++
+>  drivers/vhost/vhost.c      | 44 ++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/vhost.h | 25 ++++++++++++++++++++++
+>  3 files changed, 86 insertions(+)
+> 
+> diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
+> index 020d4fbb947c..49e1d9dc92b7 100644
+> --- a/drivers/vhost/Kconfig
+> +++ b/drivers/vhost/Kconfig
+> @@ -96,3 +96,20 @@ config VHOST_CROSS_ENDIAN_LEGACY
+>  	  If unsure, say "N".
+>  
+>  endif
 > +
-> =C2=A0	ret =3D spi_sync_transfer(st->us, xfer, ARRAY_SIZE(xfer));
-> -	if (ret) {
-> +	if (ret)
-> =C2=A0		dev_err(&st->us->dev, "problem reading register\n");
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return ret;
-
-Unless I'm missing something, the above seems unrelated to the rest of the =
-patch.
-
-- Nuno S=C3=A1
-
-> =C2=A0}
-> =C2=A0
-> =C2=A0/**
-> @@ -1001,16 +972,15 @@ static void sca3000_ring_int_process(u8 val, struc=
-t iio_dev
-> *indio_dev)
-> =C2=A0	mutex_lock(&st->lock);
-> =C2=A0
-> =C2=A0	if (val & SCA3000_REG_INT_STATUS_HALF) {
-> -		ret =3D sca3000_read_data_short(st, SCA3000_REG_BUF_COUNT_ADDR,
-> -					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1);
-> +		ret =3D spi_w8r8(st->us,
-> SCA3000_READ_REG(SCA3000_REG_BUF_COUNT_ADDR));
-> =C2=A0		if (ret)
-> =C2=A0			goto error_ret;
-> -		num_available =3D st->rx[0];
-> +		num_available =3D ret;
-> =C2=A0		/*
-> =C2=A0		 * num_available is the total number of samples available
-> =C2=A0		 * i.e. number of time points * number of channels.
-> =C2=A0		 */
-> -		ret =3D sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR, st->rx,
-> +		ret =3D sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR,
-> =C2=A0					num_available * 2);
-> =C2=A0		if (ret)
-> =C2=A0			goto error_ret;
-> @@ -1045,7 +1015,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
-oid
-> *private)
-> =C2=A0{
-> =C2=A0	struct iio_dev *indio_dev =3D private;
-> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
-> -	int ret, val;
-> +	int ret;
-> =C2=A0	s64 last_timestamp =3D iio_get_time_ns(indio_dev);
-> =C2=A0
-> =C2=A0	/*
-> @@ -1053,15 +1023,14 @@ static irqreturn_t sca3000_event_handler(int irq,=
- void
-> *private)
-> =C2=A0	 * but ensures no interrupt is missed.
-> =C2=A0	 */
-> =C2=A0	mutex_lock(&st->lock);
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_STATUS_ADDR, 1);
-> -	val =3D st->rx[0];
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_STATUS_ADDR))=
-;
-> =C2=A0	mutex_unlock(&st->lock);
-> =C2=A0	if (ret)
-> =C2=A0		goto done;
-> =C2=A0
-> -	sca3000_ring_int_process(val, indio_dev);
-> +	sca3000_ring_int_process(ret, indio_dev);
-> =C2=A0
-> -	if (val & SCA3000_INT_STATUS_FREE_FALL)
-> +	if (ret & SCA3000_INT_STATUS_FREE_FALL)
-> =C2=A0		iio_push_event(indio_dev,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
-L,
-> =C2=A0						=C2=A0 0,
-> @@ -1070,7 +1039,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
-oid
-> *private)
-> =C2=A0						=C2=A0 IIO_EV_DIR_FALLING),
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 last_timestamp);
-> =C2=A0
-> -	if (val & SCA3000_INT_STATUS_Y_TRIGGER)
-> +	if (ret & SCA3000_INT_STATUS_Y_TRIGGER)
-> =C2=A0		iio_push_event(indio_dev,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
-L,
-> =C2=A0						=C2=A0 0,
-> @@ -1079,7 +1048,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
-oid
-> *private)
-> =C2=A0						=C2=A0 IIO_EV_DIR_RISING),
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 last_timestamp);
-> =C2=A0
-> -	if (val & SCA3000_INT_STATUS_X_TRIGGER)
-> +	if (ret & SCA3000_INT_STATUS_X_TRIGGER)
-> =C2=A0		iio_push_event(indio_dev,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
-L,
-> =C2=A0						=C2=A0 0,
-> @@ -1088,7 +1057,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
-oid
-> *private)
-> =C2=A0						=C2=A0 IIO_EV_DIR_RISING),
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 last_timestamp);
-> =C2=A0
-> -	if (val & SCA3000_INT_STATUS_Z_TRIGGER)
-> +	if (ret & SCA3000_INT_STATUS_Z_TRIGGER)
-> =C2=A0		iio_push_event(indio_dev,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
-L,
-> =C2=A0						=C2=A0 0,
-> @@ -1114,13 +1083,13 @@ static int sca3000_read_event_config(struct iio_d=
-ev
-> *indio_dev,
-> =C2=A0	/* read current value of mode register */
-> =C2=A0	mutex_lock(&st->lock);
-> =C2=A0
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
-> =C2=A0
-> =C2=A0	switch (chan->channel2) {
-> =C2=A0	case IIO_MOD_X_AND_Y_AND_Z:
-> -		ret =3D !!(st->rx[0] & SCA3000_REG_MODE_FREE_FALL_DETECT);
-> +		ret =3D !!(ret & SCA3000_REG_MODE_FREE_FALL_DETECT);
-> =C2=A0		break;
-> =C2=A0	case IIO_MOD_X:
-> =C2=A0	case IIO_MOD_Y:
-> @@ -1129,7 +1098,7 @@ static int sca3000_read_event_config(struct iio_dev
-> *indio_dev,
-> =C2=A0		 * Motion detection mode cannot run at the same time as
-> =C2=A0		 * acceleration data being read.
-> =C2=A0		 */
-> -		if ((st->rx[0] & SCA3000_REG_MODE_MODE_MASK)
-> +		if ((ret & SCA3000_REG_MODE_MODE_MASK)
-> =C2=A0		=C2=A0=C2=A0=C2=A0 !=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET) {
-> =C2=A0			ret =3D 0;
-> =C2=A0		} else {
-> @@ -1157,20 +1126,20 @@ static int sca3000_freefall_set_state(struct iio_=
-dev
-> *indio_dev, bool state)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	/* read current value of mode register */
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
-> =C2=A0	/* if off and should be on */
-> -	if (state && !(st->rx[0] & SCA3000_REG_MODE_FREE_FALL_DETECT))
-> +	if (state && !(ret & SCA3000_REG_MODE_FREE_FALL_DETECT))
-> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
-> -					 st->rx[0] |
-> SCA3000_REG_MODE_FREE_FALL_DETECT);
-> +					 ret | SCA3000_REG_MODE_FREE_FALL_DETECT);
-> =C2=A0	/* if on and should be off */
-> -	else if (!state && (st->rx[0] & SCA3000_REG_MODE_FREE_FALL_DETECT))
-> +	if (!state && (ret & SCA3000_REG_MODE_FREE_FALL_DETECT))
-> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
-> -					 st->rx[0] &
-> ~SCA3000_REG_MODE_FREE_FALL_DETECT);
-> -	else
-> -		return 0;
-> +					 ret &
-> ~SCA3000_REG_MODE_FREE_FALL_DETECT);
+> +config CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL
+> +	bool "Enable CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL"
+> +	default n
+> +	help
+> +	  This option enables two IOCTLs: VHOST_SET_FORK_FROM_OWNER and
+> +	  VHOST_GET_FORK_FROM_OWNER. These allow userspace applications
+> +	  to modify the vhost worker mode for vhost devices.
 > +
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int sca3000_motion_detect_set_state(struct iio_dev *indio_de=
-v, int axis,
-> @@ -1207,22 +1176,22 @@ static int sca3000_motion_detect_set_state(struct=
- iio_dev
-> *indio_dev, int axis,
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	/* read current value of mode register */
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0	/* if off and should be on */
-> =C2=A0	if ((st->mo_det_use_count) &&
-> -	=C2=A0=C2=A0=C2=A0 ((st->rx[0] & SCA3000_REG_MODE_MODE_MASK)
-> +	=C2=A0=C2=A0=C2=A0 ((ret & SCA3000_REG_MODE_MODE_MASK)
-> =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 !=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET))
-> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
-> -			(st->rx[0] & ~SCA3000_REG_MODE_MODE_MASK)
-> +			(ret & ~SCA3000_REG_MODE_MODE_MASK)
-> =C2=A0			| SCA3000_REG_MODE_MEAS_MODE_MOT_DET);
-> =C2=A0	/* if on and should be off */
-> =C2=A0	else if (!(st->mo_det_use_count) &&
-> -		 ((st->rx[0] & SCA3000_REG_MODE_MODE_MASK)
-> +		 ((ret & SCA3000_REG_MODE_MODE_MASK)
-> =C2=A0		=C2=A0 =3D=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET))
-> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
-> -			st->rx[0] & SCA3000_REG_MODE_MODE_MASK);
-> +			ret & SCA3000_REG_MODE_MODE_MASK);
-> =C2=A0	else
-> =C2=A0		return 0;
-> =C2=A0}
-> @@ -1280,18 +1249,18 @@ int __sca3000_hw_ring_state_set(struct iio_dev *i=
-ndio_dev,
-> bool state)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	mutex_lock(&st->lock);
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
-> =C2=A0	if (state) {
-> =C2=A0		dev_info(&indio_dev->dev, "supposedly enabling ring buffer\n");
-> =C2=A0		ret =3D sca3000_write_reg(st,
-> =C2=A0			SCA3000_REG_MODE_ADDR,
-> -			(st->rx[0] | SCA3000_REG_MODE_RING_BUF_ENABLE));
-> +			(ret | SCA3000_REG_MODE_RING_BUF_ENABLE));
-> =C2=A0	} else
-> =C2=A0		ret =3D sca3000_write_reg(st,
-> =C2=A0			SCA3000_REG_MODE_ADDR,
-> -			(st->rx[0] & ~SCA3000_REG_MODE_RING_BUF_ENABLE));
-> +			(ret & ~SCA3000_REG_MODE_RING_BUF_ENABLE));
-> =C2=A0error_ret:
-> =C2=A0	mutex_unlock(&st->lock);
-> =C2=A0
-> @@ -1315,12 +1284,12 @@ static int sca3000_hw_ring_preenable(struct iio_d=
-ev
-> *indio_dev)
-> =C2=A0	mutex_lock(&st->lock);
-> =C2=A0
-> =C2=A0	/* Enable the 50% full interrupt */
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_unlock;
-> =C2=A0	ret =3D sca3000_write_reg(st,
-> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
-> -				st->rx[0] | SCA3000_REG_INT_MASK_RING_HALF);
-> +				ret | SCA3000_REG_INT_MASK_RING_HALF);
-> =C2=A0	if (ret)
-> =C2=A0		goto error_unlock;
-> =C2=A0
-> @@ -1346,12 +1315,12 @@ static int sca3000_hw_ring_postdisable(struct iio=
-_dev
-> *indio_dev)
-> =C2=A0	/* Disable the 50% full interrupt */
-> =C2=A0	mutex_lock(&st->lock);
-> =C2=A0
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto unlock;
-> =C2=A0	ret =3D sca3000_write_reg(st,
-> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
-> -				st->rx[0] & ~SCA3000_REG_INT_MASK_RING_HALF);
-> +				ret & ~SCA3000_REG_INT_MASK_RING_HALF);
-> =C2=A0unlock:
-> =C2=A0	mutex_unlock(&st->lock);
-> =C2=A0	return ret;
-> @@ -1376,7 +1345,7 @@ static int sca3000_clean_setup(struct sca3000_state=
- *st)
-> =C2=A0
-> =C2=A0	mutex_lock(&st->lock);
-> =C2=A0	/* Ensure all interrupts have been acknowledged */
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_STATUS_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
-> =C2=A0
-> @@ -1402,7 +1371,7 @@ static int sca3000_clean_setup(struct sca3000_state=
- *st)
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
-> =C2=A0	/* Enable interrupts, relevant to mode and set up as active low */
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
-> =C2=A0	ret =3D sca3000_write_reg(st,
-> @@ -1416,11 +1385,11 @@ static int sca3000_clean_setup(struct sca3000_sta=
-te *st)
-> =C2=A0	 * Ring in 12 bit mode - it is fine to overwrite reserved bits 3,5
-> =C2=A0	 * as that occurs in one of the example on the datasheet
-> =C2=A0	 */
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
-> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
-> -				(st->rx[0] & SCA3000_MODE_PROT_MASK));
-> +				ret & SCA3000_MODE_PROT_MASK);
-> =C2=A0
-> =C2=A0error_ret:
-> =C2=A0	mutex_unlock(&st->lock);
-> @@ -1503,14 +1472,15 @@ static int sca3000_stop_all_interrupts(struct sca=
-3000_state
-> *st)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	mutex_lock(&st->lock);
-> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
-> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
-> =C2=A0	if (ret)
-> =C2=A0		goto error_ret;
+> +	  Also expose module parameter 'fork_from_owner_default' to allow users
+> +	  to configure the default mode for vhost workers.
 > +
-> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_INT_MASK_ADDR,
-> -				(st->rx[0] &
-> -				 ~(SCA3000_REG_INT_MASK_RING_THREE_QUARTER |
-> -				=C2=A0=C2=A0 SCA3000_REG_INT_MASK_RING_HALF |
-> -				=C2=A0=C2=A0 SCA3000_REG_INT_MASK_ALL_INTS)));
-> +				ret &
-> +				~(SCA3000_REG_INT_MASK_RING_THREE_QUARTER |
-> +				=C2=A0 SCA3000_REG_INT_MASK_RING_HALF |
-> +				=C2=A0 SCA3000_REG_INT_MASK_ALL_INTS));
-> =C2=A0error_ret:
-> =C2=A0	mutex_unlock(&st->lock);
-> =C2=A0	return ret;
+> +	  By default, `CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL` is set to `n`,
+> +	  which disables the IOCTLs and parameter.
+> +	  When enabled (y), users can change the worker thread mode as needed.
+> +
+> +	  If unsure, say "N".
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 37d3ed8be822..903d9c3f6784 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -43,6 +43,11 @@ module_param(max_iotlb_entries, int, 0444);
+>  MODULE_PARM_DESC(max_iotlb_entries,
+>  	"Maximum number of iotlb entries. (default: 2048)");
+>  static bool fork_from_owner_default = true;
+
+Add empty lines around ifdef to make it clear what code do they
+delimit.
+
+
+> +#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL
+> +module_param(fork_from_owner_default, bool, 0444);
+> +MODULE_PARM_DESC(fork_from_owner_default,
+> +		 "Set task mode as the default(default: Y)");
+> +#endif
+>  
+>  enum {
+>  	VHOST_MEMORY_F_LOG = 0x1,
+> @@ -1019,6 +1024,13 @@ long vhost_worker_ioctl(struct vhost_dev *dev, unsigned int ioctl,
+>  	switch (ioctl) {
+>  	/* dev worker ioctls */
+>  	case VHOST_NEW_WORKER:
+> +		/*
+> +		 * vhost_tasks will account for worker threads under the parent's
+> +		 * NPROC value but kthreads do not. To avoid userspace overflowing
+> +		 * the system with worker threads fork_owner must be true.
+> +		 */
+> +		if (!dev->fork_owner)
+> +			return -EFAULT;
+
+An empty line here would make the code clearer.
+
+>  		ret = vhost_new_worker(dev, &state);
+>  		if (!ret && copy_to_user(argp, &state, sizeof(state)))
+>  			ret = -EFAULT;
+> @@ -1136,6 +1148,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev, struct vhost_iotlb *umem)
+>  
+>  	vhost_dev_cleanup(dev);
+>  
+> +	dev->fork_owner = fork_from_owner_default;
+>  	dev->umem = umem;
+>  	/* We don't need VQ locks below since vhost_dev_cleanup makes sure
+>  	 * VQs aren't running.
+> @@ -2289,6 +2302,37 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
+>  		goto done;
+>  	}
+>  
+> +#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL
+> +	u8 fork_owner;
+
+Do not declare variables in the middle of a scope please.
+This one is not needed in this scope, so just move it down
+to within if (yes you will repeat the declaration twice then).
+
+
+
+> +
+> +	if (ioctl == VHOST_SET_FORK_FROM_OWNER) {
+> +		/*fork_owner can only be modified before owner is set*/
+
+bad comment style.
+
+> +		if (vhost_dev_has_owner(d)) {
+> +			r = -EBUSY;
+> +			goto done;
+> +		}
+> +		if (copy_from_user(&fork_owner, argp, sizeof(u8))) {
+
+get_user is a better fit for this. In particular, typesafe.
+
+
+> +			r = -EFAULT;
+> +			goto done;
+> +		}
+> +		if (fork_owner > 1) {
+
+so 0 and 1 are the only legal values?
+maybe add an enum or defines in the header then.
+
+
+> +			r = -EINVAL;
+> +			goto done;
+> +		}
+> +		d->fork_owner = (bool)fork_owner;
+
+		!!fork_owner is shorter and idiomatic.
+
+> +		r = 0;
+> +		goto done;
+> +	}
+> +	if (ioctl == VHOST_GET_FORK_FROM_OWNER) {
+> +		fork_owner = d->fork_owner;
+> +		if (copy_to_user(argp, &fork_owner, sizeof(u8))) {
+
+put_user
+
+> +			r = -EFAULT;
+> +			goto done;
+> +		}
+> +		r = 0;
+> +		goto done;
+> +	}
+> +#endif
+>  	/* You must be the owner to do anything else */
+>  	r = vhost_dev_check_owner(d);
+>  	if (r)
+> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> index d4b3e2ae1314..e51d6a347607 100644
+> --- a/include/uapi/linux/vhost.h
+> +++ b/include/uapi/linux/vhost.h
+> @@ -235,4 +235,29 @@
+>   */
+>  #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	\
+>  					      struct vhost_vring_state)
+> +
+> +/**
+> + * VHOST_SET_FORK_FROM_OWNER - Set the fork_owner flag for the vhost device,
+> + * This ioctl must called before VHOST_SET_OWNER.
+> + * Only available when CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL=y
+> + *
+> + * @param fork_owner: An 8-bit value that determines the vhost thread mode
+> + *
+> + * When fork_owner is set to 1(default value):
+> + *   - Vhost will create vhost worker as tasks forked from the owner,
+> + *     inheriting all of the owner's attributes.
+> + *
+> + * When fork_owner is set to 0:
+> + *   - Vhost will create vhost workers as kernel threads.
+> + */
+> +#define VHOST_SET_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
+> +
+> +/**
+> + * VHOST_GET_FORK_OWNER - Get the current fork_owner flag for the vhost device.
+> + * Only available when CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL=y
+> + *
+> + * @return: An 8-bit value indicating the current thread mode.
+> + */
+> +#define VHOST_GET_FORK_FROM_OWNER _IOR(VHOST_VIRTIO, 0x84, __u8)
+> +
+>  #endif
+> -- 
+> 2.45.0
 
 
