@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-684026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B594AD74E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:59:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBDBAD7525
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CEF37AB307
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3933AFD1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C59926D4C9;
-	Thu, 12 Jun 2025 14:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC64E27978C;
+	Thu, 12 Jun 2025 15:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILHIinid"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UBs+WhFP"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7147926C39C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9E5278E5D;
+	Thu, 12 Jun 2025 15:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740351; cv=none; b=WM5jK//1NeBuOa/6C/d5Q5YqgYX+Pnup9Bf5L0jlvptwLvs5wTzbb9Qe21TF66F93IxojvVtzr7FJ7r1A65wtLNQ4STr34e5Ih/LuLa43g3NfCWDXKPkW/+QPSdg/bhpvdj5OA2dOM/GLqJKlehI1TXMU2YJJRBaws1v/wH9m8I=
+	t=1749740441; cv=none; b=oOkBoTxhhUhD9qPjr5MsEofd28iIUjpRQPoXYuS2OfnJxebnozpyOfQEOsqgKoefP2bUpiPGM7Sws+M7znsmWxp3C6v1GUxjdcKPunckqHlfn6kLXGvJ7smLNbjwBCQvXHucXaE5Y/pOQlJLO9Lvay7ISdhw32tGvpQRvapz81U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740351; c=relaxed/simple;
-	bh=ojBGHXn1vUpJycK6ORdZXXJtOHf8zF7gSm+mZb22HOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNU2LycxUaCChNO2+CAvynddw53lIOkBSueKiYm4QhUUka6FOZhbpDu05SDLWDQ2KvyML2dBHdHt1JDFOT9ZnXbyO2s/Ub/wpzxAAOSNLppwe8oQxlhfzSJQ4psapI76aTtCHl6y9mE8EKipi7RMTBQbx0xipixg+LnHBSPNGW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILHIinid; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE08C4CEEA;
-	Thu, 12 Jun 2025 14:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749740350;
-	bh=ojBGHXn1vUpJycK6ORdZXXJtOHf8zF7gSm+mZb22HOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ILHIinidwPTFzHnyloqn7k3FKs4AAV6Pd9HoxU5EmEQxYWmeiffMvgFuYpYPe07o2
-	 L5EbA02mRawCu3O2f0IVBasaV2TzKq2Yq4Lby50b2M0a/2ai8i4dj8S3excj4cNPIe
-	 C2sL+fdCG2Zca5gw476eA2UOK7eF02v1f/WbY7nnhQhubS955sPnjGnJE8UVtalPJw
-	 LMYZXGrMDaDPNigF7Mz6ax3tUVHAcKD7IlcKn0ltKRCY2+0oipeRWolygoY1YQaahk
-	 hyF9Z6Cx0/r4Ld/PPRwFIULRWUz/dgX7O8w4PurKxTnIDlXqC90YWxN+OyYbBZrn+F
-	 7KuWwr+CenVIw==
-Date: Thu, 12 Jun 2025 15:59:06 +0100
-From: Will Deacon <will@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
-Message-ID: <20250612145906.GB12912@willie-the-truck>
-References: <20250606135654.178300-1-ryan.roberts@arm.com>
- <aEgeQCCzRt-B8_nW@arm.com>
- <3cad01ea-b704-4156-807e-7a83643917a8@arm.com>
- <aEhKSq0zVaUJkomX@arm.com>
- <b567a16a-8d80-4aab-84c2-21cbc6a6a35d@arm.com>
+	s=arc-20240116; t=1749740441; c=relaxed/simple;
+	bh=hyszOhcRbzyjfVvsWkNpk+hVLWy3Vif4GHa8XCtb/z0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mj+BQ23YtNjjYQbUYip9w5+oUZHFQ307Fkgc2TmD7prl0jId8+uryIjDal6Y2HFxxntLfTnPvU6VmsPDJ+D9710Xw9e2Im5Fb21pBEn3hQVnGxp0HyMBwUtMdnG4j0AeUQgeXX1HYhHHYFhBhdAMkVFwMH5EGKmgFY2y7xojvyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UBs+WhFP; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 14A5A260A0;
+	Thu, 12 Jun 2025 17:00:38 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Ma3iOkFIL4ux; Thu, 12 Jun 2025 17:00:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1749740435; bh=hyszOhcRbzyjfVvsWkNpk+hVLWy3Vif4GHa8XCtb/z0=;
+	h=From:Subject:Date:To:Cc;
+	b=UBs+WhFPGmXf10maD/KCA03fqTS+jQmw0BJes/UnNzmC3xIEuLH2la6i7Qp2XZk4N
+	 3H8QosxjTDSMl6IvaERdEF5o/9lFwU01jdjA0Po7JFJvMiyp3ZABsTzTt4d6yCBiXb
+	 yOwlZi+8sc4hHDFjd14rxmfDdpm5jWajdicBwrQoVgHycyO9FJjoAbxM4ebi1EV7sG
+	 HxXyQu0I9+eoI17KoDJCUIKGAF1MMtvRXXAbDbQHyrlSqLTeNMMTI9CDxedjW9U9zf
+	 iAmientABoTM6Z65Y4RkCs/kkdFAX3sdeN/HQXDj3qX4m2FhuoDL8gcj5zWB0Mkfsy
+	 2JIEUcWipbuaA==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v2 0/2] Samsung Exynos 7870 DECON driver support
+Date: Thu, 12 Jun 2025 20:29:18 +0530
+Message-Id: <20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b567a16a-8d80-4aab-84c2-21cbc6a6a35d@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEbrSmgC/2WNQQ6CMBBFr0JmbU3bIIIr72FYSGeAWdgxU0Igh
+ LtbSVy5fC/572+QSJkS3IoNlGZOLDGDPxUQxmccyDBmBm99aRt3NbSsURLqyyAFiaYM3teIDn3
+ XQ169lXpejuKjzTxymkTX42B2X/trNX+t2RlrqnCpKxdc6Gx5R04qMp1FB2j3ff8Ax0hFv7AAA
+ AA=
+X-Change-ID: 20240917-exynosdrm-decon-4c228dd1d2bf
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ stable@vger.kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749740428; l=1203;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=hyszOhcRbzyjfVvsWkNpk+hVLWy3Vif4GHa8XCtb/z0=;
+ b=RBepMzepmmvN9MEFlWtkAYr8CSmXHsbMD5QHpkFVOAJxzE4dbCgTT+mxjmvjvSYo2dr+5RnEc
+ 0Fi3M5ecoAzBnDtWAjPc8ngbIx8joImgFgyZP9PLH1uivMD+tNAjOEP
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Tue, Jun 10, 2025 at 05:37:20PM +0100, Ryan Roberts wrote:
-> On 10/06/2025 16:07, Catalin Marinas wrote:
-> > On Tue, Jun 10, 2025 at 02:41:01PM +0100, Ryan Roberts wrote:
-> >> On 10/06/2025 13:00, Catalin Marinas wrote:
-> >>> On Fri, Jun 06, 2025 at 02:56:52PM +0100, Ryan Roberts wrote:
-> >>>> Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
-> >>>> provided a quick fix to ensure that lazy_mmu_mode continues to work when
-> >>>> CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
-> >>>> nest.
-> >>>>
-> >>>> The solution in that patch is the make the implementation tolerant to
-> >>>
-> >>> s/is the make/is to make/
-> >>>
-> >>>> nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
-> >>>> exit becomes a nop. But this sacrifices the optimization opportunity for
-> >>>> the remainder of the outer user.
-> >>> [...]
-> >>>> I wonder if you might be willing to take this for v6.16? I think its a neater
-> >>>> solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
-> >>>> lazy_mmu_mode to be nested") - which is already in Linus's master.
-> >>>>
-> >>>> To be clear, the current solution is safe, I just think this is much neater.
-> >>>
-> >>> Maybe better, though I wouldn't say much neater. One concern I have is
-> >>> about whether we'll get other such nesting in the future and we need to
-> >>> fix them in generic code. Here we control __kernel_map_pages() but we
-> >>> may not for other cases.
-> >>>
-> >>> Is it the fault of the arch code that uses apply_to_page_range() via
-> >>> __kernel_map_pages()? It feels like it shouldn't care about the lazy
-> >>> mode as that's some detail of the apply_to_page_range() implementation.
-> >>> Maybe this API should just allow nesting.
-> >>
-> >> I don't think it is possible to properly support nesting:
-> >>
-> >> enter_lazy_mmu
-> >>     for_each_pte {
-> >>         read/modify-write pte
-> >>
-> >>         alloc_page
-> >>             enter_lazy_mmu
-> >>                 make page valid
-> >>             exit_lazy_mmu
-> >>
-> >>         write_to_page
-> >>     }
-> >> exit_lazy_mmu
-> >>
-> >> This example only works because lazy_mmu doesn't support nesting. The "make page
-> >> valid" operation is completed by the time of the inner exit_lazy_mmu so that the
-> >> page can be accessed in write_to_page. If nesting was supported, the inner
-> >> exit_lazy_mmu would become a nop and write_to_page would explode.
-> > 
-> > What I meant is for enter/exit_lazy_mmu to handle a kind of de-nesting
-> > themselves: enter_lazy_mmu would emit the barriers if already in lazy
-> > mode, clear pending (well, it doesn't need to do this but it may be
-> > easier to reason about in terms of flattening). exit_lazy_mmu also needs
-> > to emit the barriers but leave the lazy mode on if already on when last
-> > entered. This does need some API modifications to return the old mode on
-> > enter and get an argument for exit. But the correctness wouldn't be
-> > affected since exit_lazy_mmu still emits the barriers irrespective of
-> > the nesting level.
-> 
-> Ahh I see what you mean now; exit always emits barriers but only the last exit
-> clears TIF_LAZY_MMU.
-> 
-> I think that's much cleaner, but we are changing the API which needs changes to
-> all the arches and my attempt at [1] didn't really gain much enthusiasm.
+This patch series aims at adding support for Exynos7870's DECON in the
+Exynos7 DECON driver. It introduces a driver data struct so that support
+for DECON on other SoCs can be added to it in the future.
 
-To be honest, I don't think the proposal in this series is really
-improving what we have. Either we support nested lazy mode or we don't;
-having __kernel_map_pages() mess around with the lazy mmu state because
-it somehow knows that set_memory_valid() is going to use it is fragile
-and ugly.
+It also fixes a few bugs in the driver, such as functions receiving bad
+pointers.
 
-So I'm incined to leave the current code as-is, unless we can remove it
-in favour of teaching the core code how to handle it instead.
+Tested on Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2
+Core (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte).
 
-Cheers,
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v2:
+- Add a new commit to prevent an occasional panic under circumstances.
+- Rewrite and redo [v1 2/6] to be a more sensible commit.
+- Link to v1: https://lore.kernel.org/r/20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org
 
-Will
+---
+Kaustabh Chakraborty (2):
+      drm/exynos: exynos7_drm_decon: fix call of decon_commit()
+      drm/exynos: exynos7_drm_decon: add vblank check in IRQ handling
+
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
