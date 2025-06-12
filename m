@@ -1,189 +1,131 @@
-Return-Path: <linux-kernel+bounces-684452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE03AD7B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92486AD7B63
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB5D3A14AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E6618964A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1BE2D3231;
-	Thu, 12 Jun 2025 19:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8FD2D4B4D;
+	Thu, 12 Jun 2025 19:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="L1+a6pB5"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="gclIacj1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oXtljNtx"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5072C2D1936
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 19:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6101F5858;
+	Thu, 12 Jun 2025 19:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749757686; cv=none; b=txy/2vubXU7sdryY7o8CkLbY6CsTkDgQuQClzwcfPsoJcGUtebWKSf5w/NX0k2TivRfJHUs9uwXlZO9s9wJgJbVVOlJ8tTI/gXtSQDlxIVxYSJudCHyaTnGTAf3BhdXd4tqxNRRSyIg7nfv1jhDDWprK4nskLUH8nw/QwC3WDps=
+	t=1749757768; cv=none; b=kUmNLRXGEsj8Oet7ZGM1XsKDTmAWAYqAILZxje6AcVMe+0q7y550IQTbM+GLOV9E9KXdq3aPz6NW7IXSXSdBlM1XQV0bG8pl8wEbsQGHxCKukG27xRnBwH95ynPKKb2arG30Ksiifw2lLNhjiqFablGcjYFarWnDAq38FmZp2us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749757686; c=relaxed/simple;
-	bh=ioKitG+yRYhRJrtQctH8UeW8KGYpeayaBl4Ml1mBldA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pWi5oYZAKI7odkQIOIiqtihitv9zg0gFjc1IvhRqJ2v8ZA2v8PhTOLvjZuU5AzJ/X/WqThRRbcBUQSPNfr9Ou7L5Qbg1WTowf+BDBO0rZm7+IGu4tWOhQBdV7/p/bzaQnbm/F/hdV0fTScgyiSHnktyiRa6FIvCB3Y5/xuOsvKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=L1+a6pB5; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-404a5f4cdedso390302b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1749757683; x=1750362483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8e9esVoe2c1asLojkhwYh+MoQPaPYmSvfLLOY1O43Qk=;
-        b=L1+a6pB5HWKsnQSfy/aDfl2Ow2HHCndtYYNnEpXRf1L4YsCgXaabYJB2094YKQLZbA
-         0fbNHwMRFSGJgwseBRxrobOyN2oJZ90EjBi//94CRg3YIer7o7fhh8t0zSz6gF42WhH9
-         kiXYPy4e+90MsBpEwURC3E/G34tH1yB46UIXAGCHsSDGtssXOCpdpIyfUJZFaSAEIqbS
-         umIeeFAzdemJ/fSYoEcZ7hHr3kfLtS3TOdq7JIpz0dcQEG1d1Dq/xMsKrtMefUL0Q66u
-         sLsfXqpEaJEMLQW24JoqA5uo1bYB2Nb2HYpUmcIohaI8kdNMsmd0ygv591C+AV6ADOAT
-         PcYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749757683; x=1750362483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8e9esVoe2c1asLojkhwYh+MoQPaPYmSvfLLOY1O43Qk=;
-        b=u4K9fAbcURUmWIc77RuVRrCyBQ6Go7soh1DLHIXlEq5h6aavrNgje+aUN+vqJEADoT
-         tyf/WE8pdz0WlIjDYddMU0yDXFb7E37DrwAEYe/HzMM1RDUwyvn+V6bN4UTEg8C7G93R
-         3KltOrgun88dAP3Tl4JvcfIgudojPCdJPc0iS4PfDHJjn+x3x8z4ODa+crqCwkHm1VNZ
-         CIMON8nonyk/7ztHudLalnP2oxx6K/9omKGsuswnE13MbmqtgvlfISKsNlWwgEUFOF7c
-         AHyoLzH24Po0i6un5ZxBE39FgLIFHc969G+OXxr3NnzkXZ3VVSweackYahR9VCTw4ZWl
-         DWOA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1CITzMhmAkq7X0z7FzxvzqgzIOoTgQoB/565lv50WDuH3ob2AZ6rbETAQYzAWJFgeq4A3IoVqjDnMcC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyA+cLXjBfxsQNNIUQypd2ZKha+xqP/bSEcBmGFHNktzkxWxxv
-	eJgiV6IHMP1z9Vo+EISDFqbh6hDNInzWZQKxDlpzamS6R/rjgleCKahTmoP2ausWWyDuuAIpTqj
-	SaQ9b+yiUi7jo7JN3frvydIKfT3bJnNo9M4HLjMs9Kg==
-X-Gm-Gg: ASbGncuuLVcL4HOthYLAaIPecyQNL430XBPJhvjz/2l7FmUPk1UB57Uso4flFjvOChL
-	2c+HEpdKaRNsBjRZs7axUuVOQEKzSS1mka6yjbg+IqHw/J//M8FmskzOyBU6Lm9yojqz4bdNHGC
-	3W99bY/vTCw2kk0Y8w5TIulqeorMFIwp0dGyhIbqNJmUk=
-X-Google-Smtp-Source: AGHT+IFcwAXQ3PbWAljxpAOaH7id08n7aXe7ujr3lhVGcrvJaHIYrxkMSHXAY37YjImxRVd5r3NbxP9AAw1idnxghok=
-X-Received: by 2002:a05:6808:3c43:b0:401:16e:918e with SMTP id
- 5614622812f47-40a71d7641fmr583982b6e.8.1749757683321; Thu, 12 Jun 2025
- 12:48:03 -0700 (PDT)
+	s=arc-20240116; t=1749757768; c=relaxed/simple;
+	bh=gTjzw7DYnMfcfeme9pufjEyQVylrAdz2sEZRJifMjq8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=V37irDY0hEZ0OA7VNpVAChOjgZulWZPU1QA4nuTFBzKRU1qbEfQU/YUu4UHTl6ufix67hH9cGBtLqaJvRr41Co8JbGWHBu1ddhERi1jH9GaZNtJviU1lH1W6/oM0bB5pWD3TunKcSnJ2vvRWD6GmqDlZLORfD4CDg3FMvoueFNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=gclIacj1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oXtljNtx; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2383711402D4;
+	Thu, 12 Jun 2025 15:49:25 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 15:49:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749757764;
+	 x=1749844164; bh=xu/b7phdvNJx1K04NsqpXKd/hD3Y6fbxZ6wAb9spphk=; b=
+	gclIacj1SuZZUcbY8iXzTAtIQgtQu4eFRJ2RwDNUYg1rEldPaQ8gb0VdWJhtpMwS
+	wlMSwuDCdttJxrVdWbxkyVthnTH40is7IHW1ZhS9HLrgckbpa9xObZ5IWjK8GTPC
+	i1RhedyGlJVOUUgpQZxGD3P3sjoSqmYhct8s13BuFw9y2wOwSNurCoBrHhNehBP2
+	cVnLx1PxqSj6aaTog/QxaNGxk5hawZz7zE8Ojho6MgEIzPvrUVU/C5CzfgGoUnFD
+	YWvpg3TQc5qy0bISq4tvYtqa8ylEBJbAclgUCutfznc1RyZFMQ+etRLMkTSub/z1
+	DqEAJX7ymHzCC7cro33AIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749757764; x=
+	1749844164; bh=xu/b7phdvNJx1K04NsqpXKd/hD3Y6fbxZ6wAb9spphk=; b=o
+	XtljNtxF/QxGSyaGKAbc1KLSWCORNof4i1Fej6pOnn34HIbvhtDKFxbkqHce1Blo
+	cfs7uK7nArue7C+v6D+ZdA2b47sXDQoPG5672P7G4qJGrqRodr2WyJxdm0YA/PEM
+	Ra0ySXucMtsa4vzjk3XX48gkm27h9LNk3582c+kq5P//f4DAusbpJMiKTJbf6sEt
+	wHsKXE0cz4gMPFiT3+0/YCYQHhujx0ZcMPTTK7YMDATpwZ2QkcLtQBXhxhS5EQ2z
+	fKmFI2vymYIPdT8R12OFGrSIuvugcNIpEUHAfI6S4/RcgaI1d5eq4IeT4hbUCVmZ
+	MVKmv6NHTRNqtDxKAguwQ==
+X-ME-Sender: <xms:RC9LaEKUfD3SbFyWXRVqnXSIm_qDuH3VSVBkjhfuPCz0fgfrDpuDCg>
+    <xme:RC9LaEKIDEyhPHKtXO1QMX0foCUw8ECbKLL6fUF_Lu2n688tXuljmme297tU1Mvfj
+    hbrdq1Ug2bgqyj1hIw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheelhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhrihgrmhdrrhgrtghhvghlrd
+    hkohhrvghnsghlihhtsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghnuggvrhhsrdhr
+    ohigvghllheslhhinhgrrhhordhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnth
+    gvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhkfhhtsehlihhnrghrohdrohhr
+    ghdprhgtphhtthhopehjohhhrghnnhgvshesshhiphhsohhluhhtihhonhhsrdhnvghtpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:RC9LaEuo-XPjUqyHwkurDvht5JriWzd0IS6UbyuEm4yuePIULp1F-Q>
+    <xmx:RC9LaBZ2hyJTEobshnQHkbR8NvitzyfxonacpeblJyiRhbFy1hU5Cg>
+    <xmx:RC9LaLbPUJQlq5KRcLaTGf4xsgt0t-hRbeSA26gCAp1-zXtM0Grhhw>
+    <xmx:RC9LaNCQtJFadscUq2nywzFtViGAERoEojM_lSQLRtPRrPF0KKTTzg>
+    <xmx:RC9LaHSMIs2ZGGoGvusXxzlKjv3_5yJ0sfWnDxaKBIKfVuFc_3_ncRYx>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B5D1E700062; Thu, 12 Jun 2025 15:49:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612022747.1206053-1-hongxing.zhu@nxp.com>
- <20250612022747.1206053-2-hongxing.zhu@nxp.com> <aEr8PxcHp55Bo5Os@lizhi-Precision-Tower-5810>
-In-Reply-To: <aEr8PxcHp55Bo5Os@lizhi-Precision-Tower-5810>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Thu, 12 Jun 2025 12:47:52 -0700
-X-Gm-Features: AX0GCFtVrSEePbUg8i-7Hr0xxmYOgLkuZdutnpQomlDJR8IFZN655IzCDiGytFM
-Message-ID: <CAJ+vNU3vyznybZ_QZBrB+nc1=2+BcC8csOtR5=6-gmgn6sb5tQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] PCI: imx6: Remove apps_reset toggle in _core_reset functions
-To: Frank Li <Frank.li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, l.stach@pengutronix.de, lpieralisi@kernel.org, 
-	kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org, 
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: T781adb4479eb08a1
+Date: Thu, 12 Jun 2025 21:48:41 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Anders Roxell" <anders.roxell@linaro.org>,
+ "Johannes Berg" <johannes@sipsolutions.net>
+Cc: "Miri Korenblit" <miriam.rachel.korenblit@intel.com>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "Linaro Kernel Functional Testing" <lkft@linaro.org>
+Message-Id: <ee7559eb-c26b-47c0-bf4c-f710e010a21b@app.fastmail.com>
+In-Reply-To: <aEsrmH7sDVvsmgLs@monster>
+References: <20250612130719.3878754-1-anders.roxell@linaro.org>
+ <d2ea3f77ea2737aafc879f4fc291dee097867b61.camel@sipsolutions.net>
+ <aEsrmH7sDVvsmgLs@monster>
+Subject: Re: [PATCH] wifi: iwlwifi: pcie: ensure RX_QUEUE_CB_SIZE fits bitfield for
+ gcc-8|9
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 9:11=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+On Thu, Jun 12, 2025, at 21:33, Anders Roxell wrote:
+> On 2025-06-12 17:21, Johannes Berg wrote:
 >
-> On Thu, Jun 12, 2025 at 10:27:46AM +0800, Richard Zhu wrote:
-> > apps_reset is LTSSM_EN on i.MX7, i.MX8MQ, i.MX8MM and i.MX8MP platforms=
-.
-> > Since the assertion/de-assertion of apps_reset(LTSSM_EN bit) had been
-> > wrappered in imx_pcie_ltssm_enable() and imx_pcie_ltssm_disable();
-> >
-> > Remove apps_reset toggle in imx_pcie_assert_core_reset() and
-> > imx_pcie_deassert_core_reset() functions. Use imx_pcie_ltssm_enable()
-> > and imx_pcie_ltssm_disable() to configure apps_reset directly.
-> >
-> > Fix fail to enumerate reliably PI7C9X2G608GP (hotplug) at i.MX8MM, whic=
-h
-> > reported By Tim.
-> >
+> Would it help if I indent like this?
 >
-> You may rename apps_reset to ltssm_reset to avoid confuse for legancy
-> platform later.
+> +	/* This should just be u32_encode_bits() but gcc-8 and gcc-9 fail to build */
+> +	control_flags |= FIELD_PREP(IWL_CTXT_INFO_RB_CB_SIZE,
+> +				    RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans)) &
+> +				    FIELD_MAX(IWL_CTXT_INFO_RB_CB_SIZE));
+>  	control_flags |= u32_encode_bits(rb_size, IWL_CTXT_INFO_RB_SIZE);
 
-Hi Frank and Richard,
+I still find it odd to mix FIELD_PREP() and u32_encode_bits() here,
+as they do the same thing.
 
-I was thinking of making the same suggestion however the apps reset is
-in several places:
-- imx8m*.dtsi pci node as 'reset-names' and reset index number #define
-- imx8m*-reset.h bindings as reset index number/define
-- pci-imx.c driver
-
-Granted it is used by imx7d.dtsi, fsl,imx8mq-pcie, fsl,imx8mm-pcie,
-fsl,imx8mp-pcie and in every one of those reference manuals it's bit6
-of SRC_PCIEPH_RCR named PCIE_CTRL_APPS_EN but described as
-'Pcie_ctrl_app_ltssm_enable'. Can you ask your references to get more
-definition for this bit? I'm still unclear why 'de-asserting' it twice
-was an issue.
-
-Regardless, any cleanup changing the name can be a seperate patch in my opi=
-nion.
-
-Best Regards,
-
-Tim
-
-
->
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
->
->
-> > Reported-by: Tim Harvey <tharvey@gateworks.com>
-> > Closes: https://lore.kernel.org/all/CAJ+vNU3ohR2YKTwC4xoYrc1z-neDoH2TTZ=
-cMHDy+poj9=3DjSy+w@mail.gmail.com/
-> > Fixes: ef61c7d8d032 ("PCI: imx6: Deassert apps_reset in imx_pcie_deasse=
-rt_core_reset()")
-> > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > ---
-> >  drivers/pci/controller/dwc/pci-imx6.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/contro=
-ller/dwc/pci-imx6.c
-> > index 5f267dd261b5..f4e0342f4d56 100644
-> > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > @@ -776,7 +776,6 @@ static int imx7d_pcie_core_reset(struct imx_pcie *i=
-mx_pcie, bool assert)
-> >  static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
-> >  {
-> >       reset_control_assert(imx_pcie->pciephy_reset);
-> > -     reset_control_assert(imx_pcie->apps_reset);
-> >
-> >       if (imx_pcie->drvdata->core_reset)
-> >               imx_pcie->drvdata->core_reset(imx_pcie, true);
-> > @@ -788,7 +787,6 @@ static void imx_pcie_assert_core_reset(struct imx_p=
-cie *imx_pcie)
-> >  static int imx_pcie_deassert_core_reset(struct imx_pcie *imx_pcie)
-> >  {
-> >       reset_control_deassert(imx_pcie->pciephy_reset);
-> > -     reset_control_deassert(imx_pcie->apps_reset);
-> >
-> >       if (imx_pcie->drvdata->core_reset)
-> >               imx_pcie->drvdata->core_reset(imx_pcie, false);
-> > @@ -1176,6 +1174,9 @@ static int imx_pcie_host_init(struct dw_pcie_rp *=
-pp)
-> >               }
-> >       }
-> >
-> > +     /* Make sure that PCIe LTSSM is cleared */
-> > +     imx_pcie_ltssm_disable(dev);
-> > +
-> >       ret =3D imx_pcie_deassert_core_reset(imx_pcie);
-> >       if (ret < 0) {
-> >               dev_err(dev, "pcie deassert core reset failed: %d\n", ret=
-);
-> > --
-> > 2.37.1
-> >
+      Arnd
 
