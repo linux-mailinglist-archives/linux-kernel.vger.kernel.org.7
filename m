@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-683204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB64FAD6A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:18:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C65AD6A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C9FE7A2FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8744C1676C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053092040A7;
-	Thu, 12 Jun 2025 08:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A87220F51;
+	Thu, 12 Jun 2025 08:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="vnyP5Wl3"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDRAKLMm"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A376B42A82
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C9F21D3F4;
+	Thu, 12 Jun 2025 08:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749716322; cv=none; b=dyPxhbT3cRZ0LF34XgJKD4XVmO7Vnq2VzIH73xVS9mlNV7m0EF2BCSAQe/78vNfTKtEVl8W1e7TnRf67n84OWhe0O2GzpW3PE6RkL3ZaPCNU+Yz4LycQfQDif2m9AnjV5sWhRoQeJspGXlyxv96EDY6tpamY0ny6iVSOY++hSkc=
+	t=1749716432; cv=none; b=dYUG5CJNVp693ewlXLmm59YXK+LScYr0ZDt91+OzZqyWN4ApvMtC3CLsUDR9ji2nBSn71bMyfq0bHf7AaNQR6OWlA7wOPhdlzdVJYF5eqEz4DKH+XSuEz8VBTrRW6OeuwVSCrg5pXmY+DFBgB5eVaphs4W/gm7sDZScgc5UwhOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749716322; c=relaxed/simple;
-	bh=0qdrwiAj6O2C5b2rv9VYI4/lQoSv/F9LRl/c7Zh0O1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TF7kXE2zo/zSIyQRRTS7pjjXxr9Ryah3WnSaxJDW6qlzjiO1CxaxBbU76b1sTSv2fUxUjXUqY5Bt4TP1/jaMjtjKylKcbtyPqj3sHIjpBa7v5m/0SbXVi51oV9ib9dHx8t37uAE94J6QjPX7KQMwNqMFqRsrjLEUjfxw21Xk8MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=vnyP5Wl3; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 8CE53229C9;
-	Thu, 12 Jun 2025 10:18:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1749716319;
-	bh=GmMT2Gx7ebGWyVDXriDd7aNz+qSSEpHApUznco75Q1M=; h=From:To:Subject;
-	b=vnyP5Wl3dDjRBzubS5Zzkxtrb9SVNQvIk7S/1QMcnRD9f1j07zyobYbQTloW08qET
-	 KboSSVos/hiJ7e4bhTvWVHqHTYk3gC/RFsMhoECWgDUhzhNRU3IS+L7evlyARzOCmz
-	 6A3baPzMmnh9BIxex0lVAveoOUliL3JKITL99aofs4e1A1jqUwH3YOZ4gOZjpkSjgH
-	 7Fh4V1ibYDvIZsvifjpXNsM5jYIExtJEiPaV8eQ0V0BUvEJonldUXPXRXGxZENYRHg
-	 BsKlAlcXGhM/KBak/IUi4UmZFMpe1U7mWuzPO9unYsi/uBHa5heewMTuSmSJMNqANR
-	 Wb3EYclgml3mw==
-Date: Thu, 12 Jun 2025 10:18:34 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Anusha Srivatsa <asrivats@redhat.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: drm/panel/panel-simple v6.16-rc1 WARNING regression
-Message-ID: <20250612081834.GA248237@francesco-nb>
+	s=arc-20240116; t=1749716432; c=relaxed/simple;
+	bh=WVgG2tnnkYpGMxVKQjyY3rF80ora3aJX6lpro4BS+uo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O4bkmgZDmH1aoayv++j/7xEIZQljpadpI3fiMne13W4eRTS+LRYbsL9r97FBEr+7bIHWlB966+TiYSqsq/w2HPSCrlPXwpBoQjFF9GeFtQSJLmElPzk6sBE5rfbCvmJLd1rSyDEQkgkolswluuyx69/WVAaTKmqCY0Tqa//FGxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDRAKLMm; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-404e580bf09so172075b6e.1;
+        Thu, 12 Jun 2025 01:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749716430; x=1750321230; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iHaOjqwhY79rHl7CZbeFzNKnbLFycykRZVNCnsxTjBw=;
+        b=iDRAKLMmIfcWwJ8mhVQ3C35Ysd2kEYiNlM7t4MrGl0OzVjR5eGYxO3ELWdJEzc6czU
+         lSyIv5pUi1TGhaCACEv9a+un5PMx53mF2oTViitxJruWe4tsrbWX+LGeSx0zsQiHhiEL
+         XBuALKGj4xAL/ST6c9wRL6K48Qofe9eYve7V+8/FxSwIYZnPczywZ+Re4vFtxYjNjVV1
+         2ChOHuu7C3In6OZC2C+WMNLRAmJK59ENO1HxHIvnGGg7MFU+p1thi5UQN2chzSKvq9uO
+         L6M4DSyS5kAQoN5jwYSRVpTeR1jpWDS7ZV9rZePz9BbYfywSBw1RXPgqGNiB/hA3sTWx
+         IZKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749716430; x=1750321230;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iHaOjqwhY79rHl7CZbeFzNKnbLFycykRZVNCnsxTjBw=;
+        b=pUzdv1mEQx9PMMpBG6BD9kBtSAYpbGYE8TVxywe0viH7PVSR0rFJCaHRC/ReibYfKz
+         4KfRijE+1hoQtlWySzjzDzHa5yNVxLekD+5UyqfIPfFziJBY+0PCs/X6DbSZWodbWtPj
+         YcwKQzeD+tFT+e1AHKtNz9a4ANqY7qPAAF5B1ezAOf4cfXIyQt67Uk+xKM5FKSGpuGQa
+         Ly1Ke1Er88S0jzZgujoMm1KdCui4B1vFBjDbi+gODHinbiECcR7EmJXgpMXXn1ophOmY
+         vZfkqUqZp0bidA1/46CVr2SQscWzJm7/PaKo3dJLABaKAcMErs9p2GIkcFYSWE1OHq4u
+         Odww==
+X-Forwarded-Encrypted: i=1; AJvYcCWcds0Kx8+RiE5HgsUgBuQ/vaKTpKk+i5F07t5W6HXS1wg0uLtbyrLw/sEvs06VSXNElK5mjWy+Mic0sO0Xsw==@vger.kernel.org, AJvYcCWkAmuoPxdWeQ9FDGnIMY2+hS/JxjGYuWv4iwXPshlbFw8V7waxQvZfL/46Omw/+uGiOCc3+ljqmGtZJfH4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgBDkmAtFdzUN4X90VkebeF8eRFLwspzL07OuJFw4/VpNOhpYM
+	yLvInIC2WYtW2m1NTesr4rkSSzHrOaUKEU/80C/K/rk/gApQl4dzlg7P5DU2s40Z
+X-Gm-Gg: ASbGnctqR6hXVpuRmx2rRXIi4JshofZ65eVMCCoUqnaC49GcMtfYAlqV58gXOKB+EVI
+	oNh1OwoRna1sbJInkrNqffQtwQCKEC8iDHj3uu6RlydywA9J0KVctdnCOFitBX2tpIU5xqHXbvI
+	TUxh1142ekCLqxtA/w2tDTrOA3naWr+z7+1u0oovbCltEinVaEFAe/qSc9GSv3a8rx3KUkBVjj9
+	Sr/oq1MqcOWGoYhpxXwKcBt4hxcrpDGIcr+Ero4/OtOnJDPDJMgePIH4sk31pv6BzybBKERHTrC
+	zNMUvicPC4qm3+E1u1k9rYB70UWwEag0ImuHQTzBU8iUUHExX0ckdHE33PhOnm4=
+X-Google-Smtp-Source: AGHT+IHgoouR9wdzwq9AQYrVJwXB6hntvSFWGTLZ5QK5PWgpDBD8wu5ti9LLCSM1L4N6sdRNdH53Ag==
+X-Received: by 2002:a05:6808:690c:b0:406:7186:5114 with SMTP id 5614622812f47-40a660ce8d6mr1224140b6e.36.1749716430280;
+        Thu, 12 Jun 2025 01:20:30 -0700 (PDT)
+Received: from s-machine2.. ([2806:2f0:5501:d07c:2c0e:c0ab:c58f:2cd])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a6830b980sm211965b6e.33.2025.06.12.01.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 01:20:29 -0700 (PDT)
+From: Sergio Perez Gonzalez <sperezglz@gmail.com>
+To: kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org
+Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	syzbot+e577022d4fba380653be@syzkaller.appspotmail.com
+Subject: [PATCH] bcachefs: fix size used to calculate `nr` of devices in member_to_text()
+Date: Thu, 12 Jun 2025 02:19:26 -0600
+Message-ID: <20250612081935.161598-1-sperezglz@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello all,
+In bch2_sb_members_v1_to_text() there is an incorrect size used to
+calculate the number of devices.
 
-Commit de04bb0089a9 ("drm/panel/panel-simple: Use the new allocation in place of devm_kzalloc()")
-from 6.16-rc1 introduced a regression with this warning during probe
-with panel dpi described in the DT.
+The correct size should be `BCH_MEMBER_V1_BYTES` as implied by:
 
-A revert solves the issue.
+static struct bch_member *members_v1_get_mut(struct bch_sb_field_members_v1 *mi, int i)
+{
+	return (void *) mi->_members + (i * BCH_MEMBER_V1_BYTES);
+}
 
-The issue is that connector_type is set to DRM_MODE_CONNECTOR_DPI in
-panel_dpi_probe() that after that change is called after
-devm_drm_panel_alloc().
+Also invert the pointers used in the calculation, given that they yield a
+negative number.
 
-I am not sure if there are other implication for this change in the call
-ordering, apart the one that triggers this warning.
+Reported-by: syzbot+e577022d4fba380653be@syzkaller.appspotmail.com
+Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+---
+ fs/bcachefs/sb-members.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-[   12.089274] ------------[ cut here ]------------
-[   12.089303] WARNING: CPU: 0 PID: 96 at drivers/gpu/drm/bridge/panel.c:377 devm_drm_of_get_bridge+0xac/0xb8
-[   12.130808] Modules linked in: v4l2_jpeg pwm_imx27(+) imx_vdoa gpu_sched panel_simple imx6_media(C) imx_media_common
-(C) videobuf2_dma_contig pwm_bl gpio_keys v4l2_mem2mem fuse ipv6 autofs4
-[   12.147774] CPU: 0 UID: 0 PID: 96 Comm: kworker/u8:3 Tainted: G         C          6.16.0-rc1+ #1 PREEMPT
-[   12.157446] Tainted: [C]=CRAP
-[   12.160418] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[   12.166953] Workqueue: events_unbound deferred_probe_work_func
-[   12.172805] Call trace:
-[   12.172815]  unwind_backtrace from show_stack+0x10/0x14
-[   12.180598]  show_stack from dump_stack_lvl+0x68/0x74
-[   12.185674]  dump_stack_lvl from __warn+0x7c/0xe0
-[   12.190407]  __warn from warn_slowpath_fmt+0x1b8/0x1c0
-[   12.195567]  warn_slowpath_fmt from devm_drm_of_get_bridge+0xac/0xb8
-[   12.201949]  devm_drm_of_get_bridge from imx_pd_probe+0x58/0x164
-[   12.207976]  imx_pd_probe from platform_probe+0x5c/0xb0
-[   12.213220]  platform_probe from really_probe+0xd0/0x3a4
-[   12.218551]  really_probe from __driver_probe_device+0x8c/0x1d4
-[   12.224486]  __driver_probe_device from driver_probe_device+0x30/0xc0
-[   12.230942]  driver_probe_device from __device_attach_driver+0x98/0x10c
-[   12.237572]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
-[   12.243854]  bus_for_each_drv from __device_attach+0xa8/0x1c8
-[   12.249614]  __device_attach from bus_probe_device+0x88/0x8c
-[   12.255285]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
-[   12.261739]  deferred_probe_work_func from process_one_work+0x154/0x2dc
-[   12.268371]  process_one_work from worker_thread+0x250/0x3f0
-[   12.274043]  worker_thread from kthread+0x12c/0x24c
-[   12.278940]  kthread from ret_from_fork+0x14/0x28
-[   12.283660] Exception stack(0xd0be9fb0 to 0xd0be9ff8)
-[   12.288720] 9fa0:                                     00000000 00000000 00000000 00000000
-[   12.296906] 9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[   12.305089] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[   12.312050] ---[ end trace 0000000000000000 ]---
-
-#regzbot ^introduced: de04bb0089a96cc00d13b12cbf66a088befe3057
-
-Any advise?
-
-Francesco
+diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
+index c673e76ca27f..cc51313ebcf6 100644
+--- a/fs/bcachefs/sb-members.c
++++ b/fs/bcachefs/sb-members.c
+@@ -325,10 +325,10 @@ static void bch2_sb_members_v1_to_text(struct printbuf *out, struct bch_sb *sb,
+ {
+ 	struct bch_sb_field_members_v1 *mi = field_to_type(f, members_v1);
+ 	struct bch_sb_field_disk_groups *gi = bch2_sb_field_get(sb, disk_groups);
+-	int nr = (vstruct_end(&mi->field) - (void *) &gi->entries[0]) / sizeof(gi->entries[0]);
++	int nr = ((void *) &gi->entries[0] - vstruct_end(&mi->field)) / BCH_MEMBER_V1_BYTES;
+ 
+ 	if (nr != sb->nr_devices)
+-		prt_printf(out, "nr_devices mismatch: have %i entries, should be %u", nr, sb->nr_devices);
++		prt_printf(out, "nr_devices mismatch: have %i entries, should be %u\n", nr, sb->nr_devices);
+ 
+ 	for (int i = 0; i < nr; i++)
+ 		member_to_text(out, members_v1_get(mi, i), gi, sb, i);
+@@ -344,10 +344,10 @@ static void bch2_sb_members_v2_to_text(struct printbuf *out, struct bch_sb *sb,
+ {
+ 	struct bch_sb_field_members_v2 *mi = field_to_type(f, members_v2);
+ 	struct bch_sb_field_disk_groups *gi = bch2_sb_field_get(sb, disk_groups);
+-	int nr = (vstruct_end(&mi->field) - (void *) &gi->entries[0]) / le16_to_cpu(mi->member_bytes);
++	int nr = ((void *) &gi->entries[0] - vstruct_end(&mi->field)) / le16_to_cpu(mi->member_bytes);
+ 
+ 	if (nr != sb->nr_devices)
+-		prt_printf(out, "nr_devices mismatch: have %i entries, should be %u", nr, sb->nr_devices);
++		prt_printf(out, "nr_devices mismatch: have %i entries, should be %u\n", nr, sb->nr_devices);
+ 
+ 	/*
+ 	 * We call to_text() on superblock sections that haven't passed
+-- 
+2.43.0
 
 
