@@ -1,152 +1,217 @@
-Return-Path: <linux-kernel+bounces-684432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169C7AD7AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:18:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A055CAD7B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2854E7AAC7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57CDA3A215E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5710B2D3A7B;
-	Thu, 12 Jun 2025 19:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A7A2D322E;
+	Thu, 12 Jun 2025 19:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="jdBSKwBQ"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="F/gjGLyi";
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="CA8b1L5+"
+Received: from mx0a-000eb902.pphosted.com (mx0a-000eb902.pphosted.com [205.220.165.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9588419A;
-	Thu, 12 Jun 2025 19:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BE31F473A;
+	Thu, 12 Jun 2025 19:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.212
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749755858; cv=pass; b=eKHooeyMXedpSGtviLVpi9Nvz5c9Xp0UzHJRmbOWvr2KkwcaPbqFDlq0rsplglm0C0wYYQps9Ve6PjB3wJp0qEu+Wx9tfmV28QoSosDJZbkBGkixpHdOALpJ/VaPPT6YgAxJYNl4b/OJajobucRCs/0DDR+6TRcXz5QCb47jorM=
+	t=1749756527; cv=fail; b=ZfVKAwrWcwYGuuPCAEFJ7wEUmxMxB5G3Myn6U3GL3iPXdwu2QCw2pqbgFr330vilg4UzreioEzuU7IdH2iE3jbZ3TZArYqIqOyMqhudoLeOnofo4w/VSijyXVe4pvP7LsufupQpVUtLtDDF2tkVvK8C3BnjCOX9yfb+mv727iT4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749755858; c=relaxed/simple;
-	bh=sXrcw6tTsI/Mmww8u6JL7diNrWJf4Q7mj9O1jvIgM/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=baVXVUxTlbuV5yoQ2vlBKoN5wexwTUBEqdx3ASe39uHB6pNgmuIGmtI3RGmNpYw1IEx4bWozSnlYcLhKXZmIkDzyhBsS/jQHPG2V7SA5S9+OzGsGaAsfiL95THvICMHjkN8jaUzXRZ0FQIgOccobxgF3meTT16fziSRprb8WHoY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=jdBSKwBQ; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749755784; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EFH1gBrXRxnEbdwN8NuKJttxVfo8otLAVWOqMjccSlAJPieQGoreQOALJFOFSNWr7sTm1nnCQDuu/HsQkPOtQ/3OSYvQ4RyjyXBtSHjqSQpOvG+rol3y4CMkvAvX4S8y9ER4JY1+I1De1RTZCspz3nMo9hgIs9GEa29Bt5D3wzA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749755784; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=sAz8u8Of8VgXN3BQQ00U/F57NlhrS7p1nuOTfYJkSLY=; 
-	b=gx56POiNw+tPyzwOMUrXJdu8LXA3Wx0Fc7fpLgAxdL2NAvF06jUmFzQXXgdclEPvSot/sq5wjbKw4wosmJTvqvr3D2Ol7BcVPeIHRceQLb93o93NE842mu2MIU+ewqzhHXcOyn6sA+I1W7R4ndFqRO48pbEglbjFxLxjTpMHRfE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749755783;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=sAz8u8Of8VgXN3BQQ00U/F57NlhrS7p1nuOTfYJkSLY=;
-	b=jdBSKwBQJwbK7Wgb1BeOkKDHoXCKiMSRe7vNwtqecSYRDrLuqn7O5OZawJAn+DCb
-	1ShpLyDr//VBXzQCMKFW7XHKGS1I5U54aXGur+fPFzehkfen3wY4iloFKJZGU5HBeiY
-	CPvZ+rLtAcn7WQvK9zh7a9yesjqizAMrfxYGbQiQ=
-Received: by mx.zohomail.com with SMTPS id 1749755781436118.00228707547853;
-	Thu, 12 Jun 2025 12:16:21 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 15/20] net: stmmac: dwmac-rk: switch to HWORD_UPDATE macro
-Date: Thu, 12 Jun 2025 21:16:09 +0200
-Message-ID: <10689894.nUPlyArG6x@workhorse>
-In-Reply-To: <5947475f-ef38-44cb-857e-0c7378023ccd@lunn.ch>
-References:
- <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
- <20250612-byeword-update-v1-15-f4afb8f6313f@collabora.com>
- <5947475f-ef38-44cb-857e-0c7378023ccd@lunn.ch>
+	s=arc-20240116; t=1749756527; c=relaxed/simple;
+	bh=NJ3d8PWyp1pWQUF7FN/D8VB8rX0OdXYtnLBLgX9boOA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FsyxCo2bqW+MbfeAtbccq3nrPhnHarxXI0tr1Z5G6ZE/7JiS2CZegs5IpVfGo8dyjE/dJpeVjPEoO4M8V7dxLk0qV1mJUtwr9DrmLAV7SoWQCpJpwt6ac6HywLttfPDDqU+NHbIE6mSebTmD5Q+8w87sgPa0wVPg4m3pko7qbsc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com; spf=pass smtp.mailfrom=garmin.com; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=F/gjGLyi; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=CA8b1L5+; arc=fail smtp.client-ip=205.220.165.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garmin.com
+Received: from pps.filterd (m0220296.ppops.net [127.0.0.1])
+	by mx0a-000eb902.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CAOka9002475;
+	Thu, 12 Jun 2025 14:19:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pps1; bh=kwDAfVX6eWQWkoklALyOL4qWRTg
+	PyaVpgJkfreXb04E=; b=F/gjGLyiSndM0KpTDZABxbMVgpOZ8P3YIek9XF8XXiJ
+	eidySqIJuZoP3AmNoqskEFRqzWVXMUTTPiLRGKxXe8xPgF+8GrHI5ICrDODdWQFy
+	ZmgzoIkWUNh9zWbmGRaDBIbP5xNHsnnn5ZDYLN6rLpQajnAFo9xpObMeStJb3jou
+	EmzPHr/R72ZCK2A4t/znZ9lwTXGKHvz2oXESEdGDHAlXEjIOB6OTmItqgr63AJZG
+	YU+/RDy073GvT9U/mCqwOtzbypRHy0k/oEque/qvMBZDZ2fgD0FY7+tZb25ZoqFh
+	9oHiABXmdSsJQrXVwEDf1afX9Y/GAULw53I+nLUNo6Q==
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2129.outbound.protection.outlook.com [40.107.223.129])
+	by mx0a-000eb902.pphosted.com (PPS) with ESMTPS id 477w3ps55x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 14:19:11 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w/DQ3FQ7yh2PpUMJtnCbf+DYyaq3Mc7XOjETYFeZVonTIfYMDtZ7jtxOjLkULEHQltaXBH1k33jiMK3JFAGJ/zon6BPsbZiKSrfee8YpjLOo6MIDIA5nMa0FKbfvOPIBbuApuyy3YdZCdCrr/roY1W72OflHHuAsCbFPkS/XszAfbKe3jrKPlRHgF/GLn+WCyQ5XmqgMIVwpVk9xPmVmeJjAWWn79FS2z4INttW0jH465R7GaV2B2mMYp353BSvVMHNLqbycKr55/g4fEqdvnv+HP8cML1KI/ql3yXradtfXnSK2Uk5YFx/yvCH6YP06vqTbHw0NvCBNoNuAlTvYYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kwDAfVX6eWQWkoklALyOL4qWRTgPyaVpgJkfreXb04E=;
+ b=dnt/gdRSTOoANXs/jkz3n/Vh+JytSxJHXXXgAYDZRJZz70k6iy/+jJ5zPzqH0nvo9Sj6L19c8U9aUKHDVIq9JBZHLu4jjXmPNUPIk4cXOzlpOcXPNoJeij6rmujZvRzJ+r1vk5Uk7PoLj3bKbyPYE8gzvulcqgh+kDuZ81akaO2eLFQW7L8K0TyEO2WjllOrEO4ELK9UbVwUbo8sfvUIy4XNfg8s9/V0IQMBJ9+eTgJgMvb9UVmHMvg/IC3uaa+DahnZCCyuUhnffkQkdNNH+MVZFYYfQ1kmklBFDWeu1rXaQvt5sGSVY7j9Q2w9bU+uVSpqIsrKsh76s7FsZOtDkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 204.77.163.244) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=garmin.com;
+ dmarc=pass (p=reject sp=quarantine pct=100) action=none
+ header.from=garmin.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kwDAfVX6eWQWkoklALyOL4qWRTgPyaVpgJkfreXb04E=;
+ b=CA8b1L5+XjQgox+alJfjz/sd/yoECzXiGeo3sjnu0F/giSsnbcyDoUhHB0W2088MVQJMZ5blBYKgAhKLvXeANl/nlFqxZVT4jtS5Upbc8AJS05CpyGdZ2sX4ONbexG6WpXDrFNY+kj9XH70CedHrDbntya1lddbBpjQP+o65edPRIorSQwdZ8Ci4ryptOyi4JYngV5g4MFI2ZPwQz+hk8GyXjcJqFBgo6VIU1/zawSro0TooQbGbNrfemtwraKsgf+wSFkDsslwRXpQo1BHXvkOQu9trlbH/ljVA6JlZssrO7WCfKqtQR5Ev4X+rTyr+V8iN6K9y2d7jBQRbHvIcIA==
+Received: from CH0PR04CA0114.namprd04.prod.outlook.com (2603:10b6:610:75::29)
+ by BY5PR04MB6437.namprd04.prod.outlook.com (2603:10b6:a03:1e4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 19:19:08 +0000
+Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
+ (2603:10b6:610:75:cafe::49) by CH0PR04CA0114.outlook.office365.com
+ (2603:10b6:610:75::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.19 via Frontend Transport; Thu,
+ 12 Jun 2025 19:19:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 204.77.163.244)
+ smtp.mailfrom=garmin.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=garmin.com;
+Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
+ 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
+ client-ip=204.77.163.244; helo=edgetransport.garmin.com; pr=C
+Received: from edgetransport.garmin.com (204.77.163.244) by
+ CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.15 via Frontend Transport; Thu, 12 Jun 2025 19:19:08 +0000
+Received: from OLAWPA-EXMB2.ad.garmin.com (10.5.144.14) by cv1wpa-edge1
+ (10.60.4.254) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Jun
+ 2025 14:18:27 -0500
+Received: from cv1wpa-exmb1.ad.garmin.com (10.5.144.71) by
+ OLAWPA-EXMB2.ad.garmin.com (10.5.144.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 12 Jun 2025 14:18:29 -0500
+Received: from cv1wpa-exmb3.ad.garmin.com (10.5.144.73) by
+ CV1WPA-EXMB1.ad.garmin.com (10.5.144.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 12 Jun 2025 14:18:28 -0500
+Received: from OLA-JW4GN34.ad.garmin.com (10.5.209.17) by smtp.garmin.com
+ (10.5.144.73) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 12 Jun 2025 14:18:28 -0500
+From: Brett Werling <brett.werling@garmin.com>
+To: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Marc Kleine-Budde <mkl@pengutronix.de>,
+        Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>, <bwerl.dev@gmail.com>,
+        Brett Werling
+	<brett.werling@garmin.com>
+Subject: [PATCH] can: tcan4x5x: fix power regulator retrieval during probe
+Date: Thu, 12 Jun 2025 14:18:25 -0500
+Message-ID: <20250612191825.3646364-1-brett.werling@garmin.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|BY5PR04MB6437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9250da59-b459-47f3-095e-08dda9e60101
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hoEukW/Ku6aoeAaBV8MnAkKJnHQHyA04676Gm0wiTc8Pd4kdLABAXDVL/mhz?=
+ =?us-ascii?Q?BJzhg5cIUi1CX+P3ZMTNLVl1LPsVFzJKpui3ePUB/7L3+hqbxQk+GqCSvYJF?=
+ =?us-ascii?Q?S6BZiwxDAmbzoVNv5YvlKgXNANwZMt9LXVSt3PC5vbIlfzAQIbVlbQ1Xu63N?=
+ =?us-ascii?Q?8ygvg7g5uAnutB7EyT2j7k2pF0lXrvSoS9OQcOywJdsGFGaEfKe0DrgHZ9+N?=
+ =?us-ascii?Q?Uks36iBIELqJx7WyOibFOptOb2h9TFQNfswF62N3fMpJG8r2rPzKKYKYbd0a?=
+ =?us-ascii?Q?3WW3i/FSDbasDqYTtpxOsu8W5FDfClsuJcj4hIn/c8mNG2ZhFkfB0jFfFxAX?=
+ =?us-ascii?Q?TA6wKfmRBefAy4sZgKxk22343Q+X0QYq6whzKFfLAsWyX+p6nl12Hq5WgrJM?=
+ =?us-ascii?Q?UvufXZqx3PVXd5GCNuYBX6oq1VMpCpIQeQwDYj6bvtiyj386S/5NBRdFtL0o?=
+ =?us-ascii?Q?W4PJ7PZTOfxU/pdPyWr2YMUE6REquyC7QNgevJQJS+SmAjZ4N05llvUL6nN5?=
+ =?us-ascii?Q?DWbgS026H3ojgKMQskghZf6DHNhUtI88y7/jKsWn9HGUzW4KsTFjXSYvDiQX?=
+ =?us-ascii?Q?Z/TASMPUqaDaM645A1TDF6DZx1PwNEXnjAgRCFmauJBTY3wZ2mKTyIFn6Y2S?=
+ =?us-ascii?Q?S3wHDNiCenrwB+P4DzBwy1tV7k8a+LhX+gQfjxUdfoPP3EXPQJu/HbxUmhWy?=
+ =?us-ascii?Q?rPTrcVuG7Cjm2iF0Orh08odpcd6DV7zuMNurX0MuTwkloplgTHtDDu8L/EGI?=
+ =?us-ascii?Q?mAnYYTGNvAo3JeNyNLXmNxtgWV2xQ/3eZqJ3WMNAd03R0j5NagNkv62bxSGU?=
+ =?us-ascii?Q?kkYGIY3OCBdz8yyIlEcOzqlArxtadT7hC7uBngf5rsbokEl9X+V1X52Z+CDp?=
+ =?us-ascii?Q?g989Y+9DRyPQ8YjYvCYYA/6wOGTND+azYDBgU1kKx1XTStwkBZ9jqPFIFNyT?=
+ =?us-ascii?Q?ZVQeKa7aRGKR8nSQ66vDDi76zvcCNO2G8SGysqeQ+t/c9Rgurt/LFCf7dWhP?=
+ =?us-ascii?Q?VUQ/MjVRxbO++H5/oetn1gM7zSN9VrMfMhU8SgQRusMGE5QrfzJ0SDeHhNVt?=
+ =?us-ascii?Q?z7XUd5pVmd8uH4NC7p9Y13O973MMMvDYQz2Yt80P0j1AUYFl+BnafpCsiGgX?=
+ =?us-ascii?Q?S4G8buu/8wvdfdkT+CLmUdl2L1ngrMtQb2d5Ala84OrSjwdb9CdN4fXQchaU?=
+ =?us-ascii?Q?fplLuTNnNpNghEl1IXXnQEbPM1i4MqKRPlit/QyDaEa8eofMP5Mq6sWM/dE0?=
+ =?us-ascii?Q?Gl4y1d/pMlj9BJi1xJYasuRm4BpJklz/yknqXfqJGy14edV3LR8orVcs10sU?=
+ =?us-ascii?Q?G79qzfetftAF/Z8rLsPBmDRxy4spCG0M0qdR/XXZQ2q5VwXBG46yQ2kM3fSZ?=
+ =?us-ascii?Q?hBrb+OEch0oTKhkAbQpwlrBeJoWGrjDUyaGTYe/FSm3r6trKHd/1AO2B/Wum?=
+ =?us-ascii?Q?cUk3NzW7aiPX9xNbmyw1C7LFSJt4+YivLlAeMnAvZF2HfBdw6b9Arp+zRoXF?=
+ =?us-ascii?Q?ZxYHaYz7vH9Cl029wxebHoa9zQ3BiCSsgirV?=
+X-Forefront-Antispam-Report:
+	CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: garmin.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 19:19:08.0117
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9250da59-b459-47f3-095e-08dda9e60101
+X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD78.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB6437
+X-Proofpoint-ORIG-GUID: 1K7_KG6xJZ3tMR13xlBr-3XPxkunVbGI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDE1MCBTYWx0ZWRfXy5cQkhaznyFh hPavI8M4YNltfSlP7wGyJvHMgj9dj8bnLCN2JXjxKvwVMZeGhBXz5MJMQNW/ybbQZXvrWeGmD/q U2Re1hRvS1JScalmYm5Pf8He8LGa1EaYbCRUNEQlvV6zh6aZA/ttBnrNM7I51ax68/y74/LgrF2
+ 00E57afqsRHQaaF2/edJDxE7ka5sMIST/qum8W6+eq9AWU+kWW5jHGypwUrEZlUvMFMAiRBIhX+ eBi0pbYyQxmA6EZkE8UWZQgnlMKQ0QpNVTnHlk/Os/iGqqTaHniXD4NUPxB1+xG919g8+pP+jIH F+aXWHZ+5RmlOCo5ACiv6CtHCxR/9SECu+ZM8V6yneSh/MqhPHgQ/aeG0/t9kwUxxATJzAE7TjR
+ Z/IXkX1R04iWit3uNohrwGhfwhlwlDViVATpiz6acavMsZzVCaHZwhH14Lt4z52mhv0+5ISm
+X-Proofpoint-GUID: 1K7_KG6xJZ3tMR13xlBr-3XPxkunVbGI
+X-Authority-Analysis: v=2.4 cv=SMdCVPvH c=1 sm=1 tr=0 ts=684b282f cx=c_pps a=rpzdijBBfSkI3xxH5MEd0g==:117 a=YA0UzX50FYCGjWi3QxTvkg==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=6IFa9wvqVegA:10 a=qm69fr9Wx_0A:10 a=NbHB2C0EAAAA:8 a=K_XiwLw5_EJofLazd_wA:9 cc=ntf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 suspectscore=0 clxscore=1011 spamscore=0 adultscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=notification
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
+ definitions=main-2506120150
 
-On Thursday, 12 June 2025 21:08:20 Central European Summer Time Andrew Lunn wrote:
-> On Thu, Jun 12, 2025 at 08:56:17PM +0200, Nicolas Frattaroli wrote:
-> > The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-> > drivers that use constant masks.
-> > 
-> > Like many other Rockchip drivers, dwmac-rk has its own HIWORD_UPDATE
-> > macro. Its semantics allow us to redefine it as a wrapper to the shared
-> > bitfield.h HWORD_UPDATE macros though.
-> > 
-> > Replace the implementation of this driver's very own HIWORD_UPDATE macro
-> > with an instance of HWORD_UPDATE from bitfield.h. This keeps the diff
-> > easily reviewable, while giving us more compile-time error checking.
-> > 
-> > The related GRF_BIT macro is left alone for now; any attempt to rework
-> > the code to not use its own solution here would likely end up harder to
-> > review and less pretty for the time being.
-> > 
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> 
-> Please split this out into a patch for net-next.
+Fixes the power regulator retrieval in tcan4x5x_can_probe() by ensuring
+the regulator pointer is not set to NULL in the successful return from
+devm_regulator_get_optional().
 
-I would be surprised if it didn't apply to net-next.
+Fixes: 3814ca3a10be ("can: tcan4x5x: tcan4x5x_can_probe(): turn on the power before parsing the config")
+Signed-off-by: Brett Werling <brett.werling@garmin.com>
+---
+ drivers/net/can/m_can/tcan4x5x-core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> Also, Russell King has just posted a number of patches for this driver,
-> so you will probably want to wait for them to be merged, so you post
-> something which will merged without any fuzz.
-
-I would be surprised if an automatic merge did not produce correct code
-here, as I specifically replaced the implementation of the macro with
-an instance of the new macro and adjusted semantics on purpose. If it
-compiles, it's correct.
-
-Would you still prefer for me to re-send this patch based against
-net-next once the new macro is merged and within net-next?
-
-> 
-> 	Andrew
-> 
-
-Best regards,
-Nicolas Frattaroli
-
-
+diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
+index e5c162f8c589..8edaa339d590 100644
+--- a/drivers/net/can/m_can/tcan4x5x-core.c
++++ b/drivers/net/can/m_can/tcan4x5x-core.c
+@@ -411,10 +411,11 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+ 	priv = cdev_to_priv(mcan_class);
+ 
+ 	priv->power = devm_regulator_get_optional(&spi->dev, "vsup");
+-	if (PTR_ERR(priv->power) == -EPROBE_DEFER) {
+-		ret = -EPROBE_DEFER;
+-		goto out_m_can_class_free_dev;
+-	} else {
++	if (IS_ERR(priv->power)) {
++		if (PTR_ERR(priv->power) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto out_m_can_class_free_dev;
++		}
+ 		priv->power = NULL;
+ 	}
+ 
+-- 
+2.49.0
 
 
