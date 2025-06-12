@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-684185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87249AD774F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:01:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC46AD7729
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D3B1677DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:55:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E30C7ACB73
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31EA2BD5B0;
-	Thu, 12 Jun 2025 15:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAYplWd8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA340298CD2;
+	Thu, 12 Jun 2025 15:54:13 +0000 (UTC)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2709818FC91;
-	Thu, 12 Jun 2025 15:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA35922094;
+	Thu, 12 Jun 2025 15:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743614; cv=none; b=UAS16/lxYv+a982DdXH3DHTCtqnAei1aRK3gKB6v5KDh7/t96DVA47aMoypL5XVDRXEql8v+bQqf7y+6rDflCnQ1Ll1lWKUdGzDfMbbKihT4Es93/ja42hz8GW0W6IFjIkpKwX0j/qtTBm7m+IT5F0kGQAw/OpTlqR+50pvOehE=
+	t=1749743653; cv=none; b=Uke2NhumC4gkEPTdixfZ2yMN+WSuMrD1ADmUZEUIX7Tk7EIvX6xWLD6hR2+BuG5WwLBHWE9Gec/3kF4YdYPhbuEqgHBsXzxzQWB9JOQL5UqmoobYZS3B8JvFZH9+s7E5tlDD4mw3hMePuOafVEOrKbo4oETwdlc0hYnYViyewC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743614; c=relaxed/simple;
-	bh=oJd9zlLqq+yGzcYCfQLO7Zx+Kd3Fc5whC5ZgR/zQbhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQyJb6WhVZf7pAXx7SqEb+IGJtfSfIdEzeWoxenJDM45UIZro91pbSsOSqRc+6fKoICYNAvsD0Ra0AfAq3paABu1VmmxxsyeqKXozLX7ipAESMhccnXZ1nAco693KO7GwM5TMwuLsrKCB1CoGIOjtC2fcjX/fRw7vMkN2JDSmMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAYplWd8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C369C4CEEA;
-	Thu, 12 Jun 2025 15:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749743613;
-	bh=oJd9zlLqq+yGzcYCfQLO7Zx+Kd3Fc5whC5ZgR/zQbhE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZAYplWd8EO10I6lKieJ2IK+172cR4sYjSUdunAyFL+3KIp8x4a8e88BjlTxL7ogsU
-	 nniAAbZ9lQtShuBoenvzSrwA4N0bblX45PZrj5zCS7xkPkOvUS4WRV5GDTXMfDtDn7
-	 JP/MKRudGD/uStsdBtb5I7ZxKPXTma9Q33GG6uAQlSg0QiTN3TZOvVCtFoPfK3nolJ
-	 oFsNKJ6ujjYu/WTytmhBi6OBuLaOH+fzNGIiJKcOTTBErrG5iofM1DGiwTPydax0R1
-	 XOD+KRmEQ7TtxUBW1xVOTMnqAOQLgocqCIazFzigzT8xskPYB2RaW5cr75A5u07Mxh
-	 gfUwT3HQllD6g==
-Message-ID: <f73a08e2-7793-447a-b7be-07909aa80425@kernel.org>
-Date: Thu, 12 Jun 2025 17:53:28 +0200
+	s=arc-20240116; t=1749743653; c=relaxed/simple;
+	bh=Lozr22R6CO+RNvwVhifH/eSDDg9MlLQKcOlojkNqxc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XdPRtZ+04TiEXzaDq4DThV1C333xqU4VygjfUKGnyykOEBYDm32UuzpXdo7FxR8irvLNeGIzWaWRt8+kdpaXnUsKiCbeqU5PloBzL/zHH8XSZJxmVykWMifMC0DaVhOkuBTfEZ+Ss6Wk5X1lGhLYGth00d8d1G3DVDIxGsYei0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53125ca7837so635169e0c.0;
+        Thu, 12 Jun 2025 08:54:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749743649; x=1750348449;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MCWdKGDkn0LPrrpZul9GwNXUtPRdna1q2f9cpPPTLvA=;
+        b=CJnRmZoQ0g9EeciCPu5VSgLQ6+Yp0sVzbIUuG7Hw0r3haTpYwF21HW+9STnyJy6O9c
+         ulAGUTqJFZZfKyYx/K9NAHZq9OU4XUGGSQzDF0D5+rG37dGfugK7tLcJ9ORfzhwnEdQ2
+         ti8J6zb1CBNoqI5l8cnMvtPfjuH+ukszGhAyaFPr5OHh/UeB8CYRcL6oquxChjyuBW1c
+         75JQwTuG2WmdTRREClWXwkFWny5EXotZJgDPDhfxb/VpPjOPKrPKDBDm9xXULB56wR/y
+         lvFSnQs1LIR/19ZvQ0vyI13j1dumLw5yZsi3MMq44nbsnXSUxfJ5PsmbxY6ihEIRP5TX
+         q5zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOVp7hSMWtR+LrlA6Frd0BnR/loTzLXVGb6IfRJO7daV1nKfwc2ox2u1PSzwU5k4/23/kwwAeqEMm9w3uvmGLhsmg=@vger.kernel.org, AJvYcCUkZcsR3Ss3sCr5/R3dPXHOmKXPpE59twdWjwVLTketmtnJNYDJ3kPULDU99nRe4YSVsXlAh0JNFYH4SYA=@vger.kernel.org, AJvYcCVbnRcHQmj3qmkwUVH4uDHh359MlnmZw+hxJIOKJLUIRCe8QteOwLNd3L6MdTDZ+eKj8BmX18AmuyG77/kodmX/YFI=@vger.kernel.org, AJvYcCWsUzdGiOMYf+//lkaORyRFeoFsvPxny/1EZNLGOuHbmdEiHkak0tkMBCrPcOAZESHHA/eWlS5GaNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypo7DB0NRFCzgTV2JyaYjQsPVhDNqsZD6nC0sYs4+DFYO0wRw9
+	IuOIFBrVs9ll+nasIhuD6sCSZpN4pXFZAn6GFed51DM3bval9f63U43ztnW7OMh2
+X-Gm-Gg: ASbGncthSQPf+5XFYpGw9rz9RnmwgYBPMmsSf/aO4NlXWcmxPqrPSxGDsrvwSA9nc4H
+	ggZO0xyU9NMVKfNL9/DIvmHoyCTz6LJlXydyT5ii9OKpBxwbMzA4WWWKHnEt1eOtI0xP5oqIygC
+	BXv7X5BOdhCV0UqHWyPrt92Qw7A56FZ3Qg8EVoZDF5565LsBmqC9jBMZZmi2DDcEd0eihrZDaHv
+	TC3LVQlK8rQJOJrFvxrxWMoJEl68PPviRzP6aON/dNAOtcnjNHHQ0BUfbi0eRLatc2HG+VET7T0
+	p4Cngyb27KvSLopSDYHIODbb0e/lmWwZP/BGq0WtzpTGFLKU7/woo9Ole8Kme1yukA/DyeO0Jhi
+	uLI5Vk/aaialT3Ga+tExBWS59
+X-Google-Smtp-Source: AGHT+IHPQH4Y8zIYDo7jnYGjuCCKNfPDnUxt8yyPNZacUMOEktQBFF58LQrKvZEwDw2RZYYcI0kOoA==
+X-Received: by 2002:a05:6122:81dc:b0:52d:cc6f:81a2 with SMTP id 71dfb90a1353d-5312dc21da3mr2539414e0c.6.1749743649358;
+        Thu, 12 Jun 2025 08:54:09 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01259249sm340861241.9.2025.06.12.08.54.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 08:54:08 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e7c7680591so656668137.1;
+        Thu, 12 Jun 2025 08:54:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUowVZxKTEwyQURYu7qTx9yNZ323/WGFV047Wy0s8MyKJSqJakBSpr/fIRonZdUt8U/qYz+nzu2uBpnToQ=@vger.kernel.org, AJvYcCVoNcpLFUGR19ERv5s2F4O+s4f3gt2yrCOjsUIjHjkRDU5Ku3VtOHRDbhtwC+IjSZvd/m/n1ATo8/JTQeNO69kadlQ=@vger.kernel.org, AJvYcCWqS1F10E6wubpH3w+gSsedHbklQtjSgYWni/MiuXsqtgfkDi3N7ItySzSw3ImnZ/ZtlX1LjN5gket2VllD36d9ohg=@vger.kernel.org, AJvYcCXRxK2ji42gfTE/fVcDTmDx9S+YlJO6PiHjtQMXYx+6S9XvQe4yrwGqZ8l0aJedtkRtAtuCkiclT4g=@vger.kernel.org
+X-Received: by 2002:a05:6102:5113:b0:4e4:3c3a:f163 with SMTP id
+ ada2fe7eead31-4e7cd7a4049mr3737309137.7.1749743648153; Thu, 12 Jun 2025
+ 08:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xdp: tracing: Hide some xdp events under
- CONFIG_BPF_SYSCALL
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller\"" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>
-References: <20250612101612.3d4509cc@batman.local.home>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20250612101612.3d4509cc@batman.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+In-Reply-To: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 17:53:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV2Ar95nrmH=NTwY+pkrg6nD-sNoVG7MJY7ofJF4N3bNA@mail.gmail.com>
+X-Gm-Features: AX0GCFsIwHF9_aoZ54iuAPGFucIDRqFn8Tjpa14cAUcOdjFvqEv5PYmW-DjzBPU
+Message-ID: <CAMuHMdV2Ar95nrmH=NTwY+pkrg6nD-sNoVG7MJY7ofJF4N3bNA@mail.gmail.com>
+Subject: Re: [PATCH v2] pmdomain: Use str_enable_disable-like helpers
+To: shao.mingyin@zte.com.cn
+Cc: ulf.hansson@linaro.org, changhuang.liang@starfivetech.com, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, heiko@sntech.de, 
+	krzk@kernel.org, alim.akhtar@samsung.com, walker.chen@starfivetech.com, 
+	sebastian.reichel@collabora.com, detlev.casanova@collabora.com, 
+	finley.xiao@rock-chips.com, shawn.lin@rock-chips.com, pgwipeout@gmail.com, 
+	qiu.yutan@zte.com.cn, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, yang.yang29@zte.com.cn, 
+	xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, ye.xingchen@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mingyin,
 
-
-On 12/06/2025 16.16, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> The events xdp_cpumap_kthread, xdp_cpumap_enqueue and xdp_devmap_xmit are
-> only called when CONFIG_BPF_SYSCALL is defined.  As each event can take up
-> to 5K regardless if they are used or not, it's best not to define them
-> when they are not used. Add #ifdef around these events when they are not
-> used.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+On Tue, 10 Jun 2025 at 13:34, <shao.mingyin@zte.com.cn> wrote:
+> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>
+> Replace ternary (condition ? "enable" : "disable") syntax and ternary
+> (condition ? "on" : "off") syntax with helpers from
+> string_choices.h because:
+> 1. Simple function call with one argument is easier to read.  Ternary
+>    operator has three arguments and with wrapping might lead to quite
+>    long code.
+> 2. Is slightly shorter thus also easier to read.
+> 3. It brings uniformity in the text - same string.
+> 4. Allows deduping by the linker, which results in a smaller binary
+>    file.
+>
+> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 > ---
-> Note, I will be adding code soon that will make unused events cause a waring.
-> 
->   include/trace/events/xdp.h | 2 ++
->   1 file changed, 2 insertions(+)
+> v2:
+>  %sable ==> %s in jh71xx_pmu_dev()
 
-LGTM
+Thanks for the update!
 
-Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+While I already provided my Rb-tag on Krzysztof's original [1], your
+version is whitespace-damaged (TABs replaced by spaces), and thus
+cannot be applied.
 
+[1] https://lore.kernel.org/all/CAMuHMdXJ57mATWW4AnBedn+D7TQ4PadkJ642daquFtAo=wZFrQ@mail.gmail.com/
 
-> diff --git a/include/trace/events/xdp.h b/include/trace/events/xdp.h
-> index 0fe0893c2567..18c0ac514fcb 100644
-> --- a/include/trace/events/xdp.h
-> +++ b/include/trace/events/xdp.h
-> @@ -168,6 +168,7 @@ DEFINE_EVENT(xdp_redirect_template, xdp_redirect_err,
->   #define _trace_xdp_redirect_map_err(dev, xdp, to, map_type, map_id, index, err) \
->   	 trace_xdp_redirect_err(dev, xdp, to, err, map_type, map_id, index)
->   
-> +#ifdef CONFIG_BPF_SYSCALL
->   TRACE_EVENT(xdp_cpumap_kthread,
->   
->   	TP_PROTO(int map_id, unsigned int processed,  unsigned int drops,
-> @@ -281,6 +282,7 @@ TRACE_EVENT(xdp_devmap_xmit,
->   		  __entry->sent, __entry->drops,
->   		  __entry->err)
->   );
-> +#endif /* CONFIG_BPF_SYSCALL */
->   
->   /* Expect users already include <net/xdp.h>, but not xdp_priv.h */
->   #include <net/xdp_priv.h>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
