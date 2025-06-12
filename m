@@ -1,569 +1,181 @@
-Return-Path: <linux-kernel+bounces-683512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0852BAD6E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD82AD6E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37F043B2180
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365BB1882E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0497A23D284;
-	Thu, 12 Jun 2025 10:53:38 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD8423BCED
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836C239570;
+	Thu, 12 Jun 2025 10:50:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0078D223339;
+	Thu, 12 Jun 2025 10:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725617; cv=none; b=mSnMyxrtuX6JPM8JPtuDeZIkmSkYYthur0t6Z0WV/knpSfLiJmr5SERs36Xhsk746+6WsbsaFt8mYOV+Tjyg1J6+aecGf2PmUHQoEMGF9/1ltMLsOqpZ78DvOjnpU29qtWwSHTQbK26wdct/pJcM1lorB+Ik20EO1y3y4IsTKIU=
+	t=1749725438; cv=none; b=nELIOVtEFLyYJpNMcE+ZcycopUM0ENnpSWpP1S/gJctxX5XwzeYzuFMuVbRvY4IrGLE8LvC9pMwzKZvtM69CLVi3lQX+NX1ze2PSQyfnu4IUewbamHKgnDAA0xPvUcGAAbprNd3+4QvkmbBMt5nA5+f5LeOTnZ8haKl5fxR7uwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725617; c=relaxed/simple;
-	bh=ALZMxnbU3t7+QRRD3cqcdF8BHAFeVToWtA6sWETWCXY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hgqu3C8qoMbpixgZI46UTfGkgZta3HYl0fygQDEUghvreSsrttll6Wb39fQ4QmCjo5YMG6f+PUHwujAc/HZ82+NA/NujLrBtRGqD1etzFkG4M+UuZSpg9Id7rkMxqE0PGNv0K4pm/0oyJfj0G0TF+o0ZnjLGQV+DkCvxfLDxnBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330.lge.net) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 12 Jun 2025 19:38:32 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-From: youngjun.park@lge.com
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shikemeng@huaweicloud.com,
-	kasong@tencent.com,
-	nphamcs@gmail.com,
-	bhe@redhat.com,
-	baohua@kernel.org,
-	chrisl@kernel.org,
-	muchun.song@linux.dev,
-	iamjoonsoo.kim@lge.com,
-	taejoon.song@lge.com,
-	gunho.lee@lge.com,
-	"youngjun.park" <youngjun.park@lge.com>
-Subject: [RFC PATCH 2/2] mm: swap: apply per cgroup swap priority mechansim on swap layer
-Date: Thu, 12 Jun 2025 19:37:44 +0900
-Message-Id: <20250612103743.3385842-3-youngjun.park@lge.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250612103743.3385842-1-youngjun.park@lge.com>
-References: <20250612103743.3385842-1-youngjun.park@lge.com>
+	s=arc-20240116; t=1749725438; c=relaxed/simple;
+	bh=7BSZe8+beUgmypE7JzP+qQZrtF8zpwmQBhHO7r4ycdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WTD+Nc6Lw8rDOctbjq24mANu6vvpDB4NE1FVBoKUmMN7vntsRub8QufPTnfw5PUIyXi8VgqbgVHe64c6aY3zWmv8VN97odKxqCPA2rQcnT+7TLX/0pUUl205Ix1AOsbCk9EJzotfiq6UAXQoiZYSh1QyX92HdejEneCqtexxUkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bHzXv173dz9v8B;
+	Thu, 12 Jun 2025 12:39:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 745naYi7a1d6; Thu, 12 Jun 2025 12:39:11 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bHzXv0K5Wz9thj;
+	Thu, 12 Jun 2025 12:39:11 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 059D18B77B;
+	Thu, 12 Jun 2025 12:39:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id PjhTgEekJaLp; Thu, 12 Jun 2025 12:39:10 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 76DD38B769;
+	Thu, 12 Jun 2025 12:39:10 +0200 (CEST)
+Message-ID: <722831ed-b37c-41e9-ba96-d359883bcb3f@csgroup.eu>
+Date: Thu, 12 Jun 2025 12:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ALSA: pcm: Convert multiple {get/put}_user to
+ user_access_begin/user_access_end()
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>,
+ Mark Brown <broonie@kernel.org>
+References: <d2609397eafc2b55ec1f44a3f30ccec00e0c7f6e.1749455639.git.christophe.leroy@csgroup.eu>
+ <87zfeh72sz.wl-tiwai@suse.de>
+ <6fbbb13e-aedd-47ad-a58b-cc00e9ea138c@csgroup.eu>
+ <87frg96uxg.wl-tiwai@suse.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <87frg96uxg.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: "youngjun.park" <youngjun.park@lge.com>
 
-This patch implements swap device selection and swap on/off propagation
-when a cgroup-specific swap priority is set.
 
-There is one workaround to this implementation as follows.
-Current per-cpu swap cluster enforces swap device selection based solely
-on CPU locality, overriding the swap cgroup's configured priorities.
-Therefore, when a swap cgroup priority is assigned, we fall back to
-using per-CPU clusters per swap device, similar to the previous behavior.
+Le 09/06/2025 à 13:00, Takashi Iwai a écrit :
+> On Mon, 09 Jun 2025 12:02:00 +0200,
+> Christophe Leroy wrote:
+>>
+>>
+>>
+>> Le 09/06/2025 à 10:10, Takashi Iwai a écrit :
+>>> On Mon, 09 Jun 2025 10:00:38 +0200,
+>>> Christophe Leroy wrote:
+>>>>
+>>>> With user access protection (Called SMAP on x86 or KUAP on powerpc)
+>>>> each and every call to get_user() or put_user() performs heavy
+>>>> operations to unlock and lock kernel access to userspace.
+>>>>
+>>>> To avoid that, perform user accesses by blocks using
+>>>> user_access_begin/user_access_end() and unsafe_get_user()/
+>>>> unsafe_put_user() and alike.
+>>>>
+>>>> As an exemple, before the patch the 9 calls to put_user() at the
+>>>> end of snd_pcm_ioctl_sync_ptr_compat() imply the following set of
+>>>> instructions about 9 times (access_ok - enable user - write - disable
+>>>> user):
+>>>>       0.00 :   c057f858:       3d 20 7f ff     lis     r9,32767
+>>>>       0.29 :   c057f85c:       39 5e 00 14     addi    r10,r30,20
+>>>>       0.77 :   c057f860:       61 29 ff fc     ori     r9,r9,65532
+>>>>       0.32 :   c057f864:       7c 0a 48 40     cmplw   r10,r9
+>>>>       0.36 :   c057f868:       41 a1 fb 58     bgt     c057f3c0 <snd_pcm_ioctl+0xbb0>
+>>>>       0.30 :   c057f86c:       3d 20 dc 00     lis     r9,-9216
+>>>>       1.95 :   c057f870:       7d 3a c3 a6     mtspr   794,r9
+>>>>       0.33 :   c057f874:       92 8a 00 00     stw     r20,0(r10)
+>>>>       0.27 :   c057f878:       3d 20 de 00     lis     r9,-8704
+>>>>       0.28 :   c057f87c:       7d 3a c3 a6     mtspr   794,r9
+>>>> ...
+>>>>
+>>>> A perf profile shows that in total the 9 put_user() represent 36% of
+>>>> the time spent in snd_pcm_ioctl() and about 80 instructions.
+>>>>
+>>>> With this patch everything is done in 13 instructions and represent
+>>>> only 15% of the time spent in snd_pcm_ioctl():
+>>>>
+>>>>       0.57 :   c057f5dc:       3d 20 dc 00     lis     r9,-9216
+>>>>       0.98 :   c057f5e0:       7d 3a c3 a6     mtspr   794,r9
+>>>>       0.16 :   c057f5e4:       92 7f 00 04     stw     r19,4(r31)
+>>>>       0.63 :   c057f5e8:       93 df 00 0c     stw     r30,12(r31)
+>>>>       0.16 :   c057f5ec:       93 9f 00 10     stw     r28,16(r31)
+>>>>       4.95 :   c057f5f0:       92 9f 00 14     stw     r20,20(r31)
+>>>>       0.19 :   c057f5f4:       92 5f 00 18     stw     r18,24(r31)
+>>>>       0.49 :   c057f5f8:       92 bf 00 1c     stw     r21,28(r31)
+>>>>       0.27 :   c057f5fc:       93 7f 00 20     stw     r27,32(r31)
+>>>>       5.88 :   c057f600:       93 36 00 00     stw     r25,0(r22)
+>>>>       0.11 :   c057f604:       93 17 00 00     stw     r24,0(r23)
+>>>>       0.00 :   c057f608:       3d 20 de 00     lis     r9,-8704
+>>>>       0.79 :   c057f60c:       7d 3a c3 a6     mtspr   794,r9
+>>>>
+>>>> Note that here the access_ok() in user_write_access_begin() is skipped
+>>>> because the exact same verification has already been performed at the
+>>>> beginning of the fonction with the call to user_read_access_begin().
+>>>>
+>>>> A couple more can be converted as well but require
+>>>> unsafe_copy_from_user() which is not defined on x86 and arm64, so
+>>>> those are left aside for the time being and will be handled in a
+>>>> separate patch.
+>>>>
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>>> ---
+>>>> v2: Split out the two hunks using copy_from_user() as unsafe_copy_from_user() is not implemented on x86 and arm64 yet.
+>>>
+>>> Thanks for the patch.
+>>>
+>>> The idea looks interesting, but the implementations with
+>>> unsafe_get_user() leads to very ugly goto lines, and that's too bad;
+>>> it makes the code flow much more difficult to follow.
+>>>
+>>> I guess that, in most cases this patch tries to cover, we just use
+>>> another temporary variable for compat struct, copy fields locally,
+>>> then run copy_to_user() in a shot instead.
+>>
+>> Thanks for looking.
+>>
+>> I'll give it a try but I think going through a local intermediate will
+>> be less performant than direct copy with unsafe_get/put_user().
+> 
 
-A proper fix for this workaround will be evaluated in the next patch.
+I have now tried going through a temporary struct and the result is 
+awful, even worth than the current implementation, because 
+snd_pcm_ioctl_sync_ptr_compat() is not inlined anymore into 
+snd_pcm_ioctl(), and the call to copy_from_user() and copy_to_user() 
+also show up in the top 10 functions in the perf profile.
 
-Signed-off-by: Youngjun park <youngjun.park@lge.com>
----
- include/linux/swap.h      |   8 +++
- mm/swap.h                 |   8 +++
- mm/swap_cgroup_priority.c | 133 ++++++++++++++++++++++++++++++++++++++
- mm/swapfile.c             | 125 ++++++++++++++++++++++++-----------
- 4 files changed, 238 insertions(+), 36 deletions(-)
+> Yes, but the code readability is often more important than minor
+> optimizations unless it's in a hot path.
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 49b73911c1bd..d158b0d5c997 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -283,6 +283,13 @@ enum swap_cluster_flags {
- #define SWAP_NR_ORDERS		1
- #endif
- 
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+struct percpu_cluster {
-+	local_lock_t lock; /* Protect the percpu_cluster above */
-+	unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation offset */
-+};
-+#endif
-+
- /*
-  * We keep using same cluster for rotational device so IO will be sequential.
-  * The purpose is to optimize SWAP throughput on these device.
-@@ -341,6 +348,7 @@ struct swap_info_struct {
- 	struct list_head discard_clusters; /* discard clusters list */
- #ifdef CONFIG_SWAP_CGROUP_PRIORITY
- 	int unique_id;
-+	struct percpu_cluster __percpu *percpu_cluster; /* per cpu's swap location */
- #endif
- 	struct plist_node avail_lists[]; /*
- 					   * entries in swap_avail_heads, one
-diff --git a/mm/swap.h b/mm/swap.h
-index cd2649c632ed..cb6d653fe3f1 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -113,7 +113,15 @@ void delete_swap_cgroup_priority(struct mem_cgroup *memcg);
- void show_swap_device_unique_id(struct seq_file *m);
- #else
- static inline void delete_swap_cgroup_priority(struct mem_cgroup *memcg) {}
-+static inline void activate_swap_cgroup_priority_pnode(struct swap_info_struct *swp, bool swapon) {}
-+static inline void deactivate_swap_cgroup_priority_pnode(struct swap_info_struct *swp, bool swapoff){}
- static inline void get_swap_unique_id(struct swap_info_struct *si) {}
-+static inline bool swap_alloc_cgroup_priority(struct mem_cgroup *memcg,
-+				swp_entry_t *entry, int order)
-+{
-+	return false;
-+}
-+
- #endif
- 
- #else /* CONFIG_SWAP */
-diff --git a/mm/swap_cgroup_priority.c b/mm/swap_cgroup_priority.c
-index b3e20b676680..bb18cb251f60 100644
---- a/mm/swap_cgroup_priority.c
-+++ b/mm/swap_cgroup_priority.c
-@@ -54,6 +54,132 @@ static void get_swap_unique_id(struct swap_info_struct *si)
- 	si->unique_id = atomic_add_return(1, &swap_unique_id_counter);
- }
- 
-+static bool swap_alloc_cgroup_priority(struct mem_cgroup *memcg,
-+				swp_entry_t *entry, int order)
-+{
-+	struct swap_cgroup_priority *swap_priority;
-+	struct swap_cgroup_priority_pnode *pnode, *next;
-+	unsigned long offset;
-+	int node;
-+
-+	if (!memcg)
-+		return false;
-+
-+	spin_lock(&swap_avail_lock);
-+priority_check:
-+	swap_priority = memcg->swap_priority;
-+	if (!swap_priority) {
-+		spin_unlock(&swap_avail_lock);
-+		return false;
-+	}
-+
-+	node = numa_node_id();
-+start_over:
-+	plist_for_each_entry_safe(pnode, next, &swap_priority->plist[node],
-+					avail_lists[node]) {
-+		struct swap_info_struct *si = pnode->swap;
-+		plist_requeue(&pnode->avail_lists[node],
-+			&swap_priority->plist[node]);
-+		spin_unlock(&swap_avail_lock);
-+
-+		if (get_swap_device_info(si)) {
-+			offset = cluster_alloc_swap_entry(si,
-+					order, SWAP_HAS_CACHE, true);
-+			put_swap_device(si);
-+			if (offset) {
-+				*entry = swp_entry(si->type, offset);
-+				return true;
-+			}
-+			if (order)
-+				return false;
-+		}
-+
-+		spin_lock(&swap_avail_lock);
-+
-+		/* swap_priority is remove or changed under us. */
-+		if (swap_priority != memcg->swap_priority)
-+			goto priority_check;
-+
-+		if (plist_node_empty(&next->avail_lists[node]))
-+			goto start_over;
-+	}
-+	spin_unlock(&swap_avail_lock);
-+
-+	return false;
-+}
-+
-+/* add_to_avail_list (swapon / swapusage > 0) */
-+static void activate_swap_cgroup_priority_pnode(struct swap_info_struct *swp,
-+			bool swapon)
-+{
-+	struct swap_cgroup_priority *swap_priority;
-+	int i;
-+
-+	list_for_each_entry(swap_priority, &swap_cgroup_priority_list, link) {
-+		struct swap_cgroup_priority_pnode *pnode
-+			= swap_priority->pnode[swp->type];
-+
-+		if (swapon) {
-+			pnode->swap = swp;
-+			pnode->prio = swp->prio;
-+		}
-+
-+		/* NUMA priority handling */
-+		for_each_node(i) {
-+			if (swapon) {
-+				if (swap_node(swp) == i) {
-+					plist_node_init(
-+						&pnode->avail_lists[i],
-+						1);
-+				} else {
-+					plist_node_init(
-+						&pnode->avail_lists[i],
-+						-pnode->prio);
-+				}
-+			}
-+
-+			plist_add(&pnode->avail_lists[i],
-+				&swap_priority->plist[i]);
-+		}
-+	}
-+}
-+
-+/* del_from_avail_list (swapoff / swap usage <= 0) */
-+static void deactivate_swap_cgroup_priority_pnode(struct swap_info_struct *swp,
-+		bool swapoff)
-+{
-+	struct swap_cgroup_priority *swap_priority;
-+	int nid, i;
-+
-+	list_for_each_entry(swap_priority, &swap_cgroup_priority_list, link) {
-+		struct swap_cgroup_priority_pnode *pnode;
-+
-+		if (swapoff && swp->prio < 0) {
-+			/*
-+			* NUMA priority handling
-+			* mimic swapoff prio adjustment without plist
-+			*/
-+			for (int i = 0; i < MAX_SWAPFILES; i++) {
-+				pnode = swap_priority->pnode[i];
-+				if (pnode->prio > swp->prio ||
-+					pnode->swap == swp)
-+					continue;
-+
-+				pnode->prio++;
-+				for_each_node(nid) {
-+					if (pnode->avail_lists[nid].prio != 1)
-+						pnode->avail_lists[nid].prio--;
-+				}
-+			}
-+		}
-+
-+		pnode = swap_priority->pnode[swp->type];
-+		for_each_node(i)
-+			plist_del(&pnode->avail_lists[i],
-+				&swap_priority->plist[i]);
-+	}
-+}
-+
- int create_swap_cgroup_priority(struct mem_cgroup *memcg,
- 		int unique[], int prio[], int nr)
- {
-@@ -183,6 +309,12 @@ void delete_swap_cgroup_priority(struct mem_cgroup *memcg)
- {
- 	struct swap_cgroup_priority *swap_priority;
- 
-+	/*
-+	* XXX: Possible RCU wait? No. Cannot protect priority list addition.
-+	* swap_avail_lock gives protection.
-+	* Think about other object protection mechanism
-+	* might be solve it and better. (e.g object reference)
-+	*/
- 	spin_lock(&swap_avail_lock);
- 	swap_priority = memcg->swap_priority;
- 	if (!swap_priority) {
-@@ -198,5 +330,6 @@ void delete_swap_cgroup_priority(struct mem_cgroup *memcg)
- 
- 	for (int i = 0; i < MAX_SWAPFILES; i++)
- 		kvfree(swap_priority->pnode[i]);
-+
- 	kvfree(swap_priority);
- }
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index f8e48dd2381e..28afe4ec0504 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -126,8 +126,12 @@ static DEFINE_PER_CPU(struct percpu_swap_cluster, percpu_swap_cluster) = {
- 	.offset = { SWAP_ENTRY_INVALID },
- 	.lock = INIT_LOCAL_LOCK(),
- };
--/* TODO: better choice? */
-+/* TODO: better arrangement */
- #ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+static bool get_swap_device_info(struct swap_info_struct *si);
-+static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int order,
-+					      unsigned char usage, bool is_cgroup_priority);
-+static int swap_node(struct swap_info_struct *si);
- #include "swap_cgroup_priority.c"
- #endif
- 
-@@ -776,7 +780,8 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si,
- 					    struct swap_cluster_info *ci,
- 					    unsigned long offset,
- 					    unsigned int order,
--					    unsigned char usage)
-+					    unsigned char usage,
-+					    bool is_cgroup_priority)
- {
- 	unsigned int next = SWAP_ENTRY_INVALID, found = SWAP_ENTRY_INVALID;
- 	unsigned long start = ALIGN_DOWN(offset, SWAPFILE_CLUSTER);
-@@ -820,12 +825,19 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si,
- out:
- 	relocate_cluster(si, ci);
- 	unlock_cluster(ci);
-+
- 	if (si->flags & SWP_SOLIDSTATE) {
--		this_cpu_write(percpu_swap_cluster.offset[order], next);
--		this_cpu_write(percpu_swap_cluster.si[order], si);
--	} else {
-+		if (!is_cgroup_priority) {
-+			this_cpu_write(percpu_swap_cluster.offset[order], next);
-+			this_cpu_write(percpu_swap_cluster.si[order], si);
-+		} else {
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+			__this_cpu_write(si->percpu_cluster->next[order], next);
-+#endif
-+		}
-+	} else
- 		si->global_cluster->next[order] = next;
--	}
-+
- 	return found;
- }
- 
-@@ -883,7 +895,7 @@ static void swap_reclaim_work(struct work_struct *work)
-  * cluster for current CPU too.
-  */
- static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int order,
--					      unsigned char usage)
-+					      unsigned char usage, bool is_cgroup_priority)
- {
- 	struct swap_cluster_info *ci;
- 	unsigned int offset = SWAP_ENTRY_INVALID, found = SWAP_ENTRY_INVALID;
-@@ -895,32 +907,38 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 	if (order && !(si->flags & SWP_BLKDEV))
- 		return 0;
- 
--	if (!(si->flags & SWP_SOLIDSTATE)) {
-+	if (si->flags & SWP_SOLIDSTATE) {
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+                local_lock(&si->percpu_cluster->lock);
-+                offset = __this_cpu_read(si->percpu_cluster->next[order]);
-+#endif
-+	} else {
- 		/* Serialize HDD SWAP allocation for each device. */
- 		spin_lock(&si->global_cluster_lock);
- 		offset = si->global_cluster->next[order];
--		if (offset == SWAP_ENTRY_INVALID)
--			goto new_cluster;
-+	}
- 
--		ci = lock_cluster(si, offset);
--		/* Cluster could have been used by another order */
--		if (cluster_is_usable(ci, order)) {
--			if (cluster_is_empty(ci))
--				offset = cluster_offset(si, ci);
--			found = alloc_swap_scan_cluster(si, ci, offset,
--							order, usage);
--		} else {
--			unlock_cluster(ci);
--		}
--		if (found)
--			goto done;
-+	if (offset == SWAP_ENTRY_INVALID)
-+		goto new_cluster;
-+
-+	ci = lock_cluster(si, offset);
-+	/* Cluster could have been used by another order */
-+	if (cluster_is_usable(ci, order)) {
-+		if (cluster_is_empty(ci))
-+			offset = cluster_offset(si, ci);
-+		found = alloc_swap_scan_cluster(si, ci, offset,
-+						order, usage, is_cgroup_priority);
-+	} else {
-+		unlock_cluster(ci);
- 	}
-+	if (found)
-+		goto done;
- 
- new_cluster:
- 	ci = isolate_lock_cluster(si, &si->free_clusters);
- 	if (ci) {
- 		found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--						order, usage);
-+						order, usage, is_cgroup_priority);
- 		if (found)
- 			goto done;
- 	}
-@@ -934,7 +952,7 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 
- 		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[order]))) {
- 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							order, usage);
-+							order, usage, is_cgroup_priority);
- 			if (found)
- 				goto done;
- 			/* Clusters failed to allocate are moved to frag_clusters */
-@@ -952,7 +970,7 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 			 * reclaimable (eg. lazy-freed swap cache) slots.
- 			 */
- 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							order, usage);
-+							order, usage, is_cgroup_priority);
- 			if (found)
- 				goto done;
- 			frags++;
-@@ -979,21 +997,27 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 		while ((ci = isolate_lock_cluster(si, &si->frag_clusters[o]))) {
- 			atomic_long_dec(&si->frag_cluster_nr[o]);
- 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							0, usage);
-+							0, usage, is_cgroup_priority);
- 			if (found)
- 				goto done;
- 		}
- 
- 		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[o]))) {
- 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							0, usage);
-+							0, usage, is_cgroup_priority);
- 			if (found)
- 				goto done;
- 		}
- 	}
- done:
--	if (!(si->flags & SWP_SOLIDSTATE))
-+	if (si->flags & SWP_SOLIDSTATE) {
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+		local_unlock(&si->percpu_cluster->lock);
-+#endif
-+	} else {
- 		spin_unlock(&si->global_cluster_lock);
-+	}
-+
- 	return found;
- }
- 
-@@ -1032,6 +1056,7 @@ static void del_from_avail_list(struct swap_info_struct *si, bool swapoff)
- 	for_each_node(nid)
- 		plist_del(&si->avail_lists[nid], &swap_avail_heads[nid]);
- 
-+	deactivate_swap_cgroup_priority_pnode(si, swapoff);
- skip:
- 	spin_unlock(&swap_avail_lock);
- }
-@@ -1075,6 +1100,7 @@ static void add_to_avail_list(struct swap_info_struct *si, bool swapon)
- 	for_each_node(nid)
- 		plist_add(&si->avail_lists[nid], &swap_avail_heads[nid]);
- 
-+	activate_swap_cgroup_priority_pnode(si, swapon);
- skip:
- 	spin_unlock(&swap_avail_lock);
- }
-@@ -1200,7 +1226,8 @@ static bool swap_alloc_fast(swp_entry_t *entry,
- 	if (cluster_is_usable(ci, order)) {
- 		if (cluster_is_empty(ci))
- 			offset = cluster_offset(si, ci);
--		found = alloc_swap_scan_cluster(si, ci, offset, order, SWAP_HAS_CACHE);
-+		found = alloc_swap_scan_cluster(si, ci, offset, order,
-+				SWAP_HAS_CACHE, false);
- 		if (found)
- 			*entry = swp_entry(si->type, found);
- 	} else {
-@@ -1227,7 +1254,7 @@ static bool swap_alloc_slow(swp_entry_t *entry,
- 		plist_requeue(&si->avail_lists[node], &swap_avail_heads[node]);
- 		spin_unlock(&swap_avail_lock);
- 		if (get_swap_device_info(si)) {
--			offset = cluster_alloc_swap_entry(si, order, SWAP_HAS_CACHE);
-+			offset = cluster_alloc_swap_entry(si, order, SWAP_HAS_CACHE, false);
- 			put_swap_device(si);
- 			if (offset) {
- 				*entry = swp_entry(si->type, offset);
-@@ -1294,10 +1321,12 @@ int folio_alloc_swap(struct folio *folio, gfp_t gfp)
- 		}
- 	}
- 
--	local_lock(&percpu_swap_cluster.lock);
--	if (!swap_alloc_fast(&entry, order))
--		swap_alloc_slow(&entry, order);
--	local_unlock(&percpu_swap_cluster.lock);
-+	if (!swap_alloc_cgroup_priority(folio_memcg(folio), &entry, order)) {
-+		local_lock(&percpu_swap_cluster.lock);
-+		if (!swap_alloc_fast(&entry, order))
-+			swap_alloc_slow(&entry, order);
-+		local_unlock(&percpu_swap_cluster.lock);
-+	}
- 
- 	/* Need to call this even if allocation failed, for MEMCG_SWAP_FAIL. */
- 	if (mem_cgroup_try_charge_swap(folio, entry))
-@@ -1870,7 +1899,7 @@ swp_entry_t get_swap_page_of_type(int type)
- 	/* This is called for allocating swap entry, not cache */
- 	if (get_swap_device_info(si)) {
- 		if (si->flags & SWP_WRITEOK) {
--			offset = cluster_alloc_swap_entry(si, 0, 1);
-+			offset = cluster_alloc_swap_entry(si, 0, 1, false);
- 			if (offset) {
- 				entry = swp_entry(si->type, offset);
- 				atomic_long_dec(&nr_swap_pages);
-@@ -2800,6 +2829,10 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	arch_swap_invalidate_area(p->type);
- 	zswap_swapoff(p->type);
- 	mutex_unlock(&swapon_mutex);
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+	free_percpu(p->percpu_cluster);
-+	p->percpu_cluster = NULL;
-+#endif
- 	kfree(p->global_cluster);
- 	p->global_cluster = NULL;
- 	vfree(swap_map);
-@@ -3207,7 +3240,23 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
- 	for (i = 0; i < nr_clusters; i++)
- 		spin_lock_init(&cluster_info[i].lock);
- 
--	if (!(si->flags & SWP_SOLIDSTATE)) {
-+	if (si->flags & SWP_SOLIDSTATE) {
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+		si->percpu_cluster = alloc_percpu(struct percpu_cluster);
-+		if (!si->percpu_cluster)
-+			goto err_free;
-+
-+		int cpu;
-+		for_each_possible_cpu(cpu) {
-+			struct percpu_cluster *cluster;
-+
-+			cluster = per_cpu_ptr(si->percpu_cluster, cpu);
-+			for (i = 0; i < SWAP_NR_ORDERS; i++)
-+				cluster->next[i] = SWAP_ENTRY_INVALID;
-+			local_lock_init(&cluster->lock);
-+		}
-+#endif
-+	} else {
- 		si->global_cluster = kmalloc(sizeof(*si->global_cluster),
- 				     GFP_KERNEL);
- 		if (!si->global_cluster)
-@@ -3495,6 +3544,10 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- bad_swap_unlock_inode:
- 	inode_unlock(inode);
- bad_swap:
-+#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-+	free_percpu(si->percpu_cluster);
-+	si->percpu_cluster = NULL;
-+#endif
- 	kfree(si->global_cluster);
- 	si->global_cluster = NULL;
- 	inode = NULL;
--- 
-2.34.1
+So let's focus on the identified hot path: the SNDRV_PCM_IOCTL_SYNC_PTR 
+iotcl.
 
+I will send a patch focussing only on that part. I tweaked it a bit to 
+increase readability by nesting the failure labels closer to the 
+actions. Let me know whether that patch is more acceptable for you.
+
+In parallel I will send a RFC series that reworks a bit deaper the 
+SNDRV_PCM_IOCTL_SYNC_PTR functions with a helper macro, maybe you will 
+prefer that allthough the churn is bigger.
+
+Christophe
 
