@@ -1,142 +1,205 @@
-Return-Path: <linux-kernel+bounces-683937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC1AD73C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:26:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C543AD73EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793533B38E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021471898880
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA53E22E3E3;
-	Thu, 12 Jun 2025 14:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1F9239E9E;
+	Thu, 12 Jun 2025 14:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="FQof/u5+"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BYYBoRRh"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783BE42048
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D1248878
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749738359; cv=none; b=fG6bbocNBWyDyY3NldR9abZbIegdaqgdh0D2Y3trVZEJIvPCW2t7f5+awS4JUr+hCsXroFFkF64+gGOYJmoIjS92AOqOmDoXdu9CRk5jiC8N9KS5TOjYiBLmtdH6SAWjjh0gZnYPUTx1S5mFcg0DmMCbiH3tvCza2FT2W6QOn0E=
+	t=1749738470; cv=none; b=pME0kyuJiXYLXvze5+ci0VXddEfK/ZYVWhfWQnJQn1j+LJiWMDlbTKbdPpUvjWLq7B8sBgX98bUoCbMAjHsB/GETdhXWPxhbHslTU6h6fcMRRHSxSu/kXqBr++0hiAGOzv2dLNwH5cHtlXOu+YpMdGFmYpXfmDfVtBvPuI1DrXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749738359; c=relaxed/simple;
-	bh=ApF8vBWEk/Mxf+COrA4pHzNgYDC969mE44V8IPsB400=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uR7nJOUdveyQKD6HoLRbzp5+/qBd11oFUBI0HO5uJbM4yhCo3TLLFnpPqm5TXnjF7q/0DABMFZ1+39xPspVHcBirYZVa9HddA0gGbHDS6MkXOVW0P75R57sRHt9SFnPIRYJYwrdTss9qWIToJWy0muiNau1GrXqpJqdCUw3zihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=FQof/u5+; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-453066fad06so7981855e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1749738356; x=1750343156; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0dRuAS/zUdBPIbw/8bXhZ48yEMTP9V1WRvDJONrZWng=;
-        b=FQof/u5+XPWjd6NV2IFJb/4KDZU3/J7pgIEP2R1sm03mDbWsQ4WHEWrtxOQVcl4Ibv
-         rJnxh/tYt05LCn6V8Bm/IAag8/2NWnzyW1SlWlKnO75yTGINCuhKYdIQSD3Y/pngMnlq
-         tENBY5RAfxQxA0ZqJYMWat/DKSerPorUM5Dg0iHsDjt2+3gD29BAR/YzWDxbx1W3ivWs
-         OSUrDN540zZmnavTSsZKl8uBqycr4kinUPwXmBcMzMRYyqimR1C5pc2qBQrIDqofNwYT
-         KKnNLaV2ADfYozEk2iJmlVQXKfLffXPvz3w43joLsl84iurtthyLPnP2PigSqumFD3E0
-         aGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749738356; x=1750343156;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0dRuAS/zUdBPIbw/8bXhZ48yEMTP9V1WRvDJONrZWng=;
-        b=mrBcXsy+vSl2qmAQZpYED9aqJYjGnHULiEEREmkWtNMYiqzqcap3XnOpsMSYPfud75
-         fVjzF9/leg6e9izRSh1ZBFgy8whNLuzjnxWpZSjvysPdkyDutywp+jxs7aWkZHvP5qYF
-         hNgfXvTtedtLzznUuVvEFOYNKfChfgUGTd6Pk5N6h9VcqrU6d2G4kxNFgkduMIa285z8
-         sJQcQMfi+WDUf0yVuYX57pzcMvflPZYoJp8MzBU5+YA3HDNS+xWpEGKe1QeJO6ranDGL
-         WNoaUMIwUqGGYVSPAZtKg90vMar93kTkdDElcdiI/9W2UFm0zeHjjaNlk1mM3ehmk0jF
-         JX6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2b5UPOpUacJ4j4qrFHD9/oENTJoYs+t8YU84JUxefW0vhPe/0HxGZejS0eA9kDw8JR1+pQAvMUvbSbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbCwXkXwF7pNM+gTeOiHuh6/M7QnlPKYAeSpjkzTGlv69yf8Y5
-	hZW1vPJFC4ZM1lumQ2mzxlqp59wXP+JRNZ5KaaWycRDmTXBIvUH5hUOV0VHu3dnqqvE=
-X-Gm-Gg: ASbGncuiWD9J5C2l9ORtqgkbQgNcnAUfBAjNOrW7qIhqxEWWRKkVTdmvQXagyqB+zlO
-	IqdtDJJZOs97lhbzzABOSRU7kXtznHmAsTSk4r8Ac9YL8LfGOeHh76bQB2GoPgs/OSPWBmA6d4H
-	G+DtsCQG/TM7N1b93MzIsN58fWwgYZv9F7LrWBH1M5K5kaVFxdracAQ97Tw8rHAAdUkyo9YiDTn
-	9iIYirATErM/MvaTNCbaTTW39WhztxYf+4GGL0rTH6xZ4iMvI7qfa767utMonxywIb2MaHEcjZL
-	pROvMCUr7PNaewg5u55LNLFHqp2/hJHPyNZpou1cXT5/cWJzMkSrD72bYdhK86An5YoupoJA
-X-Google-Smtp-Source: AGHT+IFvlefm01oYPM1h9ExnmLfkUHYFh6gyuhvhlTFDJV5yDSLIyUvQ0kWkWHYwVMpiGkMEole17Q==
-X-Received: by 2002:a05:6000:1887:b0:3a4:e672:deef with SMTP id ffacd0b85a97d-3a5586dc42dmr6618337f8f.36.1749738355672;
-        Thu, 12 Jun 2025 07:25:55 -0700 (PDT)
-Received: from MacBook-Air.local ([5.100.243.24])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a56199a930sm2174154f8f.35.2025.06.12.07.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 07:25:55 -0700 (PDT)
-Date: Thu, 12 Jun 2025 17:25:52 +0300
-From: Joe Damato <joe@dama.to>
-To: Breno Leitao <leitao@debian.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next 2/2] netdevsim: collect statistics at RX side
-Message-ID: <aErjcH3NPbdP7Usx@MacBook-Air.local>
-Mail-Followup-To: Joe Damato <joe@dama.to>,
-	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-References: <20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org>
- <20250611-netdevsim_stat-v1-2-c11b657d96bf@debian.org>
+	s=arc-20240116; t=1749738470; c=relaxed/simple;
+	bh=lR4rRyT8kEmeAFgFbTyrlgyEKk+f9LUnBbC9banrJsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MRAA5zUWoCSxqTlSBJbhb0zqoEnP32r1gjfzYHcRMqptNX5k5tYRBp7IqktWAwA5jbNZlSbn5/qyoZsyi7MyjujyUp8NjErFSZJulsAUVlI8a3oaeKN9OPS0RtH9K7dSG1bvALCMSeiiQ0It2fAYToWsHI2rRbew4GbghqkJnTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BYYBoRRh; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749738464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TPwDoP+jbnUa8bxVZg836/xmpXU4SXa+id2ZO0eScw4=;
+	b=BYYBoRRhyn3yzwB6sJ3KgEfbbn9MSqYPlWwxFGIib6wKVgDgzAHWo/gcqDmus3hZ9U68IK
+	kKwuzq3dOAz4MwpWzI7VoAYYmfB/9ZlRZoij3Of4DPisYZBoWPRwwx+qpDN4XBduR/A4B8
+	CG1PQPRwy10HjYZ2v+NgwfIKMNMDRbU=
+From: Yajun Deng <yajun.deng@linux.dev>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yajun Deng <yajun.deng@linux.dev>
+Subject: [PATCH RESEND net-next v2] net: sysfs: Implement is_visible for phys_(port_id, port_name, switch_id)
+Date: Thu, 12 Jun 2025 14:27:07 +0000
+Message-ID: <20250612142707.4644-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611-netdevsim_stat-v1-2-c11b657d96bf@debian.org>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 11, 2025 at 08:06:20AM -0700, Breno Leitao wrote:
-> When the RX side of netdevsim was added, the RX statistics were missing,
-> making the driver unusable for GenerateTraffic() test framework.
-> 
-> This patch adds proper statistics tracking on RX side, complementing the
-> TX path.
-> 
-> Signed-off-by: Breno Leitao <Leitao@debian.org>
-> ---
->  drivers/net/netdevsim/netdev.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-> index 67871d31252fe..590cb5bb0d20b 100644
-> --- a/drivers/net/netdevsim/netdev.c
-> +++ b/drivers/net/netdevsim/netdev.c
-> @@ -39,12 +39,16 @@ MODULE_IMPORT_NS("NETDEV_INTERNAL");
->  
->  static int nsim_napi_rx(struct nsim_rq *rq, struct sk_buff *skb)
->  {
-> +	struct net_device *dev = rq->napi.dev;
-> +
->  	if (skb_queue_len(&rq->skb_queue) > NSIM_RING_SIZE) {
->  		dev_kfree_skb_any(skb);
-> +		dev_dstats_rx_dropped(dev);
->  		return NET_RX_DROP;
->  	}
->  
->  	skb_queue_tail(&rq->skb_queue, skb);
-> +	dev_dstats_rx_add(dev, skb->len);
->  	return NET_RX_SUCCESS;
->  }
+phys_port_id_show, phys_port_name_show and phys_switch_id_show would
+return -EOPNOTSUPP if the netdev didn't implement the corresponding
+method.
 
-Hm, I was wondering: is it maybe better to add the stats code to nsim_poll or
-nsim_rcv instead?
+There is no point in creating these files if they are unsupported.
 
-It "feels" like other drivers would be bumping RX stats in their NAPI poll
-function (which is nsim_poll, the naming of the functions is a bit confusing
-here), so it seems like netdevsim maybe should too?
+Put these attributes in netdev_phys_group and implement the is_visible
+method. make phys_(port_id, port_name, switch_id) invisible if the netdev
+dosen't implement the corresponding method.
+
+Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+v2: Remove worthless comments.
+v1: https://lore.kernel.org/all/20250515130205.3274-1-yajun.deng@linux.dev/
+---
+ include/linux/netdevice.h |  2 +-
+ net/core/net-sysfs.c      | 59 +++++++++++++++++++++++----------------
+ 2 files changed, 36 insertions(+), 25 deletions(-)
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index adb14db25798..9cbc4e54b7e4 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2388,7 +2388,7 @@ struct net_device {
+ 	struct dm_hw_stat_delta __rcu *dm_private;
+ #endif
+ 	struct device		dev;
+-	const struct attribute_group *sysfs_groups[4];
++	const struct attribute_group *sysfs_groups[5];
+ 	const struct attribute_group *sysfs_rx_queue_group;
+ 
+ 	const struct rtnl_link_ops *rtnl_link_ops;
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 1ace0cd01adc..c9b969386399 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -641,12 +641,6 @@ static ssize_t phys_port_id_show(struct device *dev,
+ 	struct netdev_phys_item_id ppid;
+ 	ssize_t ret;
+ 
+-	/* The check is also done in dev_get_phys_port_id; this helps returning
+-	 * early without hitting the locking section below.
+-	 */
+-	if (!netdev->netdev_ops->ndo_get_phys_port_id)
+-		return -EOPNOTSUPP;
+-
+ 	ret = sysfs_rtnl_lock(&dev->kobj, &attr->attr, netdev);
+ 	if (ret)
+ 		return ret;
+@@ -668,13 +662,6 @@ static ssize_t phys_port_name_show(struct device *dev,
+ 	char name[IFNAMSIZ];
+ 	ssize_t ret;
+ 
+-	/* The checks are also done in dev_get_phys_port_name; this helps
+-	 * returning early without hitting the locking section below.
+-	 */
+-	if (!netdev->netdev_ops->ndo_get_phys_port_name &&
+-	    !netdev->devlink_port)
+-		return -EOPNOTSUPP;
+-
+ 	ret = sysfs_rtnl_lock(&dev->kobj, &attr->attr, netdev);
+ 	if (ret)
+ 		return ret;
+@@ -696,14 +683,6 @@ static ssize_t phys_switch_id_show(struct device *dev,
+ 	struct netdev_phys_item_id ppid = { };
+ 	ssize_t ret;
+ 
+-	/* The checks are also done in dev_get_phys_port_name; this helps
+-	 * returning early without hitting the locking section below. This works
+-	 * because recurse is false when calling dev_get_port_parent_id.
+-	 */
+-	if (!netdev->netdev_ops->ndo_get_port_parent_id &&
+-	    !netdev->devlink_port)
+-		return -EOPNOTSUPP;
+-
+ 	ret = sysfs_rtnl_lock(&dev->kobj, &attr->attr, netdev);
+ 	if (ret)
+ 		return ret;
+@@ -718,6 +697,40 @@ static ssize_t phys_switch_id_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(phys_switch_id);
+ 
++static struct attribute *netdev_phys_attrs[] __ro_after_init = {
++	&dev_attr_phys_port_id.attr,
++	&dev_attr_phys_port_name.attr,
++	&dev_attr_phys_switch_id.attr,
++	NULL,
++};
++
++static umode_t netdev_phys_is_visible(struct kobject *kobj,
++				      struct attribute *attr, int index)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct net_device *netdev = to_net_dev(dev);
++
++	if (attr == &dev_attr_phys_port_id.attr) {
++		if (!netdev->netdev_ops->ndo_get_phys_port_id)
++			return 0;
++	} else if (attr == &dev_attr_phys_port_name.attr) {
++		if (!netdev->netdev_ops->ndo_get_phys_port_name &&
++		    !netdev->devlink_port)
++			return 0;
++	} else if (attr == &dev_attr_phys_switch_id.attr) {
++		if (!netdev->netdev_ops->ndo_get_port_parent_id &&
++		    !netdev->devlink_port)
++			return 0;
++	}
++
++	return attr->mode;
++}
++
++static const struct attribute_group netdev_phys_group = {
++	.attrs = netdev_phys_attrs,
++	.is_visible = netdev_phys_is_visible,
++};
++
+ static ssize_t threaded_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+ {
+@@ -783,9 +796,6 @@ static struct attribute *net_class_attrs[] __ro_after_init = {
+ 	&dev_attr_tx_queue_len.attr,
+ 	&dev_attr_gro_flush_timeout.attr,
+ 	&dev_attr_napi_defer_hard_irqs.attr,
+-	&dev_attr_phys_port_id.attr,
+-	&dev_attr_phys_port_name.attr,
+-	&dev_attr_phys_switch_id.attr,
+ 	&dev_attr_proto_down.attr,
+ 	&dev_attr_carrier_up_count.attr,
+ 	&dev_attr_carrier_down_count.attr,
+@@ -2328,6 +2338,7 @@ int netdev_register_kobject(struct net_device *ndev)
+ 		groups++;
+ 
+ 	*groups++ = &netstat_group;
++	*groups++ = &netdev_phys_group;
+ 
+ 	if (wireless_group_needed(ndev))
+ 		*groups++ = &wireless_group;
+-- 
+2.25.1
+
 
