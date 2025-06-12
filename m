@@ -1,157 +1,145 @@
-Return-Path: <linux-kernel+bounces-684483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD9CAD7BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:09:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB86AD7BAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C563B3344
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA93A3B7157
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1572E6D38;
-	Thu, 12 Jun 2025 20:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933A2DECCD;
+	Thu, 12 Jun 2025 20:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4sHbK8R"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="BeCpa18K"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7B92E6D0D;
-	Thu, 12 Jun 2025 20:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7418F2C326E;
+	Thu, 12 Jun 2025 20:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749758612; cv=none; b=oykDLHeFqGybBA7eosJ06LVHYtp0L98BVxAp6ehVyUyWLkePCKLa1JhbnPt7N5sWgMe8IjyS36mmGqw8b9cu8e0agy4szLegwMJAo3l8EdFynHoedKfD2SvF3C58I8PlzCVrkV2xBi8uJKZAXhkAS9K1pUG89RDkdJg0+pJU2K0=
+	t=1749758583; cv=none; b=R7ZHOGlRn1bt8vboHsOpkIF9cMCEQlr77MpxZdctC0QZSsA3cK15oT6iLpDyfK/3emVpPKPFDgDLYQ1Fy3/prf3+NLrMDGlmTz5GUawO8PemaqDlujCMnXR3Xmrl56lCy7k+vE6niKD6Bvi3VKA/+HggNxLMgo7xofdW9WxC7O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749758612; c=relaxed/simple;
-	bh=1fykyusYVro73+SkCEdouTI5VeesZrBsX99TGTggxRY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GAAyAvv9lIXR3cz9HD2ThZaq1wzxKon+gChUVXXxi1VS9gRNQTL5qia+sq33ISLlSHYpXpzqsL5ysojx4mu5xqIY/L6wkigRRZz6sLFSeySMdcZGyZJ+Sikqb7I3P7YpG/PICLspat9ZGSThXfsH6IMbWm/xtRdHwgRXi0HSLzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4sHbK8R; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d393a42698so13740885a.2;
-        Thu, 12 Jun 2025 13:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749758610; x=1750363410; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZnKjnGPQVsYruwW26IKQXjP4KtQDe+H/2EepWEDvdH4=;
-        b=W4sHbK8Rs5KCcGme9De5sqRir3UOA9vOZUcGmoOpf2cdZ8eVtjOlxadBwoa6UdY4qA
-         vhv59KXx9PALywRfJr53obg2XymxjiHUWtZtVr5731rN5HyxE2R1NpUM85oNbzaafcrN
-         VrvTpUCkIrV7HSSsCtVA8D2pyJ/IMq5Gwn6Cd1Rtex/VX4UtFGsn0WQdwxybAF5AesVk
-         LT7hYM/v4q+OwU1ZZqFzpQbQs7Z6cvfqwmfpanM950fUjwV3G69dlKjS+VUFniiIuAnj
-         cNFRaZasw117y0uEdrX59SoR6U3rvV92aAMU7lxT/gLn2YABxYYdzqpu/62udPRs10PC
-         sL2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749758610; x=1750363410;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZnKjnGPQVsYruwW26IKQXjP4KtQDe+H/2EepWEDvdH4=;
-        b=FYSb8ZBs+T1hBE7+4cYhBLcBcbUsfBomS5S2hjArW3N8znEvxz2bYAgCrW6iV6cfgg
-         NNZJCP+1wYUnCsuvxuLDQ2kdL4AbWfPrekuhFenU8xGk8R82rh4cPA8jV9qk7gpsDn7s
-         uaywj8UzIhW6/Q9xg0s4tqsa5fp0hffB9fTdf+TwfH35F58BtgwArrHFMxky1YZffq5M
-         WYJC20eWBLQW/CsGtCtVBh1dE0vszMTY8FtcXzcvMX9xoL16PPT+6gjTkvv0KPwpaXop
-         Dqt9aDaCYwZQJ0ggzrcZuYR3RfUJAI+Y+zgi8MM5bFcOHl4E8pIDfgWoRb9yy/kc8vmy
-         i9kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzCku/qJEjoT4lmmSJWlLQMDfvzF1PDby7z6diCIzUGlMT28rEjGicpfzSbLCTYSCEHxsFrhoAnVw=@vger.kernel.org, AJvYcCXl1hzb/7TtZYcgq1mRBp2EBAVnlSixPgi9lWp8MBDNQgigANkhltwwRwPdypncKccWOM55JgnLBxC7tbgB5yH1@vger.kernel.org, AJvYcCXpsFENXwt6XDuMBp8YzIRglxg0uGbDIZCrnOc9LSgbmYoA8xLExibsrgmpq3mJkUbF45KAZRpX02YRfoe7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzemp48UW2eRTE77l+NhFmWCXbXdMkhb5b+0I6XRfqrHonCSFLK
-	h4VT5dRChQmGcbAOIhgXCj997Wl2MisvoE7U8Dnx1Zop4kL9/HWuOI1D/kEyEkYECYI=
-X-Gm-Gg: ASbGncv7uSNB/GwdM4f+K0mFi4sLBJxoYHT6kaFLmDKmp93cQlzBQpOmwizBJa23yGD
-	4X0HQj/NyvhAUMs7WLGZssRZmEdodbtGzznbH8nQvBo3TEZUMnJ6dulO29U+zxzjxL1/DJsCfEe
-	lQwDpoDLnZfiyuBOl2xZYPaSzoAbTWET4A/B7Ot7lnZHosb1AU3GD3hlexvJQ9yyqQUqS3GboCO
-	6auBKHxFiiI9dD05tHpxoQHdkH9cztNgsosV+fUp64L+c4fWaVlVe8T4dMrA5zx8eVp8yC0POju
-	1fPKlWizcCqmKwJgpvbD9Etez1QpWPaRN7DB69i/9zhhV3QvV94L1/U=
-X-Google-Smtp-Source: AGHT+IEYJNouzQaBO57RIFJdSjytY+rAwJnE1qi8JXnfhXTA6dO5SUQ1nlRCfzkPu1uKMj9aLcCzVw==
-X-Received: by 2002:a05:620a:bc3:b0:7c5:79e8:412a with SMTP id af79cd13be357-7d3bc37d979mr35927485a.2.1749758609646;
-        Thu, 12 Jun 2025 13:03:29 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:1::])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8ed35b1sm77151285a.88.2025.06.12.13.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 13:03:29 -0700 (PDT)
-From: Gustavo Luiz Duarte <gustavold@gmail.com>
-Date: Thu, 12 Jun 2025 13:02:18 -0700
-Subject: [PATCH net-next v2 5/5] docs: netconsole: document msgid feature
+	s=arc-20240116; t=1749758583; c=relaxed/simple;
+	bh=9PAgFh2Rs+8amMX0IEnn4DbVMXUpSwgI04vMhuK5+J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7l+OO3U9+SKlMTVrrCVnACqpUeusGKtuOj28+pCQ+zdlhOCtJL2sh2c0Bh2gMic6ppm1zSYPnwU5WHbVM9GRXnBzMdGF6KTBiNXXFNVttWx8HYWVfel4C0/u1MMYkeBAJxk+3Xqs3Phhf8I76MyXgrqtEKfEmDpVVqYsUd8OMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=BeCpa18K; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1749758579; bh=9PAgFh2Rs+8amMX0IEnn4DbVMXUpSwgI04vMhuK5+J4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BeCpa18KugoVstac64qyGfYXu5qhGDNen7Z68UnEzdx3t4DJpZg12auMSbj9OyUd9
+	 L9m8SwGWqwzwnsl9w3Eh7+IcPfIaVVOdqTqZofnGkyuJOUA2OHaLZg1M0JTLxm2Mk1
+	 MwgEHtBxxy6sAz1bIj1Co2aKtWa+gqIEoj505kURR64NRVdXex9aa0tRxKERLwYLa6
+	 6zp2ukmyygLPpJRIUnayQlMr78PU4uxVShIHTEVKSRm+obSbltL/EoO0a6XUd0FeUI
+	 A4C7lQnSPJ/epqNb5FG1ZNZAyIagy3mJGt9DoSZPRuQjq559WYRJZGV84xd6nq/9jE
+	 QMut30DSJ/zKQ==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id 16025100069; Thu, 12 Jun 2025 21:02:59 +0100 (BST)
+Date: Thu, 12 Jun 2025 21:02:58 +0100
+From: Sean Young <sean@mess.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] media: rc: ir-spi: constrain carrier frequency
+Message-ID: <aEsycgtDxrypTU0v@gofer.mess.org>
+References: <20250611112348.3576093-1-demonsingur@gmail.com>
+ <20250611112348.3576093-3-demonsingur@gmail.com>
+ <aEnifhd1M6oJjy1S@gofer.mess.org>
+ <24d63ec4-a037-46fd-bbc1-9be2bef34c2b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-netconsole-msgid-v2-5-d4c1abc84bac@gmail.com>
-References: <20250612-netconsole-msgid-v2-0-d4c1abc84bac@gmail.com>
-In-Reply-To: <20250612-netconsole-msgid-v2-0-d4c1abc84bac@gmail.com>
-To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
- Gustavo Luiz Duarte <gustavold@gmail.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24d63ec4-a037-46fd-bbc1-9be2bef34c2b@gmail.com>
 
-Add documentation explaining the msgid feature in netconsole.
+On Wed, Jun 11, 2025 at 11:35:21PM +0300, Cosmin Tanislav wrote:
+> On 6/11/25 11:09 PM, Sean Young wrote:
+> > On Wed, Jun 11, 2025 at 02:23:44PM +0300, Cosmin Tanislav wrote:
+> > > Carrier frequency is currently unconstrained, allowing the SPI transfer
+> > > to be allocated and filled only for it to be later rejected by the SPI
+> > > controller since the frequency is too large.
+> > > 
+> > > Add a check to constrain the carrier frequency inside
+> > > ir_spi_set_tx_carrier().
+> > > 
+> > > Also, move the number of bits per pulse to a macro since it is not used
+> > > in multiple places.
+> > > 
+> > > Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> > > ---
+> > >   drivers/media/rc/ir-spi.c | 6 +++++-
+> > >   1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/media/rc/ir-spi.c b/drivers/media/rc/ir-spi.c
+> > > index 50e30e2fae22..bf731204c81e 100644
+> > > --- a/drivers/media/rc/ir-spi.c
+> > > +++ b/drivers/media/rc/ir-spi.c
+> > > @@ -21,6 +21,7 @@
+> > >   #define IR_SPI_DRIVER_NAME		"ir-spi"
+> > >   #define IR_SPI_DEFAULT_FREQUENCY	38000
+> > > +#define IR_SPI_BITS_PER_PULSE		16
+> > >   struct ir_spi_data {
+> > >   	u32 freq;
+> > > @@ -70,7 +71,7 @@ static int ir_spi_tx(struct rc_dev *dev, unsigned int *buffer, unsigned int coun
+> > >   	memset(&xfer, 0, sizeof(xfer));
+> > > -	xfer.speed_hz = idata->freq * 16;
+> > > +	xfer.speed_hz = idata->freq * IR_SPI_BITS_PER_PULSE;
+> > >   	xfer.len = len * sizeof(*tx_buf);
+> > >   	xfer.tx_buf = tx_buf;
+> > > @@ -98,6 +99,9 @@ static int ir_spi_set_tx_carrier(struct rc_dev *dev, u32 carrier)
+> > >   	if (!carrier)
+> > >   		return -EINVAL;
+> > > +	if (carrier * IR_SPI_BITS_PER_PULSE > idata->spi->max_speed_hz)
+> > > +		return -EINVAL;
+> > 
+> > Just a nitpick.
+> > 
+> > I think carrier * IR_SPI_BITS_PER_PULSE could overflow, and then the check
+> > wouldn't work. It might be better to do:
+> > 
+> > 	if (carrier > idata->spi->max_speed_hz / IR_SPI_BITS_PER_PULSE)
+> > 
+> > However since IR_SPI_BITS_PER_PULSE is 16, which is just a shift left by 4,
+> > I don't think this can be abused in any useful way.
+> > 
+> 
+> I have another concern regarding overflow, inside ir_spi_tx().
+> 
+> DIV_ROUND_CLOSEST() is called with buffer[i] * idata->freq and 1000000.
+> buffer[i] comes from userspace, it's the number of microseconds for this
+> pulse. It's unsigned int. lirc core already checks that each element
+> is not bigger than 500000 microseconds. Issue is, at 500000, it would
+> take a carrier frequency as low as 8590 to overflow the unsigned int.
 
-This feature appends unique id to the userdata dictionary. The message
-ID is populated from a per-target 32 bit counter which is incremented
-for each message sent to the target. This allows a target to detect if
-messages are dropped before reaching the target.
+Interesting, you are right.
 
-Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
----
- Documentation/networking/netconsole.rst | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+> Maybe it would make sense to switch this one to mult_frac()? But we
+> would lose rounding.
+> 
+> mult_frac(buffer[i], idata->freq, 1000000)
+> 
+> Optionally, we could cast buffer[i] to u64/unsigned long long, and use
+> DIV_ROUND_CLOSEST_ULL.
+> 
+> DIV_ROUND_CLOSEST_ULL((u64)buffer[i] * idata->freq, 1000000)
+> 
+> Let me know what you think.
 
-diff --git a/Documentation/networking/netconsole.rst b/Documentation/networking/netconsole.rst
-index a0076b542e9c..59cb9982afe6 100644
---- a/Documentation/networking/netconsole.rst
-+++ b/Documentation/networking/netconsole.rst
-@@ -340,6 +340,38 @@ In this example, the message was sent by CPU 42.
-       cpu=42    # kernel-populated value
- 
- 
-+Message ID auto population in userdata
-+--------------------------------------
-+
-+Within the netconsole configfs hierarchy, there is a file named `msgid_enabled`
-+located in the `userdata` directory. This file controls the message ID
-+auto-population feature, which assigns a numeric id to each message sent to a
-+given target and appends the ID to userdata dictionary in every message sent.
-+
-+The message ID is generated using a per-target 32 bit counter that is
-+incremented for every message sent to the target. Note that this counter will
-+eventually wrap around after reaching uint32_t max value, so the message ID is
-+not globally unique over time. However, it can still be used by the target to
-+detect if messages were dropped before reaching the target by identifying gaps
-+in the sequence of IDs.
-+
-+It is important to distinguish message IDs from the message <sequnum> field.
-+Some kernel messages may never reach netconsole (for example, due to printk
-+rate limiting). Thus, a gap in <sequnum> cannot be solely relied upon to
-+indicate that a message was dropped during transmission, as it may never have
-+been sent via netconsole. The message ID, on the other hand, is only assigned
-+to messages that are actually transmitted via netconsole.
-+
-+Example::
-+
-+  echo "This is message #1" > /dev/kmsg
-+  echo "This is message #2" > /dev/kmsg
-+  13,434,54928466,-;This is message #1
-+   msgid=1
-+  13,435,54934019,-;This is message #2
-+   msgid=2
-+
-+
- Extended console:
- =================
- 
+I've given it some thought and I'm not sure there is a better solution. It's
+an edge case of course, but we should deal with it correctly.
 
--- 
-2.47.1
+Nice catch, solution looks good.
 
+
+Sean
 
