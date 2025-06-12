@@ -1,172 +1,161 @@
-Return-Path: <linux-kernel+bounces-684349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7ECBAD7978
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:57:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1C3AD7985
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 657307B094A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB591895DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5638F2BE7C7;
-	Thu, 12 Jun 2025 17:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770362C325E;
+	Thu, 12 Jun 2025 18:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wzuh/NUK"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="VoLgJNLO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QkyK7T6d"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDEB2BDC3E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAA81DE4EC;
+	Thu, 12 Jun 2025 18:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749751056; cv=none; b=gseQjw893CkwgJBXNcO6q1rndECSbbgSe00kve+a4mTWOcfSmLsvGcE59bH/bomVa00J1P81vYLOaZTybJqc2xTRVi+JzLwJsszHuGQhI+QC5/QTdRvHEpN5ltDVP+KiSs0qt8jTB0U4bWpCUx/m6cgR0WaaHWTKsQffJxxHMOA=
+	t=1749751344; cv=none; b=TILMjCq4w0P4phX5zzpONPR5JBasIlsnKBRVJ+6tGnsQKrh2875S62CvZ2TYAuAA0wcK1kBwR/ou3BaSH1UVsIoqMq9Cpe8lyr8YJLHuu4wsTuJnO1uzylZ3wdS2CkazVClVaeHnDJdUfOJNDREGvLHLddp/Y+m01gwK6IQvAvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749751056; c=relaxed/simple;
-	bh=2rzP5TUm+JRajWqIjslt5tlZ6hdbAA9qvgRYJFTZ5zo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=olhNMuU/hD44Fpf5OKvFXHI1Hgix/SIdd4yLSad85jVuzz9KL6lBIcyqGr3DZD4ht2XboP0P4eRQHIrx363/eq48xO/LF7kdtXVvv8hQETtR8u7E18ENv1TCrCTtJGTK3zCaafkGA7gfcOBXXppBYihe6KHZolW6yAkfiHeE3Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wzuh/NUK; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-87ec6f5e7c9so390803241.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749751054; x=1750355854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5AiuSztYKPKbeGeOfe2jiG+1OuDsuMpjn4U/nAD/7gA=;
-        b=wzuh/NUK2O8K3fVPoGZArTyf3mXAVIS1huw14nf86GZHcPLKEMJrJj1AgrLowP98W+
-         ymKoULu/8n+gU2EIHc6jVhJjYECU7ZRbxCng4x3bmfb2CFWaVLDfyCOOhJugLHilFMa5
-         JevjYjyWD8EXWnUCC4b+xku8vGJCHK3TeUTLF4s3yHB1Hl24vr4Jez+6ojBNgLRRrKsc
-         4Q1xUtnsJnRDr4dw49iyZhIxfgGwmzrfWfJ3ULDmtM0/DMNIal2VQRlllVIL3LkAOOyt
-         BrRc27riN1IfnwBRCIayUONPfRFPEpTVtUQoSkq2xQZszEPkfTHTitXBunsanA/yK2Sn
-         tJ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749751054; x=1750355854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5AiuSztYKPKbeGeOfe2jiG+1OuDsuMpjn4U/nAD/7gA=;
-        b=QrcWkInp02LlmUHJCqGxMHQJKa8JGzuNZ4g7LFeUTejM539cjR02Ek1diz9x52o1aJ
-         Fy4WY/IFwcDQDSaMbjfDU1inrYfZSC9MGGpenW/gJfa6EYJt1DXgrOc01oQlgfvZJHQx
-         smyZB92/e0IV6HMjVhiI8dvrh4e0T2FIUK7/6ac8cPYkaNfa6UZ4KZzPd5uvI+oV+Ina
-         pknP8bkVTKCqGDUd4thw59lEcTHSxvl7mqMcZ1CtPE5nha+1+0p77ffFqKX6tYwcEydy
-         DrXAhcbG0RHcLlqTTHDEwHaRW01Ktp3oYWbmeimYF/vctR7MmUQqZOiSY8pxlhdhvA8C
-         iGWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN2WLXIfqOLLb9X6IjhLTMrQIxO4FE56uvyjum7aOQ4GQ4PQTFxDn1KAx+hoLRQlgZsH5MSdufEDIS+lU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ11cVZ8Wi8E4wciyOMNGJETItpVKmhOn5qWHmTG/dJzgfAKFy
-	WW1JudHurMeT90JFTLDaXqhDBh/LaxJIV+Y4aBlDUbSCm1bW/A+xVWk0xNjSaQn7erKerA26tyo
-	1va5xMs+Qd6WsncqEEwqARNNHKGcQ9VutkuApY5kZ
-X-Gm-Gg: ASbGncvVelB/AWo0xVo5WDwsrP5Ro6SgoR4R4X+DGxhodBo9QYQT6w7tQ0EQtzMZ32h
-	kRpvUjBlEaWIgnenh7OCQXgf1Xx3pIy5K01UwJtRDbO/7mbn0bpbxWxEoSmtdDt7Ol/P0P16YzN
-	VccEr25IDs3QiTOLXswdAIxLfp88sGJ53PvFS0xMf+SQ==
-X-Google-Smtp-Source: AGHT+IGaZUcnCXH+Qe2tMTpBabktqR9W4dWoxFOP0XwT8IwfEVxYQB/9HmvU+nw4/P7dOGGa6Gr7c31sLFSHQtYQGoI=
-X-Received: by 2002:a05:6102:c0a:b0:4e6:ddd0:96ea with SMTP id
- ada2fe7eead31-4e7e0fb7879mr1011979137.10.1749751053421; Thu, 12 Jun 2025
- 10:57:33 -0700 (PDT)
+	s=arc-20240116; t=1749751344; c=relaxed/simple;
+	bh=MGNrLspyBuVpm/4SZnjMSy7+VeVU4JeBXhsZCCkfqAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n403zhN+PHIcAQPE8yfxsxITRfzp6yS+U3IBTOIvJX205banAeI/q62pZKaPB1drURAyQ156BVcB8lCYbSov9hJOWbKM+Qlslp+IGC4teQ38gPU3l9gjXz6EZztcgUxLlZtlRRsQkmOuGARJytbtA3W0DHmiaRiQzPMGjRqVxjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=VoLgJNLO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QkyK7T6d; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CD85B11401DF;
+	Thu, 12 Jun 2025 14:02:21 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Thu, 12 Jun 2025 14:02:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1749751341; x=1749837741; bh=Zz
+	F9BcLlRSYQfOzzleyPakkKKInfN0nDB3cc4YLylRs=; b=VoLgJNLO8b9BmhqKGB
+	lRJ5lEacg0SsQnRLzM6dIXRhZQ62nX5woUYtmAoHeWia8i8ALc4Q9gjPatNwKrzI
+	V004/kXQ1nKaJiGRBtNePOOYmczwmxogD2D0vGZyMG4CexTzMHDpgiIAoQICwudx
+	XOes+h3vZvsUXHAgcwwJ8ezFnK4HCScYGyUDpI+q85dvNYVrdBx64liG75UcDzjC
+	oA0awdMUX5+y587FLQ4PZM7ZoEMdYnanwo69q5nTc/FfRLL6n1gOV7CqE/wHD7Gc
+	w6+Pl3rcB72JZ+23k5PG/YUq3cq6HVRxGM+Vj5f6931Xq0jM56RF88o9omswG1lk
+	nkdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1749751341; x=1749837741; bh=ZzF9BcLlRSYQfOzzleyPakkKKInf
+	N0nDB3cc4YLylRs=; b=QkyK7T6d8CJmCl2K/WLi9mQ9npT6R4vSzam92yRP0ilf
+	W/rQaQDIlSWw9K1loHGhw0qpzvQBDB9+Ic7i71DqoK9PFI1EWElC1cT2XZrTgs2c
+	QVmdMtg9aL4P0uVYnZk+/cg8eFfIQko+jRQZjSCx2kH8riY/oNuvA30Ompf5351h
+	NF67m/TzWDAcA2NlHwrk779mT1tDWDgBDKptUQ0U9eR3X/J8xWCqh3CStReFC+O8
+	iqFzCMnjI5T+zlfn7gyDkODvUp4ZZFDdijw8P1REvrNiKLTzJk/j3+90gyGd3/rC
+	pXq376zOQcThne2EgB62+3YZfecSuQprY6yVzvWp8Q==
+X-ME-Sender: <xms:LRZLaF_s08jROAw4VDSS6iZnmMpTqCtGwBfV59yiTX1VKnDssKLP-Q>
+    <xme:LRZLaJsaI3pbxfsXCJTsBZVLl0Ktd0wTxdCfHOX4I0qqZ5vJFR4QOCJDGcHP717uS
+    sF0LJhDtc7o8cx33iY>
+X-ME-Received: <xmr:LRZLaDDuHXOIt8fOIH8-4DYSRYBVc9_lSWoVSBO8gONi5z_KZk8TDb2kP8lH1nRWy5ixePgIe-ObwXNp-glMSE5x>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheejfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffogggtgfesthekredtredtjeen
+    ucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvg
+    hrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthht
+    vghrnhepheduleetteekgffffedufeeuvdejiedvkefhveeifeegffehledtvdevhfefte
+    egnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhi
+    khhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpth
+    htohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgthhgvhhgrsgeskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvg
+    hrrdgsvgdprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgv
+    lhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhdorhgvnhgvshgrsh
+    esihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhi
+    nhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehlihhnuh
+    igqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvg
+    gthhdrshgv
+X-ME-Proxy: <xmx:LRZLaJf24GBTWIr_8RXhIR_1bMtzGyAbzPu4IKIvQoLxrFRS1ULJjA>
+    <xmx:LRZLaKNszN5oFEAvUGFYnil0BxA9V7g3tDM2GuMvJnNqzneFkT5InA>
+    <xmx:LRZLaLlPz4ei4Oisp92jVv8BOvjRNNm64YMRU8F4ms9-9WOX90RSSw>
+    <xmx:LRZLaEu5DnSlimx2Rl-ZfuapZOUhHoLH4IyM_yyUbIU3WG1u0H49dQ>
+    <xmx:LRZLaPmuu9OYCMby7xwAq141uAqyAItp5jsp8c8hBwel25zUgO6f_TFv>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Jun 2025 14:02:20 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 0/4] media: rcar-csi2: Add D-PHY support for V4H
+Date: Thu, 12 Jun 2025 19:59:00 +0200
+Message-ID: <20250612175904.1126717-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cb354fd2-bece-42ef-9213-de7512e80912@linux.dev>
- <20250610183459.3395328-1-sean.anderson@linux.dev> <CAGETcx-koKBvSXTHChYYF-qSU-r1cBUbLghJZcqtJOGQZjn3BA@mail.gmail.com>
- <a52c513c-ff93-4767-a370-3f7c562df7bd@linux.dev> <2025061147-squishier-oversleep-80cd@gregkh>
- <7d6d8789-e10b-4b06-aa99-5c1a1bdd3b4c@linux.dev>
-In-Reply-To: <7d6d8789-e10b-4b06-aa99-5c1a1bdd3b4c@linux.dev>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 12 Jun 2025 10:56:55 -0700
-X-Gm-Features: AX0GCFu73POcL4_l4HfI9KMdwt9R050XRJyR3Nu3cTV3q1xTTJqKgvrWmdSnY44
-Message-ID: <CAGETcx9E5DB4UtdjjAO2=XfTNXdXocj7uk0JkVZ8hf9YadwNcA@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Prevent deferred probe loops
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Christoph Hellwig <hch@lst.de>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025 at 8:53=E2=80=AFAM Sean Anderson <sean.anderson@linux.=
-dev> wrote:
->
-> On 6/11/25 08:23, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 10, 2025 at 07:44:27PM -0400, Sean Anderson wrote:
-> >> On 6/10/25 19:32, Saravana Kannan wrote:
-> >> > On Tue, Jun 10, 2025 at 11:35=E2=80=AFAM Sean Anderson <sean.anderso=
-n@linux.dev> wrote:
-> >> >>
-> >> >> A deferred probe loop can occur when a device returns EPROBE_DEFER =
-after
-> >> >> registering a bus with children:
-> >> >
-> >> > This is a broken driver. A parent device shouldn't register child
-> >> > devices unless it is fully read itself. It's not logical to say the
-> >> > child devices are available, if the parent itself isn't fully ready.
-> >> > So, adding child devices/the bus should be the last thing done in th=
-e
-> >> > parent's probe function.
-> >> >
-> >> > I know there are odd exceptions where the parent depends on the chil=
-d,
-> >> > so they might add the child a bit earlier in the probe
-> >>
-> >> This is exactly the case here. So the bus probing cannot happen any
-> >> later than it already does.
-> >
-> > Please fix the driver not to do this.
->
-> How? The driver needs the PCS to work. And the PCS can live on the MDIO
-> bus.
+Hello,
 
-Obviously I don't know the full details, but you could implement it as
-MFD. So the bus part would not get removed even if the PCS fails to
-probe. Then the PCS can probe when whatever it needs ends up probing.
+This series adds support for CSI-2 D-PHY reception on R-Car Gen4 V4H
+devices. Previously only C-PHY reception was supported due lack of
+documentation and no hardware to test D-PHY on.
 
->
-> >> > but in those cases, the parent's probe should still do all the check=
-s
-> >> > ahead of time.
-> >>
-> >> Such as what? How is the parent going to know the resource is missing
-> >> without checking for it?
-> >>
-> >> > Can you be more specific about the actual failure you are seeing?
-> >>
-> >> MAC is looking for a PCS that's on its internal MDIO bus, but that PCS=
-'s
-> >> driver isn't loaded. The PCS has to be loaded at probe time because
-> >> phylink_create needs it, and phylink is necessary to register the
-> >> netdev. The latter situation is not ideal, but it would be quite a bit
-> >> of work to untangle.
+Later revisions of the datasheet (Rev.1.21) describes the start-up
+procedure in some detail, and we now have hardware to test on! The
+documentation however only sparsely documents the registers involved and
+instead mostly document magic values and an order to write them to
+register offsets without much documentation.
 
-I meant, point to a specific device in a DT and the driver. Provide
-logs of the failure if possible, etc. Tell me which device is failing
-and why, etc. That way, I can take a closer look or give you other
-suggestions.
+This series tries to in the extend possible to at least used named
+register and use formulas and lookup tables to make some sens of the
+magic values. Still most of them comes of a table of magic values in the
+datasheet.
 
--Saravana
+Patch 1/4 clears up a unfortunate mix of the name mbps (mega bits per
+second) used in the D-PHY context and msps (mega symbols per second)
+used in the C-PHY context.
 
-> >
-> > Please untangle, don't put stuff in the driver core for broken
-> > subsystems.  That is just pushing the maintaince of this from the drive=
-r
-> > authors to the driver core maintainers for the next 20+ years :(
->
-> What makes it broken? The "mess" has already been made in netdev. The dri=
-ver
-> authors have already pushed it off onto phylink.
->
-> And by "quite a bit of work to untangle" I mean the PCS affects settings
-> (ethtool ksettings, MII IOCTL) that are exposed to userspace as soon as
-> the netdev is registered. So we cannot move to a "delayed" lookup
-> without breaking reading/modifying the settings. We could of course fake
-> it, but what happens when e.g. userspace looks at the settings and
-> breaks because we are not reporting the right capabilities (which would
-> have been reported in the past)?
->
-> --Sean
+Patch 2/4 and 3/4 prepares for adding D-PHY support by cleaning up
+register names and an updated common startup procedure for V4H which
+have been revised in later versions of the datasheet since the initial
+C-PHY V4H support was added.
+
+Finally patch 4/4 adds D-PHY support.
+
+The work is tested at many different link speed and number of lanes. In 
+2-lane mode using an IMX219 and in 4-lane mode using IMX462 sensors.
+
+See individual patches for change log.
+
+Niklas Söderlund (4):
+  media: rcar-csi2: Clarify usage of mbps and msps
+  media: rcar-csi2: Rework macros to access AFE lanes
+  media: rcar-csi2: Update start procedure for V4H
+  media: rcar-csi2: Add D-PHY support for V4H
+
+ drivers/media/platform/renesas/rcar-csi2.c | 332 ++++++++++++++++++---
+ 1 file changed, 287 insertions(+), 45 deletions(-)
+
+-- 
+2.49.0
+
 
