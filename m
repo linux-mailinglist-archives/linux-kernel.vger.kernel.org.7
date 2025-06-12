@@ -1,121 +1,171 @@
-Return-Path: <linux-kernel+bounces-683883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A51AAD7324
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:05:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E080AAD7340
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F36C57A8BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:04:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF66E16DC3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF6925BF00;
-	Thu, 12 Jun 2025 14:03:27 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3602F4317;
+	Thu, 12 Jun 2025 14:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDh+STQq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BEC22157F;
-	Thu, 12 Jun 2025 14:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEED149C4D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749737006; cv=none; b=ZLYYmW4B2uG44LdJJ6ukA3V0tOd25YdVVVhrA7frWbQAdM8l5ylyRDm/yvpGXlqdZ8paUAtqbuJQ90Gvyn0H9oNtRtOf0G2snd0Nx7N895C1nR8nUCMhf8dHjP2CVkEg8WvM7dSsxT4lUK0OUK7xO580dUm6K/ZNHqe6UM+f2aM=
+	t=1749737133; cv=none; b=N9yehpY8ICjW68XwguHC62xBjp/INbSMiZsq73fFlXJwpcGXDfVDDkJ9pjy0YvR8GYNNikXA8D27P0V4XAtR0OyxduYdXh2XA3sL4Wo41g/9z8vxhQGbV4GqjlLbKkrNqyl+0KXZkcyJKEcQe6NPQN1w/uXFwiNNf7/iFTrDXsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749737006; c=relaxed/simple;
-	bh=4Z63mMzRXQGf11Y/TbOm11xYKVHZZ2q9evEA63ZcDYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xo1RAP9rDJGa41x/1fHszXiM5eJ36e7rqx/o6Gl96TymfeU39W7qY25n8JV659i0RtLFtVrTTw7oo1LPZlhETOaEN4MBmpXHS7/ps65Jym7fave+0wB0fHNbKHQOZuWvPx7GEk5Hg4KfNM/wE9ReoquNENmsbGH5ue39c9IcqNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 181C3140C8F;
-	Thu, 12 Jun 2025 14:03:17 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 027DB17;
-	Thu, 12 Jun 2025 14:03:13 +0000 (UTC)
-Date: Thu, 12 Jun 2025 10:03:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, linux-mm@kvack.org, x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, David Hildenbrand <david@redhat.com>,
- Borislav Petkov <bp@alien8.de>
-Subject: [PATCH] mm, x86/mm: Move creating the tlb_flush event back to x86
- code
-Message-ID: <20250612100313.3b9a8b80@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749737133; c=relaxed/simple;
+	bh=nIwQa+mlLJWbBfrzS2N0M8rMHMjUKwQdZhUJBoyfG/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fDyh0UeC4X1bAd4TCSnJfo5DWpwtna0UziF+CHFdmCj6ixyl0oj2cu/1XpKuaciUMYBFW2W+J6z7LJQpYzUzkwGSLtnzU9RlPjezgPnyIwEth3rha5NRBq/0AiB5hEQ52DEftmJD0ibmTWYW/J3xFpsLqB1pUFEj2f+L0v28Ikg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDh+STQq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46230C4CEEA;
+	Thu, 12 Jun 2025 14:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749737133;
+	bh=nIwQa+mlLJWbBfrzS2N0M8rMHMjUKwQdZhUJBoyfG/w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jDh+STQqbL4vbcLlM9UZu+sTS/XDBoBRloMSaa2X68263QKs5ehPswuW+DV7WjMr7
+	 mrMgGeFUe3B06Ng55eDwbEwN0QHK3ty47qBYIcah0lE+21SN4M8UdfizYTgv7o7LnD
+	 LpzCrtES/XxGHK5zQeJfRVgXLkr/Ik+71HTh3JsX/DujBKNS4A4nEFrsORmhTCOMY2
+	 w6epVLxMk9oiXJhv3bDcc3jY3WPlIdKMpzQhbyOssvzmG61n82ilffPTYNvTqlqLEH
+	 H/q2dHiaHIjO/sOtHh/yCLVRfTUCKdHtvME4AoB1hK7m6Hms5Szbth9AhZlP3T022/
+	 jreG4HCCtJyZw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: introduce reserved_pin_section sysfs entry
+Date: Thu, 12 Jun 2025 22:05:26 +0800
+Message-Id: <20250612140526.6435-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 027DB17
-X-Stat-Signature: a633aexr8assinwfnh58a1t5wtz17x14
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18C+o9UXjVaYLfXVFToL0QGqnozJG/773c=
-X-HE-Tag: 1749736993-720449
-X-HE-Meta: U2FsdGVkX19nUL9F8mZWNw+0MQ2nz2VkNz1X5YCpiQuSBsq9uh+KUxoAKhB5MUcc5h6RjHD+G5h0yQy7k2Us0ulvQkv+rh3UAN7WnG8Lb2grJSArNfqFjyxllkbiyIPcwy6cyN+ddxtnBWE6ID6ipVqvayImDHh3c3jDvRHcQZWAf3Djybp3gf/aL56oh25yZ03EEORZ4uj2Zpj2qNPT+74t/pGv+TreaTKs7VW6qT0hiovVztZAwdAwLpOnXYdX6YrFD13kBMcDloNpG7ccwAJMXvMebpvRRvBukQWn2pe9sXYt1T7skK7Qg9IUEd9N+p8eaLkCvqYlBKzf89GQX509Y7VtxBUh7HORsK1uO7qyqI5yt+bTw/BbXPNuzDjObl59oP53N6z9WDhTXIbGCj+9JZDhO99L
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+This patch introduces /sys/fs/f2fs/<dev>/reserved_pin_section for tuning
+@needed parameter of has_not_enough_free_secs(), if we configure it w/
+zero, it can avoid f2fs_gc() as much as possible while fallocating on
+pinned file.
 
-Commit e73ad5ff2f76 ("mm, x86/mm: Make the batched unmap TLB flush API
-more generic") moved the trace_tlb_flush out of mm/rmap.c and back into
-x86 specific architecture, but it kept the include to the events/tlb.h
-file, even though it didn't use that event.
-
-Then another commit came in and added more events to the mm/rmap.c file
-and moved the #define CREATE_TRACE_POINTS define from the x86 specific
-architecture to the generic mm/rmap.h file to create both the tlb_flush
-tracepoint and the new tracepoints.
-
-But since the tlb_flush tracepoint is only x86 specific, it now creates
-that tracepoint for all other architectures and this wastes approximately
-5K of text and meta data that will not be used.
-
-Remove the events/tlb.h from mm/rmap.c and add the define
-CREATE_TRACE_POINTS back in the x86 code.
-
-Fixes: 4cc79b3303f22 ("mm/migration: add trace events for base page and HugeTLB migrations")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-Note, I will be adding code soon that will make unused events cause a warning.
+ Documentation/ABI/testing/sysfs-fs-f2fs | 9 +++++++++
+ fs/f2fs/f2fs.h                          | 3 +++
+ fs/f2fs/file.c                          | 5 ++---
+ fs/f2fs/super.c                         | 3 +++
+ fs/f2fs/sysfs.c                         | 9 +++++++++
+ 5 files changed, 26 insertions(+), 3 deletions(-)
 
- arch/x86/mm/init.c | 1 +
- mm/rmap.c          | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 7456df985d96..f85313a8b5a9 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -34,6 +34,7 @@
-  * We need to define the tracepoints somewhere, and tlb.c
-  * is only compiled when SMP=y.
-  */
-+#define CREATE_TRACE_POINTS
- #include <trace/events/tlb.h>
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index bf03263b9f46..c2a233f2a085 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -861,3 +861,12 @@ Description:	This is a read-only entry to show the value of sb.s_encoding_flags,
+ 		SB_ENC_STRICT_MODE_FL            0x00000001
+ 		SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
+ 		============================     ==========
++
++What:		/sys/fs/f2fs/<disk>/reserved_pin_section
++Date:		June 2025
++Contact:	"Chao Yu" <chao@kernel.org>
++Description:	This threshold is used to control triggering garbage collection while
++		fallocating on pinned file, so, it can guarantee there is enough free
++		reserved section before preallocating on pinned file.
++		By default, the value is ovp_sections, especially, for zoned ufs, the
++		value is 1.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9333a22b9a01..fa27498202a3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1724,6 +1724,9 @@ struct f2fs_sb_info {
+ 	/* for skip statistic */
+ 	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
  
- #include "mm_internal.h"
-diff --git a/mm/rmap.c b/mm/rmap.c
-index fb63d9256f09..0bc00668970f 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -79,7 +79,6 @@
- #include <asm/tlbflush.h>
++	/* free sections reserved for pinned file */
++	unsigned int reserved_pin_section;
++
+ 	/* threshold for gc trials on pinned files */
+ 	unsigned short gc_pin_file_threshold;
+ 	struct f2fs_rwsem pin_sem;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 696131e655ed..a909f79db178 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1887,9 +1887,8 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ 			}
+ 		}
  
- #define CREATE_TRACE_POINTS
--#include <trace/events/tlb.h>
- #include <trace/events/migrate.h>
+-		if (has_not_enough_free_secs(sbi, 0, f2fs_sb_has_blkzoned(sbi) ?
+-			ZONED_PIN_SEC_REQUIRED_COUNT :
+-			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
++		if (has_not_enough_free_secs(sbi, 0,
++				sbi->reserved_pin_section)) {
+ 			f2fs_down_write(&sbi->gc_lock);
+ 			stat_inc_gc_call_count(sbi, FOREGROUND);
+ 			err = f2fs_gc(sbi, &gc_control);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 57adeff5ef25..48b97a95fd63 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4975,6 +4975,9 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->last_valid_block_count = sbi->total_valid_block_count;
+ 	sbi->reserved_blocks = 0;
+ 	sbi->current_reserved_blocks = 0;
++	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
++			ZONED_PIN_SEC_REQUIRED_COUNT :
++			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi));
+ 	limit_reserve_root(sbi);
+ 	adjust_unusable_cap_perc(sbi);
  
- #include "internal.h"
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 75134d69a0bd..51be7ffb38c5 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -824,6 +824,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "reserved_pin_section")) {
++		if (t > GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))
++			return -EINVAL;
++		*ui = (unsigned int)t;
++		return count;
++	}
++
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
+@@ -1130,6 +1137,7 @@ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
+ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ F2FS_SBI_GENERAL_RW_ATTR(carve_out);
++F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
+ 
+ /* STAT_INFO ATTR */
+ #ifdef CONFIG_F2FS_STAT_FS
+@@ -1323,6 +1331,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(last_age_weight),
+ 	ATTR_LIST(max_read_extent_count),
+ 	ATTR_LIST(carve_out),
++	ATTR_LIST(reserved_pin_section),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs);
 -- 
-2.47.2
+2.40.1
 
 
