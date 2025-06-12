@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-683138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E33AD697D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:50:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B500BAD6980
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CEC117341F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:50:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CACE7AE824
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B4D22259A;
-	Thu, 12 Jun 2025 07:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1191221294;
+	Thu, 12 Jun 2025 07:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kI2y8v4P"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QBlgkZQ+"
 Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3C32222CC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B2D223339
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749714571; cv=none; b=jO7R+bmDD/j9iN0Q4EO3ypXxhhfyEFzhFcOFUv1CowOpKR4006yjufBVNGXZfaBhuhCMPHYFzF+KAa7ry57OYvxvVDQUHXInMOGY5pArOWYX/v58gesySa3hj3r+m6kWUuTyV5vQ1IyVCoShUgiWK9XItQ9TO0W34G6+8KQ9Fyo=
+	t=1749714574; cv=none; b=SAcikZINYZZ5rX9VMxTTw5gXNQ13TNv0K6VlCqZWh+85v3d8gEiGc9UmSn2xVTQ2kC2Wuwz+HRb3CIRtJ/ayLXgQkvUPWWMw0pBQDHg6ZbYTVDLu0/hWGYJh4Bzq4eD1J3+bJHeE7whl22F4FLHadQTGSXxmHRYdo1+eiOCvExc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749714571; c=relaxed/simple;
-	bh=ulJwcQBy9dMgYWG+wUZv9LjO7oJNNwU+lvBcQcMNFb0=;
+	s=arc-20240116; t=1749714574; c=relaxed/simple;
+	bh=vJU0lSRgVK0wAGWmZHwdmRtL/aFRS74afRHgWTg1wKs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LTprbeyJ2iZ9Go11INgeUne2P9UextwlCGrYyHEU8XcQfCXIiudj5zHRZHZTVOyoAkdpmkW067Xqsi6cau0HJeXUU5GCaxtWvoFrMJ6XKMDbKzEfyMROct9/zGgzRXLgJt+xOArAx67KU6+Sd1YlWbD3iQGYG2SP2DtjsRWDZas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kI2y8v4P; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=DPDyeaxelq4Vd2N6ENW6ML8EQXT5WzBVp/6QPs+bdSksUO7pPexYaa8jq9wc6Y7F+0oROb5UwqC98tHvAmSATOOjoei6nYZ5S5wap2Vp78Uysl6mogiacC15xLFZu710/FFgarXcW9/GeH1W+1mBBfl5ptaDMhSowM33QXmf4+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QBlgkZQ+; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-235ef62066eso8179245ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:49:29 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-235a3dd4f0dso4407105ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749714569; x=1750319369; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1749714572; x=1750319372; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7XrR9Z799EQOitdhyIDhq08g/G4OghhPor0uKz260cg=;
-        b=kI2y8v4Ptw5rXnR3ZiDliznPO1KWcegPU1dtOnbvcmkZqKy+v8Tt5ddGhahZP3xjPX
-         zsJYZjhRDcF5XWpXNhX/uaIjUV3zmvzJENNKl3ThwQTv413VhZ7yOhLLNflC00S209az
-         co2En4gSZPBj9Cbva8tYx8Cfr4qFFyvxjZqkw=
+        bh=sbtP55NCyh4Df1vJCDqUAIM6R+yyfwut8FIK3Aq64wo=;
+        b=QBlgkZQ+0zaOvA2lNogUqQaxIwNvvJ5OOY/g+nUoaEt4NWjaLATNT+C/qJlUl8JCNy
+         FYm06PiqHVNu7syczoxcQpCKUpb8k84qc5+afquu/u947rwZOHxOVqqmpb6ZTNcpzr6Z
+         9ob80CO8EQNeKTzPsotEzPsDTcKejQmy7crIA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749714569; x=1750319369;
+        d=1e100.net; s=20230601; t=1749714572; x=1750319372;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7XrR9Z799EQOitdhyIDhq08g/G4OghhPor0uKz260cg=;
-        b=my1GUDDEZlAPFLqyXq8TSqGsA0sihNBznLr1ubRaghtls00/3lE6p53UPkDae7WPeY
-         4lfcvU91ZOmaVnAHPZAPP/Er384cv5ZNqaexxC3X0m2HnJz48sEN0xvNJqSjKofi1InY
-         U+hiTCPUfSURtjBmdJVz+gX0G0aGMzAVILlCkpm3IAwIZhlS4Y8a/TYBQR07SYyzKxDs
-         3YEj3UD7+9BHkBEU2xxrIaj8yRUXaaL8xudrR3okWaYUSrFfZ50UHzxo4gHnMuP5ORz1
-         pwOSb7xSH/eXhS7VvSEBK7TlG2fUE4QUBSh0KXAC0TETO9lFX+wkkJNSVgPvg/Ur+1nn
-         jOsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmQSoNlePl3o6Z3wJU0WTpyGH/Z8fLedRHXpv+fwzrGsTDHYu5bjtHQyqJOpFE/etE/W7GP+N9JggFfjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcNvx/l7plJWS9+9FUKeDCFTZxfdVPpiK6TbV41bNvTdg710eJ
-	MFoDc+yYpJZVVtyuN2hBKX5glPYTv+/NBYUpc7c+iCeyaUEJriP/9ZMD3uKbQmLJcQ==
-X-Gm-Gg: ASbGnctW/exafaHAqilyN6cBbIJJ0y/ShmC/nn/Zc5jB0A6ZgdtcdO4NHWnQfPM7TJs
-	3YtpoSVXVkEaVC1NImwTC+GPQRG4yQ1Lul4loS9iFsmgL3unoNSPw+CdBDf1tq9udM9xC2oTfBl
-	9S+9KgKeK6yXrtBG0suG+UU3rCnkMlrBB4m4Jpq0QBQI6fWRi6xe1ZwW0DPd7b/bfRr3RYb1kSx
-	jS3A3c+TC4wMfld1TwDMJWpqhsbnFHBo53SizbMnYP0MKhy8gzmWYxOXY/DLzQc2McmFPc13L1F
-	G4i5bOv4ctXbWKHMgpyYPVKNcT128aRf5qMuwirwYvUqq9TwWWuVWdFOkLn1fsSLn91uijQ6rcg
-	jLAOeyEx8AzDg1w==
-X-Google-Smtp-Source: AGHT+IFE5DvvPsxXV+bi1JEfMtSwm9K9UZ18IP94fohAyoCbLtffwhmgBBALXCfno10M7kxbt6Y0fw==
-X-Received: by 2002:a17:902:d54a:b0:233:ab04:27a with SMTP id d9443c01a7336-23641b3fa11mr102085905ad.53.1749714569502;
-        Thu, 12 Jun 2025 00:49:29 -0700 (PDT)
+        bh=sbtP55NCyh4Df1vJCDqUAIM6R+yyfwut8FIK3Aq64wo=;
+        b=r5nDWcICO6H0YQxhLOJfNgTxXOzq89O/nwxUQmUQ9x6FIFGuIN+1WdoJZaIpnaC5fU
+         LQbCKn8vAr0TC4MDvQ1XbdoTEta/0DzzC7ov2qgZR3Lplt5uXR2BVKXr3e6xnXKf9C72
+         r1l8I/05fr3nEFeRCJkIjNHeUcMhHgH6S/ELPYoj99JzF9hLyvKZxylJC8lywZt3o/b7
+         aKsvxFfBJxKtsebOFsT9ghoftsGJ9N4qlUAxvLAZ2JPMAFc1tcXiiOwRqd554XY8hw0g
+         oqvDpnfV3z5o8dza9N0lER6Ul2xkQuwXQXOb0loKsprFAseWc5PIk8CN07hA5MXzqjQ+
+         Zlqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGLeY1F9eSoEkSQHS5+PccZgIG8ZXAuefbrH2/ViKLQ24rtHyslm3c4v5mRCk8wAd/V58REyqu9n6kVos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+ZkPGMDRjWc32PilRl88aeK78lAt6wxU8hBTNuK0BYeiSxgm+
+	oITt7cikyfrDDNDIPvHxUVGlV5z5+mMSQii0i0d8gp9lGdpBxM5IHvWfwDY8ni5d5A==
+X-Gm-Gg: ASbGncsbKGHMhBsOu4jjwV1cokNYnBT4LKFk8rEQA+nRXsr9sY15TkFyXKhLVambxTc
+	ddZnFjJ7TZS6OxY/ISV8qnNngVIRuGmKA4iuTL5tHk6dUdgsufpz08/Fg9r+dU2VWC4o2AnD4/z
+	Rb0Ij1Ij/P/0L1ktjsL51w8bdHc0zAQRZlRbT1BZOmQ5XsWMSwCM7UMZ1En1VUOXNPp7QOAnTmG
+	uRnDza2XjXA9ImFKTSCdp+p5c/XLzuS2B8fVYOgk4C8F8F/Q/K+m8ejGa8NOX+7wLn5wbXpDO3E
+	P3diBWNn6Tz4Rs8aVKFkcyXwSs5rK6CNsw6TGiKwB4/RUTvxJ02JiRg1vcbqzUqGfVhbtm2PVFY
+	MD6g=
+X-Google-Smtp-Source: AGHT+IHaJlXxYg2mu49lXSk0cZU/cv8JMuXBWfPAapKkAyg9tvhMsqA+YooEcad1wogppx7rwBhFeA==
+X-Received: by 2002:a17:903:1b10:b0:234:d2fb:2d28 with SMTP id d9443c01a7336-23641aa2385mr85824375ad.2.1749714572600;
+        Thu, 12 Jun 2025 00:49:32 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:5b9:e73a:2e58:5a47])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2364e63d42esm7893295ad.74.2025.06.12.00.49.26
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2364e63d42esm7893295ad.74.2025.06.12.00.49.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 00:49:29 -0700 (PDT)
+        Thu, 12 Jun 2025 00:49:32 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>
@@ -86,9 +86,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/9] ASoC: dt-bindings: mt8192-afe-pcm: Allow specifying reserved memory region
-Date: Thu, 12 Jun 2025 15:48:56 +0800
-Message-ID: <20250612074901.4023253-6-wenst@chromium.org>
+Subject: [PATCH v3 6/9] ASoC: mediatek: use reserved memory or enable buffer pre-allocation
+Date: Thu, 12 Jun 2025 15:48:57 +0800
+Message-ID: <20250612074901.4023253-7-wenst@chromium.org>
 X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
 In-Reply-To: <20250612074901.4023253-1-wenst@chromium.org>
 References: <20250612074901.4023253-1-wenst@chromium.org>
@@ -100,41 +100,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It is desirable to reserve memory for the audio frontend.
+In commit 32c9c06adb5b ("ASoC: mediatek: disable buffer pre-allocation")
+buffer pre-allocation was disabled to accommodate newer platforms that
+have a limited reserved memory region for the audio frontend.
 
-Allow the "memory-region" property, to be used to point to a reserved
-memory region.
+Turns out disabling pre-allocation across the board impacts platforms
+that don't have this reserved memory region. Buffer allocation failures
+have been observed on MT8173 and MT8183 based Chromebooks under low
+memory conditions, which results in no audio playback for the user.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Since some MediaTek platforms already have dedicated reserved memory
+pools for the audio frontend, the plan is to enable this for all of
+them. This requires device tree changes. As a fallback, reinstate the
+original policy of pre-allocating audio buffers at probe time of the
+reserved memory pool cannot be found or used.
+
+This patch covers the MT8173, MT8183, MT8186 and MT8192 platforms for
+now, the reason being that existing MediaTek platform drivers that
+supported reserved memory were all platforms that mainly supported
+ChromeOS, and is also the set of devices that I can verify.
+
+Fixes: 32c9c06adb5b ("ASoC: mediatek: disable buffer pre-allocation")
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/mediatek/common/mtk-afe-platform-driver.c | 4 +++-
+ sound/soc/mediatek/common/mtk-base-afe.h            | 1 +
+ sound/soc/mediatek/mt8173/mt8173-afe-pcm.c          | 7 +++++++
+ sound/soc/mediatek/mt8183/mt8183-afe-pcm.c          | 7 +++++++
+ sound/soc/mediatek/mt8186/mt8186-afe-pcm.c          | 7 +++++++
+ sound/soc/mediatek/mt8192/mt8192-afe-pcm.c          | 7 +++++++
+ 6 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml b/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
-index 064ef172bef4..8ddf49b0040d 100644
---- a/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
-@@ -23,6 +23,10 @@ properties:
-   reset-names:
-     const: audiosys
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+index 6b6330583941..70fd05d5ff48 100644
+--- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
++++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+@@ -120,7 +120,9 @@ int mtk_afe_pcm_new(struct snd_soc_component *component,
+ 	struct mtk_base_afe *afe = snd_soc_component_get_drvdata(component);
  
-+  memory-region:
-+    description: memory region for audio DMA buffers
-+    maxItems: 1
+ 	size = afe->mtk_afe_hardware->buffer_bytes_max;
+-	snd_pcm_set_managed_buffer_all(pcm, SNDRV_DMA_TYPE_DEV, afe->dev, 0, size);
++	snd_pcm_set_managed_buffer_all(pcm, SNDRV_DMA_TYPE_DEV, afe->dev,
++				       afe->preallocate_buffers ? size : 0,
++				       size);
+ 
+ 	return 0;
+ }
+diff --git a/sound/soc/mediatek/common/mtk-base-afe.h b/sound/soc/mediatek/common/mtk-base-afe.h
+index f51578b6c50a..a406f2e3e7a8 100644
+--- a/sound/soc/mediatek/common/mtk-base-afe.h
++++ b/sound/soc/mediatek/common/mtk-base-afe.h
+@@ -117,6 +117,7 @@ struct mtk_base_afe {
+ 	struct mtk_base_afe_irq *irqs;
+ 	int irqs_size;
+ 	int memif_32bit_supported;
++	bool preallocate_buffers;
+ 
+ 	struct list_head sub_dais;
+ 	struct snd_soc_dai_driver *dai_drivers;
+diff --git a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+index 04ed0cfec174..f93d6348fdf8 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
++++ b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/pm_runtime.h>
+ #include <sound/soc.h>
+@@ -1070,6 +1071,12 @@ static int mt8173_afe_pcm_dev_probe(struct platform_device *pdev)
+ 
+ 	afe->dev = &pdev->dev;
+ 
++	ret = of_reserved_mem_device_init(&pdev->dev);
++	if (ret) {
++		dev_info(&pdev->dev, "no reserved memory found, pre-allocating buffers instead\n");
++		afe->preallocate_buffers = true;
++	}
 +
-   mediatek,apmixedsys:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek apmixedsys controller
-@@ -95,6 +99,7 @@ examples:
-                       "aud_dac_predis_clk",
-                       "aud_infra_clk",
-                       "aud_infra_26m_clk";
-+        memory-region = <&afe_dma_mem>;
-     };
+ 	irq_id = platform_get_irq(pdev, 0);
+ 	if (irq_id <= 0)
+ 		return irq_id < 0 ? irq_id : -ENXIO;
+diff --git a/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c b/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c
+index e8884354995c..9b6b45c646e6 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c
++++ b/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c
+@@ -10,6 +10,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
- ...
+@@ -777,6 +778,12 @@ static int mt8183_afe_pcm_dev_probe(struct platform_device *pdev)
+ 	afe->dev = &pdev->dev;
+ 	dev = afe->dev;
+ 
++	ret = of_reserved_mem_device_init(dev);
++	if (ret) {
++		dev_info(dev, "no reserved memory found, pre-allocating buffers instead\n");
++		afe->preallocate_buffers = true;
++	}
++
+ 	/* initial audio related clock */
+ 	ret = mt8183_init_clock(afe);
+ 	if (ret) {
+diff --git a/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c b/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c
+index db7c93401bee..c73b4664e53e 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c
++++ b/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <sound/soc.h>
+@@ -2835,6 +2836,12 @@ static int mt8186_afe_pcm_dev_probe(struct platform_device *pdev)
+ 	afe_priv = afe->platform_priv;
+ 	afe->dev = &pdev->dev;
+ 
++	ret = of_reserved_mem_device_init(dev);
++	if (ret) {
++		dev_info(dev, "no reserved memory found, pre-allocating buffers instead\n");
++		afe->preallocate_buffers = true;
++	}
++
+ 	afe->base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(afe->base_addr))
+ 		return PTR_ERR(afe->base_addr);
+diff --git a/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c b/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c
+index fd6af74d7995..3d32fe46118e 100644
+--- a/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c
++++ b/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c
+@@ -12,6 +12,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <sound/soc.h>
+@@ -2179,6 +2180,12 @@ static int mt8192_afe_pcm_dev_probe(struct platform_device *pdev)
+ 
+ 	afe->dev = dev;
+ 
++	ret = of_reserved_mem_device_init(dev);
++	if (ret) {
++		dev_info(dev, "no reserved memory found, pre-allocating buffers instead\n");
++		afe->preallocate_buffers = true;
++	}
++
+ 	/* init audio related clock */
+ 	ret = mt8192_init_clock(afe);
+ 	if (ret) {
 -- 
 2.50.0.rc1.591.g9c95f17f64-goog
 
