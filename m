@@ -1,336 +1,145 @@
-Return-Path: <linux-kernel+bounces-684090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC01AD75EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C23AD761C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD4D03A0CDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00AEA3A18CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A480329ACE4;
-	Thu, 12 Jun 2025 15:19:08 +0000 (UTC)
-Received: from FR6P281CU001.outbound.protection.outlook.com (mail-germanywestcentralazon11020079.outbound.protection.outlook.com [52.101.171.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156092BD013;
+	Thu, 12 Jun 2025 15:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="vroO0C16";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RV36GKp6"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FA329AAEE;
-	Thu, 12 Jun 2025 15:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.171.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749741547; cv=fail; b=hvKZRx+7Ds47ujMdq6t2YOzqZDubNtHWUoMLd94qp59m37LuPFD6R5Hyf2hEZgqhyb2Ff/rOnmfjI/usL3X7G3/lqqokogHrYbJ4cMkHPYEft0HGIKISZ2xj406iuY5DM9CQUSaGwraBZJmj4APwC6JvFcr9tAT5+2Aoo0JXfbg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749741547; c=relaxed/simple;
-	bh=6gMdyKbokUm+RAPjBE+sID7Emc1AXM/3OQUh3q9tTxc=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=REBd7VLmURdwpP8ER7jf19Fnroj6SvPzXLIjiLz7fjcM6ZscU6ZxkdqbdwiNautunYVWbIacXLV7y++KlSUAs3y8Zw/WVtp0PI+Vn4bk+WDRLNspzbgyP/zpV8uGQbjQUgDPxMs+m/veaYUZEEYKMrNKcwcKIHnzTd7kNHYG0lQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siewert.io; spf=pass smtp.mailfrom=siewert.io; arc=fail smtp.client-ip=52.101.171.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siewert.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siewert.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uaeJp5iEOKHNi+ZR8nQ5+WWzP+ydSSO3DVd7R2CrNX07zrMPuh2l4zOBGcc8HobSbFwkyHVWMFMxFBKTfC5D/0ehDXB1xPnCgZDDNTFWMZ4q4U+FT03pB8MYISY5Gx9cGTxubpTG2/wUmUuZQ1sjQW6SUENWin44JveKQRI45vozoQG4fBomELiKbxodv26bUGjAj0/cb/OCY8yX+wAfbN2V96TMIEy/NJfS/HEimj0kOOW7vXAMzXtAlPn7uOMw7p2y+Kr49DP0HP7TN2l3quj/7SqXPyVm19nAN9GW8+4pzjNXFXpoIQzi1oZT1fLBp7OxR6gDGBx5y1ZshFMuhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/7QBolZuLgWE3f/SzPJCWH+6GD07xvh2jTNHJv6/k+U=;
- b=o/A5YDi5Eipmd0YzA9kkyr/3BNPXNvG8bwArRn5UpLUTky/rjjgUDXpe/vw5/tiUr1aqIgN8nNCUjrUvNGpdl+tcJ/G6mITlDpQjsIAA/oYsVBI6NfeewbgdkZEQ6ZU+AcHCm0q9gJsvmvRsvwB9paFV4p22JJQt7PwRhVYp/8kcClNBpQKoDhZWWTAwmysFbgjjPYhNkSvO7imIBv2YBA476m/asFwsSIFa8HGM8YP6kVSNJ8W3RewRwoDRZi059xAKhsiiNZixA3HbyiBqIOJOJQrAO8hs3qdfULIkfETb4xDSNDNSw+nQByp6OJ+zPMk+n00Ai1m7lWvncYzfXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siewert.io; dmarc=pass action=none header.from=siewert.io;
- dkim=pass header.d=siewert.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siewert.io;
-Received: from FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::182)
- by FR3P281MB1600.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:7b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
- 2025 15:19:01 +0000
-Received: from FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
- ([fe80::6ec7:ece3:1787:5e48]) by FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
- ([fe80::6ec7:ece3:1787:5e48%6]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
- 15:19:01 +0000
-From: Tan Siewert <tan@siewert.io>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Joel Stanley <joel@jms.id.au>,
-	linux-aspeed@lists.ozlabs.org,
-	openbmc@lists.ozlabs.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Tan Siewert <tan@siewert.io>
-Subject: [PATCH] pinctrl: aspeed: Log error if SCU protection is active
-Date: Thu, 12 Jun 2025 17:18:59 +0200
-Message-ID: <20250612151900.32874-1-tan@siewert.io>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0045.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c7::14) To FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d18:2::182)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB34D2BDC20
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749741699; cv=none; b=M2KYIO+9siuPWy3zEiYZbzdpOeeb1Hp+VvIUo3f1GOamv4aAC34CH+mhezVpsUYzJHKOkGivnrIikJJfpwAKSjJcfoS5X6RPddYmuvK8svCeNgFm2qbMPvOsFixCE4Sv5tkRJmvEqoUgIXyz9j/fw9VJe6PqOFiC94zj9lLwRlY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749741699; c=relaxed/simple;
+	bh=YCRd0TiN4yDTjEytGnluWQtF+hrCORQN6aUIK2WrZCA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=kHlYHvleGJGpuMutppnWCDSsitCSA3ASOJBRld/1PJg01cRX3AKpn84OQSMh1zYpUVXk7dM6k45qbATDMCeKjK+1GYB7QMMSO5dBFlq6Tmiykmr9Xa8BZkZzVNUY+xsyJpiZncabrDwsPCPOiNxXR72oAB0ADIfP68dRSBY9s/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=vroO0C16; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RV36GKp6; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id D872013803AF;
+	Thu, 12 Jun 2025 11:21:35 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 11:21:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749741695;
+	 x=1749828095; bh=yo46/0j5hmsmMNixOyVWRoGIJqFxk5fUKVizkJxtF2g=; b=
+	vroO0C16rS97XT9Cs1m12LLszasW9eQA848HdECFr9FRX2TTeLLifk2WR1duCfmQ
+	+BqGmheN2bm/i3m3255d0WUUWSbEmns8UJZh1LWWjeSo6nK1zMP4i8N5eheTCnVB
+	G/PQ6D6iC5nhhon7+Ji4UJ9WirYy5Gj97hFQk2wqiGOFvTw/b8o7uK6s9WI5NEV/
+	A6NW7RL+i3k76nefQU5VtDgqzipXmzm71blnFkZH1xkug8w1M+3kbl8sCs35pHWM
+	JK1XUkgDS9Iz85W5I3uzI0qwAvhEp+nkPRMDahLUeotKb8kihzTj57M4HZz2Wpj8
+	LTF9KidPnpR59ncOZMDW8Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749741695; x=
+	1749828095; bh=yo46/0j5hmsmMNixOyVWRoGIJqFxk5fUKVizkJxtF2g=; b=R
+	V36GKp6bagKkgFi5W50SHy0AKhHWTPP5tgGu7axJMavkXIrq82TjI/rrLh3mG/rp
+	etpwglWXb0VyX2X8kINTfb7/PzFJ0blhLaXz+9qQhatyT7uydu78BqLeird9Xk3C
+	RJ6EhecQVv0gH+MmCWP3fPrYrp2k0pMw+KLJ7c77Cn+8UMA+G/AUcTnpzNrrVjLk
+	SfA2XHEST44PwwA+Ll/qMU/XOyUCUCKHVy+F689JMiwgYwzzlBhzt991mPzboSwy
+	wwxvsJzZecZ2AGiBTRQRWqFnwDNsrZDBxSS5Nx0fopFbRSREtHh9eROawXrXqVV7
+	6HhzlE+InQg/ID4+HaakQ==
+X-ME-Sender: <xms:fvBKaArG63TVq8jnSR8iuf2tXQtvx6J4HZ-YEKsCHoPkD6gqbSwcYg>
+    <xme:fvBKaGpqfiHNqa9N0GhXWEPKlSq8F7U_OoNoLL_Pd-dAcASklW_F_xdQ9tGwLTEvE
+    U7Ux5nrP3r-sjcyJ7Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheegudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpeeggfejudejvdeijeeglefgtdfhudffieetfedu
+    gefhffekjeefhedtjeefjeetfeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvgdpnhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghirhhlihgv
+    ugesghhmrghilhdrtghomhdprhgtphhtthhopehnihgtkhdruggvshgruhhlnhhivghrsh
+    dolhhkmhhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhushhtihhnshhtihhtthes
+    ghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhmpd
+    hrtghpthhtohepthhomhhirdhvrghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdr
+    tghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmh
+    hrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghr
+    nhgvlhdrohhrgh
+X-ME-Proxy: <xmx:fvBKaFPjhtPDtyIgiKClztvwQqG5txFN1Kf6Ce5DwCtley3Abv6qVA>
+    <xmx:fvBKaH7IEhBL1Py8wryZkMKmGJWIf9nYQnHAFpPCk65xAqCpRvulnw>
+    <xmx:fvBKaP5VjAyv2WVmwHcj-ezFH6Fs2NMGK3_43uPQKofNhP8PZDYmVw>
+    <xmx:fvBKaHhtEXjBKuOVmxUA_LFBt-NbsEUFvfRhqJmzjSJrJjqYJ2AsxQ>
+    <xmx:f_BKaBJmEhJgRp7WsewDvbgnixt1gjiprL_X9IX0pcC_Y02mFjoc1epS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A9B66700062; Thu, 12 Jun 2025 11:21:34 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: FR3PPFB3D0CF1D2:EE_|FR3P281MB1600:EE_
-X-MS-Office365-Filtering-Correlation-Id: 440bd7d2-42d2-42cd-dd59-08dda9c47599
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|376014|52116014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gVZ3OvyOxTrA8sII4eyNssVnKG5nULplEKnTaaYufmpkdeHCWAwstmLDvMY0?=
- =?us-ascii?Q?cYN+fcoSdYhnNL1rcJyhvahuZvLI7rWQClI383RB+o5HdKU7Bxt6VVQPjO1P?=
- =?us-ascii?Q?sSHzM+a2pG/zUnrlkmUDG4mX5C65qKZmckKzHWmd5XHfk12oGCxkmi7Zebbt?=
- =?us-ascii?Q?dOlI4rEi9z0YyflYdxOdcAE4DCK51Ty26yT1VjHBFKhGZhGHnB3fFiqUN/p+?=
- =?us-ascii?Q?mFCSy4zutw000iz0KZXJYIF3Jg8SVgyc8VGHwLKlIWVy6PiRB5nMkXnnRvo4?=
- =?us-ascii?Q?8/NvYFDffR5i2oOi5M9b7t6c420fxuiGfSsQavjzyV7aEDFGstDpgrU98Pca?=
- =?us-ascii?Q?bsukr79586pC/c1pggAlKHF0wNxhO+HU7h99T6zpG8/TwQPBK5yALepNVnXn?=
- =?us-ascii?Q?HbscFUDFhVHEKjTJdhFRgxnbrx0G8Cza9eivK58orrGw03tJPgFvcZ7VytyG?=
- =?us-ascii?Q?cUkTz0HvlRIRlDF7uNOlbNZAB8qcN5eqVdcDId3TYm9O91dzDJ3MqA+66h4I?=
- =?us-ascii?Q?57Hs06bm0ZOslhm70NjupeUFJJfTqJippc8L300ETQTrWp4n5C7+Hp3oS8Dv?=
- =?us-ascii?Q?8R0ImCy7fh54CMXbPyWfx6Enerv27misG9nR+QwXvJA5J8dYTRAQ0Ej1xoI0?=
- =?us-ascii?Q?FeJQpONFOW5cdj32q+Sa+6s4+u4Jp+PLG695H40Zmsi6NO92GvEPz8XlXDXE?=
- =?us-ascii?Q?L1+TU0+0PkPN8xvSw2Tx+ia4NuiOWk4xiPrshGFheKYWk8NyCSQJRaNm+zN8?=
- =?us-ascii?Q?HJCBP8V0o9fcor8EWzxX241rmsLuPdRfBpDRV8TzeE9asNyb6sD9ToDBjfke?=
- =?us-ascii?Q?LpW+Jn2FEOLbqDiXW6p4pu2Kwah1HMX7UpjzR8uTyOWT6h9AylY/JM8IElVU?=
- =?us-ascii?Q?ZdAZ1OPBQsnOJzrcshOgS7XlzIW9FZ3uFZp7S3BcoUfgAKS3UjRst8TIDx/E?=
- =?us-ascii?Q?rwisiBvnE/ptx3tQwKZ6porJvvfcPRodTbkJIecj1x9FWqcCogjCUB/nZPle?=
- =?us-ascii?Q?q+WDm2VeX7+13vMdKIjFs/jMomwIpcXQjMG8Du2QBONhcPJZAnr8hSa8b5sr?=
- =?us-ascii?Q?8x2n1zehitVYSWz4yNe/974P441T7Z9dRsmU6YFsZuzb28XikVFI10uotU6p?=
- =?us-ascii?Q?BPR1bBgvoCpwKHiMi8KuVg9/1lf/HzHgCTagjVj/sR4kdYoPYuMMQwzTaotp?=
- =?us-ascii?Q?FHiLY9WsOySNic3s4P+37m18GA/h2D1vF76q/Dg95V1B+FWV+xjW9iQoHmE+?=
- =?us-ascii?Q?RGQQtN202aQKbq0oyigRan3Ygd7RPqToQfbCbEBlAf7PTcpvEXKsMZbEtL9P?=
- =?us-ascii?Q?R7zzRZkwECDTX7kQkn81FgaOASlW21FZcDvbMEByGrZjfDWIdZCUQzHHztMi?=
- =?us-ascii?Q?MSlOcJLOrc3ThSodimgd207URKnrotzzSxA8uKpxOuEvjPsIGslqWfqF9yDJ?=
- =?us-ascii?Q?91hNhbFIO4s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(52116014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RvDSfGpThgEyWqCoWOLVSXtLdLNUk3djpN4NidPYmZYu/MspXtvJD7Rjh3r4?=
- =?us-ascii?Q?k1w0nkeDUXRqM8Rb/L4Dr3DdOOvm96h/8uSW5ybEo+oCu8Qk2LXnR1PAgPGx?=
- =?us-ascii?Q?T+TRtHHAY30hbI+WGw9SX4pjQvLAW3wA1bkQbn94mkAnmxRh0wU375erjf1o?=
- =?us-ascii?Q?mgxNjx4epdXdS8dllTzClkLMZoVtd5YvV51pqRjKijIu/biSlz7gITagkMJ9?=
- =?us-ascii?Q?KFAb1qR3M81Vc1c6225j6GXjrxu5y5tV9TVXmmoa6HFMz28sXQMNMrCcH0fl?=
- =?us-ascii?Q?oSqwQ1hUP20equJsi45cwdn9HDt9H5N/F4nmPytfhoX3PAZPDUirQ5rNSKuk?=
- =?us-ascii?Q?MGxIY4VEd26G9mmWXY6Jm+ltpyhiriF1GXYxCuQs4sJKXoPs7Wy73UdddYGJ?=
- =?us-ascii?Q?Hple6tleG7mrZRNahf19GmU33aWBiL3pWtVj2MGjaKo7eflPcJvuoqov/+xG?=
- =?us-ascii?Q?oBLBSi8Ygi5U06Skca0hiyQD1Nb0B1LQ5793W1x1eor/nEPOid2WV5EfQ/HF?=
- =?us-ascii?Q?EijpE4C1WbyMS9bnDoe7M2v6/T3+zt14CJUENndX2kWKSj71y/N/gsTJLwrZ?=
- =?us-ascii?Q?m2MJLtQ4WHhJiTFrTlblEEnOutg7YGNc8nBTkx6DMiiYyCO2g04LgjFCztdv?=
- =?us-ascii?Q?BbrVS4IG02sInMm7EKu3fOqstJjwsz/of4KUr4mru/+kNMo3b85JWXUD8cxd?=
- =?us-ascii?Q?tIn/1/lL4kY40LMf/Of71oHvrx0p9QwomWv/OvGPHX8VblZk8j+1syMBirzE?=
- =?us-ascii?Q?ieI6WSdKXTtkOrrGwMbLsu7BGl0KSzfo9CQaO7mzFMjIeEZY6epKACxnaDMq?=
- =?us-ascii?Q?eU4+KXbwtIuwjStAMrsTiDSnWftGivt8w+mFHt8ueFX6PigTKO/C05G9kwlj?=
- =?us-ascii?Q?ZG1OT8lTa/irFEsNJT4uyhzpOJxzVBs+nf1vQBE2x2NEBPz7JZvVujdnS9ni?=
- =?us-ascii?Q?2rJ0x5GLGhJVUMYMujBca7i2Gg/DWQLRzyaU5jQ6IkMQ2wyGX3K0wF9sTxpY?=
- =?us-ascii?Q?FpuHsQZRI131dc4ETeNRYT4lRtNaVsY93WQzLfE6s+igZjoOoki3KdoHd6s3?=
- =?us-ascii?Q?9ActVvMwqWlLsHTKqPk2Yddlm1PWVTdMxEVtjRGTT2l76tnCs/snwspUNBK3?=
- =?us-ascii?Q?PZCY/QEIj6dmmRrOEDwCQG6t0YyaUpH50fVanSBjLNVME2Zz2dioDc5DM5l3?=
- =?us-ascii?Q?UOY57Ex2TawEGF1jilH3MEVcav3YRfrqE9xUlsB+nhr5x3AwfzS9XrlK6zsR?=
- =?us-ascii?Q?djHtFbCaYkwb4NguMP7XmAiqFQwFzf1jSKolBvqHNuJluzs8pz75S9rOXnbW?=
- =?us-ascii?Q?vH0WqxzzsPpmZRFSQAee85SCOqcv3oFTNQkAnu90UnDwc48nlFGCsa0svjmP?=
- =?us-ascii?Q?nuSt5vA8rI/xHK0aDtyfV+0N+FQGVyW6a+iH6HLcktuGyuXoij3q+mVk/Rs0?=
- =?us-ascii?Q?DPRL+TD7LGP15CYeR/LN0Fb2S1x+epw9qTK2ATXVaLxBZ1tjh58rnOPHUuH3?=
- =?us-ascii?Q?4ngE7Dv9J2HllpX5R+dgNIt+sFtVstzcoeeqvh6Gz5ES2pOKXyK/+LVttXJa?=
- =?us-ascii?Q?ZbtZohnTg++dZtkViZcSsnpvAWHkjugOA9HAWRWZpcDaBdxdRhu/VU0vV/My?=
- =?us-ascii?Q?672nkogLDUV5+XLx61+hxBc=3D?=
-X-OriginatorOrg: siewert.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: 440bd7d2-42d2-42cd-dd59-08dda9c47599
-X-MS-Exchange-CrossTenant-AuthSource: FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 15:19:01.1985
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e8b4abbe-444b-4835-b8fd-87ac97451a7e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yZPBBA8+h3l6ClMLaGt+WqEzY3+ESrJjsM1/ZvIzYj4vDvNd6opasu5CJKYFJ4bP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR3P281MB1600
+X-ThreadId: T7abef826b1a41757
+Date: Thu, 12 Jun 2025 17:19:56 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ linux <linux@treblig.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Dave Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Nathan Chancellor" <nathan@kernel.org>
+Message-Id: <d24e13cd-f327-4077-9119-ea6fcd11f9f9@app.fastmail.com>
+In-Reply-To: <c93bf50b-0300-4bd9-8c59-bc2b876801f8@ideasonboard.com>
+References: <20250610092737.2641862-1-arnd@kernel.org>
+ <f4e42ca9-d6f2-401b-9a53-d3b41915c6a0@ideasonboard.com>
+ <4a81fc44-7c93-49d1-891b-dae11cd5e74a@app.fastmail.com>
+ <c93bf50b-0300-4bd9-8c59-bc2b876801f8@ideasonboard.com>
+Subject: Re: [PATCH] drm: omapdrm: reduce clang stack usage
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-ASPEED pinctrl and other drivers accessing SCU registers rely on the
-bootloader to unlock the SCU before handing over to the kernel.
+On Thu, Jun 12, 2025, at 16:37, Tomi Valkeinen wrote:
+> On 12/06/2025 15:40, Arnd Bergmann wrote:
 
-However, some userspace scripts may re-enable SCU protection via
-/dev/mem, causing pinctrl operations such as disabling GPIOD passthrough
-to fail in not-so-obvious ways. For example, a GPIO request for GPID0 on
-an AST2500 fails with:
+> static u16 DISPC_OVL_BASE(enum omap_plane_id plane)
+> {
+>     static const u16 bases[] = {0x0080, 0x00BC, 0x014C, 0x0300, 0x0500};
+>     return bases[plane];
+> }
+>
+> In any case, I'll apply this with a small comment.
 
-  [  428.204733] aspeed-g5-pinctrl 1e6e2080.pinctrl: request() failed for pin 24
-  [  428.204998] aspeed-g5-pinctrl 1e6e2080.pinctrl: pin-24 (1e780000.gpio:536) status -1
+Thanks!
 
-With dynamic_debug enabled, the SCU write failures become visible:
+I've also opened an issue against llvm at
+https://github.com/llvm/llvm-project/issues/143908
 
-  [  428.204657] Disabling signal GPID0IN for GPID
-  [  428.204673] Want SCU70[0x00200000]=0x1, got 0x1 from 0xF122D206
-  [  428.204708] Want SCU70[0x00200000]=0x0, got 0x1 from 0xF122D206
+Hopefully we can pinpoint something in llvm that can be fixed
+to improve similar issues in other code.
 
-Since SCU unlocking would need to be done in multiple drivers, adding
-unlock logic to each is not viable. Instead, this patch adds an
-explicit error message and early abort in `sig_expr_set()` if SCU
-protection is detected by checking the SCU Protection Key Register.
+It does seem fairly obscure, as even changing the code
+slightly seems to completely avoid the problem, e.g. if the
+one of the loops grows too big to be unrolled.
 
-Before:
-
-  [  428.204733] aspeed-g5-pinctrl 1e6e2080.pinctrl: request() failed for pin 24
-  [  428.204998] aspeed-g5-pinctrl 1e6e2080.pinctrl: pin-24 (1e780000.gpio:536) status -1
-
-After:
-
-  [   43.558353] aspeed-g5-pinctrl 1e6e2080.pinctrl: SCU protection is active, cannot continue
-  [   43.559107] aspeed-g5-pinctrl 1e6e2080.pinctrl: request() failed for pin 24
-  [   43.559434] aspeed-g5-pinctrl 1e6e2080.pinctrl: pin-24 (1e780000.gpio:536) status -1
-
-Suggested-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Tan Siewert <tan@siewert.io>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c | 21 +++++++++++++++++
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 24 +++++++++++++++++++-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 26 ++++++++++++++++++++++
- 3 files changed, 70 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-index 774f8d05142f..81680c032b3c 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-@@ -28,6 +28,8 @@
- #define SIG_EXPR_LIST_DECL_SINGLE SIG_EXPR_LIST_DECL_SESG
- #define SIG_EXPR_LIST_DECL_DUAL SIG_EXPR_LIST_DECL_DESG
- 
-+#define SCU_UNLOCKED_VALUE 0x00000001
-+
- /*
-  * The "Multi-function Pins Mapping and Control" table in the SoC datasheet
-  * references registers by the device/offset mnemonic. The register macros
-@@ -36,6 +38,7 @@
-  * reference registers beyond those dedicated to pinmux, such as the system
-  * reset control and MAC clock configuration registers.
-  */
-+#define SCU00           0x00 /* Protection Key Register */
- #define SCU2C           0x2C /* Misc. Control Register */
- #define SCU3C           0x3C /* System Reset Control/Status Register */
- #define SCU48           0x48 /* MAC Interface Clock Delay Setting */
-@@ -2582,6 +2585,24 @@ static int aspeed_g4_sig_expr_set(struct aspeed_pinmux_data *ctx,
- 		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP2)
- 			continue;
- 
-+		/*
-+		 * The SCU should be unlocked, with SCU00 returning 0x01.
-+		 * However, it may have been locked, e.g. by a
-+		 * userspace script using /dev/mem.
-+		 */
-+		u32 value;
-+
-+		ret = regmap_read(ctx->maps[desc->ip], SCU00, &value);
-+
-+		if (ret < 0)
-+			return ret;
-+
-+		if (value != SCU_UNLOCKED_VALUE) {
-+			dev_err(ctx->dev,
-+				"SCU protection is active, cannot continue\n");
-+			return -EPERM;
-+		}
-+
- 		ret = regmap_update_bits(ctx->maps[desc->ip], desc->reg,
- 					 desc->mask, val);
- 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-index 5bb8fd0d1e41..7b3f887edda5 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-@@ -28,6 +28,8 @@
- #define SIG_EXPR_LIST_DECL_SINGLE SIG_EXPR_LIST_DECL_SESG
- #define SIG_EXPR_LIST_DECL_DUAL SIG_EXPR_LIST_DECL_DESG
- 
-+#define SCU_UNLOCKED_VALUE 0x00000001
-+
- /*
-  * The "Multi-function Pins Mapping and Control" table in the SoC datasheet
-  * references registers by the device/offset mnemonic. The register macros
-@@ -37,6 +39,7 @@
-  * reset control and MAC clock configuration registers. The AST2500 goes a step
-  * further and references registers in the graphics IP block.
-  */
-+#define SCU00           0x00 /* Protection Key Register */
- #define SCU2C           0x2C /* Misc. Control Register */
- #define SCU3C           0x3C /* System Reset Control/Status Register */
- #define SCU48           0x48 /* MAC Interface Clock Delay Setting */
-@@ -2763,7 +2766,26 @@ static int aspeed_g5_sig_expr_set(struct aspeed_pinmux_data *ctx,
- 
- 		/* On AST2500, Set bits in SCU70 are cleared from SCU7C */
- 		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP1) {
--			u32 value = ~val & desc->mask;
-+			/*
-+			 * The SCU should be unlocked, with SCU00
-+			 * returning 0x01.
-+			 * However, it may have been locked, e.g. by a
-+			 * userspace script using /dev/mem.
-+			 */
-+			u32 value;
-+
-+			ret = regmap_read(ctx->maps[desc->ip], SCU00, &value);
-+
-+			if (ret < 0)
-+				return ret;
-+
-+			if (value != SCU_UNLOCKED_VALUE) {
-+				dev_err(ctx->dev,
-+					"SCU protection is active, cannot continue\n");
-+				return -EPERM;
-+			}
-+
-+			value = ~val & desc->mask;
- 
- 			if (value) {
- 				ret = regmap_write(ctx->maps[desc->ip],
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-index 5a7cd0a88687..68e40f2c015b 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-@@ -17,6 +17,10 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-aspeed.h"
- 
-+#define SCU_UNLOCKED_VALUE 0x00000001
-+
-+#define SCU000		0x000 /* Protection Key Register */
-+#define SCU010		0x010 /* Protection Key Register 2 */
- #define SCU400		0x400 /* Multi-function Pin Control #1  */
- #define SCU404		0x404 /* Multi-function Pin Control #2  */
- #define SCU40C		0x40C /* Multi-function Pin Control #3  */
-@@ -2668,6 +2672,28 @@ static int aspeed_g6_sig_expr_set(struct aspeed_pinmux_data *ctx,
- 		WARN_ON(desc->ip != ASPEED_IP_SCU);
- 		is_strap = desc->reg == SCU500 || desc->reg == SCU510;
- 
-+		/*
-+		 * The SCU should be unlocked, with SCU000 and SCU010
-+		 * both returning 0x01. However, it may have been locked,
-+		 * e.g. by a userspace script using /dev/mem.
-+		 */
-+		u32 scuprt_val, scuprt2_val;
-+
-+		ret = regmap_read(ctx->maps[desc->ip], SCU000, &scuprt_val);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = regmap_read(ctx->maps[desc->ip], SCU010, &scuprt2_val);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (scuprt_val != SCU_UNLOCKED_VALUE ||
-+		    scuprt2_val != SCU_UNLOCKED_VALUE) {
-+			dev_err(ctx->dev,
-+				"SCU protection is active, cannot continue\n");
-+			return -EPERM;
-+		}
-+
- 		if (is_strap) {
- 			/*
- 			 * The AST2600 has write protection mask registers for
--- 
-2.49.0
-
+    Arnd
 
