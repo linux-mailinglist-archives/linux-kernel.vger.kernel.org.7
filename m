@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-684671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E997AD7F03
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:40:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5846AD7F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CEA3A298C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2565E3B6CFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1062E0B63;
-	Thu, 12 Jun 2025 23:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0B02E1744;
+	Thu, 12 Jun 2025 23:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H8PLXXZ0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/nDRbo4u"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QLT4Qa5g";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sVDSTl54"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463AC2DCC10
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 23:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8379B2E172D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 23:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749771625; cv=none; b=alJZoNVNG+AIu1rg7Sh7TFDrnZ2tpfDnIB7B9bAcGqifEtBYJ2MOzQ4XjqsTh/9G8xrW5w+aEJJa2ZHa72vsjr6jMktOABhAWw7Nz0aj1KbWkmW8IT0dpcscmOdIpgkBt+ImC365UudCvDyFaI4mhWoFjA73El3PAEWc7uA3ZHA=
+	t=1749771629; cv=none; b=NbJCLG/lLDygm1dgPoPIUoCpLJfUfNeyfmShr3beNT8vYTTos5BP/QEl4hYiHBsujoxOLHbXSydvASfWxiWj0Px/s1nDPJcG2jo1LHOudpr5KMD8UkHr10naEfaifLTfS9baRLVvfmcRSsNrH4OtIKgDw4hnq+EpSfsvpAvZydo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749771625; c=relaxed/simple;
-	bh=6Pf/tXMZzJo5FfKHir7iP/T7zDvDoWdK5wp07Bj9XFo=;
+	s=arc-20240116; t=1749771629; c=relaxed/simple;
+	bh=j/MxQJmLqteQkdH7tidFHqXDUcSXzs6RjKD25dy1XVA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SlzFRLmV91icElnY/LmnOIJG8r68inwTOC2KWsdlaz/B1KucNBSw1quxlPB2z3jXSahdOYGyggDFFKuDVPnzDpMBNLXW4XSfGHDJ8B0MSXlbX0lzDNKSDfQaQb34Rk7g3I7SwIq0KYV3BBblTcye+s6LYdd/pKeQj1W1uQCqNAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H8PLXXZ0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/nDRbo4u; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=IFwThMuAoOUBwFn/BM2U9ERW19Tx6vq1z3Y6YKB4mn1bvBCeECknn8G7Uk45brrsl3Dx59JQpnh0Lyxd1v+D3/D1eYYfmW+/A0ne0HasK5VqRD8CznKTMHDaD0wZ7G+YIG6sSKm/q3SJ75HuhVeXyM26whjo0w3TYErfPTo5ppU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QLT4Qa5g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sVDSTl54; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749771622;
+	s=2020; t=1749771626;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=moW3grsIEEkZ24nmNYOLsz6RTNF0J1cs4slM6upzMSY=;
-	b=H8PLXXZ0nEu48ExfTAABpLtAj6SaRiuK4r+HT/KcwIfKXG1ku1heoSEPje+PV6R5uC3HJp
-	EOE7BlxJDRSMGWfqM6goRWnRo2LdH5CbYw3tRIDEkL4lFkcwO/JghtA/fidAsOhx/QF00M
-	mriYKQumLlFlDcNEEnKa/EcxIEFBL8OYAyV/H3plkOrMqdwJdV9XdQg1W/oHvlcwICyLKx
-	M6oWhzCJbnoVkJDCRRtPI/W4LPTZDd6eb1tbxX1jtMXnU13l+6NDSHuB3b3Ld37HQdZFdO
-	kBW5Wk8c4zr/ndVtvC6w3J2bq0b+KDHXRVrN07Rv3MWgXwP4iQJ7rgdNw4VuQg==
+	bh=Cq1E0FuKK5sFEDeBEwjwBTOXySpdITktux1efgKrh14=;
+	b=QLT4Qa5g6c815rKobMzPWhP+33yBRR6NWJkD7NVj5j4hTtkAOnFIgfrV8DNzeHtGZhPzIu
+	UnjySnk8Uc1d2pV2TC+sXgMrcL+szzP6/9PNQtoVH7+YPJAyZSK//ErMHJdeYc7egAuvwU
+	OsUrbdNeNAr56na08q0mCXjrxeW33xwykHhNGPINMYwOWV9LUos7zw9Ky/6UY16bwiuH63
+	tcFVc1P5bHYuoRD+cEPWC7DFuOWUHmu1A8smc8F0JGWZkNfhQowQgkJ4cbKSKnL8l15ixh
+	+osR6Yh2KT5+2TRRKcixO6qpqE/8RUd5oQ6IHi9IPkU2FoG9OjUmGbM4LhnHOw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749771622;
+	s=2020e; t=1749771626;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=moW3grsIEEkZ24nmNYOLsz6RTNF0J1cs4slM6upzMSY=;
-	b=/nDRbo4uxEJCyJkKA6dzwcEWp33Pl+d34uBuRpw7r34DCzJYO4SxGuagAsNsL6tDvLhrv7
-	tnHOAv018uurWrDA==
+	bh=Cq1E0FuKK5sFEDeBEwjwBTOXySpdITktux1efgKrh14=;
+	b=sVDSTl54KE9HLWplB35afvhSP1pzGMHIQ8Y93dLRFB7UOiDCll03GVQW1sL2CNYQ+9djon
+	SjJ/sym6z6ETaQDQ==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v3 01/44] x86/cpuid: Remove transitional <asm/cpuid.h> header
-Date: Fri, 13 Jun 2025 01:39:27 +0200
-Message-ID: <20250612234010.572636-2-darwi@linutronix.de>
+Subject: [PATCH v3 02/44] ASoC: Intel: avs: Include CPUID header at file scope
+Date: Fri, 13 Jun 2025 01:39:28 +0200
+Message-ID: <20250612234010.572636-3-darwi@linutronix.de>
 In-Reply-To: <20250612234010.572636-1-darwi@linutronix.de>
 References: <20250612234010.572636-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,36 +81,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All CPUID call sites were updated at commit:
+Commit
 
-    968e30006807 ("x86/cpuid: Set <asm/cpuid/api.h> as the main CPUID header")
+    cbe37a4d2b3c ("ASoC: Intel: avs: Configure basefw on TGL-based platforms")
 
-to include <asm/cpuid/api.h> instead of <asm/cpuid.h>.
+includes the main CPUID header from within a C function.  This obviously
+works by luck and forbids valid refactorings inside the CPUID header.
 
-The <asm/cpuid.h> header was still retained as a wrapper, just in case
-some new code in -next started using it.  Now that everything is merged
-to Linus' tree, remove the header.
+Include the CPUID header at file scope instead.
+
+Note, for the CPUID(0x15) leaf number, use CPUID_LEAF_TSC instead of
+defining a custom local macro for it.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/include/asm/cpuid.h | 8 --------
- 1 file changed, 8 deletions(-)
- delete mode 100644 arch/x86/include/asm/cpuid.h
+ sound/soc/intel/avs/tgl.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
-deleted file mode 100644
-index d5749b25fa10..000000000000
---- a/arch/x86/include/asm/cpuid.h
-+++ /dev/null
-@@ -1,8 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/sound/soc/intel/avs/tgl.c b/sound/soc/intel/avs/tgl.c
+index 9dbb3ad0954a..cf19d3a7ced2 100644
+--- a/sound/soc/intel/avs/tgl.c
++++ b/sound/soc/intel/avs/tgl.c
+@@ -10,8 +10,6 @@
+ #include "avs.h"
+ #include "messages.h"
+ 
+-#define CPUID_TSC_LEAF 0x15
 -
--#ifndef _ASM_X86_CPUID_H
--#define _ASM_X86_CPUID_H
--
+ static int avs_tgl_dsp_core_power(struct avs_dev *adev, u32 core_mask, bool power)
+ {
+ 	core_mask &= AVS_MAIN_CORE_MASK;
+@@ -39,22 +37,31 @@ static int avs_tgl_dsp_core_stall(struct avs_dev *adev, u32 core_mask, bool stal
+ 	return avs_dsp_core_stall(adev, core_mask, stall);
+ }
+ 
++#ifdef CONFIG_X86
++#include <asm/cpuid/api.h>
++static unsigned int intel_crystal_freq_hz(void)
++{
++	return cpuid_ecx(CPUID_LEAF_TSC);
++}
++#else
++static unsigned int intel_crystal_freq_hz(void)
++{
++	return 0;
++}
++#endif /* !CONFIG_X86 */
++
+ static int avs_tgl_config_basefw(struct avs_dev *adev)
+ {
++	unsigned int freq = intel_crystal_freq_hz();
+ 	struct pci_dev *pci = adev->base.pci;
+ 	struct avs_bus_hwid hwid;
+ 	int ret;
+-#ifdef CONFIG_X86
+-	unsigned int ecx;
+ 
 -#include <asm/cpuid/api.h>
--
--#endif /* _ASM_X86_CPUID_H */
+-	ecx = cpuid_ecx(CPUID_TSC_LEAF);
+-	if (ecx) {
+-		ret = avs_ipc_set_fw_config(adev, 1, AVS_FW_CFG_XTAL_FREQ_HZ, sizeof(ecx), &ecx);
++	if (freq) {
++		ret = avs_ipc_set_fw_config(adev, 1, AVS_FW_CFG_XTAL_FREQ_HZ, sizeof(freq), &freq);
+ 		if (ret)
+ 			return AVS_IPC_RET(ret);
+ 	}
+-#endif
+ 
+ 	hwid.device = pci->device;
+ 	hwid.subsystem = pci->subsystem_vendor | (pci->subsystem_device << 16);
 -- 
 2.49.0
 
