@@ -1,180 +1,130 @@
-Return-Path: <linux-kernel+bounces-683952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E03AD7411
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720F9AD743E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16947AA30A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:35:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003CE188BCB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3854248F5F;
-	Thu, 12 Jun 2025 14:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808D4248894;
+	Thu, 12 Jun 2025 14:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O52qP6DE"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="n4xs0+e5"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9252417F0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A94226CF1;
+	Thu, 12 Jun 2025 14:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749738968; cv=none; b=kBdXBmqQacqVeYwSQTta37PV2/aG37S1lIi0nfNRMmltFddeDnfQRb0IFX/kLaAW1tqaFebbwlmUxR5JfLTYz7YLlqMzi4hPYOH94y2sDuVfnWVPcmFHKlyg1LxO7xwPW3nzbs7a0hB3HnoDSLHdUWpj/h7l1Q0ZsTN3SLWW4OU=
+	t=1749739027; cv=none; b=ou0bqCJ3wlsWDeIgJdrPy56EVwujXpDMy7aktcT4hksP/cZBSxLYABDub11cu2gOSxo+HKdMDNcAD+NHVI92XTInKuORC8INpRCDuR07Fw15OLr8XzdSpiY1Wp5WBWsrV7eV5pL0HI54JWHTst+b/j5LgppL+Kka/2+PGZ2/Xl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749738968; c=relaxed/simple;
-	bh=e7mQm6vylBR2bfztnRuyfarlV7hi9abXFDp0hheyUCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QWOo4Bd/oqcnS/D6JA6pkAJmIcCgyfCGRR3/E/24WbPVCv1JpFICpq9D0mCWXyaa69R1KiXwQPl6Fn2MR22M2mcLjHHruLeZ7Uzf1U7WCyu8msU1qbAz7n+HaDziFX4EHYhUq79NmORLfmQNSPzpl03ysunsNULUSUoxu6xB1+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O52qP6DE; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749738951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Dx8aeEOgTzQw2K+RDp/d5UZ3Ss5Ti7d4DLVlPWSC39o=;
-	b=O52qP6DEGc2tyZWZq9YK7cKtLONNqeL8DmRQeYMDqAF0QftZJ9TzgRtrC72SqkWHO9cuNL
-	LUGmxdpSIq9Eplg9mj8YaEc4lI0o8FeAwf+f/nxim07CU35YpbcINTR911o4IaoSgVv5Gx
-	fiqB9x7pAfGnYO0W2IFFdC1/1oAMqT0=
-From: Yajun Deng <yajun.deng@linux.dev>
-To: andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yajun Deng <yajun.deng@linux.dev>
-Subject: [PATCH RESEND net-next v2] net: phy: Add c45_phy_ids sysfs directory entry
-Date: Thu, 12 Jun 2025 14:35:32 +0000
-Message-ID: <20250612143532.4689-1-yajun.deng@linux.dev>
+	s=arc-20240116; t=1749739027; c=relaxed/simple;
+	bh=gy4Z7/j1AUXzmiZT9kxQby9opWaeoiU8G46ukvR+dvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JfICfZ3SnNJi9n908H+egBwj3jvoDkw37y8HjoA1QdVhehWhLYwM4wWGFaIF07ahzfvqm8dXg57fCu+O7EnzDHgabZUfIqy6OAFwVTagI56h9byN+JxwqUOlqc6XKLjkd65RhkPFqgJn4Xfhji7YU6KnZF5mZqRg5XYkx2JtepI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=n4xs0+e5; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CCUW78017559;
+	Thu, 12 Jun 2025 16:36:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	sZd4+FhIUpYGyZ7CJ7ZHdy/qoIQX7PX06UdReZgudWA=; b=n4xs0+e5WhsDf9iZ
+	txJc9iZOB8cpwCDdbAw7UkBO9gPDgdjg2Zj4pbpLkH9U4qvS2qH/kUKSYluXv2xQ
+	jEF3j+jYOHLJIRkHlvKm7qSSbjvmEmrDPr1BFGG8nz1X08RgyDCAb3kWQ1iI/bh6
+	TETacmIwLzFdWwKn33GHNJ188PpCWuxzRdwlb0PuwtZQTjLOFr0Nby6Tr3SqEHzq
+	HTKfOZ/LM7nHfJLmQrdJWUaZhbEJ26XxKckRQNUxdceyRj46D+MQboPl6ZXIKvay
+	9JqyDQyfbWqROOgY7IkSB2OPZ2g/Bg8qTynGZoztPjPnMjgOKR2b32OVXQvVF1y2
+	2O+KTQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474ajag59m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 16:36:56 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4AC6040052;
+	Thu, 12 Jun 2025 16:36:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E913DA68D88;
+	Thu, 12 Jun 2025 16:35:56 +0200 (CEST)
+Received: from [10.252.9.207] (10.252.9.207) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Jun
+ 2025 16:35:56 +0200
+Message-ID: <f3aef0f1-df18-4539-9656-0265dce93433@foss.st.com>
+Date: Thu, 12 Jun 2025 16:35:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] media: i2c: vd55g1: Fix RATE macros not being
+ expressed in bps
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250609-fix_vd55g1-v1-0-594f1134e3fb@foss.st.com>
+ <20250609-fix_vd55g1-v1-1-594f1134e3fb@foss.st.com>
+ <aEf0gdJ0hA2dNQoH@kekkonen.localdomain>
+ <e080a28c-9ec7-46bd-8bcd-49b48bd9ab94@foss.st.com>
+ <aEpykCRKpJ9pA9sN@kekkonen.localdomain>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <aEpykCRKpJ9pA9sN@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_09,2025-06-12_02,2025-03-28_01
 
-The phy_id field only shows the PHY ID of the C22 device, and the C45
-device did not store its PHY ID in this field.
 
-Add a new phy_mmd_group, and export the mmd<n>_device_id for the C45
-device. These files are invisible to the C22 device.
 
-Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
----
-v2: Only one value for per file and invisible to the C22 device.
-v1: https://lore.kernel.org/all/20250523132606.2814-1-yajun.deng@linux.dev/
----
- .../ABI/testing/sysfs-class-net-phydev        | 10 +++
- drivers/net/phy/phy_device.c                  | 62 ++++++++++++++++++-
- 2 files changed, 70 insertions(+), 2 deletions(-)
+On 6/12/25 08:24, Sakari Ailus wrote:
+> On Tue, Jun 10, 2025 at 11:31:09AM +0200, Benjamin Mugnier wrote:
+>> On 6/10/25 11:01, Sakari Ailus wrote:
+>>> On Mon, Jun 09, 2025 at 03:46:21PM +0200, Benjamin Mugnier wrote:
+>>>> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+>>>> ---
+>>>>  drivers/media/i2c/vd55g1.c | 4 ++--
+>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/media/i2c/vd55g1.c b/drivers/media/i2c/vd55g1.c
+>>>> index 25e2fc88a0367bf6a28bb22d209323ace99299f2..78dd22d9cab03edf4ff3e5a301f8d045e930c997 100644
+>>>> --- a/drivers/media/i2c/vd55g1.c
+>>>> +++ b/drivers/media/i2c/vd55g1.c
+>>>> @@ -129,8 +129,8 @@
+>>>>  #define VD55G1_FWPATCH_REVISION_MINOR			9
+>>>>  #define VD55G1_XCLK_FREQ_MIN				(6 * HZ_PER_MHZ)
+>>>>  #define VD55G1_XCLK_FREQ_MAX				(27 * HZ_PER_MHZ)
+>>>> -#define VD55G1_MIPI_RATE_MIN				(250 * HZ_PER_MHZ)
+>>>> -#define VD55G1_MIPI_RATE_MAX				(1200 * HZ_PER_MHZ)
+>>>> +#define VD55G1_MIPI_RATE_MIN				(250 * MEGA)
+>>>> +#define VD55G1_MIPI_RATE_MAX				(1200 * MEGA)
+>>>
+>>> As the meaning of Hz is just /s, I don't think the use of HZ_PER_MHZ was
+>>> wrong in any way above.
+>>>
+>>
+>> Should I just drop this patch then ?
+> 
+> Up to you.
+> 
 
-diff --git a/Documentation/ABI/testing/sysfs-class-net-phydev b/Documentation/ABI/testing/sysfs-class-net-phydev
-index ac722dd5e694..31615c59bff9 100644
---- a/Documentation/ABI/testing/sysfs-class-net-phydev
-+++ b/Documentation/ABI/testing/sysfs-class-net-phydev
-@@ -26,6 +26,16 @@ Description:
- 		This ID is used to match the device with the appropriate
- 		driver.
- 
-+What:		/sys/class/mdio_bus/<bus>/<device>/c45_phy_ids/mmd<n>_device_id
-+Date:		June 2025
-+KernelVersion:	6.17
-+Contact:	netdev@vger.kernel.org
-+Description:
-+		This attribute contains the 32-bit PHY Identifier as reported
-+		by the device during bus enumeration, encoded in hexadecimal.
-+		These C45 IDs are used to match the device with the appropriate
-+		driver. These files are invisible to the C22 device.
-+
- What:		/sys/class/mdio_bus/<bus>/<device>/phy_interface
- Date:		February 2014
- KernelVersion:	3.15
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 73f9cb2e2844..5e5bac8d8651 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -645,11 +645,69 @@ static struct attribute *phy_dev_attrs[] = {
- 	&dev_attr_phy_dev_flags.attr,
- 	NULL,
- };
--ATTRIBUTE_GROUPS(phy_dev);
-+
-+static const struct attribute_group phy_dev_group = {
-+	.attrs = phy_dev_attrs,
-+};
-+
-+#define MMD_INDICES \
-+	_(1) _(2) _(3) _(4) _(5) _(6) _(7) _(8) \
-+	_(9) _(10) _(11) _(12) _(13) _(14) _(15) _(16) \
-+	_(17) _(18) _(19) _(20) _(21) _(22) _(23) _(24) \
-+	_(25) _(26) _(27) _(28) _(29) _(30) _(31)
-+
-+#define MMD_DEVICE_ID_ATTR(n) \
-+static ssize_t mmd##n##_device_id_show(struct device *dev, \
-+				struct device_attribute *attr, char *buf) \
-+{ \
-+	struct phy_device *phydev = to_phy_device(dev); \
-+	return sysfs_emit(buf, "0x%.8lx\n", \
-+			 (unsigned long)phydev->c45_ids.device_ids[n]); \
-+} \
-+static DEVICE_ATTR_RO(mmd##n##_device_id)
-+
-+#define _(x) MMD_DEVICE_ID_ATTR(x);
-+MMD_INDICES
-+#undef _
-+
-+static struct attribute *phy_mmd_attrs[] = {
-+	#define _(x) &dev_attr_mmd##x##_device_id.attr,
-+	MMD_INDICES
-+	#undef _
-+	NULL
-+};
-+
-+static umode_t phy_mmd_is_visible(struct kobject *kobj,
-+				  struct attribute *attr, int index)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct phy_device *phydev = to_phy_device(dev);
-+	const int i = index + 1;
-+
-+	if (!phydev->is_c45)
-+		return 0;
-+	if (i >= ARRAY_SIZE(phydev->c45_ids.device_ids) ||
-+	    phydev->c45_ids.device_ids[i] == 0xffffffff)
-+		return 0;
-+
-+	return attr->mode;
-+}
-+
-+static const struct attribute_group phy_mmd_group = {
-+	.name = "c45_phy_ids",
-+	.attrs = phy_mmd_attrs,
-+	.is_visible = phy_mmd_is_visible,
-+};
-+
-+static const struct attribute_group *phy_device_groups[] = {
-+	&phy_dev_group,
-+	&phy_mmd_group,
-+	NULL,
-+};
- 
- static const struct device_type mdio_bus_phy_type = {
- 	.name = "PHY",
--	.groups = phy_dev_groups,
-+	.groups = phy_device_groups,
- 	.release = phy_device_release,
- 	.pm = pm_ptr(&mdio_bus_phy_pm_ops),
- };
+Then I'd like to keep it please :)
+
 -- 
-2.25.1
-
+Regards,
+Benjamin
 
