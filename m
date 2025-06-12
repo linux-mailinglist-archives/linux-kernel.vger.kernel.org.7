@@ -1,125 +1,248 @@
-Return-Path: <linux-kernel+bounces-683995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67A9AD7496
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D815AD74A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D644816C46D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1964F3AECB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E84A1DE3D6;
-	Thu, 12 Jun 2025 14:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBADD256C9B;
+	Thu, 12 Jun 2025 14:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clBW/dVK"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D7W/z6VN"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191E22318;
-	Thu, 12 Jun 2025 14:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCCD260580
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739838; cv=none; b=Spc9iAmTZ2Nr+zShz23wK3lIX4/2fqOM5gl2ufZOQ5nHZAW68n0HjqZkUvVHCgwvcTixmnS0b+jhWm7XASIMFCPwpKfIh7ytA/pj8OVdd8vr9igtTseWVzZVDKPGY/T+uMTAtiOuxVCexYk9ryb7XbqGLYstXGE1DfLUIxjgXBU=
+	t=1749739900; cv=none; b=preb1s7UmlnRZLEPnx19ZTxEawpdp+oILnBhSphb2phEawQ6RD4EF4OvZmYtsO3ekGTvjU6yX9l/YODsV0TOLk+nbDdZdyJgw9S7NGLldMyNm0DulIpbTeDA8Fkt9hElHHVKUwCCSXW3yAJrj+xYDWwcDNLpCu+qISbxqRMwglg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739838; c=relaxed/simple;
-	bh=D9C+xwp3mD/7d0f06D4jPqB+wkdk0j3g2h2HOi1HAbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y6q/H9m5zGPJDaY+CLdeWGctvMmNEd1ah/PjBy6ZQLJzTGVGAKWC7KqojMluENv+SFiUyUOaH96ozEf5NjQOiSrc3ybq0CSMnja+Kh48aw8M1PoBL54SkZIpOQtEFDnlV35Esuj7ed4OIHtX0NhYu08jwE80DYKqaYV4msNy6e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clBW/dVK; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6084dfb4cd5so3836510a12.0;
-        Thu, 12 Jun 2025 07:50:35 -0700 (PDT)
+	s=arc-20240116; t=1749739900; c=relaxed/simple;
+	bh=H9CvRZ+d3EO8wng9e7dPGuz7tmNjxnR/ZAx77aFKjSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xa3xPK8m1UcQMmR3JpxNOb7mdbjZQOe/FzxcMqSaV5oCAZauUjZDIarfcWrrI1Hwc8E/M+Np15uEyxMy6siHkac13WsSOyEFO5Bp937cIXGyW/sEyV6itS848FHo2pEYm/ba56voB7vVlMHHiJ7ZX1WkEbkRXz23VxPwkeSnaYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D7W/z6VN; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-747fba9f962so940094b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749739834; x=1750344634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1749739894; x=1750344694; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bRXKs4VGDh5S2vPlr4/hDjovefGwIy/vQJKlAAiyucM=;
-        b=clBW/dVKQJzm1xG59YQZgwa/4ot7SsigqvW5nfim+ys+GcVsJ+AXNMsLIRlnYHDjrt
-         m7e89fGv4N+aEYiYAqndEdeekow59gTlPjkhDu7EPbLhLfAJHLjlENUwLvd8rxeJirEb
-         8hnSQRa0olzwWU2QJct4jWM5mBcb0aQze2YPFMusvjV3SxmBVDTamFdb3W34pZgWibjL
-         VhBA3iO212k2Srdv9ARvnaPJdEumWuBNG2vu6m50Ao31IWfwBt2qA9UttSjsxYRQf6AK
-         hPJKbjB1BcG57Yv9I7ONFXXy1LCPsLgw98xQOkL3dhy9I9nOi6R1uKzTm0TTsn+DYzd1
-         D74Q==
+        bh=ZF8QzGPobTCQxU3cK3KGjHnmiAyxl3Hnpr6d0zTgBdg=;
+        b=D7W/z6VNcxok81E/pDlw059MML25KBqBIL5gsRUFkl+vLF98L761hlHoZIMamJC2lZ
+         YJ4A1eNvYg8+Pba5N1zkXLLafZ1EuXKwmYJl3oNO4KjdAhILCt5IRf4JLp/agoHN9yPe
+         Y6KLIxs7y3Ka80+fSY1OW+WXuTDFaxgLmHUhE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749739834; x=1750344634;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749739894; x=1750344694;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bRXKs4VGDh5S2vPlr4/hDjovefGwIy/vQJKlAAiyucM=;
-        b=Z9qkghbZ6gccb8/8SM+wuvouQA636ba4h26csto8VUjaiTy+i6KeAKrvFRZTibvSDD
-         Izc9eR/Q43NEyPoIXXdlDzukhBK0qWW2zIGlor5SIlN2MNmjRtszyKJYVi1QwQm97yaN
-         xdI7vxstww2s923v0JKdhD1b7tiRs+RdkKiey9xfKnzh7uxkbLvnNKxcayVBU1u3XE2q
-         oRF8G9xR0hxefuPpdL+UlIPREbfMeIHIE+3bQCCANdwnsiYjPJ13pz4CsTJWrVz9mXC+
-         2OUZrmIaWejKxoYvbAKX0cBYiF0vRH+01YjawaFPTfFcHeRgCrOF0OBwnsWYMNqx2An4
-         vH/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVuusFVH/ngH9nnUXV2Sl9ObvzhER2+NyO9yEg5gotX0OOsI4+zulpIR0mFuGOLNPmbsRicGG2qaaMLKAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz92iOYL3znNf7XkQROOm7P0mXrZ2U29g8ZxFrrTjMf2ebo+5nd
-	l92TfZPKoWqwJEZB5HKrzS9If3Z+L77uWQkC8J+RHO5QCLuQXK2Alw2z5uvEN/m/
-X-Gm-Gg: ASbGnctHPHCFnihP3j5+Rho0pnH6Ckuy7CbRyn718rxE43sPpf5twimAuV2+nBItDG/
-	X61zZbpo8d7PnZQ0dvdiUvQHWOPM8pHuZGzW1QyfpsHX49mEOcRxVuFeXWxESjF5ocbqOG5eGU+
-	cIXw+w7VvFJomYD+Mv6UGuUzY4xILFtMyQFH2PZgFFDQb8E9m2rHKFOeBsnX1W9eohAp58ClHs+
-	Sb/7TM8KdAUGNZZ6+wy8/PlpY7ZJSx21BI7d2shwZADj+91wYEb9F4p9fOmfE+gCTLj0cacEic1
-	Xrbz95xkOSdNGhDXMJ6ChFwl8nrhcTTJACYU+SUJHZwl3fG0+RP+DYDYQMhsZ8SN2v0IEk+4lMV
-	UYH2K0/Q=
-X-Google-Smtp-Source: AGHT+IE6yt33Qixhwf2CvlRwXrUM91B/lNFVnf2cPUVd6bgWUieYAI6gxD+gQmh8m7XSxgF9h3kmTg==
-X-Received: by 2002:a17:906:7307:b0:aca:d29e:53f1 with SMTP id a640c23a62f3a-adea56302bdmr374648966b.12.1749739833928;
-        Thu, 12 Jun 2025 07:50:33 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:3030:ae0:54e3:8eed:b526:85ff:7c72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adead4cfe60sm145009266b.23.2025.06.12.07.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 07:50:33 -0700 (PDT)
-From: RubenKelevra <rubenkelevra@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-kernel@vger.kernel.org,
-	RubenKelevra <rubenkelevra@gmail.com>
-Subject: [PATCH net-next v2] net: pfcp: fix typo in message_priority field name
-Date: Thu, 12 Jun 2025 16:50:12 +0200
-Message-ID: <20250612145012.185321-1-rubenkelevra@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250610160612.268612-1-rubenkelevra@gmail.com>
-References: <20250610160612.268612-1-rubenkelevra@gmail.com>
+        bh=ZF8QzGPobTCQxU3cK3KGjHnmiAyxl3Hnpr6d0zTgBdg=;
+        b=Sh4XzxijZ1ItuR53cQrJYu1kPQl/rIO0bXDUSb9G/0t4O6B1YuQDu/Ml0wPVg6PIa4
+         YRtsii4A1/5Eq0KHEPOuhwyAqnaHB7xRzkrlbVCONUJ9juiOlMHl/A+44fYfPLosi6MZ
+         PriNfu5RtMd+9f2+a8VI83JbXVO16UQeR3Zou5vu5LOch6U++/gTQjAQl2ZkltNGmwRJ
+         wvZ47GVQX8tAI12+nD25JPs6jOFFSNRfDqUwjZOrfaS+tIgz3vwyLdzsUTUHk1cSt0At
+         QbSWZc3faKCAUqOKt3sZJtoSpshLQxExoCAA4RllLRBBAhBMo90H5R9nYt4foN4ktF8K
+         UDEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvOZOuEB1gDtzyMwfhzrvbPrvpU4p9NsrY7sn6BuVUxBWe2tylMEJtfcfoZDMhyU7yvs/DKXutHTQwW68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXIXrGlHIqYK9WlofkkGUWeYmdZ08uTlTG4j4XsE9yCOK7O8vP
+	CO7DVnUpJhWGqsK7MLr653EVKqDOwJ2TzfQaHSfUFlDJHgunNVpRqdizeNQPjhV5QXiewUf239G
+	oMqg=
+X-Gm-Gg: ASbGncuITwGlBip8aCBmMSmMlKqsYWD7F4LDLz6dojvbAggLwvw0rJWJEL+qyNZBYOH
+	poyX0LmV4ZLCs6yxEY563V1ZE9PG6thFJlvmLbcu/sOwbbg0T0nE0z2hZqjgYHFEbVuUHw2viph
+	Vj/aouYn1Puc7GnAWAEBJGhK9Dih1hbjOO+S3uPHjzdndHbhqreNJ+ufcUyBjcARtIwgZsHaOOL
+	BEfoygxXLOOeWh74X4/B4tpGKon5m7MoBBjRCxDYo5uhonMkihVhHEUhKavweao9PDm2miReQH7
+	qHz0HXkeAD86YLdqsOoEznxD9fJe99nGejO/BO4xWPu2/z+X1MPshAz+VbsxxcSDAsCpg1eTNZF
+	D8ymqoaupV3P5Syt+ROzg1pqwzb4SBA==
+X-Google-Smtp-Source: AGHT+IFPVc2tlKpeXLp+Y2mCYbnmo1HyliDPKEvs32mDs7+p+Gr6HsdgxgpIDOAyCIAiJAddoT/J+A==
+X-Received: by 2002:a05:6a00:2e1f:b0:740:6f6:7338 with SMTP id d2e1a72fcca58-7487ce16507mr5204044b3a.3.1749739893653;
+        Thu, 12 Jun 2025 07:51:33 -0700 (PDT)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488087e640sm1547735b3a.4.2025.06.12.07.51.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 07:51:32 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2363e973db1so18288605ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:51:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSS5A/Tceh2ygGCl2+ZIoqFlyMJnjbxYFjOHHbuuB195JhAjB/ZJKjFK0lqg4lmkntaJlDaBH+vWNOQkc=@vger.kernel.org
+X-Received: by 2002:a17:90b:3b90:b0:311:9cdf:a8a4 with SMTP id
+ 98e67ed59e1d1-313bfd90bb1mr4862616a91.8.1749739891134; Thu, 12 Jun 2025
+ 07:51:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250611052947.5776-1-j-choudhary@ti.com> <CAD=FV=WvH73d78De3PrbiG7b6OaS_BysGtxQ=mJTj4z-h0LYWA@mail.gmail.com>
+ <547a35f4-abc0-4808-9994-ccc70eb3c201@ti.com>
+In-Reply-To: <547a35f4-abc0-4808-9994-ccc70eb3c201@ti.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 12 Jun 2025 07:51:19 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XzSOqnLQCjDiJX7wrGH0UGq839a84v3QT9cj3eK+AeRA@mail.gmail.com>
+X-Gm-Features: AX0GCFvUog-W0Yq8ScavOChYN1RdpooYMU-w84jaSxr5YZftWGA6ukEIfk_PLzY
+Message-ID: <CAD=FV=XzSOqnLQCjDiJX7wrGH0UGq839a84v3QT9cj3eK+AeRA@mail.gmail.com>
+Subject: Re: [PATCH v4] drm/bridge: ti-sn65dsi86: Add HPD for DisplayPort
+ connector type
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org, 
+	tomi.valkeinen@ideasonboard.com, max.krummenacher@toradex.com, 
+	ernestvanhoecke@gmail.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, kieran.bingham+renesas@ideasonboard.com, 
+	linux-kernel@vger.kernel.org, max.oss.09@gmail.com, devarsht@ti.com, 
+	geert@linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The field is spelled “message_priprity” in the big-endian bit-field
-definition.  Nothing in-tree currently references the member, so the
-typo does not break kernel builds, but it is clearly incorrect and
-confuses out-of-tree code.
+Hi,
 
-Signed-off-by: RubenKelevra <rubenkelevra@gmail.com>
----
- include/net/pfcp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Jun 11, 2025 at 9:39=E2=80=AFPM Jayesh Choudhary <j-choudhary@ti.co=
+m> wrote:
+>
+> Hello Doug,
+>
+> On 12/06/25 03:08, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Tue, Jun 10, 2025 at 10:29=E2=80=AFPM Jayesh Choudhary <j-choudhary@=
+ti.com> wrote:
+> >>
+> >> @@ -1195,9 +1203,17 @@ static enum drm_connector_status ti_sn_bridge_d=
+etect(struct drm_bridge *bridge)
+> >>          struct ti_sn65dsi86 *pdata =3D bridge_to_ti_sn65dsi86(bridge)=
+;
+> >>          int val =3D 0;
+> >>
+> >> -       pm_runtime_get_sync(pdata->dev);
+> >> +       /*
+> >> +        * The chip won't report HPD right after being powered on as
+> >> +        * HPD_DEBOUNCED_STATE reflects correct state only after the
+> >> +        * debounce time (~100-400 ms).
+> >> +        * So having pm_runtime_get_sync() and immediately reading
+> >> +        * the register in detect() won't work, and adding delay()
+> >> +        * in detect will have performace impact in display.
+> >> +        * So remove runtime calls here.
+> >
+> > That last sentence makes sense in a commit message, but not long term.
+> > Someone reading the code later won't understand what "remove" means.
+> > If you change "remove" to "omit" then it all makes sense, though. You
+> > could also say that a pm_runtime reference will be grabbed by
+> > ti_sn_bridge_hpd_enable().
+>
+> Okay. Will edit this.
+>
+> >
+> >
+> >> +        */
+> >> +
+> >>          regmap_read(pdata->regmap, SN_HPD_DISABLE_REG, &val);
+> >> -       pm_runtime_put_autosuspend(pdata->dev);
+> >>
+> >>          return val & HPD_DEBOUNCED_STATE ? connector_status_connected
+> >>                                           : connector_status_disconnec=
+ted;
+> >> @@ -1220,6 +1236,20 @@ static void ti_sn65dsi86_debugfs_init(struct dr=
+m_bridge *bridge, struct dentry *
+> >>          debugfs_create_file("status", 0600, debugfs, pdata, &status_f=
+ops);
+> >>   }
+> >>
+> >> +static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+> >> +{
+> >> +       struct ti_sn65dsi86 *pdata =3D bridge_to_ti_sn65dsi86(bridge);
+> >> +
+> >> +       pm_runtime_get_sync(pdata->dev);
+> >> +}
+> >> +
+> >> +static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
+> >> +{
+> >> +       struct ti_sn65dsi86 *pdata =3D bridge_to_ti_sn65dsi86(bridge);
+> >> +
+> >> +       pm_runtime_put_sync(pdata->dev);
+> >> +}
+> >> +
+> >>   static const struct drm_bridge_funcs ti_sn_bridge_funcs =3D {
+> >>          .attach =3D ti_sn_bridge_attach,
+> >>          .detach =3D ti_sn_bridge_detach,
+> >> @@ -1234,6 +1264,8 @@ static const struct drm_bridge_funcs ti_sn_bridg=
+e_funcs =3D {
+> >>          .atomic_duplicate_state =3D drm_atomic_helper_bridge_duplicat=
+e_state,
+> >>          .atomic_destroy_state =3D drm_atomic_helper_bridge_destroy_st=
+ate,
+> >>          .debugfs_init =3D ti_sn65dsi86_debugfs_init,
+> >> +       .hpd_enable =3D ti_sn_bridge_hpd_enable,
+> >> +       .hpd_disable =3D ti_sn_bridge_hpd_disable,
+> >>   };
+> >>
+> >>   static void ti_sn_bridge_parse_lanes(struct ti_sn65dsi86 *pdata,
+> >> @@ -1322,7 +1354,8 @@ static int ti_sn_bridge_probe(struct auxiliary_d=
+evice *adev,
+> >>                             ? DRM_MODE_CONNECTOR_DisplayPort : DRM_MOD=
+E_CONNECTOR_eDP;
+> >>
+> >>          if (pdata->bridge.type =3D=3D DRM_MODE_CONNECTOR_DisplayPort)
+> >> -               pdata->bridge.ops =3D DRM_BRIDGE_OP_EDID | DRM_BRIDGE_=
+OP_DETECT;
+> >> +               pdata->bridge.ops =3D DRM_BRIDGE_OP_EDID | DRM_BRIDGE_=
+OP_DETECT |
+> >> +                                   DRM_BRIDGE_OP_HPD;
+> >
+> > I think you also need this in the "DRM_MODE_CONNECTOR_DisplayPort" if t=
+est:
+> >
+> > /*
+> >   * If comms were already enabled they would have been enabled
+> >   * with the wrong value of HPD_DISABLE. Update it now. Comms
+> >   * could be enabled if anyone is holding a pm_runtime reference
+> >   * (like if a GPIO is in use). Note that in most cases nobody
+> >   * is doing AUX channel xfers before the bridge is added so
+> >   * HPD doesn't _really_ matter then. The only exception is in
+> >   * the eDP case where the panel wants to read the EDID before
+> >   * the bridge is added. We always consistently have HPD disabled
+> >   * for eDP.
+> >   */
+> > mutex_lock(&pdata->comms_mutex);
+> > if (pdata->comms_enabled)
+> >    regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG,
+> >      HPD_DISABLE, 0);
+> > mutex_unlock(&pdata->comms_mutex);
+> >
+> > Does that sound right?
+>
+>
+> Here I don't think it is necessary to add this because enable_comms
+> will be called again after probe either in hpd_enable() (in case
+> refclk exist) or pre_enable() (in case it doesn't) with correct value.
 
-diff --git a/include/net/pfcp.h b/include/net/pfcp.h
-index af14f970b80e1..639553797d3e4 100644
---- a/include/net/pfcp.h
-+++ b/include/net/pfcp.h
-@@ -45,7 +45,7 @@ struct pfcphdr_session {
- 		reserved:4;
- #elif defined(__BIG_ENDIAN_BITFIELD)
- 	u8	reserved:4,
--		message_priprity:4;
-+		message_priority:4;
- #else
- #error "Please fix <asm/byteorder>"
- #endif
--- 
-2.49.0
+I don't think that's necessarily true, is it? From my memory, this happens:
 
+1. Main driver probe and we create the sub-devices, like the GPIO,
+backlight, and AUX.
+
+2. As soon as the GPIO probe happens, someone could conceivably claim
+one of the GPIOs and set it as an output, which would cause a
+"pm_runtime" reference to be held indefinitely.
+
+3. After AUX probes, we create the bridge sub-device.
+
+4. When the bridge probe runs, comms will still be enabled because the
+"pm_runtime" reference keeps them on.
+
+...there's also the issue that we use "autosuspend" and thus comms can
+still be left on for a chunk of time even after there are no
+"pm_runtime" references left.
+
+-Doug
 
