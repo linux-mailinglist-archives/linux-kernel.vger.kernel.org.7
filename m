@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-683217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481BAAD6A97
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:24:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7E2AD6A9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4BCA7A88EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0002C189FC24
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D636720A5F1;
-	Thu, 12 Jun 2025 08:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pjW7/Xsq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v2p0fGS6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1CwuzBLR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NU+uJwWk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF2D189BB0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423BE21D3F4;
+	Thu, 12 Jun 2025 08:26:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB64189BB0;
+	Thu, 12 Jun 2025 08:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749716657; cv=none; b=WfAcssdIJLftetSWX1R/kpkDckXFP0HO1xRTZRV1PVTiImktdGZYdqW5tsuUVmRoUm1TNldW67cyPDaPsMX77QVp4iWkrI+gMjVkUsBAbToalneaeLDGP1WOXvboHxAqi8srL1e9TRXh7m6xan0KwrD/gY0HQStwRiuwX9n4iPE=
+	t=1749716759; cv=none; b=hkTLBKw4LuTR6EnR9jDuwwtW7YS1VG/Fi+Ma6cBmdG6LV9bqvNtTqa4HAl1H58xm4Xgv/DSbcWFz7dqNNow8wrvh6h0LjKt5HITAo/ip3PBslGEnTMchrAc/z2BkRLjL9zqERIUUFkpufXYz4xNmEpo3HWF9aTT4c35AYIhMQvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749716657; c=relaxed/simple;
-	bh=SUrp3msHj7f/1K8NVabxBLrjZqVDuoc++exdCHaZbnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lyeVpEDQRfFBxb7iUbMD/vuYlBwxEmiTUNIp+9GaUPl4CnCOoaJcumURR1UpMCxVln/TgOF+ph2ShZiyPkExlIIHuIn1cGQmNoaUmmqqMoyMMO2M4aFsi8QkHpzpPiCCy2wMfT3RE20sb33hP+nUyQ5xfAVD7alvHckCVwSlOCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pjW7/Xsq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v2p0fGS6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1CwuzBLR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NU+uJwWk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DC69B1F7CF;
-	Thu, 12 Jun 2025 08:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749716654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTMTRD4bGFp407oNnvAExtTVyT2B4bJWP3/doMonz+0=;
-	b=pjW7/XsqU5KiQEKFm91N5kjx4QNwlxF69Xj2V/Cj0Zzm9ixeJLe7Z4u7ZVyiXqOLNX595I
-	DKaeaWEH5wXSJr1nxL2OJD3Ta1xFBwrAcmLlxYPUoVaz867oYO2N6DyULmPqT6jQuJZZDl
-	I4kKbQJ2j3a14Q/QLcVc9KPop4HF6DA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749716654;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTMTRD4bGFp407oNnvAExtTVyT2B4bJWP3/doMonz+0=;
-	b=v2p0fGS6Apg5Du3XvzhPAHm3IuRfXkP6tAEHJWR24SdvWtH578sW9vOlSfMR3ZlnUVyDoJ
-	9DZtd2AApMmP8vDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1CwuzBLR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NU+uJwWk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749716653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTMTRD4bGFp407oNnvAExtTVyT2B4bJWP3/doMonz+0=;
-	b=1CwuzBLR6Tu8WqO+CB5lvY5kbwZW45uJlnJ8MbyRwL2PbtNEKTBlw+Kk+w12P02USAfJ9i
-	neGKQl0zsSVjrOKQI4hAHfJBe6xaJmVaAuc9K8Qn6pfkhRwm+BR7H4cLAwbkwuyzJPtaR5
-	9fnuZ528Qt6P7crDw4vV1tYHQgCtF0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749716653;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTMTRD4bGFp407oNnvAExtTVyT2B4bJWP3/doMonz+0=;
-	b=NU+uJwWkuYUabiSHeSJLkCSLomc++IJcXQpCoRsOLyPpXc70qKcrNaLKJSJ/Ms06/aNZMu
-	ckyIwVaMekRd5mCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDA87132D8;
-	Thu, 12 Jun 2025 08:24:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4oXxMa2OSmjgLAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 08:24:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 670DAA099E; Thu, 12 Jun 2025 10:24:13 +0200 (CEST)
-Date: Thu, 12 Jun 2025 10:24:13 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+180dd013ba371eabc162@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, heming.zhao@suse.com, jack@suse.cz, 
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	mark@fasheh.com, ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in deactivate_super (2)
-Message-ID: <vnghd7yksmrxs7whd5axkb3naty2ppyw5jprbfatec7xglz6yx@zwrfsuuky2yn>
-References: <679f7c8e.050a0220.163cdc.002f.GAE@google.com>
- <68485d14.050a0220.33aa0e.035f.GAE@google.com>
+	s=arc-20240116; t=1749716759; c=relaxed/simple;
+	bh=q0+fYfF97FI9aDDTnIU+4LmdN8vqnGfbcenWAJ4Aa74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W7sJJ1f7HJEUJbgJvTLmLWZs4TQE/75AHxrF766U1d9HonYY+2ynRhU5m/KozkNnFN5VNDUOZN5LqXs79UKWuesHIFEsh3D1w3/f8T0jFYKwfIhZrRVm03q94zy+kXtFh53ZMFq6Qs/WHLB3Irzd8uJSAB8VdBWFr6swjfX20Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C3F4339;
+	Thu, 12 Jun 2025 01:25:37 -0700 (PDT)
+Received: from [10.1.32.165] (e134369.arm.com [10.1.32.165])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A6393F59E;
+	Thu, 12 Jun 2025 01:25:55 -0700 (PDT)
+Message-ID: <4383f1ad-2782-4cd9-b21e-55d3a1500e65@arm.com>
+Date: Thu, 12 Jun 2025 09:25:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68485d14.050a0220.33aa0e.035f.GAE@google.com>
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=170d968a88ba5c06];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	URIBL_BLOCKED(0.00)[syzkaller.appspot.com:url];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim,suse.cz:email];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[180dd013ba371eabc162];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: DC69B1F7CF
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -1.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: sunxi-ng: a523: Mark MBUS clock as critical
+To: Chen-Yu Tsai <wens@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250607135029.2085140-1-wens@kernel.org>
+Content-Language: en-US
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20250607135029.2085140-1-wens@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 10-06-25 09:28:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit fcaf3b2683b05a9684acdebda706a12025a6927a
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Thu Apr 24 13:45:13 2025 +0000
-> 
->     ocfs2: stop quota recovery before disabling quotas
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=123ce9d4580000
-> start commit:   8560697b23dc Merge tag '6.15-rc2-smb3-client-fixes' of git..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=170d968a88ba5c06
-> dashboard link: https://syzkaller.appspot.com/bug?extid=180dd013ba371eabc162
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d39b98580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fbd204580000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
+Hi Chen-Yu,
 
-Looks correct:
- 
-#syz fix: ocfs2: stop quota recovery before disabling quotas
+thanks for your research on this!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 07/06/2025 14:50, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> The MBUS serves as the main data bus for various DMA masters in the
+> system. If its clock is not enabled, the DMA operations will stall,
+> leading to the peripherals stalling or timing out. This has been
+> observed as USB or MMC hosts timing out waiting for transactions
+> when the clock is automatically disabled by the CCF due to it not
+> being used.
+> 
+> Mark the clock as critical so that it never gets disabled.
+
+Yes, we do this for all the other SoCs, and I somehow missed that for 
+the A523.
+I am still scratching my head how this worked for me, though, but the 
+patch is pretty surely correct:
+
+> Fixes: 74b0443a0d0a ("clk: sunxi-ng: a523: add system mod clocks")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
+
+> ---
+>   drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> index 9efb9fd24b42..1a9a1cb869e2 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> @@ -385,7 +385,8 @@ static SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(mbus_clk, "mbus", mbus_parents,
+>   					    0, 0,		/* no P */
+>   					    24, 3,	/* mux */
+>   					    BIT(31),	/* gate */
+> -					    0, CCU_FEATURE_UPDATE_BIT);
+> +					    CLK_IS_CRITICAL,
+> +					    CCU_FEATURE_UPDATE_BIT);
+>   
+>   static const struct clk_hw *mbus_hws[] = { &mbus_clk.common.hw };
+>   
+
 
