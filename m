@@ -1,122 +1,199 @@
-Return-Path: <linux-kernel+bounces-682806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616EDAD64C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:49:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAA8AD64C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DF51883092
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:49:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B21D3ACBAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328AC7080C;
-	Thu, 12 Jun 2025 00:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184406BFC0;
+	Thu, 12 Jun 2025 00:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AvEqefY6"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3555A26AD9;
-	Thu, 12 Jun 2025 00:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="irQTORLM"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAE3A944;
+	Thu, 12 Jun 2025 00:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749689341; cv=none; b=li7Bf19WlkLKqey3sN7hU1x9X79ONvI0YmbdCSzYWWQ+uYV9qNOC97AwiUwRUwFO2gvqw+Wo73+f5/52v+Zxcl3pZygT5zqs2eSyyB5bVmUDzCldUI0NmDjZEyyCdh+IupqUTn1YlQCbJ5wW7ZHKoKMGClXoNU2mOrZKvjEx9f4=
+	t=1749689449; cv=none; b=rVs6WgbY2ofpfbVDGgk0LnNlxvi1Iwbq7YGdg7a8lPr3Yu7VkdAWzoIJURgVHjEzTb63/ZkwIAosu7zdSVHDVVNrfvMFv8h5/F5c5itVDsNepdjeIeoDNklKu7DGOvBd0tyO66CAP6z2E3yeDM7OD/PoUKWvuNduQBw0M6pk984=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749689341; c=relaxed/simple;
-	bh=/yHgCp2Nj87O1+hE+z6Wjjusqd4RBegdP1jqfyeqfZQ=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=f7Ajf8XQKXHo+LYowz8n6uH5HjuW7uI0Wg1mSu6xhry1W3AszhtH/hrrAODhTYJ4jDFlA3CRf2oeszkZmwuXdLm/QTykx2ftqbRSAqimvxcrRj15zenaEeP5bmbHUEKeeMACI4Cb7Y9B6R5mzoX20yXHGxv46mzR06aw67zyzlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AvEqefY6; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso597399b3a.2;
-        Wed, 11 Jun 2025 17:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749689339; x=1750294139; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BnVzuSAi+VGLwZqj+6jW2zhew4ye4rLcStPcRTu5cuk=;
-        b=AvEqefY6MTyPCo3kGuYo4Vk3HH30915VAkCroEvsJ5rG/gSzWdiLXjzXqJwNmWr/jY
-         Ir8T6hVkyoC46zx775XQxQu1Wu7uv6iEkhbrKC3lYs5HKC7BoqNeFEBsZ1zpukV4d3gY
-         CW3N8R92oOLDS4pFFP04BpdlIw0owQWBCeLinoojfEQBBsbQErRAlqKidJaeLxMvAslN
-         bVUIOpaUyAVSOCMh+LugAlbGPoqbAinPLWEiWm9W6e1saLtnxjQNqJv8EEQS0QI1DZvc
-         1gvOgfYS+5AiJRZcUBqd5RHhR3oXpd0O0XsQh0mmV3Yp2TELUh/dhHNJ+CyD5c6kyUeT
-         thTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749689339; x=1750294139;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BnVzuSAi+VGLwZqj+6jW2zhew4ye4rLcStPcRTu5cuk=;
-        b=dC0rYjzTjm2xc8WDUlZiXzHMc4ZJYD6H324xOYy1ndCJ2FmeL4f2ZJO/sGFJEXzFlX
-         6N6+ukl+ugmaAsYpuT18uYHWm7D62H4GCT6lDdwkWNj49MrfqX8y6TmTgggBHRBN8KiZ
-         5YzHSbsag2Ed/0S21DsqolLAISPxQJ9b/0tQVr3WggrJGlKC2qse4M94Fh8N0ysYBeNT
-         mf8L/Otp8L18Iae+INVeloQvnEyAq8jI0jeB9wMgjU8KNHIjCmr7y2vQck4eedMB+0bw
-         PL0xgmAV68FzLoxcntc0+FmrFfArwUZRE81wIwEaCkflJ4le+j+cd2Uqy47NP5R7k66N
-         eKpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvMZB94hx1NirGvCa/yzRZNe8gQYFw7a2lwMKDzC1OxHOOQHhsWT8/ovUKqwir3TE7+kta+pR3@vger.kernel.org, AJvYcCXWeq2PzHvqTsnl5gVZHRbpvCNLQjNfqw5WRFKw+S2DWh7rQ/ouBITNbkvYZS/oTV23nSmfmsZm5TFkOJg=@vger.kernel.org, AJvYcCXpK57Yknzna9a02iFlohd/CP7B5LYsF/2blwFW0N+zk0ON+3NW6jT1wRMGptNQjwflQTxKNfoyB/TBGK5Iug0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxioXv4f0VzU6RXMJM0fJDmXdhIxEy6IOhmBKfLqxgwVbgeo58L
-	WUXXDm29uhsOOQkQCmuKxXGRQgWFgfiKMFjRL9HKNH6xucgbvTRA+FyR
-X-Gm-Gg: ASbGncurzeyEN3B+pva9lPVH/ZjwmpuDj/KPg8+lTboqG2BFrXZR4uvZWHkch3vwYzJ
-	9+9s8h8+pp67Z39kgmtTwJ9gFM+1MwONFewxJ4KMg1IBDPZNKBRbXzsYm+wUsScr8lhFd+qn6yg
-	sZ16CUae0BPi/UfHA9qPcw3xtri3iMvpnGN2L4zgq/XNyUdVh8ud83kPEC0GlYZ2IQvSmPwSvVX
-	8d2GvEqZmJEMyXac7VyQY7x6FV05MzT2mNH4g0Ld1g/QP5dkboLmXfsqkum/ksBNE+OHIylnTsm
-	eFUF+jhjVgVmES+4JE9/QilUcuW9/jurWJwaiTcTJOvS7mzqFoneUK8IHgiCrKeaGoycHMzS0WX
-	NgcW71E1W+8D6wRatqGnx/9oSWI6XuiscX+VyPRwB
-X-Google-Smtp-Source: AGHT+IHkUbqDLQgmErzS/Fm0ohtqpYCXxdJOooNkrwjZOfmDhJCFlgfY+aV1we6nOyEVcpq2KHK6mw==
-X-Received: by 2002:a05:6a20:2587:b0:21f:53e4:1930 with SMTP id adf61e73a8af0-21f86725dfemr7996776637.22.1749689339308;
-        Wed, 11 Jun 2025 17:48:59 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748809ebb8bsm195364b3a.126.2025.06.11.17.48.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 17:48:59 -0700 (PDT)
-Date: Thu, 12 Jun 2025 09:48:53 +0900 (JST)
-Message-Id: <20250612.094853.1245231705823615660.fujita.tomonori@gmail.com>
-To: tamird@gmail.com
-Cc: aliceryhl@google.com, fujita.tomonori@gmail.com, tmgross@umich.edu,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
- a.hindborg@kernel.org, dakr@kernel.org, davem@davemloft.net,
- andrew@lunn.ch, netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: cast to the proper type
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <CAJ-ks9kZZEWXSHX95=QrNXaQvEc-T1cTPTaB3mCjT2coGzpwUg@mail.gmail.com>
-References: <CAH5fLghomO3znaj14ZSR9FeJSTAtJhLjR=fNdmSQ0MJdO+NfjQ@mail.gmail.com>
-	<CAJ-ks9m837aTYsS9Qd8bC0_abE_GT9TZUDZbbPnpyOtgrF9Ehw@mail.gmail.com>
-	<CAJ-ks9kZZEWXSHX95=QrNXaQvEc-T1cTPTaB3mCjT2coGzpwUg@mail.gmail.com>
+	s=arc-20240116; t=1749689449; c=relaxed/simple;
+	bh=TO+esTbBV563zHhYclGKbQ4Kk44uqSY4io8/BVfQCA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=csdQGFOV2TghZ5/PJxR6uxCgP7QmQ5bsdulp8uy37u62rLliWR6Oajg+nY9aPOjbJGmsxCm/rxociZ7thvkqdgxXZVWIeR+M/3JyVj4TVHIDV4WNWZAzUW4qijgbE9vhiQYZe9qrXmcrjW0I7uuqcfNfBDWKU0Fz3AsKlnz8upc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=irQTORLM; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=1dOaqnFjZKRJyblr+6PCERlCBnX9Gn93vnPzUMgrd8k=;
+	b=irQTORLMsWATNz5nl8DuuEHMsyzgXw2/Mm0Pwo5Enw/7WdeqAA3TJoT5dG8wEX
+	sK6NKHxsegaCxEosMrr7uFg7/Gq9Hm6UKGgCnium7S3a6JwyQyiq6uPEw8yXG1Js
+	dy7rlCVvn8b0aTKdzU5rEhn6O9+TDwFPoHbFJSgHDnm9E=
+Received: from [192.168.18.52] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBX7slSJEpoBHmaHw--.5481S2;
+	Thu, 12 Jun 2025 08:50:28 +0800 (CST)
+Message-ID: <bd7f1053-f00e-4a1b-9923-9c3e1d1605b2@163.com>
+Date: Thu, 12 Jun 2025 08:50:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/13] PCI: dwc: Refactor imx6 to use
+ dw_pcie_clear_and_set_dword()
+To: Frank Li <Frank.li@nxp.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, mani@kernel.org,
+ kwilczynski@kernel.org, robh@kernel.org, jingoohan1@gmail.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250611163121.860619-1-18255117159@163.com>
+ <aEnNFgv08BVVxfOQ@lizhi-Precision-Tower-5810>
+ <aEnO4QSrAzEHzoAe@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aEnO4QSrAzEHzoAe@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wBX7slSJEpoBHmaHw--.5481S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw1fAw17Kw4fuw1fAw4kCrg_yoW7GrW7p3
+	y2vF4SkF48JrWruwsFvas5ZF13tasakr1DW3W7G340qF9Fyry7Ga1jyrW3Krn7Gr4Utryj
+	kr1UJws3Aa4YyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ujg4fUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwNqo2hKH5lxbwABs+
 
-On Wed, 11 Jun 2025 09:41:08 -0400
-Tamir Duberstein <tamird@gmail.com> wrote:
 
->> > > +            DuplexMode::Full => bindings::DUPLEX_FULL,
->> > > +            DuplexMode::Half => bindings::DUPLEX_HALF,
->> > > +            DuplexMode::Unknown => bindings::DUPLEX_UNKNOWN,
->> > > +        } as crate::ffi::c_int;
->> >
->> > This file imports the prelude, so this can just be c_int without the
->> > crate::ffI:: path.
+
+On 2025/6/12 02:45, Frank Li wrote:
+> On Wed, Jun 11, 2025 at 02:38:14PM -0400, Frank Li wrote:
+>> On Thu, Jun 12, 2025 at 12:31:21AM +0800, Hans Zhang wrote:
 >>
->> This has come up a few times now; should we consider denying
->> unused_qualifications?
+>> Subject should be
 >>
->> https://doc.rust-lang.org/stable/nightly-rustc/rustc_lint/builtin/static.UNUSED_QUALIFICATIONS.html
+>> PCI: dwc: imx6: Refactor code by using dw_pcie_clear_and_set_dword()
+>>
+>> tag "imx6:" should after "dwc:"
+>>
+>> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > 
-> I should point out also that every reference to crate::ffi::c_int in
-> this file is fully qualified, so I think this should be a separate
-> change.
+> I sent out too quick, please don't applied my review tag at next version
+> because I found a issue, see:
+> 
+> https://lore.kernel.org/linux-pci/aEnONwJUSEMdMAUD@lizhi-Precision-Tower-5810/
+> 
 
-I can take care of this file.
+Dear Frank,
 
-Thanks,
+Thank you very much for your reply.
+
+I have replied to you in the previous email. Bjorn also raised a 
+question as to why the entire series is not under 
+0000-cover-letter.patch. I will reply to Bjorn in the email and try to 
+solve this problem.
+
+Best regards,
+Hans
+
+> Frank
+>>
+>>> i.MX6 PCIe driver contains multiple read-modify-write sequences for
+>>> link training and speed configuration. These operations manually handle
+>>> bit masking and shifting to update specific fields in control registers,
+>>> particularly for link capabilities and speed change initiation.
+>>>
+>>> Refactor link capability configuration and speed change handling using
+>>> dw_pcie_clear_and_set_dword(). The helper simplifies LNKCAP modification
+>>> by encapsulating bit clear/set operations and eliminates intermediate
+>>> variables. For speed change control, replace explicit bit manipulation
+>>> with direct register updates through the helper.
+>>>
+>>> Adopting the standard interface reduces code complexity in link training
+>>> paths and ensures consistent handling of speed-related bits. The change
+>>> also prepares the driver for future enhancements to Gen3 link training
+>>> by centralizing bit manipulation logic.
+>>>
+>>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>>> ---
+>>>   drivers/pci/controller/dwc/pci-imx6.c | 26 ++++++++++----------------
+>>>   1 file changed, 10 insertions(+), 16 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+>>> index 5a38cfaf989b..3004e432f013 100644
+>>> --- a/drivers/pci/controller/dwc/pci-imx6.c
+>>> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+>>> @@ -941,7 +941,6 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
+>>>   	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
+>>>   	struct device *dev = pci->dev;
+>>>   	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>> -	u32 tmp;
+>>>   	int ret;
+>>>
+>>>   	if (!(imx_pcie->drvdata->flags &
+>>> @@ -956,10 +955,9 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
+>>>   	 * bus will not be detected at all.  This happens with PCIe switches.
+>>>   	 */
+>>>   	dw_pcie_dbi_ro_wr_en(pci);
+>>> -	tmp = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+>>> -	tmp &= ~PCI_EXP_LNKCAP_SLS;
+>>> -	tmp |= PCI_EXP_LNKCAP_SLS_2_5GB;
+>>> -	dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCAP, tmp);
+>>> +	dw_pcie_clear_and_set_dword(pci, offset + PCI_EXP_LNKCAP,
+>>> +				    PCI_EXP_LNKCAP_SLS,
+>>> +				    PCI_EXP_LNKCAP_SLS_2_5GB);
+>>>   	dw_pcie_dbi_ro_wr_dis(pci);
+>>>
+>>>   	/* Start LTSSM. */
+>>> @@ -972,18 +970,16 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
+>>>
+>>>   		/* Allow faster modes after the link is up */
+>>>   		dw_pcie_dbi_ro_wr_en(pci);
+>>> -		tmp = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+>>> -		tmp &= ~PCI_EXP_LNKCAP_SLS;
+>>> -		tmp |= pci->max_link_speed;
+>>> -		dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCAP, tmp);
+>>> +		dw_pcie_clear_and_set_dword(pci, offset + PCI_EXP_LNKCAP,
+>>> +					    PCI_EXP_LNKCAP_SLS,
+>>> +					    pci->max_link_speed);
+>>>
+>>>   		/*
+>>>   		 * Start Directed Speed Change so the best possible
+>>>   		 * speed both link partners support can be negotiated.
+>>>   		 */
+>>> -		tmp = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+>>> -		tmp |= PORT_LOGIC_SPEED_CHANGE;
+>>> -		dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
+>>> +		dw_pcie_clear_and_set_dword(pci, PCIE_LINK_WIDTH_SPEED_CONTROL,
+>>> +					    0, PORT_LOGIC_SPEED_CHANGE);
+>>>   		dw_pcie_dbi_ro_wr_dis(pci);
+>>>
+>>>   		ret = imx_pcie_wait_for_speed_change(imx_pcie);
+>>> @@ -1295,7 +1291,6 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+>>>   {
+>>>   	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>>>   	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
+>>> -	u32 val;
+>>>
+>>>   	if (imx_pcie->drvdata->flags & IMX_PCIE_FLAG_8GT_ECN_ERR051586) {
+>>>   		/*
+>>> @@ -1310,9 +1305,8 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+>>>   		 * to 0.
+>>>   		 */
+>>>   		dw_pcie_dbi_ro_wr_en(pci);
+>>> -		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+>>> -		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+>>> -		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+>>> +		dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
+>>> +					    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL, 0);
+>>>   		dw_pcie_dbi_ro_wr_dis(pci);
+>>>   	}
+>>>   }
+>>> --
+>>> 2.25.1
+>>>
+
 
