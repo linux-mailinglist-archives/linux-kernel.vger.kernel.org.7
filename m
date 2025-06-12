@@ -1,233 +1,240 @@
-Return-Path: <linux-kernel+bounces-684304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE9AAD78D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:20:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0514AD78DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13023B54CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:19:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83F93A2FA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5412E29C326;
-	Thu, 12 Jun 2025 17:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074862BCF4A;
+	Thu, 12 Jun 2025 17:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3cj0ZP3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GVHrciw9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E72F431F;
-	Thu, 12 Jun 2025 17:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749748777; cv=none; b=tZQA+r8GcqDJU0T1+Q1Hb9req5RMsdpb9o9tbkvoYt6Vz73fG2KEs4UKJafteKVET5pqtgCE7YU2AlQRe1f+3/pv6VV49Y/IQYPWrODjunni5SQKkDmpGWpu7ep4VOkca4H27CjRrrFX1wsTjsDMAe2gNSw8Q3fo1NzM62Bi3ec=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749748777; c=relaxed/simple;
-	bh=KAMMKqVzdsVuZnPOPaGfiqiMehOKnAmXFo814aZimys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBq1VhZUWm6Bo8e88JyYSaWEjrAu/nQ4fn8GOaOkYBg6O8HqJKDJQBEaRap8ucUTaGRZY2ZT84hKvyohXt8JzszkpMComrL82yiDUK7jR/tKTeEYmTA9IkBDPq/C3NyDRFEUjwDqCEl9h72tbn+e2FgeyDdHoTz0g6pssvHWlpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3cj0ZP3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1693AC4CEEA;
-	Thu, 12 Jun 2025 17:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749748774;
-	bh=KAMMKqVzdsVuZnPOPaGfiqiMehOKnAmXFo814aZimys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r3cj0ZP3QdZuDv5oZ43tHa4gOcrJFLLmFd1jglvQZtbp6q9AhBXLZbDz98A5oNpd8
-	 9J1zryk3EmAXlb04ta1Gio1chgeG5g9qC00y/16DgfEng7+PI/nJPhpyT+N7y4e9oT
-	 J1zuESkffa0raNlfO4zVr8sKEpQvZUsomcE/LT1oe6AC1jSdaWg8e+a/H4ksDpghkM
-	 GA1d7R30+fL0zw+rtB1Bxr1FUyAfVfcsRJJ7vg1LdDL4D7jH3UdQGO3a5scUV0h6ib
-	 Zk5bnWbzAdZOF3m+sGr6qAvAa6ViAw4dQ7B3B0S1FzgQWnwvQ6BF35t/xosVV/nOoD
-	 wplhGqANytO2A==
-Date: Thu, 12 Jun 2025 22:49:25 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	cassel@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, michal.simek@amd.com, bharat.kumar.gogada@amd.com, 
-	thippeswamy.havalige@amd.com
-Subject: Re: [RESEND PATCH v7 2/2] PCI: xilinx-cpm: Add support for PCIe RP
- PERST# signal
-Message-ID: <mwv2twlpknjecqf2ck2t3vcainvcitikblvylpd73mtzlhklfq@odmoplmctgy5>
-References: <20250414032304.862779-1-sai.krishna.musham@amd.com>
- <20250414032304.862779-3-sai.krishna.musham@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9909C2F4334;
+	Thu, 12 Jun 2025 17:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749748805; cv=fail; b=LEaUrLUPbY2uJ/q0h6jlnvO5oeO7iq3JYjWBmB2LM1j4q8KyiBiwVsmBJ4/jqAZL1BVFYYYDKZIV3f13dvyVRQ70X6V8pw7B1dac+m0TvE3DDB5aqk/dQjk7NLrI87FBbER0b+RsYJRoeamcy/R7WGrhYfIAwS4eXvGQwcKQ1o0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749748805; c=relaxed/simple;
+	bh=MHcIJV25hVa6or+TWL/YmKm/kPH5mSsdHmavC24QhV0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jn0/4uMZ+AW25npPqRNz7RMj2jNHJpHCRZaA2DwoWens0bsHuesK0xkjTkc6tSPyhJRdIsEJZWRWBYK2VKQp5CcVo1JLBL1z55QW4ph1VZbZ5Qr4gX8RJ8yfRDroax+x42d9JYmYh5ikpqVhPnLHQV3RO60xh1fl4PAYxZmpzfo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GVHrciw9; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749748804; x=1781284804;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=MHcIJV25hVa6or+TWL/YmKm/kPH5mSsdHmavC24QhV0=;
+  b=GVHrciw9W1O7+XElPxQaqLufZpRXpC93c/Yd7o8CKlRsDmxF4vImVB2O
+   wqEDPr+0clG9FF1UF7Gda/6pYEkEKMi561K/hIDXVARHmDFaqMeldYw/P
+   VlSER9oiLGY2fFLYD1L600qvMJwC37UEM2cVUtd9v7nsDyrJnk9yFVM7t
+   E79m67YTPCzePRTf6d9okkAizwO85ia8eymoZcXtVo6zqAPpG1B41le7I
+   SR2G7UrLIR1hM9X2nGBtopAAFyMREhPq7jaqanQQWJVJPA5x+HnSum4v5
+   S12ncMhoY/JiOeLj15Pg8IqFEXvzxH+ka88d+PRezlFsFCHUeRFI2VV1B
+   g==;
+X-CSE-ConnectionGUID: al7TtyMLT++55+65l/dlYQ==
+X-CSE-MsgGUID: gUcm/Tl9SRCzrNHjZO5bKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="74476163"
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="74476163"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 10:20:03 -0700
+X-CSE-ConnectionGUID: O95SOcJbTtGrNy0zIgvCHQ==
+X-CSE-MsgGUID: gnCBPQCsQQmpGTTZh65AGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="178549557"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 10:20:02 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 12 Jun 2025 10:20:01 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 12 Jun 2025 10:20:01 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.49)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 12 Jun 2025 10:20:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JNqbyjJu27HWsJVoZppMTC4Rvu2aLnmMHyr+XLhnW2M4xk2C8+eHLUf9zTXfvZSBLqBdVSh5RjHT9aRVMw28PI8BFb+jp121jqlLOlZgUixarf6ORYmM+2aIuoApJDaxkIk8SmllXfUXikY/7Wejv/TUWRaMvUFIXYuNPyi91BGfqWtRVaYPoa+Hg+aQWX34x6xpLO39+dQM/RnCIBCg2xY3UO/IY4Ath3llTO7YnNa/FhgHH/6hzKJBomLXBvaPL+0cmmshm8F+wnllj9sTTCNboR1h19DO3AY2k6emS02D/ByBuv8WHpsCfF2jBySbfm46ZBmdM1dU5ibtGqTyXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gc7yyxCYp/+l5hF/eIMtB8V7xwpJMB9jTyJ78jApADI=;
+ b=aYnQwwxuj4o6cHj9hpJZ0aDQ3dPEIzKYAmjeoweq7F1UYhyRtYNdb4AXsMMFioNEam5xZA+pjmbGXd7Bg2VuQt3tRe/AWsuchiHrvLLV/gshVQS4EDcFfpzbG5miLsbIWBCFVm5CiHhkdqEUp0QTk82IZDXqRfH7BmD1rmxe/E2IYqDJy0uO7uLdzmcNH0wO7OMVS5LB+nt6XoSbH1qLROdtO67jXKPF52lxBoxZbzZfmIYpO92PdvDD8PAHluYtBppHDX8UaZhjLBUufEY6Jgf7Pr5utmjwMLn+1dTzcP4qWUf2QGUmNQxlo9RSF1xqr5ENjQtMELJvX+jO+6o/KQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5095.namprd11.prod.outlook.com (2603:10b6:510:3b::14)
+ by SA1PR11MB8426.namprd11.prod.outlook.com (2603:10b6:806:38d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 17:19:59 +0000
+Received: from PH0PR11MB5095.namprd11.prod.outlook.com
+ ([fe80::215b:e85e:1973:8189]) by PH0PR11MB5095.namprd11.prod.outlook.com
+ ([fe80::215b:e85e:1973:8189%6]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
+ 17:19:59 +0000
+Message-ID: <8b53b5be-82eb-458c-8269-d296bffcef33@intel.com>
+Date: Thu, 12 Jun 2025 10:19:57 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] docs: net: clarify sysctl value constraints
+To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <corbet@lwn.net>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <skhan@linuxfoundation.com>,
+	<linux-kernel-mentees@lists.linux.dev>
+References: <20250612162954.55843-1-abdelrahmanfekry375@gmail.com>
+ <20250612162954.55843-3-abdelrahmanfekry375@gmail.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <20250612162954.55843-3-abdelrahmanfekry375@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0194.namprd03.prod.outlook.com
+ (2603:10b6:303:b8::19) To PH0PR11MB5095.namprd11.prod.outlook.com
+ (2603:10b6:510:3b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250414032304.862779-3-sai.krishna.musham@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5095:EE_|SA1PR11MB8426:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1f56814-57dc-4dcc-f9f7-08dda9d55c2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dldONUMrcUYyd3VKc0xnVmdDeUwzWkpjUlJIbHpvbk5XdEE3cmRnbjY5SXlU?=
+ =?utf-8?B?UzN6Ym94SUJtWWdFL2QxTENpMHZkaGxuRG0zWTVBM2JyNy9pbEpYMHh5TlR4?=
+ =?utf-8?B?ZjBJckdhVEFOMGNBR2tCUkFlOVQ1UGpBVktCbmN4bFovMEdYZEZ5bEg1WE9R?=
+ =?utf-8?B?dnVrY09NejFYcGxFNWs5QlhmUkl6SDB2b2JCRDlRUjdncFFnazhwbS9Jc1Mv?=
+ =?utf-8?B?UVdPYktXQ3dMQmZ2OFhlVlRWWmJBbndFQStTNjMwNGJXTVBVVkNQY2x0WEt3?=
+ =?utf-8?B?Zk1SMUFEYkQzYlFBWWZFdWlGMmdPUk94YWJ6dm45T2hyTGNuVkcrcmhMdkFF?=
+ =?utf-8?B?Nm9TV2JJUXJqTVU0RXpDK3NJWU5qMmswNGlOMkVnOHc3dzJhNUptb3dhczJP?=
+ =?utf-8?B?ekYxQ2ZtcUlFendqLzMyR1Y0MjFRU1grSkVKeHRmbEhHZFJMQmNnRFo2ZTlz?=
+ =?utf-8?B?WVhsVVF4d0R2OVVOT1kvT1NLaHhwMHh3dGp6bkxxQjNZeEljanNYRTFkNUEy?=
+ =?utf-8?B?emszOXRGbXZEbjh3TU9scldaVmhjeWwxN0xqY2ExSU9xT2hNZGJycElOMFBi?=
+ =?utf-8?B?OFJ3UWVYZUU5b005bkFwZEpTaStvRURQamR1SFNFZitPZnJtQnMrUlJ4TFhJ?=
+ =?utf-8?B?c0lQTWFGMUw5M2tST3I3dW0vdGYzVHAxbDZhUTBRSmFLcSs3SEJjSDZHV2xu?=
+ =?utf-8?B?N2J1M0xZTG1rbGdhOGt3ZVJSMTcvcEVxVHczY2JWSjRUaEJQa0EzdW4rM1Z5?=
+ =?utf-8?B?N2xSRmhuWE1YdmlQQmtudFlka080OXYzMkU2Smk3OEZMY0ZRWkZvZWVMRWh1?=
+ =?utf-8?B?Uml6LzdUaUlkVFpuZ1lLWTJ3cVh3MjhUU052ZzlHdy90dWQ5T1o1SXdTYVcy?=
+ =?utf-8?B?K3JxRFhHYVZKVWpjZ0hjV2dVUUFYQmRYS2lhYjJTSTRWZE9SMDdwNVpDSVNV?=
+ =?utf-8?B?VmRxSHRtU0hQVEhoTDNXc0ZwL05ObmVEbVNmbVZ1WmdFS1pmWXdzaktndGhp?=
+ =?utf-8?B?a2oyc285aW11aE1RMHdkanNSWlJQckQ5Uk1KdUlIRnlZc3pCbit3NGxDUWI3?=
+ =?utf-8?B?U0dOb21KMEh4MG8yRG9WWUNnc3VXa3p0VkZpSENyV0hEeUFrTUpWUUxuZnJX?=
+ =?utf-8?B?WktIWWN4QThtTjRmcjI1Z3hwRUZtcDZQUlFGK1lSY3lraTZRenMyTm5yLzNF?=
+ =?utf-8?B?aWtUREozek1uMkZlZmRBR284S2RDNE9WNDgxU3BPWkh3b0IwMU5kWi96N3By?=
+ =?utf-8?B?SEVmMG02UjFKSmY5UHlrZjdRUmV3VVZGbjV1cmtBR0NjRTM1SXRXUG5BRmVT?=
+ =?utf-8?B?dXRkb2NGZkt5REhGU2xMTFNSY3hjUUlDNnhxVTcwdHdWb1NSTVZJTTdXeXR0?=
+ =?utf-8?B?OWtNOG0zdGdhZWlGT0MvUGh5c3IxSEU1VTN2ZWQ4RG5HSVl2REpmeGl4UEx6?=
+ =?utf-8?B?NFZ1c25GSm5pSFFPVU1hOFZTTUptV1ZlYis4MUVFOWZXa2J3NzJVSnlDa1Ev?=
+ =?utf-8?B?cUlJV2RwNldOUGx1WUlwOHVOWjM1RnBvUkxhc2hVVDMxSnBhL1phdWs2eHNj?=
+ =?utf-8?B?UWxoMVNSR2hGdnlNM1BsYjlHampVK1NHcGFzRXhjL044S3RiNzRyMC9rQXk1?=
+ =?utf-8?B?TWZ0dUd2OFRDM09UYUpSQ2hXK0JPQzd1V0JVeFJ3ZlMwWmxoYm4vMlhnQUN1?=
+ =?utf-8?B?TkZwZ2pWY3ZndkxFSGwzTHRieEF1SWdoMlB0bThheGx4aTYzNkQxMDA1QXJN?=
+ =?utf-8?B?K0FNRmNaVDgzT3NQbHpIaG1CaFlFZVc5MExZMVdldmVVKzNDWE5UZkNZNjlZ?=
+ =?utf-8?B?akpneFV5UTZBRERXR1RuVlBJTXU1dlM2MG9HMFBvN2dSRTR6UzJQZUFVVnEx?=
+ =?utf-8?B?UHZybmI1WE9sVzhpNVBSZ2hYaXRBK01CNit5dWFyaDlYT3pGdFgzaUdLSVhQ?=
+ =?utf-8?Q?hFhS+IzBZxI=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5095.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?REUyd2VyMUtFY0Q2UExVeU5ZNVdHQWNHZ2ExQW91L1VjRm8xeWU5ay91ZXNC?=
+ =?utf-8?B?WisvWkQ3dFQ4ZTBmcHBIenhENlpmMVBoSldjTTlwTHNjMnlIMktWSVpZMmhQ?=
+ =?utf-8?B?L3dIY1paZ2p0S2ZWSTROdzQrMzdpRUQrdVZHSmM5bGJTanFZSkVaa0kwSExD?=
+ =?utf-8?B?NHlNeTRJbldNVVkrYVgwemZ1ZG1MOW9nUHlhMUVUZkFXTjc4WlZsWDkxaERW?=
+ =?utf-8?B?VTB0cjVTQm9HSzkycy9wYzBRYnpaSUdnR2tFbFBsR09jR3Y1aExyZTkzOGt0?=
+ =?utf-8?B?eFVEVmVFTUd6Y0NFcW5USmpTYzl6aUJTT0N0Mnk5RkRvR2h4b1ByRWFrT2Fr?=
+ =?utf-8?B?eXM0Z3p1L1BZQld0NnZxOGdvNWdnMmJMZ3VNa1A5VFlIK1h1ZHNYa1ZpZnlE?=
+ =?utf-8?B?Rm5zU1JESUd6UW01SVd5ODY1dDlzRHJ0UnFIcFExelczVlNIdENmNEE0RkhG?=
+ =?utf-8?B?MmVaZDRnaGs3QlpwUm9SR21TOEl0Mk50ZU5UcVdlY21ZMjlhWDJwTzMzeHRG?=
+ =?utf-8?B?cUVsUnhRTENUeDBzakNNMGgzNFRLemdEaDYvV3Jvb0prUW42TWcvTzUra1Fk?=
+ =?utf-8?B?UWpEaWRhNUhxbkNaa1RzUndIWEgxVk1MTlBBbW0zNjh0dWFSdk5XWldYWkdF?=
+ =?utf-8?B?UzhreDRNQnVSeklJdTFtMHpQa1J4WWNaU3UzbGZ3ZmlMRmYwT1N1L3puMUx4?=
+ =?utf-8?B?ZkZUbHd5L1duUkFDVWNwaS85NXZWQll3OFYycWtUK3UwekhoTURFWTg1azJX?=
+ =?utf-8?B?MmtXQWJsWUlKTHR4cUVSdWE0amJXWGxCajVCWi9oaXI3alBlUEVPNzRTZEZW?=
+ =?utf-8?B?S2lyS2hPNHAvSVhOdG1XL0JUM0RGY2ZPdkpYVEdEalZoejZWM0YybG0rQ3Rp?=
+ =?utf-8?B?eFRPMmNGR2wrUGNqdFhZTTZUOTN1N3oxb0N5RUFYNFlrWUZUcm9EcjhSQVJX?=
+ =?utf-8?B?eG1kekNmd2I5VHR2RUsycVVoUkZ3bzVYYmFjUkVLSDcwVE96TWRmeEh1cVQ3?=
+ =?utf-8?B?Z01XcW9tazlybHRsQ1lQdGtaQ2ZrWXp5ZEFuWUpoYm1BY3N2R1lOK2s4Tm0x?=
+ =?utf-8?B?djBWOEQwR1dHUVhPR0dDblhIVXR4dlpvSW9WUHZOczlBang0V011cFZYZkV0?=
+ =?utf-8?B?RkllNUlGRkFuVXZmNXczTVRXQnB4eHBDMG5mNCs5d1BGR0hQQ2lZMVVJb0U5?=
+ =?utf-8?B?bjdlQmtMTDgwc3FHZXJDTlVJYnYxdVkwb3Y1VEtjZzhDWEx2NjIzeUtQWkJH?=
+ =?utf-8?B?Y09oeTl6UityTXlUTEhLNUw1V0NIUFRMYlRkS1k4V0k3NlppOXl5MlNKWVFk?=
+ =?utf-8?B?S2dxRlN3TFM3ZU9JdXJacDZ6VXRWVWttT2FsVzFGZVFlbm5sd0xuVGdJTmxT?=
+ =?utf-8?B?cHJhR1I5UDhSVWNwRTJjcE5BVmIybGdEVjhRVTF5ZHVuQ2NJMXBuQlhGakFh?=
+ =?utf-8?B?ZzF6MEhzOWtsTHlpYUZHWGJQa2syZGhrbzliMmRlWkpXdVYrMjdBK3Yxc3pn?=
+ =?utf-8?B?WnZSUWVlekZGVDVOWjVTNjNTNDZ6MGY3WlpPZE5FVnk1Ym1ZYXQ0YWg3c09x?=
+ =?utf-8?B?b3NYZS95dUpaOVlTMG9rUytHdllRNEl0QjNwUGE5SDJuU2N6NTJYUklQNjNK?=
+ =?utf-8?B?cTByTWVacjNqeEJCeVE0SU52a1c3emRiTTJmK2xYUEJ6NXZYc2dQaWh1WmE2?=
+ =?utf-8?B?SGxDUjQ4YWpxVk95a0k1N2tMSXF1R1pKUjM3ZERvZ09lTk4yVVhsL3ZxdlFo?=
+ =?utf-8?B?cjRrdEZEM2hqb2VySER6L3VZR2xiUTB1ZDdsZFA3dnF1QlpEUDQ4aXQvNVlY?=
+ =?utf-8?B?YncyRE5ZMVpZbGQxc01iVlhNNzVUR0lnWkh1c3JPUkxYcVQ3Z0UyTFB4K3Rl?=
+ =?utf-8?B?VHhRRW5CcWVJQ0FXN2xsWW5FODRQMlZnRFMrVmxyM1R6NnhEQ3RwWkxIalMx?=
+ =?utf-8?B?OGt5UzVacitiNnI3dGZYb3BlOXUvdzdUR1VkNVhablVoV3Z5WExMeXJtRGM4?=
+ =?utf-8?B?ZmFsUHkreGNySm1MZmYrM05JTSttOFp4ZDc4bGJpM05CbFRQNHpocmc1K1dz?=
+ =?utf-8?B?eUl5T3BMeFpMM2QwK2FVSUdZdlM5YjVwYmdtQU5KZjN2Q0QxT0FMZ2xJS2t4?=
+ =?utf-8?B?YjgwZXpqeFFTOHhyK0RSWHgvV0s4RnVPaEhTZG1LejJGZVBQdGcyL0NGQVRF?=
+ =?utf-8?B?c1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1f56814-57dc-4dcc-f9f7-08dda9d55c2a
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5095.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 17:19:59.7914
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3dAMDs0CeeaeqONBcIsiYDxgJ3XASj9Fz2+KP0+uRatJ+/shWkv9dRxdbpDBwL5kidxhKReaXqGd6lbpI2vp3hHvog3g/ZB9LhrFpRb8D2g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8426
+X-OriginatorOrg: intel.com
 
-On Mon, Apr 14, 2025 at 08:53:04AM +0530, Sai Krishna Musham wrote:
-> Add support for handling the PCIe Root Port (RP) PERST# signal using
-> the GPIO framework, along with the PCIe IP reset. This reset is
-> managed by the driver and occurs after the Initial Power Up sequence
-> (PCIe CEM r6.0, 2.2.1) is handled in hardware before the driver's probe
-> function is called.
+
+
+On 6/12/2025 9:29 AM, Abdelrahman Fekry wrote:
+> So, i also noticed that some of the parameters represented
+> as boolean have no value constrain checks and accept integer
+> values due to u8 implementation, so i wrote a note for every
+> boolean parameter that have no constrain checks in code. and
+> fixed a typo in fmwark instead of fwmark.
 > 
-> This reset mechanism is particularly useful in warm reset scenarios,
-> where the power rails remain stable and only PERST# signal is toggled
-> through the driver. Applying both the PCIe IP reset and the PERST#
-> improves the reliability of the reset process by ensuring that both
-> the Root Port controller and the Endpoint are reset synchronously
-> and avoid lane errors.
+> Added notes for 19 confirmed parameters,
+> Verified by code inspection and runtime testing.
 > 
-> Adapt the implementation to use the GPIO framework for reset signal
-> handling and make this reset handling optional, along with the
-> `cpm_crx` property, to maintain backward compatibility with existing
-> device tree binaries (DTBs).
-> 
-> Additionally, clear Firewall after the link reset for CPM5NC to allow
-> further PCIe transactions.
-> 
-> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
+> Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
 > ---
-> Changes for v7:
-> - Use platform_get_resource_byname() to make cpm_crx and cpm5nc_fw_attr
->   optional
-> - Use 100us delay T_PERST as per PCIe spec before PERST# deassert.
+>  Documentation/networking/ip-sysctl.rst | 50 +++++++++++++++++++++++---
+>  1 file changed, 45 insertions(+), 5 deletions(-)
 > 
-> Changes for v6:
-> - Correct version check condition of CPM5NC_HOST.
-> 
-> Changes for v5:
-> - Handle probe defer for reset_gpio.
-> - Resolve ABI break.
-> 
-> Changes for v4:
-> - Add PCIe PERST# support for CPM5NC.
-> - Add PCIe IP reset along with PERST# to avoid Link Training Errors.
-> - Remove PCIE_T_PVPERL_MS define and PCIE_T_RRS_READY_MS after
->   PERST# deassert.
-> - Move PCIe PERST# assert and deassert logic to
->   xilinx_cpm_pcie_init_port() before cpm_pcie_link_up(), since
->   Interrupts enable and PCIe RP bridge enable should be done after
->   Link up.
-> - Update commit message.
-> 
-> Changes for v3:
-> - Use PCIE_T_PVPERL_MS define.
-> 
-> Changes for v2:
-> - Make the request GPIO optional.
-> - Correct the reset sequence as per PERST#
-> - Update commit message
-> ---
->  drivers/pci/controller/pcie-xilinx-cpm.c | 97 +++++++++++++++++++++++-
->  1 file changed, 94 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-> index 13ca493d22bd..c46642417d52 100644
-> --- a/drivers/pci/controller/pcie-xilinx-cpm.c
-> +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-> @@ -6,6 +6,8 @@
->   */
+> diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
+> index f7ff8c53f412..99e786915204 100644
+> --- a/Documentation/networking/ip-sysctl.rst
+> +++ b/Documentation/networking/ip-sysctl.rst
+> @@ -68,6 +68,8 @@ ip_forward_use_pmtu - BOOLEAN
 >  
->  #include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/irqchip.h>
-> @@ -21,6 +23,13 @@
->  #include "pcie-xilinx-common.h"
+>  	- 0 - disabled
+>  	- 1 - enabled
+> +
+> +	note: Accepts integer values (0-255) but only 0/1 have defined behaviour.
 >  
->  /* Register definitions */
-> +#define XILINX_CPM_PCIE0_RST		0x00000308
-> +#define XILINX_CPM5_PCIE0_RST		0x00000318
-> +#define XILINX_CPM5_PCIE1_RST		0x0000031C
-> +#define XILINX_CPM5NC_PCIE0_RST		0x00000324
-> +
-> +#define XILINX_CPM5NC_PCIE0_FRWALL	0x00000140
-> +
->  #define XILINX_CPM_PCIE_REG_IDR		0x00000E10
->  #define XILINX_CPM_PCIE_REG_IMR		0x00000E14
->  #define XILINX_CPM_PCIE_REG_PSCR	0x00000E1C
-> @@ -93,12 +102,16 @@ enum xilinx_cpm_version {
->   * @ir_status: Offset for the error interrupt status register
->   * @ir_enable: Offset for the CPM5 local error interrupt enable register
->   * @ir_misc_value: A bitmask for the miscellaneous interrupt status
-> + * @cpm_pcie_rst: Offset for the PCIe IP reset
-> + * @cpm5nc_fw_rst: Offset for the CPM5NC Firewall
->   */
->  struct xilinx_cpm_variant {
->  	enum xilinx_cpm_version version;
->  	u32 ir_status;
->  	u32 ir_enable;
->  	u32 ir_misc_value;
-> +	u32 cpm_pcie_rst;
-> +	u32 cpm5nc_fw_rst;
->  };
->  
->  /**
-> @@ -106,6 +119,8 @@ struct xilinx_cpm_variant {
->   * @dev: Device pointer
->   * @reg_base: Bridge Register Base
->   * @cpm_base: CPM System Level Control and Status Register(SLCR) Base
-> + * @crx_base: CPM Clock and Reset Control Registers Base
-> + * @cpm5nc_fw_base: CPM5NC Firewall Attribute Base
->   * @intx_domain: Legacy IRQ domain pointer
->   * @cpm_domain: CPM IRQ domain pointer
->   * @cfg: Holds mappings of config space window
-> @@ -118,6 +133,8 @@ struct xilinx_cpm_pcie {
->  	struct device			*dev;
->  	void __iomem			*reg_base;
->  	void __iomem			*cpm_base;
-> +	void __iomem			*crx_base;
-> +	void __iomem			*cpm5nc_fw_base;
->  	struct irq_domain		*intx_domain;
->  	struct irq_domain		*cpm_domain;
->  	struct pci_config_window	*cfg;
-> @@ -475,12 +492,57 @@ static int xilinx_cpm_setup_irq(struct xilinx_cpm_pcie *port)
->   * xilinx_cpm_pcie_init_port - Initialize hardware
->   * @port: PCIe port information
->   */
-> -static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
-> +static int xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
->  {
->  	const struct xilinx_cpm_variant *variant = port->variant;
-> +	struct device *dev = port->dev;
-> +	struct gpio_desc *reset_gpio;
-> +	bool do_reset = false;
-> +
-> +	if (port->crx_base && (variant->version < CPM5NC_HOST ||
-> +			       (variant->version == CPM5NC_HOST &&
-> +				port->cpm5nc_fw_base))) {
-> +		/* Request the GPIO for PCIe reset signal and assert */
-> +		reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +		if (IS_ERR(reset_gpio))
-> +			return dev_err_probe(dev, PTR_ERR(reset_gpio),
-> +					     "Failed to request reset GPIO\n");
-> +		if (reset_gpio)
-> +			do_reset = true;
-> +	}
-> +
-> +	if (do_reset) {
-> +		/* Assert the PCIe IP reset */
-> +		writel_relaxed(0x1, port->crx_base + variant->cpm_pcie_rst);
-> +
-> +		/*
-> +		 * "PERST# active time", as per Table 2-10: Power Sequencing
-> +		 * and Reset Signal Timings of the PCIe Electromechanical
-> +		 * Specification, Revision 6.0, symbol "T_PERST".
-> +		 */
-> +		udelay(100);
-> +
 
-Are you sure that you need T_PERST here and not T_PVPERL? T_PERST is only valid
-while resuming from D3Cold i.e., after power up, while T_PVPERL is valid during
-the power up, which is usually the case when a controller driver probes. Is your
-driver relying on power being enabled by the bootloader and the driver just
-toggling PERST# to perform conventional reset of the endpoint?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Hm. In many cases any non-zero value might be interpreted as "enabled" I
+suppose that is simply "undefined behavior"?
 
