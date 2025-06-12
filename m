@@ -1,233 +1,138 @@
-Return-Path: <linux-kernel+bounces-683801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B444AD724C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:40:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490F2AD722B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796F2189C820
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EA13B9767
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6627251792;
-	Thu, 12 Jun 2025 13:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF84246774;
+	Thu, 12 Jun 2025 13:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CEkICjMo"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N7QTZ2sl"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56524244696;
-	Thu, 12 Jun 2025 13:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD5A23D2B3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749735068; cv=none; b=cMXNxBSMgVhjZsjGjDhr1PKXWDs9IABytpm1uwMFTU0wYJwJqXpxT4EdLGu6SMZItG75tlvX97OyAm3iSxj4UbcFgJ8Cl9+O17w7T6SDhSsbDL7ANxQ2x4oLHrbtC3mnrarJiAlDFhokxtHB0eKo79p9DEheenufxmDiyeuTipM=
+	t=1749734977; cv=none; b=insV1SQUR00q+Lb2ifBNYc/k04LuIwxTu7nPwq+R2Aawn7hcaJzXkiVTDjsoTM++30K6RA5WJS7HoTTJrd5MEjtkL0N9PjcI9y0iQogwJlOR9jiPNnm+6eJpesPUq7+f+bZwd1jhMoJSLzkjIFUQl4UjHO+SuJHhZ7ci6l1u/sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749735068; c=relaxed/simple;
-	bh=aMvLh341gdssraEfSVOSiKlXkAERmSxfQgVgt1vSRMo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=u8VJp0xZk1fPukiZjjEpOjjQ5++WPyLbsymjYIVInz039J7H0zl6W8CQkz99N/gG6dYgFMgihx+g3UIh+VFYWO0ksLyjZKrmqRDa/v2DihTsw/0andRWaoWRL9wEpf7zrNOBRIiYNfHTMUz5Nk+ADQowiqsgKFABL+BTn6u+lNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CEkICjMo; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CCgPWj025965;
-	Thu, 12 Jun 2025 15:30:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ERviKJzJWlZq/zWcOwo++EjzTpgeVRiokZ0eXobkweM=; b=CEkICjMoTQD0BpEW
-	suZqI97L6bGTXYEmI0lLhmS2Ix8pEnmIJHj/w4j00yCvyX9kVbX2PNQv2Lmi3QFv
-	HDEskOLiZ8Py1q+A4WKKv9CMH7uTzGKdJIeu80R6cRHVMtTnVQIxzwgDPB7xnuRR
-	ijfoEtAvYSluQMpp1+1c2fnyWw3yTPp3qkti4j/vZQcMOvp7y0BN0ay9XHXS8ARo
-	q9LRzEgc8F3S2ZV+80Xd2hmJ7VEtFHixDtvZUlg8aguRUhAMuUQeLCASt6l3l7lK
-	Mf7xPzOdZCA+HPxzb4mh8aoz4cZGpEf67SDE5YKcLNl2vlNA0BeXuZPgTh9HddHa
-	7vdsrQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474aums1xg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 15:30:51 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 53BB940046;
-	Thu, 12 Jun 2025 15:29:42 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8557AB9C2B7;
-	Thu, 12 Jun 2025 15:28:53 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Jun
- 2025 15:28:52 +0200
-Message-ID: <341950d6-1a2c-4191-948a-6e572fa74cc0@foss.st.com>
-Date: Thu, 12 Jun 2025 15:28:51 +0200
+	s=arc-20240116; t=1749734977; c=relaxed/simple;
+	bh=tyaWXuJEscIM/pRJvevrANS+YajaEw5h4VbmA0cjUGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pFqrs6sJ4qZHUjLXzKtWCiU+m/4kRwzJYTamb92QndYgSylxs4FkdU1PrC5SaxTpVBH2bgkNUaD9wMhXDp7glBJ1lFgqUKm0sEfYWi6/zb/cWbnbL3HMlT7oNa0Lf7/eTua3IVPPj2DIQ6MwOF+XJAM6QJWupjrczcxa5WY91X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N7QTZ2sl; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad89333d603so199015066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749734973; x=1750339773; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaCbwYcyztgsQSk4M0vxeNKM8wXA6XHC0XWXp5bFZsc=;
+        b=N7QTZ2sl2heJpBsAnlU70B3xw5MkCUVa2MvooNCUhE7Ln74hN5Lc+G1rCcPnc/LHuV
+         IuJwAqMvqFfqg1NeOMIoS3HMXSPyDg87dvTKRUdA1NbEj8Kz3lLhdscP2+z6eFkpD3vi
+         8rDMzQ/0PMfD74Ck1F20lzQAQWo/ajiyft6XINiThKOOTBBxh/7se28A3wNUdo6ez72I
+         slNe3nW7UvTVGOIWd1ryncu+5tBXvNGnNNXxZpmSTmErX0hGjtE3aoG0PrlvIZD4tynP
+         brCAClikq8iRuhxBoEjlalPkospjrnH5HfpGeIwr/xpQFyIF7fqVcvh+lkXpKZtUZqXL
+         5fAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749734973; x=1750339773;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OaCbwYcyztgsQSk4M0vxeNKM8wXA6XHC0XWXp5bFZsc=;
+        b=LC2cvT8+82CjGvhJf4LMdm0kTzg5kUrWj1ea9zjT9NbyrFMof0yWkNGmYqdvHpdWxc
+         33ocpqTJAO1m0FS9dWmSDN0iwjLLdflkqiKfajqme8waZLvCyfMuSllAz0kmbL0BolSH
+         Oe5uAURVJsdcce9/PZBiJCkDjlqog1ViZEtnVlpdoJ5PymdfIgzKw0MwEzCCOQcMr42k
+         oxjHzBALeH7Ep+PRhGnKFSDbikQmJW+g29armEUYiWl+rXEmdgMG2ourGGexM2YOFteF
+         SqrIAa2w1SLyZfYnMu2iHbIlLG/r/mp/ip/Nnr9+nu5mrawYHQI+gSvcetUXJeyyIL0B
+         Dyng==
+X-Forwarded-Encrypted: i=1; AJvYcCXUbcIy93piSP0yhrRfkSISmH51XUITaBLnKEASRIsmCDBTosxCx2vM1pWAUiKVq80T19xdsUahV07E7MU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPcgz69r6LtN6EjcfhNMef6ygFYgeiQOZ780zEG9cskEQciK7P
+	Hywk77CUcDjc0BOM54UlxC9YA9xvCCE+zBAsaY5Ne79VJ2eVjGqk/19XLG9Npl006FC6bonX0xx
+	BWHz4LHXSu92TPkuSLOBqj29aT/vrFuNybCRqObd/qQ==
+X-Gm-Gg: ASbGncuwHlZJx9/9E+BTBb9TZpDJN7ENO0P9RaUkcPcdgUO2kLdQ47uvucm9bxArqE1
+	Gmh6YaqXTf2UitHub6NP1TeucvHx616e2BBmqGZl+9Stqe0+SQ3JVb+txcgyvQA+KSxoYrS+lL7
+	vqr+FktLGZPg52Gh5TQwY6n9nCZh24X6g60RPhOfgkpg==
+X-Google-Smtp-Source: AGHT+IFGzGuDldvCwIGTPyVY/Q1f+5J2pGNKIoR0uw4vF1eEfVN2+qQHJPAY5DSSkd6e4ABDxQQq7ZK6AMhN3exyrJM=
+X-Received: by 2002:a17:906:4796:b0:ad5:78ca:2126 with SMTP id
+ a640c23a62f3a-ade89855d42mr727863366b.59.1749734973378; Thu, 12 Jun 2025
+ 06:29:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux-stm32] [PATCH v3 5/9] ARM: dts: stm32: add Hardware debug
- port (HDP) on stm32mp13
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-gpio@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
- <20250523-hdp-upstream-v3-5-bd6ca199466a@foss.st.com>
- <5b7a2102-ff68-4aab-a88d-0c4f9195ef95@kernel.org>
- <3c868c4b-8a0e-44b5-9d6e-3a0526d9deeb@foss.st.com>
- <3ba588ed-1614-4877-b6fc-b5aa853b8c2e@kernel.org>
- <714ad17d-53f1-4703-8e13-61c290a8da89@foss.st.com>
- <7000f63e-5e68-465d-9d7f-1a6ca0524222@kernel.org>
- <a49d0af2-07b7-4f51-941b-fa25b2879720@foss.st.com>
- <42a0b7ab-d85d-4d52-a263-4a4648c7ff05@kernel.org>
- <2865ab3a-1c20-4951-8132-4be98d73d70e@foss.st.com>
- <f1a63830-0533-4f1c-9116-32e8c1e61a8b@kernel.org>
- <26a4f12a-2295-402e-8e31-45733aa6582d@foss.st.com>
- <4f31f016-d250-41ea-b613-b074b8ea00d1@kernel.org>
- <782763e2-99d6-4533-b0db-79b618577586@foss.st.com>
- <30f8e319-4103-44ba-8f98-c01e7b0ba76c@kernel.org>
- <49e5b9ca-6860-4ebe-9856-ae550e1aff42@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <49e5b9ca-6860-4ebe-9856-ae550e1aff42@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_08,2025-06-12_02,2025-03-28_01
+References: <20250602155320.1854888-1-neelx@suse.com> <20250602155320.1854888-3-neelx@suse.com>
+ <20250602172904.GE4037@twin.jikos.cz>
+In-Reply-To: <20250602172904.GE4037@twin.jikos.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Thu, 12 Jun 2025 15:29:21 +0200
+X-Gm-Features: AX0GCFsfTbBiHDmM72eeEGEjMZ4pxvPRrfO66llnHwT1xiVFoRv5Mu6oDVr90v0
+Message-ID: <CAPjX3FdyMGKGFch-k=CmOD7wP_as_iaB9hmnbbui5=off+m+iQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] btrfs: harden parsing of compress mount options
+To: dsterba@suse.cz
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Nick Terrell <terrelln@fb.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/12/25 15:21, Clement LE GOFFIC wrote:
-> On 6/12/25 15:09, Krzysztof Kozlowski wrote:
->> On 12/06/2025 15:02, Clement LE GOFFIC wrote:
->>> On 6/12/25 13:05, Krzysztof Kozlowski wrote:
->>>> On 12/06/2025 11:31, Clement LE GOFFIC wrote:
->>>>> On 6/11/25 17:48, Krzysztof Kozlowski wrote:
->>>>>> On 11/06/2025 16:08, Clement LE GOFFIC wrote:
->>>>>>> On 6/11/25 08:35, Krzysztof Kozlowski wrote:
->>>>>>>> On 10/06/2025 15:33, Clement LE GOFFIC wrote:
->>>>>>>>> On 6/10/25 14:38, Krzysztof Kozlowski wrote:
->>>>>>>>>> On 10/06/2025 14:02, Clement LE GOFFIC wrote:
->>>>>>>>>>> On 5/29/25 11:01, Krzysztof Kozlowski wrote:
->>>>>>>>>>>> On 28/05/2025 14:14, Clement LE GOFFIC wrote:
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>> +        };
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +        hdp: pinctrl@5002a000 {
->>>>>>>>>>>>>>> +            compatible = "st,stm32mp131-hdp";
->>>>>>>>>>>>>>> +            reg = <0x5002a000 0x400>;
->>>>>>>>>>>>>>> +            clocks = <&rcc HDP>;
->>>>>>>>>>>>>>>                     status = "disabled";
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Why are you disabling it? What is missing?
->>>>>>>>>>>>>
->>>>>>>>>>>>> Nothing is missing just disabled by default.
->>>>>>>>>>>>> The node is then enabled when needed in board's dts file.
->>>>>>>>>>>> Nodes should not be disabled by default if they are 
->>>>>>>>>>>> complete. That's why
->>>>>>>>>>>> I asked what is missing. Drop.
->>>>>>>>>>>
->>>>>>>>>>> Hi Krzysztof, OK I better understand now.
->>>>>>>>>>> So yes the 'pinctrl-*' properties which are board dependent 
->>>>>>>>>>> are lacking.
->>>>>>>>>>
->>>>>>>>>> These are not properties of this node.
->>>>>>>>>
->>>>>>>>> Does this mean I should add 'pinctrl-*' properties in bindings 
->>>>>>>>> yaml file ?
->>>>>>>>> I don't get it..
->>>>>>>>
->>>>>>>> These properties have no meaning here, so the hardware 
->>>>>>>> description is
->>>>>>>> complete. You claim that you miss them thus device is incomplete 
->>>>>>>> is just
->>>>>>>> not correct: these properties do not belong here! They belong to 
->>>>>>>> the
->>>>>>>> board but even there they are totally optional. Why would they be a
->>>>>>>> required resource?
->>>>>>>>
->>>>>>>> To remind: we talk here ONLY about required resources.
->>>>>>>
->>>>>>> Yes, 'pinctrl-*' properties belongs to the board and are not 
->>>>>>> required.
->>>>>>> So nothing is missing.
->>>>>>>
->>>>>>> This hdp node in the SoC dtsi file can be enabled by default.
->>>>>>> But the hdp driver will probe and do nothing because without the
->>>>>>> 'pinctrl-*' properties from the board files it would not be able to
->>>>>>> access to any pin.
->>>>>>
->>>>>>
->>>>>> Pinctrl has other features in general, including interfaces to 
->>>>>> userspace
->>>>>> (as pretty often combined with gpio, although not sure if relevant 
->>>>>> here).
->>>>>
->>>>> You're right. Also HDP pinctrl has a GPO feature accessible from 
->>>>> userspace.
->>>>> But by default the HDP is not connected to any pad; it needs the board
->>>>
->>>> OK, then that was the answer to my first question - what is missing.
->>>> However aren't these pads connected internally also to other parts of
->>>> the SoC (like in most other vendors)?
->>>
->>> No, HDP "output pads" are only connected to SoC pinctrl to route outside
->>> the internal SoC signals for debug purpose.
->>>
->>>>> 'pinctrl-*' properties to configure the SoC pinctrl and expose HDP on
->>>>> the SoC pads.
->>>>>
->>>>> That's why for me the enabling of the driver should be in the board 
->>>>> file
->>>>> together with the SoC pinctrl configuration.
->>>>
->>>> And what are the default pad settings configured by HPD driver in
->>>> bootloader (and by bootloader I mean one of few bootloaders this is
->>>> going to be used on like U-Boot)
->>>
->>> The default is to use the GPIO of the SoC pinctrl. The HDP is not routed
->>> outside.
->>>    >>
->>>>> The userland cannot change the pinctrl alternate function mux, this is
->>>>> statically defined by the devicetree.
->>>>
->>>> If you expose GPIO then userland needs this regardless of alternate 
->>>> mux.
->>>> IOW, board level could not configure mux because it should be always
->>>> configured to safe GPIO input.
->>>
->>> For userland sight view, SoC GPIO are preferred instead of HDP.
->>> HDP is only GPO not GPIO. 'pinctrl-*' properties configure at the same
->>> time the SoC pinctrl mux to HDP and the HDP pinctrl mux to one of the
->>> HDP functions (e.g. GPO).
->> Thanks, that's explains, fine to keep it disabled. Unless it is obvious
->> for everyone, it would be nice to put it in commit msg.
-> 
-> You're welcome, so I'll provide the V6 with more information in the
-> commit message of patch [5-7] among other needed fixes.
+On Mon, 2 Jun 2025 at 19:29, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Mon, Jun 02, 2025 at 05:53:19PM +0200, Daniel Vacek wrote:
+> > Btrfs happily but incorrectly accepts the `-o compress=zlib+foo` and similar
+> > options with any random suffix.
+> >
+> > Fix that by explicitly checking the end of the strings.
+> >
+> > Signed-off-by: Daniel Vacek <neelx@suse.com>
+> > ---
+> > v3 changes: Split into two patches to ease backporting,
+> >             no functional changes.
+> >
+> >  fs/btrfs/super.c | 26 +++++++++++++++++++-------
+> >  1 file changed, 19 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> > index 6291ab45ab2a5..4510c5f7a785e 100644
+> > --- a/fs/btrfs/super.c
+> > +++ b/fs/btrfs/super.c
+> > @@ -270,9 +270,20 @@ static inline blk_mode_t btrfs_open_mode(struct fs_context *fc)
+> >       return sb_open_mode(fc->sb_flags) & ~BLK_OPEN_RESTRICT_WRITES;
+> >  }
+> >
+> > +static bool btrfs_match_compress_type(char *string, char *type, bool may_have_level)
+>
+> const also here, string, type
+>
+> > +{
+> > +     int len = strlen(type);
+> > +
+> > +     return strncmp(string, type, len) == 0 &&
+> > +             ((may_have_level && string[len] == ':') ||
+> > +                                 string[len] == '\0');
+> > +}
+> > +
+> >  static int btrfs_parse_compress(struct btrfs_fs_context *ctx,
+> >                               struct fs_parameter *param, int opt)
+> >  {
+> > +     char *string = param->string;
+>
+> and here
 
-V5*
+Can be done at merge time. Or do you want a re-send?
 
->>
->> Best regards,
->> Krzysztof
-> 
-> _______________________________________________
-> Linux-stm32 mailing list
-> Linux-stm32@st-md-mailman.stormreply.com
-> https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
 
+> > +
+> >       /*
+> >        * Provide the same semantics as older kernels that don't use fs
+> >        * context, specifying the "compress" option clears
 
