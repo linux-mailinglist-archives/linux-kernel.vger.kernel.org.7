@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-684527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74047AD7C7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:35:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3062AD7C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3FA188B32A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735253A4C93
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BD52D660E;
-	Thu, 12 Jun 2025 20:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C32D8DA1;
+	Thu, 12 Jun 2025 20:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6kYlCh9"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jT8b4bai"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0727170A26;
-	Thu, 12 Jun 2025 20:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B69E2D6636
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 20:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749760548; cv=none; b=EW3aqxkFgLiEaiweyuqAgFsOX1nR7T5xgkTlD5FsyB96PXyJMjxWSoUm1sQntGp/U7jiydYRDkwMmXUd0BDLcGpHs2SBFdPZ9BYAV4wB1C5jq8B+nstyKe/uDP6lvjRa8lxjog4V7TIezu78yL3NNzOkQ+oi3tgK5A1eYMDHImg=
+	t=1749760603; cv=none; b=Qt1hOxQWxJyBNUjNJB1zi9Rpbvu78WHJxH6qHFG96Z5a2GsHlAuQe2+X5aebPd2sOj8yyoi2tVl9IWuXwjfIk3rtMPSYruLQPp300gCkKzbpcLp28d1/vYBnzJtOvDc+j2SQYFp6ah02FdTsoDqSr9cPInriuej1rQuOtG9cgOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749760548; c=relaxed/simple;
-	bh=VKOjouIkPbjnpquNldGEURnFbitxXv7Hj66iDotFJR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9Rw2hL159mGlZrP91Mf7Z/DiUslwOcnWWczlBUjbD19iP8hw++kOWUn92uaRYjqIyZsSteO8trsHSs18FhkSktepxmpBQ9AGL1eyuzJq8zCuQ4r3jTZvFcUJZwnxEUNiGcM9qNWzLQO92YRlO7Q3FmvImE4ThprPkfsrxBksRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6kYlCh9; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2351227b098so12316755ad.2;
-        Thu, 12 Jun 2025 13:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749760546; x=1750365346; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4QWSoYdyhatNabwZvPhcwiKLVaajSTZN35CYhP3BmVc=;
-        b=b6kYlCh9kOijbqdENnbpDYmLn+Pn2IBLOyKa3RfiD0ybqqXcBEvIqnGixFH1dEKQ5i
-         7XdbTyz3w8iwdZDNSnGrAFL3St9Ve8Ku3lwH0FW6Eg8PX5QZ10HvmaEo0kXHuL08DO0+
-         b8HaxyuWw+lOQRgUcgzy3vlmj+ZUpG4IwuRIsoxMZuCly9mricCfi0XjBRv8F7UgPYNi
-         YKEiesCoLfECGne+4LE6cE+IX1MIinAQwAMY0wJeyExXNzzl1/A+z/JEr/Hr6+w2pH1T
-         jdtAZItonO3pSE6e37bO8bPi0KrwibKMm33U6EnPEZfTfZ/hQRRBVkkX41kqsaLDl3CM
-         bNDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749760546; x=1750365346;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4QWSoYdyhatNabwZvPhcwiKLVaajSTZN35CYhP3BmVc=;
-        b=wo1MhcqXd0VoT9k2c6UiZ7n3mEWzogl44l5Wv7JETC7vf/npGt3fOOSr2vwWmIAy+D
-         HsjhgMED/0TC3zeoo69+b57O5AOYPhzT5QSXChi43rFSib6kKxciaCAlV2ZUhJ5c0tj7
-         G0kABmXvqRv9Z4rims6JrsXrK9J7uSiZosgDPPArSl6mo0Ue4kh+cw9EtwkJ7Q52oPyg
-         ywu7/+szH50yKCrwmpMwMUew2YBj+r7MkFgFUz3fyiFAgeUv79w6ZMzGyf2nz0eZo9+T
-         uOCombzcD/xVPwHZxexmAtA+RwOJRyfwiQyl8bLbOtWxalx3NiMeKRtgsbXk/B9d1Gm0
-         2urQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbaKWVzvX/SuSi3poGvtFuXX1hdTTs8BT8DWQucFt1oDs26rGeqmitdEDUKDevlwIQhyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB8L9GB1q+4OXiQeFq95foESAmuSIGfXlVnkUxiFTv7RrXIRi+
-	HswzSMDYddZr3e44wm/GQX4umYklM3EJV0K+RQQUKhmXnHKdyYcXcmGx
-X-Gm-Gg: ASbGncvW4GfzHirTp8gocOBuwKaVIfJYRxZ/7dYAd9nlZhHLBwhKI9EOv6llo+FXXFP
-	Go9n88v2DzSIOhqXt+XVTudE1dIZHDPy2KtZfItQvfbcbr5gf9pxLzToPbgahf8+bH48KcZNbuj
-	ohsN2KW8p8BfMwVxiskRXFLNeYeD4x4Om3Q2s0GR3BDgTOzy32MUQR7O0n8ms2BM/45TDQIaNq9
-	vzYUyhM5v6KyIYsOMdkJHTo+0RzxgiFd49GHj3QdjqVIjyHkR94glZ6Jv8PVngU6gcYvjGRJi9l
-	rqF2VxCj6qlK5T3uWcRODB28H1+SQE6b9I3EXZxCVAET8eBCNDlDROjxvap0L+BQ1P6/3YRtcRf
-	d
-X-Google-Smtp-Source: AGHT+IH9btAUftjr4XnFGe6XjhQpAuBtvJF3bOSgSEruSMF5xgFR20FqFzrIqcz4tAx8eUoBIc5zsA==
-X-Received: by 2002:a17:903:234e:b0:235:eb8d:800b with SMTP id d9443c01a7336-2365da0858cmr6108555ad.26.1749760546142;
-        Thu, 12 Jun 2025 13:35:46 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365decb864sm1371725ad.213.2025.06.12.13.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 13:35:44 -0700 (PDT)
-Date: Thu, 12 Jun 2025 13:35:43 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Alban Crequy <alban.crequy@gmail.com>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Yucong Sun <fallentree@fb.com>, mauriciovasquezbernal@gmail.com,
-	albancrequy@microsoft.com
-Subject: Re: Loading custom BPF programs at early boot (initrd)
-Message-ID: <aEs6H4sVGY/YqcQl@pop-os.localdomain>
-References: <CAMXgnP4nfgJ+gEvXLummspjRegsZsQ=e5Q8GFAONb2yCxVZLnA@mail.gmail.com>
+	s=arc-20240116; t=1749760603; c=relaxed/simple;
+	bh=SAU5o2DQ0CfgLin1S8tnE5huEGqu4f6AQhBXhQIQYLU=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=tyRlL0sDPwUIZkLtUWpxn5DiNK2s3ZQ/ncsWZG7pGN4+7AhAu1cJINKsvT00AbAq+CM80d0JbmuyRTTRim86aZyGwHKMiptpUCdIzR6ctYXI6XTswzxJ+wMB/GTgsuDFqsB8Zzu3a0u8sLDNGtKf4GzR02k32mcvjxGFMQQ475g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jT8b4bai; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749760600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gj8SQGLLh0rljui6jnNkQMA92RjfoZpiblWpalJC6vA=;
+	b=jT8b4baiUZ2r4ib2mm7mh5UzfMe0XOYMY76yAVQePMj7SSfu2ELllHyvTL4tQDgdz3pIdD
+	epdwn4A3t0QiOJpiWxFZT+IdAtQgkC7vKPwl/VDR+hqcTwnRd974mawKnqDBskYFpdi9Gj
+	m1WVW4a7ShMfPb52UA2nEAHi6j60Cb4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-yC1TTY1fOoaf_k-updd0AA-1; Thu,
+ 12 Jun 2025 16:36:35 -0400
+X-MC-Unique: yC1TTY1fOoaf_k-updd0AA-1
+X-Mimecast-MFC-AGG-ID: yC1TTY1fOoaf_k-updd0AA_1749760593
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E95CE180AB15;
+	Thu, 12 Jun 2025 20:36:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.18])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 84881195E340;
+	Thu, 12 Jun 2025 20:36:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <2dc7318d6c74b27a49b4c64b513f3da13d980473.camel@HansenPartnership.com>
+References: <2dc7318d6c74b27a49b4c64b513f3da13d980473.camel@HansenPartnership.com> <462886.1749731810@warthog.procyon.org.uk>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
+    Jarkko Sakkinen <jarkko@kernel.org>,
+    Steve French <sfrench@samba.org>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Mimi Zohar <zohar@linux.ibm.com>, Paulo Alcantara <pc@manguebit.org>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
+    linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+    linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Keyrings: How to make them more useful
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMXgnP4nfgJ+gEvXLummspjRegsZsQ=e5Q8GFAONb2yCxVZLnA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <473710.1749760578.1@warthog.procyon.org.uk>
+Date: Thu, 12 Jun 2025 21:36:18 +0100
+Message-ID: <473711.1749760578@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Alban,
+James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 
-On Wed, Jun 04, 2025 at 04:50:15PM +0200, Alban Crequy wrote:
-> Hello,
+> One of the problems I keep tripping over is different special casing
+> for user keyrings (which are real struct key structures) and system
+> keyrings which are special values of the pointer in struct key *.
+
+It's meant to be like that.  The trusted system keyrings are static within
+system_keyring.c and not so easily accessible by kernel modules for
+direct modification, bypassing the security checks.
+
+Obviously this is merely a bit of obscurity and enforcement isn't possible
+against kernel code that is determined to modify those keyrings or otherwise
+interfere in the verification process.
+
+> For examples of what this special handling does, just look at things
+> like bpf_trace.c:bpf_lookup_{user|system}_key
 > 
-> I’m looking to load and attach a BPF program at early boot, that is
-> before the rootfs is mounted in read-write mode. This is for tracing
-> I/O operations on disk.
-> 
-> Without BPF, this can be done with a kernel module and then use Dracut
-> + dkms to update the initrd. But I am looking to avoid custom kernel
-> modules and I would like to have a solution with BPF working on most
-> Linux distros without too much maintenance work for each distro.
-> 
-> I’ve noticed the bpf_preload module, but from the discussion below, I
-> gather that it does not allow to load custom bpf modules:
-> https://github.com/torvalds/linux/tree/master/kernel/bpf/preload
-> https://lwn.net/Articles/889466/
-> 
-> Do you know of prior-art or recommendation how to do this correctly,
-> and hopefully without a custom kernel module?
+> Since the serial allocation code has a hard coded not less than 3
+> (which looks for all the world like it was designed to mean the two
+> system keyring id's were never used as user serial numbers)
 
-I must miss something here... but dracut should allow to pack any binary
-(e.g. your own eBPF program) into initramfs and allow to customize your
-own init script too. With the eBPF binary and bpftool and/or other
-loading script packed into initramfs, you can get what you want without
-bothering a kernel module?
+That's just a coincidence.  The <3 thing predates the advent of those system
+keyring magic pointers.
 
-Something like below?
+> I think we could simply allow the two system keyring ids to be passed into
+> lookup_user_key() (which now might be a bit misnamed) and special case not
+> freeing it in put_key().
 
-install_items+="/path/to/your/ebpf_program"
-# pack bpftool if you need
-# pack libbpf if you need
-inst_hook pre-mount 50 "/path/to/your_loading_script"
+If you want to make lookup_user_key() provide access to specific keyrings like
+this, just use the next negative numbers - it's not like we're likely to run
+out soon.
 
-Regards,
-Cong
+But I'd rather not let lookup_user_key() return pointers to these keyrings...
+
+David
+
 
