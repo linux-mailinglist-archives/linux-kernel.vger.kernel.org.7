@@ -1,226 +1,284 @@
-Return-Path: <linux-kernel+bounces-683090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF4CAAD68CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E4AAD67EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD2317EAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90593ADCB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5A721FF21;
-	Thu, 12 Jun 2025 07:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD4A1E25F2;
+	Thu, 12 Jun 2025 06:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRVa03V7"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1RA11Q7b"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8BB220F20;
-	Thu, 12 Jun 2025 07:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749712787; cv=none; b=gtfqZWUjQ15MQeEn9Ipz10ah7+UcdrCxd/qOxkLFy7GORlOQOaTE/nwRzna85fz/P1smQw52BlzCZGFETdqfaDOOeBq9de7+j0piRiTF9wjGXpQSHySLL6V4jc71rAhVvVTNJvTfWAJifWL4YIP9nX//D+cQVQogUp/lENOwKnA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749712787; c=relaxed/simple;
-	bh=2vB3uaZ76UmD4+u+BlBPCzWOweF29pK7hPLSmmNUsp4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BBgBWxtLlDT1Kgi1EsJo6dPzfbvGjhlKmLZ9ExS8xW/0aqhf19wN0OWT3GZew+QSOlDWRudaW6rt2dlJSVyK6LT/+kE3gKOZT2ptcWKxg452dYnGJh3NfmV4bc2DMG7CSePJLVS7Cw9KPg2k54KIlSBZUVrGJ/pqZNXPd/PUdOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRVa03V7; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45310223677so4758615e9.0;
-        Thu, 12 Jun 2025 00:19:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749712784; x=1750317584; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UNgeTzNuPPlWV6399sRDI4mM2DYoN3BkqAj0IL8GhPg=;
-        b=JRVa03V7MZASHhyCcIPRFxa1w59p/jv0vMnNhdfyvqG/vgIgmWRjLq7up4JerBIsVD
-         3OAz9rpzyvtzD83sgQj1OyN1D1Fwr4Dtce1e3FHcnTE9eUt52M3P75vWgTTBiGPkP+qB
-         Bcr93PJcGZAhJWMAunGuoWXltVUxbvzlw66zXJew+jSPl4B7ugQzUPsXdTKOU90zEiGD
-         UDk3268mFWDUcIGppHdPBCb0mTpZKrFiBWyK2KeiQgKjYllnUxajWQNZx2VrbROW5Dd6
-         SsTmiQi5q82p5ZU6fj58e8wjZNysHE9KsBqOJVhyUPbMa54NhwaWa9HuApylXOev7+pm
-         Opqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749712784; x=1750317584;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UNgeTzNuPPlWV6399sRDI4mM2DYoN3BkqAj0IL8GhPg=;
-        b=hUkans1YqPiA+Tklg9G6wIHK5BU6e+Vc2Jp/cEb6/BPWbW2auM/iedLKeSgo8uSrhz
-         6gtAlwWkVjtv5raT61ztmkV2xRHaZJS1+stH5XsL+0mrCl4zxrwm+MFtpDvHhcQ+H3xs
-         1CJej6tb13cHUX7rACPbMLkGrmXdvSzg2fIM5FRImud61vyE9mZW88+6qSl+0OHlg8yi
-         ckQiU05qB6ugLevhQEjiRJn/vC4g7JfDa+iWVfT3+c5iAclOmmT5pNEobOsxCIhgbIMj
-         +xnppICufWfpIRAKrfGWg3nIQdUhBOwpVrmI0Fv0pUEsBnl6DBq95IBw7Ajv6hoUnrYD
-         02rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrAYIOY4cFyqayeAurquA03YlG4wGkc6vHDB3F2kOj4WDjCQDMiIaNpbx7+mCcdVAVaYSjSrLfdiQ=@vger.kernel.org, AJvYcCXchpQ1sPrxomvLGalBgXib7NW2GhAkEgGKFMqxSSqcL+A9+7BDSLvH2OHlwXu6rrhj8Hygq7G7ZTk6247k@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/u4tUAnVclH56LRSFgz+weFsIS5sV/BpCr0fMYvQwKGW3IpCm
-	kvvDPEwPmhIO6dGq8njUAMYQWVWCyU141sQpXsGySxM4CMS7cPaq0KyU
-X-Gm-Gg: ASbGnctwu+GkgoYEms9Uhpa8KFarndFfKF7+gvGlBSOcKN7YxUhL3NcMQwJHybsYsR8
-	MzIXuDvfQHmlklCFEU4TthSw9DhVQLm6hah03GhUVdP1H9+/HB7sr8bi9Iibd2KLaQsJ2hyYa/a
-	hBFAlFeNtIYD4ma2pd1exRilSfPLygo9uILboDRIzYTM2y7QVXAhAiSe5CCl9MSH9Qgy1XdLEsj
-	J0BupG2jZg2fJn+Z3N+2/nydU/QfO4ZEl9ST4OWNRbL8aEPDa1idDFCB+1Sd/q2Okd5LPztp+i9
-	IMFsCMnuIPYrMkqFxtgO9D95rOVbYF54QuW58fYpURP5JbCEd838/1gJMX1n3EqN87uQNXW5T7j
-	CRPn/S/fy6/vgktdu7YYAwBCAfA+SZxzo/Yq4
-X-Google-Smtp-Source: AGHT+IH/JcWlJPaQUqLWdYPKZkUPwPJlkgLNR5yKATgmWr/yuLPXR2kI6m4eDzVYNtOSsGSLwcilIg==
-X-Received: by 2002:a05:6000:26cc:b0:3a4:e629:6504 with SMTP id ffacd0b85a97d-3a56130b81bmr1325247f8f.49.1749712783836;
-        Thu, 12 Jun 2025 00:19:43 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561a3cd11sm1108313f8f.59.2025.06.12.00.19.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 00:19:43 -0700 (PDT)
-Message-ID: <028710c4e4494285bee82ae811147b03cfa612f2.camel@gmail.com>
-Subject: Re: [PATCH v5 1/3] iio: accel: sca3000: replace error_ret labels by
- simple returns
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Andrew Ijano <andrew.ijano@gmail.com>, jic23@kernel.org
-Cc: andrew.lopes@alumni.usp.br, gustavobastos@usp.br, dlechner@baylibre.com,
-  nuno.sa@analog.com, andy@kernel.org, jstephan@baylibre.com, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 12 Jun 2025 07:20:15 +0100
-In-Reply-To: <20250611194648.18133-2-andrew.lopes@alumni.usp.br>
-References: <20250611194648.18133-1-andrew.lopes@alumni.usp.br>
-	 <20250611194648.18133-2-andrew.lopes@alumni.usp.br>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971A114A8B;
+	Thu, 12 Jun 2025 06:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749709293; cv=fail; b=fv73xDE//RCTHcCa1YZR/yDAvfJa4xpYsto22XbXNo5HTIG1B0q2rjDgD/pWVqOMPoQCOpnEAhP49cp7aL2PJiytGrrxZr/c4jiLl7xwBXJv9M/iJAEoMr6lTBf1BBMI20rjuCxhN7jht2JsJz5XqYNdWahmaUoaXFvgkrVOodU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749709293; c=relaxed/simple;
+	bh=0EVw5iEaORvrShqCWJi9bKWYiL7z4yBzXjHFFVnmrLY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DgYvoK9SCxPwjaSCpYAv6MJTM1QUD3OGcPBqiPhze6/iDa3ZTDryfrbCH0S/uHq1FwG55L3LTK6fjW1r770+PRmkMkzNxnnTmklwohyI/ZMw2s4+m50YwbS8X54q2WeXS4qjgGxl6eHB1BFBc+EYBUMxXIrBSidaQq3OR5JDk3Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1RA11Q7b; arc=fail smtp.client-ip=40.107.92.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F/QpRJq3qQq5La8NiUfp6YHfmNDktscM9wUao6Sq9PGPur+Rd+9zY7TxYUA0/+1IhsiT95d7RXR0BaDMhgrmA0FpLDPJF2RyLaVMy6dxpaElmPIrBWuugwa+72ZEj8cOxom+zIImyOjb4JPZ8RqdTXm8+iGNCB2mZaVG5/X5mfSLVOnSbPA1kcObbrYUP9TE5/DetDH2aRqf5QhvGIVadtZMmOGrn8CWyDgsy4i3WHs2AMeUlEMNI8S6mcOdZjEMUM5JIuozEKhBuMqRbUmh4g/Gjypn/gogQFc7sLsMuPdlXBfoKtVXOTjykDQxuaga5HHww0fPlcv1QqocrW9W6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4gOgozVtpOCSn2Pi7L9sAfxZS/xQb4q/SbhlxKF3dnU=;
+ b=dFh/JOF4/4/OAdsKWmzwc/nvtgA8BEamDTrd+fvdQbHRgQEg9kZwSIYs/DTdSdwr/iCTMyFp7P9Ye9gmsYDD+LOlI/VVnhVY+Mx6c3E8fjo0V3OmTPEMymx9jx6/vM7aEUfpY+aMxMCHUvUXCK4ImXAsoWgParl8QylWnBfCf9w0nY6F5TDhmCET/pJz7OMA5gC3AK0UEOc1+cVMiRPh6/e/ljguDpCyBh89HYv2Y1EBYGNJM922XAwN/3pccW3kkNCWZMTnHOvi6wPAixn8nrQt9OKey1C4V28cczmzmaG7Dhel6YraNRCe7L5v+JOasv+hpsfilp2V3wMXDnMGsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4gOgozVtpOCSn2Pi7L9sAfxZS/xQb4q/SbhlxKF3dnU=;
+ b=1RA11Q7bbzyUAX/gtFf3dREDAr2rm1WQC1upwRPLS9yijjYIVDf6QOnIYHUZ9wa/LVwUUME+msD3NcZl2Em+tx1q9XfsZImoWK9CoPzepzFI9mqOqPvx4aK77nWvLxUXmQkarBqaRrBGKuCk3cG6POvre9NlMsV3ZcAuPyDiTXg=
+Received: from SJ0PR03CA0117.namprd03.prod.outlook.com (2603:10b6:a03:333::32)
+ by IA1PR12MB8467.namprd12.prod.outlook.com (2603:10b6:208:448::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 06:21:25 +0000
+Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
+ (2603:10b6:a03:333:cafe::fb) by SJ0PR03CA0117.outlook.office365.com
+ (2603:10b6:a03:333::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.19 via Frontend Transport; Thu,
+ 12 Jun 2025 06:21:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8835.15 via Frontend Transport; Thu, 12 Jun 2025 06:21:24 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Jun
+ 2025 01:21:23 -0500
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 12 Jun 2025 01:21:22 -0500
+From: Devendra K Verma <devverma@amd.com>
+To: <devverma@amd.com>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>
+Subject: [PATCH] dmaengine: dw-edma: Add Simple Mode Support
+Date: Thu, 12 Jun 2025 11:50:26 +0530
+Message-ID: <20250612062026.1261724-1-devverma@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: devverma@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|IA1PR12MB8467:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77ed16a9-c306-463a-719e-08dda9795b8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PjU/K5jiKh5NXWg2T8Nh6m3rD25HymzVSIHExzyZK+CGK9FRfAta36S/H5NU?=
+ =?us-ascii?Q?JaqvUOIPq9Ozk81/vRLa1QUAZKiCijElKpyWX/oSiJ1/KfCXcNRwFBczD9yP?=
+ =?us-ascii?Q?cyJCFiDLjLGaHbGF73/qn5YMxC9qAmeKzW/wlibQmyVYgD9KD6OeUqt1cHeB?=
+ =?us-ascii?Q?BwjHSZwO22v0HD/15n6XFdZ/VnH8YhLazzWG+nsY3bzd+skqysJtTJ+YKbq0?=
+ =?us-ascii?Q?igKEFEtc1Eh+DTxS7tTrvzc9hby5M/wKzlwKWETP/sHStYre3SmjHqgSrosd?=
+ =?us-ascii?Q?z1KNYvfmYZoQQmfJBG17DC8efqepPBAUVqANiEkIecXvr1WFtqgUwBbM9wse?=
+ =?us-ascii?Q?66WzOeWu3D+ppEpotgX84wJP8b80s/qhbwMmi5m4fegM1abZ7Lpwc1Pa+F78?=
+ =?us-ascii?Q?Fh991OgRFHBz/FMs2VnKLx5AQiHAvntsP1aRWQenC4eDdvGVzIdKJRX8ASZH?=
+ =?us-ascii?Q?lxoY/uJ99edeQp2i25mD+4nM0t+BOZ/+GkBfchj5WcAwx9oB5nhdVj6/p8tY?=
+ =?us-ascii?Q?N8JZPWqlZqCcMf3nT1d+yPiBkqsvz3HkYg70ERzPMHClf1E84SdQ0HUp5tN6?=
+ =?us-ascii?Q?hWB3ukFjWVHbMgKUgTjFskSl1vfwy9iQ0itzOUE1nLrvZiRnuiIf5askyrnh?=
+ =?us-ascii?Q?0uV7uwOs0GQOvhJRIW3GXZur9zDElZ7N+Os96Ff33lovKF7O815cGv1pMY4D?=
+ =?us-ascii?Q?idXPJEl6N2owaTRSzKAQjdFrnDPGG4DjqtZAewcxrSonzZN/Bb8kiPBrzAKe?=
+ =?us-ascii?Q?rYthlY8RJqdo/ItEx0o0FXUsDNllaDoGgeKVmd4R8L/vHHtS0Sjur5TxID0k?=
+ =?us-ascii?Q?Sdcu7OyKUSXTURHoI/YcHhYhQv5KjWUXuJ9Swf2y1+7wFzFWgMOYPIgGYylk?=
+ =?us-ascii?Q?X0hauyisBrdBowY717nuMokDorVNZ5jHt8GK3vYR++aAIJsiddNeLXhL2BS9?=
+ =?us-ascii?Q?nc6J46ngz2bJOkPZRb7RAJujs+XfR7rLv6qF9aRPWYiB3lP7ynNNWVoS5Ak2?=
+ =?us-ascii?Q?ZEbqOAiiwuD+2eKnsDpkyDAAZZRjG/G9w8yGiiPkVShX408YewhrdFL2DjEq?=
+ =?us-ascii?Q?3hfhMDkNzZZ55m2At+ieRmDapukLTgu2sM21DaSaPswkvbmLY2cj6Bpd2Jl2?=
+ =?us-ascii?Q?DSnnEHvPcl3HqonQmqACd1sS8muBHNzjEg3o7I0k9bSUpZATVLEMe8h8fgnq?=
+ =?us-ascii?Q?yJvm1OjXb96Hd7hUQ8XMhQHUyZDPBbxUDoms9oL/B15B5KFE7zdatbDiGDxe?=
+ =?us-ascii?Q?MG13ztdr8u/jj2eSYz+gOFZzJQE5Ne00cyS5vhA7P9z3gGroAAOh73FnKQIC?=
+ =?us-ascii?Q?yMsSftT6Ydt/gTg6uYahVIYXiLrKg+9Pm3YyaYl/klclOzN8ml/jIZpHSElz?=
+ =?us-ascii?Q?eZg35P6iOQZmviAVXyfQDw8/eonVZAenZfyVFwbYKT5bkmLKPtypXxx6AhmK?=
+ =?us-ascii?Q?IqzMTFEgy+ZGcdbMps764+3ArsSduouAtb6SaQ4VT6/PeW8gok0RYAt/kEl6?=
+ =?us-ascii?Q?MQRsJ3aS+VcCNNrkJ7vWi6gFHgDIRtjjENlK?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 06:21:24.7025
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77ed16a9-c306-463a-719e-08dda9795b8d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8467
 
-On Wed, 2025-06-11 at 16:39 -0300, Andrew Ijano wrote:
-> Replace usage of error_ret labels by returning directly when handling
-> errors. Cases that do a mutex unlock were not changed.
->=20
-> Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
-> Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
-> Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
-> Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> ---
+The HDMA IP supports the simple mode (non-linked list).
+In this mode the channel registers are configured to initiate
+a single DMA data transfer. The channel can be configured in
+simple mode via peripheral param of dma_slave_config param.
 
-Code looks good. But since you're doing this you could cleanup some of the =
-switch()
-cases. Some return in every case statement while other don't (even think I =
-saw one
-one place where 'return' in the end was not needed). IIRC, there's preferen=
-ce for
-returning in place.
+Signed-off-by: Devendra K Verma <devverma@amd.com>
+---
+ drivers/dma/dw-edma/dw-edma-core.c    | 10 +++++
+ drivers/dma/dw-edma/dw-edma-core.h    |  2 +
+ drivers/dma/dw-edma/dw-hdma-v0-core.c | 53 ++++++++++++++++++++++++++-
+ include/linux/dma/edma.h              |  8 ++++
+ 4 files changed, 72 insertions(+), 1 deletion(-)
 
-- Nuno S=C3=A1
-
-> =C2=A0drivers/iio/accel/sca3000.c | 29 +++++++++++------------------
-> =C2=A01 file changed, 11 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index aabe4491efd7..bfa8a3f5a92f 100644
-> --- a/drivers/iio/accel/sca3000.c
-> +++ b/drivers/iio/accel/sca3000.c
-> @@ -369,23 +369,20 @@ static int sca3000_write_ctrl_reg(struct sca3000_st=
-ate *st,
-> =C2=A0
-> =C2=A0	ret =3D sca3000_reg_lock_on(st);
-> =C2=A0	if (ret < 0)
-> -		goto error_ret;
-> +		return ret;
-> =C2=A0	if (ret) {
-> =C2=A0		ret =3D __sca3000_unlock_reg_lock(st);
-> =C2=A0		if (ret)
-> -			goto error_ret;
-> +			return ret;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	/* Set the control select register */
-> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_CTRL_SEL_ADDR, sel);
-> =C2=A0	if (ret)
-> -		goto error_ret;
-> +		return ret;
-> =C2=A0
-> =C2=A0	/* Write the actual value into the register */
-> -	ret =3D sca3000_write_reg(st, SCA3000_REG_CTRL_DATA_ADDR, val);
-> -
-> -error_ret:
-> -	return ret;
-> +	return sca3000_write_reg(st, SCA3000_REG_CTRL_DATA_ADDR, val);
-> =C2=A0}
-> =C2=A0
-> =C2=A0/**
-> @@ -402,22 +399,20 @@ static int sca3000_read_ctrl_reg(struct sca3000_sta=
-te *st,
-> =C2=A0
-> =C2=A0	ret =3D sca3000_reg_lock_on(st);
-> =C2=A0	if (ret < 0)
-> -		goto error_ret;
-> +		return ret;
-> =C2=A0	if (ret) {
-> =C2=A0		ret =3D __sca3000_unlock_reg_lock(st);
-> =C2=A0		if (ret)
-> -			goto error_ret;
-> +			return ret;
-> =C2=A0	}
-> =C2=A0	/* Set the control select register */
-> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_CTRL_SEL_ADDR, ctrl_reg)=
-;
-> =C2=A0	if (ret)
-> -		goto error_ret;
-> +		return ret;
-> =C2=A0	ret =3D sca3000_read_data_short(st, SCA3000_REG_CTRL_DATA_ADDR, 1)=
-;
-> =C2=A0	if (ret)
-> -		goto error_ret;
-> +		return ret;
-> =C2=A0	return st->rx[0];
-> -error_ret:
-> -	return ret;
-> =C2=A0}
-> =C2=A0
-> =C2=A0/**
-> @@ -577,7 +572,8 @@ static inline int __sca3000_get_base_freq(struct sca3=
-000_state
-> *st,
-> =C2=A0
-> =C2=A0	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
-> =C2=A0	if (ret)
-> -		goto error_ret;
-> +		return ret;
-> +
-> =C2=A0	switch (SCA3000_REG_MODE_MODE_MASK & st->rx[0]) {
-> =C2=A0	case SCA3000_REG_MODE_MEAS_MODE_NORMAL:
-> =C2=A0		*base_freq =3D info->measurement_mode_freq;
-> @@ -591,7 +587,6 @@ static inline int __sca3000_get_base_freq(struct sca3=
-000_state
-> *st,
-> =C2=A0	default:
-> =C2=A0		ret =3D -EINVAL;
-> =C2=A0	}
-> -error_ret:
-> =C2=A0	return ret;
-> =C2=A0}
-> =C2=A0
-> @@ -834,7 +829,7 @@ static ssize_t sca3000_read_av_freq(struct device *de=
-v,
-> =C2=A0	val =3D st->rx[0];
-> =C2=A0	mutex_unlock(&st->lock);
-> =C2=A0	if (ret)
-> -		goto error_ret;
-> +		return ret;
-> =C2=A0
-> =C2=A0	switch (val & SCA3000_REG_MODE_MODE_MASK) {
-> =C2=A0	case SCA3000_REG_MODE_MEAS_MODE_NORMAL:
-> @@ -857,8 +852,6 @@ static ssize_t sca3000_read_av_freq(struct device *de=
-v,
-> =C2=A0		break;
-> =C2=A0	}
-> =C2=A0	return len;
-> -error_ret:
-> -	return ret;
-> =C2=A0}
-> =C2=A0
-> =C2=A0/*
+diff --git a/drivers/dma/dw-edma/dw-edma-core.c b/drivers/dma/dw-edma/dw-edma-core.c
+index c2b88cc99e5d..4dafd6554277 100644
+--- a/drivers/dma/dw-edma/dw-edma-core.c
++++ b/drivers/dma/dw-edma/dw-edma-core.c
+@@ -235,9 +235,19 @@ static int dw_edma_device_config(struct dma_chan *dchan,
+ 				 struct dma_slave_config *config)
+ {
+ 	struct dw_edma_chan *chan = dchan2dw_edma_chan(dchan);
++	struct dw_edma_peripheral_config *pconfig = config->peripheral_config;
++	unsigned long flags;
++
++	if (WARN_ON(config->peripheral_config &&
++		    config->peripheral_size != sizeof(*pconfig)))
++		return -EINVAL;
+ 
++	spin_lock_irqsave(&chan->vc.lock, flags);
+ 	memcpy(&chan->config, config, sizeof(*config));
++
++	chan->non_ll_en = pconfig ? pconfig->non_ll_en : false;
+ 	chan->configured = true;
++	spin_unlock_irqrestore(&chan->vc.lock, flags);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/dma/dw-edma/dw-edma-core.h b/drivers/dma/dw-edma/dw-edma-core.h
+index 71894b9e0b15..c0266976aa22 100644
+--- a/drivers/dma/dw-edma/dw-edma-core.h
++++ b/drivers/dma/dw-edma/dw-edma-core.h
+@@ -86,6 +86,8 @@ struct dw_edma_chan {
+ 	u8				configured;
+ 
+ 	struct dma_slave_config		config;
++
++	bool				non_ll_en;
+ };
+ 
+ struct dw_edma_irq {
+diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+index e3f8db4fe909..3237c807a18e 100644
+--- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
++++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+@@ -225,7 +225,7 @@ static void dw_hdma_v0_sync_ll_data(struct dw_edma_chunk *chunk)
+ 		readl(chunk->ll_region.vaddr.io);
+ }
+ 
+-static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
++static void dw_hdma_v0_ll_start(struct dw_edma_chunk *chunk, bool first)
+ {
+ 	struct dw_edma_chan *chan = chunk->chan;
+ 	struct dw_edma *dw = chan->dw;
+@@ -263,6 +263,57 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
+ 	SET_CH_32(dw, chan->dir, chan->id, doorbell, HDMA_V0_DOORBELL_START);
+ }
+ 
++static void dw_hdma_v0_non_ll_start(struct dw_edma_chunk *chunk)
++{
++	struct dw_edma_chan *chan = chunk->chan;
++	struct dw_edma *dw = chan->dw;
++	struct dw_edma_burst *child;
++	u32 val;
++
++	list_for_each_entry(child, &chunk->burst->list, list) {
++		SET_CH_32(dw, chan->dir, chan->id, ch_en, BIT(0));
++
++		/* Source address */
++		SET_CH_32(dw, chan->dir, chan->id, sar.lsb, lower_32_bits(child->sar));
++		SET_CH_32(dw, chan->dir, chan->id, sar.msb, upper_32_bits(child->sar));
++
++		/* Destination address */
++		SET_CH_32(dw, chan->dir, chan->id, dar.lsb, lower_32_bits(child->dar));
++		SET_CH_32(dw, chan->dir, chan->id, dar.msb, upper_32_bits(child->dar));
++
++		/* Transfer size */
++		SET_CH_32(dw, chan->dir, chan->id, transfer_size, child->sz);
++
++		/* Interrupt setup */
++		val = GET_CH_32(dw, chan->dir, chan->id, int_setup) |
++				HDMA_V0_STOP_INT_MASK | HDMA_V0_ABORT_INT_MASK |
++				HDMA_V0_LOCAL_STOP_INT_EN | HDMA_V0_LOCAL_ABORT_INT_EN;
++
++		if (!(dw->chip->flags & DW_EDMA_CHIP_LOCAL))
++			val |= HDMA_V0_REMOTE_STOP_INT_EN | HDMA_V0_REMOTE_ABORT_INT_EN;
++
++		SET_CH_32(dw, chan->dir, chan->id, int_setup, val);
++
++		/* Channel control setup */
++		val = GET_CH_32(dw, chan->dir, chan->id, control1);
++		val &= ~HDMA_V0_LINKLIST_EN;
++		SET_CH_32(dw, chan->dir, chan->id, control1, val);
++
++		/* Ring the doorbell */
++		SET_CH_32(dw, chan->dir, chan->id, doorbell, HDMA_V0_DOORBELL_START);
++	}
++}
++
++static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
++{
++	struct dw_edma_chan *chan = chunk->chan;
++
++	if (!chan->non_ll_en)
++		dw_hdma_v0_ll_start(chunk, first);
++	else
++		dw_hdma_v0_non_ll_start(chunk);
++}
++
+ static void dw_hdma_v0_core_ch_config(struct dw_edma_chan *chan)
+ {
+ 	struct dw_edma *dw = chan->dw;
+diff --git a/include/linux/dma/edma.h b/include/linux/dma/edma.h
+index 3080747689f6..82d808013a66 100644
+--- a/include/linux/dma/edma.h
++++ b/include/linux/dma/edma.h
+@@ -101,6 +101,14 @@ struct dw_edma_chip {
+ 	struct dw_edma		*dw;
+ };
+ 
++/**
++ * struct dw_edma_peripheral_config - peripheral spicific configurations
++ * @non_ll_en:		 enable non-linked list mode of operations
++ */
++struct dw_edma_peripheral_config {
++	bool			non_ll_en;
++};
++
+ /* Export to the platform drivers */
+ #if IS_REACHABLE(CONFIG_DW_EDMA)
+ int dw_edma_probe(struct dw_edma_chip *chip);
+-- 
+2.43.0
 
 
