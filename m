@@ -1,170 +1,145 @@
-Return-Path: <linux-kernel+bounces-683238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96762AD6AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:34:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C87CAD6AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F31A37A4D48
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E395917F312
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B883221268;
-	Thu, 12 Jun 2025 08:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0068223704;
+	Thu, 12 Jun 2025 08:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YmThgej+"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ofTkKVd0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD490EC2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FC922259F;
+	Thu, 12 Jun 2025 08:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749717274; cv=none; b=kT5JsnMIWHJRtPM96HfYva/4t4F8QrKexrNFY/U66/5SJgYlPW4M5JRihR5wIecKDscnAAnHjzO6OHfWwQ78Su/M4+CvTLul5D+dpJ2+xUYqlzxu2Jy+lmyYsC0BEkoxED+L16rEgyY2E0qJfUHSOjPjLtDTwFJKlmtEzC5qaPM=
+	t=1749717400; cv=none; b=kvA3SKVkr+2OU5lkOzSWutKyCAbE4+S+snm3Pa5EJp/UDalZTzxw8JSIo4u2SmyhR3RJWRRDQCpX+FJqCMR08+NRbGERayFrOylWuan6RiPXytN9C6aTMkdt6r17p0YEgvzQHEHm8TkajeSqF+2vftGDFN2ocE1d1eZiX/wwugQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749717274; c=relaxed/simple;
-	bh=KmseBCGkBltkQJB+bXiWrUlTYOiIhBbRpBapI2IUh0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=igqWKDSq2TXfBSMukuiuNZQ3UZKFEUQJgdFS31b+zQ8wPAapqBrPoyCeWqx1///FoIVJsB99e/VzoDZ0NBRElQF1bI2Nx9JV/sf3Na0axdM64aSxbrVdYvl/KEwNcJxOUa9JWxReE7NjM9EFyQjtIIS8nl5tCH8Fr26YEuUC0Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YmThgej+; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad8a8da2376so116296166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749717271; x=1750322071; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7g8CYkJXGi+LouyxL2Tn5ZZ861hnviLISrxqX1kUus=;
-        b=YmThgej+evWuaKj9jRAJaB/6T/nZicY1AvMwtE03QVTf+d05a4KlKLbepIyZlmcHyu
-         pRBYbHfQY+jPxJMoznnfBG+0Ad1BuuNWAGJAgQLjf7ua8Poiw18HojHKtjBDcOKkhCk2
-         3yY26Ourd6RZnnWJrC8lmSC8y99LKQdur8sj9ofx6YX+ioGmfjw7DB5rjW3fnPNiCeOt
-         eDPrCtwTKkHx26omZwe2hirdMENj1uuetR1V90tcid1F8dotqOiKuiiobB+q3BO/wmZ4
-         RCjXlGPSFTlntvlH9nXuZ6aRwpgA11z5wbdKDGwGi/jxPDtpHd2ZNAIuXukKml6R3qg8
-         n1BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749717271; x=1750322071;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R7g8CYkJXGi+LouyxL2Tn5ZZ861hnviLISrxqX1kUus=;
-        b=L5rxUj0hzbwyTFA7CwD2DfNyh3ALTHamKSVPATuyz63yOn8bVLJMlNP3cHd6qFcfRZ
-         eVjTsjB6MqgDQPhnfytKHVytxqLKNwMHIG9Ei+arCeUObI3eS/y+NYPccGgW71wv3g4G
-         l1u7A5BZ6BBxcx7S2EdXydGFbJp88vcd9CbnR3n5mloyoMKdb61+So2NpsE/u4o5opnT
-         kWU+H+/XkU/jHNSQnez19RCbqCTPzfsnLeo2+hxUvswycVMh+0nfoFaOoH3zsollstx/
-         m04EwsYUrPc9PKwvPdk6v/vNGlqfxQRSyp/U2s5YnaxCvpvNcX+6MDLAd/KNSyn1L7B9
-         2oPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWugUO1DK7Cm0z3WqBfKjFObsO3dz2Rj3Dbvnfz6N2mWEmewBPk98ulKBTamrxAZN4pE/lhNcbRvGPD8iQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq7chk0Yw4WfU1Qs67dMWBlezFT/5bLDBJ9G9qQoQxN4/czbKR
-	biaheuvOQu6t6iMbbqEjqG10WuLHRNuDaa6gET2nGYYv3vJFAbQ2TDJVbTkdSg6VX70qF6SvaP8
-	qWFX3zZctfhIeZ2UwoPTgSxxwfbA1thZ+wADQWmbvLw==
-X-Gm-Gg: ASbGnctvRbsT7H2aNMqgL8Bqljjc0dkR/vP9D5utIj/gJHB7GhnQv7+TQlzOLQwrbUk
-	a0Kh4jcPXMGI1El2m9qQM0YjgwqigopXBWxDxssC11KjxOdwJ0AeJmvEWuLUu3lMRw/rGkZLXtR
-	4bCv2Q8+FGO2xMfLbxArwj/bPyISSEN64A2kk25EkdCg==
-X-Google-Smtp-Source: AGHT+IFVugGpngvrzd5noKecu2O4BZGb+svn8vwAenX7BptOiMp6XK92yeX+JaMUqYjvqa9ZA798w5EpZZYsteYSr4c=
-X-Received: by 2002:a17:907:25cb:b0:ade:3b84:8ef6 with SMTP id
- a640c23a62f3a-adea92898f9mr197761666b.23.1749717271081; Thu, 12 Jun 2025
- 01:34:31 -0700 (PDT)
+	s=arc-20240116; t=1749717400; c=relaxed/simple;
+	bh=QWusFwyJCN64pgDrgn4qUvLzOMhMziLG3us47SDguwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pZ1cz4z8XEQjtPG+rtiZi6lSAbyi0f3mUx01Oxq+TqjLSHhH9wUSK9pDLcwXppZWEvXYV9mXGDxswyV8F3QGUINSCTvtgnSexi2pgocXKLC7W8iV85rkX9RZSIlBEdTn6c8SBRt3Iedkak4j0OA73bsd0si2hw7rYoDReocfJ4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ofTkKVd0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7XJC8029246;
+	Thu, 12 Jun 2025 08:36:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KGDSpqUz2cRHwtVx5MfMXXVll6loPNtH2PlrNsxSpfg=; b=ofTkKVd0Q0Zt+QOI
+	6Rxv36enIwTPCNsdpV2W1nMCyq5wGvwjSsfa+TPoX3zrIEaNDOilEWxvACyr0F24
+	qMmA1BepnGHhl6UxP/21KORTd0MKkwiYiYoVG19Bl5a5U1lqZYT1ZxadH+K7at6/
+	VaACQ/Dv2tQK52WFegzjYUJBQslCCIZFbpfgTMUymcL3TvZgkTMMwXI3iPnyKQN0
+	e+K8v2BDsfe9OvP6qOFVmCrP1rbdODCUNqiNh3d2psCuQ+0nVNtrd88v6Bhjr/4+
+	I9Olzap8oRWzIH83IfAeilQHJkZEgSGcjIFf87bzyUW7843zfj8N9RbAhUoLsLym
+	d+GrFA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn6ftng-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 08:36:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55C8aXla003933
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 08:36:33 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Jun
+ 2025 01:36:31 -0700
+Message-ID: <ec013f29-ae0a-46bf-9ddb-4b66bdc13f3f@quicinc.com>
+Date: Thu, 12 Jun 2025 16:36:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512172321.3004779-1-neelx@suse.com> <20250606172811.GY4037@twin.jikos.cz>
-In-Reply-To: <20250606172811.GY4037@twin.jikos.cz>
-From: Daniel Vacek <neelx@suse.com>
-Date: Thu, 12 Jun 2025 10:34:20 +0200
-X-Gm-Features: AX0GCFs0W2NEeBrD98LqU3d1NgoxS3gwTh7DNtFowD5ncNr0sDzIgrfzpQTGXbc
-Message-ID: <CAPjX3FdP0k8YRR7vA+g_deUqEt=1wnRZXV-9gaTHwur43HVJ6w@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: index buffer_tree using node size
-To: dsterba@suse.cz
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2] wifi: ath11k: mark reset srng lists as uninitialized
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+CC: Jeff Johnson <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250529035708.3136232-1-senozhatsky@chromium.org>
+ <5857380e-ced9-4118-b9a0-ce926b25c11c@quicinc.com>
+ <rxaibpgtf37w3th5lnt3w574w443yononqjoglyfktlcxe26qg@jpmtkckrotzp>
+ <2f77045c-6763-4fc4-bf09-50fd9b76a394@quicinc.com>
+ <xr3n5pbohquhaloonctfqvpb2r3eu6fi5jly7ms4pgcotqmqzh@msrgbaawafsj>
+ <ce3c0e51-4df0-4164-adcd-e98f2edee454@quicinc.com>
+ <qqhs2mzhg6mgq23wej5a65iau4ysfjh2raakcsvwc4fuqtpwk2@4ouqfld6mrnd>
+ <d48a228a-5f48-4732-b12d-78f03541ae9e@quicinc.com>
+ <kuawjsglndjvwmq2ki2kctvgcdci6mhfp7juux7tzo3g6h5txh@hddxo4o5raea>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <kuawjsglndjvwmq2ki2kctvgcdci6mhfp7juux7tzo3g6h5txh@hddxo4o5raea>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA2NSBTYWx0ZWRfXyr2I2dZrcyqf
+ XzUFrwXlCwpHGFgTJKdr/UWXWprSmaVOpnkV6So82UzCBULjEx9CWy0rS4Z3m42TiKuYBslE91B
+ qlXmtosD+k/u9mVIiw8yX0OdpZFZunQvl67vpHthk4Z6vPEDpiFCv++2ocHmDkVSgnsNMlaXEpe
+ lYx02GzQDKS4jmsg73F7dJiK0lib91UTI2XoCNmGZN7INsakOMSGiJdNWjxFIYDQXmqnJPKgSax
+ bHiS1nKIyS7bEgjIoWv2UYXZ+puXgA80TUl7txWM9zJyzrZF4R5jtfg+3ZjrgKbk88MCSQ5HEq4
+ xxZFMK7jxquignScttLo6XIXRQQicjofmtpxgrrCEdJvswUvnldb7qGM+aM3bfEG8U+3fU2iTzc
+ dJo+t1wxtlfKyPaVsS5+JKTzAO/lkBQxcG4qc7GslZLjbu/BVe+FW8vsMUciqBQgkOIDwvYS
+X-Proofpoint-GUID: A_Y639chkTDV-Im6Xres6sd79qBSG-sN
+X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=684a9191 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
+ a=ATmZjSGgzA2CBFBw7-EA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: A_Y639chkTDV-Im6Xres6sd79qBSG-sN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_06,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ mlxlogscore=659 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506120065
 
-On Fri, 6 Jun 2025 at 19:28, David Sterba <dsterba@suse.cz> wrote:
->
-> On Mon, May 12, 2025 at 07:23:20PM +0200, Daniel Vacek wrote:
-> > So far we are deriving the buffer tree index using the sector size. But each
-> > extent buffer covers multiple sectors. This makes the buffer tree rather sparse.
-> >
-> > For example the typical and quite common configuration uses sector size of 4KiB
-> > and node size of 16KiB. In this case it means the buffer tree is using up to
-> > the maximum of 25% of it's slots. Or in other words at least 75% of the tree
-> > slots are wasted as never used.
-> >
-> > We can score significant memory savings on the required tree nodes by indexing
-> > the tree using the node size instead. As a result far less slots are wasted
-> > and the tree can now use up to all 100% of it's slots this way.
-> >
-> > Signed-off-by: Daniel Vacek <neelx@suse.com>
->
-> This is a useful improvement, so we should continue and merge it. The
-> performance improvements should be done so we get some idea. Runtime and
-> slab savings.
 
-Performance-wise this fix is not that significant. With my testing I
-did not notice any changes in runtime performance.
-Slab usage is _relatively_ significant though - about 2/3 of the btrfs
-radix_tree_node objects are saved. Though in _absolute_ numbers
-system-wide it's still within the level of noise. Without this fix
-btrfs uses a bit over 1% of the radix_tree_node slab cache while with
-the fix it falls below half a percent from what I was able to pull
-from the memory.
 
-> One coding comment, please rename node_bits to nodesize_bits so it's
-> consistent with sectorsize and sectorsize_bits.
+On 6/12/2025 4:31 PM, Sergey Senozhatsky wrote:
+> On (25/06/12 16:14), Baochen Qiang wrote:
+>>> <4>[23562.576034] ath11k_qmi_driver_event_work+0xbd/0x1050 [ath11k (HASH:6cea 4)]
+>>> <4>[23562.576058] worker_thread+0x389/0x930
+>>> <4>[23562.576065] kthread+0x149/0x170
+>>> <4>[23562.576074] ? start_flush_work+0x130/0x130
+>>> <4>[23562.576078] ? kthread_associate_blkcg+0xb0/0xb0
+>>> <4>[23562.576084] ret_from_fork+0x3b/0x50
+>>> <4>[23562.576090] ? kthread_associate_blkcg+0xb0/0xb0
+>>> <4>[23562.576096] ret_from_fork_asm+0x11/0x20
+>>>
+>>>
+>>> There are clearly two ath11k_hal_dump_srng_stats() calls, the first
+>>> one happens before crash recovery, the second happens right after
+>>> and presumably causes UAF, because ->initialized flag is not cleared.
+>>
+>> So with above we can confirm our guess.
+>>
+>> Could you refine your commit message with these details such that readers have a clear
+>> understanding of this issue?
+> 
+> Sure, I can do that.   I didn't want to throw my guesses into the commit
+> message, stale ->initialized flag looked like a good enough justification
 
-Right.
+Yeah, it is indeed enough. But would be better to disclose any known issue caused by it.
 
-> >  fs/btrfs/disk-io.c   |  1 +
-> >  fs/btrfs/extent_io.c | 30 +++++++++++++++---------------
-> >  fs/btrfs/fs.h        |  3 ++-
-> >  3 files changed, 18 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> > index 5bcf11246ba66..dcea5b0a2db50 100644
-> > --- a/fs/btrfs/extent_io.c
-> > +++ b/fs/btrfs/extent_io.c
-> > @@ -4294,9 +4294,9 @@ static int try_release_subpage_extent_buffer(struct folio *folio)
-> >  {
-> >       struct btrfs_fs_info *fs_info = folio_to_fs_info(folio);
-> >       struct extent_buffer *eb;
-> > -     unsigned long start = folio_pos(folio) >> fs_info->sectorsize_bits;
-> > +     unsigned long start = folio_pos(folio) >> fs_info->node_bits;
-> >       unsigned long index = start;
-> > -     unsigned long end = index + (PAGE_SIZE >> fs_info->sectorsize_bits) - 1;
-> > +     unsigned long end = index + (PAGE_SIZE >> fs_info->node_bits) - 1;
->
-> This looks a bit suspicious, page size is 4k node size can be 4k .. 64k.
-> It's in subpage code so sector < page, the shift it's always >= 0. Node
-> can be larger so the shift result would be 0 but as a result of 4k
-> shifted by "16k".
+> for the patch.  But I can send out v3 with a more detailed commit message.
 
-This comes from commit 19d7f65f032f ("btrfs: convert the buffer_radix
-to an xarray").
-You can still have 64 KiB page with 16 KiB node size. So this still
-looks sound to me.
+Thanks.
 
-> >       int ret;
-> >
-> >       xa_lock_irq(&fs_info->buffer_tree);
-> > diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-> > index cf805b4032af3..8c9113304fabe 100644
-> > --- a/fs/btrfs/fs.h
-> > +++ b/fs/btrfs/fs.h
-> > @@ -778,8 +778,9 @@ struct btrfs_fs_info {
-> >
-> >       struct btrfs_delayed_root *delayed_root;
-> >
-> > -     /* Entries are eb->start / sectorsize */
-> > +     /* Entries are eb->start >> node_bits */
-> >       struct xarray buffer_tree;
-> > +     int node_bits;
->
-> u32 and pleas move it to nodesize.
 
-Sure.
 
