@@ -1,269 +1,255 @@
-Return-Path: <linux-kernel+bounces-683194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9B8AD6A31
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C220AD6A3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E01F417D328
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DE817A677
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F40227BB5;
-	Thu, 12 Jun 2025 08:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479A91AAA1F;
+	Thu, 12 Jun 2025 08:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPPI86LD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yZobqC+f"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46F225A37;
-	Thu, 12 Jun 2025 08:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2BE20F069
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749716096; cv=none; b=HkXmS9KvvrxpFJd81fMNcLXi1tBhnB+1AMQu0QsLYERGXuJyijePo0SBCD2caBkt2LSHmuUINmDeRNizEkvkkm3N5PlvQe+NhPjiBbub+tj2k/IhnDkNeSjWFUqh4RcivoJFNIWHU+aIIX8r3AiRleT1PPo+KgQ61HalsiAgvMY=
+	t=1749716155; cv=none; b=Qnu/UYL3zOpg//OtOUuqnzP5BWGTSygE8h/r7OasQf6P4fv7RVZ3txfO9Woc4dxQGVK5kqWtSo29ONaVUYvGgOZdt2aE1LCmWO+1yqkR2gb+UI3FFVkdrHOiFS4YJ8vHt6JvBl0kjnDHR+gfu7DzV0WhCUvfXqCFTlV4IwuSR0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749716096; c=relaxed/simple;
-	bh=CSCzDg77pjTCT23c+61nq16hO8ePvStoc3+J9Y/Niv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MHxH+fSDaT+7V344k5d6xl4orxY87dzS9LCYLRKLRQvTB9y9D6Quq3irqQ+lThEszvo3VRPFsuoSe/Qj5MR+a5KcrfNhRk/WUFcin1/UH3EtDIzahzVSDJZxzydjCjnFo0rBUHVNAckVsxL/ZcAeZfFWvWHQTHKeEPJYaltGAKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPPI86LD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BKKDcl014570;
-	Thu, 12 Jun 2025 08:14:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i1DsMF9bQe1fAE3hp7+oZe/bYHD5wUMyAR5wN2oIKBs=; b=gPPI86LDk1D1YPez
-	43lrG+wGHMkro8X5iH85XqQNyEIogJgjsScDlv751lplAhPux3uA9v6JRF3chzbd
-	uegKXjjvhQTsjCF5GkhCeSTlV6mHlNBUpkXLW23++tr264VwdKGFyzSOjN8al9cF
-	l17McFSQA/BXwQHsIfS4lvAzFJ0d5Tp30SO31JH9mwlmAGAupnyH+rIB8nX3RIW6
-	tZo2Lr5utlAAemKDPyyvnepr2F53BgH3QOd2TAjx374OW9RejM9iFNpc2qcTHDlV
-	3y9DYdiURJ8Rvr0/3W3buz/IFSHtariv2PD9C8RzOUms3scz4BGfQRF2ZKPaJtkv
-	YF3IbQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 476fmnfcra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 08:14:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55C8Ek89020510
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 08:14:46 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Jun
- 2025 01:14:44 -0700
-Message-ID: <d48a228a-5f48-4732-b12d-78f03541ae9e@quicinc.com>
-Date: Thu, 12 Jun 2025 16:14:41 +0800
+	s=arc-20240116; t=1749716155; c=relaxed/simple;
+	bh=/jeQZnIfpThiYHh9X0HmtQFj4BhvzZaipUw5tvNkriU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uOtD6pnpwbXSLVKygv8yVo4KhUVMryP7CNraYk1Kh2rsBmn0DsW4HEm+lf7z9IOTGadzDxHS71JuVNuwVzJXinhZU/IeecMrhPlJZaQ1nDyKCsoopcIGG98LrGdg+mFcKDZ3DwIILXnzxKov8DeHTJocfwdYqP3hi9c1jnFYShI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yZobqC+f; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a4ef2c2ef3so616498f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749716152; x=1750320952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KWyjynHQNpgV3HTjIQYJq/1ALGEGZYiMXXTWfwfkttE=;
+        b=yZobqC+fdx+avId4OuadbxJdWQczeJB1UjAf9V7Sfz7vATwuZBH8cWm6t5OVmE6iCg
+         dRdthVNbkvxYPoyKPwIS6SwHe3/vm7BQ+NXWPbZ/5mRLEDSeUQq1JbtNuf3cGVHqjtbf
+         l4z1Qg4Qz+VRDQbnYSalWnkACBcS+Br5iUukglX6FYVWdsiv9K0i0DTpkSc5nJFnTO1v
+         KJbf2XSO3oHKX5JvaOpF0n+jRmiXlHIdLCuSYwG9SYa6SJksiSjoY4daITlQ2w4uwh3h
+         oRoh0Chyq51hMS/AB/9vKYA/C1QiTVQr8n5HO9mjyb6YgFZzX9wcJAy6FRUx7c6CfYH7
+         6cWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749716152; x=1750320952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KWyjynHQNpgV3HTjIQYJq/1ALGEGZYiMXXTWfwfkttE=;
+        b=ikWK5LehTlWY0icH8qetIY933dI7GxFZA1CmExq8fDu2BkdLfl36HXYSD77wCmuo4/
+         0cMFMlgKyZpX6zg971rVscpOyqtoNV7TBUdi5pWyOGlf4jPV7aIKwio+6KYEPoxiKIKQ
+         6xLjZ6Z8906pjYH75+KyGNcmLK+pFG1aQgHwQW6Dk6aJeZlDI8EMms4HIH0G1FrDVcqO
+         oJYm0cBPmQ2x+ESmPPFlL881ZmGpsryqNz8pXXYwejMlGCnRiegMbGT7bLLtejMhtI32
+         UxeNctKn0c/HnSMvo+pFs3eJAmTp2pG/lSPA8SaUeowJyfAS72wcwUQTEVv+A1q0fPIf
+         s+tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlhhlQ09E5pzz5NxFzVfTWe9Jj4q1e0vk2Por2zkW3MK9erlHmwZbEtNJWd8Hsj9lGr0XCT7bbYtwDX/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdKmuWCKxb458HBXNW1N7MsjEZ9LU8XYwSuFn9KzgHShVL8xk5
+	5l3/f6Rx1/IdAINjRtCvNPzT39uU//dtVpxxNGIaunRrWHsWRjl/lMy1cecoSI+v12WQb/Uk1pX
+	PGpkNp1v1mRCVSdtYokhAS4Y98Gt7WMnuIHmaCKV+
+X-Gm-Gg: ASbGncvtlFfAlda5wVPUwYLtLjRrhixHVosaP72gged4NhcEpGTQ1nBXCYoEo2YVN/q
+	upIdNN+uNhV01djSruxigy7I6CjpSlvfrda1IxYU2+GP3Hq430DkdITVufBND0KoSJUhjJHrJNi
+	Cn3OlXME1Chk9JB6Je9bDKltGceYBZh5eoG2Au7F8eVGwYk434TXS2ZjNHzm5BgOOUDLULgGf/N
+	g==
+X-Google-Smtp-Source: AGHT+IH30hgR4r6+sEqcFf/3abnlDKHzRPthg4iHGK2e9UxDCWAveCuvDarVkhtnsGCIiTfPZBrtFHOKc3CFAss+V6k=
+X-Received: by 2002:a05:6000:1a8b:b0:3a4:cb4f:ac2a with SMTP id
+ ffacd0b85a97d-3a561369ec6mr1620198f8f.21.1749716151578; Thu, 12 Jun 2025
+ 01:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2] wifi: ath11k: mark reset srng lists as uninitialized
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-CC: Jeff Johnson <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250529035708.3136232-1-senozhatsky@chromium.org>
- <5857380e-ced9-4118-b9a0-ce926b25c11c@quicinc.com>
- <rxaibpgtf37w3th5lnt3w574w443yononqjoglyfktlcxe26qg@jpmtkckrotzp>
- <2f77045c-6763-4fc4-bf09-50fd9b76a394@quicinc.com>
- <xr3n5pbohquhaloonctfqvpb2r3eu6fi5jly7ms4pgcotqmqzh@msrgbaawafsj>
- <ce3c0e51-4df0-4164-adcd-e98f2edee454@quicinc.com>
- <qqhs2mzhg6mgq23wej5a65iau4ysfjh2raakcsvwc4fuqtpwk2@4ouqfld6mrnd>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <qqhs2mzhg6mgq23wej5a65iau4ysfjh2raakcsvwc4fuqtpwk2@4ouqfld6mrnd>
+References: <20250603205416.49281-1-dakr@kernel.org> <20250603205416.49281-4-dakr@kernel.org>
+ <DAKEK5YPNCAU.3LQGI98GGG4KF@kernel.org>
+In-Reply-To: <DAKEK5YPNCAU.3LQGI98GGG4KF@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 12 Jun 2025 10:15:38 +0200
+X-Gm-Features: AX0GCFsoCQk7kWRWd9C3B--8QDSmH-75a87FOwEo4gnRqfgaYYHM30s6I935Ods
+Message-ID: <CAH5fLgharxhAHrP6OFZxXrWKSTsMp=vY5sGvUKzca3yhRJEW7A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: devres: fix race in Devres::drop()
+To: Benno Lossin <lossin@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, chrisi.schrefl@gmail.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: luLERCugnvn7yL8ZQMCwbINdR597sg8r
-X-Proofpoint-GUID: luLERCugnvn7yL8ZQMCwbINdR597sg8r
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA2MyBTYWx0ZWRfX6pifoiT+9CGa
- DTzafXBl6EljcqN0eeWBTbSwZsEHhTKqsMd9m4f/IVgScTUGN/c/u+RsnO/8LK6ERZVbNBRUP+c
- SmMeETLvWzHZuJ9ZI0ooJaEZhQHF6FmeKk44j1b7b98HuMDEAmOAwl9ajcsLfRJ197slIVB67u1
- R0JcRLbr2kzcnCOLpRlKWw+jjspQs5P1nmT3pfpF3+cWGoeTuofVaCHsjyyrrZ2+d+hCrQa6TQy
- NyxsHL7uHYsH4CIgQPTkvG2niSbBwg2wV2G1WHWfEBVAVipMLLotOdlfrelzPnuMZVewZtihJN1
- b6Oc2bLevc90X5VVbRLlC24z92mQKkCAJ5CzCR1IVPDAV0K3QikeutUL7KaN/Ki4iwPhDCHG3wA
- qVYxDU7Hv1fM6Ut/5YAo8BVJM9hzYP/G3mLkQwctpylVrITMnINzx/pZ21xvFCAbd8bYZaf2
-X-Authority-Analysis: v=2.4 cv=K8wiHzWI c=1 sm=1 tr=0 ts=684a8c76 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
- a=PQx6h1c_D4Aj2YnHI-0A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_05,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506120063
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 12, 2025 at 10:13=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
+rote:
+>
+> On Tue Jun 3, 2025 at 10:48 PM CEST, Danilo Krummrich wrote:
+> > In Devres::drop() we first remove the devres action and then drop the
+> > wrapped device resource.
+> >
+> > The design goal is to give the owner of a Devres object control over wh=
+en
+> > the device resource is dropped, but limit the overall scope to the
+> > corresponding device being bound to a driver.
+> >
+> > However, there's a race that was introduced with commit 8ff656643d30
+> > ("rust: devres: remove action in `Devres::drop`"), but also has been
+> > (partially) present from the initial version on.
+> >
+> > In Devres::drop(), the devres action is removed successfully and
+> > subsequently the destructor of the wrapped device resource runs.
+> > However, there is no guarantee that the destructor of the wrapped devic=
+e
+> > resource completes before the driver core is done unbinding the
+> > corresponding device.
+> >
+> > If in Devres::drop(), the devres action can't be removed, it means that
+> > the devres callback has been executed already, or is still running
+> > concurrently. In case of the latter, either Devres::drop() wins revokin=
+g
+> > the Revocable or the devres callback wins revoking the Revocable. If
+> > Devres::drop() wins, we (again) have no guarantee that the destructor o=
+f
+> > the wrapped device resource completes before the driver core is done
+> > unbinding the corresponding device.
+>
+> I don't understand the exact sequence of events here. Here is what I got
+> from your explanation:
+>
+> * the driver created a `Devres<T>` associated to their device.
+> * their physical device gets disconnected and thus the driver core
+>   starts unbinding the device.
+> * simultaneously, the driver drops the `Devres<T>` (eg because the
+>   driver initiated the physical removal)
+> * now `devres_callback` is being called from both `Devres::Drop` (which
+>   calls `Devres::remove_action`) and from the driver core.
+> * they both call `inner.data.revoke()`, but only one wins, in our
+>   example `Devres::drop`.
+> * but now the driver core has finished running `devres_callback` and
+>   finalizes unbinding the device, even though the `Devres` still exists
+>   though is almost done being dropped.
+>
+> I don't see a race here. Also the `dev: ARef<Device>` should keep the
+> device alive until the `Devres` is dropped, no?
 
+The race is that Devres is used when the contents *must* be dropped
+before the device is unbound. This example violates that by having
+device unbind finish before the contents are dropped.
 
-On 6/12/2025 4:00 PM, Sergey Senozhatsky wrote:
-> On (25/06/12 15:49), Baochen Qiang wrote:
->>> My understanding is that the driver first fails to reconfigure
->>>
->>> <4>[163874.555825] ath11k_pci 0000:01:00.0: already resetting count 2
->>> <4>[163884.606490] ath11k_pci 0000:01:00.0: failed to wait wlan mode request (mode 4): -110
->>> <4>[163884.606508] ath11k_pci 0000:01:00.0: qmi failed to send wlan mode off: -110
->>> <3>[163884.606550] ath11k_pci 0000:01:00.0: failed to reconfigure driver on crash recovery
->>>
->>> so ath11k_core_reconfigure_on_crash() calls ath11k_hal_srng_deinit(),
->>> which destroys the srng lists, but leaves the stale initialized flag.
->>> So next time ath11k_hal_dump_srng_stats() is called everything looks ok,
->>> but in fact everything is not quite ok.
->>
->> OK, we have a second crash while the first crash is still in recovering. And guess the
->> first recovery fails such that srng is not reinitialized. Then after a
->> wait-for-first-recovery time out, the second recovery starts, this results in
->> ath11k_hal_dump_srng_stats() getting called and hence the kernel crash.
->>
->> Could you please share complete verbose kernel log? you may enable it with
->>
->> 	modprobe ath11k debug_mask=0xffffffff
->> 	modprobe ath11k_pci
-> 
-> Unfortunately I don't have a reproducer.  We just see that some of the
-> consumer devices crash on resume and all we get is ramoops.  We can't
-> do any debugging on consumer devices.
-
-no worry, below log is enough.
-
-> 
-> This is all I have:
-> 
-> <3>[23518.302240] Last interrupt received for each group:
-> <3>[23518.302243] ath11k_pci 0000:01:00.0: group_id 0 22511ms before
-> <3>[23518.302246] ath11k_pci 0000:01:00.0: group_id 1 14440788ms before
-> <3>[23518.302248] ath11k_pci 0000:01:00.0: group_id 2 14440788ms before
-> <3>[23518.302250] ath11k_pci 0000:01:00.0: group_id 3 14440788ms before
-> <3>[23518.302252] ath11k_pci 0000:01:00.0: group_id 4 14736571ms before
-> <3>[23518.302253] ath11k_pci 0000:01:00.0: group_id 5 14736571ms before
-> <3>[23518.302261] ath11k_pci 0000:01:00.0: group_id 6 14440789ms before
-> <3>[23518.302263] ath11k_pci 0000:01:00.0: group_id 7 22541ms before
-> <3>[23518.302265] ath11k_pci 0000:01:00.0: group_id 8 24724ms before
-> <3>[23518.302266] ath11k_pci 0000:01:00.0: group_id 9 23315ms before
-> <3>[23518.302268] ath11k_pci 0000:01:00.0: group_id 10 25238ms before
-> <3>[23518.302270] ath11k_pci 0000:01:00.0: dst srng id 0 tp 5312, cur hp 5312, cached hp 5312 last hp 5312 napi processed before 22541ms
-> <3>[23518.302272] ath11k_pci 0000:01:00.0: dst srng id 1 tp 27664, cur hp 27664, cached hp 27664 last hp 27664 napi processed before 24724ms
-> <3>[23518.302274] ath11k_pci 0000:01:00.0: dst srng id 2 tp 12432, cur hp 12432, cached hp 12432 last hp 12432 napi processed before 23315ms
-> <3>[23518.302276] ath11k_pci 0000:01:00.0: dst srng id 3 tp 1424, cur hp 1424, cached hp 1424 last hp 1424 napi processed before 25238ms
-> <3>[23518.302278] ath11k_pci 0000:01:00.0: dst srng id 4 tp 0, cur hp 0, cached hp 0 last hp 0 napi processed before 22512ms
-> <3>[23518.302280] ath11k_pci 0000:01:00.0: src srng id 5 hp 0, reap_hp 248, cur tp 0, cached tp 0 last tp 0 napi processed before 14440789ms
-> <3>[23518.302282] ath11k_pci 0000:01:00.0: src srng id 8 hp 950, reap_hp 950, cur tp 950, cached tp 280 last tp 280 napi processed before 22512ms
-> <3>[23518.302284] ath11k_pci 0000:01:00.0: dst srng id 9 tp 19526, cur hp 19526, cached hp 19526 last hp 19526 napi processed before 22512ms
-> <3>[23518.302286] ath11k_pci 0000:01:00.0: src srng id 16 hp 3832, reap_hp 3832, cur tp 3832, cached tp 3824 last tp 3824 napi processed before 22758ms
-> <3>[23518.302288] ath11k_pci 0000:01:00.0: src srng id 24 hp 0, reap_hp 248, cur tp 0, cached tp 0 last tp 0 napi processed before 14440789ms
-> <3>[23518.302290] ath11k_pci 0000:01:00.0: dst srng id 25 tp 0, cur hp 0, cached hp 0 last hp 0 napi processed before 14440789ms
-> <3>[23518.302292] ath11k_pci 0000:01:00.0: src srng id 32 hp 12, reap_hp 8, cur tp 12, cached tp 12 last tp 8 napi processed before 14736834ms
-> <3>[23518.302294] ath11k_pci 0000:01:00.0: src srng id 35 hp 96, reap_hp 88, cur tp 92, cached tp 92 last tp 92 napi processed before 21573ms
-> <3>[23518.302296] ath11k_pci 0000:01:00.0: src srng id 36 hp 176, reap_hp 164, cur tp 176, cached tp 168 last tp 168 napi processed before 22447ms
-> <3>[23518.302298] ath11k_pci 0000:01:00.0: src srng id 39 hp 0, reap_hp 124, cur tp 0, cached tp 0 last tp 0 napi processed before 14440789ms
-> <3>[23518.302300] ath11k_pci 0000:01:00.0: src srng id 57 hp 54, reap_hp 54, cur tp 58, cached tp 58 last tp 58 napi processed before 22485ms
-> <3>[23518.302302] ath11k_pci 0000:01:00.0: src srng id 58 hp 584, reap_hp 584, cur tp 588, cached tp 588 last tp 588 napi processed before 22429ms
-> <3>[23518.302304] ath11k_pci 0000:01:00.0: src srng id 61 hp 1020, reap_hp 1020, cur tp 0, cached tp 0 last tp 0 napi processed before 14736834ms
-> <3>[23518.302306] ath11k_pci 0000:01:00.0: dst srng id 81 tp 116, cur hp 116, cached hp 116 last hp 116 napi processed before 22485ms
-> <3>[23518.302308] ath11k_pci 0000:01:00.0: dst srng id 82 tp 1176, cur hp 1176, cached hp 1176 last hp 1176 napi processed before 22429ms
-> <3>[23518.302309] ath11k_pci 0000:01:00.0: dst srng id 85 tp 0, cur hp 0, cached hp 0 last hp 0 napi processed before 14440789ms
-> <3>[23518.302311] ath11k_pci 0000:01:00.0: src srng id 104 hp 65532, reap_hp 65532, cur tp 0, cached tp 0 last tp 0 napi processed before 14736836ms
-> <3>[23518.302313] ath11k_pci 0000:01:00.0: src srng id 105 hp 0, reap_hp 504, cur tp 0, cached tp 0 last tp 0 napi processed before 14440789ms
-> <3>[23518.302315] ath11k_pci 0000:01:00.0: dst srng id 106 tp 245496, cur hp 245496, cached hp 245496 last hp 245496 napi processed before 22512ms
-> <3>[23518.302317] ath11k_pci 0000:01:00.0: dst srng id 109 tp 5704, cur hp 5704, cached hp 5704 last hp 5704 napi processed before 22512ms
-> <3>[23518.302319] ath11k_pci 0000:01:00.0: src srng id 128 hp 3182, reap_hp 3182, cur tp 7428, cached tp 7428 last tp 7428 napi processed before 22541ms
-> <3>[23518.302321] ath11k_pci 0000:01:00.0: src srng id 129 hp 0, reap_hp 2046, cur tp 0, cached tp 0 last tp 0 napi processed before 14440789ms
-> <3>[23518.302323] ath11k_pci 0000:01:00.0: src srng id 132 hp 1690, reap_hp 1690, cur tp 1692, cached tp 1692 last tp 1692 napi processed before 22429ms
-> <3>[23518.302324] ath11k_pci 0000:01:00.0: dst srng id 133 tp 0, cur hp 0, cached hp 0 last hp 0 napi processed before 22512ms
-> <3>[23518.302326] ath11k_pci 0000:01:00.0: src srng id 144 hp 0, reap_hp 2046, cur tp 0, cached tp 0 last tp 0 napi processed before 14440789ms
-> <3>[23518.302328] ath11k_pci 0000:01:00.0: src srng id 147 hp 1948, reap_hp 1948, cur tp 1950, cached tp 1950 last tp 1950 napi processed before 22429ms
-> <3>[23518.302330] ath11k_pci 0000:01:00.0: dst srng id 148 tp 0, cur hp 0, cached hp 0 last hp 0 napi processed before 14440789ms
-> <4>[23519.369310] ath11k_pci 0000:01:00.0: failed to receive control response completion, polling..
-> <3>[23520.393292] ath11k_pci 0000:01:00.0: Service connect timeout
-> <3>[23520.393302] ath11k_pci 0000:01:00.0: failed to connect to HTT: -110
-> <3>[23520.394087] ath11k_pci 0000:01:00.0: failed to start core: -110
-> <4>[23520.710478] ath11k_pci 0000:01:00.0: firmware crashed: MHI_CB_EE_RDDM
-> <4>[23520.710550] ath11k_pci 0000:01:00.0: already resetting count 2
-> <4>[23530.761544] ath11k_pci 0000:01:00.0: failed to wait wlan mode request (mode 4): -110
-> <4>[23530.761562] ath11k_pci 0000:01:00.0: qmi failed to send wlan mode off: -110
-> <3>[23530.761595] ath11k_pci 0000:01:00.0: failed to reconfigure driver on crash recovery
-> <6>[23561.813605] mhi mhi0: Requested to power ON
-> <6>[23561.813627] mhi mhi0: Power on setup success
-> <6>[23561.899318] mhi mhi0: Wait for device to enter SBL or Mission mode
-> <6>[23562.530990] ath11k_pci 0000:01:00.0: chip_id 0x12 chip_family 0xb board_id 0xff soc_id 0x400c1211
-> <6>[23562.531010] ath11k_pci 0000:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-> <3>[23562.575723] ath11k_pci 0000:01:00.0: Last interrupt received for each CE:
-> <3>[23562.575742] ath11k_pci 0000:01:00.0: CE_id 0 pipe_num 0 14781107ms before
-> <3>[23562.575751] ath11k_pci 0000:01:00.0: CE_id 1 pipe_num 1 66758ms before
-> <3>[23562.575756] ath11k_pci 0000:01:00.0: CE_id 2 pipe_num 2 66702ms before
-> <3>[23562.575759] ath11k_pci 0000:01:00.0: CE_id 3 pipe_num 3 66720ms before
-> <3>[23562.575763] ath11k_pci 0000:01:00.0: CE_id 5 pipe_num 5 14485062ms before
-> <3>[23562.575766] ath11k_pci 0000:01:00.0: CE_id 7 pipe_num 7 14485062ms before
-> <3>[23562.575770] ath11k_pci 0000:01:00.0: CE_id 8 pipe_num 8 14485062ms before
-> <3>[23562.575773] ath11k_pci 0000:01:00.0:
-> <3>[23562.575773] Last interrupt received for each group:
-> <3>[23562.575778] ath11k_pci 0000:01:00.0: group_id 0 66785ms before
-> <3>[23562.575781] ath11k_pci 0000:01:00.0: group_id 1 14485062ms before
-> <3>[23562.575785] ath11k_pci 0000:01:00.0: group_id 2 14485062ms before
-> <3>[23562.575788] ath11k_pci 0000:01:00.0: group_id 3 14485062ms before
-> <3>[23562.575791] ath11k_pci 0000:01:00.0: group_id 4 14780845ms before
-> <3>[23562.575795] ath11k_pci 0000:01:00.0: group_id 5 14780845ms before
-> <3>[23562.575798] ath11k_pci 0000:01:00.0: group_id 6 14485062ms before
-> <3>[23562.575801] ath11k_pci 0000:01:00.0: group_id 7 66814ms before
-> <3>[23562.575805] ath11k_pci 0000:01:00.0: group_id 8 68997ms before
-> <3>[23562.575808] ath11k_pci 0000:01:00.0: group_id 9 67588ms before
-> <3>[23562.575812] ath11k_pci 0000:01:00.0: group_id 10 69511ms before
-> <1>[23562.575828] BUG: unable to handle page fault for address: ffffa007404eb010
-> <1>[23562.575833] #PF: supervisor read access in kernel mode
-> <1>[23562.575837] #PF: error_code(0x0000) - not-present page
-> <6>[23562.575842] PGD 100000067 P4D 100000067 PUD 10022d067 PMD 100b01067 PTE 0
-> <4>[23562.575852] Oops: 0000 [#1] PREEMPT SMP NOPTI
-> <4>[23562.575873] Workqueue: ath11k_qmi_driver_event ath11k_qmi_driver_event_work [ath11k]
-> <4>[23562.575896] RIP: 0010:ath11k_hal_dump_srng_stats+0x2b4/0x3b0 [ath11k]
-> <4>[23562.575916] Code: 6b c0 44 89 f2 89 c1 e8 4a 14 06 00 41 be e8 25 00 00 eb 6e 42 0f b6 84 33 78 ff ff ff 89 45 d0 46 8b 7c 33 d8 4a 8b 44 33 e0 <44> 8b 20 46 8b 6c 33 e8 42 8b 04 33 48 89 45 c8 48 8b 3d 45 93 fd
-> <4>[23562.575922] RSP: 0018:ffffa00759ed3c50 EFLAGS: 00010246
-> <4>[23562.575926] RAX: ffffa007404eb010 RBX: ffff9eab4ea60000 RCX: 382d128991c49600
-> <4>[23562.575930] RDX: 00000000ffffffea RSI: ffffa00759ed3998 RDI: ffff9eac66017488
-> <4>[23562.575934] RBP: ffffa00759ed3c90 R08: ffffffffbd649d80 R09: 0000000000005ffd
-> <4>[23562.575937] R10: 0000000000000004 R11: 00000000ffffdfff R12: ffff9eab4ea61c90
-> <4>[23562.575941] R13: ffff9eab4ea60000 R14: 0000000000002828 R15: 0000000000000000
-> <4>[23562.575945] FS: 0000000000000000(0000) GS:ffff9eac66000000(0000) knlGS:0000000000000000
-> <4>[23562.575949] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> <4>[23562.575953] CR2: ffffa007404eb010 CR3: 0000000136e24000 CR4: 0000000000750ee0
-> <4>[23562.575956] PKRU: 55555554
-> <4>[23562.575959] Call Trace:
-> <4>[23562.575965] <TASK>
-> <4>[23562.575978] ? __die_body+0xae/0xb0
-> <4>[23562.575987] ? page_fault_oops+0x381/0x3e0
-> <4>[23562.575995] ? exc_page_fault+0x69/0xa0
-> <4>[23562.576003] ? asm_exc_page_fault+0x22/0x30
-> <4>[23562.576015] ? ath11k_hal_dump_srng_stats+0x2b4/0x3b0 [ath11k (HASH:6cea 4)]
-> <4>[23562.576034] ath11k_qmi_driver_event_work+0xbd/0x1050 [ath11k (HASH:6cea 4)]
-> <4>[23562.576058] worker_thread+0x389/0x930
-> <4>[23562.576065] kthread+0x149/0x170
-> <4>[23562.576074] ? start_flush_work+0x130/0x130
-> <4>[23562.576078] ? kthread_associate_blkcg+0xb0/0xb0
-> <4>[23562.576084] ret_from_fork+0x3b/0x50
-> <4>[23562.576090] ? kthread_associate_blkcg+0xb0/0xb0
-> <4>[23562.576096] ret_from_fork_asm+0x11/0x20
-> 
-> 
-> There are clearly two ath11k_hal_dump_srng_stats() calls, the first
-> one happens before crash recovery, the second happens right after
-> and presumably causes UAF, because ->initialized flag is not cleared.
-
-So with above we can confirm our guess.
-
-Could you refine your commit message with these details such that readers have a clear
-understanding of this issue?
-
-
+> > Depending on the specific device resource, this can potentially lead to
+> > user-after-free bugs.
+> >
+> > In order to fix this, implement the following logic.
+> >
+> > In the devres callback, we're always good when we get to revoke the
+> > device resource ourselves, i.e. Revocable::revoke() returns true.
+> >
+> > If Revocable::revoke() returns false, it means that Devres::drop(),
+> > concurrently, already drops the device resource and we have to wait for
+> > Devres::drop() to signal that it finished dropping the device resource.
+> >
+> > Note that if we hit the case where we need to wait for the completion o=
+f
+> > Devres::drop() in the devres callback, it means that we're actually
+> > racing with a concurrent Devres::drop() call, which already started
+> > revoking the device resource for us. This is rather unlikely and means
+> > that the concurrent Devres::drop() already started doing our work and w=
+e
+> > just need to wait for it to complete it for us. Hence, there should not
+> > be any additional overhead from that.
+> >
+> > (Actually, for now it's even better if Devres::drop() does the work for
+> > us, since it can bypass the synchronize_rcu() call implied by
+> > Revocable::revoke(), but this goes away anyways once I get to implement
+> > the split devres callback approach, which allows us to first flip the
+> > atomics of all registered Devres objects of a certain device, execute a
+> > single synchronize_rcu() and then drop all revocable objects.)
+> >
+> > In Devres::drop() we try to revoke the device resource. If that is *not=
+*
+> > successful, it means that the devres callback already did and we're goo=
+d.
+> >
+> > Otherwise, we try to remove the devres action, which, if successful,
+> > means that we're good, since the device resource has just been revoked
+> > by us *before* we removed the devres action successfully.
+> >
+> > If the devres action could not be removed, it means that the devres
+> > callback must be running concurrently, hence we signal that the device
+> > resource has been revoked by us, using the completion.
+> >
+> > This makes it safe to drop a Devres object from any task and at any poi=
+nt
+> > of time, which is one of the design goals.
+> >
+> > Fixes: 8ff656643d30 ("rust: devres: remove action in `Devres::drop`") [=
+1]
+> > Reported-by: Alice Ryhl <aliceryhl@google.com>
+> > Closes: https://lore.kernel.org/lkml/aD64YNuqbPPZHAa5@google.com/
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/devres.rs | 33 ++++++++++++++++++++++++++-------
+> >  1 file changed, 26 insertions(+), 7 deletions(-)
+>
+> > @@ -161,7 +166,12 @@ fn remove_action(this: &Arc<Self>) {
+> >          //         `DevresInner::new`.
+> >          let inner =3D unsafe { Arc::from_raw(ptr) };
+> >
+> > -        inner.data.revoke();
+> > +        if !inner.data.revoke() {
+> > +            // If `revoke()` returns false, it means that `Devres::dro=
+p` already started revoking
+> > +            // `inner.data` for us. Hence we have to wait until `Devre=
+s::drop()` signals that it
+> > +            // completed revoking `inner.data`.
+> > +            inner.revoke.wait_for_completion();
+> > +        }
+> >      }
+> >  }
+> >
+> > @@ -232,6 +242,15 @@ fn deref(&self) -> &Self::Target {
+> >
+> >  impl<T> Drop for Devres<T> {
+> >      fn drop(&mut self) {
+> > -        DevresInner::remove_action(&self.0);
+> > +        // SAFETY: When `drop` runs, it is guaranteed that nobody is a=
+ccessing the revocable data
+> > +        // anymore, hence it is safe not to wait for the grace period =
+to finish.
+> > +        if unsafe { self.revoke_nosync() } {
+> > +            // We revoked `self.0.data` before the devres action did, =
+hence try to remove it.
+> > +            if !DevresInner::remove_action(&self.0) {
+>
+> Shouldn't this not be inverted? (ie 's/!//')
+>
+> Otherwise this will return `true`, get negated and we don't run the code
+> below and the `inner.data.revoke()` in `devres_callback` will return
+> `false` which will get negated and thus it will never return.
+>
+> ---
+> Cheers,
+> Benno
+>
+> > +                // We could not remove the devres action, which means =
+that it now runs concurrently,
+> > +                // hence signal that `self.0.data` has been revoked su=
+ccessfully.
+> > +                self.0.revoke.complete_all();
+> > +            }
+> > +        }
+> >      }
+> >  }
+>
 
