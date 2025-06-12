@@ -1,215 +1,191 @@
-Return-Path: <linux-kernel+bounces-684614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426D0AD7E31
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:04:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C15AD7EFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEA23A9F1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F49C188B838
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322862DCC0C;
-	Thu, 12 Jun 2025 22:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0942C2E1739;
+	Thu, 12 Jun 2025 23:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LB9pU7bY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mr0/8HI4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PKC3iKPy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A97D22F384
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 22:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741B521ABC1;
+	Thu, 12 Jun 2025 23:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749765843; cv=none; b=TdlL/GMuEGzvOdAShPg588os53qLcLqBA3yifQheU8gdMv5LMx6oukKR590mVhDCJvuzwFhBiKdNENFiL1+ovquzc6GJpTLb9USe2GyoFvBk1TXv5mTii5AXPwwuwfokJc4rTQqOUU5A2K3gYcIsgXBw1x+YLeofeUtNG/1pTns=
+	t=1749771516; cv=none; b=RmxTO5qTVXbsXQoIj29KpruC9LFgyoMaopnZahTbyi2u3hmJrHNor+g36zcHbxkmyvkrwgO8SyQRG7tF1uSEi/c3skPHguID7lAnDVGmP6k1PdX1dqbxszujS5Ke+FqHLrOaIgPekLCBETKAFtfqRjuMpiiNfwKbTsKtKz775tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749765843; c=relaxed/simple;
-	bh=xOp9+ySyWdeiHDLdGbl/XZz0dLdjjfSbf4vKk+LB4fI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NmVWVBFvbEdXTDyBy6QIreTkqDtoa0hPNMXlJdcsKY7P+B6pPf+Ar+gXcF23QaGgJdxm9JAFEvfegDhSFepxBgPXj1G8CFAnRKYnisKEry2eCRbvfOPVuP88bErVr6LYyICMQrXKz0+c0tNyzweM9TtIMpa79OqrBe1c4qRWAlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LB9pU7bY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mr0/8HI4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749765839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pO1ViRykxcTrtYuBECel5X50y24X/phoMDcyLguDBKU=;
-	b=LB9pU7bYYR6Zo2KbH6bWPXFZND2rSF1cFqqqYqtjNjb52QalI0Xi4jdq4UgWp1Ur8IXczQ
-	I84m6/pyzLNqHeCV12EOM94lD81jdPFnnYoVj8tp6CPLtwci1gz190TniQzbfBk+tKyZlY
-	P32qpqoMli7UoFoq0u6qHSU5KXbe0PMOZuvwQbSVbSXpeH1Xr/pxC2X/VTYjFkaa63STQi
-	XyaIReUlQexQ01XetFmgWL/hsOqDsdNIwRACroYtJNI2ai0Pdvovkr5CHcpYU1kutWF7Rr
-	ANWhHmGkkg6yd8hPfOhq27rz7y2A3nvw85F3kFsd9mdNwFGi4W8gJkvWU2VpTQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749765839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pO1ViRykxcTrtYuBECel5X50y24X/phoMDcyLguDBKU=;
-	b=Mr0/8HI4NtdiePd5gCmPQNWZu6eya3kT/DNttCgPmZlYmyaPuM1kAAozwaBufHa6VdP76h
-	7FwxMyOwf4IGoZDQ==
-To: Waiman Long <longman@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 3/3] timers: Disable memory pre-allocation of timer
- debug objects
-In-Reply-To: <20250606031539.1004644-4-longman@redhat.com>
-References: <20250606031539.1004644-1-longman@redhat.com>
- <20250606031539.1004644-4-longman@redhat.com>
-Date: Fri, 13 Jun 2025 00:03:58 +0200
-Message-ID: <87o6ussjld.ffs@tglx>
+	s=arc-20240116; t=1749771516; c=relaxed/simple;
+	bh=UCmoJIN3PnIxrjeH6Dj0H0MqBwJIGb75XNIGz9od9sk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=umEfCCDpnH86h24IB3WQsNM0GNIKuijQ7OAK4xuCCugoOCPj1Vok+o87BSlic04L03dBlkJXrJ/aj4SyoTmWUzlaIOZ+Hl4Tm9QH+2KU7prp/QUB3+gDpaW32z5v7ruEe/46+CnXwFvvKvk9l76jDSWctaj3JoayVEumx41WpUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PKC3iKPy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CGuaLK027168;
+	Thu, 12 Jun 2025 23:38:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9zUJ4QASD9b5811bOefXsI
+	McEI2B4llFlLFwYd1rv9c=; b=PKC3iKPyrDZvRj7ciUnkWDUoIHcIfMFvdUZ3Xo
+	QLs43pGk0yygnsA4MhOSE1/TqSjY22IZMgPdzEv8EHTdOtTjTPMLzzM0Sz667sdE
+	I24uOxqYpWg7KY9RV1SEpq1BiUh690pNoI6qQ4mi60aQM7yoKGdvQHYjS8+9ecdv
+	H/T24v9Da8KHfHf7PDV63GlrVIGax/wvk29VpuA6T7sC5FXjwxsz/lRPNxo5Jv6O
+	BTYJh1VLfKap0be2uz8y10FLtm+snfgp+o++GTThXnaZC8RIVbpZOf0YnIq2IUAR
+	tpnEUG9fXtXMhHwB6Oo87+DDkBpw/S5fyjDBjkL09zi0IhAQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ccvj33d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 23:38:30 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55CNcQ49017023;
+	Thu, 12 Jun 2025 23:38:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 474egnstc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 23:38:26 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55CNcPeq016972;
+	Thu, 12 Jun 2025 23:38:25 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 55CNcPrU016961
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 23:38:25 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
+	id AFC995AB; Thu, 12 Jun 2025 21:24:53 +0530 (+0530)
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com,
+        kernel@oss.qualcomm.com, Wasim Nazir <quic_wasimn@quicinc.com>
+Subject: [PATCH v10 0/3] qcom: Add support for IQ-9075-evk board
+Date: Thu, 12 Jun 2025 21:24:31 +0530
+Message-ID: <20250612155437.146925-1-quic_wasimn@quicinc.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: PoNWqPUswIXl62ntH-v1vDfQ9NBpKsdp
+X-Authority-Analysis: v=2.4 cv=TsLmhCXh c=1 sm=1 tr=0 ts=684b64f6 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=2OP31JLycSEo0J8rzGgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: PoNWqPUswIXl62ntH-v1vDfQ9NBpKsdp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDE4MSBTYWx0ZWRfXx67HCsbXGSOW
+ EW/Aq38U6/YHkA49CMLtTBrl9fj6atQ1cYAVsR7z6Hq0vzy1ZoxCHh1tXn4Dfi8rczjdsxE03to
+ bVbI2ReJRWrY3zdLME1V+/uRreiAC7I8/NWE4GPtVM0RAMgAU+aMRloQbJLztge+Zip43wT0imw
+ 1G0gEbEhIRtxSQxCxR8yVKu0ojfjkA7lvkkRfLx4tFLeft/dygtIrmKy+c7PhsNcIguxeMkl+2H
+ ECyvGw0idcWNTkkurfD/1epF/7SWiFVKFOeRkZI5t01Vh1zt83+ifSdtNwwuJmlHysg8LQnkaLt
+ HyZ+gws9k01EeIRleZbqUtCiT5j+pb8qXsD4RC1+laIoH0+OvqxrnUquGMGXaJzgaSuTtasliTq
+ SqKsjJXJsK2CG4r1vFuqckCALJSvrQvlY/W/hvIlHltZu/zRSb2JAdYDbyEmbH/RXk4SOd8W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506120181
 
-On Thu, Jun 05 2025 at 23:15, Waiman Long wrote:
-> A circular locking dependency lockdep splat was hit recently with a
-> debug kernel. The dependency chain (in reverse order) is:
->
->   -> #3 (&zone->lock){-.-.}-{2:2}:
->   -> #2 (&base->lock){-.-.}-{2:2}:
->   -> #1 (&console_sch_key){-.-.}-{2:2}:
->   -> #0 (console_owner){..-.}-{0:0}:
->
-> The last one is from calling printk() within the rmqueue_bulk() call in
-> mm/page_alloc.c. The "base->lock" is from lock_timer_base() and first
-> one is due to calling add_timer_on() leading to debug_object_activate()
-> doing actual memory allocation acquiring the zone lock.
->
-> The console_sch_key comes from a s390 console driver in driver/s390/cio.
-> The console_sch_key -> timer dependency happens because the console
-> driver is setting a timeout value while holding its lock. Apparently it
-> is pretty common for a console driver to use timer for timeout or other
-> timing purposes. So this may happen to other console drivers as well.
->
-> One way to break this circular locking dependency is to disallow any
-> memory allocation when a timer debug object is being handled. Do this by
-> setting the ODEBUG_FLAG_NO_ALLOC flag in the timer_debug_descr
-> structure.
+This series:
 
-Well. I'm absolutely not convinced that this is the right approach.
+Add support for Qualcomm's iq9-evk board using QCS9075 SOC.
 
-I have a hard time to find the printk() in rmqueue_bulk(). But if there
-is one then it has to go or has to be converted to a deferred printk()
-simply because that code can be called from so many contexts, which all
-can legitimately create a lock dependency chain into the console drivers
-in some way or the other. That's like invoking printk() from the guts of
-the scheduler or locking code.
+QCS9075 is compatible IoT-industrial grade variant of SA8775p SOC.
+Unlike QCS9100, it doesn't have safety monitoring feature of
+Safety-Island(SAIL) subsystem, which affects thermal management.
 
-> The figures below show the number of times the debug_objects_fill_pool()
-> function has reached the statement right before and after the no_alloc
-> check in initial bootup and after running a parallel kernel build on
-> a 2-socket 96-threads x86-64 system.
->
-> 			 Before      After     non-timer %
-> 		 	 ------      -----     -----------
->   Initial bootup	  150,730     148,198     98.3%
->   Parallel kernel build 5,974,464   5,893,116     98.6%
->
-> So from object pre-allocation perspective, timer debug objects represent
-> just a small slice of the total number of debug objects to be processed.
+In QCS9100 SOC, the safety subsystem monitors all thermal sensors and
+does corrective action for each subsystem based on sensor violation
+to comply safety standards. But as QCS9075 is non-safe SOC it requires
+conventional thermal mitigation for thermal management.
+In this series thermal mitigation changes are not included as it needs
+more discussion whether to include the change in DT or in drivers.
 
-That math is skewed due to the way how debugobjects handles the
-allocations for the global pool.
+Below are detailed informations on IQ-9075-evk HW:
+------------------------------------------------------
+QCS9075 SOM is stacked on top of IQ-9075-evk board.
+On top of IQ-9075-evk board additional mezzanine boards can be stacked
+in future.
+IQ-9075-evk is single board supporting these peripherals:
+  - Storage: 2 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
+    eMMC on mezzanine card
+  - Audio/Video, Camera & Display ports
+  - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
+  - Sensors: IMU
+  - PCIe ports
+  - USB & UART ports
 
-The initial decision to attempt a refill is:
+Currently basic features are enabled to support 'boot to shell'.
 
-    count < min_cnt
+---
+Changelog:
 
-where min_cnt = 256 + 16 * num_possible_cpus()
+v10:
+  - Introduce SoC device tree file for qcs9075.
+  - Squash new memory map changes to SoC DT file.
+  - After moving memory map changes to SoC DT file, the qcs9075-som DT
+    file is now empty. Therefore, remove it and move the remaining PMIC
+    changes to the board file. Moreover, there is no point in keeping it,
+    since it was introduced to accommodate the memory map differences
+    which is taken care by SoC DT file.
+  - v9-link: [1]
 
-That makes _one_ context go into the allocation path unless
+v9:
+  - Retain earlier tags from Rob Herring [2] & Krzysztof Kozlowski [3]
+  - v8-link: [4]
 
-    count < min_cnt / 2
+v8:
+  - Squash UFS support [5] into initial board support patch.
+  - Remove uart10 pinctrl settings from board, it is moved to sa8775p.dtsi.
+  - Arrange ufs nodes in alphabetical order.
+  - v7-link: [6]
 
-which forces all contexts to try allocating in order not to deplete the
-pool.
+[1] https://lore.kernel.org/all/20250530092850.631831-1-quic_wasimn@quicinc.com/
+[2] https://lore.kernel.org/all/173142574295.951085.7523517676553074543.robh@kernel.org/
+[3] https://lore.kernel.org/all/20250430-enlightened-enchanted-jellyfish-7049d0@kuoka/
+[4] https://lore.kernel.org/all/20250528122753.3623570-1-quic_wasimn@quicinc.com/
+[5] https://lore.kernel.org/all/20250513084309.10275-1-quic_sayalil@quicinc.com/
+[6] https://lore.kernel.org/all/20250521140807.3837019-1-quic_wasimn@quicinc.com/
 
-So let's assume we have 16 CPUs, then min_cnt = 512 and therefore
-min_cnt / 2 = 256.
+Wasim Nazir (3):
+  dt-bindings: arm: qcom: Add bindings for QCS9075 SOC based board
+  arm64: dts: qcom: Add qcs9075 IoT SOC devicetree
+  arm64: dts: qcom: Add support for qcs9075 IQ-9075-EVK
 
-As the initial context which allocates when the count goes below 512
-might be preempted, the rest of the callers can lower the pool count to
-256 easily.
+ .../devicetree/bindings/arm/qcom.yaml         |   7 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 290 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs9075.dtsi         | 116 +++++++
+ 4 files changed, 414 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075.dtsi
 
-In the 0-day splat the debug_objects OOM happens from o2net_init():
 
-[ 92.566274][ T1] debug_object_init (kbuild/obj/consumer/x86_64-randconfig-003-20250608/lib/debugobjects.c:785) 
-[ 92.566777][ T1] init_timer_key (kbuild/obj/consumer/x86_64-randconfig-003-20250608/arch/x86/include/asm/jump_label.h:36
-[ 92.567230][ T1] o2net_init (kbuild/obj/consumer/x86_64-randconfig-003-20250608/fs/ocfs2/cluster/tcp.c:2128 (discriminator 3)) 
-[ 92.567629][ T1] init_o2nm (kbuild/obj/consumer/x86_64-randconfig-003-20250608/fs/ocfs2/cluster/nodemanager.c:832) 
-[ 92.568023][ T1] do_one_initcall (kbuild/obj/consumer/x86_64-randconfig-003-20250608/init/main.c:1257) 
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+--
+2.49.0
 
-o2net_init() initializes 255 nodes and each node has three delayed works. Each
-delayed work contains a timer for which debugobjects needs to create a
-new tracking object. So with your brute force approach of disabling
-allocations for timers blindy o2net_init() can trivially deplete the
-pool.
-
-For the o2net case this requires that workqueue debugobjects are
-disabled, but you can't argue that this is silly because there are other
-code paths which do bulk initialization of timers w/o having a work
-involved.
-
-So using the percentage of timer operations for evaluating how this
-change can cause a debug object OOM is just bogus and wishful thinking.
-
-Let's take a step back and ask the obvious question, when there is
-actually consumption of debug objects happening:
-
-  1) For all dynamically initialized objects it happens in
-     debug_object_init()
-
-  2) For statically initialized objects it happens in
-     debug_object_activate()
-
-#2 is arguably irrelevant as there are not gazillions of statically
-   initialized objects, which are trackable by debugobjects
-
-#1 is the vast majority and the good news is that the initialization of
-   such objects (after allocation) happens mostly in preemptible context
-   with no locks held.
-
-So the obvious thing to try is not adding some random flag to timers
-(and tomorrow to RCU and work), but to restrict the allocation
-requirement to debug_object_init().
-
-Something like the untested below should make all of these headaches
-go away. Except for the general observation that debugobjects is not the
-only way to create nasty dependency chains into console driver locks,
-but that's a headache the MM folks have to sort out.
-
-Thanks,
-
-        tglx
----        
-
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -811,8 +811,6 @@ int debug_object_activate(void *addr, co
- 	if (!debug_objects_enabled)
- 		return 0;
- 
--	debug_objects_fill_pool();
--
- 	db = get_bucket((unsigned long) addr);
- 
- 	raw_spin_lock_irqsave(&db->lock, flags);
-@@ -1000,8 +998,6 @@ void debug_object_assert_init(void *addr
- 	if (!debug_objects_enabled)
- 		return;
- 
--	debug_objects_fill_pool();
--
- 	db = get_bucket((unsigned long) addr);
- 
- 	raw_spin_lock_irqsave(&db->lock, flags);
 
