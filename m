@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-684408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C698AD7A48
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:59:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDEBAD7AB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40C13AE76D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9943B674B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7FD2D323E;
-	Thu, 12 Jun 2025 18:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115B32E3379;
+	Thu, 12 Jun 2025 19:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEg1rSys"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A4L79eJ5"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580CC2D3232;
-	Thu, 12 Jun 2025 18:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FA52D8DB9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 19:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749754693; cv=none; b=AA4wEWMHWqvUHuDSoJZqBlZmS/bjXUPbi4VtFDsl4Za7M24OCKLBozcpxqUw9D+mTjVFeCq3E6f3XtIg3AXqkCuJpz0QaY9xj9RolNGyQgc1hB1q0VudB+SvpT5RB+x76JWsqiODyGpte+HwwluV1djwbg2fXBZ83MLkgzg0CNQ=
+	t=1749754863; cv=none; b=g4fwyUGHm6tSUGCiGypdfbLcXj3NyNaZpXlmnugfMiX0z8WzLVcIkfsHk6PGbdNPdxI3mUk3l40NUhSEU2nF9GhwLgAPL+rSG2aOTxVJWNScVJeUe/37VijZieqIpIfjScF7eZmLWC89100K9w7eQ7r3NXp2OQ7kubDYnYmOHPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749754693; c=relaxed/simple;
-	bh=zaz/qKtnA1eAwQLge9799svVuaz0bK6tpHPHFb9I4nM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/LXU7PQ+5KhQfzIxPS1+lGnTbS/aeohLDpYXp6MdIvKXvJN8U8ESF2alWa52yqg/0o9qoVnTrgkZ5x30yL5qHiMABUE6R6d7NjxvnT4FcVL0jdfo0m7h5Q+Flc+Ik/zcgpkb5NAo1annXNcWuVZCRW1r6NEsLn3jL1DAFtW/lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEg1rSys; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749754691; x=1781290691;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=zaz/qKtnA1eAwQLge9799svVuaz0bK6tpHPHFb9I4nM=;
-  b=CEg1rSys/Y2NLC4wWixgGwXmLlSPQWQhLb7m094voWW5DimLs1UjmQic
-   XACSHgiYE1D+OsEqq9fBKm6Sx9iVbuzS+/2D99zrcFl4zhHlrGc1TJ6Cr
-   S1Ybh+SWqfeyLtu5gpCASIuqecEtyg9e1X7QElulhJlt1omm4io8cbKDt
-   EdiDS0drTUj6PVTfWIxbih1+NL0Bmao56oaVZjnFHHaO3DwbjqAFTjVpt
-   wJF7KObc6rz2bm3gM8ve6oWgoQrF6l4wItGSBPW6WWeDBLXO7QF0Azdvj
-   mWTzxOMzmaVUArNzR7s5A/twIkbyjsHZGPeR7FQKimQg+HD6FTiAJe2cd
-   Q==;
-X-CSE-ConnectionGUID: HW4d9bCOTKSQF9iiyuHR4Q==
-X-CSE-MsgGUID: wo45PT2mQKOpJu4BfxfbiA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="55627070"
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="55627070"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 11:58:11 -0700
-X-CSE-ConnectionGUID: lqZL7g11Tj2E3L7ZXAXFgg==
-X-CSE-MsgGUID: yTjIVX5zS5G2SFZ75CZymQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="152766963"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 11:58:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uPn7l-000000061eI-2CMG;
-	Thu, 12 Jun 2025 21:58:05 +0300
-Date: Thu, 12 Jun 2025 21:58:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] iio: amplifiers: ada4250: move offset_uv in struct
-Message-ID: <aEsjPffnVdhMXXFK@smile.fi.intel.com>
-References: <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-0-bf85ddea79f2@baylibre.com>
- <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-4-bf85ddea79f2@baylibre.com>
- <aErQVKul7Gnxvu3F@smile.fi.intel.com>
- <275cf035-f0ca-4aa6-a41f-b0c21d7c9374@baylibre.com>
- <CAHp75VeewKdOQk9qoO-2Ann90hwAGE0goOtiOG9BRjJ4cn6h=g@mail.gmail.com>
- <846f5979-778a-41f0-b5d2-52d639607315@baylibre.com>
+	s=arc-20240116; t=1749754863; c=relaxed/simple;
+	bh=ZwlMsaTHjZOtEXv/YqtnnEPbYBwwh6k+wD4c3F2kUr0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GZQFT0auXo0Awx8mK2T2fJasJiOZS5TI0hMaDi75uZNZvHMYGUlnwrIn5151WEkC3FbZu+hhLrnfZFFs+IuI/fQUz9LbCiTvcolskYsfWXglVgr8WB51Zmg1Rp9vpHzI/ysQx/+jQdFV9LKNJnrLwmgYteIW3pec9Kx3OwcJEqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A4L79eJ5; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235e389599fso40365ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749754860; x=1750359660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZwlMsaTHjZOtEXv/YqtnnEPbYBwwh6k+wD4c3F2kUr0=;
+        b=A4L79eJ54S8X/R6hdBRCGJERy7H+zrEjPyMVVBDEq73jX4tDGzH3TXGyFFeViSYU5x
+         IGzAXqwuH26ZZPVqh2BTD5c3EpOFjYyeo1I9HO28R5rcfjJlc2TAXXEdCVOvI8HMDWfp
+         M7wJn59bo/R0KEjXzu89S81WRPMoZVOOhkc21AJp4jsxBc+Z1Ovope1S+Euh07I4obrz
+         XE0AA8khB6StZ406/4PRkf1tmhWHpT5xPcwwyRiaVgrHj8YsHyvkoiansK9tWjlLAHxI
+         FYIg/BMQu0jDDqJ66Tbft8Y7n2iHJ/TnY54dW18edX+W/DKljg8uhbbwI+IRKCUqSyD8
+         Ja2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749754860; x=1750359660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZwlMsaTHjZOtEXv/YqtnnEPbYBwwh6k+wD4c3F2kUr0=;
+        b=G040Fri07UWfLIS6jpnguV1WQq3o9obx0jKuIujm3nFemt5Y+DF5A3Yy2O+8GgLaQt
+         0nv8tJqZpyzEbMtcHP29cNoc+rQP/9Q+kRTzd0mjer6JzkUIiLk8Wy8cI/4J5ReggQ1O
+         7RxDfivz+Kjoteh5juj+jjyzc+4mvSIWsCsm98QD16A2YsMRGkI3XCrx47swWIhjsXgj
+         8SSyUhtmcz4ILF3/zmk4aUTYZvjZCrbtSbaVuhe4yqScBMCx24bLD5t2uxoQc9h05mec
+         SB71IWIYm9ApEMuE2VlQgBjzUfS363v/gxnNw+3hpe0fzYnlecqODk5cRDvDDzf3/F+I
+         WxqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMyJ61T4C9drZOJILIxlcg4CKpbCQj4QHbc3wgYTCW5pCayAlkhci859v12xH/kzuqhcOf6Vw2M5tiGu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfrASuCTjDD37H0DvMTsVR5nTzB0D4y6UjEwYP1S+LRtNG/9y6
+	cpAfQWgXILDxt6CrQWJLf7D4a//LN74aMd2s4LX2nM3KYPZ2WSAnoEXHORlo+mvpZ9kPT63W4l/
+	MOYG77v4AW/TzGYXQPCCp0SxId9SRK+QYm5HNQLfOix85aDF1F6RCV3QA
+X-Gm-Gg: ASbGncsGL7MgeZPQwxt3U7DTse4j4wN1yfT1KB86/wEFGOkHcC+m8BBpHS4FEMmqO+V
+	bDYNCO1KBblf0RovLcU3ijWUT0Vyey7qX+/OcehW0tvmrc4zP/p9OqfvAByJ8ZUMuzdD5pn6Zgj
+	P8LIbumpxCbO7URNzyymn3WrT7sQlOAug4EI5GpaKfAh3QqioXdXZDxxwY4ND4RTeXPeab88fcw
+	w==
+X-Google-Smtp-Source: AGHT+IF+DrhTdw1EVP33Lsxs8pEmeKyxPiFeWCjxcFQq5i+dtpZuy+WTSh+WvsQ3zeAWf1tAffKMVahMPLgaOisNCFA=
+X-Received: by 2002:a17:902:d54a:b0:235:e1d6:5339 with SMTP id
+ d9443c01a7336-2365e950001mr97625ad.26.1749754859927; Thu, 12 Jun 2025
+ 12:00:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <846f5979-778a-41f0-b5d2-52d639607315@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250612154648.1161201-1-mbloch@nvidia.com> <20250612154648.1161201-4-mbloch@nvidia.com>
+In-Reply-To: <20250612154648.1161201-4-mbloch@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 12 Jun 2025 12:00:45 -0700
+X-Gm-Features: AX0GCFs8bIh3dxPetT87B5xeJSISXmwVqrXxvRLSdCTJ2AOZNbM701RU8f8TtdA
+Message-ID: <CAHS8izNe_g9o92C0RbOe6vtbSfBMbJJJc4K1HubpozN4xwrcuA@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 03/12] page_pool: Add page_pool_dev_alloc_netmems
+ helper
+To: Mark Bloch <mbloch@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, saeedm@nvidia.com, 
+	gal@nvidia.com, leonro@nvidia.com, tariqt@nvidia.com, 
+	Leon Romanovsky <leon@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Dragos Tatulea <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 01:45:16PM -0500, David Lechner wrote:
-> On 6/12/25 1:34 PM, Andy Shevchenko wrote:
-> > On Thu, Jun 12, 2025 at 6:31 PM David Lechner <dlechner@baylibre.com> wrote:
-> >> On 6/12/25 8:04 AM, Andy Shevchenko wrote:
-> >>> On Wed, Jun 11, 2025 at 04:33:04PM -0500, David Lechner wrote:
-> >>>> Move offset_uv in struct ada4250_state. This keeps things logically
-> >>>> grouped and reduces holes in the struct.
-> >>>
-> >>> Can the (smallest part of) the diff for `pahole` runs be added here?
-> >>
-> >> Well, I didn't use pahole. I could just tell by looking at it. There
-> >> was int followed by two u8 followed by int, so we know there was a 2
-> >> byte hole before the last int.
-> > 
-> > Yes, but since we have a tool for such cases, why not use it?
-> 
-> In cases like this, I don't think the we are getting much value
-> from it compared to the amount of time it would take me to do it.
+On Thu, Jun 12, 2025 at 8:52=E2=80=AFAM Mark Bloch <mbloch@nvidia.com> wrot=
+e:
+>
+> From: Dragos Tatulea <dtatulea@nvidia.com>
+>
+> This is the netmem counterpart of page_pool_dev_alloc_pages() which
+> uses the default GFP flags for RX.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
 
-It helps reviewers to see the difference without checking themselves.
-Also, it's not a waste of 15 minutes (that's my experience with pahole
-when I started it first time), it's an investment to the future similar
-changes by you or others. Believe me, as a reviewer you will find this tool
-very helpful.
+Thank you!
 
-So, please try it once and then you will know how to do that again much
-quicker.
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+Thanks,
+Mina
 
