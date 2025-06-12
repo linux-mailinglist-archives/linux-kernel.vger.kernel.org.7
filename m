@@ -1,130 +1,164 @@
-Return-Path: <linux-kernel+bounces-682816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A01FFAD64E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:03:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B6FAD64E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A88A1894903
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B0817F8C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4053D70824;
-	Thu, 12 Jun 2025 01:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B60B51022;
+	Thu, 12 Jun 2025 01:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1OIudjf"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="QQ4ix1aF"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2FA2F4317
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749690189; cv=none; b=ohC5OW32/fCXmkJ0xo6JaSk5XFQMpc7bDGvtOxAnlujrIXkkat80QzPB6B1h7QR1H7IRywgtvZUz+umSaj810ZSBq7A6P9ei03P6tZ3hjktlik54wLhcLJqL8RNdvVx66NwH3I8OSsOd0qPDke3rTe/aU6JoaJUtyDt2XhYBgN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749690189; c=relaxed/simple;
-	bh=sK8hh4GrbaJPxO5UXjT4uZdicZ+332w6O+W30ugAODc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=du+V06H1RDfsQTtHWR50PgFVslHCFswP/q4mt6/1h0zXIw5hrNkdxEg97onTvRyW+uEz/C8aYTEGxTDdCbhRz2D+cbp6yqVjcRZ57HJjw/WM/MoFXp24Brd28s3SwnoFqQrfOgIFQ1h05huOgEmeOh4ndJNbQtGcNujkVC4U/5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M1OIudjf; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7d20451c016so24687285a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749690187; x=1750294987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JNmsutdsye3P3CJhJsMQlrvMgcaKzefaeXL9LWbLYu8=;
-        b=M1OIudjfa2mH0zjUKznhdtRGRlc5RAUo/l2vaYGQ4ua2JCJ0V0u+4OhBdtzyVBef0N
-         M1cp779MjH82xzL6X9uJDUTWM9OSmEMpMY7JDkcom7GyW7YTF3/tOTraah9LFUJkfmFI
-         DLOzA93CMspRpmSrk7rdHt4eSV6GXHs6cW2WJ35c3NYPyJNAbtvUqaA74lSIIi4XAE64
-         tiCLeZVJPucwgoMrAWCANtOv8SDINmREbGUtlD8ozo+C4AlLxqB9mw2B66OM1K4Gig9S
-         TnON6+4VUKe3hkHtFHejl+3MP/i2x6snsGiDU8pcSDITLg5caQLWp0a3JC68cgZ0tLS4
-         2zQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749690187; x=1750294987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JNmsutdsye3P3CJhJsMQlrvMgcaKzefaeXL9LWbLYu8=;
-        b=GxnEg6+QDT92Y0aeze63FZNbBJrF4IZTDhH9txlDtPJtPCbgXJ/I7e5t6fWUX0vKRe
-         OicK/kdRn3/qJR2r61OG6R2AyhVXwz/DtiVHOePYNg8M9S/xUR6XFtYkWnXDqIm1sE03
-         r0XYcATexhzMnSl7+IqAzwu0kMDKukpTtLiaj3e3a83PhgEX4LcYZxvg8OQVNi29islI
-         3RdYuQPtH6RhmAETxO4rcYhMHUiAJZxl4lvVErfisd28kPVGIuPSgmLsyDoiAsewXIRQ
-         iZgUJKmdupDnhawrw8973xcD6pOU/CSbW0kMzaRFbtp/MKDPkdAkl3kg38YB1ZdP1y/k
-         AoSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXo5yrKscGcmUTkN6UTsJLYA4QH33kvtptccpVILMVtfw6Jr6qPTUPfND+tvzuc9NnQ83xkjCWYYZ03wtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKl6tFvVa2nw89MvJjEfeEeD1iV/9xXZ9otLN2z/j8FPg94++L
-	7MbngfKSfVVbdwgMUOuDkQ98oV8CpIdcOGirrv8SejU0EUij50gQ0n72aJ+NHehPgKKvkTlLs6T
-	MWT6rAiX2SQ+RKAhk+S2KrwafDegN2+JTV6bMrPql
-X-Gm-Gg: ASbGncuvjNwrHnLelVjSLQecTGn42UHhvN7QR3TJd2ck3mBLWQJUE7bR3QqkkEEgKeV
-	AA0rlPaLQxr+mRK/SGxatV1Qx52kphZFfgHKg34rtvkHil4MF9nwpFOFb7CdFfzDmfONdmLp+RH
-	8Mo5gnWIUsztOo+/F4ko+a7b2XsO/kdelqGSQtw7VXoww=
-X-Google-Smtp-Source: AGHT+IFp0H/SdT8TXZjBxo1iu5o7/B6/EdR3KllZkVhClS8c+6Ys31CAAk4hlmnPUPvNSofi1wCF4sFRdVdcowfqamQ=
-X-Received: by 2002:a05:620a:a21b:b0:7d2:cc6:b485 with SMTP id
- af79cd13be357-7d3b35c0047mr188173085a.8.1749690186830; Wed, 11 Jun 2025
- 18:03:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8822F4317;
+	Thu, 12 Jun 2025 01:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749690372; cv=pass; b=n+66bCCD72whq/9Jrr8XpSYVVmxNoAPW8ulOuFKe6KEP+byyk1Lw59kxo08z8vxSCH023cQrZ1SO0Qbin6uU33qHvVa4DvBp4LAdLGRk7WWgr+A9LcDMMjgdejr7vpyLs6a+hpZJTQyLWSPCqSD13Iw0urO3swo0xQ65BCiR9f0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749690372; c=relaxed/simple;
+	bh=qcBIqiqgEqNH/gAPwyki31podD2iALIdvmiSORhj25M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RI0GTu0u2oaHqnxpiiaiKJCIO2NsqqfBYWsrTHhC3yxUXXf62q8Dg90lIrfwuu9cguzLR9S4Y7tFpLu7+X/lHLGM/cYZNXvZdgl9VOOQ74miUIdQo+9Fy/BWTIUWgnfZuh41E1KhP7kTwkAXznf5T0tryRvjPZkvqfgp4EsETyM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=QQ4ix1aF; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1749690354; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QGrkd0TbS0wHtqyyAzdMtBrwvMRO++hZkCzbXATFl1Yep3BmyJsCzQLHcZjiK0EF4UWep43fTd/U9PizBj3PH8zCVhLZohCm5GhA3Pzs7V5jcYUSLzHvRi2zldULZH5w2sXyD9dmytfNJjWE13p9KHD/S1+3dJIR3Jv1o6cnDjo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749690354; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yXPXKnGzInWurD7QEHdOaP9i4/7gqwiuKjJcRldQdpM=; 
+	b=O2lHMC7G9a6NTLDAnDMmWNE+Qoz/MOBCvJvvfn5BVN9umaQ+AOYa6ObvewuPWC6+gqlLeZ/1Lds/hJGd9GPes5VyhJCtESz01xyltqhTXuLxTMUfUGUL2jZaYd4mo+al0qRN2/Qcb8pVhT9B1QfEs5FvV0+v00Oyhb4ZoeeJXwI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749690354;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=yXPXKnGzInWurD7QEHdOaP9i4/7gqwiuKjJcRldQdpM=;
+	b=QQ4ix1aFCQlZ3amEGOmIIKY9y52SgSqd8xY6gmdEbvD1bMkCndLKBy9LW/nLa4BJ
+	pNkxf5IKcsMN8I5iM25COuL1G+mRbC6NrfF13048aL4LNsB/GEdFfcIeMQp1yYHIfkn
+	mmCqf5RsJVeL6ELezRaKqNAkSPTS/vZZm6gYz2Io=
+Received: by mx.zohomail.com with SMTPS id 1749690352799475.5882412202018;
+	Wed, 11 Jun 2025 18:05:52 -0700 (PDT)
+Message-ID: <cd89c81f-2a9d-4b3f-94e9-c30471410686@zohomail.com>
+Date: Thu, 12 Jun 2025 09:05:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606215246.2419387-1-blakejones@google.com>
- <aEnLBgCTuuZjeakP@google.com> <CAP_z_Ci2HtnSX8h51Lg=XcW_-5OryGb3PAH7MJjWg60Bjpdpng@mail.gmail.com>
-In-Reply-To: <CAP_z_Ci2HtnSX8h51Lg=XcW_-5OryGb3PAH7MJjWg60Bjpdpng@mail.gmail.com>
-From: Blake Jones <blakejones@google.com>
-Date: Wed, 11 Jun 2025 18:02:55 -0700
-X-Gm-Features: AX0GCFsD9zg5ZgEveoY8yrj3fK_CYrXNLsmBVWmj9_aAH5Tq9sMRAl0BYKh9JCg
-Message-ID: <CAP_z_CjRB6MwNrXW_o_XyWSwcXZKpVHyGZoj1udJU4uBu1iw=g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] perf: generate events for BPF metadata
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Yujie Liu <yujie.liu@intel.com>, 
-	Graham Woodward <graham.woodward@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Ben Gainey <ben.gainey@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] cxl/edac: Fix potential memory leak issues
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250611033542.96184-1-ming.li@zohomail.com>
+ <20250611141637.0000546b@huawei.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <20250611141637.0000546b@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr08011227b61ce302fb3409d8faf691710000c7ad5a556caf45c5a187b173ebc0277256b2016849b8b01c55:zu08011227fb3cb49cab3d2a682c7d6eb7000092b3cdcb4d67516b8f2f6933e54fecd6a922c0598868ba5653:rf0801122db16c54944d6be6cd8f4e9ab60000f3303566aec7bbbc566e8b68cdcac3d92c456301bdfbef689d490751763828:ZohoMail
+X-ZohoMailClient: External
 
-On Wed, Jun 11, 2025 at 5:39=E2=80=AFPM Blake Jones <blakejones@google.com>=
- wrote:
-> Is there anything written up about how to set up a machine so that
-> "make build-test" works reliably?
+On 6/11/2025 9:16 PM, Jonathan Cameron wrote:
+> On Wed, 11 Jun 2025 11:35:42 +0800
+> Li Ming <ming.li@zohomail.com> wrote:
+>
+>> In cxl_store_rec_gen_media() and cxl_store_rec_dram(), use kmemdup() to
+>> duplicate a cxl gen_media/dram event to store the event in a xarray by
+>> xa_store(). The cxl gen_media/dram event allocated by kmemdup() should
+>> be freed in the case that the xa_store() fails.
+>>
+>> Fixes: 0b5ccb0de1e2 ("cxl/edac: Support for finding memory operation attributes from the current boot")
+>> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> Good fine but I'm not sure this is the best fix.
+>
+>> ---
+>> base-commit: 87b42c114cdda76c8ad3002f2096699ad5146cb3 cxl/fixes
+>> ---
+>>  drivers/cxl/core/edac.c | 10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
+>> index 2cbc664e5d62..b4c5c23a45d4 100644
+>> --- a/drivers/cxl/core/edac.c
+>> +++ b/drivers/cxl/core/edac.c
+>> @@ -1086,13 +1086,13 @@ static void cxl_del_overflow_old_recs(struct xarray *rec_xarray)
+>>  int cxl_store_rec_gen_media(struct cxl_memdev *cxlmd, union cxl_event *evt)
+>>  {
+>>  	struct cxl_mem_err_rec *array_rec = cxlmd->err_rec_array;
+>> -	struct cxl_event_gen_media *rec;
+>>  	void *old_rec;
+>>  
+>>  	if (!IS_ENABLED(CONFIG_CXL_EDAC_MEM_REPAIR) || !array_rec)
+>>  		return 0;
+>>  
+>> -	rec = kmemdup(&evt->gen_media, sizeof(*rec), GFP_KERNEL);
+>> +	struct cxl_event_gen_media *rec __free(kfree) =
+>> +		kmemdup(&evt->gen_media, sizeof(*rec), GFP_KERNEL);
+>>  	if (!rec)
+>>  		return -ENOMEM;
+>>  
+>> @@ -1106,6 +1106,7 @@ int cxl_store_rec_gen_media(struct cxl_memdev *cxlmd, union cxl_event *evt)
+>>  
+>>  	cxl_del_expired_gmedia_recs(&array_rec->rec_gen_media, rec);
+>>  	cxl_del_overflow_old_recs(&array_rec->rec_gen_media);
+>> +	retain_and_null_ptr(rec);
+>>  
+>>  	return 0;
+>>  }
+>> @@ -1114,13 +1115,13 @@ EXPORT_SYMBOL_NS_GPL(cxl_store_rec_gen_media, "CXL");
+>>  int cxl_store_rec_dram(struct cxl_memdev *cxlmd, union cxl_event *evt)
+>>  {
+>>  	struct cxl_mem_err_rec *array_rec = cxlmd->err_rec_array;
+>> -	struct cxl_event_dram *rec;
+>>  	void *old_rec;
+>>  
+>>  	if (!IS_ENABLED(CONFIG_CXL_EDAC_MEM_REPAIR) || !array_rec)
+>>  		return 0;
+>>  
+>> -	rec = kmemdup(&evt->dram, sizeof(*rec), GFP_KERNEL);
+>> +	struct cxl_event_dram *rec __free(kfree) =
+>> +		kmemdup(&evt->dram, sizeof(*rec), GFP_KERNEL);
+>>  	if (!rec)
+>>  		return -ENOMEM;
+>>  
+>> @@ -1134,6 +1135,7 @@ int cxl_store_rec_dram(struct cxl_memdev *cxlmd, union cxl_event *evt)
+>>  
+>>  	cxl_del_expired_dram_recs(&array_rec->rec_dram, rec);
+>>  	cxl_del_overflow_old_recs(&array_rec->rec_dram);
+>> +	retain_and_null_ptr(rec);
+> I'd move this up to immediately after we hand it over to the xa successfully.
+>
+> Actually I'm not sure this is a good use of __free given we have a single
+> error path to handle it in and have to manually release it in a different
+> call to where it is passed to the xa_store() function.  Maybe better
+> to just kfree in the error path.
 
-Barring that, I've confirmed that each of my new patches builds successfull=
-y
-under the following build commands: (I have a copy of libbpf that supports
-".emit_strings" in /usr/local/include)
+Sure, I can do that, using kfree directly instead of the __free(kfree). Thanks for reviewing.
 
-    cd tools/perf
-    make clean
-    make NO_LIBTRACEEVENT=3D1 LIBBPF_DYNAMIC=3D1 LIBBPF_INCLUDE=3D/usr/loca=
-l/include
-    ./perf check feature libbpf-strings
 
-    make clean
-    make NO_LIBTRACEEVENT=3D1
-    ./perf check feature libbpf-strings
+Ming
 
-    make clean
-    make NO_LIBTRACEEVENT=3D1 NO_LIBBPF=3D1
-    ./perf check feature libbpf-strings
+>
+>
+>>  
+>>  	return 0;
+>>  }
 
-Please let me know if that seems like sufficient testing.
 
-Blake
 
