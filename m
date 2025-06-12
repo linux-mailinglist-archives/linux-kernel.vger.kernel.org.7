@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-683413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1915AD6D39
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:12:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907DEAD6D2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 600867AF9CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347A4189439D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A79723A99F;
-	Thu, 12 Jun 2025 10:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482D623C8A3;
+	Thu, 12 Jun 2025 10:09:55 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D99F23A58B;
-	Thu, 12 Jun 2025 10:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3515223A566;
+	Thu, 12 Jun 2025 10:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749722992; cv=none; b=OioTMfaegTnH0QqBblr7COznAD5R/cCB4o8MRT68B9H1Y+SMCn8x9/dJmv4boRYRDutnxw0ORsh5IMYzMUjBShX9q0dxBQ/XW7Y1aNOzFOfAaU0haXrBDI9QHJHXEfA0HLIEC+ZAOAbb7ff1SbzXdJZlC0P+HXTZD2+wi8lMEOo=
+	t=1749722994; cv=none; b=iV3z//Mrg1K96sptTbJ0uKJqEUNZVO35K1DDFd0vo56IW0ucyIC2q2KBRh7UwedMv3yYKlguaCyUlQPm8F3O56D8lYcJvhXSdp+DhaRjExsDwTy8C5h8Yse3lT2wccglEtVusljhNdvoQIQfOcfz/9Ui3aVy1Rp8LfY1qPNyyGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749722992; c=relaxed/simple;
-	bh=t1Mq/ydzptDL9vJKIUvctlvePASvSZu3bKvh8Y+LYPU=;
+	s=arc-20240116; t=1749722994; c=relaxed/simple;
+	bh=fWTGdhzdZ6vdgiwY8u2G5FjOPqNxbmZQtTEseyvkd8s=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j0Ff4pLflPsFNJ/N538ra0QwoNV/AZC2Nw1FhFavcq3ZSnI2F2NGRkfJ1fy6FDuFrLaEz/Fjpv0FculPAFbHBxdgQDD/v3oKQS99vSAhDylYjxXsuOniYdJlGJ5xIQli5IMRfbdvHBbYINk+FJ3fmKUB7TOd51K8ASWQbSRfLzQ=
+	 MIME-Version:Content-Type; b=gS2P1aPmHbQsu+u2EkPMh1NjpGD2o/qWfc6aQ2Yv6C3W2YLLRppXZwWl6eBP6AKuNB3vS1dvEyf5xf/paz+N5URE+5LHgEjyTHWLdNxGyc3t+t5R/ggTwe6AvmFN5Ijo+8tgFImVrjogScmmPu25lu/c5FaT5GXMzoYA+8o7hfo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -52,9 +52,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>,
 	<romlem@google.com>, William Kennington <wak@google.com>, Yuxiao Zhang
 	<yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
 	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
-Subject: [PATCH v0 4/5] arm64: dts: aspeed: Add AST2700 EVB device tree
-Date: Thu, 12 Jun 2025 18:09:32 +0800
-Message-ID: <20250612100933.3007673-5-ryan_chen@aspeedtech.com>
+Subject: [PATCH v0 5/5] arm64: configs: Update defconfig for AST2700 platform support
+Date: Thu, 12 Jun 2025 18:09:33 +0800
+Message-ID: <20250612100933.3007673-6-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250612100933.3007673-1-ryan_chen@aspeedtech.com>
 References: <20250612100933.3007673-1-ryan_chen@aspeedtech.com>
@@ -67,103 +67,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-- Add ast2700-evb.dts for the ASPEED AST2700 Evaluation Board.
-- Set board model and compatible strings: "aspeed,ast2700-evb",
-"aspeed,ast2700".
-- Reference the common AST2700 SoC device tree aspeed-g7.dtsi.
-- Define memory layout and reserved-memory regions for
-MCU firmware, ATF, and OP-TEE.
-- Add OP-TEE firmware node with SMC method.
-- Set up serial12 as the default console.
+- Enable options for ASPEED AST2700 SoC.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- arch/arm64/boot/dts/Makefile               |  1 +
- arch/arm64/boot/dts/aspeed/Makefile        |  4 ++
- arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 54 ++++++++++++++++++++++
- 3 files changed, 59 insertions(+)
- create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
- create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index 79b73a21ddc2..d9c3e58b9ca5 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -35,3 +35,4 @@ subdir-y += tesla
- subdir-y += ti
- subdir-y += toshiba
- subdir-y += xilinx
-+subdir-y += aspeed
-diff --git a/arch/arm64/boot/dts/aspeed/Makefile b/arch/arm64/boot/dts/aspeed/Makefile
-new file mode 100644
-index 000000000000..ffe7e15017cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/aspeed/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+dtb-$(CONFIG_ARCH_ASPEED) += \
-+	ast2700-evb.dtb
-diff --git a/arch/arm64/boot/dts/aspeed/ast2700-evb.dts b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-new file mode 100644
-index 000000000000..ecd4b55931e7
---- /dev/null
-+++ b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/dts-v1/;
-+#include "aspeed-g7.dtsi"
-+
-+/ {
-+	model = "ASPEED ast2700 Development Board";
-+	compatible = "aspeed,ast2700-evb", "aspeed,ast2700";
-+
-+	aliases {
-+		serial12 = &serial12;
-+	};
-+
-+	chosen {
-+		stdout-path = &serial12;
-+	};
-+
-+	firmware {
-+		optee: optee {
-+			compatible = "linaro,optee-tz";
-+			method = "smc";
-+		};
-+	};
-+
-+	memory@400000000 {
-+		device_type = "memory";
-+		reg = <0x4 0x00000000 0x40000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mcu_fw: mcu-firmware@42fe00000 {
-+			reg = <0x4 0x2fe00000 0x200000>;
-+			no-map;
-+		};
-+
-+		atf: trusted-firmware-a@430000000 {
-+			reg = <0x4 0x30000000 0x80000>;
-+			no-map;
-+		};
-+
-+		optee_core: optee-core@430080000 {
-+			reg = <0x4 0x30080000 0x1000000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&serial12 {
-+	status = "okay";
-+};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 897fc686e6a9..c9d90aa07e59 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -38,6 +38,7 @@ CONFIG_ARCH_AIROHA=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_ALPINE=y
+ CONFIG_ARCH_APPLE=y
++CONFIG_ARCH_ASPEED=y
+ CONFIG_ARCH_BCM=y
+ CONFIG_ARCH_BCM2835=y
+ CONFIG_ARCH_BCM_IPROC=y
 -- 
 2.34.1
 
