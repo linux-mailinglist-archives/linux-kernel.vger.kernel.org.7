@@ -1,110 +1,185 @@
-Return-Path: <linux-kernel+bounces-684144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAE7AD7693
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:41:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A5AAD76C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E1357AC7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DA23BB3F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3782C0334;
-	Thu, 12 Jun 2025 15:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9D829898D;
+	Thu, 12 Jun 2025 15:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="auLrsJ/6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XrY1sRDW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D67221DA8;
-	Thu, 12 Jun 2025 15:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183852989BF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742548; cv=none; b=AevXEY8JI6tILE/DyaGmoG2m0N9dFYLjMZ2a3wKW/zMe54E4ICytpoiTWUk6UvI6RLdpRaIQC1ZYKATqBjtqhDvHHbWLM8YDeF7lg1XrORZyQGUlebyw4MktAxONSHjjlOlxcC9wb79qX1McpXaRJafYODGg/8SfvGrA6B5ZGYY=
+	t=1749742603; cv=none; b=C7OcF07SYTMfhkXolVf+PfNPIrC3bvJrutFQkh1dAPYx4rWuZ9hSE6U5PA8zH1SvjareVZHAUx58dNm53MINf0tSNDphKoiFOY27oT+QwteMthPFcdCCYCXwOvV2pAB6oE3KWFagNptpMNhx13YQ4GLw3nKkbiIw/bglXZlLWFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742548; c=relaxed/simple;
-	bh=Ss4ahYRx/y3pjwhd7QqlDK8uOFCu1jOBr4RPH/Ks9bo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVQbd8KR6zjzaOqcXrVgfGMHe+Q9I3FD3sDLyDYuUuTeZxeh55NKK4Tjj8Va2a0ndmBjw//Oj0jcSDdyd9n9EOy2r1C+KHn1R8uJffEGz+SdBQObRxTR0ApCcwVGuUF+HqY8DHJRIEeQFj2lySn9442NcZtQqDmQKsrHYGJ9nXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=auLrsJ/6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2588EC4CEEA;
-	Thu, 12 Jun 2025 15:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749742547;
-	bh=Ss4ahYRx/y3pjwhd7QqlDK8uOFCu1jOBr4RPH/Ks9bo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=auLrsJ/6G8/Nk8NFr4MskwcvM4uw4NObh3me2bKXsGlCE/GgINLIKEF00tdXKPUVB
-	 pRQiVQFnzPl1vUEnTcGP2+vnUDPGIs8+YdOduzrw6hjkiy+R9/p5Ne8jDIXxbggupA
-	 a7Rh6ZfP9wsYptqrYGlAzeYshwm4qkEM+NgAbI+Hybe6HrG/jmYqQalFfJaTI6urnZ
-	 jqkff3rGnxDBUmgcYqvl7JyPZscCfAIPrQZ9B71mwDY7S0/bdNdSn94FmRkXrivB4e
-	 S5F4eDy2/qSR/o0GPYpkq7JU4c0MwhUTVhiPh8Db9fb310HtxM24ewwB7CQCCISp+A
-	 V2uBjTwq0HlKg==
-Date: Thu, 12 Jun 2025 16:35:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Anup Patel <anup@brainfault.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Ryo Takakura <takakura@valinux.co.jp>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev
-Subject: Re: [PATCH v3 3/7] dt-bindings: interrupt-controller: add MIPS P8700
- aclint-sswi
-Message-ID: <20250612-wildfire-ambiance-b4acbe3fff31@spud>
-References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
- <20250612143911.3224046-1-vladimir.kondratiev@mobileye.com>
- <20250612143911.3224046-4-vladimir.kondratiev@mobileye.com>
+	s=arc-20240116; t=1749742603; c=relaxed/simple;
+	bh=PI5f96cR6hYaypvBXQce4I7+EC/ofNQivIj5NzZKHho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nQ/0R/Hg4nF6X+XfCehJ6NScriOHwFwA1VwGcgKm3y4sZ6qaNFrVG4fQETZ8MORAYPiDLyZ15Uy06IEK15mmZUYXnMs6yZuteYphPWsSOorRWCVgsGNeEYgWzqNK2rg0HHScZ2+8ubuJUVk+cRRvTDZROitIlUBtym6o+aJyd9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XrY1sRDW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749742600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=j6FlpRtQvUpUW4eY/0JVT6f8fEwPoGbC3/HdECX0jnY=;
+	b=XrY1sRDWM70GC+j99xT4nwRTxzy8tseFfVtNRg472lGl2RinpUrp68SyoZF1qinRwGMxUm
+	Aq+VhVxoGepT/Vhcxd+y8XyevFTSGEhDTXxSZBz91hCZ89BzNPsgWeCjAWYZFTB/hyR0pd
+	amnJC/DWFJikvXqAlJ68VFsbuuASuKA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-UZ481FajNhWD5_LZ2TQung-1; Thu, 12 Jun 2025 11:36:39 -0400
+X-MC-Unique: UZ481FajNhWD5_LZ2TQung-1
+X-Mimecast-MFC-AGG-ID: UZ481FajNhWD5_LZ2TQung_1749742598
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4eeed54c2so719130f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:36:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749742598; x=1750347398;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j6FlpRtQvUpUW4eY/0JVT6f8fEwPoGbC3/HdECX0jnY=;
+        b=nSD6HyKq2ghy5M4+gngqUaqPDc+NKESVhkpdQE/RvchNOKlkez/wEOVv0V1XlaZ/dj
+         GHlC1bHjp4fwM9rcPYNP4BZszf0AW/n/y8IH/5aJHAFnJ+uxjIjm7cL+Jnlq3r3CDUPS
+         el1JzI6H4ORXapMUqoGG2ZRAIu5aaIbgxdhgd5K1/t9d5ev99whBBFOFZUdSalNEFlDR
+         01REwo2rE/BWNQyuS9gHEnSSPJ0Ln70BDinRLVxHu1w1rMHzMDHhss+RowgqaXmPBgX8
+         5nDqfYmyWHYsfn3iwUaYA7wtt50YEaA+KAQxGn+/oYA+fYUgg/X5N+vrLFzomJF5SeCo
+         yeDg==
+X-Gm-Message-State: AOJu0YxVssSfIJ6WU48FxTkwEaJaPWtftTb7zmty0OM/lqcb7xtPe6Gt
+	dFPrYFCQ4sDenkh4RiIsHGtJGmvOw8FEfBWJLScwVS0ksZelBEUDFYzU8QLphEJseveN+2uQNvs
+	AHFT01CgT1UdiMfRJwaIfstUFF6QF01r/brgJuPfI6vn4fczQm86ys7bxvuom5EIV0A==
+X-Gm-Gg: ASbGncuDaXuNBHp4qkgb7LWEdu/455bzJgFex+WzxPQz+ihvqYt+CnSVRxMUIGpVWv+
+	7zSZqNBdlSOOtmA3B4T608z7GlM0ZF/GG7pWoXGLsgQ7NvXmCrOfxbBen9+HoAZAKlwfZG87sVz
+	H0ZhrmLEYDqbN3WjMe2ugd7TJL3ajeSLN5OYQj/LXZEeD1A131MCKVmlD4PeVGT1KiDMBmwTwd+
+	dmKqfuaXLN1o3P9qIdQK4xfttlsjM5ly1SKhS6KMGxx+QC6SMsXoFkmHyNV7JKorQ3Yg5qx6sX1
+	wgIH2MzQd4xEwn/sHJRDMZjiqJvFL/e2q2f3INV1x4lpVTyn9FKgwLXyUoK/uyQTSq+uXgwxtis
+	wjCnDy//j93yKf3bfyJ90ljX4KQ+LujxF7A0cufbHa6utWXUPPQ==
+X-Received: by 2002:a05:6000:250d:b0:3a4:d8f8:fba7 with SMTP id ffacd0b85a97d-3a560748c21mr3810548f8f.2.1749742597926;
+        Thu, 12 Jun 2025 08:36:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOfhHJckHdYmyAgxwpqTeZ7FZww/fQGcBhftw9Ckx1CdxgEKuklHbnz03HaXMemBKSqLkt2w==
+X-Received: by 2002:a05:6000:250d:b0:3a4:d8f8:fba7 with SMTP id ffacd0b85a97d-3a560748c21mr3810526f8f.2.1749742597569;
+        Thu, 12 Jun 2025 08:36:37 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2c:1e00:1e1e:7a32:e798:6457? (p200300d82f2c1e001e1e7a32e7986457.dip0.t-ipconnect.de. [2003:d8:2f2c:1e00:1e1e:7a32:e798:6457])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e253f64sm23645205e9.27.2025.06.12.08.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 08:36:36 -0700 (PDT)
+Message-ID: <c6c1924b-54ae-4d75-95f7-30d3e428e3e7@redhat.com>
+Date: Thu, 12 Jun 2025 17:36:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="68if0ZfXqCRI0GCb"
-Content-Disposition: inline
-In-Reply-To: <20250612143911.3224046-4-vladimir.kondratiev@mobileye.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] mm/huge_memory: don't ignore queried cachemode in
+ vmf_insert_pfn_pud()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Alistair Popple <apopple@nvidia.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Dan Williams <dan.j.williams@intel.com>,
+ Oscar Salvador <osalvador@suse.de>, stable@vger.kernel.org
+References: <20250611120654.545963-1-david@redhat.com>
+ <20250611120654.545963-2-david@redhat.com>
+ <02d6a55b-52fd-4dae-ba7a-1cccf72386aa@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <02d6a55b-52fd-4dae-ba7a-1cccf72386aa@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 12.06.25 17:28, Lorenzo Stoakes wrote:
+> On Wed, Jun 11, 2025 at 02:06:52PM +0200, David Hildenbrand wrote:
+>> We setup the cache mode but ... don't forward the updated pgprot to
+>> insert_pfn_pud().
+>>
+>> Only a problem on x86-64 PAT when mapping PFNs using PUDs that
+>> require a special cachemode.
+>>
+>> Fix it by using the proper pgprot where the cachemode was setup.
+>>
+>> Identified by code inspection.
+>>
+>> Fixes: 7b806d229ef1 ("mm: remove vmf_insert_pfn_xxx_prot() for huge page-table entries")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> Nice catch!
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
---68if0ZfXqCRI0GCb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks! What's your opinion on stable? Really hard to judge the impact ...
 
-On Thu, Jun 12, 2025 at 05:39:07PM +0300, Vladimir Kondratiev wrote:
-> Add ACLINT-SSWI variant for the MIPS P8700. This CPU has
-> SSWI device compliant with the RISC-V draft spec (see [1])
-> CPU indexes on this platform are not contiguous, instead
-> it uses bit-fields to encode hart,core,cluster numbers, thus
-> property "riscv,hart-indexes" is mandatory
->=20
-> Link: https://github.com/riscvarchive/riscv-aclint [1]
->=20
-^ this blank line shouldn't be here fwiw.
+-- 
+Cheers,
 
-> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+David / dhildenb
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---68if0ZfXqCRI0GCb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaErzzgAKCRB4tDGHoIJi
-0qQtAP96mQXSweUBXZh9o3rMkqZLrg/kAmO+xkB2lY/aAdpU9QD9E5LQRDJdi1Jq
-Grs4zFK0xB6PMdtGGbxpWhfpr/KbfA4=
-=We6+
------END PGP SIGNATURE-----
-
---68if0ZfXqCRI0GCb--
 
