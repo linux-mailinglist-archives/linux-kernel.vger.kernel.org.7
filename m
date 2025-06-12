@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-683438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4CAAD6D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7480EAD6D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7D616BF75
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F64C1669D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0201D2356CB;
-	Thu, 12 Jun 2025 10:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE66238C24;
+	Thu, 12 Jun 2025 10:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g0sfK/qh"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AoW26Lmh"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B7723315A;
-	Thu, 12 Jun 2025 10:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0961E232369;
+	Thu, 12 Jun 2025 10:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749723619; cv=none; b=GPfsrAf/NgevQjN21HP4zBTP2fmjck8lKFL2ESqA9+NZtj/uT37c2Nyoky8HPm3nZDlI6MAfuSOTR4XhBHnsTvsk+jc0wz0N8oElOr1uYM8zRn4wq/S8B2SntgFZKqOmbdwRMILbUKRsu2OeBnsBMOmp/NbVOl2zJMoCLbc1M9c=
+	t=1749723740; cv=none; b=BbeEsBCO6kS+OOnBKDdlVjDq58hU33a8Byk8r34bLqbk4U2fDq/YdwFuRUiG1azw5ug2sk8Pk7YvY0RBWuP0yvA5vN4VU6d2le24Wugj7tCdF6mKlkoXhi8yP6xhElSxpRtA7qaCxxwDyNlqiiYfXCv3mocPqQsKSc9oDEAxWmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749723619; c=relaxed/simple;
-	bh=TeQ0oTGNLG+F9KDcQ6FK6W8BtHHFwsQpIJeKJHI9IRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uh+3gU8v4Lpn4DhilTSfhq7T7WjFkVGDFZrGn7MabhQFqECwj6M470AlidMfTYATd/PYd+XI/E84wZaxCJXVLLqM8u77eY/6PGZwhr5yAb5AnCq24V45/HdPdoyxyfAH6MVdPakUeOVs3dE3NVfsanIRWbXvbhvlyu4qwg/Hbwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=g0sfK/qh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65BAED6;
-	Thu, 12 Jun 2025 12:20:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1749723607;
-	bh=TeQ0oTGNLG+F9KDcQ6FK6W8BtHHFwsQpIJeKJHI9IRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g0sfK/qhHn13a85LaU/OuqNIwcGcNqLdDI/HIk1X04rmBhPdvshQdu8NYc7fe4WCk
-	 +GtSUCxMT7WuAaZCmPvP1PSuE4ny7fKcEzkVOTSV/UzTorbFc1y3XYuthDSnH93RW1
-	 ZPH4uma2nTrgVi6wclOlmA/oX9AHFTcQ8QCKhip8=
-Date: Thu, 12 Jun 2025 12:20:13 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: vsp1: Reset FCP for VSPX
-Message-ID: <rkihvnry5yybz7bjcbanth4yq7svywicmbhksz4ity6buw52ff@tmxefdhvpgaf>
-References: <20250609-vspx-reset-v1-0-9f17277ff1e2@ideasonboard.com>
- <20250609-vspx-reset-v1-3-9f17277ff1e2@ideasonboard.com>
- <20250611233611.GR24465@pendragon.ideasonboard.com>
- <6orphbs6syqu6oruppyln4kkepj42c775cs4nj4oygu4xitpx6@tlvab6mntrrx>
- <20250612101215.GE25137@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1749723740; c=relaxed/simple;
+	bh=SO37R/h1del/1aQpao1BZENt0XTR2Cf547jTkk++7rY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KA3K1kSA1R8K5P9KQN2HEgREMFRDpL8UGNrtdk06pZA2heHO/e3xKxQIelthMNfeMsVofhNL2a5ClLsHN+Bkb8mLwA29eqRZAga+t5YxWDSigr3oLF1bkEDcjETVdiheo0v3IbBYQEht2nJtJSdV685ITbPxxZ8OV8PxO0IkZiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AoW26Lmh; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so85788a91.2;
+        Thu, 12 Jun 2025 03:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749723737; x=1750328537; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SO37R/h1del/1aQpao1BZENt0XTR2Cf547jTkk++7rY=;
+        b=AoW26LmhJeT0bI/QCmMy0K5zdYGfIVK0KHgO3TedC3Y1bgq3ZS3BVososn2srZRjr4
+         1TS3ykdki0NrnwvgKbqUlyuhsbsPrCYwzSxMQ7l8/2c120Wd0AUzrt5M5kvXr5s+Lz+T
+         YFRZuLnHUWRrGJloTnFGYsv1daPXEm2iQ8MEzL1GlQJMeteLiV75ZJiNv0gBw6lOkD0i
+         49B97KBLQREArPlnhNZFpGVAU3tVghT0y2HVRbizQC2RhPw9NefXDnj0Yd/eSayPGckl
+         H4i9K43r9ZwAATU2zp6WXqF0wbWSQmUloMl9Pt2JkQcx6a2GD1fvd/8Hs7yu//sp4YKv
+         k2/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749723737; x=1750328537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SO37R/h1del/1aQpao1BZENt0XTR2Cf547jTkk++7rY=;
+        b=Ng/w+QT2RI0jwqiQgrwl2LGTHt3OLOxFNP3gUTzMXhg29fqmBzB+vyKb664ElMEONX
+         YxXqQ5i00fHB6qpfMX9dRjxMM0qOfhMWf/HnrG2I69pKBmc4wS0WaEKKvB4GvxY4pmOq
+         5+DH0VWzoFD6A0/EPfOlZWUQgwlVmbtKRWCGRAVwolDrjdQfP9S9p503Y9/7xciBcn8k
+         VJ11mlpxEP367vZyn4J/MpkdKTa7Qt1FWnjWXWwI/IDWnIrXeUNpMVQX4OnrKU5pV50A
+         Tce2ffJEQrwY5MsmlsiryxQg1MejCEQkR3tUxK0v5Jar+UxcgY0syJDJky42K6HC0UsP
+         goIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+czE17UsLf/lPu3AxhLvJbsFeBwbLrgdRdM4v07UbeDrCdGh/DiOzfsGzDHheMlzGqs06ZZO/JPnc@vger.kernel.org, AJvYcCW010Nmt85OfNKTjSJygPldEtzt3nEz6NrNT8oY5reizCHm8Uesd1RPnVtL9heFMcbDOrrtQdnSGdh7kg==@vger.kernel.org, AJvYcCWxYuCNIl2uZ50FTAXDYFZOIaXNhtVbRHCq5/yt4Dqgl0Fe2ON3l+kPssVRyfA5Wr+EYMi0XrFJ4uA=@vger.kernel.org, AJvYcCXBnZZqDQq8tCoSQTkK+DqFfUrq3S6x6HQPGy2aNOXiAL8fJ1E+jlLYe6hv2PremUl/AqwO7LQtpq0l@vger.kernel.org, AJvYcCXRMmzlgd7tlwmZVbVfprcC39hL9umLlY1VREKlWNYYUbCBIPzkMI3xICQIrBPYF5fSFJrAVPeoEO+s5kb1@vger.kernel.org, AJvYcCXqKmKNEzclJHzUj7EBIai1xPbK4ogBQeYljaBODK7+l5BbXOYuZytxJlVYmf2Mfic2NmikZGjpFHH45PtBWLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBb7JZlBJF2p2AZ2D7tWbsa+UF2YoZ/o8I0h4t2faKplgQnVB0
+	y9ByUXq9nEEGICUden4MdD8UvDmSPtTdsMcnTsOaBPATdmGUhGDKb39KmDinrHev+RfRrHJ0IWS
+	yS3BulCPhDLj0nlijWUfPYKMAnvuoYWs=
+X-Gm-Gg: ASbGncuMA8JVWmBYT8taEn+fgCjAi0AGO4eyLUet4PtiyCK7sCRG7iCNwVQBx6mCPVI
+	T8fysoRtuRCem+SP04bF87XDDMc6UqjxTba1ZBEzJ1556vhiz+P+a80W4LqUE1X6DuQkY0sSPtV
+	8zsATIymzMKkGJSazahzyJ+MGddkdkHjtZmfAH3L8S5f0=
+X-Google-Smtp-Source: AGHT+IH94DNvTVzRRDj3ogVCtR6iefFy1RSOyjadVcC0pwgm1vWym97QPStxMRP0lyaW52odQ/fleX0SckRjUMwc7mI=
+X-Received: by 2002:a17:90b:17cd:b0:312:639:a06d with SMTP id
+ 98e67ed59e1d1-313af136457mr3612530a91.5.1749723737296; Thu, 12 Jun 2025
+ 03:22:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250612101215.GE25137@pendragon.ideasonboard.com>
+References: <ddd5ce0ac20c99a72a4f1e4322d3de3911056922.1749545815.git.viresh.kumar@linaro.org>
+ <20250612014210.bcp2p6ww5ofvy6zh@vireshk-i7>
+In-Reply-To: <20250612014210.bcp2p6ww5ofvy6zh@vireshk-i7>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 12 Jun 2025 12:22:05 +0200
+X-Gm-Features: AX0GCFuqCHMJ_ULC48U5582v9ZYgwTQqDBONlu6akMmTosspZ2vQkFio_vWEcxA
+Message-ID: <CANiq72=m+O7p==Fte4HA7kmt0DKaKmkeAQ-J1kVtyTKDKibgcA@mail.gmail.com>
+Subject: Re: [PATCH V2] rust: Use consistent "# Examples" heading style in rustdoc
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Yury Norov <yury.norov@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Nishanth Menon <nm@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent
-
-On Thu, Jun 12, 2025 at 01:12:15PM +0300, Laurent Pinchart wrote:
-> On Thu, Jun 12, 2025 at 11:48:49AM +0200, Jacopo Mondi wrote:
-> > On Thu, Jun 12, 2025 at 02:36:11AM +0300, Laurent Pinchart wrote:
-> > > On Mon, Jun 09, 2025 at 09:01:44PM +0200, Jacopo Mondi wrote:
-> > > > According section "62.3.7.1 "Operation Control Setting
-> > >
-> > > "According to"
-> > >
-> > > > IP set VSPX+FCPVX" of the R-Car Gen4 Hardware Manual, FCPX has to
-> > > > be reset when stopping the image processing.
-> > >
-> > > That's only when stopping "image process of VSPX+FCPVX immediately".
-> > > Note the "immediately", which involves resetting the VSP too. The code
-> > > below waits for the pipeline to stop at the end of the frame. Resetting
-> > > the FCP doesn't seem to be required in that case.
-> >
-> > True, we certainly don't
-> >
-> > 2. Set value 1 to VSPX register VI6_SRESET.SRST0. VSPX will invoke
-> >    termination process immediately.
-> >
-> > but rather wait for the last frame to complete before stopping the
-> > pipeline.
-> >
-> > Do you think this patch should be dropped ?
+On Thu, Jun 12, 2025 at 3:42=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
 >
-> I would say so, I don't think there's a need to reset the FCP when
-> waiting for the pipeline to stop normally. Or have you noticed issues
-> that this patch would solve ?
->
+> If you are okay, I can also take this via the PM tree along with my other=
+ rust
+> fixes for next rc.
 
-Not really, this comes straight from the upporting of the FCPD reset.
+Do you need it there? It is trivial, so it probably does not matter,
+but mistakes are still possible (like it happened in v1). Since it
+touches files from a few maintainers, it would be best to put it
+across the "global" Rust tree (ideally with their Acked-by), and Cc
+everyone (e.g. Tejun added now).
 
-We've been running with an older of this patch that wasn't actually
-resetting the FCP and we got no issues. At the same time Niklas has
-confirmed running with this version that actually resets the FCP
-doesn't introduce regressions.
+I also have a fixes PR to send, but I was not planning to take this as
+a fix since it is not marked as such.
 
-I'm fine dropping this patch indeed
+But I don't want to delay you. If you need the changes, then I would
+suggest just applying the parts that modify your files, and we clean
+up the rest later.
 
-> > > > Softawre reset the FCPX after the vsp1 pipe has stopped.
-> > >
-> > > s/Softawre/Software/
-> > >
-> > > > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> > > > ---
-> > > >  drivers/media/platform/renesas/vsp1/vsp1_pipe.c | 7 +++++--
-> > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> > > > index a6e5e10f3ef275c1b081c3d957e6cf356332afce..c6f2417aabc479384012ab8ab99556029ede1f44 100644
-> > > > --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> > > > +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> > > > @@ -499,6 +499,7 @@ bool vsp1_pipeline_stopped(struct vsp1_pipeline *pipe)
-> > > >  int vsp1_pipeline_stop(struct vsp1_pipeline *pipe)
-> > > >  {
-> > > >  	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
-> > > > +	u32 version = vsp1->version & VI6_IP_VERSION_MODEL_MASK;
-> > > >  	struct vsp1_entity *entity;
-> > > >  	unsigned long flags;
-> > > >  	int ret;
-> > > > @@ -515,8 +516,7 @@ int vsp1_pipeline_stop(struct vsp1_pipeline *pipe)
-> > > >  			spin_unlock_irqrestore(&pipe->irqlock, flags);
-> > > >  		}
-> > > >
-> > > > -		if ((vsp1->version & VI6_IP_VERSION_MODEL_MASK) ==
-> > > > -		    VI6_IP_VERSION_MODEL_VSPD_GEN3)
-> > > > +		if (version == VI6_IP_VERSION_MODEL_VSPD_GEN3)
-> > > >  			ret |= rcar_fcp_soft_reset(vsp1->fcp);
-> > > >
-> > > >  	} else {
-> > > > @@ -529,6 +529,9 @@ int vsp1_pipeline_stop(struct vsp1_pipeline *pipe)
-> > > >  		ret = wait_event_timeout(pipe->wq, vsp1_pipeline_stopped(pipe),
-> > > >  					 msecs_to_jiffies(500));
-> > > >  		ret = ret == 0 ? -ETIMEDOUT : 0;
-> > > > +
-> > > > +		if (version == VI6_IP_VERSION_MODEL_VSPX_GEN4)
-> > > > +			ret |= rcar_fcp_soft_reset(vsp1->fcp);
-> > > >  	}
-> > > >
-> > > >  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
->
-> --
-> Regards,
->
-> Laurent Pinchart
+Thanks!
+
+Cheers,
+Miguel
 
