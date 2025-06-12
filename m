@@ -1,250 +1,573 @@
-Return-Path: <linux-kernel+bounces-684669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434C2AD7F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:40:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D234AD7F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E0B18950CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDEA33A28F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA292E1744;
-	Thu, 12 Jun 2025 23:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343502DFA39;
+	Thu, 12 Jun 2025 23:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Apl64pv/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cXE+gUak";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nqDV+3wN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213EB2E1734;
-	Thu, 12 Jun 2025 23:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749771545; cv=fail; b=QJhw5dvorASeu9n5pPVQMkXIyM2ynZUznZE86NFsBowSmIoFi9jcOEKu6KiK05xejQGLc1Qx+OapKd7PnJnwKWbNn/41t7xHwO0idRoDCZGIti1OxdjR6Xont3JkuwZ5BsKuPaIEmIIpWMpiuDUxdNjDHj8i/eLJzql8TO46u10=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749771545; c=relaxed/simple;
-	bh=gUrhJi+DhBEDLP0z61zNx3hi7OVx5TLs66hkAhI8nN4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=g+u3hhMVJkk6kKQkoKTnoLgiktHb71Y2ueia7jRyoLwqUlOf5LoNmBVR3jx1PlZ+KKjZOJSMD3X82ptUsysAZQw4mi9wF4dLVY+V6mBZTcOsYNBkdlZNsQ93AbiTSXlJ0ATE6Mia9F6ublRYTlqr3KL5IVa9b/iO2bd/4xnrjpI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Apl64pv/; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749771544; x=1781307544;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=gUrhJi+DhBEDLP0z61zNx3hi7OVx5TLs66hkAhI8nN4=;
-  b=Apl64pv/1arbjNKZhK+1bFN8kg0t1ubhINnjutNNQwoGZEbDo8ChrZKt
-   EzqPPN4f6S5EeVesfP2H+BLGXuT8dNACsTO2ywHdkbUfHflVPkX+Qt2YE
-   ss8Fubp9FvP8MQobZpyyUWn6MZucAkHHxZu++4Q2gyhBttJPZReqWWWg5
-   FVGmMPEQJAHFvG4CQHATTh7k2rklI6GfFKeNYSD4be2D38Jh/e0tfIUzr
-   A0ikaXKj+SHi/BzA6uULa3NIetdebdNXf7dPgFtWOgQXqqVT/5xnSBIEc
-   7/T5IyIO9HSfzdWmCChlNRkQtYjW19EBgHSA6K8/r1Cut6incrPvA2AbU
-   Q==;
-X-CSE-ConnectionGUID: h1gLxMpZS4yGKCUUuEuLIQ==
-X-CSE-MsgGUID: o1IMegvkQ3qJS6BHDtryHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="69417709"
-X-IronPort-AV: E=Sophos;i="6.16,232,1744095600"; 
-   d="scan'208";a="69417709"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 16:39:04 -0700
-X-CSE-ConnectionGUID: i4FnbdfRR2Gxo3N4weh/nA==
-X-CSE-MsgGUID: I7BH/bDbQQCsa70CkHAPdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,232,1744095600"; 
-   d="scan'208";a="147575927"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 16:39:04 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 12 Jun 2025 16:39:02 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 12 Jun 2025 16:39:02 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.51)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 12 Jun 2025 16:39:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g3q7N/kBj2/7zY+Emei0L60+TnXQqev5biAI51BQT9E6oZ7TqJOVAOcWqu9U6n26vN3Xaq7I/Dvd+R7XU0tnGwrliPUVhsfX4jHExsC4c/i+wW38CBhnX5xK3PTbWaregKaAKdpHfmLD0POHEmRUGu2dCmVGO+IaqLVrGYuyuHu1DenOjUU2hE7EZ/+XuU9HgG7SNLSEtexhQV5psEEorc+Utry5UP2d0KZalW+wtiPDgAf/R6IqgMzaJctxFoaVBw0Fld045rbQqDAXraS2ADNUNtyOG1GsPctoQcGqxUSTA56tTIrDkqMv5v+XB+BFGH7pZvSFspShtTL9OIk+qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gUrhJi+DhBEDLP0z61zNx3hi7OVx5TLs66hkAhI8nN4=;
- b=l9y6Fv1W7L2R0MdKc2BpwFRzfpGBnFWVyecZYdWXePoZjTWFMt0tXs0yVdBCzzr8K2gfZT2Ph7vPb7miioKMyt8NfI4H2yNtEsCaON+VHTJC9JWV2/Hh6ntZlVdEu0Pl5IdmlT5Mfgzemy8s3YE8fBSVgFqTESLoAKQeb6knJN0pALhQJTiFt0EW3yR5v3j1WVNI+691MaGtRsdmBQmNPxSZ4dJmvdYPNG1wtDs20bvgarbKWlyGBSjbkLUwEbvdBqmQrdctAf79nVVwvuwEDFNWO4YNqjpQdEv9NIJcCx7FNSTZ1bdkAURRwpF+tux9UDbp5ENoJ9pALo3fb6o2qA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by DM4PR11MB6503.namprd11.prod.outlook.com (2603:10b6:8:8c::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8813.26; Thu, 12 Jun 2025 23:39:00 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.8813.024; Thu, 12 Jun 2025
- 23:39:00 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
-	<kai.huang@intel.com>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao"
-	<xiaoyao.li@intel.com>, "Du, Fan" <fan.du@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, "Shutemov, Kirill"
-	<kirill.shutemov@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Weiny, Ira"
-	<ira.weiny@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Yamahata, Isaku"
-	<isaku.yamahata@intel.com>, "ackerleytng@google.com"
-	<ackerleytng@google.com>, "tabba@google.com" <tabba@google.com>, "Peng, Chao
- P" <chao.p.peng@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Annapurve, Vishal"
-	<vannapurve@google.com>, "jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun"
-	<jun.miao@intel.com>, "pgonda@google.com" <pgonda@google.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [RFC PATCH 09/21] KVM: TDX: Enable 2MB mapping size after TD is
- RUNNABLE
-Thread-Topic: [RFC PATCH 09/21] KVM: TDX: Enable 2MB mapping size after TD is
- RUNNABLE
-Thread-Index: AQHbtMYisXlDVaH8LEKqVl1+c9iQ77PRHICAgAN/mYCAAIg5AIAA1+mAgAPLQICAAIwTAIABF74AgADuIICAIfsagIACKESA
-Date: Thu, 12 Jun 2025 23:39:00 +0000
-Message-ID: <f001881a152772b623ff9d3bb6ca5b2f72034db9.camel@intel.com>
-References: <20250424030033.32635-1-yan.y.zhao@intel.com>
-	 <20250424030618.352-1-yan.y.zhao@intel.com>
-	 <dc20a7338f615d34966757321a27de10ddcbeae6.camel@intel.com>
-	 <c19b4f450d8d079131088a045c0821eeb6fcae52.camel@intel.com>
-	 <aCcIrjw9B2h0YjuV@yzhao56-desk.sh.intel.com>
-	 <c98cbbd0d2a164df162a3637154cf754130b3a3d.camel@intel.com>
-	 <aCrsi1k4y8mGdfv7@yzhao56-desk.sh.intel.com>
-	 <f9a2354f8265efb9ed99beb871e471f92adf133f.camel@intel.com>
-	 <aCxMtjuvYHk2oWbc@yzhao56-desk.sh.intel.com>
-	 <119e40ecb68a55bdf210377d98021683b7bda8e3.camel@intel.com>
-	 <aEmVa0YjUIRKvyNy@google.com>
-In-Reply-To: <aEmVa0YjUIRKvyNy@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DM4PR11MB6503:EE_
-x-ms-office365-filtering-correlation-id: 7c995839-dd21-4896-77b9-08ddaa0a4ec3
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?dnJ5RzV3TGZ3MTh0UDVpeHMzRGN3S0EvWDFNN3VSVEdFb29jY0IrYUtSaDdE?=
- =?utf-8?B?czJUN1c4eklJVjJ2RGgwamZmQzdxMjkvSGp4c1BlUkc5TEFvMUNQYkdjRjc2?=
- =?utf-8?B?RXhIUlJFLzJhZk5CZW4wSy9ZeTk1SDZQWENVWnhENUQ4U0dZRFlXa2x1TEJm?=
- =?utf-8?B?V3gzM2Y2eGprUk8zdFdPTDR5eGMyaW90aGtOZ0RvUE5rS0ZHM0tEY0RORk1M?=
- =?utf-8?B?cEdKTWIrVVkvKzQ1cXViSU9rcTZDTE5pcVpIQzVSV1hjMUx0Qi90K2xXdmFZ?=
- =?utf-8?B?VVVwSVFaazRFTkpEV0MxSXBOMlVlRE5vM0JhNW90Vmg0Q2dCbElTUmhaQVhB?=
- =?utf-8?B?dFdRckdONk9qMWhKKzJjMms5SkNqZ0oveTRVSWdybnBHU1YxR084MHpKZDhu?=
- =?utf-8?B?MjRjOVlhVW9kdkFDYTJ4eENQYlJWQjVpbjNKS1d5bHdWN1kxaEM3eDJsWVZC?=
- =?utf-8?B?M2FOdDFKUlZXU1Z3V2F1eHp6WVRoeHNyeHFTTllYN3lNbGlmSjlHNEpSUU9u?=
- =?utf-8?B?WGNTUXlmUW44WURHTDhMYWUzTzBjSVBnRkt1YjhNR2FvbmF0VWk4cVZ1NFRN?=
- =?utf-8?B?WkRCdWlBRjNXWFZtaExSVVhlNm52L0pWZ1pSU0g0a09kZ0k2NUVTWmVGZGpn?=
- =?utf-8?B?TkI2dUJWLzZTei9Dano2dFNEVjJmSHJpdDVOM0ZZdlhIYXVqdEtQSFVLZ05R?=
- =?utf-8?B?N01ZMjN0S1RNR1dtalRPN1VMMnZOSmUzYXZBR0hjVmRSTm84bUZnUHJaT3Ba?=
- =?utf-8?B?SHh5NGpOOENnSDU4Qk5wY3U5RFB6aEd1MFM2RTJVNlZlUnVpaW50dG1zQVQz?=
- =?utf-8?B?QXI0KzY3UTNqSDJmS3dtb1Fsb05DYmZJUGJxMmtUSzlNU3ZSbzhVMTZtVUtV?=
- =?utf-8?B?TmgyaUNKbGQzVCtzNG51cnAxQi92NHlHWlQxYzA2MjZmU3NxeVZlUlVvK25Y?=
- =?utf-8?B?N084S0FVMWROTW9CaXQyMUtHRzJ0Q3I0eWw3QllhcGttVVZSb0cyQ1ZXWm1p?=
- =?utf-8?B?S0thMjJER1JGbWkwRWg5YnlDRW1xSUgzeUkzaWlGMFhRbGVJbHpCazNlQ2N1?=
- =?utf-8?B?SUd4N1RMNnkyKzdoQklua3BKNnI1N3BPV1VBVDA4TmRBNmcxMnhXSWhjazV0?=
- =?utf-8?B?TXZ3UzJSYnZvaC9adnpTZVkvNG1uREU2VENDeFBEVTlKUkhBRVM1TENhdUFh?=
- =?utf-8?B?Y0ZYcGRRek16ZHFCSjFJT3NpZWZoWDNlQnRnaXphWnU1Z0FGNjg0WVFiemR6?=
- =?utf-8?B?d1QvMXkzamJVMlpmaXFmV0FkWkNxdDlVaTVrWUpKRjVyQzRSdi9IbHNuQTZT?=
- =?utf-8?B?SDZraVZVSmN0WlYxN2dOVDhSaDQ4RURmcGNtQTNMOEVZZ3lmSEIxZXN5Unlm?=
- =?utf-8?B?OUYxT0RjUTA1ZC92R0IzdThkVWZXZzdyMkpJa0diczRINlZrNmVVYlVURzli?=
- =?utf-8?B?bHA0ZzdiUVZJa3U2R1Q4cFlnaWdTOCtPQ0JxdVNQd3gzVGQ1aktKZW5TdFli?=
- =?utf-8?B?TjBjeWw5TitYVDN0Q2pYYnMvK2EzYk5iREU5NEVnYUFHWGJoR1Z4enlRdks1?=
- =?utf-8?B?UjRaVGhlSDJSRjJXdmx5TmdVTmE1K1ZMeTRUcjlYbEFoN3hhWExVaUVuYTFJ?=
- =?utf-8?B?WXdqcVFXZVpnQTRERStNNk1USjkyZ3ZyTWlhMExMc0xtTDJXUlJYRFNMbXM0?=
- =?utf-8?B?ajRUU1A0RXpNVEcrbzZKRDV4VzQ5RURsWEpkSU83RWJ5WUI5Z0E1OW1iRTY1?=
- =?utf-8?B?ZUtXU1gxbllJdmRKcS8xZk9RMGRpRGgzVFB6TUtpYlhmcnladzVnL3plODlX?=
- =?utf-8?B?S2ZtelNsVllkMWtqSFppTEJGQ0o3YnlyQlVLOWdBVHhCRHVkUzZua1IvN2J0?=
- =?utf-8?B?RThLZ2hLdDlIbUJrdG5MOTlGTThvTXRHZmxhTjRIQnhqZmtWYXk3QjcwWXh2?=
- =?utf-8?B?SG5RNmZQT1BUdnJzaFB2dm5VNGhzNzlreTRvVXJ6ZlpuWWFkR1F0NldMQVBu?=
- =?utf-8?B?U053eC9rS3J3PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VERRVUE4NUlpU1I2YjJCQnMveWpqSENKTUJNbjR1MmJTbnFhNUxyNmtSeThP?=
- =?utf-8?B?NitrVitBYkcwZ1Z3amxCdVhhMkNtSnhiWHdiUWtUbElwVFFYWlJoT0hWYU0z?=
- =?utf-8?B?ckxXbFhWL04vWDNkZ25Mb3gwQ1hrWjNqWmtScVZIdzd5bXRKc1Fnalk3WTE5?=
- =?utf-8?B?ZTlYOHhEOE03ajNuSENlZDg3eStYK2VMVnNQUjdSMkZpaWN1SEtuZ3hYejVX?=
- =?utf-8?B?T3NOeHEzVkVDMHcyS09wdGxCYzFNalZROVJ1Z2o1K09PQkxET2R5U1VRc0pQ?=
- =?utf-8?B?cTk5YUJ5UG5qNU9lTGlVOGdVbER0QW5qUXQ2ZG8xVkJPR0lSVEtOM1FUTXdJ?=
- =?utf-8?B?ZGNDZGdidE5lS2FucnZ5dk1lNlpNZXNPbm84b3hRSkFtUmZuUThTbGtublpE?=
- =?utf-8?B?blFuV2poN29XUmxxMVpUMHJGKzlhbHJ2RnI0a3o0Y1BjbFFSVmowZTRGMGxu?=
- =?utf-8?B?NkpHelFPU1RKbm05MmZ4RTROak5jM1lHNzRxWmsxUXh5enhFQ1VUMThKR2NL?=
- =?utf-8?B?VHd1SW9NQ0xvYklReVFhbjY1NTc3d1RjN2xkdktDc3Bzb1ZuUGp1akpRK05s?=
- =?utf-8?B?RmVHcThzRUVsUVhQclFBRHdRMjl2QVN4NnI3d2pKYVQzYjNyTnpESE9KSTcz?=
- =?utf-8?B?OUYwaTZYdUZXTW95TFgrd0N3L2Exd2VoK3V1YTlNOGlBdFIrRmZIUWtvdHh4?=
- =?utf-8?B?TFFwL1ZFMTF3cGtjeVViYWI4UWhlakxjL2JBZExldndNdkNDVXd0K2tzanU3?=
- =?utf-8?B?RFFQQldRRCsyQkxLbjBhYVNmQzNyc3A0RnhyTGQwWjNyeXlyZTczdVZtUHNh?=
- =?utf-8?B?Qkh2c3VLTUtTNEp3ZTdkODZIazh2WTdMeHBqdGJMYWNPemdWUWlPZDlVQ2Va?=
- =?utf-8?B?OHZaWlpRQmFUYVRPNlRqbVJsamdoME0zanVZN0E1VmpvMm9sYkxGL2p1SG1U?=
- =?utf-8?B?dTFVaDFYcjBIQ0ZPUU5ha2pXRWtqN3pXbFUza1J6Ky8xd2VNMVd1ejhzRlo3?=
- =?utf-8?B?N3FLUkhJdEhTejF6cUpWK0s2TFltTWllNjZyMHYraURUOWNrQXFhdzVQcDN2?=
- =?utf-8?B?ZHFzVFplRmpnM3Q0d09sSTl6K2t4YjJ4WlBKOXZXU1hHUVBsSHJncFR0aXYv?=
- =?utf-8?B?c290eStoR1FBVTlrb1ZVOWR6SUJzc1JEalRBcFU3amZncTRCL2xSejRTNGtL?=
- =?utf-8?B?WnlBY2RsWmxZK3NxaFhRV3VONllqL3huS0Rhc3Q3ZHBXTCtZU2k0ZkNleXFS?=
- =?utf-8?B?eFJIaW1Zckg5YnpTREZKekpjeFVyWXpWU3o5eThkNWRYcW1xbUZmNDYzbTNk?=
- =?utf-8?B?bGlvUFFOUGZ2WkNFUXZKZ0FQM2ZRRUlSc0VVS0NRZWVESkJnL3hIOHVOOGo2?=
- =?utf-8?B?aDFkQWNWazJiNnVqUDJZdnlZM3NvMmMwWUkvTjRNNnBlTXlYdXNGSUEyYkdU?=
- =?utf-8?B?U21hc1dHakpNd1hyMFVMM1dJOTlUZnBXQXBURlU2cXZLaTl6eWwrUFR3NnRm?=
- =?utf-8?B?UDVkb2NEZGdhc0M0Y1EwNS9iSnd5cTZVWEhDVHhXN2ExYnp4ZjZwekwyVGdW?=
- =?utf-8?B?Q2xvZXJyNUxQbm5rTmNmSUVNTXYzVFRKODFVMURNOXZSZk92azVBWDFSQkow?=
- =?utf-8?B?SnBrczZKNzB0dUdnRFVUNmdzaGw2by9haGN4dG1maFgzL09nbEJFTk9iS2Zt?=
- =?utf-8?B?WkxMUkJCbHVMQ0ZxQmVQelZ0bEVsNTF3cmdMT3A1TVpWa3V1NVNkYlpIYnoy?=
- =?utf-8?B?U2t1amZJNTd5RE1pUnV3bWlRQUxwdFJ5NmpsY1VYK3pQYTEvenkzM0pxTzhv?=
- =?utf-8?B?WWptaG05d2FYZFRpR2NEaG4zRGJkbzdLQzNsQUhVRE1LTDJqVEVuZWRLRFRL?=
- =?utf-8?B?Q0pXQW5OUHBMYytGZHBtdFMvd3FIcU5mOWpxdkwvQmowZVgrdlFsUUpkS1kw?=
- =?utf-8?B?bnRIOEhxVEtGUk16UVV0NW84cHFteUJham1MRFo5N2x1cDdaQ1cwbTYzeUlj?=
- =?utf-8?B?WDZ0SytKbW5ONEJUOXlxQkU4TXArdEhhd25EMVdmeklVNEZkQUU3ZXZmUFhX?=
- =?utf-8?B?U0JwUWtYMTNGZGY4dkpnWUxkZzhqekJ0Z0tYQWZjNGI2VjVVRFMyOEpYTGZ0?=
- =?utf-8?B?MGtPaWhmVEl1WjZFNS9NWFZzUzdWY090WXJOQWF1dUZtS3I4Y2hSRklJcTRS?=
- =?utf-8?Q?suhB3VdfPXB1JQfbiLhOv68=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0321ED80D1C9C44BA3BB223E14D41C86@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FF822D9ED
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 23:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749771624; cv=none; b=nEWv/yhiJ1qONYFYjvmzLdb/7iUv12aKxYlWwP3u9zx/wNbixfjtnaEKuRdQYTVzxSsGX93iv/1lf3km2Gfr0rC7IoJ20q//EA1+hdNWxrAqEpaFjvWj6hUIDrRJDJKlWBXIs5QKI1KUwJTHeQXIRbgTF3qZp1EOyeFgPelnjV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749771624; c=relaxed/simple;
+	bh=HgPyG0zfBpsAaRmFh5Mf3XsW9TS09iDXSvGaz+lVQUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MUTYEuHytcaHB1hSTJ5Uq+mYiCbRfm6RYvoZgGnfBwqxweAME3A+pexcwZKEEfu2KQVCm95YnfKgmhw8yrCjQxYfPg/gO6x177J/AKMrlh1SCRrPENlZIjj/GoKQuI/27dYc+UZWc7jmduDMesHl/2ekfJw2zKQzHa7uLfJ64vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cXE+gUak; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nqDV+3wN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749771618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zb4eFr8rBlyubPM4VLhXUTekr67Q/fq32/z731O4wf4=;
+	b=cXE+gUakUqzqxEin8GONQYpIdHdkQu0bRG4QcNv2nz7cS2XAxjVzuzRq85tT4S6QM9tLzl
+	IjQr1Zwz3wVRkKISw/hOBKyPZTiEZPWRPj8/5n7ufh27AYE2ew2CiJNoPZIFjTVD9dkM0d
+	ZHNzgeyUU1zaJPN5qLjMNphJb20uYzlrRabeEMTv+h14w4FdSZix53JdcWxc9lWeGlHekm
+	cAljy/b30q+G9m3Iwbi+uSJe1/+qC+i5nsPkql9U1JxAQhv86c0MeI22U3y6Lv6zSh/YMH
+	N2T2XijaXDtRQUr9wm30LUUvmNq0Q6SfuIac9U8whGKZCd/zTCUIBO+/hwvnmw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749771618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zb4eFr8rBlyubPM4VLhXUTekr67Q/fq32/z731O4wf4=;
+	b=nqDV+3wNtZxkORqtCCHhdj/3LRHqDWeyua7ojBsVIBSCFDDkVkuHqivC8qQKin9x4U14ec
+	rRKawdaYP7Ts/xDA==
+To: Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v3 00/44] x86: Introduce a centralized CPUID data model
+Date: Fri, 13 Jun 2025 01:39:26 +0200
+Message-ID: <20250612234010.572636-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c995839-dd21-4896-77b9-08ddaa0a4ec3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2025 23:39:00.4240
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XAH8P2mR0FR+SExlSdroZ2Q7rBhpKaY6QQ498s4hneGpKkQRv0f0MvRBg/zAP0cdWg4fvxFlxNrmtyBK00PkVVh/YdpuRrwJUe3RJN+f3CE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6503
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI1LTA2LTExIGF0IDA3OjQyIC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
-b3RlOg0KPiBJZiB0aGVyZSdzIGEgKmxlZ2l0aW1hdGUqIHVzZSBjYXNlIHdoZXJlIHRoZSBndWVz
-dCB3YW50cyB0byBBQ0NFUFQgYSBzdWJzZXQgb2YNCj4gbWVtb3J5LCB0aGVuIHRoZXJlIHNob3Vs
-ZCBiZSBhbiBleHBsaWNpdCBURENBTEwgdG8gcmVxdWVzdCB0aGF0IHRoZSB1bndhbnRlZA0KPiBy
-ZWdpb25zIG9mIG1lbW9yeSBiZSB1bm1hcHBlZC7CoCBTbXVzaGluZyBldmVyeXRoaW5nIGludG8g
-aW1wbGljaXQgYmVoYXZpb3IgaGFzDQo+IG9idmlvdWxzeSBjcmVhdGVkIGEgZ2lhbnQgbWVzcy4N
-Cg0KSGksIHN0aWxsIGRpZ2dpbmcgb24gaWYgdGhlcmUgaXMgYW55IHBvc3NpYmxlIHVzZS4NCg0K
-SSB0aGluayB0aGlzIG1heSBuZWVkIGEgZ3Vlc3Qgb3B0LWluLCBzbyB0aGUgZ3Vlc3QgY2FuIHNh
-eSBpdCBjYW4gaGFuZGxlIGVycm9ycw0KZm9yIGJvdGggc21hbGxlciBhbmQgbGFyZ2VyIHBhZ2Ug
-c2l6ZSBtYXRjaGVzLiBTbyBpdCBtYXkgbm90IG1hdHRlciBpZiB0aGVyZSBpcw0KYSByYXJlIHVz
-YWdlIG9yIG5vdC4gSWYgS1ZNIGZpbmRzIHRoZSBndWVzdCBvcHRzLWluIChob3cgdG8gZG8gdGhh
-dCBUQkQpLCBpdCBjYW4NCnN0YXJ0IG1hcHBpbmcgYXQgdGhlIGhvc3QgbGV2ZWwuIElmIEtWTSBk
-b2Vzbid0IHNlZSB0aGUgb3B0LWluLCB0aGUgZ3Vlc3QgZ2V0cw0KNGsgcGFnZXMuDQo=
+Hi,
+
+This series introduces a centralized CPUID model for the x86 subsystem.
+
+Rationale for this work can be found at:
+
+    https://lore.kernel.org/lkml/874ixernra.ffs@tglx
+
+    https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+
+The first 19 patches can be independently applied.
+
+
+Changelog v3
+~~~~~~~~~~~~
+
+* Transform the final CPUID(0x80000006) call site, inline C function
+  cpuid_amd_hygon_has_l3_cache() at <asm/cpuid/api.h>, to the new parsed
+  CPUID API.
+
+  Due to this C inline function requiring access to 'struct cpuinfo_x86',
+  a circular dependency emerged in the headers:
+
+  <asm/cpuid/api.h>    includes    <asm/processor.h>	# for 'struct cpuinfo_x86'
+  <asm/processor.h>    includes    <asm/cpuid/api.h>	# for CPUID types
+
+  Turns out, <asm/processor.h> does not need <asm/cpuid/api.h>, and
+  <asm/cpuid/types.h> is enough for it.
+
+  Thus, let <asm/processor.h> include <asm/cpuid/types.h> instead.
+
+  For all call sites that included the CPUID API header implicitly
+  through <asm/processor.h>, transform them to explicitly include
+  <asm/cpuid/api.h> instead.
+
+  This <asm/processor.h>⇔CPUID-API headers disentanglement is done by
+  patches 1=>19.
+
+* Initially (at v1, v2), there were two CPUID parser functions to fill a
+  CPUID table: cpuid_parser_scan_cpu() and cpuid_parser_rescan_cpu().
+  The latter zeroed-out the CPUID table beforehand, while the former did
+  not.
+
+  For v3, let the CPUID parser provide only one function where the CPUID
+  table is always zeroed beforehand: cpuid_parser_scan_cpu(),
+
+  Rationale for this decision is explained at patch 21/44 ("x86/cpuid:
+  Introduce a centralized CPUID parser"), inside
+  cpuid_parser_scan_cpu()'s implementation.
+
+* Minimize the code for leaf-specific CPUID parser code by removing some
+  redundant steps: remove initial zeroing of "output->info->nr_entries",
+  remove a static assert, etc.
+
+* Drop the v2 patch, ("x86/cpuid: Warn once on invalid CPUID(0x2)
+  iteration count"), from this model v3.  On AMD machines with zeroed
+  CPUID(0x2) output, a false warning will be triggered.
+
+  This is because the CPUID model generic leaves parser has no vendor
+  filtering so far; i.e. all CPUID leaves are queried on all CPU vendors.
+  This keeps the parser simple, but I'll think a bit if adding minimal
+  vendor filtering will be useful for this PQ's next iteration.
+
+* Apply more CPUID parser code readability enhancements.
+
+* Series is on top of v6.16-rc1.
+
+
+Changelog v2
+~~~~~~~~~~~~
+
+( [PATCH v2 00/27] x86: Introduce a centralized CPUID data model
+  https://lore.kernel.org/x86-cpuid/20250605192356.82250-1-darwi@linutronix.de )
+
+* Pre-requisite CPUID headers cleanups, requested by Ingo, are now merged:
+
+    [PATCH v1 0/9] x86/cpuid: Headers cleanup
+    https://lore.kernel.org/lkml/20250508150240.172915-1-darwi@linutronix.de
+
+    [PATCH v2 0/2] x86/cpuid: Headers cleanup
+    https://lore.kernel.org/lkml/20250515202143.34448-1-darwi@linutronix.de
+
+  This v2 series is rebased on top of the above restructuring, where the
+  CPUID headers become:
+
+    include/asm/cpuid/
+    ├── api.h
+    ├── leaf_types.h		// x86-cpuid-db auto-generated file
+    └── types.h
+
+* At <asm/cpuid/api.h>, add a clear rational for call sites to use the
+  new API:
+
+   /*
+    * External APIs for accessing parsed CPUID data:
+    *
+    * Call sites should use below APIs instead of invoking direct CPUID
+    * queries.  Benefits include:
+    *
+    * - Return CPUID output as typed C structures that are auto-generated
+    *   from a centralized database (see <cpuid/leaf_types.h).  Such data
+    *   types have a full C99 bitfield layout per CPUID leaf/subleaf
+    *   combination.  Call sites can thus avoid doing ugly and cryptic
+    *   bitwise operations on raw CPUID data.
+    *
+    * - Return cached, per-CPU, CPUID output.  Below APIs do not invoke
+    *   any CPUID queries, thus avoiding their side effects like
+    *   serialization and VM exits.  Call-site-specific hard coded
+    *   constants and macros for caching CPUID query outputs can also be
+    *   avoided.
+    *
+    * - Return sanitized CPUID data.  Below APIs return NULL if the given
+    *   CPUID leaf/subleaf input is not supported by hardware, or if the
+    *   hardware CPUID output was deemed invalid by the CPUID parser.
+    *   This centralizes all CPUID data sanitization in one place (the
+    *   kernel's CPUID parser.)
+    *
+    * - A centralized global view of system CPUID data.  Below APIs will
+    *   reflect any kernel-enforced feature masking or overrides, unlike
+    *   ad hoc parsing of raw CPUID output by drivers and individual call
+    *   sites.
+    */
+
+* Since this model's APIs will be the official kernel CPUID API, free the
+  cpuid_subleaf() and cpuid_leaf() namespace and dedicate it to the model:
+
+    patch 02/27 ("x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf() APIs")
+
+  After some local iterative work, I've found below API names to make the
+  most sense.  They look "so obvious" now, which is IMHO a good sign.
+  The CPUID model APIs become:
+
+    /*
+     * For CPUID leaves with static, compile-time, subleaves
+     */
+
+    cpuid_subleaf(_cpuinfo, _leaf, _subleaf)
+    cpuid_leaf(_cpuinfo, _leaf)
+    cpuid_leaf_regs(_cpuinfo, _leaf)
+
+    /*
+     * For CPUID leaves with dynamic subleaves
+     */
+
+    cpuid_subleaf_index(_cpuinfo, _leaf, _idx)
+    cpuid_subleaf_index_regs(_cpuinfo, _leaf, _idx)
+    cpuid_subleaf_count(_cpuinfo, _leaf)
+
+  The difference between the static and dynamic parts of the API is
+  described in detail at patch 04/27 ("x86/cpuid: Introduce a centralized
+  CPUID data model").
+
+  In general, all of the above APIs translate to a /single/ assembly
+  instruction offset calculation.  For example:
+
+    const struct leaf_0x7_0 *l7_0;
+    const struct leaf_0x7_1 *l7_1;
+
+    l7_0 = cpuid_subleaf(c, 0x7, 0);
+                         |   |   └────────┐
+                         |   └─────────┐  |
+                         *             *  *
+                        &c.cpuid.leaf_0x7_0[0]
+
+    l7_1 = cpuid_subleaf(c, 0x7, 1);
+                         |   |   └────────┐
+                         |   └─────────┐  |
+                         *             *  *
+                        &c.cpuid.leaf_0x7_1[0]
+
+* Per Ingo's feedback, avoid the "CPUID scanner" terminology and
+  standardize on "CPUID parser".  Use the new terminology for all of the
+  relevent data structures, functions, and file names: "cpuid_parser.h",
+  cpuid_parser.c, 'struct cpuid_parse_entry', cpuid_parser_scan_cpu(),
+  cpuid_parser_rescan_cpu(), etc.
+
+* Standardize on "__cpuid_leaves_" and "__cpuid_table_" prefixes for all
+  of the <cpuid/api.h> macros that are intended for internal CPUID usage.
+
+* Apply multiple code clarity enhancements to the CPUID parser.  No
+  change in functionality.
+
+* For the series main patch, 04/27 ("x86/cpuid: Introduce a centralized
+  CPUID data model"), expand it with full design and implementation
+  details rational.
+
+* Per Sohil's feedback, apply output formatting enhancements to the new
+  CPUID debugfs files x86/cpuid/[0-ncpu]:
+
+    patch 07/27 ("x86/cpuid: Introduce CPUID parser debugfs interface")
+
+* Per Ingo's feedback, (lightly) log the cases where the CPUID parser
+  encounters bogus hardware CPUID data:
+
+    patch 13/27 ("x86/cpuid: Warn once on invalid CPUID(0x2) iteration count")
+
+* Per Ingo's feedback, break CPUID(0x4) call-site patch into:
+
+    patch 19/27 ("x86/cacheinfo: Pass a 'struct cpuinfo_x86' refrence to CPUID(0x4) code")
+    patch 20/27 ("x86/cacheinfo: Use parsed CPUID(0x4)")
+
+* Enhance all of the project's APIs kernel-doc.
+
+* Massage all commit logs and code comments for overall clarity.
+
+
+Changelog v1
+~~~~~~~~~~~~
+
+( [PATCH v1 00/26] x86: Introduce centralized CPUID model
+  https://lore.kernel.org/lkml/20250506050437.10264-1-darwi@linutronix.de )
+
+This series introduces a CPUID model for the x86 subsystem.
+
+It is based on top of the CPUID refactorings and bugfixes currently
+merged at tip:x86/cpu:
+
+    [PATCH v1 00/40] x86: Leaf 0x2 and leaf 0x4 refactorings
+    https://lore.kernel.org/lkml/20250304085152.51092-1-darwi@linutronix.de
+
+    [PATCH v4 00/29] x86: Leaf 0x2 and leaf 0x4 refactorings
+    https://lore.kernel.org/lkml/20250324133324.23458-1-darwi@linutronix.de
+
+    [PATCH v2 0/2] x86/cacheinfo: Fixes for CPUID(0x80000005) and CPUID(0x80000006)
+    https://lore.kernel.org/lkml/20250409122233.1058601-1-darwi@linutronix.de
+
+    [PATCH v1 0/2] x86: CPUID refactorings: follow-up
+    https://lore.kernel.org/lkml/20250411070401.1358760-1-darwi@linutronix.de
+
+    [PATCH v3 00/20] tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.3
+    https://lore.kernel.org/lkml/20250324142042.29010-1-darwi@linutronix.de
+
+First, deploy <asm/cpuid/leaves.h>, as generated by x86-cpuid-db. [*]
+
+The header is in the form:
+
+    /* SPDX-License-Identifier: MIT */
+    /* Generator: x86-cpuid-db v2.4 */
+
+    /*
+     * Leaf 0x0
+     * Maximum standard leaf number + CPU vendor string
+     */
+
+    struct leaf_0x0_0 {
+     	u32	max_std_leaf		: 32; // Highest standard CPUID leaf supported
+     	u32	cpu_vendorid_0		: 32; // CPU vendor ID string bytes 0 - 3
+     	u32	cpu_vendorid_2		: 32; // CPU vendor ID string bytes 8 - 11
+     	u32	cpu_vendorid_1		: 32; // CPU vendor ID string bytes 4 - 7
+    };
+
+    /*
+     * Leaf 0x1
+     * CPU FMS (Family/Model/Stepping) + standard feature flags
+     */
+
+    struct leaf_0x1_0 {
+	// eax
+	u32	stepping		:  4, // Stepping ID
+		base_model		:  4, // Base CPU model ID
+		base_family_id		:  4, // Base CPU family ID
+		...;
+	// ebx
+	u32	brand_id		:  8, // Brand index
+		clflush_size		:  8, // CLFLUSH instruction cache line size
+		n_logical_cpu		:  8, // Logical CPU count
+		local_apic_id		:  8; // Initial local APIC physical ID
+	// ecx
+	...
+    };
+
+    ...
+
+where for each 'struct leaf_0xN_M', N is the leaf number and M is the
+subleaf.  The bitfields mirror the x86-cpuid-db kcpuid auto-generated
+file, as already merged mainline at tools/arch/x86/kcpuid/cpuid.csv.
+
+Create a 'struct cpuid_leaves' in <cpuid/types.h> to hold scanned CPUID
+data:
+
+    struct cpuid_leaves {
+     	struct leaf_0x0_0	leaf_0x0_0[1];
+     	struct leaf_query_info	leaf_0x0_0_info;
+
+     	struct leaf_0x1_0	leaf_0x1_0[1];
+     	struct leaf_query_info	leaf_0x0_0_info;
+
+     	struct leaf_0x4_0	leaf_0x4_0[8];
+     	struct leaf_query_info	leaf_0x4_0_info;
+     	...
+    };
+
+where the 'struct leaf_0xN_M' definitions are auto-generated.  Use arrays
+to handle CPUID leaves with uniform subleaf structures, which is typical
+for enumerating hierarchical objects; e.g., CPUID(0x4) cache topology
+enumeration, CPUID(0xd) XSAVE enumeration, CPUID(0x12) SGX enclaves
+enumeration, and CPUID(0x8000001d) AMD cache enumeration.
+
+For each entry in the CPUID table, associate a 'struct leaf_query_info'.
+It is to be filled for each available CPUID leaf by the generic CPUID
+scanning logic.
+
+Define a 'struct cpuid_table' for caching each CPU's CPUID table, and
+embed in it a 'struct cpuid_leaves' instance.  This way, global table
+data can also be added.  Embed an instance of 'struct cpuid_table' in the
+'struct cpuinfo_x86' CPU capability structure(s):
+
+    struct cpuinfo_x86 {
+     	...
+     	struct cpuid_table	cpuid_table;
+     	...
+    };
+
+This way, centralized CPUID data can be accessed on early boot using
+'boot_cpu_data', and later on a per-CPU basis using the 'cpu_info'
+per-CPU CPU capability structures.
+
+Build the CPUID data in that "struct leaf_0xN_M leaf_0xN_M" format to
+facilitate direct CPUID table and CPUID bitfields access.  Accessing
+scanned CPUID bitfields can be done using statements like:
+
+    u32 level = cpudata_cpuid(c, 0x0)->max_std_leaf;
+
+    const struct leaf_0x1_0 *l1 = cpudata_cpuid(c, 0x1);
+    c->x86_stepping		= l1->stepping;
+    c->x86_clflush_size		= l1->clflush_size * 8;
+
+    const struct leaf_0x80000005_0 *el5 = cpudata_cpuid(c, 0x80000005);
+    unsigned assoc		= el5->l1_dcache_assoc;
+    unsigned line_size		= el5->l1_dcache_line_size;
+
+    unsigned l1d_index = 0;	// CPUID(0x4) subleaf 0: L1 data cache
+    unsigned l1i_index = 1;	// CPUID(0x4) subleaf 1: L1 inst cache
+    const struct leaf_0x4_0 *l1d = cpudata_cpuid_index(0x4, l1d_index);
+    const struct leaf_0x4_0 *l1i = cpudata_cpuid_index(0x4, l1i_index);
+
+    /* Then access l1d->cache_nways, l1d->cache_nsets, ... */
+
+where in the above snippet, 'c' is the CPU's capability structure.
+Define all macros at <cpuid/table_api.h>, and add proper kernel docs.
+
+Beside the model's centralization benefits, this also avoids using the
+ugly manual bit-fiddling common in a lot of CPUID call sites.  The late
+part of this PQ clearly shows this.  As a start, switch the following
+leaves to scanned CPUID access:
+
+    CPUID(0x0)
+    CPUID(0x1)
+    CPUID(0x2)
+    CPUID(0x4)
+    CPUID(0x80000000)
+    CPUID(0x80000005)
+    CPUID(0x80000006)
+    CPUID(0x8000001d)
+
+With these converted, the entirety of the x86/cacheinfo code is void of
+any direct CPUID queries.
+
+Introduce the debugfs files 'x86/scanned_cpuid/[0-ncpus]' to dump the
+cached CPUID table for each CPU.  This should help with tricky bug
+reports in the future, if/when the scanned CPUID tables get
+(unexpectedly) out of sync with actual hardware state.  Example output
+from an Intel Core i5-8250U laptop:
+
+   $ cat /sys/kernel/debug/x86/scanned_cpuid/cpus/1
+
+    Leaf 0x00000000, subleaf 0:
+    cached: EAX=0x00000016	EBX=0x756e6547	ECX=0x6c65746e	EDX=0x49656e69
+    actual: EAX=0x00000016	EBX=0x756e6547	ECX=0x6c65746e	EDX=0x49656e69
+
+    Leaf 0x00000001, subleaf 0:
+    cached: EAX=0x000806ea	EBX=0x02100800	ECX=0x7ffafbbf	EDX=0xbfebfbff
+    actual: EAX=0x000806ea	EBX=0x02100800	ECX=0x7ffafbbf	EDX=0xbfebfbff
+
+    ...
+
+Thanks!
+
+8<-----
+
+Ahmed S. Darwish (44):
+  x86/cpuid: Remove transitional <asm/cpuid.h> header
+  ASoC: Intel: avs: Include CPUID header at file scope
+  x86/boot: Reorder sme.c headers alphabetically
+  x86/cpu: Reorder scattered.c headers alphabetically
+  x86/cpu/amd: Reorder headers alphabetically
+  x86/cpu/topology: Reorder headers alphabetically
+  x86/mce: Reorder core.c headers alphabetically
+  x86/paravirt: Reorder headers alphabetically
+  x86/perf/zhaoxin: Reorder headers alphabetically
+  x86/resctrl: Reorder core.c headers alphabetically
+  x86/tdx: Reorder headers alphabetically
+  cpufreq: Reorder headers alphabetically
+  hwmon: (fam15h_power) Reorder headers alphabetically
+  hwmon: (k8temp) Reorder headers alphabetically
+  perf/x86/amd/uncore: Reorder headers alphabetically
+  thermal: intel: Reorder headers alphabetically
+  treewide: Explicitly include <asm/cpuid/api.h>
+  x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf() APIs
+  x86/cpuid: Introduce <asm/cpuid/leaf_types.h>
+  x86/cpuid: Introduce a centralized CPUID data model
+  x86/cpuid: Introduce a centralized CPUID parser
+  x86/cpuid: Parse CPUID(0x80000000)
+  x86/cpuid: Introduce CPUID parser debugfs interface
+  x86/cpu: Use parsed CPUID(0x0)
+  x86/cpu: Use parsed CPUID(0x80000000)
+  x86/lib: Add CPUID(0x1) CPU family and model calculation
+  x86/cpu: Use parsed CPUID(0x1)
+  x86/cpuid: Parse CPUID(0x2)
+  x86/cpuid: Introduce parsed CPUID(0x2) API
+  x86/cpu: Use parsed CPUID(0x2)
+  x86/cacheinfo: Use parsed CPUID(0x2)
+  x86/cpuid: Remove direct CPUID(0x2) query API
+  x86/cpuid: Parse deterministic cache parameters CPUID leaves
+  x86/cacheinfo: Pass a 'struct cpuinfo_x86' refrence to CPUID(0x4) code
+  x86/cacheinfo: Use parsed CPUID(0x4)
+  x86/cacheinfo: Use parsed CPUID(0x8000001d)
+  x86/cpuid: Parse CPUID(0x80000005) and CPUID(0x80000006)
+  x86/cacheinfo: Use auto-generated data types
+  x86/cacheinfo: Use parsed CPUID(0x80000005) and CPUID(0x80000006)
+  x86/amd_nb: Trickle down 'struct cpuinfo_x86' reference
+  x86/cpu: <asm/processor.h>: Do not include CPUID API header
+  x86/cpuid: Use parsed CPUID(0x80000006)
+  x86/cpu: Rescan CPUID table after PSN disable
+  x86/cpu: Rescan CPUID table after unlocking full CPUID range
+
+ MAINTAINERS                                  |    1 +
+ arch/x86/boot/compressed/pgtable_64.c        |    1 +
+ arch/x86/boot/startup/sme.c                  |    9 +-
+ arch/x86/coco/tdx/tdx.c                      |    6 +-
+ arch/x86/events/amd/core.c                   |    2 +
+ arch/x86/events/amd/ibs.c                    |    1 +
+ arch/x86/events/amd/lbr.c                    |    2 +
+ arch/x86/events/amd/power.c                  |    3 +
+ arch/x86/events/amd/uncore.c                 |   15 +-
+ arch/x86/events/intel/core.c                 |    1 +
+ arch/x86/events/intel/lbr.c                  |    1 +
+ arch/x86/events/zhaoxin/core.c               |   12 +-
+ arch/x86/include/asm/acrn.h                  |    2 +
+ arch/x86/include/asm/cpu.h                   |    6 +
+ arch/x86/include/asm/cpuid.h                 |    8 -
+ arch/x86/include/asm/cpuid/api.h             |  321 ++-
+ arch/x86/include/asm/cpuid/leaf_types.h      | 2055 ++++++++++++++++++
+ arch/x86/include/asm/cpuid/types.h           |  117 +
+ arch/x86/include/asm/microcode.h             |    1 +
+ arch/x86/include/asm/processor.h             |    3 +-
+ arch/x86/include/asm/xen/hypervisor.h        |    1 +
+ arch/x86/kernel/amd_nb.c                     |    9 +-
+ arch/x86/kernel/cpu/Makefile                 |    3 +-
+ arch/x86/kernel/cpu/amd.c                    |   21 +-
+ arch/x86/kernel/cpu/cacheinfo.c              |  284 +--
+ arch/x86/kernel/cpu/centaur.c                |    1 +
+ arch/x86/kernel/cpu/common.c                 |   58 +-
+ arch/x86/kernel/cpu/cpuid_debugfs.c          |  102 +
+ arch/x86/kernel/cpu/cpuid_parser.c           |  201 ++
+ arch/x86/kernel/cpu/cpuid_parser.h           |  109 +
+ arch/x86/kernel/cpu/hygon.c                  |    1 +
+ arch/x86/kernel/cpu/intel.c                  |   17 +-
+ arch/x86/kernel/cpu/mce/core.c               |   63 +-
+ arch/x86/kernel/cpu/mce/inject.c             |    1 +
+ arch/x86/kernel/cpu/resctrl/core.c           |    6 +-
+ arch/x86/kernel/cpu/resctrl/monitor.c        |    1 +
+ arch/x86/kernel/cpu/scattered.c              |    3 +-
+ arch/x86/kernel/cpu/sgx/main.c               |    3 +
+ arch/x86/kernel/cpu/topology_amd.c           |    3 +-
+ arch/x86/kernel/cpu/topology_common.c        |    3 +-
+ arch/x86/kernel/cpu/topology_ext.c           |    3 +-
+ arch/x86/kernel/cpu/transmeta.c              |    3 +
+ arch/x86/kernel/cpu/zhaoxin.c                |    1 +
+ arch/x86/kernel/cpuid.c                      |    6 +-
+ arch/x86/kernel/paravirt.c                   |   29 +-
+ arch/x86/kvm/cpuid.h                         |    3 +
+ arch/x86/kvm/mmu/spte.c                      |    1 +
+ arch/x86/lib/cpu.c                           |   41 +-
+ drivers/cpufreq/speedstep-lib.c              |    6 +-
+ drivers/firmware/efi/libstub/x86-5lvl.c      |    1 +
+ drivers/hwmon/fam15h_power.c                 |   14 +-
+ drivers/hwmon/k10temp.c                      |    2 +
+ drivers/hwmon/k8temp.c                       |   12 +-
+ drivers/thermal/intel/intel_hfi.c            |    1 +
+ drivers/thermal/intel/x86_pkg_temp_thermal.c |   15 +-
+ sound/soc/intel/avs/tgl.c                    |   25 +-
+ 56 files changed, 3215 insertions(+), 405 deletions(-)
+ delete mode 100644 arch/x86/include/asm/cpuid.h
+ create mode 100644 arch/x86/include/asm/cpuid/leaf_types.h
+ create mode 100644 arch/x86/kernel/cpu/cpuid_debugfs.c
+ create mode 100644 arch/x86/kernel/cpu/cpuid_parser.c
+ create mode 100644 arch/x86/kernel/cpu/cpuid_parser.h
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.49.0
+
 
