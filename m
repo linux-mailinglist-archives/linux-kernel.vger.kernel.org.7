@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-683575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B44DAD6F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:37:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182CAAD6F34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499981686A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:37:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5446B7A4298
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625BC2F4331;
-	Thu, 12 Jun 2025 11:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4070623C8C7;
+	Thu, 12 Jun 2025 11:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dfkYSN2y"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfKNkqMJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3842134CF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9120AEC2;
+	Thu, 12 Jun 2025 11:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749728265; cv=none; b=tfbQcPxVd/G8jrDD1j6NkBp7dzozZwQ8dYxEstMVCrcPb25paEa6iouGpHghhvPG+muNtCibtGWJhpiXl6qFZP6BekT8BEpp+NdzMBxaAkEiYiUhcrEhuKIvZpfOGEkPVmKGnUnV7h6wCFBt+6cYz5igPbbLCtTlEo6fwKKPU28=
+	t=1749728271; cv=none; b=hpnjNZtSL+dD+NklP9VWjGpAM57H8odvCMHAigv1FwtGJNhwMry3LdwzL7mz/+V9ohQkV3qjN6VWF1uM+B9j0B+ZIfdWrrM4A0r27lRFrPdrIjZUPG1bH3sB0Ego85Vs5fQ51C7qDJ3Aq/OkKYV3gJu4TQguOdmIm23n1tvoIH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749728265; c=relaxed/simple;
-	bh=ajEyLNa2aXTQ1Sza2yCrahNAvJ+6C4eOyWt6Yu2DxWA=;
+	s=arc-20240116; t=1749728271; c=relaxed/simple;
+	bh=RC6e67q4bD7RzUdBsPC19A7/O1+Ylly3nWUTzq8H6C0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=unpZO1FdXRV7YwL9bulNAgeQZ9mCNbwOvatf6A+n6c5EEttSu5lcHviW2RsHfq7JftY0p0GdcVqwXXhbpAMb0eu/X9SdSr65FYfBUkXocMymlUsI0jsE23u/60WPUbRgUhac4M4A54DvwlyQxVJB1l4Y7cr4Jg6ZuZedodxQ2XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dfkYSN2y; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45024721cbdso6995625e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 04:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749728262; x=1750333062; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9QrilPSQvbXfJ08sUe8Lfon4aIXPuasH11CoOCyPp0=;
-        b=dfkYSN2yvqVW3l02TcwLbErc1oXjLmfPN07nwhxVXnLI7ens4ibARMbWalBjOyMQBs
-         VIvPMJMbnrNhEwvy3H7SEIKk4QHp2VNV1QAQMMCgaY9/bBfroT1lt5P3KJTLg9AZhhiB
-         EsOabCFXbta/L3ZugE0K4LQqPd8azBfDuAj2ck/4XBKOs0o5Oe7v9G00MqZvVsTdcF3L
-         itS0zBgqn+RJkrpUhqUfPlevFmSYEtDoJQA8OSCjye7rUkl5zox76O1PjOjgioZzld/F
-         QcKlE3Tnd9H1M1nL0nffZTVMFheQSnbvJQYge4OCDPjqavsg07sj6iEYftY+0m0kw71S
-         Qnkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749728262; x=1750333062;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k9QrilPSQvbXfJ08sUe8Lfon4aIXPuasH11CoOCyPp0=;
-        b=TVE96ZALmStI4sMxYiBB+XXgbRI9kRBQ/TaKE/QeNdwXNpf+przofXljlNUtSwHiuC
-         6gPI7jMTt4SLeX534X1ykLPDZ7RciHYOobcHLGnst2o/faaUaE4A48rSCbjAuCT9hWdg
-         FD4ip56F2upjMMzYkKa/xltfuWejxJmD0e1kKKBft+DmcGyTVPCwm86kUR+rpFOhH6A0
-         TlgvICrVpIuUp1gQKTA02Yj+ibMNkUMLJxhtA9QmMMdPvLv1RHKW2TgGGCHaTPiGKIGJ
-         H3LZOXpuwZQIpbg/82HaXTscaYlp/oPU11WEJm8R/SU9qpEhB1GQMLOPJkYHiV9xE6d9
-         wOzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKV0gpOMwZARNH7IGd0j3YI3KdG8qPYYSKr1RG5geGJI83jkiRQVlOFoQ74ZfU/LPMPXnV34cPAg1YnRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Az5+MffZwMczoSrI/i7c3eqks39dp8fS8KwGQmu0jYAAvrJt
-	UmqBhZpyFOQUo5P7ZHvhdw/yrlEiWdrWxyOe/NSQXQQ1FJZr4jg7+L1UWBjsVOa7eZA=
-X-Gm-Gg: ASbGnctkr++JogVK6u6R6Qq1r/O76OGPKlx50RW30p8KYIbK4mbtG2gRd8r6zl6EE1q
-	G/RFlLH+QPlc0rK6Cw24xzDP/Xk++NZZUoSTUMHBkpttKRqFFUUnnpaBSRPDRKdp9X5HNJlUdaF
-	dF4P7Vs2hTNkJYjySHyCfNGRK1btQnkk7hCaz7fyZKlxeb3VPlM4TgUGaojLvJjGQJyHwTl2juX
-	MIcaNWigcYXTpkgY6CdhIQUKmDug/rMzXSTSWH8+om3uFRR10hWvi6nCJb9BeVnDHNhPcMOhbEC
-	JWjENRBNvc0AGtxKMnx65GCLUZWup/eWaHOhu6LMhUJkiycFsWlMx1lZqUq8VJA5
-X-Google-Smtp-Source: AGHT+IHXCg3+DiBF83TGwbCmv/kLjdbvxNJQQ6VbyG09B4swehwBIKZVwb3UC55yvD6cNudHR6xmLQ==
-X-Received: by 2002:a05:600c:3f15:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-453248c0d13mr64564255e9.18.1749728262073;
-        Thu, 12 Jun 2025 04:37:42 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e232e4asm17864375e9.11.2025.06.12.04.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 04:37:41 -0700 (PDT)
-Date: Thu, 12 Jun 2025 13:37:39 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Cc: Martin Doucha <mdoucha@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] memcontrol: Wait for draining of remote stocks to
- avoid OOM when charging
-Message-ID: <hpheex5rheykebhbh4qjqy4jirnrpqvnfahr75cn6p6ob6lo2x@mpdv2yrht2o4>
-References: <20250530151858.672391-1-mkoutny@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=usGvXV6dmIgCuiYWR78MlC1fV5ADpotvMBAq788jkm6nqOhPoCewFMU/8D5V6vifaz05xJOTulXBnLddjnDCL4v4Bhzr07fZk9a7Pja/h2pWkKetmdQ6MdZfQhCmEBiKmyVzrmu6OwXQMqHXTv8QxQXaHquaiWds7ZK/LfDLrH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfKNkqMJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDB6C4CEEA;
+	Thu, 12 Jun 2025 11:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749728271;
+	bh=RC6e67q4bD7RzUdBsPC19A7/O1+Ylly3nWUTzq8H6C0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LfKNkqMJ230N0EmQJ6n6F5hxs2eDHc2gDzUqnaFqxjR2BzP+se/A2VupzCMhrI4gb
+	 9NYBUQi6O74YbTU15kOTP7LtYwDO6nlpekDG4/rRf81shqTxXz5puLtCfFMvrC1Ez8
+	 lC0MdZSRw4aOzUbAy3MWk4X+otN1Bl7AvHQP+2SamIX9i1DphEmtbMo4CBHyTrmcS0
+	 MUdzc/iYg1tYTc5iGlJ+oeZUq/maoaBSzH0FDgLo2Lkc4GZua4eYLruLegRywdBiqV
+	 mpLSscXiDGCpK6qASc0UCBqdRsHIBwtAVRWHdD2/UFkcmRUXp26vKsR4TOHPK4TG94
+	 WUZI4sxPL5xPQ==
+Date: Thu, 12 Jun 2025 13:37:48 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+	bpf@vger.kernel.org, xiqi2@huawei.com
+Subject: Re: [PATCH 2/2] rcu: Fix lockup when RCU reader used while IRQ
+ exiting
+Message-ID: <aEq8DAHY0ycCOmoN@localhost.localdomain>
+References: <20250609180125.2988129-1-joelagnelf@nvidia.com>
+ <20250609180125.2988129-2-joelagnelf@nvidia.com>
+ <aEgjvGkYB0RoQFvg@localhost.localdomain>
+ <5568ff6b-6d5c-ea63-3c4a-c0714103aa9d@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oejxf5ik6o3wgoks"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250530151858.672391-1-mkoutny@suse.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5568ff6b-6d5c-ea63-3c4a-c0714103aa9d@huawei.com>
 
+Le Thu, Jun 12, 2025 at 11:06:07AM +0800, Xiongfeng Wang a écrit :
+> +cc (Qi, my colleague who helps testing the modification)
+> 
+> On 2025/6/10 20:23, Frederic Weisbecker wrote:
+> > Le Mon, Jun 09, 2025 at 02:01:24PM -0400, Joel Fernandes a écrit :
+> >> During rcu_read_unlock_special(), if this happens during irq_exit(), we
+> 
+> ...skipped...
+> 
+> We have tested the below modification without the modification written by Joel
+> using the previous syzkaller benchmark. The kernel still panic.
+> The dmesg log is attached.
 
---oejxf5ik6o3wgoks
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH] memcontrol: Wait for draining of remote stocks to
- avoid OOM when charging
-MIME-Version: 1.0
+Yes, it's a cleanup that doesn't include Joel's change yet. So this is
+expected.
 
-On Fri, May 30, 2025 at 05:18:57PM +0200, Michal Koutn=FD <mkoutny@suse.com=
-> wrote:
-> 2) It requires specific scheduling over CPUs, so it may not be so common
->    and severe in practice.
+Thanks.
 
-This means in practice, there'd be likely a _different_ running memcg on
-other CPUs and that would implicitly flush those stocks. I'm concluding
-there's no big issue to fix.
-
-Michal
-
---oejxf5ik6o3wgoks
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaEq8AQAKCRB+PQLnlNv4
-CKOpAPwPyeKYZIri83c7FJXo++/Yoy8EYitLgQ3Pizu96VuM8wD/VtGjuUchQZcF
-sREfNnUzPxFE2xbScKBn/ePHJEOUGgc=
-=Uv72
------END PGP SIGNATURE-----
-
---oejxf5ik6o3wgoks--
+-- 
+Frederic Weisbecker
+SUSE Labs
 
