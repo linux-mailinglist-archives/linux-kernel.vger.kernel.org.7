@@ -1,190 +1,321 @@
-Return-Path: <linux-kernel+bounces-683647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469A7AD704B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:26:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF44AD703C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED4C17F9B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:26:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F5847AD40B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001A41CF7AF;
-	Thu, 12 Jun 2025 12:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5292222A6;
+	Thu, 12 Jun 2025 12:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SDh9u8c2"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g63kpkoe"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27A6221DB1;
-	Thu, 12 Jun 2025 12:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749731113; cv=fail; b=OHaqT3B8d58dgAZSO7EavgB7mONo4RKm5lilgTTIDxIcMpQ3loVOtupkpM01nmMELnDrECDbW6XeFMCyUW90EgcwEYX14oK476+UR2DrQJltg0z36DPbJjCfC1J5KN8AqQaZc/opYVZWdRlJuyOMI0EtNpJzQROV4EiYqrLb4RA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749731113; c=relaxed/simple;
-	bh=QLm25SepmMaOWPf+sLfz/7Jx1QozHDMPFBxpZixIQ/E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Aj+OGs9tq3xmvS6fbbcwqiCUq6sq+CsS4kzBiA41NzvTzoRUCBltIHCT46kA4dx5KGsx7W+aaAuQq7rkfZPl/c1M7W/NyhwKuntE8yY/MBQL3yrkNB+Cgog4KIXEzKjZLnOCvawPm8mug5yIg36vnIFwvTeSCBnICns8zCz6CME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SDh9u8c2; arc=fail smtp.client-ip=40.107.223.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=raAPf9Aqm5aHV1tsJbXVtzBnVK0IokmVhvMD23XYjEkN/RJkjYkZVMXV+MnHdaMJ8gQpAtv0ql6iTB6lmdTs0Wbu/ZLo0t6iY+MxbO/UcelmVtra6uyHrvr19O0DDSAERQBvpkH8JQu7bq0nDACpFRolHipNusqD2cNxVaTseD03S/ZUcWpHv+glMEEhUwoAluadpQ/qWqvM7IyyBYLcS96VGbz7VXbozGB9hjJ4Gt3XV4LQjW0JHcxFGDpBVoG1H5rkw18q20rAtE77jXULa9xeXur31TgBni3BW2zftw8ElAxT1BOvUMp2QveYUvN/Zrg0QEr2zGL677VGhk3ZUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MO39YjZMtJbf3zBv2fPndOnsAHJbd+KBZWcxSWISUiw=;
- b=brZ7kNT8uCf+g7drByJgIAABIc20ZEeubfvZp3cX/aUw99cwiMn3H2S097V12TkCzOu6HQ0W47CneGrUD70k+PoH4bL9VVyXyveFps+kwRnTZFOuWaZ2ar+riYMNiOky0gTmePdcxqlwyww090WSWN8svLTljfmjS/1ZuxnNzz1TQ5J6pSzpC+sulpr0PlsjCg2umwBJJYvRfcdaC8LNEYBmomIwKj/cympIxzr3hjdmBO8aFZOXz91MIs6FNDFydxjscjSEWbwfZyhySjCmFtzGTFaBNW4mhjcrZPGXJEVizdfkZbLkmbCI4pb+tzYlgc/7FVOXD/qS8919rhMQ9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MO39YjZMtJbf3zBv2fPndOnsAHJbd+KBZWcxSWISUiw=;
- b=SDh9u8c2JNQ7dc7yEVpyK0SVtMAPW/VkqfYktVuGf06fWpD6stulv/wwra1uRDEJpf7YC3XOe7BS/IdgPPPYmaQp0VxiEk+/a0Ma+zX6U6Xa1kcl0OAOy8hvt/oSVb+m8z4Qr54o4HmKV/xRBtZH/WcHgzjL4iDtGoTlwyGf4Dw=
-Received: from CH2PR02CA0006.namprd02.prod.outlook.com (2603:10b6:610:4e::16)
- by MW4PR12MB7014.namprd12.prod.outlook.com (2603:10b6:303:218::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
- 2025 12:25:09 +0000
-Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
- (2603:10b6:610:4e:cafe::d1) by CH2PR02CA0006.outlook.office365.com
- (2603:10b6:610:4e::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.23 via Frontend Transport; Thu,
- 12 Jun 2025 12:25:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Thu, 12 Jun 2025 12:25:09 +0000
-Received: from BLRRASHENOY1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Jun
- 2025 07:25:06 -0500
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, "John B
- . Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Gautham R.
- Shenoy" <gautham.shenoy@amd.com>
-Subject: [PATCH 2/2] pm: cpupower: Fix printing of CORE, CPU fields in cpupower-monitor
-Date: Thu, 12 Jun 2025 17:53:55 +0530
-Message-ID: <20250612122355.19629-3-gautham.shenoy@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250612122355.19629-1-gautham.shenoy@amd.com>
-References: <20250612122355.19629-1-gautham.shenoy@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190D1917ED;
+	Thu, 12 Jun 2025 12:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749731069; cv=none; b=FmKDKn6EPGFtyL9j+q4bnFoAmQQKHv0RtGQF8uN6bm0Ufc2uutm6wdgykt7ZsHtVb9FwSjI1rEzJAK7Uc3aRFPoiFVBxGiq26Pr4N0sqS8CUT+u7Kxs/2jY+6ixPd1oiPtIXKTtDrtqFwzYt7o1CrUlnnrZDCGe6swMBQnW3D1E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749731069; c=relaxed/simple;
+	bh=mTlTGx5qMcj9oo7NbwlgffToNGz66QBd9EOnadHWMhk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sh5X4xqOmJgFiGmOOacTFiJTdGBlNyRijqG+zHPoW8nRXbG9XRggh41U2UI9oYIgE3KNMRFd9/67bBDJbhyWAtIKhsdYfgwErjIP3BpFmwClNOlqm575x/MT6FFW7TOrx/hdIb8aXVnpIhh/DJa4rOkcva2YuaodWx4UzmNfO80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g63kpkoe; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32a72cb7e4dso9595451fa.0;
+        Thu, 12 Jun 2025 05:24:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749731066; x=1750335866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2SweKlcwfC9UHjYra4TpM3WTLuJ0fF6U4YIJI8RKnNE=;
+        b=g63kpkoeH/9yBMCQg079M1XO1r+QoP0Yx4+Gi0uJ0ShRaLl0sPg4IzX8pph3O4EbRJ
+         b2cNZmRsxpOGApHIbQcuImpEa4QUxtaMfCtvRUEgFJxIIMLzjPS0KDKJ78BDuBBD+gqY
+         ZFhx2VR1g1+bClwYfB2I5IFrw27OnTJm/nsvfrEn7ZjEwOTUPB/I89YR56JB7rEQvcsh
+         ZTxYT9oVhn+7FlqyndMjUn8rk83NW+F1zZ8v3qbyP0u8PlB1PxRdQIqCPgtkeH1eVphD
+         wFwV+Bheg3GTd75TqCzCB+be4/N5jLU6iVtjb4QxIuRFUj6FAfV8D2JmJWIEXCKkGfPL
+         xgBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749731066; x=1750335866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2SweKlcwfC9UHjYra4TpM3WTLuJ0fF6U4YIJI8RKnNE=;
+        b=Ig3p4F0pQaa4fh01yjV33mwlIDczVUZGY4GW4v/1AjSXT5Gz9/lYdme5PNB2arkddk
+         w97ZNgVMDaX6Xi0t9r4o3TEhUbWKKg/hebzlCQfvnm2gVWfOja6o0IWQ1IMICxFNNICo
+         dk2c/JQRSeabMwZ8lHaaS008cqNrleH6yZwllSRUWDMNx8Gob1ImNfso103eccglCfOS
+         JxQPV119/KFJm4sKS3akCyZWbxPkGc0K1L+MqvXP9vagEev299NqHN3a0LCzY/VEOOTU
+         m7Wbp/B8qqVUIme/HMJOvjzrATERyi9LUmOot8aGxwxRUgWbYE2QP0iA/4Q30UafZMGz
+         lN1A==
+X-Forwarded-Encrypted: i=1; AJvYcCURk4MjxOGNDFW4EuKDgwOc/ro5olmCJjxVKAFlglt3RC+TYk7s8pKofHaInbQ4Nffc5fJpyaVW@vger.kernel.org, AJvYcCWJYSe8J/pHoIMGP4J8iLdBcJLXLEUH5kBkqRmuRowxDr2nWKWcIYCQVrj3snXpheSe0WTZ7T/QBVITho8Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuZGZdctFt1BkJOpN8pAEnrGaPeL/nE97STRJEt1Ja84acB4OW
+	vlEzDeFqqnnwihMtuKqgx8x7QcYBRZW5u4ZAk8iA+F0e88HahLt75uy+Kz4nXmqvMCdTk4+lez2
+	CpVytdtgVeax+h4xPdfziwmv3VkNSUkM=
+X-Gm-Gg: ASbGncuNCWbE5pAxlLw2+Mmdo/YBY4q2rXZOyLnPk3KVzwaLXNdJMVnlHnQd2ZViY2A
+	Sb7zabxX8B3DNR8JRrr1UklEcanNT2FxWKrEp21ZE9lAv3mTGFM2CTl1RRLwg3Luqk0l9kGfAsf
+	tH+fXo80Rj10OQneB2gtVkHv9AC0VXfn0G0XT47WiCQKU=
+X-Google-Smtp-Source: AGHT+IFwSzKoBcF7ID2T+P6G69X43FsObyrPgZc6+hgqV/3LbGXqSMbn531OFsTo73Kz5d8vP5uqHkvUYoZ6OcteLlI=
+X-Received: by 2002:a2e:be9c:0:b0:32a:6aa0:216f with SMTP id
+ 38308e7fff4ca-32b307120d6mr11383471fa.29.1749731065631; Thu, 12 Jun 2025
+ 05:24:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|MW4PR12MB7014:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79d51777-574a-46f4-b138-08dda9ac2be6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VHje7XF1zFFpdhAvAc0ro0YVZOQvBy6FRPfqxoO7Ttjf1iu5xxlgL59YQDZo?=
- =?us-ascii?Q?9F41Z8ufgf/TUbchm+dqAA5OEolWfhlmwnhVMuCxoMVyYuyM1KfhvZ2chi55?=
- =?us-ascii?Q?r0sBhjhXdyqhD47N7GSGXfLakC6kWivtdfBtr8QbX4iz0E2m8P/2/28HXicI?=
- =?us-ascii?Q?hagfnkYArM+EfQtUGLLvLTUQ/uHvKZYj10/QE7zmJXwSxVPXZs0i3SrsqzaA?=
- =?us-ascii?Q?dru6Fk3yJnzpbznBlKQKF7SNQnhOVFmun3j9y5ahZcSWVejy27jiREcqggzA?=
- =?us-ascii?Q?JDTAgPzGgLLh0xZtIy2voFJIHHhsUf/2UbsyhUoGivYDKXGCanx9Iu9bh+Nz?=
- =?us-ascii?Q?qoip6SIip3QKSJbVhjpXl+ZPZRiGw0Rjo6JIbhGzDdBePg15ocFFEmNEmxMa?=
- =?us-ascii?Q?WvSNU13XzLCZTGL8WSxD5KEIil+qkA4emHRGht5vEvpSMtaIsiptdCGVRiOY?=
- =?us-ascii?Q?fcpWt+OHHEsVaqmCKGrGc3Nlyl9kPzMKDZFkkXBCT/raQv+bBc7xSCiISUMx?=
- =?us-ascii?Q?NZsXGechtFGQ0Z1C/lxmaYUcDloxCV+ufS7icwGXAleMvD0A7/RbOc/Ig3or?=
- =?us-ascii?Q?zLbLgAAT6RBVL+fdZiZJJFt5fCL7wJ1ZSU8O7ESdtpxPTvaf2B0nTz837LUH?=
- =?us-ascii?Q?0t0xaxq6OfpFYtNGuKMLJ0C/MIFa0Imscd/fdOlhpIwubO7TZdTqqfG5mdBK?=
- =?us-ascii?Q?rN4OnGvuee4CmqGsP5FpWDTK80WifhBuLx5fmILeBQqQNQMX1UcdfIm89Osn?=
- =?us-ascii?Q?MHb/lcKvZ7bgCHM2O/HW6oQYy8+Il291Pxyg5L7UcjkqBb+QF7+iumI9mCeP?=
- =?us-ascii?Q?r/8vZlJsblJtmi7cdspEzMLaxq/HOUW8w4NiByjPPUA699QAI9dmAnaNIVXW?=
- =?us-ascii?Q?i7PJASedTl/TQagwF56Zme5W9u9FDjTrCQM17VNQkh8Zrw99yDa3Zn7cQzO7?=
- =?us-ascii?Q?s4uftP/733v0axPlFyXYEGDpe8LhpyC/dXfBc7XARJctnAVzuNvxR1RdGn/C?=
- =?us-ascii?Q?QPwlhT5FKesbi4y3r8cS17sVmMZzay41HgWAODH8/mCgYELorSeWJYfQvR+b?=
- =?us-ascii?Q?DGun2BdKEhuu+3ONsKV1o7sbGBDg4gUGghc7coM8QyikZjhZdjAWW3K4oMqB?=
- =?us-ascii?Q?BHVjqnBEBnE1ysQkP/pPY2Zp72/kPuonibuV3zwzHJwvtIA8bhIwNvrOYlf4?=
- =?us-ascii?Q?8pd/6P1WU1GhoC+WmrL4o2AUsCATm5qDOLUvOI2R+wW331lfV8gZ+2PtVrLy?=
- =?us-ascii?Q?CGqi2oFVyTITr60Vuzjbjt9Om0EUnkxWreHDND9oFzVdBDhAQQWdxfI40Xoo?=
- =?us-ascii?Q?rwRFgo82tbVjVPFGpFDS8tnwzPotfKYwd2Z8y+Lz391WlYsyBzXiRzeKJyE1?=
- =?us-ascii?Q?bQ//Tc7KxCQtocb+UA+2JeHYOXpnO4siGK4jLbeBQu6QtMrVjNp2l1U4VRNS?=
- =?us-ascii?Q?VVu2cJtTu5kPQZJyqouRWi8RDl/njTRPM87+l0iAfUrnRCkecOCxLBllL1wc?=
- =?us-ascii?Q?+Djc4KuJ1nNTbOV6FsrI0AtOgBAie4p2UoRN?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 12:25:09.1908
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79d51777-574a-46f4-b138-08dda9ac2be6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A348.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7014
+References: <20250612103743.3385842-1-youngjun.park@lge.com>
+In-Reply-To: <20250612103743.3385842-1-youngjun.park@lge.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 12 Jun 2025 20:24:08 +0800
+X-Gm-Features: AX0GCFtkixhsnGjXFLa3XHQn2P5tRNtM6hPsFB17j20v1d6bwb5YtLLUJ4LcUe0
+Message-ID: <CAMgjq7BA_2-5iCvS-vp9ZEoG=1DwHWYuVZOuH8DWH9wzdoC00g@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] mm/swap, memcg: Support per-cgroup swap device prioritization
+To: youngjun.park@lge.com
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org, 
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com, 
+	baohua@kernel.org, chrisl@kernel.org, muchun.song@linux.dev, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After the commit 0014f65e3df0 ("pm: cpupower: remove hard-coded
-topology depth values"), "cpupower monitor" output ceased to print the
-CORE and the CPU fields on a multi-socket platform.
+On Thu, Jun 12, 2025 at 6:38=E2=80=AFPM <youngjun.park@lge.com> wrote:
+>
+> From: Youngjun Park <youngjun.park@lge.com>
+>
+> Introduction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> I am a kernel developer working on platforms deployed on commercial consu=
+mer devices.
+> Due to real-world product requirements, needed to modify the Linux kernel=
+ to support
+> a new swap management mechanism. The proposed mechanism allows assigning =
+different swap
+> priorities to swap devices per cgroup.
+> I believe this mechanism can be generally useful for similar constrained-=
+device scenarios
+> and would like to propose it for upstream inclusion and solicit feedback =
+from the community.
+>
+> Motivation
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Core requirement was to improve application responsiveness and loading ti=
+me, especially
+> for latency critical applications, without increasing RAM or storage hard=
+ware resources.
+> Device constraints:
+>   - Linux-based embedded platform
+>   - Limited system RAM
+>   - Small local swap
+>   - No option to expand RAM or local swap
+> To mitigate this, we explored utilizing idle RAM and storage from nearby =
+devices as remote
+> swap space. To maximize its effectiveness, we needed the ability to contr=
+ol which swap devices
+> were used by different cgroups:
+>   - Assign faster local swap devices to latency critical apps
+>   - Assign remote swap devices to background apps
+> However, current Linux kernel swap infrastructure does not support per-cg=
+roup swap device
+> assignment.
+> To solve this, I propose a mechanism to allow each cgroup to specify its =
+own swap device
+> priorities.
+>
+> Evaluated Alternatives
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. **Per-cgroup dedicated swap devices**
+>    - Previously proposed upstream [1]
+>    - Challenges in managing global vs per-cgroup swap state
+>    - Difficult to integrate with existing memory.limit / swap.max semanti=
+cs
+> 2. **Multi-backend swap device with cgroup-aware routing**
+>    - Considered sort of layering violation (block device cgroup awareness=
+)
+>    - Swap devices are commonly meant to be physical block devices.
+>    - Similar idea mentioned in [2]
+> 3. **Per-cgroup swap device enable/disable with swap usage contorl**
+>    - Expand swap.max with zswap.writeback usage
+>    - Discussed in context of zswap writeback [3]
+>    - Cannot express arbitrary priority orderings
+>     (e.g. swap priority A-B-C on cgroup C-A-B impossible)
+>    - Less flexible than per-device priority approach
+> 4. **Per-namespace swap priority configuration**
+>    - In short, make swap namespace for swap device priority
+>    - Overly complex for our use case
+>    - Cgroups are the natural scope for this mechanism
+>
+> Based on these findings, we chose to prototype per-cgroup swap priority c=
+onfiguration
+> as the most natural, least invasive extension of the existing kernel mech=
+anisms.
+>
+> Design and Semantics
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> - Each swap device gets a unique ID at `swapon` time
+> - Each cgroup has a `memory.swap.priority` interface:
+>   - Show unique ID by memory.swap.priority interface
+>   - Format: `unique_id:priority,unique_id:priority,...`
+>   - All currently-active swap devices must be listed
+>   - Priorities follow existing swap infrastructure semantics
+> - The interface is writeable and updatable at runtime
+> - A priority configuration can be reset via `echo "" > memory.swap.priori=
+ty`
+> - Swap on/off events propagate to all cgroups with priority configuration=
+s
+>
+> Example Usage
+> -------------
+> # swap device on
+> $ swapon
+> NAME      TYPE      SIZE USED PRIO
+> /dev/sdb  partition 300M  0B   10
+> /dev/sdc  partition 300M  0B    5
+>
+> # assign custom priorities in a cgroup
+> $ echo "1:5,2:10" > memory.swap.priority
+> $ cat memory.swap.priority
+> Active
+> /dev/sdb  unique:1  prio:5
+> /dev/sdc  unique:2  prio:10
+>
+> # adding new swap device later
+> $ swapon /dev/sdd --priority -1
+> $ cat memory.swap.priority
+> Active
+> /dev/sdb  unique:1  prio:5
+> /dev/sdc  unique:2  prio:10
+> /dev/sdd  unique:3  prio:-2
+>
+> # reset cgroup priority
+> $ echo "" > memory.swap.priority
+> $ cat memory.swap.priority
+> Inactive
+> /dev/sdb  unique:1  prio:10
+> /dev/sdc  unique:2  prio:5
+> /dev/sdd  unique:3  prio:-2
+>
+> Implementation Notes
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> The items mentioned below are to be considered during the next patch work=
+.
+>
+> - Workaround using per swap cpu cluster as before
+> - Priority propgation of child cgroup
+> - And other TODO, XXX
+> - Refactoring for reviewability and maintainability, comprehensive testin=
+g
+>   and performance evaluation
 
-The reason for this is that the patch changed the behaviour to break
-out of the switch-case after printing the PKG details, while prior to
-the patch, the CORE and the CPU details would also get printed since
-the "if" condition check would pass for any level whose topology depth
-was lesser than that of a package.
+Hi Youngjun,
 
-Fix this ensuring all the details below a desired topology depth are
-printed in the cpupower monitor output.
+Interesting idea. For your current approach, I think all we need is
+per-cgroup swap meta info structures (and infrastures for maintaining
+and manipulating them).
 
-Fixes: 0014f65e3df0 ("pm: cpupower: remove hard-coded topology depth values")
-Signed-off-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
----
- tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c | 4 ----
- 1 file changed, 4 deletions(-)
+So we have a global version and a cgroup version of "plist, next
+cluster list, and maybe something else", right? And then
+once the allocator is folio aware it can just prefer the cgroup ones
+(as I mentioned in another reply) reusing all the same other
+routines. Changes are minimal, the cgroup swap meta infos
+and control plane are separately maintained.
 
-diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-index ad493157f826..e8b3841d5c0f 100644
---- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-+++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-@@ -121,10 +121,8 @@ void print_header(int topology_depth)
- 	switch (topology_depth) {
- 	case TOPOLOGY_DEPTH_PKG:
- 		printf(" PKG|");
--		break;
- 	case TOPOLOGY_DEPTH_CORE:
- 		printf("CORE|");
--		break;
- 	case	TOPOLOGY_DEPTH_CPU:
- 		printf(" CPU|");
- 		break;
-@@ -167,10 +165,8 @@ void print_results(int topology_depth, int cpu)
- 	switch (topology_depth) {
- 	case TOPOLOGY_DEPTH_PKG:
- 		printf("%4d|", cpu_top.core_info[cpu].pkg);
--		break;
- 	case TOPOLOGY_DEPTH_CORE:
- 		printf("%4d|", cpu_top.core_info[cpu].core);
--		break;
- 	case TOPOLOGY_DEPTH_CPU:
- 		printf("%4d|", cpu_top.core_info[cpu].cpu);
- 		break;
--- 
-2.34.1
+It seems aligned quite well with what I wanted to do, and can be done
+in a clean and easy to maintain way.
 
+Meanwhile with virtual swap, things could be even more flexible, not
+only changing the priority at swapout time, it will also provide
+capabilities to migrate and balance devices adaptively, and solve long
+term issues like mTHP fragmentation and min-order swapout etc..
+
+Maybe they can be combined, like maybe cgroup can be limited to use
+the virtual device or physical ones depending on priority. Seems all
+solvable. Just some ideas here.
+
+Vswap can cover the priority part too. I think we might want to avoid
+duplicated interfaces.
+
+So I'm just imagining things now, will it be good if we have something
+like (following your design):
+
+$ cat memcg1/memory.swap.priority
+Active
+/dev/vswap:(zram/zswap? with compression params?) unique:0 prio:5
+
+$ cat memcg2/memory.swap.priority
+Active
+/dev/vswap:/dev/nvme1  unique:1  prio:5
+/dev/vswap:/dev/nvme2  unique:2  prio:10
+/dev/vswap:/dev/vda  unique:3  prio:15
+/dev/sda  unique:4  prio:20
+
+$ cat memcg3/memory.swap.priority
+Active
+/dev/vda  unique:3  prio:5
+/dev/sda  unique:4  prio:15
+
+Meaning memcg1 (high priority) is allowed to use compressed memory
+only through vswap, and memcg2 (mid priority) uses disks through vswap
+and fallback to HDD. memcg3 (low prio) is only allowed to use slow
+devices.
+
+Global fallback just uses everything the system has. It might be over
+complex though?
+
+
+>
+> Future Work
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> These are items that would benefit from further consideration
+> and potential implementation.
+>
+> - Support for per-process or anything else swap prioritization
+> - Optional usage limits per swap device (e.g., ratio, max bytes)
+> - Generalizing the interface beyond cgroups
+>
+> References
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [1] https://lkml.iu.edu/hypermail/linux/kernel/1404.0/02530.html
+> [2] https://lore.kernel.org/linux-mm/CAMgjq7DGMS5A4t6nOQmwyLy5Px96aoejBki=
+wFHgy9uMk-F8Y-w@mail.gmail.com
+> [3] https://lore.kernel.org/lkml/CAF8kJuN-4UE0skVHvjUzpGefavkLULMonjgkXUZ=
+SBVJrcGFXCA@mail.gmail.com
+>
+> All comments and feedback are greatly appreciated.
+> Patch will follow.
+>
+> Sincerely,
+> Youngjun Park
+>
+> youngjun.park (2):
+>   mm/swap, memcg: basic structure and logic for per cgroup swap priority
+>     control
+>   mm: swap: apply per cgroup swap priority mechansim on swap layer
+>
+>  include/linux/memcontrol.h |   3 +
+>  include/linux/swap.h       |  11 ++
+>  mm/Kconfig                 |   7 +
+>  mm/memcontrol.c            |  55 ++++++
+>  mm/swap.h                  |  18 ++
+>  mm/swap_cgroup_priority.c  | 335 +++++++++++++++++++++++++++++++++++++
+>  mm/swapfile.c              | 129 ++++++++++----
+>  7 files changed, 523 insertions(+), 35 deletions(-)
+>  create mode 100644 mm/swap_cgroup_priority.c
+>
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> --
+> 2.34.1
+>
+>
 
