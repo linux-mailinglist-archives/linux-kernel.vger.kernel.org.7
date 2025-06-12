@@ -1,120 +1,87 @@
-Return-Path: <linux-kernel+bounces-683278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0DEAD6B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:50:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3487AAD6B55
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E793A3ADBB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE7253AC15E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E1921CC6D;
-	Thu, 12 Jun 2025 08:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3C6204C00;
+	Thu, 12 Jun 2025 08:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fAf7by06";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="i6bGHfJu"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qsVXGP0t"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093291AB6F1;
-	Thu, 12 Jun 2025 08:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749718193; cv=fail; b=IF2wINwzm31QZl/9nk2fEYfrpTKr2L9+e0IRE0ebxooo2c9DGuywHBAv3UtUgjb+AWTIFVsxSRUWM2SUaC5EM5VLaMfLLgrnPY5bDayYyjxFiMeounsn8QXGu2MjNL3q7AJqseqLCUpQoWV2d9ZFjtzbqBy36z4GN2vuKxPhlNk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749718193; c=relaxed/simple;
-	bh=uw8n3M7lQUmZkNFbxrXqFpnyi3xAcemFOWAiyXW1w/0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9780918DB2A;
+	Thu, 12 Jun 2025 08:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749718149; cv=none; b=gsT59vxDhh9HK50Ey4p6J1yocWnblmpkeavRydBsiL0/hSbjA0iTE8v8WS0wbt1vHiynvVtudHr/3hwtlqGPjLFSdArQHLberQI/xIqTXFO1Wko83iKilxchLmu92WmCERwJl6KzktRbIB7au6NEh9TF1CuR7WHuKR5S/tPI0xA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749718149; c=relaxed/simple;
+	bh=PAy/WlPsNYo+E95/+VqoFf2fwUusuRoy36XPJndo1fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AI4Z/dJwOJ220fmh4swwGpu1v3G4ETLQ7tcOBBB24fsphwORI8D24GNUzWVS1nUb5xHEYsXPjozNvyvDJ9InMkpVpHTWSOHJGMSBCq3dhasiFnFazL/wq3jHZilIwo7c3UxTu15rXP7GUzq+bEdsaBRt1u2FT4xNW713zmHumUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fAf7by06; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=i6bGHfJu; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C5a2vm001079;
-	Thu, 12 Jun 2025 03:48:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xx+PyvHgm7N+sscwwby4SIEfRrCukodVF7C5BZVLAfOg5lqygzKgjGLJogw7et5pYjFn4NDWVMSC7lrpfRghUnCcSsHXjzcxCMiiu2weQbRYpPf5WQ4w7lwCyRz71MBn+O6eyH3t72VUqrI6P7ezjPRD4i3mlDBxBXu16ddUp04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qsVXGP0t; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C1RqVE019665;
+	Thu, 12 Jun 2025 08:49:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=Mp6wAFt2Iu0N/IFXUq
-	gfrt9eZl/zWHCCsWhPrJjoqoU=; b=fAf7by06bEsAT3M7A/2gkS6m/YRvHt+mvq
-	y+BF7aGL/WCbf02t+7cJYfp7TDhcYNWcdYhgCpv12rFB8n24XWhQNXp1plrOz4Sl
-	6LFexsmWeHWUZVNOPVnx4lWw9E1tRpze5KBf/xW2yk34erPaXqkzghX6hfsrZTKe
-	Gb8u2rXiM+MKS+HJtO+SamvYpsI1dw19mZv/mcrULo/h3SfuL0Z7cqDSqcLHGbQd
-	LXC1t8/PV46lSuKHk8BsW7ATWrXyLw25Kpg2OdF940W33swBmuNgZGGRx+IyqNU4
-	98dpsiXELapCi5m4fEqMUxKVuqJ8IU5r/b9rGFq6VbNYcZ7nva7w==
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11hn2210.outbound.protection.outlook.com [52.100.172.210])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 476ksdbhh6-1
+	:references:subject:to; s=pp1; bh=931g58CzQGgnHv1qSvxrUg/N0PxEDU
+	ddT7sLaxR1SCg=; b=qsVXGP0tvfIKw99NVM+a8FEXbzCnqvS+YJbCdrHvlfQExe
+	3bFposHMGYrSrzhizK7D8sOwPYI+sqDX0QzqzBs2jvVpftbwHWhut93FwGoDG7tS
+	T3onS4s1nKGUvQCE2olzgd/WWzxK5zERjm1CdD05zKuNRO8lI0RJhin0y7Rqn001
+	TzHmKqycJM45vCSh2p/2t4Kk1SwYCv15L/m/t5qwDNsAC/ytGZ49vZ4cyBKJPXRP
+	lBflzkfoqHulOjaVvOp99xx4kdR4k/yhGS0RH2tIXk1U75QiXmTUAegnQf1+5hvH
+	7RdTfSHGySaNH3Y7X5NyTw189ew9/5Djvg0VMskA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474dv7shdn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 03:48:59 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ohnJR3sdTe7zeE0S0f6C6zShs7r0hUfEtn9Hx0gsvZ4kL4ABfmAJqmFYOu8VMGu6R1Meaag+DnCTCJw9gVybFIu6mA0NC8DMX5+wRO5srUVk3KaPc2zsqErLhW4g6WfQyP9fkjgGB8YYdcFSuGukPN0GLPR1N6gdILpoAeSLLXCcpxOlHMSCIxjguJiPbGUaSQ4yvmf3q1RdpOh2ECGR1MdKtC3vNPukR7rzoTOY96jEfLHQ4DK5cOkzMNo5rtv3BXYtolmkNT3+9cxxq+fwyIsgWFkUTer/r1WQjxn6ucDVTdx5RdzSisiz+Ib2Q3IjGpsFzK3oOYDmqoEqBI2uDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mp6wAFt2Iu0N/IFXUqgfrt9eZl/zWHCCsWhPrJjoqoU=;
- b=d32RYyKsA2gFEUxqyNEE8TJsvICOD2Gaczj7hEJdAcn7EX4qqOE2ebhz3P4YwdzyFTi+l0BCPfBCz7qdBIT0E9mZnnDIvwv/hJXsXPegaT/XMjx9lCzUM65YctvIGiQ3t53FoyPs5/mQA4Ix1StiXNQt2XQ+pnfns43QFPhLZk1bgrNCY4r10E2O0HQFwYfzGnwUpy1G9ydmEcB79QqdW3Yy8NUhH7hVcIg25N+x1jbLlO30thAIJpQj0bv422PxWiN90BGY2LTY46B7kibcQu5+HqZ1FVp73hwJs9HA6vixZ89kQpyO8A2CipGvCXDJU1itIFOkxOevDc5My6jd3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=atomide.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mp6wAFt2Iu0N/IFXUqgfrt9eZl/zWHCCsWhPrJjoqoU=;
- b=i6bGHfJuejK97DVCXKpcwwnG8Ft485dJq9HAI2jL1EnEJ/xcLqpM+iFEF3CERUPgq63/VXF43urOzySrKSRb6BfTehlDyfIoYrn9Ydix/C+YtFpzzOy+vCFsKwHjW+Ffz9QiDfMCEJBnGtrvLf5dfEQixdvX2XtHB6aeZ/xprBM=
-Received: from PH0PR07CA0008.namprd07.prod.outlook.com (2603:10b6:510:5::13)
- by SA6PR19MB8594.namprd19.prod.outlook.com (2603:10b6:806:412::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
- 2025 08:48:54 +0000
-Received: from CY4PEPF0000E9D0.namprd03.prod.outlook.com
- (2603:10b6:510:5:cafe::ef) by PH0PR07CA0008.outlook.office365.com
- (2603:10b6:510:5::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.21 via Frontend Transport; Thu,
- 12 Jun 2025 08:48:54 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- CY4PEPF0000E9D0.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.15
- via Frontend Transport; Thu, 12 Jun 2025 08:48:53 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 324FE406541;
-	Thu, 12 Jun 2025 08:48:52 +0000 (UTC)
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 15114820249;
-	Thu, 12 Jun 2025 08:48:52 +0000 (UTC)
-Date: Thu, 12 Jun 2025 09:48:50 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org,
-        imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH] mfd: Use dev_fwnode()
-Message-ID: <aEqUcjZ3q0UcVSSf@opensource.cirrus.com>
-References: <20250611104348.192092-1-jirislaby@kernel.org>
- <20250611104348.192092-13-jirislaby@kernel.org>
+	Thu, 12 Jun 2025 08:49:00 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55C57WEM015168;
+	Thu, 12 Jun 2025 08:48:59 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 474yrtm5mp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 08:48:59 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55C8mteu38666584
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Jun 2025 08:48:55 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B9CC82004D;
+	Thu, 12 Jun 2025 08:48:55 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0361520043;
+	Thu, 12 Jun 2025 08:48:55 +0000 (GMT)
+Received: from osiris (unknown [9.87.144.171])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 12 Jun 2025 08:48:54 +0000 (GMT)
+Date: Thu, 12 Jun 2025 10:48:53 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Harald Freudenberger <freude@linux.ibm.com>,
+        Holger Dengler <dengler@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Ingo Franzki <ifranzki@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] s390/pkey: prevent overflow in size calculation for
+ memdup_user()
+Message-ID: <20250612084853.10868Bec-hca@linux.ibm.com>
+References: <20250611192011.206057-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,80 +90,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250611104348.192092-13-jirislaby@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D0:EE_|SA6PR19MB8594:EE_
-X-MS-Office365-Filtering-Correlation-Id: 41410a49-d510-4b43-d0bf-08dda98df600
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|34020700016|36860700013|7416014|376014|61400799027|12100799063;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EflOBUD9AvXV/qaOi93hQwM3TJ6aCqaBvdhPOv1a2VpuCk/iKme+bmU588hV?=
- =?us-ascii?Q?C94yYWEqtyp2MslCfaPOrEWH8HqRx2SfmYT4lIL7KIz0DZUShqKVhqJq/wDI?=
- =?us-ascii?Q?Yy2AVX/+Sw4o0tuB98MKvHwbxxuDOqRuopgNeeoKxd6KcgR54JDj4rsnJzBq?=
- =?us-ascii?Q?Ypv7wkKT8ZMqgOeBTGLQzpZGPVhLOBwlRBf9XNAmwkp+NkRKvWgAqfjxj8zp?=
- =?us-ascii?Q?Y4qOTLwyOjIwuLeNJvQYCIAzWqDRi4zLg3mUbVoBrceWYKCFK9SkUrwxtQFa?=
- =?us-ascii?Q?JfdVFUMKrBikCZW4zMDgIwGsn0qL+qo6Oc0ob3xjH6Iha3X3WmIptafKkBfY?=
- =?us-ascii?Q?E+sYveLRB5Z45wE+KZnVWkAkonbyHTy5/azQ1yb+spL3NyaBDjfCkK9+Iabt?=
- =?us-ascii?Q?AV6PWy0Ojf2CH9MEZurUXe6QI1ARz1adxQbVSLF2sO0msnQZ3/hVvDxbicCB?=
- =?us-ascii?Q?NZCo729IJz4RRKAqpMh4XmHjsSWlgnI482Cvlv39LSU4sBN9F4mIGQwGa+Jd?=
- =?us-ascii?Q?I0FHm8GbC+ZMdAqqBHDh1LRd7sEjzBdKGuLIPM7QvnX1fgfjm5KewjV5Xsl9?=
- =?us-ascii?Q?DrxFzlYSxAU6hktDysQPjqIsnVXq2PHyNY5YxF7mRU89WYCQ2aCWxSuvN3DU?=
- =?us-ascii?Q?DBQW9UaK4jr3hzWe03B1qbOGVNtm499vbXlQ/XIfF/QnKCqkuIkQiDhJMTIk?=
- =?us-ascii?Q?uFTSpCno5PwBQYoByt09Y5qV9UL8FYCbat4/Gz0PpuyxSmXdyaRuqs8iN4+c?=
- =?us-ascii?Q?1D29N0DXBiqHzoexh5Cs2CGJCN3+0g2FdmdY42PALK20/1qXhr4aR9eciR8L?=
- =?us-ascii?Q?sPM1OygbIA8O5d9uj3S/khYlolhflnuiC7bE+YMUyMuJLESfuixi3AYDxsXN?=
- =?us-ascii?Q?UIEGzModC6746vBCP9yYF+Qvwc1thPUxRiJaJtomxExcadoOY83HUIfJLB7o?=
- =?us-ascii?Q?pcJ+2Hq4U3ekOFFJOB7+1Yao4LuQfBBBEznrM/lS6GTtAlzyNM5bSNSDeryI?=
- =?us-ascii?Q?12W2Dkw4A0h8Prt34/ME7JHuOySFM9rvtFhgPLaz5OaQnX8nOmS3PLXKSXBB?=
- =?us-ascii?Q?Rpkg/VXEYG3B3cVt8yqIcstcD/cJLYbKFDHXMHYJLy1bZ6U80LAeYxbFPbCc?=
- =?us-ascii?Q?b8YWzp51/jewrrIYWjL3M+WeLj7Bogh0K/5ENaRnIaoDJ3bqUGOpwyV/oR7y?=
- =?us-ascii?Q?AJMks9ivffMtQL4KVnrp4EvsoChbD/0o8Lz+a8Uz6yBbPRK0xBCBXIe/mw89?=
- =?us-ascii?Q?mymMVZ0aoTskRqPLdmAAbyC4MSZS1PfsABg+GPAUaZo65IDzMtLE4yyqHAlT?=
- =?us-ascii?Q?LUFarRtsIoFMcbKEqfXiXoUwFAiiWamH2972KDAf7TkgryNqlSM72Gx8Kuqu?=
- =?us-ascii?Q?rgPZh6PRBAi6BIRVqeSdOAa2lcmTN8wom0q6VekA0NJ4tDSSMLc2msxhcSXo?=
- =?us-ascii?Q?+PFZpz4yyuIlDnRzJzfCfSn6Qe0j/iXY5bw+bRDnLNcjn3IdREAarsmvoZpr?=
- =?us-ascii?Q?IafLGCXfzo5tRwy6cklAEqVFrkOu7f774s9n?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(34020700016)(36860700013)(7416014)(376014)(61400799027)(12100799063);DIR:OUT;SFP:1501;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 08:48:53.6238
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41410a49-d510-4b43-d0bf-08dda98df600
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR19MB8594
-X-Proofpoint-GUID: MI1o5d_OcAduM1Cq0ic6z3Ct2T16YFPj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA2NyBTYWx0ZWRfX3dtSLqtgUovA aSKqR1OMT2jEO0IknB+dodUrjfguhdNDEWt5FhI77WrSyTzlcHLXcLM84jCmVpZDUxJkU8pfWIZ 7GfoaZFZdp22z6jDJJ1B/ofe7Xia8ShuVPnL4Kh9ZY+8uvIF3Dj4a/fcIUC6CYjNnC7RuftK/Y4
- RTzvFcxFElbwBWzTgwXxtGAlIx1nb802NLYZTsnnQr4pW1oJW41JcDHr9Yigd0ss5IcshIP111+ ZE6/cXwOgKNPMNGeovSsGYtwVshC2j8fN72ICPmx9qiAnbasNzbLb7iW1zaGn/+SSzkj8ZcR2Aq o+qws/q/FRZzCmLye2TLhklYcObiXlRpHPllkQV90GYGLjwYENIYoXitO+O7dAR589qJe/jvfZY
- 5HWuJLGb8gPzEIz+gBmmxk/fKTDiYaA6SC6TR2SN546LBYig6io/495mb/XXdmu0JM/6GYTI
-X-Authority-Analysis: v=2.4 cv=c5OrQQ9l c=1 sm=1 tr=0 ts=684a947b cx=c_pps a=KMTg/8RFoxcndjAm0j+8Gg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=VwQbUJbxAAAA:8 a=w1d2syhTAAAA:8 a=GpktXrwMqSbe8FIqCiwA:9 a=CjuIK1q_8ugA:10 a=jZz-an6Pvt0H8_Yc_ROU:22
-X-Proofpoint-ORIG-GUID: MI1o5d_OcAduM1Cq0ic6z3Ct2T16YFPj
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <20250611192011.206057-1-pchelkin@ispras.ru>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: DUSRih4kD1J-pZVTJ7-3wUb-CIvBe78g
+X-Proofpoint-GUID: DUSRih4kD1J-pZVTJ7-3wUb-CIvBe78g
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA2NyBTYWx0ZWRfX3shafD5pCby5 zn4BQWOW3B1EP+sJu5j58nF6pQs0rF3N0CdALFigXxqCa2t0ErpEnSps1KG0ODNWdK9xrUcOggP Z1mVBHDDPxUK9/IvelrL4L5hBFZ9p7DZZfBxyLdoi2FE4PtlKb6nqjSCbyb9oo4gPB0GSv09619
+ ohGtTxZmCzUFfDIJGH+lHNn0qmH4JlfYrVv5LP/dTwLVh6nDQzcW1xGPN3ETd86XsG4lStbifN2 8IqsxPbRhdphZLt6k+PvUffu15jB+1HWnN/FLF+jXq8okZ1SXJ0/hxDHeA+C7waI2+yHTLTmOKW 9S9U5KiK2zRkmtrG6Y3ZO+MSVkFMAG87BhpgQ2gFMV4lC8+L7RpcZKTfAHIDPA/mc296IBxTpon
+ yy2O+zwduh38cem/p97WBjAALWFENM9CG2nhwm6m5DUk8nvuDYbeSpPwH7lPADN/pLO83S34
+X-Authority-Analysis: v=2.4 cv=CfMI5Krl c=1 sm=1 tr=0 ts=684a947c cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=HH5vDtPzAAAA:8 a=VwQbUJbxAAAA:8 a=xjQjg--fAAAA:8 a=VnNF1IyMAAAA:8
+ a=UixuG2OKhzkuXq3kIYYA:9 a=CjuIK1q_8ugA:10 a=QM_-zKB-Ew0MsOlNKMB5:22 a=L4vkcYpMSA5nFlNZ2tk3:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_06,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=397 adultscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506120067
 
-On Wed, Jun 11, 2025 at 12:43:41PM +0200, Jiri Slaby (SUSE) wrote:
-> irq_domain_create_simple() takes fwnode as the first argument. It can be
-> extracted from the struct device using dev_fwnode() helper instead of
-> using of_node with of_fwnode_handle().
+On Wed, Jun 11, 2025 at 10:20:10PM +0300, Fedor Pchelkin wrote:
+> Number of apqn target list entries contained in 'nr_apqns' variable is
+> determined by userspace via an ioctl call so the result of the product in
+> calculation of size passed to memdup_user() may overflow.
 > 
-> So use the dev_fwnode() helper.
+> In this case the actual size of the allocated area and the value
+> describing it won't be in sync leading to various types of unpredictable
+> behaviour later.
 > 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Lee Jones <lee@kernel.org>
+> Use a proper memdup_array_user() helper which returns an error if an
+> overflow is detected. Note that it is different from when nr_apqns is
+> initially zero - that case is considered valid and should be handled in
+> subsequent pkey_handler implementations.
 > 
+> Found by Linux Verification Center (linuxtesting.org).
+> 
+> Fixes: f2bbc96e7cfa ("s390/pkey: add CCA AES cipher key support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 > ---
+> 
+> v2: use memdup_array_user() helper (Heiko Carstens)
+> 
+>  drivers/s390/crypto/pkey_api.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-For wm831x:
-
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
 
