@@ -1,188 +1,166 @@
-Return-Path: <linux-kernel+bounces-684173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B46AD7715
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:54:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD666AD7731
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8162D1624D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE930167077
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953872BF3FC;
-	Thu, 12 Jun 2025 15:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B05D2D5400;
+	Thu, 12 Jun 2025 15:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VCULH4qL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZUemjm+"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C592C17A8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1893298CA4;
+	Thu, 12 Jun 2025 15:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743297; cv=none; b=kUhZyxAFbQNm+M02mwjhLIMCe+A6+X5CcMIBk0JILjehtd7RU3E513J3+EZNmBIpMynHEjHQPGF/06+Bgyf8XCdzwWjsCP9CdbPtCc585H3ZIDp6R6uWuUk721CbxIAlhSWM1aOzYoLX/u1DQDRDP4/VcXq1k9ScYWlvGfmgr5Q=
+	t=1749743328; cv=none; b=lWzLSoKiL9pLuiJEVug6QI+1BkbCZ1WpvmyFayoDLb3HpaTBrO9pqkIMs+9l/S5hqNSq/dlpLba0yz9bmAz0QcvAfBZLfyi2gir2Z0zGUj0RWysMHRtyF3cjlcVdzGiBjQWskIUVut+5dZxLDfnZFoqT0aBcx45RG8P8gjssma8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743297; c=relaxed/simple;
-	bh=zuH9jIzu3uEbL6ck4x154Vp0Q8D1adHK9ehH3B2mO1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ekt+yCyuWpSZddY/tT6v2uM3rWRtXGmHydGZ9qruVQygzo6xUbbZAaxfgW6vzGyALg+bfEVBIGfVwit/MIZDGAEanVEBG50JRQWCjGl7ZsA8EYRABCrkfcMWZ1hVvJ90hC62IjvGkvJaT28jUWt9z25FqWA9dHlIsuNvrUGtP3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VCULH4qL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749743294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ei/d28RGKwbGgo0BkY8L/1pu6a5ZV2mA8pg90GSA4I0=;
-	b=VCULH4qL1A81h9I6qCg0vFSp8lqaykymMR+h6k2YsQR4ZGIKTImofum+p568EsL1ubi3nz
-	ab7bJera6hcbJ6xt6FbGGfyA3nSZ14YzP/rW6JU9TRpYdeCR3GdGMR8xAHTPw41ERqEdqX
-	0hp0nXujRnj5pnk8+QdKQwR/gLFgtV4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-436-9VUndFBWNPe1-qtJiaPTzA-1; Thu, 12 Jun 2025 11:48:12 -0400
-X-MC-Unique: 9VUndFBWNPe1-qtJiaPTzA-1
-X-Mimecast-MFC-AGG-ID: 9VUndFBWNPe1-qtJiaPTzA_1749743291
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-450d64026baso6735265e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:48:12 -0700 (PDT)
+	s=arc-20240116; t=1749743328; c=relaxed/simple;
+	bh=8HADoriTzSv3LLylQjU5OFZpVtub8FPBcT6Xb5M2ro8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/hHAPsCGNRPRSrnewI7IHC6GN29D+hLEmeSZhPq5bEMPyiI31aMDCerxM4tdwmnM5lLZNXcKMd+ad+C03Ranp1SEvtqD0PGHI6RMnK7sSnNzN7Rzhsd4p7lvDb6sI+LgnV2sYj4mkiPqOZpbr/ftPi30lpijyX0C7B/4VAo5Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZUemjm+; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a585dc5f4aso15166461cf.2;
+        Thu, 12 Jun 2025 08:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749743326; x=1750348126; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zsySlexy+K3bTyJCdtJD4e5BpSRlU9lctN+3OaWRO3s=;
+        b=LZUemjm+G/CEm6YUb8ZhysNEmMT4WZUXwc5I+EXV1H4//MddMNp+i8mJIT94yhsp/D
+         vSoMDVPOK9Z4FxTi1bkdzeT/DqZ6gdsvS638688bT7bNimQhDXSsD4ApCmFdljQV0ayf
+         9j99nWkvc9kNImnUsHJoku/HiBBTjn5ASjxIh26VCO3OQp/jSuEfBHNhBzRPvon88krO
+         JKyefwtRLBYuik59lyKLl1tjfk9fMLVAKfZS82Y8fVKOmTlFqByQBfljGGsqWMpujdLV
+         gTE00vlL1EB3oiWYRKhsXja51Ouron2G40zgkO902Rlys/F+CplF2Ywet6uB8wOirUjF
+         Bcuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749743291; x=1750348091;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ei/d28RGKwbGgo0BkY8L/1pu6a5ZV2mA8pg90GSA4I0=;
-        b=h9kg6Uqmu6XxNDGDrtebRAm+15Mf6XTVRREFCBm7qHK8JLEmICJ5VoKI5B4/0rMOUv
-         46K4Vl1VN16t0JxxAba2Hyb8juBxYRgcOl0WXzpARZGFYLz/tx/2P+jmUR8s4ylEzLQW
-         0T17EbMw3b754BD+ylw5CPmCGGogws2Xfu7cJtYqf7yB/OnrtY5M8xZR+E/6SeyPm6ND
-         s6bRO9lUPOztv1Gy/G/W6uomqewPrOOzz6h2PFq2QjbWASyYKvkK/9B/GrBKsE7OEzqx
-         sSaKQcrZAYFuP6r4Qhg7SMNdMm/KQlXnZsYa5XLhwt1p+lFV/4R7DmNKRFr717Stz6vW
-         1Lfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN4qX1wJhJ2NqdPX9jQgrZ900roNf8wW4f/zX4Zb1GB6FOpMawKCL8bE7QBydGJBEUTrphmsPkGWmCCog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJqY5SgSJpIrwg1n3rD1x0TbKw+4K4YoYoROotpF/dkJInQocw
-	JBLuVjU+Hj5LNA2FMnsgO/J0INA4pGmaznIc9w4ORJf6MUa+nVuKlOSkG8qOK3truUPRcCLYQ9X
-	LwoBEsiBnUd72VJpCDOql2zmMLVSII0TBM6/6DniFQtwcJPhrHJPZJTNyLzJ6ak5ZAA==
-X-Gm-Gg: ASbGnctR4qzJOfoO5zggtw8ozAqOGxQn7B7IEFFV/o2veTmVNzakwloNrKLjGjnzzU8
-	yOchAE881+nPFiANhglohaOwIEochWk0ge3tomLFiSAqE8FOMEfvaQNLv/y9DEwpdXmMw4fOFRD
-	3rV6piNYSNqNcjSY46bgchY72Nj4F8CuHi4UeO04sADG65/tJug9kdXunCjObU8BIbysa256sjh
-	ceUF6DQIBHUqOGIALWkr3YFexdaJ6AEchzBEsKGVbuKJyQn8ua0eSZHGpi7Tt/kAFkIJ0TSa+3X
-	BMXDYQNMpKNyk7gxbUXKBGm+bfKxcTVFhY8soXh4ZhIw9Hf+C/aNz7lwNHdqQVQRO80mz0tPFqJ
-	3YnZrSOVDmNzcVEfrxzaqPtu8T6Z3tTLTzaf2/HJ0Q+u/UHRhRw==
-X-Received: by 2002:a05:600c:3489:b0:441:d4e8:76c6 with SMTP id 5b1f17b1804b1-453248dc848mr86660245e9.30.1749743291237;
-        Thu, 12 Jun 2025 08:48:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKJbzhqucCYFF6L45cVov1+4dJDmjC/GWZqYfL6Yk/ZiNCgc95grP7byUyLps7/+rUkN1TbQ==
-X-Received: by 2002:a05:600c:3489:b0:441:d4e8:76c6 with SMTP id 5b1f17b1804b1-453248dc848mr86660005e9.30.1749743290856;
-        Thu, 12 Jun 2025 08:48:10 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2c:1e00:1e1e:7a32:e798:6457? (p200300d82f2c1e001e1e7a32e7986457.dip0.t-ipconnect.de. [2003:d8:2f2c:1e00:1e1e:7a32:e798:6457])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e16e550sm24134635e9.35.2025.06.12.08.48.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 08:48:10 -0700 (PDT)
-Message-ID: <2e5eda85-f1b3-4fc7-a378-346cfb3840e9@redhat.com>
-Date: Thu, 12 Jun 2025 17:48:09 +0200
+        d=1e100.net; s=20230601; t=1749743326; x=1750348126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zsySlexy+K3bTyJCdtJD4e5BpSRlU9lctN+3OaWRO3s=;
+        b=GCQKTEWW0kvRsXNe2TjQzkJVZQLY+xeL9rQL6HwFLRuh3WEXWO2ScjrWJWl3FjyqM3
+         yz7rsv/aRhEyJSigdLYCLCHLLnDaBHnFN2FIxWfVEj3qRTvfNDkT77Sp0z+Qory5WGBY
+         5IsvBN8gLz0TDaJgytg8UaSvlNgF3H/y+UceJmNitzvPmCVPhEjqWibFFNBoHXqYx/88
+         1moTXIWombPD/KBaIwygJ+brUeEOtD8Lq0Kg+108hKalRXqhQ8RZFrUdpIUufolPxRL/
+         kpWrcftum2s/H//WLrin7+DiUl73iXOMyQIS8FbJAxbNotuErL44yiKBto9b2TR2dFBY
+         ZcHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9CJ6P2XIDr7TigFyfKxnVm+yyC8D64XTCCIgFwpxTSnwLqtzFUyWWadimO9MXXT9jDZ4sKD6iloWKe4c=@vger.kernel.org, AJvYcCWeUcVP6AC1i62KN7XjlmfNFz1Q+mki4f0OEfoTHICHLD+4I9Or9FYmVZtEhRxHSCVv74grkEWza493LZErkg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeTO11JitptnfobJ/lJM1gXPcmQrGJZltzTgXu7gBGbiS1sHHL
+	Yu9HNXXm4TQZqQsIzJqWb4/dXOJueRaeZ4G/1zVhPsUBAitj92/buXFTh3VbPA==
+X-Gm-Gg: ASbGnctxhcYgsRrAfSWhv52NuxDg1xPYLlsix7vWht42x6kJXbWk11rUDECSYyrhYuy
+	eklehqBknenqqsazpmXqWLKIwjL1sgy4rrDMt1BOWSTn4/5ZBc5gQfTA+rl1feZNhY5Mo+0j5wy
+	yU1D6tqIoKpjx4USE2sBdPcJZaCASQRJYsMjHrhJNo2dCrp/lnSwlIlrDK+5cgfBLU1rikQSMsO
+	NMFLWTav28jtEMgCaiJJvDZo17ONu5lkGQCk++gmTjrbhGI7yERKR1Pk5GVqWyGPbRXueo3xrxe
+	u5b//xmAQoUy9IZWpdZzxOlkWWfsQ48xh83T3IaqpyRW6l5/BF3/L2kngbkxtBiIBQmXGTPOgeR
+	8C1DFGbmet5O7UxGsi5bhZ418pP6DBvT8GjmQht3aSddzFMhaApc6
+X-Google-Smtp-Source: AGHT+IG6pC9iDq1hBXXy2ISGnZVF/wjbi/lAfGnQl+QyKt/sAFJKy2rQ+tdtX3IKXdm3j/eMV4jCYw==
+X-Received: by 2002:a05:622a:1dce:b0:4a3:530b:2880 with SMTP id d75a77b69052e-4a713b9fc88mr140141911cf.14.1749743314635;
+        Thu, 12 Jun 2025 08:48:34 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a4e144bsm5364581cf.62.2025.06.12.08.48.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 08:48:34 -0700 (PDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C06AB1200068;
+	Thu, 12 Jun 2025 11:48:33 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Thu, 12 Jun 2025 11:48:33 -0400
+X-ME-Sender: <xms:0fZKaEJ_pLq7qG1pNUvRWHQWkFQ9v4nPMzNF7bs4pMlOgPwjRYCS7Q>
+    <xme:0fZKaEKXLRcFXgkXeXUPYrFV8BsLLRUzP5pUCpKstWinDvQ_ShPpOzDTZXemWoSt0
+    GDecQuD7uyJgTvRgQ>
+X-ME-Received: <xmr:0fZKaEsLh3jpzQWKYpwgVbG2T4_NxaGO1tv8BymheqDCjrlKzJxMryXgO8Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheegjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgt
+    phhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurg
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghi
+    lhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtth
+    hopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegs
+    vghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnug
+    gsohhrgheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:0fZKaBadrF2ZNk25pSIj88qdzLM8Q-_xbbjBqUjJHxklW_GYQsdGng>
+    <xmx:0fZKaLZqLBiqOchJ5qUb3K4g9_LhYND-LDBm-GPByh1zmgh9uHumGg>
+    <xmx:0fZKaNCPd-drxXTcQQ5ogQy4-WzY9RyPek3mlKEftFp9Fbgf1jghfA>
+    <xmx:0fZKaBatel_ogf4C2zMMbGhc2KtUs9eILrmgcxWCfT8vq4Sb9-g0DQ>
+    <xmx:0fZKaDpDtou5SXuvC1LNV92_L_KwxOLJ_EVuxj51L-QM908sO9h1TJn0>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Jun 2025 11:48:33 -0400 (EDT)
+Date: Thu, 12 Jun 2025 08:48:32 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, chrisi.schrefl@gmail.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] rust: devres: fix race in Devres::drop()
+Message-ID: <aEr20HfFfOz8Y7pA@tardis.local>
+References: <20250603205416.49281-1-dakr@kernel.org>
+ <20250603205416.49281-4-dakr@kernel.org>
+ <aD-EiRChuScS5TK-@tardis.local>
+ <aEAWwnyP4zwwrccX@pollux>
+ <aErxSYp0AsHGWt0E@tardis.local>
+ <aEr120wdhFVjFXWg@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests: khugepaged: fix the shmem collapse failure
-To: Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, shuah@kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <c16d1d452aa876b449324d12df6465677158a711.1749697399.git.baolin.wang@linux.alibaba.com>
- <AFC17CA1-DF5A-48F0-8E63-E139005F5880@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <AFC17CA1-DF5A-48F0-8E63-E139005F5880@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEr120wdhFVjFXWg@cassiopeiae>
 
-On 12.06.25 17:46, Zi Yan wrote:
-> On 11 Jun 2025, at 23:54, Baolin Wang wrote:
+On Thu, Jun 12, 2025 at 05:44:27PM +0200, Danilo Krummrich wrote:
+> On Thu, Jun 12, 2025 at 08:24:57AM -0700, Boqun Feng wrote:
+> > Thanks for the explanation, and sorry I'm a bit late for the response. I
+> > was trying to find a place that we should document this, how about the
+> > diff below:
+> > 
+> > ------------
+> > diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> > index 0f79a2ec9474..c8b9754e411b 100644
+> > --- a/rust/kernel/devres.rs
+> > +++ b/rust/kernel/devres.rs
+> > @@ -31,7 +31,8 @@ struct DevresInner<T> {
+> >  /// manage their lifetime.
+> >  ///
+> >  /// [`Device`] bound resources should be freed when either the resource goes out of scope or the
+> > -/// [`Device`] is unbound respectively, depending on what happens first.
+> > +/// [`Device`] is unbound respectively, depending on what happens first. And if the resource goes
+> > +/// out of scope first, [`Device`] unbinding will wait until the resource being freed.
 > 
->> When running the khugepaged selftest for shmem (./khugepaged all:shmem),
->> I encountered the following test failures:
->> "
->> Run test: collapse_full (khugepaged:shmem)
->> Collapse multiple fully populated PTE table.... Fail
->> ...
->> Run test: collapse_single_pte_entry (khugepaged:shmem)
->> Collapse PTE table with single PTE entry present.... Fail
->> ...
->> Run test: collapse_full_of_compound (khugepaged:shmem)
->> Allocate huge page... OK
->> Split huge page leaving single PTE page table full of compound pages... OK
->> Collapse PTE table full of compound pages.... Fail
->> "
->>
->> The reason for the failure is that, it will set MADV_NOHUGEPAGE to prevent
->> khugepaged from continuing to scan shmem VMA after khugepaged finishes
->> scanning in the wait_for_scan() function. Moreover, shmem requires a refault
->> to establish PMD mappings.
->>
->> However, after commit 2b0f922323cc, PMD mappings are prevented if the VMA is
+> I will add
 > 
-> Can you add the title of the commit? It is easier to understand the context.
+> 	In any case, it is always guaranteed that revoking the device resource
+> 	is completed before the corresponding [`Device`] is unbound.
 > 
-> 2b0f922323cc ("mm: don't install PMD mappings when THPs are disabled by the hw/process/vma")
->
+> when applying the patch, if that's fine with you.
 
-Probably checkpatch.pl would point out the same :)
+Looks good to me, thanks!
 
--- 
-Cheers,
-
-David / dhildenb
-
+Regards,
+Boqun
 
