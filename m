@@ -1,144 +1,162 @@
-Return-Path: <linux-kernel+bounces-683426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D299AD6D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:17:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB83AD6D5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EF31746B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:17:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6A127A8AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CE222F763;
-	Thu, 12 Jun 2025 10:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F6C232395;
+	Thu, 12 Jun 2025 10:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VFdCXSsf"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BeaF14EX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0BD1A9B32;
-	Thu, 12 Jun 2025 10:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0E231825;
+	Thu, 12 Jun 2025 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749723423; cv=none; b=ujv6Ey6YWQfd+pkw7fTeGtySEjKqFnj/qW1FoYOgGekc8oF4hWbrqS1xSRGVe9sXsvq5wlKQfdHVXNK+zK5fmRQn12RzI7v8xUFYa3kmr3oCAoxtXC9t28pRXgHja8KYcXSsiU5ip6Q0jgUTVmrNtUIai5OtQlQCCmnHjcvcdnE=
+	t=1749723467; cv=none; b=gh+1S58YfNXyvXzvfU2hIVsBE+7mSPj9tcmK3Mkxuxlf48KZkiIejc5WCYtU38iSVVrbZrITBvnbf5bRYnKzVIuwV5f+UgWPMjD2eLfrXGg43+xFLZEEO74LbQyLXIPum1njlxLDWonXVXZtiwB2ELaQXtSZCtWRsIcAYwQfrGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749723423; c=relaxed/simple;
-	bh=m+13JVvNe4Aqqrmb5JHan1JbgajcNao6ikZ970Xy6QU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RnatmRBxan+YE+n4+/Vpa6aJN26OvgPkVDNm5lvWAJcl98KSPLR+3eJeX3ioRbUKAnXr9heBC58Oshfg2I5fXYZ70XBCYsxnkn0Z9AUlGCIxm9nh3J4wzlwO9tCwTtYA0yX+DAKNvKND81Tc2FYsn7x+PFKeUrLuJXVx9ejhwtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VFdCXSsf; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55CAGt8R1639154;
-	Thu, 12 Jun 2025 05:16:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1749723415;
-	bh=xtLHyzIXT1AKmPX6hD2tyAPsnEPd735Ph5uIX9qO/h4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VFdCXSsf0KSKsQa22pRTYSnZ1S4x/nh8NF14mSgUoGcU9dNoby7E8Bn0QM52seN29
-	 enIuIrYqHHmGuraGByLDM0hgOwjHsE/tGE1sbSYnYiNbiircAOBbAh15P3V4yJhb01
-	 uNukUwu5asUVlNUiCgsLcsgX9Tm38dtUYQHmprEM=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55CAGtGX1734427
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 12 Jun 2025 05:16:55 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 12
- Jun 2025 05:16:55 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 12 Jun 2025 05:16:55 -0500
-Received: from [172.24.227.4] (hp-z2-tower.dhcp.ti.com [172.24.227.4])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55CAGpPr1835014;
-	Thu, 12 Jun 2025 05:16:51 -0500
-Message-ID: <f6a57a82-c534-4439-a337-8592c2e121c5@ti.com>
-Date: Thu, 12 Jun 2025 15:46:50 +0530
+	s=arc-20240116; t=1749723467; c=relaxed/simple;
+	bh=nH0ZbGBKHPf5MFpT38ALZh/nq/TUB3USQxhADgIOh0U=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=jp5ORqhb1XQgZCN55CkzIfmm7Vk0+ldNdGIvG0Xc2xNHljyRDO+83h8AA2rTMtsgfjxdwwXl8NuhSRFhmmY3VtECnTIxmoAm5zaSH2fPtm4sz1aCX5e2Bu9LH/JE59FHX78HGdpQvGLaMZ6UUOQSxGE64B1PtSriMTaCX/EJ5ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BeaF14EX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C88vWi026067;
+	Thu, 12 Jun 2025 10:17:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=0mjt7j2US1dgiwZAzjj32e
+	dM35HUp9TmrTsIXRNxYZA=; b=BeaF14EXJGvLkaK4TJM3SCxiRPajWJBzAuoUEQ
+	jZK8VhjDlve2Xw8bDmJZrqZIewM4dZd20qfAmWhrWMHz2evOmhL9CXQWf2ZTUJ6X
+	ixy8CZ66DDMK9ovlUfZxSr+CRoMlyfHS8mXA/EVUOLO2zxCvWHg1Azwt18x70LHH
+	wgv3AAr5S/tfGFEsAAfX2dpecM9ZilNpYzGF9c+FTWbo5hu4HxlyRBZmG9qmurfj
+	cLjKyz7Igfb+UcnRykgRNqGZWUB6yfEWLB5A0Fef/C0/ZAbfPkK8gPrJgOsKym0J
+	OwKRp5SEU1dvO983LWejvbIoMzOQG5PYBpx/zfJiNfr6wONQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 475v2yaxn8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 10:17:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55CAHgJ4005524
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 10:17:42 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 12 Jun 2025 03:17:38 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v3 0/2] Add support for clock controllers and CPU scaling
+ for QCS615
+Date: Thu, 12 Jun 2025 15:47:19 +0530
+Message-ID: <20250612-qcs615-mm-cpu-dt-v3-v3-0-721d5db70342@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am642-evm-pcie0-ep: Add boot phase
- tag to "pcie0_ep"
-To: Vignesh Raghavendra <vigneshr@ti.com>, <nm@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <s-vadapalli@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <danishanwar@ti.com>, Hrushikesh Salunke <h-salunke@ti.com>
-References: <20250610054920.2395509-1-h-salunke@ti.com>
- <98e04654-a693-494d-9f60-930b6a4cd84a@ti.com>
- <b24a97fc-8dac-443b-aec7-317b9e393f2d@ti.com>
-Content-Language: en-US
-From: Hrushikesh Salunke <h-salunke@ti.com>
-In-Reply-To: <b24a97fc-8dac-443b-aec7-317b9e393f2d@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC+pSmgC/03NzW7DIBAE4FexOHcrfhxsrKjqe0Q5wLK0qMYk4
+ FiRorx7SdJDjzPSfHNjlUqkyqbuxgptsca8tKDeOobfdvkiiL5lJrnccS0EnLFqsYOUAE8X8Ct
+ sCoIjGmjsER1nbXkqFOL1qR6Or1zofGn4+ipZolrtE5+6/Z8t/9mbAZwz/gDmZS15nqnUR8nBq
+ d7jMHpNwn02E+OC75jTx+PY2UptklJcp04Yq7k0yhnT/JF7MwQpg5DSolUBe+2tt8Gw4/3+C5f
+ TUmEIAQAA
+X-Change-ID: 20250611-qcs615-mm-cpu-dt-v3-fbee7e84ccb0
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        "Konrad
+ Dybcio" <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA3OSBTYWx0ZWRfX4HQbdjYYfO06
+ SHOzKC+2zdxY1bc6c/IbiKIA9O5yP8W7jNDHXXaDSkKGuz42fsByvltXT/bybNYNJLW4mlfif4A
+ SJFZ4M437XhHsH+csTNRkcgGds8aGtR0ThWFbqfuCdRltEyq7Ho53bGPOM9IlXv/yrIjq+JZoUM
+ c5VYfJa+N61zFpTGCrPfOFo7QCoOcNDoLwI1KX7Uc0ivhph66uFzWv5Gam06YTNUoRJA29keqgC
+ cUiLN+tIb10REKPXrEQGJwiAnkdHtHVuqMiNTAOYRQmzvKArouEnUNE0NZeAjbRbx6QIBvomO6u
+ Q9rHrskjueQkvO24bKQyWzgDwBStMSOT7FXgYCW49zl8FE5K0dr1rauDZisq1YGeIkG6iqd1ada
+ iZ74B+BDLYAV1WU1c0qX52P3kucdLJLR0fqSV19dPVKULHwAFV7I23SCDpD5GKnmi6RsCZWk
+X-Proofpoint-GUID: DISlMIodEt1B90BpA_6ZAVVTDy1PE5wi
+X-Proofpoint-ORIG-GUID: DISlMIodEt1B90BpA_6ZAVVTDy1PE5wi
+X-Authority-Analysis: v=2.4 cv=f+BIBPyM c=1 sm=1 tr=0 ts=684aa947 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=ukys1PUpxxTaYa5xlC8A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 mlxlogscore=728 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506120079
 
+Add the video, camera, display and gpu clock controller nodes and the
+cpufreq-hw node to support cpu scaling.
 
+Clock Dependency:
+https://lore.kernel.org/all/20250119-qcs615-mm-v4-clockcontroller-v4-0-5d1bdb5a140c@quicinc.com/
 
-On 11/06/25 14:17, Hrushikesh Salunke wrote:
-> 
-> 
-> On 11/06/25 14:14, Vignesh Raghavendra wrote:
->>
->>
->> On 10/06/25 11:19, Hrushikesh Salunke wrote:
->>> AM64X SoC has one instance of PCIe which is PCIe0. To support PCIe boot
->>> on AM64X SoC, PCIe0 needs to be in endpoint mode and it needs to be
->>> functional at all stages of PCIe boot process. Thus add the
->>> "bootph-all" boot phase tag to "pcie0_ep" device tree node.
->>>
->>> Signed-off-by: Hrushikesh Salunke <h-salunke@ti.com>
->>> ---
->>> This patch is based on commit
->>> 475c850a7fdd Add linux-next specific files for 20250606
->>>
->>> Changes since v1
->>> As per feedback from Nishanth, changed the position of "bootph-all"
->>> tag, according to ordering rules for device tree properties.
->>>
->>> v1 : 
->>> https://lore.kernel.org/all/20250609115930.w2s6jzg7xii55dlu@speckled/
->>>
->>>   arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso 
->>> b/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
->>> index 432751774853..a7e8d4ea98ac 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
->>> +++ b/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
->>> @@ -46,6 +46,7 @@ pcie0_ep: pcie-ep@f102000 {
->>>           max-functions = /bits/ 8 <1>;
->>>           phys = <&serdes0_pcie_link>;
->>>           phy-names = "pcie-phy";
->>> +        bootph-all;
->>>           ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
->>>       };
->>>   };
->>
->> Are the patches for PCIe boot support merged to U-Boot or such other
->> bootloader repo?
->> No, they are not in the U-Boot yet. I will be posting patches for PCIe
-> boot support for U-Boot this week.
-> 
+Changes in v3:
+- Move the cpufreq-hw node under /soc {}
+- Add the RB-tag on (v2) from [Konrad]
 
-I have posted Patch series for the PCIe boot support in Uboot.
+Changes in v2:
+- pad address field to 8 digits [Dmitry]
+- Replace cpu/CPU in commit [Dmitry]
+- Update the binding to use SC7180 compatible, as QCS615 uses the same
+  hardware version.
+- Link to v1: https://lore.kernel.org/r/20241108-qcs615-mm-dt-nodes-v1-0-b2669cac0624@quicinc.com
 
-1.https://patchwork.ozlabs.org/project/uboot/patch/20250612084910.3457060-1-h-salunke@ti.com/
-2. 
-https://patchwork.ozlabs.org/project/uboot/cover/20250612085023.3457117-1-h-salunke@ti.com/
-3. 
-https://patchwork.ozlabs.org/project/uboot/cover/20250612085534.3457522-1-h-salunke@ti.com/
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Taniya Das (2):
+      arm64: dts: qcom: qcs615: Add clock nodes for multimedia clock
+      arm64: dts: qcom: qcs615: Add CPU scaling clock node
 
+ arch/arm64/boot/dts/qcom/qcs615.dtsi | 80 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+---
+base-commit: 19a60293b9925080d97f22f122aca3fc46dadaf9
+change-id: 20250611-qcs615-mm-cpu-dt-v3-fbee7e84ccb0
+prerequisite-message-id: <20250612-qcs615-mm-v9-clock-controllers-v9-0-b34dc78d6e1b@quicinc.com>
+prerequisite-patch-id: 90315d53ce2ec33b6503433068dd9a3ecdba8e8c
+prerequisite-patch-id: 6414e91724ba90fe820c3d2bb5caa720c99cf3be
+prerequisite-patch-id: b9e3a2663e27dc60be0eff97baf3739db8516eeb
+prerequisite-patch-id: 23062409b23977940c958bf22a215ae5dc45e93a
+prerequisite-patch-id: faf0d569634dad432f67acd073343e47add0ee68
+prerequisite-patch-id: 9a0caaaa8d25634dd0db5edffbc939eb7e734c6c
+prerequisite-patch-id: 1a1dbf7144745dfbc60c0f2efcad188d1fc26779
+prerequisite-patch-id: 2327271def3656283d53dadb2ce9f8cd561249d1
+prerequisite-patch-id: b12e39a6a0763b8ec23c99c82f3ac6acdca26f85
+prerequisite-patch-id: 71f0eb0fb98c3177dcbe6736c120cba4efef0c33
 
-Regards,
-Hrushikesh.
+Best regards,
+-- 
+Taniya Das <quic_tdas@quicinc.com>
+
 
