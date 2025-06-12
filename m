@@ -1,225 +1,197 @@
-Return-Path: <linux-kernel+bounces-684252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75571AD782A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 192F5AD782E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1D83A932B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91DBF3A5C5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BAC221DA8;
-	Thu, 12 Jun 2025 16:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C0F299AB1;
+	Thu, 12 Jun 2025 16:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8es107J";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TEnmcgOo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8es107J";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TEnmcgOo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cGu7+eYv"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F5A298CA6
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC20A26FD91
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749745386; cv=none; b=FwqjI6zd7zZyfmyS/2X8vQRhxgFv8AW2S8p9dkTNOVA0d05sCNhysCACcCDxVPhTeRNEOQXpjXb4MNsDrXKZixltfhhb5HtqXXQIztjPLvwMP8BM4ZkMnvyelWyShZE9i7ltEbUuKSUvp8NYNYSFkQjZOMKkh+gzsVzce7f4bWc=
+	t=1749745460; cv=none; b=gKC8k9n9/RAL6AYK8iD7HuNLiBfviEsUb+ZgTkgfC8n8mPHClW6pIix9BP7d0MCejazsLQJiroFpt64vafKw1f3NFMRHv63xxm34y2lPW0kOUWONhsKPMcPg85PZtf0R3EoPSG+yxLnfJVMZnF4+cKecq3ZHZmU3eB8Q0v78Rj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749745386; c=relaxed/simple;
-	bh=7AP8fqRO4JJ8g1LZXRdJ1vokZpS4bKBvVAgN9s+xATo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jnpje+X4ZiKuHhv6Y9pnk2uyrX4mTF2TxY4GGYGLJViqP5fsAb66RuB3erd18UIwb5/r9f46v4uV2U6RHiB3ZbA5WaMszvj4YjEMG9s3JhunpBF34LIPys8n++aBVYyQMne2oPMnxHV7ZSfmWpH9H+Q9/cJbhcPmRjyOiKsrTN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8es107J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TEnmcgOo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8es107J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TEnmcgOo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4B7231F7E8;
-	Thu, 12 Jun 2025 16:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749745382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PFZ+uLNMtP9yso1JZju5KkdQPKX8bCV/l3apoAnYl+A=;
-	b=c8es107Jaiqk/6P4+3yNsA80g4jQ1Y49f+fLYRke6MwaDRyCPBc5K20pdqMJTakZFqfGwY
-	89drO+p5RPHemFuKx32zUQWqG8pyyb11dTNfO2SejtzKUtAQS0GN5qLRUipjyufjJrSYcg
-	U9jP3G9/IZlNcxH2XZ/H6VgOEoV4/7s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749745382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PFZ+uLNMtP9yso1JZju5KkdQPKX8bCV/l3apoAnYl+A=;
-	b=TEnmcgOo3GC9KFKIv7hKab8b410CzHwXcEkn0XfoU4R7rnC4T9HYvOP5vlmaEGqTFfVxJf
-	HUZPUEqHqcH83DBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749745382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PFZ+uLNMtP9yso1JZju5KkdQPKX8bCV/l3apoAnYl+A=;
-	b=c8es107Jaiqk/6P4+3yNsA80g4jQ1Y49f+fLYRke6MwaDRyCPBc5K20pdqMJTakZFqfGwY
-	89drO+p5RPHemFuKx32zUQWqG8pyyb11dTNfO2SejtzKUtAQS0GN5qLRUipjyufjJrSYcg
-	U9jP3G9/IZlNcxH2XZ/H6VgOEoV4/7s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749745382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PFZ+uLNMtP9yso1JZju5KkdQPKX8bCV/l3apoAnYl+A=;
-	b=TEnmcgOo3GC9KFKIv7hKab8b410CzHwXcEkn0XfoU4R7rnC4T9HYvOP5vlmaEGqTFfVxJf
-	HUZPUEqHqcH83DBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F401132D8;
-	Thu, 12 Jun 2025 16:23:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rPU1C+b+SmjSPQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 16:23:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 823E3A09B0; Thu, 12 Jun 2025 18:23:01 +0200 (CEST)
-Date: Thu, 12 Jun 2025 18:23:01 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Luis Henriques <luis@igalia.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
-Message-ID: <3gvuqzzyhiz5is42h4rbvqx43q4axmo7ehubomijvbr5k25xgb@pwjvfuttjegk>
-References: <87tt4u4p4h.fsf@igalia.com>
- <20250612094101.6003-1-luis@igalia.com>
- <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
+	s=arc-20240116; t=1749745460; c=relaxed/simple;
+	bh=Be+I5tmdlC2zkdh5UFDc365I6yz+JrdL9QpxdY9MCSM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IlvgAHxLJctuzumqxLUPEQjWarZelPnRFXdZzmC2A4X2pfOT8E/yJdjB9z0i00XyjIWr3kQdUyivVrvWIjXu2mYRuVDQlWtC4OO9fz861hxBRv1jsnPetTQ8gALd/HGHE6PoZm5bpAbLkaBq+1MFeJtZ+1RYfMChOUgPM0TVzKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cGu7+eYv; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a58ba6c945so22935681cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:24:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749745457; x=1750350257; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ubpwtkgx55qA2WdWpUmBhEo0OXMBytST0Gd49bZRuCQ=;
+        b=cGu7+eYv4XF5ZrOsHEVbwj5yUZtHayOAGB9kjmIgXrwsnJRldfpgNtaszeVGTJDhRt
+         gWNqQ6A6jgS5neZe2vqg87eKRR/3Gbae4v4BBMTousPcRYQ6UHjNgTYhM0NESVAPuwcJ
+         ubCh5yBox4OeVoWXFtTTEq6NnfEsiUfpUqk+9plKsEA9i/sErBJCOLDlslK9Mov5NysS
+         fOSFzPwljX9v1xp3r9H7sMu5ZJ/765HY4iXZbx7gi2YEg3w3+U3mY/gzC+vAYIAImcM5
+         E26wq3SRdjlyldQf3G+6uPwGzVtU5x4cIymJZ3IeGVkI37ZGgHPfZP++JcxuAbjF/tO8
+         9DuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749745457; x=1750350257;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ubpwtkgx55qA2WdWpUmBhEo0OXMBytST0Gd49bZRuCQ=;
+        b=bsc9LQi7DocGA02Ax5p7C52BP91IDkei8TQEiFX8WlzkDZvi+NLaW0CBUW9vcQOZ10
+         ss6GvQiv4g3vyaYQuNNkW8NqNbsaOJbuCLR/WJ2J0HnV2JxMcVR2kFJIuCeHfFX3AI7R
+         tz6eIx4kcPuVeQhGOx8diuozK7aJM+ty2Q03gmEapviMUgL8/x13hQ13tfNwpK3lgzGc
+         xDVmYxVt4trzg74NrTk71hnitorXCHziI0lvs8fxJyQK5gSJFw+YYjbOEXlHM/TwjXE8
+         H2ixmVGprZrpnhkSa9T0EuthtG/AjCTuvd6bybH0ozDSxjbrHLvRxzZE3/yN3cFLLtmH
+         pjwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBwrQ8keowNX/iN7qAYMZQKua43HMxYyT4ms+H72EWBpqy9uN+7iMF87DNhLBQ/uwj/rg3vDEDmMBLeJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGC29s9B5yiyLkidzEQBs1R8BfjuwyjirrU9uUiLJIA/MLIMPN
+	3p63xpp09MjO09KrJgW5nO64JOmb0wI8cLerXZx08YElCX/3weUq10jGyfbca9Rb5QrVPiWp3ND
+	/IFvjjTMcvL/N8bZcZsWqQey7M2XXb9w501OAQyvyxA==
+X-Gm-Gg: ASbGncuiWuRUPUgohiJJQIoD/JoyhnLTpTdVL54mvRDDtO4waxdPLogPA3oTUS2g8yp
+	SATt4ho7O12ewxTZRS1ZTy5/29o2dSxajCkJ9KXYLzOhnpLkAQBKDAPTVDq7lifbcznNqSaT6WG
+	XIhECRaftbhthED0V7Eku92qvxukKOp2K8VJmUV+uglYjGOJAKQrkptEcfibYTwo8rkO640IyMW
+	Mmp
+X-Google-Smtp-Source: AGHT+IH5VlckLY7oPmrOLAf7S12aXor6dxrtFBu851Xisht0fLTv7wD60rAOBD4hQbJLQ1v8NQWu/UVsaM/TmBbBsuw=
+X-Received: by 2002:a05:620a:4808:b0:7c5:544e:2ccf with SMTP id
+ af79cd13be357-7d3b2a8dd09mr647746085a.57.1749745456840; Thu, 12 Jun 2025
+ 09:24:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Level: 
+References: <20250610234307.c675969e83ce53bb856e94d7@kernel.org>
+ <174956686826.1494782.11512582667456262594.stgit@mhiramat.tok.corp.google.com>
+ <20250611113001.GC2273038@noisy.programming.kicks-ass.net> <20250612091754.b56ed1faf47cdcc1b90aafcd@kernel.org>
+In-Reply-To: <20250612091754.b56ed1faf47cdcc1b90aafcd@kernel.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 12 Jun 2025 21:54:05 +0530
+X-Gm-Features: AX0GCFt_ZAJRmm-hY3w_ZWYFRcEx6mKnHy_6UevUofpVrJ7c2ZmBQd-o7EHHwYw
+Message-ID: <CA+G9fYt=zY4Xt1ZrkKqENdrJ41=iT5JcKnYn004=paANbG6UPA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] x86: alternative: Invalidate the cache for
+ updated instructions
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, 
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 12-06-25 15:55:40, Mateusz Guzik wrote:
-> On Thu, Jun 12, 2025 at 10:41:01AM +0100, Luis Henriques wrote:
-> > The assert in function file_seek_cur_needs_f_lock() can be triggered very
-> > easily because, as Jan Kara suggested, the file reference may get
-> > incremented after checking it with fdget_pos().
-> > 
-> > Fixes: da06e3c51794 ("fs: don't needlessly acquire f_lock")
-> > Signed-off-by: Luis Henriques <luis@igalia.com>
-> > ---
-> > Hi Christian,
-> > 
-> > It wasn't clear whether you'd be queueing this fix yourself.  Since I don't
-> > see it on vfs.git, I decided to explicitly send the patch so that it doesn't
-> > slip through the cracks.
-> > 
-> > Cheers,
-> > -- 
-> > Luis
-> > 
-> >  fs/file.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 3a3146664cf3..075f07bdc977 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -1198,8 +1198,6 @@ bool file_seek_cur_needs_f_lock(struct file *file)
-> >  	if (!(file->f_mode & FMODE_ATOMIC_POS) && !file->f_op->iterate_shared)
-> >  		return false;
-> >  
-> > -	VFS_WARN_ON_ONCE((file_count(file) > 1) &&
-> > -			 !mutex_is_locked(&file->f_pos_lock));
-> >  	return true;
-> >  }
-> 
-> fdget_pos() can only legally skip locking if it determines to be in
-> position where nobody else can operate on the same file obj, meaning
-> file_count(file) == 1 and it can't go up. Otherwise the lock is taken.
-> 
-> Or to put it differently, fdget_pos() NOT taking the lock and new refs
-> showing up later is a bug.
+On Thu, 12 Jun 2025 at 05:47, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> On Wed, 11 Jun 2025 13:30:01 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > On Tue, Jun 10, 2025 at 11:47:48PM +0900, Masami Hiramatsu (Google) wrote:
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > >
+> > > Invalidate the cache after replacing INT3 with the new instruction.
+> > > This will prevent the other CPUs seeing the removed INT3 in their
+> > > cache after serializing the pipeline.
+> > >
+> > > LKFT reported an oops by INT3 but there is no INT3 shown in the
+> > > dumped code. This means the INT3 is removed after the CPU hits
+> > > INT3.
+> > >
+> > >  ## Test log
+> > >  ftrace-stress-test: <12>[   21.971153] /usr/local/bin/kirk[277]:
+> > >  starting test ftrace-stress-test (ftrace_stress_test.sh 90)
+> > >  <4>[   58.997439] Oops: int3: 0000 [#1] SMP PTI
+> > >  <4>[   58.998089] CPU: 0 UID: 0 PID: 323 Comm: sh Not tainted
+> > >  6.15.0-next-20250605 #1 PREEMPT(voluntary)
+> > >  <4>[   58.998152] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+> > >  BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > >  <4>[   58.998260] RIP: 0010:_raw_spin_lock+0x5/0x50
+> > >  <4>[   58.998563] Code: 5d e9 ff 12 00 00 66 66 2e 0f 1f 84 00 00 00
+> > >  00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
+> > >  0f 1e fa 0f <1f> 44 00 00 55 48 89 e5 53 48 89 fb bf 01 00 00 00 e8 15
+> > >  12 e4 fe
+> > >
+> > > Maybe one possible scenario is to hit the int3 after the third step
+> > > somehow (on I-cache).
+> > >
+> > > ------
+> > > <CPU0>                                      <CPU1>
+> > >                                     Start smp_text_poke_batch_finish().
+> > >                                     Start the third step. (remove INT3)
+> > >                                     on_each_cpu(do_sync_core)
+> > > do_sync_core(do SERIALIZE)
+> > >                                     Finish the third step.
+> > > Hit INT3 (from I-cache)
+> > >                                     Clear text_poke_array_refs[cpu0]
+> > > Start smp_text_poke_int3_handler()
+> > > Failed to get text_poke_array_refs[cpu0]
+> > > Oops: int3
+> > > ------
+> > >
+> > > SERIALIZE instruction flashes pipeline, thus the processor needs
+> > > to reload the instruction. But it is not ensured to reload it from
+> > > memory because SERIALIZE does not invalidate the cache.
+> > >
+> > > To prevent reloading replaced INT3, we need to invalidate the cache
+> > > (flush TLB) in the third step, before the do_sync_core().
+> >
+> > This sounds all sorts of wrong. x86 is supposed to be cache-coherent. A
+> > store should cause the invalidation per MESI and all that. This means
+> > the only place where the old instruction can stick around is in the
+> > uarch micro-ops cache and all that, and SERIALIZE will very much flush
+> > those.
+>
+> OK, thanks for pointing it out!
+>
+> >
+> > Also, TLB flush != I$ flush. There is clflush_cache_range() for this.
+> > But still, this really should not be needed.
+> >
+> > Also, this is all qemu, and qemu is known to have gotten this terribly
+> > wrong in the past.
+>
+> What about KVM? We need to ask Naresh how it is running on the machine.
+> Naresh, can you tell us how the VM is running? Does that use KVM?
+> And if so, how the kvm is configured(it may depend on the real hardware)?
 
-I mostly agree and as I've checked again, this indeed seems to be the case
-as fdget() will increment f_ref if file table is shared with another thread
-and thus file_needs_f_pos_lock() returns true whenever there are more
-threads sharing the file table or if the struct file is dupped to another
-fd. That being said I find the assertion in file_seek_cur_needs_f_lock()
-misplaced - it just doesn't make sense in that place to me.
- 
-> I don't believe anything of the sort is happening here.
-> 
-> Instead, overlayfs is playing games and *NOT* going through fdget_pos():
-> 
-> 	ovl_inode_lock(inode);
->         realfile = ovl_real_file(file);
-> 	[..]
->         ret = vfs_llseek(realfile, offset, whence);
-> 
-> Given the custom inode locking around the call, it may be any other
-> locking is unnecessary and the code happens to be correct despite the
-> splat.
+We do not use KVM and are running the Qemu version (10.0.0).
 
-Right and good spotting. That's indeed more likely explanation than mine.
-Actually custom locking around llseek isn't all that uncommon (mostly for
-historical reasons AFAIK but that's another story).
+>
+> >
+> > If you all cannot reproduce on real hardware, I'm considering this a
+> > qemu bug.
 
-> I think the safest way out with some future-proofing is to in fact *add*
-> the locking in ovl_llseek() to shut up the assert -- personally I find
-> it uneasy there is some underlying file obj flying around.
+It is reproducible intermittently on x86_64 device and qemu-x86 device
+with and without compat mode.
 
-Well, if you grep for vfs_llseek(), you'll see there are much more calls to
-it in the kernel than overlayfs. These callers outside of fs/read_write.c
-are responsible for their locking. So I don't think keeping the assert in
-file_seek_cur_needs_f_lock() makes any sense. If anything I'd be open to
-putting it in fdput_pos() or something like that.
+This link is showing how intermittent it is on Linux next tree.
 
-> Even if ultimately the assert has to go, the proposed commit message
-> does not justify it.
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250606/testrun/28685600/suite/log-parser-test/test/oops-oops-int3-smp-pti/history/?page=2
 
-I guess the commit message could be improved. Something like:
+- Naresh
 
-The assert in function file_seek_cur_needs_f_lock() can be triggered very
-easily because there are many users of vfs_llseek() (such as overlayfs)
-that do their custom locking around llseek instead of relying on
-fdget_pos(). Just drop the overzealous assertion.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> OK, if it is a qemu's bug, dropping [2/2], but I think we still need
+> [1/2] to avoid kernel crash (with a warning message without dump).
+>
+> Thank you,
+>
+> >
+> >
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
