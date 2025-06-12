@@ -1,270 +1,243 @@
-Return-Path: <linux-kernel+bounces-683374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7FBAD6CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD94BAD6CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC5317D7CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE8717F15C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8BD22DA0F;
-	Thu, 12 Jun 2025 09:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F73622F755;
+	Thu, 12 Jun 2025 09:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRt9Yj8x"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o1r8QQSH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8256A1F0E39;
-	Thu, 12 Jun 2025 09:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57B922DA02;
+	Thu, 12 Jun 2025 09:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749722110; cv=none; b=d3nBTcCIesvJsxKCT+n5og4oVXSvx+aKr6/3Rwgqy4MmAXEU4zi7ZeQHtvXej4aTeLkx3k0tOxfSl2EpcOtIGqQW1oFlJ5hQt7/RXf3ugllOx8ZaMbLVu+lQZznjmDu8dLqFFqWIX8j25ma7Da4av6SPKiuN0soMSrncsxJ4x4A=
+	t=1749722198; cv=none; b=pQrlsMS5lNR78Z1ARrbR4lrCOgU8ubgR8QtOENvCb8sMe0A3HGvyCFQVVyXanSTFZ8CmlvQe8sdWHs/+I0vCAsQjgviQuJN69mtjrlmVkDzK5IBcSEylkzU5GgviN61UAORjMcs/Y+B6HdVMuXptvGEH4SCwFg+f8mMHyPkNKvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749722110; c=relaxed/simple;
-	bh=UBZIU7orokqIbTAlErkDSw8d3/28HqSG10nBK9bv3Gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N/OyhAaLE5XINNn9Dvd1xmj/ffA3uOE/+SYPHWMvOAHRw2Ji7F24aeXBTPH8QwYy6E1Y+rp0mLcw53QhhnUQI6KZ4WptwsqB10oIqhYd6tRtMObMs9m4dXQGz7pItVF0KWxtBvOQ7ulL11WXjKamY1Nr3M9PFsf646lySof/g6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRt9Yj8x; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234fcadde3eso9337595ad.0;
-        Thu, 12 Jun 2025 02:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749722108; x=1750326908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5v78VkZLXww0x+jfw1DMkbMZbuVvalpX2roWsau0taU=;
-        b=TRt9Yj8xmwiCyKRyGkfLw1Ety4j3DiOEm8Sw+3+33GIFnir/oX/SWSDe2QktUBFvBI
-         JWYU8WsrfpPlbrnC7bywRf99/yCru2QsTlHctgu+llj2eCwhMbNKrvy7UBpomscNt1nu
-         7S13PoBHvhvxScLVBKh2ikPkkw4tYVtOuT6/XjQRXKge+QAnyLGD8qX2v/lnLzemrtY3
-         hoRPviQDfD03ma8Yq+iXZVrC5l/jKSTCIh70wMTgiNs9OJ0e8CyMuC1VsoePaH0CBPFT
-         /Jyav8vNeXMB7GhQtegc3+6jPDJKhOhtRTliR0P3KUoxX1qSSmuuGwFpt1Jt5Z3Yongi
-         QQ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749722108; x=1750326908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5v78VkZLXww0x+jfw1DMkbMZbuVvalpX2roWsau0taU=;
-        b=XLOjM3BT2Knk9ax4leR3v6FlqIf/LHNrN8nVX+cDOO/3cUOED44vY34Ks79qeYYTGZ
-         gTDp9YLGISYDhACxMV2KKt8aaUKkxRTtI30I73ChDP1PXT0ubWyw9m9ShlQKcPKvv2yq
-         vF/+jofo0ECEQ0bEXMcEBfdnTs+xbc2HJr9n82sxkaJG3EtjpBlezraDoppPV8zGnuti
-         naX5fxQrJIicxBt/fTILTm1N78b2yqi3VPkYIW4OvYrGMpFlTg/Tc7dxsXlGvL0xW8Ay
-         k+K0fmnJT/LxZS3lJ70KI5ZLMuVQIY80SUpfoPeUvN/RR2VrnqeHtesABZZXsHRLBBu+
-         fsrA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8XXcgOVd3WI3A/B5NTcMJu+/4lnuepLaoTiozfilzvs46CpXuoEqfEALnwLCqNhoNnQiz7pJs7DSXT0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR7+b9ZpSxvxGQDwdPUVNU3MBTqEc04d9SUd745gFzKs1uBaHx
-	f3uPWgr2gJxRq+ejFNXmhlL6IdYHHb1JxYRy8dOiJD4rGjWYpriYPY86XNGbZ7aWGiaq/Q==
-X-Gm-Gg: ASbGncsqpyB2PgjeNKCITx2+ycQbS6fQiIPTHwul4XR7xlOI1K51G6VOR2cVO6cMIFP
-	Z6jacCx2dhfixguGuUt+hitCONbT+no7CJhRLG4BM6iMULchiAPxg1YGkQxnhuzYzz8moIefl1m
-	z22MshkKQT+3kR35ltFfOO+B1lvGLI1ledvxB0JZxIT9g5mchRhuILfGFvMl3XyVIZ6jQ2oNm8D
-	+CI7KdjED3WqN1NEB/JyF5UWrUXiFpqCEIvnqwlwAA1d8AcHP1DNF7Ll4efjibrv8iOGAOPpth+
-	7QGOQnKlkgpmoBN21C/OHbWu5B/ysRIqQVuZ0ztSXOOQ
-X-Google-Smtp-Source: AGHT+IHcPRdBhRsbBc2A/yJonIlJWAqzhv+uX32iEL9BThoZ0ABPWrwcj9p4KmGO7Q8AiVyqVDImxQ==
-X-Received: by 2002:a17:902:d58f:b0:234:8f5d:e3bd with SMTP id d9443c01a7336-2364d8cc7aamr37633475ad.39.1749722107779;
-        Thu, 12 Jun 2025 02:55:07 -0700 (PDT)
-Received: from [127.0.0.1] ([2403:2c80:6::3058])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2364e6d9c3asm10027285ad.123.2025.06.12.02.55.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 02:55:07 -0700 (PDT)
-Message-ID: <938b0969-cace-4998-8e4a-88d445c220b1@gmail.com>
-Date: Thu, 12 Jun 2025 17:55:04 +0800
+	s=arc-20240116; t=1749722198; c=relaxed/simple;
+	bh=ohiZKLTsCmAX7wUdm2S2t15r7UHYouJjtV3g6qA78Os=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=HXPv8S41oNJtkEvqSML8JCaMxvtBq0UdRO2jAH5Tf2O9uMx6dpZ4oAVapGo9jIirE1R6JDXiv8lUT0e12wZ79D7zN4bSvGOyxPxbXwU9cgdl9UKX6LS1y60S3Dala9/L9ziIsnBmlIxX4ANBaaCyT+LNVldQ/eo+6AzlYUaZppQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o1r8QQSH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7wA2j029379;
+	Thu, 12 Jun 2025 09:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5l9bQ53EhKSgGSqxRgWh/x
+	Pf61f7VELmbS19DohTVME=; b=o1r8QQSHEcrlZmcyPrTvNx37MOKTkfkLxXOGX9
+	BlliGeOMhy0MQkAu/RmgH7L1Al/Hu+i4CmWnouieh/3lrL3FakdKH3VnWPmJKgRD
+	SaNTq5uOncut2syCrFP/HuWqFMHyoIc1KY8QOIiXm2TK7F042at1j5/9q87YV9+b
+	61tgIQEhT2HZKhFAxJiTujDtOye6FweNR3IZoAvSRAd1jSJZz7MZJNOeCiYgreqr
+	Sy75TuCwd+QfAqaR/Fr6+y1i65KYdYc9ggxJj3aDx/vXLrXR7HZ4TNw4D5yz8GU/
+	YpWs5f4f0wwg26JFQzHN4wCnXVFHdmt39/q1KH6rLGX+/hVg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn6g2b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 09:56:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55C9uN8J019125
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 09:56:23 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 12 Jun 2025 02:56:16 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v9 00/10] Add support for videocc, camcc, dispcc and gpucc
+ on Qualcomm QCS615 platform
+Date: Thu, 12 Jun 2025 15:25:04 +0530
+Message-ID: <20250612-qcs615-mm-v9-clock-controllers-v9-0-b34dc78d6e1b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] md/raid1: Fix stack memory use after return in
- raid1_reshape
-To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250611090203.271488-1-wangjinchao600@gmail.com>
- <5143c5c3-3a77-919f-0d38-8adb0e8923e9@huaweicloud.com>
- <06935480-a959-4e3f-8e41-286d7f54754a@gmail.com>
- <9c7d5e66-4f5f-b984-c291-f19c3d568b85@huaweicloud.com>
-Content-Language: en-US
-From: Wang Jinchao <wangjinchao600@gmail.com>
-In-Reply-To: <9c7d5e66-4f5f-b984-c291-f19c3d568b85@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPmjSmgC/x3NwQqDMAyA4VeRnBdoCzrqq8gONYtbWG23RGQgv
+ vvKjt/l/w8wVmGDsTtAeReTWhripQN6pvJglHszBBd6N3iPH7LB97iuuEekXOmFVMumNWdWw0R
+ zTOwWvgYHLfJWXuT7H0y38/wBHzclE3AAAAA=
+X-Change-ID: 20250611-qcs615-mm-v9-clock-controllers-acb9ae0fe720
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Will Deacon
+	<will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.15-dev-aa3f6
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA3NiBTYWx0ZWRfX8TkfcmSiU+YX
+ DAK3Fni68hRSEVCg4TPlrIpPIfYK8FRd8KEHNzEfDZjnxBmRWyjmeuvzuA/wOLhmC6g6OqC6hgg
+ UJkucM7YzEAlEiPhLZOhY38ZqXUW44J8CFITceBpW25k22i1Zm4w3HjW6Jbz42kbDt2Tjb73yGx
+ mGUQxo101haP6Snf6ElsFDsTACzf8wh7ZXUsh/yyeiFgkN2LkjZJalikeWTc9r6eJs3Goi5hELg
+ /RuuMQBE9EaKf1hZtBx88KId+0r1FUmo51Gu3W6GV+KlPj5i5ok2NKX3D605KDMcBocXGd8DuJX
+ 2WsQTfwSWuhuOUrJNwycTYB+2cdfA5JaSoalDUoWP15eF4j0zP1qbn8SxCpGC7QTcjNpFlpX+IN
+ SMI3ututbuVPRrcEyQ+1CVUW5UM48agcwT22AivpHwaSp++GZ26UgD8VLBvpVFCb+q8LFO+d
+X-Proofpoint-GUID: uFFuPtTjrIr-pKimpVzCa-BywVv_ZZn4
+X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=684aa447 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=pGLkceISAAAA:8 a=ibGQlGnF6lNa58M2td8A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: uFFuPtTjrIr-pKimpVzCa-BywVv_ZZn4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506120076
 
-On 2025/6/12 17:17, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/06/12 15:45, Wang Jinchao 写道:
->> 在 2025/6/12 15:31, Yu Kuai 写道:
->>> Hi,
->>>
->>> 在 2025/06/11 16:55, Wang Jinchao 写道:
->>>> In the raid1_reshape function, newpool is
->>>> allocated on the stack and assigned to conf->r1bio_pool.
->>>> This results in conf->r1bio_pool.wait.head pointing
->>>> to a stack address.
->>>> Accessing this address later can lead to a kernel panic.
->>>>
->>>> Example access path:
->>>>
->>>> raid1_reshape()
->>>> {
->>>>     // newpool is on the stack
->>>>     mempool_t newpool, oldpool;
->>>>     // initialize newpool.wait.head to stack address
->>>>     mempool_init(&newpool, ...);
->>>>     conf->r1bio_pool = newpool;
->>>> }
->>>>
->>>> raid1_read_request() or raid1_write_request()
->>>> {
->>>>     alloc_r1bio()
->>>>     {
->>>>         mempool_alloc()
->>>>         {
->>>>             // if pool->alloc fails
->>>>             remove_element()
->>>>             {
->>>>                 --pool->curr_nr;
->>>>             }
->>>>         }
->>>>     }
->>>> }
->>>>
->>>> mempool_free()
->>>> {
->>>>     if (pool->curr_nr < pool->min_nr) {
->>>>         // pool->wait.head is a stack address
->>>>         // wake_up() will try to access this invalid address
->>>>         // which leads to a kernel panic
->>>>         return;
->>>>         wake_up(&pool->wait);
->>>>     }
->>>> }
->>>>
->>>> Fix:
->>>> The solution is to avoid using a stack-based newpool.
->>>> Instead, directly initialize conf->r1bio_pool.
->>>>
->>>> Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
->>>> ---
->>>> v1 -> v2:
->>>> - change subject
->>>> - use mempool_init(&conf->r1bio_pool) instead of reinitializing the 
->>>> list on stack
->>>> ---
->>>>   drivers/md/raid1.c | 34 +++++++++++++++++++---------------
->>>>   1 file changed, 19 insertions(+), 15 deletions(-)
->>>>
->>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->>>> index 19c5a0ce5a40..f2436262092a 100644
->>>> --- a/drivers/md/raid1.c
->>>> +++ b/drivers/md/raid1.c
->>>> @@ -3366,7 +3366,7 @@ static int raid1_reshape(struct mddev *mddev)
->>>>        * At the same time, we "pack" the devices so that all the 
->>>> missing
->>>>        * devices have the higher raid_disk numbers.
->>>>        */
->>>> -    mempool_t newpool, oldpool;
->>>> +    mempool_t oldpool;
->>>>       struct pool_info *newpoolinfo;
->>>>       struct raid1_info *newmirrors;
->>>>       struct r1conf *conf = mddev->private;
->>>> @@ -3375,9 +3375,6 @@ static int raid1_reshape(struct mddev *mddev)
->>>>       int d, d2;
->>>>       int ret;
->>>> -    memset(&newpool, 0, sizeof(newpool));
->>>> -    memset(&oldpool, 0, sizeof(oldpool));
->>>> -
->>>>       /* Cannot change chunk_size, layout, or level */
->>>>       if (mddev->chunk_sectors != mddev->new_chunk_sectors ||
->>>>           mddev->layout != mddev->new_layout ||
->>>> @@ -3408,26 +3405,33 @@ static int raid1_reshape(struct mddev *mddev)
->>>>       newpoolinfo->mddev = mddev;
->>>>       newpoolinfo->raid_disks = raid_disks * 2;
->>>> -    ret = mempool_init(&newpool, NR_RAID_BIOS, r1bio_pool_alloc,
->>>> -               rbio_pool_free, newpoolinfo);
->>>> -    if (ret) {
->>>> -        kfree(newpoolinfo);
->>>> -        return ret;
->>>> -    }
->>>>       newmirrors = kzalloc(array3_size(sizeof(struct raid1_info),
->>>> -                     raid_disks, 2),
->>>> -                 GFP_KERNEL);
->>>> +    raid_disks, 2),
->>>> +    GFP_KERNEL);
->>>>       if (!newmirrors) {
->>>>           kfree(newpoolinfo);
->>>> -        mempool_exit(&newpool);
->>>>           return -ENOMEM;
->>>>       }
->>>> +    /* stop everything before switching the pool */
->>>>       freeze_array(conf, 0);
->>>> -    /* ok, everything is stopped */
->>>> +    /* backup old pool in case restore is needed */
->>>>       oldpool = conf->r1bio_pool;
->>>> -    conf->r1bio_pool = newpool;
->>>> +
->>>> +    ret = mempool_init(&conf->r1bio_pool, NR_RAID_BIOS, 
->>>> r1bio_pool_alloc,
->>>> +               rbio_pool_free, newpoolinfo);
->>>> +    if (ret) {
->>>> +        kfree(newpoolinfo);
->>>> +        kfree(newmirrors);
->>>> +        mempool_exit(&conf->r1bio_pool);
->>>> +        /* restore the old pool */
->>>> +        conf->r1bio_pool = oldpool;
->>>> +        unfreeze_array(conf);
->>>> +        pr_err("md/raid1:%s: cannot allocate r1bio_pool for 
->>>> reshape\n",
->>>> +            mdname(mddev));
->>>> +        return ret;
->>>> +    }
->>>>       for (d = d2 = 0; d < conf->raid_disks; d++) {
->>>>           struct md_rdev *rdev = conf->mirrors[d].rdev;
->>>>
->>>
->>> Any specific reason not to use mempool_resize() and krealloc() here?
->>> In the case if new raid_disks is greater than the old one.
->> The element size is different between the old pool and the new pool.
->> mempool_resize only resizes the pool size (i.e., the number of 
->> elements in pool->elements), but does not handle changes in element 
->> size, which occurs in raid1_reshape.
->>
->> Another reason may be to avoid modifying the old pool directly — in 
->> case initializing the new pool fails, the old one remains usable.
->>
->> If we modify the old pool directly and the operation fails, not only 
->> will the reshaped RAID be unusable, but the original RAID may also be 
->> corrupted.
-> 
-> Yes, you're right, thanks for the explanation.
-> 
-> I feel like raid1_reshape() need better coding, anyway, your fix looks
-> good.
-> 
-> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+Add support for multimedia clock controllers on Qualcomm QCS615 platform.
+Update the defconfig to enable these clock controllers.
 
-Now that we have the same information, I prefer patch-v1 before 
-refactoring raid1_reshape,
-because it’s really simple (only one line) and clearer to show the 
-backup and restore logic.
-Another reason is that v2 freezes the RAID longer than v1.
-Would you like me to provide a v3 patch combining the v2 explanation 
-with the v1 diff?
-Thanks for your reviewing.
-> 
->>>
->>> Thanks,
->>> Kuai
->>>
->>
->> .
->>
-> 
+Global clock controller support
+https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
+
+Changes in v9:
+- Reuse the qcom,sm6350-camcc.yaml for QCS615 [Vladimir]
+	- Still carrying the RB-tag from Krzysztof on the CAMCC DT bindings from (v8)
+- Added all the RB-tags received in (v8).
+
+Changes in v8:
+- Drop the properties which are already covered as part of gcc.yaml [Krzysztof]
+- Drop the RB tag for dt-bindings for Camera clock controller.
+- Link to v7: https://lore.kernel.org/r/20250414-qcs615-mm-v7-clock-controllers-v7-0-ebab8e3a96e9@quicinc.com
+
+Changes in v7:
+- Update DT bindings for CAMCC, DISPCC, VIDEOCC, GPUCC to remove the
+  common bindings and add reference to "qcom,gcc.yaml" [Krzysztof]
+- Fix the following in the alpha pll code [Bjorn]
+	- double space removal in clk_alpha_pll_slew_set_rate
+	- fix the alpha_width from dynamic to 'ALPHA_REG_BITWIDTH'
+	- cleanup the programming of lower/upper_32_bits of 'alpha'
+	- update the comment for 'mb()'
+- Link to v6: https://lore.kernel.org/all/20250313-qcs615-v5-mm-cc-v6-1-ebf4b9a5e916@quicinc.com/
+
+Changes in v6:
+- Remove wrongly RB-By tags which got introduced in v4 and was carried
+  to v5 as well.
+- Adding the reference where the tags were added and dropped.
+  -[01/10] clk: qcom: clk-alpha-pll: Add support for dynamic update for slewing PLLs
+    - RB-By from Imran (v2)
+  -[02/10] dt-bindings: clock: Add Qualcomm QCS615 Camera clock controller
+    - RB-By from Krzysztof (v2), drop wrong RB-By from Dmitry (v5)
+  -[03/10] clk: qcom: camcc-qcs615: Add QCS615 camera clock controller driver
+    - R-By from Bryan (v2)
+  -[04/10] dt-bindings: clock: Add Qualcomm QCS615 Display clock controller
+    - Drop wrong RB-By from Dmitry (v5)
+  -[05/10] clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver
+    - R-By from Dmitry (v1)
+  -[06/10] dt-bindings: clock: Add Qualcomm QCS615 Graphics clock controller
+    - Drop wrong RB-By from Dmitry(v5)
+  -[07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+    - R-By from Dmitry (v1)
+  -[08/10] dt-bindings: clock: Add Qualcomm QCS615 Video clock controller
+    - Drop wrong RB-By from Dmitry(v5)
+  -[09/10] clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver
+    - R-By from Dmitry and Bryan (v3)
+  -[10/10] arm64: defconfig: Enable QCS615 clock controllers
+    - Drop wrong RB-By from Dmitry (v5)
+- Link to v5: https://lore.kernel.org/r/20250221-qcs615-v5-mm-cc-v5-0-b6d9ddf2f28d@quicinc.com
+
+Changes in v5:
+- Update ARM64 || COMPILE_TEST in all Kconfig to resolve kismet warnings.
+- Fix sparse errors in GPUCC.
+- Link to v4: https://lore.kernel.org/r/20250119-qcs615-mm-v4-clockcontroller-v4-0-5d1bdb5a140c@quicinc.com
+
+Changes in v4:
+- Drop patch Update the support for alpha mode configuration as this
+  patch was picked - https://lore.kernel.org/all/20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com/
+- Update the bindings to include "qcom,gcc.yaml" [Dmitry]
+
+Changes in v3:
+- update PLL configs to use BIT and GENMASK for vco_val and vco_mask for all CCs [Bryan O'Donoghue]
+- Link to v2: https://lore.kernel.org/r/20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com
+
+Changes in v2:
+- cleanups in clk_alpha_pll_slew_update and clk_alpha_pll_slew_enable functions [Christophe]
+- update PLL configs for "vco_val = 0x0" shift(20)  [Bryan O'Donoghue]
+- update PLL configs to use lower case for L value  [Dmitry]
+- Link parents for IFE/IPE/BPS GDSCs as Titan Top GDSC [Bryan O'Donoghue, Dmitry]
+- Remove DT_BI_TCXO_AO from camcc-qcs615           [Dmitry]
+- Remove HW_CTRL_TRIGGER from camcc-qcs615         [Bryan O'Donoghue]
+- Update platform name for default configuration   [Dmitry]
+- Link to v1: https://lore.kernel.org/r/20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Taniya Das (10):
+      clk: qcom: clk-alpha-pll: Add support for dynamic update for slewing PLLs
+      dt-bindings: clock: Add Qualcomm QCS615 Camera clock controller
+      clk: qcom: camcc-qcs615: Add QCS615 camera clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Display clock controller
+      clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Graphics clock controller
+      clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Video clock controller
+      clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver
+      arm64: defconfig: Enable QCS615 clock controllers
+
+ .../bindings/clock/qcom,qcs615-dispcc.yaml         |   55 +
+ .../bindings/clock/qcom,qcs615-gpucc.yaml          |   49 +
+ .../bindings/clock/qcom,qcs615-videocc.yaml        |   47 +
+ .../bindings/clock/qcom,sm6350-camcc.yaml          |   11 +-
+ arch/arm64/configs/defconfig                       |    4 +
+ drivers/clk/qcom/Kconfig                           |   35 +
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/camcc-qcs615.c                    | 1591 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |  170 +++
+ drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
+ drivers/clk/qcom/dispcc-qcs615.c                   |  786 ++++++++++
+ drivers/clk/qcom/gpucc-qcs615.c                    |  525 +++++++
+ drivers/clk/qcom/videocc-qcs615.c                  |  332 ++++
+ include/dt-bindings/clock/qcom,qcs615-camcc.h      |  110 ++
+ include/dt-bindings/clock/qcom,qcs615-dispcc.h     |   52 +
+ include/dt-bindings/clock/qcom,qcs615-gpucc.h      |   39 +
+ include/dt-bindings/clock/qcom,qcs615-videocc.h    |   30 +
+ 17 files changed, 3838 insertions(+), 3 deletions(-)
+---
+base-commit: 19a60293b9925080d97f22f122aca3fc46dadaf9
+change-id: 20250611-qcs615-mm-v9-clock-controllers-acb9ae0fe720
+
+Best regards,
+-- 
+Taniya Das <quic_tdas@quicinc.com>
 
 
