@@ -1,185 +1,107 @@
-Return-Path: <linux-kernel+bounces-683102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CF7AD6906
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE5AAD690A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9B31BC2992
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0861BC2AB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B79621B9C1;
-	Thu, 12 Jun 2025 07:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UTgG5l9u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QXydL/u7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xf4NTLiO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+YsBOsQh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A37C2036EC;
+	Thu, 12 Jun 2025 07:30:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43BD2139B0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A40317A31D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749713404; cv=none; b=CfzBzRHl1aFKCGTCTQ8biZHEQxh1lZ1mqnFIO3gy4dZ5eAl2iG0J00NOmBLCs4bbgBvmDNxSuhLzOv7Oa7ClGqgV6uuREbPODa80t2Ow682gWjIpHwq8R39UearInSE8EXYEr93fEV9DWUDozsI0LJ0J6Dj6xFmkvS4FIe3tdaY=
+	t=1749713448; cv=none; b=MMeMmKK0uvCc4QgacEUU1TH4sWOkQiL2VzOyEGW4kukSJ2wHzAUMbVcz3vAD1OvyrkkDKfSkL0QZmq+lrvvc5CfIxvMhWeiHmXl3hnbweI35HVlPXk/px1c0mJQGm324lG47ESCRAGQyUBIXwxNDjz23k5g9zIGFn0VZkDaL5B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749713404; c=relaxed/simple;
-	bh=kd+vd2hBCjJlWFs8nbd31uGpSQWqPWYqH2ilgcz+lXM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lpVoaCxXanD+obXgQr9ZsnzYfK5aSPjDQ3ICZJjMGqHmRiKgWWp/CzbRwcL0oBV5RJw2fgJfJllu87nrFXPmDld79yh46NrPf+0fNW8yq7SnWJ57lH1U0vJMbTXNa3JhLyoiIYqI8tvdLtDO4nWz88OEtFKkVF1sgbcupnqQDDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UTgG5l9u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QXydL/u7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xf4NTLiO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+YsBOsQh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E33261F391;
-	Thu, 12 Jun 2025 07:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749713401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
-	b=UTgG5l9u4Xs+HjGZRRIvx3FAY7tCYd8DomQht+ZOheiXZm3mREnbXqdOxhiJBR5jLi38pz
-	p7Hgr+DxjsGJsCVuRU932GfSLCq5oOxwHg5OMSbZrO5WkiTJq5a22tXLEDFUmTKPSo/Bu8
-	MJm5gAsvea8rq9OGXFh53IPvYrTffrA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749713401;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
-	b=QXydL/u7gH46qadC9LGHTnP40tbQ7LiYXs43h4NVfv1VcM1qfK6n6uwG2BHtSLUwFG3aMC
-	oyt1Os7r4BY7osAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Xf4NTLiO;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+YsBOsQh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749713400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
-	b=Xf4NTLiO2I+4ZaTpKqp9XfiCy9F7MBBQuBl6VPZ85xSJFoMOMueL6ZqYnqWy6T1MEYWIHi
-	dq04SyJIlzBJx+aGEnp+3eINbnzF5ZQ/XqK75q5LR3+gIMd383NhOuuvp0rIT1krAX8Ik/
-	FQSAV7rJSpCrEtfncRyWlzkYf5l2q4Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749713400;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
-	b=+YsBOsQh8PDjtiXlSBw2rR6CBbqU6YwjjMkejsBoe+Us4QnrWpICL8hnPDRJFKogmP9Eg6
-	N37VEB4jrC3nsmAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93A21132D8;
-	Thu, 12 Jun 2025 07:30:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IdRkIviBSmiMGwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 12 Jun 2025 07:30:00 +0000
-Date: Thu, 12 Jun 2025 09:30:00 +0200
-Message-ID: <87ecvpv2mf.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Chen Ni <nichen@iscas.ac.cn>,
-	perex@perex.cz,
-	tiwai@suse.com,
-	franta-linux@frantovo.cz,
-	lina+kernel@asahilina.net,
-	livvy@base.nu,
-	sstistrup@gmail.com,
-	s@srd.tw,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Convert comma to semicolon
-In-Reply-To: <b8f6fb15-cc77-41c5-b362-70cfd6be6f37@collabora.com>
-References: <20250612060228.1518028-1-nichen@iscas.ac.cn>
-	<87ikl1v4cj.wl-tiwai@suse.de>
-	<b8f6fb15-cc77-41c5-b362-70cfd6be6f37@collabora.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1749713448; c=relaxed/simple;
+	bh=nov992LCVMyZO3iwhDNtSw/xJ4PKYx0N3w/Cu6ujlr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sVOT804fIFiAEEXyWuENuocLNhg0j0en/7O5Fje0aZRMV7UYtuL6UqQu/r1raiKk8jD4kvwlzwpd87eDkhiQiNdk1wmh2lv/cQXBf1uEgYsFsiIVNiebrDGNA3h3HgwXYNAni/vBOREDIRT4IpHsQyPUe4yOIH5WBv0O5Tvc3fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uPcON-0001dv-QA; Thu, 12 Jun 2025 09:30:31 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uPcON-0035AV-1C;
+	Thu, 12 Jun 2025 09:30:31 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uPcON-008nuf-0r;
+	Thu, 12 Jun 2025 09:30:31 +0200
+Date: Thu, 12 Jun 2025 09:30:31 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: scmi: Fix children encountered before parents case
+Message-ID: <aEqCF-xV04VIKCfg@pengutronix.de>
+References: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
+ <20250612034723.GB7552@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: E33261F391
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[kernel];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,iscas.ac.cn,perex.cz,suse.com,frantovo.cz,asahilina.net,base.nu,gmail.com,srd.tw,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[iscas.ac.cn:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -2.01
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612034723.GB7552@nxa18884-linux>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jun 2025 09:22:36 +0200,
-Cristian Ciocaltea wrote:
+On Thu, Jun 12, 2025 at 11:47:23AM +0800, Peng Fan wrote:
+> On Wed, Jun 04, 2025 at 01:00:30PM +0200, Sascha Hauer wrote:
+> >When it comes to clocks with parents the SCMI clk driver assumes that
+> >parents are always initialized before their children which might not
+> >always be the case.
+> >
+> >During initialization of the parent_data array we have:
+> >
+> >	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
+> >
+> >hws[sclk->info->parents[i]] will not yet be initialized when children
+> >are encountered before their possible parents. Solve this by allocating
+> >all struct scmi_clk as an array first and populating all hws[] upfront.
+> >
+> >Fixes: 65a8a3dd3b95f ("clk: scmi: Add support for clock {set,get}_parent")
+> >Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > 
-> On 6/12/25 9:52 AM, Takashi Iwai wrote:
-> > On Thu, 12 Jun 2025 08:02:28 +0200,
-> > Chen Ni wrote:
-> >>
-> >> Replace comma between expressions with semicolons.
-> >>
-> >> Using a ',' in place of a ';' can have unintended side effects.
-> >> Although that is not the case here, it is seems best to use ';'
-> >> unless ',' is intended.
-> >>
-> >> Found by inspection.
-> >> No functional change intended.
-> >> Compile tested only.
-> >>
-> >> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> > 
-> > Thanks, applied now.
-> > 
-> > At the next time, though, it'd be appreciated if you can put the
-> > proper Fixes tag.
-> 
-> Considering this is not really a functional change, I think a 
-> Fixes tag would trigger an unnecessary backport, wouldn't it?
+> Thanks for the fix. To i.MX, the index of child clk is always after
+> parent clk per current SM design. Not sure you met real issue, anyway
+> this patch itself is correct.
 
-If it were in the old released kernels, I wouldn't be bothered,
-either.  But this is still in staging for the next, and having Fixes
-tag will help to track if someone tries to backport patches.
-Otherwise the code differs and may give conflicts in further
-backports.
+I had issues on TI AM62L (not yet upstream).
 
+Sascha
 
-thanks,
-
-Takashi
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
