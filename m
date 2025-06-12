@@ -1,141 +1,88 @@
-Return-Path: <linux-kernel+bounces-683679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3293AD70C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:49:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEEEAD70C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E1F1BC2C3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B59D07AEA1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173E42356CF;
-	Thu, 12 Jun 2025 12:49:30 +0000 (UTC)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D464239570;
+	Thu, 12 Jun 2025 12:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sMt2SYSH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OMVrBsow"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398262F432C;
-	Thu, 12 Jun 2025 12:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611A2229B12;
+	Thu, 12 Jun 2025 12:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749732569; cv=none; b=g9OXkcjE2cAfcbq7b5FP91LhX1/t8EQdJ31kRWNpADjX4fNz1Tqbmgk5Sj6kf+TiWCH+N7EK4G4Nsioq7kiGdQuzD+En+W9gfVxCP68Yp1DXsJcJlK+6jhnQqIuq3EY7ch8pLAt94J5UpILIpVjpEsIndG52Z8Y+EBv6mn485Rk=
+	t=1749732662; cv=none; b=EtpvFX/o9UUFLVja7C8gZSsBjJnROMlkboRkyCP8w3KP37uQtKEZmY6kllFJjUS6jkbjliK6J81s6Ipl98nwiq23/exlu1wceE7yLwITB2d0sqECoxABjoBy+MhMPDyGtSCrDPSohBtVI1qrzBGKNn7BavWi8aIG2wWlM6xI3Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749732569; c=relaxed/simple;
-	bh=Fa7WyXp0LB0/w/1HP/XkdPqB9l46c413nDCHWgSzj2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qmu22MyPNYhbwnyi3ZQT5l7zHI5aGOEtLdp2bDl/plEyR6R9tWizyROc7KkQy2enB5OY/k35AotoNFJR9jsNEy0mlfwVQTp8JLQlzTqTxlz6QPuuOUB+wkOErdHA/qOFlHB4PsfKeb4/M8a8DODagPiOcMjanzXu0X60ucqQgZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-53118db57b4so298746e0c.2;
-        Thu, 12 Jun 2025 05:49:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749732566; x=1750337366;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B8vHCQZF5jXiN+qNw+6KkjSd042ttK1jmr3cfA4PkP4=;
-        b=JDbiAPpAKYWqIIC1BUZIeeNSiBEgBdojau21xRnXWBCsxdm1/WX2k8U4AvAHpGyakW
-         XvWdOKd28UJ1zNsnHaWpCrPaYYYjUBSMdjcQOPmcyzrYOsipUKUvTgTNSOeiqXE+uD4m
-         v4HNOy0jYTZQ5+UKqYAuGjJUjqYSftM5YiXAQqwRfO+WhHp8cFOTFh4IPkxuCHGXqLqQ
-         mDq9i+6TUGVGbBxxRaglxvMYEGe9K0GR6jw9WweJMdAfHZBSearaHs+U4g9Dd4x6sEb8
-         z/mBC8IwSb1BF+nucGd5mL3pS96Xq8gHBvwmeH6oSZZ1Mo2zVkv8rirl3bKZ0q+c9/sJ
-         swEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWN+u1t9Tc5kJaDhy4SHfNzfuiXFYo0nY3Ww6217AVNJDaLc+IOG5uXWp0OBtSg7+fHSvKXhFE+J7zrpJmF@vger.kernel.org, AJvYcCWkVFWzwHhTileLGZIeXCdRdB9mWDYk9AzcvN5eukgfN6xKnxWVfAVn6glEmoB9nWGBNUzcbnq022UwdjEUJs1Ms5I=@vger.kernel.org, AJvYcCWv90SKh5Mut7wBThjtNRB17GZIVhO/dV0M+lqy0M+rgNBxBYJkn5yJIE+UN2t/3+2CMDCRThhmXeZc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0E/J+53nxmzVICo5S/G/Kt/a8i9qlmq4R8EwuLgRxOjiBKmZW
-	rZnkyhHqBjgmvtmApNX9SFk6TlBSR68nxCLXqG0F2QLtrXprwzMhSFM+DpRR7lgj
-X-Gm-Gg: ASbGncvffkkLVinVfdIE+7nBULQVi9it5LCNMr2Z4cVB7hMbpZL5bKIvRoZwEFcgcvp
-	teLBC3SQK32BKos7hvoDX6gRjNxPWWO7uKIUpbRMVNpS9tjB3DXCrsJLLqh0rgKv3C6GdQX8Z95
-	5BLkgltjcP4U0ncK3QctpQxpdAxPkLDluGuXgU3eboie+oiHM4eK5zLNYaHKCPhrhRgrkpl0MIa
-	fpK+QCiyFI0zKFY4Ht2zJZQ2xuxYsjGWElfH/EfdQ3V6512LBYUIsnybTyJM3r1Ixk2mVUp/3ee
-	+QIntph296cOMFDwskU7wUBkCybvoe2Ax3ahIyNgmRH9adE53u5X99TdV9JaJR/bA83yxbWx2Uc
-	V0qt+mzrwLgccvpRjhwDaeQxd
-X-Google-Smtp-Source: AGHT+IFleAtodR9kj3sWNjaH7eCWjsgCnI5AJ5Y7Qzo8OXuovx9Kxs7dr1r2lPoXgiZxhgzaQUSDiA==
-X-Received: by 2002:a05:6122:181f:b0:531:19ee:93ea with SMTP id 71dfb90a1353d-5312cc4574bmr3399355e0c.0.1749732566037;
-        Thu, 12 Jun 2025 05:49:26 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5312f6515f1sm270293e0c.29.2025.06.12.05.49.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 05:49:25 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4e7ccab0776so201294137.2;
-        Thu, 12 Jun 2025 05:49:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNq40wn6sbnqJtpQu1pmpr96yR0v61oeSOgzva1EQVDWvqzo8E4HcbNkdjKB4GeaPzNefjudJ+C5GE@vger.kernel.org, AJvYcCXdKOdMDdPCxd//tOrp5VtcCO27j/JzyCee43bOGue87Q8JHDLxGCX/ZTyJEamuVzd4I9a5uUFID0GG1862AddiPVA=@vger.kernel.org, AJvYcCXjYKOJUkUebNdQu3oW2g99x8hQWGlDc68Pt3bHhubre90au4eUMlg/znyKJLhDZIa25d6sG8BvM39G5FuO@vger.kernel.org
-X-Received: by 2002:a05:6102:835a:b0:4e6:ddd0:96ff with SMTP id
- ada2fe7eead31-4e7cccc8dd2mr2227516137.16.1749732565390; Thu, 12 Jun 2025
- 05:49:25 -0700 (PDT)
+	s=arc-20240116; t=1749732662; c=relaxed/simple;
+	bh=FYAchfzV30Dip4AccSWccXU22v/2sm2EN/5Ete6GYsw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sYxJatCZ1cYIecKA0TqWmh6KVWhBIYAlZz0ZOJ3zFPVH+Efr7HhJgG4lxNZwPTWc3kzXegdl174BGo+2kohT0+17glrE/QkT7tfaUBJ63Kq/B6Yuf5aFBOeLQNYacTlr6l4ePXzPk5wJ9xq5+ed2DNvHv0Bev4yMWMNB6Yor9JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sMt2SYSH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OMVrBsow; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749732652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w25nhMgVqdOfPC/cHt9LodtYaiDNkuaOb39/bucgAv4=;
+	b=sMt2SYSHVg2g/iTY8jfJnT0nY2MKBqfXyJYeozgo134YmbiW+0PXzc8WShhyN7XT75MWhD
+	uFUiP0m57NjwZ5oyDaPzWAHkzdl0pPi1Ddv1HekeJhmbkV+b18mS06MYtKF6PDJdVUxyN5
+	TIrF+K22K50w6gNuCsq3tToBw1Cbc0HMorZIKbTMRpfIvFEf+fpUKndTG6q9V9ro77AGd8
+	T+mVGE2k039VomkITimMF5DRitpb8fL7AMFPqk7i1l/yggQ3/nripCRbvDJPYGDDoRBbl2
+	x5Ud+q6QJO7ppqVKlhtjba8cZNYmjtUl8P3kMFE3Fr5wn+NZtY6HLd2vM1LnAQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749732652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w25nhMgVqdOfPC/cHt9LodtYaiDNkuaOb39/bucgAv4=;
+	b=OMVrBsowEer3f9arJs9mXBrwL3AVPO+UqHab5iE0xbYgvvUPPnKv/Elg+VeNwXlWFewJb8
+	sel8OToCmpkvOxDQ==
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+ Ghiti <alex@ghiti.fr>, Anup Patel <anup@brainfault.org>, Chen Wang
+ <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, Sunil V L
+ <sunilvl@ventanamicro.com>, "Rafael J . Wysocki"
+ <rafael.j.wysocki@intel.com>, Ryo Takakura <takakura@valinux.co.jp>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, sophgo@lists.linux.dev, Vladimir
+ Kondratiev <vladimir.kondratiev@mobileye.com>
+Subject: Re: [PATCH v1 2/7] irqchip: riscv aplic: use riscv_get_hart_index()
+In-Reply-To: <20250609134749.1453835-3-vladimir.kondratiev@mobileye.com>
+References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
+ <20250609134749.1453835-3-vladimir.kondratiev@mobileye.com>
+Date: Thu, 12 Jun 2025 14:50:52 +0200
+Message-ID: <87h60lrumr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528140453.181851-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250528140453.181851-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250528140453.181851-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 14:49:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVa4axB+aKhH18KxK4DVafeix6wn407PEhMxV_6xfpraA@mail.gmail.com>
-X-Gm-Features: AX0GCFv1580KM32SBuUHr5OfYR6zvBo1yjOIfUUT_GVzNFDtLihh4XudBW__vt0
-Message-ID: <CAMuHMdVa4axB+aKhH18KxK4DVafeix6wn407PEhMxV_6xfpraA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable
- USB2.0 support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hi Prabhakar,
+On Mon, Jun 09 2025 at 16:47, Vladimir Kondratiev wrote:
 
-On Wed, 28 May 2025 at 16:05, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable USB2.0 support on the RZ/V2N EVK board, CN2 connector on the EVK
-> supports host/function operation.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Please use the documented subsytem prefix nomenclature:
 
-Thanks for your patch!
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-subject
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-> @@ -302,6 +317,16 @@ sd1-dat-cmd {
->                         slew-rate = <0>;
->                 };
->         };
-> +
-> +       usb20_pins: usb20 {
-> +               ovc {
-> +                       pinmux =  <RZV2N_PORT_PINMUX(9, 6, 14)>; /* OVC */
+Thanks,
 
-Any specific reason why OVC needs "bias-pull-up" on RZ/V2H EVK, but
-not on RZ/V2N EVK?
-
-> +               };
-> +
-> +               vbus {
-> +                       pinmux = <RZV2N_PORT_PINMUX(9, 5, 14)>; /* VBUS */
-> +               };
-> +       };
->  };
->
->  &qextal_clk {
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.17 when the above is sorted out.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+        tglx
 
