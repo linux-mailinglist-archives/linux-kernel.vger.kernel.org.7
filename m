@@ -1,145 +1,124 @@
-Return-Path: <linux-kernel+bounces-683582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B01AD6F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:42:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1544EAD6F48
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2483AE0B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9AD3B089D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B802F4333;
-	Thu, 12 Jun 2025 11:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D98219A8D;
+	Thu, 12 Jun 2025 11:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHSBmUJR"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zAqYtyvi"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8482F4311
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0B1A304A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749728522; cv=none; b=RW5URQ3SiGjwR911zM83VNC/FHMvjUqKT7/qcWg2G6TzFu5x5RgOKm4E/MAJTz8hlfe0NMwae0RjJ9xBZs+32/dcvSkAXFqnrDIzdHogmSZDc1XdzJNYceRauvKpV/X4DwFJOV5pijSh+J9kEJr3TXvCrFRYtKX7rb8zWcXivVI=
+	t=1749728548; cv=none; b=oqC0TgIzbQFNdVWbmLQkELW96d5jcXsjmMFsQgk3KJGuu6rXrBqt0eF/doyU/+9eGpKvdfL2hmIPi13vGvZTETQfinsjQuHorTctTXbmZuKVYTj5bPBbjjH/My70qn8NBbKkYEMWDjY2ojCIEfyMcDzPbZQNIzh1IJSKmtcRuN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749728522; c=relaxed/simple;
-	bh=JO2jjm9qYOdw2JshMb5OsK/0Q8ZwDMtKa89tdDngYdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ju565ysoLoiOiV5GNjXe+VEozkddhpdMFHQobiwuaYJvcrLYszprooctmHKvBaFS1qeLJq2QRk5NN0Je859sgnWbuY5/bToaYvEMREu46fajRPwLU1shDxVZRQKZFroSr/8cvLKuAO5TBGKUOdpCtM0Aj3LTZ/7LS70jpwvZ2D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHSBmUJR; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-311d27eb8bdso659057a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 04:42:00 -0700 (PDT)
+	s=arc-20240116; t=1749728548; c=relaxed/simple;
+	bh=QXtBQLsLvmgKCeZpy9SACWHhgLdOix4C6WfpyVk7tJ8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C4wUoxjcA613G0bICRSx3AjRclbCN5UxsMQOIKK5BJJPlSKu/T6soBw3vjQ+tJoguxYWH8TdZpQ8Fg0/C2FAxeO8J232wAf2MoXBYtmaX0ir0dPmlfoSQymqzWACRAPwlnwbMt/SQ086KPaGPt+D5IJtmbtaxleQY+k23WDcbSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zAqYtyvi; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-606aea61721so726382a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 04:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749728520; x=1750333320; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQiLIawa1V32qoLRiAiNhsJ7EGIPTtQuUgMBaxbGSIw=;
-        b=JHSBmUJR0+k/HmI2OvFbJYYjsR809vHN66Xce/YQ//folTPgOm+1hm9SJl19TyWGwa
-         yJXcKnAA+ZV9sp+rPFBTUNOM2/GnrQYijux90sNb0N6EcTpKyAvrKCJ+FL6w2+O/dnDI
-         1MuIAUA5UnsAo74kh+q4FiEn4G31DPIfSbjkbXHxxEIAO0PKRsOewPzwGG7pAqckv3H2
-         kvgNcuRNNIoXQWeBxSGajouOJ7BP90QIObl7AWMLX8mRlOXVhsk8ZDkGs1NJnew1rVvN
-         F2Fs7KKUXNBDFp4TckfVeVVdGC1H6hhh2AfsvV3My5toIxWz8gZ6Z+2LetkCPQpYScwa
-         2o5g==
+        d=google.com; s=20230601; t=1749728545; x=1750333345; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zzguWUlfoEXe+YlTaZtG+0rEZ7v9uyUK3wef2hG/zAY=;
+        b=zAqYtyviPp/hTJoaDYiE7m0yHhv0JrHqcN26c08NzzKrEZcnbUZLZSWCbETVML7Vns
+         W0icugi4Tq8uXIOsEzMry18nMu13QQo0ASDib5w37VPUJ5Tff0qj8Ckk44KvtVAI70SL
+         C4heeCCJ+xN+kftX0ShQpgYLyTtN3E3Id686dVPVEmCVxguyGB5gR5NFmb+FgdVBeWlP
+         LJ1egXGuBOKkrfuAjE8deQPcAJkhmAd/ZqMmiLq7WrnWSsKnvdDiwplfFerGZVDMcp59
+         qUFPbp6UGN68vNzYNyKLL7LPv+M+eQMUA3X3oeSXYTAjtDZyDktnG6G4RE+cSlop062i
+         QZ2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749728520; x=1750333320;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQiLIawa1V32qoLRiAiNhsJ7EGIPTtQuUgMBaxbGSIw=;
-        b=fokdrJelKFCbzhtneK3qr3FWHrbjIemsQy8if70cQEJuhUNVTdyxKe+7dfMV+kcXCW
-         lY5CQoPE57cnxau8LK+7gU2w0XBpcR0Ss+jQ+IzUhCx+I2SlmY0bhdzji5lmECJYTWuC
-         PTQxsL14DsKX9YVo61tLEWHNl9Lg59K+OK9KV4z+L9uWusDxrWlEkBN9TO3dDWLY5EtA
-         8jZv63wLUhppodPUCRdo1P3/ieG0vZgbcoF7qip9zEhUwz55FFRcoy4K4AiEOZxGIGWX
-         S0xHSURocL36QxBrxGvbkbldSeWBXI3HQ2Yh5ZIASMZsbaHHHdg4NVd/ll7bYF3PgPuY
-         Bsmw==
-X-Gm-Message-State: AOJu0Yz66AwUXz4lf5pdBOBOSO+XJrFQw/TjejBa8fKUC9MKUJQz1pH5
-	7qdO/2hh9P4DWNeRq8vmD/PY7Uj7wj/4EpbORo6jOApA8VyEDJr5k424pN9LgzBrZMOHBesRX0o
-	LPfehtZFA2kQF0LKrz/YyQxjpgiUP41Q=
-X-Gm-Gg: ASbGncvKEAnf78hBlkvaxsN+AGGpr5NCDMWIQ0QttOby5atd8oLeBN3QI+zccv7Yl5C
-	SUUMJJuoFmxGfl9r7A9T5QaQfWp7/qsyx611sK+9w1fefhXCJkUPifgvslnORG3JIRBjGqKN9VI
-	tBmFrrSKkS6gd3dHnoPjHuzKzoi6Fq9w9eYeh5nUnBDcZc
-X-Google-Smtp-Source: AGHT+IHdBp+IoDkdTG/nt1rk4Di2kL71Qu1GGMsx1QgagC6jyO2vbN+W5WFbJ4cCZphomlDigaNYwUwOe2MJywkSIv0=
-X-Received: by 2002:a17:90b:2809:b0:312:39c1:c9cf with SMTP id
- 98e67ed59e1d1-313af0f80d9mr10946079a91.7.1749728519703; Thu, 12 Jun 2025
- 04:41:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749728545; x=1750333345;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zzguWUlfoEXe+YlTaZtG+0rEZ7v9uyUK3wef2hG/zAY=;
+        b=vkxfEX6FOtNC7eG7JE58UCmA9/0Tc3XamKcI7OtxMAurJvVSrIL4CSgAZBFqp60R+Y
+         py24b+bPVvYqDWJVGCveZ91VPhBZ3z5faPndY4v6X1zLXKkEH3KZ+RsJK0P1+tz2M2ih
+         a9bbyqVadTQeXk2dGpVH2/F+5oIK+F4yJZ8WXgcbd38KxTp2cTZmThlBNKPSNDSC8dqG
+         lxdSJQhKT4Di0OGCRSHBqtTCaOKH/4XFU/rVSi+oRboXAipbDMof9saDTZpd8DbiEsUP
+         YVvsJ0ruErbq5qe2W8ANxOQBhXJz3OlMxH+Ze/ySuVoOIZvwnN7YVyxJY5+a1sbgZz9I
+         FStQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLbgtNxcYOHR+bBLe+6X7BuQxnYKmwh45nf4flVVk67vOLEgjxQpMcX3RW+hHSceyY0w4T8tkm4uu6t20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydCAZL2Jbb1wNh5EzG3LyCUa5yrU10+/o0bViA0uU2m4BQGIdF
+	qIF2gnTwbzY27111nXa2jVdGOdz1TsarQQr18sfOS41iuLd7yYNKnAf3Uv+6hsQlp3jyShqwDHv
+	ixsaauGdOfkO74yu1q7KIFg==
+X-Google-Smtp-Source: AGHT+IHQhB9KxEerkKZiu9qR2EkYzNfHsYj6AxxV/xNEcdvJShwSN5Xny18JELLkZkfVd8q068snd0PkYT5KwIGL
+X-Received: from edil3.prod.google.com ([2002:a50:cbc3:0:b0:607:e52:389])
+ (user=mclapinski job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:5cd:b0:607:d235:87b1 with SMTP id 4fb4d7f45d1cf-60863c28483mr2905583a12.32.1749728545512;
+ Thu, 12 Jun 2025 04:42:25 -0700 (PDT)
+Date: Thu, 12 Jun 2025 13:42:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250527093530.958801-1-gye976@gmail.com> <87tt4mok84.ffs@tglx>
-In-Reply-To: <87tt4mok84.ffs@tglx>
-From: Gyeyoung Baek <gye976@gmail.com>
-Date: Thu, 12 Jun 2025 20:41:48 +0900
-X-Gm-Features: AX0GCFvpBlEiPiLB19NLIdP6bP__Ri2c8-rBfsAsOUluqZaBHoFJXhvLtEXeaOs
-Message-ID: <CAKbEznsu=2O4b-3rHGVtqg=+s28Np2=cL+q8w6TbrkO6RPCVVg@mail.gmail.com>
-Subject: Re: [PATCH] irq: Fix uninitialized pointers
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+Message-ID: <20250612114210.2786075-1-mclapinski@google.com>
+Subject: [PATCH v3 0/2] libnvdimm/e820: Add a new parameter to configure many
+ regions per e820 entry
+From: Michal Clapinski <mclapinski@google.com>
+To: Jonathan Corbet <corbet@lwn.net>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, nvdimm@lists.linux.dev
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Thomas Huth <thuth@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, Michal Clapinski <mclapinski@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas, thanks for your review.
+This includes:
+1. Splitting one e820 entry into many regions.
+2. Conversion to devdax during boot.
 
-On Wed, Jun 11, 2025 at 3:39=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Tue, May 27 2025 at 18:35, Gyeyoung Baek wrote:
->
-> The subject line prefix is wrong. See
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-=
-subject
+This change is needed for the hypervisor live update. VMs' memory will
+be backed by those emulated pmem devices. To support various VM shapes
+I want to create devdax devices at 1GB granularity similar to hugetlb.
+Also detecting those devices as devdax during boot speeds up the whole
+process. Conversion in userspace would be much slower which is
+unacceptable while trying to minimize
 
-Thank you for providing the guideline, I see now how to.
+v3:
+- Added a second commit.
+- Reworked string parsing.
+- I was asked to rename the parameter to 'split' but I'm not sure it
+  fits anymore with the conversion functionality, so I didn't do that
+  yet. LMK.
+v2: Fixed a crash when pmem parameter is omitted.
 
-> > Fix uninitialized `ops` member's pointers to avoid kernel Oops in
->
-> You cannot fix an uninitialized pointer. You only can initialize it
-> properly.
+Michal Clapinski (2):
+  libnvdimm/e820: Add a new parameter to split e820 entry into many
+    regions
+  libnvdimm: add nd_e820.pmem automatic devdax conversion
 
-Yes, I will update the subject to 'Initialize properly' in v2.
+ .../admin-guide/kernel-parameters.txt         |  10 +
+ drivers/dax/pmem.c                            |   2 +-
+ drivers/nvdimm/dax_devs.c                     |   5 +-
+ drivers/nvdimm/e820.c                         | 211 +++++++++++++++++-
+ drivers/nvdimm/nd.h                           |   6 +
+ drivers/nvdimm/pfn_devs.c                     | 158 +++++++++----
+ include/linux/libnvdimm.h                     |   3 +
+ 7 files changed, 346 insertions(+), 49 deletions(-)
 
----
+-- 
+2.50.0.rc1.591.g9c95f17f64-goog
 
-> Also please describe how this ends up with an oops in
-> irq_sim_request_resources(). The point is that any dereference of an
-> uninitialized pointer is resulting in a problem and it does not matter
-> where.
-
-Yes, It looks good to just remove irq_sim_request_resources() from the
-commit message.
-
-> Dereferencing an uninitialized pointer can cause an Ooops or worse it
-> can call into some random code when the uninitialized memory contained a
-> valid pointer, which is way harder to debug than a plain crash.
-
-Yes, then I will remove irq_sim_request_resources() from the commit message=
-,
-and explain it consistently with the subject.
-
----
-
-> > -     if (ops)
-> > +     if (ops) {
-> >               memcpy(&work_ctx->ops, ops, sizeof(*ops));
-> > +     } else {
-> > +             work_ctx->ops.irq_sim_irq_released =3D NULL;
-> > +             work_ctx->ops.irq_sim_irq_requested =3D NULL;
-> > +     }
->
-> The obvious fix is way more simple. Just allocate work_ctx with
-> kzalloc() instead of kmalloc(), no?
-
-Yes, that's a much simpler and cleaner fix.
-then I will send a v2 patch according to your reviews, Thank you.
-
---
-Best Regards,
-Gyeyoung
 
