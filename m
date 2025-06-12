@@ -1,86 +1,79 @@
-Return-Path: <linux-kernel+bounces-683344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27761AD6C48
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:33:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBF1AD6C42
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919B43AC19D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2BB189216F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FDC22A4F0;
-	Thu, 12 Jun 2025 09:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450D522A4F0;
+	Thu, 12 Jun 2025 09:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UTFB5yAN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="he5wGYrN"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5141F583D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D621F583D;
+	Thu, 12 Jun 2025 09:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749720781; cv=none; b=QsvQDjXUbh8ORosP0U5kfcjRzyFtxOR1Fh4uS3sQG0ELbLGlEYl5Fl890H+3pV0eXMgNJxTbWphZMED+DB335/O1ekGYgeEvvQPcu09fTa0h6/IdPOSqR9Dgy+TLHqtTcPcSXDl7K3Tvzr2qaho2XIgtibTYHFXvyIkpNtxO6HU=
+	t=1749720728; cv=none; b=i9VGNfYDdMN8+w/nEFlWegAhyHK+iq7AvxyCJZzDijt5iRabQywsTp2SwLHBC3X2oiqeH/9DIZan628bbzMa4UNt0GsVCsTZOdOBXK6E7hAzcoDMHWZ8lHMua0dUXjPnLJF9szpfcRfFJiDBu3hKk2mHMEdOy4ujgDMLKSQMUKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749720781; c=relaxed/simple;
-	bh=8OFSXBuTsZph9YN+58NxpHuks3+eLbATc8hv+sy8Q10=;
+	s=arc-20240116; t=1749720728; c=relaxed/simple;
+	bh=fjXkONU7XmuJaoZ3aT6+vTpOz6C4HuPYdk5YletMS4Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HYF5j4hvhXm1e1jQEwN9iTyTJZdECpsmFAmpHTjym15JpPNU//eSixj1c9GDifleR4kNBNchf/e8CHzQ/avMCQ468uVaF4gQa+iNe5kRa2/UOeVjo1v3TWACEkwx8bc+agj0/DpdV0AhXgdotbhTHLoPOrHz7jhS0oZA41zZTHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UTFB5yAN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C84vgt010994
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:32:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8OFSXBuTsZph9YN+58NxpHuks3+eLbATc8hv+sy8Q10=; b=UTFB5yANkhxQnK/+
-	u4XlrbwojEQZGU8O6bL/ADIUk/FfDawPzIH3KzJv9u49STGGvvOhqEs0NV9GOoSX
-	1KtDD/EZf3NBXoCHtQF/TbGBr1OatXIW1jJ7cC0M5UZTmb67zfyP1Vm1EmMV9Dil
-	LVSzbI+j3rjoMeVuQFFZPxy9qeB343jH9uYL+8Y99Ffh4d3tP68FdfG98js25dhz
-	WfYBUbTKBS7e9WXAhiSq3D/Fl8FQPtJUycVHFf5RNXs5rWeNlGnVGAa3SE4nPY9O
-	nNwBtX/Er7l53SY97NR+103zO65hfak7orbG3rLS5cyymUyzUIh0GT1Kxi3/fLEz
-	V/neLA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ekpyp70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:32:58 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-235842baba4so6640125ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 02:32:58 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Hp0VOHi/9z2qJv17z1EIzwuZyyaV/myjKtgVyAUr6FXlvy6Z1R8/yvl6aPWgQh0tGmH8OniSeFv1P/1uV9CWRmF6zXx8mKBVaShZevgaJCC8+DZ3DWgLFdDt7ubuItW2BNGYNxvPx4fElSAWA9GH9p20j32pIkfMAcl9j37lAbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=he5wGYrN; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad88d77314bso160789466b.1;
+        Thu, 12 Jun 2025 02:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749720725; x=1750325525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eCJsxEivkwvGkCehnqd6AJf/P7ksgfCcXbdvRxFOYIc=;
+        b=he5wGYrN3e2jUhni8hkN8vqrn82N6vuDQvggT/EkLMxSuCZpf5wLZPgO7EeF1BFBF2
+         o3nXXnR6W4nhgraTf9tpf2kHdWb7llhJVr0W+roELU06P2OOKj+csIdiVnkrfLMn1ocf
+         ZsCFYovtlkApTH8NrwfIFu1dBpIRc5dasCxt84YVY14Pt7ccFU93Dmd3uEGPQ8J6FR3A
+         HSMLhrP1UJE1t4I80dcxkDBA13vwWmjJ+sXEkOyYpXEBZ9rw1tkyFMChsdgkxsF62/kQ
+         lh40rf6wBU0y3H+Gt4I78tDBmpFY8qlwc3g05xmjjob+2F3oPSVGdvx2eua+14Tnmh5V
+         K+wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749720778; x=1750325578;
+        d=1e100.net; s=20230601; t=1749720725; x=1750325525;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8OFSXBuTsZph9YN+58NxpHuks3+eLbATc8hv+sy8Q10=;
-        b=DVud4BWq5jhhV3r/w3xDg0WeVhaez70eRrgoQNmFd3AZpUJ8jzZkNB5Nl2Sz0Otj9/
-         mq9FZOoZruqtSDBunqEz9hubzYMuRtBL+t4NmO8XeJaaJPuJei6bf7REgv/O4IJIIVv5
-         DeXU8xf4WDNHqTJxzxptmC2G0vM2aZLgkXNLP5V5O6KVDPL+fHJAuLUSzg4cRFZC6iaA
-         qiZa7oU8Ez10yicL92jYF6MRoA+JbBnFwR8w8MHHUsA++cXPeZEO01Aofuu4mgfVA7au
-         2Ki//eYotgdXuV9ykMz7DYh4meaQ9NCG+B6Q6c8J5hYPwM22Bt/pBlmPDJ37cIkBDK1y
-         71eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWp8S2cMK13a5Tl1XGCy8q570XeuACSoKqkg3Jqgb7ONzKLMSo6JJva1wLeeJJ7+O2HJfrLxXrG/XDqLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh7sLScCzf0d2dCkKrX+iZ07rnmAobSAoLumxXUQK8MmoVVsb0
-	fMML1gEXk47UCzdWvGwVtQCODgye4sde4zUC1BEwhNpcQOa8AlwvSsjOcjsLwTC1Jf+NvWjo8lj
-	MXNwBw4w3eF3HeoEnFlQF1JCwxDEryqfo7gDnYdtMdY9JSYn3u8wjI3c8PsZY2OrlUFk=
-X-Gm-Gg: ASbGncvRxPybZz0Zrkuk1BdTBkT0FxtFpVx8dAd5w5bd2hOZDtSvBne68R6CbLHvXZA
-	rOrTd2aCky0KvgSmvGxYkMG0GNMT3roU7v8Y8YF46yo367zmooGRzYcRlOXqLyrYvmvaf87BMgL
-	MIlbqKc7577/eLLPSDiB4NLMgRHQLtjZsB4ZuUHgz5/jDu7+8pJEt+pnDW+oRQfFMcWRVFixTBZ
-	IDZSWDoXl3EZsU//UupOi/rxnuRP0x97DTi6iB9SS203keQ21GYrpe9/ySd7RiLVFPvA2sVa7IU
-	JtsedENhTIs7oSWIkzPyvxZw1BGMvHCu9FBkD8PzeoYs9YsN
-X-Received: by 2002:a17:902:d50e:b0:235:eb8d:7fff with SMTP id d9443c01a7336-23641b1aa64mr108573535ad.28.1749720777922;
-        Thu, 12 Jun 2025 02:32:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3YB0/88oPhzctSwvZEmnLkEwQuSYwYdDcT17qqG5HyuttcfCBbQFmrpEr+WXA62Dq5W9B9g==
-X-Received: by 2002:a17:902:d50e:b0:235:eb8d:7fff with SMTP id d9443c01a7336-23641b1aa64mr108573005ad.28.1749720777504;
-        Thu, 12 Jun 2025 02:32:57 -0700 (PDT)
-Received: from [10.204.65.175] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1bdc89esm1132256a91.19.2025.06.12.02.32.54
+        bh=eCJsxEivkwvGkCehnqd6AJf/P7ksgfCcXbdvRxFOYIc=;
+        b=W4diFmfGq+ZN7iBQmFjFzCUCfWQ6bGa3nqHIg8lpUmh8E7d7hshEkN/S0lw0UFiIba
+         UK9vYUT6mwkVTdgdgvOXLA+jf94gqmJ1sag8QniaPVO6jeQ2iB2EOQQn7+oq9yp4m1W+
+         NBO1gz9+FP+0itM58JF+XKuqr2t7HOSP+UOqhDEmj5/q5dddi16fbl8FbtNcWC5SL0Ui
+         taW9va/GFgtZRKkM244ifipcZCCKGVqB55GJLaEmTTUEPQ81Wi6zGeiBTMhtFMwPUurh
+         lvg1MVoc/aSV0QYZFmDHvH7hYmhJQhzzlZU55MCZJrStTmj5vvEom2TC8Fnrkvk1CQxT
+         qAjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNF5Fz/zSFF+UwToLBjcUycYazfxEk9grloxvbxMlbncrElhJcqfYV1skaWZf/AWllBk=@vger.kernel.org, AJvYcCXh4wqUXz4jVXBr1qMcMhGMtE3p2NG+Ie7N8h0P6QgEKqJGaIdK2bHAYOxgST63wdSoid7Z/6y2LyPRGMhQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFsf5bhiITEg367mzrLTPZBf5FQ8LqVV5VTWkCyxW2C1uKdh1g
+	ztmOXUs/KcBBqIuy1m/l7W+imF7ZKo9ryQocoHS4g7GdQ0XuEzTs7IBiZYlW6A==
+X-Gm-Gg: ASbGncsAh84GLLwDb/a+NneYfENWcE2jTg/7V5oJJ9CiXf25NXMOZofscIRf6ed5L7g
+	aTBbryGayyGWjTkFt7Tnsg+SI1aZ2EMw/DYoWF520KJ9hNf/mRsa4qixHypQGRCPSuOD3oqbM42
+	G6bnQdW+HuolwuN4W4Bb+VWbirV6eFGVu09++KSi1zGcZ0T4BIXK1JiXfHV/NBgCczVU0pvTU8j
+	4TbLZbpp3EI53/7IMK2rnrpThPSa8W6GKthb0ojrEy0HUR0m33i+ynaenUMEB20S7YHAeMkBRMU
+	Wb7rDYLSJzWM1912OIkWF5dizXaTlzTuqpbncDsYWV4RvOcgpgnOaY2R0P1l8zxcMfjrSKQtGiK
+	JgL57ZHMe36of5RGIIQ==
+X-Google-Smtp-Source: AGHT+IFk5VbJtxAhNF/55f923ZLJvy/heiuxusUdJGsctgKxkDgGsjMqsZ7BI1Rd/xG/CWbwrnZuiQ==
+X-Received: by 2002:a17:907:9803:b0:ad8:9e80:6bc3 with SMTP id a640c23a62f3a-ade893db0e9mr668476866b.1.1749720725285;
+        Thu, 12 Jun 2025 02:32:05 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:be2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adead8d773dsm102079166b.41.2025.06.12.02.32.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 02:32:57 -0700 (PDT)
-Message-ID: <7505f0e8-222d-4052-8614-c12109d14bce@oss.qualcomm.com>
-Date: Thu, 12 Jun 2025 15:02:52 +0530
+        Thu, 12 Jun 2025 02:32:04 -0700 (PDT)
+Message-ID: <6649c552-5a84-4a3a-b276-fc9f4008d019@gmail.com>
+Date: Thu, 12 Jun 2025 10:33:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,104 +81,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/5] misc: fastrpc: Add missing unmapping
- user-requested remote heap
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: srinivas.kandagatla@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
-        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
-        dri-devel@lists.freedesktop.org, arnd@arndb.de, stable@kernel.org
-References: <20250513042825.2147985-1-ekansh.gupta@oss.qualcomm.com>
- <20250513042825.2147985-6-ekansh.gupta@oss.qualcomm.com>
- <22uccyp5m2szry7bpitqcav5nlvwch5eqh4mdacfedidgrnyhx@vsjobngwdkmb>
- <dc67df54-2a19-4318-acd4-b96b8549b64d@oss.qualcomm.com>
- <7ogkoxsowpd2x5qmjog4qx5eu4eiinvtnyjz5hfufgna2hz7na@oxzmowlnelxb>
- <61dd2c3f-20ac-484e-8a45-f42fd5f42b86@oss.qualcomm.com>
- <CAO9ioeX1uE3ty5oSezYOLJKqf8G5dLYAS5nRiNvryWTk0RPdEQ@mail.gmail.com>
- <f3d376cc-6e2d-4ac3-88f6-3104eec67acf@oss.qualcomm.com>
- <qw64xqfnyy76f6oawtaecvraejcwyml5k7oxdy67adj2rh46lq@nupxbuy3vwu4>
+Subject: Re: [RFC v2 4/5] io_uring/bpf: add handle events callback
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: io-uring@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <cover.1749214572.git.asml.silence@gmail.com>
+ <1c8fcadfb605269011618e285a4d9e066542dba2.1749214572.git.asml.silence@gmail.com>
+ <CAADnVQKOmYmFZwMZJmtAc5v9v1gBJqO-FyGeBZDZe1tT5qPKWA@mail.gmail.com>
 Content-Language: en-US
-From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-In-Reply-To: <qw64xqfnyy76f6oawtaecvraejcwyml5k7oxdy67adj2rh46lq@nupxbuy3vwu4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=JcO8rVKV c=1 sm=1 tr=0 ts=684a9eca cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
- a=QnOT__A0hv9WPcCiwtcA:9 a=7Od4JLvlTNRbCQXB:21 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA3MyBTYWx0ZWRfX/TRqP/vkMfxI
- TfgMKY2BbGCo3AizgzkXZzcOOVCrt2da49z4f6UHuzfIfXt8s8Q/eTB3zvD1IvUXEg1Z8Qx2+JU
- 99B7H/0ZsVsjD7Ziwsuy2MMmEa12A6awMihMsrrAM+5SFMvt5+BDRXumKVhqdcCSaCfTQx689kd
- FDyIG8oKpA6Tzc2CSwge89pWsCAHNK6a/aQzIFklLiBdjlIafb2D6UsnIv4hyThb+7yCSZwe9tb
- 58HD3K4cufqucwMi+joYcVNYvkAraiyYjNEQKznWsakpxfDpn7nvyb942FtGbI7vwvz/k7BNkyX
- FN8toxd1PH768i5L79Mnk6DiwB0cHs8QlTPYtDC4dEeOsT/8Wgw7684e2yjssRdyaiUROij+EoN
- GBIVOQNmJ/7iD4ZINnCfeLISSPzGKiWOFNmQXJu2cz5um9W+EBLlWWm+91//SpIjEfdL13aZ
-X-Proofpoint-GUID: GYnOkXmadNGfG1zdewhjbyXEkOcEGi0A
-X-Proofpoint-ORIG-GUID: GYnOkXmadNGfG1zdewhjbyXEkOcEGi0A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0
- suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506120073
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAADnVQKOmYmFZwMZJmtAc5v9v1gBJqO-FyGeBZDZe1tT5qPKWA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 6/12/2025 1:35 PM, Dmitry Baryshkov wrote:
-> On Thu, Jun 12, 2025 at 10:50:10AM +0530, Ekansh Gupta wrote:
+On 6/12/25 03:28, Alexei Starovoitov wrote:
+> On Fri, Jun 6, 2025 at 6:58 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
 >>
->> On 5/22/2025 5:43 PM, Dmitry Baryshkov wrote:
->>> On Thu, 22 May 2025 at 08:01, Ekansh Gupta
->>> <ekansh.gupta@oss.qualcomm.com> wrote:
->>>>
->>>> On 5/19/2025 7:04 PM, Dmitry Baryshkov wrote:
->>>>> On Mon, May 19, 2025 at 04:28:34PM +0530, Ekansh Gupta wrote:
->>>>>> On 5/19/2025 4:22 PM, Dmitry Baryshkov wrote:
->>>>>>> On Tue, May 13, 2025 at 09:58:25AM +0530, Ekansh Gupta wrote:
->>>>>>>> User request for remote heap allocation is supported using ioctl
->>>>>>>> interface but support for unmap is missing. This could result in
->>>>>>>> memory leak issues. Add unmap user request support for remote heap.
->>>>>>> Can this memory be in use by the remote proc?
->>>>>> Remote heap allocation request is only intended for audioPD. Other PDs
->>>>>> running on DSP are not intended to use this request.
->>>>> 'Intended'. That's fine. I asked a different question: _can_ it be in
->>>>> use? What happens if userspace by mistake tries to unmap memory too
->>>>> early? Or if it happens intentionally, at some specific time during
->>>>> work.
->>>> If the unmap is restricted to audio daemon, then the unmap will only
->>>> happen if the remoteproc is no longer using this memory.
->>>>
->>>> But without this restriction, yes it possible that some userspace process
->>>> calls unmap which tries to move the ownership back to HLOS which the
->>>> remoteproc is still using the memory. This might lead to memory access
->>>> problems.
->>> This needs to be fixed in the driver. We need to track which memory is
->>> being used by the remoteproc and unmap it once remoteproc stops using
->>> it, without additional userspace intervention.
->> If it's the audio daemon which is requesting for unmap then it basically means that
->> the remoteproc is no longer using the memory. Audio PD can request for both grow
->> and shrink operations for it's dedicated heap. The case of grow is already supported
->> from fastrpc_req_mmap but the case of shrink(when remoteproc is no longer using the
->> memory) is not yet available. This memory is more specific to audio PD rather than
->> complete remoteproc.
->>
->> If we have to control this completely from driver then I see a problem in freeing/unmapping
->> the memory when the PD is no longer using the memory.
-> What happens if userspace requests to free the memory that is still in
-> use by the PD
-I understand your point, for this I was thinking to limit the unmap functionality to the process
-that is already attached to audio PD on DSP, no other process will be able to map/unmap this
-memory from userspace.
+>> +static inline int io_run_bpf(struct io_ring_ctx *ctx, struct iou_loop_state *state)
+>> +{
+>> +       scoped_guard(mutex, &ctx->uring_lock) {
+>> +               if (!ctx->bpf_ops)
+>> +                       return IOU_EVENTS_STOP;
+>> +               return ctx->bpf_ops->handle_events(ctx, state);
+>> +       }
+>> +}
+> 
+> you're grabbing the mutex before calling bpf prog and doing
+> it in a loop million times a second?
+> Looks like massive overhead for program invocation.
+> I'm surprised it's fast.
 
->
-> How does PD signal the memory is no longer in use?
-PD makes a reverse fastrpc request[1] to unmap the memory when it is no longer used.
+You need the lock to submit anything with io_uring, so there is
+a parity with how it already is. And the program is just a test
+and pretty silly in nature, normally you'd either get higher
+batching, and the user (incl bpf) can specifically specify to
+wait for more, or it'll be intermingled with sleeping at which
+point the mutex is not a problem. I'll write a storage IO
+example for the next time.
 
-[1] https://github.com/quic/fastrpc/blob/development/src/apps_mem_imp.c#L231
->
+If there will be a good use case, I can try to relax it for
+programs that don't issue requests, but that might make
+sync more complicated, especially on the reg/unreg side.
+
+-- 
+Pavel Begunkov
 
 
