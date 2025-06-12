@@ -1,160 +1,113 @@
-Return-Path: <linux-kernel+bounces-683789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9430BAD7234
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:36:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E57AD7245
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C461C269C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F853B2EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A677253957;
-	Thu, 12 Jun 2025 13:27:45 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB9B244696;
+	Thu, 12 Jun 2025 13:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ADEs34ox"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB0824A066;
-	Thu, 12 Jun 2025 13:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE751F1313
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734865; cv=none; b=jYVbTRHknZIP9+02bvxxvW/DGRlORPSwSImnZy/pt+tsWGjVm7f+qz2Heybk0nVSc5aNZtLATBrhf5crn64Z9ANQb1zUDk5Jke3Uvpt6GJfTfpF+G9zZhoyFIBdqTFekXlnSZ42yVjZHNntP/TUzfDzUUhSkBhSlgnPjs4vpilg=
+	t=1749735305; cv=none; b=ncD1kMw1tNT+L5B8EHkFfc/tnifK+CJXdMsVk2ie1PYSq/luRVCKp3a29ZGehSzCUq1NbWIm8cQuQwwWPX4dGsSwU9lKdEnniCd43y9zbz4lDhFNC84Mw2kV4Rgo1ysnMO4MLpJ9HXV7kxGE01DQpxPFQnJ+DTimmcEtJwEGjaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734865; c=relaxed/simple;
-	bh=2axOLzUf30BQP5kOoNmargzDJdFzgivypedmX5gDPFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PsaS7r1Ybv9Zo/o/zO2zAZXxWCeDq01eXnCC/UDDsLA893sxSg6r/ey5KwaPP0CYqeitD2hmBwWDO2CP3C4dgxKaTBCNI1WOlMkPgz2g38NRTlFSJeDkB5DpeB2XZijXg5oW7svpXQ8NXPNrRLFgrN8ldZ3EBs1p7apPVqFmJn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bJ3HH5VrlzYQv41;
-	Thu, 12 Jun 2025 21:27:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BC6C81A0D9E;
-	Thu, 12 Jun 2025 21:27:38 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB321_J1Upo_mswPQ--.39170S4;
-	Thu, 12 Jun 2025 21:27:38 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH] md/raid1,raid10: fix IO handle for REQ_NOWAIT
-Date: Thu, 12 Jun 2025 21:21:41 +0800
-Message-Id: <20250612132141.358202-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1749735305; c=relaxed/simple;
+	bh=mx0+sqdmz7ExONA2KrajxLPAnH4pTOp/SJ63TIEKTj0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lSfGTppbCZz77Cycvbvka7+NvFlUhN6Gk/o4sqOhrOasoj8nDfj/+PYPAnF4n+wjZbJUQcj4alv1yrhWc1KrZ/IOUfLmSPUDXQo5WiQt0yOcU4O2Fl3SBmVNDltcSnlT6KbZxEaxYPon3iiTLb1XbYI26Luuac45VrVSonYD+M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ADEs34ox; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1749735295; bh=xfu72Ansb0YbK3DXTB/yjp6h12RbUxTUdKMq0wzfGGg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ADEs34oxXL5Vb6I/bJLMlcAUwc8viim9zRXJkUXl/3jQYquWNZy9ARBaHA2BFnpJV
+	 qHlYMQ4cfmDxpAoYSK57ekJwKgSuLXpBiHUz4dV9p0HJ6EAAvVXzcPTE4SsDdbdEBL
+	 ckfkvUOIsZLwBX2GJCxQwirW9tr/zCJ5uky6JV3Q=
+Received: from ubuntu.localdomain ([112.48.46.129])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 5A124079; Thu, 12 Jun 2025 21:22:33 +0800
+X-QQ-mid: xmsmtpt1749734553ty48fhnjs
+Message-ID: <tencent_289DE02620144CF4490D1F9E1EA941243607@qq.com>
+X-QQ-XMAILINFO: OAeeP88hDd8wBC7ZFt+SBbUSR5gzK6nO/Lxe1PO/A/F0aI9i7DAoNHmgG1T991
+	 KzPtu81egU/OffLtqRpEDlM/eDc8FdUA+XLVqDiisPgHEChQ7DWW5XbfdYpIUejUecZOZZ8q4v4e
+	 dt5lu0zAYSWJN+nHBrdX07IWpFVw0pumMYBIAb6FqkEuKg2vNBwV5XidtLM6KuDLShWIOE5nLzNW
+	 33uPtLlsamS/PBy3DFV5N8ULmPqE+MqADheaPZtkvezXBOkMgSoXB0RjUmVKHb/ys+z2GF5M4FLu
+	 +6ObN8z/TTM9/OheC9p4l+bbXUE3AvTrQB1/S02z8i/SH1T7RqrfTuI5/hJnpnnaJB4yrr6og6y+
+	 c1wbrrIWv9LQctMRo5fn+NJvu92mGtBx3wxh0rgSolgCRTKo18rWajItjZRn1UAP5TnxAAB9tb19
+	 5u9t3Q7iHX6JtfhFzMFRiBsPPRQt85E4EX9YBa7EGMH6XX/7z1OwYu6doN10F+7RfZfIeB621d/p
+	 2EmKSnRQz1BMujFi7cOlGBwhRtuvxNpH8XikYNaalURQ+Hh1XxkRnRWtEHXshesyv+ncLjtH4NVg
+	 gR1V2a22xuk5p1DyDXbmLkRcBFu0c+f3yNOgmtwWPsYznH2PJHZpzCOwzs9/q41cBZRDIeJBYmJx
+	 bpHc3kwutEE5g+w5ZoHNm4fng4qdcQGnzTYfqlY7TKdsXaaeqeOmpc4Lbbzw7DhHdUz76VdZWHmd
+	 RYZB3yjIi0nc7IL+STHIQElOEvxnasmHqGtbTLo1oHqmFQam9UVlYv9LZg7eCiHqpDsq6gqUQ2uJ
+	 lVB1W68G4Y/kOgImKAJ5sZWKwqX6V7aGZ7jnAf9GcVEz7y6ufle/VLaS2rLGM4endV7Q5Ditq9ZH
+	 5dnHPizDA0mmB4CrCJUPHxY1c9dyXa2U1yFi2qfyXxbziKFqTYlUTDgX9Y5eiDsQvElVuV63skup
+	 XA3KJ7z0mX82UOUd0lseQGY0aUZ5KS42PqN46SnpiM62OR4U7gticLdfJT9BY+K36ELsBYlhk=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: 1425075683@qq.com
+To: 1425075683@qq.com
+Cc: nico@fluxnic.net,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] posix-timers: omit posix_cpu_timers_init_group when CONFIG_POSIX_TIMERS is disabled
+Date: Thu, 12 Jun 2025 21:22:30 +0800
+X-OQ-MSGID: <20250612132230.20351-1-1425075683@qq.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <tencent_92F5880EDEB07D078301A561B64F06F9AC0A@qq.com>
+References: <tencent_92F5880EDEB07D078301A561B64F06F9AC0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB321_J1Upo_mswPQ--.39170S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFW8ZF17XFWUtFyUur1xXwb_yoW5Cw18p3
-	47Ga9av39rGFWUZ3WDtFWUXa4Fka1Fgay7C3yUJ34xXas09FZ8Aa1DJ34Ygrs8XFWrur12
-	q3WrWw4UCFWayFUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8imRUUUUUU==
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+Hi all,
 
-IO with REQ_NOWAIT should not set R1BIO_Uptodate when it fails,
-and bad blocks should also be cleared when REQ_NOWAIT IO succeeds.
+My apologies—I neglected to CC both of you on my last submission. Please find below the same patch, now with the correct CC list.
 
-Fixes: 9f346f7d4ea7 ("md/raid1,raid10: don't handle IO error for REQ_RAHEAD and REQ_NOWAIT")
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
 ---
- drivers/md/raid1.c  | 11 ++++++-----
- drivers/md/raid10.c |  9 +++++----
- 2 files changed, 11 insertions(+), 9 deletions(-)
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 168681fc4b25a9fddcb90ce155c027551455f4ee..9632e863c17b44424fadc40b2445034ec5cd20d6 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1883,6 +1883,7 @@ void __cleanup_sighand(struct sighand_struct *sighand)
+ 	}
+ }
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 19c5a0ce5a40..a1cddd24b178 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -455,13 +455,13 @@ static void raid1_end_write_request(struct bio *bio)
- 	struct md_rdev *rdev = conf->mirrors[mirror].rdev;
- 	sector_t lo = r1_bio->sector;
- 	sector_t hi = r1_bio->sector + r1_bio->sectors;
--	bool ignore_error = !raid1_should_handle_error(bio) ||
--		(bio->bi_status && bio_op(bio) == REQ_OP_DISCARD);
-+	bool discard_error = bio->bi_status && bio_op(bio) == REQ_OP_DISCARD;
++#ifdef CONFIG_POSIX_TIMERS
+ /*
+  * Initialize POSIX timer handling for a thread group.
+  */
+@@ -1894,6 +1895,9 @@ static void posix_cpu_timers_init_group(struct signal_struct *sig)
+ 	cpu_limit = READ_ONCE(sig->rlim[RLIMIT_CPU].rlim_cur);
+ 	posix_cputimers_group_init(pct, cpu_limit);
+ }
++#else
++static inline void posix_cpu_timers_init_group(struct signal_struct *sig) { }
++#endif
  
- 	/*
- 	 * 'one mirror IO has finished' event handler:
- 	 */
--	if (bio->bi_status && !ignore_error) {
-+	if (bio->bi_status && !discard_error &&
-+	    raid1_should_handle_error(bio)) {
- 		set_bit(WriteErrorSeen,	&rdev->flags);
- 		if (!test_and_set_bit(WantReplacement, &rdev->flags))
- 			set_bit(MD_RECOVERY_NEEDED, &
-@@ -507,12 +507,13 @@ static void raid1_end_write_request(struct bio *bio)
- 		 * check this here.
- 		 */
- 		if (test_bit(In_sync, &rdev->flags) &&
--		    !test_bit(Faulty, &rdev->flags))
-+		    !test_bit(Faulty, &rdev->flags) &&
-+		    (!bio->bi_status || discard_error))
- 			set_bit(R1BIO_Uptodate, &r1_bio->state);
- 
- 		/* Maybe we can clear some bad blocks. */
- 		if (rdev_has_badblock(rdev, r1_bio->sector, r1_bio->sectors) &&
--		    !ignore_error) {
-+		    !bio->bi_status) {
- 			r1_bio->bios[mirror] = IO_MADE_GOOD;
- 			set_bit(R1BIO_MadeGood, &r1_bio->state);
- 		}
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index b74780af4c22..1848947b0a6d 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -458,8 +458,8 @@ static void raid10_end_write_request(struct bio *bio)
- 	int slot, repl;
- 	struct md_rdev *rdev = NULL;
- 	struct bio *to_put = NULL;
--	bool ignore_error = !raid1_should_handle_error(bio) ||
--		(bio->bi_status && bio_op(bio) == REQ_OP_DISCARD);
-+	bool discard_error = bio->bi_status && bio_op(bio) == REQ_OP_DISCARD;
-+	bool ignore_error = !raid1_should_handle_error(bio) || discard_error;
- 
- 	dev = find_bio_disk(conf, r10_bio, bio, &slot, &repl);
- 
-@@ -522,13 +522,14 @@ static void raid10_end_write_request(struct bio *bio)
- 		 * check this here.
- 		 */
- 		if (test_bit(In_sync, &rdev->flags) &&
--		    !test_bit(Faulty, &rdev->flags))
-+		    !test_bit(Faulty, &rdev->flags) &&
-+		    (!bio->bi_status || discard_error))
- 			set_bit(R10BIO_Uptodate, &r10_bio->state);
- 
- 		/* Maybe we can clear some bad blocks. */
- 		if (rdev_has_badblock(rdev, r10_bio->devs[slot].addr,
- 				      r10_bio->sectors) &&
--		    !ignore_error) {
-+		    !bio->bi_status) {
- 			bio_put(bio);
- 			if (repl)
- 				r10_bio->devs[slot].repl_bio = IO_MADE_GOOD;
--- 
-2.39.2
+ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ {
+
+---
+
+Thanks for your understanding!
+–-
+Liya Huang <1425075683@qq.com>
 
 
