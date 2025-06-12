@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-683727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80FBAD7155
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:14:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348B2AD714E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A003B21F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010A53B3A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F3F246BAC;
-	Thu, 12 Jun 2025 13:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AA324468D;
+	Thu, 12 Jun 2025 13:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBQb5AXd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R49oWCXa"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5555023D284;
-	Thu, 12 Jun 2025 13:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D968E946F;
+	Thu, 12 Jun 2025 13:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749733912; cv=none; b=l1VeQl6zAMDyqVLcrT9LeQsMmX90M5TnAAmmIc/e3FUUNDy4L1sugj5wzarCPbFcIYS5+Jq1z4qtMN2AwoX0Yahn6Gp4W4Oy4NCscWVS8vSPWeWtd6bp9zr8n72lc/HY3BKkBRgc1rSRp6QXhvaLJg5wCIy5SNbH+vWnKiDhbCs=
+	t=1749733865; cv=none; b=FMz8Ps5MlBzfzlcyMwp35zQTPsNi30Aw0W83mJK/1FzqZD1Q5cKLgIbamuXCwLEj4ViR+4Nj+Id07/xjznBot3Y3OW3X3cAMK3a5HAhF7w7+XztwZTygFVXPCV4d4gVC+UAXL9ZKuvrZBWW4Jd9j8eDrpLoG4Sp84Mjo9VuUhvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749733912; c=relaxed/simple;
-	bh=FEZbDGNo2b5jvLwTR6AS8f/hfIVAHrWCGxHahtywlRI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=orcT/30rBt/Z8nGvcpdxkiJeUi2VF3qr7g8HkNk1Xjqr8IZCPvF8jLfZBOgFGRffEVACPvDBinVuhvCBM012VyG/5HBycS00VJXk5v1KCvGXL6hZZ8HjKoavvtcGysU/8ujG/tvuCQoMAM9PB+pmTJG6AVWpjTUE72SWDhIuHbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBQb5AXd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA3DC4CEED;
-	Thu, 12 Jun 2025 13:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749733911;
-	bh=FEZbDGNo2b5jvLwTR6AS8f/hfIVAHrWCGxHahtywlRI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EBQb5AXdPKg8hlat83TNEefxlLiX647569L5D5K20A30fKmyS1G2TJLUyVEmaGhJs
-	 9WNQoJ3W9yBk+8fhs2GvLzicm01ZM/5h0FFmGEeDgkTfyv1HrFtYeQKJ0PWlOy9sg2
-	 IxhKF1ZeGUuggdFKhDzku76XN9JREIcZ8UoI1LB7IRZi3K9nr4PTXsgR8zLkDVU5Wt
-	 h3YTMBLquZqCqFKib7FfQD4Fw55F4oT/2C49Pn+7EHxu9RCfn3qv2JWZMzwUMauMER
-	 ZYSXFKny1qA3G1ewWiErsJnGr6qduc5YD6/1sN0OlsLGYSNcX0ZmH+nEzkzQ7NhVsI
-	 tSh2cuLgCqQsQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Thu, 12 Jun 2025 15:09:44 +0200
-Subject: [PATCH v3 2/2] rust: types: require `ForeignOwnable::into_foreign`
- return non-null
+	s=arc-20240116; t=1749733865; c=relaxed/simple;
+	bh=vrQyTyacU7Ij/hd4JULIJv8TrZZjFmKfYlNixSpiJok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WGtyWLuNUeRA1IHe4IMzEAEEgS01PGFSHbZ8LD7b3dBjp12bdcTaEGA5vXV1GFOll2xWRdC8Sdmf+3GXKhRGknwR5Hl3ODlI8S6wnkvYa0o03rteXz18QVH745e883XEHOvR6nJskwEdiAE1mErVtl+0YYpqcyxKzLGitSHHtEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R49oWCXa; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55CDA0Z32925702;
+	Thu, 12 Jun 2025 08:10:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749733800;
+	bh=SZsYXdUJxDqqAruGjKI1G6QK33eagQBI2kBAS/U2H9E=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=R49oWCXaLeCfto2fyhcX2Jk6U0KZNdPtDpKrvGWbubbskG+aLLBqLbREwF7QbmKcd
+	 7OYm7RcUMzTCdwG00Bsk6z945Ucq/sEKFUXc0NzL6jS8KN0MCl2uGmQYws+UoISeqp
+	 Dz5eCdTo+xIsSS7Ve7zKvmFGNXi+y3yACikjK5pk=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55CDA0Q91974279
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 12 Jun 2025 08:10:00 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 12
+ Jun 2025 08:09:59 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 12 Jun 2025 08:09:59 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55CD9xgi2202130;
+	Thu, 12 Jun 2025 08:09:59 -0500
+Message-ID: <ef6d6315-6517-4c8b-bf76-e41bb72bae8d@ti.com>
+Date: Thu, 12 Jun 2025 08:09:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] arm: omap2plus_defconfig: Enable TPS65219
+ regulator
+To: Andreas Kemnade <andreas@kemnade.info>
+CC: Kory Maincent <kory.maincent@bootlin.com>,
+        Tony Lindgren
+	<tony@atomide.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Aaro Koskinen
+	<aaro.koskinen@iki.fi>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Roger Quadros
+	<rogerq@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Bajjuri Praneeth
+	<praneeth@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
+ <20250609-bbg-v2-5-5278026b7498@bootlin.com>
+ <1d87fa3b-c3b9-44fd-9e61-7f1ffadcfb0c@ti.com> <20250612081255.255be21e@akair>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250612081255.255be21e@akair>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-pointed-to-v3-2-b009006d86a1@kernel.org>
-References: <20250612-pointed-to-v3-0-b009006d86a1@kernel.org>
-In-Reply-To: <20250612-pointed-to-v3-0-b009006d86a1@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1041; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=FEZbDGNo2b5jvLwTR6AS8f/hfIVAHrWCGxHahtywlRI=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoStGbcMdt+yS2gJghNN/b4cVIuKT+O97uTLGrR
- zSyrUr3tv+JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaErRmwAKCRDhuBo+eShj
- d9JEEACma2fr9oZZ1fmy/MeQdkAoD8Kzj+YONLuAcDCKwIf2IWSNDilgPb7jwjmqwjXUnL3cC6i
- XPrJB4L4OFtJBwp/KEee/WfPDfYwz/5DH2lSODwrR5YrjDXl0/JKMRydo7vuLS2xhTUGPb1Grkg
- x+UhSdieLGVWetgDTPYhzpYY4DEqpdmlIWn0DkRGKI2zLbPO1vA4/JHtQEZuM6+2Zwr/3UBAbit
- TY2/qMzmFPghvq6Cy9Yme4gZqbFZyjK2DxTYFoRchgDy12I4RScT1p4+77jTwEszc5wapCmzrml
- G8NvC7K93kR/zrtQvPJbWuqGWB9eYPYKGl+fu8bFJRAeoDPZU5oEtywbCqHR2+PrRKUgyTn631d
- slcUGlC9H4rtDPSfjUVJl0atgG5JGB95f87q0QbJhzhPvnYuJLES6j8e07+qxfSWIqdwpy4mmrh
- 5f9p4ScZbDrVWTDUs13K3UD7tJA34Q5I56bIvSRjHP2NPMP/DtTZ3nARtkePzEgVejc3hRyvHuw
- fQB/Ex2buuVkvtOEJULgo7GV4bFmPy5cpcSm+myXcUYIZTXZdIfhA8bg8LKCz26sHctPUW/nHqA
- qcgDlkR6T4nFcJOGkOiSGanAnIepLJgegIzH2HB3IjwBJw05ErTvbecdL5spiwBSG1OtideKG7g
- zihhplbhTTwnHTg==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The intended implementations of `ForeignOwnable` will not return null
-pointers from `into_foreign`, as this would render the implementation of
-`try_from_foreign` useless. Current users of `ForeignOwnable` rely on
-`into_foreign` returning non-null pointers. So require `into_foreign` to
-return non-null pointers.
+On 6/12/25 1:12 AM, Andreas Kemnade wrote:
+> Am Wed, 11 Jun 2025 16:13:05 -0500
+> schrieb Andrew Davis <afd@ti.com>:
+> 
+>> On 6/9/25 10:43 AM, Kory Maincent wrote:
+>>> Enable the TPS65219 regulator in the defconfig, as the TPS65214
+>>> variant is used by the newly introduced BeagleBoard Green Eco board.
+>>>
+>>> Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
+>>> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+>>> ---
+>>>    arch/arm/configs/omap2plus_defconfig | 3 +++
+>>>    1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+>>> index 9f9780c8e62a..2ad669f7b202 100644
+>>> --- a/arch/arm/configs/omap2plus_defconfig
+>>> +++ b/arch/arm/configs/omap2plus_defconfig
+>>
+>> Why omap2plus_defconfig? OMAP3 and newer are all ARMv7 and
+>> boards with those can/should use multi_v7_defconfig.
+>>
+> if there are enough drivers enabled there, it would work, but it is not.
+> So there need to be a bunch of patches to add the missing stuff.
+> omap2plus_defconfig is there and support for boards are added.
+> 
 
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- rust/kernel/types.rs | 1 +
- 1 file changed, 1 insertion(+)
+Yes multi_v7 is still missing stuff for some boards we want to
+support, and we are working on adding those needed modules now.
 
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index c156808a78d3..63a2559a545f 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -43,6 +43,7 @@ pub unsafe trait ForeignOwnable: Sized {
-     /// # Guarantees
-     ///
-     /// - Minimum alignment of returned pointer is [`Self::FOREIGN_ALIGN`].
-+    /// - The returned pointer is not null.
-     ///
-     /// [`from_foreign`]: Self::from_foreign
-     /// [`try_from_foreign`]: Self::try_from_foreign
+We won't get feature parity in multi_v7 if we keep adding new
+boards to the old omap2plus_defconfig. For this patch series
+how about we add support to both defconfigs?
 
--- 
-2.47.2
+> So I think until multi_v7_defconfig is really usable for OMAP3+, we
+> should stick with the name omap2plus_defconfig and add stuff.
+> If we rename omap2plus_defconfig to omap2_defconfig, we should imho
+> disable OMAP3/4/5 there to avoid confusion.
+> 
 
+Yes, that was part of the plan, right now these SoCs are enabled
+in both configs, so new boards often get enabled in one or the other
+but rarely both.
 
+Andrew
+
+> Regards,
+> Andreas
 
