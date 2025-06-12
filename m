@@ -1,363 +1,186 @@
-Return-Path: <linux-kernel+bounces-683783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8886AD7202
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E02AD722D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97D73B3A0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2856188B667
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3E725A351;
-	Thu, 12 Jun 2025 13:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D8324DCF1;
+	Thu, 12 Jun 2025 13:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s0S17hdV"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Uh9DXPNF"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2972586C8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BD6247DEA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734756; cv=none; b=p+ifKwPHezQyo9FvFqbU2fXr9srRiVLOLjC3XS3uY63s5nGFnRrByWkq125uOuubNEm+HcXWQ+29anB0hJLbMnjtBANwSDA+VkCPxoaSaPFhdjMeatsjTB6yj6AtnP/q3QamB5pQ6rQc5Z7RUvlFd+tfShJvt9zclT7/sotvkjA=
+	t=1749734808; cv=none; b=IyjcmzkQhl3PiR4gXB28m/zt5PuucJ/vA/KhcUSbR/k7uktIxjXV8UWH9FQj7wllbMYaYHhcs0j5+EzkagzAujAs5uQ8Ezf7K1Ecb2ZmWSeezQEeC5kjNn/OS8PjHrOFunqPC2x9Hlw4NXBn2uF5QTAjZH/KlRCfhP8cUYzizHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734756; c=relaxed/simple;
-	bh=hcZcBkKt0UFxCiGP9o6Bx1GJEYfRCoYTXBc4w4JpNoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cSFmlCl04qwPlICmTtYAxB/6yUye5FFo89lI6DZUbIyA6L6uzqieGm9DbSgNT0KCCeAcX98l4DYnMz6D1AjreCYzMd7BD7EFs41ZPVd/HAIVBVjAyP3pd1CjG2NYl++HGDCBlcWYbz9LPKV86SNMV+zesJQz0IW8W0ZoaDN7zS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s0S17hdV; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749734745; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=vYF/r51uFCbhClrqwieaK0VW0rIZWeBxCvWde2d0ef4=;
-	b=s0S17hdVpdGDPMM4cRntzv5iCvUlebiNfg6VAnoadbnKon9NnbNhvwgb/CqMOkmtN/efNMLVpjWraRi2qbVs4X7MLRyvaqR3ixy27pNrhaWH1L0gda5vp95vPlSpnHhC+xCpO4VJGPlWVk2CVpIU9J1mIeQdvWfy/cQP18NFYHI=
-Received: from 30.39.247.88(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdhBJVR_1749734743 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Jun 2025 21:25:44 +0800
-Message-ID: <e6e3137c-3b0a-4c92-9e5f-69bee5e0c948@linux.alibaba.com>
-Date: Thu, 12 Jun 2025 21:25:43 +0800
+	s=arc-20240116; t=1749734808; c=relaxed/simple;
+	bh=CVQ9VovITFp4al3duc780000P3ZE3EpGg5M4UugODQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EtimHL/YxQS6+6Fv+ld5Hj8UrNwTVYOaXVu2DSdyrr+Xw40k/Mc4fkkCiOLeDr3GwTPqCOqZsmD1mS+7X8IYTx8TjOqIH0qyuFUl0WH67+OFqvAvTnooJpPX6/YNQ7sm4vr21OlPeIFVriZUA4/gLO9RlrSamiCnG8zdjblFI/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Uh9DXPNF; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3ddd6f2d911so4042025ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1749734806; x=1750339606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2eN3swV8AIIuWWlJ3gYBwChYsvkIrC7SYyJzazn/BSI=;
+        b=Uh9DXPNF0rmS4hO/A2moRXrF7EqWLUsG33MFYRgsajNC+EyEIi15DBT6cUAcUeDr/O
+         Y8tdbyH4SurOAhZ9aKgO1Sqb3u9Ex091HtfWSLd0mVvWqHAWSQWk3ggvl8CDiiIvXbVs
+         SRot/VnAGpn4VMGeJXmjeTZ0jVYuiHX2VPtNolzSRajwi6zsNeCAcVz6nzmySNonBL07
+         A8FkhwUzuLrbDmp4cDs1WiQOGYqjYwNyVuD4UvlSA7cXIX7boYEr0vYecdHeFuYe8TYD
+         j0vUmpCPgi7C4ypudoQ4bupP6YKcrU7elqQDGfzJ/8kXZcV/20+dP4sw/alXG/LfIZA7
+         DUPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749734806; x=1750339606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2eN3swV8AIIuWWlJ3gYBwChYsvkIrC7SYyJzazn/BSI=;
+        b=p62DrmQrlnJ9zuJpNtC273dwvDDDzvOQyak270brf5SKQgxAxxeOR48/+UrZPExfkN
+         GLb8eBRj5G+oP9ApecEqcyoZ5BSSCmeEUaaSh9XTzXfW5d+wRSE+QGKB30mcmyQ3GVPS
+         VABRDT/rzAldzpEJmp9YaaFhcjTL6rd4jdVtzUhi0vW2ZZuK6TLKgBpWtQyXfWDP6QoU
+         mfqXamlBHVBYbzzsF5D9G1vPhbKJ3PZmGy/UqXsRHq4ptMJCPgYGBwcWa6ccgtvdhFyB
+         aUAD68x33SCMtgVGJA61f1MpfeLCy6QzP/VfUdFQoGAAn0zQsqOU10zqQ+jJu6OIg87a
+         fuDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvX0PIXn+9IbXjM2weyzEkDcSJixdxQwbVWU+JkKPoMiYiATBrLYLFvTduuC8SMCb5av56pSomG9C+Rz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQD+04GVM1dPaIiUHwaBtNI4tBCZSFwyZbQbfnbc4uVPZMMxvX
+	EiSePzyv+Qs3XloXHT91r+ipLr4Chv027KAnsWK8w2OkdJ8NzurmywTVSku/luW+QiSVDsnVI0V
+	GGuzbpiU0AqW7ozCJUc/HlOsIhT0qApFW/Ou5m/HLhw==
+X-Gm-Gg: ASbGncvdzcuI7IbOA0LxFSDn+HJj+b9f312v5WudXEn+90cdIutfhO/exDHc6cuTtwo
+	zoaWdch4DAJLiJXIJcEMPpRcU5r9kZWaLEGL2ArUbqn+3h9BY0SJLFkQTABrZP0YvOCV+SOfkEy
+	UkmLahBkxR8KIq3vG9fcRQJKtkoPoySdwE/U/iHcEYe0kz
+X-Google-Smtp-Source: AGHT+IG2iBZqXBZpblYqqV1CfizkbcXBVYuUqCYGloOAj0H2lvAJwOXwnS5XNnZkQ46BncD7OmhOhE+Hobvx1RtA1UQ=
+X-Received: by 2002:a05:6e02:1807:b0:3dd:8663:d182 with SMTP id
+ e9e14a558f8ab-3ddf42c5b4dmr72461125ab.13.1749734805782; Thu, 12 Jun 2025
+ 06:26:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
- system-wide THP sysfs settings are disabled
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
- <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
- <1ec368c4-c4d8-41ea-b8a3-7d1fdb3ec358@redhat.com>
- <2ff65f37-efa9-4e96-9cdf-534d63ff154e@linux.alibaba.com>
- <953596b2-8749-493d-97eb-a5d8995d9ef8@redhat.com>
- <97a67b74-d473-455e-a05e-c85fe45da008@linux.alibaba.com>
- <b8fe659e-8a84-4328-b6d6-6116c616cb3d@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <b8fe659e-8a84-4328-b6d6-6116c616cb3d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250523101932.1594077-1-cleger@rivosinc.com> <20250523101932.1594077-15-cleger@rivosinc.com>
+In-Reply-To: <20250523101932.1594077-15-cleger@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 12 Jun 2025 18:56:33 +0530
+X-Gm-Features: AX0GCFtHBaD1dkadFboJHCaCDko1UoltJB37LuW30sdZ0j57mmaziXXBSUbao7Y
+Message-ID: <CAAhSdy1qnRYOh0ka4PeJDf5ybviMrf+bpYaOOka3BXVmwAPSoQ@mail.gmail.com>
+Subject: Re: [PATCH v8 14/14] RISC-V: KVM: add support for SBI_FWFT_MISALIGNED_DELEG
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Deepak Gupta <debug@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Atish Patra <atishp@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 23, 2025 at 3:53=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
+>
+> SBI_FWFT_MISALIGNED_DELEG needs hedeleg to be modified to delegate
+> misaligned load/store exceptions. Save and restore it during CPU
+> load/put.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
+Queued this patch for Linux-6.17
 
-On 2025/6/12 21:05, David Hildenbrand wrote:
-> On 12.06.25 14:45, Baolin Wang wrote:
->>
->>
->> On 2025/6/12 16:51, David Hildenbrand wrote:
->>> On 12.06.25 09:51, Baolin Wang wrote:
->>>>
->>>>
->>>> On 2025/6/11 20:34, David Hildenbrand wrote:
->>>>> On 05.06.25 10:00, Baolin Wang wrote:
->>>>>> The MADV_COLLAPSE will ignore the system-wide Anon THP sysfs 
->>>>>> settings,
->>>>>> which
->>>>>> means that even though we have disabled the Anon THP configuration,
->>>>>> MADV_COLLAPSE
->>>>>> will still attempt to collapse into a Anon THP. This violates the 
->>>>>> rule
->>>>>> we have
->>>>>> agreed upon: never means never.
->>>>>>
->>>>>> Another rule for madvise, referring to David's suggestion: “allowing
->>>>>> for collapsing
->>>>>> in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
->>>>>>
->>>>>> To address this issue, should check whether the Anon THP 
->>>>>> configuration
->>>>>> is disabled
->>>>>> in thp_vma_allowable_orders(), even when the TVA_ENFORCE_SYSFS 
->>>>>> flag is
->>>>>> set.
->>>>>>
->>>>>> In summary, the current strategy is:
->>>>>>
->>>>>> 1. If always & orders == 0, and madvise & orders == 0, and
->>>>>> hugepage_global_enabled() == false
->>>>>> (global THP settings are not enabled), it means mTHP of that orders
->>>>>> are prohibited
->>>>>> from being used, then madvise_collapse() is forbidden for that 
->>>>>> orders.
->>>>>>
->>>>>> 2. If always & orders == 0, and madvise & orders == 0, and
->>>>>> hugepage_global_enabled() == true
->>>>>> (global THP settings are enabled), and inherit & orders == 0, it 
->>>>>> means
->>>>>> mTHP of that
->>>>>> orders are still prohibited from being used, thus madvise_collapse()
->>>>>> is not allowed
->>>>>> for that orders.
->>>>>>
->>>>>> Reviewed-by: Zi Yan <ziy@nvidia.com>
->>>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>>> ---
->>>>>>     include/linux/huge_mm.h | 23 +++++++++++++++++++----
->>>>>>     1 file changed, 19 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>>>> index 2f190c90192d..199ddc9f04a1 100644
->>>>>> --- a/include/linux/huge_mm.h
->>>>>> +++ b/include/linux/huge_mm.h
->>>>>> @@ -287,20 +287,35 @@ unsigned long thp_vma_allowable_orders(struct
->>>>>> vm_area_struct *vma,
->>>>>>                            unsigned long orders)
->>>>>>     {
->>>>>>         /* Optimization to check if required orders are enabled
->>>>>> early. */
->>>>>> -    if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
->>>>>> -        unsigned long mask = READ_ONCE(huge_anon_orders_always);
->>>>>> +    if (vma_is_anonymous(vma)) {
->>>>>> +        unsigned long always = READ_ONCE(huge_anon_orders_always);
->>>>>> +        unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
->>>>>> +        unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
->>>>>> +        unsigned long mask = always | madvise;
->>>>>> +
->>>>>> +        /*
->>>>>> +         * If the system-wide THP/mTHP sysfs settings are disabled,
->>>>>> +         * then we should never allow hugepages.
->>>>>    > +         */> +        if (!(mask & orders) &&
->>>>> !(hugepage_global_enabled() && (inherit & orders)))
->>>>>> +            return 0;
->>>>>
->>>>> I'm still trying to digest that. Isn't there a way for us to work with
->>>>> the orders,
->>>>> essentially masking off all orders that are forbidden globally. 
->>>>> Similar
->>>>> to below, if !orders, then return 0?
->>>>> /* Orders disabled directly. */
->>>>> orders &= ~TODO;
->>>>> /* Orders disabled by inheriting from the global toggle. */
->>>>> if (!hugepage_global_enabled())
->>>>>        orders &= ~READ_ONCE(huge_anon_orders_inherit);
->>>>>
->>>>> TODO is probably a -1ULL and then clearing always/madvise/inherit. 
->>>>> Could
->>>>> add a simple helper for that
->>>>>
->>>>> huge_anon_orders_never
->>>>
->>>> I followed Lorenzo's suggestion to simplify the logic. Does that look
->>>> more readable?
->>>>
->>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>> index 2f190c90192d..3087ac7631e0 100644
->>>> --- a/include/linux/huge_mm.h
->>>> +++ b/include/linux/huge_mm.h
->>>> @@ -265,6 +265,43 @@ unsigned long __thp_vma_allowable_orders(struct
->>>> vm_area_struct *vma,
->>>>                                             unsigned long tva_flags,
->>>>                                             unsigned long orders);
->>>>
->>>> +/* Strictly mask requested anonymous orders according to sysfs
->>>> settings. */
->>>> +static inline unsigned long __thp_mask_anon_orders(unsigned long
->>>> vm_flags,
->>>> +                               unsigned long tva_flags, unsigned long
->>>> orders)
->>>> +{
->>>> +       unsigned long always = READ_ONCE(huge_anon_orders_always);
->>>> +       unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
->>>> +       unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
->>>> +       bool inherit_enabled = hugepage_global_enabled();
->>>> +       bool has_madvise =  vm_flags & VM_HUGEPAGE;
->>>> +       unsigned long mask = always | madvise;
->>>> +
->>>> +       mask = always | madvise;
->>>> +       if (inherit_enabled)
->>>> +               mask |= inherit;
->>>> +
->>>> +       /* All set to/inherit NEVER - never means never globally,
->>>> abort. */
->>>> +       if (!(mask & orders))
->>>> +               return 0;
->>>
->>> Still confusing. I am not sure if we would properly catch when someone
->>> specifies e.g., 2M and 1M, while we only have 2M disabled.
->>
->> IIUC, Yes. In your case, we will only allow order 8 (1M mTHP).
->>
->>> I would rewrite the function to only ever substract from "orders".
->>>
->>> ...
->>>
->>> /* Disallow orders that are set to NEVER directly ... */
->>> order &= (always | madvise | inherit);
->>>
->>> /* ... or through inheritance. */
->>> if (inherit_enabled)
->>>       orders &= ~inherit;
->>
->> Sorry, I didn't get you here.
->>
->> If orders = THP_ORDERS_ALL_ANON, inherit = 0x200 (order 9), always and
->> madvise are 0, and inherit_enabled = true. Then orders will be 0 with
->> your logic. But we should allow order 9, right?
-> 
-> Yeah, all confusing, because the temporary variables don't help.
-> 
-> if (!inherit_enabled)
-> 
-> or simply
-> 
-> if (!hugepage_global_enabled();)
-> 
-> Let me try again below.
-> 
->>
->>>
->>> /*
->>>    * Otherwise, we only enforce sysfs settings if asked. In addition,
->>>    * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
->>>    * is not set, we don't bother checking whether the VMA has 
->>> VM_HUGEPAGE
->>>    * set.
->>>    */
->>> if (!orders || !(tva_flags & TVA_ENFORCE_SYSFS))
->>>       return orders;
->>>
->>>> +
->>>> +       /*
->>>> +        * Otherwise, we only enforce sysfs settings if asked. In
->>>> addition,
->>>> +        * if the user sets a sysfs mode of madvise and if
->>>> TVA_ENFORCE_SYSFS
->>>> +        * is not set, we don't bother checking whether the VMA has
->>>> VM_HUGEPAGE
->>>> +        * set.
->>>> +        */
->>>> +       if (!(tva_flags & TVA_ENFORCE_SYSFS))
->>>> +               return orders;
->>>> +
->>>> +       mask = always;
->>>> +       if (has_madvise)
->>>> +               mask |= madvise;
->>>> +       if (hugepage_global_always() || (has_madvise && 
->>>> inherit_enabled))
->>>> +               mask |= inherit;
->>>
->>> Similarly, this can maybe become (not 100% sure if I got it right, the
->>> condition above is confusing)
->>
->> IMO, this is the original logic.
-> 
-> Yeah, and it's absolutely confusing stuff.
-> 
-> Let me try again by only clearing flags. Maybe this would be clearer?
-> (and correct? still confused why the latter part is so complicated in 
-> existing
-> code)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 8b8f353cc7b81..66fdfe06e4996 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -265,6 +265,42 @@ unsigned long __thp_vma_allowable_orders(struct 
-> vm_area_struct *vma,
->                                           unsigned long tva_flags,
->                                           unsigned long orders);
-> 
-> +/* Strictly mask requested anonymous orders according to sysfs 
-> settings. */
-> +static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
-> +       unsigned long tva_flags, unsigned long orders)
+Thanks,
+Anup
+
+> ---
+>  arch/riscv/kvm/vcpu_sbi_fwft.c | 41 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>
+> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwf=
+t.c
+> index b0f66c7bf010..6770c043bbcb 100644
+> --- a/arch/riscv/kvm/vcpu_sbi_fwft.c
+> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> @@ -14,6 +14,8 @@
+>  #include <asm/kvm_vcpu_sbi.h>
+>  #include <asm/kvm_vcpu_sbi_fwft.h>
+>
+> +#define MIS_DELEG (BIT_ULL(EXC_LOAD_MISALIGNED) | BIT_ULL(EXC_STORE_MISA=
+LIGNED))
+> +
+>  struct kvm_sbi_fwft_feature {
+>         /**
+>          * @id: Feature ID
+> @@ -68,7 +70,46 @@ static bool kvm_fwft_is_defined_feature(enum sbi_fwft_=
+feature_t feature)
+>         return false;
+>  }
+>
+> +static bool kvm_sbi_fwft_misaligned_delegation_supported(struct kvm_vcpu=
+ *vcpu)
 > +{
-> +       const unsigned long always = READ_ONCE(huge_anon_orders_always);
-> +       const unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
-> +       const unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
-> +       const unsigned long never = ~(always | madvise | inherit);
-> +
-> +       /* Disallow orders that are set to NEVER directly ... */
-> +       orders &= ~never;
-> +
-> +       /* ... or through inheritance (global == NEVER). */
-> +       if (!hugepage_global_enabled())
-> +               orders &= ~inherit;
-> +
-> +       /*
-> +        * Otherwise, we only enforce sysfs settings if asked. In addition,
-> +        * if the user sets a sysfs mode of madvise and if 
-> TVA_ENFORCE_SYSFS
-> +        * is not set, we don't bother checking whether the VMA has 
-> VM_HUGEPAGE
-> +        * set.
-> +        */
-> +       if (!(tva_flags & TVA_ENFORCE_SYSFS))
-> +               return orders;
-> +
-> +       if (!(vm_flags & VM_HUGEPAGE)) {
-> +               /* Disallow orders that are set to MADVISE directly ... */
-> +               orders &= ~madvise;
-> +
-> +               /* ... or through inheritance (global == MADVISE). */
-> +               if (!hugepage_global_always())
-> +                       orders &= ~inherit;
-
-Seems we can drop this 'inherit' check, cause if 
-!hugepage_global_enabled() == true, which always means 
-!hugepage_global_always() is true.
-
-> +       }
-> +       return orders;
+> +       return misaligned_traps_can_delegate();
 > +}
-
-Otherwise look good to me.
-
 > +
->   /**
->    * thp_vma_allowable_orders - determine hugepage orders that are 
-> allowed for vma
->    * @vma:  the vm area to check
-> @@ -287,16 +323,8 @@ unsigned long thp_vma_allowable_orders(struct 
-> vm_area_struct *vma,
->                                         unsigned long orders)
->   {
->          /* Optimization to check if required orders are enabled early. */
-> -       if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
-> -               unsigned long mask = READ_ONCE(huge_anon_orders_always);
-> -
-> -               if (vm_flags & VM_HUGEPAGE)
-> -                       mask |= READ_ONCE(huge_anon_orders_madvise);
-> -               if (hugepage_global_always() ||
-> -                   ((vm_flags & VM_HUGEPAGE) && 
-> hugepage_global_enabled()))
-> -                       mask |= READ_ONCE(huge_anon_orders_inherit);
-> -
-> -               orders &= mask;
-> +       if (vma_is_anonymous(vma)) {
-> +               orders = __thp_mask_anon_orders(vm_flags, tva_flags, 
-> orders);
->                  if (!orders)
->                          return 0;
->          }
-> 
-> 
+> +static long kvm_sbi_fwft_set_misaligned_delegation(struct kvm_vcpu *vcpu=
+,
+> +                                       struct kvm_sbi_fwft_config *conf,
+> +                                       unsigned long value)
+> +{
+> +       struct kvm_vcpu_config *cfg =3D &vcpu->arch.cfg;
+> +
+> +       if (value =3D=3D 1) {
+> +               cfg->hedeleg |=3D MIS_DELEG;
+> +               csr_set(CSR_HEDELEG, MIS_DELEG);
+> +       } else if (value =3D=3D 0) {
+> +               cfg->hedeleg &=3D ~MIS_DELEG;
+> +               csr_clear(CSR_HEDELEG, MIS_DELEG);
+> +       } else {
+> +               return SBI_ERR_INVALID_PARAM;
+> +       }
+> +
+> +       return SBI_SUCCESS;
+> +}
+> +
+> +static long kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu=
+,
+> +                                       struct kvm_sbi_fwft_config *conf,
+> +                                       unsigned long *value)
+> +{
+> +       *value =3D (csr_read(CSR_HEDELEG) & MIS_DELEG) =3D=3D MIS_DELEG;
+> +
+> +       return SBI_SUCCESS;
+> +}
+> +
+>  static const struct kvm_sbi_fwft_feature features[] =3D {
+> +       {
+> +               .id =3D SBI_FWFT_MISALIGNED_EXC_DELEG,
+> +               .supported =3D kvm_sbi_fwft_misaligned_delegation_support=
+ed,
+> +               .set =3D kvm_sbi_fwft_set_misaligned_delegation,
+> +               .get =3D kvm_sbi_fwft_get_misaligned_delegation,
+> +       },
+>  };
+>
+>  static struct kvm_sbi_fwft_config *
+> --
+> 2.49.0
+>
 
