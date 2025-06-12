@@ -1,68 +1,78 @@
-Return-Path: <linux-kernel+bounces-684272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10965AD7874
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:45:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4421AD785E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B64937A8FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF5FC3A23ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8415029B22A;
-	Thu, 12 Jun 2025 16:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521D929AAEC;
+	Thu, 12 Jun 2025 16:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="IQxfot/8"
-Received: from ksmg01.maxima.ru (ksmg01.mt-integration.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="elzle4GN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D7E221DA8;
-	Thu, 12 Jun 2025 16:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1355228AAF8;
+	Thu, 12 Jun 2025 16:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749746708; cv=none; b=knuuMJDNZMPjwYYv2xC+M6XY8E26HklYOZxvXH8go2p6XcrgeFq8mFk49UXwD1snuyP1ZrHOrrBylMYldaOUwfgiEG4VJpXyL3nCM8vHFzJ/B/l69rgxN3dTXYu/uerjDQSXg3Yc+baHJmU5gil4MjXIQHKFB05kMhd7WLMS/K8=
+	t=1749746232; cv=none; b=EDx/F6cu31vL2lXg76UuSjmnqLVRygIeOHXd37Zk9Z2a+r3VEbRFUa4gDTclqUZSXx5J+SMUhz2AryQU6ytzNIVFr3Rh3zlwn2Lq/dEmsikd9R0MkQFlb57hB/ysXtpuBjDAFKwNZr17ZF5xe65qOisKRjUz8ke856xusKASJFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749746708; c=relaxed/simple;
-	bh=MOZXZ36WD3BqwUhBic6EdETWBxhSyIzABu52Hz2npgw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pphi+Xj36tfUtNS6HUUUOw2cgsdIELkpMuOWh4fORo2xNADEhdq0irn1vNds6p7AOg1HaKTOiYigH3JOrkITr8LW4VOA5uPfJHY2nvyGxWG0d8EZrXeWv1KKFlVxagnIMq9CVd5pJtmvY/AjjwOjy1T5AlNV5Bnb1JFdbb4AVRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=IQxfot/8; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 3AAAEC005A;
-	Thu, 12 Jun 2025 19:38:45 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 3AAAEC005A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1749746325; bh=Idap/fFoG4XkipCO0MFBqKEhwqzYYXaupjHesI4b544=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=IQxfot/8iBGybBLU1W/fqwhwQnToiQ+XSFg7qR04gqL778kdk/a9gPP/U6bWam0sg
-	 GH/ZQgzGvAG/RLhuqPSMs2abAMGEho4uObUprPoqiHEqdkEUuMRVrHegrVtXdUdBWn
-	 tFd9S95dOfcbdQssJjZ9j2G9td8M3IdsJyYdUU/OQceiHujAgys5KXHggWPSbujeEM
-	 pvmrYq2hHYlqjL4yza4pu458MQ/C5mPG57T09iTAfXcFBxUenZZbrJWmkOepzUYEgj
-	 tbjUMm5Xc1IDNVwBoqYny7hv+SYn0PW0yS8At/PC964b4zX4p/KiC6+vx0R3UOHKrN
-	 Sb5MxswM1XXrg==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (not verified))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Thu, 12 Jun 2025 19:38:45 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (178.236.220.13) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Thu, 12 Jun 2025 19:38:43 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: James Smart <james.smart@broadcom.com>
-CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Ram Vegesna
-	<ram.vegesna@broadcom.com>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Daniel Wagner
-	<dwagner@suse.de>, <linux-scsi@vger.kernel.org>,
-	<target-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] scsi: elx: efct: fix memory leak in efct_hw_parse_filter()
-Date: Thu, 12 Jun 2025 21:35:18 +0500
-Message-ID: <20250612163616.24298-1-v.shevtsov@mt-integration.ru>
+	s=arc-20240116; t=1749746232; c=relaxed/simple;
+	bh=Xw8NY++yvCtE0FcxweWC9uIfkONuXmW62OOgQjcK/0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HzXdTWqsdKTsrlJ5GI/rceMdx0vJlij5IHUd0KIKeIJl0A+DsjlzfBqUAwTnEjxSgES15sRZNDpHn0dnd4o77s07PKUianpU8A9/cNlHS7plmmRlwBY/H7tOAIztINtScIXDBEMi741xwVEC20VneZZyCXusGHJSK22ZYDRVHLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=elzle4GN; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749746231; x=1781282231;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Xw8NY++yvCtE0FcxweWC9uIfkONuXmW62OOgQjcK/0M=;
+  b=elzle4GNVDLpf+ShgnW2OlIlSUDI3F2Iu6uB/HchDD9gtr7RX6BPk2VY
+   PulDR2v0YL7HiXcRm0MzH8JwVzyRkNNBNMFXmcxZHl+G0UBMNmGhjCt4v
+   6hvNQyvzlUMhCNJOu/zcjXOohB5tV+tQ/BUCMmAFHd62VGcodtay/QJHC
+   +9ZPQ2dZjKPlrowitOZQO/58HpG8dFticBMDlVWYcZUX0+hln/qsiGF1F
+   cT2kCVJMurEXkuPQevv7J/S5XjA4LuMli8DTJIJzevCM6fGtJ7NucyGcd
+   dgIrVmuy0QiY1Una5iRgFCtUW4FQMCv+lCm2mOtnWzTy1HD253UsvByXr
+   g==;
+X-CSE-ConnectionGUID: B4WZH9A/QjCYcrJNJV+5mg==
+X-CSE-MsgGUID: 8z1+5kLvRBSH1+jLsAoyYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="54567941"
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="54567941"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 09:37:10 -0700
+X-CSE-ConnectionGUID: uC4aU3sfSWGvSMezSo5w0w==
+X-CSE-MsgGUID: o5UMFk9XTy6hFZ5ICd9ITQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="148474615"
+Received: from ldmartin-desk2.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.125.111.204])
+  by orviesa008.jf.intel.com with ESMTP; 12 Jun 2025 09:37:09 -0700
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: [PATCH v4 1/2] perf: move perf_pmus__find_core_pmu() prototype to pmus.h
+Date: Thu, 12 Jun 2025 11:36:58 -0500
+Message-ID: <20250612163659.1357950-1-thomas.falcon@intel.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,70 +81,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 62 0.3.62 e2af3448995f5f8a7fe71abf21bb23519d0f38c3, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 194027 [Jun 11 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/12 14:52:00 #27561045
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
 
-strsep() modifies the address of the pointer passed to it so that it no
-longer points to the original address. This means kfree() gets the wrong
-pointer.
+perf_pmus__find_core_pmu() is implemented in util/pmus.c but its
+prototpye is in util/pmu.h. Move it to util/pmus.h.
 
-Fix this by passing unmodified pointer returned from kstrdup() to kfree().
-
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Fixes: 4df84e846624 ("scsi: elx: efct: Driver initialization routines")
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+Suggested-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
 ---
- drivers/scsi/elx/efct/efct_hw.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.h  | 1 -
+ tools/perf/util/pmus.h | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/elx/efct/efct_hw.c b/drivers/scsi/elx/efct/efct_hw.c
-index 5a5525054d71..5b079b8b7a08 100644
---- a/drivers/scsi/elx/efct/efct_hw.c
-+++ b/drivers/scsi/elx/efct/efct_hw.c
-@@ -1120,7 +1120,7 @@ int
- efct_hw_parse_filter(struct efct_hw *hw, void *value)
- {
- 	int rc = 0;
--	char *p = NULL;
-+	char *p = NULL, *pp = NULL;
- 	char *token;
- 	u32 idx = 0;
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index a1fdd6d50c53..d38a63ba4583 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -298,7 +298,6 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *pmus, int dirfd, const char
+ 				  bool eager_load);
+ struct perf_pmu *perf_pmu__create_placeholder_core_pmu(struct list_head *core_pmus);
+ void perf_pmu__delete(struct perf_pmu *pmu);
+-struct perf_pmu *perf_pmus__find_core_pmu(void);
  
-@@ -1132,6 +1132,7 @@ efct_hw_parse_filter(struct efct_hw *hw, void *value)
- 		efc_log_err(hw->os, "p is NULL\n");
- 		return -ENOMEM;
- 	}
-+	pp = p;
+ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config);
+ bool perf_pmu__is_fake(const struct perf_pmu *pmu);
+diff --git a/tools/perf/util/pmus.h b/tools/perf/util/pmus.h
+index 8def20e615ad..d6a8d95af376 100644
+--- a/tools/perf/util/pmus.h
++++ b/tools/perf/util/pmus.h
+@@ -33,5 +33,6 @@ struct perf_pmu *perf_pmus__add_test_hwmon_pmu(int hwmon_dir,
+ 					       const char *sysfs_name,
+ 					       const char *name);
+ struct perf_pmu *perf_pmus__fake_pmu(void);
++struct perf_pmu *perf_pmus__find_core_pmu(void);
  
- 	idx = 0;
- 	while ((token = strsep(&p, ",")) && *token) {
-@@ -1144,7 +1145,7 @@ efct_hw_parse_filter(struct efct_hw *hw, void *value)
- 		if (idx == ARRAY_SIZE(hw->config.filter_def))
- 			break;
- 	}
--	kfree(p);
-+	kfree(pp);
- 
- 	return rc;
- }
+ #endif /* __PMUS_H */
 -- 
-2.49.0
+2.48.1
 
 
