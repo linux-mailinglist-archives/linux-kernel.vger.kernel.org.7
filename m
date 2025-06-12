@@ -1,157 +1,207 @@
-Return-Path: <linux-kernel+bounces-683798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C019AD7241
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:38:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD98DAD71B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B951C22725
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B950174A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9187248F63;
-	Thu, 12 Jun 2025 13:30:09 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462F923CF12;
+	Thu, 12 Jun 2025 13:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="USL7PAmy"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1416623E229;
-	Thu, 12 Jun 2025 13:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FD5239E6B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749735009; cv=none; b=VBuDZyE9AcAo3hRg/mww0og+EOrsCetrU3J2n9PwsmMIh9FcdxRMK3zmzZJoU06IasrwN6lZhcnHVC372R3jJ+KCrDmkMecSzhrMPKCRGNDPao6BNRVlRpOfvCriwyTPEgojXRd4Oy2SqU6ym5r/T4o44gsHyaZ3fmpn4WcSl8U=
+	t=1749734696; cv=none; b=OOhNVkSu7dBn1C02bZNqLxvH8PVLYSvWeTbI68V338qJdFXh9cm8J+PE+mMH7fDp2VIrtRY+JGQyJHVSb8hck2+2ZpTTxk170n4b6KWd/H0JKWMsKLR28gU8WAIA2MswX3446GpLZ7nHPM1/i4T3ZdpUrMTAu9NESEUYKiy+Tzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749735009; c=relaxed/simple;
-	bh=xX9ZZLz6dt8kHVgaW+ZLN6eqeYZjADOTT+Qoes0duhQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cSxpBxceuXIXGdyH4zDwMQAgqMF4inLQoDoFwcxvOQEar0/slfbot/btL0ir551byDQO6VQ7PRiE0YEUc1TbRFE9zP7sOLsaYe1IzyIxGRgCNSnuVViuCpO3acZU+2R9NuDHGn0bMROr3NgiR7Q4R73qrJXj9Cmnz/Q5ARv0WHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJ3L437VszKHNP7;
-	Thu, 12 Jun 2025 21:30:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C31E81A1232;
-	Thu, 12 Jun 2025 21:30:02 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBXul5Z1kpoBZgwPQ--.19631S4;
-	Thu, 12 Jun 2025 21:30:02 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: josef@toxicpanda.com,
-	axboe@kernel.dk,
-	xiubli@redhat.com,
-	prasanna.kalever@redhat.com,
-	ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org,
-	nbd@other.debian.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH] nbd: fix uaf in nbd_genl_connect() error path
-Date: Thu, 12 Jun 2025 21:24:05 +0800
-Message-Id: <20250612132405.364904-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1749734696; c=relaxed/simple;
+	bh=nSjx51XwsDM238FSIikQC+yI/Iljj0NBnR2BVO64huc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TZQiY6FFUk73U6yAABFkxGmbTkWSuCgovNBnF7Np8mZA2obZlh4388V3ZV9IMRURZBQATqXGUWPJX9RcMYps0M7Bt9ZbZLojypNPiLHOlsZNxggn0GLE1KEdjf0ukNX22V7iZwoy533/Kji4MavT72b9gDozwG5BIKq46xNTVqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=USL7PAmy; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fad8b4c927so8692946d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1749734694; x=1750339494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yO42KCFFAU1JaE5snqlMD+WeNGQUfTluFPre84YIRbg=;
+        b=USL7PAmyjBqjvLTTZ0N7ITv/cMyLL/ILxBJdSWH5hw0LBRwJik1N7ohefT3h/drDIg
+         mIeL1iWWS4F4aTMqLU+BEp2/Z3bOzTQf9inqk8cZhqM5dNRNwjBbNnEmNSuQAQ+9S9YH
+         q1pzlGs5zBKIt8wiEr3qvX3LmaXqh4KlTN87e+7gO+f1ZbtP8f3u94iwBZ6dxNEZvsQz
+         3MPGVksFhtrDEyZtnJXSEVZmxsMUzuJDecfyxsX0hZK64xii5W2/FjMQJOqOOLIYdqEJ
+         mP7byCXZwyA7yFAbdp/u/DSOU4dAdeHW1XAnwvkHg6Wq7rJcfX4BEPt7vNbnjNXwnDAm
+         A+QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749734694; x=1750339494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yO42KCFFAU1JaE5snqlMD+WeNGQUfTluFPre84YIRbg=;
+        b=ofXkussB5ItRjsVRfCj7Dgo24ALOM6+aOISMc6sR62oyzpFF/jqT1P8bDTu2cat7l2
+         jKt0fRkIoApv4N5AmUTgwsXU1OJWkehPplEpfJ4fFlj2T7r3V8TRs5orK06SZJcJtEtV
+         qCzpFh9AXP+158/qZlsQSrLsi8HXE6pAmKkpsTqyw+FCzBh87iSjFsoc6qMAmcdZIZhE
+         a4LYF91R8vfoS5jlp4mayUv+tCVXetBLKjXlDdnsb9rb+B3lY8Fb7mP2jQZL9M+6pUNM
+         TY0yJnL0nZjlkmbd1FL/WvnVQA+l7JYIkhwBIpjDbdhiQs9++8w45GXz6Gz86Li8HTc3
+         RRvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVr+ukQh2MsrAE9IbhYQIbHSHPx8z1vh6s8KRu97VgjlTxBDQ6L0oPwMKBfXp3UwQBu118jkfoGEuEq3OA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHlcwmHlJsQ5lbpHxcBti0yyLKd99aiuAj2aTNdFiovPVIQRH+
+	gBCupSpWVBnODA3KNvTd+oMBtyLRCAHt8OImC6XJ5Tyx3AkCNrZscVZBmmnIMnfPTUwBS1A5GTf
+	dc4Prx8M9fxigCd8INRYBQk/djwrs5lYkYV1VGE+KAQNPibQrJ7Xf
+X-Gm-Gg: ASbGnctQ9uMpWSNkBOfqKeOVp7Q29KmHkAN2Mxk8LdPTbs8UFxOgppbYTqojXE/PzXn
+	c3YvGST2D2/MxbRpMOsbkpaie6FfRcC0BRqZN2iBKaqSsR+7t11MQqZP+16fPMjrGfsq4fopsZl
+	wRE3ffsiP5fxkhu7Zm1gaoOV6SPhYo9DJ/JH6scylMOffb
+X-Google-Smtp-Source: AGHT+IEQ8/gBtL0M7nfyYdA1Q09mRUvmfJss0qUxYGME0df67gFne3lBmXn745akWi2zsvhSTtgFKgn2YK7q1n6XKl8=
+X-Received: by 2002:a05:6e02:2783:b0:3dd:c40d:787e with SMTP id
+ e9e14a558f8ab-3ddfa80be5fmr50613855ab.2.1749734681937; Thu, 12 Jun 2025
+ 06:24:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXul5Z1kpoBZgwPQ--.19631S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFWktw4ktr4Uuw4DZry5urg_yoW5ZF18pF
-	sxGFZ7CrW8ua40gFWkAw18ZFy5t3W5Xry7Kr97Gw1YvryfAr4j9F9YkF90qF98KryrCF9r
-	AF1qqry8KF1UGrDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU0rhL5UUUUU==
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+References: <20250523101932.1594077-1-cleger@rivosinc.com> <20250523101932.1594077-12-cleger@rivosinc.com>
+In-Reply-To: <20250523101932.1594077-12-cleger@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 12 Jun 2025 18:54:30 +0530
+X-Gm-Features: AX0GCFu-M1pG9OAlM2fvsx7DbIa0rvE-jQkn0nAnykhBaLvlREw8Qci06BqSqC4
+Message-ID: <CAAhSdy10FcQxWR3PCA0502AAEQ7S=TxkX-Jtuh+yVDh5ZgNnSg@mail.gmail.com>
+Subject: Re: [PATCH v8 11/14] RISC-V: KVM: add SBI extension init()/deinit() functions
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Deepak Gupta <debug@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Atish Patra <atishp@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+On Fri, May 23, 2025 at 3:52=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
+>
+> The FWFT SBI extension will need to dynamically allocate memory and do
+> init time specific initialization. Add an init/deinit callbacks that
+> allows to do so.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-There is a use-after-free issue in nbd:
+Queued this patch for Linux-6.17
 
-block nbd6: Receive control failed (result -104)
-block nbd6: shutting down sockets
-==================================================================
-BUG: KASAN: slab-use-after-free in recv_work+0x694/0xa80 drivers/block/nbd.c:1022
-Write of size 4 at addr ffff8880295de478 by task kworker/u33:0/67
+Thanks,
+Anup
 
-CPU: 2 UID: 0 PID: 67 Comm: kworker/u33:0 Not tainted 6.15.0-rc5-syzkaller-00123-g2c89c1b655c0 #0 PREEMPT(full)
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: nbd6-recv recv_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xe0/0x110 mm/kasan/report.c:634
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
- recv_work+0x694/0xa80 drivers/block/nbd.c:1022
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-nbd_genl_connect() does not properly stop the device on certain
-error paths after nbd_start_device() has been called. This causes
-the error path to put nbd->config while recv_work continue to use
-the config after putting it, leading to use-after-free in recv_work.
-
-This patch moves nbd_start_device() after the backend file creation.
-
-Reported-by: syzbot+48240bab47e705c53126@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68227a04.050a0220.f2294.00b5.GAE@google.com/T/
-Fixes: 6497ef8df568 ("nbd: provide a way for userspace processes to identify device backends")
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
----
- drivers/block/nbd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 7bdc7eb808ea..2592bd19ebc1 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -2198,9 +2198,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 				goto out;
- 		}
- 	}
--	ret = nbd_start_device(nbd);
--	if (ret)
--		goto out;
-+
- 	if (info->attrs[NBD_ATTR_BACKEND_IDENTIFIER]) {
- 		nbd->backend = nla_strdup(info->attrs[NBD_ATTR_BACKEND_IDENTIFIER],
- 					  GFP_KERNEL);
-@@ -2216,6 +2214,8 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 		goto out;
- 	}
- 	set_bit(NBD_RT_HAS_BACKEND_FILE, &config->runtime_flags);
-+
-+	ret = nbd_start_device(nbd);
- out:
- 	mutex_unlock(&nbd->config_lock);
- 	if (!ret) {
--- 
-2.39.2
-
+> ---
+>  arch/riscv/include/asm/kvm_vcpu_sbi.h |  9 +++++++++
+>  arch/riscv/kvm/vcpu.c                 |  2 ++
+>  arch/riscv/kvm/vcpu_sbi.c             | 26 ++++++++++++++++++++++++++
+>  3 files changed, 37 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/a=
+sm/kvm_vcpu_sbi.h
+> index 4ed6203cdd30..bcb90757b149 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -49,6 +49,14 @@ struct kvm_vcpu_sbi_extension {
+>
+>         /* Extension specific probe function */
+>         unsigned long (*probe)(struct kvm_vcpu *vcpu);
+> +
+> +       /*
+> +        * Init/deinit function called once during VCPU init/destroy. The=
+se
+> +        * might be use if the SBI extensions need to allocate or do spec=
+ific
+> +        * init time only configuration.
+> +        */
+> +       int (*init)(struct kvm_vcpu *vcpu);
+> +       void (*deinit)(struct kvm_vcpu *vcpu);
+>  };
+>
+>  void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcpu, struct kvm_run *r=
+un);
+> @@ -69,6 +77,7 @@ const struct kvm_vcpu_sbi_extension *kvm_vcpu_sbi_find_=
+ext(
+>  bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx);
+>  int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run)=
+;
+>  void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
+> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
+>
+>  int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu, unsigned long =
+reg_num,
+>                                    unsigned long *reg_val);
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 02635bac91f1..2259717e3b89 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -187,6 +187,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+>
+>  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+>  {
+> +       kvm_riscv_vcpu_sbi_deinit(vcpu);
+> +
+>         /* Cleanup VCPU AIA context */
+>         kvm_riscv_vcpu_aia_deinit(vcpu);
+>
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index d1c83a77735e..3139f171c20f 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -508,5 +508,31 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu)
+>                 scontext->ext_status[idx] =3D ext->default_disabled ?
+>                                         KVM_RISCV_SBI_EXT_STATUS_DISABLED=
+ :
+>                                         KVM_RISCV_SBI_EXT_STATUS_ENABLED;
+> +
+> +               if (ext->init && ext->init(vcpu) !=3D 0)
+> +                       scontext->ext_status[idx] =3D KVM_RISCV_SBI_EXT_S=
+TATUS_UNAVAILABLE;
+> +       }
+> +}
+> +
+> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu)
+> +{
+> +       struct kvm_vcpu_sbi_context *scontext =3D &vcpu->arch.sbi_context=
+;
+> +       const struct kvm_riscv_sbi_extension_entry *entry;
+> +       const struct kvm_vcpu_sbi_extension *ext;
+> +       int idx, i;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(sbi_ext); i++) {
+> +               entry =3D &sbi_ext[i];
+> +               ext =3D entry->ext_ptr;
+> +               idx =3D entry->ext_idx;
+> +
+> +               if (idx < 0 || idx >=3D ARRAY_SIZE(scontext->ext_status))
+> +                       continue;
+> +
+> +               if (scontext->ext_status[idx] =3D=3D KVM_RISCV_SBI_EXT_ST=
+ATUS_UNAVAILABLE ||
+> +                   !ext->deinit)
+> +                       continue;
+> +
+> +               ext->deinit(vcpu);
+>         }
+>  }
+> --
+> 2.49.0
+>
 
