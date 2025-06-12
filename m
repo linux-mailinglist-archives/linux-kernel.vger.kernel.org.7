@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-683939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A81AD73CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:28:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE07AD73F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BD3176406
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29919188B3BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFD822157F;
-	Thu, 12 Jun 2025 14:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED8123505F;
+	Thu, 12 Jun 2025 14:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HQGbMX7H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UdWCYiUn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G2njMlsj"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13401247DEA;
-	Thu, 12 Jun 2025 14:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DC419007D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749738466; cv=none; b=iCE0BcWKBaFcMJMUXHQC31txDlL/IvLu/PIcQBzkHijKQPV+Z2lxKy0GfZKHgWdZ681GvuoNOd84YGdsiM6GrG+iXSAKoNPiE725nE7EGFVxPE2kojuVw0QNMja5k0x8onR+5fxqcajkg/BJ6q0aTch9st7Gx4B15/jZhYTWb5E=
+	t=1749738522; cv=none; b=tvUDdjms3XJWwW72GiF6b6TeWtc7sWy+Bcn52lhP+2P4vwaWEAx3vc/alUG4TVyYeYr2YaPs6S47HYcByXmKE0N2P9NDJ7Ii9SFEXE4d218fRPV57W+3ksNO1t9g8KIAC+lsXRnowXEk2QoB1rpINPqSAGdWqHgcl83hIlOXe04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749738466; c=relaxed/simple;
-	bh=Vc758BeY06sEOUyS5ze/KYna8HJw6VGoT8zRzFVsN6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kEvCPdyp1DQHn8DsTdKsJ4kpWs4KF7bdzXB/iZPdmlkmnNhdZQcWkM/NDE/AKRbc4lL7hK2I4+VFKZ7husOuSBRdLfdPRn9TY7y5RaALpr0jrJEX57eOJGPN6T/4Q5y76LZWa5rEI13v27QbAr7KAlipbl+SNS1JqtubT/VAbN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HQGbMX7H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UdWCYiUn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 12 Jun 2025 16:27:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749738462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYuR96f9aCmk+UgAJ+PfZpTvLkyj7cl7/21Uj0F6GOs=;
-	b=HQGbMX7H99yjouL/7Jw3HK/BsZtXEemHl8G5TOr2xgFVHCrvS5DWCatTfr4U+N9icRzk9z
-	qoeG5qOZ4Si1rZvE9hwIZn1oZy6k8JH3vnRk4Aa0JGQ2cNFODjjvHfQnJnMC7zUGqqKNLQ
-	lNS92xdVzSzYIGVawYcBTW8cr9j9yN2G7rSZ1WWdsXe74/OaFdTkeMzMx8VQTxxMzj+vg7
-	BXYc/8S3C3ZKHhCqpVkhUWLFuaXC36ZbdoqtcW926YrQBzzpHO9bBRs/1ISoGUA+gHE7dB
-	bcxj1iwjRwplkeqwJw1SxUGOTdJNIb2T8NPSzIKukE9XU01B168YkDG8hfHaDA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749738462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYuR96f9aCmk+UgAJ+PfZpTvLkyj7cl7/21Uj0F6GOs=;
-	b=UdWCYiUn+dfYE0u8mvZRWfU92Kdcx6mPx8AkMkG3DoQQcUrUsiGAHTPFxMsSam2UIhNUD7
-	Y6fO3mwQ8GhsStBA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Jason Gunthorpe <jgg@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Mark Brown <broonie@kernel.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 09/14] selftests: harness: Move teardown conditional
- into test metadata
-Message-ID: <20250612162151-1fc97a6c-a1c9-4656-997e-fd02f5f9418b@linutronix.de>
-References: <aEh+DNmbZrqg6rHR@nvidia.com>
- <20250610234657.GO543171@nvidia.com>
- <aEkqtfcOJDrxAAcs@nvidia.com>
- <20250611093942-f6c65a06-c72a-4451-aa1e-8cb8de0d69cb@linutronix.de>
- <aEm6tuzy7WK12sMh@nvidia.com>
- <aEn5jmXZbC5hARGv@nvidia.com>
- <aEoUhPYIAizTLADq@nvidia.com>
- <20250611235117.GR543171@nvidia.com>
- <aEp6tGUEFCQz1prh@nvidia.com>
- <20250612135802.GU543171@nvidia.com>
+	s=arc-20240116; t=1749738522; c=relaxed/simple;
+	bh=EJUn+HxEphkXa3Tmo0WpUA6X64DPGMauzWeB2gIGvQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H3RrZb+MN/CbAoh7F6JlUfm0rPu154n4frzTPXfCaG1QW2Pc+HFTuGbQkaNJMe5FagcQDP8FsiQt6CaWfG6OTIBETvX/kV4SVtESDY8izQk4UVDcwGO4ZA/cB33xjVjNEorzIJI2MgTA1lJUBAR5bjkphJvasp6nB03u1oEaH2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G2njMlsj; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so888886f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749738518; x=1750343318; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y7rIsWA2briWQ8Yb8DhTmywFqeEer3lbSfSQBbj2pps=;
+        b=G2njMlsj+SEOIHr/5PYGj2oKnSU4DzwqxrpaaZCFD7xIhwRbgdQr/qY9Ek324Y+L0i
+         8AbK8b48Hdus62jPwS9AiMSS9XN0C2YfzeOj6BMssc2vNfKorIz4m614vOuMhrncGIoY
+         CwVGNO5eeQnqNHgv/m4mhgM9DfBVHjkIAMGn0rgr9aCZnRde/gqt2TUJeR3a9XcfGuW8
+         7KKz+KktGOo1ozruMtgURfxTlTVgu1A5DGBbKDExbMw3qt9gaXaVjFWj0X4N8cmsiFOv
+         Qa8W9UZ6g9IBNUlluzFqA4uQtr5kzZAneTFA8KyIzPo5pnnShLPp6DhDSbdZ/Q4wuI9U
+         iysQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749738518; x=1750343318;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y7rIsWA2briWQ8Yb8DhTmywFqeEer3lbSfSQBbj2pps=;
+        b=hxrCNE6YP5llhg3ZYkl8d7MpRH/eQ4N6LoFlGYa516X/9hqsMxrkdUulflP03Fr7aJ
+         VlXpX/6zot5Z+Efm9Zt3cJdamKZzt7DdNmzsBvcR5XRUkDOw9LrV5Y2Gw1t9YWeBCNRA
+         dNxL45JjclmMujDq0IcOoEdbqTV2xNAVIYRqQ1IgEUOd/LcZNCstDD8/hMw5ddALMWz/
+         f8nveVqV0Mwf0kqApbsqp8DrsdafYPsCLCmJcDzIpP/oF6qUl+sb4f+SUUQwNA19Krlt
+         BsZXhqEbjEe+GSSS6BbNfSBf7YssPfFmXe73yopWxgvsrWWXmc634LXwfFGagR/v7a1m
+         2sqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsCQI2smeA+H/Q4ae6//sYJspFv4pszkiRFWWyxcm0Px/A+sxteqJMmsoOUkGxECmLiDUI1Vnu0FUz3YA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFvTnzx97vhEtsAPZvOElOusej1nBn83QZSXpPo9lESMj6UIff
+	la4Fz3jEJJrfyCQN8VLgzcrAvbnAytZRaxYHFrrEc7CVPDdK2jcOkDDOSYUU9YbX0rM=
+X-Gm-Gg: ASbGncuVAwCmjQwPndro2nr0xKUqOzDXPJFSV7grJ2/4g9VlPZdNkFmYgdpn/uxcWJS
+	Pv23O5iU34yq29zeJs8lpcewiEy28se7RIfAdPMkH45eRZ8bf1PVDlf/t5HmWByIrrUGgLEtFZu
+	ni5quJbR0EGpflIOITOgwmnhknxYX/v5u9l025D2uuzzGiqpAoL+uCGKaHfuPttnTfpo8vYLeje
+	DJyx+Mhy/f1XXn6JccM6YOharLKhFBzH8KJ3cLZBg4+FY1wtvDcKSdk848Cdt1CFZFO6YPwJ7J9
+	OZtlgL6lXoFjt0VSt+HOD4rDc8qi54X3DtD7V24I5paWgAYAtN7OH9ctNXk2wksHWDs=
+X-Google-Smtp-Source: AGHT+IGSIQRcM7fVzWirS8YoPF0tFI1UZjJkmBNxvk3+G8I7l0PWiFBYrTUOa1vhtpeoVhEQXQLGMA==
+X-Received: by 2002:a05:6000:3106:b0:3a4:d975:7d6f with SMTP id ffacd0b85a97d-3a56076b241mr3276014f8f.39.1749738518473;
+        Thu, 12 Jun 2025 07:28:38 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561a3cdb4sm2152087f8f.54.2025.06.12.07.28.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 07:28:38 -0700 (PDT)
+Message-ID: <5b21c4c9-0ef7-41e5-a3bb-5a48a0c73644@linaro.org>
+Date: Thu, 12 Jun 2025 15:28:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612135802.GU543171@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] spi: spi-fsl-dspi: Use non-coherent memory for DMA
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Frank Li <Frank.li@nxp.com>,
+ Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
+ <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
+ <aEhMBsqlx9I4XqJS@lizhi-Precision-Tower-5810>
+ <de7142ac-f1a3-412f-9f00-502222b20165@app.fastmail.com>
+ <aEhVsrEk0qv+38r3@lizhi-Precision-Tower-5810>
+ <20250611090107.t35zatn47vetnvse@skbuf>
+ <c65c752a-5b60-4f30-8d51-9a903ddd55a6@linaro.org>
+ <20250612111514.rfb3gpmlilznrfxs@skbuf>
+ <ad7e9aa7-74a3-449d-8ed9-cb270fd5c718@linaro.org>
+ <20250612142306.3c3dl46z326xvcud@skbuf>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250612142306.3c3dl46z326xvcud@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 10:58:02AM -0300, Jason Gunthorpe wrote:
-> On Wed, Jun 11, 2025 at 11:59:00PM -0700, Nicolin Chen wrote:
+
+
+On 12/06/2025 3:23 pm, Vladimir Oltean wrote:
+> On Thu, Jun 12, 2025 at 03:14:32PM +0100, James Clark wrote:
+>>> That's why I don't like the DMA mode in DSPI, it's still CPU-bound,
+>>> because the DMA buffers are very small (you can only provide one TX FIFO
+>>> worth of data per DMA transfer, rather than the whole buffer).
+>>
+>> Is that right? The FIFO size isn't used in any of the DMA codepaths, it
+>> looks like the whole DMA buffer is filled before initiating the transfer.
+>> And we increase the buffer to 4k in this patchset to fully use the existing
+>> allocation.
 > 
-> > We can see the 64MB was rounded up to 512MB by ksys_mmap_pgoff()
-> > when being passed in to hugetlb_file_setup() at:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/mmap.c?h=v6.16-rc1#n594
-> > "		len = ALIGN(len, huge_page_size(hs));  "
-> > 
-> > By looking at the comments here..:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/hugetlbfs/inode.c#n1521
-> > "
-> > /*
-> >  * Note that size should be aligned to proper hugepage size in caller side,
-> >  * otherwise hugetlb_reserve_pages reserves one less hugepages than intended.
-> >  */
-> > struct file *hugetlb_file_setup(const char *name, size_t size,
-> > "
-> > 
-> > ..I guess this function was supposed to fail the not-a-multiple
-> > case as you remarked? But it certainly can't do that, when that
-> > size passed in is already hugepage-aligned..
-> > 
-> > It feels like a kernel bug as you suspect :-/
+> Uhm, yeah, no?
 > 
-> Certainly is
->  
-> > And I just found one more weird thing...
-> > 
-> > In iommufd.c selftest code, we have:
-> > "static __attribute__((constructor)) void setup_sizes(void)"
-> > where it does another pair of posix_memalign/mmap, although this
-> > one doesn't flag MAP_HUGETLB and shouldn't impact what is coming
-> > to the next...
+> dspi_dma_xfer():
 > 
-> This could all just be more weirdness from the above, it doesn't
-> really make alot of sense.
-> 
-> I think change things so the MAP_HUGETLB test all skip if
-> HUGEPAGE_SIZE < buffer_size and move on..
-> 
-> Can't run those tests on ARM64 64k which is unfortunate.. I thought
-> there were patches to give that config a 2M huge page size option
-> based on the new contiguous page support though? Maybe it was only THPS..
+> 	while (dspi->len) {
+> 		dspi->words_in_flight = dspi->len / dspi->oper_word_size;
+> 		if (dspi->words_in_flight > dspi->devtype_data->fifo_size)
+> 			dspi->words_in_flight = dspi->devtype_data->fifo_size;
+> 		dspi_next_xfer_dma_submit();
+> 	}
 
-If the assumption is that this is most likely a kernel bug,
-shouldn't it be fixed properly rather than worked around?
-After all the job of a selftest is to detect bugs to be fixed.
+Right but that's before the change in this patchset to use the whole 
+page that was allocated, hence the next bit:
 
-But I wasn't able to follow all of your discussions,
-so I may be missing something.
+ > And we increase the buffer to 4k in this patchset to fully use the
+   existing allocation.
 
-If the test is broken on ARM64 64k in general then I am also wondering how
-it didn't fail before my change to the selftest harness.
+We were allocating for the size of the FIFO (multiplied by two to hold 
+the control words), but dma_alloc_coherent() will be backed by a whole 
+page anyway, even if you only ask for a few bytes.
 
+After changing that to make use of the full allocation the FIFO length 
+is no longer involved.
 
-Thomas
 
