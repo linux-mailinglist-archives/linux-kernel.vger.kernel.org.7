@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-684528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18183AD7C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F767AD7C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4635D7ACE23
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D3BA188F657
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7E52D663E;
-	Thu, 12 Jun 2025 20:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164C32D8DA0;
+	Thu, 12 Jun 2025 20:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0S2M7k7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="R4LaJXdj"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4123D170A26;
-	Thu, 12 Jun 2025 20:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6925B2D8773;
+	Thu, 12 Jun 2025 20:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749760589; cv=none; b=ZR538M6sVj2E52Ry6+8qipqwob3NCTpFS6Gm5hiMlaarQcsINcksrgqqtV12pXYXrMv5sxpm0XavneWPJzTa0+JjqEYVpHQ91OyhyZf+RdF74MTB91VlI3W6UTRHXLtYNfu8y0L3t63fnm2lHNEYNi9Zs8gRGJYO48goHhvFOtQ=
+	t=1749760628; cv=none; b=BIeleUsEaAeyPoC1vDnFOFqSOc5HcWjdHjeB0t/ircDGM68FpW2jDwPXHI+W8NPWJD7muldwNLOojLRG2r1Ub29CAtJXM1QibAKlO0tiqkCp6n1AH65iPFPqPv7A0Hq3SwmZx/lTZkVc6dcFfzbxA6XawlPrnrHU29bVLHQw2jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749760589; c=relaxed/simple;
-	bh=X6ZFmCqv+rVQiA6r4vfqa/BBIukFpY3bI33k6qaoFMQ=;
+	s=arc-20240116; t=1749760628; c=relaxed/simple;
+	bh=9bR2YbjDcKulL5hNBeUJr73babSsUOTOMmhT4wUFqnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RO7l9rdox8xuHsaAgDta5kKFf+d3/7vUdwgfr7pzFG66Twu1XJYDyHWo3S1suh0lMeuHqtwxppCiUfhcX/n6OijfejQz+nSncokUNkdDmF4te4xUp3tOr76GKOxJ8NBChF3L1TGCazp/PpKRPBmuOoieqfFk7/LPm0IFAHH9ehE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0S2M7k7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D087C4CEEA;
-	Thu, 12 Jun 2025 20:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749760588;
-	bh=X6ZFmCqv+rVQiA6r4vfqa/BBIukFpY3bI33k6qaoFMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0S2M7k7+SGKzMwSIMzZZEk5sL16d2Rz/FLrH5H6V05cfgV2rfDn9SNLK/jxRW7rO
-	 /rDPqMCHc8CpiB0/icznBRUOQj5wcOGy8TVaWLyESU19XBnPcUVOJIAlDRgNRGVsaX
-	 g/RGKFXImxrbR92yDWJ/gf7hnH7oRhJon9+YYETDW8FmgaV6KdsleDippxdoFRMQ7m
-	 prEEf3bxSA+1gRObi5g80zpz0ZRa3j+asn6UOwy27WAGZud4eqrqdTkhw12dBwmpcv
-	 esj6IuleWtNd7rkPZFhwf5Naojmoo0lXKfBbESHB+Du9+kRt5l7Hdwd0JC8wqEF7Vt
-	 4YLz04gqNL4bA==
-Date: Thu, 12 Jun 2025 22:36:22 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
-Message-ID: <5aam5ff3m24yzsqdh7w2zplccuwmmr2no7jhgmdnxggmhpo4hl@r6iawlw7f42m>
-References: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
- <CGME20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d@eucas1p1.samsung.com>
- <20250610-rust-next-pwm-working-fan-for-sending-v2-2-753e2955f110@samsung.com>
- <jbm3qvowi5vskhnjyqlp3xek36gzzqjt35m66eayxi6lmi525t@iefevopxjl53>
- <d1523586-82ca-4863-964f-331718bb1f0e@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSlbG5l/xpouAIPRlee4lstuHG39DirTs343CmFEuozJMFWxh2xOvWn5izai1RFV25SvSrfWKaBVSXF4oN2TrixGThVdwnpENnS9GKaeoo1CVK8zZr7dUtZjdoZA4V89aX0v/rT3ibNXPo0OS28QVFrKAlNkhY8JPWr0rJfx7gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=R4LaJXdj; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bJDpk5BGyz9t5Y;
+	Thu, 12 Jun 2025 22:37:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1749760622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Smza2Jc4Jwl4Da5lRMks2Zjvr0wRUWchDcyc8CJiMs=;
+	b=R4LaJXdjSwMzUkY7g817Vq/lRyAaIBH3jcKGIh7tWnoqeown1ttyXDuiZ3nabREK7v9XHw
+	ycPTaxOzRz1qNET38XoBmQrfxk3NzK9NAxaTGLMHjSWjAwvtd7MxSvkbxp1VIOaaMP5DZE
+	Byzvv5fxey/X9IFFTI5HPyGIgiMDIAcg6pfLG52GYWH8NVHJ5bthwJwL9aYMSMQlR/J3IP
+	E30fKoibQSosM97GRjxFsckpEWYAEezBI+osesLhmBdWKdFPoTEVgIg2F2N5eic3cFBHCK
+	4U7HoT/g5YhSxT117sCaYTkH6p15140lyOmGr94ba7fhb+algNv2I1TZ7ZZVfQ==
+Date: Thu, 12 Jun 2025 22:36:48 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de
+Subject: Re: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
+Message-ID: <nsquvkkywghoeloxexlgqman2ks7s6o6isxzvkehaipayaxnth@6er73cdqopmo>
+References: <20250612105100.59144-1-p.raghav@samsung.com>
+ <30a3048f-efbe-4999-a051-d48056bafe0b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5np625sv2e7hqcqz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d1523586-82ca-4863-964f-331718bb1f0e@samsung.com>
+In-Reply-To: <30a3048f-efbe-4999-a051-d48056bafe0b@intel.com>
+X-Rspamd-Queue-Id: 4bJDpk5BGyz9t5Y
 
+On Thu, Jun 12, 2025 at 06:50:07AM -0700, Dave Hansen wrote:
+> On 6/12/25 03:50, Pankaj Raghav wrote:
+> > But to use huge_zero_folio, we need to pass a mm struct and the
+> > put_folio needs to be called in the destructor. This makes sense for
+> > systems that have memory constraints but for bigger servers, it does not
+> > matter if the PMD size is reasonable (like in x86).
+> 
+> So, what's the problem with calling a destructor?
+> 
+> In your last patch, surely bio_add_folio() can put the page/folio when
+> it's done. Is the real problem that you don't want to call zero page
+> specific code at bio teardown?
 
---5np625sv2e7hqcqz
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
-MIME-Version: 1.0
+Yeah, it feels like a lot of code on the caller just to use a zero page.
+It would be nice just to have a call similar to ZERO_PAGE() in these
+subsystems where we can have guarantee of getting huge zero page.
 
-Hello Michael,
+Apart from that, these are the following problems if we use
+mm_get_huge_zero_folio() at the moment:
 
-On Thu, Jun 12, 2025 at 10:14:13AM +0200, Michal Wilczynski wrote:
-> On 6/11/25 08:58, Uwe Kleine-K=F6nig wrote:
-> > Huh, if you do the newstyle stuff, .get_state() is wrong. It's either
-> > .round_waveform_tohw() + .round_waveform_fromhw() + .read_waveform() +
-> > .write_waveform() or .apply() + .get_state(), but don't mix these.
->=20
-> In the process of implementing the full "newstyle" waveform API as you
-> suggested, I discovered a hardware limitation. After writing new values
-> to the period and duty cycle registers, reading them back does not
-> return the programmed values, which makes it impossible to reliably
-> report the current hardware state.
->=20
-> This appears to be a known quirk of the hardware, as the reference C
-> driver from T-HEAD [1] also omits the .get_state callback, likely for
-> the same reason.
+- We might end up allocating 512MB PMD on ARM systems with 64k base page
+  size, which is undesirable. With the patch series posted, we will only
+  enable the static huge page for sane architectures and page sizes.
 
-Do you read complete non-sense or e.g. the old configuration until
-the current period ends?
+- In the current implementation we always call mm_put_huge_zero_folio()
+  in __mmput()[1]. I am not sure if model will work for all subsystems. For
+  example bio completions can be async, i.e, we might need a reference
+  to the zero page even if the process is no longer alive.
 
-I guess would be that .get_state wasn't implemented because this is an
-oldoldstyle driver and it works also without that function.
+I will try to include these motivations in the cover letter next time.
 
-> Given this, would it be acceptable to provide a write-only driver? My
-> proposed solution would be to omit the .read_waveform() and
-> .round_waveform_fromhw() implementations from my PwmOps trait. This
+Thanks
 
-Please don't skip .round_waveform_fromhw(), that one is needed for
-pwm_round_waveform_might_sleep().
+[1] 6fcb52a56ff6 ("thp: reduce usage of huge zero page's atomic counter")
 
-I don't like it, but given that the hardware doesn't play along there is
-no alternative.
-
-> would mean the driver can correctly set the PWM state, but attempting to
-> read it back via sysfs would fail (e.g., with -EOPNOTSUPP), reflecting
-> the hardware's capability.
-
-I think there might be another patch opportunity then to make PWM_DEBUG
-work with that.
-
-Best regards
-Uwe
-
---5np625sv2e7hqcqz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhLOkMACgkQj4D7WH0S
-/k4ucQgAuqXHTYO1I3RV2AzSFsFd2LK5PaRAhfs5MWWKlBDbPjW95mxdlioBxzyq
-+fee+3TYWq4FMe9u7ogpJKQvFn7yDZcR5Iy9SH78CnHEAugQG8L0GZ3OkRUQEc5P
-OsuxPI6MY19uVPT/phoGVYdRb1X6/X9lvsVg/rItyJTNcChYmqm5cc9QHgv6wY+D
-AKFTu2CUaSGuJUQR8WYz8+Z/Mtn/Zy8jgKkoMHosAfELqSZDK5sijuGrTnh03a52
-J5FC1Pc5JaqXDJIDXwt3+HqkWi9vnms23HE4Kk4B8oFmJhHuCHP/Sbg6ocx8y5Om
-sfhozLUhiIsfiZp/dXwaRpbOdkmJjA==
-=jmz9
------END PGP SIGNATURE-----
-
---5np625sv2e7hqcqz--
+--
+Pankaj
 
