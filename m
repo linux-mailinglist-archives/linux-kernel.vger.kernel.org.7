@@ -1,175 +1,229 @@
-Return-Path: <linux-kernel+bounces-683547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D6AAD6ECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:17:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF35AD6EC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7855E3A0507
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:17:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C468F3A03B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417F822F76C;
-	Thu, 12 Jun 2025 11:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE203234971;
+	Thu, 12 Jun 2025 11:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="MCTXa7ei";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dTCct3G8"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kGRlwwLt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5658623C51E;
-	Thu, 12 Jun 2025 11:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7091621B9C8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727037; cv=none; b=EvlUWOkMIrhnae2GxRS2nC46Z6jjv/ZUR/1dghkutqkw5Vix6fKrbRBvZsZbA1zXuNAcoafHUUoDJMEWk/H3DRfVl/tX9GOlPcw/GFnS5/PCkVfIHVrDIn6OOUAbZ9SIpRSVpf3RSzwYMxpbhx17dABm3dWTogTBNPuZyCNN4Lk=
+	t=1749726994; cv=none; b=DazcRfR3i0VGtl/KeL3HMjxg99ayg0uElGbORGIn8IWv6K1uvX/A2AwwX6n6p573VKLCRQXH9zkVEDL4ZwqE+YlE0i2bqnBkX+SGhKvO0SnfQb+A4LljMYt96lp/+THA66kdrnGI8Pys8hPmhesXeD6gvRDGf/IcII07H3mYQx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727037; c=relaxed/simple;
-	bh=/ob1+R4rK+evjYyQ9GByv2Tek8HEKPX3CQI3lK8yogc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rY+TXGiUGStFCpomvWHeDKdXgYedu/Fs7olxRj6GN0iYpf+8paSrYP89REkD1jNOew7aRmJCRikli0ArpB4orCWd7kPk124ulifvPb5TITOEL/xglFVFzB0/Hhg8mx/TPNC46lFaGh/JXxKSP1wO/eYXAiEtXpwkBzHSrleVv3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=MCTXa7ei; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dTCct3G8; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 4FAE91380440;
-	Thu, 12 Jun 2025 07:17:14 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 07:17:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1749727034;
-	 x=1749813434; bh=Akc6NrVjz9IseDhIujJxCPwAB8Hadsgbs8m/AeaTufM=; b=
-	MCTXa7eiQfCsN4qWW/Aod0S/H/S6b8PkjbtX1QZKgo6oFyLBi4kY6BCI3NeemNtr
-	35fuMoSfVhVWD+hnlY1Tefnl5dEXc7LVsMUoi5UyCPBvP9JjsQ/2ZV9iblWwH9JN
-	fb/bJd0SnMp3xoQIKfRSCI1haGxRJM8B71P+PUlOTnzswsEwhoZYcZeZ4GPADTp1
-	iXDXCgJwELvhLmkw5FEYounFTCjpcwvU0l23ucugf7uxzTA3uErTcGDWE90ZdihC
-	bg7TMWDqSuBe2Cz1CcSHLXgAfUVHjq6ab6DVvfhFefbyieC/6CqyBbH5yADWoLmz
-	mg9ycZoQIZhetAVlSmyBkQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749727034; x=
-	1749813434; bh=Akc6NrVjz9IseDhIujJxCPwAB8Hadsgbs8m/AeaTufM=; b=d
-	TCct3G8shRUsRRt6Yi4Rz6wrOtCPwcnDPD94IjI95FajbNrvArqbSD/KlTl99D0N
-	w3OvTdq5L4EiiSlD8FMUDhrzQOkjyCXtgUanyohRjtPV+hkc9peXsjoyw9wbPsiE
-	k3PLP4mtah5jEvRHVfzdNl8GDVDYi425L1OmnGpdR6jypxFRLGwVTwardK/r5jGy
-	lZXGOYir0jtocN2qVrwsutw6oCO+UkC/08JO7ewXR5zUgBuDqhhv+IHt6C6uDLF7
-	1bBgaZ2XPpc4nxXp5Wv5xOI4BRrx6w0xxAdtbY+uYE6Eg7KOfUl9e/8cj3o1Ld69
-	VI8ZlS3wjL2gcvdGnve/g==
-X-ME-Sender: <xms:OrdKaEf2yaeMGn2ojVwzGtOc8zu7ch3DQiFQh6BQ2hNMNa2QTA0zVw>
-    <xme:OrdKaGPCq8fT9zKn9Uaz5nWjusbhIaJqpfM2rWMbRN-I6Hj_VWKMard778NJHEiVm
-    dF-OjIGNydy5KHlqK0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddugeelfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeholhhtvggrnhhvsehgmhgrihhlrd
-    gtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepjhgrmhgvshdrtghlrghrkheslhhinhgrrhhordhorhhgpdhrtghpthhtohepihhmgi
-    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehfrhgrnhhkrdhlihesnhig
-    phdrtghomhdprhgtphhtthhopehvlhgrughimhhirhdrohhlthgvrghnsehngihprdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqshhpihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:OrdKaFgOa1me-KdjCnVxcsMd9M-hNdUO0ATAHVI_iNNwwLjxkolnSA>
-    <xmx:OrdKaJ-Xew_3gsCafIcDynKd5c4i9HOEOx1aPVgw5DHkBA32A0ixdA>
-    <xmx:OrdKaAstsIZ-IAMzFZvJ_bayL4A1Q56tFacr2KQK7iflqxi6yRAPjQ>
-    <xmx:OrdKaAGshTIhhfCpZDkn52Ipnf6clQrbL-P0zcO7DerC8PsIgzhDgg>
-    <xmx:OrdKaKFsUt5hutpYek-P1YJWWoYctQ1w6yC-j2q69brnnzC9bjoZWQR->
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EBD10700062; Thu, 12 Jun 2025 07:17:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1749726994; c=relaxed/simple;
+	bh=xqZxgl2OAyvQcplDI+Q3mDj5cWFNafK3ReG88eVTAKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G+a4FnCbukuDwEiBcQAKPeZyzquT7r4QbOVwkJ1SXp5RlluEbk/NGyEd691+BNxx5ukHhOWwOxHq7m2qm9phuLwKpp/7A7K2f2oPv0R4e85DTucXlQ1kZtR4g1yuPTd2DjaYgzdB0ox3EPBvuDFUdBQeouNsIdjyyvsNcgCk5vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kGRlwwLt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7fRVl029304
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:16:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vpfX2NMeoo7UDS517K3UcKESErQZe/+g/3vF2bOfmOQ=; b=kGRlwwLtyi3yroLp
+	vPcTrdIh6peGLvQwI3oLukBUag1AnQQzJTzFv5o+A6t9WdNSRrJjsNI5at3wiOjd
+	uLxRB7QPEOVmypLuI0zx3FbFSzHqFtEg8ita12yT3ivdVNiKNPajb1W8LC5YNvdq
+	3F1Ts3TxQWS4nIc6u7brkDlyp0Sod5YwZxmv4vUJXOTuveiDeLbd2bngNPQGfORP
+	Uey8wAkryAzw5UvIoPaVZPan6wZWAt0W6ut0Rmp/9SWDfFuE114auelY8QVe8uc0
+	Q4J/0hz2/12L36B1NXCTfg1K6Of3gkxtlLldIpRQ3j7Jnd9eqROIy6vhhWQu5hGP
+	HWu5UA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn6g98s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 11:16:31 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7caee990721so207228185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 04:16:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749726990; x=1750331790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vpfX2NMeoo7UDS517K3UcKESErQZe/+g/3vF2bOfmOQ=;
+        b=kFvgLqLg33BS1ynvmFZ0tJVzv3os1ec/oswf1IUEEmvU9g/i9h9T34bRoAa7jcakda
+         pmjRuXfeVsfLw09ch24GJhwmje0xEovmRMlUh8EQQsHh74DEc1PGGpf2JMLrGLk1bivl
+         vp1tG4h0Sslc7SRDQLMMGqsJNkqo7SJ9A02ZP34HGpTlGDgG431iemCuiZ9r27MNnm9N
+         dxDnBETjZ4FZj56IuZoMjSw7ikrHMrV+s+h/f3SyJF70l720wWyK5Hr+ZrRh39NRu4A0
+         ifG/k0oMDFobHQszpCsIv8LznLdYdbXqymMiqmsgyBdLJxd3r6SblVRO3CNhvKaxBzuq
+         CpAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWs/35WptlPkkJyzeY8rjyTfeNCaOpZDDNkkx13BAyg2MSCiOG/l8kdz8d0xwXglrjtBUao43dwznfV8c0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIyqeKzX9kOALCuw6/k33JQh5Bu99s32R7nluV1gxwy3k2sbN0
+	s3oopvk4kYDt0+vT5nf23DG2XrlEzY338kAfkrrFmht0FlcI4ezkPjWwo887DSDcSYLLP0DO81k
+	OKPAlScis619YOJsOWerAM4TURD6T4qOQUeOVay73tWUWQ+U2Hjwi90PoBueau56kAOI=
+X-Gm-Gg: ASbGncv84jT+MRcshfVIDVVjGvkTujuwbOdTVAs9ho5XlnCBTAu/okeq26xKmQqcUt5
+	oZoixqfoBUXewnpnxAkevvDl7WXZgffnT1qgx4mQjmabiGdv0eoMK9IBa5PQbjXQl6gjuHK+eVK
+	dVC8XV1GO7QOcJHmi9Boas3G0PvCuEUzT+KvA+3zLUNl3kVaRTVRtshx0bohidrnp95HgMByX3B
+	rI9Nyl+Y52LgtIH+7QvyAeGGVtfwS/1/Nc+5RgJIHSJtd4kfeLI3Ag9cvTG/KWZ0BHsskFs1kQ+
+	WG3I4UAA1dAdCDCJ76M99+qxJvKbWVx3SlLsY+IsA2i7vZoslq++Kep9vo37qJnoNvmj2Z6QLRE
+	0GLfYhyK+nuPBhA6ursqO+vdE
+X-Received: by 2002:a05:6214:cc1:b0:6fa:cd9e:7fe1 with SMTP id 6a1803df08f44-6fb3464a613mr35975686d6.24.1749726989972;
+        Thu, 12 Jun 2025 04:16:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHetYtA3HieDljs7UJWghv1brQVUM/Q0GTlBER+BwKf79FavNV1DFHrP4isixdHDMlhem16WQ==
+X-Received: by 2002:a05:6214:cc1:b0:6fa:cd9e:7fe1 with SMTP id 6a1803df08f44-6fb3464a613mr35975096d6.24.1749726989420;
+        Thu, 12 Jun 2025 04:16:29 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0c3:3a00::4c9? (2001-14ba-a0c3-3a00--4c9.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::4c9])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1aa036sm77231e87.128.2025.06.12.04.16.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 04:16:27 -0700 (PDT)
+Message-ID: <aaae04d2-8f1a-4aa2-8f02-9b46d5a35207@oss.qualcomm.com>
+Date: Thu, 12 Jun 2025 14:16:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T7ec8a5524929d219
-Date: Thu, 12 Jun 2025 13:15:46 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "James Clark" <james.clark@linaro.org>,
- "Vladimir Oltean" <vladimir.oltean@nxp.com>, "Frank Li" <Frank.li@nxp.com>
-Cc: "Vladimir Oltean" <olteanv@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Message-Id: <e8752d90-5087-4b02-92bc-b3636b5e705d@app.fastmail.com>
-In-Reply-To: <c65c752a-5b60-4f30-8d51-9a903ddd55a6@linaro.org>
-References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
- <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
- <aEhMBsqlx9I4XqJS@lizhi-Precision-Tower-5810>
- <de7142ac-f1a3-412f-9f00-502222b20165@app.fastmail.com>
- <aEhVsrEk0qv+38r3@lizhi-Precision-Tower-5810>
- <20250611090107.t35zatn47vetnvse@skbuf>
- <c65c752a-5b60-4f30-8d51-9a903ddd55a6@linaro.org>
-Subject: Re: [PATCH 2/4] spi: spi-fsl-dspi: Use non-coherent memory for DMA
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/5] misc: fastrpc: Move all remote heap allocations to
+ a new list
+To: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+Cc: srinivas.kandagatla@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+        dri-devel@lists.freedesktop.org, arnd@arndb.de, stable@kernel.org,
+        Alexey Klimov <alexey.klimov@linaro.org>
+References: <20250513042825.2147985-1-ekansh.gupta@oss.qualcomm.com>
+ <20250513042825.2147985-3-ekansh.gupta@oss.qualcomm.com>
+ <sgfcaujjpbvirwx7cwebgj46uwlcvgr4cgcnav5fmwmjsf4uku@iytanuqqiwxo>
+ <71eb4b35-51a3-411c-838d-4af19631325a@oss.qualcomm.com>
+ <tdae3jb7zbkbzvk546j5jnxnfkeux2bwrbz3i5gsehecj65n7v@2hseuptlk2a2>
+ <999d2ca0-b3d3-4fa2-b131-092bef4951c8@oss.qualcomm.com>
+ <CAO9ioeUW=v_CBUchJEt3PArbzBbUgznFO8TK-j=2yUkv8S1Baw@mail.gmail.com>
+ <bddf894f-1d79-40b4-9f80-355746c122da@oss.qualcomm.com>
+Content-Language: en-US
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <bddf894f-1d79-40b4-9f80-355746c122da@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA4NiBTYWx0ZWRfXw1MZkF64Ab3B
+ 0+E+9obqpURzZn1R/RNlhrA+JtOA0LPXAbSwq3/zR3+I7665FuQM+FbaFEkO2t4cb42/5XpEvnU
+ vZ6bC169KHWgPxilnhsLXGj9R06+qUg0xuNthbU1rQOV9evJNKTvU567Pt5QJvXof6DhhbyrGTV
+ 4hQMc18TjN43CiSOtTPQiAaCZ8ii3Wt4eVp3KGS6IWR16YhtD+IUIyLPohLXyP921FtpnlUKPPB
+ OHC2SRntmJtlPCjo3rijvHdooUkjW9pXExjuqAKg80HO7uoN7aDdymRqdEuWHZxeZAB7dKcOK/v
+ 1UM0jGBfPH/g4bC3Wha5+zsDRwrlqt9L7pJ0velC7AxH7Rx155BCJnMNWq1iGmzM4hBMwi0nnP/
+ eA7oAsbIYRhxcp8qXikh+9W6/XL7qcU22ky8ErPN/e3I/R6wNkXKkUF7NZ5gWUSdDEKm//8A
+X-Proofpoint-GUID: gdiG_JbycKR4fPzJG6PvouOuGbElaCQE
+X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=684ab70f cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6IFa9wvqVegA:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=D513OUjRMiX1TR4FSfYA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: gdiG_JbycKR4fPzJG6PvouOuGbElaCQE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506120086
 
-On Thu, Jun 12, 2025, at 13:05, James Clark wrote:
-> On 11/06/2025 10:01 am, Vladimir Oltean wrote:
->> On Tue, Jun 10, 2025 at 11:56:34AM -0400, Frank Li wrote:
->>> Can you add performance beneafit information after use non-coherent memory
->>> in commit message to let reviewer easily know your intention.
->> 
->> To expand on that, you can post the output of something like this
->> (before and after):
->> $ spidev_test --device /dev/spidev1.0 --bpw 8 --size 256 --cpha --iter 10000000 --speed 10000000
->> where /dev/spidev1.0 is an unconnected chip select with a dummy entry in
->> the device tree.
->
-> Coherent (before):
->
-> rate: tx 385.8kbps, rx 385.8kbps
-> rate: tx 1215.7kbps, rx 1215.7kbps
-> rate: tx 1845.2kbps, rx 1845.2kbps
-> rate: tx 1844.0kbps, rx 1844.0kbps
-> rate: tx 1846.1kbps, rx 1846.1kbps
-> rate: tx 1844.8kbps, rx 1844.8kbps
-> rate: tx 1844.4kbps, rx 1844.4kbps
-> rate: tx 1846.9kbps, rx 1846.9kbps
-> rate: tx 1846.5kbps, rx 1846.5kbps
-> rate: tx 1843.2kbps, rx 1843.2kbps
-> rate: tx 1844.8kbps, rx 1844.8kbps
-> rate: tx 1845.2kbps, rx 1845.2kbps
-> rate: tx 1846.5kbps, rx 1846.5kbps
->
-> Non-coherent (after):
->
-> rate: tx 314.6kbps, rx 314.6kbps
-> rate: tx 748.3kbps, rx 748.3kbps
-> rate: tx 1845.2kbps, rx 1845.2kbps
-> rate: tx 1849.3kbps, rx 1849.3kbps
-> rate: tx 1846.1kbps, rx 1846.1kbps
-> rate: tx 1847.3kbps, rx 1847.3kbps
-> rate: tx 1845.7kbps, rx 1845.7kbps
-> rate: tx 1846.5kbps, rx 1846.5kbps
-> rate: tx 1844.4kbps, rx 1844.4kbps
-> rate: tx 1847.3kbps, rx 1847.3kbps
-> rate: tx 1847.3kbps, rx 1847.3kbps
-> rate: tx 1845.7kbps, rx 1845.7kbps
-> rate: tx 1846.5kbps, rx 1846.5kbps
->
-> Ignoring anything less than 1800 as starting up, coherent has an average 
-> of 1845.2kbps and non-coherent 1846.5kbps. Not sure if that's just noise 
-> or an actual effect.
+On 12/06/2025 08:13, Ekansh Gupta wrote:
+> 
+> 
+> On 5/22/2025 5:39 PM, Dmitry Baryshkov wrote:
+>> On Thu, 22 May 2025 at 07:54, Ekansh Gupta
+>> <ekansh.gupta@oss.qualcomm.com> wrote:
+>>>
+>>>
+>>> On 5/19/2025 6:59 PM, Dmitry Baryshkov wrote:
+>>>> On Mon, May 19, 2025 at 04:36:13PM +0530, Ekansh Gupta wrote:
+>>>>> On 5/19/2025 3:46 PM, Dmitry Baryshkov wrote:
+>>>>>> On Tue, May 13, 2025 at 09:58:22AM +0530, Ekansh Gupta wrote:
+>>>>>>> Remote heap allocations are not organized in a maintainable manner,
+>>>>>>> leading to potential issues with memory management. As the remote
+>>>>>> Which issues? I think I have been asking this question previously.
+>>>>>> Please expand the commit message here.
+>>>>> This is mostly related to the memory clean-up and the other patch where
+>>>>> unmap request was added, I'll try to pull more details about the issue
+>>>>> scenario.
+>>>> Thanks.
+>>>>
+>>>>>>> heap allocations are maintained in fl mmaps list, the allocations
+>>>>>>> will go away if the audio daemon process is killed but there are
+>>>>>> What is audio daemon process?
+>>>>> As audio PD on DSP is static, there is HLOS process(audio daemon) required to
+>>>>> attach to audio PD to fulfill it's memory and file operation requirements.
+>>>>>
+>>>>> This daemon can be thought of to be somewhat similar to rootPD(adsprpcd) or
+>>>>> sensorsPD(sscrpcd) daemons. Although, there is a slight difference in case of audio
+>>>>> daemon as it is required to take additional information and resources to audio PD
+>>>>> while attaching.
+>>>> I find it a little bit strange to see 'required' here, while we have
+>>>> working audio setup on all up platforms up to and including SM8750
+>>>> without any additional daemons. This is the primary reason for my
+>>>> question: what is it, why is it necessary, when is it necessary, etc.
+>>> This daemon is critical to facilitate dynamic loading and memory
+>>> requirement for audio PD(running on DSP for audio processing). Even
+>>> for audio testing on SM8750, I believe Alexey was enabling this daemon.
+>> Could you please point out the daemon sources?
+>>
+>> As far as I remember, we didn't need it on any of the platforms up to
+>> and including SM8650, that's why I'm asking.
+> This source was used for testing audio use case on SM8750:
+> https://github.com/quic/fastrpc/blob/development/src/adsprpcd.c
+> 
+> The use case tried by Alexey as per my knowledge is audio playback where dynamic
+> loading was needed but he can give more details on the use case.
 
-The extra cache flushes do introduce some overhead as well, so I
-would expect the noncoherent case to be slightly slower for
-small transfers, but the coherent case to be faster for large
-transfers.
+Okay.
+You need to be more specific in the commit messages.
 
-"--size 256" presumably means 256 bytes, i.e. four cachelines?
-If it's easy to reproduce, can you check with smaller sizes
-that still use the DMA codepath (e.g. 64 bytes) and much larger
-transfers (e.g. 2048 bytes)?
+- It is a normal adsprpcd.
+- It is only required for compressed audio playback.
 
-      Arnd
+> 
+> He was observing failures and panic which got resolved after picking this patch series.
+
+Which failures? Panic in which driver?
+
+>>
+>>> What is it?
+>>> - HLOS process to attached to audio PD to fulfill the requirements that
+>>> cannot be met by DSP alone(like file operations, memory etc.)
+>>>
+>>> Why is it necessary?
+>>> - There are limitation on DSP for which the PD requirements needs to be
+>>> taken to HLOS. For example, DSP does not have it's own file system, so
+>>> any file operation request it PD(say for dynamic loading) needs to be
+>>> taken to HLOS(using listener/reverse calls) and is fulfilled there.
+>>> Similarly memory requirement is another example.
+>>>
+>>> When is it necessary?
+>>> - When audio PD needs to perform any task that requires HLOS relying
+>>> operations like dynamic loading etc.
+>> This doesn't exactly answer the question. I can play and capture audio
+>> on most of the platforms that I tested without using extra daemon. So,
+>> when is it necessary?
+> For use case details, I'll let Alexey comment here.
+> 
+> The daemons major requirement is to facilitate any dynamic loading or memory
+> requirements from DSP audio PD. The daemons are already supported for
+> different types of static PDs to facilitate these requirements(fops and memory).
+
+So... compressed audio only or a normal playback / capture too?
+
+> 
+>>
+> 
+
+
+-- 
+With best wishes
+Dmitry
 
