@@ -1,524 +1,469 @@
-Return-Path: <linux-kernel+bounces-683027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F307BAD6802
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAA8AD6901
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684087A3653
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70B3179B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4191F2380;
-	Thu, 12 Jun 2025 06:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E6420E021;
+	Thu, 12 Jun 2025 07:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m2zYh1xN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MbGyspmo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSv5Szs+"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EF01AC891;
-	Thu, 12 Jun 2025 06:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95C079E1;
+	Thu, 12 Jun 2025 07:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749709759; cv=none; b=SoKykTjWPTBtxaVrdF6vNVOnyOrb4XI4oskZ3kPAS4EPAeUTR5IneEZcT3d/SULilSR55m+7NiOaUQ1dg8lzVYonOyEuzRwWLVlMPAYU7dfniD9zur2dQ3zq24Zeo50Oe8aFsg5zbtnVT/v4g5ayVDMEqCUO4/FfVm7Bh0cqwq4=
+	t=1749713347; cv=none; b=XdnOFnpjsWA3c+h6yO3W6chm2R2J9U9hkisFWDIJJFvu04teqPiZOvYSWqwzX6/e+QEtzlAsqWbLPlE9s2R2THEkkwQZH8++LjdFhNKXCGFye6ETVLpjcauM6VYOurmeIO4awUA/3wNIbr9almUxlnPIjDy1GqB56gxJNlR1PD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749709759; c=relaxed/simple;
-	bh=q+ooHgsMsxlWywNzAHkgEDbnTeufzdrYa5toXP1T9mw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WKApkWDkGxyKHsIUskEZQ3UrgKIFIzGRISwH5P7cuzzuLVZDM72CcZoCU7l6e6TjZb72MBEdHTuIXbYkBCEJb/RqH4Bi3bLUMwxmjNrZzwJDP/7WdQvWH0l3CT+FodA9EoBLKPXyfl9gZMuiYv/6Yy7KU0jN+yKgz/BPZ9MuGgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m2zYh1xN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MbGyspmo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749709755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/gwFuPowb6u+x2IVr4GkR/YZTTKIETm7xejWZr1/1hQ=;
-	b=m2zYh1xNxTZZwrK4OVcTXPdFRDlMzV0YO3MxziqXW1CiANmhK9vc85ZvNBySyJsSeYgyjs
-	y/QBC/hBLI/Y50ZdgS6W/c9S+KCg77KJOhNZTBTLP0RwcvhPqwNyv1xR0Gjh7n3x/ixFzh
-	qkd8NKBAjbSOFwfl43THlBS5Q0EeDMSDnJr6nNBiBwQ1y/QbVzGEo5rwqpR9jBYjtJkwo5
-	3Dc0Kvzx4HUIr58DAGRPyrD9l+os/F82UvB70XpSsVHvhX4RQvf5n2ybcW3bL2uYiBKMfk
-	VFnF0lO6hTmusonjRHPqe0ZxQNEek+oycMsdCgcN1mxP7/3SOjzCNuMOQrWotQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749709755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/gwFuPowb6u+x2IVr4GkR/YZTTKIETm7xejWZr1/1hQ=;
-	b=MbGyspmos2sNkNBg9fDhrdUFyFSN8LK2BN088a/b71cyfSoWcjyGYmCBiawgNR/cLMBV5G
-	emnhoHzE49IK+nCg==
-Date: Thu, 12 Jun 2025 08:29:07 +0200
-Subject: [PATCH v3] printk: ringbuffer: Add KUnit test
+	s=arc-20240116; t=1749713347; c=relaxed/simple;
+	bh=X0FTrp/R/lIegGoDUVzTjr6HANWCJx4bamhehvKO4eU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ND0+rCYSE8wa/4uddmaRfS47HYyFzt2qJi5iK7Rf0N4dvVKb0oZyI2DO19y/vw9woxoAaSEBI1Aolr6MPWn/twBkWVOBy21EG2/kN31R6FJj9EVUM/HRDq3cTKaqPTHoSSc7f3noevLcLf3Ad1d6wzrszWs9raILzfcUiJ9peZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSv5Szs+; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cf214200so5140035e9.1;
+        Thu, 12 Jun 2025 00:29:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749713344; x=1750318144; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k5rsRc3oaJQ0aUQI/xHoM1EtK1DWZnKKYa3+PrwYcGA=;
+        b=aSv5Szs+ceRAQ0/Z867Yameq+S1edvF4FJsM0emjQLLnujCtVZn8iMjOsCn/U0rbXB
+         WDMS/FEB0toOxHJGcwnmk75WtbMD3rkUIMfVhneJHRK3L3eIUh73pjXHQc5cDooMi1I9
+         fs1HNLBjIj6CqWkcEzATVhyH1AOSZjPDoewsZ8i0pU4Vrygq8Rf+gM4eL9vO7juDZi1D
+         fBj6xt0Qw/l9gnvyJ6QQtc8AN3Rq9fpKqfI/qdnTiYrz7w5rxo/LjN0vWj8LzhjeIUAM
+         9FIF1sMYAV2W1Coc4VqFYmPw7ZLjVvK1M17dRtURuhljhFJK0YT0eS9meHGnVhJq/BKS
+         RbNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749713344; x=1750318144;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k5rsRc3oaJQ0aUQI/xHoM1EtK1DWZnKKYa3+PrwYcGA=;
+        b=Q8LkX4rf30mNH8oJbgKkyVI+XROVYBVEwtKPBaY1db0qw25cWYft+CoRY4MQyVSikG
+         Oba/9Le30aoRhaqIfEotBgjnLPgYJTPL0GwujK6Qg5HRzJm1i29/DjiPeFVHxBQFFJ5z
+         32hfehbPbSlK8Umhg0FVx5zME5jujEfJ/gxcVlafngfbvx4gaZTHG1k1aAYiVfMANIK/
+         4f6S3Wejw1KEV/OUFYwQ6EDyG0jyzA4Hi8qQ7EQ12Y9hnNeNvC6PV5+lFbOatEy0lUvQ
+         emVYT/YCGjZMLiBrQ42uGv/TDlUEB2mbxibiLCCkOlk8O4WQNrZ01HpliNdGxAUUyYg8
+         xNKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIX3uIfTGQUQ0DbQf5gPHshUfwXGPwYzgAYy6pouVQN5nS3yu//sxbsWUBd3zuqSori1XcoHJCDlX1QU4w@vger.kernel.org, AJvYcCXaCAdL/KXZfirKeGAetDZ4wl7l5GXWxnftmth1zoJn03F5xIofDbBREvqk7YKMrchT2sqgxKInVWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7WIJuGd/Mh9gfnblyiYn4/XuecqGD2dFk74EkqHUu4jyyxI4c
+	b9JEToT9xEgj2UpF2M1cKgVs2uMfNX0pbzgvlTnPXMaIXi2EylWq7MtC
+X-Gm-Gg: ASbGncu23bYzWvfbsix5qmpG3BRDm3TOkYHGuna6Iy152FuHi1YEbH1cWnUn+9EMBcY
+	ghwxyRp7LLhYDd9CUoDERm5Krf0vVja4gxlq0iKjLGpmLObYNIHZ+hOWiuTUSiuOzPqA2YlOtki
+	Tn007YAEO1qNh9aeJU0xOC848unpYlOhZiUevC47gveRTKsh2yxDoFdz/XHMkg8Fnd2C4711ATP
+	Sknbv22tEJ9pcYKKXeQkRRaxmOMWZkUzbyx7zjQdN2Zu7XXr/GQteYdpLF7uAiB940RMCimWVCF
+	YfQaB8qfVhyoDtVuPwuKCxuYnIdT1Otw9dAqcclGzUGbQAaE3yuRrrQaPSVN76uaunE8DPcPStn
+	MQyH4hks7ozputkma2f86tlBx1Wf+OA9Aitqn
+X-Google-Smtp-Source: AGHT+IEh8KrU6+FfhTEntGxofDae6xv4P3kTFmAzBGjC94QSPtuH4F1ePSrPaFbPyNtsQ5r0arMXSA==
+X-Received: by 2002:a05:6000:2086:b0:3a4:e6c6:b8bf with SMTP id ffacd0b85a97d-3a56080ac65mr1853632f8f.52.1749713343769;
+        Thu, 12 Jun 2025 00:29:03 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561b510dfsm1091528f8f.82.2025.06.12.00.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 00:29:03 -0700 (PDT)
+Message-ID: <84643f3fc87425e8c5019eede275791a20872b6b.camel@gmail.com>
+Subject: Re: [PATCH v5 2/3] iio: accel: sca3000: replace usages of internal
+ read data helpers by spi helpers
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Andrew Ijano <andrew.ijano@gmail.com>, jic23@kernel.org
+Cc: andrew.lopes@alumni.usp.br, gustavobastos@usp.br, dlechner@baylibre.com,
+  nuno.sa@analog.com, andy@kernel.org, jstephan@baylibre.com, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 12 Jun 2025 07:29:35 +0100
+In-Reply-To: <20250611194648.18133-3-andrew.lopes@alumni.usp.br>
+References: <20250611194648.18133-1-andrew.lopes@alumni.usp.br>
+	 <20250611194648.18133-3-andrew.lopes@alumni.usp.br>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250612-printk-ringbuffer-test-v3-1-550c088ee368@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIALJzSmgC/33OwWrDMAwG4FcJPtdDsq0k3WnvMXawHbk1G0mx3
- dBS8u51ukspyy6CX6BP/01kTpGzeG9uIvEcc5zGGvSuEf5oxwPLONQsFCiDgChPKY7lW9Z5cOc
- QOMnCuchgutB3vrV970Q9PiUO8fKAP79qPsZcpnR9/Jlx3a4kgUHaImeUKDu25DunLYP++Inju
- aRpjJe3gcXKzuqJUnqTUpVqFbo9+MF68i/UrvklCNp/CSSlAKjds8O/2pjnNv0mZSpliME6D0E
- TvVLLstwBv6PX7pkBAAA=
-X-Change-ID: 20241011-printk-ringbuffer-test-f47f87c6a88b
-To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: John Ogness <jogness@linutronix.de>, David Gow <davidgow@google.com>, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749709754; l=14587;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=q+ooHgsMsxlWywNzAHkgEDbnTeufzdrYa5toXP1T9mw=;
- b=oQ1Zj+FuNq48sXvAgFf0v77Qfu78+ieO7Zu+7jjfnCSoOUu6yPtRSV5n9lK0AHoEkuU3evPhK
- HXyPsoYaF9YCSyLIc0r5v1Bygc7YI2EtKZud/W6fS3MWrq/BXpLhAwv
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The KUnit test validates the correct operation of the ringbuffer.
-A separate dedicated ringbuffer is used so that the global printk
-ringbuffer is not touched.
+On Wed, 2025-06-11 at 16:39 -0300, Andrew Ijano wrote:
+> Remove usages of sca3000_read_data() and sca3000_read_data_short()
+> functions, replacing it by spi_w8r8() and spi_w8r16be() helpers. Just
+> one case that reads large buffers is left using an internal helper.
+>=20
+> This is an old driver that was not making full use of the newer
+> infrastructure.
+>=20
+> Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
+> Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
+> Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> ---
 
-Co-developed-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Looks good. Just one comment from me...
+
+> =C2=A0drivers/iio/accel/sca3000.c | 166 +++++++++++++++------------------=
 ---
-Changes in v3:
-- Rebase onto v6.16-rc1
-- Fix build for PRINTK_RINGBUFFER_KUNIT_TEST=m
-- Add comment about reinitialization
-- Avoid strnlen() in prbtest_check_data() to
-  - Avoid out-of-bound reads with CONFIG_FORTIFY_SOURCE
-  - Work correctly with so many CPUs that "text_id" will be '\0'
-- Link to v2: https://lore.kernel.org/r/20250506-printk-ringbuffer-test-v2-1-152200569eb1@linutronix.de
+> =C2=A01 file changed, 68 insertions(+), 98 deletions(-)
+>=20
+> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+> index bfa8a3f5a92f..d41759c68fb4 100644
+> --- a/drivers/iio/accel/sca3000.c
+> +++ b/drivers/iio/accel/sca3000.c
+> @@ -281,24 +281,6 @@ static int sca3000_write_reg(struct sca3000_state *s=
+t, u8
+> address, u8 val)
+> =C2=A0	return spi_write(st->us, st->tx, 2);
+> =C2=A0}
+> =C2=A0
 
-Changes in v2:
-- Adapt to new MODULE_IMPORT_NS() syntax
-- Handle platforms without u64 division
-- Allocate resources through kunit wrappers
-- Drop setup thread
-- Allow multiple executions
-- Make naming more consistent
-- Use get_random_u32_below()
-- Allow !CONFIG_SMP
-- Follow KUNIT kconfig naming scheme
-- Fix limited string formatting in prbtest_fail_record()
-- Fix MODULE_DESCRIPTION
-- Use get_random_u32_inclusive()
-- Drop timing measurements, preemption and lost tracking
-- Use plain jiffies variable
-- Print warning if only one CPU is present
-- Style cleanup
-- Fix formatting of bad message payload
-- Link to v1: https://lore.kernel.org/r/20250415-printk-ringbuffer-test-v1-1-7ea5c7b3ae03@linutronix.de
----
- init/Kconfig                                 |  12 ++
- kernel/printk/.kunitconfig                   |   3 +
- kernel/printk/Makefile                       |   2 +
- kernel/printk/printk_ringbuffer.c            |   5 +
- kernel/printk/printk_ringbuffer_kunit_test.c | 295 +++++++++++++++++++++++++++
- 5 files changed, 317 insertions(+)
+...
 
-diff --git a/init/Kconfig b/init/Kconfig
-index af4c2f0854554bbcdf193852cf5c1d2c2accc64f..73e64172b564e6db3efe2a18c5f52d620c62bf44 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1667,6 +1667,18 @@ config PRINTK
- 	  very difficult to diagnose system problems, saying N here is
- 	  strongly discouraged.
- 
-+config PRINTK_RINGBUFFER_KUNIT_TEST
-+	tristate "KUnit Test for the printk ringbuffer" if !KUNIT_ALL_TESTS
-+	depends on PRINTK && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the printk ringbuffer KUnit test suite.
-+
-+	  For more information on KUnit and unit tests in general, please refer
-+	  to the KUnit documentation.
-+
-+	  If unsure, say N.
-+
- config BUG
- 	bool "BUG() support" if EXPERT
- 	default y
-diff --git a/kernel/printk/.kunitconfig b/kernel/printk/.kunitconfig
-new file mode 100644
-index 0000000000000000000000000000000000000000..f31458fd1a92fe24a61f6a6ebd1078b7ea2cd137
---- /dev/null
-+++ b/kernel/printk/.kunitconfig
-@@ -0,0 +1,3 @@
-+CONFIG_KUNIT=y
-+CONFIG_PRINTK=y
-+CONFIG_PRINTK_RINGBUFFER_KUNIT_TEST=y
-diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
-index 39a2b61c7232e7b65d64eafd3ceadcf72cd32760..f8004ac3983da27a6218705fc5273bf3bf572045 100644
---- a/kernel/printk/Makefile
-+++ b/kernel/printk/Makefile
-@@ -7,3 +7,5 @@ obj-$(CONFIG_PRINTK_INDEX)	+= index.o
- obj-$(CONFIG_PRINTK)                 += printk_support.o
- printk_support-y	             := printk_ringbuffer.o
- printk_support-$(CONFIG_SYSCTL)	     += sysctl.o
-+
-+obj-$(CONFIG_PRINTK_RINGBUFFER_KUNIT_TEST) += printk_ringbuffer_kunit_test.o
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index d9fb053cff67dbdb8741ee3cac60f51ab986e499..bc811de18316bb8bcb59b96a272addd3c0d46e40 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include <kunit/visibility.h>
- #include <linux/kernel.h>
- #include <linux/irqflags.h>
- #include <linux/string.h>
-@@ -1685,6 +1686,7 @@ bool prb_reserve(struct prb_reserved_entry *e, struct printk_ringbuffer *rb,
- 	memset(r, 0, sizeof(*r));
- 	return false;
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_reserve);
- 
- /* Commit the data (possibly finalizing it) and restore interrupts. */
- static void _prb_commit(struct prb_reserved_entry *e, unsigned long state_val)
-@@ -1759,6 +1761,7 @@ void prb_commit(struct prb_reserved_entry *e)
- 	if (head_id != e->id)
- 		desc_make_final(e->rb, e->id);
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_commit);
- 
- /**
-  * prb_final_commit() - Commit and finalize (previously reserved) data to
-@@ -2184,6 +2187,7 @@ bool prb_read_valid(struct printk_ringbuffer *rb, u64 seq,
- {
- 	return _prb_read_valid(rb, &seq, r, NULL);
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_read_valid);
- 
- /**
-  * prb_read_valid_info() - Non-blocking read of meta data for a requested
-@@ -2333,6 +2337,7 @@ void prb_init(struct printk_ringbuffer *rb,
- 	infos[0].seq = -(u64)_DESCS_COUNT(descbits);
- 	infos[_DESCS_COUNT(descbits) - 1].seq = 0;
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_init);
- 
- /**
-  * prb_record_text_space() - Query the full actual used ringbuffer space for
-diff --git a/kernel/printk/printk_ringbuffer_kunit_test.c b/kernel/printk/printk_ringbuffer_kunit_test.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4081ae051d8e63fe195095118f2e8370ddd0737e
---- /dev/null
-+++ b/kernel/printk/printk_ringbuffer_kunit_test.c
-@@ -0,0 +1,295 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/cpuhplock.h>
-+#include <linux/cpumask.h>
-+#include <linux/init.h>
-+#include <linux/kthread.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/random.h>
-+#include <linux/slab.h>
-+#include <linux/timer.h>
-+#include <linux/wait.h>
-+
-+#include <kunit/resource.h>
-+#include <kunit/test.h>
-+
-+#include "printk_ringbuffer.h"
-+
-+/*
-+ * This KUnit tests the data integrity of the lockless printk_ringbuffer.
-+ * From multiple CPUs it writes messages of varying length and content while
-+ * a reader validates the correctness of the messages.
-+ *
-+ * IMPORTANT: The more CPUs you can use for this KUnit, the better!
-+ *
-+ * The test works by starting "num_online_cpus() - 1" writer threads, each
-+ * pinned to their own CPU. Each writer thread loops, writing data of varying
-+ * length into a printk_ringbuffer as fast as possible. The data content is
-+ * an embedded data struct followed by string content repeating the byte:
-+ *
-+ *      'A' + CPUID
-+ *
-+ * The reader is running on the remaining online CPU, or if there is only one
-+ * CPU on the same as the writer.
-+ * It ensures that the embedded struct content is consistent with the string
-+ * and that the string * is terminated and is composed of the same repeating
-+ * byte as its first byte.
-+ *
-+ * Because the threads are running in such tight loops, they will call
-+ * cond_resched() from time to time so the system stays functional.
-+ *
-+ * If the reader encounters an error, the test is aborted and some
-+ * information about the error is reported.
-+ * The runtime of the test can be configured with the runtime_ms module parameter.
-+ *
-+ * Note that the test is performed on a separate printk_ringbuffer instance
-+ * and not the instance used by printk().
-+ */
-+
-+static unsigned long runtime_ms = 10 * MSEC_PER_SEC;
-+module_param(runtime_ms, ulong, 0400);
-+
-+/* test data structure */
-+struct prbtest_rbdata {
-+	unsigned int len;
-+	char text[] __counted_by(len);
-+};
-+
-+#define MAX_RBDATA_TEXT_SIZE 0x7f
-+/* +1 for terminator. */
-+#define MAX_PRB_RECORD_SIZE (sizeof(struct prbtest_rbdata) + MAX_RBDATA_TEXT_SIZE + 1)
-+
-+struct prbtest_data {
-+	struct kunit *test;
-+	struct printk_ringbuffer *ringbuffer;
-+	/* used by writers to signal reader of new records */
-+	wait_queue_head_t new_record_wait;
-+};
-+
-+struct prbtest_thread_data {
-+	unsigned long num;
-+	struct prbtest_data *test_data;
-+};
-+
-+static void prbtest_fail_record(struct kunit *test, const struct prbtest_rbdata *dat, u64 seq)
-+{
-+	KUNIT_FAIL(test, "BAD RECORD: seq=%llu len=%u text=%.*s\n",
-+		   seq, dat->len,
-+		   dat->len <= MAX_RBDATA_TEXT_SIZE ? dat->len : -1,
-+		   dat->len <= MAX_RBDATA_TEXT_SIZE ? dat->text : "<invalid>");
-+}
-+
-+static bool prbtest_check_data(const struct prbtest_rbdata *dat)
-+{
-+	unsigned int len;
-+
-+	/* Sane length? */
-+	if (dat->len < 1 || dat->len > MAX_RBDATA_TEXT_SIZE)
-+		return false;
-+
-+	if (dat->text[dat->len] != '\0')
-+		return false;
-+
-+	/* String repeats with the same character? */
-+	len = dat->len;
-+	while (len--) {
-+		if (dat->text[len] != dat->text[0])
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static int prbtest_writer(void *data)
-+{
-+	struct prbtest_thread_data *tr = data;
-+	char text_id = 'A' + tr->num;
-+	struct prb_reserved_entry e;
-+	struct prbtest_rbdata *dat;
-+	u32 record_size, text_size;
-+	unsigned long count = 0;
-+	struct printk_record r;
-+
-+	kunit_info(tr->test_data->test, "start thread %03lu (writer)\n", tr->num);
-+
-+	for (;;) {
-+		/* ensure at least 1 character */
-+		text_size = get_random_u32_inclusive(1, MAX_RBDATA_TEXT_SIZE);
-+		/* +1 for terminator. */
-+		record_size = sizeof(struct prbtest_rbdata) + text_size + 1;
-+		WARN_ON_ONCE(record_size > MAX_PRB_RECORD_SIZE);
-+
-+		/* specify the text sizes for reservation */
-+		prb_rec_init_wr(&r, record_size);
-+
-+		if (prb_reserve(&e, tr->test_data->ringbuffer, &r)) {
-+			r.info->text_len = record_size;
-+
-+			dat = (struct prbtest_rbdata *)r.text_buf;
-+			dat->len = text_size;
-+			memset(dat->text, text_id, text_size);
-+			dat->text[text_size] = 0;
-+
-+			prb_commit(&e);
-+
-+			wake_up_interruptible(&tr->test_data->new_record_wait);
-+		}
-+
-+		if ((count++ & 0x3fff) == 0)
-+			cond_resched();
-+
-+		if (kthread_should_stop())
-+			break;
-+	}
-+
-+	kunit_info(tr->test_data->test, "end thread %03lu: wrote=%lu\n", tr->num, count);
-+
-+	return 0;
-+}
-+
-+struct prbtest_wakeup_timer {
-+	struct timer_list timer;
-+	struct task_struct *task;
-+};
-+
-+static void prbtest_wakeup_callback(struct timer_list *timer)
-+{
-+	struct prbtest_wakeup_timer *wakeup = timer_container_of(wakeup, timer, timer);
-+
-+	set_tsk_thread_flag(wakeup->task, TIF_NOTIFY_SIGNAL);
-+	wake_up_process(wakeup->task);
-+}
-+
-+static int prbtest_reader(struct prbtest_data *test_data, unsigned long timeout_ms)
-+{
-+	struct prbtest_wakeup_timer wakeup;
-+	char text_buf[MAX_PRB_RECORD_SIZE];
-+	unsigned long count = 0;
-+	struct printk_info info;
-+	struct printk_record r;
-+	u64 seq = 0;
-+
-+	wakeup.task = current;
-+	timer_setup_on_stack(&wakeup.timer, prbtest_wakeup_callback, 0);
-+	mod_timer(&wakeup.timer, jiffies + msecs_to_jiffies(timeout_ms));
-+
-+	prb_rec_init_rd(&r, &info, text_buf, sizeof(text_buf));
-+
-+	kunit_info(test_data->test, "start reader\n");
-+
-+	while (!wait_event_interruptible(test_data->new_record_wait,
-+					 prb_read_valid(test_data->ringbuffer, seq, &r))) {
-+		/* check/track the sequence */
-+		if (info.seq < seq)
-+			KUNIT_FAIL(test_data->test, "BAD SEQ READ: request=%llu read=%llu\n",
-+				   seq, info.seq);
-+
-+		if (!prbtest_check_data((struct prbtest_rbdata *)r.text_buf))
-+			prbtest_fail_record(test_data->test,
-+					    (struct prbtest_rbdata *)r.text_buf, info.seq);
-+
-+		if ((count++ & 0x3fff) == 0)
-+			cond_resched();
-+
-+		seq = info.seq + 1;
-+	}
-+
-+	timer_delete_sync(&wakeup.timer);
-+	timer_destroy_on_stack(&wakeup.timer);
-+
-+	kunit_info(test_data->test, "end reader: read=%lu seq=%llu\n", count, info.seq);
-+
-+	return 0;
-+}
-+
-+KUNIT_DEFINE_ACTION_WRAPPER(prbtest_kthread_cleanup, kthread_stop, struct task_struct *);
-+
-+static void prbtest_add_kthread_cleanup(struct kunit *test, struct task_struct *kthread)
-+{
-+	int err;
-+
-+	err = kunit_add_action_or_reset(test, prbtest_kthread_cleanup, kthread);
-+	KUNIT_ASSERT_EQ(test, err, 0);
-+}
-+
-+static inline void prbtest_prb_reinit(struct printk_ringbuffer *rb)
-+{
-+	prb_init(rb, rb->text_data_ring.data, rb->text_data_ring.size_bits, rb->desc_ring.descs,
-+		 rb->desc_ring.count_bits, rb->desc_ring.infos);
-+}
-+
-+static void test_readerwriter(struct kunit *test)
-+{
-+	/* Equivalent to CONFIG_LOG_BUF_SHIFT=13 */
-+	DEFINE_PRINTKRB(test_rb, 8, 5);
-+
-+	struct prbtest_thread_data *thread_data;
-+	struct prbtest_data *test_data;
-+	struct task_struct *thread;
-+	cpumask_t test_cpus;
-+	int cpu, reader_cpu;
-+
-+	cpus_read_lock();
-+	/*
-+	 * Failure of KUNIT_ASSERT() kills the current task
-+	 * so it can not be called while the CPU hotplug lock is held.
-+	 * Instead use a snapshot of the online CPUs.
-+	 * If they change during test execution it is unfortunate but not a grave error.
-+	 */
-+	cpumask_copy(&test_cpus, cpu_online_mask);
-+	cpus_read_unlock();
-+
-+	/* One CPU is for the reader, all others are writers */
-+	reader_cpu = cpumask_first(&test_cpus);
-+	if (cpumask_weight(&test_cpus) == 1)
-+		kunit_warn(test, "more than one CPU is recommended");
-+	else
-+		cpumask_clear_cpu(reader_cpu, &test_cpus);
-+
-+	/* KUnit test can get restarted more times. */
-+	prbtest_prb_reinit(&test_rb);
-+
-+	test_data = kunit_kmalloc(test, sizeof(*test_data), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, test_data);
-+	test_data->test = test;
-+	test_data->ringbuffer = &test_rb;
-+	init_waitqueue_head(&test_data->new_record_wait);
-+
-+	kunit_info(test, "running for %lu ms\n", runtime_ms);
-+
-+	for_each_cpu(cpu, &test_cpus) {
-+		thread_data = kunit_kmalloc(test, sizeof(*thread_data), GFP_KERNEL);
-+		KUNIT_ASSERT_NOT_NULL(test, thread_data);
-+		thread_data->test_data = test_data;
-+		thread_data->num = cpu;
-+
-+		thread = kthread_run_on_cpu(prbtest_writer, thread_data, cpu,
-+					    "prbtest writer %u");
-+		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, thread);
-+		prbtest_add_kthread_cleanup(test, thread);
-+	}
-+
-+	kunit_info(test, "starting test\n");
-+
-+	set_cpus_allowed_ptr(current, cpumask_of(reader_cpu));
-+	prbtest_reader(test_data, runtime_ms);
-+
-+	kunit_info(test, "completed test\n");
-+}
-+
-+static struct kunit_case prb_test_cases[] = {
-+	KUNIT_CASE_SLOW(test_readerwriter),
-+	{}
-+};
-+
-+static struct kunit_suite prb_test_suite = {
-+	.name       = "printk-ringbuffer",
-+	.test_cases = prb_test_cases,
-+};
-+kunit_test_suite(prb_test_suite);
-+
-+MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
-+MODULE_AUTHOR("John Ogness <john.ogness@linutronix.de>");
-+MODULE_DESCRIPTION("printk_ringbuffer KUnit test");
-+MODULE_LICENSE("GPL");
+>=20
+> =C2=A0static int sca3000_read_data(struct sca3000_state *st,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 u8 reg_address_high,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 u8 *rx,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 int len)
+> =C2=A0{
+> =C2=A0	int ret;
+> @@ -974,18 +948,15 @@ static int sca3000_read_data(struct sca3000_state *=
+st,
+> =C2=A0			.tx_buf =3D st->tx,
+> =C2=A0		}, {
+> =C2=A0			.len =3D len,
+> -			.rx_buf =3D rx,
+> +			.rx_buf =3D st->rx,
+> =C2=A0		}
+> =C2=A0	};
+> -
+> =C2=A0	st->tx[0] =3D SCA3000_READ_REG(reg_address_high);
+> +
+> =C2=A0	ret =3D spi_sync_transfer(st->us, xfer, ARRAY_SIZE(xfer));
+> -	if (ret) {
+> +	if (ret)
+> =C2=A0		dev_err(&st->us->dev, "problem reading register\n");
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> +	return ret;
 
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20241011-printk-ringbuffer-test-f47f87c6a88b
+Unless I'm missing something, the above seems unrelated to the rest of the =
+patch.
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+- Nuno S=C3=A1
+
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> @@ -1001,16 +972,15 @@ static void sca3000_ring_int_process(u8 val, struc=
+t iio_dev
+> *indio_dev)
+> =C2=A0	mutex_lock(&st->lock);
+> =C2=A0
+> =C2=A0	if (val & SCA3000_REG_INT_STATUS_HALF) {
+> -		ret =3D sca3000_read_data_short(st, SCA3000_REG_BUF_COUNT_ADDR,
+> -					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1);
+> +		ret =3D spi_w8r8(st->us,
+> SCA3000_READ_REG(SCA3000_REG_BUF_COUNT_ADDR));
+> =C2=A0		if (ret)
+> =C2=A0			goto error_ret;
+> -		num_available =3D st->rx[0];
+> +		num_available =3D ret;
+> =C2=A0		/*
+> =C2=A0		 * num_available is the total number of samples available
+> =C2=A0		 * i.e. number of time points * number of channels.
+> =C2=A0		 */
+> -		ret =3D sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR, st->rx,
+> +		ret =3D sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR,
+> =C2=A0					num_available * 2);
+> =C2=A0		if (ret)
+> =C2=A0			goto error_ret;
+> @@ -1045,7 +1015,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
+oid
+> *private)
+> =C2=A0{
+> =C2=A0	struct iio_dev *indio_dev =3D private;
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> -	int ret, val;
+> +	int ret;
+> =C2=A0	s64 last_timestamp =3D iio_get_time_ns(indio_dev);
+> =C2=A0
+> =C2=A0	/*
+> @@ -1053,15 +1023,14 @@ static irqreturn_t sca3000_event_handler(int irq,=
+ void
+> *private)
+> =C2=A0	 * but ensures no interrupt is missed.
+> =C2=A0	 */
+> =C2=A0	mutex_lock(&st->lock);
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_STATUS_ADDR, 1);
+> -	val =3D st->rx[0];
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_STATUS_ADDR))=
+;
+> =C2=A0	mutex_unlock(&st->lock);
+> =C2=A0	if (ret)
+> =C2=A0		goto done;
+> =C2=A0
+> -	sca3000_ring_int_process(val, indio_dev);
+> +	sca3000_ring_int_process(ret, indio_dev);
+> =C2=A0
+> -	if (val & SCA3000_INT_STATUS_FREE_FALL)
+> +	if (ret & SCA3000_INT_STATUS_FREE_FALL)
+> =C2=A0		iio_push_event(indio_dev,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
+L,
+> =C2=A0						=C2=A0 0,
+> @@ -1070,7 +1039,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
+oid
+> *private)
+> =C2=A0						=C2=A0 IIO_EV_DIR_FALLING),
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 last_timestamp);
+> =C2=A0
+> -	if (val & SCA3000_INT_STATUS_Y_TRIGGER)
+> +	if (ret & SCA3000_INT_STATUS_Y_TRIGGER)
+> =C2=A0		iio_push_event(indio_dev,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
+L,
+> =C2=A0						=C2=A0 0,
+> @@ -1079,7 +1048,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
+oid
+> *private)
+> =C2=A0						=C2=A0 IIO_EV_DIR_RISING),
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 last_timestamp);
+> =C2=A0
+> -	if (val & SCA3000_INT_STATUS_X_TRIGGER)
+> +	if (ret & SCA3000_INT_STATUS_X_TRIGGER)
+> =C2=A0		iio_push_event(indio_dev,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
+L,
+> =C2=A0						=C2=A0 0,
+> @@ -1088,7 +1057,7 @@ static irqreturn_t sca3000_event_handler(int irq, v=
+oid
+> *private)
+> =C2=A0						=C2=A0 IIO_EV_DIR_RISING),
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 last_timestamp);
+> =C2=A0
+> -	if (val & SCA3000_INT_STATUS_Z_TRIGGER)
+> +	if (ret & SCA3000_INT_STATUS_Z_TRIGGER)
+> =C2=A0		iio_push_event(indio_dev,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_MOD_EVENT_CODE(IIO_ACCE=
+L,
+> =C2=A0						=C2=A0 0,
+> @@ -1114,13 +1083,13 @@ static int sca3000_read_event_config(struct iio_d=
+ev
+> *indio_dev,
+> =C2=A0	/* read current value of mode register */
+> =C2=A0	mutex_lock(&st->lock);
+> =C2=A0
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> =C2=A0
+> =C2=A0	switch (chan->channel2) {
+> =C2=A0	case IIO_MOD_X_AND_Y_AND_Z:
+> -		ret =3D !!(st->rx[0] & SCA3000_REG_MODE_FREE_FALL_DETECT);
+> +		ret =3D !!(ret & SCA3000_REG_MODE_FREE_FALL_DETECT);
+> =C2=A0		break;
+> =C2=A0	case IIO_MOD_X:
+> =C2=A0	case IIO_MOD_Y:
+> @@ -1129,7 +1098,7 @@ static int sca3000_read_event_config(struct iio_dev
+> *indio_dev,
+> =C2=A0		 * Motion detection mode cannot run at the same time as
+> =C2=A0		 * acceleration data being read.
+> =C2=A0		 */
+> -		if ((st->rx[0] & SCA3000_REG_MODE_MODE_MASK)
+> +		if ((ret & SCA3000_REG_MODE_MODE_MASK)
+> =C2=A0		=C2=A0=C2=A0=C2=A0 !=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET) {
+> =C2=A0			ret =3D 0;
+> =C2=A0		} else {
+> @@ -1157,20 +1126,20 @@ static int sca3000_freefall_set_state(struct iio_=
+dev
+> *indio_dev, bool state)
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	/* read current value of mode register */
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> =C2=A0	/* if off and should be on */
+> -	if (state && !(st->rx[0] & SCA3000_REG_MODE_FREE_FALL_DETECT))
+> +	if (state && !(ret & SCA3000_REG_MODE_FREE_FALL_DETECT))
+> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> -					 st->rx[0] |
+> SCA3000_REG_MODE_FREE_FALL_DETECT);
+> +					 ret | SCA3000_REG_MODE_FREE_FALL_DETECT);
+> =C2=A0	/* if on and should be off */
+> -	else if (!state && (st->rx[0] & SCA3000_REG_MODE_FREE_FALL_DETECT))
+> +	if (!state && (ret & SCA3000_REG_MODE_FREE_FALL_DETECT))
+> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> -					 st->rx[0] &
+> ~SCA3000_REG_MODE_FREE_FALL_DETECT);
+> -	else
+> -		return 0;
+> +					 ret &
+> ~SCA3000_REG_MODE_FREE_FALL_DETECT);
+> +
+> +	return 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int sca3000_motion_detect_set_state(struct iio_dev *indio_de=
+v, int axis,
+> @@ -1207,22 +1176,22 @@ static int sca3000_motion_detect_set_state(struct=
+ iio_dev
+> *indio_dev, int axis,
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	/* read current value of mode register */
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0	/* if off and should be on */
+> =C2=A0	if ((st->mo_det_use_count) &&
+> -	=C2=A0=C2=A0=C2=A0 ((st->rx[0] & SCA3000_REG_MODE_MODE_MASK)
+> +	=C2=A0=C2=A0=C2=A0 ((ret & SCA3000_REG_MODE_MODE_MASK)
+> =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 !=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET))
+> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> -			(st->rx[0] & ~SCA3000_REG_MODE_MODE_MASK)
+> +			(ret & ~SCA3000_REG_MODE_MODE_MASK)
+> =C2=A0			| SCA3000_REG_MODE_MEAS_MODE_MOT_DET);
+> =C2=A0	/* if on and should be off */
+> =C2=A0	else if (!(st->mo_det_use_count) &&
+> -		 ((st->rx[0] & SCA3000_REG_MODE_MODE_MASK)
+> +		 ((ret & SCA3000_REG_MODE_MODE_MASK)
+> =C2=A0		=C2=A0 =3D=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET))
+> =C2=A0		return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> -			st->rx[0] & SCA3000_REG_MODE_MODE_MASK);
+> +			ret & SCA3000_REG_MODE_MODE_MASK);
+> =C2=A0	else
+> =C2=A0		return 0;
+> =C2=A0}
+> @@ -1280,18 +1249,18 @@ int __sca3000_hw_ring_state_set(struct iio_dev *i=
+ndio_dev,
+> bool state)
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	mutex_lock(&st->lock);
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> =C2=A0	if (state) {
+> =C2=A0		dev_info(&indio_dev->dev, "supposedly enabling ring buffer\n");
+> =C2=A0		ret =3D sca3000_write_reg(st,
+> =C2=A0			SCA3000_REG_MODE_ADDR,
+> -			(st->rx[0] | SCA3000_REG_MODE_RING_BUF_ENABLE));
+> +			(ret | SCA3000_REG_MODE_RING_BUF_ENABLE));
+> =C2=A0	} else
+> =C2=A0		ret =3D sca3000_write_reg(st,
+> =C2=A0			SCA3000_REG_MODE_ADDR,
+> -			(st->rx[0] & ~SCA3000_REG_MODE_RING_BUF_ENABLE));
+> +			(ret & ~SCA3000_REG_MODE_RING_BUF_ENABLE));
+> =C2=A0error_ret:
+> =C2=A0	mutex_unlock(&st->lock);
+> =C2=A0
+> @@ -1315,12 +1284,12 @@ static int sca3000_hw_ring_preenable(struct iio_d=
+ev
+> *indio_dev)
+> =C2=A0	mutex_lock(&st->lock);
+> =C2=A0
+> =C2=A0	/* Enable the 50% full interrupt */
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_unlock;
+> =C2=A0	ret =3D sca3000_write_reg(st,
+> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
+> -				st->rx[0] | SCA3000_REG_INT_MASK_RING_HALF);
+> +				ret | SCA3000_REG_INT_MASK_RING_HALF);
+> =C2=A0	if (ret)
+> =C2=A0		goto error_unlock;
+> =C2=A0
+> @@ -1346,12 +1315,12 @@ static int sca3000_hw_ring_postdisable(struct iio=
+_dev
+> *indio_dev)
+> =C2=A0	/* Disable the 50% full interrupt */
+> =C2=A0	mutex_lock(&st->lock);
+> =C2=A0
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto unlock;
+> =C2=A0	ret =3D sca3000_write_reg(st,
+> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
+> -				st->rx[0] & ~SCA3000_REG_INT_MASK_RING_HALF);
+> +				ret & ~SCA3000_REG_INT_MASK_RING_HALF);
+> =C2=A0unlock:
+> =C2=A0	mutex_unlock(&st->lock);
+> =C2=A0	return ret;
+> @@ -1376,7 +1345,7 @@ static int sca3000_clean_setup(struct sca3000_state=
+ *st)
+> =C2=A0
+> =C2=A0	mutex_lock(&st->lock);
+> =C2=A0	/* Ensure all interrupts have been acknowledged */
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_STATUS_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> =C2=A0
+> @@ -1402,7 +1371,7 @@ static int sca3000_clean_setup(struct sca3000_state=
+ *st)
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> =C2=A0	/* Enable interrupts, relevant to mode and set up as active low */
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> =C2=A0	ret =3D sca3000_write_reg(st,
+> @@ -1416,11 +1385,11 @@ static int sca3000_clean_setup(struct sca3000_sta=
+te *st)
+> =C2=A0	 * Ring in 12 bit mode - it is fine to overwrite reserved bits 3,5
+> =C2=A0	 * as that occurs in one of the example on the datasheet
+> =C2=A0	 */
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> -				(st->rx[0] & SCA3000_MODE_PROT_MASK));
+> +				ret & SCA3000_MODE_PROT_MASK);
+> =C2=A0
+> =C2=A0error_ret:
+> =C2=A0	mutex_unlock(&st->lock);
+> @@ -1503,14 +1472,15 @@ static int sca3000_stop_all_interrupts(struct sca=
+3000_state
+> *st)
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	mutex_lock(&st->lock);
+> -	ret =3D sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
+> +	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADDR));
+> =C2=A0	if (ret)
+> =C2=A0		goto error_ret;
+> +
+> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_INT_MASK_ADDR,
+> -				(st->rx[0] &
+> -				 ~(SCA3000_REG_INT_MASK_RING_THREE_QUARTER |
+> -				=C2=A0=C2=A0 SCA3000_REG_INT_MASK_RING_HALF |
+> -				=C2=A0=C2=A0 SCA3000_REG_INT_MASK_ALL_INTS)));
+> +				ret &
+> +				~(SCA3000_REG_INT_MASK_RING_THREE_QUARTER |
+> +				=C2=A0 SCA3000_REG_INT_MASK_RING_HALF |
+> +				=C2=A0 SCA3000_REG_INT_MASK_ALL_INTS));
+> =C2=A0error_ret:
+> =C2=A0	mutex_unlock(&st->lock);
+> =C2=A0	return ret;
 
 
