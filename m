@@ -1,115 +1,104 @@
-Return-Path: <linux-kernel+bounces-683008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DA8AD67BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75458AD67D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA663AD42E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300521883FE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989691F3FF8;
-	Thu, 12 Jun 2025 06:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86CA1F1524;
+	Thu, 12 Jun 2025 06:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/95/Ewh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="6Tnk2zpk"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E80C1EA7CB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE0720C031;
+	Thu, 12 Jun 2025 06:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749708771; cv=none; b=UoBCRjs5Qaelribd7Ec8P52Rm5X0+m/GWVE/hjSexSEsQeqf1mqDc+78rKlEjpg8zCdWiQ3uTUc86rtfScwHkBPh9lm0NeGjBe2IRRtWhqUQ7wC4hHwHIxCcpSbxD9G2I6SqeyHlczN/bBg+9yN7EByEPHRKETeEzZXxaq7aKlU=
+	t=1749708805; cv=none; b=pyxMTfd59ozq/mANlFRtyES5VJ8+BdfWfuxZXSoenNzPI+gTKw0H1HZ8rgyG37dSfrz2nvqAlyYqMCsobntvISq+B0EXV6AREGVup3Do6W/MLhO1H8LlENLpjJLNoKhGhu70CIvhXVXuQwDMzw5H54jGQheZZxCgYQToeerlrxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749708771; c=relaxed/simple;
-	bh=MlbQ50o4f6u5pnc00CzQIFi2h3qEcGsw79ewAeB7PF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P5Gz52h514clhtK2XtzwsQfCrrqpMs6CZhC/9ECc+2eygZkCrhAQGo0jny8Rjzh1VCvzN9AQfOK80e/I2Zg2t2v5i2Ufmpbd5ojgRmBwpk0wOG/n9/yFd09dFPfjIifdrxxYJuTV4XaBhIm1Obfpe030dEuaV05IGcH4T7FtI4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/95/Ewh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749708767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MlbQ50o4f6u5pnc00CzQIFi2h3qEcGsw79ewAeB7PF4=;
-	b=J/95/EwhiL+P2u8H9kPZuyeGIOSaSm5sURzrVHy1y3weWCQJATCYmtlu/vSKkGi2/ci7/4
-	eN85wfRXHzBoA+MroNUhAatTw9GyN7NuO27rFRioUA44KYRYiLE6KLsDLNeFAwPCE6ybmI
-	TUA50B/pWhwUXffTMAkLEHrrCuw00C4=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-SZfnJe2uOQG4F4rzdLMP6Q-1; Thu, 12 Jun 2025 02:12:46 -0400
-X-MC-Unique: SZfnJe2uOQG4F4rzdLMP6Q-1
-X-Mimecast-MFC-AGG-ID: SZfnJe2uOQG4F4rzdLMP6Q_1749708765
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-311b6d25278so700983a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 23:12:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749708765; x=1750313565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MlbQ50o4f6u5pnc00CzQIFi2h3qEcGsw79ewAeB7PF4=;
-        b=IycgD02i/w0NXjK6i/j3n/f1U9h8ZZrxmql6b8awPtz9tFjgVSigjauTge/DCknNmU
-         yS1kAP0NS0WAfURm0N9gUCn8ASWdur+tEJTsBvtcgHN+kSKy1ucdJc2wHZcMAuC9yxwh
-         vQl/Zv4IVHk7bKMDf3f3yxlj/l4ns+yqg1+QOFcEKV12sKlXu6su6Bu4ZejSikx8kzXv
-         4aQdk84T1+RqrKTiySeI69jSX7ZqUIZkX72OLC0R9awO1/5T4aojbGAqpPF416oSJxpc
-         r8Z+x9ysow1kORGhQoXR9Yre6EyBT41dab7tAKLZFaADDYamwCPgSNNswuBSHWHwu2nX
-         2LKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLX4DVMnewx9JE0WeUZYkwrpKCg+wBuVNu4GS4a/VymBbLnjwN1yuZY1IojDRu9ylOuSbJrGM/dDm+hTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEF4VBs8UYFexvgOOu8nygCwbTkzQUSB0fbANHX6SzOLeTgFiD
-	+VxhkF6Niy3nIXX24ox9FZl/f9iBgR+VibnT1VVMBxFtZMQIAXbSwQ7COeYS0q3j3wHh0yraCJ0
-	0YrgCW97Tkyc4nx2EiBagMbxDEF9y4BW/cewB2ZDWzMHLv16yn/2WZO7qbKV4Y/B4AsULapmG6O
-	sAjp1L9Fjf+rBdkXRXhExio4xZUVYDkavljP2hMXju
-X-Gm-Gg: ASbGncu1SVWgEx7g5cGl1PLceEc74vc/N4Hfb/fLbHz2qGfKpTiLWHsZVCgoAMsavdg
-	VE5n2verfXKjoKtH2R+oEZD2FYEUQ6w4juSFXCPlXXOBfQpg5asg60087FOzF0QfsyHB4+L/vj9
-	K/XPp9
-X-Received: by 2002:a17:90b:5628:b0:311:e4ff:1810 with SMTP id 98e67ed59e1d1-313c0668326mr2584704a91.3.1749708765327;
-        Wed, 11 Jun 2025 23:12:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8nEsPFjSfYppZCrGBwOZj2EXvMsBbci1aiHbuZSbde5qDOX/uaEqUZ1HZNfewkqJpsnTzU7HSRHu/P9/nbYo=
-X-Received: by 2002:a17:90b:5628:b0:311:e4ff:1810 with SMTP id
- 98e67ed59e1d1-313c0668326mr2584680a91.3.1749708764934; Wed, 11 Jun 2025
- 23:12:44 -0700 (PDT)
+	s=arc-20240116; t=1749708805; c=relaxed/simple;
+	bh=oCkNsF4jAbINksOx0fvr5p8N08HQ7Tk5Wej95Tovdlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SixSy7MD8TGFTGeTJtU+/c18y1umLLLu6POfpTKmZomeRqLDcpgifz4HvaFDAYFW1RpIibM2A0X9ym3DWJrHud7GwtYtiznFaN+VT2+wArBZ4ErlktLgt8HTqNahY18RQeFjyjjpACgjyerT35qgbpBUvREslBLyU6JZrnkdK0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=6Tnk2zpk; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=d0ztJlo825I13kb3bxddMAoPs02kBnZ14ol1fnruaBk=; b=6Tnk2zpkgi0x5+D82Lxct/AdoC
+	iaw89WEFQKaSURM/9N0G/vYHbWPR9syN8Lce4kYsIaHls/rp9AZHk6GIg4yPviQ5BaKOJPzss2E2b
+	zkscX4co+YmrV2qUBBUQrTIlQvK4G2etPhd69AE6xW0gYWthmxZTrgkOJsGgp3CGSZphCn55JLtAZ
+	vWMzvomzcm5v8y89ZxPFFYSeJDY4JqAsmel/43USago5qpkoU+xmXx0ekee6RRzRJNK/R/SDLtei6
+	bE4f14YN7R6E7jJuWc0gSAjM80i2v1UsuEgN884lOfdqJp99+mO93lBpeTsfSgEhWMIBLB3DgbMgK
+	uAOEWfNQ==;
+Date: Thu, 12 Jun 2025 08:12:55 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Andrew Davis <afd@ti.com>
+Cc: Kory Maincent <kory.maincent@bootlin.com>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>, Roger Quadros
+ <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, Bajjuri Praneeth
+ <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 5/5] arm: omap2plus_defconfig: Enable TPS65219
+ regulator
+Message-ID: <20250612081255.255be21e@akair>
+In-Reply-To: <1d87fa3b-c3b9-44fd-9e61-7f1ffadcfb0c@ti.com>
+References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
+	<20250609-bbg-v2-5-5278026b7498@bootlin.com>
+	<1d87fa3b-c3b9-44fd-9e61-7f1ffadcfb0c@ti.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609073430.442159-1-lulu@redhat.com> <20250609073430.442159-2-lulu@redhat.com>
-In-Reply-To: <20250609073430.442159-2-lulu@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 12 Jun 2025 14:12:31 +0800
-X-Gm-Features: AX0GCFua3qf1tKF-j83aW6duXknVJEBpOabQNRyFghC9nw8Dh5yPS6CPiPjCd68
-Message-ID: <CACGkMEskts7y7bCxRLoZvDbg0YZbdF59b3Jzxkgpg0KCCY+TiA@mail.gmail.com>
-Subject: Re: [PATCH v11 1/3] vhost: Add a new parameter in vhost_dev to allow
- user select kthread
-To: Cindy Lu <lulu@redhat.com>
-Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 9, 2025 at 3:34=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
->
-> The vhost now uses vhost_task and workers as a child of the owner thread.
-> While this aligns with containerization principles, it confuses some
-> legacy userspace applications, therefore, we are reintroducing kthread
-> API support.
->
-> Introduce a new parameter to enable users to choose between kthread and
-> task mode.
->
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
-> ---
+Am Wed, 11 Jun 2025 16:13:05 -0500
+schrieb Andrew Davis <afd@ti.com>:
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+> On 6/9/25 10:43 AM, Kory Maincent wrote:
+> > Enable the TPS65219 regulator in the defconfig, as the TPS65214
+> > variant is used by the newly introduced BeagleBoard Green Eco board.
+> > 
+> > Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
+> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> > ---
+> >   arch/arm/configs/omap2plus_defconfig | 3 +++
+> >   1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+> > index 9f9780c8e62a..2ad669f7b202 100644
+> > --- a/arch/arm/configs/omap2plus_defconfig
+> > +++ b/arch/arm/configs/omap2plus_defconfig  
+> 
+> Why omap2plus_defconfig? OMAP3 and newer are all ARMv7 and
+> boards with those can/should use multi_v7_defconfig.
+> 
+if there are enough drivers enabled there, it would work, but it is not.
+So there need to be a bunch of patches to add the missing stuff.
+omap2plus_defconfig is there and support for boards are added.
 
-Thanks
+So I think until multi_v7_defconfig is really usable for OMAP3+, we
+should stick with the name omap2plus_defconfig and add stuff.
+If we rename omap2plus_defconfig to omap2_defconfig, we should imho
+disable OMAP3/4/5 there to avoid confusion.
 
+Regards,
+Andreas
 
