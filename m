@@ -1,256 +1,223 @@
-Return-Path: <linux-kernel+bounces-683500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1429BAD6E3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:50:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6455AD6E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8DB3AACE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4F7188490C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B108C236A9F;
-	Thu, 12 Jun 2025 10:50:43 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F266223339;
-	Thu, 12 Jun 2025 10:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEE1236A9F;
+	Thu, 12 Jun 2025 10:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOdWp8b2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6BB1F92E;
+	Thu, 12 Jun 2025 10:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725443; cv=none; b=eIJATGpBiN1UbmkJVA/gbMCoaZM3dPM1h2G5noQgrEU7cFdbgVUKrp1LXgyWY+bR0x+2aPde2T3IOEhRS4+kjYjP6+3hBnmDCxIGBDA2G3jzmIS+ZGCFz59TR0MLFcD7g+T/mjmyEH+ECg3Vo2ORXiu41T5GNl0+GxTfKpouVcU=
+	t=1749724859; cv=none; b=u/k+YhYb4cOuDGuYDQ0PBMrMEfnlirEE012yzG1wS6TYXLtbraj4rgssOzsQJGb9JphV/jHigHb3tzvWSZIWll5xpw5OEQs4uyvRGIut2iUz/fJiVRvy1M6JKuCokbSCRGce4/bk+S0U5eIPepI2299dDJm+UdxGtxQFpmI1rkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725443; c=relaxed/simple;
-	bh=SQUtuRhE2BAVHn8Mafr9cwFS7bLSZxdCosfeA4mmwDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eurQ+c9Mx30fqvk8RLE2PYv0fN5EmPxEgQkcMm0S9U/EFGzKNAeukPEQ8LEtawhNOizXjNduvG9jvTCqGnTn9EoBgI9pRWXu/qaWcVo4BqXqluGyK5E12wGA2cEpHhkssRlHVl+joBvR4eGzgl0LsSu2D5KVmIWY0vasFWys1Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bHzYb73gyz9tHF;
-	Thu, 12 Jun 2025 12:39:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id k2wwbyyyP6lu; Thu, 12 Jun 2025 12:39:47 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bHzYb6LqLz9tFS;
-	Thu, 12 Jun 2025 12:39:47 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D48D28B77B;
-	Thu, 12 Jun 2025 12:39:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id QnMofMfdk0mU; Thu, 12 Jun 2025 12:39:47 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 502998B769;
-	Thu, 12 Jun 2025 12:39:47 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ALSA: pcm: Convert snd_pcm_ioctl_sync_ptr_{compat/x32} to user_access_begin/user_access_end()
-Date: Thu, 12 Jun 2025 12:39:39 +0200
-Message-ID: <8df11af98033e4cb4d9b0f16d6e9d5b69110b036.1749724057.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1749724859; c=relaxed/simple;
+	bh=IGseCNuZuDaz/lm8jRoy5U/gC1+Grl0hSR0NO4hnO+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3U32MuoxZn3Alx6jCmtD15v9EnwoEk0DjCIIdYNPBhtYS1GUYQPFKyDVfPPqiFlujXMCbysJO9k8/y3n+iCjASeoxtpbGlkeHUOGEVVfHeF+6my+BGMNHQcybYrgHr4YTD6xvnW3mEJbPW/VvHzo8VFWLy5+v+yV69lorCstI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOdWp8b2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8E4C4CEEA;
+	Thu, 12 Jun 2025 10:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749724858;
+	bh=IGseCNuZuDaz/lm8jRoy5U/gC1+Grl0hSR0NO4hnO+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WOdWp8b2U+M5RbBcY3ywIRDDW/JsQXJluubRcvguCDgshaBzfJIz6/unl5tzio3Mv
+	 9w9NzmQTU2sslCY1SLRIPVuD64Qry3+/BkmQgq6XzAMUKDDV83R5pqQmUBOHc4aEAL
+	 oeHok690Ge4pb1rslSQ+vDy1mvRSnboU7a1w/JX0BtTxIMdnVCLZQe4J1QfLlqBcuP
+	 Uaqjt5ntBISmdVZl8lYi5afoMjKoFQkO3ESzKtmAW3yTFK3cbdS1DHMJFbw7b7cGse
+	 YfO+ZG0Nw1HpzP+bsPdJpaRN/ql+GgcesjM6s8pO7Bj/XpCgnMoy+QsO4hSSbcVCZ/
+	 iKPJL1dM7M4qw==
+Date: Thu, 12 Jun 2025 13:40:55 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Prachotan Bathi <prachotan.bathi@arm.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] tpm_crb_ffa: handle tpm busy return code
+Message-ID: <aEqut7qHnugl_vN_@kernel.org>
+References: <20250611193009.3941971-1-prachotan.bathi@arm.com>
+ <20250611193009.3941971-2-prachotan.bathi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749724779; l=8808; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=SQUtuRhE2BAVHn8Mafr9cwFS7bLSZxdCosfeA4mmwDg=; b=JuAnvGdXpCM7km35w05+tUvPA0w1w1jX1C5T0Ty88h3Q2iIkdcGF+rdmyTdi/k6rxrXDkZJBR C1Zu00NQkFTChNEZcJu80cDHnrGGebl28WMqrKj25RtnZM/hcJptrSk
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611193009.3941971-2-prachotan.bathi@arm.com>
 
-With user access protection (Called SMAP on x86 or KUAP on powerpc)
-each and every call to get_user() or put_user() performs heavy
-operations to unlock and lock kernel access to userspace.
+On Wed, Jun 11, 2025 at 02:30:09PM -0500, Prachotan Bathi wrote:
+> Platforms supporting direct message request v2 can
+> support SPs that support multiple services.
+> If the TPM service is sharing the SP with another service,
 
-SNDRV_PCM_IOCTL_SYNC_PTR ioctl is a hot path that needs to be
-optimised. To do that, perform user accesses by blocks using
-user_access_begin/user_access_end() and unsafe_get_user()/
-unsafe_put_user() and alike.
+What is "TPM service" and "SP"?
 
-Before the patch the 9 calls to put_user() at the
-end of snd_pcm_ioctl_sync_ptr_compat() imply the following set of
-instructions about 9 times (access_ok - enable user - write - disable
-user):
-    0.00 :   c057f858:       3d 20 7f ff     lis     r9,32767
-    0.29 :   c057f85c:       39 5e 00 14     addi    r10,r30,20
-    0.77 :   c057f860:       61 29 ff fc     ori     r9,r9,65532
-    0.32 :   c057f864:       7c 0a 48 40     cmplw   r10,r9
-    0.36 :   c057f868:       41 a1 fb 58     bgt     c057f3c0 <snd_pcm_ioctl+0xbb0>
-    0.30 :   c057f86c:       3d 20 dc 00     lis     r9,-9216
-    1.95 :   c057f870:       7d 3a c3 a6     mtspr   794,r9
-    0.33 :   c057f874:       92 8a 00 00     stw     r20,0(r10)
-    0.27 :   c057f878:       3d 20 de 00     lis     r9,-8704
-    0.28 :   c057f87c:       7d 3a c3 a6     mtspr   794,r9
-...
+> it could get an error code of BUSY if the other service is
+> in process.
+> This adds a parameterized variable (default 2000ms)
 
-A perf profile shows that in total the 9 put_user() represent 36% of
-the time spent in snd_pcm_ioctl() and about 80 instructions.
+What is "this"?
 
-With this patch everything is done in 13 instructions and represent
-only 15% of the time spent in snd_pcm_ioctl():
+"Add a ..."
 
-    0.57 :   c057f5dc:       3d 20 dc 00     lis     r9,-9216
-    0.98 :   c057f5e0:       7d 3a c3 a6     mtspr   794,r9
-    0.16 :   c057f5e4:       92 7f 00 04     stw     r19,4(r31)
-    0.63 :   c057f5e8:       93 df 00 0c     stw     r30,12(r31)
-    0.16 :   c057f5ec:       93 9f 00 10     stw     r28,16(r31)
-    4.95 :   c057f5f0:       92 9f 00 14     stw     r20,20(r31)
-    0.19 :   c057f5f4:       92 5f 00 18     stw     r18,24(r31)
-    0.49 :   c057f5f8:       92 bf 00 1c     stw     r21,28(r31)
-    0.27 :   c057f5fc:       93 7f 00 20     stw     r27,32(r31)
-    5.88 :   c057f600:       93 36 00 00     stw     r25,0(r22)
-    0.11 :   c057f604:       93 17 00 00     stw     r24,0(r23)
-    0.00 :   c057f608:       3d 20 de 00     lis     r9,-8704
-    0.79 :   c057f60c:       7d 3a c3 a6     mtspr   794,r9
+>  that indicates the maximum time to keep retrying for.
+> When the TPM service returns a BUSY error code, we sleep
 
-Note that here the access_ok() in user_write_access_begin() is skipped
-because the exact same verification has already been performed at the
-beginning of the fonction with the call to user_read_access_begin().
+s/we sleep/sleep/
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-This is a lighter version of previous patch "[PATCH v2] ALSA: pcm: Convert multiple {get/put}_user to user_access_begin/user_access_end()" focussing on identified hot path.
-Moved and nested the failure labels closer in order to increase readability
 
-Link: https://patchwork.ozlabs.org/project/linuxppc-dev/patch/d2609397eafc2b55ec1f44a3f30ccec00e0c7f6e.1749455639.git.christophe.leroy@csgroup.eu/
+>  50-100us before retrying again, until we are over the
+> busy timeout.
+> 
+> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
 
- sound/core/pcm_compat.c | 40 +++++++++++++++++++++++++++-------------
- sound/core/pcm_native.c | 40 +++++++++++++++++++++++++++-------------
- 2 files changed, 54 insertions(+), 26 deletions(-)
+I'd consider rewriting the commit message as it lacks any explanation
+of the code change. You replace condition statement with a loop. Start
+with that.
 
-diff --git a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
-index a42ec7f5a1da..348a72e6499e 100644
---- a/sound/core/pcm_compat.c
-+++ b/sound/core/pcm_compat.c
-@@ -418,10 +418,18 @@ static int snd_pcm_ioctl_sync_ptr_x32(struct snd_pcm_substream *substream,
- 	if (snd_BUG_ON(!runtime))
- 		return -EINVAL;
- 
--	if (get_user(sflags, &src->flags) ||
--	    get_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
--	    get_user(scontrol.avail_min, &src->c.control.avail_min))
-+	if (!user_read_access_begin(src, sizeof(*src)))
- 		return -EFAULT;
-+	err = -EFAULT;
-+	unsafe_get_user(sflags, &src->flags, Efault_rd);
-+	unsafe_get_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_rd);
-+	unsafe_get_user(scontrol.avail_min, &src->c.control.avail_min, Efault_rd);
-+	err = 0;
-+Efault_rd:
-+	user_read_access_end();
-+	if (err)
-+		return err;
-+
- 	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
- 		err = snd_pcm_hwsync(substream);
- 		if (err < 0)
-@@ -450,18 +458,24 @@ static int snd_pcm_ioctl_sync_ptr_x32(struct snd_pcm_substream *substream,
- 	}
- 	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
- 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
--	if (put_user(sstatus.state, &src->s.status.state) ||
--	    put_user(sstatus.hw_ptr, &src->s.status.hw_ptr) ||
--	    put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec) ||
--	    put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec) ||
--	    put_user(sstatus.suspended_state, &src->s.status.suspended_state) ||
--	    put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec) ||
--	    put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec) ||
--	    put_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
--	    put_user(scontrol.avail_min, &src->c.control.avail_min))
-+
-+	if (!user_write_access_begin(src, sizeof(*src)))
- 		return -EFAULT;
-+	err = -EFAULT;
-+	unsafe_put_user(sstatus.state, &src->s.status.state, Efault_wr);
-+	unsafe_put_user(sstatus.hw_ptr, &src->s.status.hw_ptr, Efault_wr);
-+	unsafe_put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec, Efault_wr);
-+	unsafe_put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec, Efault_wr);
-+	unsafe_put_user(sstatus.suspended_state, &src->s.status.suspended_state, Efault_wr);
-+	unsafe_put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec, Efault_wr);
-+	unsafe_put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec, Efault_wr);
-+	unsafe_put_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_wr);
-+	unsafe_put_user(scontrol.avail_min, &src->c.control.avail_min), Efault_wr);
-+	err = 0;
-+Efault_wr:
-+	user_write_access_end();
- 
--	return 0;
-+	return err;
- }
- #endif /* CONFIG_X86_X32_ABI */
- 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index ecb71bf1859d..b104faddb6e3 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -3165,10 +3165,18 @@ static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
- 	if (snd_BUG_ON(!runtime))
- 		return -EINVAL;
- 
--	if (get_user(sflags, &src->flags) ||
--	    get_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
--	    get_user(scontrol.avail_min, &src->c.control.avail_min))
-+	if (!user_read_access_begin(src, sizeof(*src)))
- 		return -EFAULT;
-+	err = -EFAULT;
-+	unsafe_get_user(sflags, &src->flags, Efault_rd);
-+	unsafe_get_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_rd);
-+	unsafe_get_user(scontrol.avail_min, &src->c.control.avail_min, Efault_rd);
-+	err = 0;
-+Efault_rd:
-+	user_read_access_end();
-+	if (err)
-+		return err;
-+
- 	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
- 		err = snd_pcm_hwsync(substream);
- 		if (err < 0)
-@@ -3200,18 +3208,24 @@ static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
- 	}
- 	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
- 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
--	if (put_user(sstatus.state, &src->s.status.state) ||
--	    put_user(sstatus.hw_ptr, &src->s.status.hw_ptr) ||
--	    put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec) ||
--	    put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec) ||
--	    put_user(sstatus.suspended_state, &src->s.status.suspended_state) ||
--	    put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec) ||
--	    put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec) ||
--	    put_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
--	    put_user(scontrol.avail_min, &src->c.control.avail_min))
-+
-+	if (!user_write_access_begin(src, sizeof(*src)))
- 		return -EFAULT;
-+	err = -EFAULT;
-+	unsafe_put_user(sstatus.state, &src->s.status.state, Efault_wr);
-+	unsafe_put_user(sstatus.hw_ptr, &src->s.status.hw_ptr, Efault_wr);
-+	unsafe_put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec, Efault_wr);
-+	unsafe_put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec, Efault_wr);
-+	unsafe_put_user(sstatus.suspended_state, &src->s.status.suspended_state, Efault_wr);
-+	unsafe_put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec, Efault_wr);
-+	unsafe_put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec, Efault_wr);
-+	unsafe_put_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_wr);
-+	unsafe_put_user(scontrol.avail_min, &src->c.control.avail_min, Efault_wr);
-+	err = 0;
-+Efault_wr:
-+	user_write_access_end();
- 
--	return 0;
-+	return err;
- }
- #define __SNDRV_PCM_IOCTL_SYNC_PTR32 _IOWR('A', 0x23, struct snd_pcm_sync_ptr32)
- 
--- 
-2.47.0
+I'd strip some of the comments too i.e, those that state the obvious.
 
+> ---
+>  drivers/char/tpm/tpm_crb_ffa.c | 78 +++++++++++++++++++++++-----------
+>  1 file changed, 54 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> index 4ead61f01299..5f0a30a20b57 100644
+> --- a/drivers/char/tpm/tpm_crb_ffa.c
+> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> @@ -10,6 +10,8 @@
+>  #define pr_fmt(fmt) "CRB_FFA: " fmt
+>  
+>  #include <linux/arm_ffa.h>
+> +#include <linux/delay.h>
+> +#include <linux/moduleparam.h>
+>  #include "tpm_crb_ffa.h"
+>  
+>  /* TPM service function status codes */
+> @@ -178,6 +180,17 @@ int tpm_crb_ffa_init(void)
+>  }
+>  EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+>  
+> +static unsigned int busy_timeout = 2000;
+> +/**
+> + * busy_timeout - Maximum time to retry before giving up on busy
+> + *
+> + * This parameter defines the maximum time in milliseconds to retry
+> + * sending a message to the TPM service before giving up.
+> + */
+> +module_param(busy_timeout, uint, 0644);
+> +MODULE_PARM_DESC(busy_timeout,
+> +		 "Maximum time to retry before giving up on busy");
+> +
+>  static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+>  				      unsigned long a0,
+>  				      unsigned long a1,
+> @@ -191,34 +204,51 @@ static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+>  
+>  	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>  
+> -	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> -		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+> -		       sizeof(struct ffa_send_direct_data2));
+> +	ktime_t start;
+> +	ktime_t stop;
+> +
+> +	start = ktime_get();
+> +	stop = ktime_add(start, ms_to_ktime(busy_timeout));
+> +
+> +	do {
+> +		if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> +			memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+> +			       sizeof(struct ffa_send_direct_data2));
+>  
+> -		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> -		tpm_crb_ffa->direct_msg_data2.data[1] = a0;
+> -		tpm_crb_ffa->direct_msg_data2.data[2] = a1;
+> -		tpm_crb_ffa->direct_msg_data2.data[3] = a2;
+> +			tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> +			tpm_crb_ffa->direct_msg_data2.data[1] = a0;
+> +			tpm_crb_ffa->direct_msg_data2.data[2] = a1;
+> +			tpm_crb_ffa->direct_msg_data2.data[3] = a2;
+>  
+> -		ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
+> +			ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
+>  				&tpm_crb_ffa->direct_msg_data2);
+> -		if (!ret)
+> -			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+> -	} else {
+> -		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> -		       sizeof(struct ffa_send_direct_data));
+> -
+> -		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> -		tpm_crb_ffa->direct_msg_data.data2 = a0;
+> -		tpm_crb_ffa->direct_msg_data.data3 = a1;
+> -		tpm_crb_ffa->direct_msg_data.data4 = a2;
+> -
+> -		ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> -				&tpm_crb_ffa->direct_msg_data);
+> -		if (!ret)
+> -			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> -	}
+> +			if (!ret)
+> +				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+> +		} else {
+> +			memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> +			       sizeof(struct ffa_send_direct_data));
+>  
+> +			tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> +			tpm_crb_ffa->direct_msg_data.data2 = a0;
+> +			tpm_crb_ffa->direct_msg_data.data3 = a1;
+> +			tpm_crb_ffa->direct_msg_data.data4 = a2;
+> +
+> +			ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> +				&tpm_crb_ffa->direct_msg_data);
+> +			if (!ret)
+> +				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> +		}
+> +		/* Check if the TPM service returned busy */
+
+Strip.
+
+> +		if (ret == -EBUSY)
+> +			pr_err("TPM says busy, trying again, value, ret: %d\n",
+> +			       ret);
+> +		else
+> +			/* If TPM did not return busy, we are done, exit the loop */
+
+Ditto.
+
+> +			break;
+> +		/* Sleep for a short time before retrying to avoid busy looping */
+
+Ditto.
+
+> +		usleep_range(50, 100);
+> +	} while (ktime_before(ktime_get(), stop));
+> +	/* If we are here, we either got a valid response or over the busy timeout */
+
+Ditto.
+
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.43.0
+> 
+
+BR, Jarkko
 
