@@ -1,197 +1,330 @@
-Return-Path: <linux-kernel+bounces-684334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAA9AD792C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:37:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C04AEAD7919
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731DA163BEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:37:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66E347AB014
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D368E2BF3E4;
-	Thu, 12 Jun 2025 17:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5722235C1E;
+	Thu, 12 Jun 2025 17:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LSN9nTMc"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="jav+p3jL"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C9729DB80;
-	Thu, 12 Jun 2025 17:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32146248F50
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749749812; cv=none; b=WHZjFs+vD4gpjrWIImGRrTfFCMIJvKGhCXCfyAz8l+7zl0Y4T3om6Wh+3JKdxyaenHRU36ikEvaAJc3jLdS6x3QtbQ/xOGVxuFsjKxufnMtgKLgCON6idF0F5HT/XkAQ559F8ROab3UK5/EFjv96kHmFMu7/RzOX6LbJ1t4mdME=
+	t=1749749806; cv=none; b=OAdciiwPMIYOhZx0IKfP8smGkWVMEA7oK+j78QRkTCgpcTPFv6FpDW1o6chDNFCz+Q1mRa56qK4fjUEXixvkv4Sm4JoDiyrYPbr4/EY7s/X6K8nXcMaoo3MQXU4Ypkt+MQzKlFjkTu342aCEeRiufROWgxw6ZoH4pBqLi9MFrVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749749812; c=relaxed/simple;
-	bh=jhI2H2u5NlRMRY7ijD9h9lxeBLLSc0LQ0ACNWtrvODM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=toSeIxgM/fmjBOZCImMa/diOGY8IvMRutLs6HuT0njE1+OSnt8mMNuF/M6FpkgmzUEG5c7EG12yw2iifwXxDG72gjc95c2tI+8+wviHSIHYJ6vi2gnQOcgO+blCbs80hKxahsFGJfKz73hPvdcM+pIjRm1k0tD3kCyG1J3YL7Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LSN9nTMc; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CCjL9N021397;
-	Thu, 12 Jun 2025 17:36:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=weooV9zJodYcbtNTa
-	8+KZfA3fL5XKJwaSF2bq6quK9Y=; b=LSN9nTMcDnJIjCX8Bg00mrd05eT7hUuHF
-	uuKWNUc6sZR4AMlWU7xhYoVouX1sOoYyy6PIWthmqDdNebOXQZ7B41+bNf6vlaYH
-	kkZ9bo4u+cH8+LVq9514oaCRyYHVL3VX37G3J0MqL6bBW+HGsyoy6GcAyDwrNH7Y
-	FHGNjuCGPCXoPxoeibvgpcrGVyOu6+gwMO3RZhdYa505EA7IhjOphEFvmjoWTlxF
-	JuxiwH51mVpt3qrC3vANlOIGYgYjcGaqpg2tN/eUvq0QNMuQXODNnqQI+bRZkOXJ
-	VjrIfiMKNWZyely7vz79FXHdVa4C2/7aycYSQQKthFaESJC+He5Eg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474dv7v8ma-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 17:36:18 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55CHS242001227;
-	Thu, 12 Jun 2025 17:36:17 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474dv7v8m6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 17:36:17 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55CE5jqi021839;
-	Thu, 12 Jun 2025 17:36:16 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47505061m6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 17:36:16 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55CHaEt946072194
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Jun 2025 17:36:14 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4C36F20043;
-	Thu, 12 Jun 2025 17:36:14 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3887420040;
-	Thu, 12 Jun 2025 17:36:14 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 12 Jun 2025 17:36:14 +0000 (GMT)
-Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
-	id A94ADE19DB; Thu, 12 Jun 2025 19:36:13 +0200 (CEST)
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
-        Jeremy Fitzhardinge <jeremy@goop.org>,
-        Ryan Roberts <ryan.roberts@arm.com>
-Subject: [PATCH 6/6] powerpc/64s: Do not re-activate batched TLB flush
-Date: Thu, 12 Jun 2025 19:36:13 +0200
-Message-ID: <8625a1d97dcf4ae499b4bb341e27346f768a7248.1749747752.git.agordeev@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1749747752.git.agordeev@linux.ibm.com>
-References: <cover.1749747752.git.agordeev@linux.ibm.com>
+	s=arc-20240116; t=1749749806; c=relaxed/simple;
+	bh=LCDpx9RPv21Vt/bDTkl807l3tYeupskl+otEl77ScuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d7AKhgBXwiZ2+5aUoE+hMny1aBiJ7whCWE8eSHoWxtJxlyUd2drIKIZcMHEIghjHlR0kac5/1ERo8vz2rYUWgeV2a5JYw6gsoBRR2t1QXIp6gT9ZihtfZ0Nh8V0KA8k25mOoC5Poz2HQ7MWvQpDh6AAXjBvbt1Wue2xtx6scaYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=jav+p3jL; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313154270bbso1394685a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1749749803; x=1750354603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gt5YyyJeOLs2VGVgNIW5XxNcnh/B2T4VMdq9AInbPd0=;
+        b=jav+p3jLoRI8eK8c61aUT5WxR21qI6PmoBYbHDgQT8DS3eQWuJk3r1aiPe1lQ9jIda
+         QLmwwv++Z7TNelWSAcuG/8mOhKEtxss8iAlfMUzlkmPJav/AAJg3KpQqk/1zXRzRcc4Y
+         9kiB4+jWxlt+yP1oSboTxPooY3xM++oy3GpHeawLFFNO6CuRRw1/f5WkUywEIIJmGfj8
+         DehOAbeurqi/zmGcwiEwHHPjW+TjArXcE/psejS6l2VvxIaAOKPLKNraLMVIsRfSo+rQ
+         BzxfJAJibQUCD/EIlJNa2WgMsX2zZppU8p/WeEBGcY/rkuxxRJ5Z3l40nIUvOD0XZOOY
+         2lBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749749803; x=1750354603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gt5YyyJeOLs2VGVgNIW5XxNcnh/B2T4VMdq9AInbPd0=;
+        b=M9oAOaqJWnlGLYWBFZVnqsRbkZqrqC/6zmlYEgC0N07xjQdm5i9JRi2jMEa+z5wYtf
+         BoZAgjyYlz+PZuDTC+XWWmAm5HMA8oSDxbyP+z94Nv8NIxtiKKWPXFRgywWdNPBajWh/
+         QvUnC15Q2cCBuR2Jz2nVJrMu3IJgTgLwNJmaE0cYtxTVjc2Bl/UCW+15nd9TTYvX1DLS
+         gmEIt6hA9nxVPcAwUKXyd26stJsezsc5IzFKWNeR4UJXLwTd9WIfed12eamyrZUEWuDP
+         Z+fyHqW3/0XYqju4XdRbGWw49h/TfCTFGICw04nc/Pda2fTb0l8vFI5evtGuHwa/VLV0
+         IXHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVboNkAHarUY3dr4YZl8GWoiZid2dclWRHRYdLBv/KEV3GEVv81aW82Ca74BNYmswtaLNrD+FgSpSEz7oA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF2qbmghVJCjKNcIrWFYDR20nYdA/5l4Mo5fzWdRj9g/noyhTQ
+	Ys2QtdUY5UmqqPSzNHFrtxsJXwZG8wHLukBk6SR/0uGU/p6kUu+abyIfmMhvSA7ibRE=
+X-Gm-Gg: ASbGncvtJMEanGQXl/AkcRTpxEYpn3Y1oOQH+IRapBuNiibfeIpHOpiWKkEy0BzSrfL
+	GjB8IGhCINKh0svkVos8lSwvdJD+GKnZxWd8oNO20xFGt/QrvzbhrfCHKnIxu5H5vAWFIRlZ3vD
+	wV6hfElp0kIBUJtnVg1TDkr+ND/xL5zP+4j5Pw3DGsleW9r1QF5fvf4yjwhePOCGx5m3U4ybs7e
+	XWwdXs+1jJnAcItUkjErGuqed0NF4zj2eZW0YM0wrpOABXHeLdWaAyAEkhN0+qUtftrbw2xgS5T
+	dpM79r6EHiupqGWTBKa6T3HGdaZ1A62a7Kr4hgSA8rJwzrX+WRUWLeWEAIeKTDW1vr/scAaB
+X-Google-Smtp-Source: AGHT+IFUg2RKRnIposbOF8fnfoBpdDR3SO+Eyx4YydJxNVc0sFUoQpaOabCcthfeabsf+6EmWv84Sw==
+X-Received: by 2002:a17:90b:5845:b0:311:f05b:869a with SMTP id 98e67ed59e1d1-313d9c3292dmr85247a91.8.1749749803405;
+        Thu, 12 Jun 2025 10:36:43 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c19cd3cbsm1788950a91.11.2025.06.12.10.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 10:36:43 -0700 (PDT)
+Date: Thu, 12 Jun 2025 10:36:41 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ved Shanbhogue <ved@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v7 2/3] riscv: mm: Add soft-dirty page tracking
+ support
+Message-ID: <aEsQKeJGOlCooOUK@debug.ba.rivosinc.com>
+References: <20250409095320.224100-1-zhangchunyan@iscas.ac.cn>
+ <20250409095320.224100-3-zhangchunyan@iscas.ac.cn>
+ <aEMkW8py61njmNLo@debug.ba.rivosinc.com>
+ <CAAfSe-u3oyjW7D0f=XUVaOJsM00Mqx7-LeR-Ecxjui3sfaAMUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vQTY3M8ZzSt0cV8-T9uSmi-uBIYEQ6jo
-X-Proofpoint-GUID: ilIcPrMxf5Pvcy-DGizNo5pQfOED9ogK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEzMiBTYWx0ZWRfX4hJe95qNcCfd ZiGA4V6bFSTahSxOdWra2ve+MTIch6VbUpSLy9/ie7s8Ie297H4KM++vXLqMaovxILSX/VEH7Wd kL8MyHFoqx96u5mOCGyBdQBufIfHdynh/CGelm35zApCFLN5oxqqgVJ1arMbCxOEKkamxhCcQye
- T4p0jaYnpDgiPAOCiq39P+LTkqDP2vbt+LMS1z2CvkzZGQexAIAmpDiNPfHVf+G1uXLcXOE6U5i OsZ7V6mTRdR0DBm/QtbuD0iTOQBU5jFIaSMQMFqtSBv6tG54QRa2g6Dp1oUK3GV/GQFz/SGEskt ZXn/w51Xb8tzMBLP0YYYHDaeDFEkaV4fsqRoFnw2dboBfFVZA1+J+xjRcI4OfWbgbBcpVESfnm6
- /7oQbflnv5Pj4LYSf4VrIQyml0ZufqpOCdiLtdZRi1M7LkYKIRyWGlH1NBkJIEu9ljeGJpAm
-X-Authority-Analysis: v=2.4 cv=CfMI5Krl c=1 sm=1 tr=0 ts=684b1012 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=OhCMzGPqdLFamtb4m9QA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- phishscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
- suspectscore=0 mlxlogscore=477 adultscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506120132
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAAfSe-u3oyjW7D0f=XUVaOJsM00Mqx7-LeR-Ecxjui3sfaAMUQ@mail.gmail.com>
 
-Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
-lazy mmu mode") a task can not be preempted while in lazy MMU mode.
-Therefore, the batch re-activation code is never called, so remove it.
+On Thu, Jun 12, 2025 at 02:51:57PM +0800, Chunyan Zhang wrote:
+>Hi Deepak,
+>
+>On Sat, 7 Jun 2025 at 01:24, Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> On Wed, Apr 09, 2025 at 05:53:19PM +0800, Chunyan Zhang wrote:
+>> >The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
+>> >for software, this patch uses bit 59 for soft-dirty.
+>> >
+>> >To add swap PTE soft-dirty tracking, we borrow bit 3 which is available
+>> >for swap PTEs on RISC-V systems.
+>> >
+>> >Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+>> >---
+>> > arch/riscv/Kconfig                    |  1 +
+>> > arch/riscv/include/asm/pgtable-bits.h | 19 +++++++
+>> > arch/riscv/include/asm/pgtable.h      | 71 ++++++++++++++++++++++++++-
+>> > 3 files changed, 89 insertions(+), 2 deletions(-)
+>> >
+>> >diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> >index 332fc00243ad..652e2bbfb702 100644
+>> >--- a/arch/riscv/Kconfig
+>> >+++ b/arch/riscv/Kconfig
+>> >@@ -139,6 +139,7 @@ config RISCV
+>> >       select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+>> >       select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+>> >       select HAVE_ARCH_SECCOMP_FILTER
+>> >+      select HAVE_ARCH_SOFT_DIRTY if 64BIT && MMU && RISCV_ISA_SVRSW60T59B
+>> >       select HAVE_ARCH_STACKLEAK
+>> >       select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+>> >       select HAVE_ARCH_TRACEHOOK
+>> >diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+>> >index a8f5205cea54..a6fa871dc19e 100644
+>> >--- a/arch/riscv/include/asm/pgtable-bits.h
+>> >+++ b/arch/riscv/include/asm/pgtable-bits.h
+>> >@@ -20,6 +20,25 @@
+>> >
+>> > #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
+>> > #define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
+>> >+
+>> >+#ifdef CONFIG_MEM_SOFT_DIRTY
+>> >+
+>> >+/* ext_svrsw60t59b: bit 59 for software dirty tracking */
+>> >+#define _PAGE_SOFT_DIRTY                                              \
+>> >+      ((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?    \
+>> >+       (1UL << 59) : 0)
+>> >+/*
+>> >+ * Bit 3 is always zero for swap entry computation, so we
+>> >+ * can borrow it for swap page soft-dirty tracking.
+>> >+ */
+>> >+#define _PAGE_SWP_SOFT_DIRTY                                          \
+>> >+      ((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?    \
+>> >+       _PAGE_EXEC : 0)
+>> >+#else
+>> >+#define _PAGE_SOFT_DIRTY      0
+>> >+#define _PAGE_SWP_SOFT_DIRTY  0
+>> >+#endif /* CONFIG_MEM_SOFT_DIRTY */
+>> >+
+>>
+>> Above can be done like this
+>>
+>> +
+>> +#ifdef CONFIG_MEM_SOFT_DIRTY && RISCV_ISA_EXT_SVRSW60T59B
+>> +
+>> +/* ext_svrsw60t59b: bit 59 for software dirty tracking */
+>> +#define _PAGE_SOFT_DIRTY (1UL << 59)
+>> +/*
+>> + * Bit 3 is always zero for swap entry computation, so we
+>> + * can borrow it for swap page soft-dirty tracking.
+>> + */
+>> +#define _PAGE_SWP_SOFT_DIRTY _PAGE_EXEC
+>> +#else
+>> +#define _PAGE_SOFT_DIRTY       0
+>> +#define _PAGE_SWP_SOFT_DIRTY   0
+>> +#endif /* CONFIG_MEM_SOFT_DIRTY */
+>>
+>
+>No, the feature depends not only on the compile-time configuration but
+>also on the run-time environment.
+>
+>We need to check if the platform on which the system is running
+>supports the extension SVRSW60T59B, and riscv_has_extension_unlikely()
+>does that check that is a run-time check, not a build-time condition.
+>
 
-Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
----
- arch/powerpc/include/asm/thread_info.h |  2 --
- arch/powerpc/kernel/process.c          | 25 -------------------------
- 2 files changed, 27 deletions(-)
+aah you are right. Ignore my comment.
 
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 2785c7462ebf..092118a68862 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -154,12 +154,10 @@ void arch_setup_new_exec(void);
- /* Don't move TLF_NAPPING without adjusting the code in entry_32.S */
- #define TLF_NAPPING		0	/* idle thread enabled NAP mode */
- #define TLF_SLEEPING		1	/* suspend code enabled SLEEP mode */
--#define TLF_LAZY_MMU		3	/* tlb_batch is active */
- #define TLF_RUNLATCH		4	/* Is the runlatch enabled? */
- 
- #define _TLF_NAPPING		(1 << TLF_NAPPING)
- #define _TLF_SLEEPING		(1 << TLF_SLEEPING)
--#define _TLF_LAZY_MMU		(1 << TLF_LAZY_MMU)
- #define _TLF_RUNLATCH		(1 << TLF_RUNLATCH)
- 
- #ifndef __ASSEMBLY__
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 855e09886503..edb59a447149 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -1281,9 +1281,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
- {
- 	struct thread_struct *new_thread, *old_thread;
- 	struct task_struct *last;
--#ifdef CONFIG_PPC_64S_HASH_MMU
--	struct ppc64_tlb_batch *batch;
--#endif
- 
- 	new_thread = &new->thread;
- 	old_thread = &current->thread;
-@@ -1291,14 +1288,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	WARN_ON(!irqs_disabled());
- 
- #ifdef CONFIG_PPC_64S_HASH_MMU
--	batch = this_cpu_ptr(&ppc64_tlb_batch);
--	if (batch->active) {
--		current_thread_info()->local_flags |= _TLF_LAZY_MMU;
--		if (batch->index)
--			__flush_tlb_pending(batch);
--		batch->active = 0;
--	}
--
- 	/*
- 	 * On POWER9 the copy-paste buffer can only paste into
- 	 * foreign real addresses, so unprivileged processes can not
-@@ -1369,20 +1358,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	 */
- 
- #ifdef CONFIG_PPC_BOOK3S_64
--#ifdef CONFIG_PPC_64S_HASH_MMU
--	/*
--	 * This applies to a process that was context switched while inside
--	 * arch_enter_lazy_mmu_mode(), to re-activate the batch that was
--	 * deactivated above, before _switch(). This will never be the case
--	 * for new tasks.
--	 */
--	if (current_thread_info()->local_flags & _TLF_LAZY_MMU) {
--		current_thread_info()->local_flags &= ~_TLF_LAZY_MMU;
--		batch = this_cpu_ptr(&ppc64_tlb_batch);
--		batch->active = 1;
--	}
--#endif
--
- 	/*
- 	 * Math facilities are masked out of the child MSR in copy_thread.
- 	 * A new task does not need to restore_math because it will
--- 
-2.48.1
+>> > #define _PAGE_TABLE     _PAGE_PRESENT
+>> >
+>> > /*
+>> >diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> >index 428e48e5f57d..14461ffe6321 100644
+>> >--- a/arch/riscv/include/asm/pgtable.h
+>> >+++ b/arch/riscv/include/asm/pgtable.h
+>> >@@ -436,7 +436,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
+>>
+>> Shouldn't "static inline int pte_dirty(pte_t pte)" be updated as well
+>
+>It may not be needed, since pte_dirty() on X86 and ARM doesn't check
+>_PAGE_SOFT_DIRTY either.
 
+arch/arm64/include/asm/pgtable.h
+#define pte_dirty(pte)		(pte_sw_dirty(pte) || pte_hw_dirty(pte))
+
+
+`pte_sw_dirty` eventually expands to checking of b55 which is soft dirty.
+
+But when I look at `pte_to_pagemap_entry` (`fs/proc/task_mmu.c`), I don't
+see that pte to pagemap entry conversion for arm64. There is no equivalent
+`pte_soft_dirty` macro defined on arm64.
+
+Yeah may be it's not needed then.
+
+>
+>Thanks for the review,
+>Chunyan
+>
+>
+>
+>
+>>
+>> static inline int pte_dirty(pte_t pte)
+>> {
+>>         return pte_val(pte) & (_PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+>> }
+>>
+>> Perhaps have a macro which includes both dirty together and then use together.
+>>
+>>
+>> >
+>> > static inline pte_t pte_mkdirty(pte_t pte)
+>> > {
+>> >-      return __pte(pte_val(pte) | _PAGE_DIRTY);
+>> >+      return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+>> > }
+>> >
+>> > static inline pte_t pte_mkclean(pte_t pte)
+>> >@@ -469,6 +469,38 @@ static inline pte_t pte_mkhuge(pte_t pte)
+>> >       return pte;
+>> > }
+>> >
+>> >+#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+>> >+static inline bool pte_soft_dirty(pte_t pte)
+>> >+{
+>> >+      return !!(pte_val(pte) & _PAGE_SOFT_DIRTY);
+>> >+}
+>> >+
+>> >+static inline pte_t pte_mksoft_dirty(pte_t pte)
+>> >+{
+>> >+      return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
+>> >+}
+>> >+
+>> >+static inline pte_t pte_clear_soft_dirty(pte_t pte)
+>> >+{
+>> >+      return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
+>> >+}
+>> >+
+>> >+static inline bool pte_swp_soft_dirty(pte_t pte)
+>> >+{
+>> >+      return !!(pte_val(pte) & _PAGE_SWP_SOFT_DIRTY);
+>> >+}
+>> >+
+>> >+static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
+>> >+{
+>> >+      return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
+>> >+}
+>> >+
+>> >+static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
+>> >+{
+>> >+      return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
+>> >+}
+>> >+#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
+>> >+
+>> > #ifdef CONFIG_RISCV_ISA_SVNAPOT
+>> > #define pte_leaf_size(pte)    (pte_napot(pte) ?                               \
+>> >                                       napot_cont_size(napot_cont_order(pte)) :\
+>> >@@ -821,6 +853,40 @@ static inline pud_t pud_mkspecial(pud_t pud)
+>> > }
+>> > #endif
+>> >
+>> >+#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+>> >+static inline bool pmd_soft_dirty(pmd_t pmd)
+>> >+{
+>> >+      return pte_soft_dirty(pmd_pte(pmd));
+>> >+}
+>> >+
+>> >+static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
+>> >+{
+>> >+      return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
+>> >+}
+>> >+
+>> >+static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
+>> >+{
+>> >+      return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
+>> >+}
+>> >+
+>> >+#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+>> >+static inline bool pmd_swp_soft_dirty(pmd_t pmd)
+>> >+{
+>> >+      return pte_swp_soft_dirty(pmd_pte(pmd));
+>> >+}
+>> >+
+>> >+static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+>> >+{
+>> >+      return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
+>> >+}
+>> >+
+>> >+static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+>> >+{
+>> >+      return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
+>> >+}
+>> >+#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>> >+#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
+>> >+
+>> > static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+>> >                               pmd_t *pmdp, pmd_t pmd)
+>> > {
+>> >@@ -910,7 +976,8 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+>> >  *
+>> >  * Format of swap PTE:
+>> >  *    bit            0:       _PAGE_PRESENT (zero)
+>> >- *    bit       1 to 3:       _PAGE_LEAF (zero)
+>> >+ *    bit       1 to 2:       (zero)
+>> >+ *    bit            3:       _PAGE_SWP_SOFT_DIRTY
+>> >  *    bit            5:       _PAGE_PROT_NONE (zero)
+>> >  *    bit            6:       exclusive marker
+>> >  *    bits      7 to 11:      swap type
+>> >--
+>> >2.34.1
+>> >
 
