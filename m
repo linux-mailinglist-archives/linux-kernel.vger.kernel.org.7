@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-684004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFE0AD74D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:58:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B4FAD74E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB621896A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0438189AB67
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C28A2701AE;
-	Thu, 12 Jun 2025 14:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C70E26D4D7;
+	Thu, 12 Jun 2025 14:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeYAYC1p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YzEhAtWk"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DFB26FA7E;
-	Thu, 12 Jun 2025 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0B826D4E9;
+	Thu, 12 Jun 2025 14:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739941; cv=none; b=diW8ENv5UfyxTIDzKsTZd6mJSVVQrti0OTf8Tf+Oz9AaOGD5sfYneudjcVgrZNgsdD9fSiN9m6dBH0HvsXLv/JG/CEJWF0ihJUFoaOxDUPs0SQajQ1Fo0a30sjLFFd6MQiPZa630UfxuddoiEdD6qVemFvEF+CW0Bo3MmaCizTU=
+	t=1749739979; cv=none; b=GswK+kNvp8NQPIu5S2ylv4v+ZUwedTA/R+2dmQBhPAml55JUfLCOyYJPg6dNVdTKdjcQ8kUhkzoV6oH7dtSU1h31mLBTvfd84kaBUL4Nb57GD0i10U9MRNI5+4iDBBC+etAdnF0MrBqT/gsyBtRw99kFoEuKxAKtd+sHjWlVSpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739941; c=relaxed/simple;
-	bh=m6NyqVWcWAB8aZ/nz34ATunc9qSW/wqIr84I2Z9j8i0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=UxWIZJsR6XlCvd3n7x3DBb8tCzxptwXrkck5RExjq2m3ZrJ7q2bF9tHEeOGJfMvGnWCSIguwu7bMc1UHzKLnTlwCZJ8Bp5dSXqQduPMAXJ6A1Cqw8KWbFaBid1vntWxfRRIVyClSjDZ+CNhmpu8Z9DvYsTiwAPXIS/BVrAWV6xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeYAYC1p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0121C4CEEA;
-	Thu, 12 Jun 2025 14:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749739941;
-	bh=m6NyqVWcWAB8aZ/nz34ATunc9qSW/wqIr84I2Z9j8i0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JeYAYC1pgOTLgRtJQR3ro4v2evFDxPvv7OltvZWSAFXXZ+ZiA/at2rRH9xdJ7vF97
-	 VJdO1LiOYdXjl5huYnGF9lJ5T0UfW2s/OmeDhw+DxTDhq9oSP17wuFALaZOWk0pNHi
-	 3/P/nSDT+R3NLsuqFpQHMvc2pceSxnbawpMU8L0AZbL6x2PsvGjaahoz7iHio6/xHA
-	 fQZ0TDQol/WMTztVVX3RKvTepsVgprKEOT1NNj/xDLdM1RrkyfFcDY3OASbC9FVW3o
-	 x0vQKXphjHf+WGhTQB1TKOEiLMVN7syh9AkTcoeH2pNhM0bcSBgflp5aX2Jcm1BDLD
-	 MvFiGhn+6l8tA==
+	s=arc-20240116; t=1749739979; c=relaxed/simple;
+	bh=BHs6em2IdPZtT/B9EW91eqWvHJ+mI9zvLDnVDmv0ZJw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EabX5GuPKgC0ckDOPwKWwk6G6AIHZ3O8nDEY2myZlRtN2rFzGqE/hq/9vlfelyGa+i3TT3UlCDYOIMmZ9Y9liBJKtMq8HrTbf1N0iVV/AMuQ5gMcyTE/b4OEI3/rYfhAV01c0wRIfkQhQ2lbhFc9pV22aIzM06DUy38SOJ8T+YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YzEhAtWk; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id ADADC26064;
+	Thu, 12 Jun 2025 16:52:56 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 3zxYttUun_bL; Thu, 12 Jun 2025 16:52:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1749739975; bh=BHs6em2IdPZtT/B9EW91eqWvHJ+mI9zvLDnVDmv0ZJw=;
+	h=From:Subject:Date:To:Cc;
+	b=YzEhAtWkELydVwtHUsUb6GmGaBzJ/4su5F9KfmHtUcTnk25hy2gUDKuH2Ob9+p6Ij
+	 bF5PtPfyiul5lBYRKZSWkxqTXPuY+Ftvrk39XXoip4q4BMCMDnuP9uayqj1+5DBX7u
+	 QiZG8M3r5DCvzKzljNTc5un/ofA2qEgGD78SIabV4s7RrKZTBt4/aAiE8Z6t7aZQrs
+	 GF+AQBKLq82Xr1xxxorWTum6yAkMdz+Qtc052t++B14KVUJIgzKWpSojAVql1ObEO+
+	 h1dkxPF4Wm6C+zlHHdVl3/ffKnkBrgZnYucst26bX81s9nVZnKRbThRRn2ubscOq67
+	 8XAf+CSjbtZCA==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/2] Add driver for Samsung S6E8AA5X01 panel controller
+Date: Thu, 12 Jun 2025 20:22:40 +0530
+Message-Id: <20250612-panel-samsung-s6e8aa5x01-v1-0-06dcba071ea6@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Jun 2025 16:52:15 +0200
-Message-Id: <DAKN1HO7WUXY.QS098VXTDICU@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Tamir Duberstein" <tamird@gmail.com>, "Viresh Kumar"
- <viresh.kumar@linaro.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] rust: types: require
- `ForeignOwnable::into_foreign` return non-null
-X-Mailer: aerc 0.20.1
-References: <20250612-pointed-to-v3-0-b009006d86a1@kernel.org>
- <20250612-pointed-to-v3-2-b009006d86a1@kernel.org>
-In-Reply-To: <20250612-pointed-to-v3-2-b009006d86a1@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALnpSmgC/x3MQQqDMBBG4avIrDsQo5HWqxQXg/7qgI2SQRHEu
+ ze4/BbvXWRICqO2uCjhUNM1ZpSvgvpZ4gTWIZu888EFX/EmEQub/GyPE1uDt0g4XckQX38ayIh
+ BKOdbwqjns/529/0HhI38EWoAAAA=
+X-Change-ID: 20250523-panel-samsung-s6e8aa5x01-ea2496eafeda
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749739970; l=962;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=BHs6em2IdPZtT/B9EW91eqWvHJ+mI9zvLDnVDmv0ZJw=;
+ b=FMYOVwgZYbs2u1TNKThh2/6iwy2E5OIkUYogzpc7A37V2edkpE/09hxm2GWU3bVUR6c5n+m5W
+ m7z00i7fzYOCo54SdBL/JG1rNYOnP0y+0UqhLPhOj0go3uQQDxpOeRR
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Thu Jun 12, 2025 at 3:09 PM CEST, Andreas Hindborg wrote:
-> The intended implementations of `ForeignOwnable` will not return null
-> pointers from `into_foreign`, as this would render the implementation of
-> `try_from_foreign` useless. Current users of `ForeignOwnable` rely on
-> `into_foreign` returning non-null pointers. So require `into_foreign` to
-> return non-null pointers.
->
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
->  rust/kernel/types.rs | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index c156808a78d3..63a2559a545f 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -43,6 +43,7 @@ pub unsafe trait ForeignOwnable: Sized {
->      /// # Guarantees
->      ///
->      /// - Minimum alignment of returned pointer is [`Self::FOREIGN_ALIGN=
-`].
-> +    /// - The returned pointer is not null.
+This patch series introduces a driver for Samsung S6E8AA5X01, which is
+an AMOLED MIPI DSI panel controller. This panel is found in several
+(mostly Samsung) phones, in at least two different sizes - 720x1280 and
+720x1480.
 
-This also needs to be mentioned in the `Safety` section of this trait.
-Alternatively you can put "Implementers must ensure the guarantees on
-[`into_foreign`] are upheld." or similar.
-
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-Cheers,
-Benno
+Kaustabh Chakraborty (2):
+      dt-bindings: display: panel: document Samsung S6E8AA5X01 panel driver
+      drm: panel: add support for Samsung S6E8AA5X01 panel controller
 
->      ///
->      /// [`from_foreign`]: Self::from_foreign
->      /// [`try_from_foreign`]: Self::try_from_foreign
+ .../bindings/display/panel/samsung,s6e8aa5x01.yaml |  80 ++
+ drivers/gpu/drm/panel/Kconfig                      |  11 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa5x01.c   | 922 +++++++++++++++++++++
+ 4 files changed, 1014 insertions(+)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20250523-panel-samsung-s6e8aa5x01-ea2496eafeda
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
