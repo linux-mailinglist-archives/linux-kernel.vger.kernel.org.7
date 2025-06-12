@@ -1,87 +1,113 @@
-Return-Path: <linux-kernel+bounces-684022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C774AD74D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B27DAD74FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 253E216D382
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:58:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA45F3B44AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B666026FD97;
-	Thu, 12 Jun 2025 14:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyhEhweN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E54026FDA4;
+	Thu, 12 Jun 2025 14:59:03 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B5015278E;
-	Thu, 12 Jun 2025 14:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B93433A8;
+	Thu, 12 Jun 2025 14:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740294; cv=none; b=rCJfvHUrCQ9wFZzc1eGgJ2mbnu9hSAoaTYb8Pw6GBaBBWMoP3fhTOIYd61mrmNKzlr6FIaacuq0OXLmkQYJcqMWY5Po6QOgfrCIGe2bhQdokXSDvUBpKVsu/33jGGvCWHCefdzZ3olSfDwYIz81wrcaOGR+fWxb/h/FSDeNRdPU=
+	t=1749740342; cv=none; b=OKwFaIDjWeDF0OWz7Qp+PqnJuQknEp6lYfYqbQXbUQWnwzg2XeAf/BN5OmqwkHe+qhyhjlt5vOIS2H4BTTF7jNnM0G63w9B6gjUy4Zwuept3gpW9NgkverP411LoKcQPWocJG0hcQ97+CVut5gGMsPhMdi6G1m0AY0vLK+hT/fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740294; c=relaxed/simple;
-	bh=MEQ00cN8fGMKpGx5TTT2lBG5uw4fLGW1FJZZt7d8B0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaiX3QaVumLmmOglpx3WyHjErhbxpPv1cD9djLrG/p47nKEmdomWhPv90FoURwdl0gFWAZavevOFqL8kIHp/pJJ+UtyV38M/edXleJBoqXtj8mSsJL0CpR+W23c36Onkmww8czXRjZ3mpbydydWK6QkdPl+5RLyjEvp3xUFC1is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyhEhweN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5474DC4CEEA;
-	Thu, 12 Jun 2025 14:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749740293;
-	bh=MEQ00cN8fGMKpGx5TTT2lBG5uw4fLGW1FJZZt7d8B0c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyhEhweNRZcVd2K4arWld8S0SFJue+WF4/91t2dHUDMg0/cbg2Tvu9EtE4Iu1hzNb
-	 7jOB/+bthFWk32dO1y/vdiyWb8jsdhiDa0Ex9SMs3hpmjcn2jk/9OllCxRuXZnHdXF
-	 yxkaJpCWCTh8DQVAXTlnr5El/O0Xg5/pCNbCUm4GJTIwvrL9kp8Ya9Ov0hfJgsUvOy
-	 LL1bg3cEte3Pq/tJ4GVaS4w7m31nGTN+aldUzZcbCJR0xesh8gmDJIdIwGNA1BSAIL
-	 7l6J7d3JBj9VD7KEZqtj6M6C4gp60RJhapMQrsgcUrHG0oTYOtdm90twWZX3SKWjG3
-	 s2TGt9tLDstZw==
-Date: Thu, 12 Jun 2025 15:58:08 +0100
-From: Will Deacon <will@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: Re: [PATCH] arm64/ptdump: Ensure memory hotplug is prevented during
- ptdump_check_wx()
-Message-ID: <20250612145808.GA12912@willie-the-truck>
-References: <20250609041214.285664-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1749740342; c=relaxed/simple;
+	bh=YFbcPaCUWz0JNm0nMAA5mwjarfFNlAjkrukhxmWA728=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R0QmA1xuTqp6tOgjqEturY/O0aSk9tNS+NSrKpdQrHvohISecLUWkFmcev+UmKqv/v4We8KunRlpjB/bxmD29LzGeSc1s97bRXek3ZSEDcDmqt5+KxzgUzFSd0NMpyK9Xk7IFAkV3QuL+gYvDH08rXcHj+3OiSqWv+PJIzHdzBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87ecc02528aso278221241.2;
+        Thu, 12 Jun 2025 07:59:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749740339; x=1750345139;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j7urv+43q9m5//eN/fBrHnA2GxbG1zcAPVe31MZBFY0=;
+        b=c6Ey3fC9hMKr3W11NPKrXWFGN4XX8YN6isVY0F92hSCVmrIXxXcY21MzbO8fVQP/z7
+         4JuUeQo7a5tOgirhMvvhroIF4w1wPv1BrbIhsSLDNR7iswNTT7BUq5A0ctdBUFWPEL8d
+         U04I3RzIFTo2XH4mDDTbxGYaKmbgPuSkqW7n7q6yEvLOS3xMYTdtRALJXICZZS4+44st
+         gQY/41V67dm6uXXJ1ZRh1zjU9MmrbKyOgOGurITEZLEE2wco5SX1U2yYxnjYmQuf/ohS
+         VmyZUBPmPLD2vAIUCDrZwXChvG7ETpQUvG1B1Ab7VNJQShNB+fFKXeutbcKEDhFDKLVm
+         NTog==
+X-Forwarded-Encrypted: i=1; AJvYcCVDpXy/hevvmJcsUMjbIGpJpUDKMbpr4q0ZLopDNj1Pr4gOGPnt5f239X2MOFtqxiDneG9XXak5y/ko48ErWGKCA5M=@vger.kernel.org, AJvYcCVtVxVl1tOakQ6p2vo+K3sZ+GOhj1T15yRpphta0YGQLu8kVze8lW4zLNHpBB1U4Ygfd1YUrPSwGNA4@vger.kernel.org, AJvYcCXRd4sQc+A6TDsPNSISSt9k6pqvrxnBOeg/7pfyf0MxQvAjsN8NStq+nTldThf8JbeF4OyIbFNPT5EpNl90@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNLX+eha3Irbr6X/Lw88ScUY9AaDZxUdB+J25+0CNQUnw6yPLn
+	Ts/Ue94/oRLLpMUAgaBKgT3S3sNyiAaHXYzbNQ/kKDNTfY3an+LJaD0x/EniPQT9
+X-Gm-Gg: ASbGncsJtNEE+teuZl1JCHy3Uzl1PbuirD03MgA40Pgi6NdfLYrXvbiESl4+CQHE7pg
+	X5VqPaCgrv4xJy7KcByRLINu+FJiwwDATOCNE/duuEn27zAqVTkBudSJocafGH1KrAaWXMxYlsJ
+	FUiWLgWpSKqdATpBDzfO/pLw9jSczSGZSE7SasCANSqP7F3p9tcDVViHHLiznqfnNwFPYxqIXxz
+	iEX9ubrS+BOpPugZql3Hx528i9gQQgIIAQe6P0DXb+6iY23RdUuEJamJhinsoVQgBF0crFJ4AoS
+	B9pj3hwxnuB2a5K3uyrKzTSLUAAGdMya0YbZEsBNaQ8JwhfKq4/4eN9/o0bWSIoD8DZTeqixkdt
+	fngwdB+dkjBckGjjpXJ5z8ISP
+X-Google-Smtp-Source: AGHT+IErGQ4S796F23yq83bC6pdXSd7l+w0+o7liA23ok20eocm3/qzhDW5BLU3W0WGTYqS7iG0RFA==
+X-Received: by 2002:a05:6122:2024:b0:530:5996:63a2 with SMTP id 71dfb90a1353d-5312ce5ba11mr4520968e0c.7.1749740338992;
+        Thu, 12 Jun 2025 07:58:58 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5312f6513b0sm315024e0c.26.2025.06.12.07.58.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 07:58:58 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4e7ade16082so285256137.1;
+        Thu, 12 Jun 2025 07:58:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrGJAvCGRxUDWoUiT/d1qlvxkzRYwebZYjzma6t6BKENAGAdHwPv0zPCAp9w+bDy7VgEnN3QB96h5l@vger.kernel.org, AJvYcCWijaO/jlTLDGvPlSLpYvLHZu0F3TFQriaPeJr+KEDo/OsGMRiA4dLc47AJU7z7MpoMXYFaAOBIZISOK59WqdJgtdc=@vger.kernel.org, AJvYcCWqtH9WhQNEmVdXq+VDEnWzGP2PxKYF2PJQrQZjkY8LE1qt/awYJbkfjNXM3tCSleGGbCA9kDkh+8rrO+B/@vger.kernel.org
+X-Received: by 2002:a05:6102:3046:b0:4e6:a338:a41d with SMTP id
+ ada2fe7eead31-4e7ccb9decbmr4392145137.11.1749740338109; Thu, 12 Jun 2025
+ 07:58:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609041214.285664-1-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20250610-gpiochip-set-rv-soc-v1-0-1a0c36c9deed@linaro.org> <20250610-gpiochip-set-rv-soc-v1-2-1a0c36c9deed@linaro.org>
+In-Reply-To: <20250610-gpiochip-set-rv-soc-v1-2-1a0c36c9deed@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 16:58:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXt7W+XLoeQWqjNR8dBS3oCwFKBydVZueqtYg2uka0WxQ@mail.gmail.com>
+X-Gm-Features: AX0GCFuo1dTCSfHZ3zIJsOn9_JIHrUSOYlkHewmTg8yRd6ll7bXt9Le_Qc4mtYM
+Message-ID: <CAMuHMdXt7W+XLoeQWqjNR8dBS3oCwFKBydVZueqtYg2uka0WxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: renesas: pwc-rzv2m: use new GPIO line value
+ setter callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 09, 2025 at 05:12:14AM +0100, Anshuman Khandual wrote:
-> The arm64 page table dump code can race with concurrent modification of the
-> kernel page tables. When a leaf entries are modified concurrently, the dump
-> code may log stale or inconsistent information for a VA range, but this is
-> otherwise not harmful.
-> 
-> When intermediate levels of table are freed, the dump code will continue to
-> use memory which has been freed and potentially reallocated for another
-> purpose. In such cases, the dump code may dereference bogus addresses,
-> leading to a number of potential problems.
-> 
-> This problem was fixed for ptdump_show() earlier via commit 'bf2b59f60ee1
-> ("arm64/mm: Hold memory hotplug lock while walking for kernel page table
-> dump")' but a same was missed for ptdump_check_wx() which faced the race
-> condition as well. Let's just take the memory hotplug lock while executing
-> ptdump_check_wx().
+On Tue, 10 Jun 2025 at 14:38, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-How do other architectures (e.g. x86) handle this? I don't see any usage
-of {get,put}_online_mems() over there. Should this be moved into the core
-code?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.17.
 
-Will
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
