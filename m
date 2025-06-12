@@ -1,246 +1,160 @@
-Return-Path: <linux-kernel+bounces-683752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDE9AD718A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCBAAD718D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A6A17EE42
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F97166F5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E71025C816;
-	Thu, 12 Jun 2025 13:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aegjPuSn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7131E246797;
+	Thu, 12 Jun 2025 13:17:03 +0000 (UTC)
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02BF25A62D;
-	Thu, 12 Jun 2025 13:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740B52744D;
+	Thu, 12 Jun 2025 13:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734145; cv=none; b=Usx987s1O2CfkG79RMOuEUloBvKAjZaDNvb7dQrfECt36eslligNnwNaivFJVKNGua2hgc9VjtfBHtdYWUGepW7VpyNPaOXns6PD6uQzAVk17KNY3k0YPVJV4JLJi2XT6Fs+3YyC7IX0ygF3QZLQmWLatLgklGowlP53X2I6fxc=
+	t=1749734223; cv=none; b=djPz2oHq1kZLa2wFGWs6d4bgnSJJzm6izmkMtaCtK6E18KRMbVKrzVfwtVcXjV9P1DfywkJVaHJGBreOR5g7OGB6ltXhlM/hvI0JfRTM4gKZhdSsjcTxl9qO2qlQjZbQRAhBajhSmanjTUgUNwwkqLluLy7PDNrNhsmqJywOAhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734145; c=relaxed/simple;
-	bh=LMUOc2RdYNDJK4nYvLILKjg7NqLsPsWS+vgJ82GlO9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMmM753mVP7fAK/0Wn9cwZhRvaY40BMlfTNDU3mrffRzERRGp0T4ePSpq3gJZtKaSSIir8OWk0Tt0zWTxjytTSqVfXtuj3xyXyR4n0g6Q++NB9N9sX3wnJRno7OLgFEyUj/iCl4Zzdzt8seLLIHmMTxX1wWyEV6ptBk4uJIEdKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aegjPuSn; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749734142; x=1781270142;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=LMUOc2RdYNDJK4nYvLILKjg7NqLsPsWS+vgJ82GlO9c=;
-  b=aegjPuSngi5VStxqLTGKAlufNAmKJsBjf+6embY06L1KtEnHPuhATwz8
-   uiAG0GPmHrKWuDlORQsz6LPpdV9uFR4AGiKiB7I5WDSkm0wYVt+mDVZS5
-   w9MsUQpn+5tZl2o/Dk4BivWNk4E1mW+NCuSN+8hQ0dNmLz0lF7GboziJc
-   aHd3Zcn33NzRaDwh+BfV9CbdqGblC0VN9yu8PvMfjFDx9VH3SzkkFGIhQ
-   9WsFHbQClyUwBMWhKVC61x/KnqPehbLHpFDze0ZEVsGEKVhbymvTxtawU
-   KJJlWbnd9aOeJZZQR4xiFSLwwmZcJZWRGcC2/Jcd5pdqxi83USADWHFWk
-   Q==;
-X-CSE-ConnectionGUID: JfP3WiV7Rn2v0IM4uBxyIg==
-X-CSE-MsgGUID: G7+f7ZQDQuSwd9SoN4qwVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="51138991"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
-   d="scan'208";a="51138991"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 06:15:41 -0700
-X-CSE-ConnectionGUID: YcM4vTLgSe+aq1A9LpR7Ug==
-X-CSE-MsgGUID: 3Xl/sVAJSbytpyaFde8TCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
-   d="scan'208";a="152663513"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 06:15:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uPhmK-00000005xQy-1COj;
-	Thu, 12 Jun 2025 16:15:36 +0300
-Date: Thu, 12 Jun 2025 16:15:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: surajsonawane0215@gmail.com
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] iio: chemical: Add driver for Sharp GP2Y1010AU0F
-Message-ID: <aErS-HQkO5pMw3ph@smile.fi.intel.com>
-References: <20250612100758.13241-1-surajsonawane0215@gmail.com>
- <20250612100758.13241-4-surajsonawane0215@gmail.com>
+	s=arc-20240116; t=1749734223; c=relaxed/simple;
+	bh=k4w6XpEXch4GCu7oMZGMsN4hvcVpxo8CKqiDW6bTfUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qWOjLKnbiiUlXkWCkkZGirarBaOeyuN3m9Ramrv/d5cuEG/2RQWTs33KblpDuVsAv5nPysHNszMtllImfbfF4Vv3rSs7phBJXL96o7ZMUwd8fBw99Mz+Wbq69tCSFEL9ht2zV+I5qfnmJ6m7bg95O7p35pC9c03/e7uiVr88wmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2cc57330163so624481fac.2;
+        Thu, 12 Jun 2025 06:17:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749734219; x=1750339019;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TNonWCq6tQmbQ5Q8JG6wz2OIxHKwlgX2o++VTeBoqTY=;
+        b=EoTNoCSz0afw5lpwbcGC0ld79ohtzQg3hXSS3EIdYiu/JObsI5otdeeJ8kjJ5cDA7K
+         Kav5kazRlypZxpt9iH+skpvbvpF6FEP1FJKFu4v115+bZfVAUiHyNDugZsY879bOjnxI
+         /rmiGqEOXAkpATd2iLEQG/CzzXEMf0Z0IAbdMLOKdQvZe/q6VF7n5aHsM+hP+E7Onc/u
+         wIpdl0dHiPeZO3TS4p/ixgE8fTcnZrZkWkm8VGsWCSfg7q7QhBVkN0xIPHDJG0cB+nYE
+         N7YGIARZo6KqKfbBUoxC7GU5eiXsA09KGsRian9a9oakNpRcCF1KQEYlWCxfmDmh1Cem
+         WPjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH+FvWR02nRqke880uBC8fM5abm6XI8w4ijY+hDp/aj0M+b+1YzSovrrbZ19adYXDrJu2zyhxWKHy6m0zmvIdU+yo=@vger.kernel.org, AJvYcCUf3fAj83kpQ++KfeZVmGDMJUsKM/Ja6gFckeWbvp/XoLIJePVALN/RrAPvVZwdbtuJ3pvNmPmftTQH@vger.kernel.org, AJvYcCVHNPLSURwmh/bTx1AWsJid7CXx2lgnjhI1Ysh4PrlnRpekHsg7rxxZZUHam6/72uM+xS3y5c2ELKWv@vger.kernel.org, AJvYcCX0ZxZvl40gNv6oVcNF6nrC8i1KM9mFUNC9lGkfyC/Sx2FY0/dKd6adlJhek38XLQr05w7JyN+hW8YHsGOm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxggYUxDTghCT93JLvq0uGdfR15TQL+JE0MvAombKQ+cJL6tQHq
+	4u9LPccvA4malAaaPdip6T6OKTKJgWHWTr0FkG7tBYoELd1IH7S3sB5pmMy8yx8F
+X-Gm-Gg: ASbGncs4Xseb3tFFpYoUEX3aJ6JxuOiFbzIJdmUk34IGbGmXYzLU9cv0qYOq7pdQ0C5
+	9Y2Fi4bjPD3xxH5RIDo5GaBoT5ZMz+YtYTb/PtTdd0xKJGtnbYnErGKOl1xuTt31iK8FwMsGIST
+	cfGFN1HvvtPTjTITNmx8D2sBqexPzcdjeHhDIPCY5o2WJB15QXu3+0jZRWdcddGDkdK3LfaiIea
+	L+epG7YKK6Olh6OuAMyO1eHT7HV208+gN1b7ac+5s6XgXCdFcN2mIl23mI6NkRoxhwLyuWTdCAy
+	6WxPoeQ2FFYgyiGtanf6Ou7uUtNZbbXvRBo3GkmpiMth4FVZWr904BcOzjuXll/mv1Mqwwky5TT
+	/XaNekJOGmJXGIgEkPqN5zczpJdcD
+X-Google-Smtp-Source: AGHT+IFrc2S7d8JXsxh6+5kpeaxchbVsS6LjK7xsAVK86NxxgIJvIS7pTe2FPklIeBdpO1mSSQXc/w==
+X-Received: by 2002:a05:6870:d68b:b0:2d5:2955:aa6b with SMTP id 586e51a60fabf-2ea96b7aee4mr4294786fac.5.1749734219489;
+        Thu, 12 Jun 2025 06:16:59 -0700 (PDT)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eab8e6cdbasm291000fac.38.2025.06.12.06.16.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 06:16:59 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-4066a0d0256so593029b6e.3;
+        Thu, 12 Jun 2025 06:16:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnAEC3Ao9uHOeCTwb3roLaguny9bhdWOj2AtKHSFhg6A4h5riFRk5AiOdaAr40PwGeH2dGDoepx0ni/xWYY195UOo=@vger.kernel.org, AJvYcCVt+i/lAzvxxZiFJy/2fDAo8R91zfgOvVKqsFSUQLhVSfN/X2P5Nyh4NW1XUIvdK1FXr5pPhHssRdOj@vger.kernel.org, AJvYcCXYDlM4qHE7LYXao/2bFM/fTX0ydW+IYjqsG5Go3N91HZ715ybzUgTWISFo9uQzlKhZ3vGFdBaXHo2+@vger.kernel.org, AJvYcCXmUon39oCc6wzPb4tx4yoqZwyPUC63/sCzgSzJ7dL98x1nRBKYv2pxbsL+mVrvx0vd7U3LITgSuwvl9FM6@vger.kernel.org
+X-Received: by 2002:a05:6808:1794:b0:406:6e31:18a1 with SMTP id
+ 5614622812f47-40a5d05f586mr5488096b6e.2.1749734218150; Thu, 12 Jun 2025
+ 06:16:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250612100758.13241-4-surajsonawane0215@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250607194541.79176-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250607194541.79176-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 15:16:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW_89naftFMo881zp=7QGJDznFzzqLQ-kLEuyJ=KJWQnA@mail.gmail.com>
+X-Gm-Features: AX0GCFuXLlnarexsZjEK1q0rakNUWi7gsoLxdkLO2FqaNoBwunA3MuELiFSEafs
+Message-ID: <CAMuHMdW_89naftFMo881zp=7QGJDznFzzqLQ-kLEuyJ=KJWQnA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] PCI/pwrctrl: Add optional slot clock to pwrctrl
+ driver for PCI slots
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Anand Moon <linux.amoon@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 12, 2025 at 03:37:46PM +0530, surajsonawane0215@gmail.com wrote:
-> 
-> Implement support for the Sharp GP2Y1010AU0F optical dust sensor which
-> measures particulate matter concentration using infrared scattering.
-> The sensor requires precise 320μs LED pulses with ADC sampling at 280μs
-> after LED activation (as specified in datasheet section 6-1).
-> 
-> The driver provides:
-> - Raw density readings via IIO_DENSITY channel type
-> - Hardware-agnostic operation via GPIO and IIO ADC interfaces
-> - Power management through regulator framework
-> - Device Tree binding support
+On Sat, 7 Jun 2025 at 21:46, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Add the ability to enable optional slot clock into the pwrctrl driver.
+> This is used to enable slot clock in split-clock topologies, where the
+> PCIe host/controller supply and PCIe slot supply are not provided by
+> the same clock. The PCIe host/controller clock should be described in
+> the controller node as the controller clock, while the slot clock should
+> be described in controller bridge/slot subnode.
+>
+> Example DT snippet:
+> &pcicontroller {
+>     clocks = <&clk_dif 0>;             /* PCIe controller clock */
+>
+>     pci@0,0 {
+>         #address-cells = <3>;
+>         #size-cells = <2>;
+>         reg = <0x0 0x0 0x0 0x0 0x0>;
+>         compatible = "pciclass,0604";
+>         device_type = "pci";
+>         clocks = <&clk_dif 1>;         /* PCIe slot clock */
+>         vpcie3v3-supply = <&reg_3p3v>;
+>         ranges;
+>     };
+> };
+>
+> Example clock topology:
+>  ____________                    ____________
+> |  PCIe host |                  | PCIe slot  |
+> |            |                  |            |
+> |    PCIe RX<|==================|>PCIe TX    |
+> |    PCIe TX<|==================|>PCIe RX    |
+> |            |                  |            |
+> |   PCIe CLK<|======..  ..======|>PCIe CLK   |
+> '------------'      ||  ||      '------------'
+>                     ||  ||
+>  ____________       ||  ||
+> |  9FGV0441  |      ||  ||
+> |            |      ||  ||
+> |   CLK DIF0<|======''  ||
+> |   CLK DIF1<|==========''
+> |   CLK DIF2<|
+> |   CLK DIF3<|
+> '------------'
+>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-> Datasheet: https://global.sharp/products/device/lineup/data/pdf/datasheet/gp2y1010au_appl_e.pdf
-> 
-> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-No blank line(s) in the tag block.
+Bartosz: Any chance you can apply this patch to an immutable branch,
+so I can merge that before taking the other two patches?
+The alternative is to postpone the DTS patches for one cycle.
 
-> ---
+Thanks!
 
-...
+Gr{oetje,eeting}s,
 
-> config PMS7003
-
->  	  To compile this driver as a module, choose M here: the module will
->  	  be called pms7003.
-> +
-> +config GP2Y1010AU0F
-
-Shouldn't this be alphabetically ordered?
-
-> +	tristate "Sharp GP2Y1010AU0F optical dust sensor"
-> +	depends on IIO
-
-Is it needed? Nothing is missed?
-
-...
-
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/iio/consumer.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-
-No of.h in a new code, please. Also follow IWYU principle, there are missed inclusionfs.
-
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-
-...
-
-> +struct gp2y1010_data {
-> +	struct gpio_desc *led_gpio;
-> +	struct iio_channel *adc_chan;
-> +	int v_clean;  /* Calibration: voltage in clean air (mV) */
-
-clean_air_uV is much better naming, most of the comment won't be needed with it.
-
-> +};
-
-...
-
-> +static int gp2y1010_read_raw(struct iio_dev *indio_dev,
-> +							 struct iio_chan_spec const *chan,
-> +							 int *val, int *val2, long mask)
-> +{
-> +	struct gp2y1010_data *data = iio_priv(indio_dev);
-> +	int ret, voltage_mv;
-
-_mV
-
-Also I recommend to split them as they are not semantically the same.
-
-> +
-> +	if (mask != IIO_CHAN_INFO_RAW)
-> +		return -EINVAL;
-> +
-> +	gpiod_set_value(data->led_gpio, 1);
-> +	udelay(GP2Y1010_SAMPLE_DELAY_US);
-
-flseep() and explain the need of it.
-
-> +
-> +	ret = iio_read_channel_processed(data->adc_chan, &voltage_mv);
-> +
-> +	/* Wait remaining time to complete 320 µs total LED pulse width */
-> +	udelay(GP2Y1010_LED_PULSE_US - GP2Y1010_SAMPLE_DELAY_US);
-
-fsleep()
-
-> +	gpiod_set_value(data->led_gpio, 0);
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*val = voltage_mv;
-> +	return IIO_VAL_INT;
-> +}
-
-...
-
-> +static int gp2y1010_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct gp2y1010_data *data;
-> +	enum iio_chan_type ch_type;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->v_clean = 900;
-
-The default must be defined with a comment as constant.
-
-> +	data->led_gpio = devm_gpiod_get(dev, "led", GPIOD_OUT_LOW);
-> +	if (IS_ERR(data->led_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(data->led_gpio), "Failed to get LED GPIO\n");
-> +
-> +	ret = devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return ret;
-> +	udelay(100);
-> +
-> +	data->adc_chan = devm_iio_channel_get(dev, "dust");
-> +	if (IS_ERR(data->adc_chan))
-> +		return dev_err_probe(dev, PTR_ERR(data->adc_chan), "Failed to get ADC channel\n");
-> +
-> +	ret = iio_get_channel_type(data->adc_chan, &ch_type);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ch_type != IIO_DENSITY)
-> +		return dev_err_probe(dev, -EINVAL, "ADC channel is not density type\n");
-> +
-> +	indio_dev->name = dev_name(dev);
-> +	indio_dev->info = &gp2y1010_info;
-> +	indio_dev->channels = gp2y1010_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(gp2y1010_channels);
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	return devm_iio_device_register(dev, indio_dev);
-> +}
+                        Geert
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
