@@ -1,149 +1,190 @@
-Return-Path: <linux-kernel+bounces-682749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC626AD641E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9832DAD6427
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81134189E2B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60239189E1EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7160411CA0;
-	Thu, 12 Jun 2025 00:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930D6DDAB;
+	Thu, 12 Jun 2025 00:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="B89YEpc1"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nrmYrPNn"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2DDA48;
-	Thu, 12 Jun 2025 00:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749686506; cv=pass; b=NSIhTaLUKUaieSjegL/s1h2ZEFmtyi0o7V+1G6bbdVw4eusm4S36MdyHN6W2WeN7WJ1F/Q49nfkVsTdFEDUl3UOJeZ3IcMNLQx48JFsV3KGXBiObu3XC2nAl1LUos90JvDHH/kdPLvhPZ8LyDdh46JyGNgJ7xC4mxF2bl5MEcJA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749686506; c=relaxed/simple;
-	bh=f2HADJN1HqnVLqXEX2gn0EBHpS9KEi/mJMzRBKyEVi0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E5MnDvnF4ELFvA71I6XVGRcwV4Ty4/fT6DHSlkrOy4SSCGWFHqsdBT82yKAv5mSD4bXrgsHbX1+y0hOL/R1xfCVIWp3zuMQ3zPiDESrE6WhhafYctm1V935aFNe5V9a0b4JU40GzvbQkNbUpLsNro6jJu1N5DfOpPUJev8W7htk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=B89YEpc1; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749686457; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RfUJLgL3uiMWBMZumyBvXpsPE2UMpPd3FQWhCEKj5YlW8CpCzh8drQyfbMrEH8EI96d+2L11XOX5VD8utD7ZQvI72LE3wD2WqVRCfseYEcpBtT89TeHnQkNROZlE4l4T30nS1s5igLVgQ6v8kOUqwsQ1WQi9yn43D3hkqHIXd4M=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749686457; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vGmPNxgIyEoEQtADc8X3nicC6jEVHqGcMDg8y3I/t3o=; 
-	b=B+8YjO+uqewQPSBMsMZO6HJPPCQm9iq5yZbYGgyvPx9snSvvqPnZ8jtAq+qoggS+EzUENfcIHw3z5Y1WcmVQeji7a1RpZvILe0SwcMk83npw/qm0ZAUqQ0XP0wIKnQV1QNN6DPKM+YkqsHtxkwVDzB9EXxBmX0V3TC9R0hZvKIw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749686457;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=vGmPNxgIyEoEQtADc8X3nicC6jEVHqGcMDg8y3I/t3o=;
-	b=B89YEpc18TsrakKZypLJ7xGiQ6kWyg6E59pyj89kKZmDWb8r5NGmKQEPYBR0D3Fx
-	NOmEBD89GluYxB12j6rZV/ZLix7X6ZnTqRW+Xn5Cg0Q5qqzsIW6u1ft1kCPfBt/+hqq
-	pup6vSnHDcfX3ZuwlZ+C2RdyjA7nJpHzR9/gtB8U=
-Received: by mx.zohomail.com with SMTPS id 1749686454865928.7893063021048;
-	Wed, 11 Jun 2025 17:00:54 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>,
- Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: kernel@collabora.com, Andy Yan <andyshrk@163.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject:
- Re: [PATCH 3/3] arm64: dts: rockchip: Add HDMI PHY PLL clock source to VOP2
- on rk3576
-Date: Wed, 11 Jun 2025 20:00:52 -0400
-Message-ID: <6011857.DvuYhMxLoT@trenzalore>
-In-Reply-To: <20250612-rk3576-hdmitx-fix-v1-3-4b11007d8675@collabora.com>
-References:
- <20250612-rk3576-hdmitx-fix-v1-0-4b11007d8675@collabora.com>
- <20250612-rk3576-hdmitx-fix-v1-3-4b11007d8675@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603874A1E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749686550; cv=none; b=ioOqiY07B7VhWNYnXMjbSPPqazKpm4JNHumRYRXl51VqYEc3rNhrd85KuuuBH6PAXhInNo3NovkG2uVN/R1pyvDLRuew+VL5x1R/q2ridjYaeLCqibVeNalbFXEJoFi+bLM6oPYoPb+ST/nsYPXpLDl5+AJfNpSdzpXbBHQ/8HU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749686550; c=relaxed/simple;
+	bh=21HJy6pHJV5WagLgzMaxTlQegWvphBrRtG5zAue3yk0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=enpwVpB+iSg1AJPBqqRxJ2nXzJNNHBi5GKOei2ulLVZfFzVW5u+OKmZ2ik5AEOd0gEGDNkBr6b9HNHCdGOFjGxSGPF/j1hYkF37CwsCtvEL2rkgFy5Mdy6wfRJ7MWT7wLdMKpHaPbOJoIFaGQpI81i+/jTd2kmtv4dvBh9d2KJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nrmYrPNn; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b1442e039eeso172592a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:02:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749686549; x=1750291349; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=meyCUNHBNmQLCBOG8a8LQaW0WDvhFY6hoN25mEHFE6Q=;
+        b=nrmYrPNnCYoIbkk9FmvvowDXpirupYvKbWgBbvORMHF2cJiCwiyW5zJzWys3XYmtSg
+         i9+e1xwF1LVEM8RhFjrR1Q3Vl0RXyH7ESkk9wKrcrR7Ot2PfDPifhdVXFweVV/IgF/jL
+         MCbOI9UWI2hoex8xq9sgxLsIfNNLbres07lpQ84fYuEGB6752t44gYuRcmAnRhABxOyh
+         dLJwMnGJ6NQ4TFBpXUsRjVmaXbq8E2LLBegsifaMbqBkTiijfPp3qqnfruhWmBFX4vNZ
+         kmiblyV8jIqdiEaXGyK9FfXvAc+tJ66VO9r30cfSPaqXAwmuSgSIo18YxdxXBNmPn7FT
+         +gWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749686549; x=1750291349;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=meyCUNHBNmQLCBOG8a8LQaW0WDvhFY6hoN25mEHFE6Q=;
+        b=pQ0ot8uX04m9kAnif8j9mz8ZJPVG2zWuhmVayoUvUj1GYN2F2teAWmtZU+VjaR/4CN
+         gZkMjaIZp2cSNXBe1StJnM2GanOB1ut451kPYumRqfhiYGRBBKNYWPqgZ65p0wx7Z8pg
+         9hG5QHz/m5KKwwQXhvst9RRG5EzR7hbtKtiNvyH7/v9XbNlqSkAe27JtW3gkJB6nMXre
+         SMouM7qSw60ryTyps6vFO8a9TPres5gIo+mr8b3SNgCFNXls2GOxS7m21Q1T4OLhW/oY
+         hp2jYPECHKDAUuh3pGT5AyOJ6gxMe1yz7oT04qnxQWhV6pGAZLyBT/mT6JFKAbUFk5ZQ
+         xrXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbmo7vvcIw45Pgogd9WEuCPTkYARj0UaRyXM5+TZxynppRGdsd0i9cZv2dK3QVe9EA/5VHqGbK+sqWfqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLiCsMdT3884usoW4JR+vr8o8VYEatRlIDGPXwx9brwiH80wMl
+	AKr+bjkgWIfy7mndpmF7NFBxgQI5x/DqTFtXbSHlsYo6T5Xum+OF1ZJZmhCFDNEPtYvHIDy9PCv
+	BZUYc2p3nfQ==
+X-Google-Smtp-Source: AGHT+IGPoBUQwD6J5W0XDcBFFbPQSGnASywD4GkuYq0S0OYbNX3vrh3RstSBYk1Hel6pM51oqTSPEZP3v5to
+X-Received: from plps10.prod.google.com ([2002:a17:902:988a:b0:234:8ec2:bf02])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce02:b0:234:eadc:c0b4
+ with SMTP id d9443c01a7336-2364d8f6c5emr15593115ad.44.1749686548715; Wed, 11
+ Jun 2025 17:02:28 -0700 (PDT)
+Date: Wed, 11 Jun 2025 17:02:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+Message-ID: <20250612000224.780337-1-irogers@google.com>
+Subject: [PATCH v1 00/15] perf vendor events: Update Intel events
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Caleb Biggers <caleb.biggers@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Edward Baker <edward.baker@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Cristian,
+Update:
+ - ADL/ADLN v1.29 -> 1.31
+ - ARL 1.08 -> 1.09
+ - CLX 1.23 -> 1.25
+ - EMR 1.11 -> 1.14
+ - GRR 1.07 -> 1.09
+ - GNR 1.08 -> 1.10
+ - ICX 1.27 -> 1.28
+ - LNL 1.11 -> 1.14
+ - MTL 1.13 -> 1.14
+ - PTL new v1.00
+ - SPR 1.25 -> 1.28
+ - SRF 1.09 -> 1.11
+ - SKX 1.36 -> 1.37
+ - TGL 1.17 -> 1.18
 
-On Wednesday, 11 June 2025 17:47:49 EDT Cristian Ciocaltea wrote:
-> Since commit c871a311edf0 ("phy: rockchip: samsung-hdptx: Setup TMDS
-> char rate via phy_configure_opts_hdmi"), the workaround of passing the
-> rate from DW HDMI QP bridge driver via phy_set_bus_width() became
-> partially broken, as it cannot reliably handle mode switches anymore.
-> 
-> Attempting to fix this up at PHY level would not only introduce
-> additional hacks, but it would also fail to adequately resolve the
-> display issues that are a consequence of the system CRU limitations.
-> 
-> Instead, proceed with the solution already implemented for RK3588: make
-> use of the HDMI PHY PLL as a better suited DCLK source for VOP2. This
-> will not only address the aforementioned problem, but it should also
-> facilitate the proper operation of display modes up to 4K@60Hz.
-> 
-> It's worth noting that anything above 4K@30Hz still requires high TMDS
-> clock ratio and scrambling support, which hasn't been mainlined yet.
-> 
-> Fixes: d74b842cab08 ("arm64: dts: rockchip: Add vop for rk3576")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3576.dtsi | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3576.dtsi index
-> 6a13fe0c3513fb2ff7cd535aa70e3386c37696e4..b1ac23035dd789f0478bf10c78c74ef16
-> 7d94904 100644 --- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> @@ -1155,12 +1155,14 @@ vop: vop@27d00000 {
->  				 <&cru HCLK_VOP>,
->  				 <&cru DCLK_VP0>,
->  				 <&cru DCLK_VP1>,
-> -				 <&cru DCLK_VP2>;
-> +				 <&cru DCLK_VP2>,
-> +				 <&hdptxphy>;
->  			clock-names = "aclk",
->  				      "hclk",
->  				      "dclk_vp0",
->  				      "dclk_vp1",
-> -				      "dclk_vp2";
-> +				      "dclk_vp2",
-> +				      "pll_hdmiphy0";
->  			iommus = <&vop_mmu>;
->  			power-domains = <&power RK3576_PD_VOP>;
->  			rockchip,grf = <&sys_grf>;
+Updates from:
+https://github.com/intel/perfmon
+with:
+https://github.com/intel/perfmon/pull/312
+Running the script:
+https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
 
-I tested this on the ROCK 4D and can confirm that:
- - New modes like 2K are now working
- - Mode changes is now correctly supported
+Ian Rogers (15):
+  perf vendor events: Update Alderlake events
+  perf vendor events: Update AlderlakeN events
+  perf vendor events: Update Arrowlake events
+  perf vendor events: Update CascadelakeX events
+  perf vendor events: Update EmeraldRapids events
+  perf vendor events: Update GrandRidge events
+  perf vendor events: Update GraniteRapids events
+  perf vendor events: Update IcelakeX events
+  perf vendor events: Update LunarLake events
+  perf vendor events: Update MeteorLake events
+  perf vendor events: Add PantherLake events
+  perf vendor events: Update SapphireRapids events
+  perf vendor events: Update SierraForest events
+  perf vendor events: Update SkylakeX events
+  perf vendor events: Update TigerLake events
 
-So,
-Tested-By: Detlev Casanova <detlev.casanova@collabora.com>
+ .../pmu-events/arch/x86/alderlake/cache.json  |  56 ++-
+ .../arch/x86/alderlake/floating-point.json    |   1 -
+ .../pmu-events/arch/x86/alderlake/other.json  |   1 -
+ .../arch/x86/alderlake/pipeline.json          |  44 +--
+ .../arch/x86/alderlake/virtual-memory.json    |   3 -
+ .../pmu-events/arch/x86/alderlaken/cache.json |  52 +--
+ .../arch/x86/alderlaken/floating-point.json   |   1 -
+ .../pmu-events/arch/x86/alderlaken/other.json |   1 -
+ .../arch/x86/alderlaken/pipeline.json         |  42 +--
+ .../arch/x86/alderlaken/virtual-memory.json   |   3 -
+ .../pmu-events/arch/x86/arrowlake/cache.json  |  13 +-
+ .../arch/x86/arrowlake/frontend.json          | 135 ++++++++
+ .../arch/x86/cascadelakex/floating-point.json |   6 +-
+ .../arch/x86/cascadelakex/pipeline.json       |   2 +-
+ .../arch/x86/emeraldrapids/pipeline.json      |   2 +-
+ .../arch/x86/emeraldrapids/uncore-io.json     |  12 +
+ .../arch/x86/emeraldrapids/uncore-memory.json |  20 ++
+ .../arch/x86/grandridge/grr-metrics.json      |  30 +-
+ .../x86/grandridge/uncore-interconnect.json   |  10 +
+ .../arch/x86/grandridge/uncore-io.json        |  12 +
+ .../arch/x86/graniterapids/cache.json         |   9 +
+ .../arch/x86/graniterapids/counter.json       |  10 +-
+ .../arch/x86/graniterapids/gnr-metrics.json   |  36 ++
+ .../arch/x86/graniterapids/pipeline.json      |   2 +-
+ .../graniterapids/uncore-interconnect.json    |  19 -
+ .../arch/x86/graniterapids/uncore-io.json     |  27 +-
+ .../arch/x86/icelakex/pipeline.json           |   2 +-
+ .../arch/x86/icelakex/uncore-cache.json       |   2 -
+ .../pmu-events/arch/x86/lunarlake/cache.json  |  11 +
+ .../arch/x86/lunarlake/pipeline.json          |  18 +-
+ .../arch/x86/lunarlake/virtual-memory.json    |  18 -
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |  29 +-
+ .../pmu-events/arch/x86/meteorlake/cache.json |   2 +-
+ .../arch/x86/meteorlake/frontend.json         |  72 ++++
+ .../arch/x86/meteorlake/pipeline.json         |   2 +-
+ .../arch/x86/pantherlake/cache.json           | 278 +++++++++++++++
+ .../arch/x86/pantherlake/counter.json         |  12 +
+ .../arch/x86/pantherlake/frontend.json        |  30 ++
+ .../arch/x86/pantherlake/memory.json          | 215 ++++++++++++
+ .../arch/x86/pantherlake/pipeline.json        | 325 ++++++++++++++++++
+ .../arch/x86/pantherlake/virtual-memory.json  |  62 ++++
+ .../arch/x86/sapphirerapids/pipeline.json     |   2 +-
+ .../arch/x86/sapphirerapids/uncore-io.json    |  12 +
+ .../x86/sapphirerapids/uncore-memory.json     |  20 ++
+ .../arch/x86/sierraforest/frontend.json       |  64 ++++
+ .../arch/x86/sierraforest/pipeline.json       |   8 +
+ .../arch/x86/sierraforest/srf-metrics.json    |  48 +++
+ .../arch/x86/sierraforest/uncore-cache.json   |   6 +-
+ .../x86/sierraforest/uncore-interconnect.json |  53 ++-
+ .../arch/x86/sierraforest/uncore-io.json      |  27 +-
+ .../arch/x86/skylakex/pipeline.json           |   2 +-
+ .../arch/x86/tigerlake/pipeline.json          |   2 +-
+ 52 files changed, 1623 insertions(+), 248 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/cache.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/counter.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/frontend.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/memory.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/pipeline.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/virtual-memory.json
 
-Regards,
-
-Detlev.
-
+-- 
+2.50.0.rc1.591.g9c95f17f64-goog
 
 
