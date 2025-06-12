@@ -1,244 +1,131 @@
-Return-Path: <linux-kernel+bounces-683720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF609AD7152
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F278AD716F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D0F189099A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8846E1C213F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFED23C8C7;
-	Thu, 12 Jun 2025 13:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A7D23E320;
+	Thu, 12 Jun 2025 13:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XlfPBaoi"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcEd6hF9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F001B0F0A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A3723D284;
+	Thu, 12 Jun 2025 13:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749733798; cv=none; b=uruu498m5BCih6550WjhTVKufvJ2Kb5Rt4DqRzvHLeCacjCPaHeRAeqCWlEWPjNUGT6XvHdcQLYFV28iQEqEbRrwgnUcPV6+p+uro/CnfjJvrmW/lzP+AbUzlC5FZtJG4dDjzComU+8hOBBVLASUgiSiD2f6y8hr7U4pSJArOk0=
+	t=1749733908; cv=none; b=C2rEMn5qdIWVfUy3Y2v+6fbWLH0E71TdSKXuOtvIK+QMk9MOvxwU4JnvWSDZNUhdIno/kFCTxqA0X4PzXqwYfE65HQ9JTwvGe5MIi6KNvVieeEEzyxKz6/4+pXufFnRPsCql8gMSJWewpdeWFAr34quVxgbKNGGddkmzbG+std0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749733798; c=relaxed/simple;
-	bh=ds14tut9ukNgFvAYWrJRogxZC9YwxLXyToDhwHfpcLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G/L+NjA9wKYrcND2oLYRCef8W5M9ZKio00Qr2kanSsTbX5uKaKxDfTihIP8fvcm+VpgzeaRErwkAjCBwsHqejQo4x1/aJeKnzXve3Bfq/0tJUgFLv2IwRB27DO64Mh/VJwcimSwGAArvdHMoQm5vHrpcobBVdVy/gjA2Vl7iijY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XlfPBaoi; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad89333d603so193611966b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749733794; x=1750338594; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=opG1J/uuXUhUkyywN9VdfAudOLd1wp6HGMdhIzhjVZI=;
-        b=XlfPBaoinCuvLLnPCPi/0ncqHoB/gLVMB/gUaQhSnKdRNvvAxL63OXS/wpzP4TzbO2
-         6OKXtIDxcQNLrwATAjMSzAzi7o0uHAqcXKMZJ6D3CIVBfvWyv7Bc2V910tcJH3mWInHJ
-         4WxRpMEzHOI7S0U22Pg7knLT/hsvdt1afPryeOo/k+vmnhKG36wSS1dreyzjk1iyo5K9
-         jXTSz+lt7raO++4Krg2AzAbytRcEJWZcltsj7EWZ4OK3AQoJy5ehJieevZiEFJ90wggJ
-         D9CiW12t/N/P9KrowVf2O4yRRDekRBOEBHKzrOATrk2KJZnySSWcE+8opCLGaUM9fMKe
-         2e5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749733794; x=1750338594;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=opG1J/uuXUhUkyywN9VdfAudOLd1wp6HGMdhIzhjVZI=;
-        b=kLOcoTxidIGdlCuQqSBxFRHzUcMQFJZkl43nJ6kYk99TSObmDk2F/GuvOZ2mDdI8mL
-         jzg/epFeSJB5yQ1F9fpWSuAz1HOPtyGYNlr0nQjgqjLvyOi3p2Dc8mcEm+JouRnDbX3u
-         Ph1wP0vM75n7LdVduDK9cuY+0pzUg4ygH496eeR34dbr9LfkCyPRZvLyieOWCMdM2gll
-         nHvOeIpbXPiXYldPrynCqsNGpx4lqH50iTtAErszdX+uHPf1i5F0FrB2UYgBiuPnzzRc
-         4Fho93fD0nINY53UDde2B1+1V9c9ACVN+FJK2RSWl0yQg4k8T2I01KNFkQSHJDoqwT89
-         CJJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyXbxhUPKD0HvWo7a0TglhApA9gTIITCYDr2ApTpcrc7FpQpBmhLQMgTA76fPSSMRb7KVuVbTHv9uwHnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4s96k0GOxF9QbEk7NFw9+nrVlgswAk10/80DxcfXg0n3BFdwI
-	Xrf4wd8DGYOzNUkw8LaWWNxwS2boUDKo3nHe2fgQ8snY27OAkTZgTo+sMHTv62lJ7k2Ro7+1FTC
-	Y6KxguPqRYAXzblSIxxOErk0zDFJCsnpKzBRXIzOaFg==
-X-Gm-Gg: ASbGncsATAMLYxzsBquJmr8Xzk8Qjaopij9OHrbwFfaPYOBj3OkqCf8DgR/TIjTyMSX
-	4DNdU2KTnV2nvvsZdfC0GwveuvKXW4pZRvW1ahaY3SAO7ef3nuV+WCyj/Uz033J5IH9iwxjDnu8
-	UWpdX5vcwsVbJNy+ZeKYmTsQXBuLcpmE3052Nk6kcN6v0JV/K0T2frTsV2EWeeNPrXIArNQK/iC
-	9oN
-X-Google-Smtp-Source: AGHT+IGNOnr/szm3yBR9cV0j2z15yO7hP3u/Ee6kZpjjOIimYf4i36geqFsIBGpUgm01Mc+b/WDWQjJgSq96/eYeptQ=
-X-Received: by 2002:a17:907:3f28:b0:ad5:b2aa:847c with SMTP id
- a640c23a62f3a-ade898378c1mr749998366b.54.1749733794178; Thu, 12 Jun 2025
- 06:09:54 -0700 (PDT)
+	s=arc-20240116; t=1749733908; c=relaxed/simple;
+	bh=bIy2thIEfxDGMyB737DcdbHDleWakNZE1CwB2X4ViXU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oesXwxp+GeZQI8F5ytTgmUhwzwp9uGWiE203u+nrXD4adMVrduw5iDHiLONhRhiOb67wFp02QnlO/8axa8tzHlv5M/i7GG9IO79znz/i3Qyy8aBeQC56jaEfUIiNAkx6gjzc9DyuTMy7/dp+eDY7IKyZVwruyxqQxCpQ2pQqg+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcEd6hF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7ABFC4CEEA;
+	Thu, 12 Jun 2025 13:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749733907;
+	bh=bIy2thIEfxDGMyB737DcdbHDleWakNZE1CwB2X4ViXU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=OcEd6hF9UaHs1aIuWHxMuJQzT1/evtHx8yOF4SHsVekPIEsFqzA8s3WBZHnY+hNce
+	 R62jWCA/TYudMVU3N0+gjT6Suq2y5RqqpUTU4kChQZT0R5eJuFUfb8l10Tje8aSUrO
+	 hJyATSqMsyZIjSkQQngOq7JL+oh4blpHOJQVgThc70HT+zt/lMEuD2QuNS5F2gKHIU
+	 UW1EX3Vt9g0+3UwqPtfpa0OGQ0IwOKsKJgwckjcNp3xWNhBpNniQ/9S29KogBaVMPy
+	 F7oIEFcen0XT6kWUpGZQelyRYmH0/QrRZbPjfoknJjuTx9s9+LySfd4tenLMsozCnO
+	 FwwO+2BQZ5xvQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v3 0/2] rust: improve `ForeignOwnable`
+Date: Thu, 12 Jun 2025 15:09:42 +0200
+Message-Id: <20250612-pointed-to-v3-0-b009006d86a1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com>
- <20250609220934.2c3ed98ba8c624fc7cb45172@kernel.org> <CA+G9fYsoCc3DnNGoavFiBdymVpdJiEfUSEq967GgThVQW7bTPA@mail.gmail.com>
- <20250610105337.68df01f4@gandalf.local.home>
-In-Reply-To: <20250610105337.68df01f4@gandalf.local.home>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 12 Jun 2025 18:39:41 +0530
-X-Gm-Features: AX0GCFvxFmwRBu8DgJ-HzbsdJ44lY7mfNY9MHLImOKOp-WOIdRz2u56nFMPkKoc
-Message-ID: <CA+G9fYv+1FPMD8e1ZadA3nLcfSRDAWvPRW-A3bGrV0y1VP2zLQ@mail.gmail.com>
-Subject: Re: next-20250605: Test regression: qemu-x86_64-compat mode ltp
- tracing Oops int3 kernel panic
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJbRSmgC/23MQQrCMBCF4auUWRvJjKRaV95DXJR00g5KUpISl
+ NK7m3ZlweV78P0zJI7CCa7VDJGzJAm+jNOhAju0vmclXdlAmoyutVFjED9xp6agajzrljUa0g4
+ KGCM7eW+x+6PsQdIU4mdrZ1zfv5mMChUzMtXUIFl7e3L0/DqG2MPayfRjUe8sFeva7uIasg7Z7
+ OyyLF/gXYFT4QAAAA==
+X-Change-ID: 20250605-pointed-to-6170ae01520f
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1548; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=bIy2thIEfxDGMyB737DcdbHDleWakNZE1CwB2X4ViXU=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoStGZ17fL8yiCQEhNAsNp6t7+FqLczWFIdk6+u
+ RkHDER3wg6JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaErRmQAKCRDhuBo+eShj
+ d7ulEADBumqdwZTNXkUtozvBItTY1O6Gt0D2UL7eBML2BaNtx84E83warF4pF5m6nxu1gQsBdbf
+ zRprxy544Dq+q4FgVP74BSF/5NdK4Qn4dpk22Evxwmhw3OrlWeLtWSdQKAPlFspW1bo/6dYl6nW
+ oB1RuXHe1fjczhpOibvFddpUS0rPR4MtaUCB8hpEMMpvjp6guWp2IHycFJ03af7d5g/r4eTGQ3n
+ 79twylyC/X9JHZjioZSj2rGFwkTCOJEa6WoRPeNxuLpbjaUZEZQ6AFFya6/XS+UpskkwzdChNnt
+ lMGu1oqmS2mgy2LD/fyttxPWCenjCm4CsspCXluquxqGyBQsC+t5Mo1aAwpnp3KInz6qfRiR9BJ
+ cLWq0Dz2nZBeGCAxuYgOZ3Cv/GQS9dgIEqPpO5nDesDjsWaf2Drol51mb2/B+9n/6QFeq2l2sMt
+ jdQ6qwxCKIrV2xKmQzVW4iYovdajRfAVqi1UZ3SfDVSxfcTtcMWRbVzaWup5R4JsDNOXA21H8tW
+ W0Xko/4UldgFC7tdungh1dgFhGH0UplFWAVTezBuIHEP1R9WQL8L/JMaaOVQdbJTSm8CJGyUfzT
+ pbKmQAJjNIhcijDCCULAxgvdNMbSmlHtNO+RA9Q/p2kzSlmkAhCONsyCaN9I/nP9XlrwEhwmB1T
+ tSrZGxhJIzp5Pow==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-On Tue, 10 Jun 2025 at 20:22, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Tue, 10 Jun 2025 18:50:05 +0530
-> Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> > > Is this bug reproducible easier recently?
-> >
-> > Yes. It is easy to reproduce.
->
-> Can you test before and after this commit:
->
->   4334336e769b ("x86/alternatives: Improve code-patching scalability by
->   removing false sharing in poke_int3_handler()")
->
-> I think that may be the culprit.
->
-> Even if Masami's patches work, I want to know what exactly caused it.
+This series improves `ForeignOwnable` by:
 
-Steven,
+ - changing the way we assert pointer allignment,
+ - improving the safety requirements of the trait.
 
-Since the reported regressions are intermittent, It is not easy to bisect.
-However, The commit merged into Linux next-20250414 tag and then
-started noticing from next-20250415 onwards this regression on both
-x86_64 devices and qemu-x86_64 intermittently with and without
-compat mode.
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+Changes in v3:
+- Remove more instances of absolute paths to `ffi` types.
+- Reword safety requirements in terms of function guarantees.
+- Add a patch to restrict use of null pointers with `ForeignOwnable`.
+- Link to v2: https://lore.kernel.org/r/20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org
 
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250606/testrun/28685600/suite/log-parser-test/test/oops-oops-int3-smp-pti/history/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250606/testrun/28685600/suite/log-parser-test/test/oops-oops-int3-smp-pti/history/?page=2
+Changes in v2:
+- Replace qualified path with `use` for `crate::ffi::c_void`.
+- Fix a typo and rephrase docs for `ForeignOwnable`.
+- Reorganize docs for `ForeignOwnable::into_foreign`.
+- Link to v1: https://lore.kernel.org/r/20250605-pointed-to-v1-1-ee1e262912cc@kernel.org
 
-And above commit landed into Linus master branch on 2025-05-13 and
-then started noticing this regression intermittently on x86 with and without
-compat mode.
+---
+Andreas Hindborg (2):
+      rust: types: add FOREIGN_ALIGN to ForeignOwnable
+      rust: types: require `ForeignOwnable::into_foreign` return non-null
 
-  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.16-rc1/testrun/28711641/suite/log-parser-test/test/oops-oops-oops-smp-pti/history/?page=1
+ rust/kernel/alloc/kbox.rs | 41 +++++++++++++++++++++++------------------
+ rust/kernel/miscdevice.rs | 10 +++++-----
+ rust/kernel/pci.rs        |  2 +-
+ rust/kernel/platform.rs   |  2 +-
+ rust/kernel/sync/arc.rs   | 24 +++++++++++++-----------
+ rust/kernel/types.rs      | 46 +++++++++++++++++++++++-----------------------
+ rust/kernel/xarray.rs     |  9 +++++----
+ 7 files changed, 71 insertions(+), 63 deletions(-)
+---
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
+change-id: 20250605-pointed-to-6170ae01520f
 
-Masami San,
-
-case 1) compat mode x86_64 (64-bit kernel + 32-bit rootfs)
-I have tested your patch on top of linux next-20250606 tag and tested
-on real x86_64 (64-bit kernel + 32-bit rootfs) hardware for 7 test runs.
-
-ftrace_regression01 - pass
-ftrace_regression02 - pass
-ftrace-stress-test - pass
-dynamic_debug01 - Hangs (No crash log on serial console)
-
-Case 1.1)
-Above case noticed on qemu-x86_64 with compat mode ^ with
-12 test runs.
-
-- https://lkft.validation.linaro.org/scheduler/job/8312811#L1687
-
-case 2) x86_64 (64-bit kernel + 64-bit rootfs)
-I have tested your patch on top of linux next-20250606 tag and tested
-on real x86_64 (64-bit kernel + 64-bit rootfs) hardware for 4 runs and out of
-these 3 runs failed and found these kernel warnings, kernel BUG and
-invalid opcode while running LTP tracing test cases.
-
-Here I am sharing the crash log snippet and boot and test log links  and
-build link.
-
-Test logs:
-[  112.596591] Ring buffer clock went backwards: 113864910133 -> 112596588266
-[  115.829620] cat (5762) used greatest stack depth: 10936 bytes left
-[  120.922517] ------------[ cut here ]------------
-[  120.927198] WARNING: CPU: 2 PID: 6639 at
-kernel/trace/trace_functions_graph.c:985 print_graph_entry+0x579/0x590
-[  120.937364] Modules linked in: x86_pkg_temp_thermal
-[  120.942405] CPU: 2 UID: 0 PID: 6639 Comm: cat Tainted: G S
-        6.15.0-next-20250606 #1 PREEMPT(voluntary)
-[  120.953380] Tainted: [S]=CPU_OUT_OF_SPEC
-[  120.957477] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.7 12/07/2021
-[  120.965036] RIP: 0010:print_graph_entry+0x579/0x590
-
-Run 1:
-- https://lkft.validation.linaro.org/scheduler/job/8311136#L1700
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
 
 
-ftrace-stress-test: [   58.963898] /usr/local/bin/kirk[340]: starting
-test ftrace-stress-test (ftrace_stress_test.sh 90)
-[   60.316588] ------------[ cut here ]------------
-[   60.316588] ------------[ cut here ]------------
-[   60.316590] ------------[ cut here ]------------
-[   60.316593] ------------[ cut here ]------------
-[   60.316593] ------------[ cut here ]------------
-[   60.316594] ------------[ cut here ]------------
-[   60.316594] kernel BUG at kernel/entry/common.c:328!
-[   60.316594] kernel BUG at kernel/entry/common.c:328!
-[   60.316595] kernel BUG at kernel/entry/common.c:328!
-[   60.316600] Oops: invalid opcode: 0000 [#1] SMP PTI
-[   60.316604] CPU: 2 UID: 0 PID: 1556 Comm: sh Tainted: G S
-       6.15.0-next-20250606 #1 PREEMPT(voluntary)
-[   60.316608] Tainted: [S]=CPU_OUT_OF_SPEC
-[   60.316609] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.7 12/07/2021
-[   60.316614] ------------[ cut here ]------------
-[   60.316615] kernel BUG at kernel/entry/common.c:328!
-[   60.316617] Oops: invalid opcode: 0000 [#2] SMP PTI
-[   60.316620] CPU: 2 UID: 0 PID: 1556 Comm: sh Tainted: G S
-       6.15.0-next-20250606 #1 PREEMPT(voluntary)
-[   60.316622] Tainted: [S]=CPU_OUT_OF_SPEC
-[   60.316623] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.7 12/07/2021
-[   60.316625] RIP: 0010:irqentry_nmi_enter+0x6c/0x70
-
-Run 2:
-- https://lkft.validation.linaro.org/scheduler/job/8311138#L1703
-
-ftrace-stress-test: [   78.877495] /usr/local/bin/kirk[343]: starting
-test ftrace-stress-test (ftrace_stress_test.sh 90)
-[   78.977303] Scheduler tracepoints stat_sleep, stat_iowait,
-stat_blocked and stat_runtime require the kernel parameter
-schedstats=enable or kernel.sched_schedstats=1
-[   82.299799] cat (2322) used greatest stack depth: 11520 bytes left
-[   82.327708] cat (2327) used greatest stack depth: 11256 bytes left
-[   82.632183] cat (2375) used greatest stack depth: 10992 bytes left
-[  137.335901] ------------[ cut here ]------------
-[  137.335901] ------------[ cut here ]------------
-[  137.335902] ------------[ cut here ]------------
-[  137.335907] kernel BUG at kernel/entry/common.c:328!
-[  137.335908] ------------[ cut here ]------------
-[  137.335909] ------------[ cut here ]------------
-[  137.335912] kernel BUG at kernel/entry/common.c:328!
-[  137.335912] kernel BUG at kernel/entry/common.c:328!
-[  137.335915] Oops: invalid opcode: 0000 [#1] SMP PTI
-[  137.335921] CPU: 0 UID: 0 PID: 544 Comm: sh Tainted: G S
-      6.15.0-next-20250606 #1 PREEMPT(voluntary)
-[  137.335926] Tainted: [S]=CPU_OUT_OF_SPEC
-[  137.335929] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.7 12/07/2021
-[  137.335937] ------------[ cut here ]------------
-[  137.335939] kernel BUG at kernel/entry/common.c:328!
-[  137.335945] Oops: invalid opcode: 0000 [#2] SMP PTI
-[  137.335949] CPU: 0 UID: 0 PID: 544 Comm: sh Tainted: G S
-      6.15.0-next-20250606 #1 PREEMPT(voluntary)
-[  137.335953] Tainted: [S]=CPU_OUT_OF_SPEC
-[  137.335956] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.7 12/07/2021
-[  137.335959] RIP: 0010:irqentry_nmi_enter+0x6c/0x70
-
-Run 3:
-- https://lkft.validation.linaro.org/scheduler/job/8311139#L1703
-
-Build log:
- - https://storage.tuxsuite.com/public/linaro/naresh/builds/2yM9krm5KgE5a57QFvOqw9UrSgQ/
-
-- Naresh
-
->
-> -- Steve
 
