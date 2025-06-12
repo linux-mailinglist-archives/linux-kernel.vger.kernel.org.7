@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-684626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5092AD7E60
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:21:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA5AAD7E58
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C410418960D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DE47AF459
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42EB2DECD9;
-	Thu, 12 Jun 2025 22:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="fBOasexu"
-Received: from alln-iport-4.cisco.com (alln-iport-4.cisco.com [173.37.142.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1752DECD1;
+	Thu, 12 Jun 2025 22:20:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA5D2DECB2;
-	Thu, 12 Jun 2025 22:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2912C325E;
+	Thu, 12 Jun 2025 22:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749766905; cv=none; b=sh/cCVCmLQeNtKgtvgtuo7K60VpKFASOF3MbcA9vRwIChcKFKTPmkj4pZqrj0HInKtYCEDZeSOGVbCymnJuaZXLEtMoO6DG7cCNqM1N+4qY3kdeq6Bd4YgDApQ1gQcj9ybBWe/NUaPO8ndvmYVoguTmyLLfL8xyUTm164MlmFXw=
+	t=1749766833; cv=none; b=jO9H4+Z+usVp9C9ad40okEwn7W6QMmrHZ8Hx54LaZgU0qDqTJX7Jjf1aIj+1CzWWs9LnJzKYZTCngmpqWU+iWc8Zzzdl+7Xbeah6u4VHkRuk4SiRSRXCPxJWm/IMGQPGACo9dMU3Zx0KfnKQ7MnLAW6iJiebeVOZG5vICKlg5O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749766905; c=relaxed/simple;
-	bh=W9TMtmNAQox4GJzmyGBKfQRvar8R3C9E12Rn9hMqO80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hoqO2wiwOpjZs+t3q5Ff9lPPkymaAckSAJnRMfh7Gty1ykeAgLGdZoosRhAuKKxa3ez74VVJnQ9k9Ch5ofQvBNmTH1KwGp0m9KZ/8BTsMmKy4BZpI4jWL+sXG00JzVRK4qe63cogaediAow+lz9SzHMPUZ/sv9UoiO3Ut2ttzhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=fBOasexu; arc=none smtp.client-ip=173.37.142.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=785; q=dns/txt;
-  s=iport01; t=1749766903; x=1750976503;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vebaEpidSVTCWaBHFi0jPYyqh1hFt65CsSfk9PGHd6Y=;
-  b=fBOasexuGsyfDQonBCAIqKmDo1Ubyw+K1Bjo5h8Vv33z7TvG6iUtW/Gu
-   BVx0QeQnmLeEI3nvpB0q2/tox3DL6PPVEXESxx3QSF7iZ12Mqd1r4mzWi
-   PvLoYoCoIYqbGwrXoOLClJwPNayTkh0MWKXitE6gayqpRM5bRhTo3cRVX
-   GAjTQZ48d2+12qW0G8hk6t3iFOm2DmyhPQ9KmYs0hg1ML7SITRpT7mPgF
-   PMkB+yQywMj21lWx2AU33F2ANXzCOzrcFHv7d4sfvUyShDgfm6QV3Urr9
-   wlpXaLmkKdkweXGhTXSuHgFEDvkkUVM60zr2BI+1+sF4ncZAoZM0CvO5O
-   g==;
-X-CSE-ConnectionGUID: 0xONz7/rSxma0bmfYB2Qwg==
-X-CSE-MsgGUID: KhsYbUo1T7WH8xOgNwH/Zg==
-X-IPAS-Result: =?us-ascii?q?A0AUAAAgUkto/5MQJK1aGwEBAQEBAQEBBQEBARIBAQEDA?=
- =?us-ascii?q?wEBAYIABQEBAQsBgkqBUkMZMJQkoDqBJQNXDwEBAQ9RBAEBhQcCi2YCJjUID?=
- =?us-ascii?q?gECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFgQ4ThgiGWwIBAzIBR?=
- =?us-ascii?q?hBRVhmDAoJvA7AJgiyBAd43gW6BSQGNTHCEdycVBoFJRIR9gVKCOIEGhXcEg?=
- =?us-ascii?q?iSBAhShHkiBHgNZLAFVEw0KCwcFgWMDNQwLLhVuMh2CDYUZghKLCIRJK0+FI?=
- =?us-ascii?q?YUHJHIPBkdAAwsYDUgRLDcUGwY+bgeYCYNwgQ6BMYEPpgChC4QloVMaM6phm?=
- =?us-ascii?q?QSpOIFpATqBWTMaCBsVgyJSGQ/KGCYyPAIHCwEBAwmPdYF9AQE?=
-IronPort-Data: A9a23:rOoPvart4Q6uE0NUxIZMIq4mxzxeBmLIZBIvgKrLsJaIsI4StFCzt
- garIBmEbveLMGL2L9hwboy0/R5X6MXXzYIwQVQ/ry89ESIQo+PIVI+TRqvS04x+DSFioGZPt
- Zh2hgzodZhsJpPkjk7zdOCn9z8ljPvgqoPUUIbsIjp2SRJvVBAvgBdin/9RqoNziLBVOSvV0
- T/Ji5OZYQHNNwJcaDpOtvrd8Uk35pwehRtB1rAATaET1LPhvyF94KI3fcmZM3b+S49IKe+2L
- 86r5K255G7Q4yA2AdqjlLvhGmVSKlIFFVHT4pb+c/HKbilq/kTe4I5iXBYvQRs/ZwGyojxE4
- I4lWapc5useFvakdOw1C3G0GszlVEFM0OevzXOX6aR/w6BaGpfh660GMa04AWEX0r5nJkdcq
- rsCEyAIZ0iJguyH6uiCVeY506zPLOGzVG8eknhkyTecCbMtRorOBvySo9RZxzw3wMtJGJ4yZ
- eJANmEpN0qGOkMJYwtIYH49tL/Aan3XcDRCtFORrKkf6GnIxws327/oWDbQUoDVFZsEwRjI/
- Qoq+UzaAgorPuGYkAbazVL8lsjAuzzbH7AdQejQGvlCxQf7KnYoIBEfUx2wqOOhh0iiVsh3L
- 00S8zAp668o+ySDTNT/VTW8oXiZrlgdUd8WGOo/gCmIw7DI4gDfHmUYQyRaZdoOs9U/Tjgnk
- FSOmrvBBzlitrCaSXO17LqYrTqufyMSKAcqfyIaQBEey8PurIE6klTESdMLOKq0iMDlXDL92
- TaHqAAgiLgJy80GzaO2+RbAmT3EjpzISBMlox7cRWON8Ax0fsimapau5Fyd6uxPRLt1VXGIu
- HwC3szb5+cUANTUzGqGQf4GG/ei4PPt3CDgvGOD1qIJr1yFk0NPt6gLiN2iDC+F6vo5RAI=
-IronPort-HdrOrdr: A9a23:ip+y3aATjBEgQUblHemD55DYdb4zR+YMi2TDGXocdfUzSL39qy
- nAppomPHPP4gr5HUtQ+uxoW5PwJE80l6QV3WB5B97LNzUO+lHYTr2KhrGM/9SPIUDD398Y/b
- t8cqR4Fd37BUV3gILH+gWieuxQp+VviJrJuQ8bpE0dND2DrMpbnmFENjo=
-X-Talos-CUID: =?us-ascii?q?9a23=3AoMVXNWteowZO+uCMXNwoLU0U6It9Ylr73iiXOXS?=
- =?us-ascii?q?oDG8xQribeHXKwbxrxp8=3D?=
-X-Talos-MUID: 9a23:rfldzQjEIn+sQmHGufut/sMpF8dz0q6TDxkxzqom69mjOgpvG3Cvg2Hi
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.16,231,1744070400"; 
-   d="scan'208";a="478697683"
-Received: from alln-l-core-10.cisco.com ([173.36.16.147])
-  by alln-iport-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 12 Jun 2025 22:20:21 +0000
-Received: from fedora.lan?044cisco.com (unknown [10.188.19.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kartilak@cisco.com)
-	by alln-l-core-10.cisco.com (Postfix) with ESMTPSA id 7F1CF1800015F;
-	Thu, 12 Jun 2025 22:20:19 +0000 (GMT)
-From: Karan Tilak Kumar <kartilak@cisco.com>
-To: sebaddel@cisco.com
-Cc: arulponn@cisco.com,
-	djhawar@cisco.com,
-	gcboffa@cisco.com,
-	mkai2@cisco.com,
-	satishkh@cisco.com,
-	aeasi@cisco.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jmeneghi@redhat.com,
-	revers@redhat.com,
-	dan.carpenter@linaro.org,
-	Karan Tilak Kumar <kartilak@cisco.com>
-Subject: [PATCH v4 5/5] scsi: fnic: Increment driver version number
-Date: Thu, 12 Jun 2025 15:18:05 -0700
-Message-ID: <20250612221805.4066-5-kartilak@cisco.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250612221805.4066-1-kartilak@cisco.com>
-References: <20250612221805.4066-1-kartilak@cisco.com>
+	s=arc-20240116; t=1749766833; c=relaxed/simple;
+	bh=Na0ynebOU4CGKRpm0PtJxXz/2VI6J9NPn54Ne2U51XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jfoG7+fwpf7LdX/yAsahYfwTz6AiAjB6MGWo1imhR4GLakHp0vpgP+Z2F4g040Nbo+naGH5cD659umqRQbjDqTBWcmtrhMfNCBn6CEDqRCqEJ/94aGr8lRmJRy2zdjLgfYUKHpJrzXH9e308J4AzdY7LogIGeUgaXS53JfIuA+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 60929B855C;
+	Thu, 12 Jun 2025 22:20:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 2B15E2F;
+	Thu, 12 Jun 2025 22:20:25 +0000 (UTC)
+Date: Thu, 12 Jun 2025 18:20:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+Subject: [PATCH v2] xdp: tracing: Hide some xdp events under
+ CONFIG_BPF_SYSCALL
+Message-ID: <20250612182023.78397b76@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-User: kartilak@cisco.com
-X-Outbound-SMTP-Client: 10.188.19.134, [10.188.19.134]
-X-Outbound-Node: alln-l-core-10.cisco.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ibcxz78suoa7uyk3qcq4ktqe9wzr7oh1
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 2B15E2F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18R80o1UHg+tmXsmtWNCHay9SdMG4FMWfA=
+X-HE-Tag: 1749766825-585844
+X-HE-Meta: U2FsdGVkX19V5+HsQqXb1Ps0IuyK+X/e6sLUQV+6WB+74mgly877LaBAqXAATsnGSaCG5bJ6lDznqIJBeQqBP2WAo+ZbYd1tf3YTfeV6OOtlKXgthBkuBzGLNgXy7QZ3WY9FDoWn54uCHjmSFt2WQv5OQD8DomXO0H6VXqdAUncXb037JPfca0+QVkXG+vse92X5LDJqpuiJltQEaII3xocSPwPTcda31eL2J+quhadYpC3RtUyS2tgiXbiGSKhGDeHPE5+5XgBf/KWlKpoP2JwOSWuluisbBYX1r92AtYOBbWntOe5pQa+b8gdylB0hgXUqFGEDP2TL4gtGgxPcyjyc4TwEa/IqMkf7Lfox0baNTg4kXqgFRFWnYpKYLwRblurljrrf/LoFLdZUTOqWPQ==
 
-Increment driver version number.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-Reviewed-by: Arun Easi <aeasi@cisco.com>
-Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+The events xdp_cpumap_kthread, xdp_cpumap_enqueue and xdp_devmap_xmit are
+only called when CONFIG_BPF_SYSCALL is defined.  As each event can take up
+to 5K regardless if they are used or not, it's best not to define them
+when they are not used. Add #ifdef around these events when they are not
+used.
+
+Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- drivers/scsi/fnic/fnic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1: https://lore.kernel.org/20250612101612.3d4509cc@batman.local.home
 
-diff --git a/drivers/scsi/fnic/fnic.h b/drivers/scsi/fnic/fnic.h
-index 6c5f6046b1f5..86e293ce530d 100644
---- a/drivers/scsi/fnic/fnic.h
-+++ b/drivers/scsi/fnic/fnic.h
-@@ -30,7 +30,7 @@
+- Rebased on top of bpf-next
+
+ include/trace/events/xdp.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/trace/events/xdp.h b/include/trace/events/xdp.h
+index d3ef86c97ae3..746a9e95a52a 100644
+--- a/include/trace/events/xdp.h
++++ b/include/trace/events/xdp.h
+@@ -187,6 +187,7 @@ DEFINE_EVENT(xdp_redirect_template, xdp_redirect_map_err,
+ 	TP_ARGS(dev, xdp, tgt, err, map_type, map_id, index)
+ );
  
- #define DRV_NAME		"fnic"
- #define DRV_DESCRIPTION		"Cisco FCoE HBA Driver"
--#define DRV_VERSION		"1.8.0.0"
-+#define DRV_VERSION		"1.8.0.1"
- #define PFX			DRV_NAME ": "
- #define DFX                     DRV_NAME "%d: "
++#ifdef CONFIG_BPF_SYSCALL
+ TRACE_EVENT(xdp_cpumap_kthread,
  
+ 	TP_PROTO(int map_id, unsigned int processed,  unsigned int drops,
+@@ -300,6 +301,7 @@ TRACE_EVENT(xdp_devmap_xmit,
+ 		  __entry->sent, __entry->drops,
+ 		  __entry->err)
+ );
++#endif /* CONFIG_BPF_SYSCALL */
+ 
+ /* Expect users already include <net/xdp.h>, but not xdp_priv.h */
+ #include <net/xdp_priv.h>
 -- 
-2.47.1
+2.47.2
 
 
