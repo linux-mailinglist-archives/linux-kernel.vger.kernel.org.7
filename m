@@ -1,154 +1,113 @@
-Return-Path: <linux-kernel+bounces-683989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293B4AD7479
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:48:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25738AD7484
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9762C3AB721
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:48:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 282F83ADFBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491271C7015;
-	Thu, 12 Jun 2025 14:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HJG3ne7l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7451DE2A5;
+	Thu, 12 Jun 2025 14:49:32 +0000 (UTC)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486E15278E;
-	Thu, 12 Jun 2025 14:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF5B19DF9A;
+	Thu, 12 Jun 2025 14:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739709; cv=none; b=YM49JxEt7DfANs9QTPSHAfPkH6Q4qxuFDncpYIWCLR3b8x/Xe3a0rbqFOKcwNjsvXyKLSeurZ13eM+8v4fG6Y2WXpuGyvJ5pnPMo0i5kV/vIgSGjfmRzdoL+plgeolgI4raWwl2fZrXrKSs2ftNGbgv7oeaROm+ofxHAA10GQi0=
+	t=1749739772; cv=none; b=TQ5o89py7xDM2rAUH4LpDGR3PCH3vHfvKWjar1fOUBHZSjtxHPSCylXuFeCxKeDcQ55azFblb8t/Jdd1jA2HGdTYB2wbsbmZG1Cca5s492+6WQOekCPADcWptpyXn1QfxCh5FckRNhdwipzVa7G29XXZbiVOyd3C+BnudMf+oeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739709; c=relaxed/simple;
-	bh=/e5p9osxkx51XqE1aDEoQ2Zc1sIKmHJxGFwG2HbrwZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3uZ5QL/mnn9JEnJw8PTFhQwNbY4y60iZqvDx1ywEalm91ih24UfW5gepxIzR5NfGSnEDOtPMFRVDXoaiD0SPXeXGqSIRTPkVp48v6WflK6C7sS0q9EnIUw2qc5ptuaJIqq1Y8kzKrlEW9/SxKegIxZCuglIeuJS6CgMkG7Atv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HJG3ne7l; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749739707; x=1781275707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/e5p9osxkx51XqE1aDEoQ2Zc1sIKmHJxGFwG2HbrwZc=;
-  b=HJG3ne7l1yPdaVoVGhE2izVKE6pBT7+j9O1mEKdjZBuv5i4xSGJ7O+mn
-   4gCKgRjt5EEjOR8Kp9XUY/qm4J5bFzomU6sDLdGd/FuUwDWXmAi23e8Gv
-   VCgqDvVFWFAqWMVrJg82ZIztNAT0saWfDlokNGm46yh/bmg8CqPdeyhYo
-   DrcpZgJdg8ODxGhwlBq0v1/tP5ak0BxvH3VQ6LkoQMAtqKnVRdaGvtaXH
-   Cwaf1gqkGoTtLyOR3NE71vrWGu7gTcvPpEtnclYXYa38cMk86NR9CX+Ak
-   1idyT0OZIxUJHHx/ax02LO3cm+6PwIcaG1eypI+3oJ1bi6fSba7f8IR2c
-   g==;
-X-CSE-ConnectionGUID: rsFrGFXCTu+Zsn2njnTPNQ==
-X-CSE-MsgGUID: 6UCjos3fQGq3grQ4RnJlqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="62575558"
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="62575558"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 07:48:26 -0700
-X-CSE-ConnectionGUID: Vhjg/c83SbmrpWICjHaNsw==
-X-CSE-MsgGUID: 8nxIzQ8OTQGh19CZGtxRng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="170720366"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 12 Jun 2025 07:48:23 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uPjE5-000BfW-12;
-	Thu, 12 Jun 2025 14:48:21 +0000
-Date: Thu, 12 Jun 2025 22:48:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrew Ijano <andrew.ijano@gmail.com>, jic23@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andrew.lopes@alumni.usp.br,
-	gustavobastos@usp.br, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, jstephan@baylibre.com, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] iio: accel: sca3000: use guard(mutex)() for
- handling mutex lock
-Message-ID: <202506122259.4MrANF8h-lkp@intel.com>
-References: <20250611194648.18133-4-andrew.lopes@alumni.usp.br>
+	s=arc-20240116; t=1749739772; c=relaxed/simple;
+	bh=2ZertXQqA431pXbmfY4GDumWZtR6wULFf8L3AEAO8rM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGROpGplzC5Bfb2EWIazmjqg0KY0wgbUP+BFzj9Sps5z9xNGowYtc4JdeOB9caqWzWyRxS7iRo44vzkO+06y5VgSXYN7EXhtcQ4pcTJSN+Lmaig9VFEWgCYYhJUO+rUT8m4m3KolX9+zsGUTTJcSOb4Q8mhZY3fnwMp+lmYFfpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-531341d339dso178748e0c.0;
+        Thu, 12 Jun 2025 07:49:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749739769; x=1750344569;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NBzo5c2eHQJ4UmDLe5XXuGLhcnXVF2196yaOopFMfv0=;
+        b=pqNOihS2Pqh/9TRoqV7QbUb+bRiUhtK4KdnHvS03U2t/C6nHnYwkCAYR3IAG8vMEmC
+         R8VM5hX6E8VD6W0b2wTjJyHv9OB98p4xTDZMvIZbDmPg/9DI8SdYmUkcNtpMbVVWyPVm
+         dfWPNPkYEhWuQagMAv2Lj0Y4V84Zo3mMvF8pbc+xNdynmjoXtv1bMV9cJERMteYO3C4O
+         vdGfTtHDAUD7qxeG2T6wUgdetIPvaBdbwmj9ni5goFJz+9j5Kgrw7sz8GVAGFnGb3PV3
+         q0ezjG3/MYCKGNhaRw2Mtg+SoFWD+9NwJ2fBLYm+aAGkkF1Rb91qBIlimdCGozimmATS
+         5Awg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMrZF2cgbbKgpvbamNhk47XeuHW7byFVPWk3ey0zSRRwQdOfa1NnjatSlEdBkQL5kpZ6z4dtdYVNfR@vger.kernel.org, AJvYcCUj2FDy9E7Z//XVgq8TH/6HU4neRyuFXPzZ6sVmaWWSDj7RqztpTjJUvoBIIQqCm8m+ItWtJanEl36NLJiCPxdOFw0=@vger.kernel.org, AJvYcCUlO+b6Qj+PPbAOWUxAxjlMXovuak4mWUgW9aP/N39nxCPUWIKWHk3X1WVeKkgGi/qjPZY/l4EtU4k5ESfE@vger.kernel.org, AJvYcCW7KnSFMKDrLg0kXjbnw9Iy9kiQzZ+QzOIC6McgrvUwa7qVqp3PJv7gFcrdeOPzAXarZeguwoUVjenR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3RnuNSkGNZCSoXQDD20sgon89hqI/kwgGiP3OoJpzK/bYtlhD
+	rVO/Aj8fdC0fJFiSnGLCLCbYEA9dgXgh/twxxMLc4ZcnW/r60Ko74ymrSTJtBM0Y
+X-Gm-Gg: ASbGncszOk226Xv5biiKojUQhqTOB8yzv4Gi5wqRHP8Bs4Y2Heb3JPpDDxz+0q8Zw60
+	q4f09mGqFNPmH1JtuGS9Y1LgaJBFfHwK3W+mwezdu7leLMnnL4LezpYiwCvdxvhLEp4d0aEZZvg
+	9jCZtJlxi0LnLB1C5FW+jpM11HuD+qJPLjUGhkwd9TIQ+heGTjcJXxLRsDlY4cuGzH9pvSCS2JR
+	5cbDBcv/8kej+4UgYcyixZm/xws7gByinQy6RLFlm4Egb/4rmoRcgk2ylL46tubx/MpcxadePZM
+	WJcBFx90CBn1s4tjHDUUzCDuhcg3SEPn9nb8AT3mvrLzviq6KiZD22aQSMCp6ZAGsw5zFjs1+GF
+	ztHIf2Ieksdiu9QX+MZ7IXr52HFbb
+X-Google-Smtp-Source: AGHT+IG6FCabMPqa5gDFT4SapTYACCrrvG2cjeoN5OVOFPidto9Q5HvhaGYw4d9+mfNfqUjy6UKbBw==
+X-Received: by 2002:a05:6122:da9:b0:531:2413:ce62 with SMTP id 71dfb90a1353d-5312cf19905mr4022816e0c.11.1749739769196;
+        Thu, 12 Jun 2025 07:49:29 -0700 (PDT)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5312f651547sm312041e0c.22.2025.06.12.07.49.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 07:49:29 -0700 (PDT)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53125ca78b0so363782e0c.1;
+        Thu, 12 Jun 2025 07:49:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpY8gNH0tvlUuGQiztU2Y6o840aHcf15/PXi+NuWppKlDz0YqxCeP/PQutbMwfaFme/vfwZp7vRXwXgolKA1IzrRw=@vger.kernel.org, AJvYcCWEafgFeMhYJJ2r2C0InAcHW7wQ8KQmENJUY0mtGkB2I3jj3i7qAwjRhXsymZglaVq5+75hv0kasQCG@vger.kernel.org, AJvYcCWbl6AOjqDjeK9fw9O29Ctspdfe6nFbgITapmrFWuXqH2KEdObdDX5HFeeR8knAoB8CHkOUIumX0y35@vger.kernel.org, AJvYcCXG/2U+1aE8JawFuQ8foGZEfoNRJk9+ttP35UgrmSeFK82lRGjrI+VXychRGNSMkhKjx5JLHIzI5iudJuId@vger.kernel.org
+X-Received: by 2002:a05:6122:3093:b0:531:236f:1295 with SMTP id
+ 71dfb90a1353d-5312cde4b2cmr4126676e0c.5.1749739768831; Thu, 12 Jun 2025
+ 07:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611194648.18133-4-andrew.lopes@alumni.usp.br>
+References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250609203656.333138-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250609203656.333138-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 16:49:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXJvYFrj9ZX4Q-EOAZXC+P=SmNMfMZM9tbebYeiZKQYGA@mail.gmail.com>
+X-Gm-Features: AX0GCFt9BGU4-f86W1haNgpSZABnoAaeDYNvqzPOREPZOvb_CkRm3reF840XDAE
+Message-ID: <CAMuHMdXJvYFrj9ZX4Q-EOAZXC+P=SmNMfMZM9tbebYeiZKQYGA@mail.gmail.com>
+Subject: Re: [PATCH 7/8] arm64: dts: renesas: Add DTSI for R9A09G087M44
+ variant of RZ/N2H SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrew,
+On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+>
+> Add the device tree source include file for the R9A09G087M44 variant of the
+> Renesas RZ/N2H SoC, which features a 4-core configuration.
+>
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.16-rc1 next-20250612]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Gr{oetje,eeting}s,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrew-Ijano/iio-accel-sca3000-replace-error_ret-labels-by-simple-returns/20250612-034940
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250611194648.18133-4-andrew.lopes%40alumni.usp.br
-patch subject: [PATCH v5 3/3] iio: accel: sca3000: use guard(mutex)() for handling mutex lock
-config: x86_64-randconfig-001-20250612 (https://download.01.org/0day-ci/archive/20250612/202506122259.4MrANF8h-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250612/202506122259.4MrANF8h-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506122259.4MrANF8h-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/iio/accel/sca3000.c: In function 'sca3000_write_raw':
->> drivers/iio/accel/sca3000.c:748:13: warning: unused variable 'ret' [-Wunused-variable]
-     748 |         int ret;
-         |             ^~~
-   drivers/iio/accel/sca3000.c: In function 'sca3000_write_event_value':
-   drivers/iio/accel/sca3000.c:881:13: warning: unused variable 'ret' [-Wunused-variable]
-     881 |         int ret;
-         |             ^~~
-   drivers/iio/accel/sca3000.c: In function 'sca3000_write_event_config':
-   drivers/iio/accel/sca3000.c:1188:13: warning: unused variable 'ret' [-Wunused-variable]
-    1188 |         int ret;
-         |             ^~~
-
-
-vim +/ret +748 drivers/iio/accel/sca3000.c
-
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  742  
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  743  static int sca3000_write_raw(struct iio_dev *indio_dev,
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  744  			     struct iio_chan_spec const *chan,
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  745  			     int val, int val2, long mask)
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  746  {
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  747  	struct sca3000_state *st = iio_priv(indio_dev);
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13 @748  	int ret;
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  749  
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  750  	switch (mask) {
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  751  	case IIO_CHAN_INFO_SAMP_FREQ:
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  752  		if (val2)
-e0f3fc9b47e61b drivers/staging/iio/accel/sca3000_core.c Ico Doornekamp   2016-09-13  753  			return -EINVAL;
-926150211ef327 drivers/iio/accel/sca3000.c              Andrew Ijano     2025-06-11  754  		guard(mutex)(&st->lock);
-926150211ef327 drivers/iio/accel/sca3000.c              Andrew Ijano     2025-06-11  755  		return sca3000_write_raw_samp_freq(st, val);
-626f971b5b0729 drivers/staging/iio/accel/sca3000.c      Jonathan Cameron 2016-10-08  756  	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-626f971b5b0729 drivers/staging/iio/accel/sca3000.c      Jonathan Cameron 2016-10-08  757  		if (val2)
-626f971b5b0729 drivers/staging/iio/accel/sca3000.c      Jonathan Cameron 2016-10-08  758  			return -EINVAL;
-926150211ef327 drivers/iio/accel/sca3000.c              Andrew Ijano     2025-06-11  759  		guard(mutex)(&st->lock);
-926150211ef327 drivers/iio/accel/sca3000.c              Andrew Ijano     2025-06-11  760  		return sca3000_write_3db_freq(st, val);
-25888dc51163a5 drivers/staging/iio/accel/sca3000_core.c Jonathan Cameron 2011-05-18  761  	default:
-25888dc51163a5 drivers/staging/iio/accel/sca3000_core.c Jonathan Cameron 2011-05-18  762  		return -EINVAL;
-25888dc51163a5 drivers/staging/iio/accel/sca3000_core.c Jonathan Cameron 2011-05-18  763  	}
-25888dc51163a5 drivers/staging/iio/accel/sca3000_core.c Jonathan Cameron 2011-05-18  764  }
-574fb258d63658 drivers/staging/iio/accel/sca3000_core.c Jonathan Cameron 2009-08-18  765  
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
