@@ -1,137 +1,237 @@
-Return-Path: <linux-kernel+bounces-683857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE328AD72C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF34AD72FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1CA3A7E2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1EDE188ADFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0E1246BAC;
-	Thu, 12 Jun 2025 13:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47D823C4E1;
+	Thu, 12 Jun 2025 13:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGPN1uFs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="D7XScwff"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35F23C516
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E4B23E331
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736594; cv=none; b=THM6fQYfANeY+3eVHxxYQye+oNt0HkyFDsW1JKXy2/RSFBHw8BGgV2eG384gWTinsHalNpXZeGO1s6TrHMfCzA5NTfaHfIT/kpRBN6oyqCDZLwNTDvqXeAwaODSDMqIpHJN5FPdi7xdp6NdRTkbsH9aSUrN4P0fV+lCOd1TUaGo=
+	t=1749736643; cv=none; b=XAcl12JmiUq8nUr/CkxqiByI+Om014YRcLLN+dx59qDvVtb5J7YhHSCFreHs+0DzEh8jmcjfmM0RT7IDRhgetALR56DBxnB4Po44cd/LA67xa+Dx7fzm/HN5980JD4DtOg+B+0lPgHOjnRJ2VihCNzyhzh/S3oKeskEMaRcBpZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736594; c=relaxed/simple;
-	bh=WxMzIaZy423sDZIpi9KE0Tvfc7JKlMGJWRWMOOxFmHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nkYo4fHkrcx1pOr8rDUcs4wJz92VPn0oqs38aXVFy8tdzdtc3YzDAnXJbrOmaIe8m4CqurdMHRcPlTlPmcPtcXZtqVt8QWoleAWbQ3RqyUADBy5wx0qvQ67Sba8G7bXK1RI9lpdPEVFhMlGT8TA4e/KAmKishWE2wXwYQqKacmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGPN1uFs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36678C4CEEA;
-	Thu, 12 Jun 2025 13:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749736593;
-	bh=WxMzIaZy423sDZIpi9KE0Tvfc7JKlMGJWRWMOOxFmHw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EGPN1uFsB7Gp8Gg3O8/87vCP0sU0gTcHSNGSEGA8FSPJ129gA456eN68+UtFJHfNT
-	 9J43jIC3Anbm0D6b7cnyxhIxt2raxubu+WMLL+MPH5U8QAhEjwE5dmgc/72Kh3MPPD
-	 MPetWzSlSjo53jhTRH2z7ARPEF5nduHLpuo4GAqt4gGi1j/jw01gIF8rUCtcsTG2Fi
-	 o+KUTFWZ8QBOSBTP+0GUnQNTXxhiclH5gwYkrK7VlzsquR4xSQL8kHzUWdmNHdpXp7
-	 G5OrW1YcMbLxHrM6GKwhXrZt/Oj29Jvz11u2JLS+QwUAuOYfX8n5GGS9m4ZfAFXOq/
-	 4Ze3wFmHFL8qQ==
-Date: Thu, 12 Jun 2025 10:56:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Sean Christopherson <seanjc@google.com>
-Subject: [PATCH 1/1 fyi] tools headers x86 svm: Sync svm headers with the
- kernel sources
-Message-ID: <aErcjuTTCVEZ-8Nb@x1>
+	s=arc-20240116; t=1749736643; c=relaxed/simple;
+	bh=FsjKzATE2fBcfCRDnaoVj2USddLsymJIPPzcUtqYzs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vnjt1MCv35z8MVYPninL17ebl7mGTCtxULL6o+Iky9jt1X7nJTrlbImOcpcA8F/YhrooNTas4ryPUwUo/qav7U6iqogsDRnOBsK/6SIYjzPe7T7nk6vWXohzPM2tAKBmdpTU4TxtAlyjMK9Kd0E/ow49o82aiIM92xPgPKPXPbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=D7XScwff; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-441ab63a415so10609185e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749736639; x=1750341439; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uWIybPnFMO+iPTF1D7X2vHTnG4Ra9zFxBSdBlVwLzyQ=;
+        b=D7XScwffSPpuo1FjJw7y9xXs8XqQ7kB72+1uyeWPvNCOsOgnVZ5qUmhnLmkkl47P8Q
+         TCIgi/kGRspXC1DAoTSqDTP/XJY+EIM7rJWeG4kQ38b9gEGRUVUw0Nz5hQ8U+THIUuVR
+         gPGD8ftcv/amVRcvZC/Glx6Ealo3sLcRChX4G6JYN6kCrvWewfGpdRkdxZNnunoxRq9m
+         SdDR3kgz94+457XDMuXybhIoPMM3ChGXNb7v0CiVfsm/FiHBStIqc6BMUJKohCum5cbU
+         lQ3iRyu1YDTltneD9t8r9FGqnhz1ZUSzykbBpiiyNWfbZdzyQKr5lZgMYaCZMaCVSaz1
+         MjdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749736639; x=1750341439;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uWIybPnFMO+iPTF1D7X2vHTnG4Ra9zFxBSdBlVwLzyQ=;
+        b=L87gxeZHArp5fDVOvkA+hVwCMq9/v5yyv4cTsos3VRUBgFzl2NQNY1GRHkjPePbFaA
+         vBYxHkJNY+q4ZRgYTsifXwixCZWyy+vmU5tGvpi7kObFweOznB3hn1ySrLtlZSFf83A5
+         MqwyaHsVosp73RWWIfvwdVb8T06D2GxWTDSJTYEWCJrKEHEqDFewQbb/pPq9JUrYotDW
+         mZN57/ETXys0eUW7MIm6FllCumIe2wboyYwlwPHrQ2JuBma7j3PijeMKqdxY/oTMHu+M
+         +ffqbJ63Ap3gMbLLR3ZiCnUWBiJurkiFZAXBPhPR4kW7fFz+BGE9glgGyJOiL7n0C4Dy
+         f96A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnkQV+GjVw1++2eAZcdKxg3zOBsmYDZoIMDJKkf1/rKXMSX0BPXMTUl4y1JccWA/qWVHtk1/cxMrEtwkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyloM9iN/mtdUjWVpGa1C4ycgq/zkqU2KCRAZrv3+Twu9P0GN1/
+	z10MWV2qhTAPmo4sIGqJjubRMxRyCavj0498om54quHE3KGMn/Qqy9799ZGVJloVUS4=
+X-Gm-Gg: ASbGncsfgak8CyR4a0h3+ACChqirP0L81PqZ/ZFZPVTFJPiRAO08cz1vkWgP+CM7x3Y
+	Ow3pM9rX2pUSedwcGBIsTpWqWyT+Qz1KE/DRcfsp6d0jdHtihUkoPoqxYUzmzqYg5s1To3bVjSv
+	X1WJt32niu9qEIlhDUlq+5K+MbNAhvi6wPfwfa/23SYN9oJiRU38gBwt6MqOjHlRFfmZM1xZS0N
+	5GvhSOhw+8lusxvDfVXlK7zH47ooDlQOQBesat9FsBRuRVakGeSx+yhpg8yJklWSYb/J/9XgUlY
+	DD1yPr+i27V2N4Sodbsdr+TBEKVRM6Q/O/8OEILCjSdodCgK1JomrpW687JyYrlX
+X-Google-Smtp-Source: AGHT+IHHTgsF4plb+4cSFCswnZ1BoRaKntWrXC3dKLfejS0J5Ju71cHUfrXuDzUBs/xWMfkadhCSvw==
+X-Received: by 2002:a05:6000:420b:b0:3a5:52b3:103b with SMTP id ffacd0b85a97d-3a5586dce0bmr5309298f8f.4.1749736639382;
+        Thu, 12 Jun 2025 06:57:19 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2364e61b65esm14131675ad.12.2025.06.12.06.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 06:57:18 -0700 (PDT)
+Date: Thu, 12 Jun 2025 15:57:00 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-um@lists.infradead.org
+Subject: Re: [PATCH 4/7] drivers: serial: kgdboc: Check CON_SUSPENDED instead
+ of CON_ENABLED
+Message-ID: <aErcrCKcsi9cpANY@pathway.suse.cz>
+References: <20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com>
+ <20250606-printk-cleanup-part2-v1-4-f427c743dda0@suse.com>
+ <CAD=FV=XXQyZLYKoszj68ZGFDY=9-cmEUp406WeOeSBVZOHyUHw@mail.gmail.com>
+ <f962e9bab3dc8bf5cae1c7e187a54fb96a543d51.camel@suse.com>
+ <CAD=FV=XFeokpbMUFjAc0OkwJ97vR8aB+4GbnFxRKymvpEY3gnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XFeokpbMUFjAc0OkwJ97vR8aB+4GbnFxRKymvpEY3gnA@mail.gmail.com>
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+On Tue 2025-06-10 16:18:22, Doug Anderson wrote:
+> Hi,
+> 
+> On Tue, Jun 10, 2025 at 1:03 PM Marcos Paulo de Souza
+> <mpdesouza@suse.com> wrote:
+> >
+> > On Mon, 2025-06-09 at 13:13 -0700, Doug Anderson wrote:
+> > > Hi,
+> > >
+> > > On Fri, Jun 6, 2025 at 7:54 PM Marcos Paulo de Souza
+> > > <mpdesouza@suse.com> wrote:
+> > > >
+> > > > All consoles found on for_each_console are registered, meaning that
+> > > > all of
+> > > > them are CON_ENABLED. The code tries to find an active console, so
+> > > > check if the
+> > > > console is not suspended instead.
+> > > >
+> > > > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> > > > ---
+> > > >  drivers/tty/serial/kgdboc.c | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/tty/serial/kgdboc.c
+> > > > b/drivers/tty/serial/kgdboc.c
+> > > > index
+> > > > 85f6c5a76e0fff556f86f0d45ebc5aadf5b191e8..af6d2208b8ddb82d62f33292b
+> > > > 006b2923583a0d2 100644
+> > > > --- a/drivers/tty/serial/kgdboc.c
+> > > > +++ b/drivers/tty/serial/kgdboc.c
+> > > > @@ -577,7 +577,8 @@ static int __init kgdboc_earlycon_init(char
+> > > > *opt)
+> > > >         console_list_lock();
+> > > >         for_each_console(con) {
+> > > >                 if (con->write && con->read &&
+> > > > -                   (con->flags & (CON_BOOT | CON_ENABLED)) &&
+> > > > +                   (con->flags & CON_BOOT) &&
+> > > > +                   ((con->flags & CON_SUSPENDED) == 0) &&
+> > >
+> > > I haven't tried running the code, so I could easily be mistaken,
+> > > but...
+> > >
+> > > ...the above doesn't seem like the correct conversion. The old
+> > > expression was:
+> > >
+> > > (con->flags & (CON_BOOT | CON_ENABLED))
+> > >
+> > > That would evaluate to non-zero (true) if the console was _either_
+> > > "boot" or "enabled".
+> > >
+> > > The new expression is is:
+> > >
+> > > (con->flags & CON_BOOT) && ((con->flags & CON_SUSPENDED) == 0)
+> > >
+> > > That's only true if the console is _both_ "boot" and "not suspended".
+> >
+> > My idea here was that the users of for_each_console would find the
+> > first available console, and by available I would expect them to be
+> > usable. In this case, is there any value for kgdboc to use a console
+> > that is suspended? Would it work in this case?
+> >
+> > I never really used kgdboc, but only checking if the console was
+> > enabled (which it's always the case here) was something that needed to
+> > be fixed.
+> >
+> > Maybe I'm missing something here as well, so please let me know if I
+> > should remove the new check.
+> 
+> So it's been 5 years since I wrote the code, but reading that I was
+> checking for:
+> 
+>   (con->flags & (CON_BOOT | CON_ENABLED))
+> 
+> Makes me believe that this was the case when I wrote the code:
+> 1. Early boot consoles (earlycon) were not marked as CON_ENABLED but
+> were instead marked as CON_BOOT.
+> 2. Once consoles became non-early they were moved to CON_ENABLED.
+> 
+> ...and the code was basically looking for any consoles with a matching
+> name that were either boot consoles or normal/enabled consoles.
+> 
+> Is that a plausible theory? It's also possible that I just was
+> confused when I code things up and that I really meant to write:
 
-Full explanation:
+It is easy to get confused by the register_console() code. And
+it has been even worse some years ago.
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+Anyway, the current code sets CON_ENABLED for all registered
+consoles, including CON_BOOT consoles. The flag is cleared only
+by console_suspend()[*] or unregister_console().
 
-See further details at:
+IMHO, kgdboc_earlycon_init() does not need to care about
+console_suspend() because the kernel could not be suspended
+during boot. Does this makes sense?
 
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+Also it does not need to care about unregister_console() because
+the unregistered console won't be listed by for_each_console().
 
-To pick the changes in:
+[*] The 1st patch in this patchset updates console_suspend()
+    to set CON_SUSPENDED instead of clearing CON_ENABLED.
+    It helps to make it clear that it is suspend-related.
 
-  827547bc3a2a2af6 ("KVM: SVM: Add architectural definitions/assets for Bus Lock Threshold")
 
-That triggers:
+Resume:
 
-  CC      /tmp/build/perf-tools/arch/x86/util/kvm-stat.o
-  LD      /tmp/build/perf-tools/arch/x86/util/perf-util-in.o
-  LD      /tmp/build/perf-tools/arch/x86/perf-util-in.o
-  LD      /tmp/build/perf-tools/arch/perf-util-in.o
-  LD      /tmp/build/perf-tools/perf-util-in.o
-  AR      /tmp/build/perf-tools/libperf-util.a
-  LINK    /tmp/build/perf-tools/perf
+I would remove the check of CON_ENABLED or CON_SUSPENDED
+from kgdboc_earlycon_init() completely.
 
-The SVM_EXIT_BUS_LOCK exit reason was added to SVM_EXIT_REASONS, used in
-kvm-stat.c.
+IMHO, we should keep the check of CON_BOOT because we do not
+want to register "normal" console drivers as kgdboc_earlycon_io_ops.
+It is later removed by kgdboc_earlycon_deinit(). I guess
+that the code is not ready to handle a takeover from normal
+to normal (even the same) console driver.
 
-This addresses this perf build warning:
+To make it clear, I would use:
 
- Warning: Kernel ABI header differences:
-  diff -u tools/arch/x86/include/uapi/asm/svm.h arch/x86/include/uapi/asm/svm.h
+	for_each_console(con) {
+		if (con->write && con->read &&
+		    (con->flags & CON_BOOT) &&
+		    (!opt || !opt[0] || strcmp(con->name, opt) == 0))
+			break;
+	}
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Nikunj A Dadhania <nikunj@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Link: https://lore.kernel.org/r/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/x86/include/uapi/asm/svm.h | 2 ++
- 1 file changed, 2 insertions(+)
+And I would do this change as the 1st patch in the patchset
+before we change the flag modified by console_suspend().
 
-diff --git a/tools/arch/x86/include/uapi/asm/svm.h b/tools/arch/x86/include/uapi/asm/svm.h
-index ec1321248dac2ab5..9c640a521a67006d 100644
---- a/tools/arch/x86/include/uapi/asm/svm.h
-+++ b/tools/arch/x86/include/uapi/asm/svm.h
-@@ -95,6 +95,7 @@
- #define SVM_EXIT_CR14_WRITE_TRAP		0x09e
- #define SVM_EXIT_CR15_WRITE_TRAP		0x09f
- #define SVM_EXIT_INVPCID       0x0a2
-+#define SVM_EXIT_BUS_LOCK			0x0a5
- #define SVM_EXIT_IDLE_HLT      0x0a6
- #define SVM_EXIT_NPF           0x400
- #define SVM_EXIT_AVIC_INCOMPLETE_IPI		0x401
-@@ -225,6 +226,7 @@
- 	{ SVM_EXIT_CR4_WRITE_TRAP,	"write_cr4_trap" }, \
- 	{ SVM_EXIT_CR8_WRITE_TRAP,	"write_cr8_trap" }, \
- 	{ SVM_EXIT_INVPCID,     "invpcid" }, \
-+	{ SVM_EXIT_BUS_LOCK,     "buslock" }, \
- 	{ SVM_EXIT_IDLE_HLT,     "idle-halt" }, \
- 	{ SVM_EXIT_NPF,         "npf" }, \
- 	{ SVM_EXIT_AVIC_INCOMPLETE_IPI,		"avic_incomplete_ipi" }, \
--- 
-2.49.0
-
+Best Regards,
+Petr
 
