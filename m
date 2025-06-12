@@ -1,272 +1,120 @@
-Return-Path: <linux-kernel+bounces-684040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4DCCAD753A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3ADCAD753D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B131884550
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB303B06B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4500B274FCA;
-	Thu, 12 Jun 2025 15:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7D827E7D2;
+	Thu, 12 Jun 2025 15:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wKtI/wGf"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m74s/H9b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A567E26E717
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662F0279795;
+	Thu, 12 Jun 2025 15:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740624; cv=none; b=b6Oj74YnMBAUe++6215kJsAB9KmA1bMkBBu/9AWNHKu6ml57iCBNRCc05xY5ewPeCqX21tKzFGmG2gMrouklmn71YQOa36hSyW5VghCiwga/ifQYMn8BgKtbA970aJT8s4H+SlyJhgXquQp/j2EFFZW5p52xMO8DeJv+R0Ccnfc=
+	t=1749740628; cv=none; b=WzfBwLkBLUuOb5Vzqax3mCt1WPq+AHFtgQ5jAPtGv+/DbBveZXLvoarIOr5IghKmsUU4VxEtzdD8/kUeVokcX6IDnaqnQaG3mH39Jk81WmiLc3cI4F97Goe1QshcNJRKg6Ku1ghl185An1MbBBEta9/kSbM6F2hsRLZ3rD92NIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740624; c=relaxed/simple;
-	bh=HT0OPOWngJLYGraue4dv+E8G+K+QgCbixj7ubRpcOTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X/Z+0wKJf8yuTyE2TfDW7iBOAyIcXy/7dEFe2STC4pYhluEFBpKbcAEj05pH2Tg8IkclgXOP+43QnBya2mW31j7KvrYbWuFmoVtI7Bo517LEPOIs1pXsxmBfVPH6cuJM5Y3oEiMFIsOjgkocsua0cv386Q/DlySE/ef8oyyFBwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wKtI/wGf; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-60b8a9be972so312280eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749740621; x=1750345421; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/CWX5K7cUh5q7+ZKZX3fft9+sBWTbcloK0NCvH6AyF8=;
-        b=wKtI/wGfQ4n1DeeG2Z00cUSVW7upOwHN9Z3esgRFY1ny6kibGIw5gKGZJbzgMZWLQH
-         riAasdI3mbxtIeWAtbjKqgCcKfXe5wGeKftX6dXSOl6bQdrmS2MnvdM/DiyGmZAV2+yX
-         buXG/A2DCBR5qqL3Sh1auh4VARG3Mr3ehtX3WcjCq0Sdd0PXa8NXagJTeNmfao/RmEC2
-         mZEYnwml946pUTI+3X5ZwGZUdbYRPQ08yNuBZHyXtdVQUNG0Q3q2A+AVN5OYInU+BzIe
-         aPLfdHFrlRFaOvgS2cWLQ++MiY2KPWYjfHt6LvMb84GhZKXhTO7PB2/flkXP3W2fHdno
-         Hc2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749740621; x=1750345421;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/CWX5K7cUh5q7+ZKZX3fft9+sBWTbcloK0NCvH6AyF8=;
-        b=CrndNTZ9YlF7Ng0NGGYCEFrD5ALwpuywqDJ5kftUXav8IR4sls14eTNYXz8E8sWlLc
-         R0w1yHERWFOyTtSaE/borDlKRPpb8/PRSViPLo0ftsMKuxkrYW7NZMwmXsZpF2OqtshI
-         afJAaaBdPon5/5ybnHaQACy2uswr8//QbvDnHFoNw5TO9c/CQZ3VMH2iRfZnkHtbtr0k
-         ABlBhsep0jphVoW8kiP0QWyEW+HuhjgMSR3OuYMgfPV8gHxIPb1Ravco/1HAMs4kksLk
-         S0b47dOhOALJsG463nD8/dHasd+5LvBcwi98qM9l5Iyecz4yNLw8EED4blcJfQZXaaSb
-         KiuA==
-X-Forwarded-Encrypted: i=1; AJvYcCViJsZCu7SN+3Npu+HlssFTqZMc0+opKaQ89cqYAYAtSK+vAPX8Wgj81ANbn7WjGFUwTE3DnQrUlvhYEXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiAH2MAjIuXSIMOS4lHCkQfTQH/1pLSRyhXOyFtrNNS4uWJJnN
-	tKIq4f0lRVirAOQUkBWoczxk0dh5518cb11AE2+bMC3bSQEu0patLpfDbbsLwA/8vMg=
-X-Gm-Gg: ASbGnctRWdp3H+lXGl3Tjxq/OkEh5Phgbhz7s/NHNKV7MXoRAW8lHoKD3LNDtf0ueSl
-	Yu9xfcElyHErhQApa/OA9vE5+ttqmTZS4DGR8gWh7PDTqhyqEIqgF+XvvQQayrumUVdLayxQspQ
-	qHUqnWzI3yheyQlMUT+KeWxqhgquzqcY17cklKRgUS1cIq0yCDYehu1X34xDM78sqk/EiueqreV
-	ZpgZpd/PRBUOH2zxHbIWBFwzdcKD0hDzHsJy/sweVnlNoza8tS+tix2A3cp9nzj2v/8x6UWcixu
-	t2EDruXsTlX/NuhPdWxK1qvCXlKCCw5j93K9SCf6N/GA/v2IXWMXRXYFq6rdzeNinL+HMW+65dc
-	dXS7QfPDj8H6kNmfbXPCEXGrNmhXTqINa4b0aDt8=
-X-Google-Smtp-Source: AGHT+IHPsllSyEnOVWrSdTMtSNh/JbEncApgsNcq4KhwIS/LyDsZLEXq3MJMsM7IZl//e0XvwhL3zw==
-X-Received: by 2002:a05:6820:216:b0:610:fbf2:bd7d with SMTP id 006d021491bc7-610fbf2c05emr2541424eaf.6.1749740620626;
-        Thu, 12 Jun 2025 08:03:40 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4753:719f:673f:547c? ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-610fd4fbe3asm207044eaf.28.2025.06.12.08.03.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 08:03:39 -0700 (PDT)
-Message-ID: <ef0d4038-b665-4ef0-9e7b-7ad2ce154c50@baylibre.com>
-Date: Thu, 12 Jun 2025 10:03:37 -0500
+	s=arc-20240116; t=1749740628; c=relaxed/simple;
+	bh=ONyFbl7eR0QXU3CRaThaUkea18g1Bd2HJqzSu8H2F5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVwdg6vIKF1xXsMiRSIRaSzB79GN8FbI2279dR5cLXr4bZVv0UIU/i789xnTwkcMjU6ud8IPiiocrIjnabH8BvyyuiQf5hjjvmx+ygS6MpJYiWjKjyvJ5fBBg7+m5lQglVPKeM+ZPG43Lsnk4v8F6rpnFGFU46wxjIHEWRM3IUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m74s/H9b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65BDC4CEEB;
+	Thu, 12 Jun 2025 15:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749740627;
+	bh=ONyFbl7eR0QXU3CRaThaUkea18g1Bd2HJqzSu8H2F5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m74s/H9bViol79YmIelbep7cXyzEw47hdktzg1MN6vCsg0S24VQ/KqSDwpigubKeE
+	 i41PpwJYbao8dKkGyE2Qqe80rDBt1KLstr08lFXyM7NrBpY5+1GLMitIsyHPH9pCI1
+	 RYqA94+q4srgJ820hmzPT2j5D4utw51hYyphDzfmQ9/qugstzZiKxhOn3D8GrAvQ8j
+	 X4Jo/C2BGR8LyZw47KY7cK2I3lFCTccQP4dr8up2k8RWnzpbNifNYM9Yn3+F7UHZR0
+	 qapgcqmD42kiSJv9F9eFn76HvvhT8koJ4G37SFjrSwz0usnG0i9ighP1aKYvjTYnul
+	 8U9pYzGL/Kbhg==
+Date: Thu, 12 Jun 2025 08:03:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+	martin.petersen@oracle.com, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
+ queue limits features
+Message-ID: <20250612150347.GK6138@frogsfrogsfrogs>
+References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
+ <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
+ <20250611060900.GA4613@lst.de>
+ <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
+ <20250612044744.GA12828@lst.de>
+ <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] dt-bindings: iio: adc: Add adi,ad4052
-To: Jorge Marques <gastmaier@gmail.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Jorge Marques <jorge.marques@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20250610-iio-driver-ad4052-v3-0-cf1e44c516d4@analog.com>
- <20250610-iio-driver-ad4052-v3-2-cf1e44c516d4@analog.com>
- <20250611181818.14d147c7@jic23-huawei>
- <xqkr3rq6ikuiz5wcbxmto4gp7wnccmmogklf2ux2edauotufim@pcuhddxdzjxi>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <xqkr3rq6ikuiz5wcbxmto4gp7wnccmmogklf2ux2edauotufim@pcuhddxdzjxi>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
 
-On 6/12/25 5:11 AM, Jorge Marques wrote:
-> On Wed, Jun 11, 2025 at 06:18:18PM +0100, Jonathan Cameron wrote:
->> On Tue, 10 Jun 2025 09:34:35 +0200
->> Jorge Marques <jorge.marques@analog.com> wrote:
->>
-
-...
-
->>> +  trigger-sources:
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +    description:
->>> +      Describes the output pin and event associated.
-
-trigger-sources would be an input pin connected to an external trigger.
-For example, the CNV pin could be connected to a trigger-source
-provider to trigger a conversion. But there aren't any other digital
-inputs, so I don't know what the 2nd source would be here.
-
-As an example, see [1]. We could potentially use the same gpio
-trigger-source for the conversion pin here. There is already
-a similar binding for pwm triggers, so we could drop the separate
-pwms binding as well an just have a single trigger-sources
-property for the CNV pin that works for both gpio and pwm.
-
-[1]: https://lore.kernel.org/linux-iio/cover.1749569957.git.Jonathan.Santos@analog.com/
-
->>> +
->>> +  "#trigger-source-cells":
->>> +    const: 2
->>> +    description: |
->>> +      Output pins used as trigger source.
->>> +
->>> +      Cell 0 defines the event:
->>> +      * 0 = Data ready
->>> +      * 1 = Min threshold
->>> +      * 2 = Max threshold
->>> +      * 3 = Either threshold
->>> +      * 4 = CHOP control
->>> +      * 5 = Device enable
->>> +      * 6 = Device ready (only GP1)
->>
->> Hmm. I'm a bit dubious on why 'what the offload trigger is'
->> is a DT thing?  Is that because the IP needs to comprehend
->> this?  I guess only data ready is actually supported in
->> practice? 
+On Thu, Jun 12, 2025 at 07:20:45PM +0800, Zhang Yi wrote:
+> On 2025/6/12 12:47, Christoph Hellwig wrote:
+> > On Wed, Jun 11, 2025 at 03:31:21PM +0800, Zhang Yi wrote:
+> >>>> +/* supports unmap write zeroes command */
+> >>>> +#define BLK_FEAT_WRITE_ZEROES_UNMAP	((__force blk_features_t)(1u << 17))
+> >>>
+> >>>
+> >>> Should this be exposed through sysfs as a read-only value?
+> >>
+> >> Uh, are you suggesting adding another sysfs interface to expose
+> >> this feature?
+> > 
+> > That was the idea.  Or do we have another way to report this capability?
+> > 
 > 
-> A trigger can be connected to trigger something other than a spi
-> offload, it is in the DT because it describes how the device is
-> connected. When using spi offload, the trigger-source at the spi handle
-> describes which gpio and event is routed to the offload trigger input.
-> At the ADC node, trigger-source-cells describe the source gpio and event
-> for the device driver.
+> Exposing this feature looks useful, but I think adding a new interface
+> might be somewhat redundant, and it's also difficult to name the new
+> interface. What about extend this interface to include 3 types? When
+> read, it exposes the following:
 > 
-> In practice, in this series, one gpio is Data ready, triggering offload
-> when buffer enabled, and raw reads, when disabled. And the other is
-> Either threshold, propagated as an IIO event. Fancy logic can be added
-> to the driver in future patches to allow other combinations.
+>  - none     : the device doesn't support BLK_FEAT_WRITE_ZEROES_UNMAP.
+>  - enabled  : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, but the
+>               BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is not set.
+>  - disabled : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, and the
+>               BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is set.
 > 
-> It is also worth to mention that the trigger-source is duplicated for
-> each node that uses it, as seen in the second dts example:
+> Users can write '0' and '1' to disable and enable this operation if it
+> is not 'none', thoughts?
+
+Perhaps it should reuse the enumeration pattern elsewhere in sysfs?
+For example,
+
+# cat /sys/block/sda/queue/scheduler
+none [mq-deadline]
+# echo none > /sys/block/sda/queue/scheduler
+# cat /sys/block/sda/queue/scheduler
+[none] mq-deadline
+
+(Annoying that this seems to be opencoded wherever it appears...)
+
+--D
+
+> Best regards,
+> Yi.
 > 
->    &adc AD4052_TRIGGER_EVENT_DATA_READY AD4052_TRIGGER_PIN_GP1
 > 
-> Is repeated on both adc and spi node.
-
-That sounds wrong. This would only make sense if an output of the
-ADC was wired back to itself. 
-
-> 
-> One last thing, on the driver, for v3, I should handle -ENOENT:
-> 
->   ret = of_parse_phandle_with_args(np, "trigger-sources",
->   				   "#trigger-source-cells", i,
->   				   &trigger_sources);
->   if (ret)
->   	return ret == -ENOENT ? 0 : ret;
-> 
-> To assert only when present, since the nodes are not required.
-> Or, in the driver,
-> require AD4052_TRIGGER_PIN_GP0 if irq_get_byname finds gp0, and
-> require AD4052_TRIGGER_PIN_GP1 if irq_get_byname finds gp1?
-> (I would go with the first option).
->>
-
-,,,
-
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/gpio/gpio.h>
->>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>> +    #include <dt-bindings/iio/adc/adi,ad4052.h>
->>> +
->>> +    spi {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +
->>> +        adc@0 {
->>> +            compatible = "adi,ad4052";
->>> +            reg = <0>;
->>> +            vdd-supply = <&vdd>;
->>> +            vio-supply = <&vio>;
->>> +            ref-supply = <&ref>;
->>> +            spi-max-frequency = <83333333>;
->>> +
->>> +            #trigger-source-cells = <2>;
->>> +            trigger-sources = <&adc AD4052_TRIGGER_EVENT_EITHER_THRESH
->>> +                                    AD4052_TRIGGER_PIN_GP0
->>> +                               &adc AD4052_TRIGGER_EVENT_DATA_READY
->>> +                                    AD4052_TRIGGER_PIN_GP1>;
-
-This doesn't make sense for the reason given above. These outputs
-aren't wired back to inputs on the ADC. They are wired to interrupts
-on the MCU, which is already described below.
-
->>> +            interrupt-parent = <&gpio>;
->>> +            interrupts = <0 0 IRQ_TYPE_EDGE_RISING>,
->>> +                         <0 1 IRQ_TYPE_EDGE_FALLING>;
->>> +            interrupt-names = "gp0", "gp1";
->>> +            cnv-gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;
->>> +        };
->>> +    };
->>> +  - |
->>> +    #include <dt-bindings/gpio/gpio.h>
->>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>> +    #include <dt-bindings/iio/adc/adi,ad4052.h>
->>> +
->>> +    rx_dma {
->>> +            #dma-cells = <1>;
->>> +    };
->>> +
->>> +    spi {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +
->>> +        dmas = <&rx_dma 0>;
->>> +        dma-names = "offload0-rx";
-
-The dmas aren't related to the ADC, so can be left out of the example.
-
->>> +        trigger-sources = <&adc AD4052_TRIGGER_EVENT_DATA_READY
->>> +                                AD4052_TRIGGER_PIN_GP1>;
->>> +
->>> +        adc@0 {
->>> +            compatible = "adi,ad4052";
->>> +            reg = <0>;
->>> +            vdd-supply = <&vdd>;
->>> +            vio-supply = <&vio>;
->>> +            spi-max-frequency = <83333333>;
->>> +            pwms = <&adc_trigger 0 10000 0>;
->>> +
->>> +            #trigger-source-cells = <2>;
->>> +            trigger-sources = <&adc AD4052_TRIGGER_EVENT_EITHER_THRESH
->>> +                                    AD4052_TRIGGER_PIN_GP0
->>> +                               &adc AD4052_TRIGGER_EVENT_DATA_READY
->>> +                                    AD4052_TRIGGER_PIN_GP1>;
-
-Same as above - the GP pins aren't wired back to the ADC itself.
-
->>> +            interrupt-parent = <&gpio>;
->>> +            interrupts = <0 0 IRQ_TYPE_EDGE_RISING>,
->>> +                         <0 1 IRQ_TYPE_EDGE_FALLING>;
->>> +            interrupt-names = "gp0", "gp1";
->>> +            cnv-gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;
->>> +        };
->>> +    };
 
