@@ -1,98 +1,167 @@
-Return-Path: <linux-kernel+bounces-683833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D3EAD72AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:52:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CE1AD7287
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A02D1C23C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9303178190
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0181824887A;
-	Thu, 12 Jun 2025 13:46:28 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA27D24A047;
+	Thu, 12 Jun 2025 13:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="C/TJW6Ah";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nCIoR2gF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="C/TJW6Ah";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nCIoR2gF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A948A2AEED;
-	Thu, 12 Jun 2025 13:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CFD248894
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749735987; cv=none; b=YYSpTgZso2krTKur74WoyJGhdfuwZfDrG7iTsMt9XIo8VCxxRTzSscx7FWT7y4excIv0AxffNcFuDSCwUBAuvSg5gMXKuD/WM/re3HiVAMOQ+muu9zn6jo7YPm/k2hCeOM+MQ/lpxORn7U1D7hSyiHwC12UuVBmrDurfJFEBFSw=
+	t=1749736040; cv=none; b=iwT+LyiF5sGIuonbRjLtaI4ANlx/9yV47GKQSynn4TTu8rvXnjVc7G+L2SDCKlViH0CaoVHzB9Yv0ZLJNjonEFbsjejU5zVm1tFd4ROm3/622tp/ejI7WLgiWKBtda0l789NDdzCQtrhBL7kLsQdNw0sEp2RoMpXgULBmF3MZg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749735987; c=relaxed/simple;
-	bh=ynUZwpv0LBlzaUspg0SsHNS5dRCcMW5Kf7O4Iaw8l5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Cg6IHKi6/n1fzdG3wSnMJrHlyBBRu9RYnQKtfnmdkggxFjuN5rZqxCiC5EZEJ9CtVvzkozlvRizlc2QhJxnv9TFeXVa0zM/SFOQaf9MGN8dfNilOz6pAoYlALoBK9ci/6w4wFl0U2f/AptTOENFBrBlqeXNkM6pi8xaZkcekQgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 58942100C3E;
-	Thu, 12 Jun 2025 13:46:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 6335E30;
-	Thu, 12 Jun 2025 13:46:16 +0000 (UTC)
-Date: Thu, 12 Jun 2025 09:46:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, netdev@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Eric Dumazet <edumazet@google.com>, Neal
- Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: [PATCH] net/tcp_ao: tracing: Hide tcp_ao events under CONFIG_TCP_AO
-Message-ID: <20250612094616.4222daf0@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749736040; c=relaxed/simple;
+	bh=NFVXDqykMGFFpkpeqpjFqoQQzMQjQLCl0JVe53sPaQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g8XcAev7e7jU3784sUOKswP/kS29ggZ5zq2ZJp/vkgMeytErF2B/0tR+Zt2GmA3VNPpiTKPup31NSBXrzgZw0Euf+TS+quBua1K1618A9zo1gfUHfZGJuvbB1yuIHN3IZYVRWYR8/HOwvin8j608C9HCadMXsVbRoM4kfTfP36Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=C/TJW6Ah; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nCIoR2gF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=C/TJW6Ah; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nCIoR2gF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A56CA21982;
+	Thu, 12 Jun 2025 13:47:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749736036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9MhSnHEwcuzXs2mq2aCr/RKU5BM1YHtc4oG+0a3jl0s=;
+	b=C/TJW6AhHxfBZVw3BB4vtmocSVX+ts96HtVIxs1AzxdP31G/l8N4OgOgVcZLBb0/XyHiP6
+	uzpyrxmvPfQWDXxnLfosxUsdx1r1X5exzOXjBYWwgcGPrx2AGuvCGaCAPunU/8XvuDrA62
+	lZp4VCkrUOMFby+kPvXRBZKm258axg8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749736036;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9MhSnHEwcuzXs2mq2aCr/RKU5BM1YHtc4oG+0a3jl0s=;
+	b=nCIoR2gF9Jn0YvFZh5L9x041uBNAjpstxW9ormDqVG2n8tGP+VRYpmk4nl6McGh12e/Gbt
+	gZckvJnRSXnA7fDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="C/TJW6Ah";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=nCIoR2gF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749736036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9MhSnHEwcuzXs2mq2aCr/RKU5BM1YHtc4oG+0a3jl0s=;
+	b=C/TJW6AhHxfBZVw3BB4vtmocSVX+ts96HtVIxs1AzxdP31G/l8N4OgOgVcZLBb0/XyHiP6
+	uzpyrxmvPfQWDXxnLfosxUsdx1r1X5exzOXjBYWwgcGPrx2AGuvCGaCAPunU/8XvuDrA62
+	lZp4VCkrUOMFby+kPvXRBZKm258axg8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749736036;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9MhSnHEwcuzXs2mq2aCr/RKU5BM1YHtc4oG+0a3jl0s=;
+	b=nCIoR2gF9Jn0YvFZh5L9x041uBNAjpstxW9ormDqVG2n8tGP+VRYpmk4nl6McGh12e/Gbt
+	gZckvJnRSXnA7fDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 290D6132D8;
+	Thu, 12 Jun 2025 13:47:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qO9eB2TaSmhJEAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 12 Jun 2025 13:47:16 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	James Houghton <jthoughton@google.com>,
+	Peter Xu <peterx@redhat.com>,
+	Gavin Guo <gavinguo@igalia.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 0/5] Misc rework on hugetlb_fault
+Date: Thu, 12 Jun 2025 15:46:56 +0200
+Message-ID: <20250612134701.377855-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6335E30
-X-Stat-Signature: 7y6jrrodeaqdincwbm4ks16c8s8mep8k
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18Q3W6llJvLwbjK3ADzrmeycf7ZFPSp9Xg=
-X-HE-Tag: 1749735976-138990
-X-HE-Meta: U2FsdGVkX1+1xXBpq6pG4SxWvRgVynsXgeL23sLYLZfNLLnbRtjDD26172GO4kFcM0fe75cBqTZLugVDvn+QXX+8C99upFENsVgFbWcTzSK9UWLG3KjqxdFssJk963r86YzcikTYEksUdpWtzNCeG6ZqubTVfMWhyszMkyVQHBYYDXbDh4wVcNOXQ72+YhwDdXx8mJqnz5JzTg25m/JmVpD1oD73Tb3nWAoRIQu9aj+RNivZWCetwt22PVayDk9W4lQ/ZDzMB1jlkrZNPzAzJooh2PxnwvST4ZfoVHSF39oxLHY7FtGEoaeC1uMQLsHALK1DyaEKUFtJbcQIkX8b2Da3VnP69hY/UOwa7GFXSqUmqSKrDzFYQ2aHtrwHBZUJ
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: A56CA21982
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -3.01
 
-From: Steven Rostedt <rostedt@goodmis.org>
+ RFC -> v1:
+  - Stop looking up folio in the pagecache for detecting a COW
+    on a private mapping.
+  - Document the locks
 
-Several of the tcp_ao events are only called when CONFIG_TCP_AO is
-defined. As each event can take up to 5K regardless if they are used or
-not, it's best not to define them when they are not used. Add #ifdef
-around these events when they are not used.
+Hi,
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Note, I will be adding code soon that will make unused event cause a warning.
+This is a new version of the RFC I sent a couple of weeks ago [1].
+It's the conclusion of the discussions that ocurred in that thread.
 
- include/trace/events/tcp.h | 2 ++
- 1 file changed, 2 insertions(+)
+Patch#1 is the fix for the deadlock.
+Patch#2 is to document why we take the lock, so none of us have to spend
+time again in figuring that out.
+Patch#3-5 are a bit of cleanup (removing obsolete comments etc.)
 
-diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-index 95f59c1a6f57..54e60c6009e3 100644
---- a/include/trace/events/tcp.h
-+++ b/include/trace/events/tcp.h
-@@ -692,6 +692,7 @@ DEFINE_EVENT(tcp_ao_event, tcp_ao_handshake_failure,
- 	TP_ARGS(sk, skb, keyid, rnext, maclen)
- );
- 
-+#ifdef CONFIG_TCP_AO
- DEFINE_EVENT(tcp_ao_event, tcp_ao_wrong_maclen,
- 	TP_PROTO(const struct sock *sk, const struct sk_buff *skb,
- 		 const __u8 keyid, const __u8 rnext, const __u8 maclen),
-@@ -830,6 +831,7 @@ DEFINE_EVENT(tcp_ao_event_sne, tcp_ao_rcv_sne_update,
- 	TP_PROTO(const struct sock *sk, __u32 new_sne),
- 	TP_ARGS(sk, new_sne)
- );
-+#endif /* CONFIG_TCP_AO */
- 
- #endif /* _TRACE_TCP_H */
- 
+More detail in every patch.
+
+Oscar Salvador (5):
+  mm,hugetlb: Change mechanism to detect a COW on private mapping
+  mm,hugetlb: Document the reason to lock the folio in the faulting path
+  mm,hugetlb: Conver anon_rmap into boolean
+  mm,hugetlb: Drop obsolete comment about non-present pte and second
+    faults
+  mm,hugetlb: Drop unlikelys from hugetlb_fault
+
+ mm/hugetlb.c | 98 +++++++++++++++++++---------------------------------
+ 1 file changed, 36 insertions(+), 62 deletions(-)
+
 -- 
-2.47.2
+2.49.0
 
 
