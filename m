@@ -1,165 +1,166 @@
-Return-Path: <linux-kernel+bounces-684058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BE2AD756E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88947AD7575
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001CF3A2A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1772F1885BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622D5289E0F;
-	Thu, 12 Jun 2025 15:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vYl1SOK6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="REdK3K7n"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4671027A445
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7847628A714;
+	Thu, 12 Jun 2025 15:14:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2B426FA69;
+	Thu, 12 Jun 2025 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749741253; cv=none; b=cP83uQphLFlcgPaE81TPs+6FUO3H5Co98VhzrsZ6RTGKd8/xxczFyooeR/RsuEzlR3ImxN74hma5Z4qnzlMESq+5HVe067ZUAlPSGkjEJQIw0BPFSzrne6tQpPAzB0m8HbbfULkjFQQ5WehLlGttZtF1LExLy6jCVBf9lVcCLGs=
+	t=1749741280; cv=none; b=DOXBhK5lARP7VcGMu0//6bioxMWgogDApNFKr0zhzlZhaatAdG2sPPOuXs1DqTTMLHOFeoqZx5UhLZQVeh7OLAbA8WvCIDcBYMZ66Kpj/s9C/J1iaAIcKCzjRzuRUE38zCEBxrT6bFcjcVghdDyNI8PvwFKYgsyuRqQGCDElSvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749741253; c=relaxed/simple;
-	bh=j4VSmi7G47BGKw47cF9jLjR8nBeRQe2ObFKwA/SbkhY=;
+	s=arc-20240116; t=1749741280; c=relaxed/simple;
+	bh=XipgtzNNDlXpQtTflFkk/N7lOsqTfvwkLoXG2kqL59E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brqd3RVK8OEF9AuizEJrWYPrjkq9rAt8+GVQr/k0e23OpryQEQWwXv8zQABLJPoaBWDFbeP9tvDjxrvc4T+pB3qRxyjJawInIwmCD0OCQMWGns4VdG+kfu0MqWAJiLqfCUbKFWc2pFgSYTMzXV1qja1miFnVbKxnNAhHJKSgmXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vYl1SOK6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=REdK3K7n; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 12 Jun 2025 17:14:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749741250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOZoXB1I46+nODXC8g7QxkLdyXfc3FWgBVKFHXkZNOA=;
-	b=vYl1SOK6JnmyoVMdVWBSgD6A7hfZm6BvWuoqH4PEepcb0z7Tv+Aa9l4t/ua3kdIDQI9qpd
-	PT82MZ7qkEe2DOPP7uG7knP0q9kbreaeFUpQuPhkjifv2pmcMt3uZYaNCUqIb9LisT/xkF
-	OkWJ5TiUyXD8Y22PJ7MLXWR/qI9NkjPm3x1h1Yg8sLkzC/0yniDpMJT53Mg8R1bFUZiGZW
-	o7UVabQQytpxP78wZ1uitwsPwDtt34VhyKV6ee9MAyuK8zlCgWnpjQN8SN7+XLaxfnVbM8
-	qCyG3ciY/hrcVHDqmnfZpTbbrwk9gMFQfCTDnU8/BKqW4nlt7t6v2dua4U3tlg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749741250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOZoXB1I46+nODXC8g7QxkLdyXfc3FWgBVKFHXkZNOA=;
-	b=REdK3K7ncGsHybRmLY5g0/tQS5r+Zop89uDb19CEpmyqCXXTIX4sTiKiix8vvCKi827g9n
-	qjJzOacT8iGG56DA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Atish Patra <atishp@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, Anup Patel <apatel@ventanamicro.com>
-Subject: Re: [PATCH 1/2] RISC-V: sbi: turn sbi_ecall into variadic macro
-Message-ID: <20250612170632-59116c0a-6b38-4cd9-8df1-b193251d598c@linutronix.de>
-References: <20250612145754.2126147-2-rkrcmar@ventanamicro.com>
- <20250612145754.2126147-3-rkrcmar@ventanamicro.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKXyjOqYMwkOZbbmar/FYKF435d7xrWk/WMdtZhG0rTh++dHw1pwp1ZQLvgo8ZOQ4hORl9rCDwfC+mC7pHkUqWT7P34jMXjteQf8u1uzbPE1qWDXisRB838ns7wPYV7xbu40PSJpIelNNl3X8ZYoA093TRMl+GokmKXaa4eTj7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A5D0153B;
+	Thu, 12 Jun 2025 08:14:16 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 223A43F66E;
+	Thu, 12 Jun 2025 08:14:32 -0700 (PDT)
+Date: Thu, 12 Jun 2025 16:14:27 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>
+Subject: Re: [PATCH v9 41/43] KVM: arm64: Expose support for private memory
+Message-ID: <20250612151427.GA1913753@e124191.cambridge.arm.com>
+References: <20250611104844.245235-1-steven.price@arm.com>
+ <20250611104844.245235-42-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250612145754.2126147-3-rkrcmar@ventanamicro.com>
+In-Reply-To: <20250611104844.245235-42-steven.price@arm.com>
 
-On Thu, Jun 12, 2025 at 04:57:54PM +0200, Radim Krčmář wrote:
-> Counting the arguments to sbi_ecall() and padding with zeros gets old
-> pretty quick.  It's also harder to distinguish a tailing 0 argument and
-> the padding.  The patch changes sbi_ecall() to accept anything between 1
-> and 8 integer arguments.
+Hi Steven,
+
+On Wed, Jun 11, 2025 at 11:48:38AM +0100, Steven Price wrote:
+> Select KVM_GENERIC_PRIVATE_MEM and provide the necessary support
+> functions.
 > 
-> Those who can count are also given sbi_ecall1() to sbi_ecall8(), which
-> the variadic magic uses under the hood.  The error messages upon a
-> programmer error are a bit hairy, as expected of macros, and the
-> static_assert is there to improve them a bit.
-> 
-> The final goal would be avoid clobbering registers that are not used in
-> the ecall, but we first have to fix the code generation around
-> tracepoints if sbi_ecall is expected to be used in paths where
-> performance is critical.
-> 
-> Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
 > ---
->  arch/riscv/include/asm/sbi.h | 34 +++++++++++++++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
+> Changes since v2:
+>  * Switch kvm_arch_has_private_mem() to a macro to avoid overhead of a
+>    function call.
+>  * Guard definitions of kvm_arch_{pre,post}_set_memory_attributes() with
+>    #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES.
+>  * Early out in kvm_arch_post_set_memory_attributes() if the WARN_ON
+>    should trigger.
+> ---
+>  arch/arm64/include/asm/kvm_host.h |  6 ++++++
+>  arch/arm64/kvm/Kconfig            |  1 +
+>  arch/arm64/kvm/mmu.c              | 24 ++++++++++++++++++++++++
+>  3 files changed, 31 insertions(+)
 > 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 341e74238aa0..c62db61bd018 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -10,6 +10,7 @@
->  #include <linux/types.h>
->  #include <linux/cpumask.h>
->  #include <linux/jump_label.h>
-> +#include <linux/build_bug.h>
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index a1857802db64..9903b0e8ef3f 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -1514,6 +1514,12 @@ struct kvm *kvm_arch_alloc_vm(void);
 >  
->  #ifdef CONFIG_RISCV_SBI
->  enum sbi_ext_id {
-> @@ -465,9 +466,40 @@ struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
->  			  unsigned long arg2, unsigned long arg3,
->  			  unsigned long arg4, unsigned long arg5,
->  			  int fid, int ext);
-> -#define sbi_ecall(e, f, a0, a1, a2, a3, a4, a5)	\
-> +
-> +#define sbi_ecall1(e) \
-> +		__sbi_ecall(0, 0, 0, 0, 0, 0, 0, e)
-> +#define sbi_ecall2(e, f) \
-> +		__sbi_ecall(0, 0, 0, 0, 0, 0, f, e)
-> +#define sbi_ecall3(e, f, a0) \
-> +		__sbi_ecall(a0, 0, 0, 0, 0, 0, f, e)
-> +#define sbi_ecall4(e, f, a0, a1) \
-> +		__sbi_ecall(a0, a1, 0, 0, 0, 0, f, e)
-> +#define sbi_ecall5(e, f, a0, a1, a2) \
-> +		__sbi_ecall(a0, a1, a2, 0, 0, 0, f, e)
-> +#define sbi_ecall6(e, f, a0, a1, a2, a3) \
-> +		__sbi_ecall(a0, a1, a2, a3, 0, 0, f, e)
-> +#define sbi_ecall7(e, f, a0, a1, a2, a3, a4) \
-> +		__sbi_ecall(a0, a1, a2, a3, a4, 0, f, e)
-> +#define sbi_ecall8(e, f, a0, a1, a2, a3, a4, a5) \
->  		__sbi_ecall(a0, a1, a2, a3, a4, a5, f, e)
+>  #define vcpu_is_protected(vcpu)		kvm_vm_is_protected((vcpu)->kvm)
 >  
-> +#define __sbi_count_args_magic(_, a, b, c, d, e, f, g, h, N, ...) N
-> +#define __sbi_count_args(...) \
-> +	__sbi_count_args_magic(_, ## __VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+> +#ifdef CONFIG_KVM_PRIVATE_MEM
+> +#define kvm_arch_has_private_mem(kvm) ((kvm)->arch.is_realm)
+> +#else
+> +#define kvm_arch_has_private_mem(kvm) false
+> +#endif
 
-This looks a lot like COUNT_ARGS() from include/linux/args.h.
+I don't understand the ifdef here (or below). In the Kconfig you 'select
+KVM_GENERIC_PRIVATE_MEM', so it will always be on/defined? Unless I'm
+misunderstanding something.
 
-> +#define __sbi_count_args2(...) \
-> +	(sizeof((unsigned long[]){0, ## __VA_ARGS__}) / sizeof(unsigned long) - 1)
-> +#define __sbi_concat_expanded(a, b) a ## b
-
-... and CONCATENATE()
-
-> +#define __sbi_concat(n) __sbi_concat_expanded(sbi_ecall, n)
 > +
-> +/* sbi_ecall selects the appropriate sbi_ecall1 to sbi_ecall8 */
-> +#define sbi_ecall(...)  \
-> +	({ \
-> +		static_assert(__sbi_count_args2(__VA_ARGS__) <= 8); \
-
-Why does this need to use __sbi_count_args2() ?
-
-> +		__sbi_concat(__sbi_count_args(__VA_ARGS__)) \
-> +				(__VA_ARGS__); \
-> +	})
+>  int kvm_arm_vcpu_finalize(struct kvm_vcpu *vcpu, int feature);
+>  bool kvm_arm_vcpu_is_finalized(struct kvm_vcpu *vcpu);
+>  
+> diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
+> index 713248f240e0..3a04b040869d 100644
+> --- a/arch/arm64/kvm/Kconfig
+> +++ b/arch/arm64/kvm/Kconfig
+> @@ -37,6 +37,7 @@ menuconfig KVM
+>  	select HAVE_KVM_VCPU_RUN_PID_CHANGE
+>  	select SCHED_INFO
+>  	select GUEST_PERF_EVENTS if PERF_EVENTS
+> +	select KVM_GENERIC_PRIVATE_MEM
+>  	help
+>  	  Support hosting virtualized guest machines.
+>  
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 580ed362833c..c866891fd8f9 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -2384,6 +2384,30 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+>  	return ret;
+>  }
+>  
+> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+> +bool kvm_arch_pre_set_memory_attributes(struct kvm *kvm,
+> +					struct kvm_gfn_range *range)
+> +{
+> +	WARN_ON_ONCE(!kvm_arch_has_private_mem(kvm));
+> +	return false;
+> +}
 > +
->  #ifdef CONFIG_RISCV_SBI_V01
->  void sbi_console_putchar(int ch);
->  int sbi_console_getchar(void);
+> +bool kvm_arch_post_set_memory_attributes(struct kvm *kvm,
+> +					 struct kvm_gfn_range *range)
+> +{
+> +	if (WARN_ON_ONCE(!kvm_arch_has_private_mem(kvm)))
+> +		return false;
+> +
+> +	if (range->arg.attributes & KVM_MEMORY_ATTRIBUTE_PRIVATE)
+> +		range->attr_filter = KVM_FILTER_SHARED;
+> +	else
+> +		range->attr_filter = KVM_FILTER_PRIVATE;
+> +	kvm_unmap_gfn_range(kvm, range);
+> +
+> +	return false;
+> +}
+> +#endif
+> +
+>  void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
+>  {
+>  }
 > -- 
-> 2.49.0
+> 2.43.0
 > 
+
+Thanks,
+Joey
 
