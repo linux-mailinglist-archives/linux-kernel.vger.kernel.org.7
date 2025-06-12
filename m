@@ -1,303 +1,619 @@
-Return-Path: <linux-kernel+bounces-683758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DF4AD71C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3200AD71CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507431893616
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAE51C22805
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94D324BD1F;
-	Thu, 12 Jun 2025 13:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBF62505CB;
+	Thu, 12 Jun 2025 13:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tqyo5ocX"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2065.outbound.protection.outlook.com [40.107.244.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQXNQLgO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021912744D;
-	Thu, 12 Jun 2025 13:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734229; cv=fail; b=Y3GEMdL1IjAgMmMKk8AnVNrDl84uF4hTa1lQHa2+u0IjNMJQT23/fJCnQ13ZsgmYoH+QCMxo0S4pxMp+pIbh6vau5fK0JiiqpHoPpsB1KalHIUvRpglqoXcdigWIe80XdmM63w+d7XVN2p5HztPDqjcdzW/rLV2sUtbRWFQ3ALk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734229; c=relaxed/simple;
-	bh=++TMVCoEUUpm/5ubIi2W8byUoe+ZAN/0i7IuIjgfYlM=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=eNr1j0EQSg8NfjMc8pyZVOqKJc7bSAAumGeVqHrhpnmYoDnCg9HKEPG6FYovkQ/mC/zrOqTqs2WRzGjmy+z6EFioo3FRxl6CiaffaFQTCDZyN1WdslGPo8KQ5geUbPL+cU/J6ZumgtxzVT+VB6bXh341flC4TiGlyMqWYhVEcOQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tqyo5ocX; arc=fail smtp.client-ip=40.107.244.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o4JUU7o5NkXNr0IKT+iOsKITGAY1XHuZg2qnUmNk3F2ljJRfaqRzjBmhGaRzJPeOf82yn8dNOcNP7kjIfrttOYzjD0jWMFPwqP5X26tnU+U/7NGF1LMStmB/TxVJDKpbhyzgUf+/+eQP4QIgsaFzy3XJBfNHDYbjFF6KeC7BztzH3sEN94H6h5Rrq0UjUIfWAkxBRupP4qg8YT43GVeUtHBn2Ybze+oy8nUp62eKk0H80t5GSEvEab+eHdRPMCksnwIhfKZY735Lm47liYhRjriaCbFmmWT7F8KxgyDMsxzYJB1kDBfZ6T5LeI8LNSVS+Zp9VnbSL+34woMDjIs6ng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5fcm/YWa50LLuqeX3NojHdhKZHzebGUk68NUc0XhMyQ=;
- b=BqUzZ7IoWWpEpg8IGvQnnMxboW5ce2CuJPHJywOAj6i9MOjBW91aKNx8s02AFnjO26LeaWB6RYhRwdUca4KUFo0nObeYkRIfIdoBDptDpkRdp700GKtiQrs/P5WAwgRy+z2MS3fHIfvZuunDwT8CLB3Vz9iLAdh+DEIrTyfL6b5kollmZhjq3P61wcn4zs6AHq67PEkbBcd3Lu7zyvR33M4lk0cEw8QRZonUup3gmNOBR+bMsE6swl3gAO4UqhSHm4seXTKwAP3aW9pHV7JqnGppLal5/ZFfZxSbujHc0jAsRwPVy1PW62ik65+3S9rD4WNuXtb/DSY+3Y9I+etROA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5fcm/YWa50LLuqeX3NojHdhKZHzebGUk68NUc0XhMyQ=;
- b=tqyo5ocXOhbnz5zEGOaQiXpjizgBX9aiPVpuuqnWKeITLGsIfIPUQJda6xlmPQ9+1y3PK+tA+jHVoWMp40rkZmTYrr3zeXYsiCkbaQAbQo+gjK9684OXJiJBlvBr1pbjixdi+Zmqq9T6gaKuafEMgQvKdqOgk+U0IV/9Q7H9nq6mS6MCuMEewj/0Q5JjWFc+yHzCwua1Dgzbun5SbKYLxAkn3KSwM0VK1tUCQBJwoTjbin6LXsp2bFCS6Sh2TDFj2rsnGOV+cab0ec053e7ArXVUGAUDhN0VZYt57IQDNiyvGXFaQFj85KHhhFfF8GN6V63FTZ99ekcKOwNiaUnZ1Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by MW3PR12MB4460.namprd12.prod.outlook.com (2603:10b6:303:2f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
- 2025 13:17:05 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
- 13:17:05 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Jun 2025 22:17:01 +0900
-Message-Id: <DAKL0KOWUB1G.1DSJPRWFYC43O@nvidia.com>
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
- "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- "Alistair Popple" <apopple@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 04/20] rust: add new `num` module with useful integer
- operations
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
- <20250521-nova-frts-v4-4-05dfd4f39479@nvidia.com>
- <DA82KFLNAOG7.R7YT4BHCLNZQ@kernel.org>
- <DA88YHU4AZT7.B8JGZHW9P9L9@nvidia.com>
- <DA8GTD7LT7KO.1A3LBQGEQTCEW@kernel.org>
- <DAC2L6ZKR6U2.WOMERUJIOENK@nvidia.com>
- <DAD9TNUBUGPN.1ED519FYR29U4@kernel.org>
- <DADB6892Z31G.12LB1BVSGTEAQ@nvidia.com>
- <DADKDQ1KGJJP.3T20P9V1D2PO1@kernel.org>
-In-Reply-To: <DADKDQ1KGJJP.3T20P9V1D2PO1@kernel.org>
-X-ClientProxiedBy: TYAPR01CA0224.jpnprd01.prod.outlook.com
- (2603:1096:404:11e::20) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561D12512E5;
+	Thu, 12 Jun 2025 13:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749734263; cv=none; b=WKiCBn23821654uy0EZ0ZubaqbyQIOF8nty5wMpKJ/gs956SzWj6Isgl+4OZAzv8COgi7MqFvNEEKrNfYdULK9Svfx1PvWg9wBnEelw1OwfVTNTQoavo53HdFzBy+8e3VFq7YbCzTD8QKQi+JU+lkisb7+jsVrP/UY6B46brllY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749734263; c=relaxed/simple;
+	bh=hEkt86vm4xQzj3we8H8ZsbWjyEVrNuFlKfyPkT+ZTDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bZ22m8SPo/f7midF/mxDET/LnAzGXXvD6DSFMdyUYKwAazKQ1sr6N6DZJR9//UWwsNCJ5W69LZpVfq2GLIs7k9QaG8xKfFblLSy9pyvW6ff0nfftrIM2ge4jc/3DT3wzWFxCFefWI7pkBjEL5HfOU3qn7MQ+HX/zWKsnWs0uSIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQXNQLgO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF84C4CEF1;
+	Thu, 12 Jun 2025 13:17:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749734262;
+	bh=hEkt86vm4xQzj3we8H8ZsbWjyEVrNuFlKfyPkT+ZTDc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vQXNQLgOAd2g2uX0+hnckcQzagtQGAVIkBgRRheF5imlVjE1jKZSY4rWfQ4KpkiL9
+	 bYeSzHkPLjX/WY8qDgtqSmdnxP/NC9bDspZY4yOjtUZU5yyGboHn6GseqvcmXmgC0b
+	 AUhA+N/X8Gq0JaFFm28LlGrxCjKKVHjVpHjvJ//1NbJ/YBftiIrydxYO9KyuAuBWuC
+	 uJhOx/Y4HPRAOXn2XW685d57AhScoIZWLV6k9edDDA1DeZJ/iVwogIiaEgx0HYKHl9
+	 SPrhkXRizhMenziBni1p13PvpHmVUu0N/WeclDY/RieGA0eIKaYa26ezxoAo3ot1MN
+	 1ejBKDKGw9sng==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6084dfb4cd5so3620909a12.0;
+        Thu, 12 Jun 2025 06:17:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYlmz/rkBta3ADQLoPt6dgrhCKp/62/xX2nmJAwH2yXDb1Zqyn2yCuhAIA9GKI3J0br/xtX6HTtHt8pw==@vger.kernel.org, AJvYcCWiKInU0btZP62E+1OM0XhykVOc9pCnlSXvyMPl+PqLx6Zu2a/QiyMSgs4mwLkFETPhd7yH2/WwH6sfePcn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXViFRN6X5spXh26muFfJKBphQdrudE2K8Y2kWLy5QCMyMMUJP
+	RIoJ31lo2pJAf60HMfbB0ZuK9mqeJBL2FsyehEORc2o8LXonfL5SrTnLiC6q6GIHlCFzIsvD1jh
+	Wx5MNB7lXQy8v0TSXxM739bXg3dUmz+c=
+X-Google-Smtp-Source: AGHT+IFDonCFrnwH7QpeA/YWtaVaGIwsMHMbVBVU2XNBu8QAxXIked81SPQ3g0Y3+zUeUYr4DdsRCLqmYOE3PEqo+10=
+X-Received: by 2002:a17:907:3d12:b0:ad5:6cfc:e519 with SMTP id
+ a640c23a62f3a-adea55be570mr397151066b.11.1749734261013; Thu, 12 Jun 2025
+ 06:17:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW3PR12MB4460:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42b90022-1f3e-4da6-2f07-08dda9b36cdd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aDRTRUUybUdSVDNjaW4zSHZJZFBwc1g2QmVLaThGMVh2OWhZa2JwMmh3OFlk?=
- =?utf-8?B?MjhKbEFTM1RzTko5Yk1xdGtma0dNR1BnOFVoQmM0c3JIczNFa1ArN3Byc29h?=
- =?utf-8?B?NW90eURDM3c2cHlTb1l2MXhkSis5KzJQNG1INVQxU1QzWXNOZDk3aWx2S3lI?=
- =?utf-8?B?cnFrV01hRGJSMXdqK2NSRmp5ckp1Q2ZmY2xMUE1tV2hHVHVJSU0vTElzMVRy?=
- =?utf-8?B?U2QxcXltS1NtcVJBS2RhY2V0Mjd2K1kvY1Nlc0R1QU5YYk0wNmlOaVptQjBr?=
- =?utf-8?B?SVBLdnpITDJwYnpNQ0VHTmd3eEI2UVYzSFVuQnh4RnlCbVRuUkdkVG1DeGND?=
- =?utf-8?B?eEdiL0dQTTk3N1VpR1dwK0dPSThidm52MEljVHU3ZHRxbG11RW13U20wdnJw?=
- =?utf-8?B?bzJLR0tLaUtqSURnVnBlbkEzeDh0cm1HSWh4UFZISStHdzluK3o3UGQ4S0lP?=
- =?utf-8?B?MjU4KytZdjJVc3JoYzVKbWtsa3JySUNLbGIzMFQ3QmZzTnh1aytHckRydXhR?=
- =?utf-8?B?ek5iMm5Ddk9GcThqZDNYQVBCNWFpN2h4b1RoOU5oN3RGTnR5cXJHaGJzU1Yw?=
- =?utf-8?B?bGhscHd3UzRKNnVNS2hYdkhJYjZhbEtFNHJ4Z1A3Vzg4TVY3ckdHQ0NIQkhk?=
- =?utf-8?B?UzNwKzQvOEczOENCSUFjQ1UvUTV1VnNSM3htZHpQNVJyMlJERUVrSklESHda?=
- =?utf-8?B?b1J2RGo4bFI0dWpyQTYwLzMzeTRjYlJNL2pvb2VPMEVyd2ZZK3Z5a3FOaHJT?=
- =?utf-8?B?S1U2UUhvaWlYTU9XVTdhNmQwOFhIVlczTzJJSHdpaEtkNEFPa3JBWjVSN250?=
- =?utf-8?B?eGFIaEJwankxcXBvLzdYS3pSRytxdW96ejJoZjA2OTRqbWUrczAwdmZNaTRu?=
- =?utf-8?B?S2dYTjFuY1I5bSt4TnIvWjlrbjkxWnhHa3VkeXUwNDcyN2E1Vk1jbEVTWFBw?=
- =?utf-8?B?TFZnTjhRYVdiTFJZbTF6OHFiRlRRa1hlQ2Fra1RjbmJUNnp2R2kyYVp3U1Iv?=
- =?utf-8?B?WHV4QzBpYzRiWWxGaUdoRVRmcGkySG1qdlRlZWtGcy83WXF5VzkxNzFteWM1?=
- =?utf-8?B?blZBUk9KT3kxQ003dmNReU5hRXJEbTdyNVRqTk0wSW44SWpaZ2VRSFFDR2N5?=
- =?utf-8?B?RVRzYkRoZDd1M0ZwcFptRGMvTnlLR1dSeXhJL3ZQaWVkSHl0em8xQytuTEM0?=
- =?utf-8?B?WURiUHhtS2h4aVBJd0hDRlhpamxlazcxR0puNVlQVFM0NXNCVk1kZTdBd2xz?=
- =?utf-8?B?WkxSZG1CcVpXTkFBVy9CeklKV1BHdnI4UzhvVGVwNjlqTVpEVCtsbjE1c2c3?=
- =?utf-8?B?SlptZ2hOTkdsTzA4cGluZ3grOGhueTZJQm40MTVvaWNzT21pQ1d1b2ZjbU5t?=
- =?utf-8?B?ejBkV3ZFTUZVQmFiVGZWcU1tUHVadzNwdmRpUmR3STFGUG1naUJXRm5Wekg3?=
- =?utf-8?B?K1VHUTkxMmxkMVVFS2k5aGh3UkpNVE4yR3NoUStsUW43WFlrZHhGem5ZOWtB?=
- =?utf-8?B?c2hDS2hCMGlWTkQ3VzVmMUgwQVA3VDhPNDRvQ045Z2c2UDBJbEZIMWlCa005?=
- =?utf-8?B?bCtwMkZscm8za1F2MlBra3lKOWlPTEdXeWs2c1B0WTBKbGNNV2JjUW5lcFNB?=
- =?utf-8?B?R3poakxKa2Rrb2VqeVgvcGk1RU5UWUJYekdGbGtlaUQrNG5TRk0rQlNLV1F0?=
- =?utf-8?B?VzB2c1E2YUUxMEdUeVZyMUVtUHNyNDdVL2pSQmhPVzMzVTkzRkhoclFQS0s3?=
- =?utf-8?B?OWhsbnVLYllqd0s4dDBPcWlYaTNJVkxLbnl6aTczYTdtQTVneFV1S05MWU4v?=
- =?utf-8?B?anFKaVBocVk5d21RS0dwYXFWWmgvd01XdEhFcGdMY3pxaXdYQ0h5UzFqZGVo?=
- =?utf-8?B?S2xvSEZWVFh4UnZGNnZNRENHUWtKaFlMV3RLOC9pYm5Lb3R1Wm12RkFhMWVi?=
- =?utf-8?B?SXFtTUJnYllXSzFSN3J5ZDY0Q1lnOURLZHZVL0FWNi9KT0hSN1JpQkJZd1Ev?=
- =?utf-8?B?RDg3bWRpWXJ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TzdrdC9aS2h0YXhBb2VILzlqN3VUTG9hT1FNVkVpVkpraENjOFRCbGJhNjhE?=
- =?utf-8?B?dHVGRFRwTXJFQm1MdFRRdFVtRDZRaE5QRi9FL1pzejk1S09vNHJQVUFGYTNS?=
- =?utf-8?B?K2drdUdBTXo2ZGtGbFBIS0p0YVBaaWIwVXJvUTVOTE82cVBXQ3pUN1k3TEQy?=
- =?utf-8?B?L3BQK1RUaGZZaVFObW55ajJMd1RaOTIxVGpha3A3Qi9oTDRWdlgwUzBYZVZs?=
- =?utf-8?B?MlZ1SFlhVFk0c0s1ZmVLWEhIOWlVWExYQ2MzeTlacmFxd0owMTRLTTdJRXF1?=
- =?utf-8?B?cFcxZ1NYWmkwNDIvcTczUFR3M1lTb3A1dVkzRS9Qd1dXVGhjdm9MUWtBTUFt?=
- =?utf-8?B?QjVFNG1vKzBuYkNBNk10dlZhSzRiL2RTcWlrZTlwTW1RQzZNbTkvS2F2Q1g0?=
- =?utf-8?B?dmhPRFlEbExPNWF4UXo5Qi9XRE1NNkh2Q2dkbFJTOVN6Q1pVQ0ZEc24wSGV1?=
- =?utf-8?B?aHZiTWpMZDV4eEp0N2c4bm5tTUpWWDZFeURMOThqOExlcXBPOGN1MUtiYVlw?=
- =?utf-8?B?bU5MNGVDRmg5RkNoWmlVTS8wc25qZ1VjWDV4emNKMTN2RVB1MmJTOFlCWEpR?=
- =?utf-8?B?dDRUeWRiVmFSdmw5WnNBaExMMWppSCsrRTJ6UVg0N29RRnY1d3p3TVZBUzhW?=
- =?utf-8?B?WW9NNDRRYVhpVWVRbjJWYUc2Q0tURVhPQ1prUU9QVFVDNko3MTVzQ09VRkhO?=
- =?utf-8?B?Y2hMdit3T2Fkb1o0bzlYeVBIUitMT3lxV0h2eFZFSktSQ1JsSGR0REVUclo5?=
- =?utf-8?B?alAwREVibXJia0JUOVQxK21mTHFNekVuT1BTNWg2Zml4czdwSURZa0tGZVk0?=
- =?utf-8?B?RU1ZK0RsaU9mSkgzaGdsTVFER1lzS2cwbC9LVWJZTVZlbTFpWnkyTVRHa1Ex?=
- =?utf-8?B?RlZqQ2o4aVAvd0xwY0pDN1REWTlXUXB3bUpYOExPRmFmVWhnOXpLZ0pVMG5a?=
- =?utf-8?B?QmZqMXZlRyswRTdIVnR2Uy8rRXVWeWp5V3RGYlp6dDd0cUVldHFLTnd2ZXp2?=
- =?utf-8?B?enlzdUt1aGtYQSt6WDFvc2JtZ3RKSnV5SnNMcVFKTWdKRGNycFNEa2VjTU03?=
- =?utf-8?B?bHI0YkFUbkp2Y3AvY01lbHNGbzBEMFBQcDM0c2d4K2hkYlpvREswMWNPN20z?=
- =?utf-8?B?TGVWNFdzaWhGWndEUExlRTlDK2t1cUIxa1Vsb0ZNM1NuN01mclpQdWNxZXZV?=
- =?utf-8?B?R05ERk1FMkVvNnBIcXlnOFJ0SUdBNHFaa2IwREZQbHEwMVNYbFl3WVl3OUph?=
- =?utf-8?B?VjlHNCt6ZE50WXQ0R21VK1FBNlJDL2V4Ny84UEo0cGVwVTVXVlprYWMycUtP?=
- =?utf-8?B?L2QyNTBtS2tKbUxQUTFGUVc2YkY1UWc4ZDJhWXRreUhDSjc2Q2F1akNJTnpy?=
- =?utf-8?B?S1VhWUkzenNseUJoa25jVWJBcitBeVpCTTdjYkh4TlZMSnpuandOM1NrOCty?=
- =?utf-8?B?d0xTemJidjdkOHc0cURIMklueXNFRkJmWG54S1dEMEYvSm9MYUdYNGFGYUJW?=
- =?utf-8?B?cHhoMkZTbGgya0FRNU1udnJNc2dJeXJKZ2VVOE40Z25qMjErK21DTEpIUFFr?=
- =?utf-8?B?bUR2VzNXaUtYaWtCcmkwUnorNEtrdHIrM2ZrRFdpRUw3c0tRalUxcHFZcGRw?=
- =?utf-8?B?dnpsOVNzYmxJU0l4ejU2WlE5TGdwOFR6cjVmT1hkVjc3RithTWdxTFFiMkdB?=
- =?utf-8?B?U2Y3eU1DZEpMeldoV2R3T05PS2FsT2JJNHgyWmJMUnovLzh3WDd5di9BZ2pz?=
- =?utf-8?B?eC9OUmpabCtBM2JKSTl5MjZwdDQ2YU12YzVnYjgyTzJDMUVJdWpFK0JFbUFG?=
- =?utf-8?B?YVY2ajR1aUg0Q29MVEY0ZmV2ZllnODNac3lRZXdDZUxjanYvMURqSXEvcnNn?=
- =?utf-8?B?MVZ3Qy8xTmp4WVlNdmpPQjBRd3VzTXBSaVpnM2dHdXdYWlhwWVhBL0tZZzhl?=
- =?utf-8?B?U1didmNhYlpLREkxOVVCVlM5TW5pSlFPNVdBR1RUV0pTeEVBa1M2RjlKQ2FZ?=
- =?utf-8?B?a3BKU1NkQlRWNTQra2xGNEZhMFFGcnhxanhHYXBZRUZMZHlGZ3k0aHlTbVFX?=
- =?utf-8?B?bUhhbGN4bmw1blZlUE5tc2EzY3l3OUNrUk1NU0Rnc1F6YTlMQWtOSE5WU2JY?=
- =?utf-8?B?RHlqZWlIUEF4OU0rbXg1WHdraHphWnRIbFY4WDQybytqb21DNlRLb2dBT0Zt?=
- =?utf-8?Q?Wdiklg+f1VXPa4fbNCj/AHxGFtjnUuMyjPsw8nNo3REH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42b90022-1f3e-4da6-2f07-08dda9b36cdd
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 13:17:04.9243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Q2lfSBcQTtBmkNk0tgtDgeTdqWv1i7duStT/tuaGPzSNDqtXVtiTqoBEfZMWXjghAkvo1gwqGv/TtufkZmWhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4460
+References: <202506121329.9d1f4d50-lkp@intel.com>
+In-Reply-To: <202506121329.9d1f4d50-lkp@intel.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Thu, 12 Jun 2025 14:17:03 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H6Vk_Szvy2W66ZLikqkVEdvyLPuqpvcBdYcGKD5-gEzvA@mail.gmail.com>
+X-Gm-Features: AX0GCFtWjQ_ZVrGf3xAM1_fZxqUqx11yLVtrTlvjR8OL3kePAri0rronz7kG2Jc
+Message-ID: <CAL3q7H6Vk_Szvy2W66ZLikqkVEdvyLPuqpvcBdYcGKD5-gEzvA@mail.gmail.com>
+Subject: Re: [linus:master] [btrfs] 32c523c578: reaim.jobs_per_min 16.1% regression
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Filipe Manana <fdmanana@suse.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed Jun 4, 2025 at 4:18 PM JST, Benno Lossin wrote:
-> On Wed Jun 4, 2025 at 2:05 AM CEST, Alexandre Courbot wrote:
->> On Wed Jun 4, 2025 at 8:02 AM JST, Benno Lossin wrote:
->>> On Mon Jun 2, 2025 at 3:09 PM CEST, Alexandre Courbot wrote:
->>>> On Thu May 29, 2025 at 4:27 PM JST, Benno Lossin wrote:
->>>>> On Thu May 29, 2025 at 3:18 AM CEST, Alexandre Courbot wrote:
->>>>>> On Thu May 29, 2025 at 5:17 AM JST, Benno Lossin wrote:
->>>>>>> On Wed May 21, 2025 at 8:44 AM CEST, Alexandre Courbot wrote:
->>>>>>>> +    /// Align `self` up to `alignment`.
->>>>>>>> +    ///
->>>>>>>> +    /// `alignment` must be a power of 2 for accurate results.
->>>>>>>> +    ///
->>>>>>>> +    /// Wraps around to `0` if the requested alignment pushes the=
- result above the type's limits.
->>>>>>>> +    ///
->>>>>>>> +    /// # Examples
->>>>>>>> +    ///
->>>>>>>> +    /// ```
->>>>>>>> +    /// use kernel::num::NumExt;
->>>>>>>> +    ///
->>>>>>>> +    /// assert_eq!(0x4fffu32.align_up(0x1000), 0x5000);
->>>>>>>> +    /// assert_eq!(0x4000u32.align_up(0x1000), 0x4000);
->>>>>>>> +    /// assert_eq!(0x0u32.align_up(0x1000), 0x0);
->>>>>>>> +    /// assert_eq!(0xffffu16.align_up(0x100), 0x0);
->>>>>>>> +    /// assert_eq!(0x4fffu32.align_up(0x0), 0x0);
->>>>>>>> +    /// ```
->>>>>>>> +    fn align_up(self, alignment: Self) -> Self;
->>>>>>>
->>>>>>> Isn't this `next_multiple_of` [1] (it also allows non power of 2
->>>>>>> inputs).
->>>>>>>
->>>>>>> [1]: https://doc.rust-lang.org/std/primitive.u32.html#method.next_m=
-ultiple_of
->>>>>>
->>>>>> It is, however the fact that `next_multiple_of` works with non power=
-s of
->>>>>> two also means it needs to perform a modulo operation. That operatio=
-n
->>>>>> might well be optimized away by the compiler, but ACAICT we have no =
-way
->>>>>> of proving it will always be the case, hence the always-optimal
->>>>>> implementation here.
->>>>>
->>>>> When you use a power of 2 constant, then I'm very sure that it will g=
-et
->>>>> optimized [1]. Even with non-powers of 2, you don't get a division [2=
-].
->>>>> If you find some code that is not optimized, then sure add a custom
->>>>> function.
->>>>>
->>>>> [1]: https://godbolt.org/z/57M9e36T3
->>>>> [2]: https://godbolt.org/z/9P4P8zExh
->>>>
->>>> That's impressive and would definitely work well with a constant. But
->>>> when the value is not known at compile-time, the division does occur
->>>> unfortunately: https://godbolt.org/z/WK1bPMeEx
->>>>
->>>> So I think we will still need a kernel-optimized version of these
->>>> alignment functions.
->>>
->>> Hmm what exactly is the use-case for a variable align amount? Could you
->>> store it in const generics?
->>
->> Say you have an IOMMU with support for different pages sizes, the size
->> of a particular page can be decided at runtime.
->>
->>>
->>> If not, there are also these two variants that are more efficient:
->>>
->>> * option: https://godbolt.org/z/ecnb19zaM
->>> * unsafe: https://godbolt.org/z/EqTaGov71
->>>
->>> So if the compiler can infer it from context it still optimizes it :)
->>
->> I think the `Option` (and subsequent `unwrap`) is something we want to
->> avoid on such a common operation.
+On Thu, Jun 12, 2025 at 7:26=E2=80=AFAM kernel test robot <oliver.sang@inte=
+l.com> wrote:
 >
-> Makes sense.
 >
->>> But yeah to be extra sure, you need your version. By the way, what
->>> happens if `align` is not a power of 2 in your version?
->>
->> It will just return `(self + (self - 1)) & (alignment - 1)`, which will
->> likely be a value you don't want.
 >
-> So wouldn't it be better to make users validate that they gave a
-> power-of-2 alignment?
+> Hello,
 >
->> So yes, for this particular operation we would prefer to only use powers
->> of 2 as inputs - if we can ensure that then it solves most of our
->> problems (can use `next_multiple_of`, no `Option`, etc).
->>
->> Maybe we can introduce a new integer type that, similarly to `NonZero`,
->> guarantees that the value it stores is a power of 2? Users with const
->> values (90+% of uses) won't see any difference, and if working with a
->> runtime-generated value we will want to validate it anyway...
+> kernel test robot noticed a 16.1% regression of reaim.jobs_per_min on:
 >
-> I like this idea. But it will mean that we have to have a custom
-> function that is either standalone and const or in an extension trait :(
-> But for this one we can use the name `align_up` :)
 >
-> Here is a cool idea for the implementation: https://godbolt.org/z/x6navM5=
-WK
+> commit: 32c523c578e8489f55663ce8a8860079c8deb414 ("btrfs: allow folios to=
+ be released while ordered extent is finishing")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> [still regression on linus/master      5abc7438f1e9d62e91ad775cc83c9594c4=
+8d2282]
+> [still regression on linux-next/master 911483b25612c8bc32a706ba940738cc43=
+299496]
+>
+> testcase: reaim
+> config: x86_64-rhel-9.4
+> compiler: gcc-12
+> test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10G=
+Hz (Ice Lake) with 256G memory
+> parameters:
+>
+>         runtime: 300s
+>         nr_task: 100%
+>         disk: 1HDD
+>         fs: btrfs
+>         test: disk
+>         cpufreq_governor: performance
+>
+>
+> In addition to that, the commit also has significant impact on the follow=
+ing tests:
+>
+> +------------------+-----------------------------------------------------=
+--------------------------------------+
+> | testcase: change | reaim: reaim.jobs_per_min  5.3% regression          =
+                                      |
 
-Yeah that's close to what I had in mind. Actually, we can also define
-`align_up` and `align_down` within this new type, and these methods can
-now be const since they are not implemented via a trait!
+Here it says 5.3% regression instead of 16.1%.
+
+The phrasing right above suggests it's a different test, but it's
+confusing since there's nothing here in the table description (test
+parameters) that differs from the test details above.
+It's the same test but on a different machine IIUC.
+
+> | test machine     | 8 threads 1 sockets Intel(R) Core(TM) i7-3770K CPU @=
+ 3.50GHz (Ivy Bridge) with 16G memory |
+> | test parameters  | cpufreq_governor=3Dperformance                      =
+                                        |
+> |                  | disk=3D1HDD                                         =
+                                        |
+> |                  | fs=3Dbtrfs                                          =
+                                        |
+> |                  | nr_task=3D100%                                      =
+                                        |
+> |                  | runtime=3D300s                                      =
+                                        |
+> |                  | test=3Ddisk                                         =
+                                        |
+> +------------------+-----------------------------------------------------=
+--------------------------------------+
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202506121329.9d1f4d50-lkp@intel.=
+com
+>
+>
+> Details are as below:
+> -------------------------------------------------------------------------=
+------------------------->
+>
+>
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20250612/202506121329.9d1f4d50-lk=
+p@intel.com
+
+Following the instructions from the 'reproduce' file, it fails to
+install the job:
+
+fdmanana 13:28:49 ~/git/hub/lkp-tests (master)> sudo ./bin/lkp install job.=
+yaml
+distro=3Ddebian
+version=3D13
+Use: /home/fdmanana/git/hub/lkp-tests/distro/installer/debian install
+bc debianutils gawk gzip kmod numactl rsync time automake bison
+build-essential bzip2 ca-certificates cpio fakeroot flex git
+libarchive-tools libc6-dev:i386 libc6-dev-x32 libipc-run-perl
+libklibc-dev libssl-dev libtool linux-cpupower linux-libc-dev:i386
+linux-perf openssl patch rsync ruby ruby-dev wget
+Hit:1 http://deb.debian.org/debian testing InRelease
+Reading package lists... Done
+Reading package lists...
+Building dependency tree...
+Reading state information...
+(...)
+Reading state information...
+E: Unable to locate package libpython2
+E: Unable to locate package libpython3
+Cannot install some packages of perf-c2c depends
+fdmanana 13:29:05 ~/git/hub/lkp-tests (master)>
+
+Alternatively, tried to run reaim directly following the script from
+https://download.01.org/0day-ci/archive/20250612/202506121329.9d1f4d50-lkp@=
+intel.com/repro-script
+
+The problem is I can't find debian packages for reaim, and going to
+sourceforge to get the source, and the latest is
+osdl-aim-7.0.1.13.tar.gz (from 2004!), it doesn't compile, there are
+tons on warnings and errors.
+Applying the patch from lkp at
+lkp-tests/programs/reaim/pkg/reaim.patch doesn't help either.
+
+
+
+
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> compiler/cpufreq_governor/disk/fs/kconfig/nr_task/rootfs/runtime/tbox_gro=
+up/test/testcase:
+>   gcc-12/performance/1HDD/btrfs/x86_64-rhel-9.4/100%/debian-12-x86_64-202=
+40206.cgz/300s/lkp-icl-2sp7/disk/reaim
+>
+> commit:
+>   cbfb4cbf45 ("btrfs: update comment for try_release_extent_state()")
+>   32c523c578 ("btrfs: allow folios to be released while ordered extent is=
+ finishing")
+>
+> cbfb4cbf459d9be4 32c523c578e8489f55663ce8a88
+> ---------------- ---------------------------
+>          %stddev     %change         %stddev
+>              \          |                \
+>      71009           -14.7%      60593        meminfo.Shmem
+>  2.344e+10           -10.8%   2.09e+10        cpuidle..time
+>    6491212           -20.8%    5141230        cpuidle..usage
+>      93.14            -1.5%      91.75        iostat.cpu.idle
+>       5.81           +24.8%       7.24        iostat.cpu.iowait
+>     419.83            -9.5%     380.03        uptime.boot
+>      24988           -10.7%      22325        uptime.idle
+>     584.67 =C4=85  3%     -23.6%     446.83 =C4=85  5%  perf-c2c.DRAM.rem=
+ote
+>     551.00 =C4=85 10%     -19.1%     445.50 =C4=85  9%  perf-c2c.HITM.loc=
+al
+>     407.83 =C4=85  5%     -25.4%     304.17 =C4=85  6%  perf-c2c.HITM.rem=
+ote
+>       5.84            +1.5        7.29        mpstat.cpu.all.iowait%
+>       0.09            -0.0        0.07        mpstat.cpu.all.irq%
+>       0.53            -0.1        0.46        mpstat.cpu.all.sys%
+>       0.36 =C4=85  2%      +0.0        0.40 =C4=85  4%  mpstat.cpu.all.us=
+r%
+>    2110659 =C4=85  3%     -22.4%    1638521 =C4=85  3%  numa-numastat.nod=
+e0.local_node
+>    2132066 =C4=85  3%     -21.5%    1673684 =C4=85  3%  numa-numastat.nod=
+e0.numa_hit
+>    2054843 =C4=85  4%     -16.8%    1709588 =C4=85  2%  numa-numastat.nod=
+e1.local_node
+>    2099801 =C4=85  3%     -17.1%    1740752 =C4=85  2%  numa-numastat.nod=
+e1.numa_hit
+>      61.66          +186.4%     176.60        vmstat.io.bi
+>      17553           -16.2%      14712        vmstat.io.bo
+>       3.91 =C4=85  3%     +25.7%       4.92 =C4=85  4%  vmstat.procs.b
+>       9668           -12.3%       8476        vmstat.system.cs
+>      13868           -10.9%      12357        vmstat.system.in
+>     521965 =C4=85  4%     -27.8%     376885 =C4=85  2%  numa-vmstat.node0=
+.nr_dirtied
+>     500007 =C4=85  4%     -27.9%     360465 =C4=85  2%  numa-vmstat.node0=
+.nr_written
+>    2131472 =C4=85  3%     -21.5%    1673240 =C4=85  3%  numa-vmstat.node0=
+.numa_hit
+>    2110065 =C4=85  3%     -22.4%    1638077 =C4=85  3%  numa-vmstat.node0=
+.numa_local
+>     423228 =C4=85  4%     -21.9%     330636 =C4=85  4%  numa-vmstat.node1=
+.nr_dirtied
+>     405391 =C4=85  4%     -21.9%     316667 =C4=85  4%  numa-vmstat.node1=
+.nr_written
+>    2099495 =C4=85  4%     -17.1%    1739892 =C4=85  2%  numa-vmstat.node1=
+.numa_hit
+>    2054537 =C4=85  4%     -16.8%    1708728 =C4=85  2%  numa-vmstat.node1=
+.numa_local
+>       4262           -16.1%       3575        reaim.jobs_per_min
+>      66.61           -16.1%      55.87        reaim.jobs_per_min_child
+>       4305           -15.6%       3635        reaim.max_jobs_per_min
+>      90.09           +19.2%     107.42        reaim.parent_time
+>       1.07 =C4=85  4%     -15.8%       0.90 =C4=85  3%  reaim.std_dev_per=
+cent
+>     369.06           -10.9%     328.84        reaim.time.elapsed_time
+>     369.06           -10.9%     328.84        reaim.time.elapsed_time.max
+>      45840          +155.6%     117178        reaim.time.file_system_inpu=
+ts
+>    5943434           -25.9%    4401353        reaim.time.file_system_outp=
+uts
+>      18556           -29.3%      13119        reaim.time.involuntary_cont=
+ext_switches
+>    3738859           -25.0%    2804459        reaim.time.minor_page_fault=
+s
+>      28.83           -16.8%      24.00        reaim.time.percent_of_cpu_t=
+his_job_got
+>      93.94           -24.8%      70.62        reaim.time.system_time
+>    1061461           -24.9%     797506        reaim.time.voluntary_contex=
+t_switches
+>      25600           -25.0%      19200        reaim.workload
+>     187046            -1.3%     184574        proc-vmstat.nr_active_anon
+>     945195           -25.1%     707517        proc-vmstat.nr_dirtied
+>    1133127            -1.6%    1115274        proc-vmstat.nr_file_pages
+>     214899            -7.1%     199637        proc-vmstat.nr_inactive_fil=
+e
+>      17745           -14.7%      15145        proc-vmstat.nr_shmem
+>     905398           -25.2%     677133        proc-vmstat.nr_written
+>     187046            -1.3%     184574        proc-vmstat.nr_zone_active_=
+anon
+>     214899            -7.1%     199637        proc-vmstat.nr_zone_inactiv=
+e_file
+>    4233781           -19.3%    3415500        proc-vmstat.numa_hit
+>    4167415           -19.6%    3349180        proc-vmstat.numa_local
+>    4401990           -19.1%    3559895        proc-vmstat.pgalloc_normal
+>    4837041           -21.2%    3813117        proc-vmstat.pgfault
+>    4058646           -20.7%    3220351        proc-vmstat.pgfree
+>      22920          +155.6%      58589        proc-vmstat.pgpgin
+>    6526981           -25.2%    4881946        proc-vmstat.pgpgout
+>      48196            -8.6%      44072 =C4=85  3%  proc-vmstat.pgreuse
+>       2.95            +0.1        3.06        perf-stat.i.branch-miss-rat=
+e%
+>    9010149            +3.5%    9323057        perf-stat.i.branch-misses
+>   15272312            -6.6%   14260618        perf-stat.i.cache-reference=
+s
+>       9701           -12.3%       8509        perf-stat.i.context-switche=
+s
+>       1.97            -1.7%       1.94        perf-stat.i.cpi
+>  2.028e+09            -3.4%  1.958e+09        perf-stat.i.cpu-cycles
+>     345.48           -12.7%     301.68        perf-stat.i.cpu-migrations
+>       1061            +2.2%       1083        perf-stat.i.cycles-between-=
+cache-misses
+>       0.53            +2.0%       0.54        perf-stat.i.ipc
+>       3.86 =C4=85  2%     -20.1%       3.09 =C4=85  3%  perf-stat.i.major=
+-faults
+>      12520           -11.9%      11027        perf-stat.i.minor-faults
+>      12524           -11.9%      11030        perf-stat.i.page-faults
+>       3.66            +0.1        3.81        perf-stat.overall.branch-mi=
+ss-rate%
+>      16.24 =C4=85  5%      +1.2       17.46 =C4=85  6%  perf-stat.overall=
+.cache-miss-rate%
+>       1.64            -3.2%       1.59        perf-stat.overall.cpi
+>       0.61            +3.3%       0.63        perf-stat.overall.ipc
+>   17792434           +18.5%   21081619        perf-stat.overall.path-leng=
+th
+>    8979944            +3.5%    9292382        perf-stat.ps.branch-misses
+>   15229067            -6.6%   14216663        perf-stat.ps.cache-referenc=
+es
+>       9674           -12.3%       8483        perf-stat.ps.context-switch=
+es
+>  2.022e+09            -3.5%  1.953e+09        perf-stat.ps.cpu-cycles
+>     344.62           -12.7%     300.82        perf-stat.ps.cpu-migrations
+>       3.85 =C4=85  2%     -20.2%       3.08 =C4=85  4%  perf-stat.ps.majo=
+r-faults
+>      12486           -12.0%      10993        perf-stat.ps.minor-faults
+>      12490           -12.0%      10996        perf-stat.ps.page-faults
+>  4.555e+11           -11.1%  4.048e+11        perf-stat.total.instruction=
+s
+>      24864 =C4=85  2%     -18.6%      20241 =C4=85  6%  sched_debug.cfs_r=
+q:/.avg_vruntime.avg
+>       9646 =C4=85  3%     -32.1%       6545 =C4=85 11%  sched_debug.cfs_r=
+q:/.avg_vruntime.min
+>      88.62 =C4=85  7%     +17.8%     104.42 =C4=85  6%  sched_debug.cfs_r=
+q:/.load_avg.avg
+>     165.70 =C4=85  8%     +21.4%     201.23 =C4=85  6%  sched_debug.cfs_r=
+q:/.load_avg.stddev
+>      24864 =C4=85  2%     -18.6%      20241 =C4=85  6%  sched_debug.cfs_r=
+q:/.min_vruntime.avg
+>       9646 =C4=85  3%     -32.1%       6545 =C4=85 11%  sched_debug.cfs_r=
+q:/.min_vruntime.min
+>       7.59 =C4=85 18%     +40.4%      10.66 =C4=85  7%  sched_debug.cfs_r=
+q:/.util_est.avg
+>     197.81 =C4=85 13%     +32.3%     261.71 =C4=85 17%  sched_debug.cfs_r=
+q:/.util_est.max
+>      31.28 =C4=85 12%     +30.3%      40.77 =C4=85 10%  sched_debug.cfs_r=
+q:/.util_est.stddev
+>     229863           -17.2%     190282 =C4=85  7%  sched_debug.cpu.clock.=
+avg
+>     229868           -17.2%     190287 =C4=85  7%  sched_debug.cpu.clock.=
+max
+>     229857           -17.2%     190276 =C4=85  7%  sched_debug.cpu.clock.=
+min
+>     229303           -17.2%     189808 =C4=85  7%  sched_debug.cpu.clock_=
+task.avg
+>     229667           -17.2%     190143 =C4=85  7%  sched_debug.cpu.clock_=
+task.max
+>     219476           -17.8%     180349 =C4=85  7%  sched_debug.cpu.clock_=
+task.min
+>     749.88 =C4=85 29%     -28.8%     533.95 =C4=85 14%  sched_debug.cpu.c=
+urr->pid.avg
+>      32645           -29.7%      22956 =C4=85  8%  sched_debug.cpu.curr->=
+pid.max
+>       4481 =C4=85 10%     -29.9%       3143 =C4=85 10%  sched_debug.cpu.c=
+urr->pid.stddev
+>      29063           -30.0%      20341 =C4=85  9%  sched_debug.cpu.nr_swi=
+tches.avg
+>      83586 =C4=85  2%     -29.8%      58716 =C4=85  7%  sched_debug.cpu.n=
+r_switches.max
+>      22149 =C4=85  2%     -33.0%      14831 =C4=85 11%  sched_debug.cpu.n=
+r_switches.min
+>       7977 =C4=85  2%     -25.6%       5937 =C4=85  5%  sched_debug.cpu.n=
+r_switches.stddev
+>      92.43 =C4=85 28%     -47.8%      48.21 =C4=85 10%  sched_debug.cpu.n=
+r_uninterruptible.max
+>      25.24 =C4=85  8%     -26.2%      18.62 =C4=85  9%  sched_debug.cpu.n=
+r_uninterruptible.stddev
+>     229859           -17.2%     190278 =C4=85  7%  sched_debug.cpu_clk
+>     229148           -17.3%     189567 =C4=85  7%  sched_debug.ktime
+>     230484           -17.2%     190908 =C4=85  7%  sched_debug.sched_clk
+>       0.00 =C4=85136%    +392.6%       0.02 =C4=85 80%  perf-sched.sch_de=
+lay.avg.ms.__cond_resched.dput.terminate_walk.path_openat.do_filp_open
+>       0.03 =C4=85114%     -56.9%       0.01 =C4=85  5%  perf-sched.sch_de=
+lay.avg.ms.schedule_preempt_disabled.rwsem_down_read_slowpath.down_read.btr=
+fs_tree_read_lock_nested
+>       0.25 =C4=85209%     -95.1%       0.01 =C4=85 13%  perf-sched.sch_de=
+lay.avg.ms.schedule_preempt_disabled.rwsem_down_write_slowpath.down_write.o=
+pen_last_lookups
+>       0.21 =C4=85 40%     -38.8%       0.13 =C4=85 11%  perf-sched.sch_de=
+lay.max.ms.wait_current_trans.start_transaction.btrfs_attach_transaction_ba=
+rrier.btrfs_sync_fs
+>       0.07 =C4=85 42%    +126.0%       0.16 =C4=85 72%  perf-sched.sch_de=
+lay.max.ms.wait_extent_bit.__lock_extent.lock_extents_for_read.constprop.0
+>      26708 =C4=85  2%      -9.5%      24158 =C4=85  3%  perf-sched.total_=
+wait_and_delay.count.ms
+>       3.20 =C4=85  9%     +25.5%       4.02 =C4=85 11%  perf-sched.wait_a=
+nd_delay.avg.ms.btrfs_commit_transaction.iterate_supers.ksys_sync.__x64_sys=
+_sync
+>       7.26 =C4=85 15%     +50.7%      10.94 =C4=85 19%  perf-sched.wait_a=
+nd_delay.avg.ms.btrfs_start_ordered_extent_nowriteback.btrfs_run_ordered_ex=
+tent_work.btrfs_work_helper.process_one_work
+>      19.16 =C4=85 29%     -65.5%       6.61 =C4=85142%  perf-sched.wait_a=
+nd_delay.avg.ms.schedule_preempt_disabled.__mutex_lock.constprop.0.btrfs_wa=
+it_ordered_roots
+>       0.02 =C4=85 59%    +188.1%       0.05 =C4=85 63%  perf-sched.wait_a=
+nd_delay.avg.ms.schedule_preempt_disabled.rwsem_down_write_slowpath.down_wr=
+ite.sync_inodes_sb
+>      15.73 =C4=85 19%     +50.8%      23.72 =C4=85 10%  perf-sched.wait_a=
+nd_delay.avg.ms.schedule_timeout.__wait_for_common.wait_for_completion_stat=
+e.kernel_clone
+>     256.17 =C4=85 15%     +34.5%     344.47 =C4=85 13%  perf-sched.wait_a=
+nd_delay.avg.ms.wait_current_trans.start_transaction.btrfs_create_common.lo=
+okup_open.isra
+>      78.54 =C4=85  8%     +18.1%      92.78 =C4=85 11%  perf-sched.wait_a=
+nd_delay.avg.ms.wait_for_commit.btrfs_commit_transaction.iterate_supers.ksy=
+s_sync
+>      67.31 =C4=85  3%     +12.5%      75.72 =C4=85  5%  perf-sched.wait_a=
+nd_delay.avg.ms.wait_for_commit.btrfs_wait_for_commit.btrfs_attach_transact=
+ion_barrier.btrfs_sync_fs
+>     805.00 =C4=85 11%     -21.9%     629.00 =C4=85 11%  perf-sched.wait_a=
+nd_delay.count.btrfs_commit_transaction.iterate_supers.ksys_sync.__x64_sys_=
+sync
+>     833.33 =C4=85  5%     -29.6%     586.50 =C4=85 13%  perf-sched.wait_a=
+nd_delay.count.btrfs_start_ordered_extent_nowriteback.btrfs_run_ordered_ext=
+ent_work.btrfs_work_helper.process_one_work
+>       2990 =C4=85  5%     -16.5%       2498 =C4=85  3%  perf-sched.wait_a=
+nd_delay.count.io_schedule.folio_wait_bit_common.folio_wait_writeback.__fil=
+emap_fdatawait_range
+>     151.17 =C4=85  6%     -70.6%      44.50 =C4=85141%  perf-sched.wait_a=
+nd_delay.count.schedule_preempt_disabled.__mutex_lock.constprop.0.btrfs_wai=
+t_ordered_roots
+>     553.50 =C4=85  5%     -26.3%     407.67 =C4=85  9%  perf-sched.wait_a=
+nd_delay.count.schedule_timeout.__wait_for_common.btrfs_wait_ordered_extent=
+s.btrfs_wait_ordered_roots
+>     618.50 =C4=85  9%     -25.4%     461.17 =C4=85 12%  perf-sched.wait_a=
+nd_delay.count.wait_current_trans.start_transaction.btrfs_sync_file.btrfs_d=
+o_write_iter
+>     955.00 =C4=85  8%     -27.5%     692.17 =C4=85  8%  perf-sched.wait_a=
+nd_delay.count.wait_log_commit.btrfs_sync_log.btrfs_sync_file.btrfs_do_writ=
+e_iter
+>     551.40 =C4=85 10%     +33.8%     737.66 =C4=85  8%  perf-sched.wait_a=
+nd_delay.max.ms.io_schedule.folio_wait_bit_common.folio_wait_writeback.__fi=
+lemap_fdatawait_range
+>     251.59 =C4=85 18%     +74.5%     438.99 =C4=85 14%  perf-sched.wait_a=
+nd_delay.max.ms.wait_current_trans.start_transaction.btrfs_attach_transacti=
+on_barrier.btrfs_sync_fs
+>      11.70 =C4=85 99%    -100.0%       0.00 =C4=85223%  perf-sched.wait_t=
+ime.avg.ms.__cond_resched.btree_write_cache_pages.do_writepages.filemap_fda=
+tawrite_wbc.__filemap_fdatawrite_range
+>      44.61 =C4=85189%    +762.7%     384.84 =C4=85 81%  perf-sched.wait_t=
+ime.avg.ms.__cond_resched.down_write.unlink_anon_vmas.free_pgtables.exit_mm=
+ap
+>       3.19 =C4=85  9%     +25.6%       4.00 =C4=85 11%  perf-sched.wait_t=
+ime.avg.ms.btrfs_commit_transaction.iterate_supers.ksys_sync.__x64_sys_sync
+>       7.24 =C4=85 15%     +50.9%      10.93 =C4=85 19%  perf-sched.wait_t=
+ime.avg.ms.btrfs_start_ordered_extent_nowriteback.btrfs_run_ordered_extent_=
+work.btrfs_work_helper.process_one_work
+>       1.69 =C4=85 79%    +178.9%       4.71 =C4=85 62%  perf-sched.wait_t=
+ime.avg.ms.io_schedule.folio_wait_bit_common.extent_write_cache_pages.btrfs=
+_writepages
+>      15.72 =C4=85 19%     +50.9%      23.71 =C4=85 10%  perf-sched.wait_t=
+ime.avg.ms.schedule_timeout.__wait_for_common.wait_for_completion_state.ker=
+nel_clone
+>      20.99 =C4=85  2%     +38.2%      29.02 =C4=85 15%  perf-sched.wait_t=
+ime.avg.ms.schedule_timeout.btrfs_sync_log.btrfs_sync_file.btrfs_do_write_i=
+ter
+>      12.97 =C4=85 13%     +49.0%      19.32 =C4=85 16%  perf-sched.wait_t=
+ime.avg.ms.schedule_timeout.io_schedule_timeout.__wait_for_common.barrier_a=
+ll_devices
+>     256.15 =C4=85 15%     +34.5%     344.45 =C4=85 13%  perf-sched.wait_t=
+ime.avg.ms.wait_current_trans.start_transaction.btrfs_create_common.lookup_=
+open.isra
+>      10.94 =C4=85 25%     +84.6%      20.19 =C4=85 24%  perf-sched.wait_t=
+ime.avg.ms.wait_extent_bit.__lock_extent.lock_and_cleanup_extent_if_need.co=
+py_one_range
+>      78.51 =C4=85  8%     +18.1%      92.75 =C4=85 11%  perf-sched.wait_t=
+ime.avg.ms.wait_for_commit.btrfs_commit_transaction.iterate_supers.ksys_syn=
+c
+>      67.26 =C4=85  3%     +12.5%      75.66 =C4=85  5%  perf-sched.wait_t=
+ime.avg.ms.wait_for_commit.btrfs_wait_for_commit.btrfs_attach_transaction_b=
+arrier.btrfs_sync_fs
+>      19.50 =C4=85128%    -100.0%       0.00 =C4=85223%  perf-sched.wait_t=
+ime.max.ms.__cond_resched.btree_write_cache_pages.do_writepages.filemap_fda=
+tawrite_wbc.__filemap_fdatawrite_range
+>      83.75 =C4=85187%    +516.6%     516.38 =C4=85 68%  perf-sched.wait_t=
+ime.max.ms.__cond_resched.down_write.unlink_anon_vmas.free_pgtables.exit_mm=
+ap
+>     551.39 =C4=85 10%     +33.8%     737.64 =C4=85  8%  perf-sched.wait_t=
+ime.max.ms.io_schedule.folio_wait_bit_common.folio_wait_writeback.__filemap=
+_fdatawait_range
+>     251.57 =C4=85 18%     +74.5%     438.95 =C4=85 14%  perf-sched.wait_t=
+ime.max.ms.wait_current_trans.start_transaction.btrfs_attach_transaction_ba=
+rrier.btrfs_sync_fs
+>      86.74 =C4=85 14%     -27.4%      62.97 =C4=85 11%  perf-sched.wait_t=
+ime.max.ms.wait_extent_bit.__lock_extent.lock_and_cleanup_extent_if_need.co=
+py_one_range
+>
+>
+> *************************************************************************=
+**************************
+> lkp-ivb-d01: 8 threads 1 sockets Intel(R) Core(TM) i7-3770K CPU @ 3.50GHz=
+ (Ivy Bridge) with 16G memory
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> compiler/cpufreq_governor/disk/fs/kconfig/nr_task/rootfs/runtime/tbox_gro=
+up/test/testcase:
+>   gcc-12/performance/1HDD/btrfs/x86_64-rhel-9.4/100%/debian-12-x86_64-202=
+40206.cgz/300s/lkp-ivb-d01/disk/reaim
+>
+> commit:
+>   cbfb4cbf45 ("btrfs: update comment for try_release_extent_state()")
+>   32c523c578 ("btrfs: allow folios to be released while ordered extent is=
+ finishing")
+>
+> cbfb4cbf459d9be4 32c523c578e8489f55663ce8a88
+> ---------------- ---------------------------
+>          %stddev     %change         %stddev
+>              \          |                \
+>      22777          +101.6%      45913 =C4=85 13%  proc-vmstat.pgpgin
+>      12134 =C4=85  4%     +18.9%      14426 =C4=85  7%  sched_debug.cpu.n=
+r_switches.stddev
+>      80.30            -1.8%      78.89        iostat.cpu.idle
+>      17.77            +8.1%      19.21        iostat.cpu.iowait
+>      54.02          +101.9%     109.06        vmstat.io.bi
+>       4061            -5.0%       3856        vmstat.io.bo
+>       2.60            +2.2%       2.65        reaim.child_systime
+>     348.91            -5.3%     330.27        reaim.jobs_per_min
+>      43.61            -5.3%      41.28        reaim.jobs_per_min_child
+>     356.27            -5.4%     336.88        reaim.max_jobs_per_min
+>     137.64            +5.6%     145.41        reaim.parent_time
+>      45554          +101.6%      91826 =C4=85 13%  reaim.time.file_system=
+_inputs
+>       0.17 =C4=85 25%      -0.1        0.09 =C4=85 31%  perf-profile.chil=
+dren.cycles-pp.select_task_rq_fair
+>       0.16 =C4=85 29%      -0.1        0.10 =C4=85 33%  perf-profile.chil=
+dren.cycles-pp.vfs_fstatat
+>       0.21 =C4=85 16%      -0.1        0.15 =C4=85 12%  perf-profile.chil=
+dren.cycles-pp.___perf_sw_event
+>       0.06 =C4=85 79%      +0.1        0.16 =C4=85 33%  perf-profile.chil=
+dren.cycles-pp.vms_complete_munmap_vmas
+>       0.07 =C4=85 72%      +0.1        0.18 =C4=85 16%  perf-profile.chil=
+dren.cycles-pp.vms_clear_ptes
+>       0.19 =C4=85 18%      -0.1        0.12 =C4=85 19%  perf-profile.self=
+.cycles-pp.___perf_sw_event
+>       0.15 =C4=85 30%      +0.1        0.23 =C4=85 33%  perf-profile.self=
+.cycles-pp.x86_pmu_disable
+>       0.04 =C4=85  9%     +21.8%       0.05 =C4=85 11%  perf-sched.sch_de=
+lay.avg.ms.__cond_resched.__wait_for_common.barrier_all_devices.write_all_s=
+upers.btrfs_sync_log
+>       0.05 =C4=85  4%     +18.7%       0.06 =C4=85  4%  perf-sched.sch_de=
+lay.avg.ms.io_schedule.folio_wait_bit_common.write_all_supers.btrfs_sync_lo=
+g
+>       0.04 =C4=85 69%    -100.0%       0.00        perf-sched.sch_delay.a=
+vg.ms.wait_extent_bit.__lock_extent.lock_and_cleanup_extent_if_need.copy_on=
+e_range
+>       0.05 =C4=85 69%    -100.0%       0.00        perf-sched.sch_delay.m=
+ax.ms.wait_extent_bit.__lock_extent.lock_and_cleanup_extent_if_need.copy_on=
+e_range
+>      19.30 =C4=85  9%     +17.0%      22.59 =C4=85  6%  perf-sched.wait_a=
+nd_delay.avg.ms.io_schedule.folio_wait_bit_common.write_all_supers.btrfs_sy=
+nc_log
+>      19.25 =C4=85  9%     +17.0%      22.53 =C4=85  6%  perf-sched.wait_t=
+ime.avg.ms.io_schedule.folio_wait_bit_common.write_all_supers.btrfs_sync_lo=
+g
+>      15.74 =C4=85107%    -100.0%       0.00        perf-sched.wait_time.a=
+vg.ms.wait_extent_bit.__lock_extent.lock_and_cleanup_extent_if_need.copy_on=
+e_range
+>      22.16 =C4=85 79%    -100.0%       0.00        perf-sched.wait_time.m=
+ax.ms.wait_extent_bit.__lock_extent.lock_and_cleanup_extent_if_need.copy_on=
+e_range
+>       4.44            +1.9%       4.53        perf-stat.i.MPKI
+>       8.16            +0.2        8.41        perf-stat.i.branch-miss-rat=
+e%
+>       2313            +1.6%       2350        perf-stat.i.context-switche=
+s
+>       2.25            +1.9%       2.29        perf-stat.i.cpi
+>      73.48 =C4=85  3%      -6.6%      68.61        perf-stat.i.cpu-migrat=
+ions
+>       1972            -2.1%       1931        perf-stat.i.minor-faults
+>       1972            -2.1%       1931        perf-stat.i.page-faults
+>       2308            +1.6%       2344        perf-stat.ps.context-switch=
+es
+>      73.31 =C4=85  3%      -6.6%      68.45        perf-stat.ps.cpu-migra=
+tions
+>       1967            -2.1%       1926        perf-stat.ps.minor-faults
+>       1968            -2.1%       1926        perf-stat.ps.page-faults
+>
+>
+>
+>
+>
+> Disclaimer:
+> Results have been estimated based on internal Intel analysis and are prov=
+ided
+> for informational purposes only. Any difference in system hardware or sof=
+tware
+> design or configuration may affect actual performance.
+>
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
+>
 
