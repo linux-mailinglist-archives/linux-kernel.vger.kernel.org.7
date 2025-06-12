@@ -1,177 +1,142 @@
-Return-Path: <linux-kernel+bounces-683615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53EA0AD6FE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:14:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E352EAD6FF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11450178FEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BFC3A1211
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817C523026B;
-	Thu, 12 Jun 2025 12:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB38221DB3;
+	Thu, 12 Jun 2025 12:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HEFUCRj7"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gudvIHpO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA58223714;
-	Thu, 12 Jun 2025 12:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB26F1EA65;
+	Thu, 12 Jun 2025 12:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749730481; cv=none; b=quewGoyH0MctZS00elvMWrcVUEa1upfKUcqPlkKIUTPATCuFsODdWVlQuXj0CWYF/kNPMtuC73ms+k41CSU/u4sgoCJfSPa8ECv83LhxMDnxrdD9/REvwwrmdoFMSYSJoOm/SY0fe2CQ+lWqAqiM8NAGGIPj+EJRrnNUsiZYo3M=
+	t=1749730525; cv=none; b=c1l7IasFm0k2D/7u0uv2T60z6Ib3fIhUru6ukvtLqh4MLym9r3ec35eQj/5iTucKL2h3mFsHkTVOuazjMwPsnpzkQEOc1mzMbtv5XYDBt2+q7ZFvQH3l0Y5K5Fp+gVEYV6db3i9PImehmVTpp0uDsG+LDnrDqfuBmTGz+X6fB/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749730481; c=relaxed/simple;
-	bh=5Ff3aJ0jv+xKGQeZHfIxfYOLj+J7heE56PKBBO8OEOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jvo9biV+dAuPkPz/xyhwQ+yV63J1gacZVIemWDm0Djwvp9ygAsXTQViIxrZxUbOz7ahPQAE9Rif+NPheib2uXoqDNViV6+q2Ox3xcNfJ8warxMwfCfPImmZTYuZzqdJeAxj/0wqMK2zT1K4RoCl+7U/1x4nACnBaW0ky9YaKJk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HEFUCRj7; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749730474; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=sbCEUNMaN9u599ZS8ghGRn/n3p008D7oXfWjfSzogfk=;
-	b=HEFUCRj7A77IfOLBMUicb/3lpV7VBCiU/c2nCCGeStXpkgjQyLj6gUIwOSOl7xpduoEKqqHIbADL7lNJhi7tF2ibiS2nXDejt2/pUytxnXf3IsRcnJcMpa24W2Im/GIVVCoFRZGxFh7Rm/pdgn+VVIk0oq8HwjdCfRGXGtFwUlE=
-Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdgyX62_1749730473 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Jun 2025 20:14:34 +0800
-Message-ID: <8c6dcf96-adbf-4c25-b1ab-b172bdc91800@linux.alibaba.com>
-Date: Thu, 12 Jun 2025 20:14:33 +0800
+	s=arc-20240116; t=1749730525; c=relaxed/simple;
+	bh=oUg64Lp4ouK6DMtf4tzr73t1t8m/jAYlfcW8PGJ+fzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bc0W0lpd9O9STtsi2YbPjpEXt6JU7Vm3cGbImkKcmCxNyXTHsnidc5uSQQYMdwkTyffE+T9hs697YccA68nzFM5/P4/OArcCFkC28+TgczuhEqPGS7f9WqVyzzclHbZ3HUCSO/BAuIk4LxscXJWmYP8iLbaFPDNHCttxeyqleXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gudvIHpO; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749730524; x=1781266524;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oUg64Lp4ouK6DMtf4tzr73t1t8m/jAYlfcW8PGJ+fzw=;
+  b=gudvIHpOogvJ1oomOzmJdDXea5Ro5u6WnR0mgTA1uDZouSKWvXKxuI0Z
+   3/ZSiZBaRIpt6HNYrXkjyWKXoT0VwIWjyoHJWvuBzHR7gyr07MwDTqhxG
+   vIxvmz5hv8sCEpW/pxhezMNdJ5d04UJW1U7BI6avTmLswH0Y3jwDji9ec
+   JZM/BuToiFEDBAkMaJpZiRkCniO1Je53ItJ70U1erS3E5bOOCfNEmlHSo
+   NMtpoRGemPNGMFSQJ2EU1DNuO0B0sZlRqLECDracHXoZEiC6uKTIpQ7SM
+   2J+uq2zS8YixhNQQk1Oqi9eQey7VxtrBL7qevWbFKAhwjSKDl36XBXfjP
+   w==;
+X-CSE-ConnectionGUID: DUucQXSYQ0eqOfs9SBM8ZA==
+X-CSE-MsgGUID: OIUHbBCaRpaG9471qKIDMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51993046"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
+   d="scan'208";a="51993046"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 05:15:23 -0700
+X-CSE-ConnectionGUID: b6K50vP/RgyjqUsunZmkZw==
+X-CSE-MsgGUID: mi6lf1KhQBeM98UX02mCJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
+   d="scan'208";a="152412828"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.205])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 05:15:19 -0700
+Date: Thu, 12 Jun 2025 14:15:10 +0200
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com, 
+	jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, kieran.bingham@ideasonboard.com, 
+	naush@raspberrypi.com, mchehab@kernel.org, hdegoede@redhat.com, 
+	dave.stevenson@raspberrypi.com, arnd@arndb.de, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v5] media: v4l2-common: Add a helper for obtaining
+ the clock producer
+Message-ID: <hgczrxw25a7jn6ubuwijga7yn7epek4yhtya2gnd77awsgxdgs@lv2oxey567hu>
+References: <20250521104115.176950-1-mehdi.djait@linux.intel.com>
+ <mwh7xx675kulx6tdebuvqtdjfa4ih3ehi2brrcdxfemfnvxsrs@i5nxkvfskfhe>
+ <20250521110944.GG12514@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests: khugepaged: fix the shmem collapse failure
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org, shuah@kernel.org,
- ziy@nvidia.com, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <c16d1d452aa876b449324d12df6465677158a711.1749697399.git.baolin.wang@linux.alibaba.com>
- <e06530f6-5c2e-4b6f-b175-c7aaab79aa4e@redhat.com>
- <42b76dbc-d1a1-4d00-b139-c50e0abf8b0c@linux.alibaba.com>
- <6ceb38ce-c16d-48f2-baca-fef79f8fc058@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <6ceb38ce-c16d-48f2-baca-fef79f8fc058@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521110944.GG12514@pendragon.ideasonboard.com>
 
+Hi Laurent,
 
+Thank you for the review!
 
-On 2025/6/12 19:45, David Hildenbrand wrote:
-> On 12.06.25 13:37, Baolin Wang wrote:
->>
->>
->> On 2025/6/12 18:08, David Hildenbrand wrote:
->>> On 12.06.25 05:54, Baolin Wang wrote:
->>>> When running the khugepaged selftest for shmem (./khugepaged 
->>>> all:shmem),
->>>
->>> Hmm, this combination is not run automatically through run_tests.sh,
->>> right? IIUC, it only runs "./khugepaged" which tests anon only ...
->>>
->>> Should we add it there? Then I would probably have noticed that myself
->>> earlier :)
->>
->> Yes, see patch 2.
-> 
-> Yes, was pleasantly surprised when I found that :)
-> 
->>
->>>> I encountered the following test failures:
->>>> "
->>>> Run test: collapse_full (khugepaged:shmem)
->>>> Collapse multiple fully populated PTE table.... Fail
->>>> ...
->>>> Run test: collapse_single_pte_entry (khugepaged:shmem)
->>>> Collapse PTE table with single PTE entry present.... Fail
->>>> ...
->>>> Run test: collapse_full_of_compound (khugepaged:shmem)
->>>> Allocate huge page... OK
->>>> Split huge page leaving single PTE page table full of compound
->>>> pages... OK
->>>> Collapse PTE table full of compound pages.... Fail
->>>> "
->>>>
->>>> The reason for the failure is that, it will set MADV_NOHUGEPAGE to
->>>> prevent
->>>> khugepaged from continuing to scan shmem VMA after khugepaged finishes
->>>> scanning in the wait_for_scan() function. Moreover, shmem requires a
->>>> refault
->>>> to establish PMD mappings.
->>>>
->>>> However, after commit 2b0f922323cc, PMD mappings are prevented if the
->>>> VMA is
->>>> set with MADV_NOHUGEPAGE flag, so shmem cannot establish PMD mappings
->>>> during
->>>> refault.
->>>
->>> Right. It's always problematic when we have some contradicting
->>> information in the VMA vs. pagecache.
->>>
->>>>
->>>> To fix this issue, we can set the MADV_NOHUGEPAGE flag after the shmem
->>>> refault.
->>>> With this fix, the shmem test case passes.
->>>>
->>>> Fixes: 2b0f922323cc ("mm: don't install PMD mappings when THPs are
->>>> disabled by the hw/process/vma")
->>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> ---
->>>>    tools/testing/selftests/mm/khugepaged.c | 3 +--
->>>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>>
->>>> diff --git a/tools/testing/selftests/mm/khugepaged.c
->>>> b/tools/testing/selftests/mm/khugepaged.c
->>>> index 8a4d34cce36b..d462f62d8116 100644
->>>> --- a/tools/testing/selftests/mm/khugepaged.c
->>>> +++ b/tools/testing/selftests/mm/khugepaged.c
->>>> @@ -561,8 +561,6 @@ static bool wait_for_scan(const char *msg, char
->>>> *p, int nr_hpages,
->>>>            usleep(TICK);
->>>>        }
->>>> -    madvise(p, nr_hpages * hpage_pmd_size, MADV_NOHUGEPAGE);
->>>> -
->>>>        return timeout == -1;
->>>>    }
->>>> @@ -585,6 +583,7 @@ static void khugepaged_collapse(const char *msg,
->>>> char *p, int nr_hpages,
->>>>        if (ops != &__anon_ops)
->>>>            ops->fault(p, 0, nr_hpages * hpage_pmd_size);
->>>> +    madvise(p, nr_hpages * hpage_pmd_size, MADV_NOHUGEPAGE);
->>>>        if (ops->check_huge(p, expect ? nr_hpages : 0))
->>>>            success("OK");
->>>>        else
->>>
->>> It's a shame we have this weird interface: there is no way we can clear
->>> VM_HUGEPAGE without setting VM_NOHUGEPAGE :(
->>
->> Right.
->>
->>> But, do we even care about setting MADV_NOHUGEPAGE at all? IIUC, we'll
->>> almost immediately later call cleanup_area() where we munmap(), right?
->>
->> I tested removing the MADV_NOHUGEPAGE setting, and the khugepaged test
->> cases all passed.
->>
->> However, a potential impact of removing MADV_NOHUGEPAGE is that,
->> khugepaged might report 'timeout', but check_huge() would still report
->> 'success' (assuming khugepaged tries to scan the VMA and successfully
->> collapses it after the timeout). Such test result could be confusing.
-> 
-> If we run into the timeout, we return "true" from wait_for_scan(), and 
-> in khugepaged_collapse() returns immediately.
-> 
-> So we wouldn't issue another check_huge() call in khugepaged_collapse().
-> 
-> Did I miss something?
+A very small question below.
 
-Ah, right. Sorry for the wrong example. Now I'm fine to drop the 
-MADV_NOHUGEPAGE settiing. Thanks.
+On Wed, May 21, 2025 at 01:09:44PM +0200, Laurent Pinchart wrote:
+> On Wed, May 21, 2025 at 12:52:08PM +0200, Mehdi Djait wrote:
+
+> > > +struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
+> > > +{
+> > > +	const char *clk_id __free(kfree) = NULL;
+> > > +	struct clk_hw *clk_hw;
+> > > +	struct clk *clk;
+> > > +	u32 rate;
+> > > +	int ret;
+> > > +
+> > > +	clk = devm_clk_get_optional(dev, id);
+> > > +	ret = device_property_read_u32(dev, "clock-frequency", &rate);
+> > > +
+> > > +	if (clk) {
+> > > +		if (!ret) {
+> > > +			ret = clk_set_rate(clk, rate);
+> > > +			if (ret)
+> > > +				dev_warn(dev, "Failed to set clock rate: %u\n",
+> > > +					 rate);
+> 
+> I would return ERR_PTR(ret) here.
+> 
+> > > +		}
+> > > +
+> > > +		return clk;
+> > > +	}
+> > > +
+> > > +	if (ret)
+> > > +		return ERR_PTR(ret);
+> 
+> And here, return a fixed error code, maybe -ENOENT, as propagating the
+> device_property_read_u32() error could result in strange error code for
+> the user.
+
+device_property_read_u32() returns the following:
+
+Return: number of values if @val was %NULL,
+        %0 if the property was found (success),
+          %-EINVAL if given arguments are not valid,
+          %-ENODATA if the property does not have a value,
+          %-EPROTO if the property is not an array of numbers,
+          %-EOVERFLOW if the size of the property is not as expected.
+          %-ENXIO if no suitable firmware interface is present.
+
+Don't you think it is better to keep the return value and not overshadow
+it ? The function is well documented and this may help understand where
+the problem comes from if getting the clk fails.
+
+--
+Kind Regards
+Mehdi Djait
 
