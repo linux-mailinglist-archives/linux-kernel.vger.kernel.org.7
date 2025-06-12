@@ -1,133 +1,101 @@
-Return-Path: <linux-kernel+bounces-683063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF40AD687C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:08:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3972DAD6881
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EDE3AC67C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CECD189CD31
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DEF1FBEA9;
-	Thu, 12 Jun 2025 07:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B6F1FF61E;
+	Thu, 12 Jun 2025 07:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kow2OY1i"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/J/5gga"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413D5142E73;
-	Thu, 12 Jun 2025 07:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A47E142E73;
+	Thu, 12 Jun 2025 07:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749712077; cv=none; b=N9rNBlIJiRHZk++skbApflIuwRrld0Pt8lEzFEwrwjeLQNxrtvojsMmEoQ6m68mv4RyFr1mjnsVgT5Ve5qreGlMKQgOoXByJwl3mXDqo7zJ2QAc78VHa6a5xljnHH/3OCOeiveXr4QEUdPW5eMoX47COJMQc9lc1zqXFEP9JF2U=
+	t=1749712162; cv=none; b=IiHq44m/Wed2qAw6OaASar88OkvHPzxeua3qCV61/MnHI8Ku62gs5EWNeIYun84vZ6pyijfpnH3MISsoRBke+yLhC8fZcT4bonBeQuSVprnkgeDV7ttQnmr54UK1C3CEgkPNkVKsR1V3aD9J9oCAqhqpn/W1Nxyyo7NAjHkVPE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749712077; c=relaxed/simple;
-	bh=fcbcUsdmGSWC6B+UaH4cDfyK1n0S4FLllNdjhTXZzr4=;
+	s=arc-20240116; t=1749712162; c=relaxed/simple;
+	bh=luE0SzdQUHqB2dRlRfXU4UX21FqI9tQ4K6OmW4aikh8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vdx5c7+ttOOdE0ox88mpGglcHswhU7XpjICl07ZOryC9iLngkRWELi9+Fkq8btn1OdaarNuzSprnY6LVcJleJX06FC8e2/st2PPw/uCIzqJ6dFBDiIU5g1PmXp6tVYhS8LbI5JQn2OOW8c8BnlJxM4+TaXIzr1naSliLUG/Xj94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kow2OY1i; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso935875a91.3;
-        Thu, 12 Jun 2025 00:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749712075; x=1750316875; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dAOjJxhCfv8VWKL7BVvY9ZNzsKcaY5YiZqclR7H4/vs=;
-        b=Kow2OY1iF0KD34H77JO1Y/hgIV2UH6IA2mx8lcd5ccw+l+c5ABmaipVzaiklpSzLVe
-         6q93GMpBqrPTGUKAZ6rpNoVRQv1bV56rUC/2uei+oz2sER+trBH+6xuMhhGJWYhQEaE8
-         btR5cEU1EGkZhWXwrDL2E3p4XPTo7AJOqXZQibMzW8mnIi63LPjwaqBMscVvL0BEswr1
-         JBf2R4XFV9GNIY7piJ1Fwg2Y8tRyvg4QcSdpcRgC7EhloHOhadzKFv8uwC+A+x1diCgd
-         G7IF/pzkSG1iGT7xhfeJp+W1MkHGYaE4moAjQii06O8KUMPiLcXGQxHgGcrrbS8WM9nQ
-         PWvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749712075; x=1750316875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dAOjJxhCfv8VWKL7BVvY9ZNzsKcaY5YiZqclR7H4/vs=;
-        b=VtIAjFV2zXPPXok7tYq2u9yr4u6HeqhuNf6BquJjWDbnS/dTfY8P/3TBwi0jSxuAcB
-         OWu97rGgsAfs8cPuoCsIBgbepiBSmh0H94m0MGb7FX3gBrCHUDvZMtW5VFR0lNNAyYyB
-         yOFAJelprb2S2l1rNP3/AZrc9fu9GSTvp8O9NLvCI4p0kP4SwP/oSbWSdrWgMQwBIKez
-         hybLNSzfERpn0cGx70FKwbXO3aIjmI5lM8tt7DgMA0eyTepqr9l8JHhaFIGQLNKqH97E
-         gZLCYW6r+DFpyL8ktQ9Nwg2i3eHhYT2vp8sFUHRcmMfUz4XV7+7+ufil27S8mcMopn+B
-         M1JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnc0Dy8jKmC3rByxNhhGeDRUT7RV4aN1j0Y65102epnY7Y2R0WTCcynKZS3sUt3LLCFoHVqa1iUTWN@vger.kernel.org, AJvYcCWwn1BS+2PW2SMdZZybcrWQd+SLviq5VvWf9/LQIh0UxMM6+JuPltPBNoFBVlpC40W6dxyehawTdXMYp2US@vger.kernel.org
-X-Gm-Message-State: AOJu0YzazXTpkPhCe54Fc1TdLdAP5fYZLoPAGJn3SxBvLD7EMuHW3OWt
-	knwJxjWJhMVxhYYVJhd8ZjYLcwx+1a6E46t5iX/O+VwBLcdlCk0SJVUYqmNp+8tZGQA=
-X-Gm-Gg: ASbGncsHzNAFiTLJe44cgltdiTdmSWvcM20a/W7DUzpxB5FptaxcG1WkaCVm/+QvtNu
-	BjEsKrHwnXLVbAfwx4IpHSD9FS3vQFWrKI6p9vFxqLtnHRjMrqPhoKoobS1q0wvu5lYQ7Bt+DvI
-	Qj/fv0t45xhLNnb7vhbVc5FnkIEBZcoebAMeY2snO4s3Espf4uKzwlAEuZJXqbcgPuaVJ26cAtD
-	Rl8Jc/wZgTehthGis5olQks9JfrhszNLn3CCxiCMT3MC2CY46r7Np0hczRgzAgtbYz4bwnkQlwb
-	WOFi4rxBiZxwLU6qRi2zt31/hbLfwx8ilPT8vgZIm6bI4DwX/ytWM7HbZJ5RqKXDXYZqFvwP3NA
-	qIND8pLvePyRgHuJ1fqKInXQkZ48xQVs=
-X-Google-Smtp-Source: AGHT+IGfi33QMmP2NxREt3lPErfPBTHFxGftgC5xTDBsF/Wzhv8TdBvW48FWIe805inRamkcxDRnzw==
-X-Received: by 2002:a05:6a20:729c:b0:1ee:efa5:6573 with SMTP id adf61e73a8af0-21f86600846mr9497042637.8.1749712064431;
-        Thu, 12 Jun 2025 00:07:44 -0700 (PDT)
-Received: from ankitchauhan-Legion-5-15ITH6 ([2405:201:4042:d128:1895:113a:65dd:3ae0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74880a06b64sm738064b3a.143.2025.06.12.00.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 00:07:43 -0700 (PDT)
-Date: Thu, 12 Jun 2025 12:36:56 +0530
-From: Ankit Chauhan <ankitchauhan2065@gmail.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm: lanyang: fix lable->label typo for lanyang dts
-Message-ID: <20250612070656.bir2ywkwu27gxs7d@ankitchauhan-Legion-5-15ITH6>
-References: <20250529-lanyang-lable-fix-v1-1-8a2dcb48bda4@gmail.com>
- <3fe9885cc54a328932915a63816ac1b7952689a2.camel@codeconstruct.com.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PuQSmqGxwp3YebHXqBf3k/ynM4UNW9LBaLyqNdw2hRDLkIsYfbMCTtA7/jXQ9EEEiFWFJqIwQhNQWJGN6IWdSONxQericZQ6JXezlhMlgZcImCBvJ2/rQrh5x6TMU/xzxffXkBviiYprNUS7VWDRnuK8mjJG/JFoFbD0x4/Jqfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/J/5gga; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97455C4CEEA;
+	Thu, 12 Jun 2025 07:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749712162;
+	bh=luE0SzdQUHqB2dRlRfXU4UX21FqI9tQ4K6OmW4aikh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W/J/5ggaPb3rUTEWlLXI9E9YzuinzYrIXIpAzNWlY9l8Ngm7yOAcjKFp/Q70yZzuY
+	 YaZnZqStAfMkX3j9J0zFeBXh5kIVSrw2k4aX3ybaS/csV6tOUXhFSiaRBKzJC3yCsP
+	 H+Wgo9Z6V+F5DPizqIKqHbOFJVFVxWK31BUsI4LmGfY+zo2aXJgpvHp86lAeWDgFZH
+	 i38aGITlb6n1MIqH49bHCBqlhVMlrqLsk4CdZLpi0HISS/IJymx34m+ycGG05l5faQ
+	 HHP3XHDJzR98ryL1N1NZNvfWNtRBCJNANIoCQyKufWbIYRO2hbHy4xpGrTyimVMCTX
+	 FTImXwmsLT59A==
+Date: Thu, 12 Jun 2025 09:09:19 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>
+Cc: boerge.struempfel@gmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: arm: imx8mp: Add Ultratronik
+ Ultra-MACH SBC
+Message-ID: <20250612-snobbish-outrageous-nyala-dca804@kuoka>
+References: <20250611113039.304742-1-goran.radni@gmail.com>
+ <20250611113039.304742-3-goran.radni@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3fe9885cc54a328932915a63816ac1b7952689a2.camel@codeconstruct.com.au>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250611113039.304742-3-goran.radni@gmail.com>
 
-On Thu, Jun 12, 2025 at 03:01:58PM +0930, Andrew Jeffery wrote:
-> Hi Ankit, thanks for the fix.
-> 
-> Regarding the subject, can you please use the prefix 'ARM: dts:
-> aspeed:'? From there, I'd prefer something like:
-> 
->    ARM: dts: aspeed: lanyang: Fix 'lable' typo in LED nodes
-> 
-> On Thu, 2025-05-29 at 17:09 +0530, Ankit Chauhan wrote:
-> > Fix an obvious spelling error in the dts file for Lanyang BMC.
-> > This was reported by bugzilla a few years ago but never got fixed.
-> > 
-> > Reported by: Jens Schleusener <Jens.Schleusener@fossies.org>
-> 
-> Please make sure these tags reflect convention:
-> 
-> https://docs.kernel.org/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
-> 
-> Rather than spaces, they use `-` to separate words, so:
-> 
-> Reported-by: ...
-> 
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=205891
-> > 
-> > Signed-off-by: Ankit Chauhan <ankitchauhan2065@gmail.com>
-> 
-> Finally, all the tags should go together in the 'trailer' (final
-> paragraph). There should not be an empty line between the `Closes:` tag
-> and your `Signed-off-by:` tag above.
->
+On Wed, Jun 11, 2025 at 01:30:37PM GMT, Goran Ra=C4=91enovi=C4=87 wrote:
+> Document the Ultratronik Ultra-MACH SBC, based on the NXP i.MX8MP SoC.
+>=20
+> This board is manufactured by Ultratronik GmbH and uses the compatible
+> string "ux,imx8mp-ultra-mach-sbc".
+>=20
+> Signed-off-by: Goran Ra=C4=91enovi=C4=87 <goran.radni@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentati=
+on/devicetree/bindings/arm/fsl.yaml
+> index d3b5e6923e41..132a6f39b59a 100644
+> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> @@ -1232,6 +1232,12 @@ properties:
+>            - const: tq,imx8mp-tqma8mpql            # TQ-Systems GmbH i.MX=
+8MP TQMa8MPQL SOM
+>            - const: fsl,imx8mp
+> =20
+> +      - description: Ultratronik SBC i.MX8MP based boards
+> +        items:
+> +          - enum:
 
-Hi Andrew,
+Nothing improved... got actually worse, because you never tested it.
 
-Thanks for the feedback. I will make all the necessary changes and send
-a v2 PATCH.
+  ^
+  |
+Look here. This is '+' means you added it. My previous comment was that
+it should be part of previous enum. If you add enum, then it is not part
+of previous, right?
 
-Kind regards,
-Ankit Chauhan
+Best regards,
+Krzysztof
+
 
