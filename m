@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-684251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A704AD7823
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:26:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638EBAD7811
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD82518876EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:23:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E9297B33C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4892F4337;
-	Thu, 12 Jun 2025 16:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B4329AB01;
+	Thu, 12 Jun 2025 16:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MWAICFeC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GkdNJFj9"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C816A28B7FC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005A226FD91
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749745361; cv=none; b=WoYutwN3UVijnriruHEPAAj91/RJRbjng5/2YyzRhBlyk2SmiRq940g9HsQhXztwXfkXJ8SNQLm9b8HmUtm6ewkuxUpU+WtjIS+dB3kQMsLOSziJ74sit29V9zgOVCeWKj6m4z/cbFwVy7AZ7nlk7YatMwD1vC0clWJCQbQMucU=
+	t=1749745387; cv=none; b=fA2O+IXcXeEm0V1sVyznygNWWei9XddeREvj4LDYxNyRU6N90h78FU+cErSkhckRawXDk/43GuvtJPXqo5LaYEZYuDXbwQdE+48F433T7DTlapJcyhtCAaKzd94stK5l6LMoEKb1JzY+5tUsXLEkVHJBkTLiR73zxJtApUhgX6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749745361; c=relaxed/simple;
-	bh=Al0mJHRZrvoZ61WtSk0Ko36r2Zf9LmbijIUvRuOou7Q=;
+	s=arc-20240116; t=1749745387; c=relaxed/simple;
+	bh=y4WFL2SbvgeV88Dn3pvioaJZuCsarQOzHwGhQ3uefK8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TfbIiG0qHE7TGfkXlxvYd7lSOLV3tl39cZNB9sprbLNmt2hFLFSvp5axW112ayhD9B4ATe7p25IYCUxjff9HZBiHv2R/wWsln39i/HbsVqXQeVp/CcGeWwwVnmZ1lUSyDnV5CUzQTlDMtNKQAHj+4zsE9hnVGi9+t4BbjjqSK1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MWAICFeC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749745358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y7GY49NLSZb0Lr0DFOFP5zgErbowRq+Rb1idml11R7M=;
-	b=MWAICFeCD0lgznFz+GlTce/0g73o9opLWvEMGlPnNyq6iLs1OZWaWcI2a2BdWTVr5KfwvV
-	eikhLrnKy+YyL3GGVvRMniLO/F7D1KNZAkBZ3b78Zc6xPdrpNZ4HYVVqG9H0XTd7sRXOCr
-	89Cj783c8L8qNGNC9HZtKYcU8LEJt58=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-pb5uXI1AO5CUTv3l4bm4ag-1; Thu, 12 Jun 2025 12:22:36 -0400
-X-MC-Unique: pb5uXI1AO5CUTv3l4bm4ag-1
-X-Mimecast-MFC-AGG-ID: pb5uXI1AO5CUTv3l4bm4ag_1749745354
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f3796779so1001057f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:22:35 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=fMelwO6XbGN2QYyj71E9CqXBz4aur9e9mu7m+e1eWYZ1l8xUdw78V2J+05+SzbLooPFQQzMw9z5wNfX0UuR2VLbkzWcvWd+2xPOogJ1pmNeHqqO0dT6Jy4+Ap0k58oNeg4Lk2WHcYQk/WOxZF+4cMIfR2+19Y4suuGeM7qDZzhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GkdNJFj9; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72c13802133so415723a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749745383; x=1750350183; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oYwm5KPWdXCHcqPHzjdSfYHQXy0MsNGLcDPBqq6h364=;
+        b=GkdNJFj9bv6/o+n4GP+aLJ6HpkHTVWFSr0x00mj2+Tqn1ojLKNp/itqxkBxNtSB0TD
+         znkS2SImxvPCG1H8/3xJ8MWDMkqrASWn6eTnRRDLoq3naJId4LGIzdNdettKI97BYdJo
+         RK29eeUI6pgknaVjgi3JAX+htiQW5sXqMVDrIdo9JGBC1aXNY7owkyEXYVysCccRrP3O
+         Q8Vkd7z0LHGvSmAjBl3Hg3+LkY2r5e9lZ2D/pKIP9T4rebW101B+YKMURFm2Y37mvgWX
+         aFJo9b4wZYDp9+4dFia2rYLD3vzjrQTgwx5KaGIWqmP1/f2zgM0IaW1OVhMDG/zNPDvX
+         +Ogg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749745354; x=1750350154;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y7GY49NLSZb0Lr0DFOFP5zgErbowRq+Rb1idml11R7M=;
-        b=DKbpUCArceVAEuWUCqdMWQCD+oiLZnpOO4fYEIG4eG4WIAmopjOprrzsef75mJnFGE
-         sD6MPHSqRidx0KvYeFQiBGh6QGh5CmnFERbM3LvTB3/awxQ2+1UAlni1rQsAWkoYQ/us
-         LFG9ixieLuUVf3xC2sImkvUuLHq6ehrvHX+cdZJHbfHs3doKhBFPB6d0INrPiCeT6d78
-         URlgx4IGkKasQELFt3GVQ8928EHB9glmBivoLqqrSFI33ZdFiMEj5o9d3rzVJvuw/GN+
-         gH4mYxUHvGiQkXjXtj7QQxeDpV048aRcZ+HUfjsBN5PVOnHBHRSXWILTM3SiAp+UNWWi
-         L9QQ==
-X-Gm-Message-State: AOJu0YwWH+DyNbxe6ZjmxksdOZknkG5SUa9uPIJKXO90Qjhkdx2nc+LK
-	h0TFpAhHYWYNGWDSqozSp2IoF1qdO9JzK+EDluiu4s4x3U59dh41MmOefU+dJ5hGeWMWBCi83MS
-	+YiNOQTQRbeK7SZZunm9x/iL8EGTIrvDec5G3r88WR1UyzHgNRahbnTBbFmLLlFxZWbuxR3m6bs
-	NL
-X-Gm-Gg: ASbGncsV2B0bZ/iD/cKjgQAD09TO91ymlmD7azsT7CfqvlfasXhwEVB8mkUNZt9/Toi
-	bvnv8lW0KEBDFT+IvWvR0gUv8Ke+gyOL4oE0qw0attkGS615UISi3ZR5qfIpyNwv7YVU7HcE6Te
-	rFgKizu2Tvw2imLFmV1RFeMhU+JjPnNNzSHRZzy2V8NMTQs0oRzmEwE/fSZ/bxGtvQTAD4RgWm7
-	PwJp5iCIoS++3wCEAlSEhol3+R8yzldLiZjbLhQMyrp0ZR/l1GaYM9v7kp/bmvu+biTvEJPm3n2
-	UGFW2cEPSFM1h4AP4ltlYtVw9fGOVL9eNg+dE2sLiKYRUBrknzm4GHHrEzOBdblH57pDJYvlMaB
-	6zuyLfZrBGJYeoCLWgDCF+SKAvyXh0irXlXV8RkzH8GkeEuFP6w==
-X-Received: by 2002:a05:6000:26cf:b0:3a5:1241:c1a3 with SMTP id ffacd0b85a97d-3a558a4286fmr6492722f8f.50.1749745354234;
-        Thu, 12 Jun 2025 09:22:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxNHM+y9+onXl/609vGofc8NG43R64Tkq6UMoshYWj17N2y2c0zpgcsoFkkjfCrhhEXuYihw==
-X-Received: by 2002:a05:6000:26cf:b0:3a5:1241:c1a3 with SMTP id ffacd0b85a97d-3a558a4286fmr6492702f8f.50.1749745353886;
-        Thu, 12 Jun 2025 09:22:33 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2c:1e00:1e1e:7a32:e798:6457? (p200300d82f2c1e001e1e7a32e7986457.dip0.t-ipconnect.de. [2003:d8:2f2c:1e00:1e1e:7a32:e798:6457])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2324c6sm24697855e9.12.2025.06.12.09.22.32
+        d=1e100.net; s=20230601; t=1749745383; x=1750350183;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oYwm5KPWdXCHcqPHzjdSfYHQXy0MsNGLcDPBqq6h364=;
+        b=bSMPNkCsFTjGbbLd3XcXHHISxXlyNaN+zLjBoyAXyLON4kTWQywIHz6aMMnUT9bzWA
+         Hugtfwt7v21U/lUIozrVUlSgNLs1xVPe5ev/660IDZiFHXPyjvJpVH3ICdbLteLxGJfU
+         tQF7zgMkzIz1GtSa5EPzdNRR350Igq1lGCxN5vfH0IZ6QrC4IkHQlaO+8cjC1KNXh+dA
+         zXKH5MXNvqYBD5CCAPTAdkSkUEXQdLGzeclm+DYh6UJsZK7O3XeATnkBKyrUtzQED+DZ
+         8g8MHGasyYSnvNk56OFqtPmWvqZ5v8C5SumZtp7kjBvaHxx9Lp4NJM72mhdLQ5VuKj2N
+         LXgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQnuNdhKGiglL3DC+eS93jYx+d9uXxBi0SgbYfQfbLSn747maCm3Bqdf/lGVQWV2WpGQte014XOU7Tih0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTHEmsELcDo5NTHmLjQwi1T9TPk0+0iMEYYYnaWZKiPJjqF3t/
+	OmxG+72Qquhxqaxa3AiRd+9enzTgjZbCgGVw+YFihOVkPUbrOnqYs+jox1BVWqjz/GQ=
+X-Gm-Gg: ASbGncvu9f+WWxfcGy09zsy6sdZr4JzcWLdIQVDS+AQotfqMoE26yqYcRbxSfJmBPjY
+	KygvQpRL+5MBgH34+UNJlAlnXHg5j6BFbKlJGciQZ8LOF2chDKj/ZkXSb/q2IQnmC3FW5Bf1s45
+	wNmakE3silQlY8x95z3aURDjyqCdYp3bnra5LqKn3DDQ96s5FmBAfXy7zTvIg/rwS0o+8AL0/q3
+	jNzgvY/odrzJS1e0mlda+F+gBYh0P+JmzlsP8YjPtiq6/zpD/1wj18Gsz4vG4TQKwHxQ3/+PCqc
+	vMHy4xBwObobFxuf8MKrBWLSGmiKAu9N96NeZzML2ewqWO5zaj+kzfWHH/XOnSei/CP/Mqclog4
+	bLG1Mewl4/mNKnFCsDuMsKkcbiZjqhm0KdZ3hn5k=
+X-Google-Smtp-Source: AGHT+IFTwehji9nh5NvvDQuKE+AZnMrQrDaqD349Jh5toAGXoSpDzkbqFYAG6hYvMWXToSQmqhzzoA==
+X-Received: by 2002:a05:6830:8088:b0:727:3957:8522 with SMTP id 46e09a7af769-73a13ab0ce3mr2638607a34.20.1749745382919;
+        Thu, 12 Jun 2025 09:23:02 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:4753:719f:673f:547c? ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a16a2673dsm320209a34.5.2025.06.12.09.23.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 09:22:33 -0700 (PDT)
-Message-ID: <0340de74-1cc8-4760-9741-2d9c96bcfd17@redhat.com>
-Date: Thu, 12 Jun 2025 18:22:32 +0200
+        Thu, 12 Jun 2025 09:23:02 -0700 (PDT)
+Message-ID: <9a3731cc-ea6f-45fa-a3e7-c2a33d44ecef@baylibre.com>
+Date: Thu, 12 Jun 2025 11:23:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,81 +81,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] mm/huge_memory: vmf_insert_folio_*() and
- vmf_insert_pfn_pud() fixes
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Alistair Popple <apopple@nvidia.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Dan Williams <dan.j.williams@intel.com>,
- Oscar Salvador <osalvador@suse.de>
-References: <20250611120654.545963-1-david@redhat.com>
- <6ae86037-69bc-4329-9a0f-4ecc815f645d@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 1/3] iio: Add IIO_DENSITY channel type
+To: surajsonawane0215@gmail.com, Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250612100758.13241-1-surajsonawane0215@gmail.com>
+ <20250612100758.13241-2-surajsonawane0215@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6ae86037-69bc-4329-9a0f-4ecc815f645d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250612100758.13241-2-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 12.06.25 18:19, Lorenzo Stoakes wrote:
-> FWIW I did a basic build/mm self tests run locally and all looking good!
+On 6/12/25 5:07 AM, surajsonawane0215@gmail.com wrote:
+> From: Suraj Sonawane <surajsonawane0215@gmail.com>
+> 
+> Add IIO_DENSITY channel type for particulate matter sensors,
+> with base units of grams per cubic meter (g/m³). This is needed
+> for optical dust sensors like the Sharp GP2Y1010AU0F that measure
+> airborne particle concentration rather than raw voltage.
+> 
+> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+> ---
+> V2: Initial version introducing IIO_DENSITY channel type
+> 
+>  Documentation/ABI/testing/sysfs-bus-iio | 8 ++++++++
+>  include/uapi/linux/iio/types.h          | 1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index 190bfcc1e..9b1b538ce 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -2383,3 +2383,11 @@ Description:
+>  		Value representing the user's attention to the system expressed
+>  		in units as percentage. This usually means if the user is
+>  		looking at the screen or not.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_density_raw
+> +KernelVersion:	6.15
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Raw reading from an optical dust sensor.
+> +		This value is proportional to dust density in air,
 
-Thanks! I have another series based on this series coming up ... but 
-struggling to get !CONFIG_ARCH_HAS_PTE_SPECIAL tested "easily" :)
+I don't see why density would be specific to dust. We could make
+this description more generic.
 
--- 
-Cheers,
+> +		with base units of g/m^3.
+> +
+> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> index 3eb0821af..e7d09ec0b 100644
+> --- a/include/uapi/linux/iio/types.h
+> +++ b/include/uapi/linux/iio/types.h
+> @@ -37,6 +37,7 @@ enum iio_chan_type {
+>  	IIO_DISTANCE,
+>  	IIO_VELOCITY,
+>  	IIO_CONCENTRATION,
+> +	IIO_DENSITY,
 
-David / dhildenb
+This is part of the userspace ABI, new items have to be added
+to the end. We can't change the meaning of the numeric values.
 
+>  	IIO_RESISTANCE,
+>  	IIO_PH,
+>  	IIO_UVINDEX,
+
+There are also a couple more places where this new channel needs
+be added as well. See [1] for an example (although density probably
+doesn't need to be added to known events).
+
+[1]: https://lore.kernel.org/all/20241101-hpd-v3-3-e9c80b7c7164@chromium.org/
 
