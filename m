@@ -1,129 +1,185 @@
-Return-Path: <linux-kernel+bounces-683100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE6DAD6902
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CF7AD6906
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B77C3AB95A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9B31BC2992
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FBC20E021;
-	Thu, 12 Jun 2025 07:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B79621B9C1;
+	Thu, 12 Jun 2025 07:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="obfUzTtq"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UTgG5l9u";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QXydL/u7";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xf4NTLiO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+YsBOsQh"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082A017A31D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43BD2139B0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749713383; cv=none; b=qi6VBozjAN9X0BAMSfFzFKtMKzfqL0foyGWzr8nurPnSAnUf/lUUodrJ5hJCt+ymHaifP/+6RmOoIfDthYvnxqK5wPiJVtelxK+Wb0AwPmHVfPgJNm5F64ZjsWnuVY/IC8fW5pQcfOQrzC/CSD/sm1HVXhfOLE9VqCLq1/WaFUs=
+	t=1749713404; cv=none; b=CfzBzRHl1aFKCGTCTQ8biZHEQxh1lZ1mqnFIO3gy4dZ5eAl2iG0J00NOmBLCs4bbgBvmDNxSuhLzOv7Oa7ClGqgV6uuREbPODa80t2Ow682gWjIpHwq8R39UearInSE8EXYEr93fEV9DWUDozsI0LJ0J6Dj6xFmkvS4FIe3tdaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749713383; c=relaxed/simple;
-	bh=zSlIbjxaW75NdtQMB+5uCdNGmRLfncsyMDDu8q/6d+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1isXkOGBhBjmd5talV7PZbvMlwW9tgZob11Se5eJ4F1AegE+2+s+PbJbCZhoqxKls0cIjkmf7Y0s+RqYOogPwDt0CMOI5l4Wht3UqF5KPrGFLeJNdxtZfKmMVkPs0n0D6ZqmfKhkGqNxO7zl6ganKFZDE5Kz2jfBpOFg0Nc37w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=obfUzTtq; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235d6de331fso7515755ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749713380; x=1750318180; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OY0OK186Eiy+kb3OI3njLLfZm61nlKnH95xfL7qAiAQ=;
-        b=obfUzTtqrVVWwDUecdSHUoT23V33ZLhVIDXpdZWZkCNMoZug75fMeaEpCSUn94X3MQ
-         IjfRF2dWBOMTSf4/p4l98k/nTv50vtWO59IWmfj3YhXmMNhMoZ7Wj9btQYARyujj4Al+
-         hRgaO2xYHTyiXIpkDcjQFEjSsEn/BwWoPas4aGEALUh+jeg3Xn/ikrHITBFi9K/JffCW
-         YmWnMBQ9lTUg5M2WQs2aXE0bT1cE0AQsPM4/0drchiTImxVbl17VorPxkk20zeKFuwmB
-         4/1Srw7/9YftCK35A8+MOHGgcJsXE2L8sxyz+YURa2m+Ab2oV8seCHTuv5iyWI7LMHtk
-         bgnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749713380; x=1750318180;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OY0OK186Eiy+kb3OI3njLLfZm61nlKnH95xfL7qAiAQ=;
-        b=SJLlVUNqoFVmDoY4cMWGK1oDNrZx4bmoDwfMijA2LUNAyIjOCoZOFccrEeegdrye7h
-         OTfdmVThpHsLK7Sz3774QhO0ii9t+rUFqlipMTLEWhl6nbIx64YwJjqwcjCfMdA/ap+5
-         GQoXithoKEZBAQVvoN4CARNGSY4Nvah+N4sMprTYhlJyYedW8WikS2ixPMTCFrdLJ9Yh
-         Pb5VT3WI6v7e1I3GGSN1hDNSLtpYgk7SkMGDLgrnNdvkt/JzXWPNouBHWBulruVZwf2J
-         IDysqAbf2X/HNgtVEKeOdgsgafH7Ifjnae5BD3Eiw6xmFVCDqUrusq/bULj3q/mcJyHZ
-         srAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPCBOgvD1E/Dd6ngyKJYqEkLTtXS+AV0/tlCu5Dc0ON3CHpWqtrPheACenS5292tWfOhZ5aLiGmk91zFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYI+wutzeBpDnKzBQqSp8V+VJq/islJc/LrI6yPgmRdSeqNx7E
-	JwraulzkusL0jqVSxTScvtQSi6SGGUBJVLrE2g+J7AtyT7BgGX8bOUhVcKKe33UJmOs=
-X-Gm-Gg: ASbGncsCShAkoJLDaK0pdX102VJYG0aroSESf/ikuI2LJlSZhCpodbiFAZkOmlDaeHg
-	NqPAulTQ2WHQpofC6Rl4WNb9Lba5adAvWKZUCh1lPC77kMuKUyBTVNEXnUgfzwiFK0H3xQztTpF
-	9tMGJS5voZzQawsEec3xlap6/xh4n11mvdh1Jv3nLAHgbLU/VV4lSE0ggXEVmGSbbhBV+x0lFWz
-	22d4EXHosvQyRccxvA+k8iHTOlTglSgxqS24/Xk1Qz7GfX6uhE6EoNl8qZ+niZDPS0ii+hEk0Bk
-	8vh/IxPKR6eWPMKIA1h1ZJK+awDfOspxz+NXFJufqr0x4gVPL2/8v9VszcyUnls=
-X-Google-Smtp-Source: AGHT+IHSsq98Gwdk5JzoPA1cqT+FsUUn7tYinnnuONXeJ94UIXplKK2bd7jvRP2tu3UYegqm9ju+WQ==
-X-Received: by 2002:a17:902:f943:b0:234:ef42:5d5b with SMTP id d9443c01a7336-2364c8d0c0bmr28410245ad.16.1749713380188;
-        Thu, 12 Jun 2025 00:29:40 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2364e61b614sm7499335ad.13.2025.06.12.00.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 00:29:39 -0700 (PDT)
-Date: Thu, 12 Jun 2025 12:59:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: drivers/opp/of.o: warning: objtool:
- _opp_table_alloc_required_tables+0x3b0: stack state mismatch: reg1[22]=-1+0
- reg2[22]=-2-16
-Message-ID: <20250612072937.gb3n2mh34aivabt4@vireshk-i7>
-References: <202506110656.WF6sPKbe-lkp@intel.com>
+	s=arc-20240116; t=1749713404; c=relaxed/simple;
+	bh=kd+vd2hBCjJlWFs8nbd31uGpSQWqPWYqH2ilgcz+lXM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lpVoaCxXanD+obXgQr9ZsnzYfK5aSPjDQ3ICZJjMGqHmRiKgWWp/CzbRwcL0oBV5RJw2fgJfJllu87nrFXPmDld79yh46NrPf+0fNW8yq7SnWJ57lH1U0vJMbTXNa3JhLyoiIYqI8tvdLtDO4nWz88OEtFKkVF1sgbcupnqQDDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UTgG5l9u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QXydL/u7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xf4NTLiO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+YsBOsQh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E33261F391;
+	Thu, 12 Jun 2025 07:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749713401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
+	b=UTgG5l9u4Xs+HjGZRRIvx3FAY7tCYd8DomQht+ZOheiXZm3mREnbXqdOxhiJBR5jLi38pz
+	p7Hgr+DxjsGJsCVuRU932GfSLCq5oOxwHg5OMSbZrO5WkiTJq5a22tXLEDFUmTKPSo/Bu8
+	MJm5gAsvea8rq9OGXFh53IPvYrTffrA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749713401;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
+	b=QXydL/u7gH46qadC9LGHTnP40tbQ7LiYXs43h4NVfv1VcM1qfK6n6uwG2BHtSLUwFG3aMC
+	oyt1Os7r4BY7osAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Xf4NTLiO;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+YsBOsQh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749713400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
+	b=Xf4NTLiO2I+4ZaTpKqp9XfiCy9F7MBBQuBl6VPZ85xSJFoMOMueL6ZqYnqWy6T1MEYWIHi
+	dq04SyJIlzBJx+aGEnp+3eINbnzF5ZQ/XqK75q5LR3+gIMd383NhOuuvp0rIT1krAX8Ik/
+	FQSAV7rJSpCrEtfncRyWlzkYf5l2q4Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749713400;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkTEU3/q67RJKkZJGi7inSXpViDUneJqtH39mG+jjQE=;
+	b=+YsBOsQh8PDjtiXlSBw2rR6CBbqU6YwjjMkejsBoe+Us4QnrWpICL8hnPDRJFKogmP9Eg6
+	N37VEB4jrC3nsmAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93A21132D8;
+	Thu, 12 Jun 2025 07:30:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IdRkIviBSmiMGwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 12 Jun 2025 07:30:00 +0000
+Date: Thu, 12 Jun 2025 09:30:00 +0200
+Message-ID: <87ecvpv2mf.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	perex@perex.cz,
+	tiwai@suse.com,
+	franta-linux@frantovo.cz,
+	lina+kernel@asahilina.net,
+	livvy@base.nu,
+	sstistrup@gmail.com,
+	s@srd.tw,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Convert comma to semicolon
+In-Reply-To: <b8f6fb15-cc77-41c5-b362-70cfd6be6f37@collabora.com>
+References: <20250612060228.1518028-1-nichen@iscas.ac.cn>
+	<87ikl1v4cj.wl-tiwai@suse.de>
+	<b8f6fb15-cc77-41c5-b362-70cfd6be6f37@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202506110656.WF6sPKbe-lkp@intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: E33261F391
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[kernel];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,iscas.ac.cn,perex.cz,suse.com,frantovo.cz,asahilina.net,base.nu,gmail.com,srd.tw,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[iscas.ac.cn:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -2.01
+X-Spam-Level: 
 
-On 11-06-25, 06:19, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   f09079bd04a924c72d555cd97942d5f8d7eca98c
-> commit: ff9c512041f2b405536640374ae3a3fe10efaf8b OPP: Use mutex locking guards
-> date:   6 weeks ago
-> config: loongarch-randconfig-002-20250611
-> compiler: loongarch64-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=1 build):
+On Thu, 12 Jun 2025 09:22:36 +0200,
+Cristian Ciocaltea wrote:
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202506110656.WF6sPKbe-lkp@intel.com/
+> On 6/12/25 9:52 AM, Takashi Iwai wrote:
+> > On Thu, 12 Jun 2025 08:02:28 +0200,
+> > Chen Ni wrote:
+> >>
+> >> Replace comma between expressions with semicolons.
+> >>
+> >> Using a ',' in place of a ';' can have unintended side effects.
+> >> Although that is not the case here, it is seems best to use ';'
+> >> unless ',' is intended.
+> >>
+> >> Found by inspection.
+> >> No functional change intended.
+> >> Compile tested only.
+> >>
+> >> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> > 
+> > Thanks, applied now.
+> > 
+> > At the next time, though, it'd be appreciated if you can put the
+> > proper Fixes tag.
 > 
-> All warnings (new ones prefixed by >>):
-> 
-> >> drivers/opp/of.o: warning: objtool: _opp_table_alloc_required_tables+0x3b0: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
+> Considering this is not really a functional change, I think a 
+> Fixes tag would trigger an unnecessary backport, wouldn't it?
 
-Hi,
+If it were in the old released kernels, I wouldn't be bothered,
+either.  But this is still in staging for the next, and having Fixes
+tag will help to track if someone tries to backport patches.
+Otherwise the code differs and may give conflicts in further
+backports.
 
-I am not really sure what's really wrong with the change here:
 
-@@ -201,9 +191,8 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
-                 * The OPP table is not held while allocating the table, take it
-                 * now to avoid corruption to the lazy_opp_tables list.
-                 */
--               mutex_lock(&opp_table_lock);
-+               guard(mutex)(&opp_table_lock);
-                list_add(&opp_table->lazy, &lazy_opp_tables);
--               mutex_unlock(&opp_table_lock);
-        }
- }
+thanks,
 
-Can someone help ?
-
--- 
-viresh
+Takashi
 
