@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-683970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAB3AD743A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:41:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4D5AD74AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC03A5152
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5EA1891B92
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7723B25C83C;
-	Thu, 12 Jun 2025 14:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DC81C84C9;
+	Thu, 12 Jun 2025 14:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeWqqdY5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="VXQ0RaMO"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF825BF02;
-	Thu, 12 Jun 2025 14:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F428DF49;
+	Thu, 12 Jun 2025 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739171; cv=none; b=Pxepq7KvOdRS/5MVEI8+B07RbSCricvuuHbGfuog779wHZAwcOSI2Y5BWtSKWCcgtGoFim7XPs9NScBIC4wWnZ/8Kp2JmAHto6LxtVuQGxo4uOG8xe+F383GOhbNjIn7wqqsLH9/9nKsCVPL3ehXUOKeh+XphnMY7bnYiNtPX+s=
+	t=1749739727; cv=none; b=MJY5qGjcrXkQtckFq4tR0itH5kov/L827uTXpS7U2PnXtelpg9fCmChvFJRGvxkdxpMgdmh/5ilYIXkFQK55/oSr163To4tBJRujet9nJnICRlMTWGPbhmyvmP4pEM0+DTrLI7c1TedEBHXOxJpHF5XK/hYClQO0y7Zr/Q74QYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739171; c=relaxed/simple;
-	bh=oocYYW9XhNGhlIxt3VxA0yDbX+cvu/AYrEHlCDzEaEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AwJi/vxYgZYtWZhR+vRFnsbxZJN8asC62tfZ5dJZgTbgj6A7btgjPC1owapw0pdCCM3ARfitKvoIMTXpJpdSN74J3cVBh9rk8hZ+q7gRaCe4qZKEJ7LwymL/2ujOgS4zY/EEB3s/pYzPf1gbWLORsLeA1x2Rj8epM7AD4L7fGAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeWqqdY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB59C4CEF7;
-	Thu, 12 Jun 2025 14:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749739171;
-	bh=oocYYW9XhNGhlIxt3VxA0yDbX+cvu/AYrEHlCDzEaEU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HeWqqdY5vrpn0k5DQvBel2CHEGRBgQDN15MknA6s3IDn1q15iZRQdO9brvYgOw177
-	 3MORk3AUrQAElWBebC92T8aK8le5Ne9IOPe3m79od2/iZRTLPjTEACw4dAxWAq0LIl
-	 Nbfc58jHNiOieAz6Fsf/6ttOegsKnaYKDds6AVzzqhEAAxCA8xy3ZnwYQYmZ3fnJP8
-	 UTaPQwt7hGzhEJQ2KwkG9QfN172sCiD0hPzFBU6c/j1GfBge/+x7BevqT+tFj45XL5
-	 AReWpz5axKrG5sfnaHIuUxRCkUiPptVnl1sbtl9Glk15VhXxSu10ho7aSlzNxaa66x
-	 3k3A5hLKio1LA==
-Date: Thu, 12 Jun 2025 07:39:29 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, skalluru@marvell.com, manishc@marvell.com,
- andrew+netdev@lunn.ch, michael.chan@broadcom.com,
- pavan.chebbi@broadcom.com, ajit.khaparde@broadcom.com,
- sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
- anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
- tariqt@nvidia.com, saeedm@nvidia.com, louis.peens@corigine.com,
- shshaikh@marvell.com, GR-Linux-NIC-Dev@marvell.com, ecree.xilinx@gmail.com,
- horms@kernel.org, dsahern@kernel.org, shuah@kernel.org,
- ruanjinjie@huawei.com, mheib@redhat.com, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
- oss-drivers@corigine.com, linux-net-drivers@amd.com,
- linux-kselftest@vger.kernel.org, leon@kernel.org, Cosmin Ratiu
- <cratiu@nvidia.com>
-Subject: Re: [PATCH net-next v3 1/4] udp_tunnel: remove rtnl_lock dependency
-Message-ID: <20250612073929.151fe6bf@kernel.org>
-In-Reply-To: <aEo_2hOn5kh6kBpk@mini-arch>
-References: <20250610171522.2119030-1-stfomichev@gmail.com>
-	<20250610171522.2119030-2-stfomichev@gmail.com>
-	<20250611184345.3b403ad0@kernel.org>
-	<aEo_2hOn5kh6kBpk@mini-arch>
+	s=arc-20240116; t=1749739727; c=relaxed/simple;
+	bh=kgCWCtFdri3esltkaVO3k5udDgP7TdzXf8myfDMfKO0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VcC77nN0AoLz45fq2EH4Y+7oAPxQg7vYBxU2TYisqqktZ9/wtBApfCgHCMOj2MUZwFFZqEhOREssrX85a7Z57N38eydvqen+rQUuJl/wjQ8LabDj3BietZYcABb5cnCvRZsjfax4xq18lH5T6EFxuZ6zj6WvbC01nCRGeDwXUmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=VXQ0RaMO; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D5BFF25FD8;
+	Thu, 12 Jun 2025 16:40:03 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id D0I0sQscU69L; Thu, 12 Jun 2025 16:40:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1749739203; bh=kgCWCtFdri3esltkaVO3k5udDgP7TdzXf8myfDMfKO0=;
+	h=From:Subject:Date:To:Cc;
+	b=VXQ0RaMOVgPSkTnZsqrBGEwGYdnCNeYJ57cZWusWn+VCedxGRB+eOe4M7hEZgyVZb
+	 io72nq5m+2V3Nr4Ab3qzIud9z5EaccXAAKJ/Mja8+rGopprEL3zTX8FtCPGHTVp0zJ
+	 J5Vq19EdfzNG1ZQf1azMqeVjtJoeqP9HmC/IzdroG1SPnOfi03L6cPHyPXeWlMZM7G
+	 XcwLdAq9gKsmzgNSM+KEsSDaCZrZaFhW9RyHHKHOkjBGJMKBdhZc95pqTbUaLbr13M
+	 AAstUmBWLk+LWbOnCdUZMryr9ypb9H14OXvziRio3jdJkMibe8tmlV3M+ZrXiMXLpm
+	 sHtGGvqJ3XVTQ==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/2] Support for Synaptics TDDI series panels
+Date: Thu, 12 Jun 2025 20:09:39 +0530
+Message-Id: <20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKvmSmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyNj3YLEvNQc3eLKvMSCkszkYt2SlJRMXYMkgyTjNAPzNAtDEyWg1oK
+ i1LTMCrCx0bG1tQAmEp4yZgAAAA==
+X-Change-ID: 20250523-panel-synaptics-tddi-0b0b3f07f814
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749739197; l=1328;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=kgCWCtFdri3esltkaVO3k5udDgP7TdzXf8myfDMfKO0=;
+ b=NvDmcVt9Cyid6fOiJp/Xqyeew53Mwq032aYZSHo1xiCWCdMGd5GC5QrHIogK4r2eBjNyQzObI
+ FjMEdXSNz38AqeizorhTnDgYMIdvDQFE0AqbxIkqzfGe7/th0xFZSVx
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Wed, 11 Jun 2025 19:47:54 -0700 Stanislav Fomichev wrote:
-> > There are multiple entry points to this code, basically each member of
-> > struct udp_tunnel_nic_ops and the netdev notifiers. In this patch only
-> > reset and work are locked. I'm a bit confused as to what is the new
-> > lock protecting :S  
-> 
-> I though that most of the callers are from do_setlink and there we have
-> rtnl and we grab rtnl+lock during the sync. But that doesn't
-> address the suspend/resume vs do_setlink race, that's true :-(
+Synaptics' Touch and Display Driver Integration (TDDI) technology [1]
+employs a single chip for both touchscreen and display capabilities.
+Such designs reportedly help reducing costs and power consumption.
 
-It's the UDP tunnels that add and remove the ports usually.
+Although the touchscreens, which are powered by Synaptics'
+Register-Mapped Interface 4 (RMI4) touch protocol via I2C or SPI have
+driver support in the kernel, the MIPI DSI display panels don't.
+
+This series introduces a rudimentary driver for controlling said display
+panels, which supports TD4101 and TD4300 panels.
+
+[1] https://www.synaptics.com/technology/display-integration
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: display: panel: document Synaptics TDDI panel driver
+      drm: panel: add support for Synaptics TDDI series DSI panels
+
+ .../bindings/display/panel/synaptics,tddi.yaml     |  92 +++++++
+ drivers/gpu/drm/panel/Kconfig                      |  11 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-synaptics-tddi.c       | 284 +++++++++++++++++++++
+ 4 files changed, 388 insertions(+)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20250523-panel-synaptics-tddi-0b0b3f07f814
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
