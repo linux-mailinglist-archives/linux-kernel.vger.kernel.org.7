@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-684125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E15AD7673
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:38:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD707AD7686
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13DA18872FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEA43A63E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535722C0307;
-	Thu, 12 Jun 2025 15:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5422C3269;
+	Thu, 12 Jun 2025 15:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1H/F52zj"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B2qosYu+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179982BE7D1
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D657C2BF3F9;
+	Thu, 12 Jun 2025 15:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742308; cv=none; b=eywUuCvF2uqpM5w1k/eLxyoPHXBe02HhnsTbbF1vIj2tY0r9knds/KCXxSM+5hvmbb5uPGLlVs8D42oeXM4+0acymvYrJ+8X8e0HOt/3eRo8d1nElx+arwf/wNUpAX2+95OhszxuoU0yBWsrULGKEruXURL4jW1Mr6qmeWzbEJA=
+	t=1749742331; cv=none; b=otj8bUlStZ5tCYBup/eF4Jxlh5hGtgf3OGOH5pOXq3SqRJu8FuXqYtXw/FHOXHI33vfvBzzLKJwKJM/sFqCGTZZ1CNEaPAzAHADbFs2wDjOrEBQIncQUPVZBHcFKtLf/zGJDIL7jAiqJ/omjw3ywdJNbya1QU2EYW3nGPKpGLbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742308; c=relaxed/simple;
-	bh=IQLfy/Zvhm0tkwTZfSoUkuAWBTTh+JjfsYN5OcGahFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a8pSrg8ZLwlKiAS6H0e0vivgqkkoNAP8t77nlj5F4ycZY1mm/iMKaxjrY9nGn4mmXRZvH79ALGqZ2sU4yv/FDAR2LrrCbwZrkFgPLlDZsr+S1aL1xBkaTNtwaYAIbnStFx0s4SLOvr7oNXzpk4zHl/xt1X/dpnCMnJlrTcGnlCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1H/F52zj; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2e9a38d2a3aso892486fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749742306; x=1750347106; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K6yA7sWYbwYlMmX+GRi/1Lmimz1lplFtP8nIGu+YKP0=;
-        b=1H/F52zjPN4dsyxuvKtQ3yx2ggGc20GWZJ+c81s76XJZTw3sVUjz5Gw9foUvywmpXw
-         OOPR63bBgJr1aJWsMCvZfamGpso8P9MmCj31yudL175+R4BKDVT3KsDu3gxWtU/ZQGU/
-         36uydGTBffkoGZCZWLCZG4HF2aWEdUYq2vainmyZPpPXYN87mf0Hv+pLdMMg/pA4qsHL
-         xTeyQLKqQpHsDBlfac/zs95k1NGPm+ppumQ48BvVYinjCcUQeQiSKozveCoc8MIpJXC6
-         RjrO45m8YkpvdO5pdvl4Srf+E9MHGAQ8sfJbHZykCT0qD0BlMdMNkEyqXsAbkZk+D/+V
-         oR9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749742306; x=1750347106;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K6yA7sWYbwYlMmX+GRi/1Lmimz1lplFtP8nIGu+YKP0=;
-        b=wT0pyNs0sezBzLMEfemOGLF5b9f2qUYBqHmbqwn58IVwGnEWphTJag4qDfFQQmPesc
-         Gkxmv0N06Raz6i3oVLGcAt4t8NVMAFuDOb8BWiKBWkyBgXD04/EmvHX+fRS8UPYpoLBm
-         SbGzMw4QGmSGr4LjkEIXqkN/p7kTxhiuVeKH+eR902MlJN3kPDtmH4uaCqxk+LFJ2pde
-         g68wT+WHBz9lg7CUbJaho/QkvuGKtrchSrFtfBnDHvRfs3BU+HK6Q64Gh1HR5q8/2ngg
-         /MVjg0+IevTz5z7w4GUUixoVS33yVVCWM9njEgGd6lNlyZ6f7v1W3xOsS6QgqmRaaqgl
-         Widg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3U1kk8aYTaJUizg8WiLLs+ONAZIs5wNuSPhU8obcDibIxN53+ptnOVjMK8h8WAjuDphaKmJ+mqbz/afo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl3rt5AsN9Xp2r9XMBYua0Hbxt0BBhLWvz/fSjFIugMlB9qZ8Y
-	g+3dHb6wWSXf4EZ74wz7SZllnUFtTncUspmN6ag19CjLIW+H+4xUW11mxtTZGafT9cM=
-X-Gm-Gg: ASbGncvlwNhOk3Ba6LJV7t1494UY1KfCHVhAEkZ46ZgmcEJO5eBw6VF7z8UkeK7CHmI
-	SvHq7xKQB0W6PiLjs5hEOJJ20RqO9dc+4Yja9ZFCWh4bAE9zPVHBCgIuwyDZu0YBlR27y49OtmV
-	2tTVj+FYqwnbn2YXmciMHD5Wmvk0IUgot1mdOF/XUAh+4EmW1HZr3SR4mlJRdsrGbKMg3d1L2XA
-	STcu++djAymfsRyppXFT4iXSBRMxyQxHzonER5GDZV4vCqJC03vNTgNZ80vpJNgo86fIPEiAhrR
-	mjE2LAoQdGVnpQ/gHEp/akwed0sJ4q+zD3DN0muXSZ0SR99F73lUQ0RhkBaaB8dD83JONviOOcC
-	2WpHjT4BzPGW8OQhI4P2/OXhCuHyLV8lJLjwUKXg=
-X-Google-Smtp-Source: AGHT+IHUcajUQvAiQlcpyarsGKUlow+7UkFOgMUpz2TyLeDgZ26uWwara/bTnXaDMDjrdskS7D6z6Q==
-X-Received: by 2002:a05:6870:52a:b0:2cc:3e39:7352 with SMTP id 586e51a60fabf-2ead0561b76mr207656fac.18.1749742306204;
-        Thu, 12 Jun 2025 08:31:46 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4753:719f:673f:547c? ([2600:8803:e7e4:1d00:4753:719f:673f:547c])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eab8edbd59sm319106fac.40.2025.06.12.08.31.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 08:31:44 -0700 (PDT)
-Message-ID: <275cf035-f0ca-4aa6-a41f-b0c21d7c9374@baylibre.com>
-Date: Thu, 12 Jun 2025 10:31:43 -0500
+	s=arc-20240116; t=1749742331; c=relaxed/simple;
+	bh=5PV+jOeEc6M5rMfrO2WVc1PW2rGtHnpqpCCs2fKhF4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fa9Hqm+L5M7X+ygGg3m0/hTiDb4ixvpX3RS8IpAyRDDbibwnAbM02uCMJAb/dCj55EAgpP0kXZ7qNGJfsLuWZwS6/arpUXQyrML+XKeZjF/AHFEVxZ4Mnh4Kr+HOrNYkn3TFyF3UwjWU3iP7IDA815HwT5P06qD+Rtxe3WsUvDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B2qosYu+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=STSk0/Pp53STkxsJ2uC08Ifb3MPW7vNpEjKmTxWJIX8=; b=B2qosYu+6KqYewsmy/RV+3y2TH
+	ZOd7C053W7apTgLKzCe3JOoKjw01irsa6bti8pJNU3c1NlVJWSEfH8X+wgAomC3AUrq8TuBZA8WFU
+	CY8E7Z38v8FNwpKjj8eLvCarMWGmQqUCMQ5BM/TUip1zoPnfvI9fNY/V4ULTbJ+lS5LM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPju6-00FYla-CO; Thu, 12 Jun 2025 17:31:46 +0200
+Date: Thu, 12 Jun 2025 17:31:46 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yajun Deng <yajun.deng@linux.dev>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND net-next v2] net: phy: Add c45_phy_ids sysfs
+ directory entry
+Message-ID: <737294c1-258f-4780-80f8-e7a72e887f8b@lunn.ch>
+References: <20250612143532.4689-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] iio: amplifiers: ada4250: move offset_uv in struct
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-0-bf85ddea79f2@baylibre.com>
- <20250611-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v3-4-bf85ddea79f2@baylibre.com>
- <aErQVKul7Gnxvu3F@smile.fi.intel.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aErQVKul7Gnxvu3F@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612143532.4689-1-yajun.deng@linux.dev>
 
-On 6/12/25 8:04 AM, Andy Shevchenko wrote:
-> On Wed, Jun 11, 2025 at 04:33:04PM -0500, David Lechner wrote:
->> Move offset_uv in struct ada4250_state. This keeps things logically
->> grouped and reduces holes in the struct.
-> 
-> Can the (smallest part of) the diff for `pahole` runs be added here?
-> 
+> +#define MMD_INDICES \
+> +	_(1) _(2) _(3) _(4) _(5) _(6) _(7) _(8) \
+> +	_(9) _(10) _(11) _(12) _(13) _(14) _(15) _(16) \
+> +	_(17) _(18) _(19) _(20) _(21) _(22) _(23) _(24) \
+> +	_(25) _(26) _(27) _(28) _(29) _(30) _(31)
 
-Well, I didn't use pahole. I could just tell by looking at it. There
-was int followed by two u8 followed by int, so we know there was a 2
-byte hole before the last int.
+Is 0 not valid?
+
+> +#define MMD_DEVICE_ID_ATTR(n) \
+> +static ssize_t mmd##n##_device_id_show(struct device *dev, \
+> +				struct device_attribute *attr, char *buf) \
+> +{ \
+> +	struct phy_device *phydev = to_phy_device(dev); \
+> +	return sysfs_emit(buf, "0x%.8lx\n", \
+> +			 (unsigned long)phydev->c45_ids.device_ids[n]); \
+> +} \
+> +static DEVICE_ATTR_RO(mmd##n##_device_id)
+
+This macro magic i can follow, you see this quite a bit in the kernel.
+
+> +
+> +#define _(x) MMD_DEVICE_ID_ATTR(x);
+> +MMD_INDICES
+> +#undef _
+> +
+> +static struct attribute *phy_mmd_attrs[] = {
+> +	#define _(x) &dev_attr_mmd##x##_device_id.attr,
+> +	MMD_INDICES
+> +	#undef _
+> +	NULL
+> +};
+
+If i squint at this enough, i can work it out, but generally a much
+more readable KISS approach is taken, of just invoking a macro 32
+times. See mdio_bus.c as an example.
+
+    Andrew
+
+---
+pw-bot: cr
 
