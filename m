@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-684136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45200AD7683
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFC2AD76A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2559B165205
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98F663A26F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B7029DB64;
-	Thu, 12 Jun 2025 15:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EC92D4B75;
+	Thu, 12 Jun 2025 15:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHCXl8OM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TlKf7MXF"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F529CB32;
-	Thu, 12 Jun 2025 15:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41742BEC34;
+	Thu, 12 Jun 2025 15:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742469; cv=none; b=NfYRyZIWd7zM+StpPMDI45hC7ubOcdxJONJOt10V0nRniSRJPBUVN99ctZxjmIJaMHCd4GpPhQGxwJaEZwYrXOOdos9lmtASPSoh74vig+Dyxv419xcglSxdOe+hjOXYboX8gYdvm/QbKB/INs9L2tjYoskzPjNiwued43ZYVPQ=
+	t=1749742506; cv=none; b=kPPLvBUduug+DQBzJXMSY5QZAIRYNhFiX4djksplRQZiieJ+BbHty/3Ci5i0ydjYYXDj5ZwUcFXsz0NKNNdR+V8VT7xCYGl4WUS2ttpWYZssCTyVvVyTsOC5RH7bjU8lT4YVjRyKgSYDfPntvhZGowB9spmArwnUeCQSN2Vobvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742469; c=relaxed/simple;
-	bh=WvdhfgNJT5v5cFAw5+htw1gcZlt/xJmT2/R10D/S/u4=;
+	s=arc-20240116; t=1749742506; c=relaxed/simple;
+	bh=oR30sMB3apJLZroHpS5Z433ClkjUIogihHlAImD2zDI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ByQt3ksgSWC7igqBkq+f/bjT/atZxL1u1/EWNpwEaZvTAGkCOH+8tLJXD4SScoshhg4NmvP0BOHwyu1eDM93HCpouCbr//GXzShHuzoMBJpuvyYlvki8AAuu+iMmlDIu5qCD0jR7aWzRLvICc7HFDiVWRXu0y984d2jVCLqFLC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHCXl8OM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 797ACC4CEEA;
-	Thu, 12 Jun 2025 15:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749742468;
-	bh=WvdhfgNJT5v5cFAw5+htw1gcZlt/xJmT2/R10D/S/u4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sHCXl8OM0W3Li5mbXc8STHlocqBbXXzomS0PWwgJWbz9cPCa54iJ2BC06tl1CtSSD
-	 o9DSbjNJbGQfrRPz7e/uZiNZllbuyP4YtV7NsDuUMzv56drJTilCdRnnEFmTB40vp5
-	 lvClEDILxGEBM6Q6n6kMN1sBtbvz6dnslKdPM193Zth8kHhv9XvOINgAdVdjlZ2WPC
-	 79K0gR+Lbgh0HEbQYC994/TP0yWkoA/iEr7w9JSQJAFCR6AFiPUYE9l4Z3qHpahe/1
-	 RDhCm4kvzNw9ZGUItpYK6VDaTBN04njeKSdtFYA8aNiY9okUmbkSmBEg0OeoKOmvWJ
-	 zeJYrFQ3IqPKw==
-Date: Thu, 12 Jun 2025 16:34:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/2] dt-bindings: arm: mediatek: add mt8173-hana rev2
-Message-ID: <20250612-scholar-crown-517f28582edf@spud>
-References: <20250612135559.2601139-1-uwu@icenowy.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyJlQBY9Ts7nv+hEnl16omCVIDjJmD8VGb2sHWjGVUqgZgFYDuB1EAl6rDI4xX8UI6e4KOk5pVmF/A8cs9R8ByDIF1HE6FpSGehg8LTWsCTintS7+HOECqZNOPMq0u91Ei9pi6cRk7bZH0HZu47B18peewQijM6tVL7N4nYDF5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TlKf7MXF; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=14HKFxr1P9LFfEJfHXTUwEKl/fFHkZOWWgIfViNx+dE=; b=TlKf7MXFyCZ1/8tD3RwLc0sjFJ
+	ODIdJLeuQZAsFh46Zcly9ukIXre0EO14RWpTz42tEct9/otLDVBw7dKa6L+HttQr5+aob0iNwz8Ar
+	pVT/aFEgY7B2+ttH+2qAx83pRq1b0TSgBd+78zGJTQCa4CWzxkZzB0szRaI55p3rwGUE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPjx9-00FYpp-3b; Thu, 12 Jun 2025 17:34:55 +0200
+Date: Thu, 12 Jun 2025 17:34:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Jander <david@protonic.nl>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 3/3] net: phy: dp83tg720: switch to adaptive
+ polling and remove random delays
+Message-ID: <e2e91c7e-c201-4fbc-9e5e-e967b6c52e8b@lunn.ch>
+References: <20250612104157.2262058-1-o.rempel@pengutronix.de>
+ <20250612104157.2262058-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rBD6QiyAktVQ2uJs"
-Content-Disposition: inline
-In-Reply-To: <20250612135559.2601139-1-uwu@icenowy.me>
-
-
---rBD6QiyAktVQ2uJs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250612104157.2262058-4-o.rempel@pengutronix.de>
 
-On Thu, Jun 12, 2025 at 09:55:58PM +0800, Icenowy Zheng wrote:
-> My Lenovo Flex 11 Chromebook contains a board with revision ID 2.
->=20
-> Add rev2 to the compatible list of base hana DTB to allow depthcharge to
-> match the DTB.
->=20
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Docume=
-ntation/devicetree/bindings/arm/mediatek.yaml
-> index 108ae5e0185d9..7d13547ff57ba 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> @@ -132,6 +132,7 @@ properties:
->            - const: google,hana-rev5
->            - const: google,hana-rev4
->            - const: google,hana-rev3
-> +          - const: google,hana-rev2
+On Thu, Jun 12, 2025 at 12:41:57PM +0200, Oleksij Rempel wrote:
+> From: David Jander <david@protonic.nl>
+> 
+> Now that the PHY reset logic includes a role-specific asymmetric delay
+> to avoid synchronized reset deadlocks, the previously used randomized
+> polling intervals are no longer necessary.
+> 
+> This patch removes the get_random_u32_below()-based logic and introduces
+> an adaptive polling strategy:
+> - Fast polling for a short time after link-down
+> - Slow polling if the link remains down
+> - Slower polling when the link is up
+> 
+> This balances CPU usage and responsiveness while avoiding reset
+> collisions. Additionally, the driver still relies on polling for
+> all link state changes, as interrupt support is not implemented,
+> and link-up events are not reliably signaled by the PHY.
+> 
+> The polling parameters are now documented in the updated top-of-file
+> comment.
+> 
+> Co-developed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: David Jander <david@protonic.nl>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Ordinarily I would complain about inserting a compatible like this
-being a problem, but these chromebooks are all cocked up so w/e
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
->            - const: google,hana
->            - const: mediatek,mt8173
->        - description: Google Hana rev7 (Poin2 Chromebook 11C)
-> --=20
-> 2.49.0
->=20
-
---rBD6QiyAktVQ2uJs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaErzgAAKCRB4tDGHoIJi
-0q7hAP4+dlT8mJ7UwIKnCYl2qYuKoPNuL652IQfNk/cSnsBByQEAxsWxRVNvWavo
-iouK9N1MJK5viXIHp3ANj69LAdfTdwk=
-=vB56
------END PGP SIGNATURE-----
-
---rBD6QiyAktVQ2uJs--
+    Andrew
 
