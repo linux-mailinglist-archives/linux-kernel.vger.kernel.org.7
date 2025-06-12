@@ -1,93 +1,83 @@
-Return-Path: <linux-kernel+bounces-683354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C49DAD6C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:38:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E336DAD6C6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE60C17CD0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C823ABA26
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F11422B8D0;
-	Thu, 12 Jun 2025 09:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C4F22CBD9;
+	Thu, 12 Jun 2025 09:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GB5DFE2r"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="gCgCKhQb"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3961F583D;
-	Thu, 12 Jun 2025 09:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C351F4E57;
+	Thu, 12 Jun 2025 09:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749721094; cv=none; b=RxpucFfoUZXg93cAl1tWw+WQj/M+GKS6kIAB/U1HczbY0uHa5s1TFX92zGy/i3k8VZk0yqeJIkJIYcj3w8MEmx8Rxv8CbydCcyb+wY60h2WCgpjYrdtSvFvyC6xyuWXwAH1EyyWala5hg0ZLmY+OsPkFVEmdpEBTsiSBJug0PxM=
+	t=1749721214; cv=none; b=DgGNdcAC9RXFNXcwiV40d2+UYMK4zCEFvaJGoiuQQKpAt+c48tYioxSIbfWGG2eZCwI4Vtwzky5J/KHTus7WtNCnS07eKOjprQ5vIddHgR7o4ObKbhOvexkwwcf3J6A1ahRuC0eqSz/EPUjBSOujixJ0stWM2iPXAoZuIORFwn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749721094; c=relaxed/simple;
-	bh=7Sew4ToZ48tcoIH5TUH3MSmnlLAiIfzoRnfYAjbjk4o=;
+	s=arc-20240116; t=1749721214; c=relaxed/simple;
+	bh=X0WyNzqdNdMYgNmtykgr5YdK/wDKDI9dptgfeOw9HhY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ7i3/V9R3ozypOEzODBNa3+qC9fsS+SQOnmg/QnHqrqCY/fodzzrbP/cXVmQXiZYJDiWNB3Uba7dAMwGMRsrqZSK4PFz2PR483z30P+PpM87vz6JyOwYcwqUPOMNAXK9Y2GLgtkwTcSj8n+rQwKAM6UY3ivHU/jWF/X1dEdLHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GB5DFE2r; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B2EF27E4;
-	Thu, 12 Jun 2025 11:38:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1749721082;
-	bh=7Sew4ToZ48tcoIH5TUH3MSmnlLAiIfzoRnfYAjbjk4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GB5DFE2rrwc1NR0KSyjetQbYNpDQoHhKlVfzVN8TA7JXnt3QYIVu+by2gEYyviYOd
-	 ZWD5qLZP35SoMrBvp0R4pjy62H3JJgs/b5zerR9J5vn0Qz49WiYvRT2/bTYrtmoFWP
-	 ie6bTZeQ945UIf9PugrWP/Q9w2enfOHfs6GmYhyk=
-Date: Thu, 12 Jun 2025 12:37:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-	LUU HOAI <hoai.luu.ub@renesas.com>
-Subject: Re: [PATCH 2/3] media: vsp1: Reset FCP for VSPD
-Message-ID: <20250612093757.GA4533@pendragon.ideasonboard.com>
-References: <20250609-vspx-reset-v1-0-9f17277ff1e2@ideasonboard.com>
- <20250609-vspx-reset-v1-2-9f17277ff1e2@ideasonboard.com>
- <20250611232956.GQ24465@pendragon.ideasonboard.com>
- <CAMuHMdVU0JJDff539YBMhM8xNQVf5Ufiw1D9TXitzsGWXPBMAg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mz+6OLLdx5dR4NsEYfEuOOYMjeGFBTBMmc4NOLCarPgNdWIsKJ5dqetjaGjxchCtq7KHkXqr5SHM2HbmJDkbaGOGrmP+3QK5DIS/6ZMHdhtegLU/MBFQZh2EEtLXa18T9dJEygd5TdYpD+WxdpJZS2wuGqHrbz3AwcSLQcL+deE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=gCgCKhQb; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=PWsK6/4szkHoVXHrnAm4LALSER2jQ1ghC7Ix2DLbky0=;
+	b=gCgCKhQbohyOe0xUCPsJ3o4Ew/mFa7zLgMkmqU0BS9KZaD06obYbyN0WtRyCXQ
+	RdKxtQYtBavGjIlWxi3tSqzVWp0Tb1ZBRikMCHdkTfX0e9JdZegrO4h+PgwDcLLC
+	vEc/cl7bkv8Y6lRYN4tOAocJ4iuR0/3xVKMRC2NKkkiVI=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD31+0yoEpo1rB_AA--.16809S3;
+	Thu, 12 Jun 2025 17:39:00 +0800 (CST)
+Date: Thu, 12 Jun 2025 17:38:57 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v17 1/7] Documentation/firmware: add imx/se to
+ other_interfaces
+Message-ID: <aEqgMVHl0C07/dPz@dragon>
+References: <20250426-imx-se-if-v17-0-0c85155a50d1@nxp.com>
+ <20250426-imx-se-if-v17-1-0c85155a50d1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVU0JJDff539YBMhM8xNQVf5Ufiw1D9TXitzsGWXPBMAg@mail.gmail.com>
+In-Reply-To: <20250426-imx-se-if-v17-1-0c85155a50d1@nxp.com>
+X-CM-TRANSID:Ms8vCgD31+0yoEpo1rB_AA--.16809S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYJPEUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAR5qZWhKmz8VvgAAs9
 
-On Thu, Jun 12, 2025 at 11:33:39AM +0200, Geert Uytterhoeven wrote:
-> On Thu, 12 Jun 2025 at 09:19, Laurent Pinchart wrote:
-> > On Mon, Jun 09, 2025 at 09:01:43PM +0200, Jacopo Mondi wrote:
-> > > From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> > >
-> > > According to H/W manual v1.00, VSPD must be excecuted
-> > > FCP_RST.SOFTRST after VI6_SRESET.SRST. So this patch adds it.
-> > > VSPDL is not applicable.
-> >
-> > According to the R-Car Gen3 H/W manual v1.00, the FCP must be reset
-> > after resetting the VSPD, except for the VSPDL. Do so.
+On Sat, Apr 26, 2025 at 12:31:32AM +0530, Pankaj Gupta wrote:
+> Documents i.MX SoC's Service layer and C_DEV driver for selected SoC(s)
+> that contains the NXP hardware IP(s) for Secure Enclaves(se) like:
+> - NXP EdgeLock Enclave on i.MX93 & i.MX8ULP
 > 
-> "Rev.1.00"
-> 
-> Stil, that is a very old version. "Rev.2.40" is 6 years younger...
+> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
 
-The good thing is that both document the reset procedure the same way
-:-)
+No one cared to give a Reviewed-by on this one?
 
--- 
-Regards,
+Shawn
 
-Laurent Pinchart
 
