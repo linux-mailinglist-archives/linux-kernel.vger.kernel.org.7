@@ -1,110 +1,133 @@
-Return-Path: <linux-kernel+bounces-683109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26F1AD691C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:33:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF40AD687C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D1E1BC2DEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EDE3AC67C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E318A20E70B;
-	Thu, 12 Jun 2025 07:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DEF1FBEA9;
+	Thu, 12 Jun 2025 07:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cyk1yl1e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kow2OY1i"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6961E487;
-	Thu, 12 Jun 2025 07:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413D5142E73;
+	Thu, 12 Jun 2025 07:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749713580; cv=none; b=RI55YVZuSCPbnSq6nRVXJFZRkm54CTVOwh1kHkzbHfvKf9YQ0I+ZA2VbzsM+RBH+cFfTK2/zAMevewU4c9vyoGjlC5vstJt/yAtZXAiQ0mPrXrq7lddbNjQ/z1BH16gy6RF4YeDMrnb3JqBbFvBTvueabCNeh1AjxQq0Tiw0NUQ=
+	t=1749712077; cv=none; b=N9rNBlIJiRHZk++skbApflIuwRrld0Pt8lEzFEwrwjeLQNxrtvojsMmEoQ6m68mv4RyFr1mjnsVgT5Ve5qreGlMKQgOoXByJwl3mXDqo7zJ2QAc78VHa6a5xljnHH/3OCOeiveXr4QEUdPW5eMoX47COJMQc9lc1zqXFEP9JF2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749713580; c=relaxed/simple;
-	bh=tZCcnl/osurP6iT2PXIgUw4w7LPGhfuYD+FmFH/xzzk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hy7ykRBE6cDUaVm1xfUdn4scApNqF5OxZx5jYWXBslJZPkw49kmE1sFSjPlrNtEm3BH6GBt3ire7lYWbV7G46iVbxXaU00VgWF/EqhyNRvPE8GVqRXYpbOV1u75HZZFC6BY1JxNYg2S0//Ex6ZCZbUCewqP/yvG2ZgyiJGdkyn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cyk1yl1e; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749713578; x=1781249578;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tZCcnl/osurP6iT2PXIgUw4w7LPGhfuYD+FmFH/xzzk=;
-  b=Cyk1yl1eTOollM+bRvSdmqCDD0ZuQdDI06Q+nYpGPfI9hymj8B4hgHe6
-   JxGDdb+eQS/vddZwN/ZLR0OBmbu59XaMc2l7u5ynaNR8qlGekn27V8Kd+
-   ogX4TguEpvjKKdjCfUbx1l457+yreyhAkr0QIYsexJiRMIWn2w8u6Szde
-   sCSn4cSdafxrZ4Z7EzCQQvHmDrQiw+xHVI/VwSlQVEycUOzr5jvm6DtSJ
-   sjJIJBDp3n7snCjrjEOnHCjHDkicybF73d4G6DF/3mTWReXtrjN/Isyx4
-   1R1sX5r4EserXsPp29Qjo2D6FO5zxaGmzqm5zVkpRNcV/eMeFZpjKjBjp
-   A==;
-X-CSE-ConnectionGUID: hN2Fz9BlSb+voeglWm+b4Q==
-X-CSE-MsgGUID: SQdxwChBRZqdVxzcfggw8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51795010"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
-   d="scan'208";a="51795010"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 00:32:57 -0700
-X-CSE-ConnectionGUID: WKhWkXWMTA+8j+Hvxxiglg==
-X-CSE-MsgGUID: ogDBG0D+TtmrsGe5eXKKOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
-   d="scan'208";a="152201840"
-Received: from wqiao.bj.intel.com ([10.238.158.145])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 00:32:54 -0700
-From: Qiao Wei <wei.qiao@intel.com>
-To: rafael@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: rui.zhang@intel.com,
-	xiange.pi@intel.com,
-	lili.li@intel.com,
-	furong.zhou@intel.com,
-	Qiao Wei <wei.qiao@intel.com>
-Subject: [PATCH v2 1/1] powercap: intel_rapl: Add support for Bartlett Lake platform
-Date: Thu, 12 Jun 2025 15:06:13 +0800
-Message-Id: <20250612070613.2995756-1-wei.qiao@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250612044538.2970661-1-wei.qiao@intel.com>
-References: <20250612044538.2970661-1-wei.qiao@intel.com>
+	s=arc-20240116; t=1749712077; c=relaxed/simple;
+	bh=fcbcUsdmGSWC6B+UaH4cDfyK1n0S4FLllNdjhTXZzr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vdx5c7+ttOOdE0ox88mpGglcHswhU7XpjICl07ZOryC9iLngkRWELi9+Fkq8btn1OdaarNuzSprnY6LVcJleJX06FC8e2/st2PPw/uCIzqJ6dFBDiIU5g1PmXp6tVYhS8LbI5JQn2OOW8c8BnlJxM4+TaXIzr1naSliLUG/Xj94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kow2OY1i; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso935875a91.3;
+        Thu, 12 Jun 2025 00:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749712075; x=1750316875; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dAOjJxhCfv8VWKL7BVvY9ZNzsKcaY5YiZqclR7H4/vs=;
+        b=Kow2OY1iF0KD34H77JO1Y/hgIV2UH6IA2mx8lcd5ccw+l+c5ABmaipVzaiklpSzLVe
+         6q93GMpBqrPTGUKAZ6rpNoVRQv1bV56rUC/2uei+oz2sER+trBH+6xuMhhGJWYhQEaE8
+         btR5cEU1EGkZhWXwrDL2E3p4XPTo7AJOqXZQibMzW8mnIi63LPjwaqBMscVvL0BEswr1
+         JBf2R4XFV9GNIY7piJ1Fwg2Y8tRyvg4QcSdpcRgC7EhloHOhadzKFv8uwC+A+x1diCgd
+         G7IF/pzkSG1iGT7xhfeJp+W1MkHGYaE4moAjQii06O8KUMPiLcXGQxHgGcrrbS8WM9nQ
+         PWvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749712075; x=1750316875;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dAOjJxhCfv8VWKL7BVvY9ZNzsKcaY5YiZqclR7H4/vs=;
+        b=VtIAjFV2zXPPXok7tYq2u9yr4u6HeqhuNf6BquJjWDbnS/dTfY8P/3TBwi0jSxuAcB
+         OWu97rGgsAfs8cPuoCsIBgbepiBSmh0H94m0MGb7FX3gBrCHUDvZMtW5VFR0lNNAyYyB
+         yOFAJelprb2S2l1rNP3/AZrc9fu9GSTvp8O9NLvCI4p0kP4SwP/oSbWSdrWgMQwBIKez
+         hybLNSzfERpn0cGx70FKwbXO3aIjmI5lM8tt7DgMA0eyTepqr9l8JHhaFIGQLNKqH97E
+         gZLCYW6r+DFpyL8ktQ9Nwg2i3eHhYT2vp8sFUHRcmMfUz4XV7+7+ufil27S8mcMopn+B
+         M1JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnc0Dy8jKmC3rByxNhhGeDRUT7RV4aN1j0Y65102epnY7Y2R0WTCcynKZS3sUt3LLCFoHVqa1iUTWN@vger.kernel.org, AJvYcCWwn1BS+2PW2SMdZZybcrWQd+SLviq5VvWf9/LQIh0UxMM6+JuPltPBNoFBVlpC40W6dxyehawTdXMYp2US@vger.kernel.org
+X-Gm-Message-State: AOJu0YzazXTpkPhCe54Fc1TdLdAP5fYZLoPAGJn3SxBvLD7EMuHW3OWt
+	knwJxjWJhMVxhYYVJhd8ZjYLcwx+1a6E46t5iX/O+VwBLcdlCk0SJVUYqmNp+8tZGQA=
+X-Gm-Gg: ASbGncsHzNAFiTLJe44cgltdiTdmSWvcM20a/W7DUzpxB5FptaxcG1WkaCVm/+QvtNu
+	BjEsKrHwnXLVbAfwx4IpHSD9FS3vQFWrKI6p9vFxqLtnHRjMrqPhoKoobS1q0wvu5lYQ7Bt+DvI
+	Qj/fv0t45xhLNnb7vhbVc5FnkIEBZcoebAMeY2snO4s3Espf4uKzwlAEuZJXqbcgPuaVJ26cAtD
+	Rl8Jc/wZgTehthGis5olQks9JfrhszNLn3CCxiCMT3MC2CY46r7Np0hczRgzAgtbYz4bwnkQlwb
+	WOFi4rxBiZxwLU6qRi2zt31/hbLfwx8ilPT8vgZIm6bI4DwX/ytWM7HbZJ5RqKXDXYZqFvwP3NA
+	qIND8pLvePyRgHuJ1fqKInXQkZ48xQVs=
+X-Google-Smtp-Source: AGHT+IGfi33QMmP2NxREt3lPErfPBTHFxGftgC5xTDBsF/Wzhv8TdBvW48FWIe805inRamkcxDRnzw==
+X-Received: by 2002:a05:6a20:729c:b0:1ee:efa5:6573 with SMTP id adf61e73a8af0-21f86600846mr9497042637.8.1749712064431;
+        Thu, 12 Jun 2025 00:07:44 -0700 (PDT)
+Received: from ankitchauhan-Legion-5-15ITH6 ([2405:201:4042:d128:1895:113a:65dd:3ae0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74880a06b64sm738064b3a.143.2025.06.12.00.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 00:07:43 -0700 (PDT)
+Date: Thu, 12 Jun 2025 12:36:56 +0530
+From: Ankit Chauhan <ankitchauhan2065@gmail.com>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm: lanyang: fix lable->label typo for lanyang dts
+Message-ID: <20250612070656.bir2ywkwu27gxs7d@ankitchauhan-Legion-5-15ITH6>
+References: <20250529-lanyang-lable-fix-v1-1-8a2dcb48bda4@gmail.com>
+ <3fe9885cc54a328932915a63816ac1b7952689a2.camel@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3fe9885cc54a328932915a63816ac1b7952689a2.camel@codeconstruct.com.au>
 
-Add support for Bartlett Lake platform to the RAPL common driver.
+On Thu, Jun 12, 2025 at 03:01:58PM +0930, Andrew Jeffery wrote:
+> Hi Ankit, thanks for the fix.
+> 
+> Regarding the subject, can you please use the prefix 'ARM: dts:
+> aspeed:'? From there, I'd prefer something like:
+> 
+>    ARM: dts: aspeed: lanyang: Fix 'lable' typo in LED nodes
+> 
+> On Thu, 2025-05-29 at 17:09 +0530, Ankit Chauhan wrote:
+> > Fix an obvious spelling error in the dts file for Lanyang BMC.
+> > This was reported by bugzilla a few years ago but never got fixed.
+> > 
+> > Reported by: Jens Schleusener <Jens.Schleusener@fossies.org>
+> 
+> Please make sure these tags reflect convention:
+> 
+> https://docs.kernel.org/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
+> 
+> Rather than spaces, they use `-` to separate words, so:
+> 
+> Reported-by: ...
+> 
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=205891
+> > 
+> > Signed-off-by: Ankit Chauhan <ankitchauhan2065@gmail.com>
+> 
+> Finally, all the tags should go together in the 'trailer' (final
+> paragraph). There should not be an empty line between the `Closes:` tag
+> and your `Signed-off-by:` tag above.
+>
 
-Acked-by: Zhang Rui <rui.zhang@intel.com>
-Signed-off-by: Qiao Wei <wei.qiao@intel.com>
----
-Changes since V1:
-- Remove "[linux-driver-review]" prefix in the subject
-- Add Acked-by tag from Zhang Rui
----
- drivers/powercap/intel_rapl_common.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi Andrew,
 
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-index e3be40adc0d7a..c0789df34b2f7 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -1261,6 +1261,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE,		&rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,        &rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_BARTLETTLAKE,	&rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_METEORLAKE,		&rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L,	&rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	&rapl_defaults_spr_server),
--- 
-2.34.1
+Thanks for the feedback. I will make all the necessary changes and send
+a v2 PATCH.
 
+Kind regards,
+Ankit Chauhan
 
