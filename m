@@ -1,205 +1,92 @@
-Return-Path: <linux-kernel+bounces-682933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F305AD66A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B09AD6698
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 535F27A2D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7771F1BC2458
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2CD1DAC95;
-	Thu, 12 Jun 2025 04:08:25 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A2723875D;
+	Thu, 12 Jun 2025 04:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqIetFeC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F7E19F137;
-	Thu, 12 Jun 2025 04:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C9F23315A;
+	Thu, 12 Jun 2025 04:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749701304; cv=none; b=UVL3Uy8P5AJNmbCHzgIAAAOY823GjnYWAwJseR4f+/oY5aXsyenfcsfb6NOhAZ5qD0DHzWpDEYwnW6J0Bmatgu9YZr/cPZaZS+vlBIDa93tPhEP9cJfOFpIOP5dPlxiz3nh3fnSdRCbpCzvmPpPex3ZrjHQsvRZzb7XlpVdKLPo=
+	t=1749700873; cv=none; b=YWQlm687dVHFPKlRBCHpP/2ac3TyWXyTjILQ+4xyREL7tmYC8tOoEZ1kc+gvRn6BYuJLT7dPa1CWn09LlsicwnrSWO0bw19itwVuUc+w4T94QmLq9eLvKe44KJnSJffUNc3/FygWCuLDYlf+LDx63UfrbRNprlCoFewF7B7zXO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749701304; c=relaxed/simple;
-	bh=XU7wejBwGgIJ5mrJNR8OeoF4ChRgysR4TveQLmwzHps=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HA0/Ay9u+A7OwpvdgWb5uGwCAprY601QPc0sQmtUKVqCH26J4UmcnWMfG/u7h1Y+YpRAQ6MRBhmyjwC/H0vphhdbePKrG5O3fJSuZp+cUzWt4ZORLFnIhD1raWBLbfTMDhtwhz3My8eO916wlIDXy37M70Jg5+CqJjZMpXKYQ8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bHprK3kxHz2TSCk;
-	Thu, 12 Jun 2025 12:06:57 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id CA3311A0171;
-	Thu, 12 Jun 2025 12:08:17 +0800 (CST)
-Received: from huawei.com (10.175.112.188) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
- 2025 12:08:16 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH v2] nfsd: Invoke tracking callbacks only after initialization is complete
-Date: Thu, 12 Jun 2025 11:55:06 +0800
-Message-ID: <20250612035506.3651985-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1749700873; c=relaxed/simple;
+	bh=MksUImPZA979XdX5UwujVDcIaositjUOeT0Z3M6VUMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LXQKJOGvxd8vUk3Immz10G1SaOKpUtHnz27SZFGBf6dLnSq7vzH5HCfMdprJEmZ1EHhWfrL3nvDE4sZT/L8RBszQ75iXV0hO1fHypOiOF7CzsDxb1gu/mNpwjZPitcYoPyyhS1KWCBhpqtAISkhanSMWfvuIlk87vB5pFIO4ELA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqIetFeC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B48E9C4CEF1;
+	Thu, 12 Jun 2025 04:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749700871;
+	bh=MksUImPZA979XdX5UwujVDcIaositjUOeT0Z3M6VUMY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FqIetFeCberubPDGlGZJA/IEYWGPz5EtC9DqmZ36bb/EOhWURSgCETLv+7SCbBJDp
+	 2Qm9hGDNEccZO4u+14cghaQRYf5X0iPv4P1GEuKLjStL9XHo5Oj/vWWZxSiovLEOTg
+	 I3IELBqahNaYi+edMH7Aqr8bLJm/kv6lY0bMjtJq48BAqiTedujrNWME0vCeA/lMXy
+	 sye+f8wTn9Qv1qhZkPwwDdtWqkJagb9jm+3zbFBBV/O5krC0oZTXSU15xkiY3NZ/YD
+	 pXm1hkF3UH2nJ+KvbA1cdmiREidWkTZTsOlz9DNnvRy4Yc5zX/0P9Ox6jroJ4KkKjX
+	 gDDeIL12rsseQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v7 0/5] media: qcom: iris: add support for QCS8300
+Date: Wed, 11 Jun 2025 23:00:50 -0500
+Message-ID: <174970084194.547582.4302512086798820865.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250501-qcs8300_iris-v7-0-b229d5347990@quicinc.com>
+References: <20250501-qcs8300_iris-v7-0-b229d5347990@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemg500017.china.huawei.com (7.202.181.81)
 
-Checking whether tracking callbacks can be called based on whether
-nn->client_tracking_ops is NULL may lead to callbacks being invoked
-before tracking initialization completes, causing resource access
-violations (UAF, NULL pointer dereference). Examples:
 
-1) nfsd4_client_tracking_init
-   // set nn->client_tracking_ops
-   nfsd4_cld_tracking_init
-    nfs4_cld_state_init
-     nn->reclaim_str_hashtbl = kmalloc_array
-    ... // error path, goto err
-    nfs4_cld_state_shutdown
-     kfree(nn->reclaim_str_hashtbl)
-                                      write_v4_end_grace
-                                       nfsd4_end_grace
-                                        nfsd4_record_grace_done
-                                         nfsd4_cld_grace_done
-                                          nfs4_release_reclaim
-                                           nn->reclaim_str_hashtbl[i]
-                                           // UAF
-   // clear nn->client_tracking_ops
+On Thu, 01 May 2025 02:16:46 +0530, Vikash Garodia wrote:
+> add support for video hardware acceleration on QCS8300 platform.
+> 
+> This series depends on
+> https://lore.kernel.org/all/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
+> 
+> 
 
-2) nfsd4_client_tracking_init
-   // set nn->client_tracking_ops
-   nfsd4_cld_tracking_init
-                                      write_v4_end_grace
-                                       nfsd4_end_grace
-                                        nfsd4_record_grace_done
-                                         nfsd4_cld_grace_done
-                                          alloc_cld_upcall
-                                           cn = nn->cld_net
-                                           spin_lock // cn->cn_lock
-                                           // NULL deref
-   // error path, skip init pipe
-   __nfsd4_init_cld_pipe
-    cn = kzalloc
-    nn->cld_net = cn
-   // clear nn->client_tracking_ops
+Applied, thanks!
 
-After nfsd mounts, users can trigger grace_done callbacks via
-/proc/fs/nfsd/v4_end_grace. If resources are uninitialized or freed
-in error paths, this causes access violations.
+[4/5] arm64: dts: qcom: qcs8300: add video node
+      commit: bf6ec39c3f36d5f65335e68f756b639e872869ce
+[5/5] arm64: dts: qcom: qcs8300-ride: enable video
+      commit: f981efd411d260794f3d24bdc7f26cb6200e21f3
 
-Resolve the issue by leveraging nfsd_mutex to prevent concurrency.
-
-Fixes: 52e19c09a183 ("nfsd: make reclaim_str_hashtbl allocated per net")
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
-  Changes in v2:
-    Use nfsd_mutex instead of adding a new flag to prevent concurrency.
- fs/nfsd/nfs4recover.c | 8 ++++++++
- fs/nfsd/nfs4state.c   | 4 ++++
- fs/nfsd/nfsctl.c      | 2 ++
- 3 files changed, 14 insertions(+)
-
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index 82785db730d9..8ac089f8134c 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -162,7 +162,9 @@ legacy_recdir_name_error(struct nfs4_client *clp, int error)
- 	if (error == -ENOENT) {
- 		printk(KERN_ERR "NFSD: disabling legacy clientid tracking. "
- 			"Reboot recovery will not function correctly!\n");
-+		mutex_lock(&nfsd_mutex);
- 		nfsd4_client_tracking_exit(clp->net);
-+		mutex_unlock(&nfsd_mutex);
- 	}
- }
- 
-@@ -2083,8 +2085,10 @@ nfsd4_client_record_create(struct nfs4_client *clp)
- {
- 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
- 
-+	mutex_lock(&nfsd_mutex);
- 	if (nn->client_tracking_ops)
- 		nn->client_tracking_ops->create(clp);
-+	mutex_unlock(&nfsd_mutex);
- }
- 
- void
-@@ -2092,8 +2096,10 @@ nfsd4_client_record_remove(struct nfs4_client *clp)
- {
- 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
- 
-+	mutex_lock(&nfsd_mutex);
- 	if (nn->client_tracking_ops)
- 		nn->client_tracking_ops->remove(clp);
-+	mutex_unlock(&nfsd_mutex);
- }
- 
- int
-@@ -2101,8 +2107,10 @@ nfsd4_client_record_check(struct nfs4_client *clp)
- {
- 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
- 
-+	mutex_lock(&nfsd_mutex);
- 	if (nn->client_tracking_ops)
- 		return nn->client_tracking_ops->check(clp);
-+	mutex_unlock(&nfsd_mutex);
- 
- 	return -EOPNOTSUPP;
- }
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index d5694987f86f..2794fdc8b678 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -2529,7 +2529,9 @@ static void inc_reclaim_complete(struct nfs4_client *clp)
- 			nn->reclaim_str_hashtbl_size) {
- 		printk(KERN_INFO "NFSD: all clients done reclaiming, ending NFSv4 grace period (net %x)\n",
- 				clp->net->ns.inum);
-+		mutex_lock(&nfsd_mutex);
- 		nfsd4_end_grace(nn);
-+		mutex_unlock(&nfsd_mutex);
- 	}
- }
- 
-@@ -6773,7 +6775,9 @@ nfs4_laundromat(struct nfsd_net *nn)
- 		lt.new_timeo = 0;
- 		goto out;
- 	}
-+	mutex_lock(&nfsd_mutex);
- 	nfsd4_end_grace(nn);
-+	mutex_unlock(&nfsd_mutex);
- 
- 	spin_lock(&nn->s2s_cp_lock);
- 	idr_for_each_entry(&nn->s2s_cp_stateids, cps_t, i) {
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 3f3e9f6c4250..649850b4bb60 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1085,7 +1085,9 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
- 			if (!nn->nfsd_serv)
- 				return -EBUSY;
- 			trace_nfsd_end_grace(netns(file));
-+			mutex_lock(&nfsd_mutex);
- 			nfsd4_end_grace(nn);
-+			mutex_lock(&nfsd_mutex);
- 			break;
- 		default:
- 			return -EINVAL;
+Best regards,
 -- 
-2.46.1
-
+Bjorn Andersson <andersson@kernel.org>
 
