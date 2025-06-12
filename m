@@ -1,174 +1,140 @@
-Return-Path: <linux-kernel+bounces-684152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C300EAD76DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:48:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00E6AD76C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A943BC1DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57F41898A2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2A424A079;
-	Thu, 12 Jun 2025 15:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81A7298991;
+	Thu, 12 Jun 2025 15:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V10LlDub"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="4QeuTfF5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Qvu9P7xE"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957DB1A265E;
-	Thu, 12 Jun 2025 15:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA0F1A265E;
+	Thu, 12 Jun 2025 15:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742785; cv=none; b=PtfCBOKM/vsyq0AHQrIXrhpjVcgFDv28aLBLdT44itnWtLjYfj4FktM2vak4C2gdK3Aho/rgTsQU01O0+3/x7i8SwcaNTJo1BOanoZoAjScXfuXSKAc368ME1mQSw/xRQHgXnu+l8UhqK0FbIDjHWq9QYXVrMvzawPfjaKGKeUY=
+	t=1749742856; cv=none; b=QjmhkHH9WNX2vRq+a3reoC8ixJrem2LCKBY121vE+WTWrFCFy4shFh4h3ACxZk7kR0RbWRVNrvVT4cT4BP5i5Pm5oRRhoTDuOuYcWYO83tV6glB5bqDSUTAA7Wd9aYvaSAecVTZSYMvMU+GyeYTjHp/ZtTac+9Ke0kNce8IysJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742785; c=relaxed/simple;
-	bh=kql/68pdZM78tfHESpUFtGAG253otQkry8EKhBsHpQ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bFhESgFB0rrG4MPq/+ll5u+zMd5jQjwaCFFgofOlxwa4kXGKggK65//a+9YyxSE4dltIsFtN+KhfQuhkRnBMRXp6GpPJmV1/si2wkpwdF7Ppb6m4vYXqBxsLv2H/fBAm2D/Dg4Ufpc+faXQrUm2obrzG/h4V06JNl8nZIg7vNZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V10LlDub; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183CAC4CEEA;
-	Thu, 12 Jun 2025 15:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749742785;
-	bh=kql/68pdZM78tfHESpUFtGAG253otQkry8EKhBsHpQ0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V10LlDub+VHqlA5ixOqtYjEnEMX0oLZoITvIBMJKwrUTQBiOnGJJIkfHy9d7WXD+u
-	 57JrjqMBuhe6az73OLfIvzzWL04vXyC0vhxmcjri86AA+pBZdrct3yE9Sdv9doT4Ba
-	 stDpdJS1V8W9EKceuG4g8pPbSKFnScf8W0RZpqpKtBGXJ0oYRIs9mBh66vQaOkA5XT
-	 OzkBwU1yEhMfxdaPWGhiBI8cupBC79gQq6dKOHMJwPi3WzGD83Qz74V83r3WHSosmP
-	 87qeQbY/Cl987QkI8XzbFzjfUctOnQyPlbEGYHx8kCOVsYkItH3IYBDTCFuorLZRF6
-	 GDjf05tupfbxg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-551fc6d4a76so1059483e87.0;
-        Thu, 12 Jun 2025 08:39:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVTnRuGJlIwHt4SGr5zCYR1pQuuHkAKvPH7OL/zDCm2AgKDouG/7de96CVzvnGNAne8Q9qec99JXDBmTALp@vger.kernel.org, AJvYcCWT3G2k6m3+E50QKdy9uOpskvUbhWJ2f9R+MWUP0qZvPOkp+uvLPhF2f0QcQHv02Cx5K6YNyLnA1qG/kHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx69eDiHpjXJczvnOyOAhBBdHyhxRUY78guebg3JqYrpEvyVmDe
-	ENGfaCg4kghIHoJSbA1n5zLozcc+PJC30hoonvYOaOtd2IlFzvdY5SlgrPbgYUAqZv7EemnIlgX
-	EbqPoMXcWVJwE55bvmyJI7BX+pRe+U44=
-X-Google-Smtp-Source: AGHT+IFCn4cy8C3+uiWTpUl/bd4P8YsEsu+4izukKFuLL6PKg/Lb5ciTZY8OYnsP8L0vp4VZAkEInbX/v51sLL36k8M=
-X-Received: by 2002:a05:6512:4025:b0:553:2f50:5dff with SMTP id
- 2adb3069b0e04-553a5599d7fmr1294722e87.17.1749742783743; Thu, 12 Jun 2025
- 08:39:43 -0700 (PDT)
+	s=arc-20240116; t=1749742856; c=relaxed/simple;
+	bh=id4ih60TuebeVY8xdlobeadCEqP8YfcnizOYCiHa1u0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CDSxBuPMpnkTawTCeMsYaCix6Cx6dSpN9vd49cga0peZVDfbvs7M75gUw00c0UviIZCogwG7eOC+oPf2opI9KP6IjKPS61+gjZsBqrrOqZNyLVgVsRU51Z6sMhIRoAYhYCS5H6CiI36TW73d+8tEIi5S8Dic5npWpzLOr6WCPjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=4QeuTfF5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Qvu9P7xE; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8384F1140250;
+	Thu, 12 Jun 2025 11:40:54 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 11:40:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749742854;
+	 x=1749829254; bh=sWelLnp2+cYiV77S4Yvo1Q6mYaqOKiPfdOyUWSK8nrk=; b=
+	4QeuTfF5PcInrQBsM34KSDk2CeLuGSu2AIA5rYUy+wrTcXmhhvKu5ctBRJ6PJV6k
+	J/a0ymN6VytkungiF+5mwf6I97I8LVCXYQ1fYHIcLOksONNi+dSj19yBUZ+KEzmN
+	dZHD1YUcO0kGi/Sxi449AOVJk+r5lbHUYsvFYviyJHE26ZzGbB7LLACLiUK+CLlQ
+	eyHREgOoBHWhJ+ZOstwsP2aoZ8RfqOyKG7B7vYpX6RqvILpluJ4DsBNDeAvZeEj4
+	wix3WLwt6L0HOq8ntu/7p4vNP0m4opTocN+laKqpuG34D+pHo2FvyCUM74BUSw8R
+	9NPh59rl/hn3cGn9JtlpUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749742854; x=
+	1749829254; bh=sWelLnp2+cYiV77S4Yvo1Q6mYaqOKiPfdOyUWSK8nrk=; b=Q
+	vu9P7xE0es4tN65mYdM2nVsmcOOXCKQ+rX4bT02kV1HFMLYfb4pNKvQkoD02qlVp
+	El9ihjx46fB/X/MEQmDVrQUkqqG9+AwjkcbZOBfFrC+GGTtzfvNi+LYeMlO0scyp
+	XAstAhZ0x3FRzCo6VuzxStn0dt+QAsLCYfSaolfyg1LZTZQAr2d6rP9q0XhIUUAu
+	CDCEYZJM8InFaqGrtzQynWkNPrthDAeZXEXI396GBXOWRC3rciG5q7Rj1PGr/7Sn
+	zorydElm7bbd+RhqyRv6CkaaisCLWeLEONOlS2MK0cFAelR5d4TzHocB8E0aYhZC
+	5SdXpbQaY9P+SJGIP1Ujg==
+X-ME-Sender: <xms:BvVKaO4sczhyK7B8_T1rKSioG-PMJreKeelislgf2dbmvEWfze2I-w>
+    <xme:BvVKaH4RxposRIUuwLQg7RMjyb3SfICpCr4AjnPMHX2QAwkAuHONW8PcSPAoefUsC
+    -OlKpAazzWMqlBSk7I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheeghecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeholhhtvggrnhhvsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepjhgrmhgvshdrtghlrghrkheslhhinhgrrhhordhorhhgpdhrtghpthhtohepihhmgi
+    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehfrhgrnhhkrdhlihesnhig
+    phdrtghomhdprhgtphhtthhopehvlhgrughimhhirhdrohhlthgvrghnsehngihprdgtoh
+    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqshhpihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:BvVKaNf-lDV226O4SxCItt11pByKUOXkXVxwpMakcaqssbnnX9DV6g>
+    <xmx:BvVKaLIXfVITFPBjbJ4aDbf5jti0-uDXCt1asfxJ06HYMd0SuSqJvg>
+    <xmx:BvVKaCLH6PJ0SSkRDpV6BfUUGguMkrNHBMVd4Ywr0yK40EJOoMskKg>
+    <xmx:BvVKaMzxQyBts5JxAz1C9MIDV6_bVLXqDTPtsWAf0-39s-3lsubdhA>
+    <xmx:BvVKaNyeL7nRYyg0pQ0kawOd1LbaMh6GRmW7-lG890m_c_NGdIvjjKaB>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3D9A8700062; Thu, 12 Jun 2025 11:40:54 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com>
- <20250611075533.8102A57-hca@linux.ibm.com> <CAK7LNASSeuZWAXS6tDGL1T8S1N9fmg4DND616BL6uco4gnYFqA@mail.gmail.com>
- <8992766a-cc96-40bb-b8c2-60931ad0f065@app.fastmail.com> <CAK7LNAShTuuxL6+foeQBTg4Nf581Q3vy38XGuXRk4hFvEAWjig@mail.gmail.com>
- <38a08452-4db2-43e0-afdc-b7d696da5454@app.fastmail.com>
-In-Reply-To: <38a08452-4db2-43e0-afdc-b7d696da5454@app.fastmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 13 Jun 2025 00:39:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARzWWrQQb3C5hXQ91GED6-7A3eG8WzeFDvcqQeA15hZrA@mail.gmail.com>
-X-Gm-Features: AX0GCFuubVFMo5O9hAdzt9MUjZOnvHvlasTNzdZAHWJ9mz6H1COFBdQ9RnKyH9A
-Message-ID: <CAK7LNARzWWrQQb3C5hXQ91GED6-7A3eG8WzeFDvcqQeA15hZrA@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for v6.16-rc1
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: T7ec8a5524929d219
+Date: Thu, 12 Jun 2025 17:40:33 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "James Clark" <james.clark@linaro.org>,
+ "Vladimir Oltean" <vladimir.oltean@nxp.com>
+Cc: "Frank Li" <Frank.li@nxp.com>, "Vladimir Oltean" <olteanv@gmail.com>,
+ "Mark Brown" <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <b9ae3ee9-1296-4a0d-b6e2-97aaf551482c@app.fastmail.com>
+In-Reply-To: <ad7e9aa7-74a3-449d-8ed9-cb270fd5c718@linaro.org>
+References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
+ <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
+ <aEhMBsqlx9I4XqJS@lizhi-Precision-Tower-5810>
+ <de7142ac-f1a3-412f-9f00-502222b20165@app.fastmail.com>
+ <aEhVsrEk0qv+38r3@lizhi-Precision-Tower-5810>
+ <20250611090107.t35zatn47vetnvse@skbuf>
+ <c65c752a-5b60-4f30-8d51-9a903ddd55a6@linaro.org>
+ <20250612111514.rfb3gpmlilznrfxs@skbuf>
+ <ad7e9aa7-74a3-449d-8ed9-cb270fd5c718@linaro.org>
+Subject: Re: [PATCH 2/4] spi: spi-fsl-dspi: Use non-coherent memory for DMA
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 5:01=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
+On Thu, Jun 12, 2025, at 16:14, James Clark wrote:
+> On 12/06/2025 12:15 pm, Vladimir Oltean wrote:
+> This leads me to realise a mistake in my original figures. My head was 
+> stuck in target mode where we use DMA so I forgot to force DMA in host 
+> mode to run the performance tests. The previous figures were all XSPI 
+> mode and the small difference in performance could have been just down 
+> to the layout of the code changing?
 >
-> On Thu, Jun 12, 2025, at 03:42, Masahiro Yamada wrote:
-> > On Wed, Jun 11, 2025 at 11:24=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
-> >> On Wed, Jun 11, 2025, at 15:32, Masahiro Yamada wrote:
-> >> > On Wed, Jun 11, 2025 at 4:55=E2=80=AFPM Heiko Carstens <hca@linux.ib=
-m.com> wrote:
-> >> I think this makes sense in general, but the output here is
-> >> excessive if it leads to users no longer wanting to enable W=3D1.
-> >>
-> >> There are other warnings that I think should be enabled at the
-> >> W=3D1 level (e.g. -Wformat-security) and eventually by default,
-> >> but that are still too noisy at that level.
-> >>
-> >> My own cutoff would be at a few hundred warnings in allmodconfig
-> >> builds if there is an effort to reduce it further, but it seems
-> >> that this one is still at a few thousand, which does not seem ok.
-> >
-> > Then, what to do?  Downgrade to W=3D2?
-> >
-> > I think nobody cares about W=3D2 builds,
+> Changing it to DMA mode gives figures that make much more sense:
 >
-> I think the first step would be mass-cleanup patches to get
-> the initial numbers down. A lot of this can be scripted.
+> Coherent (4096 byte transfers): 6534 kbps
+> Non-coherent:                   7347 kbps
 >
-> > and the problem of all C files including <linux/export.h>
-> > would remain forever.
->
-> I'm missing a bit of background here, and I don't see this
-> explained in the 5b20755b7780 ("init: move THIS_MODULE
-> from <linux/export.h> to <linux/init.h>") changelog text
-> either
+> Coherent (16 byte transfers):    447 kbps
+> Non-coherent:                    448 kbps
 
-I explained in 5b20755b7780 and also in the comment lines
-in scripts/misc-check.
+Ok, good. The improvement from the patch is less than I had hoped
+for, but it does sound like at least it doesn't get worse for
+small transfers.
 
-
-<linux/module.h> is included by modular (i.e. tristate) code,
-which is symbol _consumers_.
-
-<linux/export.h> is included by symbol _providers_.
-
-These are independent, or in other words, orthogonal.
-
-Therefore, there is no reason for <linux/module.h>
-to include <linux/export.h>.
-
-It is standard to split consumers and providers,
-since they are included by different files.
-See <linux/clk.h> vs <linux/clk-providers.h> as another example.
-
-
-
-
-
-> What is the purpose of cleaning the linux/export.h inclusions,
-> and what makes this one more important than others?
-> I obviously understand that indirect header inclusions are
-> a giant mess and that any such cleanup helps, but linux/export.h
-> seems particularly small compared to many others. It was
-> originally introduced so a lot of files would no longer have
-> to pull in linux/module.h if they only care about using
-> EXPORT_SYMBOL() and THIS_MODULE, so linux/module.h could
-> eventually become private to kernel/module/*.c.
-
-I believe <linux/module.h> will remain, as modules must
-define MODULE_LICENSE().
-
-
-> Is this something you are trying to continue, or are you
-> doing something else here?
->
-> FWIW, I compared the preprocessed sizes of linux/export.h
-> (~2000) and linux/module.h (~120,000), and it seems that almost
-> none of those are needed by most of the files including
-> linux/module.h. The one part that is commonly required is
-> MODULE_{INFO,AUTHOR,LICENSE,DESCRIPTION}, so maybe there would
-> be a chance to clean this up at the same time if you are
-> planning some large-scale reshuffling of #include statements
-> around export.h.
->
->      Arnd
-
-Split <linux/module.h> into public and private is good,
-but it is beyond the scope of this work.
-
-Regardless of the file size, if a file does not need to
-include <linux/export.h>, the open syscall can be avoided.
-80 % of *.c files do not need to include it.
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+     Arnd
 
