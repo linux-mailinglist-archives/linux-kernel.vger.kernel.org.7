@@ -1,119 +1,132 @@
-Return-Path: <linux-kernel+bounces-683608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837A9AD6FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BB8AD6FBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A6016DBD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075FB3A9A65
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1779E21FF5B;
-	Thu, 12 Jun 2025 12:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD3A2356CF;
+	Thu, 12 Jun 2025 12:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g+yez3Yy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="b/+EWrU0"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59E135A53
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C39421FF5B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749730012; cv=none; b=bhQNfnuf+gGpcdLBvKYz81rHdfP2E89vw3emlxv2cYRbQKuuXPPbrdU0RTNr0ajWOIi0FPEU0BwPKPLgWTH3AIaptk50wi1S4DIqdO9wq9Lh3JgBpPBUTRt57Br8dIdcWcdrjNcwnio2B4SPk0ovbwgbwWJ1qN0gcAjLwm8YJ08=
+	t=1749730115; cv=none; b=RO6wwoOyt70GQzqn6VKiMong5GpYZ2RkTnP6kDzCEDUEtAS1Zd11SEj42v8wwR5SOeWcvHxbIfeGDG58Z5lqXWriGSSLk+4QQKCIAkJX0qAv50uhAuD1oghnQnMtH9ljhbeG3y57Lcfcnl8nGdpahxi8uQYVQuk+XwKn5aPYeBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749730012; c=relaxed/simple;
-	bh=bt8x5keeLDE81x2GrYzxHcSD008whjgI3Lsl2w1r3ac=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ujGynEO2wOyJesg+7u57/sNWLoZgxvoErDe4jR+IznNxxKJe5Xw7EIAdaQ3SbwHeRTCMbiTc1xCFbZW5oThEHNcgykasJsGf+4ql7RJFxnni50dNQMrvi9AitWGvqXtovmMG/K++pBebQoegqRgx6ki37aHJO6btgzPghH1j56M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g+yez3Yy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749730009;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+6AfO1YybxLGPmROnZhI75QLnlG9tkbcH/GZMCHyp4Q=;
-	b=g+yez3Yy93T4fvf5cRDaaJEfJouCrFomvnQPyExGItXQsXwZL/w7uqdYs9Je7rJXcqmL0j
-	oMosvyw6ZyVrD2M2hYt8eYArLsvA5G28Rp6kUzK92sFd0CoizTfnw7lHsCCDp26YFPxy+5
-	jP6yZs7M+/KTgNZRIlaqlMLfH+TJoM4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-97-R4Bxs8vMN1qTKAan9YxIdg-1; Thu, 12 Jun 2025 08:06:48 -0400
-X-MC-Unique: R4Bxs8vMN1qTKAan9YxIdg-1
-X-Mimecast-MFC-AGG-ID: R4Bxs8vMN1qTKAan9YxIdg_1749730007
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d290d542so4834125e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 05:06:48 -0700 (PDT)
+	s=arc-20240116; t=1749730115; c=relaxed/simple;
+	bh=/5hkVOPMuKNYyP5pXqAuGWYICPyX3micXgythDTEnfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FlsYTrMlbs7cvw+Sbd0ylEmlSErFN3toAr3NQlYn+k8Wy3XpyWFRGqk3iEg24eWGAYaYuNOSNY4OgJ+V0DHrbRlcACn6fVKtqXP2X4MHit9IGBadkq21ZFdt/XZ3tAthpn1vTK4YjuMLIHThUzaSLZcwcVZaYapOIvo076x7D/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=b/+EWrU0; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-872886ed65aso82141839f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 05:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1749730111; x=1750334911; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oiQC+W0yjIGVwcsiN86fhi+gjf0lk8z+cPeuP0rwwk8=;
+        b=b/+EWrU00bjwqoqDBfgmYPWOhkSYPf9t6JvmX8kXLzj1ZrUUYHgzKK7TZc6ZTCIm+u
+         kPgS+I65OIuGFHJxyqvt7BuJ47EADr8r/3NM6rNo0FaA4y1G8LzTtpQ6EGxttSF5B24P
+         /hTX0C/8paMgK9MgwJ57jgm3Pm5KPjA0ypCzA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749730007; x=1750334807;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+6AfO1YybxLGPmROnZhI75QLnlG9tkbcH/GZMCHyp4Q=;
-        b=uyuFsPE1LRE8AzKNt29vwdUyxHA1NWOVi9VnhK3KMxKKJ+I0Py20QGgnBRmMcPG8Ht
-         EfDP1zK/Eq0Uj2LGGfaqKGYs4cQo5qKBcpEz4Y6OvCQqrVvHaLii3964zbpqFYAxbxnk
-         sFVS/aHaYT3K/zscLmOFisxF9FZ1abPGxq7c/8fuS4qNzp4BuKtby62Nl84LgzPU3z/b
-         LjViRSnQqbWE95nJrzXoWRvPIevGKCDhm/9GWoxlVmXO+87DGKPVB01Vwc1pLSn0zj4D
-         JE37OeRT4vtDOOVb9BRSyYQe22n4EdJnTnyS6/2cLgm/WOGLKNIaheNLQfe2i5U7vffO
-         F5kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmOk8uPzvh25QPj3baNXRmgLeLLmGLqax7vRzfPcFE9nLEd0SK5j4qt5RwmC+v8RhSJQaBBWgFrriJiR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdXNuAo1UPqU9P+WLsXMoY8nL5dhHBRLz338fePcp2cL62BQY8
-	tlSYIKJsDb819cd32fAhXBL8zFMPqEhfT0bAUl/W2+fKI/+DT2e/bjrE5rzfvyVKbvcQMAVYL+N
-	vIqBwqFhSS+eKYBMxYKAaY3+AiDBNRHVJvsS7qaIZQNX9PY8G9sMCkmzmdWyKLR8/Yg==
-X-Gm-Gg: ASbGncu3mNvmEyOc9+X0onvrMBun32Wqk4TxEZF2YZpCA0Am12SpbpSdgNxbG+NeXRs
-	JtKs4EH+NwFXTgssV7aITi/f1A04+ntUOXLjutrwpXlqF1GzKhAroiuq2fB0QJHQgb7niYKebV6
-	lLfab+waKGac2jOCjGwGJBGqCxK1QzLBrKmNG3KpVU+NA7FQkZovpznBs0QTpB50kXUqO9ii+C9
-	uDUWjq3ROL4KNaudXZmCXOpLlDL15jmM36jRWfFE0cFAWBQRRsKW4UJl2FY5Lg4UpGNxOdKnczc
-	75jVQwO9tgG5LPTdO3a4tW2LIZt8qgI2xylb98LGFs28FrYko5HwPt6YZiITyVSOe0pABvUshlf
-	552c4
-X-Received: by 2002:a05:600c:4f07:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-4532490d350mr60458885e9.27.1749730007373;
-        Thu, 12 Jun 2025 05:06:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECOqBPukEfbMMYv+M4kFQvSfoApbouCQboDsRv8ZIe+hsTnwqXQ+pN68YZ/SnG6HPde8Y/Ew==
-X-Received: by 2002:a05:600c:4f07:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-4532490d350mr60458475e9.27.1749730006945;
-        Thu, 12 Jun 2025 05:06:46 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e224888sm19001155e9.1.2025.06.12.05.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 05:06:46 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: John Keeping <jkeeping@inmusicbrands.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/ssd130x: fix ssd132x_clear_screen() columns
-In-Reply-To: <20250611111307.1814876-1-jkeeping@inmusicbrands.com>
-References: <20250611111307.1814876-1-jkeeping@inmusicbrands.com>
-Date: Thu, 12 Jun 2025 14:06:45 +0200
-Message-ID: <87cyb9w4dm.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1749730111; x=1750334911;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oiQC+W0yjIGVwcsiN86fhi+gjf0lk8z+cPeuP0rwwk8=;
+        b=jvDmqPGGfkOjznIXUxmhezlZTVL9AN4noDk2BQfcVO68SM+uMdQe3PnqxBeOLaa1kW
+         AEHAVwmAeT7tDaMUxf/cmLoMB/HjjthFdAzUw3GLUCFH2yjSWeigOtmVK65EQ49wBi40
+         y+YpMUkW+pg3jSB7KlVl9Q8/b8mJ8c2q9rCba3KAZcpnbBwLcl93hvEuAb7aLvpinTHL
+         Ol4eymIu9FmyLricvvU5aPEg8wIR3nv97lD6aOljVSDgLl+0z8kpgmTzSfR4dqDw51Dz
+         P2JJUzv1tnscrFBpoKeyVZ8GdwYKg0wX46/SNpJ+D8BghclyGmygVFSj5rLVIfh38yQr
+         THcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzJNZZBp+dLNtl18+BUswHf60Tzas+HjAUU9s5pEgGVaS/zA2MCtnvcpvjxuJIzG1806Ja6ycCh4gfHmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb6F34QaaU1x/mqLexFAkzMdgVlq20Ou2GLy8j4sxo1Bq/OjKM
+	j56R5JqjSiEG/gvjyrKhbM5bQobe84K4KGRgPcCSTbN1bNa77hsNQcAtWHz1GgEYXdwp6CSrEIi
+	g/X8=
+X-Gm-Gg: ASbGncsAGDebDmKF9/DA5PRM8xlBj1eGBWz9PmwF9pMFq+nywU/VXc0Rpp090VPyG6A
+	ZNXOPsgPpX9v4jDsg5m427IN+i7wVrtLHQ0+P9LeBLjUmtYA1zudaHJrEAl07/ahyA1Ld4jdYca
+	3I1ZBgmyh4tO005dSPSIU5kS392fp899t14dIxtt4BGOX8iLdfilhFtg3eorSe6r4N/X6rIjt/S
+	qegNU4gAhtJoBuWM8CSMEVjyVxwk0Brm+uivXTVVJp+bGoaH+UPCcme9p4HNni866P5aiekcIIi
+	X97qk7pnRnGcGn/tgNBfVvhRvf/HdNEZiTWw/WjbLQJT+nONoNXOTQ/dNyDM7Kh/UM2Z4LiH3qf
+	JgoFc9XlKNM2uDAumJwfI
+X-Google-Smtp-Source: AGHT+IFE6LoaIDSTbR2+Z49WPjvrD6HagrivYIZlBUHlPLtFW8Kl3MBn0+M7fl7SQRHeC/DZIkrMcg==
+X-Received: by 2002:a05:6602:3719:b0:864:a3d0:ddef with SMTP id ca18e2360f4ac-875bc410f92mr880203339f.6.1749730111300;
+        Thu, 12 Jun 2025 05:08:31 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-5013b75604esm260578173.8.2025.06.12.05.08.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 05:08:30 -0700 (PDT)
+Message-ID: <28c3f551-c1a2-4bc0-a263-a27576335317@ieee.org>
+Date: Thu, 12 Jun 2025 07:08:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] rbd: convert to use secs_to_jiffies
+To: Yuesong Li <liyuesong@vivo.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
+ ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20250612110705.91353-1-liyuesong@vivo.com>
+Content-Language: en-US
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20250612110705.91353-1-liyuesong@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-John Keeping <jkeeping@inmusicbrands.com> writes:
+On 6/12/25 6:07 AM, Yuesong Li wrote:
+> Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
+> use it to avoid scaling the time to msec.
+> 
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
 
-Hello John,
+Looks good.
 
-> The number of columns relates to the width, not the height.  Use the
-> correct variable.
->
-> Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+Reviewed-by: Alex Elder <elder@riscstar.com>
+
 > ---
-
-Pushed to drm-misc (drm-misc-fixes). Thanks!
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+>   drivers/block/rbd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index faafd7ff43d6..92d04a60718f 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *work)
+>   		dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
+>   		     rbd_dev);
+>   		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+> -		    msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
+> +		    secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
+>   	}
+>   }
+>   
+> @@ -6285,7 +6285,7 @@ static int rbd_parse_param(struct fs_parameter *param,
+>   		/* 0 is "wait forever" (i.e. infinite timeout) */
+>   		if (result.uint_32 > INT_MAX / 1000)
+>   			goto out_of_range;
+> -		opt->lock_timeout = msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->lock_timeout = secs_to_jiffies(result.uint_32);
+>   		break;
+>   	case Opt_pool_ns:
+>   		kfree(pctx->spec->pool_ns);
 
 
