@@ -1,485 +1,226 @@
-Return-Path: <linux-kernel+bounces-683016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA45AD67E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:20:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4CAAD68CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50FCD7A87DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD2317EAC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BEF1F2361;
-	Thu, 12 Jun 2025 06:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5A721FF21;
+	Thu, 12 Jun 2025 07:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImnXNj2V"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRVa03V7"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B7E14A8B;
-	Thu, 12 Jun 2025 06:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8BB220F20;
+	Thu, 12 Jun 2025 07:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749709224; cv=none; b=m/HaWxqyuJ/HRKfhgzkBSp05lJzGYSaSCaZrlF+Jie0+1JerNg7i4r491v/xvMccsiX5wApZ7o35yICB/1D8+6yQZc+IRmh2ey60FkraTGEJPZ1agpHkeAO2nENvGv1PUxEPL85xFhVR0xNPbwPmRbeyipGDhdfbBTXYq9JXWpM=
+	t=1749712787; cv=none; b=gtfqZWUjQ15MQeEn9Ipz10ah7+UcdrCxd/qOxkLFy7GORlOQOaTE/nwRzna85fz/P1smQw52BlzCZGFETdqfaDOOeBq9de7+j0piRiTF9wjGXpQSHySLL6V4jc71rAhVvVTNJvTfWAJifWL4YIP9nX//D+cQVQogUp/lENOwKnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749709224; c=relaxed/simple;
-	bh=ROL57B4C1PzXfkxTk3k39JMgjd/+cIAnEhMhagBXZgM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fBulsNEBevCXVK8dWyQoLsaLmI0a7kjZU7MP0GlNyQuBwKWBR6JcXsfq6cDK6aIhkpymKli4jApK88rLfqUPRjHpUP5Rvy7Y5Y2xiExRYcQ7qQDtf3s1panwqoqQaXR7RXgfmnCItlED55JOq5u4RyVkNEqTp+sq3b8uNsydYVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImnXNj2V; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1749712787; c=relaxed/simple;
+	bh=2vB3uaZ76UmD4+u+BlBPCzWOweF29pK7hPLSmmNUsp4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BBgBWxtLlDT1Kgi1EsJo6dPzfbvGjhlKmLZ9ExS8xW/0aqhf19wN0OWT3GZew+QSOlDWRudaW6rt2dlJSVyK6LT/+kE3gKOZT2ptcWKxg452dYnGJh3NfmV4bc2DMG7CSePJLVS7Cw9KPg2k54KIlSBZUVrGJ/pqZNXPd/PUdOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRVa03V7; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-acb5ec407b1so103504366b.1;
-        Wed, 11 Jun 2025 23:20:21 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45310223677so4758615e9.0;
+        Thu, 12 Jun 2025 00:19:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749709220; x=1750314020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QsvPI6p8jzrn37KI0Y8zRydotCTdKcnBA3r1zxQs9lU=;
-        b=ImnXNj2V9mtYSuToiL8r6Qz7rx4UnYDQc+NGwmZsFg+IE5GW9aLjPMhAh3ocCKNzH7
-         6XnFYXE0Y8YPyGvpgmdhTGR3T+dKPnQINbotrRRXmc2aaC/EiyOaPFZeFRXvdkN6kceb
-         bFqySryCsKZIQQDhid5neHC6+G+XUA0tsWQYvgfVXEs9LDioPymM9VgAHEPP561D7H5D
-         XiXo+Jx0Oxpc3uiQG+rNmfQ2iAk/WD+tGusPt4gMDj4M1FSpNpCSltlATP84aXv5HQHw
-         C40CpIAsJEmyZrzKSV5TfdhFGjSM7tnSragRKzwAtv9wqImiyOy/tT3dXGgd6iC9TY/w
-         RO6A==
+        d=gmail.com; s=20230601; t=1749712784; x=1750317584; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UNgeTzNuPPlWV6399sRDI4mM2DYoN3BkqAj0IL8GhPg=;
+        b=JRVa03V7MZASHhyCcIPRFxa1w59p/jv0vMnNhdfyvqG/vgIgmWRjLq7up4JerBIsVD
+         3OAz9rpzyvtzD83sgQj1OyN1D1Fwr4Dtce1e3FHcnTE9eUt52M3P75vWgTTBiGPkP+qB
+         Bcr93PJcGZAhJWMAunGuoWXltVUxbvzlw66zXJew+jSPl4B7ugQzUPsXdTKOU90zEiGD
+         UDk3268mFWDUcIGppHdPBCb0mTpZKrFiBWyK2KeiQgKjYllnUxajWQNZx2VrbROW5Dd6
+         SsTmiQi5q82p5ZU6fj58e8wjZNysHE9KsBqOJVhyUPbMa54NhwaWa9HuApylXOev7+pm
+         Opqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749709220; x=1750314020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QsvPI6p8jzrn37KI0Y8zRydotCTdKcnBA3r1zxQs9lU=;
-        b=wVEUpUkbk/xIIaN/LOLbkdCt24v9ROOdvo+lrAFrzhpm9Q7qYJPIo9riinIGI27uWo
-         LUDxF9Q26Uj36yif5SsDitBIcv6V8RMdOTpZkBD2Yme5M2qQ7ZKipd4buQNf5a/m+7Ge
-         Rrd3RpvcuhpyRFYzP5jfoTBq/HiyR+KGtShmlFhwIWsk2YozfKX3Ii0RuMjnRfV65cfl
-         ki4EIBN7WonjruW+TBtWWdQZ0DJrGohK9KVDa0qQE0ScXSEgBB5vn40QEYtYfzmiDVm2
-         rzod76t+HwpNottq5hl3wAqpA3txtKJEfgMpC/RKseB+cUcjYaZXp8wjAUH1Oa1oci/s
-         PbUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrvMDo52v7MIYYfufTeT0qKA9o5IwvyaeR6wKv/P5YFdvGzh2nscLuUaKODWYoVL+WPPjU0qb0asmbOw==@vger.kernel.org, AJvYcCWE3WRXuB9YSmM8lB58W1z+FZeiPK5hULq+arNk/XGsGnibh2Hqcr9Mo3nrSulB2uPyPbbqRioWml8BWSk2@vger.kernel.org, AJvYcCWfEiUCEeKl/bHX8w8RZfce1Pz/Arqt5NmUzn00LVTkFEf+r7mvniAYocHJA57vg4imGFpl6unV1j2KCOujzA==@vger.kernel.org, AJvYcCWn+EOvoOVZJi4F/ASy+7e1R4rDK6Au4dNBfJVEbwQPPpgMdyt5KgzDQwxR5urMvjFcpcB3leZKAQ==@vger.kernel.org, AJvYcCWuFN4jfa0Si868siQIAIl5/LljRnihGzVLh06UpNR+YJLwQ0zLYPuTwQjto02TJCo7aJY0vnxTbAVE@vger.kernel.org, AJvYcCXCRwNch1YF5dH0zUW16WvABlded2rP+Vy6lK7OlVHRPM2TMPS9h2q0rumpUlQsWkfbwMtAb5zXgACtvPBa8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOowOjG0KD1hwNPIoKyC7QQ8RkJBjrgmHoBno6zVzodoQtCT07
-	Y1A2IfFUtVvi18j8jZbc7mrZQLAWuVCPCu8idaGS0zoh9MSk0ith4F+MquzFX/izknTBiaYHcHL
-	y9XEcWxe2AAnprPzy3/BFnqM9FajLHhc=
-X-Gm-Gg: ASbGncv9CfTzzQE+A/GX8B7/aMJHOiYqPDrkTRtyBiNLF3Wy6MmWyPMRtgCEQtt7N1+
-	WxZZ299BZd2oxeJJLlENQ802cB2VUAtWWIOu4Rd9ryA+oYknIuxkRzNNoYhZ64Ju36LEmNsrUw9
-	nhQQytO7a/lxxtaZiwwYk5+RUL002iY85znn5KRhh+qOc=
-X-Google-Smtp-Source: AGHT+IEfv36oKkPid/8r6FrxPKQB/uPiTZlRIEgJe/VyBosZyqDB53l0dcs1mgmwkGFrRdPIQk1jgMMUkEAouEr/kSM=
-X-Received: by 2002:a17:907:7208:b0:ad5:430b:9013 with SMTP id
- a640c23a62f3a-adea2714a7dmr240969966b.42.1749709219937; Wed, 11 Jun 2025
- 23:20:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749712784; x=1750317584;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UNgeTzNuPPlWV6399sRDI4mM2DYoN3BkqAj0IL8GhPg=;
+        b=hUkans1YqPiA+Tklg9G6wIHK5BU6e+Vc2Jp/cEb6/BPWbW2auM/iedLKeSgo8uSrhz
+         6gtAlwWkVjtv5raT61ztmkV2xRHaZJS1+stH5XsL+0mrCl4zxrwm+MFtpDvHhcQ+H3xs
+         1CJej6tb13cHUX7rACPbMLkGrmXdvSzg2fIM5FRImud61vyE9mZW88+6qSl+0OHlg8yi
+         ckQiU05qB6ugLevhQEjiRJn/vC4g7JfDa+iWVfT3+c5iAclOmmT5pNEobOsxCIhgbIMj
+         +xnppICufWfpIRAKrfGWg3nIQdUhBOwpVrmI0Fv0pUEsBnl6DBq95IBw7Ajv6hoUnrYD
+         02rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrAYIOY4cFyqayeAurquA03YlG4wGkc6vHDB3F2kOj4WDjCQDMiIaNpbx7+mCcdVAVaYSjSrLfdiQ=@vger.kernel.org, AJvYcCXchpQ1sPrxomvLGalBgXib7NW2GhAkEgGKFMqxSSqcL+A9+7BDSLvH2OHlwXu6rrhj8Hygq7G7ZTk6247k@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/u4tUAnVclH56LRSFgz+weFsIS5sV/BpCr0fMYvQwKGW3IpCm
+	kvvDPEwPmhIO6dGq8njUAMYQWVWCyU141sQpXsGySxM4CMS7cPaq0KyU
+X-Gm-Gg: ASbGnctwu+GkgoYEms9Uhpa8KFarndFfKF7+gvGlBSOcKN7YxUhL3NcMQwJHybsYsR8
+	MzIXuDvfQHmlklCFEU4TthSw9DhVQLm6hah03GhUVdP1H9+/HB7sr8bi9Iibd2KLaQsJ2hyYa/a
+	hBFAlFeNtIYD4ma2pd1exRilSfPLygo9uILboDRIzYTM2y7QVXAhAiSe5CCl9MSH9Qgy1XdLEsj
+	J0BupG2jZg2fJn+Z3N+2/nydU/QfO4ZEl9ST4OWNRbL8aEPDa1idDFCB+1Sd/q2Okd5LPztp+i9
+	IMFsCMnuIPYrMkqFxtgO9D95rOVbYF54QuW58fYpURP5JbCEd838/1gJMX1n3EqN87uQNXW5T7j
+	CRPn/S/fy6/vgktdu7YYAwBCAfA+SZxzo/Yq4
+X-Google-Smtp-Source: AGHT+IH/JcWlJPaQUqLWdYPKZkUPwPJlkgLNR5yKATgmWr/yuLPXR2kI6m4eDzVYNtOSsGSLwcilIg==
+X-Received: by 2002:a05:6000:26cc:b0:3a4:e629:6504 with SMTP id ffacd0b85a97d-3a56130b81bmr1325247f8f.49.1749712783836;
+        Thu, 12 Jun 2025 00:19:43 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561a3cd11sm1108313f8f.59.2025.06.12.00.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 00:19:43 -0700 (PDT)
+Message-ID: <028710c4e4494285bee82ae811147b03cfa612f2.camel@gmail.com>
+Subject: Re: [PATCH v5 1/3] iio: accel: sca3000: replace error_ret labels by
+ simple returns
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Andrew Ijano <andrew.ijano@gmail.com>, jic23@kernel.org
+Cc: andrew.lopes@alumni.usp.br, gustavobastos@usp.br, dlechner@baylibre.com,
+  nuno.sa@analog.com, andy@kernel.org, jstephan@baylibre.com, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 12 Jun 2025 07:20:15 +0100
+In-Reply-To: <20250611194648.18133-2-andrew.lopes@alumni.usp.br>
+References: <20250611194648.18133-1-andrew.lopes@alumni.usp.br>
+	 <20250611194648.18133-2-andrew.lopes@alumni.usp.br>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611225848.1374929-1-neil@brown.name> <20250611225848.1374929-2-neil@brown.name>
-In-Reply-To: <20250611225848.1374929-2-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 12 Jun 2025 08:20:08 +0200
-X-Gm-Features: AX0GCFvAa4t1BNVGZfnqWhM_rSPz41NDychwwTzBAcMrTlMp36ygzGDsHLheIjA
-Message-ID: <CAOQ4uxiFf8sY0SrTAi+6LOFcL3ChfRkGimaoo-GELLyca9_WRw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] VFS: change old_dir and new_dir in struct renamedata
- to dentrys
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Kees Cook <kees@kernel.org>, 
-	Joel Granados <joel.granados@kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, netfs@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, ecryptfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 12:59=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> all users of 'struct renamedata' have the dentry for the old and new
-> directories, and often have no use for the inode except to store it in
-> the renamedata.
->
-> This patch changes struct renamedata to hold the dentry, rather than
-> the inode, for the old and new directories, and changes callers to
-> match.
->
-> This results in the removal of several local variables and several
-> dereferences of ->d_inode at the cost of adding ->d_inode dereferences
-> to vfs_rename().
->
-> Signed-off-by: NeilBrown <neil@brown.name>
+On Wed, 2025-06-11 at 16:39 -0300, Andrew Ijano wrote:
+> Replace usage of error_ret labels by returning directly when handling
+> errors. Cases that do a mutex unlock were not changed.
+>=20
+> Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
+> Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
+> Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
 > ---
->  fs/cachefiles/namei.c    |  4 ++--
->  fs/ecryptfs/inode.c      |  4 ++--
->  fs/namei.c               |  6 +++---
->  fs/nfsd/vfs.c            |  7 ++-----
->  fs/overlayfs/copy_up.c   |  6 +++---
->  fs/overlayfs/dir.c       | 16 ++++++++--------
->  fs/overlayfs/overlayfs.h |  6 +++---
->  fs/overlayfs/readdir.c   |  2 +-
->  fs/overlayfs/super.c     |  2 +-
->  fs/overlayfs/util.c      |  2 +-
->  fs/smb/server/vfs.c      |  4 ++--
->  include/linux/fs.h       |  4 ++--
->  12 files changed, 30 insertions(+), 33 deletions(-)
->
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index aecfc5c37b49..053fc28b5423 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -388,10 +388,10 @@ int cachefiles_bury_object(struct cachefiles_cache =
-*cache,
->         } else {
->                 struct renamedata rd =3D {
->                         .old_mnt_idmap  =3D &nop_mnt_idmap,
-> -                       .old_dir        =3D d_inode(dir),
-> +                       .old_dir        =3D dir,
->                         .old_dentry     =3D rep,
->                         .new_mnt_idmap  =3D &nop_mnt_idmap,
-> -                       .new_dir        =3D d_inode(cache->graveyard),
-> +                       .new_dir        =3D cache->graveyard,
->                         .new_dentry     =3D grave,
->                 };
->                 trace_cachefiles_rename(object, d_inode(rep)->i_ino, why)=
+
+Code looks good. But since you're doing this you could cleanup some of the =
+switch()
+cases. Some return in every case statement while other don't (even think I =
+saw one
+one place where 'return' in the end was not needed). IIRC, there's preferen=
+ce for
+returning in place.
+
+- Nuno S=C3=A1
+
+> =C2=A0drivers/iio/accel/sca3000.c | 29 +++++++++++------------------
+> =C2=A01 file changed, 11 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+> index aabe4491efd7..bfa8a3f5a92f 100644
+> --- a/drivers/iio/accel/sca3000.c
+> +++ b/drivers/iio/accel/sca3000.c
+> @@ -369,23 +369,20 @@ static int sca3000_write_ctrl_reg(struct sca3000_st=
+ate *st,
+> =C2=A0
+> =C2=A0	ret =3D sca3000_reg_lock_on(st);
+> =C2=A0	if (ret < 0)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	if (ret) {
+> =C2=A0		ret =3D __sca3000_unlock_reg_lock(st);
+> =C2=A0		if (ret)
+> -			goto error_ret;
+> +			return ret;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	/* Set the control select register */
+> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_CTRL_SEL_ADDR, sel);
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0
+> =C2=A0	/* Write the actual value into the register */
+> -	ret =3D sca3000_write_reg(st, SCA3000_REG_CTRL_DATA_ADDR, val);
+> -
+> -error_ret:
+> -	return ret;
+> +	return sca3000_write_reg(st, SCA3000_REG_CTRL_DATA_ADDR, val);
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> @@ -402,22 +399,20 @@ static int sca3000_read_ctrl_reg(struct sca3000_sta=
+te *st,
+> =C2=A0
+> =C2=A0	ret =3D sca3000_reg_lock_on(st);
+> =C2=A0	if (ret < 0)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	if (ret) {
+> =C2=A0		ret =3D __sca3000_unlock_reg_lock(st);
+> =C2=A0		if (ret)
+> -			goto error_ret;
+> +			return ret;
+> =C2=A0	}
+> =C2=A0	/* Set the control select register */
+> =C2=A0	ret =3D sca3000_write_reg(st, SCA3000_REG_CTRL_SEL_ADDR, ctrl_reg)=
 ;
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index 493d7f194956..c9fec8b7e000 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -635,10 +635,10 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct ino=
-de *old_dir,
->         }
->
->         rd.old_mnt_idmap        =3D &nop_mnt_idmap;
-> -       rd.old_dir              =3D d_inode(lower_old_dir_dentry);
-> +       rd.old_dir              =3D lower_old_dir_dentry;
->         rd.old_dentry           =3D lower_old_dentry;
->         rd.new_mnt_idmap        =3D &nop_mnt_idmap;
-> -       rd.new_dir              =3D d_inode(lower_new_dir_dentry);
-> +       rd.new_dir              =3D lower_new_dir_dentry;
->         rd.new_dentry           =3D lower_new_dentry;
->         rc =3D vfs_rename(&rd);
->         if (rc)
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 019073162b8a..5b0be8bca50d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -5007,7 +5007,7 @@ SYSCALL_DEFINE2(link, const char __user *, oldname,=
- const char __user *, newname
->  int vfs_rename(struct renamedata *rd)
->  {
->         int error;
-> -       struct inode *old_dir =3D rd->old_dir, *new_dir =3D rd->new_dir;
-> +       struct inode *old_dir =3D d_inode(rd->old_dir), *new_dir =3D d_in=
-ode(rd->new_dir);
->         struct dentry *old_dentry =3D rd->old_dentry;
->         struct dentry *new_dentry =3D rd->new_dentry;
->         struct inode **delegated_inode =3D rd->delegated_inode;
-> @@ -5266,10 +5266,10 @@ int do_renameat2(int olddfd, struct filename *fro=
-m, int newdfd,
->         if (error)
->                 goto exit5;
->
-> -       rd.old_dir         =3D old_path.dentry->d_inode;
-> +       rd.old_dir         =3D old_path.dentry;
->         rd.old_dentry      =3D old_dentry;
->         rd.old_mnt_idmap   =3D mnt_idmap(old_path.mnt);
-> -       rd.new_dir         =3D new_path.dentry->d_inode;
-> +       rd.new_dir         =3D new_path.dentry;
->         rd.new_dentry      =3D new_dentry;
->         rd.new_mnt_idmap   =3D mnt_idmap(new_path.mnt);
->         rd.delegated_inode =3D &delegated_inode;
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index cd689df2ca5d..3c87fbd22c57 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1864,7 +1864,6 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *=
-ffhp, char *fname, int flen,
->                             struct svc_fh *tfhp, char *tname, int tlen)
->  {
->         struct dentry   *fdentry, *tdentry, *odentry, *ndentry, *trap;
-> -       struct inode    *fdir, *tdir;
->         int             type =3D S_IFDIR;
->         __be32          err;
->         int             host_err;
-> @@ -1880,10 +1879,8 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh =
-*ffhp, char *fname, int flen,
->                 goto out;
->
->         fdentry =3D ffhp->fh_dentry;
-> -       fdir =3D d_inode(fdentry);
->
->         tdentry =3D tfhp->fh_dentry;
-> -       tdir =3D d_inode(tdentry);
->
->         err =3D nfserr_perm;
->         if (!flen || isdotent(fname, flen) || !tlen || isdotent(tname, tl=
-en))
-> @@ -1944,10 +1941,10 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh=
- *ffhp, char *fname, int flen,
->         } else {
->                 struct renamedata rd =3D {
->                         .old_mnt_idmap  =3D &nop_mnt_idmap,
-> -                       .old_dir        =3D fdir,
-> +                       .old_dir        =3D fdentry,
->                         .old_dentry     =3D odentry,
->                         .new_mnt_idmap  =3D &nop_mnt_idmap,
-> -                       .new_dir        =3D tdir,
-> +                       .new_dir        =3D tdentry,
->                         .new_dentry     =3D ndentry,
->                 };
->                 int retries;
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index d7310fcf3888..8a3c0d18ec2e 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -563,7 +563,7 @@ static int ovl_create_index(struct dentry *dentry, co=
-nst struct ovl_fh *fh,
->         if (IS_ERR(index)) {
->                 err =3D PTR_ERR(index);
->         } else {
-> -               err =3D ovl_do_rename(ofs, dir, temp, dir, index, 0);
-> +               err =3D ovl_do_rename(ofs, indexdir, temp, indexdir, inde=
-x, 0);
->                 dput(index);
->         }
->  out:
-> @@ -762,7 +762,7 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx=
- *c)
->  {
->         struct ovl_fs *ofs =3D OVL_FS(c->dentry->d_sb);
->         struct inode *inode;
-> -       struct inode *udir =3D d_inode(c->destdir), *wdir =3D d_inode(c->=
-workdir);
-> +       struct inode *wdir =3D d_inode(c->workdir);
->         struct path path =3D { .mnt =3D ovl_upper_mnt(ofs) };
->         struct dentry *temp, *upper, *trap;
->         struct ovl_cu_creds cc;
-> @@ -829,7 +829,7 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx=
- *c)
->         if (IS_ERR(upper))
->                 goto cleanup;
->
-> -       err =3D ovl_do_rename(ofs, wdir, temp, udir, upper, 0);
-> +       err =3D ovl_do_rename(ofs, c->workdir, temp, c->destdir, upper, 0=
-);
->         dput(upper);
->         if (err)
->                 goto cleanup;
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index fe493f3ed6b6..4fc221ea6480 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -107,7 +107,7 @@ static struct dentry *ovl_whiteout(struct ovl_fs *ofs=
-)
->  }
->
->  /* Caller must hold i_mutex on both workdir and dir */
-> -int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct inode *dir,
-> +int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct dentry *dir,
->                              struct dentry *dentry)
->  {
->         struct inode *wdir =3D ofs->workdir->d_inode;
-> @@ -123,7 +123,7 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, stru=
-ct inode *dir,
->         if (d_is_dir(dentry))
->                 flags =3D RENAME_EXCHANGE;
->
-> -       err =3D ovl_do_rename(ofs, wdir, whiteout, dir, dentry, flags);
-> +       err =3D ovl_do_rename(ofs, ofs->workdir, whiteout, dir, dentry, f=
-lags);
->         if (err)
->                 goto kill_whiteout;
->         if (flags)
-> @@ -384,7 +384,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
-dentry,
->         if (err)
->                 goto out_cleanup;
->
-> -       err =3D ovl_do_rename(ofs, wdir, opaquedir, udir, upper, RENAME_E=
-XCHANGE);
-> +       err =3D ovl_do_rename(ofs, workdir, opaquedir, upperdir, upper, R=
-ENAME_EXCHANGE);
->         if (err)
->                 goto out_cleanup;
->
-> @@ -491,14 +491,14 @@ static int ovl_create_over_whiteout(struct dentry *=
-dentry, struct inode *inode,
->                 if (err)
->                         goto out_cleanup;
->
-> -               err =3D ovl_do_rename(ofs, wdir, newdentry, udir, upper,
-> +               err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, =
-upper,
->                                     RENAME_EXCHANGE);
->                 if (err)
->                         goto out_cleanup;
->
->                 ovl_cleanup(ofs, wdir, upper);
->         } else {
-> -               err =3D ovl_do_rename(ofs, wdir, newdentry, udir, upper, =
-0);
-> +               err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, =
-upper, 0);
->                 if (err)
->                         goto out_cleanup;
->         }
-> @@ -774,7 +774,7 @@ static int ovl_remove_and_whiteout(struct dentry *den=
-try,
->                 goto out_dput_upper;
->         }
->
-> -       err =3D ovl_cleanup_and_whiteout(ofs, d_inode(upperdir), upper);
-> +       err =3D ovl_cleanup_and_whiteout(ofs, upperdir, upper);
->         if (err)
->                 goto out_d_drop;
->
-> @@ -1246,8 +1246,8 @@ static int ovl_rename(struct mnt_idmap *idmap, stru=
-ct inode *olddir,
->         if (err)
->                 goto out_dput;
->
-> -       err =3D ovl_do_rename(ofs, old_upperdir->d_inode, olddentry,
-> -                           new_upperdir->d_inode, newdentry, flags);
-> +       err =3D ovl_do_rename(ofs, old_upperdir, olddentry,
-> +                           new_upperdir, newdentry, flags);
->         if (err)
->                 goto out_dput;
->
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 8baaba0a3fe5..65f9d51bed7c 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -353,8 +353,8 @@ static inline int ovl_do_remove_acl(struct ovl_fs *of=
-s, struct dentry *dentry,
->         return vfs_remove_acl(ovl_upper_mnt_idmap(ofs), dentry, acl_name)=
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	ret =3D sca3000_read_data_short(st, SCA3000_REG_CTRL_DATA_ADDR, 1)=
 ;
->  }
->
-> -static inline int ovl_do_rename(struct ovl_fs *ofs, struct inode *olddir=
-,
-> -                               struct dentry *olddentry, struct inode *n=
-ewdir,
-> +static inline int ovl_do_rename(struct ovl_fs *ofs, struct dentry *olddi=
-r,
-> +                               struct dentry *olddentry, struct dentry *=
-newdir,
->                                 struct dentry *newdentry, unsigned int fl=
-ags)
->  {
->         int err;
-> @@ -826,7 +826,7 @@ static inline void ovl_copyflags(struct inode *from, =
-struct inode *to)
->
->  /* dir.c */
->  extern const struct inode_operations ovl_dir_inode_operations;
-> -int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct inode *dir,
-> +int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct dentry *dir,
->                              struct dentry *dentry);
->  struct ovl_cattr {
->         dev_t rdev;
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 474c80d210d1..68cca52ae2ac 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -1235,7 +1235,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
->                          * Whiteout orphan index to block future open by
->                          * handle after overlay nlink dropped to zero.
->                          */
-> -                       err =3D ovl_cleanup_and_whiteout(ofs, dir, index)=
-;
-> +                       err =3D ovl_cleanup_and_whiteout(ofs, indexdir, i=
-ndex);
->                 } else {
->                         /* Cleanup orphan index entries */
->                         err =3D ovl_cleanup(ofs, dir, index);
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index e19940d649ca..cf99b276fdfb 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -580,7 +580,7 @@ static int ovl_check_rename_whiteout(struct ovl_fs *o=
-fs)
->
->         /* Name is inline and stable - using snapshot as a copy helper */
->         take_dentry_name_snapshot(&name, temp);
-> -       err =3D ovl_do_rename(ofs, dir, temp, dir, dest, RENAME_WHITEOUT)=
-;
-> +       err =3D ovl_do_rename(ofs, workdir, temp, workdir, dest, RENAME_W=
-HITEOUT);
->         if (err) {
->                 if (err =3D=3D -EINVAL)
->                         err =3D 0;
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index dcccb4b4a66c..2b4754c645ee 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1115,7 +1115,7 @@ static void ovl_cleanup_index(struct dentry *dentry=
-)
->         } else if (ovl_index_all(dentry->d_sb)) {
->                 /* Whiteout orphan index to block future open by handle *=
-/
->                 err =3D ovl_cleanup_and_whiteout(OVL_FS(dentry->d_sb),
-> -                                              dir, index);
-> +                                              indexdir, index);
->         } else {
->                 /* Cleanup orphan index entries */
->                 err =3D ovl_cleanup(ofs, dir, index);
-> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-> index ba45e809555a..b8d913c61623 100644
-> --- a/fs/smb/server/vfs.c
-> +++ b/fs/smb/server/vfs.c
-> @@ -764,10 +764,10 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const=
- struct path *old_path,
->         }
->
->         rd.old_mnt_idmap        =3D mnt_idmap(old_path->mnt),
-> -       rd.old_dir              =3D d_inode(old_parent),
-> +       rd.old_dir              =3D old_parent,
->         rd.old_dentry           =3D old_child,
->         rd.new_mnt_idmap        =3D mnt_idmap(new_path.mnt),
-> -       rd.new_dir              =3D new_path.dentry->d_inode,
-> +       rd.new_dir              =3D new_path.dentry,
->         rd.new_dentry           =3D new_dentry,
->         rd.flags                =3D flags,
->         rd.delegated_inode      =3D NULL,
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 16f40a6f8264..9a83904c9d4a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2016,10 +2016,10 @@ int vfs_unlink(struct mnt_idmap *, struct inode *=
-, struct dentry *,
->   */
->  struct renamedata {
->         struct mnt_idmap *old_mnt_idmap;
-> -       struct inode *old_dir;
-> +       struct dentry *old_dir;
->         struct dentry *old_dentry;
->         struct mnt_idmap *new_mnt_idmap;
-> -       struct inode *new_dir;
-> +       struct dentry *new_dir;
->         struct dentry *new_dentry;
->         struct inode **delegated_inode;
->         unsigned int flags;
-> --
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	return st->rx[0];
+> -error_ret:
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> @@ -577,7 +572,8 @@ static inline int __sca3000_get_base_freq(struct sca3=
+000_state
+> *st,
+> =C2=A0
+> =C2=A0	ret =3D sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> +
+> =C2=A0	switch (SCA3000_REG_MODE_MODE_MASK & st->rx[0]) {
+> =C2=A0	case SCA3000_REG_MODE_MEAS_MODE_NORMAL:
+> =C2=A0		*base_freq =3D info->measurement_mode_freq;
+> @@ -591,7 +587,6 @@ static inline int __sca3000_get_base_freq(struct sca3=
+000_state
+> *st,
+> =C2=A0	default:
+> =C2=A0		ret =3D -EINVAL;
+> =C2=A0	}
+> -error_ret:
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> @@ -834,7 +829,7 @@ static ssize_t sca3000_read_av_freq(struct device *de=
+v,
+> =C2=A0	val =3D st->rx[0];
+> =C2=A0	mutex_unlock(&st->lock);
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0
+> =C2=A0	switch (val & SCA3000_REG_MODE_MODE_MASK) {
+> =C2=A0	case SCA3000_REG_MODE_MEAS_MODE_NORMAL:
+> @@ -857,8 +852,6 @@ static ssize_t sca3000_read_av_freq(struct device *de=
+v,
+> =C2=A0		break;
+> =C2=A0	}
+> =C2=A0	return len;
+> -error_ret:
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0/*
 
-It bothers me a bit that we are keeping the field name while changing its t=
-ype.
-
-There is a wide convention in vfs methods and helpers of using
-struct inode *dir
-as the parent directory inode
-and often (but not always) using
-struct dentry *parent
-as the parent dentry
-
-How do you feel about making struct renamedata use:
-
-struct dentry *old_parent;
-struct dentry *new_parent;
-
-I don't think it will add any churn beyond what this patch already does.
-
-Thanks,
-Amir.
 
