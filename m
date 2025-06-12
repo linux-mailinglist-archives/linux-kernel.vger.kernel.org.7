@@ -1,141 +1,197 @@
-Return-Path: <linux-kernel+bounces-684590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE76AD7D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2844AD7D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56F587B1B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:31:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D9518812F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 21:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5846B22ACF3;
-	Thu, 12 Jun 2025 21:32:46 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE312D8DD6;
+	Thu, 12 Jun 2025 21:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlEXkERD"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E127FD;
-	Thu, 12 Jun 2025 21:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222C42E0B69;
+	Thu, 12 Jun 2025 21:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749763966; cv=none; b=k8UlgQXJHZ5zpVXpL+aBmlYvD+cBeXsreP4hzivxsUURAnyNQ/BgndiMT6uqeNxHMdDVRCpexlNahNgiYuF0kRceGdJ2wSwKZbJ3DImolwVt23VhyKyJaADO/+WUT3D1DaJypZ4/Qz0ow68rjI7qvY0z2d91bfnW2VnMSqExMc8=
+	t=1749763684; cv=none; b=dZR7CO4+X4g+RrMnn9Qi595N52MoLbE/0IWHAo8d6g8cjRV/NuEdcZkAPDpLLT8r6pqLJWuXP7nAIhsW/I/nOtlyTNZzhITG5t6FZZk66bNMkFzIftgfGfFwpRrTbxcIjzSGSxSyoheztwVEdcVs2g0WxgOSkbo0J+fwO/AXWt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749763966; c=relaxed/simple;
-	bh=ON3tli/S6K3gaMncVtXAqZDYSF179jqt86fVFR3uljs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSOfWKC6Q+0N6Lx65vrReYR7/v6518xcBlpDbyTYUMtyJtVdJrMkFhl52KgMxh8P4MwgaB7/fvrAKpZ2r25FIVPlndDaQP62+F4QaWgPU8X6iwxMYmPssbTGV5s6niLjf7Yu8oN0QMVcbAVgjWh3Ct+qipMMII+GB4rYTZnkpKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 0BA6F6B4; Thu, 12 Jun 2025 16:26:26 -0500 (CDT)
-Date: Thu, 12 Jun 2025 16:26:26 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jann Horn <jannh@google.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Richard Guy Briggs <rgb@redhat.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>,
-	Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org,
-	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org,
-	Christian Brauner <christian@brauner.io>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
-Message-ID: <20250612212626.GA166079@mail.hallyn.com>
-References: <202505151451.638C22B@keescook>
- <87ecwopofp.fsf@email.froward.int.ebiederm.org>
- <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
- <87wmagnnhq.fsf@email.froward.int.ebiederm.org>
- <202505201319.D57FDCB2A@keescook>
- <87frgznd74.fsf_-_@email.froward.int.ebiederm.org>
- <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
- <87zff6gf17.fsf@email.froward.int.ebiederm.org>
- <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
- <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
+	s=arc-20240116; t=1749763684; c=relaxed/simple;
+	bh=Jy/yZ6vY7PvDZK4lQadHfmUekwMYcxQX96889QzZIQI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C2jII8QDEKL3vEL71ORPeglFpB+ZGGlEwAGPtqcLNdl1s5qAshhYRERdGQyAZA/wZP1niX2+m8dGWwN9ficz8l9B8t4U5UajRn1sQ/oEVA50LhgUxlNcHHcNmhLIK3PmuBnsmNePfaWwrxilvzDNZTi4WD5c/wAB43NJvpJP2XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlEXkERD; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-afc857702d1so1126940a12.3;
+        Thu, 12 Jun 2025 14:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749763682; x=1750368482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v/jVN4FCRaxQzsD77p3tTDX0LkCrSNulyTd+dxPmoWs=;
+        b=hlEXkERDGnlO5hJAj58h8iB83f7lSAt20ubWLlSJ+RzKgmP+WYcb8aj4WQX7Anhr8D
+         K6UVGGhckU5DPXifrByKFNYMdzkZEVjx8HwQRdLOAtqAHv5+mlb2wThYkLBH0ix+qqc4
+         0meuggSEm9hBFXteJxaw8j9HDhcIQ1yzaioMN9BnGWMGu7lr3EYc8VxBrtWxJBA2q0nt
+         2UwHlwq3wwP/wER+8sDOYmizDjFmeWC8bjdUXIRtBwx8cvSRlp0ogdEiw+V1VrmIRQI1
+         /4AI/qSQ7V4kulSFLvN8CCichI08kwmqLs+s+/+RpLrHlGZ/r5mggkk8gMpyNLKoc40x
+         p+vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749763682; x=1750368482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v/jVN4FCRaxQzsD77p3tTDX0LkCrSNulyTd+dxPmoWs=;
+        b=l9ExXP6KeQYQqOdUeVKjBnTRwSbiWUBJw1/2EPzSGqGbWacPISYrhZBrhMzljwXm0Q
+         BkQYOcILRkncYrAf08RbpYWZkiqQ3q4BMM7d/FQZ1wXWAcuqejdJ4toZ1OZgMHkkRBXp
+         1RnIBuy7jP8vAGqDEyFIBBB1q1Xwr/D6XLwtxzBqYLpYK/AbeBu/ouIVBDtLacIhTTX/
+         I2kGcOYZ7TJUwezsVCr1fNNo7YfyyfV0fnbNXgPq3QF9+piaWMA5lNHgPWudyzb0HEUC
+         7SkT9ENXtAvNDKTA/N+Vhl5ZFgADHgT13HXZghc1LifSkHhtNdt7SgNBlxZAFHhLMcK4
+         Khxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdLSZ8mDNPYiZDR2RkVadGQg70cex18RXOVigRaTCqeZfDpE0wWb+7YwqmJsHo5/ATK8db8ee9IlgLojOvPqE11gJy@vger.kernel.org, AJvYcCWZD2Qxr/8NBtMkWfcOrUdG9619rVMs+D6b7R3xfCOHPTBCt9gOAOa1odpWfiFV/6hm7a4=@vger.kernel.org, AJvYcCX7rDzY9ga6KSwwx3LzNgI6gaUZ9HKDEul3pnTaDwhqQ1o/ouGzSE3mRSkOrV4d8HE+PVU5RXcJEXAU1N2c@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZNaUabELnaHwIwpp6sbDjY7NNlAHLL5h9XCdlZo6AkXA2dhpW
+	N9e+44oQm5CPczceGhbgaO8cu22yECfyvk/g1hkv2i3iJy3wN7MRGWgNXCjjk23AhjVFFsc1HLb
+	LoeIg1uI6gUIUGadq8hhGMUOaBFwCwFQ=
+X-Gm-Gg: ASbGncs9H5F68jZgfyPOS4j6ITe6AfNwAD8krJuv7xm0W4enKLmyZwBCq0iVd+B12Yj
+	kEdfEnJF1VbxqUq9PQ8HdLzkRgYrKLbTffKgmM8qyX9YKa1WHw/27pcClmo46UFbFsEfYj4wzz2
+	GeJLyan/uNa5Cvkm3plOQ9tBVtKqoszzPd8ItNOkrSv3DI+a48wmnJy/rONPM=
+X-Google-Smtp-Source: AGHT+IHC71UZaYX6LBU/R1I5IFL9TBpwhd5z6utXefL5DI7/jMlJA/Vzpc/3QGBxhZAe7aFb0RkhQsxJO9pQouTlCgM=
+X-Received: by 2002:a05:6a20:7fa3:b0:1ee:e33d:f477 with SMTP id
+ adf61e73a8af0-21facbc3112mr701553637.15.1749763682304; Thu, 12 Jun 2025
+ 14:28:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
+References: <20250612115556.295103-1-chen.dylane@linux.dev>
+In-Reply-To: <20250612115556.295103-1-chen.dylane@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Jun 2025 14:27:49 -0700
+X-Gm-Features: AX0GCFttX6D2UIAegCADzLgzq3nurhhoxgD7HPEfDH6erHkUkFSrCjNJPjF5G_k
+Message-ID: <CAEf4BzbxGS85nKK8qAYkSE1HEj7hVshmr9xGsZcP5di0Fu02xQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add show_fdinfo for uprobe_multi
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 08:18:56PM -0400, Paul Moore wrote:
-> On Wed, May 21, 2025 at 11:36 AM Jann Horn <jannh@google.com> wrote:
-> > On Wed, May 21, 2025 at 5:27 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > > Jann Horn <jannh@google.com> writes:
-> > >
-> > > > On Wed, May 21, 2025 at 12:13 AM Eric W. Biederman
-> > > > <ebiederm@xmission.com> wrote:
-> > >
-> > > > Looks good to me overall, thanks for figuring out the history of this
-> > > > not-particularly-easy-to-understand code and figuring out the right
-> > > > fix.
-> > > >
-> > > > Reviewed-by: Jann Horn <jannh@google.com>
-> > > >
-> > > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
-> > > >>         /* Process setpcap binaries and capabilities for uid 0 */
-> > > >>         const struct cred *old = current_cred();
-> > > >>         struct cred *new = bprm->cred;
-> > > >> -       bool effective = false, has_fcap = false, is_setid;
-> > > >> +       bool effective = false, has_fcap = false, id_changed;
-> > > >>         int ret;
-> > > >>         kuid_t root_uid;
-> > > >>
-> > > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
-> > > >>          *
-> > > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
-> > > >>          */
-> > > >> -       is_setid = __is_setuid(new, old) || __is_setgid(new, old);
-> > > >> +       id_changed = !uid_eq(new->euid, old->euid) || !in_group_p(new->egid);
-> > > >
-> > > > Hm, so when we change from one EGID to another EGID which was already
-> > > > in our groups list, we don't treat it as a privileged exec? Which is
-> > > > okay because, while an unprivileged user would not just be allowed to
-> > > > change their EGID to a GID from their groups list themselves through
-> > > > __sys_setregid(), they would be allowed to create a new setgid binary
-> > > > owned by a group from their groups list and then execute that?
-> > > >
-> > > > That's fine with me, though it seems a little weird to me. setgid exec
-> > > > is changing our creds and yet we're not treating it as a "real" setgid
-> > > > execution because the execution is only granting privileges that
-> > > > userspace could have gotten anyway.
-> > >
-> > > More than could have gotten.  From permission checking point of view
-> > > permission that the application already had.  In general group based
-> > > permission checks just check in_group_p, which looks at cred->fsgid and
-> > > the group.
-> > >
-> > > The logic is since the effective permissions of the running executable
-> > > have not changed, there is nothing to special case.
-> > >
-> > > Arguably a setgid exec can drop what was egid, and if people have
-> > > configured their permissions to deny people access based upon a group
-> > > they are in that could change the result of the permission checks.  If
-> > > changing egid winds up dropping a group from the list of the process's
-> > > groups, the process could also have dropped that group with setresgid.
-> > > So I don't think we need to be concerned about the combination of
-> > > dropping egid and brpm->unsafe.
-> > >
-> > > If anyone sees a hole in that logic I am happy to change the check
-> > > to !gid_eq(new->egid, old->egid), but I just can't see a way changing
-> > > egid/fsgid to a group the process already has is a problem.
-> >
-> > I'm fine with leaving your patch as-is.
-> 
-> Aside from a tested-by verification from Max, it looks like everyone
-> is satisfied with the v2 patch, yes?
-> 
-> Serge, I see you've reviewed this patch, can I assume that now you
-> have a capabilities tree up and running you'll take this patch?
+On Thu, Jun 12, 2025 at 4:56=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> wr=
+ote:
+>
+> Show uprobe_multi link info with fdinfo, the info as follows:
+>
+> link_type:      uprobe_multi
+> link_id:        9
+> prog_tag:       e729f789e34a8eca
+> prog_id:        39
+> type:   uprobe_multi
+> func_cnt:       3
+> pid:    0
+> path:   /home/dylane/bpf/tools/testing/selftests/bpf/test_progs
+> offset: 0xa69ed7
+> ref_ctr_offset: 0x0
+> cookie: 3
+> offset: 0xa69ee2
+> ref_ctr_offset: 0x0
+> cookie: 1
+> offset: 0xa69eed
+> ref_ctr_offset: 0x0
+> cookie: 2
+>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>  kernel/trace/bpf_trace.c | 48 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 24b94870b50..c4ad82b8fd8 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -3157,10 +3157,58 @@ static int bpf_uprobe_multi_link_fill_link_info(c=
+onst struct bpf_link *link,
+>         return err;
+>  }
+>
+> +#ifdef CONFIG_PROC_FS
+> +static void bpf_uprobe_multi_show_fdinfo(const struct bpf_link *link,
+> +                                        struct seq_file *seq)
+> +{
+> +       struct bpf_uprobe_multi_link *umulti_link;
+> +       char *p, *buf;
+> +
+> +       umulti_link =3D container_of(link, struct bpf_uprobe_multi_link, =
+link);
+> +
+> +       buf =3D kmalloc(PATH_MAX, GFP_KERNEL);
+> +       if (!buf)
+> +               return;
+> +
+> +       p =3D d_path(&umulti_link->path, buf, PATH_MAX);
+> +       if (IS_ERR(p)) {
+> +               kfree(buf);
+> +               return;
+> +       }
+> +
+> +       seq_printf(seq,
+> +                  "type:\t%s\n"
+> +                  "func_cnt:\t%u\n"
 
-I can take another look and consider taking it on Monday, but until
-then I'm effectively afk.
+it's not really *func* (e.g., for USDTs it's basically guaranteed to
+be somewhere inside the function, potentially in many places within
+the same function), I'd use generic "uprobe_{cnt,count}"
 
--serge
+
+> +                  "pid:\t%u\n"
+> +                  "path:\t%s\n",
+> +                  umulti_link->flags =3D=3D BPF_F_UPROBE_MULTI_RETURN ?
+> +                                        "uretprobe_multi" : "uprobe_mult=
+i",
+> +                  umulti_link->cnt,
+> +                  umulti_link->task ? task_pid_nr_ns(umulti_link->task,
+> +                          task_active_pid_ns(current)) : 0,
+> +                  p);
+> +
+> +       for (int i =3D 0; i < umulti_link->cnt; i++) {
+> +               seq_printf(seq,
+> +                          "offset:\t%#llx\n"
+> +                          "ref_ctr_offset:\t%#lx\n"
+> +                          "cookie:\t%llu\n",
+> +                          umulti_link->uprobes[i].offset,
+> +                          umulti_link->uprobes[i].ref_ctr_offset,
+> +                          umulti_link->uprobes[i].cookie);
+> +       }
+> +
+> +       kfree(buf);
+> +}
+> +#endif
+> +
+>  static const struct bpf_link_ops bpf_uprobe_multi_link_lops =3D {
+>         .release =3D bpf_uprobe_multi_link_release,
+>         .dealloc_deferred =3D bpf_uprobe_multi_link_dealloc,
+>         .fill_link_info =3D bpf_uprobe_multi_link_fill_link_info,
+> +#ifdef CONFIG_PROC_FS
+> +       .show_fdinfo =3D bpf_uprobe_multi_show_fdinfo,
+> +#endif
+>  };
+>
+>  static int uprobe_prog_run(struct bpf_uprobe *uprobe,
+> --
+> 2.48.1
+>
 
