@@ -1,85 +1,118 @@
-Return-Path: <linux-kernel+bounces-684390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C650CAD79E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B54CAD79E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E762C1895367
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439891894894
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9532D191F;
-	Thu, 12 Jun 2025 18:46:15 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9C129B8CE;
+	Thu, 12 Jun 2025 18:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjiiOam3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C881DED49;
-	Thu, 12 Jun 2025 18:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A9713D539;
+	Thu, 12 Jun 2025 18:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749753975; cv=none; b=lPQFn+kupjfZfJq81+wbu9AJZMhxza0OyOax4S4mkHIjhflNduqzvx2UYLPDPsgr+G1jS451uJj3atUdxw0hwoAPx5mapQVKS7/Q5GU8/8zM+dKNBntOq3BMhtdScUkF3Beo31w1yQspVWSxFSXOgibWZ8uCgpl0/IAFYvp8AuI=
+	t=1749754021; cv=none; b=NlFWtEBDsPKNVlr/t5N8PHNhcFrWXQNp4A0dy/EzwDIllodns/ofcvxoRWZdOABwGyY2DMOEdOOGfrWPPpPmkXBFAfh6Y5cMFpA+GegczrGIFiKCPmmc0io29bT7PC8ERkhAmK5A+WPNmpODfHxHMKojA0wPj8IFrOvkySfAYGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749753975; c=relaxed/simple;
-	bh=/H9i4+0JZXYBeLsLAGfFJ2L0/J3aSZVDyLNzZIJUV1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BGB9sQFr4jHcQyz97lSHy5gzTsuvhzKUbBQvw1qhL+cdlxgUFL8/Hk4wFkmlERsxLvy2Fg2QtnW7MsQNx1cosPN6ddm5/ceDnthdQzFSDNeVt2B0l4LTU8frUp6RqRthqa5EuZP3LtbApl4kVnRB5wDo7lhtf2BR6XpBd7nNtmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 5BB3F1A178F;
-	Thu, 12 Jun 2025 18:46:11 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id A1B812F;
-	Thu, 12 Jun 2025 18:46:09 +0000 (UTC)
-Date: Thu, 12 Jun 2025 14:46:08 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org, Carlos
- Maiolino <cem@kernel.org>, Christoph Hellwig <hch@lst.de>
-Subject: Re: Unused event xfs_growfs_check_rtgeom
-Message-ID: <20250612144608.525860bc@batman.local.home>
-In-Reply-To: <20250612174737.GM6179@frogsfrogsfrogs>
-References: <20250612131021.114e6ec8@batman.local.home>
-	<20250612131651.546936be@batman.local.home>
-	<20250612174737.GM6179@frogsfrogsfrogs>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749754021; c=relaxed/simple;
+	bh=rae+Xy+GVeClcCuswO7WbVtIsL71ZmU4FtcEUBegmnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JrOLie8W7A/P4toljWIbIMYpinyAPdpYs2TiHSo1k7Z0FtOg+YWtVsXlCzk01L+ah4Sy5oBdVtsRoQ9GUeLRuIGjVVprsUCPcqT5E4MJpmgxPoeuUJt2lr6zB7ukStZ/DJnmwpMrzfYXu4b654V4fVVltobY+1J8WB78tVFMDhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjiiOam3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037DAC4CEF1;
+	Thu, 12 Jun 2025 18:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749754021;
+	bh=rae+Xy+GVeClcCuswO7WbVtIsL71ZmU4FtcEUBegmnw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OjiiOam3P0ES7NiE+EZJjuXt7LqkCLNruQnPCNpX06jpVlpRfuT+ibrxnDfCr0Qgc
+	 aVmenVGPayEVh2vBYKeO9OxkFdANxN+sF9dpZl1f50vhu/3TPnrU6fxMxryjugHJ0F
+	 OKC1MjSo8BZ23PZF3xzP0Pw8eXOEpdfMIwAETx+6iXATUZ93/ovbHZklNkYigseKK1
+	 JRcZtE7lzdX62ZT87N0AZ+XGacFN00z4cIWuGiWW2U8AK/gPVPESeseWd5DA9iYXhT
+	 6WAamqnLjbDyz5qKvoz8e790Q2osebh0BfhNUmWJDrQD/hrQJK+PMqsG/tGOBfkszj
+	 Rjk7GyUDVfOlA==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6065251725bso871119eaf.1;
+        Thu, 12 Jun 2025 11:47:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW1rHUBy2kx3KRoTGpddzPz9vqOvfzo9fqma0Dy5HIZttUG/Gv5k2u+6UmF3uDDutOvhPp1sjwKGw==@vger.kernel.org, AJvYcCW5JliNhPEphbk4qbS3oLyS/PPN+mgniZbpA0rIvZKbikGRfSqxnRXqXOEJOe/MXbxYJ4oMmB094zIIHWylep3up4C/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3RQllC2Qm/q7CRxpFFUr73tr2qJWC6gkW/5FOVkdJqtp76mtm
+	SOI2xKwz7TGVS7sU5GrTHOvZ4RDhvlDdYZ+UbR83QyzUV0mLIa1MAlAk7ni8ifMsnLR8e7gqCTa
+	556zKbwyesbYOrwzPWSnQPXlBcS3lQxc=
+X-Google-Smtp-Source: AGHT+IGVBH3lWI6ocKqXpduli60MAl5yPrTXUSBJUCNvpZ8YMVLXnRTpp4jSJe5p38bu5Vi5w5+ShdNClwr7F6Qn4V8=
+X-Received: by 2002:a05:6820:1a09:b0:60f:3be9:187a with SMTP id
+ 006d021491bc7-61107aa1b27mr172114eaf.8.1749754020209; Thu, 12 Jun 2025
+ 11:47:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A1B812F
-X-Stat-Signature: duorc8ay8zkp4zsqmk3wa4cnp3nuyqy6
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+FrPMhahetRh/AQCGHFoz0rx1Z+zXcy5I=
-X-HE-Tag: 1749753969-439561
-X-HE-Meta: U2FsdGVkX18QtXp1s0JHtR2VaRPyjGJviGIaUeclJ2my7tP7AQ3AoNR85Np4dinTv0o+C3F/4qsmb2fr4ZcUQjzadoh1UU+ROf2k/n25xotdNjQjfkzxaSMatc3Cgb0/KSCwwbIKc4eTC7yy+WlLqy1L8FT2fRK+SzbY2tMJnZXKfCjmJ2Wp/tr/6cion6uejKsX+QAqTAtIO9HYqTIS8CmUaVVZJeIClPTIpOCR1113RWs/S5l1Yb4gsDfqYz68mJ6ICyMmYm8ZfQwF7oCVJL2lEAGV3j946rwDYBMc//d3352Pyc3XRiz8VBREAn0VdbTdsq/OHXgAt7ww3eon9lP1Wd9wkY96
+References: <20250612145310.563358597@goodmis.org>
+In-Reply-To: <20250612145310.563358597@goodmis.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 12 Jun 2025 20:46:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iTrDBV7wG0gzpg3hzjBFWUdohquyVGta93uOhyoWpiLw@mail.gmail.com>
+X-Gm-Features: AX0GCFtmIZhBJxZjxq0ItKlhq1D_VGfvqSHyPe_kp82oXVvS-MbMbDdYCDMbVmA
+Message-ID: <CAJZ5v0iTrDBV7wG0gzpg3hzjBFWUdohquyVGta93uOhyoWpiLw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] PM: tracing: Don't compile in unused trace events
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 12 Jun 2025 10:47:37 -0700
-"Darrick J. Wong" <djwong@kernel.org> wrote:
-
-> On Thu, Jun 12, 2025 at 01:16:51PM -0400, Steven Rostedt wrote:
-> > I also found events: xfs_metadir_link and xfs_metadir_start_link are
-> > defined in fs/xfs/libxfs/xfs_metadir.c in a #ifndef __KERNEL__ section.
-> > 
-> > Are these events ever used? Why are they called in !__KERNEL__ code?  
-> 
-> libxfs is shared with userspace, and xfs_repair uses them to relink old
-> quota files.
+On Thu, Jun 12, 2025 at 4:52=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
 >
+>
+> I have code that makes unsued events trigger a warning. I'm currently cle=
+aning
+> up the kernel to remove the majority of events that are defined but not u=
+sed.
+> When an event is defined, it can take up to 5K of text and meta data per
+> event. An event should not be created if it is not being used.
+>
+> The powernv_throttle event is only used by the powernv code so I moved it=
+ to
+> its own header file and it gets created when the powernv code is compiled=
+ in.
+>
+> For the other power events, I just added #ifdef around them with the conf=
+igs
+> that enable them.
+>
+> Steven Rostedt (4):
+>       PM: cpufreq: powernv/tracing: Move powernv_throttle trace event
+>       PM: tracing: Hide psci_domain_idle events under ARM_PSCI_CPUIDLE
+>       PM: tracing: Hide device_pm_callback events under PM_SLEEP
+>       PM: tracing: Hide power_domain_target event under ARCH_OMAP2PLUS
+>
+> ----
+>  drivers/cpufreq/Makefile          |  1 +
+>  drivers/cpufreq/powernv-cpufreq.c |  4 +++-
+>  drivers/cpufreq/powernv-trace.h   | 44 +++++++++++++++++++++++++++++++++=
+++++++
+>  include/trace/events/power.h      | 28 ++++++-------------------
+>  kernel/trace/power-traces.c       |  1 -
+>  5 files changed, 54 insertions(+), 24 deletions(-)
+>  create mode 100644 drivers/cpufreq/powernv-trace.h
 
-Does this userspace use these trace events? If so, I think the events
-need to have an:
+For the series:
 
- #ifndef __KERENL__
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-around them too.
-
--- Steve
+Thanks!
 
