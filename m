@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-683496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288B9AD6E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776F6AD6E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1818166DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1AC3ACDA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F24B23909C;
-	Thu, 12 Jun 2025 10:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0018D2397A4;
+	Thu, 12 Jun 2025 10:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VKGzRxSh"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UiCPzLXp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2D5223339
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C307E223339;
+	Thu, 12 Jun 2025 10:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725304; cv=none; b=R27pa3CPPbdaAotD7h06tzqZIFY2jNn5Cj/nn1IsdORaNsQmJygbzZZEOJ8EKOknCFSWLoANWAVwGOsepYf/Dkkt2rsY7/WiOjfU75RGhAJwm9pOp4pwgsx35xLbn+dYl9qe2j2VJzoWgwKPgcixXOpZVzGv9umK3Q0wkKK7ucs=
+	t=1749725356; cv=none; b=Qyd1GRCBUgSW/CKO3/2DxjyoGXcLMXBDgWSpusN3xu8V+yP+Z9qlV6tpv4qqjIM2o5YN2lCXexfGNZEAgKB3PXSD0BZPNCm+b6lZ3uRhCVYXehZ5snSvZkgitraU/rOiIQd5oLUmS+ytKaSNt5C0GpXVUEohD3M3t6NsPwU5zZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725304; c=relaxed/simple;
-	bh=HNDqJvbrM3YoJTFiv4uqxRukmDC/kioQTcqiuAA2cac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E++7//TjKGmdoHkKnCclSpd9S47Th6ps5RIJnJVWzGf5K7gGnBgSMIRwiZu8YiTFEpHLKCPl27OpNICxIhzKDAp8DWwhEirOi5FodmmGBSlza8DLW3ZB3aiHw0lHvK7WJZabFcIjAy9rpg9gYKf0DUMszTAOVJP/+7dKCseNHb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VKGzRxSh; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a54700a463so486515f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 03:48:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749725301; x=1750330101; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O9eVd27nL1eqHZbw4F9ds6pBpZa05pK5xdu04RGTqP0=;
-        b=VKGzRxSh71/QF8p8wnUQ7PEGwC0EUpZkw7hv4LYxPDa7j4XDSOth5nk828JYDek1HH
-         gyVQZfml7PkpMgWORHIN6L5J4O0dbGuWYWf3SdM6mHoN69ENGQC3uHa1nBqkq0siUJi3
-         5Hs6IsYvlv41WztZIOdtoOof0W+m9AvXIw20bVXixzeqjj04ZJIbyem3HTHuXpFUoJnh
-         kocp75cCpvXWbWxRNgYl83NQdPsX8kN1A8iBNUh6QUK+C0M4Q+1QUx+csaDXMRxRAGKl
-         RdBq+F4t5VAEuNsA2bNtnC3/F5zoQpcYX/F46KVzSg2QMSF0mA59uuKAnBlfYLBe2uMc
-         tbUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749725301; x=1750330101;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9eVd27nL1eqHZbw4F9ds6pBpZa05pK5xdu04RGTqP0=;
-        b=FcBlBibvuGtLhPDaKdcx6J+YkpJsZyzdigGdL6ZoWeqJgdSYEZgul58j+c3tyomW8S
-         jyRRyPn1dnJU+GerGSWtkM573aliSsziDmIvyTYjXc1NrNQSOa4vzrPQnp+PYJPs4ysU
-         hHShi9+GKVt9SBq5N199u6qbvj8/97VKEY8PwSxhd4Nb2jiwiKkSgd9ZZCT9KWHYZxZ+
-         MGmPRMcco58T3fwNcL/E6byQ4mZZBjFxaRSR6hhNpsnDTzi7QBYYpaBewFhmPNw4tk/p
-         zTpodRfQwB3Qf9Kd3ukNrrjidDoP8Rajv2qNycXb0AohIaC5AynW/d+Mx/NjQg9Fc47z
-         7/iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmWmaX5t9HdC8nOMSZhGRRHbUUqGDeeknaFKjvfzZcAP1a+he67dADeMAmFExPRmMRzWLAdaftFR0xnPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGl2z+1YQ87KCI6bFmJyR18o2yUIdQSUY2GHRyNT6KXT1CTV/C
-	psp130HJGSiuVbwoMq20k+dkZFXuX3GSAEcoCCyrFrrvi9Oe6r7vt+HxYZyLk0mz/F0=
-X-Gm-Gg: ASbGncuMibqtL+q0emK6H9fCkBeMIw3w5gGBnI+sGDWwvErNEk8LyItyQw8VUfItGA2
-	uLz6AvdAg/+BqoaSgZUNFF82VCcX2HXXHr2RfpjnfkZj6Z+HensLipBLNj7hss43GSdh4ZmJxcm
-	xYmQ36bGcwdXyo+uUwGyTOzFFAGAo9MUM4MvoWoJKM+dlqCAXGVN/1uRJo01PZ9JFl+V5UyVH2W
-	Puan9JulWWseQlSnsZ9Nvc5qQXCdD6t+z9tfKBj+w8U81QhtsYnKVxwIx6WW49zrNckYPoH0KCP
-	x7gTa9FPOeoCaozpRMuCeouis1wcWJRuw2IM8ygHSRW06Hc5HZX/TzPKf+PsIiLzJrRsBvxHNHo
-	jXmXs
-X-Google-Smtp-Source: AGHT+IEaAyozngycLd0mG65hkJuHuQ/++UMGDBEwmcvUNmlN9HEgHszswErmF9JjhOS7OFHmrHQ5zA==
-X-Received: by 2002:a05:6000:3107:b0:3a4:ed9a:7016 with SMTP id ffacd0b85a97d-3a560827df3mr1956811f8f.26.1749725300756;
-        Thu, 12 Jun 2025 03:48:20 -0700 (PDT)
-Received: from [10.0.1.22] (109-81-1-248.rct.o2.cz. [109.81.1.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561976a20sm1655934f8f.19.2025.06.12.03.48.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 03:48:20 -0700 (PDT)
-Message-ID: <c7dbb33d-98b6-45da-be77-e86b9e6787ee@suse.com>
-Date: Thu, 12 Jun 2025 12:48:19 +0200
+	s=arc-20240116; t=1749725356; c=relaxed/simple;
+	bh=/p2+oAN4N9RGll1iL8VgjWS6CIl6MG8l1wXxzcHOKdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R9shbjv/mOGg0rmSSIqtCuIqQflEIF5v0QJPeZNY+xHtOVJw/wbFGZ8tUZT5jYU5iWB8xnNK0mAb0xbjaRvB+OWb8v6xttD+Xbj+Iq3luPcTAgtfQ5g1kKcZuPSjLMJcwXgxjIa95uw0TrjOUkAthuL69TunW3EDpKh9NdGd4yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UiCPzLXp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C9IMav002515;
+	Thu, 12 Jun 2025 10:49:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xAru5tL6A9/kwMmGSI/WjuX5wDfBZY9BmkF91WMW9as=; b=UiCPzLXpMWtN2Ugk
+	DqKrYrijt5dQFy7Ygvj22hHCzfHRMPNK2bCMpXV/cpzRIAlXh8jyak3zyhfCGbJh
+	NoCPK4WQuR7W5fnCuO683hXjCKaGsWRcKppLNNIM03c8zf0+aw6GrF2z262R5xN7
+	YuhFbmZZLHlbh6ZrF0ysWtexueuGzbW1e0MoEdhkD/Bedgw1OeFuUhJdiVIaNhIQ
+	3NO9CCCEnYlD0G23bu2wqSSDSSy+scYSrmw3db605l44on9EpSqNtSkb2pnP5jd8
+	GXJ4WDVnbBf606MqCFS2q4JlXhX/T4qGPIhfrsGLa+0j1MDATueSb0U1aFqvKS49
+	CJdcrA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 477jbphqav-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 10:49:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55CAn83P014123
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 10:49:08 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Jun
+ 2025 03:49:06 -0700
+Message-ID: <73c6cd0a-9c15-421e-afa4-27fe173bb428@quicinc.com>
+Date: Thu, 12 Jun 2025 18:49:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,121 +64,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] module: Fix memory deallocation on error path in
- move_module()
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250607161823.409691-1-petr.pavlu@suse.com>
- <20250607161823.409691-2-petr.pavlu@suse.com>
- <ae967353-71fa-4438-a84b-8f7e2815f485@kernel.org>
+Subject: Re: [PATCHv3] wifi: ath11k: clear initialized flag for deinit-ed srng
+ lists
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Jeff Johnson
+	<jjohnson@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250612084551.702803-1-senozhatsky@chromium.org>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <ae967353-71fa-4438-a84b-8f7e2815f485@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250612084551.702803-1-senozhatsky@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6qqAZqvnHHzwNlWHZf_PLk18dmzfKXJ5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA4MiBTYWx0ZWRfX8kM+9n60IL4u
+ OE6AH0e9Q1JP9zlu2pjJKMN8I/hf0ZoR//ultXwmcjuD0jpjifZA63IsPL7S/sYVcURj5hoRcvI
+ 26L9zO4Q/kbpGbYq4CEWtZ5JWjPfuidrgbpKBkaWapYDoFaYCTyGd96IJCD9M7lhQ0AHtIjWmlS
+ TnNhsx0ITTRkHNIRJQ56KJr1I4wrx3VxVww80X2mLYjyKYVSgzkcubGVsTTNcSOCYGKXCfKGaNq
+ VdqGQxany70ywfd9o8AbmQWT8O+nUPtuFMfJBXaZzOdQhtpFrr+IvcnO9XOsUebA7vXiGEoTYzn
+ jxW0C6hpwZBTRTl8IwOWR+5D4t7ZYNSE82w4l+Bwlsw9NreXv5L1AU5x8Mji7s11Zb8FQxWcGpx
+ iM/zJTQoL/uRFRQs+4liN1I2PDJ/hvLnBY9g5w0LV9CFw6eMyG2K0PDugbqgGfodufklenmJ
+X-Proofpoint-ORIG-GUID: 6qqAZqvnHHzwNlWHZf_PLk18dmzfKXJ5
+X-Authority-Analysis: v=2.4 cv=OLgn3TaB c=1 sm=1 tr=0 ts=684ab0a5 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=cm27Pg_UAAAA:8
+ a=COk6AnOGAAAA:8 a=B3OtxjWztyHNNZvo7z4A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
+ malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506120082
 
-On 6/10/25 8:51 PM, Daniel Gomez wrote:
-> On 07/06/2025 18.16, Petr Pavlu wrote:
->> The function move_module() uses the variable t to track how many memory
->> types it has allocated and consequently how many should be freed if an
->> error occurs.
->>
->> The variable is initially set to 0 and is updated when a call to
->> module_memory_alloc() fails. However, move_module() can fail for other
->> reasons as well, in which case t remains set to 0 and no memory is freed.
-> 
-> Do you have a way to reproduce the leak?
 
-I was only able to test it by directly inserting errors in
-move_module().
 
+On 6/12/2025 4:45 PM, Sergey Senozhatsky wrote:
+> In a number of cases we see kernel panics on resume due
+> to ath11k kernel page fault, which happens under the
+> following circumstances:
 > 
->>
->> Fix the problem by setting t to MOD_MEM_NUM_TYPES after all memory types
->> have been allocated. Additionally, make the deallocation loop more robust
->> by not relying on the mod_mem_type_t enum having a signed integer as its
->> underlying type.
->>
->> Fixes: c7ee8aebf6c0 ("module: add stop-grap sanity check on module memcpy()")
->> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
->> ---
->>  kernel/module/main.c | 7 ++++---
->>  1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/kernel/module/main.c b/kernel/module/main.c
->> index 08b59c37735e..322b38c0a782 100644
->> --- a/kernel/module/main.c
->> +++ b/kernel/module/main.c
->> @@ -2614,7 +2614,7 @@ static int find_module_sections(struct module *mod, struct load_info *info)
->>  static int move_module(struct module *mod, struct load_info *info)
->>  {
->>  	int i;
->> -	enum mod_mem_type t = 0;
->> +	enum mod_mem_type t;
->>  	int ret = -ENOMEM;
->>  	bool codetag_section_found = false;
->>  
->> @@ -2630,6 +2630,7 @@ static int move_module(struct module *mod, struct load_info *info)
->>  			goto out_err;
->>  		}
->>  	}
->> +	t = MOD_MEM_NUM_TYPES;
+> 1) First ath11k_hal_dump_srng_stats() call
 > 
-> Why forcing to this? I think we want to loop from the last type found, in case
-> move_module() fails after this point. Here's my suggestion:
+>  Last interrupt received for each group:
+>  ath11k_pci 0000:01:00.0: group_id 0 22511ms before
+>  ath11k_pci 0000:01:00.0: group_id 1 14440788ms before
+>  [..]
+>  ath11k_pci 0000:01:00.0: failed to receive control response completion, polling..
+>  ath11k_pci 0000:01:00.0: Service connect timeout
+>  ath11k_pci 0000:01:00.0: failed to connect to HTT: -110
+>  ath11k_pci 0000:01:00.0: failed to start core: -110
+>  ath11k_pci 0000:01:00.0: firmware crashed: MHI_CB_EE_RDDM
+>  ath11k_pci 0000:01:00.0: already resetting count 2
+>  ath11k_pci 0000:01:00.0: failed to wait wlan mode request (mode 4): -110
+>  ath11k_pci 0000:01:00.0: qmi failed to send wlan mode off: -110
+>  ath11k_pci 0000:01:00.0: failed to reconfigure driver on crash recovery
+>  [..]
 > 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index ada44860a868..c66881d2fb62 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2697,7 +2697,7 @@ static int find_module_sections(struct module *mod, struct load_info *info)
->  static int move_module(struct module *mod, struct load_info *info)
+> 2) At this point reconfiguration fails (we have 2 resets) and
+>   ath11k_core_reconfigure_on_crash() calls ath11k_hal_srng_deinit()
+>   which destroys srng lists.  However, it does not reset per-list
+>   ->initialized flag.
+> 
+> 3) Second ath11k_hal_dump_srng_stats() call sees stale ->initialized
+>   flag and attempts to dump srng stats:
+> 
+>  Last interrupt received for each group:
+>  ath11k_pci 0000:01:00.0: group_id 0 66785ms before
+>  ath11k_pci 0000:01:00.0: group_id 1 14485062ms before
+>  ath11k_pci 0000:01:00.0: group_id 2 14485062ms before
+>  ath11k_pci 0000:01:00.0: group_id 3 14485062ms before
+>  ath11k_pci 0000:01:00.0: group_id 4 14780845ms before
+>  ath11k_pci 0000:01:00.0: group_id 5 14780845ms before
+>  ath11k_pci 0000:01:00.0: group_id 6 14485062ms before
+>  ath11k_pci 0000:01:00.0: group_id 7 66814ms before
+>  ath11k_pci 0000:01:00.0: group_id 8 68997ms before
+>  ath11k_pci 0000:01:00.0: group_id 9 67588ms before
+>  ath11k_pci 0000:01:00.0: group_id 10 69511ms before
+>  BUG: unable to handle page fault for address: ffffa007404eb010
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 100000067 P4D 100000067 PUD 10022d067 PMD 100b01067 PTE 0
+>  Oops: 0000 [#1] PREEMPT SMP NOPTI
+>  RIP: 0010:ath11k_hal_dump_srng_stats+0x2b4/0x3b0 [ath11k]
+>  Call Trace:
+>  <TASK>
+>  ? __die_body+0xae/0xb0
+>  ? page_fault_oops+0x381/0x3e0
+>  ? exc_page_fault+0x69/0xa0
+>  ? asm_exc_page_fault+0x22/0x30
+>  ? ath11k_hal_dump_srng_stats+0x2b4/0x3b0 [ath11k (HASH:6cea 4)]
+>  ath11k_qmi_driver_event_work+0xbd/0x1050 [ath11k (HASH:6cea 4)]
+>  worker_thread+0x389/0x930
+>  kthread+0x149/0x170
+> 
+> Clear per-list ->initialized flag in ath11k_hal_srng_deinit().
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+> 
+> v3:
+> - updated commit message and subject line (Baochen Qiang)
+> 
+>  drivers/net/wireless/ath/ath11k/hal.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+> index 8cb1505a5a0c..cab11a35f911 100644
+> --- a/drivers/net/wireless/ath/ath11k/hal.c
+> +++ b/drivers/net/wireless/ath/ath11k/hal.c
+> @@ -1346,6 +1346,10 @@ EXPORT_SYMBOL(ath11k_hal_srng_init);
+>  void ath11k_hal_srng_deinit(struct ath11k_base *ab)
 >  {
->         int i;
-> -       enum mod_mem_type t;
-> +       enum mod_mem_type t = MOD_TEXT;
->         int ret;
->         bool codetag_section_found = false;
-> 
-> @@ -2708,12 +2708,10 @@ static int move_module(struct module *mod, struct load_info *info)
->                 }
-> 
->                 ret = module_memory_alloc(mod, type);
-> -               if (ret) {
-> -                       t = type;
-> +               t = type;
-> +               if (ret)
->                         goto out_err;
-> -               }
->         }
-> -       t = MOD_MEM_NUM_TYPES;
-> 
->         /* Transfer each section which specifies SHF_ALLOC */
->         pr_debug("Final section addresses for %s:\n", mod->name)
+>  	struct ath11k_hal *hal = &ab->hal;
+> +	int i;
+> +
+> +	for (i = 0; i < HAL_SRNG_RING_ID_MAX; i++)
+> +		ab->hal.srng_list[i].initialized = 0;
+>  
+>  	ath11k_hal_unregister_srng_key(ab);
+>  	ath11k_hal_free_cont_rdp(ab);
 
-This seems to be off by one. For instance, if the loop reaches the last
-valid type in mod_mem_type, MOD_INIT_RODATA, and successfully allocates
-its memory, the variable t gets set to MOD_INIT_RODATA. Subsequently, if
-an error occurs later in move_module() and control is transferred to
-out_err, the deallocation starts from t-1, and therefore MOD_INIT_RODATA
-doesn't get freed.
+Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
 
-If we want to always start from the last type found, the code would need
-to be:
 
-		[...]
-		ret = module_memory_alloc(mod, type);
-		if (ret)
-			goto out_err;
-		t = type + 1;
-	}
-
-I can adjust it in this way if it is preferred.
-
--- 
-Thanks,
-Petr
 
