@@ -1,128 +1,172 @@
-Return-Path: <linux-kernel+bounces-684322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4048DAD78FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:29:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4013AD7902
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08EA3A413C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21F83A01DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367702BEC45;
-	Thu, 12 Jun 2025 17:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D6B29B227;
+	Thu, 12 Jun 2025 17:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPs34fLD"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fixme.name header.i=@fixme.name header.b="vdkw2Ox2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VfjoD6q9"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2570B2BDC13;
-	Thu, 12 Jun 2025 17:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A7B19CC39;
+	Thu, 12 Jun 2025 17:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749749328; cv=none; b=bsy09k9mhWlsG6P0B/MqvZk89TKBVtSLXnIwopgHY6W9IlqZ+i6K39Ojfm2zCPuK5XLx8AtJDCJexRfxVgyaiFESo6rxH7Bm8uvuyIk8v9mGQF9QEgaU/VKd0nIrz5bWFnxwogPli47tJpR1Tuq1pagnyMJPibTNkISmdFjpz1U=
+	t=1749749466; cv=none; b=SYMM6NyuiEkNLOBFhJvw7Hlf532gyR97VkE/Sy0zEz33MlIuC2whfg4Q0ziiVVyd1ji/+RXPfBmI6kZtfLFywFUbyCaiwC5ib+6Q3sV7VThw0yYQLiZxKw3aLjt8mPgl5dP3h3zFB4g0w/AaDpIKpdARTTe1vhwq9y3kkzIOVkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749749328; c=relaxed/simple;
-	bh=cVzggo6fwLrjSrHwgdYTjOmIIJBC25mHFWhaLr0wgiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YGp5p4hFNTO4pcw5WJZAiCWz0ZXOkt01gXbsAUnCwmhza6tDSP7F6qeW7eL62p85kJhrhBvr4cXn6t9aJsieUMf6El8V9nwPpHQRF5xD0mV+fTk2TdNv8JOhLy5kwykTUAJu5NSpYH19Ax5p6cYFjbeAaoJXKoieKyns+YxROpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPs34fLD; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6fad4a1dc33so13182356d6.1;
-        Thu, 12 Jun 2025 10:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749749325; x=1750354125; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cVzggo6fwLrjSrHwgdYTjOmIIJBC25mHFWhaLr0wgiM=;
-        b=HPs34fLDKSMvYESblLH9V3YVsR/e8F98chIh2PgE5PC4u5s1pkJf3oznZu1+PkFb+x
-         Uu0dftyeVSLS4O7Q6xYf0XY6aWCr+bt9Kru75wWs2zOLcSHRPO4g7Qx53VL/c1g6IEIL
-         ISrLrWKk3yTFPnA51TH4U5I9KNCv7lRvsf60Sh1xjZcS5vQYv2Pi7EH7qny82eFKnJye
-         WZ2mJIL01dgCscDhTSqLHXtC4vS2AxfqBoGxOQLMfdxRVtsCQxsQeJtDHcw87uV5LjNp
-         2npYbXPIJvx5pJxF4GR//TXgVY2hgjz+r1Nye8RLDfwADRIcOCEqEtCH7/HAdfCN/kq8
-         zX5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749749325; x=1750354125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cVzggo6fwLrjSrHwgdYTjOmIIJBC25mHFWhaLr0wgiM=;
-        b=baZHbcWlCGIeJyDRXZeasHn+OQOthPwtWY/fbPv4JhuL66nEEa2r2dOJSe5nYnr5ty
-         J5e3IdqCS/3QGaxP+1rJ31t1HJKRAkInh3qf5ZHymdVzrNE6gKp8hmgnUoMSfy3Tz+Ca
-         ZASeqKzW8ei/ZYIfAzjxHUjA45aM0Ql0w7s9KkxdizQ56nkV5uTSuXL+4PSyFmtaEtVh
-         wLSmRJ8NCZz+sH/eW22jvwPhfYkeEQDnv8t2PBH1fdwXV1qclDCBACrwKhTMJli+rLuE
-         2mWdrc0JY/5bP+ViCLtI/QU9v2S/cbwIsRrXJKrJWLRT94MC6aAguK7R/jzZVw7EE6sE
-         3QOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWE5FH30lj65lXp9mridrqUJ97It1x/wLh7WpVAuKe48gu9V7HHUe/PVgHwUfuqN1hH1n07RwewYq+wcjH2@vger.kernel.org, AJvYcCWzRRoHiS4gaJLx1NxB4U+j7B0O+bHJ5og06Y5y8BRa5BjCoHs+fwi3aVtM6NHaboWyDXHRAI4I@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAcTfB+RsTOLR3hK8VnkkLfk65tKgRElBkrJ1BCeyW0ySA379t
-	RNIhXMLQMIdP87iBbiJfHgqLRDxJ0KNXWNy5W5fgY78rwYrOEJGTDWgV4sC8v13BStiKjTekQ1H
-	Og8qX9p+J6nI0LHBybis5sE3jmpw+RMI=
-X-Gm-Gg: ASbGncuiBJqG/VkaDxvXu13dKTdp6xPCCZ+y4xCJ4RpjnhwOzR6Zt1agmFNQDIb9oYq
-	0Hdj+vcf+3bVYuWdYu6M0LG3vKzSnFTPdxD7RmxwTH6EarGZczuVO84xB+zJ0VZIaM6+hHn4c7A
-	9ZD5enHmpqAc8Zba3jpEHXsXOwHxxcnB28vZbaBIUqqBCSMPVhhQ1RFTaGXBk=
-X-Google-Smtp-Source: AGHT+IEXdxdD53pTjTM8GX7O6wNncG5C9alVq4mW+efekyq5EYpQPguf/NrZNanJT1ZnJiDheX47I0CCs9OiXFq+bqQ=
-X-Received: by 2002:ad4:4eee:0:b0:6fb:1db:e9e7 with SMTP id
- 6a1803df08f44-6fb3460dcb6mr74029396d6.10.1749749324580; Thu, 12 Jun 2025
- 10:28:44 -0700 (PDT)
+	s=arc-20240116; t=1749749466; c=relaxed/simple;
+	bh=fGr0rJHgLpd6zUTWhIz+yNO88y9keApjANZl/NMnsMU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TgUFaUjbsDZXS5UPy9EuL+z4PdSBPtsYsRnnHOkyMSpMuOQCH9l6jVne8tMSMu6H4hkCF0/0iik92eDsmUK93jmycZg9ueXCKpCIA1sYtbB+B10BXqxevLm1riuQfV4/tmbgOSgAv5RfKO97CJnRUICTKm6pHi3GieEaKPQ9Iq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fixme.name; spf=pass smtp.mailfrom=fixme.name; dkim=pass (2048-bit key) header.d=fixme.name header.i=@fixme.name header.b=vdkw2Ox2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VfjoD6q9; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fixme.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fixme.name
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id F1B871380600;
+	Thu, 12 Jun 2025 13:30:59 -0400 (EDT)
+Received: from phl-imap-16 ([10.202.2.88])
+  by phl-compute-01.internal (MEProxy); Thu, 12 Jun 2025 13:30:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fixme.name; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749749459;
+	 x=1749835859; bh=WCNw8TaPoZpTkQjM0KFEMXopFWerGIynO7kJB1LPe1k=; b=
+	vdkw2Ox2Yd6QBPVHDeb3ubgl6H557wDZqjWcSHZqObvs46gVd6l457ZRwCA9UN/E
+	WJQoyGrx09wcebOlfRS/xAEi1Z+7bqByGMzeEZBLr1OTs3ERcnoGLtbpb+JZvuZ5
+	T9ewab6rllJ7EeprPvnawlCqUL4nQHK724gLLNG7RI0Wc8OfSXVTtlxMJYo0UuAr
+	7nRCEKIPk7aiDuQ+JXMe89AOauKzgeg5aKoEh95rIz4ueaUWL7Msvfqes3KErq7v
+	dJn4Nk7exZvgq71w6r8pDN4WfMWoEQ1JOkHMdSEyN89Baba8q+LvmIUIf/BSIceG
+	j++pOXl8IXS4F28juFisXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749749459; x=
+	1749835859; bh=WCNw8TaPoZpTkQjM0KFEMXopFWerGIynO7kJB1LPe1k=; b=V
+	fjoD6q9JrXO/B2ZHKoFttqERtRc27rDxR9lIx0ZalFCvQnBxVWfUCXx9TVbLmSi8
+	FcsDNoWxNkRGlP2hTyP95/CmXmNet8Rv8/9XI107UBoEEVHyuC/xtJG8HNppW2AO
+	M7TsW2RTaNq4rqvC9ETF8WNUkNUC+c3C+ipPcxnO20j/tQLNstU+dR2VStWZ6Efu
+	8t4LgQkK57qbf17VxJvqe2JiSW7CSleuS4Dq01W1A7b5f3VNAfGP5XrvHWZp/+Br
+	FxU7xX+zd6Axx7y3OHyIpOZ+Y84bymg4Y5wECdjE9j7S7Gatsv/LGNt52D0D+qf4
+	up6n6yQT+Tj1L9xdhWJVw==
+X-ME-Sender: <xms:0w5LaPUzdLNT5S9_T4YvGC5v0tq0B28yt3uSkgPoqU3iKnIQt_Ns0g>
+    <xme:0w5LaHlZ-nKrs5paS4F9EsmDStFq5CZYibldaEB-kyfZbdwe7nxYMC1_vNArU1-gq
+    ia707BtrKetx17tng>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheeijecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdeuohhquhhnucfhvghnghdfuceosghoqhhunhesfhhigihmvgdrnh
+    grmhgvqeenucggtffrrghtthgvrhhnpeffgfdutdekieettefhjeffteeugeeluedutddt
+    uddvtdetvdfhkeffgfeuieevleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthht
+    ohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgvvghrrghjrdhuphgrug
+    hhhigrhiesrghmugdrtghomhdprhgtphhtthhopehurhgviihkihesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggvshdrohhrghdprhgtph
+    htthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhl
+    mhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhovghlrghgnhgvlhhfsehnvh
+    hiughirgdrtghomhdprhgtphhtthhopeholhgvkhhsihihrdgrvhhrrghmtghhvghnkhho
+    sehsohhnhidrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:0w5LaLYm50Hb1KjC4w0an2fJz8d0UD7ZlbANAVjmQefPHPzyehJ7mQ>
+    <xmx:0w5LaKVr3oQvItMnMMmKq3SQEBxiZ5PaMCipglMc4-5ywtoVAfjRsg>
+    <xmx:0w5LaJnXyfWMZLS9GfMDnYnsctB7nOeLb6vEx9-wxjCQheojg_IuJg>
+    <xmx:0w5LaHfelu4_K6LbDJZCfyRlXyGmn8etk5w_ritaHPWJpQPj6dzc_g>
+    <xmx:0w5LaCHpi6oOSIWQm53beYkI5bY8oI0FPgumVeGYj9YkRZSb_TOK0PY3>
+Feedback-ID: if58145b1:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 94E7A2CC0081; Thu, 12 Jun 2025 13:30:59 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612103743.3385842-1-youngjun.park@lge.com>
- <20250612103743.3385842-3-youngjun.park@lge.com> <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
-In-Reply-To: <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 12 Jun 2025 10:28:33 -0700
-X-Gm-Features: AX0GCFuF9SfcQkfWFU5D6MhImUNQ-lwvv6Y8pN7241v7yDw3O3b564ehqU6vmjs
-Message-ID: <CAKEwX=PsGKS5JHqQ-G29Fg8xLssPhM+E-4wV_QakhqrDOsV36g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm: swap: apply per cgroup swap priority
- mechansim on swap layer
-To: Kairui Song <ryncsn@gmail.com>
-Cc: youngjun.park@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	shikemeng@huaweicloud.com, bhe@redhat.com, baohua@kernel.org, 
-	chrisl@kernel.org, muchun.song@linux.dev, iamjoonsoo.kim@lge.com, 
-	taejoon.song@lge.com, gunho.lee@lge.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: Tf837c207727b83ac
+Date: Thu, 12 Jun 2025 10:30:38 -0700
+From: "Boqun Feng" <boqun@fixme.name>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ "Joel Fernandes" <joel@joelfernandes.org>,
+ "Neeraj Upadhyay" <Neeraj.Upadhyay@amd.com>
+Cc: RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ "Frederic Weisbecker" <frederic@kernel.org>,
+ "Oleksiy Avramchenko" <oleksiy.avramchenko@sony.com>
+Message-Id: <0caf7054-140e-4b6c-abd4-2ec2ebe79b2c@app.fastmail.com>
+In-Reply-To: <4bc63cf3-29a4-4a64-be65-30f7bd55e31c@nvidia.com>
+References: <20250610173450.107293-1-urezki@gmail.com>
+ <4bc63cf3-29a4-4a64-be65-30f7bd55e31c@nvidia.com>
+Subject: Re: [PATCH 1/3] rcu: Return early if callback is not specified
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 4:14=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Thu, Jun 12, 2025 at 6:43=E2=80=AFPM <youngjun.park@lge.com> wrote:
-> >
-> > From: "youngjun.park" <youngjun.park@lge.com>
-> >
->
-> Hi, Youngjun,
->
-> Thanks for sharing this series.
->
-> > This patch implements swap device selection and swap on/off propagation
-> > when a cgroup-specific swap priority is set.
-> >
-> > There is one workaround to this implementation as follows.
-> > Current per-cpu swap cluster enforces swap device selection based solel=
-y
-> > on CPU locality, overriding the swap cgroup's configured priorities.
->
-> I've been thinking about this, we can switch to a per-cgroup-per-cpu
-> next cluster selector, the problem with current code is that swap
 
-What about per-cpu-per-order-per-swap-device :-? Number of swap
-devices is gonna be smaller than number of cgroups, right?
 
-At swap slot allocation time, we check the folio's swap device
-priority list, then pump that all the way to the swap allocator.
+On Tue, Jun 10, 2025, at 12:33 PM, Joel Fernandes wrote:
+> On 6/10/2025 1:34 PM, Uladzislau Rezki (Sony) wrote:
+>> Currently the call_rcu() API does not check whether a callback
+>> pointer is NULL. If NULL is passed, rcu_core() will try to invoke
+>> it, resulting in NULL pointer dereference and a kernel crash.
+>>=20
+>> To prevent this and improve debuggability, this patch adds a check
+>> for NULL and emits a kernel stack trace to help identify a faulty
+>> caller.
+>>=20
+>> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+>
+> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+>
 
-swap allocator, given a priority list, for each priority level, try to
-allocate from that level first. It will get a cluster (either locally
-cached or a new one) from swap devices in that priority level, before
-moving on to the next priority level.
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+
+> I will add this first one (only this one since we're discussing the ot=
+hers) to a
+> new rcu/fixes-for-6.16 branch, but let me know if any objections.
+>
+
+Not sure it=E2=80=99s urgent enough given the current evidence.
+
+Regards,
+Boqun
+
+> Will push that branch out during -rc2 or -rc3 after sufficient testing.
+>
+> thanks,
+>
+>  - Joel
+>
+>> ---
+>>  kernel/rcu/tree.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>=20
+>> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+>> index e8a4b720d7d2..14d4499c6fc3 100644
+>> --- a/kernel/rcu/tree.c
+>> +++ b/kernel/rcu/tree.c
+>> @@ -3072,6 +3072,10 @@ __call_rcu_common(struct rcu_head *head, rcu_c=
+allback_t func, bool lazy_in)
+>>  	/* Misaligned rcu_head! */
+>>  	WARN_ON_ONCE((unsigned long)head & (sizeof(void *) - 1));
+>> =20
+>> +	/* Avoid NULL dereference if callback is NULL. */
+>> +	if (WARN_ON_ONCE(!func))
+>> +		return;
+>> +
+>>  	if (debug_rcu_head_queue(head)) {
+>>  		/*
+>>  		 * Probable double call_rcu(), so leak the callback.
 
