@@ -1,117 +1,189 @@
-Return-Path: <linux-kernel+bounces-684020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3CAAD74E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 019E2AD7518
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8684D3A958B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA513AF464
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6A726D4C9;
-	Thu, 12 Jun 2025 14:57:44 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329A5269CF4;
+	Thu, 12 Jun 2025 15:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QGC1CSDd"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D623942048;
-	Thu, 12 Jun 2025 14:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E561BC9E2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740264; cv=none; b=mGaTqRFaklZdiUf8BwbKcZVWe8Xv4XaibJMxmTcB2ogl4m/V289TyHWn5It7fleBKbDORfNJH+UZv52bnwEFsBa5J6XOiLA1Jn0QTi4gquQ7WlZX+MvjW5dpSfnJ++6k9/E/QkaaSHPKMuugh9dUjoFN8IgiMkXyuMJefGIu6NE=
+	t=1749740413; cv=none; b=OpDSrosuNmOUpyKt1sBhTeHzSo/mbrqtX65/dwFRdt7ySCHHbgNdPYFNsT1jCUF33V+bqGFU3k63o9RtkxAR8C+fF+DxsfuRnmyvHyUWiyJU2TFSNZFRktRV9uugBqK81h6B/21Z3i5ooW+Vbhq92Vp/xzQVyFvovFcS/fNcj78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740264; c=relaxed/simple;
-	bh=+cbCVAyRkTlLDE5xDEGDYf7+61Wv6HnIqo6YW/Y+8F8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WXST5feuOb+2iGDBQYWjCHkNGKbUC3BZZ/0axbOYMF7SXv1ZiNLM/FpTU16l8+xbp6RXKzqS8KuabsU20UZ1W/MwPlJN20xBjI0vHFgHQ/iKOsYtzOzGu7VggD9d5DBIT+ysChBkf7xEJq/2yJnGpiuamNOO+MWHT5uAkJPD6pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53119fe46d8so305994e0c.1;
-        Thu, 12 Jun 2025 07:57:42 -0700 (PDT)
+	s=arc-20240116; t=1749740413; c=relaxed/simple;
+	bh=m63/SvGQVrF/SFgUb+zp5Sn/VTdHvOYl5uPmAMOpnyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LH7aNgl9kCXB/68ttQ+fmt869Is0dipeUN8AH4e2SBuwJ5loYWlpn8y0GP3r6qYEMZZmjRzOUmVm5Vso7/LS/JlPJ0zuVpZji+r/Mk3BkMu4SpospLVlixMkynhTrDbI//i9mfGOuVxS2qw1Qa6c8STCHsIQYgGNMqvAE92N6KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QGC1CSDd; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4ef05f631so124320f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749740410; x=1750345210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibZsfu61G+oZ3OcZnknsMkAY7GOU8y9qTpgpoBVVb8g=;
+        b=QGC1CSDdnbNC+XJ8IMeAISXw2qS1uWUaVzxGCMlK2YNoI6/DNDo28Xgk74Vh8cHk1L
+         kRNioXtHyISzKoQLPcWR3VMw0hBaP3rqjCRiHBvE334YE1Yhbdy8sD5sDPxiXUVREIgn
+         DM5NKS8yNeIN0WMB5IonF4/Cp6Yp8bGYuyd8enwr8mNQvhIAVMdB8QFCJwGJV36XgddK
+         N6JyRn0/5bgOd1Y8MpPpYtsccMTxqrqezg3JzcWAF47MkoJ/HUjXu0q3Qp5nPKsvNuhg
+         N9xZvwlsTnKWUTgHkxuflJYKrFjteWtjUvgZmxYiSFDs1z4rTQs2wxHkrNNY/WXRMESW
+         5vlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749740261; x=1750345061;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1749740410; x=1750345210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YLGpxLsJSw4q7Wykq729C6wwN0Wlwd+qKs8+s0wgaMA=;
-        b=hBI5BU039sE2lQ8ePhya3U6Z5vEmhZ28jfAXj5OzL7E42aU1pKCfwq/ICnC4niG+Qv
-         5G3U33pAKjfAHKay+MgeCBn6IuGQWr5FureEkA7/JvEGRUs7xh3zqTq7uwqdE60Vd8VU
-         T8uBuWbZbDSXuimeywdNjj6zRrrBl0tfBgdCOtZ4vVaqMDlYpjcgM78reVKuQhFb3Zb3
-         E2s7JW5vpgV0z29Z+l4RbVjc9S4HZakrKAeAFkXNXDkk1tNY6SJKqquWiIXwQGuRHF3/
-         QFDNWEP4Wvp6XwadgOiLLKdohOW3jSFjuyk+Z6LlP8xoX9b+UKPd5T3mZB5rL7mAP9Zn
-         cwHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKeo4aLThjvlk+ULoDwFYCw1WiEyoByhpOOr0+hmMJYcaeBFIMnwMebcRLHBEKekE0xDqCtAH6KhgdKgjlb63Txas=@vger.kernel.org, AJvYcCUYwaAUYIiSzN24NWOi2001h1yZY4R/eruphd3gkJevbAatgFNOvS7d7FAS2vkbkU9fPl16p1kDyGM2@vger.kernel.org, AJvYcCXaPQW+7sLhM9DBIy7jGGO6g3lpSFXXb1sdrlP4TsfZz+7s7jwiteoQogK49SlC7lK7SrWfGcbBz1zaLVvC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNoiWdr8X4fGPJBtOLRrqk0WfE04dsLgLNPV2loDWUidQY2Qhc
-	EsFgiS2qEXWoME5w+UnyH1zvYdTyi5rkIQN2CSQ1qHxpxG2/gftho3CASrLJ3231
-X-Gm-Gg: ASbGncuRyOfXLVuAbScdRsKIhEpIHOF8K+xTe5pJpM/shcrqAL6JGa4d30CwPLJ1kAR
-	rwYPRdEd7TgVTOpLtaYZDYz2ogAJqfKVEVjvXM3ot8R9XzetTA0SxeUClwLchUkrWEiiL7hsjcB
-	k63L7HVCj/I7sFPwDpP0CfgB9WOhvfRzpzIcuiC1vJsMcluCIY7535Frlg3xwmBEb+Q9g1ANY91
-	CR0L4jtX6u3sCfXIrc1roRIjJwsEImpfIOmx/wHZ3XpkRaTwKJ6U/xTEJcmQFOXIgwGVvThAq0I
-	YI//lCBdEKckhA0AlkaWZA6xcX5fVvdDBbnsh3Z8/xRZiSZ0TZwAqNf7Ieqh8dqhGHoZHIInC9N
-	6DSaAW0/xiHFwIskDCa2TczfGWMj3
-X-Google-Smtp-Source: AGHT+IHb33sw6kWqJ6xGIZ2J+jdzACEGqTBpzf0gi9GIuhmgVfywRtjUkNS1kEGHSY07QZbbvEYoFQ==
-X-Received: by 2002:a05:6122:470b:b0:530:65f0:7fcf with SMTP id 71dfb90a1353d-53122224b27mr7025646e0c.1.1749740260682;
-        Thu, 12 Jun 2025 07:57:40 -0700 (PDT)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5312f4f74a1sm330263e0c.18.2025.06.12.07.57.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 07:57:40 -0700 (PDT)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52eec54acf4so278261e0c.0;
-        Thu, 12 Jun 2025 07:57:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPur0ds5MnzF0Az2egt+Jm9VdnrN/M0vbl/eq8g7FNspD1+Jg6vMTxdVqdHMIAwo6P35/w6WReqVfr5Cg9@vger.kernel.org, AJvYcCVB1JCXYWnoc/nR5Q+j/3eG6FJtarWet10mGC9LSKYLq/AoiE/tJsZh9GzHO50r4yFFVdugPIbkP7pCis8dFXRLjUc=@vger.kernel.org, AJvYcCVxZuJaIlkCdMb3gbSqAkLwUUdNGbUwMayCvnlUtVny0iXhfX0yj3Aq0Q65h8pTdbHe1938imcNa9vX@vger.kernel.org
-X-Received: by 2002:a05:6122:d8c:b0:529:f50:7904 with SMTP id
- 71dfb90a1353d-531223a9d6emr7462655e0c.9.1749740259843; Thu, 12 Jun 2025
- 07:57:39 -0700 (PDT)
+        bh=ibZsfu61G+oZ3OcZnknsMkAY7GOU8y9qTpgpoBVVb8g=;
+        b=JbFgAroMidUnPA2L9fduxYfdeD+PyQQAZDuzH2bQLrwTr9E3fgBBeOGnqhG4Nd/vAC
+         /opLMBCRFKTNhmF9bjr/bi5nw84KvayulA+OieapNTf2ipN+IooA/4j1fI3lLUbYgd/d
+         fowHK2WIDz8Ev8C+AxgM5/XgZcnt5T9QsmFgBxxVkWQrXIJe+G4OlD5m5oDR1Wpn4ZqD
+         yrdxX2XKDJ8KYJJIofMfLMYHPLRV2ymd4Urz/XeWQlj+SR1+x9QK/qS7dYZ9dhp1ccgD
+         TLaRi+S20FQHHYiYqLCHO8dUEy4v4w/w6fcpVOk8B1BfYZYbfRU74c/F3nsfa9JqO9zM
+         Q2dw==
+X-Gm-Message-State: AOJu0Yy30AKKS0kKVKTvmqqVMH7KFh2jrbbXuiwQ0/TOqM/+ypRGCdgj
+	EWnnHNxxYnY+0QFG1dqfjoydO79MuyOiYoRPqwRdyO62on8jB0AMpSpIehfQYWxocAg=
+X-Gm-Gg: ASbGnctRJOsmyRa1BzyE7gBlrDyTWIUN7hT+NnyvANubWWJL5qKmdHZqMb92ujQzbL9
+	FIr0RLabHIkkB/ZmnhGD1spQxAp56TW7wNlEM4jqdW11bs4yerqRMK8ptowkKJK0IRge8EkemA2
+	svIfBTfTY0JZOSgdN+yHf2Nbzy7RviJGkGJLcUcf6Das7ybVbTrldH8+185SJruk2q1CNKtfwUU
+	Xu8NUR1Ipcfxi444/cu4EnydNFlpBMQ0zHgludvcPjtApFutBojHrHSTi6zS7sqWb7rYMP1i/yK
+	qWJRqMZgsb9SZKaMCnQ60lO1EfIw/S7mAn5MPRar9rTQrm+N2sPo1MWbjrVhf/csyR8YkuukAid
+	GmrZV
+X-Google-Smtp-Source: AGHT+IHYojXyzsnTuhUqtfCyOthtbjJaQgHpUcmPKRrwJXGKkrjC5qwisSFgGuYVFXTmo+5uBFTdgA==
+X-Received: by 2002:a05:6000:2c10:b0:3a4:def8:1465 with SMTP id ffacd0b85a97d-3a5588078e8mr2489717f8f.9.1749740409326;
+        Thu, 12 Jun 2025 08:00:09 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:e05f:7af3:1bf9:f101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a56199b337sm2228683f8f.37.2025.06.12.08.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 08:00:09 -0700 (PDT)
+From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+To: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Atish Patra <atishp@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH 0/2] RISC-V: turn sbi_ecall into a variadic macro
+Date: Thu, 12 Jun 2025 16:57:53 +0200
+Message-ID: <20250612145754.2126147-2-rkrcmar@ventanamicro.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609231905.511904-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250609231905.511904-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 16:57:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVpP2g_XVgV-Lo-iDonioykPxOdj5u66yacGBBKwCFiVQ@mail.gmail.com>
-X-Gm-Features: AX0GCFs6fvXldOJS-VLbdO_0YPI2sLemmxiH0HgmfiLcqEebgyfY3165_oOXBxo
-Message-ID: <CAMuHMdVpP2g_XVgV-Lo-iDonioykPxOdj5u66yacGBBKwCFiVQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: renesas,rzg2l-du: Add support for
- RZ/V2N SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Jun 2025 at 01:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Document support for the DU IP found on the Renesas RZ/V2N (R9A09G056) SoC.
-> The DU IP is functionally identical to that on the RZ/V2H(P) SoC, so no
-> driver changes are needed. The existing `renesas,r9a09g057-du` compatible
-> will be used as a fallback for the RZ/V2N SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Padding the ecalls with zeros is not great for reasons in [1/2].
+I could also redo the code to use sbi_ecall1~sbi_ecall8, and drop
+sbi_ecall if you think that variadic macros are too evil.
+[2/2] puts the new macro that into use, and I hopefully haven't deleted
+any intentional trailing 0.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For a related issue, I hoped that the tracepoints in __sbi_ecall would
+only add a nop or two, because __sbi_ecall without tracepoints looks
+like this:
+   0xffffffff80023ad0 <+0>:	addi	sp,sp,-32
+   0xffffffff80023ad2 <+2>:	sd	s0,16(sp)
+   0xffffffff80023ad4 <+4>:	sd	ra,24(sp)
+   0xffffffff80023ad6 <+6>:	addi	s0,sp,32
+   0xffffffff80023ad8 <+8>:	ecall
+   0xffffffff80023adc <+12>:	ld	ra,24(sp)
+   0xffffffff80023ade <+14>:	ld	s0,16(sp)
+   0xffffffff80023ae0 <+16>:	addi	sp,sp,32
+   0xffffffff80023ae2 <+18>:	ret
 
-Gr{oetje,eeting}s,
+Maybe I am missing some kernel config, because __sbi_ecall currently
+looks like this:
+   0xffffffff80023e58 <+0>:	addi	sp,sp,-112
+   0xffffffff80023e5a <+2>:	sd	s0,96(sp)
+   0xffffffff80023e5c <+4>:	sd	s1,88(sp)
+   0xffffffff80023e5e <+6>:	sd	s3,72(sp)
+   0xffffffff80023e60 <+8>:	sd	s4,64(sp)
+   0xffffffff80023e62 <+10>:	sd	s5,56(sp)
+   0xffffffff80023e64 <+12>:	sd	s6,48(sp)
+   0xffffffff80023e66 <+14>:	sd	s7,40(sp)
+   0xffffffff80023e68 <+16>:	sd	s8,32(sp)
+   0xffffffff80023e6a <+18>:	sd	s9,24(sp)
+   0xffffffff80023e6c <+20>:	sd	ra,104(sp)
+   0xffffffff80023e6e <+22>:	sd	s2,80(sp)
+   0xffffffff80023e70 <+24>:	addi	s0,sp,112
+   0xffffffff80023e72 <+26>:	mv	s9,a0
+   0xffffffff80023e74 <+28>:	mv	s8,a1
+   0xffffffff80023e76 <+30>:	mv	s7,a2
+   0xffffffff80023e78 <+32>:	mv	s6,a3
+   0xffffffff80023e7a <+34>:	mv	s5,a4
+   0xffffffff80023e7c <+36>:	mv	s4,a5
+   0xffffffff80023e7e <+38>:	mv	s3,a6
+   0xffffffff80023e80 <+40>:	mv	s1,a7
+   0xffffffff80023e82 <+42>:	nop
+   0xffffffff80023e84 <+44>:	nop
+   0xffffffff80023e88 <+48>:	mv	a0,s9
+   0xffffffff80023e8a <+50>:	mv	a1,s8
+   0xffffffff80023e8c <+52>:	mv	a2,s7
+   0xffffffff80023e8e <+54>:	mv	a3,s6
+   0xffffffff80023e90 <+56>:	mv	a4,s5
+   0xffffffff80023e92 <+58>:	mv	a5,s4
+   0xffffffff80023e94 <+60>:	mv	a6,s3
+   0xffffffff80023e96 <+62>:	mv	a7,s1
+   0xffffffff80023e98 <+64>:	ecall
+   0xffffffff80023e9c <+68>:	mv	s3,a0
+   0xffffffff80023e9e <+70>:	mv	s2,a1
+   0xffffffff80023ea0 <+72>:	nop
+   0xffffffff80023ea4 <+76>:	ld	ra,104(sp)
+   0xffffffff80023ea6 <+78>:	ld	s0,96(sp)
+   0xffffffff80023ea8 <+80>:	ld	s1,88(sp)
+   0xffffffff80023eaa <+82>:	ld	s4,64(sp)
+   0xffffffff80023eac <+84>:	ld	s5,56(sp)
+   0xffffffff80023eae <+86>:	ld	s6,48(sp)
+   0xffffffff80023eb0 <+88>:	ld	s7,40(sp)
+   0xffffffff80023eb2 <+90>:	ld	s8,32(sp)
+   0xffffffff80023eb4 <+92>:	ld	s9,24(sp)
+   0xffffffff80023eb6 <+94>:	mv	a0,s3
+   0xffffffff80023eb8 <+96>:	mv	a1,s2
+   0xffffffff80023eba <+98>:	ld	s3,72(sp)
+   0xffffffff80023ebc <+100>:	ld	s2,80(sp)
+   0xffffffff80023ebe <+102>:	addi	sp,sp,112
+   0xffffffff80023ec0 <+104>:	ret
+   ...
+   [The actual tracepoint handling goes up to +328.]
 
-                        Geert
+Radim Krčmář (2):
+  RISC-V: sbi: turn sbi_ecall into variadic macro
+  RISC-V: make use of variadic sbi_ecall
+
+ arch/riscv/include/asm/kvm_nacl.h |  4 +--
+ arch/riscv/include/asm/sbi.h      | 34 +++++++++++++++++-
+ arch/riscv/kernel/cpu_ops_sbi.c   |  6 ++--
+ arch/riscv/kernel/paravirt.c      |  2 +-
+ arch/riscv/kernel/sbi.c           | 57 ++++++++++++++-----------------
+ arch/riscv/kernel/sbi_ecall.c     |  2 +-
+ arch/riscv/kernel/suspend.c       |  4 +--
+ arch/riscv/kvm/nacl.c             |  7 ++--
+ drivers/acpi/riscv/cppc.c         |  4 +--
+ drivers/perf/riscv_pmu_sbi.c      | 48 +++++++++++++-------------
+ 10 files changed, 98 insertions(+), 70 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.49.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
