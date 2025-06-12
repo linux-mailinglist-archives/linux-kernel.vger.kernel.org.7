@@ -1,276 +1,90 @@
-Return-Path: <linux-kernel+bounces-683097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91EEAD68ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:25:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB743AD6930
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7920F16EB98
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EED617DF6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C91E5B8A;
-	Thu, 12 Jun 2025 07:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5ED211499;
+	Thu, 12 Jun 2025 07:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qjHdRBmR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CMMSupme";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qjHdRBmR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CMMSupme"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="ZoJd1Rof"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A841EB1BF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487E720103A;
+	Thu, 12 Jun 2025 07:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749713110; cv=none; b=Y8ZxGTdL0vE0rTeyeGA+thoAgc36dqmcWQGyFk9F8yDn4eGu/g8l7KdgeZi5VA0YtLkbkI3p8x51N8OyWS0uBMzeOWd6YqPmqywE5N08U0zTIixvazrsFNXAM+J5rFnaUZDbvEMq6FmNDjSo1J+BAZtDzHAXEZSvAhJXn+AaBmA=
+	t=1749713731; cv=none; b=h2BPbXlRRZS98vMmZppgligQxde9cmYAalnNuO54MTdNsj0Lv10wfnXJIrACKRDicAX8TJ5yc9MN0Dutaa3/M+GufOJdFzQXT8ialB4819XDjyley0UVIxNhg2LguEz9/xFAQL6y15lDxQR8CHH6H5FOw5jwjg4yoAH9NQhTtYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749713110; c=relaxed/simple;
-	bh=JVfMoimik0HVoEucow0mEOx9KNQX3ArpFK7hOiLPg/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ca0PdZDdP5qL2JcB3LqBG5jLXTqHg5UBeBzFtqPNCVy9DO5Q01ZZlI80VDTCsu4Wc03TlzHhvSp71ikJM2UO6Ger+r5EmcL++jRACE+uzNYYjKKf9yCkAvaAdfuANN3tYoGaP6SXCKjMOW+h+ku5QhW10dvh1+7tytxC76d/XPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qjHdRBmR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CMMSupme; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qjHdRBmR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CMMSupme; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 24601211D0;
-	Thu, 12 Jun 2025 07:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749713107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
-	b=qjHdRBmRxnhUwh7+X0EdINyLt2jJwiW7NNeIP70Sc2UA4gYS3JXXUMip8oKSnw4d/7oWn8
-	XzH1kfo162/VJfQHeR7M2FC7EbUB7Ql5qR8OulMMz1GZo5NlsSedOV7SX5rFX9JtJdbhrE
-	wW5HiNl+7pDlgA0PkKxb0saignEoxGw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749713107;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
-	b=CMMSupmeFjHp1XgbAgaYoRKEBgHLBhd2BU3lcTyt4IopnW5PW7m/Jvy4t4HPhOg+CicP/s
-	Dks+nNZFqumN5CAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749713107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
-	b=qjHdRBmRxnhUwh7+X0EdINyLt2jJwiW7NNeIP70Sc2UA4gYS3JXXUMip8oKSnw4d/7oWn8
-	XzH1kfo162/VJfQHeR7M2FC7EbUB7Ql5qR8OulMMz1GZo5NlsSedOV7SX5rFX9JtJdbhrE
-	wW5HiNl+7pDlgA0PkKxb0saignEoxGw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749713107;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OIFIbc2scGPWIlpVurAYWkEZOyPLXw9LExgLq86DRAo=;
-	b=CMMSupmeFjHp1XgbAgaYoRKEBgHLBhd2BU3lcTyt4IopnW5PW7m/Jvy4t4HPhOg+CicP/s
-	Dks+nNZFqumN5CAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8C78139E2;
-	Thu, 12 Jun 2025 07:25:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8gIMKNKASmgYGgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 12 Jun 2025 07:25:06 +0000
-Message-ID: <370634b8-b872-4bdb-8514-4f011a4a1a46@suse.de>
-Date: Thu, 12 Jun 2025 09:25:06 +0200
+	s=arc-20240116; t=1749713731; c=relaxed/simple;
+	bh=x3cQxvge1b3pgTXY/P74zyHhUe8/1LHEazQ2unbyP9Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lOCQSe+0S070JQyCGESJV/w8xDdJfkl3OEvPUZJiOpPv5A77JjnOdn2F3Ts8JChcvAVtAS0KOauss04wA1JtSKrMG/HGf4bjOJ2ssoCkvc/TQA3wBGF7g8xtVAnIN+Rv1425HinAqvxoSgCuVugeLJccRKG7BKBHNwshAgFhDP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=ZoJd1Rof; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1749713264; bh=x3cQxvge1b3pgTXY/P74zyHhUe8/1LHEazQ2unbyP9Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ZoJd1RofjBG3c2KRN9APXC7yxH3qNKPgwDg9QDflTXn2UCDBMYdeHUlTnQkMRhgax
+	 HuzjkJQSAq9Qvs2q8Q/YutgomAfDQk4nC6GtPBRvppz43JKq9/2InUl2sQ9HhHHzqi
+	 cdZfrEzrSLzDaHWpFZkaPUkhr8WE3C4IX6q5it8UJ76/lcT+O0JcPM/5oCL/kKmwUZ
+	 XtMRVhnSul7lBuW1QOysqlimnKwXlmOW4I1Suuu1cZ2mqyh1v4k7ogGAsI8B9zzeK7
+	 GPYQtmFJSep4xl2hOH80kBONORtLHt1HIqzf3yHPHyk5XJEUItIxTkyFXiX+ctoiqY
+	 H0wuxYVu3o4pw==
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Jeff Johnson
+ <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ath11k@lists.infradead.org,
+ ath12k@lists.infradead.org, Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH ath-next 2/5] wifi: ath9k: Add missing include of export.h
+In-Reply-To: <20250611-ath-unused-export-v1-2-c36819df7e7b@oss.qualcomm.com>
+References: <20250611-ath-unused-export-v1-0-c36819df7e7b@oss.qualcomm.com>
+ <20250611-ath-unused-export-v1-2-c36819df7e7b@oss.qualcomm.com>
+Date: Thu, 12 Jun 2025 09:27:43 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87h60lbes0.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel
- memory framebuffers
-To: Michael Kelley <mhklinux@outlook.com>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: David Hildenbrand <david@redhat.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "deller@gmx.de" <deller@gmx.de>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "weh@microsoft.com" <weh@microsoft.com>, "hch@lst.de" <hch@lst.de>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20250523161522.409504-1-mhklinux@outlook.com>
- <20250523161522.409504-4-mhklinux@outlook.com>
- <de0f2cb8-aed6-436f-b55e-d3f7b3fe6d81@redhat.com>
- <SN6PR02MB41573C075152ECD8428CAF5ED46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <c0b91a50-d3e7-44f9-b9c5-9c3b29639428@suse.de>
- <SN6PR02MB4157871127ED95AD24EDF96DD46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <9a93813c-4d7c-45ef-b5a2-0ad37e7a078a@suse.de>
- <aEBcCjMWZJgbsRas@phenom.ffwll.local>
- <SN6PR02MB415702B00D6D52B0EE962C98D46CA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <154aa365-0e27-458c-b801-62fd1cbfa169@suse.de>
- <SN6PR02MB4157F630284939E084486AFED46FA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <SN6PR02MB41579713B557A32674252865D475A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <SN6PR02MB41579713B557A32674252865D475A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de,outlook.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[outlook.com,ffwll.ch];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,ffwll.ch,gmx.de,microsoft.com,kernel.org,linux-foundation.org,lst.de,lists.freedesktop.org,vger.kernel.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+Jeff Johnson <jeff.johnson@oss.qualcomm.com> writes:
 
-Am 12.06.25 um 01:18 schrieb Michael Kelley:
-> From: Michael Kelley Sent: Thursday, June 5, 2025 10:39 AM
->> From: Thomas Zimmermann <tzimmermann@suse.de> Sent: Thursday, June 5, 2025
->> 8:36 AM
->>> Hi
->>>
->>> Am 04.06.25 um 23:43 schrieb Michael Kelley:
->>> [...]
->>>> Nonetheless, there's an underlying issue. A main cause of the difference
->>>> is the number of messages to Hyper-V to update dirty regions. With
->>>> hyperv_fb using deferred I/O, the messages are limited 20/second, so
->>>> the total number of messages to Hyper-V is about 480. But hyperv_drm
->>>> appears to send 3 messages to Hyper-V for each line of output, or a total of
->>>> about 3,000,000 messages (~90K/second). That's a lot of additional load
->>>> on the Hyper-V host, and it adds the 10 seconds of additional elapsed
->>>> time seen in the guest. There also this ugly output in dmesg because the
->>>> ring buffer for sending messages to the Hyper-V host gets full -- Hyper-V
->>>> doesn't always keep up, at least not on my local laptop where I'm
->>>> testing:
->>>>
->>>> [12574.327615] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12574.327684] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12574.327760] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12574.327841] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12597.016128] hyperv_sendpacket: 6211 callbacks suppressed
->>>> [12597.016133] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12597.016172] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12597.016220] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> [12597.016267] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm]
->>> *ERROR* Unable to send packet via vmbus; error -11
->>>> hyperv_drm could be fixed to not output the ugly messages, but there's
->>>> still the underlying issue of overrunning the ring buffer, and excessively
->>>> hammering on the host. If we could get hyperv_drm doing deferred I/O, I
->>>> would feel much better about going full-on with deprecating hyperv_fb.
->>> I try to address the problem with the patches at
->>>
->>> https://lore.kernel.org/dri-devel/20250605152637.98493-1-
->> tzimmermann@suse.de/
->>> Testing and feedback is much appreciated.
->>>
->> Nice!
->>
->> I ran the same test case with your patches, and everything works well. The
->> hyperv_drm numbers are now pretty much the same as the hyperv_fb
->> numbers for both elapsed time and system CPU time -- within a few percent.
->> For hyperv_drm, there's no longer a gap in the elapsed time and system
->> CPU time. No errors due to the guest-to-host ring buffer being full. Total
->> messages to Hyper-V for hyperv_drm are now a few hundred instead of 3M.
->> The hyperv_drm message count is still a little higher than for hyperv_fb,
->> presumably because the simulated vblank rate in hyperv_drm is higher than
->> the 20 Hz rate used by hyperv_fb deferred I/O. But the overall numbers are
->> small enough that the difference is in the noise. Question: what is the default
->> value for the simulated vblank rate? Just curious ...
->>
-> FYI, I'm seeing this message occasionally when running with your simulated
-> vblank code and hyperv_drm:
+> Commit a934a57a42f6 ("scripts/misc-check: check missing #include
+> <linux/export.h> when W=3D1") introduced a new check that is producing
+> the following warnings:
 >
-> [90920.128278] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] vblank timer overrun
+> drivers/net/wireless/ath/ath9k/common-beacon.c: warning: EXPORT_SYMBOL() =
+is used, but #include <linux/export.h> is missing
+> drivers/net/wireless/ath/ath9k/common-debug.c: warning: EXPORT_SYMBOL() i=
+s used, but #include <linux/export.h> is missing
+> drivers/net/wireless/ath/ath9k/common-init.c: warning: EXPORT_SYMBOL() is=
+ used, but #include <linux/export.h> is missing
+> drivers/net/wireless/ath/ath9k/common-spectral.c: warning: EXPORT_SYMBOL(=
+) is used, but #include <linux/export.h> is missing
+> drivers/net/wireless/ath/ath9k/common.c: warning: EXPORT_SYMBOL() is used=
+, but #include <linux/export.h> is missing
+> drivers/net/wireless/ath/ath9k/dynack.c: warning: EXPORT_SYMBOL() is used=
+, but #include <linux/export.h> is missing
+> drivers/net/wireless/ath/ath9k/hw.c: warning: EXPORT_SYMBOL() is used, bu=
+t #include <linux/export.h> is missing
 >
-> "Occasionally" is about a dozen occurrences over the last day or so. I can't
-> yet correlate to any particular activity in the VM. The graphics console has
-> not been very busy.
-
-Thanks for the report. It can happen that the vblank timer is handled 
-late. It's not strictly an error as the whole thing is best-effort 
-anyway. Maybe the timeout could be adjusted.
-
-Best regards
-Thomas
-
+> Add the missing #include to satisfy the check.
 >
-> Michael
->
+> Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
 
