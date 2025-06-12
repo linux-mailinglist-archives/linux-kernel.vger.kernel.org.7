@@ -1,136 +1,96 @@
-Return-Path: <linux-kernel+bounces-684145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E064AD76C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:46:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F46AD76A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE343BAF54
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9EF7B4D61
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8609C298996;
-	Thu, 12 Jun 2025 15:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52400299AB4;
+	Thu, 12 Jun 2025 15:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B0uJ5zFI"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yt01YW6k"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F0329898D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22661298CD2;
+	Thu, 12 Jun 2025 15:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742600; cv=none; b=ePn5o7e+HEmEZFkbV4l834epznw6STRHgHR5w9wZzsy+bfRvdMLuZNwh4Yevux3xEaWa46Dbfm2vlo0qTvutEEh2brLCmPh4z+njpkRh6zho9npOBmw69TlhdnzAZHxzojC3oR7wjdVixQ0zhfyYxzwL3D9x5SIVe3eJXgimYwA=
+	t=1749742607; cv=none; b=rumciY7DCPIX0dahXfuoPtvKYMGfogb7XSh8TRYI3rBo1rwchZGyhwtmfTPVQOxWzGMIFxg2r/BelYiRCfDsfcdZsUCU2vqYLwO4CLDTLQX0gBPfxfxcYqAatUvwMNSCT5mJHkYQKh8lJfZfevpWoJ+ysJSvt+LeXZDieWE2dYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742600; c=relaxed/simple;
-	bh=gfSkNsEDvHrBasjkaxzkBzgE2ArloUcp9iGt4cd2kgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZzPs17L3bBgsZFhkmyoqH1p9p4gYobt7MfhhmUZHuDHygsgU14rBqbMXX1v2xVT2jIcssZbVZsd0hUDZmzCva0HVzrJ6zL0nCX9aI3xDT7FbWxeRwaNV2A4JLkv9u8JQTgfQIWzU25AQ6Mc2Age844JTi3eJNf9UMIE8LyeIEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B0uJ5zFI; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d7b50815so9476195e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749742597; x=1750347397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/ljv00glv7rh1spp86bQ43dOcZbrTy283SQsKA4sfY=;
-        b=B0uJ5zFI/qhkH6ZrotjI+p6mYc8oiiN0iJaErTcXODlXLahWjRW1sUH766I928tt/z
-         6TzRS5lI8mxv78CmC6F9KIgriOoYPu/ZVDcEHu9ybqWMNKCaenU5i9ubSZgCNgYja0/x
-         8AR4ya/sTLRZ0AdummyK8u+Nd6uabmLEs9P8ZCWkgnTi/KbVnTooGFhXvGu6bOsBqJNx
-         5wqtjwhYqG7wVW9prTzlHCckaIXzpsSKuhaUZUKlGc8HLwCn0N+KUnT6XalTc8DCJ8sZ
-         VAQiievyRPz/qJFb2fR2FPyloJbMoLV1OjXD7F6PNgcR5aPZJwQrSF0QsSvwFBJlBCR8
-         GDHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749742597; x=1750347397;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/ljv00glv7rh1spp86bQ43dOcZbrTy283SQsKA4sfY=;
-        b=oVw9Q6CQrThRUtxBlCumNcGODUdTmamvC85kkkkMCMIDlMWKrf2tq7PHfSb3TpzTjp
-         SA+lsaYauNq/0u89EmKB6LrCGXV8h/u2fGT1FVYOqH33AgURiu0pA362pkaB14etKspX
-         wATW2LG4yNXMctpFFz9Gz6u5lVS+OrAydwsluCFeklbswU0at0BTqLmERGKqYO/0BJC3
-         TJg4EmN52fL8R9t1xG+JPSW0NwU61mC1w2yLKmWE2c35gwmiIkjESJ9t6LZegsp5mbiq
-         CqbFRT7/bEF430Y+9wRjR0cRQKaAaHhUl8NARaYeUy/xV0hdcNx9Vne0p12g0sVkvWS1
-         OBuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUh9zOUa1MYDfMzPWmFxcfo06YosaTjwoJJg/8UUgzWJcKh5UX7qOIA3WMhobU4EzX/wmA3yJxgjy2DSLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEI4yuPy3NKwMoi2gYqL8DmbXQukoZSOxTIyKKQAKVJ4yi0nWQ
-	qJ6zxrVYvmrKXVKsxHMmP5LigVduhaH1Le1nZazSdpUIgQTG2ncVWYRk5NvNg6z03DY/8obG5uJ
-	O5JGU
-X-Gm-Gg: ASbGnct+WsWjwjPm+z+P+sguPGrDZFdluzYdVR/Y9pEUNcVRM/a2H9u/KulXID7K8Fs
-	pGWsuLEcB1h9QW3pMSCCayF49Jx3ArDTFn6Nqwg1Hvvg4yBfrUWGnw/LrY1/XvUu32GpKuqWg8Q
-	6Q2k3eqKtDuiNWl4ul/dE/hcVBprzFX8tgdmBnQ/MjvZM4Q0fJoj7xKRpbPw8TFKCv4RF0pymWM
-	G5417/JskASstzmXaBAV0B/pjj9VI51JNhPMLNqKz9OgSM5ILPqWy56cCq/mo4plFDQzYKT9bHk
-	EFXyl/AW9NfY7rRmB5OGkanMykxazn0PBQE6x1hNHCCCF/GupzP3Y7D02v6R6EgZrk4=
-X-Google-Smtp-Source: AGHT+IFSR8e8jVVCJqCvh7kcoUQB+Aw0Y24SkOD/mG2mZV1+q1ECgdVeqvoTrAvrNH8EzxirHatO2g==
-X-Received: by 2002:a05:600c:1ca8:b0:442:ccfa:18c with SMTP id 5b1f17b1804b1-4532b941335mr36533255e9.32.1749742597338;
-        Thu, 12 Jun 2025 08:36:37 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532dea17d7sm24007395e9.10.2025.06.12.08.36.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 08:36:36 -0700 (PDT)
-Message-ID: <7e4bcfe4-cf79-4b21-865d-a1248e09ffee@linaro.org>
-Date: Thu, 12 Jun 2025 16:36:36 +0100
+	s=arc-20240116; t=1749742607; c=relaxed/simple;
+	bh=YkGQb8u2LFs6Ny5AZDZ8dQLB2Mj5Hwh5mCAoXi9JxhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWsmdJEJDWJB9sT2RHhue+xtyo5IfsChUcKb8jystETJ3Pn5vzMeUtcLchenVD1Iw1o2TIg/qMR5Ijirc19fNOJxw8dU3pqVQzSwp/eqSEEw3XNHenYDvJtaqVHG9y+gLI4owvaYv2OEyqbY8/eIc9QvIxhnieNxWbi540fldxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=yt01YW6k; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QrJhlPmIGFpkmPRtfeqRYsI2Ia1MBPkjaqSOSbGZiSs=; b=yt01YW6k4t6UAt7H4xX6DshAhI
+	i0quv3ifop6RM7RcEvjAwOADbe58RlzVgrd6fn8Sv3QwWQO+qf3bAdvAVrA1vgvJDqbaDo+n7zzlj
+	4X13J99n1oGhBOwg9McPGr3hByePOxmfvQpMmNNSHgyB7xzX8WyS0yxdev82S46khAn4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPjyn-00FYqi-JH; Thu, 12 Jun 2025 17:36:37 +0200
+Date: Thu, 12 Jun 2025 17:36:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next v5 3/5] net: phy: qcom: at803x: Add Qualcomm
+ IPQ5018 Internal PHY support
+Message-ID: <096eacfe-ff24-4ed8-b223-04a6fe590496@lunn.ch>
+References: <20250612-ipq5018-ge-phy-v5-0-b5baf36705b0@outlook.com>
+ <DS7PR19MB88833EF18DC634F4D7F037439D74A@DS7PR19MB8883.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] spi: spi-fsl-dspi: Use non-coherent memory for DMA
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Frank Li <Frank.li@nxp.com>,
- Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
- <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
- <aEhMBsqlx9I4XqJS@lizhi-Precision-Tower-5810>
- <de7142ac-f1a3-412f-9f00-502222b20165@app.fastmail.com>
- <aEhVsrEk0qv+38r3@lizhi-Precision-Tower-5810>
- <20250611090107.t35zatn47vetnvse@skbuf>
- <c65c752a-5b60-4f30-8d51-9a903ddd55a6@linaro.org>
- <20250612111514.rfb3gpmlilznrfxs@skbuf>
- <ad7e9aa7-74a3-449d-8ed9-cb270fd5c718@linaro.org>
- <20250612143644.cmw6d4iiootipafp@skbuf>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250612143644.cmw6d4iiootipafp@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS7PR19MB88833EF18DC634F4D7F037439D74A@DS7PR19MB8883.namprd19.prod.outlook.com>
 
-
-
-On 12/06/2025 3:36 pm, Vladimir Oltean wrote:
-> On Thu, Jun 12, 2025 at 03:14:32PM +0100, James Clark wrote:
->>> FWIW, the XSPI FIFO performance should be higher.
->>
->> This leads me to realise a mistake in my original figures. My head was stuck
->> in target mode where we use DMA so I forgot to force DMA in host mode to run
->> the performance tests. The previous figures were all XSPI mode and the small
->> difference in performance could have been just down to the layout of the
->> code changing?
->>
->> Changing it to DMA mode gives figures that make much more sense:
->>
->> Coherent (4096 byte transfers): 6534 kbps
->> Non-coherent:                   7347 kbps
->>
->> Coherent (16 byte transfers):    447 kbps
->> Non-coherent:                    448 kbps
->>
->>
->> Just for comparison running the same test in XSPI mode:
->>
->> 4096 byte transfers:            2143 kbps
->> 16 byte transfers:               637 kbps
+On Thu, Jun 12, 2025 at 05:11:07PM +0400, George Moussalem wrote:
+> The IPQ5018 SoC contains a single internal Gigabit Ethernet PHY which
+> provides an MDI interface directly to an RJ45 connector or an external
+> switch over a PHY to PHY link.
 > 
-> So to be clear, the 'non-coherent' test was done just with patch 2
-> applied, or also with 3?
+> The PHY supports 10BASE-T/100BASE-TX/1000BASE-T link modes in SGMII
+> interface mode, CDT, auto-negotiation and 802.3az EEE.
+> 
+> Let's add support for this PHY in the at803x driver as it falls within
+> the Qualcomm Atheros OUI.
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 
-The whole set, and then the non-coherent patch reverted.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
 
