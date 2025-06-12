@@ -1,220 +1,129 @@
-Return-Path: <linux-kernel+bounces-684530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1064DAD7C8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:37:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39645AD7C59
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C05503A4C93
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94F73B53E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 20:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE642D663E;
-	Thu, 12 Jun 2025 20:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90822D661D;
+	Thu, 12 Jun 2025 20:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LxkrIfVV"
-Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Faz8D18k"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B072D6616;
-	Thu, 12 Jun 2025 20:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AA71D79A5;
+	Thu, 12 Jun 2025 20:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749760620; cv=none; b=iSd5LgHkRzkC1lJ2LhK/bLkhNTJtZoAPG2aIdviPBxpeHAc/6M4VUWG2Ir9geCZUfM0EQmhI1RSWZqmtg3OPOoUlReHK+d+v8yQeuglCK6zaj5mpCeEjcDnwZi3YTkCoGl+PcnCK67H+t4PRoHhVge4E96yYPgl4pXfx/Nhm+CQ=
+	t=1749760101; cv=none; b=S+iLvTAX8sfaEHpePQe6L5INjjw0zUgWffyqYYOMx45Mi0LMZLwpxd/Wt4PsmQB3pxjMZ6OIRRdCzqkSffEslX86NeBEqb0nq8L1Y9L3EVZri11p14q43Sy3JL/08Y5J8y36bhd4mXCSa4fs927TsJRtPROUKPF0c1+Hk1o0Vqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749760620; c=relaxed/simple;
-	bh=H8u1w/YwStaUJxudyE2L3/g/KCe1Lq6vTTC/Fx7X2wI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Srqx2mipeCBcHhKlKNlnTMlu1dRY/uqfz2rcqGyjRr5uV5cyS+rG1EiQy1tCEFr1IXMBsWM3iv87XuYLuTWE0kKoSP1tis6PDkGsQFNSsGrN8j0xvcKbasLR5TsB50dx4RPSzRnhbQ7yVTCVffcw41UJOzZPbSAzspzX5k1/M0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LxkrIfVV; arc=none smtp.client-ip=80.12.242.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id PoWIuYWF3h2MlPoWJutI1a; Thu, 12 Jun 2025 22:27:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1749760052;
-	bh=30F9MeODJaJtiCyPTKPIaDBgYSsnYVpZ0EqQQiVnKc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=LxkrIfVVst3GNiCIT4KgzwDqBS7GHuyxt1F86CTNcjmtrqWPq33ea8kN0AFZ79R1J
-	 OrSf46HuFOMk24s6lePYsB7lz+Nd2k8lLOHWUj/tG/uBUBjQX9P8r9FPX268lSo+VH
-	 NeNSbLfs4Hk+UYZn9E0s3zR/R98L2WllTR2hieQPjAJ+nyKdk/CmL6oKx/60MtMg7m
-	 sna5jFMu7AO5g/194HqUqmj8Tx16xrjoFZmcQR0dogrwNzQ5UPt6zKArBLmeUeq4cc
-	 0NLouo5u4hMqCHaXj8/6nnCLcrq86m+ZsQv/Kj7yubTx7rQRQsUYRsUpaDSd6+8Dtm
-	 xM5bAJeS6ZrIQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 12 Jun 2025 22:27:32 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <5e131f07-9753-4d2f-a043-35751c278a63@wanadoo.fr>
-Date: Thu, 12 Jun 2025 22:27:30 +0200
+	s=arc-20240116; t=1749760101; c=relaxed/simple;
+	bh=oRSm7ZpB2dIF6nVqpuQz3Jd3BNn0/vdz7YkxnBDKJzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KzQngG56flCoXkFzIU76O1hs3tHq8P6Dt9OMgZ7wmKs3oIj6VFhQO7HGCdrUc+5KienfOG2Rn4QbX1BG5cjlsxyVBUOZtM7WjVz6FWV9Bp0cBlAytH18H5mHXpN4mh/MJwQWO7yJYmjOLBF1/eJ7tFAYjEivxgsaYz14pEP4m7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Faz8D18k; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso1539470a91.0;
+        Thu, 12 Jun 2025 13:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749760099; x=1750364899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RbNc7HY8VMs8jQgNlP6re9PN2yZih6ZIaqzQM653mQQ=;
+        b=Faz8D18kb4AWoe6kcvsGP7Q7hk9U8M4yU+kc4uHht2eqV0TVuLSeU/abE7FCUI5jE8
+         eO8zxwo+h3k0GpkrnjzatIOBAeLz0NSRfk3g9TGbsG8blvARGRuAwQ01lqaEG5vDblbK
+         tXCdM90AtPwQgsmsRYl6O1ZODU0Qj6/5SWLBKJC2I1Ui/Uyh7fQkWT39ujBds+wrZstk
+         MWPqlo17hPKHKNpNeE7YsRjqYRSX3xzhAiidgnh+2czW6Wf4NP15Jx2nDKXG5tZLpOr2
+         eJYUAhktvfeVYNnqDJn1U2EQxsSMO+SRihWUCAqmpgiU0wifcwtoJeSKqfBWo2EZXzQE
+         op+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749760099; x=1750364899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RbNc7HY8VMs8jQgNlP6re9PN2yZih6ZIaqzQM653mQQ=;
+        b=YYXQvUgtG8F+zDqY8RsdV36WqcSzZCZUTnGa6G111c0ixoV9GbzfczFg79uLA31Zin
+         uUPQr+nXv8tvNGT2GDwIdMWq7NBLTPPmWNSDnRT2dCssXzBfdy01wr1VRbRobDA2eaPV
+         Q/4CP1TxFub5pH+IHgRfrQP1YK8FUAa3sOuSMEfniVl8KAwE30AHdkUn07OxSnrkHdKL
+         nHv89UnB1DvqNaeyhOD67MVSvYjNWrLJ5Ce2rNrKnHrInH+5CaOWDVzQ+/LPm0T6x6Zo
+         oXNlRO2xhzRrcZIm9Iwy055vYWfLVV0u4kUeCJQ4xA4KulQcJRF9FhhBOo+V3SRrc2po
+         MpMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnLnm3r1e2/Ce91xIO+E7VyIjTRl3uYpc0xb0eGFfbD7Lz3QxorUt4d5wG+pckfCANf8pZyoW4dhCnsUJ/@vger.kernel.org, AJvYcCWAt8S4F4ktHWktW8qcWXIX3EBGO7zYxGKT99i2XQ2C8XRbxpK8hZpx9rLNcN2z+MQusvw=@vger.kernel.org, AJvYcCX81wLivfd13yTRfihBdUXaQRl3/QO54TvoP+0BWfo7V2OKi/d1yneXKsO7i9kQ0FzwrJX/MpRVXBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfiwWWR5NRdF2563h/SHUWBOZNca7RGjjtjmXu1dHVLK9dDVd4
+	eylg58bn290O8iRHBGlke9rp6oLqMQWH1VWNevFaKDxOhIHTaYhdnkT6ITox0qqAdjP3ltX71Az
+	5hsH9E2RRJ9Bd2nozJzv5OwQJsc4RyV0=
+X-Gm-Gg: ASbGncv4QKzitpS/XgheL6ygzFH/PuBptT6CVEQLJ/DAbE8cg/L4L2/WBeIgjwj0qnN
+	eoiS8XC5pdtalHU1d+jy8LhblYqCKdFzfY4w6O12W2BATGeVe0GfAvQ2I+8eMnpUnBeLELu/nLY
+	5pkkuIq9tb+C85JUmiMPIiQuRDLvpxVnfG7wrRHysI2zPppIswUoj/TsJiHW0=
+X-Google-Smtp-Source: AGHT+IFzp9wE6ohGX9H5TUuxNuCopVHXZP+q6ExEdlcRvnybkr7qomkVzrU4YPeYA/75XCqu0VoEcg00BbvSowdup2Q=
+X-Received: by 2002:a17:90b:3d06:b0:311:c970:c9ce with SMTP id
+ 98e67ed59e1d1-313d9ea2effmr736404a91.28.1749760099154; Thu, 12 Jun 2025
+ 13:28:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-To: Lukas Timmermann <linux@timmermann.space>, lee@kernel.org,
- pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250611083151.22150-1-linux@timmermann.space>
- <20250611083151.22150-3-linux@timmermann.space>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250611083151.22150-3-linux@timmermann.space>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250606214840.3165754-1-andrii@kernel.org> <CANiq72kDA3MPpjMzX+LutOoLgKqm9uz8xAT_-iBzhR3pFC+L_Q@mail.gmail.com>
+In-Reply-To: <CANiq72kDA3MPpjMzX+LutOoLgKqm9uz8xAT_-iBzhR3pFC+L_Q@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Jun 2025 13:28:06 -0700
+X-Gm-Features: AX0GCFv2_R1w9AinnKKibx6LjkaQ05xASRlncBw9977J0iGCLXb0a7tS5H8foEE
+Message-ID: <CAEf4BzZDkkjRxp4rL7mMvjEOiwb_jhQLP2Y2YgyUO=O-FksDiQ@mail.gmail.com>
+Subject: Re: [PATCH v2] .gitignore: ignore compile_commands.json globally
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, masahiroy@kernel.org, 
+	ojeda@kernel.org, nathan@kernel.org, bpf@vger.kernel.org, 
+	kernel-team@meta.com, linux-pm@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 11/06/2025 à 10:31, Lukas Timmermann a écrit :
-> Since there were no existing drivers for the AS3668 or related devices,
-> a new driver was introduced in a separate file. Similar devices were
-> reviewed, but none shared enough characteristics to justify code reuse.
-> As a result, this driver is written specifically for the AS3668.
-> 
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+On Sat, Jun 7, 2025 at 2:27=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Fri, Jun 6, 2025 at 11:48=E2=80=AFPM Andrii Nakryiko <andrii@kernel.or=
+g> wrote:
+> >
+> > compile_commands.json can be used with clangd to enable language server
+> > protocol-based assistance. For kernel itself this can be built with
+> > scripts/gen_compile_commands.py, but other projects (e.g., libbpf, or
+> > BPF selftests) can benefit from their own compilation database file,
+> > which can be generated successfully using external tools, like bear [0]=
+.
+> >
+> > So, instead of adding compile_commands.json to .gitignore in respective
+> > individual projects, let's just ignore it globally anywhere in Linux re=
+po.
+> >
+> > While at it, remove exactly such a local .gitignore rule under
+> > tools/power/cpupower.
+> >
+> >   [0] https://github.com/rizsotto/Bear
+> >
+> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+>
 
-Hi,
+Masahiro,
 
-first, I should that you should wait longer before sending each new 
-version, so that you can collect more feedback.
+Would you be able to pick this up? Or where should we route this
+through, in your opinion? Thanks!
 
-> ---
->   MAINTAINERS                |   1 +
->   drivers/leds/Kconfig       |  13 +++
->   drivers/leds/Makefile      |   1 +
->   drivers/leds/leds-as3668.c | 204 +++++++++++++++++++++++++++++++++++++
->   4 files changed, 219 insertions(+)
->   create mode 100644 drivers/leds/leds-as3668.c
-
-...
-
-> +static int as3668_dt_init(struct as3668 *as3668)
-> +{
-> +	struct device *dev = &as3668->client->dev;
-> +	struct as3668_led *led;
-> +	struct led_init_data init_data = {};
-> +	int err;
-> +	u32 reg;
-> +
-> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err) {
-> +			dev_err(dev, "unable to read device tree led reg, err %d\n", err);
-
-as3668_dt_init() is only called from the probe. Sometimes maintainers 
-prefer using "return dev_err_probe()" in such a case, to have less 
-verbose code.
-(I don't know if it is the case for the leds subsystem)
-
-> +			return err;
-> +		}
-> +
-> +		if (reg < 0 || reg > AS3668_MAX_LEDS) {
-> +			dev_err(dev, "unsupported led reg %d\n", reg);
-> +			return -EOPNOTSUPP;
-
-Same.
-
-> +		}
-> +
-> +		led = &as3668->leds[reg];
-> +		led->fwnode = of_fwnode_handle(child);
-> +
-> +		led->num = reg;
-> +		led->chip = as3668;
-> +
-> +		led->cdev.max_brightness = U8_MAX;
-> +		led->cdev.brightness_get = as3668_brightness_get;
-> +		led->cdev.brightness_set = as3668_brightness_set;
-> +
-> +		init_data.fwnode = led->fwnode;
-> +		init_data.default_label = ":";
-> +
-> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-> +		if (err) {
-> +			dev_err(dev, "failed to register %d LED\n", reg);
-> +			return err;
-
-Same.
-
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int as3668_probe(struct i2c_client *client)
-> +{
-> +	u8 chip_id1, chip_id2, chip_serial, chip_rev;
-> +	struct as3668 *as3668;
-> +
-> +	/* Check for sensible i2c address */
-> +	if (client->addr != 0x42)
-> +		return dev_err_probe(&client->dev, -EFAULT,
-> +				     "unexpected address for as3668 device\n");
-> +
-> +	/* Read identifier from chip */
-> +	chip_id1 = as3668_read_value(client, AS3668_CHIP_ID1);
-> +
-> +	if (chip_id1 != AS3668_CHIP_IDENT)
-> +		return dev_err_probe(&client->dev, -ENODEV,
-> +				"chip reported wrong id: 0x%02x\n", chip_id1);
-> +
-> +	/* Check the revision */
-> +	chip_id2 = as3668_read_value(client, AS3668_CHIP_ID2);
-> +	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_id2);
-> +	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_id2);
-> +
-> +	if (chip_rev != AS3668_CHIP_REV1)
-> +		dev_warn(&client->dev, "unexpected chip revision\n");
-> +
-> +	/* Print out information about the chip */
-> +	dev_dbg(&client->dev,
-> +		"chip_id: 0x%02x | chip_id2: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
-> +		chip_id1, chip_id2, chip_serial, chip_rev);
-> +
-> +	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
-> +
-
-Unneeded new line.
-
-> +	if (!as3668)
-> +		return -ENOMEM;
-> +
-> +	as3668->client = client;
-> +	int err = as3668_dt_init(as3668);
-
-Would be better, IMHO, if err was declared at the top of the function.
-
-> +
-
-Unneeded new line.
-
-> +	if (err) {
-> +		dev_err(&client->dev, "failed to initialize device, err %d\n", err);
-
-return dev_err_probe() to be consistent with the code above.
-
-> +		return err;
-> +	}
-> +
-> +	/* Initialize the chip */
-> +	as3668_write_value(client, AS3668_CURRX_CONTROL, 0x55);
-> +	as3668_write_value(client, AS3668_CURR1, 0x00);
-> +	as3668_write_value(client, AS3668_CURR2, 0x00);
-> +	as3668_write_value(client, AS3668_CURR3, 0x00);
-> +	as3668_write_value(client, AS3668_CURR4, 0x00);
-> +
-> +	return 0;
-> +}
-
-...
-
-CJ
+> Thanks!
+>
+> Cheers,
+> Miguel
 
