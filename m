@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-683859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA67AD72C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE328AD72C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A4C3B05F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1CA3A7E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAEF248F63;
-	Thu, 12 Jun 2025 13:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0E1246BAC;
+	Thu, 12 Jun 2025 13:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="n8+WYuf9"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGPN1uFs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCA51A8405;
-	Thu, 12 Jun 2025 13:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736612; cv=pass; b=CMB/jl028r4tdAo+pjYTvDf0gy34fbgQ9TQWpcB1XpEtzyydvhGJnfCXQPA01thtiN4h1WIgf1XKeswfZJ/10b4cW1v4frCclbPuawRSswbbYJ8EvqbSs5yaCLSNtoUS2Thr+Tb+LzNr+z9faD7abjfk6cilelvQYtyZ+soZoDg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736612; c=relaxed/simple;
-	bh=9z9L2t/idxIPWqHtl6feJ5+98mUHvEmO1D71s0ZzRy8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=APt5njTGGXxrDnIXQ48NhGzNAuMtR0jbVKgFpN8gT2bk013tsthWPiMhxY5p7nsDo4wC3R0cf2hdc6arHlzA1h0OhlpSTBUgQtsuFI/PnlZOEt5zUpGxDhAJ7T001YG3uHOjrR0osd0tamQoMVpWPPA4X+uLhxBk07CmlxYeBy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=n8+WYuf9; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1749736586; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lvR1fq3NchjreiyUiIeLyfUSl3q2G2RoAlsQESjIc53+9OOmdW49NG0QOCklpaAxkpzOf+O3J5TOvuWFybfEplwcaG6SlWktPmVS4TBXLl1CE+CNBIWgpw+JPMzHAHvrgK3MAmVcgjWwsLQjgM1OiYYRK5Yzn18WQBKTwVWeYRY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749736586; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Xe+/CWthc6ot+OCxKsW3fGV6MDdG1CZZweZmpwlQwl8=; 
-	b=UDb8x8KAEskyKoSz1q1Mjj674Y9Rt4VlIoYO9Btoo4sS28yUQqBfQK7bS5IbuU518aeieAFSnj+TDZqkC9cgxYZZSvCSmghmOHXVmgKQJMWTPv+DDBO/oEGe4QqVIqZePNHuSv8DtRWGH0koTxGY2nAaixJwK5J2UjvLaqR9j/4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749736586;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Xe+/CWthc6ot+OCxKsW3fGV6MDdG1CZZweZmpwlQwl8=;
-	b=n8+WYuf92DJ5Lm1peHwH0i8dXZkNIOPgt6STqoXZn6bE31CoXzRJ7aDTt1IPiUfh
-	XEjSZx+S0IZMuy5sEy/SA0Ayo2YBiyF/OSXxBVCrX+L6rMKOiyXcJF0k+rFEmYjLIvn
-	5gyhXvQ81zaLxlmvGB/DqrM1LDnuGFFfTwq9TvyjZn32JvK1bv1xeaoMuwh2dnchIPO
-	tzuQGpMYbgc2ttKjYPZsz5dvWbyK1lvofXwv/tFR5IOhFwwxJv1lqD+FwFJDt27KfX0
-	GYrwEKtAQvYBc4LsXL0BBDQZ4y5dpMAJYjJmW46HmjVRr/t43nrfjeHjWv9lVTvViGF
-	1pKHyolYxQ==
-Received: by mx.zohomail.com with SMTPS id 1749736583346329.0335267878131;
-	Thu, 12 Jun 2025 06:56:23 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Sean Wang <sean.wang@mediatek.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH 2/2] arm64: dts: mediatek: mt8173: add hana revision 2
-Date: Thu, 12 Jun 2025 21:55:59 +0800
-Message-ID: <20250612135559.2601139-2-uwu@icenowy.me>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612135559.2601139-1-uwu@icenowy.me>
-References: <20250612135559.2601139-1-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35F23C516
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749736594; cv=none; b=THM6fQYfANeY+3eVHxxYQye+oNt0HkyFDsW1JKXy2/RSFBHw8BGgV2eG384gWTinsHalNpXZeGO1s6TrHMfCzA5NTfaHfIT/kpRBN6oyqCDZLwNTDvqXeAwaODSDMqIpHJN5FPdi7xdp6NdRTkbsH9aSUrN4P0fV+lCOd1TUaGo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749736594; c=relaxed/simple;
+	bh=WxMzIaZy423sDZIpi9KE0Tvfc7JKlMGJWRWMOOxFmHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nkYo4fHkrcx1pOr8rDUcs4wJz92VPn0oqs38aXVFy8tdzdtc3YzDAnXJbrOmaIe8m4CqurdMHRcPlTlPmcPtcXZtqVt8QWoleAWbQ3RqyUADBy5wx0qvQ67Sba8G7bXK1RI9lpdPEVFhMlGT8TA4e/KAmKishWE2wXwYQqKacmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGPN1uFs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36678C4CEEA;
+	Thu, 12 Jun 2025 13:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749736593;
+	bh=WxMzIaZy423sDZIpi9KE0Tvfc7JKlMGJWRWMOOxFmHw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EGPN1uFsB7Gp8Gg3O8/87vCP0sU0gTcHSNGSEGA8FSPJ129gA456eN68+UtFJHfNT
+	 9J43jIC3Anbm0D6b7cnyxhIxt2raxubu+WMLL+MPH5U8QAhEjwE5dmgc/72Kh3MPPD
+	 MPetWzSlSjo53jhTRH2z7ARPEF5nduHLpuo4GAqt4gGi1j/jw01gIF8rUCtcsTG2Fi
+	 o+KUTFWZ8QBOSBTP+0GUnQNTXxhiclH5gwYkrK7VlzsquR4xSQL8kHzUWdmNHdpXp7
+	 G5OrW1YcMbLxHrM6GKwhXrZt/Oj29Jvz11u2JLS+QwUAuOYfX8n5GGS9m4ZfAFXOq/
+	 4Ze3wFmHFL8qQ==
+Date: Thu, 12 Jun 2025 10:56:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Sean Christopherson <seanjc@google.com>
+Subject: [PATCH 1/1 fyi] tools headers x86 svm: Sync svm headers with the
+ kernel sources
+Message-ID: <aErcjuTTCVEZ-8Nb@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <20250612135559.2601139-2-uwu@icenowy.me>+zmo_0_
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The current mt8173-elm-hana.dts file only contains compatible strings
-for revision 3~6, makes boards with revision 0~2 to fail to match a
-revision-specific DTS and may fall back to the rev7 one (which lacks
-some gpio-keys).
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-As I've got a Lenovo Flex 11 Chromebook with board revision 2, add it to
-the base hana DTB file.
+Full explanation:
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
+
+See further details at:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+
+To pick the changes in:
+
+  827547bc3a2a2af6 ("KVM: SVM: Add architectural definitions/assets for Bus Lock Threshold")
+
+That triggers:
+
+  CC      /tmp/build/perf-tools/arch/x86/util/kvm-stat.o
+  LD      /tmp/build/perf-tools/arch/x86/util/perf-util-in.o
+  LD      /tmp/build/perf-tools/arch/x86/perf-util-in.o
+  LD      /tmp/build/perf-tools/arch/perf-util-in.o
+  LD      /tmp/build/perf-tools/perf-util-in.o
+  AR      /tmp/build/perf-tools/libperf-util.a
+  LINK    /tmp/build/perf-tools/perf
+
+The SVM_EXIT_BUS_LOCK exit reason was added to SVM_EXIT_REASONS, used in
+kvm-stat.c.
+
+This addresses this perf build warning:
+
+ Warning: Kernel ABI header differences:
+  diff -u tools/arch/x86/include/uapi/asm/svm.h arch/x86/include/uapi/asm/svm.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Nikunj A Dadhania <nikunj@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Link: https://lore.kernel.org/r/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/arch/x86/include/uapi/asm/svm.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dts b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dts
-index fcf0cb76a87c3..84638a07587f3 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dts
-@@ -11,5 +11,5 @@ / {
- 	chassis-type = "laptop";
- 	compatible = "google,hana-rev6", "google,hana-rev5",
- 		     "google,hana-rev4", "google,hana-rev3",
--		     "google,hana", "mediatek,mt8173";
-+		     "google,hana-rev2", "google,hana", "mediatek,mt8173";
- };
+diff --git a/tools/arch/x86/include/uapi/asm/svm.h b/tools/arch/x86/include/uapi/asm/svm.h
+index ec1321248dac2ab5..9c640a521a67006d 100644
+--- a/tools/arch/x86/include/uapi/asm/svm.h
++++ b/tools/arch/x86/include/uapi/asm/svm.h
+@@ -95,6 +95,7 @@
+ #define SVM_EXIT_CR14_WRITE_TRAP		0x09e
+ #define SVM_EXIT_CR15_WRITE_TRAP		0x09f
+ #define SVM_EXIT_INVPCID       0x0a2
++#define SVM_EXIT_BUS_LOCK			0x0a5
+ #define SVM_EXIT_IDLE_HLT      0x0a6
+ #define SVM_EXIT_NPF           0x400
+ #define SVM_EXIT_AVIC_INCOMPLETE_IPI		0x401
+@@ -225,6 +226,7 @@
+ 	{ SVM_EXIT_CR4_WRITE_TRAP,	"write_cr4_trap" }, \
+ 	{ SVM_EXIT_CR8_WRITE_TRAP,	"write_cr8_trap" }, \
+ 	{ SVM_EXIT_INVPCID,     "invpcid" }, \
++	{ SVM_EXIT_BUS_LOCK,     "buslock" }, \
+ 	{ SVM_EXIT_IDLE_HLT,     "idle-halt" }, \
+ 	{ SVM_EXIT_NPF,         "npf" }, \
+ 	{ SVM_EXIT_AVIC_INCOMPLETE_IPI,		"avic_incomplete_ipi" }, \
 -- 
 2.49.0
 
