@@ -1,109 +1,107 @@
-Return-Path: <linux-kernel+bounces-684010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E153AD74B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA84FAD74FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739B62C3D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6E0189BC3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8483026E165;
-	Thu, 12 Jun 2025 14:53:05 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854422701BF;
+	Thu, 12 Jun 2025 14:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v01xndwn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z3l0ZEVL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79591273D7F;
-	Thu, 12 Jun 2025 14:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6662842048;
+	Thu, 12 Jun 2025 14:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739985; cv=none; b=gx/B0aFCOu7Tuo443NVGwHPqiQNMgianovme/0kXUVo5wbDZwRNx3m6zv6XJab8g/RQwH+c9PrF6Loy1uqSug5eIGBDIzJdSJ3Q8SDmq2c5p7Mw4mrxLTj28tbEyQhV6sr3pOhTpgm7vWLpyXWjP2PZt4PMtcY23gopOV9d8k7I=
+	t=1749740053; cv=none; b=KaWp9gcncOAUrrODarmFeIflhsLgEZef+b1VHvGnWwUD2LuW6jBq/Zlj13ybY+PI01iBhjvSHtzuZqepaD4YZjlT5A7Fj2/tIQsnMhFfDHmEkYkmjXZljt7fefomV1WHj7bZE+bWthYGNrtgpClRz49TXCmE+/4GhykWLZD1sPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739985; c=relaxed/simple;
-	bh=iPaMVCvtVq/bIrjuta3WZIZB6tCzbML6yKhL4yeq8kU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=gvXoaG330HfKXmMvIs9fjAcfiIQF0ubTS84CfPlpv7r3k7JuVwPOyWndYvcfyOU3j2zw1kataAgSdduhc3uB5crXyUKh8J8293kID7BFRu4+fV3cxyfAD1i8pCh6wBhqWzqHZA07U3Y5x02UBkC1y92DoQNP+KqmS+AbIka44Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id B80275FBDE;
-	Thu, 12 Jun 2025 14:52:34 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id D68DE20028;
-	Thu, 12 Jun 2025 14:52:32 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uPjJg-00000001lQ5-2NL5;
-	Thu, 12 Jun 2025 10:54:08 -0400
-Message-ID: <20250612145408.415483176@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 12 Jun 2025 10:53:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4/4] PM: tracing: Hide power_domain_target event under ARCH_OMAP2PLUS
-References: <20250612145310.563358597@goodmis.org>
+	s=arc-20240116; t=1749740053; c=relaxed/simple;
+	bh=JLpyd2g/Xe7Snc8TZSz2U73JR+zRBfDYm2l2i1X5yzQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KwRkUKH2Cjyxvjipfo0AQSaJ54B6ODdr8rzFJBz0CfIuyyJgfwcDtoUynTXB7AMkjxHagcgVTy3FfDzdPvZxg97RdC12abZHvNO/0K5Q2d4v76P+9yeH4eXJaOuEJBaQsP2igxgINTUuPgCr0keRBCEqIPg8DdXf5/NYr1esD9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v01xndwn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z3l0ZEVL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749740050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fjwRLX2hmKU2M12T6FDQVTqpIRNQy8PjR1/oqRxiAuE=;
+	b=v01xndwn5kle1gJ1WXpR+eVWH9xR6k3hd9zUVmVFQY5M3ZZKcS0c9v+BJ81BpCiBmjci6N
+	WhJT6ONx/K4adk7NKGktPQ1mtHpSh7t0+LtFUEznSVH2+qo6PriILKAQRwS9si1BJaxXRT
+	zZkZ4NJJNfVy7b2s5hqc/u7T3xyTE0NZoRnnZNXqQNQex3jOQjbgE4V5NuI7dlUAzpOpZh
+	CfcqvUXgqXqPmFW9z/0yu5kqEGziJ4hXAPIP3F/CryyX5Ag7nCuh4dvUMoOr9UNb2jUBdl
+	fV2HtBLZucMJJ53J+HX/2Jcn99Xu+O3pgNsLgQ+z0hXdiSK9sIekRWfWwsHwkA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749740050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fjwRLX2hmKU2M12T6FDQVTqpIRNQy8PjR1/oqRxiAuE=;
+	b=z3l0ZEVLqs494vuwhRCC0AaGkmClNHH1GPTRWwPaNjgLw32+8aA4HOCM937JRU6lsBanMG
+	uXOGy5rmwF4lnCDg==
+Subject: [PATCH 0/3] module: make structure definitions always visible
+Date: Thu, 12 Jun 2025 16:53:53 +0200
+Message-Id: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Rspamd-Queue-Id: D68DE20028
-X-Stat-Signature: d779s6b79wo56idmtjbw44h7e3pmcfdt
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+p9qLGefh3sHaR9HeWxLmuONQDxFeJOGA=
-X-HE-Tag: 1749739952-78830
-X-HE-Meta: U2FsdGVkX1+oktxM9QHJotdDuSoK5vAHsGppqxtCgNWEj1VK1VKxq7/y9psVHR+Bs2ogve3wyTswzYhgNOyT0RsushAuh86z1DNqREAWXAVYDIw2j/ZsYhMZLTVYjQ8tO3lOFw5W+hCQAnkWijSF0faDxdMJ9DJ6sGb8RQKmoR3SZNxnb7lAeFHLvABmw29eyA7HWOe3keGbV3AcW1SXcIb1HyTjyHcZ7NsmXrf4Kc7rI+8WmBBmycoB36t9bq5+LBgoUG3rcDrkB7/7MIJ6wtJaGJ+4hMxsfRR+6L3upigYysuBZt6mHOQGwhCgC8DnLSqMPjWh1mkigyDN9bMbVxUntrVmbY2x2r+jJZ9u3EJbauVyndWCWlvOSERxtbTuWU7ND/LoCS+VoL3L5cnl4w==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAALqSmgC/x3MQQqDMBBG4avIrB3IKHbhVaSLYP5pBzWRpEpBv
+ HtDl9/ivYsKsqHQ2FyUcVqxFCukbWh++/gCW6imznWDe4jwckT7sGmA8pbCsaKwU2iQ3kOGnmq
+ 5Z6h9/9fped8/RgDNVmUAAAA=
+X-Change-ID: 20250611-kunit-ifdef-modules-0fefd13ae153
+To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749740050; l=828;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=JLpyd2g/Xe7Snc8TZSz2U73JR+zRBfDYm2l2i1X5yzQ=;
+ b=XWVHF8VTdoJM/mSgo4aVnOylh7DnsaPHQ6m/W9id/IzvZjlna/thD6sw9RK/dlNajeAj1CSjS
+ BermlnFdJ+yBemtIP2L8WVwRdD3Z9sXScrW5+34Z0JkngBs9V4d4jwi
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Code using IS_ENABLED(CONFIG_MODULES) as a C expression may need access
+to the module structure definitions to compile.
+Make sure these structure definitions are always visible.
 
-The power_domain_target event event is only called when CONFIG_OMAP2PLUS
-is defined. As each event can take up to 5K regardless if they are used or
-not, it's best not to define them when they are not used. Add #ifdef
-around these events when they are not used.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- include/trace/events/power.h | 2 ++
- 1 file changed, 2 insertions(+)
+Thomas Weißschuh (3):
+      module: move 'struct module_use' to internal.h
+      module: make structure definitions always visible
+      kunit: test: Drop CONFIG_MODULE ifdeffery
 
-diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-index 5b1df5e1e092..82904291c2b8 100644
---- a/include/trace/events/power.h
-+++ b/include/trace/events/power.h
-@@ -319,6 +319,7 @@ DEFINE_EVENT(wakeup_source, wakeup_source_deactivate,
- 	TP_ARGS(name, state)
- );
- 
-+#ifdef CONFIG_ARCH_OMAP2PLUS
- /*
-  * The power domain events are used for power domains transitions
-  */
-@@ -350,6 +351,7 @@ DEFINE_EVENT(power_domain, power_domain_target,
- 
- 	TP_ARGS(name, state, cpu_id)
- );
-+#endif
- 
- /*
-  * CPU latency QoS events used for global CPU latency QoS list updates
+ include/linux/module.h   | 30 ++++++++++++------------------
+ kernel/module/internal.h |  7 +++++++
+ lib/kunit/test.c         |  8 --------
+ 3 files changed, 19 insertions(+), 26 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250611-kunit-ifdef-modules-0fefd13ae153
+
+Best regards,
 -- 
-2.47.2
-
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
