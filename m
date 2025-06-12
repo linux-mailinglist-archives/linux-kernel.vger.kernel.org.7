@@ -1,90 +1,54 @@
-Return-Path: <linux-kernel+bounces-684047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C66AD7548
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:09:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CA0AD7559
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91BA170B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643883A3A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6F6248886;
-	Thu, 12 Jun 2025 15:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72E928A73F;
+	Thu, 12 Jun 2025 15:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xz51RLys"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="glwmPQ2C"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0D327AC4B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A3E27511A;
+	Thu, 12 Jun 2025 15:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740922; cv=none; b=cRvBrNq82dPPAMJfy6rxtoJemSSTxSsVSNCMG8PxcEkulqnkpTrX5OC4R2ckW7hak7W7a5OTOT5Po2uLvH4NUk+NR/2ApVEq9KPNs7siUZhq+KXILw1A6xAOv0/1ApOM7m525VRd5THxRrYFm67Usi2HBnaAlODNGd+gEX5Rfag=
+	t=1749741003; cv=none; b=KxjBof4xEkDuLZRh7TPl8hVuW1rhIJujBBhAhbDBF0ILFWNTps6SHVl5Ap0cCS6yVtInO25vwcPOhNcGHVRB8uSY7tQaryJCaxSBymRmC0h4pi/PLOz2Ltam0exk0ip0wIcsJ0Q6COkORMT4FHAP+CFcuBU4lMM2eKrPSXzIsNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740922; c=relaxed/simple;
-	bh=a2v2y6wL0kyXRH8MKApGqb3Kz81NcBCJAVjIEqK7s/w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dVTGY71mcYrSxplASHRjlbtQNG/ex2pNdMBnjsY5TSnvCIJpkq0IeYDGxziivQWScgz7iqn0b97e5T1LyuPWRrq/cX9W0WiTWfHtQI0W8OakA/gj/im+Oq4nuBPhaPFg3B/dcrhpbL1EzcJviOgWyxT4rQuq4gDvkEXpk7T7HK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xz51RLys; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-44069f5f3aaso1492755e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749740918; x=1750345718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RfogaeDXFu8NsSm9XLGcZrTDHnRVDxhctoqJhgjWD2Y=;
-        b=xz51RLysxZ+mSDr+1/yg/1W3PPed9UqSCwCBDPA4fjObBOxjoHitJhfuEBgKo0BqSq
-         dduFNk15ih4SS8lmAmkXpUQJ6CABIFzLblFVgoa6vV8GebCi5MefvT2r7+RSF0RXJQ6N
-         FkMuUIPurKFfJellTWi78mO/HrsntjFGJr+pqoTM9rdGZ6dtnNA7nIEklEvEJyr0oKaN
-         ko4Hv/9Zfut3qiR2QHYcSQ4/lFJH80EGEm01TBoepYUSKTlSCxQkoUq+fy+5TLftlvZ6
-         KTbzYdwNUxWtKi88AaMhsGztlA1Rixoc/lw937GK0LO6UP14VZwIBVbnrPOqVMvwBKNT
-         C7ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749740918; x=1750345718;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RfogaeDXFu8NsSm9XLGcZrTDHnRVDxhctoqJhgjWD2Y=;
-        b=MPXr/ayyo1mFbw6U1UUQrewABdk/YVj5pyz5njQx5ksXVaCDx7KurpAxvTG3W+mmqx
-         WEnlU0qbGLVtQZ21+r53e4tpt153ZZlY8D0A6Dtc5jrcrJAj+4YeMMG9iVodX6eeU8ZD
-         xNBQ56orQHebn4A4/b94dRd5ZqeGnSr4jHnSHtoUQQO70ZcomprU4W1sp8YXT42aUPAr
-         qVs4iphHsRRVQeiBZ+QIRItR3e1gPHjGG3roDx1IFsxczxNhLzmnUDhKr1VP+16iYZ0w
-         Jrgb/AYuXLQtgizTGBhaoEPjq0kcNzd+euvlKL2VLMleavjo40Usl1KMSErqX4NwD/Uf
-         9kEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKs2CcIuTdJHsaQ0BgVDGDB3WqF/yHUt5mPM4yXA3T4HP2X41KbibQzek/DpVE3QYCrLP53v6pPGO7lzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/g8tgw1O/rE/hHvywan53BzcGnIw+q5Oi6rJZ3AKC8wsFkChj
-	gm53EOjMHj9Cw71Ys5NDf45zh5hLkbNMFdPiZG2Ng4n4OuLxg78JHB6SbCugW1uMJAY=
-X-Gm-Gg: ASbGnctivnbGoomVo1S+gKAZmb4j1Wh86sAsFQBajSdnfRIGwmSZ7H97ytEcR9RAoIu
-	opFkqMy5XVTAHof8LZtS9ABfL3C460vN//y4KHF4bxhPbQmMvMWKvn9V0Yum3Uzc1ze+AEItcf6
-	yF0oAxkYzQygxuK6HNdxqZqOpB94KWUtEYO8C69vISXrwgT3zfwoNM+uXaiJ6zezSp7iuqycYgo
-	21mdyN/U2ueCuUDmZQbRqqtfkhZfXxfUw8SAX3+0CGIhdyVFS62n/wZPCRqhyOYqecTND3RSznZ
-	yw7lO9cII/4hVRt+qfj16jhyIxKfR28Sjec4V0B6FFLqAQkBXF31Djxq6PkSP/83z9/+AzSlHcH
-	Wqw1zYEnY/9sGKPmEAw==
-X-Google-Smtp-Source: AGHT+IGsHolW/1zgZsW15i4xzcpT6QiGNVGcfarQaCKUIeuKHVzXBnh/SKJKOYXQYnzFBUqMAybUug==
-X-Received: by 2002:a05:600c:4e45:b0:439:8294:2115 with SMTP id 5b1f17b1804b1-4532e8e40d2mr12583245e9.8.1749740916809;
-        Thu, 12 Jun 2025 08:08:36 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532dea1925sm24251255e9.12.2025.06.12.08.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 08:08:34 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250504145907.1728721-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250504145907.1728721-1-ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: [PATCH v4 0/4] arm64: dts: exynos: add initial support for
- Samsung Galaxy S22+
-Message-Id: <174974091358.105902.6680955080416928440.b4-ty@linaro.org>
-Date: Thu, 12 Jun 2025 17:08:33 +0200
+	s=arc-20240116; t=1749741003; c=relaxed/simple;
+	bh=dSXo45mIJJx9bDeTqNn31sUJ/q0OnjYwLXEix43Xrw0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jcTd9rZ7YGucSbORzdahNljm6SEvTu4B75VdVhRh3e1Vt2CI7u+9LMjIJPbrt9yZPPY5Sidf8MYSEQvBtntB+xaiGijuSAV6KBWJhlqmoSE/GfnkxjYWyabQe2U23roxs6ymlWTs70BAq8FwMhOHhRMd55pyKXf/FXzGZIw1WkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=glwmPQ2C; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7075025C7B;
+	Thu, 12 Jun 2025 17:10:00 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id guWSlxOGple0; Thu, 12 Jun 2025 17:09:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1749740999; bh=dSXo45mIJJx9bDeTqNn31sUJ/q0OnjYwLXEix43Xrw0=;
+	h=From:Subject:Date:To:Cc;
+	b=glwmPQ2CSMUg8fREOyygECG6WwXxlVb+wX16fBWBwWSdhrZZs3DDXfSGRf1pL2KUv
+	 XBiaj0mtIneJeaSpdZBwbrM27QMAN5ZPKHsV6E94LVOqygMVnlh5SbVyRkjXFLO4Kh
+	 ytQFo315OmRo8ozmC6/lB7Q0RrpIFYHfa2se+eG2hA5HyScrGNlNJvvSRDeIFcvn1W
+	 SRIFgp8gVdxMjO6SzYVMTTg/2XS95cuhMeOTEwdKhMQAsVdFC7vCD4C9jI6ilIy39i
+	 WktJloerb2WhF6VsYwM/vsSLNVk712C2IvKdBN+1o4EAHlSK2VtT7yr+3wYeDgOHXZ
+	 H+wnu1ViQdNqg==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/2] Support for Exynos7870's MIPI PHY blocks
+Date: Thu, 12 Jun 2025 20:39:28 +0530
+Message-Id: <20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,33 +57,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-B4-Tracking: v=1; b=H4sIAKjtSmgC/x3MTQqAIBBA4avErBswy4yuEi36GWsWmSiEIt09a
+ fkt3ssQyDMFGKsMnh4OfNuCpq5gOxd7EPJeDFJIJZRskWKyd9CDFnixY3Rnwk41ZtDK9OsioZT
+ Ok+H4X6f5fT+Xq/nrZQAAAA==
+X-Change-ID: 20250523-exynos7870-mipi-phy-451f875f6ba2
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749740994; l=845;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=dSXo45mIJJx9bDeTqNn31sUJ/q0OnjYwLXEix43Xrw0=;
+ b=8D4uqf1bHJF54i/+4jjJQo9pGHE9cAYBK0Au1T4+ogxwrDYvP9PPCEjq13Ru+GQKkhUc+0qcS
+ IlkF/AAqxdhCI54z50n1Z7RsvpIJIcihHrGP2kSNOtGQtBp+xNwGE3C
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
+This patch series adds support for Exynos7870's MIPI DSIM (for display)
+and CSIS (for camera) PHY blocks. It contains a single DSIM and three
+CSIS PHYs.
 
-On Sun, 04 May 2025 17:59:03 +0300, Ivaylo Ivanov wrote:
-> Hey folks,
-> 
-> This patchset adds device tree files for Exynos 2200 and Samsung
-> Galaxy S22+.
-> 
-> [1] is a dependancy on the aforementioned series for the usb phy drivers
-> and bindings.
-> 
-> [...]
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: phy: samsung,mipi-video-phy: document exynos7870 MIPI phy
+      phy: exynos-mipi-video: introduce support for exynos7870
 
-Applied, thanks!
-
-[1/4] dt-bindings: arm: samsung: document g0s board binding
-      https://git.kernel.org/krzk/linux/c/a67a28f59fbaeebbc37186d60a6c56e16b99829c
-[2/4] arm64: dts: exynos: add initial support for exynos2200 SoC
-      https://git.kernel.org/krzk/linux/c/11715fcf1ccab759d43ee1ad3b1b5bedd7559b48
-[3/4] arm64: dts: exynos: add initial support for Samsung Galaxy S22+
-      https://git.kernel.org/krzk/linux/c/5430fd9e0794a21b08ccdc01ddc942b09830c1be
-[4/4] MAINTAINERS: add entry for Samsung Exynos2200 SoC
-      https://git.kernel.org/krzk/linux/c/6c1497a4bd72438360d977f37837d9638b702f33
+ .../bindings/phy/samsung,mipi-video-phy.yaml       | 29 ++++++++++--
+ drivers/phy/samsung/phy-exynos-mipi-video.c        | 52 ++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  5 +++
+ 3 files changed, 82 insertions(+), 4 deletions(-)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20250523-exynos7870-mipi-phy-451f875f6ba2
 
 Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
