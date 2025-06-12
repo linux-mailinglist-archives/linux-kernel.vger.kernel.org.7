@@ -1,234 +1,259 @@
-Return-Path: <linux-kernel+bounces-683670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE13AD70A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:42:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B79AD70AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE5D1BC05FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5603A0B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB47221FDC;
-	Thu, 12 Jun 2025 12:42:34 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1791A315C;
+	Thu, 12 Jun 2025 12:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cHwD4QHI"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751F32AE8D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF04A2F4306
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749732154; cv=none; b=gsMl2/hmMkDazGZ1tjeYAxs6L7FeCOMLiCM4bCopYXuYrilqYSOf+vnIcMDa2D5Qe0N6tdo27I4kEDJFZhQn2HYqr7zhWCXZMnRvwGHWk05CBFF/TNU/iCOZX4ojgym+OKr9vpiJIJkV9fgvYH2kBi/eGfIRZS0rLMyQHd1PMfc=
+	t=1749732318; cv=none; b=mS12mn0FP87rph13Fv0xQ5NJPl9IHUt24NMxwCPajfMt6/sSAbilKUzIroflX3TSOirqImVBHXqyopPtgLdqaIAipwG3MyYdNf2/Y6CtflSXGGEl5gO1WxpHBgiYADFzx2LWdngIBQ8JDbb2zR1d1+tVrNcO1QBYFGhM2gQGcTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749732154; c=relaxed/simple;
-	bh=697PY5Nbn19ygEdhBM6ksoSsaGIhpIVkom3/BoDU+O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3+g/4p5JhzM4QXks2KWp9+urCBB3845pd9Yvpv+c8ld0YQYMIPO/EO+ihIwlKRqARaAy4pxd3Y+Msy+3HPYYN6L0kwkR9ZQsDEZbBmzTWeDNBuHs03DHKRlQFNpxgFpnzAlzPixRNAeuoYg86Wgczo6cclN3L++2W2kJAsc4TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1uPhG0-00029s-Mk; Thu, 12 Jun 2025 14:42:12 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1uPhFz-0037mO-05;
-	Thu, 12 Jun 2025 14:42:11 +0200
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1uPhFy-008uO9-2t;
-	Thu, 12 Jun 2025 14:42:10 +0200
-Date: Thu, 12 Jun 2025 14:42:10 +0200
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: yassine.ouaissa@allegrodvt.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: media: allegro-dvt: add decoder
- dt-bindings for Gen3 IP
-Message-ID: <aErLIriSYa1meukJ@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	yassine.ouaissa@allegrodvt.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20250605-allegro_dvt_al300_dec_driver-v2-0-1ef4839f5f06@allegrodvt.com>
- <20250605-allegro_dvt_al300_dec_driver-v2-2-1ef4839f5f06@allegrodvt.com>
+	s=arc-20240116; t=1749732318; c=relaxed/simple;
+	bh=9atixXIbZsg4zhY2o+Amlux4/5wm9+JzZJGmI/b5STA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQrz8FHdoBi8FQh3whLw0QfzzyFEA89ith97D9sAgIFQ6BfShv3iOOP9GYAPku6ZkfzR7nHTcZXyxqnf3QPI3LSZ4ZiZ40mg6T4TkMhqcb5IGTpyMTrj8vX7AAAvm2+xHq6twu94TGNNijDbeLGMuSYOE0EYD/8rIOhLRu+NZ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cHwD4QHI; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749732313; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=67UlPPGc4i2QzwzleZBj0/M5eJF7H8hsVKz2BEG30Ps=;
+	b=cHwD4QHIFOBCMg4gsludLveLLXE6RuJL5m06knYNBegLktrMN9v5aCL3fBaXL4SgKdjMmiqInu+a5lIeRVsLFNejIOuDT6S60JFewsUyKyQ2uCVL6t/Ni+kyOSqSBF6gxYwNKD3peBFVqX9OiPiOhEydtwFkq0Sawv1keJApego=
+Received: from 30.39.247.88(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wdh3ogd_1749732311 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 12 Jun 2025 20:45:12 +0800
+Message-ID: <97a67b74-d473-455e-a05e-c85fe45da008@linux.alibaba.com>
+Date: Thu, 12 Jun 2025 20:45:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250605-allegro_dvt_al300_dec_driver-v2-2-1ef4839f5f06@allegrodvt.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
+ <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
+ <1ec368c4-c4d8-41ea-b8a3-7d1fdb3ec358@redhat.com>
+ <2ff65f37-efa9-4e96-9cdf-534d63ff154e@linux.alibaba.com>
+ <953596b2-8749-493d-97eb-a5d8995d9ef8@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <953596b2-8749-493d-97eb-a5d8995d9ef8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 05 Jun 2025 12:26:57 +0000, Yassine Ouaissa via B4 Relay wrote:
-> From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-> 
-> Add compatible for video decoder on allegrodvt Gen 3 IP.
-> 
-> v2:
-> - Change the YAML file name, use the existing vendor-prefix.
-> - Improuve the dt-bindings description.
-> - Change the device compatible identifier, from "allegrodvt, al300-vdec",
->   to "allegro, al300-vdec"
-> - Simplify the register property specification,
->   by using the simple min/max items constraint (Krzysztof Kozlowski)
-> - Remove the clock-names property. And remove it from the required
->   properties list (Krzysztof Kozlowski) (Conor Dooley)
-> - Use the simple maxItems constraint for the memory-region property.
->   Also for the firmware-name (Krzysztof Kozlowski)
-> - Example changes:
->   - Use header provides definitions for the interrupts (Conor Dooley)
->   - Improuve Interrupt specification using GIC constants (Conor Dooley)
->   - Use generic node name "video-decoder" (Krzysztof Kozlowski) (Conor Dooley)
->   - Remove unused label (Krzysztof Kozlowski)
->   - Change clock reference from <&mcu_clock_dec> to <&mcu_core_clk>
->   - Use hex format for reg property (Krzysztof Kozlowski) (Conor Dooley)
->   - Reduce memory region size (Krzysztof Kozlowski) (Conor Dooley)
-> 
->   - Link v1: https://patchwork.linuxtv.org/project/linux-media/patch/20250511144752.504162-4-yassine.ouaissa@allegrodvt.com/
-> 
-> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-> ---
->  .../bindings/media/allegro,al300-vdec.yaml         | 75 ++++++++++++++++++++++
->  MAINTAINERS                                        |  2 +
->  2 files changed, 77 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml b/Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..26f9ac39682431b1d4828aed5d1ed43ef099e204
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml
-> @@ -0,0 +1,75 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/allegro,al300-vdec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allegro DVT Video IP Decoder Gen 3
-> +
-> +maintainers:
-> +  - Yassine OUAISSA <yassine.ouaissa@allegrodvt.com>
-> +
-> +description: The al300-vdec represents the gen 3 of Allegro DVT IP video
-> +  decoding technology, offering significant advancements over its
-> +  predecessors. This new decoder features enhanced processing capabilities
-> +  with improved throughput and reduced latency.
-> +
-> +  Communication between the host driver software and the MCU is implemented
-> +  through a specialized mailbox interface mechanism. This mailbox system
-> +  provides a structured channel for exchanging commands, parameters, and
-> +  status information between the host CPU and the MCU controlling the codec
-> +  engines.
-> +
-> +properties:
-> +  compatible:
-> +    const: allegro,al300-vdec
-> +
-> +  reg:
-> +    maxItems: 2
-> +    minItems: 2
-> +
-> +  reg-names:
-> +    items:
-> +      - const: regs
-> +      - const: apb
 
-If I understand correctly, "regs" are the registers to control the MCU
-and "apb" are the registers of the actual codec engines, which is
-controlled by the MCU. The driver never accesses the apb registers, but
-uses the apb address only to configure the firmware and tell it, where
-the registers of the codec engines are found.
 
-Maybe a separate node for the actual codec that is referred via a
-phandle could be a better description of the hardware?
+On 2025/6/12 16:51, David Hildenbrand wrote:
+> On 12.06.25 09:51, Baolin Wang wrote:
+>>
+>>
+>> On 2025/6/11 20:34, David Hildenbrand wrote:
+>>> On 05.06.25 10:00, Baolin Wang wrote:
+>>>> The MADV_COLLAPSE will ignore the system-wide Anon THP sysfs settings,
+>>>> which
+>>>> means that even though we have disabled the Anon THP configuration,
+>>>> MADV_COLLAPSE
+>>>> will still attempt to collapse into a Anon THP. This violates the rule
+>>>> we have
+>>>> agreed upon: never means never.
+>>>>
+>>>> Another rule for madvise, referring to David's suggestion: “allowing
+>>>> for collapsing
+>>>> in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+>>>>
+>>>> To address this issue, should check whether the Anon THP configuration
+>>>> is disabled
+>>>> in thp_vma_allowable_orders(), even when the TVA_ENFORCE_SYSFS flag is
+>>>> set.
+>>>>
+>>>> In summary, the current strategy is:
+>>>>
+>>>> 1. If always & orders == 0, and madvise & orders == 0, and
+>>>> hugepage_global_enabled() == false
+>>>> (global THP settings are not enabled), it means mTHP of that orders
+>>>> are prohibited
+>>>> from being used, then madvise_collapse() is forbidden for that orders.
+>>>>
+>>>> 2. If always & orders == 0, and madvise & orders == 0, and
+>>>> hugepage_global_enabled() == true
+>>>> (global THP settings are enabled), and inherit & orders == 0, it means
+>>>> mTHP of that
+>>>> orders are still prohibited from being used, thus madvise_collapse()
+>>>> is not allowed
+>>>> for that orders.
+>>>>
+>>>> Reviewed-by: Zi Yan <ziy@nvidia.com>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>>    include/linux/huge_mm.h | 23 +++++++++++++++++++----
+>>>>    1 file changed, 19 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>> index 2f190c90192d..199ddc9f04a1 100644
+>>>> --- a/include/linux/huge_mm.h
+>>>> +++ b/include/linux/huge_mm.h
+>>>> @@ -287,20 +287,35 @@ unsigned long thp_vma_allowable_orders(struct
+>>>> vm_area_struct *vma,
+>>>>                           unsigned long orders)
+>>>>    {
+>>>>        /* Optimization to check if required orders are enabled 
+>>>> early. */
+>>>> -    if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
+>>>> -        unsigned long mask = READ_ONCE(huge_anon_orders_always);
+>>>> +    if (vma_is_anonymous(vma)) {
+>>>> +        unsigned long always = READ_ONCE(huge_anon_orders_always);
+>>>> +        unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+>>>> +        unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
+>>>> +        unsigned long mask = always | madvise;
+>>>> +
+>>>> +        /*
+>>>> +         * If the system-wide THP/mTHP sysfs settings are disabled,
+>>>> +         * then we should never allow hugepages.
+>>>   > +         */> +        if (!(mask & orders) &&
+>>> !(hugepage_global_enabled() && (inherit & orders)))
+>>>> +            return 0;
+>>>
+>>> I'm still trying to digest that. Isn't there a way for us to work with
+>>> the orders,
+>>> essentially masking off all orders that are forbidden globally. Similar
+>>> to below, if !orders, then return 0?
+>>> /* Orders disabled directly. */
+>>> orders &= ~TODO;
+>>> /* Orders disabled by inheriting from the global toggle. */
+>>> if (!hugepage_global_enabled())
+>>>       orders &= ~READ_ONCE(huge_anon_orders_inherit);
+>>>
+>>> TODO is probably a -1ULL and then clearing always/madvise/inherit. Could
+>>> add a simple helper for that
+>>>
+>>> huge_anon_orders_never
+>>
+>> I followed Lorenzo's suggestion to simplify the logic. Does that look
+>> more readable?
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 2f190c90192d..3087ac7631e0 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -265,6 +265,43 @@ unsigned long __thp_vma_allowable_orders(struct
+>> vm_area_struct *vma,
+>>                                            unsigned long tva_flags,
+>>                                            unsigned long orders);
+>>
+>> +/* Strictly mask requested anonymous orders according to sysfs 
+>> settings. */
+>> +static inline unsigned long __thp_mask_anon_orders(unsigned long 
+>> vm_flags,
+>> +                               unsigned long tva_flags, unsigned long
+>> orders)
+>> +{
+>> +       unsigned long always = READ_ONCE(huge_anon_orders_always);
+>> +       unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+>> +       unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
+>> +       bool inherit_enabled = hugepage_global_enabled();
+>> +       bool has_madvise =  vm_flags & VM_HUGEPAGE;
+>> +       unsigned long mask = always | madvise;
+>> +
+>> +       mask = always | madvise;
+>> +       if (inherit_enabled)
+>> +               mask |= inherit;
+>> +
+>> +       /* All set to/inherit NEVER - never means never globally, 
+>> abort. */
+>> +       if (!(mask & orders))
+>> +               return 0;
+> 
+> Still confusing. I am not sure if we would properly catch when someone 
+> specifies e.g., 2M and 1M, while we only have 2M disabled.
 
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: MCU core clock
-> +
-> +  memory-region:
-> +    maxItems: 1
-> +
-> +  firmware-name:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - clocks
-> +
-> +additionalProperties: False
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    axi {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        video-decoder@a0120000 {
-> +            compatible = "allegro,al300-vdec";
-> +            reg = <0x00 0xa0120000 0x00 0x10000>,
-> +                  <0x01 0x80000000 0x00 0x8000>;
-> +            reg-names = "regs", "apb";
-> +            interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&mcu_core_clk>;
-> +            firmware-name = "al300_vdec.fw";
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index abc6ba61048771303bc219102f2db602266b7c30..1ff78b9a76cb8cdf32263fcd9b4579b4a2bb6b2a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -816,7 +816,9 @@ M:	Michael Tretter <m.tretter@pengutronix.de>
->  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml
->  F:	Documentation/devicetree/bindings/media/allegro,al5e.yaml
-> +F:	drivers/media/platform/allegro-dvt/al300
->  F:	drivers/media/platform/allegro-dvt/zynqmp
->  
->  ALLIED VISION ALVIUM CAMERA DRIVER
+IIUC, Yes. In your case, we will only allow order 8 (1M mTHP).
+
+> I would rewrite the function to only ever substract from "orders".
 > 
-> -- 
-> 2.30.2
+> ...
 > 
+> /* Disallow orders that are set to NEVER directly ... */
+> order &= (always | madvise | inherit);
 > 
+> /* ... or through inheritance. */
+> if (inherit_enabled)
+>      orders &= ~inherit;
+
+Sorry, I didn't get you here.
+
+If orders = THP_ORDERS_ALL_ANON, inherit = 0x200 (order 9), always and 
+madvise are 0, and inherit_enabled = true. Then orders will be 0 with 
+your logic. But we should allow order 9, right?
+
+> 
+> /*
+>   * Otherwise, we only enforce sysfs settings if asked. In addition,
+>   * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
+>   * is not set, we don't bother checking whether the VMA has VM_HUGEPAGE
+>   * set.
+>   */
+> if (!orders || !(tva_flags & TVA_ENFORCE_SYSFS))
+>      return orders;
+> 
+>> +
+>> +       /*
+>> +        * Otherwise, we only enforce sysfs settings if asked. In 
+>> addition,
+>> +        * if the user sets a sysfs mode of madvise and if 
+>> TVA_ENFORCE_SYSFS
+>> +        * is not set, we don't bother checking whether the VMA has
+>> VM_HUGEPAGE
+>> +        * set.
+>> +        */
+>> +       if (!(tva_flags & TVA_ENFORCE_SYSFS))
+>> +               return orders;
+>> +
+>> +       mask = always;
+>> +       if (has_madvise)
+>> +               mask |= madvise;
+>> +       if (hugepage_global_always() || (has_madvise && inherit_enabled))
+>> +               mask |= inherit;
+> 
+> Similarly, this can maybe become (not 100% sure if I got it right, the 
+> condition above is confusing)
+
+IMO, this is the original logic.
+
+> if (!has_madvise) {
+>      /*
+>       * Without VM_HUGEPAGE, only allow orders that are set to
+>       * ALWAYS directly ...
+>        */
+>      order &= (always | inherit);
+>      /* ... or through inheritance. */
+>      if (!hugepage_global_always())
+>          orders &= ~inherit;
+
+Ditto. I can not understand this too.
+
+> }
 > 
 
