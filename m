@@ -1,185 +1,99 @@
-Return-Path: <linux-kernel+bounces-683017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418FAAD67E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AE6AD67EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0494C7A740C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:19:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881573ADA30
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8226E1F0E2D;
-	Thu, 12 Jun 2025 06:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB441F0E39;
+	Thu, 12 Jun 2025 06:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PJPjyxJE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="oGxaZFuG"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F7A1E25F2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5874F1DFE20
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749709250; cv=none; b=UEx/t7NFnPHmVB03SZn3O5PblYreykfKEuurxUjb8BpRZ7g5h9RJMfAfoSzX+q4550+ygsgzkUzRkfDcL3WrTYCgzTHZgioeoIp1za5JcOuhxDbT/OxBos0LLyUdNOYQLpXc9OelqCl6xrazUwyWAmLcC+BVmrQ041QE7m6SibE=
+	t=1749709374; cv=none; b=tQzRkPllfUGd43bORPZ+TJDu2PTSoQgg+ArjWMu5+U2qPU9Ma0u+33TLCZYaMyTclbkArMmiUVKEXhlE2GUsjoIVPVxavT/T9fpK6xxSILfPWjeq4zAsDXE1NPES8rqqNtApBN2Oo74wLj9hbsJ2ZOOelyn5+FQNOesRt7SNSUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749709250; c=relaxed/simple;
-	bh=UjKVWN7uen5QtJlj47WJo7MSZiaiu10pJfZXyVbBjLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tjmtw2kvvaLS5j6xwN6HJW2hsVCR+NsuHo18yaPLNkfMnZQDA+Cp9VbO9OKH1jqYAqwDhb6wu/Gn3ViyWvS7P5fB7h8/XhPKpmsUCykgj5DEaqzbYMUx6cl/k7jD2S/5yaPtnbLburM+Xj7I02qgV/ok3dh4q2V8zhdIts+xw/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PJPjyxJE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749709247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=piaS+IvVA5BU5uoyHWio7NQXE3J6rbJilCTVKgCGvkw=;
-	b=PJPjyxJEZH6N+jp60tdq7eDjUsXCHix79YpXahvuIbSCGFY7cJMThElBwkvEjmAzrhKJXG
-	ldAHxb80YOJGk1eZc+t4dG4qlbcr9EeoyMD8pNpH8u/SkaK6sf96ul7KRlSGVmMsQ1TU9X
-	QqcUdzbozHO1tCx4DJGOGwd/5fu6JAA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-OxQPsz7jMqK0-9ZVmPEwwQ-1; Thu, 12 Jun 2025 02:20:46 -0400
-X-MC-Unique: OxQPsz7jMqK0-9ZVmPEwwQ-1
-X-Mimecast-MFC-AGG-ID: OxQPsz7jMqK0-9ZVmPEwwQ_1749709245
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f8fd1856so245969f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 23:20:45 -0700 (PDT)
+	s=arc-20240116; t=1749709374; c=relaxed/simple;
+	bh=NVSA+aFvs1XO3TlVQr3XMhBpHu6vTAXKDoH9mbxB4wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eMXC9PVDOJx9g6Q9NctOP9CBzR4qnt0sBga0FW3Mu7i6tcICAqGBq37HB3E2TL61Ue9Alrk5g9+GzE+kUsCVBwLhWf1eS4FGo9hhkSgJdJv/OBtnxPZrGm5Ume/DNH/FMijxLwpasmyf96iIpeKyIc3oOsQ67Jc9iqydcaKy8H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=oGxaZFuG; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a58ba6c945so11905941cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 23:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1749709371; x=1750314171; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NVSA+aFvs1XO3TlVQr3XMhBpHu6vTAXKDoH9mbxB4wc=;
+        b=oGxaZFuGzg2ustNbGNKVleQsTCAYnk7VpaJ0pBE0Gu8xGCkdCeklfkUPIOh2gENeiw
+         x2L8jpg4makVjVhiLxNf7ijMxO2AdHtxQR/B9h40D+xj6j2lq0MaHkz2MPJTT2JsnnVP
+         mPVl1APKyY2GvXrRK2KTlcBFkougfQYVw1Z7M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749709245; x=1750314045;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=piaS+IvVA5BU5uoyHWio7NQXE3J6rbJilCTVKgCGvkw=;
-        b=FP6KSw2VFSLVkVJMzAsntUXVQMqxCoV3GhpLMM2BuKaZwCvq/RqZbywbEnWa1Jk6cw
-         fA78QpibvBqxVyBuvBNXym+yD0Ze8lX+z0YBggcd0e9iOG92cUD35GQGhm4KF9h/5Iz0
-         XtD8oOl6imK4VJFMT8CZw0i3iAZKWlvic/zuPsF8v4aLF2Xeuag8FuqvFU8QT60yUIgp
-         wsRQuevmQaqcEzj9zaH7LTe2oxDMwPGLiI3TkAcXZG/5FOXzfLQLwGnY1NUcTneKe+mn
-         qtmO1UFWbHeag6wNxJPQyyNp6/8zyui9iFlSCImzJn1+qkOrseWjqur+Pa/3m7Ua+eW3
-         Lv+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJWfE82q/iPfgrmCI3TV30lFVgN+nLuxlNfKM/dpKNA+S4H7zCUS0k1Dx/EanpJjIBrkegtOLf/iRjM+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPea14Hj3V/GY17l5xOVWLTDt0R6IfQV7FdjdDxTwesFJ8Aq1X
-	3ZzW9pmD54en6gv3d5F9ijr8JcU14PwduDSEzfd+HQQ/IWuO9JmhP9bAA7UVCy7akxqUxoVzjxi
-	liv9pmoP/Wz3C/pNr37jd0KGnYnuS2D8wfNUUH6RJfc2dO9DbmD4lO5ctefdYgJldrg==
-X-Gm-Gg: ASbGncsS1kQer9mCFlUylYrTei1CS6y2rWh4rXDcqOj6nP14GjDcOgMQJ6aKgfz9PxC
-	AyQsvq82xycObrJxSXAhN54jtDju2oXfxOC1uHPtbB5g9t3ssEWEJpCMi6iV5YuiK75GzmAz/Jh
-	zVJGBqu0bg3JQGiz3UYF9IVteQdo0yN4v0/XtU4rhxwL/7xbQU8YkNhTUEYUwWdyJ5qEbabmDVV
-	bZOlKCLCTlA9l3Mo4QqBWVMkB0MdQBtVywhhZdwu53KVvHiadouCje4/dXm2c2Syjnqw1P/Fe7e
-	vp2uvL2xsL3ZbLhE
-X-Received: by 2002:a05:6000:2210:b0:3a4:f6ba:51da with SMTP id ffacd0b85a97d-3a561309d4bmr1368858f8f.15.1749709244935;
-        Wed, 11 Jun 2025 23:20:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2RtRKGSbUvUXqFG5RCVEOgWfBzpJ3ZXPuVL/rUgYKBarLIkU9OJETs4KF/dDE8YU6wvHsPw==
-X-Received: by 2002:a05:6000:2210:b0:3a4:f6ba:51da with SMTP id ffacd0b85a97d-3a561309d4bmr1368835f8f.15.1749709244571;
-        Wed, 11 Jun 2025 23:20:44 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a56198a3b4sm980497f8f.21.2025.06.11.23.20.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 23:20:44 -0700 (PDT)
-Date: Thu, 12 Jun 2025 02:20:41 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v11 0/3] vhost: Add support of kthread API
-Message-ID: <20250612022012-mutt-send-email-mst@kernel.org>
-References: <20250609073430.442159-1-lulu@redhat.com>
+        d=1e100.net; s=20230601; t=1749709371; x=1750314171;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NVSA+aFvs1XO3TlVQr3XMhBpHu6vTAXKDoH9mbxB4wc=;
+        b=E2PvrxCPXdRj+YK+A8Or/HQG2bc4UImdzPAX/KyFm8kY9NRm477PY0qC25sKLrU0R2
+         cTxGK0t1t24/euD91PtS5CzvSTqpRWzVK4cRNYxPW4DSY8Zf4b4DGro6lwSrAYZwWok9
+         4NMgbtg2cz0Rsw3CnNB1USCWzwYihAfZwtNILFccvUFnFewWmOJ7bNFXKbKNCZ4odDGv
+         x8ppoFGI19o2WY0J3iX7UBR6lbXqg72xTBT2p0gIwo4r4PabHshsEJ6HXrlzkQpsubp6
+         Y1k001mIKynwhNpzM6HLBULsWVDGlaiNf8bgIFpLRXd+00ki6qCBP+ytLhIZ3cpNK5CP
+         dKNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUR+yhDqrZUZgoVA2c4xVvGOSP2PstlZrsAmSAZEonUS1kezmEktUnAtFhFCq7Ru67OvBp5lII/VWkwZoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIU/p5txv4M6NjcVzAeOEymxSstTTfb/16Z7Z41ezvRW/DeNP4
+	r3v3Kxiax+8F7r4n2ezarlIIppcEVm3//7tAS+Kx+8AtWmlorG36W+aJqHWDixLRxqlrUk9Ur+3
+	dbd+18pKOHuqe9l4RhrDtNL/a+mpCSiVWivB9GxTQUQ==
+X-Gm-Gg: ASbGncuvqp1vRytvXu2HSc7qJWZ3YVav82yllIQ64GDxlvVk113L3f41cNGlyElMxB+
+	GzfLQPg/fn5U11CAM0ka16/IAIi7TTu+7gt9iDOjE/ctIy6+uRE8BJHjpTnS7AG52oHVcrZx2hq
+	9B/7p6Ya42f3etVqmBzhAFLE5g+jj43pM8RtBzHqsYDADh
+X-Google-Smtp-Source: AGHT+IH2I+YwhsNEN2W/f0jBkF1nxvsiE/H4QK8q+uPATGIvdhpGf8PYgM3jx5R7mR9gdQG0BY/Jl8TKR1yRM88Z5FA=
+X-Received: by 2002:a05:622a:1e10:b0:494:5805:c2b9 with SMTP id
+ d75a77b69052e-4a72298b30fmr46608091cf.31.1749709371314; Wed, 11 Jun 2025
+ 23:22:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609073430.442159-1-lulu@redhat.com>
+References: <20250610021124.2800951-2-chenlinxuan@uniontech.com>
+In-Reply-To: <20250610021124.2800951-2-chenlinxuan@uniontech.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 12 Jun 2025 08:22:38 +0200
+X-Gm-Features: AX0GCFtg9rZdO_j-xlB7BjFTfd7v-suiRWlCa3w6oicMUUxJvtRI76Y9_mraJcE
+Message-ID: <CAJfpegtF0KUw86m_NHFGUtnfcmPgzO88hv3AOs14=j_OQYuvbQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] doc: fuse: Add max_background and congestion_threshold
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, zhanjun@uniontech.com, niecheng1@uniontech.com, 
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 09, 2025 at 03:33:06PM +0800, Cindy Lu wrote:
-> In this series, a new UAPI is implemented to allow   
-> userspace applications to configure their thread mode.
+On Tue, 10 Jun 2025 at 04:11, Chen Linxuan <chenlinxuan@uniontech.com> wrote:
+>
+> As I preparing patches adding selftests for fusectl,
+> I notice that documentation of max_background and congestion_threshold
+> is missing.
+>
+> This patch add some descriptions about these two files.
+>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
 
+Applied, thanks.
 
-> Changelog v2:
->  1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
->  2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
-> 
-> Changelog v3:
->  1. Change the module_param's name to inherit_owner_default, and the default value is true.
->  2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
->  3. device will have their own inherit_owner in struct vhost_dev
->  4. Address other comments
-> 
-> Changelog v4:
->  1. remove the module_param, only keep the UAPI
->  2. remove the structure for task function; change to use the function pointer in vhost_worker
->  3. fix the issue in vhost_worker_create and vhost_dev_ioctl
->  4. Address other comments
-> 
-> Changelog v5:
->  1. Change wakeup and stop function pointers in struct vhost_worker to void.
->  2. merging patches 4, 5, 6 in a single patch
->  3. Fix spelling issues and address other comments.
-> 
-> Changelog v6:
->  1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
->  2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FROM_OWNER
->  3. reuse the function __vhost_worker_flush
->  4. use a ops sturct to support worker relates function
->  5. reset the value of inherit_owner in vhost_dev_reset_owner.
->  
-> Changelog v7: 
->  1. add a KConfig knob to disable legacy app support
->  2. Split the changes into two patches to separately introduce the ops and add kthread support.
->  3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
->  4. Rebased on the latest kernel
->  5. Address other comments
->  
-> Changelog v8: 
->  1. Rebased on the latest kernel
->  2. Address some other comments 
->  
-> Changelog v9:
->  1. Rebased on the latest kernel. 
->  2. Squashed patches 6‑7. 
->  3. Squashed patches 2‑4. 
->  4. Minor fixes in commit log
->  
-> Changelog v10:
->  1.Add support for the module_param.
->  2.Squash patches 3 and 4.
->  3.Make minor fixes in the commit log.
->  4.Fix the mismatched tabs in Kconfig.
->  5.Rebase on the latest kernel.
-> 
-> Changelog v11:
->  1.make the module_param under Kconfig
->  2.Make minor fixes in the commit log.
->  3.change the name inherit_owner to fork_owner
->  4.add NEW ioctl VHOST_GET_FORK_FROM_OWNER
->  5.Rebase on the latest kernel
->      
-> Tested with QEMU with kthread mode/task mode/kthread+task mode
-> 
-> Cindy Lu (3):
->   vhost: Add a new parameter in vhost_dev to allow user select kthread
->   vhost: Reintroduce kthread mode support in vhost
->   vhost: Add configuration controls for vhost worker's mode
-
-
-All of this should be squashed in a single patch.
-
-> 
->  drivers/vhost/Kconfig      |  17 +++
->  drivers/vhost/vhost.c      | 234 ++++++++++++++++++++++++++++++++++---
->  drivers/vhost/vhost.h      |  22 ++++
->  include/uapi/linux/vhost.h |  25 ++++
->  4 files changed, 280 insertions(+), 18 deletions(-)
-> 
-> -- 
-> 2.45.0
-
+Miklos
 
