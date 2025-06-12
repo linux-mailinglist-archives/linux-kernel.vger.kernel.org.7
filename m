@@ -1,101 +1,78 @@
-Return-Path: <linux-kernel+bounces-684119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504B7AD764E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6C9AD7651
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E071734C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B1616202E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685CB29B78B;
-	Thu, 12 Jun 2025 15:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C442BDC15;
+	Thu, 12 Jun 2025 15:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBJ1AJLi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr7zA6Tx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BAF29B773;
-	Thu, 12 Jun 2025 15:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1644C29CB4B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742129; cv=none; b=AA4LR8fpUfFR3c5CXM/I22kXdBjzdVN6195liavH7Pf7NwxHs3Nd4Wkk5DNSIAz9nZ8pxwX5APNA6KFLlvl36mYdSlsdrqOSl65gtoDHU9k0wnpT/DoI5bfDuyZFASPxVdVT5Xii0m40HZZ+j8Tx/A95k9qe/eAvvo9UYhV5mc4=
+	t=1749742147; cv=none; b=BJZptcWAJYGl1bdSgYm5k7lHrlOta5cL32qAZahUXeLuLVViJA4OOfWyCNqRI+nLAy87Ddl++0d77j6ruqQSwYXQrb110kizGKBasMV4R6uRWyyu85nnBvYw3wsLWGm1QctT8vHgjwpWETWC0i+btperQKtHlD9UbbIqSRpAlzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742129; c=relaxed/simple;
-	bh=t7kFj3CUvv/CS73sWzGwnm3tHKJMaqfmiaX3ddssg0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mn34dc3f7uuDPxkvkZnuJ9iM7nyNLiwNgQ8rczeeM4TMErR0m2UuBZAzCV7MMGNFzxkIunAvEKgT1s+DmzCfSvnFAT5+Cu4nsSXEUDH8IOTordB689DGTwW2+M/X2M/eVDN+wWexn90S6a/6l2N/xEMpYErQZtxtrA0KC5BUrSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBJ1AJLi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58504C4CEEA;
-	Thu, 12 Jun 2025 15:28:46 +0000 (UTC)
+	s=arc-20240116; t=1749742147; c=relaxed/simple;
+	bh=UNLzRa776RJODcoF+CnT30n0SiCPeOwJoEpOzseHN/U=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tYRp5T7CDU0nnTbwOVJSWm0AYcW8Hm+/Pk4dnNa93Y33EIO10x6gBlF3yZePvHp7EIJGINq3PATIiq8ZMx22oaQGESouMA5biH5ZlqYkT6oRZCbx+85S2V9cgOS7nYQCT+vrjUVyd/2FDBMmyTRPrXY537IVHc4RSGtSnR6i+Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nr7zA6Tx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 934AAC4CEEA;
+	Thu, 12 Jun 2025 15:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749742129;
-	bh=t7kFj3CUvv/CS73sWzGwnm3tHKJMaqfmiaX3ddssg0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NBJ1AJLi2/VBvcn8K3zZFaIdebMiKc4pC4pqU1oD174Nyic3I5Vc0tYsWBUagR3AR
-	 dhN5uG49SFhLwzEphylzAUlEdaqgzBH9qYOpNbvbXJ84CycsJnzwvt1OMWLIBi+/sk
-	 AelZxxiwy4IWq8CJ9KwdfplFJa1ffrGvIdnEov3hsqdrPZgOEbnQT3F0xN79BxCSxM
-	 64O1AJCB+RBxUMbwUd5fdM9v2Bvbxt6vn90YdmeRBiat3KXXlYDWlG3U/INFGhf5hI
-	 oJKLvjpF5D5LPgwG3pmKaH2CQcRlHkhj98dnUFeDAtcKm2u/VAOjF72WtKJvSvYIdT
-	 PwREXpzfhGKKw==
-Date: Thu, 12 Jun 2025 16:28:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: samsung,mipi-video-phy: document
- exynos7870 MIPI phy
-Message-ID: <20250612-unpaid-slacker-edaf80ce160b@spud>
-References: <20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org>
- <20250612-exynos7870-mipi-phy-v1-1-3fff0b62d9d3@disroot.org>
+	s=k20201202; t=1749742146;
+	bh=UNLzRa776RJODcoF+CnT30n0SiCPeOwJoEpOzseHN/U=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=nr7zA6TxyzxyVrbwdbFLgSuItqdSwV49d0mTEeB3/Mtk8ip7X7KF7uZu34+WoYCT+
+	 Do13DqcSmuY6RxYuS/eU+DoO6FA/Ij+B+Gk56lIkcLq7TE0XB3COtAf3ptdDTCY0bY
+	 g63jjkF4x/l1C1t6j60/ZyP1vhZYkvwBWe0dzDjtRU38su9quSYdm5DUo10QuEsnhP
+	 BnTOxkQlgX7OsPLsVP4uT8FOjA2vQ/m1Wm0yn1xmQyKqyRuvRnSy5SXGqK6egBNaOz
+	 7vIqQjNKfqBa2POEpI3nRhq9VgN94kzedmtCjciacK9eE8vo1KWCEDo8A2kB3EyxC2
+	 t0Pcmej8S6EzQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFA539EFFCF;
+	Thu, 12 Jun 2025 15:29:37 +0000 (UTC)
+Subject: Re: [GIT PULL] ARC updates for 6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <4cb508de-3af3-4796-ac74-2c082a578588@kernel.org>
+References: <4cb508de-3af3-4796-ac74-2c082a578588@kernel.org>
+X-PR-Tracked-List-Id: Linux on Synopsys ARC Processors <linux-snps-arc.lists.infradead.org>
+X-PR-Tracked-Message-Id: <4cb508de-3af3-4796-ac74-2c082a578588@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-6.16-rc1
+X-PR-Tracked-Commit-Id: 179e949719fe81219a3e23f1e716ac2d02eea845
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3d853391c441965d30cc94d00d59e8bb2dd0668c
+Message-Id: <174974217638.4182490.1766621494814405934.pr-tracker-bot@kernel.org>
+Date: Thu, 12 Jun 2025 15:29:36 +0000
+To: Vineet Gupta <vgupta@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, arcml <linux-snps-arc@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, Yu-Chun Lin <eleanor15x@gmail.com>, Thomas Huth <thuth@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f30wP9juoNGzy1L/"
-Content-Disposition: inline
-In-Reply-To: <20250612-exynos7870-mipi-phy-v1-1-3fff0b62d9d3@disroot.org>
 
+The pull request you sent on Wed, 11 Jun 2025 20:29:45 -0700:
 
---f30wP9juoNGzy1L/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-6.16-rc1
 
-On Thu, Jun 12, 2025 at 08:39:29PM +0530, Kaustabh Chakraborty wrote:
-> The Exynos7870 MIPI PHY device contains one DSIM PHY block and three
-> CSIS PHY blocks. It also requires two sysregs, one for display, and the
-> other for cameras. Document this device.
->=20
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3d853391c441965d30cc94d00d59e8bb2dd0668c
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Thank you!
 
---f30wP9juoNGzy1L/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEryKwAKCRB4tDGHoIJi
-0mqJAP9DJbUlkADvUrHdf81purqcXzTVeDAzhbMUmKO+F21UFAD/QjLSgELcwtip
-njn3vQB/7wZoDC6VzVfnBVgIdy1XAwg=
-=Bir7
------END PGP SIGNATURE-----
-
---f30wP9juoNGzy1L/--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
