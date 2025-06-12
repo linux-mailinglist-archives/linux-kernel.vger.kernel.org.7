@@ -1,157 +1,108 @@
-Return-Path: <linux-kernel+bounces-683856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77607AD72BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA14AAD72E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D616C174C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DAB318877E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5752472B6;
-	Thu, 12 Jun 2025 13:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0BD246BC1;
+	Thu, 12 Jun 2025 13:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPOC7IHB"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="cB79ZboY"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82A2AEED;
-	Thu, 12 Jun 2025 13:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736551; cv=none; b=OziNnSi27cAiS1s08EgdgWak+qspwCDiCxPHyz7RfkjQyVOvaPC7IHCb5rhZ8XADMNJLFsPE2C9rLQsP1bRfOEbpOMG058d8XRZjy1/rQuPiuFHcZQIbOY9fJOMqGtRYWEYCKU6n5lHTCuqJYoEX3vG8uCKTjc6MPA+dQ558IQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736551; c=relaxed/simple;
-	bh=E0Nxbb8Zhk8mfwiipHLBBckrZjv1zJdhcMMkqy7tMgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9GhRb3MFF3WUCOizMwD5CYBGJ7425S1oD24P/KMbr+bCzwN1amoEhCmQ2NgJCRnAWFAC2zmDP6g7Xaz5OGSxqO5Svh4oALPvZ4N5B1CjAzZ8vUHY9uuEuEzAKTy2HN84oZHn9T/GUVOXAcerSSiPwdF3DiQ5OqsN9GLBBEzrdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPOC7IHB; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ade5b8aab41so215911466b.0;
-        Thu, 12 Jun 2025 06:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749736548; x=1750341348; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xikeG81Glqm5M9v3u+UCgVKmnmOs9BH7r2u0CB2OILg=;
-        b=kPOC7IHB7oaMcgBNiRPMVraJYWrDhrfoCH2nmJxQzMbOXLVsFH95ru6BuLDPXU5/TP
-         XGyu35QBNLfQRRqcvLxc2Hfa+a4pqrJl0JMKKGI/F3cpJOI0A7DxHvriOVupVPMs+rAk
-         xqP9CGCVEj7h4Wd6Pv6T2truLEv6TBLUob1jQL0EDLk8FAzP4u61yccZB99xBNRznMS2
-         xdvYjRzg+OEsXyNHnFf3JDV97CRGmyziNLOyTcV104TTWBOtVNhyPc8dtyoCXi/tjv9G
-         fQyDl6dK+iux8UEhhBPi+fLkvwqgIoqp+bEsFns5wpThlPx9x+7F5u6ZIVSOPoFjnM/V
-         rP4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749736548; x=1750341348;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xikeG81Glqm5M9v3u+UCgVKmnmOs9BH7r2u0CB2OILg=;
-        b=JpZ0GozvaazjBibXzxVT8mVpVpD6p6qqtMqDe4XRWHKg4ZmWghcvaeVImOF/w+zsU+
-         p0o30TDmrNwG61sHjnR4AYvTQOctyuBzZrgJzw4rL6cKpgCUrLXBEav2H4stgIXUOHeS
-         /k1hQ7dtlH6gQI458CTu8F4fjkI26RvQ5HqxzAhoPOIIib3WSjq5JjhB5UKInrL7T5gb
-         Xrzf/VCtKfP5nULIlC18zfRaEm7jNF+sPSaLHz0obMeTNKF+wwxijOF3Esn1LUa0Lf8A
-         BguMbES6JNv0R1mpAnbF4nu6Ed3dPwEW+AiyLs61/6ZlOE7k3PzANg9u3pIxA5InGIIC
-         IEpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPxL3IloC0+xx7F6HU+65gaNwhrqiIX5nqeEIsqT508bqOJAaAeJojnsLmt6uPvJbszlpWMTRspEw2SBXJ@vger.kernel.org, AJvYcCXf5oWSMN5xhN1/RrRRvxI1evy1TJkk7ee3vMz2pZ2PQNRlZWEpg6TFfPzPwU3f7Dl0L6k0rdiI+J+4oNye@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx8o2e1aPQ8ykSclda1Zrp7ZfcsO8JS8LojyCzdXO0p0xb8o2T
-	FHT3epRL1CKizu12j3euSQxmeXPrNj2qfX2W73D1kFgnqCDMsdxO+J7M
-X-Gm-Gg: ASbGncuPGSmVX/igEw/isXiky7r3FNbqkFHRZJei2FJg0Hj9pQla1gtH7SLyU6q2jfH
-	sMhoFUMFUpmHGrdgnp+JHgQxpgb5j3VaS3sKVQuayeezGPxw+BNEVQIHVW8w20QWGw4u9Uf/LwE
-	I4axKqkJQjReHXJ8Nnr2l87vHKIXDxy9ssNYZjwGHOEQN5rYAeUlhrUkayc8eTYPepNnQkvLN0a
-	2Wd76E4QmvARVVNo2l1X1zUIsAuYldQNpJtB53GBqVlkU2Zs8cvMYQ6qpkkxatUQrIiJ20/bPB1
-	Tf8oCgoPMw/sqG+6cA+RnuX262klhW6T+MXnit0xIQius4UWiSaLIAGYeOZkhWCY/K5CwsFJ2cU
-	rxA==
-X-Google-Smtp-Source: AGHT+IEt/gyCua3q4hkdwtZlk5m5IJpx57fEfd6rwWGyPrfaAiZW+b8ZSeyx9l/e9qKVOFzE3helXQ==
-X-Received: by 2002:a17:907:7248:b0:ade:348f:88df with SMTP id a640c23a62f3a-adea92790f3mr328097866b.4.1749736547320;
-        Thu, 12 Jun 2025 06:55:47 -0700 (PDT)
-Received: from f (cst-prg-93-231.cust.vodafone.cz. [46.135.93.231])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adeadb8c3f8sm136320766b.129.2025.06.12.06.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 06:55:46 -0700 (PDT)
-Date: Thu, 12 Jun 2025 15:55:40 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Luis Henriques <luis@igalia.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
-Message-ID: <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
-References: <87tt4u4p4h.fsf@igalia.com>
- <20250612094101.6003-1-luis@igalia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001E823C4E1;
+	Thu, 12 Jun 2025 13:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749736605; cv=pass; b=h8Kt8//UGXb2dHs8YwjJFGLpMJL0Y8K2U5wBaSObAAKewqtyGYRd9AqgY7yjhJk3oOsP6vXmJBTKl0iAsFTkkrxQxb/dsIvXEuCr73c6oVY8HQxCMt8RiyTV37saTLHdHtEOZrl11pUFgzxSha4GwLPu+PIkjiU/qJwtmJrhX7E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749736605; c=relaxed/simple;
+	bh=jjyzOPli1ra635E/Ffy/tg1VaUvXRkSQuP8371mstPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A8i5vS2+ZjIfxPfPZ0sipK5ECDs3+7wvqMafdjOCrZcc7gDtxSSu8seg5JNAh0KikCvbNfR1ZivRz9CeUUinkRcHkW6odrjwm5dOa7FaiP3896caEYPNwgiR6C7Qg1+VhO0IhESqEHE8D5xBbMfDhH3AMdRFpImTaTaEJDxcNa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=cB79ZboY; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1749736578; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z9Q6LpwOskFzXu7qFIqDahCinDV85umIMp0V5V90dF7bGYa5NYV89EM6WS0OwHQqd4/Uv2GrLuC17jCqKWGsiS3DgT6YHgWlkx0nVLYDPAGFWkjHJgF1egrIEVsnPr+yAxCQm6AkbkBgWNKa4ARXHPstwsiFDVRpeo62daoIcjA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749736578; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KUIfLwvoP44U5nDfSmqojpW++w9cxu2WaXPKkzeIK40=; 
+	b=i68huo5HXEszm0XtLDeI3hap5XBQ0TEjonhcTuFAHwLyctmv+zfAdxJP4AYyOPd8EytdSiiU+3o/mbGHoDKTg5IKe0tEmkpcVlco54i1d6deoZqw1NQjgQnM6VIICB5TrmIq5V89n7yuMrsDQX3jW3TUWT/GhE2Med+bYTb+2/w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749736578;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=KUIfLwvoP44U5nDfSmqojpW++w9cxu2WaXPKkzeIK40=;
+	b=cB79ZboY1lFL9af6mnwgT0N6Y0FcjVW7L4hsO0ita2ELplHFr9csDJsspMYpZ+wM
+	iXN1J/COAX88HG2r91O8+liDKQ6izRy+6ZX5HT6MKqoixIRZP/0CbfNrk5lnI7DeQbd
+	TBdTShZFNU85CZzECc15JWt2HEJ50Peaeil1iaVjkeBp1k8SD5taNTsYM0mU8Wz0QF+
+	7hzKXd4o8bVxpr13ffHrBOSFy6Jw4cREKjzEXFUfwM5e9h8BwKqt6gUhnuKsPW1XfbR
+	b0bg3k2M5B1ZX0UVvHPM698VsCqcF5tzp4MCl/VVL5Z+bAJsfgNJZ0UHYrKPqwM39nb
+	VWTuVDzl5A==
+Received: by mx.zohomail.com with SMTPS id 174973657610749.98040995348208;
+	Thu, 12 Jun 2025 06:56:16 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Sean Wang <sean.wang@mediatek.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 1/2] dt-bindings: arm: mediatek: add mt8173-hana rev2
+Date: Thu, 12 Jun 2025 21:55:58 +0800
+Message-ID: <20250612135559.2601139-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250612094101.6003-1-luis@igalia.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
+X-ZohoMail-Owner: <20250612135559.2601139-1-uwu@icenowy.me>+zmo_0_
 
-On Thu, Jun 12, 2025 at 10:41:01AM +0100, Luis Henriques wrote:
-> The assert in function file_seek_cur_needs_f_lock() can be triggered very
-> easily because, as Jan Kara suggested, the file reference may get
-> incremented after checking it with fdget_pos().
-> 
-> Fixes: da06e3c51794 ("fs: don't needlessly acquire f_lock")
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
-> Hi Christian,
-> 
-> It wasn't clear whether you'd be queueing this fix yourself.  Since I don't
-> see it on vfs.git, I decided to explicitly send the patch so that it doesn't
-> slip through the cracks.
-> 
-> Cheers,
-> -- 
-> Luis
-> 
->  fs/file.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 3a3146664cf3..075f07bdc977 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -1198,8 +1198,6 @@ bool file_seek_cur_needs_f_lock(struct file *file)
->  	if (!(file->f_mode & FMODE_ATOMIC_POS) && !file->f_op->iterate_shared)
->  		return false;
->  
-> -	VFS_WARN_ON_ONCE((file_count(file) > 1) &&
-> -			 !mutex_is_locked(&file->f_pos_lock));
->  	return true;
->  }
->  
+My Lenovo Flex 11 Chromebook contains a board with revision ID 2.
 
-There this justifies the change.
+Add rev2 to the compatible list of base hana DTB to allow depthcharge to
+match the DTB.
 
-fdget_pos() can only legally skip locking if it determines to be in
-position where nobody else can operate on the same file obj, meaning
-file_count(file) == 1 and it can't go up. Otherwise the lock is taken.
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+ Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Or to put it differently, fdget_pos() NOT taking the lock and new refs
-showing up later is a bug.
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index 108ae5e0185d9..7d13547ff57ba 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -132,6 +132,7 @@ properties:
+           - const: google,hana-rev5
+           - const: google,hana-rev4
+           - const: google,hana-rev3
++          - const: google,hana-rev2
+           - const: google,hana
+           - const: mediatek,mt8173
+       - description: Google Hana rev7 (Poin2 Chromebook 11C)
+-- 
+2.49.0
 
-I don't believe anything of the sort is happening here.
-
-Instead, overlayfs is playing games and *NOT* going through fdget_pos():
-
-	ovl_inode_lock(inode);
-        realfile = ovl_real_file(file);
-	[..]
-        ret = vfs_llseek(realfile, offset, whence);
-
-Given the custom inode locking around the call, it may be any other
-locking is unnecessary and the code happens to be correct despite the
-splat.
-
-I think the safest way out with some future-proofing is to in fact *add*
-the locking in ovl_llseek() to shut up the assert -- personally I find
-it uneasy there is some underlying file obj flying around.
-
-Even if ultimately the assert has to go, the proposed commit message
-does not justify it.
 
