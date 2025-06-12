@@ -1,223 +1,133 @@
-Return-Path: <linux-kernel+bounces-683479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6455AD6E0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:42:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB8FAD6E10
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4F7188490C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:41:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38457A424E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEE1236A9F;
-	Thu, 12 Jun 2025 10:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAFF239096;
+	Thu, 12 Jun 2025 10:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOdWp8b2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnYAvcr5"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6BB1F92E;
-	Thu, 12 Jun 2025 10:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA3523C8D5;
+	Thu, 12 Jun 2025 10:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749724859; cv=none; b=u/k+YhYb4cOuDGuYDQ0PBMrMEfnlirEE012yzG1wS6TYXLtbraj4rgssOzsQJGb9JphV/jHigHb3tzvWSZIWll5xpw5OEQs4uyvRGIut2iUz/fJiVRvy1M6JKuCokbSCRGce4/bk+S0U5eIPepI2299dDJm+UdxGtxQFpmI1rkA=
+	t=1749724939; cv=none; b=GcXHvL6Pal9Z2qCaAUrlZZwY3nXFo0yPKyf9Hnyz8VI46ynkKHINShrBaTAY6XMxG2aCNpfbk7NBUfnNiajV6QLaaR2IjWfqMWOeFa9Hy/EMdax3KRXygCfzhyfYm54q2dVsmrYsYr9IFc7bf0Qz/nfwR5Bhh1O01qbKaPpGuDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749724859; c=relaxed/simple;
-	bh=IGseCNuZuDaz/lm8jRoy5U/gC1+Grl0hSR0NO4hnO+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3U32MuoxZn3Alx6jCmtD15v9EnwoEk0DjCIIdYNPBhtYS1GUYQPFKyDVfPPqiFlujXMCbysJO9k8/y3n+iCjASeoxtpbGlkeHUOGEVVfHeF+6my+BGMNHQcybYrgHr4YTD6xvnW3mEJbPW/VvHzo8VFWLy5+v+yV69lorCstI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOdWp8b2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8E4C4CEEA;
-	Thu, 12 Jun 2025 10:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749724858;
-	bh=IGseCNuZuDaz/lm8jRoy5U/gC1+Grl0hSR0NO4hnO+U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WOdWp8b2U+M5RbBcY3ywIRDDW/JsQXJluubRcvguCDgshaBzfJIz6/unl5tzio3Mv
-	 9w9NzmQTU2sslCY1SLRIPVuD64Qry3+/BkmQgq6XzAMUKDDV83R5pqQmUBOHc4aEAL
-	 oeHok690Ge4pb1rslSQ+vDy1mvRSnboU7a1w/JX0BtTxIMdnVCLZQe4J1QfLlqBcuP
-	 Uaqjt5ntBISmdVZl8lYi5afoMjKoFQkO3ESzKtmAW3yTFK3cbdS1DHMJFbw7b7cGse
-	 YfO+ZG0Nw1HpzP+bsPdJpaRN/ql+GgcesjM6s8pO7Bj/XpCgnMoy+QsO4hSSbcVCZ/
-	 iKPJL1dM7M4qw==
-Date: Thu, 12 Jun 2025 13:40:55 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Prachotan Bathi <prachotan.bathi@arm.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Stuart Yoder <stuart.yoder@arm.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] tpm_crb_ffa: handle tpm busy return code
-Message-ID: <aEqut7qHnugl_vN_@kernel.org>
-References: <20250611193009.3941971-1-prachotan.bathi@arm.com>
- <20250611193009.3941971-2-prachotan.bathi@arm.com>
+	s=arc-20240116; t=1749724939; c=relaxed/simple;
+	bh=oFVhBP/YL0n9/tCf5ttdVuifzE71UiLOJVEiL84VSXw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b3kS1nrrj2zz58MfT/QHmgbgfp1QwiuBLdHtm97JgsHLr19oV08bzW+g+0thEGkXETC4+qlcAR5uNAttK6GW0r02DQI8wFHDeaYQCs1YNnUfc0+KjGpYibcJPjh99ryrQWwNtfnU7cVGsZmR/Ys+ZBVnGDHa6ue/x1CZLKLLQUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnYAvcr5; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23649faf69fso7538135ad.0;
+        Thu, 12 Jun 2025 03:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749724936; x=1750329736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GybQZWZoCD/mNp4Fv4oNQX2ZSbaSeKZ922lZ4/MEtpA=;
+        b=OnYAvcr5Xf5dXA3uUW0Vg9SVoa9cVGBZPQstWPBGyyF5863OlXakqSOrcFDQ3Dt+Sl
+         Atb7thj2KgHpg3TApuJ4A0U2RZuchIp06tgrd97ztMIZfm62/qRV+9zDA873Ua/7GGtX
+         LcZ8wm8+I84qH2fHHFUPT88BwFDgte31+4JO+a33iWOTjv6Eirsa+KCeYx9O7P5gxtkJ
+         57gE8DmD+hAXqhFr1OfLwPzRZYzvcVDAt4p5svwvOSyTkvMZv1D61eqM01jjRKGsYw6i
+         zcyZ3vTjZjY8ugNTe9+Jc7lxlPi7wzScJKMtfv2Gi3BbDtDbVh2DncWoj5XGPVwMv3MR
+         XQXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749724936; x=1750329736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GybQZWZoCD/mNp4Fv4oNQX2ZSbaSeKZ922lZ4/MEtpA=;
+        b=WCAj8PcoMEGicr7UuxCx+4CyPGy34IkdFLBHnqYOo2jkeft+5eR3Su/ktnPJEtRAiD
+         n4etWJ9ORiZM1Z7KpMWSsupjALkcziRwbJwKG5yv4KLseUSlwY/2g4mgw+gqrdtBOJAW
+         7AiiFARIv+i5T928CvKORPpvSRq1LqJ4hWnbHvRT9JN1NsJXiUQ2OzqRkItOcY7qIzMf
+         UZQ7lpMFRAAfDmL0LjbFNl+N7/zyu39/TcDA7bzAU9u1nvd99eFzSryXoBTwN965Vz10
+         gEdYsCgNurj94za3MW81sBsJ6xFRp47pI/t7niSpKwiejQ2A2FdnVjExaEV9lAvI5qkj
+         A+jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUShPqibipuIZ+tnnhevPS2Tyu/7Yx5iOi81pyVdcCOavB8w2UGiMxwb9X24mRTEBjXANO1GqNyoI841Ok=@vger.kernel.org, AJvYcCWjkI3ef0EK3CZ6uSEB2sDipQm+GhK3RpV4n2jm3Leva6U1QOkPzACMR9+0RBC9X1wOrG5XbtRQ6Xk=@vger.kernel.org, AJvYcCXXy/3YlOkstsaf8HkitB0XDf0oPqm12ivaPuldBU/BZafH2FIRoo5xVeBmXpkpGwvhS+vCyHrWNVLLNT7Jtrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBrdq9C3cFCJu+QHylxwLsNITI1SlPSj0oI5mVfoewJvXxLe22
+	5RGUz/5J2kQhpzacuptrNtW5jTx2qwoYXOqqtnqpx2Nu8j3mR5YVusbc
+X-Gm-Gg: ASbGncu1efhdmNVZGb6vs99WoBPoIxrBE4chmqsSXdFa95zQW0Ik03j6D2M+w4NLsuv
+	vrhmZJQVJ/oygyz/ZzoqACrD1P7sza1kF5D6VR1U3PQimmbUE/8h8zl597JwAvFywhxEHGUDnVD
+	5WxsQ97knbDa78yDixQyQ59J+1DoFayL6eglb7XuVKeWjQ5aQMHjOfzNQWC56wVGU3hYnZertoy
+	/q1SRCfdieVnDlpQ/rxqvcgvXb5hxrU12T4TsI0z+5UoIEGmtUKdV14lYP8cPkzmzE/vg74O4xR
+	vSIAQ1/Y/z7VZwuzkhf+/uzMaz+vNoVC2Z4Nqacsy4v7VBcmNzEM9IkBK/iIXB2c
+X-Google-Smtp-Source: AGHT+IH8ZWbq3NcYdfeleEGz9gzoJI5uvC922HCmGxSqEdvple5ZXtJJUZjzVkBZ/Vxr7g8UM1sPMA==
+X-Received: by 2002:a17:903:1a0d:b0:22d:b243:2fee with SMTP id d9443c01a7336-2364d6603b7mr33758835ad.13.1749724936128;
+        Thu, 12 Jun 2025 03:42:16 -0700 (PDT)
+Received: from pop-os.. ([2401:4900:1c96:fdb4:2bbd:5e55:1c88:31fe])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2364e6d9bf4sm10781665ad.104.2025.06.12.03.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 03:42:15 -0700 (PDT)
+From: Abhinav Ananthu <abhinav.ogl@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-pm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhinav Ananthu <abhinav.ogl@gmail.com>
+Subject: [PATCH v2] rust : Update the bios_limit_callback to use the C FFI types #1170
+Date: Thu, 12 Jun 2025 16:11:28 +0530
+Message-Id: <20250612104127.10299-1-abhinav.ogl@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611193009.3941971-2-prachotan.bathi@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 11, 2025 at 02:30:09PM -0500, Prachotan Bathi wrote:
-> Platforms supporting direct message request v2 can
-> support SPs that support multiple services.
-> If the TPM service is sharing the SP with another service,
+Update the `bios_limit_callback` function to use `c_int` and `c_uint` types,
+which match the C ABI for the corresponding callback function. These types are
+imported from the prelude.
 
-What is "TPM service" and "SP"?
+This change ensures the Rust function signature exactly matches its expected
+C counterpart, avoiding potential issues with type mismatches in the FFI
+boundary.
 
-> it could get an error code of BUSY if the other service is
-> in process.
-> This adds a parameterized variable (default 2000ms)
+Reported-by: Miguel Ojeda <ojeda@kernel.org>
+Closes: https://lore.kernel.org/rust-for-linux/CANiq72=WpuGELzLbH-fxdOeJy9fiDFwatz6ynERDh=HP2z2MBw@mail.gmail.com/.
+Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+---
 
-What is "this"?
+ rust/kernel/cpufreq.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-"Add a ..."
+diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+index b0a9c6182aec..e97607ed86c2 100644
+--- a/rust/kernel/cpufreq.rs
++++ b/rust/kernel/cpufreq.rs
+@@ -1277,7 +1277,7 @@ extern "C" fn update_limits_callback(ptr: *mut bindings::cpufreq_policy) {
+     /// Driver's `bios_limit` callback.
+     ///
+     /// SAFETY: Called from C. Inputs must be valid pointers.
+-    extern "C" fn bios_limit_callback(cpu: i32, limit: *mut u32) -> kernel::ffi::c_int {
++    extern "C" fn bios_limit_callback(cpu: c_int, limit: *mut c_uint) -> c_int {
+         from_result(|| {
+             let mut policy = PolicyCpu::from_cpu(cpu as u32)?;
+ 
+-- 
+2.34.1
 
->  that indicates the maximum time to keep retrying for.
-> When the TPM service returns a BUSY error code, we sleep
-
-s/we sleep/sleep/
-
-
->  50-100us before retrying again, until we are over the
-> busy timeout.
-> 
-> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
-
-I'd consider rewriting the commit message as it lacks any explanation
-of the code change. You replace condition statement with a loop. Start
-with that.
-
-I'd strip some of the comments too i.e, those that state the obvious.
-
-> ---
->  drivers/char/tpm/tpm_crb_ffa.c | 78 +++++++++++++++++++++++-----------
->  1 file changed, 54 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
-> index 4ead61f01299..5f0a30a20b57 100644
-> --- a/drivers/char/tpm/tpm_crb_ffa.c
-> +++ b/drivers/char/tpm/tpm_crb_ffa.c
-> @@ -10,6 +10,8 @@
->  #define pr_fmt(fmt) "CRB_FFA: " fmt
->  
->  #include <linux/arm_ffa.h>
-> +#include <linux/delay.h>
-> +#include <linux/moduleparam.h>
->  #include "tpm_crb_ffa.h"
->  
->  /* TPM service function status codes */
-> @@ -178,6 +180,17 @@ int tpm_crb_ffa_init(void)
->  }
->  EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
->  
-> +static unsigned int busy_timeout = 2000;
-> +/**
-> + * busy_timeout - Maximum time to retry before giving up on busy
-> + *
-> + * This parameter defines the maximum time in milliseconds to retry
-> + * sending a message to the TPM service before giving up.
-> + */
-> +module_param(busy_timeout, uint, 0644);
-> +MODULE_PARM_DESC(busy_timeout,
-> +		 "Maximum time to retry before giving up on busy");
-> +
->  static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
->  				      unsigned long a0,
->  				      unsigned long a1,
-> @@ -191,34 +204,51 @@ static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
->  
->  	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
->  
-> -	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
-> -		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
-> -		       sizeof(struct ffa_send_direct_data2));
-> +	ktime_t start;
-> +	ktime_t stop;
-> +
-> +	start = ktime_get();
-> +	stop = ktime_add(start, ms_to_ktime(busy_timeout));
-> +
-> +	do {
-> +		if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
-> +			memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
-> +			       sizeof(struct ffa_send_direct_data2));
->  
-> -		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
-> -		tpm_crb_ffa->direct_msg_data2.data[1] = a0;
-> -		tpm_crb_ffa->direct_msg_data2.data[2] = a1;
-> -		tpm_crb_ffa->direct_msg_data2.data[3] = a2;
-> +			tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
-> +			tpm_crb_ffa->direct_msg_data2.data[1] = a0;
-> +			tpm_crb_ffa->direct_msg_data2.data[2] = a1;
-> +			tpm_crb_ffa->direct_msg_data2.data[3] = a2;
->  
-> -		ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
-> +			ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
->  				&tpm_crb_ffa->direct_msg_data2);
-> -		if (!ret)
-> -			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
-> -	} else {
-> -		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
-> -		       sizeof(struct ffa_send_direct_data));
-> -
-> -		tpm_crb_ffa->direct_msg_data.data1 = func_id;
-> -		tpm_crb_ffa->direct_msg_data.data2 = a0;
-> -		tpm_crb_ffa->direct_msg_data.data3 = a1;
-> -		tpm_crb_ffa->direct_msg_data.data4 = a2;
-> -
-> -		ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
-> -				&tpm_crb_ffa->direct_msg_data);
-> -		if (!ret)
-> -			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
-> -	}
-> +			if (!ret)
-> +				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
-> +		} else {
-> +			memset(&tpm_crb_ffa->direct_msg_data, 0x00,
-> +			       sizeof(struct ffa_send_direct_data));
->  
-> +			tpm_crb_ffa->direct_msg_data.data1 = func_id;
-> +			tpm_crb_ffa->direct_msg_data.data2 = a0;
-> +			tpm_crb_ffa->direct_msg_data.data3 = a1;
-> +			tpm_crb_ffa->direct_msg_data.data4 = a2;
-> +
-> +			ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
-> +				&tpm_crb_ffa->direct_msg_data);
-> +			if (!ret)
-> +				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
-> +		}
-> +		/* Check if the TPM service returned busy */
-
-Strip.
-
-> +		if (ret == -EBUSY)
-> +			pr_err("TPM says busy, trying again, value, ret: %d\n",
-> +			       ret);
-> +		else
-> +			/* If TPM did not return busy, we are done, exit the loop */
-
-Ditto.
-
-> +			break;
-> +		/* Sleep for a short time before retrying to avoid busy looping */
-
-Ditto.
-
-> +		usleep_range(50, 100);
-> +	} while (ktime_before(ktime_get(), stop));
-> +	/* If we are here, we either got a valid response or over the busy timeout */
-
-Ditto.
-
->  
->  	return ret;
->  }
-> -- 
-> 2.43.0
-> 
-
-BR, Jarkko
 
