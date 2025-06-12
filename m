@@ -1,131 +1,153 @@
-Return-Path: <linux-kernel+bounces-683155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2E1AD69A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B544AD69A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC40916CE00
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F11169AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A82A21D5BC;
-	Thu, 12 Jun 2025 07:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020DF22156F;
+	Thu, 12 Jun 2025 07:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O6Ge+pdM"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="OrgM7fk2"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244322745C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 07:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA72745C;
+	Thu, 12 Jun 2025 07:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749715007; cv=none; b=K9naU4EiRXMg5X5YdR+1OpYm+KjwoQzPMmm6w5QbEmdYOE72FiyjMst574tS5eluA7f2j/CtykkOtUFWjMXJTNcwN5rSO+YGUMvop+gAXte0wQQY3fipZ+Vj47yXxOaPx1bUwtCToNYZh9NudFx7AR4V2uHVQ+KWa5xSEMA0s4Y=
+	t=1749714972; cv=none; b=HyN3NXLJ3lZ6s6xQ6r9o5JOvViYK3A/ZC6lWg2LRsLsYl2g+pRBi5sKDPzFFht7U06WFV+ONF8g/c/UHownCP5OsAuQWvFdVpwlBca/Rk7VqUw3ViHWVX2GNyqVIcM++mkhQUGP098QnW3HNTfOdszezTxsbMG2pmOnie2586O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749715007; c=relaxed/simple;
-	bh=LvsURw/nqMWRXkm+nrhQDBaJHU6fMAmmLXpVcAQ1/T0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WrM+02O7pA8OzBv0vvv2qDD5D9pqHYy8z+0f+K7KPjj3TW7SlcyJQ79+jIMhnUDHYSEN2jjaoR5PoY40pU7zeY5eiCO+r2rtfn3oEwX6407vZhn53wjFc/xrfSpeer1Q3dzbsqOanhzCShdnPNWkn2KQlSSCcSRi/KB3kLBz3iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O6Ge+pdM; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749715004;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9di4IfgIfQZ0n6KWtQk6/b40WsXW7j7pcH/DrSfee4=;
-	b=O6Ge+pdM8WhzjFbEcRkFEMPi0hWkm1bRsbb+9aLEUiEw+eBxXLBoOBuyLHCknQYpOxC/wx
-	3c2ZDtaG5QiVgAQAVs+qUmgP/N/vFR5szvcGIeWWGOmpxPLobrrCB6jZtXWX+JkL7gevc4
-	lPnhNMYdV/KQWuq2GdQqdz3t5nNpDD4=
-From: Hao Ge <hao.ge@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	Hao Ge <hao.ge@linux.dev>,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH 3/5] s390: Modify the definition logic of WEAK_PER_CPU
-Date: Thu, 12 Jun 2025 15:54:26 +0800
-Message-Id: <ec8f82c68710869a310059d1a13dd071a79b1f74.1749702889.git.gehao@kylinos.cn>
-In-Reply-To: <cover.1749702889.git.gehao@kylinos.cn>
-References: <cover.1749702889.git.gehao@kylinos.cn>
+	s=arc-20240116; t=1749714972; c=relaxed/simple;
+	bh=SBa50iPVOuWP8XqFkMzDlTFFxDKtuzUJhnHSoJPWS0M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ehXGf+6xpm3chluUICjxu1/8+hwnPFlGR5nPWQ26FIgVDFOJ9YHviTV5HUq+yuvaaaPkr3ttjMOIXfS9Uuw9O0FyUtrHmWNtBuC5iG+I8kckQkiCOvOeUqQkEMKtB80kA+vDIm5gZXSTGOIK6PQwBKB1jEqObDW6bcHbK8qAc4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=OrgM7fk2; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1749714968;
+	bh=wEfLjsMWOcY/1xx1MExuBedf8lJgAMiB/kQuvYjhW5Y=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=OrgM7fk2giHneU0ZGmbu6sAUqh0o40hFWABuR8jC1UoQ6AMuK23qacFbdtW1PKj96
+	 J0bXtMXgXsKDTVzDwKYXcEhpLrP50g+ShbQsfkkMxa8o0+MRQA30dyAUdwx5bV5urY
+	 IEf9R48l50xXY7Sq8MyhKVgJFvd+e9IX2URjPXiU2FW5dMGPcsyhi1gppru8foPSMR
+	 cs/Lw/ZYLYUKVpgXJzzimXU+faACgixnOiAMf3b7c3eCIs4mUssVDrJARPgkLRM5H8
+	 biL1kpIltutmH3L2Qlyg4zbS7rHVSEFfcQ2dPEqyRAWfNJ8dI9lzlc3lU4jQ4xLde/
+	 K8HF2RX7ivetQ==
+Received: from [IPv6:2405:6e00:2427:47f7:b08d:7091:d46e:c806] (unknown [120.20.31.221])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EC56B65F91;
+	Thu, 12 Jun 2025 15:56:04 +0800 (AWST)
+Message-ID: <67c89ca729669f55e2659ad8070a154c59ef83db.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 1/1] ARM: dts: aspeed: Add device tree for Nvidia's
+ GB200 UT3.0b platform BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Donald Shannon <donalds@nvidia.com>, robh@kernel.org,
+ krzk+dt@kernel.org,  conor+dt@kernel.org
+Cc: joel@jms.id.au, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, etanous@nvidia.com
+Date: Thu, 12 Jun 2025 17:26:03 +0930
+In-Reply-To: <20250611013025.2898412-2-donalds@nvidia.com>
+References: <20250611013025.2898412-1-donalds@nvidia.com>
+	 <20250611013025.2898412-2-donalds@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Hao Ge <gehao@kylinos.cn>
+Hi Donald,
 
-As stated in the first patch of this patch series,
-we make ARCH_NEEDS_WEAK_PER_CPU a Kconfig option,
-and replace all instances of ARCH_NEEDS_WEAK_PER_CPU
-in the kernel code with MODULE_NEEDS_WEAK_PER_CPU,
-gated by #ifdef CONFIG_ARCH_NEEDS_WEAK_PER_CPU.
+In addition to addressing Krzysztof's comments regarding checkpatch:
 
-We'll make corresponding changes for the s390
-architecture.
+On Tue, 2025-06-10 at 18:30 -0700, Donald Shannon wrote:
+> The GB200NVL UT3.0b BMC is an Aspeed Ast2600 based BMC
+> for Nvidia Blackwell GB200NVL platform.
 
-Suggested-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- arch/s390/Kconfig              | 1 +
- arch/s390/include/asm/percpu.h | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Can you add some words contrasting this platform to the one submitted
+by Willie?
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 0c16dc443e2f..716031d22346 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -132,6 +132,7 @@ config S390
- 	select ARCH_INLINE_WRITE_UNLOCK_IRQ
- 	select ARCH_INLINE_WRITE_UNLOCK_IRQRESTORE
- 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
-+	select ARCH_NEEDS_WEAK_PER_CPU
- 	select ARCH_STACKWALK
- 	select ARCH_SUPPORTS_ATOMIC_RMW
- 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
-diff --git a/arch/s390/include/asm/percpu.h b/arch/s390/include/asm/percpu.h
-index 84f6b8357b45..a202baef86fb 100644
---- a/arch/s390/include/asm/percpu.h
-+++ b/arch/s390/include/asm/percpu.h
-@@ -17,8 +17,8 @@
-  * per cpu area, use weak definitions to force the compiler to
-  * generate external references.
-  */
--#if defined(MODULE)
--#define ARCH_NEEDS_WEAK_PER_CPU
-+#if defined(MODULE) && defined(CONFIG_ARCH_NEEDS_WEAK_PER_CPU)
-+#define MODULE_NEEDS_WEAK_PER_CPU
- #endif
- 
- /*
--- 
-2.25.1
+https://lore.kernel.org/all/20250401153955.314860-3-wthai@nvidia.com/
 
+
+> Reference to Ast2600 SOC [1].
+> Reference to Blackwell GB200NVL Platform [2].
+>=20
+> Link: https://www.aspeedtech.com/server_ast2600/=C2=A0[1]
+> Link:
+> https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703=C2=A0[2]
+>=20
+
+Please omit the blank line here so the Link: tags are part of the
+trailer.
+
+> Signed-off-by: Donald Shannon <donalds@nvidia.com>
+> ---
+> Changes v1 -> v2:
+> =C2=A0 - Changed phy-mode to rgmii-id [Lunn]
+> =C2=A0 - Removed redundant max-speed for mac0 [Lunn]
+> =C2=A0 - Fixed typo from gb200nvl to gb200 in Makefile
+> Changes v2 -> v3:
+> =C2=A0 - Fixed whitespace issues [Krzysztof]
+> =C2=A0 - Fixed schema validation issues from my end ( there are still
+> issues with the aspeed dtsi file that are not related to this new
+> dts) [Herring]
+> =C2=A0 - Reordered to follow style guide [Krzysztof]
+> =C2=A0 - Removed redundant status okays
+> =C2=A0 - Changed vcc to vdd for the power gating on the gpio expanders
+> Changes v3 -> v4:
+> =C2=A0 - Added changelog [Krzysztof]
+> =C2=A0 - Added nvidia,gb200-ut30b board binding [Krzysztof]
+> =C2=A0 - Removed unused imports
+> =C2=A0 - Reordered a couple other style guide violations
+> =C2=A0 - Added back in a couple needed "status okay"s
+> ---
+> =C2=A0.../bindings/arm/aspeed/aspeed.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> =C2=A0arch/arm/boot/dts/aspeed/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> =C2=A0.../aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts=C2=A0 | 1154
+> +++++++++++++++++
+> =C2=A03 files changed, 1156 insertions(+)
+> =C2=A0create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200=
+-
+> ut30b.dts
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index a3736f134130..420fabf05b24 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -98,6 +98,7 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - inventec,starscream-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - inventec,transformer-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - jabil,rbp-bmc
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - nvidia,gb200-ut30b
+
+For what it's worth, checkpatch reports at least the following:
+
+   167: WARNING: DT binding docs and includes should be a separate patch. S=
+ee: Documentation/devicetree/bindings/submitting-patches.rst
+   180: WARNING: added, moved or deleted file(s), does MAINTAINERS need upd=
+ating?
+   193: WARNING: DT compatible string "nvidia,gb200-ut30b" appears un-docum=
+ented -- check ./Documentation/devicetree/bindings/
+
+Thanks,
+
+Andrew
 
