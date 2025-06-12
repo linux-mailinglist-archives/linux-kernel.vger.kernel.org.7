@@ -1,49 +1,108 @@
-Return-Path: <linux-kernel+bounces-682794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD593AD64A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:40:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C91DAD64AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805793ACA9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A6C18954F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBF0770FE;
-	Thu, 12 Jun 2025 00:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63880450F2;
+	Thu, 12 Jun 2025 00:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWJpc4Qi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="HX6AVwk6"
+Received: from rcdn-iport-3.cisco.com (rcdn-iport-3.cisco.com [173.37.86.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CE4EACE;
-	Thu, 12 Jun 2025 00:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C5319A;
+	Thu, 12 Jun 2025 00:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749688809; cv=none; b=qAeWjxbPz9k0ahiZhGm655SWSc2JgU85NTqiAcKOV2dxCQBY1V/sMxW4U+MeeUX8sOSREg9Jt0iE3JX2GbA+o8uoOIpmj+MzquRr/X2/4ELHUwpUXMkEpbPwiTukaxqQyNyrrqiIQGmAFJlt2+tlGIV208+qrrErxpCL28IZagE=
+	t=1749689080; cv=none; b=f1z624tdD3/Wi2GnCPO2HcAdPzGPCzxiiF5AmAJdJOlI3ipr+8j20BCLDapzsDQk46vQC/MukdDUhWx8keXn4vn3XQFejYHRhrGQBGVtGGuLy0jSpKXcI1b2mUYJVMRi/ZHo0sy9el/sBR7wPNkr07/fHgqN6X2YYRTyt1t5hTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749688809; c=relaxed/simple;
-	bh=PiyhoAc6+GZvCsfQ2F+RCgbXpMYwYqCxeykWHBqua9g=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SqkhbbM7Ct7+WMXC4+EjjX56fAZI+i8k3l+Bnw0zwGB/G+fEhakHWOID0gYR2jYOwGEtXNSDwh2G4HbWHfKFcFoGoL1zYr1lCQ9UvafXLzRu20fT3ztnpUSloEBUK9ce5UYsQLAFi1iFtFkofQbSPM/uc8Pt7FwNXzUc+VoPLV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWJpc4Qi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F14C4CEE3;
-	Thu, 12 Jun 2025 00:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749688808;
-	bh=PiyhoAc6+GZvCsfQ2F+RCgbXpMYwYqCxeykWHBqua9g=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=aWJpc4QiYvNDJluKcI/kEssd81Q/qTMZGjlwBevDIf7lHNVV2hbX0MICQu2KwXo+2
-	 VEML/25qyXQiEGv+V5x7qbfXCkWRz1C8uz1hfeqJvRtjCLZgeYoYypU44iF2U0WaXH
-	 OQ0M2YfUnJWiY5E0aw9sypySLWb364u8UabUgMkH4SVrwRDUruo97R4OUIbq+c5XXo
-	 dd5Bls6rI21d/HIsGa4D8KafVNKMgilAiukyXr0bnn6Yw200TyhcW07pFlCXjNLAxu
-	 guUefIAlqMrVDcNkjzCZQcnDd5troYfbEy5HShfi4hA2L6n9otsJoXVlvJ3ELXmxIt
-	 7iphlmdoJbqyg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0743822D1A;
-	Thu, 12 Jun 2025 00:40:39 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749689080; c=relaxed/simple;
+	bh=MnCr9OEVlQ7GknTARTds4npHpQMQRi/DiitUYHLyMJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k7U4/AUq/9BUBpgY52VnNWOT5qQFDmY7eyC+2/v4mvS4HKsA8P0yW7ad+NDaPUm3u+ygUXEJObSHUtd/hT5njG9lmE02nN3+uKo3f5r5epo7LvZyrGvL3Jkl8xrQSvts6UuHASIQpYA5vm0hvoIRa64vxCfgeztZtkEsARJ7QzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=HX6AVwk6; arc=none smtp.client-ip=173.37.86.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=980; q=dns/txt;
+  s=iport01; t=1749689079; x=1750898679;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JPGvyzDxmu2hP40yELBEjF/T5i9eYvf8QiI2IbJNsD0=;
+  b=HX6AVwk6DK1NwxCV0qVXkDh/o9xrqGXXGGJdz4z0sXigJ99NkPIPQdoP
+   le9ndS+CZ1NPHKOWlFJH+H9VfteFiEsObuWZlb848C6oF01hUb1y9cv3k
+   g4NBZW/yvx9t2mO39Tm+4DPvwe3V9wIiTdnZRyCQg9sfY/APZaEwL1u+D
+   lS4M6jXZwc0BDBcq7T0Tx1jnnq4bpFe2yBMbZ7X8ARwvQ5rLSFLc2ROKZ
+   8jgjnz79qv1HUJWAZhnmKvudyp/3RQOqgAMS21N6VQMYWDpjBCHR50UkS
+   Zh4p7rQZ935f+lUt8YkTVfBuMmHA3I3BDhPPOaSBg1MiEtH8sfW86Y8xr
+   g==;
+X-CSE-ConnectionGUID: 4Fi0DSYRTlymudt4lCBKJg==
+X-CSE-MsgGUID: o96KS16SSpKBxpRrQjpz4w==
+X-IPAS-Result: =?us-ascii?q?A0AnAAAMIkpo/5IQJK1aHAEBAQEBAQcBARIBAQQEAQGBf?=
+ =?us-ascii?q?wcBAQsBgkqBUkMZMIxwhzSgOoElA1cPAQEBD1EEAQGFB4toAiY0CQ4BAgQBA?=
+ =?us-ascii?q?QEBAwIDAQEBAQEBAQEBAQELAQEFAQEBAgEHBYEOE4YIhl0rCwFGgVCDAoJvA?=
+ =?us-ascii?q?7AOgXkzgQHeN4FugUkBjUxwhHcnFQaBSUSCUIE+b4FSgjiBBoV3BIMmFKEeS?=
+ =?us-ascii?q?IEeA1ksAVUTDQoLBwWBYwM1DAsuFW4yHYINhRmCEoQphl6ESStPhSGFBSRyD?=
+ =?us-ascii?q?wdKQAMLGA1IESw3FBsGPm4HmAuDcIEOgQKBPqYAoQuEJaFTGjOqYZkEqTiBa?=
+ =?us-ascii?q?DyBWTMaCBsVgyJSGQ+OLRa7VSYyPAIHCwEBAwmQF4F9AQE?=
+IronPort-Data: A9a23:U5lSdqqzbFFjDxe/3oAud7A+SqteBmLIZBIvgKrLsJaIsI4StFCzt
+ garIBmGaKqDajajL4p0O9i28BxVuJOAydJmTAtr/i83QnsS9+PIVI+TRqvS04x+DSFioGZPt
+ Zh2hgzodZhsJpPkjk7zdOCn9z8ljPvgqoPUUIbsIjp2SRJvVBAvgBdin/9RqoNziLBVOSvV0
+ T/Ji5OZYQHNNwJcaDpOtvrd8Uo355wehRtB1rAATaET1LPhvyF94KI3fcmZM3b+S49IKe+2L
+ 86r5K255G7Q4yA2AdqjlLvhGmVSKlIFFVHT4pb+c/HKbilq/kTe4I5iXBYvQRs/ZwGyojxE4
+ I4lWapc5useFvakdOw1C3G0GszlVEFM0OevzXOX6aR/w6BaGpfh660GMa04AWEX0rpZADliz
+ s0iFDQcaw2Pm76y65iYaOY506zPLOGzVG8eknhkyTecCbMtRorOBv2bo9RZxzw3wMtJGJ4yZ
+ eJANmEpN0qGOkMJYwtJYH49tL/Aan3XcDRCtFORrKkf6GnIxws327/oWDbQUofaFJgLxhvB+
+ Qoq+Uz+U085D4XB8gGd0Vi8ntXVpCHjSt4NQejQGvlCxQf7KnYoIBEfUx2wqOOhh0iiVsh3L
+ 00S8zAp668o+ySDTNT/VTW8oXiZrlgdUd8WGOo/gCmIw7DI4gDfHmUYQyRaZdoOs9U/Tjgnk
+ FSOmrvBBzlitrCaSXO17LqYrTqufyMSKAcqfyIaQBEey8PurIE6klTESdMLOKq0iMDlXDL92
+ TaHqAAgiLgJy80GzaO2+RbAmT3EjpzISBMlox7cRWON8Ax0fsimapau5Fyd6uxPRLt1VXGIu
+ HwC3szb5+cUANTVxWqGQf4GG/ei4PPt3CDgvGOD1qIJr1yFk0NPt6gMiN2iDC+F6vo5RAI=
+IronPort-HdrOrdr: A9a23:9GIAR6l2I/Nh6QSqaz0mcqXxe8HpDfIf3DAbv31ZSRFFG/FwWf
+ rDoB19726XtN9/Yh8dcLy7UpVoIkmslqKdg7NxAV7KZmCP01dAR7sM0WKN+VDdMhy73vJB1K
+ tmbqh1AMD9ABxHl8rgiTPIdurIuOPmzEht7t2uqEuEimpRGsVd0zs=
+X-Talos-CUID: =?us-ascii?q?9a23=3ATp5HCmsXu8V3XYe82eblW3es6It5XHyF4EzhGXO?=
+ =?us-ascii?q?8GGN0RKHJTXS624Frxp8=3D?=
+X-Talos-MUID: =?us-ascii?q?9a23=3AYjAzzg+69yncBe9mMpYmsliQf8A5vYeVUR42qo0?=
+ =?us-ascii?q?lkdmcDzZJOS+P0CviFw=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.16,229,1744070400"; 
+   d="scan'208";a="389560517"
+Received: from alln-l-core-09.cisco.com ([173.36.16.146])
+  by rcdn-iport-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 12 Jun 2025 00:44:38 +0000
+Received: from fedora.lan?044cisco.com (unknown [10.188.19.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kartilak@cisco.com)
+	by alln-l-core-09.cisco.com (Postfix) with ESMTPSA id 80CB718000443;
+	Thu, 12 Jun 2025 00:44:36 +0000 (GMT)
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com,
+	djhawar@cisco.com,
+	gcboffa@cisco.com,
+	mkai2@cisco.com,
+	satishkh@cisco.com,
+	aeasi@cisco.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jmeneghi@redhat.com,
+	revers@redhat.com,
+	dan.carpenter@linaro.org,
+	Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH v3 1/5] scsi: fnic: Set appropriate logging level for log message
+Date: Wed, 11 Jun 2025 17:44:22 -0700
+Message-ID: <20250612004426.4661-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,50 +110,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v1 0/3] net: phy: micrel: add extended PHY
- support
- for KSZ9477-class devices
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174968883848.3549461.11747861450571986801.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Jun 2025 00:40:38 +0000
-References: <20250610091354.4060454-1-o.rempel@pengutronix.de>
-In-Reply-To: <20250610091354.4060454-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
- netdev@vger.kernel.org
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.188.19.134, [10.188.19.134]
+X-Outbound-Node: alln-l-core-09.cisco.com
 
-Hello:
+Replace KERN_INFO with KERN_DEBUG for a log message.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+Reviewed-by: Arun Easi <aeasi@cisco.com>
+Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+---
+ drivers/scsi/fnic/fnic_scsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, 10 Jun 2025 11:13:51 +0200 you wrote:
-> Hi all,
-> 
-> This patch series extends the PHY driver support for the Microchip
-> KSZ9477-class switch-integrated PHYs. These changes enhance ethtool
-> functionality and diagnostic capabilities by implementing the following
-> features:
-> - MDI/MDI-X configuration support
->   All crossover modes (auto, MDI, MDI-X) are now configurable.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v1,1/3] net: phy: micrel: add MDI/MDI-X control support for KSZ9477 switch-integrated PHYs
-    https://git.kernel.org/netdev/net-next/c/ee868127170c
-  - [net-next,v1,2/3] net: phy: micrel: Add RX error counter support for KSZ9477 switch-integrated PHYs
-    https://git.kernel.org/netdev/net-next/c/597ebdf37222
-  - [net-next,v1,3/3] net: phy: micrel: add cable test support for KSZ9477-class PHYs
-    https://git.kernel.org/netdev/net-next/c/b2f96c3c9631
-
-You are awesome, thank you!
+diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
+index 7133b254cbe4..75b29a018d1f 100644
+--- a/drivers/scsi/fnic/fnic_scsi.c
++++ b/drivers/scsi/fnic/fnic_scsi.c
+@@ -1046,7 +1046,7 @@ static void fnic_fcpio_icmnd_cmpl_handler(struct fnic *fnic, unsigned int cq_ind
+ 		if (icmnd_cmpl->scsi_status == SAM_STAT_TASK_SET_FULL)
+ 			atomic64_inc(&fnic_stats->misc_stats.queue_fulls);
+ 
+-		FNIC_SCSI_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
++		FNIC_SCSI_DBG(KERN_DEBUG, fnic->host, fnic->fnic_num,
+ 				"xfer_len: %llu", xfer_len);
+ 		break;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.1
 
 
