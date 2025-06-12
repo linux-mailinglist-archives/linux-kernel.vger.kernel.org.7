@@ -1,120 +1,101 @@
-Return-Path: <linux-kernel+bounces-683452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36E7AD6DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:26:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9601AD6DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9213B0F59
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E01173211
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142C623BD0B;
-	Thu, 12 Jun 2025 10:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Omfq8Zw3"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEF023E330;
+	Thu, 12 Jun 2025 10:25:37 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A15238176;
-	Thu, 12 Jun 2025 10:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5250322FF37
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749723932; cv=none; b=O8xtVQ6Lo92OX7lkENlwHsXCQ6LnCYIPDtACy2fguCfsuG+WL6hI3H/Wh8wcczhISsMu0JuxqHTsNzlw38qkVprQEEQ0x9RpqVABAWHs+AW43fFjsh7T5SOT73XGFCakq1+jzxNHnXC8WApoI9jI4nQ+tRR0e/zEzlPy/AfgDjQ=
+	t=1749723936; cv=none; b=HNrjz9TQSwtfzSKa4m5QNtxZeThLhQXwEgDkVeml954rJuhCSTULN1PoiMG8iJET3A8F2C77rSZCsCmLOnG5WMh7S5bfS7Ik4lK321FBDYt12jT3LLYsHOwtvuS574neFHeRpCF8Z2gen0VsMEBYRgVFvkC/LcJutKZ2readfqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749723932; c=relaxed/simple;
-	bh=IL/Ee0kDLb8vKxIQmMw05p8FdmrpU4ne3hnvCI1+tys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lWVHtq3qPPubjycnDvpzNg2EUugEINbI99v71Cb1h+TUADhrlPkGtgDOglbtGB8NZAIHHkM+r+nTy9CNhCnzB7GILvZNVR2GmIKZYwV3oBQIpTXif3w7uVtBK9t6ewLmA1zv532m/0NAEFLieJ17VcdsEyFdNf3xMn+9ULGPj2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Omfq8Zw3; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.6])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 39F7F40737D7;
-	Thu, 12 Jun 2025 10:25:26 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 39F7F40737D7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1749723926;
-	bh=PF768aoX4r6yIrDUHf+haREU0cDIObqduX7ooUbbWAY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Omfq8Zw32u6QjraRHp/3OS6OO0Dxhf0Sa4NeamJ+9oYx9eHyQG208M+zBiRsfhKv+
-	 mRB97JkSyhVBnDm9Ozd3Y6ProVBNRjbbQ8zcDgAv1LiNZ0L0iRxAYTLC+vd203jYVL
-	 /Sl7huHw7cP64zYs/MNk44O/F4xltwmypyvkEp3U=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Carlos Maiolino <cem@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Christoph Hellwig <hch@lst.de>,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 6/6] xfs: refactor xfs_btree_diff_two_ptrs() to take advantage of cmp_int()
-Date: Thu, 12 Jun 2025 13:24:50 +0300
-Message-ID: <20250612102455.63024-7-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612102455.63024-1-pchelkin@ispras.ru>
-References: <20250612102455.63024-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1749723936; c=relaxed/simple;
+	bh=N5uh8KFkbrv+6Af3XcZHWYTGd/ZBd99yZKZLJTjY3OQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ovegd0IHbzJ7W1yLdn/SaanExO5wDJTXvTc8aI7jJkBymAeyyXUBG3X96dPywntA0fNY2QxgbZ2WDw4jF2sdP0wJN6aAKwbmJnpsLguk432l+bQThrj/fvWEgkXck8J7NpOCss1oq0dpxk/4SSZIiv2qzPVNLoxUo4KpbQNIdN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id B2C8929473A;
+	Thu, 12 Jun 2025 12:25:31 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id Xj8l1EkZv1wk; Thu, 12 Jun 2025 12:25:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 5326B298565;
+	Thu, 12 Jun 2025 12:25:31 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NFts6TOxXvra; Thu, 12 Jun 2025 12:25:31 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 1AD3329473A;
+	Thu, 12 Jun 2025 12:25:31 +0200 (CEST)
+Date: Thu, 12 Jun 2025 12:25:30 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Guenter Roeck <linux@roeck-us.net>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, 
+	Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Karthik Poosa <karthik.poosa@intel.com>, 
+	Reuven Abliyev <reuven.abliyev@intel.com>, 
+	Oren Weil <oren.jer.weil@intel.com>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	DRI mailing list <dri-devel@lists.freedesktop.org>, 
+	intel-gfx <intel-gfx@lists.freedesktop.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1466250376.134375386.1749723930972.JavaMail.zimbra@nod.at>
+In-Reply-To: <CY5PR11MB6366DA38B20B29C1662BDC76ED74A@CY5PR11MB6366.namprd11.prod.outlook.com>
+References: <20250302140921.504304-1-alexander.usyskin@intel.com> <130790886.134361099.1749560056731.JavaMail.zimbra@nod.at> <c90c8bad-9c7a-4bf7-8282-ebefebba90a3@roeck-us.net> <877c1ivcym.fsf@bootlin.com> <1612313571.134371311.1749637592940.JavaMail.zimbra@nod.at> <CY5PR11MB636692EFD9BB99B6F2D959BFED75A@CY5PR11MB6366.namprd11.prod.outlook.com> <87y0tytjmj.fsf@bootlin.com> <CY5PR11MB6366DA38B20B29C1662BDC76ED74A@CY5PR11MB6366.namprd11.prod.outlook.com>
+Subject: Re: [PATCH v6 01/11] mtd: core: always create master device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF139 (Linux)/8.8.12_GA_3809)
+Thread-Topic: core: always create master device
+Thread-Index: AQHbi35N9ptLZMK+/0+KHmcJoUKk0bP5FNKAgABXSdCAANahSoAAWdKAgACSaAOAACUigIAAFAQAgAAhxhCAAAxMAIAAXViAgADet1B87pkdB/wY57yAgAEiYbGAAA56AIAABaLggABFNgOAATvKgCORNoJK
 
-Use cmp_int() to yield the result of a three-way-comparison instead of
-performing subtractions with extra casts.
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Alexander Usyskin" <alexander.usyskin@intel.com>
+> In general, it is fine for me - we have parent mtd initialized and partic=
+ipating
+> in power management.
+>=20
+> I can't see how to bend idr_alloc to allocate from the end and corner cas=
+e
+> of full idr range is also will be problematic.
 
-Found by Linux Verification Center (linuxtesting.org).
+I expected it to work because we can track the highest mtd ID and pass limi=
+ts
+to idr_alloc(), no?
 
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- fs/xfs/libxfs/xfs_btree.c | 6 +++---
- fs/xfs/libxfs/xfs_btree.h | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-index d3591728998e..9a227b6b3296 100644
---- a/fs/xfs/libxfs/xfs_btree.c
-+++ b/fs/xfs/libxfs/xfs_btree.c
-@@ -5353,15 +5353,15 @@ xfs_btree_count_blocks(
- }
- 
- /* Compare two btree pointers. */
--int64_t
-+int
- xfs_btree_diff_two_ptrs(
- 	struct xfs_btree_cur		*cur,
- 	const union xfs_btree_ptr	*a,
- 	const union xfs_btree_ptr	*b)
- {
- 	if (cur->bc_ops->ptr_len == XFS_BTREE_LONG_PTR_LEN)
--		return (int64_t)be64_to_cpu(a->l) - be64_to_cpu(b->l);
--	return (int64_t)be32_to_cpu(a->s) - be32_to_cpu(b->s);
-+		return cmp_int(be64_to_cpu(a->l), be64_to_cpu(b->l));
-+	return cmp_int(be32_to_cpu(a->s), be32_to_cpu(b->s));
- }
- 
- struct xfs_btree_has_records {
-diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
-index 1bf20d509ac9..23598f287af5 100644
---- a/fs/xfs/libxfs/xfs_btree.h
-+++ b/fs/xfs/libxfs/xfs_btree.h
-@@ -519,9 +519,9 @@ struct xfs_btree_block *xfs_btree_get_block(struct xfs_btree_cur *cur,
- 		int level, struct xfs_buf **bpp);
- bool xfs_btree_ptr_is_null(struct xfs_btree_cur *cur,
- 		const union xfs_btree_ptr *ptr);
--int64_t xfs_btree_diff_two_ptrs(struct xfs_btree_cur *cur,
--				const union xfs_btree_ptr *a,
--				const union xfs_btree_ptr *b);
-+int xfs_btree_diff_two_ptrs(struct xfs_btree_cur *cur,
-+			    const union xfs_btree_ptr *a,
-+			    const union xfs_btree_ptr *b);
- void xfs_btree_get_sibling(struct xfs_btree_cur *cur,
- 			   struct xfs_btree_block *block,
- 			   union xfs_btree_ptr *ptr, int lr);
--- 
-2.49.0
-
+Thanks,
+//richard
 
