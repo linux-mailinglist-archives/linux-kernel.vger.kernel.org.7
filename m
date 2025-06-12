@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-684329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FD4AD7921
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421BBAD7925
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22E07AA9E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F7C1892A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06DC29DB97;
-	Thu, 12 Jun 2025 17:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED0B2BD01E;
+	Thu, 12 Jun 2025 17:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gPjOJz2D"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ESDJHNKE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EE629B8D8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3185829C33C;
 	Thu, 12 Jun 2025 17:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749749809; cv=none; b=tDUDDnMF969hoN+5g1+bYHSiiyhoJ5cLA3PvwUHuWALiSL7qUdX+RgNoREAYi9rpcnVBqyrT5cE9Ai3sG9o6NgLSaub0VQSa6Sixrb2NnFZbfdY6MhBWrJCIu2NDPEVZ8K5MXuL7crSrIiqc2fbNrvm+4OUOuup+L4g7M9rBro0=
+	t=1749749809; cv=none; b=klXPcfjT+SqgLAMVppFeoqFYZKFYtfrJdfaajZsUWn8+sR4S4EOD5v/jDOJC2s+fqlUKByEcT5T4AvSWuHBDTI3RQ114NTSjyBfF0mFT/SNCdgeftrOgpj74SSThkvpFvkuS+kp/lyOgq6/dVnA3A6aE6wauGifxxbsmqAdDDiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749749809; c=relaxed/simple;
-	bh=Se1kv5v15PXSnxvpQY8zYf3zFp+uZCAbnl5JZqIlXQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LmFarj0uo9vRsfCh6yEsljIvaWCmN+IvVLWTIz8JdlSI6qkY/SvzBoIM7zcVMqQQIejbHKl3ie6Qpb6ByM7y2T8DzxwB0RWnF+5bRup7jffvsty9nGRwB4NsWTE0NT/X+wje2X0qQ2A2gs/AWmX7j1f1pp5ezf0QULRegg38ntI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gPjOJz2D; arc=none smtp.client-ip=148.163.158.5
+	bh=6z+a18SZhXUWILsGzwnuNuKPZ0Ml207M/8YBA42sBhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tR5qYOQI9q4/OWGtmdOlQyMYlG9ZWizAdpDkkno+M4yJFwQ8H2a7JYGoj8P8V+tWt2FGwOu1N/EpvS7+vvTaPKjK/RmZsrscvzG9dnZceeHcoyMxUI3Wzw0WJjmL8sHvH0VE4RWTxfONnz81MnxyKKTYJFs4daSdXZhE0QLyg/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ESDJHNKE; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C9xpHh005022;
-	Thu, 12 Jun 2025 17:36:17 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CDVPIr012486;
+	Thu, 12 Jun 2025 17:36:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=ANjAB/i+3wqbtm/fqKC9pjVNNGYd+LvuX5UmSeokV
-	jQ=; b=gPjOJz2DlLLAahuxLsMvga8P96e5QtjjssuX3WnL7wfNwU9S7odZ1iF9n
-	AHXZaL0QgY2Yvv6+PISmVU8AGURt3TkfFKWYn1x50taMSKAa7h1Py0L08hzBockn
-	sQx28XfA83iutCkSgewhPkGk2hg9n0qPC6L8fNJUmDuqW9yEPkMry4L+GC9tTYO0
-	SD4Ldvr2NfjhdTYVv7Rn944LtNQhipOioR+F7fsnJ9kdle/XbEcv+ONZ2kYaVUYJ
-	/VTaRAakSqlZ1oK9rnq/4HmKpkaucRMwQY60+eLDS+xgc8bSOsXNrs+da1Mm5Jx9
-	DxiiZIL4w7ZQHN8ei7UjgxYir2X1w==
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=Bzq6L693jOZBbQpnk
+	olPJGXvQrWYd1fA+nYNAUkTJK4=; b=ESDJHNKEE5xuMiyIFUW6rYf02Me5a5lyb
+	sWhbyWwUtgNFGu8PZLKdUv0/9qZAokrkZRb85d5PqBmzMqJaTlf6PYCK7ooXS42h
+	Sq9hPT9J3MS2Gveds7bG8V2afGAi1+Bp71tEdFw4AjRsQPRDr1Umq+yV+i/+HxRz
+	n29nAJUsXyZsJzo6atbehh0gZuHskVtQ+fWRjZb2/pbovS94Rs2p0L6Km7uhekrU
+	1t3NzEXRsgT+51JGwOIO1WeLGZ6quB0XBM0mrJpvTTYoJ7Z5pR4AoRk4/Ge4a+HQ
+	k5s7CGGTEeBuimVvxzeF5PeRGYrxNKHgZgbVs7HstYNamBwuMdVew==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474x4mhdbs-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474cxjmf0u-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 17:36:16 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55CHaGIg029272;
+	Thu, 12 Jun 2025 17:36:17 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55CHaHOc028261;
+	Thu, 12 Jun 2025 17:36:17 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474cxjmf0m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 17:36:17 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55CE2lWZ014912;
 	Thu, 12 Jun 2025 17:36:16 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474x4mhdbp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 17:36:16 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55CGbdNq015205;
-	Thu, 12 Jun 2025 17:36:15 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 474yrtp6b1-1
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4750rpdxe4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 12 Jun 2025 17:36:15 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55CHaE2S46072192
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55CHaEm611338160
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 12 Jun 2025 17:36:14 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F201B20043;
-	Thu, 12 Jun 2025 17:36:13 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DE45420040;
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 00E3020040;
+	Thu, 12 Jun 2025 17:36:14 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E100A2004B;
 	Thu, 12 Jun 2025 17:36:13 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
 	Thu, 12 Jun 2025 17:36:13 +0000 (GMT)
 Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
-	id 9B577E0157; Thu, 12 Jun 2025 19:36:13 +0200 (CEST)
+	id 9DA9BE198F; Thu, 12 Jun 2025 19:36:13 +0200 (CEST)
 From: Alexander Gordeev <agordeev@linux.ibm.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -83,10 +84,12 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
         Jeremy Fitzhardinge <jeremy@goop.org>,
         Ryan Roberts <ryan.roberts@arm.com>
-Subject: [PATCH 0/6] mm: Consolidate lazy MMU mode context
-Date: Thu, 12 Jun 2025 19:36:07 +0200
-Message-ID: <cover.1749747752.git.agordeev@linux.ibm.com>
+Subject: [PATCH 1/6] mm: Cleanup apply_to_pte_range() routine
+Date: Thu, 12 Jun 2025 19:36:08 +0200
+Message-ID: <b687f16961eaa285960d6b2c5e84360f1c3269df.1749747752.git.agordeev@linux.ibm.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1749747752.git.agordeev@linux.ibm.com>
+References: <cover.1749747752.git.agordeev@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,73 +98,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Y4X4sgeN c=1 sm=1 tr=0 ts=684b1011 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=_adeEUt4WAeD9YfioJwA:9
-X-Proofpoint-GUID: qr5W2YIzc2A8ZYU2dsRpP1AphHqeKos2
-X-Proofpoint-ORIG-GUID: y6xW9IJSAE1JE6kcXuiy_mrCImk2ZWSK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEzMiBTYWx0ZWRfXwOXjIkbbpepd OoV77Zxzv1DOdGZHdC1rjgNBCs+WzETf7mIinKv8drROUhS3PC4S3Ul3Eq1Rd7PKATmFyM+TDvL kAnBooerznbgDsNZ+/ZPaU+KOsEBXC93w8q9w6KmW11m/vgE/aUeMTSFQFutpSKrQJxT61mMBuv
- KSDxU4i8iMDqRaETa8beoNjTewS286bfktL7BQreW7c9kRIZcei0lJ9aqGyaWPDFPjwcafICCtq M+2fDqSlBJ149EKa1BJjaYXJjRiLvX/CmWd9wRa81Sdbs49mWKwGJKFbJ7AczMoR5fjZJzIohlx h7ggGzYUtbK6qCOXcSYaA1viUBK2oMNNt7ackAbJO+mupvs+X1Tc6Jccl69/IVghIosL27dXHPA
- isXNAQ9475tlf5eWUprb3n3jaqwe+zULK27nDf9N0r4ezafy+XnKcezzdAsVHSGEj7SQHlPp
+X-Proofpoint-ORIG-GUID: GFSzaItUyEu6yP3gS3meeLbrZ9VQTNp2
+X-Proofpoint-GUID: sqmBLLFPSau8kX6gstpm2ABJeaMXDzrY
+X-Authority-Analysis: v=2.4 cv=fZWty1QF c=1 sm=1 tr=0 ts=684b1012 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=6IFa9wvqVegA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=cw6LjJxz1Y3IMotYGxwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEzMiBTYWx0ZWRfX/1bjcnG+oHBr pQDvf9bYzabUNkDtJTPjUxbszAUvnuseyUY6yPMmqPawboY3JQdlIMe1zE8qPlqEMiTmIRm5hS1 dZl7AQt+DbprJCkJokCTDYCd0VMJnUOxqaxW//MoOIuKhE3bFMliw0UK15vBUQ0lRDM+mrJj2zC
+ yUpjswXJHT+h6+EpfvFovs4dCh6L5u4Ykn2tCFCfD453NQH13H8nIpNRXk+HHxhvDrVWycEacW4 /2czHIQffp42M7ictd08dwUcFf3euUuwxOXSbJ5WuxC/Hv/Vzb/9Vv1wFBVJU+FMSP1gFiqJsd0 VvDwZoAVDaHgmVW6Mu34ZDZJ8Cw6qnhtSzv7T/Boq9y8bX+AMp7SzKTkfdMd9g5rnuiIrxSQFrI
+ 0E24jrpYAI52CuduE9GnxB2obbmRbpdrR9rNV8uM47GqJ34ZsBxm2r2PUC1QUcejP/SHofJr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=994 spamscore=0
- clxscore=1011 lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0
- impostorscore=0 suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=780
  classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2506120132
 
-Hi All,
+Reverse 'create' vs 'mm == &init_mm' conditions and move
+page table mask modification out of the atomic context.
+This is a prerequisite for locking kernel page tables.
 
-Consolidate arch_enter|leave|flush_lazy_mmu_mode() context and protect
-with a lock not only user, but also kernel mappings before entering
-the lazy MMU mode.
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+---
+ mm/memory.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
-For not fully preemptible (Real-Time) kernels that simplifies semantics -
-while the mode is active the code should assume it is executing in atomic
-context. That paves the way for cleanups, such as suggested for sparc and
-powerpc and hopefully brings a bit more clarity in what labeled in commit
-691ee97e1a9d ("mm: fix lazy mmu docs and usage") as "a bit of a mess (to
-put it politely)".
-
-The fully preemptible (Real-Time) kernels could probably also be brought
-into the fold, but I am not sure about implications (to say at least).
-
-This series is continuation of [1] and [2], with commit b6ea95a34cbd
-("kasan: avoid sleepable page allocation from atomic context") already
-upstream.
-
-I dared to keep Nicholas Piggin R-b on patch 3, but dropped it from
-patch 2 due to new bits.
-
-Except the optional sparc (untested) and powerpc (complile-tested)
-updates this series is a prerequisite for implementation of lazy MMU
-mode on s390.
-
-1. https://lore.kernel.org/linux-mm/cover.1744037648.git.agordeev@linux.ibm.com/#r
-2. https://lore.kernel.org/linux-mm/cover.1744128123.git.agordeev@linux.ibm.com/#r
-
-Thanks!
-
-Alexander Gordeev (6):
-  mm: Cleanup apply_to_pte_range() routine
-  mm: Lock kernel page tables before entering lazy MMU mode
-  mm/debug: Detect wrong arch_enter_lazy_mmu_mode() contexts
-  sparc/mm: Do not disable preemption in lazy MMU mode
-  powerpc/64s: Do not disable preemption in lazy MMU mode
-  powerpc/64s: Do not re-activate batched TLB flush
-
- .../include/asm/book3s/64/tlbflush-hash.h     | 13 ++++----
- arch/powerpc/include/asm/thread_info.h        |  2 --
- arch/powerpc/kernel/process.c                 | 25 --------------
- arch/sparc/include/asm/tlbflush_64.h          |  2 +-
- arch/sparc/mm/tlb.c                           | 12 ++++---
- include/linux/pgtable.h                       | 32 +++++++++++++-----
- mm/kasan/shadow.c                             |  5 ---
- mm/memory.c                                   | 33 ++++++++++++-------
- mm/vmalloc.c                                  |  6 ++++
- 9 files changed, 65 insertions(+), 65 deletions(-)
-
+diff --git a/mm/memory.c b/mm/memory.c
+index 8eba595056fe..71b3d3f98999 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3006,24 +3006,28 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+ 				     pte_fn_t fn, void *data, bool create,
+ 				     pgtbl_mod_mask *mask)
+ {
++	int err = create ? -ENOMEM : -EINVAL;
+ 	pte_t *pte, *mapped_pte;
+-	int err = 0;
+ 	spinlock_t *ptl;
+ 
+-	if (create) {
+-		mapped_pte = pte = (mm == &init_mm) ?
+-			pte_alloc_kernel_track(pmd, addr, mask) :
+-			pte_alloc_map_lock(mm, pmd, addr, &ptl);
++	if (mm == &init_mm) {
++		if (create)
++			pte = pte_alloc_kernel_track(pmd, addr, mask);
++		else
++			pte = pte_offset_kernel(pmd, addr);
+ 		if (!pte)
+-			return -ENOMEM;
++			return err;
+ 	} else {
+-		mapped_pte = pte = (mm == &init_mm) ?
+-			pte_offset_kernel(pmd, addr) :
+-			pte_offset_map_lock(mm, pmd, addr, &ptl);
++		if (create)
++			pte = pte_alloc_map_lock(mm, pmd, addr, &ptl);
++		else
++			pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
+ 		if (!pte)
+-			return -EINVAL;
++			return err;
++		mapped_pte = pte;
+ 	}
+ 
++	err = 0;
+ 	arch_enter_lazy_mmu_mode();
+ 
+ 	if (fn) {
+@@ -3035,12 +3039,14 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+ 			}
+ 		} while (pte++, addr += PAGE_SIZE, addr != end);
+ 	}
+-	*mask |= PGTBL_PTE_MODIFIED;
+ 
+ 	arch_leave_lazy_mmu_mode();
+ 
+ 	if (mm != &init_mm)
+ 		pte_unmap_unlock(mapped_pte, ptl);
++
++	*mask |= PGTBL_PTE_MODIFIED;
++
+ 	return err;
+ }
+ 
 -- 
 2.48.1
 
