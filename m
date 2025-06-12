@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-684696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A5FAD7F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375CEAD7F21
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A3D3A443C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6AA83B8019
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 23:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496012E612D;
-	Thu, 12 Jun 2025 23:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAA32E92CB;
+	Thu, 12 Jun 2025 23:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MlOvnSgN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u2torbeN"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Stk8Adrb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MJCoLsU3"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE902E92B1
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 23:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53A72E92CD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 23:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749771706; cv=none; b=iNvQREpzbmOouIfWKtv04qWORJMObpxTI2+eBAF/eJ+NotnQ0EzznfZhENr1hs+NYwh9SE8Fagcq5IGtsQ8wcCR7Grr003Kc/H3GcsLNh5SiHJcMsu9GcDUfFHHl4UxdYZ5dt7sNR9kfI2qtebJiH9iviOJfjrnCbrOa2TMbZTc=
+	t=1749771710; cv=none; b=gEM17I9YxQQW3rKlhPEoOe0NmW9e8ftJe+vpqHa2G0sTDKFabQ0akoHt/mPj7fURMCkUOYKcWajwRQwY8WeRs/LS5CU9C2JGSzqbhsmlyKACTPzVbcB9KI71QxfGrN2/e35pcxKpX1ji7zp5zxWxXREvgXWe+iHOWbF8hGKsL3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749771706; c=relaxed/simple;
-	bh=GxUUBUz9xnjBH1SiZKleVg0aLiELrmJZFMUrgj2GWPs=;
+	s=arc-20240116; t=1749771710; c=relaxed/simple;
+	bh=JjpKnEEeb8EihD6NhJ+3mHH6ulCNckG1EK6KQwd39Rs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KTHxOhec00PnZcUZbq72afZMEm/ZlUHUCqibnVP5Se8xb23ilmloxEEOHMVTD07qZayqC+jlYCLPZNl3dGivEPrpwK6ZjRgq5eLsTqWGM+lEQkx2Sx0IPqaZM9Ow8TRBn3dvuBhwrRZA4/TWFo5bYEFEmA03q374hQp2TkSRW9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MlOvnSgN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u2torbeN; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=shquHvwEAOTBquIPyVpZuEBIaqz3RIhBtk50mBAJ8HpSY6tJqRdgmCEydTpiC/osJj5ys48j/liO7nRzWacSoSGRFiQK13xR3vuUeIv9+Ba1OMmF2d875mZB2J6bPNlRWL4eCdzDLZUZ2kMs+6BwVIZTE0LEcxWx/jI63iuYjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Stk8Adrb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MJCoLsU3; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749771703;
+	s=2020; t=1749771707;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GFv6MLNTZNByU7fUhT79iIPGJmtLlz5VVmjMAqBlUqY=;
-	b=MlOvnSgNClgBOpU4INaO9kJE+eNWiUZgV8aiMUQ8K4hvskjavmOznNI2eRZyoLAGcDz46G
-	F7DwSayBm9j6YgIadA/s2amzbX2cFmhY0IlS3UmNwijOOv2ch13mD9ItUou/68KryhdhZS
-	P2sspvLU8DVytRlrxGFKgUd33Pqxc9OPvoEw4LP2K6+SCSKCxS07qteOSzw6uf4l9pcq+I
-	4dew/tcxguTNMiKYJLPd/1lX6rfrbt72gQ7EittAmBcR3mgFdrWDlgdLmd439xgl13bCka
-	tYHNhuyFlGwqprd10tzI8m0VZNEglL83l7p0l5JdlNZcPSvopDHJl+kzlfWlOA==
+	bh=+Xr7p/ILqaWRsY65Bf4IVSsO8x0nPruOpeIN/uFfX+o=;
+	b=Stk8AdrbRQP9m/VWbYFCfb7VyI4kOXbu3TesUASMabP9+WdrV7ovingiF4ajfSNQysRJu3
+	jvu7ZZQGRHO1PvGi+M4Ts7y6zImz6eIrm55OljnrsvmraXF3bmNJ888UV0UrXznn5ghA1Y
+	33WwKcp5AG3/VdGLeQwU3BRPrtegLvol6zXjCDCGgbUQMDkqaHykNUeCMVqsOtDF3DmnBd
+	ytHOuEzEEBJAKY4iEK/4pEjmYwcQQ1K39k7Y8poqoBUqU/fQbtYQoaL+G9x8v3x8oEWWSQ
+	eQFkRXQbKcQxLYkGUEDrzYVZuIC9ZiQETuymkoJ2ZEpzwKeVGfV40QvoJ1JHPg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749771703;
+	s=2020e; t=1749771707;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GFv6MLNTZNByU7fUhT79iIPGJmtLlz5VVmjMAqBlUqY=;
-	b=u2torbeNu31LIwNV8bozio+4xtv75vLtL0OuQ7n+B+E65WD5wTIbn1/MAxCM/1lX5qLwmd
-	03fGr9ogBMS1/HCw==
+	bh=+Xr7p/ILqaWRsY65Bf4IVSsO8x0nPruOpeIN/uFfX+o=;
+	b=MJCoLsU3KCogV1qTyYXCbCH6JF+W25eXgQHeGqAF0rFEKuoUdxRr3Xxsi3KY65srth0Syi
+	ptUFmMkRawKyvmCg==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v3 25/44] x86/cpu: Use parsed CPUID(0x80000000)
-Date: Fri, 13 Jun 2025 01:39:51 +0200
-Message-ID: <20250612234010.572636-26-darwi@linutronix.de>
+Subject: [PATCH v3 26/44] x86/lib: Add CPUID(0x1) CPU family and model calculation
+Date: Fri, 13 Jun 2025 01:39:52 +0200
+Message-ID: <20250612234010.572636-27-darwi@linutronix.de>
 In-Reply-To: <20250612234010.572636-1-darwi@linutronix.de>
 References: <20250612234010.572636-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,63 +81,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use parsed CPUID(0x80000000) access instead of a direct CPUID query.
+The x86 library code provides x86_family() and x86_model().  They take
+raw CPUID(0x1) EAX register output, extract the necessary bitfields with
+bitwise operations, then calculate out the CPU family and model.
 
-The affected code has the check:
+In follow-up commits, the x86 code will use parsed CPUID access, along
+with its auto-generated <cpuid/leaf_types.h> CPUID leaf data structures
+and their detailed C99 bitfields.
 
-	(eax & 0xffff0000) == 0x80000000
-
-to protect against Intel 32-bit CPUs that lack extended CPUID support.  A
-similar check is already done at the CPUID(0x80000000) scanner read
-function at cpuid_parser.c:
-
-	/*
-	 * Protect against 32-bit CPUs lacking extended CPUID support: Max
-	 * extended CPUID leaf must be in the 0x80000001-0x8000ffff range.
-	 */
-	if ((l->max_ext_leaf & 0xffff0000) != 0x80000000) {
-		// Handle error
-	}
-
-Thus, just check that the parsed CPUID macro:
-
-	cpuid_leaf(c, 0x80000000)
-
-does not return NULL, thus providing a sanity check similar to the
-original code.
+Introduce CPU family and model calculation functions to x86/lib that take
+the auto-generated 'struct leaf_0x1_0' data type.  Refactor the pure CPU
+family and model calculation logic into internal static functions so that
+no logic is duplicated.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/common.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/cpu.h |  6 ++++++
+ arch/x86/lib/cpu.c         | 41 ++++++++++++++++++++++----------------
+ 2 files changed, 30 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 234d0f5de39e..b3408ae2b144 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -972,6 +972,7 @@ static void init_speculation_control(struct cpuinfo_x86 *c)
+diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
+index ad235dda1ded..90902cd91335 100644
+--- a/arch/x86/include/asm/cpu.h
++++ b/arch/x86/include/asm/cpu.h
+@@ -7,7 +7,9 @@
+ #include <linux/topology.h>
+ #include <linux/nodemask.h>
+ #include <linux/percpu.h>
++
+ #include <asm/ibt.h>
++#include <asm/cpuid/leaf_types.h>
  
- void get_cpu_cap(struct cpuinfo_x86 *c)
+ #ifndef CONFIG_SMP
+ #define cpu_physical_id(cpu)			boot_cpu_physical_apicid
+@@ -25,6 +27,10 @@ int mwait_usable(const struct cpuinfo_x86 *);
+ unsigned int x86_family(unsigned int sig);
+ unsigned int x86_model(unsigned int sig);
+ unsigned int x86_stepping(unsigned int sig);
++
++unsigned int cpuid_family(const struct leaf_0x1_0 *l);
++unsigned int cpuid_model(const struct leaf_0x1_0 *l);
++
+ #ifdef CONFIG_X86_BUS_LOCK_DETECT
+ extern void __init sld_setup(struct cpuinfo_x86 *c);
+ extern bool handle_user_split_lock(struct pt_regs *regs, long error_code);
+diff --git a/arch/x86/lib/cpu.c b/arch/x86/lib/cpu.c
+index 7ad68917a51e..eac217d637ac 100644
+--- a/arch/x86/lib/cpu.c
++++ b/arch/x86/lib/cpu.c
+@@ -1,36 +1,43 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/types.h>
+ #include <linux/export.h>
++
+ #include <asm/cpu.h>
++#include <asm/cpuid/leaf_types.h>
+ 
+-unsigned int x86_family(unsigned int sig)
++static unsigned int __x86_family(unsigned int base_fam, unsigned int ext_fam)
  {
-+	const struct leaf_0x80000000_0 *el0;
- 	u32 eax, ebx, ecx, edx;
+-	unsigned int x86;
+-
+-	x86 = (sig >> 8) & 0xf;
++	return (base_fam == 0xf) ? base_fam + ext_fam : base_fam;
++}
  
- 	/* Intel-defined flags: level 0x00000001 */
-@@ -1007,12 +1008,8 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_D_1_EAX] = eax;
- 	}
+-	if (x86 == 0xf)
+-		x86 += (sig >> 20) & 0xff;
++static unsigned int
++__x86_model(unsigned int family, unsigned int base_model, unsigned int ext_model)
++{
++	return (family >= 0x6) ? base_model | ext_model << 4 : base_model;
++}
  
--	/*
--	 * Check if extended CPUID leaves are implemented: Max extended
--	 * CPUID leaf must be in the 0x80000001-0x8000ffff range.
--	 */
--	eax = cpuid_eax(0x80000000);
--	c->extended_cpuid_level = ((eax & 0xffff0000) == 0x80000000) ? eax : 0;
-+	el0 = cpuid_leaf(c, 0x80000000);
-+	c->extended_cpuid_level = (el0) ? el0->max_ext_leaf : 0;
+-	return x86;
++unsigned int x86_family(unsigned int sig)
++{
++	return __x86_family((sig >> 8) & 0xf, (sig >> 20) & 0xff);
+ }
+ EXPORT_SYMBOL_GPL(x86_family);
  
- 	if (c->extended_cpuid_level >= 0x80000001) {
- 		cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
+-unsigned int x86_model(unsigned int sig)
++unsigned int cpuid_family(const struct leaf_0x1_0 *l)
+ {
+-	unsigned int fam, model;
+-
+-	fam = x86_family(sig);
+-
+-	model = (sig >> 4) & 0xf;
+-
+-	if (fam >= 0x6)
+-		model += ((sig >> 16) & 0xf) << 4;
++	return __x86_family(l->base_family_id, l->ext_family);
++}
+ 
+-	return model;
++unsigned int x86_model(unsigned int sig)
++{
++	return __x86_model(x86_family(sig), (sig >> 4) & 0xf, (sig >> 16) & 0xf);
+ }
+ EXPORT_SYMBOL_GPL(x86_model);
+ 
++unsigned int cpuid_model(const struct leaf_0x1_0 *l)
++{
++	return __x86_model(cpuid_family(l), l->base_model, l->ext_model);
++}
++
+ unsigned int x86_stepping(unsigned int sig)
+ {
+ 	return sig & 0xf;
 -- 
 2.49.0
 
