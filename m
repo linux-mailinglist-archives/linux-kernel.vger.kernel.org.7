@@ -1,300 +1,220 @@
-Return-Path: <linux-kernel+bounces-684267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2A5AD7864
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:39:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8065AAD785D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DF188B740
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:39:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332351729F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC6B29A331;
-	Thu, 12 Jun 2025 16:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C371429ACD1;
+	Thu, 12 Jun 2025 16:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ib0nqVL7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="No8ZUA6E"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E29289819;
-	Thu, 12 Jun 2025 16:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023382F4328
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 16:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749746335; cv=none; b=lHh3uRmh3Xi20amtJrA2lZlneQH4Sq7KJnQkRfNmy6mBOYLe6dkEiPnb3Z3GuW+DFDThCZYxAEQlwZ8oGpWH1gQ7IR3cQmnEKR8y7hiCVKBmHlBoPfFUmJA4V0j6DKKGvxh40QGFqYQFOmb5RwmuzDHuaP+6ceUZeuRPX0/Cvi0=
+	t=1749746233; cv=none; b=HnapbL55+f7mGMZ6R/Yl76fb08hBFFiSRAvVvKdmhYL7qGfcRxa7HymSkuFpoqjA7WCpjDmyjKF5v38oqnj2kSriNhH5cxzav5sC8jULOsKCiJbFrD9bOc72/oOVpbJIz3o8m/p7lZEHyVuNxmJjOZwIcVWBF1NRgUxdOzeBsZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749746335; c=relaxed/simple;
-	bh=7gprBQ4+n4A1ZwXkc/sHnxxTgIpRW2MhPxf65lnoRkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dVbCR8FNFShTc9Yo+TzFHj6iGAVVf86ylKntb54B5z/v7Ctuh3f4d1qO7JfyqVNz1uSpf8Xbcw7u1bwimeIqaN8c2N9ejbTBYDq7P5OS5K3f6JkFVLz11j72YneJkzWAe9hmYDUlBJeZ/YLtXp7kILYnREhoB50gj2bROz9wsIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ib0nqVL7; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749746334; x=1781282334;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7gprBQ4+n4A1ZwXkc/sHnxxTgIpRW2MhPxf65lnoRkM=;
-  b=Ib0nqVL74dOE10iQqtya5dZZZzeNH5ORD+lvd1NU9cQxQr8ORzphQLoj
-   pj/b+kLF0VKIez1MTrNuc9EE4LgGgCo26MwjhIEW5C4VKepdVnUaxLcy2
-   n9FJ37X4UpCM0KscjbzdhVEudBIbbBNenUn7VZoaNZ8O3RJ6eUxex5OZK
-   hUhGw62+QaeAm0Erj9S5hYSTUfGIZ60TTOwp8X5qOUXnLWbmWj/UdU/JT
-   HeKdLLjrkubAtxoAfXJNiRofh+hJ+YVDWRe1ZAxJYvFAjtvgkC9yRMNUl
-   f2ZXBHnNL9sGxdQtz9tzk7Mt5OwHxYALMOCDKiWbNxNmBMpDGRRZ8mT1G
-   w==;
-X-CSE-ConnectionGUID: xMXgGmTISuSFsdogRsvS1g==
-X-CSE-MsgGUID: glurSRkwQmuEfCil8Y+J+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="54568100"
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="54568100"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 09:38:53 -0700
-X-CSE-ConnectionGUID: uukoQaHISSe5Aw/2mGwCAA==
-X-CSE-MsgGUID: n7zt/Dz9StiZJmBOM1cY+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="148475250"
-Received: from ldmartin-desk2.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.125.111.204])
-  by orviesa008.jf.intel.com with ESMTP; 12 Jun 2025 09:38:52 -0700
-From: Thomas Falcon <thomas.falcon@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Thomas Falcon <thomas.falcon@intel.com>
-Subject: [PATCH v4 2/2] perf top: populate PMU capabilities data in perf_env
-Date: Thu, 12 Jun 2025 11:36:59 -0500
-Message-ID: <20250612163659.1357950-2-thomas.falcon@intel.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612163659.1357950-1-thomas.falcon@intel.com>
-References: <20250612163659.1357950-1-thomas.falcon@intel.com>
+	s=arc-20240116; t=1749746233; c=relaxed/simple;
+	bh=9Nb7AXJLlEbXoamLJyNG30DwaOR9qVo/4ptyzH07SVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hzQsVaJN+Th0IdUvlNi8Gv+QCMG7kM57rLP663itFP3yRgJP0hFJ19EbHmNZGjbXjdSS1K8I1Bne53oZXYkqKAgZqIIGTMHWCwLiFigSCxUkqCrKHpNALO2FfwKgpY3OfYfzk1aGdHB7ZdToIX0iIhlrV4ikaDY25PuXxc60yGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=No8ZUA6E; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2ea6dd628a7so568709fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749746230; x=1750351030; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n0tBsmp06+xhTQYUif87CyCLEMF3dBxrJAjjS712b3U=;
+        b=No8ZUA6EGZNg36+V0vEQW6Stq8dS0dFBY1QfEN0e7efpyASwz0jFHsxs6h6CywU0S+
+         QPD190fZQa4fOxrX2uNNzDLpNh24C5WL37bdqB1wQrHg7h8Eo7yk8MqMD96f4nKUdEx4
+         rxCZ57iLQTeIMRlh4ODoE6yH2SZLky7brq6vg+Xsp016RRYJDEPOEkALAYlGMKaD7XhF
+         TQvgGbzQjUV5sf4OSzWNnBQcQm1kP3/HveU2flMNW3xHGpW43cux9awX7CN21ofJmKxy
+         +qg2zZY3OwmDGTm3guGaMGwHayjllwUyoMmZl9Ic2j90xYIsya0vx266sDgT4wX1hTe9
+         nRcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749746230; x=1750351030;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n0tBsmp06+xhTQYUif87CyCLEMF3dBxrJAjjS712b3U=;
+        b=dE6rikext5JqrZw4n85dJMZFTOhmoSFGWaLyD9qWg3uDQPGMQeAh78o1DRc7IxrOZI
+         vM++BiAfeYuDFEXUbef22mJuDKP3mEGfsMXwIOEqqTIKJuxPF3APRafyoVkzC3xR0iQx
+         p6EVNiEJW2Fkjuv/emZ2esyL6iDuZ0YxDEyEoLyqWI2094aanJDcA+sheehcTxusMvdw
+         sye0DcAeqzH+5e3o5UrS+mee+RQSDcFHDyE1v8ztToZNprBRMwauiqjuvXTZciBzUv3o
+         dzF9NHcBnDOiQ+IzsfpPTBFsdKlG4mXAiNj0tiqK9VNxnTEWa+pCI5QeSYMtEYNxvwJI
+         DD0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUshcXfNhIYhpreUb+Xiu2sW/m3Cz0ja70lJl/AdgEF4SE4ZshSvuYcFNuVIrgigjwDwmnJjYGMhm45BiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOWAtfxl1lF/0WDxZGcvJnogUgxRzD4O/OLw2dnpFwueh6MhTL
+	3N9kroRpu0I8h7xYMW4HAp9bwKrIc+XyBhC2MM47XtV+NhVBi5UfoRoLIm70Qf5S1I8=
+X-Gm-Gg: ASbGncv6CL/tl3c2ov5/Uwq/CHO/0Wy7jb+Kx5haReVNhzlTSME9gt/XDrNK2uNWRcH
+	RpyX6H8DQaIIOvQpe+QT/67hGhuYL8bY3OhXeLzMf7GDZvVqjSaUWlYqGBaB1mq2TTc4T+yecVM
+	LRECSYoGR7bSr7hpGlSxtj6QdKxSkcN0dibnnccmCZvX1PEQaoUuF1hJHvQiBw9WUlGl/VBUBcj
+	W8WC9rHas1hDpmeeMC4InPrBaui25N9M12eKajq5/tz30KyCnig3HKGpI30WaaeNjFKdNlVM9H1
+	1cPnFoAVjCujcRRP2DWEzKJXgxeS0QwAt2kantQkformAGC/M8eXgbLKtTmkdvKqtg8mCQurRj7
+	it/6zuCaJOcum3mmA674MQ3cbrlLGOOyvjVd4
+X-Google-Smtp-Source: AGHT+IHHdXOO9hKMebpo+GWoY9JTcAG3EbxaHK4i0jKE8C9cGARxojbOf3B430AtmHG5MNWBG4EggQ==
+X-Received: by 2002:a05:6870:a922:b0:29d:c832:7ef6 with SMTP id 586e51a60fabf-2ea96ffd990mr4262728fac.39.1749746229940;
+        Thu, 12 Jun 2025 09:37:09 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:f808:847:b3ae:ff1a? ([2600:8803:e7e4:1d00:f808:847:b3ae:ff1a])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eab88ae983sm351337fac.2.2025.06.12.09.37.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 09:37:08 -0700 (PDT)
+Message-ID: <654c6750-9359-4d66-934a-e936c0b86009@baylibre.com>
+Date: Thu, 12 Jun 2025 11:37:07 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: iio: chemical: Add sharp,gp2y1010au0f
+To: surajsonawane0215@gmail.com, Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250612100758.13241-1-surajsonawane0215@gmail.com>
+ <20250612100758.13241-3-surajsonawane0215@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250612100758.13241-3-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Calling perf top with branch filters enabled on Intel CPU's
-with branch counters logging (A.K.A LBR event logging [1]) support
-results in a segfault.
+On 6/12/25 5:07 AM, surajsonawane0215@gmail.com wrote:
+> From: Suraj Sonawane <surajsonawane0215@gmail.com>
+> 
+> Add device tree bindings for Sharp GP2Y1010AU0F optical dust sensor.
+> The sensor measures particulate matter concentration via infrared
+> scattering with pulsed LED illumination and analog output.
+> 
+> Datasheet: https://global.sharp/products/device/lineup/data/pdf/datasheet/gp2y1010au_appl_e.pdf
+> 
+> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+> ---
+> V1: https://lore.kernel.org/lkml/20250425215149.49068-1-surajsonawane0215@gmail.com/ 
+> V2: 
+> - Updated timing properties to match datasheet exactly
+> - Added reg property for multi-sensor support
+> 
+>  .../iio/chemical/sharp,gp2y1010au0f.yaml      | 78 +++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/chemical/sharp,gp2y1010au0f.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/chemical/sharp,gp2y1010au0f.yaml b/Documentation/devicetree/bindings/iio/chemical/sharp,gp2y1010au0f.yaml
+> new file mode 100644
+> index 000000000..b4e5110d0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/chemical/sharp,gp2y1010au0f.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/chemical/sharp,gp2y1010au0f.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sharp GP2Y1010AU0F Optical Dust Sensor
+> +
+> +maintainers:
+> +  - Suraj Sonawane <surajsonawane0215@gmail.com>
+> +
+> +description: |
+> +  Optical dust sensor measuring particulate matter concentration via infrared scattering.
+> +  Requires ADC for analog output and GPIO for pulsed LED control with strict timing.
+> +  Datasheet: https://global.sharp/products/device/lineup/data/pdf/datasheet/gp2y1010au_appl_e.pdf
+> +
+> +properties:
+> +  compatible:
+> +    const: sharp,gp2y1010au0f
+> +
+> +  reg:
+> +    maxItems: 1
 
-$ perf top  -e '{cpu_core/cpu-cycles/,cpu_core/event=0xc6,umask=0x3,frontend=0x11,name=frontend_retired_dsb_miss/}' -j any,counter
-...
-Thread 27 "perf" received signal SIGSEGV, Segmentation fault.
-[Switching to Thread 0x7fffafff76c0 (LWP 949003)]
-perf_env__find_br_cntr_info (env=0xf66dc0 <perf_env>, nr=0x0, width=0x7fffafff62c0) at util/env.c:653
-653			*width = env->cpu_pmu_caps ? env->br_cntr_width :
-(gdb) bt
- #0  perf_env__find_br_cntr_info (env=0xf66dc0 <perf_env>, nr=0x0, width=0x7fffafff62c0) at util/env.c:653
- #1  0x00000000005b1599 in symbol__account_br_cntr (branch=0x7fffcc3db580, evsel=0xfea2d0, offset=12, br_cntr=8) at util/annotate.c:345
- #2  0x00000000005b17fb in symbol__account_cycles (addr=5658172, start=5658160, sym=0x7fffcc0ee420, cycles=539, evsel=0xfea2d0, br_cntr=8) at util/annotate.c:389
- #3  0x00000000005b1976 in addr_map_symbol__account_cycles (ams=0x7fffcd7b01d0, start=0x7fffcd7b02b0, cycles=539, evsel=0xfea2d0, br_cntr=8) at util/annotate.c:422
- #4  0x000000000068d57f in hist__account_cycles (bs=0x110d288, al=0x7fffafff6540, sample=0x7fffafff6760, nonany_branch_mode=false, total_cycles=0x0, evsel=0xfea2d0) at util/hist.c:2850
- #5  0x0000000000446216 in hist_iter__top_callback (iter=0x7fffafff6590, al=0x7fffafff6540, single=true, arg=0x7fffffff9e00) at builtin-top.c:737
- #6  0x0000000000689787 in hist_entry_iter__add (iter=0x7fffafff6590, al=0x7fffafff6540, max_stack_depth=127, arg=0x7fffffff9e00) at util/hist.c:1359
- #7  0x0000000000446710 in perf_event__process_sample (tool=0x7fffffff9e00, event=0x110d250, evsel=0xfea2d0, sample=0x7fffafff6760, machine=0x108c968) at builtin-top.c:845
- #8  0x0000000000447735 in deliver_event (qe=0x7fffffffa120, qevent=0x10fc200) at builtin-top.c:1211
- #9  0x000000000064ccae in do_flush (oe=0x7fffffffa120, show_progress=false) at util/ordered-events.c:245
- #10 0x000000000064d005 in __ordered_events__flush (oe=0x7fffffffa120, how=OE_FLUSH__TOP, timestamp=0) at util/ordered-events.c:324
- #11 0x000000000064d0ef in ordered_events__flush (oe=0x7fffffffa120, how=OE_FLUSH__TOP) at util/ordered-events.c:342
- #12 0x00000000004472a9 in process_thread (arg=0x7fffffff9e00) at builtin-top.c:1120
- #13 0x00007ffff6e7dba8 in start_thread (arg=<optimized out>) at pthread_create.c:448
- #14 0x00007ffff6f01b8c in __GI___clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+There is no SPI or I2C bus, so reg doesn't make sense.
 
-The cause is that perf_env__find_br_cntr_info tries to access a
-null pointer pmu_caps in the perf_env struct. A similar issue exists
-for homogeneous core systems which use the cpu_pmu_caps structure.
+> +
+> +  vdd-supply: true
+> +
+> +  led-gpios:
+> +    description: GPIO connected to the sensor's LED control pin (V-LED)
+> +    maxItems: 1
 
-Fix this by populating cpu_pmu_caps and pmu_caps structures with
-values from sysfs when calling perf top with branch stack sampling
-enabled.
+From the looks of the datasheet it seems like the light requires
+a PWM rather than a GPIO to control it. I don't see how a GPIO
+could be accurate enough in the timing.
 
-[1], LBR event logging introduced here:
-https://lore.kernel.org/all/20231025201626.3000228-5-kan.liang@linux.intel.com/
+> +
+> +  io-channels:
+> +    description: ADC channel connected to the sensor's analog output (Vo)
+> +    maxItems: 1
+> +
+> +  io-channel-names:
+> +    const: dust
+> +
+> +  sharp,led-on-delay-us:
+> +    description: |
+> +      Delay in microseconds after turning the LED ON before reading ADC.
+> +      The datasheet recommends 280µs after LED ON for accurate measurement.
+> +      (See Section 6-1 of the datasheet: Sampling timing = 0.28ms)
+> +
+> +    default: 280
+> +    minimum: 0
+> +    maximum: 320
 
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
----
-v4: prefer calloc and zfree operations in addition to other
-    cleanups suggested by Namhyung and Arnaldo
+For this, I would expect the same or a synchronized PWM output to trigger
+the ADC in order to be able to get accurate enough timing.
 
-v3: constify struct perf_pmu *pmu in __perf_env__read_core_pmu_caps()
-    use perf_pmus__find_core_pmu() instead of perf_pmus__scan_core(NULL)
+> +
+> +  sharp,measurement-window-us:
+> +    description: |
+> +      Duration in microseconds the LED remains ON for measurement.
+> +      The recommended pulse width is 320µs ±20µs. (See Section 6-1)
+> +
+> +    default: 320
+> +    minimum: 300
+> +    maximum: 340
 
-v2: update commit message with more meaningful stack trace from
-    gdb and indicate that affected systems are limited to CPU's
-    with LBR event logging support and that both hybrid and
-    non-hybrid core systems are affected.
----
- tools/perf/builtin-top.c |   8 +++
- tools/perf/util/env.c    | 110 +++++++++++++++++++++++++++++++++++++++
- tools/perf/util/env.h    |   1 +
- 3 files changed, 119 insertions(+)
+And this would be the duty cycle of the light PWM.
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index f9f31391bddb..c9d679410591 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1729,6 +1729,14 @@ int cmd_top(int argc, const char **argv)
- 	if (opts->branch_stack && callchain_param.enabled)
- 		symbol_conf.show_branchflag_count = true;
- 
-+	if (opts->branch_stack) {
-+		status = perf_env__read_core_pmu_caps(&perf_env);
-+		if (status) {
-+			pr_err("PMU capability data is not available\n");
-+			goto out_delete_evlist;
-+		}
-+	}
-+
- 	sort__mode = SORT_MODE__TOP;
- 	/* display thread wants entries to be collapsed in a different tree */
- 	perf_hpp_list.need_collapse = 1;
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index 36411749e007..b053d09438af 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -416,6 +416,116 @@ static int perf_env__read_nr_cpus_avail(struct perf_env *env)
- 	return env->nr_cpus_avail ? 0 : -ENOENT;
- }
- 
-+static int __perf_env__read_core_pmu_caps(const struct perf_pmu *pmu,
-+					  int *nr_caps, char ***caps,
-+					  unsigned int *max_branches,
-+					  unsigned int *br_cntr_nr,
-+					  unsigned int *br_cntr_width)
-+{
-+	struct perf_pmu_caps *pcaps = NULL;
-+	char *ptr, **tmp;
-+	int ret = 0;
-+
-+	*nr_caps = 0;
-+	*caps = NULL;
-+
-+	if (!pmu->nr_caps)
-+		return 0;
-+
-+	*caps = calloc(pmu->nr_caps, sizeof(char *));
-+	if (!*caps)
-+		return -ENOMEM;
-+
-+	tmp = *caps;
-+	list_for_each_entry(pcaps, &pmu->caps, list) {
-+		if (asprintf(&ptr, "%s=%s", pcaps->name, pcaps->value) < 0) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+
-+		*tmp++ = ptr;
-+
-+		if (!strcmp(pcaps->name, "branches"))
-+			*max_branches = atoi(pcaps->value);
-+		else if (!strcmp(pcaps->name, "branch_counter_nr"))
-+			*br_cntr_nr = atoi(pcaps->value);
-+		else if (!strcmp(pcaps->name, "branch_counter_width"))
-+			*br_cntr_width = atoi(pcaps->value);
-+	}
-+	*nr_caps = pmu->nr_caps;
-+	return 0;
-+error:
-+	while (tmp-- != *caps)
-+		zfree(tmp);
-+	zfree(caps);
-+	*nr_caps = 0;
-+	return ret;
-+}
-+
-+int perf_env__read_core_pmu_caps(struct perf_env *env)
-+{
-+	struct pmu_caps *pmu_caps;
-+	struct perf_pmu *pmu = NULL;
-+	int nr_pmu, i = 0, j;
-+	int ret;
-+
-+	nr_pmu = perf_pmus__num_core_pmus();
-+
-+	if (!nr_pmu)
-+		return -ENODEV;
-+
-+	if (nr_pmu == 1) {
-+		pmu = perf_pmus__find_core_pmu();
-+		if (!pmu)
-+			return -ENODEV;
-+		ret = perf_pmu__caps_parse(pmu);
-+		if (ret < 0)
-+			return ret;
-+		return __perf_env__read_core_pmu_caps(pmu, &env->nr_cpu_pmu_caps,
-+						      &env->cpu_pmu_caps,
-+						      &env->max_branches,
-+						      &env->br_cntr_nr,
-+						      &env->br_cntr_width);
-+	}
-+
-+	pmu_caps = calloc(nr_pmu, sizeof(*pmu_caps));
-+	if (!pmu_caps)
-+		return -ENOMEM;
-+
-+	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-+		if (perf_pmu__caps_parse(pmu) <= 0)
-+			continue;
-+		ret = __perf_env__read_core_pmu_caps(pmu, &pmu_caps[i].nr_caps,
-+						     &pmu_caps[i].caps,
-+						     &pmu_caps[i].max_branches,
-+						     &pmu_caps[i].br_cntr_nr,
-+						     &pmu_caps[i].br_cntr_width);
-+		if (ret)
-+			goto error;
-+
-+		pmu_caps[i].pmu_name = strdup(pmu->name);
-+		if (!pmu_caps[i].pmu_name) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+		i++;
-+	}
-+
-+	env->nr_pmus_with_caps = nr_pmu;
-+	env->pmu_caps = pmu_caps;
-+
-+	return 0;
-+error:
-+	for (i = 0; i < nr_pmu; i++) {
-+		for (j = 0; j < pmu_caps[i].nr_caps; j++)
-+			zfree(&pmu_caps[i].caps[j]);
-+		zfree(&pmu_caps[i].caps);
-+		zfree(&pmu_caps[i].pmu_name);
-+	}
-+	zfree(&pmu_caps);
-+	return ret;
-+}
-+
- const char *perf_env__raw_arch(struct perf_env *env)
- {
- 	return env && !perf_env__read_arch(env) ? env->arch : "unknown";
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index d90e343cf1fa..135a1f714905 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -152,6 +152,7 @@ struct btf_node;
- 
- extern struct perf_env perf_env;
- 
-+int perf_env__read_core_pmu_caps(struct perf_env *env);
- void perf_env__exit(struct perf_env *env);
- 
- int perf_env__kernel_is_64_bit(struct perf_env *env);
--- 
-2.48.1
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - led-gpios
+> +  - io-channels
+> +  - io-channel-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    dust_sensor {
+> +        compatible = "sharp,gp2y1010au0f";
+> +        reg = <0>;
+> +        vdd-supply = <&vcc>;
+> +        led-gpios = <&gpio 44 GPIO_ACTIVE_HIGH>;
+> +        io-channels = <&adc 0>;
+> +        io-channel-names = "dust";
+> +        sharp,led-on-delay-us = <280>;
+> +        sharp,measurement-window-us = <320>;
+> +    };
 
 
