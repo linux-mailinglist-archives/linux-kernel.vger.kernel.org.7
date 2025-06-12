@@ -1,641 +1,231 @@
-Return-Path: <linux-kernel+bounces-683800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D56CAD7211
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287D0AD7239
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA78416CD37
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5993BA79C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510352459D2;
-	Thu, 12 Jun 2025 13:30:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A61F255E27;
+	Thu, 12 Jun 2025 13:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DlGqLHkl";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OlOWRe+i"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5E424468A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749735049; cv=none; b=EJduc3UIAGxgnGYU9XNlSmdNCmaA0QFpmD6aBTHeUIAfO/EHDUawuAs9W2TGfxHYbiVYm/wmG5aiOg5jp+067WsWy2W5PikO/NKstWhuOzZYuuHjIly+4BtMOXtCQUOERaBa3gSOkOGeQR7a1SPPYecDo4uqbjuWRm9exq6CRzs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749735049; c=relaxed/simple;
-	bh=wZeNBzHzdl2QUNJzlKCVLF1nsDqYRcUKokOaDwz4RnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r49XHBWx12aYbD64ZWnJQrvBxmx6Tcaof2RREgolqvRf6BHyWJBlGA2QiA+BEjMoNFy8qQyl5kqv9KZqRgHWgUavUraNaIKcjYMxy9ItXoMe1NIzYCOPODKfo0wDd3hUHf0X7lcLZ4owSQ8ancy7N6igIFHMc4huZEDIwq34PCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1uPi0m-0001yE-Rn; Thu, 12 Jun 2025 15:30:32 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1uPi0m-0038B5-1P;
-	Thu, 12 Jun 2025 15:30:32 +0200
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1uPi0m-008vvr-0Z;
-	Thu, 12 Jun 2025 15:30:32 +0200
-Date: Thu, 12 Jun 2025 15:30:32 +0200
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: yassine.ouaissa@allegrodvt.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] media: allegro-dvt: Add Gen 3 IP stateful decoder
- driver
-Message-ID: <aErWeK9qQSrCcNnp@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	yassine.ouaissa@allegrodvt.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20250605-allegro_dvt_al300_dec_driver-v2-0-1ef4839f5f06@allegrodvt.com>
- <20250605-allegro_dvt_al300_dec_driver-v2-4-1ef4839f5f06@allegrodvt.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918BD2550CF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749735091; cv=fail; b=SdXy30T9ZGPaLPN5vC98bDj7zJRimVNPc+NXWqzHBlpI69OQR+G2Cg4eyGZBqUx3Cf6z2gVXhUGO6EatFLsnx3ulfUqq8SSrYBRl7LToVJ3MHuPd8BufEmlvP3YdGsX/EA9qJrIrjOSGFec6HVhzW11M1s6qf8VwcjRgmAab5fc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749735091; c=relaxed/simple;
+	bh=z7EuVbO0Y8fgNVW9/3p3DOO8Xgnjeh3Hr6sZ3ufMwew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Uo0DFIWUXZd//+VmqLS6g5Yr/cVOqDK7nRXjZ0XiMWJGG0j6ESnR6JYuWZTeC3VpKdpuc1ERf5lS1oIn4RDg1jMky/nEdJ6OnLvqxvmOcVUcYASm771FKQJuDB/BUS1MATzpPooq07AzHLoXL8J2faXEs+KcPnlloddFSvebGFU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DlGqLHkl; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OlOWRe+i; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7fxqY022693;
+	Thu, 12 Jun 2025 13:31:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=z7EuVbO0Y8fgNVW9/3
+	p3DOO8Xgnjeh3Hr6sZ3ufMwew=; b=DlGqLHklr4p0JavvyKEzD3XNJY1TnHtpIx
+	f1cBM6pqkKSCf7P+k0fWVKcatGJGaB03gzZYuCZVM+NCQ4st13GF8EGLNTnV4xzb
+	XCbsnd4TAQ6ZIHnTpbKKU9e08Xt7O6eBxoNrtVCbyLbaBnvwp7zi3qk4bZ2GBcaD
+	DEaNxINDWfTKoIPW7gviFv6Uny1wqf2NkuxhDMpbi1Pi48rkpqzS9aeCVExD69ps
+	YZHyYnLxAV219AGwe9rvnbnGmY8YbCBENmyte2SGpotQkRvKeF0INuWQnOH6/XZp
+	5pRAQOwmWDeIotERGW6jzlHRjr1cKQIqEf+zSPzmY48kb5fiVKkw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474dad9ke6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Jun 2025 13:31:12 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55CC4fGN037930;
+	Thu, 12 Jun 2025 13:31:10 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2081.outbound.protection.outlook.com [40.107.243.81])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 474bvhu416-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Jun 2025 13:31:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YGXNggcmub/uyxEm8ck/c2OApjz5OlSIt4fBfJ1DjX+F5Y1lkTvRkbssBOjvDXBldUZ3FlYN//1XcVfto77LRlsUy+APfHaRTBPx8xz3eVNHf8+nTDlsg7Ty1BKVNF9l9kFXSqDyD+RHVNTX2KLbJ+BwsoipnLpE2tM6sb14E1x0/mCLiTiEvGkvlWZvuiyeRd8qNJUu02J7qfDgS2qJ01G1KBDpB9C5CO3hFPufW74EG+cplpG5Y/3SMUnhNKZm9Zm8eCFDt0dXV4ssysbOcDcOkzA4tvT+RpYt6tZIAQxqjwZj8QTASzQqmEi4RIgwwIb5bsMkglGjZbsBOElyVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z7EuVbO0Y8fgNVW9/3p3DOO8Xgnjeh3Hr6sZ3ufMwew=;
+ b=xNYLcHicpG+jAgL0SG+FrIEL9hnPfqNKLV+iopGc2QeQb7qfBjYYCDGfcTL+BuIOtQFm0IgJywR594/fgwJMJaSqSFcB9d42LgF4/z8tAB/WIS7UVxWopwJUfSxDEl/YNnwOZyzFyX6U8tNT0ktDUqOVA2ztlIlWq3c3ZyjXC/nKfzvE+956TI1Haolz3c69JOse4BxgKW/4w0YfJgRjV8Ni4CBISsHA4wWI+ppJ0Ek1bSitwIj4W4T2Omvl0nw6bFX3juyMw44fxo5F5mjQqUUBiQefV/GpXF6hV8Psn8TLra9NKTK+HGvkn8gpoCn6CCxrLxYzCyZn3CXubB1rBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z7EuVbO0Y8fgNVW9/3p3DOO8Xgnjeh3Hr6sZ3ufMwew=;
+ b=OlOWRe+ihA7sQguOxvliMEfL7pZN8EjKWOP9dCEo6cwgKbsE9SXPmXzziH99UhIGqyFFt0yRa9a1G178SezlhSVgV5Z2Da+20EfyTBN5QDWbZUHr2QVCxjxmTd+C4y8Fkl8gbHho8/k3deBgtSoj8LCaWjUecvL+BpoSlMv+hKQ=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB5632.namprd10.prod.outlook.com (2603:10b6:a03:3df::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Thu, 12 Jun
+ 2025 13:31:07 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8813.024; Thu, 12 Jun 2025
+ 13:31:07 +0000
+Date: Thu, 12 Jun 2025 14:31:05 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+        hughd@google.com, Liam.Howlett@oracle.com, npache@redhat.com,
+        ryan.roberts@arm.com, dev.jain@arm.com, ziy@nvidia.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+Message-ID: <935f3127-8304-481a-91f8-fbce02197e07@lucifer.local>
+References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
+ <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
+ <1ec368c4-c4d8-41ea-b8a3-7d1fdb3ec358@redhat.com>
+ <2ff65f37-efa9-4e96-9cdf-534d63ff154e@linux.alibaba.com>
+ <953596b2-8749-493d-97eb-a5d8995d9ef8@redhat.com>
+ <3a3f6f69-f0f4-41a0-b960-e76423fb6dc9@lucifer.local>
+ <e80f8d1c-888b-4d39-a00c-5b92ee339715@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e80f8d1c-888b-4d39-a00c-5b92ee339715@redhat.com>
+X-ClientProxiedBy: LO4P123CA0694.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:37b::16) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250605-allegro_dvt_al300_dec_driver-v2-4-1ef4839f5f06@allegrodvt.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB5632:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcb0274d-e927-4e7f-526a-08dda9b56330
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kpehZrdsNhi6c54Nx+QXk3FEFOTkWJJV80CUhhUiVYnjviihyT051P++z5ws?=
+ =?us-ascii?Q?j8AV8EqljlDyPz1tEQEJKPxE1fUVEo2wfb7WmZhr25zHAWwHD+LI2IBl+18s?=
+ =?us-ascii?Q?kHEUiVYhN2596YTCJHH+ER4N4GZQQzptgq6H4+p/XWE9wTa2fDRURBRVcG67?=
+ =?us-ascii?Q?2YF31R6toey+/jTUsanXH2APbEMZAi9pvXsropWYCOZgUNCGBH/ZjfWs0u19?=
+ =?us-ascii?Q?bapsHTcNxZ7cD1JOnPPyOj29gxM1o+J/CNEbtZKJ5WbRtPM+sPpVGH4SDI8J?=
+ =?us-ascii?Q?cMbhX4hlLOxoGVus2By50nqcZyJ2x5yml49p3PSwwZrGVUGczIdXmxBcsGZo?=
+ =?us-ascii?Q?mm4jBA029aGD3/H3DrYdU07RWjE4U68992Wrb/jzM47/UtpCFC8XJT9ZZEF5?=
+ =?us-ascii?Q?Z+JOXuobScthly+TEvFjURfHlp//j7okK+hpSBx0RG/JQjHPxJ2AxN8PVJXb?=
+ =?us-ascii?Q?/3YUEB/YPQUKpjdw3nu/pvD8M9d0l9iBWOXo2mB9rP3+4hlN8P95VXkNigTm?=
+ =?us-ascii?Q?A1T3cJJyOAbQwqh5/OJvgqSil2eXS7qf8wMzM0f/6D3/j2u5dt7Z4OS8b1N0?=
+ =?us-ascii?Q?2OdhuvLpZpcbnfjx9Y5BfVXqVmAusRxxogqSXARJRdoj/8agIAtbEXC9yW9r?=
+ =?us-ascii?Q?o8T+KEW73nTxth4dTusYvmk1NBTnwQq7D0Qc76RbP4Ga71AOoHuYRoJv+RKv?=
+ =?us-ascii?Q?5nJXrc2PLE7KfXOvejVnJNiHuROs8ly3Am2/CAOBOhuqeDUWbC2Rnt8XL73X?=
+ =?us-ascii?Q?osZKXrY0ajlEW8uIozja5n6IpEvpVdeoICrpy3WRbLQZ8bORx67zn8dqMyCJ?=
+ =?us-ascii?Q?Gr+oSh/AnmLZBhr/KFsNF9GKT/sFoP9p5rLvaVqlFtR2RruqBMOe09LV+SzG?=
+ =?us-ascii?Q?U1LY8Ee+JUmnGVMseIyioKFrhNv01q+TKN14xaLhs80LUaS+36JlRVS5oQCv?=
+ =?us-ascii?Q?gYwq+dKX8rwIJrlV3QGZnfh3HYO59CzZArGtdoT+Y/owYlmNwGnjXfd4h2nB?=
+ =?us-ascii?Q?q+uimp4U1XVvrEXxe0489ac1mN3b/gtwbiClW8IWm8+HJU7w+bzlfkVE1TsV?=
+ =?us-ascii?Q?Q+scXsk891mtJDnn9tb7tSfS07kbZkiME5m2vItQ7Fmj1WGykcCpkqA4SFMf?=
+ =?us-ascii?Q?nHscEA7QbL+1pqUbruXgL1tymJvxtj2tV69bWcxZnOu2MbOU9SumB+VXhGeb?=
+ =?us-ascii?Q?S+TwNsh373RtBkdGVOZ15V1Elq9I28lQjMO6j66voP03XYydGyV3jLkQJ9bT?=
+ =?us-ascii?Q?XjUoFCStkaTvf83qcn7hx0zT7+oXtJ1KIdKGvgkY5GYRUgYEpYdftwa3HClB?=
+ =?us-ascii?Q?qiOpt/Vj25Tbl0xZ1OLYAApv7CxaXvT+B3xjEt14iRciUUWscibsE4T6v0Q3?=
+ =?us-ascii?Q?hKVRZoGtWHk/J5D5ZAK32QF0Z03nNpc8s+l6EX5+rmKH4tUuM5/jmPTQF/xi?=
+ =?us-ascii?Q?dbZshekNslE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FB15k3XyvhPEUyQdGFuT56xQ3lKAFddpXvUd0BjTjvYEIDC3098i5QbOKygP?=
+ =?us-ascii?Q?Y/7ApbBxz6nhxz+M7BkkomGb8rfUjrG90wmj9TP3+rYAeZXQLf0+sQIRjKBw?=
+ =?us-ascii?Q?94rLpmwI+IInHxYy2qcoraJKBNgzT9/3L3U0X1CA33kXh8LFg6Tpq+6eaoxf?=
+ =?us-ascii?Q?uuxS0yjhEsKNau69RhKjQMoFdFuZYd8gscAHd1Iw3eFNzsXDyoh6VIL9buZQ?=
+ =?us-ascii?Q?pYq43qg0ehK6VQeakyLeIIsXn0PH0zG7URSkzd01IcZM4FxecNaqQ5PpA4G/?=
+ =?us-ascii?Q?y2U7R15fez/FauflgYCjDd9Bn4EleQVrwXFengIvVlfuzOiz1lInYX4sIF2k?=
+ =?us-ascii?Q?zXdVs7ZpMJp9HKOrLXl91OKffuSCutOQ8zl5YI+F5bnoIqFsYprMR2HT7YMk?=
+ =?us-ascii?Q?ds6Ccm62wMJ48Io8cgfQBdVclbb98yEmm8wbv1TMVfNGuJ9R2SmlU/UK60KH?=
+ =?us-ascii?Q?ybdsnos1pBtHVVmE0ctSnvXzf9LQ36gtCDs4XbXW+S96PrmvfE0CYoVsIPF6?=
+ =?us-ascii?Q?ehO4F/xE7s65zyU6/6MnW0NW/0BiufDp71YXarbgZ3DI3iLSLtxA7B3cPfeH?=
+ =?us-ascii?Q?kcDEdvumJi3fD+MQaDFyHh4vnuhcEMMJsTk1A3ERTNm9k6DCvT6FzRExFuhT?=
+ =?us-ascii?Q?kTVPJIz4GoLW4YnjETSZFk3j8FT3oQ8fZcMyd/CK2crQHFoV6JgD3E6rBSJC?=
+ =?us-ascii?Q?riD5jLulqEZAlEfIm1zCvD0vl4caQhbieyl3ALQbwwofwJ7hgaAxQDCKfnhh?=
+ =?us-ascii?Q?ibw/qQUyc6Uc00gzkMIiqgeMIIOxGOD5KRgOf1p5o3itblhhzn/fOIwFbapN?=
+ =?us-ascii?Q?vy1YvFLPtPvTMo/mReCJFZJEttsMppijV+S6bKiLz+ip3qH4trX5x4T5xocb?=
+ =?us-ascii?Q?u574WzxI45g8zmeYUzkQN1fkXozo41SeCIzK+SpoNfq1iBgsgUhQKp4qq+ZV?=
+ =?us-ascii?Q?B8P5dJ0b9cUSbdGn7xkese3i8/WnNn4BVekEHpieSZusc2XYfMN3suDdSJS8?=
+ =?us-ascii?Q?LM0lDJONdj0jZ7fHbwPliRsE87cSRdTsYtGPzEsycOZPaL8tPKLj5CVn/Lfl?=
+ =?us-ascii?Q?i+c1u9NeN+vhSfg4jqeIeRlVxoqntTzVjjCAVwYJJEzErPisW1NGJ8wHd1E7?=
+ =?us-ascii?Q?ZDO2HtCsX3MIWXUcV2TtTzwKBWUm6w7J+tkTUyOkVFSCqsDGDWewtRRskT0+?=
+ =?us-ascii?Q?iYFU+i9TtrHwad7SK41LbSKEn6GkJRz+xmQkV97LZu0dcJvJxF1vQltb1be4?=
+ =?us-ascii?Q?QGMXSVkYl/6TJf/7X2eQ398wMrnmJCArCGVAYtDw3OMfoU48MORR48a6vp9B?=
+ =?us-ascii?Q?t6Nufd8flbJMgnQnEGX8vaqGWxtXN9tiZgn21qscC93N5Ic1dxd4vnbix96X?=
+ =?us-ascii?Q?YrpZmQq95ip9EO0xyIdTv1zXwCZP5sdku8FE2+m/+6AqCoJWKBzUjGS8t9bS?=
+ =?us-ascii?Q?YkXmfneX8bXcKUs4XjXY3CpNySZM+4symqM9Qvzq9CD2bIco/VnN+QsDOiAO?=
+ =?us-ascii?Q?+ukfzzvjslICXgifpcbrVNFuLkf+VA0a5i4np24Uqc8ORjX6WnjsmH/IWT71?=
+ =?us-ascii?Q?xQpAWpOa8QDC/soz3zuVVlng4v3M9SnpxbQsDQSt/CZnlaBeVdBq1XTg2QTv?=
+ =?us-ascii?Q?eQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ETFWwmPhnVNq8gzLuKQ1DA7uaLMsvHbRs79t+H/wEh0Xbgh94v3pzzA0R2tCT6pFMwIG3k8CqebAwMMhUjCnUxWv6ulLYBmoHbs5tdnjQUM7q2oVBGFB+j8tiQm2u025l6sj8YQMcmQRqN7dPB0JgCA0Wpfs9H3oAm5vQsWahMX1rgZDF+rnfbk95iOnHa19s+JBRKm5ejSP2Kmb5mTuuWLWqdon2ASORj6DF0WfKvxippmc146kmrHAZM+mGX8Es2TYy4X0rnz90wN324qqSvEtDdLLxGaambcOP+9YRXTYTTsN9bSRiUhze0M7VgBechDjUnSNzTy1joHKmrogpIGTCVpijKLu91NRUBedfY1e4LPUDLg6tVtTx9Cb0iaVuQPDeDipjcrrZEbx0b5j4XyicqHCp/hqFIe2RcZy4Cb2qCqriRoYrjXn3+80kD9P23NhianQNASEBINVRhuEB7DjYUcKHwNRyIgtZzYk/Kg/+UP/F1URK7QhKMShmCZ8GqI+aGdxZZGlvMaHPOuTQzaJaMQ4GMyDGNrjzS+63aoSL2WgdagWHEy/aQ1mq2rUU6uOA4INtyhBPqfe0YrRqztw59n7+sRz/BgBku0s/XQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcb0274d-e927-4e7f-526a-08dda9b56330
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 13:31:07.5677
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RGZwVmAFPe22kvWv/aqoqUtv05Iiv6oqWjt9HosM5g04VL2ydAJwuZ7UEIeMV6nMGCcvxsw00/GK9v3Y4miB60d3aQLD3rMTB0gFxaHEEKU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5632
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_08,2025-06-12_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 mlxlogscore=960
+ bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506120104
+X-Proofpoint-ORIG-GUID: 4nVWT808bwxveduaFOZsNY9xWwap1GpW
+X-Authority-Analysis: v=2.4 cv=EJwG00ZC c=1 sm=1 tr=0 ts=684ad6a0 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=G1JNWisfD23MATkZWEYA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13207
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEwNCBTYWx0ZWRfX4xidWTwff94f Qn/HTQBop7GXw/mYxrtV8W9ciDfyUf8sC/Ch+Z05Jyi2E+WZaHxR7hrzVbM0I5qsD62y4zWUmi7 ybH0bxakwgAAcPcOWoysN55du+ZXJ1ppEd7ZXBqIpH/IxUttxV0/khgBRpNjnN+iaH5eEXpOoJC
+ Y16sELwVo960qBdsrWQjxREquMYGzAsbFiXGEPV1WnLfoCRn5Os44gYxveIyTUwNWk9szUcONrR ah+6VMBNih4wqPje7sLiBwAfA7mXGTe3860/lWqr1mv/BhNh+bZZPsGA/Tx/MYgZapBd6L05Wm3 3cHwv8bGIEKIyP5wgcJEw6ZSs3b1Hbrl/9w7GprMcxe/HGP5yFI+bfpONgKkX5oZDi4K5qVL45Z
+ 94SOogCh+MdHS0f0Ha92/VuT35IN9evr6zEwyQkOJRzfWx5GpC9iitvuKVkLOC8ao70kHMqr
+X-Proofpoint-GUID: 4nVWT808bwxveduaFOZsNY9xWwap1GpW
 
-Hi Yassine,
+On Thu, Jun 12, 2025 at 03:13:19PM +0200, David Hildenbrand wrote:
+[snip]
+>
+> The masks are just disgusting :(
 
-Thanks for the patch.
+Yeah I was shocked when I saw this implementation it's bloody terrible. It just
+is.
 
-The overall architecture looks a lot like the video encoder for the
-ZynqMP, but with some significant differences in the details. I didn't
-manage to look more closely at the driver, yet, but I have a few high
-level questions.
+>
+> While you were writing that reply, I just sent out something else. Not sure
+> if that makes sense.
 
-On Thu, 05 Jun 2025 12:26:59 +0000, Yassine Ouaissa via B4 Relay wrote:
-> From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-> 
-> This commit introduces a new allegro-dvt V4L2 stateful decoder driverfor
-> the Gen 3 IP with support for:
-> - AVC (H.264), HEVC (H.265), and JPEG decoding
-> - Output formats: NV12, NV16, I420, and P010 for capture
-> 
-> v2:
-> - Replace the mutex_(lock/unlock) with the guard(mutex), that manage
->   mutexes more efficiently.
-> - Set DMA_BIT_MASK to 39, and drop the paddr check when allocating
->   dma_memory.
-> - Use dma_coerce_mask_and_coherent to set the DMA_MASK.
-> - Use static initializer for some structs.
-> - use #ifdef instead of #if defined
-> - Optimize some function.
-> - Use the declaration in the loop.
-> - Use codec for al_codec_dev instead of dev, to not get confused with
->   the device struct.
-> - Remove the codec member of the al_codec_dev, use the fmt->pixelformat
->   when request creating decoder instance.
-> 
-> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-> ---
->  drivers/media/platform/allegro-dvt/Kconfig         |    1 +
->  drivers/media/platform/allegro-dvt/Makefile        |    1 +
->  drivers/media/platform/allegro-dvt/al300/Kconfig   |   23 +
->  drivers/media/platform/allegro-dvt/al300/Makefile  |    6 +
->  .../platform/allegro-dvt/al300/al_codec_common.c   |  733 ++++++++++
->  .../platform/allegro-dvt/al300/al_codec_common.h   |  248 ++++
->  .../platform/allegro-dvt/al300/al_codec_util.c     |  174 +++
->  .../platform/allegro-dvt/al300/al_codec_util.h     |  186 +++
->  .../media/platform/allegro-dvt/al300/al_vdec_drv.c | 1518 ++++++++++++++++++++
->  .../media/platform/allegro-dvt/al300/al_vdec_drv.h |   93 ++
->  10 files changed, 2983 insertions(+)
-> 
-[...]
-> diff --git a/drivers/media/platform/allegro-dvt/al300/al_codec_common.c b/drivers/media/platform/allegro-dvt/al300/al_codec_common.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..716d0004482702537ea89ec4abecd6af26654b32
-> --- /dev/null
-> +++ b/drivers/media/platform/allegro-dvt/al300/al_codec_common.c
-[...]
-> +static void handle_alloc_memory_req(struct al_codec_dev *codec,
-> +				    struct msg_itf_header *hdr)
-> +{
-> +	struct device *dev = &codec->pdev->dev;
-> +	struct msg_itf_alloc_mem_req req;
-> +	struct msg_itf_alloc_mem_reply_full reply = {
-> +		.reply.phyAddr = 0,
-> +		.hdr.type = MSG_ITF_TYPE_ALLOC_MEM_REPLY,
-> +		.hdr.drv_ctx_hdl = hdr->drv_ctx_hdl,
-> +		.hdr.drv_cmd_hdl = hdr->drv_cmd_hdl,
-> +		.hdr.payload_len = sizeof(struct msg_itf_alloc_mem_reply),
-> +	};
-> +	struct codec_dma_buf *buf;
-> +	int ret;
-> +
-> +	ret = al_common_get_data(codec, (char *)&req, hdr->payload_len);
-> +	if (ret) {
-> +		al_codec_err(codec, "Unable to get cma req %d", ret);
-> +		return;
-> +	}
-> +
-> +	buf = kmalloc(sizeof(*buf), GFP_KERNEL);
-> +	if (!buf)
-> +		goto send_reply;
-> +
-> +	buf->size = req.uSize;
-> +	buf->vaddr =
-> +		dma_alloc_coherent(dev, buf->size, &buf->paddr, GFP_KERNEL);
-> +	if (!buf->vaddr) {
-> +		dev_warn(dev, "Failed to allocate DMA buffer\n");
-> +		goto send_reply;
-> +	}
-> +
-> +	reply.reply.phyAddr = (u64)buf->paddr;
-> +	al_common_dma_buf_insert(codec, buf);
+Replied there :>)
 
-The buffers allocated by the firmware are tracked by device. Thus, there
-is only one list for all buffers used by the firmware.
+>
+> I'm having a hard time figuring out what we even want here in the existing
+> code.
 
-I guess that the buffers are be allocated per context. If that's the
-case, maybe tracking them per context in the driver would be a better
-option.
+I'm confused as to why this has been done in this way in general.
 
-> +
-> +send_reply:
-> +	ret = al_common_send(codec, &reply.hdr);
-> +	if (ret) {
-> +		al_codec_err(codec, "Unable to reply to cma alloc");
-> +		al_common_dma_buf_remove(codec, buf);
-> +	}
-> +}
-> +
-> +static void handle_free_memory_req(struct al_codec_dev *codec,
-> +				   struct msg_itf_header *hdr)
-> +{
-> +	struct msg_itf_free_mem_req req;
-> +	struct msg_itf_free_mem_reply_full reply = {
-> +		.hdr.type = MSG_ITF_TYPE_FREE_MEM_REPLY,
-> +		.hdr.drv_ctx_hdl = hdr->drv_ctx_hdl,
-> +		.hdr.drv_cmd_hdl = hdr->drv_cmd_hdl,
-> +		.hdr.payload_len = sizeof(struct msg_itf_free_mem_reply),
-> +		.reply.ret = -1,
-> +	};
-> +	struct codec_dma_buf *buf;
-> +	int ret;
-> +
-> +	ret = al_common_get_data(codec, (char *)&req, hdr->payload_len);
-> +	if (ret) {
-> +		al_codec_err(codec, "Unable to put cma req");
-> +		return;
-> +	}
-> +
-> +	buf = al_common_dma_buf_lookup(codec, req.phyAddr);
-> +	if (!buf) {
-> +		al_codec_err(codec, "Unable to get dma handle for %p",
-> +			     (void *)(long)req.phyAddr);
-> +		reply.reply.ret = -EINVAL;
-> +		goto send_reply;
-> +	}
-> +
-> +	al_codec_dbg(codec, "Free memory %p, size %d",
-> +		     (void *)(long)req.phyAddr, buf->size);
-> +
-> +	al_common_dma_buf_remove(codec, buf);
-> +	reply.reply.ret = 0;
-> +
-> +send_reply:
-> +	ret = al_common_send(codec, &reply.hdr);
-> +	if (ret)
-> +		al_codec_err(codec, "Unable to reply to cma free");
-> +}
-> +
-> +static void handle_mcu_console_print(struct al_codec_dev *codec,
-> +				     struct msg_itf_header *hdr)
-> +{
-> +#ifdef DEBUG
+I feel a churny refactoring coming on... ;)
 
-What's the reason for making this a compile time option? Maybe a
-module parameter to enable MCU logging at runtime would be more
-friendly for debugging.
-
-> +	struct msg_itf_write_req *req;
-> +	int ret;
-> +
-> +	/* one more byte to be sure to have a zero terminated string */
-> +	req = kzalloc(hdr->payload_len + 1, GFP_KERNEL);
-> +	if (!req) {
-> +		al_common_skip_data(codec, hdr->payload_len);
-> +		al_codec_err(codec, "Unable to alloc memory");
-> +		return;
-> +	}
-> +
-> +	ret = al_codec_msg_get_data(&codec->mb_m2h, (char *)req,
-> +				    hdr->payload_len);
-> +	if (ret) {
-> +		al_codec_err(codec, "Unable to get request");
-> +		kfree(req);
-> +		return;
-> +	}
-> +
-> +	/* Print the mcu logs */
-> +	dev_dbg(&codec->pdev->dev, "[ALG_MCU] %s(),%d: %s\n", __func__,
-> +		__LINE__, (char *)(req + 1));
-> +	kfree(req);
-> +#else
-> +	al_common_skip_data(codec, hdr->payload_len);
-> +#endif
-> +}
-> +
-[...]
-> +static int al_common_load_firmware_start(struct al_codec_dev *codec,
-> +					 const char *name)
-> +{
-> +	struct device *dev = &codec->pdev->dev;
-> +	dma_addr_t phys;
-> +	size_t size;
-> +	void *virt;
-> +	int err;
-> +
-> +	if (codec->firmware.virt)
-> +		return 0;
-> +
-> +	err = al_common_read_firmware(codec, name);
-> +	if (err)
-> +		return err;
-> +
-> +	size = codec->firmware.size;
-> +
-> +	virt = dma_alloc_coherent(dev, size, &phys, GFP_KERNEL);
-> +	err = dma_mapping_error(dev, phys);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	codec->firmware.virt = virt;
-> +	codec->firmware.phys = phys;
-> +
-> +	al_common_copy_firmware_image(codec);
-> +	err = al_common_parse_firmware_image(codec);
-> +	if (err) {
-> +		al_codec_err(codec, "failed to parse firmware image");
-> +		goto cleanup;
-> +	}
-> +
-> +	err = al_common_setup_hw_regs(codec);
-> +	if (err) {
-> +		al_codec_err(codec, "Unable to setup hw registers");
-> +		goto cleanup;
-> +	}
-> +
-> +	al_codec_mb_init(&codec->mb_h2m, virt + codec->firmware.mb_h2m.offset,
-> +			 codec->firmware.mb_h2m.size, MB_IFT_MAGIC_H2M);
-> +
-> +	al_codec_mb_init(&codec->mb_m2h, virt + codec->firmware.mb_m2h.offset,
-> +			 codec->firmware.mb_m2h.size, MB_IFT_MAGIC_M2H);
-> +
-> +	err = al_common_start_fw(codec);
-> +	if (err) {
-> +		al_codec_err(codec, "fw start has failed");
-> +		goto cleanup;
-> +	}
-
-If I understand correctly, the difference to the ZynqMP firmware is that
-the firmware can be configured for different addresses. Thus, the
-firmware and mailbox addresses on ZynqMP are determined by the bitstream
-synthesis, which this driver is free to allocate memory for the firmware
-and mailboxes wherever it wants. Correct?
-
-> +
-> +	al_codec_dbg(codec, "mcu has boot successfully !");
-> +	codec->fw_ready_cb(codec->cb_arg);
-> +
-> +	release_firmware(codec->firmware.firmware);
-> +	codec->firmware.firmware = NULL;
-> +
-> +	return 0;
-> +
-> +cleanup:
-> +	dma_free_coherent(dev, size, virt, phys);
-> +
-> +	return err;
-> +}
-> +
-> +static u64 al_common_get_periph_addr(struct al_codec_dev *codec)
-> +{
-> +	struct resource *res;
-> +
-> +	res = platform_get_resource_byname(codec->pdev, IORESOURCE_MEM, "apb");
-> +	if (!res) {
-> +		al_codec_err(codec, "Unable to find APB start address");
-> +		return 0;
-> +	}
-> +
-> +	if (res->start & AL_CODEC_APB_MASK) {
-> +		al_codec_err(codec, "APB start address is invalid");
-> +		return 0;
-> +	}
-> +
-> +	return res->start;
-> +}
-> +
-> +int al_common_probe(struct al_codec_dev *codec, const char *name)
-> +{
-> +	struct platform_device *pdev = codec->pdev;
-> +	int irq;
-> +	int ret;
-> +
-> +	mutex_init(&codec->buf_lock);
-> +	INIT_LIST_HEAD(&codec->alloc_buffers);
-> +	init_completion(&codec->completion);
-> +
-> +	/* setup dma memory */
-> +	ret = al_common_setup_dma(codec);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Hw registers */
-> +	codec->regs_info =
-> +		platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-> +	if (!codec->regs_info) {
-> +		al_codec_err(codec, "regs resource missing from device tree");
-> +		return -EINVAL;
-> +	}
-> +
-> +	codec->regs = devm_ioremap_resource(&pdev->dev, codec->regs_info);
-> +	if (!codec->regs) {
-> +		al_codec_err(codec, "failed to map registers");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	codec->apb = al_common_get_periph_addr(codec);
-> +	if (!codec->apb)
-> +		return -EINVAL;
-> +
-> +	/* The MCU has already default clock value */
-> +	codec->clk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(codec->clk)) {
-> +		al_codec_err(codec, "failed to get MCU core clock");
-> +		return PTR_ERR(codec->clk);
-> +	}
-> +
-> +	ret = clk_prepare_enable(codec->clk);
-> +	if (ret) {
-> +		al_codec_err(codec, "Cannot enable MCU clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		al_codec_err(codec, "Failed to get IRQ");
-> +		ret = -EINVAL;
-> +		goto disable_clk;
-> +	}
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, irq,
-> +					al_common_hardirq_handler,
-> +					al_common_irq_handler, IRQF_SHARED,
-> +					dev_name(&pdev->dev), codec);
-> +	if (ret) {
-> +		al_codec_err(codec, "Unable to register irq handler");
-> +		goto disable_clk;
-> +	}
-> +
-> +	/* ok so request the fw */
-> +	ret = al_common_load_firmware_start(codec, name);
-> +	if (ret) {
-> +		al_codec_err(codec, "failed to load firmware : %s", name);
-> +		goto disable_clk;
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_clk:
-> +	clk_disable_unprepare(codec->clk);
-> +
-> +	return ret;
-> +}
-> +
-[...]
-> diff --git a/drivers/media/platform/allegro-dvt/al300/al_codec_util.h b/drivers/media/platform/allegro-dvt/al300/al_codec_util.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..5f893db4a1a3f2b9e6e9109b81a956bcaa71851c
-> --- /dev/null
-> +++ b/drivers/media/platform/allegro-dvt/al300/al_codec_util.h
-> @@ -0,0 +1,186 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Copyright (c) 2025 Allegro DVT.
-> + * Author: Yassine OUAISSA <yassine.ouaissa@allegrodvt.fr>
-> + */
-> +
-> +#ifndef __AL_CODEC_UTIL__
-> +#define __AL_CODEC_UTIL__
-> +
-> +#include <linux/mutex.h>
-> +#include <linux/types.h>
-> +#include <linux/v4l2-common.h>
-> +
-> +#include <media/v4l2-mem2mem.h>
-> +#include <media/videobuf2-v4l2.h>
-> +
-> +#define MB_IFT_MAGIC_H2M 0xabcd1230
-> +#define MB_IFT_MAGIC_M2H 0xabcd1231
-> +#define MB_IFT_VERSION 0x00010000
-> +
-> +#define MAJOR_SHIFT 20
-> +#define MAJOR_MASK 0xfff
-> +#define MINOR_SHIFT 8
-> +#define MINOR_MASK 0xfff
-> +#define PATCH_SHIFT 0
-> +#define PATCH_MASK 0xff
-> +
-> +/*
-> + * AL_BOOT_VERSION() - Version format 32-bit, 12 bits for the major,
-> + * the same for minor, 8bits for the patch
-> + */
-> +#define AL_BOOT_VERSION(major, minor, patch) \
-> +	((((major) & MAJOR_MASK) << MAJOR_SHIFT) | \
-> +	 (((minor) & MINOR_MASK) << MINOR_SHIFT) | \
-> +	 (((patch) & PATCH_MASK) << PATCH_SHIFT))
-> +
-> +#define al_phys_to_virt(x) ((void *)(uintptr_t)x)
-> +#define al_virt_to_phys(x) ((phys_addr_t)(uintptr_t)x)
-> +
-> +#define DECLARE_FULL_REQ(s)    \
-> +	struct s##_full {            \
-> +		struct msg_itf_header hdr; \
-> +		struct s req;              \
-> +	} __packed
-> +
-> +#define DECLARE_FULL_REPLY(s)  \
-> +	struct s##_full {            \
-> +		struct msg_itf_header hdr; \
-> +		struct s reply;            \
-> +	} __packed
-> +
-> +#define DECLARE_FULL_EVENT(s)  \
-> +	struct s##_full {            \
-> +		struct msg_itf_header hdr; \
-> +		struct s event;            \
-> +	} __packed
-> +
-> +struct al_mb_itf {
-> +	u32 magic;
-> +	u32 version;
-> +	u32 head;
-> +	u32 tail;
-> +} __packed;
-> +
-> +struct al_codec_mb {
-> +	struct al_mb_itf *hdr;
-> +	struct mutex lock;
-> +	char *data;
-> +	int size;
-> +};
-
-On a first glance, this looks a lot like the allegro_mbox in the ZynqMP
-encoder driver. Even though the message format is different, would it be
-possible to generalize the general mailbox handling and use it for both
-drivers?
-
-Michael
-
-> +
-> +struct al_codec_cmd {
-> +	struct kref refcount;
-> +	struct list_head list;
-> +	struct completion done;
-> +	int reply_size;
-> +	void *reply;
-> +};
-> +
-> +#define al_codec_err(codec, fmt, args...)                               \
-> +	dev_err(&(codec)->pdev->dev, "[ALG_CODEC][ERROR] %s():%d: " fmt "\n", \
-> +		__func__, __LINE__, ##args)
-> +
-> +#define al_v4l2_err(codec, fmt, args...)                               \
-> +	dev_err(&(codec)->pdev->dev, "[ALG_V4L2][ERROR] %s():%d: " fmt "\n", \
-> +		__func__, __LINE__, ##args)
-> +
-> +#if defined(DEBUG)
-> +
-> +extern int debug;
-> +
-> +/* V4L2 logs */
-> +#define al_v4l2_dbg(codec, level, fmt, args...)   \
-> +	do {                                            \
-> +		if (debug >= level)                           \
-> +			dev_dbg(&(codec)->pdev->dev,                \
-> +				"[ALG_V4L2] level=%d %s(),%d: " fmt "\n", \
-> +				level, __func__, __LINE__, ##args);       \
-> +	} while (0)
-> +
-> +/* Codec logs */
-> +#define al_codec_dbg(codec, fmt, args...)           \
-> +	do {                                              \
-> +		if (debug)                                      \
-> +			dev_dbg(&(codec)->pdev->dev,                  \
-> +				"[ALG_CODEC] %s(),%d: " fmt "\n", __func__, \
-> +				__LINE__, ##args);                          \
-> +	} while (0)
-> +
-> +#else
-> +
-> +#define al_v4l2_dbg(codec, level, fmt, args...)             \
-> +	do {                                                      \
-> +		(void)level;                                            \
-> +		dev_dbg(&(codec)->pdev->dev, "[ALG_V4L2]: " fmt "\n",   \
-> +			##args);                                              \
-> +	} while (0)
-> +
-> +#define al_codec_dbg(codec, fmt, args...)                         \
-> +	dev_dbg(&(codec)->pdev->dev, "[ALG_CODEC]: " fmt "\n", ##args)
-> +
-> +#endif
-> +
-> +#define MSG_ITF_TYPE_LIMIT BIT(10)
-> +
-> +/* Message types host <-> mcu */
-> +enum {
-> +	MSG_ITF_TYPE_MCU_ALIVE = 0,
-> +	MSG_ITF_TYPE_WRITE_REQ = 2,
-> +	MSG_ITF_TYPE_FIRST_REQ = 1024,
-> +	MSG_ITF_TYPE_NEXT_REQ,
-> +	MSG_ITF_TYPE_FIRST_REPLY = 2048,
-> +	MSG_ITF_TYPE_NEXT_REPLY,
-> +	MSG_ITF_TYPE_ALLOC_MEM_REQ = 3072,
-> +	MSG_ITF_TYPE_FREE_MEM_REQ,
-> +	MSG_ITF_TYPE_ALLOC_MEM_REPLY = 4096,
-> +	MSG_ITF_TYPE_FREE_MEM_REPLY,
-> +	MSG_ITF_TYPE_FIRST_EVT = 5120,
-> +	MSG_ITF_TYPE_NEXT_EVT = MSG_ITF_TYPE_FIRST_EVT
-> +};
-> +
-> +struct msg_itf_header {
-> +	u64 drv_ctx_hdl;
-> +	u64 drv_cmd_hdl;
-> +	u16 type;
-> +	u16 payload_len;
-> +	u16 padding[2];
-> +} __packed;
-> +
-> +void al_codec_mb_init(struct al_codec_mb *mb, char *addr, int size, u32 magic);
-> +int al_codec_msg_get_header(struct al_codec_mb *mb, struct msg_itf_header *hdr);
-> +int al_codec_msg_get_data(struct al_codec_mb *mb, char *data, int len);
-> +int al_codec_msg_send(struct al_codec_mb *mb, struct msg_itf_header *hdr,
-> +		      void (*trigger)(void *), void *trigger_arg);
-> +
-> +static inline bool is_type_reply(uint16_t type)
-> +{
-> +	return type >= MSG_ITF_TYPE_FIRST_REPLY &&
-> +	       type < MSG_ITF_TYPE_FIRST_REPLY + MSG_ITF_TYPE_LIMIT;
-> +}
-> +
-> +static inline bool is_type_event(uint16_t type)
-> +{
-> +	return type >= MSG_ITF_TYPE_FIRST_EVT &&
-> +	       type < MSG_ITF_TYPE_FIRST_EVT + MSG_ITF_TYPE_LIMIT;
-> +}
-> +
-> +void al_codec_cmd_put(struct al_codec_cmd *cmd);
-> +
-> +struct al_codec_cmd *al_codec_cmd_create(int reply_size);
-> +
-> +static inline struct al_codec_cmd *al_codec_cmd_get(struct list_head *cmd_list,
-> +						    uint64_t hdl)
-> +{
-> +	struct al_codec_cmd *cmd = NULL;
-> +
-> +	list_for_each_entry(cmd, cmd_list, list) {
-> +		if (likely(cmd == al_phys_to_virt(hdl))) {
-> +			kref_get(&cmd->refcount);
-> +			break;
-> +		}
-> +	}
-> +	return list_entry_is_head(cmd, cmd_list, list) ? NULL : cmd;
-> +}
-> +
-> +#endif /* __AL_CODEC_UTIL__ */
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
