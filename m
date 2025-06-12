@@ -1,715 +1,470 @@
-Return-Path: <linux-kernel+bounces-683548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358B8AD6ECC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:17:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B41AD6EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEDBE189F350
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 548963A03E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AE523E330;
-	Thu, 12 Jun 2025 11:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/kJP9oO"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F98323BF91;
+	Thu, 12 Jun 2025 11:17:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C033F23C8C7;
-	Thu, 12 Jun 2025 11:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F03521B9C8;
+	Thu, 12 Jun 2025 11:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727039; cv=none; b=X//EdL1FoPWl+h/DWCNGAOldYYrDTvMwEuTbeeYGf4juJUx0uHWtK5yDkZgPvVbszJHSDZCbGq9W176mdzBWd42/UFGlkRj+8EZEecDdwYQVAhbgh7FjNTQ+LdY2pGzU/rewMIxFPqhgkF/QrjiA2PLSCcj3hK0LXgX3zbSn2f8=
+	t=1749727032; cv=none; b=GftkgL6qPyfxAvNCU3+1CNAT+HFObUvufs2a4ED+V2oLS/DVTkeHg/r74/B5aMHAiKY/3XBbRqmlyrEXlO1eB6RhW5+YrCtkDcBieh2ES3uIU7/I9IigJVUqcHDsmbRv15EK7jKU5kx/BnlaMG6wkP/XagMUtGvuhCou1VqynYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727039; c=relaxed/simple;
-	bh=99AJ83sRQBSLfZwTfPMmEy8hzb5IiiTqhzHYSEE33A8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FHVf/GUEUvyHsdj5FdHA5d/4nUoSaUqgV87GZ8ZLFff/MqxY6i3ttxkBmRfopHgqXk8ay8WYe6SUjlGdSic5QJhuJG0IMsH4UhQJ3ofec67Sh5s5GR0S8UZwinaNP/qEvIhpiy2+Af8+m2mq+goYBSZbwGJR69KWTDGIc+RCswM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/kJP9oO; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32934448e8bso7765221fa.3;
-        Thu, 12 Jun 2025 04:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749727034; x=1750331834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HIIF55KQpm7f44r8NdaskpxJAFkQQ8vCnGotfXMcBk8=;
-        b=g/kJP9oOfs6hiU/bS9DAKmKawvOsQUMFgjYY7oSzeRBWThaxUtVi5GwmwfQOIIR5qT
-         6lRBi6tnjdmilFe4JPw5hLoJL406s7JtURMo2fiLCVx090bCb1yl6tUUQUe47mkZD6J3
-         ifE46hHl9usVQdIvTcYrsojkZJHlqmfz7C9Vce9pqioVAwKq5lFsP2dLjUIilw5D00E/
-         riQIZkUQya0E/kmIjG21Ba5niXhUi9ABQKRiFnLEOCqYvo6jPRpJCrxAV4ZaMInpK6Ge
-         AEttWDMTbLNhOFcMw8/db5qdWZHXBC4mXQwsIJNt2LeOzdWOIuzvqncjOJ1HmxgpC9zp
-         o9bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749727034; x=1750331834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HIIF55KQpm7f44r8NdaskpxJAFkQQ8vCnGotfXMcBk8=;
-        b=bxholDp+KoLZ8qQmAfZ+DAlv8MV5ehmMuK+BqMt6zIZK9gcCIm63RsG1xWVwfQIVfE
-         jpQ0BQ3gtIj2qsfHEcW36e1QlAtGMwwKhdtptCckO6SYkdAYFm2dqSFyZzjyUwRk9t1B
-         E/qnjpaDuTPj1ogncLjDfJ9utZhBnNgcHdzcdqcYwETgnSe2k5PxPvJoSDYllx/HVGYt
-         y2oeGYDZCwtcVMLBLr7deqQ+7XKhKAzeDixVu0Z9/zcjg6jJJoKMVNLS2yxd+emOgytw
-         PC8TJ7Oj003wucqpGGHWOwv3A71unLTYYEesE09uINpEOHTb68+2hjbFXKFKHsp2jcDu
-         wNrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT4jln3T36788LMnrpsxSLfwWX5UhntgZKs5mHaZJ1gKe9mFU6sFitl7pketzZ+BCsv1XgeMLKK+AxyYiH@vger.kernel.org, AJvYcCXB31aSeWqEnJlmTXxHDzlTj0HcZ9rZmkQDsj82QnHrhdEIpH3HhnlH8LoGhB1sF5jaXSCOvnl5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS3EXimh69aKyayP2jx++4IjPjhZlHEbLTl0jyL2DVrzFwJipK
-	BHLjyna2h0wj2tf+fqAxM0BOvP6JvkacneLOZOGQ9ME5BveVBmWhbyRA1uzggpzSroUYy7bsJxS
-	FV1+0/ePXPR05KL1HtYuHwRV3Y0v13E3oFzWLm4M=
-X-Gm-Gg: ASbGnctAOprQpctOOhWopkSnypsdHJjmvXUAhfjJc04iaUDwGwfocuzmVInMwr/MyIE
-	KWAVo0IwUtvaQ0zKKWB9P2fCQQyzZHyh2voOr2ZdQreArMC6OCWyHW/9eTiC5DtwK4zj/0hs7Vm
-	FfqtticCc8lNjmEtYpVRSmD0/wHRTtqUoXOa2Aq9EP5kg=
-X-Google-Smtp-Source: AGHT+IEZWRJa3iN7Ncw0u8P+0RnC6lRsrxWoZktikte8LbIo5Xj7rRGDDRVoCXAZNh860z3rF6MLc7UAGW6Xm3n9BZI=
-X-Received: by 2002:a05:651c:221f:b0:32a:6764:a1cc with SMTP id
- 38308e7fff4ca-32b21d48601mr18022131fa.5.1749727033469; Thu, 12 Jun 2025
- 04:17:13 -0700 (PDT)
+	s=arc-20240116; t=1749727032; c=relaxed/simple;
+	bh=TFCEWGXvntFPe/e4vYhFd6abgsvOKJWrNnZ+Docwxy8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DCINxE9Q++/EkqcanVaRC0O1ac0yHCY9nITxzcVX0IGfi9qc888qRXQO77VuTSmuazjIAtj6x4cDLslYwNTbkLJTQHq9hZhN+6isilVGD+IMcOJhN+l0dcA6kc6NuM8SjDz6V/h7CC9LzDAPNYb4Xj7340KzkQ1h81hU9m4RMSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bJ0LR4s5qz6HJkn;
+	Thu, 12 Jun 2025 19:15:11 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E348814020C;
+	Thu, 12 Jun 2025 19:17:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 12 Jun
+ 2025 13:17:06 +0200
+Date: Thu, 12 Jun 2025 12:17:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dave Jiang <dave.jiang@intel.com>
+CC: "Bowman, Terry" <terry.bowman@amd.com>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <dave@stgolabs.net>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <bhelgaas@google.com>,
+	<bp@alien8.de>, <ming.li@zohomail.com>, <shiju.jose@huawei.com>,
+	<dan.carpenter@linaro.org>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<kobayashi.da-06@fujitsu.com>, <rrichter@amd.com>, <peterz@infradead.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v9 04/16] PCI/AER: Dequeue forwarded CXL error
+Message-ID: <20250612121704.0000498e@huawei.com>
+In-Reply-To: <bd4a48f0-c3b2-407f-914c-74c0f062970b@intel.com>
+References: <20250603172239.159260-1-terry.bowman@amd.com>
+	<20250603172239.159260-5-terry.bowman@amd.com>
+	<81214183-fd94-428b-abeb-3ec3d2688030@intel.com>
+	<c013da01-dc6b-470f-9dbb-e209e293763a@amd.com>
+	<180a024d-9f93-4439-b25c-808a22665d2a@intel.com>
+	<d20d801a-49e5-4b78-bc1c-57f232ebd560@amd.com>
+	<bd4a48f0-c3b2-407f-914c-74c0f062970b@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612103743.3385842-1-youngjun.park@lge.com>
- <20250612103743.3385842-3-youngjun.park@lge.com> <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
-In-Reply-To: <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 12 Jun 2025 19:16:56 +0800
-X-Gm-Features: AX0GCFsFJdGizMwhML3RnqwHK9p9h8b8SBZGgU9UHbHnJQo_uU0xaAEOqNxFQX4
-Message-ID: <CAMgjq7BAvsqWkGRZO6_u+6n-cUQ1nVHwMnerOs-s_RHkf90i2A@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm: swap: apply per cgroup swap priority
- mechansim on swap layer
-To: youngjun.park@lge.com
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com, 
-	baohua@kernel.org, chrisl@kernel.org, muchun.song@linux.dev, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, gunho.lee@lge.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Jun 12, 2025 at 7:14=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Thu, Jun 12, 2025 at 6:43=E2=80=AFPM <youngjun.park@lge.com> wrote:
-> >
-> > From: "youngjun.park" <youngjun.park@lge.com>
-> >
->
-> Hi, Youngjun,
->
-> Thanks for sharing this series.
->
-> > This patch implements swap device selection and swap on/off propagation
-> > when a cgroup-specific swap priority is set.
-> >
-> > There is one workaround to this implementation as follows.
-> > Current per-cpu swap cluster enforces swap device selection based solel=
-y
-> > on CPU locality, overriding the swap cgroup's configured priorities.
->
-> I've been thinking about this, we can switch to a per-cgroup-per-cpu
-> next cluster selector, the problem with current code is that swap
-> allocator is not designed with folio / cgroup in mind at all, so it's
-> really ugly to implement, which is why I have following two patches in
-> the swap table series:
->
-> https://lore.kernel.org/linux-mm/20250514201729.48420-18-ryncsn@gmail.com=
-/
-> https://lore.kernel.org/linux-mm/20250514201729.48420-22-ryncsn@gmail.com=
-/
+On Mon, 9 Jun 2025 13:34:31 -0700
+Dave Jiang <dave.jiang@intel.com> wrote:
 
-And BTW this is not the only reason, these two are also quite critical
-to get rid of the swap_cgroup_ctrl later, and maybe switch to use
-folio lock for more swap operations, etc..
-
-> The first one makes all swap allocation starts with a folio, the
-> second one makes the allocator always folio aware. So you can know
-> which cgroup is doing the allocation at anytime inside the allocator
-> (and it reduced the number of argument, also improving performance :)
-> )
->
-> So the allocator can just use cgroup's swap info if available, plist,
-> percpu cluster, and fallback to global locality in a very natural way.
->
->
-> > Therefore, when a swap cgroup priority is assigned, we fall back to
-> > using per-CPU clusters per swap device, similar to the previous behavio=
-r.
-> >
-> > A proper fix for this workaround will be evaluated in the next patch.
->
-> Hmm, but this is already the last patch in the series?
->
-> >
-> > Signed-off-by: Youngjun park <youngjun.park@lge.com>
-> > ---
-> >  include/linux/swap.h      |   8 +++
-> >  mm/swap.h                 |   8 +++
-> >  mm/swap_cgroup_priority.c | 133 ++++++++++++++++++++++++++++++++++++++
-> >  mm/swapfile.c             | 125 ++++++++++++++++++++++++-----------
-> >  4 files changed, 238 insertions(+), 36 deletions(-)
-> >
-> > diff --git a/include/linux/swap.h b/include/linux/swap.h
-> > index 49b73911c1bd..d158b0d5c997 100644
-> > --- a/include/linux/swap.h
-> > +++ b/include/linux/swap.h
-> > @@ -283,6 +283,13 @@ enum swap_cluster_flags {
-> >  #define SWAP_NR_ORDERS         1
-> >  #endif
-> >
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +struct percpu_cluster {
-> > +       local_lock_t lock; /* Protect the percpu_cluster above */
-> > +       unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation of=
-fset */
-> > +};
-> > +#endif
-> > +
-> >  /*
-> >   * We keep using same cluster for rotational device so IO will be sequ=
-ential.
-> >   * The purpose is to optimize SWAP throughput on these device.
-> > @@ -341,6 +348,7 @@ struct swap_info_struct {
-> >         struct list_head discard_clusters; /* discard clusters list */
-> >  #ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> >         int unique_id;
-> > +       struct percpu_cluster __percpu *percpu_cluster; /* per cpu's sw=
-ap location */
-> >  #endif
-> >         struct plist_node avail_lists[]; /*
-> >                                            * entries in swap_avail_head=
-s, one
-> > diff --git a/mm/swap.h b/mm/swap.h
-> > index cd2649c632ed..cb6d653fe3f1 100644
-> > --- a/mm/swap.h
-> > +++ b/mm/swap.h
-> > @@ -113,7 +113,15 @@ void delete_swap_cgroup_priority(struct mem_cgroup=
- *memcg);
-> >  void show_swap_device_unique_id(struct seq_file *m);
-> >  #else
-> >  static inline void delete_swap_cgroup_priority(struct mem_cgroup *memc=
-g) {}
-> > +static inline void activate_swap_cgroup_priority_pnode(struct swap_inf=
-o_struct *swp, bool swapon) {}
-> > +static inline void deactivate_swap_cgroup_priority_pnode(struct swap_i=
-nfo_struct *swp, bool swapoff){}
-> >  static inline void get_swap_unique_id(struct swap_info_struct *si) {}
-> > +static inline bool swap_alloc_cgroup_priority(struct mem_cgroup *memcg=
-,
-> > +                               swp_entry_t *entry, int order)
-> > +{
-> > +       return false;
-> > +}
-> > +
-> >  #endif
-> >
-> >  #else /* CONFIG_SWAP */
-> > diff --git a/mm/swap_cgroup_priority.c b/mm/swap_cgroup_priority.c
-> > index b3e20b676680..bb18cb251f60 100644
-> > --- a/mm/swap_cgroup_priority.c
-> > +++ b/mm/swap_cgroup_priority.c
-> > @@ -54,6 +54,132 @@ static void get_swap_unique_id(struct swap_info_str=
-uct *si)
-> >         si->unique_id =3D atomic_add_return(1, &swap_unique_id_counter)=
-;
-> >  }
-> >
-> > +static bool swap_alloc_cgroup_priority(struct mem_cgroup *memcg,
-> > +                               swp_entry_t *entry, int order)
-> > +{
-> > +       struct swap_cgroup_priority *swap_priority;
-> > +       struct swap_cgroup_priority_pnode *pnode, *next;
-> > +       unsigned long offset;
-> > +       int node;
-> > +
-> > +       if (!memcg)
-> > +               return false;
-> > +
-> > +       spin_lock(&swap_avail_lock);
-> > +priority_check:
-> > +       swap_priority =3D memcg->swap_priority;
-> > +       if (!swap_priority) {
-> > +               spin_unlock(&swap_avail_lock);
-> > +               return false;
-> > +       }
-> > +
-> > +       node =3D numa_node_id();
-> > +start_over:
-> > +       plist_for_each_entry_safe(pnode, next, &swap_priority->plist[no=
-de],
-> > +                                       avail_lists[node]) {
-> > +               struct swap_info_struct *si =3D pnode->swap;
-> > +               plist_requeue(&pnode->avail_lists[node],
-> > +                       &swap_priority->plist[node]);
-> > +               spin_unlock(&swap_avail_lock);
-> > +
-> > +               if (get_swap_device_info(si)) {
-> > +                       offset =3D cluster_alloc_swap_entry(si,
-> > +                                       order, SWAP_HAS_CACHE, true);
-> > +                       put_swap_device(si);
-> > +                       if (offset) {
-> > +                               *entry =3D swp_entry(si->type, offset);
-> > +                               return true;
-> > +                       }
-> > +                       if (order)
-> > +                               return false;
-> > +               }
-> > +
-> > +               spin_lock(&swap_avail_lock);
-> > +
-> > +               /* swap_priority is remove or changed under us. */
-> > +               if (swap_priority !=3D memcg->swap_priority)
-> > +                       goto priority_check;
-> > +
-> > +               if (plist_node_empty(&next->avail_lists[node]))
-> > +                       goto start_over;
-> > +       }
-> > +       spin_unlock(&swap_avail_lock);
-> > +
-> > +       return false;
-> > +}
-> > +
-> > +/* add_to_avail_list (swapon / swapusage > 0) */
-> > +static void activate_swap_cgroup_priority_pnode(struct swap_info_struc=
-t *swp,
-> > +                       bool swapon)
-> > +{
-> > +       struct swap_cgroup_priority *swap_priority;
-> > +       int i;
-> > +
-> > +       list_for_each_entry(swap_priority, &swap_cgroup_priority_list, =
-link) {
-> > +               struct swap_cgroup_priority_pnode *pnode
-> > +                       =3D swap_priority->pnode[swp->type];
-> > +
-> > +               if (swapon) {
-> > +                       pnode->swap =3D swp;
-> > +                       pnode->prio =3D swp->prio;
-> > +               }
-> > +
-> > +               /* NUMA priority handling */
-> > +               for_each_node(i) {
-> > +                       if (swapon) {
-> > +                               if (swap_node(swp) =3D=3D i) {
-> > +                                       plist_node_init(
-> > +                                               &pnode->avail_lists[i],
-> > +                                               1);
-> > +                               } else {
-> > +                                       plist_node_init(
-> > +                                               &pnode->avail_lists[i],
-> > +                                               -pnode->prio);
-> > +                               }
-> > +                       }
-> > +
-> > +                       plist_add(&pnode->avail_lists[i],
-> > +                               &swap_priority->plist[i]);
-> > +               }
-> > +       }
-> > +}
-> > +
-> > +/* del_from_avail_list (swapoff / swap usage <=3D 0) */
-> > +static void deactivate_swap_cgroup_priority_pnode(struct swap_info_str=
-uct *swp,
-> > +               bool swapoff)
-> > +{
-> > +       struct swap_cgroup_priority *swap_priority;
-> > +       int nid, i;
-> > +
-> > +       list_for_each_entry(swap_priority, &swap_cgroup_priority_list, =
-link) {
-> > +               struct swap_cgroup_priority_pnode *pnode;
-> > +
-> > +               if (swapoff && swp->prio < 0) {
-> > +                       /*
-> > +                       * NUMA priority handling
-> > +                       * mimic swapoff prio adjustment without plist
-> > +                       */
-> > +                       for (int i =3D 0; i < MAX_SWAPFILES; i++) {
-> > +                               pnode =3D swap_priority->pnode[i];
-> > +                               if (pnode->prio > swp->prio ||
-> > +                                       pnode->swap =3D=3D swp)
-> > +                                       continue;
-> > +
-> > +                               pnode->prio++;
-> > +                               for_each_node(nid) {
-> > +                                       if (pnode->avail_lists[nid].pri=
-o !=3D 1)
-> > +                                               pnode->avail_lists[nid]=
-.prio--;
-> > +                               }
-> > +                       }
-> > +               }
-> > +
-> > +               pnode =3D swap_priority->pnode[swp->type];
-> > +               for_each_node(i)
-> > +                       plist_del(&pnode->avail_lists[i],
-> > +                               &swap_priority->plist[i]);
-> > +       }
-> > +}
-> > +
-> >  int create_swap_cgroup_priority(struct mem_cgroup *memcg,
-> >                 int unique[], int prio[], int nr)
-> >  {
-> > @@ -183,6 +309,12 @@ void delete_swap_cgroup_priority(struct mem_cgroup=
- *memcg)
-> >  {
-> >         struct swap_cgroup_priority *swap_priority;
-> >
-> > +       /*
-> > +       * XXX: Possible RCU wait? No. Cannot protect priority list addi=
-tion.
-> > +       * swap_avail_lock gives protection.
-> > +       * Think about other object protection mechanism
-> > +       * might be solve it and better. (e.g object reference)
-> > +       */
-> >         spin_lock(&swap_avail_lock);
-> >         swap_priority =3D memcg->swap_priority;
-> >         if (!swap_priority) {
-> > @@ -198,5 +330,6 @@ void delete_swap_cgroup_priority(struct mem_cgroup =
-*memcg)
-> >
-> >         for (int i =3D 0; i < MAX_SWAPFILES; i++)
-> >                 kvfree(swap_priority->pnode[i]);
-> > +
-> >         kvfree(swap_priority);
-> >  }
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index f8e48dd2381e..28afe4ec0504 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -126,8 +126,12 @@ static DEFINE_PER_CPU(struct percpu_swap_cluster, =
-percpu_swap_cluster) =3D {
-> >         .offset =3D { SWAP_ENTRY_INVALID },
-> >         .lock =3D INIT_LOCAL_LOCK(),
-> >  };
-> > -/* TODO: better choice? */
-> > +/* TODO: better arrangement */
-> >  #ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +static bool get_swap_device_info(struct swap_info_struct *si);
-> > +static unsigned long cluster_alloc_swap_entry(struct swap_info_struct =
-*si, int order,
-> > +                                             unsigned char usage, bool=
- is_cgroup_priority);
-> > +static int swap_node(struct swap_info_struct *si);
-> >  #include "swap_cgroup_priority.c"
-> >  #endif
-> >
-> > @@ -776,7 +780,8 @@ static unsigned int alloc_swap_scan_cluster(struct =
-swap_info_struct *si,
-> >                                             struct swap_cluster_info *c=
-i,
-> >                                             unsigned long offset,
-> >                                             unsigned int order,
-> > -                                           unsigned char usage)
-> > +                                           unsigned char usage,
-> > +                                           bool is_cgroup_priority)
-> >  {
-> >         unsigned int next =3D SWAP_ENTRY_INVALID, found =3D SWAP_ENTRY_=
-INVALID;
-> >         unsigned long start =3D ALIGN_DOWN(offset, SWAPFILE_CLUSTER);
-> > @@ -820,12 +825,19 @@ static unsigned int alloc_swap_scan_cluster(struc=
-t swap_info_struct *si,
-> >  out:
-> >         relocate_cluster(si, ci);
-> >         unlock_cluster(ci);
-> > +
-> >         if (si->flags & SWP_SOLIDSTATE) {
-> > -               this_cpu_write(percpu_swap_cluster.offset[order], next)=
-;
-> > -               this_cpu_write(percpu_swap_cluster.si[order], si);
-> > -       } else {
-> > +               if (!is_cgroup_priority) {
-> > +                       this_cpu_write(percpu_swap_cluster.offset[order=
-], next);
-> > +                       this_cpu_write(percpu_swap_cluster.si[order], s=
-i);
-> > +               } else {
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +                       __this_cpu_write(si->percpu_cluster->next[order=
-], next);
-> > +#endif
-> > +               }
-> > +       } else
-> >                 si->global_cluster->next[order] =3D next;
-> > -       }
-> > +
-> >         return found;
-> >  }
-> >
-> > @@ -883,7 +895,7 @@ static void swap_reclaim_work(struct work_struct *w=
-ork)
-> >   * cluster for current CPU too.
-> >   */
-> >  static unsigned long cluster_alloc_swap_entry(struct swap_info_struct =
-*si, int order,
-> > -                                             unsigned char usage)
-> > +                                             unsigned char usage, bool=
- is_cgroup_priority)
-> >  {
-> >         struct swap_cluster_info *ci;
-> >         unsigned int offset =3D SWAP_ENTRY_INVALID, found =3D SWAP_ENTR=
-Y_INVALID;
-> > @@ -895,32 +907,38 @@ static unsigned long cluster_alloc_swap_entry(str=
-uct swap_info_struct *si, int o
-> >         if (order && !(si->flags & SWP_BLKDEV))
-> >                 return 0;
-> >
-> > -       if (!(si->flags & SWP_SOLIDSTATE)) {
-> > +       if (si->flags & SWP_SOLIDSTATE) {
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +                local_lock(&si->percpu_cluster->lock);
-> > +                offset =3D __this_cpu_read(si->percpu_cluster->next[or=
-der]);
-> > +#endif
-> > +       } else {
-> >                 /* Serialize HDD SWAP allocation for each device. */
-> >                 spin_lock(&si->global_cluster_lock);
-> >                 offset =3D si->global_cluster->next[order];
-> > -               if (offset =3D=3D SWAP_ENTRY_INVALID)
-> > -                       goto new_cluster;
-> > +       }
-> >
-> > -               ci =3D lock_cluster(si, offset);
-> > -               /* Cluster could have been used by another order */
-> > -               if (cluster_is_usable(ci, order)) {
-> > -                       if (cluster_is_empty(ci))
-> > -                               offset =3D cluster_offset(si, ci);
-> > -                       found =3D alloc_swap_scan_cluster(si, ci, offse=
-t,
-> > -                                                       order, usage);
-> > -               } else {
-> > -                       unlock_cluster(ci);
-> > -               }
-> > -               if (found)
-> > -                       goto done;
-> > +       if (offset =3D=3D SWAP_ENTRY_INVALID)
-> > +               goto new_cluster;
-> > +
-> > +       ci =3D lock_cluster(si, offset);
-> > +       /* Cluster could have been used by another order */
-> > +       if (cluster_is_usable(ci, order)) {
-> > +               if (cluster_is_empty(ci))
-> > +                       offset =3D cluster_offset(si, ci);
-> > +               found =3D alloc_swap_scan_cluster(si, ci, offset,
-> > +                                               order, usage, is_cgroup=
-_priority);
-> > +       } else {
-> > +               unlock_cluster(ci);
-> >         }
-> > +       if (found)
-> > +               goto done;
-> >
-> >  new_cluster:
-> >         ci =3D isolate_lock_cluster(si, &si->free_clusters);
-> >         if (ci) {
-> >                 found =3D alloc_swap_scan_cluster(si, ci, cluster_offse=
-t(si, ci),
-> > -                                               order, usage);
-> > +                                               order, usage, is_cgroup=
-_priority);
-> >                 if (found)
-> >                         goto done;
-> >         }
-> > @@ -934,7 +952,7 @@ static unsigned long cluster_alloc_swap_entry(struc=
-t swap_info_struct *si, int o
-> >
-> >                 while ((ci =3D isolate_lock_cluster(si, &si->nonfull_cl=
-usters[order]))) {
-> >                         found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > -                                                       order, usage);
-> > +                                                       order, usage, i=
-s_cgroup_priority);
-> >                         if (found)
-> >                                 goto done;
-> >                         /* Clusters failed to allocate are moved to fra=
-g_clusters */
-> > @@ -952,7 +970,7 @@ static unsigned long cluster_alloc_swap_entry(struc=
-t swap_info_struct *si, int o
-> >                          * reclaimable (eg. lazy-freed swap cache) slot=
+> On 6/9/25 12:57 PM, Bowman, Terry wrote:
+> >=20
+> >=20
+> > On 6/6/2025 5:43 PM, Dave Jiang wrote: =20
+> >>
+> >> On 6/6/25 11:14 AM, Bowman, Terry wrote: =20
+> >>>
+> >>> On 6/6/2025 10:57 AM, Dave Jiang wrote: =20
+> >>>> On 6/3/25 10:22 AM, Terry Bowman wrote: =20
+> >>>>> The AER driver is now designed to forward CXL protocol errors to th=
+e CXL
+> >>>>> driver. Update the CXL driver with functionality to dequeue the for=
+warded
+> >>>>> CXL error from the kfifo. Also, update the CXL driver to begin the =
+protocol
+> >>>>> error handling processing using the work received from the FIFO.
+> >>>>>
+> >>>>> Introduce function cxl_prot_err_work_fn() to dequeue work forwarded=
+ by the
+> >>>>> AER service driver. This will begin the CXL protocol error processi=
+ng
+> >>>>> with a call to cxl_handle_prot_error().
+> >>>>>
+> >>>>> Update cxl/core/ras.c by adding cxl_rch_handle_error_iter() that was
+> >>>>> previously in the AER driver.
+> >>>>>
+> >>>>> Introduce sbdf_to_pci() to take the SBDF values from 'struct cxl_pr=
+ot_error_info'
+> >>>>> and use in discovering the erring PCI device. Make scope based refe=
+rence
+> >>>>> increments/decrements for the discovered PCI device and the associa=
+ted
+> >>>>> CXL device.
+> >>>>>
+> >>>>> Implement cxl_handle_prot_error() to differentiate between Restrict=
+ed CXL
+> >>>>> Host (RCH) protocol errors and CXL virtual host (VH) protocol error=
 s.
-> >                          */
-> >                         found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > -                                                       order, usage);
-> > +                                                       order, usage, i=
-s_cgroup_priority);
-> >                         if (found)
-> >                                 goto done;
-> >                         frags++;
-> > @@ -979,21 +997,27 @@ static unsigned long cluster_alloc_swap_entry(str=
-uct swap_info_struct *si, int o
-> >                 while ((ci =3D isolate_lock_cluster(si, &si->frag_clust=
-ers[o]))) {
-> >                         atomic_long_dec(&si->frag_cluster_nr[o]);
-> >                         found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > -                                                       0, usage);
-> > +                                                       0, usage, is_cg=
-roup_priority);
-> >                         if (found)
-> >                                 goto done;
-> >                 }
-> >
-> >                 while ((ci =3D isolate_lock_cluster(si, &si->nonfull_cl=
-usters[o]))) {
-> >                         found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > -                                                       0, usage);
-> > +                                                       0, usage, is_cg=
-roup_priority);
-> >                         if (found)
-> >                                 goto done;
-> >                 }
-> >         }
-> >  done:
-> > -       if (!(si->flags & SWP_SOLIDSTATE))
-> > +       if (si->flags & SWP_SOLIDSTATE) {
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +               local_unlock(&si->percpu_cluster->lock);
-> > +#endif
-> > +       } else {
-> >                 spin_unlock(&si->global_cluster_lock);
-> > +       }
-> > +
-> >         return found;
-> >  }
-> >
-> > @@ -1032,6 +1056,7 @@ static void del_from_avail_list(struct swap_info_=
-struct *si, bool swapoff)
-> >         for_each_node(nid)
-> >                 plist_del(&si->avail_lists[nid], &swap_avail_heads[nid]=
+> >>>>> RCH errors will be processed with a call to walk the associated Root
+> >>>>> Complex Event Collector's (RCEC) secondary bus looking for the Root=
+ Complex
+> >>>>> Integrated Endpoint (RCiEP) to handle the RCH error. Export pcie_wa=
+lk_rcec()
+> >>>>> so the CXL driver can walk the RCEC's downstream bus, searching for
+> >>>>> the RCiEP.
+> >>>>>
+> >>>>> VH correctable error (CE) processing will call the CXL CE handler. =
+VH
+> >>>>> uncorrectable errors (UCE) will call cxl_do_recovery(), implemented=
+ as a
+> >>>>> stub for now and to be updated in future patch. Export pci_aer_clea=
+n_fatal_status()
+> >>>>> and pci_clean_device_status() used to clean up AER status after han=
+dling.
+> >>>>>
+> >>>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> >>>>> ---
+> >>>>>  drivers/cxl/core/ras.c  | 92 +++++++++++++++++++++++++++++++++++++=
+++++
+> >>>>>  drivers/pci/pci.c       |  1 +
+> >>>>>  drivers/pci/pci.h       |  8 ----
+> >>>>>  drivers/pci/pcie/aer.c  |  1 +
+> >>>>>  drivers/pci/pcie/rcec.c |  1 +
+> >>>>>  include/linux/aer.h     |  2 +
+> >>>>>  include/linux/pci.h     | 10 +++++
+> >>>>>  7 files changed, 107 insertions(+), 8 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> >>>>> index d35525e79e04..9ed5c682e128 100644
+> >>>>> --- a/drivers/cxl/core/ras.c
+> >>>>> +++ b/drivers/cxl/core/ras.c
+> >>>>> @@ -110,8 +110,100 @@ static DECLARE_WORK(cxl_cper_prot_err_work, c=
+xl_cper_prot_err_work_fn);
+> >>>>> =20
+> >>>>>  #ifdef CONFIG_PCIEAER_CXL
+> >>>>> =20
+> >>>>> +static void cxl_do_recovery(struct pci_dev *pdev)
+> >>>>> +{
+> >>>>> +}
+> >>>>> +
+> >>>>> +static int cxl_rch_handle_error_iter(struct pci_dev *pdev, void *d=
+ata)
+> >>>>> +{
+> >>>>> +	struct cxl_prot_error_info *err_info =3D data;
+> >>>>> +	struct pci_dev *pdev_ref __free(pci_dev_put) =3D pci_dev_get(pdev=
 );
-> >
-> > +       deactivate_swap_cgroup_priority_pnode(si, swapoff);
-> >  skip:
-> >         spin_unlock(&swap_avail_lock);
-> >  }
-> > @@ -1075,6 +1100,7 @@ static void add_to_avail_list(struct swap_info_st=
-ruct *si, bool swapon)
-> >         for_each_node(nid)
-> >                 plist_add(&si->avail_lists[nid], &swap_avail_heads[nid]=
-);
-> >
-> > +       activate_swap_cgroup_priority_pnode(si, swapon);
-> >  skip:
-> >         spin_unlock(&swap_avail_lock);
-> >  }
-> > @@ -1200,7 +1226,8 @@ static bool swap_alloc_fast(swp_entry_t *entry,
-> >         if (cluster_is_usable(ci, order)) {
-> >                 if (cluster_is_empty(ci))
-> >                         offset =3D cluster_offset(si, ci);
-> > -               found =3D alloc_swap_scan_cluster(si, ci, offset, order=
-, SWAP_HAS_CACHE);
-> > +               found =3D alloc_swap_scan_cluster(si, ci, offset, order=
-,
-> > +                               SWAP_HAS_CACHE, false);
-> >                 if (found)
-> >                         *entry =3D swp_entry(si->type, found);
-> >         } else {
-> > @@ -1227,7 +1254,7 @@ static bool swap_alloc_slow(swp_entry_t *entry,
-> >                 plist_requeue(&si->avail_lists[node], &swap_avail_heads=
-[node]);
-> >                 spin_unlock(&swap_avail_lock);
-> >                 if (get_swap_device_info(si)) {
-> > -                       offset =3D cluster_alloc_swap_entry(si, order, =
-SWAP_HAS_CACHE);
-> > +                       offset =3D cluster_alloc_swap_entry(si, order, =
-SWAP_HAS_CACHE, false);
-> >                         put_swap_device(si);
-> >                         if (offset) {
-> >                                 *entry =3D swp_entry(si->type, offset);
-> > @@ -1294,10 +1321,12 @@ int folio_alloc_swap(struct folio *folio, gfp_t=
- gfp)
-> >                 }
-> >         }
-> >
-> > -       local_lock(&percpu_swap_cluster.lock);
-> > -       if (!swap_alloc_fast(&entry, order))
-> > -               swap_alloc_slow(&entry, order);
-> > -       local_unlock(&percpu_swap_cluster.lock);
-> > +       if (!swap_alloc_cgroup_priority(folio_memcg(folio), &entry, ord=
-er)) {
-> > +               local_lock(&percpu_swap_cluster.lock);
-> > +               if (!swap_alloc_fast(&entry, order))
-> > +                       swap_alloc_slow(&entry, order);
-> > +               local_unlock(&percpu_swap_cluster.lock);
-> > +       }
-> >
-> >         /* Need to call this even if allocation failed, for MEMCG_SWAP_=
-FAIL. */
-> >         if (mem_cgroup_try_charge_swap(folio, entry))
-> > @@ -1870,7 +1899,7 @@ swp_entry_t get_swap_page_of_type(int type)
-> >         /* This is called for allocating swap entry, not cache */
-> >         if (get_swap_device_info(si)) {
-> >                 if (si->flags & SWP_WRITEOK) {
-> > -                       offset =3D cluster_alloc_swap_entry(si, 0, 1);
-> > +                       offset =3D cluster_alloc_swap_entry(si, 0, 1, f=
-alse);
-> >                         if (offset) {
-> >                                 entry =3D swp_entry(si->type, offset);
-> >                                 atomic_long_dec(&nr_swap_pages);
-> > @@ -2800,6 +2829,10 @@ SYSCALL_DEFINE1(swapoff, const char __user *, sp=
-ecialfile)
-> >         arch_swap_invalidate_area(p->type);
-> >         zswap_swapoff(p->type);
-> >         mutex_unlock(&swapon_mutex);
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +       free_percpu(p->percpu_cluster);
-> > +       p->percpu_cluster =3D NULL;
-> > +#endif
-> >         kfree(p->global_cluster);
-> >         p->global_cluster =3D NULL;
-> >         vfree(swap_map);
-> > @@ -3207,7 +3240,23 @@ static struct swap_cluster_info *setup_clusters(=
-struct swap_info_struct *si,
-> >         for (i =3D 0; i < nr_clusters; i++)
-> >                 spin_lock_init(&cluster_info[i].lock);
-> >
-> > -       if (!(si->flags & SWP_SOLIDSTATE)) {
-> > +       if (si->flags & SWP_SOLIDSTATE) {
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +               si->percpu_cluster =3D alloc_percpu(struct percpu_clust=
-er);
-> > +               if (!si->percpu_cluster)
-> > +                       goto err_free;
-> > +
-> > +               int cpu;
-> > +               for_each_possible_cpu(cpu) {
-> > +                       struct percpu_cluster *cluster;
-> > +
-> > +                       cluster =3D per_cpu_ptr(si->percpu_cluster, cpu=
-);
-> > +                       for (i =3D 0; i < SWAP_NR_ORDERS; i++)
-> > +                               cluster->next[i] =3D SWAP_ENTRY_INVALID=
-;
-> > +                       local_lock_init(&cluster->lock);
-> > +               }
-> > +#endif
-> > +       } else {
-> >                 si->global_cluster =3D kmalloc(sizeof(*si->global_clust=
-er),
-> >                                      GFP_KERNEL);
-> >                 if (!si->global_cluster)
-> > @@ -3495,6 +3544,10 @@ SYSCALL_DEFINE2(swapon, const char __user *, spe=
-cialfile, int, swap_flags)
-> >  bad_swap_unlock_inode:
-> >         inode_unlock(inode);
-> >  bad_swap:
-> > +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> > +       free_percpu(si->percpu_cluster);
-> > +       si->percpu_cluster =3D NULL;
-> > +#endif
-> >         kfree(si->global_cluster);
-> >         si->global_cluster =3D NULL;
-> >         inode =3D NULL;
-> > --
-> > 2.34.1
-> >
-> >
+> >>>>> +	struct cxl_dev_state *cxlds;
+> >>>>> +
+> >>>>> +	/*
+> >>>>> +	 * The capability, status, and control fields in Device 0,
+> >>>>> +	 * Function 0 DVSEC control the CXL functionality of the
+> >>>>> +	 * entire device (CXL 3.0, 8.1.3).
+> >>>>> +	 */
+> >>>>> +	if (pdev->devfn !=3D PCI_DEVFN(0, 0))
+> >>>>> +		return 0;
+> >>>>> +
+> >>>>> +	/*
+> >>>>> +	 * CXL Memory Devices must have the 502h class code set (CXL
+> >>>>> +	 * 3.0, 8.1.12.1).
+> >>>>> +	 */
+> >>>>> +	if ((pdev->class >> 8) !=3D PCI_CLASS_MEMORY_CXL) =20
+> >>>> Should use FIELD_GET() to be consistent with the rest of CXL code ba=
+se =20
+> >>> Ok. =20
+> >=20
+> > Hi Dave,
+> >=20
+> > I have a question. I found I need to do the same you recommended for is=
+_cxl_mem_dev() in
+> > drivers/pci/pcie/cxl_aer.c. Looks like I need to define:
+> >=20
+> > #define PCI_CLASS_CODE_MASK=A0=A0=A0=A0=A0=A0=A0=A0 GENMASK(23, 8)
+> >=20
+> > to be used as:
+> >=20
+> > FIELD_GET(PCI_CLASS_CODE_MASK, pdev->class)
+> >=20
+> > What header file can I add the PCI_CLASS_CODE_MASK #define so that it c=
+an be used in CXL
+> > and PCI drivers? =20
+>=20
+> Perhaps include/uapi/linux/pci_regs.h? Although you may need to define th=
+e raw mask instead of using GENMASK due to the header being exported to use=
+r as well.
+>=20
+It's messy because that register has 3 fields (at least it does by 6.2 - no=
+t sure about earlier)
+and we are matching on combination of "sub class code" and "base class code=
+" but not the programming
+interface which is the bottom 8 bits.
+
+Whilst I'd kind like this cleaned up naming a mask might be a pain...
+Maybe we can get away with PCI_CLASS_CODE_MASK given how we name the=20
+specific IDs but perhaps making it kernel internal via include/linux/pci_id=
+s.h
+is safer than an include in uapi?
+
+I'd also like to see such a macro used through out the kernel and not
+just in this one place.
+
+Jonathan
+
+> DJ
+>=20
+> >=20
+> > Terry
+> >=20
+> >  =20
+> >>>>> +		return 0;
+> >>>>> +
+> >>>>> +	if (!is_cxl_memdev(&pdev->dev) || !pdev->dev.driver) =20
+> >>>> I think you need to hold the pdev->dev lock while checking if the dr=
+iver exists. =20
+> >>> Ok. =20
+> >>>>> +		return 0;
+> >>>>> +
+> >>>>> +	cxlds =3D pci_get_drvdata(pdev);
+> >>>>> +	struct device *dev __free(put_device) =3D get_device(&cxlds->cxlm=
+d->dev); =20
+> >>>> Maybe a comment on why cxlmd->dev ref is needed here. =20
+> >>> Good point. =20
+> >>>>> +
+> >>>>> +	if (err_info->severity =3D=3D AER_CORRECTABLE)
+> >>>>> +		cxl_cor_error_detected(pdev);
+> >>>>> +	else
+> >>>>> +		cxl_do_recovery(pdev);
+> >>>>> +
+> >>>>> +	return 1;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static struct pci_dev *sbdf_to_pci(struct cxl_prot_error_info *err=
+_info)
+> >>>>> +{
+> >>>>> +	unsigned int devfn =3D PCI_DEVFN(err_info->device,
+> >>>>> +				       err_info->function);
+> >>>>> +	struct pci_dev *pdev __free(pci_dev_put) =3D
+> >>>>> +		pci_get_domain_bus_and_slot(err_info->segment,
+> >>>>> +					    err_info->bus,
+> >>>>> +					    devfn); =20
+> >>>> Looks like DanC already caught that. Maybe have this function return=
+ with a ref held. I would also add a comment for the function mention that =
+the caller need to put the device. =20
+> >>> Right. I made the change in v10 source after DanC commented. I'll add=
+ a comment that callers must decrement the reference count.. =20
+> >>>>> +	return pdev;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static void cxl_handle_prot_error(struct cxl_prot_error_info *err_=
+info)
+> >>>>> +{
+> >>>>> +	struct pci_dev *pdev __free(pci_dev_put) =3D pci_dev_get(sbdf_to_=
+pci(err_info));
+> >>>>> +
+> >>>>> +	if (!pdev) {
+> >>>>> +		pr_err("Failed to find the CXL device\n");
+> >>>>> +		return;
+> >>>>> +	}
+> >>>>> +
+> >>>>> +	/*
+> >>>>> +	 * Internal errors of an RCEC indicate an AER error in an
+> >>>>> +	 * RCH's downstream port. Check and handle them in the CXL.mem
+> >>>>> +	 * device driver.
+> >>>>> +	 */
+> >>>>> +	if (pci_pcie_type(pdev) =3D=3D PCI_EXP_TYPE_RC_EC)
+> >>>>> +		return pcie_walk_rcec(pdev, cxl_rch_handle_error_iter, err_info);
+> >>>>> + =20
+> >>>> cxl_rch_handle_error_iter() holds the pdev device lock when handling=
+ errors. Does the code block below need locking?
+> >>>>
+> >>>> DJ =20
+> >>> There is a guard_lock() in the EP CXL error handlers (cxl_error_detec=
+ted()/cxl_cor_error_detected()). I have question about
+> >>> the same for the non-EP handlers added later: should we add the same =
+guard() for the CXL port handlers? That is in following patch:
+> >>> [PATCH v9 13/16] cxl/pci: Introduce CXL Port protocol error handlers.=
+ =20
+> >> I would think so....
+> >>
+> >> DJ
+> >> =20
+> >>> Terry =20
+> >>>>> +	if (err_info->severity =3D=3D AER_CORRECTABLE) {
+> >>>>> +		int aer =3D pdev->aer_cap;
+> >>>>> +		struct cxl_dev_state *cxlds =3D pci_get_drvdata(pdev);
+> >>>>> +		struct device *dev __free(put_device) =3D get_device(&cxlds->cxl=
+md->dev);
+> >>>>> +
+> >>>>> +		if (aer)
+> >>>>> +			pci_clear_and_set_config_dword(pdev,
+> >>>>> +						       aer + PCI_ERR_COR_STATUS,
+> >>>>> +						       0, PCI_ERR_COR_INTERNAL);
+> >>>>> +
+> >>>>> +		cxl_cor_error_detected(pdev);
+> >>>>> +
+> >>>>> +		pcie_clear_device_status(pdev);
+> >>>>> +	} else {
+> >>>>> +		cxl_do_recovery(pdev);
+> >>>>> +	}
+> >>>>> +}
+> >>>>> +
+> >>>>>  static void cxl_prot_err_work_fn(struct work_struct *work)
+> >>>>>  {
+> >>>>> +	struct cxl_prot_err_work_data wd;
+> >>>>> +
+> >>>>> +	while (cxl_prot_err_kfifo_get(&wd)) {
+> >>>>> +		struct cxl_prot_error_info *err_info =3D &wd.err_info;
+> >>>>> +
+> >>>>> +		cxl_handle_prot_error(err_info);
+> >>>>> +	}
+> >>>>>  }
+> >>>>> =20
+> >>>>>  #else
+> >>>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> >>>>> index e77d5b53c0ce..524ac32b744a 100644
+> >>>>> --- a/drivers/pci/pci.c
+> >>>>> +++ b/drivers/pci/pci.c
+> >>>>> @@ -2328,6 +2328,7 @@ void pcie_clear_device_status(struct pci_dev =
+*dev)
+> >>>>>  	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
+> >>>>>  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
+> >>>>>  }
+> >>>>> +EXPORT_SYMBOL_NS_GPL(pcie_clear_device_status, "CXL");
+> >>>>>  #endif
+> >>>>> =20
+> >>>>>  /**
+> >>>>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> >>>>> index d6296500b004..3c54a5ed803e 100644
+> >>>>> --- a/drivers/pci/pci.h
+> >>>>> +++ b/drivers/pci/pci.h
+> >>>>> @@ -649,16 +649,10 @@ static inline bool pci_dpc_recovered(struct p=
+ci_dev *pdev) { return false; }
+> >>>>>  void pci_rcec_init(struct pci_dev *dev);
+> >>>>>  void pci_rcec_exit(struct pci_dev *dev);
+> >>>>>  void pcie_link_rcec(struct pci_dev *rcec);
+> >>>>> -void pcie_walk_rcec(struct pci_dev *rcec,
+> >>>>> -		    int (*cb)(struct pci_dev *, void *),
+> >>>>> -		    void *userdata);
+> >>>>>  #else
+> >>>>>  static inline void pci_rcec_init(struct pci_dev *dev) { }
+> >>>>>  static inline void pci_rcec_exit(struct pci_dev *dev) { }
+> >>>>>  static inline void pcie_link_rcec(struct pci_dev *rcec) { }
+> >>>>> -static inline void pcie_walk_rcec(struct pci_dev *rcec,
+> >>>>> -				  int (*cb)(struct pci_dev *, void *),
+> >>>>> -				  void *userdata) { }
+> >>>>>  #endif
+> >>>>> =20
+> >>>>>  #ifdef CONFIG_PCI_ATS
+> >>>>> @@ -967,7 +961,6 @@ void pci_no_aer(void);
+> >>>>>  void pci_aer_init(struct pci_dev *dev);
+> >>>>>  void pci_aer_exit(struct pci_dev *dev);
+> >>>>>  extern const struct attribute_group aer_stats_attr_group;
+> >>>>> -void pci_aer_clear_fatal_status(struct pci_dev *dev);
+> >>>>>  int pci_aer_clear_status(struct pci_dev *dev);
+> >>>>>  int pci_aer_raw_clear_status(struct pci_dev *dev);
+> >>>>>  void pci_save_aer_state(struct pci_dev *dev);
+> >>>>> @@ -976,7 +969,6 @@ void pci_restore_aer_state(struct pci_dev *dev);
+> >>>>>  static inline void pci_no_aer(void) { }
+> >>>>>  static inline void pci_aer_init(struct pci_dev *d) { }
+> >>>>>  static inline void pci_aer_exit(struct pci_dev *d) { }
+> >>>>> -static inline void pci_aer_clear_fatal_status(struct pci_dev *dev)=
+ { }
+> >>>>>  static inline int pci_aer_clear_status(struct pci_dev *dev) { retu=
+rn -EINVAL; }
+> >>>>>  static inline int pci_aer_raw_clear_status(struct pci_dev *dev) { =
+return -EINVAL; }
+> >>>>>  static inline void pci_save_aer_state(struct pci_dev *dev) { }
+> >>>>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> >>>>> index 5350fa5be784..6e88331c6303 100644
+> >>>>> --- a/drivers/pci/pcie/aer.c
+> >>>>> +++ b/drivers/pci/pcie/aer.c
+> >>>>> @@ -290,6 +290,7 @@ void pci_aer_clear_fatal_status(struct pci_dev =
+*dev)
+> >>>>>  	if (status)
+> >>>>>  		pci_write_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS, status);
+> >>>>>  }
+> >>>>> +EXPORT_SYMBOL_GPL(pci_aer_clear_fatal_status);
+> >>>>> =20
+> >>>>>  /**
+> >>>>>   * pci_aer_raw_clear_status - Clear AER error registers.
+> >>>>> diff --git a/drivers/pci/pcie/rcec.c b/drivers/pci/pcie/rcec.c
+> >>>>> index d0bcd141ac9c..fb6cf6449a1d 100644
+> >>>>> --- a/drivers/pci/pcie/rcec.c
+> >>>>> +++ b/drivers/pci/pcie/rcec.c
+> >>>>> @@ -145,6 +145,7 @@ void pcie_walk_rcec(struct pci_dev *rcec, int (=
+*cb)(struct pci_dev *, void *),
+> >>>>> =20
+> >>>>>  	walk_rcec(walk_rcec_helper, &rcec_data);
+> >>>>>  }
+> >>>>> +EXPORT_SYMBOL_NS_GPL(pcie_walk_rcec, "CXL");
+> >>>>> =20
+> >>>>>  void pci_rcec_init(struct pci_dev *dev)
+> >>>>>  {
+> >>>>> diff --git a/include/linux/aer.h b/include/linux/aer.h
+> >>>>> index 550407240ab5..c9a18eca16f8 100644
+> >>>>> --- a/include/linux/aer.h
+> >>>>> +++ b/include/linux/aer.h
+> >>>>> @@ -77,12 +77,14 @@ struct cxl_prot_err_work_data {
+> >>>>> =20
+> >>>>>  #if defined(CONFIG_PCIEAER)
+> >>>>>  int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
+> >>>>> +void pci_aer_clear_fatal_status(struct pci_dev *dev);
+> >>>>>  int pcie_aer_is_native(struct pci_dev *dev);
+> >>>>>  #else
+> >>>>>  static inline int pci_aer_clear_nonfatal_status(struct pci_dev *de=
+v)
+> >>>>>  {
+> >>>>>  	return -EINVAL;
+> >>>>>  }
+> >>>>> +static inline void pci_aer_clear_fatal_status(struct pci_dev *dev)=
+ { }
+> >>>>>  static inline int pcie_aer_is_native(struct pci_dev *dev) { return=
+ 0; }
+> >>>>>  #endif
+> >>>>> =20
+> >>>>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> >>>>> index bff3009f9ff0..cd53715d53f3 100644
+> >>>>> --- a/include/linux/pci.h
+> >>>>> +++ b/include/linux/pci.h
+> >>>>> @@ -1806,6 +1806,9 @@ extern bool pcie_ports_native;
+> >>>>> =20
+> >>>>>  int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed=
+ speed_req,
+> >>>>>  			  bool use_lt);
+> >>>>> +void pcie_walk_rcec(struct pci_dev *rcec,
+> >>>>> +		    int (*cb)(struct pci_dev *, void *),
+> >>>>> +		    void *userdata);
+> >>>>>  #else
+> >>>>>  #define pcie_ports_disabled	true
+> >>>>>  #define pcie_ports_native	false
+> >>>>> @@ -1816,8 +1819,15 @@ static inline int pcie_set_target_speed(stru=
+ct pci_dev *port,
+> >>>>>  {
+> >>>>>  	return -EOPNOTSUPP;
+> >>>>>  }
+> >>>>> +
+> >>>>> +static inline void pcie_walk_rcec(struct pci_dev *rcec,
+> >>>>> +				  int (*cb)(struct pci_dev *, void *),
+> >>>>> +				  void *userdata) { }
+> >>>>> +
+> >>>>>  #endif
+> >>>>> =20
+> >>>>> +void pcie_clear_device_status(struct pci_dev *dev);
+> >>>>> +
+> >>>>>  #define PCIE_LINK_STATE_L0S		(BIT(0) | BIT(1)) /* Upstr/dwnstr L0s=
+ */
+> >>>>>  #define PCIE_LINK_STATE_L1		BIT(2)	/* L1 state */
+> >>>>>  #define PCIE_LINK_STATE_L1_1		BIT(3)	/* ASPM L1.1 state */ =20
+> >>> =20
+> >  =20
+>=20
+>=20
+
 
