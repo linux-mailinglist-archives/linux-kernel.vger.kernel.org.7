@@ -1,150 +1,126 @@
-Return-Path: <linux-kernel+bounces-684184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AECFAD7758
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2C2AD775B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 18:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65EF73B5911
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:55:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8BE3AE44D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A981F29DB97;
-	Thu, 12 Jun 2025 15:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB012BDC20;
+	Thu, 12 Jun 2025 15:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1FQieJT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tJ9HcDCB"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3161B3957;
-	Thu, 12 Jun 2025 15:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713C229B76C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743586; cv=none; b=VJU2TLy1liMJGViwxMHSq7NKVZ6f5FuEvbf6B36oEuyR2VHw/G53Pg4zKD1AQGr809pIKE1BtXzFE2mJZ16AB8FNlCY7hblHpnZ/xmvGeFYlOn0+Trn/ZBrRIEFZ3N7sgXoWcHpdFstF6Ulpj9T11ZN+o1zBqYZzkivBrD3geMI=
+	t=1749743614; cv=none; b=UsEEOWVjWcdwXBSZhX9PunlOVUjH3HsIeI3oyfDwlQkiDqMKLz9+tslz20R3fDVflYs7PAkLvj0vbi8evLTpCo5MOmEeX+lDv3lWUTsMSEck4Qo/9l8tOth54du6uPurrNu/31WLyn4qo0ouELNZ9BgpeM56+D8k6h855itRULk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743586; c=relaxed/simple;
-	bh=G7ZMMQ9ADT/6wk/tz0a93t09tIL8YIFEwIYmqTwvN7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KG4RwmYSvYqKxFjMdpaGmpAGUQTcv6bZnxBnzSO0vjs3lwgRJcQ7PPimtRhwzP+nrDu0ERrgIwZezk/Xx4UTvmw/7pEj6Ww1Pi7S2zVsg+ZF+4nixxhBxgAB6Hc4KWvAqeC5SwqSwnpdQXlfL0pCORcInerisOULORRzcM6ml78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1FQieJT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11085C4CEEA;
-	Thu, 12 Jun 2025 15:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749743585;
-	bh=G7ZMMQ9ADT/6wk/tz0a93t09tIL8YIFEwIYmqTwvN7M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n1FQieJTUyWtSztZ5N1cLG1nh921uBAqQ+2ezL6GVhhIqU36+GzOkXOAfAcBr2tuN
-	 sdhPunWhYbIEA8AnT0MSD9Qh9/YV2oK40K9Q3YP6V2GgFXTYTLoyWU3r2GWdC+3gQz
-	 QBX5jdPLoaWnAVQh4uhuy2Ps9RDVLuXLMqJmce5O4OHvAoyJ21fN/iRO8YZUjHjCj+
-	 xLiov+Z9Ojk+Hl8W2yTtAnD+c6HkVYmBv5kC940amaRZqRuB//3sSExHH62wntLix0
-	 oDaLt4wjz0ho74ZMWAWEnGLXzQDizYPkHKO8v3cOu5ojq6+9+dK5k69mRV24ZqmHIn
-	 INOTynZQxxIxQ==
-Date: Thu, 12 Jun 2025 16:53:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: panel: document Synaptics TDDI
- panel driver
-Message-ID: <20250612-patriarch-triage-8ceeebc6da4a@spud>
-References: <20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org>
- <20250612-panel-synaptics-tddi-v1-1-dfb8a425f76c@disroot.org>
- <20250612-agency-mothball-3830177fd43b@spud>
- <2d8714983c484fe34313efe1dbabf2bd@disroot.org>
+	s=arc-20240116; t=1749743614; c=relaxed/simple;
+	bh=1cRDkeLHzFug3qxAN04q6m0PQr+KA292mN+/J7203SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sEgkugOZcEsdR2VfAUClZFSRzhPbBIW4SX8WLc14HmLXcduPVb0NbjrmzAg0FYXk1T/sOpt5MtkKl9PAUu+m7gz86yCs1FUlSzGzw/rnP26svZDqsmPGkm8ltKeYnNtOXTeCxyYUzRuNsvKFXLyZfAnmM6RF98wR4RZwFy16EfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tJ9HcDCB; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7d6d8789-e10b-4b06-aa99-5c1a1bdd3b4c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749743609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VtRiob/WK6dB9hiKsBztaXiC/lktTw6wqNhGJ63l+W4=;
+	b=tJ9HcDCB7jXNy8vPj1JafBm/OvNXzP9IOqlWuNUgi7F4DcQp+dzc1ukYjMpZz4aqJfvHlc
+	8iDFjYtfY04Px4+/pflwCGlg2iuolBe41mxgNLf0xXYbbFNNPm6Z2SQ+jcCmSZat08GsMV
+	4C+gdBKGhjcgEAMDybjA+WapeXQZNsU=
+Date: Thu, 12 Jun 2025 11:53:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="s5vmbRD8rosFxZgz"
-Content-Disposition: inline
-In-Reply-To: <2d8714983c484fe34313efe1dbabf2bd@disroot.org>
+Subject: Re: [PATCH] driver core: Prevent deferred probe loops
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Danilo Krummrich
+ <dakr@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Rob Herring <robh+dt@kernel.org>,
+ Grant Likely <grant.likely@linaro.org>
+References: <cb354fd2-bece-42ef-9213-de7512e80912@linux.dev>
+ <20250610183459.3395328-1-sean.anderson@linux.dev>
+ <CAGETcx-koKBvSXTHChYYF-qSU-r1cBUbLghJZcqtJOGQZjn3BA@mail.gmail.com>
+ <a52c513c-ff93-4767-a370-3f7c562df7bd@linux.dev>
+ <2025061147-squishier-oversleep-80cd@gregkh>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <2025061147-squishier-oversleep-80cd@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+On 6/11/25 08:23, Greg Kroah-Hartman wrote:
+> On Tue, Jun 10, 2025 at 07:44:27PM -0400, Sean Anderson wrote:
+>> On 6/10/25 19:32, Saravana Kannan wrote:
+>> > On Tue, Jun 10, 2025 at 11:35 AM Sean Anderson <sean.anderson@linux.dev> wrote:
+>> >>
+>> >> A deferred probe loop can occur when a device returns EPROBE_DEFER after
+>> >> registering a bus with children:
+>> > 
+>> > This is a broken driver. A parent device shouldn't register child
+>> > devices unless it is fully read itself. It's not logical to say the
+>> > child devices are available, if the parent itself isn't fully ready.
+>> > So, adding child devices/the bus should be the last thing done in the
+>> > parent's probe function.
+>> >
+>> > I know there are odd exceptions where the parent depends on the child,
+>> > so they might add the child a bit earlier in the probe
+>> 
+>> This is exactly the case here. So the bus probing cannot happen any
+>> later than it already does.
+> 
+> Please fix the driver not to do this.
 
---s5vmbRD8rosFxZgz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How? The driver needs the PCS to work. And the PCS can live on the MDIO
+bus.
 
-On Thu, Jun 12, 2025 at 03:47:55PM +0000, Kaustabh Chakraborty wrote:
-> On 2025-06-12 15:32, Conor Dooley wrote:
-> > On Thu, Jun 12, 2025 at 08:09:40PM +0530, Kaustabh Chakraborty wrote:
-> >> Document the driver for Synaptics TDDI (Touch/Display Integration) pan=
-els.
-> >> Along with the MIPI-DSI panel, these devices also have an in-built LED
-> >> backlight device and a touchscreen, all packed together in a single ch=
-ip.
-> >> Also, add compatibles for supported panels - TD4101 and TD4300.
-> >>=20
-> >> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> >> ---
-> >>  .../bindings/display/panel/synaptics,tddi.yaml     | 92 +++++++++++++=
-+++++++++
-> >>  1 file changed, 92 insertions(+)
-> >>=20
-> >> diff --git a/Documentation/devicetree/bindings/display/panel/synaptics=
-,tddi.yaml b/Documentation/devicetree/bindings/display/panel/synaptics,tddi=
-=2Eyaml
-> >> new file mode 100644
-> >> index 0000000000000000000000000000000000000000..3aae1358a1d764361c072d=
-3b54f74cdf634f7fa8
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/display/panel/synaptics,tddi.y=
-aml
-> >=20
-> > File called synaptics,tddi
-> >=20
-> >> @@ -0,0 +1,92 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/display/panel/samsung,tddi.yaml#
-> >=20
-> > id of samsung,tddi
-> >=20
-> > [...]
-> >
-> >> +properties:
-> >> +  compatible:
-> >> +    enum:
-> >> +      - syna,td4101-panel
-> >> +      - syna,td4300-panel
-> >=20
-> > compatibles are syna,td####-panel
-> >=20
-> > These should be consistent and tooling should have complained about the
-> > mismatch between id and filename at the least.
->=20
-> Hmm, I don't recall seeing any errors. Do I pick any one then? Or is there
-> any other generic way?
+>> > but in those cases, the parent's probe should still do all the checks
+>> > ahead of time.
+>> 
+>> Such as what? How is the parent going to know the resource is missing
+>> without checking for it?
+>>  
+>> > Can you be more specific about the actual failure you are seeing?
+>> 
+>> MAC is looking for a PCS that's on its internal MDIO bus, but that PCS's
+>> driver isn't loaded. The PCS has to be loaded at probe time because
+>> phylink_create needs it, and phylink is necessary to register the
+>> netdev. The latter situation is not ideal, but it would be quite a bit
+>> of work to untangle.
+> 
+> Please untangle, don't put stuff in the driver core for broken
+> subsystems.  That is just pushing the maintaince of this from the driver
+> authors to the driver core maintainers for the next 20+ years :(
 
-The id must match the filename and the filename should match one of the
-compatibles.
+What makes it broken? The "mess" has already been made in netdev. The driver
+authors have already pushed it off onto phylink.
 
+And by "quite a bit of work to untangle" I mean the PCS affects settings
+(ethtool ksettings, MII IOCTL) that are exposed to userspace as soon as
+the netdev is registered. So we cannot move to a "delayed" lookup
+without breaking reading/modifying the settings. We could of course fake
+it, but what happens when e.g. userspace looks at the settings and
+breaks because we are not reporting the right capabilities (which would
+have been reported in the past)?
 
---s5vmbRD8rosFxZgz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEr33AAKCRB4tDGHoIJi
-0o+1AQDRaFLnl2hzqpE5LjBnhUp12VJATlA6CFsXD8YOLe6IkwEAiexCjLj6ONAF
-oQvB1eDC8gP6KWkgZrOYnQuvxANgKgQ=
-=wHWT
------END PGP SIGNATURE-----
-
---s5vmbRD8rosFxZgz--
+--Sean
 
