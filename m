@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-683335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0F9AD6C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D54AD6C28
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D83172046
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F417DEC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057B022B586;
-	Thu, 12 Jun 2025 09:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q94Z/Ayl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E725422D7B1;
+	Thu, 12 Jun 2025 09:29:24 +0000 (UTC)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321AD2288CB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5AB22D4FF;
+	Thu, 12 Jun 2025 09:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749720531; cv=none; b=VQrOyCZDwcUnOmFn4td4wZsZJSyS1okyofh/6mUyJuhgtJYpKFPLeE2pehUB0lcGQcbl/J+Uf3KXzDvxYQH4ypUpWFt2h48h9ssoqfPvdda1sXItSIT+c5+0YwJ0kliy01eFZF7wSt4kfRc67lDBhQyav4fLaRcfLHFg25LesV0=
+	t=1749720564; cv=none; b=gGhrLVy/zwX8Ns09IA7OaQUC5TwZfFRZFSYaSv3Fo5xybObNdqby5+gF2OZliHh2/j4YUKm4TPf2us2pTtHdx3Gk/CkXQasiG5di7HVJK4T/Bkv+KlcH7U+FWNqqkL67G6PseyH6xCBEZd3yQ97sJ6KoCe/DmSHvBjm2AYOpZew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749720531; c=relaxed/simple;
-	bh=15A+Jq7bf64Y0Sob0l+shkxqSMyV+klxuzTzYl+nPwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GDyKPEZwfLBVUEo3DIMMsT8HqzdgtLSgSDSL1RYNMq5qC63tnjyJDH0YnPJCdFmQ5RUs7rd0wkPBg0trLTDxSoVHsnVoq0BiQdGqApetKrIZhLD5xXP8n7f9DvrqsTMxy9RFL0f7IRTo1P9qSyanu7nKCnNNmGTAm7KFXL0hklk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q94Z/Ayl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749720528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFdgvb/gxCfOxh7wiM2uvpJKoACuWo2ZO3Xgqk/MBn0=;
-	b=Q94Z/Ayl2hF+khK59GEGt3s8LchhTuD+Zeoa9chTXIs0wZyZH8Q+rFW8e2HuB9N/3lZg7h
-	sLkZo0GVRa5nP3Wq+K/DPZMoj4T305QgCzfxAf9NFjZCVrWD3w0JpgQByy2uU5Nw7t5Vyn
-	5sNdmNzMesk7j8nKWNu/4yxpkpTRD6Q=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-250-kj7aqRDmNkyS14xQgbufMg-1; Thu, 12 Jun 2025 05:28:46 -0400
-X-MC-Unique: kj7aqRDmNkyS14xQgbufMg-1
-X-Mimecast-MFC-AGG-ID: kj7aqRDmNkyS14xQgbufMg_1749720526
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d64026baso4317625e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 02:28:46 -0700 (PDT)
+	s=arc-20240116; t=1749720564; c=relaxed/simple;
+	bh=xncBKzmzCQLk7mSsHxy95YNmxWkHWoPa46bnKz9eXBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MCxlpyiwbhsFiWwRA3+/EaVxxYYwC1MY0oiX6CpxAEgmB4qzPTeISp0BDhbJs5+2MyLg/9iEvBNFNCc2eBGVF9DRUF5DQ0sQDCuxBuaERbez1DeZdigf7gLAac4yE4yv2bQhIVs2TRyiQwL4rMaQrqLmzEw95pWNB6vp1B8ZWiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e7c4ab7ff6so207326137.3;
+        Thu, 12 Jun 2025 02:29:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749720525; x=1750325325;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eFdgvb/gxCfOxh7wiM2uvpJKoACuWo2ZO3Xgqk/MBn0=;
-        b=PBfClckBFaw2zrT5N0kJmUPoQMIam2FVuDYYmYgtErYfb5joAe22kedwnYPpM0YcHp
-         0/O+7mRU5WoU3SxoTUA73g4mdYK8oNoeu9kVC5izColRuNGyrQK/iAr7L9ZeHKjPwKM2
-         2BYCWntZkfqMY9YhK/1e2mvSuZq3jA+1ZzZLK13TtmjYusrdB1k2igIRvTjkmzwy7dLG
-         F+ZEeMTwnqwIYzm1+xudTwoBZ9A7x1vkQz+hz03Xsc9ZPHe0eLCaaJWXC+MOqWF8DvRk
-         PeKjH6fiRLd/tqdc8nB5NTbD7RyLEaDcmPGKnSmQKF2G3VXOl6sIcvL6VYC3C4AHJ6ZI
-         abXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/uDX/EDMYEkA/WwxULOLAvN/DxTtpWz0RXkhbHfUPpQ0GYXxs0JF8PQY5em9krX7K6CidLRbirXb7ctY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg89do1srhv2MDi0dUtZ9kmEZx4lYzS35lEYx568HvVOnjZ9PY
-	8Utqmin1SvIlya55OY3eNF51lckoDU2wfxM56BpASbTj7uMIrwaG1kXrnqDD5XEcUKw94pamwrC
-	UxinVxq+QTSnu5Yh4+yFAVpraS50c0FDtOo9RwUsVaWj5CVJkBP1h4Hvy4RKVlRkGkg==
-X-Gm-Gg: ASbGncswGTy4i3NqMlruGvHFC18xfojG2q7NA5BkEFeyMNBiv0MhXAFREj4KCJMRVSF
-	3dB27pejLy+r3Pe4vRtt2t9CzPJqMCNXeOLRwpW+9o0RJbJKxAhGviWrvYQurQqUMUHgXKd9IqH
-	KLczhTnRDc99PPoH5Pc4wi1LVZTpVBU0TO3Ok4VBXbLQTNmk0hvqufgJ++Xqnnwsmxt6Z5KYomc
-	5K9dqe7QihJl4bbBbYH+nA2L06EEXvdKrKPML4FbKRd3EZegRBW/5QoiWwrLGq5f0f7CJgrsFz7
-	ucb79WuajdGkhf0tmdlA3mCE4p+ekV7zHem68pQjEh5YI3gYOxXxaYle
-X-Received: by 2002:a05:600c:4f95:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-453248dbf28mr62663465e9.29.1749720525537;
-        Thu, 12 Jun 2025 02:28:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdhTavuGh0Cum2rAbeyftkpMyPY9J+DGmx0/nwN3QfQd4jm1p2rE5yEec6J7zmpY7sb/Fe0w==
-X-Received: by 2002:a05:600c:4f95:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-453248dbf28mr62663255e9.29.1749720525187;
-        Thu, 12 Jun 2025 02:28:45 -0700 (PDT)
-Received: from ?IPV6:2001:67c:1220:8b4:8b:591b:3de:f160? ([2001:67c:1220:8b4:8b:591b:3de:f160])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45320562afbsm53511295e9.1.2025.06.12.02.28.43
+        d=1e100.net; s=20230601; t=1749720560; x=1750325360;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NERsyttcJtkIczzHslePzMNvEb9gRLTeDCgd7sAMOcQ=;
+        b=lzBSCyfrx7aT3lle/dCHURUuSOmDa0ZnX6z5LzHI+kM3FqwR0F7jrSUqArmldshIBI
+         PWYh03H7Wdkqo/JMkA8jejnSVfQ/zp9d+hq6rcFEqlgDTLj6G7DIBOUwp4WlFZsb/N82
+         0bjKp9L3leHkjcrIpcOd21B4AK5ZCHLJNCry+UUHTBpCN7A9Ls841ALeCmUV2YFBv0iV
+         7Cir01X0FpEY2T3aWMHUJGcEdz76oLBkjogKsdbVZ+L/iTgUi5cQIu4xrSh+S1uPSz9s
+         ilq1BeFIovdvd3fBKmnLzBIY76GRU/ZizBfGo/YKyAQFhHsKCXTyfaVdL3Y2JAXpf1BP
+         hrOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmP/sUAKhC7lLBK2lxiJ213tD1XkPk+2fnWIfI6fRp3vAqAwmDw/bbItUHq8yO+RQ2GS/Qs9tjPnC786Js@vger.kernel.org, AJvYcCXqlOAICHwtf4SDV3H6op5kxVp81+ItfxjzCgqaUT1ZI14h9phhzAJmlmldm/e6nd5m2tIDa66h9iUztA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBucCco2bzs/KP1xnqx1nkpgqPZr0X9xrBCnHyo/ezFJg4Glda
+	5xCaGoyve07nITl4BPgrik3imiswIPl8p8P6jmkb8axdpgcWDxEo2D8NVlx/mrdS
+X-Gm-Gg: ASbGncvgtV7cZtgmY3XQNBDwiUIqknPfJdG11nY1DRciB6zg37N2a1/mlT41u2wq1Z8
+	vP74uTxQ681C/ZTlUz3INNx+k/yKk+eMyOyfsD6tWrFwSenPYZ5BaiVfVCjtlP1aSMYzc6TAPGX
+	auqvSSvMtQqcWSRUnzN2uj7uhjBhmKilMzl/5lX5ULrWBCzVJ0vvFT1qUwruWqJ/4PatSJxpide
+	tj71ZZhN+V7lZcoajkc8d3+lHLqbr70jpDjEqEjMsXsexjzGpBRVq6Aml7i7DUvnpooxflnYFBK
+	3irz6/f9mOEUxljsIewAlnzWBWAY/aGoqjvLVGlXCek6lwYN1Rj/W8ixXoaYh1tcADJwAzyy4B2
+	hk1Np+XXRzAtloF5EzFHf+fpogeW8RoHV4u4=
+X-Google-Smtp-Source: AGHT+IEqW9am1rIU6PjNRZahp0UG17xMzrFqbsH8aRHgct5PBS4FCtXU3ddOWc3LLw5WuzZ3oBzNJQ==
+X-Received: by 2002:a05:6102:f08:b0:4e5:ac99:e466 with SMTP id ada2fe7eead31-4e7ce914bbemr1569285137.18.1749720559899;
+        Thu, 12 Jun 2025 02:29:19 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f0135026bsm219816241.20.2025.06.12.02.29.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 02:28:44 -0700 (PDT)
-Message-ID: <9c2fca05-baa6-4da5-ad9f-df3361356db9@redhat.com>
-Date: Thu, 12 Jun 2025 11:28:41 +0200
+        Thu, 12 Jun 2025 02:29:19 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-87ecba78750so245602241.1;
+        Thu, 12 Jun 2025 02:29:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX1aITzNTwv5DOg2FYyxstSmO5f7nUx5CftUSntLnb9riYdHjhGK+twoy3+C2NyxbqUjD8O/2TRvV2j9w==@vger.kernel.org, AJvYcCXzb860X3GTk4ogIWwIi8e4tIU1SA2rudlD6deTrpoeyjF4oB7EKSrKyMRoWVtQaRg/LIa1I3yDyAB7xmVg@vger.kernel.org
+X-Received: by 2002:a05:6102:3e12:b0:4e7:7787:1cf8 with SMTP id
+ ada2fe7eead31-4e7ce8308b4mr1675643137.7.1749720559317; Thu, 12 Jun 2025
+ 02:29:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: sysfs: Implement is_visible for
- phys_(port_id, port_name, switch_id)
-To: Yajun Deng <yajun.deng@linux.dev>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250521140824.3523-1-yajun.deng@linux.dev>
- <10a15ca4-ff93-4e62-9953-cbd3ba2c3f53@redhat.com>
- <be52bdf3f1f4786f73b618369f63ce035ce8b955@linux.dev>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <be52bdf3f1f4786f73b618369f63ce035ce8b955@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAMuHMdW5wU1ForGOGD-+HDUu7wcnBx3jx911nLEqbJ71t4MBsg@mail.gmail.com>
+ <20250611161207.4031677-1-alexguo1023@gmail.com>
+In-Reply-To: <20250611161207.4031677-1-alexguo1023@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 11:29:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW=GyUHsfqtSD8iYaV_nRszEunaDMCoL6zWf5_bPS0T4Q@mail.gmail.com>
+X-Gm-Features: AX0GCFsIv4ID6KhU6t-X5eNite_AO0HV8CCJC0-uReM8yNgsMZKrhCmvXGEXb8Y
+Message-ID: <CAMuHMdW=GyUHsfqtSD8iYaV_nRszEunaDMCoL6zWf5_bPS0T4Q@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: pm3fb: Fix potential divide by zero
+To: Alex Guo <alexguo1023@gmail.com>
+Cc: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/12/25 10:51 AM, Yajun Deng wrote:
-> May 27, 2025 at 2:08 PM, "Paolo Abeni" <pabeni@redhat.com> wrote:
->> On 5/21/25 4:08 PM, Yajun Deng wrote:
->>> phys_port_id_show, phys_port_name_show and phys_switch_id_show would
->>>
->>>  return -EOPNOTSUPP if the netdev didn't implement the corresponding
->>>
->>>  method.
->>>
->>>  
->>>
->>>  There is no point in creating these files if they are unsupported.
->>>
->>>  
->>>
->>>  Put these attributes in netdev_phys_group and implement the is_visible
->>>
->>>  method. make phys_(port_id, port_name, switch_id) invisible if the netdev
->>>
->>>  dosen't implement the corresponding method.
->>>
->>>  
->>>
->>>  Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
->>>
->>
->> I fear that some orchestration infra depends on the files existence -
->>
->> i.e. scripts don't tolerate the files absence, deal only with I/O errors
->>
->> after open.
->>
->> It feel a bit too dangerous to merge a change that could break
->>
->> user-space this late. Let's defer it to the beginning of the next cycle.
->>
-> 
-> Ping.
+Hi Alex,
 
-I was likely not clear. The above means you should re-submit the patch now.
+On Wed, 11 Jun 2025 at 18:12, Alex Guo <alexguo1023@gmail.com> wrote:
+> > On Sat, 7 Jun 2025 at 22:14, Alex Guo <alexguo1023@gmail.com> wrote:
+> > > variable var->pixclock can be set by user. In case it equals to
+> > >  zero, divide by zero would occur in pm3fb_check_var. Similar
+> > > crashes have happened in other fbdev drivers. There is no check
+> > > and modification on var->pixclock along the call chain to
+> > > pm3fb_check_var. So we fix this by checking whether 'pixclock'
+> > > is zero.
+> > >
+> > > Similar commit: commit 16844e58704 ("video: fbdev: tridentfb:
+> > > Error out if 'pixclock' equals zero")
+> > >
+> > > Signed-off-by: Alex Guo <alexguo1023@gmail.com>
+> >
+> > Thanks for your patch, which is now commit 59d1fc7b3e1ae9d4
+> > ("fbdev: pm3fb: fix potential divide by zero") in fbdev/for-next.
+> >
+> > > --- a/drivers/video/fbdev/pm3fb.c
+> > > +++ b/drivers/video/fbdev/pm3fb.c
+> > > @@ -998,6 +998,9 @@ static int pm3fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
+> > >                 return -EINVAL;
+> > >         }
+> > >
+> > > +       if (!var->pixclock)
+> > > +               return -EINVAL;
+> >
+> > While this fixes the crash, this is correct behavior for an fbdev driver.
+> > When a value is invalid, it should be rounded up to a valid value instead,
+> > if possible.
+>
+> Thanks for your confirmation and suggestions.
+>
+> I added this patch based on existing checks on var->pixclock in other drivers, such as savagefb_check_var, nvidiafb_check_var, etc.
+> Are you suggesting that it is better to replace an invalid value (var->pixclock == 0) with a default valid value, instead of returning -EINVAL?
 
-/P
+Indeed.
 
+> If so, could you advise what a suitable default value would be for this case?
+
+The answer is hidden in the existing check below:
+
+> > > +
+> > >         if (PICOS2KHZ(var->pixclock) > PM3_MAX_PIXCLOCK) {
+> > >                 DPRINTK("pixclock too high (%ldKHz)\n",
+> > >                         PICOS2KHZ(var->pixclock));
+> > >                 return -EINVAL;
+> > >         }
+
+It can be replaced by:
+
+    if (var->pixclock <= KHZ2PICOS(PM3_MAX_PIXCLOCK))
+            var->pixclock = KHZ2PICOS(PM3_MAX_PIXCLOCK) + 1;
+
+The "+ 1" is needed because of rounding.
+
+> Actually, I have found a few similar issues in other functions as well. I would like to make sure I am addressing them in the correct way.
+
+That would be great. Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
