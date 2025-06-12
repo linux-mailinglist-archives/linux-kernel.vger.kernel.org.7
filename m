@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-683668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787CBAD70A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:41:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE13AD70A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C3F3A39B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE5D1BC05FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0732222A6;
-	Thu, 12 Jun 2025 12:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cek8NItr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB47221FDC;
+	Thu, 12 Jun 2025 12:42:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50762F4326;
-	Thu, 12 Jun 2025 12:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751F32AE8D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 12:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749732074; cv=none; b=XEUKw0T4h4u3pLR+8XstPPcfJ3U+v7HzPCLfroB0VbjugXSQEs2tVq7GYebS5JanbGkuUDclJKoi0nH5qbBzP37l2/zSI8m+8K/Xu5bjRD4eaoPcZIhO4eHKQHKU3T8Eu7QRHoQL5tEolNAihSC1G12e3MMD9G/7v1mjHqTxQfg=
+	t=1749732154; cv=none; b=gsMl2/hmMkDazGZ1tjeYAxs6L7FeCOMLiCM4bCopYXuYrilqYSOf+vnIcMDa2D5Qe0N6tdo27I4kEDJFZhQn2HYqr7zhWCXZMnRvwGHWk05CBFF/TNU/iCOZX4ojgym+OKr9vpiJIJkV9fgvYH2kBi/eGfIRZS0rLMyQHd1PMfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749732074; c=relaxed/simple;
-	bh=GPx47ZNv+igRsgoY9s4VuSgva7jzA22yGk+M8NK0yYI=;
+	s=arc-20240116; t=1749732154; c=relaxed/simple;
+	bh=697PY5Nbn19ygEdhBM6ksoSsaGIhpIVkom3/BoDU+O8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZyXrUK1pkhLHl/ti7NhJ4ca/xe3zbWaD6iBZRP9hDyoRqsxRmCKXVSoQywjXpkxcE1XiALQFlpK9mi3KywappJAOztlfw36ZdkKkU0HQvQQkTogst9wQ6My8RBwmLlC4jFgBZMcQnchwpTN3bzaXBlw6epPWl1nAqxC1irPbdwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cek8NItr; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749732073; x=1781268073;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GPx47ZNv+igRsgoY9s4VuSgva7jzA22yGk+M8NK0yYI=;
-  b=Cek8NItrX8Kxm1ZKPVXzHsFkIEDYtTatulUSyOInefYS9BQJfem0XdTI
-   4NlAh6fEOT7TOphXP45uYPrGYoFo6n5Cs4p29gGeKir/QWaZunwGYJ2VS
-   3bNxhfTop8LGBuM0j9MiY42Lelnnq3UhQAu63iVneB4i47YkgmRUmjjCu
-   +TIJWer9oqykU4JAfTSvG8t3SOO3G/Agu3d3esrISfmGWE0Y0/JIquVY3
-   mpMPdm+qUBA7tu3Dg0nLaSRN8sEXz2SG0J8pqzo7WpQqMOeersUH/kKbq
-   JB0x1/bFlFcHyG0z4rarCK3DJ+3dzCbB/YMcV5Nkqf6Wga9qBVny+hQ3v
-   A==;
-X-CSE-ConnectionGUID: yBSG3Ni0SS+YIaGZ0gzvKw==
-X-CSE-MsgGUID: dh+klCrGT5eWlLgJ6RMifw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="52004976"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
-   d="scan'208";a="52004976"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 05:41:12 -0700
-X-CSE-ConnectionGUID: 5Nu0z7AXSn+5oHtdzU0yBg==
-X-CSE-MsgGUID: Z9bB9wIETAKpC+I4MQv6nA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
-   d="scan'208";a="147388494"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 05:41:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uPhEw-00000005wzH-3wGa;
-	Thu, 12 Jun 2025 15:41:06 +0300
-Date: Thu, 12 Jun 2025 15:41:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
-	Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/11] iio: accel: adxl313: add power-save on
- activity/inactivity
-Message-ID: <aErK4ij3I83ETw-X@smile.fi.intel.com>
-References: <20250601172139.59156-1-l.rubusch@gmail.com>
- <aDz5WoBFlLiRptza@archie.me>
- <CAFXKEHZQZuKYS-DJ_KSmHzEO7OAGmKXCeEZ3VaLR-JJdb3Sw6Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3+g/4p5JhzM4QXks2KWp9+urCBB3845pd9Yvpv+c8ld0YQYMIPO/EO+ihIwlKRqARaAy4pxd3Y+Msy+3HPYYN6L0kwkR9ZQsDEZbBmzTWeDNBuHs03DHKRlQFNpxgFpnzAlzPixRNAeuoYg86Wgczo6cclN3L++2W2kJAsc4TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1uPhG0-00029s-Mk; Thu, 12 Jun 2025 14:42:12 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1uPhFz-0037mO-05;
+	Thu, 12 Jun 2025 14:42:11 +0200
+Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1uPhFy-008uO9-2t;
+	Thu, 12 Jun 2025 14:42:10 +0200
+Date: Thu, 12 Jun 2025 14:42:10 +0200
+From: Michael Tretter <m.tretter@pengutronix.de>
+To: yassine.ouaissa@allegrodvt.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Dufresne <nicolas@ndufresne.ca>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: media: allegro-dvt: add decoder
+ dt-bindings for Gen3 IP
+Message-ID: <aErLIriSYa1meukJ@pengutronix.de>
+Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
+	yassine.ouaissa@allegrodvt.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Dufresne <nicolas@ndufresne.ca>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20250605-allegro_dvt_al300_dec_driver-v2-0-1ef4839f5f06@allegrodvt.com>
+ <20250605-allegro_dvt_al300_dec_driver-v2-2-1ef4839f5f06@allegrodvt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,45 +77,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFXKEHZQZuKYS-DJ_KSmHzEO7OAGmKXCeEZ3VaLR-JJdb3Sw6Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250605-allegro_dvt_al300_dec_driver-v2-2-1ef4839f5f06@allegrodvt.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jun 11, 2025 at 10:04:17PM +0200, Lothar Rubusch wrote:
-> On Mon, Jun 2, 2025 at 3:07 AM Bagas Sanjaya <bagasdotme@gmail.com> wrote:
-> >
-> > On Sun, Jun 01, 2025 at 05:21:28PM +0000, Lothar Rubusch wrote:
-> > > The patch set covers the following topics:
-> > > - add debug register and regmap cache
-> > > - prepare iio channel scan_type and scan_index
-> > > - prepare interrupt handling
-> > > - implement fifo with watermark
-> > > - add activity/inactivity together with auto-sleep with link bit
-> > > - add ac coupled activity/inactivity, integrate with auto-sleep and link bit
-> > > - documentation
-> >
-> > The series doesn't cleanly apply on iio/testing tree. Base commit or tree?
-> >
-> > Confused...
+On Thu, 05 Jun 2025 12:26:57 +0000, Yassine Ouaissa via B4 Relay wrote:
+> From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
 > 
-> I'm sorry for that. My base tree is "testing" here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/log/?h=testing
+> Add compatible for video decoder on allegrodvt Gen 3 IP.
 > 
-> Since this patch could be applied, I guess it could be a good base commit:
-> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=d4d10d3535639b946007fb7ffb5bff2d878df921
+> v2:
+> - Change the YAML file name, use the existing vendor-prefix.
+> - Improuve the dt-bindings description.
+> - Change the device compatible identifier, from "allegrodvt, al300-vdec",
+>   to "allegro, al300-vdec"
+> - Simplify the register property specification,
+>   by using the simple min/max items constraint (Krzysztof Kozlowski)
+> - Remove the clock-names property. And remove it from the required
+>   properties list (Krzysztof Kozlowski) (Conor Dooley)
+> - Use the simple maxItems constraint for the memory-region property.
+>   Also for the firmware-name (Krzysztof Kozlowski)
+> - Example changes:
+>   - Use header provides definitions for the interrupts (Conor Dooley)
+>   - Improuve Interrupt specification using GIC constants (Conor Dooley)
+>   - Use generic node name "video-decoder" (Krzysztof Kozlowski) (Conor Dooley)
+>   - Remove unused label (Krzysztof Kozlowski)
+>   - Change clock reference from <&mcu_clock_dec> to <&mcu_core_clk>
+>   - Use hex format for reg property (Krzysztof Kozlowski) (Conor Dooley)
+>   - Reduce memory region size (Krzysztof Kozlowski) (Conor Dooley)
+> 
+>   - Link v1: https://patchwork.linuxtv.org/project/linux-media/patch/20250511144752.504162-4-yassine.ouaissa@allegrodvt.com/
+> 
+> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+> ---
+>  .../bindings/media/allegro,al300-vdec.yaml         | 75 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  2 +
+>  2 files changed, 77 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml b/Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..26f9ac39682431b1d4828aed5d1ed43ef099e204
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml
+> @@ -0,0 +1,75 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/allegro,al300-vdec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allegro DVT Video IP Decoder Gen 3
+> +
+> +maintainers:
+> +  - Yassine OUAISSA <yassine.ouaissa@allegrodvt.com>
+> +
+> +description: The al300-vdec represents the gen 3 of Allegro DVT IP video
+> +  decoding technology, offering significant advancements over its
+> +  predecessors. This new decoder features enhanced processing capabilities
+> +  with improved throughput and reduced latency.
+> +
+> +  Communication between the host driver software and the MCU is implemented
+> +  through a specialized mailbox interface mechanism. This mailbox system
+> +  provides a structured channel for exchanging commands, parameters, and
+> +  status information between the host CPU and the MCU controlling the codec
+> +  engines.
+> +
+> +properties:
+> +  compatible:
+> +    const: allegro,al300-vdec
+> +
+> +  reg:
+> +    maxItems: 2
+> +    minItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: regs
+> +      - const: apb
 
-Don't you use --base when creating series?
-If not, use it.
+If I understand correctly, "regs" are the registers to control the MCU
+and "apb" are the registers of the actual codec engines, which is
+controlled by the MCU. The driver never accesses the apb registers, but
+uses the apb address only to configure the firmware and tell it, where
+the registers of the codec engines are found.
 
-Bagas, you should refer to the last lines of the (cover letter) message where
-should be base commit written. When you use `b4` tool, it does automatically
-for you find the correct base, so one needs just to call `b4 shazam -M
-$MessageID` on top of the clean vanilla tag, and it will do the rest for you.
+Maybe a separate node for the actual codec that is referred via a
+phandle could be a better description of the hardware?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: MCU core clock
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - clocks
+> +
+> +additionalProperties: False
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    axi {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        video-decoder@a0120000 {
+> +            compatible = "allegro,al300-vdec";
+> +            reg = <0x00 0xa0120000 0x00 0x10000>,
+> +                  <0x01 0x80000000 0x00 0x8000>;
+> +            reg-names = "regs", "apb";
+> +            interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+> +            clocks = <&mcu_core_clk>;
+> +            firmware-name = "al300_vdec.fw";
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index abc6ba61048771303bc219102f2db602266b7c30..1ff78b9a76cb8cdf32263fcd9b4579b4a2bb6b2a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -816,7 +816,9 @@ M:	Michael Tretter <m.tretter@pengutronix.de>
+>  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/allegro,al300-vdec.yaml
+>  F:	Documentation/devicetree/bindings/media/allegro,al5e.yaml
+> +F:	drivers/media/platform/allegro-dvt/al300
+>  F:	drivers/media/platform/allegro-dvt/zynqmp
+>  
+>  ALLIED VISION ALVIUM CAMERA DRIVER
+> 
+> -- 
+> 2.30.2
+> 
+> 
+> 
 
