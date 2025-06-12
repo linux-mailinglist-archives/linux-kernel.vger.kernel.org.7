@@ -1,301 +1,217 @@
-Return-Path: <linux-kernel+bounces-684043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2E3AD7543
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:08:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A62EAD751E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC621887B0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2D3188F33F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9899273D8E;
-	Thu, 12 Jun 2025 15:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE8A2737E4;
+	Thu, 12 Jun 2025 14:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-bs.de header.i=@tu-bs.de header.b="tyyE0jJs"
-Received: from pmxout2.rz.tu-bs.de (pmxout2.rz.tu-bs.de [134.169.4.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnPhl1wc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AA726E717;
-	Thu, 12 Jun 2025 15:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.169.4.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D36526D4F8;
+	Thu, 12 Jun 2025 14:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740672; cv=none; b=MoAvK02sbobyISrcHbk/pvzVUPVxRpaj8Amo8U1i97yRs1xg9SSVQrCj7WMymh2Vy5XSudFMkETysFUAlkAHZWZssaU8PQ/uwwN81nHx9bkY9fHaRaytde+cy34phFAywTXsfPFaG6jGsLJHytCvxwG5mfn8la0YZimNgKSW/ro=
+	t=1749740361; cv=none; b=QV0nDa3NlbtHS6PYUKX4Zsz/plSAgIPLq658wn+IuXEx7VYrkTS8e7dP2g39j2X2+FibKbK3toa0/t9pvXCsOytdG8QGPG/Uq69CA8kAUeW69XmdzXTI27aWpXk/Rvy8dF7C6XuAuOKJuwToWgfvIi2xGshh/bZTucObhtr/G5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740672; c=relaxed/simple;
-	bh=M7psreqtd7qDN8w7ZaJtjjjh4GKXKbz1dQhsMZmx/og=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=QcuiCwBRWTkrrEZUD1F1eTNRWE0ZxpnOwSgnUdK1sBAtbPkKNOIojO1QFz9nV0u3UVcXoUBqb/VkdJ4MtYbpxta9aU6zfwt4mlhm3mkQZTMGmy2yU/NOSm9Tf/d1gzhCz0KeeD9bbc7D/X0pok8br9FiRWkv1Tv0FLlaPPBsH0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-bs.de; spf=pass smtp.mailfrom=tu-braunschweig.de; dkim=pass (2048-bit key) header.d=tu-bs.de header.i=@tu-bs.de header.b=tyyE0jJs; arc=none smtp.client-ip=134.169.4.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-bs.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-braunschweig.de
-Received: from Hermes02.ad.tu-bs.de (hermes02.rz.tu-bs.de [134.169.4.130])
-	by pmxout2.rz.tu-bs.de (Postfix) with ESMTPS id F34534E05E6;
-	Thu, 12 Jun 2025 16:55:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-bs.de;
-	s=exchange_neu; t=1749740130;
-	bh=M7psreqtd7qDN8w7ZaJtjjjh4GKXKbz1dQhsMZmx/og=;
-	h=Date:To:CC:From:Subject:From;
-	b=tyyE0jJs1A8u58jMiVSNqeCpSVDjFl8CRZag/xvAwHfg+CJuZ/WwaJdz6YiZqCFZk
-	 F//1n1T0H5JrpbUwn4L1rwVDO6GH9MwG0YyBwFyROHL4QdximACap6HYWbIWTD9i9q
-	 KEwkiU92QtLs8dIuMojO+IPmRWANncU2YUkI3n2whuy7YAn6doQ13v3JPo3Iumpl8c
-	 m20Q5xjjUiQZtA//C8yF3H+6P2NvtNcyn2yXn+GQAshDfxLz7wPbDJDFfAd4OkKJ91
-	 27iO3VxYd+LnDO7m3d8uCU70kRXuOe6+9bpvz9loJU6WKqBYCzhQcL9sUYmnvmQ5mQ
-	 xdCu4b92Vmz3w==
-Received: from [192.168.178.25] (134.169.9.110) by Hermes02.ad.tu-bs.de
- (134.169.4.130) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 12 Jun
- 2025 16:55:29 +0200
-Message-ID: <cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de>
-Date: Thu, 12 Jun 2025 16:55:28 +0200
+	s=arc-20240116; t=1749740361; c=relaxed/simple;
+	bh=WgLzrP/HBmAzSTOgYFRrJG+fDleiBjNr3X0mdLMrFkU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lal/XrptywDcPCnnIlpO2UONxmNIMd2lHZy3S64CHA6yMoNfC56xm3tLeALy5HlH07HbFgpcTJ9OBFnVOGFciZ7n7YRL49EE9pTtl/di/QCv/Mf5f3wddK+epOaupomBZohio56hiIYeJ/COlEgBmQVgfG5oKkQC7avGo+yK/Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnPhl1wc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8FDDAC4CEEA;
+	Thu, 12 Jun 2025 14:59:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749740360;
+	bh=WgLzrP/HBmAzSTOgYFRrJG+fDleiBjNr3X0mdLMrFkU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=fnPhl1wcVmtG4VUDVtxgMeAP0nQ3Ut0iaLA+4krpgjeLvknik17F5hyLU99PtPchj
+	 uC7+2MuTGM1gvcDcQs6p4Doq/xRQlwJ1y3Mn1lr3EbT3TShWxp7fbz0IITB6ZvDRz6
+	 zC+mc2n3NNrWofBcXigLz6ZRwtV2OG5Z6QaZkF3QJo39uAOSnHDA0JeFUDlCdtUMpj
+	 QOiiqL6EC9bfmwDREHt9jt971yq70SoMoWqHbi1SojDT6/YmdQIIw2MgeYCde0AI8T
+	 YbhXbnKuxVsfKhJ0BT4jkH8Jvb4I9WhXaguagyZ2HL51yx1sGgZwaZucvy+lfoVXcy
+	 P34q2HqQ/3xeQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD0CC7113E;
+	Thu, 12 Jun 2025 14:59:20 +0000 (UTC)
+From: Samuel Kayode via B4 Relay <devnull+samuel.kayode.savoirfairelinux.com@kernel.org>
+Subject: [PATCH v7 0/6] add support for pf1550 PMIC MFD-based drivers
+Date: Thu, 12 Jun 2025 10:55:42 -0400
+Message-Id: <20250612-pf1550-v7-0-0e393b0f45d7@savoirfairelinux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Alan Stern <stern@rowland.harvard.edu>, Andrea Parri
-	<parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin
-	<npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave
-	<j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E.
- McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel
- Lustig <dlustig@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<lkmm@lists.linux.dev>
-CC: <hernan.poncedeleon@huaweicloud.com>, <jonas.oberhauser@huaweicloud.com>,
-	"r.maseli@tu-bs.de" <r.maseli@tu-bs.de>
-From: Thomas Haas <t.haas@tu-bs.de>
-Subject: [RFC] Potential problem in qspinlock due to mixed-size accesses
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Hermes02.ad.tu-bs.de (134.169.4.130) To
- Hermes02.ad.tu-bs.de (134.169.4.130)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG7qSmgC/33OQWrDMBAF0KsYraswsjRynVXvUbqQpVEz0Nip5
+ IiU4LtXdcANhWb5h8/7cxWZElMW++YqEhXOPI01dE+N8Ac3vpPkULNooUXAtpOnqBBBBgMqQoB
+ ueAZRy6dEkS8r9Pp2y4k+z9Wbb0cxuEzST8cjz/um2J1C8VM8cJ6n9LU+UPTa/LtVtARpMNreo
+ PYB1Ut2ZeIUHSf64PF82VV31Yr5FSzoTTBVGGKIqIiw9/6BgHeCgk3AKlCA0JN2zvnugWDvBbU
+ JtgraxDaESGCQ/hGWZfkGx7dU65YBAAA=
+X-Change-ID: 20250527-pf1550-d401f0d07b80
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>
+Cc: imx@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
+ Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, 
+ Robin Gong <yibin.gong@nxp.com>, 
+ Enric Balletbo i Serra <eballetbo@gmail.com>, 
+ Samuel Kayode <samuel.kayode@savoirfairelinux.com>, 
+ Abel Vesa <abelvesa@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749740359; l=6030;
+ i=samuel.kayode@savoirfairelinux.com; s=20250527;
+ h=from:subject:message-id;
+ bh=WgLzrP/HBmAzSTOgYFRrJG+fDleiBjNr3X0mdLMrFkU=;
+ b=EcTg2V21GNOWe6urm2jw0J1zEol/rtMZdXRDsBgYrpAPd9tS5duSgH7+t7Db9VAQlRZgWnEPl
+ TZXBk2NUAwoCewXVV5+HftEQpbeI5BUtjK3NpOVLbHpUpQMPdSCnl1o
+X-Developer-Key: i=samuel.kayode@savoirfairelinux.com; a=ed25519;
+ pk=TPSQGQ5kywnnPyGs0EQqLajLFbdDu17ahXz8/gxMfio=
+X-Endpoint-Received: by B4 Relay for
+ samuel.kayode@savoirfairelinux.com/20250527 with auth_id=412
+X-Original-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+Reply-To: samuel.kayode@savoirfairelinux.com
 
-We have been taking a look if mixed-size accesses (MSA) can affect the 
-correctness of qspinlock.
-We are focusing on aarch64 which is the only memory model with MSA 
-support [1].
-For this we extended the dartagnan [2] tool to support MSA and now it 
-reports liveness, synchronization, and mutex issues.
-Notice that we did something similar in the past for LKMM, but we were 
-ignoring MSA [3].
+This series adds support for pf1550 PMIC. It provides the core mfd driver and a
+set of three sub-drivers for the regulator, power supply and input subsystems.
 
-The culprit of all these issues is that atomicity of single load 
-instructions is not guaranteed in the presence of smaller-sized stores 
-(observed on real hardware according to [1] and Fig. 21/22)
-Consider the following pseudo code:
+Patch 1 adds the DT binding document for the PMIC. Patches 2-5 adds the
+pertinent drivers. Last patch adds a MAINTAINERS entry for the drivers.
 
-     int16 old = xchg16_rlx(&lock, 42);
-     int32 l = load32_acq(&lock);
+The patches 3-5 depend on the mfd driver provided in patch 2.
 
-Then the hardware can treat the code as (likely due to store-forwarding)
+Changes since v1:
+   - DT bindings for all devices included
+   - Add onkey driver
+   - Add driver for the regulators
+   - Ensure charger is activated as some variants have it off by default
+   - Update mfd and charger driver per feedback from eballetbo@gmail.com
+   - Add myself as maintainer for these drivers
+   - Link to v1: https://lore.kernel.org/1523974819-8711-1-git-send-email-abel.vesa@nxp.com/
 
-     int16 old = xchg16_rlx(&lock, 42);
-     int16 l1 = load16_acq(&lock);
-     int16 l2 = load16_acq(&lock + 2); // Assuming byte-precise pointer 
-arithmetic
+Changes since v2:
+   - Rebase on recent mainline kernel v6.15
+   - Single yaml file containing dt bindings for all pf1550 devices
+   - irq mapping done in MFD driver as suggested by Dmitry Torokhov
+   - Drop unnecessary includes in drivers
+   - Replace dev_err with dev_err_probe in probe method of drivers
+   - Drop compatible string from drivers of the sub-devices
+   - Remove dependency on OF from drivers of the sub-devices
+   - onkey: move driver from input/keyboard into input/misc
+   - onkey: remove dependency on OF
+   - onkey: use onkey virqs instead of central irq
+   - onkey: fix integer overflow for regmap_write when unmasking
+     interrupts during pf1550_onkey_resume
+   - charger: add support for monitored-battery which is used in setting
+     a constant voltage for the charger.
+   - Address other feedback from Dmitry Torokhov and Krzysztof Kozlowski
+   - Link to v2: https://lore.kernel.org/cover.1747409892.git.samuel.kayode@savoirfairelinux.com/
 
-and reorder it to
+Changes since v3:
+   - Update manufacturer from Freescale to NXP in compatible,
+     dt-binding and Kconfigs
+   - Use C++ style comments for SPDX license in .c code
+   - Add portions copyright to source code
+   - irqs are defined as struct resource in mfd cell such that
+     platform_get_irq is used in the sub-devices
+   - Make struct pf1550_dev of type const in sub-device driver
+   - irq variable dropped from sub-device driver struct
+   - EXPORT_SYMBOL of global pf1550_read_otp function for use in
+     regulator driver
+   - Drop unneeded info in driver_data when defining device table id
+   - regulator: validate ramp_delay
+   - regulator: report overcurrent and over temperature events
+   - onkey: drop unnecessary keycode variable
+   - onkey: change wakeup variable to type bool
+   - onkey: replace (error < 0) with error in if statement when possible
+   - onkey: use pm_sleep_ptr when defining driver.pm
+   - charger: finish handling of some interrupts in threaded irq handler
+   - Link to v3: https://lore.kernel.org/20250527-pf1550-v3-0-45f69453cd51@savoirfairelinux.com/
 
-     int16 l2 = load16_acq(&lock + 2);
-     int16 old = xchg16_rlx(&lock, 42);
-     int16 l1 = load16_acq(&lock);
+Changes since v4:
+   - Use top level interrupt to minimize number of registers checked on
+     each interrupt
+   - Fix bad offset for temperature interrupts of regulator irq chip
+   - Address Krzysztof's comments for dt-binding
+   - regulator: add comments to clarify difference in its interrupts
+   - regulator: issue warn event for _LS interrupt and error event for
+     _HS interrupt
+   - regulator: validate maximum and minimum ramp_delay
+   - charger: drop lock in battery and charger delayed_work
+   - charger: more conservative locking for vbus delayed_work
+   - charger: apply lock when setting power_supply type during register
+     intialization
+   - Link to v4: https://lore.kernel.org/r/20250603-pf1550-v4-0-bfdf51ee59cc@savoirfairelinux.com
 
-Now another thread can overwrite "lock" in between the first two 
-accesses so that the original l (l1 and l2) ends up containing
-parts of a lock value that is older than what the xchg observed.
+Changes since v5:
+   - Ensure lowercase when assigning hex values
+   - Add imx@lists.linux.dev to relevant mailing list in MAINTAINERS file
+   - Use GENMASK macro
+   - Drop unused chips variable
+   - Read the OTP in the mfd driver probe for new dvs_enb variable
+   - Hardcode IRQ flags in pf1550_add_child function
+   - charger: drop the mutex entirely
+   - charger: reverse christmas tree style local variable definition in
+     probe
+   - Link to v5: https://lore.kernel.org/r/20250610-pf1550-v5-0-ed0d9e3aaac7@savoirfairelinux.com
 
-Let us now explain how this can break qspinlock.
-We need 3 threads going the slowpath, T1, T2, and T3.
-T1 is a setup-thread that takes the lock just so that T2 and T3 observe 
-contention and try to enqueue themselves.
-So consider a situation where
-     - T3's node is the only enqueued node (due to previous contention 
-with T1).
-     - T2 is about to enqueue its node.
-     - T3 is about to take the lock because it sees no contention (lock 
-is free, no pending bits are set, it has the only node in the queue).
-     - the lock is released (T1 is already done)
+Changes since v6:
+   - Use reverse christmas tree order
+   - Drop 0 in table id's driver data
+   - charger: store virq to avoid reinvoking platform_get_irq in ISR
+   - Link to v6: https://lore.kernel.org/r/20250611-pf1550-v6-0-34f2ddfe045e@savoirfairelinux.com
 
-We focus on the following lines of code in qspinlock.c:
+Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+---
+Samuel Kayode (6):
+      dt-bindings: mfd: add pf1550
+      mfd: pf1550: add core mfd driver
+      regulator: pf1550: add support for regulator
+      input: pf1550: add onkey support
+      power: supply: pf1550: add battery charger support
+      MAINTAINERS: add an entry for pf1550 mfd driver
 
-         // <- T2 is here, but executes part of line 328 first.
-         277: old = xchg_tail(lock, tail);    // ~ xchg_rlx(&lock->tail, 
-tail)
-         // ...
-         328: val = atomic_cond_read_acquire(&lock->val, !(VAL & 
-_Q_LOCKED_PENDING_MASK));
-         // ...
-         // <- T3 is here
-         352: if ((val & _Q_TAIL_MASK) == tail) {
-                     if (atomic_try_cmpxchg_relaxed(&lock->val, &val, 
-_Q_LOCKED_VAL))
-                         goto release; /* No contention */
-         355: }
+ .../devicetree/bindings/mfd/nxp,pf1550.yaml        | 137 +++++
+ MAINTAINERS                                        |  11 +
+ drivers/input/misc/Kconfig                         |  11 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/pf1550-onkey.c                  | 183 ++++++
+ drivers/mfd/Kconfig                                |  14 +
+ drivers/mfd/Makefile                               |   2 +
+ drivers/mfd/pf1550.c                               | 339 +++++++++++
+ drivers/power/supply/Kconfig                       |  11 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/pf1550-charger.c              | 632 +++++++++++++++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/pf1550-regulator.c               | 362 ++++++++++++
+ include/linux/mfd/pf1550.h                         | 254 +++++++++
+ 15 files changed, 1968 insertions(+)
+---
+base-commit: 0a4b866d08c6adaea2f4592d31edac6deeb4dcbd
+change-id: 20250527-pf1550-d401f0d07b80
 
-
-Then the following sequence of operations is problematic:
-
-(1) T2 reads half of the lock (the half that is not lock->tail, i.e., it 
-"only" reads lock->lock_pending)
-
-         328: val = atomic_cond_read_acquire(&lock->val, !(VAL & 
-_Q_LOCKED_PENDING_MASK)); // P1
-         // Roughly: val_lock_pending = load_acquire(&lock->lock_pending);
-
-      T2 observes a free lock and no pending bits set.
-
-(2) T3 takes the lock because it does not observe contention
-
-         352: if ((val & _Q_TAIL_MASK) == tail) {  // Satisfied because 
-only T3's node is enqueued and lock is free
-                     if (atomic_try_cmpxchg_relaxed(&lock->val, &val, 
-_Q_LOCKED_VAL))
-                         goto release; /* No contention */
-         355: }
-
-     T3 clears the tail and claims the lock. The queue is empty now.
-
-(3) T2 enqueues itself
-
-         277: old = xchg_tail(lock, tail);
-
-     T2 sees an empty queue (old == 0) because T3 just cleared it, and 
-enqueues its node.
-
-(4) T2 reads the remaining half of the lock from (1), reading the tail 
-(lock->tail) it just inserted.
-
-         328: val = atomic_cond_read_acquire(&lock->val, !(VAL & 
-_Q_LOCKED_PENDING_MASK)); // P2
-         // Roughly: val_tail = load_acquire(&lock->tail);
-
-     T2 observes its own tail + lock is free and no pending bits are set 
-(from (1))
-
-
-Now there are two continuations, one leading to broken synchronisation, 
-another leading to non-termination or failure of mutual exclusion.
-We first consider the synchronisation issue.
-
-
-(5a) T3 finishes its critical section and releases the lock
-
-
-(6a) T2 takes the lock with the same code as in point (2):
-
-          352: if ((val & _Q_TAIL_MASK) == tail) {     // Satisfied 
-because only T2's node is enqueued and lock is free
-                     if (atomic_try_cmpxchg_relaxed(&lock->val, &val, 
-_Q_LOCKED_VAL))
-                         goto release; /* No contention */
-          355: }
-
-       Notice that the "atomic_try_cmpxchg_relaxed" would fail if the 
-lock was still taken by T3, because "val" has no lock bits set (as T2 
-observed the lock to be free).
-       Although T2 now properly enters the CS after T3 has finished, the 
-synchronisation is broken since T2 did not perform an acquire operation 
-to synchronise with the lock release.
-       Indeed, dartagnan reports no safety violations (with 3 threads) 
-if the CAS is made an acquire or the CS itself contains an acquire 
-barrier (smb_rmb or smb_mb).
-
-
-Now, let's consider the alternative continuation that leads to 
-non-termination or failure of mutual exclusion.
-
-
-(5b) T2 tries to take the lock as above in (6a) but the CAS fails 
-because the lock is still taken by T3.
-
-
-(6b) Due to the failing CAS, T2 observes contention (at least it thinks 
-so). It sets the lock (although T3 might still have it!) and waits until 
-the (non-existent) "contending thread" enqueues its node:
-
-         /*
-          * Either somebody is queued behind us or _Q_PENDING_VAL got set
-          * which will then detect the remaining tail and queue behind us
-          * ensuring we'll see a @next.
-          */
-         362: set_locked(lock);
-
-         /*
-          * contended path; wait for next if not observed yet, release.
-          */
-         367: if (!next)
-         368:    next = smp_cond_load_relaxed(&node->next, (VAL));
-
-
-   The first comment suggests that the assumed situation is that either 
-another thread enqueued a node or the pending bits got set. But neither is
-   true in the current execution: we got here because the lock was taken.
-   Now there are two outcomes:
-     - Non-termination: the "smp_cond_load_relaxed" waits forever, 
-because there is no other thread that enqueues another node.
-     - Broken mutex: another thread (T4) enqueues a node and therefore 
-releases T2 from its loop. Now T2 enters the CS while T3 still executes 
-its CS.
-        Indeed, dartagnan reports this safety violation only with 4+ 
-threads.
-
-
-NOTE: For the above examples we forced all threads to take the slowpath 
-of qspinlock by removing the fastpath. With the fastpath present, 
-another thread (T0) is needed to force the other threads into the 
-slowpath, i.e., we need 4-5 threads to witness the issues.
-
-### Solutions
-
-The problematic executions rely on the fact that T2 can move half of its 
-load operation (1) to before the xchg_tail (3).
-Preventing this reordering solves all issues. Possible solutions are:
-     - make the xchg_tail full-sized (i.e, also touch lock/pending bits).
-       Note that if the kernel is configured with >= 16k cpus, then the 
-tail becomes larger than 16 bits and needs to be encoded in parts of the 
-pending byte as well.
-       In this case, the kernel makes a full-sized (32-bit) access for 
-the xchg. So the above bugs are only present in the < 16k cpus setting.
-     - make the xchg_tail an acquire operation.
-     - make the xchg_tail a release operation (this is an odd solution 
-by itself but works for aarch64 because it preserves REL->ACQ ordering). 
-In this case, maybe the preceding "smp_wmb()" can be removed.
-     - put some other read-read barrier between the xchg_tail and the load.
-
-
-### Implications for qspinlock executed on non-ARM architectures.
-
-Unfortunately, there are no MSA extensions for other hardware memory 
-models, so we have to speculate based on whether the problematic 
-reordering is permitted if the problematic load was treated as two 
-individual instructions.
-It seems Power and RISCV would have no problem reordering the 
-instructions, so qspinlock might also break on those architectures.
-TSO, on the other hand, does not permit such reordering. Also, the 
-xchg_tail is a rmw operation which acts like a full memory barrier under 
-TSO, so even if load-load reordering was permitted, the rmw would 
-prevent this.
-
-
-[1] https://dl.acm.org/doi/10.1145/3458926
-[2] https://github.com/hernanponcedeleon/Dat3M
-[3] https://lkml.org/lkml/2022/8/26/597
-
+Best regards,
 -- 
-=====================================
+Samuel Kayode <samuel.kayode@savoirfairelinux.com>
 
-Thomas Haas
-
-Technische Universität Braunschweig
-Institut für Theoretische Informatik
-Mühlenpfordtstr. 23, Raum IZ 343
-38106 Braunschweig | Germany
-
-t.haas@tu-braunschweig.de
-https://www.tu-braunschweig.de/tcs/team/thomas-haas
 
 
