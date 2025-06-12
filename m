@@ -1,629 +1,206 @@
-Return-Path: <linux-kernel+bounces-684036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA575AD7510
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:03:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D04AD74D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4272C2C4516
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FBF617F08C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7331BC9E2;
-	Thu, 12 Jun 2025 15:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB86826D4C4;
+	Thu, 12 Jun 2025 14:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="G6EG9hC/"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cdBMQO8L"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733D62701AB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740416; cv=none; b=lQOp1I3c2l/sV8OBNXjw7XIU1D28tAFpuveMP/nX7mLpIy/nkLQC6Ak2/Z+u3kCMYZTrOOuPc9xAo+0cdJR+UOCr/TXE+4fGw5E6rxULQPaH/WeNVz25eIKd2apSTCQ0LOmsq+QnHXW/TWAvFVAW336jlqOGoWMksmPpa1YHwjs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740416; c=relaxed/simple;
-	bh=gjOtxRDgxx8Tt0j75yME+dF5SDkmuxsE4rL0G/YMYlo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tdeBPBTUGPkQVyYLHyc/Vui2gljUoEoNLoITCU1GRGGBqMd2tyUuFUJmxTLFMPySDMU662VRIeYOrXl1jaXlJ5vnzBIWzUaZDU/cxDTqjIKX/+/LJXafg60MaemfwpUvSotXCyZktIo+WExR00n8wyjencUhFdqpSM1K0qCSH/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=G6EG9hC/; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4ebbfb18fso50287f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 08:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749740411; x=1750345211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YcQYAB/ZlkNpFLEJF5CWOp3cdYZoBXO0yKKyITW0/lA=;
-        b=G6EG9hC/Sk9nR42jSs7IxZwhhmhZxGeQqwxoetw6ElbE6Iac89X/CY5q+IIwAkM3ya
-         6wxr8xqptckY2BaWYlVlowhXxEMMkRWdpAz72fNsu7zsaFRMst3FcxBFzb/Z1BXljHM8
-         pC44MbctFCpt8zw3T0GzzfaFsrn5ALbA0zofkEi3cOekvdzkD33gBOGShFQazJCUIXKa
-         bSWD5rpvAx4lL/CBi1reaqvOd8maJ4UdBY9+NNdny6YwKtLPjzKpZryo1zjNzAH+UAOP
-         nliJDnt8yyXGA/76mTmSV6T5iP5SHegF60sf0YisgFrXVulfLWq1ImuQIGGq2RWuBw9E
-         +xew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749740412; x=1750345212;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YcQYAB/ZlkNpFLEJF5CWOp3cdYZoBXO0yKKyITW0/lA=;
-        b=OUMGI85qcXdtU8Was0gRtiokXLaoEhDD1gPXrT/4iQ6EuQcVtGRla8qxElcZ5Q6Qf5
-         rw4oyiP2yQx9nrxqNcfsBGW2lET66a2As2zGTc4ZfHpEUkNPY7sWiJfODePKDJlPw/+H
-         SetvjXlHsNvBHLnhmMl0V+Js/qsjComUYk597SZmkskp6NGmXCCaXpX7/ojbZCry3uew
-         sToCPnKbgSartD2hP6DUsGfk7mMaXYNUki83RBcb0v5e1M0o3ZTfzWVOx08p8oFBHULb
-         SWGL1gqTlh6ud+AktON1O5QLg63PBgSD2PhYrXGfNwpJ/ThnX4wGs1kIoON1MbdgORVh
-         Smaw==
-X-Gm-Message-State: AOJu0YwFB18jCGjcorRxeDyPEqXcFXGnjRqg/yOhnmqAL+8ERT4ZhYkf
-	tuM7OjXQvhJ7zTEg4E79T0nJOTCGisAyHpTIV578ndm3b/bd97Vu1qL5jTB78wL9I/c=
-X-Gm-Gg: ASbGnctJUUHFdXyRC+kCs5r8LpU7MkCIOmeK/YovaKFG0dmBDXM6BrWQw+Q32WGLsEe
-	RPxGtUgOyuotTgeM4JuZwiTFFVEuMRiIuUCEd4uUrBwu3lK9XNFTP3podSZH+TsBYUNH6pmcwpd
-	oJ1scAJP/ReOjvZAF09GtODKcLUk3NjIWqAKKHaYBDaTvhx01SDuIetzxTsgHD2pLWX/RWwUjP8
-	xvB9xOEEXC7IGBnhgX7E1RT4KSxEe3tsukJjIsG+B+D8qkyMxuc+wsda/8tgLc8peIhC7Ol0Gw8
-	LAojbzlWABLsA6eaLxFkyLMAMZ4tOMDdFw5aI9HGMZNALoMU5gYx9DFxyKzEUaXhadjQ2A==
-X-Google-Smtp-Source: AGHT+IEdv88UTi+FoedSsSS0XwV7MjztONQlfWNB/7ITxC5u6gxePJnjvgxuWV/3jUIF07rsxOlOCA==
-X-Received: by 2002:adf:b60c:0:b0:3a4:f912:86b2 with SMTP id ffacd0b85a97d-3a55880311dmr2172489f8f.11.1749740411478;
-        Thu, 12 Jun 2025 08:00:11 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:e05f:7af3:1bf9:f101])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2354fbsm22860915e9.15.2025.06.12.08.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 08:00:10 -0700 (PDT)
-From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-To: linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Atish Patra <atishp@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH 2/2] RISC-V: make use of variadic sbi_ecall
-Date: Thu, 12 Jun 2025 16:57:55 +0200
-Message-ID: <20250612145754.2126147-4-rkrcmar@ventanamicro.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612145754.2126147-2-rkrcmar@ventanamicro.com>
-References: <20250612145754.2126147-2-rkrcmar@ventanamicro.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758EB15278E;
+	Thu, 12 Jun 2025 14:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749740288; cv=fail; b=mHdfB/o0FbkMLjTFj3IfmrpQGiDQgyBZeOFTHwUGhOUSmgt0qV52gckhGBZe8+8H1mSlsLR4jsBRAeIvox/nzqRs54IqvmrZLfKdpUHGpOMnDf4tlV8VPyLdEcGnum1SnC8uB3u6p7Yb6KiQawuCmfXmSpvr8fTJZaLqtbkwnIQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749740288; c=relaxed/simple;
+	bh=haoZEuVif0U8PzYEUzzDUsgLt/gxsmJLCMZwi3DVA9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=B2dqRLpredlJYc6fPXQCxs6D8/bfZzcCwxHvliQjmVcsJ1mUnkfc19cOds1jNf5Ze40VQkAXGaAD1VooZNAbJ/+LGEgA7n7GhgLJNhO7QWMTCGAjeoV9tHthUoiFC3puDV9zYiEy9GZazr1Rj37Qbb9OI+xfQeXeoyjAoWuupUU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cdBMQO8L; arc=fail smtp.client-ip=40.107.244.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NLN/2nNvcy4lHyG0Ap2rg44zYjYaqbM0qr7MpuXZ/9EO9s/zqfh5UDNHzN9ZNu9PO0s/mjZtWYNJA0DGOmLi1sXRTwWcyY0wNzUPPO7/yf3OdLG9lSfs3MtE/xjZ2gUHO1kpH2tSV17k8aAXx9eWYwdDeUMgixPR4rWvAMrxgwGR5Vb3xXiXu9HynC4/9PoxkTJ/vHYmwti0ZtgnOMLTgna21BX+dVCdYpIS4jRkXt8FNIElHa6XjZj4+MYqdBlzrlu72eZ6NI+WTF9+pta+JtfwWt6yfEfN5j06BUsvsJ4/rnuYcK/GNUnS0Fr9m/TJsG+BzH6o4JhnVWxkxqSqAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nyXKRdn+sP5RbJid7nW+/fYoU/Cpt7kw30UBWrGbRfE=;
+ b=QT0di8ahFhMmZKgRbTzmxoZCXOJhgkJFJorpyIIRVCf9CyHBYpp/kdgzoaoeauAKew6dmvVrL8K/lHqqevPfaJvnWtjQ3574Uj3fHoto8QqYwlCRph2J0dUJjFzJcsiFW/vF2JS/a/k9SmDAbbUVaaFq7HFDujSAltm5W0RlmA16UKrL70bGvFqH5VKvz7+OQc8Qd737tjpUpbDkWZKn9uL2MicvxnZ6urCet5vrsQZt2i7WrE+85CTd7zsXDApzHJXZSSadpgOp2Tu4c5QZB4nc2YWgg+UF4+KLIwvdNDWIHzF7fXGd5vzIKZ8NWNlfIvAECZ07s59fatfR0hGvaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nyXKRdn+sP5RbJid7nW+/fYoU/Cpt7kw30UBWrGbRfE=;
+ b=cdBMQO8Lvt24GjItYnJMc19usYy3ZQs1CvxkL07ONHhqLH4pLYTiV/O5z6fEs7/Aw6V5flFil/InFLQysNhRn1dCRyXLzHd59b80lJG2BYHhn2sCr1E2R1FQ12zXtQz4oOszi9Z7ZzWKdcHhy1MzTVxEYKn5CG8otzllspNLttFEPytSq6SJ8ejS8oJjNX9rxSmIOTndyiIzh5bWYbY6aF7Wr7ceBaVQDOO0hRXIOB2T5k7BkU6FZYUFxkY1oVJkzj13Elft7jO4YO7vaGEo400xk8tgqId9lI/IgoJ4pQNUzPIt5J9gsM5/o69OtWSMmj96VouVcdH+EpM0aHwlSg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BL1PR12MB5778.namprd12.prod.outlook.com (2603:10b6:208:391::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.42; Thu, 12 Jun
+ 2025 14:58:02 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8792.038; Thu, 12 Jun 2025
+ 14:58:02 +0000
+Date: Thu, 12 Jun 2025 11:58:01 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, Shuah Khan <shuah@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Mark Brown <broonie@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 09/14] selftests: harness: Move teardown conditional
+ into test metadata
+Message-ID: <20250612145801.GV543171@nvidia.com>
+References: <20250610234657.GO543171@nvidia.com>
+ <aEkqtfcOJDrxAAcs@nvidia.com>
+ <20250611093942-f6c65a06-c72a-4451-aa1e-8cb8de0d69cb@linutronix.de>
+ <aEm6tuzy7WK12sMh@nvidia.com>
+ <aEn5jmXZbC5hARGv@nvidia.com>
+ <aEoUhPYIAizTLADq@nvidia.com>
+ <20250611235117.GR543171@nvidia.com>
+ <aEp6tGUEFCQz1prh@nvidia.com>
+ <20250612135802.GU543171@nvidia.com>
+ <20250612162151-1fc97a6c-a1c9-4656-997e-fd02f5f9418b@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250612162151-1fc97a6c-a1c9-4656-997e-fd02f5f9418b@linutronix.de>
+X-ClientProxiedBy: YT4P288CA0025.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d3::10) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL1PR12MB5778:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fea7d0e-5a0c-418e-b9eb-08dda9c1876e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SWVwMGJOTVdIbnUzL0FrQmFuWUY5UmI4cVJyQVY5M2svSHR6STdjZ0ZFcHE1?=
+ =?utf-8?B?ak5iSFE2MlNZWDJzanlHQnZlVk5kWFRQcFJhY2xSU3RsL1FralpJUTF0WW52?=
+ =?utf-8?B?TkFFQlFRUThndG11eVVvem5Ndk55RmpjWkRDK0pXNS96QnI3UERBY3VpY1Fj?=
+ =?utf-8?B?MWRmU3YxckdzMm5WZXNKS1kvTVNmSDVZK1hxa2lvQU1qU1RIRWxkMmhPQ0NK?=
+ =?utf-8?B?U3MzaFpuVkN0MVhMVzZmQkRJZDFiU2V6VFVaNU93S1BQWnN2cGxieWR6aHBv?=
+ =?utf-8?B?aGRMN1VOdXZiYWdwRDU1TFhDckNRdFE1ZGxCdlVsOXNEWDVKREwrZC9IVTdC?=
+ =?utf-8?B?cDhqWTkvT2dmNWs2TmZidUdvc3o0aHBQYk9yOE5DZno4MzJqLzRrVFZraUhh?=
+ =?utf-8?B?cEJOZFVEdkZ6dTgrVXVxcWVxVmlERWxLZEJCV2xKdWxxenhTRVliT0cvdW9Z?=
+ =?utf-8?B?Q3cyODJSRjBrL3NiWWlGcnpLTzZONFJXd1kydjVhNG5sWWxCeUtVTWZuTzN6?=
+ =?utf-8?B?SUxLZUhjMTR6S05SY2pVZTkrSlhnTklsaGlyemF3eXhzUndmRkYwSzdtclN2?=
+ =?utf-8?B?c0g1S0JHdUxpUVVkNmh1cjhHbmlscmhZNzVNdlJKaE1jQ0pDalUzSHNXdWJo?=
+ =?utf-8?B?NURmT0FoOHBqVVhXaUt1cnpLY1J5K1piTm8wY1M2YVY2S2JsK2xzQUJ4Y1Rs?=
+ =?utf-8?B?RnB0TCtRaG16bjVYS2RqaDgvVDdNOGZjTmlDeVR3djVsL0JXRldOL1hnc0Q5?=
+ =?utf-8?B?cDdFU25wTW82OElOdHluU05zZkM5aTFrZlFseU4vYy9ibUlEbFdIKzFqbmlY?=
+ =?utf-8?B?YW5yYkJ6K090Y3RmbmpiK0cra0xIUURVOHRsdVUwUnFZd1hsbUgvdEJKanlw?=
+ =?utf-8?B?bU5qcGkvUzM3UlFvOUV3a1B0QndPVGljTU1JQ25pQUZ5MUFyMnU1bDRMcit6?=
+ =?utf-8?B?Z3g5R1Fkb0FaN28wMkJJV3VoTjlGdEpkL2pMMk5JMDR6S3I4dG8rOXpObkJ3?=
+ =?utf-8?B?WlZsL1ZRWGtiUkIrOVF3UGk0NWE3c3Y0N0ZSMGlzNXZYbmd3bmMraUtUM09h?=
+ =?utf-8?B?ekR3M1BabjArblBKNU56dXo3OWNVSEloQy93VjRFVktUb2F0b0UzcjlBYWEv?=
+ =?utf-8?B?MWt1TFlrUUVYV0k0dXUyTTRSWnJFOVhkeGVQTmo3YjRQTU5BZTk1L0xTcDZP?=
+ =?utf-8?B?RmMvZCtlYmNYN1RkV0tTaFdDb09vb0ppMCttd1JKNDRkWEN0YWVYc3dhcmI5?=
+ =?utf-8?B?TWVPRnlXRElEU1RBNW9WZVl5WW1MWXEwMHBOeENBTW5pQ0M3Y213QnZVSjBt?=
+ =?utf-8?B?UXVuTHYxY01EblYwYlJZK1NvOXVBekN2YThleWtUYUtqTEJQQVRpcHBpbDJq?=
+ =?utf-8?B?dS83bVVORFVnSWVZN3dEZHNocCt5cng0TlpxRUcyZU9DbEJJRjBwSEZXbEl0?=
+ =?utf-8?B?UTNFaS93ZG5tYXZEVCt6cnFiVlRMenlLTkovNWo1czJYVytKcU8wRDVVODBP?=
+ =?utf-8?B?YUVzQmFqcDJwUEF5SXdkL2FZcEVtNEFlanZUQlI3RllDWUNrMEhUR040UmdC?=
+ =?utf-8?B?N0ZHcGw5V3VsZFFKb1FGM3FGQzB2bUhHQnp3SkFmdWxVUjkyY3llTGd3VlQr?=
+ =?utf-8?B?MmxoUy9LTUsyK2RLRWViOWtyNFNqNzNLNk81NGliczBuckd2VC93OThMcGdE?=
+ =?utf-8?B?dXdYTXZaNzVMZW5hY0M2VTN0bE4rVmgrTjlqcHVtYTMrakg2Y1E0aXFYVVNK?=
+ =?utf-8?B?OTYzZzZmS2V2MUhDU1Z3RUMrUEJoUXcyV0R4aU1IbHNURjVwQnAvUVhGRG9L?=
+ =?utf-8?B?VzRPdlh6RkdjVWd0SndhUXhYMnN4bzNPdFI0Njg0RUxpbjArbml3WDA4VmQ5?=
+ =?utf-8?B?bUJqbVhnZVcxbFR6QlZqWmtaT0VyaTJvSUJuNmNIQjVxSWhPUExzODV2b1JU?=
+ =?utf-8?Q?4g2ojnGGJRo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WUFZcjdMK0tRZ3EwWU52cXBLL2NGK2hpU09hUXc1b1pKZjA5OHc1MHR1Yk5S?=
+ =?utf-8?B?WW1uNXNyYlJPSGF0SHJxTU52djRuOW5NZFJnMXV2WmNYMmdLWFVDZGtFQkR4?=
+ =?utf-8?B?MnRtMXVoK0Fvdmg1d2tyOGtPN1owcVVDaFNkNmI4d3lmakdpcy9HUlNtbWNU?=
+ =?utf-8?B?VVNWZGdHWm8vLzdwS2R5TjlRTzA4Mml0QVZVZUM4bmp1S3dPMzZpQnFaR3BD?=
+ =?utf-8?B?Ri9pY0E1QmV0Z2lmVE04R0FLNmhDK2V1OWhLTmNTYmF5enBPQjFOR1ZHR1Fm?=
+ =?utf-8?B?NWJPUFBtRUZiWEhjaWpsUDlqU09sWUdMV3lvQ1Y3U3hPeUM1M00xMkVjcU9x?=
+ =?utf-8?B?RC9rVnRFTjlXeVlzRGJRVDkxR3RMQTFhemhrSStCWG5ESS8wQlo3RVAxS1R4?=
+ =?utf-8?B?MXhacmdNaVRpNTcyQ2Z6WkF4R0hOQWY1b1p0NEJ1RTk2TGF6dHkrSE5jRCtv?=
+ =?utf-8?B?a21QMXBSL01hWThaU2cyQ29vTHJYME5UcUxPSk5wcE1ISnZYYzZ4UVA4NlhC?=
+ =?utf-8?B?a0Z4VWlzV29pY041N3hjV0ZMK0sxck5sMHRIcjVhZ3JyQytNRDNVcWNlbngx?=
+ =?utf-8?B?QVg4ZGxWaEk0L0dWWjcxWmpOTEZQWStuLzg4VXIya3hkMVFsNndtSUJ6YXBX?=
+ =?utf-8?B?REtwbFBjK2g3WlZZU2xGUi8zYXZqcHZSSk53SXpMY1VOdjhwaXdRcWNYUWp6?=
+ =?utf-8?B?UnN2SEFZRXRjVTdXMlNyTnJyWlpua0VxZnFKeDRPdmFLYjU0a0ttUjczL1Fm?=
+ =?utf-8?B?Y0xpQ1hlVWVrSElLa0FJWHk5QWFtV2M3aTVJOTlQYVNIcng0WkN5VWlUSjRZ?=
+ =?utf-8?B?TUVBOG9oZjNaR2pYVWx2bGEzaE1IUHdvUEFZbzJKZnNaZmhuVmdyVVppZmNE?=
+ =?utf-8?B?UGlubmNEVEpzMmhNY2ZSSm5XV1praWZrT1JoWVFyMVJsbVFhZ29RL1FVdldL?=
+ =?utf-8?B?NlR1RlJZd2dHei80RVhOSUR0a2xPSTg3bThiU2psVEhkQWZZenRNcDY1NHhl?=
+ =?utf-8?B?bXRiZzBXMzJFZXJPMHdocnBMYkFnZnBIUXhpSmdPa1d6ek54b29jamdCNi85?=
+ =?utf-8?B?S2cwaWRqaDl1SzlGUCtLZ0JxbkpIUnZDNHBBTzJiSVBHbEgxQzRLamZSNGJo?=
+ =?utf-8?B?eUQrUEpKVGl5bW5jT3FKZVVqZ0NSZjdyRVJwSXlMNTZoa1JPYjladGpjKzFT?=
+ =?utf-8?B?eWVCdEw4MHNoaEtJTmNVUTkzQ0piMWpuQ2dZOGVrdnNRTGRsRmd5ZU1IVDdy?=
+ =?utf-8?B?a3VTUVpJWmxoSkpLcTc2TE9aL296S3E3NWlhd045Nk9YYXdoUTEzM0FPZkZx?=
+ =?utf-8?B?YkI1VVlMNlNnWnNxYzJxcDdENFZCekxQczZjNmFZRVJubkd0Tkg2UnF5L04z?=
+ =?utf-8?B?L2JhZENRMVNkZFRlRUhEcSsxZkV1eVRjdDArLzVJM3NtYXlJeXE1MWFjYUdN?=
+ =?utf-8?B?Z2MwQzN0ck4yNk01cVY5eEZRY3hmN05QeGptZ0JlUGRWUm9UM3NCSUxWRDgw?=
+ =?utf-8?B?M0ZWNFdUMm9XdjM5UjlnL3RGTjVQMmx4Y3VjRUtNejg2eUVjNjRvY21xd3RX?=
+ =?utf-8?B?bm5GS2RQLzFkQzd4NmZyM0JoVVA4TkppMW84MlJHVkczU0JTYm9qY1FhS0Zv?=
+ =?utf-8?B?RUU3V0R2K3Q2MUV1TTA1Y1o2MHZmbktmdm1TVG1ieFpmSDRzeHNYVVhvb1NM?=
+ =?utf-8?B?dS9IYmZDY0lIaWFtNzdoSTltZWdNQ3M0ZkJha3J6Rms4MUFubnZxS2I5K0lr?=
+ =?utf-8?B?THpzMEZubk5EUFVJSHlvNHN5ZWZVc016RS9zZ1RTQVFTR0g5c3ZrSHR4ZWUx?=
+ =?utf-8?B?cXFOOHZXNG1HWmxpZjVqYzEvZXIwdHlVOTZselZrQkJKS29wczA3YTB4QlhL?=
+ =?utf-8?B?UnJXdC80Wk5DNHk0dVhld0tRcGZ5cGhUclp6VGU2cUxUT3FmSU5yM0xWcGNM?=
+ =?utf-8?B?S0xLR2gvcTZpelh3M0t5UGZ4WW1hSUNEL2lWUHM0czJTUFI1SDc4RjFOeXBW?=
+ =?utf-8?B?QUpOdm9tU0JVRGl3UUhWbTNkOE1JYXZCWUovTm9abTM0T3JTNFJsdUdYL1NC?=
+ =?utf-8?B?Ung1R29LaE0rYXpPVUdkcXdoaEFtRnZyT0lNQWxxWFcrREJlR3drV1BhMjc2?=
+ =?utf-8?Q?jH49+dhPbkuknLLT3iMFnUjlN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fea7d0e-5a0c-418e-b9eb-08dda9c1876e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 14:58:02.4523
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hH9drIbN6wRxPWtg6YueorqmDrbiEgeo8WSAuA4E5EQKnhmPyClEjUrtiwqim0bv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5778
 
-The new sbi_ecall doesn't have to list all 8 arguments anymore, so only
-pass the actual numbers of arguments for each SBI function.
+On Thu, Jun 12, 2025 at 04:27:41PM +0200, Thomas Weißschuh wrote:
 
-Trailing 0 is sometimes intentional.
+> If the assumption is that this is most likely a kernel bug,
+> shouldn't it be fixed properly rather than worked around?
+> After all the job of a selftest is to detect bugs to be fixed.
 
-Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
----
- arch/riscv/include/asm/kvm_nacl.h |  4 +--
- arch/riscv/kernel/cpu_ops_sbi.c   |  6 ++--
- arch/riscv/kernel/paravirt.c      |  2 +-
- arch/riscv/kernel/sbi.c           | 57 ++++++++++++++-----------------
- arch/riscv/kernel/sbi_ecall.c     |  2 +-
- arch/riscv/kernel/suspend.c       |  4 +--
- arch/riscv/kvm/nacl.c             |  7 ++--
- drivers/acpi/riscv/cppc.c         |  4 +--
- drivers/perf/riscv_pmu_sbi.c      | 48 +++++++++++++-------------
- 9 files changed, 65 insertions(+), 69 deletions(-)
+I investigated the history for a bit and it seems likely we cannot
+change the kernel here. Call it an undocumented "feature".
 
-diff --git a/arch/riscv/include/asm/kvm_nacl.h b/arch/riscv/include/asm/kvm_nacl.h
-index 4124d5e06a0f..5849af11c945 100644
---- a/arch/riscv/include/asm/kvm_nacl.h
-+++ b/arch/riscv/include/asm/kvm_nacl.h
-@@ -96,7 +96,7 @@ do {									\
- 
- #define nacl_sync_hfence(__e)						\
- 	sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_HFENCE,		\
--		  (__e), 0, 0, 0, 0, 0)
-+		  (__e))
- 
- #define nacl_hfence_mkconfig(__type, __order, __vmid, __asid)		\
- ({									\
-@@ -196,7 +196,7 @@ do {									\
- 
- #define nacl_sync_csr(__csr)						\
- 	sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_CSR,			\
--		  (__csr), 0, 0, 0, 0, 0)
-+		  (__csr))
- 
- /*
-  * Each ncsr_xyz() macro defined below has it's own static-branch so every
-diff --git a/arch/riscv/kernel/cpu_ops_sbi.c b/arch/riscv/kernel/cpu_ops_sbi.c
-index e6fbaaf54956..d5de532ca082 100644
---- a/arch/riscv/kernel/cpu_ops_sbi.c
-+++ b/arch/riscv/kernel/cpu_ops_sbi.c
-@@ -29,7 +29,7 @@ static int sbi_hsm_hart_start(unsigned long hartid, unsigned long saddr,
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_START,
--			hartid, saddr, priv, 0, 0, 0);
-+			hartid, saddr, priv);
- 	if (ret.error)
- 		return sbi_err_map_linux_errno(ret.error);
- 	else
-@@ -41,7 +41,7 @@ static int sbi_hsm_hart_stop(void)
- {
- 	struct sbiret ret;
- 
--	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STOP, 0, 0, 0, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STOP);
- 
- 	if (ret.error)
- 		return sbi_err_map_linux_errno(ret.error);
-@@ -54,7 +54,7 @@ static int sbi_hsm_hart_get_status(unsigned long hartid)
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STATUS,
--			hartid, 0, 0, 0, 0, 0);
-+			hartid);
- 	if (ret.error)
- 		return sbi_err_map_linux_errno(ret.error);
- 	else
-diff --git a/arch/riscv/kernel/paravirt.c b/arch/riscv/kernel/paravirt.c
-index fa6b0339a65d..9d00743a96c1 100644
---- a/arch/riscv/kernel/paravirt.c
-+++ b/arch/riscv/kernel/paravirt.c
-@@ -60,7 +60,7 @@ static int sbi_sta_steal_time_set_shmem(unsigned long lo, unsigned long hi,
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_STA, SBI_EXT_STA_STEAL_TIME_SET_SHMEM,
--			lo, hi, flags, 0, 0, 0);
-+			lo, hi, flags);
- 	if (ret.error) {
- 		if (lo == SBI_SHMEM_DISABLE && hi == SBI_SHMEM_DISABLE)
- 			pr_warn("Failed to disable steal-time shmem");
-diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-index 53836a9235e3..c2401efd84e5 100644
---- a/arch/riscv/kernel/sbi.c
-+++ b/arch/riscv/kernel/sbi.c
-@@ -57,7 +57,7 @@ static unsigned long __sbi_v01_cpumask_to_hartmask(const struct cpumask *cpu_mas
-  */
- void sbi_console_putchar(int ch)
- {
--	sbi_ecall(SBI_EXT_0_1_CONSOLE_PUTCHAR, 0, ch, 0, 0, 0, 0, 0);
-+	sbi_ecall(SBI_EXT_0_1_CONSOLE_PUTCHAR, 0, ch);
- }
- EXPORT_SYMBOL(sbi_console_putchar);
- 
-@@ -70,7 +70,7 @@ int sbi_console_getchar(void)
- {
- 	struct sbiret ret;
- 
--	ret = sbi_ecall(SBI_EXT_0_1_CONSOLE_GETCHAR, 0, 0, 0, 0, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_0_1_CONSOLE_GETCHAR);
- 
- 	return ret.error;
- }
-@@ -83,7 +83,7 @@ EXPORT_SYMBOL(sbi_console_getchar);
-  */
- void sbi_shutdown(void)
- {
--	sbi_ecall(SBI_EXT_0_1_SHUTDOWN, 0, 0, 0, 0, 0, 0, 0);
-+	sbi_ecall(SBI_EXT_0_1_SHUTDOWN);
- }
- EXPORT_SYMBOL(sbi_shutdown);
- 
-@@ -97,9 +97,9 @@ static void __sbi_set_timer_v01(uint64_t stime_value)
- {
- #if __riscv_xlen == 32
- 	sbi_ecall(SBI_EXT_0_1_SET_TIMER, 0, stime_value,
--		  stime_value >> 32, 0, 0, 0, 0);
-+		  stime_value >> 32);
- #else
--	sbi_ecall(SBI_EXT_0_1_SET_TIMER, 0, stime_value, 0, 0, 0, 0, 0);
-+	sbi_ecall(SBI_EXT_0_1_SET_TIMER, 0, stime_value);
- #endif
- }
- 
-@@ -107,8 +107,7 @@ static void __sbi_send_ipi_v01(unsigned int cpu)
- {
- 	unsigned long hart_mask =
- 		__sbi_v01_cpumask_to_hartmask(cpumask_of(cpu));
--	sbi_ecall(SBI_EXT_0_1_SEND_IPI, 0, (unsigned long)(&hart_mask),
--		  0, 0, 0, 0, 0);
-+	sbi_ecall(SBI_EXT_0_1_SEND_IPI, 0, (unsigned long)(&hart_mask));
- }
- 
- static int __sbi_rfence_v01(int fid, const struct cpumask *cpu_mask,
-@@ -126,17 +125,16 @@ static int __sbi_rfence_v01(int fid, const struct cpumask *cpu_mask,
- 	switch (fid) {
- 	case SBI_EXT_RFENCE_REMOTE_FENCE_I:
- 		sbi_ecall(SBI_EXT_0_1_REMOTE_FENCE_I, 0,
--			  (unsigned long)&hart_mask, 0, 0, 0, 0, 0);
-+			  (unsigned long)&hart_mask);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_SFENCE_VMA:
- 		sbi_ecall(SBI_EXT_0_1_REMOTE_SFENCE_VMA, 0,
--			  (unsigned long)&hart_mask, start, size,
--			  0, 0, 0);
-+			  (unsigned long)&hart_mask, start, size);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_SFENCE_VMA_ASID:
- 		sbi_ecall(SBI_EXT_0_1_REMOTE_SFENCE_VMA_ASID, 0,
- 			  (unsigned long)&hart_mask, start, size,
--			  arg4, 0, 0);
-+			  arg4);
- 		break;
- 	default:
- 		pr_err("SBI call [%d]not supported in SBI v0.1\n", fid);
-@@ -180,10 +178,9 @@ static void __sbi_set_timer_v02(uint64_t stime_value)
- {
- #if __riscv_xlen == 32
- 	sbi_ecall(SBI_EXT_TIME, SBI_EXT_TIME_SET_TIMER, stime_value,
--		  stime_value >> 32, 0, 0, 0, 0);
-+		  stime_value >> 32);
- #else
--	sbi_ecall(SBI_EXT_TIME, SBI_EXT_TIME_SET_TIMER, stime_value, 0,
--		  0, 0, 0, 0);
-+	sbi_ecall(SBI_EXT_TIME, SBI_EXT_TIME_SET_TIMER, stime_value);
- #endif
- }
- 
-@@ -193,7 +190,7 @@ static void __sbi_send_ipi_v02(unsigned int cpu)
- 	struct sbiret ret = {0};
- 
- 	ret = sbi_ecall(SBI_EXT_IPI, SBI_EXT_IPI_SEND_IPI,
--			1UL, cpuid_to_hartid_map(cpu), 0, 0, 0, 0);
-+			1UL, cpuid_to_hartid_map(cpu));
- 	if (ret.error) {
- 		result = sbi_err_map_linux_errno(ret.error);
- 		pr_err("%s: hbase = [%lu] failed (error [%d])\n",
-@@ -212,32 +209,32 @@ static int __sbi_rfence_v02_call(unsigned long fid, unsigned long hmask,
- 
- 	switch (fid) {
- 	case SBI_EXT_RFENCE_REMOTE_FENCE_I:
--		ret = sbi_ecall(ext, fid, hmask, hbase, 0, 0, 0, 0);
-+		ret = sbi_ecall(ext, fid, hmask, hbase);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_SFENCE_VMA:
- 		ret = sbi_ecall(ext, fid, hmask, hbase, start,
--				size, 0, 0);
-+				size);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_SFENCE_VMA_ASID:
- 		ret = sbi_ecall(ext, fid, hmask, hbase, start,
--				size, arg4, 0);
-+				size, arg4);
- 		break;
- 
- 	case SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA:
- 		ret = sbi_ecall(ext, fid, hmask, hbase, start,
--				size, 0, 0);
-+				size);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA_VMID:
- 		ret = sbi_ecall(ext, fid, hmask, hbase, start,
--				size, arg4, 0);
-+				size, arg4);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA:
- 		ret = sbi_ecall(ext, fid, hmask, hbase, start,
--				size, 0, 0);
-+				size);
- 		break;
- 	case SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID:
- 		ret = sbi_ecall(ext, fid, hmask, hbase, start,
--				size, arg4, 0);
-+				size, arg4);
- 		break;
- 	default:
- 		pr_err("unknown function ID [%lu] for SBI extension [%d]\n",
-@@ -334,7 +331,7 @@ int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
- 		return -EOPNOTSUPP;
- 
- 	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
--			feature, value, flags, 0, 0, 0);
-+			feature, value, flags);
- 
- 	return sbi_err_map_linux_errno(ret.error);
- }
-@@ -510,8 +507,7 @@ EXPORT_SYMBOL(sbi_remote_hfence_vvma_asid);
- 
- static void sbi_srst_reset(unsigned long type, unsigned long reason)
- {
--	sbi_ecall(SBI_EXT_SRST, SBI_EXT_SRST_RESET, type, reason,
--		  0, 0, 0, 0);
-+	sbi_ecall(SBI_EXT_SRST, SBI_EXT_SRST_RESET, type, reason);
- 	pr_warn("%s: type=0x%lx reason=0x%lx failed\n",
- 		__func__, type, reason);
- }
-@@ -544,8 +540,7 @@ long sbi_probe_extension(int extid)
- {
- 	struct sbiret ret;
- 
--	ret = sbi_ecall(SBI_EXT_BASE, SBI_EXT_BASE_PROBE_EXT, extid,
--			0, 0, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_BASE, SBI_EXT_BASE_PROBE_EXT, extid);
- 	if (!ret.error)
- 		return ret.value;
- 
-@@ -607,10 +602,10 @@ int sbi_debug_console_write(const char *bytes, unsigned int num_bytes)
- 	if (IS_ENABLED(CONFIG_32BIT))
- 		ret = sbi_ecall(SBI_EXT_DBCN, SBI_EXT_DBCN_CONSOLE_WRITE,
- 				num_bytes, lower_32_bits(base_addr),
--				upper_32_bits(base_addr), 0, 0, 0);
-+				upper_32_bits(base_addr));
- 	else
- 		ret = sbi_ecall(SBI_EXT_DBCN, SBI_EXT_DBCN_CONSOLE_WRITE,
--				num_bytes, base_addr, 0, 0, 0, 0);
-+				num_bytes, base_addr);
- 
- 	if (ret.error == SBI_ERR_FAILURE)
- 		return -EIO;
-@@ -636,10 +631,10 @@ int sbi_debug_console_read(char *bytes, unsigned int num_bytes)
- 	if (IS_ENABLED(CONFIG_32BIT))
- 		ret = sbi_ecall(SBI_EXT_DBCN, SBI_EXT_DBCN_CONSOLE_READ,
- 				num_bytes, lower_32_bits(base_addr),
--				upper_32_bits(base_addr), 0, 0, 0);
-+				upper_32_bits(base_addr));
- 	else
- 		ret = sbi_ecall(SBI_EXT_DBCN, SBI_EXT_DBCN_CONSOLE_READ,
--				num_bytes, base_addr, 0, 0, 0, 0);
-+				num_bytes, base_addr);
- 
- 	if (ret.error == SBI_ERR_FAILURE)
- 		return -EIO;
-diff --git a/arch/riscv/kernel/sbi_ecall.c b/arch/riscv/kernel/sbi_ecall.c
-index 24aabb4fbde3..714a16103cd7 100644
---- a/arch/riscv/kernel/sbi_ecall.c
-+++ b/arch/riscv/kernel/sbi_ecall.c
-@@ -9,7 +9,7 @@ long __sbi_base_ecall(int fid)
- {
- 	struct sbiret ret;
- 
--	ret = sbi_ecall(SBI_EXT_BASE, fid, 0, 0, 0, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_BASE, fid);
- 	if (!ret.error)
- 		return ret.value;
- 	else
-diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
-index 24b3f57d467f..bef83043e8c7 100644
---- a/arch/riscv/kernel/suspend.c
-+++ b/arch/riscv/kernel/suspend.c
-@@ -115,7 +115,7 @@ static int sbi_system_suspend(unsigned long sleep_type,
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_SUSP, SBI_EXT_SUSP_SYSTEM_SUSPEND,
--			sleep_type, resume_addr, opaque, 0, 0, 0);
-+			sleep_type, resume_addr, opaque);
- 	if (ret.error)
- 		return sbi_err_map_linux_errno(ret.error);
- 
-@@ -153,7 +153,7 @@ static int sbi_suspend_finisher(unsigned long suspend_type,
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_SUSPEND,
--			suspend_type, resume_addr, opaque, 0, 0, 0);
-+			suspend_type, resume_addr, opaque);
- 
- 	return (ret.error) ? sbi_err_map_linux_errno(ret.error) : 0;
- }
-diff --git a/arch/riscv/kvm/nacl.c b/arch/riscv/kvm/nacl.c
-index 08a95ad9ada2..bc0ea3157645 100644
---- a/arch/riscv/kvm/nacl.c
-+++ b/arch/riscv/kvm/nacl.c
-@@ -61,7 +61,7 @@ int kvm_riscv_nacl_enable(void)
- 	nacl = this_cpu_ptr(&kvm_riscv_nacl);
- 
- 	ret = sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SET_SHMEM,
--			nacl->shmem_phys, 0, 0, 0, 0, 0);
-+			nacl->shmem_phys, 0, 0);
- 	rc = sbi_err_map_linux_errno(ret.error);
- 	if (rc)
- 		return rc;
-@@ -75,7 +75,7 @@ void kvm_riscv_nacl_disable(void)
- 		return;
- 
- 	sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SET_SHMEM,
--		  SBI_SHMEM_DISABLE, SBI_SHMEM_DISABLE, 0, 0, 0, 0);
-+		  SBI_SHMEM_DISABLE, SBI_SHMEM_DISABLE, 0);
- }
- 
- void kvm_riscv_nacl_exit(void)
-@@ -106,8 +106,7 @@ static long nacl_probe_feature(long feature_id)
- 	if (!kvm_riscv_nacl_available())
- 		return 0;
- 
--	ret = sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_PROBE_FEATURE,
--			feature_id, 0, 0, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_PROBE_FEATURE, feature_id);
- 	return ret.value;
- }
- 
-diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-index 4cdff387deff..21e2051b3e35 100644
---- a/drivers/acpi/riscv/cppc.c
-+++ b/drivers/acpi/riscv/cppc.c
-@@ -53,7 +53,7 @@ static void sbi_cppc_read(void *read_data)
- 	struct sbi_cppc_data *data = (struct sbi_cppc_data *)read_data;
- 
- 	data->ret = sbi_ecall(SBI_EXT_CPPC, SBI_CPPC_READ,
--			      data->reg, 0, 0, 0, 0, 0);
-+			      data->reg);
- }
- 
- static void sbi_cppc_write(void *write_data)
-@@ -61,7 +61,7 @@ static void sbi_cppc_write(void *write_data)
- 	struct sbi_cppc_data *data = (struct sbi_cppc_data *)write_data;
- 
- 	data->ret = sbi_ecall(SBI_EXT_CPPC, SBI_CPPC_WRITE,
--			      data->reg, data->val, 0, 0, 0, 0);
-+			      data->reg, data->val);
- }
- 
- static void cppc_ffh_csr_read(void *read_data)
-diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-index 698de8ddf895..752096b1ef9a 100644
---- a/drivers/perf/riscv_pmu_sbi.c
-+++ b/drivers/perf/riscv_pmu_sbi.c
-@@ -303,10 +303,10 @@ static void pmu_sbi_check_event(struct sbi_pmu_event_data *edata)
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_CFG_MATCH,
--			0, cmask, 0, edata->event_idx, 0, 0);
-+			0, cmask, 0, edata->event_idx, 0);
- 	if (!ret.error) {
- 		sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP,
--			  ret.value, 0x1, SBI_PMU_STOP_FLAG_RESET, 0, 0, 0);
-+			  ret.value, 0x1, SBI_PMU_STOP_FLAG_RESET);
- 	} else if (ret.error == SBI_ERR_NOT_SUPPORTED) {
- 		/* This event cannot be monitored by any counter */
- 		edata->event_idx = -ENOENT;
-@@ -433,7 +433,7 @@ static int pmu_sbi_ctr_get_idx(struct perf_event *event)
- 			hwc->config >> 32);
- #else
- 	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_CFG_MATCH, cbase,
--			cmask, cflags, hwc->event_base, hwc->config, 0);
-+			cmask, cflags, hwc->event_base, hwc->config);
- #endif
- 	if (ret.error) {
- 		pr_debug("Not able to find a counter for event %lx config %llx\n",
-@@ -606,7 +606,7 @@ static int pmu_sbi_snapshot_disable(void)
- 	struct sbiret ret;
- 
- 	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_SNAPSHOT_SET_SHMEM, SBI_SHMEM_DISABLE,
--			SBI_SHMEM_DISABLE, 0, 0, 0, 0);
-+			SBI_SHMEM_DISABLE);
- 	if (ret.error) {
- 		pr_warn("failed to disable snapshot shared memory\n");
- 		return sbi_err_map_linux_errno(ret.error);
-@@ -630,10 +630,10 @@ static int pmu_sbi_snapshot_setup(struct riscv_pmu *pmu, int cpu)
- 	if (IS_ENABLED(CONFIG_32BIT))
- 		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_SNAPSHOT_SET_SHMEM,
- 				cpu_hw_evt->snapshot_addr_phys,
--				(u64)(cpu_hw_evt->snapshot_addr_phys) >> 32, 0, 0, 0, 0);
-+				(u64)(cpu_hw_evt->snapshot_addr_phys) >> 32);
- 	else
- 		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_SNAPSHOT_SET_SHMEM,
--				cpu_hw_evt->snapshot_addr_phys, 0, 0, 0, 0, 0);
-+				cpu_hw_evt->snapshot_addr_phys);
- 
- 	/* Free up the snapshot area memory and fall back to SBI PMU calls without snapshot */
- 	if (ret.error) {
-@@ -667,14 +667,14 @@ static u64 pmu_sbi_ctr_read(struct perf_event *event)
- 
- 	if (pmu_sbi_is_fw_event(event)) {
- 		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_FW_READ,
--				hwc->idx, 0, 0, 0, 0, 0);
-+				hwc->idx);
- 		if (ret.error)
- 			return 0;
- 
- 		val = ret.value;
- 		if (IS_ENABLED(CONFIG_32BIT) && sbi_v2_available && info.width >= 32) {
- 			ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_FW_READ_HI,
--					hwc->idx, 0, 0, 0, 0, 0);
-+					hwc->idx);
- 			if (!ret.error)
- 				val |= ((u64)ret.value << 32);
- 			else
-@@ -717,10 +717,10 @@ static void pmu_sbi_ctr_start(struct perf_event *event, u64 ival)
- 	/* There is no benefit setting SNAPSHOT FLAG for a single counter */
- #if defined(CONFIG_32BIT)
- 	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, hwc->idx,
--			1, flag, ival, ival >> 32, 0);
-+			1, flag, ival, ival >> 32);
- #else
- 	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, hwc->idx,
--			1, flag, ival, 0, 0);
-+			1, flag, ival);
- #endif
- 	if (ret.error && (ret.error != SBI_ERR_ALREADY_STARTED))
- 		pr_err("Starting counter idx %d failed with error %d\n",
-@@ -746,7 +746,8 @@ static void pmu_sbi_ctr_stop(struct perf_event *event, unsigned long flag)
- 	if (sbi_pmu_snapshot_available())
- 		flag |= SBI_PMU_STOP_FLAG_TAKE_SNAPSHOT;
- 
--	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP, hwc->idx, 1, flag, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP,
-+			hwc->idx, 1, flag);
- 	if (!ret.error && sbi_pmu_snapshot_available()) {
- 		/*
- 		 * The counter snapshot is based on the index base specified by hwc->idx.
-@@ -771,7 +772,7 @@ static int pmu_sbi_find_num_ctrs(void)
- {
- 	struct sbiret ret;
- 
--	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_NUM_COUNTERS, 0, 0, 0, 0, 0, 0);
-+	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_NUM_COUNTERS);
- 	if (!ret.error)
- 		return ret.value;
- 	else
-@@ -789,7 +790,7 @@ static int pmu_sbi_get_ctrinfo(int nctr, unsigned long *mask)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < nctr; i++) {
--		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_GET_INFO, i, 0, 0, 0, 0, 0);
-+		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_GET_INFO, i);
- 		if (ret.error)
- 			/* The logical counter ids are not expected to be contiguous */
- 			continue;
-@@ -816,7 +817,7 @@ static inline void pmu_sbi_stop_all(struct riscv_pmu *pmu)
- 	 * which may include counters that are not enabled yet.
- 	 */
- 	sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP,
--		  0, pmu->cmask, SBI_PMU_STOP_FLAG_RESET, 0, 0, 0);
-+		  0, pmu->cmask, SBI_PMU_STOP_FLAG_RESET);
- }
- 
- static inline void pmu_sbi_stop_hw_ctrs(struct riscv_pmu *pmu)
-@@ -837,7 +838,7 @@ static inline void pmu_sbi_stop_hw_ctrs(struct riscv_pmu *pmu)
- 	for (i = 0; i < BITS_TO_LONGS(RISCV_MAX_COUNTERS); i++) {
- 		/* No need to check the error here as we can't do anything about the error */
- 		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP, i * BITS_PER_LONG,
--				cpu_hw_evt->used_hw_ctrs[i], flag, 0, 0, 0);
-+				cpu_hw_evt->used_hw_ctrs[i], flag);
- 		if (!ret.error && sbi_pmu_snapshot_available()) {
- 			/* Save the counter values to avoid clobbering */
- 			for_each_set_bit(idx, &cpu_hw_evt->used_hw_ctrs[i], BITS_PER_LONG)
-@@ -877,8 +878,8 @@ static inline void pmu_sbi_start_ovf_ctrs_sbi(struct cpu_hw_events *cpu_hw_evt,
- 	for (i = 0; i < BITS_TO_LONGS(RISCV_MAX_COUNTERS); i++) {
- 		ctr_start_mask = cpu_hw_evt->used_hw_ctrs[i] & ~ctr_ovf_mask;
- 		/* Start all the counters that did not overflow in a single shot */
--		sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, i * BITS_PER_LONG, ctr_start_mask,
--			0, 0, 0, 0);
-+		sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START,
-+			  i * BITS_PER_LONG, ctr_start_mask, 0);
- 	}
- 
- 	/* Reinitialize and start all the counter that overflowed */
-@@ -889,11 +890,11 @@ static inline void pmu_sbi_start_ovf_ctrs_sbi(struct cpu_hw_events *cpu_hw_evt,
- 			max_period = riscv_pmu_ctr_get_width_mask(event);
- 			init_val = local64_read(&hwc->prev_count) & max_period;
- #if defined(CONFIG_32BIT)
--			sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, idx, 1,
--				  flag, init_val, init_val >> 32, 0);
-+			sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, idx,
-+				  1, flag, init_val, init_val >> 32);
- #else
--			sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, idx, 1,
--				  flag, init_val, 0, 0);
-+			sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, idx,
-+				  1, flag, init_val);
- #endif
- 			perf_event_update_userpage(event);
- 		}
-@@ -932,8 +933,9 @@ static inline void pmu_sbi_start_ovf_ctrs_snapshot(struct cpu_hw_events *cpu_hw_
- 			sdata->ctr_values[idx] =
- 					cpu_hw_evt->snapshot_cval_shcopy[idx + i * BITS_PER_LONG];
- 		/* Start all the counters in a single shot */
--		sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, idx * BITS_PER_LONG,
--			  cpu_hw_evt->used_hw_ctrs[i], flag, 0, 0, 0);
-+		sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START,
-+			  idx * BITS_PER_LONG,
-+			  cpu_hw_evt->used_hw_ctrs[i], flag);
- 	}
- }
- 
--- 
-2.49.0
+MAP_HUGETLBFS rounds up the length to some value, userspace has to
+figure that out and not pass incorrect lengths.  The selftest is doing
+that wrong.
 
+> If the test is broken on ARM64 64k in general then I am also wondering how
+> it didn't fail before my change to the selftest harness.
+
+It got lucky and didn't overmap something important.
+
+Jason
 
