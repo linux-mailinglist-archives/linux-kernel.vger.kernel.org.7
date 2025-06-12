@@ -1,267 +1,397 @@
-Return-Path: <linux-kernel+bounces-683864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC59DAD7328
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD02AD7338
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98721188778C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:01:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27750188EF43
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0F4246327;
-	Thu, 12 Jun 2025 14:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AF124DD01;
+	Thu, 12 Jun 2025 14:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBN8jJ3j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AeFG49L0"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBBC2745E;
-	Thu, 12 Jun 2025 14:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736849; cv=none; b=c57uZvRrXIF1YP2dQ1G1iJCDot+4FrY+Qtfwa0vMJK7CjeuqhV7F+bWBFQB64FEU3T3aSp4NDx2XguyBfqatqi4M87XEmYOtxyfD4oW+u7P4OR2K2lLa2eJ0vuuYERiABiRQkRFhwKckiu6daUUGvzhjN8/gpH+UU9yGq4JdbKU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736849; c=relaxed/simple;
-	bh=b/HubsKTNPeTRSAp6TCHMgHzCQE3BmzRFQuGAGVx1pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MU0bl7DTV2oUOx7pEaU+pa/0K8V0lkKgEkIHYUkpXLUcAZ7ewYXZn2Au1lU7S4PHkAEu1CWYvok1MdH2vAqgGgRuqu39w9RpeLY1+GuXv10jM+KeE4K2oelwlmEPixirKEdZ0cMezvRpv6sl3Oh0cNJvQf/2jTHFRaSIRRL+1Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBN8jJ3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C71DC4CEEB;
-	Thu, 12 Jun 2025 14:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749736849;
-	bh=b/HubsKTNPeTRSAp6TCHMgHzCQE3BmzRFQuGAGVx1pg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TBN8jJ3j/nD9SkRH3SZ2FjuvzuqbmCx00Z16QXYn7b8lFktXXebNl7vmpa0++ML4v
-	 bOxBaHYiP7DdiYLNTvtH1FzmOQDoJLCq/OHvG1C2lCDpMzW9QT6KIkf+XZMkyZEI1Y
-	 bLtjIkPrzk7kxSIMFdKjYwBhjekGm+8PuXEzKurCg7k4y/H+VZZP76948rtqznjb6o
-	 Wy21rMZ9Y54R74JsZJtB8OA4dgznGaI8n3J7wiX13wRG33spDDVZljvWbTVSS5jCv8
-	 qK46AmrpJP8IHJJEa6aGTS+HMRzFdLdZdN5FpLfI81lRoTsu/gzO5+Uq9LOCobFKT7
-	 /UEMhZAQ4F0BQ==
-Date: Thu, 12 Jun 2025 15:00:41 +0100
-From: Lee Jones <lee@kernel.org>
-To: a0282524688@gmail.com
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
-	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org,
-	linux@roeck-us.net, jdelvare@suse.com,
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
-	Ming Yu <tmyu0@nuvoton.com>
-Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20250612140041.GF381401@google.com>
-References: <20250604041418.1188792-1-tmyu0@nuvoton.com>
- <20250604041418.1188792-2-tmyu0@nuvoton.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA0324DCF1;
+	Thu, 12 Jun 2025 14:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749736965; cv=fail; b=mBRVDyiVNL0S4bjLZs/xVu8MokZIWyRZbNsA0Q5o8p1biRbyaUYvtLDYlcGJSrXjWwhBsuWpiBqkEn2Y4/0+O87aIQxCQR4tX6pUc7TyyvevVNZ7eCQfsQ2tfHIB4CKn8ajooBaRNhqS3BUeIO9wCY6X0qCpmE2tzmjFCuXHLbU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749736965; c=relaxed/simple;
+	bh=WDN9VzSALBDKlsfXL1EAKRmT4jofA1OWob32YOzxHqY=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=XeCyAHayGO8Vs1J50W/f18+lpst53icZCmlPi78eQHFBYou7sHTudW8Aakncr/1bOB2a65dnrYSv8pnCplZEmlY6E+QoluxnfJ0U2k23Xnhk5w5dtzocLFrdMqqCeKtUVn5s8/ixSd//Oa+x3yyuUqsTBEAvTrdewp+9WCMENsg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AeFG49L0; arc=fail smtp.client-ip=40.107.94.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gVXvvZTqtVbqBfIJIVbzZsG71+kUwpGhldV5XfR0waQy9B5ohpyrElU6oXn4uATFx0R2tQuqHCXIIkpBL735XBXmsqh+NfgExx/xnPO815tvgIQaX1Fhl5LjhpSWH10NfjtMeUuwnvfZquHqeNqEHhzqyf9yKpHuIhfREU80bbpIglSMou1ZBtTDZqaV7k1L17v163a9583Og36oPbxlCSCUUf+PLA76Nyrl0Nql4QB3/cyLuv2FkVJm0J97haddYrQlHJGT/aaJgwP5ALgSp7nbbtIN03x3BuzUkM31VYYaSO7BCUkrGrjnsxbDhB0FTZKnVe7JCzDTgkgrz6Yz1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s3vgx6glAomZ16EYqyX96pRNhdEF+5Ze25Qw0mz8mFI=;
+ b=fDEH+vEiurJYBHpyzXxQ4oYDUBcKK7KLGrkSHjjCIZxXurbZQN4z9yI/5Ijk2IIhLOHPqrY5YKuvTPtZKhReYkQVl6LaXvrxc++xDH2l/3KvLaXuo3H2xBOMzvU6BBLqQxcIS5xKpLtGQ3LP7MXB4nwEGVisIgub/JIX/IB8PqBTT0UuHHxqZ12jpaQy6DxXe3MbOWDArZ7c07S6xtAXgoHk/zCtHlfrmIhmKIqGWxX38fxkHvOFzWHXCv+SFETL1D1xcM7utjg9GniyVywQj0LQZHjEWAniuBi4GskCQL7wn07J11Md55KRyipUcYQF6SUFLB3MATjLrLmX4f8oMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s3vgx6glAomZ16EYqyX96pRNhdEF+5Ze25Qw0mz8mFI=;
+ b=AeFG49L0j7CSVt/YSTVI6otg9jYfRDMaSUxx9xb/+nEuVJIYG9rLGvOIQ+/qMwLhrcKq7iKvt7RecdVqfzqud3RkV/3qiWu9rFRwaDKo9oUKxnQGAmBXZPrJ3quldo0keg8PwyNdwyUNQEQYjRiW2edD4hvck+u6CNz4Hmj7cX6CaZ0q4YyTcSK0PYleVOxhRdYGkCEzhHmMtWkHu9iq3kglSYRBGwhX7eb4Aw1bdtNHzZy9+bBZfAQIw9Ur3Lj7N8YVV7rRCyUO0xVyuJb2COfQATuPkimX03QZE/T8xBCCI9esaCvZE9PCDdxjOvPpoUX/F59kpHnjq5QjSjPeZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH3PR12MB8458.namprd12.prod.outlook.com (2603:10b6:610:155::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Thu, 12 Jun
+ 2025 14:02:42 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
+ 14:02:41 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Thu, 12 Jun 2025 23:01:32 +0900
+Subject: [PATCH v5 04/23] rust: add new `num` module with `PowerOfTwo` type
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250612-nova-frts-v5-4-14ba7eaf166b@nvidia.com>
+References: <20250612-nova-frts-v5-0-14ba7eaf166b@nvidia.com>
+In-Reply-To: <20250612-nova-frts-v5-0-14ba7eaf166b@nvidia.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Benno Lossin <lossin@kernel.org>
+Cc: John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+ Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYCP286CA0077.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::9) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250604041418.1188792-2-tmyu0@nuvoton.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB8458:EE_
+X-MS-Office365-Filtering-Correlation-Id: f22532db-3b7d-4a6f-5813-08dda9b9cc2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?anRjck1VZzIrWVgzU1l3K0RBNUhIRkhJV1I3cnVuVUlLSUt0bWN3NHRNNmhE?=
+ =?utf-8?B?TmxFMTdtRWx3bjlSTldsbktkVDFRd1JwSzUwL05ZMDJOOFZnTzQrd1ZWOG1R?=
+ =?utf-8?B?RlNpSy9tcm9PRnc5Y3RYeER2aW8vSXdvTGMvUlBHSzBBTlFWM2ZrRjVqZkty?=
+ =?utf-8?B?NFlzYm1wSFVxa21ES2hSVTU1am1xbGZ0ejhQNFJXbVBGLytOOTN2dHpmNHBp?=
+ =?utf-8?B?cUtYU0c4S3VTZldxeXRpVkJCRUNIdWU2b1dRanZzN0JUYUwyZTNzVUl5aWtH?=
+ =?utf-8?B?R3JQdnlsTG50elNPNm1ZeDkrN1E0Uk5zdDRWSlZKd1BZWlJGZDhGYUEvY0xU?=
+ =?utf-8?B?YXRsQVJFVnpYaUU2VTRkUmZrS1oydm5CNE5YaHVQWXNiZEVMOHBXdzI5dVk3?=
+ =?utf-8?B?bDYwYkZsRy8zM0EwU2RSZTFYUXNPNnFQOTZrL1d2SDZZWTNFa0sydTF6MWhx?=
+ =?utf-8?B?U0tMZmxvM3ZoVnl5WXI1RHRodlF6REs0dS9lSURneElSUThJVjFOMVJ3ekha?=
+ =?utf-8?B?OFFmU2Y0Sk9Vc3NLWkVxYlkzZ3psSUZ3eldzS2NxRThHMENRbXJrQ2dHUjFr?=
+ =?utf-8?B?R0NnS1lEVHQ1Y096V290cDNqWlVIUEZYNklvOWIxVFJxaFd0S3pHTDAvSURI?=
+ =?utf-8?B?cGQ5c09oY011Yjk0aWt1dHJpdFVQZU55eDMySldBZG1weVlXT2hwd2hKT0dz?=
+ =?utf-8?B?NGFOdUpGK3ZMMzBUdmhFREpaTDBib0ZQMUJEU1pZNlBkcjg5WU50blZ6S1ky?=
+ =?utf-8?B?WE8wekdwQlAzVUk4SFQ2WXY5WVMrc2R0bWd3WDFMWWpFdVZ3KzJJbVF5c3oz?=
+ =?utf-8?B?QjFOQlNNbTJpSUtialgxYXdXYkN5RWozbFBYNUpzUXdiKzVldCtEcnFlSE9K?=
+ =?utf-8?B?bGlFa0pwa2pKRE1OelZFanRobFJ3SmNYOU1jSGVCdytRMlUyZm1GeVdrT2xI?=
+ =?utf-8?B?VjlnUERTYjBSeHVpMmVhYS8xUGd2UVR5c2xzS0R4T2dtMTVxbWtnY2tUU3Vu?=
+ =?utf-8?B?K2h2bGt3Q3RCUEl3ZEFIZTZtVE93dEtMTHNCa2JkT2tLWmtOUTBEaTN1Tksr?=
+ =?utf-8?B?UHl6VFdEemFvL0VONEFjWmxmb2JuNUc5THVmVzMydzFObGxlN1k5LzNUSEdJ?=
+ =?utf-8?B?Y29ZYktVQ3YzeVN6ZzFBWXJMK2tDZEN2S3p1ZTNsVzl4dkJncVFrZzB4Sjcw?=
+ =?utf-8?B?OTNZRlk0WHVqNitxZW15aWpSL2ZzODhGV0lNSUY1UHVZTm84dEtndGpuSU1x?=
+ =?utf-8?B?YzRDSFk5bER0VWgyMGlNQ1pBMFZRbElvRHVMRHhTQ1NjbmloV0xLWkRWcjVm?=
+ =?utf-8?B?TWV6aStCVENoczhSSU1KTlcwaVZ3MHhHTzk2NGUrcm9xdlhqRndDSGFMSElH?=
+ =?utf-8?B?bHl3N0FhSk43SWFlV01XbkpUeCtNMHdsSXBWUVdId2dkSzBZbkhkMjFiZkxt?=
+ =?utf-8?B?c1E5YTZuVUpKUkVCTngrMXQyQUtTZ2QrV214WnZYcUEwN2NDTGFXYmNReHNX?=
+ =?utf-8?B?U2pZai9naVIrUVJBZkpXenUwcEZES0IwZ2g3TXd5S3lsRmxGbW1YSWtMcWZr?=
+ =?utf-8?B?L3AxV3pZc3JlblpsV0xzU05PT2NCZHlDVWFEaEl0eU8yZml5SVN0OFJtV0tD?=
+ =?utf-8?B?aXduUEVaV0pJSFoxU3pTQytFM0tPd0tFL2JSR3hLN1hhSmZrOHBOWTBrWjAw?=
+ =?utf-8?B?ZEFDWDc3MUlDL3JMMDRHa1RVTmxwMTlQVk5haithend0d05mTTVoMUt6Z1dI?=
+ =?utf-8?B?a0FTbEZJTjZ1Z3h2RFlya0RoSlBTYVB3WUYwWFZTWHRsZkI1WTNpV2xHVlgv?=
+ =?utf-8?B?TElnMmhxY3VrTDVxS054Rkd2WDEvRjU4bXFINDN1QlpYMlNYdXJKK1MxZmpF?=
+ =?utf-8?B?N0kxRHNaKzdOK2RZOHNmMmtEVVRHSmxjbnE3dWRYeXZmYkZCVzZPSE1Ec1V2?=
+ =?utf-8?B?U2dZM0FDUkRJVGFSa3ZRNStxMmx6WDQrcUVycVlKU0E3V3BnbW5ObDVtUzMv?=
+ =?utf-8?B?TVRrYUpTRFZnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V3hjWDFMOUFIazh4bkc0RzZvSkRyd3BSeVFzVHZENlZ1SmFDdlpCYmErR2pU?=
+ =?utf-8?B?TlFnVGxuYWV0dTlaTWMzWEFBWkU0MWVOM1BxOFA3S3JnRUVReWhTbWp2WDQ3?=
+ =?utf-8?B?VUFvQURiYU9FS0xZK3V3Y2RzRnUwYmU1d1RxbGU3bFJ4amxLRnVVREk2Ry9k?=
+ =?utf-8?B?ODhGcURSZW5WdmhDL0FjeGcrQ3FpbWt5V1dCUCtzZEJENTUvQkw0cFUxZ0M3?=
+ =?utf-8?B?OXBVbDlkYnJlMlgxVHVBYTMzYjRFalJxbkV1bDFXTzc4UmFLSHhidk9IV09j?=
+ =?utf-8?B?SEI4bTRHbHk1SmRjaUJpM1Y4YVo5TUpaZ3ZFb2svUEZ2Q1RjT1BsWGR5UzVW?=
+ =?utf-8?B?RXNDYTRSMWRmRGdyU013cXdYb1dDU05ZVWFRM2E2blpLNitndHNCUTdYaWdX?=
+ =?utf-8?B?blBLUVVCc3p2bE4wRWg2Q3RIQ01sQS9TY3Jiak5vZ3Q0NTI5SFdtU2xLcXAy?=
+ =?utf-8?B?WDZROW9TNnlYL0NvT3lVT2c1amNjU2tuanFBZEJxT2RGSDhJRjYzVkJKU0VI?=
+ =?utf-8?B?NndwNFNGZERiN0xUT3dFdWxJUk53cWpxTExuakttODdXU0dCL252RDl6ZU1V?=
+ =?utf-8?B?VkVEdEdvV2d5bzhkZW0zK3RrU1dOU2x6V2RQaG4zdjBOSFFIbHhkS0F4M0lB?=
+ =?utf-8?B?ZHpHZ1o3RTYybEhQWlB4WHB4QlllTVBqWHgyckg3ajhQNE1lZHZtRXVTU3pr?=
+ =?utf-8?B?VFA5ZTVBMDBSRVl2SW9oU0NtUzQzQWlZMmp6NnBtd0w3U0RGTmJKODN0M043?=
+ =?utf-8?B?UVJLZzBzN0ppM1hmWi9JMHZBN0x4L3dwRjhtVi9INGk5VmVlbmcrR3F5NU1i?=
+ =?utf-8?B?R3RoNTF1ZVhsaDd2eGxNQkdPKzdGeWpCQWJtdzFwTDVHTkFqcWhIUjdkYnpa?=
+ =?utf-8?B?RFJzdXFVQjBMNWExaVplcitRMWlRWDdTMUFjdWdLMFE3dHFDelRJMVVxNk81?=
+ =?utf-8?B?bjJaanN0dFR3dy9MQy9xNlhrT2ZabHNzaThCenFadXVlR0RSTThyTUJvMTda?=
+ =?utf-8?B?YXBKV1NobnUwSW82SVZTWk9hS2FLMXcvT1h4bG1JV1B2QVJqb0VYUlRwU25O?=
+ =?utf-8?B?TUF5SEs1UVhZbk4xK0lkVWpITnQ5Ukl5bEhQd1RsSjJPVzhjVVBvMWhOL01w?=
+ =?utf-8?B?Q2VPVlpPckx0aCtEejVXdHVaejhCckNzRjVVZk42bncvVWtXdnBmVmM5blFW?=
+ =?utf-8?B?R3JUZk44Vis4c2FmcUZ3b3ljOTBiY2ZPbStXOGI1M0VQanhXU2RZcjZmNzdW?=
+ =?utf-8?B?R1R6NzR1NDJpNjg2WGx1c1lYL1NTRkxrZExEdXVLWUNKZW9uTWt4K1VyMHl0?=
+ =?utf-8?B?TmxZSjlsNW9KTkVQU0NBdVJnd1N4VDc2cG1RNFE4d0tCY3BWanJNdy8yWXp2?=
+ =?utf-8?B?N1dheW1ubFFwanhrWGpFNUFRUWJPNisvUlJaUEQ3ZUlqTytRSTE5OWt0WVlv?=
+ =?utf-8?B?Y05xZmtTOG8vMVhWVzR5V1FrWkNjdmdZVGtRa2QxcVkxL0QyV1ZaNldFSmEz?=
+ =?utf-8?B?WHpTQnMydDJva2VpUktJZnZ0TUJqeS9rOXgrdCtzYXNHcEZNdnBRaDZVYlB6?=
+ =?utf-8?B?R1g1WEY2cUxpcEhNMDlOZkR4REo4L3U5WlZDWkRZa1RxbXVEeWdtLzRlWXoz?=
+ =?utf-8?B?dEpwUWRJb2RmYjV1VlUyRmQxVTYvTTBaUytiVUJaY015eTRuMFQveFE0MSsw?=
+ =?utf-8?B?VnNTcjRibWdIMlVCTVBWZUoyK1ZmdVNBdE9HRURERGsvcHlOd2pCemJ3aytO?=
+ =?utf-8?B?VzhQMEZIUW53RjdDZWJ5VUFPcWNxekQwNmtmVDhSYmdPK0JOZUIvQUNOeThy?=
+ =?utf-8?B?V1dWQWJkL2FadVBHS3BQdVZXNUdua01zRkFsRE84bWt6VFd3TTN6endTTmVK?=
+ =?utf-8?B?aFYrTHlBS1NkZTkxS0RxajRzRmI1V0pzanB4bDNlSnB1VVh4ZkxzcWVjTitt?=
+ =?utf-8?B?MDEvNFQ1RXFzbEwyUCtuYnVab0ZMQWtoalh3QTNKN2wrb0RUTDU1bWU1K3lm?=
+ =?utf-8?B?T3pXdXN5Qk95WjNSZnRBSTVZK0JvYlpNQzBYUmhxaVpqSS9xdHc1VVJEN1RY?=
+ =?utf-8?B?Z0w3QTk2UGNPckROaExteThVZnVoY2swbVVjUUoyRjJ4aG9jVFpUNHd2Kytv?=
+ =?utf-8?B?N3l5alVtanF5VTlOVHhzYzR5Vm40dHpsVy83OGV3OFNoVFJLdkIydXJaSEZ4?=
+ =?utf-8?Q?jJ6rhvcSB8vkQD/3b38lkU5SMl7z/VNtpUIMn/uqtIND?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f22532db-3b7d-4a6f-5813-08dda9b9cc2f
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 14:02:41.8800
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cxU9svuCbXQ7uY86BBcy3gNoQIdUSnaxDHHLo91wMPnyjM+tyiNPIsQlLa4MBvttbYh/GBXcMiCV6BMD0Ocdrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8458
 
-On Wed, 04 Jun 2025, a0282524688@gmail.com wrote:
+Introduce the `num` module, featuring the `PowerOfTwo` unsigned wrapper
+that guarantees (at build-time or runtime) that a value is a power of
+two.
 
-> From: Ming Yu <tmyu0@nuvoton.com>
-> 
-> The Nuvoton NCT6694 provides an USB interface to the host to
-> access its features.
-> 
-> Sub-devices can use the USB functions nct6694_read_msg() and
-> nct6694_write_msg() to issue a command. They can also request
-> interrupt that will be called when the USB device receives its
-> interrupt pipe.
-> 
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ---
-> Changes since version 11:
-> - Modify the irq_domain_add_simple() to irq_domain_create_simple()
-> - Fix mfd_cell back to v9, and use Use platform_device's id to replace IDA
->   in sub-drivers
-> 
-> Changes since version 10:
-> - Add change log for the patch
-> - Fix mfd_cell to MFD_CELL_NAME()
-> - Remove unnecessary blank line
-> 
-> Changes since version 9:
-> - Add KernelDoc to exported functions
-> 
-> Changes since version 8:
-> - Modify the signed-off-by with my work address
-> - Rename all MFD cell names to "nct6694-xxx"
-> - Fix some comments in nct6694.c and in nct6694.h
-> 
-> Changes since version 7:
-> - Add error handling for devm_mutex_init()
-> 
-> Changes since version 6:
-> 
-> Changes since version 5:
-> - Fix mfd_cell to MFD_CELL_NAME() and MFD_CELL_BASIC()
-> - Drop unnecessary macros
-> 
-> Changes since version 4:
-> - Modify arguments in read/write function to a pointer to cmd_header
-> 
-> Changes since version 3:
-> - Modify array buffer to structure
-> - Fix defines and comments
-> - Add header <linux/bits.h> and use BIT macro
-> - Modify mutex_init() to devm_mutex_init()
-> 
-> Changes since version 2:
-> 
-> Changes since version 1:
-> - Implement IRQ domain to handle IRQ demux
-> - Modify USB_DEVICE to USB_DEVICE_AND_INTERFACE_INFO API
-> - Add command structure
-> - Fix USB functions
-> - Sort each driver's header files alphabetically
-> 
->  MAINTAINERS                 |   6 +
->  drivers/mfd/Kconfig         |  15 ++
->  drivers/mfd/Makefile        |   2 +
->  drivers/mfd/nct6694.c       | 386 ++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/nct6694.h |  98 +++++++++
->  5 files changed, 507 insertions(+)
->  create mode 100644 drivers/mfd/nct6694.c
->  create mode 100644 include/linux/mfd/nct6694.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 98201e1f4ab5..29d2d05bac22 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17679,6 +17679,12 @@ F:	drivers/nubus/
->  F:	include/linux/nubus.h
->  F:	include/uapi/linux/nubus.h
->  
-> +NUVOTON NCT6694 MFD DRIVER
-> +M:	Ming Yu <tmyu0@nuvoton.com>
-> +S:	Supported
-> +F:	drivers/mfd/nct6694.c
-> +F:	include/linux/mfd/nct6694.h
-> +
->  NVIDIA (rivafb and nvidiafb) FRAMEBUFFER DRIVER
->  M:	Antonino Daplas <adaplas@gmail.com>
->  L:	linux-fbdev@vger.kernel.org
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 96992af22565..489c1950f1ac 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1078,6 +1078,21 @@ config MFD_MENF21BMC
->  	  This driver can also be built as a module. If so the module
->  	  will be called menf21bmc.
->  
-> +config MFD_NCT6694
-> +	tristate "Nuvoton NCT6694 support"
-> +	select MFD_CORE
-> +	depends on USB
-> +	help
-> +	  This enables support for the Nuvoton USB device NCT6694, which shares
-> +	  peripherals.
-> +	  The Nuvoton NCT6694 is a peripheral expander with 16 GPIO chips,
-> +	  6 I2C controllers, 2 CANfd controllers, 2 Watchdog timers, ADC,
-> +	  PWM, and RTC.
-> +	  This driver provides core APIs to access the NCT6694 hardware
-> +	  monitoring and control features.
-> +	  Additional drivers must be enabled to utilize the specific
-> +	  functionalities of the device.
-> +
->  config MFD_OCELOT
->  	tristate "Microsemi Ocelot External Control Support"
->  	depends on SPI_MASTER
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 5e5cc279af60..a96204d938fc 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -120,6 +120,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
->  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
->  obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
->  
-> +obj-$(CONFIG_MFD_NCT6694)	+= nct6694.o
-> +
->  obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
->  
->  ocelot-soc-objs			:= ocelot-core.o ocelot-spi.o
-> diff --git a/drivers/mfd/nct6694.c b/drivers/mfd/nct6694.c
-> new file mode 100644
-> index 000000000000..82d378ee47ed
-> --- /dev/null
-> +++ b/drivers/mfd/nct6694.c
-> @@ -0,0 +1,386 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2025 Nuvoton Technology Corp.
-> + *
-> + * Nuvoton NCT6694 core driver using USB interface to provide
-> + * access to the NCT6694 hardware monitoring and control features.
-> + *
-> + * The NCT6694 is an integrated controller that provides GPIO, I2C,
-> + * CAN, WDT, HWMON and RTC management.
-> + */
-> +
-> +#include <linux/bits.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/nct6694.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/usb.h>
-> +
-> +static const struct mfd_cell nct6694_devs[] = {
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 0),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 1),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 2),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 3),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 4),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 5),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 6),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 7),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 8),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 9),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 10),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 11),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 12),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 13),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 14),
-> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 15),
-> +
-> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 0),
-> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 1),
-> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 2),
-> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 3),
-> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 4),
-> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 5),
+Such a property is often useful to maintain. In the context of the
+kernel, powers of two are often used to align addresses or sizes up and
+down, or to create masks. These operations are provided by this type.
 
-Why have we gone back to this silly numbering scheme?
+It is introduced to be first used by the nova-core driver.
 
-What happened to using IDA in the child driver?
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ rust/kernel/lib.rs |   1 +
+ rust/kernel/num.rs | 173 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 174 insertions(+)
 
-> +
-> +	MFD_CELL_BASIC("nct6694-canfd", NULL, NULL, 0, 0),
-> +	MFD_CELL_BASIC("nct6694-canfd", NULL, NULL, 0, 1),
-> +
-> +	MFD_CELL_BASIC("nct6694-wdt", NULL, NULL, 0, 0),
-> +	MFD_CELL_BASIC("nct6694-wdt", NULL, NULL, 0, 1),
-> +
-> +	MFD_CELL_NAME("nct6694-hwmon"),
-> +
-> +	MFD_CELL_NAME("nct6694-rtc"),
-> +};
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 6b4774b2b1c37f4da1866e993be6230bc6715841..2955f65da1278dd4cba1e4272ff178b8211a892c 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -89,6 +89,7 @@
+ pub mod mm;
+ #[cfg(CONFIG_NET)]
+ pub mod net;
++pub mod num;
+ pub mod of;
+ #[cfg(CONFIG_PM_OPP)]
+ pub mod opp;
+diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..ee0f67ad1a89e69f5f8d2077eba5541b472e7d8a
+--- /dev/null
++++ b/rust/kernel/num.rs
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Numerical and binary utilities for primitive types.
++
++use crate::build_assert;
++use core::borrow::Borrow;
++use core::fmt::Debug;
++use core::hash::Hash;
++use core::ops::Deref;
++
++/// An unsigned integer which is guaranteed to be a power of 2.
++#[derive(Debug, Clone, Copy)]
++#[repr(transparent)]
++pub struct PowerOfTwo<T>(T);
++
++macro_rules! power_of_two_impl {
++    ($($t:ty),+) => {
++        $(
++            impl PowerOfTwo<$t> {
++                /// Validates that `v` is a power of two at build-time, and returns it wrapped into
++                /// `PowerOfTwo`.
++                ///
++                /// A build error is triggered if `v` cannot be asserted to be a power of two.
++                ///
++                /// # Examples
++                ///
++                /// ```
++                /// use kernel::num::PowerOfTwo;
++                ///
++                /// let v = PowerOfTwo::<u32>::new(256);
++                /// assert_eq!(v.value(), 256);
++                /// ```
++                #[inline(always)]
++                pub const fn new(v: $t) -> Self {
++                    build_assert!(v.count_ones() == 1);
++                    Self(v)
++                }
++
++                /// Validates that `v` is a power of two at runtime, and returns it wrapped into
++                /// `PowerOfTwo`.
++                ///
++                /// `None` is returned if `v` was not a power of two.
++                ///
++                /// # Examples
++                ///
++                /// ```
++                /// use kernel::num::PowerOfTwo;
++                ///
++                /// assert_eq!(PowerOfTwo::<u32>::try_new(16).unwrap().value(), 16);
++                /// assert_eq!(PowerOfTwo::<u32>::try_new(15), None);
++                /// ```
++                #[inline(always)]
++                pub const fn try_new(v: $t) -> Option<Self> {
++                    match v.count_ones() {
++                        1 => Some(Self(v)),
++                        _ => None,
++                    }
++                }
++
++                /// Returns the value of this instance.
++                ///
++                /// It is guaranteed to be a power of two.
++                ///
++                /// # Examples
++                ///
++                /// ```
++                /// use kernel::num::PowerOfTwo;
++                ///
++                /// let v = PowerOfTwo::<u32>::new(256);
++                /// assert_eq!(v.value(), 256);
++                /// ```
++                #[inline(always)]
++                pub const fn value(&self) -> $t {
++                    self.0
++                }
++
++                /// Returns the mask corresponding to `self.value() - 1`.
++                #[inline(always)]
++                pub const fn mask(&self) -> $t {
++                    self.0.wrapping_sub(1)
++                }
++
++                /// Aligns `self` down to `alignment`.
++                ///
++                /// # Examples
++                ///
++                /// ```
++                /// use kernel::num::PowerOfTwo;
++                ///
++                /// assert_eq!(PowerOfTwo::<u32>::new(0x1000).align_down(0x4fff), 0x4000);
++                /// ```
++                #[inline(always)]
++                pub const fn align_down(self, value: $t) -> $t {
++                    value & !self.mask()
++                }
++
++                /// Aligns `value` up to `self`.
++                ///
++                /// Wraps around to `0` if the requested alignment pushes the result above the
++                /// type's limits.
++                ///
++                /// # Examples
++                ///
++                /// ```
++                /// use kernel::num::PowerOfTwo;
++                ///
++                /// assert_eq!(PowerOfTwo::<u32>::new(0x1000).align_up(0x4fff), 0x5000);
++                /// assert_eq!(PowerOfTwo::<u32>::new(0x1000).align_up(0x4000), 0x4000);
++                /// assert_eq!(PowerOfTwo::<u32>::new(0x1000).align_up(0x0), 0x0);
++                /// assert_eq!(PowerOfTwo::<u16>::new(0x100).align_up(0xffff), 0x0);
++                /// ```
++                #[inline(always)]
++                pub const fn align_up(self, value: $t) -> $t {
++                    self.align_down(value.wrapping_add(self.mask()))
++                }
++            }
++        )+
++    };
++}
++
++power_of_two_impl!(usize, u8, u16, u32, u64, u128);
++
++impl<T> Deref for PowerOfTwo<T> {
++    type Target = T;
++
++    fn deref(&self) -> &Self::Target {
++        &self.0
++    }
++}
++
++impl<T> PartialEq for PowerOfTwo<T>
++where
++    T: PartialEq,
++{
++    fn eq(&self, other: &Self) -> bool {
++        self.0 == other.0
++    }
++}
++
++impl<T> Eq for PowerOfTwo<T> where T: Eq {}
++
++impl<T> PartialOrd for PowerOfTwo<T>
++where
++    T: PartialOrd,
++{
++    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
++        self.0.partial_cmp(&other.0)
++    }
++}
++
++impl<T> Ord for PowerOfTwo<T>
++where
++    T: Ord,
++{
++    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
++        self.0.cmp(&other.0)
++    }
++}
++
++impl<T> Hash for PowerOfTwo<T>
++where
++    T: Hash,
++{
++    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
++        self.0.hash(state);
++    }
++}
++
++impl<T> Borrow<T> for PowerOfTwo<T> {
++    fn borrow(&self) -> &T {
++        &self.0
++    }
++}
 
 -- 
-Lee Jones [李琼斯]
+2.49.0
+
 
