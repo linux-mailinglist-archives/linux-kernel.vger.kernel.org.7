@@ -1,100 +1,169 @@
-Return-Path: <linux-kernel+bounces-683463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B81AD6DC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D7BAD6DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B193A3B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852DA3A9235
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1321923875D;
-	Thu, 12 Jun 2025 10:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2256823D2A3;
+	Thu, 12 Jun 2025 10:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NW6fQ5tz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEwHVk26"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB5922DF95;
-	Thu, 12 Jun 2025 10:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA8423371F;
+	Thu, 12 Jun 2025 10:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749724294; cv=none; b=L9laf7IEJDcC71KPeCCMIx9FlYS0yMucMIzOhxLeaa+9paJkJB3yAb0f50KS7xI3pT581VKrB+lLM4pQVDJzL7pQNdgoY/dCLw/sKGRqNdABMvw+Div76YFFgHpuWCh6MC9tBCbz827e4WRBvPSw2QwiWdRMXRnlJMdwbV+mCdY=
+	t=1749724344; cv=none; b=TCXQlNq3D1vanixMclU0mBzWXBlPaTwEgsLmonr6EmjGkV6zMAol1qb+Rj7Q4A+VmxcO8b452V3VnX+u1Q8MZkVfhlhT50a0E//aXNePB2AyqarwnLIAJ8/JqK8P5v0UorI6QOs1ll1pkFoKNrbWj3llIMWMZ9nr3Vj1EQuec+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749724294; c=relaxed/simple;
-	bh=mDm1RzkSd3lHQVQx0NkoIKQPL1oLiexJUBX7k9eUA3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWiV1ujZAOgQJDDKmsOUWY7lJuUpvsY8GEoeJBpsXTOhrTjWorFbUA6LS4w2/ilhxk+wy/NKVzvAs414kevDpyh97bu2Jukjblcw0K1hpqawasSXqb95JC7JTgOlvizd/mkZZI98dw96MeSF6nB8X7CHKDLIE29xyJu7/YxMKe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NW6fQ5tz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1464EC4CEEA;
-	Thu, 12 Jun 2025 10:31:30 +0000 (UTC)
+	s=arc-20240116; t=1749724344; c=relaxed/simple;
+	bh=czv1ppWf51VQn/WLMI/drbyNbJm4kBBkat2r5H82qC4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f6q/3L2uPGpGBoTnNZ9Q/sWnT53xB8oDLeh7A7reALwomqg8T7Mo0Ao04yw3WThjQhasOqSmidsBz8W/4tCf8pvpRePmHBh6V3nURnP/0CX31HwVe2BOYLtbhwY/X2/pobY1KJSWQIVKvRAAoBVvEdkXUC8cIaq3EowOf13DsYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEwHVk26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDACC4CEEA;
+	Thu, 12 Jun 2025 10:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749724294;
-	bh=mDm1RzkSd3lHQVQx0NkoIKQPL1oLiexJUBX7k9eUA3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NW6fQ5tzMXCgQ75WPQhzp7TKnDIRKBTHyPzcEXOWWP9UclXy4K5rFulrbnRBcKdLR
-	 bLhz5VPa5+APOcaHn5fzBWCw4OeoI/ZEs4B37Vc0I3L5ldiqyaiHmLVo9JAT/UgDdQ
-	 ckqxI/yyv08Fm1vsn0niDGosHT5DnUwArbWxMS+9KlZjvmZxzPZZxziTQwj1CMWyjo
-	 DV/E0b7bfAaN/NOnJP9n638tkuShnnzJ4PHk7kyUzoVdDs4FgWbexD9we9YpSxH/k7
-	 Hgq0qypV/JXhjBHv4uYFnqubckmDpDkNjk3mMk7O0Jm4uJTI4Vh1aHZiQVsBVvxKoW
-	 IKADhhJe8+F6w==
-Date: Thu, 12 Jun 2025 12:31:28 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <lossin@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: devres: fix race in Devres::drop()
-Message-ID: <aEqsgD2ap2VMpTR9@pollux>
-References: <20250603205416.49281-1-dakr@kernel.org>
- <20250603205416.49281-4-dakr@kernel.org>
- <DAKEK5YPNCAU.3LQGI98GGG4KF@kernel.org>
+	s=k20201202; t=1749724343;
+	bh=czv1ppWf51VQn/WLMI/drbyNbJm4kBBkat2r5H82qC4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UEwHVk2615OuggDiyVOWsOuwEKYFJBgDRG+0efTpTdA1BhknQiZsEuLzViZrXAWTO
+	 EWNt3d4tpaWECxY4xaCUMAQYe1Qojr5XSK4pTTPQAGiEik+Q5aurt4l5kTW6tL34cS
+	 INBv6mZtYT455rnv56pD5VF28HLWES9CAV1ru9r4iDUmzl1IqG3AATRNX80BxCwZ9X
+	 ydRHt8tRVVva6Kmf/b8goIOC3Jq+qwvu2jjK9jPjmabgnftBErvBnhlwU3kTCRVtmU
+	 glzvE92MN6xY5jMz6KGkYrKtMv1OUYxySrPR9g4SEu8zGRGC6XreejhJnaw72eWkyt
+	 18uTaaRoFZKvQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uPfEL-00000004yv2-3ta7;
+	Thu, 12 Jun 2025 12:32:21 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ignacio Encinas Rubio <ignacio@iencinas.com>,
+	Marco Elver <elver@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jan Stancek <jstancek@redhat.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ruben Wauters <rubenru09@aol.com>,
+	joel@joelfernandes.org,
+	linux-kernel-mentees@lists.linux.dev,
+	lkmm@lists.linux.dev,
+	netdev@vger.kernel.org,
+	peterz@infradead.org,
+	stern@rowland.harvard.edu,
+	Breno Leitao <leitao@debian.org>,
+	Jakub Kicinski <mchehab+huawei@kernel.org>,
+	Simon Horman <mchehab+huawei@kernel.org>
+Subject: [PATCH v2 00/12] Don't generate netlink .rst files inside $(srctree)
+Date: Thu, 12 Jun 2025 12:31:52 +0200
+Message-ID: <cover.1749723671.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DAKEK5YPNCAU.3LQGI98GGG4KF@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Thu, Jun 12, 2025 at 10:13:29AM +0200, Benno Lossin wrote:
-> On Tue Jun 3, 2025 at 10:48 PM CEST, Danilo Krummrich wrote:
-> >  impl<T> Drop for Devres<T> {
-> >      fn drop(&mut self) {
-> > -        DevresInner::remove_action(&self.0);
-> > +        // SAFETY: When `drop` runs, it is guaranteed that nobody is accessing the revocable data
-> > +        // anymore, hence it is safe not to wait for the grace period to finish.
-> > +        if unsafe { self.revoke_nosync() } {
-> > +            // We revoked `self.0.data` before the devres action did, hence try to remove it.
-> > +            if !DevresInner::remove_action(&self.0) {
-> 
-> Shouldn't this not be inverted? (ie 's/!//')
-> 
-> Otherwise this will return `true`, get negated and we don't run the code
-> below and the `inner.data.revoke()` in `devres_callback` will return
-> `false` which will get negated and thus it will never return.
+As discussed at:
+   https://lore.kernel.org/all/20250610101331.62ba466f@foz.lan/
 
-DevresInner::remove_action() returns false it means that the devres action has
-already been taken from the list and will be run eventually, hence we have to
-complete the completion.
+changeset f061c9f7d058 ("Documentation: Document each netlink family")
+added a logic which generates *.rst files inside $(srctree). This is bad when
+O=<BUILDDIR> is used.
 
-If DevresInner::remove_action() returns true, it means that we removed the
-action from the list and the callback will never be exectuted, hence nothing to
-do.
+A recent change renamed the yaml files used by Netlink, revealing a bad
+side effect: as "make cleandocs" don't clean the produced files, symbols 
+appear duplicated for people that don't build the kernel from scratch.
 
-> > +                // We could not remove the devres action, which means that it now runs concurrently,
-> > +                // hence signal that `self.0.data` has been revoked successfully.
-> > +                self.0.revoke.complete_all();
-> > +            }
-> > +        }
-> >      }
-> >  }
-> 
+There are some possible solutions for that. The simplest one, which is what
+this series address, places the build files inside Documentation/output. 
+The changes to do that are simple enough, but has one drawback,
+as it requires a (simple) template file for every netlink family file from
+netlink/specs. The template is simple enough:
+
+        .. kernel-include:: $BUILDDIR/networking/netlink_spec/<family>.rst
+
+Part of the issue is that sphinx-build only produces html files for sources
+inside the source tree (Documentation/). 
+
+To address that, add an yaml parser extension to Sphinx.
+
+It should be noticed that this version has one drawback: it increases the
+documentation build time. I suspect that the culprit is inside Sphinx
+glob logic and the way it handles exclude_patterns. What happens is that
+sphinx/project.py uses glob, which, on my own experiences, it is slow
+(due to that, I ended implementing my own glob logic for kernel-doc).
+
+On the plus side, the extension is flexible enough to handle other types
+of yaml files, as the actual yaml conversion logic is outside the extension.
+
+With this version, there's no need to add any template file per netlink/spec
+file. Yet, the Documentation/netlink/spec.index.rst require updates as
+spec files are added/renamed/removed. The already-existing script can
+handle it automatically by running:
+
+            tools/net/ynl/pyynl/ynl_gen_rst.py -x  -v -o Documentation/netlink/specs/index.rst
+
+---
+
+v2:
+- Use a Sphinx extension to handle netlink files.
+
+v1:
+- Statically add template files to as networking/netlink_spec/<family>.rst
+
+Mauro Carvalho Chehab (12):
+  tools: ynl_gen_rst.py: create a top-level reference
+  docs: netlink: netlink-raw.rst: use :ref: instead of :doc:
+  docs: netlink: don't ignore generated rst files
+  tools: ynl_gen_rst.py: make the index parser more generic
+  tools: ynl_gen_rst.py: Split library from command line tool
+  scripts: lib: netlink_yml_parser.py: use classes
+  tools: ynl_gen_rst.py: do some coding style cleanups
+  scripts: netlink_yml_parser.py: improve index.rst generation
+  docs: sphinx: add a parser template for yaml files
+  docs: sphinx: parser_yaml.py: add Netlink specs parser
+  docs: use parser_yaml extension to handle Netlink specs
+  docs: conf.py: don't handle yaml files outside Netlink specs
+
+ .pylintrc                                     |   2 +-
+ Documentation/Makefile                        |  17 -
+ Documentation/conf.py                         |  17 +-
+ Documentation/netlink/specs/index.rst         |  38 ++
+ Documentation/networking/index.rst            |   2 +-
+ .../networking/netlink_spec/.gitignore        |   1 -
+ .../networking/netlink_spec/readme.txt        |   4 -
+ Documentation/sphinx/parser_yaml.py           |  80 ++++
+ .../userspace-api/netlink/netlink-raw.rst     |   6 +-
+ scripts/lib/netlink_yml_parser.py             | 394 ++++++++++++++++++
+ tools/net/ynl/pyynl/ynl_gen_rst.py            | 378 +----------------
+ 11 files changed, 544 insertions(+), 395 deletions(-)
+ create mode 100644 Documentation/netlink/specs/index.rst
+ delete mode 100644 Documentation/networking/netlink_spec/.gitignore
+ delete mode 100644 Documentation/networking/netlink_spec/readme.txt
+ create mode 100755 Documentation/sphinx/parser_yaml.py
+ create mode 100755 scripts/lib/netlink_yml_parser.py
+
+-- 
+2.49.0
+
+
 
