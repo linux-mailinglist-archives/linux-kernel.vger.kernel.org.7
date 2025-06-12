@@ -1,476 +1,193 @@
-Return-Path: <linux-kernel+bounces-682962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D237BAD671B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:12:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCB1AD671F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEDA517DED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 05:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225BE177BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 05:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4B1E5B68;
-	Thu, 12 Jun 2025 05:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B14E1DE3C0;
+	Thu, 12 Jun 2025 05:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gp9w4x3N"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Om4UnU45"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBFE1DDC11
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 05:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CC23C1F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 05:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749705112; cv=none; b=pq21CemNDacxv5KNl/vsrj04uwPlwmu3AoD3I0gLJM5JPY2vsyFZzCKMRxINlzNf9uSIDEYmn96KEy+cFSuxe0mPs7+Ngq1aL14YeN2x5b92HPeWyuwSdI6cYFekiVKo2MY+U0OlOAyBZ7Hseg8SavyYU5ud6NJtYccCE9EMMv4=
+	t=1749705170; cv=none; b=Kb1DE6VQOuADcQgZfG7JL3AbAYTMSuijPjEqKRFMH6oe0TeQ5HrVdVBGJQIyASpT3EgIGMpukecGDubcMSk5/O/bAPAOiW18ygLiyA2IoR66TyN0nLxKoT6fSEy1Vz3FZVTLy44q96O20cJra+0xQfdDjIEEHEug6WE1TbbqSF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749705112; c=relaxed/simple;
-	bh=PqkBG+4nUJ1VxMC+pPmDp9KgVxS+nrzT9SNkoIxqku8=;
+	s=arc-20240116; t=1749705170; c=relaxed/simple;
+	bh=/sgG9pRcws1VWtmd9KhrNh1csTV9VFQlk5VxX/ukZKY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6XQ3PqBGSQgElqMvRoXf6bk9Q91RPNuOiPiPbo1Ff1bdhvT2rZvxjvKg7f0BWGLJU+TZJ9XnTIM8EHcYuBjbssRg/hd0wu/+mzxohCsGWFTlFlpiJeyMfAXwnV3n9cvuF0Yk3RBaEh87Hmn64F4A8UmndGF13E7e6NF+bqOfIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gp9w4x3N; arc=none smtp.client-ip=209.85.214.178
+	 To:Cc:Content-Type; b=iEjdyC4pYzdAo8YlL4tBDjvZiOWmhpzCg799QM16XwVMZn3229tDWnc8dll9nnrMsBHPG2LxaAjee5691oscXbKtAsK9JKiZ5K1eH16vdpJsu+Nk7l2NBahvwqRIpB8RYI83YgZBS7a2FeeGvg3Ef6H1YU2LSrPsTN1LWfBjS+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Om4UnU45; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2348ac8e0b4so80365ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:11:48 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3ddc10f09easo102895ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 22:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749705108; x=1750309908; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1749705168; x=1750309968; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RdEv5qKXliKu38n+kbYUXx4rRb8cp55dcu4kDcmFYcU=;
-        b=gp9w4x3Nar79sAttawd1OlfTAWgAaBwEKmoZ0nzlFVl53FcKlSTRVUTuJy5Su+YTtJ
-         mPcqxw90UORIdL0AqHkIeeDiRZ6HwOcSrOmrx/n/cbSXGFBOF0mJAjejoHC++OElLymv
-         Xgz3EkvCmsYmdqwdwdSA93eIuK+xW7iOnluw8YXo2tjVf46em2Bd1YXYUXNe+enPl92K
-         eEvis0W+zx0gU+TCohSbaR8ZhYbZsWqT4lAxZh48zu4MWDJ8yutfhnd+AliU5Q4CqWxr
-         4X773LjOHGVIhRfTOMm1EVeZFCeI3McAs49W0ZKzdFkbj32sFyhx06oa3LQgPYJ0T4z2
-         AyJA==
+        bh=YdaN/Zgh6q1i4+rKiM1kwsO14T+bDrERR9qijvq+wi4=;
+        b=Om4UnU4504nZwegqk9nTBvOZ27B01KeZlRLevlpHCEqpD804smTq55ypc44+eebCG/
+         oB0OUxpmhV6M3Cet74/HLXHKq6ESYhT2Z/xifLIOP3S2OzJcJj97UhxonUGM85OQle1Y
+         Z1Oqoa6igg4mWyFX6C7Ev1pXLer9CVUYdtaLc3cS1jR8Wf2o/t9u1h+Tyub9poE+8bH/
+         AYovyhlxdOOrZ1TkUB05SAwIiSpAtJvvN292882ywj+VgREIxksz0yPf7BsR+t//LZul
+         OFKCJ6raGv886kM1KkdlLZqflx3r5kle4Asw62IS03nWDkt06BBQ453RPmEgAoU8f0Kt
+         J0Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749705108; x=1750309908;
+        d=1e100.net; s=20230601; t=1749705168; x=1750309968;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RdEv5qKXliKu38n+kbYUXx4rRb8cp55dcu4kDcmFYcU=;
-        b=ELsXfICYjir18IuohHWk0w6xg9eKsq+d6YgrCYLPupwYVLN0j70t7TdDwQAJfBNBrD
-         CNZbUzmBBXx9iJQ3DcWGcu6tqVX7QCJrDayqjYk/QNa9jpnCZRg5MFeEHMbrdWqiLH/F
-         bvRQsFE3htxvLITuayTIGzD/VeOW45vKd14iu4/fz6JVgBT4l3DoLNhmA2+HEWtM7ec7
-         vGbOp6DPAin0+QmDKJMENb655rWdbzNOOWH6ixIzl9hxXp6mgOcbhmw5DALrWKpYVOqI
-         EZex/iaGxzL9qtmujGYq1EYADZA86kaZ6jYN7rTWloTND3kBiA7LIvmeUuOXiGc3EFnc
-         F/BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/Krm/19ML/o0Z3YySEtiepFr3OKfHWXEDAcuyablpHrqrBjkvDJ57n/HdXaoHbt6dpjc0h5gGcicypew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsyEKlt4QFxBgXe+pJ1NZJL0cN+tKGEojTfQzD3QBlhvcbxQ0L
-	X6ZGhwRZ5NZewrb0k6sd8X+4RaNORkRwTvYdnkqtShJHNN3/HYdRXiyP1XEaE7zun6J0kcetPVm
-	WyrUN9SXBZmtPA9sYqHU2pjlHrD34voH73e1OrAkG
-X-Gm-Gg: ASbGnctv4ucq8FDmoYqc71YUHRWQ1s5aJ+tRwkLnvBv1GqWHBQ/+//Cxu7ovdfmlfOT
-	jOS8SQuLWZ7t4F4+e3/btwjuvGuSimg8llQeRyqCWC741zflCQm2SbWQKEBNZTX9sPS4dNko2EG
-	x/Uv8O/9xmZERjzdqlpvJzzqcoVzjzLKvfIA2+lu9Kq6xs
-X-Google-Smtp-Source: AGHT+IFXutW3ZqifkpQX73zVMcoi2GswkeL0OzDcKImyoEu/KLr1VYXb/adEhwkaYVitvijNlGA9OiPBEfkFRQu5shs=
-X-Received: by 2002:a17:903:948:b0:234:c2e7:a0e7 with SMTP id
- d9443c01a7336-2364dd8118emr1922745ad.4.1749705107723; Wed, 11 Jun 2025
- 22:11:47 -0700 (PDT)
+        bh=YdaN/Zgh6q1i4+rKiM1kwsO14T+bDrERR9qijvq+wi4=;
+        b=eNXlYykBAErQGenOCBlA3jIu3W7ukD2t4HlWvNt6IeRc7ElREpWgNLjKdI2vzbKPUb
+         4hukcO7icrQnjDLKB9E2mJCayf6IWh4GQwAg3eBzY8F6XOn6riqN91dEOxDecp5lfP+0
+         H6LfP6sKqvrqyNK01cyXeTMqc48gJHyvQ53mj95eQLf+GEIXtnT9bxrKWciE/l+/jjS/
+         4F5itp/kUl4+7T6STQp0ruI6uZZleGM1qG6QHrTWMJEhAhunbniS1Xt7qD+NjrY4yC3w
+         2O+0FK43SE1tVD9ri8OucHpiItop/d/ZAsgMbTbCGhwGU7Y/R4oueLrF3UvIZntDdyVs
+         vwxA==
+X-Gm-Message-State: AOJu0Yx1QN08ZGqfSF6QgMyyHMnu2YDFKWEx99OPutbQxBZMxbMj0huT
+	xYs6HhSFZk2O+gTHCcyUfzcxNVIOHlbOGbQyOjNz1m/FYbkb8DlA1H4cNQtK+mvC2BT9ODeFZDg
+	IxCW4dQxfCC3GL2GM2xorI4Q8NrLVa9QZ2B62bkV9A1wf26S1dyjEpUXC
+X-Gm-Gg: ASbGnculZ+dmvTWJxdkP1TiIJXxMvAaKMjDtaeGrxVBomVdrj4ccBzMKAoCzB5i0I//
+	rpvNBYBAqX9zvvdY4GXFlynOP8u6+VgCuIKdU9v0F6rux8CuercN0fso53qsQn15yk8eBTQi/YY
+	WqsNl2HoWJIq7bl6SlXvrmglPBkpbkMVkTR+zDaOnPE941ySylxpa9mJw=
+X-Google-Smtp-Source: AGHT+IG7YxzZA6X011xjZW2PBmgUDfJs9/CtCASjV34NKdLBmJyQaRIPMD9oQB3I1YB0BhoqUYh7fuMjqztm0z7ZA4A=
+X-Received: by 2002:a05:6e02:148d:b0:3dd:a562:ce54 with SMTP id
+ e9e14a558f8ab-3ddfbef136dmr1182945ab.15.1749705167982; Wed, 11 Jun 2025
+ 22:12:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610150950.1094376-1-mbloch@nvidia.com> <20250610150950.1094376-8-mbloch@nvidia.com>
-In-Reply-To: <20250610150950.1094376-8-mbloch@nvidia.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 11 Jun 2025 22:11:32 -0700
-X-Gm-Features: AX0GCFtH6sPx3EXqTqBrKzXvc9h7jOqyKJNqVFjQhsca8EETnSeN7Ssm9aCXjWg
-Message-ID: <CAHS8izNkYg6GoMNZOaridxWLYpE3WU0yWpNV2-g4oLd7q9TfuQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 07/11] net/mlx5e: Convert over to netmem
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, saeedm@nvidia.com, gal@nvidia.com, 
-	leonro@nvidia.com, tariqt@nvidia.com, Leon Romanovsky <leon@kernel.org>, 
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dragos Tatulea <dtatulea@nvidia.com>, 
-	Cosmin Ratiu <cratiu@nvidia.com>
+References: <20250611233239.3098064-1-ctshao@google.com> <CAP-5=fXyB3H-msiSUGH_XqOntJNv-A2X7DtjvZO=nLzJgdTY+A@mail.gmail.com>
+ <CAJpZYjVxs3yAS1-Uj_aQjkHGo+hRkHnwCbWxNsS4pT50-rvRPg@mail.gmail.com>
+In-Reply-To: <CAJpZYjVxs3yAS1-Uj_aQjkHGo+hRkHnwCbWxNsS4pT50-rvRPg@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 11 Jun 2025 22:12:34 -0700
+X-Gm-Features: AX0GCFtelBAVo2RzU2KvezCSYDyFJZNOtQ7A2u-EB7jcv8cHPKsueu0CQDYublg
+Message-ID: <CAP-5=fWvnALUJiHrb_xzHXjseD88HF7LExs4N_Okg+UguuXsXg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf stat: Fix uncore aggregation number
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 8:19=E2=80=AFAM Mark Bloch <mbloch@nvidia.com> wrot=
-e:
+On Wed, Jun 11, 2025 at 8:18=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> w=
+rote:
 >
-> From: Saeed Mahameed <saeedm@nvidia.com>
+> Thanks for your test, Ian!
 >
-> mlx5e_page_frag holds the physical page itself, to naturally support
-> zc page pools, remove physical page reference from mlx5 and replace it
-> with netmem_ref, to avoid internal handling in mlx5 for net_iov backed
-> pages.
->
-> SHAMPO can issue packets that are not split into header and data. These
-> packets will be dropped if the data part resides in a net_iov as the
-> driver can't read into this area.
->
-> No performance degradation observed.
->
-> Signed-off-by: Saeed Mahameed <saeedm@nvidia.com>
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
-> Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en.h  |   2 +-
->  .../net/ethernet/mellanox/mlx5/core/en_rx.c   | 103 ++++++++++--------
->  2 files changed, 61 insertions(+), 44 deletions(-)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/e=
-thernet/mellanox/mlx5/core/en.h
-> index c329de1d4f0a..65a73913b9a2 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> @@ -553,7 +553,7 @@ struct mlx5e_icosq {
->  } ____cacheline_aligned_in_smp;
->
->  struct mlx5e_frag_page {
-> -       struct page *page;
-> +       netmem_ref netmem;
->         u16 frags;
->  };
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/ne=
-t/ethernet/mellanox/mlx5/core/en_rx.c
-> index e34ef53ebd0e..75e753adedef 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-> @@ -273,33 +273,33 @@ static inline u32 mlx5e_decompress_cqes_start(struc=
-t mlx5e_rq *rq,
->
->  #define MLX5E_PAGECNT_BIAS_MAX (PAGE_SIZE / 64)
->
-> -static int mlx5e_page_alloc_fragmented(struct page_pool *pool,
-> +static int mlx5e_page_alloc_fragmented(struct page_pool *pp,
->                                        struct mlx5e_frag_page *frag_page)
->  {
-> -       struct page *page;
-> +       netmem_ref netmem =3D page_pool_alloc_netmems(pp,
-> +                                                   GFP_ATOMIC | __GFP_NO=
-WARN);
->
+> I wonder if `nr_pmus` makes sense, since the column would be shared
+> with multiple different pmus. WDYT?
 
-I would prefer if you add page_pool_dev_alloc_netmems helper for all
-drivers to use rather than specify the GFP params inline here.
+So each PMU in sysfs has a cpumask that specifies which CPUs perf
+should pass to perf_event_open. For example, on a two socket machine
+the cpumask will typically have the first CPU of each socket. If the
+cpumask (or cpus) file isn't present then the cpumask is implicitly
+all online CPUs. Given that the aggregation number is the number of
+CPUs in the cpumask multiplied by the number of PMUs, I think the most
+neutral name is probably "counters" possibly shortened down to "ctrs".
+I suspect others have better suggestions :-)
 
-> -       page =3D page_pool_dev_alloc_pages(pool);
-> -       if (unlikely(!page))
-> +       if (unlikely(!netmem))
->                 return -ENOMEM;
->
-> -       page_pool_fragment_page(page, MLX5E_PAGECNT_BIAS_MAX);
-> +       page_pool_fragment_netmem(netmem, MLX5E_PAGECNT_BIAS_MAX);
->
->         *frag_page =3D (struct mlx5e_frag_page) {
-> -               .page   =3D page,
-> +               .netmem =3D netmem,
->                 .frags  =3D 0,
->         };
->
->         return 0;
->  }
->
-> -static void mlx5e_page_release_fragmented(struct page_pool *pool,
-> +static void mlx5e_page_release_fragmented(struct page_pool *pp,
->                                           struct mlx5e_frag_page *frag_pa=
-ge)
->  {
->         u16 drain_count =3D MLX5E_PAGECNT_BIAS_MAX - frag_page->frags;
-> -       struct page *page =3D frag_page->page;
-> +       netmem_ref netmem =3D frag_page->netmem;
->
-> -       if (page_pool_unref_page(page, drain_count) =3D=3D 0)
-> -               page_pool_put_unrefed_page(pool, page, -1, true);
-> +       if (page_pool_unref_netmem(netmem, drain_count) =3D=3D 0)
-> +               page_pool_put_unrefed_netmem(pp, netmem, -1, true);
->  }
->
->  static inline int mlx5e_get_rx_frag(struct mlx5e_rq *rq,
-> @@ -359,7 +359,7 @@ static int mlx5e_alloc_rx_wqe(struct mlx5e_rq *rq, st=
-ruct mlx5e_rx_wqe_cyc *wqe,
->                 frag->flags &=3D ~BIT(MLX5E_WQE_FRAG_SKIP_RELEASE);
->
->                 headroom =3D i =3D=3D 0 ? rq->buff.headroom : 0;
-> -               addr =3D page_pool_get_dma_addr(frag->frag_page->page);
-> +               addr =3D page_pool_get_dma_addr_netmem(frag->frag_page->n=
-etmem);
->                 wqe->data[i].addr =3D cpu_to_be64(addr + frag->offset + h=
-eadroom);
->         }
->
-> @@ -500,9 +500,10 @@ mlx5e_add_skb_shared_info_frag(struct mlx5e_rq *rq, =
-struct skb_shared_info *sinf
->                                struct xdp_buff *xdp, struct mlx5e_frag_pa=
-ge *frag_page,
->                                u32 frag_offset, u32 len)
->  {
-> +       netmem_ref netmem =3D frag_page->netmem;
->         skb_frag_t *frag;
->
-> -       dma_addr_t addr =3D page_pool_get_dma_addr(frag_page->page);
-> +       dma_addr_t addr =3D page_pool_get_dma_addr_netmem(netmem);
->
->         dma_sync_single_for_cpu(rq->pdev, addr + frag_offset, len, rq->bu=
-ff.map_dir);
->         if (!xdp_buff_has_frags(xdp)) {
-> @@ -515,9 +516,9 @@ mlx5e_add_skb_shared_info_frag(struct mlx5e_rq *rq, s=
-truct skb_shared_info *sinf
->         }
->
->         frag =3D &sinfo->frags[sinfo->nr_frags++];
-> -       skb_frag_fill_page_desc(frag, frag_page->page, frag_offset, len);
-> +       skb_frag_fill_netmem_desc(frag, netmem, frag_offset, len);
->
-> -       if (page_is_pfmemalloc(frag_page->page))
-> +       if (!netmem_is_net_iov(netmem) && netmem_is_pfmemalloc(netmem))
-
-Unnecessary netmem_is_net_iov check.
-
->                 xdp_buff_set_frag_pfmemalloc(xdp);
->         sinfo->xdp_frags_size +=3D len;
->  }
-> @@ -528,27 +529,29 @@ mlx5e_add_skb_frag(struct mlx5e_rq *rq, struct sk_b=
-uff *skb,
->                    u32 frag_offset, u32 len,
->                    unsigned int truesize)
->  {
-> -       dma_addr_t addr =3D page_pool_get_dma_addr(frag_page->page);
-> +       dma_addr_t addr =3D page_pool_get_dma_addr_netmem(frag_page->netm=
-em);
->         u8 next_frag =3D skb_shinfo(skb)->nr_frags;
-> +       netmem_ref netmem =3D frag_page->netmem;
->
->         dma_sync_single_for_cpu(rq->pdev, addr + frag_offset, len,
->                                 rq->buff.map_dir);
->
-> -       if (skb_can_coalesce(skb, next_frag, frag_page->page, frag_offset=
-)) {
-> +       if (skb_can_coalesce_netmem(skb, next_frag, netmem, frag_offset))=
- {
->                 skb_coalesce_rx_frag(skb, next_frag - 1, len, truesize);
-> -       } else {
-> -               frag_page->frags++;
-> -               skb_add_rx_frag(skb, next_frag, frag_page->page,
-> -                               frag_offset, len, truesize);
-> +               return;
->         }
-> +
-> +       frag_page->frags++;
-> +       skb_add_rx_frag_netmem(skb, next_frag, netmem,
-> +                              frag_offset, len, truesize);
->  }
->
->  static inline void
->  mlx5e_copy_skb_header(struct mlx5e_rq *rq, struct sk_buff *skb,
-> -                     struct page *page, dma_addr_t addr,
-> +                     netmem_ref netmem, dma_addr_t addr,
->                       int offset_from, int dma_offset, u32 headlen)
->  {
-> -       const void *from =3D page_address(page) + offset_from;
-> +       const void *from =3D netmem_address(netmem) + offset_from;
->         /* Aligning len to sizeof(long) optimizes memcpy performance */
->         unsigned int len =3D ALIGN(headlen, sizeof(long));
->
-> @@ -685,7 +688,7 @@ static int mlx5e_build_shampo_hd_umr(struct mlx5e_rq =
-*rq,
->                 if (unlikely(err))
->                         goto err_unmap;
->
-> -               addr =3D page_pool_get_dma_addr(frag_page->page);
-> +               addr =3D page_pool_get_dma_addr_netmem(frag_page->netmem)=
-;
->
->                 for (int j =3D 0; j < MLX5E_SHAMPO_WQ_HEADER_PER_PAGE; j+=
-+) {
->                         header_offset =3D mlx5e_shampo_hd_offset(index++)=
-;
-> @@ -796,7 +799,8 @@ static int mlx5e_alloc_rx_mpwqe(struct mlx5e_rq *rq, =
-u16 ix)
->                 err =3D mlx5e_page_alloc_fragmented(rq->page_pool, frag_p=
-age);
->                 if (unlikely(err))
->                         goto err_unmap;
-> -               addr =3D page_pool_get_dma_addr(frag_page->page);
-> +
-> +               addr =3D page_pool_get_dma_addr_netmem(frag_page->netmem)=
-;
->                 umr_wqe->inline_mtts[i] =3D (struct mlx5_mtt) {
->                         .ptag =3D cpu_to_be64(addr | MLX5_EN_WR),
->                 };
-> @@ -1216,7 +1220,7 @@ static void *mlx5e_shampo_get_packet_hd(struct mlx5=
-e_rq *rq, u16 header_index)
->         struct mlx5e_frag_page *frag_page =3D mlx5e_shampo_hd_to_frag_pag=
-e(rq, header_index);
->         u16 head_offset =3D mlx5e_shampo_hd_offset(header_index) + rq->bu=
-ff.headroom;
->
-> -       return page_address(frag_page->page) + head_offset;
-> +       return netmem_address(frag_page->netmem) + head_offset;
->  }
->
->  static void mlx5e_shampo_update_ipv4_udp_hdr(struct mlx5e_rq *rq, struct=
- iphdr *ipv4)
-> @@ -1677,11 +1681,11 @@ mlx5e_skb_from_cqe_linear(struct mlx5e_rq *rq, st=
-ruct mlx5e_wqe_frag_info *wi,
->         dma_addr_t addr;
->         u32 frag_size;
->
-> -       va             =3D page_address(frag_page->page) + wi->offset;
-> +       va             =3D netmem_address(frag_page->netmem) + wi->offset=
-;
->         data           =3D va + rx_headroom;
->         frag_size      =3D MLX5_SKB_FRAG_SZ(rx_headroom + cqe_bcnt);
->
-> -       addr =3D page_pool_get_dma_addr(frag_page->page);
-> +       addr =3D page_pool_get_dma_addr_netmem(frag_page->netmem);
->         dma_sync_single_range_for_cpu(rq->pdev, addr, wi->offset,
->                                       frag_size, rq->buff.map_dir);
->         net_prefetch(data);
-> @@ -1731,10 +1735,10 @@ mlx5e_skb_from_cqe_nonlinear(struct mlx5e_rq *rq,=
- struct mlx5e_wqe_frag_info *wi
->
->         frag_page =3D wi->frag_page;
->
-> -       va =3D page_address(frag_page->page) + wi->offset;
-> +       va =3D netmem_address(frag_page->netmem) + wi->offset;
->         frag_consumed_bytes =3D min_t(u32, frag_info->frag_size, cqe_bcnt=
-);
->
-> -       addr =3D page_pool_get_dma_addr(frag_page->page);
-> +       addr =3D page_pool_get_dma_addr_netmem(frag_page->netmem);
->         dma_sync_single_range_for_cpu(rq->pdev, addr, wi->offset,
->                                       rq->buff.frame0_sz, rq->buff.map_di=
-r);
->         net_prefetchw(va); /* xdp_frame data area */
-> @@ -2007,13 +2011,14 @@ mlx5e_skb_from_cqe_mpwrq_nonlinear(struct mlx5e_r=
-q *rq, struct mlx5e_mpw_info *w
->
->         if (prog) {
->                 /* area for bpf_xdp_[store|load]_bytes */
-> -               net_prefetchw(page_address(frag_page->page) + frag_offset=
-);
-> +               net_prefetchw(netmem_address(frag_page->netmem) + frag_of=
-fset);
->                 if (unlikely(mlx5e_page_alloc_fragmented(rq->page_pool,
->                                                          &wi->linear_page=
-))) {
->                         rq->stats->buff_alloc_err++;
->                         return NULL;
->                 }
-> -               va =3D page_address(wi->linear_page.page);
-> +
-> +               va =3D netmem_address(wi->linear_page.netmem);
->                 net_prefetchw(va); /* xdp_frame data area */
->                 linear_hr =3D XDP_PACKET_HEADROOM;
->                 linear_data_len =3D 0;
-> @@ -2124,8 +2129,8 @@ mlx5e_skb_from_cqe_mpwrq_nonlinear(struct mlx5e_rq =
-*rq, struct mlx5e_mpw_info *w
->                         while (++pagep < frag_page);
->                 }
->                 /* copy header */
-> -               addr =3D page_pool_get_dma_addr(head_page->page);
-> -               mlx5e_copy_skb_header(rq, skb, head_page->page, addr,
-> +               addr =3D page_pool_get_dma_addr_netmem(head_page->netmem)=
-;
-> +               mlx5e_copy_skb_header(rq, skb, head_page->netmem, addr,
->                                       head_offset, head_offset, headlen);
->                 /* skb linear part was allocated with headlen and aligned=
- to long */
->                 skb->tail +=3D headlen;
-> @@ -2155,11 +2160,11 @@ mlx5e_skb_from_cqe_mpwrq_linear(struct mlx5e_rq *=
-rq, struct mlx5e_mpw_info *wi,
->                 return NULL;
->         }
->
-> -       va             =3D page_address(frag_page->page) + head_offset;
-> +       va             =3D netmem_address(frag_page->netmem) + head_offse=
-t;
->         data           =3D va + rx_headroom;
->         frag_size      =3D MLX5_SKB_FRAG_SZ(rx_headroom + cqe_bcnt);
->
-> -       addr =3D page_pool_get_dma_addr(frag_page->page);
-> +       addr =3D page_pool_get_dma_addr_netmem(frag_page->netmem);
->         dma_sync_single_range_for_cpu(rq->pdev, addr, head_offset,
->                                       frag_size, rq->buff.map_dir);
->         net_prefetch(data);
-> @@ -2198,16 +2203,19 @@ mlx5e_skb_from_cqe_shampo(struct mlx5e_rq *rq, st=
-ruct mlx5e_mpw_info *wi,
->                           struct mlx5_cqe64 *cqe, u16 header_index)
->  {
->         struct mlx5e_frag_page *frag_page =3D mlx5e_shampo_hd_to_frag_pag=
-e(rq, header_index);
-> -       dma_addr_t page_dma_addr =3D page_pool_get_dma_addr(frag_page->pa=
-ge);
->         u16 head_offset =3D mlx5e_shampo_hd_offset(header_index);
-> -       dma_addr_t dma_addr =3D page_dma_addr + head_offset;
->         u16 head_size =3D cqe->shampo.header_size;
->         u16 rx_headroom =3D rq->buff.headroom;
->         struct sk_buff *skb =3D NULL;
-> +       dma_addr_t page_dma_addr;
-> +       dma_addr_t dma_addr;
->         void *hdr, *data;
->         u32 frag_size;
->
-> -       hdr             =3D page_address(frag_page->page) + head_offset;
-> +       page_dma_addr =3D page_pool_get_dma_addr_netmem(frag_page->netmem=
-);
-> +       dma_addr =3D page_dma_addr + head_offset;
-> +
-> +       hdr             =3D netmem_address(frag_page->netmem) + head_offs=
-et;
->         data            =3D hdr + rx_headroom;
->         frag_size       =3D MLX5_SKB_FRAG_SZ(rx_headroom + head_size);
->
-> @@ -2232,7 +2240,7 @@ mlx5e_skb_from_cqe_shampo(struct mlx5e_rq *rq, stru=
-ct mlx5e_mpw_info *wi,
->                 }
->
->                 net_prefetchw(skb->data);
-> -               mlx5e_copy_skb_header(rq, skb, frag_page->page, dma_addr,
-> +               mlx5e_copy_skb_header(rq, skb, frag_page->netmem, dma_add=
-r,
->                                       head_offset + rx_headroom,
->                                       rx_headroom, head_size);
->                 /* skb linear part was allocated with headlen and aligned=
- to long */
-> @@ -2326,11 +2334,20 @@ static void (struct mlx5e_rq *rq, struct mlx5_cq
->         }
->
->         if (!*skb) {
-> -               if (likely(head_size))
-> +               if (likely(head_size)) {
->                         *skb =3D mlx5e_skb_from_cqe_shampo(rq, wi, cqe, h=
-eader_index);
-> -               else
-> -                       *skb =3D mlx5e_skb_from_cqe_mpwrq_nonlinear(rq, w=
-i, cqe, cqe_bcnt,
-> -                                                                 data_of=
-fset, page_idx);
-> +               } else {
-> +                       struct mlx5e_frag_page *frag_page;
-> +
-> +                       frag_page =3D &wi->alloc_units.frag_pages[page_id=
-x];
-> +                       if (unlikely(netmem_is_net_iov(frag_page->netmem)=
-))
-> +                               goto free_hd_entry;
-
-If I understand correctly, when the code reaches here, head_size =3D=3D 0,
-which means the packet was not split. And if netmem_is_net_iov =3D=3D
-true, then the entire packet (including the header) has landed in
-unreadable memory so now you are going to drop the packet, right?
-
-If my understanding is correct, this is all subtle enough that it
-maybe warrants a comment. Also you may want driver stats to see how
-often this happens (seems like a headersplit failure causing packet
-drops).
-
-Mostly nits, so,
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-
---
 Thanks,
-Mina
+Ian
+
+> -CT
+>
+> On Wed, Jun 11, 2025 at 5:16=E2=80=AFPM Ian Rogers <irogers@google.com> w=
+rote:
+> >
+> > On Wed, Jun 11, 2025 at 4:36=E2=80=AFPM Chun-Tse Shao <ctshao@google.co=
+m> wrote:
+> > >
+> > > Follow up:
+> > > lore.kernel.org/CAP-5=3DfVDF4-qYL1Lm7efgiHk7X=3D_nw_nEFMBZFMcsnOOJgX4=
+Kg@mail.gmail.com/
+> > >
+> > > The patch adds unit aggregation during evsel merge the aggregated unc=
+ore
+> > > counters.
+> > >
+> > > Tested on a 2-socket machine with SNC3, uncore_imc_[0-11] and
+> > > cpumask=3D"0,120"
+> > > Before:
+> > >   perf stat -e clockticks -I 1000 --per-socket
+> > >   #           time socket cpus             counts unit events
+> > >        1.001085024 S0        1         9615386315      clockticks
+> > >        1.001085024 S1        1         9614287448      clockticks
+> > >   perf stat -e clockticks -I 1000 --per-node
+> > >   #           time node   cpus             counts unit events
+> > >        1.001029867 N0        1         3205726984      clockticks
+> > >        1.001029867 N1        1         3205444421      clockticks
+> > >        1.001029867 N2        1         3205234018      clockticks
+> > >        1.001029867 N3        1         3205224660      clockticks
+> > >        1.001029867 N4        1         3205207213      clockticks
+> > >        1.001029867 N5        1         3205528246      clockticks
+> > > After:
+> > >   perf stat -e clockticks -I 1000 --per-socket
+> > >   #           time socket cpus             counts unit events
+> >
+> > I wonder if there is a better column heading than "cpus" given that
+> > these are imc PMUs.
+> >
+> > >        1.001022937 S0       12         9621463177      clockticks
+> > >        1.001022937 S1       12         9619804949      clockticks
+> > >   perf stat -e clockticks -I 1000 --per-node
+> > >   #           time node   cpus             counts unit events
+> > >        1.001029867 N0        4         3206782080      clockticks
+> > >        1.001029867 N1        4         3207025354      clockticks
+> > >        1.001029867 N2        4         3207067946      clockticks
+> > >        1.001029867 N3        4         3206871733      clockticks
+> > >        1.001029867 N4        4         3206199005      clockticks
+> > >        1.001029867 N5        4         3205525058      clockticks
+> > >
+> > > Suggested-by: Ian Rogers <irogers@google.com>
+> > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+>
+> Added Namhyung's ack from the previous email.
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
+>
+> >
+> > Tested-by: Ian Rogers <irogers@google.com>
+> >
+> > Thanks,
+> > Ian
+> >
+> > > ---
+> > >  tools/perf/util/stat.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+> > > index 355a7d5c8ab8..52266d773353 100644
+> > > --- a/tools/perf/util/stat.c
+> > > +++ b/tools/perf/util/stat.c
+> > > @@ -527,6 +527,7 @@ static int evsel__merge_aggr_counters(struct evse=
+l *evsel, struct evsel *alias)
+> > >                 struct perf_counts_values *aggr_counts_b =3D &ps_b->a=
+ggr[i].counts;
+> > >
+> > >                 /* NB: don't increase aggr.nr for aliases */
+> > > +               ps_a->aggr[i].nr +=3D ps_b->aggr[i].nr;
+> > >
+> > >                 aggr_counts_a->val +=3D aggr_counts_b->val;
+> > >                 aggr_counts_a->ena +=3D aggr_counts_b->ena;
+> > > --
+> > > 2.50.0.rc1.591.g9c95f17f64-goog
+> > >
 
