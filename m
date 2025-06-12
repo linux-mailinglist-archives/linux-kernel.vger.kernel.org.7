@@ -1,362 +1,251 @@
-Return-Path: <linux-kernel+bounces-684300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B84CAD78CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:19:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA41AD78D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA73717B725
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:18:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9712F1893962
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816FB29B20E;
-	Thu, 12 Jun 2025 17:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA632BCF47;
+	Thu, 12 Jun 2025 17:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nC62XfK9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xwk4EeuH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91F919A2A3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749748731; cv=none; b=EOwRA21dS7KTmmfGv8J96VOsG3k7SGHdgBNlc/JsJKp96uD8ZCUefJhlGW7dZfiiAcV04fjgoIS9LNxfhQuq19+5NeKBjxmxNKc45hBDpqCezfdOTLdvHccxTJrMN5eBR7EWkZ5Kqi/pNud6ADDeva/QZq9ZNDG0jvJgzqEb4I4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749748731; c=relaxed/simple;
-	bh=cn88p5R3Fk3fbeYuWcR19hLDcM8Ds/dn8XfTcbw4Hfg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sM7kw+PHn6L5fuHjJbDHIx8kMMPM9zx7gl0hPdADyR2qKL/FGgEcfaph+O0pwMMxuM59ubIqDkHjtQKlcTrBi3+KXkj9jE8wwR11jmqI8ffqXLrr3lgaZU7coUVjYtmbp8RIMztwawm98BXazn85mmv6x3bvFA1OqhqMNxQD4xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nC62XfK9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CHHfHj027161
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:18:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=FAfd/466aJtk26pdkcE23i
-	lUVjqGoKW+Tnh2zkx2NW4=; b=nC62XfK9UZzFHDI4g+xpU2QOqAXn6b+A7Prl/w
-	YXxKtazHEVz3vLsP4Xars2nfNDMAVmBlYl8mCfFr4WzH8vJ+n2Jo/QhK9ubT4cDy
-	CSsTOEjMXIn4d8npkbKCXxqxhzwomRigFgdKvCevJsmUOVaKrypvBmzSEjlvmvdd
-	W9Fi9OJe8MQEiP9baIGvJt5umZd3AztiO5NW6dMTpov1xTr8pDVxQ03pGdWKIG6A
-	0eDP7jYdfNzLpfGeB/aaoUuy1khB3PBoZFNzCoHiVe12C1sbRih/XdNbo/na6rtH
-	cvCe+iiDsV5XjtHZdgnALjA7//bwmj610dSumU89utDFw5dg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ccvh8qn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:18:48 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23592f5fcb0so16683315ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:18:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749748727; x=1750353527;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FAfd/466aJtk26pdkcE23ilUVjqGoKW+Tnh2zkx2NW4=;
-        b=Elr6jkhk+tEUkCTYwW6hwuu4l1k0AF9LlHdkqRpLBp/xvu9P9+WnLl1v/zt25fDPX9
-         iRJzNXR3i/iIG5bO7POZVQLOATq0GMvG8I3iLpegxceG0qExn/LEgrzosg8UdOMI0zDY
-         QC/IgbeMgF8yTTSAmexZhr1MCFT4U58gjbX+8eAih5ZSLhUFobUjH5qBb9exPNfn4yMk
-         EqRTaSlXdb46CAEM30t6hxAFAO78+WAf0dvPuwY6bgiBk7wrrndQQoTzy9uhT/KkNcsl
-         xPDe/wnZH2g+hIyaGYQUGR871X2R6msgdS0ehijyQCmLXIgGZuq1b6qkalTUO5CPDdco
-         4U7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ+rNVwGXrODj5uiCCzJfObXe+3jLQxztZbubpvOtqV07P8eJqx8o/ctZ9VYel4Ldh0DO4c04g5wxdXa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1h4hutpsEaCzAwgkv/3OfmYe0l0zMFHEXH46Ro+ompX0AWWGQ
-	TSr8XR0vL9DPzRbeSw2lp2OB1yCwcsF2ErBnl+6s3J2SZGkUDosyOlaHb/c0fyCVN9BBSXNCee3
-	7MTKgfoPcxyheZSU9rikyTdQ0Rzx9rrxzhew3QDhJnRG5vM7lqfI29x9LBZqaH2Vm7Zk=
-X-Gm-Gg: ASbGncuJiaNEC8V6s91PGcXQHAOgJGJ4FR9xCLT4Rkku2Q+KtlxM7P0CmvTpCtg3vAb
-	5H6iX0AFOUYk5AW8N08zOccmnTBTgqyvvf3o/YeHV5f9cpcop6PnJa97IU479Xl+FPVyguGuMOm
-	1mN5VwRHb4Z6sD488bJU/tXeLh98SRlzj9Bs8HPqmMovyytAG+ptYbpjsKDzHQm3J6PKUb0kctJ
-	GYz1rmwjCplQ43cgUp6nphqkCCaX+sgxplVDm/rAhOZbFRJimaOvZFlGCd3OEqd+hDiaj9rCZ2c
-	EnCurs18w2s2nYJaARX4n75Tu4kqZjB5y7PzhMBGGthzU3wn9tx2ikhz7V7Lf+2gPfeCoSkCPei
-	IkY9voQsnxT68zPbytcTM7MmLT7pNhTBEAGPEtWGtZqCtpdk=
-X-Received: by 2002:a17:902:d489:b0:234:a992:96d8 with SMTP id d9443c01a7336-23641abe52fmr121980145ad.19.1749748727203;
-        Thu, 12 Jun 2025 10:18:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEb3hmyzcuYh62ytDN+Gfk1knVYsAAA29UVORbZv5+sAlmWUmsH84jXYEFz2PZxZTBqay4zGA==
-X-Received: by 2002:a17:902:d489:b0:234:a992:96d8 with SMTP id d9443c01a7336-23641abe52fmr121979685ad.19.1749748726701;
-        Thu, 12 Jun 2025 10:18:46 -0700 (PDT)
-Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fd629375fsm1411495a12.45.2025.06.12.10.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 10:18:46 -0700 (PDT)
-From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Date: Thu, 12 Jun 2025 22:48:20 +0530
-Subject: [PATCH ath-next] wifi: ath12k: handle regulatory hints during mac
- registration
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BC229B8C3;
+	Thu, 12 Jun 2025 17:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749748748; cv=fail; b=hQG3OFB5BT9HVwYONk1jjM+ivfRkC8WkJ6SJIuFJBok47dVdujeALoBEvn60A8qLyg6yY2Tnt3DaTcFCdvXHXktr7WFGXb5yqbaPJfrHYBhj0sCdWO+Cz5uFkYTNMSRnAXNzEVXQzm/+zgWKLTZ6eifKa70PcrU0UtouvyHS93A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749748748; c=relaxed/simple;
+	bh=MewSS7qOBKzC1+WhRMld5GGMskixxpluGIXqn07H0Hg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IG0SizwOQhn19di/Lj2uuGEhJ1OpBR468oX6sY69AAktRzCTYgdDuYRQ+qMpV+MPpzJ2dziGaRQPyy8AMNQ84YKmrEcf3BqaYDYntPP0DYvQPzPdP5qR9oFwglIVZspleC0O/LN/8bBECqhDRb6c9/ABaobfwMUO+wu1xXQfcqE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xwk4EeuH; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749748746; x=1781284746;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=MewSS7qOBKzC1+WhRMld5GGMskixxpluGIXqn07H0Hg=;
+  b=Xwk4EeuHAs9gQs4XQexibQZDkRT2O5PqwUVe//rCc9J14vflWCN3rSmR
+   ZfXmiKpgys8v/xZBeRobRjwMWn8Htn+sNTudi1wR4aGr68yqcxZGerKGF
+   OchMGQEKELsQ4fiAwVFhGFmS9/ib6g1HNW8agDFiHJDdM8zI8J702tww5
+   4pMiXNkHAr/oC3PsgFuVAEOAR0wo9op9WJjH9585Z8JWzXRyfOJox8Bj/
+   D4ZEmN43rKhDvbjuUPwPS6kEIrV7eII3wJaw7b5+XIk8ZEF7dr60vK74c
+   LG6IZ/v2CWvTqTLgf9xuy8Pf4flALXJDfoeM59yh6vjqFntMIu0b8uDPJ
+   Q==;
+X-CSE-ConnectionGUID: xq3YNdhGTZmt5EsEslRv3Q==
+X-CSE-MsgGUID: SBLiRC/ISJqFao1ffdhzuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="62596155"
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="62596155"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 10:18:59 -0700
+X-CSE-ConnectionGUID: Vu+4aolwTiSVFFIg4CZ8Wg==
+X-CSE-MsgGUID: YK5hGD0pSqS7Y9WZvY4sbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="184827129"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 10:18:59 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 12 Jun 2025 10:18:59 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 12 Jun 2025 10:18:59 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.57)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 12 Jun 2025 10:18:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bZOCSr6pLR8XEUK6XH3dYP5hwXKWg7lOJtrcsT9GDtBNootpskt0xiuCeoC4v0QnV463WQ9jQEX7vGqDt6GbDVKn/EYIRHSADMx+x5EyvFzuQwsLQUBx0RkGVddbaT6aEt/iX9xWuWbEpGfotiimnSKUvO0FgZqfTL94XqLZc8MQ31znOcEth9De+IZ4YiyzWysNmts5fXCieQzGFVt9WbXbu0uX1E62ozmMm8K08VETMuu9b/CmwnqwV7Xy70B/3RTQ5Tb32MDK7BiZF8+yNH6hVNtIl/9aPx/ee9n+ETWwXABuq6GTrMKWCNRIGpxipA/Nu56EX63RKkfezgby0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=40L13ZwBR4ZZSL29Czvw4rb1mboMdIp4uznbpbVvsWI=;
+ b=OuR4LtYU7YJxYELTC454H4dYh0Sa1AQzgghG0d8MLAtWSbVdrlAszjrzZ3ISbtU4QautwSN4sQqe84c2AmBlKPDIAbCTtILO12lawdeAgOTis7IzEEbttzas8Vp5VdbLUOxO/L5qU7TDTatNehJcWE3DzKwCU8IkZKrLU2L3mQ0vEiKp8ahXEDN1S4gZGJk+lb2vNKnCNza77GhXj7zroRj4SYuzP/uj2LQOFmn0+hU/H5tzlBazum9BTMLAUvC2cQnwPQ1JEIothK97RukYo70vHY89y4N/Kqr7U8ouNPhblBnEahUd91bhPAopd8FEN6wb1AK9KE/Ez13bNmqyEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5095.namprd11.prod.outlook.com (2603:10b6:510:3b::14)
+ by SA1PR11MB8426.namprd11.prod.outlook.com (2603:10b6:806:38d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 17:18:51 +0000
+Received: from PH0PR11MB5095.namprd11.prod.outlook.com
+ ([fe80::215b:e85e:1973:8189]) by PH0PR11MB5095.namprd11.prod.outlook.com
+ ([fe80::215b:e85e:1973:8189%6]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
+ 17:18:50 +0000
+Message-ID: <ede97506-e6ce-4af0-8c2f-19cd1987ec97@intel.com>
+Date: Thu, 12 Jun 2025 10:18:48 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] docs: net: sysctl documentation cleanup
+To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <corbet@lwn.net>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <skhan@linuxfoundation.com>,
+	<linux-kernel-mentees@lists.linux.dev>
+References: <20250612162954.55843-1-abdelrahmanfekry375@gmail.com>
+ <20250612162954.55843-2-abdelrahmanfekry375@gmail.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <20250612162954.55843-2-abdelrahmanfekry375@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4P222CA0019.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:303:114::24) To PH0PR11MB5095.namprd11.prod.outlook.com
+ (2603:10b6:510:3b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-handle_user_regd_update_hints_during_insmod-v1-1-576bd0f6dbe0@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIANsLS2gC/6XPwW7DIAwA0F+pOI8qkFBIT/uPqkIoNomlBjogU
- acq/z6Wyy7bYdvFkm3Zz36yjIkws/PhyRKulCmGmoiXAxsmF0bkBDVnspGqUVLyWoQb2qXO2YQ
- j2OUOrqCdKJRsYUkURkshzxF4JwctELVvzYnVjfeEnh67dmGuTDzgo7Br7UyUS0zv+xmr2Pt/E
- lfBBTfOOwOq1aZ3rzHn49vibkOc52MNO7fKfxCyEh2YzjdeNdrrH4j2izgJ8Tui/fyi70HhgOB
- 7/w2xbdsH8kOorb0BAAA=
-X-Change-ID: 20250522-handle_user_regd_update_hints_during_insmod-42c71ee7f386
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: CLGuVmWB1B56rllnDQ7TGG08ifG0_DA9
-X-Authority-Analysis: v=2.4 cv=TsLmhCXh c=1 sm=1 tr=0 ts=684b0bf8 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=cjyl3gcxlCMcS8tmzmQA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: CLGuVmWB1B56rllnDQ7TGG08ifG0_DA9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEzMyBTYWx0ZWRfX+0os2WEb8I9r
- D/5bhynisdZ83dABlol0L7SLn5gG7jnwaOiVZdZTNNnUi7jad2pg77OSYKMSTmhisZoSVSlessp
- kR9zrHjUyzSxoiwCzeVqGkmq7hMlLcHtf7QUxL0tYnOrKoT54MFF4OVHuDBZhwAjlQ7FUEVnXr7
- eA8DbHb6gzY5pdmWdFMz1+gZZco4QBdjma+jFb579oTX85IfLE8nihQD8hr81ciUtjQZB28QuOA
- j0qsL+D7gNc6MFWbz3AUPKHyL+RFeDc7ibV1qmLbnTS5AUknv2g2POkmobDiVBud551UIp+uN7G
- LiX9jZ7cu0puhuXea4ZKMNoDJogmBVOfBfosfmNMBKFPbqVRnZOOKQYdutumEUOdqKs8CmBtC5k
- 09+/meyCOMI5TZG4BFeNfGWKUdODIsZTkV52anOr9UE8pgKtr3CSSHQ2YzjJTAZ/jdjaY/yo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506120133
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5095:EE_|SA1PR11MB8426:EE_
+X-MS-Office365-Filtering-Correlation-Id: a04e8093-4ba3-4370-0cb0-08dda9d532f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?blNCMldJNGdJSmU2WU1LR3RjaFE4b3pLRU9OTDU3amYvT0hrR1k3SjdpM1Bv?=
+ =?utf-8?B?M0RkUmU3UzlXRUJPMjNKa1BRanVrZlRUSFNxNTAvcGI0L3V5ZDNGNXBTRUR1?=
+ =?utf-8?B?M3ZNN3RTYnk4ZGl3TDI3NnVWU0lEK25UU3gvRURjdmJ5VHlhdXF6dmtqRlRp?=
+ =?utf-8?B?QUVtNHdTek0xdXYycHcyK0dITCs2azJqeEF5NElZalFTbGJXbmVoZHJDdnk4?=
+ =?utf-8?B?bmZaa3YxN3BkWk5iRXNrVmNKMWM0T255MGVnWmV4MCtVOTNBbE90QnRjdzB2?=
+ =?utf-8?B?U1k5blE3SElMQi8zZXJhRGxFRkFFaXpuN2Q5TGt4NVR3MkhOUnkzRWZRMWJ1?=
+ =?utf-8?B?SzNBNGhRMk5odXUybkVLUlNvWVhZSGdTejdpZHRXek0vYVJ0Q2pWMDFlQSts?=
+ =?utf-8?B?M2JneEpKaHk0RmpGS29sVzZsdmQwV3E5K2ZjZTRyN0tST1pEaVRGSU5ybS9T?=
+ =?utf-8?B?V1BEcXNOV1dxMjY5NVM2Vng5M2loeGp6TTVXZkE0K05SNUVzOGVIU0I0ZVhx?=
+ =?utf-8?B?c2JTZk9MWHJhc2ZhODVYMmVORHFXTjM5RzliNGhGK1BwcEk3cGRmN0RPbEJQ?=
+ =?utf-8?B?eVlGeWV6UUptQmRWcHJSS283SFluT3RaTFk1UnZ3c0loTDlxL3ZQL3dNK0pP?=
+ =?utf-8?B?REFOOW9OTXVhNS9ZTHFvYWEyb2RDM3Z3dko5UFNndTIyRXBybnJXOTNSOEEv?=
+ =?utf-8?B?ZjgrRTVjanlGRlEvZHJaN21rb0hTVmxkQ1NiSTBjblNoV2hzZXZCdS9aZFFO?=
+ =?utf-8?B?UWZJNjJicmlkbTAzTERrNFpZUXhmdnMxYjZKRlRLbElwSlp6dStHd3dYT2dF?=
+ =?utf-8?B?R1ZubGhqdnpiUWpoUk12L3ZBcW9tNldVbWx4bUZyYk5RQUFhYm85TzVuWlNy?=
+ =?utf-8?B?dlQrRnRjOEl2WWZhQndKbmlQb2dwTUs5S2tDcTBMZTlwZXJQNVNYcHZIa1ZV?=
+ =?utf-8?B?aGR0RWEzY1NJVTQ5dGk1K0FoUVNJK2U2bURBNFRFRVBsYU1zcHg2UDZyUzMr?=
+ =?utf-8?B?Y2tMYU9iei9HbkdlVjdLOFRtQk9VZ2RVbHZXOUoxckRiSUhGWmIxY1h3Y012?=
+ =?utf-8?B?bzkweHVRREhrL0JXaS9PQ3Ayb0NneFdCMm44dXVJMXVQOHREVjNUbWZMam1t?=
+ =?utf-8?B?VS8wRER5bW9VZGJ5YmxiQ204YjduMXB4WG9MdUdyNGVET2lQcXg2dnUxZm5Q?=
+ =?utf-8?B?STNlbGJOSkJNdklJaEVVc3EwUDRtUDRLQlV5RXNSV3RLbUoxVFI2MTZWVTFn?=
+ =?utf-8?B?WUNYSmxiTjRzbjBYR3dnK2VuTUduYTdpSXlrd1VQTEpDaUtTNXJlNGRmVWk0?=
+ =?utf-8?B?MnhZdEVOcHlXQnZKZzVkNlZibFBJU3BWZFM3bWo5VXZyZGNmODY3YVdoK0hO?=
+ =?utf-8?B?OGpPRktoMWV4dmcyb2Z5cnVpaXd1TEpOUm1FL1BNckQ3N0k2YUUvTnVqVUJX?=
+ =?utf-8?B?Ri9WcFFFN2JLeTg0RzloU3hsUmFWZlJxNjd4V3VRNUs2TkNwdHpKZ0E2MXM0?=
+ =?utf-8?B?bnlCOVpjM1MwK0ZuQkRjR1Bic052YklERVd0ZHZGL05KS2FRMHhoL2N5dFdR?=
+ =?utf-8?B?MEN6em81NDltVVhpYjlSMTdvZkdYSU1rQ3FSbnR3RUE1bEtucVliclkrN29v?=
+ =?utf-8?B?MDdQNFlMclVzb2dmNW1WdDJMSGRxY2ZJWkxadmFTc09wbkRVTG56ZkVKbmRJ?=
+ =?utf-8?B?OVJaOTRaUTVFRmljK05paTZQaHg0cUhocVRGTklYR2l2Z011R0RCNkVCTEFz?=
+ =?utf-8?B?ZUdxaUxCL3NnYzRSaENpWjJML2VSUkhuRDM0T3p2b0dNZ29sQ2VudFFBc2tJ?=
+ =?utf-8?B?V25oSDRvQTJhTTdMYzhvdHJKYzltWGZCenIrMitFNkZINkRxYUN3UlpYYUtr?=
+ =?utf-8?B?alk3d3FpZndsT2VrTVU5ZjdjVDZXZDB1VCs0RDl5N0VxdC9jc3Y5ZStXYi95?=
+ =?utf-8?Q?ObX1C5+fKSM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5095.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZGV6YmtrWG4wWGFMVHNBei83WHdyLzlaaHR6aVNMdmhEaG5qck9nUTBYSWNW?=
+ =?utf-8?B?ZDQzT0ZGbGlwNGRPMEJieG5pNzB2eFFFYWIwR2NNWWExMTZ2aGkrdEkwd1Rp?=
+ =?utf-8?B?UG1XRDA0NjQ2K2Rxd2cvWjBkdEFVYVZCZk1NY3NvNEFKOFQ2K2I5SzdlR282?=
+ =?utf-8?B?MTdkZWJleVVZZFFHVGV1ODlaU0doL0tIOVVyWmZnYmNjanF3SjBBUG11TXJX?=
+ =?utf-8?B?L3Q4OTYvamFkekNHaE9XV3M1Rms3SmxvSVhTUThhZENzVzZEUDZ6Z0RML09X?=
+ =?utf-8?B?S0ZNeHJwWDltTmM2a2gvcGw1SzFRMytXdHd3dnB2THVKMjlNQVhjMEUwTFJz?=
+ =?utf-8?B?c3ZGMmhKVHQ4VmxKWTlTeWtOeTc5R2ZLaTVsTkVvV0tGM2UvUmdTSHowbUpr?=
+ =?utf-8?B?VUpFdll6QitlcXA5eHFGTU5hTXBuMzE1ZmNrWFBleUpPbUUwSEZKRTdHVXJX?=
+ =?utf-8?B?a0tibW9tbmN2dHNKa3EwaFRHZk5aTWZ3Ukg0SE11dnQwY011c1J3Z1NZMGN6?=
+ =?utf-8?B?eEZmU1dpdllDUWZrUlFVcU5PNUlCSFV3eGM5RHdFcFlvWTFYajNmSHV3Q0lH?=
+ =?utf-8?B?Rk4vcEljcjVkS2NvNFcrbGZhcFRuaUl3bDl5RktHZFBvRkFBUDkybXhOaHl4?=
+ =?utf-8?B?WXZ6ZFlmT2RTeFRNb3orajRFQVNpdVdQVUp4TU84Qk01T2pGbWZtQXVweDIz?=
+ =?utf-8?B?YnZqaU5SRzV5RGdNdGVSbWlNWHRheko3TnRNOUJ1c1JNNXk0Uk03N09QRXd3?=
+ =?utf-8?B?TVc2eTNrV0JGbC96WXpGNHZQOEFtMXBCQ1dOWlNZOGcza3phR1luQkRwMjc1?=
+ =?utf-8?B?cWlPNGNqWEZLbkJiZlhTRnBndDBnYzQ4aGZKaXZQcGJUdUxZZW50aGQ1aWl6?=
+ =?utf-8?B?N0oyZG84Sjl3eC9LT3pTcml3RGdJOWVpT1dmbGhoMEhjMVB5dUV6ZHp2Smwx?=
+ =?utf-8?B?elVHbVBkelFmQkhOQm1kZHU1eXgxaTlmOUorK3p4VXNINFB2RkorelVFVHlx?=
+ =?utf-8?B?UDlISHF6b0owZ2N2THU5Ym41cXcwY0MweXNEaTNvZlU2cmVWUTJRcE9ua0Vm?=
+ =?utf-8?B?NWVJSEJqZnpScmQvc2lDRGZ2MVlCbWpuWlVQcndnMjZ2VVVTT1hMaHBpVDU0?=
+ =?utf-8?B?WDlVMFlMY3hzdCsxd2dtL1pBNzFhWVhxb0hFbDYwYlNoSUxXYXo5ajZLc1N0?=
+ =?utf-8?B?dFArTGdoSkJ4cGRQeGJzM3MzZk9Wd3d5VVVQOGNITzAxd2NGYjN4NWRFcDZq?=
+ =?utf-8?B?dlhUVHd5cnRmaGJhM3lFQVpUQStDM2hQYmdvYWllc0FXZk8wOTlpM1o4WXRs?=
+ =?utf-8?B?b2JwUlJqUjZjZTVZd3lURGNaNHZRTUwrWUZaK1MrQTZ2cis5VG16WU9hZXB6?=
+ =?utf-8?B?MnB1d0xjb3hQbnlIUFlsMkgwUktvQUsxWG50QUxVekIxdStRUlkyYURKRGZR?=
+ =?utf-8?B?MjBiVWtKTFhKR1dEWUp3bGZldzZwZ3JjNjBxOHl3MGlsYVFYcUZwZDA2eGN3?=
+ =?utf-8?B?NHI1dUx3clY3c0VWV2xTbW5uL0FJdWRRWVJCcVltSE5GNTFuVFVwbk1udVV1?=
+ =?utf-8?B?U0QrTHNJdDFkUkhwRzR5Nk5kRjJJcmFtL3EvQU5VaVNkMm5ZbmlWdXUwQWYr?=
+ =?utf-8?B?Q1NoMFJoVGtOK0hNck9GSHh6RkJZUjRSbm5jWVhFNGc4STlwdFF4eGIvWjN3?=
+ =?utf-8?B?MS9aL29WekI2UXo2K1h5Z3pzaFZWUTIvdWhkM3Vza0RjS1Nxam02M3ozR0VH?=
+ =?utf-8?B?T1d5ZkMrWmRieWxJWHRZdHVZUzR4T2VuOWNBRU9VQ0c5OGZCaVUrWXRQMWtQ?=
+ =?utf-8?B?ak1yUWJpOGMxZVNtNTdHYjhlU2Y4YjNyaHEzS21wOVQ5V0N6azR4U2lSdzZL?=
+ =?utf-8?B?QU9VYzk5eGgzL1lJdER4bjVjK1FzaVBMcUt3d0JONHJVT3J5QlFKT1Vxb0Uw?=
+ =?utf-8?B?OElGL3JmcDdTeHZWNFEvY2ovLzdPbHpQVEpjMk5JWFAvMGxDMks2bVpUZzRN?=
+ =?utf-8?B?ejlOSWd0MEo4TkFId0hzc29IaldTT0wrNlhuMHhNa0NYYmwxRjI0S2FkRDRS?=
+ =?utf-8?B?VlRpSFBZVzB4SjI4U3FFUURkSlNPNlIrMnh3ZjAyWmNyaVdGNzZuUkE1bzFS?=
+ =?utf-8?B?VjhjN05QaXVEMTZLTXE2bG42WnJaR1RPL3FSaDZYQlgrZlljRkdCbnd6clJl?=
+ =?utf-8?B?NHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a04e8093-4ba3-4370-0cb0-08dda9d532f0
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5095.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 17:18:50.7094
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: svRxdfCBC0mrRFbLIcvB3xDtZSs9s9KAq+7jQDitBOtrTwpOFw8lllaDNIWXay/b3O18o1BAp1G+rRu+ecyVbvc9BXKaAbDK5mk5H/7x7Aw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8426
+X-OriginatorOrg: intel.com
 
-If a regulatory notification is there in the system while the hardware is
-being registered, it attempts to set the new regulatory country. However,
-ath12k currently boots with a default country derived from the BDF. If this
-default country differs from the one provided in the notification, a race
-condition can occur while updating the regulatory information back to
-userspace. This potentially leads to driver having the incorrect regulatory
-applied.
 
-For example, suppose the regulatory domain for France (FR) is already
-applied, and then the driver is loaded with a BDF that has the United
-States (US) country programmed. When the driver finishes loading, the
-regulatory domain shown in phyX still reflects the US regulatory settings.
-This is incorrect, as the driver had already received a notification for
-FR during hardware registration, but failed to process it properly due to
-the race condition.
 
-The race condition exists during driver initialization and hardware
-registration:
-- On driver load, the firmware sends BDF-based country regulatory rules,
-  which are stored in default_regd via ath12k_reg_handle_chan_list().
+On 6/12/2025 9:29 AM, Abdelrahman Fekry wrote:
+> I noticed that some boolean parameters have missing default values
+> (enabled/disabled) in the documentation so i checked the initialization
+> functions to get their default values, also there was some inconsistency
+> in the representation. During the process , i stumbled upon a typo in
+> cipso_rbm_struct_valid instead of cipso_rbm_struct_valid. 
+> 
+> - Fixed typo in cipso_rbm_struct_valid
+> - Added missing default value declarations
+> - Standardized boolean representation (0/1 with enabled/disabled)
+> 
+> Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+> ---
 
-- During hardware registration, a regulatory notification is triggered
-  through:
-    ath12k_mac_hw_register()
-      -> ieee80211_register_hw()
-        -> wiphy_register()
-          -> wiphy_regulatory_register()
-            -> reg_call_notifier()
+Thank you for the documentation improvements! I do think its a bit more
+clear to include the "(enabled)" or "(disabled)".
 
-  This sends a country code to the firmware, which responds with updated
-  regulatory rules.
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-- After registration, ath12k_mac_hw_register() calls ath12k_regd_update(),
-  which copies default_regd and passes it to the upper layers.
+>  Documentation/networking/ip-sysctl.rst | 37 +++++++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
+> index 0f1251cce314..f7ff8c53f412 100644
+> --- a/Documentation/networking/ip-sysctl.rst
+> +++ b/Documentation/networking/ip-sysctl.rst
+> @@ -407,6 +407,12 @@ tcp_congestion_control - STRING
+>  
+>  tcp_dsack - BOOLEAN
+>  	Allows TCP to send "duplicate" SACKs.
+> +	Possible values:
+> +		- 0 disabled
+> +		- 1 enabled
+> +
+> +	Default: 1 (enabled)
+>  
 
-The race occurs between the firmware's response and the execution of
-ath12k_regd_update(). If the firmware's new rules are processed before the
-update call, the correct values are used. Otherwise, outdated boot-time
-country settings are exposed to userspace.
-
-To resolve this issue, introduce a completion mechanism within the hardware
-group (ah). Trigger this completion whenever a regulatory change is
-requested from the firmware. Then, in ath12k_regd_update(), wait for the
-firmware to complete its regulatory processing before proceeding with the
-update.
-
-This ensures that during driver load, the default country is processed
-first. However, before ath12k_regd_update() is called, the new regulatory
-notification will have already been received by the driver. As a result, it
-will wait for the firmware's regulatory processing to complete, and only
-the final, correct regulatory domain will be updated to userspace.
-
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
-
-Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
----
- drivers/net/wireless/ath/ath12k/core.c |  4 ++++
- drivers/net/wireless/ath/ath12k/core.h |  1 +
- drivers/net/wireless/ath/ath12k/mac.c  | 15 +++++++++++++++
- drivers/net/wireless/ath/ath12k/reg.c  | 12 ++++++++++++
- drivers/net/wireless/ath/ath12k/reg.h  |  2 ++
- drivers/net/wireless/ath/ath12k/wmi.c  | 13 ++++++++++++-
- 6 files changed, 46 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index ebc0560d40e3419130e4caf01c9b91bd9affb3bd..9c18a706dc3ae3b8c5b95d8575e778c8a9c898ba 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -1470,6 +1470,7 @@ static void ath12k_core_pre_reconfigure_recovery(struct ath12k_base *ab)
- 			complete(&ar->vdev_setup_done);
- 			complete(&ar->vdev_delete_done);
- 			complete(&ar->bss_survey_done);
-+			complete(&ar->regd_update_completed);
- 
- 			wake_up(&ar->dp.tx_empty_waitq);
- 			idr_for_each(&ar->txmgmt_idr,
-@@ -1509,6 +1510,9 @@ static void ath12k_update_11d(struct work_struct *work)
- 		ar = pdev->ar;
- 
- 		memcpy(&ar->alpha2, &arg.alpha2, 2);
-+
-+		reinit_completion(&ar->regd_update_completed);
-+
- 		ret = ath12k_wmi_send_set_current_country_cmd(ar, &arg);
- 		if (ret)
- 			ath12k_warn(ar->ab,
-diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
-index 941db6e49d6eaeb03783f7714d433259d887820b..329f3e490a713b179413f73a4024448aedc363fd 100644
---- a/drivers/net/wireless/ath/ath12k/core.h
-+++ b/drivers/net/wireless/ath/ath12k/core.h
-@@ -804,6 +804,7 @@ struct ath12k {
- 	enum ath12k_11d_state state_11d;
- 	u8 alpha2[REG_ALPHA2_LEN];
- 	bool regdom_set_by_user;
-+	struct completion regd_update_completed;
- 
- 	struct completion fw_stats_complete;
- 
-diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-index 88b59f3ff87af8b48cb3fafcd364fd9ced4ff197..ef2e8398cbe8723c020aff03da5db7fa7fb2245e 100644
---- a/drivers/net/wireless/ath/ath12k/mac.c
-+++ b/drivers/net/wireless/ath/ath12k/mac.c
-@@ -10900,6 +10900,7 @@ ath12k_mac_op_reconfig_complete(struct ieee80211_hw *hw,
- 			struct wmi_set_current_country_arg arg = {};
- 
- 			memcpy(&arg.alpha2, ar->alpha2, 2);
-+			reinit_completion(&ar->regd_update_completed);
- 			ath12k_wmi_send_set_current_country_cmd(ar, &arg);
- 		}
- 
-@@ -12116,6 +12117,16 @@ static int ath12k_mac_hw_register(struct ath12k_hw *ah)
- 		goto err_cleanup_if_combs;
- 	}
- 
-+	/* Boot-time regulatory updates have already been processed.
-+	 * Mark them as complete now, because after registration,
-+	 * cfg80211 will notify us again if there are any pending hints.
-+	 * We need to wait for those hints to be processed, so it's
-+	 * important to mark the boot-time updates as complete before
-+	 * proceeding with registration.
-+	 */
-+	for_each_ar(ah, ar, i)
-+		complete(&ar->regd_update_completed);
-+
- 	ret = ieee80211_register_hw(hw);
- 	if (ret) {
- 		ath12k_err(ab, "ieee80211 registration failed: %d\n", ret);
-@@ -12143,6 +12154,9 @@ static int ath12k_mac_hw_register(struct ath12k_hw *ah)
- 
- 			memcpy(&current_cc.alpha2, ab->new_alpha2, 2);
- 			memcpy(&ar->alpha2, ab->new_alpha2, 2);
-+
-+			reinit_completion(&ar->regd_update_completed);
-+
- 			ret = ath12k_wmi_send_set_current_country_cmd(ar, &current_cc);
- 			if (ret)
- 				ath12k_warn(ar->ab,
-@@ -12215,6 +12229,7 @@ static void ath12k_mac_setup(struct ath12k *ar)
- 	init_completion(&ar->scan.on_channel);
- 	init_completion(&ar->mlo_setup_done);
- 	init_completion(&ar->completed_11d_scan);
-+	init_completion(&ar->regd_update_completed);
- 
- 	INIT_DELAYED_WORK(&ar->scan.timeout, ath12k_scan_timeout_work);
- 	wiphy_work_init(&ar->scan.vdev_clean_wk, ath12k_scan_vdev_clean_work);
-diff --git a/drivers/net/wireless/ath/ath12k/reg.c b/drivers/net/wireless/ath/ath12k/reg.c
-index 2598b39d5d7ee9b24ad8ed5d6de1bc5bbc6554e0..079dcb6d83df4eb487fb0dbf4088fb8cacca8f6e 100644
---- a/drivers/net/wireless/ath/ath12k/reg.c
-+++ b/drivers/net/wireless/ath/ath12k/reg.c
-@@ -102,6 +102,8 @@ ath12k_reg_notifier(struct wiphy *wiphy, struct regulatory_request *request)
- 
- 	/* Send the reg change request to all the radios */
- 	for_each_ar(ah, ar, i) {
-+		reinit_completion(&ar->regd_update_completed);
-+
- 		if (ar->ab->hw_params->current_cc_support) {
- 			memcpy(&current_arg.alpha2, request->alpha2, 2);
- 			memcpy(&ar->alpha2, &current_arg.alpha2, 2);
-@@ -272,9 +274,19 @@ int ath12k_regd_update(struct ath12k *ar, bool init)
- 	struct ieee80211_regdomain *regd, *regd_copy = NULL;
- 	int ret, regd_len, pdev_id;
- 	struct ath12k_base *ab;
-+	long time_left;
- 
- 	ab = ar->ab;
- 
-+	time_left = wait_for_completion_timeout(&ar->regd_update_completed,
-+						ATH12K_REG_UPDATE_TIMEOUT_HZ);
-+	if (time_left == 0) {
-+		ath12k_warn(ab, "Timeout while waiting for regulatory update");
-+		/* Even though timeout has occurred, still continue since at least boot
-+		 * time data would be there to process
-+		 */
-+	}
-+
- 	supported_bands = ar->pdev->cap.supported_bands;
- 	reg_cap = &ab->hal_reg_cap[ar->pdev_idx];
- 
-diff --git a/drivers/net/wireless/ath/ath12k/reg.h b/drivers/net/wireless/ath/ath12k/reg.h
-index 8af8e9ba462e90db3eb137885d0acd4b1cb2286e..fb508302c7f0f1fea2588ad4cf9d813da574d06b 100644
---- a/drivers/net/wireless/ath/ath12k/reg.h
-+++ b/drivers/net/wireless/ath/ath12k/reg.h
-@@ -13,6 +13,8 @@
- struct ath12k_base;
- struct ath12k;
- 
-+#define ATH12K_REG_UPDATE_TIMEOUT_HZ	(3 * HZ)
-+
- #define ATH12K_2GHZ_MAX_FREQUENCY	2495
- #define ATH12K_5GHZ_MAX_FREQUENCY	5920
- 
-diff --git a/drivers/net/wireless/ath/ath12k/wmi.c b/drivers/net/wireless/ath/ath12k/wmi.c
-index 60e2444fe08cefa39ae218d07eb9736d2a0c982b..047d7a0f0e7423759f7cf05dff4aafbd3b9697d7 100644
---- a/drivers/net/wireless/ath/ath12k/wmi.c
-+++ b/drivers/net/wireless/ath/ath12k/wmi.c
-@@ -6143,6 +6143,7 @@ static void ath12k_wmi_htc_tx_complete(struct ath12k_base *ab,
- static int ath12k_reg_chan_list_event(struct ath12k_base *ab, struct sk_buff *skb)
- {
- 	struct ath12k_reg_info *reg_info;
-+	struct ath12k *ar;
- 	u8 pdev_idx;
- 	int ret;
- 
-@@ -6198,7 +6199,7 @@ static int ath12k_reg_chan_list_event(struct ath12k_base *ab, struct sk_buff *sk
- 	kfree(reg_info);
- 
- 	if (ret == ATH12K_REG_STATUS_VALID)
--		return ret;
-+		goto out;
- 
- fallback:
- 	/* Fallback to older reg (by sending previous country setting
-@@ -6212,6 +6213,16 @@ static int ath12k_reg_chan_list_event(struct ath12k_base *ab, struct sk_buff *sk
- 	WARN_ON(1);
- 
- out:
-+	ar = ab->pdevs[pdev_idx].ar;
-+
-+	/* During the boot-time update, 'ar' might not be allocated,
-+	 * so the completion cannot be marked at that point.
-+	 * This boot-time update is handled in ath12k_mac_hw_register()
-+	 * before registering the hardware.
-+	 */
-+	if (ar)
-+		complete(&ar->regd_update_completed);
-+
- 	return ret;
- }
- 
-
----
-base-commit: 8270f43193a0d097659eca55e701fd6818708945
-change-id: 20250522-handle_user_regd_update_hints_during_insmod-42c71ee7f386
+Would it make sense to use "0 (disabled)" and "1 (enabled)" with
+parenthesis for consistency with the default value?
 
 
