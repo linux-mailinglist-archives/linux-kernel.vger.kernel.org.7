@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-684103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45968AD7617
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B05AD7632
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878D53A17C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887783B1D0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096772BD584;
-	Thu, 12 Jun 2025 15:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D52C0307;
+	Thu, 12 Jun 2025 15:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="usjvXQDT"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hPliXOhA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+BgbbrzB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5B62BD013;
-	Thu, 12 Jun 2025 15:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF952BF3FC;
+	Thu, 12 Jun 2025 15:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749741693; cv=none; b=OwwxqBr6p04AYp2o3+a4NWQPEOP1OMMtGmHdea6bOiz/5YNC7266P+cGOztUXBuEIsrrNmtyxMg2K9rLqpl/aLO4uhwdW1bZUP5P+wbTGTFTOx3/UlsvIPpamrMJoKECGJGEv7uCaM5mvG9y4CNbZeTL+Jzc6RV/2i8voZb4QAI=
+	t=1749741786; cv=none; b=SHZ6JOKmwwx6H09aXAfU1ErZrN6cahnEp2QjZt52eXyyXtTGo9CPTXPlhHUx2O0YWFv9EBF7oKXAzFBCY0JzdZdGdNvoBhV/Mo87r6gCZX5Kv2Ea4ipnRF6XJnsqk10gSw2U2oYwK+xt/nj8fxWH2Um+2pOoY+ps+jiomgXON2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749741693; c=relaxed/simple;
-	bh=AtjIXzmU/hPSXFudbcJBMbJhelEPvlWDR6RKOypa5aU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YjHpWYRnFUGhNGYFgnL6LH4qWuzH6V0uENXYTs6r1d6MJz4J89FE35E0FzATKjiJmw/xXTgxoiN05y2rAeZg0EJhuHd9wU1CO4ufG8sBlJXRhmLvOxBcMM3oDqcPwk8QoZbjzwxEkesgPhDEpT4VEWoSWXR+mo8ea1FXMD6K/QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=usjvXQDT; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=7qZn9AIcCZO7vLYhxnQsMtcerHAI9s47qwBN+G1jFsY=;
-	t=1749741691; x=1750951291; b=usjvXQDTfoIHHopRLnafUVBixXD259Wky/jOgOgNPxCpyyw
-	K/EIBiL4vjWK3DPs0ys8tX38iPkVDYNHle7udOROU6xnQnT/6gaFwmyNZZSzZOIvpbvKGbUOoiJmq
-	Gwj08pZnbuwm0N+UhtURbRzmt3hCfcLYDCqh9rTwgngH9nHR8CftSH3C95JLoON1aww6XdMAgUmdK
-	SPSZbQ7GcyMehJ2rPd+GdSlsJdezxko18EDMDsYtIwQkof82LIGVGeO1KQPl0JHFjyOnNzTVct08f
-	3FMioLvJHbvp9xGgKfaab+kAmRpxCfi7hY0097LEadfn5bLODED/LPEbsT6XsbTg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uPjk3-00000004LTC-2232;
-	Thu, 12 Jun 2025 17:21:23 +0200
-Message-ID: <d2ea3f77ea2737aafc879f4fc291dee097867b61.camel@sipsolutions.net>
-Subject: Re: [PATCH] wifi: iwlwifi: pcie: ensure RX_QUEUE_CB_SIZE fits
- bitfield for gcc-8|9
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Anders Roxell <anders.roxell@linaro.org>, 
-	miriam.rachel.korenblit@intel.com
-Cc: dan.carpenter@linaro.org, arnd@arndb.de, linux-wireless@vger.kernel.org,
- 	linux-kernel@vger.kernel.org, Linux Kernel Functional Testing
- <lkft@linaro.org>
-Date: Thu, 12 Jun 2025 17:21:22 +0200
-In-Reply-To: <20250612130719.3878754-1-anders.roxell@linaro.org>
-References: <20250612130719.3878754-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1749741786; c=relaxed/simple;
+	bh=109r9m51nhbXd4XW9VK8INeIft9FNq31oPO5TLsUxVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESb7Ujt8qEmvrCqz/MX8LLTUaZpi+bscbcjPM1UUibjSvmWIR5rY2r41/MZmOuq4q2Kn2MkrTxxpgHUeDHciwzIsl0lykoePCcXMMnJrnJwpBMlYATtOkg85IyvvQkzwNfBydTBTh3ui86HvZWZyowgg7L4ImY456Uz81EzPOTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hPliXOhA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+BgbbrzB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 12 Jun 2025 17:23:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749741782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fxodMvHky9N8TaH3XwaudPITft4aNZE+idcZWUcu2a0=;
+	b=hPliXOhA8PdYV+bAZbJ5jLSXHK0yB7nnwnKeyZjpyco4LAXIz/oG85h+pDN03l6jUHmr43
+	/Sd0EUocstOkmm2IoLoFNFMPboFXb3hQq9nVFt+F61Sv/ETvf6liEpFw36goAysAwDyIf+
+	Jigravn+lyI/s33UGFdWK18njs+f0/HnxVgK8HgbbnoubDSJlMgpa1zovCukSi5ScsrV9P
+	QuChAkAVpSwxlkP4+oOXpZYpetVfG18pkcjFkbSCgYq+yMY0cum4Fed02NeP3usV1x9DXK
+	E6MUM4Vk8HHP9NEpNaWSu3qLYUT3ksnv5Af8zgAFbXoAUS4xgDrdwYCuk6orcg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749741782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fxodMvHky9N8TaH3XwaudPITft4aNZE+idcZWUcu2a0=;
+	b=+BgbbrzByV4uDL66Swwva8QAo1HaXmAcK1d6VUxDySAMkkzndIVZwLYJMiIjxURE4M+pHE
+	gidAP1ExrK78RDDw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, 
+	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Mark Brown <broonie@kernel.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 09/14] selftests: harness: Move teardown conditional
+ into test metadata
+Message-ID: <20250612171437-450fb7d6-c73a-47e3-9e1c-5c009cba7fe1@linutronix.de>
+References: <aEkqtfcOJDrxAAcs@nvidia.com>
+ <20250611093942-f6c65a06-c72a-4451-aa1e-8cb8de0d69cb@linutronix.de>
+ <aEm6tuzy7WK12sMh@nvidia.com>
+ <aEn5jmXZbC5hARGv@nvidia.com>
+ <aEoUhPYIAizTLADq@nvidia.com>
+ <20250611235117.GR543171@nvidia.com>
+ <aEp6tGUEFCQz1prh@nvidia.com>
+ <20250612135802.GU543171@nvidia.com>
+ <20250612162151-1fc97a6c-a1c9-4656-997e-fd02f5f9418b@linutronix.de>
+ <20250612145801.GV543171@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250612145801.GV543171@nvidia.com>
 
->=20
-> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c b/driver=
-s/net/wireless/intel/iwlwifi/pcie/ctxt-info.c
-> index cb36baac14da..1854d071aff2 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c
-> @@ -204,9 +204,10 @@ int iwl_pcie_ctxt_info_init(struct iwl_trans *trans,
-> =20
->  	WARN_ON(RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans)) > 12);
->  	control_flags =3D IWL_CTXT_INFO_TFD_FORMAT_LONG;
-> -	control_flags |=3D
-> -		u32_encode_bits(RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans)),
-> -				IWL_CTXT_INFO_RB_CB_SIZE);
-> +	/* This should just be u32_encode_bits() but gcc-8 and gcc-9 fail to bu=
-ild */
-> +	control_flags |=3D FIELD_PREP(IWL_CTXT_INFO_RB_CB_SIZE,
-> +		RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans)) &
-> +		FIELD_MAX(IWL_CTXT_INFO_RB_CB_SIZE));
->=20
+On Thu, Jun 12, 2025 at 11:58:01AM -0300, Jason Gunthorpe wrote:
+> On Thu, Jun 12, 2025 at 04:27:41PM +0200, Thomas Weißschuh wrote:
+> 
+> > If the assumption is that this is most likely a kernel bug,
+> > shouldn't it be fixed properly rather than worked around?
+> > After all the job of a selftest is to detect bugs to be fixed.
+> 
+> I investigated the history for a bit and it seems likely we cannot
+> change the kernel here. Call it an undocumented "feature".
 
-The coding style is really confusing now though - what are arguments to
-the macro and all that.
+I looked a bit and it seems to be mentioned in mmap(2):
 
-johannes
+	For mmap(), offset must be a multiple of the underlying huge page size.
+	The system automatically aligns length to be a multiple of the underlying huge page size.
+
+And MAP_FIXED is documented to wipe away whichever mapping was there before.
+
+> MAP_HUGETLBFS rounds up the length to some value, userspace has to
+> figure that out and not pass incorrect lengths.  The selftest is doing
+> that wrong.
+
+The selftest would be more robust if MAP_FIXED is replaced by
+MAP_FIXED_NOREPLACE. Even with the new explicit skip logic it should
+make debugging easier if something goes wrong.
+
+> > If the test is broken on ARM64 64k in general then I am also wondering how
+> > it didn't fail before my change to the selftest harness.
+> 
+> It got lucky and didn't overmap something important.
+
+Oh, okay.
 
