@@ -1,198 +1,109 @@
-Return-Path: <linux-kernel+bounces-683904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FEFAD7355
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:14:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DEBAD7384
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA713BAB23
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38471884B9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D3A247DEA;
-	Thu, 12 Jun 2025 14:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078E1757EA;
+	Thu, 12 Jun 2025 14:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VePziA9h"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="rLQ63c4K"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFFE19066D;
-	Thu, 12 Jun 2025 14:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E10B19049B;
+	Thu, 12 Jun 2025 14:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749737366; cv=none; b=WXxMoGgAqcaJTkvGiOSRpAGKjp+6giINapr8CrlE3rzFtgIXxS444NpRXduraYJT69Y6r134DNQ8xITp1HOjJYnLylhlll1Xm1teBeRZvu//NlHnbGgyLNedV9esZQhBcmkaenC+scE1wbOyVdapBIHRh6v0tLxgms3Sa36kF/M=
+	t=1749737660; cv=none; b=Z15qZcI30I6AqjuewkBCU6KvYIhUo4RK8ydzygFTl5e/GmtbjN71I1SASUqLtFu1k9qg33BmjsGvEnXCL8qNm5bNi6RLnxpXBqnUnp8kC1lQAL435EQYWKTU4y/UiScvQtQN6i1yisHin1Kj0b3O8G0oEV6QCcJtfqvgw7qxZVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749737366; c=relaxed/simple;
-	bh=kGaKNVsxpFzIz+WCZZnJXn4hE7TGZUw5e0te86QWm/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQXP+U+CA+B9yjihG+exa06dT2zn4Nb8nnAHpgsJyDJEYD4b9B2i9caJa0K51Utu3DLC+mjLiq0QKCMRH2Wbggavdc8mv7mYQ3bQICEtj9/Aw0/TCNt4ondL4QQ5t+TUF+6yhoqVn9H561gm86cn0/T2WbSMnfrS0h+UA6wO+JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VePziA9h; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=GzirIYRqhqmK+GV4aZFnktzJiM51rywbvs1UUJO0Zhw=; b=VePziA9h3ZV+DLfm8PoHZoEqN7
-	CL5dTgj6W/pRgO5Mhs9mT7fstYxJhOUV16CfriLwI4r6zR0KLs+3r8hERv70HEjRQHWC/JiVBvnJy
-	AaaSwz83O7RQ3qbsBYDPIfUTW5ASyQRWZYjIQdABTaAWh68sm5P0u8/lgE5SxHW7Gs54EgGl53r0k
-	7IOBtdiOV2WoV6DpuqYDfjvWXYy0dTZN35WQDyAX3hQW3+dYTJUN4FH9uSWI1L6hlv722e0a244Wr
-	D3VXvw9jc045NmumDEFMpWh2DArXPm1y+1dRNf/Xaj1S/vhi26TWK39pKz2vGUv5b7QllDCeuNuwQ
-	pCmjMcDQ==;
-Received: from [189.6.13.79] (helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uPicF-002f9i-AE; Thu, 12 Jun 2025 16:09:15 +0200
-Date: Thu, 12 Jun 2025 11:08:10 -0300
-From: Melissa Wen <mwen@igalia.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>, 
-	Aurabindo Pillai <aurabindo.pillai@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dominik Kaszewski <dominik.kaszewski@amd.com>, Fangzhi Zuo <Jerry.Zuo@amd.com>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Roman Li <roman.li@amd.com>, Simona Vetter <simona@ffwll.ch>, 
-	Tom Chung <chiahsuan.chung@amd.com>, Wayne Lin <Wayne.Lin@amd.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev, cocci@inria.fr
-Subject: Re: [PATCH v3] drm/amd/display: Fix exception handling in
- dm_validate_stream_and_context()
-Message-ID: <5ebybqjohsoz7qhsenufkpkkw52w6tgikkbrzpegwotmefhnpn@m2cnzvsfai7v>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <e6656c83-ee7a-a253-2028-109138779c94@web.de>
- <ea0ff67b-3665-db82-9792-67a633ba07f5@web.de>
- <32674bac-92c2-8fc7-0977-6d2d81b3257f@amd.com>
- <da489521-7786-4716-8fb8-d79b3c08d93c@web.de>
- <8684e2ba-b644-44c8-adf7-9f1423a1251d@web.de>
+	s=arc-20240116; t=1749737660; c=relaxed/simple;
+	bh=/ZJkPhEibj3MRPgMngwUIY78iCtXynAw21Rdt2Ce18w=;
+	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=D5ch5qsvmNjGVkjCM6XPpSVlyy5HtZQQl6efmKaaMTAkb7izqme3vYOs+GXPzmb/CLa76qDPI0fZzAnmg/Qe5Yl6K69BomHS0WtYz/i4HHUNp948JQCLLXAUDp7H+qE9reCxVGKnIVAo7/E5fg3tvYOPi55k+z9gFD1BY7Hl9/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=rLQ63c4K; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.178.76] (host-212-18-30-247.customer.m-online.net [212.18.30.247])
+	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 9E63E2FC01A4;
+	Thu, 12 Jun 2025 16:08:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1749737336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=s5RIfBjLWs/xgjxHgpqZTRDMhe9rCAFWtvXm/cCwe04=;
+	b=rLQ63c4KFwKsdCLhObDXXmCpVSmdMv9txk1MrlfTzroHr2j2j7QInvwdgbM3YAbgBRZW9C
+	cF1KyBivKbPYLLbqxJXEFszUJPKhq3fLaa0zR0IdBSgw/QUD09JGN4iKYyYYraCQl/QpM1
+	H4Uu1ols9PKB7cq1dLE0CVo77Gw1LtU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=ggo@tuxedocomputers.com
+Message-ID: <fd10cda4-cd9b-487e-b7c6-83c98c9db3f8@tuxedocomputers.com>
+Date: Thu, 12 Jun 2025 16:08:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8684e2ba-b644-44c8-adf7-9f1423a1251d@web.de>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: stable@vger.kernel.org, regressions@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: ggo@tuxedocomputers.com
+Cc: amd-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Hamza Mahfooz <hamza.mahfooz@amd.com>,
+ Werner Sembach <wse@tuxedocomputers.com>,
+ Christoffer Sandberg <cs@tuxedocomputers.com>
+Subject: [REGRESSION] drm/amd/display: Radeon 840M/860M: bisected suspend
+ crash
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 06/10, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 10 Jun 2025 07:42:40 +0200
-> 
-> The label “cleanup” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “dm_validate_stream_and_context”
-> that it was determined already that corresponding variables contained
-> still null pointers.
-> 
-> 1. Thus return directly if
->    * a null pointer was passed for the function parameter “stream”
->      or
->    * a call of the function “dc_create_plane_state” failed.
-> 
-> 2. Use a more appropriate label instead.
-> 
-> 3. Delete two questionable checks.
-> 
-> 4. Omit extra initialisations (for the variables “dc_state” and “dc_plane_state”)
->    which became unnecessary with this refactoring.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
+Hi,
 
-Hi Markus,
+I have discovered that two small form factor desktops with Ryzen AI 7
+350 and Ryzen AI 5 340 crash when woken up from suspend. I can see how
+the LED on the USB mouse is switched on when I trigger a resume via
+keyboard button, but the display remains black. The kernel also no
+longer responds to Magic SysRq keys in this state.
 
-Thanks for working on this improvement.
-Overall, LGTM. Some nits below.
+The problem affects all kernels after merge b50753547453 (v6.11.0). But
+this merge only adds PCI_DEVICE_ID_AMD_1AH_M60H_ROOT with commit
+59c34008d (necessary to trigger this bug with Ryzen AI CPU).
+I cherry-picked this commit and continued searching. Which finally led
+me to commit f6098641d3e - drm/amd/display: fix s2idle entry for DCN3.5+
 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506100312.Ms4XgAzW-lkp@intel.com/
+If I remove the code, which has changed somewhat in the meantime, then
+the suspend works without any problems. See the following patch.
 
-As the patch wasn't merged yet, don't add these two kernel-bot-related lines.
+Regards,
+Georg
 
-You only need to add these lines "If you fix the issue in a separate
-patch/commit (i.e. not just a new version of the same patch/commit)"
 
-> Fixes: 5468c36d6285 ("drm/amd/display: Filter Invalid 420 Modes for HDMI TMDS")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> V3:
-> * Another function call was renamed.
-> 
-> * Recipient lists were adjusted once more.
-> 
-> V2:
-> * The change suggestion was rebased on source files of
->   the software “Linux next-20250606”.
-> 
-> * Recipient lists were adjusted accordingly.
-> 
-> 
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 20 ++++++++-----------
->  1 file changed, 8 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 78816712afbb..7dc80b2fbd30 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -7473,19 +7473,19 @@ static enum dc_status dm_validate_stream_and_context(struct dc *dc,
->  						struct dc_stream_state *stream)
->  {
->  	enum dc_status dc_result = DC_ERROR_UNEXPECTED;
-> -	struct dc_plane_state *dc_plane_state = NULL;
-> -	struct dc_state *dc_state = NULL;
-> +	struct dc_plane_state *dc_plane_state;
-> +	struct dc_state *dc_state;
->  
->  	if (!stream)
-> -		goto cleanup;
-> +		return dc_result;
->  
->  	dc_plane_state = dc_create_plane_state(dc);
->  	if (!dc_plane_state)
-> -		goto cleanup;
-> +		return dc_result;
->  
->  	dc_state = dc_state_create(dc, NULL);
->  	if (!dc_state)
-> -		goto cleanup;
-> +		goto release_plane_state;
->  
->  	/* populate stream to plane */
->  	dc_plane_state->src_rect.height  = stream->src.height;
-> @@ -7522,13 +7522,9 @@ static enum dc_status dm_validate_stream_and_context(struct dc *dc,
->  	if (dc_result == DC_OK)
->  		dc_result = dc_validate_global_state(dc, dc_state, DC_VALIDATE_MODE_ONLY);
->  
-> -cleanup:
-> -	if (dc_state)
-> -		dc_state_release(dc_state);
-> -
-> -	if (dc_plane_state)
-> -		dc_plane_state_release(dc_plane_state);
-> -
-> +	dc_state_release(dc_state);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index d3100f641ac6..76204ae70acc 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3121,9 +3121,6 @@ static int dm_suspend(struct amdgpu_ip_block
+*ip_block)
 
-For readability, I would add an extra line here...
+ 	dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D3);
 
-> +release_plane_state:
-> +	dc_plane_state_release(dc_plane_state);
+-	if (dm->dc->caps.ips_support && adev->in_s0ix)
+-		dc_allow_idle_optimizations(dm->dc, true);
+-
+ 	dc_dmub_srv_set_power_state(dm->dc->ctx->dmub_srv,
+DC_ACPI_CM_POWER_STATE_D3);
 
-and here.
+ 	return 0;
 
-With that, you can add my
-
-Reviewed-by: Melissa Wen <mwen@igalia.com>
-
->  	return dc_result;
->  }
->  
-> -- 
-> 2.49.0
-> 
 
