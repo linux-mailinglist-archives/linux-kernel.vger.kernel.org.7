@@ -1,245 +1,622 @@
-Return-Path: <linux-kernel+bounces-683035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F83EAD6818
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:37:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16659AD693F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E687AA5D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A942A171A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1D21F4C8D;
-	Thu, 12 Jun 2025 06:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05F2212FB7;
+	Thu, 12 Jun 2025 07:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhRBe/IY"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElvSBGH0"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00541F1313;
-	Thu, 12 Jun 2025 06:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC481E51EB;
+	Thu, 12 Jun 2025 07:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749710231; cv=none; b=PCet7wL+Eh8M1HDxrN6WUmIRkP6BFEGcFFTrRnK61n2baf1KRuyG6rsoFhG/iaC919/xHXbkRGVQtV5RHnRx7XcykYueRP+Q11VQyNjcFMeQ7+SHD4RESgjPVGH2FBKG+61731eu+564WUleZ1W5D8ve1/XW3XrQvEjLI34neik=
+	t=1749713871; cv=none; b=iTp07QYrawpwCn9lKnyzCCHskqH2FU58V2Y4+8Tv0t22OK9Y1I7ua6L09vHpZepD8esKete9wmdrpfQSAvurkGPkzqY7lUsoS0jSoiquHKXoTgeB75RgXiLUFGTy+sG40v3gHZg/uxSqQkqzUT4FIM3iR+DwW79J9S2cn3q52IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749710231; c=relaxed/simple;
-	bh=/VpVpbtC3baNIr5wzysF+4FBa8mkC7xG5zs4TCPuWqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NbAja7JIpUJTI5zzoLOpk8CIIvLLZViEyYopSrwWTwnXZhbear2g4EhkVf9Z3Ti4Hlp+Q7BHpcJfkHJnZPtq3h84E3pscfkSfjhGD1Hh1BY6SIcu4MJ9qlAeGdS6J8aIGaXsUUp1rbBoXqioa4NUPC0yZUVkt44yczyE1Az4ukc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhRBe/IY; arc=none smtp.client-ip=209.85.217.48
+	s=arc-20240116; t=1749713871; c=relaxed/simple;
+	bh=X1xQm5L4ZOCoUnWaJLSbiEqfCpD15FXo7BwvXN6XHJM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EqUFvmZ5FywVQ38iEUiiQ8rlspNIkP72fqTwZb6DIKd7gh2gk0RmjY9wsNg8lImDYTcJ1BHP2/uT9LR65G61wUCtquhj+3W5GNny5o78lUX67BtNUlplNItBgYkjAYtdd7Rl1ke8tS6ap2lexNY/0JDtFDK+gUsmLtXpYunuIM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElvSBGH0; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4e79de9da3fso160309137.1;
-        Wed, 11 Jun 2025 23:37:09 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a361b8a664so569651f8f.3;
+        Thu, 12 Jun 2025 00:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749710229; x=1750315029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TSM5fa2hq4AxPJITWpG89v/KX6gCjVB1D4fyAWuaB0g=;
-        b=fhRBe/IY5g3XhUNpYFFZO7kkeuw7cLJOf6l/JgtkPOtvj7lIkzz66o9RAlMWOcqwg0
-         KU8JUHRaQMewkcQyt6rdWEYYVyoPYL2WnK/8BfntS/Vd18VWgPlEJ4pNIQbKhsXmGeoc
-         b0g4IXJYfHx8nKJ96iMxVAZpx7bZFy3bpwNSp31pdS8LwhSyEZ0C030WE7YKQ0yngMga
-         be3zT1a20UZu2SGvaaxRkihBEnnbqCLiOOKdPDCrWG5zEOyc6Ogw5wBJtT6s4MxD9NG7
-         bahnmuh/rCHx/w55/c27mPPww+OQU4KpsGfcVLZg9hLllkR4zMjZpVpjwDlx93mH27lF
-         mS6g==
+        d=gmail.com; s=20230601; t=1749713868; x=1750318668; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m5GIspDP7X6wWgI2A2h0itSqo2tyEX++DMvUNjb6jiM=;
+        b=ElvSBGH0ZwMZ0QPuZ8D63539B/n+4tXCIVoMFA1FprPMg5W4yNcV5ugHnpJ2zVf37i
+         yOyn88lNBPQSbaHq4YV6XgBPJJEr8iFtOTYsV1tkigYJMKvdNqV3Qe/G/HUgeaNQG+n3
+         dvUaIpqI30QmWcSQIYo2iRkPFgdGfsQZiYMXZqBUn8deZjRKasYvkBQ83ZaY5ascbtRv
+         izvgj5nDIi9lrNDz5enh8Wh8tz6Ja+xRzo9wgy9q71SVQVMqG9mNKtg1DSm9tI/Mw3+G
+         AWsnWmbOdW9XhGoymxu+S6ufWhaAQWBKBnTHNODiLbTkri9dxRo1B7o4ebY32fx5aUUO
+         wUCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749710229; x=1750315029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TSM5fa2hq4AxPJITWpG89v/KX6gCjVB1D4fyAWuaB0g=;
-        b=GBBSYYfBmbYBQ/A4sKxdbxz1Zy3JBvVrPnTjC7qppAhtb8eE7CLLC7lHQB1fwBZnf/
-         z9fhDL0/h8fgrhEgPxFn4ReeX6W0FmNqD1eZBETDLI/TAgTZu19q0ctj1z3lx9SI84Rn
-         Kxb9BD7UuEoq/u4oLlxZ8k8zZ+bmq4rzQY/g/dLbVJYNDmRHSqhRd9iNGwibXT9pG8Bl
-         /CV5myc/MTFXj3d4CNTtWipR/jxwnNGIRWdXH8o4BGpb+ByEs3Mz5sI9lGx8O0cpPSbh
-         YoLmNZEC8ViPyIHyBCbFBvemKgtttYEMLGYTIcdMyi4YpQwFZ6NTbQ0RZlGTJTY6zT3E
-         1BIg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7CJ6o1Sb44S/oglOYOEKur0LpEgnD41J8X3VFyOk1qIo90rU9BcdICUF0atrnOV4q4+k=@vger.kernel.org, AJvYcCW636GwuycW0glIjcp9Urlm7OPW1fvMzZRVwj1IhSX3cVAMxGUO41qIKeSka9+lTu6MMGzBohg8HRqAslPF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7ttrUBkFOCQ5KNgeqNAF0JxfD/IcbWtQ7NsYkHn7oXP39WSO2
-	LOxHV+4531gtDcnjEequnejI3G5Afo/juc9ObRyCFS6TwjBNcPdKwmBr1L2QjxDQ9qjovN9DdYZ
-	UQn4nHVx8GHmZprkekJoZgJt/DeqG7QM=
-X-Gm-Gg: ASbGncviQcdQT+X6QpzJzDxuBZmBeOxewXYPvQhDfgiVRMwPofYH+NdvzWZbVisRIC3
-	w+oPVYnP9E/4Dr8/iA47/ZyixmD1gcmNIz3XKMgrFjI8OD8CNizoDmcGGbxpZVkiskQzpLBt59L
-	eilextIuI19tVVZH/VM6b5uIRGZDT6OvZjAoSfRWG5GXV9QM4/FK+P8J7EmwUoUy/uqtI3uiDl3
-	Qnlhg==
-X-Google-Smtp-Source: AGHT+IEbFgP1S6Gk9/6iAqTU4+jgjbVNHHgyFY+8WLCVxocnGQ5CY+KraXI49ZsjlW99mMD8LVQFot8xOM2G7DKn7II=
-X-Received: by 2002:a05:6102:5809:b0:4e5:9380:9c25 with SMTP id
- ada2fe7eead31-4e7ce7f66f7mr1574972137.3.1749710228499; Wed, 11 Jun 2025
- 23:37:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749713868; x=1750318668;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m5GIspDP7X6wWgI2A2h0itSqo2tyEX++DMvUNjb6jiM=;
+        b=fNds+TxCg03pMdXU/tLLg2IRBrVnNCWzu1US9VwHJ8R96SsO2w2bLn7tRMMmUysB18
+         CisOWLHDd6F65iBxfTkAs9GETRJX417nICx4KfdxyyRAxJSRJmn3/z6INCArwsU1p1uU
+         cGad5EcF+T8xtHMmtyX1LegJu33Et0KmsbLiqxbQ8TTKtjy3uHKrjY0RXo/zRSl5FIDu
+         +0oW6gbK00vVmiparkzkQB3MGn9lbSaNFuwcJC0KkPxNCUhiNnx5OM4Jg9oF96geMYTY
+         NyEfCGj9LyEMyflGNqEchS3n1htm6beNNvb+gJcfiJfcardL3HwsQU/pusV0TRsw976d
+         qpEw==
+X-Forwarded-Encrypted: i=1; AJvYcCX96O+J3afi4194d6KxAq5wC2Hx/2PQPgQd3OTk9SfZe3j59FXHf8EIYQ394iLwq5chx9J5nTGreGM=@vger.kernel.org, AJvYcCXWvLxCZEiztBcLLMEUqwfFOY7tPIIBkZHPG2umoiZ0DM7z+DEbpZ4onzNjXhnD4YaxEuwcGQqSmMZK53fI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4YmiHowcYDKiwMAYfROIdo1yAiEY/4iR3GB0pQqv9iw2IdXYg
+	pL7/QYcxeGLIQvGeL7yKXc32+QSJ3iKjosKMO4Rj6ohHyLd7HAUeuRvA
+X-Gm-Gg: ASbGncufVmjPG+hcRW/+DQ1vPe9F8CZ6l8oeokF+KrBIzvEp4MCyIGRu0/Nnpi9cjZX
+	sFEiBCBqrWkQNxebSFqaQMDrk71ELHvB2SDsKyqEbMnAxHWN7fVTpxidqhJ4rJ9PXcP3hVndMrw
+	bYbbdk697y/L3YYVoGLh4OmOhDk8d23N0hzp+DS7VvTJdKZtHXICzxVWeRg7T/AnltC1IMq1z1T
+	VIOdJvn+JMRj8BTZlddihjD84TnGJK36ERzktDFECV+JCB/EX6mi98usfxCuZrXAD6lnLSLaUAl
+	x8r1UjPSk220EUUWQ+AyTGsaZ8BPflGzCi+jyWjTK1bvQq/B9xwpr/EvRdASu1VlUoGUE0WNxg8
+	esQheWTmDmKDqEoY3hY6OF2YFUyNfE0t0M0nI
+X-Google-Smtp-Source: AGHT+IGWw5COUvVIf0mONy/K+/WhsCZ8yXo0GpkrgMXzoz6Y5BeD/coH/o7Nh9eYh9MhRjcqKG49Ow==
+X-Received: by 2002:a05:6000:2002:b0:3a5:39a8:199c with SMTP id ffacd0b85a97d-3a558a436e7mr5890506f8f.53.1749713867530;
+        Thu, 12 Jun 2025 00:37:47 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561b510ebsm1115416f8f.83.2025.06.12.00.37.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 00:37:47 -0700 (PDT)
+Message-ID: <c707bb2ad7334736c56687f20824be4b3ef71d74.camel@gmail.com>
+Subject: Re: [PATCH v5 3/3] iio: accel: sca3000: use guard(mutex)() for
+ handling mutex lock
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Andrew Ijano <andrew.ijano@gmail.com>, jic23@kernel.org
+Cc: andrew.lopes@alumni.usp.br, gustavobastos@usp.br, dlechner@baylibre.com,
+  nuno.sa@analog.com, andy@kernel.org, jstephan@baylibre.com, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 12 Jun 2025 07:38:18 +0100
+In-Reply-To: <20250611194648.18133-4-andrew.lopes@alumni.usp.br>
+References: <20250611194648.18133-1-andrew.lopes@alumni.usp.br>
+	 <20250611194648.18133-4-andrew.lopes@alumni.usp.br>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610221356.2663491-1-harishankar.vishwanathan@gmail.com> <a39e1ed2db4121b690796c347f1259da09e23e13.camel@gmail.com>
-In-Reply-To: <a39e1ed2db4121b690796c347f1259da09e23e13.camel@gmail.com>
-From: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
-Date: Thu, 12 Jun 2025 02:36:56 -0400
-X-Gm-Features: AX0GCFs9Z304OB7d5wa1MX6csEMZ52OJaNSn4qdReUou0pSVZF0pvwUwszJsHcI
-Message-ID: <CAM=Ch06Jr11bSO1DHO+NSLmxj1kuRW8GmzUfBqKPnhNGs6i=nw@mail.gmail.com>
-Subject: Re: [PATCH] bpf, verifier: Improve precision for BPF_ADD and BPF_SUB
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: ast@kernel.org, Matan Shachnai <m.shachnai@rutgers.edu>, 
-	Srinivas Narayana <srinivas.narayana@rutgers.edu>, 
-	Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 2:11=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Tue, 2025-06-10 at 18:13 -0400, Harishankar Vishwanathan wrote:
-> > This patch improves the precison of the scalar(32)_min_max_add and
-> > scalar(32)_min_max_sub functions, which update the u(32)min/u(32)_max
-> > ranges for the BPF_ADD and BPF_SUB instructions. We discovered this mor=
-e
-> > precise operator using a technique we are developing for automatically
-> > synthesizing functions for updating tnums and ranges.
-> >
-> > According to the BPF ISA [1], "Underflow and overflow are allowed durin=
-g
-> > arithmetic operations, meaning the 64-bit or 32-bit value will wrap".
-> > Our patch leverages the wrap-around semantics of unsigned overflow and
-> > underflow to improve precision.
-> >
-> > Below is an example of our patch for scalar_min_max_add; the idea is
-> > analogous for all four functions.
-> >
-> > There are three cases to consider when adding two u64 ranges [dst_umin,
-> > dst_umax] and [src_umin, src_umax]. Consider a value x in the range
-> > [dst_umin, dst_umax] and another value y in the range [src_umin,
-> > src_umax].
-> >
-> > (a) No overflow: No addition x + y overflows. This occurs when even the
-> > largest possible sum, i.e., dst_umax + src_umax <=3D U64_MAX.
-> >
-> > (b) Partial overflow: Some additions x + y overflow. This occurs when
-> > the largest possible sum overflows (dst_umax + src_umax > U64_MAX), but
-> > the smallest possible sum does not overflow (dst_umin + src_umin <=3D
-> > U64_MAX).
-> >
-> > (c) Full overflow: All additions x + y overflow. This occurs when both
-> > the smallest possible sum and the largest possible sum overflow, i.e.,
-> > both (dst_umin + src_umin) and (dst_umax + src_umax) are > U64_MAX.
-> >
-> > The current implementation conservatively sets the output bounds to
-> > unbounded, i.e, [umin=3D0, umax=3DU64_MAX], whenever there is *any*
-> > possibility of overflow, i.e, in cases (b) and (c). Otherwise it
-> > computes tight bounds as [dst_umin + src_umin, dst_umax + src_umax]:
-> >
-> > if (check_add_overflow(*dst_umin, src_reg->umin_value, dst_umin) ||
-> >     check_add_overflow(*dst_umax, src_reg->umax_value, dst_umax)) {
-> >       *dst_umin =3D 0;
-> >       *dst_umax =3D U64_MAX;
-> > }
-> >
-> > Our synthesis-based technique discovered a more precise operator.
-> > Particularly, in case (c), all possible additions x + y overflow and
-> > wrap around according to eBPF semantics, and the computation of the
-> > output range as [dst_umin + src_umin, dst_umax + src_umax] continues to
-> > work. Only in case (b), do we need to set the output bounds to
-> > unbounded, i.e., [0, U64_MAX].
-> >
-> > Case (b) can be checked by seeing if the minimum possible sum does *not=
-*
-> > overflow and the maximum possible sum *does* overflow, and when that
-> > happens, we set the output to unbounded:
-> >
-> > min_overflow =3D check_add_overflow(*dst_umin, src_reg->umin_value, dst=
-_umin);
-> > max_overflow =3D check_add_overflow(*dst_umax, src_reg->umax_value, dst=
-_umax);
-> >
-> > if (!min_overflow && max_overflow) {
-> >       *dst_umin =3D 0;
-> >       *dst_umax =3D U64_MAX;
-> > }
-> >
-> > Below is an example eBPF program and the corresponding log from the
-> > verifier. Before instruction 6, register r3 has bounds
-> > [0x8000000000000000, U64_MAX].
-> >
-> > The current implementation sets r3's bounds to [0, U64_MAX] after
-> > instruction r3 +=3D r3, due to conservative overflow handling.
-> >
-> > 0: R1=3Dctx() R10=3Dfp0
-> > 0: (18) r3 =3D 0x8000000000000000       ; R3_w=3D0x8000000000000000
-> > 2: (18) r4 =3D 0x0                      ; R4_w=3D0
-> > 4: (87) r4 =3D -r4                      ; R4_w=3Dscalar()
-> > 5: (4f) r3 |=3D r4                      ; R3_w=3Dscalar(smax=3D-1,umin=
-=3D0x8000000000000000,var_off=3D(0x8000000000000000; 0x7fffffffffffffff)) R=
-4_w=3Dscalar()
-> > 6: (0f) r3 +=3D r3                      ; R3_w=3Dscalar()
-> > 7: (b7) r0 =3D 1                        ; R0_w=3D1
-> > 8: (95) exit
-> >
-> > With our patch, r3's bounds after instruction 6 are set to a more preci=
-se
-> > [0, 0xfffffffffffffffe].
-> >
-> > ...
-> > 6: (0f) r3 +=3D r3                      ; R3_w=3Dscalar(umax=3D0xffffff=
-fffffffffe)
-> > 7: (b7) r0 =3D 1                        ; R0_w=3D1
-> > 8: (95) exit
-> >
-> > The logic for scalar32_min_max_add is analogous. For the
-> > scalar(32)_min_max_sub functions, the reasoning is similar but applied
-> > to detecting underflow instead of overflow.
-> >
-> > We verified the correctness of the new implementations using Agni [3,4]=
-.
-> >
-> > We since also discovered that a similar technique has been used to
-> > calculate output ranges for unsigned interval addition and subtraction
-> > in Hacker's Delight [2].
-> >
-> > [1] https://docs.kernel.org/bpf/standardization/instruction-set.html
-> > [2] Hacker's Delight Ch.4-2, Propagating Bounds through Add=E2=80=99s a=
-nd Subtract=E2=80=99s
-> > [3] https://github.com/bpfverif/agni
-> > [4] https://people.cs.rutgers.edu/~sn349/papers/sas24-preprint.pdf
-> >
-> > Co-developed-by: Matan Shachnai <m.shachnai@rutgers.edu>
-> > Signed-off-by: Matan Shachnai <m.shachnai@rutgers.edu>
-> > Co-developed-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
-> > Signed-off-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
-> > Co-developed-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
-> > Signed-off-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
-> > Signed-off-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail=
-.com>
-> > ---
->
-> Is this patch dictated by mere possibility of improvement or you
-> observed some C programs that can benefit from the change?
->
-> Could you please add selftests covering each overflow / underflow
-> combination?
-> Please use same framework as tools/testing/selftests/bpf/progs/verifier_a=
-nd.c.
+On Wed, 2025-06-11 at 16:39 -0300, Andrew Ijano wrote:
+> Use guard(mutex)(&st->lock) for handling mutex lock instead of
+> manually locking and unlocking the mutex. This prevents forgotten
+> locks due to early exits and remove the need of gotos.
+>=20
+> Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
+> Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
+> Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> ---
+> For this one, there are two cases where the previous implementation
+> was a smalllocking portion of the code and now it's locking the whole
+> function. I don't know if this is a desired behavior.
+>=20
 
-We didn't specifically look for C programs that show improvements. We
-discovered this operator using our abstract operator synthesis
-framework, and that was the motivation for the patch.
+In theory, it should not break anything. But you can always refactor things=
+ (like
+small helpers) to lock only the code you want. There's also scoped_guard().=
+ I would
+say, up to you for re-spinning a new version because of the above :).=C2=A0
 
-In theory, programs that make use of overflow or underflow behavior,
-particularly where all outcomes overflow, should benefit from this
-patch.
+Just have something that I'm not totatlly sure... Did you made sure to comp=
+ile?
+AFAIR, guard() had some complains when used in switch() case statements. Ma=
+ybe that
+got improved.
 
-As illustrated in the commit message, we do have examples of eBPF
-programs that benefit from the precision improvement. We can
-definitely add selftests covering each case. I'll send a follow up v2
-patch set.
+If the above is not an issue:
 
-Thanks for the feedback!
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-> [...]
+> =C2=A0drivers/iio/accel/sca3000.c | 177 ++++++++++++---------------------=
+---
+> =C2=A01 file changed, 57 insertions(+), 120 deletions(-)
+>=20
+> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+> index d41759c68fb4..098d45bad389 100644
+> --- a/drivers/iio/accel/sca3000.c
+> +++ b/drivers/iio/accel/sca3000.c
+> @@ -405,17 +405,14 @@ static int sca3000_print_rev(struct iio_dev *indio_=
+dev)
+> =C2=A0	int ret;
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_REVID_ADDR))=
+;
+> =C2=A0	if (ret < 0)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	dev_info(&indio_dev->dev,
+> =C2=A0		 "sca3000 revision major=3D%lu, minor=3D%lu\n",
+> =C2=A0		 ret & SCA3000_REG_REVID_MAJOR_MASK,
+> =C2=A0		 ret & SCA3000_REG_REVID_MINOR_MASK);
+> -error_ret:
+> -	mutex_unlock(&st->lock);
+> -
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> @@ -699,32 +696,25 @@ static int sca3000_read_raw(struct iio_dev *indio_d=
+ev,
+> =C2=A0
+> =C2=A0	switch (mask) {
+> =C2=A0	case IIO_CHAN_INFO_RAW:
+> -		mutex_lock(&st->lock);
+> +		guard(mutex)(&st->lock);
+> =C2=A0		if (chan->type =3D=3D IIO_ACCEL) {
+> -			if (st->mo_det_use_count) {
+> -				mutex_unlock(&st->lock);
+> +			if (st->mo_det_use_count)
+> =C2=A0				return -EBUSY;
+> -			}
+> =C2=A0			address =3D sca3000_addresses[chan->address][0];
+> =C2=A0			ret =3D spi_w8r16be(st->us, SCA3000_READ_REG(address));
+> -			if (ret < 0) {
+> -				mutex_unlock(&st->lock);
+> +			if (ret < 0)
+> =C2=A0				return ret;
+> -			}
+> =C2=A0			*val =3D sign_extend32(ret >> chan->scan_type.shift,
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0 chan->scan_type.realbits - 1);
+> =C2=A0		} else {
+> =C2=A0			/* get the temperature when available */
+> =C2=A0			ret =3D spi_w8r16be(st->us,
+> =C2=A0						SCA3000_READ_REG(SCA3000_REG_TEMP_
+> MSB_ADDR));
+> -			if (ret < 0) {
+> -				mutex_unlock(&st->lock);
+> +			if (ret < 0)
+> =C2=A0				return ret;
+> -			}
+> =C2=A0			*val =3D (ret >> chan->scan_type.shift) &
+> =C2=A0				GENMASK(chan->scan_type.realbits - 1, 0);
+> =C2=A0		}
+> -		mutex_unlock(&st->lock);
+> =C2=A0		return IIO_VAL_INT;
+> =C2=A0	case IIO_CHAN_INFO_SCALE:
+> =C2=A0		*val =3D 0;
+> @@ -738,14 +728,12 @@ static int sca3000_read_raw(struct iio_dev *indio_d=
+ev,
+> =C2=A0		*val2 =3D 600000;
+> =C2=A0		return IIO_VAL_INT_PLUS_MICRO;
+> =C2=A0	case IIO_CHAN_INFO_SAMP_FREQ:
+> -		mutex_lock(&st->lock);
+> +		guard(mutex)(&st->lock);
+> =C2=A0		ret =3D sca3000_read_raw_samp_freq(st, val);
+> -		mutex_unlock(&st->lock);
+> =C2=A0		return ret ? ret : IIO_VAL_INT;
+> =C2=A0	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> -		mutex_lock(&st->lock);
+> +		guard(mutex)(&st->lock);
+> =C2=A0		ret =3D sca3000_read_3db_freq(st, val);
+> -		mutex_unlock(&st->lock);
+> =C2=A0		return ret;
+> =C2=A0	default:
+> =C2=A0		return -EINVAL;
+> @@ -763,22 +751,16 @@ static int sca3000_write_raw(struct iio_dev *indio_=
+dev,
+> =C2=A0	case IIO_CHAN_INFO_SAMP_FREQ:
+> =C2=A0		if (val2)
+> =C2=A0			return -EINVAL;
+> -		mutex_lock(&st->lock);
+> -		ret =3D sca3000_write_raw_samp_freq(st, val);
+> -		mutex_unlock(&st->lock);
+> -		return ret;
+> +		guard(mutex)(&st->lock);
+> +		return sca3000_write_raw_samp_freq(st, val);
+> =C2=A0	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> =C2=A0		if (val2)
+> =C2=A0			return -EINVAL;
+> -		mutex_lock(&st->lock);
+> -		ret =3D sca3000_write_3db_freq(st, val);
+> -		mutex_unlock(&st->lock);
+> -		return ret;
+> +		guard(mutex)(&st->lock);
+> +		return sca3000_write_3db_freq(st, val);
+> =C2=A0	default:
+> =C2=A0		return -EINVAL;
+> =C2=A0	}
+> -
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> @@ -800,9 +782,8 @@ static ssize_t sca3000_read_av_freq(struct device *de=
+v,
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0	int len =3D 0, ret;
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> -	mutex_unlock(&st->lock);
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> @@ -851,10 +832,9 @@ static int sca3000_read_event_value(struct iio_dev *=
+indio_dev,
+> =C2=A0
+> =C2=A0	switch (info) {
+> =C2=A0	case IIO_EV_INFO_VALUE:
+> -		mutex_lock(&st->lock);
+> +		guard(mutex)(&st->lock);
+> =C2=A0		ret =3D sca3000_read_ctrl_reg(st,
+> =C2=A0					=C2=A0=C2=A0=C2=A0 sca3000_addresses[chan->address][1]);
+> -		mutex_unlock(&st->lock);
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> =C2=A0		*val =3D 0;
+> @@ -918,13 +898,10 @@ static int sca3000_write_event_value(struct iio_dev
+> *indio_dev,
+> =C2=A0			}
+> =C2=A0	}
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> -	ret =3D sca3000_write_ctrl_reg(st,
+> +	guard(mutex)(&st->lock);
+> +	return sca3000_write_ctrl_reg(st,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 sca3000_addresses[chan->address][1],
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 nonlinear);
+> -	mutex_unlock(&st->lock);
+> -
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static struct attribute *sca3000_attributes[] =3D {
+> @@ -969,12 +946,12 @@ static void sca3000_ring_int_process(u8 val, struct=
+ iio_dev
+> *indio_dev)
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0	int ret, i, num_available;
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0
+> =C2=A0	if (val & SCA3000_REG_INT_STATUS_HALF) {
+> =C2=A0		ret =3D spi_w8r8(st->us,
+> SCA3000_READ_REG(SCA3000_REG_BUF_COUNT_ADDR));
+> =C2=A0		if (ret)
+> -			goto error_ret;
+> +			return;
+> =C2=A0		num_available =3D ret;
+> =C2=A0		/*
+> =C2=A0		 * num_available is the total number of samples available
+> @@ -983,7 +960,7 @@ static void sca3000_ring_int_process(u8 val, struct i=
+io_dev
+> *indio_dev)
+> =C2=A0		ret =3D sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR,
+> =C2=A0					num_available * 2);
+> =C2=A0		if (ret)
+> -			goto error_ret;
+> +			return;
+> =C2=A0		for (i =3D 0; i < num_available / 3; i++) {
+> =C2=A0			/*
+> =C2=A0			 * Dirty hack to cover for 11 bit in fifo, 13 bit
+> @@ -995,8 +972,6 @@ static void sca3000_ring_int_process(u8 val, struct i=
+io_dev
+> *indio_dev)
+> =C2=A0			iio_push_to_buffers(indio_dev, st->rx + i * 3 * 2);
+> =C2=A0		}
+> =C2=A0	}
+> -error_ret:
+> -	mutex_unlock(&st->lock);
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> @@ -1022,9 +997,8 @@ static irqreturn_t sca3000_event_handler(int irq, vo=
+id
+> *private)
+> =C2=A0	 * Could lead if badly timed to an extra read of status reg,
+> =C2=A0	 * but ensures no interrupt is missed.
+> =C2=A0	 */
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_STATUS_A=
+DDR));
+> -	mutex_unlock(&st->lock);
+> =C2=A0	if (ret)
+> =C2=A0		goto done;
+> =C2=A0
+> @@ -1081,16 +1055,15 @@ static int sca3000_read_event_config(struct iio_d=
+ev
+> *indio_dev,
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0	int ret;
+> =C2=A0	/* read current value of mode register */
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0
+> =C2=A0	switch (chan->channel2) {
+> =C2=A0	case IIO_MOD_X_AND_Y_AND_Z:
+> -		ret =3D !!(ret & SCA3000_REG_MODE_FREE_FALL_DETECT);
+> -		break;
+> +		return !!(ret & SCA3000_REG_MODE_FREE_FALL_DETECT);
+> =C2=A0	case IIO_MOD_X:
+> =C2=A0	case IIO_MOD_Y:
+> =C2=A0	case IIO_MOD_Z:
+> @@ -1100,24 +1073,18 @@ static int sca3000_read_event_config(struct iio_d=
+ev
+> *indio_dev,
+> =C2=A0		 */
+> =C2=A0		if ((ret & SCA3000_REG_MODE_MODE_MASK)
+> =C2=A0		=C2=A0=C2=A0=C2=A0 !=3D SCA3000_REG_MODE_MEAS_MODE_MOT_DET) {
+> -			ret =3D 0;
+> +			return 0;
+> =C2=A0		} else {
+> =C2=A0			ret =3D sca3000_read_ctrl_reg(st,
+> =C2=A0						SCA3000_REG_CTRL_SEL_MD_CTRL);
+> =C2=A0			if (ret < 0)
+> -				goto error_ret;
+> +				return ret;
+> =C2=A0			/* only supporting logical or's for now */
+> -			ret =3D !!(ret & sca3000_addresses[chan->address][2]);
+> +			return !!(ret & sca3000_addresses[chan->address][2]);
+> =C2=A0		}
+> -		break;
+> =C2=A0	default:
+> -		ret =3D -EINVAL;
+> +		return -EINVAL;
+> =C2=A0	}
+> -
+> -error_ret:
+> -	mutex_unlock(&st->lock);
+> -
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int sca3000_freefall_set_state(struct iio_dev *indio_dev, bo=
+ol state)
+> @@ -1220,26 +1187,19 @@ static int sca3000_write_event_config(struct iio_=
+dev
+> *indio_dev,
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0	int ret;
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0	switch (chan->channel2) {
+> =C2=A0	case IIO_MOD_X_AND_Y_AND_Z:
+> -		ret =3D sca3000_freefall_set_state(indio_dev, state);
+> -		break;
+> -
+> +		return sca3000_freefall_set_state(indio_dev, state);
+> =C2=A0	case IIO_MOD_X:
+> =C2=A0	case IIO_MOD_Y:
+> =C2=A0	case IIO_MOD_Z:
+> -		ret =3D sca3000_motion_detect_set_state(indio_dev,
+> +		return sca3000_motion_detect_set_state(indio_dev,
+> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chan->address,
+> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state);
+> -		break;
+> =C2=A0	default:
+> -		ret =3D -EINVAL;
+> -		break;
+> +		return -EINVAL;
+> =C2=A0	}
+> -	mutex_unlock(&st->lock);
+> -
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static inline
+> @@ -1248,23 +1208,19 @@ int __sca3000_hw_ring_state_set(struct iio_dev *i=
+ndio_dev,
+> bool state)
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0	int ret;
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> +
+> =C2=A0	if (state) {
+> =C2=A0		dev_info(&indio_dev->dev, "supposedly enabling ring buffer\n");
+> -		ret =3D sca3000_write_reg(st,
+> +		return sca3000_write_reg(st,
+> =C2=A0			SCA3000_REG_MODE_ADDR,
+> =C2=A0			(ret | SCA3000_REG_MODE_RING_BUF_ENABLE));
+> -	} else
+> -		ret =3D sca3000_write_reg(st,
+> -			SCA3000_REG_MODE_ADDR,
+> -			(ret & ~SCA3000_REG_MODE_RING_BUF_ENABLE));
+> -error_ret:
+> -	mutex_unlock(&st->lock);
+> -
+> -	return ret;
+> +	}
+> +	return sca3000_write_reg(st,
+> +		SCA3000_REG_MODE_ADDR,
+> +		(ret & ~SCA3000_REG_MODE_RING_BUF_ENABLE));
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> @@ -1281,26 +1237,18 @@ static int sca3000_hw_ring_preenable(struct iio_d=
+ev
+> *indio_dev)
+> =C2=A0	int ret;
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> -
+> +	guard(mutex)(&st->lock);
+> =C2=A0	/* Enable the 50% full interrupt */
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADD=
+R));
+> =C2=A0	if (ret)
+> -		goto error_unlock;
+> +		return ret;
+> =C2=A0	ret =3D sca3000_write_reg(st,
+> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
+> =C2=A0				ret | SCA3000_REG_INT_MASK_RING_HALF);
+> =C2=A0	if (ret)
+> -		goto error_unlock;
+> -
+> -	mutex_unlock(&st->lock);
+> +		return ret;
+> =C2=A0
+> =C2=A0	return __sca3000_hw_ring_state_set(indio_dev, 1);
+> -
+> -error_unlock:
+> -	mutex_unlock(&st->lock);
+> -
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int sca3000_hw_ring_postdisable(struct iio_dev *indio_dev)
+> @@ -1308,22 +1256,18 @@ static int sca3000_hw_ring_postdisable(struct iio=
+_dev
+> *indio_dev)
+> =C2=A0	int ret;
+> =C2=A0	struct sca3000_state *st =3D iio_priv(indio_dev);
+> =C2=A0
+> +	guard(mutex)(&st->lock);
+> =C2=A0	ret =3D __sca3000_hw_ring_state_set(indio_dev, 0);
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> =C2=A0	/* Disable the 50% full interrupt */
+> -	mutex_lock(&st->lock);
+> -
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADD=
+R));
+> =C2=A0	if (ret)
+> -		goto unlock;
+> -	ret =3D sca3000_write_reg(st,
+> +		return ret;
+> +	return sca3000_write_reg(st,
+> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
+> =C2=A0				ret & ~SCA3000_REG_INT_MASK_RING_HALF);
+> -unlock:
+> -	mutex_unlock(&st->lock);
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static const struct iio_buffer_setup_ops sca3000_ring_setup_ops =3D=
+ {
+> @@ -1343,25 +1287,25 @@ static int sca3000_clean_setup(struct sca3000_sta=
+te *st)
+> =C2=A0{
+> =C2=A0	int ret;
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0	/* Ensure all interrupts have been acknowledged */
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADD=
+R));
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0
+> =C2=A0	/* Turn off all motion detection channels */
+> =C2=A0	ret =3D sca3000_read_ctrl_reg(st, SCA3000_REG_CTRL_SEL_MD_CTRL);
+> =C2=A0	if (ret < 0)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	ret =3D sca3000_write_ctrl_reg(st, SCA3000_REG_CTRL_SEL_MD_CTRL,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 ret & SCA3000_MD_CTRL_PROT_MASK);
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0
+> =C2=A0	/* Disable ring buffer */
+> =C2=A0	ret =3D sca3000_read_ctrl_reg(st, SCA3000_REG_CTRL_SEL_OUT_CTRL);
+> =C2=A0	if (ret < 0)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	ret =3D sca3000_write_ctrl_reg(st, SCA3000_REG_CTRL_SEL_OUT_CTRL,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 (ret & SCA3000_REG_OUT_CTRL_PROT_MASK)
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 | SCA3000_REG_OUT_CTRL_BUF_X_EN
+> @@ -1369,17 +1313,17 @@ static int sca3000_clean_setup(struct sca3000_sta=
+te *st)
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 | SCA3000_REG_OUT_CTRL_BUF_Z_EN
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 | SCA3000_REG_OUT_CTRL_BUF_DIV_4);
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	/* Enable interrupts, relevant to mode and set up as active low */
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADD=
+R));
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	ret =3D sca3000_write_reg(st,
+> =C2=A0				SCA3000_REG_INT_MASK_ADDR,
+> =C2=A0				(ret & SCA3000_REG_INT_MASK_PROT_MASK)
+> =C2=A0				| SCA3000_REG_INT_MASK_ACTIVE_LOW);
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0	/*
+> =C2=A0	 * Select normal measurement mode, free fall off, ring off
+> =C2=A0	 * Ring in 12 bit mode - it is fine to overwrite reserved bits 3,5
+> @@ -1387,13 +1331,9 @@ static int sca3000_clean_setup(struct sca3000_stat=
+e *st)
+> =C2=A0	 */
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_MODE_ADDR));
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> -	ret =3D sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> +		return ret;
+> +	return sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+> =C2=A0				ret & SCA3000_MODE_PROT_MASK);
+> -
+> -error_ret:
+> -	mutex_unlock(&st->lock);
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static const struct iio_info sca3000_info =3D {
+> @@ -1471,19 +1411,16 @@ static int sca3000_stop_all_interrupts(struct sca=
+3000_state
+> *st)
+> =C2=A0{
+> =C2=A0	int ret;
+> =C2=A0
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> =C2=A0	ret =3D spi_w8r8(st->us, SCA3000_READ_REG(SCA3000_REG_INT_MASK_ADD=
+R));
+> =C2=A0	if (ret)
+> -		goto error_ret;
+> +		return ret;
+> =C2=A0
+> -	ret =3D sca3000_write_reg(st, SCA3000_REG_INT_MASK_ADDR,
+> +	return sca3000_write_reg(st, SCA3000_REG_INT_MASK_ADDR,
+> =C2=A0				ret &
+> =C2=A0				~(SCA3000_REG_INT_MASK_RING_THREE_QUARTER |
+> =C2=A0				=C2=A0 SCA3000_REG_INT_MASK_RING_HALF |
+> =C2=A0				=C2=A0 SCA3000_REG_INT_MASK_ALL_INTS));
+> -error_ret:
+> -	mutex_unlock(&st->lock);
+> -	return ret;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static void sca3000_remove(struct spi_device *spi)
+
 
