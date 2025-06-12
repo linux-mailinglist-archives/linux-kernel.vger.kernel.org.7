@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-682762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F58CAD6444
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA09AD6449
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C2923AB04D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB333AB1AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 00:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D86B1F2B88;
-	Thu, 12 Jun 2025 00:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADD6221739;
+	Thu, 12 Jun 2025 00:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k1dywmDS"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zLRcNWvV"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA21288DA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E01D1FF61E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 00:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749686574; cv=none; b=rczKCZVQQeCGQgWnLKPg3FfyhjT93Hp/RFnTHptosqfjxagjP8RbBmnJNEggM4sYFou3vOxdyfyLGfLkkyOprNAiBGQZBcdWCGjh3awRv6UZwzicuqjRQri/qJpf+gCNF+Va2pi3OQLgUREl0H1i09Grey99tkPoejuIlS+fJ6s=
+	t=1749686576; cv=none; b=LbT5GPTBm+Vl859349E/97iCI7CteUTuhhnfPt5xM7QmU5n0C9iwA5st1RGrqQylFD3ghw1W8XgO3tRJJWLDGRX7fpoYbMkSNZnlDJYZkPPcccyXwRouqkOZrSNCiI2guUURT4W9ECR3gtC59hijHdxL9RjX1e6IFZAPmsrJjzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749686574; c=relaxed/simple;
-	bh=Q/mbrCPGvZtVCsK/mn8/zuy3mRqFS3sJTQpDWrqsrh8=;
+	s=arc-20240116; t=1749686576; c=relaxed/simple;
+	bh=ZTw885Bem4ZCCLHyNKZ+Pmul2MdJOpY/XTcwfAwNl94=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=ZbcaPFd8yeK90ysMabyw3dfRgOsrRL7QNM7Ngbvn/jXfWXJDHpM7vY04YcgvKj8tqNQScSoNVkn5coMfbUd7SOqkfJxuCyqVXKPYJsrrqe9yDcZePmwsLu5emDKdJKf8M3tOlpaKIujWAw1/6PrmVDS6B1qDa1sIJ1on8KORsA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k1dywmDS; arc=none smtp.client-ip=209.85.215.201
+	 To:Content-Type; b=IgFYbUPCl+8YYNh745qIItHPH6jYP1TAg0CoHEdvITaTaWGFyR0p6NaxUquPkJjZzD+W2vmylaHkD7d7uWUw9GqzPJdIR/s9bWVfyF4h59FvqlT700KsS4u1/RCHswKF6FCj8k531OWlBHUtojxYzZ47Oj1OdP9QDtO0LucpDR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zLRcNWvV; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2fb347b3e4so167549a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:02:52 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30a39fa0765so487882a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 17:02:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749686572; x=1750291372; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1749686574; x=1750291374; darn=vger.kernel.org;
         h=content-transfer-encoding:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qQQxcFLDosIVv4JUv5/6nXKM2/vvgEnajjnxg425FeU=;
-        b=k1dywmDS6U9rIImnV8MbAXcEUwlqBS/R+ZP6hA1wLaCCOPEL0eTbbaSGKJt79/0hGK
-         g3Ra3FwjIdlJtGJrJ09qY+bLjMt8VF9IeMOHw6XVufPCJSqLAjRIWyQVIk4ibSK9PZgi
-         iDI6J9JGTMnt22aKFeWt7SQJxK97yI+pd5ts5UEyTJ3qZkIenQZVBevs6ouBNdthkneo
-         1otD2oGPgzky191kqaS1Wy8uz5hKxk2FsbtJFB4qwdGjLOQtV+JBWPnUUiqenCYmP3lI
-         XssiN41f3OdhCxV6i9MpEFM0btPbyIPoMSfqBn1lBLCSuHe1TiCPCcDmMlS18fzB7TyD
-         Is/w==
+        bh=UofBpNxuqYU4CCinw74izIvpf3M2T/dM2DLx90SqXC0=;
+        b=zLRcNWvVk9uAXLAUfPOnolN4/qd/xHLqEUHLwzXwF6wWe17I+ndJCRc0iFvZxIkMSY
+         nJ/JflJxMOwd5uRzQnzsSNy3UNptr57YNCtqF3bvSJDaOx9CgdDQYV6RGMPlz4s1b734
+         eacZTGpLHV6CuBRZW9AkeKtZ79Qd8V8J16f/zoIgpwDrlzr01sRNseWUuYGAiV5ed8dQ
+         IyaN9ymwQ1CwBRiZL8dRbs0QzAA58zAo2AUAXRLKy5Qzx/DGmZphAIcXkCzFDNf2+1k1
+         bwjCc5LdGRvD2npU1mJv3FecsA9/naVG5Mhwvr/ClcPr+fQwdXR7TxHoGJi6gnQGpyzA
+         3q4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749686572; x=1750291372;
+        d=1e100.net; s=20230601; t=1749686574; x=1750291374;
         h=content-transfer-encoding:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=qQQxcFLDosIVv4JUv5/6nXKM2/vvgEnajjnxg425FeU=;
-        b=eUwIPda2XoM1Y3HU+Dv78/k3dYC18ZhYbrRFs5YgWUQ8DK7WE6sdReSGWCg7tJPI0r
-         BUAcsd8WrJMMYDm/sfRKn8/uqRAW86ll8sGTEgrfl8X4rZ2v5t7mubUN3RNhAdWjY13R
-         g0XHtmIByRUoXsXTmWex0MuM5f4MlnAN9cqwz2ml0z09E8y3RslERFcFwwY3GSS+xcPf
-         9Efdvg+22g07mJEsHqSJ9G+kyF+dg9OCNJEQBmWoWKH9/nuUFzDYagMsoBLuijmQW2A1
-         TGNtMZhKj5DBt4YNRK76FeDbv10B/VJ2efrTphaS7PVbpIgQVKnKh0RX0Z8e1n1G1Z83
-         L4zg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1d0pJzQKSvo4NsfEfWOj+EhdzkISnbeBKNmIabVb51INvzKpH03y9MZG2Z2y7+re/rLRoG7tiVil6RZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4hC6NOTTgcGtqE1YI3wJe2B/32rmyI3/4wcXZ3ld+YYMTnG9B
-	yKgHsbh1qufmz/qd2KdGCXmC+XGyOui3nOWco2/mW6MdBRq06xSSKXFA6z5JuEVP9hu9+CPx7Y6
-	HguagHUOeUg==
-X-Google-Smtp-Source: AGHT+IH8979V4AZvHAEEANCj1pHoa5xxhNYEoqChdfJBiTikePa1Ov290qW0O4RSQDdaO1PwbDsf4zl31SBf
-X-Received: from pjbpx2.prod.google.com ([2002:a17:90b:2702:b0:313:230:89ed])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:510f:b0:313:2754:5910
- with SMTP id 98e67ed59e1d1-313bfbc310bmr2143164a91.15.1749686571909; Wed, 11
- Jun 2025 17:02:51 -0700 (PDT)
-Date: Wed, 11 Jun 2025 17:02:21 -0700
+        bh=UofBpNxuqYU4CCinw74izIvpf3M2T/dM2DLx90SqXC0=;
+        b=J3jjvyjW+17ZG/SwhOqZtVEsDfVNNSDVtw3rR+yqu/7ulTZp44ecgzKiCwQIukjUE2
+         N6hpBc+wTg5XaleNqWQeiWv6ShD75keolwgW/GpA+LHov9WO6pHQbntuBbIz7hDSO8JH
+         aCX0gge2jKNj8fFxg+2QmfiD6cIkU6HAzUJ27pMg/5WxHNcqRY1jKn3jBddMbOKZnTKm
+         n+3DY3tb7I792v5Qaj1g9UY1kktombx9GMoqPKq1Xsqxhxbp6kXDsnA7+eXa2RW13STo
+         2A8/32oC3S7wSEsM/cJ4n/wXufPBV2Hc/wd/4/2bGY9WOi082NnXE0ZGRWSxzHJGdUIt
+         zm+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNgLHunfYsQXMbcP398jzeE4w/hLl+cqwNsy2P4iG4UjbrmbvoVxrTFtg9F4HA4sidmWeGDRVmeexCm1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx64mH4iaiCgEotD6z6GOsT03OpdpCkQuSbGRuXTi649M7RGtUz
+	k80xpYphaPXJvtblYnzzj44DD+zlA9xuZfdypxeU49i96KHvchrrR30XyMGVLxLK+0uWQF5p/Dq
+	+0trA8t80tA==
+X-Google-Smtp-Source: AGHT+IELMRMyXAYBNaCfyTohlmDUnovz0/5zH/pZhnykhNn3/U14IsMnC9rzdOYCy72sMsvq20UTC7VMFhDL
+X-Received: from pji15.prod.google.com ([2002:a17:90b:3fcf:b0:312:f88d:25f6])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e45:b0:313:c1e9:9352
+ with SMTP id 98e67ed59e1d1-313c1e993f6mr603237a91.8.1749686573771; Wed, 11
+ Jun 2025 17:02:53 -0700 (PDT)
+Date: Wed, 11 Jun 2025 17:02:22 -0700
 In-Reply-To: <20250612000224.780337-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250612000224.780337-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <20250612000224.780337-13-irogers@google.com>
-Subject: [PATCH v1 12/15] perf vendor events: Update SapphireRapids events
+Message-ID: <20250612000224.780337-14-irogers@google.com>
+Subject: [PATCH v1 13/15] perf vendor events: Update SierraForest events
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,64 +90,517 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Update events from v1.25 to v1.28.
+Update events from v1.09 to v1.11.
 
-Bring in the event updates v1.28:
-https://github.com/intel/perfmon/commit/990bfdff270adf08d408534d6d66ba47ec6=
-adb34
-https://github.com/intel/perfmon/commit/b7b4d7f18cf9a893438777a571abc7ecc08=
-7368b
+Bring in the event updates v1.11:
+https://github.com/intel/perfmon/commit/6b824df1dba3948146281c8ba2a8c3e7bf7=
+f7c51
+https://github.com/intel/perfmon/commit/4b0346fbee2b04dd34526522250116aee52=
+5c922
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
  tools/perf/pmu-events/arch/x86/mapfile.csv    |  2 +-
- .../arch/x86/sapphirerapids/pipeline.json     |  2 +-
- .../arch/x86/sapphirerapids/uncore-io.json    | 12 +++++++++++
- .../x86/sapphirerapids/uncore-memory.json     | 20 +++++++++++++++++++
- 4 files changed, 34 insertions(+), 2 deletions(-)
+ .../arch/x86/sierraforest/frontend.json       | 64 +++++++++++++++++++
+ .../arch/x86/sierraforest/pipeline.json       |  8 +++
+ .../arch/x86/sierraforest/srf-metrics.json    | 48 ++++++++++++++
+ .../arch/x86/sierraforest/uncore-cache.json   |  6 +-
+ .../x86/sierraforest/uncore-interconnect.json | 53 ++++++++++++---
+ .../arch/x86/sierraforest/uncore-io.json      | 27 +++++++-
+ 7 files changed, 194 insertions(+), 14 deletions(-)
 
 diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-ev=
 ents/arch/x86/mapfile.csv
-index 252382751fa5..13eaed97b4ac 100644
+index 13eaed97b4ac..54c2cfb0af9c 100644
 --- a/tools/perf/pmu-events/arch/x86/mapfile.csv
 +++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
-@@ -29,7 +29,7 @@ GenuineIntel-6-2E,v4,nehalemex,core
- GenuineIntel-6-CC,v1.00,pantherlake,core
+@@ -30,7 +30,7 @@ GenuineIntel-6-CC,v1.00,pantherlake,core
  GenuineIntel-6-A7,v1.04,rocketlake,core
  GenuineIntel-6-2A,v19,sandybridge,core
--GenuineIntel-6-8F,v1.25,sapphirerapids,core
-+GenuineIntel-6-8F,v1.28,sapphirerapids,core
- GenuineIntel-6-AF,v1.09,sierraforest,core
+ GenuineIntel-6-8F,v1.28,sapphirerapids,core
+-GenuineIntel-6-AF,v1.09,sierraforest,core
++GenuineIntel-6-AF,v1.11,sierraforest,core
  GenuineIntel-6-(37|4A|4C|4D|5A),v15,silvermont,core
  GenuineIntel-6-(4E|5E|8E|9E|A5|A6),v59,skylake,core
-diff --git a/tools/perf/pmu-events/arch/x86/sapphirerapids/pipeline.json b/=
-tools/perf/pmu-events/arch/x86/sapphirerapids/pipeline.json
-index 00b05a77c289..48bec483b49a 100644
---- a/tools/perf/pmu-events/arch/x86/sapphirerapids/pipeline.json
-+++ b/tools/perf/pmu-events/arch/x86/sapphirerapids/pipeline.json
-@@ -684,7 +684,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0x4c",
-         "EventName": "LOAD_HIT_PREFETCH.SWPF",
--        "PublicDescription": "Counts all not software-prefetch load dispat=
-ches that hit the fill buffer (FB) allocated for the software prefetch. It =
-can also be incremented by some lock instructions. So it should only be use=
-d with profiling so that the locks can be excluded by ASM (Assembly File) i=
-nspection of the nearby instructions. Available PDIST counters: 0",
-+        "PublicDescription": "Counts all software-prefetch load dispatches=
- that hit the fill buffer (FB) allocated for the software prefetch. It can =
-also be incremented by some lock instructions. So it should only be used wi=
-th profiling so that the locks can be excluded by ASM (Assembly File) inspe=
-ction of the nearby instructions. Available PDIST counters: 0",
-         "SampleAfterValue": "100003",
+ GenuineIntel-6-55-[01234],v1.36,skylakex,core
+diff --git a/tools/perf/pmu-events/arch/x86/sierraforest/frontend.json b/to=
+ols/perf/pmu-events/arch/x86/sierraforest/frontend.json
+index fef5cba533bb..8a591e31d331 100644
+--- a/tools/perf/pmu-events/arch/x86/sierraforest/frontend.json
++++ b/tools/perf/pmu-events/arch/x86/sierraforest/frontend.json
+@@ -8,6 +8,54 @@
+         "SampleAfterValue": "200003",
          "UMask": "0x1"
      },
-diff --git a/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-io.json b=
-/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-io.json
-index aab082ff9402..dac7e6c50f31 100644
---- a/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-io.json
-+++ b/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-io.json
-@@ -1901,6 +1901,18 @@
++    {
++        "BriefDescription": "Counts the number of instructions retired tha=
+t were tagged with having preceded with frontend bound behavior",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.ALL",
++        "SampleAfterValue": "1000003"
++    },
++    {
++        "BriefDescription": "Counts the number of instruction retired that=
+ are tagged after a branch instruction causes bubbles/empty issue slots due=
+ to a baclear",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.BRANCH_DETECT",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x2"
++    },
++    {
++        "BriefDescription": "Counts the number of instruction retired that=
+ are tagged after a branch instruction causes bubbles /empty issue slots du=
+e to a btclear",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.BRANCH_RESTEER",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x40"
++    },
++    {
++        "BriefDescription": "Counts the number of instructions retired tha=
+t were tagged following an ms flow due to the bubble/wasted issue slot from=
+ exiting long ms flow",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.CISC",
++        "PublicDescription": "Counts the number of  instructions retired t=
+hat were tagged following an ms flow due to the bubble/wasted issue slot fr=
+om exiting long ms flow",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x1"
++    },
++    {
++        "BriefDescription": "Counts the number of instructions retired tha=
+t were tagged every cycle the decoder is unable to send 3 uops per cycle.",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.DECODE",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x8"
++    },
++    {
++        "BriefDescription": "Counts the number of instructions retired tha=
+t were tagged because empty issue slots were seen before the uop due to ica=
+che miss",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.ICACHE",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x20"
++    },
+     {
+         "BriefDescription": "Counts the number of instructions retired tha=
+t were tagged because empty issue slots were seen before the uop due to ITL=
+B miss",
+         "Counter": "0,1,2,3,4,5,6,7",
+@@ -16,6 +64,22 @@
+         "SampleAfterValue": "1000003",
+         "UMask": "0x10"
+     },
++    {
++        "BriefDescription": "Counts the number of instruction retired tagg=
+ed after a wasted issue slot if none of the previous events occurred",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.OTHER",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x80"
++    },
++    {
++        "BriefDescription": "Counts the number of instruction retired that=
+ are tagged after a branch instruction causes bubbles/empty issue slots due=
+ to a predecode wrong.",
++        "Counter": "0,1,2,3,4,5,6,7",
++        "EventCode": "0xc6",
++        "EventName": "FRONTEND_RETIRED.PREDECODE",
++        "SampleAfterValue": "1000003",
++        "UMask": "0x4"
++    },
+     {
+         "BriefDescription": "Counts every time the code stream enters into=
+ a new cache line by walking sequential from the previous line or being red=
+irected by a jump.",
+         "Counter": "0,1,2,3,4,5,6,7",
+diff --git a/tools/perf/pmu-events/arch/x86/sierraforest/pipeline.json b/to=
+ols/perf/pmu-events/arch/x86/sierraforest/pipeline.json
+index f56d8d816e53..70af13143024 100644
+--- a/tools/perf/pmu-events/arch/x86/sierraforest/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/sierraforest/pipeline.json
+@@ -11,6 +11,7 @@
+     {
+         "BriefDescription": "Counts the total number of branch instruction=
+s retired for all branch types.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF6, SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.ALL_BRANCHES",
+         "PublicDescription": "Counts the total number of instructions in w=
+hich the instruction pointer (IP) of the processor is resteered due to a br=
+anch instruction and the branch instruction successfully retires.  All bran=
+ch type instructions are accounted for.",
+@@ -19,6 +20,7 @@
+     {
+         "BriefDescription": "Counts the number of retired JCC (Jump on Con=
+ditional Code) branch instructions retired, includes both taken and not tak=
+en branches.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.COND",
+         "SampleAfterValue": "200003",
+@@ -35,6 +37,7 @@
+     {
+         "BriefDescription": "Counts the number of far branch instructions =
+retired, includes far jump, far call and return, and interrupt call and ret=
+urn.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.FAR_BRANCH",
+         "SampleAfterValue": "200003",
+@@ -43,6 +46,7 @@
+     {
+         "BriefDescription": "Counts the number of near indirect JMP and ne=
+ar indirect CALL branch instructions retired.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.INDIRECT",
+         "SampleAfterValue": "200003",
+@@ -51,6 +55,7 @@
+     {
+         "BriefDescription": "Counts the number of near indirect CALL branc=
+h instructions retired.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.INDIRECT_CALL",
+         "SampleAfterValue": "200003",
+@@ -68,6 +73,7 @@
+         "BriefDescription": "This event is deprecated. Refer to new event =
+BR_INST_RETIRED.INDIRECT_CALL",
+         "Counter": "0,1,2,3,4,5,6,7",
+         "Deprecated": "1",
++        "Errata": "SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.IND_CALL",
+         "SampleAfterValue": "200003",
+@@ -76,6 +82,7 @@
+     {
+         "BriefDescription": "Counts the number of near CALL branch instruc=
+tions retired.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF6, SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.NEAR_CALL",
+         "SampleAfterValue": "200003",
+@@ -92,6 +99,7 @@
+     {
+         "BriefDescription": "Counts the number of near taken branch instru=
+ctions retired.",
+         "Counter": "0,1,2,3,4,5,6,7",
++        "Errata": "SRF7",
+         "EventCode": "0xc4",
+         "EventName": "BR_INST_RETIRED.NEAR_TAKEN",
+         "SampleAfterValue": "200003",
+diff --git a/tools/perf/pmu-events/arch/x86/sierraforest/srf-metrics.json b=
+/tools/perf/pmu-events/arch/x86/sierraforest/srf-metrics.json
+index ef629e4e91ce..b9f3c611d87b 100644
+--- a/tools/perf/pmu-events/arch/x86/sierraforest/srf-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/sierraforest/srf-metrics.json
+@@ -61,6 +61,18 @@
+         "MetricName": "cpi",
+         "ScaleUnit": "1per_instr"
+     },
++    {
++        "BriefDescription": "The average number of cores that are in cstat=
+e C0 as observed by the power control unit (PCU)",
++        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0 / pcu_0@UNC_P_=
+CLOCKTICKS@ * #num_packages",
++        "MetricGroup": "cpu_cstate",
++        "MetricName": "cpu_cstate_c0"
++    },
++    {
++        "BriefDescription": "The average number of cores that are in cstat=
+e C6 as observed by the power control unit (PCU)",
++        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6 / pcu_0@UNC_P_=
+CLOCKTICKS@ * #num_packages",
++        "MetricGroup": "cpu_cstate",
++        "MetricName": "cpu_cstate_c6"
++    },
+     {
+         "BriefDescription": "CPU operating frequency (in GHz)",
+         "MetricExpr": "CPU_CLK_UNHALTED.THREAD / CPU_CLK_UNHALTED.REF_TSC =
+* #SYSTEM_TSC_FREQ / 1e9",
+@@ -112,6 +124,12 @@
+         "MetricName": "io_bandwidth_read",
+         "ScaleUnit": "1MB/s"
+     },
++    {
++        "BriefDescription": "Bandwidth of inbound IO reads that are initia=
+ted by end device controllers that are requesting memory from the CPU and m=
+iss the L3 cache",
++        "MetricExpr": "UNC_CHA_TOR_INSERTS.IO_MISS_PCIRDCUR * 64 / 1e6 / d=
+uration_time",
++        "MetricName": "io_bandwidth_read_l3_miss",
++        "ScaleUnit": "1MB/s"
++    },
+     {
+         "BriefDescription": "Bandwidth of IO reads that are initiated by e=
+nd device controllers that are requesting memory from the local CPU socket"=
+,
+         "MetricExpr": "UNC_CHA_TOR_INSERTS.IO_PCIRDCUR_LOCAL * 64 / 1e6 / =
+duration_time",
+@@ -130,6 +148,12 @@
+         "MetricName": "io_bandwidth_write",
+         "ScaleUnit": "1MB/s"
+     },
++    {
++        "BriefDescription": "Bandwidth of inbound IO writes that are initi=
+ated by end device controllers that are writing memory to the CPU",
++        "MetricExpr": "(UNC_CHA_TOR_INSERTS.IO_MISS_ITOM + UNC_CHA_TOR_INS=
+ERTS.IO_MISS_ITOMCACHENEAR) * 64 / 1e6 / duration_time",
++        "MetricName": "io_bandwidth_write_l3_miss",
++        "ScaleUnit": "1MB/s"
++    },
+     {
+         "BriefDescription": "Bandwidth of IO writes that are initiated by =
+end device controllers that are writing memory to the local CPU socket",
+         "MetricExpr": "(UNC_CHA_TOR_INSERTS.IO_ITOM_LOCAL + UNC_CHA_TOR_IN=
+SERTS.IO_ITOMCACHENEAR_LOCAL) * 64 / 1e6 / duration_time",
+@@ -142,6 +166,30 @@
+         "MetricName": "io_bandwidth_write_remote",
+         "ScaleUnit": "1MB/s"
+     },
++    {
++        "BriefDescription": "The percent of inbound full cache line writes=
+ initiated by IO that miss the L3 cache",
++        "MetricExpr": "UNC_CHA_TOR_INSERTS.IO_MISS_ITOM / UNC_CHA_TOR_INSE=
+RTS.IO_ITOM",
++        "MetricName": "io_full_write_l3_miss",
++        "ScaleUnit": "100%"
++    },
++    {
++        "BriefDescription": "Message Signaled Interrupts (MSI) per second =
+sent by the integrated I/O traffic controller (IIO) to System Configuration=
+ Controller (Ubox)",
++        "MetricExpr": "UNC_IIO_NUM_REQ_OF_CPU_BY_TGT.UBOX_POSTED / duratio=
+n_time",
++        "MetricName": "io_msi",
++        "ScaleUnit": "1per_sec"
++    },
++    {
++        "BriefDescription": "The percent of inbound partial writes initiat=
+ed by IO that miss the L3 cache",
++        "MetricExpr": "(UNC_CHA_TOR_INSERTS.IO_MISS_ITOMCACHENEAR + UNC_CH=
+A_TOR_INSERTS.IO_MISS_RFO) / (UNC_CHA_TOR_INSERTS.IO_ITOMCACHENEAR + UNC_CH=
+A_TOR_INSERTS.IO_RFO)",
++        "MetricName": "io_partial_write_l3_miss",
++        "ScaleUnit": "100%"
++    },
++    {
++        "BriefDescription": "The percent of inbound reads initiated by IO =
+that miss the L3 cache",
++        "MetricExpr": "UNC_CHA_TOR_INSERTS.IO_MISS_PCIRDCUR / UNC_CHA_TOR_=
+INSERTS.IO_PCIRDCUR",
++        "MetricName": "io_read_l3_miss",
++        "ScaleUnit": "100%"
++    },
+     {
+         "BriefDescription": "Ratio of number of completed page walks (for =
+2 megabyte and 4 megabyte page sizes) caused by a code fetch to the total n=
+umber of completed instructions",
+         "MetricExpr": "ITLB_MISSES.WALK_COMPLETED_2M_4M / INST_RETIRED.ANY=
+",
+diff --git a/tools/perf/pmu-events/arch/x86/sierraforest/uncore-cache.json =
+b/tools/perf/pmu-events/arch/x86/sierraforest/uncore-cache.json
+index 7182ca00ef8d..3d1fb5f0417e 100644
+--- a/tools/perf/pmu-events/arch/x86/sierraforest/uncore-cache.json
++++ b/tools/perf/pmu-events/arch/x86/sierraforest/uncore-cache.json
+@@ -874,7 +874,7 @@
+         "Unit": "CHA"
+     },
+     {
+-        "BriefDescription": "Counts snoop filter capacity evictions for en=
+tries tracking exclusive lines in the cores? cache.? Snoop filter capacity =
+evictions occur when the snoop filter is full and evicts an existing entry =
+to track a new entry.? Does not count clean evictions such as when a core?s=
+ cache replaces a tracked cacheline with a new cacheline.",
++        "BriefDescription": "Counts snoop filter capacity evictions for en=
+tries tracking exclusive lines in the core's cache. Snoop filter capacity e=
+victions occur when the snoop filter is full and evicts an existing entry t=
+o track a new entry. Does not count clean evictions such as when a core's c=
+ache replaces a tracked cacheline with a new cacheline.",
+         "Counter": "0,1,2,3",
+         "EventCode": "0x3d",
+         "EventName": "UNC_CHA_SF_EVICTION.E_STATE",
+@@ -885,7 +885,7 @@
+         "Unit": "CHA"
+     },
+     {
+-        "BriefDescription": "Counts snoop filter capacity evictions for en=
+tries tracking modified lines in the cores? cache.? Snoop filter capacity e=
+victions occur when the snoop filter is full and evicts an existing entry t=
+o track a new entry.? Does not count clean evictions such as when a core?s =
+cache replaces a tracked cacheline with a new cacheline.",
++        "BriefDescription": "Counts snoop filter capacity evictions for en=
+tries tracking modified lines in the core's cache. Snoop filter capacity ev=
+ictions occur when the snoop filter is full and evicts an existing entry to=
+ track a new entry. Does not count clean evictions such as when a core's ca=
+che replaces a tracked cacheline with a new cacheline.",
+         "Counter": "0,1,2,3",
+         "EventCode": "0x3d",
+         "EventName": "UNC_CHA_SF_EVICTION.M_STATE",
+@@ -895,7 +895,7 @@
+         "Unit": "CHA"
+     },
+     {
+-        "BriefDescription": "Counts snoop filter capacity evictions for en=
+tries tracking shared lines in the cores? cache.? Snoop filter capacity evi=
+ctions occur when the snoop filter is full and evicts an existing entry to =
+track a new entry.? Does not count clean evictions such as when a core?s ca=
+che replaces a tracked cacheline with a new cacheline.",
++        "BriefDescription": "Counts snoop filter capacity evictions for en=
+tries tracking shared lines in the core's cache. Snoop filter capacity evic=
+tions occur when the snoop filter is full and evicts an existing entry to t=
+rack a new entry. Does not count clean evictions such as when a core's cach=
+e replaces a tracked cacheline with a new cacheline.",
+         "Counter": "0,1,2,3",
+         "EventCode": "0x3d",
+         "EventName": "UNC_CHA_SF_EVICTION.S_STATE",
+diff --git a/tools/perf/pmu-events/arch/x86/sierraforest/uncore-interconnec=
+t.json b/tools/perf/pmu-events/arch/x86/sierraforest/uncore-interconnect.js=
+on
+index 2ccbc8bca24e..952b6de3fefc 100644
+--- a/tools/perf/pmu-events/arch/x86/sierraforest/uncore-interconnect.json
++++ b/tools/perf/pmu-events/arch/x86/sierraforest/uncore-interconnect.json
+@@ -1562,21 +1562,56 @@
+         "Unit": "UPI"
+     },
+     {
+-        "BriefDescription": "Tx Flit Buffer Allocations : Number of alloca=
+tions into the UPI Tx Flit Buffer.  Generally, when data is transmitted acr=
+oss UPI, it will bypass the TxQ and pass directly to the link.  However, th=
+e TxQ will be used with L0p and when LLR occurs, increasing latency to tran=
+sfer out to the link.  This event can be used in conjunction with the Flit =
+Buffer Occupancy event in order to calculate the average flit buffer lifeti=
+me.",
+-        "Counter": "0,1,2,3",
+-        "EventCode": "0x40",
+-        "EventName": "UNC_UPI_TxL_INSERTS",
++        "BriefDescription": "Message Received : Doorbell",
++        "Counter": "0,1",
++        "EventCode": "0x42",
++        "EventName": "UNC_U_EVENT_MSG.DOORBELL_RCVD",
+         "Experimental": "1",
+         "PerPkg": "1",
+-        "Unit": "UPI"
++        "UMask": "0x8",
++        "Unit": "UBOX"
+     },
+     {
+-        "BriefDescription": "Tx Flit Buffer Occupancy : Accumulates the nu=
+mber of flits in the TxQ.  Generally, when data is transmitted across UPI, =
+it will bypass the TxQ and pass directly to the link.  However, the TxQ wil=
+l be used with L0p and when LLR occurs, increasing latency to transfer out =
+to the link. This can be used with the cycles not empty event to track aver=
+age occupancy, or the allocations event to track average lifetime in the Tx=
+Q.",
+-        "Counter": "0,1,2,3",
++        "BriefDescription": "Message Received : Interrupt",
++        "Counter": "0,1",
+         "EventCode": "0x42",
+-        "EventName": "UNC_UPI_TxL_OCCUPANCY",
++        "EventName": "UNC_U_EVENT_MSG.INT_PRIO",
+         "Experimental": "1",
+         "PerPkg": "1",
+-        "Unit": "UPI"
++        "PublicDescription": "Message Received : Interrupt : Interrupts",
++        "UMask": "0x10",
++        "Unit": "UBOX"
++    },
++    {
++        "BriefDescription": "Message Received : IPI",
++        "Counter": "0,1",
++        "EventCode": "0x42",
++        "EventName": "UNC_U_EVENT_MSG.IPI_RCVD",
++        "Experimental": "1",
++        "PerPkg": "1",
++        "PublicDescription": "Message Received : IPI : Inter Processor Int=
+errupts",
++        "UMask": "0x4",
++        "Unit": "UBOX"
++    },
++    {
++        "BriefDescription": "Message Received : MSI",
++        "Counter": "0,1",
++        "EventCode": "0x42",
++        "EventName": "UNC_U_EVENT_MSG.MSI_RCVD",
++        "PerPkg": "1",
++        "PublicDescription": "Message Received : MSI : Message Signaled In=
+terrupts - interrupts sent by devices (including PCIe via IOxAPIC) (Socket =
+Mode only)",
++        "UMask": "0x2",
++        "Unit": "UBOX"
++    },
++    {
++        "BriefDescription": "Message Received : VLW",
++        "Counter": "0,1",
++        "EventCode": "0x42",
++        "EventName": "UNC_U_EVENT_MSG.VLW_RCVD",
++        "Experimental": "1",
++        "PerPkg": "1",
++        "PublicDescription": "Message Received : VLW : Virtual Logical Wir=
+e (legacy) message were received from Uncore.",
++        "UMask": "0x1",
++        "Unit": "UBOX"
+     }
+ ]
+diff --git a/tools/perf/pmu-events/arch/x86/sierraforest/uncore-io.json b/t=
+ools/perf/pmu-events/arch/x86/sierraforest/uncore-io.json
+index 886b99a971be..f4f956966e16 100644
+--- a/tools/perf/pmu-events/arch/x86/sierraforest/uncore-io.json
++++ b/tools/perf/pmu-events/arch/x86/sierraforest/uncore-io.json
+@@ -1121,8 +1121,9 @@
+         "Unit": "IIO"
+     },
+     {
+-        "BriefDescription": "Occupancy of outbound request queue : To devi=
+ce : Counts number of outbound requests/completions IIO is currently proces=
+sing",
++        "BriefDescription": "This event is deprecated. [This event is alia=
+s to UNC_IIO_NUM_OUTSTANDING_REQ_FROM_CPU.TO_IO]",
+         "Counter": "2,3",
++        "Deprecated": "1",
+         "EventCode": "0xc5",
+         "EventName": "UNC_IIO_NUM_OUSTANDING_REQ_FROM_CPU.TO_IO",
+         "Experimental": "1",
+@@ -1132,6 +1133,18 @@
+         "UMask": "0x8",
+         "Unit": "IIO"
+     },
++    {
++        "BriefDescription": "Occupancy of outbound request queue : To devi=
+ce : Counts number of outbound requests/completions IIO is currently proces=
+sing [This event is alias to UNC_IIO_NUM_OUSTANDING_REQ_FROM_CPU.TO_IO]",
++        "Counter": "2,3",
++        "EventCode": "0xc5",
++        "EventName": "UNC_IIO_NUM_OUTSTANDING_REQ_FROM_CPU.TO_IO",
++        "Experimental": "1",
++        "FCMask": "0x07",
++        "PerPkg": "1",
++        "PortMask": "0x0FF",
++        "UMask": "0x8",
++        "Unit": "IIO"
++    },
+     {
+         "BriefDescription": "Passing data to be written",
+         "Counter": "0,1,2,3",
+@@ -1300,6 +1313,18 @@
          "UMask": "0x4",
          "Unit": "IIO"
      },
@@ -158,64 +611,15 @@ O) controller to the Ubox, useful for counting message signaled interrupts =
 +        "Counter": "0,1,2,3",
 +        "EventCode": "0x8e",
 +        "EventName": "UNC_IIO_NUM_REQ_OF_CPU_BY_TGT.UBOX_POSTED",
-+        "Experimental": "1",
 +        "FCMask": "0x01",
 +        "PerPkg": "1",
-+        "PortMask": "0x00FF",
++        "PortMask": "0x0FF",
++        "PublicDescription": "-",
 +        "UMask": "0x4",
 +        "Unit": "IIO"
 +    },
      {
-         "BriefDescription": "ITC address map 1",
-         "Counter": "0,1,2,3",
-diff --git a/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-memory.js=
-on b/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-memory.json
-index aa06088dd26f..68be01dad7c9 100644
---- a/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-memory.json
-+++ b/tools/perf/pmu-events/arch/x86/sapphirerapids/uncore-memory.json
-@@ -2145,6 +2145,16 @@
-         "UMask": "0x1",
-         "Unit": "MCHBM"
-     },
-+    {
-+        "BriefDescription": "ECC Correctable Errors",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x09",
-+        "EventName": "UNC_MCHBM_ECC_CORRECTABLE_ERRORS",
-+        "Experimental": "1",
-+        "PerPkg": "1",
-+        "PublicDescription": "ECC Correctable Errors.  Counts the number o=
-f ECC errors detected and corrected by the iMC on this channel.  This count=
-er is only useful with ECC devices.  This count will increment one time for=
- each correction regardless of the number of bits corrected.  The iMC can c=
-orrect up to 4 bit errors in independent channel mode and 8 bit errors in l=
-ockstep mode.",
-+        "Unit": "MCHBM"
-+    },
-     {
-         "BriefDescription": "HBM Precharge All Commands",
-         "Counter": "0,1,2,3",
-@@ -2759,6 +2769,16 @@
-         "UMask": "0x3",
-         "Unit": "iMC"
-     },
-+    {
-+        "BriefDescription": "ECC Correctable Errors",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x09",
-+        "EventName": "UNC_M_ECC_CORRECTABLE_ERRORS",
-+        "Experimental": "1",
-+        "PerPkg": "1",
-+        "PublicDescription": "ECC Correctable Errors : Counts the number o=
-f ECC errors detected and corrected by the iMC on this channel.  This count=
-er is only useful with ECC DRAM devices.  This count will increment one tim=
-e for each correction regardless of the number of bits corrected.  The iMC =
-can correct up to 4 bit errors in independent channel mode and 8 bit errors=
- in lockstep mode.",
-+        "Unit": "iMC"
-+    },
-     {
-         "BriefDescription": "IMC Clockticks at HCLK frequency",
+         "BriefDescription": "All 9 bits of Page Walk Tracker Occupancy",
          "Counter": "0,1,2,3",
 --=20
 2.50.0.rc1.591.g9c95f17f64-goog
