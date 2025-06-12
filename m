@@ -1,297 +1,560 @@
-Return-Path: <linux-kernel+bounces-683781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CC5AD720C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:33:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E385AD7213
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA3A1C24919
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F77C3B7319
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB4B2550A6;
-	Thu, 12 Jun 2025 13:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6AC248F5F;
+	Thu, 12 Jun 2025 13:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWiypeyi"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gHw83QO2";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dAwkj9AM"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F82242927;
-	Thu, 12 Jun 2025 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734738; cv=none; b=tQXAElJtrYAUXYdnqGArPJt29xEiojLZvYxXX2Ux7PjjswI+0zr29CP9IgBXiWKjAvn3dJF+e/BkJeHBxQtnyMfaEk0TEL3Jeqdss+ghyPY/U+BCYLQi6iaflV9BcvWrR8CfOApTaEYtIZTpqWlgc9FvKzjxWow8bhlyMdcsvtA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734738; c=relaxed/simple;
-	bh=x/LX/NF49fH82gw7hAYoUm3U1ut5qzEj5rfuDlwbzng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3HBPu+RqUodywqVqXJ31wLIObwZ73h/TH9EYyffPOWlKLexSeFolMVHrmw5KszJqNTxbI7Q836m5NeqCMQtlASJOOEgDCtHkd8dcm9zRM3V4M2tKgADk6GLcz99M+DuCLyrezc6eBnPT65D8Ey56l1sUtPnMB342Z8zYaOw2jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWiypeyi; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60727e46168so1744340a12.0;
-        Thu, 12 Jun 2025 06:25:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BCE2472BD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749734851; cv=fail; b=IMRD0e5BvSK43P3egwuSeDqDOP1c1DClrqfhCfEAHvVufFLEljSXhrb4wt6Kvfp+BRAr0k9hkR1vcN3kNRzlPi0zk0wdX4UlIos65cJvweIvm+jczuWXidg9v55554sLG5B2loeX0FZpaT/wT8fUrijHz0NrXZgO+GRT1xPrfos=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749734851; c=relaxed/simple;
+	bh=jf71yJHVH0z9d85nQdKFH8bYYH98p6H4pjpqFlvoYmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MQ/Nel3SmJ4ZtnEiD0mC+Jn2Q8P+EJtLxXgPiKtp2oPXzn3Agd51imkQ84ifDtAQkkrenCUmAc0R+I8VYrz+fnWHoSGsND7uNy+nb6oy5vU59UnUiWe/IgRmlwn6iJPXPMLGNC61sswBfdsgwycoIy6PFQEXiOxb45Tl9Za4vhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gHw83QO2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dAwkj9AM; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7fYSO005593;
+	Thu, 12 Jun 2025 13:27:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=ZA8QsffnIxB3UlKQP7w/HSEl5Ll65ku6iiwJNRn3e3Q=; b=
+	gHw83QO24TUV4+SLeT1RYibT/Swm7NOyKf9MipRkY5tj2auBx1/HNiLpSP+EcV+f
+	firbZArcGoprNW16ohSbPF0/r35QOnNp4xkru3W5ieJ85kFgVV9LO4cfPcwLP8SK
+	zSsaEKM297aSk27DKwOoXMVlQIo+hGjjU1fo1FwqevUON6miFsLfvrOvtXFzqTgJ
+	4+SGzGmdGlT4+easYn3GxTzOT/9rwVPsg1w1QB5w3dF5u/m9+emtXPlYsDnptInZ
+	Oc1M9GJqOR29Rz5QVqG7mUpi6aP8X/CfXn9bSnL/uNAJY81PPmZTY6vlBPopq7Z3
+	pQ6QHVev+KCbQncfDXRyHA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474d1v9qdh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Jun 2025 13:27:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55CBtf8m040802;
+	Thu, 12 Jun 2025 13:27:12 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bvck9k9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Jun 2025 13:27:12 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=doebLOH9Mv4VsA1qWI3PWqVytDzuCi3Fa3JnElGX2ZdMX9Qs+71J/gYR2jPWShaiYRBmcMK/1a8U7K9xw1e+4MWoqRakjrKEfrHguBYWwILnXoPiOMF21zflWn6mTJq0QJFeQ/uL3KSufd4FhPAblklr0dtwwwogcO/4HARCUu9jujyaEbRdRxenJFDNBItUCUufadApnEUdmkMLBU3XbX4Oizj8RJjF/k2AdWgszz9RAn8AFiqwVqfRONWo0AK6v8su+G+a6AzzhExd/+RKyB7+qOAZNL9l5cw2p0HnWWe8WBX7w+JkFjI1fk+VODb7lEtJvC7+ikFnQIrAfA1ckA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZA8QsffnIxB3UlKQP7w/HSEl5Ll65ku6iiwJNRn3e3Q=;
+ b=x3y1WfpX2gZ2k4pz56qeIFmdAaEuXuHeLDjHKZWhdt3sm02BTcpSvPB+dYSsJylChcvmHz+TjpxXZLRVN3LI61nupWf/jIZbiV4paBkfRXtQUG3fl7lwbudMZdGWnvFzwtV/DMIK2XPCIgY6zFFw3jFFE3oc2kTH7W4HXP5zBxMJqcDwixIxuds8MgFL997TP0oG21z+75HfDACvcRue74VlsJlALmNK5Rvb/7GGZIIpIOZ/gSlHhM7eyQa0wgbjvb8XK7i7jPCPkJiB8xS11gEphSxwW6cim8oZhOXF0yww35DJWDpvgpDhWMiewRxhdR+4tDZbedrn8ZO4gX0mvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749734735; x=1750339535; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kWQJ78NSqKK670VP4Vaoznw10u+sraccs8botEaierk=;
-        b=GWiypeyi2PbZmQS8haI3Uc2XJ34KqFG7WWEjQlxygn8mSiwlQtXYXF3QSl3aK7EZgY
-         36EveIbXGHavbs9AsTUQZotkFH+D3TqHNrXjnDgcodivfEM6ZzxiASAE+h6G7TfPLWnU
-         PqS1bMpijoAShhsGJwP8ws/YZpSVg9nJ5qVgUgCy/X6xPDVkpNegXSr2FPu46OheRfCE
-         opI3LS5lPwTbyzuuNz2buLJwOybneAsERyL+Oo7gHg1Osz7XtmNaOhXMQdqR5N+h3W4o
-         KSluUgpiU7LSaRm4JkfMvHWPCkdw4mIRXClQBdy7xblF9DOMuHr4Dg2xBFNLX6ZPu/Tf
-         iC0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749734735; x=1750339535;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kWQJ78NSqKK670VP4Vaoznw10u+sraccs8botEaierk=;
-        b=WkYDv3udKeMRbiRXeoGa94Uo5IwwyUq003tNjopJraLvfgAp1YmVGGaJT2UuO7VtJ8
-         ZfyKilDYBZEULs3L24Y2N1wWE19HSLLQUX2hwB5ddiP5EtL8uqwMu8cDCunB2rG+UT3F
-         Ebj8iCTF/LGhypSLokWlv7+mxAiIMtsYBFL8lSnynJQiny18rJgozgUHnj/79UAtYEMJ
-         5Lt94mk6fUYGxA61xsEMlu8xIrW7XMeg8SHgR/4UkXdSAQbXccv6EeQ2pn4cK5mrvH1O
-         sVq1pMHwlIiFw8oqFoBcxLwIvC2oEv6K8Q7VSMVRYuXG/YTl3r6yCZWNcQ0vkaP5ayIU
-         qETw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPoTttE/c8HgY4VKUH8NZx6s8zLOOYMHKlmzkJFKZiSMy2DtQ3ueF/JGVaKrSA0p9x4c1pPuRcUJM59aco@vger.kernel.org, AJvYcCVEf+0CGUMCczzRZOB5bZAbGP8Xb75o6rnQEgB2bwH7by9Ej467F+z53NTfRNK2XjF7m5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOs8Omvuctw9lFV5ZOsVPH8FJvbUsXIp0OqZe9LvsMmfulJjkj
-	gzaMdTbbKWa0apnZZeiZuoUYb64fVyJ3q401q8htO7QxHtp8D3O/faLz
-X-Gm-Gg: ASbGncsunKhxv6aEgZ2xtcMKKqV0t3PQYFh4vXlkRlvNs4RWfWlmtkw4rGFlSmxDDUw
-	bg2j+v9QAaZ15QNXOyYLP+Ui9B5//jIXnI7l2Vwrui1z7+K0Qlny2t4cwKbjSwSh9c7oCuV1KTX
-	VDBqysPkchSNqkyr5gHSNH3SkJtl/mW6BUsC9w5g6zUTl2z3fG0vm0U+IQfYrg74Lkf18D9ft80
-	ZRhVO0N+Zhw0FRkmFbKquGSHKy7FoL2qbT069UhllSbMUKQl7/QftBw4zAxiaaWrtt+KHumyNxm
-	NlUTXI5jmsGCR8B6zfzSbXJ7l1bEDa3TO00rLQIr3EqjlAK/5hqM1gS2gS0lOsQq40JOc1kCwrH
-	Tb8KvUAOuKScE2m/CYw==
-X-Google-Smtp-Source: AGHT+IFZxvwRQiBgTxSNHZLFGXnyUwZuR+Pl8ThdMj5kISrDwLpDREt72ApHyIV8rpIEcy5wIbNuRw==
-X-Received: by 2002:a05:6402:5113:b0:607:323e:8071 with SMTP id 4fb4d7f45d1cf-6086389b344mr3524281a12.14.1749734734468;
-        Thu, 12 Jun 2025 06:25:34 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:be2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6086b22ab35sm1183704a12.60.2025.06.12.06.25.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 06:25:33 -0700 (PDT)
-Message-ID: <8aa7b962-40a6-4bbc-8646-86dd7ce3380e@gmail.com>
-Date: Thu, 12 Jun 2025 14:26:58 +0100
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZA8QsffnIxB3UlKQP7w/HSEl5Ll65ku6iiwJNRn3e3Q=;
+ b=dAwkj9AML8K6SqYGBxAya+R+3N08Zp0iZHJwhuGNFoFdQt4pNjsNpQd7D2tHo7yk6z5t+58VPbNs29jzEQESaglFA6/Q17+2vM9e5REl45olTU/yu44ca2QT4r2jWiDpk04wQGwWDBOUVu1fb8MlJvynz5sBYRgLxWOLbbR2kIw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by MN6PR10MB8072.namprd10.prod.outlook.com (2603:10b6:208:4ff::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Thu, 12 Jun
+ 2025 13:27:10 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8813.024; Thu, 12 Jun 2025
+ 13:27:10 +0000
+Date: Thu, 12 Jun 2025 14:27:06 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+        hughd@google.com, Liam.Howlett@oracle.com, npache@redhat.com,
+        ryan.roberts@arm.com, dev.jain@arm.com, ziy@nvidia.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+Message-ID: <ce58b08c-0ac1-4ec2-8ff6-cf8e651709b0@lucifer.local>
+References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
+ <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
+ <1ec368c4-c4d8-41ea-b8a3-7d1fdb3ec358@redhat.com>
+ <2ff65f37-efa9-4e96-9cdf-534d63ff154e@linux.alibaba.com>
+ <953596b2-8749-493d-97eb-a5d8995d9ef8@redhat.com>
+ <97a67b74-d473-455e-a05e-c85fe45da008@linux.alibaba.com>
+ <b8fe659e-8a84-4328-b6d6-6116c616cb3d@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b8fe659e-8a84-4328-b6d6-6116c616cb3d@redhat.com>
+X-ClientProxiedBy: LO4P265CA0175.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:312::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 5/5] io_uring/bpf: add basic kfunc helpers
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: io-uring@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <cover.1749214572.git.asml.silence@gmail.com>
- <c4de7ed6e165f54e2166e84bc88632887d87cfdf.1749214572.git.asml.silence@gmail.com>
- <CAADnVQJgxnQEL+rtVkp7TB_qQ1JKHiXe=p48tB_-N6F+oaDLyQ@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAADnVQJgxnQEL+rtVkp7TB_qQ1JKHiXe=p48tB_-N6F+oaDLyQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|MN6PR10MB8072:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b8275a3-f64e-4ea9-88b8-08dda9b4d585
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MzZWOTJiWGgzZG1WTDFYdytLUUNrVUhtQitVRkJQelNBTjZmc3ROU0JNK1Vv?=
+ =?utf-8?B?WXRFOW5lSkc0TVdaNWhPekt3NFBpdVgybHVZUjVCcGpQRlR2a3hxSVh4WXZI?=
+ =?utf-8?B?THdmbkdhYkVnTWxrUTFxTkpYK25QMFoxcnU2R3QzOHRZTG1CT3ZNZWlMcnNO?=
+ =?utf-8?B?VjVzNE1JZjJ4SE9Nd1dEZG02VG95ZUxaTW5yc3Q5R0EyaXFrbWp2ZUpqc040?=
+ =?utf-8?B?WFA4VVkvcEZYbEJXdVgzVDZUOGoweGVVbElrV1JUbldzL0RWdjQzZWtoOGdt?=
+ =?utf-8?B?N3c5QWFXVWx3R1BrUGpkNmkxY00rUmpQcFVlWGE0S1BuWHdja21vZ1dreGVK?=
+ =?utf-8?B?YUJiVTk0MHBkbnZLenBLVWFZUjQzb0R4S05kVnM2SjdyUEVrSUJ0aFhLUkpC?=
+ =?utf-8?B?Qm4venJiQmkxKzVOQ2pVVU44bldSQXlacnJ5T3JqelNOTmQ2WkVFaGt5TFU5?=
+ =?utf-8?B?UVozbkcwMU8rU0FLTkVBbXJlQmwzVHRVbjVQVFdhaEVDTS9pUy9kbC9yYmVu?=
+ =?utf-8?B?aUlLc0VXMlI3Y1hnVDE5K1E2MEtDenZqVmhFZHpRRXR2UzFoMG9rNnoraGpw?=
+ =?utf-8?B?T21QY0pEYTFHdE8zMlFoSFAyNStIV0JmTmYwb0tmNHpRNFlqZmdDYWZ3VHlE?=
+ =?utf-8?B?dGpuUnZkMW5WakVhNlU4VVVRWTl3VEtqWUhtK053NjZ1a0V5NEdWckpyR1Fv?=
+ =?utf-8?B?MzJVSkFldUZlV1hwYUtVbkxNcEhRcDd2czN2ejc5TWUxUkIyeEFVcEVKY0VB?=
+ =?utf-8?B?b1QreUlXUkd5OU9RRFhlTG1YOTRnSmJyMlhwd3R3VlRrVFB0TTBSSWdBb3lJ?=
+ =?utf-8?B?SCtwODV6d04wNnhPY2IzODY4anRjQ3V1SDF1TWhjblAzYnQvWCt5Sm9BZ2o3?=
+ =?utf-8?B?QnhxTjgrTEtHdzJ6RTRhRlpwWmZheWE2VWgzL1VERmVzZE5KODAzRElqYldu?=
+ =?utf-8?B?TDJzcDVLRVNxYUtnQzlDYjhyVXZ3YzdjT085YWQreGt1Z29abnQ1SDdzNHJs?=
+ =?utf-8?B?MWRpWWVDYmdJNVJOMjZZUDZwM21JVWJrQ0dBTUhQd0dXL0dTbUxqQ1dmRGNH?=
+ =?utf-8?B?MHJEUHZjUjIzTFRnallhVHhtYkpscitnWWVnSzk5b1lZcU9GMTlHamxxUjRz?=
+ =?utf-8?B?MjRPeFphcStLS2RkcllCZU0yaTQ4YmRYMzJDUklhV2haS3FnY015bExhOGhv?=
+ =?utf-8?B?aVl0b0haY29oNjA2ZjJrTkVoTjJlMmdHKzN3K1NsQW9oYVQ0dDl1QzdaY25W?=
+ =?utf-8?B?VkMrYjRoY2EySElLZU52Z0tMYmZLTDBXUi9leGtHUmh5dmh4bm45ZnJPdXBt?=
+ =?utf-8?B?VUtub0FrL0dwNko3UG80RXJ1MWJpVE5QNUZ3OVhXOEQ2Mm4ybU1EU1loS1Jk?=
+ =?utf-8?B?WlExQnZ2a1FCRkFvUURLTVZOZ3hqVjhJMjB5NHdZTmNiYkhDUEJDRm5XVDN0?=
+ =?utf-8?B?MjlMSzVGa0dvYlNKZTBwdGszTVR4OEJZUXFaN2hmNUVURHFNQ2Zya05mcStz?=
+ =?utf-8?B?eCtEWE84RUhtY1hQVmtZYWNISWcxdkM1SHg4OVRaUnpNOFJQdDVHQjJjWFJI?=
+ =?utf-8?B?TmJCdkl0UHdiTkZoaTI2OTFtb0JUZzZCanovcytvSnB5OEhsclhCM1YybXhL?=
+ =?utf-8?B?RkZ1c0hPWHRCOGpZYXlUdUtKcTg1c0xrVktrWjllSUk4SkQ1WVhjeXJaWmF0?=
+ =?utf-8?B?VUMwaGNqZXRwMXNWMm9QSzdKaXJUREl3eEZKMnA4dnIrejhWSlN5VjFuN0tZ?=
+ =?utf-8?B?ZGRBU1Z0d2JNUW91QkF5RkNlKzF6Uk1OQlg1cnRlNXdNa3dtVXRyMllrZThB?=
+ =?utf-8?B?cEpyQ3p2OFJ0Uy9uU2NDUit4aEpjMmZKN1NSeTVHSmNTekNzVkFRUXJPbWdR?=
+ =?utf-8?B?cXVGWVk4UFFmZ1k2eTZ1a3krbWNaeVRwM3Z0ekRtZk04ZldlcmNVZHVrSm82?=
+ =?utf-8?Q?ccCBI9QS3sE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YVpDRjhqZ3lCNVJGbmVhY2c1SDlVS0hHMGY0WFphcnRaY2J5VmNReE1BQ0p0?=
+ =?utf-8?B?MmFmSDI3TldCaldvSTJOd0VyeGdmYUpmbmx5cEVDNEtaa0I5VVZKL3dTQXU5?=
+ =?utf-8?B?UzNlWHhPSUtVZnR6TDRDQTRVUmhKbHRtTlFwMjRvdUFhbnRjT3ZuNUc1WjQw?=
+ =?utf-8?B?dnZhQzljNUlmTGd2U3ZtdGpXLys5dGVLY2FhcWpXdVh6VFJTYkR3UWdhUDJt?=
+ =?utf-8?B?Nm05TysrSHVackpGd2plODFuZGV1ZmRKVU1laUxIQTBQVE5LQk90SWpoY0kx?=
+ =?utf-8?B?dnBUby9GRkJsTTMyMGpnMm9ESjU5aTB1cjV3WVNWemsxVTJXdE1vUjJwcG1K?=
+ =?utf-8?B?aGRhQUcyWDNjK3pvd09GU3ozdHNDYUVtUkRKVFZ5Nngvd1lIZzZoQ3JPMTVl?=
+ =?utf-8?B?azBGTkNQYmh4U2JXdFU0V3l0SzNleUw5anNXN3N2ZW1jUlNiU3pieTBzSzBP?=
+ =?utf-8?B?ay9pL25FQ3NrcVFNNU5PRWNiS1BzRUVhdXRsRnNXSHJnaGNJRk9aMWpkVlpt?=
+ =?utf-8?B?NDRMRVNBMk94MmJFTTM5UWNXZnBFTG1OOUNuYzRiTjQwR05TZ2RxZTFYWlpV?=
+ =?utf-8?B?V3BmeVFpemNrUHBMOHNneHV2bWtqSTNiTTBWK2prRUVoVkd5bTRUZ09RSWJ4?=
+ =?utf-8?B?aHFKWkRoVEtJUDlsOWFzVWJrTU51L3QxRVBSYVJBWS9SR2lIUjByUysyOXFu?=
+ =?utf-8?B?aG8vNkFlSzM4cFM2dGx2b0RLbjBIOE42a0FBK0V2TW9aOGdKTXo1TTcyM2J2?=
+ =?utf-8?B?aU1hd3M3a1ZPTU5KVllEY2wwb1NvcmM2aVJsdC9hdWZVODRPUzNOc1lKNHFu?=
+ =?utf-8?B?R2p4dGpuL25CZkp2bDN5UnduV21PMGJPZjZaaDF0b2RaVFRtMGN4U1ZEbnFI?=
+ =?utf-8?B?Z2JGRnJlZ3l2ckhLWEVUc0dTcVhVd3lhcE0xc2NWVFJLVnhFNk9MbCtYSSs5?=
+ =?utf-8?B?bE4rMnpLaHJ6TFdhaTYxdkdWRlN4ZDhsa2NOWmZ2eXlHNVRBSFFHWHFRc2Iw?=
+ =?utf-8?B?MUI4eHVXRFo1K3Q0QVpPWFdhZGROMml3VzJ6SVdyTmhPWmExMzQ3UlZsQzVP?=
+ =?utf-8?B?c0pzQ2J4dHRYQnJLTjJBUklMYWpCTFpVQUw2RG1ESGs5eE9XRkozSTVscmFr?=
+ =?utf-8?B?OHdEVFB6RktFSkFTL2JFc0d2MnBxRWVjbUJLKzE2NmgxaS9YdjRZZmR2czRT?=
+ =?utf-8?B?a0RaRUJqbDlIcG1NbDBaMVNmbUM3TzB5UmlNUEZZK3JKVGJhZXZQRm5UZGQ2?=
+ =?utf-8?B?bWQ3K1o0Zi80SW9aRlV4VnhnVUZiQU5VRHlpT01PTVAvS0Y1RGFWeGpsT0dD?=
+ =?utf-8?B?RVgxL1lVK0JXUGtpUDdlRHpKeEthclJRK2ZCVjBCaHJoZ0QxNDhsdmNrK1dE?=
+ =?utf-8?B?a21yS0crWE52ZFpyQmdLb3hHbFhPNlVtTkhQSmVhSVNLWUVucGV2ZkVwbm1C?=
+ =?utf-8?B?ZUpWaEJpSlF4WFllZEhNUXlNdWhsaEd1R1dmdzMwclB2SmVUVHd3QkVJSFls?=
+ =?utf-8?B?S3YwNnRmN2ltRGZQbFhncWhPSUhpOEVkV2pvRE1IbXRqTWNJTk9hL3RzWDZN?=
+ =?utf-8?B?ZmdDZTFWbWlHVkZSdWx1ZzhVNTgrTlJaa0hCUUdMeHZIM0ZSS3Z3T1crbE9x?=
+ =?utf-8?B?eVJEYU83cm9BMjdVQkRQK2J4SEcyU29mWWFHL0hQZ2ltRWNxL2NtYXMwUzlQ?=
+ =?utf-8?B?TFQ2UnZCTGF2bGV0K2xURkhDVHI4MUQ2NktmbXZINmpNQXJlRUZrTzNqZXha?=
+ =?utf-8?B?RDhOZnBicWMrTXhYSHN4d1NVMlBsVzVGQ0lwK0tCZlEzK3dxOFlBWndQNjJB?=
+ =?utf-8?B?dXZlcWxndlA2UVNIQk1KeUJEMm0xT3VxaklYWkw2MXIwREJmTUx0NDdQVy9k?=
+ =?utf-8?B?NmU4Mml1MlVST2c4YkVuQ0VrTnhpV2luNFpsRWVnMUlibk9PWDI2L25LeGpC?=
+ =?utf-8?B?Tm1TODc5eWRZdkIxQ3ZybHJWdVNxZnBFUFlYbFJVckV4ZFVvZnQwTk5NUnNi?=
+ =?utf-8?B?bTlkZ1NNb2xaOFQ1dU0yQUdDeTRKRlcwR1o1ZWl1dzFGWDFFQVdINFM0cGxO?=
+ =?utf-8?B?Zk5sbXkwOVAvdjk2VXdVaU1LRzdrR3I3ZFJKbFptalZ4UDhqUGJXa3NjTjJp?=
+ =?utf-8?B?ZGtmWHVDdDR6Nk82bEtEQldaOVlMR0NzNTJ5QnJjMktUdFZjZ0xOMVJvME5R?=
+ =?utf-8?B?TGc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	SD1bT789o5b/Bz7pwy5/j9ja/o6U58sjhGk1u5D/Z7DY89nMjShILs/OevtcBYF1PcQAQ7qQMmNqAMShLIx652bbSMXKnitxiDlRQu7cjj46DrKdJz4ZP/qK3i4M8MdCc6l4QtI0lvf7J+i8MPa0Ar9jA9MD79TVqNpVxvovTAR+uKD6Ba433Oq8TpqY/RlgyGX9GOAaO5oigzAW4GVLPnAH+azH/GvE6bXpocx73puzMjft94QCflAtgaemGgV14YY8O+TGvhkWXc4spfUcguCd0uxkhXndX6UOm94UnDjkb/9Y0p+4IqH5OVIUjYVtah39QeIoHA3QhS+gn+FYVvYvO7NSv2yqtQYHg5oI5hIG1FQCCKmJ7Y6Ybr4j/BuhXAVMGQRhJTaCVlgKB5TsyqvVkUbmWV8YnSR3h1a36lltSGP2aJXDlu7380lnS+jefKkWfo9TqvyXLf0dMWX1Fr68VPGTP7arHwzw5erTBDZBKVESV3+ROWM8FC/GAE1sIL6g7jeOOS2rpdEH6VFn5MLewY3NGSWcEI/QaXEwHjM/DiL4MWBKXbDnWM1EtBLZA/bqg9ZkHBkXDGIvkLkvVwx2bRu67E6P5+Ua8DDjDoo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b8275a3-f64e-4ea9-88b8-08dda9b4d585
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 13:27:09.9992
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h6L8ynIL8CnwDXPgO3pMNfnJke7NqUvaASwPjOiFuFVj+eV/mGmv1HipHMX+N4V82yiBOJkqoaRSnFBb01jndy9aPssTp7L/9XHlxwASWtA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB8072
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_08,2025-06-12_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506120103
+X-Proofpoint-GUID: UGKNTSLCg6FtdoeNYJsIx-Zikd1VbZO_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEwMyBTYWx0ZWRfX2xO3R4EmpJCf BKK85OdYtZZPZWqmuMTy/pQq5sNsXQ3Yx9OS/bf7BnLHA5gvWmqrckAoLvHoWeI+gJrU035RMUw 05TAnItB970J12r8ympMPkLsrvpsNlXOfk6w8FC2rcIabjr60FrowDKNwUoKSZteoMut4TGRl9D
+ Bjjbae66PbAQPpiWoh8YmpozZ2AvQIR6HQfMlku5XEArF2efqaju7bV1ypnYvYWG5cA1KbwGxMh kINaz0/OE8eTskpOnxqM6r9sYMSXd3NIZltn8m/0RkHbdyqQD+xi1P0/xEQCkBUCp47mH7/LKTR q0P0aTDjzNNibAmdKKoX1jA5D9InKeGLam0MNSWrfWzPErkvVDFXa+WLjk5jiL4MsftZQE756xm
+ 1TYBE/xCSZQrMdLRuY947ldF5jGD7PlrwQiK5Qvjv4AflGLl5QYaxu5f8WjdOhtvh/LcSnL7
+X-Proofpoint-ORIG-GUID: UGKNTSLCg6FtdoeNYJsIx-Zikd1VbZO_
+X-Authority-Analysis: v=2.4 cv=d731yQjE c=1 sm=1 tr=0 ts=684ad5b1 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=SRrdq9N9AAAA:8 a=RGdv4hGqK0ukZ42cFDIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
 
-On 6/12/25 03:47, Alexei Starovoitov wrote:
-> On Fri, Jun 6, 2025 at 6:58 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-...>> +__bpf_kfunc
->> +struct io_uring_cqe *bpf_io_uring_extract_next_cqe(struct io_ring_ctx *ctx)
->> +{
->> +       struct io_rings *rings = ctx->rings;
->> +       unsigned int mask = ctx->cq_entries - 1;
->> +       unsigned head = rings->cq.head;
->> +       struct io_uring_cqe *cqe;
->> +
->> +       /* TODO CQE32 */
->> +       if (head == rings->cq.tail)
->> +               return NULL;
->> +
->> +       cqe = &rings->cqes[head & mask];
->> +       rings->cq.head++;
->> +       return cqe;
->> +}
->> +
->> +__bpf_kfunc_end_defs();
->> +
->> +BTF_KFUNCS_START(io_uring_kfunc_set)
->> +BTF_ID_FLAGS(func, bpf_io_uring_submit_sqes, KF_SLEEPABLE);
->> +BTF_ID_FLAGS(func, bpf_io_uring_post_cqe, KF_SLEEPABLE);
->> +BTF_ID_FLAGS(func, bpf_io_uring_queue_sqe, KF_SLEEPABLE);
->> +BTF_ID_FLAGS(func, bpf_io_uring_get_cqe, 0);
->> +BTF_ID_FLAGS(func, bpf_io_uring_extract_next_cqe, KF_RET_NULL);
->> +BTF_KFUNCS_END(io_uring_kfunc_set)
-> 
-> This is not safe in general.
-> The verifier doesn't enforce argument safety here.
-> As a minimum you need to add KF_TRUSTED_ARGS flag to all kfunc.
-> And once you do that you'll see that the verifier
-> doesn't recognize the cqe returned from bpf_io_uring_get_cqe*()
-> as trusted.
+On Thu, Jun 12, 2025 at 03:05:22PM +0200, David Hildenbrand wrote:
+> On 12.06.25 14:45, Baolin Wang wrote:
+> >
+> >
+> > On 2025/6/12 16:51, David Hildenbrand wrote:
+> > > On 12.06.25 09:51, Baolin Wang wrote:
+> > > >
+> > > >
+> > > > On 2025/6/11 20:34, David Hildenbrand wrote:
+> > > > > On 05.06.25 10:00, Baolin Wang wrote:
+> > > > > > The MADV_COLLAPSE will ignore the system-wide Anon THP sysfs settings,
+> > > > > > which
+> > > > > > means that even though we have disabled the Anon THP configuration,
+> > > > > > MADV_COLLAPSE
+> > > > > > will still attempt to collapse into a Anon THP. This violates the rule
+> > > > > > we have
+> > > > > > agreed upon: never means never.
+> > > > > >
+> > > > > > Another rule for madvise, referring to David's suggestion: “allowing
+> > > > > > for collapsing
+> > > > > > in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+> > > > > >
+> > > > > > To address this issue, should check whether the Anon THP configuration
+> > > > > > is disabled
+> > > > > > in thp_vma_allowable_orders(), even when the TVA_ENFORCE_SYSFS flag is
+> > > > > > set.
+> > > > > >
+> > > > > > In summary, the current strategy is:
+> > > > > >
+> > > > > > 1. If always & orders == 0, and madvise & orders == 0, and
+> > > > > > hugepage_global_enabled() == false
+> > > > > > (global THP settings are not enabled), it means mTHP of that orders
+> > > > > > are prohibited
+> > > > > > from being used, then madvise_collapse() is forbidden for that orders.
+> > > > > >
+> > > > > > 2. If always & orders == 0, and madvise & orders == 0, and
+> > > > > > hugepage_global_enabled() == true
+> > > > > > (global THP settings are enabled), and inherit & orders == 0, it means
+> > > > > > mTHP of that
+> > > > > > orders are still prohibited from being used, thus madvise_collapse()
+> > > > > > is not allowed
+> > > > > > for that orders.
+> > > > > >
+> > > > > > Reviewed-by: Zi Yan <ziy@nvidia.com>
+> > > > > > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > > > > > ---
+> > > > > >     include/linux/huge_mm.h | 23 +++++++++++++++++++----
+> > > > > >     1 file changed, 19 insertions(+), 4 deletions(-)
+> > > > > >
+> > > > > > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > > > > > index 2f190c90192d..199ddc9f04a1 100644
+> > > > > > --- a/include/linux/huge_mm.h
+> > > > > > +++ b/include/linux/huge_mm.h
+> > > > > > @@ -287,20 +287,35 @@ unsigned long thp_vma_allowable_orders(struct
+> > > > > > vm_area_struct *vma,
+> > > > > >                            unsigned long orders)
+> > > > > >     {
+> > > > > >         /* Optimization to check if required orders are enabled
+> > > > > > early. */
+> > > > > > -    if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
+> > > > > > -        unsigned long mask = READ_ONCE(huge_anon_orders_always);
+> > > > > > +    if (vma_is_anonymous(vma)) {
+> > > > > > +        unsigned long always = READ_ONCE(huge_anon_orders_always);
+> > > > > > +        unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+> > > > > > +        unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
+> > > > > > +        unsigned long mask = always | madvise;
+> > > > > > +
+> > > > > > +        /*
+> > > > > > +         * If the system-wide THP/mTHP sysfs settings are disabled,
+> > > > > > +         * then we should never allow hugepages.
+> > > > >    > +         */> +        if (!(mask & orders) &&
+> > > > > !(hugepage_global_enabled() && (inherit & orders)))
+> > > > > > +            return 0;
+> > > > >
+> > > > > I'm still trying to digest that. Isn't there a way for us to work with
+> > > > > the orders,
+> > > > > essentially masking off all orders that are forbidden globally. Similar
+> > > > > to below, if !orders, then return 0?
+> > > > > /* Orders disabled directly. */
+> > > > > orders &= ~TODO;
+> > > > > /* Orders disabled by inheriting from the global toggle. */
+> > > > > if (!hugepage_global_enabled())
+> > > > >        orders &= ~READ_ONCE(huge_anon_orders_inherit);
+> > > > >
+> > > > > TODO is probably a -1ULL and then clearing always/madvise/inherit. Could
+> > > > > add a simple helper for that
+> > > > >
+> > > > > huge_anon_orders_never
+> > > >
+> > > > I followed Lorenzo's suggestion to simplify the logic. Does that look
+> > > > more readable?
+> > > >
+> > > > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > > > index 2f190c90192d..3087ac7631e0 100644
+> > > > --- a/include/linux/huge_mm.h
+> > > > +++ b/include/linux/huge_mm.h
+> > > > @@ -265,6 +265,43 @@ unsigned long __thp_vma_allowable_orders(struct
+> > > > vm_area_struct *vma,
+> > > >                                             unsigned long tva_flags,
+> > > >                                             unsigned long orders);
+> > > >
+> > > > +/* Strictly mask requested anonymous orders according to sysfs
+> > > > settings. */
+> > > > +static inline unsigned long __thp_mask_anon_orders(unsigned long
+> > > > vm_flags,
+> > > > +                               unsigned long tva_flags, unsigned long
+> > > > orders)
+> > > > +{
+> > > > +       unsigned long always = READ_ONCE(huge_anon_orders_always);
+> > > > +       unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+> > > > +       unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
+> > > > +       bool inherit_enabled = hugepage_global_enabled();
+> > > > +       bool has_madvise =  vm_flags & VM_HUGEPAGE;
+> > > > +       unsigned long mask = always | madvise;
+> > > > +
+> > > > +       mask = always | madvise;
+> > > > +       if (inherit_enabled)
+> > > > +               mask |= inherit;
+> > > > +
+> > > > +       /* All set to/inherit NEVER - never means never globally,
+> > > > abort. */
+> > > > +       if (!(mask & orders))
+> > > > +               return 0;
+> > >
+> > > Still confusing. I am not sure if we would properly catch when someone
+> > > specifies e.g., 2M and 1M, while we only have 2M disabled.
+> >
+> > IIUC, Yes. In your case, we will only allow order 8 (1M mTHP).
+> >
+> > > I would rewrite the function to only ever substract from "orders".
+> > >
+> > > ...
+> > >
+> > > /* Disallow orders that are set to NEVER directly ... */
+> > > order &= (always | madvise | inherit);
+> > >
+> > > /* ... or through inheritance. */
+> > > if (inherit_enabled)
+> > >       orders &= ~inherit;
+> >
+> > Sorry, I didn't get you here.
+> >
+> > If orders = THP_ORDERS_ALL_ANON, inherit = 0x200 (order 9), always and
+> > madvise are 0, and inherit_enabled = true. Then orders will be 0 with
+> > your logic. But we should allow order 9, right?
+>
+> Yeah, all confusing, because the temporary variables don't help.
+>
+> if (!inherit_enabled)
+>
+> or simply
+>
+> if (!hugepage_global_enabled();)
+>
+> Let me try again below.
+>
+> >
+> > >
+> > > /*
+> > >    * Otherwise, we only enforce sysfs settings if asked. In addition,
+> > >    * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
+> > >    * is not set, we don't bother checking whether the VMA has VM_HUGEPAGE
+> > >    * set.
+> > >    */
+> > > if (!orders || !(tva_flags & TVA_ENFORCE_SYSFS))
+> > >       return orders;
+> > >
+> > > > +
+> > > > +       /*
+> > > > +        * Otherwise, we only enforce sysfs settings if asked. In
+> > > > addition,
+> > > > +        * if the user sets a sysfs mode of madvise and if
+> > > > TVA_ENFORCE_SYSFS
+> > > > +        * is not set, we don't bother checking whether the VMA has
+> > > > VM_HUGEPAGE
+> > > > +        * set.
+> > > > +        */
+> > > > +       if (!(tva_flags & TVA_ENFORCE_SYSFS))
+> > > > +               return orders;
+> > > > +
+> > > > +       mask = always;
+> > > > +       if (has_madvise)
+> > > > +               mask |= madvise;
+> > > > +       if (hugepage_global_always() || (has_madvise && inherit_enabled))
+> > > > +               mask |= inherit;
+> > >
+> > > Similarly, this can maybe become (not 100% sure if I got it right, the
+> > > condition above is confusing)
+> >
+> > IMO, this is the original logic.
+>
+> Yeah, and it's absolutely confusing stuff.
+>
+> Let me try again by only clearing flags. Maybe this would be clearer?
+> (and correct? still confused why the latter part is so complicated in existing
+> code)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 8b8f353cc7b81..66fdfe06e4996 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -265,6 +265,42 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>                                          unsigned long tva_flags,
+>                                          unsigned long orders);
+> +/* Strictly mask requested anonymous orders according to sysfs settings. */
+> +static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
+> +       unsigned long tva_flags, unsigned long orders)
+> +{
+> +       const unsigned long always = READ_ONCE(huge_anon_orders_always);
+> +       const unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+> +       const unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
+> +       const unsigned long never = ~(always | madvise | inherit);
+> +
+> +       /* Disallow orders that are set to NEVER directly ... */
+> +       orders &= ~never;
+> +
+> +       /* ... or through inheritance (global == NEVER). */
+> +       if (!hugepage_global_enabled())
+> +               orders &= ~inherit;
+> +
+> +       /*
+> +        * Otherwise, we only enforce sysfs settings if asked. In addition,
+> +        * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
+> +        * is not set, we don't bother checking whether the VMA has VM_HUGEPAGE
+> +        * set.
+> +        */
+> +       if (!(tva_flags & TVA_ENFORCE_SYSFS))
+> +               return orders;
 
-Thanks, will add it. If I read it right, without the flag the
-program can, for example, create a struct io_ring_ctx on stack,
-fill it with nonsense and pass to kfuncs. Is that right?
+This implicitly does a & mask as per suggested previous version, which I think
+is correct but worth pointing out.
 
-> Looking at your example:
-> https://github.com/axboe/liburing/commit/706237127f03e15b4cc9c7c31c16d34dbff37cdc
-> it doesn't care about contents of cqe and doesn't pass it further.
-> So sort-of ok-ish right now,
-> but if you need to pass cqe to another kfunc
-> you would need to add an open coded iterator for cqe-s
-> with appropriate KF_ITER* flags
-> or maybe add acquire/release semantics for cqe.
-> Like, get_cqe will be KF_ACQUIRE, and you'd need
-> matching KF_RELEASE kfunc,
-> so that 'cqe' is not lost.
-> Then 'cqe' will be trusted and you can pass it as actual 'cqe'
-> into another kfunc.
-> Without KF_ACQUIRE the verifier sees that get_cqe*() kfuncs
-> return 'struct io_uring_cqe *' and it's ok for tracing
-> or passing into kfuncs like bpf_io_uring_queue_sqe()
-> that don't care about a particular type,
-> but not ok for full tracking of objects.
+> +
+> +       if (!(vm_flags & VM_HUGEPAGE)) {
 
-I don't need type safety for SQEs / CQEs, they're supposed to be simple
-memory blobs containing userspace data only. SQ / CQ are shared with
-userspace, and the kfuncs can leak the content of passed CQE / SQE to
-userspace. But I'd like to find a way to reject programs stashing
-kernel pointers / data into them.
+Don't love this sort of mega negation here. I read this as _does_ have huge
+page...
 
-BPF_PROG(name, struct io_ring_ctx *io_ring)
+> +               /* Disallow orders that are set to MADVISE directly ... */
+> +               orders &= ~madvise;
+> +
+> +               /* ... or through inheritance (global == MADVISE). */
+> +               if (!hugepage_global_always())
+> +                       orders &= ~inherit;
+
+I hate this implicit 'not hugepage global always so this means either never or
+madvise and since we cleared orders for never this means madvise' mental
+gymnastics required here.
+
+Yeah I feel this is a bridge too far, we're getting into double negation and I
+think that's more confusiong.
+
+
+> +       }
+
+I propose a compromise as I rather like your 'exclude never' negation bit.
+
+So:
+
+/* Strictly mask requested anonymous orders according to sysfs settings. */
+static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
+                unsigned long tva_flags, unsigned long orders)
 {
-     struct io_uring_sqe *cqe = ...;
-     cqe->user_data = io_ring;
-     cqe->res = io_ring->private_field;
+        const unsigned long always = READ_ONCE(huge_anon_orders_always);
+        const unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+        const unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);;
+	const unsigned long never = ~(always | madvise | inherit);
+        const bool inherit_enabled = hugepage_global_enabled();
+
+	/* Disallow orders that are set to NEVER directly ... */
+	orders &= ~never;
+
+	/* ... or through inheritance (global == NEVER). */
+	if (!inherit_enabled)
+		orders &= ~inherit;
+
+	/*
+	 * Otherwise, we only enforce sysfs settings if asked. In addition,
+	 * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
+	 * is not set, we don't bother checking whether the VMA has VM_HUGEPAGE
+	 * set.
+	 */
+	if (!(tva_flags & TVA_ENFORCE_SYSFS))
+		return orders;
+
+	if (hugepage_global_always())
+		return orders & (always | inherit);
+
+	/* We already excluded never inherit above. */
+	if (vm_flags & VM_HUGEPAGE)
+		return orders & (always | madvise | inherit);
+
+	return orders & always;
 }
 
-And I mentioned in the message, I rather want to get rid of half of the
-kfuncs, and give BPF direct access to the SQ/CQ instead. Schematically
-it should look like this:
-
-BPF_PROG(name, struct io_ring_ctx *ring)
-{
-     struct io_uring_sqe *sqes = get_SQ(ring);
-
-     sqes[ring->sq_tail]->opcode = OP_NOP;
-     bpf_kfunc_submit_sqes(ring, 1);
-
-     struct io_uring_cqe *cqes = get_CQ(ring);
-     print_cqe(&cqes[ring->cq_head]);
-}
-
-I hacked up RET_PTR_TO_MEM for kfuncs, the diff is below, but it'd be
-great to get rid of the constness of the size argument. I need to
-digest arenas first as conceptually they look very close.
-
-> For next revision please post all selftest, examples,
-> and bpf progs on the list,
-> so people don't need to search github.
-
-Did the link in the cover letter not work for you? I'm confused
-since it's all in a branch in my tree, but you linked to the same
-patches but in Jens' tree, and I have zero clue what they're
-doing there or how you found them.
+What do you think?
 
 
-diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-index 9494e4289605..400a06a74b5d 100644
---- a/io_uring/bpf.c
-+++ b/io_uring/bpf.c
-@@ -2,6 +2,7 @@
-  #include <linux/bpf_verifier.h>
-  
-  #include "io_uring.h"
-+#include "memmap.h"
-  #include "bpf.h"
-  #include "register.h"
-  
-@@ -72,6 +73,14 @@ struct io_uring_cqe *bpf_io_uring_extract_next_cqe(struct io_ring_ctx *ctx)
-  	return cqe;
-  }
-  
-+__bpf_kfunc
-+void *bpf_io_uring_get_region(struct io_ring_ctx *ctx, u64 size__retsz)
-+{
-+	if (size__retsz > ((u64)ctx->ring_region.nr_pages << PAGE_SHIFT))
-+		return NULL;
-+	return io_region_get_ptr(&ctx->ring_region);
-+}
-+
-  __bpf_kfunc_end_defs();
-  
-  BTF_KFUNCS_START(io_uring_kfunc_set)
-@@ -80,6 +89,7 @@ BTF_ID_FLAGS(func, bpf_io_uring_post_cqe, KF_SLEEPABLE);
-  BTF_ID_FLAGS(func, bpf_io_uring_queue_sqe, KF_SLEEPABLE);
-  BTF_ID_FLAGS(func, bpf_io_uring_get_cqe, 0);
-  BTF_ID_FLAGS(func, bpf_io_uring_extract_next_cqe, KF_RET_NULL);
-+BTF_ID_FLAGS(func, bpf_io_uring_get_region, KF_RET_NULL);
-  BTF_KFUNCS_END(io_uring_kfunc_set)
-  
-  static const struct btf_kfunc_id_set bpf_io_uring_kfunc_set = {
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 54c6953a8b84..ac4803b5933c 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -343,6 +343,7 @@ struct bpf_kfunc_call_arg_meta {
-  		int uid;
-  	} map;
-  	u64 mem_size;
-+	bool mem_size_found;
-  };
-  
-  struct btf *btf_vmlinux;
-@@ -11862,6 +11863,11 @@ static bool is_kfunc_arg_ignore(const struct btf *btf, const struct btf_param *a
-  	return btf_param_match_suffix(btf, arg, "__ign");
-  }
-  
-+static bool is_kfunc_arg_ret_size(const struct btf *btf, const struct btf_param *arg)
-+{
-+	return btf_param_match_suffix(btf, arg, "__retsz");
-+}
-+
-  static bool is_kfunc_arg_map(const struct btf *btf, const struct btf_param *arg)
-  {
-  	return btf_param_match_suffix(btf, arg, "__map");
-@@ -12912,7 +12918,21 @@ static int check_kfunc_args(struct bpf_verifier_env *env, struct bpf_kfunc_call_
-  				return -EINVAL;
-  			}
-  
--			if (is_kfunc_arg_constant(meta->btf, &args[i])) {
-+			if (is_kfunc_arg_ret_size(btf, &args[i])) {
-+				if (!tnum_is_const(reg->var_off)) {
-+					verbose(env, "R%d must be a known constant\n", regno);
-+					return -EINVAL;
-+				}
-+				if (meta->mem_size_found) {
-+					verbose(env, "Only one return size argument is permitted\n");
-+					return -EINVAL;
-+				}
-+				meta->mem_size = reg->var_off.value;
-+				meta->mem_size_found = true;
-+				ret = mark_chain_precision(env, regno);
-+				if (ret)
-+					return ret;
-+			} else if (is_kfunc_arg_constant(meta->btf, &args[i])) {
-  				if (meta->arg_constant.found) {
-  					verbose(env, "verifier internal error: only one constant argument permitted\n");
-  					return -EFAULT;
-@@ -13816,6 +13836,12 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
-  		} else if (btf_type_is_void(ptr_type)) {
-  			/* kfunc returning 'void *' is equivalent to returning scalar */
-  			mark_reg_unknown(env, regs, BPF_REG_0);
-+
-+			if (meta.mem_size_found) {
-+				mark_reg_known_zero(env, regs, BPF_REG_0);
-+				regs[BPF_REG_0].type = PTR_TO_MEM;
-+				regs[BPF_REG_0].mem_size = meta.mem_size;
-+			}
-  		} else if (!__btf_type_is_struct(ptr_type)) {
-  			if (!meta.r0_size) {
-  				__u32 sz;
+> +       return orders;
+> +}
+> +
+>  /**
+>   * thp_vma_allowable_orders - determine hugepage orders that are allowed for vma
+>   * @vma:  the vm area to check
+> @@ -287,16 +323,8 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+>                                        unsigned long orders)
+>  {
+>         /* Optimization to check if required orders are enabled early. */
+> -       if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
+> -               unsigned long mask = READ_ONCE(huge_anon_orders_always);
+> -
+> -               if (vm_flags & VM_HUGEPAGE)
+> -                       mask |= READ_ONCE(huge_anon_orders_madvise);
+> -               if (hugepage_global_always() ||
+> -                   ((vm_flags & VM_HUGEPAGE) && hugepage_global_enabled()))
+> -                       mask |= READ_ONCE(huge_anon_orders_inherit);
+> -
+> -               orders &= mask;
+> +       if (vma_is_anonymous(vma)) {
+> +               orders = __thp_mask_anon_orders(vm_flags, tva_flags, orders);
+>                 if (!orders)
+>                         return 0;
 
--- 
-Pavel Begunkov
+I pointed out to Baolin that __thp_vma_allowable_orders() handles the orders ==
+0 case almost immediately so there's no need to do this, it just makes the code
+noisier.
 
+I mean we _could_ keep it but I think it's better not to for cleanliness, what
+do you think?
+
+>         }
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
