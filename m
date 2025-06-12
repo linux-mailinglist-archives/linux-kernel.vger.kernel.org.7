@@ -1,170 +1,381 @@
-Return-Path: <linux-kernel+bounces-682826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5EEAD651D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 011FBAD64ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6A0175A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B3A3ACAA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B8913E41A;
-	Thu, 12 Jun 2025 01:27:16 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2139.outbound.protection.partner.outlook.cn [139.219.17.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750ED7080C;
+	Thu, 12 Jun 2025 01:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J8pNbGL8"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D5572613;
-	Thu, 12 Jun 2025 01:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749691636; cv=fail; b=EqRUkDfUR71eyd7WnO2EjVaRVmN7U76JYRI9LHDkJDLyMmLozlx3fioiliptRqVQMP1DAKRE0nBnWfCYlSQ92IaK/14p8jUDq/6QnPsJXHfkVDslJ5oYCTKxPS77URJAnGTRjtv261dSLYoiIXT7S1TsWxNa70+tnRUnOx1Ajvo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749691636; c=relaxed/simple;
-	bh=c8pvgE3v8aI/eCvcneiU/QzCzZ2LarIoE8YbhUHmUic=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qfIcK/gjRLUcQqe5CA7AwMJcm1zOOAIOZF2bG0taRRHutYXzpiKb2Zgh/Bq+yW3ChP+MlQ1mOF06171GkxnjeTSUDlgu0/QxEyaZNzB8FJ65Zex1vLyab2j89mnjoHCrMzQXuEqk+uy1Ya9xmAGbb+zCQETK3/gcaLzFfv0l5nk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nZ26Lg0kosfM4yEQc/FQOT8bXJeHKdxK8aXFnkn0rBlZl2yuet0VQPi/bnQC++pT1mpphVLMb1dlRydaxPNWcULeh3KO6C2BZfJmWLuv8or41Lm9YXvG8EnKmJ9F+CnAsjDkJJ61FzV3lyMk2VLMMDeaW3IRsTD3f08O7ev+O22cZgEXgdijd+Nxu9hkhcccsnpUEkQhT5+J+d+1R50tJWRz4k319nguSdZrkGQ5bPwKMgrumYXXRUOXHxCWVDqiNDjD0SwmI6xv+Xqoe6VBTdiBH0t4fbWdImQoBVAvDPhwvYIGzre4UxFzoPcJ+GZcLnfjkcgKcNLbqvg1sQxmjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c8pvgE3v8aI/eCvcneiU/QzCzZ2LarIoE8YbhUHmUic=;
- b=EeyYGtf0q3sdyJrGKIOUda58YvVR2i9D6spBa2Ee751EG0Fbw0e3Od7pCtmkGjtTRiCKZ118MpuFuf2ga6FQoB5tdlim/hvNpBk6unSs59s9hnZD+X9xUJVCFD3TDrMJSGGQXlDIxyfN8sIiuoZ7osBSYPMSmVx/bNHYpBQz1V1wXuS8yuKPmtEr/27oIAxii+Sk0jDxf850WeqyaLyPie30RSE0KNy5I5ZhzZ0EtBovvb+WcdqfL2d0h2FOGpTyIQWvQMDZuhX7Up/RJ0LOO9kYgV63FJVJM0agFpnSThWgKG0x2SOjVjdwzWTXtVDcge7aAycEBPlIDi3gHFR23w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1303.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1c::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.42; Thu, 12 Jun
- 2025 01:12:05 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%7])
- with mapi id 15.20.8792.038; Thu, 12 Jun 2025 01:12:05 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: "shao.mingyin@zte.com.cn" <shao.mingyin@zte.com.cn>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-CC: "geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "heiko@sntech.de"
-	<heiko@sntech.de>, "krzk@kernel.org" <krzk@kernel.org>,
-	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, Walker Chen
-	<walker.chen@starfivetech.com>, "sebastian.reichel@collabora.com"
-	<sebastian.reichel@collabora.com>, "detlev.casanova@collabora.com"
-	<detlev.casanova@collabora.com>, "finley.xiao@rock-chips.com"
-	<finley.xiao@rock-chips.com>, "shawn.lin@rock-chips.com"
-	<shawn.lin@rock-chips.com>, "pgwipeout@gmail.com" <pgwipeout@gmail.com>,
-	"qiu.yutan@zte.com.cn" <qiu.yutan@zte.com.cn>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, "yang.yang29@zte.com.cn"
-	<yang.yang29@zte.com.cn>, "xu.xin16@zte.com.cn" <xu.xin16@zte.com.cn>,
-	"yang.tao172@zte.com.cn" <yang.tao172@zte.com.cn>, "ye.xingchen@zte.com.cn"
-	<ye.xingchen@zte.com.cn>
-Subject:
- =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjJdIHBtZG9tYWluOiBVc2Ugc3RyX2VuYWJsZV9k?=
- =?utf-8?Q?isable-like_helpers?=
-Thread-Topic: [PATCH v2] pmdomain: Use str_enable_disable-like helpers
-Thread-Index: AQHb2fuaxaFW95Sx/USP9qxGCvTQ0LP+uXyA
-Date: Thu, 12 Jun 2025 01:12:05 +0000
-Message-ID:
- <ZQ0PR01MB130266C8DC79B041567E2262F2742@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-References: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
-In-Reply-To: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1303:EE_
-x-ms-office365-filtering-correlation-id: c245bb18-bb2f-4714-a066-08dda94e2573
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|1800799024|41320700013|38070700018;
-x-microsoft-antispam-message-info:
- LM29ALdgyzJjhKL9iC5l3yRNObMy8isMzLF/5cnyMplXSrVBfYU1l2MItq7LQAhCoP5AcSlP0f+4U/21dEYx14hzeWiBsGLPH9S8OaBPzLkbJ/ty2FbGKGUDMu+EtkgO8wdtIxSb/TVezcbNaOdPHTb3zyZ5BSz19JFKLu8grY2Rm3QnEk4gwZ8wr9+ZVUlDVinR8njXomcIUgDCB4qlt+V71zjv01I+gLZMaAhgyEjAI0ByG/qrqEZTagGi3Ff3Alr5T1Wc4d/ZdQ1ByKcb4JgNTmvIfO1CTXdM4G7M8cSikuYc7UpSQCUZkLw9juTLlS8c/FuiNX4H9NbE8EgAsvpEbANNY20n+/v1PJrH+dmNup4ikVoEmBNacCngto91CPnTZJ8feQccndNWE8bV/pDA8C6I5Xfy7l3JdvXBUAWqFFsUO4OyaLIeY1J10EwsEJy1eaJbveT8eD0mMqtTlyqrj5yeYE8R+9xpdSIqin52ZCyPAv4eMNMtxJmz/UcH89Sm42F9klFNybuP4f+Axk1pO7OSlkbwEIjyHs829CtFVR2CMhCNws0mrM4i6qwuCc/8LfPBeNnX6DtkG7ddzmaTq5UtH3jtF7nGQ60jPYs=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(41320700013)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NlIrNnAwbDBZdGIvOFFFdGxIQUt4VkhNVy9qN3V6bkFPYis2T3lUcnI0N01O?=
- =?utf-8?B?cnJLWnZna1QxRmttV05xbGNNeUQ0SDdodXp0ZUsvbEpYR0ZVOWtjUmpEQ0Zw?=
- =?utf-8?B?aDVuck1HS2ZPbUJrUllxMzFQMi9EOGRpZ0xiTmUwMmlIenk5VmdUYWpKekpj?=
- =?utf-8?B?N01UOWVqM25LSForRmptZHZsQWVlWFVVOHZSdjhoVmtBVUFLcnZOQ1YrVlNk?=
- =?utf-8?B?cU5qSmJHLzR0WFhVU3RBSEFCenNrcHdQNm82d0ZBUkluemp3NVlHZUJEMENa?=
- =?utf-8?B?NnhJYjFab1dlbmdRNytZVW9TMXZJOHduTFBVbjZXQ0prdUM0TlQ3NUFtRndU?=
- =?utf-8?B?L01CVWNXWjhIOGlLbDlWdG9SMFVBRnBRZUk2U0tyYm55ek1Nc2ZEc1RwSTNI?=
- =?utf-8?B?angvZTRBUTBheXFyMFEyRTdLTkIxc0ZsYVpPbXV5R0FyTmVGbVVpdytlUFpo?=
- =?utf-8?B?Y3RDU1NhMWlsYTd1bFBMazZuRmtTZ1JINUw5YmJrZ1Y4aDcyZjFjUW5OR0Vz?=
- =?utf-8?B?Z2RyTXdzSU9Ca1JhRjBYb2ZqUmxKVXdqU3U4K0RJMmVIa0wyM3ZhSUpTRzdP?=
- =?utf-8?B?ek5LZ1YxWTd0cEx5b2dBc0xueE9yWW1ZenpocG1UcmlCOVdUVk1vRnhQdkFC?=
- =?utf-8?B?dll2MGdrWmxDbUttNHNGU0VNSVgySWJsMVMyMkZHZGNHVHJPdTQ1UmZFcTln?=
- =?utf-8?B?dThoU05TYTRCaWhSL2J1UjJwNUUvYTMyOXNvUW8vREZCaVpCN2Y1cU5SSk1i?=
- =?utf-8?B?N2x4akYrd29CbDFIOWMreFhVRHpubG5kNHZpV2tMMXVjTnd5Smx4QTZqc0N5?=
- =?utf-8?B?M1NHaTdYRHpVUVQ0VE5KeC84dGZMZWZOanJJU2d0cVBOZ1Jpb2tGNVJpSlY3?=
- =?utf-8?B?OGd1OHFVS04ySkg0T0RkUEpLY3JydkxzVEFKeHJNemgvR2FkZncxdDVsUUdi?=
- =?utf-8?B?Tmx1VjlDOHJ5NGVZQ2duclRwckFERzhJQ2djWVpmV1FURXFRc2IyQys3R0I3?=
- =?utf-8?B?cFg4SDZuUDBsdjJKTFRsN1l2YUVMMlJadm9QbzY2SXdCczhVWkdMalhzdTl3?=
- =?utf-8?B?dEJZSEZxSlNNK3hxVTFQa1Z4MGtWM1Vic1p4Z3QxZEttUnJTVW9xeWtjOTU3?=
- =?utf-8?B?cFNQb1c0QmJmaEFLL3A1N1lMeWRnNDVFS2VrTUxIS09WNHE1MXZvTEQ0NjM0?=
- =?utf-8?B?cFp3QkFkM0dXWS9NbGkzM2ZwaHpLNmIwbDZ5RERSOERIY3lvN01Hdy9rbHlF?=
- =?utf-8?B?cld3aWJvQjNDOW1Ka3Y2T3MrY1dLVE9aVlFEeExpdTV4TCtSMldYRUQwcXpG?=
- =?utf-8?B?SVRVTHUyN3FRM05UcUdoeElxY21XOVRyVlJHZWczRkdpTENNZXJ6L3ppSGxR?=
- =?utf-8?B?RjhDSVNRcFlNOCswVjZKTitvMDJyNzgyUFoxSGkwRXRzclYxQVdXenBJSExO?=
- =?utf-8?B?SzVsY012TUdQZ0ZjTzNXTm5uV2VMWll5Tm9aMnJEREVudkZXQ3JuZDF1NGxy?=
- =?utf-8?B?eXlYRFc5Z0VrVHpuc3VKMkgvNkp2aDhTNXU5WDNIaFRoN0FLV1d6UXhYeXk0?=
- =?utf-8?B?RHl2VC9MTHRmejlicDJ0YVBJQUJiK09rSWRWY3lKampsNG5yb0o0QzBMdE1N?=
- =?utf-8?B?QjhQR3FsUlZkTGxGS1ZHdE1RajdPZDBPSVA1bkc4UnBPcW43VDRaeStDTWFE?=
- =?utf-8?B?ZFVnems0SUx0NmxoRHhMRHNSRTNxZjNpbjhVWG1MNEZVem5uWDJnVVc4aE9R?=
- =?utf-8?B?dlBWbEQ1WG00V0NINjFwRmdCUDNDYlp3SzQwdm1SSmZCQkEwSXhDMjNGTWxD?=
- =?utf-8?B?cnUra0xsbGRpN2VKcm5HVldxdkNCRi9oOERoRlVBY3BiZ2xVTDd6VUI5UzZ5?=
- =?utf-8?B?eWdkdzF3Q1dRdGwzanR3S2QrRlRnK1BZcENnZ3lHRzlpRmZEd2JiRVFud2Jj?=
- =?utf-8?B?MWhQK2VITk0wbVNwOGt1aitxVkpHZlRhaXJBb25pNFd2OGVITkE2d2pXN09x?=
- =?utf-8?B?L0V3QmpsTFp0YkJMZ3JSa09meDlTR2l4Z1ZXR2pPdjdaVmlwNWUrT25veFVW?=
- =?utf-8?B?eUtML3BRSjBnM0JTcU1IbVJvWmQvbkNVbENyRFJVTmp5cWxzRTFjV0owOFBl?=
- =?utf-8?B?YW9XWThBQ21mUHNzbDFsN2pnMjQxdkdkbjYzUEx5anZWbS9HT05VMTZIKzFi?=
- =?utf-8?Q?34X04WYoAgaLMf150t3rE6U=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A3C20328
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749690876; cv=none; b=FSa44CZHABDqVkmeVayBzprMdAQCAKjal/4WjHd11471tlpPpW6+SC4JfbD8OHZ8PvKMzJhQT6+XKq8Vkq0vPUZ1fQBUr5VNYHohu538W64/M+KxY9ihGhJGpDj9LUleyT3rXPuMBKw/cXzFukRQIjgvjNu/CB2dsL72zRRnPYs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749690876; c=relaxed/simple;
+	bh=ezPFSlu3yz1pjyMO2zO6mbcTYGr9giYy1tIM2ia2Dos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XKuL/MdqhLlMWugXdcUDG3tOvAtXE5N1aJIEFtsyID3LROCkxYIw2rknKqmeDyq5fRd9Gtlw9e8AuxzWRxdqnQvD+UfklxvzOcaIq42C+xsgOszq5sjhH4ttJYFIQDbXJZrl4W8FI8zd6+VtZqMnxTPsNo56BE1mSPBRm+atc34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J8pNbGL8; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <04b07c6a-9b9a-41c2-b7ee-9d544e649565@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749690870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vsDM81FHkv+7o8okVOpJPx4JajCWW8Njn7LbYiZgPsE=;
+	b=J8pNbGL8ycX0DcAcEgP/U32nGAPjnMeOiQp4XtCMj2IwYbDG9OjSJNVY1v3ayGs3Iy2IMx
+	2dMQnyQW/5VqPQD5OhLIszpjSoqoDrlLe1+WppBHCzXDWWoj+jc3IaAEMr828aURuij4Pg
+	irMD79KD4ueYQEQzEZ8tWgZ9HZpHXYU=
+Date: Thu, 12 Jun 2025 09:14:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: c245bb18-bb2f-4714-a066-08dda94e2573
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2025 01:12:05.7186
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EZ4kR6m5KO83RiV0FNcph/aV3JQxx05KjjyJaNIUIKDMJK8wp4pyQ2TRJvynmbgNu8/kI6Fko27ZuyDMMhV8EcLeX2DPAzFDNvQ0M8pGKtxqlna9S+607Clz7/dU/UT6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1303
+Subject: Re: [PATCH] docs/zh_CN: improve formatting and content clarity
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250611043616.264245-1-dzm91@hust.edu.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250611043616.264245-1-dzm91@hust.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-PiBGcm9tOiBTaGFvIE1pbmd5aW4gPHNoYW8ubWluZ3lpbkB6dGUuY29tLmNuPg0KPiANCj4gUmVw
-bGFjZSB0ZXJuYXJ5IChjb25kaXRpb24gPyAiZW5hYmxlIiA6ICJkaXNhYmxlIikgc3ludGF4IGFu
-ZCB0ZXJuYXJ5DQo+IChjb25kaXRpb24gPyAib24iIDogIm9mZiIpIHN5bnRheCB3aXRoIGhlbHBl
-cnMgZnJvbSBzdHJpbmdfY2hvaWNlcy5oIGJlY2F1c2U6DQo+IDEuIFNpbXBsZSBmdW5jdGlvbiBj
-YWxsIHdpdGggb25lIGFyZ3VtZW50IGlzIGVhc2llciB0byByZWFkLiAgVGVybmFyeQ0KPiAgICBv
-cGVyYXRvciBoYXMgdGhyZWUgYXJndW1lbnRzIGFuZCB3aXRoIHdyYXBwaW5nIG1pZ2h0IGxlYWQg
-dG8gcXVpdGUNCj4gICAgbG9uZyBjb2RlLg0KPiAyLiBJcyBzbGlnaHRseSBzaG9ydGVyIHRodXMg
-YWxzbyBlYXNpZXIgdG8gcmVhZC4NCj4gMy4gSXQgYnJpbmdzIHVuaWZvcm1pdHkgaW4gdGhlIHRl
-eHQgLSBzYW1lIHN0cmluZy4NCj4gNC4gQWxsb3dzIGRlZHVwaW5nIGJ5IHRoZSBsaW5rZXIsIHdo
-aWNoIHJlc3VsdHMgaW4gYSBzbWFsbGVyIGJpbmFyeQ0KPiAgICBmaWxlLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogU2hhbyBNaW5neWluIDxzaGFvLm1pbmd5aW5AenRlLmNvbS5jbj4NCg0KRm9yIHN0
-YXJmaXZlOg0KDQpSZXZpZXdlZC1ieTogQ2hhbmdodWFuZyBMaWFuZyA8Y2hhbmdodWFuZy5saWFu
-Z0BzdGFyZml2ZXRlY2guY29tPg0KDQo=
+
+在 6/11/25 12:36 PM, Dongliang Mu 写道:
+> This patch fixes some issues in the how-to.rst:
+>
+> 1. Add spaces between Chinese and English or numbers;
+> 2. Fold some long sentences or commands;
+> 3. Revise a few improper description and add some important tips;
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+
+Good job!
+
+
+Acked-by: Yanteng Si <si.yanteng@linux.dev>
+
+
+Thanks,
+
+Yanteng
+
+> ---
+>   Documentation/translations/zh_CN/how-to.rst | 103 +++++++++++---------
+>   1 file changed, 59 insertions(+), 44 deletions(-)
+>
+> diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/translations/zh_CN/how-to.rst
+> index 569b0209385a..fa1dc46c2b4a 100644
+> --- a/Documentation/translations/zh_CN/how-to.rst
+> +++ b/Documentation/translations/zh_CN/how-to.rst
+> @@ -1,19 +1,19 @@
+>   .. SPDX-License-Identifier: GPL-2.0
+>   
+> -=========================
+> -Linux内核中文文档翻译规范
+> -=========================
+> +==========================
+> +Linux 内核中文文档翻译规范
+> +==========================
+>   
+>   修订记录：
+> - - v1.0 2025年3月28日，司延腾、慕冬亮共同编写了该规范。
+> + - v1.0 2025 年 3 月 28 日，司延腾、慕冬亮共同编写了该规范。
+>   
+>   制定规范的背景
+>   ==============
+>   
+>   过去几年，在广大社区爱好者的友好合作下，Linux 内核中文文档迎来了蓬勃的发
+>   展。在翻译的早期，一切都是混乱的，社区对译稿只有一个准确翻译的要求，以鼓
+> -励更多的开发者参与进来，这是从0到1的必然过程，所以早期的中文文档目录更加
+> -具有多样性，不过好在文档不多，维护上并没有过大的压力。
+> +励更多的开发者参与进来，这是从 0 到 1 的必然过程，所以早期的中文文档目录
+> +更加具有多样性，不过好在文档不多，维护上并没有过大的压力。
+>   
+>   然而，世事变幻，不觉有年，现在内核中文文档在前进的道路上越走越远，很多潜
+>   在的问题逐渐浮出水面，而且随着中文文档数量的增加，翻译更多的文档与提高中
+> @@ -34,7 +34,7 @@ reviewer 们只能耐心地指导他们如何与社区更好地合作，但是
+>   ========
+>   
+>   工欲善其事必先利其器，如果您目前对内核文档翻译满怀热情，并且会独立地安装
+> -linux 发行版和简单地使用 linux 命令行，那么可以迅速开始了。若您尚不具备该
+> +Linux 发行版和简单地使用 Linux 命令行，那么可以迅速开始了。若您尚不具备该
+>   能力，很多网站上会有详细的手把手教程，最多一个上午，您应该就能掌握对应技
+>   能。您需要注意的一点是，请不要使用 root 用户进行后续步骤和文档翻译。
+>   
+> @@ -66,11 +66,18 @@ linux 发行版和简单地使用 linux 命令行，那么可以迅速开始了
+>   	cd linux
+>   	./scripts/sphinx-pre-install
+>   
+> -以Fedora为例，它的输出是这样的::
+> +以 Fedora 为例，它的输出是这样的::
+>   
+>   	You should run:
+>   
+> -		sudo dnf install -y dejavu-sans-fonts dejavu-sans-mono-fonts dejavu-serif-fonts google-noto-sans-cjk-fonts graphviz-gd latexmk librsvg2-tools texlive-anyfontsize texlive-capt-of texlive-collection-fontsrecommended texlive-ctex texlive-eqparbox texlive-fncychap texlive-framed texlive-luatex85 texlive-multirow texlive-needspace texlive-tabulary texlive-threeparttable texlive-upquote texlive-wrapfig texlive-xecjk
+> +		sudo dnf install -y dejavu-sans-fonts dejavu-sans-mono-fonts \
+> +		     dejavu-serif-fonts google-noto-sans-cjk-fonts graphviz-gd \
+> +	             latexmk librsvg2-tools texlive-anyfontsize texlive-capt-of \
+> +		     texlive-collection-fontsrecommended texlive-ctex \
+> +		     texlive-eqparbox texlive-fncychap texlive-framed \
+> +		     texlive-luatex85 texlive-multirow texlive-needspace \
+> +		     texlive-tabulary texlive-threeparttable texlive-upquote \
+> +		     texlive-wrapfig texlive-xecjk
+>   
+>   	Sphinx needs to be installed either:
+>   	1) via pip/pypi with:
+> @@ -92,7 +99,8 @@ linux 发行版和简单地使用 linux 命令行，那么可以迅速开始了
+>   		https://github.com/sphinx-doc/sphinx/pull/8313
+>   
+>   请您按照提示复制打印的命令到命令行执行，您必须具备 root 权限才能执行 sudo
+> -开头的命令。
+> +开头的命令。**请注意**，最新版本 Sphinx 的文档编译速度有极大提升，强烈建议
+> +您通过 pip/pypi 安装最新版本 Sphinx。
+>   
+>   如果您处于一个多用户环境中，为了避免对其他人造成影响，建议您配置单用户
+>   sphinx 虚拟环境，即只需要执行::
+> @@ -126,11 +134,11 @@ sphinx 虚拟环境，即只需要执行::
+>   检查编译结果
+>   ------------
+>   
+> -编译输出在Documentation/output/目录下，请用浏览器打开该目录下对应
+> +编译输出在 Documentation/output/ 目录下，请用浏览器打开该目录下对应
+>   的文件进行检查。
+>   
+> -git和邮箱配置
+> --------------
+> +Git 和邮箱配置
+> +--------------
+>   
+>   打开命令行执行::
+>   
+> @@ -150,11 +158,11 @@ git和邮箱配置
+>   	       smtpencryption = ssl
+>   	       smtpserver = smtp.migadu.com
+>   	       smtpuser = si.yanteng@linux.dev
+> -	       smtppass = <passwd>      # 建议使用第三方客户端专用密码
+> +	       smtppass = <passwd>      	# 建议使用第三方客户端专用密码
+>   	       chainreplyto = false
+>   	       smtpserverport = 465
+>   
+> -关于邮件客户端的配置，请查阅Documentation/translations/zh_CN/process/email-clients.rst。
+> +关于邮件客户端的配置，请查阅 Documentation/translations/zh_CN/process/email-clients.rst。
+>   
+>   开始翻译文档
+>   ============
+> @@ -162,8 +170,8 @@ git和邮箱配置
+>   文档索引结构
+>   ------------
+>   
+> -目前中文文档是在Documentation/translations/zh_CN/目录下进行，该
+> -目录结构最终会与Documentation/结构一致，所以您只需要将您感兴趣的英文
+> +目前中文文档是在 Documentation/translations/zh_CN/ 目录下进行，该
+> +目录结构最终会与 Documentation/ 结构一致，所以您只需要将您感兴趣的英文
+>   文档文件和对应的 index.rst 复制到 zh_CN 目录下对应的位置，然后修改更
+>   上一级的 index 即可开始您的翻译。
+>   
+> @@ -183,7 +191,7 @@ git和邮箱配置
+>   译文格式要求
+>   ------------
+>   
+> -	- 每行长度最多不超过40个字符
+> +	- 每行长度最多不超过 40 个字符
+>   	- 每行长度请保持一致
+>   	- 标题的下划线长度请按照一个英文一个字符、一个中文两个字符与标题对齐
+>   	- 其它的修饰符请与英文文档保持一致
+> @@ -192,7 +200,7 @@ git和邮箱配置
+>   
+>   	.. SPDX-License-Identifier: GPL-2.0
+>   	.. include:: ../disclaimer-zh_CN.rst  #您需要了解该文件的路径，根
+> -						据您实际翻译的文档灵活调整
+> +					       据您实际翻译的文档灵活调整
+>   
+>   	:Original: Documentation/xxx/xxx.rst  #替换为您翻译的英文文档路径
+>   
+> @@ -203,11 +211,11 @@ git和邮箱配置
+>   翻译技巧
+>   --------
+>   
+> -中文文档有每行40字符限制，因为一个中文字符等于2个英文字符。但是社区并没有
+> -那么严格，一个诀窍是将您的翻译的内容与英文原文的每行长度对齐即可，这样，
+> +中文文档有每行 40 字符限制，因为一个中文字符等于 2 个英文字符。但是社区并
+> +没有那么严格，一个诀窍是将您的翻译的内容与英文原文的每行长度对齐即可，这样，
+>   您也不必总是检查有没有超限。
+>   
+> -如果您的英文阅读能力有限，可以考虑使用辅助翻译工具，例如 deepseek 。但是您
+> +如果您的英文阅读能力有限，可以考虑使用辅助翻译工具，例如 deepseek。但是您
+>   必须仔细地打磨，使译文达到“信达雅”的标准。
+>   
+>   **请注意** 社区不接受纯机器翻译的文档，社区工作建立在信任的基础上，请认真对待。
+> @@ -248,14 +256,17 @@ git和邮箱配置
+>   
+>   	Translate .../security/self-protection.rst into Chinese.
+>   
+> -	Update the translation through commit b080e52110ea	#请执行git log <您翻译的英文文档路径> 复制最顶部第一个补丁的sha值的前12位，替换掉12位sha值。
+> +	Update the translation through commit b080e52110ea
+>   	("docs: update self-protection __ro_after_init status")
+> +	# 请执行 git log --oneline <您翻译的英文文档路径>，并替换上述内容
+>   
+> -	Signed-off-by: Yanteng Si <si.yanteng@linux.dev>	#如果您前面的步骤正确执行，该行会自动显示，否则请检查gitconfig文件。
+> +	Signed-off-by: Yanteng Si <si.yanteng@linux.dev>
+> +	# 如果您前面的步骤正确执行，该行会自动显示，否则请检查 gitconfig 文件
+>   
+>   保存并退出。
+>   
+> -**请注意** 以上四行，缺少任何一行，您都将会在第一轮审阅后返工，如果您需要一个更加明确的示例，请对 zh_CN 目录执行 git log。
+> +**请注意** 以上四行，缺少任何一行，您都将会在第一轮审阅后返工，如果您需要一个
+> +更加明确的示例，请对 zh_CN 目录执行 git log。
+>   
+>   导出补丁和制作封面
+>   ------------------
+> @@ -263,6 +274,7 @@ git和邮箱配置
+>   这个时候，可以导出补丁，做发送邮件列表最后的准备了。命令行执行::
+>   
+>   	git format-patch -N
+> +	# N 要替换为补丁数量，一般 N 大于等于 1
+>   
+>   然后命令行会输出类似下面的内容::
+>   
+> @@ -289,10 +301,10 @@ warning 不需要解决::
+>   	git branch test-trans
+>   	git am 0001-xxxxx.patch
+>   	./scripts/checkpatch.pl 0001-xxxxx.patch
+> -	直接修改您的翻译
+> +	# 直接修改您的翻译
+>   	git add .
+>   	git am --amend
+> -	保存退出
+> +	# 保存退出
+>   	git am 0002-xxxxx.patch
+>   	……
+>   
+> @@ -301,28 +313,30 @@ warning 不需要解决::
+>   最后，如果检测时没有 warning 和 error 需要被处理或者您只有一个补丁，请跳
+>   过下面这个步骤，否则请重新导出补丁制作封面::
+>   
+> -	git format-patch -N --cover-letter --thread=shallow  #N为您的补丁数量,N一般要大于1。
+> +	git format-patch -N --cover-letter --thread=shallow
+> +	# N 要替换为补丁数量，一般 N 大于 1
+>   
+>   然后命令行会输出类似下面的内容::
+>   
+>   	0000-cover-letter.patch
+>   	0001-docs-zh_CN-add-xxxxxxxx.patch
+>   	0002-docs-zh_CN-add-xxxxxxxx.patch
+> +	……
+>   
+> -您需要用编辑器打开0号补丁，修改两处内容::
+> +您需要用编辑器打开 0 号补丁，修改两处内容::
+>   
+>   	vim 0000-cover-letter.patch
+>   
+>   	...
+> -	Subject: [PATCH 0/1] *** SUBJECT HERE ***	#修改该字段，概括您的补丁集都做了哪些事情
+> +	Subject: [PATCH 0/N] *** SUBJECT HERE *** #修改该字段，概括您的补丁集都做了哪些事情
+>   
+> -	*** BLURB HERE ***				#修改该字段，详细描述您的补丁集做了哪些事情
+> +	*** BLURB HERE ***			  #修改该字段，详细描述您的补丁集做了哪些事情
+>   
+>   	Yanteng Si (1):
+>   	  docs/zh_CN: add xxxxx
+>   	...
+>   
+> -如果您只有一个补丁，则可以不制作封面，即0号补丁，只需要执行::
+> +如果您只有一个补丁，则可以不制作封面，即 0 号补丁，只需要执行::
+>   
+>   	git format-patch -1
+>   
+> @@ -345,9 +359,10 @@ warning 不需要解决::
+>   
+>   打开上面您保存的邮件地址，执行::
+>   
+> -	git send-email *.patch --to <maintainer email addr> --cc <others addr>	#一个to对应一个地址，一个cc对应一个地址，有几个就写几个。
+> +	git send-email *.patch --to <maintainer email addr> --cc <others addr>
+> +	# 一个 to 对应一个地址，一个 cc 对应一个地址，有几个就写几个
+>   
+> -执行该命令时，请确保网络通常，邮件发送成功一般会返回250。
+> +执行该命令时，请确保网络通常，邮件发送成功一般会返回 250。
+>   
+>   您可以先发送给自己，尝试发出的 patch 是否可以用 'git am' 工具正常打上。
+>   如果检查正常， 您就可以放心的发送到社区评审了。
+> @@ -382,15 +397,15 @@ reviewer 的评论，做到每条都有回复，每个回复都落实到位。
+>   每次迭代一个补丁，不要一次多个::
+>   
+>   	git am <您要修改的补丁>
+> -	直接对文件进行您的修改
+> +	# 直接对文件进行您的修改
+>   	git add .
+>   	git commit --amend
+>   
+>   当您将所有的评论落实到位后，导出第二版补丁，并修改封面::
+>   
+> -	git format-patch -N  -v 2 --cover-letter --thread=shallow
+> +	git format-patch -N -v 2 --cover-letter --thread=shallow
+>   
+> -打开0号补丁，在 BLURB HERE 处编写相较于上个版本，您做了哪些改动。
+> +打开 0 号补丁，在 BLURB HERE 处编写相较于上个版本，您做了哪些改动。
+>   
+>   然后执行::
+>   
+> @@ -414,7 +429,7 @@ reviewer 的评论，做到每条都有回复，每个回复都落实到位。
+>   如果您发送到邮件列表之后。发现发错了补丁集，尤其是在多个版本迭代的过程中；
+>   自己发现了一些不妥的翻译；发送错了邮件列表……
+>   
+> -git email默认会抄送给您一份，所以您可以切换为审阅者的角色审查自己的补丁，
+> +git email 默认会抄送给您一份，所以您可以切换为审阅者的角色审查自己的补丁，
+>   并留下评论，描述有何不妥，将在下个版本怎么改，并付诸行动，重新提交，但是
+>   注意频率，每天提交的次数不要超过两次。
+>   
+> @@ -425,9 +440,9 @@ git email默认会抄送给您一份，所以您可以切换为审阅者的角
+>   
+>   	./script/checktransupdate.py -l zh_CN``
+>   
+> -该命令会列出需要翻译或更新的英文文档。
+> +该命令会列出需要翻译或更新的英文文档，结果同时保存在 checktransupdate.log 中。
+>   
+> -关于详细操作说明，请参考： Documentation/translations/zh_CN/doc-guide/checktransupdate.rst\
+> +关于详细操作说明，请参考：Documentation/translations/zh_CN/doc-guide/checktransupdate.rst。
+>   
+>   进阶
+>   ----
+> @@ -439,8 +454,8 @@ git email默认会抄送给您一份，所以您可以切换为审阅者的角
+>   常见的问题
+>   ==========
+>   
+> -Maintainer回复补丁不能正常apply
+> --------------------------------
+> +Maintainer 回复补丁不能正常 apply
+> +---------------------------------
+>   
+>   这通常是因为您的补丁与邮件列表其他人的补丁产生了冲突，别人的补丁先被 apply 了，
+>   您的补丁集就无法成功 apply 了，这需要您更新本地分支，在本地解决完冲突后再次提交。
+> @@ -455,5 +470,5 @@ Maintainer回复补丁不能正常apply
+>   大部分情况下，是由于您发送了非纯文本格式的信件，请尽量避免使用 webmail，推荐
+>   使用邮件客户端，比如 thunderbird，记得在设置中的回信配置那改为纯文本发送。
+>   
+> -如果超过了24小时，您依旧没有在<https://lore.kernel.org/linux-doc/>发现您的邮
+> -件，请联系您的网络管理员帮忙解决。
+> +如果超过了 24 小时，您依旧没有在<https://lore.kernel.org/linux-doc/>发现您的
+> +邮件，请联系您的网络管理员帮忙解决。
 
