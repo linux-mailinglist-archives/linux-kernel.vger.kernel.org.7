@@ -1,253 +1,150 @@
-Return-Path: <linux-kernel+bounces-683483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B1BAD6E0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:42:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42107AD6E14
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57A3D167877
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:42:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02B637A9323
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB5B23BCED;
-	Thu, 12 Jun 2025 10:42:16 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D496239E7E;
+	Thu, 12 Jun 2025 10:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="njXntUFo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87631F92E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3035E231A32;
+	Thu, 12 Jun 2025 10:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749724936; cv=none; b=Y1gJL8OsiponrtCbf8nzKS4/JIQEHpthh83uEY8SWQL4vevemWlF7lUmZtkLHmJDGqzDrh1GPFX42KywEW7CANoohltrhK5sliX7ZaSmHqyJejycoACtXPnV8VRDjr7N6hXEUFJO73/wBSzI3pSY3BkgTiOzM91NiH2KWhULt1E=
+	t=1749724975; cv=none; b=ORux5l4R7F8MfySaatF6quPmPsPP2VXIKUjsjy+HkwqUaUyjExq35PLr8LRaAv2FuFnPBcj4Kvuk2bzFrg3BwPtT2DqOT4mrpq5MdTMFrA9aPfinqP1PI4Oh1sGgwqEpRdR5yB6L21Qk/VlxbsuKArHaR2+lHf/BDxCQk5jnaRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749724936; c=relaxed/simple;
-	bh=ouu2cHZCiDwpO+QTY/I1XSm6jEuv/+YIdngIZFjwsBk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UuyU5vKqyD1ze2ITq0UEg3L7UIsDb51T38tX5xdu77HYanXT9fvIWitebGUN4vTgopo7ScbnWNzjHjeDtP+BZJZFuVZvG9JXyVMHQ6FTcI704+dQzOpmev1aD6roSp0p85fhoJOpgiL64QjyZTm8g8NCbi9DkZGTiuTSzgVh9yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uPfNg-00069J-GV; Thu, 12 Jun 2025 12:42:00 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uPfNf-0036k2-0Z;
-	Thu, 12 Jun 2025 12:41:59 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uPfNf-009UU6-0L;
-	Thu, 12 Jun 2025 12:41:59 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: David Jander <david@protonic.nl>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v2 3/3] net: phy: dp83tg720: switch to adaptive polling and remove random delays
-Date: Thu, 12 Jun 2025 12:41:57 +0200
-Message-Id: <20250612104157.2262058-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250612104157.2262058-1-o.rempel@pengutronix.de>
-References: <20250612104157.2262058-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1749724975; c=relaxed/simple;
+	bh=lRvJOiOoQxNwg1/S0z3v+01XL+nggaA0QMHlFm6CCss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i1ahfGlUUYxDszhpj/O3mB0AkjaJPdU6HUg0dVEHsU5JphR133Iv0fX/CekQ5xd3UPO8DMvoaek1Ek/3IpoeR0nMMWmEZcqldMHw27tnFJaZMnL4PbyXSbF+4XiCacPv2oa8Y6xbhkFtD4r3DK05u7GNEt3LPxw0zAjFA952JVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=njXntUFo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C8L6qM011530;
+	Thu, 12 Jun 2025 10:42:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	h4034OsWfnzqWI7rpRXbrvhnUsIe7YHju91pqkD8gVk=; b=njXntUFoQo1PyQt4
+	lD4i/pyOMkJ9KrmGQozlUQvyMIz5CDJUbAyJQz3mUnB8g/eOOVyAOi6U0jJxmN59
+	JjZKdfm1cx3zb3Jq2kGqPw+vJRZFZaR7OSOus6wuuuiq6tOm3K4Mtek/UeOv1wVS
+	XaUoTp4b3MkkK77UfYPsXS9eY6DYp81+3hMZFyKlDNK4KKl2Gq4dgaJGNJejlbv/
+	FhUB1H0re1Iwkn1rDsNLtk7u4it1SBzLlEBeyScr6JcN6bySpExwFWg8cGYmXXw5
+	daljSgENRyJikx98eID/uiBfb3ekFFfpz3RqGaPvpK/nEmSjA9Ey0cbAsaKabNVN
+	zpuGkw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ekpyvnn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 10:42:50 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55CAgobO001890
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 10:42:50 GMT
+Received: from [10.218.12.164] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Jun
+ 2025 03:42:45 -0700
+Message-ID: <85594b9d-b4fe-4cfd-ae3a-07901b9e27df@quicinc.com>
+Date: Thu, 12 Jun 2025 16:12:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615: Enable TSENS support for
+ QCS615 SoC
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <amitk@kernel.org>, <daniel.lezcano@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_manafm@quicinc.com>
+References: <cover.1744955863.git.gkohli@qti.qualcomm.com>
+ <1758b5c2d839d40a9cb1dd17c734f36c279ac81c.1744955863.git.gkohli@qti.qualcomm.com>
+ <74b017c2-7144-4446-969c-8502fb2cb74b@oss.qualcomm.com>
+ <x2avlatyjo7sgcjubefexsfk6gerdbhx5dcug2kszk2hukcusm@srs5dwuc2m22>
+ <4a8df547-e625-4dbf-9c6e-44a3f793e602@oss.qualcomm.com>
+Content-Language: en-US
+From: Gaurav Kohli <quic_gkohli@quicinc.com>
+In-Reply-To: <4a8df547-e625-4dbf-9c6e-44a3f793e602@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=JcO8rVKV c=1 sm=1 tr=0 ts=684aaf2a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
+ a=07oZwJDR7OJQ1aN1LC4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA4MSBTYWx0ZWRfX7pwmCrcYR40U
+ fdQq8X1+w0C1dsCnR462/nZ/W9XQEOL9Th790pgqvRbJD58W3PbrBL5fOMF0YcjH0bmdjB93uzU
+ HyerLjhMPyoNpMHuHCDdR2+MCUHdLl57d+N5XwKQ/ufWDGpGMAM6UkcuSbW6evjUsAHixvsvV7W
+ bZzice92BBf3bS+eN9PzpJKaZgSPNbsO1oOASwoe6BR6FgVmtk8BRg5cLB5rDNmfpozrWosTykK
+ bf6nAc6RUKvu0o1CDAaop+27zOijwzeyE2+V3TgDTa+06aTuXLqorw407zxGkMnSyLIVhqImNT6
+ DS7jBvp/Fz5P955kIoY0rt0f/7Ywu9VXJeYeYy4m9xbtvKUhb1PsuPn09S7KdGwf11yGo5ArkyI
+ kpDGrjeXudsA8wQjzOQ2KhE2/gdCQeFc6Le2nAfxDCddylXyOvSs7fcygdBidAD2se01z/j9
+X-Proofpoint-GUID: DWzGg613QCuoJZ3IrlGm5yhEOASbYPOa
+X-Proofpoint-ORIG-GUID: DWzGg613QCuoJZ3IrlGm5yhEOASbYPOa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=661 bulkscore=0 spamscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506120081
 
-From: David Jander <david@protonic.nl>
 
-Now that the PHY reset logic includes a role-specific asymmetric delay
-to avoid synchronized reset deadlocks, the previously used randomized
-polling intervals are no longer necessary.
 
-This patch removes the get_random_u32_below()-based logic and introduces
-an adaptive polling strategy:
-- Fast polling for a short time after link-down
-- Slow polling if the link remains down
-- Slower polling when the link is up
-
-This balances CPU usage and responsiveness while avoiding reset
-collisions. Additionally, the driver still relies on polling for
-all link state changes, as interrupt support is not implemented,
-and link-up events are not reliably signaled by the PHY.
-
-The polling parameters are now documented in the updated top-of-file
-comment.
-
-Co-developed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: David Jander <david@protonic.nl>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v2:
-- move by Sob to the end of commit message
----
- drivers/net/phy/dp83tg720.c | 94 ++++++++++++++++++++++---------------
- 1 file changed, 55 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index 92597d12ecb9..391c1d868808 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -52,15 +52,37 @@
-  * The functions that implement this logic are:
-  * - dp83tg720_soft_reset()
-  * - dp83tg720_get_next_update_time()
-+ *
-+ * 2. Polling-Based Link Detection and IRQ Support
-+ * -----------------------------------------------
-+ * Due to the PHY-specific limitation described in section 1, link-up events
-+ * cannot be reliably detected via interrupts on the DP83TG720. Therefore,
-+ * polling is required to detect transitions from link-down to link-up.
-+ *
-+ * While link-down events *can* be detected via IRQs on this PHY, this driver
-+ * currently does **not** implement interrupt support. As a result, all link
-+ * state changes must be detected using polling.
-+ *
-+ * Polling behavior:
-+ * - When the link is up: slow polling (e.g. 1s).
-+ * - When the link just went down: fast polling for a short time.
-+ * - When the link stays down: fallback to slow polling.
-+ *
-+ * This design balances responsiveness and CPU usage. It sacrifices fast link-up
-+ * times in cases where the link is expected to remain down for extended periods,
-+ * assuming that such systems do not require immediate reactivity.
-  */
- 
- /*
-  * DP83TG720S_POLL_ACTIVE_LINK - Polling interval in milliseconds when the link
-  *				 is active.
-- * DP83TG720S_POLL_NO_LINK_MIN - Minimum polling interval in milliseconds when
-- *				 the link is down.
-- * DP83TG720S_POLL_NO_LINK_MAX - Maximum polling interval in milliseconds when
-- *				 the link is down.
-+ * DP83TG720S_POLL_NO_LINK     - Polling interval in milliseconds when the
-+ *				 link is down.
-+ * DP83TG720S_FAST_POLL_DURATION_MS - Timeout in milliseconds for no-link
-+ *				 polling after which polling interval is
-+ *				 increased.
-+ * DP83TG720S_POLL_SLOW	       - Slow polling interval when there is no
-+ *				 link for a prolongued period.
-  * DP83TG720S_RESET_DELAY_MS_MASTER - Delay after a reset before attempting
-  *				 to establish a link again for master phy.
-  * DP83TG720S_RESET_DELAY_MS_SLAVE  - Delay after a reset before attempting
-@@ -71,9 +93,10 @@
-  * minimizing the number of reset retries while ensuring reliable link recovery
-  * within a reasonable timeframe.
-  */
--#define DP83TG720S_POLL_ACTIVE_LINK		1000
--#define DP83TG720S_POLL_NO_LINK_MIN		100
--#define DP83TG720S_POLL_NO_LINK_MAX		1000
-+#define DP83TG720S_POLL_ACTIVE_LINK		421
-+#define DP83TG720S_POLL_NO_LINK			149
-+#define DP83TG720S_FAST_POLL_DURATION_MS	6000
-+#define DP83TG720S_POLL_SLOW			1117
- #define DP83TG720S_RESET_DELAY_MS_MASTER	97
- #define DP83TG720S_RESET_DELAY_MS_SLAVE		149
- 
-@@ -172,6 +195,7 @@ struct dp83tg720_stats {
- 
- struct dp83tg720_priv {
- 	struct dp83tg720_stats stats;
-+	unsigned long last_link_down_jiffies;
- };
- 
- /**
-@@ -575,50 +599,42 @@ static int dp83tg720_probe(struct phy_device *phydev)
- }
- 
- /**
-- * dp83tg720_get_next_update_time - Determine the next update time for PHY
-- *                                  state
-+ * dp83tg720_get_next_update_time - Return next polling interval for PHY state
-  * @phydev: Pointer to the phy_device structure
-  *
-- * This function addresses a limitation of the DP83TG720 PHY, which cannot
-- * reliably detect or report a stable link state. To recover from such
-- * scenarios, the PHY must be periodically reset when the link is down. However,
-- * if the link partner also runs Linux with the same driver, synchronized reset
-- * intervals can lead to a deadlock where the link never establishes due to
-- * simultaneous resets on both sides.
-- *
-- * To avoid this, the function implements randomized polling intervals when the
-- * link is down. It ensures that reset intervals are desynchronized by
-- * introducing a random delay between a configured minimum and maximum range.
-- * When the link is up, a fixed polling interval is used to minimize overhead.
-- *
-- * This mechanism guarantees that the link will reestablish within 10 seconds
-- * in the worst-case scenario.
-+ * Implements adaptive polling interval logic depending on link state and
-+ * downtime duration. See the "2. Polling-Based Link Detection and IRQ Support"
-+ * section at the top of this file for details.
-  *
-- * Return: Time (in jiffies) until the next update event for the PHY state
-- * machine.
-+ * Return: Time (in jiffies) until the next poll
-  */
- static unsigned int dp83tg720_get_next_update_time(struct phy_device *phydev)
- {
-+	struct dp83tg720_priv *priv = phydev->priv;
- 	unsigned int next_time_jiffies;
- 
- 	if (phydev->link) {
--		/* When the link is up, use a fixed 1000ms interval
--		 * (in jiffies)
--		 */
-+		priv->last_link_down_jiffies = 0;
-+
-+		/* When the link is up, use a slower interval (in jiffies) */
- 		next_time_jiffies =
- 			msecs_to_jiffies(DP83TG720S_POLL_ACTIVE_LINK);
- 	} else {
--		unsigned int min_jiffies, max_jiffies, rand_jiffies;
--
--		/* When the link is down, randomize interval between min/max
--		 * (in jiffies)
--		 */
--		min_jiffies = msecs_to_jiffies(DP83TG720S_POLL_NO_LINK_MIN);
--		max_jiffies = msecs_to_jiffies(DP83TG720S_POLL_NO_LINK_MAX);
--
--		rand_jiffies = min_jiffies +
--			get_random_u32_below(max_jiffies - min_jiffies + 1);
--		next_time_jiffies = rand_jiffies;
-+		unsigned long now = jiffies;
-+
-+		if (!priv->last_link_down_jiffies)
-+			priv->last_link_down_jiffies = now;
-+
-+		if (time_before(now, priv->last_link_down_jiffies +
-+			  msecs_to_jiffies(DP83TG720S_FAST_POLL_DURATION_MS))) {
-+			/* Link recently went down: fast polling */
-+			next_time_jiffies =
-+				msecs_to_jiffies(DP83TG720S_POLL_NO_LINK);
-+		} else {
-+			/* Link has been down for a while: slow polling */
-+			next_time_jiffies =
-+				msecs_to_jiffies(DP83TG720S_POLL_SLOW);
-+		}
- 	}
- 
- 	/* Ensure the polling time is at least one jiffy */
--- 
-2.39.5
+On 6/11/2025 8:17 PM, Konrad Dybcio wrote:
+> On 6/11/25 4:19 PM, Dmitry Baryshkov wrote:
+>> On Wed, Jun 11, 2025 at 04:08:57PM +0200, Konrad Dybcio wrote:
+>>> On 6/11/25 8:37 AM, Gaurav Kohli wrote:
+>>>> Add TSENS and thermal devicetree node for QCS615 SoC.
+>>>>
+>>>> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>> +	thermal-zones {
+>>>> +		aoss-thermal {
+>>>> +			thermal-sensors = <&tsens0 0>;
+>>>> +
+>>>> +			trips {
+>>>> +				trip-point0 {
+>>>> +					temperature = <110000>;
+>>>> +					hysteresis = <5000>;
+>>>> +					type = "passive";
+>>>
+>>> All of the passive trip points you added that aren't bound to any
+>>> cooling devices should be critical instead (otherwise they're not
+>>> doing anything)
+>>>
+>>> otherwise, looks good
+>>
+thanks for the review & comment, let me send 3rd patch with critical for 
+all trips.
+>> Don't we need cooling-maps for CPU thermal zones?
+> 
+> no, we have lmh
+> 
+> Konrad
 
 
