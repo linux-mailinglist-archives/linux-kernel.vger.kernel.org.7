@@ -1,230 +1,173 @@
-Return-Path: <linux-kernel+bounces-682842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115EAAD6550
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91304AD655B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E48E1BC28E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9A91BC2C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 01:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9E719924D;
-	Thu, 12 Jun 2025 01:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCCA19F471;
+	Thu, 12 Jun 2025 01:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r+fBJ4HG"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R6mX2mVK"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB60433AD;
-	Thu, 12 Jun 2025 01:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749693392; cv=fail; b=uDiyHF5GOBVm+/raUAUltO2syfAWR2tWYSHSkya5bDu+pPu/6Awqh61hTDlyksLNLHrDGwqAOHJxKLqs+B7vQCvUAW/Tx/Fkko0hRM/0IlnXp1VfFqBwF9WQk/7IL771w72zY1I3Oxpg70LflSop8gfP/K4mElRQJQwD/H45qZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749693392; c=relaxed/simple;
-	bh=DYq6Qe4Kt2HnaxJJAiS/KpJouDvKZGm6mBdxougyaME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jXxPAx46bQMRFs/LiDB7ZA7Ril6Qav6kYUMonDVIm8iByEegmhRUJZMzwZCFnHK5OiSMsAaTCW8UagDT6RlaziBLIGoh+0JrlKOSTAwhDL7hvhGXkHIR4g6IYLPWzCL6XNqc2obZ2C219w9329BgHlBt9/FQORTPEuC6DdmQFQ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r+fBJ4HG; arc=fail smtp.client-ip=40.107.220.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uLOQzGvuykKVsdxmss3KNHCFMqFzjeGIWABlpRr2Ek/daOn/LtLEb11IN3vddNLNzEufRr0UUTHdtG7dMiAmT7WfRq0+kHXCL7y/7bICx4uGbKoC+ebE5iTxJwR6jfyQDBfF9K2d9GbOktjuzP8cdizx899Aae0mN7izFFPg1A8WRJcAgv9wwJ4tMKMFheeMYaAezLFqTsCe6a3DFUC+kUU6qW3cjg9KsYH0kF4YW5QpzSIvsY0rCbA1Go5AHRb/jq19x0uQURlJLxYbmtmMg4IG2CD5UI6Vofu5KFZEh6h25NvJ/x0mR1FRx4yXkEtD26GaAYMfJWwED78RL0tD4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f7VIgni/GEtOLbD9+JfTOJnktEwrhPDUk+z16ZpZXA4=;
- b=iIRCPrtKOOd9KPeJxPTyccyFbKc0xiakMHKjnJX5byKN8vCM0+2U2WHy0k+qfnX9JOpxw4o26n8RgMsSoTkb6VvcijSrzCASsJiLlgWjgAcovJ0xkSZvl0lCRtjMHYwHtvvVA+6J9+k6FCeRxGnAdNGZhlNe2sf2bHT7/p/v/neTYlBWZNg95GMSZ/3100Il0mzwA5Vck4EKD3JjTtDMzYCvRa4CfFcS+CtuZ58iuwZi5ydBt+ZPYYRUOqkyPjQ+DPY2t77lSlOaIOc9XKfvgsToaObFwroePngsFxPtTkoAfFtPqHgKSW8dyOuSM1hjhuWC045UEeJiLBMfseWVzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f7VIgni/GEtOLbD9+JfTOJnktEwrhPDUk+z16ZpZXA4=;
- b=r+fBJ4HGyAAddoHq4dUtl6wXFYcUiJwFQLGYbkyAEpFFZUPl839HM1qZEUuyaUIxBxFTlTS3KpM3syUEU/w45dRI76sMCxoepomssz2olMwxxucG1PL+3BMvWLlPhiucI5N7Z5bOSbgUNpisTdWeGHtye8hHBS220hVC8+sNaPcutqkATk4DjRbk+0BgdtejYhwnZynF6XqKWKelr2T+RNOBqXJguIKXaNL74XV1118H7EOdir37Hr1HntlQXkb2/sFSRW+IbcPi+UIUzHJGtYHjLx6kIPZkK718YSwOW3XwOHLkyDWRKc6jHk080hpNrUXQAxaEGCf1ybd3g3mapA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7728.namprd12.prod.outlook.com (2603:10b6:8:13a::10)
- by BL4PR12MB9723.namprd12.prod.outlook.com (2603:10b6:208:4ed::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Thu, 12 Jun
- 2025 01:56:28 +0000
-Received: from DS0PR12MB7728.namprd12.prod.outlook.com
- ([fe80::f790:9057:1f2:6e67]) by DS0PR12MB7728.namprd12.prod.outlook.com
- ([fe80::f790:9057:1f2:6e67%5]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
- 01:56:27 +0000
-Date: Thu, 12 Jun 2025 11:56:22 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Oscar Salvador <osalvador@suse.de>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] mm/huge_memory: don't ignore queried cachemode in
- vmf_insert_pfn_pud()
-Message-ID: <dvstixx4pey6euns6xttep5bbc4jhz6smtgheijviwkbawnqbm@tqhbg4hzeiog>
-References: <20250611120654.545963-1-david@redhat.com>
- <20250611120654.545963-2-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611120654.545963-2-david@redhat.com>
-X-ClientProxiedBy: SY6PR01CA0076.ausprd01.prod.outlook.com
- (2603:10c6:10:110::9) To DS0PR12MB7728.namprd12.prod.outlook.com
- (2603:10b6:8:13a::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFBA770FE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 01:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749693508; cv=none; b=jA3ARWZmG4v4nVvIznyH+VFqDqS9hU8SG0lrZQmkXuxMlSAL2H9ip6Yhf1b6ySKchst8hvpJpCyCx50WTv+V49cCTr3/aF8yBgqP77gU8Ksyc+DtTlqbv16/IKoF4XxE/Et6gx7GbT+7vBU0iN3jOpUHflNnNtqi7pBTSc5I6P4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749693508; c=relaxed/simple;
+	bh=Ay5oQohGM+cVjnNWHVNcpUKrCpFL8jgt+c4zZIHKDB0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mPycgPliOmnMXkZWb6yUhkxBybK6pGNXLAvWzthGykHr2DDFO7vZo411O18kJMB0rwO/kSuVfIrvaOAYhR84zRak8P4rKsAg1wuMXXaTC6KDE7Zm+lT6boZvWNHYHyZjsoeuQoExsBKGXNIjUw6vQwKdnBhopyVuytYF77UTds4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuyanghuang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R6mX2mVK; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuyanghuang.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7370e73f690so503108b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 18:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749693506; x=1750298306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4xOt1jqHtKfWjw2Okk5Lx4VTTX7yg4srSCqsBU9bfdk=;
+        b=R6mX2mVKxWB6gmSSW1uaAXjazlZp2mi1s/I5LqGPVVXXVTcZ+sqt8UQq6Ikhdk1QvQ
+         SwZVh0ZACS1s9rW1ABjJf9xGeM7wcfCD3fOmtzPmd4RGXYxdz3mHXzMUxnlw2bjXfZyu
+         EhlnlgEyD+M5kY40Gv46JXEbqo9f2Run4DDZYzwI8sgLM0TGLMSWOctzkVoUxLjNpElO
+         et6fclmNsz1B4hIyh/RTJgbsemdI8tNizQZZEkAcZVvzVxgvtkzmliFWPhzrcj49fsWS
+         LJQvIVACfUYpZZyXDJbkXVsfWbZnlwQe8MVZKg8McW3EVkz5sh7Bwz1xNhJ++titvFaq
+         wyMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749693506; x=1750298306;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4xOt1jqHtKfWjw2Okk5Lx4VTTX7yg4srSCqsBU9bfdk=;
+        b=W98LlZPkO/A1ZNUuTkaDShBcN40jX+1G/3++qcp6IY9a0fsvL/IcMadETIWQh3OkDf
+         4f2Tza5uqKfwHqq81F47hYSamjNAHH9ZEKxmcGFUXJwLIzv+9GNAkGvMr9nx8HhxEJsP
+         bedSk3vpW8i/9vlhgo7tRZDecyB6tZGeCMX7zldKxrDxut3fQ/+UgkxYCdD1T5aZjLQu
+         wnsCaCrE18j0aK7OKmojgGmSZVpaJyhTARt77EC97WJfft1X+X6+KxBrLuztmHFCQibf
+         9AbZMgrnBfVn6GOi+DOVw6SpolQS4WlwigKCwsRISlFDQkadlK19bNpco2oSb3VowKOZ
+         0X5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXcdhA1jEH2RwcHCzCtuOH+YmG1E1fp4GdbEOKzjIvtx633CUDkKfZgT/ytAMsu1x2yBINcx1aESoPkjNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwApXUVT7cVf592JFFOdh/brnk4JjklAqgCADirckWY0WOul8sS
+	KD2l8H+eQfNBNIkezrEhrvvSfSTdpqxDAvuQiRYnyZ6ZNFzm03nbMTFMuTtblPwN3rlCFbjp7xU
+	/1N7+gF7Scmit9JJPJQf7N7otKQ==
+X-Google-Smtp-Source: AGHT+IH0xuhQyu7PzeBD2lZe2ItcmrlnVX8CKI5tsgo+GqBtt/K3hLGGc+yQSmUUI1O0fxnFPA7xdeO7SO6ERkuafg==
+X-Received: from pfez22.prod.google.com ([2002:aa7:8896:0:b0:746:257b:1d37])
+ (user=yuyanghuang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:a60d:b0:21f:8817:f695 with SMTP id adf61e73a8af0-21f8817f6a5mr4714343637.25.1749693506379;
+ Wed, 11 Jun 2025 18:58:26 -0700 (PDT)
+Date: Thu, 12 Jun 2025 10:58:12 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7728:EE_|BL4PR12MB9723:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57163f23-b0ab-42e7-cb97-08dda95457c0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kiICP6XMlJ86n5AJZNmgW6m0K7J1H/XjXlh+M3TxfGdO7JeSlGMOqBWzHr8t?=
- =?us-ascii?Q?ptFjyATNXQjmfyIGg2a03pPz9CwFhfpW8HZsT03ACXIKb1Jc1DAAk/ENGCbz?=
- =?us-ascii?Q?LLuSRWVgyvAPmEZ+ty0PRp9MgWbyZ+k5MESwAGSzYciARfceIgr0JuMNzO4u?=
- =?us-ascii?Q?MCKgGp7MeUk5NaDupLFunyqHZTN7YeIYn/nIW+z2kmKO54Dx6XA64fTkJL77?=
- =?us-ascii?Q?4AcZvbcivH1CsSR7vsOMh6KJPojSjNJtjkf4LcgQo3OBE9PAqQ+tqRg6vbdX?=
- =?us-ascii?Q?Sf6v2alO3uLpmkgGxADegIcKPNnb43x9oomMUlJhuVIWFvdIdkuProZh5wt5?=
- =?us-ascii?Q?OpUMdrzzLbKDoHEpfPyoFtuYKs0X+kwqxMAnCD0J4sIniklv/FkT+nFnn5wX?=
- =?us-ascii?Q?/IsHc4fM9CVlu/5zJN3yCL1ej0NBRT0JkQzoSj/2s4Xg0maczLF9kmSY62N3?=
- =?us-ascii?Q?RQUUT/4xcR/tysk2uhjCdjmOZWDmXb4/pIXNVUWbnoVWI2T8goBkA/8QYD77?=
- =?us-ascii?Q?qeJLCpvH8bHTNwtSKKB1MsFqZNPmOoJvBfGb6qrVsPV0lQ+BDEerosgD4KjA?=
- =?us-ascii?Q?5xZ77idQCtzldm+HF6mZHPuQDfMw11hGeqc+LoFW98tIfANa+sAcKb46poJb?=
- =?us-ascii?Q?6ybj0/bS9PbpTyHxGGTkZUB9TDMTzsjwnlu2V5dOqrxP7XpKiNxyEKlMS8kh?=
- =?us-ascii?Q?VZtL1JaOZ0v10dKt/vb3z/4m2vehxPO2qghZjXVvBGCaplwfSjneqrO+1jes?=
- =?us-ascii?Q?rDL8FUBVVKs/Fd3uQ1YB21elshgi9Ejn5PLo18+62SQXS0I1XtQghvbjXB2s?=
- =?us-ascii?Q?oqUwAPBjNpvD+wFVpSBMZUbC9kf1+8Q4u6pU+T675hDyaV0v5pxHnqOfALBb?=
- =?us-ascii?Q?y42q6bL7cQpPP6PDZI2y2yEszrNXzp/ayY5giRc9SLCbhGxjzJV7gU0oZRUC?=
- =?us-ascii?Q?fyerwqh5x4zydoKEGvDiK2AycVVNMjbjCh5JQvERjMmRoz8G7wkhzSAgus7h?=
- =?us-ascii?Q?G4HFhb4y9dWp/BHW6vIDzWygKBtEUyMgA0MWaNrpHCIbHAH/oVhZLlnwW4rn?=
- =?us-ascii?Q?fA87BpGK3ys8DiuuiTkEsAaIWJt8aEJICddDehZCgO+TLGc7sbAh4OmGbugU?=
- =?us-ascii?Q?BkSdjnts+njeATS0Q/068aYFBPkm/yXSf9RjzHYkXcHsL9VawBJVIl2PQq6w?=
- =?us-ascii?Q?+kac6GUb5Ii1FNjnRl6BF+QKh5gH+tsOOMytV9ijTz2Q1B82PTFl/tDgibDE?=
- =?us-ascii?Q?LDcAymSzx0Nz8uxD7zppUrmXHxXLdYn7jPDNvfj/RtdiNnrYLe/daFRQQaCY?=
- =?us-ascii?Q?tP53YD6dOr/ad7UdcKxSTO+hQ6SBwzCxgKYzlTdj3ShZ7CKIzxi9t9c9rQ11?=
- =?us-ascii?Q?txrC6a0mp/WG3hhftsDsnmt+hmrUhDosDsRXf9aShXzGSFGMDg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7728.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?g8EqKwqPUbJ5Xb7mAoAKFfA/fc+mHUmKjhe8MXaAP0B4Sw8xLZjzabAG9c1U?=
- =?us-ascii?Q?Zr06yyqAuwEciBhpTEM4s7jjJIlgb9YvzXUQTtJAKmiCstm74+lQvxzvdgQc?=
- =?us-ascii?Q?Alky327I1ug7Ek9EK4s4i94fg23e1ySO0gqiEB1MAMDGFKdY23p5iK6eGMSb?=
- =?us-ascii?Q?4ADqPD9KkGTcrQsWlnBgnryLp15jp+hXWS3B4Kx0ZGYgntQdGnYUFocO4RpG?=
- =?us-ascii?Q?4zmCRAGkDwBvHYH8eXA9P2u7lcX2qyvLg2IsWk1FYu0cYHL8ET0wdmPU6KV8?=
- =?us-ascii?Q?2Ah8lC/d2K+8R4R+QrJnK3VwKwWcqOAgo8kJd3FjPSPTIOABasutlhkideTy?=
- =?us-ascii?Q?w8OsqqQn/Jj8MMCNvZgHP/ptUXiDG+AcRJ1HK02bkQjq9K2R/ccb0ELWo/Oi?=
- =?us-ascii?Q?Rt+qfi7U44NnLLT4NClGR/Lh1LVeYdO7u02GtgqHqxk62L2guR8nOw57eclT?=
- =?us-ascii?Q?HvegI8AJtNJG+zEdAAXxpkByZdvhopsU5BpGX5APSMicUqFvpPFJTgOdSKp5?=
- =?us-ascii?Q?TI00d2FElCmATC5IUanYgkbM5tVCuusJlVvr/61oDnDxDBJglPPYcePyw+0s?=
- =?us-ascii?Q?KFroDE2xngHIyIg/osOTGMwuZjkdLRhuOSvUmen/Qy2OrWBiDk7hGExLnEdt?=
- =?us-ascii?Q?/S6DKi4Y3kpx8bPOnALv7UC1JHe9TXnVLobb4hoAExyjotl4+8377i9MsWvX?=
- =?us-ascii?Q?aNwwf09V/NejlKbLFMEqClL78WY6magNxo7yx63E15RaULGqu/G0qyNx7YXa?=
- =?us-ascii?Q?/qTxuVKc/ocZEV5usA3TZOv2lqh+Zi/LHMgEQR+fQFlAxM/D/ZyAXF3aBEtz?=
- =?us-ascii?Q?cDv2xm1a2zJlJ5Q6nIr3+siK+MnlCdvuAFAd/IuiD+Q+zraenQOBR5QGgPi6?=
- =?us-ascii?Q?td9rrImFCkAJ+bHVT/bqFO2FCcKmBIJWQUBwLArydq+THf5VAU3EBMtGTfUz?=
- =?us-ascii?Q?EbuRFA+AIW1AqQ7BxoTRSu8f6ytqHYkqhfst9rbru11aNJHDLH30hUQ5qra/?=
- =?us-ascii?Q?CLqcTzRuJY+l6N4QalzNq9MtW6iY81jrtl//1U5Izyi84osD44Qg1bKSDYd3?=
- =?us-ascii?Q?+/88Nv2gwgG9TeGyxKAMasPPXBvLnFAoI9YuTzAZ351qxHGtmwyCfY1/mRfu?=
- =?us-ascii?Q?mlnvtAYEHMkV6O6hBgJFp8X0wIqM8aIM1oDCZ+7DxW2kwTuXuZQ7kKaqZ4VL?=
- =?us-ascii?Q?p5aCICy0vs7gd198CqXIUPR3ZqTlmBBEnLO53nv6wNYYrlbgGzV3nF7vxucp?=
- =?us-ascii?Q?afklgDTLsq6pancE66FvIt+u20wS79XLnLwKv/XidYTvIvbkyTAa8fAcn1li?=
- =?us-ascii?Q?qlCQ5sy6dRB7bzRASIg8TNDEx2DSQiofMV3JdBMA85y4DELxXnlCFYXlUZ7K?=
- =?us-ascii?Q?Nb5lsdvUeuwxYstKEFExUDctuRaJFh3sexp+gkpDmR5Zjvn6mpxoU+mi7FUD?=
- =?us-ascii?Q?o1SeyuLrv2em/ZLh7lxNMe/KRae+DJp2h206UXWbswJ3LVaXzBblrPHLQwaj?=
- =?us-ascii?Q?d97KZGJkPwsf2YWVQrje13z8SrRJtfTZ0zIS5dBcR/Q4jjDAka1NDwSvvWxX?=
- =?us-ascii?Q?KTBy990oG3HOTe9KfYo3bjVH04tEMnAdewGSFNeP?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57163f23-b0ab-42e7-cb97-08dda95457c0
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7728.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 01:56:27.6587
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GoDC9zUNlaWgOxc7t7FoR3wA8vrDSu+lRFiTYuN6vSBGhrX0h6jruFczQLdYn0215jXmze3celFm/6OmXzyvGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9723
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+Message-ID: <20250612015812.2520789-1-yuyanghuang@google.com>
+Subject: [PATCH net-next, v2] selftest: Add selftest for multicast address notifications
+From: Yuyang Huang <yuyanghuang@google.com>
+To: Yuyang Huang <yuyanghuang@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>, Lorenzo Colitti <lorenzo@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 02:06:52PM +0200, David Hildenbrand wrote:
-> We setup the cache mode but ... don't forward the updated pgprot to
-> insert_pfn_pud().
-> 
-> Only a problem on x86-64 PAT when mapping PFNs using PUDs that
-> require a special cachemode.
-> 
-> Fix it by using the proper pgprot where the cachemode was setup.
-> 
-> Identified by code inspection.
-> 
-> Fixes: 7b806d229ef1 ("mm: remove vmf_insert_pfn_xxx_prot() for huge page-table entries")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/huge_memory.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index d3e66136e41a3..49b98082c5401 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1516,10 +1516,9 @@ static pud_t maybe_pud_mkwrite(pud_t pud, struct vm_area_struct *vma)
->  }
->  
->  static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
-> -		pud_t *pud, pfn_t pfn, bool write)
-> +		pud_t *pud, pfn_t pfn, pgprot_t prot, bool write)
->  {
->  	struct mm_struct *mm = vma->vm_mm;
-> -	pgprot_t prot = vma->vm_page_prot;
->  	pud_t entry;
->  
->  	if (!pud_none(*pud)) {
-> @@ -1581,7 +1580,7 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
->  	pfnmap_setup_cachemode_pfn(pfn_t_to_pfn(pfn), &pgprot);
->  
->  	ptl = pud_lock(vma->vm_mm, vmf->pud);
-> -	insert_pfn_pud(vma, addr, vmf->pud, pfn, write);
-> +	insert_pfn_pud(vma, addr, vmf->pud, pfn, pgprot, write);
->  	spin_unlock(ptl);
->  
->  	return VM_FAULT_NOPAGE;
-> @@ -1625,7 +1624,7 @@ vm_fault_t vmf_insert_folio_pud(struct vm_fault *vmf, struct folio *folio,
->  		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PUD_NR);
->  	}
->  	insert_pfn_pud(vma, addr, vmf->pud, pfn_to_pfn_t(folio_pfn(folio)),
-> -		write);
-> +		       vma->vm_page_prot, write);
+This commit adds a new kernel selftest to verify RTNLGRP_IPV4_MCADDR
+and RTNLGRP_IPV6_MCADDR notifications. The test works by adding and
+removing a dummy interface and then confirming that the system
+correctly receives join and removal notifications for the 224.0.0.1
+and ff02::1 multicast addresses.
 
-Actually It's not immediately obvious to me why we don't call track_pfn_insert()
-and forward the pgprot here as well. Prior to me adding vmf_insert_folio_pud()
-device DAX would call vmf_insert_pfn_pud(), and the intent at least seems to
-have been to change pgprot for that (and we did for the PTE/PMD versions).
+The test relies on the iproute2 version to be 6.13+.
 
-However now that the ZONE_DEVICE folios are refcounted normally I switched
-device dax to using vmf_insert_folio_*() which never changes pgprot based on x86
-PAT. So I think we probably need to either add that to vmf_insert_folio_*() or
-a new variant or make it the responsibility of callers to figure out the correct
-pgprot.
+Tested by the following command:
+$ vng -v --user root --cpus 16 -- \
+make -C tools/testing/selftests TARGETS=3Dnet TEST_PROGS=3Drtnetlink.sh \
+TEST_GEN_PROGS=3D"" run_tests
 
->  	spin_unlock(ptl);
->  
->  	return VM_FAULT_NOPAGE;
-> -- 
-> 2.49.0
-> 
+Cc: Maciej =C5=BBenczykowski <maze@google.com>
+Cc: Lorenzo Colitti <lorenzo@google.com>
+Signed-off-by: Yuyang Huang <yuyanghuang@google.com>
+---
+
+Changelog since v1:
+- Skip the test if the iproute2 is too old.
+
+ tools/testing/selftests/net/rtnetlink.sh | 39 ++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selft=
+ests/net/rtnetlink.sh
+index 2e8243a65b50..74d4afb55d7c 100755
+--- a/tools/testing/selftests/net/rtnetlink.sh
++++ b/tools/testing/selftests/net/rtnetlink.sh
+@@ -21,6 +21,7 @@ ALL_TESTS=3D"
+ 	kci_test_vrf
+ 	kci_test_encap
+ 	kci_test_macsec
++	kci_test_mcast_addr_notification
+ 	kci_test_ipsec
+ 	kci_test_ipsec_offload
+ 	kci_test_fdb_get
+@@ -1334,6 +1335,44 @@ kci_test_mngtmpaddr()
+ 	return $ret
+ }
+=20
++kci_test_mcast_addr_notification()
++{
++	local tmpfile
++	local monitor_pid
++	local match_result
++
++	tmpfile=3D$(mktemp)
++
++	ip monitor maddr > $tmpfile &
++	monitor_pid=3D$!
++	sleep 1
++	if [ ! -e "/proc/$monitor_pid" ]; then
++		end_test "SKIP: mcast addr notification: iproute2 too old"
++		rm $tmpfile
++		return $ksft_skip
++	fi
++
++	run_cmd ip link add name test-dummy1 type dummy
++	run_cmd ip link set test-dummy1 up
++	run_cmd ip link del dev test-dummy1
++	sleep 1
++
++	match_result=3D$(grep -cE "test-dummy1.*(224.0.0.1|ff02::1)" $tmpfile)
++
++	kill $monitor_pid
++	rm $tmpfile
++	# There should be 4 line matches as follows.
++	# 13: test-dummy1=C2=A0 =C2=A0 inet6 mcast ff02::1 scope global=C2=A0
++	# 13: test-dummy1=C2=A0 =C2=A0 inet mcast 224.0.0.1 scope global=C2=A0
++	# Deleted 13: test-dummy1=C2=A0 =C2=A0 inet mcast 224.0.0.1 scope global=
+=C2=A0
++	# Deleted 13: test-dummy1=C2=A0 =C2=A0 inet6 mcast ff02::1 scope global=
+=C2=A0
++	if [ $match_result -ne 4 ];then
++		end_test "FAIL: mcast addr notification"
++		return 1
++	fi
++	end_test "PASS: mcast addr notification"
++}
++
+ kci_test_rtnl()
+ {
+ 	local current_test
+--=20
+2.49.0.1204.g71687c7c1d-goog
+
 
