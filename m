@@ -1,119 +1,87 @@
-Return-Path: <linux-kernel+bounces-683973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D103AD7442
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FAB3AD743A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B266C3B47E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC03A5152
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C67D25EF99;
-	Thu, 12 Jun 2025 14:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7723B25C83C;
+	Thu, 12 Jun 2025 14:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="kgzSfWck"
-Received: from esa2.hc555-34.eu.iphmx.com (esa2.hc555-34.eu.iphmx.com [23.90.104.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeWqqdY5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0683725C6F3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF825BF02;
 	Thu, 12 Jun 2025 14:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.90.104.147
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739174; cv=none; b=RwrX4hsDzCKJXfrna9cFC7uusm9gOgRBdPJhwP1FjNZNh0NVe0N8EHwUFXX6Ne618/jD7/a2vU5zQF7XTHUal7w1k+pOjidNTBPdMT8m7vmoIY9dx3r4Mp991GpdwRBUI43gIz/+VA2MVt9vIpAPHXupyqyGyIlGH35T/xBNb/M=
+	t=1749739171; cv=none; b=Pxepq7KvOdRS/5MVEI8+B07RbSCricvuuHbGfuog779wHZAwcOSI2Y5BWtSKWCcgtGoFim7XPs9NScBIC4wWnZ/8Kp2JmAHto6LxtVuQGxo4uOG8xe+F383GOhbNjIn7wqqsLH9/9nKsCVPL3ehXUOKeh+XphnMY7bnYiNtPX+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739174; c=relaxed/simple;
-	bh=qHQZtgOUSppdb/h/ZBO+JNEWe7/fBqOyl/vdXLNJOYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TSVpKymn1VPkIU60q5eMqJmicmFs11Vb6+9SvpPoO0tQzU6Lo65yYmeUUhYBKsa54QXJjheKmR/eY21i/WsgNCrhMMS+UGSfEmGWYOdqsfa0EAow931WaH3CJEm/s+shIBTbQJZX2cibw7mGGpAovULk9gfnuN3FFuwLP4KDeOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=kgzSfWck reason="key not found in DNS"; arc=none smtp.client-ip=23.90.104.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobileye.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=mobileye.com; i=@mobileye.com; q=dns/txt; s=MoEyIP;
-  t=1749739172; x=1781275172;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qHQZtgOUSppdb/h/ZBO+JNEWe7/fBqOyl/vdXLNJOYQ=;
-  b=kgzSfWckRi4vY3UEu1Nl1Hs0j5UGGjyJYqzhmn8MsnwG5ds24v3yrv7X
-   n/v/gFB3mr44se1FYlO+G0RUA2xdNlZLVnbe64RAjVs86JwNd5LVKmjJ/
-   goDiuUMo+LxLMbqL9SbhIRv7N/FU9IFg0D9KLNfqHXbITA+BlBCLxB6XQ
-   nLQPezNce/hdQATjfRVHQZ6CXVNoQkK90+XG0drCg2loFNCEvfGWQq7St
-   tk1s62BtAdaEWzgORmrbj4Lm0hEzzc90V2n12CxAEVdWphYzmikEIDvNn
-   Gyt30dZiF7Iy/Q0CrJ1yhrofNIhIoy9fuuKEY4bWAwO4f+2tjwWLrNZpq
-   Q==;
-X-CSE-ConnectionGUID: TDDXB1duQWqC8XJ4q7vXag==
-X-CSE-MsgGUID: cRubhSHCS3KghFXFcfDXag==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from unknown (HELO ces02_data.me-corp.lan) ([146.255.191.134])
-  by esa2.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 17:39:22 +0300
-X-CSE-ConnectionGUID: 7KsuaaKlTxqTEHgxHTSWtg==
-X-CSE-MsgGUID: pZwLk6cwTG2vxbWmD9CagA==
-Received: from unknown (HELO epgd071.me-corp.lan) ([10.154.54.1])
-  by ces02_data.me-corp.lan with SMTP; 12 Jun 2025 17:39:21 +0300
-Received: by epgd071.me-corp.lan (sSMTP sendmail emulation); Thu, 12 Jun 2025 17:39:21 +0300
-From: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Anup Patel <anup@brainfault.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Ryo Takakura <takakura@valinux.co.jp>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Subject: [PATCH v3 7/7] irqchip/aclint-sswi: remove extra includes
-Date: Thu, 12 Jun 2025 17:39:11 +0300
-Message-ID: <20250612143911.3224046-8-vladimir.kondratiev@mobileye.com>
-In-Reply-To: <20250612143911.3224046-1-vladimir.kondratiev@mobileye.com>
-References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
- <20250612143911.3224046-1-vladimir.kondratiev@mobileye.com>
+	s=arc-20240116; t=1749739171; c=relaxed/simple;
+	bh=oocYYW9XhNGhlIxt3VxA0yDbX+cvu/AYrEHlCDzEaEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AwJi/vxYgZYtWZhR+vRFnsbxZJN8asC62tfZ5dJZgTbgj6A7btgjPC1owapw0pdCCM3ARfitKvoIMTXpJpdSN74J3cVBh9rk8hZ+q7gRaCe4qZKEJ7LwymL/2ujOgS4zY/EEB3s/pYzPf1gbWLORsLeA1x2Rj8epM7AD4L7fGAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeWqqdY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB59C4CEF7;
+	Thu, 12 Jun 2025 14:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749739171;
+	bh=oocYYW9XhNGhlIxt3VxA0yDbX+cvu/AYrEHlCDzEaEU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HeWqqdY5vrpn0k5DQvBel2CHEGRBgQDN15MknA6s3IDn1q15iZRQdO9brvYgOw177
+	 3MORk3AUrQAElWBebC92T8aK8le5Ne9IOPe3m79od2/iZRTLPjTEACw4dAxWAq0LIl
+	 Nbfc58jHNiOieAz6Fsf/6ttOegsKnaYKDds6AVzzqhEAAxCA8xy3ZnwYQYmZ3fnJP8
+	 UTaPQwt7hGzhEJQ2KwkG9QfN172sCiD0hPzFBU6c/j1GfBge/+x7BevqT+tFj45XL5
+	 AReWpz5axKrG5sfnaHIuUxRCkUiPptVnl1sbtl9Glk15VhXxSu10ho7aSlzNxaa66x
+	 3k3A5hLKio1LA==
+Date: Thu, 12 Jun 2025 07:39:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, skalluru@marvell.com, manishc@marvell.com,
+ andrew+netdev@lunn.ch, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, ajit.khaparde@broadcom.com,
+ sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
+ anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+ tariqt@nvidia.com, saeedm@nvidia.com, louis.peens@corigine.com,
+ shshaikh@marvell.com, GR-Linux-NIC-Dev@marvell.com, ecree.xilinx@gmail.com,
+ horms@kernel.org, dsahern@kernel.org, shuah@kernel.org,
+ ruanjinjie@huawei.com, mheib@redhat.com, linux-kernel@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+ oss-drivers@corigine.com, linux-net-drivers@amd.com,
+ linux-kselftest@vger.kernel.org, leon@kernel.org, Cosmin Ratiu
+ <cratiu@nvidia.com>
+Subject: Re: [PATCH net-next v3 1/4] udp_tunnel: remove rtnl_lock dependency
+Message-ID: <20250612073929.151fe6bf@kernel.org>
+In-Reply-To: <aEo_2hOn5kh6kBpk@mini-arch>
+References: <20250610171522.2119030-1-stfomichev@gmail.com>
+	<20250610171522.2119030-2-stfomichev@gmail.com>
+	<20250611184345.3b403ad0@kernel.org>
+	<aEo_2hOn5kh6kBpk@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
----
- drivers/irqchip/irq-aclint-sswi.c | 6 ------
- 1 file changed, 6 deletions(-)
+On Wed, 11 Jun 2025 19:47:54 -0700 Stanislav Fomichev wrote:
+> > There are multiple entry points to this code, basically each member of
+> > struct udp_tunnel_nic_ops and the netdev notifiers. In this patch only
+> > reset and work are locked. I'm a bit confused as to what is the new
+> > lock protecting :S  
+> 
+> I though that most of the callers are from do_setlink and there we have
+> rtnl and we grab rtnl+lock during the sync. But that doesn't
+> address the suspend/resume vs do_setlink race, that's true :-(
 
-diff --git a/drivers/irqchip/irq-aclint-sswi.c b/drivers/irqchip/irq-aclint-sswi.c
-index a604c7e1e416..51ecb509a984 100644
---- a/drivers/irqchip/irq-aclint-sswi.c
-+++ b/drivers/irqchip/irq-aclint-sswi.c
-@@ -7,15 +7,9 @@
- 
- #include <linux/cpu.h>
- #include <linux/interrupt.h>
--#include <linux/io.h>
--#include <linux/irq.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/chained_irq.h>
--#include <linux/module.h>
--#include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_irq.h>
--#include <linux/pci.h>
- #include <linux/spinlock.h>
- #include <linux/smp.h>
- #include <linux/string_choices.h>
--- 
-2.43.0
-
+It's the UDP tunnels that add and remove the ports usually.
 
