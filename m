@@ -1,141 +1,224 @@
-Return-Path: <linux-kernel+bounces-684044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF70DAD7545
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:08:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9688AD7569
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB20018897C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2375C1717D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56039274668;
-	Thu, 12 Jun 2025 15:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1932980AA;
+	Thu, 12 Jun 2025 15:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jm5Tqtx+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JVD8+Avq"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JB5J9pT9"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB45526D4C9;
-	Thu, 12 Jun 2025 15:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514228937C;
+	Thu, 12 Jun 2025 15:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740728; cv=none; b=B1d1jcXXLNlSs5wTxA5e9W0n9aawnZ2XpyvYhXdwTHt2jDAZrGLDT79Grktm11bbeM7tc+p/hWKKva92opEClbGkrVUIs6h7AAo1VJjRbJsECQhwCqErVuSRd26jEdnS39icZTCSdEmopV+oaGFMHtw7Ikpe59t403YgTizp1gs=
+	t=1749741088; cv=none; b=VqKB2BEu96iM0rQ4fNX0auMI6TU51YHOZgZu47TDEMuqPwQAHG5an2TKwCdeTgaYH7kQci4QJJKmjvxjatvkeHifDMCG/nZfPramyVIU/DI+GwXQV+BrRVAYW9bWpikEOYO3OPazBiCdJAJyztDSMixq14mRHxXbW45qDo/3x2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740728; c=relaxed/simple;
-	bh=FrUyFoeakZ/6ELmKkHRpIQLhoYY54oaCXbP4semewDk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=lOL+VTMQOFrjHt43JTNmuI41/ppszWTSj/YHubQnwbb10XWCVbYcm+E4KcUFqttL2bPgtf2akZFHxMZz+4/F48jboi+5poybcMZeDgS/ZMmeQum3dXQEd3Y0OrnBTRWdvb+f9EBeXLerm90udO2m6ON9wkVKTPed06gIpfZkL9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jm5Tqtx+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JVD8+Avq; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id D44AA13805C6;
-	Thu, 12 Jun 2025 11:05:23 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 11:05:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1749740723;
-	 x=1749827123; bh=F2brnDyX2RdfWZaowl+U6ywciKsVMQieC6WvQHg1iV8=; b=
-	Jm5Tqtx+yk1k2lGRaFOeo2qQR4+VMyseQTEKG42iSTo9P6jMwKWKxgQ9Iwqk6iI8
-	lf4fGeCpzFFE+CgHlMxYSKP7zDq3J0XJU5nE3OnUbiUXlQNC9rb8DH2Oy3ZX5JcR
-	0NFR3yQVoi9d+qzJyiSgmqMxE8EJp5E1Rb2JejI7NSlWJ4Jrn18wiLF8okqYWsVa
-	RXMQrTG2ZS9n4vnc/LqLV5cp1n4H6Yyg4GQZ7HWrboQo3Vrsf94Q3IiSeDn1oFRQ
-	7yMjlxnr4iej+yMzGhOfwJY5T2QdSwL0ut1df66NsRC11gxZnzSi/3r+F7qa02ZJ
-	aRP74315z5Sz3fwtha7yUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749740723; x=
-	1749827123; bh=F2brnDyX2RdfWZaowl+U6ywciKsVMQieC6WvQHg1iV8=; b=J
-	VD8+AvqEq1VJvmoypW5EPfC3mFllRnFuJEfEg4zHvXlMukjVmaSZhryCTQbm3eaA
-	0Fh1XLNxOMOhIWizIcdPuTeoA4MktyLzHHdnlhpx3ostDMYmEocxybbp9dHl6qfN
-	DA0/06CZPn/GDkq6ZDNm0U4RxAnktIvU2GA9jXGAvfT8GzpW+w68gNtkQdz6D/Cd
-	KjI8ayYWSu9P+dHHezgD47utUXkDoEQQrAtvDw9xBzSJduPsz/6ppYVwz3VnrqC9
-	Cl2OoM/RSaslVa2HtpTZWoTlB/h1sFP9WkMSvOGdqjF3R0ehRw+l6iKc5c9xpvLb
-	UKcROEiF0juumr9gIrtug==
-X-ME-Sender: <xms:s-xKaH34P9m8uz7hV427SUVGaDNUksqr_CYe9SDRYAHlDcO9vnyodQ>
-    <xme:s-xKaGE3r7qLnHcKobFcB0f3aQZuhWhKHKLHHKEqFwDl28BUN8EpOcenxen5G2urQ
-    0Dm-xaUlEnI6fWY89Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprh
-    gtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskh
-    hisehlihhnrghrohdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieek
-    khdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtsh
-    drihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhl
-    ihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotges
-    vhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:s-xKaH4SKAslg6GaVk3KwslqGGvlTgs9tgucsMNFsvLValYWOnOmlQ>
-    <xmx:s-xKaM1_uFV8rVSaGmZtdIio6EoSJJr8B3qXjtCAu64uAPCFj3L6TA>
-    <xmx:s-xKaKFcoBVn_K_jB5B61X_GRyU0rPYMVnwc0v4jMwnMUleLRlCsBQ>
-    <xmx:s-xKaN-y0st34moHmInI4RYu2-ubKc-ELP3A2tpmXDnj7iR1jrQnkA>
-    <xmx:s-xKaF9tXKePnpmYLrwW5E9xrOPmpcVk5d3Z3GQFRQ9tqykg9UqvMB_n>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 186A0700065; Thu, 12 Jun 2025 11:05:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1749741088; c=relaxed/simple;
+	bh=unaQiuIZlkFeSx8YV8ZcLV4sr/wHefsUkoyHPA7p3uw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eQN+l4i4UapYF9WJw8Q8S5MTax9JMTzsaly65ScGng0cvDKq/3RrpW9C1EphTg/8p4WVEdN3YXGpLDspVzhYQLyojDHoquaMIhKLUC+MiNrwi4DU1S7PEuv2Ql35S+QMAn4ZwEp/VfxPuV2TWT7wGnnFRVh4y0SSg4EnRKocrbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JB5J9pT9; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4531898b208so1085545e9.3;
+        Thu, 12 Jun 2025 08:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749741085; x=1750345885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pebtx4crYp3NAH6PwfiknDBb0Q1k3Z+dLYGSSugushY=;
+        b=JB5J9pT9ouotXmuVTJM6x3vYSHqG3NxLpGmtYKIy1sk2jKJeN0CDIS6OJ4jPYR0plm
+         2zK0CLR7VWWaCuzEgBu4wBpmHk91ow86LbOuSjFEipP3gPbUuL4iMAUz97aqOLEAfLbl
+         CBDaKFZNUd11LAnHFKcLxV5f22TdHOABGQxpKy4JOx0sARubhlRHVpLQ9gfVWPhxpejT
+         DljyccAKiChnNHfjo6okOA8dLdE1YZWktwOf3ivTJL38QF5RKv3IG9ldkb4FVZnXBXtU
+         +37qX6h6I0UyDVwDxugl3j+W2vOM1z/tGKO/jVYJ45ZbYjlgRxTSYH+sHsDd8nG8PbZx
+         6fqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749741085; x=1750345885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pebtx4crYp3NAH6PwfiknDBb0Q1k3Z+dLYGSSugushY=;
+        b=vsHxp9xGB2ZEJMUzDjckg+9d0XZmi+T4+0KIZ38tEBbO49+EdEjdfLRAIwx1SFJdUW
+         zQGCbJ6WdKyPtV4BAWGFl9XnXLAM6lUKL580ZuatqdoI9vKFasnLnKECS2lYkfiW8R1o
+         FFR7IGIGy2WG4Yfzlo5XuLTApiFsYMqVCn8ePpp0pddYrXP3Dx4N59Uauw/Xmtw4QRnW
+         VV+SZ3ZgXrR8NkTCN8IbBCAdzczqfT/X2gqmLbKfKwYme0+onF3dzZ3LrUml3j7sax7l
+         fCE7+m4LakkbDotTctkUML/Cy8cCOnvFwcxKfL6PwfxZd1otFdveMnoLTTD8nWs9i3Ft
+         M4nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDsOUqYBz7JsC8TnMWZYRulBfJTLQGBF+Vc+fpClDet/SL0EkV1TeFXXWmx7FZhbmZPao+sYOw@vger.kernel.org, AJvYcCXpckx4Ogh1soR8KPRyj081cJfYz8O0DNBRRbYE3bLQlBlNxFbjjek+AYnBHXJpdr0SCB02IHj56tuYRxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo3LrpoyoZGQeGPWPD2zIH5TJSwXCgz20vbdTUv84EhcYFPW+g
+	Z917dNuKJ0PCM2ZTDejQ4YjcKmyc+0mBUY1BRtgDJkKaXPaI62VfTfu9
+X-Gm-Gg: ASbGnctDRIOUf4B57szHqXIaXnnEkfTCjuDEflHwWr0bP+VoxRh+W9IPSyFX4/WM8UW
+	Jbzpqg06TSwYEzaTKcyzDIh6LhU/yLV20Mldltwe3uIojVm3wpXacIlBELa/epZXhBFAfxof211
+	YjVDj7CRI0JTGUyX0kRMg/J+z+K5ajS6nByEAMHnQIv2VWtt/Q6iszbCzv3fzHd9tnhwDVMxfSW
+	RDcvW1icJE/Erl7gIpj9tuOy1CVibYpDKmFQ++B0suF5QYWKSsybLuPN3Uc5D5pjqU2AjoAF3Ho
+	fqTScJ9Ic02Ve+2j0xsdwhJQoEyuvsdc2frc8R/+ITGvsrevYAoLufXJm0OPHaiECEm1oRfWe1O
+	LovFQ/5FSWnOrvSXTyKoIrQ==
+X-Google-Smtp-Source: AGHT+IEu/ptSpWA2NpNjS+NYr1/sRscpVV0jrp9hLsf3tiygLm8YoCl4M+445JSF+xJhWl/p+2HyLw==
+X-Received: by 2002:a05:600c:a10c:b0:453:bf1:8895 with SMTP id 5b1f17b1804b1-453248c4e85mr20185585e9.5.1749741084643;
+        Thu, 12 Jun 2025 08:11:24 -0700 (PDT)
+Received: from thomas-precision3591.. ([2a0d:e487:219f:b2e4:a011:1902:f9c3:4790])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a561996d30sm2254335f8f.31.2025.06.12.08.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 08:11:24 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] (drivers/ethernet/atheros/atl1) test DMA mapping for error code
+Date: Thu, 12 Jun 2025 17:05:34 +0200
+Message-ID: <20250612150542.85239-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0983471eb64d6916
-Date: Thu, 12 Jun 2025 17:05:02 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Sven Peter" <sven@kernel.org>, "Janne Grunau" <j@jannau.net>,
- asahi@lists.linux.dev, linux-samsung-soc@vger.kernel.org
-Message-Id: <b8783289-6670-4254-9049-786ae7cdd6a1@app.fastmail.com>
-In-Reply-To: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
-References: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: defconfig: Switch SOUND to module
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025, at 15:44, Krzysztof Kozlowski wrote:
-> Sound drivers are not essential to boot boards or mount rootfs,
-> therefore in effort to reduce the size of kernel image (and boot images)
-> switch the ASoC drivers to modules to decrease the size:
->
->   vmlinux: 152864 kB -> 154528 kB
->   Image: 39391 kB -> 39067 kB
->
-> No difference in resulting include/generated/autoconf.h, except making
-> modules: SND_SOC_SAMSUNG, SND_SOC_SDCA_OPTIONAL, SND_SOC_APPLE_MCA,
-> SND_TIMER, SND_COMPRESS_OFFLOAD, SND_PCM, SND_SOC_SOF_OF and
-> SND_DMAENGINE_PCM.
->
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> ---
->
-> If patches are fine, I will take them via Samsung SoC.
+According to Shuah Khan[1], all `dma_map()` functions should be tested
+before using the pointer. This patch checks for errors in `dma_map()`
+calls and in case of failure, unmaps the previously dma_mapped regions
+and returns an error.
 
-Nice find!
+[1] https://events.static.linuxfound.org/sites/events/files/slides/Shuah_Khan_dma_map_error.pdf
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/net/ethernet/atheros/atlx/atl1.c | 38 ++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-There are some nasty interactions between DRM drivers calling
-into sound drivers for HDMI audio, but I checked that this is fine
-here because of CONFIG_DRM=m.
+diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
+index cfdb546a09e7..99d7a37b4ddf 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl1.c
++++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+@@ -1869,6 +1869,13 @@ static u16 atl1_alloc_rx_buffers(struct atl1_adapter *adapter)
+ 		buffer_info->dma = dma_map_page(&pdev->dev, page, offset,
+ 						adapter->rx_buffer_len,
+ 						DMA_FROM_DEVICE);
++		if (dma_mapping_error(&pdev->dev, buffer_info->dma)) {
++			buffer_info->alloced = 0;
++			buffer_info->skb = NULL;
++			kfree_skb(skb);
++			adapter->soft_stats.rx_dropped++;
++			break;
++		}
+ 		rfd_desc->buffer_addr = cpu_to_le64(buffer_info->dma);
+ 		rfd_desc->buf_len = cpu_to_le16(adapter->rx_buffer_len);
+ 		rfd_desc->coalese = 0;
+@@ -2183,7 +2190,7 @@ static int atl1_tx_csum(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	return 0;
+ }
+ 
+-static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
++static int atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	struct tx_packet_desc *ptpd)
+ {
+ 	struct atl1_tpd_ring *tpd_ring = &adapter->tpd_ring;
+@@ -2195,12 +2202,14 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	unsigned int f;
+ 	int retval;
+ 	u16 next_to_use;
++	u16 first_mapped;
+ 	u16 data_len;
+ 	u8 hdr_len;
+ 
+ 	buf_len -= skb->data_len;
+ 	nr_frags = skb_shinfo(skb)->nr_frags;
+ 	next_to_use = atomic_read(&tpd_ring->next_to_use);
++	first_mapped = next_to_use;
+ 	buffer_info = &tpd_ring->buffer_info[next_to_use];
+ 	BUG_ON(buffer_info->skb);
+ 	/* put skb in last TPD */
+@@ -2216,6 +2225,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+ 						offset, hdr_len,
+ 						DMA_TO_DEVICE);
++		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++			goto dma_err;
+ 
+ 		if (++next_to_use == tpd_ring->count)
+ 			next_to_use = 0;
+@@ -2242,6 +2253,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 								page, offset,
+ 								buffer_info->length,
+ 								DMA_TO_DEVICE);
++				if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++					goto dma_err;
+ 				if (++next_to_use == tpd_ring->count)
+ 					next_to_use = 0;
+ 			}
+@@ -2254,6 +2267,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+ 						offset, buf_len,
+ 						DMA_TO_DEVICE);
++		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++			goto dma_err;
+ 		if (++next_to_use == tpd_ring->count)
+ 			next_to_use = 0;
+ 	}
+@@ -2277,6 +2292,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 			buffer_info->dma = skb_frag_dma_map(&adapter->pdev->dev,
+ 				frag, i * ATL1_MAX_TX_BUF_LEN,
+ 				buffer_info->length, DMA_TO_DEVICE);
++			if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++				goto dma_err;
+ 
+ 			if (++next_to_use == tpd_ring->count)
+ 				next_to_use = 0;
+@@ -2285,6 +2302,22 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 
+ 	/* last tpd's buffer-info */
+ 	buffer_info->skb = skb;
++
++	return 0;
++
++ dma_err:
++	while (first_mapped != next_to_use) {
++		buffer_info = &tpd_ring->buffer_info[first_mapped];
++		dma_unmap_page(&adapter->pdev->dev,
++			       buffer_info->dma,
++			       buffer_info->length,
++			       DMA_TO_DEVICE);
++		buffer_info->dma = NULL;
++
++		if (++first_mapped == tdp_ring->count)
++			first_mapped = 0;
++	}
++	return -ENOMEM;
+ }
+ 
+ static void atl1_tx_queue(struct atl1_adapter *adapter, u16 count,
+@@ -2419,7 +2452,8 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
+ 		}
+ 	}
+ 
+-	atl1_tx_map(adapter, skb, ptpd);
++	if (atl1_tx_map(adapter, skb, ptpd))
++		return NETDEV_TX_BUSY;
+ 	atl1_tx_queue(adapter, count, ptpd);
+ 	atl1_update_mailbox(adapter);
+ 	return NETDEV_TX_OK;
+-- 
+2.43.0
+
 
