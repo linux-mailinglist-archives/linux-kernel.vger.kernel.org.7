@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-682870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6108AD65AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:29:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F305AD66A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11EB17EE7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 535F27A2D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF72E1C3C08;
-	Thu, 12 Jun 2025 02:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ewVXWC7R"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2CD1DAC95;
+	Thu, 12 Jun 2025 04:08:25 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDFC1C32FF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 02:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F7E19F137;
+	Thu, 12 Jun 2025 04:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749695374; cv=none; b=VlWxRb+Qv2nnk52/J+yJ58vE7jyYnldRlX70hpKRHhlHCjgMcDIb2BCuKX3YuGMTxvbUgOkNTUNnEOEG3XUCPqX3waLos0NwiFuk+oiozLQW3y2ehfDWTC6FViyW7WDUPAAeWwABc23s2zpCaK3aA42Ew3JXGtYRynvQd8ltklE=
+	t=1749701304; cv=none; b=UVL3Uy8P5AJNmbCHzgIAAAOY823GjnYWAwJseR4f+/oY5aXsyenfcsfb6NOhAZ5qD0DHzWpDEYwnW6J0Bmatgu9YZr/cPZaZS+vlBIDa93tPhEP9cJfOFpIOP5dPlxiz3nh3fnSdRCbpCzvmPpPex3ZrjHQsvRZzb7XlpVdKLPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749695374; c=relaxed/simple;
-	bh=UiR+4jj7Lezdi7ckAIhQ1hmMUd7C1uiRiYBWgV7z74w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sQFsM/OkADAYQLiF+vYhsSEXeXV2MejmJDAw1iJRFz++BkVqWjGDrWQQHzyovAXbsHrgo39Etr+vloJUjlDqk/rfTWJNRbZ2Ruht1D8psVeaqD3UizCzksVH6929ba8rK2dKEUU1mmFhfWxO/yOOUq08/lecfeK4PBpLlcQCrrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ewVXWC7R; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so403690f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jun 2025 19:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749695370; x=1750300170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wyJycTNJKqQAdQ4vv1MjI1ZDB2PA21sgOvxj6YC0ETM=;
-        b=ewVXWC7RK1FoHXMgNlYNRCYV84yypu5i/u05FEHnx7NH43xZwOUZEFacgOHhw+5E3+
-         FyS/t1cTwVib9RaD0VieonMXFIZaeelijGgR+bChQRZDeaECA83RlFuZFYXr20rRrBV2
-         V93OhqS+8jXN83sNceAd2CZ2ZqsvmsAgen2MaPy/AZK+t2L3AdclxaKHwR5aJVaeEQOT
-         0zaEnIRtvkPFB59Yx5OmmrtS9CaBi+KQxoWieTv1Es/mpVwtXS21JIaSQsjGmv/Acdne
-         59tamKdPID7DtHLvYk3SfDMoYaMcX4m91duRHxSu2jFvomIhANyFHJbvwsCujqEKoB6B
-         TzoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749695370; x=1750300170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wyJycTNJKqQAdQ4vv1MjI1ZDB2PA21sgOvxj6YC0ETM=;
-        b=r2IJ2P0qn1r9+9vgaj8ZSA8e/dw5WLjO/ZhrXzn803ycGM51rdiPiQD46RJFWEbA1K
-         kjnVlG0ZY53aDDLFQ+07fb+dmPucCYWTnRFP4JGoZ1g9wcRtOOCplVjcsnFZQgJJNUJU
-         UUpz8N6BkZa9QgNivzdQEyESiQ7OrfT5+vtAN8IsUqBeF7wRFQ3qaZi5ThC+duC8vRR2
-         i4oTa8SJmvqCHV6LxE3u2CwL3Q3cNHgsWFGbylBLPSKFPkUtpBv/dW7N13RNssicJ6lY
-         zYWDvAAzHDkAoxciIUBWf/XJcDifvCknn2pPZmlNhqxMta7x/mkwnBgGptM6V1UyyTq7
-         kr6A==
-X-Gm-Message-State: AOJu0Yy6rVjqzJKR9Sr3mJg87CvhJjn/MNs58wVLfI3O/W3WC6P0cnVj
-	upc9j4w6LjxGyp4pp/lrHjrN86iWrt6SH2d0JJ7j4T1OHpO183IU9k6ksb9Mfr3XJV6388rZQiV
-	7Qfw=
-X-Gm-Gg: ASbGncuzKMi+iz0iyljoze8XmiVEHHyCzG0gjmpEL9Vcb0WfC4satKueyFWIzf2A4ZH
-	ubM+LTVz1Pxotxj5JmwU5JYo8zZaaa1qtZc+1ddQDq25EmWU9yHYd/7UvdbgpCls716FtezqLj+
-	IBQRHhToUD3G6+0KINb+wHHZAmyvFHKAml++TnTln7cLjHH0fhoRWhvknf4Ws8dVYabXnTmRvnt
-	nKCB+R3XrARuCz0Ti/rbIpxdS4dUSBvj1s269QlZHmpuVgrIPMdl5FxSrbxumQOIbuH8ptRPXSJ
-	C4Dy4EYDNwmJnNh/niJwo/4+7mMyY8lQ46WrpO23MLXBiJA+AqwXf85yttm5Yg==
-X-Google-Smtp-Source: AGHT+IEor0nUXVAnFPELZdkVN3Zon9NMN75gb7Dse9/hrs9o11jYQcVQVAHlt5QJB3hYaccylY2k3w==
-X-Received: by 2002:a05:6000:2dc4:b0:3a4:ef00:a7b9 with SMTP id ffacd0b85a97d-3a5586dcd53mr3812187f8f.12.1749695370135;
-        Wed, 11 Jun 2025 19:29:30 -0700 (PDT)
-Received: from localhost ([202.127.77.110])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-748809ebecesm296699b3a.138.2025.06.11.19.29.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 19:29:29 -0700 (PDT)
-From: Wei Gao <wegao@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: jack@suse.com,
-	linux-ext4@vger.kernel.org,
-	wegao@suse.com
-Subject: [PATCH] ext2: Handle fiemap on empty files to prevent EINVAL
-Date: Thu, 12 Jun 2025 10:28:55 -0400
-Message-ID: <20250612142855.2678267-1-wegao@suse.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749701304; c=relaxed/simple;
+	bh=XU7wejBwGgIJ5mrJNR8OeoF4ChRgysR4TveQLmwzHps=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HA0/Ay9u+A7OwpvdgWb5uGwCAprY601QPc0sQmtUKVqCH26J4UmcnWMfG/u7h1Y+YpRAQ6MRBhmyjwC/H0vphhdbePKrG5O3fJSuZp+cUzWt4ZORLFnIhD1raWBLbfTMDhtwhz3My8eO916wlIDXy37M70Jg5+CqJjZMpXKYQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bHprK3kxHz2TSCk;
+	Thu, 12 Jun 2025 12:06:57 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id CA3311A0171;
+	Thu, 12 Jun 2025 12:08:17 +0800 (CST)
+Received: from huawei.com (10.175.112.188) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
+ 2025 12:08:16 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH v2] nfsd: Invoke tracking callbacks only after initialization is complete
+Date: Thu, 12 Jun 2025 11:55:06 +0800
+Message-ID: <20250612035506.3651985-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,56 +55,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Previously, ext2_fiemap would unconditionally apply "len = min_t(u64, len,
-i_size_read(inode));", When inode->i_size was 0 (for an empty file), this
-would reduce the requested len to 0. Passing len = 0 to iomap_fiemap could
-then result in an -EINVAL error, even for valid queries on empty files.
-The new validation logic directly references ext4_fiemap_check_ranges.
+Checking whether tracking callbacks can be called based on whether
+nn->client_tracking_ops is NULL may lead to callbacks being invoked
+before tracking initialization completes, causing resource access
+violations (UAF, NULL pointer dereference). Examples:
 
-Link: https://github.com/linux-test-project/ltp/issues/1246
-Signed-off-by: Wei Gao <wegao@suse.com>
+1) nfsd4_client_tracking_init
+   // set nn->client_tracking_ops
+   nfsd4_cld_tracking_init
+    nfs4_cld_state_init
+     nn->reclaim_str_hashtbl = kmalloc_array
+    ... // error path, goto err
+    nfs4_cld_state_shutdown
+     kfree(nn->reclaim_str_hashtbl)
+                                      write_v4_end_grace
+                                       nfsd4_end_grace
+                                        nfsd4_record_grace_done
+                                         nfsd4_cld_grace_done
+                                          nfs4_release_reclaim
+                                           nn->reclaim_str_hashtbl[i]
+                                           // UAF
+   // clear nn->client_tracking_ops
+
+2) nfsd4_client_tracking_init
+   // set nn->client_tracking_ops
+   nfsd4_cld_tracking_init
+                                      write_v4_end_grace
+                                       nfsd4_end_grace
+                                        nfsd4_record_grace_done
+                                         nfsd4_cld_grace_done
+                                          alloc_cld_upcall
+                                           cn = nn->cld_net
+                                           spin_lock // cn->cn_lock
+                                           // NULL deref
+   // error path, skip init pipe
+   __nfsd4_init_cld_pipe
+    cn = kzalloc
+    nn->cld_net = cn
+   // clear nn->client_tracking_ops
+
+After nfsd mounts, users can trigger grace_done callbacks via
+/proc/fs/nfsd/v4_end_grace. If resources are uninitialized or freed
+in error paths, this causes access violations.
+
+Resolve the issue by leveraging nfsd_mutex to prevent concurrency.
+
+Fixes: 52e19c09a183 ("nfsd: make reclaim_str_hashtbl allocated per net")
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 ---
- fs/ext2/inode.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+  Changes in v2:
+    Use nfsd_mutex instead of adding a new flag to prevent concurrency.
+ fs/nfsd/nfs4recover.c | 8 ++++++++
+ fs/nfsd/nfs4state.c   | 4 ++++
+ fs/nfsd/nfsctl.c      | 2 ++
+ 3 files changed, 14 insertions(+)
 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 30f8201c155f..e5cc61088f21 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -895,10 +895,30 @@ int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		u64 start, u64 len)
+diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+index 82785db730d9..8ac089f8134c 100644
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -162,7 +162,9 @@ legacy_recdir_name_error(struct nfs4_client *clp, int error)
+ 	if (error == -ENOENT) {
+ 		printk(KERN_ERR "NFSD: disabling legacy clientid tracking. "
+ 			"Reboot recovery will not function correctly!\n");
++		mutex_lock(&nfsd_mutex);
+ 		nfsd4_client_tracking_exit(clp->net);
++		mutex_unlock(&nfsd_mutex);
+ 	}
+ }
+ 
+@@ -2083,8 +2085,10 @@ nfsd4_client_record_create(struct nfs4_client *clp)
  {
- 	int ret;
-+	u64 maxbytes;
+ 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
  
- 	inode_lock(inode);
--	len = min_t(u64, len, i_size_read(inode));
-+	maxbytes = inode->i_sb->s_maxbytes;
-+
-+	if (len == 0) {
-+		ret = -EINVAL;
-+		goto unlock_inode;
-+	}
-+
-+	if (start > maxbytes) {
-+		ret = -EFBIG;
-+		goto unlock_inode;
-+	}
-+
-+	/*
-+	 * Shrink request scope to what the fs can actually handle.
-+	 */
-+	if (len > maxbytes || (maxbytes - len) < start)
-+		len = maxbytes - start;
-+
- 	ret = iomap_fiemap(inode, fieinfo, start, len, &ext2_iomap_ops);
-+
-+unlock_inode:
- 	inode_unlock(inode);
++	mutex_lock(&nfsd_mutex);
+ 	if (nn->client_tracking_ops)
+ 		nn->client_tracking_ops->create(clp);
++	mutex_unlock(&nfsd_mutex);
+ }
  
- 	return ret;
+ void
+@@ -2092,8 +2096,10 @@ nfsd4_client_record_remove(struct nfs4_client *clp)
+ {
+ 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
+ 
++	mutex_lock(&nfsd_mutex);
+ 	if (nn->client_tracking_ops)
+ 		nn->client_tracking_ops->remove(clp);
++	mutex_unlock(&nfsd_mutex);
+ }
+ 
+ int
+@@ -2101,8 +2107,10 @@ nfsd4_client_record_check(struct nfs4_client *clp)
+ {
+ 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
+ 
++	mutex_lock(&nfsd_mutex);
+ 	if (nn->client_tracking_ops)
+ 		return nn->client_tracking_ops->check(clp);
++	mutex_unlock(&nfsd_mutex);
+ 
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index d5694987f86f..2794fdc8b678 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -2529,7 +2529,9 @@ static void inc_reclaim_complete(struct nfs4_client *clp)
+ 			nn->reclaim_str_hashtbl_size) {
+ 		printk(KERN_INFO "NFSD: all clients done reclaiming, ending NFSv4 grace period (net %x)\n",
+ 				clp->net->ns.inum);
++		mutex_lock(&nfsd_mutex);
+ 		nfsd4_end_grace(nn);
++		mutex_unlock(&nfsd_mutex);
+ 	}
+ }
+ 
+@@ -6773,7 +6775,9 @@ nfs4_laundromat(struct nfsd_net *nn)
+ 		lt.new_timeo = 0;
+ 		goto out;
+ 	}
++	mutex_lock(&nfsd_mutex);
+ 	nfsd4_end_grace(nn);
++	mutex_unlock(&nfsd_mutex);
+ 
+ 	spin_lock(&nn->s2s_cp_lock);
+ 	idr_for_each_entry(&nn->s2s_cp_stateids, cps_t, i) {
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 3f3e9f6c4250..649850b4bb60 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1085,7 +1085,9 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
+ 			if (!nn->nfsd_serv)
+ 				return -EBUSY;
+ 			trace_nfsd_end_grace(netns(file));
++			mutex_lock(&nfsd_mutex);
+ 			nfsd4_end_grace(nn);
++			mutex_lock(&nfsd_mutex);
+ 			break;
+ 		default:
+ 			return -EINVAL;
 -- 
-2.49.0
+2.46.1
 
 
