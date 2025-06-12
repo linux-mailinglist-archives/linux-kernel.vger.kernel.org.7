@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-683997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B7AAD749C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:51:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E464AD74A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A11763B394E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115E7173CCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6F425290D;
-	Thu, 12 Jun 2025 14:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9F0268FD8;
+	Thu, 12 Jun 2025 14:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5izHmlo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLSKS37A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABD024DCF1
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B12268C66;
+	Thu, 12 Jun 2025 14:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739884; cv=none; b=HaH116bxdGP7T4rEYyGI+z3Wf/Zq+j57+OBxZS68xL4MM5dTstMJdAsGzVHWLFlSGFDQrvpizGL+n44bXlTwjAVgRmI04KjyhQwxkGL3m8fja5MFaxjq8lRccc7M19rGuTpjxNPp/HPD7X5chzs3wkni6n4afwIWTCf0feB7v4M=
+	t=1749739911; cv=none; b=gGxj1NYPL9idGtFwZJAbif7qJkU2uda4U+hAaxvXtYRonNy2rlcoKzv7m6zSf/iKSbrJgfm2+NfKKPpdB7O7s9p2q1urHYXFjKcfo5fX7nPXrJeLf8+eSFANln+UbxJIh6pmbqiH0gpGp4SA9B8dmC7kwUfLe4Mb67jkrCkAMKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739884; c=relaxed/simple;
-	bh=Xf7pA1iH8R0kEK1Bi68lYJUZWLTkVcu0i//GjSh5l3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYxp28J57qrfzgt4fWiUZYisKe4yXFmL2kqex/I3h2Rz7lMoNFZE59nNMpSE1gwxip5ChRziQPmNY4GnhrVoxKEXA9liU2kaDPsjLe9b8AOnTdyPXmLSgwT1Xr51lfJnx1o5YWGtqZFmU7aFlUhyGvouPCO9fQbcARv1pinLyxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5izHmlo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB208C4CEEB;
-	Thu, 12 Jun 2025 14:51:22 +0000 (UTC)
+	s=arc-20240116; t=1749739911; c=relaxed/simple;
+	bh=M+iZ92QvszXsMUKBpby7ZU3P13f31um/5NFkEJ3pVro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2eW2A8f1HRvPKn/dezvS7twtos39JKGCcr6FiFUhfl0DXn33kNOMkoLF3q+Zd6DhhRerANcCylXuvEFvw2pDvaORw04bOXHg/ObmSlW0qjg3YSLA0smT5Rn8cU10J1KbxkGLv6Kaf/cIKwRqjDiWb94enq/uYk0DFDy8GczjAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLSKS37A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B290C4CEEA;
+	Thu, 12 Jun 2025 14:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749739884;
-	bh=Xf7pA1iH8R0kEK1Bi68lYJUZWLTkVcu0i//GjSh5l3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G5izHmloGxfvmAKtxCBCGoWnKOObEAsaaMsON8o2BrhMNIpeBRzNJEeGl0QzTFC8o
-	 gI6IqastNqKeSsjpXyrXuodJWf/N7uO1+qPu97R4doYc0SmtDbGTNr/1yq3eDMYaSp
-	 0GF5dPC/nShzhzTStxALDZtWfcbly6QUpqwy54DZTgKVHwFgAHFfjS3kPzl1FJZiyD
-	 MV5jAOGevgyzGynH/dH+sjyyd6L2Xn3OEnRKaMQCk0WPTN461x80nkraPr1OkL9lfA
-	 heZh4hysHTNyR+UYAws2Crt7UTvYSgtmiR9Q3xvzak001Z0F+1OTMvT/aD/x7LiPiP
-	 S8CuvVrWccX4A==
-Date: Thu, 12 Jun 2025 15:51:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/gcs: Don't call gcs_free() during flush_gcs()
-Message-ID: <93a0f043-d5f6-432f-ac37-266dd5bbe899@sirena.org.uk>
-References: <20250611-arm64-gcs-flush-thread-v1-1-cc26feeddabd@kernel.org>
- <aEm-F04k0sC1tOCp@arm.com>
- <4b354842-2108-4904-9294-fb9b00978986@sirena.org.uk>
- <aErokN0vKT3urlmA@arm.com>
+	s=k20201202; t=1749739911;
+	bh=M+iZ92QvszXsMUKBpby7ZU3P13f31um/5NFkEJ3pVro=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jLSKS37AbbtnWw2hQ2CL61IfUjBbsK1Lhrb6giNpJJd0MWICFb1yAjCH9h5Ris4Hh
+	 GoZ/3Z48rg4IYQn7JUGitVw5DF+ZN4yZdARh4acLRfq5BZyjmi1KcE3YE+Bf6pu0Bu
+	 ztv/jFeTHj+DBxSwIAVYbm1E7ES4AVUvNr6BHAgs1ijncu5ZT2qriNLTJr6FKSMzrg
+	 7zbX1/mqVUg0RLUc6BBH62hL5so2hKVSwDpc6RN+MxpqR7K6qXvtdUjMogd8b8Nxsb
+	 MWq+/23cgrV6DwrPZtJ3Q/KTSzeDKtdlgi5xLMrP65XRg/FWV7uxhCDh5uQk2iwxDD
+	 MuKu69kAa2kvQ==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/4] Improvements for Devres
+Date: Thu, 12 Jun 2025 16:51:37 +0200
+Message-ID: <20250612145145.12143-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Rl3Atc6kzOHHJTuB"
-Content-Disposition: inline
-In-Reply-To: <aErokN0vKT3urlmA@arm.com>
-X-Cookie: Biz is better.
+Content-Transfer-Encoding: 8bit
+
+This patch series provides some optimizations for Devres:
+
+  1) Provide a more lightweight replacement for Devres::new_foreign_owned().
+
+  2) Get rid of Devres' inner Arc and instead consume and provide an
+     impl PinInit instead.
+
+     Additionally, having the resulting explicit synchronization in
+     Devres::drop() prevents potential subtle undesired side effects of the
+     devres callback dropping the final Arc reference asynchronously within
+     the devres callback.
+
+  3) An optimization for when we never need to access the resource or release
+     it manually.
+
+Thanks to Alice for some great offline discussions on this topic.
+
+This patch series depends on the devres fixes [1] the Opaque patch in [2] and
+the pin-init patch in [3], which Benno will provide a signed tag for. A branch
+containing the patches can be found in [4].
+
+[1] https://lore.kernel.org/lkml/20250612121817.1621-1-dakr@kernel.org/
+[2] https://lore.kernel.org/lkml/20250610-b4-rust_miscdevice_registrationdata-v6-1-b03f5dfce998@gmail.com/
+[3] https://lore.kernel.org/rust-for-linux/20250529081027.297648-2-lossin@kernel.org/
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/devres
+
+Danilo Krummrich (4):
+  rust: revocable: support fallible PinInit types
+  rust: devres: replace Devres::new_foreign_owned()
+  rust: devres: get rid of Devres' inner Arc
+  rust: devres: implement register_foreign_release()
+
+ drivers/gpu/nova-core/driver.rs |   7 +-
+ drivers/gpu/nova-core/gpu.rs    |   6 +-
+ rust/helpers/device.c           |   7 +
+ rust/kernel/cpufreq.rs          |   8 +-
+ rust/kernel/devres.rs           | 338 ++++++++++++++++++++++----------
+ rust/kernel/drm/driver.rs       |  11 +-
+ rust/kernel/pci.rs              |  20 +-
+ rust/kernel/revocable.rs        |   7 +-
+ samples/rust/rust_driver_pci.rs |  19 +-
+ 9 files changed, 280 insertions(+), 143 deletions(-)
 
 
---Rl3Atc6kzOHHJTuB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+base-commit: e15a5b4301ec42990448b5b023e3439315b821ce
+-- 
+2.49.0
 
-On Thu, Jun 12, 2025 at 03:47:44PM +0100, Catalin Marinas wrote:
-> On Thu, Jun 12, 2025 at 12:40:42PM +0100, Mark Brown wrote:
-> > On Wed, Jun 11, 2025 at 06:34:15PM +0100, Catalin Marinas wrote:
-
-> > > Another caller of gcs_free() is deactivate_mm(). It's not clear to me
-> > > when we need to free the shadow stack on this path. On the exit_mm()
-> > > path for example we have mmput() -> exit_mmap() that takes care of
-> > > unmapping everything. Similarly on the exec_mmap() path.
-
-> > We need that one to clean up the GCS for threads that had it allocated
-> > for compatibility, you can see the leak that results without it easily
-> > with the glibc testsuite (or anything else that does threads, the glibc
-> > tests just spot it).  Most of the checking for arch_release_task_struct()
-> > is verifying that deactivate_mm() is guaranteed to be called eveywhere
-> > it's relevant, I need to page that back in.
-
-> Makes sense. I think we should only keep gcs_free() in one place,
-> ideally deactivate_mm() as that's more related to mm rather than the
-> task_struct.
-
-Yes, me too - I just need to double check.
-
---Rl3Atc6kzOHHJTuB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhK6WYACgkQJNaLcl1U
-h9CXoQf9FPQfd8EjZCLMPaTNqdJWnK+Imm3M4iiBTWQPw5Cs4En1X3aPzX06av/d
-hRgfuipMS/WRm1uJFcj/yvkijXiSwywItHs6CbK2TU+cMrxSvWK8Ilk1gCg2n8Ac
-Kek5jAtdA5ROBw9UZGw5/4mw8utZOP2DlrXpImQtFEU9G7fxMup2ipqfAVcsIoHo
-LgE680V/Gg/ytylXWjP1aA8YpMPivqTUu+bMmPhGfblUzCTj7BYsrqB+9PUtt2ly
-3mDthSe6MCXKm3g01RP5ursX5bnui2kvTIgPoYINxwcEDLz/ELjVbSCUBB9yf/VL
-h4FnRm1zAapoQ/K+wV+s7uLYmO5InQ==
-=FkRy
------END PGP SIGNATURE-----
-
---Rl3Atc6kzOHHJTuB--
 
