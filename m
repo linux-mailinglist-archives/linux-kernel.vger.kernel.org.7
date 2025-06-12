@@ -1,90 +1,82 @@
-Return-Path: <linux-kernel+bounces-683261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99151AD6B2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A546AD6B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26541BC47FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FDBC189FDB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E423A2253EA;
-	Thu, 12 Jun 2025 08:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P7Cloj61"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E8C222593;
+	Thu, 12 Jun 2025 08:44:13 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC302222A0;
-	Thu, 12 Jun 2025 08:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256222040A7;
+	Thu, 12 Jun 2025 08:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749717694; cv=none; b=SUfhlWtYN48w29WBwzYUstnURqFFczYWBFghsDIyE+MjGN1dvcwy+IxEfVlktGIUGk1alV0+NNXBV9FnsaNqplmDMpZxrp61oE7/E5+pboJxSioAIkLG2pOA/EbNvBHGekEDp01nqwXKHYx4vW6V5Nc8PKv+fr0SzLzyxDXBOrI=
+	t=1749717852; cv=none; b=M0oDrMcO0i/x8/LlhBdqnpNFdzy/5mgnR4bIu7Zv+E/+nekDVXdDgDAB3mx/iDeFKe/D/ndOtbbX/huSW7ZuOtb4GEEaCNuG2awhvJ5MgKgF/a/p5x/o1sUe0nSoYarzhpIXcLuSgrbuXyNT0PR3PPPAXeCD0OLM75Qyx/YZ1Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749717694; c=relaxed/simple;
-	bh=ceuO3byIRRm+MqMZlU6KysEwLuLv1zbJ6tHnEEr8Wf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oSuqlR9XYfd+xD18Phi3huf1YBSMgtJPYNYdvkrKUNiJY59yB3o03XsVj95erltsZUR0t7/4VUnH4mRcAFkNdjogS8vabdHtGuOrjs7fuS7njvm2gxWKT2315j97J+AmDjw2hueSRvFiOfxZWWT/1JdHOtzMwF/rL2I3Z4kcXTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P7Cloj61; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1749717690;
-	bh=ceuO3byIRRm+MqMZlU6KysEwLuLv1zbJ6tHnEEr8Wf4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P7Cloj61ekFKIP3wKs4Our4enhTRTBleSgxEycbY6EyeW3jq1OGAGOwH3tVXRHcqL
-	 epa37gtqTbfKY6LzdX6zCeJccIumG+GldnRSHzEqPvqS5zj2kSu1B8CgOTOSUcHOmk
-	 ACHu8RhFqrwL6BjKVAmz+kbyC/mwmAg248C9ApnjlNc8nwG9xlFkgacyU74WeTnMAD
-	 +LpargqRTWPTCeZ8CTTXfxYXxtBR6QjGqC4jJp7i2mrMBF3pGlMFECWI7VV6QT5wcj
-	 bIspE6hBvpnZi2hjmN6OAUYofmbOlIaY2vaoAb1dl5DC83MVw1A1K9SiPeELJiJl1C
-	 BV4Xi2fK5DbfA==
-Received: from [192.168.1.90] (unknown [212.93.144.165])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1C6B917E00A3;
-	Thu, 12 Jun 2025 10:41:30 +0200 (CEST)
-Message-ID: <110d6ab5-3977-44c1-8790-badb66108e81@collabora.com>
-Date: Thu, 12 Jun 2025 11:41:15 +0300
+	s=arc-20240116; t=1749717852; c=relaxed/simple;
+	bh=I69bZIqiy4XEo/WWZmtDr/07/X+aYo0XsdccoBY0B7k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TzFshbPNFmPQ3A6CBBJUEAGZVzdSmxTojBV+G7RthsMcLb3zX+e0iOYTdkssr8MfeNhNFqkQchSOicBY0LXfZkR1sdXC775gRSE3y7pS+bOolYOdZMdn/6VexPpPgc2K2olWXe2Z5b83sbek0SHDohxudsyYzWBU3jJwMFvtJRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <andrii@kernel.org>, <eddyz87@gmail.com>, <mykolal@fb.com>,
+	<martin.lau@linux.dev>, <song@kernel.org>, <yonghong.song@linux.dev>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
+	<haoluo@google.com>, <jolsa@kernel.org>, <ast@kernel.org>,
+	<daniel@iogearbox.net>, <shuah@kernel.org>
+CC: <mhal@rbox.co>, <jakub@cloudflare.com>, <thinker.li@gmail.com>,
+	<bpf@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH bpf-next v2] selftests/bpf: fix signedness bug in redir_partial()
+Date: Thu, 12 Jun 2025 16:42:08 +0800
+Message-ID: <20250612084208.27722-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] HID: playstation: Simplify locking with guard() and
- scoped_guard()
-To: Roderick Colenbrander <thunderbird2k@gmail.com>
-Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
- Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com>
- <20250526-dualsense-hid-jack-v1-3-a65fee4a60cc@collabora.com>
- <CAEc3jaDRCD66B3Y7V4Ehzw2GPUNLXV8DmLfEcDhjRokOeXc8Xw@mail.gmail.com>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <CAEc3jaDRCD66B3Y7V4Ehzw2GPUNLXV8DmLfEcDhjRokOeXc8Xw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc7.internal.baidu.com (172.31.3.17) To
+ bjkjy-mail-ex22.internal.baidu.com (172.31.50.16)
+X-FEAS-Client-IP: 172.31.50.16
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hi Roderick,
+When xsend() returns -1 (error), the check 'n < sizeof(buf)' incorrectly
+treats it as success due to unsigned promotion. Explicitly check for -1
+first.
 
-On 6/10/25 7:28 AM, Roderick Colenbrander wrote:
-> Hi Christian,
-> 
-> This patch look fine and does simplify some things. Though in terms of
-> size the patch is a bit long, so it took some careful looking at the
-> code.
-Yeah, sorry for the long list of changes - I had a final round of
-inspection before sending the patch out just to make sure I haven't
-introduced a regression or something.  But that's not a guaranty, 
-obviously, hence thanks a lot for checking this out!
+Fixes: a4b7193d8efd ("selftests/bpf: Add sockmap test for redirecting partial skb data")
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ tools/testing/selftests/bpf/prog_tests/sockmap_listen.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-Cristian
+diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+index 1d98eee7a2c3..f1bdccc7e4e7 100644
+--- a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
++++ b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
+@@ -924,6 +924,8 @@ static void redir_partial(int family, int sotype, int sock_map, int parser_map)
+ 		goto close;
+ 
+ 	n = xsend(c1, buf, sizeof(buf), 0);
++	if (n == -1)
++		goto close;
+ 	if (n < sizeof(buf))
+ 		FAIL("incomplete write");
+ 
+-- 
+2.36.1
+
 
