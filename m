@@ -1,184 +1,123 @@
-Return-Path: <linux-kernel+bounces-683843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58E9AD72A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:51:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B43AD72A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB763B642A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B562C09A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCA7253F31;
-	Thu, 12 Jun 2025 13:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NPzjCHIN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RMFn6t//";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NPzjCHIN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RMFn6t//"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6124C060;
+	Thu, 12 Jun 2025 13:48:05 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF6725486A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4968C18FC91;
+	Thu, 12 Jun 2025 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736047; cv=none; b=WsqfvAM5KMbwUWb0C8oa+ZETia4iOW3giZtt0SuJXBhfzu1w8mf4xeIMMVSN6txoY685w7iFC1ysdU2pkjo+jlXWwo5mfDKH5dUpILkTH4dn+kLRn5INwRfeCUgfMl91yDaXNeWwB5URv9yF12LwP0Ho8NPM1tLHlKkeyW3qosQ=
+	t=1749736084; cv=none; b=KVvOooLQfCExPhbzK7sTEcxpEAa8tF9XOnGSPx0L79SAb9XXjpliZGGzdy3nPOwKES9l20iY/AvgtcmldUtW0XajQOPiJeEcktpsUoj9UJbhr62GiN12ua99rQfuTd1xoP7Smu8mtZDTDergRrzW64/dMEluuzmIJCN4Po45ktw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736047; c=relaxed/simple;
-	bh=6VxsUa9pp7zu1n0zdDNUqNqWXpP5qoBim9VfuOOJWnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HaDTmdb+o78x0ucDusF63csG7J+8cMh0FyBMsaNFxQTfT4oQ+t37tJfNvnX3NNzMLRc7+Evc6XyfCYhTme/VInCyJJxnqqWGrYp2T7eBGQbThWXw95lcUUempk1yAfDNKC9vKM1UG72rK//hbFeym4aA6i7eQjpz4NgPFmomF8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NPzjCHIN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RMFn6t//; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NPzjCHIN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RMFn6t//; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 934BA1F850;
-	Thu, 12 Jun 2025 13:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749736039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e+huMrOQB10g9Wu0c3leQPZ840vTa2RdWXsWQX3/xvQ=;
-	b=NPzjCHINtoCkkgooLDQVx7y7JRILmxtXH0n2Vc16NPF0Rjd48K9rSJu7Twud7rtT69tKYp
-	IKsMNEcR+bWpbB42qppy62Wg8Ft4mJSqqz4wFS9l186aS84Yj0khSxeQNm4QJbadimS5MQ
-	HPqRnveuLhhXgAubXWbhrm7ObYNWz0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749736039;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e+huMrOQB10g9Wu0c3leQPZ840vTa2RdWXsWQX3/xvQ=;
-	b=RMFn6t///l87pVFne+2oETPz0Qr2en1Z2yDDezyc87wmWG+KFh6KR5YXkXA5YS6f2GnpZ0
-	0OLCV7Od1RiJQpCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NPzjCHIN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="RMFn6t//"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749736039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e+huMrOQB10g9Wu0c3leQPZ840vTa2RdWXsWQX3/xvQ=;
-	b=NPzjCHINtoCkkgooLDQVx7y7JRILmxtXH0n2Vc16NPF0Rjd48K9rSJu7Twud7rtT69tKYp
-	IKsMNEcR+bWpbB42qppy62Wg8Ft4mJSqqz4wFS9l186aS84Yj0khSxeQNm4QJbadimS5MQ
-	HPqRnveuLhhXgAubXWbhrm7ObYNWz0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749736039;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e+huMrOQB10g9Wu0c3leQPZ840vTa2RdWXsWQX3/xvQ=;
-	b=RMFn6t///l87pVFne+2oETPz0Qr2en1Z2yDDezyc87wmWG+KFh6KR5YXkXA5YS6f2GnpZ0
-	0OLCV7Od1RiJQpCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1613613A6D;
-	Thu, 12 Jun 2025 13:47:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sCDIAmfaSmhJEAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 12 Jun 2025 13:47:19 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	James Houghton <jthoughton@google.com>,
-	Peter Xu <peterx@redhat.com>,
-	Gavin Guo <gavinguo@igalia.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 5/5] mm,hugetlb: Drop unlikelys from hugetlb_fault
-Date: Thu, 12 Jun 2025 15:47:01 +0200
-Message-ID: <20250612134701.377855-6-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612134701.377855-1-osalvador@suse.de>
-References: <20250612134701.377855-1-osalvador@suse.de>
+	s=arc-20240116; t=1749736084; c=relaxed/simple;
+	bh=y8CFAn9qh3k/yLp5zOH+ernhDI9ZtahcNeN0S2G9P1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GoEr/UTwd0yjYxFkLnt5kbbBk9BCHKiJkRPIocQgFmbatTQ5C6+zpm+3lvTV6FEBLpOv3sT8ftFPO9cKVbL40lH5PzloYqmiWhBKfbq/4HQC6EEkwxdQRSsfV2+/fKYba9sxkWZbr9dYMBCnQ5NSh7ky22p6zLDI8YKD4hBIYZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87ec5e1cd4aso286593241.0;
+        Thu, 12 Jun 2025 06:48:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749736081; x=1750340881;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7FQr7slkKxPbariVEmX9D6gn7HsHdpZpEVmZVDWtqF4=;
+        b=ken/3lX1fPyfnUnYNt0jGkikxCWu/PNw9hhkbguKrgMNVkxDphhnjrLdarAsmViwyP
+         a1myF9ecV+BkWCy3I5lTduUTFCiV+dh6AjE0mvKdHBqTY3fBsrWzA7MSClMVhuXapVlF
+         Xaj9QdCAJZasmRnz6joziF9NqJ2JAQHYdA2UaOujVhcQVoDadGWJ04MK53Cg5wWsSGFh
+         BkqvjBT+1HDaTFY5/AqFHoFjyHc35rktWRsMwMArDjfGdjN1IYUtc6zKFi2JhoEe/Evr
+         LePunl6glEXM+3Rs0Q0CZVN93rqAwuy2WjI8Cz9LQEiRgB6IICmAilNlUdGPSNCjwr9v
+         C+4g==
+X-Forwarded-Encrypted: i=1; AJvYcCURTZcuOj1C4aFovqG+nyY/4QPlLsCrO0WNJQUB0c9zMZQvOm8zj7ezrRJEysuyUl0M9mYs0fSKBJTYzX1s@vger.kernel.org, AJvYcCVQK17dF55n7cXqR6vS1Q703UVU6z2oFpnge4HQHjcU/B85f4sZ4PGGYH1tzFcUWslRGhnoz2dWJ9M=@vger.kernel.org, AJvYcCXoy+9+e1Kkw4wUBQIVv5cyjg11sgtH4KYxqKbCrT685ikBKyGFkQg+Eljz+KW/KdvfZuIfVfgln9tapyTB6Lc426M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLqoO9ZVPCaw71Ymn+S/uycz7otLUNfvsQSwYEQwFIRlAdjcy2
+	u653dXLB9+9crlhHs1IdD6fA+tzXDr3E2v/v7QRoFjk0mU1ZBT3sZISCLiNnWuO9
+X-Gm-Gg: ASbGncvwxMbxXj2mvAyiY7hgL+Oq69VyRpZ2UzcqrdCOlTyYJaQ5NMmLg1T1zF6Jtj5
+	VFvO75x75ZQt1rTdVtwYkylSxb44nSowjrIcKoSPD5zX03Cr4lI4bEJRz+sz2ykCHGdL/BeF9aP
+	8vt7WZqylLIaf2YmwsTe0TipmQmVBlIYWrXy2PTYLdfHCQS2q0Y849o/wWa5pQHp6Ev75rForP1
+	CQbyVq4Cf2cv8CdTKVOaasJMFqPJldbW9udpGirbcXErX6Ci/Fs8eT6XesLttfW4Inpifp0TJJH
+	W+gDb5ltrN/TgdwU77YKNYgzDLn3wK0asRVQHDAsW0oo5RdwmEkoO0KLiEABmpDznzLk2mh9SP+
+	8Ud/J1nzMe6LDUHvavWjgpPKocHjFhHi/CZs=
+X-Google-Smtp-Source: AGHT+IETRftRWQysl+wm+CZvPLOKPLG+qdHOy1bhzi/lsBCa1PgmSaK6GhG64LkitNiC01zQ6irD4Q==
+X-Received: by 2002:a05:6102:94d:b0:4bb:eb4a:f9ef with SMTP id ada2fe7eead31-4e7ce7f841dmr2474911137.4.1749736081419;
+        Thu, 12 Jun 2025 06:48:01 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01243001sm297441241.5.2025.06.12.06.48.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 06:48:00 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87ecba78750so321456241.1;
+        Thu, 12 Jun 2025 06:48:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWE8cb5ltxP5tyaxtJ1hku4kA32dVNdNRuxU5XSjVnQ2R085Fhh4wUnVTMGfGAAvztR03V4+T88hdA=@vger.kernel.org, AJvYcCXF84Gbss+bU06Jj8XWWMT5QaZcOS8o7I3rEXv2ko/tw64smfNc3wCA540CDJ2lq3phF7zXz4R4kFYUlCYXyX8laJ0=@vger.kernel.org, AJvYcCXum6x9yUuz8Jt/HWwPD4DjniQuJH88vW8m4grI5gOMOXTSVTbtkeI7r80cbLzp8k/rk5Vzh/i8wZoGQwS7@vger.kernel.org
+X-Received: by 2002:a05:6102:54a9:b0:4e6:d784:3f7 with SMTP id
+ ada2fe7eead31-4e7ce8ef245mr2321438137.15.1749736079868; Thu, 12 Jun 2025
+ 06:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 934BA1F850
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[to_ip_from(RL9xiirkf5437rzygec8i7198k)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim,suse.de:email]
-X-Spam-Score: -3.01
-X-Spam-Level: 
+References: <20250609140341.235919-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250609140341.235919-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 15:47:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU5YyfQ6KwQyVaeZaEk7buNv56H_gPrWt_yb85SSF5aEQ@mail.gmail.com>
+X-Gm-Features: AX0GCFsjFFOMl0FpwnFUdrbDnlL9gyxveYHGO9Mfv0X_27HN0AyCAO3jn5ITdyY
+Message-ID: <CAMuHMdU5YyfQ6KwQyVaeZaEk7buNv56H_gPrWt_yb85SSF5aEQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzv2h-cpg: Fix missing CLK_SET_RATE_PARENT
+ flag for ddiv clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The unlikely predates an era where we were checking for hwpoisoned/migration
-entries prior to checking whether the pte was present.
+Hi Prabhakar,
 
-Currently, we check for the pte to be a migration/hwpoison entry after we
-have checked that is not present, so it must be either one or the other.
+On Mon, 9 Jun 2025 at 16:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Commit bc4d25fdfadf ("clk: renesas: rzv2h: Add support for dynamic
+> switching divider clocks") missed setting the `CLK_SET_RATE_PARENT`
+> flag when registering ddiv clocks.
+>
+> Without this flag, rate changes to the divider clock do not propagate
+> to its parent, potentially resulting in incorrect clock configurations.
+>
+> Fix this by setting `CLK_SET_RATE_PARENT` in the clock init data.
+>
+> Fixes: bc4d25fdfadfa ("clk: renesas: rzv2h: Add support for dynamic switching divider clocks")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- mm/hugetlb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for your patch!
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ad377e24b7d0..d6b0f2b68beb 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -6744,7 +6744,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	/* Not present, either a migration or a hwpoisoned entry */
- 	if (!pte_present(vmf.orig_pte)) {
--		if (unlikely(is_hugetlb_entry_migration(vmf.orig_pte))) {
-+		if (is_hugetlb_entry_migration(vmf.orig_pte)) {
- 			/*
- 			 * Release the hugetlb fault lock now, but retain
- 			 * the vma lock, because it is needed to guard the
-@@ -6755,7 +6755,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 			migration_entry_wait_huge(vma, vmf.address, vmf.pte);
- 			return 0;
--		} else if (unlikely(is_hugetlb_entry_hwpoisoned(vmf.orig_pte)))
-+		} else if (is_hugetlb_entry_hwpoisoned(vmf.orig_pte))
- 			ret = VM_FAULT_HWPOISON_LARGE |
- 			    VM_FAULT_SET_HINDEX(hstate_index(h));
- 		goto out_mutex;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17, unless you think it deserves
+to be fast-tracked as a fix (issue present since v6.12).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.49.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
