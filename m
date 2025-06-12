@@ -1,75 +1,56 @@
-Return-Path: <linux-kernel+bounces-683490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B678AD6E2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08D2AD6E28
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFBDE189584A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:44:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9B71620DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B8C229B36;
-	Thu, 12 Jun 2025 10:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GM/96B9O"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE90F239E97
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 10:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F2E23BD0B;
+	Thu, 12 Jun 2025 10:46:10 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18EB23184A;
+	Thu, 12 Jun 2025 10:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725053; cv=none; b=DKfwlB9k6FnaUsaXDSpdT9Fu4tdbU8ztgHaCAylfgohm92YjDy7sKU/ZSsRXvhANwoW0GEx1sWruONd8QK6QKktCeTdZquWtL0RxlHweBDHZsubWx00Kt0XKGHqLjoiQIJIhFzmzch7mQAZ6P+YxaZVcuu0chbrk/JxYe+SyabE=
+	t=1749725170; cv=none; b=qZdGWthThN5GsPRkv0xXhkMw69zsCwB+ld0DaH8udTbn80fnpAsDz3nCcSDt2536vf3HWvj1CBKoiVt3neB5GaMDs/mF7LltS7QQEYxmEZp9ttpRzBXZZwkzG0xfsxOnSzwAD0SJ11u4IjpJOIGfCpUsZvzRMGviUiT6KgYg4io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725053; c=relaxed/simple;
-	bh=2T7OvIvbXQpz1az1cTon17qTeu5hxE6aNMsf4Szhn7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UPGStUaqNs09wnDSSrrAAyT3l6f5mMqHNKtD9bSs2+c8q6XdiEODEpG7ggdf0IrjcCQsE9qRlFHlM6by1RG9pFoLroYpz6JeHmqoh0eF0aHdrhg18Euuw82wpMdwoDJyRZkXumFKzPLXI+OpDu8nBXc9X2Jl1eWtcmUpLziFfXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GM/96B9O; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749725050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mv1uqkDZHNNjQcmTQAzf5MMmJ3eI0GyQ5KwebHi6ukY=;
-	b=GM/96B9OjbHbCQxAMHGwGdm7//jcEB/YPGyacZjDfUHhQH3EUnam6uTJXv+DeDlr8FcIKt
-	kTUB3Rt9Gndo5/bwOfBBixCPG0w2yCpIzYe/tUPU02A7XNSqcPOX1JZp7QNgErMYujmYxD
-	f4tE188i/KdOGbfzGbMEDBnx6iJQVbQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-tKtALmS2PBKkTbNK5PcTxw-1; Thu,
- 12 Jun 2025 06:44:09 -0400
-X-MC-Unique: tKtALmS2PBKkTbNK5PcTxw-1
-X-Mimecast-MFC-AGG-ID: tKtALmS2PBKkTbNK5PcTxw_1749725048
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 455AF1800283;
-	Thu, 12 Jun 2025 10:44:08 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.242.17])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B58B19560B2;
-	Thu, 12 Jun 2025 10:44:04 +0000 (UTC)
-From: Gabriele Paoloni <gpaoloni@redhat.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
+	s=arc-20240116; t=1749725170; c=relaxed/simple;
+	bh=/1gcciYLf3mcr5dTWnS0/NNH5ggDzXWBaBIN89ySJHw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KpAfdjVeyVA9HxkTmcXzpgDAxTPGbDOJtaZ+gB3818iD3EyVth1FcdqY0CQxR22rM00VuQNPgWWQusKdpW0zjbQE3NaPp4FXzoXxLeDgTmLqOStHNmRtGUrVfiMwThvfSQEkVQLSPOLwUWtAEDKjXCJ1+WRLNZYKaX+DzShaQfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app1 (Coremail) with SMTP id TAJkCgDH6xHXr0popHueAA--.50747S2;
+	Thu, 12 Jun 2025 18:45:45 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: acarmina@redhat.com,
-	chuck.wolber@boeing.com,
-	Gabriele Paoloni <gpaoloni@redhat.com>
-Subject: [RFC PATCH 2/2] tracing: add testable specifications for event_enable_write/read
-Date: Thu, 12 Jun 2025 12:43:49 +0200
-Message-ID: <20250612104349.5047-3-gpaoloni@redhat.com>
-In-Reply-To: <20250612104349.5047-1-gpaoloni@redhat.com>
-References: <20250612104349.5047-1-gpaoloni@redhat.com>
+	kees@kernel.org,
+	gustavoars@kernel.org,
+	brgl@bgdev.pl,
+	linux-hardening@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	Yulin Lu <luyulin@eswincomputing.com>
+Subject: [PATCH v5 0/2] ESWIN EIC7700 pinctrl driver
+Date: Thu, 12 Jun 2025 18:45:39 +0800
+Message-Id: <20250612104539.2011-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,107 +58,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-CM-TRANSID:TAJkCgDH6xHXr0popHueAA--.50747S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cry7KF4fAFWUKFWkJFWkZwb_yoW8Gr13pF
+	43Grn5Jan8XF47ta4xJ3Wj9ry3Gan7Ar1a9a1Sg347XFs8Aw1UJFW5Kr15XFWDGr48Jr93
+	tF15Kryj9F1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-This patch implements the documentation of event_enable_write and
-event_enable_read in the form of testable function's expectations.
+  Implements support for the Eswin eic7700 SoC pinctrl controller.
+  Provides API to manage pinctrl for the eic7700 SoC.
+  Integration with the Linux pinctrl subsystem for consistency and
+  scalability.
 
-Signed-off-by: Gabriele Paoloni <gpaoloni@redhat.com>
+  Supported chips:
+    Eswin eic7700 SoC.
+
+  Test:
+    Tested this patch on the Sifive HiFive Premier P550 (which uses
+    the EIC7700 SoC), including system boot, networking, EMMC, display,
+    and other peripherals. The drivers for these modules all use the
+    pinctrl module, so this verifies that this pinctrl driver
+    patch is working properly.
+
 ---
- kernel/trace/trace_events.c | 72 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+Changes since V4:
+  pinctrl: eswin: Add EIC7700 pinctrl driver
+  - Added #ifdef CONFIG_OF to fix the kernel robot test compilation error.
+  - Removed "Reviewed-by" tag of "Krzysztof Kozlowski"
+  - Link: https://lore.kernel.org/all/20250515054524.390-1-luyulin@eswincomputing.com/
 
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 5e84ef01d0c8..eb3c5e6e557d 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1771,6 +1771,46 @@ static void p_stop(struct seq_file *m, void *p)
- 	mutex_unlock(&event_mutex);
- }
- 
-+/**
-+ * event_enable_read - read from a trace event file to retrieve its status.
-+ * @filp: file pointer associated with the target trace event;
-+ * @ubuf: user space buffer where the event status is copied to;
-+ * @cnt: number of bytes to be copied to the user space buffer;
-+ * @ppos: the current position in the buffer.
-+ *
-+ * This is a way for user space executables to retrieve the status of a
-+ * specific event
-+ *
-+ * Function's expectations:
-+ * - This function shall lock the global event_mutex before performing any
-+ *   operation on the target event file and unlock it after all operations on
-+ *   the target event file have completed;
-+ * - This function shall retrieve the status flags from the file associated
-+ *   with the target event;
-+ * - This function shall format the string to report the event status to user
-+ *   space:
-+ *   - The first character of the string to be copied to user space shall be
-+ *     set to "1" if the enabled flag is set AND the soft_disabled flag is not
-+ *     set, else it shall be set to "0";
-+ *   - The second character of the string to be copied to user space shall be
-+ *     set to "*" if either the soft_disabled flag or the soft_mode flag is
-+ *     set, else it shall be set to "\n";
-+ *   - The third character of the string to be copied to user space shall b
-+ *     set to "\n" if either the soft_disabled flag or the soft_mode flag is
-+ *     set, else it shall be set to "0";
-+ *   - Any other character in the string to be copied to user space shall be
-+ *     set to "0";
-+ * - This function shall check if the requested cnt bytes are equal or greater
-+ *   than the length of the string to be copied to user space (else a
-+ *   corrupted event status could be reported);
-+ * - This function shall invoke simple_read_from_buffer() to perform the copy
-+ *   of the kernel space string to ubuf.
-+ *
-+ * Returns the number of copied bytes on success, -ENODEV if the event file
-+ * cannot be retrieved from the input filp, -EINVAL if cnt is less than the
-+ * length of the string to be copied to ubuf, any error returned by
-+ * simple_read_from_buffer
-+ */
- static ssize_t
- event_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
- 		  loff_t *ppos)
-@@ -1808,6 +1848,38 @@ event_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
- 	return simple_read_from_buffer(ubuf, cnt, ppos, buf, strlen(buf));
- }
- 
-+/**
-+ * event_enable_write - write to a trace event file to enable/disable it.
-+ * @filp: file pointer associated with the target trace event;
-+ * @ubuf: user space buffer where the enable/disable value is copied from;
-+ * @cnt: number of bytes to be copied from the user space buffer;
-+ * @ppos: the current position in the buffer.
-+ *
-+ * This is a way for user space executables to enable or disable event
-+ * recording.
-+ *
-+ * Function's expectations:
-+ * - This function shall copy cnt bytes from the input ubuf buffer to a kernel
-+ *   space buffer (or the whole input ubuf if cnt is larger than ubuf size)
-+ *   and shall convert the string within the kernel space buffer into a decimal
-+ *   base format number;
-+ * - This function shall lock the global event_mutex before performing any
-+ *   operation on the target event file and unlock it after all operations on
-+ *   the target event file have completed;
-+ * - This function shall check the size of the per-cpu ring-buffers used for
-+ *   the event trace data and, if smaller than TRACE_BUF_SIZE_DEFAULT, expand
-+ *   them to TRACE_BUF_SIZE_DEFAULT bytes (sizes larger than
-+ *   TRACE_BUF_SIZE_DEFAULT are not allowed);
-+ * - This function shall invoke ftrace_event_enable_disable to enable or
-+ *   disable the target trace event according to the value read from user space
-+ *   (0 - disable, 1 - enable);
-+ *
-+ * Returns 0 on success, any error returned by kstrtoul_from_user, -ENODEV if
-+ * the event file cannot be retrieved from the input filp, any error returned by
-+ * tracing_update_buffers, any error returned by ftrace_event_enable_disable,
-+ * -EINVAL if the value copied from the user space ubuf is different from 0 or
-+ *  1.
-+ */
- static ssize_t
- event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		   loff_t *ppos)
+Yulin Lu (2):
+  dt-bindings: pinctrl: eswin: Document for EIC7700 SoC
+  pinctrl: eswin: Add EIC7700 pinctrl driver
+
+ .../pinctrl/eswin,eic7700-pinctrl.yaml        | 156 ++++
+ drivers/pinctrl/Kconfig                       |  11 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-eic7700.c             | 704 ++++++++++++++++++
+ 4 files changed, 872 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-eic7700.c
+
 -- 
-2.48.1
+2.25.1
 
 
