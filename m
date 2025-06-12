@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-684305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97FDAD78DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:20:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD86FAD78E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 19:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8090D189452F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:20:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A63D7A841C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF4429C33E;
-	Thu, 12 Jun 2025 17:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C39829B8C7;
+	Thu, 12 Jun 2025 17:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUqh8CZd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="mFBRqP94"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0722F431F;
-	Thu, 12 Jun 2025 17:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794CE19B3CB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749748799; cv=none; b=Ys2pOwbH4iROJprY/4QItcqqNv+WVIPvRr7Cfy1zAvd1hr9sUtloeDplEPFctPCXSNGIFiRDuq+nqa0MIp9Ye/uNYy7eL3/nnxHxVLIdGDtmmw7MAYJv0VPtrpAnl23vXxdm9hP9J7ks8be+5P55kew1DhG1EXfj4pk0ElhiP8Y=
+	t=1749749081; cv=none; b=RuR5mmsbRQ9NGFqvZHL6WJLBhxnWizwopTO/pogknT3d/iaXJ/mUzkVm79i1mGcD9rH6B1fcloHCyH8YjGV6iQwNMrxGYBJxGumijj0MeZzXKgAQGSJAafCUWLRx9Ny3yRsgsbfZYiyXQl3yt2OiT5GjONJkR1r4xnWUcqd6XT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749748799; c=relaxed/simple;
-	bh=HsL/G1M5bmovcZuSfCfYKfjkLeI0hmgdp3WD/9lvOGo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hYBApJK0MiJguItUO5I6CpCccboia33eoUHNHIDuxsdMntX4+cPIpYnCqnPcr9qq/YxV11JFmd6iMlSk5khkKPDbAntG2uS6U4wE9RNNXcVqaDEbiq1D9e3GAmRiWpgIqHvmeOgp+x+3kmuDu8pcMGu3cK2s8kAsn5k8TCkD5uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUqh8CZd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B60C4CEEA;
-	Thu, 12 Jun 2025 17:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749748798;
-	bh=HsL/G1M5bmovcZuSfCfYKfjkLeI0hmgdp3WD/9lvOGo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nUqh8CZdKP5boy5lHAxxsi1o9zZNVXbOKGuZxcGe87w6mVfoJBl/Hw5MV1GsVLJGK
-	 4V/in0W/v1FEQQSQio9h06o7iti5n48S8dOn+i/lShpe28IIXlcjwWGehnrSAmE1G0
-	 Y/h3ydexz2pd4CIZVv4efY4DKWQEZ9tQ0Tp1wy10fPVjfw3GeePjvxfQ+ZzLWBFVDw
-	 1WMaVKpK9b0zIaHuWZo1p2QahkN7TzV4PbXqBnWC1BlmAgzaYUHirGQbJ/wN8k537j
-	 fbtU2u8eP4yDW/4GwxjE4ah+pL1XVhWkS+OpR7CEstOobA/QVq5OWeTDB1C+yFf8Po
-	 ZaCbG6h9OOaow==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD5439EFFCF;
-	Thu, 12 Jun 2025 17:20:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749749081; c=relaxed/simple;
+	bh=WRKb87UdKPXbYjK/v8MKnErSrlTQ53xJ1XH/XRBVYFk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OGV8soCOrBRrE70uzUaZXYjWarJmgBpFR3cCMdcl7Nc/ZQ2nWWn9AuEb62ZcK6T6mBz6antTTczdOH5FW4L1JBFTIeqv/Aj5ckzwVDVegpUqIRVjoSp5ZcalMixKRzHBvqkn5eEYUoeu/S98XTlmVxuKlLvxbGS+PVUCxDWQ8nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=mFBRqP94; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 85AA9240106
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 19:24:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net;
+	s=1984.ea087b; t=1749749069;
+	bh=WRKb87UdKPXbYjK/v8MKnErSrlTQ53xJ1XH/XRBVYFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=mFBRqP94M4cuhSLPz0WQ+Q8WZuvfkW2aexNW2Dbqrega8iFBHuEmlZ8r8Hv84iX3O
+	 13fOeI4OTURg+xWyQ3CkWH3hlmBQYcmzE1zssHtGj1ORo81x+70YlHcbkVxj42QEhF
+	 4fV3YYqC7qO2F24xdOQfAaK0M1zV8mW1k0hooYaAOT1RmzjsSMkWk0eaanI5m0MWrJ
+	 72czjYjOYdZTqKkKpBY4N0NvwLrR9tMY6Nc5gVQ9FKVepwgeogOAQCQzrpbRyZN7GE
+	 9f63MfTs8z04NVo2wADc7PgF9F9/mcHxgs1rdQbvkkE1r9c0mCb9xEvdSDMXAakbYv
+	 T1kaCTwRSQbdNRHG1cG/haSLBG96/RCVbFYOxXRyEuRE8aRkACLIAFm4d3OSsIp3bJ
+	 eV7gyBDUV6nJBOgg+1+Q8zX+A/vEK4mblrGccM5rC+hQxiIOO3AWpd2Yf+T/xnvrjc
+	 h3wvyqIMge51tKsLzPbsiJMz6g1uW0jlbDt6rPCd8k5xVQR7W6u
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4bJ8XW0Qt4z9rxL;
+	Thu, 12 Jun 2025 19:24:26 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Chris Snook <chris.snook@gmail.com>,  Andrew Lunn
+ <andrew+netdev@lunn.ch>,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Ingo Molnar <mingo@kernel.org>,  Thomas
+ Gleixner <tglx@linutronix.de>,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] (drivers/ethernet/atheros/atl1) test DMA mapping for
+ error code
+In-Reply-To: <20250612150542.85239-2-fourier.thomas@gmail.com>
+References: <20250612150542.85239-2-fourier.thomas@gmail.com>
+Date: Thu, 12 Jun 2025 17:24:02 +0000
+Message-ID: <87jz5gyitp.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2] selftests/bpf: fix signedness bug in
- redir_partial()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174974882850.30472.12542945135182061841.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Jun 2025 17:20:28 +0000
-References: <20250612084208.27722-1-wangfushuai@baidu.com>
-In-Reply-To: <20250612084208.27722-1-wangfushuai@baidu.com>
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- shuah@kernel.org, mhal@rbox.co, jakub@cloudflare.com, thinker.li@gmail.com,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-Hello:
+Thomas Fourier <fourier.thomas@gmail.com> writes:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Thu, 12 Jun 2025 16:42:08 +0800 you wrote:
-> When xsend() returns -1 (error), the check 'n < sizeof(buf)' incorrectly
-> treats it as success due to unsigned promotion. Explicitly check for -1
-> first.
-> 
-> Fixes: a4b7193d8efd ("selftests/bpf: Add sockmap test for redirecting partial skb data")
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
-> 
+> According to Shuah Khan[1], all `dma_map()` functions should be tested
+> before using the pointer. This patch checks for errors in `dma_map()`
+> calls and in case of failure, unmaps the previously dma_mapped regions
+> and returns an error.
+>
+> [1] https://events.static.linuxfound.org/sites/events/files/slides/Shuah_Khan_dma_map_error.pdf
+>
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> ---
+>  drivers/net/ethernet/atheros/atlx/atl1.c | 38 ++++++++++++++++++++++--
+>  1 file changed, 36 insertions(+), 2 deletions(-)
 > [...]
 
-Here is the summary with links:
-  - [bpf-next,v2] selftests/bpf: fix signedness bug in redir_partial()
-    https://git.kernel.org/bpf/bpf-next/c/a59f468c4a02
+Hi Thomas,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+This doesn't seem to build. You can also see it here[1].
 
-
+[1]: https://patchwork.kernel.org/project/netdevbpf/patch/20250612150542.85239-2-fourier.thomas@gmail.com/
 
