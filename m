@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-683812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E57AD7245
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:39:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DDFAD71A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F853B2EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B97E170962
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB9B244696;
-	Thu, 12 Jun 2025 13:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A716923D285;
+	Thu, 12 Jun 2025 13:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ADEs34ox"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LZjslZB6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE751F1313
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8239E23D284
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 13:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749735305; cv=none; b=ncD1kMw1tNT+L5B8EHkFfc/tnifK+CJXdMsVk2ie1PYSq/luRVCKp3a29ZGehSzCUq1NbWIm8cQuQwwWPX4dGsSwU9lKdEnniCd43y9zbz4lDhFNC84Mw2kV4Rgo1ysnMO4MLpJ9HXV7kxGE01DQpxPFQnJ+DTimmcEtJwEGjaI=
+	t=1749734578; cv=none; b=MVpho+W7mSHh32CYfTfwStmLmQjLd8SqN5RFpJBx3dr2rc0ZupvhDXz971joCweWUugUEwTWEjEktGROu4CuGVk1n6rnuws39Oo3ceFojqojd+T7jEHYZsTuK2o/3wWXtDAMXNUV6D9c/LFoI/YKZc1A71Zquwx2LscXuIhOrys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749735305; c=relaxed/simple;
-	bh=mx0+sqdmz7ExONA2KrajxLPAnH4pTOp/SJ63TIEKTj0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lSfGTppbCZz77Cycvbvka7+NvFlUhN6Gk/o4sqOhrOasoj8nDfj/+PYPAnF4n+wjZbJUQcj4alv1yrhWc1KrZ/IOUfLmSPUDXQo5WiQt0yOcU4O2Fl3SBmVNDltcSnlT6KbZxEaxYPon3iiTLb1XbYI26Luuac45VrVSonYD+M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ADEs34ox; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1749735295; bh=xfu72Ansb0YbK3DXTB/yjp6h12RbUxTUdKMq0wzfGGg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ADEs34oxXL5Vb6I/bJLMlcAUwc8viim9zRXJkUXl/3jQYquWNZy9ARBaHA2BFnpJV
-	 qHlYMQ4cfmDxpAoYSK57ekJwKgSuLXpBiHUz4dV9p0HJ6EAAvVXzcPTE4SsDdbdEBL
-	 ckfkvUOIsZLwBX2GJCxQwirW9tr/zCJ5uky6JV3Q=
-Received: from ubuntu.localdomain ([112.48.46.129])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 5A124079; Thu, 12 Jun 2025 21:22:33 +0800
-X-QQ-mid: xmsmtpt1749734553ty48fhnjs
-Message-ID: <tencent_289DE02620144CF4490D1F9E1EA941243607@qq.com>
-X-QQ-XMAILINFO: OAeeP88hDd8wBC7ZFt+SBbUSR5gzK6nO/Lxe1PO/A/F0aI9i7DAoNHmgG1T991
-	 KzPtu81egU/OffLtqRpEDlM/eDc8FdUA+XLVqDiisPgHEChQ7DWW5XbfdYpIUejUecZOZZ8q4v4e
-	 dt5lu0zAYSWJN+nHBrdX07IWpFVw0pumMYBIAb6FqkEuKg2vNBwV5XidtLM6KuDLShWIOE5nLzNW
-	 33uPtLlsamS/PBy3DFV5N8ULmPqE+MqADheaPZtkvezXBOkMgSoXB0RjUmVKHb/ys+z2GF5M4FLu
-	 +6ObN8z/TTM9/OheC9p4l+bbXUE3AvTrQB1/S02z8i/SH1T7RqrfTuI5/hJnpnnaJB4yrr6og6y+
-	 c1wbrrIWv9LQctMRo5fn+NJvu92mGtBx3wxh0rgSolgCRTKo18rWajItjZRn1UAP5TnxAAB9tb19
-	 5u9t3Q7iHX6JtfhFzMFRiBsPPRQt85E4EX9YBa7EGMH6XX/7z1OwYu6doN10F+7RfZfIeB621d/p
-	 2EmKSnRQz1BMujFi7cOlGBwhRtuvxNpH8XikYNaalURQ+Hh1XxkRnRWtEHXshesyv+ncLjtH4NVg
-	 gR1V2a22xuk5p1DyDXbmLkRcBFu0c+f3yNOgmtwWPsYznH2PJHZpzCOwzs9/q41cBZRDIeJBYmJx
-	 bpHc3kwutEE5g+w5ZoHNm4fng4qdcQGnzTYfqlY7TKdsXaaeqeOmpc4Lbbzw7DhHdUz76VdZWHmd
-	 RYZB3yjIi0nc7IL+STHIQElOEvxnasmHqGtbTLo1oHqmFQam9UVlYv9LZg7eCiHqpDsq6gqUQ2uJ
-	 lVB1W68G4Y/kOgImKAJ5sZWKwqX6V7aGZ7jnAf9GcVEz7y6ufle/VLaS2rLGM4endV7Q5Ditq9ZH
-	 5dnHPizDA0mmB4CrCJUPHxY1c9dyXa2U1yFi2qfyXxbziKFqTYlUTDgX9Y5eiDsQvElVuV63skup
-	 XA3KJ7z0mX82UOUd0lseQGY0aUZ5KS42PqN46SnpiM62OR4U7gticLdfJT9BY+K36ELsBYlhk=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: 1425075683@qq.com
-To: 1425075683@qq.com
-Cc: nico@fluxnic.net,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] posix-timers: omit posix_cpu_timers_init_group when CONFIG_POSIX_TIMERS is disabled
-Date: Thu, 12 Jun 2025 21:22:30 +0800
-X-OQ-MSGID: <20250612132230.20351-1-1425075683@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <tencent_92F5880EDEB07D078301A561B64F06F9AC0A@qq.com>
-References: <tencent_92F5880EDEB07D078301A561B64F06F9AC0A@qq.com>
+	s=arc-20240116; t=1749734578; c=relaxed/simple;
+	bh=DX6UEMb+iyNSYkkAU+xtYVYYiAZRgNNPDyijXIvfsL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AukkfX1ITHG9OHF0zTlkKssNAQh+C69nWOS2b+UgAq8r4sJuU24M2g8L5V55mUawc5Rt/RgoDsrH8mP4B/yF/m37g/ufzQo2syZNKgVIMeORdEnBJH2Xu6gTFHNXsffaQpmf6B4XAD8nGyrxW4kv37eLRmn/DfjsGqPVw0vZN2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LZjslZB6; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749734576; x=1781270576;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DX6UEMb+iyNSYkkAU+xtYVYYiAZRgNNPDyijXIvfsL4=;
+  b=LZjslZB6aaSK3wiMJ3lmxsxiQIW/GtQ4LDSKSsY9L4FTeasHoknIjewP
+   4HKS2m3t2C36y1kvOqmCfAscBAFTyzh8G/I5WapH3UMe7U3nQJnEvg0Wg
+   bVDf7aj+GhUXt4EwVV/BV8kw4XzFeWeCPpn8AKsesMV3MGW2SgjhStRAS
+   +2kMYvh0VaT0e/8p6Joe0EI/DSiL1Lb+cQQrTe4YFC+ZpjHldp8I+MzJT
+   xxr1W3sya1vEegvcgpqqCaAOB4c7cJHIOxgiGs2gPbYgFmG/FqdY5tJjQ
+   aAe6vT/9J3ncAZQH+v8SKQ2UGhd5P5sZANs0XR3CsMuNtSQRCu5RfmXer
+   Q==;
+X-CSE-ConnectionGUID: 2EZWuATRQwWtyrbRK3R6jw==
+X-CSE-MsgGUID: gHqhjKg0QJ2zJSkF4cl7RA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="63321666"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
+   d="scan'208";a="63321666"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 06:22:56 -0700
+X-CSE-ConnectionGUID: 552AbT7GQG2qjsELcjgc1Q==
+X-CSE-MsgGUID: A9DAT8ypQxmkOkCFQjLO7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
+   d="scan'208";a="178425128"
+Received: from dholevas-mobl1.amr.corp.intel.com (HELO desk) ([10.125.146.47])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 06:22:56 -0700
+Date: Thu, 12 Jun 2025 06:22:50 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: [PATCH] x86/its: Warn when microcode is old
+Message-ID: <20250612132250.k2loomkqhkfvksvk@desk>
+References: <20250611-its-warn-v1-1-02eb9a75ce9c@linux.intel.com>
+ <f9e2dcaa-6eff-4eda-8c7c-0d19c2d11e73@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9e2dcaa-6eff-4eda-8c7c-0d19c2d11e73@suse.com>
 
-Hi all,
+On Thu, Jun 12, 2025 at 09:58:35AM +0300, Nikolay Borisov wrote:
+> 
+> 
+> On 6/12/25 03:08, Pawan Gupta wrote:
+> > A microcode update is required for IBPB to be effective against ITS. On
+> > Intel, X86_BUG_OLD_MICROCODE is set already when old microcode is detected.
+> > In such a case system is tainted and a warning is issued.
+> > 
+> > Also warn that userspace could be vulnerable to ITS.
+> > 
+> > Suggested-by: Borislav Petkov <bp@alien8.de>
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > ---
+> >   arch/x86/kernel/cpu/bugs.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> > index 7f94e6a5497d9a2d312a76095e48d6b364565777..7aa3ae00e6b4daa5e42217b66c50cd46d6bcc115 100644
+> > --- a/arch/x86/kernel/cpu/bugs.c
+> > +++ b/arch/x86/kernel/cpu/bugs.c
+> > @@ -1427,6 +1427,10 @@ static void __init its_select_mitigation(void)
+> >   		return;
+> >   	}
+> > +	/* For IBPB to be effective against ITS */
+> > +	if (boot_cpu_has_bug(X86_BUG_OLD_MICROCODE))
+> > +		pr_warn("Old microcode, userspace may be vulnerable to ITS\n");
+> > +
+> 
+> That check is too coarse and probably has a high chance of false positive,
+> i.e
+> 
+> Latest firmware for your CPU is version Z as defined in intel-ucode-defs.h,
+> current running version is X which is older than Z , but it already contains
+> IBPB fixups for ITS. Then it will trigger a false positive.
 
-My apologies—I neglected to CC both of you on my last submission. Please find below the same patch, now with the correct CC list.
-
----
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 168681fc4b25a9fddcb90ce155c027551455f4ee..9632e863c17b44424fadc40b2445034ec5cd20d6 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1883,6 +1883,7 @@ void __cleanup_sighand(struct sighand_struct *sighand)
- 	}
- }
-
-+#ifdef CONFIG_POSIX_TIMERS
- /*
-  * Initialize POSIX timer handling for a thread group.
-  */
-@@ -1894,6 +1895,9 @@ static void posix_cpu_timers_init_group(struct signal_struct *sig)
- 	cpu_limit = READ_ONCE(sig->rlim[RLIMIT_CPU].rlim_cur);
- 	posix_cputimers_group_init(pct, cpu_limit);
- }
-+#else
-+static inline void posix_cpu_timers_init_group(struct signal_struct *sig) { }
-+#endif
- 
- static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
- {
-
----
-
-Thanks for your understanding!
-–-
-Liya Huang <1425075683@qq.com>
-
+Agree, as I mentioned in the other email, I am okay dropping this patch.
+This creates more confusion than it helps.
 
