@@ -1,260 +1,503 @@
-Return-Path: <linux-kernel+bounces-683393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE380AD6CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E234AD6CEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 679DF3B0030
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14383A5B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9BD22F757;
-	Thu, 12 Jun 2025 10:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF91E230BFB;
+	Thu, 12 Jun 2025 10:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GERArkaJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HpWxmnNN"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="UUT5LNZt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ajzw9jb1"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C44922FF4C;
-	Thu, 12 Jun 2025 10:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749722495; cv=fail; b=b56LDBxsB/nXo+5eUT5iI2GbMpL7yKqRXv0Y4ktyqAp5ib4anOWGVAnzzEDarjk0qYHfpDZ52FqsJoEqhlmmY434HReDpaMJIB41CDzZDtG60pF62Dwk76m1f8ayjV0q8bnjRwC1MIrc4M0zhaYHcxhpOut/IlK+7zq/6AAWzlE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749722495; c=relaxed/simple;
-	bh=YzNTLXXY9ZAVNcCuZX0YdxijGWCNJ00cNDJAwjETffk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tjic4+Vh8uU8WAeMDQj6Go9bjf43+h7A4GMKhp9FxanhZqbqatfDk6FXcls1mXiZQvXE/MmsF8KSlL4QWi14h2hP9MDDnppVCJ4rOOlntN22qqm3Zox+INfdlcp2NmRWHiQyQJTqFicsy0W92ph0nhg8aZ13qfbT863dg67po6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GERArkaJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HpWxmnNN; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C7fYq2031316;
-	Thu, 12 Jun 2025 10:01:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=nE03C05KutueEYCLzPSpAfsqH7cOqqME4DJ2miZlRIE=; b=
-	GERArkaJGBpwOiLHPD75BJOnKvZRQJEaGtZ5iZS97hBjX/iWeirxOW4u0uOV9SF/
-	8cfVLgPMRZG5b1xoDLzbZQ/Dc/UmaL/so9Nkgox8GWB8zSaByy0Jbm1BNWeE86wz
-	uYKyGCQctwXlxNieVv/wKVxgbQKBkLJP0Ef+9RHpsYv7H+MnC7NnpJNAOLvTFvgs
-	GjBcfCgbzMBOzysVYzxIR5xwQwvbOs40wLWxwCN/Q8d7zPLJCWQZNQfZHU8inOG9
-	8hFlo+LNelf/GQ4jO3Niwif/60wqecAZSqmRBcGlNkM9RF3j7gCPXm3k9TICAN3M
-	GtFAkGsZiTWzZv9wPXmGxA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4752xk0srx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Jun 2025 10:01:12 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55C83sjt037807;
-	Thu, 12 Jun 2025 10:01:12 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 474bvhm035-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Jun 2025 10:01:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c5ly2PwXccC11Mw6goQ6iX8dYqFHbLix5ODLVxtxT7i1ZIHGtgDEp6ekpdRHQVmo6+DgI31ZIbXGNW500oF2baxZtnNi3tRYXsLk1yXjpFFD64dameSxk3f+EeXXWSPFp+INuqaSnO9el5FJCkoL79ZHLPCxQK2Ma7X1n02777R+RhJnQwLFrfFNCB1EdxqElr08sw4GBfBWPPtV9LpAMICVZkp1mHCiWKY1CUqaH914j1GuZXAnsGE1JmiLsZ/HSuSN1PHgIFeNCXmbxGR+532wsXcJfXuw+PXfOia4k7S9V+WnxXAxNF/+nTrY0xBT34dZRyynBcK772UcQqoHhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nE03C05KutueEYCLzPSpAfsqH7cOqqME4DJ2miZlRIE=;
- b=t27SWFuoXP+DdHDscI6DQqxFDOreHspudquwMsflHpYLfvF8DjX8uGVJp4gf20VtziePo3dA7yuLeht6oyL08hd9Rn9w0gpCVgfysQrWkdeH139ty1ykzkQG+YON+/Utwds/Gb5EEZKdDrK+tvMEqvXEp9TQSXOiqf4+E3qNRMI4Sk6W/EySfk57bnwBkJrRyPIdytgPN5y41cn4KyLyYedgQVRv3LefkUaqEsXl+LP2qNUS8n7XURRDHVkI90PA8ccGipWPnfHHY1zXXemI1udHVKqAL+FOvhkcRMRIxSt4v5kw1yBmGdfozSk8WTMh+ZwgbpKNZSm9p7+ruw7rIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nE03C05KutueEYCLzPSpAfsqH7cOqqME4DJ2miZlRIE=;
- b=HpWxmnNNfpFODsQPcDfFZBNiH+I6L8jJO0ywaOwv10uS1jBDrK5n2w85lNW8Ou91nxxuLoj3Alibccvayp/T3F2akuCID+YNcyO6+slpQe87szUHsTILFrrolOnwMODzrYItDqNpKM2JNHqZdhQvwJGbLpoeRWURPSN3CSRvI+A=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS4PPF7BD9BEA92.namprd10.prod.outlook.com (2603:10b6:f:fc00::d2d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.25; Thu, 12 Jun
- 2025 10:01:10 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
- 10:01:10 +0000
-Message-ID: <f06aa274-c442-478e-85c2-40d9a07c7a5a@oracle.com>
-Date: Thu, 12 Jun 2025 11:01:05 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] dm-stripe: limit chunk_sectors to the stripe size
-To: Nilay Shroff <nilay@linux.ibm.com>, agk@redhat.com, snitzer@kernel.org,
-        mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com, hch@lst.de,
-        axboe@kernel.dk
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        ojaswin@linux.ibm.com, martin.petersen@oracle.com
-References: <20250605150857.4061971-1-john.g.garry@oracle.com>
- <20250605150857.4061971-4-john.g.garry@oracle.com>
- <041186c7-a249-4564-979c-3e480aadaa23@linux.ibm.com>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <041186c7-a249-4564-979c-3e480aadaa23@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0143.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c4::19) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A549224893;
+	Thu, 12 Jun 2025 10:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749722478; cv=none; b=FAYZZSUV6f/LICui+Q2TdIQBV+gqVZUwNXggm393bmo0Giii5bbjiutQlBLkph6om3NDw3PuosDzQ3s9mPSMwcOGaU3H3aBMTkPkxg/2QD59lYM9pcnemQjSWhA7tI3QdY5YaN2Xx+hN1qnOBdIgDtelA6qPIO5gD08704dhfKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749722478; c=relaxed/simple;
+	bh=ws1Ohzmfwbdsk2KboaQFROeoEl/So8VQwpumSbUXvIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcpz55Ifx32Y9DmfGUwCT7luv/+oQz5CwS9PHkmYvo9PIomi+KhVckje1zGYPtGQ1sjFSgT+aYaWBtio1BMqdemnqEdAPDbARFNdWFGTqTUrW6SLgt+tZ+heM0e3LeEYUdthSVvyuaIQdxoJfpMcVdm7lOTMKj/8MZQQobhVXaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=UUT5LNZt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ajzw9jb1; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3084511400A6;
+	Thu, 12 Jun 2025 06:01:14 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Thu, 12 Jun 2025 06:01:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749722474;
+	 x=1749808874; bh=3FXrwQ+Q8Fy6owvq7C6oKNrlmMZ27M9S55QbXCSiATA=; b=
+	UUT5LNZtAu5GnUcl+je1IaIWmE1H7YuGQS90N46/An0/ivr3EgTLClQpmzDVkjIb
+	aTYfG5TasxXn9h5I2EZ8Nncs38CYYKYdPzF6CVLzrmG2oJFZ6/TX1rgcxtgWIsHq
+	rtj7fbU5ndqOjjQ6shw4j+oop0NReflXDs6kLf5lHxqHDwKjAE1AwSZ4YvR6rvmS
+	xG7MPG7xOVCuFMRfjEBqZrjkVeWhqmsCnV9HXA6WfauXsbsSxcxRoM+BzBpEUZ/F
+	O+nxbc2mTXLXNIx+beVd1ub93uTYl/mqz/Lfw5+4N34lKY8wxOpBaeVJAIC85q7Z
+	z59d9PcanpHujFvEVoItYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749722474; x=
+	1749808874; bh=3FXrwQ+Q8Fy6owvq7C6oKNrlmMZ27M9S55QbXCSiATA=; b=A
+	jzw9jb1vrNnI95/1WaBcZgjRquPgEtOUWWkQgiLwfKncOPaYF/2tNnWvHfGah2Dc
+	FnqBMWiwSwYUG8XjKAE+CINZLGYe4Mj5S+XiUY78hQiQ0O0pDE/i2sX7QZcN7HIv
+	RezDDJbA7QrJs0Rdts94743GOuehX+0DaEeCYThP2ufrTDXs73D6V4/Ih+M1FgEr
+	e520laRnw71YC5aOI7mwUmnk/mCZST3oRyIvH/EZHXvKD8oKgpUSWqxXXcXT2+vj
+	Dd5nPPC0zYyTI5h+lHwCMs+bedw3wHfZU9thkCHPJ3tXbZSd/BR9FENwALYDDY9n
+	9Sw0UQXnpXdVB3vpymxiw==
+X-ME-Sender: <xms:aaVKaIfTi8RDNth_Hy97qc-sm-b4IWK9fWvx0papsSRqMUEpfnYEmg>
+    <xme:aaVKaKN2_qkp4Xr__LTZVVHozfnv427WnFaNxSlzvaQtHEyfmWxdngLLJ41AHgVqx
+    lcfdUcCSY57Aik2zE4>
+X-ME-Received: <xmr:aaVKaJhNk6-gDkNKE99U6V5KioEtjNQMzqBLMl_mPR5YGbSASFY6A5mC-jR-ZqciH38Y_Xh5abUwg3-Jdg3t0ZGS2wWK0i769g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddugeejjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
+    guvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgr
+    thhtvghrnhepfefhleelhfffjefgfedugfegjeelhfevheeikefhueelgfdtfeeuhefftd
+    dvleeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
+    nhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrd
+    hsvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    lhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprh
+    gtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgvggv
+    rhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtohepshgrkhgrrhhird
+    grihhluhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthhomhhirdhv
+    rghlkhgvihhnvghnodhrvghnvghsrghssehiuggvrghsohhnsghorghrugdrtghomhdprh
+    gtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrgh
+X-ME-Proxy: <xmx:aaVKaN8FcrYqUSZ4r2roATW7GNyuvHZz7YqyN5LiMYsvdiPOe33o-A>
+    <xmx:aaVKaEueqidRLLu6_ZfS1BBO_FM27g_sP7LfEMpyrHshuraq_CQ6rg>
+    <xmx:aaVKaEFk56WjTSawLqiI3UX_x7Vb1E71b0tTNhH63XBUeadKRvf-tw>
+    <xmx:aaVKaDOnIcSy6PKKrjQ2wPdwpd-EchRm2Fsnr0RBafnt-W8EWZP7Iw>
+    <xmx:aqVKaD33PYo-hYAQLNPqfPbyGPGqdhb-HKFaXuwBVdCyf2OCy-gDeQfi>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Jun 2025 06:01:13 -0400 (EDT)
+Date: Thu, 12 Jun 2025 12:01:12 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] media: rcar-csi2: Add D-PHY support for V4H
+Message-ID: <20250612100112.GH330732@ragnatech.se>
+References: <20250611154445.123412-1-niklas.soderlund+renesas@ragnatech.se>
+ <20250611154445.123412-5-niklas.soderlund+renesas@ragnatech.se>
+ <20250611230412.GO24465@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS4PPF7BD9BEA92:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4b65f63-2a70-4e6c-b0d5-08dda9980e3c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WHB0SlVUMnZLNUlUamRMdFRxNVR0Y0E0aElqaXppTjZVcEV6aVdXMzdkYTNI?=
- =?utf-8?B?K2tkOWhvZUxKeFhydXF3bmwrUDdyNldNUGp3OU4xL0V6NngvRERoaExyUW1G?=
- =?utf-8?B?VUYyWlJRazlRcFhRMGovNUQ5Yjg4S0pUbmxaNXdNT3Rnd1NMcmJ0M2k3VUNu?=
- =?utf-8?B?UjkyTUlSZmJMS2F3bitCUExUNmFCYUk1VCtRWVA3eVV2a050RHlDNlFRK09j?=
- =?utf-8?B?U0oxOUROdXR6blNERDU3MmlmUHR4ZlFYZTdLV0ZKanNpc2plNjEwb0xMdUNI?=
- =?utf-8?B?SWdlTHRpcm12QUQwUDhBancrQlluSjMrRnAvQ3NLR01rSlI0REFLNS9vd1VU?=
- =?utf-8?B?UDZYdzVTend4bmg3Sk15N01udWkrcTVXSW5PcTIyZFJWNWNwalRLWVJ6V21v?=
- =?utf-8?B?S3IwTW5GTU94OGcvVk9td0d5NTdXVTVPcXJQWWtBREgwbGlBeUNaT21iTFU0?=
- =?utf-8?B?b0JlUGFqTDFOTjdEM3RjR1VDdDFFckwyRTk0NzdMZGFFK0pHWkFjazVjTUND?=
- =?utf-8?B?RTlqTlZrL0ZQcCtvWUEwd3BoRmVQVzFrUVlOUkhnVG1VWVIrOXgzdDlHc09M?=
- =?utf-8?B?aWZmUzE3MTJMNS9XZlQ0Z1VjckFpd0FsZElwUWdIWWZNQXY3aEFZampqZ255?=
- =?utf-8?B?RzVRZTN5M2VNdE5QN3VTMmovdCtvdkswVWZSYzMzeVIyRXZ1UzRTQmpsbVRh?=
- =?utf-8?B?RW0ya2VhOGkxWldKUy9yM3BJUllESEhXVE93STZnRllSN0N6MGNOUEg4M2ZQ?=
- =?utf-8?B?K3pRVUpGcGRmTUxpa3hYMktqMjBGQTdtTE5yS2c5VjZGbUNTbW95VzQ0SU9X?=
- =?utf-8?B?dmxhTS8vT2VTNUxEOWRHQnF2QWVqb3puMlJoS09rZHl6MDJPdEZiUmdiR1Rq?=
- =?utf-8?B?ODZPK2xjSSs4ODVrMnZsUmYrQkIzR0dGK2t6bUsyQ2tJN0VFRlA0WGhuWjZu?=
- =?utf-8?B?WHVaM044bkhhdHdmOXE1a1ZjWklydDFCWmFnOFptdFZTSkJTQytkYzBBeWw0?=
- =?utf-8?B?SitmQWJTR1BCMkRPbGZDNTlZdFlGbUtiSzEvZytHNDJFcmF6b0dHRHJrUkhD?=
- =?utf-8?B?bDVicTJIM2hxVTZjQkpvUDQwWFk0eFI4c241b29EMm1mWDBJNjU4RWNSZ2Fl?=
- =?utf-8?B?QVBtTmJOcVJCR0k0Q0RFZWMySDkzYmRpNHNmSE5nYlhFS09uck9MQTVUNHpY?=
- =?utf-8?B?MmdSN0Z4TzJwbnI4bHJaNHhjUm50ZkF4MHRZNUFEdm9TV1o1K2xjTkVMcWNH?=
- =?utf-8?B?SUc1SmZwTm4xZzlDeGRsWjB4eWUrR2d0R3FIaWJsN1N5eFhDTVI3OTZyMUx5?=
- =?utf-8?B?R0dsNUhOQWNURnZ6aUNOc3R2SjhiR2l3VDFRWUprQTF0NDVvR285UmN3anlv?=
- =?utf-8?B?Z0V4dkN2SlMxa3Q3UHZ1ajBxTnBsTThrUzZRUmpsajlMMmZNYkp0eXQ3YWJK?=
- =?utf-8?B?ZlpEVFpzeTd5Z2VNeWp4R2lEOVJXemxsTnBqa0RKeHhYanJzbjN1WnB6MFB3?=
- =?utf-8?B?Vks1cUtpRERscHBDdVcvYjFaalE0bjR3ZVBqV2FtU25KY3YrelFWcUhPUmU0?=
- =?utf-8?B?Z3lXS3lwSVIrUXk2NTBKQXFVL3hhSDJ0Sk5ValdwQnRwTmJsVWVtUDRKY0Iz?=
- =?utf-8?B?Y1NYNUNmem1qODZjNlhRMnlKeCt1WmtPa2pHU05abVdxVk5vWjZxdDJ5UllP?=
- =?utf-8?B?clpmOTJORzE3QkxSUVFDQUNBV2E0cXBlb0piWHRRZXJtV3R6UDFiOVhJQXJm?=
- =?utf-8?B?cWp4cVc1TDd0TytUanM4MHZZMjRNWUVWeHY1K0FGNzk1TjVhRjY4UUFNeVpE?=
- =?utf-8?B?Q2Vaby9UaVJnK25EeFlNWVRuaGx1L2hMV1dkSENMa3Uralc2NktvMDdsMGVm?=
- =?utf-8?B?SGNJeUZmVTJDME5EYVd6c0pGbU5zY3g5WWxjTjFXWHViRGtFQStiVlkrRlRi?=
- =?utf-8?Q?5+6BmiVcSxg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c29vODRkWEp0TFFhVnRCdHA5Y3JrVmw3RHFIQ05SKzhNWnY0UWo3cjFTcmMr?=
- =?utf-8?B?U1RKTExLNXUvak05cStMK0pjZy9Fdng4VWg1c3c0d0prSWRqQXdJbFBQb3hy?=
- =?utf-8?B?bGFDSTduSjVXS051M1VWZmkrQlY4RTIwVkFIMFFHclBYM0l2Y1habDBsLzRa?=
- =?utf-8?B?OHJPbTc1ZmJPNTRTMHVVQzlLVnhtaWdoWmc2K3NYSFFCamhvUzdwNkp0SlA5?=
- =?utf-8?B?c25uREVMYXRFN0JFSmcwSnNnUXgvQll3V0k1YmlTaFZwMEVWT0dwUE56cnVn?=
- =?utf-8?B?NndmSEcvSWthK1NtU3krQVdST1VnNS81a08xTjVVb3UvZmNFNWdNZXJuZEdw?=
- =?utf-8?B?Y3BZaXl4Nm4zVGtDUUxSMVAycTVQZENGRnNIMlQvRlc4ajlmTWNUWUwxL1ZP?=
- =?utf-8?B?QnVSWkJmS1VEMkkxMXhtd256RjZ2U0JaM1NWcmc3SlMrV0Q4UXdZeTJza1ZE?=
- =?utf-8?B?L1pMOXlaM1pPWFpNdEdmSTN1MTcyalZ0SWtoZE1ZVVEvNTBZckM5TlQ2Q2t6?=
- =?utf-8?B?eGEyVmMyNzVnS1BMS2R0WDhRWEw1RFk1Q2hlQnNsWE1ON25QQ0g5M1FRays3?=
- =?utf-8?B?VjBIZ0xQQnBaR3dHWlFMZ3lNajhZWERKS2FLcUw4SnI0VkY0eDMzTWFsL24z?=
- =?utf-8?B?M1NrODdRZmhyUFhZY09ZRUZ6RXlSZ0pBN2c2VUUwa1ZmaVpVd1V2SVNQTWxK?=
- =?utf-8?B?aEJmV3FJNmV6UG84YXE0SG5Zc0NsUWdvU3RvbSt1dnNRM3pndGFZbkR2emg4?=
- =?utf-8?B?d05kdWwzMmhVS3FJazFPaHp2R09DRktZVXp6aGh1RC9JaXJtc29FM3lvejVu?=
- =?utf-8?B?VlRMNVMxcE9NcVRvWmxwMGJsaTZoWFhrSDZKT2xLdXlzNXRWREVINVhwczJ2?=
- =?utf-8?B?eDQ3SWJraWtDS3RGcEFNUXl2WjFtQjMrRHVFUjVXUy8vMENyL2FvSnV0eFNT?=
- =?utf-8?B?NnUyRTRXUHFqeWt3VmZseTF0MVJkNnN0c3JLQkt6R3Q4THN3UzRXRE9JVU1J?=
- =?utf-8?B?MHdYUXYvd2JsSDg3b0xWN3M1V3hPU2lhU3l1Z1NxcExlOVhmelorNDh6dHZB?=
- =?utf-8?B?NitMcXNUelI4djdTNVV5TCtRWjlzaGhmc3piRDE3ZEdqQWJZcmtjQU80OHEz?=
- =?utf-8?B?SVdCZkdHSUtGWllnVVdjbFI5cytoaGsweFByWmtpZUt3SUdza3Q3dTJjekFM?=
- =?utf-8?B?STQ1ZnA1aWliZnUvRVl0M0Q3VmQ4VGZvekltNzM2VFNqdytvZE9kQWY2MzFH?=
- =?utf-8?B?Z1lvMFNkZThaWWJZeGs4SS9IbWZmR2ZyQnY2dHRUd015N2xHZWRDb3VjcWNa?=
- =?utf-8?B?QmhYbHM4M3RmTXlSdDNhdWdsZWNQNzZrclV5SC9LSGZVRm84ejZHWTVIMTY0?=
- =?utf-8?B?MkM4djJCNUpIMUJlanFZbWpKWEZoSkNNSHVFRjdNS0RyRUM1R0hHcWQwakEw?=
- =?utf-8?B?Mm80WkxxUnI3T05nNXMzTGZJY1R2elBlWGU2ek5tM25kKzViYndEQlFabmIx?=
- =?utf-8?B?Q1Jvb0RqOUtqVVV4MG5jYS9hRTdNeThrK25laUNJdTdtS2p5Y1dLWm5veDV2?=
- =?utf-8?B?RzVVOU4rcFo5OC9Jc2s5TUMwaUdQSE93RG1sTUdNOTZVYUtsT3J1Q0psVUNw?=
- =?utf-8?B?R1RXdjlsUkdla09RanZjdGpNWGNjbWwzVzQ5QzEzZU45WGt1WWtIaU5LM3di?=
- =?utf-8?B?aitEWWVkRGJYMDRBZ1krUzZ0VExSRnpuNG1pRXplM2VzbVhrR2JtVDRxVkJJ?=
- =?utf-8?B?em1VaTlOTXJ1U3VUbERIM28xTW51Q0lxQUVUUHUyVVZNWnAzZm03eUhTY0pS?=
- =?utf-8?B?MzZTWHZOcTcrQ1JDZk9XN09LYmFMb2NFeWhHT2k3bXh4Y3VNanBnRmZzSFND?=
- =?utf-8?B?RVl3YTYxT3RaMVFKQXRvck1FbU1LdG00ZmZqNk1FZ2lJRTRDd0FGSkFsV1lJ?=
- =?utf-8?B?K2lYRGJReFo1TFY5QXNtREhYeVU0ZXNwTTkrY1lNTldTNVBLQ0RSbTVac1Qw?=
- =?utf-8?B?czhsZ3BFYzV1NW1GbXptRG1uR0tBY3EvNW81TlgzcW5lRlZyUmJPZzMvNWg5?=
- =?utf-8?B?YTd6TlBkdE1qWjJoN2JQZHVXY2NuRUg2N3dpQU1sVHBUWE5CYzRIb2JPaWVn?=
- =?utf-8?Q?knMPiR709CsNlT4qHzaPBTGYo?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	hegM49Pwrr79nNZ/cEXFDELTSiOnJ/19eCBu/UCfkTjRsXbJOIRnTBDVETBi0wP1guS/XakgsRWUE6ar45PAPM+xo3X2lkTaEvg2zeONJO1tjinrziTc7OdFlhxJTfR0t+5/LkohU1AVI0kWvnkviEZdNEY+pDJyPjp2VTCC7ZanMN+4hRKKYcqZ1evW/dy0TeyKP2qOLtaOUb3NL01qqMLbgwO8hPGA2Pnz8XechggaSMj8VToBbDXe7Mel07LMJQEKmpirU292nNOVt/GbUlgSjbmpbVYHj99uHSIfwM/0yG8bFruHyuvqYq9nu7UGeZYodPr36tzA/tltGQ5LLv0/0RIxbs2eOMMFtv87kmBfaoLnmR4Mxhse9+a/YSXVPd+X57Qk1odZXArl+yZCIHCYIMFJne83ApeUJNebWTNtKSFixYPC3BeQgoGbedOmZ8dzjfFdJdIEp2P+XkF3SIsFLwKaE4VgJv6j5m0erIL9FqwYbvKfebVRxQj0L4SLBktaL5B6r+iLKzXLe80K9clx+1Yj7WHfr98C5TmRcCYMbM4zo1x3CrIaIkmUsyaN2ncgcIHyiwXnNwa0xrHni+olHopXU3q7KLNkiJsqFyI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4b65f63-2a70-4e6c-b0d5-08dda9980e3c
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 10:01:10.0310
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ml2P0WNZZYH256hagnqGgqptEOI2lNPGruAFp8wPDBluNpQY8CLiSoNWIbW42EKHz3cZ0koJWALGRw8JwJ3wIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF7BD9BEA92
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 mlxlogscore=999
- bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506120077
-X-Authority-Analysis: v=2.4 cv=K4AiHzWI c=1 sm=1 tr=0 ts=684aa568 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=vDLckumU3XCrawMfmvoA:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:13207
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA3NyBTYWx0ZWRfXxd/DAwXRB3UA 8xApdc3jxoRKZdTkwGwR1W/kfOqb5kBPvzmU+Jq5arTIxKvj6gn/FtNGLgs4i0h9R6M4ghhh42p XZPVAIcuN0ogE8+Aquh/l3VyHsQSFu5PNdXtRVdN7wKji3+0SzUAr9M7Rls0qF9cKMUy4dyCdL1
- mQ+04klRFWSG+Iw6aWwXjyB5Q0efmGz19ICplrK4EhUW0PQwAuL8+wd2aHJ8/L+JbOuVDhnUFfO AwJiP9MbaLSHzSWtcWKnERytJU+nZoSnyaqw9V+8n0iL3fEqQulSBjmKJLJh4PkR3uS243+0Bhl Y+/ZIM8zoKNcFcMwNQCdYLbM6WtUlj908Jn6WPUgvlVu+bKiWLDqnNtbvKcrz5vVt7n1eGOTOq1
- p/adb+MuwzCMwSql8Pl2bqIVRhutmcv5GuxYF/zBkTuv2Mxwnqxjxr7rl9UTpKWrY3A9v+5T
-X-Proofpoint-ORIG-GUID: khNJQSOAaO3wo_s_EHylMhz4ATNEMbSp
-X-Proofpoint-GUID: khNJQSOAaO3wo_s_EHylMhz4ATNEMbSp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611230412.GO24465@pendragon.ideasonboard.com>
 
-On 06/06/2025 16:16, Nilay Shroff wrote:
->> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
->> index 24a857ff6d0b..4f1f7173740c 100644
->> --- a/drivers/md/dm-table.c
->> +++ b/drivers/md/dm-table.c
->> @@ -430,6 +430,10 @@ static int dm_set_device_limits(struct dm_target *ti, struct dm_dev *dev,
->>   		return 0;
->>   	}
->>   
->> +	/* For striped types, limit the chunk_sectors to the chunk size */
->> +	if (dm_target_supports_striped(ti->type))
->> +		limits->chunk_sectors = len >> SECTOR_SHIFT;
->> +
-> I think here "len" refers to the total size of dm target and not the
-> chunk sectors. So we need to modify this and take into account chunk sectors..
-> We can get chunk sectors, for example, like this:
+Hi Laurent,
+
+Thanks for your quick review!
+
+On 2025-06-12 02:04:12 +0300, Laurent Pinchart wrote:
+> Hi Niklas,
 > 
-> 	struct stripe_c *sc = ti->private;
-> 	limits->chunk_sectors = sc->chunk_size;
+> Thank you for the patch.
+> 
+> On Wed, Jun 11, 2025 at 05:44:45PM +0200, Niklas Söderlund wrote:
+> > Add D-PHY support for V4H in addition to the already support C-PHY
+> 
+> s/support C-PHY support/supported C-PHY/
+> 
+> > support. The common start-up procedure for C-PHY and D-PHY are shared,
+> 
+> s/are shared/is shared/
+> 
+> > only PHY setup differ. Extend the V4H setup with D-PHY support as
+> > documented in the datasheet (Rev.1.21).
+> > 
+> > Most of the start-up procedure is only documented as magic values in
+> > tables, there is little documentation to make the settings more clear.
+> > Wherever possible formulas or lookup tables are used as they are
+> > documented in the datasheet.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > Tested-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > ---
+> > * Fixes since v2
+> > - Stire DESKEW settings in an array and loop over it instead of opene
+> >   coding it.
+> > 
+> > * Fixes since v1
+> > - Init cphy  variables to not trigger false -Wmaybe-uninitialized
+> >   warning.
+> > - Adjust line lengths.
+> > ---
+> >  drivers/media/platform/renesas/rcar-csi2.c | 240 ++++++++++++++++++++-
+> >  1 file changed, 230 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
+> > index 7ba637d8683b..1fd36823c8e9 100644
+> > --- a/drivers/media/platform/renesas/rcar-csi2.c
+> > +++ b/drivers/media/platform/renesas/rcar-csi2.c
+> > @@ -172,6 +172,7 @@ struct rcar_csi2;
+> >  #define V4H_PPI_RW_LPDCOCAL_TWAIT_CONFIG_REG		0x21c0a
+> >  #define V4H_PPI_RW_LPDCOCAL_VT_CONFIG_REG		0x21c0c
+> >  #define V4H_PPI_RW_LPDCOCAL_COARSE_CFG_REG		0x21c10
+> > +#define V4H_PPI_RW_DDLCAL_CFG_n_REG(n)			(0x21c40 + ((n) * 2)) /* n = 0 - 7 */
+> >  #define V4H_PPI_RW_COMMON_CFG_REG			0x21c6c
+> >  #define V4H_PPI_RW_TERMCAL_CFG_0_REG			0x21c80
+> >  #define V4H_PPI_RW_OFFSETCAL_CFG_0_REG			0x21ca0
+> > @@ -185,6 +186,13 @@ struct rcar_csi2;
+> >  #define V4H_CORE_DIG_IOCTRL_RW_AFE_CB_CTRL_2_REG(n)	(0x23840 + ((n) * 2)) /* n = 0 - 11 */
+> >  #define V4H_CORE_DIG_RW_COMMON_REG(n)			(0x23880 + ((n) * 2)) /* n = 0 - 15 */
+> >  #define V4H_CORE_DIG_ANACTRL_RW_COMMON_ANACTRL_REG(n)	(0x239e0 + ((n) * 2)) /* n = 0 - 3 */
+> > +#define V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG	0x23fe0
+> > +
+> > +#define V4H_CORE_DIG_DLANE_l_RW_CFG_n_REG(l, n)		(0x26000 + ((l) * 0x400) + ((n) * 2))
+> > +#define V4H_CORE_DIG_DLANE_l_RW_LP_n_REG(l, n)		(0x26080 + ((l) * 0x400) + ((n) * 2))
+> > +#define V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, n)	(0x26100 + ((l) * 0x400) + ((n) * 2))
+> > +#define V4H_CORE_DIG_DLANE_CLK_RW_LP_n_REG(n)		V4H_CORE_DIG_DLANE_l_RW_LP_n_REG(4, (n))
+> > +#define V4H_CORE_DIG_DLANE_CLK_RW_HS_RX_n_REG(n)	V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(4, (n))
+> >  
+> >  /* V4H C-PHY */
+> >  #define V4H_CORE_DIG_RW_TRIO0_REG(n)			(0x22100 + ((n) * 2)) /* n = 0 - 3 */
+> > @@ -1282,11 +1290,203 @@ rcsi2_c_phy_setting_v4h(struct rcar_csi2 *priv, int mbps)
+> >  	return conf;
+> >  }
+> >  
+> > +struct rcsi2_d_phy_setting_v4h_lut_value {
+> > +	unsigned int mbps;
+> > +	unsigned char cfg_1;
+> > +	unsigned char cfg_5_94;
+> > +	unsigned char cfg_5_30;
+> > +	unsigned char lane_ctrl_2_8;
+> > +	unsigned char rw_hs_rx_3_83;
+> > +	unsigned char rw_hs_rx_3_20;
+> > +	unsigned char rw_hs_rx_6;
+> > +	unsigned char rw_hs_rx_1;
+> > +};
+> > +
+> > +static const struct rcsi2_d_phy_setting_v4h_lut_value *
+> > +rcsi2_d_phy_setting_v4h_lut_lookup(int mbps)
+> > +{
+> > +	static const struct rcsi2_d_phy_setting_v4h_lut_value values[] = {
+> > +		{ 4500, 0x3f, 0x07, 0x00, 0x01, 0x02, 0x01, 0x0d, 0x10 },
+> > +		{ 4000, 0x47, 0x08, 0x01, 0x01, 0x05, 0x01, 0x0f, 0x0d },
+> > +		{ 3600, 0x4f, 0x09, 0x01, 0x01, 0x06, 0x01, 0x10, 0x0b },
+> > +		{ 3230, 0x57, 0x0a, 0x01, 0x01, 0x06, 0x01, 0x12, 0x09 },
+> > +		{ 3000, 0x47, 0x08, 0x00, 0x00, 0x03, 0x01, 0x0f, 0x0c },
+> > +		{ 2700, 0x4f, 0x09, 0x01, 0x00, 0x06, 0x01, 0x10, 0x0b },
+> > +		{ 2455, 0x57, 0x0a, 0x01, 0x00, 0x06, 0x01, 0x12, 0x09 },
+> > +		{ 2250, 0x5f, 0x0b, 0x01, 0x00, 0x08, 0x01, 0x13, 0x08 },
+> > +		{ 2077, 0x67, 0x0c, 0x01, 0x00, 0x06, 0x02, 0x15, 0x0d },
+> > +		{ 1929, 0x6f, 0x0d, 0x02, 0x00, 0x06, 0x02, 0x17, 0x0d },
+> > +		{ 1800, 0x77, 0x0e, 0x02, 0x00, 0x06, 0x02, 0x18, 0x0d },
+> > +		{ 1688, 0x7f, 0x0f, 0x02, 0x00, 0x08, 0x02, 0x1a, 0x0d },
+> > +		{ 1588, 0x87, 0x10, 0x02, 0x00, 0x08, 0x02, 0x1b, 0x0d },
+> > +		{ 1500, 0x8f, 0x11, 0x03, 0x00, 0x08, 0x02, 0x1d, 0x0c },
+> > +	};
+> > +
+> > +	for (unsigned int i = 0; i < ARRAY_SIZE(values); i++)
+> > +		if (values[i].mbps >= mbps)
+> 
+> I think this should be <=. Or
+> 
+> 		if (mbps >= values[i].mbps)
 
-right
-
-I find that the terminology used in the dm code for stripe width and 
-size a bit confusing.
+Indeed it should! Thanks for catching this, funny how the magic values 
+for the incorrect link speed worked. I wonder what they do ;-)
 
 > 
-> But again struct stripe_c is private to dm-stripe.c and so we can't access it
-> here directly in dm-table.c Better we add a new callback function for dm target
-> type under struct target_type and then use that callback to get chunk sector.
+> > +			return &values[i];
+> > +
+> > +	return NULL;
+> > +}
+> > +
+> > +static int rcsi2_d_phy_setting_v4h(struct rcar_csi2 *priv, int mbps)
+> > +{
+> > +	const struct rcsi2_d_phy_setting_v4h_lut_value *lut =
+> > +		rcsi2_d_phy_setting_v4h_lut_lookup(mbps);
+> > +	u16 val;
+> > +
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_RW_COMMON_REG(7), 0x0000);
+> > +	rcsi2_write16(priv, V4H_PPI_STARTUP_RW_COMMON_DPHY_REG(7), mbps > 1500 ? 0x0028 : 0x0068);
+> > +	rcsi2_write16(priv, V4H_PPI_STARTUP_RW_COMMON_DPHY_REG(8), 0x0050);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(0), 0x0063);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(7), 0x1132);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(1), 0x1340);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(2), 0x4b13);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(4), 0x000a);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(6), 0x800a);
+> > +	rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(7), 0x1109);
+> > +
+> > +	if (mbps > 1500) {
+> > +		val = roundup(5 * mbps / 64, 1);
 > 
-> struct target_type stripe_target = {
->          ...
->          .chunk_sectors = stripe_chunk_sectors,
->          ...
-> }
+> roundup(..., 1) seems weird. I think you meant
+> 
+> 		val = DIV_ROUND_UP(5 * mbps, 64);
 
+Ack.
 
-Please see reply to Mikulas on this same topic.
+> 
+> > +		rcsi2_write16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(3), val);
+> > +	}
+> > +
+> > +	if (lut) {
+> > +		rcsi2_modify16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(1),
+> > +			       lut->cfg_1, 0x00ff);
+> > +		rcsi2_modify16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(5),
+> > +			       lut->cfg_5_94 << 4, 0x03f0);
+> > +		rcsi2_modify16(priv, V4H_PPI_RW_DDLCAL_CFG_n_REG(5),
+> > +			       lut->cfg_5_30 << 0, 0x000f);
+> > +
+> > +		for (unsigned int l = 0; l < 5; l++)
+> > +			rcsi2_modify16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 8),
+> > +				       lut->lane_ctrl_2_8 << 12, 0x1000);
+> > +	}
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_LP_n_REG(l, 0), 0x463c);
+> > +
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(0, 2), 0x0000);
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(1, 2), 0x0000);
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(2, 2), 0x0001);
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(3, 2), 0x0000);
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(4, 2), 0x0000);
+> > +
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_RW_COMMON_REG(6), 0x0009);
+> > +
+> > +	val = mbps > 1500 ? 0x0800 : 0x0802;
+> > +	for (unsigned int l = 0; l < 5; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 12), val);
+> > +
+> > +	val = mbps > 1500 ? 0x0000 : 0x0002;
+> > +	for (unsigned int l = 0; l < 5; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 13), val);
+> > +
+> > +	if (mbps >= 80) {
+> > +		if (mbps >= 2560)
+> > +			val = 6;
+> > +		else if (mbps >= 1280)
+> > +			val = 5;
+> > +		else if (mbps >= 640)
+> > +			val = 4;
+> > +		else if (mbps >= 320)
+> > +			val = 3;
+> > +		else if (mbps >= 160)
+> > +			val = 2;
+> > +		else if (mbps >= 80)
+> > +			val = 1;
+> 
+> You could possibly replace this with
+> 
+> 		val = ilog2(mbps / 80) + 1;
+> 
+> Up to you.
 
-Thanks,
-John
+I opted to keep it as is to make it easier to match with the datasheet.  
+The ilog2() is clever but I will never remember why it was used ;-)
+
+> 
+> > +
+> > +		rcsi2_modify16(priv,
+> > +			       V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(2, 9),
+> > +			       val << 5, 0xe0);
+> > +	}
+> > +
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_DLANE_CLK_RW_HS_RX_n_REG(0), 0x091c);
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_DLANE_CLK_RW_HS_RX_n_REG(7), 0x3b06);
+> > +
+> > +	val = roundup(1200 / mbps, 1) + 12;
+> 
+> And here
+> 
+> 	val = DIV_ROUND_UP(1200, mbps) + 12;
+> 
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_modify16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 0), val << 8, 0xf0);
+> > +
+> > +	val = mbps > 1500 ? 0x0004 : 0x0008;
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_CFG_n_REG(l, 1), val);
+> > +
+> > +	val = mbps > 2500 ? 0x669a : mbps > 1500 ? 0xe69a : 0xe69b;
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 2), val);
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_LP_n_REG(l, 0), 0x163c);
+> > +	rcsi2_write16(priv, V4H_CORE_DIG_DLANE_CLK_RW_LP_n_REG(0), 0x163c);
+> > +
+> > +	if (lut) {
+> > +		for (unsigned int l = 0; l < 4; l++)
+> > +			rcsi2_modify16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 1),
+> > +				       lut->rw_hs_rx_1, 0xff);
+> > +	}
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 3), 0x9209);
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 4), 0x0096);
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 5), 0x0100);
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 6), 0x2d02);
+> > +
+> > +	for (unsigned int l = 0; l < 4; l++)
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 7), 0x1b06);
+> > +
+> > +	if (lut) {
+> > +		/* Documentation LUT have two values but document writing both
+> 
+> 		/*
+> 		 * Documentation LUT have two values but document writing both
+> 
+> > +		 * values in a single write.
+> > +		 */
+> > +		for (unsigned int l = 0; l < 4; l++)
+> > +			rcsi2_modify16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 3),
+> > +				       lut->rw_hs_rx_3_83 << 3 | lut->rw_hs_rx_3_20, 0x1ff);
+> > +
+> > +		for (unsigned int l = 0; l < 4; l++)
+> > +			rcsi2_modify16(priv, V4H_CORE_DIG_DLANE_l_RW_HS_RX_n_REG(l, 6),
+> > +				       lut->rw_hs_rx_6 << 8, 0xff00);
+> > +	}
+> > +
+> > +	static const u16 deskew_fine[] = {
+> > +		0x0404, 0x040c, 0x0414, 0x041c, 0x0423, 0x0429, 0x0430, 0x043a,
+> > +		0x0445, 0x044a, 0x0450, 0x045a, 0x0465, 0x0469, 0x0472, 0x047a,
+> > +		0x0485, 0x0489, 0x0490, 0x049a, 0x04a4, 0x04ac, 0x04b4, 0x04bc,
+> > +		0x04c4, 0x04cc, 0x04d4, 0x04dc, 0x04e4, 0x04ec, 0x04f4, 0x04fc,
+> > +		0x0504, 0x050c, 0x0514, 0x051c, 0x0523, 0x0529, 0x0530, 0x053a,
+> > +		0x0545, 0x054a, 0x0550, 0x055a, 0x0565, 0x0569, 0x0572, 0x057a,
+> > +		0x0585, 0x0589, 0x0590, 0x059a, 0x05a4, 0x05ac, 0x05b4, 0x05bc,
+> > +		0x05c4, 0x05cc, 0x05d4, 0x05dc, 0x05e4, 0x05ec, 0x05f4, 0x05fc,
+> > +		0x0604, 0x060c, 0x0614, 0x061c, 0x0623, 0x0629, 0x0632, 0x063a,
+> > +		0x0645, 0x064a, 0x0650, 0x065a, 0x0665, 0x0669, 0x0672, 0x067a,
+> > +		0x0685, 0x0689, 0x0690, 0x069a, 0x06a4, 0x06ac, 0x06b4, 0x06bc,
+> > +		0x06c4, 0x06cc, 0x06d4, 0x06dc, 0x06e4, 0x06ec, 0x06f4, 0x06fc,
+> > +		0x0704, 0x070c, 0x0714, 0x071c, 0x0723, 0x072a, 0x0730, 0x073a,
+> > +		0x0745, 0x074a, 0x0750, 0x075a, 0x0765, 0x0769, 0x0772, 0x077a,
+> > +		0x0785, 0x0789, 0x0790, 0x079a, 0x07a4, 0x07ac, 0x07b4, 0x07bc,
+> > +		0x07c4, 0x07cc, 0x07d4, 0x07dc, 0x07e4, 0x07ec, 0x07f4, 0x07fc,
+> > +	};
+> > +
+> > +	for (unsigned int i = 0; i < ARRAY_SIZE(deskew_fine); i++) {
+> > +		rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG,
+> > +			      deskew_fine[i]);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
+> >  				    struct v4l2_subdev_state *state)
+> >  {
+> > +	const struct rcsi2_cphy_setting *cphy = NULL;
+> >  	const struct rcar_csi2_format *format;
+> > -	const struct rcsi2_cphy_setting *cphy;
+> >  	const struct v4l2_mbus_framefmt *fmt;
+> >  	unsigned int lanes;
+> >  	int mbps;
+> > @@ -1318,7 +1518,8 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
+> >  	rcsi2_write(priv, V4H_FLDC_REG, 0);
+> >  	rcsi2_write(priv, V4H_FLDD_REG, 0);
+> >  	rcsi2_write(priv, V4H_IDIC_REG, 0);
+> > -	rcsi2_write(priv, V4H_PHY_MODE_REG, V4H_PHY_MODE_CPHY);
+> > +	rcsi2_write(priv, V4H_PHY_MODE_REG,
+> > +		    priv->cphy ? V4H_PHY_MODE_CPHY : V4H_PHY_MODE_DPHY);
+> >  	rcsi2_write(priv, V4H_N_LANES_REG, lanes - 1);
+> >  
+> >  	rcsi2_write(priv, V4M_FRXM_REG,
+> > @@ -1361,9 +1562,15 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
+> >  	rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_CB_CTRL_2_REG(5), 0x4000);
+> >  
+> >  	/* T3: PHY settings */
+> > -	cphy = rcsi2_c_phy_setting_v4h(priv, mbps);
+> > -	if (!cphy)
+> > -		return -ERANGE;
+> > +	if (priv->cphy) {
+> > +		cphy = rcsi2_c_phy_setting_v4h(priv, mbps);
+> > +		if (!cphy)
+> > +			return -ERANGE;
+> > +	} else {
+> > +		ret = rcsi2_d_phy_setting_v4h(priv, mbps);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> >  
+> >  	/* T4: Leave Shutdown mode */
+> >  	rcsi2_write(priv, V4H_DPHY_RSTZ_REG, BIT(0));
+> > @@ -1376,11 +1583,23 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
+> >  	}
+> >  
+> >  	/* T6: Analog programming */
+> > -	for (unsigned int l = 0; l < 3; l++) {
+> > -		rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 9),
+> > -			      cphy->lane29);
+> > -		rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 7),
+> > -			      cphy->lane27);
+> > +	if (priv->cphy) {
+> > +		for (unsigned int l = 0; l < 3; l++) {
+> > +			rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 9),
+> > +				      cphy->lane29);
+> > +			rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 7),
+> > +				      cphy->lane27);
+> > +		}
+> > +	} else {
+> > +		u16 val_2_9 = mbps > 2500 ? 0x14 : mbps > 1500 ? 0x04 : 0x00;
+> > +		u16 val_2_15 = mbps > 1500 ? 0x03 : 0x00;
+> > +
+> > +		for (unsigned int l = 0; l < 5; l++) {
+> > +			rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 9),
+> > +				      val_2_9);
+> > +			rcsi2_write16(priv, V4H_CORE_DIG_IOCTRL_RW_AFE_LANEl_CTRL_2_REG(l, 15),
+> > +				      val_2_15);
+> > +		}
+> >  	}
+> >  
+> >  	/* T7: Wait for stop state */
+> > @@ -2245,6 +2464,7 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a779g0 = {
+> >  	.start_receiver = rcsi2_start_receiver_v4h,
+> >  	.use_isp = true,
+> >  	.support_cphy = true,
+> > +	.support_dphy = true,
+> >  };
+> >  
+> >  static const struct rcsi2_register_layout rcsi2_registers_v4m = {
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
