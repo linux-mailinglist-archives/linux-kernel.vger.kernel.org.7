@@ -1,183 +1,124 @@
-Return-Path: <linux-kernel+bounces-682878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CC3AD65C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 04:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 142EEAD664C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 05:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9351BC1922
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 02:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CEE1BC11A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 03:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DE71C3C08;
-	Thu, 12 Jun 2025 02:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C6E1D63DD;
+	Thu, 12 Jun 2025 03:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="i2sB6GDK"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010064.outbound.protection.outlook.com [52.101.84.64])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nggY2ap/"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774B41E487;
-	Thu, 12 Jun 2025 02:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749695841; cv=fail; b=ibn8r3S7mTnooW/P+l9Wdw1ql2yhqpatYUswaUgkfeMijsn8dKCj2oKvX/s11+YmBAP8xAcubtM12mHvwZ8sKnUpltJmwauq69B3Biy8fMJfGneYEfWARhDnZm1Vza0zut2jIYDtnSfGOLcJyTm0cnhgmpvYaVEjs0CfBF80rS4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749695841; c=relaxed/simple;
-	bh=zHdQ4Q3PVnjG99BeqS/kXkRRJc+GLWKKNku5VbBTcD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hWTunmlyBX1K66PkUz+Xjpv0ncgfUlbo5fsC62q+0BIp24i6PdevXcUeuISmZ1jP3inGYUyomXlmgO10NIm2eE1lo9u0rxJMY9KO/5z08HgUvmuRylmNYrbzvWCYcwA746+VzO8if+1phroyHrsulLNuEfXXKRNHancN+XnLj40=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=i2sB6GDK; arc=fail smtp.client-ip=52.101.84.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n0guXTeUfKeTN/D5hWJM22sJIclLiKpHRUWiqUbldwBsZwQonhFakUMz5ywX9koR0uK+O93Ha01dm+i4hmoMTgY8nQ53RCPXboFD6m7pGCPi1k04M3NunoKs5lreAizVlRBF7DUnlR4gd/LkHJehVHQY2aN0lKYF2QhI6qXWVyf8AafIG/hTXj+VoL+tRlaeQ4Sq74r/O9aXlbJ5rtytsU7sT49tbTFmu4kpKix7oZkou2F2Hs8FduW5MNX1tVvkP99g+JNxzkH3afng1Eu11yj94tXWcg7A34LN2046j6S4hvcJPrktEqVL5M2eGlcIs7pKT9ZdtcEcOwtS/+rdwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=okndc97KXOd344oWbmTR6lCVvxtFiCiytaVvpoGwaHY=;
- b=GiS/gRaAuYHe9AABzUOt6VmvEik5+ihRGrBNFVrA4L5UkzQJdFmSTHTUdOXlER1BL7yIg0jOxItfXV40A1R0npbJ/E2JZQC5XsTrvnED/9FvBXrFMSdiglm1xenwyMGV8iirg0a1EObVKzMy6siWh+tEIhENUbFvV1bsRRsYjKvEzM2+Sm2OuE7LeEtkGBx1pHVkC0QSb0PEI5ItzwGulbzv9wM16kAr3Fz5Nx1d3zEkOwpWozjBsd/egyFUQ641gMWSuBJ0c6x17P0rvC3hQq+wH7ZQNqWYw1//mZyjUXh1rrQKuNmXHYZv+0tmZXl4qxtJHtO8DrQh1rR8dBUQ4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=okndc97KXOd344oWbmTR6lCVvxtFiCiytaVvpoGwaHY=;
- b=i2sB6GDKoP36OI3djtqVhz1Fj7D0EH0meZdMcKW4bTGiV3nm1EwudOa8x9uzz34mSkKWaP66hazwDt/W47960w5jZZ7kbF3Ns1C5so71fsF9p/avFJgkFwDZ7X/2aNjhDM8HyoeAgjHSMH5l8fEu33uuvN6xhDyrocqBmE4d9PMoGwwtP9PPx4lVVk+VmOLl17wPAYW/K9NEo5o9Pqlc1vOUb3NgsFddkwGoe0pwO3oJtJCe4EmDu07TOg09+6SRrdAki1xVwLieqtCz4vhbDWFGB64MtOWyByOc9QgF3EawJ8Ohnewi6bLJL298z6/ZwQaqF1vf5rRpVlF/LeDAPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GVXPR04MB10732.eurprd04.prod.outlook.com (2603:10a6:150:215::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.22; Thu, 12 Jun
- 2025 02:37:14 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8813.024; Thu, 12 Jun 2025
- 02:37:14 +0000
-Date: Thu, 12 Jun 2025 11:47:23 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: scmi: Fix children encountered before parents case
-Message-ID: <20250612034723.GB7552@nxa18884-linux>
-References: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR06CA0002.apcprd06.prod.outlook.com
- (2603:1096:4:186::10) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3065F1A5B92;
+	Thu, 12 Jun 2025 03:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749700481; cv=none; b=lt87LuZ/XpFiVAJ7GEmBLbe8Wteh/lIsKAy072n0ZFrb95h5pcgmqZ0uiarkr/1PCr50mouo/QhHp6WFuRYrim9ZolGAOLhgqZPLZRldOWH/sjN3ILyB7REf/2sriZoEkleF3pUXMQKI8L7QC7+4LGePHGO88WAE0JcmCQx5eME=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749700481; c=relaxed/simple;
+	bh=0qO1I6eQHyLDxt28LjGMWfn3ucClxQYRzRmbAjICYbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hzQjRKE0vLM9fnkSZ9MdiiyrWHpSoxXxOTVtxk6RBUKrb7z1sjc2/Mp5yp8WWCo4RZrV4t+z8s+CUeHPJmU0BedDvJwZYAmFvDr5OkfSq4F+uhAd7Y3xNfdAA8zVJsUbbn0ZfUjS4y1E/WO87aVjRD4DLpXQLkUO745/Lnut3Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nggY2ap/; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749700471; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=vhGiq7rkvYoNNdtNkWO+TZlRxj9/2gW4OzFoq6S0qAk=;
+	b=nggY2ap/va7ZeHAr45Mq/i5OTGWWYaOf1lfnzGRAfbzbALglPMV9FXLePEYIJkOcDQv1IBxn2t8gH86hJzaTIZ4hXtFOt0NvNTYhb0vt/hWH7m2OoVtnPPBnPQeb2PsRVbLANak2/1+Kmb9q9ZNw/HIGb7UQcx1d0e6hPQvrpBE=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdfRnw6_1749700469 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 12 Jun 2025 11:54:30 +0800
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	shuah@kernel.org,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] selftests: khugepaged: fix the shmem collapse failure
+Date: Thu, 12 Jun 2025 11:54:20 +0800
+Message-ID: <c16d1d452aa876b449324d12df6465677158a711.1749697399.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GVXPR04MB10732:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9df62419-f013-4e10-5640-08dda95a0a20
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WaCIzsLmALOSgQrNpjYggWNMLmr0b9k1WrWOtHjOJFBT+CLAkVGlOVALIC1a?=
- =?us-ascii?Q?xXSYZZBnTLWrFRYgroONvsXux/MK3JXTA+XMY3gW4QbshHdEUKYosxSpaimj?=
- =?us-ascii?Q?x3rC42zOscYFiUugc3Rz76ET5m5jnBTnurTpCgMRhlOeBKzgXYd3mi8IbK2G?=
- =?us-ascii?Q?Jy+Km1nYisFqM80P7dmK5LaDYdQlIU8SAngunYM118Gan0Ua2tAIWrNIvUQt?=
- =?us-ascii?Q?1z1cKLbxdwValo7BGrpULdj1+I2q+qY3gn/PKvJtkQk+iOyO0ZPLb72LoanR?=
- =?us-ascii?Q?lZJXPUTa/GL5ZELJW3jX3z+uududToy/xuq5F7xURjJ/Pnyfs6+ok7wleGVa?=
- =?us-ascii?Q?SKBTP4KuzlolZEJneIxDDqcMJdtk/gnqUQh7+PvzpxvVnLs6OHcdlr59Q4Vs?=
- =?us-ascii?Q?9hkq1v8hW46yDWjyn3ZgvZVygJkP0VRQfQA8rfkeJhspoLqwbsarkFFqbNEx?=
- =?us-ascii?Q?7bGc8U2B6+QILZlNfvzYWeTNy1hCsi4vJ5AyuAnTigjOCbbN4mnizrg8Xle7?=
- =?us-ascii?Q?dEYTfjnAp7Qn+gHDiLNBeMuWdop0OozxAYMpM+o4QulxkbV4tf9ZRF1fPKx2?=
- =?us-ascii?Q?Sr06E8likaSTmAZm/ppobMxM95GWFFou+zt6WDKM9cc3P+uBqLvATQP5Ss0q?=
- =?us-ascii?Q?p1abfAZkhRWrh5gO56RJQl8sEMEF7wd8Spg1GOcT7x7OrOLneEQHaNcwnzRU?=
- =?us-ascii?Q?6oQPljwEqUOVdNYhevTBMGDcyL4Vx7Rt/iVA/zbakiGX3q/697R1Lk5v2ij2?=
- =?us-ascii?Q?MMR8pRZy3s0yEor/D1ghFX0Am36slUFZ0cgezwkpPzjMPp+T2m5dkhmkBSeU?=
- =?us-ascii?Q?HDlk2UEughkygbTboxDUa+qMsLSa7CiZzKgUzMuAmfObmq05+OlJhbU60oln?=
- =?us-ascii?Q?Xo5JBSXZ5uvICskGrfF/r9PoPae5jECDOfxNsQX6oRvwfd5dn73pI6AeI1Wv?=
- =?us-ascii?Q?4n3UfBcdCYJVtgrtm/UytL2IylaaUaW7NbpFVoms62XoBdwh4MBDETHoB9p2?=
- =?us-ascii?Q?8VCjKmBSVK16LAJoQme6pbVk7N7F40Io7NoWEvLrLppl+vFKcqFlla0WA4RS?=
- =?us-ascii?Q?SFv+JSpFCJ7hi9iVY6hIAiF2s4k+f5Lzt0MIkHZjM9Oq6sho4lLh2Z7rc73U?=
- =?us-ascii?Q?YCpP76rUMbev6hyEABSizffOzFWv9XH2n0eQ50GxuzHH6jkrLIRPt4NJ+r5V?=
- =?us-ascii?Q?FPVjo4KtPLXUxqMPOQeN1XspCvrULzgU4urGeMu/p4fubcllk8cI/dRVn8JC?=
- =?us-ascii?Q?ZgrIiqgyiLCNWrOl1EZjWiYNdyGoXpqHm6JjoHcZkoNsqH3p+KwT3mG+eLYV?=
- =?us-ascii?Q?pyawQWdLftbPtq8oyxc0ZyDrzZ5f9xLBX4uRtJA75u6YuEZcoU6BC3/CMcp0?=
- =?us-ascii?Q?buoMMX+rV2/J9hNhB1gbWzOPZMiVjz0ky8eTo5oTqKTqsq3hoCf4HYlBG9Qj?=
- =?us-ascii?Q?FP+kG1Y7ju6fQpi+VsPeBWcaBME8pnq25bAO2bUBsfxFCMiKQTeX+w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fcB7/PAjCQYld+XECE34CS+8k+23wQbLraH6CkBZElFNs2tfjvcJcTSUy3Yq?=
- =?us-ascii?Q?F7oN/H42f88wylIVizlYCPcfrsdhEL8q0aYC8+z3B9Q1m7PrXuaYnaI5rvnH?=
- =?us-ascii?Q?EYNlIYuCESDiidqZJFztI0WRPV9z3DeAcEO9d6WYDVMKvj9iXbL2KTkqlFyS?=
- =?us-ascii?Q?4wU5uI7yPb+d9Inh32eredbFmqJA3mcs2ueNWvxIk7B6KMgv/vKX2VcPyPyO?=
- =?us-ascii?Q?Fc7GHbMvbKV8NWlDGyp7pNW3D53Eaq5SHYpLdE3E5TlXQb20t04812PLkrxT?=
- =?us-ascii?Q?E+zHV9gJSKJdv8eFci9GcOXQrpl9ZfqknbidtDFf7OOX0AyW+RPDIgpYrcVc?=
- =?us-ascii?Q?qw6mh0qXN1ULpacWcIJ5Bfv8QhLhsMV+QVrPRhWnuoTG4vvs5CEcBBhjQjWw?=
- =?us-ascii?Q?PcQKR1NJm+9Q/fks0jINmNQyW11g2p72zHj5VW0G8/xmDjPGpnsXGLb5AGR1?=
- =?us-ascii?Q?83iiP1xa0RWJaGuuauP7J+7LHBOOK9RmYaO6iEVGYHjxHvQruGHYB/Dq6Lg9?=
- =?us-ascii?Q?ICojf+WRs05X7KGIW1CPnwAnt/yTkCtodmiccZGjUfgXD75WwR4b0KN0ktJK?=
- =?us-ascii?Q?hj7PaOZtIXG61m10EQS+Yx2myc/5OHcad2viGc0DWcSUlLccGxohi0h9d/AI?=
- =?us-ascii?Q?OQSEE84w8wtquLvyHbKEM7d5YPjOF09Vd7rHe5YvM5woZuWVfrAmAXHOPlsr?=
- =?us-ascii?Q?SzdXPGE4Uibutwi99HSLdVb7/EltvT+Re5o3FnXyywCfN4T51qEMpy04yN4a?=
- =?us-ascii?Q?uacciTjxXzAnz/013L8OgRccyPe9Tl0t4wpuAjGEA8u81ZlrsFf2ZXwvhqev?=
- =?us-ascii?Q?AP1d4uYI7CTUedoNpd4uBgUZDwxQ0j4PoP1dl7DXBTJ5hYKcI8Oa1Z6I71co?=
- =?us-ascii?Q?YvC/Xh8JXi69MVNkk0SAFPae+ENakqeIZLqJBalqaomnsM7/290QbmJIKnAT?=
- =?us-ascii?Q?fSJYLMHLQW9eITo+bslnf1W//VhGNb3ZYK2rbsJFTwNHXBIhea/zRJYbFe8o?=
- =?us-ascii?Q?vhDzbK72jKAjuxr3y7GhVzIcTRKHboWJE36tWcNa40/w1Xv2AtBpqlzhEXm2?=
- =?us-ascii?Q?KnM0a6zT0tEFi6KtTintWLtsqW5HaJMcfSrBfcGgP/u6WTYC7O8HzBOcDd0B?=
- =?us-ascii?Q?L83XgTDG3RzALZ6V47cwGrzyJ12oirt/R1TFF+Y3YJ4vcg8xdSnqV7/LNQxQ?=
- =?us-ascii?Q?hVHqgmXUb1MMNlOUKQRXfKVJTVIPbzxkP6OSrDAOFWaLlTzTltu0M9ZJBlFC?=
- =?us-ascii?Q?0fWFw8MOAyg2ki3D8H3Z4tSfuF3M7HnzjGPGUv6YGBDZpNeI22fzVOi5ILyO?=
- =?us-ascii?Q?RgWdwMypoItZAqUUCqe88z0ETvAq0IrtrBxRHcyBp7PdsOj41C/YrxklEusw?=
- =?us-ascii?Q?/1AJ6E7DMqdYyBtRXIRquz/JGLPuU1tHik5L/SoIiSeBoAuTMd9Zi20M5mor?=
- =?us-ascii?Q?5oS5VXo2kCtMvFalaZJiczBf3Qd/IkSI9UF1SC4Q7JxvLM4gXR9rqPljxIRA?=
- =?us-ascii?Q?HvSMISigxRoKV1iPwZP8V1BULc+0Ys/yag4QZ/SI58nGQ9QVvE6BI43wMrZg?=
- =?us-ascii?Q?T/gYNUl9ouAGxh/cksqv/O1eD/LR7uls6ETq1qRY?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9df62419-f013-4e10-5640-08dda95a0a20
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 02:37:14.0494
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: udeeuJ9HEnxSqIlb78EX54+yJJvD9VZpQhOCXH4QqYqTx+U1TrXfPA7WC0SMaQIeOaJTd6onovhEggWLzLImzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10732
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 04, 2025 at 01:00:30PM +0200, Sascha Hauer wrote:
->When it comes to clocks with parents the SCMI clk driver assumes that
->parents are always initialized before their children which might not
->always be the case.
->
->During initialization of the parent_data array we have:
->
->	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
->
->hws[sclk->info->parents[i]] will not yet be initialized when children
->are encountered before their possible parents. Solve this by allocating
->all struct scmi_clk as an array first and populating all hws[] upfront.
->
->Fixes: 65a8a3dd3b95f ("clk: scmi: Add support for clock {set,get}_parent")
->Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+When running the khugepaged selftest for shmem (./khugepaged all:shmem),
+I encountered the following test failures:
+"
+Run test: collapse_full (khugepaged:shmem)
+Collapse multiple fully populated PTE table.... Fail
+...
+Run test: collapse_single_pte_entry (khugepaged:shmem)
+Collapse PTE table with single PTE entry present.... Fail
+...
+Run test: collapse_full_of_compound (khugepaged:shmem)
+Allocate huge page... OK
+Split huge page leaving single PTE page table full of compound pages... OK
+Collapse PTE table full of compound pages.... Fail
+"
 
-Thanks for the fix. To i.MX, the index of child clk is always after
-parent clk per current SM design. Not sure you met real issue, anyway
-this patch itself is correct.
+The reason for the failure is that, it will set MADV_NOHUGEPAGE to prevent
+khugepaged from continuing to scan shmem VMA after khugepaged finishes
+scanning in the wait_for_scan() function. Moreover, shmem requires a refault
+to establish PMD mappings.
 
-Reviewed-by: <peng.fan@nxp.com>
+However, after commit 2b0f922323cc, PMD mappings are prevented if the VMA is
+set with MADV_NOHUGEPAGE flag, so shmem cannot establish PMD mappings during
+refault.
+
+To fix this issue, we can set the MADV_NOHUGEPAGE flag after the shmem refault.
+With this fix, the shmem test case passes.
+
+Fixes: 2b0f922323cc ("mm: don't install PMD mappings when THPs are disabled by the hw/process/vma")
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ tools/testing/selftests/mm/khugepaged.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
+index 8a4d34cce36b..d462f62d8116 100644
+--- a/tools/testing/selftests/mm/khugepaged.c
++++ b/tools/testing/selftests/mm/khugepaged.c
+@@ -561,8 +561,6 @@ static bool wait_for_scan(const char *msg, char *p, int nr_hpages,
+ 		usleep(TICK);
+ 	}
+ 
+-	madvise(p, nr_hpages * hpage_pmd_size, MADV_NOHUGEPAGE);
+-
+ 	return timeout == -1;
+ }
+ 
+@@ -585,6 +583,7 @@ static void khugepaged_collapse(const char *msg, char *p, int nr_hpages,
+ 	if (ops != &__anon_ops)
+ 		ops->fault(p, 0, nr_hpages * hpage_pmd_size);
+ 
++	madvise(p, nr_hpages * hpage_pmd_size, MADV_NOHUGEPAGE);
+ 	if (ops->check_huge(p, expect ? nr_hpages : 0))
+ 		success("OK");
+ 	else
+-- 
+2.43.5
+
 
