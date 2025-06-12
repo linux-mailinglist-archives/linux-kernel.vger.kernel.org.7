@@ -1,249 +1,149 @@
-Return-Path: <linux-kernel+bounces-683938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20981AD73C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:27:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976FDAD73A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61E8316AA37
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:27:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD42165357
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A3722E3E3;
-	Thu, 12 Jun 2025 14:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67235196C7C;
+	Thu, 12 Jun 2025 14:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xD9XA+tF"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K9H6d31+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w5C638nu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611D02F24;
-	Thu, 12 Jun 2025 14:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFDC149C4D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 14:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749738461; cv=none; b=JL8OxZKea/I4lflhc6j3Pkk9tOCpvYxX18s1TRTIj+xCHsDlDR2Dd+1cCXJ7OhE+tk8RiWl6keQgiz6xgugHBSWaSA9PwBtDRazscfJ2DgpTEIIK2O68o6+TEpc8F0Pl4RvNVxH1XFhaeNM3J9JKr5QduC8qKjt8OGh2E43Dzcg=
+	t=1749738099; cv=none; b=e8T941JfkDTu6GU9Q3WxRJCXI9OPjce0Mk1dk9f1z+qL0ceBhYXSV0dB+AnvbxgYn/4S8tMyetDNoHsZlEPXS3lP+h7CFCMfbUGOCFFCQfe0JK3+3lKfhy51wmwsFM4/zyQCvkPx6f7Tc513I7orIGguJwedYoD7jb78TixXEAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749738461; c=relaxed/simple;
-	bh=mZtjFVpDF4zOYDZZGfMJaIYLzQRJ1cUipqthavlmgVg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D+U0irz+fNiK8hEX1tTHk6+D9WLBpMeT7VNyubCpnjC3z4jaKnPWT2LYpdJWkzWvkeUuXEE/cpa/JvXLCN63/IvKR9/GmNiX8EUaJWYH2RxYn7QuGDThbj413YLtgmdtNQgTl7H7UFCOsIJ5Hbuoyy2KmMHuIcTtiutY79YIus8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xD9XA+tF; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bJ4Sw0z4Dz9sp3;
-	Thu, 12 Jun 2025 16:21:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1749738064; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1749738099; c=relaxed/simple;
+	bh=Hsc2T8sTIjfBEYE7rFx+jmDibxndiVANCGaWHaZkmjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czbLNfxIjnEEKnGtjPB3qrSKrr8dAXojiD5c9zaVglB+HWlEt6j7puP3ldM+VoIvaKgz+GHN+vGuChRmV9Rse4Eu4sEznN6vko54NCWDbwxkhW22d5lG+ECwesj19bUbcXxVLOfv/9h+pProMRYyO7nqEOULdm9hxsl4E9iRSw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K9H6d31+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w5C638nu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 12 Jun 2025 16:21:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749738096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LUPnbMKZsQR2YGEzcKKfW5NC/LS9WZVDDt3t+hU+WYU=;
-	b=xD9XA+tF3DtsgZ/TvoLRbK1Aczn2kB03rAMmVtJak3LqwegXNUc9uE/X+ueAQE2lsb3m4z
-	nMS/GAVVbawehSW3oHS+UrMDPUfosntFCueeJu0jdBg7agC7b/icGX2oLwDaaDbb/D3uJL
-	e0PHOod+Rz4m5QK3iAme7eCMyiPKbR5hv1VO4K8fvv7B7PtHCpIMMecJx5sREk1CryUckd
-	v62q0rHqELw4BRYHCKbhp13fonFZXPKIGO8HYmj7yJardsvD2c96JZp/YCYBLIPBPM8h8y
-	a26R8D10Vu/FuGEcVYJVpeR3fZsngtoc6ndZnptXNyVwj5KyXuDzGjrPViZ2IA==
-Message-ID: <f4f326a0ecb98a9996919c3f827b3247b8207feb.camel@mailbox.org>
-Subject: Re: [RFC PATCH 1/6] drm/sched: Avoid memory leaks with cancel_job()
- callback
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Philipp Stanner
- <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
- <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Sumit Semwal
- <sumit.semwal@linaro.org>, Pierre-Eric Pelloux-Prayer
- <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Date: Thu, 12 Jun 2025 16:20:58 +0200
-In-Reply-To: <62ff8ddb-b2f1-4e52-a026-290561ab5337@igalia.com>
-References: <20250603093130.100159-2-phasta@kernel.org>
-	 <20250603093130.100159-3-phasta@kernel.org>
-	 <62ff8ddb-b2f1-4e52-a026-290561ab5337@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	bh=pl4iD19u/tvG4+VMp89MNYtzMFEcmgmm0KnazjaFycE=;
+	b=K9H6d31+9MSDUfhsh3uETF2aV+bxvrRnkXITk06U2irnbchGUxFYd6p6cmayprMF+ssuCc
+	yjD0GboPXRQA5Ik6Xa7Mfd38YWkeq8gqD6z1Sln6e7zfUFCiAv0afA0XZsWx1DmfL1NITy
+	GMw8ao7/9aFcNz8ywe8MURwC6z1rkHhIQg+vvn7fd/+kaCrjfndvn/IE+oismSkuVC579a
+	k3nej/cHlRW8VGt/mgWZn/Vc9IUdoVVgYlHKw/riBvRWuJCVVwMtYBe9sHJc7sbULfn0OK
+	XmY4OuSWxdJahtgarFLrjV0VlYZBSZgPYL9dG4icV4rHUV27JzJRfTWtp33Xhg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749738096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pl4iD19u/tvG4+VMp89MNYtzMFEcmgmm0KnazjaFycE=;
+	b=w5C638nukRzf0+OZcZmeo4QyuuSXTL2DL3gcUcZqmjrdwp0B4QgyFM4FxVoyn5cjvZrHuh
+	Aguhg4aLMAgexLCg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 3/3] vdso: Reject absolute relocations during build
+Message-ID: <20250612155635-ecade4e1-0235-464a-bcb3-293f7452510a@linutronix.de>
+References: <20250611-vdso-absolute-reloc-v3-0-47897d73784b@linutronix.de>
+ <20250611-vdso-absolute-reloc-v3-3-47897d73784b@linutronix.de>
+ <7ddda233-99f7-468b-842d-8469f0a86e77@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: oodnuo5gzpywi6c6hikd3z6f1sf1sei5
-X-MBO-RS-ID: 8a4021f237a81cd6bf4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ddda233-99f7-468b-842d-8469f0a86e77@ghiti.fr>
 
-On Thu, 2025-06-12 at 15:17 +0100, Tvrtko Ursulin wrote:
->=20
-> On 03/06/2025 10:31, Philipp Stanner wrote:
-> > Since its inception, the GPU scheduler can leak memory if the
-> > driver
-> > calls drm_sched_fini() while there are still jobs in flight.
-> >=20
-> > The simplest way to solve this in a backwards compatible manner is
-> > by
-> > adding a new callback, drm_sched_backend_ops.cancel_job(), which
-> > instructs the driver to signal the hardware fence associated with
-> > the
-> > job. Afterwards, the scheduler can savely use the established
-> > free_job()
-> > callback for freeing the job.
-> >=20
-> > Implement the new backend_ops callback cancel_job().
-> >=20
-> > Suggested-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->=20
-> Please just add the link to the patch here (it is only in the cover
-> letter):
->=20
-> Link:=20
-> https://lore.kernel.org/dri-devel/20250418113211.69956-1-tvrtko.ursulin@i=
-galia.com/
+Hi Alexandre,
 
-That I can do, sure
-
->=20
-> And you probably want to take the unit test modifications from the
-> same=20
-> patch too. You could put them in the same patch or separate.
-
-Necessary adjustments for the unit tests are already implemented and
-are waiting for review separately, since this can be done independently
-from this entire series:
-
-https://lore.kernel.org/dri-devel/20250605134154.191764-2-phasta@kernel.org=
-/
-
-
-Thx
-P.
-
->=20
-> Regards,
->=20
-> Tvrtko
->=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+On Thu, Jun 12, 2025 at 10:31:20AM +0200, Alexandre Ghiti wrote:
+> On 6/11/25 11:22, Thomas Weiﬂschuh wrote:
+> > All vDSO code needs to be completely position independent.
+> > Symbol references are marked as hidden so the compiler emits
+> > PC-relative relocations. However there are cases where the compiler may
+> > still emit absolute relocations, as they are valid in regular PIC DSO code.
+> > These would be resolved by the linker and will break at runtime.
+> > This has been observed on arm64 under some circumstances, see
+> > commit 0c314cda9325 ("arm64: vdso: Work around invalid absolute relocations from GCC")
+> > 
+> > Introduce a build-time check for absolute relocations.
+> > The check is done on the object files as the relocations will not exist
+> > anymore in the final DSO. As there is no extension point for the
+> > compilation of each object file, perform the validation in vdso_check.
+> > 
+> > Debug information can contain legal absolute relocations and readelf can
+> > not print relocations from the .text section only. Make use of the fact
+> > that all global vDSO symbols follow the naming pattern "vdso_u_".
+> > 
+> > Link: https://lore.kernel.org/lkml/aApGPAoctq_eoE2g@t14ultra/
+> > Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=120002
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 > > ---
-> > =C2=A0 drivers/gpu/drm/scheduler/sched_main.c | 34 ++++++++++++++++----=
--
-> > -----
-> > =C2=A0 include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 +++++++
-> > =C2=A0 2 files changed, 30 insertions(+), 13 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c
-> > b/drivers/gpu/drm/scheduler/sched_main.c
-> > index d20726d7adf0..3f14f1e151fa 100644
-> > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > @@ -1352,6 +1352,18 @@ int drm_sched_init(struct drm_gpu_scheduler
-> > *sched, const struct drm_sched_init_
-> > =C2=A0 }
-> > =C2=A0 EXPORT_SYMBOL(drm_sched_init);
-> > =C2=A0=20
-> > +static void drm_sched_kill_remaining_jobs(struct drm_gpu_scheduler
-> > *sched)
-> > +{
-> > +	struct drm_sched_job *job, *tmp;
-> > +
-> > +	/* All other accessors are stopped. No locking necessary.
-> > */
-> > +	list_for_each_entry_safe_reverse(job, tmp, &sched-
-> > >pending_list, list) {
-> > +		sched->ops->cancel_job(job);
-> > +		list_del(&job->list);
-> > +		sched->ops->free_job(job);
-> > +	}
-> > +}
-> > +
-> > =C2=A0 /**
-> > =C2=A0=C2=A0 * drm_sched_fini - Destroy a gpu scheduler
-> > =C2=A0=C2=A0 *
-> > @@ -1359,19 +1371,11 @@ EXPORT_SYMBOL(drm_sched_init);
-> > =C2=A0=C2=A0 *
-> > =C2=A0=C2=A0 * Tears down and cleans up the scheduler.
-> > =C2=A0=C2=A0 *
-> > - * This stops submission of new jobs to the hardware through
-> > - * drm_sched_backend_ops.run_job(). Consequently,
-> > drm_sched_backend_ops.free_job()
-> > - * will not be called for all jobs still in
-> > drm_gpu_scheduler.pending_list.
-> > - * There is no solution for this currently. Thus, it is up to the
-> > driver to make
-> > - * sure that:
-> > - *
-> > - *=C2=A0 a) drm_sched_fini() is only called after for all submitted
-> > jobs
-> > - *=C2=A0=C2=A0=C2=A0=C2=A0 drm_sched_backend_ops.free_job() has been c=
-alled or that
-> > - *=C2=A0 b) the jobs for which drm_sched_backend_ops.free_job() has no=
-t
-> > been called
-> > - *=C2=A0=C2=A0=C2=A0=C2=A0 after drm_sched_fini() ran are freed manual=
-ly.
-> > - *
-> > - * FIXME: Take care of the above problem and prevent this function
-> > from leaking
-> > - * the jobs in drm_gpu_scheduler.pending_list under any
-> > circumstances.
-> > + * This stops submission of new jobs to the hardware through
-> > &struct
-> > + * drm_sched_backend_ops.run_job. If &struct
-> > drm_sched_backend_ops.cancel_job
-> > + * is implemented, all jobs will be canceled through it and
-> > afterwards cleaned
-> > + * up through &struct drm_sched_backend_ops.free_job. If
-> > cancel_job is not
-> > + * implemented, memory could leak.
-> > =C2=A0=C2=A0 */
-> > =C2=A0 void drm_sched_fini(struct drm_gpu_scheduler *sched)
-> > =C2=A0 {
-> > @@ -1401,6 +1405,10 @@ void drm_sched_fini(struct drm_gpu_scheduler
-> > *sched)
-> > =C2=A0=C2=A0	/* Confirm no work left behind accessing device structures
-> > */
-> > =C2=A0=C2=A0	cancel_delayed_work_sync(&sched->work_tdr);
-> > =C2=A0=20
-> > +	/* Avoid memory leaks if supported by the driver. */
-> > +	if (sched->ops->cancel_job)
-> > +		drm_sched_kill_remaining_jobs(sched);
-> > +
-> > =C2=A0=C2=A0	if (sched->own_submit_wq)
-> > =C2=A0=C2=A0		destroy_workqueue(sched->submit_wq);
-> > =C2=A0=C2=A0	sched->ready =3D false;
-> > diff --git a/include/drm/gpu_scheduler.h
-> > b/include/drm/gpu_scheduler.h
-> > index e62a7214e052..81dcbfc8c223 100644
-> > --- a/include/drm/gpu_scheduler.h
-> > +++ b/include/drm/gpu_scheduler.h
-> > @@ -512,6 +512,15 @@ struct drm_sched_backend_ops {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * and it's=
- time to clean it up.
-> > =C2=A0=C2=A0	 */
-> > =C2=A0=C2=A0	void (*free_job)(struct drm_sched_job *sched_job);
-> > +
-> > +	/**
-> > +	 * @cancel_job: Used by the scheduler to guarantee
-> > remaining jobs' fences
-> > +	 * get signaled in drm_sched_fini().
-> > +	 *
-> > +	 * Drivers need to signal the passed job's hardware fence
-> > with
-> > +	 * -ECANCELED in this callback. They must not free the
-> > job.
-> > +	 */
-> > +	void (*cancel_job)(struct drm_sched_job *sched_job);
-> > =C2=A0 };
-> > =C2=A0=20
-> > =C2=A0 /**
->=20
+> >   lib/vdso/Makefile.include | 6 ++++++
+> >   1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/lib/vdso/Makefile.include b/lib/vdso/Makefile.include
+> > index cedbf15f80874d4bb27c097244bc5b11272f261c..04257d0f28c0ed324e31adbb68497181085752f8 100644
+> > --- a/lib/vdso/Makefile.include
+> > +++ b/lib/vdso/Makefile.include
+> > @@ -12,7 +12,13 @@ c-getrandom-$(CONFIG_VDSO_GETRANDOM) := $(addprefix $(GENERIC_VDSO_DIR), getrand
+> >   #
+> >   # As a workaround for some GNU ld ports which produce unneeded R_*_NONE
+> >   # dynamic relocations, ignore R_*_NONE.
+> > +#
+> > +# Also validate that no absolute relocations against global symbols are present
+> > +# in the object files.
+> >   quiet_cmd_vdso_check = VDSOCHK $@
+> >         cmd_vdso_check = if $(READELF) -rW $@ | grep -v _NONE | grep -q " R_\w*_"; \
+> >   		       then (echo >&2 "$@: dynamic relocations are not supported"; \
+> > +			     rm -f $@; /bin/false); fi && \
+> > +		       if $(READELF) -rW $(filter %.o, $(real-prereqs)) | grep -q " R_\w*_ABS.*vdso_u_"; \
+> 
+> 
+> This only works for arm64 relocations right? I can't find any *ABS*
+> relocations in riscv elf abi
+> (https://github.com/riscv-non-isa/riscv-elf-psabi-doc/releases/tag/v1.0).
 
+Indeed you are right.
+
+We could introduce per-architecture configuration. Essentially reverting parts
+of commit aff69273af61 ("vdso: Improve cmd_vdso_check to check all dynamic relocations").
+The final logic for the intermediary objects still needs to be more complicated
+than for the final .so as those contain relocations in the debug information.
+
+Or we could add a C hostprog for validation.
+That would be much more flexible than the inline shell command.
+It would then also be easier to use an allow-list than the brittle deny-list.
+
+Or we don't do anything, relying on the selftests to detect miscompilations.
+
+I'll run this by tglx. If somebody else has any opinions, I'm all ears.
+
+> > +		       then (echo >&2 "$@: absolute relocations are not supported"; \
+> >   			     rm -f $@; /bin/false); fi
+> > 
 
