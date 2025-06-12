@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-683851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB41EAD72A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3A1AD72B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E13166007
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEC216EE65
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 13:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBD6247DF9;
-	Thu, 12 Jun 2025 13:51:50 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3BF1A8405;
+	Thu, 12 Jun 2025 13:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZ576ryH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E7C18FC91;
-	Thu, 12 Jun 2025 13:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F75220F2A;
+	Thu, 12 Jun 2025 13:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736310; cv=none; b=hiQO59GOY5FbhM02PuA70MkizKIK0d5Ls2Ze2uwbkXaooxvAsBuoRkUxxqLqEZgFpJYzumFsYO8qhZZwagkkYTK1bhLTCxN6Oy28/6yo4CXoOrGUihi22+8D4eCyhvN5ZyhCuq/9kqSy/J7KXa84cN4QuTGPRdZeUE44jKPxR6w=
+	t=1749736370; cv=none; b=Y5HV5P8GTDMcbK7fZIqNM20WIIGuppeTEliSJPTy/ezwZHwuurzeteq2ht/ZuUX0Qt5YP66Vp7WjKcRsuLpr0iTbSSBJva8jRZluGfU5omiKGvLl5Y/iPkWDxchW6P4eqs4WJsX6LeI+eiMjGPmTxiyNsWkpsK/SJ0WIkqQumM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736310; c=relaxed/simple;
-	bh=Kyg7eb1AAplC4+EEmiu7P/7vwpj2UgJh+0WoDayuqFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kDLCKcpW8/ILO853GEOH1eBeqZk17k+P4FqijLzko1RD6R8Q7T6loUkuqm9RlGmdTQ//6sYy7C/q7jGWULRvSyl4g2ms28mEeubU0ocZdNcPe88llxuGRwhah0UX/DRnzsujdryWs5UiXt0jhCGv2pFd011C3mIaNfs76zwTBns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e7b7b09887so596817137.1;
-        Thu, 12 Jun 2025 06:51:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749736307; x=1750341107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sU+E14nHPWkzbgTxZjHrHqv/1thIS6lIF8oB6Qh0++4=;
-        b=s5D1PEiq/LuH/pqAnMS+6DGYjYo1qcy6ddzeDDIp2CX6mQlPOqSggCc8AnQamJXSrg
-         FCwka4MyZySqneK+6NgCdLg7uKm/GLR4Rb2k7iEiHhUH852cqIa1LqyeTlZxLzHwxmVV
-         SbhxnlG3obthUDKJCqLtlgh9Pjuf9/27SbWHrBYfx8kSaradQ1ohI7QtXtVp7sNZI6WA
-         Sqxc6JU9gFuAOHFbGN9YkeZeBILiwOELqXTrh1l2c8KjixHEC/gYPZbcjDYp4sBxsxBO
-         7EsdK1/4GGVSh8fjgikKtSzCktQk8996rt56qWRN27Xzrr5yuKNQrXTXWnc4K0gBMFT/
-         DfPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJHTW15742UbZJJEBi44n9ADVsAMjWUw4+ZZLB2peMgd6xQP30S4m5WbDAidbOCsSb2gHHviBxbVBd@vger.kernel.org, AJvYcCVHP1VHuIQlzHGZSsQGZkg1zPOU06voe3p0NGVCb8KqKsA6cBF0P7Huw8+s9CUGcUzaFlMOtnhAUeJrF7Uj@vger.kernel.org, AJvYcCWQeqI1R76kr8Igmhj7w/dnCgRDs1drIyWhaAJLFRblQN0EmW0guKrq98flZkrwkH97m1kmC0mTOYREK8dQSPdsODs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywZdrN3V9St0B9rFzkEGHSEpJZYqPYGnpgBQ9Bt0vyZhlQLPbU
-	xxJTzipE1XhuR8axPqj7tg9Rdj6hn/vq2Qi0+1/tKGn83aOTw5GekKQxgCUgzhEt
-X-Gm-Gg: ASbGncu0+zMSGHaOWPeFDjq9Dw2M4MRl4sKMkW2bAubBanWgH75vpkdfbNbdoCTMrA+
-	kJlQQnHWZJ2ImmYGpgj6w1ST3KuDMTE/UGeQ2qgaAxI7hsxxuWl5YTC7v9XrPgI7AmUB8JZSzS/
-	vDDer4+vs3H4KCgvW0yTBLAQUPMn5QbfTiEhsQMYqcKnbYVx39SPkB2ib8sSAI8TMmBZwBaqSTG
-	0F1GhCu/NHWV03TNIbfSx4zCSAUnjkN73AylaqzGa/lSrrzPzbYY5xNUeIXcYbOn1mkS73eDvZu
-	JIBD77dC4mTbY9Zo5QmDjxbriXxkTyWco7Xogo/YoHUC15c3CpwAVDBRuBraffYDmwnV0xxSeXa
-	izo1Ln5vahtM35wq+SvrA+5sJ
-X-Google-Smtp-Source: AGHT+IFbb1t4T7FuJxbzRzr5OMuz1N/p+RH8WPh5kWXq1AugQkPRBB57PrwIAN1c0vJj10z37Pgt0A==
-X-Received: by 2002:a05:6102:8028:b0:4e6:f86b:143c with SMTP id ada2fe7eead31-4e7ce7fd855mr2685077137.1.1749736306986;
-        Thu, 12 Jun 2025 06:51:46 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e7d095851esm232106137.20.2025.06.12.06.51.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 06:51:46 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e773c50385so567969137.0;
-        Thu, 12 Jun 2025 06:51:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHOMcxC1eQNDW9ijh2LlciEopvd2JxA9FU/9ak7tW1PM/PD2FxIAG0UrFiTQSuV4Qn+l1cOaUvNkUS/X3Vimr8IM0=@vger.kernel.org, AJvYcCWFxeGyN8I7QCrABzu1ualR6zPP2+uRMq4e6uv3VwG1S7Zu4En23uqLoGy9caqQtbC1VUslZz5xrgHr@vger.kernel.org, AJvYcCXWPuggxZMsSoMiEsWUe/Dh0xlbNCvquILGmCvOZG9vT5WoCJvrTf0raMfJ7MBqMQa1EjQeruZOCMCCwHUj@vger.kernel.org
-X-Received: by 2002:a05:6102:2909:b0:4e6:df73:f147 with SMTP id
- ada2fe7eead31-4e7ce872d4fmr2881027137.11.1749736306438; Thu, 12 Jun 2025
- 06:51:46 -0700 (PDT)
+	s=arc-20240116; t=1749736370; c=relaxed/simple;
+	bh=S5qtNAXCpRXuIJHkgSFJUeAvSjADu2RXd2r/n4jbK0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ptcX9+kYx69FS/3ehRUjtVgWIG9Yi2tWU5j5FhGi4t0k/Wi12ERzITCxOBpUoCxyglXlUiTj3FU4oJ6E8s7nlxdzh6M9xxRjefm0ThiWKR8FBRwWyDltB5HiylL8tOJhKM64eBZAfAwujs3HO6Paz5W0+z4+cec0WlHIwQ+Nm7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZ576ryH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 514C4C4CEEA;
+	Thu, 12 Jun 2025 13:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749736370;
+	bh=S5qtNAXCpRXuIJHkgSFJUeAvSjADu2RXd2r/n4jbK0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CZ576ryHXNGQ547s7LE6F+wUGVxvdrMiZ+qHyaJ5axp6VaK15awFGbW2LqrDI/jAT
+	 X1vw2xIOYKUjulm/YmyAu8KXissvgc+PVhXyAj3BzG4dFEJJ5XR3WUCmy2w/tCRroI
+	 tdHf5EsEn+taetHjsil3ReDw0BnpcHeRkoDH7UkyOfMZA7cOyuGAMdFQd6hdbsP8RZ
+	 72MBluGC8Bn81kXlrd76pAKDUjLUNm03uJw+5nmaEbeT1jZiZS+UAWYrPOPEEeJJFQ
+	 514ZX20538PFJheI2vRNTbvsXjj1BnSm8OQT+7i/i58bT6gAMd8SSdLuhxzZx0AY/u
+	 IGm64rtC/Cofg==
+Date: Thu, 12 Jun 2025 14:52:45 +0100
+From: Lee Jones <lee@kernel.org>
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Steffen Trumtrar <kernel@pengutronix.de>,
+	Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] leds: lp5860: save count of multi_leds
+Message-ID: <20250612135245.GE381401@google.com>
+References: <20250514-v6-14-topic-ti-lp5860-v2-0-72ecc8fa4ad7@pengutronix.de>
+ <20250514-v6-14-topic-ti-lp5860-v2-3-72ecc8fa4ad7@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528140453.181851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250528140453.181851-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVa4axB+aKhH18KxK4DVafeix6wn407PEhMxV_6xfpraA@mail.gmail.com> <CA+V-a8stpis6RuFZ8X+g=nnQhQQNJN8X8kpma6kf2Hmi+3hf4w@mail.gmail.com>
-In-Reply-To: <CA+V-a8stpis6RuFZ8X+g=nnQhQQNJN8X8kpma6kf2Hmi+3hf4w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 15:51:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVEA=agcGwLRvXRX9LCz48YaYT45HL2-nVN10KSjLs3Hw@mail.gmail.com>
-X-Gm-Features: AX0GCFtajsvn3HK0qkSch9g_tEIAAi_atdi1vGvi0U17ZoPSqNBB7DzSH5TlpbM
-Message-ID: <CAMuHMdVEA=agcGwLRvXRX9LCz48YaYT45HL2-nVN10KSjLs3Hw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable
- USB2.0 support
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250514-v6-14-topic-ti-lp5860-v2-3-72ecc8fa4ad7@pengutronix.de>
 
-Hi Prabhakar,
+On Wed, 14 May 2025, Steffen Trumtrar wrote:
 
-On Thu, 12 Jun 2025 at 15:25, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Thu, Jun 12, 2025 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Wed, 28 May 2025 at 16:05, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Enable USB2.0 support on the RZ/V2N EVK board, CN2 connector on the E=
-VK
-> > > supports host/function operation.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-> > > @@ -302,6 +317,16 @@ sd1-dat-cmd {
-> > >                         slew-rate =3D <0>;
-> > >                 };
-> > >         };
-> > > +
-> > > +       usb20_pins: usb20 {
-> > > +               ovc {
-> > > +                       pinmux =3D  <RZV2N_PORT_PINMUX(9, 6, 14)>; /*=
- OVC */
-> >
-> > Any specific reason why OVC needs "bias-pull-up" on RZ/V2H EVK, but
-> > not on RZ/V2N EVK?
-> >
-> On the RZ/V2N EVK for the USB20_OVRCUR pin we have R13110K0603 pullup
-> resistor, this was missing on the earlier version of the RZ/V2H EVK
-> due to which we saw false OC condition (as seen below). Said that the
+> Save the count of multi_leds child nodes for later use.
+> As the leds are added to a flex array, the size needs to be saved at
+> runtime.
 
-Thanks, I missed following one branch on the schematics :-(
+Size of the LEDs?  Length in millimeters?
 
-> actual EVKs for RZ/V2H for which support is being added do have this
-> pullup resistor. After testing I will post a patch to drop the
-> `bias-pull-up` property from the RZ/V2H DTS (thanks for reminding me
-> :-)).
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>  drivers/leds/leds-lp5860-spi.c | 2 ++
+>  drivers/leds/leds-lp5860.h     | 1 +
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/leds/leds-lp5860-spi.c b/drivers/leds/leds-lp5860-spi.c
+> index 751cc4184037c3c0e14d3493d0a43f0885786523..eee41ee8a8c226db6a68413998642624fabffe7c 100644
+> --- a/drivers/leds/leds-lp5860-spi.c
+> +++ b/drivers/leds/leds-lp5860-spi.c
+> @@ -50,6 +50,8 @@ static int lp5860_probe(struct spi_device *spi)
+>  	if (!lp5860)
+>  		return -ENOMEM;
+>  
+> +	lp5860->leds_size = multi_leds;
+> +
+>  	spi_set_drvdata(spi, lp5860);
+>  
+>  	spi->mode = SPI_MODE_0;
+> diff --git a/drivers/leds/leds-lp5860.h b/drivers/leds/leds-lp5860.h
+> index b4255fb48372814c7fda86ada96f504c2036f534..3b8342a832bc75afdf2318fd4ee1ee9ce105cbe3 100644
+> --- a/drivers/leds/leds-lp5860.h
+> +++ b/drivers/leds/leds-lp5860.h
+> @@ -305,6 +305,7 @@ struct lp5860_led {
+>  struct lp5860 {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+> +	unsigned int leds_size;
+>  
+>  	DECLARE_FLEX_ARRAY(struct lp5860_led, leds);
+>  };
+> 
+> -- 
+> 2.47.1
+> 
+> 
 
-Great, thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Lee Jones [李琼斯]
 
