@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-684632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38110AD7E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD2AD7E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC91C17258D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:36:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59AD01898438
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 22:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740672DECDD;
-	Thu, 12 Jun 2025 22:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542C2E1735;
+	Thu, 12 Jun 2025 22:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="loklCyLS"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7MFeE22"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541A1537F8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 22:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB56230D1E;
+	Thu, 12 Jun 2025 22:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749767798; cv=none; b=TQktUY+VqclGETytc/HIQBNHk4gA5GBwonw5P/4qPmQEMARu0UecQ9OHzAhkxS98/yGhNnOAetupZZWDPyYITJXdU9moWU5eYCNJELGS8nMq1rfyfyUdnAPUYr7FId3keJ/CoBll3eiPrhsuy8JmjuNVYypVHaAPOvnGe5a830M=
+	t=1749767849; cv=none; b=supSMGmtGkxuqWRyOBWn/ZEJ57CuKVjLxw8GBg/T8/5YP61MCVOyg+/JOwq73WCpSWxG2w4KPvwQYauL84xPVNeQOQKCxlgmKes7P3NT1GTWMw0HiJYgIDTLtvm7PjWO8i50TfHD3EJiORwW1z/7Vm3j4X8BRmimtbDbJXFZ7JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749767798; c=relaxed/simple;
-	bh=7xulCPXVhScf77ocienXAQH0tyuuMW7mAWLEdefz5Mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qV7wRzTb/EByoWqcb60RJjLR09hLGxbx+MAG89bJDyJE+GNDMUaIadhrrAGdTJQIPn/h/6xPzcAbTIpImRuoz7W9Cr+UUDZw/kvI9oi8LPxkkOACZvv8mexsCprPg4UK0fn0j5scxrXJwfBs8DFXjJZhpeBzOqRbcCng7ei094w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=loklCyLS; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54998f865b8so1363671e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:36:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749767795; x=1750372595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7xulCPXVhScf77ocienXAQH0tyuuMW7mAWLEdefz5Mk=;
-        b=loklCyLSBIWbDepinaOQW9Tqjlck0/Dht4cF45rIZcYONmgL/0skJqHmzScuSid0kh
-         u96qZDqm8VnkJuSigvKltWVgW47Ka3tDeRukNF11doYmV8rps9WbFha7ELoKQ+4cB2qQ
-         BHUa9SSNPb7kbu2D7DxdrjAIccs7BeDKaweLcWf0Xcy9Qomz8maaPRCODFYoDzzn7ORb
-         DKuvyz4hvPhXXdT8T6cUXnMRHJvWW9Thkso1cwwW4O5CkJ+J1DRNeFR5eyC/5b6OD0AH
-         FipTkKq16fKwk5JcWs5QKu0jPBz8Tu263QUGUHRJfxqZB1XyCPWV15WtWdvSek//Os2G
-         0ztg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749767795; x=1750372595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7xulCPXVhScf77ocienXAQH0tyuuMW7mAWLEdefz5Mk=;
-        b=OfE41FgaCaFvtTCW0tEk4MmC5ya3BS9aBzgtvzvuTVTZJLOKK/ZLKtbHk5k/aOID6h
-         Yz0Zqb/LOFxR+79m1YHcnRUwfXFW3cFjad91iIOZMk8ycxhRoK0imbD+0C5pxToL7GoC
-         oHRQOYRWi9EKc58QJeWyrz+sdF7oD6kiIMXXG+pdrIVUZRIaktfEd+hmWp5JUGhI96H4
-         wnq6F3yhCyU7T7w6SZdfpBgZ7/4mkWUpJi9tA60Mr0ulRICJ44jh+H3zwpgIawgFIlCG
-         AOZCoNaWdfCd9jU0JlNOk5Dtsk/Ljws5oegwyGrGCBlSOWKMXiswrK8f4tR0xcU+JOVN
-         57Wg==
-X-Gm-Message-State: AOJu0YwktcsAqQkTPOe/RYnklPga9Xqf9qdQYTbyOR6Xqybmo/JVDE2j
-	bv3kVnpMuziDmh0ql+V6fhIa3pQTziQmjizGL4RwNcsdsYOpQB/quuarXWXrX2Gh1c2o/DwOPo3
-	cjJuCNXhoKBN2KRLekYoAVxDEDyx8LntBT+gDGkY=
-X-Gm-Gg: ASbGncs6RqR7Cp4snTqSVPdq7ZdQDED4OzFwTXgN7GLtTa1gkcfdNXROilWtGyGZZTi
-	dZdDIc7AjIclN9QozZJIjhV8CSryvJWCU6154osCrAI1sCamygmg87zjI0el64h+J/R9JAr63y4
-	CFqDZV1of1783PX8TWMYIJLvVIMNYlhDxFMrE+zjeIQ3QRsPU35icqgheIGaZFJWf2YHxNdOKYk
-	C9ggcUB+nM=
-X-Google-Smtp-Source: AGHT+IGl0dDXnBGPIef0qxu8tOFUCVgIEThs+j6hmCCV4bdPc347k+COWCMfaNFMLwa+jweiXZQPJhzkBZTLk4DyTgw=
-X-Received: by 2002:a05:6512:398b:b0:553:2cc1:2bba with SMTP id
- 2adb3069b0e04-553af95ee64mr210885e87.31.1749767795412; Thu, 12 Jun 2025
- 15:36:35 -0700 (PDT)
+	s=arc-20240116; t=1749767849; c=relaxed/simple;
+	bh=GQ+Xtv/R4Cazn0jTLW14AKKOtVPMuLFroC6FY7/Wwwc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=g0YtstW4LEEiwYiYGdQ7pitYKgNu8/B9vu1S3HZ/VfCqLG0LS/ntj/1CyhoWpoGlLMh6aQIKYzHuIVmVkDo3Q3mqpyQnOAEksXCX1fWclUVpQapbt5Mo06pmzjBJl0bDTxxlRvYo3ln56KmFZ/BNeCSfMdrrDgcq15UmN8qOIj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7MFeE22; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 68A82C4CEEA;
+	Thu, 12 Jun 2025 22:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749767848;
+	bh=GQ+Xtv/R4Cazn0jTLW14AKKOtVPMuLFroC6FY7/Wwwc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=H7MFeE22n87q9NkuJhY1Dj4Yx1s2G8kuXAkWSzbBOK1QfS0CFILUJAmTaGoFedA28
+	 K92wgJb8rvhcWrCY5XDRMK1rxYgVCHHsisCXNDCE2sl32EuxtY8etHudJQcTleiWJj
+	 ZwNi+EMWYfhq0lv3ysGxZFotewKsqOkuWyOEIL1+0gXd8FIepzPsBxHyplstFrOjUc
+	 Q9FoO0ZENY+ae//PLpG3xTejHW45puGQ2a+V1o8udzozy2Gkhg1+r6p0kSgULHHob8
+	 uEXwYMPKTfoKNKZSQWhy0i0ZcQsrHsXNu8/pG5kZEOuIVI1EGGVo5czeC6+aHSK2qM
+	 hv/NjBBvxr8qw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF7EC61CE8;
+	Thu, 12 Jun 2025 22:37:28 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH 0/3] arm64: dts: qcom: msm8976-longcheer-l9360: Add initial
+ device tree
+Date: Fri, 13 Jun 2025 00:37:17 +0200
+Message-Id: <20250613-bqx5plus-v1-0-2bc2d43707a6@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519082042.742926976@linutronix.de> <20250519083025.715836017@linutronix.de>
-In-Reply-To: <20250519083025.715836017@linutronix.de>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 12 Jun 2025 15:36:24 -0700
-X-Gm-Features: AX0GCFsxJlt95H0gfp-Y9RiXb9uKGp4ez_vZO90EG9M7VXdjEprJQT7MyGstH_A
-Message-ID: <CANDhNComTYD4q-M5OjjYBjgDuLYBUKUZu41ghxQpAe7NPtT87A@mail.gmail.com>
-Subject: Re: [patch V2 02/26] timekeeping: Cleanup kernel doc of __ktime_get_real_seconds()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
-	Antoine Tenart <atenart@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJ1WS2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDM0Mj3aTCCtOCnNJi3RRzo1RDwzRTC3PzZCWg8oKi1LTMCrBR0bG1tQB
+ 7QwS5WgAAAA==
+X-Change-ID: 20250612-bqx5plus-d72e11f5877c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749767846; l=936;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=GQ+Xtv/R4Cazn0jTLW14AKKOtVPMuLFroC6FY7/Wwwc=;
+ b=BtpIaq4MHJ8rHJvyS2zi/RJdzpn0Y5hUwKIBUabE0oANdzbtLtlnAFfyhN8FV0nA/zsmrtwIJ
+ mFDzJBdJFIMAItGto0WhQsmWZW+wMJfVb/cUtTWU1Eqz/JYjUrcoT6l
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Mon, May 19, 2025 at 1:33=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+This dts adds support for BQ Aquaris X5 Plus (Longcheer L9360) released
+in 2016.
 
-Not a fan of empty commit messages, but:
-Acked-by: John Stultz <jstultz@google.com>
+Add a device tree with initial support for:
+
+- GPIO keys
+- NFC
+- SDHCI
+- Status LED
+- Touchscreen
+
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+André Apitzsch (3):
+      arm64: dts: qcom: msm8976: Make blsp_dma controlled-remotely
+      dt-bindings: arm: qcom: Add MSM8976 BQ Aquaris X5 Plus
+      arm64: dts: qcom: msm8976-longcheer-l9360: Add initial device tree
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   5 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ .../boot/dts/qcom/msm8976-longcheer-l9360.dts      | 532 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8976.dtsi              |   2 +
+ 4 files changed, 540 insertions(+)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20250612-bqx5plus-d72e11f5877c
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
