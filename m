@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-683996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D297AD749B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:51:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67A9AD7496
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 16:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9FD3B1A5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D644816C46D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 14:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26413253F13;
-	Thu, 12 Jun 2025 14:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E84A1DE3D6;
+	Thu, 12 Jun 2025 14:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBrPlBKN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clBW/dVK"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC6024DD19;
-	Thu, 12 Jun 2025 14:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191E22318;
+	Thu, 12 Jun 2025 14:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739884; cv=none; b=ff1/XWjQWp+wEEynPX9mPcLGV4Nr2dVnSYbqsl6tHMqcMM+4y7onw9zvg6HQC3qDnDwKlqX292J1zjbjJi6NyVO1kdZ0l1z+e3jga62CZ8/JE9FWHRN57bVi/OuvOTIwVO7HvpmhPVJMr1CbJ5c/LEjRwTaj5jaSsO+IeiS46og=
+	t=1749739838; cv=none; b=Spc9iAmTZ2Nr+zShz23wK3lIX4/2fqOM5gl2ufZOQ5nHZAW68n0HjqZkUvVHCgwvcTixmnS0b+jhWm7XASIMFCPwpKfIh7ytA/pj8OVdd8vr9igtTseWVzZVDKPGY/T+uMTAtiOuxVCexYk9ryb7XbqGLYstXGE1DfLUIxjgXBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739884; c=relaxed/simple;
-	bh=0qTRo/pmUhEjT80nAp8EEXMwEdEowH/xG6PhDIwPuN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KtaICpOhIhPm9K+RLSXKaYCnnSkm3yIIyeb5HJUhcsydddW7sMTA7xSrVTp1mfPyMgSwX/EM8/GOzZD1nJukQ+kRDxwpOLLLcoRDOpXQqMIpUGDi3wUSKFRIgPrfQCSr3oWmgEkCDqUWB6vJIkJM6mWUlUGW0OstfMuw29qGllo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBrPlBKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99461C4CEEA;
-	Thu, 12 Jun 2025 14:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749739884;
-	bh=0qTRo/pmUhEjT80nAp8EEXMwEdEowH/xG6PhDIwPuN8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YBrPlBKNH2a4/bws8W6neqOmymaes6R2+S7rFQ/FRrqsuxUIS+ukWKJupJBcEj0/d
-	 KsKX/GnYGqtJvT3Bz3/iGnT6cUja76N/vtSr93k8ISCvreiB7Vnwl34/Ow0MobvunE
-	 BRJG/c3t1O/P328EqHMyEWCb3UdWFZgD8LnOqw7cR/mwofBpastZO/GVVDwuyZT/nF
-	 W0HzDGXI7DPXc3tYr/Hi/Gg8IDIWcJ4J7+HGkSWoHU4U19olRiv3OTrbnFnnwAhkKs
-	 2Z8Tv26brwyFn4dJ5lNt35AaDWhy/kcdgpGB/yH7f5kWjvSG+feyD8s55eDCg+dxAT
-	 Byz24fe1YstxA==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1749739838; c=relaxed/simple;
+	bh=D9C+xwp3mD/7d0f06D4jPqB+wkdk0j3g2h2HOi1HAbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y6q/H9m5zGPJDaY+CLdeWGctvMmNEd1ah/PjBy6ZQLJzTGVGAKWC7KqojMluENv+SFiUyUOaH96ozEf5NjQOiSrc3ybq0CSMnja+Kh48aw8M1PoBL54SkZIpOQtEFDnlV35Esuj7ed4OIHtX0NhYu08jwE80DYKqaYV4msNy6e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clBW/dVK; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6084dfb4cd5so3836510a12.0;
+        Thu, 12 Jun 2025 07:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749739834; x=1750344634; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bRXKs4VGDh5S2vPlr4/hDjovefGwIy/vQJKlAAiyucM=;
+        b=clBW/dVKQJzm1xG59YQZgwa/4ot7SsigqvW5nfim+ys+GcVsJ+AXNMsLIRlnYHDjrt
+         m7e89fGv4N+aEYiYAqndEdeekow59gTlPjkhDu7EPbLhLfAJHLjlENUwLvd8rxeJirEb
+         8hnSQRa0olzwWU2QJct4jWM5mBcb0aQze2YPFMusvjV3SxmBVDTamFdb3W34pZgWibjL
+         VhBA3iO212k2Srdv9ARvnaPJdEumWuBNG2vu6m50Ao31IWfwBt2qA9UttSjsxYRQf6AK
+         hPJKbjB1BcG57Yv9I7ONFXXy1LCPsLgw98xQOkL3dhy9I9nOi6R1uKzTm0TTsn+DYzd1
+         D74Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749739834; x=1750344634;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bRXKs4VGDh5S2vPlr4/hDjovefGwIy/vQJKlAAiyucM=;
+        b=Z9qkghbZ6gccb8/8SM+wuvouQA636ba4h26csto8VUjaiTy+i6KeAKrvFRZTibvSDD
+         Izc9eR/Q43NEyPoIXXdlDzukhBK0qWW2zIGlor5SIlN2MNmjRtszyKJYVi1QwQm97yaN
+         xdI7vxstww2s923v0JKdhD1b7tiRs+RdkKiey9xfKnzh7uxkbLvnNKxcayVBU1u3XE2q
+         oRF8G9xR0hxefuPpdL+UlIPREbfMeIHIE+3bQCCANdwnsiYjPJ13pz4CsTJWrVz9mXC+
+         2OUZrmIaWejKxoYvbAKX0cBYiF0vRH+01YjawaFPTfFcHeRgCrOF0OBwnsWYMNqx2An4
+         vH/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVuusFVH/ngH9nnUXV2Sl9ObvzhER2+NyO9yEg5gotX0OOsI4+zulpIR0mFuGOLNPmbsRicGG2qaaMLKAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz92iOYL3znNf7XkQROOm7P0mXrZ2U29g8ZxFrrTjMf2ebo+5nd
+	l92TfZPKoWqwJEZB5HKrzS9If3Z+L77uWQkC8J+RHO5QCLuQXK2Alw2z5uvEN/m/
+X-Gm-Gg: ASbGnctHPHCFnihP3j5+Rho0pnH6Ckuy7CbRyn718rxE43sPpf5twimAuV2+nBItDG/
+	X61zZbpo8d7PnZQ0dvdiUvQHWOPM8pHuZGzW1QyfpsHX49mEOcRxVuFeXWxESjF5ocbqOG5eGU+
+	cIXw+w7VvFJomYD+Mv6UGuUzY4xILFtMyQFH2PZgFFDQb8E9m2rHKFOeBsnX1W9eohAp58ClHs+
+	Sb/7TM8KdAUGNZZ6+wy8/PlpY7ZJSx21BI7d2shwZADj+91wYEb9F4p9fOmfE+gCTLj0cacEic1
+	Xrbz95xkOSdNGhDXMJ6ChFwl8nrhcTTJACYU+SUJHZwl3fG0+RP+DYDYQMhsZ8SN2v0IEk+4lMV
+	UYH2K0/Q=
+X-Google-Smtp-Source: AGHT+IE6yt33Qixhwf2CvlRwXrUM91B/lNFVnf2cPUVd6bgWUieYAI6gxD+gQmh8m7XSxgF9h3kmTg==
+X-Received: by 2002:a17:906:7307:b0:aca:d29e:53f1 with SMTP id a640c23a62f3a-adea56302bdmr374648966b.12.1749739833928;
+        Thu, 12 Jun 2025 07:50:33 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:3030:ae0:54e3:8eed:b526:85ff:7c72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adead4cfe60sm145009266b.23.2025.06.12.07.50.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 07:50:33 -0700 (PDT)
+From: RubenKelevra <rubenkelevra@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v2] drm/sched: Clarify scenarios for separate workqueues
-Date: Thu, 12 Jun 2025 16:49:54 +0200
-Message-ID: <20250612144953.111829-2-phasta@kernel.org>
+	RubenKelevra <rubenkelevra@gmail.com>
+Subject: [PATCH net-next v2] net: pfcp: fix typo in message_priority field name
+Date: Thu, 12 Jun 2025 16:50:12 +0200
+Message-ID: <20250612145012.185321-1-rubenkelevra@gmail.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250610160612.268612-1-rubenkelevra@gmail.com>
+References: <20250610160612.268612-1-rubenkelevra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-struct drm_sched_init_args provides the possibility of letting the
-scheduler use user-controlled workqueues, instead of the scheduler
-creating its own workqueues. It's currently not documented who would
-want to use that.
+The field is spelled “message_priprity” in the big-endian bit-field
+definition.  Nothing in-tree currently references the member, so the
+typo does not break kernel builds, but it is clearly incorrect and
+confuses out-of-tree code.
 
-Not sharing the submit_wq between driver and scheduler has the advantage
-of no negative intereference between them being able to occur (e.g.,
-MMU notifier callbacks waiting for fences to get signaled).
-
-Add a new docu section for concurrency in drm/sched.
-
-Discourage the usage of own workqueues in the documentation. Document
-when using them can make sense. Warn about pitfalls.
-
-Co-authored-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Signed-off-by: RubenKelevra <rubenkelevra@gmail.com>
 ---
-Changes in v2:
-  - Add new docu section for concurrency in the scheduler. (Sima)
-  - Document what an ordered workqueue passed to the scheduler can be
-    useful for. (Christian, Sima)
-  - Warn more detailed about potential deadlocks. (Danilo)
----
- include/drm/gpu_scheduler.h | 54 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 51 insertions(+), 3 deletions(-)
+ include/net/pfcp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index 81dcbfc8c223..00c528e62485 100644
---- a/include/drm/gpu_scheduler.h
-+++ b/include/drm/gpu_scheduler.h
-@@ -21,6 +21,49 @@
-  *
-  */
- 
-+/**
-+ * DOC: Concurrency in drm/sched
-+ *
-+ * The DRM GPU Scheduler interacts with drivers through the callbacks defined in
-+ * &struct drm_sched_backend_ops. These callbacks can be invoked by the scheduler
-+ * at any point in time if not stated otherwise explicitly in the callback
-+ * documentation.
-+ *
-+ * For most use cases, passing the recommended default parameters in &struct
-+ * drm_sched_init_args is sufficient. There are some special circumstances,
-+ * though:
-+ *
-+ * For timeout handling, it makes a lot of sense for drivers with HARDWARE
-+ * scheduling to have the timeouts (e.g., for different hardware rings) occur
-+ * sequentially, for example to allow for detecting which job timedout first
-+ * and, therefore, caused the hang. Thereby, it is determined which &struct
-+ * drm_sched_entity has to be killed and which entities' jobs must be
-+ * resubmitted after a GPU reset.
-+ *
-+ * This can be achieved by passing an ordered workqueue in &struct
-+ * drm_sched_init_args.timeout_wq. Also take a look at the documentation of
-+ * &struct drm_sched_backend_ops.timedout_job.
-+ *
-+ * Furthermore, for drivers with hardware that supports FIRMWARE scheduling,
-+ * the driver design can be simplified a bit by providing one ordered workqueue
-+ * for both &struct drm_sched_init_args.timeout_wq and
-+ * &struct drm_sched_init_args.submit_wq. Reason being that firmware schedulers
-+ * should always have one scheduler instance per firmware runqueue and one
-+ * entity per scheduler instance. If that scheduler instance then shares one
-+ * ordered workqueue with the driver, locking can be very lightweight or
-+ * dropped alltogether.
-+ *
-+ * NOTE that sharing &struct drm_sched_init_args.submit_wq with the driver
-+ * theoretically can deadlock. It must be guaranteed that submit_wq never has
-+ * more than max_active - 1 active tasks, or if max_active tasks are reached at
-+ * least one of them does not execute operations that may block on dma_fences
-+ * that potentially make progress through this scheduler instance. Otherwise,
-+ * it is possible that all max_active tasks end up waiting on a dma_fence (that
-+ * can only make progress through this schduler instance), while the
-+ * scheduler's queued work waits for at least one of the max_active tasks to
-+ * finish. Thus, this can result in a deadlock.
-+ */
-+
- #ifndef _DRM_GPU_SCHEDULER_H_
- #define _DRM_GPU_SCHEDULER_H_
- 
-@@ -499,7 +542,7 @@ struct drm_sched_backend_ops {
- 	 * timeout handlers of different schedulers. One way to achieve this
- 	 * synchronization is to create an ordered workqueue (using
- 	 * alloc_ordered_workqueue()) at the driver level, and pass this queue
--	 * as drm_sched_init()'s @timeout_wq parameter. This will guarantee
-+	 * in &struct drm_sched_init_args.timeout_wq. This will guarantee
- 	 * that timeout handlers are executed sequentially.
- 	 *
- 	 * Return: The scheduler's status, defined by &enum drm_gpu_sched_stat
-@@ -590,14 +633,19 @@ struct drm_gpu_scheduler {
-  *
-  * @ops: backend operations provided by the driver
-  * @submit_wq: workqueue to use for submission. If NULL, an ordered wq is
-- *	       allocated and used.
-+ *	       allocated and used. It is recommended to pass NULL unless there
-+ *	       is a good reason not to. For details, see &DOC: Concurrency in
-+ *	       drm/sched.
-  * @num_rqs: Number of run-queues. This may be at most DRM_SCHED_PRIORITY_COUNT,
-  *	     as there's usually one run-queue per priority, but may be less.
-  * @credit_limit: the number of credits this scheduler can hold from all jobs
-  * @hang_limit: number of times to allow a job to hang before dropping it.
-  *		This mechanism is DEPRECATED. Set it to 0.
-  * @timeout: timeout value in jiffies for submitted jobs.
-- * @timeout_wq: workqueue to use for timeout work. If NULL, the system_wq is used.
-+ * @timeout_wq: workqueue to use for timeout work. If NULL, the system_wq is
-+ *		used. An ordered workqueue could be passed to achieve timeout
-+ *		synchronization. See &DOC: Concurreny in drm/sched and &struct
-+ *		drm_sched_backend_ops.timedout_job.
-  * @score: score atomic shared with other schedulers. May be NULL.
-  * @name: name (typically the driver's name). Used for debugging
-  * @dev: associated device. Used for debugging
+diff --git a/include/net/pfcp.h b/include/net/pfcp.h
+index af14f970b80e1..639553797d3e4 100644
+--- a/include/net/pfcp.h
++++ b/include/net/pfcp.h
+@@ -45,7 +45,7 @@ struct pfcphdr_session {
+ 		reserved:4;
+ #elif defined(__BIG_ENDIAN_BITFIELD)
+ 	u8	reserved:4,
+-		message_priprity:4;
++		message_priority:4;
+ #else
+ #error "Please fix <asm/byteorder>"
+ #endif
 -- 
 2.49.0
 
