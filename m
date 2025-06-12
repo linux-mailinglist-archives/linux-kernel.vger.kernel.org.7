@@ -1,172 +1,203 @@
-Return-Path: <linux-kernel+bounces-684075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33ABBAD75C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F1FAD7582
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 17:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C006F1884D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96401884713
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 15:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF752BEC2F;
-	Thu, 12 Jun 2025 15:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEE8298994;
+	Thu, 12 Jun 2025 15:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcfJxqRV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IeB4g2aw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5612C298CDC;
-	Thu, 12 Jun 2025 15:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737051BC2A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 15:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749741469; cv=none; b=tJhYvlCY6eZjC/QXL0sC+cEeCG8h9hwE7lKJL85L1Z6Px1oRvfWYYRhNxhQVPAPka3zy1Me0gXfhAuLW+Pr4gpZy/Rk9aiiJjb0LN6BHPtbwIbMOeZnYbdaBKiuigXncUywxYCQxSoR/EKNdmVOyDuGiU/zUrQ2d4S8RjEe6EYg=
+	t=1749741462; cv=none; b=qlBCBcF+ZhsB16xuDjiL0l3+ZIvWJOZsg6IfNArz7mHJUAQy5gnR0A9HmBYHlfD2U++6V1HdhfWmbhvcq3F4PsmjEF+zXodv5S8QVF5lvq3N1q/rFKOaNVET15S+THA+FvAoFFM/D+/XNGxLSl7nadj3FR62F7saypgnX5bPVHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749741469; c=relaxed/simple;
-	bh=ZtEXcjWPD0aNOQAtqxHuKiNURx4bS3DXUBi6+1xEqLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sj5ejJLt/Fxr2+mjfvNg87Yktk2mNC76CKTYivG+N5aQOITlliO3ujZ+RTzcCZ3QZqlI+PLDxueZwFXUKK/xcCDPcZe+mBSL6drYdQdjDgJPLkTweiY27ZAhdDy0cjfSJat9W7omGs95iWIBmRafDb+P6PzcThx78C07K2Iayho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcfJxqRV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A67EC116B1;
-	Thu, 12 Jun 2025 15:17:49 +0000 (UTC)
+	s=arc-20240116; t=1749741462; c=relaxed/simple;
+	bh=bBMRarVFRDGfMbWiiFdvD8PpDR7gEd1eqox42pTHpu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZoUjQ17UbHpNeIYSsansQyCXWJxinV8/uPDN/V/JfRGJprpHd1Rg2pX/YkzLgJPHhKFSX3G1H4MmH9rQ90tMpRrdhU92dMhBr1s9SzOTqIpgvELO0qC+QhdiDW+Z5D75YRs5lRR26ZLI6gjexUDTRx2d8UQVbQQcyioBvGoFc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IeB4g2aw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D73CDC4CEEB;
+	Thu, 12 Jun 2025 15:17:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749741469;
-	bh=ZtEXcjWPD0aNOQAtqxHuKiNURx4bS3DXUBi6+1xEqLw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DcfJxqRVTP1FSUs5WGe8WteUr3299GtHgegGRvZzoGupecSzejQc+VM2brNKjngvo
-	 h5g7oEys1HqnbbPmQ9WrQsJ3g+lAfCeN9dW06h/TQykeTZkPCu9zRKNjqpaO08HYmM
-	 9FJ30b0SSWrFZ4SNeIHE32o3uG0XMytKJkkn4OibEk2EjyTxDYMT/onSJb15oEzHJu
-	 UEYUw/fqpFdL7qs5cHpn40MDNbXrOxu9v/byrccyvsmJW3nZ+/T0rMoFuVZiHbf4SG
-	 zk13YO4XbikQmzm7r3OLmrNM5l5tVlHoo4E5zRqKmkgcDxfR6JPsigE0/gkZq3ONNA
-	 rjlEmf5ny78tw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uPjgZ-00000005Evu-1NGm;
-	Thu, 12 Jun 2025 17:17:47 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Ani Sinha" <anisinha@redhat.com>,
-	"Dongjiu Geng" <gengdongjiu1@gmail.com>,
-	"Paolo Bonzini" <pbonzini@redhat.com>,
-	"Peter Maydell" <peter.maydell@linaro.org>,
-	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
-	"Shannon Zhao" <shannon.zhaosl@gmail.com>,
-	"Yanan Wang" <wangyanan55@huawei.com>,
-	"Zhao Liu" <zhao1.liu@intel.com>,
-	Eduardo Habkost <eduardo@habkost.net>,
-	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v10 (RESEND) 12/20] acpi/generic_event_device: add logic to detect if HEST addr is available
-Date: Thu, 12 Jun 2025 17:17:36 +0200
-Message-ID: <b642ba25bc0d253682de2feaa47983d655c6fbe0.1749741085.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749741085.git.mchehab+huawei@kernel.org>
-References: <cover.1749741085.git.mchehab+huawei@kernel.org>
+	s=k20201202; t=1749741462;
+	bh=bBMRarVFRDGfMbWiiFdvD8PpDR7gEd1eqox42pTHpu8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IeB4g2awCxNBi5/eCdMjbz6zNklxVDnwZS88CrgmKdgbvpf5e1Yl7L95rrhLEWWB3
+	 2YUdemQXGDWIhmJjkeDTp4Cn+jrrf/T/IIq+OjErgjFdY8xar95wVEzOoOlSkDhAV3
+	 tpCkTO8PAgUfHlowKti8cPyjwDu8orURt9pTyQD+35cg6tAchgbS7SmaD+NFPaNOMJ
+	 zU7n7ricY/+KNG28LReGfCOK9jH30rxEK6UEFsdKrzBYdctFumhKON2829O7EtCVi1
+	 dxZcITubggmOyVS3ORybQdNjSpx+NFYrPxdndHo9A1mIdcm84v0jKBq0gTbcSm5Qg/
+	 js9BhyGBmagww==
+Date: Thu, 12 Jun 2025 16:17:36 +0100
+From: Will Deacon <will@kernel.org>
+To: Lifeng Zheng <zhenglifeng1@huawei.com>, beata.michalska@arm.com,
+	sudeep.holla@arm.com
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, viresh.kumar@linaro.org,
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com,
+	lihuisong@huawei.com, yubowen8@huawei.com,
+	vincent.guittot@linaro.org
+Subject: Re: [PATCH] arm64: topology: Setup amu fie when cpu hotplugging
+Message-ID: <20250612151736.GC12912@willie-the-truck>
+References: <20250607094533.416368-1-zhenglifeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250607094533.416368-1-zhenglifeng1@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Create a new property (x-has-hest-addr) and use it to detect if
-the GHES table offsets can be calculated from the HEST address
-(qemu 10.0 and upper) or via the legacy way via an offset obtained
-from the hardware_errors firmware file.
+[+arm topology folks]
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
----
- hw/acpi/generic_event_device.c |  2 ++
- hw/arm/virt-acpi-build.c       | 18 ++++++++++++++++--
- hw/core/machine.c              |  2 ++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+On Sat, Jun 07, 2025 at 05:45:33PM +0800, Lifeng Zheng wrote:
+> Amu fie was set up by a cpufreq policy notifier after the policy was
+> created. This caused some problems:
+> 
+> 1. The cpus related to the same policy would all fail to set up amu fie if
+> one of them couldn't pass the freq_counters_valid() check.
+> 
+> 2. The cpus fail to set up amu fie would never have a chance to set up
+> again.
 
-diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-index d292f61b4e41..3cf9dab0d01a 100644
---- a/hw/acpi/generic_event_device.c
-+++ b/hw/acpi/generic_event_device.c
-@@ -318,6 +318,8 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
- 
- static const Property acpi_ged_properties[] = {
-     DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
-+    DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState,
-+                     ghes_state.use_hest_addr, false),
- };
- 
- static const VMStateDescription vmstate_memhp_state = {
-diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-index da3ebf403ef9..3126234e657d 100644
---- a/hw/arm/virt-acpi-build.c
-+++ b/hw/arm/virt-acpi-build.c
-@@ -893,6 +893,10 @@ static const AcpiNotificationSourceId hest_ghes_notify[] = {
-     { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
- };
- 
-+static const AcpiNotificationSourceId hest_ghes_notify_10_0[] = {
-+    { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
-+};
-+
- static
- void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
- {
-@@ -947,15 +951,25 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
- 
-     if (vms->ras) {
-         AcpiGedState *acpi_ged_state;
-+        static const AcpiNotificationSourceId *notify;
-+        unsigned int notify_sz;
-         AcpiGhesState *ags;
- 
-         acpi_ged_state = ACPI_GED(vms->acpi_dev);
-         ags = &acpi_ged_state->ghes_state;
-         if (ags) {
-             acpi_add_table(table_offsets, tables_blob);
-+
-+            if (!ags->use_hest_addr) {
-+                notify = hest_ghes_notify_10_0;
-+                notify_sz = ARRAY_SIZE(hest_ghes_notify_10_0);
-+            } else {
-+                notify = hest_ghes_notify;
-+                notify_sz = ARRAY_SIZE(hest_ghes_notify);
-+            }
-+
-             acpi_build_hest(ags, tables_blob, tables->hardware_errors,
--                            tables->linker, hest_ghes_notify,
--                            ARRAY_SIZE(hest_ghes_notify),
-+                            tables->linker, notify, notify_sz,
-                             vms->oem_id, vms->oem_table_id);
-         }
-     }
-diff --git a/hw/core/machine.c b/hw/core/machine.c
-index e869821b2246..6c5cf9781181 100644
---- a/hw/core/machine.c
-+++ b/hw/core/machine.c
-@@ -35,10 +35,12 @@
- #include "hw/virtio/virtio-pci.h"
- #include "hw/virtio/virtio-net.h"
- #include "hw/virtio/virtio-iommu.h"
-+#include "hw/acpi/generic_event_device.h"
- #include "audio/audio.h"
- 
- GlobalProperty hw_compat_10_0[] = {
-     { "scsi-hd", "dpofua", "off" },
-+    { TYPE_ACPI_GED, "x-has-hest-addr", "false" },
- };
- const size_t hw_compat_10_0_len = G_N_ELEMENTS(hw_compat_10_0);
- 
--- 
-2.49.0
+I don't fully understand this (we don't tend to use the past tense in commit
+messages), but it sounds like you're saying that the singleton nature of
+the AMU driver is causing you problems with late CPU hotplug. Is that
+correct? Can you perhaps be a bit more specific about what goes wrong and
+how to reproduce the issue, please?
 
+> When boot with maxcpu=1 restrict, the support amu flags of the offline cpus
+> would never be setup. After that, when cpufreq policy was being created,
+> the online cpu might set up amu fie fail because the other cpus related to
+> the same policy couldn't pass the freq_counters_valid() check. Hotplug the
+> offline cpus, since the policy was already created, amu_fie_setup() would
+> never be called again. All cpus couldn't setup amu fie in this situation.
+> 
+> After commit 1f023007f5e7 ("arm64/amu: Use capacity_ref_freq() to set AMU
+> ratio"), the max_freq stores in policy data is never needed when setting up
+> amu fie.  This indicates that the setting up of amu fie does not depend on
+> the policy any more. So each cpu can set up amu fie separately during
+> hotplug and the problems above will be solved.
+> 
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> ---
+>  arch/arm64/kernel/topology.c | 56 ++++++++++++++----------------------
+>  1 file changed, 21 insertions(+), 35 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 5d07ee85bdae..207eab4fa31f 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -351,63 +351,49 @@ int arch_freq_get_on_cpu(int cpu)
+>  	return freq;
+>  }
+>  
+> -static void amu_fie_setup(const struct cpumask *cpus)
+> +static void amu_fie_setup(unsigned int cpu)
+>  {
+> -	int cpu;
+> -
+> -	/* We are already set since the last insmod of cpufreq driver */
+>  	if (cpumask_available(amu_fie_cpus) &&
+> -	    unlikely(cpumask_subset(cpus, amu_fie_cpus)))
+> +	    cpumask_test_cpu(cpu, amu_fie_cpus))
+>  		return;
+>  
+> -	for_each_cpu(cpu, cpus)
+> -		if (!freq_counters_valid(cpu))
+> -			return;
+> +	if (!freq_counters_valid(cpu))
+> +		return;
+>  
+>  	if (!cpumask_available(amu_fie_cpus) &&
+>  	    !zalloc_cpumask_var(&amu_fie_cpus, GFP_KERNEL)) {
+> -		WARN_ONCE(1, "Failed to allocate FIE cpumask for CPUs[%*pbl]\n",
+> -			  cpumask_pr_args(cpus));
+> +		WARN_ONCE(1, "Failed to allocate FIE cpumask for CPUs[%u]\n",
+> +			  cpu);
+>  		return;
+>  	}
+>  
+> -	cpumask_or(amu_fie_cpus, amu_fie_cpus, cpus);
+> +	cpumask_set_cpu(cpu, amu_fie_cpus);
+>  
+>  	topology_set_scale_freq_source(&amu_sfd, amu_fie_cpus);
+
+Isn't it going to be potentially expensive to call this every time a CPU
+comes online?
+
+Will
+
+[left the rest of the patch below for the folks I added]
+
+>  
+> -	pr_debug("CPUs[%*pbl]: counters will be used for FIE.",
+> -		 cpumask_pr_args(cpus));
+> +	pr_debug("CPUs[%u]: counters will be used for FIE.", cpu);
+>  }
+>  
+> -static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
+> -				 void *data)
+> +static int cpuhp_topology_online(unsigned int cpu)
+>  {
+> -	struct cpufreq_policy *policy = data;
+> -
+> -	if (val == CPUFREQ_CREATE_POLICY)
+> -		amu_fie_setup(policy->related_cpus);
+> -
+> -	/*
+> -	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
+> -	 * counters don't have any dependency on cpufreq driver once we have
+> -	 * initialized AMU support and enabled invariance. The AMU counters will
+> -	 * keep on working just fine in the absence of the cpufreq driver, and
+> -	 * for the CPUs for which there are no counters available, the last set
+> -	 * value of arch_freq_scale will remain valid as that is the frequency
+> -	 * those CPUs are running at.
+> -	 */
+> +	amu_fie_setup(cpu);
+>  
+>  	return 0;
+>  }
+>  
+> -static struct notifier_block init_amu_fie_notifier = {
+> -	.notifier_call = init_amu_fie_callback,
+> -};
+> -
+>  static int __init init_amu_fie(void)
+>  {
+> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
+> -					CPUFREQ_POLICY_NOTIFIER);
+> +	int ret;
+> +
+> +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> +				"arm64/topology:online",
+> +				cpuhp_topology_online,
+> +				NULL);
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+>  }
+>  core_initcall(init_amu_fie);
+>  
+> -- 
+> 2.33.0
+> 
 
