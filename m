@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-683342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBF1AD6C42
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCC1AD6C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2BB189216F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA0B189E452
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450D522A4F0;
-	Thu, 12 Jun 2025 09:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="he5wGYrN"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD2C22D4FF;
+	Thu, 12 Jun 2025 09:33:54 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D621F583D;
-	Thu, 12 Jun 2025 09:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10BD22A1E6;
+	Thu, 12 Jun 2025 09:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749720728; cv=none; b=i9VGNfYDdMN8+w/nEFlWegAhyHK+iq7AvxyCJZzDijt5iRabQywsTp2SwLHBC3X2oiqeH/9DIZan628bbzMa4UNt0GsVCsTZOdOBXK6E7hAzcoDMHWZ8lHMua0dUXjPnLJF9szpfcRfFJiDBu3hKk2mHMEdOy4ujgDMLKSQMUKE=
+	t=1749720834; cv=none; b=HKH3/ck9IxDR4XH8bKJ24f873HMRbOmww9peBBcvY6oN+n9CYcHpsRVgQddxxaN4KbFkrrDZU6rDA+uI7Sdd3DPASXTg12W6yF5dFt/l/0nPPsZtSiaATZqpMxfAVwBaFS0ZrIkUhgcKXP8I/Kgr/2KtQiVwaXn4XsCygurU6Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749720728; c=relaxed/simple;
-	bh=fjXkONU7XmuJaoZ3aT6+vTpOz6C4HuPYdk5YletMS4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hp0VOHi/9z2qJv17z1EIzwuZyyaV/myjKtgVyAUr6FXlvy6Z1R8/yvl6aPWgQh0tGmH8OniSeFv1P/1uV9CWRmF6zXx8mKBVaShZevgaJCC8+DZ3DWgLFdDt7ubuItW2BNGYNxvPx4fElSAWA9GH9p20j32pIkfMAcl9j37lAbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=he5wGYrN; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1749720834; c=relaxed/simple;
+	bh=3ME4uAr82A5FCxKsaE3r3YBp3wrOVKkc2TwWb/wzwa4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ObV9cV+VtEdgb2qMPLsmBCG8sBgKc2qcIQxYSZS1Ji6sl22WmMu50QOaZUZAlsusclZpAgXs817OQc7V7qa06+gxnF2n2nVhqn6outkS2ea48FYcjy8od7lLH6vOpunjgbS9z/rbMzgX6q5N8rdeF2jaPr/DXAvj9b0eZ5OWHUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad88d77314bso160789466b.1;
-        Thu, 12 Jun 2025 02:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749720725; x=1750325525; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eCJsxEivkwvGkCehnqd6AJf/P7ksgfCcXbdvRxFOYIc=;
-        b=he5wGYrN3e2jUhni8hkN8vqrn82N6vuDQvggT/EkLMxSuCZpf5wLZPgO7EeF1BFBF2
-         o3nXXnR6W4nhgraTf9tpf2kHdWb7llhJVr0W+roELU06P2OOKj+csIdiVnkrfLMn1ocf
-         ZsCFYovtlkApTH8NrwfIFu1dBpIRc5dasCxt84YVY14Pt7ccFU93Dmd3uEGPQ8J6FR3A
-         HSMLhrP1UJE1t4I80dcxkDBA13vwWmjJ+sXEkOyYpXEBZ9rw1tkyFMChsdgkxsF62/kQ
-         lh40rf6wBU0y3H+Gt4I78tDBmpFY8qlwc3g05xmjjob+2F3oPSVGdvx2eua+14Tnmh5V
-         K+wg==
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-525b44b7720so223028e0c.0;
+        Thu, 12 Jun 2025 02:33:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749720725; x=1750325525;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eCJsxEivkwvGkCehnqd6AJf/P7ksgfCcXbdvRxFOYIc=;
-        b=W4diFmfGq+ZN7iBQmFjFzCUCfWQ6bGa3nqHIg8lpUmh8E7d7hshEkN/S0lw0UFiIba
-         UK9vYUT6mwkVTdgdgvOXLA+jf94gqmJ1sag8QniaPVO6jeQ2iB2EOQQn7+oq9yp4m1W+
-         NBO1gz9+FP+0itM58JF+XKuqr2t7HOSP+UOqhDEmj5/q5dddi16fbl8FbtNcWC5SL0Ui
-         taW9va/GFgtZRKkM244ifipcZCCKGVqB55GJLaEmTTUEPQ81Wi6zGeiBTMhtFMwPUurh
-         lvg1MVoc/aSV0QYZFmDHvH7hYmhJQhzzlZU55MCZJrStTmj5vvEom2TC8Fnrkvk1CQxT
-         qAjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSNF5Fz/zSFF+UwToLBjcUycYazfxEk9grloxvbxMlbncrElhJcqfYV1skaWZf/AWllBk=@vger.kernel.org, AJvYcCXh4wqUXz4jVXBr1qMcMhGMtE3p2NG+Ie7N8h0P6QgEKqJGaIdK2bHAYOxgST63wdSoid7Z/6y2LyPRGMhQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFsf5bhiITEg367mzrLTPZBf5FQ8LqVV5VTWkCyxW2C1uKdh1g
-	ztmOXUs/KcBBqIuy1m/l7W+imF7ZKo9ryQocoHS4g7GdQ0XuEzTs7IBiZYlW6A==
-X-Gm-Gg: ASbGncsAh84GLLwDb/a+NneYfENWcE2jTg/7V5oJJ9CiXf25NXMOZofscIRf6ed5L7g
-	aTBbryGayyGWjTkFt7Tnsg+SI1aZ2EMw/DYoWF520KJ9hNf/mRsa4qixHypQGRCPSuOD3oqbM42
-	G6bnQdW+HuolwuN4W4Bb+VWbirV6eFGVu09++KSi1zGcZ0T4BIXK1JiXfHV/NBgCczVU0pvTU8j
-	4TbLZbpp3EI53/7IMK2rnrpThPSa8W6GKthb0ojrEy0HUR0m33i+ynaenUMEB20S7YHAeMkBRMU
-	Wb7rDYLSJzWM1912OIkWF5dizXaTlzTuqpbncDsYWV4RvOcgpgnOaY2R0P1l8zxcMfjrSKQtGiK
-	JgL57ZHMe36of5RGIIQ==
-X-Google-Smtp-Source: AGHT+IFk5VbJtxAhNF/55f923ZLJvy/heiuxusUdJGsctgKxkDgGsjMqsZ7BI1Rd/xG/CWbwrnZuiQ==
-X-Received: by 2002:a17:907:9803:b0:ad8:9e80:6bc3 with SMTP id a640c23a62f3a-ade893db0e9mr668476866b.1.1749720725285;
-        Thu, 12 Jun 2025 02:32:05 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:be2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adead8d773dsm102079166b.41.2025.06.12.02.32.04
+        d=1e100.net; s=20230601; t=1749720831; x=1750325631;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xmt7U++OOW6yZB65AZURgC6J9cCyi6Rv4N4Xo2Z9FpI=;
+        b=UaTnMgYMHJrIX3SqEzh576K5GaChjo7N+lGHOPKHFys8pyvmMk5Mz8bRFG3U8I8NoT
+         CNmlCcUNslhf+ybVkewrWyj7DUGxlAxzDEbSb5EyrUBVeWyx2kC4+TmZ7CrjD2AjQ4xC
+         7BzuVQSjT9H2Th8faIGB3jz1U5SahqR0Q7OR7WM3rzrR527X8r4/V0pl1GFQYIT4a0Mp
+         3e+iCusiwpEPOP77NP7HfXJcycmfgqY1aJLq04gCK415BzITkF096cn16Pthm8D+TzV9
+         73mAnL1cSZq7uhBfXOWEGV+Vcr1rcxzfZYMSZkHDrhUjVYmN9lf+UhthZQ5NlJk8gAJ4
+         8Xog==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgECzFfkrLJlrO/6J1DUaphfGP0YysmFtU2Opmma310Th7XqyPJQVJc6qLnCTKIur/Iw32W7QM06LHiOvNkgWH4s=@vger.kernel.org, AJvYcCWTrHPxazQMGEn4sX4XdiR52UuXC2KkxalU27IsRIirYGuNZibOmCtCWaKIawsmlTDMz4oYyd7QdgxyfCM=@vger.kernel.org, AJvYcCWsbEKh2xUfvOUU3SlvaC1al1xRf4+3kKjcXJkJ0GINHbVrNG0/F6SWPkbUrboFi1bH3/Vcn9kzP+9nhdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6DC1cuTgm2H2TgrhENGd284efH3JjecDmAx2ijE0QC9MrKrma
+	w/1vB6RvdYVsHMunDOhyguwlrSqnyuPEZ95oY7/guFXNTYf2BRpT2st/poFhFTWf
+X-Gm-Gg: ASbGnct+h0xYab6dTKzzR1kgNo8zQhkxTVkQtpu+305tBJE4a+yyZkXq764A3/x4kZ7
+	eDsbIFJMIZKu2SYsb2DYiA164wUOgyccDlNVxe+O0go0cW9RLku+uZYe/BlDsZ8ZvUMyPKs7Y/W
+	Zz2ixJclj57H6XIXBi+v5it6u4rbd14lCU0k0rEe6Z3J7TCNIf+cN384bqOipbCX0Yt95GUxNS9
+	kE1cPSLwguLw4yNvTKu8w65Sl6ZzBTpADBTj0y40NkSIO+4XsPR+nh9UsuXzDTls7ijM2P0dq3P
+	p257PIRJp8CEjLONUqFTlAcTiLKR+/JGw8QneffgKaf/2Hj2zLKlAXtjQsaAZpx6PBqowYFkWqo
+	HMuQV6tOnShiTEHin9LqcPzLq
+X-Google-Smtp-Source: AGHT+IGIm7TD1mgYxgSZaHW0X0Ilf89P5i4ewplfyZlGdK+qpe3j4IHGLfx8a6hJ8tBEVYY+QkUoqg==
+X-Received: by 2002:a05:6122:2024:b0:530:5996:63a2 with SMTP id 71dfb90a1353d-5312ce5ba11mr3131133e0c.7.1749720831181;
+        Thu, 12 Jun 2025 02:33:51 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01259249sm228702241.9.2025.06.12.02.33.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 02:32:04 -0700 (PDT)
-Message-ID: <6649c552-5a84-4a3a-b276-fc9f4008d019@gmail.com>
-Date: Thu, 12 Jun 2025 10:33:29 +0100
+        Thu, 12 Jun 2025 02:33:51 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87ecc02528aso186980241.2;
+        Thu, 12 Jun 2025 02:33:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVA5v+s9xSIFX1LcnOF5TIPGbqCCjV9Ze4Jn/nBMqQftA5ZC6qt55kOipVjLCoYUq3Is8En6queJ7k87mrkBQu4ws=@vger.kernel.org, AJvYcCUr1pXq6ewsvwxKP+CB9nyKFEXoGRzeKIIVrbieOXw9CjcJt+UCJJ4BkdFLS9CKUbxUHEDsIkDMy9XqqXI=@vger.kernel.org, AJvYcCXftIYNvs5scKVLIVZ5Bp5kVdbOy121GylwN+nPE4y9XSAzfIChJdGvScWr7kXpFf4TrNhvC6nbhGQMU7s=@vger.kernel.org
+X-Received: by 2002:a05:6102:41a0:b0:4e5:9fbe:79f1 with SMTP id
+ ada2fe7eead31-4e7ccd99bfbmr2984995137.24.1749720830818; Thu, 12 Jun 2025
+ 02:33:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 4/5] io_uring/bpf: add handle events callback
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: io-uring@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <cover.1749214572.git.asml.silence@gmail.com>
- <1c8fcadfb605269011618e285a4d9e066542dba2.1749214572.git.asml.silence@gmail.com>
- <CAADnVQKOmYmFZwMZJmtAc5v9v1gBJqO-FyGeBZDZe1tT5qPKWA@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAADnVQKOmYmFZwMZJmtAc5v9v1gBJqO-FyGeBZDZe1tT5qPKWA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250609-vspx-reset-v1-0-9f17277ff1e2@ideasonboard.com>
+ <20250609-vspx-reset-v1-2-9f17277ff1e2@ideasonboard.com> <20250611232956.GQ24465@pendragon.ideasonboard.com>
+In-Reply-To: <20250611232956.GQ24465@pendragon.ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 11:33:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVU0JJDff539YBMhM8xNQVf5Ufiw1D9TXitzsGWXPBMAg@mail.gmail.com>
+X-Gm-Features: AX0GCFtY_lX4OASbuVWIV2IK1zyzigbX0AJWMSKSYwfSLRBfpIvsSDPq1QLb6bM
+Message-ID: <CAMuHMdVU0JJDff539YBMhM8xNQVf5Ufiw1D9TXitzsGWXPBMAg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] media: vsp1: Reset FCP for VSPD
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Koji Matsuoka <koji.matsuoka.xm@renesas.com>, 
+	LUU HOAI <hoai.luu.ub@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/12/25 03:28, Alexei Starovoitov wrote:
-> On Fri, Jun 6, 2025 at 6:58 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> +static inline int io_run_bpf(struct io_ring_ctx *ctx, struct iou_loop_state *state)
->> +{
->> +       scoped_guard(mutex, &ctx->uring_lock) {
->> +               if (!ctx->bpf_ops)
->> +                       return IOU_EVENTS_STOP;
->> +               return ctx->bpf_ops->handle_events(ctx, state);
->> +       }
->> +}
-> 
-> you're grabbing the mutex before calling bpf prog and doing
-> it in a loop million times a second?
-> Looks like massive overhead for program invocation.
-> I'm surprised it's fast.
+Hi Laurent, Jacopo,
 
-You need the lock to submit anything with io_uring, so there is
-a parity with how it already is. And the program is just a test
-and pretty silly in nature, normally you'd either get higher
-batching, and the user (incl bpf) can specifically specify to
-wait for more, or it'll be intermingled with sleeping at which
-point the mutex is not a problem. I'll write a storage IO
-example for the next time.
+On Thu, 12 Jun 2025 at 09:19, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Jun 09, 2025 at 09:01:43PM +0200, Jacopo Mondi wrote:
+> > From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> >
+> > According to H/W manual v1.00, VSPD must be excecuted
+> > FCP_RST.SOFTRST after VI6_SRESET.SRST. So this patch adds it.
+> > VSPDL is not applicable.
+>
+> According to the R-Car Gen3 H/W manual v1.00, the FCP must be reset
+> after resetting the VSPD, except for the VSPDL. Do so.
 
-If there will be a good use case, I can try to relax it for
-programs that don't issue requests, but that might make
-sync more complicated, especially on the reg/unreg side.
+"Rev.1.00"
+
+Stil, that is a very old version. "Rev.2.40" is 6 years younger...
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Pavel Begunkov
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
