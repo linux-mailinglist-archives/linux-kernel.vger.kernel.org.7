@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-682995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-682993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BE0AD678F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 08:00:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807DFAD6789
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 07:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A4E17B9A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 06:00:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 308417AC87F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 05:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C219C556;
-	Thu, 12 Jun 2025 06:00:50 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E501E51EB;
+	Thu, 12 Jun 2025 05:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="k0a4qQP3"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC4819A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 06:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC352AE6D;
+	Thu, 12 Jun 2025 05:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749708050; cv=none; b=jk0opMeF80WnCZAOgsTdEOz78RFm7sxYonUpUrIsUMXmkso+HuuVRY8imJCVuK+G76gPoqhFSELsiiap1WoWki0xuQx67u1ZF6sBRbbQ128OM1dn29/cYfeoY4t9YtEXUBeY2r+y4y0rrjVTXjMOHX4UnjgaDESa1bbqMweYYxo=
+	t=1749707729; cv=none; b=pkTmY55ZKDsday5xVfz/u/VOJRfHNmzceirNiSp3r1p6Bw9MEjS6tgjKfYhGUzdiDUw1DlFBMYSvJJTe9bBDUQU0/J/qhQym2WmnwwJxQWeuRyIm625FamMJYcmkL+6y6qEmw39nhAcm69E+Rin+SdK+NV2IjIJcOWZ+3taEhVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749708050; c=relaxed/simple;
-	bh=GDvuOTC1L83xOm6sqH/DJEmqE+NIMjdEDgDrSBYIUVw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PlpcKbp/kUOjp7HbVRRRpXqKjCTpgW4y58eFK0VHAa2EPCBKlJn/hWQ4t2l3DpU8dhSdikYDfgFMDbMAWNE0jmc6cOkFzY1rIul9Bn09zhL9aWWzblSM/ndxN0cAt3Au99eQGstece1eLAQJPaBuH0XaHd3pfwesS+g+G8k0wiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowACHNtX3bEpo1oH6BQ--.46002S2;
-	Thu, 12 Jun 2025 14:00:23 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	biju.das.jz@bp.renesas.com,
-	luca.ceresoli@bootlin.com,
-	tommaso.merciai.xr@bp.renesas.com,
-	aford173@gmail.com,
-	jesseevg@gmail.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/bridge: adv7511: Convert comma to semicolon
-Date: Thu, 12 Jun 2025 13:52:18 +0800
-Message-Id: <20250612055218.1517952-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749707729; c=relaxed/simple;
+	bh=8+H/tr96YZjUd6UCg+BS6Q3khuu+sPU8yba5aX51SoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8c5vRTZl1I2rGK/cTpN7SQ8viTZrpK9gFFAM4FwhS1k809Fwaa/YkK1guj+Xo7eyp+snrjdxgNlU10PYvjMLDrmiUwNjfV0eK6Z60vQKZ7xpsNkuDdveEMu4ZZkGN/mZyEkvyM/rf97S+aBR73onVP7mYgq3AjjaNI9k7ombjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=k0a4qQP3; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rc74KEKSZcVOTVA/X0fklZuVaLUXgUh7vebuiIcruL8=; b=k0a4qQP3qpSqZjk6gHZ8m/K26L
+	mtwxJx5P23LDqdPMEW3EbrHOevA/Kp5rCrHQsNnBxneuHKohHbbLj4CXiVX16q1gOQrT7RFdod62y
+	3tat1rIObAbIB1g4SzrdX5jjXbLRpO0CWIt/4OUfGuX0e3wmA5tkctk+WZH2lBFh1uIsnL8vb99HV
+	3ngHRw3otW1VooHIB0R/b7VL7k6bttiDxnI4XPauFqtz1rVhhc3r3so+sP1zHpozmz5ZO1hGV2ahp
+	ZUU2DLZvviZxP0nNK7w2SRhQvPcNQ1SmAw9KgjRKOWo018iY0bednf1QglSjVhHHirHftWHcoYxNc
+	t7o6LraQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uPauH-00CYGr-2Y;
+	Thu, 12 Jun 2025 13:55:22 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 12 Jun 2025 13:55:21 +0800
+Date: Thu, 12 Jun 2025 13:55:21 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Ingo Franzki <ifranzki@linux.ibm.com>
+Subject: Re: [PATCH] crypto: testmgr - reinstate kconfig support for fast
+ tests only
+Message-ID: <aEpryXbiFJ5mmsvj@gondor.apana.org.au>
+References: <20250611175525.42516-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACHNtX3bEpo1oH6BQ--.46002S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWkJrXEkF
-	1fu3Z7Xr1Yy3Wqkw13ArWYvFW2k3WUuFZ5u3Z3ta1ayr45Zr129w17Xr4kXF15uF4jkr15
-	Jw1jqr4rAa47KjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbDxYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
-	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14
-	v_GF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTiCJmxUUUU
-	U
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611175525.42516-1-ebiggers@kernel.org>
 
-Replace comma between expressions with semicolons.
+On Wed, Jun 11, 2025 at 10:55:25AM -0700, Eric Biggers wrote:
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index e9fee7818e270..8612ebf655647 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -174,20 +174,30 @@ config CRYPTO_USER
+>  	  Userspace configuration for cryptographic instantiations such as
+>  	  cbc(aes).
+>  
+>  config CRYPTO_SELFTESTS
+>  	bool "Enable cryptographic self-tests"
+> -	depends on DEBUG_KERNEL
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+Please restore the dependency on EXPERT.  I do not want random
+users exposed to this toggle.
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+> +config CRYPTO_SELFTESTS_FULL
+> +	bool "Enable the full set of cryptographic self-tests"
+> +	depends on CRYPTO_SELFTESTS
+> +	default y
+> +	help
+> +	  Enable the full set of cryptographic self-tests for each algorithm.
+> +
+> +	  For development and pre-release testing, leave this as 'y'.
+> +
+> +	  If you're keeping the crypto self-tests enabled in a production
+> +	  kernel, you likely want to set this to 'n' to speed up the boot.  This
+> +	  will cause the "slow" tests to be skipped.  This may suffice for a
+> +	  quick sanity check of drivers and for FIPS 140-3 pre-operational self-
+> +	  testing, but some issues can be found only by the full set of tests.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please remove the "default y".
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 9df18a8f2e37..418a403586f6 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -1278,7 +1278,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- 						  SNDRV_PCM_FMTBIT_S20_3LE |
- 						  SNDRV_PCM_FMTBIT_S24_3LE |
- 						  SNDRV_PCM_FMTBIT_S24_LE |
--						  SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE),
-+						  SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE);
- 	adv7511->bridge.hdmi_audio_spdif_playback = 1;
- 	adv7511->bridge.hdmi_audio_dai_port = 2;
- #endif
+Thanks,
 -- 
-2.25.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
