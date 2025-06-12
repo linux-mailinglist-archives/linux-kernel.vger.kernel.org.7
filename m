@@ -1,202 +1,187 @@
-Return-Path: <linux-kernel+bounces-683333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5402AD6C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:27:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171E2AD6C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 11:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D031660A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D401899EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 09:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2D12288EE;
-	Thu, 12 Jun 2025 09:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F48422538F;
+	Thu, 12 Jun 2025 09:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="PkZDjm+V"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXcP7cYi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA8B1DDC1B;
-	Thu, 12 Jun 2025 09:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F10921C178;
+	Thu, 12 Jun 2025 09:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749720463; cv=none; b=C29lCIzcOFbk0hxi2W10SwiCQLtkZQPcohS0+f5vrLtvReBlHCoJ4GUjuzsgz0wbC4dxCYetIRgKDRu4tjQ/48VrQndx3d6P25Gm8s8YTYH4Io0RsjhJw9pExrhBt4tEDlvRMBFZoNnnlt08FkCHj7c2gfUOZ0MiswLnN2mrXJk=
+	t=1749719926; cv=none; b=JwQ5ochXbFmNb18Hieqjrm+2VaC4KsR/wZzYeYwDUNJHpAzPadlSRnGZTIWX3RX1Y+Us/DgxFcEwpgwehJvbDXsKcz47ubzdI6vyNJUh8qYONV6j3l2QzDoJ47Le+or89ovf8Aeho36I5U47xQAoL0Hc4xbqnOhKYxcHF0YCbyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749720463; c=relaxed/simple;
-	bh=zU2wAuUr/7XYBXddnsRh3IBaolX1LhhUnQ+M9OIR0q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9cMsU9mRcHFIS4qyNJ+2LtbXUmqzHcqBh2zvTF8keh2klDRv5LyjYFNieH2ys+aCUkvHPcdVT+sc/GLUZdhDvoPT4jmvX9tI9oCRoDdp5WUJufic7Wn+rmL9zK7Hi/Mt2osriCp0vQtATZUtHDaLhXVWke2eQ7aLDe/CMRNGxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=PkZDjm+V; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id C9E871C00B7; Thu, 12 Jun 2025 11:17:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1749719872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jK207JmCPoreSPAxEuJucLTQP5EiXczQgWbs/TTbYI0=;
-	b=PkZDjm+VNaBiHoM19j/d5n9YER5Bd3SVefh8dKqwEN8k5jc2k65ob+oA7hwkxHW6kxGWBX
-	9O4xDZh7LriFaoxfmyvFJQg3qyg3IlrtwF8xT0JGHqOaRBnYof2s+Lj763My4eXvfO6kxu
-	0RF39dsnyWVpKCOD3wdHEG1hkzigaK4=
-Date: Thu, 12 Jun 2025 11:17:52 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
-	Leonard =?iso-8859-1?Q?G=F6hrs?= <l.goehrs@pengutronix.de>,
-	kernel@pengutronix.de, Oleksij Rempel <o.rempel@pengutronix.de>,
-	Roan van Dijk <roan@protonic.nl>,
-	Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
-	Andreas Klinger <ak@it-klinger.de>,
-	Petre Rodan <petre.rodan@subdimension.ro>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 00/28] iio: zero init stack with { } instead of memset()
-Message-ID: <aEqbQPvz0FsLXt0Z@duo.ucw.cz>
-References: <20250611-iio-zero-init-stack-with-instead-of-memset-v1-0-ebb2d0a24302@baylibre.com>
+	s=arc-20240116; t=1749719926; c=relaxed/simple;
+	bh=p6AQhqNJvHkmuCFbaI+9cOCMZDEhMXTJmKgUnQA0StM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lSABf/PDOlBAB0w1ztRDxg9Vy8ZIG9CcA+wvxcGRoVgAI+KW7we7fXtUmviqM7lAujUvP7wGGSvYRbKYyokN3kJ2j7plOXJuLassnzV8occM9LzBllcCcDnrvvp+hmOfAvqSW3DyWKkkcpNw7Hu50YC+JkgaewWfxjQ4wES8aNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXcP7cYi; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749719925; x=1781255925;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=p6AQhqNJvHkmuCFbaI+9cOCMZDEhMXTJmKgUnQA0StM=;
+  b=MXcP7cYiyz+7WQNGpuTxgjUkOfl9lqrRhINmLTTKXXYR5sLJ1L5IrrCm
+   Xxco6K8vHCnsZ9/MaMyHbTmg8VI9JKJ4XnUAVj3VK243k5SfsJh16KRyg
+   mrsxc/Q93Y9+9ThSJb0M55RUIHJpPIVAHREkjFrJC50150YEQsw4XFOJ5
+   hPWQeMIVEKUBA6/dY8HehYVnmUCFEXfe6CS6D5cmFE68ViODkYicHJHQX
+   M0LYmBD0ad9VHifdSqEtPdDw/7HMgFBlzjVH6s6q5aKvTU6kji1hl1PbB
+   lwyLE3liRaVm9Ezvdj35k+H+gwDxt/8t6auKuV3fgZkHCV3etwHfy23VM
+   w==;
+X-CSE-ConnectionGUID: afW3SPj4SYKaWws6kcvX7g==
+X-CSE-MsgGUID: o20TxZNGQomgoWhKX6ACHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="63299119"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
+   d="scan'208";a="63299119"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 02:18:44 -0700
+X-CSE-ConnectionGUID: uZcevFszSt2bGm+mHraiEA==
+X-CSE-MsgGUID: rjJhRMO6RyKxtMoJnwRHjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; 
+   d="scan'208";a="152227579"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.140])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 02:18:43 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 12 Jun 2025 12:18:39 +0300 (EEST)
+To: Jiri Slaby <jirislaby@kernel.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 15/33] serial: 8250: extract serial8250_THRE_test()
+In-Reply-To: <b6c85f8e-da53-4268-ae34-421dcf9e373c@kernel.org>
+Message-ID: <8fe35d82-bee7-03e1-6e07-73df9f351728@linux.intel.com>
+References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-16-jirislaby@kernel.org> <2c7977aa-831d-16be-667f-9f761ea0060f@linux.intel.com> <b6c85f8e-da53-4268-ae34-421dcf9e373c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rtWrUApkft0MEwbP"
-Content-Disposition: inline
-In-Reply-To: <20250611-iio-zero-init-stack-with-instead-of-memset-v1-0-ebb2d0a24302@baylibre.com>
+Content-Type: multipart/mixed; boundary="8323328-499402911-1749719919=:943"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---rtWrUApkft0MEwbP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--8323328-499402911-1749719919=:943
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hi!
+On Thu, 12 Jun 2025, Jiri Slaby wrote:
 
-> Jonathan mentioned recently that he would like to get away from using
-> memset() to zero-initialize stack memory in the IIO subsystem. And we
-> have it on good authority that initializing a struct or array with =3D { }
-> is the preferred way to do this in the kernel [1]. So here is a series
-> to take care of that.
-
-1) Is it worth the churn?
-
-2) Will this fail to initialize padding with some obscure compiler?
-
-3) Why do you believe that {} is the preffered way? All we have is
-Kees' email that explains that =3D {} maybe works in configs he tested.
-
-BR,
-								Pavel
-
-> [1]:
-> https://lore.kernel.org/linux-iio/202505090942.48EBF01B@keescook/
-
-
-
-> ---
-> David Lechner (28):
->       iio: accel: adxl372: use =3D { } instead of memset()
->       iio: accel: msa311: use =3D { } instead of memset()
->       iio: adc: dln2-adc: use =3D { } instead of memset()
->       iio: adc: mt6360-adc: use =3D { } instead of memset()
->       iio: adc: rockchip_saradc: use =3D { } instead of memset()
->       iio: adc: rtq6056: use =3D { } instead of memset()
->       iio: adc: stm32-adc: use =3D { } instead of memset()
->       iio: adc: ti-ads1015: use =3D { } instead of memset()
->       iio: adc: ti-ads1119: use =3D { } instead of memset()
->       iio: adc: ti-lmp92064: use =3D { } instead of memset()
->       iio: adc: ti-tsc2046: use =3D { } instead of memset()
->       iio: chemical: scd4x: use =3D { } instead of memset()
->       iio: chemical: scd30: use =3D { } instead of memset()
->       iio: chemical: sunrise_co2: use =3D { } instead of memset()
->       iio: dac: ad3552r: use =3D { } instead of memset()
->       iio: imu: inv_icm42600: use =3D { } instead of memset()
->       iio: imu: inv_mpu6050: use =3D { } instead of memset()
->       iio: light: bh1745: use =3D { } instead of memset()
->       iio: light: ltr501: use =3D { } instead of memset()
->       iio: light: opt4060: use =3D { } instead of memset()
->       iio: light: veml6030: use =3D { } instead of memset()
->       iio: magnetometer: af8133j: use =3D { } instead of memset()
->       iio: pressure: bmp280: use =3D { } instead of memset()
->       iio: pressure: mpl3115: use =3D { } instead of memset()
->       iio: pressure: mprls0025pa: use =3D { } instead of memset()
->       iio: pressure: zpa2326: use =3D { } instead of memset()
->       iio: proximity: irsd200: use =3D { } instead of memset()
->       iio: temperature: tmp006: use =3D { } instead of memset()
+> On 11. 06. 25, 14:03, Ilpo J=C3=A4rvinen wrote:
+> > On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
+> ...
+> > > +=09/*
+> > > +=09 * Test for UARTs that do not reassert THRE when the transmitter =
+is
+> > > idle and the interrupt
+> > > +=09 * has already been cleared.  Real 16550s should always reassert =
+this
+> > > interrupt whenever the
+> > > +=09 * transmitter is idle and the interrupt is enabled.  Delays are
+> > > necessary to allow register
+> > > +=09 * changes to become visible.
+> >=20
+> > Very long comment lines are hard to read. (This is mostly not related t=
+o
+> > line length limits, but with eye movement required.)
+> >=20
+> > It may make sense to place some of the descriptive comment text into a
+> > function comment instead of placing them mid-function.
+> >=20
+> > > +=09 *
+> > > +=09 * Synchronize UART_IER access against the console.
+> > > +=09 */
+> > > +=09uart_port_lock_irqsave(port, &flags);
+> > > +
+> > > +=09wait_for_xmitr(up, UART_LSR_THRE);
+> > > +=09serial_port_out_sync(port, UART_IER, UART_IER_THRI);
+> > > +=09udelay(1); /* allow THRE to set */
+> >=20
+> > These comments mix visually into the code making this look a big wall o=
+f
+> > text overall. Maybe consider adding empty lines to the logic as well as
+> > there are what looks clear steps in this logic.
 >=20
->  drivers/iio/accel/adxl372.c                       | 3 +--
->  drivers/iio/accel/msa311.c                        | 4 +---
->  drivers/iio/adc/dln2-adc.c                        | 4 +---
->  drivers/iio/adc/mt6360-adc.c                      | 3 +--
->  drivers/iio/adc/rockchip_saradc.c                 | 4 +---
->  drivers/iio/adc/rtq6056.c                         | 4 +---
->  drivers/iio/adc/stm32-adc.c                       | 3 +--
->  drivers/iio/adc/ti-ads1015.c                      | 4 +---
->  drivers/iio/adc/ti-ads1119.c                      | 4 +---
->  drivers/iio/adc/ti-lmp92064.c                     | 4 +---
->  drivers/iio/adc/ti-tsc2046.c                      | 3 +--
->  drivers/iio/chemical/scd30_core.c                 | 3 +--
->  drivers/iio/chemical/scd4x.c                      | 3 +--
->  drivers/iio/chemical/sunrise_co2.c                | 6 ++----
->  drivers/iio/dac/ad3552r.c                         | 3 +--
->  drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c | 5 ++---
->  drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c  | 5 ++---
->  drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c        | 4 +---
->  drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c        | 6 ++----
->  drivers/iio/light/bh1745.c                        | 4 +---
->  drivers/iio/light/ltr501.c                        | 4 +---
->  drivers/iio/light/opt4060.c                       | 4 +---
->  drivers/iio/light/veml6030.c                      | 4 +---
->  drivers/iio/magnetometer/af8133j.c                | 4 +---
->  drivers/iio/pressure/bmp280-core.c                | 5 +----
->  drivers/iio/pressure/mpl3115.c                    | 3 +--
->  drivers/iio/pressure/mprls0025pa_i2c.c            | 5 +----
->  drivers/iio/pressure/zpa2326.c                    | 4 +---
->  drivers/iio/proximity/irsd200.c                   | 3 +--
->  drivers/iio/temperature/tmp006.c                  | 4 +---
->  30 files changed, 34 insertions(+), 85 deletions(-)
-> ---
-> base-commit: 4c6073fec2fee4827fa0dd8a4ab4e6f7bbc05ee6
-> change-id: 20250611-iio-zero-init-stack-with-instead-of-memset-0d12d41a7e=
-cb
 >=20
-> Best regards,
+> What about this:
+> > /*
+> >  * Test for UARTs that do not reassert THRE when the transmitter is idl=
+e and
+> > the
+> >  * interrupt has already been cleared. Real 16550s should always reasse=
+rt
+> > this
+> >  * interrupt whenever the transmitter is idle and the interrupt is enab=
+led.
+> >  * Delays are necessary to allow register changes to become visible.
+> >  */
+> > static void serial8250_THRE_test(struct uart_port *port)
+> > {               struct uart_8250_port *up =3D up_to_u8250p(port);
+> >         unsigned long flags;
+> >         bool iir_noint1, iir_noint2;
+> >=20
+> >         if (!port->irq)
+> >                 return;
+> >                                 if (up->port.flags & UPF_NO_THRE_TEST)
+> >                 return;
+> >                 if (port->irqflags & IRQF_SHARED)
+> >                 disable_irq_nosync(port->irq);
+> >                 /* Synchronize UART_IER access against the console. */
+> >         uart_port_lock_irqsave(port, &flags);
+> >                 wait_for_xmitr(up, UART_LSR_THRE);
+> >         serial_port_out_sync(port, UART_IER, UART_IER_THRI);
+> >         /* allow THRE to set */
+> >         udelay(1);=20
+> >         iir_noint1 =3D serial_port_in(port, UART_IIR) & UART_IIR_NO_INT=
+;
+> >         serial_port_out(port, UART_IER, 0);
+> >         serial_port_out_sync(port, UART_IER, UART_IER_THRI);
+> >         /* allow a working UART time to re-assert THRE */
+> >         udelay(1);=20
+> >         iir_noint2 =3D serial_port_in(port, UART_IIR) & UART_IIR_NO_INT=
+;
+> >         serial_port_out(port, UART_IER, 0);
+> >=20
+> >         uart_port_unlock_irqrestore(port, flags);
+> >=20
+> >         if (port->irqflags & IRQF_SHARED)
+> >                 enable_irq(port->irq);                                 =
+/*
+> >          * If the interrupt is not reasserted, or we otherwise don't tr=
+ust
+> > the
+> >          * iir, setup a timer to kick the UART on a regular basis.
+> >          */
+> >         if ((!iir_noint1 && iir_noint2) || up->port.flags & UPF_BUG_THR=
+E)
+> >                 up->bugs |=3D UART_BUG_THRE;
+> > }
+> >=20
+>=20
+> ?
+
+I don't know what part exactly you wanted to ask about but it looks mostly=
+=20
+fine (sans what is broken due to email).
 
 --=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---rtWrUApkft0MEwbP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaEqbQAAKCRAw5/Bqldv6
-8quUAJ9TqDazu4enIZD/WIHKSEebP5o8lQCgo2StzDEJ7G4crF9oQEjDZPrt78A=
-=/MEA
------END PGP SIGNATURE-----
-
---rtWrUApkft0MEwbP--
+ i.
+--8323328-499402911-1749719919=:943--
 
