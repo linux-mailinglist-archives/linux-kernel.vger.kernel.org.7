@@ -1,124 +1,83 @@
-Return-Path: <linux-kernel+bounces-683472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-683477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF70AD6DED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:36:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B69AD6E04
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 12:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8D93AAC7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB9E1BC673C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Jun 2025 10:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5C6233D9E;
-	Thu, 12 Jun 2025 10:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CE9239E8A;
+	Thu, 12 Jun 2025 10:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujSnLxIC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Adhe+qAt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A9D239E8F;
-	Thu, 12 Jun 2025 10:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3922828032E;
+	Thu, 12 Jun 2025 10:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749724344; cv=none; b=eVP7s2P+2lrhzkKqBnqh8nLcqNOgj2Dwh2O+zVM0l1gP12bbcEFBThxlBmco33T5CpJlEUOwEKHfVJyD+RamNOJW3TLoPtURvoImtCNZOGvAWmi9MDOW9GceC630j78pJSbjv9X6OoXPFLV+fFbc5dKWtDq58sbsKkx4znRCwnM=
+	t=1749724356; cv=none; b=HR9vd4/OWcXL9bplXwWjJ2oD9+HN8DI+PtDVGZJCu6v05tPbnIch8bLPM40V1C3fT8+RuT4b1YVjLHOvlJDUNsHBCxzWHVmrfC1v7wQ4Taj7CO6ZvjpUPVGkzGUeOczQxRobRIEzSJVvnDj9gfrf2xrtlnYkZSSpNTYKqmG5SVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749724344; c=relaxed/simple;
-	bh=FsS6lOMAqt6O4kSiWFDk/a19S4XMRpll04UTzLeJcwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UJlaePbfY0kSMLaYSnDlSUW6XakcJaBn4f7aVAJFYW1zZ6u0d6fGcqnkLlH3Wh1zo2cwtiFNCt3GGkqBYOX80vkdXCJp/vpoABaIX2g/g6L7YD+UcMWFVty+1O6wQRjrVixZCEyZQZndFzhs0dTJy1kj0LaLJSPXXGadGQBFvb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujSnLxIC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C7CC4CEF1;
-	Thu, 12 Jun 2025 10:32:24 +0000 (UTC)
+	s=arc-20240116; t=1749724356; c=relaxed/simple;
+	bh=YMnRaTUFakFJLPvl7q3vCoMeTDEm9FrrLwyT1W/42nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWGyARZ/hqdTuX+eYNO+aUBuR5YhUiifhjERTQXoGJ6cdvpmMvFEx1tK3rR4TcuOc2TCQjYNM/VagVGQi8o0gNab0pFfcjMA4ddmA7KNpupwpc5p1BIsXULW5erHBowMapr7Hm/wOwFAfZEkulbv5DvcPCAhIrjx/fhJ3TXcvCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Adhe+qAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59C7C4CEEA;
+	Thu, 12 Jun 2025 10:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749724344;
-	bh=FsS6lOMAqt6O4kSiWFDk/a19S4XMRpll04UTzLeJcwU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ujSnLxICL70uRitMOPt/pnPTa/kFVygsYa0jIvSAG9tlCqpWPSwjmVNxSYp0tpcOB
-	 a5kbJR4AymcTNl/x84W+ouVtaF3Xw4qUAAaBnv7Ck3pfNgIz1gKBiP+ZHBwequMRrY
-	 G7CaHwLKENVKceJ+GkAO4e0FwAi90fNgdBW5dCAaz+GpaM3wfguIg/n6hdMJ5BrRp2
-	 D9OceGstlxS9o4h8WueMjv8vJA1IGgrs9MslYE4NXiyPR2t3GVkRiNuoOVljXWmVeb
-	 4p4qEQ5l2fzCm9igqYue45sO7y+kj8GR01XW/0VgxvAxBSOZ5R7nbm5+p7dkKc99Wo
-	 ak8+WA+tiYX2A==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uPfEM-00000004yvo-2h1n;
-	Thu, 12 Jun 2025 12:32:22 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Marco Elver" <elver@google.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v2 12/12] docs: conf.py: don't handle yaml files outside Netlink specs
-Date: Thu, 12 Jun 2025 12:32:04 +0200
-Message-ID: <d4b8d090ce728fce9ff06557565409539a8b936b.1749723671.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749723671.git.mchehab+huawei@kernel.org>
-References: <cover.1749723671.git.mchehab+huawei@kernel.org>
+	s=k20201202; t=1749724356;
+	bh=YMnRaTUFakFJLPvl7q3vCoMeTDEm9FrrLwyT1W/42nk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Adhe+qAttboQeqrW31YXMRcpFEw+Cfjk/7Dd3/UlW2It87CK+vAw8qc/6foHLRNyV
+	 k7clu4nQLf4qyHiFyBAkROiQ71bragstzHznsC1EFlSU3kX0B2mIIUwkTe5DgfNxtO
+	 ZSzFeJyAaK53rmb66VND8EZguN+12wAIe1ZWu7IWzjZL3V8VA64/ElHHnxEbl6DPPB
+	 WO/pWpTY3ky2JQfCfKvqKvwvuzKX5Na2ls9bCTaL2LfsC16MWqY4xsQIERQZWRqAJt
+	 QI1CGvBzv2vYovhuI/2UsIdAzmkmZUFdQeU/ipvF8p+VmvSjFsXAJRJun08ICb6VaC
+	 LLFf5mqV/c41w==
+Date: Thu, 12 Jun 2025 13:32:32 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
+Message-ID: <aEqswAc8nkXVAJH7@kernel.org>
+References: <301015.1748434697@warthog.procyon.org.uk>
+ <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+ <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
 
-The parser_yaml extension already has a logic to prevent
-handing all yaml documents. However, if we don't also exclude
-the patterns at conf.py, the build time would increase a lot,
-and warnings like those would be generated:
+On Wed, Jun 11, 2025 at 10:50:46AM -0700, Linus Torvalds wrote:
+> On Tue, 10 Jun 2025 at 17:23, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > It doesn't look like this has made its way to Linus.
+> 
+> Bah. It "made it" in the sense that sure, it's in my inbox.
+> 
+> But particularly during the the early merge window I end up heavily
+> limiting my emails to pull requests. And then it ended up composted at
+> the bottom of my endless pile of emails.
+> 
+> I guess I can still take it if people just say "do it".
+> 
+>             Linus
 
-    Documentation/netlink/genetlink.yaml: WARNING: o documento não está incluído em nenhum toctree
-    Documentation/netlink/genetlink-c.yaml: WARNING: o documento não está incluído em nenhum toctree
-    Documentation/netlink/genetlink-legacy.yaml: WARNING: o documento não está incluído em nenhum toctree
-    Documentation/netlink/index.rst: WARNING: o documento não está incluído em nenhum toctree
-    Documentation/netlink/netlink-raw.yaml: WARNING: o documento não está incluído em nenhum toctree
++1 for picking it.
 
-Add some exclusion rules to prevent that.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/conf.py | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index add6ce78dd80..b8668bcaf090 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -222,7 +222,11 @@ language = 'en'
- 
- # List of patterns, relative to source directory, that match files and
- # directories to ignore when looking for source files.
--exclude_patterns = ['output']
-+exclude_patterns = [
-+	'output',
-+	'devicetree/bindings/**.yaml',
-+	'netlink/*.yaml',
-+]
- 
- # The reST default role (used for this markup: `text`) to use for all
- # documents.
--- 
-2.49.0
-
+BR, Jarkko
 
