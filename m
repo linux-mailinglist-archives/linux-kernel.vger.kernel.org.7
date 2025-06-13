@@ -1,253 +1,270 @@
-Return-Path: <linux-kernel+bounces-686431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FC4AD971F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AB1AD96DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D951BC2E49
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1B6188324D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D532741C3;
-	Fri, 13 Jun 2025 21:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3186A27146E;
+	Fri, 13 Jun 2025 21:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HMNKX3Nr"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2047.outbound.protection.outlook.com [40.107.220.47])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cLNUEQDK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EDB272E44;
-	Fri, 13 Jun 2025 21:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749848976; cv=fail; b=Gi9XDcDUezUHhYcuzqmtjXuvAyebX8egzDs6t5rbdZ3uGPG2jfRgxlCWn1QFjbkrT0eLbIwS+z0U3JsnFcRh2DIV4gEb8FzJPc+xsJ/8jgXE6uZGZLeulSVCoG1hr4bYL0ga8mwFFn+1MOLeuU1CU08PCMdxzdg9Q8M5Yb5sob4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749848976; c=relaxed/simple;
-	bh=utRTbmMjuoseKIyi2mgUgb2CbbO0aZVIVlu38P0Dr9Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LJC1MizmcuKkhW75j8kf7x7IxRYcvmxFDYFn/ibqXGlcseHPcjFbIGAat9cIUmWNruHZI1K778w3PLPmZUY/DKST2zt4xyjdm1950lIL8UDEi2CDp3H9nabK2C/pKJgcM6fIGeefcktHN/VsXbKl8bxAyNvgIPtsAmX/5QTyPhU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HMNKX3Nr; arc=fail smtp.client-ip=40.107.220.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E/STXoYkuTtX6AjvzjzDEINWRZtaCtRXBRmlXUj+twecIAPIJkTJZBHcMTn3e/qpAqSBAffvDdYF3H6djhj97d5oUeCshZF/N7GDlXk166u7+ITOHd0vDOJOOm5nBu6wP8RkbavZ3zJ/hoXoEvxSCfOtLe+KrH1NI5K1ubQs1VuwtcH0jXDr480nloHSJhRYIU9Lsg3zPPvej0/NXM/uQPRLxEWsQkRmXKTyJ0F6HOkbR5tIeG3n/j+uT6bNgAvFiI7Z5EK2X4e8K6izaEXFo7bV2ZATk1MF7O756bmrgjcfeC28sXdypJyrfkH89AaTVWFg+3QQ8IP/icUNZ99LGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lcTzM5XN3l3Sd7lFf4fpceqrazo3z+vZ2R/RzQSq6C4=;
- b=LjQKF/HunMbX9v7iSeJwanOSswFD7diUkz2YKj8aBbxw3QYufLv72cOGx732l3ZCd3uOT1ZyVLJJRF2fnTGX0zTfhQVB3aIBz//NcX9KxG6ROMfpVnVCxlKsRkSlyWAZhVS8oFzWnJe4tDi9Nka/+vZz0gWDZic3FnPq1e901WnhDirjaUt6v5kMsJyUD0NIFMVDtL+hySdBLuBiK1zSgLFmGus0Q4Rx1JJPdA46ndVqsRzYzkp/Nd9qCQlg4nc0ADOJwzv79quD9LJWI/mVHqt2puck53cBuEfJIB1kN7FJCYWxXyWkvqfhGfCxgqX9m206MKjUveizdxhFocVMwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lcTzM5XN3l3Sd7lFf4fpceqrazo3z+vZ2R/RzQSq6C4=;
- b=HMNKX3Nrpo1yvQWToVOhD01fyPlZ0uu6f8z5UNg6j1Se58fe2jJjrvTO14iQ+YenSaqZET22BZ3695iRMNVqgRJiLh+wLonmHxOFn6Uzo3+v1w9qHAEiQaAxJfz4wWEdZUh9NeBw3DqVDlFEhdaHa/eSMYOxNn9KNcdx+FkDxPA=
-Received: from DM6PR02CA0103.namprd02.prod.outlook.com (2603:10b6:5:1f4::44)
- by IA1PR12MB6626.namprd12.prod.outlook.com (2603:10b6:208:3a2::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.43; Fri, 13 Jun
- 2025 21:09:30 +0000
-Received: from CY4PEPF0000EDD0.namprd03.prod.outlook.com
- (2603:10b6:5:1f4:cafe::be) by DM6PR02CA0103.outlook.office365.com
- (2603:10b6:5:1f4::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.31 via Frontend Transport; Fri,
- 13 Jun 2025 21:09:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EDD0.mail.protection.outlook.com (10.167.241.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Fri, 13 Jun 2025 21:09:30 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
- 2025 16:09:28 -0500
-From: Babu Moger <babu.moger@amd.com>
-To: <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
-	<reinette.chatre@intel.com>, <Dave.Martin@arm.com>, <james.morse@arm.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
-	<rostedt@goodmis.org>, <paulmck@kernel.org>, <thuth@redhat.com>,
-	<ardb@kernel.org>, <gregkh@linuxfoundation.org>, <seanjc@google.com>,
-	<thomas.lendacky@amd.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<manali.shukla@amd.com>, <perry.yuan@amd.com>, <kai.huang@intel.com>,
-	<peterz@infradead.org>, <xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>,
-	<mario.limonciello@amd.com>, <xin3.li@intel.com>, <gautham.shenoy@amd.com>,
-	<xin@zytor.com>, <chang.seok.bae@intel.com>, <fenghuay@nvidia.com>,
-	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
-	<eranian@google.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 30/32] fs/resctrl: Hide the BMEC related files when mbm_event mode is enabled
-Date: Fri, 13 Jun 2025 16:05:14 -0500
-Message-ID: <4769751d1de7c4f66b1c7f3c5ea7eeeb49951363.1749848715.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1749848714.git.babu.moger@amd.com>
-References: <cover.1749848714.git.babu.moger@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361B127144D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 21:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749848727; cv=none; b=ARnkLhRJI07V90yA5T4ZLS3yU8eOX1ZYvtquGodnqt3/+5c+bfzuB6Le2lBtVOJ1V+42tbXt6a8rsgZlLIBYApV7yVsHf+3sev24TqmNvusJI/3D6sNN8Z16eV3X7bVnZ41veVXiJHNoVzDE3nZx1ej8NTsaGqQGLWBYAO7fPzo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749848727; c=relaxed/simple;
+	bh=6b9uhCaucq1HR1ltLnDBNKjqEplDpXU2+ROBPXl5mPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nfyGh5W9SbRZbSnqH6g80LSwn8TTI7nHW2JjlSqZawXbMvgQZCAMNwQivWetXN83oDZAwjqDi6lFM3Cp432H4uOqO0hhVtb96WjXStkYY8O/w6QhzVCqFn+bZnn3c8vx859vLTEazyMA+XKcheKsXOCEA5DRtfuenVkw7yx5Q/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cLNUEQDK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749848724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KZRoIjhYsGtN1dGwrD8GFpMgCRv/BQTfuHtUSNNekCg=;
+	b=cLNUEQDKsufYNc8afAjcCVU5dvBiGWJu37uZ/5s8MhwcqF2Y+wAmjiEdWyrbWpgPkJ0fDN
+	nMc9MRQlaZ+yvf/UF3mf6D9mtPDdfCWF1BS6aPCqAyyw0+aaYjmwJe9b8DG8WrBybcUKUY
+	z1bqCui7knf6nbPuJPTYJgl+P9VNLzI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-553--J9CdwW_N-STTexnbez1Wg-1; Fri,
+ 13 Jun 2025 17:05:20 -0400
+X-MC-Unique: -J9CdwW_N-STTexnbez1Wg-1
+X-Mimecast-MFC-AGG-ID: -J9CdwW_N-STTexnbez1Wg_1749848719
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ADECF195608E;
+	Fri, 13 Jun 2025 21:05:18 +0000 (UTC)
+Received: from [10.22.89.154] (unknown [10.22.89.154])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D23A130044CC;
+	Fri, 13 Jun 2025 21:05:15 +0000 (UTC)
+Message-ID: <304247e3-8c09-4fd4-90a9-ec23fcba2420@redhat.com>
+Date: Fri, 13 Jun 2025 17:05:14 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD0:EE_|IA1PR12MB6626:EE_
-X-MS-Office365-Filtering-Correlation-Id: e89d6cb4-be5a-403b-9b0a-08ddaabe96b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WURGYm1lM2JKb3UxbjczTTVLTCtqMnRLVzRhT05VS2M5QVIydDh3WUdjOEdI?=
- =?utf-8?B?c2t3eGUyYXpBN2kxR0pPdEZnbTNhV3VmVUtSaFkrWlZrN2lCaUdUclpRL1k2?=
- =?utf-8?B?Z2FLQlpBb1hPclY0L3dTY2ZMRXQweEpyYjk1cGdQOXV5ZUNWeFlmU1VlS0lU?=
- =?utf-8?B?NFI5YWlKb3RvNTN1ZytVcE1aZDltek9oRm5hSVFwd1IyazdSblNWaGV0dDZE?=
- =?utf-8?B?MldPc2QvRHR4anUrbzBHWUtyNnVleDlWcjJIbnFUMGFWSnlUcHFvWkt4N1VM?=
- =?utf-8?B?NXBLL1JTUmpTOGhlTXZ2MWszMGhYSnJpeEd1bHRPT3duQjl5bTNYRll4dGsv?=
- =?utf-8?B?T25wci9sSXpjNTQvSEhEakpUOVJGbW9pSjBxMExpT3Nac0FiU0VualU0SzdC?=
- =?utf-8?B?am55aTJDeWNmMFFoK2tYS0JuZ1NYMUw0VkpDd3QxRmplVE4vcXRoODZienNz?=
- =?utf-8?B?N2RRWFNPaGgrai9zN0JKSGVtOVJVdUtLcERvNGV3b0R3WFVqZTBjQmxjMjRi?=
- =?utf-8?B?Szl4T3lrbjdwWG01aXhEYUVmd0RsZWZEOVFoSVZsa29tM1dJb1JrNmo4K29u?=
- =?utf-8?B?QjRwL0NHby9aelVQL09tS28zZEM4Ujl0TGcrRDF5MDgycDl1aUg5cUt2a1pR?=
- =?utf-8?B?ZEJFeDBCTXJlbGRwbW9Ndm5nRVZVdS9oSXBQY3NDRGVFdDF0UnRFK2xnOWp3?=
- =?utf-8?B?VDBEMFBPaVVhYzRKTUtxUmpCSFZleXl2Zmh4bUlLS2NaUmJyK1k0VG1mMGJw?=
- =?utf-8?B?cEhKVUZHSFlkNEN3bDZCbUg1elQ5MEJxNFBYSm5zN2pZd2RvcWtjWjBFRmR0?=
- =?utf-8?B?QnVQUG12dU53QklNLzExbEYyZ05sWHZCS2M4VGRIR1JqRlRJSExhdVRkYVg4?=
- =?utf-8?B?Qzk0YmR1U0tKRFJQczByc0VVVlh2dWNvbHp5R29tSzYrNVNRNlVMakdFVzg1?=
- =?utf-8?B?YkVXVmg2OFNXMWxTOVYvMW1HamdoTXBialhHeGFEa1dGZHFTMWM0RkdYNHJP?=
- =?utf-8?B?bkdoMXkrNDloenBFOEJNekc1OHpneUQzVE1tbGk2YkJTb3FoZ3Q1Smgzb3Yv?=
- =?utf-8?B?WVBFYTVoTm5UNVBEVWdqNTRsTm81UTFvbk0yM0dxVUkzMHNoTUt1M0FXQ2Zp?=
- =?utf-8?B?cHFFMmpuNi9WbW9NaGFabmtudSs4ZE14RGlNeVlIdlE3WmpsNWl4NGtRTnRB?=
- =?utf-8?B?b01aMEROTXVzOTRkT2tiRnVSVkNMMUMyNjV0c0QxVlNaY1ZsQVhwVHRudFUz?=
- =?utf-8?B?UU9hYVI2M29JTlo4WlpqMm56N2llckFBazkrZkIwQjZjQkJrSlZqOFovTzVX?=
- =?utf-8?B?RFJtMnhRdGRVQjRRVmRVcXg5YkRsNUZsM3FLMEtIVlVVUGZGaGQraDM2UjM5?=
- =?utf-8?B?bWhKNEhGTStCNVZrdnZ0VzJQY0tLQzViTStwQ2o1V29oNFkyZDEyVmtiN0hG?=
- =?utf-8?B?TlE2UGhzSlcycVVUdVVqVzh5a0dTTnVqendSQXh5dEZoNUhOSzhnVjVRVzNj?=
- =?utf-8?B?OUhCTXZRMERVRWxrMCtJUkhGOGpGR0NkellVTjZuTlJQT1VRSjlTdVg3ZzlL?=
- =?utf-8?B?TFQwTmdMSXkyVjllb01KdFZQWXNWNXlQOWIzTHZoZXNEeTZ6SUNDY0JXd01F?=
- =?utf-8?B?eWgvQ2pQYnhTSGErQ2dBVHVZZm1mRU96UUVEdlBERCtXUzlkdDFNYlhYU0Y0?=
- =?utf-8?B?Y0ZoYzh2Z08zTnk1RW5JRVF2UENlKzZmSFpQY0dMWEd4a2dSRFRocHlvY2c4?=
- =?utf-8?B?cytNdUk3aUFaNnF0QnRMYmJCWHhLcVMvMGpWdWNLajMxcW5yaG4yUEV0bVJx?=
- =?utf-8?B?SGFSYUwvNXFxVFVBOSs5MXR2VC9KdThITGsrKzRsRHpZRDlxRzJzUEpyUSth?=
- =?utf-8?B?SGM2dmtRZDV3SHJpbW5kekdsbFdKRWxNWDh3d3UxOUNkVUI0dFIvRmx6MVdt?=
- =?utf-8?B?ZVU5RE5WdVFkVmRhRFVnMklWYWc4eE9jbVZEZWwrR0JxZlpFZ2Y4akRmQmpW?=
- =?utf-8?B?YjJvSERLc2NmbzVCU0NXR2FjZldIT0pqaDlueGZRVHgyZG82RGJ3cmlzU2dK?=
- =?utf-8?B?ekdrMFZSOE9qUTVQM2wrZzE4ejhZMTUxeTF0dz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 21:09:30.4319
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e89d6cb4-be5a-403b-9b0a-08ddaabe96b3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6626
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] scsi: fnic: Add and improve logs in FDMI and FDMI
+ ABTS paths
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
+ mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, revers@redhat.com, dan.carpenter@linaro.org
+References: <20250612221805.4066-1-kartilak@cisco.com>
+ <20250612221805.4066-3-kartilak@cisco.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <20250612221805.4066-3-kartilak@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-BMEC (Bandwidth Monitoring Event Configuration) and mbm_event mode do not
-work simultaneously.
+Reviewed-by: John Meneghini <jmeneghi@redhat.com>
 
-When mbm_event mode is enabled, hide BMEC-related files to avoid confusion
-and update the mon_features display accordingly.
-
-The files /sys/fs/resctrl/info/L3_MON/mbm_total_bytes_config and
-/sys/fs/resctrl/info/L3_MON/mbm_local_bytes_config will not be visible
-when mbm_event mode is enabled.
-
-Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
-v14: Updated the changelog for change in mbm_assign_modes.
-     Added check in rdt_mon_features_show to hide bmec related feature.
-
-v13: New patch to hide BMEC related files.
----
- fs/resctrl/rdtgroup.c | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 92bb8f3adfae..8c67e0897f25 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -1164,7 +1164,8 @@ static int rdt_mon_features_show(struct kernfs_open_file *of,
- 		if (mevt->rid != r->rid || !mevt->enabled)
- 			continue;
- 		seq_printf(seq, "%s\n", mevt->name);
--		if (mevt->configurable)
-+		if (mevt->configurable &&
-+		    !resctrl_arch_mbm_cntr_assign_enabled(r))
- 			seq_printf(seq, "%s_config\n", mevt->name);
- 	}
- 
-@@ -1813,6 +1814,38 @@ static ssize_t mbm_local_bytes_config_write(struct kernfs_open_file *of,
- 	return ret ?: nbytes;
- }
- 
-+/**
-+ * resctrl_bmec_files_show() — Controls the visibility of BMEC-related resctrl
-+ * files. When @show is true, the files are displayed; when false, the files
-+ * are hidden.
-+ */
-+static void resctrl_bmec_files_show(struct rdt_resource *r, bool show)
-+{
-+	struct kernfs_node *kn_config, *l3_mon_kn;
-+	char name[32];
-+
-+	sprintf(name, "%s_MON", r->name);
-+	l3_mon_kn = kernfs_find_and_get(kn_info, name);
-+	if (!l3_mon_kn)
-+		return;
-+
-+	kn_config = kernfs_find_and_get(l3_mon_kn, "mbm_total_bytes_config");
-+	if (kn_config) {
-+		kernfs_get(kn_config);
-+		kernfs_show(kn_config, show);
-+		kernfs_put(kn_config);
-+	}
-+
-+	kn_config = kernfs_find_and_get(l3_mon_kn, "mbm_local_bytes_config");
-+	if (kn_config) {
-+		kernfs_get(kn_config);
-+		kernfs_show(kn_config, show);
-+		kernfs_put(kn_config);
-+	}
-+
-+	kernfs_put(l3_mon_kn);
-+}
-+
- static int resctrl_mbm_assign_mode_show(struct kernfs_open_file *of,
- 					struct seq_file *s, void *v)
- {
-@@ -2808,6 +2841,13 @@ static int rdtgroup_create_info_dir(struct kernfs_node *parent_kn)
- 			ret = resctrl_mkdir_counter_configs(r, name);
- 			if (ret)
- 				goto out_destroy;
-+
-+			/*
-+			 * Hide BMEC related files if mbm_event mode
-+			 * is enabled.
-+			 */
-+			if (resctrl_arch_mbm_cntr_assign_enabled(r))
-+				resctrl_bmec_files_show(r, false);
- 		}
- 	}
- 
--- 
-2.34.1
+On 6/12/25 6:18 PM, Karan Tilak Kumar wrote:
+> Add logs in FDMI and FDMI ABTS paths.
+> Modify log text in these paths.
+> 
+> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+> Reviewed-by: Arun Easi <aeasi@cisco.com>
+> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+> ---
+>   drivers/scsi/fnic/fdls_disc.c | 65 +++++++++++++++++++++++++++++++----
+>   1 file changed, 58 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
+> index 0ee1b74967b9..9e9939d41fa8 100644
+> --- a/drivers/scsi/fnic/fdls_disc.c
+> +++ b/drivers/scsi/fnic/fdls_disc.c
+> @@ -791,6 +791,7 @@ static uint8_t *fdls_alloc_init_fdmi_abts_frame(struct fnic_iport_s *iport,
+>   static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
+>   {
+>   	uint8_t *frame;
+> +	struct fnic *fnic = iport->fnic;
+>   	unsigned long fdmi_tov;
+>   	uint16_t frame_size = FNIC_ETH_FCOE_HDRS_OFFSET +
+>   			sizeof(struct fc_frame_header);
+> @@ -801,6 +802,9 @@ static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
+>   		if (frame == NULL)
+>   			return;
+>   
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: FDLS send FDMI PLOGI abts. iport->fabric.state: %d oxid: 0x%x",
+> +			 iport->fcid, iport->fabric.state, iport->active_oxid_fdmi_plogi);
+>   		fnic_send_fcoe_frame(iport, frame, frame_size);
+>   	} else {
+>   		if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING) {
+> @@ -809,6 +813,9 @@ static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
+>   			if (frame == NULL)
+>   				return;
+>   
+> +			FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +				 "0x%x: FDLS send FDMI RHBA abts. iport->fabric.state: %d oxid: 0x%x",
+> +				 iport->fcid, iport->fabric.state, iport->active_oxid_fdmi_rhba);
+>   			fnic_send_fcoe_frame(iport, frame, frame_size);
+>   		}
+>   		if (iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING) {
+> @@ -821,6 +828,9 @@ static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
+>   					return;
+>   			}
+>   
+> +			FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +				 "0x%x: FDLS send FDMI RPA abts. iport->fabric.state: %d oxid: 0x%x",
+> +				 iport->fcid, iport->fabric.state, iport->active_oxid_fdmi_rpa);
+>   			fnic_send_fcoe_frame(iport, frame, frame_size);
+>   		}
+>   	}
+> @@ -829,6 +839,10 @@ static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
+>   	fdmi_tov = jiffies + msecs_to_jiffies(2 * iport->e_d_tov);
+>   	mod_timer(&iport->fabric.fdmi_timer, round_jiffies(fdmi_tov));
+>   	iport->fabric.fdmi_pending |= FDLS_FDMI_ABORT_PENDING;
+> +
+> +	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +		 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +		 iport->fcid, iport->fabric.fdmi_pending);
+>   }
+>   
+>   static void fdls_send_fabric_flogi(struct fnic_iport_s *iport)
+> @@ -2292,7 +2306,7 @@ void fdls_fdmi_timer_callback(struct timer_list *t)
+>   	spin_lock_irqsave(&fnic->fnic_lock, flags);
+>   
+>   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> -		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
+> +		"iport->fabric.fdmi_pending: 0x%x\n", iport->fabric.fdmi_pending);
+>   
+>   	if (!iport->fabric.fdmi_pending) {
+>   		/* timer expired after fdmi responses received. */
+> @@ -2300,7 +2314,7 @@ void fdls_fdmi_timer_callback(struct timer_list *t)
+>   		return;
+>   	}
+>   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> -		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
+> +		"iport->fabric.fdmi_pending: 0x%x\n", iport->fabric.fdmi_pending);
+>   
+>   	/* if not abort pending, send an abort */
+>   	if (!(iport->fabric.fdmi_pending & FDLS_FDMI_ABORT_PENDING)) {
+> @@ -2309,26 +2323,37 @@ void fdls_fdmi_timer_callback(struct timer_list *t)
+>   		return;
+>   	}
+>   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> -		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
+> +		"iport->fabric.fdmi_pending: 0x%x\n", iport->fabric.fdmi_pending);
+>   
+>   	/* ABTS pending for an active fdmi request that is pending.
+>   	 * That means FDMI ABTS timed out
+>   	 * Schedule to free the OXID after 2*r_a_tov and proceed
+>   	 */
+>   	if (iport->fabric.fdmi_pending & FDLS_FDMI_PLOGI_PENDING) {
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			"FDMI PLOGI ABTS timed out. Schedule oxid free: 0x%x\n",
+> +			iport->active_oxid_fdmi_plogi);
+>   		fdls_schedule_oxid_free(iport, &iport->active_oxid_fdmi_plogi);
+>   	} else {
+> -		if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING)
+> +		if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING) {
+> +			FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +						"FDMI RHBA ABTS timed out. Schedule oxid free: 0x%x\n",
+> +						iport->active_oxid_fdmi_rhba);
+>   			fdls_schedule_oxid_free(iport, &iport->active_oxid_fdmi_rhba);
+> -		if (iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING)
+> +		}
+> +		if (iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING) {
+> +			FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +						"FDMI RPA ABTS timed out. Schedule oxid free: 0x%x\n",
+> +						iport->active_oxid_fdmi_rpa);
+>   			fdls_schedule_oxid_free(iport, &iport->active_oxid_fdmi_rpa);
+> +		}
+>   	}
+>   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> -		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
+> +		"iport->fabric.fdmi_pending: 0x%x\n", iport->fabric.fdmi_pending);
+>   
+>   	fdls_fdmi_retry_plogi(iport);
+>   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> -		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
+> +		"iport->fabric.fdmi_pending: 0x%x\n", iport->fabric.fdmi_pending);
+>   	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+>   }
+>   
+> @@ -3743,12 +3768,26 @@ static void fdls_process_fdmi_abts_rsp(struct fnic_iport_s *iport,
+>   
+>   	switch (FNIC_FRAME_TYPE(oxid)) {
+>   	case FNIC_FRAME_TYPE_FDMI_PLOGI:
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			"Received FDMI PLOGI ABTS rsp with oxid: 0x%x", oxid);
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +			 iport->fcid, iport->fabric.fdmi_pending);
+>   		fdls_free_oxid(iport, oxid, &iport->active_oxid_fdmi_plogi);
+>   
+>   		iport->fabric.fdmi_pending &= ~FDLS_FDMI_PLOGI_PENDING;
+>   		iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +			 iport->fcid, iport->fabric.fdmi_pending);
+>   		break;
+>   	case FNIC_FRAME_TYPE_FDMI_RHBA:
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			"Received FDMI RHBA ABTS rsp with oxid: 0x%x", oxid);
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +			 iport->fcid, iport->fabric.fdmi_pending);
+> +
+>   		iport->fabric.fdmi_pending &= ~FDLS_FDMI_REG_HBA_PENDING;
+>   
+>   		/* If RPA is still pending, don't turn off ABORT PENDING.
+> @@ -3759,8 +3798,17 @@ static void fdls_process_fdmi_abts_rsp(struct fnic_iport_s *iport,
+>   			iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
+>   
+>   		fdls_free_oxid(iport, oxid, &iport->active_oxid_fdmi_rhba);
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +			 iport->fcid, iport->fabric.fdmi_pending);
+>   		break;
+>   	case FNIC_FRAME_TYPE_FDMI_RPA:
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			"Received FDMI RPA ABTS rsp with oxid: 0x%x", oxid);
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +			 iport->fcid, iport->fabric.fdmi_pending);
+> +
+>   		iport->fabric.fdmi_pending &= ~FDLS_FDMI_RPA_PENDING;
+>   
+>   		/* If RHBA is still pending, don't turn off ABORT PENDING.
+> @@ -3771,6 +3819,9 @@ static void fdls_process_fdmi_abts_rsp(struct fnic_iport_s *iport,
+>   			iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
+>   
+>   		fdls_free_oxid(iport, oxid, &iport->active_oxid_fdmi_rpa);
+> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+> +			 "0x%x: iport->fabric.fdmi_pending: 0x%x",
+> +			 iport->fcid, iport->fabric.fdmi_pending);
+>   		break;
+>   	default:
+>   		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
 
 
