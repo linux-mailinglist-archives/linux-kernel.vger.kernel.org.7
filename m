@@ -1,84 +1,168 @@
-Return-Path: <linux-kernel+bounces-686320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C08AD95E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:07:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441FEAD95FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC531E2FD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:07:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C83E1BC3E38
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215AE23D28A;
-	Fri, 13 Jun 2025 20:07:34 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B55472608;
-	Fri, 13 Jun 2025 20:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0963E23D28A;
+	Fri, 13 Jun 2025 20:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iCtdbqq6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77C72343B6;
+	Fri, 13 Jun 2025 20:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749845253; cv=none; b=maTGo+rvX2Yrhfu2jL+mQUvB8cwnn8Jnejnti1gjjH0uCV6DyqzvlS1PjspPfSMjji7popzTdwS7zjgGhtcdmKsWHsX+eCMClJMiUl5llWXk7Ttn2Y6Vf21sE4fogtt5uhGPLjXddSFGjiJwSACWfXPfzIfNr8PlhaAdUIkzS+8=
+	t=1749845583; cv=none; b=eX/+chosiQxGfX6pnBTXNRwloztWZGd7wSoFOZ6W3ced9nTd50DcLxp210xI3uKqUNJzg1rag6ksZHFPIb9qMu26MiWaN2TZIA+Qn7QTlob6lbLvipqzPcKrTkGsn1eMhcVtQ4ZL2ivfZalmLkJRkDyqGZZzFIKcM8fGPmvbUGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749845253; c=relaxed/simple;
-	bh=mWoVO4+nIqKJNfVlaTd98H8+f125Mc8TgZzKioB0I2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCAw5TD2E75t9SP+IGAXWa9P+E5C/NjfoShJ0ASavaQd1nr0SCLzZj06cU1h7h5Bz6/xf3j/gCiMsp6LjewRj6w2aMRaydbJzYKHXh0hH2SYnWQhtM5HE9iIRqQsOX+lEOaRP/NnGcgdQpv4lPn9EcsDtvSFgI/mENyNpu8MxDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uQAgQ-00007d-00; Fri, 13 Jun 2025 22:07:26 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id B0F25C0176; Fri, 13 Jun 2025 16:16:57 +0200 (CEST)
-Date: Fri, 13 Jun 2025 16:16:57 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v1 1/1] MIPS: Alchemy: Remove unused forward declaration
-Message-ID: <aEwy2Ud08nHHAdED@alpha.franken.de>
-References: <20250531194346.3630898-1-andriy.shevchenko@linux.intel.com>
- <aEv_y5Lfe3Dul48I@smile.fi.intel.com>
- <aEwMFVSPzc-mV1ve@alpha.franken.de>
- <aEweZReuPzQ_hq8L@smile.fi.intel.com>
+	s=arc-20240116; t=1749845583; c=relaxed/simple;
+	bh=kD2ynVceQcdQa7T8ECS2SFeAwaNQpSN34BKH9Gb6w4Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ljoaBQrxQ0nJ6jtTpgkvzxWRc4gd/bBeKwIgmiTg291ALIVhuJ5UNtMk/AVgh81d5MBLZj0eTY4gpkipkFYSj/LFKHmSAqtoqVauFL1rUIPRJvzrSQ2JlOCEon2dXC2jOZlZ8ArQV52YhdKfpODCjqSDsj3whDFQnHRh8zkLpUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iCtdbqq6; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749845582; x=1781381582;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kD2ynVceQcdQa7T8ECS2SFeAwaNQpSN34BKH9Gb6w4Q=;
+  b=iCtdbqq6EDT+33VTE5R8i30vEAMwsDu1vuYNsEePH2EM27XR+5x1JOLg
+   WOlMrwY23bDLeZZpQ7/Md/BoY/oUWmyS20RzazGkwwe3n+gdKBbFsJDf0
+   u/obkquMH9Fv0oNgq3oxgqq8RQtC7wwtOr923JoaEmVAGV7EOzI1z3rrL
+   UjA/R9zsbNguUEX/PMw9vVKjpsuDz5FXkMkunnueTp5DYAenPcGwqboPa
+   fiE6OaVJL4zRUxoCAiazzTklgzXCKC1pMeoLKhMiWMxnnRcdBkWMYacxU
+   bVLDVjXRo6Q17dolnckMoiYAcZy/wi7mOW5KVtDTM2kvONiYZEuEWbvpf
+   g==;
+X-CSE-ConnectionGUID: z+OmUUhmTMmc+GNKRZg55Q==
+X-CSE-MsgGUID: srKTznbiT9aohxIpD8g2Nw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="51300341"
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="51300341"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 13:13:01 -0700
+X-CSE-ConnectionGUID: 7Rh7IRO2T12iXHL5n4lJng==
+X-CSE-MsgGUID: Civ3vyrtQKiNN7pquM/9PA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="148456793"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by orviesa007.jf.intel.com with ESMTP; 13 Jun 2025 13:12:56 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	vadim.fedorenko@linux.dev,
+	jiri@resnulli.us,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	aleksandr.loktionov@intel.com,
+	corbet@lwn.net
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-rdma@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net-next v6 0/3] dpll: add Reference SYNC feature
+Date: Fri, 13 Jun 2025 22:06:52 +0200
+Message-Id: <20250613200655.1712561-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEweZReuPzQ_hq8L@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 03:49:41PM +0300, Andy Shevchenko wrote:
-> On Fri, Jun 13, 2025 at 01:31:33PM +0200, Thomas Bogendoerfer wrote:
-> > On Fri, Jun 13, 2025 at 01:39:07PM +0300, Andy Shevchenko wrote:
-> > > +Cc: Bart.
-> > > 
-> > > On Sat, May 31, 2025 at 10:43:46PM +0300, Andy Shevchenko wrote:
-> > > > The 'struct gpio' is not used in the code, remove unneeded forward declaration.
-> > > > This seems to be a leftover for a 5 years.
-> > > 
-> > > Any comments on this, please?
-> > 
-> > looks good
-> 
-> Formal tag please?
-> 
-> > > It prevents us from moving forward with the killing the GPIO legacy APIs
-> > > (it's not critical at all in this case, just an inconvenience for a `grep`,
-> > > but still...).
-> > > 
-> > > I think we can take it via GPIO tree if there is no reply.
-> > 
-> > please do
-> 
-> Acked-by?
+The device may support the Reference SYNC feature, which allows the
+combination of two inputs into a input pair. In this configuration,
+clock signals from both inputs are used to synchronize the DPLL device.
+The higher frequency signal is utilized for the loop bandwidth of the DPLL,
+while the lower frequency signal is used to syntonize the output signal of
+the DPLL device. This feature enables the provision of a high-quality loop
+bandwidth signal from an external source.
 
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+A capable input provides a list of inputs that can be bound with to create
+Reference SYNC. To control this feature, the user must request a
+desired state for a target pin: use ``DPLL_PIN_STATE_CONNECTED`` to
+enable or ``DPLL_PIN_STATE_DISCONNECTED`` to disable the feature. An input
+pin can be bound to only one other pin at any given time.
 
+Verify pins bind state/capabilities:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do pin-get \
+ --json '{"id":0}'
+{'board-label': 'CVL-SDP22',
+ 'id': 0,
+ [...]
+ 'reference-sync': [{'id': 1, 'state': 'disconnected'}],
+ [...]}
+
+Bind the pins by setting connected state between them:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do pin-set \
+ --json '{"id":0, "reference-sync":{"id":1, "state":"connected"}}'
+
+Verify pins bind state:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do pin-get \
+ --json '{"id":0}'
+{'board-label': 'CVL-SDP22',
+ 'id': 0,
+ [...]
+ 'reference-sync': [{'id': 1, 'state': 'connected'}],
+ [...]}
+
+Unbind the pins by setting disconnected state between them:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do pin-set \
+ --json '{"id":0, "reference-sync":{"id":1, "state":"disconnected"}}'
+
+v6:
+- rebase,
+- 'dpll' -> 'DPLL'.
+
+Arkadiusz Kubalewski (3):
+  dpll: add reference-sync netlink attribute
+  dpll: add reference sync get/set
+  ice: add ref-sync dpll pins
+
+ Documentation/driver-api/dpll.rst             |  25 ++
+ Documentation/netlink/specs/dpll.yaml         |  19 ++
+ drivers/dpll/dpll_core.c                      |  45 +++
+ drivers/dpll/dpll_core.h                      |   2 +
+ drivers/dpll/dpll_netlink.c                   | 190 ++++++++++--
+ drivers/dpll/dpll_netlink.h                   |   2 +
+ drivers/dpll/dpll_nl.c                        |  10 +-
+ drivers/dpll/dpll_nl.h                        |   1 +
+ .../net/ethernet/intel/ice/ice_adminq_cmd.h   |   2 +
+ drivers/net/ethernet/intel/ice/ice_dpll.c     | 284 ++++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_dpll.h     |   2 +
+ include/linux/dpll.h                          |  13 +
+ include/uapi/linux/dpll.h                     |   1 +
+ 13 files changed, 575 insertions(+), 21 deletions(-)
+
+
+base-commit: 08207f42d3ffee43c97f16baf03d7426a3c353ca
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.38.1
+
 
