@@ -1,198 +1,94 @@
-Return-Path: <linux-kernel+bounces-685967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAEBAD9138
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:25:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E9BAD913B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A99527A6B84
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FDAF3BCF96
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72C61E8353;
-	Fri, 13 Jun 2025 15:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E31CWq5M"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D631E5729;
+	Fri, 13 Jun 2025 15:25:47 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7033718A6DF;
-	Fri, 13 Jun 2025 15:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40ED518A6DF
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 15:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749828316; cv=none; b=eytB3TJ/XKw3fH8Lzz0GMq/gzxa+ZJVHhlnvcQgJ5KLHKG0+O9ovrCUtH00AowdrvUvnMJVUFDyeMl+8F1bafRgVl1mFGJ15cMS8natWqsMK3JcV7mI5S9TqRpIUCVLVP2ooWAf0+jwLgsc0PAulO7PWKQDql0EAcdxzxfcXxMM=
+	t=1749828346; cv=none; b=Uomzc/TAqzk9oQrdkcagfBveKbG6GAKSUlEPtzFA8FduPoJyx99Yt9XQEbhN77kbkP5n0TyGj+a+oNHBdIE7fRAv46fCsyoddK5OL/0tHvmQLBVqqnKx9aEPKrGHqX0EKOzZ0vMXYeN4ugTenKCV8wV0p8NN/eQMtGA8hP9ifes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749828316; c=relaxed/simple;
-	bh=7kbpf/amXiLBHBqrXHn/DDFLA4Nstyyxn9xRrRyEAxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfvUCvA3qsuv0/9W+k6+F+YyyNgQ3FRavIlI3OohzB2fkEuvZsFyb7sLD0UcJWJ+LHdXpOATSSj3IZnjvSmX+A5HkGx71MtdNBuqauCCb/+bS2L8oljNABf13/ljQOqRvwD7PorNkqZg7sdMY0VNwVGlw01PFgHiEfIYokMpJjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E31CWq5M; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c922169051so140821585a.0;
-        Fri, 13 Jun 2025 08:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749828313; x=1750433113; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lAvMYCY7N602oTIv1xbvy3rwaOD5ob45HmfKgySj4yM=;
-        b=E31CWq5MpUA0O/wu1tAnQI2jhikTTKXYgddt/d9IuoU1B9gJ16FL0ixk+LrLBlIQLD
-         TWDpcYGJ325BigLzPO2uB+9FDkuWccmc75UL10JGzMbgxQ0ush0uXpb31dwyVQ13l5QY
-         rlM0iv4BTbPNDLQ3oopXm9CahGg8Yc9Oy0+ZofqYhuK3+pNrsRAhhLcBG43uIkOAdQUR
-         hG1IIHsWt6bv2toBSmPSVyu9ngdABPlP0ehemzOFmi7MniQynzOyVkJvP4J1AZ72QwQO
-         jHFe5k2ZURVuZvYNXVQcXwxFXzg0saTGLUpa2M/uTz/vFiW5x+M3xBzVhOsIWxVijd5p
-         EZNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749828313; x=1750433113;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lAvMYCY7N602oTIv1xbvy3rwaOD5ob45HmfKgySj4yM=;
-        b=mlawKeQDTB293EotX3K1jNPnbsZZ3ePAXMeFjMBNfKCQ7g2RyQd00MF5QpQJDi3/Ii
-         SWwT4UFhfK73ROvN7baztBht4/XHFJUEBKhHTyArB77rSK4DzefuGO4uoBQnGqGpaqW6
-         SxYBSinTaDqR+/AaayXah/gZsieR4lXUTZsbeAm/QS8+25Q5HfFDlF/L3U8LyQanx5oO
-         NW/izgv/ZpXiCwpf/34xqcFKTsWAVyp8LWSxmLrlcX+8ruI2zcBpr+kNEFVzN2sxeGsY
-         tPmFcOFLD3ARrsmQyvUytUIuCVYAFJRyf+C42Xp27pGyK1kzd2MDrEq4uZHMhlJt6idb
-         A38A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHSQMO008sSv9G8EOHsI6eSBaVIFmsto/eulxf2raRIqBhLErpkjuM4OdWD1oQNU9AJpLuj7h5T11Y0Fk=@vger.kernel.org, AJvYcCUbJAE9lGu5Dbr+7biEvJ+ymFxIdGw/lqbI5757jG8yDajiTyIvWjb8MN/orzGTIkRB36ngUR4EwBcoceZ5fEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxJb2WNQX0YSHoMrC516lkYi1XZ0x68+XleXVINSlCzpTdMkW+
-	n4aiTGgpuQJPWR3BuPpa4Po8o5B4wMgNL9EfvvrspvXBDFj0V3rwR+fZ
-X-Gm-Gg: ASbGnct5yHAclEzbKvaoEs1zzmFxULp9QqtB0ftkhGxRn8wu1KVDoSbtX0feDaSHYUj
-	uIgN2cVtdqfMOB7mNi+OMe3qbksspavptvtuUNW4JSGGzUR9AChFO6p0uGeOLH1HKjrRZC0BPNQ
-	kFxmOGYt3tJI/duEwOYV4VTjWUfolQqo2poJ/v7SKNjdJX4e3GfEl7ZUaeR0T4lTuNzuZOHf+Dm
-	ng6GYlOhKSqb0GDEore7PCk1cTZU1z1Y0rRAYzK40hstlxAjcPT/2X/klin0+ZPwGlA5vWZgv8u
-	CuC1hahgtV/WRTw6k0g20AdHwBlPIIzV67rNcOAzzNXTtlkCWPfuCAOQ3kC/zXi9/NAaYhCE8UE
-	/GxnzIKZSeSBgoGi9b7YaJBwcE4GGAxAd7iyVW+3NOVjjNQRNjAIi
-X-Google-Smtp-Source: AGHT+IF0nUAxa3ReBaADmdgbTluy0nUpM5l1CqJ7CF4aRQW+mAF+H8dNcq9aeQVegX9bYVkg1XO5gw==
-X-Received: by 2002:a05:620a:2905:b0:7ca:df2c:e112 with SMTP id af79cd13be357-7d3bc4b8904mr469287285a.45.1749828313083;
-        Fri, 13 Jun 2025 08:25:13 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8eac852sm184655885a.71.2025.06.13.08.25.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 08:25:12 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B68461200043;
-	Fri, 13 Jun 2025 11:25:11 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 13 Jun 2025 11:25:11 -0400
-X-ME-Sender: <xms:10JMaOdiZhcyzdY9O-UyB-HYPT4bQ2eExX7BSrCeeVb_lvLYlm5YuQ>
-    <xme:10JMaIPCXbrhyhWgzd2KbHv3tqiEgajb8TKENsm-AA05nZMNtwojaMca2R1AEfHoG
-    PHK8lHfRad0WPP8Iw>
-X-ME-Received: <xmr:10JMaPjb0XgDR_VD9sZev4hdAsMDoQjNbtigy7Ghh-_dV-W9yvAHZM1Hvg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddukeefudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvhedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprggtohhurhgsohhtsehnvhhiughirgdrtg
-    homhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegr
-    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrg
-    hrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgr
-    ihhlrdgtohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehtmhhgrhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepuggrkhhrsehkvghrnh
-    gvlhdrohhrgh
-X-ME-Proxy: <xmx:10JMaL_kfhoKrO6X8e3fz52F0wnehq8a6jKkLf17zQC5_DLEj2z-0A>
-    <xmx:10JMaKvD4gdM7EQ95ZJZjAv5YReN4IXxytDIypr7FBVye2qNKA75zg>
-    <xmx:10JMaCGO40MMjFycUE4eFTeVCmv8MrGVbGoWc57K13ufV-rjUvrk0w>
-    <xmx:10JMaJO7nnDgCfmU5iEo8WgGK6AoKvkSkG8oC9hOFgZth1sQ5r7QFQ>
-    <xmx:10JMaHO8UP66GCv2E26QOvTPmojbt-HM3WaXjUu0O8N_sb9of3oQwtMv>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 13 Jun 2025 11:25:11 -0400 (EDT)
-Date: Fri, 13 Jun 2025 08:25:10 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Benno Lossin <lossin@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v5 04/23] rust: add new `num` module with `PowerOfTwo`
- type
-Message-ID: <aExC1j8WmkJn3Csb@Mac.home>
-References: <20250612-nova-frts-v5-0-14ba7eaf166b@nvidia.com>
- <20250612-nova-frts-v5-4-14ba7eaf166b@nvidia.com>
- <aErtL6yxLu3Azbsm@tardis.local>
- <DALGWEM3TD3O.95L77CD6R62S@nvidia.com>
+	s=arc-20240116; t=1749828346; c=relaxed/simple;
+	bh=5Qxm/mUOR7cmc6BrDSdpe6P/adHyAhov4VLqzOUjc4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NrPtrdZePfY/WJLXbMb1r8BCAqZeeT3Yc2pn2vtcUwfK7ZO3VjUqWUwWzURMkhqojl6waT0ntUSywNN2SbNxtQRJnDFhbteS7Sro3kBSuw8zONS/jwpxFW6o9nVjnIMFgjJQrrM6xb82FgXyTxvnFqQI83XTLFbriAdM5bTwYl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 9ADB8120A87;
+	Fri, 13 Jun 2025 15:25:35 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id E8C8220038;
+	Fri, 13 Jun 2025 15:25:32 +0000 (UTC)
+Date: Fri, 13 Jun 2025 11:25:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: juri.lelli@redhat.com, bsegall@google.com, dietmar.eggemann@arm.com,
+ linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it, mgorman@suse.de,
+ mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
+ vschneid@redhat.com, yuri.andriaccio@santannapisa.it
+Subject: Re: [RFC PATCH 5/9] sched/deadline: Hierarchical scheduling with DL
+ on top of RT
+Message-ID: <20250613112531.04cfa8ad@batman.local.home>
+In-Reply-To: <20250611135456.61493-1-yurand2000@gmail.com>
+References: <aEfwxUyu54Y1EXJI@jlelli-thinkpadt14gen4.remote.csb>
+	<20250611135456.61493-1-yurand2000@gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DALGWEM3TD3O.95L77CD6R62S@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: E8C8220038
+X-Stat-Signature: b863p6t3mr3aiymdfksf5jrzxd73h44z
+X-Rspamd-Server: rspamout07
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1++YD2dBarreGRLQfXg0JX4SQCK0wJYWpk=
+X-HE-Tag: 1749828332-630125
+X-HE-Meta: U2FsdGVkX1+IoBJY9fUs4RxV2RXZQqXln+frg5L8jeKzAYWCZKEgL+C2I1wSJpA0VzJNtX7st3LcR+xzzfh5U6PhftrrzQkGxbwtY6q1MZKU5oaQVac9nue7UbklB/ymRCnTW/QpOOvFJ5x5XiTKJPsbj3qy5ShGA0McjlclcaH2wNixJmAIH7jpH2yS1D1D9iYkpDikaP4y+10M+cXn/MWzF4xgPwALYu+2tWuEwQQ+LV7oO4UGiBkYRRr2cNMasIAkIIkOaWabjjqyEhZWyvP4KKCak0U4dB8N/DEVZzwpW6p5MQI/TF3HQQTocOAVc3BRe1lPC2GIFwk/7l8KgWUI4zemYSGf
 
-On Fri, Jun 13, 2025 at 11:16:10PM +0900, Alexandre Courbot wrote:
-[...]
-> >> +#[repr(transparent)]
-> >> +pub struct PowerOfTwo<T>(T);
-> >> +
-> >> +macro_rules! power_of_two_impl {
-> >> +    ($($t:ty),+) => {
-> >> +        $(
-> >> +            impl PowerOfTwo<$t> {
-> >> +                /// Validates that `v` is a power of two at build-time, and returns it wrapped into
-> >> +                /// `PowerOfTwo`.
-> >> +                ///
-> >> +                /// A build error is triggered if `v` cannot be asserted to be a power of two.
-> >> +                ///
-> >> +                /// # Examples
-> >> +                ///
-> >> +                /// ```
-> >> +                /// use kernel::num::PowerOfTwo;
-> >> +                ///
-> >> +                /// let v = PowerOfTwo::<u32>::new(256);
-> >> +                /// assert_eq!(v.value(), 256);
-> >> +                /// ```
-> >> +                #[inline(always)]
-> >> +                pub const fn new(v: $t) -> Self {
-> >
-> > Then this function should be unsafe, because an invalid `v` can create
-> > an invalid PowerOfTwo.
+On Wed, 11 Jun 2025 15:54:56 +0200
+Yuri Andriaccio <yurand2000@gmail.com> wrote:
+
+> Hi,
 > 
-> Doesn't the `build_assert` below allow us to keep this method safe,
-> since it will fail at build-time if it cannot be asserted that `v` is a
-> power of two?
+> thanks for your feedback.
 > 
+> > From changelog (and confirmed by changed lines), this patch might be doing too
+> > many things at once and so it might be harder to review. Do you think it can
+> > be split in smaller chunks?  
+> 
+> I'm currently working on splitting this patch (and the patch 8) in smaller
+> chunks as you suggested, adding changes bit by bit.
+> 
+> I'll submit the updated version of the patchset for a RFC v2 as soon as I have
+> it done.
 
-You're right, I misunderstood a bit, so if compiler cannot be sure about
-the assertion from build_assert!() it'll still generate a build error,
-i.e. even for cases like:
+Hi Yuri,
 
-    pub fn my_power_of_two(v: i32) -> PowerOfTwo<i32> {
-        PowerOfTwo::new(v)
-    }
+Thanks for doing this. On your next version, please add your own
+Signed-off-by to each patch you send. Although you may not be the
+author, you are posting them, which requires a Signed-off-by which
+basically is you saying you have the right to post these patches.
 
-where `v` is a user input and the value is unknown at the build time.
-build_assert!() will trigger.
+Thanks,
 
-Regards,
-Boqun
+-- Steve
 
-> >
-> >> +                    build_assert!(v.count_ones() == 1);
-> >> +                    Self(v)
-> >> +                }
-[...]
 
