@@ -1,112 +1,96 @@
-Return-Path: <linux-kernel+bounces-685630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B393DAD8C7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:49:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBA1AD8C87
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A3FD7A970E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:47:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B374179857
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548D8347DD;
-	Fri, 13 Jun 2025 12:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02DC200A3;
+	Fri, 13 Jun 2025 12:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dOWVlNK1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEulPce0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEACA12B73;
-	Fri, 13 Jun 2025 12:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEBD79F5;
+	Fri, 13 Jun 2025 12:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749818944; cv=none; b=i80YgsjLM6uwg5XTDfsehFIrb40DNnMSlyk4I+JleUoiU+l0LifibQ+sNFFAKNqTb3bgEh6/O0jo+HeEDdPZzX0kK5rG+NVa5yho9VynyPAyOJuPa1EFnfDb+yEazSsyNsE2GLQv2G5aejEhM2halVEYwiksKYSf5b54XLSYeLA=
+	t=1749819026; cv=none; b=WoMwG0ICzgHu0NGkMx4pbhw/lIXCub1Qf/lWuacOdQlMwi5fuk085LDhydg3OdlgmNIl6aHcPfIYsA6WQYYxa/UfQ1pe+ey4E0J2ktrbtpP6EtpvADb/ZsbLxqLgSgYT312J6DweJAykBtAYYzOwCKYGtv/TvVzhtvmufdpy9w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749818944; c=relaxed/simple;
-	bh=YEq3r8z9CPTt5vkquBPOsdtVyNqtsd8fCjZ9kOARXHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0PO7q2FKtnxtvhZ5Wk8ycQtmDZDj5v/m0DQzqM0a1b5HtEkkWEnlncMDRIc+PrfZ07xcK24Fbw6wwUURCT3r+05Y679Rzkdal6aFxMEfb5GH9klgu5fWHTDkVTqGCXIzH6LtRD4JgtA7W1rC0LglBfx/33G8Tol/s0mrvpKrqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dOWVlNK1; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749818943; x=1781354943;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YEq3r8z9CPTt5vkquBPOsdtVyNqtsd8fCjZ9kOARXHw=;
-  b=dOWVlNK1efwrUGCvOs5/pJPWSORzT00BOhe+13b84Js2xKqwPBlVX6K6
-   dcPYSBVdxbtMqbHxP6zFUZmUy5Au4Le0xPflUdySFERg/vzi4OawoHeaV
-   GoSSTYaNX1OWoVp11vTKcUzpWqPHy0Fk5rvQGZAaU81bjW+QQdFSMOBKY
-   qS+f+DAIpArAGMbKqxlMEXAupfkdk+f6FkJ7A9qOF2s2eFXcsfOex1I78
-   fvwHdV07L4CL/3vdWuxka49zUb1X3kjmGVxXLhSi63+TqLpjVOJNwaoJh
-   IIHhiYyfa1Sp+l7kmaYs6LSByJtQC7fETHpqDjtAzSkMvg0MEyGeTWA9l
-   A==;
-X-CSE-ConnectionGUID: QekG7zqPRfiVU9tmbrbpLg==
-X-CSE-MsgGUID: PRuNhoT3QbGSAbU3r9eAUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="63386439"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="63386439"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:49:02 -0700
-X-CSE-ConnectionGUID: L8mRnVdgSiWXFWr30HX9ew==
-X-CSE-MsgGUID: QEGtiL6UR0SjxOy0sLjvLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="147722174"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:48:58 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uQ3q2-00000006FPO-1dnT;
-	Fri, 13 Jun 2025 15:48:54 +0300
-Date: Fri, 13 Jun 2025 15:48:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	andy@kernel.org, nuno.sa@analog.com, Michael.Hennerich@analog.com,
-	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com,
-	linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
-	broonie@kernel.org, jonath4nns@gmail.com, dlechner@baylibre.com
-Subject: Re: [PATCH v11 00/11] iio: adc: ad7768-1: Add features,
- improvements, and fixes
-Message-ID: <aEweNqhLsL_Hg_gl@smile.fi.intel.com>
-References: <cover.1749569957.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1749819026; c=relaxed/simple;
+	bh=79WqwjURJrzcM8vb/SrEx49AYycjsLMAMZFEZGKyt8U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WhGeVtfX7O78nZwc7GI21xeMF7rSkavPiBF/XkKn3wSUHagJDsAtdC1yZRNBFE/iMlQ99MckgvO+JCRU9zvMOJ0GTxfvfhAEZgXDPgcKvvsJ6mch2idBvKDzYa5rbiOFsaV+SN4IPmkO7AvQJvMFKruXr2ME5jsGlRDh7lyCV6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEulPce0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55CFC4CEE3;
+	Fri, 13 Jun 2025 12:50:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749819025;
+	bh=79WqwjURJrzcM8vb/SrEx49AYycjsLMAMZFEZGKyt8U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cEulPce0chfJ/48f3xl++id2UE+66hPqoI/OwP4GXDX1qDNutroMdTPltj5gZAzNY
+	 BKSXlPQRTjYbLZjJkM/VUTcD62fQOjAqYuENIvXb+pFlPhE2VLMsNKPxM0t4NPacXp
+	 09IayyOwye8v9t0ujUPnQeFP82iuXgJdXs03fbfkHinzC3RvMUu0jUW7MegSx8oJo+
+	 kJhBbYUWO6BVJh8yNhHp1RKOjl3sSx4JqKlD2b6Kj40UI4hpbbbfWw2d8G+P7kwSEu
+	 FJ91hmg6iD5XK6M25MVyhtgva6tT2jTyRKhSOTCoivULEcYqkIoUhe6fnOqIdT/qKZ
+	 s/AcHZQchhbAg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>
+Cc: <acourbot@nvidia.com>,  <dakr@kernel.org>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Valentin Obst" <kernel@valentinobst.de>,
+  <linux-kernel@vger.kernel.org>,  "Marek Szyprowski"
+ <m.szyprowski@samsung.com>,  "Robin Murphy" <robin.murphy@arm.com>,
+  <airlied@redhat.com>,  <rust-for-linux@vger.kernel.org>,
+  <iommu@lists.linux.dev>,  "Petr Tesarik" <petr@tesarici.cz>,  "Andrew
+ Morton" <akpm@linux-foundation.org>,  "Herbert Xu"
+ <herbert@gondor.apana.org.au>,  "Sui Jingfeng" <sui.jingfeng@linux.dev>,
+  "Randy Dunlap" <rdunlap@infradead.org>,  "Michael Kelley"
+ <mhklinux@outlook.com>
+Subject: Re: [PATCH v4 1/3] rust: dma: clarify wording and be consistent in
+ `coherent` nomenclature
+In-Reply-To: <20250602085444.1925053-2-abdiel.janulgue@gmail.com> (Abdiel
+	Janulgue's message of "Mon, 02 Jun 2025 11:53:11 +0300")
+References: <20250602085444.1925053-1-abdiel.janulgue@gmail.com>
+	<9MKxKNA6QF7sSvlvmOX-7hZHeRN1N-Qm1EKm3nhZFgJLsmZAKhIrzu1ZeRy1w-4f7ZZGUEHhxLLILrq05UpOKA==@protonmail.internalid>
+	<20250602085444.1925053-2-abdiel.janulgue@gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Fri, 13 Jun 2025 14:49:02 +0200
+Message-ID: <87y0tvbydd.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1749569957.git.Jonathan.Santos@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Wed, Jun 11, 2025 at 08:49:34AM -0300, Jonathan Santos wrote:
-> 
-> This patch series introduces some new features, improvements,
-> and fixes for the AD7768-1 ADC driver.
-> 
-> The goal is to support all key functionalities listed in the device
-> datasheet, including filter mode selection, common mode voltage output
-> configuration and GPIO support. Additionally, this includes fixes
-> for SPI communication and for IIO interface, and also code improvements
-> to enhance maintainability and readability.
+"Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-(for all except DT patches)
+> In the kernel, `consistent` and `coherent` are used interchangeably for the
+> region described in this api. Stick with `coherent` nomenclature
+> to show that dma_alloc_coherent() is being used, in addition to improving
+> the clarity in the DMA mapping attributes documentation.
+>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 
-The nit-picks can be addressed either in next version (if needed) or whilst
-applying. Up to maintainers and you.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
+
+Best regards,
+Andreas Hindborg
+
 
 
 
