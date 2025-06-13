@@ -1,93 +1,176 @@
-Return-Path: <linux-kernel+bounces-684806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC989AD8071
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:46:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14719AD8077
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6023A2024
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41AD1898FD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B904C1C4A10;
-	Fri, 13 Jun 2025 01:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B47D1DE4C2;
+	Fri, 13 Jun 2025 01:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lr6F0E45"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1xX1Hgd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CDA13C9D4
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 01:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA572636;
+	Fri, 13 Jun 2025 01:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749779169; cv=none; b=Tekz7ZmzYpww8T8jnNuUODsVBqOjj8nVEYOyA8zfOvbKjuOn4XVOcyfwLt3GNj9/jfTLU6q/7mWJy+khnJ92t65oHrs/MPz7n6LdkO/HXnwxYsbpWGqofV94pt5sTO/kflhsgUpQyo69Oc34ljDer2VJI/aM+uaqqQ/0XMuPLyU=
+	t=1749779295; cv=none; b=dIdjgRQ4EynVK4acKaKJff+P+8d6Z8IPuuR7lNZTkpLA/Y9zvuV1+pryH0kVz1blkyaNA1QKUVEvU5j9scSLLwrQAADZsDYC6SjhJOpNu2bJ/NMatxBnFjHMQkJzDKgucVyllN9I08z7a70uj9JSj47fft/bSMdWx74Fe8ID+14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749779169; c=relaxed/simple;
-	bh=AIEFXSNFIQ8wHSdxmdtHNoIPh/Lc/0SGjlWekdE0oNU=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=IvdxqoM4ggJC468LARZW5hlZKBW+1k5Pp1Ce0cxiXTOZfxfDTnFxWdQGAHsyg3/zpb6Yio0cBR2Ji0SxVMjC3bbRu2nH2pzly63KLccGMBfBlvialTa/ha0kpmfGs83Fe42RRHh7+lpGzAuumg47j88df8jy+jwySQDFvMiE8mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lr6F0E45; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749779164; h=Message-ID:Subject:Date:From:To;
-	bh=I1iitAfuyNfHL08DWYkuTZtILYFZ/AGD1QTYq1Beu+c=;
-	b=lr6F0E45OH3/cNii0gAVbMPjCFnVWWrO84d2X1Ndazfb0Nehb0FaubBRDtbKSboWJxtV2blNTXNeLHwdCeLYlNVGjYb1jHw4gfo8V7SPGbaeDtp93kZSH4QBZIEGPTybHoGpmbLBEboluQJ7HI01uWQAGTL0Ms/fX/nc3TLmeDY=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WdiV4L5_1749779163 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Jun 2025 09:46:03 +0800
-Message-ID: <1749779153.2349436-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v2 1/3] virtio: Fix typo in register_virtio_device() doc comment
-Date: Fri, 13 Jun 2025 09:45:53 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: alok.a.tiwari@oracle.com,
- linux-kernel@vger.kernel.org,
- darren.kenny@oracle.com,
- david@redhat.com,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com,
- virtualization@lists.linux.dev
-References: <20250529084350.3145699-1-alok.a.tiwari@oracle.com>
-In-Reply-To: <20250529084350.3145699-1-alok.a.tiwari@oracle.com>
+	s=arc-20240116; t=1749779295; c=relaxed/simple;
+	bh=q464iU8oHlOhLED7rRVpQcVddt2ATVpp07Hs0FJvkhs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=o8uxog51Y+3ePSlK60JzBD1sGjPb+Vv2qEkvHC9v/qeQ5flDxsI0B4UqIXr9F0x8BrQT2FMGLin+eMuLnbSL+VVJDhBFycAAOW3V9wr/WHwDfGjt5UGgeTkmw+FtAZDvFHF19acori8uH7udCkrjE6zdA1HlyXmsA9Kkm59XfB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1xX1Hgd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C2CC4CEEA;
+	Fri, 13 Jun 2025 01:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749779295;
+	bh=q464iU8oHlOhLED7rRVpQcVddt2ATVpp07Hs0FJvkhs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=o1xX1HgdwejrnX+GXCdC9S2Fjocpu2bzjEEehryJnyXXEYAkmBK9+/h7SS+7VSwbo
+	 8U9hHjdoBxZ3eYmFRL2I2wuW5ybBhtozGPcRQGbD1p8poOk0CcjS14QtV210xu5CkD
+	 FLMf2VBCKjhdt0UDnCBbv4aFRXeXqd10mKJrX2ItmO2ggSGRTKJFKW2ZbPjdMW2hJE
+	 S1eoBKRhv2fPB4aJDeyhZhI7kroOVvAQMfoukme0U5x2l315GPE0CEXwG5Mcni/l1q
+	 gKumC53vfUQHU5dgoiXY3RMGKABIGRi/+d4wZFQsqzpMlmArJlY9m1KnXNlAxG4dob
+	 BVSOSifEpkk/A==
+Date: Thu, 12 Jun 2025 18:48:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>
+CC: Jann Horn <jannh@google.com>, "Eric W. Biederman" <ebiederm@xmission.com>,
+ Richard Guy Briggs <rgb@redhat.com>,
+ Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org,
+ Andy Lutomirski <luto@kernel.org>, morgan@kernel.org,
+ Christian Brauner <christian@brauner.io>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250612212626.GA166079@mail.hallyn.com>
+References: <202505151451.638C22B@keescook> <87ecwopofp.fsf@email.froward.int.ebiederm.org> <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com> <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook> <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com> <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com> <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com> <20250612212626.GA166079@mail.hallyn.com>
+Message-ID: <40CCFDE0-A0DC-4F4E-8621-206F53D9225B@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 29 May 2025 01:42:39 -0700, Alok Tiwari <alok.a.tiwari@oracle.com> wrote:
-> Corrected "suceess" to "success" in the function documentation
-> for clarity.
->
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> Acked-by: Jason Wang <jasowang@redhat.com>
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
-> ---
-> v1 -> v2
-> No changes; only added Acked-by: Jason Wang.
-> ---
->  drivers/virtio/virtio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On June 12, 2025 2:26:26 PM PDT, "Serge E=2E Hallyn" <serge@hallyn=2Ecom> =
+wrote:
+>On Tue, Jun 10, 2025 at 08:18:56PM -0400, Paul Moore wrote:
+>> On Wed, May 21, 2025 at 11:36=E2=80=AFAM Jann Horn <jannh@google=2Ecom>=
+ wrote:
+>> > On Wed, May 21, 2025 at 5:27=E2=80=AFPM Eric W=2E Biederman <ebiederm=
+@xmission=2Ecom> wrote:
+>> > > Jann Horn <jannh@google=2Ecom> writes:
+>> > >
+>> > > > On Wed, May 21, 2025 at 12:13=E2=80=AFAM Eric W=2E Biederman
+>> > > > <ebiederm@xmission=2Ecom> wrote:
+>> > >
+>> > > > Looks good to me overall, thanks for figuring out the history of =
+this
+>> > > > not-particularly-easy-to-understand code and figuring out the rig=
+ht
+>> > > > fix=2E
+>> > > >
+>> > > > Reviewed-by: Jann Horn <jannh@google=2Ecom>
+>> > > >
+>> > > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_bi=
+nprm *bprm, const struct file *file)
+>> > > >>         /* Process setpcap binaries and capabilities for uid 0 *=
+/
+>> > > >>         const struct cred *old =3D current_cred();
+>> > > >>         struct cred *new =3D bprm->cred;
+>> > > >> -       bool effective =3D false, has_fcap =3D false, is_setid;
+>> > > >> +       bool effective =3D false, has_fcap =3D false, id_changed=
+;
+>> > > >>         int ret;
+>> > > >>         kuid_t root_uid;
+>> > > >>
+>> > > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_bi=
+nprm *bprm, const struct file *file)
+>> > > >>          *
+>> > > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no n=
+ew privs=2E
+>> > > >>          */
+>> > > >> -       is_setid =3D __is_setuid(new, old) || __is_setgid(new, o=
+ld);
+>> > > >> +       id_changed =3D !uid_eq(new->euid, old->euid) || !in_grou=
+p_p(new->egid);
+>> > > >
+>> > > > Hm, so when we change from one EGID to another EGID which was alr=
+eady
+>> > > > in our groups list, we don't treat it as a privileged exec? Which=
+ is
+>> > > > okay because, while an unprivileged user would not just be allowe=
+d to
+>> > > > change their EGID to a GID from their groups list themselves thro=
+ugh
+>> > > > __sys_setregid(), they would be allowed to create a new setgid bi=
+nary
+>> > > > owned by a group from their groups list and then execute that?
+>> > > >
+>> > > > That's fine with me, though it seems a little weird to me=2E setg=
+id exec
+>> > > > is changing our creds and yet we're not treating it as a "real" s=
+etgid
+>> > > > execution because the execution is only granting privileges that
+>> > > > userspace could have gotten anyway=2E
+>> > >
+>> > > More than could have gotten=2E  From permission checking point of v=
+iew
+>> > > permission that the application already had=2E  In general group ba=
+sed
+>> > > permission checks just check in_group_p, which looks at cred->fsgid=
+ and
+>> > > the group=2E
+>> > >
+>> > > The logic is since the effective permissions of the running executa=
+ble
+>> > > have not changed, there is nothing to special case=2E
+>> > >
+>> > > Arguably a setgid exec can drop what was egid, and if people have
+>> > > configured their permissions to deny people access based upon a gro=
+up
+>> > > they are in that could change the result of the permission checks=
+=2E  If
+>> > > changing egid winds up dropping a group from the list of the proces=
+s's
+>> > > groups, the process could also have dropped that group with setresg=
+id=2E
+>> > > So I don't think we need to be concerned about the combination of
+>> > > dropping egid and brpm->unsafe=2E
+>> > >
+>> > > If anyone sees a hole in that logic I am happy to change the check
+>> > > to !gid_eq(new->egid, old->egid), but I just can't see a way changi=
+ng
+>> > > egid/fsgid to a group the process already has is a problem=2E
+>> >
+>> > I'm fine with leaving your patch as-is=2E
+>>=20
+>> Aside from a tested-by verification from Max, it looks like everyone
+>> is satisfied with the v2 patch, yes?
+>>=20
+>> Serge, I see you've reviewed this patch, can I assume that now you
+>> have a capabilities tree up and running you'll take this patch?
 >
-> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> index 95d5d7993e5b..2c022640ec4b 100644
-> --- a/drivers/virtio/virtio.c
-> +++ b/drivers/virtio/virtio.c
-> @@ -506,7 +506,7 @@ static int virtio_device_of_init(struct virtio_device *dev)
->   * On error, the caller must call put_device on &@dev->dev (and not kfree),
->   * as another code path may have obtained a reference to @dev.
->   *
-> - * Returns: 0 on suceess, -error on failure
-> + * Returns: 0 on success, -error on failure
->   */
->  int register_virtio_device(struct virtio_device *dev)
->  {
-> --
-> 2.47.1
->
+>I can take another look and consider taking it on Monday, but until
+>then I'm effectively afk=2E
+
+I'd rather this go via the execve/binfmt tree=2E I was waiting for -rc2 be=
+fore putting it into -next=2E I can do Sunday night after it's out=2E :)
+
+--=20
+Kees Cook
 
