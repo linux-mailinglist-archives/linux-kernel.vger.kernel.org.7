@@ -1,126 +1,225 @@
-Return-Path: <linux-kernel+bounces-685163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953D7AD84E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70360AD850E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58DD016D589
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBDC51893DDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119A52E6D3B;
-	Fri, 13 Jun 2025 07:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A712E62A0;
+	Fri, 13 Jun 2025 07:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EM3tyTAH"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kbfxDFdg"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5072E337E;
-	Fri, 13 Jun 2025 07:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30772E6110;
+	Fri, 13 Jun 2025 07:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800535; cv=none; b=CY6a/I+qowU34WJkV2soe4Idz2N8FYHvjL7ORTvULjcV8vcNxcyxrBAjVFnuSbREPtWS/npzmKmpeiZxTiaOigos84X4dX+R1xr8AlvgQm2UYtnwJOGhvfIBMfu5DDGRxbJ4gvHWllhHD4L//ytALacCrmcKc7ueWoM2WdayMQM=
+	t=1749800338; cv=none; b=iw1TNvUlWvT+xV2KuNUxSpN8OtgDh5CuWS/MWKLzVQTKv47Ib2dfqBeDXIEro73z5nQ+VAe6SYK0DaqKRR+TiK00h2weQiYY8DxVEQ8wNA1GiNyQuEEZdO9WO0zcre1cjbP3F6AFSI5YQqaXjS/hrCp/ofbl6YUABO5Jr9Ep5Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800535; c=relaxed/simple;
-	bh=c4VPRTpmVLRj51P1P/drS8KkDTxWgLY6SmOUwd3FyJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CLaMrF5dpyHl0ckglUaeam9BmqLYqNRj2sjjVoV91mfCJKS8OYmEZklLrBcIPdLWiyjKTFWhLQfewIpKOatm/66AHfk3UkUC+IWrlC/XvXdIW4wECs8MWULWH4UgYxO7+vhWnhro8SQT9V5pVUCiC+AIPfzscT0Gk785vsJNGAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EM3tyTAH; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1749800338; c=relaxed/simple;
+	bh=jlHx5hwuxTAqnwI8Qw4RJcIgRGyuIHjQkgvwwjwo2LI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PZeKVz5ZIvP9Kfr46z3fiq+7SBOR48SsL37q+ObGPJo4Z7mBg+Rc3QGS85UMOkwJWOASdsqdKoBzsJ61xyxdNN2ec+KyIj06+AkFfFW5kXahV3Kml3v0mJAJrxXUMj1CzihVJtDDmKVM887VVv1jwDzFC3eQE9PhObKhfL0LfOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kbfxDFdg; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4530e6f4db4so1669795e9.2;
-        Fri, 13 Jun 2025 00:42:11 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b43c5c04fso1417131fa.0;
+        Fri, 13 Jun 2025 00:38:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749800530; x=1750405330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749800335; x=1750405135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+mHRCW2P2LDNhBI8HSjh6g8BIpo2V/XePOS2AmYos8w=;
-        b=EM3tyTAHZ4vQMPbujSWWp1Gkzb3ZPSIn3rk33DwT6K4lSc+jeL9J8N27+CixW6fYT0
-         1OUxtpctKxaL+aPMMbnphqVwNR1XKRSZfjHVOyFgY3bXOCEIAbcaqq53FBNliiCxh3G3
-         KBAWtWz/gwhwx20DAaaGfORW5QNNvWDM9wUa4iMV9BdZsJUrpy2as4i2q8QcZAXpvyEM
-         fIHzaCJHRg3EEf5UUFTVuceR97qKcpxdKWI1T5T/pXYf9699zpAwscPyt5gNJhb8Tjrh
-         pp/uhOTu0vFyGpP00bsedA1EK233qj2Fj6ZAFoP2N4x5QakM6Za1JqskTMYw1W5MjxmG
-         lV0A==
+        bh=2snE+bbgVXzx5opbdAh5YB6aoSkRDd4dkM12RKy9Zzo=;
+        b=kbfxDFdg6v1kOz0nGAR1W9+SJDPfIv8zDUi9WjEgB4CYnjOYLgblkrfXE6ss5kR+M4
+         YQ81YaEu6gRECn2dC1n0RSpR1wNcjFYCcOgtHieNwe3jBqs42Q14w/gArSUI0eYwSMUp
+         P6BrkmsjFAsWAU5zYdigthy0TIId5hO722SehW2FrNubuPw3ub2mc//T8zbWULmSYF5M
+         FhwIcwO3OgaNjPIEE1UO61S1NLGRIJBzLzBdSpYK2yrvdFDhECeg9fV8hWGy9A6QRyyX
+         TUXW5Q/TK3Jjn3TOck45rhU+Mzt+yDADZRPnTGvJCLk7Js9GY7pKqTo0/v1Ec+a/azrj
+         FudA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749800530; x=1750405330;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749800335; x=1750405135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+mHRCW2P2LDNhBI8HSjh6g8BIpo2V/XePOS2AmYos8w=;
-        b=eT5zvoyUJWJ07oS/JKAGZdI0AGieeCeX8qjEK9BkYosVGjMv28f7MF9sgSoJDdB9xe
-         LedWz/e542dLzXW+T5bWi6PEUH/jxJpumH8NlU6eOQ+kk3jBc3FW9ArKqVHowPM/kk6J
-         EYdt+3+JB1lZLcldIqSL4ThrT3x3lQlly4PsAwKAOC51BzZG6C7h4vYtkTQsYKsEWDnA
-         X2dqpzO2FlfyKc9lpFy0Y6+9UOK+KckQTdJX7Mz5vg6Xh6ydK0Q14x5eTLbgjcDFfAgN
-         gHO5ccNZy4rCShWkJm25d9/TVGeRr6MJu+1YdNSIixRxKEAgJ4sHMJROVZZt9MxnlSy5
-         ww0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWuHvg+pCgaS64pMASSiQN+kwesl+JgC+WMzwGmuUn8PVwaUZVRlK2fCZBhOXW29JPbv/CZUjlD6g0LhKFyspY=@vger.kernel.org, AJvYcCXB2lFBgl0WFjVC+qWJ2+ftOCUDTwIaUsWDohauj2LWBjVbYXjFNeV8hHr6d3xvfsimqJZt+WH3gIqpQpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxggJlGij6LCQwudKWgrIPbq7lLHSKyWCI3Q7z7v9zBoohp5e1b
-	68emfWH1MSA++R7mHAvW0DhOfbbqIZWVkdOC9VcTRfe0v7Y1ubAmt/Velj1LnVJP
-X-Gm-Gg: ASbGncv4lJ1qbMVFpF4CQJ83srWmHl1gzh+i5nSXXdD0qJjAdrm0XM5XTLNDwVtDl/M
-	vHxHOCCd65NElSul3WFKQAx4BmJ6DOnuBuBlJK039osRYM/ncjnyNQz/agae8EV8/j4f48CwM2G
-	+KC0O+a7FpIphxu8Cvz7yrF08FiPenO308Mbx5frCsMOypq83yp1QGcZhvrnSzdw1IwKpnJUEUF
-	zFXIvVIM95/VYRvCqoHqqhSve/4/5nZDly0M9kEbZy/AHooPN/5nlwP+ZtjuJrMfoBcYUm+pDv5
-	kMD2Km+j64BhF1PowAg78WEiRE8zIQY2HuYT64AH0lcrTxKVVMnA2qqfl5PjMg1bFICNpMSC0ll
-	tsPdygDA41rnSjbeBrxuebsxa+PlrDmDEJ4k5e6jFpcVHAAlnBNtiHDUtISGUGfFTcD4LLs5OWO
-	Wp8Q1973Mh
-X-Google-Smtp-Source: AGHT+IGX3ElMSuMPQPMhJruu5vPH6ifXwBOMevT//Ehz8t4/ajxGCobDDyPCH92F6MevBuNrEmCMwQ==
-X-Received: by 2002:a05:6000:22c2:b0:3a4:d30a:7633 with SMTP id ffacd0b85a97d-3a56874032cmr674690f8f.15.1749800530234;
-        Fri, 13 Jun 2025 00:42:10 -0700 (PDT)
-Received: from thomas-precision3591.home (2a01cb00014ec300ef49063bf04e52e9.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:ef49:63b:f04e:52e9])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a568b08785sm1518728f8f.56.2025.06.13.00.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 00:42:09 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rtw-next] wifi: rtlwifi: fix possible skb memory leak in _rtl_pci_init_one_rxdesc()
-Date: Fri, 13 Jun 2025 09:38:36 +0200
-Message-ID: <20250613074014.69856-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <9800869271a34ca3835743207c0a4109@realtek.com>
-References: <9800869271a34ca3835743207c0a4109@realtek.com>
+        bh=2snE+bbgVXzx5opbdAh5YB6aoSkRDd4dkM12RKy9Zzo=;
+        b=ZQsQZHQlrovCTyvGwhirDPjmtk5xowfDEotWe0y7hfWz9QcUVekYyNEcJp6fkPxduK
+         gwXd6u1urqV684jQq/BBpK8OAzpAcuWG4gmX/scpO8uS4HvwUJ7DWRz5MbxtMbkCFW+A
+         sjugMUm/WFf0k+N12Z9uHttiuJUbuP/lKJdPQK64IFPDpQxZHxuqZE0Ja4MqHwjxYFKi
+         ZkhgB27fJAGZC60jMrpNajrixEGfktEsCRokCBz3agKXUKZB89mMZ6Ipe6GNp7rpdSUF
+         iC7i8sE6cpxomoHMqT/RW/9L9t4Jvcc0Evi8FIAslO7JHnn03ktarQA7hoewqXmLkZUr
+         1hZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXP9g4STR9JGoAFRMSchFe4+WMlV/G2wGHveU9lb7QdV74iVyj6X+p0QbCcLH34Xym+OskFi9xC@vger.kernel.org, AJvYcCXxX0FmQSpQA3J9lwlgMI6CWQK8lBZY0De1W+Tptym6eWsoOLOlOvR78YiWaNrYv9U0AH64HTdFyh4cQtQG@vger.kernel.org
+X-Gm-Message-State: AOJu0YynzhfTPqB8aQ7WzZbYu32kbwp9/bT5awYlv0F6HjsJ5ugoC2We
+	WbE8DXE1HgxLSfB2cuO66Kr/G4PuLkvTV9GwcutPaJPdLwGVZpd7EqicAV4+dQPOl27KWMBvGtF
+	qgH4bTmdwlHjd3qddWPqpBsBbp0qRsGM=
+X-Gm-Gg: ASbGnct4tcSvbsL2gZNVKZR3/kQ4tDCrLpFmhFrB5GAMDS26yjcduG9XYhDzhVblNIn
+	9anxglBhtFJPDza+ZGRAgcQzJedYi5Ecbv0/HSD09r9wI9nxibjEjKW9lxsVpbKLLnh+5nXoeok
+	ZLUItDwcQWPLVHD3CxxNkkQlAur/0Kh6UWKnN0ydkdCqvr2uCB9ExIUQ==
+X-Google-Smtp-Source: AGHT+IFh4Z8yJABYXTto0CU65jTSk1UpTtOC9b00IjTJotmc+C0ThKDtLHCbIRjhpDo5TyNPFR6UwC+r5s3jPRZRZ2s=
+X-Received: by 2002:a2e:bea0:0:b0:30d:c4c3:eafa with SMTP id
+ 38308e7fff4ca-32b3fd76eb9mr4076051fa.7.1749800334347; Fri, 13 Jun 2025
+ 00:38:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250612103743.3385842-1-youngjun.park@lge.com>
+ <20250612103743.3385842-3-youngjun.park@lge.com> <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
+ <CAKEwX=PsGKS5JHqQ-G29Fg8xLssPhM+E-4wV_QakhqrDOsV36g@mail.gmail.com>
+ <CAMgjq7Aq1LW9wFgyQ4oCS5Su23X62S+5ZW_d5OydJj-pp2n21Q@mail.gmail.com>
+ <CAKEwX=PD+P_wugkAJ83ti6YRo4-6QNM7HDFs+KDURVwx2JrnZg@mail.gmail.com>
+ <aEvPBSObBrrQCsa3@yjaykim-PowerEdge-T330> <CAMgjq7BzQ8bKKXuHB=TiQnkdSdCuABXrRf8Z8w2QkjpD44jdgA@mail.gmail.com>
+In-Reply-To: <CAMgjq7BzQ8bKKXuHB=TiQnkdSdCuABXrRf8Z8w2QkjpD44jdgA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 13 Jun 2025 15:38:37 +0800
+X-Gm-Features: AX0GCFvf-NtVlOutH0cboEpQxncMH9Qo2kIalrzH-ZX5C1AFR5cVChJfxC3ceRc
+Message-ID: <CAMgjq7BPQx93GhaUU0sURVkhf7AofE-qqzSwXS22RXnJhE=3Rw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm: swap: apply per cgroup swap priority
+ mechansim on swap layer
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shikemeng@huaweicloud.com, bhe@redhat.com, baohua@kernel.org, 
+	chrisl@kernel.org, muchun.song@linux.dev, iamjoonsoo.kim@lge.com, 
+	taejoon.song@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When `dma_mapping_error()` is true, if a new `skb` has been allocated,
-then it must be de-allocated.
+On Fri, Jun 13, 2025 at 3:36=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> On Fri, Jun 13, 2025 at 3:11=E2=80=AFPM YoungJun Park <youngjun.park@lge.=
+com> wrote:
+> >
+> > On Thu, Jun 12, 2025 at 01:08:08PM -0700, Nhat Pham wrote:
+> > > On Thu, Jun 12, 2025 at 11:20=E2=80=AFAM Kairui Song <ryncsn@gmail.co=
+m> wrote:
+> > > >
+> > > > On Fri, Jun 13, 2025 at 1:28=E2=80=AFAM Nhat Pham <nphamcs@gmail.co=
+m> wrote:
+> > > > >
+> > > > > On Thu, Jun 12, 2025 at 4:14=E2=80=AFAM Kairui Song <ryncsn@gmail=
+.com> wrote:
+> > > > > >
+> > > > > > On Thu, Jun 12, 2025 at 6:43=E2=80=AFPM <youngjun.park@lge.com>=
+ wrote:
+> > > > > > >
+> > > > > > > From: "youngjun.park" <youngjun.park@lge.com>
+> > > > > > >
+> > > > > >
+> > > > > > Hi, Youngjun,
+> > > > > >
+> > > > > > Thanks for sharing this series.
+> > > > > >
+> > > > > > > This patch implements swap device selection and swap on/off p=
+ropagation
+> > > > > > > when a cgroup-specific swap priority is set.
+> > > > > > >
+> > > > > > > There is one workaround to this implementation as follows.
+> > > > > > > Current per-cpu swap cluster enforces swap device selection b=
+ased solely
+> > > > > > > on CPU locality, overriding the swap cgroup's configured prio=
+rities.
+> > > > > >
+> > > > > > I've been thinking about this, we can switch to a per-cgroup-pe=
+r-cpu
+> > > > > > next cluster selector, the problem with current code is that sw=
+ap
+> > > > >
+> > > > > What about per-cpu-per-order-per-swap-device :-? Number of swap
+> > > > > devices is gonna be smaller than number of cgroups, right?
+> > > >
+> > > > Hi Nhat,
+> > > >
+> > > > The problem is per cgroup makes more sense (I was suggested to use
+> > > > cgroup level locality at the very beginning of the implementation o=
+f
+> > > > the allocator in the mail list, but it was hard to do so at that
+> > > > time), for container environments, a cgroup is a container that run=
+s
+> > > > one type of workload, so it has its own locality. Things like syste=
+md
+> > > > also organize different desktop workloads into cgroups. The whole
+> > > > point is about cgroup.
+> > >
+> > > Yeah I know what cgroup represents. Which is why I mentioned in the
+> > > next paragraph that are still making decisions based per-cgroup - we
+> > > just organize the per-cpu cache based on swap devices. This way, two
+> > > cgroups with similar/same priority list can share the clusters, for
+> > > each swapfile, in each CPU. There will be a lot less duplication and
+> > > overhead. And two cgroups with different priority lists won't
+> > > interfere with each other, since they'll target different swapfiles.
+> > >
+> > > Unless we want to nudge the swapfiles/clusters to be self-partitioned
+> > > among the cgroups? :) IOW, each cluster contains pages mostly from a
+> > > single cgroup (with some stranglers mixed in). I suppose that will be
+> > > very useful for swap on rotational drives where read contiguity is
+> > > imperative, but not sure about other backends :-?
+> > > Anyway, no strong opinions to be completely honest :) Was just
+> > > throwing out some ideas. Per-cgroup-per-cpu-per-order sounds good to
+> > > me too, if it's easy to do.
+> >
+> > Good point!
+> > I agree with the mention that self-partitioned clusters and duplicated =
+priority.
+> > One concern is the cost of synchronization.
+> > Specifically the one incurred when accessing the prioritized swap devic=
+e
+> > From a simple performance perspective, a per-cgroup-per-CPU implementat=
+ion
+> > seems favorable - in line with the current swap allocation fastpath.
+> >
+> > It seems most reasonable to carefully compare the pros and cons of the
+> > tow approaches.
+> >
+> > To summaraize,
+> >
+> > Option 1. per-cgroup-per-cpu
+> > Pros: upstream fit. performance.
+> > Cons: duplicate priority(some memory structure consumtion cost),
+> > self partioned cluster
+> >
+> > Option 2. per-cpu-per-order(per-device)
+> > Pros: Cons of Option1
+> > Cons: Pros of Option1
+> >
+> > It's not easy to draw a definitive conclusion right away,
+> > I should also evaluate other pros and cons that may arise during actual
+> > implementation.
+> > so I'd like to take some time to review things in more detail
+> > and share my thoughs and conclusions in the next patch series.
+> >
+> > What do you think, Nhat and Kairui?
+>
+> Ah, I think what might be best fits here is, each cgroup have a pcp
+> device list,  and each device have a pcp cluster list:
+>
+> folio -> mem_cgroup -> swap_priority (maybe a more generic name is
+> better?) -> swap_device_pcp (recording only the *si per order)
+> swap_device_info -> swap_cluster_pcp (cluster offset per order)
 
-Compile tested only
+Sorry the truncate made this hard to read, let me try again:
 
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/net/wireless/realtek/rtlwifi/pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+folio ->
+  mem_cgroup ->
+    swap_priority (maybe a more generic name is better?) ->
+      swap_device_pcp (recording only the *si per order)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wireless/realtek/rtlwifi/pci.c
-index 898f597f70a9..472072630f8d 100644
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -572,8 +572,11 @@ static int _rtl_pci_init_one_rxdesc(struct ieee80211_hw *hw,
- 		dma_map_single(&rtlpci->pdev->dev, skb_tail_pointer(skb),
- 			       rtlpci->rxbuffersize, DMA_FROM_DEVICE);
- 	bufferaddress = *((dma_addr_t *)skb->cb);
--	if (dma_mapping_error(&rtlpci->pdev->dev, bufferaddress))
-+	if (dma_mapping_error(&rtlpci->pdev->dev, bufferaddress)) {
-+		if (!new_skb)
-+			kfree_skb(skb);
- 		return 0;
-+	}
- 	rtlpci->rx_ring[rxring_idx].rx_buf[desc_idx] = skb;
- 	if (rtlpriv->use_new_trx_flow) {
- 		/* skb->cb may be 64 bit address */
--- 
-2.43.0
+And:
+swap_device_info ->
+  swap_cluster_pcp (cluster offset per order)
 
+And if mem_cgroup -> swap_priority is NULL,
+fallback to a global swap_device_pcp.
 
