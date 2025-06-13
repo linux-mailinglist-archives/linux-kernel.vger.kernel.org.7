@@ -1,322 +1,248 @@
-Return-Path: <linux-kernel+bounces-685173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220E6AD8509
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:54:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45D9AD8538
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90FA27AD60F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B5C1893B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BB92727F5;
-	Fri, 13 Jun 2025 07:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNZW2e57"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4B82727F6;
+	Fri, 13 Jun 2025 08:02:44 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF844239E8B;
-	Fri, 13 Jun 2025 07:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749801147; cv=fail; b=g9EVjbALDzsahokshuhhU1yp1AbQCq5BGZfQUg81AmfY6KJRaiVowS7kCHGiUKasohP44bgXmCXwxJyw/EBLSNd8o24yu/EuuwMgke4jmsseRq4xlggRsFe8VykW2hLvG9b3j0nxLW4MNKM66JQYmY7sXYp/lkyNfkB+Amu73kE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749801147; c=relaxed/simple;
-	bh=w6WLLCIyDkM+H9Y+fKHu2fIw2kdSh2hT9Zt18dmsq9I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Hm5OCRAN4vFu5Fyj6DHNJesKH7z03J6zCCBD18HNVqvctNyfLJQ9QwjfWx8FaQhNIQrTQ+BTX55M4zEaDWZaT+qktrwXj0gH6x9pkbdeeRiGLuSTQCD+Np62VXPKCPgmRFY2a0t8BZvDXB1lWRHh9iCGyJDsY/6CUsnsAuVsKgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNZW2e57; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749801146; x=1781337146;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=w6WLLCIyDkM+H9Y+fKHu2fIw2kdSh2hT9Zt18dmsq9I=;
-  b=bNZW2e57XC11XdmmLC+ghlwjQGghRGfxmEILeokXcNYXx3lAp1GuWrDj
-   UtKHbRqQZ8L+Cm0AjxPUfwwrEodn5b5lxX9DuG9CvAmsZLGcVZo+2yQ0F
-   oZQFJKa7UFRY0zDIWGwsIJxdxsjkMmkSKnYTXW4tRm11N8cxTmC2EWCNy
-   i2ik6a7U3X81YvKSfmVH6VDUXG6jDZggeIcKVEkmgR+YY0SiSiZVQE84N
-   9ckBiv1x83zLq47cZC6oe9VzZ8/O8BZf52TB2lK93mZerlRphF+lRwjy0
-   RFSkTX4fI6gweFuN92bOhM3XLUONbCjPx1WGvhBkDFkIrul1XzXKLyLWz
-   A==;
-X-CSE-ConnectionGUID: +yzqvxoHToCdIUkIykhERQ==
-X-CSE-MsgGUID: mS7bWbt5QEaw2P2uVH6ESA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="51234309"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="51234309"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:52:23 -0700
-X-CSE-ConnectionGUID: wWQhLD0OR1icxPrSRuZITA==
-X-CSE-MsgGUID: CNsKmgBbTtqwm8f2bzfvwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="178657031"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:52:23 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 13 Jun 2025 00:52:22 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 13 Jun 2025 00:52:22 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.48)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 13 Jun 2025 00:52:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y3Y2mMKmDC7TXIDQECJ509dR2hqF0F3Bp7JPaexT5xu2bjYdv3WP4veU/qof4R6LKEuPSRLnyS8Iq8pzPLyY6GXFVdyyidP/YM2tVhXZt4Z1Eym3/fcFWaEtlj/Z6Ae8o8IJlBW82DtsI6G366sd7f4LoI8/0+QmTYeX7Sl2dwgv9xaQBu3tgHJlaz5ZpYXgkMdZgCBcs9FYlcVPNCiK095KHMO1/ITHUPEEl+9h+WT+DfteESZjGIPFzM6JhAznlN8NhPPLdyP7Frdd2s/EKe1Gs/yJSmaqxyf6dPEKZdVRZwZ3R3h+SHQKKmLjLBm6WOEY5+HYj421xFfQLJufUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SufQij5w+lX8naf4lveRVfL0J5mHN00/6i3PifPc718=;
- b=IC504OcTxLr1Inp//p9WLV3weMe/Nh1pkPZyYzdGPB767AifMkv/WarOORICxEF8mNEtNdd2u2dnWEJt6dbHVcIcTcG0V69v4y2mQrBPT5PY1eOcm8bCpGmZxpRM1ldvV9paptWF2exzafmYWAChdXBoTO5kMTmpfoOcw17xJPQPAQEZlhjisQ+s5aiVtKzJBPcufEm48097Fu88nzDmd9o0KVXB0AnY1EwsPo8MzNEOpRUrxpnqQdCo6oPGu0Inho9ZGb7LyPngktVU7WnCRnvCSZeRO4Ma9cYrh6SoXvHGSA2ycca4lFHTEfnkpIhNrx4beSnhQxzh8sVgrD119g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by SN7PR11MB7638.namprd11.prod.outlook.com (2603:10b6:806:34b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Fri, 13 Jun
- 2025 07:52:18 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%7]) with mapi id 15.20.8769.022; Fri, 13 Jun 2025
- 07:52:17 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
-	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
-	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
- Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
-	Simon Horman <horms@kernel.org>, "nex.sw.ncis.osdt.itp.upstreaming@intel.com"
-	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
-	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH iwl-next v2 01/17] libeth, libie: clean
- symbol exports up a little
-Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v2 01/17] libeth, libie: clean
- symbol exports up a little
-Thread-Index: AQHb28JVyUjs0lWBoEaABvNpUeWIurQAuJsg
-Date: Fri, 13 Jun 2025 07:52:17 +0000
-Message-ID: <IA3PR11MB89860787AABFDDEFC24ECDDDE577A@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20250612160234.68682-1-aleksander.lobakin@intel.com>
- <20250612160234.68682-2-aleksander.lobakin@intel.com>
-In-Reply-To: <20250612160234.68682-2-aleksander.lobakin@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|SN7PR11MB7638:EE_
-x-ms-office365-filtering-correlation-id: 96cd9c02-61b2-44d3-eee4-08ddaa4f380f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018|7053199007;
-x-microsoft-antispam-message-info: =?us-ascii?Q?+o9YYDg6Gs+tXXzx0R07R7o9z8LYue519J9CVCX0reqT0XOq8asdbPcPLZF/?=
- =?us-ascii?Q?s6ex1IB9DURbv0YJ0Qkgnws91hf8+pBF3N2ZW55QoTw+QTL1GDC3bO5jz0xH?=
- =?us-ascii?Q?bglkwL1J/wwCnlRhO9xeX1UvmJJYEecYI2rb5gPL8ZOx5KCuvgvYh+Fg0w5G?=
- =?us-ascii?Q?GSre7Z8DY0zAYYmJUvhmO3nUkJ7czNMHem+q75X0OL9CfqsgMnBnHHUHZ/UX?=
- =?us-ascii?Q?6qLTLBZRgNnIDjXA33XSaWggJDMz0y4RV9RhvRCUIly1zRXgPz/FabmKqfXQ?=
- =?us-ascii?Q?UBFYOmpc293CURF8KEVailonEsNffo7kxZKmBnsrNgFpGxI1JV45VlP8Hm5E?=
- =?us-ascii?Q?UaMOTHsIFl5T+fL/xTAuoBssCq3J4dcRo6p8SRfipV+x5jp7SGGCsTCta1zl?=
- =?us-ascii?Q?EFkKLUrL3h9UvRyPEUbVhFOhN52sX+3uIZRBz6MxHSdOYSFuDHMP8Jupti71?=
- =?us-ascii?Q?t7tIfCxqdGvoSbKdACoiFNwKoFhikNKDAKFpE8RNc8gCsPDEp20fpQ3dTdAh?=
- =?us-ascii?Q?bb43lodHQWZewJbmDiWvqAo07tbHNBPKci+PwuLyxPk+5TOz2R8bknyenmAB?=
- =?us-ascii?Q?X2GqDK7TP1tJm4iVkTkj+ntOmYBo8U3Me44xtOUnWjlZ7LB8WzvqRgzXt9KN?=
- =?us-ascii?Q?q78eFU9GTnpyMoS53xNgmkl9fLdfF3Knq8c1062Mlhjrff+II/WMIcC9Q863?=
- =?us-ascii?Q?TynzKekttb3vy1Ngv8WoyDjmqPX5j0iAQbsPV1gAXDMPaveMFuqSudO2LerO?=
- =?us-ascii?Q?IPiGmAMXTDTFpCju48Mc93gnfTc/8GeQQSC9ZvbOpQy6EtgKInaEfDverz0O?=
- =?us-ascii?Q?KZarNQ3kNpio2fDhH+kSJN7kDEefTivtBGrF3nWIyf5f4yn76zUb3BitfGFp?=
- =?us-ascii?Q?yeVjcNIkKXJbCugRt0bEP+MxoInb3tCs046T+5ADKY7bfxKPSQ8GwgKkM1XI?=
- =?us-ascii?Q?ZUKBJ5HxXAP3qMg0eelSqdKTM+zfPJVhLVOWG+OE745sJGGhPsi90DaYWr+6?=
- =?us-ascii?Q?ZTKyUaZtL0DF/6pCswb+vOiSV43mxiupFh/1Agri8hQKRz5g4Nii5wb3B5LU?=
- =?us-ascii?Q?EDqDdka9sBp9Krc4Tu3BTKAVtRtDnyhGLGCF+pqPl5juN462EjiXktFXo26P?=
- =?us-ascii?Q?3LMHa6ybRC3s8Li79UXbPmPSmkn4NVaqfnKWWoK6GMtJqA7zZgon73tt18e1?=
- =?us-ascii?Q?BK/N5eQJr9/XBA8TI8EpERA/rhZq4kK6jPedtlDDKo1d02oDmFo+dHYJ8e0G?=
- =?us-ascii?Q?KavgiOvBdkbJkEP9I3TYhLqMVXaROU2k3zIY8O9keeowsDIiv3cmAuZxS1wb?=
- =?us-ascii?Q?VKCS8Z7HOzvU8tn/3FbBx9nxF5ZfuiL4lv+KmGfa5YGjwtBrNBjypiZ4wqxf?=
- =?us-ascii?Q?aRipgaE4MuF6O08K3nFIA5C/5vMNo9TW1C465Um5yT6FUoFJV/pL6BptQKMR?=
- =?us-ascii?Q?svQEOhbw12wIQM0EDCjto/zw7NxP2D4eizAukK0yM1dB5RDwGFxDig=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?01uQnP1EnJ3xym4/br+cZQcExU/mxH9e+XNNbkgCncpkERYNt5DioIpHGHJq?=
- =?us-ascii?Q?EdLkTjdvm/F+F84z+DREE03yxm4eGkukMV3+PRqNpkx7jaWcBy88XF6MdUIh?=
- =?us-ascii?Q?N+nOZaKk8A2bVNrMzX2inX0NCL2aMxzQCl0eN4g6rg4H5Xxsvp/MsLCLG7EA?=
- =?us-ascii?Q?TpjN6d8X+aZr30JQ7vtDSKT7CqQ/5asMyryA+oBLtfucvquCU7EuELPOcypE?=
- =?us-ascii?Q?p1gyOhvwG6MfSEYOkwaTqGgL4H/TKTIUYywnflYjXQOp9qvQJ0nZ2uOTGO+Q?=
- =?us-ascii?Q?5v80+qp6v/G0O7WLtuycKmC8G7eW5EQLTlnSlLhIbISz6WZNZac/jdXapPIu?=
- =?us-ascii?Q?WUOMe/6TwmgXGCV/oHaUkaSxC/YTXXvef5DhnFrAXH77efAnK3WeEZ1BfyHF?=
- =?us-ascii?Q?nCdylP3vZrrTmNKW+mnOTD7mpHV7O/CDAqfngDzPfOT27p0DmhfIdj7Z+cri?=
- =?us-ascii?Q?2JmG1hZIPmVXtiTIlFhwqoSO+11SMv8ji7zW6uMpRQ60gmJ4jt1FuZ6g0tY6?=
- =?us-ascii?Q?wLfWk0krX3i/u7TDU1qKgDlKGOtIEFLIW0krlTPdtz+neDxLrjqLqHMreEea?=
- =?us-ascii?Q?hqc99107GNQCRCbR9eM6fxkrJKBDMFB7irZKIp3+fZuZKXjzIKOH23M1GeU4?=
- =?us-ascii?Q?waJHcoF9AJbj3IjSDmbAtnC4Kxmtfwj46X17QT0rxg8kBIqsMqKg/PiMv+EF?=
- =?us-ascii?Q?Ap27Yj6HEXMn550xa6bLyD9Bso1FiqyJ6hUj+pBhMPQR6+CMXkbGi5hls0Nn?=
- =?us-ascii?Q?tbIXcarkCYR3v/reyqZJzv3t1Cs7+YtlkMBWM29tXxzzX59GC1FE/X63iyQ/?=
- =?us-ascii?Q?I+jDQv4Dh2GURUs4kzr8uDMtGDkKAIHPdHUPaYaLO+w/Wi8qYp3Cg+LQFk/O?=
- =?us-ascii?Q?RnDfwGUkHHawWOdQdqvhGitxgQ1SW/Sen/EdwpK4dOYjyIu/2VqUMXV2Wggj?=
- =?us-ascii?Q?p/LA712f1BtobiPMiuRCrJx49JoKXc9eU+DEEFJ76WCbm6K9ZGDviHb2uBfh?=
- =?us-ascii?Q?KdU0Z96EdHZc/IPlw7O5t18a9a+bejc7LyJRJ4ZakNl+KKMA+9QqRL0DJwT8?=
- =?us-ascii?Q?NvPIhxGQI+E8EETSp0X3RmhecdC1fFE6Yu7l+THWC16hpAH6KZMfhMOCL1tr?=
- =?us-ascii?Q?gSfpdZQ43NiE5VzDNJT1jAbqlzzGdubu0h1MkpXtiMKVwHvV18k8KMMKv9L5?=
- =?us-ascii?Q?h8vVdhNLlCIaZ1IpbjTKnnw4cBA8E/ctAMlmhxwXrZLiklTZk7NMHliQs9IN?=
- =?us-ascii?Q?Be+Rt3iQjqEthhxSv+iBr63Y+r8dS1CXFfeiNewDNuQ6TH9kP+9emBZGSy+W?=
- =?us-ascii?Q?fMI2gbUxIlHyiwwJz2/mOg7AsRIuYJHKbbKetQXubahRpni0sTCOLyuZtrr/?=
- =?us-ascii?Q?VLsJdtQqMY/uc/87g0fZTN7ui7gDi+7GThLbRNf4XgT+rS4D4oaTVrbQspCR?=
- =?us-ascii?Q?yrvWeVMHxXuxSZV8pu9fcevjTYPFxiPFAXyEUXRg4Y4WxnV0yfPHPxYFA7pK?=
- =?us-ascii?Q?/8cBJKipVX80hXEyyMjZjwHFRiIJg23NhrTbgSfvCHDKsAqkbjxI/xqwzhwc?=
- =?us-ascii?Q?3Iqe9jcm6T7HzD9ejHCSzyKOG7pe2kWkaUBkWewETlN6BIoZ5YzfzQ5RRqdu?=
- =?us-ascii?Q?6A=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8F945948;
+	Fri, 13 Jun 2025 08:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749801764; cv=none; b=c8tsUNiIu+6zV9BHenSlbRkVKG4qwodCTXTB6Jk0oG006/V/pHxRsZpn8xz2v5YuBbM1ks/rOqb7tc8FrZW4vGfAy/SuDdb5hpp+kV1Z0YDfEZZMfIM6jGyY2WfwrkBKwJGr7vCkuNtiF6zPcfAtGYE6Wf/Gor4YGQi8KdE88FQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749801764; c=relaxed/simple;
+	bh=aFt06c2yemkL9zrx3K8NAM4m13KMJWdAfxY1VSvf2GA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oZhIjppgjMQ3vUjqsRrIDYJumhcKLPRKDdp7Ul7HoX4OJCrOhTPB80ZKSMCLxziTPEBcJnlKE+5tw8HsNlYvXqT39cV+S9NxPnuZDh5IDhOAKSaO0ppkwLDmv/90q1yscOJThb9UYSKwpN74PV91gOhM6217w9HFojxn+f2a3uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.smartont.net (unknown [180.110.114.155])
+	by APP-05 (Coremail) with SMTP id zQCowABHzAoM20tolHFJBg--.51063S2;
+	Fri, 13 Jun 2025 16:02:20 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH] RISC-V: perf/kvm: Add reporting of interrupt events
+Date: Fri, 13 Jun 2025 15:53:38 +0800
+Message-Id: <9693132df4d0f857b8be3a75750c36b40213fcc0.1726211632.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96cd9c02-61b2-44d3-eee4-08ddaa4f380f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2025 07:52:17.5913
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yfOLf7ig6XPwn7JscUqDQqkyLu3lM3BjbHeF3dMkQZkt1F6Xm7DdMeGjKjLd8QXe4xL9VYut7k4QMxpXAsxTNlrrGOLcKAQeDKu4IJCjylA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7638
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABHzAoM20tolHFJBg--.51063S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GrWrtF4xJrykCF1kZFyUGFg_yoWxCr48pw
+	43CFZ2kr4FgrZrKa48GFnagF4xGFs3Xr1UGw1jgw409F4UAw1kJ3W7Wryrta4DWrZ5JrW8
+	Cr1DCrWY9w1Yqr7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1aFAJUUUUU==
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBwoMBmhLsDui7AAAsh
 
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
+For `perf kvm stat` on the RISC-V, in order to avoid the
+occurrence of `UNKNOWN` event names, interrupts should be
+reported in addition to exceptions.
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
-> Of Alexander Lobakin
-> Sent: Thursday, June 12, 2025 6:02 PM
-> To: intel-wired-lan@lists.osuosl.org
-> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
-> <michal.kubiak@intel.com>; Fijalkowski, Maciej
-> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
-> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
-> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
-> David S. Miller <davem@davemloft.net>; Eric Dumazet
-> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
-> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
-> Borkmann <daniel@iogearbox.net>; Jesper Dangaard Brouer
-> <hawk@kernel.org>; John Fastabend <john.fastabend@gmail.com>; Simon
-> Horman <horms@kernel.org>; nex.sw.ncis.osdt.itp.upstreaming@intel.com;
-> bpf@vger.kernel.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH iwl-next v2 01/17] libeth, libie:
-> clean symbol exports up a little
->=20
-> Change EXPORT_SYMBOL_NS_GPL(x, "LIBETH") to EXPORT_SYMBOL_GPL(x) +
-> DEFAULT_SYMBOL_NAMESPACE "LIBETH" to make the code more compact.
-> Also, explicitly include <linux/export.h> to satisfy new requirements
-> from scripts/misc-check.
->=20
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-> ---
->  drivers/net/ethernet/intel/libeth/rx.c | 14 +++++++++-----
-> drivers/net/ethernet/intel/libie/rx.c  |  7 +++++--
->  2 files changed, 14 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/libeth/rx.c
-> b/drivers/net/ethernet/intel/libeth/rx.c
-> index 66d1d23b8ad2..c2c53552c440 100644
-> --- a/drivers/net/ethernet/intel/libeth/rx.c
-> +++ b/drivers/net/ethernet/intel/libeth/rx.c
-> @@ -1,5 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright (C) 2024 Intel Corporation */
-> +/* Copyright (C) 2024-2025 Intel Corporation */
-> +
-> +#define DEFAULT_SYMBOL_NAMESPACE	"LIBETH"
-> +
-> +#include <linux/export.h>
->=20
->  #include <net/libeth/rx.h>
->=20
-> @@ -186,7 +190,7 @@ int libeth_rx_fq_create(struct libeth_fq *fq,
-> struct napi_struct *napi)
->=20
->  	return -ENOMEM;
->  }
-> -EXPORT_SYMBOL_NS_GPL(libeth_rx_fq_create, "LIBETH");
-> +EXPORT_SYMBOL_GPL(libeth_rx_fq_create);
->=20
->  /**
->   * libeth_rx_fq_destroy - destroy a &page_pool created by libeth @@ -
-> 197,7 +201,7 @@ void libeth_rx_fq_destroy(struct libeth_fq *fq)
->  	kvfree(fq->fqes);
->  	page_pool_destroy(fq->pp);
->  }
-> -EXPORT_SYMBOL_NS_GPL(libeth_rx_fq_destroy, "LIBETH");
-> +EXPORT_SYMBOL_GPL(libeth_rx_fq_destroy);
->=20
->  /**
->   * libeth_rx_recycle_slow - recycle a libeth page from the NAPI
-> context @@ -209,7 +213,7 @@ void libeth_rx_recycle_slow(struct page
-> *page)  {
->  	page_pool_recycle_direct(page->pp, page);  } -
-> EXPORT_SYMBOL_NS_GPL(libeth_rx_recycle_slow, "LIBETH");
-> +EXPORT_SYMBOL_GPL(libeth_rx_recycle_slow);
->=20
->  /* Converting abstract packet type numbers into a software structure
-> with
->   * the packet parameters to do O(1) lookup on Rx.
-> @@ -251,7 +255,7 @@ void libeth_rx_pt_gen_hash_type(struct
-> libeth_rx_pt *pt)
->  	pt->hash_type |=3D libeth_rx_pt_xdp_iprot[pt->inner_prot];
->  	pt->hash_type |=3D libeth_rx_pt_xdp_pl[pt->payload_layer];
->  }
-> -EXPORT_SYMBOL_NS_GPL(libeth_rx_pt_gen_hash_type, "LIBETH");
-> +EXPORT_SYMBOL_GPL(libeth_rx_pt_gen_hash_type);
->=20
->  /* Module */
->=20
-> diff --git a/drivers/net/ethernet/intel/libie/rx.c
-> b/drivers/net/ethernet/intel/libie/rx.c
-> index 66a9825fe11f..6fda656afa9c 100644
-> --- a/drivers/net/ethernet/intel/libie/rx.c
-> +++ b/drivers/net/ethernet/intel/libie/rx.c
-> @@ -1,6 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright (C) 2024 Intel Corporation */
-> +/* Copyright (C) 2024-2025 Intel Corporation */
->=20
-> +#define DEFAULT_SYMBOL_NAMESPACE	"LIBIE"
-> +
-> +#include <linux/export.h>
->  #include <linux/net/intel/libie/rx.h>
->=20
->  /* O(1) converting i40e/ice/iavf's 8/10-bit hardware packet type to a
-> parsed @@ -116,7 +119,7 @@ const struct libeth_rx_pt
-> libie_rx_pt_lut[LIBIE_RX_PT_NUM] =3D {
->  	LIBIE_RX_PT_IP(4),
->  	LIBIE_RX_PT_IP(6),
->  };
-> -EXPORT_SYMBOL_NS_GPL(libie_rx_pt_lut, "LIBIE");
-> +EXPORT_SYMBOL_GPL(libie_rx_pt_lut);
->=20
->  MODULE_DESCRIPTION("Intel(R) Ethernet common library");
-> MODULE_IMPORT_NS("LIBETH");
-> --
-> 2.49.0
+testing without patch:
+---
+Event name                    Samples  Sample%       Time(ns)
+---------------------------  --------  --------  ------------
+STORE_GUEST_PAGE_FAULT   	  1496461   53.00%    889612544
+UNKNOWN                        887514   31.00%    272857968
+LOAD_GUEST_PAGE_FAULT          305164   10.00%    189186331
+VIRTUAL_INST_FAULT              70625    2.00%    134114260
+SUPERVISOR_SYSCALL              32014    1.00%     58577110
+INST_GUEST_PAGE_FAULT               1    0.00%         2545
+
+testing with patch:
+---
+Event name                    Samples  Sample%       Time(ns)
+---------------------------  --------  --------  ------------
+IRQ_S_TIMER                   211271    58.00%  738298680600
+EXC_STORE_GUEST_PAGE_FAULT    111279    30.00%  130725914800
+EXC_LOAD_GUEST_PAGE_FAULT      22039     6.00%   25441480600
+EXC_VIRTUAL_INST_FAULT          8913     2.00%   21015381600
+IRQ_VS_EXT                      4748     1.00%   10155464300
+IRQ_S_EXT                       2802     0.00%   13288775800
+IRQ_S_SOFT                      1998     0.00%    4254129300
+
+Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+---
+ tools/perf/arch/riscv/util/kvm-stat.c         |  6 +-
+ .../arch/riscv/util/riscv_exception_types.h   | 35 ------------
+ tools/perf/arch/riscv/util/riscv_trap_types.h | 57 +++++++++++++++++++
+ 3 files changed, 60 insertions(+), 38 deletions(-)
+ delete mode 100644 tools/perf/arch/riscv/util/riscv_exception_types.h
+ create mode 100644 tools/perf/arch/riscv/util/riscv_trap_types.h
+
+diff --git a/tools/perf/arch/riscv/util/kvm-stat.c b/tools/perf/arch/riscv/util/kvm-stat.c
+index 491aef449d1a..3ea7acb5e159 100644
+--- a/tools/perf/arch/riscv/util/kvm-stat.c
++++ b/tools/perf/arch/riscv/util/kvm-stat.c
+@@ -9,10 +9,10 @@
+ #include <memory.h>
+ #include "../../../util/evsel.h"
+ #include "../../../util/kvm-stat.h"
+-#include "riscv_exception_types.h"
++#include "riscv_trap_types.h"
+ #include "debug.h"
+ 
+-define_exit_reasons_table(riscv_exit_reasons, kvm_riscv_exception_class);
++define_exit_reasons_table(riscv_exit_reasons, kvm_riscv_trap_class);
+ 
+ const char *vcpu_id_str = "id";
+ const char *kvm_exit_reason = "scause";
+@@ -30,7 +30,7 @@ static void event_get_key(struct evsel *evsel,
+ 			  struct event_key *key)
+ {
+ 	key->info = 0;
+-	key->key = evsel__intval(evsel, sample, kvm_exit_reason);
++	key->key = evsel__intval(evsel, sample, kvm_exit_reason) & ~CAUSE_IRQ_FLAG;
+ 	key->exit_reasons = riscv_exit_reasons;
+ }
+ 
+diff --git a/tools/perf/arch/riscv/util/riscv_exception_types.h b/tools/perf/arch/riscv/util/riscv_exception_types.h
+deleted file mode 100644
+index c49b8fa5e847..000000000000
+--- a/tools/perf/arch/riscv/util/riscv_exception_types.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#ifndef ARCH_PERF_RISCV_EXCEPTION_TYPES_H
+-#define ARCH_PERF_RISCV_EXCEPTION_TYPES_H
+-
+-#define EXC_INST_MISALIGNED 0
+-#define EXC_INST_ACCESS 1
+-#define EXC_INST_ILLEGAL 2
+-#define EXC_BREAKPOINT 3
+-#define EXC_LOAD_MISALIGNED 4
+-#define EXC_LOAD_ACCESS 5
+-#define EXC_STORE_MISALIGNED 6
+-#define EXC_STORE_ACCESS 7
+-#define EXC_SYSCALL 8
+-#define EXC_HYPERVISOR_SYSCALL 9
+-#define EXC_SUPERVISOR_SYSCALL 10
+-#define EXC_INST_PAGE_FAULT 12
+-#define EXC_LOAD_PAGE_FAULT 13
+-#define EXC_STORE_PAGE_FAULT 15
+-#define EXC_INST_GUEST_PAGE_FAULT 20
+-#define EXC_LOAD_GUEST_PAGE_FAULT 21
+-#define EXC_VIRTUAL_INST_FAULT 22
+-#define EXC_STORE_GUEST_PAGE_FAULT 23
+-
+-#define EXC(x) {EXC_##x, #x }
+-
+-#define kvm_riscv_exception_class                                         \
+-	EXC(INST_MISALIGNED), EXC(INST_ACCESS), EXC(INST_ILLEGAL),         \
+-	EXC(BREAKPOINT), EXC(LOAD_MISALIGNED), EXC(LOAD_ACCESS),           \
+-	EXC(STORE_MISALIGNED), EXC(STORE_ACCESS), EXC(SYSCALL),            \
+-	EXC(HYPERVISOR_SYSCALL), EXC(SUPERVISOR_SYSCALL),                  \
+-	EXC(INST_PAGE_FAULT), EXC(LOAD_PAGE_FAULT), EXC(STORE_PAGE_FAULT), \
+-	EXC(INST_GUEST_PAGE_FAULT), EXC(LOAD_GUEST_PAGE_FAULT),            \
+-	EXC(VIRTUAL_INST_FAULT), EXC(STORE_GUEST_PAGE_FAULT)
+-
+-#endif /* ARCH_PERF_RISCV_EXCEPTION_TYPES_H */
+diff --git a/tools/perf/arch/riscv/util/riscv_trap_types.h b/tools/perf/arch/riscv/util/riscv_trap_types.h
+new file mode 100644
+index 000000000000..854e9d95524d
+--- /dev/null
++++ b/tools/perf/arch/riscv/util/riscv_trap_types.h
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef ARCH_PERF_RISCV_TRAP_TYPES_H
++#define ARCH_PERF_RISCV_TRAP_TYPES_H
++
++/* Exception cause high bit - is an interrupt if set */
++#define CAUSE_IRQ_FLAG		(_AC(1, UL) << (__riscv_xlen - 1))
++
++/* Interrupt causes (minus the high bit) */
++#define IRQ_S_SOFT 1
++#define IRQ_VS_SOFT 2
++#define IRQ_M_SOFT 3
++#define IRQ_S_TIMER 5
++#define IRQ_VS_TIMER 6
++#define IRQ_M_TIMER 7
++#define IRQ_S_EXT 9
++#define IRQ_VS_EXT 10
++#define IRQ_M_EXT 11
++#define IRQ_S_GEXT 12
++#define IRQ_PMU_OVF 13
++
++/* Exception causes */
++#define EXC_INST_MISALIGNED 0
++#define EXC_INST_ACCESS 1
++#define EXC_INST_ILLEGAL 2
++#define EXC_BREAKPOINT 3
++#define EXC_LOAD_MISALIGNED 4
++#define EXC_LOAD_ACCESS 5
++#define EXC_STORE_MISALIGNED 6
++#define EXC_STORE_ACCESS 7
++#define EXC_SYSCALL 8
++#define EXC_HYPERVISOR_SYSCALL 9
++#define EXC_SUPERVISOR_SYSCALL 10
++#define EXC_INST_PAGE_FAULT 12
++#define EXC_LOAD_PAGE_FAULT 13
++#define EXC_STORE_PAGE_FAULT 15
++#define EXC_INST_GUEST_PAGE_FAULT 20
++#define EXC_LOAD_GUEST_PAGE_FAULT 21
++#define EXC_VIRTUAL_INST_FAULT 22
++#define EXC_STORE_GUEST_PAGE_FAULT 23
++
++#define TRAP(x) { x, #x }
++
++#define kvm_riscv_trap_class \
++	TRAP(IRQ_S_SOFT), TRAP(IRQ_VS_SOFT), TRAP(IRQ_M_SOFT), \
++	TRAP(IRQ_S_TIMER), TRAP(IRQ_VS_TIMER), TRAP(IRQ_M_TIMER), \
++	TRAP(IRQ_S_EXT), TRAP(IRQ_VS_EXT), TRAP(IRQ_M_EXT), \
++	TRAP(IRQ_S_GEXT), TRAP(IRQ_PMU_OVF), \
++	TRAP(EXC_INST_MISALIGNED), TRAP(EXC_INST_ACCESS), TRAP(EXC_INST_ILLEGAL), \
++	TRAP(EXC_BREAKPOINT), TRAP(EXC_LOAD_MISALIGNED), TRAP(EXC_LOAD_ACCESS), \
++	TRAP(EXC_STORE_MISALIGNED), TRAP(EXC_STORE_ACCESS), TRAP(EXC_SYSCALL), \
++	TRAP(EXC_HYPERVISOR_SYSCALL), TRAP(EXC_SUPERVISOR_SYSCALL), \
++	TRAP(EXC_INST_PAGE_FAULT), TRAP(EXC_LOAD_PAGE_FAULT), \
++	TRAP(EXC_STORE_PAGE_FAULT), TRAP(EXC_INST_GUEST_PAGE_FAULT), \
++	TRAP(EXC_LOAD_GUEST_PAGE_FAULT), TRAP(EXC_VIRTUAL_INST_FAULT), \
++	TRAP(EXC_STORE_GUEST_PAGE_FAULT)
++
++#endif /* ARCH_PERF_RISCV_TRAP_TYPES_H */
+
+base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+-- 
+2.34.1
 
 
