@@ -1,143 +1,218 @@
-Return-Path: <linux-kernel+bounces-685693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657D6AD8D3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:38:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA36AD8D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628AB1E0A89
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8DB172CED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA63418DB0D;
-	Fri, 13 Jun 2025 13:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5761D188735;
+	Fri, 13 Jun 2025 13:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="W80yf5Jc"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqRVk66n"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A94F19007D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43F1111BF;
+	Fri, 13 Jun 2025 13:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749821874; cv=none; b=efzT+H9GAYPFJw3BcKwE/LwzmuO2xm7hVMEDY6KSlm2RrvjefnA0/Qv66FH0WUlCMTFUw3kDBdyU88AsXdTQ0TGcNaxdYlJz986gGdZEGLp9WDNoNJIVmbRvU5UkM/TLwRwSAppA818T8M6r2ujJ3ufWKRHObBb5xm/b/SGaMKc=
+	t=1749822050; cv=none; b=Z1+7TtycwgbNtAC7hKdrbpOIv2HiJR2PKHGjy4ZyBTCHvh6aZaGfDAIYNBZ+b/L5LsHh7cBUpP0N0yqJD6EbiDSOFvGfPzMLs2PgsODD6BSi2xjeTXokWgrIjXAclSUw3xXxojFuuZjCK5LwkRh0KXgDUcym1rP0KVzb41jKaH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749821874; c=relaxed/simple;
-	bh=BJoef0xWSj+7ZrFt5m5fWdPbULwYKZEpkk2JZYAFbMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bF3Dj6nkijNYwi6oLK6ftbHPQ9fafDR9rpSENmtgKiX6UShbeuME1d7Ls7qLD+ifIHnPvXoaNrEll7mTu3nRFCHXOEKMpzIdxADYBl0jK/ERc7FvC5INKfA/hr1pZcU+VqwGAH9Ews7iajJco9N0LrNwfYtcRkP1kxkZBS5UAPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=W80yf5Jc; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3ddff24fdc4so14554795ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:37:50 -0700 (PDT)
+	s=arc-20240116; t=1749822050; c=relaxed/simple;
+	bh=fLM1J7jVqqiZf/ld7d1JFGfRWVz+teNjK6y084/tbPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BNSV5vms5Kwbtlbhq6bjk/VgU1NkfplM+jeg7FEJImv0lUpQmLatZyS3RynIE0hx/xHMs3qNFmJpvpokQRZt1VXVajgeDoA9i2xAFrpmxqg8fFqh0ZjlCh9Skx7HoR3sbRpTS4lO2uAd1Ou9KcCvqx/7wq3BiSjuC+cANMmGIEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqRVk66n; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso17390995e9.2;
+        Fri, 13 Jun 2025 06:40:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1749821869; x=1750426669; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J+r+Bp65bEAZWnWid1OsBGNzxx17ZgRBrVVBgeYnd6A=;
-        b=W80yf5JcFnxbJBJE2+czvUHP+lSXhYAfwc9Fh1A+x1zrJuA8/mCBU4R9VxWdZnsc5S
-         PMbfGFM0Cj4tQLwuxqkqHZfpIlX8syRXYFRBEWWMMG0HMbZ9VQDRozUo6pJR53daBDzT
-         tbRXmBsGrlxQmd5Sex5UTc1HGuoEKnfr4tzEI=
+        d=gmail.com; s=20230601; t=1749822047; x=1750426847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oudxA8JPC06HRjXurKEPIdr/6i2EGFIADSPFZLQo5s0=;
+        b=JqRVk66nenFwP3UFJSa2v0lIxzb6/hIo1iqOQqNzCbibJEMr/GQ7I2ZZ38jAw7Fe8s
+         6LhmobPA7CVC+WrrO9OB1gjz7tsXUCnq3J9ps515xDnl2kFCPVDufBS4T7kCCS6xSLwO
+         IP8CkfzAbgm/vDgtiAsAUM0ewRwXkSN4m0cgmeJklKbHDs2Zw9b5jdoApSiPCYj+apwk
+         v5Fhsi48PlEtIMENJxTcLGNXgW5Lx7qUOc81aKa83cmn88EuZljftGpE0EPITSFPxaYh
+         rHK44fBmJ11GkuP0gBqN8JlQ1LAJREviY+rDCjM9n/i3c8D+UXG8Kfw5jAf+Rwp+0svE
+         EKBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749821869; x=1750426669;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+r+Bp65bEAZWnWid1OsBGNzxx17ZgRBrVVBgeYnd6A=;
-        b=ZiFlRyrxNRX0Gjtp63DMXcY1EXCUSeijJ7LpgBLj4jxzp4uYaDisynpN1hmmuGLPxo
-         FZa9OPGvIpeQQ+uHkR3hehft4yhl2OTtvUUPX9/5Sr90BaeR2TUHSnDIvd72dUmplY1d
-         0ufwZNJZvOYTz7p0v3pwaL0+GMo1K1prBi842IcGhzPV+FmCMC0f6L8cP/FBvbTQ4+I9
-         +9qFyfslqj7QF4DlYNL9OZF7TW5VPRtXhBo7TWmQ2M3cbG2gjp42JFCRYpZZJmsfyQFp
-         dgRPCbiCQU4+UUrrBl7qsmW+wiVnxy2mGBlYhC+CWKmbNpiqrNUbdTyLeb/4nAOthO+w
-         aCRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe0qjtoV0DQPbZybooW8pBa3XhZg+cUnd+5uDhWOyPz8PcwqXjnUYGj1wqnngveLoM9MNqd+RM1NSegMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGOMUFcIuYqXL8Xrn3Pw97VVQKDgfatqVt7wq6/DmQ9+DqnZtF
-	5gUioV1WnKp3DMNbD32pbyMdoTO7EUqoWcV2s5iu/L4NwqPvDk7zE5qv7mSS/NXFZQ==
-X-Gm-Gg: ASbGncv9U4H9a7kt9lU9Iym+GBT2xdFndkX1xk6fPd+n17n/NDSsb8dJl4Hi4s9pWXm
-	OjO2TdwsFfuq/3WJbT4HhaC2l0B3e3ddxm1+U4H/K8baqaXA4omhjpMtL5gbkzvvtawQn3Aql5x
-	84DBYnhX4HHeWUtv7vtf+r+9CnMYx6pizcV65jbR3Hn+00cIUmby1twT5U1GqKdQLUdii3VG8ML
-	IPp9tyBMeNFjWuEM9c6iPJBjTSE4IVaUS7Hukk5jJ73xfdrRyZEc3IZAaPKx0yvhyIOvJycYJ+Z
-	zK+bFh724XMZldVCcMckd3pk7XI/GJlSFyrhl5E6XDTjEG/Dl/huufIWtxePAzogm85eK19SP4w
-	VebNQtfpKsVTjw20ovvz6
-X-Google-Smtp-Source: AGHT+IHmsqeaMGQ+A9VzBjS2uR5emsuPjFhHVVeYjhQKAzqV/edqTdOsFGFmJAYO4yUNC+PGzl3SQQ==
-X-Received: by 2002:a05:6e02:178d:b0:3dc:87c7:a5b5 with SMTP id e9e14a558f8ab-3de00ad78d0mr34635405ab.3.1749821867585;
-        Fri, 13 Jun 2025 06:37:47 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-50149b7a47dsm301397173.22.2025.06.13.06.37.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 06:37:47 -0700 (PDT)
-Message-ID: <9dfa0d6b-e28d-4e83-acd0-1ad7803d2387@ieee.org>
-Date: Fri, 13 Jun 2025 08:37:45 -0500
+        d=1e100.net; s=20230601; t=1749822047; x=1750426847;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oudxA8JPC06HRjXurKEPIdr/6i2EGFIADSPFZLQo5s0=;
+        b=uH9MzXXREWtXXMYb12JNtv5x5RJJmjUXOI55KGpB2MW2h6Brje5YhzS+NkKXNAKy1j
+         BZcB/N7Y3Yiwjo8cRSWIRdztI/SVpEbhKk+CVp/8mYmFlQnNEvs9vaW8/r4XAGEeRLnR
+         dgycMXfGWzKE44ujr+m6AFBewDEvkTGAZXLcHKtZFw9QZHjUVFgxvkJ3vAWS8R6MSq7o
+         zseuIxSmyu5ZOBokwCrRjQU7W52u8/6b89E85DQPNZKY2mdByc/OyRJ8KmVDDK/Rds0T
+         kzHbVCPtMa5RB12Ua+e4n/pouGvLcznPTpPDRsaSMuhYyZEBFtx2gwHsoPLeSUaqVM8N
+         MNQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Th2+3U+a8mUPgRhSoViDu3bgqmJeuW04EQ6iok8ZSJAdim+3XEhfa0PLcs76GFxjGF8z44HVTKsrr8AEFKc=@vger.kernel.org, AJvYcCXCEbqv2XD4Qe0SLUPoO5zbz7zobkMSx5sWQ85oJuM68fsI6vCpvwdUwYS9aBmbk1hn9eAVER1KX8wE@vger.kernel.org, AJvYcCXfeBZ9Cxws57v8dfPEW94gUFOJIeiC6mFGK78ntU9E5ZxSBZIAJCob0A/iu8NsFkD8qf/m8DpqyEaU/Kc5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW1WvD6Cks/+uJgZwlTZ8Hb5P79ycPDQiT1v5yX6k/ly6rVEmD
+	+JYsFORkenmFJHRxyiJkH5LIRItQ6MMyvJzSvg54X0kqNL4T3LOc8b44
+X-Gm-Gg: ASbGncs1rVaRP0NNeLvEhH3cYIcPO4H+N9Ick/E0aPfPQSPrSbiKAyZE5/Fx99RrUdf
+	pje+Sm0EbFORPt6ES+H/hvTG9a+MykO4r6Jx7dPm9wFYyESwOuTjywMMGAlzIvNEVCzhaNtfDTR
+	U5xX1f/4q+D3wmbuwQLU6iUZkTC/irVEQZMIj/6bzgVXugspqglAMBnOkE3egtMGthuXdPxPlB3
+	8sprvqY7CLdxMdgL1waVlOosHpJqXqqd8VilOAgyEhFO3tYDMo4aWduf5LmjpuFBglwl8RjQeuI
+	a+akTIYlvS9pbfsMxiPOIcAWYBfcoE7hz+w3x0I6EQFTRnLBWvXRROMcGney8kPdCh1W0bV+4xB
+	iI+EefVSMyokKt8PWPl87yH1jBxsdk8Hn+XxyXppqKFsiuNc=
+X-Google-Smtp-Source: AGHT+IGSQQDsmwIh4IRTyDRinr32zbDXqbTyjcQINJTodAgQ41yIYuwm/iuMJcEHUctW6KpfLD9UWA==
+X-Received: by 2002:a05:600c:4f53:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-45334ad2eb9mr35369995e9.14.1749822046739;
+        Fri, 13 Jun 2025 06:40:46 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b48564sm2361368f8f.82.2025.06.13.06.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 06:40:46 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v6 1/6] rust: acpi: add `acpi::DeviceId` abstraction
+Date: Fri, 13 Jun 2025 14:38:42 +0100
+Message-ID: <20250613133842.1230254-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
+References: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ceph: convert to use secs_to_jiffies
-To: Yuesong Li <liyuesong@vivo.com>, Ilya Dryomov <idryomov@gmail.com>,
- Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20250613102322.3074153-1-liyuesong@vivo.com>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20250613102322.3074153-1-liyuesong@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/13/25 5:23 AM, Yuesong Li wrote:
-> Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
-> use it to avoid scaling the time to msec.
-> 
-> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+`acpi::DeviceId` is an abstraction around `struct acpi_device_id`.
 
-Looks good.
+This is used by subsequent patches, in particular the i2c driver
+abstractions, to create ACPI device ID tables.
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ MAINTAINERS         |  1 +
+ rust/kernel/acpi.rs | 61 +++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs  |  1 +
+ 3 files changed, 63 insertions(+)
+ create mode 100644 rust/kernel/acpi.rs
 
-> ---
->   net/ceph/ceph_common.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index 4c6441536d55..9ef326b0d50e 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -530,26 +530,26 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
->   		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
->   		opt->osd_keepalive_timeout =
-> -		    msecs_to_jiffies(result.uint_32 * 1000);
-> +		    secs_to_jiffies(result.uint_32);
->   		break;
->   	case Opt_osd_idle_ttl:
->   		/* 0 isn't well defined right now, reject it */
->   		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
-> -		opt->osd_idle_ttl = msecs_to_jiffies(result.uint_32 * 1000);
-> +		opt->osd_idle_ttl = secs_to_jiffies(result.uint_32);
->   		break;
->   	case Opt_mount_timeout:
->   		/* 0 is "wait forever" (i.e. infinite timeout) */
->   		if (result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
-> -		opt->mount_timeout = msecs_to_jiffies(result.uint_32 * 1000);
-> +		opt->mount_timeout = secs_to_jiffies(result.uint_32);
->   		break;
->   	case Opt_osd_request_timeout:
->   		/* 0 is "wait forever" (i.e. infinite timeout) */
->   		if (result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
->   		opt->osd_request_timeout =
-> -		    msecs_to_jiffies(result.uint_32 * 1000);
-> +		    secs_to_jiffies(result.uint_32);
->   		break;
->   
->   	case Opt_share:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a92290fffa16..6c809ea30e6a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -302,6 +302,7 @@ F:	include/linux/acpi.h
+ F:	include/linux/fwnode.h
+ F:	include/linux/fw_table.h
+ F:	lib/fw_table.c
++F:	rust/kernel/acpi.rs
+ F:	tools/power/acpi/
+ 
+ ACPI APEI
+diff --git a/rust/kernel/acpi.rs b/rust/kernel/acpi.rs
+new file mode 100644
+index 000000000000..f9a98dc4eb8a
+--- /dev/null
++++ b/rust/kernel/acpi.rs
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Advanced Configuration and Power Interface abstractions.
++
++use crate::{bindings, device_id::RawDeviceId, prelude::*};
++
++/// IdTable type for ACPI drivers.
++pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
++
++/// An ACPI device id.
++#[repr(transparent)]
++#[derive(Clone, Copy)]
++pub struct DeviceId(bindings::acpi_device_id);
++
++// SAFETY:
++// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct acpi_device_id` and does not add
++//   additional invariants, so it's safe to transmute to `RawType`.
++// * `DRIVER_DATA_OFFSET` is the offset to the `data` field.
++unsafe impl RawDeviceId for DeviceId {
++    type RawType = bindings::acpi_device_id;
++
++    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::acpi_device_id, driver_data);
++
++    fn index(&self) -> usize {
++        self.0.driver_data as _
++    }
++}
++
++impl DeviceId {
++    const ACPI_ID_LEN: usize = 16;
++
++    /// Create a new device id from an ACPI 'id' string.
++    pub const fn new(id: &'static CStr) -> Self {
++        assert!(id.len() <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
++        let src = id.as_bytes_with_nul();
++        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
++        // SAFETY: FFI type is valid to be zero-initialized.
++        let mut acpi: bindings::acpi_device_id = unsafe { core::mem::zeroed() };
++        let mut i = 0;
++        while i < src.len() {
++            acpi.id[i] = src[i];
++            i += 1;
++        }
++
++        Self(acpi)
++    }
++}
++
++/// Create an ACPI `IdTable` with an "alias" for modpost.
++#[macro_export]
++macro_rules! acpi_device_table {
++    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
++        const $table_name: $crate::device_id::IdArray<
++            $crate::acpi::DeviceId,
++            $id_info_type,
++            { $table_data.len() },
++        > = $crate::device_id::IdArray::new($table_data);
++
++        $crate::module_device_table!("acpi", $module_table_name, $table_name);
++    };
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 6b4774b2b1c3..5bbf3627212f 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -51,6 +51,7 @@
+ 
+ pub use ffi;
+ 
++pub mod acpi;
+ pub mod alloc;
+ #[cfg(CONFIG_AUXILIARY_BUS)]
+ pub mod auxiliary;
+-- 
+2.43.0
 
 
