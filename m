@@ -1,76 +1,57 @@
-Return-Path: <linux-kernel+bounces-684888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A31FAD8163
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:07:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3505AD8156
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FDB93A875E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024281899D27
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EE525394A;
-	Fri, 13 Jun 2025 03:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VmrD+p0k"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D0A1EB19B;
+	Fri, 13 Jun 2025 03:06:03 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6A6248883;
-	Fri, 13 Jun 2025 03:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8982818DB1A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 03:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749783990; cv=none; b=ndO80KWtQPoRIRaxB9A3A03jJcF41Uz/ATbTZUdwAuCuRe2x33+5vZwxoxCrhieF49lUWM3+CQVDd9f2EFgQen18ry00Ro00jzAUvvbte1mA/t5gaGsnVuPdeFUenhE02iI4cRFpAwND2E3JJlFJoOtH5abGLYjbG/wxpDImMwc=
+	t=1749783963; cv=none; b=SrkUXrJliXc5++HmlZb8LYKtapmI4bu5Iw3OvTYRZVUV8m/ZajOalMQNWV/UMRpToMPkjL+e7mPeBhI20sQ7UC9CMhoNFeQHftqMUk8oaLJj8ZvXvtrIE6m1/YlMkDfi6r47jORej5i1SXPuI/sbKo0JnH7GLE4ooaoGMcQ1HPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749783990; c=relaxed/simple;
-	bh=w5lvnxdf7nXQzABIUueKfM2G7ZWWXlgNS18Oez8SQuk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r3Ci+t7iGp4dOibm3EUSZx1xZjCDUPGelozPYei31Ug3FTNNQBHhqiurdQNGyfSuIgkeuU7fj0hanJLmbQw3j+oeN0KO8DAP1I22A4vUJKMLM7s9wJ/HdcC96FsSEoYRMIrKdxRHXEMFmaAsPzLQxU+DeieKqaYRIff7fya4tyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VmrD+p0k; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749783986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FK5GViGeaS0eKXb1CGklOs8Lcazv9ig1sTbfs/WnUDs=;
-	b=VmrD+p0k1+hGglgFMyD3kLFYXh+SMTmVlSrsl5nL5sfKCHcBwrkI++kzMSRi0v0hWA09jU
-	Awtwc4OjwwnWnH73KWQTYi0o6jxXhNdzlAKgW0UJDfP8s6cB0zbAizCjx0Z9fBoQOYtHrV
-	eO24fkJuo68McBVD7RaFUCIN/zpBRWU=
-From: Hao Ge <hao.ge@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	Hao Ge <hao.ge@linux.dev>,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH v2 3/3] mm/alloc_tag: add the CONFIG_ARCH_NEEDS_WEAK_PER_CPU macro when statically defining the percpu variable _shared_alloc_tag
-Date: Fri, 13 Jun 2025 11:05:07 +0800
-Message-Id: <099651f46b0b57f6c7890a64608dc7ca44df7764.1749779391.git.gehao@kylinos.cn>
-In-Reply-To: <cover.1749779391.git.gehao@kylinos.cn>
-References: <cover.1749779391.git.gehao@kylinos.cn>
+	s=arc-20240116; t=1749783963; c=relaxed/simple;
+	bh=m4AYh6RU9zuub135XZ1TR4xLpcavkb6EIx5/K0rd8p0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XUg8iwjdz8uS3epNmTMIjX3vUSxOMXp2P+0NWg83X2bKZAePzwGTs83VWNBAp7OvilsswOA33Km3kfuqWNqA906p+azEa3JjLXqIVUtIGh26WRdsq6dG3tw6n9oj3300v0IYcw+ruvioMNNrQT8wDlSPko3lPZW6TBHUbkhDEcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D29EYw003800;
+	Thu, 12 Jun 2025 20:05:38 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 474mxm668r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 12 Jun 2025 20:05:38 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Thu, 12 Jun 2025 20:05:36 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.57 via Frontend Transport; Thu, 12 Jun 2025 20:05:35 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+6e516bb515d93230bc7b@syzkaller.appspotmail.com>
+CC: <jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <shaggy@kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] jfs: truncate good inode pages when hard link is 0
+Date: Fri, 13 Jun 2025 11:05:34 +0800
+Message-ID: <20250613030534.3839793-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <684abfc1.a00a0220.e7731.0015.GAE@google.com>
+References: <684abfc1.a00a0220.e7731.0015.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,43 +59,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-Proofpoint-GUID: rpBkP97mikXmUsFQz-CFm1qnQyEayrAh
+X-Authority-Analysis: v=2.4 cv=L74dQ/T8 c=1 sm=1 tr=0 ts=684b9582 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=6IFa9wvqVegA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=iYHks2O19Bam7npcOOMA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDAyMiBTYWx0ZWRfX1VlUeqgmaFu0 JR7ghSj0kpQUbvddwLmPIFzFMPScRopH/OsRXGZiAnJ1vOrY+BSyKyYBMJL5KTAgBHMYzOm78bv jT3HPuzPg8Isa9JNMr36CriVJUZdQRKSz0NOiu95ZXxVvQiRIhYzPBnWl2PfWq98d9IvrM4l2k4
+ h7gWf6tLc1Fsq76KscpGPVqwrASEz9tRVSSrJvvKiE8OJcGx5+c3C5ej8pGgS2znOBlw1OgMwsi 4gZDHGnh5o5SAqcLkTSe6S8S5Akc/mNoEd4On37rxHcP6scTa7aDn5+m4WcisvX4rpcdKjGzNEn uzF8D9urSZx2jBbte1CrxVANon+1JDXMGUofiyXL4n/fOasNoWpMfyUqResTtEe6FBw31spIPcO
+ aqKtt1xvymNRJkbJJWpebOJOK8zifHbEscN0IomUAnEo8rVxxgPhUBF6BAd6HNWPiYFsyB4O
+X-Proofpoint-ORIG-GUID: rpBkP97mikXmUsFQz-CFm1qnQyEayrAh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=921 adultscore=0 spamscore=0 suspectscore=0
+ mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0 phishscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
+ definitions=main-2506130022
 
-From: Hao Ge <gehao@kylinos.cn>
+The fileset value of the inode copy from the disk by the reproducer is
+AGGR_RESERVED_I. When executing evict, its hard link number is 0, so its
+inode pages are not truncated. This causes the bugon to be triggered when
+executing clear_inode() because nrpages is greater than 0.
 
-Recently discovered this entry while checking kallsyms on ARM64:
-ffff800083e509c0 D _shared_alloc_tag
-
-If CONFIG_ARCH_NEEDS_WEAK_PER_CPU is not defined(it is only defined for
-s390 and alpha architectures),there's no need to statically define
-the percpu variable _shared_alloc_tag. As the number of CPUs
-increases,the wasted memory will grow correspondingly.
-
-Enclose the definition of _shared_alloc_tag within the
-CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition.
-
-Suggested-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
+Reported-by: syzbot+6e516bb515d93230bc7b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6e516bb515d93230bc7b
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
- lib/alloc_tag.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/jfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index c7f602fa7b23..14fd66f26e42 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -24,8 +24,10 @@ static bool mem_profiling_support;
+diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
+index 60fc92dee24d..81e6b18e81e1 100644
+--- a/fs/jfs/inode.c
++++ b/fs/jfs/inode.c
+@@ -145,9 +145,9 @@ void jfs_evict_inode(struct inode *inode)
+ 	if (!inode->i_nlink && !is_bad_inode(inode)) {
+ 		dquot_initialize(inode);
  
- static struct codetag_type *alloc_tag_cttype;
++		truncate_inode_pages_final(&inode->i_data);
+ 		if (JFS_IP(inode)->fileset == FILESYSTEM_I) {
+ 			struct inode *ipimap = JFS_SBI(inode->i_sb)->ipimap;
+-			truncate_inode_pages_final(&inode->i_data);
  
-+#ifdef CONFIG_ARCH_NEEDS_WEAK_PER_CPU
- DEFINE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
- EXPORT_SYMBOL(_shared_alloc_tag);
-+#endif
- 
- DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
- 			mem_alloc_profiling_key);
+ 			if (test_cflag(COMMIT_Freewmap, inode))
+ 				jfs_free_zero_link(inode);
 -- 
-2.25.1
+2.43.0
 
 
