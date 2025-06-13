@@ -1,189 +1,171 @@
-Return-Path: <linux-kernel+bounces-685691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4599AD8D39
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:37:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B54AD8D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0F9F189F8E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D06B17E9FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB30187FEC;
-	Fri, 13 Jun 2025 13:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9428158DA3;
+	Fri, 13 Jun 2025 13:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvuoxziV"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CuQAorHq"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2064.outbound.protection.outlook.com [40.107.100.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F2D15B0EF;
-	Fri, 13 Jun 2025 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749821861; cv=none; b=DDvuHSYpEYoq9zDFHls5n3OValqXctQkCEbUFMEZakAUn/mD6TDGXTrir/2r2/kErw82I32KzoSkGS1bbTb6pFY/YXlN+2XTUYQWJRk/+VpOkQ/wbMBRqP5XjNrtO/FgRM245wCSWc2Cyey2Wj5Y+UQbKiFoQVHotm3KREVX578=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749821861; c=relaxed/simple;
-	bh=1WD1jj5PlSIXON2dAf/X3+A1XrTksu+aG8VctVQYa/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tAGzGz5OjKpHuYheb/7NeoZI7rEeIL2nfA/tv24m7QubCKobzJQrXdQy5NKpK8G4wVinK9x8PNqeFYbYzSTRV0zYosW53KuMpKUt34JsuauLVHoy9dPOQbgO7BeKVF+ja9CqYuXtqGCthtALGRiaDYg1dcgzIfgH2AKaLjVIspM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvuoxziV; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-442f9043f56so12545035e9.0;
-        Fri, 13 Jun 2025 06:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749821857; x=1750426657; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewdpFu+JUq9oZpU5NEM0XWzWun+XanrMGmzqVHwgcFM=;
-        b=dvuoxziVlM9gBijmzxBo+aQc0OK/j34gVFAg5soluXPY0bwthzz77RKt9qCMCb0vhV
-         TBfUXPipjnLiakaTR7vZmeGXs4ihG5PJG2x/t+q/cEfzOXhmWwi/d7x7wjT9uKmkXCN/
-         zt5T+U1iV+uomHTRLH8STdWwKZEBRig+zPeX6ebf41hKtRGQ/hO3EGIYa1zqeLolktLh
-         3zpSVehnrAA9ek91fMPKVKcuF/x61JjLoWxybFVbeU+UbL3n5zAy6M89A5gJVxoADpqk
-         IfJIRcxYfErqshfuwd9skHiy7H/kQFob2VwEK/Sxxcc8B5OU+22MabJuv62SS5YjRnzw
-         0oIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749821857; x=1750426657;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ewdpFu+JUq9oZpU5NEM0XWzWun+XanrMGmzqVHwgcFM=;
-        b=l5lnVocY1/9EArObu2NJHzvrTXcQhm3Y+PZaforwe2MmykqCRoJWsFmTqnjs81v0MS
-         gCShs3u3iqNlahL3mwQIvyMfHuKVfLfCIr5TIzICsCmHey0yTcv/IOsEL2KPRcjfXEvn
-         rzLROsh6BXX4bAFdModLrLT0NJxnBnwJ37KN61n4ti2uoLsGjJsyHHGnoXW8R6TGpP1h
-         rTotAYYqRSYtKmGPEvOCMHSZQH5GCmdSBmg8mZCMgWFj+5MevaZbDk//T5K2UY4YhvIx
-         6AmMcQ/0ulHsjQi3oi40NrbQ1V09JQmIezG4/Ks0zLXnei/Xj9rLcnoM0B8d7WmtB6pu
-         p5Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9SjVjrKOe0gv9jJP3+ey9+zypm5GZ/AGhE7zfvG2w9+/+GcJY9HY4uHY62KgwjZ/tB8ZvPbVYkkxG8kGD@vger.kernel.org, AJvYcCVQ/F07TxRK6OzHIE/Ufsq9ZzkdJWhEpq7s5y22AGtwmWUc5LiP1h1rZeGjwJWgsowj6XCbmdrZnZSIXt/oI3k=@vger.kernel.org, AJvYcCWPkwmbe783OEJ422f0Y7FlYk/yGjyOzuRBVBIGuITncwYxifN0X+dtONBOcXdqKbbEJdQ5IDpDOIcv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwV7SxSni1NQNR6R8Yk3mjMlnir9H552S2rFljpuQYS08SroZY
-	mgH7C0XilKEYFUIH62pu+QancROob3g+V1Xg8UEfdKJ7lrtVQYLy9VlC
-X-Gm-Gg: ASbGnct0d3GWvmLyhlVL5tbg3TpT3eFSCSoG+9B3CQy49ktTXuFDRkPEJ0nvYdU84EL
-	x1ToQPgbzFf5/2+XJnH/nQWNWjcaX+8utMB9xyNjuIL4NuK8ogs1o8LiyQq25JdkwduE6t8SiG8
-	yrIQRBCZ8J/b/zyR7PNODKeju/GxOY3EfXwqjLKOCu8mxkQ1jESsA8h+d/SW6aKOoFKqFR9p2JC
-	kMEn6gYI+CONoTcbD1MbGpKa8KVCXIkZJKIwpsPV3WpGeqwDEo7J3D3J7rP2WzN+1ThFnJX14R1
-	hhRg+pQbbokElP9Sr5pkekTARpnmaBax0XUT2VZiX38xRW0cqOV8aXSxDy1PH7Fe4OE2Xz8cykO
-	xAz08lVejGvE53zNuKpCKydxOOxhZUzBJOUqP
-X-Google-Smtp-Source: AGHT+IGVcSD1mQg3mpoyjCkfH4RAG1TUXktirt1za44bnqpVSTvX7FY8Nn1swXT0r2wVHVp5+qXzSQ==
-X-Received: by 2002:a05:600c:3d97:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-45334b07fe9mr31150995e9.33.1749821856990;
-        Fri, 13 Jun 2025 06:37:36 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e13c19esm52865445e9.25.2025.06.13.06.37.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:37:36 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v6 0/6] rust: Add ACPI match table support for Rust drivers
-Date: Fri, 13 Jun 2025 14:35:17 +0100
-Message-ID: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCFA14D2B7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749821768; cv=fail; b=uS8dgDr9jkgCbL4h0TCDAw1OuiXVMVOrrFndj3EHKwwRUmnR9KRc23rjj6c3JqoIJfdVsQNY5VezReZhk3/sMUwnavyg6t8TH+E6shYuO2SzjdcPGf5/7UK6WqgMFbDmo0lbthWjYCKq5F5ru5+hZZV2yVUIFO94abbiSiON5mk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749821768; c=relaxed/simple;
+	bh=DmZ+o4du1o0mHYO4AJDjvD7rrGCsFbmaDejwMy7RySs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mbVKxdy46+o4g1mZ/cdlbwPCUlAxoD3qsltCzNzjIxUciIItt3U+xPFDsuqVNG1522qSkus7lauyZnKXIbKQbHmJ9X0r9vxzH1zp/76JIlOznC5TrXSKlksdZRPn2KWSDryPoz+tgPQXk4js6sReb5YZ7q67fpXeqHR+QZcOV+M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CuQAorHq; arc=fail smtp.client-ip=40.107.100.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=if+zDrbmrBKKzELDSFx1uIK5H0ve5I5HZQWYTtvgJu8l1gebmKtevZ1VOLSpUA5jqqF4pjC4wF9HXeooZ/tyqYijJiSZ+08EoIxmb8mgXs5hmecUNLITN2HKSAD1fplt3gVE4GbYxl04wTXHflnTePThg9d6yNEO4ilfWb4LOnZdspmgfsnrhb1nmSottS+E1rPOlaqn8/0YkI8/kOuUwSTB3iAfBf3z002tNcp0AG/pODuGnXfr3ge5EXPgVXvX79svu+513uS7b/rcMTg0DX+IlJI609Qi+6hdNQ0bIz1MGS6JNtF05o+W01XJCF7EpbRSA04423Yi/70Y2Yc7pA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n84P7t4w7SrPq091QkqwSkMTAM+ncYQZcUa5qo8H8Rc=;
+ b=WVuq0ih7TpFiLU3Au2RtaiAAybS9Dm0YwxYKAqhiTY5nrDp2cLKPRy+SBuxIeTRC8triFny+j1/REA/kkfZLeD5kK9FU3TMCBiK3MO/ZiAVVYZZfaest15KU673qUXKC+6P449Lfy1u+1kxIwfiBLRxGIFnUDyehkgdIUxssfCllUVfv3QX+uoV6LVYepOJCgeDBaTFUhszDqvgajVcvPomSNnV/x4fdWGogSAoIIH1B81H8IglLxT85erulwUGdVGSgo1An63EOw9fxKH/UQNi81/MSELmkzyIqJh282QNmpvu0nCo2lkI2xMT0l9m8TPLcIHqq+7YUVnWF7a40/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n84P7t4w7SrPq091QkqwSkMTAM+ncYQZcUa5qo8H8Rc=;
+ b=CuQAorHq2aQXR2uiluyieLk8clvtq0PSgXfcpRePaiX8MitXKNtPwOam7R+Oi8qTd2G8lTkfhxiRyrlilTEpywxy0CiA/p41xXg1V0KWB0W1HbbfeE7orRsqiTArHOIauKw3Tc976FTj8whpqkMyY8fiq0K9+EaVzCECyobLw/KIFvgZ8dk3yKYvvp4/jepCE2nQCi0LgODtommkHNu++i1uMBGfNiMu9wY7MBFkH5jdbDzzjDxGO0E93Ocfa9if73hLthlL+ocvUlsi8He1Z1UUubz7hW4rg+CTGeoY3jwd9ju01P2HztRpv0WCcOa6XVQmtBVFQMGnAD3iQw3CaQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA1PR12MB6701.namprd12.prod.outlook.com (2603:10b6:806:251::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Fri, 13 Jun
+ 2025 13:36:02 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8835.023; Fri, 13 Jun 2025
+ 13:36:01 +0000
+Date: Fri, 13 Jun 2025 10:36:00 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, robin.murphy@arm.com,
+	joro@8bytes.org, ddutile@redhat.com, yi.l.liu@intel.com,
+	peterz@infradead.org, jsnitsel@redhat.com, praan@google.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	baolu.lu@linux.intel.com
+Subject: Re: [PATCH v1 02/12] iommufd: Drop unused ictx in struct
+ iommufd_vdevice
+Message-ID: <20250613133600.GA1174925@nvidia.com>
+References: <cover.1749488870.git.nicolinc@nvidia.com>
+ <4c85d75d630d37df6e7140b7d396678046324975.1749488870.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c85d75d630d37df6e7140b7d396678046324975.1749488870.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: YT4PR01CA0277.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:109::10) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA1PR12MB6701:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1dd81da6-4059-44f4-1d1f-08ddaa7f3cdc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cQbgHew2AOFBoOdVFi/KsAk4YZetlL5+T9KY7KPoT05+UuPdvWcRdXWozZwd?=
+ =?us-ascii?Q?Iz32KRmC/fTXCymQw7Q6kveVhqq5qnBiUBoWtfGBaUSvKnNYntfP/+Z8ift8?=
+ =?us-ascii?Q?VpWds5jDowF2rDCV891Pl4OAZgX9/7098kWj/RXPo+zL73aqMku3NmJyUblR?=
+ =?us-ascii?Q?rRJfIip4lRRz9OmdqDb2Tci1jiGYUg8UCyjOkv38PsctmBrgDi0Pdn1Sbf5s?=
+ =?us-ascii?Q?qkH6KKWCFjK7WV0UHfuNoaw0QGoZMCaCwwEhX9VfYODxgsvLd4M4blt/Nuk6?=
+ =?us-ascii?Q?yxKUzDRRW/KMFy+Y8OaxRC+XUbkKcMoMmP0d76tKAAs9BR+kzD5l5WM8DgHV?=
+ =?us-ascii?Q?HL2KVjQvPMos+WRSS93q0tFVlns85agrxvXNNgLmmXF0SRbUShylOwXOu0df?=
+ =?us-ascii?Q?n+bdTeSAJX/NE/3rVUYfijMFTNCao4jZ+WJxbW0f6XLw7/B80NUAk2eFtl8f?=
+ =?us-ascii?Q?TETd+PxQwt0zHTJiIvt3W8oFrd+H3Z0xh7ju8Oic5WO0Zj4+de8IoVSSOe6P?=
+ =?us-ascii?Q?ANh5c3fPefVBczeLJq/CwjQBA13e+3iMv6EckrNo6CmneYFqbGnUwWU7WBQf?=
+ =?us-ascii?Q?AWwBOFVgHZPuSQfn5ZTnKElcpwZiSCm/cEhI4YcgzwoKx7IHSa/R0iQN0nr+?=
+ =?us-ascii?Q?k1KSYJeLsX1e8CHJSIlV7Tz6HVoBfs7Y02kqCCweIsQK3Y45/EekEIYj7q5I?=
+ =?us-ascii?Q?ltl9UB1wMQRO9Sd48topE38cwuCyQ3wjSnojrrnm1kespMSd1HhHdMMJt5sm?=
+ =?us-ascii?Q?wsdvXdZNlWnpzJtGKyE2W726aRU5vGMok/3VVaQtZDDFy0wm2lKi11Fxy5p6?=
+ =?us-ascii?Q?QsDMiBBQur69027/BwUu1lNWxp6Uw/qshlW+lDT1gOcB9oM5loLnGSFKAWq4?=
+ =?us-ascii?Q?qUMa34TpradoBQLYF2kmNSPy+mGgfD0lVdIwDF5qYxmRs1+7T6k4+x7MZ11i?=
+ =?us-ascii?Q?feumQ1ieBFARWDqtNmvIo8gClo/6/GCYof1Jpkor7LqW3asdCdvddxJVK/B2?=
+ =?us-ascii?Q?FbtdRsnIB5/iMlvjFbW38+zpHZlzhvMLNWPBPu8LuVRx4KJYXxB7vYpFP1RQ?=
+ =?us-ascii?Q?3zDeCFIDP3k5quVL9qIWGsO287utQ+0vgv4zW/RJuUjoTRSrZ2EMnIehyjbm?=
+ =?us-ascii?Q?ae8+3ER4Z8gpxwCRuQnHoZE/mXC9drCaoseuHm0Oi3OlA35aLuM31quZjuuA?=
+ =?us-ascii?Q?vqYFOv9yQxPpmJxaiNOhS2N6nrq0ofWYLu3sKscS20V6VcLhvdodbx4g7hAz?=
+ =?us-ascii?Q?MlZu6oK0E8WCAJtWYoHL0O2cqjazhdE9Xtmi0W5zfjyouqvxyWGckeS7P8yH?=
+ =?us-ascii?Q?MDBhFWujls1drudkdwO/jbeUosscD2ZVmotv8xTyOSCdzvEjXR2+t8CrwXp1?=
+ =?us-ascii?Q?CWJ6RpzV4MCJrB7xamKqr+0coEAMe6gQpDzu1NnnyoEsozt/iQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wHFHPR4l4EfOu7SACFanPNSh7jE9B/F8BiG6NXH/IyHK+CAJRcYEQrx0GaFA?=
+ =?us-ascii?Q?VeIl0UMVV3FnEnL+kyb63wrUhE18LrMFYJ8TNvYyTcbLeUI5tM+MaPxvvrKs?=
+ =?us-ascii?Q?hxTfVZaOph7B3+W15Gw+SYVCqJeTp3GcRJ2yk3wmdNL0aIK70yH9KJvlFGFB?=
+ =?us-ascii?Q?PAPd48zSMssnWtSMk0A/xk/HDkEwjJocEWg05pZ+OHpHeBMJsBbaMZIOXZr0?=
+ =?us-ascii?Q?DjQU15AtyvAIcBNbB8JmFWtKZ2YqhG0RJDfjSy6TNeqLzAzRjPbIWM1eSfS8?=
+ =?us-ascii?Q?baJGyQyl9yIu3E8W6IJq2zkrX3R61FwmhAYiOgqFAZBUalHB+17CTP4WbM/G?=
+ =?us-ascii?Q?4jdIfrvgSpOtykihgWBgYm2qlAwMu98KDTQv/nQvZx47Hv69Ms7EANSDaAuj?=
+ =?us-ascii?Q?lrTOMQIgzMz1PHfBmyf8z293PfHM3AWLjPNpqNhDntV8OcqBmHYvtXRxwCdP?=
+ =?us-ascii?Q?apr/AGUCr36pnoCV0Ezccy0VGOr2TVGPP8ZPV2m5Afl+irCZxpcYEnrQ2eR3?=
+ =?us-ascii?Q?OjO7VBwrhv5sSMQ5vsDRKmH+BP6f/zyK/wifHDDqumWwHiQ/2DbG+dSxhmGJ?=
+ =?us-ascii?Q?MGrprFXzVA8ITGx/MHIMmMMFVDPRGRaBj/TYMswk7w3l9N8nc4ZD8WpT6IFH?=
+ =?us-ascii?Q?pYzHEQAxjESBD6axChT5Bq5zIha9MA6fo4F3iAkxmkEx9lx5fsbyaEgkOrrc?=
+ =?us-ascii?Q?ojen2i4Is4HXLA4Vo/dNADRa6n7FU8toXgob+P5gy62OW5LYadCyi/nLFLoA?=
+ =?us-ascii?Q?sfgVhBn68AUE2CuxbPsA/Mn9m4wzZmUt8ZmpFdzoBZfey2b8dGGRX+XDa8lb?=
+ =?us-ascii?Q?0VCPFRdxgs3n9obSuFJ8MRbN1JLcPjYXLhmxS/HNf802r2IdTcQjguybBikT?=
+ =?us-ascii?Q?eT0XdMN+Bgz02gt+xuULxI3ji9JdTjX66K5zY5Aihr+XA7aEQFFfaEFmxNkf?=
+ =?us-ascii?Q?2E013lFTMUVlOJFqzcHd4Wk7owMsAsL/03byDE/kOF92m/vREBEFjGciwny8?=
+ =?us-ascii?Q?opf5fjVWwH8xjOqyD0qIy4lPkK9eMgeOhtjqToGJraV7WnQhaX78zlVHXXY5?=
+ =?us-ascii?Q?ycA/WoBU3ZauqEefu5AWwBzEeDB4Kk0Q7I34rW0Pu2nZFv8yjEvRwdQSRlVA?=
+ =?us-ascii?Q?pmEwVTEfRIezQEzkUmbOe3G0lZuPHjHqhh2vKpwdaxOln1A52UYjGtobX5TB?=
+ =?us-ascii?Q?UD4V/yA2CCD9USpMCFl84PqVZKeWKTzEQWa/e5MohXOuNoTkj68T/jENr3YV?=
+ =?us-ascii?Q?B96Jb4lon4jXaaQWfLKKFQmpydKpF7V5kKkLaN1/r2DNNgBcsjmT++pyQlrE?=
+ =?us-ascii?Q?CqVOqgXDv71WLNpbGV0n/cilTIzZkR8nOn/vSacTHUhAesoNHnmDC3sreVJm?=
+ =?us-ascii?Q?FJJn92RpqKOfc1cYEpAqIEtA4Z6XkGzAx3PI4KL0zMIRJu7NH/t6AQDWb4Xj?=
+ =?us-ascii?Q?kmTkJbVG0dZ8y4WG1/N4nZBUqiTUSZc8AcMY9Sx0ohnYSvhVCS1TcrYFzqSX?=
+ =?us-ascii?Q?xFHizvGDzVV8AGz59rDn3bganjxbFjijYg2T5YzuOIMYwvp7u5dfItTCGOk9?=
+ =?us-ascii?Q?skXHuOX+zS89KzcYtaEaV6NedoGOJn5yHHx5tjqX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dd81da6-4059-44f4-1d1f-08ddaa7f3cdc
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 13:36:01.8565
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cIgXL3BkUTOB5VYhBGGim4aBccr28RWYZ2b85gOZ5RzLuekuawmb8e5itDf4FYoA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6701
 
-This patch series introduces support for ACPI match tables in Rust 
-drivers.
+On Mon, Jun 09, 2025 at 10:13:25AM -0700, Nicolin Chen wrote:
+> The core code can always get the ictx pointer via vdev->viommu->ictx, thus
+> drop this unused one.
+> 
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h | 1 -
+>  1 file changed, 1 deletion(-)
 
-Currently, Rust abstractions support only Open Firmware (OF) device 
-matching. This series extends the driver model to support ACPI-based 
-matching, enabling Rust drivers to bind to ACPI-described devices.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Changes include:
-  - A new `acpi::DeviceId` abstraction for working with 
-   `struct acpi_device_id`.
-  - Updates to the core `Adapter` trait and `platform::Driver` to support
-    optional ACPI ID tables.
-  - A sample implementation in the Rust platform driver, demonstrating 
-    multi-bus matching.
-
-This is especially useful for writing drivers that work across platforms 
-using both OF and ACPI.
-
-Tested using QEMU with a custom SSDT that creates an ACPI device matching
-the sample Rust platform driver.
-
-Igor Korotin (6):
-  rust: acpi: add `acpi::DeviceId` abstraction
-  rust: driver: Consolidate `Adapter::of_id_info` methods using `#[cfg]`
-  rust: driver: Add ACPI id table support to Adapter trait
-  rust: platform: Set `OF_ID_TABLE` default to `None` in `Driver` trait
-  rust: platform: Add ACPI match table support to `Driver` trait
-  samples: rust: add ACPI match table example to platform driver
-
-Changelog
----------
-v6:
- - Moved set `Driver::OF_ID_TABLE` default to `None` to a separate commit 
- - Removed out of scope change related to cpufreq driver.
- - Link to v5: https://lore.kernel.org/rust-for-linux/20250611174034.801460-1-igor.korotin.linux@gmail.com/
-v5:
- - Got rid of unnecessary consolidation of `Adapter::acpi_id_info` methods.
-   Instead, firstly made consolidation of `Adapter::of_id_info`, then
-   `Adapter::acpi_id_info` is added using the same pattern. 
- - Set `Adapter::OF_ID_TABLE` and `Adapter::ACPI_ID_TABLE` as None by 
-   default. 
- - Removed `Adapter::OF_ID_TABLE`/`Adapter::ACPI_ID_TABLE` initialization
-   example due to irrelevance.
- - Removed extra `of` dependency and `Adapter::OF_ID_TABLE` initialization 
-   in cpufreq driver.
- - Link to v4: https://lore.kernel.org/rust-for-linux/20250610145234.235005-1-igor.korotin.linux@gmail.com/
-v4:
- - Fixed code example for `trait Adapter` in platform.rs 
- - Fixed driver implementation example in rust_driver_platform.rs and moved
-   it to `trait Adapter` in platform.rs per Danilo Krummrich's suggestion.
- - Consolidated `Adapter::of_id_info` and `Adapter::acpi_id_info` methods using
-   `#[cfg]` per Benno Lossin's suggestion.
- - Link to v3: https://lore.kernel.org/rust-for-linux/20250606170341.3880941-1-igor.korotin.linux@gmail.com/
-v3:
- - Removed fwnode type check in `Adapter::id_info` per Greg's and Danilo's
-   comments
- - Removed `is_of_node` rust helper, due to unnecessity. 
- - Fixed example code in `rust_driver_platform.rs` per Danilo's comment
- - Added an instruction of testing ACPI using QEMU with a custom SSDT
- - Fixed minor code formatting issues.
- - Link to v2: https://lore.kernel.org/rust-for-linux/20250605161956.3658374-1-igor.korotin.linux@gmail.com/
-v2:
- - Removed misleading comment in `acpi::DeviceID` implementation. 
- - Removed unnecessary casting in `acpi::DeviceID::new`.
- - Moved `pub mod acpi` to correct alphabetical position in `rust/kernel/lib.rs`.
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250530123815.1766726-1-igor.korotin.linux@gmail.com/
-
- MAINTAINERS                          |  1 +
- rust/bindings/bindings_helper.h      |  1 +
- rust/kernel/acpi.rs                  | 61 +++++++++++++++++++++
- rust/kernel/driver.rs                | 81 +++++++++++++++++++++-------
- rust/kernel/lib.rs                   |  1 +
- rust/kernel/platform.rs              | 29 ++++++++--
- samples/rust/rust_driver_platform.rs | 71 +++++++++++++++++++++++-
- 7 files changed, 221 insertions(+), 24 deletions(-)
- create mode 100644 rust/kernel/acpi.rs
-
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
--- 
-2.43.0
-
+Jason
 
