@@ -1,174 +1,148 @@
-Return-Path: <linux-kernel+bounces-684990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398F5AD82B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD2BAD82BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E8417B462
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DCF216FB4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D0724DD19;
-	Fri, 13 Jun 2025 05:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE93124DD19;
+	Fri, 13 Jun 2025 05:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TweeflZX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i1L9T31P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA55220F47
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 05:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC16A2F4311
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 05:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749793875; cv=none; b=gzCrbKQHevu4VfbTDRAsKCRzMhSN/4DdHgPIYXusUMnDj+NPwQOymGxLL8KPjaM6WQVIg7Y91Hp2khIw76kHA4AYXESpj+IcuCMce6RF35BJ7JW7DkhsUHTE/9JOkvshq2idxr7t4ITMbbDbe8B/BaxJXcgCIyji5QVkVQsiyEA=
+	t=1749793992; cv=none; b=AONBvllJPb1M0BYmbJ/KPEyC39NBp+VhnqaB8IOv8VfAKmCrFfbArrUJhrZhlAQHZDcRur+YW4nGr5mslWscLnE1zjglXNQs5cx6FjJ3QGNik9LEq0bAiQBugk84Yy232pTDdFDA8g/l9JdkzhHu0HkBJmxc61apUqc9Vlvik9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749793875; c=relaxed/simple;
-	bh=KRqlg4gXsASPE1ojCNZ9bKXs5qtVRlaikINe1tozUSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TN9CWPAlXK2U0nGW3zS0EU1pwj5sB7jfSUhvWBCLyODnmkVRme3TxJnryhb5EdTTmwipMgTA9eeAWO8D+4Jb9EOfmIBjqW/4NNfKKlgp8NX3sqO07bKj2CrMH0izw6HByRoAySHodLYG1P18463rSOo0995K54S05oJTcflX+T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TweeflZX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8720CC4CEE3;
-	Fri, 13 Jun 2025 05:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749793874;
-	bh=KRqlg4gXsASPE1ojCNZ9bKXs5qtVRlaikINe1tozUSM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TweeflZXYV+3wWq9a1bm/ghWAbK31EjDAGur8bZZcdSbXVsfjCV8YQ9H+xcJwge16
-	 hV7Nf7GR+zT9j3LZTk14gj7ZalL6/J2Uzf3KJv9LIu+AuCeGgL2z/tkBw7T+IkRj03
-	 YWHV9aO6X/o15NEzi+nnPkEwiCYQhX8p2QdIYRcmfLMHtPJ1PwpzJICvK5uQ3gfbrJ
-	 zVoLj1rrSX1j4deGYL2QfEdg2UE7vnZoCclXTj2g0R6YUga3/uLZOgAG8x4SRJ4J22
-	 qndFn76Do3YcRdE04+UNCb+x2koZ8xIkLj4tf5VrmNV1HMWEXoO82KaB0DwTYI19Vi
-	 B3LPanFOS/bRA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: introduce reserved_pin_section sysfs entry
-Date: Fri, 13 Jun 2025 13:51:09 +0800
-Message-Id: <20250613055109.2335-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1749793992; c=relaxed/simple;
+	bh=E84jZASd9VrkCktkUiz5jFkq3GE3aTxqEKWj2Lca2r0=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XdUi4X3KJTlfBTOY38XWUqGLyhrYXo4AOHGL0MxvihgSD4lULEKkegDeRgNEtaPBWEbzLc6n/sggcEo/qC4WifwhVUmVsxUH4HNt9Sh47k+SKIVklMTUPI7hj82QrXOObuEOCZAJ740rrRXouLahiuc+LujftKp/NjBC55Wmlos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i1L9T31P; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749793988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uRM/XkwtDFJU3Fu5AOGF8vxNu/ZWgeclRQ0HOKH7F88=;
+	b=i1L9T31PkjNTjTQo//g0+zx6N1EmIoBWaoBU9VtnKr/ZJvdxLqTQj07gTh/Yg72oil2LSf
+	GqVci+rrB8UE9aMl97IZo9Io98nRNG8DuyFB0PQJgES8qnMUCnuynEee+tkNqJ3Y808BR5
+	Oy0jmfFZaOETfRl+AOj1+Y7gm6CbPIE=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-HHU6Kyd0Nr21A-YugRzm_w-1; Fri, 13 Jun 2025 01:53:07 -0400
+X-MC-Unique: HHU6Kyd0Nr21A-YugRzm_w-1
+X-Mimecast-MFC-AGG-ID: HHU6Kyd0Nr21A-YugRzm_w_1749793987
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fab979413fso35878336d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 22:53:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749793986; x=1750398786;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRM/XkwtDFJU3Fu5AOGF8vxNu/ZWgeclRQ0HOKH7F88=;
+        b=pZsf+o6k6l69cxalNaskCoG+57hGdMoyYbWI6ySL4jL47PJkFClM5+3O95XVWgXrep
+         X7/TrfIqWc4/edwV4TOpQX80cBLixIkIbFeXM74RxXeVQTEFbvNqb27FC66jp2qVYKUQ
+         4diBYpwWONCkZ8GLnHg7EWfAZASoP8U+BBKivj8XSM3GaIy4vx4jzVamwmx9qMvHySVt
+         3p6BYMPRdAS7KKyTj7VkDGDfmiAMzwcap30IDQYqJTwFMSxMtfSKHO5s1YrqGjX8Swpu
+         gPFDAF2cE09LyPxz9Tt2xAEL0PnB1+3OkNbZ5K5HVvLX8J6aGVuOg16ClYLbITGl6aAg
+         MfGA==
+X-Gm-Message-State: AOJu0Yy2bCJ/75Hj+GRi9fJQkiSi1svfHvKLDrhti0ywpIy+VenAlLZU
+	1XkkD4HFpnBZyiBGIoVhWDtPCEc2eZErK3ouG6Aob7apNNwdRiaSJtbTDMwNqDx48n5iWSVja8T
+	LyLNno31TdNdGNkd7TPbdHaTsZxrb+PxiPErqVl6eqpyHIJe8vGUqYZY5tRPUGV75yDUmtkfmPK
+	9d
+X-Gm-Gg: ASbGncvdunJkpDXMhSocl0ymCJ8VklAlHZ8PTNHrB7Reg/ZFMaIhRsnjfF7JUXSCyYP
+	G0heZr8z2B8bASj/99eK9wi5rWR/U5c5ORi3blJavL8o4SU2dWieqWFmuPXBpisLXeFQ8NT6WSf
+	BCuLsHzDgOViEAqE45OEQJR5C3bXdD5XsE6GynYo1LwbRw77iYHSdZ3DVHZNZMDsaEo2ZQQNcKw
+	tF7VpCBrxsy5R1Gfv/YIbGI+lN1laoz7CTIWifoLDq8lomskEjAt2h9uFYl91K30g8DwjGdAQoC
+	vN8Zj/B7+Ajx7ZsLUeLPFLHHwYmH/3LmFIwn
+X-Received: by 2002:a05:6602:4181:b0:875:28e5:92e5 with SMTP id ca18e2360f4ac-875d3d4c8a2mr208128039f.13.1749793975515;
+        Thu, 12 Jun 2025 22:52:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfT3vZmyWBhXW9Py11Ri5qfbIXpcGOdhc8T4lJJRvwqujl2GDwJOVyYUgmO+X3YgxyQOhGaQ==
+X-Received: by 2002:a05:6e02:1786:b0:3dc:7660:9ed9 with SMTP id e9e14a558f8ab-3de00a267c9mr18607045ab.0.1749793964593;
+        Thu, 12 Jun 2025 22:52:44 -0700 (PDT)
+Received: from [192.168.21.4] ([216.228.39.50])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149c85ef9sm155867173.119.2025.06.12.22.52.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 22:52:43 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <7a006014-bf6e-4480-bd61-b0333c74e3a4@redhat.com>
+Date: Fri, 13 Jun 2025 01:52:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/rwsem: use OWNER_NONSPINNABLE directly instead of
+ OWNER_SPINNABLE
+To: alexjlzheng@gmail.com, peterz@infradead.org, will@kernel.org,
+ boqun.feng@gmail.com
+Cc: linux-kernel@vger.kernel.org, Jinliang Zheng <alexjlzheng@tencent.com>
+References: <20250610130158.4876-1-alexjlzheng@tencent.com>
+Content-Language: en-US
+In-Reply-To: <20250610130158.4876-1-alexjlzheng@tencent.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch introduces /sys/fs/f2fs/<dev>/reserved_pin_section for tuning
-@needed parameter of has_not_enough_free_secs(), if we configure it w/
-zero, it can avoid f2fs_gc() as much as possible while fallocating on
-pinned file.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- assign SM_I(sbi)->ovp_segments after f2fs_build_segment_manager()
- Documentation/ABI/testing/sysfs-fs-f2fs | 9 +++++++++
- fs/f2fs/f2fs.h                          | 3 +++
- fs/f2fs/file.c                          | 5 ++---
- fs/f2fs/super.c                         | 4 ++++
- fs/f2fs/sysfs.c                         | 9 +++++++++
- 5 files changed, 27 insertions(+), 3 deletions(-)
+On 6/10/25 9:01 AM, alexjlzheng@gmail.com wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+>
+> After commit 7d43f1ce9dd0 ("locking/rwsem: Enable time-based spinning on
+> reader-owned rwsem"), OWNER_SPINNABLE contains all possible values except
+> OWNER_NONSPINNABLE, namely OWNER_NULL | OWNER_WRITER | OWNER_READER.
+>
+> Therefore, it is better to use OWNER_NONSPINNABLE directly to determine
+> whether to exit optimistic spin.
+>
+> And, remove useless OWNER_SPINNABLE to simplify the code.
+>
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> ---
+>   kernel/locking/rwsem.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> index 2ddb827e3bea..8572dba95af4 100644
+> --- a/kernel/locking/rwsem.c
+> +++ b/kernel/locking/rwsem.c
+> @@ -727,8 +727,6 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+>   	return ret;
+>   }
+>   
+> -#define OWNER_SPINNABLE		(OWNER_NULL | OWNER_WRITER | OWNER_READER)
+> -
+>   static inline enum owner_state
+>   rwsem_owner_state(struct task_struct *owner, unsigned long flags)
+>   {
+> @@ -835,7 +833,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+>   		enum owner_state owner_state;
+>   
+>   		owner_state = rwsem_spin_on_owner(sem);
+> -		if (!(owner_state & OWNER_SPINNABLE))
+> +		if (owner_state == OWNER_NONSPINNABLE)
+>   			break;
+>   
+>   		/*
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index bf03263b9f46..c2a233f2a085 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -861,3 +861,12 @@ Description:	This is a read-only entry to show the value of sb.s_encoding_flags,
- 		SB_ENC_STRICT_MODE_FL            0x00000001
- 		SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
- 		============================     ==========
-+
-+What:		/sys/fs/f2fs/<disk>/reserved_pin_section
-+Date:		June 2025
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This threshold is used to control triggering garbage collection while
-+		fallocating on pinned file, so, it can guarantee there is enough free
-+		reserved section before preallocating on pinned file.
-+		By default, the value is ovp_sections, especially, for zoned ufs, the
-+		value is 1.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9333a22b9a01..fa27498202a3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1724,6 +1724,9 @@ struct f2fs_sb_info {
- 	/* for skip statistic */
- 	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
- 
-+	/* free sections reserved for pinned file */
-+	unsigned int reserved_pin_section;
-+
- 	/* threshold for gc trials on pinned files */
- 	unsigned short gc_pin_file_threshold;
- 	struct f2fs_rwsem pin_sem;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 696131e655ed..a909f79db178 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1887,9 +1887,8 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
- 			}
- 		}
- 
--		if (has_not_enough_free_secs(sbi, 0, f2fs_sb_has_blkzoned(sbi) ?
--			ZONED_PIN_SEC_REQUIRED_COUNT :
--			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
-+		if (has_not_enough_free_secs(sbi, 0,
-+				sbi->reserved_pin_section)) {
- 			f2fs_down_write(&sbi->gc_lock);
- 			stat_inc_gc_call_count(sbi, FOREGROUND);
- 			err = f2fs_gc(sbi, &gc_control);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 57adeff5ef25..e0ecc341f1d3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -5017,6 +5017,10 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	/* get segno of first zoned block device */
- 	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
- 
-+	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
-+			ZONED_PIN_SEC_REQUIRED_COUNT :
-+			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi));
-+
- 	/* Read accumulated write IO statistics if exists */
- 	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
- 	if (__exist_node_summaries(sbi))
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 75134d69a0bd..51be7ffb38c5 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -824,6 +824,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "reserved_pin_section")) {
-+		if (t > GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))
-+			return -EINVAL;
-+		*ui = (unsigned int)t;
-+		return count;
-+	}
-+
- 	*ui = (unsigned int)t;
- 
- 	return count;
-@@ -1130,6 +1137,7 @@ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
- F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
- #endif
- F2FS_SBI_GENERAL_RW_ATTR(carve_out);
-+F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
- 
- /* STAT_INFO ATTR */
- #ifdef CONFIG_F2FS_STAT_FS
-@@ -1323,6 +1331,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(last_age_weight),
- 	ATTR_LIST(max_read_extent_count),
- 	ATTR_LIST(carve_out),
-+	ATTR_LIST(reserved_pin_section),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
--- 
-2.40.1
+Right, OWNER_SPINNABLE is no longer needed after commit 7d43f1ce9dd0.
+
+Acked-by: Waiman Long <longman@redhat.com>
 
 
