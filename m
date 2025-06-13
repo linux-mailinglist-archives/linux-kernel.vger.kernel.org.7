@@ -1,104 +1,59 @@
-Return-Path: <linux-kernel+bounces-685528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4F8AD8AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:44:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEB3AD8ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2654D1891CA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6E5D1E3803
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F252E764A;
-	Fri, 13 Jun 2025 11:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="YNHl7knK"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE00E2D8784;
+	Fri, 13 Jun 2025 11:41:15 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F32B2E1758
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583EE2D8769;
+	Fri, 13 Jun 2025 11:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749814938; cv=none; b=kTHh+Kh5a/2ljRUaQEHRPTIAGUQp3nJ9I4gJo88TgcPC3m67yKjb1qTKC6lMNZPcAiv+cxgEqjSI4ssdf1dherRI4zPLf+gBQWsKKw/s6oaVijANPhp83Rx/IxHnoEepxHhIPJWZVsnu+uWfE4KxAerFtE5j8wnwMROqDtycUyM=
+	t=1749814875; cv=none; b=Ddb5mT6z1+NxOjsJVZfdyI5cwVFMMNNv9lLQtYVHD+PlWZCeWXaT3UB0cAdJdkEkEhU8B1HEcUXdhUG6sXBbhxmEyjwRd4fQPMMo6wv9bOGj/IqFLlIKdxI4uFuVQ6gKd4kkC60CmPSuBLcIzStQfeNgOSPlDs2gWiz2tT2MmCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749814938; c=relaxed/simple;
-	bh=9oxZLiMqxg04N22sji4gyuqoa02gKr5691CGYVnCg7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mb32C0NyuhD0GX2JqofT65gpvlUDw7Z85kf/AR+J4rz2J/eDwoTznoi5VKZFkDq/bCFIARsL9U4b8Y1H43eyfJh/eOgjBIyw/8aseSzo+2OSAcNcOSh5MYuNrftetLo0oPCDWY6+lxD8m36FjZWwxY6T37yIGUkxxLVAQJxQt8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=YNHl7knK; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso18194706d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 04:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1749814935; x=1750419735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3FOxOys3zo2Dw07T/mQvOuXgGCEKYh0s2Uiw4mKVmQs=;
-        b=YNHl7knKNDVKvypJcJhcGlGu8DrU5PyO+LN2J08UyFVzU+7XAZzimNTzhNeyR93302
-         XJ2LMdkOO9R9gmdzW4xyjI6FTXvDlg8705pU5im7roRIDXChZYjgtdxTkBuIUAGCYyHF
-         ZbIdAVJvz9EM2HpsG6FFia8QAVyoGD2TVmrlHDAjvnyST/jNSkF5eNqv8V491uqwnZyo
-         Y0TN4hgljgTL6kYYObEddKdoAV8ixSTl1imVfV3yCIhUrsVizO3P0xsW5HEwWlWJh2GF
-         o7ohjQ470K0gVZ/EUPROnnF9f9fdL+9J34FgR6gZ43GJt2vvpweBo1JzK0ocdiitTB06
-         sNIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749814935; x=1750419735;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3FOxOys3zo2Dw07T/mQvOuXgGCEKYh0s2Uiw4mKVmQs=;
-        b=FDXBqXT7GSq+cG55gmSe0nETArnNk1gF/4aJBcySLHbBXDbn2qVq36XhDW3MANy5nm
-         pSqrP1hDGdZfrcFaxhuqF2v00gxYuboskEq5FzxtwUuQMRGewkMdFgRKckF1MCs0e5tK
-         LLJyzJOmtFZ0cL3ESvSpXlOKvfHr6eTKsfHA39SL6x6Xm9ry6jyBDPxHN43JWhfUciFS
-         +kz+ZAtB4cTyqSZ23kRF8K+uw9Qv8CMDDOYeNItHxfWNWhrMiK10O6Ga03I6lgsxDO8w
-         E8uia4UZRBXFaJ4GX5HpTC7MPebTvoTX1oDom+JLcSEQcwhGU37oP91jhcEcc+hH2AV1
-         f6wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmc+Xyvnq/rd9HktOvFx0btGNReCeVRQ08ftx0gXspseBAIIxjLQhP49Nti0OuTPmvwmBklHkyRFV4Rkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXH7hdih5RTfmHcmzBk4xwwWR72y+vUMUcsgY7f3gX+Z7tjH/K
-	eDXVCDgUJP5qWi4+uQ6Fz9N5QhSkcYgpb5u89rpXPQeDrPL+lAiWqxYM+cjYBbZKmaI=
-X-Gm-Gg: ASbGncve4Zvfx6+njLHQXINed0oROccRU4SndtDEtlAALrXQpUyH+mlo+PZvbY5LfRh
-	nFZzn9NASlbsUODXDYf0YOJFu4xGtES1i5Snkym50PaqLqOoGubCBw2rr0BbctGoi0U3jOl0A/R
-	HRNo35czU749nrSNzJSVgVEOmwplOkqGfevUCHKjPw8JWsTO2hIM4knxt7ph16vNpaTkWDZSotj
-	j7/bi8qrckL3RVDstzvbdOuybyxOWFr4Mm0eSHWkZj8UyK2SDUoZJO0tAO3Xfgon3XmyA6ioDT9
-	4SKm6a54ywdnPP739FOETJDKqfxnIvOdOgEKiWR9GmmxeJtjX5jjoLWstjqplzqsKVO5cTpzGfO
-	9xpxpm0M2D/Tn1Yrta98ddA==
-X-Google-Smtp-Source: AGHT+IHILIH9TTHUNXKE2SXsO/39QmE4PBt4ZlHa7MSBEM/sfhXbd9DkCQeEuqozVECdWauUoscyHw==
-X-Received: by 2002:a05:6214:29c1:b0:6fa:f94e:6e79 with SMTP id 6a1803df08f44-6fb3e59a197mr39514346d6.9.1749814935402;
-        Fri, 13 Jun 2025 04:42:15 -0700 (PDT)
-Received: from fedora.. (cpe-109-60-82-18.zg3.cable.xnet.hr. [109.60.82.18])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6fb35b3058fsm20558206d6.37.2025.06.13.04.42.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 04:42:14 -0700 (PDT)
-From: Robert Marko <robert.marko@sartura.hr>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	olivia@selenic.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	vkoul@kernel.org,
-	andi.shyti@kernel.org,
-	broonie@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	kernel@pengutronix.de,
-	ore@pengutronix.de,
-	luka.perkov@sartura.hr,
-	arnd@arndb.de,
-	daniel.machon@microchip.com
-Cc: Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v7 6/6] crypto: atmel-aes: make it selectable for ARCH_LAN969X
-Date: Fri, 13 Jun 2025 13:39:41 +0200
-Message-ID: <20250613114148.1943267-7-robert.marko@sartura.hr>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250613114148.1943267-1-robert.marko@sartura.hr>
-References: <20250613114148.1943267-1-robert.marko@sartura.hr>
+	s=arc-20240116; t=1749814875; c=relaxed/simple;
+	bh=AKO2IWwBCnH/kj2D9yQB16wKAlI1BiVH+clJ4sSGF9w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gw5GqtuG47iAU3o3OS0bqxwT4QUwvZ6yu+FR2fEvXbdYyoyCTCvb6eQTI1Put8v8BW2NHv9y8rYCyPJH/qwGdh4ROY1I0+SEFOndWioJIEIYh7B2I/i+USTFXPMpgVth1voiY3Zlr+Tg+nuYtEg8N/Tk5KefcoG/vGjH25kMJEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bJcnJ6WN4zdbCp;
+	Fri, 13 Jun 2025 19:37:08 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5689E18047B;
+	Fri, 13 Jun 2025 19:41:01 +0800 (CST)
+Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 13 Jun 2025 19:41:01 +0800
+Received: from M910t.huawei.com (10.110.54.157) by
+ kwepemq200002.china.huawei.com (7.202.195.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 13 Jun 2025 19:41:00 +0800
+From: Changbin Du <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
+ Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>, <linux-perf-users@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@huawei.com>
+Subject: [PATCH] perf: ftrace: add graph tracer options args/retval/retval-hex/retaddr
+Date: Fri, 13 Jun 2025 19:40:47 +0800
+Message-ID: <20250613114048.132336-1-changbin.du@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,28 +61,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq200002.china.huawei.com (7.202.195.90)
 
-LAN969x uses the same crypto engine, make it selectable for ARCH_LAN969X.
+This change adds support for new funcgraph tracer options funcgraph-args,
+funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
 
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+The new added options are:
+  - args       : Show function arguments.
+  - retval     : Show function return value.
+  - retval-hex : Show function return value in hexadecimal format.
+  - retaddr    : Show function return address.
+
+ # ./perf ftrace -G vfs_write --graph-opts retval,retaddr
+ # tracer: function_graph
+ #
+ # CPU  DURATION                  FUNCTION CALLS
+ # |     |   |                     |   |   |   |
+ 5)               |  mutex_unlock() { /* <-rb_simple_write+0xda/0x150 */
+ 5)   0.188 us    |    local_clock(); /* <-lock_release+0x2ad/0x440 ret=0x3bf2a3cf90e */
+ 5)               |    rt_mutex_slowunlock() { /* <-rb_simple_write+0xda/0x150 */
+ 5)               |      _raw_spin_lock_irqsave() { /* <-rt_mutex_slowunlock+0x4f/0x200 */
+ 5)   0.123 us    |        preempt_count_add(); /* <-_raw_spin_lock_irqsave+0x23/0x90 ret=0x0 */
+ 5)   0.128 us    |        local_clock(); /* <-__lock_acquire.isra.0+0x17a/0x740 ret=0x3bf2a3cfc8b */
+ 5)   0.086 us    |        do_raw_spin_trylock(); /* <-_raw_spin_lock_irqsave+0x4a/0x90 ret=0x1 */
+ 5)   0.845 us    |      } /* _raw_spin_lock_irqsave ret=0x292 */
+ 5)               |      _raw_spin_unlock_irqrestore() { /* <-rt_mutex_slowunlock+0x191/0x200 */
+ 5)   0.097 us    |        local_clock(); /* <-lock_release+0x2ad/0x440 ret=0x3bf2a3cff1f */
+ 5)   0.086 us    |        do_raw_spin_unlock(); /* <-_raw_spin_unlock_irqrestore+0x23/0x60 ret=0x1 */
+ 5)   0.104 us    |        preempt_count_sub(); /* <-_raw_spin_unlock_irqrestore+0x35/0x60 ret=0x0 */
+ 5)   0.726 us    |      } /* _raw_spin_unlock_irqrestore ret=0x80000000 */
+ 5)   1.881 us    |    } /* rt_mutex_slowunlock ret=0x0 */
+ 5)   2.931 us    |  } /* mutex_unlock ret=0x0 */
+
+Signed-off-by: Changbin Du <changbin.du@huawei.com>
 ---
- drivers/crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/Documentation/perf-ftrace.txt |  4 ++
+ tools/perf/builtin-ftrace.c              | 60 +++++++++++++++++++++++-
+ tools/perf/util/ftrace.h                 |  4 ++
+ 3 files changed, 67 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 9f8a3a5bed7e..b82881e345b3 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -426,7 +426,7 @@ config CRYPTO_DEV_ATMEL_AUTHENC
+diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Documentation/perf-ftrace.txt
+index b77f58c4d2fd..4b21a755132f 100644
+--- a/tools/perf/Documentation/perf-ftrace.txt
++++ b/tools/perf/Documentation/perf-ftrace.txt
+@@ -123,6 +123,10 @@ OPTIONS for 'perf ftrace trace'
+ --graph-opts::
+ 	List of options allowed to set:
  
- config CRYPTO_DEV_ATMEL_AES
- 	tristate "Support for Atmel AES hw accelerator"
--	depends on ARCH_AT91 || COMPILE_TEST
-+	depends on ARCH_AT91 || ARCH_LAN969X || COMPILE_TEST
- 	select CRYPTO_AES
- 	select CRYPTO_AEAD
- 	select CRYPTO_SKCIPHER
++	  - args         - Show function arguments.
++	  - retval       - Show function return value.
++	  - retval-hex   - Show function return value in hexadecimal format.
++	  - retaddr      - Show function return address.
+ 	  - nosleep-time - Measure on-CPU time only for function_graph tracer.
+ 	  - noirqs       - Ignore functions that happen inside interrupt.
+ 	  - verbose      - Show process names, PIDs, timestamps, etc.
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index bba36ebc2aa7..f7cf1dd7b64b 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -301,6 +301,10 @@ static void reset_tracing_options(struct perf_ftrace *ftrace __maybe_unused)
+ 	write_tracing_option_file("funcgraph-proc", "0");
+ 	write_tracing_option_file("funcgraph-abstime", "0");
+ 	write_tracing_option_file("funcgraph-tail", "0");
++	write_tracing_option_file("funcgraph-args", "0");
++	write_tracing_option_file("funcgraph-retval", "0");
++	write_tracing_option_file("funcgraph-retval-hex", "0");
++	write_tracing_option_file("funcgraph-retaddr", "0");
+ 	write_tracing_option_file("latency-format", "0");
+ 	write_tracing_option_file("irq-info", "0");
+ }
+@@ -542,6 +546,41 @@ static int set_tracing_sleep_time(struct perf_ftrace *ftrace)
+ 	return 0;
+ }
+ 
++static int set_tracing_funcgraph_args(struct perf_ftrace *ftrace)
++{
++	if (ftrace->graph_args) {
++		if (write_tracing_option_file("funcgraph-args", "1") < 0)
++			return -1;
++	}
++
++	return 0;
++}
++
++static int set_tracing_funcgraph_retval(struct perf_ftrace *ftrace)
++{
++	if (ftrace->graph_retval || ftrace->graph_retval_hex) {
++		if (write_tracing_option_file("funcgraph-retval", "1") < 0)
++			return -1;
++	}
++
++	if (ftrace->graph_retval_hex) {
++		if (write_tracing_option_file("funcgraph-retval-hex", "1") < 0)
++			return -1;
++	}
++
++	return 0;
++}
++
++static int set_tracing_funcgraph_retaddr(struct perf_ftrace *ftrace)
++{
++	if (ftrace->graph_retaddr) {
++		if (write_tracing_option_file("funcgraph-retaddr", "1") < 0)
++			return -1;
++	}
++
++	return 0;
++}
++
+ static int set_tracing_funcgraph_irqs(struct perf_ftrace *ftrace)
+ {
+ 	if (!ftrace->graph_noirqs)
+@@ -642,6 +681,21 @@ static int set_tracing_options(struct perf_ftrace *ftrace)
+ 		return -1;
+ 	}
+ 
++	if (set_tracing_funcgraph_args(ftrace) < 0) {
++		pr_err("failed to set tracing option funcgraph-args\n");
++		return -1;
++	}
++
++	if (set_tracing_funcgraph_retval(ftrace) < 0) {
++		pr_err("failed to set tracing option funcgraph-retval\n");
++		return -1;
++	}
++
++	if (set_tracing_funcgraph_retaddr(ftrace) < 0) {
++		pr_err("failed to set tracing option funcgraph-retaddr\n");
++		return -1;
++	}
++
+ 	if (set_tracing_funcgraph_irqs(ftrace) < 0) {
+ 		pr_err("failed to set tracing option funcgraph-irqs\n");
+ 		return -1;
+@@ -1607,6 +1661,10 @@ static int parse_graph_tracer_opts(const struct option *opt,
+ 	int ret;
+ 	struct perf_ftrace *ftrace = (struct perf_ftrace *) opt->value;
+ 	struct sublevel_option graph_tracer_opts[] = {
++		{ .name = "args",		.value_ptr = &ftrace->graph_args },
++		{ .name = "retval",		.value_ptr = &ftrace->graph_retval },
++		{ .name = "retval-hex",		.value_ptr = &ftrace->graph_retval_hex },
++		{ .name = "retaddr",		.value_ptr = &ftrace->graph_retaddr },
+ 		{ .name = "nosleep-time",	.value_ptr = &ftrace->graph_nosleep_time },
+ 		{ .name = "noirqs",		.value_ptr = &ftrace->graph_noirqs },
+ 		{ .name = "verbose",		.value_ptr = &ftrace->graph_verbose },
+@@ -1699,7 +1757,7 @@ int cmd_ftrace(int argc, const char **argv)
+ 	OPT_CALLBACK('g', "nograph-funcs", &ftrace.nograph_funcs, "func",
+ 		     "Set nograph filter on given functions", parse_filter_func),
+ 	OPT_CALLBACK(0, "graph-opts", &ftrace, "options",
+-		     "Graph tracer options, available options: nosleep-time,noirqs,verbose,thresh=<n>,depth=<n>",
++		     "Graph tracer options, available options: args,retval,retval-hex,retaddr,nosleep-time,noirqs,verbose,thresh=<n>,depth=<n>",
+ 		     parse_graph_tracer_opts),
+ 	OPT_CALLBACK('m', "buffer-size", &ftrace.percpu_buffer_size, "size",
+ 		     "Size of per cpu buffer, needs to use a B, K, M or G suffix.", parse_buffer_size),
+diff --git a/tools/perf/util/ftrace.h b/tools/perf/util/ftrace.h
+index a9bc47da83a5..782c33227e92 100644
+--- a/tools/perf/util/ftrace.h
++++ b/tools/perf/util/ftrace.h
+@@ -29,6 +29,10 @@ struct perf_ftrace {
+ 	int			graph_depth;
+ 	int			func_stack_trace;
+ 	int			func_irq_info;
++	int			graph_args;
++	int			graph_retval;
++	int			graph_retval_hex;
++	int			graph_retaddr;
+ 	int			graph_nosleep_time;
+ 	int			graph_noirqs;
+ 	int			graph_verbose;
 -- 
-2.49.0
+2.43.0
 
 
