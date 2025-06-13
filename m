@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-685890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6CFBAD8FF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:47:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7442AD9002
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED22E188DB76
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E451889B83
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865CB1AA1DA;
-	Fri, 13 Jun 2025 14:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF6B1ADFFB;
+	Fri, 13 Jun 2025 14:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOCpuMA9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GukvyTlS"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D628F10F9;
-	Fri, 13 Jun 2025 14:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C411A76AE;
+	Fri, 13 Jun 2025 14:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826049; cv=none; b=R2Vk1QLjjNF3NLTJZRqQMn6UgTBQsaFLY6XMlO+8qexLXV4Fokofr2vMnz/dYGqEFojFLL8y2okFog+JCJZRV7tTe6AaKJuBXPC99fFafxBRGVXsjww04DFkaaw5b33oPETDhl4LXFZ8mg8v52u63s/Aic4D3xm0JHkisHtddEM=
+	t=1749826111; cv=none; b=QyM89kusR623Ao35qlHCsjiZcp95HzGu3xWreb+yYquJgixJSOnn/f6kUv55wJbsayC4V+2bzk/p2bMv1kBqh0hex0Cv2SIB+Gy9DHhHMBjLonW0yVwWYKXdNdnxhFsvfGX2LDB8snQskWIsMgYVIra/iEdVnAl7yuVcFQA5cQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826049; c=relaxed/simple;
-	bh=Vck2Z3Pn+YuFhuarhlC9R7s/5ZP8BvkQdzh7LJHwePE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHMArMafbW1qJuy9FfWnbHvSpNsL1AWe9FDd+pVAhHrJmKRJMsG2VfdknYPexMavLRV+YccPxhWm7Ocvy3y3Jv5ewEnX6stlYWQpk8+/OmEWZUHvQL+XJC3dOnF1+xj4lSvOWGgWsxMfZ/lZOL3ycPqseFvcLnYuvp4P4cP/BOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOCpuMA9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7429EC4CEE3;
-	Fri, 13 Jun 2025 14:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749826048;
-	bh=Vck2Z3Pn+YuFhuarhlC9R7s/5ZP8BvkQdzh7LJHwePE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dOCpuMA9hqXLFa9KJ4I8LAiuqIqbK9S4cdhLImmLbzbfKzK8jRS8CV1UyQopxGbiN
-	 yVyxhdY+/hP/4EO25XmBvKRIuh/Eh/h6YD0ES3F4Nj7eL1AExBJoWeMKDPrtuBWCgY
-	 WWjMRT/gCVZ+V5py9J3LYhZDBcYLdXxFk5ds3i3g7FdNkcgmpZhLPsa8bun1qvRTTj
-	 06zocGTvj6/uVH9i8DuviVVvAfoPr2rddauLoXAdU1CoGOMX/8UT6oNglLwdHtQsVd
-	 OhU7RgX8iv5aiQ0MzVVX5Yj01npyM8A1Bdyk3FNruwn6OuDEzdellbktWbaH4TXl9g
-	 4Gv2EvDdo8qZw==
-Date: Fri, 13 Jun 2025 15:47:23 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ghennadi Procopciuc <dan.carpenter@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Xu Yang <xu.yang_2@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, s32@nxp.com, linaro-s32@linaro.org,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Ionut Vicovan <Ionut.Vicovan@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH 1/3 v2] dt-bindings: usb: Add compatible strings for
- s32g2/s32g3
-Message-ID: <20250613-alongside-remark-819b10305ca7@spud>
-References: <cover.1749747898.git.dan.carpenter@linaro.org>
- <cb3970d93f2df0d350f3f3de27d9f0cdb41d0d3b.1749747898.git.dan.carpenter@linaro.org>
+	s=arc-20240116; t=1749826111; c=relaxed/simple;
+	bh=26ErZJ2j5j8tbM2DQYOWAirvOPS6iIdLWscIEgu7UGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pVK++9rLSzZEvJpKax+lpkKloEjIB2dshWz7Nxi0kYMFq5fAKrb7J0WM9z53v52c5ZnmDfqQxQ4+Ko8bNBkJCewUcz1IdptNWmXVoxhVqI4ZjLXRm/94+Iz6+GqI5R8N5SxUebgdoCfeNzP4rPQr+UiGe8yIGVMDkePZRIIl4QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GukvyTlS; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2f0faeb994so2460661a12.0;
+        Fri, 13 Jun 2025 07:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749826107; x=1750430907; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f9JTiirLp7dFXp65A+6dp+48wUewOH1a1vp6gPpeVWM=;
+        b=GukvyTlS7OrhVGp0KN8ewbWkAJ3Z1bygdVi15CnQYghBGmkdLyTEEKzAlVqGF5xrjp
+         hVW9gyrE8rZQI8V99hSCOj35KKRFBlEz3jN6gRDc7d2owSe187p2ciMN1uM2fkIjbDUU
+         mYQc/23BALXF1Akqu4SIt3p3AdgkQkh0qlWbbMKh61HFdcUq2l/ZaN+7tmvnkjT4tgJV
+         M27yCWhHAdF0ixT5apRnj9YJIzLq0EPGa35EOBsiNM/WWQrXXBm/kEWLY1EGHUvKzRGw
+         4kawFUZAJORPIOZ1ppctDB81umz7PoKne469GGwQWVRgoM2/tJe4FIkFVKX1wz9KlN2q
+         7YMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749826107; x=1750430907;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f9JTiirLp7dFXp65A+6dp+48wUewOH1a1vp6gPpeVWM=;
+        b=eAVFAf/5Sm5NzdodR484m+Rx0vvvXwv/bM2EUZP8D6bVcMNh6/JTLssz0Omi9piuXx
+         4imIgRLVzQemDvrpi7Id9yBZbXqsQx3J+Nt4QfZFc9eQ94svQNBHPaDqIeh3E2AmPWBI
+         8TJMSCBtRyYLfP8JSKY/nsOSKIfwkKF9+1jneDK7yZuVLeX77yaUmwQHeIShbhEnEQ4Y
+         aLZbbG90VHwxT3g0ym0S08pb43X7I0tp/EzVeU9NS1OPROESZ/D6EnPvBrnOa3yamZjm
+         YrYOgPpkg6RhC1h8AqcCtBUUsHKGez03dKhYmldjWFT2zTlEO/3WmL3xYOx1NsafaSIL
+         mbBg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1i0Obh3kS0EPvLQWkf0Nm59y7CRNbu2S112VxI21I/HuOzns5LSG8Wt6MzRb07rnInQnNQRbupz66C/8=@vger.kernel.org, AJvYcCXQf2KJciNCx1TWKUm3w19lAcLEMaYq0pad4F3b5ERvYSB0q9Osb7YGtZa0H6nd51Nxp8lsTN2/Fgzh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJhvVE0VWHCeudFJXdOytJeKwe6eCm9rl67UcC9oX2XsaFYg0G
+	AvliTm/UwighjJ7jnbUPY30dnsJepZUhg3tC+BCoSin9sWvoDFjbqkyT
+X-Gm-Gg: ASbGncuqujPLPBC7202sPstRMje2hJ2hcxoH8jVf8IhDoAPEB7Ctd4AQ5UzcFKEMCNz
+	hAivzHi8M5hqh5TcKtT/RL8efkCF3k0XL4K+sTxqY3V8MRjZC3qdEU2UtRK4IQKQhyNmMVIEaRs
+	mhCR4aWnFE31Fl0m3tPX03csy9SobLoU8M9wzrS1vG8catL1jX1SHmyfylz+pEOPny07ZdzdSno
+	4kXHEfQbSXvfVOqmGNAaggPPjUTFXJz3Vwc12bE4tC6Yc4Z0Q2pOjImvm0j6s6JuHRUHifH6Kws
+	ZR1/6v8R7YmO3V1+73jTDQL7F6KYfiEqqBCp4ivw5Jf4ylrtag==
+X-Google-Smtp-Source: AGHT+IHcd33U1pPTm2OZvPaNgt6ez8a+j54CjSPCSVvtmMq9GaYDflpq+hrFnm/a0JpIR7GcANSQcQ==
+X-Received: by 2002:a05:6a20:728e:b0:1f5:64fd:68ea with SMTP id adf61e73a8af0-21facb4a140mr4610926637.4.1749826107267;
+        Fri, 13 Jun 2025 07:48:27 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:838f::dead:c001])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe164406esm1803644a12.27.2025.06.13.07.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 07:48:26 -0700 (PDT)
+Date: Fri, 13 Jun 2025 11:48:21 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v4 0/4] PCI: rockchip: Improve quality of driver
+Message-ID: <cover.1749825317.git.geraldogabriel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GK+9otxDYzRic2k2"
-Content-Disposition: inline
-In-Reply-To: <cb3970d93f2df0d350f3f3de27d9f0cdb41d0d3b.1749747898.git.dan.carpenter@linaro.org>
-
-
---GK+9otxDYzRic2k2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 09:50:51PM +0300, Ghennadi Procopciuc wrote:
-> From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
->=20
-> Add the compatible strings for the NXP s32g2 and s32g3.  These chips
-> are mostly compatible.  The one difference is that the s32g2-usbmisc
-> device has an errata ERR050474 which requires a special flag to be set
-> for handling packages that aren't 4 byte aligned.
->=20
-> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+During a 30-day debugging-run fighting quirky PCIe devices on RK3399
+some quality improvements began to take form and this is my attempt
+at upstreaming it. It will ensure maximum chance of retraining to Gen2
+5.0GT/s, on all four lanes and plus if anybody is debugging the PHY
+they'll now get real values from TEST_I[3:0] for every TEST_ADDR[4:0]
+without risk of locking up kernel like with present broken async
+strobe TEST_WRITE.
 
-This signoff chain is absolutely wrong, what were the contributions of
-Larisa, Ionut or Dan to this patch? If they were co-authors (surely not
-4 people for a trivial 4 line diff) they need co-developed-by tags.
-You sent it, so your name should be last.=20
-> ---
-> Changes since v1:
-> 1: Alphabetize
-> 2: Update the commit message a bit.
->=20
->  Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml | 2 ++
->  Documentation/devicetree/bindings/usb/fsl,usbmisc.yaml  | 2 ++
->  2 files changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml b/Do=
-cumentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-> index cc5787a8cfa3..f6372b76ed5a 100644
-> --- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-> @@ -23,6 +23,8 @@ properties:
->            - nvidia,tegra30-udc
->            - nvidia,tegra114-udc
->            - nvidia,tegra124-udc
-> +          - nxp,s32g2-usb
-> +          - nxp,s32g3-usb
->            - qcom,ci-hdrc
->        - items:
->            - enum:
-> diff --git a/Documentation/devicetree/bindings/usb/fsl,usbmisc.yaml b/Doc=
-umentation/devicetree/bindings/usb/fsl,usbmisc.yaml
-> index 019435540df0..ca677d1a8274 100644
-> --- a/Documentation/devicetree/bindings/usb/fsl,usbmisc.yaml
-> +++ b/Documentation/devicetree/bindings/usb/fsl,usbmisc.yaml
-> @@ -21,6 +21,8 @@ properties:
->            - fsl,imx53-usbmisc
->            - fsl,imx6q-usbmisc
->            - fsl,vf610-usbmisc
-> +          - nxp,s32g2-usbmisc
-> +          - nxp,s32g3-usbmisc
->        - items:
->            - enum:
->                - fsl,imx6ul-usbmisc
-> --=20
-> 2.47.2
->=20
+---
+V3 -> V4: fix TLS setting-up in Link Control and Status Register 2 and
+adjust commit titles
+V2 -> V3: correctly clean-up with standard PCIe defines as per Bjorn's
+suggestion
+V1 -> V2: use standard PCIe defines as suggested by Bjorn
 
---GK+9otxDYzRic2k2
-Content-Type: application/pgp-signature; name="signature.asc"
+Geraldo Nascimento (4):
+  PCI: rockchip: Drop unused custom registers and bitfields
+  PCI: rockchip: Set Target Link Speed before retraining
+  phy: rockchip-pcie: Enable all four lanes
+  phy: rockchip-pcie: Adjust read mask and write
 
------BEGIN PGP SIGNATURE-----
+ drivers/pci/controller/pcie-rockchip-host.c |  4 ++++
+ drivers/pci/controller/pcie-rockchip.h      | 11 +----------
+ drivers/phy/rockchip/phy-rockchip-pcie.c    | 16 +++++++++-------
+ 3 files changed, 14 insertions(+), 17 deletions(-)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEw5+wAKCRB4tDGHoIJi
-0jfHAQCkXsavnoWfTZY4GsGpIgS9OIp2XucKbJDZfr4z7ZRpHAD6A6tUb10kViaP
-x6MhqceZjJ2qIXckKfk7V3lgR3mCjQg=
-=V3nJ
------END PGP SIGNATURE-----
+-- 
+2.49.0
 
---GK+9otxDYzRic2k2--
 
