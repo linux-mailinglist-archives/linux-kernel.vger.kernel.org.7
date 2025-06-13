@@ -1,170 +1,214 @@
-Return-Path: <linux-kernel+bounces-684776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1CBAD8010
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:12:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F11AD800D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB911E0361
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC503AA392
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D4E1DB92E;
-	Fri, 13 Jun 2025 01:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245BC1DE8A4;
+	Fri, 13 Jun 2025 01:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="zSi5JIMf"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7xmcNgG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3ED1EEA5D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 01:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2101D5175;
+	Fri, 13 Jun 2025 01:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749777108; cv=none; b=ZGdjV4765k5JpcAIguTvwkoOmFRx1NAtt3wmUq7lXPEESjUwfgVVDc5LLEyTMlOcgZB8d3JWlTheS1wXAMjIKSKDMYRwkG1iMmLoeep3UmQ6LXQ8W2I8wMpbnUAPj/b1StM7ilumORff3oCZ1tE7I0Q1dnanVoqcpbYnFb8aCs4=
+	t=1749777092; cv=none; b=b/laHpG221BeILEqI069t6uuaQcmwhLAq5VKwf7HUGg9GXU/rye5BGS8/c3hjqoTBJecpRUbZND4LqH8E3U2nGLibUAWddUIYURE3VFkGB96pUygxS/gw9l2evv/YW/wKnwcyOaMT1Oa1od6htEQwSyOHITK5fbcd34x+HXro/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749777108; c=relaxed/simple;
-	bh=8u736JUylRMKJQJC8tFKjjHmAF3VB42qomu/hTIe6UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o9NylfBQW1i56CFmpWCBWGoWo4TElobrQua7iwQFmF+6G7+/12+oCdJ055yLXpKkOKvIn5OSQyoOV/p6tKCvWNJfsJ0vfK3V0YqbH1JxryDliF3I7hRj3D49SEZWmxuSpDdikFcjgQGLkmfk5bU/g5+Fly2gtY56N/Ap6WNcByY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=zSi5JIMf; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-60ef850d590so448370eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 18:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749777104; x=1750381904; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qLjk8AtIe7EkG0gXs3iZYCpvTmGpW65yPt2cGZeyPVs=;
-        b=zSi5JIMfNakFFLIxQBn5QCs5uDgwCkgKqsCi35kepZITgUBgpnnub7kpjQhKWQ+OXF
-         hHygWATq8xwBTmSG8cFCRsW2bv2Mpx6ojw7Zx1yXq9CYMyZVyxXhg3Tirz6OxGvnqtJ4
-         h5Opq/EQUXy/3rX44V6QIDrOrH6ChJwyYU+j0Og35RO3uFZtBmND4qJw6AyUXMJPLA64
-         LVQLNDdHB7LODTUV0fRyP4qmQzgM8wOrP/EEl7U4rkKpQmbPM8pd0rcj6e7dovhXXOwO
-         1h6BFNflE2HEpWUotbRoWysdgKwzNOABi//dEMT9G+QRy1o3lwHacpr2qI3hWBtRDQos
-         I+EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749777104; x=1750381904;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qLjk8AtIe7EkG0gXs3iZYCpvTmGpW65yPt2cGZeyPVs=;
-        b=MSfTmha57jBYL0pIJkpiu7FVAee5dzA5iCiNg7v0s58qu97VPsDHKFAjk07apBLY9+
-         IK4en1Uab7W8UPjwv2nq7BdLouOQvVLCvcXH7y0lj4b2e6fwjhCk4LLNIRq1vtKrj/FZ
-         6ph8z4NnXQTIy9AKzAaLZyyvTESMQ2UgrRIxeysPTvdMPZByTtkcf0KSVk6ywEHW3vxU
-         cRS2TtiIsCF/jtWQ/bxU0DSP0/ogtOq9IDlUaEeUMA4yF/WH5MYOKpJERfcouTZVqtGS
-         fo+cdi2Gi+NAc/xXoqs9+cEtIVFons19Sbum4nX1LhjNGjl1VKV43b8Ov2s19onycU2p
-         pO2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3GN9sjIeLW6wRItTdSCqdM4QHUS4FOn2seeEjsyArIhL0SbATX69VIZPwwIJChTBLB9AyIbRsZBoxbIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkffPBsGt7guF76Mgwvq5xogj/fZ3GS9rELTm8l2XEVYqj0gor
-	tXHRq/3J5zeIXG2nOds+5w4Dep8IvgYA/1P6erc4NPbG7t1EQtOG8od7dSrJPhp3nkw=
-X-Gm-Gg: ASbGnct4zh4lKsqEX6XobkMPnWUGo8Me44iZk8blNItWasbJwOmfDDkqn8lfYdJoaC2
-	fyjoHg323FCUoyJ1feUvYVlxGU4OUlWaJqTLjK4lV5H3m/b6vAuRnPF/BuuZKwH9wyS2P3i0Zei
-	qPX9Ce1qo2xqoArLi8HV9tQxy64YbC7F6vY9vLUQFUq/Q7ZS4aaY5k515Yr6JZ1d7zftk1a4xm1
-	Lz+dmt4sg63dJdsihTbmWUlh2owas3b8Aypk9bvZ7T1huUtoi78pC1CINW9/Y8Oj//ImxBAQ7mu
-	9wA+JCsw1977Q2X5RsNpg7YguXK9aejHMTazmS9ghPd3RDWHYng47Fhj0dTib8DSS+SJ5JPq9+K
-	dA3VQd/GUu3/gbw5ms50OSd9ueqIblWnOY9VhH/tVBg==
-X-Google-Smtp-Source: AGHT+IGuYA1UmF+qyhDFUECuEGO+2TaO/UuS30QC1CnU/pGEOag7zhyk90q5MH8bH5ojGbCRLTOPgQ==
-X-Received: by 2002:a05:6870:ab09:b0:2e8:7505:638e with SMTP id 586e51a60fabf-2ead51cc4c8mr724652fac.39.1749777104481;
-        Thu, 12 Jun 2025 18:11:44 -0700 (PDT)
-Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eac0c17211sm407685fac.18.2025.06.12.18.11.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 18:11:43 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 0/6] reset: spacemit: add K1 reset support
-Date: Thu, 12 Jun 2025 20:11:32 -0500
-Message-ID: <20250613011139.1201702-1-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1749777092; c=relaxed/simple;
+	bh=22pOkiaoYKkKE9+FYGPOdRNTGjENCtQxx9n9TpcRYQw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iF7iWdrosm3nSyneokYsHN+AhGv/wYt4ex8rRUDByNPbqYqG8WpRi7dIaySv9rKmuSXZgLniq/Rfa78U6lV7FIHybwoEUyrCiShs7eea6QJ6PmH6WqVy2akBzqwY00+tJDNKbV4jqd1sWfPq0tza7ox8jdqpswbc9L9z7849/Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7xmcNgG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D1FB5C4CEEB;
+	Fri, 13 Jun 2025 01:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749777091;
+	bh=22pOkiaoYKkKE9+FYGPOdRNTGjENCtQxx9n9TpcRYQw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=K7xmcNgGJceP5Ea/EI6S4Ae9f69XPMUzhS3hCUNJGwOh8mFkn3EiLevIQVzFOJm8P
+	 srXqvU+UuZSAcRmxl5f7544ZFCkX4hXdB/bv2JtaUQd+sCVN/zaCwJLnrB6VTHeM7t
+	 AuDznSMSaBbfZyWgq1SrBQQ4qE091QSW4C9aQBJmJIM2KEJdr5tMI7PF6D7Wtr7jc0
+	 Gq9F/0TUtwG9JBV0LPS85JlmhIUzGmQCgYvfpTFYFDdc2/T7+1bKoCzUGl142n7mkj
+	 v86mwNjhTLCeERrgcx0T6opX9XOlmpHZSKVY+9IBTIWlbAZggiLspRehb5Ma93ayM5
+	 TuKwfgD8OPS2g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8653C71136;
+	Fri, 13 Jun 2025 01:11:31 +0000 (UTC)
+From: Mingcong Bai via B4 Relay <devnull+jeffbai.aosc.io@kernel.org>
+Date: Fri, 13 Jun 2025 09:11:32 +0800
+Subject: [PATCH v2 4/5] drm/xe: use 4KiB alignment for cursor jumps
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250613-upstream-xe-non-4k-v2-v2-4-934f82249f8a@aosc.io>
+References: <20250613-upstream-xe-non-4k-v2-v2-0-934f82249f8a@aosc.io>
+In-Reply-To: <20250613-upstream-xe-non-4k-v2-v2-0-934f82249f8a@aosc.io>
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Francois Dugast <francois.dugast@intel.com>, 
+ =?utf-8?q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>, 
+ =?utf-8?q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>, 
+ Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ Zhanjun Dong <zhanjun.dong@intel.com>, 
+ Matt Roper <matthew.d.roper@intel.com>, 
+ Alan Previn <alan.previn.teres.alexis@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Mateusz Naklicki <mateusz.naklicki@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Kexy Biscuit <kexybiscuit@aosc.io>, Shang Yatsen <429839446@qq.com>, 
+ Mingcong Bai <jeffbai@aosc.io>, Wenbin Fang <fangwenbin@vip.qq.com>, 
+ Haien Liang <27873200@qq.com>, Jianfeng Liu <liujianfeng1994@gmail.com>, 
+ Shirong Liu <lsr1024@qq.com>, Haofeng Wu <s2600cw2@126.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749777090; l=7981;
+ i=jeffbai@aosc.io; s=20250604; h=from:subject:message-id;
+ bh=kV2+HI26h6dKnEaSLYBIKXKOHnIj4zNMp7DXKD0IyuY=;
+ b=48LfUtXhEPCUahqI3iDktGvLSziHXj/NCM1hwuPhImZqPlmB5YP6R8E3mVMIvkAfuP1Sbe2z8
+ TkRywyRsSiYAyzrBxkKRGqHhreKqY3N3LJcwC3M1EmyVP4Nhbsd3YOw
+X-Developer-Key: i=jeffbai@aosc.io; a=ed25519;
+ pk=MJdgklflDF+Xz9x2Lp+ogEnEyk8HRosMGiqLgWbFctY=
+X-Endpoint-Received: by B4 Relay for jeffbai@aosc.io/20250604 with
+ auth_id=422
+X-Original-From: Mingcong Bai <jeffbai@aosc.io>
+Reply-To: jeffbai@aosc.io
 
-This series adds reset controller support for the SpacemiT K1 SoC.
-A SpacemiT reset controller is implemented as an auxiliary device
-associated with a clock controller (CCU).  A new header file
-holds definitions used by both the clock and reset drivers.
+From: Mingcong Bai <jeffbai@aosc.io>
 
-In this version several "multi-bit" resets have been redefined as
-individual ones.  For example, RESET_AUDIO had a mask that included
-3 bits.  Now there are 3 separate resets (one for each bit):
-RESET_AUDIO_SYS; RESET_AUDIO_MCU_CORE; and RESET_AUDIO_APMU.
+It appears that the xe_res_cursor also assumes 4KiB alignment.
 
-The reset symbols affected (their previous names) are:
-    RESET_USB3_0 ->
-      RESET_USB30_AHB,  RESET_USB30_VCC, RESET_USB30_PHY 
-    RESET_AUDIO ->
-      RESET_AUDIO_SYS, RESET_AUDIO_MCU, RESET_AUDIO_APMU
-    RESET_PCIE0 ->
-      RESET_PCI0_DBI, RESET_PCI0_SLV, RESET_PCI0_MSTR, RESET_PCI0_GLB
-    RESET_PCIE1 ->
-      RESET_PCI1_DBI, RESET_PCI1_SLV, RESET_PCI1_MSTR, RESET_PCI1_GLB
-    RESET_PCIE2 ->
-      RESET_PCI2_DBI, RESET_PCI2_SLV, RESET_PCI2_MSTR, RESET_PCI2_GLB
+Current implementation uses `PAGE_SIZE' as an assumed alignment reference,
+but 4KiB kernel page sizes is by no means a guarantee. On 16KiB-paged
+kernels, this causes driver failures during boot up:
 
-No other code has changed since v10.
+[   23.242757] ------------[ cut here ]------------
+[   23.247363] WARNING: CPU: 0 PID: 2036 at drivers/gpu/drm/xe/xe_res_cursor.h:182 emit_pte+0x394/0x3b0 [xe]
+[   23.256962] Modules linked in: nf_conntrack_netbios_ns(E) nf_conntrack_broadcast(E) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) nft_reject(E) nft_ct(E) rfkill(E) nft_chain_nat(E) ip6table_nat(E) ip6table_mangle(E) ip6table_raw(E) ip6table_security(E) iptable_nat(E) nf_nat(E) nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv4(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ip_set(E) nf_tables(E) ip6table_filter(E) ip6_tables(E) iptable_filter(E) snd_hda_codec_conexant(E) snd_hda_codec_generic(E) snd_hda_codec_hdmi(E) snd_hda_intel(E) snd_intel_dspcfg(E) snd_hda_codec(E) nls_iso8859_1(E) qrtr(E) nls_cp437(E) snd_hda_core(E) loongson3_cpufreq(E) rtc_efi(E) snd_hwdep(E) snd_pcm(E) spi_loongson_pci(E) snd_timer(E) snd(E) spi_loongson_core(E) soundcore(E) gpio_loongson_64bit(E) rtc_loongson(E) i2c_ls2x(E) mousedev(E) input_leds(E) sch_fq_codel(E) fuse(E) nfnetlink(E) dmi_sysfs(E) ip_tables(E) x_tables(E) xe(E) d
+ rm_gpuvm(E) drm_buddy(E) gpu_sched(E)
+[   23.257034]  drm_exec(E) drm_suballoc_helper(E) drm_display_helper(E) cec(E) rc_core(E) hid_generic(E) tpm_tis_spi(E) r8169(E) loongson(E) i2c_algo_bit(E) realtek(E) drm_ttm_helper(E) led_class(E) ttm(E) drm_client_lib(E) drm_kms_helper(E) sunrpc(E) i2c_dev(E)
+[   23.369697] CPU: 0 UID: 1000 PID: 2036 Comm: QSGRenderThread Tainted: G            E      6.14.0-rc4-aosc-main-g7cc07e6e50b0-dirty #8
+[   23.381640] Tainted: [E]=UNSIGNED_MODULE
+[   23.385534] Hardware name: Loongson Loongson-3A6000-HV-7A2000-1w-V0.1-EVB/Loongson-3A6000-HV-7A2000-1w-EVB-V1.21, BIOS Loongson-UDK2018-V4.0.05756-prestab
+[   23.399319] pc ffff80000251efc0 ra ffff80000251eddc tp 900000011fe3c000 sp 900000011fe3f7e0
+[   23.407632] a0 0000000000000001 a1 0000000000000000 a2 0000000000000000 a3 0000000000000000
+[   23.415938] a4 0000000000000000 a5 0000000000000000 a6 0000000000060000 a7 900000010c947b00
+[   23.424240] t0 0000000000000000 t1 0000000000000000 t2 0000000000000000 t3 900000012e456230
+[   23.432543] t4 0000000000000035 t5 0000000000004000 t6 00000001fbc40403 t7 0000000000004000
+[   23.440845] t8 9000000100e688a8 u0 5cc06cee8ef0edee s9 9000000100024420 s0 0000000000000047
+[   23.449147] s1 0000000000004000 s2 0000000000000001 s3 900000012adba000 s4 ffffffffffffc000
+[   23.457450] s5 9000000108939428 s6 0000000000000000 s7 0000000000000000 s8 900000011fe3f8e0
+[   23.465851]    ra: ffff80000251eddc emit_pte+0x1b0/0x3b0 [xe]
+[   23.471761]   ERA: ffff80000251efc0 emit_pte+0x394/0x3b0 [xe]
+[   23.477557]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+[   23.483732]  PRMD: 00000004 (PPLV0 +PIE -PWE)
+[   23.488068]  EUEN: 00000003 (+FPE +SXE -ASXE -BTE)
+[   23.492832]  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
+[   23.497594] ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
+[   23.503133]  PRID: 0014d000 (Loongson-64bit, Loongson-3A6000-HV)
+[   23.509164] CPU: 0 UID: 1000 PID: 2036 Comm: QSGRenderThread Tainted: G            E      6.14.0-rc4-aosc-main-g7cc07e6e50b0-dirty #8
+[   23.509168] Tainted: [E]=UNSIGNED_MODULE
+[   23.509168] Hardware name: Loongson Loongson-3A6000-HV-7A2000-1w-V0.1-EVB/Loongson-3A6000-HV-7A2000-1w-EVB-V1.21, BIOS Loongson-UDK2018-V4.0.05756-prestab
+[   23.509170] Stack : ffffffffffffffff ffffffffffffffff 900000000023eb34 900000011fe3c000
+[   23.509176]         900000011fe3f440 0000000000000000 900000011fe3f448 9000000001c31c70
+[   23.509181]         0000000000000000 0000000000000000 0000000000000000 0000000000000000
+[   23.509185]         0000000000000000 5cc06cee8ef0edee 0000000000000000 0000000000000000
+[   23.509190]         0000000000000000 0000000000000000 0000000000000000 0000000000000000
+[   23.509193]         0000000000000000 0000000000000000 00000000066b4000 9000000100024420
+[   23.509197]         9000000001eb8000 0000000000000000 9000000001c31c70 0000000000000004
+[   23.509202]         0000000000000004 0000000000000000 0000000000000000 0000000000000000
+[   23.509206]         900000011fe3f8e0 9000000001c31c70 9000000000244174 00007fffac097534
+[   23.509211]         00000000000000b0 0000000000000004 0000000000000003 0000000000071c1d
+[   23.509216]         ...
+[   23.509218] Call Trace:
+[   23.509220] [<9000000000244174>] show_stack+0x3c/0x16c
+[   23.509226] [<900000000023eb30>] dump_stack_lvl+0x84/0xe0
+[   23.509230] [<9000000000288208>] __warn+0x8c/0x174
+[   23.509234] [<90000000017c1918>] report_bug+0x1c0/0x22c
+[   23.509238] [<90000000017f66e8>] do_bp+0x280/0x344
+[   23.509243] [<90000000002428a0>] handle_bp+0x120/0x1c0
+[   23.509247] [<ffff80000251efc0>] emit_pte+0x394/0x3b0 [xe]
+[   23.509295] [<ffff800002520d38>] xe_migrate_clear+0x2d8/0xa54 [xe]
+[   23.509341] [<ffff8000024e6c38>] xe_bo_move+0x324/0x930 [xe]
+[   23.509387] [<ffff800002209468>] ttm_bo_handle_move_mem+0xd0/0x194 [ttm]
+[   23.509392] [<ffff800002209ebc>] ttm_bo_validate+0xd4/0x1cc [ttm]
+[   23.509396] [<ffff80000220a138>] ttm_bo_init_reserved+0x184/0x1dc [ttm]
+[   23.509399] [<ffff8000024e7840>] ___xe_bo_create_locked+0x1e8/0x3d4 [xe]
+[   23.509445] [<ffff8000024e7cf8>] __xe_bo_create_locked+0x2cc/0x390 [xe]
+[   23.509489] [<ffff8000024e7e98>] xe_bo_create_user+0x34/0xe4 [xe]
+[   23.509533] [<ffff8000024e875c>] xe_gem_create_ioctl+0x154/0x4d8 [xe]
+[   23.509578] [<9000000001062784>] drm_ioctl_kernel+0xe0/0x14c
+[   23.509582] [<9000000001062c10>] drm_ioctl+0x420/0x5f4
+[   23.509585] [<ffff8000024ea778>] xe_drm_ioctl+0x64/0xac [xe]
+[   23.509630] [<9000000000653504>] sys_ioctl+0x2b8/0xf98
+[   23.509634] [<90000000017f684c>] do_syscall+0xa0/0x140
+[   23.509637] [<9000000000241e38>] handle_syscall+0xb8/0x158
+[   23.509640]
+[   23.509644] ---[ end trace 0000000000000000 ]---
 
-All of these patches are available here:
-  https://github.com/riscstar/linux/tree/outgoing/reset-v11
+Revise calls to `xe_res_dma()' and `xe_res_cursor()' to use
+`XE_PTE_MASK' (12) and `SZ_4K' to fix this potentially confused use of
+`PAGE_SIZE' in relevant code.
 
-					-Alex
+Cc: stable@vger.kernel.org
+Fixes: e89b384cde62 ("drm/xe/migrate: Update emit_pte to cope with a size level than 4k")
+Tested-by: Mingcong Bai <jeffbai@aosc.io>
+Tested-by: Wenbin Fang <fangwenbin@vip.qq.com>
+Tested-by: Haien Liang <27873200@qq.com>
+Tested-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+Tested-by: Shirong Liu <lsr1024@qq.com>
+Tested-by: Haofeng Wu <s2600cw2@126.com>
+Link: https://github.com/FanFansfan/loongson-linux/commit/22c55ab3931c32410a077b3ddb6dca3f28223360
+Link: https://t.me/c/1109254909/768552
+Co-developed-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+---
+ drivers/gpu/drm/xe/xe_migrate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Between version 10 and version 11:
-  - Rebased onto Linux v6.16-rc1
-  - Redefined several "multi-bit" resets as individual ones.
+diff --git a/drivers/gpu/drm/xe/xe_migrate.c b/drivers/gpu/drm/xe/xe_migrate.c
+index 8f8e9fdfb2a813dfc7619f626f919c3f70441527..74b887ec4edccccd65b8923b8c170477ca28ed43 100644
+--- a/drivers/gpu/drm/xe/xe_migrate.c
++++ b/drivers/gpu/drm/xe/xe_migrate.c
+@@ -592,7 +592,7 @@ static void emit_pte(struct xe_migrate *m,
+ 			u64 addr, flags = 0;
+ 			bool devmem = false;
+ 
+-			addr = xe_res_dma(cur) & PAGE_MASK;
++			addr = xe_res_dma(cur) & ~XE_PTE_MASK;
+ 			if (is_vram) {
+ 				if (vm->flags & XE_VM_FLAG_64K) {
+ 					u64 va = cur_ofs * XE_PAGE_SIZE / 8;
+@@ -613,7 +613,7 @@ static void emit_pte(struct xe_migrate *m,
+ 			bb->cs[bb->len++] = lower_32_bits(addr);
+ 			bb->cs[bb->len++] = upper_32_bits(addr);
+ 
+-			xe_res_next(cur, min_t(u32, size, PAGE_SIZE));
++			xe_res_next(cur, min_t(u32, size, XE_PAGE_SIZE));
+ 			cur_ofs += 8;
+ 		}
+ 	}
 
-Here is version 10 of this series.
-  https://lore.kernel.org/lkml/20250513215345.3631593-1-elder@riscstar.com/
-
-All other history is available via that link, so I won't reproduce
-it again here.
-
-Alex Elder (6):
-  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
-  soc: spacemit: create a header for clock/reset registers
-  clk: spacemit: set up reset auxiliary devices
-  clk: spacemit: define three reset-only CCUs
-  reset: spacemit: add support for SpacemiT CCU resets
-  riscv: dts: spacemit: add reset support for the K1 SoC
-
- .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
- arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 ++
- drivers/clk/spacemit/Kconfig                  |   1 +
- drivers/clk/spacemit/ccu-k1.c                 | 239 +++++++-------
- drivers/reset/Kconfig                         |   9 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-spacemit.c                | 304 ++++++++++++++++++
- .../dt-bindings/clock/spacemit,k1-syscon.h    | 141 ++++++++
- include/soc/spacemit/k1-syscon.h              | 160 +++++++++
- 9 files changed, 775 insertions(+), 127 deletions(-)
- create mode 100644 drivers/reset/reset-spacemit.c
- create mode 100644 include/soc/spacemit/k1-syscon.h
-
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.45.2
+2.49.0
+
 
 
