@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-684852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C60CAD810C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:37:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47B4AD8115
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3F91E03A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95233B8B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E974F24EF76;
-	Fri, 13 Jun 2025 02:37:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5FD24A069;
-	Fri, 13 Jun 2025 02:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC0D245003;
+	Fri, 13 Jun 2025 02:37:38 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A16C23AE62;
+	Fri, 13 Jun 2025 02:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749782225; cv=none; b=agZiLT95pQ8N2GINrI02IHN0944lo5O1CsftY6NUT+hlSjzAXeNBU1nLX6wU3d30IpAqzQXhsLWBmwsUcHpTHgSjLzhJcpS3Mzj+HSOSRb9iQfE33o/jqXErwp4rSAo/T8juM54i+NB/xavVmY9iAWDRsSkXF4964wAw0fnBSpw=
+	t=1749782258; cv=none; b=JFRcd8ImafO22RtFY7KD1QHeg+exLgEPS579ZCm0LEfJwi/AN/KNboFSLRhz82M5Nr9JpT6l8T7xp/Ez4cSfjUgH/z/SGWzq8g5fxXJzgGVUMT7sKk5m+RueZ1ffH9WRCtZhWMKXa5YlaCWhww4nKYYnBCOgrFay9TQvdnOxdVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749782225; c=relaxed/simple;
-	bh=uMLZZIGntfima+Z+v7TifEE3E+4sqrRZ2e8DOcSjaoU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=McR6Nlk6Ix3iGj3L7wVyu0vwLNVgLvBYeC4OvxsL9sFnMC+iB9rINmVsNQE1PQWDBLCfhKK7jQWqo4qsqELIwoDCyeYk7y4Kw5UkgQjY2huJrVNtmaIddu6NPAjOAKbEXC87Pbjy3jcw+WvivyPuQsYOCGxZu3w2r+BSg4ypH+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 597D81D14;
-	Thu, 12 Jun 2025 19:36:43 -0700 (PDT)
-Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A571B3F673;
-	Thu, 12 Jun 2025 19:36:59 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH V5 2/2] KVM: selftests: Change MDSCR_EL1 register holding variables as uint64_t
-Date: Fri, 13 Jun 2025 08:06:46 +0530
-Message-Id: <20250613023646.1215700-3-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250613023646.1215700-1-anshuman.khandual@arm.com>
-References: <20250613023646.1215700-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1749782258; c=relaxed/simple;
+	bh=LJWAuQOr6gJLtbQ1+3X2NJZqAsFLjMQDr8H9MVFlA3g=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=PnSSm4vvRUWoFFVSrXYwmEMBZIiNS5EryuAAbRJezfAOFLDh0qNDYL8V4Mbp+tp+xbZQ+p9p61/AtjmXL4HVqloqeiJFik2ofgLYwIxSuTkXIPWdF1wW/iGtCuUdhzqebG/3IuSSinKSKxgYHMbJS37NeD2CWalkvsgqDa/ZYRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uPuIP-009mxQ-Fe;
+	Fri, 13 Jun 2025 02:37:33 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neil@brown.name>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Kees Cook" <kees@kernel.org>, "Joel Granados" <joel.granados@kernel.org>,
+ linux-fsdevel@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] proc_sysctl: Fix up ->is_seen() handling
+In-reply-to: <20250613020111.GE1647736@ZenIV>
+References: <>, <20250613020111.GE1647736@ZenIV>
+Date: Fri, 13 Jun 2025 12:37:33 +1000
+Message-id: <174978225309.608730.8864073362569294982@noble.neil.brown.name>
 
-Change MDSCR_EL1 register holding local variables as uint64_t that reflects
-its true register width as well.
+On Fri, 13 Jun 2025, Al Viro wrote:
+> On Fri, Jun 13, 2025 at 02:54:21AM +0100, Al Viro wrote:
+> > On Fri, Jun 13, 2025 at 10:37:58AM +1000, NeilBrown wrote:
+> > > 
+> > > Some sysctl tables can provide an is_seen() function which reports if
+> > > the sysctl should be visible to the current process.  This is currently
+> > > used to cause d_compare to fail for invisible sysctls.
+> > > 
+> > > This technique might have worked in 2.6.26 when it was implemented, but
+> > > it cannot work now.  In particular if ->d_compare always fails for a
+> > > particular name, then d_alloc_parallel() will always create a new dentry
+> > > and pass it to lookup() resulting in a new inode for every lookup.  I
+> > > tested this by changing sysctl_is_seen() to always return 0.  When
+> > > all sysctls were still visible and repeated lookups (ls -li) reported
+> > > different inode numbers.
+> > 
+> > What do you mean, "name"?
+> 
+> The whole fucking point of that thing is that /proc/sys/net contents for
+> processes in different netns is not the same.  And such processes should
+> not screw each other into the ground by doing lookups in that area.
+> 
+> Yes, it means multiple children of the same dentry having the same name
+> *and* staying hashed at the same time.
+> 
 
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Joey Gouly <joey.gouly@arm.com>
-Cc: kvm@vger.kernel.org
-Cc: kvmarm@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Reviewed-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- tools/testing/selftests/kvm/arm64/debug-exceptions.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If two threads in the same namespace look up the same name at the same
+time (which previously didn't exist), they will both enter
+d_alloc_parallel() where neither will notice the other, so both will
+create and install d_in_lookup() dentries, and then both will call
+->lookup, creating two identical inodes.
 
-diff --git a/tools/testing/selftests/kvm/arm64/debug-exceptions.c b/tools/testing/selftests/kvm/arm64/debug-exceptions.c
-index c7fb55c9135b..e34963956fbc 100644
---- a/tools/testing/selftests/kvm/arm64/debug-exceptions.c
-+++ b/tools/testing/selftests/kvm/arm64/debug-exceptions.c
-@@ -140,7 +140,7 @@ static void enable_os_lock(void)
- 
- static void enable_monitor_debug_exceptions(void)
- {
--	uint32_t mdscr;
-+	uint64_t mdscr;
- 
- 	asm volatile("msr daifclr, #8");
- 
-@@ -223,7 +223,7 @@ void install_hw_bp_ctx(uint8_t addr_bp, uint8_t ctx_bp, uint64_t addr,
- 
- static void install_ss(void)
- {
--	uint32_t mdscr;
-+	uint64_t mdscr;
- 
- 	asm volatile("msr daifclr, #8");
- 
--- 
-2.25.1
+I suspect that isn't fatal, but it does seem odd.
 
+Maybe proc_sys_compare should return 0 for d_in_lookup() (aka !inode)
+dentries, and then proc_sys_revalidate() can perform the is_seen test
+and return -EAGAIN if needed, and __lookup_slow() and others could
+interpret that as meaning to "goto again" without calling
+d_invalidate().
+
+Maybe.
+
+NeilBrown
 
