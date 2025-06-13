@@ -1,141 +1,216 @@
-Return-Path: <linux-kernel+bounces-685755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7979EAD8E26
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFC7AD8D89
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65553BD8DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C3A3A1E9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EDF2F2C58;
-	Fri, 13 Jun 2025 13:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FA219DF8B;
+	Fri, 13 Jun 2025 13:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDmwatfu"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LF1bY8Ql"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB8C2ED85A;
-	Fri, 13 Jun 2025 13:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822580; cv=none; b=cb0V8rvJVVPnLS+MAe7y2LfHIVfHIRcr+66PAHC6kXhLZ8qB4uGVHgqjyqGmD6S0tLg+BB5IfXrHOgWpIofCy48j+pXpRbV8oXTh0Nbf/C2ktwqM28ngMOq6AfK+aiivuh/LddBnMYTFSI2qaFfFLsrvnPzi0cn6aViSn5Z7AV8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822580; c=relaxed/simple;
-	bh=X3GP0rFGQWYb7D9EofmWO4CkjJb3nRBnJ4sS25K5GGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ihzV1Hz3jgC/gaq3cBp2HrFgN7kiHFfl6tuLwnwLyrUJeBxfiCHBJTPLQy+n+HVsvfOOJpnECzpD8qwO1UNJ81PmTb4U0mjROYsBM9auKWD6AOMrmEPBY3rvvv9xxwSPhOHMjiziPERGTKt/aZq96shuGC1QocwxfJUH8CWEZVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDmwatfu; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so1738863f8f.2;
-        Fri, 13 Jun 2025 06:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749822577; x=1750427377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X/r6nOkep5bcePWw/OmX8epaR10E2HZMsLJvTHOobc0=;
-        b=jDmwatfuYDuuuzpxYppYdUR56GQzk0p5X3qFTdrDZ5FdZ0UCQGn4LaKjfl93RcwwUg
-         Sjss4lSAe/Jh8tl7mBAZBdg+XqASL+jyqstRNZNhgnwclKpmLclePAQRHN5/u7W9qsNI
-         hg0rcZsRm9fyZGlBxHTCyTV12utmpkjIpjTuNKhdimf2Bst7NoFIe8nWG4dFp6GnzI0t
-         g8MpiORXevD/aNg1PGPwcV2e6kTVxKfN2LLZnjT8Z4NFWVkXpne1GUgwVFDCVDkn4IaY
-         0Up+QEuTQG6rGQfNwxm6Y1A25dWyzZIbbO/FY4X93Bv+aATID9hhZfRf+pon6ywqMMN7
-         EjAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822577; x=1750427377;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=X/r6nOkep5bcePWw/OmX8epaR10E2HZMsLJvTHOobc0=;
-        b=GkevFhoHdWL74jRF4Dt0SW9QSwr3/ra6gPbjgg+EFkt3tKOSTN8mOkXWEE6lf5n3sG
-         nbRt9WqHFzfE/Gj43f5cDKq1ieZ8bkggCLspyeP110Hlf4eqtFJgFJ03EkD07HNmbk6/
-         Sz7cdKwHAniieBIJTqASohOjNeNAQqZkjv4u3z1DHwxl6U9NHSKo53NVRhOZUmn0pUov
-         VKvPr5WyUpWOpVA/+tP5caR8GXFHg2c2N88/PKyxRsNgtGFo7+VvbZHIFM6ojOuWQcBJ
-         +ICXM23c620muoLBJDKfdUk9WIwiwixYAtUzU9d2FugZr4yJ3V1FdVZAGFqnUUL+tgBt
-         cXjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUky7R9QWPeC9R5atmjQC2HRDgGI+F6dPkiCsZZ6UqeWOxRwa+AoLA7+dIaUG7TIpAc9BJGxo8hF7AI/GB6@vger.kernel.org, AJvYcCWkn1gh8IObpPz/BZ7eAX3U+kx1H7Y2Qgwexe3Aqps7UE8arjZQdNVZ47nVJUZdXdshRk5HdK1yRoEM@vger.kernel.org, AJvYcCX1PibPX/C/Vrf7Wen0QNLo4FDpngmKnjPbK8gwue4GufOyen8UUnwEz+l4W+uD7q/T8o4qcOxtnRDpXeFI8qY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbItQ4ExO6RhlkLDgTsUke5NXnMHpF5YKg2L2To1vnB1nO7UDI
-	hwKgt/H3/MgeIs6bw54dAOHeFfU/gpS1YXeDz0iqyOQyfYmF4pVHZQU5
-X-Gm-Gg: ASbGncu5y7xL+oaDaNvs4d1tg869E7bmHL3eosLunOyLcnSsp0uKarlv8nGvPEXbS84
-	9WeXGCUvVTbO4tEWg7ehl+tUJqfEyI6U5vfWeRssYjVJejhJz3XshVfBUO98SYxagmzkmlvxnbd
-	gzsTeA6+Zq2SGTUQ1zkLLWxWCOOTlTvqfqsz7AExPXRODl0tq+9Gxn9UVXe46B02cRZZf3h7beo
-	GKWpaVt3Py9o6W5Xtqt+KzehpTYdl5EWJsorJJUEQOguqwzjEB6oIbVg3/k1K75FH4lXEMiW3dt
-	JzVSLfo2pg0EugHYBjr3ryUo4wGXypHacud6c2UPqZWrarX7K3FjZbCu5jcJVI9VGO4+dUuRrkJ
-	fGRfcsLhWC4iM/pjMANAikAQlSMRdFYTFHkVR
-X-Google-Smtp-Source: AGHT+IGGIalFTB6DUZM1gWX0syyRV3WpDt1rCMWnNCP9Kf/JDeJ16571MhlLO0tSnSeYWmbVL1oyKA==
-X-Received: by 2002:a05:6000:22ca:b0:3a4:d975:7d6f with SMTP id ffacd0b85a97d-3a56877eb6fmr3360807f8f.39.1749822576560;
-        Fri, 13 Jun 2025 06:49:36 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54d74sm2482634f8f.10.2025.06.13.06.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:49:36 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v6 4/6] rust: platform: Set `OF_ID_TABLE` default to `None` in `Driver` trait
-Date: Fri, 13 Jun 2025 14:45:10 +0100
-Message-ID: <20250613134510.1231709-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
-References: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6BA2260C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749822329; cv=fail; b=ewmPBLRDYAc8EfcedJk4OGFhRujC+j6aAlhhDBvH6ERv1wb0jBeIftMuD+Zxi/bjXCPu9oz1icvN+Txa3bnn5LXL8+1MGIgOG/3rQ1VeUzkQ83xWkVsyzXk5vlazYV2li71BJw1kEPYKI/ZdHXpUUtekKV9G4mFEd8zY6VqAAHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749822329; c=relaxed/simple;
+	bh=GkPbDDW3Q4JQtMLtQ75vJ87oFfDrZi4Gg+v8TP7QQsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aUH41xK1A5DgWHSWfhxux44NxpQMQm4F0hBVGbReNA52o62CUEXRzG33nCiGUWeNLPriegaccqkDC8LLNuTHfCrBunyUdKhW7mu+A6/S1K95nmejcCKxY+uND8AqU3NQUqnqSxzv5Cg4MvcczWX7zeSnwIIrILIV/DqGYMCRrSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LF1bY8Ql; arc=fail smtp.client-ip=40.107.223.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DZqDqYJqAoiDD4eFF46TQMeR9UMMfUdX63AaBVdmc2spUsmv+vBrzaF8pS2XpFHzkyacbl+G8I5SW6Sq0G+IgcaOJ0k7hM+CFyn2HnjV6uy9Uhwb76/Le1ZyQqEj7zsbqiJa55OkG4SVrCoM4xDx8aVpAFnB3aXBY6v1F82UJqfBpU9UYX/KCj+To7xwczWTEzXC7M52uOAypTf5tnImfH57qzE//Vh5CyWC4NdyaVhsFqtrSmSGMlqwqYRsM/kiB9PWI8PdYZhwULbx+NyIxIGDNuG0hHygNpxMFr9sV7Ycfd99alFwfw5ndtFYz+H9cJ2tqSo23BEDcbHgvVAzOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1i13DgxYpxhpGgsgH3zFniKzIgPxRoE64KU7ECSy/GQ=;
+ b=Y4Esc47o5vcTY0jtA/bvvaQwASwDOxbeLIFT80rPh66oPMEztVj801ixBBGrPhDro9wOWvmBcez48TzVo/g9ets+QZHig2wE26SGPLrpli13QpKhNPL1jBYW+Ior1aOi2uEmLIVYc4ZjTsV1RSQiLnL13iC53dcGwSEe2xmfIvlIGfFf6TwhfwcOKuEVpPoThPVzIbjSSMfHPemDtsHL4VoNm+bYgp0BctmOg/0lay2g4B81pG4NgiY3FJC2U+mFELskww9NJcKwjQvjJ3vmoH4rAiecNhBY2rBncf2pYuHQFwKdZ0MkiwoTPmflxVwAG+F+oT/p87E4nZhN+iWiXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1i13DgxYpxhpGgsgH3zFniKzIgPxRoE64KU7ECSy/GQ=;
+ b=LF1bY8QlmRN1Q35MyX33dop28U6PVcHm8HwmdswgrPWDa59pqZCvAG3UJ2UgGJVIjVEmluOQP6T24TrGEiuO96VCUp3sQ/YrXdVv+BzvrDe2OJmIf/bbYamd7eL8RVo9OWg6hAs6ZZrr1QSHALJyThXE57E3difNztljSDKVsKWFPNyXY1yUfb02OIO9Yv5gFMJNNhW0AtQYWK2mUM3fqQpnDSz6bvzt95kodsvRaahbMrd5jjMRLliqCHCvkAY50j5qk5yTd9tXozlobwDp3nk5jVYUOmKGmD1Zl5zYsjfBm0g4v4n4TukuSLkLo9aBPgBohXM1IzIKLnV/t/EPgA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by PH7PR12MB9221.namprd12.prod.outlook.com (2603:10b6:510:2e8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.22; Fri, 13 Jun
+ 2025 13:45:24 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8835.023; Fri, 13 Jun 2025
+ 13:45:24 +0000
+Date: Fri, 13 Jun 2025 10:45:22 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, robin.murphy@arm.com,
+	joro@8bytes.org, ddutile@redhat.com, yi.l.liu@intel.com,
+	peterz@infradead.org, jsnitsel@redhat.com, praan@google.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	baolu.lu@linux.intel.com
+Subject: Re: [PATCH v1 06/12] iommufd/selftest: Implement
+ mock_get_viommu_size and mock_viommu_init
+Message-ID: <20250613134522.GE1174925@nvidia.com>
+References: <cover.1749488870.git.nicolinc@nvidia.com>
+ <5880f4d754b2b7a7c4bc8664a5b954821c73aab7.1749488870.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5880f4d754b2b7a7c4bc8664a5b954821c73aab7.1749488870.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: YT4PR01CA0325.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10a::8) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB9221:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8913db40-f258-469e-995c-08ddaa808c2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gVwv7v1MVr0MHZgjikYqN9v16NPz50QJPGiEz02rUQrHTYCWWRYEwpID284M?=
+ =?us-ascii?Q?OIUNnR+RqeGea3MGhcUO8qcvYO76GiPIozhRpnVU3gCavxiMOAdgDWVFyCkr?=
+ =?us-ascii?Q?N+0zbBWOP3NvgyQvtOIjWXdkB5Vu2GWuxsPtTj9lLf4lCZ02nLp/V+QI4j+u?=
+ =?us-ascii?Q?LPiqVu43M5Gp5laKBhQxZZlW2mYEgTk48j02FID9znGKk9UJLi8EL4xH33K9?=
+ =?us-ascii?Q?IHHDkIcoMvsCXt5RKp+qa/Ne4kL9teRqoiAAGXrR1uG13MHMQvy7hry+Cwc6?=
+ =?us-ascii?Q?MPUOc2F6qlhIY3+jiNBHGuI+SDAvt33/wAJlzp9jAvVc0/IUPb3GIBmnluPf?=
+ =?us-ascii?Q?jWzHx5J+wr7q1zhUgihm/k9qjfF/P0yvg+KFVDZpPndulGtOQEJl29+STsSu?=
+ =?us-ascii?Q?gVmNcj1m7iqqdSmU/zI8JwWbdBa8sJzidn5tJH8P3Anz3qOEh+fFk5VlMisL?=
+ =?us-ascii?Q?5AzvNk9cppBZ7E6LyHaM5HzxOzwjq0c/VgAKKr+j5g2XttuWOndyB42GY3A7?=
+ =?us-ascii?Q?EsIxofjpyMHIA9HF2O9HkAX9yerdSAk8b/S9XYMx0jvDI530p08/ft18C3Nn?=
+ =?us-ascii?Q?THp4Y74MDXSeQg5rzWMfX/A1XDcnWPDsKl8M6CG8RsFBgMB5Wz1593pw6uGM?=
+ =?us-ascii?Q?oqg1E4nuFYhW6im3shYKvjYHS5CeZaGy4y7SexGWR/5RzZS4oVKvOj40CuF/?=
+ =?us-ascii?Q?lSgE8l8DvnujoFUFabQWnu93Q/kbTMSrr8LFj+D6WJXQ7VWNtE2AnNjtAklQ?=
+ =?us-ascii?Q?GYVx8jMiT9vEy4a2sJSJLQ+qJ2+r4BZT0svstkTD1zJbbceRhgQCJFganhnZ?=
+ =?us-ascii?Q?1Ee1hxeYuclCVOuGCk5Ln0ByFTZ4ULLNQR8XVRzm+wtEX5heQQp/6PzfpF37?=
+ =?us-ascii?Q?aYwJ3UuZW8Wz09HplsGYrGOMY/B8SXLKV9K1Kv34Wfk9beSGkud4VyLAMm+n?=
+ =?us-ascii?Q?J7pgUcaeRW8ygRNNMkGbhLmPyo8uzEGhjN+6tbfUmWvLOA51GgqGifyAAOuc?=
+ =?us-ascii?Q?tHVC6w2WeUFgPRPvK/csU7GxkrHM1R5gdtp490+OCnlb7QrBWMUwA3sgJb4K?=
+ =?us-ascii?Q?OJKQyc+DFY7lP1U2jvuQRANIiUCgfCWtHB1UyUY1PYbLwGHmVCRkMvQcVmFC?=
+ =?us-ascii?Q?671WucSc9IYaDeHV4ZJwKgMNAG+ckvpmO3nYp9c7dkM9rJEAP20xyYUMV15I?=
+ =?us-ascii?Q?TzC1B78vFBp/MtVNSljdnixglROeIiD4XF3yJAXNzECo00b9TYDPM2x57G5c?=
+ =?us-ascii?Q?vNSfYHyviy3gph6zkBKfTQKacpbr2dfDpBNUW8NfbYjV9/9b5dj9UVECAmMj?=
+ =?us-ascii?Q?RiNGAGk18edNRgmsi/W2KoN67rXDnPwlK/ejyTvb9pCaptqvl9y1SM03qyDf?=
+ =?us-ascii?Q?7sm3IM+LpnseYHBZX9Z5FkiPnJwZDx53jaLnHuFqEW8G0NwrUQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nNOwega/UFdM97fbIIhOUaSeAoACB1TbmrHVFBPegxmxNaCKM98SO9QOt5zc?=
+ =?us-ascii?Q?c7MhZllbYJm/oswV3j+1/Bz+NrFsoGZJhv/2N8EDHoWlWLQbLwWVBkknDkSm?=
+ =?us-ascii?Q?lfU5PDv4kr6AwrcUq1km95bAZ+5+lwuwNcwQf0bBxb4vwGKy5/kPJyoOzW6e?=
+ =?us-ascii?Q?7O/N54AQ5k+D4ABcqVVXdJ5WqVhilZ7HkiGDKF0utZp68DtIwyl2UgDCmgyI?=
+ =?us-ascii?Q?q4IriMI0G4ihCWj3QNBIgUXPuf0JNzRAm1nXHvB+k58QbIOc65ynfEUR/UzJ?=
+ =?us-ascii?Q?V+zijSAi+hb+Duj9QgSQeT3KZcTk0G+jVrMv0mupstFGbdmtefNhSWsDamN0?=
+ =?us-ascii?Q?DaV4KvXkEXCm0kvALqXcrzQsOhoquKk6iLIk9R+N7KY+j25vx+d0ceK7cCDF?=
+ =?us-ascii?Q?lVMoEHGAgoSUW1SE8GptpwT7w2dmG09/dOEmoYlIRoWI7M09hs6WLAUYQk5A?=
+ =?us-ascii?Q?Vdo+W4tEgNGaFOSUNyHexxBEOfwq6k6gltmGttxYmcr5ifo5dHecTqXqRJ9K?=
+ =?us-ascii?Q?aFtCbeB8BvNfBHjWORQnqkCM1JTAy5NGmsGpeeP6r++ghFp/Uh7qNxKcTFC6?=
+ =?us-ascii?Q?QJpQP/bLObqpw1cgL9Lp+PlSNRQhopSUJwyZJvLi4IVslawu9buxjGkrp/BC?=
+ =?us-ascii?Q?T2Ch2loDOB6dUY2aiyekpCQdMESfc8a7MXUOhJB+R+yL1DNBZJC+QBtMxOT3?=
+ =?us-ascii?Q?QQ/YBxmVLrBMvU1WpSSb4SoWEyb7zQeQyEDetmLbMs/hJka9KG9KeqjVzWsv?=
+ =?us-ascii?Q?zADtPH6aAzjYAjQniwnVlUdL0d/cyybv4Fu2ML9UX83CykeHoNwhY18C8ZW2?=
+ =?us-ascii?Q?s1ey0cjUjP5X+Gag9R3i5wqtjGGw5xJyvzP2IMZsKsRNyNpg4bsrz0CrPGuz?=
+ =?us-ascii?Q?IyanMu3Rig6Wk/bgKs8ozOEZ0Qma+OiAqGJTSho6wDr27mgtuCDc6fOGYJV7?=
+ =?us-ascii?Q?SEXHLXuoRY6fguORvR6zyBjggdw1Ih6P8rtCjzpTL3T0l1geh1F75LbDCxNx?=
+ =?us-ascii?Q?ajoe57lyBMhjm8CABpr0iSk/qMkE+K6b4Vx78THdWCwRJX7JUHyRSwfIcpd3?=
+ =?us-ascii?Q?wpGSyB3zXtT78jBWSx4XL+0cgvXqI1VA8qk4CxqYSu4gBaB2zUsqhCv0LY5O?=
+ =?us-ascii?Q?RynjOSNkOWmF024os4VrTfDjnyCU79UTBZ9ogMPgV/onGGJ3q3XI/kQXHhCK?=
+ =?us-ascii?Q?LJE4ksUdLYxRvEEF+s9tnPTcGF6rqR35wZhCacR5i67CBmZ10DU1/pBKhSaw?=
+ =?us-ascii?Q?bxHPnka7V9jWdttXWDaMd3MTcDgauk3BfMnhbX6DvJGtmViCRiviXs4qSG87?=
+ =?us-ascii?Q?Nhj6FiQbmZO/XKy4ds6ZUPPGDK+She+8Pzr+8DdJEhfjlJtpY9ueswBD4VWh?=
+ =?us-ascii?Q?MSXxc+aviNy8mCwMZN0VCH64zKWsNjFoNSf+NW7ARYUOCwCPO2Z1KYETyLim?=
+ =?us-ascii?Q?ta3VVKBZuHHw42VkpNYcGes03Z1W2OpERKGg+9WOzwBYchpuDYNR3wHlzfv5?=
+ =?us-ascii?Q?LgOgSn7rkLmwdQkrROdSuv/3widvLlrXXZIYB5yB9mT2BvRKI4elKcl/qD2C?=
+ =?us-ascii?Q?ZsxdNYcNLONiNFxbjfp0enphWQoQFWS5lyjXNX/e?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8913db40-f258-469e-995c-08ddaa808c2a
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 13:45:24.4044
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x6WnkOd35e44YYSve1oeUk5FXuEc+Sft3n5Sk55fdT2eUIEh6WEQLp1r0lLrrDEG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9221
 
-Provide a default value of `None` for `Driver::OF_ID_TABLE` to simplify
-driver implementations.
+On Mon, Jun 09, 2025 at 10:13:29AM -0700, Nicolin Chen wrote:
+> Sanitize the inputs and report the size of struct mock_viommu on success,
+> in mock_get_viommu_size().
+> 
+> The core will ensure the viommu_type is set to the core vIOMMU object, so
+> simply init the driver part in mock_viommu_init().
+> 
+> The mock_viommu_alloc() will be cleaned up once the transition is done.
 
-Drivers that do not require OpenFirmware matching no longer need to
-import the `of` module or define the constant explicitly.
+Note the addition of the missed s2_parent store
 
-This reduces unnecessary boilerplate and avoids pulling in unused
-dependencies.
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/selftest.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
+> index 4d5dca8027b1..b0de205a2303 100644
+> --- a/drivers/iommu/iommufd/selftest.c
+> +++ b/drivers/iommu/iommufd/selftest.c
+> @@ -772,6 +772,29 @@ static struct iommufd_viommu_ops mock_viommu_ops = {
+>  	.cache_invalidate = mock_viommu_cache_invalidate,
+>  };
+>  
+> +static int mock_get_viommu_size(enum iommu_viommu_type viommu_type,
+> +				struct device *dev, size_t *viommu_size)
+> +{
+> +	if (viommu_type != IOMMU_VIOMMU_TYPE_SELFTEST)
+> +		return -EOPNOTSUPP;
+> +	*viommu_size = VIOMMU_STRUCT_SIZE(struct mock_viommu, core);
+> +	return 0;
+> +}
+> +
+> +static int mock_viommu_init(struct iommufd_viommu *viommu,
+> +			    struct iommu_domain *parent_domain)
+> +{
+> +	struct mock_iommu_device *mock_iommu = container_of(
+> +		viommu->iommu_dev, struct mock_iommu_device, iommu_dev);
+> +	struct mock_viommu *mock_viommu = to_mock_viommu(viommu);
+> +
+> +	refcount_inc(&mock_iommu->users);
+> +	mock_viommu->s2_parent = to_mock_domain(parent_domain);
+> +
+> +	viommu->ops = &mock_viommu_ops;
+> +	return 0;
+> +}
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- rust/kernel/platform.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patches will read better if you add the call logic for init along
+side alloc based on init or alloc ops being non-NULL in the prior
+patch and then have these driver patches replace alloc with init.
 
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 5923d29a0511..2436f55b579b 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -162,7 +162,7 @@ pub trait Driver: Send {
-     type IdInfo: 'static;
- 
-     /// The table of OF device ids supported by the driver.
--    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>>;
-+    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
- 
-     /// Platform driver probe.
-     ///
--- 
-2.43.0
+Duplicating alloc into init and leaving both makes the patch harder to
+check.
 
+But the change looks right
+
+Jason
 
