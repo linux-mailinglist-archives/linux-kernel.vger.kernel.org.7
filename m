@@ -1,64 +1,49 @@
-Return-Path: <linux-kernel+bounces-684809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4563AAD8079
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62557AD8080
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C421898D50
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:50:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6428B1899273
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D3D1DE4C3;
-	Fri, 13 Jun 2025 01:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1881DFE0B;
+	Fri, 13 Jun 2025 01:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FLUNqVcF"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1rhK76u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222A372636;
-	Fri, 13 Jun 2025 01:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F68C1C4A10;
+	Fri, 13 Jun 2025 01:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749779377; cv=none; b=LLgiRYp4GBwlBaIu0w4AA69FsQwggBp3GuQaT+ttB0OwvAwzCXih1U4iBugAy+w1EqhxGEh9zF+JREb+RGzw5pIu8eND0oEVShTIVt4zXE3+2AJ186BO3yd+6JlAENkkmZ3RoIug+9nXMOo60ANeGHAiOKrRdMy+Z17yyzJdfBc=
+	t=1749779400; cv=none; b=QQEX0Bs3/JprkgvIoDll6PC7iI04F1W1Htxvz7u/VPNJ8eqju71Yjvv+x1w7FgTbTN6GD2D9ewCuvqZGTY232wohGbeNIhEMIK4MSqm1WMsPsrolkQlUdDqNf50Yhevq/IFVeVyrdPe1EUvitng0Cj2D0uCS7sJIuAoaXstjsD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749779377; c=relaxed/simple;
-	bh=sM5LQBogj1YqlTMubTmqr5U56exFczyX2txJ3YgHXlY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OSafzb/10qR1ws578ibrYk6H/1Q3z1GUwKPXm2mDNz1Nhab4N7TET4X2MLgRu7sSMPsWkMMv22SphJt3ecggfVGOCVMcVHTUA4Dcl517eU1CF1t/3XWZYNKAh8uCBxWBGWjFAVM4uEql/osTfRfEjdbm9tLcbJYbhS1GZs1A6CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FLUNqVcF; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749779372; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=FtipOg0jR+RxbNWbEIuvLEIIRNhaeKYX+tgFf32YOWs=;
-	b=FLUNqVcFNfKqNIFKCVkRB7ptQ88o5tBolUGApXZBb3q2lyBk/mOF6xiGGWpv1oCAFsgThCQ+Z2jFrRXHJU/Za4B04qHU1rGb8Nzbm7VZkj0LZJ5hnV01oijMeUZJqLnP1oTChPOdIi5eEdMm9MJJJfuhCdGVgteubWA96aAEQl8=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdiYSol_1749779371 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Jun 2025 09:49:31 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com
-Cc: lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	shuah@kernel.org,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests: mm: add shmem collapse as a default test item
-Date: Fri, 13 Jun 2025 09:49:20 +0800
-Message-ID: <a30b1529b399f2e649b5a05c3d352f41a68faeae.1749779183.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <d8502fc50d0304c2afd27ced062b1d636b7a872e.1749779183.git.baolin.wang@linux.alibaba.com>
-References: <d8502fc50d0304c2afd27ced062b1d636b7a872e.1749779183.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1749779400; c=relaxed/simple;
+	bh=KvQpbekyf0KFJWKFpC0va1oh7HK6XoLcGPLoyuPICOE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=b6JiKJKeKkoAMDyIdRzcJ91TGuQRgILZ4Y6FhIR0AtAPjti8FNUFpBUq0DkpQATAvwRiUojHYCPVCygFP3uHfLgjvftw/X1tdY4WMCv0vXx/+r2GKDdoouRhxvlHf1iJz++wAQ1XVQwIVCJstCuN/5tPhqT4tVZAwQE+uL0u+ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1rhK76u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC018C4CEEA;
+	Fri, 13 Jun 2025 01:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749779399;
+	bh=KvQpbekyf0KFJWKFpC0va1oh7HK6XoLcGPLoyuPICOE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=L1rhK76uFw5pFA95AqKZdJlBYNQr8MNwGTpKknRpIxCd4BCXGmw3COgzUe6dDDIa+
+	 7q6TO7wwYsXkSE3PrJYCRJY/cerKIv8a7gFh3QCfIpIX47Nlv3Iw5dHQxlgE7b4LkE
+	 rk5dIhapWMz01Mx3G820wVdjNl7ZgEKWBj6mqr4Fm9sJqQ4SoHXe8juk015s5fYlR/
+	 rhrHiIlsBvPy8yNy0zclSthAXMJEP4QBHkVoTwpcUjqTjhT/WN1I+NorAl6CWmHVy1
+	 6aDQ47dn3DuL+7wuAhhxcasj6K7x/ZyE1YJTeHygpja4tQywyipa9uuwOwYHZscghP
+	 bYDp0g38BvR5Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC5039EFFCF;
+	Fri, 13 Jun 2025 01:50:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,39 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] dt-bindings: net: renesas-gbeth: Add support for
+ RZ/G3E (R9A09G047) SoC
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174977942950.184018.422586356896918128.git-patchwork-notify@kernel.org>
+Date: Fri, 13 Jun 2025 01:50:29 +0000
+References: <20250611061204.15393-1-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20250611061204.15393-1-john.madieu.xa@bp.renesas.com>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: andrew+netdev@lunn.ch, conor+dt@kernel.org, davem@davemloft.net,
+ edumazet@google.com, geert+renesas@glider.be, krzk+dt@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ robh@kernel.org, biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org,
+ john.madieu@gmail.com, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+ netdev@vger.kernel.org
 
-Currently, we only test anonymous memory collapse by default. We should also
-add shmem collapse as a default test item to catch issues that could break
-the test cases.
+Hello:
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-Tested-by: Dev Jain <dev.jain@arm.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
-Changes from v1:
- - Collect reviewed and acked tags. Thanks.
----
- tools/testing/selftests/mm/run_vmtests.sh | 4 ++++
- 1 file changed, 4 insertions(+)
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index 33fc7fafa8f9..a38c984103ce 100755
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -485,6 +485,10 @@ CATEGORY="thp" run_test ./khugepaged
- 
- CATEGORY="thp" run_test ./khugepaged -s 2
- 
-+CATEGORY="thp" run_test ./khugepaged all:shmem
-+
-+CATEGORY="thp" run_test ./khugepaged -s 4 all:shmem
-+
- CATEGORY="thp" run_test ./transhuge-stress -d 20
- 
- # Try to create XFS if not provided
+On Wed, 11 Jun 2025 08:12:04 +0200 you wrote:
+> Document support for the GBETH IP found on the Renesas RZ/G3E (R9A09G047) SoC.
+> The GBETH block on RZ/G3E is equivalent in functionality to the GBETH found on
+> RZ/V2H(P) (R9A09G057).
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviwed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] dt-bindings: net: renesas-gbeth: Add support for RZ/G3E (R9A09G047) SoC
+    https://git.kernel.org/netdev/net-next/c/31b928210df1
+
+You are awesome, thank you!
 -- 
-2.43.5
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
