@@ -1,181 +1,160 @@
-Return-Path: <linux-kernel+bounces-686048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15757AD9286
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:06:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AF4AD928E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3513B1E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB4C1663BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4411FDA69;
-	Fri, 13 Jun 2025 16:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A313D1FBE9B;
+	Fri, 13 Jun 2025 16:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZpwwqWD"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHhSb3a7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE512E11CA;
-	Fri, 13 Jun 2025 16:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C261F4C8A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749830558; cv=none; b=OlzMcxuLjd0eNgEN3Sv0lm5LAtrjAIp1srueWcyh/nxptzVH6blJJJQzcbG+F14oYcXS10T23g/jlD5OtG2ysPgpwEVkkxIZRe/AiKZqbaaidoI8kSb+SGPkN1zRvbJ1H5ye5vKeZGvGrrIoykKU/fkbKIwOI0m1POxwM2bJvls=
+	t=1749830853; cv=none; b=iP2tjwkdi/nW8Huy/7n3TbqB0EOnzV2jWMLeuj8yTy5bJN79pnbpEV1doEhMYa9ZW9vR93P3B5+FLoEUabUyA3cu8VyX271zYRJ+Syi+WQaqFx2HqqsQ8+Kx8mFjCTVs/X5WcfBCqzgooJMDMcQgHrBGQMRydyDoLaAReCdqMY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749830558; c=relaxed/simple;
-	bh=ZebeOwLSI23Kxel4xf6Al1F6s45Vl8wyBG0DVFwGFV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aP5yvMJt0825l8j9gMrOOXvwNm9MQWichzoaImttM/un2/NWPIG7fPaqrKaRUI0P5kfO2SY5C2Q3mGn/vFp+YCNZzWp8kkq1ZWE6upkZ9kwIXXE0qDzwnif8a9Z/4PhV9m1f28mqOTLkv1YaxBJPH2wrgHxo+/qG2GjyEHiql8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZpwwqWD; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad574992fcaso353455266b.1;
-        Fri, 13 Jun 2025 09:02:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749830554; x=1750435354; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EolkFjwa32486SxkHimT0PoLXhvW13QswRm2sB8b3Go=;
-        b=VZpwwqWDDZwQcPJ40EZSgb02RtUBfJgph/9FKU8NXjNsUYKAYWfzny4v7KON72Ei5J
-         Xf6hut/dcJoLlvyJiOekOBV79fbeOSDJpv/tJQ4O5BW24zcjHN4DZCDF+7x1DBiQbjXv
-         qI57cBd6iPZFQwP2sLhpxaaD4K1+Fl7Vz9pPgKJmyAnArkKRcl1UH0jMZ5IO1iQBPnRj
-         OWA4t746IvvWDMAks+09wkQv6m9Up2DRU7eyVFJ8cN7iqN2fYBqxNJeuRqrmmu9qKJfv
-         SrhYau48X6RoTTWrx3ho2xL4o+FVQoir6ZSTznb88xJPZO3979aeeyttXYHZUq+1Zzsk
-         Oq5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749830554; x=1750435354;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EolkFjwa32486SxkHimT0PoLXhvW13QswRm2sB8b3Go=;
-        b=KnUtpU6LPprWTovSHkCiDT/yU/QiTN/fhdbQZ8F6dSeN1IzyCEZXIeZGIu+cGeqDBM
-         GbnM6vuiSr06zy3qkjB+uGobNThYogqxebRKpMvNDnAkPDF9CicyWWs42/t5YijiHvVY
-         fRqdwPK28NJZ7YOY3P/lFENNgZcNWsx+yqgYuCFPRf9gnR2vO7RT7U2vtUzOGu1cgc28
-         dHsGZhik6zjCMIp3w0mI6eCIRBA+ezeV6WJIqagoFfwhoIvI+wcKX5rdkrS9K+PreCB/
-         pNHQPIpySHHMdhlw6k3+TXnxN+xPKEwu+/ygHXnvZoSPxPJhE3cv2s/ykRujMyIdwwnX
-         8psQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe8K1PhWD2Z3Pby2w9Dx/F6tbJcFswXkuLgv+mr0ZabQ5N1PEYJYTWbq6Y0mbS86Sb1F1nISWaFiDbmR+x@vger.kernel.org, AJvYcCWTtkFqYLpuoONn9KvB6PCGN4OO3NuOvSox2MOhwXZIxYcTkgFWXaHjTd/lcDoUnlB7Mom5sSTD0JU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9T43DwrIuB1DfuU9SOO8dF5xMhntq+y5CNlWoxmbZVgYtVzEo
-	ph3LAaDIj7ZcEVz28N/a/PQw0xRghifLMaYSae0u3MQE4OhFdkAQILS2kYKcyZ9DKafei8rMcY4
-	dDVBou1phq8mceJqF6xPzUac1EgV2YUE=
-X-Gm-Gg: ASbGncuaT2hQEDtD9f9dg+iDRSfaYWMVmDeX4HLg6utT26QaJuueZFX3jBumIOvGtd+
-	UHHSKwattL8ew/7TmzDDP1HOcTfpBw/91jB+w6fxDlauRGKVyAV+8KaiTOCy3/XdU6COzt0IxiV
-	cepYn/WL1/AvEmlZGjbVsB00wiXK8TVf7woSFP12XdIG+5PTNlKEeluaeiBd9b9FAUxjh9L/pRi
-	wCQ
-X-Google-Smtp-Source: AGHT+IGAK5cy8SvdVQyZPmEOukEmvVLoi77USHaZ8HE50a/XPUDwRV2/XI+o9a9sjbYnuvbGDNhT0rm/lrJAt/GFfdM=
-X-Received: by 2002:a17:907:3f1a:b0:ad8:9b5d:2c38 with SMTP id
- a640c23a62f3a-adec5564a1cmr383361866b.26.1749830552242; Fri, 13 Jun 2025
- 09:02:32 -0700 (PDT)
+	s=arc-20240116; t=1749830853; c=relaxed/simple;
+	bh=16qrPfYa0zQKVDAiotgJz0jchD2mvSFtFu2RcespcfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aIoIlnKT9pxgqvGUTFdNW0rNu2NymVt3CMiIlRcQzkuhjxj3xtfA3cc8VaBVUk6IKx5g5RSp418nKezwraYzeDH7zL8JCJgzad7ADbgV+IOuz9JsVkLQYvjCRLVd/ff9y59Aky/EbvfuJ+w5ZuEPUAEzmQ3K80mfdCQyKythDbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHhSb3a7; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749830852; x=1781366852;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=16qrPfYa0zQKVDAiotgJz0jchD2mvSFtFu2RcespcfA=;
+  b=QHhSb3a7QVBySRd+Tu4is4Gx0+0Kspy3Yv+2xIEOL+tWD7xVYQQ//cna
+   t2onXkINMb2AMkGQ98UH0PN7LfRpCh/oL01tIDCP9LthfixbL8vWH3O7C
+   BGCyatYXu86qZCAlH/JWFwbsYKoonGDDngJohFrbEjAbp8SlVweLPkv5G
+   uTc09cwiljGc8sd55kBRjLNA3Dgs+4yT76zQ2cpIs5HxsUzYMQhrxKElL
+   apAdqyKvIxkSfaOQilx6Q3tiCH/MEDbXW5tgsAivIOQ1YycUsVSNH45HV
+   OqnRnCivs1jLjOFfcVYKwuC67EL/1fdr1U2EmNP02QrGud82Vc43ygeLs
+   A==;
+X-CSE-ConnectionGUID: ETqjMHMcSQq3iYKo+dnkHw==
+X-CSE-MsgGUID: eQS5XxJpQde/xh+oKxWbeQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="77443014"
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="77443014"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 09:07:31 -0700
+X-CSE-ConnectionGUID: xwHcFgeoRZirfBXX7a1IWQ==
+X-CSE-MsgGUID: lYa/lK3nSY6cMrAse54m4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="152755224"
+Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.111.228]) ([10.125.111.228])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 09:02:26 -0700
+Message-ID: <9624b098-f3ab-4db7-8811-cab2c5cce351@intel.com>
+Date: Fri, 13 Jun 2025 09:02:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612234942.3612-1-sj@kernel.org> <875xh0747l.fsf@DESKTOP-5N7EMDA>
-In-Reply-To: <875xh0747l.fsf@DESKTOP-5N7EMDA>
-From: Bijan Tabatabai <bijan311@gmail.com>
-Date: Fri, 13 Jun 2025 11:02:20 -0500
-X-Gm-Features: AX0GCFteGyv6q1eNkeTKJgzYqopZRdUgq7cFJrBGrNlx7JkrByQHyxHa2nxi6bU
-Message-ID: <CAMvvPS6EncxZsHvWpOvAdHxDWvYCcL+XYx7Sj8ekfVDqxmZSVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] mm/damon: Add DAMOS action to interleave data
- across nodes
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: SeongJae Park <sj@kernel.org>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, corbet@lwn.net, 
-	david@redhat.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, apopple@nvidia.com, bijantabatab@micron.com, 
-	venkataravis@micron.com, emirakhur@micron.com, ajayjoshi@micron.com, 
-	vtavarespetr@micron.com, damon@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 08/12] perf/x86: Add APX in extended regs
+To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
+ jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+ linux-kernel@vger.kernel.org
+Cc: dapeng1.mi@linux.intel.com, ak@linux.intel.com, zide.chen@intel.com
+References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
+ <20250613134943.3186517-9-kan.liang@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250613134943.3186517-9-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 9:42=E2=80=AFPM Huang, Ying
-<ying.huang@linux.alibaba.com> wrote:
->
-> SeongJae Park <sj@kernel.org> writes:
->
-> > Hi Bijan,
-> >
-> > On Thu, 12 Jun 2025 13:13:26 -0500 Bijan Tabatabai <bijan311@gmail.com>=
- wrote:
-> >
-> >> From: Bijan Tabatabai <bijantabatab@micron.com>
-> >>
-> >> A recent patch set automatically set the interleave weight for each no=
-de
-> >> according to the node's maximum bandwidth [1]. In another thread, the =
-patch
-> >> set's author, Joshua Hahn, wondered if/how these weights should be cha=
-nged
-> >> if the bandwidth utilization of the system changes [2].
-> >
-> > Thank you for sharing the background.  I do agree it is an important qu=
-estion.
-> >
-> >>
-> >> This patch set adds the mechanism for dynamically changing how applica=
-tion
-> >> data is interleaved across nodes while leaving the policy of what the
-> >> interleave weights should be to userspace. It does this by adding a ne=
-w
-> >> DAMOS action: DAMOS_INTERLEAVE. We implement DAMOS_INTERLEAVE with bot=
-h
-> >> paddr and vaddr operations sets. Using the paddr version is useful for
-> >> managing page placement globally. Using the vaddr version limits track=
-ing
-> >> to one process per kdamond instance, but the va based tracking better
-> >> captures spacial locality.
-> >>
-> >> DAMOS_INTERLEAVE interleaves pages within a region across nodes using =
-the
-> >> interleave weights at /sys/kernel/mm/mempolicy/weighted_interleave/nod=
-e<N>
-> >> and the page placement algorithm in weighted_interleave_nid via
-> >> policy_nodemask.
-> >
-> > So, what DAMOS_INTERLEAVE will do is, migrating pages of a given DAMON =
-region
-> > into multiple nodes, following interleaving weights, right?
-Hi Ying,
+On 6/13/25 06:49, kan.liang@linux.intel.com wrote:
+> +#define __x86_pmu_get_regs(_mask, _regs, _size)		\
+> +do {							\
+> +	if (mask & _mask && xcomp_bv & _mask) {		\
+> +		_regs = xsave;				\
+> +		xsave += _size;				\
+> +	}						\
+> +} while (0)
 
-> Hi, Bijan,
->
-> It's hard for me to understand what you want to do in your original
-> patch description.  SeongJae's description is helpful.  So, can you add
-> more description in the future version?
+Ewww.
 
-Yes, sorry about that. I added more detail in my reply to SeongJae and
-will include more detail in the cover letter of the next revision.
+First of all, this doesn't work generally because of the previously
+mentioned alignment. Second, it's using xcomp_bv which doesn't tell you
+if XSAVES wrote the data.
 
-> So, you will migrate allocated pages to follow new weight?
+Last, this attempts to reimplement get_xsave_addr().
 
-Yes
+I'd do something like this:
 
-> How to interact with the weight specified by users explicitly?  Usually w=
-e will
-> respect explicit user policy.
+	for (xfeature_nr in mask) {
+		void *src = get_xsave_addr(xsave, xfeature_nr);
+		void *dst = ... a function to map XFEATURE_MASK_APX
+				to perf_regs->apx_regs,
+		int size  = xstate_sizes(xfeature_nr);
 
-I am not entirely sure I understand the question completely, but I
-will try to answer
-the best I can.
+		if (!src)
+			continue;
 
-We interact with the user provided weights through the policy_nodemask func=
-tion,
-which gives us the node id a page should be on. This patch only reads the u=
-ser
-provided weights and migrates pages to be consistent with new weights provi=
-ded
-by the user, so I believe these changes do respect the explicit user
-policy. Please let
-me know if you disagree.
+		memcpy(dst, src, size);
+	}
 
-Thanks for the review,
-Bijan
-
-P.S. Sorry for sending this twice - I accidentally replied instead of
-replied all.
+That should handle *all* of the nastiness. The alignment, the init
+optimization. *Please* use get_xsave_addr() or one of the other helpers.
 
