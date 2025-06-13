@@ -1,348 +1,184 @@
-Return-Path: <linux-kernel+bounces-685943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9FFAD90C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:07:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AC4AD909E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F373BAEE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:07:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF5027ABC72
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A640C1E0DD8;
-	Fri, 13 Jun 2025 15:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D8D19FA93;
+	Fri, 13 Jun 2025 15:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lu9BfuvU";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JM+J3QRG"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lwBVg6jZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C25149DE8;
-	Fri, 13 Jun 2025 15:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749827244; cv=fail; b=amU5D+wtBBhlEz9XNwKEyd3n61crRgV0Gh6Rc9yOek68sDlQW3HXGG/ZTyvpQ+GQ6S9U34+49e7zbm4VxMkaUivHFiy3WNapLFGJ2Yad4O6gTICJc8WeLuoGM3Y4GUVR4iTVyi2jZMA/3ywYDsdZPnlMFPhvDmfziEYRExC/oaE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749827244; c=relaxed/simple;
-	bh=fdPGiZy0KJebfma2LKm11ekdkKGrWTzX0ahOY/x6MmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TqiAyg9u5mhklnV1zwFo0rmkCIQFY5h0m3nVVK6koh6TItAV6Jfo6/Lp0epqrVBiIwGmtCQ5C1Dci2xzorCUjo1ujsB1Wg0uJx8EVZBMyN/dFb+ne0D0h1lbs+2ZgbUnvEeomJZBZs6+gLNffjkSE8iW8iVu+CXzOPsZcYDOSws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lu9BfuvU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JM+J3QRG; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55DCtZXC009418;
-	Fri, 13 Jun 2025 15:01:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=uYUN5BvXpHTCXle2er
-	92WkskC3mOPfvte/V4fWarjmI=; b=lu9BfuvUCg0W7+lZdYpuJRXc6zcN8AKkFJ
-	BQSlaAKR4Bowur4PkUUaNYWA1dLwVT4TwJYU4/kcfb5Krrz1aLyJgmPLJ818Ji2j
-	aWs05Wj3AAFgoK00krNRNKRxGJTH/2DSkcnZw8UYS2oaYx7Ba+W3wf7ROUdrD0EG
-	YLRUeLeIHpK0XGuAizO4lzKqC//B0XsfkFUgHw1vZHTYQkAPgmxRVGE7mK22V3Vn
-	Q8vrQOdMLP84B0KKqc03UcbyX0jhqBhTM3y2dTRZo0ZOs9FSM9hLrPuTUAhnmfAk
-	ggt5ah0OlvzQuOkcv9gvyOaD+a83iVCWZSODs3LAhYeHFU1FdvZA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4752xk370u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Jun 2025 15:01:45 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55DDP2TV009127;
-	Fri, 13 Jun 2025 15:01:44 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2044.outbound.protection.outlook.com [40.107.243.44])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 474bvdqv8t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Jun 2025 15:01:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wOfMlQwnVmuHrayWfcNQf/gu56DNpn6WWVX96u0wrP/dnEfNkHXK6IBzluY35bAGz6VPyRHQFQNerBUL0UK2Abtz8Ptm6P9V6HzF4BykWu3ZNerZRFcDNvtwrnDYPnfolUI8uT+ZsNbWL/LBWWTrReJfrlClnsyuvkmqHAc07bHM6Ma4yY2j6zDRplyYUeTJHbMlPVJdGl3CN3yZ4L4GaH/J7QqwprC6/mJErMCjjqsVywVlNV/xBuai5PrijfUe2uj6BUAwktJbi6q8I5abp7ltPBuggbbdlQFUlxq1T6wHDodnbt4WH8Bz5gPz8RSyyfSKLkJ9ZQ2DF5B5SZJgTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uYUN5BvXpHTCXle2er92WkskC3mOPfvte/V4fWarjmI=;
- b=kPVEZhcRmAEgibGyP9W4JdMCVbEPGeOuzcdXESIy41QGI8WPJjEtd2YGYZM4FlffCw6nIsmtAOAKm+QYn0ceTqCdNAXe7Nc5u4CP2BDxPbCOjB15b6jfLh/87n6AHjhcDRHzMcrkc+LjIrFXp/DdArom8kPjJUXPOf0Tis86d0fkHNdXJ/3vG7WInFjIBQvE6wbXEhNgVBwAf8fDioAFAtz4WLEgdepk0e6IMtkOLk4bTXvzjNkjUJogtTw+Afc46h1rziGi2P8RoHUGZXDEh74QnwnIm6JecJ0k3N+SUgufvHP8hQHQL23fPrzZQEfwcqRfjtpu3YFBxJox71nCiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uYUN5BvXpHTCXle2er92WkskC3mOPfvte/V4fWarjmI=;
- b=JM+J3QRGGgnwf9Rsff7AjrRUVjULPrMF7A8/vQAHSklKbsvAcvERoz8I95QZj02SOg8vMSQblOKO0cbMY2caClbEnwIHME0kNwkwFJE5uGPzp0YDQMFc3NHIGGWbygBoZ8iHqMNlWFsiOESWtcugl2SqU6My4vJeKcv0lkiXk68=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA1PR10MB7168.namprd10.prod.outlook.com (2603:10b6:208:3f0::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Fri, 13 Jun
- 2025 15:01:42 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8813.024; Fri, 13 Jun 2025
- 15:01:42 +0000
-Date: Fri, 13 Jun 2025 16:01:39 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com,
-        vbabka@suse.cz, peterx@redhat.com, jannh@google.com,
-        hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org,
-        shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org,
-        josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net,
-        willy@infradead.org, osalvador@suse.de, andrii@kernel.org,
-        ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
-        tjmercier@google.com, kaleshsingh@google.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] use per-vma locks for /proc/pid/maps reads and
- PROCMAP_QUERY
-Message-ID: <e1863f40-39ab-4e5b-984a-c48765ffde1c@lucifer.local>
-References: <20250604231151.799834-1-surenb@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604231151.799834-1-surenb@google.com>
-X-ClientProxiedBy: LO4P123CA0444.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a9::17) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F1E2E11DC;
+	Fri, 13 Jun 2025 15:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749826923; cv=none; b=QuWr/l5Y9zlv+VLFmtZ0gh8kKYoHNuUpGbqdlGeIFWZl5gE6oa6oQRiAj5NervrJU9wvfG9D0sVG9OYJ8vxEBLKRp1wOq22ltqqQ/W5SKtJ6Qo1fPOdrP5xZeogynGiEw+PsEi7XPLR6zo9NqvsGtYFCJUh/NiejfkZSJVATSPo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749826923; c=relaxed/simple;
+	bh=c7bXGkiWRxvoldC7dxoyAbyqGDXjDsAGEKdNdgmIhVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmJGMG5Kqxenixqi8KX8UHdUKn2Q2Tu4hgACjmr1p5IFiGa1RxmjRBe/aneyU6NfSAw0uGfk5NclvfuWsca0/15J/UcN6Oq/lZJ3gfLdHHgn7p/i0EUTENNUhs7sVfJJoioBR5pO1MOyei00XDihAQBQ2VizhaMlqx0qHHqjjFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lwBVg6jZ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749826922; x=1781362922;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=c7bXGkiWRxvoldC7dxoyAbyqGDXjDsAGEKdNdgmIhVk=;
+  b=lwBVg6jZV2JvtPY+laBJyVqCfLw+VyuaQ/zMgoeWfXkBg9yK3szjrpN9
+   PB2g7GJxLsXyErtgS/xB1oix0jjWufqEI98DoOZuRe2nnIyfSqCV+LUlQ
+   aekrBNIdRNdMzhhQwr35xXfrnPjKc6eaRn78w9fyqNK1jxXotdanXzoTw
+   M7ZzIikT2rg7HNfKjG3U8GdRNYTZAplm/EzPSHwsg8A6zmfAKB/8r32Wy
+   9WBXzXnk4jpzsFP+Z9lV26SIMuxows9CEYpr7PXuknN+6lRilz+6RQEsu
+   bvv2sWBuafbZwROnTsCspFmsFQZf8RKAw/Zmt1+106kwuNCvS1XAIopNw
+   Q==;
+X-CSE-ConnectionGUID: WGGJZzIyST62LATNpfFMfg==
+X-CSE-MsgGUID: 5R938C4PS52R6Cd2t/plAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="51158570"
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="51158570"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 08:02:01 -0700
+X-CSE-ConnectionGUID: BczvfYkzTeuADX0PJyqo0w==
+X-CSE-MsgGUID: MdyQOD+ZQFKQXMmJNsygHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="171032378"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 08:01:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uQ5um-00000006HHz-13Pn;
+	Fri, 13 Jun 2025 18:01:56 +0300
+Date: Fri, 13 Jun 2025 18:01:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] iio: imu: inv_icm42600: add WoM support
+Message-ID: <aEw9Yxhodwhh8BT6@smile.fi.intel.com>
+References: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
+ <20250613-losd-3-inv-icm42600-add-wom-support-v4-1-7e5f554201bf@tdk.com>
+ <aEvhZiXHLLIRe41-@smile.fi.intel.com>
+ <FR3P281MB17578B82AC67F49552E24EB3CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+ <aEwfUMgLTnQxOh_k@smile.fi.intel.com>
+ <aEwfgP3tiio52Rj-@smile.fi.intel.com>
+ <FR3P281MB1757AEF932A3CE2AB9637046CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+ <aEw4q3p12q1iI7vC@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA1PR10MB7168:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d3204fe-c35a-47b9-c80e-08ddaa8b348b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/6xTir3ewvCDANsBg6ifzMf4n+Htvc48hFLvw6xTRXME054VpFMNyxRbHdF3?=
- =?us-ascii?Q?dvazg6ox6dQ5MpBHDQtaAyNXx4moH4H5XZ+/vX0oQZoEzyrDCCamiNJ9WUdV?=
- =?us-ascii?Q?dWKRpYqNERVDpxEXz4zEOCy5fhYyzbE7TCa1strt6PSbn9FL9EU+W+0jkOVT?=
- =?us-ascii?Q?1LCEfYtuDcvIOHx+PGdatM+r7i3g6HZ9DQd5MRM22JO/0NDSUcGGSd66gaER?=
- =?us-ascii?Q?5I4lXEhOIMpVBF+ZSarfOmSBk0huJ51BW7Fpp66Y8pziUolWqUja1gNDCker?=
- =?us-ascii?Q?l3AvMqjWaTIx2KwCW68SRPtozCj/b6QW0jD24OXIVt6djpn+kk6VasiEoUUh?=
- =?us-ascii?Q?2pO8U0HpDv6g5xtfMKMG2CMv7uj1vPz0xEJswJrB/fOFWK2XM0LwaZcg336t?=
- =?us-ascii?Q?7m7JSRhmB/KL2F54SeyMKFkyQj5j12XPLc1+Hw8rCOa9UuUzUetjIgQH1wh5?=
- =?us-ascii?Q?qreEh61SRdaCOcz10ZpioGd2IlN9x06Vzev+MZ87QFwjF37gdnYkgzsL5U5S?=
- =?us-ascii?Q?BTCgdU2sxKqF0cXF5TPfqC6qXnOQeVvWKIYWTIGA/kZanhPEnv2KpjRP5OK9?=
- =?us-ascii?Q?5/bG6/0q7yVBHg4vNrZTshcG32CsLTo7XkogrRaYNaZZtSkRzLduU1JQKZ3s?=
- =?us-ascii?Q?SL/ZSPe0z7kj7fOzAwOpQyGAHdYFKGoTVK6nk9N4Zj1sJzHyb9ee7mwTrO14?=
- =?us-ascii?Q?2pUfBmHqZ6LPyGCHUAIu4xVF3CH5qrOJUTkaiS3KSXi9/v3OGOZHjK7+A9Um?=
- =?us-ascii?Q?as2msKlBNUx8vZeaw1TU3FlEhhTpP5xdQyaje0Uepxzrp3cDZgonH0qM6R6f?=
- =?us-ascii?Q?i0Mv8yntDPCtppJH9ObVkOF4Rxy/+T4oVQBR5tvBtsXJOghElZwSFhAn7I9z?=
- =?us-ascii?Q?S9AVylEMTKDgJaMTfiEWx+0foIYs765L9v9P4ZQb1FY44/llfID2HVp43Np4?=
- =?us-ascii?Q?/zIQ0jmFCq0G8wbwpn5s38B/0tS0ifgKgTuiJnirELWnnDWMJTxGHyzxUdEW?=
- =?us-ascii?Q?nOdltKct8KxiKm2YnF8lpOfM3LCC7AfRYnxGU8u4f8UDucUFJSH0O7R6FO+0?=
- =?us-ascii?Q?GL7GRC79I2JkKhFVqxZ0z47F74lTe65eb9bRNlgwW8yu2TrEF1Hqp5wkweAE?=
- =?us-ascii?Q?JahnViuJ6eaaw2t9H520UGLm/GhG0tCQpuBDIf6UdXn56FRPOfH4nH0IfB4+?=
- =?us-ascii?Q?Mmh+6UBiZa4AWqOvtwB3sN2MfEwsOjSNrIscVPVY04Syet9OQEpcBoHNDYPm?=
- =?us-ascii?Q?duKRSBUh9wm5Yj8VpCcg+Ej9aqZ4ZEkqB76MbmL71Itp16/Ojpqn94SRGGGd?=
- =?us-ascii?Q?tAJAJgI3NjEsiXYqnu74sUK/xeDN3sX1HU1pHeD2scancvLVfU4MzMPl13HQ?=
- =?us-ascii?Q?XgaPJZ1ljLS3k4aixdy0BnaAtS3qKBhqql2aKov9unmIILHDRn8PYsABgM7C?=
- =?us-ascii?Q?exjRuMuqhC4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oFe+oZ2VI/4G4J8B2h7JtdaQWnCYpmU3/7QjfDl2w2XLFTdDAfDWlfTA6esn?=
- =?us-ascii?Q?WHiL72KOWBD6Gq1ilyEyky5Dlj20waiGUaXtXLhZ9mPs9mTWnZN3XA5W/1e5?=
- =?us-ascii?Q?w+mDni1HoPE2DqC0dy4+T5Om6TjbqGffr2z7pB6NPFzuZGmYAdYiBiniF9SH?=
- =?us-ascii?Q?mxhTEX58XgTigyZ6TAWuTmRsyz8egYuUQhYD2NRkZWnD8+I2Ny9YUKlv+MwK?=
- =?us-ascii?Q?CGZYtAQF+HT5qalkUo5+9H2ZKfypUiB/08wbFIIDLsyxzxCveeDPGWvOrpRa?=
- =?us-ascii?Q?8cmCRl8jvyZAfi8o8felW2d/dOa0K230YZoeqi/Z5af+2mWzjj6rrxyB0vY4?=
- =?us-ascii?Q?GzZG+O7NrBiD11Q7aqhhbwdSfJj+MjJbojnJ50JirUSYgzvBXwoSo66Q0tHQ?=
- =?us-ascii?Q?SSE0GQUcQqvE3oEEts/RdeG/jF6ApvYk98jT6sYvIxXmKSkPNB5jqcawcptz?=
- =?us-ascii?Q?UfVn2x3ep8dD73p15txdYsxC3jLI7GU0h9Nk58CkWyjUMb8pyhVs75GfQRxh?=
- =?us-ascii?Q?GXUEHeAlrMmICa3fHtR0bvq24ev6x5biXvSSs1J6aAElLzd1Wk8rn1McEFYI?=
- =?us-ascii?Q?+AUeLJw327x65e/lF1hYATyIq1u3xaYcO9KuOCWr5ej450tZCfTJin0tMof+?=
- =?us-ascii?Q?13ntPLm5vOKeKOiBmhKaWd9CMM0LrTrX1thIY+Sr2oUARerhkFzEwvuzPRS0?=
- =?us-ascii?Q?IP89IOnp0TUNm0kVr1M/Kgv3Zh3VKcpMpqu0tAi+J/bq4lXuA2AdoDrmpwws?=
- =?us-ascii?Q?hdKeQn0US4g6rIxBQkmiPYyyKI/xCtODfgbXRd4rSYRo01eeqi8YGb1yD9rW?=
- =?us-ascii?Q?2Ru2Ys2sOnT2twICbnPk2WSbcyec7rQBNBwU9n4rc//QjXnHtcofqOoWk33J?=
- =?us-ascii?Q?6HF/64ll5gOttsi0YlukaOqWZ/NzojtPpgMKCh1KW0lKd/dylkryCUvWTfZC?=
- =?us-ascii?Q?UoufWieKqDuRaZqDdWhvAQT7gnhOeOSBzyq55g9Xn+ABx/MgaPAi27XPIZOJ?=
- =?us-ascii?Q?/VQS7lgfWS/H0YDkIDSO85BEZX7VS/cNlYQBKlaXbPDM49q5cwEVJBKkW6Rx?=
- =?us-ascii?Q?O6/g1BQpHQR9Iwt5L8p+L98S6vuqteGRX7vKJ1gCUKEhMWU4l/QNaIHVUIBO?=
- =?us-ascii?Q?6UdB5hjGiDWNxN8l8RE9ucptHRQ89C0Ek6Lx6qSr00mmbqAmiCfs8VH0AZHY?=
- =?us-ascii?Q?yWMstu4+0R1ONuFog+w/o3o90y+lH5uTrBzaaRFBCq07A/4z8mbZdJMYDY/s?=
- =?us-ascii?Q?YOVfpc8L2kDOwP8OXbERrW7JHWpsSZDhcqgDHCXNV7C9zHeDhvxNNnSbnv3O?=
- =?us-ascii?Q?tLmS7V0DTWmaXZwVaBN96i2VXp+KBRkdFVfgfUriuhHc6OGzLqtQAVokqTpj?=
- =?us-ascii?Q?iXtnaQB5mY4IZMAaglby2vcVI34V0o2+5BiIeH0u7kH9P3tS3R9VRrpQ7Nw+?=
- =?us-ascii?Q?1Pa925ewXZ0eyqQVQqs6O45q2L2+HO2z+zFV1C5stCAnjmO1FaP07JOJQ8MI?=
- =?us-ascii?Q?iP9O+NN0XDCzTYqUSyjq52IG0wF3yqy/T6tYumjua13NjKi7dOjAjziG45YV?=
- =?us-ascii?Q?Ls4Tgp5vlZ/ZzEpRMyGBu30oyUaFM/mxvXloGTIt1tmi9P7JFazX8RbzGWPq?=
- =?us-ascii?Q?ag=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	BmYlA+7NpsJNksQrC9r5+pGCfpkIgsFYHZS/gqyYpjNNE1Ax5yZQ3YW0kAcGcsuHLmzDBZ1Qn4P0+kA63NSd8cQ1Vdys7AKZ5NzsVLYgTVp1f3pXANBwrmElva729Se3PRph1XpMev8zlLo3cibplTOVYxcAeeRAxijtYzbfD9+WwYntgYrVFXbIDaWXOrRek9ExSVPodZY22deLtywfDKdLLNJzmEjeaCjyI3gi09JODHuEnTs/vsF0UT5OjKgtezBBRWiYW95OZTWqVOK0ZIUizCJR2dC4VMDllSolv2O7YvZ716/YHyxXFx7At6m6284LC3HFG0AlWi/ie0mvS24rVjtfhMwmU0b/x3rc2cW061ngsdFD32OpHpA5SY2NZPvD/KBa22n0lOfAAdQSBD5AO50uDQIM8huog2VjfvTI2xFVqyRQLL9rKN/rYld92uemLm30P45qFKZYVjHpbKXOGA7lhOYEjyMeH3iDJHoumyEH20jcXCN8OLl4VW/hWghBy9hOI0Nl6bTi+2mMcJu/eDd2bv6TI7ZuQNzxrHVQd9H2uyyzzla8/0hvzRHy7aLeKUFxOdXUwN3dJBEhiAeoCWTMIWaCANu6ICzyi6s=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d3204fe-c35a-47b9-c80e-08ddaa8b348b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 15:01:41.6514
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n/bWTc7bzg6P95WuIA5Y0HG8vbcWbhAx3ZjSfipmYNpbfq2ixBHyAJ2oTNpuLW+pjdxRdROHJk00UK0l4TWBYbell+Bu6bttZWnyCO5cuSE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7168
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-13_01,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=984 bulkscore=0
- malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506130109
-X-Authority-Analysis: v=2.4 cv=K4AiHzWI c=1 sm=1 tr=0 ts=684c3d59 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=BY1yGMaX3i0BXbB-MCoA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13206
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDEwOSBTYWx0ZWRfX1pwFoPsBdX81 SRDn4WoCEx6Ue+ojYOUaHiFITp7xePM1y1uNWNMrkP6XfBESwzjMYN+cnaO0qqCR3KOJ3nLVWV+ rNPhORsGw0+hovdayzs/k2hfYpL/lrFO52TLwjzxX8cGLunYnCtcU4GL9L6cte97TIVTroiRNU9
- SpZlx2ygKWiVPNb17fSIsh4EmI+dbebOpsupne9xnSMLCYxAuReJsIcpD/qMC5qHXofq89hh6NJ BWNtFFLdX4kiCkdsjOy1asElUbf1V2Doosl2cbGc0/CWkVrEE18SaOhrKwUY5k0VENA0pZK9E4e x9AvGPqp/rVgvqLjnqj67hK/vkIlZzrwyOfDGvDTcorRfThRwvnJjkd0fu9wyFiBltGTH7z36m2
- mUFIsGYqLI6H5uyzJ+dAYM3rh8feQc+Sk8vs0mlvHnwwztEQU/CQDCg64a7RPO1juNh4neQJ
-X-Proofpoint-ORIG-GUID: RcnJWWtX8rc0HZu9M2546GRLh0LsBsQT
-X-Proofpoint-GUID: RcnJWWtX8rc0HZu9M2546GRLh0LsBsQT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aEw4q3p12q1iI7vC@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Suren,
+On Fri, Jun 13, 2025 at 05:41:47PM +0300, Andy Shevchenko wrote:
+> On Fri, Jun 13, 2025 at 01:43:58PM +0000, Jean-Baptiste Maneyrol wrote:
+> > >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > >Sent: Friday, June 13, 2025 14:54
+> > >On Fri, Jun 13, 2025 at 03:53:36PM +0300, Andy Shevchenko wrote:
+> > >> On Fri, Jun 13, 2025 at 12:46:46PM +0000, Jean-Baptiste Maneyrol wrote:
+> > >> > >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > >> > >Sent: Friday, June 13, 2025 10:29
+> > >> > >On Fri, Jun 13, 2025 at 09:34:26AM +0200, Jean-Baptiste Maneyrol via B4 Relay wrote:
 
-I promised I'd share VMA merging scenarios so we can be absolutely sure we have
-all cases covered, I share that below. I also included information on split.
+...
 
-Hopefully this is useful! And maybe we can somehow put in a comment or commit
-msg or something somewhere? Not sure if a bit much for that though :)
+> > >> > >Overall, looking to this patch again, I think it would be better to prepend it
+> > >> > >by replacing *int*_t types by the respective uXX ones. Because in this patch
+> > >> > >we add dozens of new ones which increases an unneeded churn in the future.
+> > >> > >
+> > >> > In my opinion, to respect the rule don't mix *int*_t and uXX types, it is better
+> > >> > to keep *int*_t types. If it need to be changed, we can change afterward the
+> > >> > whole driver types with a replace tool and send it in a separate patch.
+> > >> 
+> > >> It will be never ending story, sorry. We need someone to solve this tech debt.
+> > >> And since this patch adds more than 3 new users of it, I think it's a candidate
+> > >> to embrace the burden.
+> > >
+> > >For your convenience I can mock-up a change...
+> > 
+> > It looks like there's something I don't understand in the kernel Documentation about
+> > types then.
+> > Quoting Documentation/process/coding-style.rst, section 5.d:
+> > ---
+> > New types which are identical to standard C99 types, in certain exceptional circumstances.
+> > 
+> > Although it would only take a short amount of time for the eyes and brain to become accustomed
+> > to the standard types like uint32_t, some people object to their use anyway.
+> > 
+> > Therefore, the Linux-specific u8/u16/u32/u64 types and their signed equivalents which are
+> > identical to standard types are permitted -- although they are not mandatory in new code
+> > of your own.
+> > 
+> > When editing existing code which already uses one or the other set of types, you should
+> > conform to the existing choices in that code.
+> > ---
+> > 
+> > My understanding is that uXX are not mandatory for new code. You can use types like *int*_t.
+> > But you need to conform afterward to the existing choice. That's why this driver was
+> > done initially with *int*_t types, and that patches are conforming to this choice.
+> 
+> This part of the documentation has a lot of room for different interpretations.
+> One [1] may consider this as uXX superior, another, like you, that it's okay
+> to use.  In any case Greg KH prefers uXX over uintXX_t. And he is also in
+> the chain of maintainers here. Feel free to amend the Documentation. But
+> be sure all stakeholders will see your proposal (like Greg KH and other
+> key maintainers).
+> 
+> > By looking at all Linux drivers, there are plenty of them using *int*_t, even
+> > inside iio:
+> 
+> $ git grep -l 'u\?int[0-9][0-9]\?_t' -- drivers/iio/ | wc -l
+> 59
+> 
+> $ git ls-files drivers/iio*.c | wc -l
+> 640
+> 
+> Less than 10%.
+> 
+> > Then, why it is mandatory to change this driver to use uXX instead?
+> 
+> TO be consistent. With the above wording in the documentation I may argue that
+> entire subsystem should be consistent and at least in IIO we have tons of patch
+> series that are against the whole subsystem to do one style change or another
+> (look at the recent memset() vs. {} for initialisation).
+> 
+> [1] https://lore.kernel.org/all/20250409180953.398686-1-matchstick@neverthere.org/
 
-Note that in all of the below we hold exclusive mmap, vma + rmap write locks.
+Oh, this [2] is golden!
+YUou may found support for your arguments and for mine in that thread, but the
+bottom line is: what do maintainers of IIO prefer? (Taking into account that it
+goes via Greg KH)
 
-## Merge with change to EXISTING VMA
 
-### Merge both
+[2]: https://lore.kernel.org/all/20210423230609.13519-1-alx.manpages@gmail.com/
 
-                      start    end
-                         |<---->|
-                 |-------********-------|
-                   prev   middle   next
-                  extend  delete  delete
+-- 
+With Best Regards,
+Andy Shevchenko
 
-1. Set prev VMA range [prev->vm_start, next->vmend)
-2. Overwrite prev, middle, next nodes in maple tree with prev
-3. Detach middle VMA
-4. Free middle VMA
-5. Detach next VMA
-6. Free next VMA
 
-### Merge left full
-
-                       start        end
-                         |<--------->|
-                 |-------*************
-                   prev     middle
-                  extend    delete
-
-1. Set prev VMA range [prev->vm_start, end)
-2. Overwrite prev, middle nodes in maple tree with prev
-3. Detach middle VMA
-4. Free middle VMA
-
-### Merge left partial
-
-                       start   end
-		         |<---->|
-		 |-------*************
-		   prev     middle
-		  extend  partial overwrite
-
-1. Set prev VMA range [prev->vm_start, end)
-2. Set middle range [end, middle->vm_end)
-3. Overwrite prev, middle (partial) nodes in maple tree with prev
-
-### Merge right full
-
-               start        end
-		 |<--------->|
-		 *************-------|
-		    middle     next
-		    delete    extend
-
-1. Set next range [start, next->vm_end)
-2. Overwrite middle, next nodes in maple tree with next
-3. Detach middle VMA
-4. Free middle VMA
-
-### Merge right partial
-
-                   start    end
-		     |<----->|
-		 *************-------|
-		    middle     next
-		    shrink    extend
-
-1. Set middle range [middle->vm_start, start)
-2. Set next range [start, next->vm_end)
-3. Overwrite middle (partial), next nodes in maple tree with next
-
-## Merge due to introduction of proposed NEW VMA
-
-These cases are easier as there's no existing VMA to either remove or partially
-adjust.
-
-### Merge both
-
-                       start     end
-		         |<------>|
-		 |-------..........-------|
-		   prev  (proposed)  next
-		  extend            delete
-
-1. Set prev VMA range [prev->vm_start, next->vm_end)
-2. Overwrite prev, next nodes in maple tree with prev
-3. Detach next VMA
-4. Delete next VMA
-
-### Merge left
-
-                       start     end
-		         |<------>|
-		 |-------..........
-		   prev  (proposed)
-		  extend
-
-1. Set prev VMA range [prev->vm_start, end)
-2. Overwrite prev node in maple tree with newly extended prev
-
-(This is what's used for brk() and bprm_mm_init() stack relocation in
-relocate_vma_down() too)
-
-### Merge right
-
-                       start     end
-		         |<------>|
-		         ..........-------|
-		         (proposed)  next
-		                    extend
-
-1. Set next VMA range [start, next->vm_end)
-2. Overwrite next node in maple tree with newly extended next
-
-## Split VMA
-
-If new below:
-
-                    addr
-                |-----.-----|
-                | new .     |
-                |-----.-----|
-                     vma
-Otherwise:
-
-                    addr
-                |-----.-----|
-                |     . new |
-                |-----.-----|
-		     vma
-
-1. Duplicate vma
-2. If new below, set new range to [vma-vm_start, addr)
-3. Otherwise, set new range to [addr, vma->vm_end)
-4. If new below, Set vma range to [addr, vma->vm_end)
-5. Otherwise, set vma range to [vma->vm_start, addr)
-6. Partially overwrite vma node in maple tree with new
-
-Cheers, Lorenzo
 
