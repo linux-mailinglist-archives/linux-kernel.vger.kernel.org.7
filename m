@@ -1,209 +1,215 @@
-Return-Path: <linux-kernel+bounces-686109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A712AD932A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:49:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E24DAD92DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7830E7A4E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503FB1E32C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9012116FB;
-	Fri, 13 Jun 2025 16:49:13 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4E51F5430;
+	Fri, 13 Jun 2025 16:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUc0gRyK"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1904207F;
-	Fri, 13 Jun 2025 16:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2742E11B5;
+	Fri, 13 Jun 2025 16:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749833352; cv=none; b=CZiyJWuEHPulJ4gSywhOWzyvBZj8bxkXgrlxXECqOiLuE61om1JvV4Qpi8yN73sR0mahhANSkQwp6pfdyi+F73KW3fDIzx8+cnVvmledvRPIEGJKX703pDST34H3D659gmfEESv7TwshsE5kIVC3miA3+2FxKSn2ev1QjRcdGNQ=
+	t=1749832413; cv=none; b=ggI/W92Gpk1C3iAkjaLBoqoYVLBbIeKMN1Nd3AT8i152Gil0ew+lfjQ+Luet+JRgm3xDpkKtlwU1WPfAVycrA9ANR3UfrxQkzASu0etp4HF3VDtnPwcejykDZq79hn+BNvxC9L4HitnqmqM5+ndFBjdxkgbTe4MxM8I1kWWNfRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749833352; c=relaxed/simple;
-	bh=Kzcv1y0IlQTrRjySbtAFTooNBaHArg/VI4VIiCWODrQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lH6Mfym1ahPKnheK2QLJs5RQi+TIJJPGKddMt3pQIP0R7PqEl2Vfl/BXVoI3AcpIKvG+iMbTbCVQ2kVhUnyiXfWk5PS07KNaVJA2qeVATknEJc8lsc8GnGRLvDoBI8WiVTndj71QcLZsa5yqvaU0f6hNoqxg6+bDabymzPnwVLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJlKM0wr0zsSKX;
-	Sat, 14 Jun 2025 00:31:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 806121402FC;
-	Sat, 14 Jun 2025 00:32:57 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCnLUyYUkxomp2vCQ--.58407S2;
-	Fri, 13 Jun 2025 17:32:56 +0100 (CET)
-Message-ID: <5dbd2f9d79e0ffee006c5c9f448d486737d93b6a.camel@huaweicloud.com>
-Subject: Re: Module signing and post-quantum crypto public key algorithms
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, David Howells
- <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stephan
- Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
- torvalds@linux-foundation.org, Paul Moore <paul@paul-moore.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@cloudflare.com>, 
- Clemens Lang <cllang@redhat.com>, David Bohannon <dbohanno@redhat.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org, 
- linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Fri, 13 Jun 2025 18:32:21 +0200
-In-Reply-To: <01f2f3171dd0f1cd9dcb496ac66bc6903767a2d2.camel@HansenPartnership.com>
-References: <501216.1749826470@warthog.procyon.org.uk>
-	 <01f2f3171dd0f1cd9dcb496ac66bc6903767a2d2.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1749832413; c=relaxed/simple;
+	bh=1WcSibMacZOYwlTkoDbYGvtq44j+e8sb3UdJnXTKqC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pd00AvCBF7aNQnYsIpPi1yNmgza2xPrZip7btgHYuc0mjyfPGHejIoW5f7Z3sUQqIoqZ8yp981tf3xFUKAkGMRCVw//RB++HFcKkTVWozrYVU2VMDslDath7EwC8mjJnUC+x1JW72oN0HetwR9eK7pGdKRFvqWp+2ohWFAdPi50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUc0gRyK; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso350816666b.2;
+        Fri, 13 Jun 2025 09:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749832410; x=1750437210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Va7AE6ZRu0tUcIQ8yzYRsNan45fKyNNXoobCqFtK7Vc=;
+        b=TUc0gRyKWj4D7pYXIG+9KszbZp1yMHnJlI21nQH2xlZu/Xdkoc+VcjNySy4aGEs6/n
+         edG7WVcYNokdDgVlaTltsFaAIWOYqLKHmDBy61m+Gm7U9vbRJl3pvG8yS9JuLLIBmb1i
+         J0Pk/zLRLknYc5V8nXwovJ7tSZvoGCMnSTsvZpSai5jc0dKeNnV0YF9Bb2F5yUpVM97Q
+         zETwmPMJg76s0VE0DXY/Og2r3zSM980DUD9MWIumZHR/WDGJZt9wJJTkua/ITT0NeRKp
+         q9OQwLZcEZ9ia3ZdnSVEI8U2mQDAtGEmkEuuikYgsNvmqjOnZ+ov8a2K5a1GOVaHPn9M
+         sYPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749832410; x=1750437210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Va7AE6ZRu0tUcIQ8yzYRsNan45fKyNNXoobCqFtK7Vc=;
+        b=gRs7tM2S3Oa+Kc8Cx3IK9rZwv7pYqKl2pMtCr+R9ulW2TI10SZgyKn2IzUFUgMmns8
+         0BMnkkPIZYqylqi0B5u3BFfEjYZb38x2Yez40vJcJz9aaxpldqq1HnayTHB425+ZQqjm
+         oGr0NIfWmOtdZ7kwCfsxvvhx/3Oc13VcQVHeRyraMNvsAf0mpjTcVvwwpHwhqF6rGTk5
+         4qi/mVqJZuovG+owKcnnJvISSDj093bgrkiUxHAAi3dE31XrUZD72K1EblBghSLTtE+E
+         2cvyfq3Y/e5OpZ+iP9HGRKN+jm/ZxOqoS7OwXr3Igjuw+H3dahPdk/dshHg14WtzqC3m
+         JCVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWELFW3CN3HWiXC1ULkcVJgVko7fuT8Lw7PUDu/arEsr3cSom8BaJnRKenooldBdUVPrOTdt0UYysM97rg1@vger.kernel.org, AJvYcCWH1E82KtgjRCdWetODpvlHfr0vx0UscSLboTVnV3rUYHoY5n5AHEjTQnTTsowKYFwYZUGluv16xT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9zYy9hYTDfJe7FDtGXWIlvOpoi685Q2iR+/n2weanj8tGJkPS
+	4XMkesAkvIrMTBIt4iqpLighlsFeQI232PmB0x8SBZKkUl2ct5xJjXIrNpthP3XCoaorJYs+evS
+	GBl/Hv0kOGgvOYn5nLXCqyFO2rCMZlDI=
+X-Gm-Gg: ASbGnct3z6KW4iNoBSahVOLNX/4gaOQzvRnBYr/341M8FL7shmUtO77FkgSVcmO7B0C
+	xWugC/b/HW8A+egsRBy/iogYXyDPApzrozKRhxUZCYUAdrTVWv/n/fPtlHSBSzIzQveczJi/VRF
+	NllfBZBafEQEysUTklr+HjX11MYyTtpuDC6mBzGWt1XXqPqJ12NxNw6jkFQrZLWQhH0Phod6JxD
+	GJO
+X-Google-Smtp-Source: AGHT+IG/OBkyK/agG2UVMmJWvTU1QMm4SmGMs9KD3Ezvf+J2tTxEtlceU4dEUBXWyJAHxcNkqh7edre0kjWHg3dWMyQ=
+X-Received: by 2002:a17:906:fe0c:b0:ad8:93a3:299c with SMTP id
+ a640c23a62f3a-adec5436bc6mr372908166b.10.1749832409926; Fri, 13 Jun 2025
+ 09:33:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCnLUyYUkxomp2vCQ--.58407S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFykJr45Zr43ZF45CrWDtwb_yoW7ZFW3pF
-	W5tFWYkrWkJFn2yFn2ka18KF4Fyws3Jw45Jr9xG348Z3Z8XFnxAr1IkFWYvFZrCrs3G3WY
-	vrWSyrn2kws5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IU5pmh7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGhLzecHGAACsD
+References: <20250612181330.31236-1-bijan311@gmail.com> <20250612181330.31236-2-bijan311@gmail.com>
+ <5a50eeba-b26d-4913-8016-45278608a1ee@redhat.com>
+In-Reply-To: <5a50eeba-b26d-4913-8016-45278608a1ee@redhat.com>
+From: Bijan Tabatabai <bijan311@gmail.com>
+Date: Fri, 13 Jun 2025 11:33:18 -0500
+X-Gm-Features: AX0GCFuazzkdI3MgkIT3-iQtcMQlbIVIrSXGr9CiMXXa7M0L7hQSrqNXvr4KFyU
+Message-ID: <CAMvvPS5U8exSvy0fknfhv8ym_dKgMVa7cfMOqn0fGyd+NSjSuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] mm/mempolicy: Expose policy_nodemask() in include/linux/mempolicy.h
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj@kernel.org, akpm@linux-foundation.org, 
+	corbet@lwn.net, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	bijantabatab@micron.com, venkataravis@micron.com, emirakhur@micron.com, 
+	ajayjoshi@micron.com, vtavarespetr@micron.com, damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-06-13 at 12:13 -0400, James Bottomley wrote:
-> On Fri, 2025-06-13 at 15:54 +0100, David Howells wrote:
-> > Hi,
-> >=20
-> > So we need to do something about the impending quantum-related
-> > obsolescence of the RSA signatures that we use for module signing,
-> > kexec, BPF signing, IMA and a bunch of other things.
->=20
-> Wait, that's not necessarily the whole threat.  There are two possible
-> ways quantum could compromise us.  One is a computer that has enough
-> qbits to run the shor algorithm and break non-quantum crypto.  The
-> other is that a computer comes along with enough qbits to speed up the
-> brute force attacks using the grover algorithm.  NIST still believes
-> the latter will happen way before the former, so our first step should
-> be doubling the number of security bits in existing algorithms, which
-> means ECC of at least 512 bits (so curve25519 needs replacing with at
-> least curve448) and for all practical purposes deprecating RSA (unless
-> someone wants to play with huge keys).
->=20
-> > From my point of view, the simplest way would be to implement key
-> > verification in the kernel for one (or more) of the available post-
-> > quantum algorithms (of which there are at least three), driving this
-> > with appropriate changes to the X.509 certificate to indicate that's
-> > what we want to use.
->=20
-> Can you at least enumerate them?  There's still a dispute going on
-> about whether we should use pure post-quantum or hybrid.  I tend to
-> think myself that hybrid is best for durable things like digital
-> signatures but given the NIST advice, we should be using > 512 bit
-> curves for that.
->=20
-> > The good news is that Stephan Mueller has an implemementation that
-> > includes
-> > kernel bits that we can use, or, at least, adapt:
-> >=20
-> > 	https://github.com/smuellerDD/leancrypto/
->=20
-> So the only hybrid scheme in there is dilithium+25519 which doesn't
-> quite fit the bill (although I'm assuming dilithium+448 could easily be
-> implemented)
->=20
-> >=20
-> > Note that we only need the signature verification bits.=C2=A0 One
-> > question, though: he's done it as a standalone "leancrypto" module,
-> > not integrated into crypto/, but should it be integrated into crypto/
-> > or is the standalone fine?
-> >=20
-> > The not so good news, as I understand it, though, is that the X.509
-> > bits are not yet standardised.
-> >=20
-> >=20
-> > However!=C2=A0 Not everyone agrees with this.=C2=A0 An alternative prop=
-osal
-> > would rather get the signature verification code out of the kernel
-> > entirely.=C2=A0 Simo Sorce's proposal, for example, AIUI, is to compile
-> > all the hashes we need into the kernel at build time, possibly with a
-> > hashed hash list to be loaded later to reduce the amount of
-> > uncompressible code in the kernel.=C2=A0 If signatures are needed at al=
-l,
-> > then this should be offloaded to a userspace program (which would
-> > also have to be hashed and marked unptraceable and I think
-> > unswappable) to do the checking.
-> >=20
-> > I don't think we can dispense with signature checking entirely,
-> > though: we need it for third party module loading, quick single-
-> > module driver updates and all the non-module checking stuff.=C2=A0 If i=
-t
-> > were to be done in userspace, this might entail an upcall for each
-> > signature we want to check - either that, or the kernel has to run a
-> > server process that it can delegate checking to.
->=20
-> I agree we can't predict everything at build time, so we need a runtime
-> scheme (like signatures) as well.  However, I'm not convinced it should
-> be run outside the kernel.  The expansion of the TCB plus the amount of
-> checking the kernel has to do to make sure the upcall is secure adds to
-> the vulnerability over in-kernel where everything just works.
->=20
-> > It's also been suggested that PQ algorithms are really slow.=C2=A0 For
-> > kernel modules that might not matter too much as we may well not load
-> > more than 200 or so during boot - but there are other users that may
-> > get used more frequently (IMA, for example).
->=20
-> If we go with a hybrid signature scheme, we can start off with only
-> verifying the pre-quantum signature and have a switch to verify both.
->=20
-> > Now, there's also a possible hybrid approach, if I understand Roberto
-> > Sassu's proposal correctly, whereby it caches bundles of hashes
-> > obtained from, say, the hashes included in an RPM.=C2=A0 These bundles =
-of
-> > hashes can be checked by signature generated by the package signing
-> > process.=C2=A0 This would reduce the PQ overhead to checking a bundle a=
-nd
-> > would also make IMA's measuring easier as the hashes can be added in
-> > the right order, rather than being dependent on the order that the
-> > binaries are used.
->=20
-> I think you're referring to the IMA digest list extension proposal:
->=20
-> https://github.com/initlove/linux/wiki/IMA-Digest-Lists-Extension
->=20
-> I'm not sure it's been progressed much.
+On Fri, Jun 13, 2025 at 8:45=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 12.06.25 20:13, Bijan Tabatabai wrote:
+> > From: Bijan Tabatabai <bijantabatab@micron.com>
+> >
+> > This patch is to allow DAMON to call policy_nodemask() so it can
+> > determine where to place a page for interleaving.
+> >
+> > Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+> > ---
+> >   include/linux/mempolicy.h | 9 +++++++++
+> >   mm/mempolicy.c            | 4 +---
+> >   2 files changed, 10 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+> > index 0fe96f3ab3ef..e96bf493ff7a 100644
+> > --- a/include/linux/mempolicy.h
+> > +++ b/include/linux/mempolicy.h
+> > @@ -133,6 +133,8 @@ struct mempolicy *__get_vma_policy(struct vm_area_s=
+truct *vma,
+> >   struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
+> >               unsigned long addr, int order, pgoff_t *ilx);
+> >   bool vma_policy_mof(struct vm_area_struct *vma);
+> > +nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy *pol,
+> > +             pgoff_t ilx, int *nid);
+> >
+> >   extern void numa_default_policy(void);
+> >   extern void numa_policy_init(void);
+> > @@ -232,6 +234,13 @@ static inline struct mempolicy *get_vma_policy(str=
+uct vm_area_struct *vma,
+> >       return NULL;
+> >   }
+> >
+> > +static inline nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy =
+*pol,
+> > +                             pgoff_t ilx, int *nid)
+> > +{
+> > +     *nid =3D NUMA_NO_NODE;
+> > +     return NULL;
+> > +}
+> > +
+> >   static inline int
+> >   vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst=
+)
+> >   {
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 3b1dfd08338b..54f539497e20 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -596,8 +596,6 @@ static const struct mempolicy_operations mpol_ops[M=
+POL_MAX] =3D {
+> >
+> >   static bool migrate_folio_add(struct folio *folio, struct list_head *=
+foliolist,
+> >                               unsigned long flags);
+> > -static nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy *pol,
+> > -                             pgoff_t ilx, int *nid);
+> >
+> >   static bool strictly_unmovable(unsigned long flags)
+> >   {
+> > @@ -2195,7 +2193,7 @@ static unsigned int interleave_nid(struct mempoli=
+cy *pol, pgoff_t ilx)
+> >    * Return a nodemask representing a mempolicy for filtering nodes for
+> >    * page allocation, together with preferred node id (or the input nod=
+e id).
+> >    */
+> > -static nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy *pol,
+> > +nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy *pol,
+> >                                  pgoff_t ilx, int *nid)
+> >   {
+> >       nodemask_t *nodemask =3D NULL;
+>
+> You actually only care about the nid for your use case.
+>
+> Maybe we should add
+>
+> get_vma_policy_node() that internally does a get_vma_policy() to then
+> give you only the node back.
+>
+> If get_vma_policy() is not the right thing (see my reply to patch #2),
+> of course a get_task_policy_node() could be added.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
 
-The latest iteration can be found here:
+Hi David,
 
-https://lore.kernel.org/linux-integrity/20241119104922.2772571-1-roberto.sa=
-ssu@huaweicloud.com/
+I did not use get_vma_policy or mpol_misplaced, which I believe is the
+closest function that exists for what I want in this patch, because
+those functions
+seem to assume they are called inside of the task that the folio/vma
+is mapped to.
+More specifically, mpol_misplaced assumes it is being called within a
+page fault.
+This doesn't work for us, because we call it inside of a kdamond process.
 
-It is more or less ready for upstreaming (from my point of view), with
-the exception of a few comments that I still need to address.
+I would be open to adding a new function that takes in a folio, vma,
+address, and
+task_struct and returns the nid the folio should be placed on. It could pos=
+sibly
+be implemented as a function internal to mpol_misplaced because the two wou=
+ld
+be very similar.
 
-The main problem was parsing the RPM headers in the kernel, that Linus
-didn't like, but I believe I solved it now with Mimi's suggestion of
-making the digest list parsers pluggable (so the RPM parser has been
-removed from this submission, and moved to a kernel module that is
-expected to be signed by distros).
+How would you propose we handle MPOL_BIND and MPOL_PREFFERED_MANY
+in this function? mpol_misplaced chooses a nid based on the node and
+cpu the fault
+occurred on, which we wouldn't have in a kdamond context. The two options I=
+ see
+are either:
+1. return the nid of the first node in the policy's nodemask
+2. return NUMA_NO_NODE
+I think I would lean towards the first.
 
-I explored the alternative of moving the parser to user space, but as
-you mentioned, it is a more risky approach.
-
-Other than that, yes, it makes IMA much faster in my benchmarks (~34
-seconds to lookup 12312 digests and verify 303 ECDSA signatures, as
-opposed to ~98 seconds to verify 12312 ECDSA signatures).
-
-Roberto
-
+Thanks,
+Bijan
 
