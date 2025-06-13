@@ -1,257 +1,213 @@
-Return-Path: <linux-kernel+bounces-685451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BB2AD89DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:57:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A79AD89EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77767AEC3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21703B0FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBEF2D5C63;
-	Fri, 13 Jun 2025 10:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1137B2D5C6C;
+	Fri, 13 Jun 2025 10:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oASVnw2e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SpR7iGWB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hY6aifoZ"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB72D29CA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4682D5421;
+	Fri, 13 Jun 2025 10:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749812220; cv=none; b=rBPkVztYfzSiSm8liCLZlCwzOj2v60y+emR0LP5Y8jEdCSkaobRJCyFk5BIZ0RoVo50ffTr0ZQu38ANWR3V2AQh9JrrTBiTx1O3sVC4UZivPr7pYl1Ql8a9nNy2YmhqFQko6jSDRCTvzsM5ahFJXDuE5P1Lz998Ambev5cHMes0=
+	t=1749812393; cv=none; b=E39XaPOn7PBIpBum99ZZtkGjCIvvvGaMDG9Uc6t7V8vkm7qYjrP+ey3iRaJlZUPc6sJH6jN1QIMBfmyeCYgNfzJ2tJQeMm6/OLdiW5h+5JJs394Je7OpAd6RIRJN721zOebhLbFVIOlHjA1zjyp2outTg/ogkI6M7AszEYQTcOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749812220; c=relaxed/simple;
-	bh=F7QqjwqXOgWJ4YGCqND1DkPhCQG97Z35XzKgrGIeJ1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JA538BPbJ0NCzvecpZ7IdGbHaBEm6WjoBgDOboWRO9xDxZUolvhu5agOLUZFyNQULvsmkfujWhBUJ6Ofwhrh+WTnU/cIZCAYB2DITYAMmqzDppOhzNOqNfwbzUVd0E9BbGzj6N4eUz33b5GExzLiRvsP0ovtprAWkD00YCB4gjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oASVnw2e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SpR7iGWB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749812217;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MbSAzXdvE6ZHJMa0/FswkbQLKKpdAPD8yjtyxZ4htm4=;
-	b=oASVnw2eFzkSQ3oJWPGtm9iqnntjT1Soe00y0EUZEWSPuqWiDngAXuloweDk/wSFOrJpDY
-	CqI6Aan0aqgIreyEBL39e6njFb2BMkKrHxiUpLxC8hu7E2tLo0LiJ1+ABGxkCQUWox7yxF
-	8usWfstq9ZQBF0oNEtcEMG8ZivqxwpU5swPrMb3rHDn3fYc4EBc1IUEBAqNjT5WESwOzMV
-	a//pk03fB9M67gVhTT81nDEAvE2eKJv4t+e9xQDBNKAopO85LcFRb0ExogVMH9wZDrLhpN
-	hDROWs3U9nM97DV9X/nYEXespdfjBDHm8b+UaQNxkYn7ptlB2Tlzmoar/DXpnw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749812217;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MbSAzXdvE6ZHJMa0/FswkbQLKKpdAPD8yjtyxZ4htm4=;
-	b=SpR7iGWBcBxfuQfmpwsyOqBQoVQDWZDvFjReNZyp4/O78//uCVtpr95tzithIhkFvPlaVO
-	K7FCzxqm8ZTEILCw==
-To: linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: Clark Williams <clrkwllms@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [RFC PATCH 1/1] softirq: Allow to drop the softirq-BKL lock on PREEMPT_RT
-Date: Fri, 13 Jun 2025 12:56:53 +0200
-Message-ID: <20250613105653.1860729-2-bigeasy@linutronix.de>
-In-Reply-To: <20250613105653.1860729-1-bigeasy@linutronix.de>
-References: <20250613105653.1860729-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1749812393; c=relaxed/simple;
+	bh=lNlHr4fN+kW1hphV1mf8s//XHzAcGEu6x4XIaFIdJVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T13nfgnCl2iQJTd+szGsE8Ubo3njMUfr9B+7VxcGzr0TXI4Q92TvIEJibQMySgVvP1RDKiq0EYtMItG4oO62IoL+P0TcAK9zXHKyI43wQ8VbOX8ccQhwu5a5Fzt9wpVcmDE0sRHKP+sgo4UY1IYE816LvoVlm50Qubg97W8caCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hY6aifoZ; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55DAxHoL1961667;
+	Fri, 13 Jun 2025 05:59:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749812357;
+	bh=ECNdaOgprCZ21ffz0S0ElddSmNcpxaOPXvRqQLB08fs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=hY6aifoZtXHMKs15wOkCqYOJWD+HDjcuOyx2WlKxO1qshiV17P0bGLtYjWCINj4vJ
+	 FRoQoGS8OauWjIiC7dQZl1PUwHupCluhYFVRyqvYvUrbwtC+vwtMzQl5Z7nijEhXcU
+	 tgh1tFNqYEAyTZLPQ6wctoH2X1aOT/jX9s7ZGt0M=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55DAxH6O2682137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 13 Jun 2025 05:59:17 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 13
+ Jun 2025 05:59:17 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 13 Jun 2025 05:59:17 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55DAxBK73455305;
+	Fri, 13 Jun 2025 05:59:12 -0500
+Message-ID: <65bf4f83-43c2-4640-9858-afb96fa1cfc7@ti.com>
+Date: Fri, 13 Jun 2025 16:29:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10] net: ti: icssg-prueth: add TAPRIO offload
+ support
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Meghana Malladi <m-malladi@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Simon Horman <horms@kernel.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Roger
+ Quadros <rogerq@ti.com>
+References: <20250502104235.492896-1-danishanwar@ti.com>
+ <20250506154631.gvzt75gl2saqdpqj@skbuf>
+ <5e928ff0-e75b-4618-b84c-609138598801@ti.com>
+ <b05cc264-44f1-42e9-ba38-d2ef587763f5@ti.com>
+ <20250610085001.3upkj2wbmoasdcel@skbuf>
+ <1cee4cab-c88f-4bd8-bd71-62cd06901b3b@ti.com>
+ <20250610150254.w4gvmbsw6nrhb6k4@skbuf>
+ <10d1c003-fcac-4463-8bce-f40bda3047f0@ti.com>
+ <20250612151043.6wfefe42pzeeazvg@skbuf>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250612151043.6wfefe42pzeeazvg@skbuf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-softirqs are preemptible on PREEMPT_RT. There is synchronisation between
-individual sections which disable bottom halves. This in turn means that
-a forced threaded interrupt can not preempt another forced threaded
-interrupt. Instead it will PI-boost the other handler and wait for its
-completion.
 
-This is required because code within a softirq section is assumed to be
-non-preemptible and may expect exclusive access to per-CPU resources
-such as variables or pinned timers.
-Code with such expectation has been identified and updated to use
-local_lock_nested_bh() for locking of the per-CPU resource. This means
-the lock can be removed.
 
-Add CONFIG_PREEMPT_RT_NEEDS_BH_LOCK which keeps the old behaviour if
-selected. Otherwise the softirq synchronising is lifted. The
-softirq_ctrl.cnt accounting remains to let NOHZ code if softirqs are
-currently handled.
+On 12/06/25 8:40 pm, Vladimir Oltean wrote:
+> On Wed, Jun 11, 2025 at 03:10:35PM +0530, MD Danish Anwar wrote:
+>>> I am not very positive that even if adding the extra restrictions
+>>> discovered here (cycle-time cannot be != IEP_DEFAULT_CYCLE_TIME_NS),
+>>> the implementation will work as expected. I am not sure that our image
+>>> of "as expected" is the same.
+>>>
+>>> Given that these don't seem to be hardware limitations, but constraints
+>>> imposed by the ICSSG firmware, I guess my suggestion would be to start
+>>> with the selftest I mentioned earlier (which may need to be adapted),
+>>
+>> Yes I am working on running the selftest on ICSSG driver however there
+>> are some setup issues that I am encountering. I will try to test this
+>> using the selftest.
+>>
+>>> and use it to get a better picture of the gaps. Then make a plan to fix
+>>> them in the firmware, and see what it takes. If it isn't going to be
+>>> sufficient to fix the bugs unless major API changes are introduced, then
+>>> maybe it doesn't make sense for Linux to support taprio offload on the
+>>> buggy firmware versions.
+>>>
+>>> Or maybe it does (with the appropriate restrictions), but it would still
+>>> inspire more trust to see that the developer at least got some version
+>>> of the firmware to pass a selftest, and has a valid reference to follow.
+>>
+>> Sure. I think we can go back to v9 implementation (no extend feature)
+>> and add two additional restrictions in the driver.
+>>
+>> 1. Cycle-time needs to be 1ms
+>> 2. Base-time needs to be Multiple of 1ms
+>>
+>> With these two restrictions we can have the basic taprio support. Once
+>> the firmware is fixed and has support for both the above cases, I will
+>> modify the driver as needed.
+>>
+>> I know firmware is very buggy as of now. But we can still start the
+>> driver integration and fix these bugs with time.
+>>
+>> I will try to test the implementation with these two limitations using
+>> the selftest and share the logs if it's okay with you to go ahead with
+>> these limitations.
+>>
+>>> Not going to lie, it doesn't look great that we discover during v10 that
+>>> taprio offload only works with a cycle time of 1 ms. The schedule is
+>>
+>> I understand that. Even I got to know about this limitation after my
+>> last response to v10
+>> (https://lore.kernel.org/all/5e928ff0-e75b-4618-b84c-609138598801@ti.com/)
+>>
+>>> network-dependent and user-customizable, and maybe the users didn't get
+>>> the memo that only 1 ms was tested :-/
+>>
+>> Let me know if it'll be okay to go ahead with the two limitations
+>> mentioned above for now (with selftest done).
+>>
+>> If it's okay, I will try to send v11 with testing with selftest done as
+>> well. Thanks for the continuous feedback.
+> 
+> I don't want to gate your upstreaming efforts, but a new version with
+> just these extra restrictions, and no concrete plan to lift them, will
+> be seen with scepticism from reviewers. You can alleviate some of that
+> by showing results from a selftest.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/Kconfig.preempt | 13 +++++++
- kernel/softirq.c       | 83 ++++++++++++++++++++++++++++++++----------
- 2 files changed, 76 insertions(+), 20 deletions(-)
+We will make a complete plan for fixing these restrictions and I will
+update the community.
 
-diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
-index 54ea59ff8fbeb..da326800c1c9b 100644
---- a/kernel/Kconfig.preempt
-+++ b/kernel/Kconfig.preempt
-@@ -103,6 +103,19 @@ config PREEMPT_RT
- 	  Select this if you are building a kernel for systems which
- 	  require real-time guarantees.
-=20
-+config PREEMPT_RT_NEEDS_BH_LOCK
-+	bool "Enforce softirq synchronisation on PREEMPT_RT"
-+	depends on PREEMPT_RT
-+	help
-+	  Enforce synchronisation across the softirqs context. On PREEMPT_RT
-+	  the softirq is preemptible. This enforces the same per-CPU BLK
-+	  semantic non-PREEMPT_RT builds have. This should not be needed
-+	  because per-CPU locks were added to avoid the per-CPU BKL.
-+
-+	  This switch provides the old behaviour for testing reasons. Select
-+	  this if you suspect an error with preemptible softirq and want test
-+	  the old synchronized behaviour.
-+
- config PREEMPT_COUNT
-        bool
-=20
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 513b1945987cc..7332326fdec8c 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -165,7 +165,11 @@ void __local_bh_disable_ip(unsigned long ip, unsigned =
-int cnt)
- 	/* First entry of a task into a BH disabled section? */
- 	if (!current->softirq_disable_cnt) {
- 		if (preemptible()) {
--			local_lock(&softirq_ctrl.lock);
-+			if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK))
-+				local_lock(&softirq_ctrl.lock);
-+			else
-+				migrate_disable();
-+
- 			/* Required to meet the RCU bottomhalf requirements. */
- 			rcu_read_lock();
- 		} else {
-@@ -177,17 +181,34 @@ void __local_bh_disable_ip(unsigned long ip, unsigned=
- int cnt)
- 	 * Track the per CPU softirq disabled state. On RT this is per CPU
- 	 * state to allow preemption of bottom half disabled sections.
- 	 */
--	newcnt =3D __this_cpu_add_return(softirq_ctrl.cnt, cnt);
--	/*
--	 * Reflect the result in the task state to prevent recursion on the
--	 * local lock and to make softirq_count() & al work.
--	 */
--	current->softirq_disable_cnt =3D newcnt;
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK)) {
-+		newcnt =3D this_cpu_add_return(softirq_ctrl.cnt, cnt);
-+		/*
-+		 * Reflect the result in the task state to prevent recursion on the
-+		 * local lock and to make softirq_count() & al work.
-+		 */
-+		current->softirq_disable_cnt =3D newcnt;
-=20
--	if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && newcnt =3D=3D cnt) {
--		raw_local_irq_save(flags);
--		lockdep_softirqs_off(ip);
--		raw_local_irq_restore(flags);
-+		if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && newcnt =3D=3D cnt) {
-+			raw_local_irq_save(flags);
-+			lockdep_softirqs_off(ip);
-+			raw_local_irq_restore(flags);
-+		}
-+	} else {
-+		bool sirq_dis =3D false;
-+
-+		if (!current->softirq_disable_cnt)
-+			sirq_dis =3D true;
-+
-+		this_cpu_add(softirq_ctrl.cnt, cnt);
-+		current->softirq_disable_cnt +=3D cnt;
-+		WARN_ON_ONCE(current->softirq_disable_cnt < 0);
-+
-+		if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && sirq_dis) {
-+			raw_local_irq_save(flags);
-+			lockdep_softirqs_off(ip);
-+			raw_local_irq_restore(flags);
-+		}
- 	}
- }
- EXPORT_SYMBOL(__local_bh_disable_ip);
-@@ -195,23 +216,42 @@ EXPORT_SYMBOL(__local_bh_disable_ip);
- static void __local_bh_enable(unsigned int cnt, bool unlock)
- {
- 	unsigned long flags;
-+	bool sirq_en =3D false;
- 	int newcnt;
-=20
--	DEBUG_LOCKS_WARN_ON(current->softirq_disable_cnt !=3D
--			    this_cpu_read(softirq_ctrl.cnt));
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK)) {
-+		DEBUG_LOCKS_WARN_ON(current->softirq_disable_cnt !=3D
-+				    this_cpu_read(softirq_ctrl.cnt));
-+		if (softirq_count() =3D=3D cnt)
-+			sirq_en =3D true;
-+	} else {
-+		if (current->softirq_disable_cnt =3D=3D cnt)
-+			sirq_en =3D true;
-+	}
-=20
--	if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && softirq_count() =3D=3D cnt) {
-+	if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && sirq_en) {
- 		raw_local_irq_save(flags);
- 		lockdep_softirqs_on(_RET_IP_);
- 		raw_local_irq_restore(flags);
- 	}
-=20
--	newcnt =3D __this_cpu_sub_return(softirq_ctrl.cnt, cnt);
--	current->softirq_disable_cnt =3D newcnt;
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK)) {
-+		newcnt =3D this_cpu_sub_return(softirq_ctrl.cnt, cnt);
-+		current->softirq_disable_cnt =3D newcnt;
-=20
--	if (!newcnt && unlock) {
--		rcu_read_unlock();
--		local_unlock(&softirq_ctrl.lock);
-+		if (!newcnt && unlock) {
-+			rcu_read_unlock();
-+			local_unlock(&softirq_ctrl.lock);
-+		}
-+	} else {
-+		current->softirq_disable_cnt -=3D cnt;
-+		this_cpu_sub(softirq_ctrl.cnt, cnt);
-+		if (unlock && !current->softirq_disable_cnt) {
-+			migrate_enable();
-+			rcu_read_unlock();
-+		} else {
-+			WARN_ON_ONCE(current->softirq_disable_cnt < 0);
-+		}
- 	}
- }
-=20
-@@ -228,7 +268,10 @@ void __local_bh_enable_ip(unsigned long ip, unsigned i=
-nt cnt)
- 	lock_map_release(&bh_lock_map);
-=20
- 	local_irq_save(flags);
--	curcnt =3D __this_cpu_read(softirq_ctrl.cnt);
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK))
-+		curcnt =3D this_cpu_read(softirq_ctrl.cnt);
-+	else
-+		curcnt =3D current->softirq_disable_cnt;
-=20
- 	/*
- 	 * If this is not reenabling soft interrupts, no point in trying to
---=20
-2.49.0
+> 
+> The existing selftest uses a 2 ms schedule and a 10 ms schedule. Neither
+> of those is supported by your current proposal. You can modify the
+> schedules to be compatible with your current firmware, and the selftest
+> may pass that way, but I will not be in favor of accepting that change
+> upstream, because the cycle time is something that needs to be highly
+> adaptive to the network requirements.
+> 
 
+I can tweak the script to use 1ms cycle time. I tried to run the script
+however I am not able to run the script due to multiple package
+dependencies which I am currently trying to resolve.
+
+I checked your commit [1] where you have introduced the tc_taprio.sh
+script. You have mentioned,
+	"This is specifically intended for NICs with an offloaded data path
+(switchdev/DSA) and requires taprio 'flags 2'. Also, $h1 and $h2 must
+support hardware timestamping, and $h1 tc-etf offload, for isochron to
+work."
+
+My NIC does support offloaded data path (switchdev), taprio 'flags 2'
+and hardware timestamping. However we don't support tc-etf offload.
+
+Will it be possible to use this script without the support of tc-etf
+offload?
+
+> So to summarize, you can try to move forward with a restricted version
+> of this feature, but you will have to be very transparent as to what
+> works and what are the next steps, as well as give assurance that you
+> intend to keep supporting the current firmware and its API when an
+> improved firmware will become available that lifts these restrictions.
+
+We are working on a plan to get full taprio support and I will update
+the community accordingly. I want the driver to get upstreamed with
+whatever support we have right now and add things later on. If I am able
+to verify the `tc_taprio.sh` script then I would share results from
+there. If I am not able to verify the script, I will at least try to
+mention what we are supporting now and what are the limitations and when
+do we plan on addressing those limitations.
+
+[1]
+https://lore.kernel.org/all/20250426144859.3128352-5-vladimir.oltean@nxp.com/#r
+
+-- 
+Thanks and Regards,
+Danish
 
