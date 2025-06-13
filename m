@@ -1,233 +1,129 @@
-Return-Path: <linux-kernel+bounces-685093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FBCAD8416
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4351CAD8439
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1883A0E41
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:34:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D413A0EE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705392D027E;
-	Fri, 13 Jun 2025 07:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72972D1F44;
+	Fri, 13 Jun 2025 07:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhZi7imR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dCQa5UPj"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD6E1EA7E1;
-	Fri, 13 Jun 2025 07:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C282D1905;
+	Fri, 13 Jun 2025 07:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800072; cv=none; b=p+3Q/8fNGO0Pcuy1rdSr4AYdob0iQs1pvXm7aTMtT7gsKZPqvbu0O/14aNA3rWEAAhcFIXkNUMzusCuWQf9mLXUtqF5n2mYLHRMVm2LJZrwW7Hsr04yJqDRb43A3nAfK7V+un6x3eIo4uZCCa8PzzLyAOj+yWWuUVw97CahwJhQ=
+	t=1749800092; cv=none; b=eYrpWxK974+PQ/vE5SIgM+jv/WdGoZbUxpEC+BEW79U+FzLpXVOt4kY4ynA1uDx9dvQFVRNCZksAQ/lBegfPYQAhNqYnMg8ITPPUZadjEKlpymBokqnrKTIGKt7g+l0ela7scTe8EZR2eXoysy9WrWHpr++TYKsKMaqqJjckq60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800072; c=relaxed/simple;
-	bh=T8pIxKQmOw7lVpBaKtcVaZ2RyDzlv50gApXra5EGrds=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H+L7g0Uqzu9WYvPAPQBYXj3pms2jsF1ZGwFwBVHGHzgixGSmsfFRvMkVQ4423aphJS6lOMYJxCRnPGRlvfPRKiCwz0+qocPqFp22phDzn8EtFVYXbEqs+nOC7KlCcxGV3dPHenuptbN6oKmdXeePJ75XBSIlaKJ1NDB6bfrzsdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhZi7imR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C114C4CEF1;
-	Fri, 13 Jun 2025 07:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749800072;
-	bh=T8pIxKQmOw7lVpBaKtcVaZ2RyDzlv50gApXra5EGrds=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YhZi7imReP6DsVavfNzcXVzimklVTWt3Z3Z/iFvNEfpjicqL5qQWzVLTQp9mryH8j
-	 d12APyLhUv5Ol6+x1mm9DszwJSH8HKAK2yHqjeaZ4njTr5bbEsktUQGhyj3UGGeWh7
-	 2H9u9i0swYaynKY+sD8KfxchMZK9x4fTRVuL9m3eNXmFJQovsEgN6wc9p7yRuQtiQt
-	 SL3iGVv0uDAkTA2X2yYDVWIUkIJZAV+31t8pRvHd3JWxyjq7QmkSUbewZBUsvUwXtC
-	 ar7vbMVe2RCc2+aWI61A+vvq3lgVsEK9OaRYPZTtPqUKLmP/vJmrgzG39Ot9SbL10Z
-	 OQZsNl+iIeeFw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AA2C71135;
-	Fri, 13 Jun 2025 07:34:32 +0000 (UTC)
-From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Date: Fri, 13 Jun 2025 09:34:27 +0200
-Subject: [PATCH v4 2/2] iio: imu: inv_icm42600: add wakeup functionality
- for Wake-on-Motion
+	s=arc-20240116; t=1749800092; c=relaxed/simple;
+	bh=jMtJU2pTkz50zel0ZVOXCLZvoKCyvMzdYg3aVYdyDDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tI/mTxg6UT4G6XGGrnseTLLjwpRi+QwOy/Kkqk/e3xAYZwGPOCY+qujOzFs0rFyCZE7txwTcMGy5uNcvu+RjHyoI9lRAAZl5cHBL9ubghJ7BstzwJYZ1oeeEjhEi4D3IxlCnH3JMjyMXOo6N/mBKmvBKEE5kSYpne33yRcz8bQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dCQa5UPj; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D2w0lh016526;
+	Fri, 13 Jun 2025 07:34:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=Q+00UsnK9QNmHyLDUgqm5Z0yCuP4tR
+	RAbOGJlESRpPw=; b=dCQa5UPjfC9CVBahw231jons1CFvs70D/96M0foymRk61/
+	LDUyLt/U77moLVGxdNpBs1JZ/LPRjGq5fKwnk/kgz9PcwdJHAn+NAidX5DN3CtdQ
+	cc5M85VaJX1iLFoIJ4G426Af/Mn0TGS8u/fIO7sn9UdXvma4zQVQkfsjOS7vjLVZ
+	2dom03hKSztypC8Sx7JUlowHAmbp+t9e1zRbNq7Dqo238xBJdE8r78J4K1XVrRAM
+	lv1ky0Kx8p9MvLtm3Ym5og/hJFsB8xQWIF5+mMgFWPu69VqX/kbuTy4W0hUwQKfw
+	tLwl1K3li39jpKpdTiuwj/mHb1gpswYw/QhOkvFg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474hguxqh2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Jun 2025 07:34:38 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55D7Fh6R017417;
+	Fri, 13 Jun 2025 07:34:38 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 474hguxqgy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Jun 2025 07:34:38 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55D6g9dG014948;
+	Fri, 13 Jun 2025 07:34:37 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4750rpgykn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Jun 2025 07:34:37 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55D7YZNM53477794
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Jun 2025 07:34:35 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A0612004B;
+	Fri, 13 Jun 2025 07:34:35 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 48C9420040;
+	Fri, 13 Jun 2025 07:34:35 +0000 (GMT)
+Received: from osiris (unknown [9.111.44.220])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 13 Jun 2025 07:34:35 +0000 (GMT)
+Date: Fri, 13 Jun 2025 09:34:33 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sean Christopherson <seanjc@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nicolas Schier <nicolas.schier@linux.dev>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: move warnings about linux/export.h from W=1 to
+ W=2
+Message-ID: <20250613073433.26153A91-hca@linux.ibm.com>
+References: <20250612160850.3007038-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250613-losd-3-inv-icm42600-add-wom-support-v4-2-7e5f554201bf@tdk.com>
-References: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
-In-Reply-To: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749800071; l=5290;
- i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
- bh=KDCTv7gpEv39CHX+r2t6f3t7cUBXM4lGf6ce0mTmS5s=;
- b=R95RMBpi7F8u7Ndrqsm2evDBTuHKFYPyd6cQKR7GCzDK8vNe+M67j7xxE6Jmp722V/UCjFhYj
- eMy52BA3rDaCQPEgnQCsaQ2zum9ZVUYakH7CO1AZZivKiVODhS8P1Ti
-X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
- pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
-X-Endpoint-Received: by B4 Relay for
- jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
-X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Reply-To: jean-baptiste.maneyrol@tdk.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612160850.3007038-1-masahiroy@kernel.org>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Pfr/hjhd c=1 sm=1 tr=0 ts=684bd48e cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=wWeqQ2MroeA1i1D5eWMA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: df9pBC3O6aQCIuOUUZyNihkLjICkB9kb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDA1MyBTYWx0ZWRfX9IIhdGcfxnKz +gmJ8zY2Mrj8pvuDF7Q1ovi7wbSP3z18gPdFm+ADGlN/MinPGJt9mn+6XiQQjY1wtpsnK5Ne8DI x/ADuyMd1PhIWKPMxPibq7/3MqErKPHeT9h1dyD3AmFkIdQqY9/ONAsJjH9dqT4BaCxnX9hW1nd
+ khLGJ1BwjhremFkfegIidog5AKsBjhP8GtRAj8dR4XQdbvukxNOqWK3R4b5ObXwVaPRycWs/oVm pfSs3XkXYLpGwcu/6dYv22iHbjAEZIhV5IwBsqWnev8iZhV8dfzUucltrMBUGIA5K9/aOKN+IxC EGZMNVbpsJdEKsVQkia+fCHM+L2BKv36VPzKue2AFe0oNBJioviEoFN2fTlQlYP/eFHYaNgnEvm
+ jfdxDVQOyPq8EiJtYobcoEF8VDL68JnK66J/v5sm/WZdu/j3FWDAGmOZX5xWedgVAcXdRHfv
+X-Proofpoint-ORIG-GUID: LnzqN63bkSsWR0S-YWzC821bvjD_P3_z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 adultscore=0
+ clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=780
+ mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506130053
 
-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+On Fri, Jun 13, 2025 at 01:08:48AM +0900, Masahiro Yamada wrote:
+> This hides excessive warnings, as nobody builds with W=2.
+> 
+> Fixes: a934a57a42f6 ("scripts/misc-check: check missing #include <linux/export.h> when W=1")
+> Fixes: 7d95680d64ac ("scripts/misc-check: check unnecessary #include <linux/export.h> when W=1")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  Makefile           |  3 ---
+>  scripts/misc-check | 15 ++++++++++++---
+>  2 files changed, 12 insertions(+), 6 deletions(-)
 
-When Wake-on-Motion is on, enable system wakeup and keep the chip on
-for waking up the system with an interrupt.
+Thank you!
 
-Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
----
- drivers/iio/imu/inv_icm42600/inv_icm42600.h       |  2 +
- drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c |  3 ++
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c  | 53 +++++++++++++++++------
- 3 files changed, 45 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-index 413a15493bcb880dc00b20da3b3168d5addd32a9..67f5c1a611988776d0bdf4d43a46f2fda43e3e44 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-@@ -151,6 +151,7 @@ struct inv_icm42600_apex {
-  *  @map:		regmap pointer.
-  *  @vdd_supply:	VDD voltage regulator for the chip.
-  *  @vddio_supply:	I/O voltage regulator for the chip.
-+ *  @irq:		chip irq, required to enable/disable and set wakeup
-  *  @orientation:	sensor chip orientation relative to main hardware.
-  *  @conf:		chip sensors configurations.
-  *  @suspended:		suspended sensors configuration.
-@@ -168,6 +169,7 @@ struct inv_icm42600_state {
- 	struct regmap *map;
- 	struct regulator *vdd_supply;
- 	struct regulator *vddio_supply;
-+	int irq;
- 	struct iio_mount_matrix orientation;
- 	struct inv_icm42600_conf conf;
- 	struct inv_icm42600_suspended suspended;
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-index 9a2089527a9426b70eb796d4e9c234d8804c508b..ddc04fdf1d4ed3afaa8c0c9385ed9739cec39a4b 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-@@ -1171,6 +1171,9 @@ struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-+	/* accel events are wakeup capable */
-+	devm_device_init_wakeup(&indio_dev->dev);
-+
- 	return indio_dev;
- }
- 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-index 9a2150ab9e874f17d7fda731cb131c3f688a75a3..0809561b8119d1ff5cf4b36ff571f9c8dc4050a0 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -765,6 +765,7 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip,
- 	mutex_init(&st->lock);
- 	st->chip = chip;
- 	st->map = regmap;
-+	st->irq = irq;
- 
- 	ret = iio_read_mount_matrix(dev, &st->orientation);
- 	if (ret) {
-@@ -843,6 +844,9 @@ EXPORT_SYMBOL_NS_GPL(inv_icm42600_core_probe, "IIO_ICM42600");
- static int inv_icm42600_suspend(struct device *dev)
- {
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
-+	struct device *accel_dev;
-+	bool wakeup;
-+	int accel_conf;
- 	int ret;
- 
- 	mutex_lock(&st->lock);
-@@ -863,20 +867,32 @@ static int inv_icm42600_suspend(struct device *dev)
- 			goto out_unlock;
- 	}
- 
--	/* disable APEX features */
--	if (st->apex.wom.enable) {
--		ret = inv_icm42600_disable_wom(st);
--		if (ret)
--			goto out_unlock;
-+	/* keep chip on and wake-up capable if APEX and wakeup on */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = st->apex.on && device_may_wakeup(accel_dev);
-+	if (wakeup) {
-+		/* keep accel on and setup irq for wakeup */
-+		accel_conf = st->conf.accel.mode;
-+		enable_irq_wake(st->irq);
-+		disable_irq(st->irq);
-+	} else {
-+		/* disable APEX features and accel if wakeup disabled */
-+		if (st->apex.wom.enable) {
-+			ret = inv_icm42600_disable_wom(st);
-+			if (ret)
-+				goto out_unlock;
-+		}
-+		accel_conf = INV_ICM42600_SENSOR_MODE_OFF;
- 	}
- 
- 	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
--					 INV_ICM42600_SENSOR_MODE_OFF, false,
--					 NULL);
-+					 accel_conf, false, NULL);
- 	if (ret)
- 		goto out_unlock;
- 
--	regulator_disable(st->vddio_supply);
-+	/* disable vddio regulator if chip is sleeping */
-+	if (!wakeup)
-+		regulator_disable(st->vddio_supply);
- 
- out_unlock:
- 	mutex_unlock(&st->lock);
-@@ -892,13 +908,24 @@ static int inv_icm42600_resume(struct device *dev)
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
- 	struct inv_icm42600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
- 	struct inv_icm42600_sensor_state *accel_st = iio_priv(st->indio_accel);
-+	struct device *accel_dev;
-+	bool wakeup;
- 	int ret;
- 
- 	mutex_lock(&st->lock);
- 
--	ret = inv_icm42600_enable_regulator_vddio(st);
--	if (ret)
--		goto out_unlock;
-+	/* check wakeup capability */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = st->apex.on && device_may_wakeup(accel_dev);
-+	/* restore irq state or vddio if cut off */
-+	if (wakeup) {
-+		enable_irq(st->irq);
-+		disable_irq_wake(st->irq);
-+	} else {
-+		ret = inv_icm42600_enable_regulator_vddio(st);
-+		if (ret)
-+			goto out_unlock;
-+	}
- 
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_active(dev);
-@@ -911,8 +938,8 @@ static int inv_icm42600_resume(struct device *dev)
- 	if (ret)
- 		goto out_unlock;
- 
--	/* restore APEX features */
--	if (st->apex.wom.enable) {
-+	/* restore APEX features if disabled */
-+	if (!wakeup && st->apex.wom.enable) {
- 		ret = inv_icm42600_enable_wom(st);
- 		if (ret)
- 			goto out_unlock;
-
--- 
-2.49.0
-
-
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
