@@ -1,90 +1,109 @@
-Return-Path: <linux-kernel+bounces-686003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05542AD91D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:48:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6743DAD91FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF7117AA98
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387141BC5021
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC3B1F4C8A;
-	Fri, 13 Jun 2025 15:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5p5AMjD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA9226D1E;
+	Fri, 13 Jun 2025 15:50:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFEC1C5F2C;
-	Fri, 13 Jun 2025 15:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92525219314
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 15:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749829722; cv=none; b=XlFStpTlcWzqpNO5hH2pdWmFSJ1zBIs8IuR79wbsTRJ5QsdNAtluDuTYdjGQ1Se6RBbwTBtpuHdlSEUm/pefYJm4kn2hfOvi1hvyrytbWYV4gZ6GCl33pba6gpUEAtzQOUDHIG+rbXtoSSl83DLQneqAtZGQrdf9yW6B7f4EBgY=
+	t=1749829804; cv=none; b=hC7ZvvjGjGimYlW+lcC6fan0ffXw8tUo1B9B+lV0q8mwhQASvPblNEaqp/JKlYSm7RdJsSjIkPnTcDRnWtuuPhmUPQLF/gTZCXI1qqG4fVCga1XMNcmZBAKvyBJ1ibcSo+FWkMgJW9MLmr0DPncHu3fBrQsXqoysRhhQmXPotMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749829722; c=relaxed/simple;
-	bh=hkm3AyV/bcFbIYbpvXd3dbrxJh4JjZw7m+IKeqSb7hI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XM8azywhhXD0ANuUmXgVvkGK2oG0Ezbg265QrP2kPSeTYlE6SYMQ0Moeek6xH4uxpg3OfwT/JCfaxAFXIM0Su5p9+GEJTWe1Y8haPHIyj1dqI5PpcgE1gUZdBl5hgefB6tGpB/XBd1tujaEv0Nn5dG3gv/Qt6kPpFnSKcqS9pyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5p5AMjD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 528A5C4CEE3;
-	Fri, 13 Jun 2025 15:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749829722;
-	bh=hkm3AyV/bcFbIYbpvXd3dbrxJh4JjZw7m+IKeqSb7hI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k5p5AMjD++z1Z48mHmLVbVIJGVvninvDjrnCKo9leVgyl+h0C0iOVbtxNYhr96dow
-	 v/SKDoljRhuyBe6mmKk9sTXdIBzUw49NsEO99dHyY1zJCuVnTRt1bRinF9mTgCKfRd
-	 Tq7L+2838pNRyFKwUYK8ECXEOhWYnvznKZaXTS49cJU/q/V3husnA5XAlZWnybj/6/
-	 5J/MhxQ2bewm/mtyOHFjvLQSIbvuySHewHVmeKd74xNoZkEJfcX6ipP7qH7d29YMyt
-	 bjHby4f5lFYvQn1FVrf/t6XyRZgJDM/AW23dAPBXL0goF5CUTvXgeOWPzaZWsqweY7
-	 QoazALVIOT8Sg==
-From: Chuck Lever <cel@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Sergey Bashirov <sergeybashirov@gmail.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konstantin Evtushenko <koevtushenko@yandex.com>
-Subject: Re: [PATCH v3] nfsd: Use correct error code when decoding extents
-Date: Fri, 13 Jun 2025 11:48:38 -0400
-Message-ID: <174982965908.544557.2417180115604364588.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612214303.35782-1-sergeybashirov@gmail.com>
-References: <20250612214303.35782-1-sergeybashirov@gmail.com>
+	s=arc-20240116; t=1749829804; c=relaxed/simple;
+	bh=RvCEpwROrm3ebb3hmiUNpMcC9Wh4HeiUfZy9w1Of2ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ei3mDnaWavCj67MSJRd+3QpURf51rEAxpYkD0uKZXd+S2fQLj6nZMfmpYivP/clFDnqxAxzGuyQiptOA7myQYYlTN4WBPWPYYSSIzDBjlXNnEFdyA4DI8NFBUNvHtpWkkfpLQpHupeK2HmuC/S8MdDKcgM5RFo/auEc1ZvjJNjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 5B71B140B41;
+	Fri, 13 Jun 2025 15:49:45 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id A035520016;
+	Fri, 13 Jun 2025 15:49:43 +0000 (UTC)
+Date: Fri, 13 Jun 2025 11:49:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [GIT PULL] tracing: Fixes for v6.16
+Message-ID: <20250613114942.61ee3dc5@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: A035520016
+X-Stat-Signature: u36rwdjh6oobdowo89j9ytu95zry1gai
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+kz781oh8MP4KQiEx3amz3udQHRlBf0wY=
+X-HE-Tag: 1749829783-110251
+X-HE-Meta: U2FsdGVkX1/RGGFi29s6x8j8P6e7CxCBmPpoaUG7GCzKyyBsE2Wc6oaWfBTxrKhMq6KKeH01YGETjAX4C83wEtAie/3lKWGj6HKmGGoMfLsAWjnQWrG1pkcQGpXC7kIimmLhSzYi058b9T8+FdIARlkO4X1U4H1i+I6rLwF4lIdaf4RAaeBtxr2apDxFlTNShyNAITNIBpOpjCx+idqL1+/Q8gbcKcHFBCkvCNle8hmbv6yvkMb8nh1kHPP1480fGvmsDfMl4rtlCXVPUXbgi30phhvDcsoB0btNZ0YpBG/EKSVgDJhwjvP9hq62mZHJIGG60WEj/zcZ+5KXKxQsf3TVKpndlPDY
 
-From: Chuck Lever <chuck.lever@oracle.com>
 
-On Fri, 13 Jun 2025 00:42:49 +0300, Sergey Bashirov wrote:
-> Update error codes in decoding functions of block and scsi layout
-> drivers to match the core nfsd code. NFS4ERR_EINVAL means that the
-> server was able to decode the request, but the decoded values are
-> invalid. Use NFS4ERR_BADXDR instead to indicate a decoding error.
-> And ENOMEM is changed to nfs code NFS4ERR_DELAY.
-> 
-> 
-> [...]
 
-Applied to nfsd-testing, thanks!
+Linus,
 
-[1/1] nfsd: Use correct error code when decoding extents
-      commit: 9558037b8e9d90f099f1c6387151ad3282c28b66
+tracing fix for 6.16:
 
---
-Chuck Lever
+- Do not free "head" variable in filter_free_subsystem_filters()
 
+  The first error path jumps to "free_now" label but first frees the newly
+  allocated "head" variable. But the "free_now" code checks this variable,
+  and if it is not NULL, it will iterate the list. As this list variable
+  was already initialized, the "free_now" code will not do anything as it
+  is empty. But freeing it will cause a UAF bug. The error path should
+  simply jump to the "free_now" label and leave the "head" variable alone.
+
+
+Please pull the latest trace-v6.16-rc1 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.16-rc1
+
+Tag SHA1: 3dec58ebef0af8431ecffae2b1814a11b86dbde1
+Head SHA1: 8a157d8a00e815cab4432653cb50c9cedbbb4931
+
+
+Steven Rostedt (1):
+      tracing: Do not free "head" on error path of filter_free_subsystem_filters()
+
+----
+ kernel/trace/trace_events_filter.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+---------------------------
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index ea8b364b6818..08141f105c95 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1437,10 +1437,8 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 	INIT_LIST_HEAD(&head->list);
+ 
+ 	item = kmalloc(sizeof(*item), GFP_KERNEL);
+-	if (!item) {
+-		kfree(head);
++	if (!item)
+ 		goto free_now;
+-	}
+ 
+ 	item->filter = filter;
+ 	list_add_tail(&item->list, &head->list);
 
