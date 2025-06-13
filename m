@@ -1,186 +1,233 @@
-Return-Path: <linux-kernel+bounces-685383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A14DAD88F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B602EAD88F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7363B39EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565723BA6B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5422D027E;
-	Fri, 13 Jun 2025 10:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583762D1929;
+	Fri, 13 Jun 2025 10:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQeWMcQ1"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VTa7IOok"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E932C376B;
-	Fri, 13 Jun 2025 10:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82F189BB0
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749809458; cv=none; b=fYyDZE7vOoLhf4rYUiCtRBzZaTnCVYEBn8uFxIRpQXPQghLVvkPFN/IDb0xRp92m22wTnkEDBN0PAmWDwBTVEmahweRDO/ANdWg06/dT3R0W+SCH88ovK7qdYld0D+49D7Gazw8Nj7VJu3aYzboAm256B/bcwPx0i3AsngvHVOo=
+	t=1749809492; cv=none; b=JzB/VlCp94cWIKWMtShJPDCtd7euiDw8yJRQdx/FQzyeHGOMvwi4mqteyeYC72zzg+z1ZilamT7F94pyVKeBftbTOKb1aOc/5FBGWiDY6JNaYTyU97x5BuS9ApfFudM5b0syV2FYWvhcYXffyWl98+hL9XtsHlhEPFFPBMvCUuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749809458; c=relaxed/simple;
-	bh=ghZ1LG1KHdiUBK1zj+udIgi2zei5jleAEyjVIVwbSK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ru0cU9jbVNlkS6Iu93aXp9qsvaI4qJDt0Zb5GfF6n6HV5rsEOaqk9AhcvLwgjqfHre7MwkvX6xUZ0Fyat7wG9alakVKk22myp0zMa3llm4Hg+y/B9j1Tsex/ufZ/K8oOGLnZSRAPFqahlHqO08xHzn7FMZjrEaUPG699gKqDyRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQeWMcQ1; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451ebd3d149so13048125e9.2;
-        Fri, 13 Jun 2025 03:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749809454; x=1750414254; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=REfwVy48LjvgCSinXle+QxaU3FrH2CN4u42d5xmEyy8=;
-        b=cQeWMcQ1qpHx2TrrfSDMvA/TrPe1qsJUm6zTDmygnt0X3wNO+EA+6lufmG/Kw313Jz
-         RLQgohYw7A33/fDSJ8QHTS5oPddNmivE31ZXKkKbL0ZLxMj3ULT4ose6ACKLRUFwZnzE
-         oNi15cVyy3vDYGQzbvgNhR3AqYjZOR0uMgDst0jRUnBJXb9TwuoCW6+OYG5UQ6adSaku
-         Vfdx6eGMCg7z0+2zMAxb5zmJ0Z1YBoBTlRZkkFfNfpGlkTq950LcolH81s2DoI91/T/5
-         ljbgLPTf1JiJLzsLIHoWl3OGnyDkdlSIedSuar56saSC9CUi67vilWVRPZ7tvKfyGUHx
-         qtsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809454; x=1750414254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=REfwVy48LjvgCSinXle+QxaU3FrH2CN4u42d5xmEyy8=;
-        b=c+9wOvHRoQ0izBK0TRN611MvUAQO0RkorLArMPsUoiueXoS1r4GcUUw7CWP2J5xQto
-         qG7o8V7PDy4+i2oyb+O34t3f3YJhEbpTkTVSzG3mS5TgNjuYZE37plVuUFuHtmqpaXbD
-         iFNrLK2pkMkb+KH7lR8jgI3g9iuYw8NpgBm9ALHrC/QhjefsKrf7FAugP86D9i93R7Hf
-         gnIACmdBtR8L0PT+2scSgplMOJl03ra+vjPKOIGRIJjkxUtUryP92qpk4QgkxjcdNIDU
-         CfXvFUNsvbQ/k0SH73jm5tqB3udKu/61XLPmfAhcZVPBR/FAttkDLQocsz0ky+n9rF1b
-         gS7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3oXaLGXNijYtKr3m1G0rCz3DMwQ5gxTCrpV491oa6MMYabsZZODtNI3/P/wGvDq3xqekcSW+yMNbR@vger.kernel.org, AJvYcCVtP51CXSFTN6bdfLDLiaSeHqR1MQYKhJCSti3SWOikjj7lsohNX4JcZ7TFxczdd2kVs14lvTGd3SgN3M8sssxhI+M=@vger.kernel.org, AJvYcCWyudvbZyd37xH3H3l+uwBag1ONSj2n4g1bhhFVF9vxejQJafCl9bKJBWy7nsHwdvUZx7gnY18sW5MgFK7t@vger.kernel.org, AJvYcCXM2som8jblq3O4aymFOo5ck1F+AiIFaKZsGkjzHpn/pV96ad5jXOJZlBrUvmAFhe7z6ROWtkiuHMkH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw78l8EY391/zPwYtK6CC85l82liweClSv0AFu3o0qKgOfQnz2Y
-	ANgnU7NrfadHznZIGe6VETZ2gqwp2f7OpBO68foLrDih16e5KaiYxYi/Iv35fft+ABqokUvMyrx
-	+Lg1DqQrOop4075burJsCn185TIt6G+4=
-X-Gm-Gg: ASbGncuB+n1Iffd44ndCeSwUu76GxtME7ZSwSW4g2BWT70j7WcJl4pA+ixX0vxNhiN4
-	YBHQml2TI2pH3RxbVIfAkMwfBK2NWUegj7f0cefo4WNc/f/YdxRTvYFEi6bydjekRdc7YdlGWqq
-	6vfDymJuFvCUj1whw5VSK1akNzuZplFHADCXFtBCmOsdHoOA==
-X-Google-Smtp-Source: AGHT+IEWDvuz4zH4iWOydIQMgbrpQR3J1s4lhCZk8JE7vwP5jdDaVx6ppbnNqm2UA4NOKPnuTe1bjM/QFqa3jPbgQ4I=
-X-Received: by 2002:a05:6000:1acf:b0:3a4:d0ed:257b with SMTP id
- ffacd0b85a97d-3a56870469emr2315734f8f.22.1749809454252; Fri, 13 Jun 2025
- 03:10:54 -0700 (PDT)
+	s=arc-20240116; t=1749809492; c=relaxed/simple;
+	bh=eV5dij/xVVdWZ7Ruoum/ACUvzuYrQNJXgVUzOKX2hxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T7wJBJgb4pzVlt58R/HhjejtpWQv/ZRdZ5DZJMrFriH8X5X6P99RH9ly/LSexq+TlmmKDQoQ23pXMS4qy/knrGC77e+/m2/acIgVGTFwA5nc6ryfT2aI8MXPyJDfbeO0KSxxU0GoA149qgbi/77r3iTq7dkQsWAZaHvlpSE03t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VTa7IOok; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55DAB84i3108518;
+	Fri, 13 Jun 2025 05:11:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749809468;
+	bh=SDjWXiFIEzg7oivIUxsy2HUytMCGwhuL+H4VQFFHmys=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=VTa7IOokqFanonCYWLicGA+agbKakJW3I7dPMnbu9yIBpEy3CBzjcNRkdieWuVm0C
+	 tM6ITG0/skf+U/W+xt5O3moAy5JHuNn9nOEieaSzYleh2af99/tEmScGiOwkC2I6b+
+	 UshpJoRqve2eM+dgNEPep8Ua2St3FpBy01GrEeIg=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55DAB8bO2659538
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 13 Jun 2025 05:11:08 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 13
+ Jun 2025 05:11:07 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 13 Jun 2025 05:11:07 -0500
+Received: from [172.24.227.14] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.14])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55DAB1Cw3591830;
+	Fri, 13 Jun 2025 05:11:02 -0500
+Message-ID: <ae5f6910-7793-4a0b-a7fe-12cd5c87d42d@ti.com>
+Date: Fri, 13 Jun 2025 15:41:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609184114.282732-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250609184114.282732-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUCYjPP326g9MsnH8p6gM-vy33L4OsFFMGzsZbLbucTUA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUCYjPP326g9MsnH8p6gM-vy33L4OsFFMGzsZbLbucTUA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 13 Jun 2025 11:10:28 +0100
-X-Gm-Features: AX0GCFsNZ6GYODXXSo_A5GWSFs0V8tUCqmJPQVQONI8m8dqOA67nkeFpQLYGvN8
-Message-ID: <CA+V-a8sWMFEA5Ub8nGh6jygcQKKVm568nD2zo5HSE2jN1qp4pg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] dt-bindings: i2c: renesas,riic: Document RZ/T2H support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/bridge: ti-sn65dsi86: Add HPD for DisplayPort
+ connector type
+To: Doug Anderson <dianders@chromium.org>
+CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ideasonboard.com>, <max.krummenacher@toradex.com>,
+        <ernestvanhoecke@gmail.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+        <simona@ffwll.ch>, <kieran.bingham+renesas@ideasonboard.com>,
+        <linux-kernel@vger.kernel.org>, <max.oss.09@gmail.com>,
+        <devarsht@ti.com>, <geert@linux-m68k.org>
+References: <20250611052947.5776-1-j-choudhary@ti.com>
+ <CAD=FV=WvH73d78De3PrbiG7b6OaS_BysGtxQ=mJTj4z-h0LYWA@mail.gmail.com>
+ <547a35f4-abc0-4808-9994-ccc70eb3c201@ti.com>
+ <CAD=FV=XzSOqnLQCjDiJX7wrGH0UGq839a84v3QT9cj3eK+AeRA@mail.gmail.com>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <CAD=FV=XzSOqnLQCjDiJX7wrGH0UGq839a84v3QT9cj3eK+AeRA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Geert,
+Hello Doug,
 
-Thank you for the review.
+On 12/06/25 20:21, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, Jun 11, 2025 at 9:39 PM Jayesh Choudhary <j-choudhary@ti.com> wrote:
+>>
+>> Hello Doug,
+>>
+>> On 12/06/25 03:08, Doug Anderson wrote:
+>>> Hi,
+>>>
+>>> On Tue, Jun 10, 2025 at 10:29 PM Jayesh Choudhary <j-choudhary@ti.com> wrote:
+>>>>
+>>>> @@ -1195,9 +1203,17 @@ static enum drm_connector_status ti_sn_bridge_detect(struct drm_bridge *bridge)
+>>>>           struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
+>>>>           int val = 0;
+>>>>
+>>>> -       pm_runtime_get_sync(pdata->dev);
+>>>> +       /*
+>>>> +        * The chip won't report HPD right after being powered on as
+>>>> +        * HPD_DEBOUNCED_STATE reflects correct state only after the
+>>>> +        * debounce time (~100-400 ms).
+>>>> +        * So having pm_runtime_get_sync() and immediately reading
+>>>> +        * the register in detect() won't work, and adding delay()
+>>>> +        * in detect will have performace impact in display.
+>>>> +        * So remove runtime calls here.
+>>>
+>>> That last sentence makes sense in a commit message, but not long term.
+>>> Someone reading the code later won't understand what "remove" means.
+>>> If you change "remove" to "omit" then it all makes sense, though. You
+>>> could also say that a pm_runtime reference will be grabbed by
+>>> ti_sn_bridge_hpd_enable().
+>>
+>> Okay. Will edit this.
+>>
+>>>
+>>>
+>>>> +        */
+>>>> +
+>>>>           regmap_read(pdata->regmap, SN_HPD_DISABLE_REG, &val);
+>>>> -       pm_runtime_put_autosuspend(pdata->dev);
+>>>>
+>>>>           return val & HPD_DEBOUNCED_STATE ? connector_status_connected
+>>>>                                            : connector_status_disconnected;
+>>>> @@ -1220,6 +1236,20 @@ static void ti_sn65dsi86_debugfs_init(struct drm_bridge *bridge, struct dentry *
+>>>>           debugfs_create_file("status", 0600, debugfs, pdata, &status_fops);
+>>>>    }
+>>>>
+>>>> +static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+>>>> +{
+>>>> +       struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
+>>>> +
+>>>> +       pm_runtime_get_sync(pdata->dev);
+>>>> +}
+>>>> +
+>>>> +static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
+>>>> +{
+>>>> +       struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
+>>>> +
+>>>> +       pm_runtime_put_sync(pdata->dev);
+>>>> +}
+>>>> +
+>>>>    static const struct drm_bridge_funcs ti_sn_bridge_funcs = {
+>>>>           .attach = ti_sn_bridge_attach,
+>>>>           .detach = ti_sn_bridge_detach,
+>>>> @@ -1234,6 +1264,8 @@ static const struct drm_bridge_funcs ti_sn_bridge_funcs = {
+>>>>           .atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>>>>           .atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+>>>>           .debugfs_init = ti_sn65dsi86_debugfs_init,
+>>>> +       .hpd_enable = ti_sn_bridge_hpd_enable,
+>>>> +       .hpd_disable = ti_sn_bridge_hpd_disable,
+>>>>    };
+>>>>
+>>>>    static void ti_sn_bridge_parse_lanes(struct ti_sn65dsi86 *pdata,
+>>>> @@ -1322,7 +1354,8 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
+>>>>                              ? DRM_MODE_CONNECTOR_DisplayPort : DRM_MODE_CONNECTOR_eDP;
+>>>>
+>>>>           if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
+>>>> -               pdata->bridge.ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
+>>>> +               pdata->bridge.ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT |
+>>>> +                                   DRM_BRIDGE_OP_HPD;
+>>>
+>>> I think you also need this in the "DRM_MODE_CONNECTOR_DisplayPort" if test:
+>>>
+>>> /*
+>>>    * If comms were already enabled they would have been enabled
+>>>    * with the wrong value of HPD_DISABLE. Update it now. Comms
+>>>    * could be enabled if anyone is holding a pm_runtime reference
+>>>    * (like if a GPIO is in use). Note that in most cases nobody
+>>>    * is doing AUX channel xfers before the bridge is added so
+>>>    * HPD doesn't _really_ matter then. The only exception is in
+>>>    * the eDP case where the panel wants to read the EDID before
+>>>    * the bridge is added. We always consistently have HPD disabled
+>>>    * for eDP.
+>>>    */
+>>> mutex_lock(&pdata->comms_mutex);
+>>> if (pdata->comms_enabled)
+>>>     regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG,
+>>>       HPD_DISABLE, 0);
+>>> mutex_unlock(&pdata->comms_mutex);
+>>>
+>>> Does that sound right?
+>>
+>>
+>> Here I don't think it is necessary to add this because enable_comms
+>> will be called again after probe either in hpd_enable() (in case
+>> refclk exist) or pre_enable() (in case it doesn't) with correct value.
+> 
+> I don't think that's necessarily true, is it? From my memory, this happens:
+> 
+> 1. Main driver probe and we create the sub-devices, like the GPIO,
+> backlight, and AUX.
+> 
+> 2. As soon as the GPIO probe happens, someone could conceivably claim
+> one of the GPIOs and set it as an output, which would cause a
+> "pm_runtime" reference to be held indefinitely.
 
-On Thu, Jun 12, 2025 at 1:17=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 9 Jun 2025 at 20:41, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Document support for the I2C Bus Interface (RIIC) found on the Renesas
-> > RZ/T2H (R9A09G077) SoC. The RIIC IP on this SoC is similar to that on
-> > the RZ/V2H(P) SoC but supports fewer interrupts, lacks FM+ support and
-> > does not require resets. Due to these differences, add a new compatible
-> > string `renesas,riic-r9a09g077` for the RZ/T2H SoC.
-> >
-> > Unlike earlier SoCs that use eight distinct interrupts, the RZ/T2H uses
-> > only four, including a combined error/event interrupt. Update the bindi=
-ng
-> > schema to reflect this interrupt layout and skip the `resets` property
-> > check, as it is not required on these SoCs.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> > v1-> v2:
-> > - Listed the interrupts in the order as mentioned in the
-> >   HW manual.
-> > - Renamed the interrupt names to match the HW manual.
-> > - Added Acked-by and Reviewed-by tags.
->
-> Thanks for the update!
->
-> > --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-> > +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-> > @@ -29,32 +29,46 @@ properties:
-> >                - renesas,riic-r9a09g056   # RZ/V2N
-> >            - const: renesas,riic-r9a09g057   # RZ/V2H(P)
-> >
-> > -      - const: renesas,riic-r9a09g057   # RZ/V2H(P)
-> > +      - enum:
-> > +          - renesas,riic-r9a09g057   # RZ/V2H(P)
-> > +          - renesas,riic-r9a09g077   # RZ/T2H
-> >
-> >    reg:
-> >      maxItems: 1
-> >
-> >    interrupts:
-> > -    items:
-> > -      - description: Transmit End Interrupt
-> > -      - description: Receive Data Full Interrupt
-> > -      - description: Transmit Data Empty Interrupt
-> > -      - description: Stop Condition Detection Interrupt
-> > -      - description: Start Condition Detection Interrupt
-> > -      - description: NACK Reception Interrupt
-> > -      - description: Arbitration-Lost Interrupt
-> > -      - description: Timeout Interrupt
-> > +    oneOf:
-> > +      - items:
-> > +          - description: Transmit End Interrupt
-> > +          - description: Receive Data Full Interrupt
-> > +          - description: Transmit Data Empty Interrupt
-> > +          - description: Stop Condition Detection Interrupt
-> > +          - description: Start Condition Detection Interrupt
-> > +          - description: NACK Reception Interrupt
-> > +          - description: Arbitration-Lost Interrupt
-> > +          - description: Timeout Interrupt
-> > +      - items:
-> > +          - description: Transmit Error Or Event Generation
->
-> s/Transmit/Transfer/
->
-Agreed.
+I did not consider this.
 
-> > +          - description: Receive Data Full Interrupt
-> > +          - description: Transmit End Interrupt
-> > +          - description: Transmit Data Empty Interrupt
->
-> The last two don't match the order in the documentation, and the
-> order in interrupt-names below.
->
-Ouch, I'll fix that and send a new version.
+> 
+> 3. After AUX probes, we create the bridge sub-device.
+> 
+> 4. When the bridge probe runs, comms will still be enabled because the
+> "pm_runtime" reference keeps them on.
+> 
+> ...there's also the issue that we use "autosuspend" and thus comms can
+> still be left on for a chunk of time even after there are no
+> "pm_runtime" references left.
 
-Cheers,
-Prabhakar
+
+It makes sense.
+
+I will add this change, edit a couple of comments mentioned and make
+suspend asynchronous as suggested by Tomi (mark_last_bit and
+put_autosuspend) in next revision.
+
+Thanks,
+Jayesh
+
+
+> 
+> -Doug
 
