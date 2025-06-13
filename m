@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-685636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11753AD8C91
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:53:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CBCAD8C98
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00841E255A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151B2189CD51
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08AD2C859;
-	Fri, 13 Jun 2025 12:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B7B3BB48;
+	Fri, 13 Jun 2025 12:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QP8hRBt3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FeLqN/GS"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10A01862A;
-	Fri, 13 Jun 2025 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC9A347DD;
+	Fri, 13 Jun 2025 12:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749819224; cv=none; b=NFN5bZGMkORbKLincCmjEOd2u4JvaDnOT5p0irtnsrBwAMFgfnjaQQ/LVImxEmaO/owOhhOzMZhiGzjAfgARLmH2QDz01YiRZ6hkWkEaihiOnfvMbFM0I89TmrEm1isMtzw7fugSg2HYPpuaiBMfKg96/Yw/G+4SS9lg/U64F6E=
+	t=1749819234; cv=none; b=Q4v2tvKWOG2Ilvn3XK3DJT/581+IRIsSORmLnsqIjgWE3F/5ptu02lTCyVIHWeLDqYmbCkiwL8PlDhUx0L/IBFUIRkyOXD9YmtcSv7FM6GAZaaKcldazBnJIZYKlS/FbQvdqC2r3g0rL+DTnFTmrS/YARHBvVFuz44dWcVx5QH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749819224; c=relaxed/simple;
-	bh=bUAaw68plyRec84yC3DRAZa8bUPMpRAHJ9ginor+ThA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECsxl7Q9CIVHD7xdgzu6WmR7fzVGgqwM81bJu/74RCcBGKtXEnQMsIEzvxNH6/WnGqVW555d0t0sXuu8BBMMs6vvs1QglM1PYnRqdyy474+moxl1+YlvFzxTXp/WCy+KATcHbZbEC5JbdNwqV1i2DlB2hoH/s8+JlBTn+285MoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QP8hRBt3; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749819223; x=1781355223;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=bUAaw68plyRec84yC3DRAZa8bUPMpRAHJ9ginor+ThA=;
-  b=QP8hRBt3u/GLs+Y17INKzA95uRPzquDz2QLlIZw+qC7N5e/EPIRC1x+r
-   37PZMhsyZ9RsCQ+NL2K32u5ZpM2JoXJjJzi0VWZCAjsLZUrLN1yLEhWRN
-   4kpGXEOFtNoGPXHxTcsIJOjs+x1GcVisWe8IwXjqvd+tYeticGtDinGFA
-   ULTFWjcfVyFhN8Z2LVquI5aNY3cuFaMax0KUPZhfb/80eecG6XA18wyqJ
-   RRe7jQRB5N4tt8Qs4RMkJp6II5b/1ipyg0kRD7I9Q8hIfufsezW+VrsMn
-   G6oqq/S/acpOvlMkkID9LUNIzFafEAjZLtB8N8QqTEw5hXLGg2gLo7iuV
-   w==;
-X-CSE-ConnectionGUID: HFuhGv0nSYq/n/LpWliyZA==
-X-CSE-MsgGUID: ESPEZbyVQjCGPRzPfPVk8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="62685476"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="62685476"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:53:42 -0700
-X-CSE-ConnectionGUID: S4fC78AnSSWqOKrwz1YYJQ==
-X-CSE-MsgGUID: UononswRQiyDi0AwwC3mVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="178719207"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:53:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uQ3ua-00000006FUj-3dpQ;
-	Fri, 13 Jun 2025 15:53:36 +0300
-Date: Fri, 13 Jun 2025 15:53:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] iio: imu: inv_icm42600: add WoM support
-Message-ID: <aEwfUMgLTnQxOh_k@smile.fi.intel.com>
-References: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
- <20250613-losd-3-inv-icm42600-add-wom-support-v4-1-7e5f554201bf@tdk.com>
- <aEvhZiXHLLIRe41-@smile.fi.intel.com>
- <FR3P281MB17578B82AC67F49552E24EB3CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1749819234; c=relaxed/simple;
+	bh=xsyK3DDIp1rgLxrUI+jVN6D+Sh2hh46tvv4RC/83r74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FBNIqPkccJQf55a4MsJMzbwO8nYgO26h8e/Hc7Lb/DMHOndqLOZoTgMQeDndn0GOlSrRRUECsYonAh7VX8ECHO2MpNBF2pgD8a/ThLWQjHU7qdrwBCVIoi4pgyhBBkKKfMu7K6INihmzxp0ZoCPKwAlY4LYo5xFrEtDI2M9+Bs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FeLqN/GS; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-407a6c6a6d4so662619b6e.1;
+        Fri, 13 Jun 2025 05:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749819232; x=1750424032; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9uK7NfXjMZE9zyAnGAVVRnIGOP/qUCD+jt4heNuFuQs=;
+        b=FeLqN/GS2KD26DEN+Vt45XA4RqnQxDOxHo3/3vi1jaa3HClIXhOXgW/TMgQE/yTRwA
+         vyADfkfJl9ePvVZTEYNhLw7xLpz+SUl9ifZ6BUST5yrPp0nVRn47p2qlb0gzj4y0RRce
+         /qwgYznWGVOTdC07kFbcKWTAz26lK/61ictgbrteDDfNr1D/Znt8MWx4ti5WxBe50AYg
+         jgInfiy4jhKfMOXEveEAd8Rr5JJUrtMrUEgdboDc9mUDiNWhhGQUBOXXqUVSA7uTRYo7
+         /WtalYvTuds64RrAw++oxhM4UNjklODYlW3+0HtSf5gMn7b6C+aGJiDDIsUNuWdE3bYw
+         sRRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749819232; x=1750424032;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9uK7NfXjMZE9zyAnGAVVRnIGOP/qUCD+jt4heNuFuQs=;
+        b=GHnv9WfCdBpeE2gtEBPhs1NeiYJ9ily+4EThHb2i9I8NitzEDEKo+qNecyk3FMjtAn
+         f/+T10RtS0cG4uNsWHdM5ppHUdVtUpaSsjmP3jgVl95uXtq38NvV0qGwgPc47bUu38hI
+         eiwIIOyrdQZS5KTd/3NI9GTjFgVKJbI4Dmg4cU4qOoW5W4XeTQqVTJx3FNTI1NnSoxxs
+         dDPqqLh+2AVY7bsIPApoM1CC6Hfocz7H9kmicPQeQGeTNhdMBmkQjP4faVaJB4gJ7ZFm
+         M3ZGZST7YzVUPSaSp8ohRsU7y5QBtr71YWg5Nb0PGr836AwgNIsIqmEJYf5QkW7APmhW
+         pX6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUd7h0FT+t6Y0ldHEl7tXiQYorjr1YF59hm8jHYm9RbEemD836CMxKiKdEpUHzNIQQHikaxnjPEgF1MK58=@vger.kernel.org, AJvYcCWZfoGtjHuGcIvzGymiNEBujgt+REPRRZnmylMC+O2ak7gG5bS/bgHgOGcvAF2dHJZA2tgSUqHA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxReKGjMDaRetfyMxZj6k6LTDu4m3gYEBs1A0dTPCbO1YyCP+N0
+	sHakQxAiGvYxNLpWpXtUdTtsPq7lKyIMO101V8H0gXLg4zvkti9BA4yL0HiWuES4gBuqkIBMLdK
+	EsuW55LrjAXQtmSxnMm4Ofn4TQwGyb8Q=
+X-Gm-Gg: ASbGncsKqwT88ql9sruHK+mOf8P8B/GuxUaexwF78AGub4czwNa8bzbbE548TX80I+T
+	1qL77QRTbF4oYsxfzi6FLOB93jfhNC5vWvXEu09x5pf6E/Lp36ERN2bFh4mS7vGk7ct47oy1uX9
+	opGZiXIQaEec/urBQ7JWlPF3zSM8nKxF0odmx6f/9Q3y5zui+pNVUfnfNQMrDBg1Q+MavPjbocv
+	g==
+X-Google-Smtp-Source: AGHT+IG4oeSmNbFar9MLWvDxuCLCzS1cvjPlujNGI66zalqzF9G7WhJe/7gNkuUgdZQZqQaDPQKfIQiwXIfWMIU4QXY=
+X-Received: by 2002:a05:6808:4fe9:b0:404:dd07:9703 with SMTP id
+ 5614622812f47-40a723a0827mr2330242b6e.26.1749819231675; Fri, 13 Jun 2025
+ 05:53:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <FR3P281MB17578B82AC67F49552E24EB3CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <cover.1749723671.git.mchehab+huawei@kernel.org>
+ <08ac4b3457b99037c7ec91d7a2589d4c820fd63a.1749723671.git.mchehab+huawei@kernel.org>
+ <m2y0tvnb0e.fsf@gmail.com> <20250613144014.5ae14ae0@foz.lan>
+In-Reply-To: <20250613144014.5ae14ae0@foz.lan>
+From: Donald Hunter <donald.hunter@gmail.com>
+Date: Fri, 13 Jun 2025 13:53:40 +0100
+X-Gm-Features: AX0GCFueKdzQLScURrrCaq--58okmj1NFh4Gy-SFqVk9_ecMKypyt0JhaFhZIuE
+Message-ID: <CAD4GDZwLW0yogWitN5vbfkDhpZZ=0YCnDh+taRzwnv_CY9Miag@mail.gmail.com>
+Subject: Re: [PATCH v2 06/12] scripts: lib: netlink_yml_parser.py: use classes
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Akira Yokosawa <akiyks@gmail.com>, Breno Leitao <leitao@debian.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Ignacio Encinas Rubio <ignacio@iencinas.com>, Jan Stancek <jstancek@redhat.com>, 
+	Marco Elver <elver@google.com>, Paolo Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, joel@joelfernandes.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org, 
+	stern@rowland.harvard.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 13, 2025 at 12:46:46PM +0000, Jean-Baptiste Maneyrol wrote:
-> >From: Andy Shevchenko <andriy.shevchenko@intel.com>
-> >Sent: Friday, June 13, 2025 10:29
-> >On Fri, Jun 13, 2025 at 09:34:26AM +0200, Jean-Baptiste Maneyrol via B4 Relay wrote:
-
-...
-
-> >> +	if (sleep_ms)
-> >> +		msleep(sleep_ms);
+On Fri, 13 Jun 2025 at 13:40, Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> Em Fri, 13 Jun 2025 12:20:33 +0100
+> Donald Hunter <donald.hunter@gmail.com> escreveu:
+>
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 > >
-> >I still wonder if we can get rid of the conditional here.
-> >Would the
+> > > As we'll be importing netlink parser into a Sphinx extension,
+> > > move all functions and global variables inside two classes:
+> > >
+> > > - RstFormatters, containing ReST formatter logic, which are
+> > >   YAML independent;
+> > > - NetlinkYamlParser: contains the actual parser classes. That's
+> > >   the only class that needs to be imported by the script or by
+> > >   a Sphinx extension.
 > >
-> >	fsleep(sleep_ms * USEC_PER_MSEC)
-> >
-> >actually work as expected?
-> >
-> >Ditto for other case(s) like this.
-> 
-> fsleep(0) would call udelay(0) which is architecture dependent. It seems like
-> it may delay for a very little while, but I'm not able to check that.
+> > I suggest a third class for the doc generator that is separate from the
+> > yaml parsing.
+>
+> Do you mean moving those two (or three? [*]) methods to a new class?
+>
+>     def parse_yaml(self, obj: Dict[str, Any]) -> str:
+>     def parse_yaml_file(self, filename: str) -> str:
+>     def generate_main_index_rst(self, output: str, index_dir: str) -> None:
+>
+> Also, how should I name it to avoid confusion with NetlinkYamlParser?
+> Maybe YnlParser?
 
-Hmm... This is unfortunate. Somebody needs at least make it clear in the
-documentation if not yet done.
+On second thoughts, I see that the rst generation is actually spread
+through all the parse_* methods so they are all related to doc generation.
 
-...
+I suggest putting all the parse_* methods into a class called
+YnlDocGenerator, so just the 2 classes.
 
-> >Overall, looking to this patch again, I think it would be better to prepend it
-> >by replacing *int*_t types by the respective uXX ones. Because in this patch
-> >we add dozens of new ones which increases an unneeded churn in the future.
-> >
-> In my opinion, to respect the rule don't mix *int*_t and uXX types, it is better
-> to keep *int*_t types. If it need to be changed, we can change afterward the
-> whole driver types with a replace tool and send it in a separate patch.
+And I'm hoping that generate_main_index_rst can be removed.
 
-It will be never ending story, sorry. We need someone to solve this tech debt.
-And since this patch adds more than 3 new users of it, I think it's a candidate
-to embrace the burden.
+> [*] generate_main_index_rst is probably deprecated. eventually
+>     we may drop it or keep it just at the command line stript.
+>
+> > The yaml parsing should really be refactored to reuse
+> > tools/net/ynl/pyynl/lib/nlspec.py at some point.
+>
+> Makes sense, but such change is out of the scope of this series.
 
-> Jonathan,
-> what is your statement on this point?
+Agreed
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Donald.
 
