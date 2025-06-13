@@ -1,70 +1,49 @@
-Return-Path: <linux-kernel+bounces-684785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23422AD802B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B885AD8032
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839403AEA10
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:17:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA423B0F75
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AF51D619F;
-	Fri, 13 Jun 2025 01:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA701D63C5;
+	Fri, 13 Jun 2025 01:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="EbNxmQTG"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b35X8M09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20F818FC91;
-	Fri, 13 Jun 2025 01:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749777439; cv=pass; b=S+UoIVAVee2HClZq7zwq/DrcuyW1aCKSZ4WGPGPesgjRHoB4j4cKAvs/pBYwKIyvQa8dAvz73gm5tllGfbql/aeI/Lshn1bZ85jGd4PoKBKdHoKaUDcxPS+TX4ErHXspdHFi/C5nSxYU/5obGAm4i81y6cebXX1qOemJ1NpWqeI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749777439; c=relaxed/simple;
-	bh=SE2gMvs69KJwEeMw4LVG+uxkdQffyaxBJ1kUt7qde/s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WA8DJBO9HhIM/UpbSsmbq1Hw77c9QBazYE9rWRTIB/4iNLqkWelRZhALp5Xbv5eUUh52ZQcEPelyeKE5MZF5Beik5PRHHxDWSutLZdhHLE/f9GI1YXtfCjaEM3e1v/f556woCmBbCrvrmhU65DiBMp03+FwP02hT8vjMq86WXdw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=EbNxmQTG; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749777420; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Db5ZLSqEvxz/mh/pQ3q9oRJsi//zI1yZf/QM1J0jhr4PRO3j1lE6qKbTLavQy4fZK1/fRIY6ZUa610w2YZQYcHtOHRnDhy3PlOYuRLNxYcytOko9ElizJolihIzYp6o6ZxrOvd20zNom8Ijnyv1xVVaEB8YDAWBG3TIpuePDoJg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749777420; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0L7BKWvOuvfVDSg+VJCsKrEDpK9Jj14ttaNHAKYRQHQ=; 
-	b=aeHYIC7nsPoP4Q0HIcN82gYUys2YCzkIv+jDsAOcrP7tPT7JzIIDIW24AclzwLKeZT6ejs2q97yK+HsCmma7uoKANpGqDJy4GuiWyg1KwFbQR1QLEE2M15V7lJm7ZYZBh8urdhAwGdf/eVSR1hvWfMfN9oW+fx4N+WJqUDlzpow=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749777420;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=0L7BKWvOuvfVDSg+VJCsKrEDpK9Jj14ttaNHAKYRQHQ=;
-	b=EbNxmQTGcve2F9r3TJ3mWwMIFzeyynWBOE0t68u1TchLLfTzX7RD0Iq7B4FacLsM
-	/JAyhS3JcypGgHpXXTTdMoXinP5cPlG0IVbwvqZRtoj2XHvRF675hB8A3cWNNtX4Ygn
-	IWjQsQApt1RJct+euNEyb99TT5E9gr1YlnjSPmHU=
-Received: by mx.zohomail.com with SMTPS id 1749777417445827.3026025740155;
-	Thu, 12 Jun 2025 18:16:57 -0700 (PDT)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	shiju.jose@huawei.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH v2 1/1] cxl/edac: Fix potential memory leak issues
-Date: Fri, 13 Jun 2025 09:16:48 +0800
-Message-Id: <20250613011648.102840-1-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7851420DD;
+	Fri, 13 Jun 2025 01:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749777599; cv=none; b=QMdGBB0FHk3QH5H15yaB2YzTtylkAuHniF7gkQQy/1DyW7bvcHoF1tdWOAPOEA29wM4qzPnZCHjsC/BNwd0mYWWkASod2Jr9HWLbLT6fZt89Z246NeiukOE8Fo7ManyzNBPwiYePVxCbuagWf83WzS5IekKR9EuV7NfFUd5yeDg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749777599; c=relaxed/simple;
+	bh=r4mE97ua+bkOvUmTWRgQCtRNdee4YOd1InjvmIXuWH8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=lG4FuI4nRB+WBEIz6e8URLQoChELrPqNkAlpJXg8JKtUiJgMjl61a83fSi0jhszYhoWAuAb0LKgIPgEPPJx9ITT94kWd2SMT9OZoqfTeVZIwFJuvWqyTgB6xPdmr0gzTncaFbh4KebW2YJugwS7R3DuPgf1R8nv2bq9MU8YvOu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b35X8M09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA456C4CEEA;
+	Fri, 13 Jun 2025 01:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749777599;
+	bh=r4mE97ua+bkOvUmTWRgQCtRNdee4YOd1InjvmIXuWH8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=b35X8M09pnfbvYnyfomGmGYFUvR+aONRM1j6E+yph+2Vfzmx59MI/sQ+LI1wLo2je
+	 6goO+zuuLO5wA+7LFWOrd6W5Cv5NRoxaDJF3pquW4GnU8fMhqT/mx1XWjh/0TH26lD
+	 Ek0txaKJtybY3cPaqI4eKJQ3SNW7ymmM+eaV4CWC7aNwiany00JDyGmOst4AQ0AXkZ
+	 wSWsrLPanDLDqViCgQAPKTmatbzAogjzV+j4gWjxKiEgIaNDqlF0oIT5RJ97Ftrvc8
+	 aOjdLLwMrNNH9o0OwtEUP5C8mr+SbAyEzL+J8nQDLfaSDVy6xZp/AVf+4XiXjKNUAl
+	 xRdUxMwZxTIzw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACBA39EFFCF;
+	Fri, 13 Jun 2025 01:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,56 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227ff1cd31c31c3086469305e060000dd3b71e465ed97275de562b51b202c59a863dfd2c3f51342fd:zu08011227b54d31b1826e7d32de7773280000d77a85a4d1c2189b604832687dc28b70bdb85ab02935fabd17:rf0801122de8fac3f0d9d5f5827a75cffe00007d19148ccccaa9f940ed8e926b7502348fcbb750edebe5f7c88f2e37fe28e7:ZohoMail
-X-ZohoMailClient: External
+Subject: Re: [PATCH net] ionic: Prevent driver/fw getting out of sync on
+ devcmd(s)
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174977762875.176894.10298712830260716394.git-patchwork-notify@kernel.org>
+Date: Fri, 13 Jun 2025 01:20:28 +0000
+References: <20250609212827.53842-1-shannon.nelson@amd.com>
+In-Reply-To: <20250609212827.53842-1-shannon.nelson@amd.com>
+To: Shannon Nelson <shannon.nelson@amd.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, brett.creeley@amd.com
 
-In cxl_store_rec_gen_media() and cxl_store_rec_dram(), use kmemdup() to
-duplicate a cxl gen_media/dram event to store the event in a xarray by
-xa_store(). The cxl gen_media/dram event allocated by kmemdup() should
-be freed in the case that the xa_store() fails.
+Hello:
 
-Fixes: 0b5ccb0de1e2 ("cxl/edac: Support for finding memory operation attributes from the current boot")
-Signed-off-by: Li Ming <ming.li@zohomail.com>
-Tested-by: Shiju Jose <shiju.jose@huawei.com>
-Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
----
-v2:
-* Use kfree() instead of __free(kfree). (Jonathan)
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-base-commit: 87b42c114cdda76c8ad3002f2096699ad5146cb3 cxl/next
----
- drivers/cxl/core/edac.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+On Mon, 9 Jun 2025 14:28:27 -0700 you wrote:
+> From: Brett Creeley <brett.creeley@amd.com>
+> 
+> Some stress/negative firmware testing around devcmd(s) returning
+> EAGAIN found that the done bit could get out of sync in the
+> firmware when it wasn't cleared in a retry case.
+> 
+> While here, change the type of the local done variable to a bool
+> to match the return type from ionic_dev_cmd_done().
+> 
+> [...]
 
-diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
-index 2cbc664e5d62..628786def464 100644
---- a/drivers/cxl/core/edac.c
-+++ b/drivers/cxl/core/edac.c
-@@ -1099,8 +1099,10 @@ int cxl_store_rec_gen_media(struct cxl_memdev *cxlmd, union cxl_event *evt)
- 	old_rec = xa_store(&array_rec->rec_gen_media,
- 			   le64_to_cpu(rec->media_hdr.phys_addr), rec,
- 			   GFP_KERNEL);
--	if (xa_is_err(old_rec))
-+	if (xa_is_err(old_rec)) {
-+		kfree(rec);
- 		return xa_err(old_rec);
-+	}
- 
- 	kfree(old_rec);
- 
-@@ -1127,8 +1129,10 @@ int cxl_store_rec_dram(struct cxl_memdev *cxlmd, union cxl_event *evt)
- 	old_rec = xa_store(&array_rec->rec_dram,
- 			   le64_to_cpu(rec->media_hdr.phys_addr), rec,
- 			   GFP_KERNEL);
--	if (xa_is_err(old_rec))
-+	if (xa_is_err(old_rec)) {
-+		kfree(rec);
- 		return xa_err(old_rec);
-+	}
- 
- 	kfree(old_rec);
- 
+Here is the summary with links:
+  - [net] ionic: Prevent driver/fw getting out of sync on devcmd(s)
+    https://git.kernel.org/netdev/net/c/5466491c9e33
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
