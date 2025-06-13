@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-685545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3077AD8B21
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:48:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A2DAD8B31
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACEF61E4C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DBCB3A7659
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAA42ECEB8;
-	Fri, 13 Jun 2025 11:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0562E0B54;
+	Fri, 13 Jun 2025 11:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCZ5OEll"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvz6J9l6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC412E7F17;
-	Fri, 13 Jun 2025 11:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA1C2ED873;
+	Fri, 13 Jun 2025 11:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749814967; cv=none; b=ATowjSd7MGeaQ6mA7D12tKGv6kPgNkmKbumDIqJdc+4rAKyRMJyJaxORq+ggbLB1KdRZkD5QFuwSoxmz/UVuI943aOoSvYbu4yw5dXlbRH85XFSjAR+pQiwI15juoghKdgAnKG7fipaasvdBWDRo6tKh7vKJ1Z8xjRLUDQXzYDc=
+	t=1749814975; cv=none; b=fDtXGdtJysQAlkawrRuSlWu1IOGGERvDEMtwosM82unm4qY+WzuVSWRLOJZ3MFkZ3gAzFjMSHWlRq+DfmtTNeYaOhs6MiWzmkGzLOeKuq2k9m6nk84IABn2SAaL6q3KsVO6wYl3ZALPMgoe+xy7mPdH88OHnuZ6wxTRHdGh+aRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749814967; c=relaxed/simple;
-	bh=jazvmyYFMnGYOxxVZMEBOjTd9mMz+TrushWEPpOXIDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O4F31+cNvfKmlw62gFu34Rlu+wkYxz5vJIFlBDZx+6FnnkUHdIYmltDqUa38SUT5m/nBu3Yd+0Z6hikJS8hCquruXJh7oAvfg9saK5do4I6e41TPyFnmQgezVGFPUWEzVvmqTc0B0hjpRFyYGOpz9CIJ+v8iAyu9HThtB/GuygY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BCZ5OEll; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BEFC4CEF0;
-	Fri, 13 Jun 2025 11:42:47 +0000 (UTC)
+	s=arc-20240116; t=1749814975; c=relaxed/simple;
+	bh=pCBlCuG9Neif5IPi1RmChNHeLoVqg6sWDPGO2L3rdng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fBNJNhTX3N9w7Cpitd68ES3hArJgAVgRoyjdmJJaVYWN5SEzpb4PF31fZ3h/+2/WLpyfiHEOcbAAcZGJG/UefsQ+A41dku+YWX1Z/iVVPFbSJdhuF4SdPsSj2Rvc4Fut5RMQlEroh3cVBHsb6U0xl75Nm5SJYpIIcd8HqUICSI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvz6J9l6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5871AC4CEE3;
+	Fri, 13 Jun 2025 11:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749814967;
-	bh=jazvmyYFMnGYOxxVZMEBOjTd9mMz+TrushWEPpOXIDU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BCZ5OEll50G95vHVAMlJ4oAHPBCfNFX3WUcZFFup++oyru4a1NoZa4Sq8j+h/KvWG
-	 YH2FBzmyxbYLNcA8LxeeCh52QyoUbXXjnfi7rbg+ur7NCwctf2WkRzCmzDeS63mF+E
-	 OGbcHd0lKDPspvm7fW+FUxEPHz4NgkjD4VDEXDDCRVI1uN+8YUvIHE9DQONsF80N5p
-	 XOS2jR0pCwppCQAoR4A0q18cd1hr77zSnQ8vRH/YoxTsiqeVHI+ea9ROobCLPk8BiV
-	 lytCcoR9GaSCr0SDEu7nEBuqodSoQE8te0qJSL22O0U+7TepL1MCf10RNEAeu5gs0d
-	 3Ru45k/lEE3mg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uQ2o1-00000005dFj-1lXM;
-	Fri, 13 Jun 2025 13:42:45 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Marco Elver" <elver@google.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v3 16/16] docs: Makefile: disable check rules on make cleandocs
-Date: Fri, 13 Jun 2025 13:42:37 +0200
-Message-ID: <18a6c2c8a9f331b3d1abc6e943d0e5aa2bc18655.1749812870.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749812870.git.mchehab+huawei@kernel.org>
-References: <cover.1749812870.git.mchehab+huawei@kernel.org>
+	s=k20201202; t=1749814975;
+	bh=pCBlCuG9Neif5IPi1RmChNHeLoVqg6sWDPGO2L3rdng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kvz6J9l61wbBCQv3BuKWM9TEx1ApP+hCbHvp9m6ZDvH+nkMvLxD02kCYauL4MOrX2
+	 /Pm2kofSDJn2ZLpRDuC1RLr3zB2dWuzrehvtqe/PPhNrAEs5R8nVZ4ZZJqK3vM5bm5
+	 fXZl78J2QwO+Zptb7Oxn7sODSQ7jPwl48e6Bh8YtWG1JnsQmXFx5kHE4SXclLpxowp
+	 zUceEWFeMTK+QqaQx/ynqmxycQotIZYSahdp0kFE4I5FCT9CVCHfFo15vwAsvAIT96
+	 GPXHtJwXtN0UuRAUA3ZieY0+delpZXtnr+D5yLkPf02wC9URgQnR/f26LG9t5wYEkH
+	 FFLXlewdNLsdA==
+Date: Fri, 13 Jun 2025 17:12:48 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: grwhyte@linux.microsoft.com
+Cc: linux-pci@vger.kernel.org, shyamsaini@linux.microsoft.com, 
+	code@tyhicks.com, Okaya@kernel.org, bhelgaas@google.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
+Message-ID: <ccclacbxzdarqy27wlwqqcsogbrodwwslt7t5sp64xvqpa3wsl@xs5cllh7a6ft>
+References: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+In-Reply-To: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
 
-It doesn't make sense to check for missing ABI and documents
-when cleaning the tree.
+On Wed, Jun 11, 2025 at 12:05:50AM +0000, grwhyte@linux.microsoft.com wrote:
+> From: Graham Whyte <grwhyte@linux.microsoft.com>
+> 
+> Add a new flr_delay member of the pci_dev struct to allow customization of
+> the delay after FLR for devices that do not support immediate readiness
+> or readiness time reporting. The main scenario this addresses is VF
+> removal and rescan during runtime repairs and driver updates, which,
+> if fixed to 100ms, introduces significant delays across multiple VFs.
+> These delays are unnecessary for devices that complete the FLR well
+> within this timeframe.
+> 
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+I don't think it is acceptable to *reduce* the standard delay just because your
+device completes it more quickly. Proper way to reduce the timing would be to
+support FRS as you said, but we cannot have arbitrary delays for random devices.
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 9185680b1e86..820f07e0afe6 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -5,6 +5,7 @@
- # for cleaning
- subdir- := devicetree/bindings
- 
-+ifneq ($(MAKECMDGOALS),cleandocs)
- # Check for broken documentation file references
- ifeq ($(CONFIG_WARN_MISSING_DOCUMENTS),y)
- $(shell $(srctree)/scripts/documentation-file-ref-check --warn)
-@@ -14,6 +15,7 @@ endif
- ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
- $(shell $(srctree)/scripts/get_abi.py --dir $(srctree)/Documentation/ABI validate)
- endif
-+endif
- 
- # You can set these variables from the command line.
- SPHINXBUILD   = sphinx-build
+- Mani
+
+> Patch 1 adds the flr_delay member to the pci_dev struct
+> Patch 2 adds the msft device specific quirk to utilize the flr_delay
+> 
+> ---
+> v2->v3:
+> - Removed Microsoft specific pcie reset reset, replaced with customizable flr_delay parameter
+> - Changed msleep in pcie_flr to usleep_range to support flr delays of under 20ms 
+> v1->v2:
+> - Removed unnecessary EXPORT_SYMBOL_GPL for function pci_dev_wait
+> - Link to thread:https://lore.kernel.org/linux-pci/?q=f%3Agrwhyte&x=t#m7453647902a1b22840f5e39434a631fd7b2515ce'
+> 
+> Link to V1: https://lore.kernel.org/linux-pci/20250522085253.GN7435@unreal/T/#m7453647902a1b22840f5e39434a631fd7b2515ce  
+> 
+> Graham Whyte (2):
+>   PCI: Add flr_delay parameter to pci_dev struct
+>   PCI: Reduce FLR delay to 10ms for MSFT devices
+> 
+>  drivers/pci/pci.c    |  8 ++++++--
+>  drivers/pci/pci.h    |  2 ++
+>  drivers/pci/quirks.c | 20 ++++++++++++++++++++
+>  include/linux/pci.h  |  1 +
+>  4 files changed, 29 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
+> 
+
 -- 
-2.49.0
-
+மணிவண்ணன் சதாசிவம்
 
