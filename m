@@ -1,176 +1,157 @@
-Return-Path: <linux-kernel+bounces-686055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF592AD9296
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:09:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BB9AD929A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 016DE3A1BF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5C03B0D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA891FC0FE;
-	Fri, 13 Jun 2025 16:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3D520E30F;
+	Fri, 13 Jun 2025 16:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mU3EcCeQ"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="n8vJJkcX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JfZsfLrc"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE9478F5E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7A32E11D2;
+	Fri, 13 Jun 2025 16:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749830803; cv=none; b=HbzUV58FlDJ02NQjsCGCsEdkSGyazHd4SmSafxx5QlPTV2zJS8PjHaIDd4ebxMGDORZxGiShp3RtkRHr1niSvhEUYZhaLP+ETM0ofVMgLwwMSHWARDX1HtEMioWyi3fZtOPDwZkAjDcDwJ4gSpwSNxxNg/F1QqFU3e9kqMM3y2o=
+	t=1749830856; cv=none; b=jPJlx7r3ppF76IGLLmr+CcWDPd/RH/kH/UDUdTHDRbpP4hD8dkqZmeuy4RQLSwlMB9sAdpnLRw1uhHj7T3+6CjK0SKwRTsx5CP4SbrYHDqkqEiPzvbX+K1Puo5Mk4cVStFKpVU0jJxeN8xLG4+Tx01nzvDRsdJH4V6zGLijlI7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749830803; c=relaxed/simple;
-	bh=/NeY+ngXyMi+qDIzTnS/XqlwdHQph8t9i32nDq+xGlc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fwkyTVT0H93/D2W7oONd2Nt9EBgAg4cC8KuPESobhX+/1OjO50agg/3yPDFnFFP6N+lGcOHUMXDyXMCyEqom+MeT2K0kBO7AfpE+o2uZFOs5abjNF6WtN5oZQkFc5s1Y91k1ioMPhvKl0I4VEZhHwMyW6LgJHrcAMvSLKfChg2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mU3EcCeQ; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <24c4dfe9-ae3a-4126-b4ec-baac7754a669@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749830788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I2N7u3LdY6tKY81X57d2CYxFMGFItj7ixzsiGoxXQJM=;
-	b=mU3EcCeQaLSTLm2rizFes01egO1u2Q33TnpqKl6SQT1ldDUf+cYna0OnlnEQ/aTt68Vszz
-	eabfq0djvZPbgjCkWLa1HRyfv/JItxfUbZ3gSrXoq+zT3fEvNCv+2cf3pFSgxNDmmA/SN+
-	CB83LX1kFsLv9EaXRnOE4rSyRq8UUtA=
-Date: Fri, 13 Jun 2025 12:06:23 -0400
+	s=arc-20240116; t=1749830856; c=relaxed/simple;
+	bh=MNz8gwHFXSriklMe/8KoYKMqq4hYPlrQVKa1bvbLYLk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sb0ZivXZ31GGwvATUqe9W6lbB8SpHpiTgT2O+aBc0obrMzSrMojwPnugd0y/sOzh35zo8+5waCq4v8xbJK5bAlWMR2vtGbhtQ0Fr3SqVGH0ogBvVfekhSYs93WJV6ffIFsK843o8jeS7MJpRUd1SSI5zd/l7gJAWsiIgb2JzH3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=n8vJJkcX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JfZsfLrc; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 89A5B1380394;
+	Fri, 13 Jun 2025 12:07:32 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 13 Jun 2025 12:07:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749830852;
+	 x=1749917252; bh=V20vyYK7C1e227OIfs4VLw6bkef6iatlvuFGlABdYfg=; b=
+	n8vJJkcXcxEe3xviJVzSsGYutA63lu2pc/ll6HtDgvk0zU9wS4jznBbIEyrrJBlh
+	64eeHIrhUxlEf6BmPgH1xR2iaAisTOvp7exZSgxo4I5PvPLqPOm3sDPjR0X4Gmlt
+	lMKAa3F7/GSJkyxMVDITMlGJQuOymNUheSO6tCnUkgtU7HiVVOjtSLv+yirUfnWl
+	e6KEUcto/rB3TJZKSCxjG9NiRk2rzZ/UqcYkcCRN3afOy8F0cKSLEoqnZd8qivUU
+	OVSdWYSUFAr/QppvaPus96Ay+nfYuZh1sS7b6DMiDhXRXCetBFyWxjd5y9+vmVnK
+	Rkx6TXd2rutkk5ujt4JdnQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749830852; x=
+	1749917252; bh=V20vyYK7C1e227OIfs4VLw6bkef6iatlvuFGlABdYfg=; b=J
+	fZsfLrc9CVCpIUpxcWUKPRrK+BhAzGqUnC3+7m58WzGAl590mvj50nnXp5QD6/8W
+	zlmL0kMpsny8oc9RCM1vEFH5UHek9tX4JwIx+X4AwLPmUXYrTkKp0g+iSWPRlaFK
+	Rlji7cFCcMy7DKWRazjyuBpdiFKGpZJf33ZXfgsRPWzuwF5Nxl8yOs37R9FvDkzj
+	heLoimlSUXPSdsNcKsM2iUCoBWJiRWf3Jzu794HN0JFDHu67islyveQAE4U7IaxU
+	UxJex7bwkFL8I08mMIRU1y07wePtjwRZYXKfMmuZ3Z5QzEurmNljnHxWnEGt+kfA
+	aD0egE44Q/bWeQaD73FmQ==
+X-ME-Sender: <xms:xExMaKmL0Pz8M-QTbuPYe5k6f4xl_QmCLCW8n0nFajUhucrBNtwCqQ>
+    <xme:xExMaB1pB5j4hJaeXVMBhWXmWbOpA4mi9ONsNasS7kTi0AtzbxJtE-YVxTcnEOoxF
+    5_DkqZETCJXb_GsfUY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddukeefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopeifvghirdhlihhusehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehnuhhnohgurghsnhgvvhgvsheslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprh
+    gtphhtthhopehrohhmrghnkheslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgt
+    phhtthhopehsshgvnhhgrghrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtg
+    hpthhtohepuggvtghuihesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehhrghi
+    higrnhhgiiesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehkhihssehmihgtrh
+    hoshhofhhtrdgtohhmpdhrtghpthhtohepmhhhkhhlihhnuhigsehouhhtlhhoohhkrdgt
+    ohhm
+X-ME-Proxy: <xmx:xExMaIontGdfZJ2E60J50iATydKwvQBRScjxGXA7SOZmpshLpHdl9w>
+    <xmx:xExMaOk9VmcqGGTBs7fJRTHHpq3AJuQ5rPlKIK8hywqJQnzYrNhimA>
+    <xmx:xExMaI12Z9jhrcy8S9DQ421FYlNdDuifusbFFB2tJaT1LA1r7LUcTQ>
+    <xmx:xExMaFvEcinH4Tf9WnEt22AnMGBsKpPCu0e9U-DDsTma7UuUHKwjsA>
+    <xmx:xExMaJ8DL5TUJkEI1xZeVfnvSPmeI1qRK743zOvUAItWrsComRXf7zvT>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2A520700065; Fri, 13 Jun 2025 12:07:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC] comparing the propesed implementation for standalone PCS
- drivers
-To: Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Russell King <linux@armlinux.org.uk>,
- Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- Kory Maincent <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>,
- Christian Marangi <ansuelsmth@gmail.com>, Lei Wei <quic_leiwei@quicinc.com>,
- Michal Simek <michal.simek@amd.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Robert Hancock <robert.hancock@calian.com>, John Crispin <john@phrozen.org>,
- Felix Fietkau <nbd@nbd.name>, Robert Marko <robimarko@gmail.com>
-References: <aEwfME3dYisQtdCj@pidgin.makrotopia.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <aEwfME3dYisQtdCj@pidgin.makrotopia.org>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: Tc9e620b0a09597a4
+Date: Fri, 13 Jun 2025 18:06:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Michael Kelley" <mhklinux@outlook.com>,
+ "Roman Kisel" <romank@linux.microsoft.com>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Dexuan Cui" <decui@microsoft.com>,
+ "Haiyang Zhang" <haiyangz@microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nunodasneves@linux.microsoft.com" <nunodasneves@linux.microsoft.com>,
+ "Saurabh Singh Sengar" <ssengar@linux.microsoft.com>,
+ "Wei Liu" <wei.liu@kernel.org>
+Message-Id: <c449d792-fcdc-4b08-a76e-519c0a64525d@app.fastmail.com>
+In-Reply-To: 
+ <SN6PR02MB4157D600219C00D33D00C3B4D477A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250610091810.2638058-1-arnd@kernel.org>
+ <20250610153354.2780-1-romank@linux.microsoft.com>
+ <df1261e1-25d4-43ae-88c4-4f5d75370aee@app.fastmail.com>
+ <SN6PR02MB4157CE643DEB6CE4B0AEFC00D46AA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB4157D3A61C5DB1357267D712D46AA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB4157D600219C00D33D00C3B4D477A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Subject: Re: [PATCH] hv: add CONFIG_EFI dependency
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 6/13/25 08:55, Daniel Golle wrote:
-> Hi netdev folks,
-> 
-> there are currently 2 competing implementations for the groundworks to
-> support standalone PCS drivers.
-> 
-> https://patchwork.kernel.org/project/netdevbpf/list/?series=970582&state=%2A&archive=both
-> 
-> https://patchwork.kernel.org/project/netdevbpf/list/?series=961784&state=%2A&archive=both
-> 
-> They both kinda stalled due to a lack of feedback in the past 2 months
-> since they have been published.
-> 
-> Merging the 2 implementation is not a viable option due to rather large
-> architecture differences:
-> 
-> 				| Sean			| Ansuel
-> --------------------------------+-----------------------+-----------------------
-> Architecture			| Standalone subsystem	| Built into phylink
-> Need OPs wrapped		| Yes			| No
-> resource lifecycle		| New subsystem		| phylink
-> Supports hot remove		| Yes			| Yes
-> Supports hot add		| Yes (*)		| Yes
-> provides generic select_pcs	| No			| Yes
-> support for #pcs-cell-cells	| No			| Yes
-> allows migrating legacy drivers	| Yes			| Yes
-> comes with tested migrations	| Yes			| No
-> 
-> (*) requires MAC driver to also unload and subsequent re-probe for link
-> to work again
-> 
-> Obviously both architectures have pros and cons, here an incomplete and
-> certainly biased list (please help completing it and discussing all
-> details):
-> 
-> Standalone Subsystem (Sean)
-> 
-> pros
-> ====
->  * phylink code (mostly) untouched
->  * doesn't burden systems which don't use dedicated PCS drivers
->  * series provides tested migrations for all Ethernet drivers currently
->    using dedicated PCS drivers
-> 
-> cons
-> ====
->  * needs wrapper for each PCS OP
->  * more complex resource management (malloc/free) 
->  * hot add and PCS showing up late (eg. due to deferred probe) are
->    problematic
->  * phylink is anyway the only user of that new subsystem
+On Fri, Jun 13, 2025, at 17:50, Michael Kelley wrote:
+> From: Michael Kelley <mhklinux@outlook.com> Sent: Tuesday, June 10, 
+>
+> There are other ways to express the HYPERV dependency on EFI that is
+> conditional. But if the condition includes HYPERV_VTL_MODE (which
+> it needs to), then there's a dependency loop because
+> HYPERV_VTL_MODE depends on HYPERV. So that doesn't work
+> either.
+>
+> To solve the immediate problem, we'll just have to do
+>
+>     select SYSFB if EFI && !HYPERV_VTL_MODE
 
-I mean, if you want I can move the whole thing to live in phylink.c, but
-that just enlarges the kernel if PCSs are not being used. The reverse
-criticism can be made for Ansuel's series: most phylink users do not
-have "dynamic" PCSs but the code is imtimately integrated with phylink
-anyway.
+Right. Technically, you could do
 
-> 
-> phylink-managed standalone PCS drivers (Ansuel)
-> 
-> pros
-> ====
->  * trivial resource management
+    select HYPERV_VTL_MODE if !EFI
 
-Actually, I would say the resource management is much more complex and
-difficult to follow due to being spread out over many different
-functions.
+but that makes no sense from a usability point of view.
 
->  * no wrappers needed
->  * full support for hot-add and deferred probe
->  * avoids code duplication by providing generic select_pcs
->    implementation
->  * supports devices which provide more than one PCS port per device
->    ('#pcs-cell-cells')
-> 
-> cons
-> ====
->  * inclusion in phylink means more (dead) code on platforms not using
->    dedicated PCS
->  * series does not provide migrations for existing drivers
->    (but that can be done after)
->  * probably a bit harder to review as one needs to know phylink very well
-> 
-> 
-> It would be great if more people can take a look and help deciding the
-> general direction to go.
+> Separately, if we want to express the broader dependency of
+> HYPERV on EFI (at least for ARM64), then the dependency of
+> HYPERV_VTL_MODE on HYPERV will need to go away. Three
+> months back I had suggested not creating that dependency [1],
+> but the eventual decision was to add it. [2, and follow discussion]
+> We would need to revisit that discussion.
+>
+> Arnd -- if you'd prefer that I submit the patch, let me know.
+> I created the original problem and can clean up the mess. :-)
 
-I also encourage netdev maintainers to have a look; Russell does not
-seem to have the time to review either system.
+Yes, please do, I trust you will come up with a better patch
+description than I would.
 
-> There are many drivers awaiting merge which require such
-> infrastructure (most are fine with either of the two), some for more
-> than a year by now.
-
-This is the major thing. PCS drivers should have been supported from the
-start of phylink, and the longer there is no solution the more legacy
-code there is to migrate.
-
---Sean
+      Arnd
 
