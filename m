@@ -1,117 +1,206 @@
-Return-Path: <linux-kernel+bounces-685549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE71AD8B2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20006AD8B6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141971894EF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50750188D8A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265D42DECB0;
-	Fri, 13 Jun 2025 11:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC632E6D0F;
+	Fri, 13 Jun 2025 11:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5J4HV1n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZyewTbF"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776FA26B761;
-	Fri, 13 Jun 2025 11:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EEF2E62C5;
+	Fri, 13 Jun 2025 11:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749815086; cv=none; b=oh+DwdoR6JfAq8MNk1ye9CFCIhqQj9IjK9Gm4/iIZasvAChVphVkLLresTuAKsE8d6nsyNeWvBqAHoRZttI1ML2URoUf+fIsBWgOnK4xAg1k8/qpcbo9FFdDxmHM8kgbya6srWGWOcWa/FcLXFMl3nqQFNOWcP1mPs/FpGZ96Qk=
+	t=1749815742; cv=none; b=dnvM/RyGnamYZ3XqOnHM7NB90892WHsL6LdCuAPgQOHrIp/qNzJ3Q1ZJPYYpC8ji6o/qkzTIFrwJxU/PS0kYaH48qQZJrC8yXjvFCLVm0S3wrCq3HGVnhyGo0MXQSqq0n20qKiRN4xDeH+essdLkJb4XQiLXdfKgH5sSHtwHXI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749815086; c=relaxed/simple;
-	bh=67C8SauhQy4UDCcOAF3lc1WX/+uxuBUuNm519MYFsJc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=vAC1krfSXnEMTglCiJsXGdrlrLycPNs5Q3U/sXtsftXDStj+ag+OSNQMtPCvx8ad4MWDe2Bruu0gEg+12EZNE79zM9aZKdOoa+r1j0HGGcMPLQm8FUShmSm2v+bbCSpFnS4zE+QTToxBG3lybeHhEgxwNddS2RLjn+GL2ef6P40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5J4HV1n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93389C4CEE3;
-	Fri, 13 Jun 2025 11:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749815085;
-	bh=67C8SauhQy4UDCcOAF3lc1WX/+uxuBUuNm519MYFsJc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=U5J4HV1ngFV03Nwvqb+pAc9sD31Mp9qvuZ+EGB52Y6jF/3OC7/HfsjDzu4k8i+Soe
-	 FvRsQ2iRGAN9oFXErAmU3anccqP0S7a6bGyg0Pl1fciAyaZrLdCjduIGlrMR3Grni1
-	 xdUoHg5UJQSqLtaoKFyrhefka+A0FnGjaJeKFN/ssjB0I8ZePHTS9pS3wWYcBKv/hj
-	 itJAjs45025+JsvzDANFT5Rue+VygzqJz0kPG7thfQH70VvyA8U3Czj6btyfFqfTuL
-	 w0nDZq+GvPC6sRzi39c7ZW4JmxfF27YrpNk+8YqAOyZ3CXTGlzfrQnvAaL2nMFypxD
-	 JXr0I5HxGxfGA==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 13 Jun 2025 12:44:07 +0100
-Subject: [PATCH] selftest/mm: Skip if fallocate() is unsupported in
- gup_longterm
+	s=arc-20240116; t=1749815742; c=relaxed/simple;
+	bh=d54+gSW1JK4j62Cxqb5brtnTXHHA9kuB6ewvEvemkwE=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=UeXvrfcdSWe+DdJtW5ODCinnmjJUjt+8vQxZX8mpkYuruf4zMCzjI6tndialZn+HZy0uIovd4lKsp1+ZTzIcPJGKaXyv5LPj+438keq8h5ieRbxVepchYF245yuqF1NOgtdCSNVxPDsK1gYxNQ9ox1JFZHv7jfMpVWgMuzoOCT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZyewTbF; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so16360525e9.1;
+        Fri, 13 Jun 2025 04:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749815739; x=1750420539; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CQWoVNWcriJachxlqnlzulKdD48PUrSHgzzEoQPD1HE=;
+        b=TZyewTbFiLOJd4H88+KOnyA97vn5jI9VQ7dnAfDTLhRxIhy3zesHE3ALc+elPztYJ/
+         1bTQFuLbrGMDB3ZY+0Pwc1VMmFgJIGm0qRY7CcCoDqCFUb2/YIFOQODlJDMh61sZxkxp
+         ng2ZpsFD8HCheGDX1Ye5XkPBC4w368L4gMXo7VH4k9/2+oXAJZoAVq1PVa4cGY6BgAnW
+         jj7ZvniWEpNe+dssK7eQYdcDcd64IaTB490/OruAYHdO6GCkvhwAvtSFBkG0QUETO6hP
+         H9Za+cQgOJYbF7451ocP9eXP0shJDmTuvHvON2yTCSVWqB1s6VwMRZeMkBwDuR77+mgx
+         TmLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749815739; x=1750420539;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQWoVNWcriJachxlqnlzulKdD48PUrSHgzzEoQPD1HE=;
+        b=kHTS96yif4QjIahabKOGc5gUOaAXIYTM7tzZf3x/do+pMPHtNCYMpfu8JE8Kt1AJc4
+         AoUws7S5ehd/l8pXMSoNfk85QiyNjwo5vcXzrayI5Zjy5lAzVHJ+8vXo7UHwal8DP9nc
+         77skcSk4OfN6XAbqogFV16GXTj/gW02Ux05Q9UdjjWcwaosZPyKwFJdC1n0zubb3bYID
+         F99h5KDyD5DeN+iwDvfkKcbuakyvP76c0JjwHtRrDWw3eDpIY3Yw/WnlsaDOcG2QC8Zx
+         ecSEf9EU+24gLJWjsNX9tYIeWy+pDZDBq4c3A3s08FbWw5E+ofkxv0Ha/tsAziORwTOi
+         4Ptw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0nVmScNt7oUGIEy2zlxkHYFhJFQKwGG3uVM46zqsTKpYdPSnTFni8eSLkIFpjpngnsivWZyVh@vger.kernel.org, AJvYcCXaQhMSlvcjxBmSa//HbPKSydbBe6/jnYzCu97HMXptZnI5YQTOQPwKLAhxTz2xrF9zi7qszOxrscu3V3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXxE0WrlC0j5xNxgdlEGbFFOGq+9yi3xTAhhz+c7DCTjJX1Tz1
+	ORT/jTecEzjeKIhrROWoYVGv0dAesFYvXUJFIDp1GebONrRL2emWQQGN
+X-Gm-Gg: ASbGncvCgBazRXenTdroKhrNvm7nrzAboNWSzCV5NlBsmlYmGULrEtYam9genmS5ti2
+	sevTvWUGqb8OrKXUTAXThmYCQUF2+eJnzWMSLUlzIkpRRm+jfx3gVbfnJdMKf8cLG5XyYD9gmKG
+	vv4i730iJDwrbDKwQN0DeaF/l5oRpkRpLA9zGFUxMZjZ1M0UdkqMfvxMbgTlbrswZAzommMVJNw
+	Y6QVHT3TwR81FKb9eGrT533s8i+NazQmh3/lfNxVBR9E4EAAs7lExqcRH/fJfjifE2fJ8kHOpTP
+	K096GKbQOU5/srxzN7HAJ8BYlrFtbtkbOeniqwEWmO1CLqGjv/GuB7YPTZP1MmFhz5w4iYDlcQ4
+	=
+X-Google-Smtp-Source: AGHT+IGdsubvoo2Cv7zpi9HiTbmjbbDaOnWIdnTnJ7OKDIXW1bb2j3+rkMkVq40YIJ+zDstuYfxwbA==
+X-Received: by 2002:a05:600c:3e85:b0:43b:4829:8067 with SMTP id 5b1f17b1804b1-4533b2428eemr5803465e9.6.1749815739298;
+        Fri, 13 Jun 2025 04:55:39 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:75e0:f7f7:dffa:561e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e224795sm50627835e9.7.2025.06.13.04.55.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 04:55:37 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
+ Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH v2 10/12] docs: sphinx: parser_yaml.py: add Netlink
+ specs parser
+In-Reply-To: <095fba5224a22b86a7604773ddaf9b5193157bc1.1749723671.git.mchehab+huawei@kernel.org>
+Date: Fri, 13 Jun 2025 12:45:10 +0100
+Message-ID: <m2plf7n9vd.fsf@gmail.com>
+References: <cover.1749723671.git.mchehab+huawei@kernel.org>
+	<095fba5224a22b86a7604773ddaf9b5193157bc1.1749723671.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250613-selftest-mm-gup-longterm-fallocate-nfs-v1-1-758a104c175f@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAYPTGgC/x3NywrCMBBG4Vcps3YgCbaCryIuQv0nBnIpmViE0
- nc3uPw25xykaBFK9+mghj1qrGXAXiZa374EcHwNkzNuNos1rEjSoZ1z5vDZONUSOlpm8SnV1Xd
- wEWVnIfN1cTeIoxHbGiR+/6PH8zx/0+23KngAAAA=
-X-Change-ID: 20250610-selftest-mm-gup-longterm-fallocate-nfs-21ef54627ef2
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1499; i=broonie@kernel.org;
- h=from:subject:message-id; bh=67C8SauhQy4UDCcOAF3lc1WX/+uxuBUuNm519MYFsJc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoTA8refSwnoxdJb+107nNprcOEDsjz4KiGYmcVQTM
- W1F/HCmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaEwPKwAKCRAk1otyXVSH0FtkB/
- 4+8N5ND04NyqzZJemY5vFK3k75oeTztrRfRyyZ3JvwmcCNAyZZ/S2SYtMfxJCnFaRVBCCrLG3cS6oD
- zS7FYy6q384+Svt1Eu6qfqAFTZrRXA1Dt+fdXTTEsAcYZk5lzEYMhRn+Pkw5E29gEYcSJp/LVAw6zz
- 37lA18qLoghB7nm3ndxqQdW5Ip+DPFq1ZKSo5Gtm1NntVlVFb0KvEcYEOr1n2jTO3HIvEmDkVa9d+6
- lj7pH6N8b3KQR/TaopssA/UlZovbnNeS6DH+1AaDd9szj+rW5yfQKQ83WoEQ8ozXn6/Bbs+v5aBP3+
- zcDOiUi+Df9d7jjbqpT2NDIHX+F5ew
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain
 
-Currently gup_longterm assumes that filesystems support fallocate() and uses
-that to allocate space in files, however this is an optional feature and is
-in particular not implemented by NFSv3 which is commonly used in CI systems
-leading to spurious failures. Check for lack of support and report a skip
-instead for that case.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/mm/gup_longterm.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+> Place the code at parser_yaml.py to handle Netlink specs. All
+> other yaml files are ignored.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  .pylintrc                           |  2 +-
+>  Documentation/sphinx/parser_yaml.py | 39 +++++++++++++++++++++--------
+>  2 files changed, 29 insertions(+), 12 deletions(-)
+>
+> diff --git a/.pylintrc b/.pylintrc
+> index 30b8ae1659f8..f1d21379254b 100644
+> --- a/.pylintrc
+> +++ b/.pylintrc
+> @@ -1,2 +1,2 @@
+>  [MASTER]
+> -init-hook='import sys; sys.path += ["scripts/lib/kdoc", "scripts/lib/abi"]'
+> +init-hook='import sys; sys.path += ["scripts/lib", "scripts/lib/kdoc", "scripts/lib/abi"]'
+> diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
+> index b3cde9cf7aac..eb32e3249274 100755
+> --- a/Documentation/sphinx/parser_yaml.py
+> +++ b/Documentation/sphinx/parser_yaml.py
+> @@ -3,6 +3,10 @@ Sphinx extension for processing YAML files
+>  """
+>  
+>  import os
+> +import re
+> +import sys
+> +
+> +from pprint import pformat
+>  
+>  from docutils.parsers.rst import Parser as RSTParser
+>  from docutils.statemachine import ViewList
+> @@ -10,7 +14,10 @@ from docutils.statemachine import ViewList
+>  from sphinx.util import logging
+>  from sphinx.parsers import Parser
+>  
+> -from pprint import pformat
+> +srctree = os.path.abspath(os.environ["srctree"])
+> +sys.path.insert(0, os.path.join(srctree, "scripts/lib"))
+> +
+> +from netlink_yml_parser import NetlinkYamlParser      # pylint: disable=C0413
+>  
+>  logger = logging.getLogger(__name__)
+>  
+> @@ -19,8 +26,9 @@ class YamlParser(Parser):
+>  
+>      supported = ('yaml', 'yml')
+>  
+> -    # Overrides docutils.parsers.Parser. See sphinx.parsers.RSTParser
+> -    def parse(self, inputstring, document):
+> +    netlink_parser = NetlinkYamlParser()
+> +
+> +    def do_parse(self, inputstring, document, msg):
+>          """Parse YAML and generate a document tree."""
+>  
+>          self.setup_parse(inputstring, document)
+> @@ -28,14 +36,6 @@ class YamlParser(Parser):
+>          result = ViewList()
+>  
+>          try:
+> -            # FIXME: Test logic to generate some ReST content
+> -            basename = os.path.basename(document.current_source)
+> -            title = os.path.splitext(basename)[0].replace('_', ' ').title()
+> -
+> -            msg = f"{title}\n"
+> -            msg += "=" * len(title) + "\n\n"
+> -            msg += "Something\n"
+> -
+>              # Parse message with RSTParser
+>              for i, line in enumerate(msg.split('\n')):
+>                  result.append(line, document.current_source, i)
+> @@ -48,6 +48,23 @@ class YamlParser(Parser):
+>  
+>          self.finish_parse()
+>  
+> +    # Overrides docutils.parsers.Parser. See sphinx.parsers.RSTParser
+> +    def parse(self, inputstring, document):
+> +        """Check if a YAML is meant to be parsed."""
+> +
+> +        fname = document.current_source
+> +
+> +        # Handle netlink yaml specs
+> +        if re.search("/netlink/specs/", fname):
 
-diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
-index 8a97ac5176a4..0e99494268ed 100644
---- a/tools/testing/selftests/mm/gup_longterm.c
-+++ b/tools/testing/selftests/mm/gup_longterm.c
-@@ -114,7 +114,15 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 	}
- 
- 	if (fallocate(fd, 0, 0, size)) {
--		if (size == pagesize) {
-+		/*
-+		 * Some filesystems (eg, NFSv3) don't support
-+		 * fallocate(), report this as a skip rather than a
-+		 * test failure.
-+		 */
-+		if (errno == EOPNOTSUPP) {
-+			ksft_print_msg("fallocate() not supported by filesystem\n");
-+			result = KSFT_SKIP;
-+		} else if (size == pagesize) {
- 			ksft_print_msg("fallocate() failed (%s)\n", strerror(errno));
- 			result = KSFT_FAIL;
- 		} else {
+The re.search is overkill since it is not a regexp. You can instead say:
 
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250610-selftest-mm-gup-longterm-fallocate-nfs-21ef54627ef2
+    if '/netlink/specs/' in fname:
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> +            if fname.endswith("index.yaml"):
+> +                msg = self.netlink_parser.generate_main_index_rst(fname, None)
+> +            else:
 
+I'm guessing we can drop these lines if the static index.rst approach works.
+
+> +                msg = self.netlink_parser.parse_yaml_file(fname)
+> +
+> +            self.do_parse(inputstring, document, msg)
+> +
+> +        # All other yaml files are ignored
+> +
+>  def setup(app):
+>      """Setup function for the Sphinx extension."""
 
