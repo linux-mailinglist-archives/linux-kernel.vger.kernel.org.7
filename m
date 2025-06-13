@@ -1,358 +1,157 @@
-Return-Path: <linux-kernel+bounces-684777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9508BAD801A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173F7AD800E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11A63AC6A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:12:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08E7518982FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532EA1D90A5;
-	Fri, 13 Jun 2025 01:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6BB1D5175;
+	Fri, 13 Jun 2025 01:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="WyJqLkLi"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtpVAedd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C371D5CC6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 01:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A3A1D7E4A;
+	Fri, 13 Jun 2025 01:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749777109; cv=none; b=mvLcaGraQL/JZFKzfuGuUpFWXXfFIgnuATQpHmy3CjjbaNVI6UBRXXXZ9sl2OloeQACq2by8zGNzi/xIRlp0cABhW+lBmEtnJGPE2n7le1v8EJfJ7R46jNWh3dEpm/4/fR+ujeEtQ12E+5n7e8qtc+4/aoqZX4A0+xgN9yzYXLw=
+	t=1749777092; cv=none; b=VG7SXRFmG/IqHaHFOHcISmL8drKw5hte0GB1jFllHrIuduBkxuYq3oYVLfjUoXWzRCnn/YeowssL5AsmAz1VRbu2Pgct36WEgI0JC5BTYfkmYAk9Rwp2s8JO2RJvsf4eD3q7vjPMgQ0E9axfpbtXu4l/oTh6kw/w0Lmsqrb9pp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749777109; c=relaxed/simple;
-	bh=G2LJ8qdRmwkw39n+FaDEDWwgq7C6rp78wyzHDLz5i94=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XiQgtmWrTUt+6YLFOOgxCUxVxsMISgRquS93h/fqjQvLCRw4taegX6ZdPLF2gZT23EHDC5OI3bhAixE3UWIPFEjzZRq9rQOsGRYXYp9D9c7f/JUu15jdZ2nEcHU2T0aO1U+qdouDQPQ8Rb0cZBGocPyQQk/KzQ0818tQKv0ytOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=WyJqLkLi; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72c27166ab3so1171528a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 18:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749777106; x=1750381906; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIMzta2AftTuOCZk7on/aypnLuIwPcK53zSW3MHSvpg=;
-        b=WyJqLkLibSUbNhWW35E5Tgr+LOlUZLYYfrw1YBEp+vz9vFQBCjQMai6YMn2oem8L/b
-         A9lduKRLrCQC/mcBPWO/uzuRHRW0wbXxpWUZ/vboE3b4kMygMRRre+Zj1VHWA3GZYr0/
-         TsGrObU2tDgmi2glcotVB/TIFeGHMw9X42Bzk6G+jpb124A/Xgi5yRjgR9ThCwr3p31w
-         v8dHEDGJXN5GT41D7Mc7B/TfGulRv596RMiCk5XI/RpHZ/zIMXthdCu6KJDZFJcjGhvx
-         uQoj7KQRO0vi6qpkeWt2o087UWu5EjaENN0FqwnXGkK9u1D5UWiwrkalYkjH1xVtTLai
-         pzxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749777106; x=1750381906;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FIMzta2AftTuOCZk7on/aypnLuIwPcK53zSW3MHSvpg=;
-        b=o3A+T8fF2w5+nT+r0tvY9dR8E56zBV+3B6d/mA4x9jrFxHxKvO4GiPmUxHluECmMSg
-         zYcrVV9U5JKKt7GfqUQJUZIqsd7lR66kN7UMah8QOAUfjlyxE0JLyXTTFlc+gbizfmj6
-         US76U0Fg3LAySfqDCier262AxZeaT+eZ2ddvdq/cwateH1QUC3pP0O4ei2ZpenCOwVrA
-         acCcPgO+ofCmEamdWc5gdthf3vh3+lyP3XiW9IdS0WF1QFOWJi2vzyPQ/tPoToeleih0
-         /mM8J2Wf7NA89CF03/md3k1g6/gAaJBGRX6RYkylQ3OO062cyaPLz4FbWoDePHISuwDl
-         o1qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHzaCXuR/YtGsQWXtLkufLTu1UOQsSe7XZ4+HOPiBxWLJ2QTGUzGW2EhV7jqpEnLuc/biE4K/gb1liMZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUyczFPltrhyEgW0mN/j/r7Zrj9OwuyVcYu2Rj7utbymJgmF4k
-	RkU8bl2v3t33hYTPmAXQfeV5Thfb+dTNL0xXsYHpg/8IbCU3hgilPmcEE3Ots0I3+mk=
-X-Gm-Gg: ASbGncvAoLJxiZVtemxRD9FayPYOEox+iWk6Zs4CDZ8zC6uzivtQj/SdVhg/fMLaYJ6
-	WBSoloIMAIDzM7x+Us4SG4X6tc+eJlRL6/uFs91vHwELpbxre51aeAnA7ri3TcOGsBOb5tu/1yD
-	bc9VLEnMfZ1i0j0o7h57HuoIE8jGL9UXfmu1eaUWMcbqbKhIwOtPOR8I32jQ49FsKmXVlyigV+K
-	WZUajsiWNaQ4vU1WQJewau8BO9inAESk8Upb7JTMV662mYk1x/Jz0stQkC01/7zZ8a66R4yHohu
-	Aw8u0cuOALDElVmoOedV3arXmJ113N3UtLWrbAW5zlw5nrbs5PWd5DWvZWqT530aTqA8YHC+3WV
-	hMRavjN71vihKTFQV8dUxizKlnGMBh34=
-X-Google-Smtp-Source: AGHT+IHGyKqIzZMGUS+0mLJ+XXdHKM3DYFea7kD1MLQTICc0wh8Dsy0iZHSyESayB407m7TuPOsAmw==
-X-Received: by 2002:a05:6871:8011:b0:29e:65ed:5c70 with SMTP id 586e51a60fabf-2ead517c850mr729455fac.30.1749777106478;
-        Thu, 12 Jun 2025 18:11:46 -0700 (PDT)
-Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eac0c17211sm407685fac.18.2025.06.12.18.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 18:11:46 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v11 1/6] dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
-Date: Thu, 12 Jun 2025 20:11:33 -0500
-Message-ID: <20250613011139.1201702-2-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250613011139.1201702-1-elder@riscstar.com>
-References: <20250613011139.1201702-1-elder@riscstar.com>
+	s=arc-20240116; t=1749777092; c=relaxed/simple;
+	bh=fYjZRivWn2Fn+oWmzNXQqN7xuN63eEwOfSVBHQpA9yc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GOHhusVfQH31aCv5ywFY+7o8iF98Y6sBuz2DOLvmVPIh+dVV0NwwnZOxQAfqZ7UopNlEnOZCnIYCukeImJTuZtF56QShu5CgjmkwXMG035UWAzBbCnZSF1FJukuedC5zCXYp75QPzlVo6yBLC0WarS28pFh72DThZa/VQAk5ois=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtpVAedd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E4E2EC4CEF7;
+	Fri, 13 Jun 2025 01:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749777091;
+	bh=fYjZRivWn2Fn+oWmzNXQqN7xuN63eEwOfSVBHQpA9yc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=rtpVAedd66sPrM+hY2oxPRDpPvlpiJObu0GevyQv0K3W7FSGgwJf3jgI8nZqCFvtn
+	 oP1zqeQTAbTSqS9MPDhf9sPqOKcu4RzJkIP7ONPyUw3P+Gv4RyH3rH4I4jep+dkIUS
+	 zsNn4uqIfj/4C/dbFOSZU74AoaSEk1d6hXgY9f9FSKJQbXDbUbXLQZDm4dqgkG9tHG
+	 1Jze3d93xNlrVPXrYkr2Rbr13b/ksCl9g0MvOWHpFwuk+A1xQS/GUw7aNDDtmbxRAl
+	 81EKT/BtkCE0/zEFEQ6BsfNfz9h8/XdQzkz4bpo8tenLzglELRAmLY9NvEaoNWBKP5
+	 1mf0qMJJVmefg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92E7C71148;
+	Fri, 13 Jun 2025 01:11:31 +0000 (UTC)
+From: Mingcong Bai via B4 Relay <devnull+jeffbai.aosc.io@kernel.org>
+Date: Fri, 13 Jun 2025 09:11:33 +0800
+Subject: [PATCH v2 5/5] drm/xe/query: use PAGE_SIZE as the minimum page
+ alignment
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250613-upstream-xe-non-4k-v2-v2-5-934f82249f8a@aosc.io>
+References: <20250613-upstream-xe-non-4k-v2-v2-0-934f82249f8a@aosc.io>
+In-Reply-To: <20250613-upstream-xe-non-4k-v2-v2-0-934f82249f8a@aosc.io>
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Francois Dugast <francois.dugast@intel.com>, 
+ =?utf-8?q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>, 
+ =?utf-8?q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>, 
+ Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ Zhanjun Dong <zhanjun.dong@intel.com>, 
+ Matt Roper <matthew.d.roper@intel.com>, 
+ Alan Previn <alan.previn.teres.alexis@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Mateusz Naklicki <mateusz.naklicki@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Kexy Biscuit <kexybiscuit@aosc.io>, Shang Yatsen <429839446@qq.com>, 
+ Mingcong Bai <jeffbai@aosc.io>, Wenbin Fang <fangwenbin@vip.qq.com>, 
+ Haien Liang <27873200@qq.com>, Jianfeng Liu <liujianfeng1994@gmail.com>, 
+ Shirong Liu <lsr1024@qq.com>, Haofeng Wu <s2600cw2@126.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749777090; l=3034;
+ i=jeffbai@aosc.io; s=20250604; h=from:subject:message-id;
+ bh=gWL8RWOcZ+T5Uids7FBARXCOIx0PC8BeNHiC9X6HMCs=;
+ b=Q0CPOLyStGLjhT6+x+gKKShN9k6MBkZEp9SYnxxZoRQbNmntY5WlakCsLQqecRGX4JzCl7Kmi
+ swRCsXXAkwoCPO5anbatDazKDXA2TuDS/6jE0TkX9SncSqJk4cINnRb
+X-Developer-Key: i=jeffbai@aosc.io; a=ed25519;
+ pk=MJdgklflDF+Xz9x2Lp+ogEnEyk8HRosMGiqLgWbFctY=
+X-Endpoint-Received: by B4 Relay for jeffbai@aosc.io/20250604 with
+ auth_id=422
+X-Original-From: Mingcong Bai <jeffbai@aosc.io>
+Reply-To: jeffbai@aosc.io
 
-There are additional SpacemiT syscon CCUs whose registers control both
-clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
-previously, these will (initially) support only resets.  They do not
-incorporate power domain functionality.
+From: Mingcong Bai <jeffbai@aosc.io>
 
-Previously the clock properties were required for all compatible nodes.
-Make that requirement only apply to the three existing CCUs (APBC, APMU,
-and MPMU), so that the new reset-only CCUs can go without specifying them.
+As this component hooks into userspace API, it should be assumed that it
+will play well with non-4KiB/64KiB pages.
 
-Define the index values for resets associated with all SpacemiT K1
-syscon nodes, including those with clocks already defined, as well as
-the new ones (without clocks).
+Use `PAGE_SIZE' as the final reference for page alignment instead.
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
+Cc: stable@vger.kernel.org
+Fixes: dd08ebf6c352 ("drm/xe: Introduce a new DRM driver for Intel GPUs")
+Fixes: 801989b08aff ("drm/xe/uapi: Make constant comments visible in kernel doc")
+Tested-by: Mingcong Bai <jeffbai@aosc.io>
+Tested-by: Wenbin Fang <fangwenbin@vip.qq.com>
+Tested-by: Haien Liang <27873200@qq.com>
+Tested-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+Tested-by: Shirong Liu <lsr1024@qq.com>
+Tested-by: Haofeng Wu <s2600cw2@126.com>
+Link: https://github.com/FanFansfan/loongson-linux/commit/22c55ab3931c32410a077b3ddb6dca3f28223360
+Link: https://t.me/c/1109254909/768552
+Co-developed-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
 ---
-v11: Expanded combined reset index values into individual ones,
-     e.g. AUDIO (3 bits) is now AUDIO_SYS, AUDIO_MCU, AUDIO_APMU
+ drivers/gpu/drm/xe/xe_query.c | 2 +-
+ include/uapi/drm/xe_drm.h     | 7 +++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
- .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +++-
- .../dt-bindings/clock/spacemit,k1-syscon.h    | 141 ++++++++++++++++++
- 2 files changed, 163 insertions(+), 7 deletions(-)
+diff --git a/drivers/gpu/drm/xe/xe_query.c b/drivers/gpu/drm/xe/xe_query.c
+index 2dbf4066d86ff225eee002d352e1233c8d9519b9..fe94a7781fa04fb277d5cc8b973b145293d3d066 100644
+--- a/drivers/gpu/drm/xe/xe_query.c
++++ b/drivers/gpu/drm/xe/xe_query.c
+@@ -346,7 +346,7 @@ static int query_config(struct xe_device *xe, struct drm_xe_device_query *query)
+ 	config->info[DRM_XE_QUERY_CONFIG_FLAGS] |=
+ 			DRM_XE_QUERY_CONFIG_FLAG_HAS_LOW_LATENCY;
+ 	config->info[DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT] =
+-		xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : SZ_4K;
++		xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : PAGE_SIZE;
+ 	config->info[DRM_XE_QUERY_CONFIG_VA_BITS] = xe->info.va_bits;
+ 	config->info[DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY] =
+ 		xe_exec_queue_device_get_max_priority(xe);
+diff --git a/include/uapi/drm/xe_drm.h b/include/uapi/drm/xe_drm.h
+index 9c08738c3b918ee387f51a68ba080057c6d5716f..f92eb8c3317a09baad4550024bb3beea02850010 100644
+--- a/include/uapi/drm/xe_drm.h
++++ b/include/uapi/drm/xe_drm.h
+@@ -397,8 +397,11 @@ struct drm_xe_query_mem_regions {
+  *      has low latency hint support
+  *    - %DRM_XE_QUERY_CONFIG_FLAG_HAS_CPU_ADDR_MIRROR - Flag is set if the
+  *      device has CPU address mirroring support
+- *  - %DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT - Minimal memory alignment
+- *    required by this device, typically SZ_4K or SZ_64K
++ *  - %DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT - Minimal memory alignment required
++ *    by this device and the CPU. The minimum page size for the device is
++ *    usually SZ_4K or SZ_64K, while for the CPU, it is PAGE_SIZE. This value
++ *    is calculated by max(min_gpu_page_size, PAGE_SIZE). This alignment is
++ *    enforced on buffer object allocations and VM binds.
+  *  - %DRM_XE_QUERY_CONFIG_VA_BITS - Maximum bits of a virtual address
+  *  - %DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY - Value of the highest
+  *    available exec queue priority
 
-diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-index 30aaf49da03d3..133a391ee68cd 100644
---- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-+++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-@@ -19,6 +19,9 @@ properties:
-       - spacemit,k1-syscon-apbc
-       - spacemit,k1-syscon-apmu
-       - spacemit,k1-syscon-mpmu
-+      - spacemit,k1-syscon-rcpu
-+      - spacemit,k1-syscon-rcpu2
-+      - spacemit,k1-syscon-apbc2
- 
-   reg:
-     maxItems: 1
-@@ -47,9 +50,6 @@ properties:
- required:
-   - compatible
-   - reg
--  - clocks
--  - clock-names
--  - "#clock-cells"
-   - "#reset-cells"
- 
- allOf:
-@@ -57,13 +57,28 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: spacemit,k1-syscon-apbc
-+            enum:
-+              - spacemit,k1-syscon-apmu
-+              - spacemit,k1-syscon-mpmu
-     then:
--      properties:
--        "#power-domain-cells": false
--    else:
-       required:
-         - "#power-domain-cells"
-+    else:
-+      properties:
-+        "#power-domain-cells": false
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - spacemit,k1-syscon-apbc
-+              - spacemit,k1-syscon-apmu
-+              - spacemit,k1-syscon-mpmu
-+    then:
-+      required:
-+        - clocks
-+        - clock-names
-+        - "#clock-cells"
- 
- additionalProperties: false
- 
-diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
-index 35968ae982466..8142b1b4c5d7a 100644
---- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-+++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-@@ -78,6 +78,9 @@
- #define CLK_APB			31
- #define CLK_WDT_BUS		32
- 
-+/* MPMU resets */
-+#define RESET_WDT		0
-+
- /* APBC clocks */
- #define CLK_UART0		0
- #define CLK_UART2		1
-@@ -180,6 +183,59 @@
- #define CLK_TSEN_BUS		98
- #define CLK_IPC_AP2AUD_BUS	99
- 
-+/* APBC resets */
-+#define RESET_UART0		0
-+#define RESET_UART2		1
-+#define RESET_UART3		2
-+#define RESET_UART4		3
-+#define RESET_UART5		4
-+#define RESET_UART6		5
-+#define RESET_UART7		6
-+#define RESET_UART8		7
-+#define RESET_UART9		8
-+#define RESET_GPIO		9
-+#define RESET_PWM0		10
-+#define RESET_PWM1		11
-+#define RESET_PWM2		12
-+#define RESET_PWM3		13
-+#define RESET_PWM4		14
-+#define RESET_PWM5		15
-+#define RESET_PWM6		16
-+#define RESET_PWM7		17
-+#define RESET_PWM8		18
-+#define RESET_PWM9		19
-+#define RESET_PWM10		20
-+#define RESET_PWM11		21
-+#define RESET_PWM12		22
-+#define RESET_PWM13		23
-+#define RESET_PWM14		24
-+#define RESET_PWM15		25
-+#define RESET_PWM16		26
-+#define RESET_PWM17		27
-+#define RESET_PWM18		28
-+#define RESET_PWM19		29
-+#define RESET_SSP3		30
-+#define RESET_RTC		31
-+#define RESET_TWSI0		32
-+#define RESET_TWSI1		33
-+#define RESET_TWSI2		34
-+#define RESET_TWSI4		35
-+#define RESET_TWSI5		36
-+#define RESET_TWSI6		37
-+#define RESET_TWSI7		38
-+#define RESET_TWSI8		39
-+#define RESET_TIMERS1		40
-+#define RESET_TIMERS2		41
-+#define RESET_AIB		42
-+#define RESET_ONEWIRE		43
-+#define RESET_SSPA0		44
-+#define RESET_SSPA1		45
-+#define RESET_DRO		46
-+#define RESET_IR		47
-+#define RESET_TSEN		48
-+#define RESET_IPC_AP2AUD	49
-+#define RESET_CAN0		50
-+
- /* APMU clocks */
- #define CLK_CCI550		0
- #define CLK_CPU_C0_HI		1
-@@ -244,4 +300,89 @@
- #define CLK_V2D			60
- #define CLK_EMMC_BUS		61
- 
-+/* APMU resets */
-+#define RESET_CCIC_4X		0
-+#define RESET_CCIC1_PHY		1
-+#define RESET_SDH_AXI		2
-+#define RESET_SDH0		3
-+#define RESET_SDH1		4
-+#define RESET_SDH2		5
-+#define RESET_USBP1_AXI		6
-+#define RESET_USB_AXI		7
-+#define RESET_USB30_AHB		8
-+#define RESET_USB30_VCC		9
-+#define RESET_USB30_PHY		10
-+#define RESET_QSPI		11
-+#define RESET_QSPI_BUS		12
-+#define RESET_DMA		13
-+#define RESET_AES		14
-+#define RESET_VPU		15
-+#define RESET_GPU		16
-+#define RESET_EMMC		17
-+#define RESET_EMMC_X		18
-+#define RESET_AUDIO_SYS		19
-+#define RESET_AUDIO_MCU		20
-+#define RESET_AUDIO_APMU	21
-+#define RESET_HDMI		22
-+#define RESET_PCIE0_DBI		23
-+#define RESET_PCIE0_SLV		24
-+#define RESET_PCIE0_MSTR	25
-+#define RESET_PCIE0_GLB		26
-+#define RESET_PCIE1_DBI		27
-+#define RESET_PCIE1_SLV		28
-+#define RESET_PCIE1_MSTR	29
-+#define RESET_PCIE1_GLB		30
-+#define RESET_PCIE2_DBI		31
-+#define RESET_PCIE2_SLV		32
-+#define RESET_PCIE2_MSTR	33
-+#define RESET_PCIE2_GLB		34
-+#define RESET_EMAC0		35
-+#define RESET_EMAC1		36
-+#define RESET_JPG		37
-+#define RESET_CCIC2PHY		38
-+#define RESET_CCIC3PHY		39
-+#define RESET_CSI		40
-+#define RESET_ISP_CPP		41
-+#define RESET_ISP_BUS		42
-+#define RESET_ISP		43
-+#define RESET_ISP_CI		44
-+#define RESET_DPU_MCLK		45
-+#define RESET_DPU_ESC		46
-+#define RESET_DPU_HCLK		47
-+#define RESET_DPU_SPIBUS	48
-+#define RESET_DPU_SPI_HBUS	49
-+#define RESET_V2D		50
-+#define RESET_MIPI		51
-+#define RESET_MC		52
-+
-+/*	RCPU resets	*/
-+#define RESET_RCPU_SSP0		0
-+#define RESET_RCPU_I2C0		1
-+#define RESET_RCPU_UART1	2
-+#define RESET_RCPU_IR		3
-+#define RESET_RCPU_CAN		4
-+#define RESET_RCPU_UART0	5
-+#define RESET_RCPU_HDMI_AUDIO	6
-+
-+/*	RCPU2 resets	*/
-+#define RESET_RCPU2_PWM0	0
-+#define RESET_RCPU2_PWM1	1
-+#define RESET_RCPU2_PWM2	2
-+#define RESET_RCPU2_PWM3	3
-+#define RESET_RCPU2_PWM4	4
-+#define RESET_RCPU2_PWM5	5
-+#define RESET_RCPU2_PWM6	6
-+#define RESET_RCPU2_PWM7	7
-+#define RESET_RCPU2_PWM8	8
-+#define RESET_RCPU2_PWM9	9
-+
-+/*	APBC2 resets	*/
-+#define RESET_APBC2_UART1	0
-+#define RESET_APBC2_SSP2	1
-+#define RESET_APBC2_TWSI3	2
-+#define RESET_APBC2_RTC		3
-+#define RESET_APBC2_TIMERS0	4
-+#define RESET_APBC2_KPC		5
-+#define RESET_APBC2_GPIO	6
-+
- #endif /* _DT_BINDINGS_SPACEMIT_CCU_H_ */
 -- 
-2.45.2
+2.49.0
+
 
 
