@@ -1,73 +1,130 @@
-Return-Path: <linux-kernel+bounces-685596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D00CAD8BDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:16:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27156AD8BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1D31895EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEF017F83A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8872D5C7A;
-	Fri, 13 Jun 2025 12:16:50 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0102E0B7B;
+	Fri, 13 Jun 2025 12:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DH28uZDU"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6743275B1D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA342727E8;
+	Fri, 13 Jun 2025 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749817010; cv=none; b=szGfhZy5zetYVubbWYhmdo8Wa+9m9x2qACIOBtQaQbRQh9Bxpvd8eiH4cOAUoL9wFVGN4gW6rlwTLxHWsV2+IjkyRiPFI16srKzgsqX4TO65vN6BnXPPDqRLXnA5sHtQNvzn8PXvWlbPywWh1wVsqkBZGBcn7J58cfPqwnZXYfc=
+	t=1749817391; cv=none; b=gtzpXequoXoFNLqtpIaTHWFxy4CF4wehkuMxvI3tVN/QESnJX6LNGfaJE9mRPduxVyQXds9Y9M6MEERTBuxmLKYy9icbcgqIFlmqOjkjJkZvuZeX4HkP08kdYnKpTDRVibS1jbaM9hf0vsmJHSV5zpIj6rRjxlwPuylDFfco5GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749817010; c=relaxed/simple;
-	bh=SfoIr08rFFEuKJXvO7anMKrnwyitTK87jSRVy8mAH+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BqCXA0APNrUmU6+vL976+SNebhRRa7PXSflBYl/uKMidoTfw4kCuh+ChHZ3/62UOhEiC8FvoaaWvLn7dwuoCuwwYbEb1TqznDvXZDiQV1E1V0zFeUhDCWYfyqAJ14dyo4DE8AISchgnefxo8B1fQEbqFDYrI4Bn0chozFAzw04s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 7391616041D;
-	Fri, 13 Jun 2025 12:16:47 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id A68BC20010;
-	Fri, 13 Jun 2025 12:16:45 +0000 (UTC)
-Date: Fri, 13 Jun 2025 08:18:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org, Gao
- Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>
-Subject: Re: Unused trace event in erofs
-Message-ID: <20250613081822.12e55023@gandalf.local.home>
-In-Reply-To: <20250613081728.6212a554@gandalf.local.home>
-References: <20250612224906.15000244@batman.local.home>
-	<0baf3fa2-ed77-4748-b5ee-286ce798c959@linux.alibaba.com>
-	<20250613081728.6212a554@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749817391; c=relaxed/simple;
+	bh=JiQ9RO63rTiSweA5WgDt7giwKWP1ckT6Lp/wiX88Ws4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EH4V15f5Yy4UyI+/Qhxv+m70VnEqytWbbE8HwN0AE7Bhgy5r8cubvJ+Lmn88tP819611kXiCP9k1XvuITW2IBuK04uMPfHkxQWFH5Ozntj+135aeWHCnutg+mqxCkPyzjsUzPkJKeMBUHb3ywcj6avb1iehtcWMkpyUu44Tcc3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DH28uZDU; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b2f1032e1c4so2141042a12.3;
+        Fri, 13 Jun 2025 05:23:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749817389; x=1750422189; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZF8Ijk+kxycu39taXWGDmympqXTula1EYmwZ/sS6tJg=;
+        b=DH28uZDUQE2D5c/KwBjFmKc4qVA4LIDW8tZ/eI7WQX/a6psAmXrGlG7LyJJCNT9+3R
+         AJGh7TJ4VdRU2dWlJZGFXkhFYPtuyB8nxIKQ93IUiieywgkQJ6iECI282/KtnGvP7wNP
+         fzDN3leajla5xlY530lS+utKP/XYBB/n7g3VfYRIh0bTobz515F/ccIsd+jY52AnbeLH
+         aUkfKHWLPDNR5smo46mzqHbLHxyQS2y5hfE1vLHjOn591JEUQ4UK9xmVfsg7Nedo5cSm
+         m2ZkyR/VTOBFj0uHYQUBOuC8gmPUl1JHX14ymCn8s+xaUakRdPh4LES2yfcxLeN2O3+N
+         0gxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749817389; x=1750422189;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZF8Ijk+kxycu39taXWGDmympqXTula1EYmwZ/sS6tJg=;
+        b=L49QlZOiDDdzI6LFYhLFvmL7oFfbUPXnh3p+suQR74i9sSs8b7aupy3PZyGg8Oibed
+         M/t6DshgItamwompKXvmrrf0jkI+bZ/kGsaLrFZ0644MGaR1pzwwvoySNGTm6JiwkuXM
+         2CBai3sL6sWiLtUxOJY7a13UJ9kOzacS8AehJFwg47Jugro6OouZofRgzn6Jq2Vvsilv
+         +aBsg029bFHyVdOvzVv8zA60F+PnysG2cKwXUZnWXjLXP3ggjfVZCBUqwlMblcUNly7+
+         oUtvbaLEAXiM38DKe8SghazzD0EYHb/kwusBC9SVVqi6OV25st0JpTimgNkCur0LrAVM
+         B/Ew==
+X-Gm-Message-State: AOJu0YxII6i7RDu0q6yGKUuQt+/+EiZXmzSNsXQ1kLPtw9N5NaWuFp27
+	xVBp9xQlQBd67gTWde7U0DWBOfs6uAa+J4ou24BDWpp5xJ5MIyjWpEOjdhDRz+Gb
+X-Gm-Gg: ASbGncvMvi1xOq0NqTw5+UEof+rc/jWVGp6vLSKbLfaAbgVddp9dhDV8Sr+Z19X6fDE
+	kxEDwm9ZiCz7kYRc44M3JhFUDDCSwK9Z1zLCJdIIquDbsATib1rc6DQfB3BTZfwu9xMZAf8ZREv
+	J5hQmBQkPT2729iNu/yCwzTpd5hXOJ41YVSffJznPsZKY/Ljhv7BZM3Rt3ZmKpKjrcjEPGMqR1O
+	mc9+pHKyve6D/P94pU0pcrS+KLVEux5yjwRkWXd8zHGKtyyq9/AZBlD9nlYlyRxzY4CpzgwZFPQ
+	vyNvQfG99kB2fQGFCh7F7JjeKlXDc4IsGmSJS4STFlvWv6ubkVE08UrzGRoYpYDz8E/aBP84en8
+	ZXwdIsMI8oPzw/A==
+X-Google-Smtp-Source: AGHT+IELKrcoAf7PgPvBAOyNIQlmy6cdkvLGa8CIZk+QShFhYJ6D0lC7HFhfXUI/BeWfsLf0KH8zAQ==
+X-Received: by 2002:a05:6a20:9148:b0:21f:512c:ba2c with SMTP id adf61e73a8af0-21facec450emr5046063637.34.1749817389000;
+        Fri, 13 Jun 2025 05:23:09 -0700 (PDT)
+Received: from avinash-INBOOK-Y2-PLUS.. ([27.63.22.176])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe163a470sm1553126a12.9.2025.06.13.05.23.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 05:23:08 -0700 (PDT)
+From: avinashlalotra <abinashlalotra@gmail.com>
+X-Google-Original-From: avinashlalotra <abinashsinghlalotra@gmail.com>
+To: linux-omap@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	aaro.koskinen@iki.fi,
+	andreas@kemnade.info,
+	khilman@baylibre.com,
+	rogerq@kernel.org,
+	tony@atomide.com,
+	lee@kernel.org,
+	avinashlalotra <abinashsinghlalotra@gmail.com>
+Subject: [RFC PATCH] mfd: twl4030-irq: remove redundant 'node' variable
+Date: Fri, 13 Jun 2025 17:52:51 +0530
+Message-ID: <20250613122251.1033078-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A68BC20010
-X-Stat-Signature: m6udp5jjwegyfd1fdgkg9u4nwyp6sj8y
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/YlOrz9rks9Xb9kZ1ETrQ3G/D/yxbpkjw=
-X-HE-Tag: 1749817005-7527
-X-HE-Meta: U2FsdGVkX19UnAUqeEpj35VQFLUlVpMOFJ+N+8y0g/XHToHOaa3gINOQWFY5FEcon3recYuI1u1W8jDnXUKGJBhc5p6PrWy1qk7uT/fmr/e+9iqAY97YwkmWkazLX/wvIygdtF7/hkvVfX6+m8Ny3eY0cRYoEDCOMx05DjLFzQM6it6KpC1lIh2L54TJYQWo9+8praYknIKAMvjdYGIFTO3npXmjBgaFnKrTsC4kwoVsgWVDNx4RsVAszXTBSjKoZzCFGWGy2scRrsh60aBgkQN+l3HYDY15MG7ebC7K92WB4LhyYgSjOfZW0JfO2X43zXGj6zcq9sXsK96htK0v0+A4gYkIEL2J55bWFCvlxD4AYi8ix7Btf9+eCSnDLv9NOVAMsZMUnpvqeaSt0th3Iw==
+Content-Transfer-Encoding: 8bit
 
-On Fri, 13 Jun 2025 08:17:28 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+The local variable 'node' was used only once to retrieve dev->of_node
+in a call to irq_domain_create_legacy(). This patch inlines the usage
+and removes the redundant variable, improving code clarity.
 
-> Please make the patch. There's too many for me to do them all.
+No functional change intended.
 
-You're not the only one with unused events. When I said there's "too many"
-I meant in general, as you only have one ;-)
+Signed-off-by: avinashlalotra <abinashsinghlalotra@gmail.com>
+---
+ drivers/mfd/twl4030-irq.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
--- Steve
+diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+index 232c2bfe8c18..a2ab5deef9e2 100644
+--- a/drivers/mfd/twl4030-irq.c
++++ b/drivers/mfd/twl4030-irq.c
+@@ -676,7 +676,6 @@ int twl4030_init_irq(struct device *dev, int irq_num)
+ 	static struct irq_chip	twl4030_irq_chip;
+ 	int			status, i;
+ 	int			irq_base, irq_end, nr_irqs;
+-	struct			device_node *node = dev->of_node;
+ 
+ 	/*
+ 	 * TWL core and pwr interrupts must be contiguous because
+@@ -691,7 +690,7 @@ int twl4030_init_irq(struct device *dev, int irq_num)
+ 		return irq_base;
+ 	}
+ 
+-	irq_domain_create_legacy(of_fwnode_handle(node), nr_irqs, irq_base, 0,
++	irq_domain_create_legacy(of_fwnode_handle(dev->of_node), nr_irqs, irq_base, 0,
+ 				 &irq_domain_simple_ops, NULL);
+ 
+ 	irq_end = irq_base + TWL4030_CORE_NR_IRQS;
+-- 
+2.43.0
+
 
