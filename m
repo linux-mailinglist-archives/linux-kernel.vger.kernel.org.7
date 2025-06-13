@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-685598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27156AD8BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:23:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A8CAD8C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEF017F83A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C3D3A3992
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0102E0B7B;
-	Fri, 13 Jun 2025 12:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1659D2E1733;
+	Fri, 13 Jun 2025 12:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DH28uZDU"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PDIZcUG4"
+Received: from out.smtpout.orange.fr (outm-51.smtpout.orange.fr [193.252.22.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA342727E8;
-	Fri, 13 Jun 2025 12:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF85A291C2E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749817391; cv=none; b=gtzpXequoXoFNLqtpIaTHWFxy4CF4wehkuMxvI3tVN/QESnJX6LNGfaJE9mRPduxVyQXds9Y9M6MEERTBuxmLKYy9icbcgqIFlmqOjkjJkZvuZeX4HkP08kdYnKpTDRVibS1jbaM9hf0vsmJHSV5zpIj6rRjxlwPuylDFfco5GY=
+	t=1749817557; cv=none; b=mRHMim9suj7s7ZRXDMFZd+E8uA6B+hyAm08i05HE7HtROHOfMyA3qSvcwxHfvqyeoUXb3EmENv99P37DtA6+xaTG93TZ6iHsG63m9u+j8HeU9Xn/PJoZt++pl6dRPBuMNYF5Qro9bloc8Vo/Qvu8U4nrvIa2e4jahkQBojTj+iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749817391; c=relaxed/simple;
-	bh=JiQ9RO63rTiSweA5WgDt7giwKWP1ckT6Lp/wiX88Ws4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EH4V15f5Yy4UyI+/Qhxv+m70VnEqytWbbE8HwN0AE7Bhgy5r8cubvJ+Lmn88tP819611kXiCP9k1XvuITW2IBuK04uMPfHkxQWFH5Ozntj+135aeWHCnutg+mqxCkPyzjsUzPkJKeMBUHb3ywcj6avb1iehtcWMkpyUu44Tcc3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DH28uZDU; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b2f1032e1c4so2141042a12.3;
-        Fri, 13 Jun 2025 05:23:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749817389; x=1750422189; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZF8Ijk+kxycu39taXWGDmympqXTula1EYmwZ/sS6tJg=;
-        b=DH28uZDUQE2D5c/KwBjFmKc4qVA4LIDW8tZ/eI7WQX/a6psAmXrGlG7LyJJCNT9+3R
-         AJGh7TJ4VdRU2dWlJZGFXkhFYPtuyB8nxIKQ93IUiieywgkQJ6iECI282/KtnGvP7wNP
-         fzDN3leajla5xlY530lS+utKP/XYBB/n7g3VfYRIh0bTobz515F/ccIsd+jY52AnbeLH
-         aUkfKHWLPDNR5smo46mzqHbLHxyQS2y5hfE1vLHjOn591JEUQ4UK9xmVfsg7Nedo5cSm
-         m2ZkyR/VTOBFj0uHYQUBOuC8gmPUl1JHX14ymCn8s+xaUakRdPh4LES2yfcxLeN2O3+N
-         0gxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749817389; x=1750422189;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZF8Ijk+kxycu39taXWGDmympqXTula1EYmwZ/sS6tJg=;
-        b=L49QlZOiDDdzI6LFYhLFvmL7oFfbUPXnh3p+suQR74i9sSs8b7aupy3PZyGg8Oibed
-         M/t6DshgItamwompKXvmrrf0jkI+bZ/kGsaLrFZ0644MGaR1pzwwvoySNGTm6JiwkuXM
-         2CBai3sL6sWiLtUxOJY7a13UJ9kOzacS8AehJFwg47Jugro6OouZofRgzn6Jq2Vvsilv
-         +aBsg029bFHyVdOvzVv8zA60F+PnysG2cKwXUZnWXjLXP3ggjfVZCBUqwlMblcUNly7+
-         oUtvbaLEAXiM38DKe8SghazzD0EYHb/kwusBC9SVVqi6OV25st0JpTimgNkCur0LrAVM
-         B/Ew==
-X-Gm-Message-State: AOJu0YxII6i7RDu0q6yGKUuQt+/+EiZXmzSNsXQ1kLPtw9N5NaWuFp27
-	xVBp9xQlQBd67gTWde7U0DWBOfs6uAa+J4ou24BDWpp5xJ5MIyjWpEOjdhDRz+Gb
-X-Gm-Gg: ASbGncvMvi1xOq0NqTw5+UEof+rc/jWVGp6vLSKbLfaAbgVddp9dhDV8Sr+Z19X6fDE
-	kxEDwm9ZiCz7kYRc44M3JhFUDDCSwK9Z1zLCJdIIquDbsATib1rc6DQfB3BTZfwu9xMZAf8ZREv
-	J5hQmBQkPT2729iNu/yCwzTpd5hXOJ41YVSffJznPsZKY/Ljhv7BZM3Rt3ZmKpKjrcjEPGMqR1O
-	mc9+pHKyve6D/P94pU0pcrS+KLVEux5yjwRkWXd8zHGKtyyq9/AZBlD9nlYlyRxzY4CpzgwZFPQ
-	vyNvQfG99kB2fQGFCh7F7JjeKlXDc4IsGmSJS4STFlvWv6ubkVE08UrzGRoYpYDz8E/aBP84en8
-	ZXwdIsMI8oPzw/A==
-X-Google-Smtp-Source: AGHT+IELKrcoAf7PgPvBAOyNIQlmy6cdkvLGa8CIZk+QShFhYJ6D0lC7HFhfXUI/BeWfsLf0KH8zAQ==
-X-Received: by 2002:a05:6a20:9148:b0:21f:512c:ba2c with SMTP id adf61e73a8af0-21facec450emr5046063637.34.1749817389000;
-        Fri, 13 Jun 2025 05:23:09 -0700 (PDT)
-Received: from avinash-INBOOK-Y2-PLUS.. ([27.63.22.176])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe163a470sm1553126a12.9.2025.06.13.05.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 05:23:08 -0700 (PDT)
-From: avinashlalotra <abinashlalotra@gmail.com>
-X-Google-Original-From: avinashlalotra <abinashsinghlalotra@gmail.com>
-To: linux-omap@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	aaro.koskinen@iki.fi,
-	andreas@kemnade.info,
-	khilman@baylibre.com,
-	rogerq@kernel.org,
-	tony@atomide.com,
-	lee@kernel.org,
-	avinashlalotra <abinashsinghlalotra@gmail.com>
-Subject: [RFC PATCH] mfd: twl4030-irq: remove redundant 'node' variable
-Date: Fri, 13 Jun 2025 17:52:51 +0530
-Message-ID: <20250613122251.1033078-1-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749817557; c=relaxed/simple;
+	bh=2mn0l/m6M2uSvV7dvbYnSPenaAzhChqJo6eFRW4XeTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qaeOBxL3vWIa08sD7LmvdAdg+hlCmhlB8+BctyOwYRuj2s6CPaTsDXxB4dQXeQBZ039i81iq6lQZeMisKEq8ul+shHRpxrgHRQJuhlTxuBd27gP1X0d4lA4LtXrWOtPoKXZEYb04RKgqxW1TD5NnZFS0hsddJUAUsmskRTphg/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PDIZcUG4; arc=none smtp.client-ip=193.252.22.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id Q3SWuw5MZP9oMQ3SXuOWQ1; Fri, 13 Jun 2025 14:24:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1749817482;
+	bh=J748P/ycE21D8ejg0rZJK2DeFaE3v4xzrkl0Hh+KRZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=PDIZcUG4cnjNu4R5mz1NQELnzrs1LEswuUz7H16c/Tda46YuuvHcUucbfXDCxj+f+
+	 8BSOWLRSFczQ5nDu0ntpfaSe/wZ9fNKoOchFdGGObllo3GSe/7aa2WUDUTCn4sUX9E
+	 nXN1lc3FihUGc+0rE7tmA8YperZrah5QrKftdJ5UTy96Fb2ChnPbTHnmDzKTA/cwt+
+	 Kt+3+HRe+HVa8x3H1Z/aIlezGoU1cbfl3yMnp4RKQq7iAChtp1H7ljPLrkPPyvA3gm
+	 NY6WH8jLBOD9KiYYTk7pXmZJ44EWcRKnnuJbZbovRfsPO5X+I57lbY3ASRLnurd+nf
+	 y40hwVhAEQEew==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 13 Jun 2025 14:24:42 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <b5030bc8-34b8-4275-86ba-11e11ab2bea5@wanadoo.fr>
+Date: Fri, 13 Jun 2025 21:24:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1 fyi] tools headers: Synchronize linux/bits.h with the
+ kernel sources
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
+ James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Namhyung Kim <namhyung@kernel.org>, Yury Norov <yury.norov@gmail.com>,
+ linux-kernel@vger.kernel.org
+References: <aEr0ZJ60EbshEy6p@x1>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <aEr0ZJ60EbshEy6p@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The local variable 'node' was used only once to retrieve dev->of_node
-in a call to irq_domain_create_legacy(). This patch inlines the usage
-and removes the redundant variable, improving code clarity.
+On 13/06/2025 at 00:38, Arnaldo Carvalho de Melo wrote:
+> tldr; Just FYI, I'm carrying this on the perf tools tree.
+> 
+> Full explanation:
+> 
+> There used to be no copies, with tools/ code using kernel headers
+> directly. From time to time tools/perf/ broke due to legitimate kernel
+> hacking. At some point Linus complained about such direct usage. Then we
+> adopted the current model.
+> 
+> See further details at:
+> 
+>  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+> 
+> To pick up the changes in this cset:
+> 
+>   5b572e8a9f3dcd6e ("bits: introduce fixed-type BIT_U*()")
+>   19408200c094858d ("bits: introduce fixed-type GENMASK_U*()")
+>   31299a5e02112411 ("bits: add comments and newlines to #if, #else and #endif directives")
+> 
+> This addresses these perf build warnings:
+> 
+>   Warning: Kernel ABI header differences:
+>     diff -u tools/include/linux/bits.h include/linux/bits.h
+> 
+> Please see tools/include/uapi/README for further details.
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Link: https://lore.kernel.org/r/
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-No functional change intended.
+For what it is worth:
 
-Signed-off-by: avinashlalotra <abinashsinghlalotra@gmail.com>
----
- drivers/mfd/twl4030-irq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Acked-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
-index 232c2bfe8c18..a2ab5deef9e2 100644
---- a/drivers/mfd/twl4030-irq.c
-+++ b/drivers/mfd/twl4030-irq.c
-@@ -676,7 +676,6 @@ int twl4030_init_irq(struct device *dev, int irq_num)
- 	static struct irq_chip	twl4030_irq_chip;
- 	int			status, i;
- 	int			irq_base, irq_end, nr_irqs;
--	struct			device_node *node = dev->of_node;
- 
- 	/*
- 	 * TWL core and pwr interrupts must be contiguous because
-@@ -691,7 +690,7 @@ int twl4030_init_irq(struct device *dev, int irq_num)
- 		return irq_base;
- 	}
- 
--	irq_domain_create_legacy(of_fwnode_handle(node), nr_irqs, irq_base, 0,
-+	irq_domain_create_legacy(of_fwnode_handle(dev->of_node), nr_irqs, irq_base, 0,
- 				 &irq_domain_simple_ops, NULL);
- 
- 	irq_end = irq_base + TWL4030_CORE_NR_IRQS;
--- 
-2.43.0
+
+Yours sincerely,
+Vincent Mailhol
 
 
