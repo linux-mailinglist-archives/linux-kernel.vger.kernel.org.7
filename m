@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-684897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5C1AD8180
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB37CAD8189
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C34189A112
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B553E189A16B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26E21FF608;
-	Fri, 13 Jun 2025 03:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rVzd5mlO"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9227247296;
+	Fri, 13 Jun 2025 03:15:49 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CFC20D4E4
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 03:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E2320E70C;
+	Fri, 13 Jun 2025 03:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749784506; cv=none; b=m0MmM+qB1wWzvsGD6/9h4iIG1QmXJp6nXFhIKgkfG3rsm+SYXKey3akbgmxj8cEmie3j6pyLRXWZ0tM2WgG4cjA8E+uZ7AkKKaRUkTR6OG4x9ZlJL71RqnDpyCloiKgAkGRWuAABaI9x77LhymKX7sBg7xK0/O5ITHQ5PJTIS4E=
+	t=1749784549; cv=none; b=lF9Wakv2w/ThDufJYWIBmX3L7MycqUa0NRVtAVF8Pf7lyzIIMoDsbHtyL4wkSmXBigmyvzBl4vspWe+hELrCGOY03waEYioGA8Qhx076oQleHi1uEa/sEmm1drHASIacIG9pcaibaEs4tvaDpgunb/0s/MZxPkJc0TDm02olxYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749784506; c=relaxed/simple;
-	bh=+VELiVMiblS9EMdhSadQrydZV1qKRILumoaWZaqOpCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIlzZZv/vxe44fH6IyQCMnE7/U83o0NpcjuYNf8vxOcXBABTr9/QmQW/vbTklLepjFtPiCpka8emIS4rFG4+k5VxAaCKdhgpLFGdK1tF8B3m4SCSRIkPh0MF3YP96M2mGMD+MOLDSIZv7AN0PDwS2xPxdDR5tZz4kv7+L18//TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rVzd5mlO; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-747fc77ba9eso1599408b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 20:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749784503; x=1750389303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JRGAb5FL87rEahmY3tAqLef0mLJKpmszE0WMQvG4V6Q=;
-        b=rVzd5mlOTEQM9utNVwI+11xON24dhrbsL+bLRKi6y3j1HGV+cTmlOpVjXxZPE2G4FL
-         odbVzHRgme6jffwZpPBPgixUBuJv+1Nqx6HvLlVAVasfA1Pr6rFm84maW6mUZncQyPKw
-         wGBg1yNz+MaD66/Z7QYpL00zA1IkqbTyO5EALNimivx4kx319x5+LTG+Rca3EVSRWdIB
-         13b57KNvOksVlJgKV4URagIdGl6ZJgx4iY7N141+OwYqn+62SeIBKm5Fg4F4cUDBxY0w
-         3KyP7pneQMapp5vYEtDKVHYJNiB1HCqd3qSEadMSsZsaS/WHu7mIS7CQgN8gfD1D2Fzb
-         JMCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749784503; x=1750389303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JRGAb5FL87rEahmY3tAqLef0mLJKpmszE0WMQvG4V6Q=;
-        b=iIEH84p5Lrem4rBkBGFzlHm54gHps8B57CSl/Khr5G8WR78wGiErh3c6kQCGP831e7
-         1E0Tt79RAtdYME4/7arx4IfHmVdyrNo68SftkCUdKcQDPQTyZqQrOlIN0XaaUQIYuCA/
-         9eQ/6/70qPEO9+gYDAqFWtyJoBGs6Zgr5YDgj/mesd2LbX0U1dGT+H0pBFC5GAU9m07r
-         tLjEz6bktKqcjzyz9+zAUny9U1v6ROMqB0wZTY9KJU1kGVQ/4BlvmKHkGYP/jd1w7My0
-         NBd7MUwUqrfBnZMOcU9/08iSEr9tsp2HNofdV/rgQ1yqQJDBzF7rZIJ7yt9bje67o8pr
-         umfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+uhktEVEQ2kIcXTIYrtrxsSZ3vf7orufMLmR9NqCvGie6Qf07UzlDmxaBn5vD8LH+YJeaGPUbeIpYNHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL+W2Nl+/MRMm8CA9cxSpUp3/HgNMKCniz+ughjWjYTUT41Vlt
-	jxLbNJrwaS20eIA0wnRcx98tA6hMtCGHyf0hA5y2OCM8YwhAVcLPaosZj72RKu+waWM=
-X-Gm-Gg: ASbGncuCyEvhj2xVE7/VQzr8oUfXakEjoagcR5J7UzYeI3p7dMabPOvV8cM/ki7h8aE
-	PaFJ+Ei9gnSfmcefrtdDjpDTCr8DBIfL3oxpx0daax/vF7rZNx47FHuiRitB5qEzDDPdb9+/OhS
-	X0RigWkuVibXrukDc1IPLxmun6wYEwvp2jR+JyKp0QQX/z9jC5kt9R8jcD0eFg49rdJK5KQ45qe
-	Axji+khNmA0niRMYVNIXEpIGub9bpGWXXZauDspBBRL205LLMuPXr4Obz6AtQNSRQuvRbHKwwZO
-	ibAJ5cV41CxVtmmIMKF+YR2VeeA7y+j5x/BpZPQhz3FX5kiA9yXo0XAZaIAWDqs=
-X-Google-Smtp-Source: AGHT+IEnho9SIZwX8QrGlyPV8bXYV4SYO9jr621hoxecz+TswlMYKxI8v4iYpnb5LWfEM/IZI9aNhQ==
-X-Received: by 2002:a05:6a21:9ccb:b0:21f:51ea:5c57 with SMTP id adf61e73a8af0-21facbd7410mr1977131637.16.1749784503419;
-        Thu, 12 Jun 2025 20:15:03 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe168b971sm568935a12.58.2025.06.12.20.15.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 20:15:02 -0700 (PDT)
-Date: Fri, 13 Jun 2025 08:44:59 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dave Airlie <airlied@redhat.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH 2/4] rust: devres: replace Devres::new_foreign_owned()
-Message-ID: <20250613031459.dmg3bgif62oyaagv@vireshk-i7>
-References: <20250612145145.12143-1-dakr@kernel.org>
- <20250612145145.12143-3-dakr@kernel.org>
+	s=arc-20240116; t=1749784549; c=relaxed/simple;
+	bh=wiWZ2dzLQqc4OfpRI+E8bl3uA461tgzyLh2UFnwyaAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GheMIyNuTe+cAnMFkBm/O47OAIxvKfRWncwOzF6hwSI7tiy528Hdan2dCK+AwJfUBmVwOAn8btlWXz1FwT+wfkJZVEq+4UCnBXfH6oioGpS/xxO1j1HgeDIYHr8XMtckqCoonEY1/B+XSyLku3GhYBkpZ2U51RJ5oSIPViuuN+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJPfn3RlhzKHN5T;
+	Fri, 13 Jun 2025 11:15:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CBD201A1911;
+	Fri, 13 Jun 2025 11:15:43 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgD3W2Ddl0to15NsPQ--.28263S3;
+	Fri, 13 Jun 2025 11:15:43 +0800 (CST)
+Message-ID: <3569a77f-1f38-4764-b1e3-d0075775c7bb@huaweicloud.com>
+Date: Fri, 13 Jun 2025 11:15:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612145145.12143-3-dakr@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
+ queue limits features
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, john.g.garry@oracle.com,
+ bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+ brauner@kernel.org, martin.petersen@oracle.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
+ <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
+ <20250611060900.GA4613@lst.de>
+ <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
+ <20250612044744.GA12828@lst.de>
+ <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
+ <20250612150347.GK6138@frogsfrogsfrogs>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250612150347.GK6138@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgD3W2Ddl0to15NsPQ--.28263S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww45Gr4fJw4UWr13Zw4DXFb_yoW5Jr43pF
+	W8GF1vyFWDKF15Gw1q93W0qr1Fvrs2ywsxXws5CrWUAwn0qr17WF1kKFWjkF97Z3Wxu3y5
+	Xa15G343ua15C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 12-06-25, 16:51, Danilo Krummrich wrote:
-> Replace Devres::new_foreign_owned() with
-> devres::register_foreign_boxed().
+On 2025/6/12 23:03, Darrick J. Wong wrote:
+> On Thu, Jun 12, 2025 at 07:20:45PM +0800, Zhang Yi wrote:
+>> On 2025/6/12 12:47, Christoph Hellwig wrote:
+>>> On Wed, Jun 11, 2025 at 03:31:21PM +0800, Zhang Yi wrote:
+>>>>>> +/* supports unmap write zeroes command */
+>>>>>> +#define BLK_FEAT_WRITE_ZEROES_UNMAP	((__force blk_features_t)(1u << 17))
+>>>>>
+>>>>>
+>>>>> Should this be exposed through sysfs as a read-only value?
+>>>>
+>>>> Uh, are you suggesting adding another sysfs interface to expose
+>>>> this feature?
+>>>
+>>> That was the idea.  Or do we have another way to report this capability?
+>>>
+>>
+>> Exposing this feature looks useful, but I think adding a new interface
+>> might be somewhat redundant, and it's also difficult to name the new
+>> interface. What about extend this interface to include 3 types? When
+>> read, it exposes the following:
+>>
+>>  - none     : the device doesn't support BLK_FEAT_WRITE_ZEROES_UNMAP.
+>>  - enabled  : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, but the
+>>               BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is not set.
+>>  - disabled : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, and the
+>>               BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is set.
+>>
+>> Users can write '0' and '1' to disable and enable this operation if it
+>> is not 'none', thoughts?
 > 
-> The current implementation of Devres::new_foreign_owned() creates a full
-> Devres container instance, including the internal Revocable and
-> completion.
+> Perhaps it should reuse the enumeration pattern elsewhere in sysfs?
+> For example,
 > 
-> However, none of that is necessary for the intended use of giving full
-> ownership of an object to devres and getting it dropped once the given
-> device is unbound.
+> # cat /sys/block/sda/queue/scheduler
+> none [mq-deadline]
+> # echo none > /sys/block/sda/queue/scheduler
+> # cat /sys/block/sda/queue/scheduler
+> [none] mq-deadline
 > 
-> Hence, implement devres::register_foreign_boxed(), which is limited to
-> consume the given data, wrap it in a KBox and drop the KBox once the
-> given device is unbound, without any other synchronization.
+> (Annoying that this seems to be opencoded wherever it appears...)
 > 
-> Cc: Dave Airlie <airlied@redhat.com>
-> Cc: Simona Vetter <simona.vetter@ffwll.ch>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/cpufreq.rs    |  8 ++---
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Yeah, this solution looks good to me. However, we currently have only
+two selections (none and unmap). What if we keep it as is and simply
+hide this interface if BLK_FEAT_WRITE_ZEROES_UNMAP is not set, making
+it visible only when the device supports this feature? Something like
+below:
 
--- 
-viresh
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index e918b2c93aed..204ee4d5f63f 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -747,6 +747,9 @@ static umode_t queue_attr_visible(struct kobject *kobj, struct attribute *attr,
+             attr == &queue_max_active_zones_entry.attr) &&
+            !blk_queue_is_zoned(q))
+                return 0;
++       if (attr == &queue_write_zeroes_unmap_entry.attr &&
++           !(q->limits.features & BLK_FEAT_WRITE_ZEROES_UNMAP))
++               return 0;
+
+        return attr->mode;
+ }
+
+Thanks,
+Yi.
+
 
