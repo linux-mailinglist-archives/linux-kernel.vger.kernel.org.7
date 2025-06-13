@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-685720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF440AD8D84
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACE1AD8D9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E3B37B0F36
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70DB3B4842
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6221993B9;
-	Fri, 13 Jun 2025 13:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08F71990B7;
+	Fri, 13 Jun 2025 13:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJ+xzy3v"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="e9zj3Qmw"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929DB1953BB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A322F22;
+	Fri, 13 Jun 2025 13:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822300; cv=none; b=dIpNIxE/Ws26jNziTCO2oODtNlNTU8RTJ7xBb3by7CziqsiMMTCAJrszKWTab8XbJHFmeD22eVqGoroa1saj/xf226DBuEvAfvbHmn91qScrR14+lGzbxr6AVQwYa9Bf40dSSU2iYHp6X79fANnSKtqJ3d5etB6EGb0+kcTXYvg=
+	t=1749822465; cv=none; b=F87LLpWNHlpW8h2PoRptRODsv8tWMERTcQDrhl7KtNxRCHOBmkNQ1o+lnQQwBX0Q5oHCp1CHJFamj4nVXpe5op20cIV3MDmrkzAthPWzVsRJx9dH28/eIhYlHxwTnVRaB4HjfzZewOjDZ5n9CkGXzMdNnGEKigMYWTrOeActSm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822300; c=relaxed/simple;
-	bh=q0NfNcDeaw2dkT7ssIvsVhJpYdlm29fY3PiCs47ExhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tm1wM3pnOmm6qHXhOVBuUHKARAA3qwrykzfiqMnSV6YpilZ8fzI7qLCqKlSGeDqOwMD0BqC2lZ1a0DOU5hu6/wZgcnCh/H95RIdhcCY8cHl43+pTK+t68wJjjDEAl76aX2HPNcvjjnDdHhMaTPcXo40EiG12sSiVGBE0TjvGbRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJ+xzy3v; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-235ea292956so20442275ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749822298; x=1750427098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/NDaCbVF56xnPNvNjsdyRE5TUgx3SSgRAAlgm9SJ4O4=;
-        b=MJ+xzy3vkAbj/+wOAVpPQ3Xq69Ny1cxETk/sNcAtek5rFz//HPJnHDO9ceEOCdEnC0
-         P9p01XFAeUgWwr9lxMy/ZX8Le0VBO49SrRSNw2CQCuXkcX7IaxhL7ldsSrx2TGkCemEf
-         IcFZvb5gnv7pzAGCgr+GPZfD39plZogayD7DXbryJKuBFT8yUnXerWDu+IfAjBTxW/Bq
-         RxfzFCypHBe2fFQsDgodJUvRylsWkghCCfE+fht+D/ouqWWDhBXC7r/yiRwICC5vr4CJ
-         C7uCEb0RyK2FUkgjt4Iwv8B9GAns/WTHdoTRf25Kb3IMMMQcAgqMp5y/3MlKTCEpG9SC
-         f0tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822298; x=1750427098;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/NDaCbVF56xnPNvNjsdyRE5TUgx3SSgRAAlgm9SJ4O4=;
-        b=PVXCYPJ2E3kZrLXUsQFh+vjqky2CPL9xH87hi2WnkwAD5bFpHlsF07xplcw4vDAb8z
-         o1wiK8OtFB8KjzSdP2qmNeEVrp4inUq0DVvs0GHV6G8+safq554K53Sk9Km+W9TdPXIe
-         hbsMiediNh6/T9VZEmTD5M6a+oXyfTSqsc6Ca3W13uCGskYhzkj66FfiggwpBf9kLs7I
-         gNslZIYXI0ilGXik9PHv6JitWMVE6+Dvm0vH2HLTIKP6S3TfvllYYcfQC2shCf/CtBcF
-         aFmMnr7UEd46MR9PdxR8t6w1FjMGaFuZdXC7F15UnlcNifr/29gJJwuny/heelEGFTdI
-         ytWA==
-X-Gm-Message-State: AOJu0YyQh5fyLoN3WOKMqMHuBoH+3R+B6j6EciDlco61tZ9czmOCMsBF
-	suHVY52VF3Qwujw99bODbZZEpXZaajCQ0/Mf6aAlsnvVE+VgcLN9gW0aNZT2xLZn
-X-Gm-Gg: ASbGnctiiN8fubpJ9HYoGa5uF9tuKTy9H61+yK7NuG4vIauosYZk/e6/GXwcIZ1OnXU
-	2zZ4VIa8nsOoW95I2dKZmyApqDDRGsQywnuLGfRUewXn6Kruh9yDsfdIEnDqLJcK905PsTEX5LM
-	V4rE6+v1L/ygYMzYfVMUcM5FHWBXqRuH6gqP2W5qFffUrMjUEDUIMxXRKYQx80ZRmELGJLFlBOs
-	Ts4efAdZuW/tI/LFiObztGPb0WoVxA1IzziKfV4eLaEiq8Q8EkGQZpMe3xazptutzLa2OK4YmQf
-	DVtKSQkcTbC+zoRfJ8lXbL804Kw2jNi1nAwsO88pSmvuRYH6hPnRTaEo5hodjwjlQS81SM53cnu
-	n2Xjqn8k=
-X-Google-Smtp-Source: AGHT+IFOIz/HmbvARBQzrFmiPDNxw41TO9on4zitwpOQf33DCfHwlEI/HyXVAe5aSUG/GmDc9R/NLg==
-X-Received: by 2002:a17:902:eccb:b0:234:eadc:c0b4 with SMTP id d9443c01a7336-2365dd3d482mr51958985ad.44.1749822298318;
-        Fri, 13 Jun 2025 06:44:58 -0700 (PDT)
-Received: from manjaro.domain.name ([2401:4900:1c30:6c31:49d8:cd52:9d21:df60])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deca368sm14017475ad.201.2025.06.13.06.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:44:57 -0700 (PDT)
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	chentao@kylinos.cn,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>
-Subject: [PATCH] firmware/memmap: use scnprintf() in show funcs
-Date: Fri, 13 Jun 2025 19:14:49 +0530
-Message-ID: <20250613134449.7459-1-pranav.tyagi03@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749822465; c=relaxed/simple;
+	bh=EvV/AQFNGYn1BkbnZYKoWbAWoLrbH5/uURZIOWrOb9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GLAFs6+3D6htgA8U3d47fyx1DRigzH4xwdFhBbsnUlgYcteRqX6Hp17wrJUCukLAA+EKacL/x9sPHGCi9DNpL5VpTmzgOpKUsGCYO7c7OJmbmfqbXvqswZ45W7FUq/rxoUty1tvLVzYhzRqb8N0kLJH300QYdx6wlI9oEg43mbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=e9zj3Qmw; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55DB7mUP030978;
+	Fri, 13 Jun 2025 15:47:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Ei9n0mlSS+RGTUs8J62IILpUrlBM4z2gov+FvU4IE2M=; b=e9zj3QmwZlRjxEsa
+	fHopqr4SFaF+DVyvbsh6ITrsy/VLyJfB/NPjT41IAjlqgnu4EyQqZ3Iqg4g1JUr1
+	mu2E7lrj/oolb6LwgSgR/fHxGB95CYTStre9MZP4ae93ZjiaXLZw4zC2VkY/rRCr
+	kW/nDiLYqdaEhu3vruKyVxvSvp1ppHtBs41ExJxJMvJRUIcnsGRaOpwJcltTaqIc
+	cRSzwr2VR3hW2I+U4+qTUKqDIneClB8VVZOZw4VWsJbkwORPLXSw7P4HXtEOpCSP
+	YCZlb1U3rJaJcBOHfLuFtcxCQWoOT5pgLRq9fBh5DEHRHRfvVGs/3IPPkwHJy6WI
+	mhJttA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs364mg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Jun 2025 15:47:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2B8B04005A;
+	Fri, 13 Jun 2025 15:46:31 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F05F2AE5D11;
+	Fri, 13 Jun 2025 15:44:59 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
+ 2025 15:44:59 +0200
+Received: from [10.252.9.77] (10.252.9.77) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
+ 2025 15:44:58 +0200
+Message-ID: <c3208fec-53ac-46eb-907f-cc5b7a18b188@foss.st.com>
+Date: Fri, 13 Jun 2025 15:44:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] pwm: stm32: add support for stm32mp25
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <wbg@kernel.org>, <jic23@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>, <lee@kernel.org>,
+        <alexandre.torgue@foss.st.com>
+References: <20250110091922.980627-1-fabrice.gasnier@foss.st.com>
+ <20250110091922.980627-5-fabrice.gasnier@foss.st.com>
+ <4b641513-ff2e-43ab-8074-ba6b521875e2@foss.st.com>
+ <5ui74qlssllgn4h34by5jcpi5g6rknziclcsh4w27tjvznynsv@lcjtjxn6rovl>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <5ui74qlssllgn4h34by5jcpi5g6rknziclcsh4w27tjvznynsv@lcjtjxn6rovl>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-13_01,2025-06-12_02,2025-03-28_01
 
-Replace all snprintf() instances with scnprintf(). snprintf() returns
-the number of bytes that would have been written had there been enough
-space. For sysfs attributes, snprintf() should not be used for the
-show() method. Instead use scnprintf() which returns the number of bytes
-actually written.
+On 5/15/25 11:24, Uwe Kleine-König wrote:
+> Hello Fabrice,
+> 
+> On Wed, May 14, 2025 at 11:30:26AM +0200, Fabrice Gasnier wrote:
+>> On 1/10/25 10:19, Fabrice Gasnier wrote:
+>>> Add support for STM32MP25 SoC. Use newly introduced compatible to handle
+>>> new features along with registers and bits diversity.
+>>> The MFD part of the driver fills in ipidr, so it is used to check the
+>>> hardware configuration register, when available to gather the number
+>>> of PWM channels and complementary outputs.
+>>>
+>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+>>> ---
+>>> Changes in v2:
+>>> Address Uwe review comments:
+>>> - Make MAX_PWM_OUTPUT definition less generic: STM32_PWM_MAX_OUTPUT
+>>> - No need to initialize 'npwm'
+>>> - refactor code, for *num_enabled to use same code path
+>>> ---
+>>>  drivers/pwm/pwm-stm32.c | 42 ++++++++++++++++++++++++++++++++++-------
+>>>  1 file changed, 35 insertions(+), 7 deletions(-)
+>>
+>> Hi Uwe,
+>>
+>> I think this patch still miss some reviews.
+>> The first patches of this series have been merged.
+>>
+>> Is it ok for you to merge, or shall I resend separately ?
+> 
+> I have it still on my radar, no need to resend. I just have to find the
+> time to look into it in more detail.
 
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
----
- drivers/firmware/memmap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hello Uwe,
 
-diff --git a/drivers/firmware/memmap.c b/drivers/firmware/memmap.c
-index 55b9cfad8a04..fef18f598ff8 100644
---- a/drivers/firmware/memmap.c
-+++ b/drivers/firmware/memmap.c
-@@ -369,19 +369,19 @@ int __meminit firmware_map_remove(u64 start, u64 end, const char *type)
- 
- static ssize_t start_show(struct firmware_map_entry *entry, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "0x%llx\n",
-+	return scnprintf(buf, PAGE_SIZE, "0x%llx\n",
- 		(unsigned long long)entry->start);
- }
- 
- static ssize_t end_show(struct firmware_map_entry *entry, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "0x%llx\n",
-+	return scnprintf(buf, PAGE_SIZE, "0x%llx\n",
- 		(unsigned long long)entry->end);
- }
- 
- static ssize_t type_show(struct firmware_map_entry *entry, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%s\n", entry->type);
-+	return scnprintf(buf, PAGE_SIZE, "%s\n", entry->type);
- }
- 
- static inline struct memmap_attribute *to_memmap_attr(struct attribute *attr)
--- 
-2.49.0
+Gentle reminder, I hope you may find some time to review this patch ?
 
+Best Regards,
+Fabrice
+
+> 
+> Best regards
+> Uwe
 
