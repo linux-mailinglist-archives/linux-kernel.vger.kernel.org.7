@@ -1,106 +1,95 @@
-Return-Path: <linux-kernel+bounces-685492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44807AD8A76
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:30:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A47AAD8AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6527D3B99B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB38318892CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AD92D4B78;
-	Fri, 13 Jun 2025 11:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPS98UCJ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FCF2D8784;
+	Fri, 13 Jun 2025 11:38:51 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4822DA765;
-	Fri, 13 Jun 2025 11:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1CC18BC0C;
+	Fri, 13 Jun 2025 11:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749814221; cv=none; b=sfsRKqVn5v/7hXrzdqc5j5S9JTTtZJauttVc2xU8mTeIK5RWdBkhNCtGAT7xHGi3hqownPvl/aBp+OvWmL3jpNfZxBf0eHmAMjFeiy32zxHalh6j1iyknI3sIMhREnX/zCNfk1bkl1Tx8HSqinnlA5r1eFS/2rPx+nKpRdV4Kig=
+	t=1749814730; cv=none; b=NZIaNLzLONf0t6FkXu76bXoYwqhU8LcHWCA+kL/OrcRUYNLGYb7H9cqPzLtHpTAT6g1FJSYY8mX2p+/ikE5oTWxH0gfXGELn8VvCS3R5TMFNMV8NxUS5ZTL1INSUof1gRizOjnUJ9+b5JzjLz6CpUZfpIxlBNV14zZmev8eUPQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749814221; c=relaxed/simple;
-	bh=HmTH70bwTVYdKhhzFkJWDj+rGc5yhYA7N7SiMyn5Iq4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MI3RhDuIB5X3jxmPuvHqupZZkUtlhxhT2EWnBOtEQDX7NVE479o7AZLGd45Y+vzYRyoEO5B3kTnF3I6K1ZuWt0doVqUjioBP2sCf8XtpDe59WFjNZ3C+/ROhdBn+ZIlvFkh+qhcUKh/s/RH0bCX3pcH02nu5j7vB9HG6Ua+Bulc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lPS98UCJ; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-742c7a52e97so1852868b3a.3;
-        Fri, 13 Jun 2025 04:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749814220; x=1750419020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HmTH70bwTVYdKhhzFkJWDj+rGc5yhYA7N7SiMyn5Iq4=;
-        b=lPS98UCJK+1STPVYYIyKLK0ko+VMGJQ8WYMu+HxEnX0h6eFa5YlonXZukcxjf1MhOQ
-         YvPd7HcsS3i/AmJIHKXpG+ZZtIUE/bJXA3RwBhd8+m3edWxPtzlmDYKPHhouC37P9VjX
-         r8y5Kum5VgLb0UkMeybZwLC/ie3AFKZ2Y8S0GFaQYkSoXhpJb6d+lTICIHSu70o9/m6V
-         YMH2JRch8k+fn19ifQP53Nkfkt9degUpvZZ3RxoLRxCf8BtBXXqRVXeuq6xwLvXT8QGb
-         /2MAywSpoj27sQMNPo9l8jpI68snAeW0825UTMALrJYs7lbAUPSDVyyYMGJ/QifNScej
-         9+hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749814220; x=1750419020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HmTH70bwTVYdKhhzFkJWDj+rGc5yhYA7N7SiMyn5Iq4=;
-        b=auvVDmKpGezggr5b3QxJhoN0Pft+CFGyKzGGDssSVCqUlTaOy5C28Om2n2Jp8ce8hj
-         u53tBnKpaF/OanmIvV+VS09GwMDDSc8R3FkfTgHviE2oCM3HChwFUBdeJdSK4pXwsWBu
-         FVUKtdNNa7lsss5hKfA0DPwPsBz9GMWDS6g/kQVD6QTYQYbwZ3en6JiBng7sCBywUI50
-         3DmzLpMQ5VPq+8zYV9c9b3GK2Al/K6FpphBMAd+lnhgdLaNhl6eSbfxTc0dFZ5ly1Obn
-         VGd1xMe3+ueFSb2zeVr2RWcRC6IeNdxXCVqeiBM9q1SVmIjprDZKN27wtyq3era9JcVB
-         X0BA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8tS5D2AsCKgCm3FyALIVF6ME2HxUN3nd6AETCMnwN9vV+auHmpcboYAVhKOe69/hzEM9I82KnzDNy4eU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEsK93LwDKqq3Qt80cUwxD3hU01urSP4wJtnAUyLe4KzzaaD+q
-	B/x9KGPZhmTaw1bWLB8rwddeGatN1VnE3EqyKGsAPZru8Z2vnwo3XqZtNZK7sLdpnsd2xgLgEBL
-	EnJq+Xy6py9mideEvyzeSJtufdfKTLA0=
-X-Gm-Gg: ASbGncu3gsmkrPLuyxggDrWFz5i7xsLmOtybh+jVtj+VjgrISTRM+pzuXR3i5lCtbuL
-	Md9o0X0Il/Hhosn8AAVSR0GVNLlgCxi5W/Y8oge+HImok/+h4xLNut/wKfJKQvQPk9592VHKojg
-	fRA76yqocpC//RXoUs0qvp8LvwcjEzAb42JGIaArhG7SM0L8H6WkhqmF+yMIb8bVRVMkswceV7v
-	8/fjQ==
-X-Google-Smtp-Source: AGHT+IEaF7K0lYWD/qRC6qjzQQCSi6NzXwISbPksiOJyDpIZrdNZ3BriDHd1PZooPsJor1sEW6s9LFjcZTlfyCHbxQY=
-X-Received: by 2002:a05:6a20:3c8e:b0:1f0:e42e:fb1d with SMTP id
- adf61e73a8af0-21faceed350mr4155660637.36.1749814219630; Fri, 13 Jun 2025
- 04:30:19 -0700 (PDT)
+	s=arc-20240116; t=1749814730; c=relaxed/simple;
+	bh=LFiGEbOv0yEE6+gXbosvozR/D9umrkZb2ofxQGgFRMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BEj02icceZUdoPhP+JZrV/wpfwr4jCuz8PpbCE/GVlsXXJmuHcWLOzp3roOQhlPw0gkRc5P3X2NE/PTzAjAaLMD1Nj+8jBCFMwE7QUVQ8LHVdPJmc7Nwx5iyQYtBM62fd86Zzos5xcEtAY2cHLbk7Jv+RUkXmYcS+L1qCkNNtoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.smartont.net (unknown [180.110.114.155])
+	by APP-03 (Coremail) with SMTP id rQCowAC3CFG2DUxo0Ak5Bg--.60443S2;
+	Fri, 13 Jun 2025 19:38:32 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH 0/2] RISC-V: KVM: Enable ring-based dirty memory tracking
+Date: Fri, 13 Jun 2025 19:29:48 +0800
+Message-Id: <cover.1749810735.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250531194346.3630898-1-andriy.shevchenko@linux.intel.com> <aEv_y5Lfe3Dul48I@smile.fi.intel.com>
-In-Reply-To: <aEv_y5Lfe3Dul48I@smile.fi.intel.com>
-From: Manuel Lauss <manuel.lauss@gmail.com>
-Date: Fri, 13 Jun 2025 13:29:43 +0200
-X-Gm-Features: AX0GCFulFU0If5AM7oDz-AO-al_LHNimx-YMWb9H-ga_I3tHdMdJmDX_Y7Hx6nI
-Message-ID: <CAOLZvyGTRvBnpqVVWB8c2uukk0jVRar=DU_ndS+gxXvxfcM7bg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] MIPS: Alchemy: Remove unused forward declaration
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3CFG2DUxo0Ak5Bg--.60443S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw47ZryxGFWUZw18ArW3GFg_yoWxAFbEk3
+	y8J397JrWxZa18XFW7Xan5XFWDKayfK34DXF1YvF15Kr1Dur47Ga1kZr1qvrWUCrs8X3sI
+	yF4fZFySq347KjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoPEfDUUUU
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBg0MBmhL72JrpwAAsj
 
-On Fri, Jun 13, 2025 at 12:39=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> +Cc: Bart.
->
-> On Sat, May 31, 2025 at 10:43:46PM +0300, Andy Shevchenko wrote:
-> > The 'struct gpio' is not used in the code, remove unneeded forward decl=
-aration.
-> > This seems to be a leftover for a 5 years.
->
-> Any comments on this, please?
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-This is fine with me!
+Enable ring-based dirty memory tracking and add some
+common KVM tests for riscv.
 
-Manuel
+Quan Zhou (2):
+  RISC-V: KVM: Enable ring-based dirty memory tracking
+  KVM: riscv: selftests: Add common supported test cases
+
+ Documentation/virt/kvm/api.rst                 |  2 +-
+ arch/riscv/include/uapi/asm/kvm.h              |  1 +
+ arch/riscv/kvm/Kconfig                         |  1 +
+ arch/riscv/kvm/vcpu.c                          | 18 ++++++++++++++++--
+ tools/testing/selftests/kvm/Makefile.kvm       | 12 ++++++++++++
+ .../selftests/kvm/include/riscv/processor.h    |  2 ++
+ tools/testing/selftests/rseq/rseq-riscv.h      |  3 +--
+ 7 files changed, 34 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
+
 
