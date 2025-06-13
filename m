@@ -1,172 +1,234 @@
-Return-Path: <linux-kernel+bounces-685848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C09BAD8F81
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2A1AD8F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C99A3ADB08
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E793A9821
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8453D170A26;
-	Fri, 13 Jun 2025 14:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287E917A30A;
+	Fri, 13 Jun 2025 14:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hmZMJOrS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SzC7Q44l";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hmZMJOrS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SzC7Q44l"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpdH5M1w"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B6E1547E7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE362E11A8;
+	Fri, 13 Jun 2025 14:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749824644; cv=none; b=cSFcSJSU9mAk+gK/v1luOQ3w0teekAUb6u1ZuNniFGJdDo4cVnP1loVwjiZTRp4Fg6t0z5yMLyE6qJAMBSvYrBIaqbqJoUmxa3F7R4rxi1o5XQPjtvtBE/lYzOkJYUGn2J3dpYJDHZMHKqbaVqxL+KDCNzVgVG+WolW9Cx9a1UM=
+	t=1749824745; cv=none; b=uMjbcL/HkK3UeDnst3ZeZg3P5KMcuOwVwdmHUgnynkp03RZK4wnccRgeKUE5QxLO7g3jPNok6t+ihYSxCUHf/1rRj1ItQvIYFU+fhssGfGI+H+GEO657OOYwQl1Rdwe+ecaorSiaBkiYD6G3tdAQimJSi+VbCj/Em60CmlWP8y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749824644; c=relaxed/simple;
-	bh=DOKuj24pLJlpwCLjnFtv8Sx+s8z8HHrltCn8BdP4ETo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZ5RMQByNbDBO9GiRK5cPsyUzorfLDEgRQeRGIDgxO+4TGdK0qzYCbtgGv1ES4tdRxramaYAZI9Gj4ksacVnslErYQF2JKUDuBiwCUfZKPSBlNT5i65MdDXAjgZd58Frqyiniwul0Eq0GzW+PhbR7KTaEYJs24Smuizn+cnNPR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hmZMJOrS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SzC7Q44l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hmZMJOrS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SzC7Q44l; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7866A5C374;
-	Fri, 13 Jun 2025 14:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749824641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MUPsPgx6alNrpaxgdEaMoO7XxeOfzLHfWilP4Ho/V/k=;
-	b=hmZMJOrSr0dBj5z7fuxXat4z/MY1W6PJnsQr9nV5t+Fcnk0I+/CjJH1IpI72MqY4mALRdn
-	0YUE7C2C6M3mU4qYlqUeogGBftHiYwMUhkPIociKqfB+friItSXZUTGYAzXemnqNwNefHC
-	tqZdUw2a+fjX/7GVGR1UB9w826kD8nw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749824641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MUPsPgx6alNrpaxgdEaMoO7XxeOfzLHfWilP4Ho/V/k=;
-	b=SzC7Q44lvgh2o1HrVmhgFh4t6zSmQdXcuFv3OzJZLOJAPKFkjeRFvGK4DfciE7Ffo7IWMx
-	A9pHnCIAAKN9UuBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749824641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MUPsPgx6alNrpaxgdEaMoO7XxeOfzLHfWilP4Ho/V/k=;
-	b=hmZMJOrSr0dBj5z7fuxXat4z/MY1W6PJnsQr9nV5t+Fcnk0I+/CjJH1IpI72MqY4mALRdn
-	0YUE7C2C6M3mU4qYlqUeogGBftHiYwMUhkPIociKqfB+friItSXZUTGYAzXemnqNwNefHC
-	tqZdUw2a+fjX/7GVGR1UB9w826kD8nw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749824641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MUPsPgx6alNrpaxgdEaMoO7XxeOfzLHfWilP4Ho/V/k=;
-	b=SzC7Q44lvgh2o1HrVmhgFh4t6zSmQdXcuFv3OzJZLOJAPKFkjeRFvGK4DfciE7Ffo7IWMx
-	A9pHnCIAAKN9UuBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E6C1013782;
-	Fri, 13 Jun 2025 14:24:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id seVGNYA0TGjBFAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 13 Jun 2025 14:24:00 +0000
-Date: Fri, 13 Jun 2025 16:23:51 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	James Houghton <jthoughton@google.com>,
-	Peter Xu <peterx@redhat.com>, Gavin Guo <gavinguo@igalia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] mm,hugetlb: Document the reason to lock the folio in
- the faulting path
-Message-ID: <aEw0dxfc5n8v1-Mp@localhost.localdomain>
-References: <20250612134701.377855-1-osalvador@suse.de>
- <20250612134701.377855-3-osalvador@suse.de>
- <44f0f1cc-307a-46e3-9e73-8b2061e4e938@redhat.com>
+	s=arc-20240116; t=1749824745; c=relaxed/simple;
+	bh=7nxxCzygmafMze1zm3p+C7sk/SkcGsulU3y8eIF1HT8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=p3DnGwgt8XNjTv6SsTNJG1GPtJGdVGrIUqI764iBofzicKSzp8YQUrbm5SNwy2Zs3xmcpLalcHSubI3Ee7mBtc3+WPBnHVSNNHW2nbfbHTPqlC+5sSl3pF59gPgSOZ4LYgme7BVQBbE+LW6/U2M4CO82GnG54/3adfp1l35WSLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpdH5M1w; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2350fc2591dso21496785ad.1;
+        Fri, 13 Jun 2025 07:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749824743; x=1750429543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qbMJZEp+OXeJUxEccMiWTpp37iHTjZ0DWM07t8/kq5w=;
+        b=LpdH5M1wg1543yoDj6zeJDzKL+s6ImWqymRDuUFhI5J7bwA6GsSERsUnYbmxL1eyVa
+         cCKAAJrMDuHkejeHadtrTW0Alw278S8Zn3A91arWQWkGKj9Txw57jCdoN3IjV8Do0SCd
+         y9hE0bXasaTQDETsvkodgP8uSuEJC0V1wLJhUsyE19YBeu0YCpeWkbemJNH7x6YXvUES
+         CtVQGBpgXX46AcZ+2XfSvrOEVHTj71vKWOfGVGci5NHYllN0M2MQ+aolYuCYfL4o1GQc
+         8GYMBddWu1DWYFvkNgai/2/lxYCzV/hhJfz3Rl2nFfrr+sX+sPpXEFf4cQKsEzLrrApM
+         IyyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749824743; x=1750429543;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qbMJZEp+OXeJUxEccMiWTpp37iHTjZ0DWM07t8/kq5w=;
+        b=lMtDfnl6rjWZ+505DPz3HKLoEfV8OkcsF2wRVwQghRprGbRx+cHWjVP/T5X56JBmji
+         bJfkKf+JLCmHCWmMAW64Ds2BrHGbYWpPwl56oQsDnyf8QDgM0ZLCTfVJWcHPH7fEhMzw
+         sLZ4zQJAeecP75ybCe3KQ64HOR4WX2Fb9LvqUh5m8IwHyrjvLJ1I4f4EdfTdf19Jm+gk
+         YlO1Pu2i+zh7dbRujErNs2Cnd0dIZyUe16HZH/LKmx0KdGSjDdlQqdTVfhzU+qaQt8DT
+         vtYuZZfLzxSA/idrSCLroRcD26FfSpO6CzkbIb3JaGc98b5AnzGy4S6x/Wb+9Wv6R9NK
+         7pgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZDM+LQYq+4CoPTquavlEWp0yQnk5HcVhoLsHE7aw/KM1edx/x1wOwOxvUr3i8bGGHsOJhvUIcP24=@vger.kernel.org, AJvYcCUwjizICdkozNacBPmtSt7QKa85WW+TfQAsi7sGwDFGnmVCOv5W0CGEmNr7hyA1ytEhIFmPIkiimpMMWlTu@vger.kernel.org, AJvYcCW5V6RDDbzbqNmBKx6XHnMuTdA6DmjKjayrSWjZ25vuD8iUP5km/6eH11ravx0i/f1jB6qccGvGJdYiphg+HYEut+nPBw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxosNqFYbg/4Sm2mlhET28AXgzzLGp5QcpxScskV9USV+9afOOw
+	2ywES50knCWjF9kKcEwJYAaAcfzNWgd2JJQXHqAOeUCjMgd4js96T31l
+X-Gm-Gg: ASbGncv0H0ZT8btOJi/YY5CIAGP8+lhStVxGigFVzkurCR1JJa8ZkSWV7K5N8heoBJ/
+	+xAKcFIYkJE7TncUcWjNH9Ch16cJxewwCYxCrgreeuPWv8X/pmwe9Fe309LfzFxFD05jEL/euO5
+	3rmMTy58j86JkGVAb/EMVylNgAD1oHR8y4n4jTK42dgVj20q9LnIrIgoENes/eMDm0oinCH/yka
+	G+bB+BfBcLoXNBotnyUoxIQZ89iubO/a1q3J/Hvqog+03ISIVPehJ52dqceYxlDIZOboQ8vgQ4h
+	VtHUyffq7u/5LdLv5CBS7vfVadAQds10JkD4xP0fXS5eW/kRq/k+ishX7lOang58C5BcDw==
+X-Google-Smtp-Source: AGHT+IFSAUyJOYrFNH5kSIABO4B+RufRr/zidEOc71Ly1nTcpZMnFAZ9v7LZ/EoOYEq6B/ckMPhekw==
+X-Received: by 2002:a17:902:ecca:b0:233:fd7b:5e0d with SMTP id d9443c01a7336-23667a28c67mr11814005ad.5.1749824742839;
+        Fri, 13 Jun 2025 07:25:42 -0700 (PDT)
+Received: from ?IPv6:::1? ([2607:fb91:3ee2:c0aa:ad2:cc58:51f0:a267])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88c20bsm14914095ad.19.2025.06.13.07.25.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 07:25:42 -0700 (PDT)
+Date: Fri, 13 Jun 2025 07:25:39 -0700
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: =?ISO-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>,
+ Jonathan Corbet <corbet@lwn.net>, Mario Limonciello <superm1@kernel.org>,
+ Luke Jones <luke@ljones.dev>, Xino Ni <nijs1@lenovo.com>,
+ Zhixin Zhang <zhangzx36@lenovo.com>, Mia Shao <shaohz1@lenovo.com>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+ "Cody T . H . Chiu" <codyit@gmail.com>, John Martens <johnfanv2@gmail.com>,
+ Kurt Borja <kuurtb@gmail.com>, platform-driver-x86@vger.kernel.org,
+ linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v12_0/6=5D_platform/x86=3A_A?=
+ =?US-ASCII?Q?dd_Lenovo_WMI_Gaming_Series_Drivers?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <facbb66b-ea34-bc57-d673-adb84f79fb8d@linux.intel.com>
+References: <20250609185027.7378-1-derekjohn.clark@gmail.com> <facbb66b-ea34-bc57-d673-adb84f79fb8d@linux.intel.com>
+Message-ID: <8933A696-ABA4-4C79-90D3-347016B26911@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44f0f1cc-307a-46e3-9e73-8b2061e4e938@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid]
-X-Spam-Level: 
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 03:56:15PM +0200, David Hildenbrand wrote:
-> On 12.06.25 15:46, Oscar Salvador wrote:
-> > -	/* hugetlb_wp() requires page locks of pte_page(vmf.orig_pte) */
-> > +	/*
-> > +	 * We need to lock the folio before calling hugetlb_wp().
-> > +	 * Either the folio is in the pagecache and we need to copy it over
-> > +	 * to another file, so it must remain stable throughout the operation,
-> 
-> But as discussed, why is that the case? We don't need that for ordinary
-> pages, and existing folio mappings can already concurrently modify the page?
 
-Normal faulting path takes the lock when we fault in a file read-only or to
-to map it privately.
-That is done via __do_fault or cow_fault, in __do_fault()->vma->vm_ops_>fault().
-E.g. filemap_fault() will locate the page and lock it.
-And it will hold it during the entire operation, note that we unlock it
-after we have called finish_fault().
 
-The page can't go away because filemap_fault also gets a reference on
-it, so I guess it's to hold it stable.
+On June 13, 2025 2:07:14 AM PDT, "Ilpo J=C3=A4rvinen" <ilpo=2Ejarvinen@lin=
+ux=2Eintel=2Ecom> wrote:
+>On Mon, 9 Jun 2025, Derek J=2E Clark wrote:
+>
+>> Adds support for the Lenovo "Gaming Series" of laptop hardware that use
+>> WMI interfaces that control various power settings=2E There are multipl=
+e WMI
+>> interfaces that work in concert to provide getting and setting values a=
+s
+>> well as validation of input=2E Currently only the "Gamezone", "Other
+>> Mode", and "LENOVO_CAPABILITY_DATA_01" interfaces are implemented, but
+>> I attempted to structure the driver so that adding the "Custom Mode",
+>> "Lighting", and other data block interfaces would be trivial in later
+>> patches=2E
+>>=20
+>> This driver attempts to standardize the exposed sysfs by mirroring the
+>> asus-armoury driver currently under review=2E As such, a lot of
+>> inspiration has been drawn from that driver=2E
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250319065827=2E53478-=
+1-luke@ljones=2Edev/#t
+>>=20
+>> The drivers have been tested by me on the Lenovo Legion Go and Legion G=
+o
+>> S=2E
+>>=20
+>> Suggested-by: Mario Limonciello <superm1@kernel=2Eorg>
+>> Reviewed-by: Armin Wolf <W_Armin@gmx=2Ede>
+>> Signed-off-by: Derek J=2E Clark <derekjohn=2Eclark@gmail=2Ecom>
+>> ---
+>> v12:
+>>  - Fix warnings from make W=3D1
+>> v11:
+>> v10:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250515182224=2E8277-1=
+-derekjohn=2Eclark@gmail=2Ecom/
+>> v9:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250508235217=2E12256-=
+1-derekjohn=2Eclark@gmail=2Ecom/
+>> v8:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250505010659=2E145098=
+4-1-derekjohn=2Eclark@gmail=2Ecom/
+>> v7:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250503000142=2E119035=
+4-1-derekjohn=2Eclark@gmail=2Ecom/
+>> v6:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250428012029=2E970017=
+-1-derekjohn=2Eclark@gmail=2Ecom/
+>> v5:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250408012815=2E103235=
+7-1-derekjohn=2Eclark@gmail=2Ecom/
+>> v4:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250317144326=2E5850-1=
+-derekjohn=2Eclark@gmail=2Ecom/
+>> v3:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250225220037=2E16073-=
+1-derekjohn=2Eclark@gmail=2Ecom/
+>> v2:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20250102004854=2E14874-=
+1-derekjohn=2Eclark@gmail=2Ecom/
+>> v1:
+>> https://lore=2Ekernel=2Eorg/platform-driver-x86/20241217230645=2E15027-=
+1-derekjohn=2Eclark@gmail=2Ecom/
+>>=20
+>> Derek J=2E Clark (6):
+>>   platform/x86: Add lenovo-wmi-* driver Documentation
+>>   platform/x86: Add lenovo-wmi-helpers
+>>   platform/x86: Add Lenovo WMI Events Driver
+>>   platform/x86: Add Lenovo Capability Data 01 WMI Driver
+>>   platform/x86: Add Lenovo Gamezone WMI Driver
+>>   platform/x86: Add Lenovo Other Mode WMI Driver
+>>=20
+>>  =2E=2E=2E/wmi/devices/lenovo-wmi-gamezone=2Erst       | 203 ++++++
+>>  =2E=2E=2E/wmi/devices/lenovo-wmi-other=2Erst          | 108 +++
+>>  MAINTAINERS                                   |  12 +
+>>  drivers/platform/x86/Kconfig                  |  41 ++
+>>  drivers/platform/x86/Makefile                 |   5 +
+>>  drivers/platform/x86/lenovo-wmi-capdata01=2Ec   | 302 ++++++++
+>>  drivers/platform/x86/lenovo-wmi-capdata01=2Eh   |  25 +
+>>  drivers/platform/x86/lenovo-wmi-events=2Ec      | 196 ++++++
+>>  drivers/platform/x86/lenovo-wmi-events=2Eh      |  20 +
+>>  drivers/platform/x86/lenovo-wmi-gamezone=2Ec    | 409 +++++++++++
+>>  drivers/platform/x86/lenovo-wmi-gamezone=2Eh    |  20 +
+>>  drivers/platform/x86/lenovo-wmi-helpers=2Ec     |  74 ++
+>>  drivers/platform/x86/lenovo-wmi-helpers=2Eh     |  20 +
+>>  drivers/platform/x86/lenovo-wmi-other=2Ec       | 665 ++++++++++++++++=
+++
+>>  drivers/platform/x86/lenovo-wmi-other=2Eh       |  16 +
+>>  15 files changed, 2116 insertions(+)
+>>  create mode 100644 Documentation/wmi/devices/lenovo-wmi-gamezone=2Erst
+>>  create mode 100644 Documentation/wmi/devices/lenovo-wmi-other=2Erst
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01=2Ec
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01=2Eh
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-events=2Ec
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-events=2Eh
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone=2Ec
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone=2Eh
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-helpers=2Ec
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-helpers=2Eh
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-other=2Ec
+>>  create mode 100644 drivers/platform/x86/lenovo-wmi-other=2Eh
+>
+>Hi Derek,
+>
+>Could you please rebase this on top of for-next placing the files under=
+=20
+>lenovo/ folder which we just created=2E I could have easily changed the=
+=20
+>placement of the files themselves, but making the Kconfig & Makefile=20
+>changes into the new files while applying would have been more=20
+>complicated=2E It is better you do it so I won't end up messing up anythi=
+ng=2E
+>
+>There's the lenovo-target in lenovo/Makefile which will auto add the=20
+>'lenovo-' prefix to the files so you can basically rename the files like=
+=20
+>this:
+>
+>drivers/platform/x86/lenovo-wmi-other=2Ec ->
+>drivers/platform/x86/lenovo/wmi-other=2Ec
+>
+>=2E=2E=2Eand add them using that lenovo-target=2E
+>
 
-Now, when we get a wp fault for an already private mapping, via do_wp_page(), we
-only take the lock to check whether we can re-use the page for us.
-We don't hold it during the copy.
+Sure=2E I'm on travel so it may be a few days=2E I'll attempt to get it do=
+ne today if I can though=2E
 
-The only reason we hold it in hugetlb for the entire hugetlb_wp() is because making
-this distinction on the lock's timespan depending on what we are dealing with,
-would be tricky with the current code.
-We would need to do some dancing of release-and-take-it depending on
-what we want to do, and frankly it seems overcomplicated at this point.
+Should I change the docs at all for this?
 
-I plan to do some more work in that area, and potentially glue it with
-the generic faulting path (I have some ideas but I need some other works
-to land first)
-
- 
-
--- 
-Oscar Salvador
-SUSE Labs
+Cheers,
+- Derek
 
