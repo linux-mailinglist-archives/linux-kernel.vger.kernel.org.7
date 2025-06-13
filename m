@@ -1,59 +1,72 @@
-Return-Path: <linux-kernel+bounces-685643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9157CAD8CA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D77AD8CB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27E8189EB0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD997168F36
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCE83594E;
-	Fri, 13 Jun 2025 12:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB33A145B16;
+	Fri, 13 Jun 2025 13:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjqlRkjS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="S2gvxlbh"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA5463A9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D093F4FA;
+	Fri, 13 Jun 2025 13:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749819572; cv=none; b=CwW8IF3pW/IUHHiacqz2g5NA3m+qkkrH/j0okI2iSaxtvmfwyRy0ZJ26uEw0zJ9/Di9iJ0FQCCnAZQtcuYCym48RO47Z4ECdZL+Gyr4rnajaQGvJiVJ0fLB9aD7Lw7yQUkIuqxc2beEb5qevTfS0f/XnMTSZJlDoOQdm3c2CV/g=
+	t=1749819767; cv=none; b=NhZGvM6wafCkcvIEkcwzlj1bbTz05+JO+EApLvZQ+beUPThVFUHE5azfes1wfN5dqGQ6jNNvyLMCg0D7j5LWCtiz49QMLnIAz55IwpR84snZJmDx3BdzwwQwV1HIbOqWduy09nxxRcki45SuF9+97eood2Yba59OWMY6ZTgR0Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749819572; c=relaxed/simple;
-	bh=1GoZAGAypiB2oHd3pN/5VWptPj76Frs4MFiz1/rzIR4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hKGoG3mbMNrDO7SNCWRALD6fSVUHOg7FaX+QNPbthXSL1z0ba7gas8UWpXubMt3XHJYzQ5406oD5EzMOpHVOw+4yIqh6f/LsQ9xFdXLyMeQu62p4xra1Ax0ogByJvFdDZzuH5kDXbOBO+uJw6akwgjBVJq5Um3j2zz5ArrVkfzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjqlRkjS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0A6CC4CEE3;
-	Fri, 13 Jun 2025 12:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749819572;
-	bh=1GoZAGAypiB2oHd3pN/5VWptPj76Frs4MFiz1/rzIR4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DjqlRkjSqS4mtvE0BoZP79f0E6u+3WNmszFR8VjFFD2aCwZ15xjkAhJ8fpbOt43CR
-	 MZFOeHBWYZ5EqEVRW6wy741J9UBA4AP5Q4hauneLWNANRSRCwZW9AN/P6REch1et8Z
-	 tGjDseMijrNPgamzq06NS61zhF9jkoobMe5tnJzmp8MHU4p4ERROPUh/tD+618lRQp
-	 USno98Hg8mmJN46I+37znExqRzf8hDsLHZ/q32KhFx+CdmFp1550mf0ChHgJ3hk2JF
-	 OfN4cBW1kafDhd53rvo/d0elwoZsWm33lttAxxqYMDBV4/k9f/g4ITmzSl/rKGe+hf
-	 ez9rJQYWOaUmw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>
-Cc: Pratyush Yadav <ptyadav@amazon.de>,
-	kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v2] kho: initialize tail pages for higher order folios properly
-Date: Fri, 13 Jun 2025 14:59:06 +0200
-Message-ID: <20250613125916.39272-1-pratyush@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749819767; c=relaxed/simple;
+	bh=Pv3r8fNxSf7s0LT8i/zRgJXPLo+r28eiR/jm2cETKaY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HeuwWyBaXIfV6Hf4JNDhp7ogm2Y2ABBAuCH5wv4xkAx8CeqP/WYmVsrD3CFgqm3mZvg9jYupEkcfhczOGGax7BgkEyzcJomJUsOuAgzDXPQ0HFv2e1EX+1rj8YTNJDYdnqbtLv1OEXQnK00aa0zLzSXKnX/93ijhhj1hSzA2ZtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=S2gvxlbh; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1749819766; x=1781355766;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Pv3r8fNxSf7s0LT8i/zRgJXPLo+r28eiR/jm2cETKaY=;
+  b=S2gvxlbhPyTFQJiaY8tWgq6R5wzPANk/vAwQKc2qwqSszR7uOZTI/eqN
+   51UOtQWMlIlcNOtjIX2Pl4cGQ2eY2pTVueMvApDVD56IqQ7GhxzMsvAI/
+   O/miA8WuPzXY3aZ54W4L+3k7OzBtUZktTTyF0pDsgkB2aiACApqsFyMlJ
+   Qth5wRFNr7O53T7lt9cPWrKf7bUSngOXcHLGbxknE4Df40Gdl+vfrOAAY
+   a5xMxzArHm/x5Q0KyJr+wxvxq+nz0o3SelkgllH5f3kGVxOQFvTYafzMD
+   q8o+Lod1SvpPYC9wtYqAV3dfDlYtltOLPlYnc9TJMd1x+6wyxm9pVXEZI
+   A==;
+X-CSE-ConnectionGUID: Q/C0oHGPR/isfC6vMelafQ==
+X-CSE-MsgGUID: 8Z1q9i9vTl2vjc/fSEsedg==
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="274154974"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Jun 2025 06:02:45 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 13 Jun 2025 06:02:24 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Fri, 13 Jun 2025 06:02:21 -0700
+From: <victor.duicu@microchip.com>
+To: <jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+	<andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v3 0/2] add support for MCP998X
+Date: Fri, 13 Jun 2025 16:02:05 +0300
+Message-ID: <20250613130207.8560-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,101 +74,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Pratyush Yadav <ptyadav@amazon.de>
+From: Victor Duicu <victor.duicu@microchip.com>
 
-Currently, when restoring higher order folios, kho_restore_folio() only
-calls prep_compound_page() on all the pages. That is not enough to
-properly initialize the folios. The managed page count does not
-get updated, the reserved flag does not get dropped, and page count does
-not get initialized properly.
+Add support for Microchip MCP998X/33 and MCP998XD/33D
+Multichannel Automotive Temperature Monitor Family.
 
-Restoring a higher order folio with it results in the following BUG with
-CONFIG_DEBUG_VM when attempting to free the folio:
+The chips in the family have different numbers of external
+channels, ranging from 1 (MCP9982) to 4 channels (MCP9985).
+Reading diodes in anti-parallel connection is supported
+by MCP9984/85/33 and MCP9984D/85D/33D.
+Dedicated hardware shutdown circuitry is present only
+in MCP998XD and MCP9933D.
 
-    BUG: Bad page state in process test  pfn:104e2b
-    page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffffffffffffff pfn:0x104e2b
-    flags: 0x2fffff80000000(node=0|zone=2|lastcpupid=0x1fffff)
-    raw: 002fffff80000000 0000000000000000 00000000ffffffff 0000000000000000
-    raw: ffffffffffffffff 0000000000000000 00000001ffffffff 0000000000000000
-    page dumped because: nonzero _refcount
-    [...]
-    Call Trace:
-    <TASK>
-    dump_stack_lvl+0x4b/0x70
-    bad_page.cold+0x97/0xb2
-    __free_frozen_pages+0x616/0x850
-    [...]
+Current version of driver does not support interrupts, events and data
+buffering.
 
-Combine the path for 0-order and higher order folios, initialize the
-tail pages with a count of zero, and call adjust_managed_page_count() to
-account for all the pages instead of just missing them.
+Differences related to previous patch:
+v3:
+- move beta parameters to devicetree.
+- change the name of the interrupts and add
+  check to match them to the device in yaml.
+- remove label for device and remove "0x" from
+  channel registers in example in yaml.
+- edit comments in yaml and driver.
+- add minItems to interrupts in yaml.
+- rename microchip,recd12 and microchip,recd34 to
+  microchip,resistance-comp-ch1-2-enable
+  and microchip,resistance-comp-ch3-4-enable.
+- rename microchip,apdd-state to microchip,enable-anti-parallel.
+- add static to mcp9982_3db_values_map_tbl to fix
+  kernel test robot warning.
+- in mcp9982_init() add check to ensure that hardware
+  shutdown feature can't be overridden.
+- replace div_u64_rem with do_div and add
+  asm/div64.h to includes.
+- remove unused includes.
+- add iio_chan_spec in the macro definition of MCP9982_CHAN.
+- remove MCP9982_EXT_BETA_ENBL.
+- in mcp9982_init() replace regmap_assign_bits
+  with regmap_write when setting beta compensation.
+- remove custom attribute enable_extended_temp_range and
+  map it to IIO_CHAN_INFO_OFFSET.
+- add unsigned to int variables that allow it.
+- reorder parameters in mcp9982_priv, change some
+  from int to bool, add const to labels and add dev_name.
+- add check for chips with "D" in the name to not
+  allow sampling frequencies lower than 1 to
+  prevent overriding of hardware shutdown.
+- remove mcp9982_attributes.
+- move mcp9982_calc_all_3db_values() to before
+  mcp9982_init().
+- use MICRO instead of number constant.
+- in mcp9982_write_raw replace ">=" with "==".
+- rename index2 to idx in mcp9982_read_raw().
+- remove i2c_set_clientdata() in mcp9982_probe().
+- since there are no more custom ABI attributes
+  the testing file was removed.
 
-In addition, since all the KHO-preserved pages get marked with
-MEMBLOCK_RSRV_NOINIT by deserialize_bitmap(), the reserved flag is not
-actually set (as can also be seen from the flags of the dumped page in
-the logs above). So drop the ClearPageReserved() calls.
+v2:
+- move hysteresis, extended temperature range and beta parameters
+  from devicetree into user space.
+- edit comments in yaml and driver.
+- remove "|" in descpriptions, remove "+" from PatternProperties in yaml.
+- add default to microchip,ideality-factor, delete blank lines and wrap to
+  80 chars in yaml.
+- remove variables with upper case.
+- add check for microchip,apdd-state and microchip,recd34 in yaml.
+- improve coding style in driver code.
+- add includes for all functions used.
+- rename MCP9982_INT_HIGH_BYTE_ADDR to MCP9982_INT_VALUE_ADDR and
+  MCP9982_INT_LOW_BYTE_ADDR to MCP9982_FRAC_VALUE_ADDR.
+- remove custom attribute running_average_window and
+  running_average_window_available and map them to a low pass filter.
+- update sysfs-bus-iio-temperature-mcp9982 to reflect current
+  driver attributes and point to next kernel version (6.17).
+- use compound literal to define driver channels.
+- replace device_property_read_string() with i2c_get_match_data() to read
+  chip name from devicetree.
+- remove MCP9982_DEV_ATTR and mcp9982_prep_custom_attributes().
+- remove client, chip_name, iio_info from mcp9982_priv.
+- replace sprintf() with sysfs_emit().
+- remove error messages which are triggered by keyboard input.
+- replace devm_kzalloc() with devm_kcalloc(), array mcp9982_chip_config[] with
+  individual structures, device_property_present() with device_property_read_bool().
+- reordered parameters in mcp9982_features and mcp9982_priv to optimize memory
+  allocation.
+- remove .endianness from channel properties.
+- change name of some parameters in mcp9982_priv.
+- add check for reg value 0 from devicetree (channel 0 is for internal temperature
+  and can't be disabled).
 
-Fixes: fc33e4b44b271 ("kexec: enable KHO support for memory preservation")
-Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
----
+v1:
+- inital version.
 
-Changes in v2:
-- Declare i in the loop instead of at the top.
+Victor Duicu (2):
+  dt-bindings: iio: temperature: add support for MCP998X
+  iio: temperature: add support for MCP998X
 
- kernel/kexec_handover.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ .../iio/temperature/microchip,mcp9982.yaml    | 211 +++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/temperature/Kconfig               |  10 +
+ drivers/iio/temperature/Makefile              |   1 +
+ drivers/iio/temperature/mcp9982.c             | 778 ++++++++++++++++++
+ 5 files changed, 1007 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+ create mode 100644 drivers/iio/temperature/mcp9982.c
 
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index eb305e7e61296..ca525f794f6be 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -157,11 +157,21 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
- }
 
- /* almost as free_reserved_page(), just don't free the page */
--static void kho_restore_page(struct page *page)
-+static void kho_restore_page(struct page *page, unsigned int order)
- {
--	ClearPageReserved(page);
--	init_page_count(page);
--	adjust_managed_page_count(page, 1);
-+	unsigned int nr_pages = (1 << order);
-+
-+	/* Head page gets refcount of 1. */
-+	set_page_count(page, 1);
-+
-+	/* For higher order folios, tail pages get a page count of zero. */
-+	for (unsigned int i = 1; i < nr_pages; i++)
-+		set_page_count(page + i, 0);
-+
-+	if (order > 0)
-+		prep_compound_page(page, order);
-+
-+	adjust_managed_page_count(page, nr_pages);
- }
-
- /**
-@@ -179,15 +189,10 @@ struct folio *kho_restore_folio(phys_addr_t phys)
- 		return NULL;
-
- 	order = page->private;
--	if (order) {
--		if (order > MAX_PAGE_ORDER)
--			return NULL;
--
--		prep_compound_page(page, order);
--	} else {
--		kho_restore_page(page);
--	}
-+	if (order > MAX_PAGE_ORDER)
-+		return NULL;
-
-+	kho_restore_page(page, order);
- 	return page_folio(page);
- }
- EXPORT_SYMBOL_GPL(kho_restore_folio);
---
-2.47.1
+base-commit: 0c86e33819785fe50616b6ee3fb35c1e4be406d5
+-- 
+2.48.1
 
 
