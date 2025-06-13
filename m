@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-685134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB1CAD84A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1C4AD84E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E84C189EFA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED75B3A8C8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889632ECEB8;
-	Fri, 13 Jun 2025 07:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198A22E2EF4;
+	Fri, 13 Jun 2025 07:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jvkcfTeW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f5SO3w7N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="L7cOZvYd"
+Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB5D2EBDFA;
-	Fri, 13 Jun 2025 07:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601E82E1743
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800255; cv=none; b=iJ2XVAWJa+7i2TJ8To2oZZIIF6UZ5mTk419m8wwsdcC9Cf44hd1K5iwULbYUJoPXiwdBHmxh5nNpd9vJ17jQ4bZPCL35ZurWXZmjCRrZ2TiiZFGsbtgc3uTaNlNDcB03nRMjz+GinvzL0Dwhvb3P/rWO0GQAOE+eq480lAyZy1g=
+	t=1749800316; cv=none; b=K3M/y+6TAMfKF2ic9Ztq+i7AITzFEFtjELgvxe/0SfjNlBPf7QPbJ3/kouXsAG9smR8SqroFrYJpcU6fpTUxz5UKm7EB2yPqKXegbreaKTkEqzhZyokQM4it90ezJ9ToE1Wc+70eZnuc+dVGk2OlDobkNyE/R202Tr5NGI9WUss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800255; c=relaxed/simple;
-	bh=J0DjSD11m1yvi3288GoGxHHXpY6y3lOvNDTKcHftiCI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=j9gLfIn/7D3YYSxKVQ+0XVcO+SEf9k2lwh14UsNOuKJ82b8ddXo0yEx6e/8L+GLBd7hYeuOfnVIchpoKkJymo9VkV/ODq45uH/BNpP8V96ZtE7O7iOJ50q21I9qk0avK1HdxrfJuurAIYBwiF4Q806c+MOAhUKtEBGhmpgXQ2aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jvkcfTeW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f5SO3w7N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 13 Jun 2025 07:37:31 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749800252;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HpyphSlymWeqrC1sPlQUPsY27E/OKIQJhOv+9zq//ss=;
-	b=jvkcfTeWtQoXqJU6abIMKgZTXAQcqN7KSQKtzw/8s9AfphOpCLR5Z5V7RMBH1Ubbm28ts3
-	ZO9vsHLg7JqZr2qsjD8gDw81aYvt3np4+FK9wJ4Yd/a+CfeiWYo+07c4tbAyCl2vAqPicm
-	Q4hVW8uMnM4Q9D91lfswre2lxAP50/MDImWfo5+MT1HwA/nogCZDQgJ5HPDsFhbggYBhup
-	u4yM30HYnoTr1Xi65cj9NA7bw0ahwLix+Bn1gLCgjN7VcOZrsKmfqZgpkSfzWxU/uJZTGe
-	NMgGIdR7uhcRD0flAAnuDE+b681gFQjnknc8IY7hjevo/G/ouvPP5gFxZCVJyQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749800252;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HpyphSlymWeqrC1sPlQUPsY27E/OKIQJhOv+9zq//ss=;
-	b=f5SO3w7N369P017Ub6s71FNWUYUxhLzczoqPJtEMOO4zUJY8kShsfvNQ7lSnIAhuCFO9a4
-	Kxzpv6O85Om5B1AQ==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Clean up and standardize #if/#else/#endif
- markers in sched/psi.c
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>,
- Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250528080924.2273858-14-mingo@kernel.org>
-References: <20250528080924.2273858-14-mingo@kernel.org>
+	s=arc-20240116; t=1749800316; c=relaxed/simple;
+	bh=6HqDFnBo7ijranK3V4U3MjjxmMiZ6DlCz2pS276dmwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U1nJDZkhnDZaY1edFQHRdYbsR91is5DYbKqclJSwsRAhW5DEwY9eP6lUzH50C6IKuYJfyaZJYTpX6mjsy5lU/lKqoNG4c/LwEz/0JcTpZ9z2oYlhBy+rXjlAXlFHJY4ux/i+7LCoq2pYT0B8IeTJvDdbTCbeQB9E8weJ2cqPXJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com; spf=pass smtp.mailfrom=jp.fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=L7cOZvYd; arc=none smtp.client-ip=68.232.139.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jp.fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1749800314; x=1781336314;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=6HqDFnBo7ijranK3V4U3MjjxmMiZ6DlCz2pS276dmwQ=;
+  b=L7cOZvYdnmUb5fHrPkuAM0SL14xekCwhys+pWIlT+vMYZRl1qEgIB1Qh
+   8ZTGXnMcZoqjNfsBGygSc7bc/X9tuLqDqJPy5iH/dS9yCKXfwTnv4wnHZ
+   fAhy1jF/3F1AZYbBV3kSnGNeONttg6ekFMLKYw/cWdWdGFN1EDXxghbUl
+   TpqED0Q64H4c6GnPKgK44lgq0Pad+Pkc7CUAfUha4gTlD1KPzaSLwjWml
+   4rHoucP05dFyjVuITsHpQ1JyD0UMT8vRgv/yN5vcvc4DqXKbdqYb/lWe5
+   iXnXEhd1/JQ04N9edfSHPEJ2/W4T0KIif6iIGxP9TkP1yxiP74/TIkatZ
+   Q==;
+X-CSE-ConnectionGUID: P5n+WB9xS9GnJ/Zg9/BVlA==
+X-CSE-MsgGUID: h1z9DBoKT2Cn2M5obHXryg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="205729535"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744038000"; 
+   d="scan'208";a="205729535"
+Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
+  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 16:38:26 +0900
+Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
+	by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id CAC3AD4C24
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:38:23 +0900 (JST)
+Received: from yto-om3.fujitsu.com (yto-om3.o.css.fujitsu.com [10.128.89.164])
+	by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 88EA2BF3C9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:38:23 +0900 (JST)
+Received: from sm-x86-amd03.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
+	by yto-om3.fujitsu.com (Postfix) with ESMTP id 58A9C400585A4;
+	Fri, 13 Jun 2025 16:38:22 +0900 (JST)
+From: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Dave Martin <dave.martin@arm.com>,
+	fenghuay@nvidia.com,
+	peternewman@google.com,
+	Babu Moger <Babu.Moger@amd.com>,
+	Borislav Petkov <bp@alien8.de>,
+	shameerali.kolothum.thodi@huawei.com,
+	bobo.shaobowang@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com,
+	Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Xin Hao <xhao@linux.alibaba.com>,
+	baolin.wang@linux.alibaba.com,
+	lcherian@marvell.com,
+	amitsinght@marvell.com,
+	Ingo Molnar <mingo@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	H Peter Anvin <hpa@zytor.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	dfustini@baylibre.com,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] fs/resctrl: Optimize code in rdt_get_tree()
+Date: Fri, 13 Jun 2025 16:37:31 +0900
+Message-ID: <20250613073733.3642679-2-tan.shaopeng@jp.fujitsu.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250613073733.3642679-1-tan.shaopeng@jp.fujitsu.com>
+References: <20250613073733.3642679-1-tan.shaopeng@jp.fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174980025133.406.5247465925865801360.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the sched/core branch of tip:
+schemata_list_destroy() has to be called if schemata_list_create() fails.
 
-Commit-ID:     fd3db705f7496c5d6b56ce8d78570dd1da11cd30
-Gitweb:        https://git.kernel.org/tip/fd3db705f7496c5d6b56ce8d78570dd1da11cd30
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 28 May 2025 10:08:54 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 13 Jun 2025 08:47:17 +02:00
+rdt_get_tree() calls schemata_list_destroy() in two different ways: 
+directly if schemata_list_create() itself fails and 
+on the exit path via the out_schemata_free goto label.
 
-sched: Clean up and standardize #if/#else/#endif markers in sched/psi.c
+Remove schemata_list_destroy() call on schemata_list_create() failure.
+Use existing out_schemata_free goto label instead.
 
- - Use the standard #ifdef marker format for larger blocks,
-   where appropriate:
-
-        #if CONFIG_FOO
-        ...
-        #else /* !CONFIG_FOO: */
-        ...
-        #endif /* !CONFIG_FOO */
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lore.kernel.org/r/20250528080924.2273858-14-mingo@kernel.org
+Signed-off-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 ---
- kernel/sched/psi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/resctrl/rdtgroup.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 333a7ba..5837cd8 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -1039,7 +1039,7 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
- 			psi_schedule_rtpoll_work(group, 1, false);
- 	} while ((group = group->parent));
- }
--#endif
-+#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 1beb124e25f6..592d4f69fce9 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -2608,10 +2608,8 @@ static int rdt_get_tree(struct fs_context *fc)
+ 		goto out_root;
  
- /**
-  * psi_memstall_enter - mark the beginning of a memory stall section
-@@ -1655,7 +1655,7 @@ static const struct proc_ops psi_irq_proc_ops = {
- 	.proc_poll	= psi_fop_poll,
- 	.proc_release	= psi_fop_release,
- };
--#endif
-+#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+ 	ret = schemata_list_create();
+-	if (ret) {
+-		schemata_list_destroy();
+-		goto out_ctx;
+-	}
++	if (ret)
++		goto out_schemata_free;
  
- static int __init psi_proc_init(void)
- {
+ 	ret = closid_init();
+ 	if (ret)
+@@ -2683,7 +2681,6 @@ static int rdt_get_tree(struct fs_context *fc)
+ 	closid_exit();
+ out_schemata_free:
+ 	schemata_list_destroy();
+-out_ctx:
+ 	rdt_disable_ctx();
+ out_root:
+ 	rdtgroup_destroy_root();
+-- 
+2.43.5
+
 
