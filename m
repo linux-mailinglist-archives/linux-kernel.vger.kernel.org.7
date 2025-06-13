@@ -1,88 +1,102 @@
-Return-Path: <linux-kernel+bounces-685840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2F6AD8F6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16528AD8F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80775188DD70
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:21:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CADB172E76
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72B4170A26;
-	Fri, 13 Jun 2025 14:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480672E11DD;
+	Fri, 13 Jun 2025 14:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ve6FZ8Al"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYE4QuqY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0132E2E11CD;
-	Fri, 13 Jun 2025 14:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C582E11D8;
+	Fri, 13 Jun 2025 14:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749824434; cv=none; b=ZpovKod8C1WYMNinYJoLABNSkh1CrTh6K1ttxVgi8+UsobdCYJH8ZvUTYEh6OsYzLRzO528yJiJAVSQ587aWxZA9RzjJbN93d4YoSKFxk+qnLrx26EEL09LO21YYgA5Y0eD5JB+KrFpiXMpnyAB2gIiKUCtbvGLMHTo9s/tR0AI=
+	t=1749824124; cv=none; b=D4434tC1zrYj+xnLfPpnFIfaNsvu7aD2um9S5mc9qNOjHubaTbGFj6/+GCNSyCis/eh6zD6roRAsA6j5WIpsmw9ICTavlGGpPl/g4dxsU5HbjrIg1w2g/jQil2wteMNhdZhi2mVUlKeFFfId0xI7hHqVVEsdZjb0VFF6m0XYqRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749824434; c=relaxed/simple;
-	bh=EPKHkNW/pWvGSKzvuK+zaYdXAKILaYuidguqxeIk4Yw=;
+	s=arc-20240116; t=1749824124; c=relaxed/simple;
+	bh=cuekvKuodAn/cGpNTMhG5VZfX56fxI4VzRxlFbLFFYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ya/jATSekTqHmbFZiKIQ4xVTjBQo3jYMxUeOVsyi4uWuqMZEXzyNUeU1mYjmjHb9zWpC95/OwE3rJjDwkLAikuibzaAK5yRdqAXWYhmShh6FGMdzOIVG0NK8SpP1Gc1MbtIK/llzt1ObYRS0wkpXpEi90yqsnN1g0yHGEqbWk48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ve6FZ8Al; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B14C4CEED;
-	Fri, 13 Jun 2025 14:20:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6UvGxbbPLjoiqhkYV6nKdzOTsiLggsr7Otg+IC6vytgHZshR9hVwzLtSHADfepDGwTNkUz8psn7j1O9pmp/G6lTtmNsyFpmKCNpHkicgjW3ZhDbaxrL5AUpjkVktYnhMLSNOrMtMpXokAbTxeW15sqWIfTsagZD4au/Qk6z6q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYE4QuqY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FA0C4CEE3;
+	Fri, 13 Jun 2025 14:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749824433;
-	bh=EPKHkNW/pWvGSKzvuK+zaYdXAKILaYuidguqxeIk4Yw=;
+	s=k20201202; t=1749824124;
+	bh=cuekvKuodAn/cGpNTMhG5VZfX56fxI4VzRxlFbLFFYY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ve6FZ8Alf9SI1sYrlPynorHq3vd7XO0hctfD/FwFi1Yr570jgszY/sWUWJFbKLuPM
-	 nQu71s/Hul7EmxbxouGX5T+wjrRTxgKeiFEW+bs5rkJCsFxcwHU759DXQlTabuPT5G
-	 PxDjtDGhNA7kvKkd2UzQA8HlsRM8T/eu+E+TSoKOFPtdjGyfJ5fxBxWqQP/vDzNKLr
-	 oD0dnXeWr2CjqBr5qLfbFaASn2OOi+AW791J7XUTflq3fgp8foITPixPCD2A4VIN4d
-	 G1byFjPOeultEOPjaOsp5MWi85kGbs7/Mu2645Oib8V07SqMlETiiDgfkafiy09YOZ
-	 U5tjo5xm+nn/A==
-Date: Fri, 13 Jun 2025 19:45:10 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
-	David Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v3 08/62] KVM: SVM: Drop pointless masking of default
- APIC base when setting V_APIC_BAR
-Message-ID: <7kz6bvwpnsbth4puaivtygdzygqmcippdgkihieqcy5ua5rlpr@biu2qjtzraxz>
-References: <20250611224604.313496-2-seanjc@google.com>
- <20250611224604.313496-10-seanjc@google.com>
+	b=sYE4QuqYAV4TW8H9u/uEh1p7jeIk0/4P1yqSwbR0PurZj5B5HurOZmlfAWKoYJq2q
+	 linnNymYEo2hZOrlU2zb77t3/YWIR2eMVohcSYJy93Iw8lHFTlOILiP3CzRi/fQbt7
+	 WPodGY9fYWMsfNFOgxdyme9qmB5/9EEaLZuGHBrBFbhwSiSvDHGCvPoWDLxr6yCMR8
+	 8lTg5ecFDVeZxJN8r5iBtRt5/QWWnsdsMLR/PtBMJ9kmJprRBNw4uhHgbmdzejIeX/
+	 UXFjWkf+IfnRaMD574HvOcwn4pm5m4oSLAHl8xRkKWVZuexr7U2oLQPQ84pZiMyny0
+	 EqovJndksA21Q==
+Date: Fri, 13 Jun 2025 15:15:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: mathieu.dubois-briand@bootlin.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v10 02/11] mfd: Add max7360 support
+Message-ID: <20250613141517.GH897353@google.com>
+References: <20250530-mdb-max7360-support-v10-0-ce3b9e60a588@bootlin.com>
+ <20250530-mdb-max7360-support-v10-2-ce3b9e60a588@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250611224604.313496-10-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250530-mdb-max7360-support-v10-2-ce3b9e60a588@bootlin.com>
 
-On Wed, Jun 11, 2025 at 03:45:11PM -0700, Sean Christopherson wrote:
-> Drop VMCB_AVIC_APIC_BAR_MASK, it's just a regurgitation of the maximum
-> theoretical 4KiB-aligned physical address, i.e. is not novel in any way,
-> and its only usage is to mask the default APIC base, which is 4KiB aligned
-> and (obviously) a legal physical address.
+On Fri, 30 May 2025, mathieu.dubois-briand@bootlin.com wrote:
+
+> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
 > 
-> No functional change intended.
+> Add core driver to support MAX7360 i2c chip, multi function device
+> with keypad, GPIO, PWM, GPO and rotary encoder submodules.
 > 
-> Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 > ---
->  arch/x86/include/asm/svm.h | 2 --
->  arch/x86/kvm/svm/avic.c    | 2 +-
->  2 files changed, 1 insertion(+), 3 deletions(-)
+>  drivers/mfd/Kconfig         |  14 ++++
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/max7360.c       | 171 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/max7360.h | 109 ++++++++++++++++++++++++++++
+>  4 files changed, 295 insertions(+)
 
-Reviewed-by: Naveen N Rao (AMD) <naveen@kernel.org>
+Looks good to me now.
 
-- Naveen
+I suggest this series goes through MFD.
 
+Ping me when you have all of the other Acks.
+
+-- 
+Lee Jones [李琼斯]
 
