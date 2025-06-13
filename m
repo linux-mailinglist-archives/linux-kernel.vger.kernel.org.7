@@ -1,155 +1,181 @@
-Return-Path: <linux-kernel+bounces-686242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098FAAD94E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:57:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B23AD94EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1591BC34F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:58:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF98B7A8616
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B375B235067;
-	Fri, 13 Jun 2025 18:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24FB2356C0;
+	Fri, 13 Jun 2025 18:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE4UsPNt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdQUdt/v"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA282236FC;
-	Fri, 13 Jun 2025 18:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F20B231837;
+	Fri, 13 Jun 2025 18:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749841059; cv=none; b=DDgz67J8HylyEE+xkqaXYx9Zvnl1ZNdaGqUP+fB7Fki2vvkFXItALn9b58ynizsoL1IcSlK33qrVjNUUwvP8ruUWfrcUaTu37zAKsLVstZxvAf/tWJiUT8Q/lvCtQDE4YyYxekRcEiEcwD0JRSZXeHS0QIFSVmmm5KUVyXAEhtQ=
+	t=1749841152; cv=none; b=Uk1olx3W5IiiRa1lGTwq8TQWhuCih5X6Q4TFXh8/8/w8T0i8J9N50HthCPknFKvdqR3H9WkntlkesBy9J1kFyP3VDMuG9h3/MhW1f4JDa+9l9yYgvqDyxd/y2Cts+rn5W7wPqxJg8pkjfnEtR5pGFm8dvreiByhAhNSXzKfCgRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749841059; c=relaxed/simple;
-	bh=yM0YHtJ7BxqfyfLZ1pIJKzDis7Kx2BYqnliwZo6DSg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3CARRROia8jAPYh7z1EVdVWaj+SycJzAr71yBRQu9vlLSC6vSEojZTz2LhE3cpTQb4z2YUpGe4QDRv9WyBnKFjA8iJrSrm5Y69aN+32A3yXvjXwfXEA4ZUSmTBvNBcQhZ6Xrea9+cOffoNPYYOa4+lP+m1IaYGJ/59r8ECTnGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE4UsPNt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B2AC4CEE3;
-	Fri, 13 Jun 2025 18:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749841058;
-	bh=yM0YHtJ7BxqfyfLZ1pIJKzDis7Kx2BYqnliwZo6DSg8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OE4UsPNtrb2fx5m0o9Tc94Ho1/loam2DfUZZ4v+joXfL6ubxBS/0kBjxbZZ1EBn2x
-	 1HEVNQaP0GyRofvm/QqIzTuTkvzWhjI87nKFl5G29z1dgDbgKsGEEH5AtdOB9/mycO
-	 QucTM87AauTa/bfk0GY0pZeuARdCFwa34COOwTefm8uiRxpqt6jyDEnQmG0cIKOpEh
-	 9wdAK4ANsyXKw5Y/g6QjCh8ZDRDkOqpqDk8/SH0geD7vSzhiEWukOkPyz+Gc54bwv9
-	 H/tOFiiGx7os3tPbhlA96Txoxnz3+zR5Dtiz8etHAyePCvezeC/pqL+ZaGms0HSz3L
-	 qWxosvrka8s4Q==
-Date: Fri, 13 Jun 2025 14:57:37 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] nfsd: use threads array as-is in netlink interface
-Message-ID: <aEx0ocoWoFkp8oCg@kernel.org>
-References: <20250527-rpc-numa-v1-0-fa1d98e9a900@kernel.org>
- <20250527-rpc-numa-v1-1-fa1d98e9a900@kernel.org>
- <a8d4c4cffe1a35ea831110ce1c7beea649352238.camel@kernel.org>
+	s=arc-20240116; t=1749841152; c=relaxed/simple;
+	bh=bfi/XXY37D6EzOO2Od8sT5Dtm/chbynwgKX5STjjpn0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mhg2F3HKXCeRHPTZucaXa430VrmYR6HrDRyERZBo8yeIufBm4X6s1c5DVBPNUh2B9PcudF8EGAuq3NZoec22SyP29capgrxrUwouMCQoohan8mNtfjop0YiTO67L9LZ/srMon9VKfSfq8z7cik4sxsbS2jnTZTmPHKmEgO4/kgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdQUdt/v; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so2383939f8f.0;
+        Fri, 13 Jun 2025 11:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749841149; x=1750445949; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1/YIWQiUS3RgGsA89qeDcl9n+fbbe3YP1rWF9uN/SOc=;
+        b=BdQUdt/vCRSJjW0FSV+gO2rp6q07n0kU5fIrRfy3LoezVTmD9hr9dhf0RDRBfOOfWa
+         LCMrNYgo2rAfyBDBWSJvlwJ/jCSq6cDJjXPasjuZcpFwEJzZaUqG/hBLECf2mFZu9v5v
+         e+jvGemQCCnYo71Q+Xfkevs8o0Nwbne1ZNz5Yurk3RIoDbYSqpVQQxhclm4PVo3bMD7g
+         ir7iTP1a/pOkmurfiF06ltgfhCi5Ogi3wN3kr2F9vP5DUYGCrNmMcI/gCL5gvjVQPQEs
+         Us/io94bMwsasxh2sH21EX13vIxtcOliaPEf8MnBCDauG8WTTxhkgHbr92NosHMj5u2k
+         +BSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749841149; x=1750445949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1/YIWQiUS3RgGsA89qeDcl9n+fbbe3YP1rWF9uN/SOc=;
+        b=PX8P/nKYm2tjpPSh1j8Fcw/Mtz18v+RC7RwD5xZu8x6DaCXBXt5eGDhKsbeh/KvNzH
+         f78+8wL0S6ITncY9iF/P8RklCdc6J5kBo8wVEaNVChOqbfszT/UnNDdSrcIBEbvUIXo3
+         wEHDh1cISzZD60UYlGkHK+VW8eOxGdcNpjD/j+NXstxTzc0it+tQG4OjkoIr3XbR7LeA
+         RHjKtB/Li1JNeWGnqq7MFRsKMzlhhfkC8jsd4zKIRFkTeNXjSM1PLc1Y9mXk+be+1kC9
+         MCoAtCg0wI7Ga+nXumf/SSbbTAb6SpGJHggKQUtSNsJJCCSTK/rVXIiq8Ce6uiSRbk3O
+         H+OA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7ekGoh+q/0JFFuaLdqZwTffWesMRkgDb9mAo4PsXhK08fw4MXj4ckLTKMVCEvSKR0UwQILP5K2Nj7zOa3@vger.kernel.org, AJvYcCVrpF0qhXOhMNDZzAE/ZrWL6eHQCucl1P/0bn1m0lv7K7E18Md4l4l8lD21W6CZBITFvVefdzV+D0ht@vger.kernel.org, AJvYcCWukulkOV+25xm3AgBmPZYj6R+T0aGG7tq2fCMyeAHWLqyxgH9bJeHYXfoVFledaR9SDDo388Mh5S0gtEb/M3xf6pM=@vger.kernel.org, AJvYcCXwnM7riu/BLSeWQdrih2DKWiUkCiD5hq0O+/yklEO0ZhOXIQjK28jmdzqsw+o6sd6sObBhzUyiYIaP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUYiCZmaSmS5ZfAG9fTIAv97VsUUdZw+KsIJGHLGvgu8xiRiYT
+	TLA8O+CZLeQY8lZKEUlx6OqMurLbMdvEed0QixXagxiULfa0hWReQiaiF3x7xk4kWzStcO8vBkR
+	myv2iXFzBWqGlZ8hoy49ao5xhZx7MR42hrh+wqRL6RQ==
+X-Gm-Gg: ASbGncsN5ksrNHOOx3TPcYH1wJ/SPviOFGDz97/5Z+CGRbGI5TRXX+nshTRcre27lG9
+	2oFTdcn9dmJxYrh9UHzEH53ho1ndSrdqVkUfgJjVwDncDEkl7v+9Sk0cvLnER+UHDOhha6xS/0E
+	ycJnQwf1LsWikbBYdXQG5blnDJWtarYCYxn6do6tavLkY=
+X-Google-Smtp-Source: AGHT+IH6gVOrqupXkFxkZ8jHnjuBHoHp7WV2inzbQO5tSHCWOyZg7SSesd/x6TXCOy40KyIsVZAvAGsZEk2TYXgix+U=
+X-Received: by 2002:a05:6000:1884:b0:3a4:eb7a:2ccb with SMTP id
+ ffacd0b85a97d-3a56d821e4dmr2085068f8f.16.1749841148379; Fri, 13 Jun 2025
+ 11:59:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8d4c4cffe1a35ea831110ce1c7beea649352238.camel@kernel.org>
+References: <20250609232253.514220-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWoWqrMKgNSYN_NDOtROD-SAq7ProhREPJTEBTOPCeH=A@mail.gmail.com> <CA+V-a8sBhF-FwV0BXCxpHkuhdAg5YcwDsWPFRPSV_BdmNpLWYA@mail.gmail.com>
+In-Reply-To: <CA+V-a8sBhF-FwV0BXCxpHkuhdAg5YcwDsWPFRPSV_BdmNpLWYA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 13 Jun 2025 19:58:42 +0100
+X-Gm-Features: AX0GCFvWiPn4aKbGTJejOZagRntrlAdbPUi0Zn3dwUU2W9SE1HnlVmKNOPFDH-w
+Message-ID: <CA+V-a8t6WNQS-1AkFUeSioxNyF9vSbaxUDkQsYDk-=m1tysu+w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: renesas,sdhi: Document RZ/T2H and
+ RZ/N2H support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 11:57:59AM -0400, Jeff Layton wrote:
-> On Tue, 2025-05-27 at 20:12 -0400, Jeff Layton wrote:
-> > The old nfsdfs interface for starting a server with multiple pools
-> > handles the special case of a single entry array passed down from
-> > userland by distributing the threads over every NUMA node.
-> > 
-> > The netlink control interface however constructs an array of length
-> > nfsd_nrpools() and fills any unprovided slots with 0's. This behavior
-> > defeats the special casing that the old interface relies on.
-> > 
-> > Change nfsd_nl_threads_set_doit() to pass down the array from userland
-> > as-is.
-> > 
-> > Fixes: 7f5c330b2620 ("nfsd: allow passing in array of thread counts via netlink")
-> > Reported-by: Mike Snitzer <snitzer@kernel.org>
-> > Closes: https://lore.kernel.org/linux-nfs/aDC-ftnzhJAlwqwh@kernel.org/
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/nfsd/nfsctl.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> > index ac265d6fde35df4e02b955050f5b0ef22e6e519c..22101e08c3e80350668e94c395058bc228b08e64 100644
-> > --- a/fs/nfsd/nfsctl.c
-> > +++ b/fs/nfsd/nfsctl.c
-> > @@ -1611,7 +1611,7 @@ int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
-> >   */
-> >  int nfsd_nl_threads_set_doit(struct sk_buff *skb, struct genl_info *info)
-> >  {
-> > -	int *nthreads, count = 0, nrpools, i, ret = -EOPNOTSUPP, rem;
-> > +	int *nthreads, nrpools = 0, i, ret = -EOPNOTSUPP, rem;
-> >  	struct net *net = genl_info_net(info);
-> >  	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-> >  	const struct nlattr *attr;
-> > @@ -1623,12 +1623,11 @@ int nfsd_nl_threads_set_doit(struct sk_buff *skb, struct genl_info *info)
-> >  	/* count number of SERVER_THREADS values */
-> >  	nlmsg_for_each_attr(attr, info->nlhdr, GENL_HDRLEN, rem) {
-> >  		if (nla_type(attr) == NFSD_A_SERVER_THREADS)
-> > -			count++;
-> > +			nrpools++;
-> >  	}
-> >  
-> >  	mutex_lock(&nfsd_mutex);
-> >  
-> > -	nrpools = max(count, nfsd_nrpools(net));
-> >  	nthreads = kcalloc(nrpools, sizeof(int), GFP_KERNEL);
-> >  	if (!nthreads) {
-> >  		ret = -ENOMEM;
-> 
-> I noticed that this didn't go in to the recent merge window.
-> 
-> This patch fixes a rather nasty regression when you try to start the
-> server on a NUMA-capable box. It all looks like it works, but some RPCs
-> get silently dropped on the floor (if they happen to be received into a
-> node with no threads). It took me a while to track down the problem
-> after Mike reported it.
-> 
-> Can we go ahead and pull this in and send it to stable?
-> 
-> Also, did this patch fix the problem for you, Mike?
+Hi Geert,
 
-Hi Jeff,
+On Fri, Jun 13, 2025 at 4:37=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+>
+> Hi Geert,
+>
+> Thank you for the review.
+>
+> On Thu, Jun 12, 2025 at 4:47=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> >
+> > Hi Prabhakar,
+> >
+> > On Tue, 10 Jun 2025 at 01:23, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add SDHI bindings for the Renesas RZ/T2H (a.k.a R9A09G077) and RZ/N2H
+> > > (a.k.a R9A09G087) SoCs. Use `renesas,sdhi-r9a09g057` as a fallback si=
+nce
+> > > the SD/MMC block on these SoCs is identical to the one on RZ/V2H(P),
+> > > allowing reuse of the existing driver without modifications.
+> > >
+> > > Update the binding schema to reflect differences: unlike RZ/V2H(P),
+> > > RZ/T2H and RZ/N2H do not require the `resets` property and use only a
+> > > single clock instead of four.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > @@ -129,59 +131,75 @@ allOf:
+> > >          compatible:
+> > >            contains:
+> > >              enum:
+> > > -              - renesas,sdhi-r9a09g057
+> > > -              - renesas,rzg2l-sdhi
+> > > +              - renesas,sdhi-r9a09g077
+> > > +              - renesas,sdhi-r9a09g087
+> > >      then:
+> > >        properties:
+> > > +        resets: false
+> > >          clocks:
+> > > -          items:
+> > > -            - description: IMCLK, SDHI channel main clock1.
+> > > -            - description: CLK_HS, SDHI channel High speed clock whi=
+ch operates
+> > > -                           4 times that of SDHI channel main clock1.
+> > > -            - description: IMCLK2, SDHI channel main clock2. When th=
+is clock is
+> > > -                           turned off, external SD card detection ca=
+nnot be
+> > > -                           detected.
+> > > -            - description: ACLK, SDHI channel bus clock.
+> > > +          description: ACLK, SDHI channel bus clock.
+> >
+> > According to the documentation, this is the SDHI high speed clock...
+> >
+Actually re-reading the doc there are two clocks (I had missed the
+second clock earlier),
+1] ACLK, IMCLK from the PCLKAM which is 200MHz
+2] SDHI_clkhs from PLL2 which is 800MHz
+Note, on RZ/V2H too the ACLK/IMCLK is 200MHz and clk_hs is 800MHz
 
-I saw your other mail asking the same, figured it best to reply to this
-thread with the patch.
+So, I'll represent them as below:
+        clocks:
+          items:
+            - description: ACLK, IMCLK, SDHI channel bus and main clocks.
+            - description: CLK_HS, SDHI channel High speed clock.
+        clock-names:
+          items:
+            - const: aclk
+            - const: clkh
 
-YES, I just verified this patch fixes the issue I reported.  I didn't
-think I was critical path for confirming the fix, and since I had
-worked around it (by downgrading nfs-utils from EL10's 2.8.2 to EL9's
-2.5.4 it wasn't a super quick thing for me to test.. it became
-out-of-sight-out-of-mind...
+And for the ACLK, IMCLK which comes from peripheral module clock
+(PCLKAM) this will be a module clock and CLK_HS will have to be
+modelled as a CORE clock.
 
-BTW, Chuck, I think the reason there aren't many/any reports (even
-with RHEL10 or Fedora users) is that the user needs to:
-1) have a NUMA system
-2) explicitly change sunrpc's default for pool_mode from global to pernode.
-
-Anyway:
-
-Tested-by: Mike Snitzer <snitzer@kernel.org>
+Cheers,
+Prabhakar
 
