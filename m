@@ -1,112 +1,164 @@
-Return-Path: <linux-kernel+bounces-685331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B6AAD8827
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A44AD883C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2424B18975E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01F843B84CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA831291C2D;
-	Fri, 13 Jun 2025 09:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A422C15B3;
+	Fri, 13 Jun 2025 09:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="adYjx3+i"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="csS790PZ"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E5F238C06
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116561F1538;
+	Fri, 13 Jun 2025 09:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749807815; cv=none; b=dLcgRCeeJYfca3Ra4rK5lPPOGPqvTsiPg6JeTNMev9HRLaTXBgqPWbHEL2+FDKwhhss+C0/T2gAEvY0/MRouJA7xLW67Z4ImEvTwJ+qbIoU3KVFxDjdbpZ/AqHXqOzV1BKTaa/flfcAMttrWOyA8FvSuRM88vgHooAKbW22wxOg=
+	t=1749807897; cv=none; b=c+imMpyt+HCo+lNMhhSWfNFmN366Im5MM58H1rBMtGlvDfusanIx3h2jfDAF0FuOK0rrUzpxZktunmYNVmygZ4m8GojSpcZ16Bx+RuuF2jXyiGjGr0PV3yAj786QLwXUCw/vgjbBowEMza8UcYqw3oRtA5mvCcOvimYAzwFs9xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749807815; c=relaxed/simple;
-	bh=KDmI3SzjPp2KgOWUtFfz6WBnZsJ1KnGOl71hkWybfyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ct5lnc/C+Vup6FvG7I7c6j8mXnAIc6rdTDUpRaWtAZ8lu28fy1aRl66OXocb9D8uDOzTINpex6QFNQKdqwTGglo7cY3sPWoJTVNzfuGNzif9iBlsAthhbkVsD8qBRKcVnrPN6yKwZT3TdLQnvXqWI5h3nd/xSsxcr2yjDDDP5yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=adYjx3+i; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RXBjLERF3nlmhC8SMKLj3/cxfoD2dWEsI3qpLnYVqKY=; b=adYjx3+iU9FSzQn/t8PomDO7Pb
-	PmOJKa+q7gnJrky/9g0qgG52pH0PguGDTzXpv2kHbnoL4ZTc/UhYAHbjgaTXJwgAAYQ/vJdm53AuB
-	oxXwFVUV56p9N725WfTuqdnVRDs2MlqHoF7NdN6be6qpGgXzxobyyBUWtQ8K5Kycpm4066Ui98sjV
-	YEW3aeqADhASvaiJO8oXbnnx9RMev+0IWv3etPZ23oef9kLnU6matICzQARBNid62USHcjNVwmTuj
-	DgpIucvsAiOBk/KhLXQmzeyvYb87NAb+GQY/sxGXX8UNz25WkyGQZ3ohIA1Q0zMasGNe07VQ7GjVb
-	xvj4L8aA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQ0wa-0000000Cncv-3Yla;
-	Fri, 13 Jun 2025 09:43:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 673E730617F; Fri, 13 Jun 2025 11:43:28 +0200 (CEST)
-Date: Fri, 13 Jun 2025 11:43:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 1/5] sched/deadline: Less agressive dl_server
- handling
-Message-ID: <20250613094328.GG2278213@noisy.programming.kicks-ass.net>
-References: <20250520094538.086709102@infradead.org>
- <20250520101727.507378961@infradead.org>
- <aD8cwJGQz6iCjhwz@jlelli-thinkpadt14gen4.remote.csb>
+	s=arc-20240116; t=1749807897; c=relaxed/simple;
+	bh=lPi6p/p/RsgcfmLbsQb/vHhcma/ASwBkZaZtMVk+4n0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BgFy6NEBbFra5Whe9Xer1gx8MA4mBI5yOLQ6wX4jcTZXU4fcGNiUuELtgdbzxfBF41bNW/KTXKkuFKgQB7FJzdQjbCy5+qQzMmRGWgpOpuV/GAAPcEvGH7TP0vMXUNoNTcezm0MX96BdRyv62+Sf1qFopmYNtIwMZhBIIzs3mks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=csS790PZ; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ISH3k62X5pv9uRJP+PEVvdd5kI4YkAzousbl8twVhzk=; b=csS790PZuqvjy/u9hFZmGAnG8M
+	+MuTMz0LOrm8hphsr+EzD6VkSrpgKwCFlWRdMpGfuoWPbl8/Mr8Wx3eACTEJQxL0yKaid8ALKy24F
+	bBG6pyyfs4t3MisFPYfWo4VRlJ55fYYECfCX6J2zJbke9tkyaqwRD3lhiNY2cbhyDzGakfxdWwyLi
+	WpzL3ApDSxXjqDdBqzWfzdaN/19Rme/g3nIaKLp7SXuK/x+OctIkqCs7vRT4bEi6vkpm7MT9GzSdG
+	spywbySuKZRLPhlfUvDOGOzAk4EmMwUZPgJyxL36LCYO0OG70p/VbR5/7TX6LNYePL7XIO9ohpBOm
+	avsO84Pg==;
+Received: from [58.29.143.236] (helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uQ0xg-002xcD-UL; Fri, 13 Jun 2025 11:44:38 +0200
+From: Changwoo Min <changwoo@igalia.com>
+To: lukasz.luba@arm.com,
+	rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org
+Cc: christian.loehle@arm.com,
+	tj@kernel.org,
+	kernel-dev@igalia.com,
+	linux-pm@vger.kernel.org,
+	sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Changwoo Min <changwoo@igalia.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH v2 00/10] PM: EM: Add netlink support for the energy model.
+Date: Fri, 13 Jun 2025 18:44:18 +0900
+Message-ID: <20250613094428.267791-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aD8cwJGQz6iCjhwz@jlelli-thinkpadt14gen4.remote.csb>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 03, 2025 at 06:03:12PM +0200, Juri Lelli wrote:
-> Hi,
-> 
+There is a need to access the energy model from the userspace. One such
+example is the sched_ext schedulers [1]. The userspace part of the
+sched_ext schedules could feed the (post-processed) energy-model
+information to the BPF part of the scheduler.
 
-> > @@ -1684,6 +1689,24 @@ void dl_server_stop(struct sched_dl_enti
-> >  	dl_se->dl_server_active = 0;
-> >  }
-> >  
-> > +static bool dl_server_stopped(struct sched_dl_entity *dl_se)
-> > +{
-> > +	if (!dl_se->dl_server_active)
-> > +		return false;
-> > +
-> > +	if (dl_se->dl_server_idle) {
-> > +		__dl_server_stop(dl_se);
-> > +		return true;
-> > +	}
-> > +
-> > +	dl_se->dl_server_idle = 1;
-> > +	return false;
-> > +}
-> > +
-> > +void dl_server_stop(struct sched_dl_entity *dl_se)
-> > +{
-> > +}
-> 
-> What if we explicitly set the server to idle (instead of ignoring the
-> stop) where this gets called in dequeue_entities()?
+Currently, debugfs is the only way to read the energy model from userspace;
+however, it lacks proper notification mechanisms when a performance domain
+and its associated energy model change.
 
-That would break thing; we want to detect if it was ever !idle in the
-period.
+This patch set introduces a generic netlink for the energy model, as
+discussed in [2]. It allows a userspace program to read the performance
+domain and its energy model. It notifies the userspace program when a
+performance domain is created or deleted or its energy model is updated
+through a multicast interface.
 
-> Also, don't we need to actually stop the server if we are changing its
-> parameters from sched_fair_server_write()?
+Specifically, it supports two commands:
+  - EM_CMD_GET_PDS: Get the list of information for all performance
+    domains.
+  - EM_CMD_GET_PD_TABLE: Get the energy model table of a performance
+    domain.
 
-Quite - let me just remove the offending callsites them.
+Also, it supports three notification events:
+  - EM_CMD_PD_CREATED: When a performance domain is created.
+  - EM_CMD_PD_DELETED: When a performance domain is deleted.
+  - EM_CMD_PD_UPDATED: When the energy model table of a performance domain
+    is updated.
 
-Would this explain this massive regression 0day reported here? Seems
-weird.
+This can be tested using the tool, tools/net/ynl/pyynl/cli.py, for example,
+with the following commands:
 
-Anyway, let me go update the patch.
+  $> tools/net/ynl/pyynl/cli.py \
+     --spec Documentation/netlink/specs/em.yaml \
+     --do get-pds
+  $> tools/net/ynl/pyynl/cli.py \
+     --spec Documentation/netlink/specs/em.yaml \
+     --do get-pd-table --json '{"pd-id": 0}'
+  $> tools/net/ynl/pyynl/cli.py \
+     --spec Documentation/netlink/specs/em.yaml \
+     --subscribe event  --sleep 10
+
+[1] https://lwn.net/Articles/922405/
+[2] https://lore.kernel.org/lkml/a82423bc-8c38-4d57-93da-c4f20011cc92@arm.com/
+
+ChangeLog v1 -> v2:
+  - Use YNL to generate boilerplate code. Overhaul the naming conventions
+    (command, event, notification, attribute) to follow the typical
+    conventions of other YNL-based netlink implementations.
+  - Calculate the exact message size instead of using NLMSG_GOODSIZE
+    when allocating a message (genlmsg_new). This avoids the reallocation
+    of a message.
+  - Remove an unnecessary function, em_netlink_exit(), and initialize the
+    netlink (em_netlink_init) at em_netlink.c without touching energy_model.c.
+
+CC: Lukasz Luba <lukasz.luba@arm.com>
+CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+CC: Tejun Heo <tj@kernel.org>
+Signed-off-by: Changwoo Min <changwoo@igalia.com>
+
+Changwoo Min (10):
+  PM: EM: Add em.yaml and autogen files.
+  PM: EM: Add a skeleton code for netlink notification.
+  PM: EM: Assign a unique ID when creating a performance domain.
+  PM: EM: Expose the ID of a performance domain via debugfs.
+  PM: EM: Add an iterator and accessor for the performance domain.
+  PM: EM: Implement em_nl_get_pds_doit().
+  PM: EM: Implement em_nl_get_pd_table_doit().
+  PM: EM: Implement em_notify_pd_deleted().
+  PM: EM: Implement em_notify_pd_created/updated().
+  PM: EM: Notify an event when the performance domain changes.
+
+ Documentation/netlink/specs/em.yaml | 113 ++++++++++
+ MAINTAINERS                         |   3 +
+ include/linux/energy_model.h        |  19 ++
+ include/uapi/linux/energy_model.h   |  62 ++++++
+ kernel/power/Makefile               |   5 +-
+ kernel/power/em_netlink.c           | 311 ++++++++++++++++++++++++++++
+ kernel/power/em_netlink.h           |  34 +++
+ kernel/power/em_netlink_autogen.c   |  48 +++++
+ kernel/power/em_netlink_autogen.h   |  23 ++
+ kernel/power/energy_model.c         |  83 +++++++-
+ 10 files changed, 699 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/netlink/specs/em.yaml
+ create mode 100644 include/uapi/linux/energy_model.h
+ create mode 100644 kernel/power/em_netlink.c
+ create mode 100644 kernel/power/em_netlink.h
+ create mode 100644 kernel/power/em_netlink_autogen.c
+ create mode 100644 kernel/power/em_netlink_autogen.h
+
+-- 
+2.49.0
+
 
