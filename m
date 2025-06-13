@@ -1,218 +1,200 @@
-Return-Path: <linux-kernel+bounces-685699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA36AD8D4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:41:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECA1AD8D3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8DB172CED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A11189F4C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5761D188735;
-	Fri, 13 Jun 2025 13:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AAB158DA3;
+	Fri, 13 Jun 2025 13:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqRVk66n"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YHv68eu+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43F1111BF;
-	Fri, 13 Jun 2025 13:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BD879F5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822050; cv=none; b=Z1+7TtycwgbNtAC7hKdrbpOIv2HiJR2PKHGjy4ZyBTCHvh6aZaGfDAIYNBZ+b/L5LsHh7cBUpP0N0yqJD6EbiDSOFvGfPzMLs2PgsODD6BSi2xjeTXokWgrIjXAclSUw3xXxojFuuZjCK5LwkRh0KXgDUcym1rP0KVzb41jKaH0=
+	t=1749821931; cv=none; b=QMRGoOXFaBTjilt+RPpA+CHh1GLuvNRmJVMKKO2e17mSkkptDD9cs0+u2mXFmxSpzEa7P51QJY4yVfir0f5DkZIeHLVSdTSvh6/z8hoRMsdvLFn4nTUUCoAlCIXuhPd8Bl8q9rwQsxPoO5r1JmN/fC7JBOTheF6SWk+MaJu0Qes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822050; c=relaxed/simple;
-	bh=fLM1J7jVqqiZf/ld7d1JFGfRWVz+teNjK6y084/tbPs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BNSV5vms5Kwbtlbhq6bjk/VgU1NkfplM+jeg7FEJImv0lUpQmLatZyS3RynIE0hx/xHMs3qNFmJpvpokQRZt1VXVajgeDoA9i2xAFrpmxqg8fFqh0ZjlCh9Skx7HoR3sbRpTS4lO2uAd1Ou9KcCvqx/7wq3BiSjuC+cANMmGIEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqRVk66n; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso17390995e9.2;
-        Fri, 13 Jun 2025 06:40:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749822047; x=1750426847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oudxA8JPC06HRjXurKEPIdr/6i2EGFIADSPFZLQo5s0=;
-        b=JqRVk66nenFwP3UFJSa2v0lIxzb6/hIo1iqOQqNzCbibJEMr/GQ7I2ZZ38jAw7Fe8s
-         6LhmobPA7CVC+WrrO9OB1gjz7tsXUCnq3J9ps515xDnl2kFCPVDufBS4T7kCCS6xSLwO
-         IP8CkfzAbgm/vDgtiAsAUM0ewRwXkSN4m0cgmeJklKbHDs2Zw9b5jdoApSiPCYj+apwk
-         v5Fhsi48PlEtIMENJxTcLGNXgW5Lx7qUOc81aKa83cmn88EuZljftGpE0EPITSFPxaYh
-         rHK44fBmJ11GkuP0gBqN8JlQ1LAJREviY+rDCjM9n/i3c8D+UXG8Kfw5jAf+Rwp+0svE
-         EKBA==
+	s=arc-20240116; t=1749821931; c=relaxed/simple;
+	bh=tqC7wSft1NA2BPEW39gbcx+zJB1l4b9bPjKz45aDUAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M72L18dqPb0oqYwanYzO3Trp5XY//PApqatIhMS8nUX0+5JH4E6B5iyzLOesftcgiUy9L6FF2gLvxuGJmCw1VvtQaBo/JXVLyzJDrcdTVhdZIqKPWPlk5Nz7jts3g4NQik9k2KCTgh17BNxS/122fG6oRsjo1r5GBig10G58c1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YHv68eu+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749821928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gA+fyTDhlNNImNCJ4jABZvRjAPCgbHPkzMh2Vk4M9w4=;
+	b=YHv68eu+/ts3km52WqYKONMQPsfJUoMtECnHKMw2020awcbhLQwudwcnJYuikFwp9PqiE0
+	RMSNbc0ryigaXT6MCdZnyinUYQaH9AIboWzuLjuS4JsMBB+PXBWJWr97fl+Y7tilmoVbWP
+	X0V2NKjH9l4aCy/Hm0te0N2IU0cfPD8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-83-iZY4gAZ7PX-BhD-cDYzD7A-1; Fri, 13 Jun 2025 09:38:47 -0400
+X-MC-Unique: iZY4gAZ7PX-BhD-cDYzD7A-1
+X-Mimecast-MFC-AGG-ID: iZY4gAZ7PX-BhD-cDYzD7A_1749821926
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43eed325461so12706205e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:38:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822047; x=1750426847;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oudxA8JPC06HRjXurKEPIdr/6i2EGFIADSPFZLQo5s0=;
-        b=uH9MzXXREWtXXMYb12JNtv5x5RJJmjUXOI55KGpB2MW2h6Brje5YhzS+NkKXNAKy1j
-         BZcB/N7Y3Yiwjo8cRSWIRdztI/SVpEbhKk+CVp/8mYmFlQnNEvs9vaW8/r4XAGEeRLnR
-         dgycMXfGWzKE44ujr+m6AFBewDEvkTGAZXLcHKtZFw9QZHjUVFgxvkJ3vAWS8R6MSq7o
-         zseuIxSmyu5ZOBokwCrRjQU7W52u8/6b89E85DQPNZKY2mdByc/OyRJ8KmVDDK/Rds0T
-         kzHbVCPtMa5RB12Ua+e4n/pouGvLcznPTpPDRsaSMuhYyZEBFtx2gwHsoPLeSUaqVM8N
-         MNQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Th2+3U+a8mUPgRhSoViDu3bgqmJeuW04EQ6iok8ZSJAdim+3XEhfa0PLcs76GFxjGF8z44HVTKsrr8AEFKc=@vger.kernel.org, AJvYcCXCEbqv2XD4Qe0SLUPoO5zbz7zobkMSx5sWQ85oJuM68fsI6vCpvwdUwYS9aBmbk1hn9eAVER1KX8wE@vger.kernel.org, AJvYcCXfeBZ9Cxws57v8dfPEW94gUFOJIeiC6mFGK78ntU9E5ZxSBZIAJCob0A/iu8NsFkD8qf/m8DpqyEaU/Kc5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW1WvD6Cks/+uJgZwlTZ8Hb5P79ycPDQiT1v5yX6k/ly6rVEmD
-	+JYsFORkenmFJHRxyiJkH5LIRItQ6MMyvJzSvg54X0kqNL4T3LOc8b44
-X-Gm-Gg: ASbGncs1rVaRP0NNeLvEhH3cYIcPO4H+N9Ick/E0aPfPQSPrSbiKAyZE5/Fx99RrUdf
-	pje+Sm0EbFORPt6ES+H/hvTG9a+MykO4r6Jx7dPm9wFYyESwOuTjywMMGAlzIvNEVCzhaNtfDTR
-	U5xX1f/4q+D3wmbuwQLU6iUZkTC/irVEQZMIj/6bzgVXugspqglAMBnOkE3egtMGthuXdPxPlB3
-	8sprvqY7CLdxMdgL1waVlOosHpJqXqqd8VilOAgyEhFO3tYDMo4aWduf5LmjpuFBglwl8RjQeuI
-	a+akTIYlvS9pbfsMxiPOIcAWYBfcoE7hz+w3x0I6EQFTRnLBWvXRROMcGney8kPdCh1W0bV+4xB
-	iI+EefVSMyokKt8PWPl87yH1jBxsdk8Hn+XxyXppqKFsiuNc=
-X-Google-Smtp-Source: AGHT+IGSQQDsmwIh4IRTyDRinr32zbDXqbTyjcQINJTodAgQ41yIYuwm/iuMJcEHUctW6KpfLD9UWA==
-X-Received: by 2002:a05:600c:4f53:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-45334ad2eb9mr35369995e9.14.1749822046739;
-        Fri, 13 Jun 2025 06:40:46 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b48564sm2361368f8f.82.2025.06.13.06.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:40:46 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v6 1/6] rust: acpi: add `acpi::DeviceId` abstraction
-Date: Fri, 13 Jun 2025 14:38:42 +0100
-Message-ID: <20250613133842.1230254-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
-References: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
+        d=1e100.net; s=20230601; t=1749821926; x=1750426726;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gA+fyTDhlNNImNCJ4jABZvRjAPCgbHPkzMh2Vk4M9w4=;
+        b=CYMDBASBUC+XLR6HQuUaWD/cC6nwTibjaM5kDmt2/+WmcaT/3sutlEbJ6QeoGSo6J7
+         hELHexchTWPEsBOEBhhVUSkPaMpgJhute32I+oH8sGE0yxSa7OBCapdV/0fl6UiWprqN
+         gV68+TOa5AE1JHpXpWZ/kw8t/PRZVkNIfRmVtIsIobLk1eMHUe3dAyUSvRlDSKYwCLbq
+         YHeOT9tnTphNAzTqXGz0o/uKO3eVRe4tiFqFd0g14hCF46d0YlfhA7ZtPaEvPpSV5Pfn
+         fLdvwcvJ1nqv4d5Op6wK2exJhF3Wm2BKNzJODzIED7q7T8M5ZXwdb16yUJwz/nT83+R5
+         lVKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVUM5JE5+C3M2aO/7e759PTY/j2OcWQnJN+NHm830SslqFmdHz9Eaq2fIthOy8AFFa4X9r4IUXeBuUFRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlTC5U/shNLroPFCVh3bvP1do9hK0b3qu5zTsPPSo+Vb2mm3sC
+	HMcBj3YdtnkpHmkawonJ+6/yI/yZu+f+gfcwLtx1PQaEOntWuHnET2v/QkMCFzsSKabyD5cXedN
+	SAau7Ddtjbmh0SJ6ZSOaCvm0a6MgNKtCrtRVDUzNeJIGScpRcGQSP2Crnuz93FTwxTw==
+X-Gm-Gg: ASbGncsl3jV+3k7q62Gkbm6N9PvyS6LakIVLpwec32WgNDYoCF48N1ezqi6weUVys8k
+	s+ZwTTX3bjNik7VkcTpE4iLe4YQMAycHx9JXEuuZLXg0ie34MGFdwxqDkUzfGBHHeFUPsqvigW3
+	+y5Ye5Jr+PhVp24ewuUco5RHOdaPS/8dNUqlIDm3Kg5Bsay5hse164Qs+NaFU1fPXGj2ZpfSGaA
+	Wcv3/0UuHxVwnm6Xbr0gKmnWLjg9b4YMwCCGfebjWDJI+3Xego8xODeEcAlx3Uf1zDk7ke7hIoI
+	f6P2YlzpyKICRmkBfPPVUBHCxCZtRxIYhPvmd9c96HkQW0zh46KK
+X-Received: by 2002:a05:600c:821a:b0:440:6a79:6df0 with SMTP id 5b1f17b1804b1-45334b63134mr26911675e9.22.1749821926089;
+        Fri, 13 Jun 2025 06:38:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPc0rAqrtm8Mfy8P9qTOpKk4v0Ra18xaU23rpSwVHpxhe/VL2TcmbeQhBrzEnWo85AfNh6Yg==
+X-Received: by 2002:a05:600c:821a:b0:440:6a79:6df0 with SMTP id 5b1f17b1804b1-45334b63134mr26911485e9.22.1749821925755;
+        Fri, 13 Jun 2025 06:38:45 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1a50c.dip0.t-ipconnect.de. [87.161.165.12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453305a0d9dsm46813075e9.21.2025.06.13.06.38.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 06:38:45 -0700 (PDT)
+Message-ID: <c885e39c-d58a-42c9-816a-a80a25ae79a4@redhat.com>
+Date: Fri, 13 Jun 2025 15:38:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: huge_memory: fix the check for allowed huge orders in
+ shmem
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ baohua@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <529affb3220153d0d5a542960b535cdfc33f51d7.1749804835.git.baolin.wang@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <529affb3220153d0d5a542960b535cdfc33f51d7.1749804835.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-`acpi::DeviceId` is an abstraction around `struct acpi_device_id`.
+On 13.06.25 11:12, Baolin Wang wrote:
+> Shmem already supports mTHP, and shmem_allowable_huge_orders() will return
+> the huge orders allowed by shmem. However, there is no check against the
+> 'orders' parameter passed by __thp_vma_allowable_orders(), which can lead
+> to incorrect check results for __thp_vma_allowable_orders().
+> 
+> For example, when a user wants to check if shmem supports PMD-sized THP
+> by thp_vma_allowable_order(), if shmem only enables 64K mTHP, the current
+> logic would cause thp_vma_allowable_order() to return true, implying that
+> shmem allows PMD-sized THP allocation, which it actually does not.
+> 
+> I don't think this will cause a significant impact on users, and this will
+> only have some impact on the shmem THP collapse. That is to say, even though
+> the shmem sysfs setting does not enable the PMD-sized THP, the
+> thp_vma_allowable_order() still indicates that shmem allows PMD-sized collapse,
+> meaning it might successfully collapse into THP, or it might not (for example,
+> thp_vma_suitable_order() check failed in the collapse process). However, this
+> still does not align with the shmem sysfs configuration, fix it.
+> 
+> Fixes: 26c7d8413aaf ("mm: thp: support "THPeligible" semantics for mTHP with anonymous shmem")
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+> Note: this general change is suitable to be split out as a bugfix patch
+> based on the discussions in the previous thread[1].
+> 
+> [1] https://lore.kernel.org/all/86bf2dcd-4be9-4fd9-98cc-da55aea52be0@lucifer.local/
+> ---
+>   mm/huge_memory.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index d3e66136e41a..a8cfa37cae72 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -166,7 +166,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>   	 * own flags.
+>   	 */
+>   	if (!in_pf && shmem_file(vma->vm_file))
+> -		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
+> +		return orders & shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>   						   vma, vma->vm_pgoff, 0,
+>   						   !enforce_sysfs);
+>   
 
-This is used by subsequent patches, in particular the i2c driver
-abstractions, to create ACPI device ID tables.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- MAINTAINERS         |  1 +
- rust/kernel/acpi.rs | 61 +++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs  |  1 +
- 3 files changed, 63 insertions(+)
- create mode 100644 rust/kernel/acpi.rs
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..6c809ea30e6a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -302,6 +302,7 @@ F:	include/linux/acpi.h
- F:	include/linux/fwnode.h
- F:	include/linux/fw_table.h
- F:	lib/fw_table.c
-+F:	rust/kernel/acpi.rs
- F:	tools/power/acpi/
- 
- ACPI APEI
-diff --git a/rust/kernel/acpi.rs b/rust/kernel/acpi.rs
-new file mode 100644
-index 000000000000..f9a98dc4eb8a
---- /dev/null
-+++ b/rust/kernel/acpi.rs
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Advanced Configuration and Power Interface abstractions.
-+
-+use crate::{bindings, device_id::RawDeviceId, prelude::*};
-+
-+/// IdTable type for ACPI drivers.
-+pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
-+
-+/// An ACPI device id.
-+#[repr(transparent)]
-+#[derive(Clone, Copy)]
-+pub struct DeviceId(bindings::acpi_device_id);
-+
-+// SAFETY:
-+// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct acpi_device_id` and does not add
-+//   additional invariants, so it's safe to transmute to `RawType`.
-+// * `DRIVER_DATA_OFFSET` is the offset to the `data` field.
-+unsafe impl RawDeviceId for DeviceId {
-+    type RawType = bindings::acpi_device_id;
-+
-+    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::acpi_device_id, driver_data);
-+
-+    fn index(&self) -> usize {
-+        self.0.driver_data as _
-+    }
-+}
-+
-+impl DeviceId {
-+    const ACPI_ID_LEN: usize = 16;
-+
-+    /// Create a new device id from an ACPI 'id' string.
-+    pub const fn new(id: &'static CStr) -> Self {
-+        assert!(id.len() <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
-+        let src = id.as_bytes_with_nul();
-+        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
-+        // SAFETY: FFI type is valid to be zero-initialized.
-+        let mut acpi: bindings::acpi_device_id = unsafe { core::mem::zeroed() };
-+        let mut i = 0;
-+        while i < src.len() {
-+            acpi.id[i] = src[i];
-+            i += 1;
-+        }
-+
-+        Self(acpi)
-+    }
-+}
-+
-+/// Create an ACPI `IdTable` with an "alias" for modpost.
-+#[macro_export]
-+macro_rules! acpi_device_table {
-+    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
-+        const $table_name: $crate::device_id::IdArray<
-+            $crate::acpi::DeviceId,
-+            $id_info_type,
-+            { $table_data.len() },
-+        > = $crate::device_id::IdArray::new($table_data);
-+
-+        $crate::module_device_table!("acpi", $module_table_name, $table_name);
-+    };
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 6b4774b2b1c3..5bbf3627212f 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -51,6 +51,7 @@
- 
- pub use ffi;
- 
-+pub mod acpi;
- pub mod alloc;
- #[cfg(CONFIG_AUXILIARY_BUS)]
- pub mod auxiliary;
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
