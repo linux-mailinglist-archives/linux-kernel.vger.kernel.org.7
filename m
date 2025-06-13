@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-684824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C5EAD80B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B20AD80BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9861898E11
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894DE1E12FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F11EB5DD;
-	Fri, 13 Jun 2025 02:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003641DF268;
+	Fri, 13 Jun 2025 02:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvSZiZll"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MQcj317D"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21FB1C84AD;
-	Fri, 13 Jun 2025 01:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F29190679;
+	Fri, 13 Jun 2025 02:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749779999; cv=none; b=aOnrJ198i2ShhFDl7b38D26NJ2bYXkrpjepxhBfSk1iK3UGYby71vtHV6tcqNvShWGAw18bUtuWMK3apPH2Qtxeikc4drzY40ENJSTIYnkMI38mC6EE1qoetrBme0yZddjeE8Un2/WEaQVV6oGBGw6ttCxDq9+OhLpbVZ+PAxs8=
+	t=1749780075; cv=none; b=bb8bAFBx4P3e9zGDXUztjCMVF7kZPsuhhMAPeSV2XhQUYZMH3mBsrZmO0Z+oj0jBUfJO8inqMyghJPGTAu4nMRMt6fBtBrSfDD2vnSo4jDo7TKfZLhshNGFg2y/kg2bbTHHaDhNb2QBlYwdG2hLsnoTm16TLx3PSiZsqTmj8l5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749779999; c=relaxed/simple;
-	bh=PdQx8SDHF2OkhNpbxe9NUNMzYfyqf5xrF8iOKtmIe6w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qJ6QXu7CkdDeKW+FN3hwVWx3rZxNSsiYcM3e3o6GGbxbHBxLwi71RFdmNb5VJGAUZQzYDL8AOQcDhInv5CtVw6XREjz7XGxjpq1D5SF05QqiIjhp/6f+9L5vVbFv7OFioP8f5EGjCT6Reaw8k6pwljvBYuE8Ko8UeFm3s0BQVIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jvSZiZll; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3510CC4CEEA;
-	Fri, 13 Jun 2025 01:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749779999;
-	bh=PdQx8SDHF2OkhNpbxe9NUNMzYfyqf5xrF8iOKtmIe6w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jvSZiZll3nclK2PkENuIpFcnJ3jFjDsRG5/lkj6Wf5Y+8aqqRPDnZwsN0QOBqju3l
-	 TylGIwx2vptMxQtlUva/uZEe66ngjecMKHthn4WGGI3ztulC5qJfdcxhqc1Q0bYVqC
-	 TDzrZz6RecObZP14lcKo+dCK0Kv/RjgNQhBm9sxD8ciiyKhgsFXCXuTHjmo2qbG8Qz
-	 ApJyrbT6MmXeA0xBPq2EBX5ifuNYzyAndXsG1ZFh8kW2wDZcT9WZ8y1/Sf8WnS9L83
-	 rPGc+GlSDvAp7+6ONLir4xuuYc5V4rz4WRTK8YMYDhgU3jOeV/s4ESBT2j0LOdwzAn
-	 Jx3QO9Njoueqg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BB239EFFD1;
-	Fri, 13 Jun 2025 02:00:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749780075; c=relaxed/simple;
+	bh=NUqXZbIF2PxxNbybudEPnBZX7TO9jM36gjeNJuIXgQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iv4/tsvXYd6B+n7smVjMUag2E8zNXbkLeg4nwsK4W+EFSPOTQ8RguAdFY7xC6XLG1oDYppbFwgk6JDAxJmBOSVLNJhTYhhlbHf2e/2hCOIoD8R9wq5wo0wBGmG7vj4Eqt7IG+20JEhbmilfMnZboyn52dFl0aYkpnmZeNnXo400=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MQcj317D; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PCD74P9rBhM5BWb+vDQDA0gUoD+FEe8gAbcb3Ihn/Sk=; b=MQcj317D1avppnw4FYcS+2tLAK
+	oeQbQCr7oSjk7dSxtr2k+YWNvXBOBtpnAB5gfCmM/Pr2mAftbmRQ4vLuvhOtrnBIiZOpKIV1JcVfY
+	xzhrw9pJ+L3IHi4/LfQ1qS0Pv7pwWfCsrbSWpq16GTXRv0bZgfSRLOxZv2smnyOJwf92CaQLpSCSL
+	F/rwzTAJQzn1NMPf6Zd5UQR7OA4TUuvRX0KgzmBFEYONoncIqp6nTbolGztOPtR3VY21nkH7IUiyq
+	I3zm62TtN7Zs6uJRsMlRysX+LfKos651u7tfZSY03rILxphvmWRzjFPgemWj982d/3hIr15LJCY97
+	LgRBT4Aw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPtjD-00000004gvS-3MBg;
+	Fri, 13 Jun 2025 02:01:11 +0000
+Date: Fri, 13 Jun 2025 03:01:11 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>,
+	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] proc_sysctl: Fix up ->is_seen() handling
+Message-ID: <20250613020111.GE1647736@ZenIV>
+References: <174977507817.608730.3467596162021780258@noble.neil.brown.name>
+ <20250613015421.GD1647736@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: Use dev_fwnode()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174978002900.187534.13912380514697676901.git-patchwork-notify@kernel.org>
-Date: Fri, 13 Jun 2025 02:00:29 +0000
-References: <20250611104348.192092-15-jirislaby@kernel.org>
-In-Reply-To: <20250611104348.192092-15-jirislaby@kernel.org>
-To: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, kuba@kernel.org,
- davem@davemloft.net, netdev@vger.kernel.org, woojung.huh@microchip.com,
- UNGLinuxDriver@microchip.com, andrew@lunn.ch, olteanv@gmail.com,
- edumazet@google.com, pabeni@redhat.com, Thangaraj.S@microchip.com,
- Rengarajan.S@microchip.com, richardcochran@gmail.com,
- linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613015421.GD1647736@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 11 Jun 2025 12:43:43 +0200 you wrote:
-> irq_domain_create_simple() takes fwnode as the first argument. It can be
-> extracted from the struct device using dev_fwnode() helper instead of
-> using of_node with of_fwnode_handle().
+On Fri, Jun 13, 2025 at 02:54:21AM +0100, Al Viro wrote:
+> On Fri, Jun 13, 2025 at 10:37:58AM +1000, NeilBrown wrote:
+> > 
+> > Some sysctl tables can provide an is_seen() function which reports if
+> > the sysctl should be visible to the current process.  This is currently
+> > used to cause d_compare to fail for invisible sysctls.
+> > 
+> > This technique might have worked in 2.6.26 when it was implemented, but
+> > it cannot work now.  In particular if ->d_compare always fails for a
+> > particular name, then d_alloc_parallel() will always create a new dentry
+> > and pass it to lookup() resulting in a new inode for every lookup.  I
+> > tested this by changing sysctl_is_seen() to always return 0.  When
+> > all sysctls were still visible and repeated lookups (ls -li) reported
+> > different inode numbers.
 > 
-> So use the dev_fwnode() helper.
-> 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
-> 
-> [...]
+> What do you mean, "name"?
 
-Here is the summary with links:
-  - net: Use dev_fwnode()
-    https://git.kernel.org/netdev/net-next/c/6d4e01d29d87
+The whole fucking point of that thing is that /proc/sys/net contents for
+processes in different netns is not the same.  And such processes should
+not screw each other into the ground by doing lookups in that area.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Yes, it means multiple children of the same dentry having the same name
+*and* staying hashed at the same time.
 
