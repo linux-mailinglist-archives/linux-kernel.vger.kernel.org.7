@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-685774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4615AD8E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:05:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E005AD8E93
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 382EE16CD6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:00:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722D11E5DA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D7D2DE2EE;
-	Fri, 13 Jun 2025 13:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4793B2DE304;
+	Fri, 13 Jun 2025 13:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bqjqb37K"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JsTIT/CK"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F9A2DD00B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6CF2DD01C
 	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822623; cv=none; b=DOvJcHBODSyPw8AK1sB4gUk7fgJf2go+/ghzFECPuYqVA0Q0GdE1hvkbqH3GRAfiNeqpJ4kcchJgb9o9NR5AWk3aYs2SosJY0C9OAtNIsLgEDCe0a++FuBeGrOEKs8qZ4FydpHJ/lwaszj+qt98Dj8pZB98KmU3hzkEHybUaE0E=
+	t=1749822624; cv=none; b=HDILAxaNeGPMLhYwS5ypPHoUHh+KxVG/iO0g+pZCPxPjeMmcLr4KQ+evbimus0B8Em0nfgBWEQ8v36SDUItX/sH0MH6zYL47Sy/GxCLqCH2nha4ChAhYRJTFbrXw4H6+Zi2eHyYzYlO5/GnfFS83dJE7/41ps1rAovxP7S203zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822623; c=relaxed/simple;
-	bh=2ZZQQW+13o2rsahnzuLYhSsOMSGkVM3SbB+MIh08WAc=;
+	s=arc-20240116; t=1749822624; c=relaxed/simple;
+	bh=mU88CWHtDu//LZsdO+tWz83VbPYcuTZ7x11tBe3CCpg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d4TFOdKxj+Y69xppAqMabsNskRONSAhWEGWhkj6Mkjn41ojJXZFgfPTEJlbnrJt68LMAvkl3tjNMPYFiWlxLCB132cBEzX+A8WBljJqf1FUotZUlanKHuSGaAmdyVqNHwKUNMCKK3y3obDZ2KCV64gKaqY85igo847pfBLREQBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bqjqb37K; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=VIhgSkMGR96Pops+cZcpeJ65nASP6Kzm5uX/VGMkH6Nf3KsP6x+LG0xKCHj5SHLbNSbt1KftXaA0d2+UdK5sw4SJnSQ6YVLDXxridNod8t8AUgLSetr87oD77fww4/rcDXB9GA1khx4C1uZZYG3LgFBgiVvFUu2xycsouxNJVXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JsTIT/CK; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749822622; x=1781358622;
+  t=1749822623; x=1781358623;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=2ZZQQW+13o2rsahnzuLYhSsOMSGkVM3SbB+MIh08WAc=;
-  b=bqjqb37KgLdUifnOqcZ779ACv4dbO7ssX0pxJ5XGfcwsE/Cb2JtixK7w
-   zb0QSadkHLTI9eTKHvXTqrBIPP4jXZ82rvA4hVq/2SWL8VJyOyov0S/SX
-   C4dEDXqJOLFwjpNLcF+RG8CE46G4BX7aT82mMJUm+RZAhOuXTStdxeU5j
-   EwOYXyD2yFBfHQsMThzaZ9gZbK5M/+tXTuxJIBsrTo6Ql9YTN6NAVDdiT
-   1yiPbxLglEJM816WGtx2VhZCHv/bLKJJjnQOQnzqcUf/FsKlsXzQpb43F
-   kdN73QOAt5B5qAuIQERRV8PPVEYZHn0LU1nCH5B7dIkP18/SI/F+mWv6q
-   w==;
-X-CSE-ConnectionGUID: lt8SkZCqTeyEPZmnqBBFSg==
-X-CSE-MsgGUID: sFcxmd0CSmGsWdvVsDWo3w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="55837606"
+  bh=mU88CWHtDu//LZsdO+tWz83VbPYcuTZ7x11tBe3CCpg=;
+  b=JsTIT/CKD2R0D16epLR5FpIQJ3hvHA1/C1yqSDQEv4k5nfK/cNbBYG4S
+   T1IwJNcOaREcZSvAfzE0XFRNhFUmStUR812Agpqrczu5na6yO280UHlP6
+   fVldrQ0xONmL+e4GkD+F91gCyYl/h6gynrNY/Z0oRVF+MUlLPgL5ulhN1
+   EABevhE5to8MlrioKsARFtv04ftcboWCFb/ICG1PDDVpsRRwR4YFqs63w
+   aQUuBTp+HK9JYd0fDJGfUZ06Zg+BbrheSBNwbN/vAWvsrfpIcJZRkr9qd
+   xsr+FSDepVwpggiCBoIqJYyU3n9sjZaFom2Yxc3/pkZsNLyRYAHu4hAzI
+   Q==;
+X-CSE-ConnectionGUID: YBvxbNTLSECo1v6uBENnpQ==
+X-CSE-MsgGUID: OXCg5x92Toa8UEo3MT8NaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="55837612"
 X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="55837606"
+   d="scan'208";a="55837612"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 06:50:22 -0700
-X-CSE-ConnectionGUID: Ew5AqW2mS2SzOHQ24eBDRw==
-X-CSE-MsgGUID: hqPSGureSN25PkXNaAFzwA==
+X-CSE-ConnectionGUID: YH6MdUXZRcSdOYOUbNO+NQ==
+X-CSE-MsgGUID: PB8h9Q70TW6uscrRdte8Wg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="171017635"
+   d="scan'208";a="171017640"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by fmviesa002.fm.intel.com with ESMTP; 13 Jun 2025 06:50:22 -0700
 From: kan.liang@linux.intel.com
@@ -73,9 +73,9 @@ Cc: dapeng1.mi@linux.intel.com,
 	ak@linux.intel.com,
 	zide.chen@intel.com,
 	Kan Liang <kan.liang@linux.intel.com>
-Subject: [RFC PATCH 09/12] perf/x86: Add OPMASK in extended regs
-Date: Fri, 13 Jun 2025 06:49:40 -0700
-Message-Id: <20250613134943.3186517-10-kan.liang@linux.intel.com>
+Subject: [RFC PATCH 10/12] perf/x86: Add ZMM in extended regs
+Date: Fri, 13 Jun 2025 06:49:41 -0700
+Message-Id: <20250613134943.3186517-11-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250613134943.3186517-1-kan.liang@linux.intel.com>
 References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
@@ -89,7 +89,7 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Support OPMASK as the extended registers. It can be configured in the
+Support ZMM as the extended registers. It can be configured in the
 sample_ext_regs_intr/user.
 
 Only the PMU with PERF_PMU_CAP_EXTENDED_REGS2 supports the feature.
@@ -97,127 +97,187 @@ The value can be retrieved via the XSAVES.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/core.c                |  6 ++++++
- arch/x86/events/perf_event.h          |  4 ++++
- arch/x86/include/asm/perf_event.h     |  1 +
- arch/x86/include/uapi/asm/perf_regs.h | 13 ++++++++++++-
- arch/x86/kernel/perf_regs.c           |  5 +++++
- 5 files changed, 28 insertions(+), 1 deletion(-)
+ arch/x86/events/core.c                | 14 +++++++++
+ arch/x86/events/perf_event.h          | 11 ++++++-
+ arch/x86/include/asm/perf_event.h     |  2 ++
+ arch/x86/include/uapi/asm/perf_regs.h | 43 +++++++++++++++++++++++++--
+ arch/x86/kernel/perf_regs.c           | 10 +++++++
+ 5 files changed, 77 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 67f62268f063..741e6dfd50a5 100644
+index 741e6dfd50a5..9bcef9a32dd2 100644
 --- a/arch/x86/events/core.c
 +++ b/arch/x86/events/core.c
-@@ -436,6 +436,7 @@ static void x86_pmu_get_ext_regs(struct x86_perf_regs *perf_regs, u64 mask)
- 	/* The XSAVES instruction always uses the compacted format */
+@@ -437,6 +437,10 @@ static void x86_pmu_get_ext_regs(struct x86_perf_regs *perf_regs, u64 mask)
  	__x86_pmu_get_regs(XFEATURE_MASK_YMM, perf_regs->ymmh_regs, XSAVE_YMM_SIZE);
  	__x86_pmu_get_regs(XFEATURE_MASK_APX, perf_regs->apx_regs, sizeof(struct apx_state));
-+	__x86_pmu_get_regs(XFEATURE_MASK_OPMASK, perf_regs->opmask_regs, sizeof(struct avx_512_opmask_state));
+ 	__x86_pmu_get_regs(XFEATURE_MASK_OPMASK, perf_regs->opmask_regs, sizeof(struct avx_512_opmask_state));
++	__x86_pmu_get_regs(XFEATURE_MASK_ZMM_Hi256, perf_regs->zmmh_regs,
++			   sizeof(struct avx_512_zmm_uppers_state));
++	__x86_pmu_get_regs(XFEATURE_MASK_Hi16_ZMM, perf_regs->h16zmm_regs,
++			   sizeof(struct avx_512_hi16_state));
  }
  
  static void release_ext_regs_buffers(void)
-@@ -465,6 +466,8 @@ static void reserve_ext_regs_buffers(void)
- 		size += XSAVE_YMM_SIZE;
- 	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_APX))
+@@ -468,6 +472,10 @@ static void reserve_ext_regs_buffers(void)
  		size += sizeof(struct apx_state);
-+	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_OPMASK))
-+		size += sizeof(struct avx_512_opmask_state);
+ 	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_OPMASK))
+ 		size += sizeof(struct avx_512_opmask_state);
++	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_ZMMH))
++		size += sizeof(struct avx_512_zmm_uppers_state);
++	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_H16ZMM))
++		size += sizeof(struct avx_512_hi16_state);
  
  	/* XSAVE feature requires 64-byte alignment. */
  	size += 64;
-@@ -743,6 +746,7 @@ int x86_pmu_hw_config(struct perf_event *event)
- 				return -EINVAL;
+@@ -747,6 +755,8 @@ int x86_pmu_hw_config(struct perf_event *event)
  			check_ext_regs(X86_EXT_REGS_YMM);
  			check_ext_regs(X86_EXT_REGS_APX);
-+			check_ext_regs(X86_EXT_REGS_OPMASK);
+ 			check_ext_regs(X86_EXT_REGS_OPMASK);
++			check_ext_regs(X86_EXT_REGS_ZMMH);
++			check_ext_regs(X86_EXT_REGS_H16ZMM);
  		}
  	}
  	return x86_setup_perfctr(event);
-@@ -1846,6 +1850,8 @@ void x86_pmu_setup_regs_data(struct perf_event *event,
- 			   XFEATURE_MASK_YMM, PERF_X86_EXT_REG_YMMH_SIZE);
- 	init_ext_regs_data(X86_EXT_REGS_APX, perf_regs->apx_regs,
+@@ -1852,6 +1862,10 @@ void x86_pmu_setup_regs_data(struct perf_event *event,
  			   XFEATURE_MASK_APX, PERF_X86_EXT_REG_APX_SIZE);
-+	init_ext_regs_data(X86_EXT_REGS_OPMASK, perf_regs->opmask_regs,
-+			   XFEATURE_MASK_OPMASK, PERF_X86_EXT_REG_OPMASK_SIZE);
+ 	init_ext_regs_data(X86_EXT_REGS_OPMASK, perf_regs->opmask_regs,
+ 			   XFEATURE_MASK_OPMASK, PERF_X86_EXT_REG_OPMASK_SIZE);
++	init_ext_regs_data(X86_EXT_REGS_ZMMH, perf_regs->zmmh_regs,
++			   XFEATURE_MASK_ZMM_Hi256, PERF_X86_EXT_REG_ZMMH_SIZE);
++	init_ext_regs_data(X86_EXT_REGS_H16ZMM, perf_regs->h16zmm_regs,
++			   XFEATURE_MASK_Hi16_ZMM, PERF_X86_EXT_REG_H16ZMM_SIZE);
  
  	mask &= ~ignore_mask;
  	if (mask)
 diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 1c40b5d9c025..c2626dcea1a0 100644
+index c2626dcea1a0..93a65c529afe 100644
 --- a/arch/x86/events/perf_event.h
 +++ b/arch/x86/events/perf_event.h
-@@ -691,6 +691,7 @@ enum {
- 	X86_EXT_REGS_XMM = 0,
+@@ -692,6 +692,8 @@ enum {
  	X86_EXT_REGS_YMM,
  	X86_EXT_REGS_APX,
-+	X86_EXT_REGS_OPMASK,
+ 	X86_EXT_REGS_OPMASK,
++	X86_EXT_REGS_ZMMH,
++	X86_EXT_REGS_H16ZMM,
  };
  
  #define PERF_PEBS_DATA_SOURCE_MAX	0x100
-@@ -1332,6 +1333,9 @@ static inline int get_num_ext_regs(u64 *ext_regs, unsigned int type)
- 	case X86_EXT_REGS_APX:
- 		mask = GENMASK_ULL(PERF_REG_X86_R31, PERF_REG_X86_R16);
+@@ -1324,7 +1326,7 @@ static inline u64 x86_pmu_get_event_config(struct perf_event *event)
+ 
+ static inline int get_num_ext_regs(u64 *ext_regs, unsigned int type)
+ {
+-	u64 mask;
++	u64 mask, mask2;
+ 
+ 	switch (type) {
+ 	case X86_EXT_REGS_YMM:
+@@ -1336,6 +1338,13 @@ static inline int get_num_ext_regs(u64 *ext_regs, unsigned int type)
+ 	case X86_EXT_REGS_OPMASK:
+ 		mask = GENMASK_ULL(PERF_REG_X86_OPMASK7, PERF_REG_X86_OPMASK0);
  		return hweight64(ext_regs[0] & mask);
-+	case X86_EXT_REGS_OPMASK:
-+		mask = GENMASK_ULL(PERF_REG_X86_OPMASK7, PERF_REG_X86_OPMASK0);
++	case X86_EXT_REGS_ZMMH:
++		mask = GENMASK_ULL(PERF_REG_X86_ZMMH15, PERF_REG_X86_ZMMH0);
 +		return hweight64(ext_regs[0] & mask);
++	case X86_EXT_REGS_H16ZMM:
++		mask = GENMASK_ULL(PERF_REG_X86_EXT_REGS_64, PERF_REG_X86_ZMM16);
++		mask2 = GENMASK_ULL(PERF_REG_X86_ZMM31 - 64, 0);
++		return hweight64(ext_regs[0] & mask) + hweight64(ext_regs[1] & mask2);
  	default:
  		return 0;
  	}
 diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 9e4d60f3a9a2..4e971f38ff94 100644
+index 4e971f38ff94..eb35ba9afbb4 100644
 --- a/arch/x86/include/asm/perf_event.h
 +++ b/arch/x86/include/asm/perf_event.h
-@@ -595,6 +595,7 @@ struct x86_perf_regs {
- 	u64		*xmm_regs;
+@@ -596,6 +596,8 @@ struct x86_perf_regs {
  	u64		*ymmh_regs;
  	u64		*apx_regs;
-+	u64		*opmask_regs;
+ 	u64		*opmask_regs;
++	u64		*zmmh_regs;
++	u64		*h16zmm_regs;
  };
  
  extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
 diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
-index e23fb112faac..b9ec58b98c5e 100644
+index b9ec58b98c5e..c43a025b0c01 100644
 --- a/arch/x86/include/uapi/asm/perf_regs.h
 +++ b/arch/x86/include/uapi/asm/perf_regs.h
-@@ -92,12 +92,23 @@ enum perf_event_x86_ext_regs {
- 	PERF_REG_X86_R30,
- 	PERF_REG_X86_R31,
+@@ -102,15 +102,54 @@ enum perf_event_x86_ext_regs {
+ 	PERF_REG_X86_OPMASK6,
+ 	PERF_REG_X86_OPMASK7,
  
--	PERF_REG_X86_EXT_REGS_MAX = PERF_REG_X86_R31,
-+	/* OPMASK Registers */
-+	PERF_REG_X86_OPMASK0,
-+	PERF_REG_X86_OPMASK1,
-+	PERF_REG_X86_OPMASK2,
-+	PERF_REG_X86_OPMASK3,
-+	PERF_REG_X86_OPMASK4,
-+	PERF_REG_X86_OPMASK5,
-+	PERF_REG_X86_OPMASK6,
-+	PERF_REG_X86_OPMASK7,
+-	PERF_REG_X86_EXT_REGS_MAX = PERF_REG_X86_OPMASK7,
++	/* ZMMH 0-15 Registers */
++	PERF_REG_X86_ZMMH0,
++	PERF_REG_X86_ZMMH1,
++	PERF_REG_X86_ZMMH2,
++	PERF_REG_X86_ZMMH3,
++	PERF_REG_X86_ZMMH4,
++	PERF_REG_X86_ZMMH5,
++	PERF_REG_X86_ZMMH6,
++	PERF_REG_X86_ZMMH7,
++	PERF_REG_X86_ZMMH8,
++	PERF_REG_X86_ZMMH9,
++	PERF_REG_X86_ZMMH10,
++	PERF_REG_X86_ZMMH11,
++	PERF_REG_X86_ZMMH12,
++	PERF_REG_X86_ZMMH13,
++	PERF_REG_X86_ZMMH14,
++	PERF_REG_X86_ZMMH15,
 +
-+	PERF_REG_X86_EXT_REGS_MAX = PERF_REG_X86_OPMASK7,
++	/* H16ZMM 16-31 Registers */
++	PERF_REG_X86_ZMM16,
++	PERF_REG_X86_ZMM17,
++	PERF_REG_X86_ZMM18,
++	PERF_REG_X86_ZMM19,
++	PERF_REG_X86_ZMM20,
++	PERF_REG_X86_ZMM21,
++	PERF_REG_X86_ZMM22,
++	PERF_REG_X86_ZMM23,
++	PERF_REG_X86_ZMM24,
++	PERF_REG_X86_ZMM25,
++	PERF_REG_X86_ZMM26,
++	PERF_REG_X86_ZMM27,
++	PERF_REG_X86_ZMM28,
++	PERF_REG_X86_ZMM29,
++	PERF_REG_X86_ZMM30,
++	PERF_REG_X86_ZMM31,
++
++	PERF_REG_X86_EXT_REGS_64 = PERF_REG_X86_ZMM23,
++	PERF_REG_X86_EXT_REGS_MAX = PERF_REG_X86_ZMM31,
  };
  
  enum perf_event_x86_ext_reg_size {
  	PERF_X86_EXT_REG_YMMH_SIZE	= 2,
  	PERF_X86_EXT_REG_APX_SIZE	= 1,
-+	PERF_X86_EXT_REG_OPMASK_SIZE	= 1,
+ 	PERF_X86_EXT_REG_OPMASK_SIZE	= 1,
++	PERF_X86_EXT_REG_ZMMH_SIZE	= 4,
++	PERF_X86_EXT_REG_H16ZMM_SIZE	= 8,
  
  	/* max of PERF_REG_X86_XXX_SIZE */
- 	PERF_X86_EXT_REG_SIZE_MAX	= PERF_X86_EXT_REG_YMMH_SIZE,
+-	PERF_X86_EXT_REG_SIZE_MAX	= PERF_X86_EXT_REG_YMMH_SIZE,
++	PERF_X86_EXT_REG_SIZE_MAX	= PERF_X86_EXT_REG_H16ZMM_SIZE,
+ };
+ #endif /* _ASM_X86_PERF_REGS_H */
 diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index 518497bafdf0..34b94b846f00 100644
+index 34b94b846f00..d5721ea85c5d 100644
 --- a/arch/x86/kernel/perf_regs.c
 +++ b/arch/x86/kernel/perf_regs.c
-@@ -87,6 +87,11 @@ static u64 perf_ext_reg_value(struct pt_regs *regs, int idx,
- 						    idx - PERF_REG_X86_R16,
- 						    perf_regs->apx_regs,
- 						    PERF_X86_EXT_REG_APX_SIZE);
-+		case PERF_REG_X86_OPMASK0 ... PERF_REG_X86_OPMASK7:
+@@ -92,6 +92,16 @@ static u64 perf_ext_reg_value(struct pt_regs *regs, int idx,
+ 						    idx - PERF_REG_X86_OPMASK0,
+ 						    perf_regs->opmask_regs,
+ 						    PERF_X86_EXT_REG_OPMASK_SIZE);
++		case PERF_REG_X86_ZMMH0 ... PERF_REG_X86_ZMMH15:
 +			return __perf_ext_reg_value(ext, ext_size,
-+						    idx - PERF_REG_X86_OPMASK0,
-+						    perf_regs->opmask_regs,
-+						    PERF_X86_EXT_REG_OPMASK_SIZE);
++						    idx - PERF_REG_X86_ZMMH0,
++						    perf_regs->zmmh_regs,
++						    PERF_X86_EXT_REG_ZMMH_SIZE);
++		case PERF_REG_X86_ZMM16 ... PERF_REG_X86_ZMM31:
++			return __perf_ext_reg_value(ext, ext_size,
++						    idx - PERF_REG_X86_ZMM16,
++						    perf_regs->h16zmm_regs,
++						    PERF_X86_EXT_REG_H16ZMM_SIZE);
  		default:
  			WARN_ON_ONCE(1);
  			*ext_size = 0;
