@@ -1,156 +1,151 @@
-Return-Path: <linux-kernel+bounces-686354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC5EAD9642
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D8EAD9649
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19B71686A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B5C189F215
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7B224C692;
-	Fri, 13 Jun 2025 20:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E5524A041;
+	Fri, 13 Jun 2025 20:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="em/rZc1r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3AABrSp"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB0724A041
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 20:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0492367D9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 20:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749846540; cv=none; b=t2XIu83D9/09z3fATERwi+NfZmn0eXgE+oEn+J2nMWNbRNn1a6DugBK3zJzOtJsI65T2ChELJkz1835cMVjS7ayHvo5UgGI2qrpsk8vj8urksolEp1h+X4munWfIJAki2tcBE3bZ2MJoV3jGXXLc4e9QGW1PKMOl6o/sk932iso=
+	t=1749846634; cv=none; b=BXWiKe8/7CtlOnxb2CwZYj6bsuW5RTa/AWiA5W1ax9wSf9YRrr3WKQ3ZLaQmssSuSF0ZAlaVOIMfsEMtvxRnktY0auHAxzan1ByMlRjDvboeHxQuwGKz4/c5eaeKUcjPubeDS4ZEdxNTQrF+hAIBHjrhxd3w1AChEyxN/ZwXx/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749846540; c=relaxed/simple;
-	bh=0C7rucsi2wDNfOlT2f1f4Cf3XdF6x8PbTkvIGXjNy40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BmedNEyWitKlQmZLiR2QA6j2TREo/kTOvsq86buBPFUQC/bxKgEerRYkQvPhg89uB2+TDgN8TbsIm3BlbBXPhATisRJgLx4REExK19xcZii+JIKBaKK9K1VBaRxdUFI9B8JZqGSqdlR+zwLRgg32/dwjqW5HUtVXoE4zwEdAEdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=em/rZc1r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749846538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TizfHzI50YnSZlKybyqCNDP5fZpWaKGNKEQ9XDSpq2w=;
-	b=em/rZc1r2M9FJLVH7ePcQdsDp58TBVyfiTyXSEHUI+OmCODH8NAs8lGsyg71Z+A2VSj5Sx
-	sPhxeOKIbz5eX+HBUO7KFvoUeeNuIuB5BmuK9RkedBZVEDa+CI/NvkB0fdf6qbWp906axy
-	hQho2+zvl1OAHiQZgKnugdR1svdOX2g=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-66-UJ1Xa6KVNceOYHD-Rug-1g-1; Fri,
- 13 Jun 2025 16:28:52 -0400
-X-MC-Unique: UJ1Xa6KVNceOYHD-Rug-1g-1
-X-Mimecast-MFC-AGG-ID: UJ1Xa6KVNceOYHD-Rug-1g_1749846531
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA42E1956046;
-	Fri, 13 Jun 2025 20:28:50 +0000 (UTC)
-Received: from [10.22.89.154] (unknown [10.22.89.154])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 770F41956050;
-	Fri, 13 Jun 2025 20:28:47 +0000 (UTC)
-Message-ID: <7a33bd90-7f1b-49ad-b24c-1808073f7f5e@redhat.com>
-Date: Fri, 13 Jun 2025 16:28:46 -0400
+	s=arc-20240116; t=1749846634; c=relaxed/simple;
+	bh=6hMvnHrlDGmIsq+dHiAUFLU63nbpFzoG7BlKtAAWUjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t1zO3Vnr23C/7jMso4U/5HlpRo5wgE4l8kEgThg32ARf6vowXiRy/ZSoS4cKD+27Zk04Seqi61Ord833Oyy/bGrW0RHqmsTPkwR/1FeelevN20WOuVED4GgBAdcfGnRxzYd27+1nxuffKJdj7H7hh4Y3DL3SzUjfEaHXgUZryGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3AABrSp; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so2465067f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749846631; x=1750451431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X6gxnPqEZ3rJPOAZK/e5c7eolLEIOuidR5IiopqFvaw=;
+        b=X3AABrSpzXyCphUFVLSdRepaqzHHfrh1wgUyL10IRMj99KMchZZiI6pk1qmtGOHhJG
+         E8AMSxgw98Wnjg8NpJdILz/KeX4AoVoOkh4QhdcGkY3UsJOjl9SpxCQ9kUdrI2cP/Orq
+         xWoWzR9yMZFggcd2hn04XQpISVmP04mVR6K+LhsoIPvyumyzR2xqE3HGj656eOvcKN18
+         DG7qM/4RN3+UwFeeggZBZAVCCIovGNPVjxCGgoJHWZOYpYUsUs7h1hZxEl2zC35tQBY3
+         ZSrOI/cWPwkMQkVd0Nwo3PXKJ6MLzzymzvGHknjBgkSXuUxOsj9Wni+U1c1xYNb6B2Xe
+         +YRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749846631; x=1750451431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X6gxnPqEZ3rJPOAZK/e5c7eolLEIOuidR5IiopqFvaw=;
+        b=aWTlxYt2RS+3SqLpxXeS7k9tO3DfYFGlV5EYsLWs3Ewr63GYCjBXsMcK+IMBqipgMs
+         5QWJJVvwFm410sIett5AGrO3Q7JOeOPNwZyzaOYvLsQ5Ike38FC7Vl1nv8mxKOPhPiDF
+         ivFCaqiVeApOSIo176vOGrbr1hxjH3F29A8XQijvbMSdQp5AWDtlCo+8PU0JVCCvQ5AW
+         nFJqXTGirJRb2DT1VWwbkYyo6UAOx4Ps8+HQpilkgEgdHL8sLYti1b+VjXJb2Sjr2XMV
+         ez0s6ss0R4Ds5EOfk3dxkar8hcBCZlbrsleM1wibC/WA6TaMu3Z5vVtoviF6mjEaZjHL
+         OgQQ==
+X-Gm-Message-State: AOJu0Yz+CSJ/3x4aNqdG6bsGTdv47X/MC1iE2iEhoSt1vQ9ttcjk14x+
+	GkdXd3ukSwy0HWIVnslUMFAi3whKFdXcdKM+AyvNfuRaMXTkTMsUuWsPH4Xhtw4B
+X-Gm-Gg: ASbGncvtTxtUrXebO1LctMDApuy+ye0BATKbRQXOheybdak83AgCSp+gZCffHTNtomR
+	0p/tSI/KQSdmP5goGqbfjaXfsQ6ys7AdGhhToLtsu0gEypY+ckzSqEPYUoGJsoqjl2W59ioKksT
+	Z5kZD1m04EDZkPxgSVuaPaQ8G6MDenAUq7YNhPvz3s001QKNSUxkoRgd2d+KJNhDifIuqwoqRux
+	wacrbJAy3ymI6cFvkYoJdeorxDefOL7mB7DgHKdGGOkYnfQpHYz+H5Uh05nJr7xxnZjI/WNF0sz
+	443u61YUQ561UNiqW78jZlwU5n+8k/8ii1zoTqkt6eU246HwCTgSTVN9Pm1m+Wm472Jk+69269q
+	U
+X-Google-Smtp-Source: AGHT+IEDjuQsLnKawdR179gPNxjs65VEiakJVNIb2Tu9L+ChyqkN7o042MQHiuqMO5RKVjxKiaqvWA==
+X-Received: by 2002:a05:6000:2507:b0:3a5:527b:64c6 with SMTP id ffacd0b85a97d-3a572398d8emr1099000f8f.1.1749846630570;
+        Fri, 13 Jun 2025 13:30:30 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532de8f2e0sm61628255e9.8.2025.06.13.13.30.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 13:30:30 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	peterz@infradead.org,
+	luto@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/entry: Remove some redundancy checks on syscall works
+Date: Fri, 13 Jun 2025 20:28:49 +0000
+Message-ID: <20250613202937.679-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] scsi: fnic: Turn off FDMI ACTIVE flags on link
- down
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
- mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, revers@redhat.com, dan.carpenter@linaro.org,
- stable@vger.kernel.org
-References: <20250612221805.4066-1-kartilak@cisco.com>
- <20250612221805.4066-4-kartilak@cisco.com>
-Content-Language: en-US
-From: John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <20250612221805.4066-4-kartilak@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-Hi Karan.
+On Wed, Jun 11 2025 at 11:43, Khalid Ali wrote:
+> > There is a redundant checks of thread syscall work.
 
-You've got two patches in this series with the same Fixes: tag.
+> Not really.
+>
+> >  After we read thread syscall work we are checking the work bits using
+>
+> We are doing nothing. Please write your changelogs in imperative mood
+> and do not try to impersonate code.
 
-[PATCH v4 2/5] scsi: fnic: Fix crash in fnic_wq_cmpl_handler when FDMI times out
-Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
+Sorry, i guess my english sucks.
 
-[PATCH v4 4/5] scsi: fnic: Turn off FDMI ACTIVE flags on link down
-Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
+> > SYSCALL_WORK_ENTER and SYSCALL_WORK_EXIT on syscall entry and exit
+> > respectively, and at the same time syscall_trace_enter() and
+> > syscall_exit_work() checking bits one by one, the bits we already checked.
+> > This is redundancy. So either we need to check the work bits one by one as I
+> > did, or check as whole. On my prespective, i think the way code is
+> > implemented now checking work bits one by one is simpler and gives us
+> > more granular control.
 
-both of these patches modify the same file:
+> That's just wrong and absolutely not redundant. Care to look at the
+> definition of SYSCALL_WORK_ENTER:
+>
+> #define SYSCALL_WORK_ENTER	(SYSCALL_WORK_SECCOMP |			\
+>				 SYSCALL_WORK_SYSCALL_TRACEPOINT |	\
+>				 SYSCALL_WORK_SYSCALL_TRACE |		\
+>				 SYSCALL_WORK_SYSCALL_EMU |		\
+>				 SYSCALL_WORK_SYSCALL_AUDIT |		\
+>				 SYSCALL_WORK_SYSCALL_USER_DISPATCH |	\
+>				 ARCH_SYSCALL_WORK_ENTER)
+>
+> So this initial check avoids:
+>
+>    1) Doing an unconditional out of line call
+>
+>    2) Checking bit for bit to figure out that there is none set.
+>
+> Same applies for SYSCALL_WORK_EXIT.
+>
+> Your change neither makes anything simpler nor provides more granular
+> control.
+>
+> All it does is adding overhead and therefore guaranteed to introduce a
+> performance regression.
+>
+> Not going to happen.
+>
+> Thanks,
+>
+>        tglx
+Thanks, for the response and noted all your points, however i spotted some minor details also:
 
-   drivers/scsi/fnic/fdls_disc.c
+First if we are talking about performance then we may need likely() on SYSCALL_WORK_ENTER since 
+the probability of condition evaluating as true is very high.
 
-So I recommend you squash patch 4/5 and patch 2/5 into one.
+Second syscall_enter_audit() missing SYSCALL_WORK_SYSCALL_AUDIT	evaluation, aren't we supposed to call
+it only if SYSCALL_WORK_SYSCALL_AUDIT is set?
 
-Thanks,
+Should i create another patch fixing these two points, of course if i am right?
 
-/John
-
-On 6/12/25 6:18 PM, Karan Tilak Kumar wrote:
-> When the link goes down and comes up, FDMI requests are not sent out
-> anymore.
-> Fix bug by turning off FNIC_FDMI_ACTIVE when the link goes down.
-> 
-> Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
-> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Reviewed-by: Arun Easi <aeasi@cisco.com>
-> Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
-> ---
-> Changes between v3 and v4:
->      - Incorporate review comments from Dan:
-> 	- Remove comments from Cc tag
-> 
-> Changes between v2 and v3:
->      - Incorporate review comments from Dan:
-> 	- Add Cc to stable
-> 
-> Changes between v1 and v2:
->      - Incorporate review comments from Dan:
-> 	- Add Fixes tag
-> ---
->   drivers/scsi/fnic/fdls_disc.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
-> index 9e9939d41fa8..14691db4d5f9 100644
-> --- a/drivers/scsi/fnic/fdls_disc.c
-> +++ b/drivers/scsi/fnic/fdls_disc.c
-> @@ -5078,9 +5078,12 @@ void fnic_fdls_link_down(struct fnic_iport_s *iport)
->   		fdls_delete_tport(iport, tport);
->   	}
->   
-> -	if ((fnic_fdmi_support == 1) && (iport->fabric.fdmi_pending > 0)) {
-> -		timer_delete_sync(&iport->fabric.fdmi_timer);
-> -		iport->fabric.fdmi_pending = 0;
-> +	if (fnic_fdmi_support == 1) {
-> +		if (iport->fabric.fdmi_pending > 0) {
-> +			timer_delete_sync(&iport->fabric.fdmi_timer);
-> +			iport->fabric.fdmi_pending = 0;
-> +		}
-> +		iport->flags &= ~FNIC_FDMI_ACTIVE;
->   	}
->   
->   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
-
+Thanks, Khalid Ali
 
