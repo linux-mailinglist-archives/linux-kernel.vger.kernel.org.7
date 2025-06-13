@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-685915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEED9AD905A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47009AD905E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047D51BC1714
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:55:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1951C188A015
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925F01E8338;
-	Fri, 13 Jun 2025 14:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7121D5141;
+	Fri, 13 Jun 2025 14:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oyU8Moeb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0GYAM/3a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nw+QO0Q7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4785115573F;
-	Fri, 13 Jun 2025 14:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7A71C84BB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826480; cv=none; b=r6ymeWqUIqGA8Rjj7otO7KbKDNQWfpyJBv51tnwx2huYpZTeGtpsUniXTagwJmbub2g/vsrjg+eJbGxLil49p9aZU3va8DSR9sMVsW6+IENNY915xFj1T678JNSbC5A6K7sHgoXobu4yQt8BdFVV8uH67qLnthC1ytp09pdbAVU=
+	t=1749826488; cv=none; b=WhbxzAqPFewt6bQcOE+2N/rAVoqLgmUKoXOMV73hF2wDzaq7qW8P0hw+G2vY8J8XL6/DKWeTMRZ80lNYQm3syoRGtzO9gt2Cps93dj06CJBIIDxEQ0PbaOD2Bbs9MBxohtvNPK4ztRTqLHuN7MXFRluo/Nh91PNgkJcUy8DpNaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826480; c=relaxed/simple;
-	bh=HINBjh/f4wDEC+TsMpSPMskJo5DvoYsxBTVJ6SzjUBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vliy6HxzSpw2TbUjBkPvxi0yrF8lTvg/IRs5KeGCJ2t5vm8QNcajh+BwyfZBMX8S9G3iLyixDOyIzeFKPGFWiwRzwJprhjd9iVFUVuo1GO6E/nal8HyjaFvHaNl9n5zYTMN5J/oJHgQ5In/Y2u0CrNz+w7G/VOd4eK5CT+uvQo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oyU8Moeb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0GYAM/3a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 13 Jun 2025 16:54:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749826476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UCgNyye0M5YlG5NmnZwHEEWDQzhX8B00XQ+oHNnuIUU=;
-	b=oyU8MoebGpq/R3iMgUVafJtAEsb9P557A0iORlS/dJI72zIN4TrWAwdJAtSYoHaAQk8N+v
-	w28d+Y0mtgPLK90FPMoBJPRI89hHbvhh920vLgySRYVuOiio/MqXa+oz3Z6Tdkw6HZpx8C
-	ld7SUpGSAt399vTh29eZ55UOIQIvyjf9Ez+k4MJij/91ZS+wguTbxnxLlLXvPnDxUuOUEe
-	3Q+metjbiye9B8etwJ437a94eNzqmiLRgA+ZaGb964HKpTuDPm4E8fdgJ/GOdrNDAXIHy6
-	r4ZpW6jtnbu699BETygIlClbiguxI24D6WEU3rJbLTFTC1tq6eg5ZyYTLfFvkg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749826476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UCgNyye0M5YlG5NmnZwHEEWDQzhX8B00XQ+oHNnuIUU=;
-	b=0GYAM/3awel+LSlkSj40gYMyxveX/JYMnZkFztKf1o3erEzycoPwxY8mp6afTVmrSTcEj6
-	9dTYQB80soPTcEBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Marc =?utf-8?Q?Str=C3=A4mke?= <marc.straemke@eltropuls.de>
-Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: Re: Latency spikes on V6.15.1 Preempt RT and maybe related to intel
- IGB
-Message-ID: <20250613145434.T2x2ML8_@linutronix.de>
-References: <cb0d6ffc-acb3-4974-8f93-c86a6479109b@eltropuls.de>
+	s=arc-20240116; t=1749826488; c=relaxed/simple;
+	bh=KlOZtFzzm6PfyrjqYCI+ew2XZogAweu4gTEHDHk+aT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNZELDgHN9q+GhZyKIP92TO5dpd+W7vgc/VQQGkQhAPelZqU8qJ4scFGNusSELnYNllI32rQ2C+NEUvmFR7zBR9Vp8Fh7FoPXMCZ+paFJresdnmE39n4oZr+GyiBHmWznhnxj+wNw1n9sOq2hVTJgLzryoBGI/KrmzWOOwZHya8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nw+QO0Q7; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749826487; x=1781362487;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=KlOZtFzzm6PfyrjqYCI+ew2XZogAweu4gTEHDHk+aT8=;
+  b=nw+QO0Q7zQUTKCa3idab9VHUshwUOVARhVN1e5rK/dSWJuzruXRNVwwI
+   vEMH0iecva/007lHwqCQ+ATDaYZ1EkIaz2v8/f9BB6hcDnIe8rMUtJnH2
+   qDJAEk7pKUb0QhPdVp/SMxhbJYNNrV6D4k3uZjZHEZK4IE6lNeBlnFH7N
+   R30c65dSUoGMfiWXZPptjsqhZstUmbdTHD0H5AEQTyRz3BZ/xFYWsNKWf
+   8Pf1JKmEIBuc+1Ie2IJVnalVwPWxT/alzqrLT1AjcJyuCTMg5sqdoMYgG
+   /eD/HhQOPGomsH6DhakpDN4tVcuCyJh9XLfKZDwV39CtIKiTv6x5O2kfT
+   w==;
+X-CSE-ConnectionGUID: ogwElbsTTuCqARGfZJv76g==
+X-CSE-MsgGUID: wAdkRKVQQLGcEEbiXkQTvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="52192524"
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="52192524"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:54:46 -0700
+X-CSE-ConnectionGUID: Pxh/EBSeQVaux7k8fdu20A==
+X-CSE-MsgGUID: ROsQTaztR1WdTTnZcGsROQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="148392590"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:54:46 -0700
+Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 6D06320B5736;
+	Fri, 13 Jun 2025 07:54:44 -0700 (PDT)
+Message-ID: <03cfdc36-a7b9-4098-bc21-cb612907add2@linux.intel.com>
+Date: Fri, 13 Jun 2025 10:54:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cb0d6ffc-acb3-4974-8f93-c86a6479109b@eltropuls.de>
-
-On 2025-06-10 13:23:13 [+0200], Marc Str=C3=A4mke wrote:
-> Hello Everyone, I am reposting to LKML as I am not sure the rt-users
-Hi,
-
-> mailinglist is read by many people, (I hope that is okay)
->=20
-> On an AMD Ryzen Embedded machine I am experiencing strange Latency spikes=
- in
-> cyclictest and need some hints how to debug that further.
->=20
-> The system typically has max latencys of=C2=A0 88 us and averages of 4-8 =
-which is
-> more then sufficient for my application, but I saw some spikes of many
-> hundred us in testing.
->=20
-> I can provoke latenciess of more then 500-1000 us by invoking "ip l set
-> enp1s0 promisc off" on the first network interfaces. The network interface
-> is an "Intel Corporation I210 Gigabit Network Connection" using the IGB
-> driver.
->=20
-> I tried more or less all tracers but am not knowledgeable enough to make
-> sense of the output. IRQSoff and wakeup_rt trace output attached.
-
-I'm not sure what your two traces captured. The irqsoff_trace captured
-208us and this looks like a regular top of the run_ktimerd() invocation.
-There is not much going on.
-
-wakeup_rt_trace shows the wakeup of cyclictest. It records 411us. Most
-of it is scheduler itself with some 100us from
-flush_smp_call_function_queue().
-=20
-> Can anyone point me in the right direction? I am not sure how to interpret
-> the function tracers and function_graph tracers output in a meaningful wa=
-y.
-> As mainly a user of of the kernel I am a bit overwhelmed by the interacti=
-on
-> of the scheduler, RCU and so on..
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/12] x86/fpu/xstate: Add xsaves_nmi
+To: Dave Hansen <dave.hansen@intel.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
+ jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+ linux-kernel@vger.kernel.org
+Cc: dapeng1.mi@linux.intel.com, ak@linux.intel.com, zide.chen@intel.com
+References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
+ <20250613134943.3186517-4-kan.liang@linux.intel.com>
+ <c7bfcaf2-1669-4d6f-afb2-9bbcadfcde9e@intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <c7bfcaf2-1669-4d6f-afb2-9bbcadfcde9e@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Could you please try one of the following:
-- enable sched tracing events and tell cyclictest to break & stop
-  tracing? The options for cyclitest would be -b --tracemark.
-  The idea to see the scheduler events before the delay happens. So your
-  latency spike is 500us then you can try -b 490 or so.
 
-- use rtla. This might be easier and give you the backtrace of what you
-  are looking for
-  	https://bristot.me/linux-scheduling-latency-debug-and-analysis/
+On 2025-06-13 10:39 a.m., Dave Hansen wrote:
+> On 6/13/25 06:49, kan.liang@linux.intel.com wrote:
+>> + * This function can only be invoked in an NMI. It returns the *ACTUAL*
+>> + * register contents when the NMI hit.
+> 
+> Yes, but why is this important and what are the implications?
+> 
+> It's important because all of the other mechanisms that deal with xstate
+> are _trying_ to get something coherent. They're trying to, for instance,
+> poke at the PKRU register for userspace and we need to ensure that the
+> PKRU value that's being targeted is for the right task and is actually
+> in memory (if that's what we're after).
+> 
+> This interface is totally *in*coherent. There's no telling what was in
+> the registers when the NMI hit. That seems crazy compared to all the
+> other FPU code in the kernel. But it's actually OK for perf because
+> there's a separate hardware mechanism that saves XSAVE-managed state off
+> to memory. That mechanism also writes whatever was in the registers when
+> the NMI hit. It's also completely incoherent.
+> 
+> That's really the only reason this insanity is OK. perf can _already_
+> handle XSAVE "snapshots" from random code running. This just provides
+> another XSAVE data source at a random time.
+> 
+> Could we get some of that ^ into the changelog and function comment, please?
 
-> I have attached my config for reference.
+Sure. Thanks for the details. I will add it in both the changelog and
+function comments.
 
-There is nothing wrong with it. You might want to disable NO_HZ (and use
-PERIODIC) and use HZ=3D250 (or less)=20
+> 
+> One other thing...
+> 
+> XSAVES uses the modified optimization. That means if you did something
+> like this:
+> 
+> NMI=>
+> 	xsaves_nmi();
+> <=IRET
+> ... run a little bit in the kernel
+> NMI=> // another NMI
+> 	xsaves_nmi();
+> <=IRET
+> 
+> The second XSAVES might not actually write anything to the buffer
+> because the registers didn't change (they weren't modified). Is that OK?
 
-> Kind Regards
->=20
-> Marc
->=20
+Yes. The per-cpu buffer in perf is only used by this XSAVES. No one will
+clear it or modify it between the two xsaves_nmi().
 
-Sebastian
+Thanks,
+Kan
+
 
