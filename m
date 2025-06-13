@@ -1,133 +1,92 @@
-Return-Path: <linux-kernel+bounces-686514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B726AD98A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:23:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0A6AD98A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 095204A1195
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803444A10D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E6428FA83;
-	Fri, 13 Jun 2025 23:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FC128E61E;
+	Fri, 13 Jun 2025 23:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="O79mGOIC"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSCiZp5d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB5228F53B;
-	Fri, 13 Jun 2025 23:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD338F6C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 23:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749857017; cv=none; b=dmx8wPhIrJ0Rea512tLOkT6ozGQ3Bcf6s57g5/ZU/uG2XLXOPdyj2JocJmQzQToJqVU5jtbFU+su8O8X1tteexD850Wc8r8LWaTOr3ZWKwvpEpazsL2vu7YkwS4B+ZkAk4T4ItoO17dKhrbKTomLbweo9N/FX4LQcsS/HcGNUSo=
+	t=1749856989; cv=none; b=H/8EoDqEnvcJZHkDf31ksi4KCPcBqLEe/+To4TNMhvemRSvPmzPtcDrxlRrM4LFJDb4RemgVgSKGZSETjvIwRqFMi8F5Pe4tri1gffORcbFjPmKPbHr4Zf05RL4apQsILT4d0cOMN07yIzA6fWqpF+VniXN7XeCFcOv1cEJGJno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749857017; c=relaxed/simple;
-	bh=pRm7WMTK6GQB+xb+SK8ZYb/NBI8HnY5C0U4VYNWXWY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nG/ztDfFQEql5dP8XK6n/lkUjYb4RR4peFbcrka9cyo33tU8q3kCwspyq6BIcC4nI5uqJO5LW/Xrh1Xu0MFgvxzlEferA3qkyfliqa866ghJ4YC3bKoJbKC5D2ZS6shWAAurH0Edc4U3e07SpuKyrFNPQ1nrn7V6l8IgMiK148Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=O79mGOIC; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55DNMvmW3983901
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 13 Jun 2025 16:22:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55DNMvmW3983901
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1749856982;
-	bh=7glF6PEEG/lXgRBaYYYqaMO2g9seEsh5Mc9ESfeo/Do=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O79mGOIClp71Ense6p47/0kGYgPQEEf4iqqQR06Gyc4az/8HUpsk1nfo4haGvsJmc
-	 QH3a8foDfnlJN6Qf2HomMrt/mmvVYmAUy62En+8SeD+JyiK+72S+mVsp/1E/2kuA6M
-	 YqN3IPohxdGcKBtHAgTqz+v9Ab/6CcVvVoQZxUfLesNlx0x0gyPj5WYtfdUa5kK9MN
-	 BX6Rcj2SV1TpBQvztBppeRMbLnQkRIp8ApjLp8Yvj8zf2KmEFkbTYy2CzJ11pqYuMs
-	 oc9D7ioHxAZY6WILY2XO/i0Cwx2HllN8g6JFko9iBW+Rt/+r71DC+CpDoYHd2JyF7K
-	 ZQ7M2JpFpoPcw==
-Message-ID: <c93b8a59-9466-4d2f-8141-81142f5ead8c@zytor.com>
-Date: Fri, 13 Jun 2025 16:22:57 -0700
+	s=arc-20240116; t=1749856989; c=relaxed/simple;
+	bh=nBtLZknoESRg0wFszCZq3RsdmiY34H8E6LkwU7+Mskw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Deo5TRbiKijSlomr48Ys79ImRSCfv/ktam7s2Pas0ItVf6yhy11Smn+w10FpaChYPz94zX5d0btwfDwdjjxLK1HvyGvzpMU+MitpZtyBiudaGXZ5dK4L7341yh/Wg2PHN1vndcYmOstr48aQu7nCUssiD84CGhStJgKd0vs+Jj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSCiZp5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6238C4CEE3;
+	Fri, 13 Jun 2025 23:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749856988;
+	bh=nBtLZknoESRg0wFszCZq3RsdmiY34H8E6LkwU7+Mskw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BSCiZp5dF6c3NxcMEImObZThIUHq6LcA6OPotdfcNKlQPUVdNdCGBgw9LzIYR8q44
+	 G21Ts5iSxFIbOtj3rPvhmC/gvNKeiwM0Iqc+MtWp/xluLpeeWMr6Xwu+rpv0et1bW4
+	 ild9Ie2qVYovBgnq6XQVEMlqXb51SjsDLtnJFklce7CTTKMpsVMWUpl7RPDxABzfRX
+	 NQbxKv4TkrCcRqoxSb7K4Wi45CowYPxeqDd6a9RJwBFcONRGHvG0SIxM/d04eKXszC
+	 7vnI8+PsWbIaO4/kr1y8broQJZialB0RIayrPKgZkP1nwrhvY3lR4nxjgbz2VcIUsE
+	 P4Z87GcoW+F/g==
+Date: Fri, 13 Jun 2025 13:23:07 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2 sched_ext/for-6.16-fixes] sched_ext: Make
+ scx_group_set_weight() always update tg->scx.weight
+Message-ID: <aEyy27BecPPHDWHc@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] x86/traps: Fix DR6/DR7 inintialization
-To: Sohil Mehta <sohil.mehta@intel.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
-        brgerst@gmail.com, tony.luck@intel.com, fenghuay@nvidia.com
-References: <20250613070118.3694407-1-xin@zytor.com>
- <ac28b350-91a4-4e6d-bca6-4e0c80f4f503@intel.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <ac28b350-91a4-4e6d-bca6-4e0c80f4f503@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/13/2025 3:43 PM, Sohil Mehta wrote:
-> On 6/13/2025 12:01 AM, Xin Li (Intel) wrote:
-> 
->>
->> Xin Li (Intel) (3):
->>    x86/traps: Move DR7_RESET_VALUE to <uapi/asm/debugreg.h>
->>    x86/traps: Initialize DR7 by writing its architectural reset value
->>    x86/traps: Initialize DR6 by writing its architectural reset value
->>
-> 
-> The patches fix the false bus_lock warning that I was observing with the
-> infinite sigtrap selftest.
-> 
-> Tested-by: Sohil Mehta <sohil.mehta@intel.com>
-> 
-> I'll try it out again once you send the updated version.
+Otherwise, tg->scx.weight can go out of sync while scx_cgroup is not enabled
+and ops.cgroup_init() may be called with a stale weight value.
 
-Thank you very much!
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 819513666966 ("sched_ext: Add cgroup support")
+Cc: stable@vger.kernel.org # v6.12+
+---
+ kernel/sched/ext.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> 
-> In future, should we incorporate a #DB (or bus_lock) specific selftest
-> to detect such DR6/7 initialization issues?
-
-
-I cant think of how to tests it.  Any suggestion about a new test?
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4241,12 +4241,12 @@ void scx_group_set_weight(struct task_gr
+ 
+ 	percpu_down_read(&scx_cgroup_rwsem);
+ 
+-	if (scx_cgroup_enabled && tg->scx_weight != weight) {
+-		if (SCX_HAS_OP(sch, cgroup_set_weight))
+-			SCX_CALL_OP(sch, SCX_KF_UNLOCKED, cgroup_set_weight, NULL,
+-				    tg_cgrp(tg), weight);
+-		tg->scx_weight = weight;
+-	}
++	if (scx_cgroup_enabled && SCX_HAS_OP(sch, cgroup_set_weight) &&
++	    tg->scx_weight != weight)
++		SCX_CALL_OP(sch, SCX_KF_UNLOCKED, cgroup_set_weight, NULL,
++			    tg_cgrp(tg), weight);
++
++	tg->scx_weight = weight;
+ 
+ 	percpu_up_read(&scx_cgroup_rwsem);
+ }
 
 
