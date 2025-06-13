@@ -1,298 +1,263 @@
-Return-Path: <linux-kernel+bounces-685059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A84AD8396
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43837AD83A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8823A16F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B479D3B8DA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E780325C81B;
-	Fri, 13 Jun 2025 07:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8557625A2D2;
+	Fri, 13 Jun 2025 07:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="CIfInV0Q"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LLGSEuhO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF1C1F152D;
-	Fri, 13 Jun 2025 07:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CF31EE7C6;
+	Fri, 13 Jun 2025 07:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749798157; cv=none; b=QamHlgp3wDhKw8Sv17ymlV7xYMVl6Z5HY5dAP90Nba6YEfXIIoHgfQTIk2xReYW693BoN8BOFG3wA7jk+NRyKKdmC5mCQe63mrXx2PHOPpXZ+llpDfFRgHkBHzRqStPCwrLVPn93IQ+uvZhLVFsVLc2TOb5FPkUpGMDWc0mZmZc=
+	t=1749798307; cv=none; b=KcunoDYB/zqjcka2o23V9xncy+n9+WDDBpoO9g1siqXm6FyJom42yCt9pSNuV9qHAqFfI6TUz94fE/184c0gLgUjzWJoErKp1V8Y9iXwDLoSGWCMqY2DP8qv2hTnZVsHGhtY8y/tghH+oabDWiTaDHQtGe/Bi1O34uvOzIOn9IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749798157; c=relaxed/simple;
-	bh=2gbOykEfw8b0Skg7GZ9gS0aQ1S4WiRzL4kpoKT73o6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L20ZFarzPcwLgHct3jqHaZRHjmAem3sOretSrpxceQLcQ/DsucOtwDecGjiMfhAM750sJvmWCjdpyIZ+6q5P6mx4VcYb9YzSYQOwk/M1LikVOo0ItcDzzEjFvHl6RDhryvSxQqaC/GCZOzMqVn6nENpRN1EVqiv63ZgsK+Ve6fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=CIfInV0Q; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55D71IfM3694425
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 13 Jun 2025 00:01:29 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55D71IfM3694425
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1749798090;
-	bh=c56T8D2ZCMU1wWU13jvv/tk+j/ZEJRy0cc12msrPZsY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CIfInV0QoUeYeKzmCKxbzua4kNlZuLua3q2+GExDA4HRqVSxokRIogfzkxxf2sC4J
-	 OpS87qxTsMsDwblt/dfEcDv115SsmCPFp4vXLHt9dz6GA2foZnlZ0pBImYaUBc8xCf
-	 ZzTxPo0SuNSBUuSo+DRZ6veTXogmj2iQdjy1JnyFH6ryYN2HoqmJuFR2MBJHmotEka
-	 A7SV8GYE0Wcs/JW1W5YlqWvSdbRSqfupwn0ZyNOXIbzwU/pCiNi7xotovbJaDIBlw0
-	 +TQ0jfArTDw7MXwUXVi1RO3J1d62Q3ssnQM4YnBSze3jAcHI+kjorie2dedGBi07ba
-	 TFXSfvVUirpFg==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
-        brgerst@gmail.com, tony.luck@intel.com, fenghuay@nvidia.com
-Subject: [PATCH v1 3/3] x86/traps: Initialize DR6 by writing its architectural reset value
-Date: Fri, 13 Jun 2025 00:01:17 -0700
-Message-ID: <20250613070118.3694407-4-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250613070118.3694407-1-xin@zytor.com>
-References: <20250613070118.3694407-1-xin@zytor.com>
+	s=arc-20240116; t=1749798307; c=relaxed/simple;
+	bh=YPhirRC/fqgXNZyCmveCpTKVmiZA7ueG5zIrOKWu6sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6wQxLDmYgQoh2ByCg0HdTu9h5r/h94ieFntzTemsfBktlNsvCX2RbVbpX+4zI4fsyZwVaDx1f75mBvRAQFHdNF9gXbD0WZK2oMjHtxQhgAxYI8oOg2sXO9HORZPMYESNXBhAOv89oEgBWhTanwriEwTH9/KnOfsmKuvTUgnO54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LLGSEuhO; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749798306; x=1781334306;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YPhirRC/fqgXNZyCmveCpTKVmiZA7ueG5zIrOKWu6sI=;
+  b=LLGSEuhOZQkOb9loS/sqDV6u+2gsn9+KmQEloOyHyYkrFCNwtYRpwemm
+   k2NisS9UWEX7DCiE7BlduUa70ZPdLaBY4glT31f+S3Xn9ToEbde5osfmn
+   qNwjyFxcM3ePrEj9pdbR4KKwBAnpOc6hgwxrkUapiViHLC9tixCLjNaQX
+   +EGTrdL5SS6sQ6vAXMMpZrPEL8/w6JCj94RwCB93P+da6AwZZULR2cz3h
+   fY8FecLQby5njqLNkrbCAEZsQksNqU9wKWIVdvuliKJPYjwj05AFHlVfA
+   50wOwJm57gUHYaU0zQVYpBPCGsStPYhwkDuXFH94pwYCPcIp0Jl4Hqs2t
+   Q==;
+X-CSE-ConnectionGUID: 5epJTmOwRuiZ3IfrVJ8Zog==
+X-CSE-MsgGUID: FA3JHCVFShK0YF3Wf3VKNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="51878656"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="51878656"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:04:53 -0700
+X-CSE-ConnectionGUID: S+YzazeVS0qcM0G9gtFmGQ==
+X-CSE-MsgGUID: ZaxUnIRhSNWmOJKg/4rtLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="170929459"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 13 Jun 2025 00:04:50 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uPyT2-000CJ4-0W;
+	Fri, 13 Jun 2025 07:04:48 +0000
+Date: Fri, 13 Jun 2025 15:04:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Thomas Fourier <fourier.thomas@gmail.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] (drivers/ethernet/atheros/atl1) test DMA mapping for
+ error code
+Message-ID: <202506131458.MnU50xNO-lkp@intel.com>
+References: <20250612150542.85239-2-fourier.thomas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612150542.85239-2-fourier.thomas@gmail.com>
 
-Initialize DR6 by writing its architectural reset value to ensure
-compliance with the specification.  This avoids incorrectly zeroing
-DR6 to clear DR6.BLD at boot time, which leads to a false bus lock
-detected warning.
+Hi Thomas,
 
-The Intel SDM says:
+kernel test robot noticed the following build errors:
 
-  1) Certain debug exceptions may clear bits 0-3 of DR6.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.16-rc1 next-20250612]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  2) BLD induced #DB clears DR6.BLD and any other debug exception
-     doesn't modify DR6.BLD.
+url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Fourier/drivers-ethernet-atheros-atl1-test-DMA-mapping-for-error-code/20250612-231733
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250612150542.85239-2-fourier.thomas%40gmail.com
+patch subject: [PATCH] (drivers/ethernet/atheros/atl1) test DMA mapping for error code
+config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250613/202506131458.MnU50xNO-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250613/202506131458.MnU50xNO-lkp@intel.com/reproduce)
 
-  3) RTM induced #DB clears DR6.RTM and any other debug exception
-     sets DR6.RTM.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506131458.MnU50xNO-lkp@intel.com/
 
-  To avoid confusion in identifying debug exceptions, debug handlers
-  should set DR6.BLD and DR6.RTM, and clear other DR6 bits before
-  returning.
+All error/warnings (new ones prefixed by >>):
 
-The DR6 architectural reset value 0xFFFF0FF0, already defined as
-macro DR6_RESERVED, satisfies these requirements, so just use it to
-reinitialize DR6 whenever needed.
+   drivers/net/ethernet/atheros/atlx/atl1.c: In function 'atl1_tx_map':
+>> drivers/net/ethernet/atheros/atlx/atl1.c:2315:34: warning: assignment to 'dma_addr_t' {aka 'long long unsigned int'} from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+    2315 |                 buffer_info->dma = NULL;
+         |                                  ^
+>> drivers/net/ethernet/atheros/atlx/atl1.c:2317:39: error: 'tdp_ring' undeclared (first use in this function); did you mean 'tpd_ring'?
+    2317 |                 if (++first_mapped == tdp_ring->count)
+         |                                       ^~~~~~~~
+         |                                       tpd_ring
+   drivers/net/ethernet/atheros/atlx/atl1.c:2317:39: note: each undeclared identifier is reported only once for each function it appears in
 
-Since debug_read_clear_dr6() no longer clears DR6, rename it to
-debug_read_reset_dr6() to better reflect its current behavior.
 
-While at it, replace the hardcoded debug register number 6 with the
-existing DR_STATUS macro for clarity.
+vim +2317 drivers/net/ethernet/atheros/atlx/atl1.c
 
-Reported-by: Sohil Mehta <sohil.mehta@intel.com>
-Link: https://lore.kernel.org/lkml/06e68373-a92b-472e-8fd9-ba548119770c@intel.com/
-Fixes: ebb1064e7c2e9 ("x86/traps: Handle #DB for bus lock")
-Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Cc: stable@vger.kernel.org
----
- arch/x86/include/uapi/asm/debugreg.h |  7 +++++-
- arch/x86/kernel/cpu/common.c         |  2 +-
- arch/x86/kernel/hw_breakpoint.c      |  2 +-
- arch/x86/kernel/process_32.c         |  2 +-
- arch/x86/kernel/process_64.c         |  2 +-
- arch/x86/kernel/traps.c              | 36 +++++++++++++++++-----------
- arch/x86/kvm/vmx/vmx.c               |  6 ++---
- 7 files changed, 35 insertions(+), 22 deletions(-)
+  2192	
+  2193	static int atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+  2194		struct tx_packet_desc *ptpd)
+  2195	{
+  2196		struct atl1_tpd_ring *tpd_ring = &adapter->tpd_ring;
+  2197		struct atl1_buffer *buffer_info;
+  2198		u16 buf_len = skb->len;
+  2199		struct page *page;
+  2200		unsigned long offset;
+  2201		unsigned int nr_frags;
+  2202		unsigned int f;
+  2203		int retval;
+  2204		u16 next_to_use;
+  2205		u16 first_mapped;
+  2206		u16 data_len;
+  2207		u8 hdr_len;
+  2208	
+  2209		buf_len -= skb->data_len;
+  2210		nr_frags = skb_shinfo(skb)->nr_frags;
+  2211		next_to_use = atomic_read(&tpd_ring->next_to_use);
+  2212		first_mapped = next_to_use;
+  2213		buffer_info = &tpd_ring->buffer_info[next_to_use];
+  2214		BUG_ON(buffer_info->skb);
+  2215		/* put skb in last TPD */
+  2216		buffer_info->skb = NULL;
+  2217	
+  2218		retval = (ptpd->word3 >> TPD_SEGMENT_EN_SHIFT) & TPD_SEGMENT_EN_MASK;
+  2219		if (retval) {
+  2220			/* TSO */
+  2221			hdr_len = skb_tcp_all_headers(skb);
+  2222			buffer_info->length = hdr_len;
+  2223			page = virt_to_page(skb->data);
+  2224			offset = offset_in_page(skb->data);
+  2225			buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+  2226							offset, hdr_len,
+  2227							DMA_TO_DEVICE);
+  2228			if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
+  2229				goto dma_err;
+  2230	
+  2231			if (++next_to_use == tpd_ring->count)
+  2232				next_to_use = 0;
+  2233	
+  2234			if (buf_len > hdr_len) {
+  2235				int i, nseg;
+  2236	
+  2237				data_len = buf_len - hdr_len;
+  2238				nseg = (data_len + ATL1_MAX_TX_BUF_LEN - 1) /
+  2239					ATL1_MAX_TX_BUF_LEN;
+  2240				for (i = 0; i < nseg; i++) {
+  2241					buffer_info =
+  2242					    &tpd_ring->buffer_info[next_to_use];
+  2243					buffer_info->skb = NULL;
+  2244					buffer_info->length =
+  2245					    (ATL1_MAX_TX_BUF_LEN >=
+  2246					     data_len) ? ATL1_MAX_TX_BUF_LEN : data_len;
+  2247					data_len -= buffer_info->length;
+  2248					page = virt_to_page(skb->data +
+  2249						(hdr_len + i * ATL1_MAX_TX_BUF_LEN));
+  2250					offset = offset_in_page(skb->data +
+  2251						(hdr_len + i * ATL1_MAX_TX_BUF_LEN));
+  2252					buffer_info->dma = dma_map_page(&adapter->pdev->dev,
+  2253									page, offset,
+  2254									buffer_info->length,
+  2255									DMA_TO_DEVICE);
+  2256					if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
+  2257						goto dma_err;
+  2258					if (++next_to_use == tpd_ring->count)
+  2259						next_to_use = 0;
+  2260				}
+  2261			}
+  2262		} else {
+  2263			/* not TSO */
+  2264			buffer_info->length = buf_len;
+  2265			page = virt_to_page(skb->data);
+  2266			offset = offset_in_page(skb->data);
+  2267			buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+  2268							offset, buf_len,
+  2269							DMA_TO_DEVICE);
+  2270			if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
+  2271				goto dma_err;
+  2272			if (++next_to_use == tpd_ring->count)
+  2273				next_to_use = 0;
+  2274		}
+  2275	
+  2276		for (f = 0; f < nr_frags; f++) {
+  2277			const skb_frag_t *frag = &skb_shinfo(skb)->frags[f];
+  2278			u16 i, nseg;
+  2279	
+  2280			buf_len = skb_frag_size(frag);
+  2281	
+  2282			nseg = (buf_len + ATL1_MAX_TX_BUF_LEN - 1) /
+  2283				ATL1_MAX_TX_BUF_LEN;
+  2284			for (i = 0; i < nseg; i++) {
+  2285				buffer_info = &tpd_ring->buffer_info[next_to_use];
+  2286				BUG_ON(buffer_info->skb);
+  2287	
+  2288				buffer_info->skb = NULL;
+  2289				buffer_info->length = (buf_len > ATL1_MAX_TX_BUF_LEN) ?
+  2290					ATL1_MAX_TX_BUF_LEN : buf_len;
+  2291				buf_len -= buffer_info->length;
+  2292				buffer_info->dma = skb_frag_dma_map(&adapter->pdev->dev,
+  2293					frag, i * ATL1_MAX_TX_BUF_LEN,
+  2294					buffer_info->length, DMA_TO_DEVICE);
+  2295				if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
+  2296					goto dma_err;
+  2297	
+  2298				if (++next_to_use == tpd_ring->count)
+  2299					next_to_use = 0;
+  2300			}
+  2301		}
+  2302	
+  2303		/* last tpd's buffer-info */
+  2304		buffer_info->skb = skb;
+  2305	
+  2306		return 0;
+  2307	
+  2308	 dma_err:
+  2309		while (first_mapped != next_to_use) {
+  2310			buffer_info = &tpd_ring->buffer_info[first_mapped];
+  2311			dma_unmap_page(&adapter->pdev->dev,
+  2312				       buffer_info->dma,
+  2313				       buffer_info->length,
+  2314				       DMA_TO_DEVICE);
+> 2315			buffer_info->dma = NULL;
+  2316	
+> 2317			if (++first_mapped == tdp_ring->count)
+  2318				first_mapped = 0;
+  2319		}
+  2320		return -ENOMEM;
+  2321	}
+  2322	
 
-diff --git a/arch/x86/include/uapi/asm/debugreg.h b/arch/x86/include/uapi/asm/debugreg.h
-index d16f53c3a9df..e407d84133a9 100644
---- a/arch/x86/include/uapi/asm/debugreg.h
-+++ b/arch/x86/include/uapi/asm/debugreg.h
-@@ -15,7 +15,12 @@
-    which debugging register was responsible for the trap.  The other bits
-    are either reserved or not of interest to us. */
- 
--/* Define reserved bits in DR6 which are always set to 1 */
-+/*
-+ * Define reserved bits in DR6 which are set to 1 by default.
-+ *
-+ * This is also the DR6 architectural value following Power-up, Reset or INIT.
-+ * Some of these reserved bits can be set to 0 by hardware or software.
-+ */
- #define DR6_RESERVED	(0xFFFF0FF0)
- 
- #define DR_TRAP0	(0x1)		/* db0 */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 628aa43acb41..459faad8dccc 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2249,7 +2249,7 @@ static void initialize_debug_regs(void)
- 
- 	/* Control register first */
- 	set_debugreg(DR7_RESET_VALUE, DR_CONTROL);
--	set_debugreg(0, DR_STATUS);
-+	set_debugreg(DR6_RESERVED, DR_STATUS);
- 
- 	/* Ignore db4, db5 */
- 	for (i = DR_FIRSTADDR; i <= DR_LASTADDR; i++)
-diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-index 29f4473817a1..05f333286eb8 100644
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -486,7 +486,7 @@ void hw_breakpoint_restore(void)
- 	set_debugreg(__this_cpu_read(cpu_debugreg[1]), 1);
- 	set_debugreg(__this_cpu_read(cpu_debugreg[2]), 2);
- 	set_debugreg(__this_cpu_read(cpu_debugreg[3]), 3);
--	set_debugreg(DR6_RESERVED, 6);
-+	set_debugreg(DR6_RESERVED, DR_STATUS);
- 	set_debugreg(__this_cpu_read(cpu_dr7), DR_CONTROL);
- }
- EXPORT_SYMBOL_GPL(hw_breakpoint_restore);
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index f5f28a8fa44c..62d6e2def021 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -88,7 +88,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
- 	get_debugreg(d1, 1);
- 	get_debugreg(d2, 2);
- 	get_debugreg(d3, 3);
--	get_debugreg(d6, 6);
-+	get_debugreg(d6, DR_STATUS);
- 	get_debugreg(d7, DR_CONTROL);
- 
- 	/* Only print out debug registers if they are in their non-default state. */
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 1eb1ac948878..f8465bf8be0d 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -128,7 +128,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
- 	get_debugreg(d1, 1);
- 	get_debugreg(d2, 2);
- 	get_debugreg(d3, 3);
--	get_debugreg(d6, 6);
-+	get_debugreg(d6, DR_STATUS);
- 	get_debugreg(d7, DR_CONTROL);
- 
- 	/* Only print out debug registers if they are in their non-default state. */
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index c5c897a86418..371a80ed97f8 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -1022,24 +1022,32 @@ static bool is_sysenter_singlestep(struct pt_regs *regs)
- #endif
- }
- 
--static __always_inline unsigned long debug_read_clear_dr6(void)
-+static __always_inline unsigned long debug_read_reset_dr6(void)
- {
- 	unsigned long dr6;
- 
-+	get_debugreg(dr6, DR_STATUS);
-+	dr6 ^= DR6_RESERVED; /* Flip to positive polarity */
-+
- 	/*
- 	 * The Intel SDM says:
- 	 *
--	 *   Certain debug exceptions may clear bits 0-3. The remaining
--	 *   contents of the DR6 register are never cleared by the
--	 *   processor. To avoid confusion in identifying debug
--	 *   exceptions, debug handlers should clear the register before
--	 *   returning to the interrupted task.
-+	 *   Certain debug exceptions may clear bits 0-3 of DR6.
-+	 *
-+	 *   BLD induced #DB clears DR6.BLD and any other debug
-+	 *   exception doesn't modify DR6.BLD.
- 	 *
--	 * Keep it simple: clear DR6 immediately.
-+	 *   RTM induced #DB clears DR6.RTM and any other debug
-+	 *   exception sets DR6.RTM.
-+	 *
-+	 *   To avoid confusion in identifying debug exceptions,
-+	 *   debug handlers should set DR6.BLD and DR6.RTM, and
-+	 *   clear other DR6 bits before returning.
-+	 *
-+	 * Keep it simple: write DR6 with its architectural reset
-+	 * value 0xFFFF0FF0, defined as DR6_RESERVED, immediately.
- 	 */
--	get_debugreg(dr6, 6);
--	set_debugreg(DR6_RESERVED, 6);
--	dr6 ^= DR6_RESERVED; /* Flip to positive polarity */
-+	set_debugreg(DR6_RESERVED, DR_STATUS);
- 
- 	return dr6;
- }
-@@ -1239,13 +1247,13 @@ static noinstr void exc_debug_user(struct pt_regs *regs, unsigned long dr6)
- /* IST stack entry */
- DEFINE_IDTENTRY_DEBUG(exc_debug)
- {
--	exc_debug_kernel(regs, debug_read_clear_dr6());
-+	exc_debug_kernel(regs, debug_read_reset_dr6());
- }
- 
- /* User entry, runs on regular task stack */
- DEFINE_IDTENTRY_DEBUG_USER(exc_debug)
- {
--	exc_debug_user(regs, debug_read_clear_dr6());
-+	exc_debug_user(regs, debug_read_reset_dr6());
- }
- 
- #ifdef CONFIG_X86_FRED
-@@ -1264,7 +1272,7 @@ DEFINE_FREDENTRY_DEBUG(exc_debug)
- {
- 	/*
- 	 * FRED #DB stores DR6 on the stack in the format which
--	 * debug_read_clear_dr6() returns for the IDT entry points.
-+	 * debug_read_reset_dr6() returns for the IDT entry points.
- 	 */
- 	unsigned long dr6 = fred_event_data(regs);
- 
-@@ -1279,7 +1287,7 @@ DEFINE_FREDENTRY_DEBUG(exc_debug)
- /* 32 bit does not have separate entry points. */
- DEFINE_IDTENTRY_RAW(exc_debug)
- {
--	unsigned long dr6 = debug_read_clear_dr6();
-+	unsigned long dr6 = debug_read_reset_dr6();
- 
- 	if (user_mode(regs))
- 		exc_debug_user(regs, dr6);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4953846cb30d..3d187995a174 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5593,7 +5593,7 @@ void vmx_sync_dirty_debug_regs(struct kvm_vcpu *vcpu)
- 	get_debugreg(vcpu->arch.db[1], 1);
- 	get_debugreg(vcpu->arch.db[2], 2);
- 	get_debugreg(vcpu->arch.db[3], 3);
--	get_debugreg(vcpu->arch.dr6, 6);
-+	get_debugreg(vcpu->arch.dr6, DR_STATUS);
- 	vcpu->arch.dr7 = vmcs_readl(GUEST_DR7);
- 
- 	vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_WONT_EXIT;
-@@ -5603,13 +5603,13 @@ void vmx_sync_dirty_debug_regs(struct kvm_vcpu *vcpu)
- 	 * exc_debug expects dr6 to be cleared after it runs, avoid that it sees
- 	 * a stale dr6 from the guest.
- 	 */
--	set_debugreg(DR6_RESERVED, 6);
-+	set_debugreg(DR6_RESERVED, DR_STATUS);
- }
- 
- void vmx_set_dr6(struct kvm_vcpu *vcpu, unsigned long val)
- {
- 	lockdep_assert_irqs_disabled();
--	set_debugreg(vcpu->arch.dr6, 6);
-+	set_debugreg(vcpu->arch.dr6, DR_STATUS);
- }
- 
- void vmx_set_dr7(struct kvm_vcpu *vcpu, unsigned long val)
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
