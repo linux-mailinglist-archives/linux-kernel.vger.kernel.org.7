@@ -1,233 +1,191 @@
-Return-Path: <linux-kernel+bounces-685721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E35AD8D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:46:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4DDAD8D6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D0F67B112B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CE13A6038
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3F41AAA1A;
-	Fri, 13 Jun 2025 13:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E880B18DB2F;
+	Fri, 13 Jun 2025 13:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtLf8G8H"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/vlDZO0"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71241A3155;
-	Fri, 13 Jun 2025 13:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982BD111BF;
+	Fri, 13 Jun 2025 13:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822307; cv=none; b=Ilm/qHgQ83qWnA3SUWNuFMNABsjnPRoVp879U4gwVkiJY5z/3SXCvo/u9DTP+bXTPRHmWCpL6IISGfY4bRLerqtV0VEOOADyyxYB2y1Q+K1gSfpf/PuXSn7cK8SSHYouuktWf6+9tT5/ybKlwrS7K0pzrcrKgBCOEZgPLSkrPq4=
+	t=1749822219; cv=none; b=pQtVs7mcra3dJexSdqi54mBicaqjqb+X6SlbJfCF0DRugzrCGCnbmLLAYiuO92n3lqmP9KppWh0jAkoIajPY/1aRiV3SPRZuh8zVNEZqQgP0JQDlpkGaaCB573FWv7v9cuBinMu/xS2hj8KCkj/pW3Q6TMZd+9n7PUgetLRrYt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822307; c=relaxed/simple;
-	bh=1Hy3ujJXBqxV9lfXBO++FN2/fZmpMCZpJfkWT5aJ4iQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mq6MJV7h8jHvpCJITHYfiwMuGfxpxUyDfSAmFq6dpGl5x+aKDAsN4IKNT+rDTV+3wjagnCh24vZiBpiA6qdWlu9m4iNKQhgsm3kRYk8/ZiawVrAL0EMqRszQ6OzYaK6Is7h5fWHpmztUeJSLhBL2PycWb/E0zbk/ouLwW/XV8jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TtLf8G8H; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1749822219; c=relaxed/simple;
+	bh=KZ8V03W9AMSS/ZrJN6Tc1lj0hBTtN9vN9Uigrs3yZ3Y=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=s0aqjLnju5DwfEzaY0b6I2at+Ec/ZR4gAZ3RI40cBpkyfztE6ANt06jXj+jmZpVLGBVrjLeZn8EC0eYluTGOlw1m4mqkBDzSwymuuoJCMkf3hvT+mL2j9SQPEgYxHJA2LCNDzVan7J39w/VA0rFgRzDFhuciv/F4xDwSaG6Pwfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/vlDZO0; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a54700a463so1471816f8f.1;
-        Fri, 13 Jun 2025 06:45:05 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-710f39f5cb9so20830027b3.3;
+        Fri, 13 Jun 2025 06:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749822304; x=1750427104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749822216; x=1750427016; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f7KlnwZB+CxVWmAEV673+n7G11D71TLYbf9q51R/jMw=;
-        b=TtLf8G8H93S0R19lPo51vLv23ecS9k9HLiG5fRfu7hZ9ODrUqS7IfI17rH8oiuGXS9
-         pRMry3wXAhMwpWMF4WlFSGjFXh4rxhBptuf3BdZXZNhZQ8UtBppv2yQhB1kaR/2O+2Rp
-         RjAN5r1aJBLMoc9k5E9o11W6KNJfw4J9uKYo09zjz+Cac9KPhMUy9a4T4vA8vDgoc4YD
-         veTK8VLD26cSj3PUj2rgF4qjZDRg/Qw1XF/rRpgBqFTVW5ch3jfRbEuyFFwNxV3a0Vh9
-         YFp/TpU/l2zvGA56teePduwujP+LjoRyMELmdO1RrslygP9eXeO1TXGnWe4C667Sw9Du
-         U35Q==
+        bh=ox3E9dQ67FbqXqAnvQO795RQbhpNGDVUFih1Lflr29A=;
+        b=j/vlDZO0PdG6zIR8guhdW8Rnp5bHjcd2aMc9WYS8KNqRofX5NWVdlvV2rwMFrCP1YK
+         yVAchWUj0YBGhXf94mMxLBuyV5sNopV/vmv+L+gVn3Kco7AKcsiAuoEj5+zv/2DiqdN2
+         16sWE9y2V/12AwajlmTjFjOwH63/aC9f1dgYijlIFfmSYr0QiGvRJlxZ23k58+EYJeTy
+         3hI/Lhnih0dd4IrMmFdbwhKxg7SSi3iGUOA1QnmO+PUfEQK1Q4GGQdugbY2MLqIuWVt3
+         1/L3R9qCpjzBVCJtKZH+7X2rSrB6/6frBO4TEp5+QAwT7SA9YKx/DCKTcYAB4QRmREDL
+         WreQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822304; x=1750427104;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=f7KlnwZB+CxVWmAEV673+n7G11D71TLYbf9q51R/jMw=;
-        b=S+3NsdqO1pxNmB0p52+T0RQvc+GY9PE7d15TQpvS1HjwB2DCfEt+I/NnOzLKPqQ32u
-         Jl9IPHS164/dgINbgvdYCWzJUFis5jghNnAaIIbK/5UJVNISDWlY2L/7Axcbqi+6s2G9
-         XZoWC3Zxp5zXD8TqggT8l9RjrhmUCrWKrm1dvINOpa5Kt2DjDsp5dk2UPdLrjuRqlOBO
-         ereUAOFh4id8yDhYaMDi9KJtbq0QTTmWJbsn9+Fk5/DXCQ46KJzQ6Hw5cEClLgc2afDT
-         dGNZZqL3czZCrTgX4oxz5JYWrrFx4OnwCm2D+HVoi1j434omOi+FHoAoKMdvaqd/YpYm
-         +HGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUa7l8XtW+tOXjyKSipzyYrQmcEknHIYepHk3xQpXfIZpSJg9dQ+n86mnmBa0l86ImVWqVnWEmJjIVI73cNwGo=@vger.kernel.org, AJvYcCV2ZNiB1Dx/pQbVpdiFf/11dd5oxalCwiwMq5ZgrDYpDr07oJDC3b28JTLNMLBmUrqoqTPromjK4F9Q2Td8@vger.kernel.org, AJvYcCV58KiDiVQAqLmq11uqz3DBLbXzGz+VMKCUP9m2SqIaL91hhQ38el3dKzB31GrIn0xpSVa+1uwu52+c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxty8eWnOabCLD9m2f7n3dpiPHAtC9fob8JH0oLOjkDqO+pg0ns
-	8E36Efxc1GvvZw6omsi6HS/upKzc61+7ygylvht8j9OCjauEKzOt8CX3
-X-Gm-Gg: ASbGncshRpMxe910ljlkQi2drDF9eaptxHNLiD5WWiSyTWIwVWHiZZL0CR/4edXaxo+
-	oMco4YgREuSa0lM+Hjf3KYM4kbkMgYSip0uSKzo32/ySOWK1Z0SrwgQxDmJRggihYVoDaPfygD1
-	tR2AaA0YhpgfK7FKjrp0yq3a5AAuIszcz8kWqjHaRE3s0guoG4FHV5maUTtvZ3m5JueQHXX9o4r
-	31G/8GE9Vqv+f4UTH+CgsYMUrjRryjakLYz/gAqHk1ztLZuJofRsOPUB/0kqvHdUQNR3l0Q5YiF
-	otVBq2xu4vtQ63ozw5rSaM4zgPwjc+k0BKGW5q68PMljxMc1/no/gFoKhdheFeCRo0UdH7nyOJ7
-	e7JToA4uqNtU00r9m27YiEnWLZUA84Cdh/Xke
-X-Google-Smtp-Source: AGHT+IEWNniUs4P1E63VohfXQE6EU3JoQMNOoUU+QZyzKBx9d/Dwe+o27BZFGaemVFzQxWfkceM/fg==
-X-Received: by 2002:a05:6000:40c9:b0:3a5:1220:36d4 with SMTP id ffacd0b85a97d-3a56d83462bmr1058582f8f.22.1749822303897;
-        Fri, 13 Jun 2025 06:45:03 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e232e0asm51752975e9.14.2025.06.13.06.45.03
+        d=1e100.net; s=20230601; t=1749822216; x=1750427016;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ox3E9dQ67FbqXqAnvQO795RQbhpNGDVUFih1Lflr29A=;
+        b=MnytL88jU+EhZzwPsGjNFKMcNetkauhn2QiBji9m98o2BasGegR2ntNjMG95mkLJLE
+         ZRnLjb0FRPUJ/JglUyI8hb4FqOD0UIdVA2kZzG6x+K8CgwYWC8y7+gyvYHmiSWdTRLnT
+         njvp/PqVO4u1GwlHyTq4Zz4aSixmsSH1HYteoVXn+SVq21U25/gEcqG7FPjmRornA/ci
+         nGEGJsFqohtA8NyQ713lFzUo6dvSsV4zKT6+9DzhtkCDs6Ea24eoJ2doBK+V+oVvAPs7
+         KammVVUMEq2vfi7wE7ba9FRatBaI3X1AV0Bbvmc4Q4cap6Rlvvfs1ODass5Bqe+vStom
+         qNOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtxeNVOeLupAuzEe7cMLyQCo7Ur8mPWYp8CG0M/4hMDUPi3oVCVzyw9LINNHqadvSY0FG7OWlJ@vger.kernel.org, AJvYcCWrKAz3MQQIUmtKuSXkmfSg0nKQe4j88kON9YjKkAOIYz+tdRVteYRgqJ5Qp1r4pNrQdHOJAoh8fd2RgtwqAn5k@vger.kernel.org, AJvYcCXe9xY+ug6EoIwQ6wf8eXMEv9tGkY6mOPdChnF74W6+1eRMsYN+paKD/aQi6iDSdcs9Q9d4NRozqFzByoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuC1blLOjB4NhV4BN1upIiffRnBQcCEw+lcpUDB82Z+1ZznOfV
+	HfvbLy36VuiHNpzTzsusDxqnsP9ccA09HbtyLKoTiC5Sk6pJAJGMxql3
+X-Gm-Gg: ASbGncuKb03M1sZZtkqp4zm2MvptcisHIDgd0TBLuVoi/JuK73rZlxhtFlNueTLWpVP
+	gSAIJKCGfbDwesnfpcT4YqrqI+orYvdfCEg1YW2g07q7cwHj0a4QWRujSfQ9+IKe5EEdxKiYzvD
+	uvcnOLBsVrMHghtBzv/Go4ptkL//a9BCBWJzHQBamE89rPTGezt71KTLp6xiflsCDTZSzYx69Kw
+	ZX/8HL+/TZEZPnIaUUM5Ekz8E4gp4cQsu/FFUur5x8hWJdPSo8Nh3RkyaeQE7Smy67lOfD3eCvl
+	DUj1GQPOOXmC6onoVV1nnO+X3buja4AMPvffHTrJ+pdaoyXpEfMVomomCP6/Tn3lcpzkQasCVRr
+	zMdyO/MtCuu5ebZS9ORGFA3gYklfsVzbaVb8vjFSOVg==
+X-Google-Smtp-Source: AGHT+IEbD4QsQkLlqlVlhfEq0zqhzfDi3PWNPwwOqa42u0o9X1ZYKAWtGJroQ5rtRtkrC07DcFZxMw==
+X-Received: by 2002:a05:690c:9c13:b0:710:f025:4077 with SMTP id 00721157ae682-7116370c74amr48799327b3.2.1749822216318;
+        Fri, 13 Jun 2025 06:43:36 -0700 (PDT)
+Received: from localhost (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-71152091490sm6424747b3.48.2025.06.13.06.43.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:45:03 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v6 3/6] rust: driver: Add ACPI id table support to Adapter trait
-Date: Fri, 13 Jun 2025 14:43:01 +0100
-Message-ID: <20250613134301.1231229-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
-References: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
+        Fri, 13 Jun 2025 06:43:35 -0700 (PDT)
+Date: Fri, 13 Jun 2025 09:43:35 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Breno Leitao <leitao@debian.org>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ ast@kernel.org
+Message-ID: <684c2b0770919_10740f29412@willemb.c.googlers.com.notmuch>
+In-Reply-To: <aEwd9oLRnxna97JK@gmail.com>
+References: <20250612-netpoll_test-v1-1-4774fd95933f@debian.org>
+ <684b8e8abb874_dcc45294a5@willemb.c.googlers.com.notmuch>
+ <aEwd9oLRnxna97JK@gmail.com>
+Subject: Re: [PATCH net-next RFC] selftests: net: add netpoll basic
+ functionality test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Extend the `Adapter` trait to support ACPI device identification.
+Breno Leitao wrote:
+> Hello Willem,
+> 
+> On Thu, Jun 12, 2025 at 10:35:54PM -0400, Willem de Bruijn wrote:
+> > Breno Leitao wrote:
+> > > Add a basic selftest for the netpoll polling mechanism, specifically
+> > > targeting the netpoll poll() side.
+> > > 
+> > > The test creates a scenario where network transmission is running at
+> > > maximum sppend, and netpoll needs to poll the NIC. This is achieved by:
+> > 
+> > minor type: sppend/speed
+> 
+> Thanks! I will update.
+> 
+> > >   1. Configuring a single RX/TX queue to create contention
+> > >   2. Generating background traffic to saturate the interface
+> > >   3. Sending netconsole messages to trigger netpoll polling
+> > >   4. Using dynamic netconsole targets via configfs
+> > > 
+> > > The test validates a critical netpoll code path by monitoring traffic
+> > > flow and ensuring netpoll_poll_dev() is called when the normal TX path
+> > > is blocked. Perf probing confirms this test successfully triggers
+> > > netpoll_poll_dev() in typical test runs.
+> > 
+> > So the test needs profiling to make it a pass/fail regression test?
+> > Then perhaps add it to TEST_FILES rather than TEST_PROGS. Unless
+> > exercising the code on its own is valuable enough.
+> 
+> Sorry for not being clear. This test doesn't depend on any profiling
+> data. Basically I just run `perf probe` to guarantee that
+> netpoll_poll_dev() was being called (as that was the goal of the test).
+> 
+> This test is self contained and should run at `make run_test` targets.
+> 
+> > Or is there another way that the packets could be observed, e.g.,
+> > counters.
+> 
+> Unfortunately netpoll doesn't expose any data, thus, it is hard to get
+> it. 
+> 
+> I have plans to create a configfs for netpoll, so, we can check for
+> these numbers (as also configure some pre-defined values today, such as
+> USEC_PER_POLL, MAX_SKBS, ip6h->version = 6; ip6h->priority = 0, etc.
+> 
+> In fact, I've an private PoC for this, but, I am modernizing the code
+> first, and creating some selftests to help me with those changes later
+> (given we have very little test on netpoll, and I aim to improve this,
+> given how critical it is for some datacenter designs).
+> 
+> > > +NETCONSOLE_CONFIGFS_PATH = "/sys/kernel/config/netconsole"
+> > > +REMOTE_PORT = 6666
+> > > +LOCAL_PORT = 1514
+> > > +# Number of netcons messages to send. I usually see netpoll_poll_dev()
+> > > +# being called at least once in 10 iterations.
+> > > +ITERATIONS = 10
+> > 
+> > Is usually sufficient to avoid flakiness, or should this be cranked
+> > up?
+> 
+> 10 was the minimum number I was able to trigger it on my dev
+> environment, either with default configuration and a debug heavy
+> configuration, but, the higher the number, more change to trigger it.
+> I can crank up it a bit more. Maybe 20?
+> 
+> > > +def check_traffic_flowing(cfg: NetDrvEpEnv, netdevnl: NetdevFamily) -> int:
+> > > +    """Check if traffic is flowing on the interface"""
+> > > +    stat1 = get_stats(cfg, netdevnl)
+> > > +    time.sleep(1)
+> > 
+> > Can the same be learned with sufficient precision when sleeping
+> > for only 100 msec? As tests are added, it's worth trying to keep
+> > their runtime short.
+> 
+> 100%. In fact, I don't need to wait for 1 seconds. In fact, we don't
+> even need to check for traffic flowing after the traffic started. I've
+> just added it to help me do develop the test.
+> 
+> We can either reduce it to 100ms or just remove it from the loop,
+> without prejudice to the test itself. Maybe reducing it to 100 ms might
+> help someone else that might debug this in the future, while just
+> slowing down ITERATIONS * 0.1 seconds !?
 
-This mirrors the existing Open Firmware (OF) support (`of_id_table`) and
-enables Rust drivers to match and retrieve ACPI-specific device data
-when `CONFIG_ACPI` is enabled.
-
-To avoid breaking compilation, a stub implementation of `acpi_id_table()`
-is added to the Platform adapter; the full implementation will be provided
-in a subsequent patch.
-
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- rust/bindings/bindings_helper.h |  1 +
- rust/kernel/driver.rs           | 41 ++++++++++++++++++++++++++++++++-
- rust/kernel/platform.rs         |  6 ++++-
- 3 files changed, 46 insertions(+), 2 deletions(-)
-
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index bc494745f67b..dfb2dd500ef6 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -28,6 +28,7 @@
-  */
- #include <linux/hrtimer_types.h>
- 
-+#include <linux/acpi.h>
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_file.h>
-diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-index cb62b75a0c0e..8389c122a047 100644
---- a/rust/kernel/driver.rs
-+++ b/rust/kernel/driver.rs
-@@ -6,7 +6,7 @@
- //! register using the [`Registration`] class.
- 
- use crate::error::{Error, Result};
--use crate::{device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
-+use crate::{acpi, device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
- use core::pin::Pin;
- use pin_init::{pin_data, pinned_drop, PinInit};
- 
-@@ -141,6 +141,40 @@ pub trait Adapter {
-     /// The type holding driver private data about each device id supported by the driver.
-     type IdInfo: 'static;
- 
-+    /// The [`acpi::IdTable`] of the corresponding driver
-+    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>>;
-+
-+    /// Returns the driver's private data from the matching entry in the [`acpi::IdTable`], if any.
-+    ///
-+    /// If this returns `None`, it means there is no match with an entry in the [`acpi::IdTable`].
-+    fn acpi_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
-+        #[cfg(not(CONFIG_ACPI))]
-+        {
-+            let _ = dev;
-+            return None;
-+        }
-+
-+        #[cfg(CONFIG_ACPI)]
-+        {
-+            let table = Self::acpi_id_table()?;
-+
-+            // SAFETY:
-+            // - `table` has static lifetime, hence it's valid for read,
-+            // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
-+            let raw_id = unsafe { bindings::acpi_match_device(table.as_ptr(), dev.as_raw()) };
-+
-+            if raw_id.is_null() {
-+                None
-+            } else {
-+                // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
-+                // does not add additional invariants, so it's safe to transmute.
-+                let id = unsafe { &*raw_id.cast::<acpi::DeviceId>() };
-+
-+                Some(table.info(<acpi::DeviceId as crate::device_id::RawDeviceId>::index(id)))
-+            }
-+        }
-+    }
-+
-     /// The [`of::IdTable`] of the corresponding driver.
-     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>>;
- 
-@@ -180,6 +214,11 @@ fn of_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
-     /// If this returns `None`, it means that there is no match in any of the ID tables directly
-     /// associated with a [`device::Device`].
-     fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
-+        let id = Self::acpi_id_info(dev);
-+        if id.is_some() {
-+            return id;
-+        }
-+
-         let id = Self::of_id_info(dev);
-         if id.is_some() {
-             return id;
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 5b21fa517e55..5923d29a0511 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -5,7 +5,7 @@
- //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
- 
- use crate::{
--    bindings, container_of, device, driver,
-+    acpi, bindings, container_of, device, driver,
-     error::{to_result, Result},
-     of,
-     prelude::*,
-@@ -94,6 +94,10 @@ impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
-     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
-         T::OF_ID_TABLE
-     }
-+
-+    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
-+        None
-+    }
- }
- 
- /// Declares a kernel module that exposes a single platform driver.
--- 
-2.43.0
+That makes sense. Or only keep it in DEBUG mode?
 
 
