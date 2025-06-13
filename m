@@ -1,111 +1,231 @@
-Return-Path: <linux-kernel+bounces-685245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7417BAD85FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:50:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD29AD8609
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8C53B07BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A0D1898D6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B148272819;
-	Fri, 13 Jun 2025 08:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9B4279DDE;
+	Fri, 13 Jun 2025 08:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIBCLUxD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bAYWQDjD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721022727EF;
-	Fri, 13 Jun 2025 08:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BCB279DA6;
+	Fri, 13 Jun 2025 08:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749804620; cv=none; b=Bq2HspuM8EzZesJuTo3JIiLLiMyHVx+fBP7SpfSlNH8ixwRczagX2Se2GkjurE0z/bIR864tVoVYSvdCzW8zo2lljb08V4bB8rLGT7ngr9EVfh2M+Hg6s3e/KVCKEfE4bO5YZ9ZRrbLBsZ28I9eEDR9bYLdAGVsDNpmvQnEGPd0=
+	t=1749804701; cv=none; b=ptMl7qygjDzTXBFYMD2NeLYUcGyKxaOvB8T/wmjeZxDoGDGPBNVzjTmwenaA3+JdFqIRoZeKtMJAc3sWihLT5QCkWulq8ptieQI27Y9uTUQRdh4z7cOh0RupdFsktAgQ4Ip/IyGK6EX0SAoJsOX8+/BmG86t0ERx6JGnQnnb/90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749804620; c=relaxed/simple;
-	bh=eCo/L6P/lgVu+jHfJMyorLu6Y9nvXk/E/NCtlMoCn2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiktWQe1B2eEUTd7F8/WfUiDDA7umY6sgc3p0FsWRJDTrrtJg6khvk4XO7f79n/wHqkhq1gVa6y917INfhc3WD6LYMIkfblXRJRy0z0GMnwfl++Z1dt+6tEhP9M7Kltb7pUsSRRcGCUdlPp2N6A1pudihJsFKcWT2NBn0C4haZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIBCLUxD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D34D3C4CEE3;
-	Fri, 13 Jun 2025 08:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749804620;
-	bh=eCo/L6P/lgVu+jHfJMyorLu6Y9nvXk/E/NCtlMoCn2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZIBCLUxDuDg0GoH2XX9bzbW0PoVGYuEIZz8QDuTtS28tmTHIkGbIWFn5SrtbelRQT
-	 1LPwLu4iq4Gdz3KT8FtEhAfAWORb/MZAPSwyKUk9oRzhPdH/E+Gw48+wtVAja0fjjS
-	 HjVEq2xut2/oBRpOddOoDLn17mnM4h3xbGUvfTS2cAa2camZu98bveQnqWVi4+zwof
-	 xOtrQ7mxDHXFViyNJlO4Ix5z9JiU6EQl2LX1nwEUJHnE7DeJEZZz52OH0UPDkU+/+Z
-	 eRv7Tk+j7WxrzJjfFfwEnzSMl2ES2liUMs3SxCay7QlS3jkNVkUkQOQskOrbMfMIAD
-	 KMBKfGlS99roA==
-Date: Fri, 13 Jun 2025 10:50:14 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v8 0/9] More Rust bindings for device property reads
-Message-ID: <aEvmRmQwX7Vb8Y_3@pollux>
-References: <20250611102908.212514-1-remo@buenzli.dev>
- <aEtjONTgqDikCoB6@cassiopeiae>
- <DAL8LI3LMET9.3LW0J9JED1EZG@buenzli.dev>
+	s=arc-20240116; t=1749804701; c=relaxed/simple;
+	bh=4dvU2gjTBAobluxvnHDFcItktqR+5ChasN0aGjgKaKI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TF+CL1X33sxw0VqtEuxr3jb9iDssc9X7A3EbESabllYS5bQypE7xtvrP24WRopbaODEJsnEitLuRSOADTb6xhjheuJ5PqfcRLTFF2NFwhhfBsRcfAtQhb6sU/Xl3UrBDR0Oi9rk601w22W+jpBT3WcnxDQYE78zs3mn4Qq2qOj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bAYWQDjD; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749804698; x=1781340698;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=4dvU2gjTBAobluxvnHDFcItktqR+5ChasN0aGjgKaKI=;
+  b=bAYWQDjDkqgi8W41nfXsD1GhZHc4vEcptHrcwRhlbYzs7p38uM/FRHY9
+   QI07SMAxI1j8YzAT+3A3xox4j6T5WDx5/kCRLw/4dvrB7gCYsUrcPGeUM
+   5Or/jMlTJwCF9tVnwbSHcrTt0AljSpxDJLPrZMoMV5Ca26pjAG/R/Fn/k
+   kVm5Zzh+lhEWkw/4s1/v1bmFadgHTs+qEplVvRsPzDVnphKTVWxulJOLY
+   CvwJSb1IjkEXK8Tlx3lXlNqBNVMtTilFT/z1CPBfL5uJlk5FjJUrlE1bo
+   7edJ/NKsfKL8WTu2ls85/a+WJfSnuVj9IHa/k2TntcNrGzpGMC1k43DNP
+   Q==;
+X-CSE-ConnectionGUID: o9pnfUYGRrqHAutgH0cHwA==
+X-CSE-MsgGUID: HMom63YgR4GFn4jvLO1IUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="74547609"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="74547609"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 01:51:37 -0700
+X-CSE-ConnectionGUID: agVmFPqcQfiQWHXPtV8Rmw==
+X-CSE-MsgGUID: gWFTP0HTRC2RODcDIuxKFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="147619241"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.26])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 01:51:19 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Yury Norov
+ <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Shreeya Patel
+ <shreeya.patel@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Nicolas
+ Frattaroli <frattaroli.nicolas@gmail.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Shawn Lin
+ <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan
+ Sadhasivam
+ <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham
+ <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Qin
+ Jian <qinjian@cqplus1.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Tvrtko Ursulin
+ <tursulin@igalia.com>
+Subject: Re: [PATCH 01/20] bitfield: introduce HWORD_UPDATE bitfield macros
+In-Reply-To: <20250612-byeword-update-v1-1-f4afb8f6313f@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
+ <20250612-byeword-update-v1-1-f4afb8f6313f@collabora.com>
+Date: Fri, 13 Jun 2025 11:51:15 +0300
+Message-ID: <5493fd6017de3f393f632125fad95945d1c4294c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DAL8LI3LMET9.3LW0J9JED1EZG@buenzli.dev>
+Content-Type: text/plain
 
-On Fri, Jun 13, 2025 at 09:45:47AM +0200, Remo Senekowitsch wrote:
-> On Fri Jun 13, 2025 at 1:31 AM CEST, Danilo Krummrich wrote:
-> > On Wed, Jun 11, 2025 at 12:28:59PM +0200, Remo Senekowitsch wrote:
-> >> Remo Senekowitsch (9):
-> >>   rust: device: Create FwNode abstraction for accessing device
-> >>     properties
-> >>   rust: device: Enable accessing the FwNode of a Device
-> >>   rust: device: Move property_present() to FwNode
-> >>   rust: device: Enable printing fwnode name and path
-> >>   rust: device: Introduce PropertyGuard
-> >>   rust: device: Implement accessors for firmware properties
-> >>   samples: rust: platform: Add property read examples
-> >
-> > Applied to driver-core-testing, thanks!
-> >
-> > Once the patches passed 0-day testing they will be merged into driver-core-next.
-> >
-> >>   rust: device: Add child accessor and iterator
-> >>   rust: device: Add property_get_reference_args
-> >
-> > I did drop those two patches for now, because:
-> >
-> >   (1) They're basically dead code.
-> >
-> >   (2) It seems that FwNode::property_get_reference_args() leaks a struct
-> >       fwnode_handle reference. property_get_reference_args() explicitly says
-> >       that the caller is responsible "for calling fwnode_handle_put() on the
-> >       returned @args->fwnode pointer", which doesn't seem to happen.
-> >
-> > Can you please fix the leak and resend those two patches with an additional one
-> > that adds a sample usage of the introduced methods to the platform sample
-> > driver?
-> 
-> Alright, thanks. I suppose that should be a new patch series, with a new
-> title and starting at v1 ..?
+On Thu, 12 Jun 2025, Nicolas Frattaroli <nicolas.frattaroli@collabora.com> wrote:
+> Hardware of various vendors, but very notably Rockchip, often uses
+> 32-bit registers where the upper 16-bit half of the register is a
+> write-enable mask for the lower half.
+>
+> This type of hardware setup allows for more granular concurrent register
+> write access.
+>
+> Over the years, many drivers have hand-rolled their own version of this
+> macro, usually without any checks, often called something like
+> HIWORD_UPDATE or FIELD_PREP_HIWORD, commonly with slightly different
+> semantics between them.
+>
+> Clearly there is a demand for such a macro, and thus the demand should
+> be satisfied in a common header file.
+>
+> Add two macros: HWORD_UPDATE, and HWORD_UPDATE_CONST. The latter is a
+> version that can be used in initializers, like FIELD_PREP_CONST. The
+> macro names are chosen to not clash with any potential other macros that
+> drivers may already have implemented themselves, while retaining a
+> familiar name.
+>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>  include/linux/bitfield.h | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 6d9a53db54b66c0833973c880444bd289d9667b1..b90d88db7405f95b78cdd6f3426263086bab5aa6 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -8,6 +8,7 @@
+>  #define _LINUX_BITFIELD_H
+>  
+>  #include <linux/build_bug.h>
+> +#include <linux/limits.h>
+>  #include <linux/typecheck.h>
+>  #include <asm/byteorder.h>
+>  
+> @@ -142,6 +143,52 @@
+>  		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))	\
+>  	)
+>  
+> +/**
+> + * HWORD_UPDATE() - prepare a bitfield element with a mask in the upper half
+> + * @_mask: shifted mask defining the field's length and position
+> + * @_val:  value to put in the field
+> + *
+> + * HWORD_UPDATE() masks and shifts up the value, as well as bitwise ORs the
+> + * result with the mask shifted up by 16.
+> + *
+> + * This is useful for a common design of hardware registers where the upper
+> + * 16-bit half of a 32-bit register is used as a write-enable mask. In such a
+> + * register, a bit in the lower half is only updated if the corresponding bit
+> + * in the upper half is high.
+> + */
+> +#define HWORD_UPDATE(_mask, _val)					 \
+> +	({								 \
+> +		__BF_FIELD_CHECK(_mask, ((u16) 0U), _val,		 \
+> +				 "HWORD_UPDATE: ");			 \
+> +		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask)) | \
+> +		((_mask) << 16);					 \
+> +	})
 
-Yes, that's fine. Please make sure to mention that it's a follow-up of this
-series (ideally with a link).
+i915 uses something like this for a few registers too, with the name
+_MASKED_FIELD(). I think we could use it.
+
+I do think this is clearly an extension of FIELD_PREP(), though, and
+should be be named similarly, instead of the completely deviating
+HWORD_UPDATE().
+
+Also, we recently got GENMASK() versions with sizes, GENMASK_U16()
+etc. so I find it inconsistent to denote size here with HWORD.
+
+FIELD_PREP_MASKED_U16? MASKED_FIELD_PREP_U16? Something along those
+lines?
+
+And perhaps that (and more potential users) could persuade Jakub that
+this is not that weird after all?
+
+
+BR,
+Jani.
+
+
+
+
+> +
+> +/**
+> + * HWORD_UPDATE_CONST() - prepare a constant bitfield element with a mask in
+> + *                        the upper half
+> + * @_mask: shifted mask defining the field's length and position
+> + * @_val:  value to put in the field
+> + *
+> + * HWORD_UPDATE_CONST() masks and shifts up the value, as well as bitwise ORs
+> + * the result with the mask shifted up by 16.
+> + *
+> + * This is useful for a common design of hardware registers where the upper
+> + * 16-bit half of a 32-bit register is used as a write-enable mask. In such a
+> + * register, a bit in the lower half is only updated if the corresponding bit
+> + * in the upper half is high.
+> + *
+> + * Unlike HWORD_UPDATE(), this is a constant expression and can therefore
+> + * be used in initializers. Error checking is less comfortable for this
+> + * version.
+> + */
+> +#define HWORD_UPDATE_CONST(_mask, _val)					  \
+> +	(								  \
+> +		FIELD_PREP_CONST(_mask, _val) |				  \
+> +		(BUILD_BUG_ON_ZERO(const_true((u64) (_mask) > U16_MAX)) + \
+> +		 ((_mask) << 16))					  \
+> +	)
+> +
+>  /**
+>   * FIELD_GET() - extract a bitfield element
+>   * @_mask: shifted mask defining the field's length and position
+
+-- 
+Jani Nikula, Intel
 
