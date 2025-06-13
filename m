@@ -1,111 +1,52 @@
-Return-Path: <linux-kernel+bounces-685764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D56DAD8E82
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE238AD8E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7C31E4491
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C24316ED2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B452D9EFC;
-	Fri, 13 Jun 2025 13:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JFjl4Q+8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o96Nzw7P";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NbaSZyMh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eVEysA6P"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2291A29A;
+	Fri, 13 Jun 2025 13:52:55 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1F82D9EF9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7FD156F5E;
+	Fri, 13 Jun 2025 13:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822604; cv=none; b=M8nu8Qq6jE+yZ3EsKiZLqNCB6uG2OcbcH/PUAEB9Dqglr8/H6jpuK1YAXcF43wzKaJS2z9x/jsHvW3H2mTepjnkxDD+gvM4hZXa4DFzipaOsCUot7ToXzDRW9U3YPam67XHxuCZ7yy58lemnX96QJ8WnOKh+RknB3ykEAcdjY8c=
+	t=1749822774; cv=none; b=Ok3J17SDVAdo1rO+NuVE9lNo4Hhphxfqzp3nYlAjqIqD5/ewltmCTn2Jmp+q4lh4J0o04+xj4U0lQaYZLibQUa7lfJXRsh2mzOcN+da1WJPmw/9FceLRE0J2enT82go1QDCqbFZWFxCG3tHwmX2C8c8MrrU0XzGcIdnM1//AuMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822604; c=relaxed/simple;
-	bh=48Btmq48StA+CNIKojo0XJZQ2ucjHK2q9m1cr1JmpC4=;
+	s=arc-20240116; t=1749822774; c=relaxed/simple;
+	bh=cWb5O919iJ5GUz1RPBsizB20JDHxE/ASBUV9zv+N5lQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=StysjiGWTWRSyjWvXHKdX+v9DHh1sCKGFGZOZGr4lcJR3L8D3Fg/0VjruODKzg7OxOh0FE1g8eWwsccaCsfQvgF9zE58LILJLv6vwG+DdJEdb6JabkXZhzEh106nea43siSQ3ZKFmUZ0HwaXI062Fkb0sVMDeySyQYpwkhulN4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JFjl4Q+8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o96Nzw7P; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NbaSZyMh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eVEysA6P; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcRnjrc7AdI/QdB/w/nssfAoHCTjIVd0hYD72f+fq75DkbSJVjVhZZBOodUeybgVmSqavlXg+gfZLOHnm+ZhV+UM2OtyNBvZj3YiSIgRLWU93+/qsjSo1wWcG/YIlLktVBrROCeXS5Gax92tPEKeUa36wiSxGgbV7OeDL8W5Oxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ECA3A1F397;
-	Fri, 13 Jun 2025 13:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749822599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
-	b=JFjl4Q+8AQh3LwubknOdgVD4oUmh/ajNptA0CrIeZKCCvmOXloT8lUDyYG+1tNPeQWM3jv
-	BLIHQfk/uEkLXQA+j5MHUnsYNPvk/h8jfEH0Diex3gDY1oavFRzRBmzRjSQieqP9jYKzsY
-	8pHGvZ/oLdcexdUNfJQ9/H7KdHhD57c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749822599;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
-	b=o96Nzw7PtgzWpMVZQFmTXHcKaN74FiNyCjJ+V8KDPdlG237umtLqeLOLvbEX2pTAJtefK8
-	NoSyXdSxlk/8anCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NbaSZyMh;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eVEysA6P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749822597; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
-	b=NbaSZyMh2LIU02VlY3UXMG0lONn/VkG1qtlN1zCkfDwjYs+DM0S4mem9gjq4P1zmqkLmDh
-	YVclMWgVBTbaXTR/GzcLBnP66qNBEvTk3rrA224aJdYofXtjFExAGEfDRoX5mGE4EXBD8K
-	ANJw+A6+MtTJz7uS40K/npORwMS65BU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749822597;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
-	b=eVEysA6Ptqu/+c6G9EG/hmLqxlRPje3ZL7uIEDYEnzE4yugEDcubXkv7uHVQ5Kw+so46xd
-	ClyMP9aLEV0tJ/AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA7A9137FE;
-	Fri, 13 Jun 2025 13:49:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ng2tMoQsTGhFCwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 13 Jun 2025 13:49:56 +0000
-Date: Fri, 13 Jun 2025 15:49:46 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v3 2/3] mm/huge_memory: don't mark refcounted folios
- special in vmf_insert_folio_pmd()
-Message-ID: <aEwseqmFrpNO5NJC@localhost.localdomain>
-References: <20250613092702.1943533-1-david@redhat.com>
- <20250613092702.1943533-3-david@redhat.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 0866620091AE;
+	Fri, 13 Jun 2025 15:45:36 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id E75D669ABA; Fri, 13 Jun 2025 15:45:35 +0200 (CEST)
+Date: Fri, 13 Jun 2025 15:45:35 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: grwhyte@linux.microsoft.com, linux-pci@vger.kernel.org,
+	shyamsaini@linux.microsoft.com, code@tyhicks.com, Okaya@kernel.org,
+	bhelgaas@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
+Message-ID: <aEwrfy63cvBLr5yc@wunner.de>
+References: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
+ <ccclacbxzdarqy27wlwqqcsogbrodwwslt7t5sp64xvqpa3wsl@xs5cllh7a6ft>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,78 +55,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250613092702.1943533-3-david@redhat.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: ECA3A1F397
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+In-Reply-To: <ccclacbxzdarqy27wlwqqcsogbrodwwslt7t5sp64xvqpa3wsl@xs5cllh7a6ft>
 
-On Fri, Jun 13, 2025 at 11:27:01AM +0200, David Hildenbrand wrote:
-> Marking PMDs that map a "normal" refcounted folios as special is
-> against our rules documented for vm_normal_page(): normal (refcounted)
-> folios shall never have the page table mapping marked as special.
+On Fri, Jun 13, 2025 at 05:12:48PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Jun 11, 2025 at 12:05:50AM +0000, grwhyte@linux.microsoft.com wrote:
+> > Add a new flr_delay member of the pci_dev struct to allow customization of
+> > the delay after FLR for devices that do not support immediate readiness
+> > or readiness time reporting. The main scenario this addresses is VF
+> > removal and rescan during runtime repairs and driver updates, which,
+> > if fixed to 100ms, introduces significant delays across multiple VFs.
+> > These delays are unnecessary for devices that complete the FLR well
+> > within this timeframe.
+> > 
 > 
-> Fortunately, there are not that many pmd_special() check that can be
-> mislead, and most vm_normal_page_pmd()/vm_normal_folio_pmd() users that
-> would get this wrong right now are rather harmless: e.g., none so far
-> bases decisions whether to grab a folio reference on that decision.
-> 
-> Well, and GUP-fast will fallback to GUP-slow. All in all, so far no big
-> implications as it seems.
-> 
-> Getting this right will get more important as we use
-> folio_normal_page_pmd() in more places.
-> 
-> Fix it by teaching insert_pfn_pmd() to properly handle folios and
-> pfns -- moving refcount/mapcount/etc handling in there, renaming it to
-> insert_pmd(), and distinguishing between both cases using a new simple
-> "struct folio_or_pfn" structure.
-> 
-> Use folio_mk_pmd() to create a pmd for a folio cleanly.
-> 
-> Fixes: 6c88f72691f8 ("mm/huge_memory: add vmf_insert_folio_pmd()")
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Tested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> I don't think it is acceptable to *reduce* the standard delay just
+> because your device completes it more quickly. Proper way to reduce
+> the timing would be to support FRS as you said, but we cannot have
+> arbitrary delays for random devices.
 
-Altough we have it quite well explained here in the changelog, maybe
-having a little comment in insert_pmd() noting why pmds mapping normal
-folios cannot be marked special would be nice.
+To be fair, we already have that for certain devices:
 
-But just saying :-)
+The quirk delay_250ms_after_flr() is referenced by three different
+Vendor ID / Device ID combos and *lengthens* the delay after FLR.
 
-Reviewed-by: Oscar salvador <osalvador@suse.de>
+It's probably difficult to justify rejecting custom delays for
+certain MANA devices, even though we allowed them for three other
+devices.
 
- 
+The proposed patch introduces a generic solution which avoids
+further cluttering up pci_dev_reset_methods[] with extra entries,
+so I think it's an approach worth considering.
 
--- 
-Oscar Salvador
-SUSE Labs
+There are a bunch of nits in the proposed patches, such as "pci"
+not being capitalized, but the general approach seems fine to me.
+
+Thanks,
+
+Lukas
 
