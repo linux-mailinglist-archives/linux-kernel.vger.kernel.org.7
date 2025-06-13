@@ -1,176 +1,134 @@
-Return-Path: <linux-kernel+bounces-685891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7429CAD8FFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2886AD9004
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C3B1684F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857703B5FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B4B192D6B;
-	Fri, 13 Jun 2025 14:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EC3199949;
+	Fri, 13 Jun 2025 14:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g2uBbAya"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dG+0yCcc"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACE5433A5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1564F433A5;
+	Fri, 13 Jun 2025 14:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826106; cv=none; b=nlsqTmgvAvDkfOsMkvdOXT+L3IGB4CRwziFRi0gOs6sfgS6O2SawGWZCdiiBn1RlD5GA9n4QSpihm6up5+D7SBpI2lZ+L/Lu9xkqDRyV7ZfROnoEEsB+K5aV5Ldbp68EZ7Vazq6a8JRIbzv0esIDlBCuBtj6jqo2S/FkhG9w/Jg=
+	t=1749826130; cv=none; b=YGbH3PVmXDtR9JlJtdlm2tO/ePPc3F7nW8oGePIufyW9+lCy9meG7Dv0CR5TPUqL/RHbPZ3PtnVL286Zsg1NS24mZc7UMkIjlT3z+m+L0sK2sSoDi6cRcuNyPx7c/G3k6UKge6L0BgEDOYHDeF1sNq3lyr5qtL2KAWFL++bTiHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826106; c=relaxed/simple;
-	bh=LunFnbTFFDzuGfxH/qbk8l6GPWmy4BO3tDou7e+5RyU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=OW5so+Ex+S9x9xl2UddU1zK4nsi0Bs6s1+Q84+1kw6TPrj68y+/P7uEB2hEowK6mbqO27l+gOBBKQCgqWoYsd/kwzVcA7oV+PviEX30yod+kJdiG+mowS7ypCDtwV0lVSutigCAcvpu3zi7jwrGe3495hu7W1wlknp2O6DpGqjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g2uBbAya; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a5096158dcso1965044f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:48:23 -0700 (PDT)
+	s=arc-20240116; t=1749826130; c=relaxed/simple;
+	bh=2czsTqDFs2LayaWE3o+qV4gJyCKv1km6UVStrH9AcGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CmD0YXW83EcXKJhh2BGebDazrsT9tC2JXn9qCTDJHvWBz8bId47pa4lLWw04DdzXYcWy5vFMbsSNm4WC9JfrKWQ/UsccMZ0MFayl70F316f+1zkNQtXrxaWEjSCZXQeAyxxC6xKzdVSMlF0+etjhzVT0DM6/XlQQ7OHDSiWGYVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dG+0yCcc; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74865da80c4so1434348b3a.3;
+        Fri, 13 Jun 2025 07:48:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749826102; x=1750430902; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mOYd+KSN0bGLBIlymGQv2zJrwVUrxAdmR0BhjkZJyc=;
-        b=g2uBbAya+Y71MOM4DjUIP+qQMEIJJlos+LZBupBO4QaRK5eY3ZA+LuNZ7y1Hr9C/XR
-         WGpWldglY9EYh1GZbQjIgyEX0tDspZCSJq/jMjmY8+zWrejND5z0AWCAS+Ext9K8SK+T
-         4KxhATCe5GRhz7cFkBSWuTJv+l/rGx7pAEx8k3m98YQxYRuMw75k7bIK0wZOgwD8oVHP
-         CFEc4hkLUF2bPaP5hflUxHH1lm1K+lh26ykPDKTtt4vBFf+iMzxkVBeIUw6Tjlr1C1Vp
-         EoyOhHuwXYaXpT6pvKI6LMTJQ0TCCquV4zzhjMsHv/k/Y+VXbJR7o3SkYRdpriYrgWKO
-         alCQ==
+        d=gmail.com; s=20230601; t=1749826128; x=1750430928; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/L0PwwkoPnRzlL6fmDLU+JBmZkHn+VWrN87UcWrxlw=;
+        b=dG+0yCcc5oEIcYI6BLpnqgglCrXYDfXPtdgUO43MLDwBywFnjegjhW1+CJXHSrROfI
+         fV7CF31GUplMhIvgwROPWMILgJvS1fu43Ylgz/jVT2j3+tqx0SMsSMRy6JA5XQUhw4X7
+         YWbUaQ8rRGwlSoZjRMXKJdH3l4nRBrkdL96YTYRRVmtTJVgQkX7YeroI1B3ybaJd/ygQ
+         zhds70Y4/XYr15aiHXJS0T0xY17APaeDJENcXjlbNjNic1AlcpgPWNYLjIUquKFNux4F
+         JqW8LswcrG9pbHaQ/bPE4kOEmrOfYBrsb2yHnwMjvynBLDLWKMlNyRKykkt8LHIeIGWt
+         zo8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749826102; x=1750430902;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2mOYd+KSN0bGLBIlymGQv2zJrwVUrxAdmR0BhjkZJyc=;
-        b=jdykt1522q8vhoLvWrdKRTgDu7IvySfSt+cJB5s8OziXCgqXyMnw0g6lTqVTSheiRT
-         maa2eZ0JnYGmHrxFSJ0Cifes5cmXR68jij8+nb59rKp6KpQSpXX5sg61paEAqxlW+ngo
-         Wp/L6ERj7xlzH9jbROmyQBmqKWkfo2ETyKsLK8UYTaQdzwD4e8tf3v6oFeFZ9+A8k8sA
-         F7EjEnSrwzDCkXrq5v075ldUOVJRKz7YkiB6+hWxAS2+aonFu/hHhKBwxvJS5kdM6Dr6
-         Z3dX+7xYwHRu5IcsnahlPLudm9r2225bBzupC5sFVZXK++qyDRsbDrn0lDLGp48yN1hk
-         mszw==
-X-Forwarded-Encrypted: i=1; AJvYcCXx0C/Md9/zEt1/TOZo/TP+lbDEFgouyjyr3+KTjeUz5NY6UIyhMsFBW1joc+CF4XluktPIpQMAtDhRAzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz50PaRlWiqvmx2EVkmjOQ8Tjt9uL3lkeccyiQkTBF80lXUhimy
-	fT8g5uk+jQajqOn1Mf/yZtleUX3uEEPHf3PkD+xryCJ+TIz2oKktR3+iKsROYwevcfcvzXG+hFV
-	wxvukSL4=
-X-Gm-Gg: ASbGncuZeSAkCSNKNYkNDI7boTLLM5NOUOE/FXvq//dxkiOlgkgtr9IxAsMG2xN1LLS
-	R0j6lpxdsSCy/AMP/zToPHJGVepCnr73o6faoufm0Kas+IMQCMzfd+gqLNvU2wpfXWvG8+f8MI6
-	2jFS5P38PpfDEeGsaoEP9bOIE8mhxcFGTjlHqL2UOcVssfya2meMdJVqRLhC+bTaLbaGKqv4x7R
-	Co03IUOHFe2WcC2nFCWMEfyzdbMvdSITWtRwzs5s/XxS9sM6aNjBAtPpXjcVi9zu02p0NtkrPTq
-	UYvhCrlQ2SKc7zqHuvWIm308mEOiNJuqlufs8AJNoK0r2RU6QdPrd2Qnk2JxyZiVQvdRh6pYy0W
-	uQbs=
-X-Google-Smtp-Source: AGHT+IG9yKxjbUAlD81jUcQCQqnSyAIGryKoG0zNvJd5LrpgpBsrLCC2LN8O3W8Hm1XE98lIX1UEKA==
-X-Received: by 2002:a05:6000:2486:b0:3a4:e502:81e1 with SMTP id ffacd0b85a97d-3a56877f1b5mr3610228f8f.52.1749826102428;
-        Fri, 13 Jun 2025 07:48:22 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7213:c700:c8e2:ba7d:a1c6:463f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532de8c4b1sm56505835e9.2.2025.06.13.07.48.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 07:48:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749826128; x=1750430928;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d/L0PwwkoPnRzlL6fmDLU+JBmZkHn+VWrN87UcWrxlw=;
+        b=Qdj5kCCwBppMkaYE6vl9f9oD38/ejLwUt4Pqp9zHFgvHu6EiNK5sHELtaPQ8Pom26o
+         S/U6W60W1zBTEjly1Fj8F6xz08mxqaRkZ3YkIvSgjf4C5hB6xWX6ZjPFs3I3l+0lQwZc
+         R+FGk2W+csu6VsSdbyt3GiznB5IvjIU/Gn98dyYpgjcd/FnZGaKj6jFGxmtT0pucYWIC
+         wHlsfdAW8Za7rPu3v+SIxwRPb8m65QIbyz/VGkpF2BYwfzTbgOZ0lubZBMaxtugMrH42
+         sbQzQ0mXVZajkD17gy+FyguUDzWV2mSI03cCtaoivdfYP2foiFtbyKnF9EYrzRi/wxie
+         lnnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFBd7fyqY7sR1n/fY1pcORT51c1XbqZ5+Cl1ijsK10jQ1aHqtz0KJhyFagCmALXDI5MajmfXRv5Gx/Lyk=@vger.kernel.org, AJvYcCWw/Iplo6bQm4VKZh5TmsaoMV/pzLUgrYcXpZQRiyUglzrScQRiIlN8/BrTOxDIXftXnxUaWDbSu6NK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8/aWcI2T6QwSj8hE0Ha69q5b3eCHtV1m9Unxr+OEFqYrAmm4B
+	XerTmzIHQXLpF30udrDg+iZuLIfLVXKKhqcwN1kCd7UJ3bjjoD8sff9G
+X-Gm-Gg: ASbGncvwmPJnDFqOl1GUMAkxKJ7XNrvX6XFtpONUMbJxpotLTDI2R9ocV40uIJAZzdf
+	n/2CqdzpnTCW1Ffa6ShTCqI+YXSvF4TL5hkRRaYG5B9fST1ZBRbfYZRWxonLuKoKeQeU62ik8Fc
+	+ErB4r6kMrrecN6Z+TMJFgOyb4NaCT93IoAVSytok74qGJTyq251/FVt+EmyVPmWuCizBvwPoHY
+	lVG47/SKqq/nrkZb/nLcKZJlfEOFZlk/RUq9DFQZy/55bOZtWA9k3PfMLaRYWZfo/U1QoSoCz7h
+	XGGzrb7PZ3zAt/6ennkdQNYnXEAzrqvqdQg34VfqLY5YB6/ucw==
+X-Google-Smtp-Source: AGHT+IFt4GR3YMTXjNMLs0lezTaz7ETEn/eRAqWAd2cNJwooWka4aI3k3Y5G9iM40lPJlQBBHOCxFg==
+X-Received: by 2002:a05:6a00:2d8e:b0:736:ab49:d56 with SMTP id d2e1a72fcca58-7488f6e49f9mr4575274b3a.1.1749826128253;
+        Fri, 13 Jun 2025 07:48:48 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:838f::dead:c001])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74890083034sm1728624b3a.98.2025.06.13.07.48.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 07:48:47 -0700 (PDT)
+Date: Fri, 13 Jun 2025 11:48:42 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v4 1/4] PCI: rockchip: Drop unused custom registers and
+ bitfields
+Message-ID: <ed25d30f2761e963164efffcfbe35502feb3adc2.1749825317.git.geraldogabriel@gmail.com>
+References: <cover.1749825317.git.geraldogabriel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Jun 2025 15:48:21 +0100
-Message-Id: <DALHL1IBO6TR.11KW7Z16V4SH1@linaro.org>
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Ekansh Gupta"
- <ekansh.gupta@oss.qualcomm.com>, <konradybcio@kernel.org>,
- <srini@kernel.org>, <quic_ekangupt@quicinc.com>
-Cc: <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <krzysztof.kozlowski@linaro.org>, "Bharath Kumar (QUIC)"
- <quic_bkumar@quicinc.com>, "Chenna Kesava Raju (QUIC)"
- <quic_chennak@quicinc.com>
-Subject: Re: [PATCH] arm64: dts: qcom: sm8750: Add adsp fastrpc support
-X-Mailer: aerc 0.20.0
-References: <20250502011539.739937-1-alexey.klimov@linaro.org>
- <10f69da3-6f94-4249-a8f3-459dc48fa5e1@oss.qualcomm.com>
- <D9R4NCKH46WP.14C8F7W4M58ZQ@linaro.org>
- <3c0fea8d-0715-40e6-bed9-e0961bf034e0@oss.qualcomm.com>
- <bb68da04-ef52-4172-8b6e-f4027bcc2786@oss.qualcomm.com>
- <3f346bdc-81a4-4620-9a31-25c41d591c58@oss.qualcomm.com>
-In-Reply-To: <3f346bdc-81a4-4620-9a31-25c41d591c58@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1749825317.git.geraldogabriel@gmail.com>
 
-On Tue May 13, 2025 at 2:09 PM BST, Konrad Dybcio wrote:
-> On 5/9/25 5:42 AM, Ekansh Gupta wrote:
->>=20
->> On 5/9/2025 4:27 AM, Konrad Dybcio wrote:
->>> On 5/9/25 12:20 AM, Alexey Klimov wrote:
->>>> On Fri May 2, 2025 at 10:38 AM BST, Konrad Dybcio wrote:
->>>>> On 5/2/25 3:15 AM, Alexey Klimov wrote:
->>>>>> While at this, also add required memory region for fastrpc.
->>>>>>
->>>>>> Tested on sm8750-mtp device with adsprpdcd.
->>>>>>
->>>>>> Cc: Ekansh Gupta <quic_ekangupt@quicinc.com>
->>>>>> Cc: Srinivas Kandagatla <srini@kernel.org>
->>>>>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>>> ---
->>>>>>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 70 +++++++++++++++++++++++++=
-+++
->>>>>>  1 file changed, 70 insertions(+)
+Since we are now using standard PCIe defines, drop
+unused custom-defined ones, which are now referenced
+from offset at added Capabilities Register.
 
-[...]
+Suggested-By: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+---
+ drivers/pci/controller/pcie-rockchip.h | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
->>>>> IIUC the driver only considers this on the sensor DSP
->>>> Memory region is required for audio protection domain + adsprpdcd as f=
-ar as I know.
->>> next-20250508
->>>
->>> rmem_node =3D of_parse_phandle(rdev->of_node, "memory-region", 0);
->>> if (domain_id =3D=3D SDSP_DOMAIN_ID && rmem_node) {
->>> 	// ...
->>> }
->>>
->>> maybe some driver changes are still pending?
->>=20
->> Would like to add some more details here:
->>=20
->> Memory region is required for audio PD for dynamic loading and remote he=
-ap memory
->> requirements. Some initial memory(~2MB) is allocated initially when audi=
-o daemon
->> is getting attached[1] and this memory is added to audio PD memory pool.
->>=20
->> Additionally, if there is some additional memory requirement from audio =
-PD, the
->> PD can request for more memory using remote heap request[2]
->>=20
->> The support for SDSP was added sometime back[3] to support SDSP usecases=
- on some old
->> platform as there were no dedicated context banks for SDSP there. On rec=
-ent platforms,
->> context banks are available wherever SDSP is supported.=20
->>=20
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/=
-tree/drivers/misc/fastrpc.c#n1273
->> [2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/=
-tree/drivers/misc/fastrpc.c#n1884
->> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/=
-commit/drivers/misc/fastrpc.c?id=3Dc3c0363bc72d4d0907a6d446d7424b3f022ce82a
->
-> Ok, this was mildly confusing given there's specific "normal" region
-> handling, but the DMA allocator takes care of this one
-
-Konrad, Srini, Ekansh,
-what's left here -- I guess memory region is needed,=20
-so do you want me to test with secure flag as the only required change at t=
-his point?
-
-Best regards,
-Alexey
+diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+index 5864a20323f2..f611599988d7 100644
+--- a/drivers/pci/controller/pcie-rockchip.h
++++ b/drivers/pci/controller/pcie-rockchip.h
+@@ -155,16 +155,7 @@
+ #define PCIE_EP_CONFIG_DID_VID		(PCIE_EP_CONFIG_BASE + 0x00)
+ #define PCIE_EP_CONFIG_LCS		(PCIE_EP_CONFIG_BASE + 0xd0)
+ #define PCIE_RC_CONFIG_RID_CCR		(PCIE_RC_CONFIG_BASE + 0x08)
+-#define PCIE_RC_CONFIG_DCR		(PCIE_RC_CONFIG_BASE + 0xc4)
+-#define   PCIE_RC_CONFIG_DCR_CSPL_SHIFT		18
+-#define   PCIE_RC_CONFIG_DCR_CSPL_LIMIT		0xff
+-#define   PCIE_RC_CONFIG_DCR_CPLS_SHIFT		26
+-#define PCIE_RC_CONFIG_DCSR		(PCIE_RC_CONFIG_BASE + 0xc8)
+-#define   PCIE_RC_CONFIG_DCSR_MPS_MASK		GENMASK(7, 5)
+-#define   PCIE_RC_CONFIG_DCSR_MPS_256		(0x1 << 5)
+-#define PCIE_RC_CONFIG_LINK_CAP		(PCIE_RC_CONFIG_BASE + 0xcc)
+-#define   PCIE_RC_CONFIG_LINK_CAP_L0S		BIT(10)
+-#define PCIE_RC_CONFIG_LCS		(PCIE_RC_CONFIG_BASE + 0xd0)
++#define PCIE_RC_CONFIG_CR		(PCIE_RC_CONFIG_BASE + 0xc0)
+ #define PCIE_EP_CONFIG_LCS		(PCIE_EP_CONFIG_BASE + 0xd0)
+ #define PCIE_RC_CONFIG_L1_SUBSTATE_CTRL2 (PCIE_RC_CONFIG_BASE + 0x90c)
+ #define PCIE_RC_CONFIG_THP_CAP		(PCIE_RC_CONFIG_BASE + 0x274)
+-- 
+2.49.0
 
 
