@@ -1,243 +1,154 @@
-Return-Path: <linux-kernel+bounces-685877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD43AD8FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:40:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E78FAD8FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB001892F41
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87D117DB8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5FC195811;
-	Fri, 13 Jun 2025 14:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B957419CD01;
+	Fri, 13 Jun 2025 14:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5Ov7966"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pay6qyGV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0E1198E8C;
-	Fri, 13 Jun 2025 14:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5671946AA
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825626; cv=none; b=QrHZE3MKcL/IyX6R5kYR+QFLke7Q+fdchC3Ic2ISm8aqp25U8HlFWS7F8RwMeHizVU++EKMP4+6IOjZ39ydZOuT4DSWPYn1MB+LhGNVJODq1DAF18nKkRqZJymHnyRqUqur880MlGKcyEshSuPoQOfxsorQBPDQMkgjLvVCctu8=
+	t=1749825715; cv=none; b=mNAm0I4Qpg1Dhod8xA9eZRIjrVAuFDhnH5Z70SjIpGZtByTbZCt1kyyLM/JRXurtNk6bMgVL2AkRh06eW3KTRm0aRXimSmubp3wjIZVi1+73muleY7hw64evcB4Zsj8P8XDeNhABsoD1fSJww3r0I1ge1kxSOCB1R4Sinpb4s7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825626; c=relaxed/simple;
-	bh=G8rFJk861KqPrLLERWkejR/HukON16JAfyXw01ERfwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvoyncSRnre+dcxWdTlY/og4ihZMBowYlHyyVueL/xnH6duezZbQq/wHxpv/JfNWazYhO9qdnqyS9lt5IWWZHmPdwfVuyG5hllb5DoUhkgxPWwrTmTCzetF2OycYC3AdiFjDkszbKQjFIXo2NldSsrQI3Wr/JSDDdEXfwGvMwfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5Ov7966; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3544DC4CEED;
-	Fri, 13 Jun 2025 14:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749825625;
-	bh=G8rFJk861KqPrLLERWkejR/HukON16JAfyXw01ERfwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H5Ov7966R6z4xv/MxB6xeP3MSov3C71Yy6dhRWaVmXU0CRIwm2F81FTy7nWn6BYJR
-	 PfcTjxfe871A+TruQy+g0g2INu3sNALpOSlL/PwzCHV6R9sNVkE24mhpocsxDv29vc
-	 4Ldtjm6RPjOVCOOLk7aEwygkcynzRn7flyEIyMCj85N/YCf0LP+V+XwwvuPbZTJojC
-	 KwEZrmSztugFFB025xw/Tcv36xaFYzz0NWFLFdUzTnUEK9sL6AI/luKlMaecR4Z0YO
-	 qHHqiGFJTAqxfXMn+rJp4CNUdPbyGiwN7Kl4k2TTmoXY4si2zgy+q0nqoMZ/cfad8k
-	 n1QmfXxfSl5tg==
-Date: Fri, 13 Jun 2025 15:40:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: victor.duicu@microchip.com
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, marius.cristea@microchip.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: temperature: add support for
- MCP998X
-Message-ID: <20250613-undergo-reviving-a97dca8f3b69@spud>
-References: <20250613130207.8560-1-victor.duicu@microchip.com>
- <20250613130207.8560-2-victor.duicu@microchip.com>
+	s=arc-20240116; t=1749825715; c=relaxed/simple;
+	bh=xR59NA9k6u+fku9xip3VLu0AuEwpmUQHbSWP6W9jjqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LJPLIhqvAeoRJfpcdVabrue2/ph/gakEYn6OVOT9GGIKq42Rm75AMpQ99yb8Ov2xfFlQX/fiOzfkKKYw77raJm7lvWbJkGVpfwoUq0TOtv6G44Ir3K5c/llEsoRWO9DiFCQFIxrTPEiMJwjddtURk+nYtno+dOvPwkjRenh487s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pay6qyGV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55DCjS8g003834
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:41:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=f8LvzWRSramzprfrBFvO2s+C1Hm+tEbtLlK
+	RSfKO3eY=; b=pay6qyGVBWCIHRDWXvnRM8KGHFLmvqXlScGFJW1m0kP6ycHs2uS
+	12j1vP2HUfI22Sr7degxe/C8v4R6fxxYhLv57pLOoCbayh9KEayLx7+NK7O6hgL9
+	GH+9vx7+SGAgNh/saaT/p5Mp/MKWG+EyfGDn420awxfDOvJssKc2T8S4x582lllJ
+	gq1YxzsYSN/h2RX9lAiWznmrGMSyuzMbADosqAZFJ0+CCue9LRI671oLRcPz7/0n
+	EeQHxpoK7V1diHe/VDtMgNat+5fbczjHOaiQZoEU1dGPr0i13bLtFLbYckKQ8Ce3
+	XrhamGf/gXNpoNmmdyQ98akCJ6PWmTBC1wQ==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 477jbpn8f8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:41:52 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b2c36d3f884so1571604a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:41:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749825711; x=1750430511;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f8LvzWRSramzprfrBFvO2s+C1Hm+tEbtLlKRSfKO3eY=;
+        b=ts3+KLZSla7jtEgwkPaysT3v0+VY+R+kpxNoA8H81lPvp5eRRkVqp1PFw1YuwUlKRA
+         Rqt5sbfzp9WetUasUU1Te5+nVoQA6tSWfDUmN7iCtucndfYHw+Bk6PK3f3YutFnOJvt7
+         3uPh1xjhgEynHtS2MU9vQgWr49+vOkxnDNfRNDtjzc/FAfczlEkyWjQZyOW1BkQ2qBtK
+         8G5NFwhPw2NvzWPdPyzfjdsqetxKv6+JUzINO29Wu0wLeGqjNQW658uY+fLuTt2eCOo0
+         jJe9HwSjQQ32dIn72XwjxrVNnjv11O17aZEO706tIxNm/hM+5oClzNEceb6x7W6JT2un
+         eYiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfy8f9jJhf6k/xI4HgrrWE5qDV8wb0/mbYdQga0mAijW4pWu2kUUAh4dMJhhKPG1Z4rwj2VmMhnh6Nd68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAImCUG5pfmdBUdXANaINpMjTBknvEz2fnmKdbFzAb4GNDEei9
+	1iHAg87CFLIyCsjzBTWnqPpicF2PxpS5hu4U1khKw6OcD4NfpK1amLvHIZisLCRIVIkrRC38/Bs
+	pWlb/aNjiPJ7Nae/g6EVRmGlikgec9KyQ06rUvFCDquUt2bdvC59zP7A/L91ElmtUf8rDwKAc2m
+	o=
+X-Gm-Gg: ASbGncvsZjRx33TO08wgD5Qi5HB3loP/55dfDZLN8g+QcKsMJPjzedfSv8QeEsVh8Fx
+	hvbGUiAjFRL6X+aJQK/6jsIoJptEZ/MlLChnfJ9EcG0aNnk5OfjKeDhox0wYFmlcuJ9nP0bQxqq
+	wg/8GKUM1oym/FstZSmgDJSAOdvyk6DEYt53uKfNxCY95TORhwUxOpbHPhs97z/acqoSm19PDlK
+	qVbjtdPo44UkBSwB+ZETt0HKswfHHK5aQSOvg23gmFoYt6Jc9LnK3wJQ/Dg0vcl/Ds/QHWqPtEB
+	Km3n8mYTZnqYHF+51AGQHmivjL/Qww49
+X-Received: by 2002:a05:6a20:748c:b0:21f:a883:d1dd with SMTP id adf61e73a8af0-21facbdebf9mr4553245637.14.1749825710759;
+        Fri, 13 Jun 2025 07:41:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7GnAOt+z7rv+BSeU7ZHDxFM735EmwOZ4MxONhEpinIvFL7k6YOrMe2Cgq92R1/zv8XQne8A==
+X-Received: by 2002:a05:6a20:748c:b0:21f:a883:d1dd with SMTP id adf61e73a8af0-21facbdebf9mr4553202637.14.1749825710353;
+        Fri, 13 Jun 2025 07:41:50 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1680c5fsm1775491a12.49.2025.06.13.07.41.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 07:41:50 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm: Fix inverted WARN_ON() logic
+Date: Fri, 13 Jun 2025 07:41:44 -0700
+Message-ID: <20250613144144.27945-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GiFAnyVgEONdrGXM"
-Content-Disposition: inline
-In-Reply-To: <20250613130207.8560-2-victor.duicu@microchip.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: x8HWGARxb57_wJXrziWAXzp7V-3SDDUH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDEwNiBTYWx0ZWRfX85CrwCx4pwl1
+ lEXK5QfYnCfuiVQ1S3heA+S6qijDrW+31qBuNVHnMgHOkEldsCbQ8Ct47TQajNrAwFdbha7rILi
+ 07mvmJZvbfxgG/BKOkxK6qTZ9VUvGGqtC6ui6tNwi1X1sBKpEEuzw+RP38wkykWBw9/vXimKv0f
+ VPuUQezx3NzMu05xkXaOJCbkpzUXCHw1/yzgDRBKC4nWUACGKEw0SC9v1tcgQV2bSt+tW5Z0TOZ
+ iy6lPivYErl7GuLhJxm7nshW9cfJBm5Z49Ip//dtk3k35uEtWAXSlb7xZqAoCfJQ6JU4OQ4vHC7
+ aDBGKCV4NOHdzWR+unCrG0VIwB64YT3rJjWBEaXo0Nqak+tUS/r535lOjF40iZ0rGwTjXsHuv6w
+ W/dfgYGBAQ26TxSV3B7FgxfDyOzB20ffwGkERLLv3iYYyAZrFFSoiGtG/Td2bqpjtK6ahIhh
+X-Proofpoint-ORIG-GUID: x8HWGARxb57_wJXrziWAXzp7V-3SDDUH
+X-Authority-Analysis: v=2.4 cv=OLgn3TaB c=1 sm=1 tr=0 ts=684c38b0 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
+ a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=4MAclHcQAAAA:8 a=r-1N9bTl5XODNADl1y4A:9
+ a=x9snwWr2DeNwDh03kgHS:22 a=cvBusfyB2V15izCimMoJ:22 a=6vtlOZhwcO7ZS_iRoh4Z:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-13_01,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
+ malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506130106
 
+We want to WARN_ON() if info is NULL.
 
---GiFAnyVgEONdrGXM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Suggested-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Fixes: 0838fc3e6718 ("drm/msm/adreno: Check for recognized GPU before bind")
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+---
+ drivers/gpu/drm/msm/adreno/adreno_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, Jun 13, 2025 at 04:02:06PM +0300, victor.duicu@microchip.com wrote:
-> From: Victor Duicu <victor.duicu@microchip.com>
->=20
-> This is the devicetree schema for Microchip MCP998X/33 and
-> MCP998XD/33D Automotive Temperature Monitor Family.
->=20
-> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
-> ---
->  .../iio/temperature/microchip,mcp9982.yaml    | 211 ++++++++++++++++++
->  1 file changed, 211 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/temperature/mic=
-rochip,mcp9982.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,=
-mcp9982.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,=
-mcp9982.yaml
-> new file mode 100644
-> index 000000000000..ec939d463612
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982=
-=2Eyaml
-> @@ -0,0 +1,211 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9982.yam=
-l#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip MCP998X/33 and MCP998XD/33D Multichannel Automotive
-> +       Temperature Monitor Family
-> +
-> +maintainers:
-> +  - Victor Duicu <victor.duicu@microchip.com>
-> +
-> +description: |
-> +  The MCP998X/33 and MCP998XD/33D family is a high-accuracy 2-wire multi=
-channel
-> +  automotive temperature monitor.
-> +  The datasheet can be found here:
-> +    https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/Prod=
-uctDocuments/DataSheets/MCP998X-Family-Data-Sheet-DS20006827.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - microchip,mcp9933
-> +      - microchip,mcp9933d
-> +      - microchip,mcp9982
-> +      - microchip,mcp9982d
-> +      - microchip,mcp9983
-> +      - microchip,mcp9983d
-> +      - microchip,mcp9984
-> +      - microchip,mcp9984d
-> +      - microchip,mcp9985
-> +      - microchip,mcp9985d
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  interrupt-names:
-> +    description:
-> +      -alert-therm is used to handle a HIGH or LOW limit.
-> +      -therm-addr is used to handle a THERM limit on chips
-> +      without "D" in the name.
-> +      -sys-shutdown is used to handle a THERM limit on chips
-> +      with "D" in the name.
-> +    items:
-> +      - const: alert-therm
-> +      - const: therm-addr
-> +      - const: sys-shutdown
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  microchip,enable-anti-parallel:
-> +    description:
-> +      Enable anti-parallel diode mode operation.
-> +      MCP9984/84D/85/85D and MCP9933/33D support reading two external di=
-odes
-> +      in anti-parallel connection on the same set of pins.
-> +    type: boolean
-> +
-> +  microchip,beta1:
-> +    description:
-> +      Set beta compensation value for external channel 1.
-> +      <0> 0.050
-> +      <1> 0.066
-> +      <2> 0.087
-> +      <3> 0.114
-> +      <4> 0.150
-> +      <5> 0.197
-> +      <6> 0.260
-> +      <7> 0.342
-> +      <8> 0.449
-> +      <9> 0.591
-> +      <10> 0.778
-> +      <11> 1.024
-> +      <12> 1.348
-> +      <13> 1.773
-> +      <14> 2.333
-> +      <15> Diode_Mode
-> +      <16> Auto
-> +      - Diode_Mode is used when measuring a discrete thermal diode
-> +      or a CPU diode that functions like a discrete thermal diode.
-> +      - Auto enables beta auto-detection. The chip monitors
-> +      external diode/transistor and determines the optimum
-> +      setting.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 16
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+index 0d12454b1f2e..5c52d392427f 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_device.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+@@ -217,7 +217,7 @@ static int adreno_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	info = adreno_info(config.chip_id);
+ 	/* We shouldn't have gotten this far if we don't recognize the GPU: */
+-	if (!WARN_ON(info))
++	if (WARN_ON(!info))
+ 		return -ENXIO;
+ 
+ 	config.info = info;
+-- 
+2.49.0
 
-Missing max/min constraints on the property.
-
-> +
-> +  microchip,beta2:
-> +    description:
-> +      Set beta compensation value for external channel 2.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 16
-> +
-> +  microchip,resistance-comp-ch1-2-enable:
-> +    description:
-> +      Enable resistance error correction(REC) for external channels 1 an=
-d 2.
-> +      The chip internal hardware counterbalances the parasitic resistanc=
-e in
-> +      series with the external diodes. The compensation can be activated=
- or
-> +      disabled in hardware for both channels 1 and 2 at the same time.
-> +    type: boolean
-
-On the previous version I objected to this wording for the property,
-where it is being used as an enable, and instead said that it should
-indicate the presence of the parasitic resistance. Did I miss some sort
-of new justification for it still talking about being an enable?
-
-
-> +  microchip,resistance-comp-ch3-4-enable:
-> +    description:
-> +      Enable resistance error correction(REC) for external channels 3 an=
-d 4.
-> +      The chip internal hardware counterbalances the parasitic resistanc=
-e in
-> +      series with the external diodes. The compensation can be activated=
- or
-> +      disabled in hardware for both channels 3 and 4 at the same time.
-> +    type: boolean
-
-Cheers,
-Conor.
-
---GiFAnyVgEONdrGXM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEw4VAAKCRB4tDGHoIJi
-0mwmAQDew5SpZ30kpLSUmEH21jXuflCEUQxJr1shipMAysEfxQD/VU4aDW13CHd/
-NSLDi+a1WL4+sorUxL4dtXWJmVWKdQs=
-=e2Hw
------END PGP SIGNATURE-----
-
---GiFAnyVgEONdrGXM--
 
