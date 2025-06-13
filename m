@@ -1,146 +1,199 @@
-Return-Path: <linux-kernel+bounces-685158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1C4AD84E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:50:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683E5AD84AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED75B3A8C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565A1189F139
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198A22E2EF4;
-	Fri, 13 Jun 2025 07:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC782ED851;
+	Fri, 13 Jun 2025 07:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="L7cOZvYd"
-Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jwp2Xiuy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QGZp6vkG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601E82E1743
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749B92ECE87;
+	Fri, 13 Jun 2025 07:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800316; cv=none; b=K3M/y+6TAMfKF2ic9Ztq+i7AITzFEFtjELgvxe/0SfjNlBPf7QPbJ3/kouXsAG9smR8SqroFrYJpcU6fpTUxz5UKm7EB2yPqKXegbreaKTkEqzhZyokQM4it90ezJ9ToE1Wc+70eZnuc+dVGk2OlDobkNyE/R202Tr5NGI9WUss=
+	t=1749800256; cv=none; b=IRnUsOoa/tkS93r+fOI9vm/hC7rbdpKgFzP6AFuGwEaMzYYXGqBgqbpm4wCxDURV10i5lDnI/6cIW6Mx5zZBkgwHQJN+lLSEAqWV4sDtswwbX8cbSEYLemZCcQBKWWk2rF1mFMsd82umkliHEDMRbL9Iu+A/8tgJnJ1fL/31fDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800316; c=relaxed/simple;
-	bh=6HqDFnBo7ijranK3V4U3MjjxmMiZ6DlCz2pS276dmwQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U1nJDZkhnDZaY1edFQHRdYbsR91is5DYbKqclJSwsRAhW5DEwY9eP6lUzH50C6IKuYJfyaZJYTpX6mjsy5lU/lKqoNG4c/LwEz/0JcTpZ9z2oYlhBy+rXjlAXlFHJY4ux/i+7LCoq2pYT0B8IeTJvDdbTCbeQB9E8weJ2cqPXJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com; spf=pass smtp.mailfrom=jp.fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=L7cOZvYd; arc=none smtp.client-ip=68.232.139.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jp.fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1749800314; x=1781336314;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6HqDFnBo7ijranK3V4U3MjjxmMiZ6DlCz2pS276dmwQ=;
-  b=L7cOZvYdnmUb5fHrPkuAM0SL14xekCwhys+pWIlT+vMYZRl1qEgIB1Qh
-   8ZTGXnMcZoqjNfsBGygSc7bc/X9tuLqDqJPy5iH/dS9yCKXfwTnv4wnHZ
-   fAhy1jF/3F1AZYbBV3kSnGNeONttg6ekFMLKYw/cWdWdGFN1EDXxghbUl
-   TpqED0Q64H4c6GnPKgK44lgq0Pad+Pkc7CUAfUha4gTlD1KPzaSLwjWml
-   4rHoucP05dFyjVuITsHpQ1JyD0UMT8vRgv/yN5vcvc4DqXKbdqYb/lWe5
-   iXnXEhd1/JQ04N9edfSHPEJ2/W4T0KIif6iIGxP9TkP1yxiP74/TIkatZ
-   Q==;
-X-CSE-ConnectionGUID: P5n+WB9xS9GnJ/Zg9/BVlA==
-X-CSE-MsgGUID: h1z9DBoKT2Cn2M5obHXryg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="205729535"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744038000"; 
-   d="scan'208";a="205729535"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 16:38:26 +0900
-Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
-	by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id CAC3AD4C24
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:38:23 +0900 (JST)
-Received: from yto-om3.fujitsu.com (yto-om3.o.css.fujitsu.com [10.128.89.164])
-	by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 88EA2BF3C9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:38:23 +0900 (JST)
-Received: from sm-x86-amd03.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by yto-om3.fujitsu.com (Postfix) with ESMTP id 58A9C400585A4;
-	Fri, 13 Jun 2025 16:38:22 +0900 (JST)
-From: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Martin <dave.martin@arm.com>,
-	fenghuay@nvidia.com,
-	peternewman@google.com,
-	Babu Moger <Babu.Moger@amd.com>,
-	Borislav Petkov <bp@alien8.de>,
-	shameerali.kolothum.thodi@huawei.com,
-	bobo.shaobowang@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	baolin.wang@linux.alibaba.com,
-	lcherian@marvell.com,
-	amitsinght@marvell.com,
-	Ingo Molnar <mingo@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	H Peter Anvin <hpa@zytor.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	dfustini@baylibre.com,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] fs/resctrl: Optimize code in rdt_get_tree()
-Date: Fri, 13 Jun 2025 16:37:31 +0900
-Message-ID: <20250613073733.3642679-2-tan.shaopeng@jp.fujitsu.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250613073733.3642679-1-tan.shaopeng@jp.fujitsu.com>
-References: <20250613073733.3642679-1-tan.shaopeng@jp.fujitsu.com>
+	s=arc-20240116; t=1749800256; c=relaxed/simple;
+	bh=00NIIfZ7+keM4UV9r3DcW46o5InN5EA9WABgV6amQn0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qpKQyAArPczqtloPsgdTjlI5fkujNd5BCsMtORfJjatXxrJECkJRzUBfOKfs22D/GKB3cQq18u1T+fcZ15i5YeCJQWPJxUa2xC9T5neAOtiAZUz7xvBx5dtTqRoTE6E5zw7/cgHokgVYaXUZMfYA+vKQnHmWeMr+oUy9eAPsXAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jwp2Xiuy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QGZp6vkG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 13 Jun 2025 07:37:32 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749800253;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zNjH+GVsWmk7ViGikQ1YzStVw8QAYUsFELZTb0pdKr4=;
+	b=jwp2XiuyiKJKhnpMHKXdLkpMr9/ppETJzG7UkUCwK/B8VsM51TqEnOstbwJsWqKqh72Cps
+	bwOnVrn/LubIvmpEgkZCdVa/Jq4UEEnb3ylTNai3oIlKAN8vVDczat7XxbTSV0PS+IKkiL
+	NyhoJg0NaVZ/3PwGhNLB6Jx2mSYT+tOniWkU4hxCVS1/fpcn+8Xglfnqe8LvKOiJUW+xsN
+	c/mKzh/0rJ/9rU1yfvwNcXpUaNcp7V0WmjP8SFuoV1jY2fj6QZrZoDqHjHJp8ZJMJL0V0W
+	uHTYp2LpcOsGC5099Uus16MZqaCiMd9vMWAMGENfpXY2iWVzuu7sw2xoccx9vQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749800253;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zNjH+GVsWmk7ViGikQ1YzStVw8QAYUsFELZTb0pdKr4=;
+	b=QGZp6vkGzKiCe2NZ0fMWiEjkpTBSChf/8EHMvFtncrVCspsNjO7lGOJktFaZn25RG1uVDp
+	0StTGCr/N7EUZPDg==
+From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: Clean up and standardize #if/#else/#endif
+ markers in sched/pelt.[ch]
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250528080924.2273858-13-mingo@kernel.org>
+References: <20250528080924.2273858-13-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174980025213.406.826763060822088939.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-schemata_list_destroy() has to be called if schemata_list_create() fails.
+The following commit has been merged into the sched/core branch of tip:
 
-rdt_get_tree() calls schemata_list_destroy() in two different ways: 
-directly if schemata_list_create() itself fails and 
-on the exit path via the out_schemata_free goto label.
+Commit-ID:     311bb3f7b78e944e831ffb07cb58455b47bf2269
+Gitweb:        https://git.kernel.org/tip/311bb3f7b78e944e831ffb07cb58455b47bf2269
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Wed, 28 May 2025 10:08:53 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 13 Jun 2025 08:47:17 +02:00
 
-Remove schemata_list_destroy() call on schemata_list_create() failure.
-Use existing out_schemata_free goto label instead.
+sched: Clean up and standardize #if/#else/#endif markers in sched/pelt.[ch]
 
-Signed-off-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+ - Use the standard #ifdef marker format for larger blocks,
+   where appropriate:
+
+        #if CONFIG_FOO
+        ...
+        #else /* !CONFIG_FOO: */
+        ...
+        #endif /* !CONFIG_FOO */
+
+ - Fix whitespace noise and other inconsistencies.
+
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lore.kernel.org/r/20250528080924.2273858-13-mingo@kernel.org
 ---
- fs/resctrl/rdtgroup.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ kernel/sched/pelt.c |  4 ++--
+ kernel/sched/pelt.h | 12 ++++++------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 1beb124e25f6..592d4f69fce9 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -2608,10 +2608,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 		goto out_root;
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index 09be6a8..fa83bba 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -414,7 +414,7 @@ int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
  
- 	ret = schemata_list_create();
--	if (ret) {
--		schemata_list_destroy();
--		goto out_ctx;
--	}
-+	if (ret)
-+		goto out_schemata_free;
+ 	return 0;
+ }
+-#endif
++#endif /* CONFIG_SCHED_HW_PRESSURE */
  
- 	ret = closid_init();
- 	if (ret)
-@@ -2683,7 +2681,6 @@ static int rdt_get_tree(struct fs_context *fc)
- 	closid_exit();
- out_schemata_free:
- 	schemata_list_destroy();
--out_ctx:
- 	rdt_disable_ctx();
- out_root:
- 	rdtgroup_destroy_root();
--- 
-2.43.5
-
+ #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+ /*
+@@ -467,7 +467,7 @@ int update_irq_load_avg(struct rq *rq, u64 running)
+ 
+ 	return ret;
+ }
+-#endif
++#endif /* CONFIG_HAVE_SCHED_AVG_IRQ */
+ 
+ /*
+  * Load avg and utiliztion metrics need to be updated periodically and before
+diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+index 1959207..a5d4933 100644
+--- a/kernel/sched/pelt.h
++++ b/kernel/sched/pelt.h
+@@ -20,7 +20,7 @@ static inline u64 hw_load_avg(struct rq *rq)
+ {
+ 	return READ_ONCE(rq->avg_hw.load_avg);
+ }
+-#else
++#else /* !CONFIG_SCHED_HW_PRESSURE: */
+ static inline int
+ update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+ {
+@@ -31,7 +31,7 @@ static inline u64 hw_load_avg(struct rq *rq)
+ {
+ 	return 0;
+ }
+-#endif
++#endif /* !CONFIG_SCHED_HW_PRESSURE */
+ 
+ #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+ int update_irq_load_avg(struct rq *rq, u64 running);
+@@ -179,15 +179,15 @@ static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+ 
+ 	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
+ }
+-#else
++#else /* !CONFIG_CFS_BANDWIDTH: */
+ static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
+ static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+ {
+ 	return rq_clock_pelt(rq_of(cfs_rq));
+ }
+-#endif
++#endif /* !CONFIG_CFS_BANDWIDTH */
+ 
+-#else
++#else /* !CONFIG_SMP: */
+ 
+ static inline int
+ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+@@ -236,6 +236,6 @@ static inline void
+ update_idle_rq_clock_pelt(struct rq *rq) { }
+ 
+ static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
+-#endif
++#endif /* !CONFIG_SMP */
+ 
+ #endif /* _KERNEL_SCHED_PELT_H */
 
