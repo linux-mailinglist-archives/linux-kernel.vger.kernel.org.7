@@ -1,86 +1,217 @@
-Return-Path: <linux-kernel+bounces-684864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91B6AD8126
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCDEAD812A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019BF3ACEAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC0C171813
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3B724503B;
-	Fri, 13 Jun 2025 02:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2799241682;
+	Fri, 13 Jun 2025 02:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WQINv2Fs"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gCLGVge/"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7335123BD0E;
-	Fri, 13 Jun 2025 02:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C213823BD0E;
+	Fri, 13 Jun 2025 02:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749782500; cv=none; b=a5OXqqZTG9kTm04m/QMlpxqmc1/Td63y/B2fOCWWkpOepB+y3Ak+uiBcW+K5P+NW1YG/ahI0XB3Akpq6Jz/icta+WwJfXcdZ8KxEXTm7gLgqY/9H8cRVFvexSsug0pejh/qb7rVQ5Eod8i8456ppRp0AVHOgf3KGEwApi2+DWv8=
+	t=1749782537; cv=none; b=bfUTD9FvycDlB6eEQoFJ+ytF9QsyeH8JKeqCGmjCn0awP56AGiXw/joq45O/WaNo3vREmKT507jyXjXKH9hiEEAJOHIPspOy/2hKSI8QAlTxC5EeJyePAChd2IBaiywnNCa1mCpKVIg8RFPgi1nCWTODbyjMZJchbWiw65qx2OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749782500; c=relaxed/simple;
-	bh=geS8XlZRiHCVw4EwzTvT0372eXrdMKICrknqgpXDSHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y575QFLiX/oyi+RcCaaF2Zjw9vVaI28Pp98vEtZxqOB28UTTbIacGp4mMSKlRJThgqJaxQtWWB4cDyGHRdX3V4Pfburs+NnsyCSwdcsbic8V4MMGLYafHwF7m3X3TCcB3F5fCMizOMyG54FPFZDV37Sz+Z5CLtYe/G6j8zRqf60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WQINv2Fs; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zOL4rBZFTivw87SF4aKWLQKacaGt47gTX8zDfWyLzn8=; b=WQINv2FskLl4oWiag2Tl4gnunG
-	ebY5JG1yfFMoI13Xuyl3SLJpDqv7hjtKQyJGoYTD+dE52gA3e59Btu5PaIBwWmca17P2CiWatCisM
-	p9laA2d8s2x/KyPdBydg/CKi24nSo12oDs0kf6+gpgu1B8evDu0o7K68LcOzXMEb/hAlmnNpMt7Ld
-	DUbdbKPVYDCNKKuWkXVUF6zZGRINPs7kVqziL5CjsKCKWJ2cat0KjIlQ+caf9J4haEpANoT1nkA7g
-	RJjX9+C1Y7FrMcxOQkyaSi0pwxxFYY2QwhCe1L2X8d+Q/kR10f3kTy78sF5wHZuQfCoCxe+2btuMN
-	BQsSGuqw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPuMI-000000053y9-1t9D;
-	Fri, 13 Jun 2025 02:41:34 +0000
-Date: Fri, 13 Jun 2025 03:41:34 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>,
-	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] proc_sysctl: Fix up ->is_seen() handling
-Message-ID: <20250613024134.GF1647736@ZenIV>
-References: <>
- <20250613020111.GE1647736@ZenIV>
- <174978225309.608730.8864073362569294982@noble.neil.brown.name>
+	s=arc-20240116; t=1749782537; c=relaxed/simple;
+	bh=pqYRi5rsk0YEszupuD4KYmkxKG16OeKfIyH7C27eGoY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kGokbXOcntozv+WPSsHG32IC0YI3AslTY03U7S7FQqNbQcfH7t8vPHWq60Yccq0rqO9sXZgpnPvWly9CACnqe8ba2OCD5ZwWxkXqIGrsYNt3NeUasoEHC0wCXKcMHhkZQkY7gEC2pIgp0AWLelqi28U/htPTpA1D/jw6XvOck7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gCLGVge/; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749782525; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=5315MvZb0AmJ1EAMaqLXjh4G4D6FqiZehEP9DArwnIU=;
+	b=gCLGVge/+e6yz2RDY+ZQl34poWPRvFkzYIHfUCH8rYr54CSiVr2s3BLv/9aK3PeSSK/o/zqgDgwC1QP62suZfaCazQbSWz6NUnv0g5PVqS81L8J9QcMgwhf4AK/STStS9XDfBxVz/6CYWdRFQLU19hPZ+7oeM6JF1PDGxpp/lA4=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wdisood_1749782522 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Jun 2025 10:42:03 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Bijan Tabatabai <bijan311@gmail.com>,  SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.com,  linux-mm@kvack.org,  linux-doc@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  akpm@linux-foundation.org,
+  corbet@lwn.net,  david@redhat.com,  ziy@nvidia.com,
+  matthew.brost@intel.com,  joshua.hahnjy@gmail.com,  rakie.kim@sk.com,
+  byungchul@sk.com,  gourry@gourry.net,  apopple@nvidia.com,
+  bijantabatab@micron.com,  venkataravis@micron.com,  emirakhur@micron.com,
+  ajayjoshi@micron.com,  vtavarespetr@micron.com
+Subject: Re: [RFC PATCH 0/4] mm/damon: Add DAMOS action to interleave data
+ across nodes
+In-Reply-To: <20250612234942.3612-1-sj@kernel.org> (SeongJae Park's message of
+	"Thu, 12 Jun 2025 16:49:42 -0700")
+References: <20250612234942.3612-1-sj@kernel.org>
+Date: Fri, 13 Jun 2025 10:41:50 +0800
+Message-ID: <875xh0747l.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174978225309.608730.8864073362569294982@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=ascii
 
-On Fri, Jun 13, 2025 at 12:37:33PM +1000, NeilBrown wrote:
+SeongJae Park <sj@kernel.org> writes:
 
-> If two threads in the same namespace look up the same name at the same
-> time (which previously didn't exist), they will both enter
-> d_alloc_parallel() where neither will notice the other, so both will
-> create and install d_in_lookup() dentries, and then both will call
-> ->lookup, creating two identical inodes.
-> 
-> I suspect that isn't fatal, but it does seem odd.
-> 
-> Maybe proc_sys_compare should return 0 for d_in_lookup() (aka !inode)
-> dentries, and then proc_sys_revalidate() can perform the is_seen test
-> and return -EAGAIN if needed, and __lookup_slow() and others could
-> interpret that as meaning to "goto again" without calling
-> d_invalidate().
+> Hi Bijan,
+>
+> On Thu, 12 Jun 2025 13:13:26 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+>
+>> From: Bijan Tabatabai <bijantabatab@micron.com>
+>> 
+>> A recent patch set automatically set the interleave weight for each node
+>> according to the node's maximum bandwidth [1]. In another thread, the patch
+>> set's author, Joshua Hahn, wondered if/how these weights should be changed
+>> if the bandwidth utilization of the system changes [2].
+>
+> Thank you for sharing the background.  I do agree it is an important question.
+>
+>> 
+>> This patch set adds the mechanism for dynamically changing how application
+>> data is interleaved across nodes while leaving the policy of what the
+>> interleave weights should be to userspace. It does this by adding a new
+>> DAMOS action: DAMOS_INTERLEAVE. We implement DAMOS_INTERLEAVE with both
+>> paddr and vaddr operations sets. Using the paddr version is useful for
+>> managing page placement globally. Using the vaddr version limits tracking
+>> to one process per kdamond instance, but the va based tracking better
+>> captures spacial locality.
+>> 
+>> DAMOS_INTERLEAVE interleaves pages within a region across nodes using the
+>> interleave weights at /sys/kernel/mm/mempolicy/weighted_interleave/node<N>
+>> and the page placement algorithm in weighted_interleave_nid via
+>> policy_nodemask.
+>
+> So, what DAMOS_INTERLEAVE will do is, migrating pages of a given DAMON region
+> into multiple nodes, following interleaving weights, right?
 
-Umm...  Not sure it's the best solution; let me think a bit.  Just need
-to finish going through the ported rpc_pipefs series for the final look
-and posting it; should be about half an hour or so...
+Hi, Bijan,
+
+It's hard for me to understand what you want to do in your original
+patch description.  SeongJae's description is helpful.  So, can you add
+more description in the future version?
+
+So, you will migrate allocated pages to follow new weight?  How to
+interact with the weight specified by users explicitly?  Usually we will
+respect explicit user policy.
+
+> We already have
+> DAMOS actions for migrating pages of a given DAMON region, namely
+> DAMOS_MIGRATE_{HOT,COLD}.  The actions support only single migration target
+> node, though.  To my perspective, hence, DAMOS_INTERLEAVE looks like an
+> extended version of DAMOS_MIGRATE_{HOT,COLD} for flexible target node
+> selections.  In a way, DAMOS_INTERLEAVE is rather a restricted version of
+> DAMOS_MIGRATE_{HOT,COLD}, since it prioritizes only hotter regions, if I read
+> the second patch correctly.
+>
+> What about extending DAMOS_MIGRATE_{HOT,COLD} to support your use case?  For
+> example, letting users enter special keyword, say, 'weighted_interleave' to
+> 'target_nid' DAMON sysfs file.  In the case, DAMOS_MIGRATE_{HOT,COLD} would
+> work in the way you are implementing DAMOS_INTERLEAVE.
+>
+>> We chose to reuse the mempolicy weighted interleave
+>> infrastructure to avoid reimplementing code. However, this has the awkward
+>> side effect that only pages that are mapped to processes using
+>> MPOL_WEIGHTED_INTERLEAVE will be migrated according to new interleave
+>> weights. This might be fine because workloads that want their data to be
+>> dynamically interleaved will want their newly allocated data to be
+>> interleaved at the same ratio.
+>
+> Makes sense to me.  I'm not very familiar with interleaving and memory policy,
+> though.
+>
+>> 
+>> If exposing policy_nodemask is undesirable,
+>
+> I see you are exposing it on include/linux/mempolicy.h on the first patch of
+> this series, and I agree it is not desirable to unnecessarily expose functions.
+> But you could reduce the exposure by exporting it on mm/internal.h instead.
+> mempolicy maitnainers and reviewers who you kindly Cc-ed to this mail could
+> give us good opinions.
+>
+>> we have two alternative methods
+>> for having DAMON access the interleave weights it should use. We would
+>> appreciate feedback on which method is preferred.
+>> 1. Use mpol_misplaced instead
+>>   pros: mpol_misplaced is already exposed publically
+>>   cons: Would require refactoring mpol_misplaced to take a struct vm_area
+>>   instead of a struct vm_fault, and require refactoring mpol_misplaced and
+>>   get_vma_policy to take in a struct task_struct rather than just using
+>>   current. Also requires processes to use MPOL_WEIGHTED_INTERLEAVE.
+>
+> I feel cons is larger than pros.  mpolicy people's opinion would matter more,
+> though.
+>
+>> 2. Add a new field to struct damos, similar to target_nid for the
+>> MIGRATE_HOT/COLD schemes.
+>>   pros: Keeps changes contained inside DAMON. Would not require processes
+>>   to use MPOL_WEIGHTED_INTERLEAVE.
+>>   cons: Duplicates page placement code. Requires discussion on the sysfs
+>>   interface to use for users to pass in the interleave weights.
+>
+> I agree this is also somewhat doable.  In future, we might want to implement
+> this anyway, for non-global and flexible memory interleaving.  But if memory
+> policy people are ok with reusing policy_nodemask(), I don't think we need to
+> do this now.
+>
+>> 
+>> This patchset was tested on an AMD machine with a NUMA node with CPUs
+>> attached to DDR memory and a cpu-less NUMA node attached to CXL memory.
+>> However, this patch set should generalize to other architectures and number
+>> of NUMA nodes.
+>
+> I show the test results on the commit messages of the second and the fourth
+> patches.  In the next version, letting readers know that here would be nice.
+> Also adding a short description of what you confirmed with the tests here
+> (e.g., with the test we confirmed this patch functions as expected [and
+> achieves X % Y metric wins]) would be nice.
+>
+>> 
+>> Patches Sequence
+>> ________________
+>> The first patch exposes policy_nodemask() in include/linux/mempolicy.h to
+>> let DAMON determine where a page should be placed for interleaving.
+>> The second patch implements DAMOS_INTERLEAVE as a paddr action.
+>> The third patch moves the DAMON page migration code to ops-common, allowing
+>> vaddr actions to use it.
+>> Finally, the fourth patch implements a vaddr version of DAMOS_INTERLEAVE.
+>
+> I'll try to take look on code and add comments if something stands out, but
+> let's focus on the high level discussion first, especially whether to implement
+> this as a new DAMOS action, or extend DAMOS_MIGRATE_{HOT,COLD} actions.
+>
+> I think it would also be nice if you could add more explanation about why you
+> picked DAMON as a way to implement this feature.  I assume that's because you
+> found opportunities to utilize this feature in some access-aware way or
+> utilizing DAMOS features.  I was actually able to imagine some such usages.
+> For example, we could do the re-interleaving for hot or cold pages of specific
+> NUMA nodes or specific virtual address ranges first to make interleaving
+> effective faster.
+>
+> Also we could apply a sort of speed limit for the interleaving-migration to
+> ensure it doesn't consume memory bandwidth too much.  The limit could be
+> arbitrarily user-defined or auto-tuned for specific system metrics value (e.g.,
+> memory bandwidth balance?).
+>
+> If you have such use case in your mind or your test setups, sharing those here
+> or on the next versions of this would be very helpful for reviewers.
+>
+>> 
+>> [1] https://lore.kernel.org/linux-mm/20250520141236.2987309-1-joshua.hahnjy@gmail.com/
+>> [2] https://lore.kernel.org/linux-mm/20250313155705.1943522-1-joshua.hahnjy@gmail.com/
+
+---
+Best Regards,
+Huang, Ying
 
