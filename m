@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-685565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60911AD8B60
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:56:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB36AD8A23
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8BB163574
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:56:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE1D3B9CE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D485A2E1737;
-	Fri, 13 Jun 2025 11:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57D42D540C;
+	Fri, 13 Jun 2025 11:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsx6/CLA"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZlWlYN3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B3C2D5C94;
-	Fri, 13 Jun 2025 11:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6591E5B65;
+	Fri, 13 Jun 2025 11:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749815735; cv=none; b=O6Pt/o77rzYqfQoiBFUT9ORMm88Ppgek7p2hUo9bns1yhYiNGMoBdEalQ8a0AP5rg86sQZVrNP1wdlpbRKUqSOY5KpraLcaMMP5bwwuLRPI35Td7Iny1V2hPiUneLJxQ4EDe2XEyujE3SsO6vWzgUl3ZteqLLj4uETvostullck=
+	t=1749813291; cv=none; b=VNmXnqoG+rovGh2NYv6Q5lMGp+jPIOD08eEPLMbE2aYnQnqxT0TH8ol1aSqmVj+T/qG7yz07VrUHhTYjXdwj85HckU2I69cOM1eiy/aiqDKZWw1tkih+RRz7us6B5W+R3+0qojdTi+t2Ma340PFPMavjZM60bBIL/r9NH2ofXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749815735; c=relaxed/simple;
-	bh=39J8B/it+yKmHYIqv06bQIDCskhQbpop8t56XJh97As=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=NRws+Ma73F5zbhtWfq+xj0cpIhQKhsErDnuzkIcH2Dr3MWGSOIg4j2elpXjU4KDh4MbIR0KsLncpWSb0za0yHpnLlcMKNy93f8mMAmKF8sQPtYXAIS/lFtkf+WhBiV3jWigzyNRufN2Xosw/JroFitWx62JXCaQRTJ33HgeQMQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gsx6/CLA; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a3798794d3so1954912f8f.1;
-        Fri, 13 Jun 2025 04:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749815731; x=1750420531; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1JJXFHi9ldlQPLqupON6xlA5LEI029g70pUzRWZNKyU=;
-        b=gsx6/CLA3wUh4qzsSFVoyYoJTzCGcaYqQX7jkLru6VrKrwFuIVBJNgy9wer/weqgjO
-         UJSBonkdhKsCiU9qtYmScIKS46+bfoEt1qaai3LU4B+RoWjYzSUguRyr9bshXU0Oh8aK
-         +mbzHO+cGbofk4F66W810o/Yy7WMnqAP76yQOiEpDBYofyIqJeQJ96kh+jEZ3LRyI0v4
-         gPd/67Q0O4m8opiWNY9oXPQlNOD+AJpiqyzBdoOq+/fFD9yKliTuqLFhMOC9BOAqXbXd
-         kZ74f+YfGfQkFY+XBWWqV0JibJlt07tq5RMVkQcdyg5oH9V0FvhtwXqy6+XWcJTdEO5U
-         SrZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749815731; x=1750420531;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1JJXFHi9ldlQPLqupON6xlA5LEI029g70pUzRWZNKyU=;
-        b=PLjBvaUolE4Zf+iOXO0Ta2a42h46Vmv9pye5DVpguGrHIzZ6GgmIebFjkhzq28VauC
-         gSNHb5zPdUXOuOQPDQVoqxGWzZ0IYMFQbCKsdJexUulx7/17iwkDzLs1F4xvLRoTEYQL
-         kfnIrxUMncyTuefKP6tG4nDAYRePelhwgN0wZ0A1EJuXHVrpOyxL0fD3bxaxggmsgFvi
-         7T76PsmxLOMubU+woEKqOaBQwBIy3615I3iFF+DRzS8gGNZ9pe8NpUaxb9xl00RVIOvB
-         qX6V4ft+vamEp46AvfFLm1VEmY1SQQuDBGwSLDCo1yIJNdouzoGpH8Sml1s/GKFjjKHc
-         pSEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvBUuk/VYpRsadhpR6xztnjIJcNmR54PnNUxfFSc59BKbFtmfsCNxvgPWMZZYlpDvsp4cccWovDo/I+Ao=@vger.kernel.org, AJvYcCX19prqCcVQbPbBHB0dAFr71IpJ7JldTr5eFJk8N+6gmpPHo+x4dg37/sOnFKmf4mAFDOfCEKx0@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoum3cXWHApPhaik693hZ794tQP6DQp9+l0NRvwBJPeBx84Q24
-	OOhWk7HrW3ERnVvZTE5rSKgPJtISKxOn4Lq0Bws3c+tWAXGlQvQbZXrt
-X-Gm-Gg: ASbGncus8lTJt4iqjTU9SJx4KnMC4ldrJpaUOpqdmep85JyZs7bQuwBPwYBNNO27a7B
-	IOBnwUehis9bJAxdf6o4ybFMwqfcW3JvNRykqMnkC3Y5JX+pqC+Gi8LjdYbzDhKzi368niBiTid
-	Je2DuJUxvZBretjvSI1zNa0ULPzc4/gyK6D/Gy54UdafD2cw3aV3wnDI+hMxc5xFBAVSDM5ucHo
-	1pgf7GMMHTtSHsFatOxYZ9NHFy/m8RColE1hVcYXWG4GV+IrerAgd6GJ7zyEu7BIDNPd6QWcEX+
-	ti5NkLw030cFqsmb4TfpH2ufh7xrnpAdHU/p5fUjxKbRqJHUqpKXyi3n+p5NAUgqFHCvY3/mDLE
-	=
-X-Google-Smtp-Source: AGHT+IH6ZxOKA+nk3cYFyy4sPdDCDQoX/fjJFz1gR0pdr5Ok5AHJOjXsI4WxV20/dTCer5v7vreBMQ==
-X-Received: by 2002:a05:6000:2c0c:b0:3a5:5fa4:a3f7 with SMTP id ffacd0b85a97d-3a5687603d1mr3028691f8f.58.1749815731307;
-        Fri, 13 Jun 2025 04:55:31 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:75e0:f7f7:dffa:561e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b087f8sm2176397f8f.53.2025.06.13.04.55.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 04:55:30 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
- Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
-  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
-  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
-Subject: Re: [PATCH v2 05/12] tools: ynl_gen_rst.py: Split library from
- command line tool
-In-Reply-To: <440956b08faee14ed22575bea6c7b022666e5402.1749723671.git.mchehab+huawei@kernel.org>
-Date: Fri, 13 Jun 2025 12:13:28 +0100
-Message-ID: <m234c3opwn.fsf@gmail.com>
-References: <cover.1749723671.git.mchehab+huawei@kernel.org>
-	<440956b08faee14ed22575bea6c7b022666e5402.1749723671.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1749813291; c=relaxed/simple;
+	bh=FKjY/JRxG0t/4YuVMn8LL5ecTBH2Uc/XSt4a6UISysg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uL7ty714Y+ETEzAOv2A2xOmGh8G5uRXA1DhP4SbCajKXSckmNX9OlwmwgKOs6tEU44nhKk3irvuiKqfOevyfgcADPyitKtdsEzz0+tzQnRV6iSpoXAEEVgGuOzX3/3dV5xoR0hlyqRJF2MxlhbCrZPzyfxPEYvc9NaEPfeN3vkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZlWlYN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A5BBC4CEE3;
+	Fri, 13 Jun 2025 11:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749813290;
+	bh=FKjY/JRxG0t/4YuVMn8LL5ecTBH2Uc/XSt4a6UISysg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OZlWlYN3WxpjO+/2zefu7CdLwjlrfaa2zEbeRs0cNj5NoLHPqrEU7LXsgKEUFyeLv
+	 jfShyjPAv8zSjaCoZQ74EOgscaF862E+pKT/waz8imxo12Q42187vprw+KJngCPz1B
+	 +kEzdJyXq+7tCilQE1+RLsfnYEOg2/+8HHpp1XLt8Wp89LDzAKEXK6/BXrMJs0gOUP
+	 xrsnUv773GFPNNKa4zTYhPUU2BTFdhAiTf45943nuwfm0ZApxrY7VFZycGvnhH6hiA
+	 HdRqZsoemdDnCwkf+0hd8Liz6ciJQ7cLEG1GorNWkuO+/1Ar2RuoLlMN5H5MHiZP2H
+	 SuU/x9nUAErbQ==
+Date: Fri, 13 Jun 2025 12:14:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thangaraj Samynathan <thangaraj.s@microchip.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH v1 for-next] spi: spi_pci1xxxx: Add support for
+ per-instance DMA interrupt vectors
+Message-ID: <4dfcea41-2bfe-4f4a-91fb-94d9b636add7@sirena.org.uk>
+References: <20250613023236.126770-1-thangaraj.s@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FvOZODbIGUHLXI0o"
+Content-Disposition: inline
+In-Reply-To: <20250613023236.126770-1-thangaraj.s@microchip.com>
+X-Cookie: When among apes, one must play the ape.
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-> As we'll be using the Netlink specs parser inside a Sphinx
-> extension, move the library part from the command line parser.
->
-> No functional changes.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  scripts/lib/netlink_yml_parser.py  | 391 +++++++++++++++++++++++++++++
->  tools/net/ynl/pyynl/ynl_gen_rst.py | 374 +--------------------------
+--FvOZODbIGUHLXI0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think the library code should be put in tools/net/ynl/pyynl/lib
-because it is YNL specific code. Maybe call it rst_generator.py
+On Fri, Jun 13, 2025 at 08:02:36AM +0530, Thangaraj Samynathan wrote:
+> Add support for dedicated DMA interrupt vectors for each SPI hardware
+> instance in the pci1xxxx driver. This improves scalability and interrupt
+> handling for systems using multiple SPI instances with DMA.
+
+This doesn't apply against current code, please check and resend.
+
+--FvOZODbIGUHLXI0o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhMCCYACgkQJNaLcl1U
+h9CBXQf/dQVd+pQTA247VlEhTCYeV8vwKkcLvPJzoZRkGCZrk1bGlaHVDFKVdfvp
+1HG44mibqiiE/jTtn1OPcYhDqkeQNbZPl+3Yj5ut3M6I0qPuVMd2rHJqhsY4uBna
+HxygNAnQ40zIg4pQvH7oBMv2YZ6sHcbwlhcy4IpFyIrQJdTCQ2p8Z+clSvGpfpQU
+r9V4HSAez3eScUKLPvqpYhQVlOzwIZerlrlvAPnFfY3FLn85HR78mZ7vQeY4f/1s
+8zaVxUchwwgOPa+uEzvjIHgXfkBQuMoEZFl/QilmvgNQhfBeIaWeQUwS8lezfD0c
+EdkiblKqaZJecCoa5BJVC/57xRx8fA==
+=Q5dk
+-----END PGP SIGNATURE-----
+
+--FvOZODbIGUHLXI0o--
 
