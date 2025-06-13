@@ -1,201 +1,155 @@
-Return-Path: <linux-kernel+bounces-684790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02ECFAD803D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:22:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF957AD8042
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69343AF861
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C061892C7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D151DE8B4;
-	Fri, 13 Jun 2025 01:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6031DE3C8;
+	Fri, 13 Jun 2025 01:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="H8CBEmR2"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023118.outbound.protection.outlook.com [40.107.44.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sopL9OVG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286CF1DE2BC;
-	Fri, 13 Jun 2025 01:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749777723; cv=fail; b=UcVNvIuFMf+xU6/mU4Wyf/EpkZeNPHXTTR5wdYuMTjPH4HokfwaqgiUxj/8/b24LOqJOQnqXs/TMZX8hA2bsYFAEFgCg3HumdVZydQ7+VqB9wbqWsUWC4b14lPj3q1xwp1ngDgW3OL5NcZmy/XkDo16MJSqiFLO3p++PerhK5hc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749777723; c=relaxed/simple;
-	bh=lNCabB8Yj3170PaStTn8UZr8jZ9Gh4SCPdhrDWQDDsU=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PwPsAQyHeFspfOxJdfhe7Gq62kkS5DOeLULXzTANmgZZOz3DmkIr+SLbuxi6QhxroDpgk3MUohmOLdzwEhPy+DzwV7ttOP2WmC1/NFm/nAp3d0fI37JIrQmXl3TmZOqxYii+oTi7UujLeXkgBYsY9PRbKAajhCyz7FBkhpJlqiI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=H8CBEmR2; arc=fail smtp.client-ip=40.107.44.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gxisy5uOnP2Sli/OzuiQMTxO3AlVuLW5/352xz3M5f2Q2Ikgs5Ia2KF1DO1u0D3CixwVb25tnHDIafW6FBkVs2/KfaolR7+/Pv7Fe+Lm3hQKnLZRe/OviFVE7q5aDFVhwLFfHDhIIEJXbrJ5zWk3C0/M7miTa86trGnhcZOKHNiO4aAQUzirF8fQw1hUDZ6vqAn992Jg2Gdi4LhKcFvdVVT9u8HIsDhHxLoIEiAQAQfOUKCN2mgiSMgSfevSGnbSUhJQalvdfbBccN9Zn3Lxc8HHTUOKmuccYhUhvbuDkAszDEC6UjWsA7XuJruDZkB13IutGYNZB8bibhXG8vJi8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lNCabB8Yj3170PaStTn8UZr8jZ9Gh4SCPdhrDWQDDsU=;
- b=DwcNt3t5FSnR8yvm5QtdbHISRl2Mg4zkHdk3AoEUP6SmBIoE6wK8RQrykk3gaqej8GjNEOCfBx+PN6MATKVV2tYzeMZ6ZGIg/gPgi+paXJ5mkeL8IR5Pw8g4ruv8Yu0fL0lwGStyAT5Wq2MrOUFbWNvn2aoxRMDkffnR+LaqpegDKAj7TXt4a4ejrEWK9qDsFxf756Uoi0n550muTPgWXtfnu3i8dS6sMP/4RUl23aWVRHErikeGiy2cDXwweMNa8NK2HUpZ5hPSg+/rzrCPWnXwltD5e+eiB6XuH7t+oLFspr9mt9nuBiWF0NysGlNDg6a7CKWrFJXAhnBMtQm62w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lNCabB8Yj3170PaStTn8UZr8jZ9Gh4SCPdhrDWQDDsU=;
- b=H8CBEmR2l3ar+RXpHP4xx30loOlRtmTJzWuH8xIOFDAk32CP1qLhaVJpkQNJ9TgiO8JQajjzoT8PAJQsgysY7efu9Yq3Tl0y3j/uiCGiJ0AUbHi/2JmxcPwI1bSoSMuAnNpEo40ToovUBw9eyQPTbM+/v4nRUTt1bL3TjGMMajLlDbNG+gidPdnX0AVPql7FriB64Jolgpuxp2RxoRvTh2wb3EKELkKlWY4W4czU5VyBS2Cd43T4YGyhg6ZMgbgUrYVSyBv6LPyvWA+uVXF76yBNQy590QYoRW/Q/gTUExEzdCiYdEa1O1c3Cbq/7z87uOsKQ1XTx+3OI2UkqiIFzg==
-Received: from TYZPR06MB6568.apcprd06.prod.outlook.com (2603:1096:400:45f::6)
- by OSQPR06MB7280.apcprd06.prod.outlook.com (2603:1096:604:295::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.22; Fri, 13 Jun
- 2025 01:21:57 +0000
-Received: from TYZPR06MB6568.apcprd06.prod.outlook.com
- ([fe80::72b8:dce5:355b:e84b]) by TYZPR06MB6568.apcprd06.prod.outlook.com
- ([fe80::72b8:dce5:355b:e84b%5]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
- 01:21:56 +0000
-From: Jammy Huang <jammy_huang@aspeedtech.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "joel@jms.id.au" <joel@jms.id.au>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] mailbox: aspeed: add mailbox driver for AST27XX
- series SoC
-Thread-Topic: [PATCH v3 2/2] mailbox: aspeed: add mailbox driver for AST27XX
- series SoC
-Thread-Index: AQHb2eeI4a5F3MN24Eu/ozXuvO4n07QAO/MAgAAJjECAAALcAIAABqtQ
-Date: Fri, 13 Jun 2025 01:21:56 +0000
-Message-ID:
- <TYZPR06MB6568D65A1288D30981D9A85EF177A@TYZPR06MB6568.apcprd06.prod.outlook.com>
-References: <20250610091026.49724-1-jammy_huang@aspeedtech.com>
-	 <20250610091026.49724-3-jammy_huang@aspeedtech.com>
-	 <13b88c1e404a9abe5cfae6673cb93e0b020e3524.camel@codeconstruct.com.au>
-	 <TYZPR06MB6568BA93BCEEBEE3B9DE15EBF177A@TYZPR06MB6568.apcprd06.prod.outlook.com>
- <831a5bf06f6e7cd7dccce77d11209b5cc0f1387c.camel@codeconstruct.com.au>
-In-Reply-To:
- <831a5bf06f6e7cd7dccce77d11209b5cc0f1387c.camel@codeconstruct.com.au>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR06MB6568:EE_|OSQPR06MB7280:EE_
-x-ms-office365-filtering-correlation-id: 4019d55d-3fd7-48ef-dfee-08ddaa18b03f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bEV5di9ia29jR3lvYTJOeTdGdEphbVBaNWFXa2NBMWJ5MXF2RG1aV1NmOEtm?=
- =?utf-8?B?RjNqUlpyZjZPOWs4aXpGaXE2ZjNvQ09ZVi9reDVkL3RsenhNcllDd09PWTl3?=
- =?utf-8?B?SlJvQ3hkNHRnSTMwMW9jbkJkZTNGN0ZQMytVUDJNaG5HVnhVZld1TTNQNG1P?=
- =?utf-8?B?c0V5TGVOMXlpNGFiMWM3R3NvYWtROStHLzd5VWhScGVkdm11bGQyMm5vVys4?=
- =?utf-8?B?RWNpVXdHY0YyaTR1T083K3YyelRNTzMvR3lGV3RMSXMvNVdMK0hjSlQzdk56?=
- =?utf-8?B?YVhlc0IrUWRMTWY4UnhyajJGRHB2ayt2dHo0TSszbU9Oa0VraEswM3ZRYkMy?=
- =?utf-8?B?ZXJCZDZBaXNwT1BzblJOZXdzUjZ6aGhneTR6MEZhSTRPWXlKTS9PUDRhVkxj?=
- =?utf-8?B?UjZ0T1d4aklUM3Q3Zkl2MzZtRU0xc2xPNXF4dVdJZE1ZWTFjUUd1TElLeDZJ?=
- =?utf-8?B?YTYvQWh5UXVBZFFrOFhOVllwYSt1YVdCTG8wRFBWSVUzV1hkZ2JhNkx1b3lU?=
- =?utf-8?B?KzRkMzM5a3RZTzBKd3BPREtYQTlsRnVFaDVrMlR3MWxDMVovZU5wM2ExRE5W?=
- =?utf-8?B?MkcyZ1FXeUl6SWVXYzA5ekRlY3Q3L1BUZVVJVHFIMHFuMDJ5L0NHRWVlOGgw?=
- =?utf-8?B?ZmRXTUErYkw3V1NwSGhrMzZJclo1dU1sS3hocXYyNEFpcjEvYnpRczJQb1Ba?=
- =?utf-8?B?NHJsU2FVZFg0TDV5YTRsYVNJNUZlUzZIYWZJSDc5NTFmZEpyVVk0RWw0R3cy?=
- =?utf-8?B?V2YwRStOTUllZmNCN0RyUTMrNFRIZjNPWW9sd2JGalVRSGxTb0RDZzZvSDhT?=
- =?utf-8?B?elR4Tkxack9MSGhRWXg4WW44aWF4MDFvSVNHZGFPTk8xR2lmcSs5eGIyQzMr?=
- =?utf-8?B?U3Y5NUM0b3Jka2FvZXJLY0JtdUg2c2hicUk2ZE51ek5BZ0pncElkZEFzNjhF?=
- =?utf-8?B?dFlla0ZmejVMbmRkVXdyYThKSU9aWWJQZHNWUHI1bE5aR0E4cEFMbzZ0MDMv?=
- =?utf-8?B?Y2JMQW1palpnZ1pMTytqUlhZVTZlbWc5VW8wRnFROEs2ZFVjRzgzWWhFcmlr?=
- =?utf-8?B?Y3JoTWZ6RCt4RXRZTGxjbVFIQ2wyVTZwU3ZxemlWckw2eURsbW5QbFV0Z3kz?=
- =?utf-8?B?dGpyNWpYT2tKNi9XR29wK2o2S1psb3dobUl5WlVZWnlUVFNsQ1hIOGNYb3Zu?=
- =?utf-8?B?WkZRM2M4WlpmVW11cHZMNnByeWhnUVdCcDJtNWN4dlZ0eGQvZXF6ekEwaU9T?=
- =?utf-8?B?dzhlTWQ0MEhLV3ZXenJkWWJQdkkrdjNYamVhZXRYeFM0Q2RZT0o0RVVRcGVR?=
- =?utf-8?B?b1REUVh4Mmp6eWl5WTQzanN2Mno3YmNQOEJkQzJjamllTXEySkRieHZIaC85?=
- =?utf-8?B?SGNEOVRCN2hIb0gvZDQzak9aQ2dMUTFFR044WVN3U3FrTXdIR0lDZVdBLzZz?=
- =?utf-8?B?bEZQQ1U2WlZZcCtJRFQ4MWhQR0lSU1JVV1IwWjZIVXRqQ09wNUVoR2IvZG01?=
- =?utf-8?B?UVp0ZzIzbkxNYnRwaThMemoyNUE5QzJOMW1zN3NwZG5EQit2eDcrWTBtNXpv?=
- =?utf-8?B?bkVLK1lZcVdKczBQMlhRWU04d1V5dkJ5MUY0dGFyYzRMWDM5ZmdZNWx1UERm?=
- =?utf-8?B?elhYTkZRQWZibjJxU2U5YmppYmc3aG1lTm16cXZkamFKZXdnbU1icWtnL2cx?=
- =?utf-8?B?VWlURnpTeHhSY2dpcncyZ242bkl3UWY1QkI5bTU2b0xMTG1Cb1lIYmxiWk9L?=
- =?utf-8?B?OWZYUjhRMVJQWXU2cjczNGdiZTZwZXdRVVZLWjNxZzRWV3R0V2xGbVVReXBS?=
- =?utf-8?B?b0RjUmh2WTM3QjkxVlZHaXRVZ3ZpU3RjWjExb2dsbkwzL0t6T3doTXk5SWRF?=
- =?utf-8?B?RktwQVppV2dVKzA0akJQQTE1eHU0a3d2d2FhWU1ka3BKMXZmM1UxNDBsY1Qw?=
- =?utf-8?B?bzFPYU1oQXZuQlZvZXRSSnJNWHRSSk1BVTVBY3VEMEJrY3l5cDFob0JHMGdt?=
- =?utf-8?Q?yD23xo8QUEjJk93rpG0rMKPbK5aatY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6568.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NTRtalhuaEtXN0xsLzI3WVFmQlhSdTB4ZXBRUmJQY0h1T09CZ3ZMMlJkOFpu?=
- =?utf-8?B?M0ZjWDVUV1ZjT3VIaWpNVEN3YUJENlV5MkpkMlJQQ0pxdVcrbDhxcS9oSEdF?=
- =?utf-8?B?MStRdHVidTQ2UU9jdm90bDNZVm1vMkE4Y2s5ZDRhSkhaOFliS2w1aDhFTjFo?=
- =?utf-8?B?d2xIemlCZFU1NXRBQjRMaEw4NFVGUTRNTVc0dURtUVJKVXRkd2ltZmt6REZU?=
- =?utf-8?B?aUNkZHJtMGdQVjhldGJ0a2Rwa2ZrV0d0eG1lQkJGTHo0SVFXQkFpc1VSMmhB?=
- =?utf-8?B?T1FXS2VlVWF1b2pPeDFia1p4RFQ3MkFsc2preE5iM05RU3pmeldPNUN4SGRW?=
- =?utf-8?B?Um93TWJ6WGNIczVpRSsrZVVwNmppa3A5cHFMcGdjSnFHRlRtQVdiV29NNS9s?=
- =?utf-8?B?VVV4TTEyVjZsZ01xYWw3cGhIcGpTR0ozMVNVazJTL1o1cU5xRXhBUTFWcHh4?=
- =?utf-8?B?NFY0bHpSZkc0YzJtZGdCbi9xM3hTT3ZrTnV6UHdTbEVEVXRoU2orT1dhNEJp?=
- =?utf-8?B?UDBkREVpSWdGOHVIRm16MGpxeVpxQkdCTlZrakVMNUJLWmIrbDc4TzVMeDk2?=
- =?utf-8?B?LzIzR2QweFAwTG1CeUE5T09kSDA4ckRNT3JLVE0wTkRyWVBMeVRtQkRvYzhZ?=
- =?utf-8?B?NStTeGM3RDhCMVVSNXFidmVsUy9KbW85Rk5mdnoyeTBhTWs1YitvUTEzdms4?=
- =?utf-8?B?VE1NQmZKK0w1bzd3YmZNYWlDZlovdGFqTXhrdWdLT0RiaGZXWjc4dVM3Vjkv?=
- =?utf-8?B?Q1RoNEk3QlJRYThKaFkzdm95OFZ0eHU5Vkp3djRGZ1gvdlZla0U2ZzJZbWR0?=
- =?utf-8?B?ajgwMGI4RGhaSlJWZENYcTdsZmR6WVIzeDY3Zi9ENms5REc0MGJRZHZYaTFm?=
- =?utf-8?B?WDlMZkhmZzNNdWJwMTdOcEZtcE1yNzlZd0lFTG1sN2FUK3ArSVFPWG5WbFVl?=
- =?utf-8?B?eE1CSWVxTDVoWkg1N1ZhZ3k4WnM2WWFsWGo3Vk9BdFU5ajRXRkdBWEpiUEQv?=
- =?utf-8?B?VVl0Y3hQaHRxbGR4Q29oU3BWdjM3T09POUgyZEJwUU5QTUxnMldRazRXMzNB?=
- =?utf-8?B?a21USUtZbklGczF5ZkFOR0tYVHRQT0c4b3RnL2xZNjVxK1JrSlJObldHT2Fo?=
- =?utf-8?B?OTVsWVJrdzdFMXNKMkhTVWhCTXF0em5naXFyNW1jTFZpZE55cnZMVGlzM3Bt?=
- =?utf-8?B?ZWcwTU1TdHpOYmVaSEtOeUxPV0ZPUEliUitQd21icXg1M3I4Szh2SysxNVNP?=
- =?utf-8?B?QzhycVFUdy9yOFRxSFVaQzZqdUpnZ2xaR0U3RmZLdTY5WUd4bWkrcllBZFhv?=
- =?utf-8?B?c0NsZVM2OVcxZHNDOG51cHJOc3JlZkpLakk3TGtJOFh5SWxkOU1tQWV2L2RQ?=
- =?utf-8?B?OXdOWGh2TWsyRHVPOVRqTnhEUloveUtuUUw3bTVQY0FDVUFsSVRzYzFMY213?=
- =?utf-8?B?aDZzL2MvOWtHMDdwM0xXQjArMEd1WUhrS1FKcDZ6RHVOODl2ZVIyUTlWU2Vi?=
- =?utf-8?B?ak8xWUhUdFBGZ0ZQa1ZDSmxsemJ1alppTzZCZmxGS29icDQydTlWdlNsbkRl?=
- =?utf-8?B?QjQ2TFVwcG9Ick4ySEdXMktXSzZmblZPa2dEVlhEQ1JxQklyWkY0RHE0aHVq?=
- =?utf-8?B?Vzl3dDgrV0hDOWJyVjRiMFdWd0xNWndMZlM3enI3NmtCSlMxRGdLS1A4UExj?=
- =?utf-8?B?RWhBeEp3UXE5TmV3c0pTT2IraTAwVFM3alBvOEhIbnJKcStxMGEybzM3R2Iy?=
- =?utf-8?B?RHhadk12MWxnVUtMV3V0UjVURmYvOFNyM0k0dmRGMlMyNDhSN1lQdWtWZlpp?=
- =?utf-8?B?RjVRdG01WlMzL3hEc2pUaDUvVlZObG5peWgzZitkeSsyUmxnSm0rTGkvZnR5?=
- =?utf-8?B?U1VnN0gyR3BJLzNNOHVzNFZBTnJuRyt6NzdKVExyS3UyWGRtRmNyQnFqYlFs?=
- =?utf-8?B?QlJrcTdPd0h6b0VsOWhqVFcxdGJ3WkdlcFZvWHh6V2o4NXBwVnoyLzhUUEFY?=
- =?utf-8?B?cjJjd2x4VEpVbHlVTkFYcVBlU3cvWGFsNFdwT0NHa1dzeUNzeERlTStseUdK?=
- =?utf-8?B?TFloKyszQmEzcTM1NTREdmJTUHFEZHl0M1BDTDhrMzVGbCtEVXVUZkVsS3A3?=
- =?utf-8?B?elAwNmxJMmpJa0U4Z0RabEZaK3FQc1lTdnhRZGxWUk9oSmt0QjFkWXNDaTdL?=
- =?utf-8?B?SGc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9A572636;
+	Fri, 13 Jun 2025 01:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749777841; cv=none; b=U1Runc3y8i8mp62AZIMIjfJYAE16vImdaPFawYPMOeQ+rqrIlv+WVYYTvW7F9KL6JI+6TcyLE3WAHYO+/paExGgfgA/EQGGOP3ETAAMQZDnxe+HEQMDdV8+BOmqahhwjCi59UafrBQ7oi+I/SS37xu8mgBKHaI4Dm1bRTPqlOqs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749777841; c=relaxed/simple;
+	bh=d5rHizoOE6yeSiQobFd52hpxfVk2+AkiKtye4xkZZNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpwcVB8zufKDpRNDoDXfUC6y6crnuQHpNOjxTu2YXtwGE90mX924g12vEPr+KtvUWUOQay0yBU7caYQNu5A7JxW1OUhFO9Y5GTDlymZRJwF9mlD8Mhy70hRpv5rxOvFTncZ7lWq5yWFu1BmMesjpMhgDivgeF+55+yMElTCRcoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sopL9OVG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4CEC4CEEA;
+	Fri, 13 Jun 2025 01:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749777840;
+	bh=d5rHizoOE6yeSiQobFd52hpxfVk2+AkiKtye4xkZZNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sopL9OVGaKkYBLoQ9K0Gx3mNqKCtmF6HeqAxRPeMFvJLOQNPGNCCbdfRxS2LlfLqu
+	 C3Drs4Qu4cFQG2+79qNVN/2U+Mp5r2Ku8fHrvgJywco1pbYG6PtA3ImiR1O4x08klz
+	 xDAF1Jfb3fKbHGBJ+46TYP3cVpNrl19/EEmKclh0GQCX86o255XF08PT4Rd7b6JjMQ
+	 0pZk7pLaqF1Q6YqyMWUL0yY5F1li1Q6ACzRmSrSgpQrt8hIvANSSWWinXiguz6euWJ
+	 eocxM+zUeCV/S4k5Ycq56kPx+45/tXS3yhtnvX35hipDpMVHslTEwlPdsTCo0NKkoz
+	 V/KcVAfBqnyXg==
+Date: Fri, 13 Jun 2025 01:23:57 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Cc: Simon Richter <Simon.Richter@hogyros.de>, linux-fscrypt@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250613012357.GA3603104@google.com>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
+ <20250612005914.GA546455@google.com>
+ <20250612062521.GA1838@sol>
+ <aEqU0iU1tBrLEYUq@gcabiddu-mobl.ger.corp.intel.com>
+ <20250612155743.GA3529549@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6568.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4019d55d-3fd7-48ef-dfee-08ddaa18b03f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2025 01:21:56.9024
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zUS/N7RGDILWZUi2pmiSthbZYClJts8bf3/Bp0U6vwVPekGjVA7pzETp3HDKcZVp9x5XIRX1GLqUBgsqSwLoROvN9noPgGRodlj/fX4jnQg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7280
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612155743.GA3529549@google.com>
 
-PiANCj4gT24gRnJpLCAyMDI1LTA2LTEzIGF0IDAwOjUxICswMDAwLCBKYW1teSBIdWFuZyB3cm90
-ZToNCj4gPiBIZWxsbyBBbmRyZXcsDQo+ID4NCj4gPiBZb3UgY2FuIGZpbmQgaXQgaW4gY2hhcHRl
-ciBvZiBhc3QyNzAwIGRhdGFzaGVldCBiZWxvdy4NCj4gPiDCoCBJSUkgRnVuY3Rpb24gUmVnaXN0
-ZXJzIC0+IDEyIEludGVyIFByb2Nlc3NvcnMgQ29tbXVuaWNhdGlvbiAoSVBDKQ0KPiANCj4gR3Jl
-YXQsIHRoYW5rcy4gVGhlIGRlc2NyaXB0aW9uIGluIHRoZSBtZW1vcnkgc3BhY2UgYWxsb2NhdGlv
-biB0YWJsZSBkb2Vzbid0DQo+IG1hdGNoIHRoZSBjaGFwdGVyIGhlYWRpbmcsIHdoaWNoIGlzIHdo
-YXQgdHJpcHBlZCBtZSB1cCAoIkludGVyUHJvY2Vzc29yDQo+IENvbnRyb2xsZXIiIHZzICJJbnRl
-ciBQcm9jZXNzb3JzIENvbW11bmljYXRpb24iKS4NCj4gDQo+IEFuZHJldw0KDQpUaGFua3MgZm9y
-IHlvdXIgcmVtaW5kZXIuIFdlIHdpbGwgY29ycmVjdCBpdCBpbiBuZXcgZGF0YXNoZWV0Lg0KDQpS
-ZWdhcmRzLA0KSmFtbXkgSHVhbmcNCg0K
+On Thu, Jun 12, 2025 at 03:57:43PM +0000, Eric Biggers wrote:
+> On Thu, Jun 12, 2025 at 09:50:26AM +0100, Giovanni Cabiddu wrote:
+> > On Wed, Jun 11, 2025 at 11:25:21PM -0700, Eric Biggers wrote:
+> > 
+> > ...
+> > 
+> > > FWIW, here's what happens if you try to use the Intel QAT driver with dm-crypt:
+> > > https://lore.kernel.org/r/CACsaVZ+mt3CfdXV0_yJh7d50tRcGcRZ12j3n6-hoX2cz3+njsg@mail.gmail.com/
+> > 
+> > /s/happens/happened/
+> > 
+> > ... and it got fixed
+> > https://lore.kernel.org/all/20220506082327.21605-1-giovanni.cabiddu@intel.com/
+> 
+> But it reached users in the first place, including stable kernels.  And
+> apparently the issues were going on for years and were known to the authors of
+> the driver
+> (https://lore.kernel.org/linux-crypto/91fe9f87-54d7-4140-4d1a-eac8e2081a7c@gmail.com/).
+> 
+> We simply don't have issues like this with the AES-NI or VAES XTS code.
+> 
+> And separately, QAT was reported to be much slower than AES-NI for synchronous use
+> (https://lore.kernel.org/linux-crypto/0171515-7267-624-5a22-238af829698f@redhat.com/)
+> 
+> Later, I added VAES accelerated AES-XTS code which is over twice as fast as
+> AES-NI on the latest Intel CPUs, so that likely widened the gap even more.
+> 
+> Yet, the QAT driver registers its "xts(aes)" implementation with priority 4001,
+> compared to priority 800 for the VAES accelerated one.  So the QAT one is the
+> one that will be used by fscrypt!
+> 
+> That seems like a major issue even just from a performance perspective.
+> 
+> I expect this patch will significantly improve fscrypt performance on Intel
+> servers that have QAT.
+
+I was curious, so I actually ran a benchmark on an Intel Emerald Rapids server.
+Specifically, I used a kernel module that repeatedly en/decrypted 4096-byte
+messages with AES-XTS using crypto_skcipher_en/decrypt().  That's basically what
+fscrypt's file contents encryption does, but here I just measured the raw crypto
+performance.  I tested both xts-aes-vaes-avx512 and qat_aes_xts.  For both, the
+difference between encryption and decryption was within the margin of error, so
+I'll give just one number for each.
+
+Results:
+
+    xts-aes-vaes-avx512: 16171 MB/s
+    qat_aes_xts: 289 MB/s
+
+So, QAT is 55 times slower than the VAES-optimized software code!
+
+It's even slower than the generic C code:
+     
+    xts(ecb(aes-generic)): 305 MB/s
+
+Now, it could be argued that this is user error -- I "should" have created lots
+of asynchronous crypto requests for 4K blocks, submitted them all at once, and
+waited for them to complete.  Thus allowing parallel processing by QAT.
+
+But, that's simply not what fscrypt does.  And even if it did, it could only
+plausibly help for large bios.  Short bios, for which latency is really
+important, would continue to be massively regressed by using QAT for them.
+
+Even for large bios, it would have to get over 55 times faster to be worth it,
+which seems (very?) tenuous.
+
+Also, as is known from dm-crypt which does do async processing, the code that's
+needed to do it is quite complex and error-prone.
+
+In any case, async processing would be a theoretical future improvement.  It's
+simply not what fscrypt does today, or has ever done.
+
+I also found that, even though I built the QAT driver as a loadable module, it
+was loaded automatically on the system and prioritized itself over the VAES-
+accelerated AES-XTS.  Thus, it would be what fscrypt uses on Intel servers where
+the QAT driver is enabled in kconfig, even just as 'm'.
+
+Even disregarding the historical data corruption issues with QAT, I think this
+makes it *very* clear that the QAT driver is harmful to fscrypt users.
+
+And I've seen similar results with the Qualcomm crypto engine
+(https://lore.kernel.org/r/20241203180553.16893-1-ebiggers@kernel.org/).
+So this isn't even unique to this particular accelerator either.
+
+This has gone on for long enough.
+
+- Eric
 
