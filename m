@@ -1,225 +1,298 @@
-Return-Path: <linux-kernel+bounces-686094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACB3AD92FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F8FAD92FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674A71887B8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54E01E3494
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FFB211A0D;
-	Fri, 13 Jun 2025 16:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49422211A23;
+	Fri, 13 Jun 2025 16:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BtvhkdJM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YC+R8j3N"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F26433A5;
-	Fri, 13 Jun 2025 16:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749833037; cv=pass; b=SZC34zU/+J6arCMCOqwzdSBwpY6J0scRz/Zhqp27NdIfB5tcEDS2UkEQa+vHDQCPoJ600HMmva7Uyzb6ndUFK9Nd5mYkHgwmI7KK24WvKQUYWy45u/YzGRCVZlsKYlg2TT7b/3luw3ebJE8uCdA7UajywDXeTSLC6QEyeNloCSA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749833037; c=relaxed/simple;
-	bh=GKpdc9YiYyCY4jgWia1aI2xBSr421cdkebKu8ejyCnw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=RQ1OrfG/2ddCg5omid9m9opgFk9Jfpnrp3SMtnA5YWIOURL/6Mbk+yyvgo9QqGtLHOV3XaErKqUvC6AQfBH/d+3Lf4ye7MIaDi4arusS0DwZJY4L6xiZgPhoSXjF8OVibWUsUgHzypqLvsk4G4iaYj5ft9UjUvLMGbJ7NiTTAFw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BtvhkdJM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749832998; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RXubKtilc4Hk7wiBtOfWMoEAbVkLii7p4eDasW98tipyK9ilfg/iaY17T61v/3qtT3TQIbOG7jeJD0TFTMcmNfIN0kJzTJ/jRTAEGBmPzIr3c6toeRmg9u2MeiQ7o4Wjz5lULCPFKR62H4lF9gUvl7mYANFBR7XVfoHWiJPbBRM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749832998; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=74vSUUgcxDPegdL/S7B0LL/ZhYlU7BQBdrEJIw3o8/4=; 
-	b=iy18LtjMHnhpfdyQHYdGpuVWAq/zxfeJQPMGRuZtdG3WjaQBw5Ja67/cbsW/OMXG66y4+tHWbTjVDGYXyOwK5xf6r1Afk64kFQrYFZG847nq2Ab1QVaCo7YWSsdFe+7ySGw7HiJyVVwsRaviLA7c9gQm8frNWEWfJT6JlaKHLu4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749832998;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=74vSUUgcxDPegdL/S7B0LL/ZhYlU7BQBdrEJIw3o8/4=;
-	b=BtvhkdJMHuKUHvpRZBnkYO2cNQVC1z/dDCPSr5TGD/9vwqOSMEqveDBN4COmd8VX
-	N9u3ePms9mT0Zca95widsqJll4DCUqd9/YdWG6PYzsP5RQAm4KUwgN/+Rqhr8KC0Y2v
-	fqs5SWMoGc74qxykJhNT/HDDkK4ZBBQxtwnyBW8A=
-Received: by mx.zohomail.com with SMTPS id 1749832997036813.3804981283496;
-	Fri, 13 Jun 2025 09:43:17 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83282135BC
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749833074; cv=none; b=PomsTUUuhYUgJnmBmTd92QpFmYg+10BkxViZL2Vb1DLjfdyUFSKs84Lf3y4fr53SbuFDjkx8C+Nc59P4Nr42q9qv4T0aVR2YNNsc1+RIUUjjfy3oB+2TMPdNCrUdy1f8k0whBR9yhSC+kKFodHFuhnJ5ByXCuo/Uf3ha2v1cG6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749833074; c=relaxed/simple;
+	bh=xfwOxsDgYunx//JZHasoSCroD3+r4OvjrSj4RQ3NaR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ObJiraQ8sObOdXkzdTnxdO24BA4cBO2/Ocyk8LBFV2ZRvH1v0hTCjcGVXQInYhEL/PE74xMZU17AGJm59FsmR1LfaLCo4JgydtLM2cgEAmJZCl3IhwcdAMv3UPbtJtvue0WwOJdKBZzGC28AvmC3nFJLe6ZGq+MpMra1SYJ9Zaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YC+R8j3N; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7406c6dd2b1so3294724b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:44:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749833071; x=1750437871; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFsHs2L6+8EBoJ/ILRzyWwmWoJe5zrU0k/YrygGMeNA=;
+        b=YC+R8j3NF8nZ74DBbo2H4YE/g6+wREQVqpk7Ksfw+IbQpMDrk7+qr4bEHB7Zwib/09
+         7HT7QNfpqhN20tltPqld5knkYk9+3tG+kFpKxp8Zq1zvPKJEvg7SORggAk8v8rJYLiM8
+         0yEl+y7XQC+bYRE4T8yxbr9khIh9YSkpilKV4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749833071; x=1750437871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oFsHs2L6+8EBoJ/ILRzyWwmWoJe5zrU0k/YrygGMeNA=;
+        b=XrIXI8POECxiho+9CMzn1aIXJNRf8UF/kog5XJj/jkFxTahY0rLW3H8dzQ255k8CZB
+         BU2RF24Exw2sohzirAhR9s5QxAI3wSGfonYLZ8p7H34cIAqxXf4Y9fzjzb9yzGsvrcO1
+         kXN8fJp4hyXzmerddqTflADBzl10Kckk9ul9v1IH8LQUvKJMkNIwB12d/zxDI0QgUJ38
+         NoeNb1QAafaKnzvBCuDjbJe1GZjSRYBudVxY7CMdu79qmiz8LRi43uQuYrpuqameGkLb
+         /3rTQDI5YZOx6Mnv4h+BAn4dAUpTIN4urn44lu+77X4LZcqDTl/5MtUpkSzbcWitHMKl
+         By+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8woGzsqv1F3VI5ObAZvHFEqCLhIlt0U6X9G6yAq3qX5kZbKBvNva55M81iGMz0D25q2zp5cWMma6BWfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl1tK6LGWy/dLgztlelVs8S2CEMrG+/71gBl/T4wBi/c4nPdYa
+	IikgW4fNzThFIAnj9Xcdry/7C9G5KLG7lbQyEYxMCBv/8lCHFOQHk7bRNMwNaunGnMGpaXe34y2
+	YXJk=
+X-Gm-Gg: ASbGncuDwmhqTroH9PWt1+legXdsNDWu+o9RUmS8gJs6j0VLpWlhVNCxZoqZyfItHnh
+	+MUKOikuS7VVTocz+JWuhUd45ilSlfOAkqZJzIeOkOIZtVcabRbGpI6zbiOHCMR4/DxSCMjIh4N
+	w4NcaZ4kjEk/1L8MMWTFh1QZE+erFzGbaJp5Lvb/h7ywWudcx5Y+7cRqiVaGapR7+zUcWn7ykAB
+	Wn4lt/aWCbmBipMM0tb9JQtwYi7pg6YPNTwl/1Er9jaGyRJRaLkPMHD4sW2mpeB9YQTMzWz0gVN
+	qUTu50eFhPPa3h+l92Ex6XvX4qBFk/NJM3i4SOmlUAjhM6EXLH+b3twinxFuQWfjxNPoWj6g1l5
+	Tj8BtqUlZAyCjnS5GgXPAM8qGIlh7Xw==
+X-Google-Smtp-Source: AGHT+IF7Qm4Yu+9MMLAYgiQSpUXRqm258b20JLXkVlWjc9L2lPxkzikEWgDPctgRthNxwf1nSI13lA==
+X-Received: by 2002:a05:6a00:a450:b0:740:6f6:7338 with SMTP id d2e1a72fcca58-748982baf5emr1491353b3a.3.1749833071034;
+        Fri, 13 Jun 2025 09:44:31 -0700 (PDT)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com. [209.85.215.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900062cesm1878151b3a.57.2025.06.13.09.44.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 09:44:30 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b2f645eba5dso2559328a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:44:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDt6ydAvTpViJzuBeZxz9/Gbc6buY7iy1Ye1VZDVv957WiIg5sWynW3dBnhqzwlzmCIUMs7hUbMD73Cso=@vger.kernel.org
+X-Received: by 2002:a17:902:fc84:b0:234:9fe1:8fc6 with SMTP id
+ d9443c01a7336-236678a6caamr20933585ad.18.1749833069252; Fri, 13 Jun 2025
+ 09:44:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2 2/2] rust: drm: Add GPUVM abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aAj7gAzFVRX3dN7L@pollux>
-Date: Fri, 13 Jun 2025 13:42:59 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Lyude Paul <lyude@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- Asahi Lina <lina@asahilina.net>
+MIME-Version: 1.0
+References: <20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com>
+ <20250606-printk-cleanup-part2-v1-4-f427c743dda0@suse.com>
+ <CAD=FV=XXQyZLYKoszj68ZGFDY=9-cmEUp406WeOeSBVZOHyUHw@mail.gmail.com>
+ <f962e9bab3dc8bf5cae1c7e187a54fb96a543d51.camel@suse.com> <CAD=FV=XFeokpbMUFjAc0OkwJ97vR8aB+4GbnFxRKymvpEY3gnA@mail.gmail.com>
+ <aErcrCKcsi9cpANY@pathway.suse.cz> <CAD=FV=WFWviPPR6VWmsN2-+vzRDoU6oTNH=EP6z1usG4EDR3+w@mail.gmail.com>
+ <aEwC81RhvveGP73Y@pathway.suse.cz>
+In-Reply-To: <aEwC81RhvveGP73Y@pathway.suse.cz>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 13 Jun 2025 09:44:17 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XwJ8b2Qd52dUG7DrbkVz2XdjCgXoThh2i3gi=+vGqFAw@mail.gmail.com>
+X-Gm-Features: AX0GCFsbz4DtEeKeZs4XLMlp6WpvZqtedSANACGhbS0pNgSY94ZUMPk-yfpPG_M
+Message-ID: <CAD=FV=XwJ8b2Qd52dUG7DrbkVz2XdjCgXoThh2i3gi=+vGqFAw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] drivers: serial: kgdboc: Check CON_SUSPENDED instead
+ of CON_ENABLED
+To: Petr Mladek <pmladek@suse.com>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
+	linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <F731D6F7-312D-4633-B677-69B7CC7194A6@collabora.com>
-References: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
- <20250422-gpuvm-v2-2-44d4fc25e411@collabora.com>
- <aAgHGuzCZzh7YPz2@cassiopeiae>
- <DBB3E8CE-19AA-437D-AF54-BF23763B254F@collabora.com>
- <aAj7gAzFVRX3dN7L@pollux>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
 
-Danilo,
+Hi,
 
+On Fri, Jun 13, 2025 at 3:52=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
+e:
+>
+> On Thu 2025-06-12 16:16:09, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Thu, Jun 12, 2025 at 6:57=E2=80=AFAM Petr Mladek <pmladek@suse.com> =
+wrote:
+> > >
+> > > > > > > @@ -577,7 +577,8 @@ static int __init kgdboc_earlycon_init(ch=
+ar
+> > > > > > > *opt)
+> > > > > > >         console_list_lock();
+> > > > > > >         for_each_console(con) {
+> > > > > > >                 if (con->write && con->read &&
+> > > > > > > -                   (con->flags & (CON_BOOT | CON_ENABLED)) &=
+&
+> > > > > > > +                   (con->flags & CON_BOOT) &&
+> > > > > > > +                   ((con->flags & CON_SUSPENDED) =3D=3D 0) &=
+&
+> > > > > >
+> > > > > > I haven't tried running the code, so I could easily be mistaken=
+,
+> > > > > > but...
+> > > > > >
+> > > > > > ...the above doesn't seem like the correct conversion. The old
+> > > > > > expression was:
+> > > > > >
+> > > > > > (con->flags & (CON_BOOT | CON_ENABLED))
+> > > > > >
+> > > It is easy to get confused by the register_console() code. And
+> > > it has been even worse some years ago.
+> > >
+> > > Anyway, the current code sets CON_ENABLED for all registered
+> > > consoles, including CON_BOOT consoles. The flag is cleared only
+> > > by console_suspend()[*] or unregister_console().
+> > >
+> > > IMHO, kgdboc_earlycon_init() does not need to care about
+> > > console_suspend() because the kernel could not be suspended
+> > > during boot. Does this makes sense?
+> >
+> > Yeah, makes sense to me.
+> >
+> > > Resume:
+> > >
+> > > I would remove the check of CON_ENABLED or CON_SUSPENDED
+> > > from kgdboc_earlycon_init() completely.
+> > >
+> > > IMHO, we should keep the check of CON_BOOT because we do not
+> > > want to register "normal" console drivers as kgdboc_earlycon_io_ops.
+> > > It is later removed by kgdboc_earlycon_deinit(). I guess
+> > > that the code is not ready to handle a takeover from normal
+> > > to normal (even the same) console driver.
+> >
+> > I'm not sure I understand your last sentence there. In general the
+> > code handling all of the possible handoff (or lack of handoff) cases
+> > between kgdboc_earlycon and regular kgdboc is pretty wacky. At one
+> > point I thought through it all and tried to test as many scenarios as
+> > I could and I seem to remember trying to model some of the behavior on
+> > how earlycon worked. If something looks broken here then let me know.
+>
+> Later update: The code is safe. The scenario below does not exist,
+>               see the "WAIT:" section below.
+>
+>
+> I am not familiar with the kgdb init code. I thought about the
+> following scenario:
+>
+> 1. kgdboc_earlycon_init() registers some struct console via
+>
+>         kgdboc_earlycon_io_ops.cons =3D con;
+>         pr_info("Going to register kgdb with earlycon '%s'\n", con->name)=
+;
+>         if (kgdb_register_io_module(&kgdboc_earlycon_io_ops) !=3D 0) {
+>
+>    and sets
+>
+>                 earlycon_orig_exit =3D con->exit;
+>                 con->exit =3D kgdboc_earlycon_deferred_exit;
+>
+>
+> 2. Later, configure_kgdboc() would find some "preferred" console
+>    and register it via
+>
+>         for_each_console_srcu(cons) {
+>                 int idx;
+>                 if (cons->device && cons->device(cons, &idx) =3D=3D p &&
+>                     idx =3D=3D tty_line) {
+>                         kgdboc_io_ops.cons =3D cons;
+> [...]
+>         err =3D kgdb_register_io_module(&kgdboc_io_ops);
+>
+>    , where kgdb_register_io_module would call deinit for the
+>    previously registered kgdboc_earlycon_io_ops:
+>
+>         if (old_dbg_io_ops) {
+>                 old_dbg_io_ops->deinit();
+>                 return 0;
+>         }
+>
+>    , where kgdboc_earlycon_deinit() might call the .exit() callback
+>
+>                 kgdboc_earlycon_io_ops.cons->exit(kgdboc_earlycon_io_ops.=
+cons);
+>
+>
+> BANG: If both "kgdboc_earlycon_io_ops" and "kgdboc_io_ops" pointed to
+>       the same struct console then this might call .exit() callback
+>       for a console which is still being used.
+>
+>       But I am wrong, see below.
+>
+> WAIT:
+>
+> I have got all the pieces together when writing this mail).
+> I see that the code is safe, namely:
+>
+> static void kgdboc_earlycon_deinit(void)
+> {
+>         if (!kgdboc_earlycon_io_ops.cons)
+>                 return;
+>
+>         if (kgdboc_earlycon_io_ops.cons->exit =3D=3D kgdboc_earlycon_defe=
+rred_exit)
+>                 /*
+>                  * kgdboc_earlycon is exiting but original boot console e=
+xit
+>                  * was never called (AKA kgdboc_earlycon_deferred_exit()
+>                  * didn't ever run).  Undo our trap.
+>                  */
+>                 kgdboc_earlycon_io_ops.cons->exit =3D earlycon_orig_exit;
+>         else if (kgdboc_earlycon_io_ops.cons->exit)
+>                 /*
+>                  * We skipped calling the exit() routine so we could try =
+to
+>                  * keep using the boot console even after it went away.  =
+We're
+>                  * finally done so call the function now.
+>                  */
+>                 kgdboc_earlycon_io_ops.cons->exit(kgdboc_earlycon_io_ops.=
+cons);
+>
+>         kgdboc_earlycon_io_ops.cons =3D NULL;
+> }
+>
+> It calls kgdboc_earlycon_io_ops.cons->exit() only when
+> unregister_console() tried to call the original con->exit()
+> which was reassigned to kgdboc_earlycon_deferred_exit()...
+>
+> Updated resume:
+>
+> It looks to me that even normal console can be used by
+> kgdboc_earlycon_io_ops and we could remove even the check
+> of the CON_BOOT flag.
+>
+> My expectation:
+>
+> If a "struct console" is registered then the driver is used
+> by printk() and it should be safe even for kgdboc_earlycon,
+> as long as it has both "con->write" and "con->read" callbacks.
+>
+> So the check in kgdboc_earlycon_init() might be:
+>
+>         for_each_console(con) {
+>                 if (con->write && con->read &&
+>                     (!opt || !opt[0] || strcmp(con->name, opt) =3D=3D 0))
+>                         break;
+>         }
+>
+> Heh, I hope that you were able to follow my thoughts and I did not
+> create even bigger confusion.
 
-> <snip>
->=20
->>>> +// SAFETY: DRM GpuVmBo objects are always reference counted and =
-the get/put functions
->>>> +// satisfy the requirements.
->>>> +unsafe impl<T: DriverGpuVm> AlwaysRefCounted for GpuVmBo<T> {
->>>> +    fn inc_ref(&self) {
->>>> +        // SAFETY: The drm_gpuvm_get function satisfies the =
-requirements for inc_ref().
->>>> +        unsafe { bindings::drm_gpuvm_bo_get(&self.bo as *const _ =
-as *mut _) };
->>>> +    }
->>>> +
->>>> +    unsafe fn dec_ref(mut obj: NonNull<Self>) {
->>>> +        // SAFETY: drm_gpuvm_bo_put() requires holding the gpuva =
-lock, which is
->>>> +        // the dma_resv lock by default.
->>>> +        // The drm_gpuvm_put function satisfies the requirements =
-for dec_ref().
->>>> +        // (We do not support custom locks yet.)
->>>> +        unsafe {
->>>> +            let resv =3D (*obj.as_mut().bo.obj).resv;
->>>> +            bindings::dma_resv_lock(resv, core::ptr::null_mut());
->>>> +            bindings::drm_gpuvm_bo_put(&mut obj.as_mut().bo);
->>>> +            bindings::dma_resv_unlock(resv);
->>>=20
->>> What if the resv_lock is held already? Please also make sure to put =
-multiple
->>> unsafe calls each in a separate unsafe block.
->>=20
->> By whom?
->=20
-> The lock might be held already by the driver or by TTM when things are =
-called
-> from TTM callbacks.
->=20
-> This is why GPUVM never takes locks by itself, but asserts that the =
-correct lock
-> is held.
->=20
-> I think we really want to get proof by the driver by providing lock =
-guard
-> references.
->=20
+I didn't go back to the code and trace through every step you made,
+but it sounds like the code looks OK even if it's a bit convoluted
+(sorry about that! at least it's commented!).
 
-There doesn=E2=80=99t seem to be a solution that fits all the boxes =
-here.
+I agree with your final suggestion for the check. That has the side
+effect of also being less of a change from what we had before. Because
+of how the code was written before, it would have allowed any console
+because it checked for "enabled or boot" and all consoles were
+enabled. So just getting rid of the check for flags seems reasonable
+to me.
 
-As you said, at this point the current status of the resv is unknown. If =
-we
-simply assume that it is not taken, we run into the problem you pointed =
-out:
-i.e.: recursive locking where ttm or some other layer has the lock =
-already.
-
-Alternatively, if we assume that the resv must be locked in dec_ref(), =
-then we
-may build a lock::Guard from it and assert that it is held, but in any =
-case
-it's very confusing to expect the reservation to be locked on a =
-dec_ref() call.
-
-The fact that dec_ref() is placed automatically on drop will massively
-complicate the call sites:
-
-We will have to ensure that the resv is locked at all times where we =
-interface
-with a GpuVmBo, because each of these points could possibly be the last =
-active
-ref. If we don't, then we've introduced a race where the list is =
-modified but
-no lock is taken, which will be a pretty easy mistake to make. This =
-seems to
-also be the case in C, which we should try to improve upon.
-
-My suggestion is to introduce a separate GPU-VA lock here:
-
-/// A base GEM object.
-#[repr(C)]
-#[pin_data]
-pub struct Object<T: DriverObject> {
-    obj: bindings::drm_gem_object,
-    // The DRM core ensures the Device exists as long as its objects =
-exist, so we don't need to
-    // manage the reference count here.
-    dev: *const bindings::drm_device,
-    #[pin]
-    inner: T,
-    #[pin]
-    _p: PhantomPinned,
-    // Add a GPU-VA lock here <--------
-}
-
-And only support custom locks in Rust, to the detriment of the =
-optimization
-where the resv is used and to the detriment of any perf improvements =
-that
-reusing the reservation might bring to the table.
-
-Notice that this would sidestep this entire discussion: nobody else =
-would be
-aware of this new lock so we could safely lock it in dec_ref(). We would =
-also
-be transparently managing the locking on behalf of drivers in all the =
-other
-calls where the VA list is accessed, which is another plus as I said =
-above.
-
-I understand that most C drivers do not need an extra lock, but it's =
-getting
-hard to emulate this behavior in Rust.
-
-Also, the fact that they don't need an extra lock does not invalidate =
-the fact
-that it would be simply safer to have this extra lock anyways. In other =
-words,
-it is still completely possible to use GPUVM without locking anything =
-and IMHO
-we shouldn't bring this over if we can help it.
-
-=E2=80=94 Daniel
-
-
+-Doug
 
