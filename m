@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-684782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6ABBAD801D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 057C8AD8030
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0FA57A9881
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:12:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75BDD7A3A80
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B81DED40;
-	Fri, 13 Jun 2025 01:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CDA1D5CED;
+	Fri, 13 Jun 2025 01:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="rzwb0w2n"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="hGHoMLUZ"
+Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954931F875A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 01:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478561420DD;
+	Fri, 13 Jun 2025 01:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749777118; cv=none; b=ZvA3Y4jEtY+lMtcxZEkasnKNSEQP+hWwh5Zt0XCsolv8WOLuGSL9VWfLH7U3KP02J/kUPCKAdcD8ybEujAsn0P23WR/aE24npqXLfqUs+VNJ2NvZNoIpq5QJsmN6udUUPSHUJunPz70v+on8dkga+G42EBkamhhrqfFtRPL9mXI=
+	t=1749777526; cv=none; b=oe7gL8JyEriNEUzM3cGzL9ajkGYJY29vMbY02iGqkTueIS3uzn3dSLaRuW/le+moSvEhqn9do/xLf/v2v3qGqfMIGE+dcHcf3E+TSk6tlHFAaTw/9ZK8c5a+zw51HZAt4xGat8SM3WzuHrMpS+fMJ83+ARPwRnCHsmXYyF+QH5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749777118; c=relaxed/simple;
-	bh=ofhrWzbkHpmkRBFTa000gjfyL5s3fJzmMKuP+Rinp2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R/+ELNz4X1mp3I+vMu3TkM2Sp1iaAB4jJMQDunww54W3j6HyRA98etJmWYBl2DL+JGCUYBAPXLID4K0Rr6n+/wHHZMZtF05OvFpNZBxwolyTkUUy7lllId5Gva8/ElogfllRXwhkphCIFY1vKfUD6UHyStz5t6yJINTnEqpCunw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=rzwb0w2n; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-610dfa45fa2so916067eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 18:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749777116; x=1750381916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hXQ0rLrEsZDkkO0xDOFrK28pA119DtQt4oQHk7dYEkk=;
-        b=rzwb0w2n5AvxAfY/2lxncPaWf58Uof4h/hNJ4tOREjuGnidyIzDmvVHBMRh2PPyw4O
-         emULH71LWz88F/4+Nu7kdB+Px76c9ufo0X50iIjKaRWSPSms/CU032sWZ+ebHepuWiAM
-         LXvsBeA13Z1J68GFSS7o1Nv4nuuFkZynMs3Ky/zOMAyb/aTTGJRRrv7BM3CXRzIoTEAA
-         aLG8qbLzC2Fe/J7hqFNIgUIRjSjVIW1J8d59vye3R1dEafCmuT1B4zKXqxlInGkrSfgg
-         J+DaxXWJPQw9+ZqUxlu+Gc43YwF+T+9GA3VtULuAh04MD2pdoHbcf8Y44UNjcAhjxUsN
-         zrzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749777116; x=1750381916;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hXQ0rLrEsZDkkO0xDOFrK28pA119DtQt4oQHk7dYEkk=;
-        b=S5Swg6A7SW+6fkC3HNYgmOs7lrmaujhLhu2vKcQI9LFo+c8wmwMqcMB4mN/VgSlo3d
-         6Jr75erZQ3F1hChtLeteB5h85moseqlu2UcpVminu2ga7NyqKvhg+p4r34yPfDLh2t02
-         mvdcf/IBFsQCo3HmYKHA6oDk6uIhZtPC89bFJgmAZd9Nj8vdlU5jQa6paJUZ0t3onPRC
-         JA4E3EbZwrjExrkcMeHmuNH/8gVJ2ZhxKIjI0ny032JGrw7F8d2QB125fRDD2SfIPIJl
-         QChn72yHfXOrNWN5yEV2EUO/cDw+0khLMMmF2C9p5ISH1U1H1MR7k61PjACnifb5KPQ/
-         aLjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM/BrJDgS38ZuxQkYsQMKSS49h44C4tBTmUvl0G3ciFoFB1IlQbFc1qoCga9wmLqm8gfC37HnpaYTV310=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRX/AjKiyEsAt8fsk+N0l5HhvDnjZ+YWLZn8lAB4fiE0cDBJ4/
-	Zz0YifnskOv9tRJs310n2q1QT/NR/Syx8NWVeIhfS0DwdXb20XGEZJUujEOdkpqEHZE=
-X-Gm-Gg: ASbGncufmg+XvZJKayUm5E26RWraMAPbVYQgR8xIjQJXmRjBYTZCTB1uw+8qRLHHVw7
-	4o0Uwb5qYIMaM6yuVZ7xcesp33cvLrPmELAs8O0VttE0GQM6N8IM/oWPV+6OW+N8fD1SQaLFVum
-	z3oGDxq8cvUQp+xrBkDc4mO+9PXVcNKLZa7SqKAVhRts1p9NVaBMSU9lgLfCy+R5QVJnzsPOTwS
-	oD2IJBABVCUa1WB0La0RZaJUwA+KRThrR1rhxzW+R8ahooDZ/FqUdw3JQiNe3EaQyFO6i3gdyj+
-	xa0C2tUWRDaXSaodqZo9U6Q+gIv9AmE+AnEICb9Dgnv2HOPHH+w9gt2iH3Den5iQFp/t9l6c2/t
-	AfBMKSnDTIbJGtjnsvZtAcbpAawp2FHU=
-X-Google-Smtp-Source: AGHT+IHLGWUc6QmwDBxYgPL11fCgmmDxgrSTZTWJDq5NM0vixs6NHFASZt4TXSVYr14kHaayK453+w==
-X-Received: by 2002:a05:6870:ce88:b0:2ea:d491:eb45 with SMTP id 586e51a60fabf-2ead510a3fbmr744385fac.18.1749777115684;
-        Thu, 12 Jun 2025 18:11:55 -0700 (PDT)
-Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eac0c17211sm407685fac.18.2025.06.12.18.11.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 18:11:55 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 6/6] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Thu, 12 Jun 2025 20:11:38 -0500
-Message-ID: <20250613011139.1201702-7-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250613011139.1201702-1-elder@riscstar.com>
-References: <20250613011139.1201702-1-elder@riscstar.com>
+	s=arc-20240116; t=1749777526; c=relaxed/simple;
+	bh=mzLaYBl+Y/d7BQANb7I+GDNo+dl/a7Akffi+nhcQ84s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gIofHeg0p+JCWPZ9ykS4EnbVBTXkFGUmp+D6Dep1vfPCbkIiUId3iZUXH24XIR6bhvuIPctuEXe2vE6YyeSgtK7r8vUdZi2UgwKokpelHDtjtb3Q+Wpz+ewr0HdpbadxrtadNQzdsYhraHgQsPnJwmTL8vpb2k0iLvH0OZpWpb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=hGHoMLUZ; arc=none smtp.client-ip=51.81.35.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id DABF822394;
+	Fri, 13 Jun 2025 01:12:46 +0000 (UTC)
+Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.66.161])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id AEA6726260;
+	Fri, 13 Jun 2025 01:12:37 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay3.mymailcheap.com (Postfix) with ESMTPS id 021413E8B6;
+	Fri, 13 Jun 2025 01:12:30 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 9E57C40078;
+	Fri, 13 Jun 2025 01:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1749777149; bh=mzLaYBl+Y/d7BQANb7I+GDNo+dl/a7Akffi+nhcQ84s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hGHoMLUZOLZCVgdW8cq0dvyersBeAz3xkHIZ2Omj7r5z+HuEW/pPNfTDO8K0Wrsxy
+	 PaFq534iNvtvMVkds2hnrsbyeuvgvQ1VD72sjrEnooOrYdKWIsbh3LCCSoX7Uq4NJ5
+	 mQuhUKNKnd4AYL5C3TFHvzaRDPGNyi6nx0e1X6nE=
+Received: from [19.191.1.9] (unknown [223.76.243.206])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id ED8D5411D6;
+	Fri, 13 Jun 2025 01:12:20 +0000 (UTC)
+Message-ID: <60cb6d5e-45f1-45a1-b142-22e3dfd203f9@aosc.io>
+Date: Fri, 13 Jun 2025 09:12:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] drm/xe: enable driver usage on non-4KiB kernels
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Francois Dugast
+ <francois.dugast@intel.com>,
+ =?UTF-8?Q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>,
+ =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+ Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Zhanjun Dong <zhanjun.dong@intel.com>, Matt Roper
+ <matthew.d.roper@intel.com>, Alan Previn
+ <alan.previn.teres.alexis@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Mateusz Naklicki <mateusz.naklicki@intel.com>,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Kexy Biscuit <kexybiscuit@aosc.io>, Shang Yatsen <429839446@qq.com>,
+ Wenbin Fang <fangwenbin@vip.qq.com>, Haien Liang <27873200@qq.com>,
+ Jianfeng Liu <liujianfeng1994@gmail.com>, Shirong Liu <lsr1024@qq.com>,
+ Haofeng Wu <s2600cw2@126.com>
+References: <20250604-upstream-xe-non-4k-v2-v2-0-ce7905da7b08@aosc.io>
+ <yyzxfqydczvfxddfsa4ebi7kyj5ezl2v4wbl5fopkdz6qwvjrg@fnhpcvfsp2dm>
+Content-Language: en-US
+From: Mingcong Bai <jeffbai@aosc.io>
+In-Reply-To: <yyzxfqydczvfxddfsa4ebi7kyj5ezl2v4wbl5fopkdz6qwvjrg@fnhpcvfsp2dm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Queue-Id: 9E57C40078
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-0.10 / 10.00];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[ce7905da7b08.aosc.io:server fail];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,intel.com,gmail.com,ffwll.ch,kernel.org,suse.de,lists.freedesktop.org,vger.kernel.org,aosc.io,qq.com,vip.qq.com,126.com];
+	FREEMAIL_ENVRCPT(0.00)[126.com,gmail.com,qq.com,vip.qq.com];
+	TO_DN_SOME(0.00)[]
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+Hi Lucas
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+在 2025/6/13 08:13, Lucas De Marchi 写道:
+> For some reason this patch series didn't make it to any mailing
+> list... it only shows the b4-sent and stable:
+> https://lore.kernel.org/intel-xe/20250604-upstream-xe-non-4k-v2-v2-0- 
+> ce7905da7b08@aosc.io/
+> 
+> Could you resend this series?
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index c0f8c5fca975d..de403bda2b878 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-controller@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -553,6 +565,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+That's strange... I have just resent the series.
 
+Best Regards,
+Mingcong Bai
 
