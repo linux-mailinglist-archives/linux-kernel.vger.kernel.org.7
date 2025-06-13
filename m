@@ -1,110 +1,169 @@
-Return-Path: <linux-kernel+bounces-685299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80011AD87BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:26:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1175EAD87BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A113B733E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:25:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C938717FB1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7218291C17;
-	Fri, 13 Jun 2025 09:25:52 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF01291C20;
+	Fri, 13 Jun 2025 09:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mg/GtxPT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACFE256C73;
-	Fri, 13 Jun 2025 09:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DA7279DDE
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806752; cv=none; b=E8EiBFhlgwdkGslRNXw8nyWhpJx2Ox4fndfBBcjWggplYRfSA4PnyzAgbDazLnXTOfmkAcxUJdy4DhbftIu1gX78BahdbwT+r9OhbIh53NttujEs2JcxevGPiiccVmXn13GYxMG1BUatDJdCkh4G6klYgUVXM2M3UrzWnHhDqIE=
+	t=1749806830; cv=none; b=i98DxHtH1Gv58Zc5TGPbekovXtzx6x6lhl3ay+FuQQ4Y7xsXWv6kCPSpvgcW0ncZgjPAV3jwoKRprRMXEjo7LTa58gqYwNDHkLk84dvTxAO6iIQ7oR8tcnMo6tUL7c617Rx7OYkJTsD7F7fu+Uws7D7eDUcvtmZyvAhSssKxsa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806752; c=relaxed/simple;
-	bh=4LsCH4BXnTTvUOxPK3fqPjjvv8ORrsKY7zJ0+so7tnI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WtDdV50/61Yo9xYAtZbdovfXT0/cPtQ8r+PLSOVebNCPClK5lfOJZUaYae87nVgO/njbvfcXwbe8/eZyUgJeyJ0ULAubQCfXEkEOdtcoVp2uNTWKmL6z9KumRyPx9xceQfDRAAlRmoBeO2qQ3cMFsSB0GAkKDZDq0Buocf8jqtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [127.0.0.2] (unknown [210.73.43.2])
-	by APP-01 (Coremail) with SMTP id qwCowAAn1tSP7ktoxvw7Bg--.2681S2;
-	Fri, 13 Jun 2025 17:25:37 +0800 (CST)
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-Date: Fri, 13 Jun 2025 17:25:33 +0800
-Subject: [PATCH] gpio: spacemit: Add missing MODULE_DEVICE_TABLE
+	s=arc-20240116; t=1749806830; c=relaxed/simple;
+	bh=mhgTTIZZsefj8mnYxT3QFETIlhACxk/HMINCBYR2EQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pbkfEefDRaNbb8xLJwC4yx29qqvuMnXl5G1TlE4rq94iJpFRIFQMiAt9uUJeiypN3HrgKms+CH3BNKFGnX/M7Vyp8M+LsYbOPVnS1uweyVijEuGeXT6HGbpzjCujjcg8iTSwuNg81iL2PW1OC1kK32J79cU6mjw7mT0Tb9oy0+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mg/GtxPT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749806828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eA9hGBugFKNk6aXi/MtXxZpnAai7SGsOuKl0QrS3BOQ=;
+	b=Mg/GtxPTsl5cND2KFhWSqcEDCa3hQA7EkVtwBe6JRrJ1MIWcfyHWho44MoYTHjp3SbfXVo
+	kbzdmyi3VxavJBbFFqQqRS+NovD4d9D2EHxDC9lAfjz6HtQeA2GoAGqy5+urHJ5POqJAqD
+	f8HpjM6YW4KNYWEjaR+rK1ecedhd8QQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-413-jm9Ng9NePHuGaAgsutKziA-1; Fri, 13 Jun 2025 05:27:05 -0400
+X-MC-Unique: jm9Ng9NePHuGaAgsutKziA-1
+X-Mimecast-MFC-AGG-ID: jm9Ng9NePHuGaAgsutKziA_1749806824
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d5600a54so16869375e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:27:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749806824; x=1750411624;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eA9hGBugFKNk6aXi/MtXxZpnAai7SGsOuKl0QrS3BOQ=;
+        b=Z2rzO+jdRbx3nN2mOcBP9geysrB9rxQEWkkKUd9Apoo7jaJvtJUAHQzufkSWnGNJjv
+         NVVTj1Cny7L4Mrkyi5DEbqoVd30Xg6WH8pVJt7/pnOLZbu0WCsjJznUQtjpag83bmMgH
+         rx5oMitT1sXme11DKeZ3kB2YLwbT8QdMFHWOGNcfXmLf11Ge9xdZpCv9Lmvib3a4oZ9X
+         ZumACDeNVuTNnashmCL+b8OGziY8c7PKUtejnxwMhJUfzx0wVMMkzGDSAxlhVqlOsdv7
+         c7Abvm6VZi940VO0QH4RC6j7h5OfuNxO7tHnoMa/AHDMUtlWqpFdAEGMw35IHxj97ZVy
+         CrvA==
+X-Gm-Message-State: AOJu0Yy4jdp9J/hPXoUXczedTl8ISAllGlOQ48txxTe0zFGaS7c9yj/6
+	/Pe4mV76BJntPxZTDlv3B04AMrF1SH94NqkJOEqPmIqYdiQMQdzqKK+DUpeIhgujQRg7RYtHGMp
+	AzEN9w60tYdLXK8iJoFXjQU3DSMArzVrRDblWoG7xROL6j7IBk/aU5NBcrWWQ6AUCzUrTnxHwR/
+	sGUjU2DBx7UMtoZHPPxvUK2d5InvBb7UJxl+lkbaK029pfFyy4
+X-Gm-Gg: ASbGncsQdO6BXEEKEfcfDRYZp1cHsKfW0O92URj/L05DHOIDYT4Lybjuh/4wZC2wwo6
+	AeG0jIkj4M904m0o99cJoHt95iTO85hNz6LRw8TRugrRRFFymx4Sn38jn/KJzuFkSyDhzq6lGTD
+	vQYcBzgUCeCj9aXfwaMUQ3CLa8UD/bt8T5HgCFE1d+RqAUk4VdtzicOACr6NmbiVv7h5VNEl1aI
+	2mf8FIAqWu9BYuLg+yFCiNI775GdR/9aTYinn2ZwmfMh1f3J/KJqZjzcIsuOlmmS0FDfLAeY4ej
+	WWOPxJdbsC2YwrEROChipJl6SSwc5cAxjwg4Hj8ZwQz6P0ZolZPTh05c9fHTXnYciIMKIZ5iL/B
+	V8oqsjpk=
+X-Received: by 2002:a05:600c:1c19:b0:442:e9eb:cba2 with SMTP id 5b1f17b1804b1-4533499edc7mr24668215e9.0.1749806824406;
+        Fri, 13 Jun 2025 02:27:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGERaE8MR+6/dmyK3cZQ7xtwJhWFU3zCcnVAfTUdbkGjRrz6rE1iR9ahL+Nyc7gnKqK2+FRCw==
+X-Received: by 2002:a05:600c:1c19:b0:442:e9eb:cba2 with SMTP id 5b1f17b1804b1-4533499edc7mr24667655e9.0.1749806823907;
+        Fri, 13 Jun 2025 02:27:03 -0700 (PDT)
+Received: from localhost (p200300d82f1a37002982b5f7a04e4cb4.dip0.t-ipconnect.de. [2003:d8:2f1a:3700:2982:b5f7:a04e:4cb4])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568a73a7bsm1822993f8f.36.2025.06.13.02.27.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 02:27:03 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alistair Popple <apopple@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v3 0/3] mm/huge_memory: vmf_insert_folio_*() and vmf_insert_pfn_pud() fixes
+Date: Fri, 13 Jun 2025 11:26:59 +0200
+Message-ID: <20250613092702.1943533-1-david@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250613-k1-gpio-of-table-v1-1-9015da8fdfdb@iscas.ac.cn>
-X-B4-Tracking: v=1; b=H4sIAI3uS2gC/x3MTQqAIBBA4avIrBvQ6Q+6SrTImmooVDQiiO6et
- PwW7z2QOAon6NQDkS9J4l2GKRRM2+hWRpmzgTTVujEl7gbXIB79gudoD0YispVtG1vVJeQsRF7
- k/pf98L4fKAWyM2IAAAA=
-X-Change-ID: 20250613-k1-gpio-of-table-222b4b76b453
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Yixun Lan <dlan@gentoo.org>, 
- Alex Elder <elder@riscstar.com>
-Cc: Vivian Wang <uwu@dram.page>, linux-gpio@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Vivian Wang <wangruikang@iscas.ac.cn>
-X-Mailer: b4 0.14.2
-X-CM-TRANSID:qwCowAAn1tSP7ktoxvw7Bg--.2681S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Jr15ur4DCry5GF43JFWDJwb_yoW8Jr1xpF
-	45Zr9ak3y5GF43tasFvan7ZF18ua1vgFyIgF12kw1xZ3WqkrnFgF4jyFZF934UXryrJrW7
-	Xa1DGFyDWF18Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-The gpio-spacemit-k1 driver can be compiled as a module. Add missing
-MODULE_DEVICE_TABLE so it can be matched by modalias and automatically
-loaded by udev.
+Based on mm/mm-unstable.
 
-Fixes: d00553240ef8 ("gpio: spacemit: add support for K1 SoC")
-Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
----
-This patch is available at:
+While working on improving vm_normal_page() and friends, I stumbled
+over this issues: refcounted "normal" folios must not be marked
+using pmd_special() / pud_special(). Otherwise, we're effectively telling
+the system that these folios are no "normal", violating the rules we
+documented for vm_normal_page().
 
-https://github.com/dramforever/linux/tree/k1/gpio-of-table/v1
----
- drivers/gpio/gpio-spacemit-k1.c | 1 +
- 1 file changed, 1 insertion(+)
+Fortunately, there are not many pmd_special()/pud_special() users yet.
+So far there doesn't seem to be serious damage.
 
-diff --git a/drivers/gpio/gpio-spacemit-k1.c b/drivers/gpio/gpio-spacemit-k1.c
-index f027066365ff8741f99da076d1e7b6339a6c1a22..3cc75c701ec40194e602b80d3f96f23204ce3b4d 100644
---- a/drivers/gpio/gpio-spacemit-k1.c
-+++ b/drivers/gpio/gpio-spacemit-k1.c
-@@ -278,6 +278,7 @@ static const struct of_device_id spacemit_gpio_dt_ids[] = {
- 	{ .compatible = "spacemit,k1-gpio" },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, spacemit_gpio_dt_ids);
- 
- static struct platform_driver spacemit_gpio_driver = {
- 	.probe		= spacemit_gpio_probe,
+Tested using the ndctl tests ("ndctl:dax" suite).
 
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250613-k1-gpio-of-table-222b4b76b453
+v2 -> v3:
+* Added tags (thanks for all the review!)
+* Smaller fixups (add empty lines) and patch description improvements
 
-Best regards,
+v1 -> v2:
+* "mm/huge_memory: don't ignore queried cachemode in vmf_insert_pfn_pud()"
+ -> Added after stumbling over that
+* Modified the other tests to reuse the existing function by passing a
+  new struct
+* Renamed the patches to talk about "folios" instead of pages and adjusted
+  the patch descriptions
+* Dropped RB/TB from Dan and Oscar due to the changes
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Nico Pache <npache@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Dev Jain <dev.jain@arm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+
+David Hildenbrand (3):
+  mm/huge_memory: don't ignore queried cachemode in vmf_insert_pfn_pud()
+  mm/huge_memory: don't mark refcounted folios special in
+    vmf_insert_folio_pmd()
+  mm/huge_memory: don't mark refcounted folios special in
+    vmf_insert_folio_pud()
+
+ include/linux/mm.h |  19 +++++++-
+ mm/huge_memory.c   | 112 ++++++++++++++++++++++++++++-----------------
+ 2 files changed, 87 insertions(+), 44 deletions(-)
+
 -- 
-Vivian "dramforever" Wang
+2.49.0
 
 
