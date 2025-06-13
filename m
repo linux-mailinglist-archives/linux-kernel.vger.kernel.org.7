@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-684786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057C8AD8030
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0F2AD8025
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75BDD7A3A80
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B08A1881C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CDA1D5CED;
-	Fri, 13 Jun 2025 01:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="hGHoMLUZ"
-Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478561420DD;
-	Fri, 13 Jun 2025 01:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86FB1DDC00;
+	Fri, 13 Jun 2025 01:13:25 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6537F1D5175;
+	Fri, 13 Jun 2025 01:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749777526; cv=none; b=oe7gL8JyEriNEUzM3cGzL9ajkGYJY29vMbY02iGqkTueIS3uzn3dSLaRuW/le+moSvEhqn9do/xLf/v2v3qGqfMIGE+dcHcf3E+TSk6tlHFAaTw/9ZK8c5a+zw51HZAt4xGat8SM3WzuHrMpS+fMJ83+ARPwRnCHsmXYyF+QH5M=
+	t=1749777205; cv=none; b=qPkVOtyyjtOMtlk8TCl5kn0EwspoFm0whWeFvVJ4+Yp6h9SSjcQDFFddNXc5v+zVW4RxW6TPRtl9rlhkVuHE3KNA/ezR1cVfHU09R/LcJV48KO6MgFVTIVa/BS0IjDahXjf3THxf4BDXGSePK94qLVF3K7Tot61To8Z855YHVhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749777526; c=relaxed/simple;
-	bh=mzLaYBl+Y/d7BQANb7I+GDNo+dl/a7Akffi+nhcQ84s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gIofHeg0p+JCWPZ9ykS4EnbVBTXkFGUmp+D6Dep1vfPCbkIiUId3iZUXH24XIR6bhvuIPctuEXe2vE6YyeSgtK7r8vUdZi2UgwKokpelHDtjtb3Q+Wpz+ewr0HdpbadxrtadNQzdsYhraHgQsPnJwmTL8vpb2k0iLvH0OZpWpb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=hGHoMLUZ; arc=none smtp.client-ip=51.81.35.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id DABF822394;
-	Fri, 13 Jun 2025 01:12:46 +0000 (UTC)
-Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.66.161])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id AEA6726260;
-	Fri, 13 Jun 2025 01:12:37 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay3.mymailcheap.com (Postfix) with ESMTPS id 021413E8B6;
-	Fri, 13 Jun 2025 01:12:30 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 9E57C40078;
-	Fri, 13 Jun 2025 01:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1749777149; bh=mzLaYBl+Y/d7BQANb7I+GDNo+dl/a7Akffi+nhcQ84s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hGHoMLUZOLZCVgdW8cq0dvyersBeAz3xkHIZ2Omj7r5z+HuEW/pPNfTDO8K0Wrsxy
-	 PaFq534iNvtvMVkds2hnrsbyeuvgvQ1VD72sjrEnooOrYdKWIsbh3LCCSoX7Uq4NJ5
-	 mQuhUKNKnd4AYL5C3TFHvzaRDPGNyi6nx0e1X6nE=
-Received: from [19.191.1.9] (unknown [223.76.243.206])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id ED8D5411D6;
-	Fri, 13 Jun 2025 01:12:20 +0000 (UTC)
-Message-ID: <60cb6d5e-45f1-45a1-b142-22e3dfd203f9@aosc.io>
-Date: Fri, 13 Jun 2025 09:12:12 +0800
+	s=arc-20240116; t=1749777205; c=relaxed/simple;
+	bh=8TekB/D+4/8UhrQsSM7eVVZa5ko+rsGTZDp4E3X4Ssk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QB3OXdatwUHr8wpE/U3JqXUGQd8urjprXeKABfaTRiOfsz21FJklOZZ8J+qOpU2nMMqacuAYRUOPlHBBM6yq5Ip2QNd9RXgYX/HkuIZM7P7jDlOdS1xBcINEfssWt1u7gzuAkYlP/y8bq1n6RkUdA6hhvGFKoB24je+eyw/fqjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-cc-684b7b275ae5
+Date: Fri, 13 Jun 2025 10:13:05 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
+	asml.silence@gmail.com, toke@redhat.com, tariqt@nvidia.com,
+	edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com,
+	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com
+Subject: Re: [PATCH net-next 1/9] netmem: introduce struct netmem_desc
+ mirroring struct page
+Message-ID: <20250613011305.GA18998@system.software.com>
+References: <20250609043225.77229-1-byungchul@sk.com>
+ <20250609043225.77229-2-byungchul@sk.com>
+ <20250609123255.18f14000@kernel.org>
+ <20250610013001.GA65598@system.software.com>
+ <20250611185542.118230c1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] drm/xe: enable driver usage on non-4KiB kernels
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Francois Dugast
- <francois.dugast@intel.com>,
- =?UTF-8?Q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>,
- =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
- Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Zhanjun Dong <zhanjun.dong@intel.com>, Matt Roper
- <matthew.d.roper@intel.com>, Alan Previn
- <alan.previn.teres.alexis@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Mateusz Naklicki <mateusz.naklicki@intel.com>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Kexy Biscuit <kexybiscuit@aosc.io>, Shang Yatsen <429839446@qq.com>,
- Wenbin Fang <fangwenbin@vip.qq.com>, Haien Liang <27873200@qq.com>,
- Jianfeng Liu <liujianfeng1994@gmail.com>, Shirong Liu <lsr1024@qq.com>,
- Haofeng Wu <s2600cw2@126.com>
-References: <20250604-upstream-xe-non-4k-v2-v2-0-ce7905da7b08@aosc.io>
- <yyzxfqydczvfxddfsa4ebi7kyj5ezl2v4wbl5fopkdz6qwvjrg@fnhpcvfsp2dm>
-Content-Language: en-US
-From: Mingcong Bai <jeffbai@aosc.io>
-In-Reply-To: <yyzxfqydczvfxddfsa4ebi7kyj5ezl2v4wbl5fopkdz6qwvjrg@fnhpcvfsp2dm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Queue-Id: 9E57C40078
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.10 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[ce7905da7b08.aosc.io:server fail];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,intel.com,gmail.com,ffwll.ch,kernel.org,suse.de,lists.freedesktop.org,vger.kernel.org,aosc.io,qq.com,vip.qq.com,126.com];
-	FREEMAIL_ENVRCPT(0.00)[126.com,gmail.com,qq.com,vip.qq.com];
-	TO_DN_SOME(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611185542.118230c1@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzH9/093a9bx88JX1o2pxaNSOHzhxkb23dYy5hZVtz0W3dTycXp
+	YSZk5ug8lIc7x66ZHq7s7EpdLQ+dQ5HRAztKl9A8JHS5HoWrGf+99n6/9977jzdPy3XsLF6d
+	slfUpCiTFJyUkX7xL1gYmrVetVh3dBKYrGUclA6mQ1GnnQWTpRJB/1CbBDzOhxxcLfDSYHqa
+	w8AP6zAN7x90ScBd2M1A7bEqGrpO1XOQmzNCw2F7MQXPKvUs5A9fo6Equ1MCLTUmDjrKfrHQ
+	7chloMFYwoBbvwoemKeD93EPAqe1igLvycsc5DWbOXib40bQfK+LgUuH9Aist10sjAyauFVz
+	SEXJS4pUG19LiNm2j5QXhxGdq5kmNstxjtj6zkpI+4tajtRfHGFItd1DkdwjvRz5/v4VQ77e
+	fs4Ra8VzhjSanRLisc2OEWKlKxLEJLVW1CxauUOqGiu8yaR2TE5vu3OMykYmfx3ieSxE4fyK
+	WB3yG8f2/CbWx4wQgmv1n2kfc0IodrmGxjlACMY55QZGh6Q8LXSz+MnZUspnTBXisaVtYJxl
+	AuCu4WLWF5ILHQifOPRBMmFMwQ2Gd4yPaSEMu8Y+Ur4RtBCIi8Z4n+wnROCnrobxyDRhLr5b
+	+ZCaGFfA41Zr+gTPxHXFLuY0Eoz/tRr/azX+azUj2oLk6hRtslKdFBWuykhRp4fv3J1sQ38e
+	UnhgdJsd9T3b5EACjxT+MqhZp5KzSm1aRrIDYZ5WBMhQ6x9JlqDMyBQ1u7dr9iWJaQ4UyDOK
+	GbIl3v0JciFRuVfcJYqpouavS/F+s7KRuU87smJP7sL5G4ZvmtvWZskHNvZG0MnaJbfYhqH+
+	oLhza781LdiapzdEnwuwZUfD6nhDUL/zzckbQe77hvPmC2eu+NW/iwzxdL+e/nOLe5luaeZc
+	deNO+5qBPP082fqmzXHx1x+R+5blCcGjLTFT6/T1kQcDLYneQLq/59MPT0WrgklTKSPCaE2a
+	8jdXI5EfHQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRyG+Z+7w9FxWR2LPrjKQMosMn5llETQQcuMiKgPtZWHNjanbCra
+	BWYONEszU9A1YzHyWo2mqZldWEMdZaZmLe+tlKLQLLU5Q3NG5LeH932fby+DS8aIlYxSkyxo
+	NXK1lBIRotjIzI0h52IU4ff7IsBkvUNBtScNyocaSDBV1SGYmO6l4aejhQLLrSkcTO0GAiat
+	XhyGm900DJaNENCUVY+D+2orBbmGGRwuNlRg8LzUScLrujwSCr23cajXD9HQ1WiiYODOHAkj
+	9lwCnMZKAgbzoqDZvBymXnxD4LDWYzB1pZSC651mCj4aBhF0PncTcCMjD4H1iYuEGY+JipLy
+	tZXvMf6hsZ/mzbYUvqYilM9xdeK8reoSxdt+FNB839smim8tniH4hw0/MT43c5Tix4d7CH7s
+	STfFWz5/x3hrbTfBvzQ76LiA46Kd8YJamSpoN+2SiRSzZQ+IpIElab1PszA9MvnnID+GY7dy
+	fYUdpI8Jdh3XlPcV9zHFrudcrukFDmTXcoaaEiIHiRicHSG5toJqzFcsZU9wVb2/FljMAuf2
+	VpC+kYQdQNzljM/03yKAc5Z8InyMs6Gca/bLvMDM8yqufJbxxX7sZq7d5VyYLGPXcM/qWrB8
+	JDYuso2LbON/24zwKhSo1KQmyJXqiDCdSpGuUaaFnU5MsKH5G5Rd+H2tAU107bMjlkFSfzE0
+	RiskpDxVl55gRxyDSwPF6M18JI6Xp58VtIkntSlqQWdHqxhCukIcfVSQSdgz8mRBJQhJgvZf
+	izF+K/XohOPeoWBvWwYdvv1D0YCt27zt/paEwJaD6rjTx+L39K32RH2ynJeVvOtWRQblFIe/
+	apnTZ+radvYET3ovDHlqxy1ZNUdKA2RhG+r25g9leLJPxcVoQg47ow/k2nWNvzZij2Odo/07
+	PCw9elP0aHr/3SI6eC4z6FVXtko+mN+xe1hK6BTyzaG4Vif/A7IqLGUCAwAA
+X-CFilter-Loop: Reflected
 
-Hi Lucas
-
-在 2025/6/13 08:13, Lucas De Marchi 写道:
-> For some reason this patch series didn't make it to any mailing
-> list... it only shows the b4-sent and stable:
-> https://lore.kernel.org/intel-xe/20250604-upstream-xe-non-4k-v2-v2-0- 
-> ce7905da7b08@aosc.io/
+On Wed, Jun 11, 2025 at 06:55:42PM -0700, Jakub Kicinski wrote:
+> On Tue, 10 Jun 2025 10:30:01 +0900 Byungchul Park wrote:
+> > > What's the intended relation between the types?  
+> > 
+> > One thing I'm trying to achieve is to remove pp fields from struct page,
+> > and make network code use struct netmem_desc { pp fields; } instead of
+> > sturc page for that purpose.
+> > 
+> > The reason why I union'ed it with the existing pp fields in struct
+> > net_iov *temporarily* for now is, to fade out the existing pp fields
+> > from struct net_iov so as to make the final form like:
 > 
-> Could you resend this series?
+> I see, I may have mixed up the complaints there. I thought the effort
+> was also about removing the need for the ref count. And Rx is
+> relatively light on use of ref counting. 
+> 
+> > > netmem_ref exists to clearly indicate that memory may not be readable.
+> > > Majority of memory we expect to allocate from page pool must be
+> > > kernel-readable. What's the plan for reading the "single pointer"
+> > > memory within the kernel?
+> > > 
+> > > I think you're approaching this problem from the easiest and least  
+> > 
+> > No, I've never looked for the easiest way.  My bad if there are a better
+> > way to achieve it.  What would you recommend?
+> 
+> Sorry, I don't mean that the approach you took is the easiest way out.
+> I meant that between Rx and Tx handling Rx is the easier part because 
+> we already have the suitable abstraction. It's true that we use more
+> fields in page struct on Rx, but I thought Tx is also more urgent
+> as there are open reports for networking taking references on slab
+> pages.
+> 
+> In any case, please make sure you maintain clear separation between
+> readable and unreadable memory in the code you produce.
 
-That's strange... I have just resent the series.
+Do you mean the current patches do not?  If yes, please point out one
+as example, which would be helpful to extract action items.
 
-Best Regards,
-Mingcong Bai
+If no, are there things I should do further for this series including
+non-controversial patches only?
+
+	Byungchul
 
