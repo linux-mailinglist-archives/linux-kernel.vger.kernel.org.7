@@ -1,261 +1,273 @@
-Return-Path: <linux-kernel+bounces-686385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE80AAD96BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D50AD96BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FE63BD7C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B8C17BA50
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68873254875;
-	Fri, 13 Jun 2025 20:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FD624169B;
+	Fri, 13 Jun 2025 21:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R+FCy6jJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b="KBIrKz5Y"
+Received: from mail-10624.protonmail.ch (mail-10624.protonmail.ch [79.135.106.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B490C23D2A4;
-	Fri, 13 Jun 2025 20:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C522E3E8
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 21:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749848373; cv=none; b=turfUIj4tMEfrzDdILvYV6Ej0lc1TDLbY974SAhJM7NKL3AvLqKWIPfsqFOGEhrCpBzFWgXN48AOgBXfzx6JuNVs+9QlGn9hQjD7zhE+egQTIITPnX9+82AMXw4E+YfsBrIkjmQ3iEu0p5ZgKRkaYir6Zexdlmil/6DxrITmvf4=
+	t=1749848420; cv=none; b=J5FSmhxQ3vFf2qn5FmQ3h63JJU2GeIANSq7Bwe8gVZ5FaRU/J/NKQ7eClv+UTh6Z2NfhsFntDdY2PGTv3tQ9ssY1CtrcQFFrms7EIZeVnuSwjQqH8oDq6ch/xGww6dNwdok1OEZ4p70hQapu036g5JBU9fHjiiHENvcIVhNAjcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749848373; c=relaxed/simple;
-	bh=4E9AW2Of6J2KPBji7P3zIuCK4y2wWFf0sk+dowU0lyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lU7xneMaHB4qMkiWR5t1S6Dnj1d/PpYPnkzanOOLU232UNzz3IWSf72e3mBhDjWUtQu52cBUcYOxLLGze8cVmnYFo4qI/4qEbwZhS4W81deOSq4Uu8Ya+geF4dzJ6mTO5sTVyDHtBqaNJ/RBsuq+ZQaP4+U35IIz0rG/NR6FswQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R+FCy6jJ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749848372; x=1781384372;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4E9AW2Of6J2KPBji7P3zIuCK4y2wWFf0sk+dowU0lyI=;
-  b=R+FCy6jJvYFPNYSP8DCqrtmsFVX/sPren4wYrYugAMwxbhTDuWF2trBO
-   NNGDWq0O44fvOE/fXJ687my5YtyUp5SZKAC/pouGcqnd8c+4rGGMRHkh4
-   +z/lNtMdrTM4kkIdJdnDQC9mJymddWhhdMftfz9SBDkjrrmrT1Sg3lJxD
-   Dmd4xNAWoFaQfS2W0W2V/bhS74Plk9U/oyRDGsIpAZyBABpG/2RdgO940
-   MBguLYD5B7CXamAMdThKJcbb2CiJZJQuqLilh22VjlTpJifKZzpzq5DVg
-   X/9DlAQ9Pu86OrO9qWZWgeiNDfBJIINd631icSykvAkfNIpD5fFYakh6L
-   A==;
-X-CSE-ConnectionGUID: FVvhl0N3TqWaoVcKki4Zew==
-X-CSE-MsgGUID: 3Z8iS/Z9TMW4EOoGLUlfjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="63484279"
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="63484279"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 13:59:31 -0700
-X-CSE-ConnectionGUID: Lq8M/PB/SJeTCHsukjaFlw==
-X-CSE-MsgGUID: +qszpJUORwGE686T8hUXeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="147807751"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.111.232]) ([10.125.111.232])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 13:59:28 -0700
-Message-ID: <50e151ed-af26-49f6-86c8-ebb7b1ad43ca@intel.com>
-Date: Fri, 13 Jun 2025 13:59:25 -0700
+	s=arc-20240116; t=1749848420; c=relaxed/simple;
+	bh=C5INVxTN3i9TinbiyttmYCtTvarHSwnt7ggmuh4hcDo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MO4YHLroKndFvhpsf5bFAEht3m+JJKgHY+jOohwtCB6MPEwFKNYtxRWhoU8qhZJ9k8eF89wFVSR5Fzi9cwSrXB5n59cOBN6FFCzcCmaxsKcJ5tBlojHPJKxFivBWq1xwnVF4CtyOrYKUiWT46hkRkE+LDsidSV32SK3DFLXB1iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca; spf=pass smtp.mailfrom=gianis.ca; dkim=pass (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b=KBIrKz5Y; arc=none smtp.client-ip=79.135.106.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gianis.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gianis.ca;
+	s=protonmail; t=1749848408; x=1750107608;
+	bh=C5INVxTN3i9TinbiyttmYCtTvarHSwnt7ggmuh4hcDo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=KBIrKz5YmjSdNIw8QGslRLkCgdFwNVRQcd2rb6SDokDiGiJio75kNPZKPlkYoc0e7
+	 hnAEuvy6G6A/5X25uMal49sjgwuBXMwTXOKIeSKhsQlBz+zVTAhWdOACoObmQmdQHo
+	 ll1vgg+YB8jeC6Tfe3486oIgP6vBcd739TyXl9Zxz/BQFpeJao2zvIuwXzxTp3Inur
+	 4BTwXtnLT/w829X5hPKHGfPPjuGSICzI3HInoIsIqflQXaDp4TazIYoQHzO/SU8Owg
+	 AeSrD7Umq2cvRqzRV9Fvn8IhNSM3EzcvDI7bMz1w/bp80OlP2qE8lsayT1sagTb86N
+	 GDtkOKOE6LMAQ==
+Date: Fri, 13 Jun 2025 21:00:02 +0000
+To: Vincent Guittot <vincent.guittot@linaro.org>
+From: dhaval@gianis.ca
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] sched/fair: Increase max lag clamping
+Message-ID: <yaV6Pl8Nz9T25r41NdQTNSmI2lbTQ6VG0XmOoKTw77RLE0pRZAorDIQU1Cgv3XpvPpUkAPHWeJyEXwaEChcctVoxuzS_24jaMzI8-yds744=@gianis.ca>
+In-Reply-To: <20250613140514.2781138-3-vincent.guittot@linaro.org>
+References: <20250613140514.2781138-1-vincent.guittot@linaro.org> <20250613140514.2781138-3-vincent.guittot@linaro.org>
+Feedback-ID: 128275035:user:proton
+X-Pm-Message-ID: 26529d53c215b8acd269a1975c0a6ced1a8a6443
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dmaengine: idxd: Expose DSA3.0 capabilities through
- sysfs
-To: Yi Sun <yi.sun@intel.com>, vinicius.gomes@intel.com,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gordon.jin@intel.com, fenghuay@nvidia.com,
- anil.s.keshavamurthy@intel.com, philip.lantz@intel.com
-References: <20250613161834.2912353-1-yi.sun@intel.com>
- <20250613161834.2912353-2-yi.sun@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250613161834.2912353-2-yi.sun@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On 6/13/25 9:18 AM, Yi Sun wrote:
-> Introduce sysfs interfaces for 3 new Data Streaming Accelerator (DSA)
-> capability registers (dsacap0-2) to enable userspace awareness of hardware
-> features in DSA version 3 and later devices.
-> 
-> Userspace components (e.g. configure libraries, workload Apps) require this
-> information to:
-> 1. Select optimal data transfer strategies based on SGL capabilities
-> 2. Enable hardware-specific optimizations for floating-point operations
-> 3. Configure memory operations with proper numerical handling
-> 4. Verify compute operation compatibility before submitting jobs
-> 
-> The output consists of values from the three dsacap registers, concatenated
-> in order and separated by commas.
-> 
-> Example:
-> cat /sys/bus/dsa/devices/dsa0/dsacap
->  0014000e000007aa,00fa01ff01ff03ff,000000000000f18d
-> 
-> Signed-off-by: Yi Sun <yi.sun@intel.com>
-> Co-developed-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Signed-off-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
 
-Would be good to provide a link to the 3.0 spec. Otherwise
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-driver-dma-idxd b/Documentation/ABI/stable/sysfs-driver-dma-idxd
-> index 4a355e6747ae..f9568ea52b2f 100644
-> --- a/Documentation/ABI/stable/sysfs-driver-dma-idxd
-> +++ b/Documentation/ABI/stable/sysfs-driver-dma-idxd
-> @@ -136,6 +136,21 @@ Description:	The last executed device administrative command's status/error.
->  		Also last configuration error overloaded.
->  		Writing to it will clear the status.
->  
-> +What:		/sys/bus/dsa/devices/dsa<m>/dsacap
-> +Date:		June 1, 2025
-> +KernelVersion:	6.17.0
-> +Contact:	dmaengine@vger.kernel.org
-> +Description:	The DSA3 specification introduces three new capability
-> +		registers: dsacap[0-2]. User components (e.g., configuration
-> +		libraries and workload applications) require this information
-> +		to properly utilize the DSA3 features.
-> +		This includes SGL capability support, Enabling hardware-specific
-> +		optimizations, Configuring memory, etc.
-> +		The output consists of values from the three dsacap registers,
-> +		concatenated in order and separated by commas.
-> +		This attribute should only be visible on DSA devices of version
-> +		3 or later.
+
+On Friday, June 13th, 2025 at 7:14 AM, Vincent Guittot <vincent.guittot@lin=
+aro.org> wrote:
+
+>=20
+>=20
+> From: Peter Zijlstra peterz@infradead.org
+>=20
+>=20
+> sched_entity's lag is currently limited to the maximum between the tick
+> and twice its slice. This is too short compared to the maximum custom
+> slice that can be set and accumulated by other tasks.
+> A task can accumulate up to its slice of negative lag while running to
+> parity and the other runnable tasks can accumulate the same positive lag
+> while waiting to run. This positive lag could be lost during dequeue when
+> clamping it to twice task's slice if a task's slice is 100ms and others
+> use a smaller value like the default 2.8ms.
+> Clamp the lag of a task to the maximum slice of enqueued entities plus
+> a tick as the update can be delayed to the next tick.
+>=20
+> Signed-off-by: Peter Zijlstra (Intel) peterz@infradead.org
+>=20
+>=20
+> [ Rebased and Fix max slice computation ]
+>=20
+> Signed-off-by: Vincent Guittot vincent.guittot@linaro.org
+>=20
+> ---
+> include/linux/sched.h | 1 +
+> kernel/sched/fair.c | 41 +++++++++++++++++++++++++++++++++++++----
+> 2 files changed, 38 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 4f78a64beb52..89855ab45c43 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -576,6 +576,7 @@ struct sched_entity {
+> u64 deadline;
+> u64 min_vruntime;
+> u64 min_slice;
+> + u64 max_slice;
+>=20
+
+I am just wondering if it makes sense to maybe add a few comments here on w=
+hat each of these fields are for. Maybe not this series, but if you are ope=
+n to it, I will spin one up next week.
+
+> struct list_head group_node;
+> unsigned char on_rq;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 44a09de38ddf..479b38dc307a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -676,6 +676,8 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
+> return cfs_rq->min_vruntime + avg;
+>=20
+> }
+>=20
+> +static inline u64 cfs_rq_max_slice(struct cfs_rq cfs_rq);
 > +
->  What:		/sys/bus/dsa/devices/dsa<m>/iaa_cap
->  Date:		Sept 14, 2022
->  KernelVersion: 6.0.0
-> diff --git a/drivers/dma/idxd/idxd.h b/drivers/dma/idxd/idxd.h
-> index 74e6695881e6..cc0a3fe1c957 100644
-> --- a/drivers/dma/idxd/idxd.h
-> +++ b/drivers/dma/idxd/idxd.h
-> @@ -252,6 +252,9 @@ struct idxd_hw {
->  	struct opcap opcap;
->  	u32 cmd_cap;
->  	union iaa_cap_reg iaa_cap;
-> +	union dsacap0_reg dsacap0;
-> +	union dsacap1_reg dsacap1;
-> +	union dsacap2_reg dsacap2;
->  };
->  
->  enum idxd_device_state {
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 80355d03004d..cc8203320d40 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -582,6 +582,10 @@ static void idxd_read_caps(struct idxd_device *idxd)
->  	}
->  	multi_u64_to_bmap(idxd->opcap_bmap, &idxd->hw.opcap.bits[0], 4);
->  
-> +	idxd->hw.dsacap0.bits = ioread64(idxd->reg_base + IDXD_DSACAP0_OFFSET);
-> +	idxd->hw.dsacap1.bits = ioread64(idxd->reg_base + IDXD_DSACAP1_OFFSET);
-> +	idxd->hw.dsacap2.bits = ioread64(idxd->reg_base + IDXD_DSACAP2_OFFSET);
-> +
->  	/* read iaa cap */
->  	if (idxd->data->type == IDXD_TYPE_IAX && idxd->hw.version >= DEVICE_VERSION_2)
->  		idxd->hw.iaa_cap.bits = ioread64(idxd->reg_base + IDXD_IAACAP_OFFSET);
-> diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-> index 006ba206ab1b..45485ecd7bb6 100644
-> --- a/drivers/dma/idxd/registers.h
-> +++ b/drivers/dma/idxd/registers.h
-> @@ -13,6 +13,7 @@
->  
->  #define DEVICE_VERSION_1		0x100
->  #define DEVICE_VERSION_2		0x200
-> +#define DEVICE_VERSION_3		0x300
->  
->  #define IDXD_MMIO_BAR		0
->  #define IDXD_WQ_BAR		2
-> @@ -582,6 +583,21 @@ union evl_status_reg {
->  	u64 bits;
->  } __packed;
->  
-> +#define IDXD_DSACAP0_OFFSET		0x180
-> +union dsacap0_reg {
-> +	u64 bits;
-> +};
-> +
-> +#define IDXD_DSACAP1_OFFSET		0x188
-> +union dsacap1_reg {
-> +	u64 bits;
-> +};
-> +
-> +#define IDXD_DSACAP2_OFFSET		0x190
-> +union dsacap2_reg {
-> +	u64 bits;
-> +};
-> +
->  #define IDXD_MAX_BATCH_IDENT	256
->  
->  struct __evl_entry {
-> diff --git a/drivers/dma/idxd/sysfs.c b/drivers/dma/idxd/sysfs.c
-> index 9f0701021af0..624b7d1b193f 100644
-> --- a/drivers/dma/idxd/sysfs.c
-> +++ b/drivers/dma/idxd/sysfs.c
-> @@ -1713,6 +1713,21 @@ static ssize_t event_log_size_store(struct device *dev,
->  }
->  static DEVICE_ATTR_RW(event_log_size);
->  
-> +static ssize_t dsacap_show(struct device *dev,
-> +			   struct device_attribute *attr, char *buf)
+> /
+> * lag_i =3D S - s_i =3D w_i * (V - v_i)
+> *
+> @@ -689,17 +691,16 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
+> * EEVDF gives the following limit for a steady state system:
+> *
+> * -r_max < lag < max(r_max, q)
+> - *
+> - * XXX could add max_slice to the augmented data to track this.
+> */
+> static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity =
+*se)
+> {
+> + u64 max_slice =3D cfs_rq_max_slice(cfs_rq) + TICK_NSEC;
+> s64 vlag, limit;
+>=20
+> WARN_ON_ONCE(!se->on_rq);
+>=20
+>=20
+> vlag =3D avg_vruntime(cfs_rq) - se->vruntime;
+>=20
+> - limit =3D calc_delta_fair(max_t(u64, 2*se->slice, TICK_NSEC), se);
+>=20
+> + limit =3D calc_delta_fair(max_slice, se);
+>=20
+> se->vlag =3D clamp(vlag, -limit, limit);
+>=20
+
+As an aside, I have a test for Theorem 1 from the paper which shows we are =
+clamping here even in conditions I do not expect. Almost always a cgroup se=
+ems to be involved. I was out dealing with sickness last couple of weeks, s=
+o I have not debugged further.
+
+> }
+> @@ -795,6 +796,21 @@ static inline u64 cfs_rq_min_slice(struct cfs_rq *cf=
+s_rq)
+> return min_slice;
+> }
+>=20
+> +static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq)
 > +{
-> +	struct idxd_device *idxd = confdev_to_idxd(dev);
+> + struct sched_entity *root =3D __pick_root_entity(cfs_rq);
+> + struct sched_entity *curr =3D cfs_rq->curr;
+>=20
+> + u64 max_slice =3D 0ULL;
 > +
-> +	return sysfs_emit(buf, "%08x,%08x,%08x,%08x,%08x,%08x\n",
-> +			  upper_32_bits(idxd->hw.dsacap0.bits),
-> +			  lower_32_bits(idxd->hw.dsacap0.bits),
-> +			  upper_32_bits(idxd->hw.dsacap1.bits),
-> +			  lower_32_bits(idxd->hw.dsacap1.bits),
-> +			  upper_32_bits(idxd->hw.dsacap2.bits),
-> +			  lower_32_bits(idxd->hw.dsacap2.bits));
-> +}
-> +static DEVICE_ATTR_RO(dsacap);
+> + if (curr && curr->on_rq)
+>=20
+> + max_slice =3D curr->slice;
+>=20
 > +
->  static bool idxd_device_attr_max_batch_size_invisible(struct attribute *attr,
->  						      struct idxd_device *idxd)
->  {
-> @@ -1750,6 +1765,14 @@ static bool idxd_device_attr_event_log_size_invisible(struct attribute *attr,
->  		!idxd->hw.gen_cap.evl_support);
->  }
->  
-> +static bool idxd_device_attr_dsacap_invisible(struct attribute *attr,
-> +					      struct idxd_device *idxd)
-> +{
-> +	return attr == &dev_attr_dsacap.attr &&
-> +		(idxd->data->type != IDXD_TYPE_DSA ||
-> +		idxd->hw.version < DEVICE_VERSION_3);
+> + if (root)
+> + max_slice =3D max(max_slice, root->max_slice);
+>=20
+> +
+> + return max_slice;
 > +}
 > +
->  static umode_t idxd_device_attr_visible(struct kobject *kobj,
->  					struct attribute *attr, int n)
->  {
-> @@ -1768,6 +1791,9 @@ static umode_t idxd_device_attr_visible(struct kobject *kobj,
->  	if (idxd_device_attr_event_log_size_invisible(attr, idxd))
->  		return 0;
->  
-> +	if (idxd_device_attr_dsacap_invisible(attr, idxd))
-> +		return 0;
+> static inline bool __entity_less(struct rb_node *a, const struct rb_node =
+*b)
+> {
+> return entity_before(__node_2_se(a), __node_2_se(b));
+> @@ -820,6 +836,16 @@ static inline void __min_slice_update(struct sched_e=
+ntity *se, struct rb_node *n
+> }
+> }
+>=20
+> +static inline void __max_slice_update(struct sched_entity *se, struct rb=
+_node *node)
+> +{
+> + if (node) {
+> + struct sched_entity *rse =3D __node_2_se(node);
 > +
->  	return attr->mode;
->  }
->  
-> @@ -1795,6 +1821,7 @@ static struct attribute *idxd_device_attributes[] = {
->  	&dev_attr_cmd_status.attr,
->  	&dev_attr_iaa_cap.attr,
->  	&dev_attr_event_log_size.attr,
-> +	&dev_attr_dsacap.attr,
->  	NULL,
->  };
->  
+> + if (rse->max_slice > se->max_slice)
+>=20
+> + se->max_slice =3D rse->max_slice;
+>=20
+> + }
+> +}
+> +
+> /*
+> * se->min_vruntime =3D min(se->vruntime, {left,right}->min_vruntime)
+>=20
+> */
+> @@ -827,6 +853,7 @@ static inline bool min_vruntime_update(struct sched_e=
+ntity *se, bool exit)
+> {
+> u64 old_min_vruntime =3D se->min_vruntime;
+>=20
+> u64 old_min_slice =3D se->min_slice;
+>=20
+> + u64 old_max_slice =3D se->max_slice;
+>=20
+> struct rb_node *node =3D &se->run_node;
+>=20
+>=20
+> se->min_vruntime =3D se->vruntime;
+>=20
+> @@ -837,8 +864,13 @@ static inline bool min_vruntime_update(struct sched_=
+entity *se, bool exit)
+> __min_slice_update(se, node->rb_right);
+>=20
+> __min_slice_update(se, node->rb_left);
+>=20
+>=20
+> + se->max_slice =3D se->slice;
+>=20
+> + __max_slice_update(se, node->rb_right);
+>=20
+> + __max_slice_update(se, node->rb_left);
+>=20
+> +
+> return se->min_vruntime =3D=3D old_min_vruntime &&
+>=20
+> - se->min_slice =3D=3D old_min_slice;
+>=20
+> + se->min_slice =3D=3D old_min_slice &&
+>=20
+> + se->max_slice =3D=3D old_max_slice;
+>=20
+> }
+>=20
+> RB_DECLARE_CALLBACKS(static, min_vruntime_cb, struct sched_entity,
+> @@ -852,6 +884,7 @@ static void __enqueue_entity(struct cfs_rq *cfs_rq, s=
+truct sched_entity *se)
+> avg_vruntime_add(cfs_rq, se);
+> se->min_vruntime =3D se->vruntime;
+>=20
+> se->min_slice =3D se->slice;
+>=20
+> + se->max_slice =3D se->slice;
+>=20
+> rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+>=20
+> __entity_less, &min_vruntime_cb);
+> }
+
+otherwise
+
+Reviewed-by: Dhaval Giani (AMD) <dhaval@gianis.ca>
+
+> --
+> 2.43.0
+
 
 
