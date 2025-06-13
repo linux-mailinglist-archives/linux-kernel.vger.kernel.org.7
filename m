@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-685881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1887AD8FD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:42:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4B0AD8FDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 762A517DD69
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0732A1895499
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CCC19D08F;
-	Fri, 13 Jun 2025 14:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yew09Y+L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49351C84BB;
+	Fri, 13 Jun 2025 14:43:04 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F203192B84;
-	Fri, 13 Jun 2025 14:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DAD1DE4CA;
+	Fri, 13 Jun 2025 14:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825753; cv=none; b=r3IjctX5mn5IEwW7kjeu1fvSsVsULrUHUKfY14LMEhSDr5Tf4/ZZFf34Mg95uqt0mRukrZrl/fKFSU2mxRZvNJmxezJA7EH7dJXpD5rxG1IUPP1Tk0v/DIzCqwhdmddvRDI3jpcSOgQXgoW6kc6odBemcXKmUgZ/vbqJ7oAAkcY=
+	t=1749825784; cv=none; b=F3mKKcE5I8yo0qd9G8SDpX6XUU24peBNrv2vZ95DCDcVA8Fj7J5HYHRo/CDwQRdnaalctTLHTHbdbQNe6qtFX0tZl6NbTxs+yowvqmXS9JfoFLf9q8ekw1JmHfGUPzyD7TU9gGpqjb/+/Db6eWC7gWj2JkIV2wGGvd3PaGoANGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825753; c=relaxed/simple;
-	bh=/EhcpIn8oZkspRCHdGD8A6ppdJP/935NyccMYNOS7y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOHd/w+7jABXNBTcyxKB3u3nLthaUYgn6nXAKnMwvydqfsCOcK6mW+huYzoSH0fItDlqW/xRyEgTDzVvpC0bUfd1xcr9VuMPdTE0cKBUK/ZkaHe31IzEH0tkIi4sm3sH02JrnokMmeQLYGg/0tWxSobfGWBH0plHonyE/GpXQ/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yew09Y+L; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749825752; x=1781361752;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/EhcpIn8oZkspRCHdGD8A6ppdJP/935NyccMYNOS7y0=;
-  b=Yew09Y+LL3upH25QsD7nTbxl1pfi3bzPZ1qOBuEMeZRaNpudISTkY2de
-   XYTRpD/2fBWp4BqieZN1u8eyCGgUYnitBnoLLUeaR0uyG6nDmlkh/kdTm
-   79n6yOWGcxVqgJurkr3/CXi1zaL4hCB4Kn/uoJgJ152SxEn+3mdXs+dhC
-   aZqq9JRxecVZGQT6JDPhdhTX7DUiqBDVSBERRV+FxYtCjojaN7SfcgoB8
-   WiLOpyoGpxd12/2LclXw+HNUXOrE1au9aQd4F6JTVKyD5LmC0YYIeYIto
-   ItM0ipl/AURYkBN29Cg83tkXd87LvgB1dVkQuVTRghLztNxgT10eA9K1r
-   g==;
-X-CSE-ConnectionGUID: k/2k6r/eTHWf/2oIofmgig==
-X-CSE-MsgGUID: b8H505LrTAKTWSmrX3smDQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="62695415"
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="62695415"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:41:53 -0700
-X-CSE-ConnectionGUID: SbKS1l3EShyEXFd005Xpng==
-X-CSE-MsgGUID: 48PhrhZGTlqAX5HpXiOnmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="148736678"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:41:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uQ5bI-00000006GwF-0764;
-	Fri, 13 Jun 2025 17:41:48 +0300
-Date: Fri, 13 Jun 2025 17:41:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] iio: imu: inv_icm42600: add WoM support
-Message-ID: <aEw4q3p12q1iI7vC@smile.fi.intel.com>
-References: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
- <20250613-losd-3-inv-icm42600-add-wom-support-v4-1-7e5f554201bf@tdk.com>
- <aEvhZiXHLLIRe41-@smile.fi.intel.com>
- <FR3P281MB17578B82AC67F49552E24EB3CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
- <aEwfUMgLTnQxOh_k@smile.fi.intel.com>
- <aEwfgP3tiio52Rj-@smile.fi.intel.com>
- <FR3P281MB1757AEF932A3CE2AB9637046CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1749825784; c=relaxed/simple;
+	bh=tPl/PEIb8eSUeiYkBoCGfQu4ggnOVkwSBcpHJFJlX+E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o18ibQfeQNuTS0uW/Lb/WqX4QSlCE8RE/5h4MmxLmKnma0VBLKrIyyJ9vZ684p2c0m5miHALvUb4iDKS8lij/hEK9Z2SjUuTDsocT7BIkaheUX1zORlbteCSSeqB6OMEudLZAcKuvO2d9g88t5PiL0dcz1uJ/sXMf1zPeQGXR+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip2t1749825713tbe4f63a0
+X-QQ-Originating-IP: V63lOhA8be4jkOMxbffSjrLoj7ZrMWN4e7cYEOp3Yfc=
+Received: from [192.168.30.36] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Jun 2025 22:41:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6568943623001376254
+EX-QQ-RecipientCnt: 9
+From: Xilin Wu <sophon@radxa.com>
+Date: Fri, 13 Jun 2025 22:41:48 +0800
+Subject: [PATCH] phy: qcom-qmp-ufs: Fix HS-G4 PHY init table for sc7280
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <FR3P281MB1757AEF932A3CE2AB9637046CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250613-sc7280-ufsphy-g4-fix-v1-1-1bf60744f5ac@radxa.com>
+X-B4-Tracking: v=1; b=H4sIAKs4TGgC/x2MSQqAMAwAvyI5G2jTuuBXxIPUVHNRaVAU8e8Wj
+ zMw84ByElboigcSn6KyrRlsWUBYxnVmlCkzkKHK1NahhoZag0fUfblx9hjlQkO+8hSdjWOAnO6
+ Js/63/fC+H2qSSPVmAAAA
+X-Change-ID: 20250613-sc7280-ufsphy-g4-fix-024542f31fac
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Nitin Rawat <quic_nitirawa@quicinc.com>, 
+ Manish Pandey <quic_mapa@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Xilin Wu <sophon@radxa.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749825712; l=1667;
+ i=sophon@radxa.com; s=20240424; h=from:subject:message-id;
+ bh=tPl/PEIb8eSUeiYkBoCGfQu4ggnOVkwSBcpHJFJlX+E=;
+ b=TjZ2DBGaELqKjKwUCVZYItwat+JLv7VGMiBu46gSHT+NLI6IL6S34l0NvKdoZJLxA8weVyFov
+ WSnE5vBfj2jDyLaAUmZ8l+7kXNOSyBxXAyUwGUW3+lBIHjNo2Aa2YH0
+X-Developer-Key: i=sophon@radxa.com; a=ed25519;
+ pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NDaL9YIDjH+JVfTGJPjC0drK2S3l6oMd3sX5QMU8QcrEPwj//KVurX/4
+	x0DMEfg89F9b35oZ9c/645mhKqkHufdB3p5lsOx5BTfK0nzNtXtpxF6a2/qJASpGgm9MNg0
+	gSCLgEXzBS3rmhN+WQRwCHxIPH6A1wsTNakGcW8sLQT8w1N0lsS3qMN2gFEIogU5ft6P1+t
+	5rfuzVvbHj1o+uIgDMIgnNikl99dPglr9t8+vvJqtU7ao6LsalmBL6Bz2R0QXTZXKLC9fic
+	gmZ0SvoxkpaWm/0Y3DNpIDZXUceHfb4gtA3Kq8Il6ap1QhU1smk+aGN5dTkFlWNiKfhULYu
+	g4rjGIaAnmYfrHQ660CxqoTehbkPJgIF7Vk/fe9eiHlwHJ0mF+8m5HnZccsdJBdqw0lmBqo
+	1UHMSgDV4QJVmILNIxTIWOx1LKR95x5vvyZGmF8TZGNhqtdcn8U8Nj6qZiTnbAfC88ela0+
+	rRdkUk52HlMIFsNu3DVaVNARhMdVYqEQihjz8eOazgmcAzqV2VzJO33IHqLN9ksd+R05zno
+	BFCpJQ/ipPD48oFmdR5D7+lXqyDlDi4Wil2zlfamtcVbIZ2/PgDKpPlEz1m7AeGVKJfnJiJ
+	pE/fdqIH+2lNzxeqiyzFBAwwyM9D0lyxmFk7tVDv1+wJN4nIPF/pe+ARNtBPNhkuQOU6YbY
+	DUSuGymQJSksdGXMhlCLMnm6nTf3Blf6ZJZhctVzbQjEQ0/ONnTZZbjFmmD6LAL2/NBpVcS
+	h21EliiOMyQODF6ZSaOaLemTJY+B3kuVw4wt/2U2ePiQDcAMzyrYn5K6/JPQUjhcLdWLRKt
+	QYj4zgMIwcvyNNOitsGbxtzVLkRXI310oowqxbkvXBSq59JD2yUO09BQzrJDF6wiKLHcFeb
+	qlqBZLebPGJLbag/52GexvAAMANYiBdQMoc8lwPhNSe79BaBVUSFqOvLliiYUnBe5PW72TW
+	CZceVTKkF3nL3ybBnyB9l5BZBzLuqdreD27Y8BusDvmi81IoZvxOk3+dy
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Jun 13, 2025 at 01:43:58PM +0000, Jean-Baptiste Maneyrol wrote:
-> >From: Andy Shevchenko <andriy.shevchenko@intel.com>
-> >Sent: Friday, June 13, 2025 14:54
-> >On Fri, Jun 13, 2025 at 03:53:36PM +0300, Andy Shevchenko wrote:
-> >> On Fri, Jun 13, 2025 at 12:46:46PM +0000, Jean-Baptiste Maneyrol wrote:
-> >> > >From: Andy Shevchenko <andriy.shevchenko@intel.com>
-> >> > >Sent: Friday, June 13, 2025 10:29
-> >> > >On Fri, Jun 13, 2025 at 09:34:26AM +0200, Jean-Baptiste Maneyrol via B4 Relay wrote:
+The PHY is limited to operating in HS-G3 mode during the initial PCS
+registers initialization. Extra PHY init sequence is required to allow
+HS-G4 mode to work when needed.
 
-...
+Fixes: 8abe9792d1ff ("phy: qcom-qmp-ufs: Add Phy Configuration support for SC7280")
+Signed-off-by: Xilin Wu <sophon@radxa.com>
+---
+This might need testing on sm8150, sm8250 and sc8180x as well.
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> >> > >Overall, looking to this patch again, I think it would be better to prepend it
-> >> > >by replacing *int*_t types by the respective uXX ones. Because in this patch
-> >> > >we add dozens of new ones which increases an unneeded churn in the future.
-> >> > >
-> >> > In my opinion, to respect the rule don't mix *int*_t and uXX types, it is better
-> >> > to keep *int*_t types. If it need to be changed, we can change afterward the
-> >> > whole driver types with a replace tool and send it in a separate patch.
-> >> 
-> >> It will be never ending story, sorry. We need someone to solve this tech debt.
-> >> And since this patch adds more than 3 new users of it, I think it's a candidate
-> >> to embrace the burden.
-> >
-> >For your convenience I can mock-up a change...
-> 
-> It looks like there's something I don't understand in the kernel Documentation about
-> types then.
-> Quoting Documentation/process/coding-style.rst, section 5.d:
-> ---
-> New types which are identical to standard C99 types, in certain exceptional circumstances.
-> 
-> Although it would only take a short amount of time for the eyes and brain to become accustomed
-> to the standard types like uint32_t, some people object to their use anyway.
-> 
-> Therefore, the Linux-specific u8/u16/u32/u64 types and their signed equivalents which are
-> identical to standard types are permitted -- although they are not mandatory in new code
-> of your own.
-> 
-> When editing existing code which already uses one or the other set of types, you should
-> conform to the existing choices in that code.
-> ---
-> 
-> My understanding is that uXX are not mandatory for new code. You can use types like *int*_t.
-> But you need to conform afterward to the existing choice. That's why this driver was
-> done initially with *int*_t types, and that patches are conforming to this choice.
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+index b33e2e2b5014d3ca8f19b623ba080887f53e616d..7797be329d75f95c80863e05351d0cf55fdf38c2 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+@@ -570,6 +570,13 @@ static const struct qmp_phy_init_tbl sm8150_ufsphy_pcs[] = {
+ 
+ static const struct qmp_phy_init_tbl sm8150_ufsphy_hs_g4_pcs[] = {
+ 	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_LARGE_AMP_DRV_LVL, 0x10),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_PLL_CNTL, 0x0b),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TIMER_20US_CORECLK_STEPS_MSB, 0x2d),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TIMER_20US_CORECLK_STEPS_LSB, 0xb0),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_PWM_GEAR_BAND, 0xff),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_HS_GEAR_BAND, 0x1b),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_HSGEAR_CAPABILITY, 0x04),
++	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_RX_HSGEAR_CAPABILITY, 0x04),
+ 	QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_BIST_FIXED_PAT_CTRL, 0x0a),
+ };
+ 
 
-This part of the documentation has a lot of room for different interpretations.
-One [1] may consider this as uXX superior, another, like you, that it's okay
-to use.  In any case Greg KH prefers uXX over uintXX_t. And he is also in
-the chain of maintainers here. Feel free to amend the Documentation. But
-be sure all stakeholders will see your proposal (like Greg KH and other
-key maintainers).
+---
+base-commit: bc6e0ba6c9bafa6241b05524b9829808056ac4ad
+change-id: 20250613-sc7280-ufsphy-g4-fix-024542f31fac
 
-> By looking at all Linux drivers, there are plenty of them using *int*_t, even
-> inside iio:
-
-$ git grep -l 'u\?int[0-9][0-9]\?_t' -- drivers/iio/ | wc -l
-59
-
-$ git ls-files drivers/iio*.c | wc -l
-640
-
-Less than 10%.
-
-> Then, why it is mandatory to change this driver to use uXX instead?
-
-TO be consistent. With the above wording in the documentation I may argue that
-entire subsystem should be consistent and at least in IIO we have tons of patch
-series that are against the whole subsystem to do one style change or another
-(look at the recent memset() vs. {} for initialisation).
-
-[1] https://lore.kernel.org/all/20250409180953.398686-1-matchstick@neverthere.org/
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Xilin Wu <sophon@radxa.com>
 
 
