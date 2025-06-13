@@ -1,95 +1,134 @@
-Return-Path: <linux-kernel+bounces-685782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE238AD8E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE89AD8E8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C24316ED2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF824188C1C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2291A29A;
-	Fri, 13 Jun 2025 13:52:55 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512C62D8797;
+	Fri, 13 Jun 2025 13:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c3iMRb5f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7FD156F5E;
-	Fri, 13 Jun 2025 13:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF752D9EF9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822774; cv=none; b=Ok3J17SDVAdo1rO+NuVE9lNo4Hhphxfqzp3nYlAjqIqD5/ewltmCTn2Jmp+q4lh4J0o04+xj4U0lQaYZLibQUa7lfJXRsh2mzOcN+da1WJPmw/9FceLRE0J2enT82go1QDCqbFZWFxCG3tHwmX2C8c8MrrU0XzGcIdnM1//AuMU=
+	t=1749822618; cv=none; b=H1Trp91HwWRtSMBA7q/f8fj+of1tSA0sYOJnfTPUUDAFbSAmnvXT+SJc1Pgi0do/hZz401EzKeSYrwUKYnocYnx6x0SuHNh7qC4gQGdiD0SvAOzHfJKYHrxLLk6TMQsKMmK+QzpEFi/WrsjRhNlNoSUm55WBqdu1831wj/034ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822774; c=relaxed/simple;
-	bh=cWb5O919iJ5GUz1RPBsizB20JDHxE/ASBUV9zv+N5lQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcRnjrc7AdI/QdB/w/nssfAoHCTjIVd0hYD72f+fq75DkbSJVjVhZZBOodUeybgVmSqavlXg+gfZLOHnm+ZhV+UM2OtyNBvZj3YiSIgRLWU93+/qsjSo1wWcG/YIlLktVBrROCeXS5Gax92tPEKeUa36wiSxGgbV7OeDL8W5Oxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 0866620091AE;
-	Fri, 13 Jun 2025 15:45:36 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id E75D669ABA; Fri, 13 Jun 2025 15:45:35 +0200 (CEST)
-Date: Fri, 13 Jun 2025 15:45:35 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: grwhyte@linux.microsoft.com, linux-pci@vger.kernel.org,
-	shyamsaini@linux.microsoft.com, code@tyhicks.com, Okaya@kernel.org,
-	bhelgaas@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
-Message-ID: <aEwrfy63cvBLr5yc@wunner.de>
-References: <20250611000552.1989795-1-grwhyte@linux.microsoft.com>
- <ccclacbxzdarqy27wlwqqcsogbrodwwslt7t5sp64xvqpa3wsl@xs5cllh7a6ft>
+	s=arc-20240116; t=1749822618; c=relaxed/simple;
+	bh=WWSMNscjRKqDqvaRWCJBqmlgX5BK/JXK0+3JVVtjIaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=n/H895k1RRenBe35z79MZxo8h1NgwbJQQ8ej4gJVHxEBL37HCkEy31oZ0fTt3D3CSe9FBZc9YiuqjbSJHUy5HWRQBAH8e3ZUkewxq+Xa0DtJaQdicsJ9PfdNTWZtDpcoci8tvPdOM2y/iH4ZPaX+p7lcZdCsgKvQZrImD6zBq+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c3iMRb5f; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749822617; x=1781358617;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=WWSMNscjRKqDqvaRWCJBqmlgX5BK/JXK0+3JVVtjIaM=;
+  b=c3iMRb5fT7/t1xdOiTd5hX6sHRO9KizQOCBejjSN4+nbX/OgdI2HS/oa
+   YO1pP4NaVUkTgq5kRolqEuWKJeI2h/i/150tyZYVPjoc4tqRzkIN+ZOhi
+   C3bMeUhk6U6VkQJWrRXXqrc7GRD9Os65kwrtN+juT9jZ2XPwWRsdSHthF
+   yRwICJLvqump9KQ0pcS3VDOmdgacCbNNnU5qfE0TxFwq0QHliRJxSvXGQ
+   IviLdhxYXHIm1ZFPGiyzA8jMR1VilGWRFagpRBrEMGoqsvKWv/C/ng++u
+   nHfetNheAK9Owln61nUmd6+jNlpZTFd1SIKJ+RBxvR28zan4QrJ5/Vx9P
+   g==;
+X-CSE-ConnectionGUID: mmxggCaWRTmX4OwakYZ3ZQ==
+X-CSE-MsgGUID: cnqbagmdTgm+LKa5me5Azg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="55837549"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="55837549"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 06:50:16 -0700
+X-CSE-ConnectionGUID: HYJePYyhQYewtHCH3lqvcQ==
+X-CSE-MsgGUID: P/PvXNpCSaG+owfBuL8pmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="171017597"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa002.fm.intel.com with ESMTP; 13 Jun 2025 06:50:16 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	jolsa@kernel.org,
+	alexander.shishkin@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Cc: dapeng1.mi@linux.intel.com,
+	ak@linux.intel.com,
+	zide.chen@intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [RFC PATCH 01/12] perf/x86: Use x86_perf_regs in the x86 nmi handler
+Date: Fri, 13 Jun 2025 06:49:32 -0700
+Message-Id: <20250613134943.3186517-2-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20250613134943.3186517-1-kan.liang@linux.intel.com>
+References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ccclacbxzdarqy27wlwqqcsogbrodwwslt7t5sp64xvqpa3wsl@xs5cllh7a6ft>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 05:12:48PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Jun 11, 2025 at 12:05:50AM +0000, grwhyte@linux.microsoft.com wrote:
-> > Add a new flr_delay member of the pci_dev struct to allow customization of
-> > the delay after FLR for devices that do not support immediate readiness
-> > or readiness time reporting. The main scenario this addresses is VF
-> > removal and rescan during runtime repairs and driver updates, which,
-> > if fixed to 100ms, introduces significant delays across multiple VFs.
-> > These delays are unnecessary for devices that complete the FLR well
-> > within this timeframe.
-> > 
-> 
-> I don't think it is acceptable to *reduce* the standard delay just
-> because your device completes it more quickly. Proper way to reduce
-> the timing would be to support FRS as you said, but we cannot have
-> arbitrary delays for random devices.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-To be fair, we already have that for certain devices:
+More and more regs will be supported in the overflow, e.g., more vector
+registers, SSP, etc. The generic pt_regs struct cannot store all of
+them. Use the X86 specific x86_perf_regs instead. The x86_perf_regs is
+already used in PEBS to store the XMM registers.
 
-The quirk delay_250ms_after_flr() is referenced by three different
-Vendor ID / Device ID combos and *lengthens* the delay after FLR.
+The struct pt_regs *regs is still passed to x86_pmu_handle_irq(). There
+is no functional change for the existing code.
 
-It's probably difficult to justify rejecting custom delays for
-certain MANA devices, even though we allowed them for three other
-devices.
+AMD IBS's NMI handler doesn't utilize the static call
+x86_pmu_handle_irq(). The x86_perf_regs struct doesn't apply to the AMD
+IBS. It can be added separately later when AMD IBS supports more regs.
 
-The proposed patch introduces a generic solution which avoids
-further cluttering up pci_dev_reset_methods[] with extra entries,
-so I think it's an approach worth considering.
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-There are a bunch of nits in the proposed patches, such as "pci"
-not being capitalized, but the general approach seems fine to me.
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 7610f26dfbd9..64a7a8aa2e38 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1752,6 +1752,7 @@ void perf_events_lapic_init(void)
+ static int
+ perf_event_nmi_handler(unsigned int cmd, struct pt_regs *regs)
+ {
++	struct x86_perf_regs x86_regs;
+ 	u64 start_clock;
+ 	u64 finish_clock;
+ 	int ret;
+@@ -1764,7 +1765,8 @@ perf_event_nmi_handler(unsigned int cmd, struct pt_regs *regs)
+ 		return NMI_DONE;
+ 
+ 	start_clock = sched_clock();
+-	ret = static_call(x86_pmu_handle_irq)(regs);
++	x86_regs.regs = *regs;
++	ret = static_call(x86_pmu_handle_irq)(&x86_regs.regs);
+ 	finish_clock = sched_clock();
+ 
+ 	perf_sample_event_took(finish_clock - start_clock);
+-- 
+2.38.1
 
-Thanks,
-
-Lukas
 
