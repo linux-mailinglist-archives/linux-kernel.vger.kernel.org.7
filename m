@@ -1,272 +1,448 @@
-Return-Path: <linux-kernel+bounces-685680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8F1AD8D21
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:33:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DD8AD8D24
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D7B37A9F09
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:31:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B3E7AB44B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D83158DD4;
-	Fri, 13 Jun 2025 13:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05209187FEC;
+	Fri, 13 Jun 2025 13:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HeFVMGS7"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y6E0PJMk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="utS98oRJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597D3111BF;
-	Fri, 13 Jun 2025 13:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749821577; cv=fail; b=AcpZwdZvzaqdTYXQMTDVn75J2DybNgflqVKUUyiWQBhhYh4u/thIAcNSuICvCBrkNt3l6C6t4fm5CrIErWhLR444Y6VPNU1CVYZw395aqlaPttM4LQkBDH7Fzi88lFd/GdzD4UkK3VhvhnHth+A4fVUUCBN/zw6GVYcPoKx4FMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749821577; c=relaxed/simple;
-	bh=Yk3ANqENYvJVmPyTCy8zgDs00tLlF9l7tKRvm2FDmh8=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=n/+wXYeZ0Cjm+i9ooDKQpSZ5vReg/3C3iSVWGx5FaaCRVAaPD8KbYYA1BQ6E2W3nPkBIRU+M2piwIVTOOaf/mNvi55pMICtFQrQ9OyAdajcrmHXqZt8jVJszZbJ4IPzTVbiX1AdJDztyLimNmFnVhuGL284cvxY3yKVXymDdFUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HeFVMGS7; arc=fail smtp.client-ip=40.107.220.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H5rI/nQ3Ms0u6phv/iii5IF2t36TioKnWJ9zUO3y2ZYQzbV6Pr3UaQptASXn3R/SDqaK+Q5HwRTuIzTyOHkxbMiA9KyvIw5ibIYYQn4YwMe4AIpH2iRcER2dcrxlT9axzIvBuCOUJy4sbkXrXFyPm6PH3BPfBjchEO0HHrHuK2udcmMuwgboQ5u4gjZYDyg7YyjHeYWmF49FKtbiekl/p4SJQS/R0r9rBUK/HZRj0+9g+jQ0bLokASxUATXXjvUxcgbUDccZDTZItB7REgiXyl/R5vyFQZX+TVO/0Vf8Oo/V+t6rZ9dWSf6yu6dOqMVcKygDobfcfL+SlKoCeAxiZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kj2/97Oj2cRVUYUNtXAeICEfO10ON4J8slYARa05h/s=;
- b=F5JQ8gVBsQraI3IZ7jWOVHSxZlqZ/CfqmVFdfCx4JKKaXGO9hdHv1VJrcXpwV5GxorsWGfAC9aVSDJ85SFQrBoIYashE3SViWiMU0LMFfRpkSfOeuBdYg3buQ9FqHaB3R7hacMP2/eT3LMRy/pROrxhkEiERc9xHhD7XxC7femyTeliQrW6obXZJHHsMgRp7gfp+9V1Z5iLzVxMA3ZsIppp5+5xOkcIBeH54lk2aTv3b3rzjIjr2slZCeYV3Am4rMoPrBYDxFRNc2BMK/6LWgDawlf6quJyD0ynueFofLdVo1OY1eXevf/wf337isM4TqsqcKvK7IDXgn/SJL9zR/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kj2/97Oj2cRVUYUNtXAeICEfO10ON4J8slYARa05h/s=;
- b=HeFVMGS7l+KDZKVOwJOygCT1/kRgOt5ZGTYWq92l/CW8FCKtXB8X9H5Q1iOiFC3HGGmiu4XUks//3Ep5az3JFSy1iKlTqxqD6eRD35gRNB2Q3IH/7F/kE2ksHyrqeMN4jR7RQDilzT1Q3gIaKDhKc0PqTAH/JlZsvzjHBdI5PmlkTgda4IGJD8xmdOcZ/Nkt3RET8G/YjHwL130pWBYFWHWQLbU2SbVx5FXanEouIbHc6UeuDOyii0glTyIj9nPV5XF8kW9O+MRCnWDVt0tc9tQo1jCpZP4bl/inUbUk0NwW4c4ZZ+EQq7zhxeZtNtLYTHIBJIMgxqNRW6yjj+hnFA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by IA1PR12MB6041.namprd12.prod.outlook.com (2603:10b6:208:3d7::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.22; Fri, 13 Jun
- 2025 13:32:51 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
- 13:32:51 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Jun 2025 22:32:47 +0900
-Message-Id: <DALFZ6YG8KPZ.2OQ25ED53ZI5X@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH] rust: math: Add KernelMathExt trait with a mul_div
- helper
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Michal Wilczynski" <m.wilczynski@samsung.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Marek Szyprowski" <m.szyprowski@samsung.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <CGME20250609215523eucas1p22f6d7d84b403badfb77af7df973b97a9@eucas1p2.samsung.com> <20250609-math-rust-v1-v1-1-285fac00031f@samsung.com>
-In-Reply-To: <20250609-math-rust-v1-v1-1-285fac00031f@samsung.com>
-X-ClientProxiedBy: TYCP301CA0037.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:380::9) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA0A111BF;
+	Fri, 13 Jun 2025 13:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749821668; cv=none; b=B06mjhKf5WS8ue5m+sNcZQYxiSQtWDh7DQxpfvlIYfyhErCGWCZFykBL0EIsEqGygb7dm47IOtvIyZhXiUjUmcy15Bfpcvp+ySdHrkUbUjD3ir4FNSj3gl3Skc9TyUJDZxdFYl4eHGhW4GYhlRryPRVFQMPb7XsdRgDcrTgYa0A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749821668; c=relaxed/simple;
+	bh=DzekLg4ogQqGHeU4BJBAAIpiIRB/63eE9WUwrESlAKw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Aj+fDA1290ZxbOjmXMJT3w1Q2lokmBRcUCM9Qz2r3wAut87Hn/Ab70UFGpQcgJbpkVRjpGD2CD+SeGi4lyJlEXiGDIE4gI1146ud6mL+zHi3+krDL6/uBAPW4V5DVgCbSM0prECHJ83yPuPHBjeJCOiBIt/4RLJ7LwjJYZyNCis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y6E0PJMk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=utS98oRJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 13 Jun 2025 13:34:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749821664;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lvop4LhiUuD6oRvV0/+e41u7SqyJ4z7NIpldjIYKGrs=;
+	b=Y6E0PJMkuA9qWbiNZ594+XHJteFbcDSokipDzlW7nvaTQPyI7jLdL3co+auoffFLfrG7nR
+	x+bveLqTfMRBZUXmrMje7mi6Akg9Gcw+drc3vGFPqCIVfok4eqfpdZTyikK1wSQFfKcPtn
+	JPkizEJRbqHfqVYYM9/AJuNZnivlaUcua/YFF0RfzCTkREGyYG+UwPXoEnjsUHOtVm8XaU
+	eT/ZGavgMIAC3UNhvOwwSVn4h6FUda02tAUJWzS6uAmexIRy+5aXWvL+Vlkq9eaGPJO2nd
+	VsNMsthcb9AVBhs/k4RHoKRvFB81Xjij4C6NqMY8UP2kn7m+NiVquUtuD8SIjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749821664;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lvop4LhiUuD6oRvV0/+e41u7SqyJ4z7NIpldjIYKGrs=;
+	b=utS98oRJF4hgTrdcgN8g48giG3+SU7Bq9bU3Nirbv15N46jC9qcEYg2nyJsrFizNTGHg/o
+	8yLttCRmq26oWSCQ==
+From: "tip-bot2 for Brian Norris" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq: Add kunit tests for depth counts
+Cc: Brian Norris <briannorris@chromium.org>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20250522210837.4135244-1-briannorris@chromium.org>
+References: <20250522210837.4135244-1-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA1PR12MB6041:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81be932e-d68c-4277-33e4-08ddaa7ecb24
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|7416014|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0ZkREJIUWtJWDg3VVpISHJHN1hRNEdPTjlvUmszM3RIQWlBUmFuT2Y0UGFr?=
- =?utf-8?B?aDliUEJackFqUEJZbGJBd2M5U205VTZhQ1pXUVhlV2ZrV3FSU0ppZnFsNTBD?=
- =?utf-8?B?MHJjU3lpZHdOWXd5cUg2RVpTM1FxMVVCMmN1K2tCc0diQ0paWHFFd0d4L0x6?=
- =?utf-8?B?UEN1d2lERkdnUzl1cnpBRFluMTE5RmRvcjA0WWRQK1JIVFdKS1pCTnZLL0d4?=
- =?utf-8?B?MkNWc1hsaEluY1JBR0hVck1hVWltU3BNMW5oZUJiVDV2Zk5wQjhqaEdjcis0?=
- =?utf-8?B?Yms3U2xXRDhEUGlKd0l4VU5PQXp2Q2R3Q2I4ZHRDbktoWHJLWUllR2xMRTBI?=
- =?utf-8?B?eHkya0REN0xib3kzN1lHTUJCQ2xZaERpdjNSRVAwNzFVSDM4WisvR2h2dFhu?=
- =?utf-8?B?ckN4WDJpa2NwWXoyOVVTYnN2a3NVeUxGY1pjazhOQWhrUlN0WmNSZllFQUVs?=
- =?utf-8?B?cG5TTThvWU91UVRsbVJqbHUzL3ZMVnV4a2xmUXNGRldhY29wcGdMOEFWTnVM?=
- =?utf-8?B?bm1ISW9nd09GcG5MRjQ4Zis0TTBpNmMvV3kxRkRNajJzRE9aSGhReUtySll6?=
- =?utf-8?B?SVZDSXU1TEkwQVhzOXlvQzFvdGhaUDFUTXg1c1REOUhOaHlTUjE3dDF0MWFk?=
- =?utf-8?B?SStCTUJwZTVCbFhEMjNMUFR4bUpFUVEvVU11TmZvYXFybEhHMm9hTVRlcDA5?=
- =?utf-8?B?T0RNM3Q1NnFkbW5YUGo0cHQvcXBESkJqQm1ieFQvYmVjdWVMVER4M2JZZVFT?=
- =?utf-8?B?RElNNlFIYTZwUjE5UDFBMmljWDNUeE8xd3h0cmJVR3pNWEw3MHNjWGRmSlp3?=
- =?utf-8?B?S3R0bnh0blVlVnBIOEorZjJnbFFydmZodXd6UEdzRm0yazZ3ckswSFlyYktP?=
- =?utf-8?B?YitGZzFlOC95bDcycWtPb0pPcDNyV0pCNHdUVUZEK1pFUkdFZnpJcWNlRlFH?=
- =?utf-8?B?M3poRWk2RW0zUmwxVGxjRGdBL3BERVZBKzl3dFZua0tvL3FGWUdQNzZZSTRl?=
- =?utf-8?B?c1JTRGFxckgrbmxaNUhzWGZIZExKVkVRMUx1M2dmejFNY0VwMm1mYUtQdEdD?=
- =?utf-8?B?SE5mdEpGYk00RnAvWEdSOXRFN3VmanpYM2p2RUNydGNmTnhVb0F3UlJrcTBP?=
- =?utf-8?B?Ujg3NXo1MGMxRE1KT09mMlNHaFh3UkNxY0FyTWpkMGNxeFdsOGJHQ0VrTXZW?=
- =?utf-8?B?WjM4SFNPQmdlVHduWGhUUXIwTUxJdXhSOGs2cGJiNU1DMTcvNnppRmNrYXM0?=
- =?utf-8?B?THJNR0d6MXcwSzhWYWJCSncwNis0WWErSjVJWDJacXlzbFRHZWN6Y0dBUlB0?=
- =?utf-8?B?YzNrVkFCeW5obElicUh2K3ZPVUQ3cjgvcys2UjhTTjdJdzRPaE5UZGtrV25n?=
- =?utf-8?B?dzBuMUtiVUNKY0NLZHB2VnQwdnFlbkUxSG4rMk5TNHFWTU9GOU1XajI5U0dV?=
- =?utf-8?B?S1pOMitPM0grYzFWUVdSL2Nra2hCTUt3Y3pKR3FjZ2gxRklKUlB6NVFRbi9w?=
- =?utf-8?B?cjA4TXdmTkhqUUkzNzZuN2kzL2hSaVJuODVXdHV0UlRMdG8xRzVIaWNEdnVr?=
- =?utf-8?B?dW1JWDhwZzc2RVUvS1Y2SzYxTkNjb0hzaTFzY0JYZnFsNVExYkt1QUFwL3l3?=
- =?utf-8?B?Si9vTkZBNFJrS1dJY2grRjNCVnBtaGxXR0NzSExHNlo5T1FpZXk0blZEVVBu?=
- =?utf-8?B?ZTc2eVNDbXN3YUhOdkMzNHV2V2luR3MxVkh2VHY4d0pNY3RtUE9aL0VlMjhH?=
- =?utf-8?B?UHhxb1JrbEZMUkF3c1NrTk1wNk5oSkFvTjliQ29wV3VSZDFEcUtLU01qaE1a?=
- =?utf-8?B?Qkc4aDM4cVZmNXU4d0VsU0g0VHBNMGlaRWxPc0NvejBOL3U1UGtCTE1NU1I0?=
- =?utf-8?B?RDZXRXQvZDBYc0NOT2VCRis3V2F5VjVUK3FqOU1zZ3UwWG83M3BPU044NG1u?=
- =?utf-8?B?OG1Pc2VUdnIzUjd2cUEwK1FrM2dGenhodEIzeTVVRmlGUVdLM1hRN0NsUlc5?=
- =?utf-8?B?Y0YxWG8ySTJBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cEpPYzFDcWlBMG8zaXdhY3Y3cFoxRVVGV2s5YjF3YkFZOUpWVVJWTFBGdzQ1?=
- =?utf-8?B?QmczcWtKSldxTDBRMnFVa2pSc2Z3RCtINUkva0J6YkUzWnlKdzdrVWx1dElm?=
- =?utf-8?B?emc0cW5tSDFjdDgzWm1VSzdnZXFuOVd0djA2VGJXOE5WNkt0aURCcnFNNzZI?=
- =?utf-8?B?dWZadlc3TWtVVjRBazRyc0xoa1dyLzJ6L3dYR09IYWFMS1hUWmVUU3R1M2Nz?=
- =?utf-8?B?aklVOUV0RHVaaGs2UmQ4dGJFQkFrbkVWZnFON2dQdHB3clA5SmJnWHJiT1FK?=
- =?utf-8?B?Qm1NeWppSWFsSTNOU1hWQ3o1VG04RC9mck1TdjFCa3dWMTdRWkFla1RTWWV2?=
- =?utf-8?B?NEE2N0daVTNYaitKZHFReHpIVVBneW9ocFZHZTdvNmlKaGdjTElTd0dwME4y?=
- =?utf-8?B?TG1KLzRIaGZpblRlNys2ZWJseFErNkxTdk5NY0s0eklIakZUVVVXd21HMThV?=
- =?utf-8?B?RVpZMkZwOVE0K1RmSURYRnlSU09tdTEyTk5XRWV1SkxUdHJQdnA1Wi9JRjVY?=
- =?utf-8?B?aXpKRXFkRCtvV3ozZVpOZ0RFRE9COEFtNmFXSmxYY0JuR0hWTnJDaGYrMDlX?=
- =?utf-8?B?Q04wS0VlMWVndldqNzJJRFpGdXhaWjZTYTFabERobXRVWVNXdWt4TWk2UW8w?=
- =?utf-8?B?RERSMXlyZm1YckJyOU1ocmN2R2E2cy9kRzBVelh0cDllbnd5bXBIYVp4K3NL?=
- =?utf-8?B?a1NhNjQ2ckZDTUFZKzN6TmdocTNiWGcvMmwrZ3o1dko4L3ZhM2gvTzFaeFgz?=
- =?utf-8?B?VGtBaTB6bGc4OGcvbHA0VFVyWmNkN21BcVYwQlFRVDFib25VVlMyVENHZmxs?=
- =?utf-8?B?SDZqOEdYalpqVkZnWWlsRzlXYncxbzBybEtkUFZicktPZE5ZSEhwckFXUE4y?=
- =?utf-8?B?TWhpR2NxbzVSeFZydGFaTFdtbHVzZ0FRWmVTSnJmMnhHTXZVNzJabmtMMXZF?=
- =?utf-8?B?UkRrR1IxbzAxRVh6R0lMZE5wbStwTGQreUZ3V1JZWFdXb3RhYk5LcU8wNGdh?=
- =?utf-8?B?RDlkcEZIeUtJOFJMdnRab0dnMFVRbUFVdEppRGRKSjVMekZTVENzVlZNYzIy?=
- =?utf-8?B?cmdIeit1djFVS3lneWtLb0x1M3FWQTNOVW5nN1Q4cEpnTks5OG15MnRxTkJv?=
- =?utf-8?B?cUwxOVhvYlo5NFZPVUFqaTIxQU8wSmdTc2c0RDZiR2VGdy9ML1lqSU5PUnph?=
- =?utf-8?B?TUU2bm5uMFd3SjVhK3hDR0xWbkVpYVFqcklpUmlPZVVucG5LN1gxYkZ5a3gw?=
- =?utf-8?B?QnBwQTlyTWpIdGsyeGJJbUpydnFJcjBCMTBoZUMvWVk3c0toSjVhVUtpTEs3?=
- =?utf-8?B?OFRVY1MwTlkrM1dXRDZkbm0yZE5temZtWU1CR3lBQm8xQ2MyLzVDUFoydTR4?=
- =?utf-8?B?TnJ6TWR6MHhmUkhVRUFQSjBjYjE1ZTZDZzVBSWpLYnduNmtVUUEvQW5ZbGZr?=
- =?utf-8?B?eU9uNm03WXU4SWJNdGJTeGFOYlRKWWdqU0NzbDZNRnNhN0tQSm5qdS91a1N1?=
- =?utf-8?B?c1pGdmZERUIraW5PN29TVFB5VW1SWml1cTZVbGdSOTZsSkVPcHBWcnZ2Ymdp?=
- =?utf-8?B?QXFrWDdnL2FyL0dQMjFvN1M1T3VZTGUrUXNtN3hoUmZKZWwrclFDL1pIbzFm?=
- =?utf-8?B?Z0p0WEVtaHpXa1htcURlWUwvaEprdXdPYUlSblNQVEJPTHh1WkExVEJxWFE5?=
- =?utf-8?B?cHNuSDlLVHExdmE5K0VPVU1mWm9IVkJhc0RzVVF2V0RLdy9ZVFNnV3FWRkdl?=
- =?utf-8?B?RGgzSmJCTk1lWDJnWlpVZWJYRjQrenNCU1JqbmJ2TGEzWTRxK2pMZmlSTmNY?=
- =?utf-8?B?cmowb25HUU5UaGNNYUpDaW9CMWJhRk1DcUhpL2hvdk1pUWs1M0svdnl2Nmlp?=
- =?utf-8?B?NmxaQk52WmxWQ3RHUHEzelFpOHA3c1RyY1AyNHhaZW5mMzNpbitTUXMxOHN6?=
- =?utf-8?B?R25HZC9DTUNXK0R0Yjd4NStxSDhHakxDRUVwR21ISllycFozaUhUUEdObkJ1?=
- =?utf-8?B?LzVYdjB0M1ZsSmhMUTRsVng3WVlreGluVFhWeEQwd3RwNE5PTFpaUDhZOGpP?=
- =?utf-8?B?ZTZWbW53SHpEVHpXMXU1bndaR0lzajhzNGZzRW9vNUdVNStJL2lJOWh0UWxh?=
- =?utf-8?B?dVlDczh6Vlk2bS85cnozK2c3aE4yc09qc0gvaHdtT0EyVHJhdGlhR084K0I0?=
- =?utf-8?Q?JEdh3EA0WJZpTLiDyQ7dZobc/vV3QgEgyti9rdqmhmDD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81be932e-d68c-4277-33e4-08ddaa7ecb24
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 13:32:51.2581
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YEGH0QmShNKbjmlYSGEldQrvEmb909A2jaYeBMcZMn9UrdTC76dVEFNFTOLRfVQgU4RACpqERH55crOVIUYdEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6041
+Message-ID: <174982166320.406.9706547589240701893.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue Jun 10, 2025 at 6:53 AM JST, Michal Wilczynski wrote:
-> The PWM subsystem and other kernel modules often need to perform a
-> 64 by 64-bit multiplication followed by a 64-bit division. Performing
-> this naively in Rust risks overflow on the intermediate multiplication.
-> The kernel provides the C helper 'mul_u64_u64_div_u64' for this exact
-> purpose.
->
-> Introduce a safe Rust wrapper for this function to make it available to
-> Rust drivers.
->
-> Following feedback from the mailing list [1], this functionality is
-> provided via a 'KernelMathExt' extension trait. This allows for
-> idiomatic, method style calls (e.g. val.mul_div()) and provides a
-> scalable pattern for adding helpers for other integer types in the
-> future.
->
-> The safe wrapper is named 'mul_div' and not 'mul_u64_u64_div_u64' [2]
-> because its behavior differs from the underlying C function. The C
-> helper traps on a division by zero, whereas this safe wrapper returns
-> `None`, thus exhibiting different and safer behavior.
->
-> This is required for the Rust PWM TH1520 driver [3].
->
-> [1] - https://lore.kernel.org/all/DAFQ19RBBSQL.3OGUXOQ0PA9YH@kernel.org/
-> [2] - https://lore.kernel.org/all/CANiq72kVvLogBSVKz0eRg6V4LDB1z7b-6y1WPL=
-SQfXXLW7X3cw@mail.gmail.com/
-> [3] - https://lore.kernel.org/all/20250524-rust-next-pwm-working-fan-for-=
-sending-v1-2-bdd2d5094ff7@samsung.com/
->
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  rust/kernel/lib.rs  |  1 +
->  rust/kernel/math.rs | 34 ++++++++++++++++++++++++++++++++++
->  2 files changed, 35 insertions(+)
->
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 6b4774b2b1c37f4da1866e993be6230bc6715841..d652c92633b82525f37e5cd8a=
-040d268e0c191d1 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -85,6 +85,7 @@
->  #[cfg(CONFIG_KUNIT)]
->  pub mod kunit;
->  pub mod list;
-> +pub mod math;
->  pub mod miscdevice;
->  pub mod mm;
->  #[cfg(CONFIG_NET)]
-> diff --git a/rust/kernel/math.rs b/rust/kernel/math.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b89e23f9266117dcf96561fbf=
-13b1c66a4851b48
-> --- /dev/null
-> +++ b/rust/kernel/math.rs
-> @@ -0,0 +1,34 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
-> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +//! Safe wrappers for kernel math helpers.
-> +//!
-> +//! This module provides safe, idiomatic Rust wrappers for C functions, =
-whose
-> +//! FFI bindings are auto-generated in the `bindings` crate.
-> +
-> +use crate::bindings;
-> +
-> +/// An extension trait that provides access to kernel math helpers on pr=
-imitive integer types.
-> +pub trait KernelMathExt: Sized {
-> +    /// Multiplies self by `multiplier and divides by divisor.
-> +    ///
-> +    /// This wrapper around the kernel's `mul_u64_u64_div_u64` C helper =
-ensures that no
-> +    /// overflow occurs during the intermediate multiplication.
-> +    ///
-> +    /// # Returns
-> +    /// * Some(result) if the division is successful.
-> +    /// * None if the divisor is zero.
-> +    fn mul_div(self, multiplier: Self, divisor: Self) -> Option<Self>;
-> +}
-> +
-> +impl KernelMathExt for u64 {
-> +    fn mul_div(self, multiplier: u64, divisor: u64) -> Option<u64> {
-> +        if divisor =3D=3D 0 {
-> +            return None;
-> +        }
+The following commit has been merged into the irq/core branch of tip:
 
-Would it make sense to turn `divisor` into a `NonZero<Self>` and return
-`u64`? This could remove the need for the caller to perform a check if
-it can statically infer that the divisor is not zero.
+Commit-ID:     66067c3c8a1ee097e9c30e8bbd643b12ba54a6b0
+Gitweb:        https://git.kernel.org/tip/66067c3c8a1ee097e9c30e8bbd643b12ba54a6b0
+Author:        Brian Norris <briannorris@chromium.org>
+AuthorDate:    Thu, 22 May 2025 14:08:01 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 13 Jun 2025 15:24:44 +02:00
+
+genirq: Add kunit tests for depth counts
+
+There have been a few bugs and/or misunderstandings about the reference
+counting, and startup/shutdown behaviors in the IRQ core and related CPU
+hotplug code. These 4 test cases try to capture a few interesting cases.
+
+ * irq_disable_depth_test: basic request/disable/enable sequence
+
+ * irq_free_disabled_test: request/disable/free/re-request sequence -
+   this catches errors on previous revisions of my work
+
+ * irq_cpuhotplug_test: exercises managed-affinity IRQ + CPU hotplug.
+   This captures a problematic test case which was fixed recently.
+   This test requires CONFIG_SMP and a hotpluggable CPU#1.
+
+ * irq_shutdown_depth_test: exercises similar behavior from
+   irq_cpuhotplug_test, but directly using irq_*() APIs instead of going
+   through CPU hotplug. This still requires CONFIG_SMP, because
+   managed-affinity is stubbed out (and not all APIs are even present)
+   without it.
+
+Note the use of 'imply SMP': ARCH=um doesn't support SMP, and kunit is
+often exercised there. Thus, 'imply' will force SMP on where possible
+(such as ARCH=x86_64), but leave it off where it's not.
+
+Behavior on various SMP and ARCH configurations:
+
+  $ tools/testing/kunit/kunit.py run 'irq_test_cases*' --arch x86_64 --qemu_args '-smp 2'
+  [...]
+  [11:12:24] Testing complete. Ran 4 tests: passed: 4
+
+  $ tools/testing/kunit/kunit.py run 'irq_test_cases*' --arch x86_64
+  [...]
+  [11:13:27] [SKIPPED] irq_cpuhotplug_test
+  [11:13:27] ================= [PASSED] irq_test_cases ==================
+  [11:13:27] ============================================================
+  [11:13:27] Testing complete. Ran 4 tests: passed: 3, skipped: 1
+
+  # default: ARCH=um
+  $ tools/testing/kunit/kunit.py run 'irq_test_cases*'
+  [11:14:26] [SKIPPED] irq_shutdown_depth_test
+  [11:14:26] [SKIPPED] irq_cpuhotplug_test
+  [11:14:26] ================= [PASSED] irq_test_cases ==================
+  [11:14:26] ============================================================
+  [11:14:26] Testing complete. Ran 4 tests: passed: 2, skipped: 2
+
+Without commit 788019eb559f ("genirq: Retain disable depth for managed
+interrupts across CPU hotplug"), this fails as follows:
+
+  [11:18:55] =============== irq_test_cases (4 subtests) ================
+  [11:18:55] [PASSED] irq_disable_depth_test
+  [11:18:55] [PASSED] irq_free_disabled_test
+  [11:18:55]     # irq_shutdown_depth_test: EXPECTATION FAILED at kernel/irq/irq_test.c:147
+  [11:18:55]     Expected desc->depth == 1, but
+  [11:18:55]         desc->depth == 0 (0x0)
+  [11:18:55] ------------[ cut here ]------------
+  [11:18:55] Unbalanced enable for IRQ 26
+  [11:18:55] WARNING: CPU: 1 PID: 36 at kernel/irq/manage.c:792 __enable_irq+0x36/0x60
+  ...
+  [11:18:55] [FAILED] irq_shutdown_depth_test
+  [11:18:55]  #1
+  [11:18:55]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:202
+  [11:18:55]     Expected irqd_is_activated(data) to be false, but is true
+  [11:18:55]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:203
+  [11:18:55]     Expected irqd_is_started(data) to be false, but is true
+  [11:18:55]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:204
+  [11:18:55]     Expected desc->depth == 1, but
+  [11:18:55]         desc->depth == 0 (0x0)
+  [11:18:55] ------------[ cut here ]------------
+  [11:18:55] Unbalanced enable for IRQ 27
+  [11:18:55] WARNING: CPU: 0 PID: 38 at kernel/irq/manage.c:792 __enable_irq+0x36/0x60
+  ...
+  [11:18:55] [FAILED] irq_cpuhotplug_test
+  [11:18:55]     # module: irq_test
+  [11:18:55] # irq_test_cases: pass:2 fail:2 skip:0 total:4
+  [11:18:55] # Totals: pass:2 fail:2 skip:0 total:4
+  [11:18:55] ================= [FAILED] irq_test_cases ==================
+  [11:18:55] ============================================================
+  [11:18:55] Testing complete. Ran 4 tests: passed: 2, failed: 2
+
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250522210837.4135244-1-briannorris@chromium.org
+
+---
+ kernel/irq/Kconfig    |  11 ++-
+ kernel/irq/Makefile   |   1 +-
+ kernel/irq/irq_test.c | 229 +++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 241 insertions(+)
+ create mode 100644 kernel/irq/irq_test.c
+
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 3f02a0e..1da5e9d 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -144,6 +144,17 @@ config GENERIC_IRQ_DEBUGFS
+ config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+ 	bool
+ 
++config IRQ_KUNIT_TEST
++	bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
++	depends on KUNIT=y
++	default KUNIT_ALL_TESTS
++	imply SMP
++	help
++	  This option enables KUnit tests for the IRQ subsystem API. These are
++	  only for development and testing, not for regular kernel use cases.
++
++	  If unsure, say N.
++
+ endmenu
+ 
+ config GENERIC_IRQ_MULTI_HANDLER
+diff --git a/kernel/irq/Makefile b/kernel/irq/Makefile
+index c0f44c0..6ab3a40 100644
+--- a/kernel/irq/Makefile
++++ b/kernel/irq/Makefile
+@@ -19,3 +19,4 @@ obj-$(CONFIG_GENERIC_IRQ_IPI_MUX) += ipi-mux.o
+ obj-$(CONFIG_SMP) += affinity.o
+ obj-$(CONFIG_GENERIC_IRQ_DEBUGFS) += debugfs.o
+ obj-$(CONFIG_GENERIC_IRQ_MATRIX_ALLOCATOR) += matrix.o
++obj-$(CONFIG_IRQ_KUNIT_TEST) += irq_test.o
+diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
+new file mode 100644
+index 0000000..5161b56
+--- /dev/null
++++ b/kernel/irq/irq_test.c
+@@ -0,0 +1,229 @@
++// SPDX-License-Identifier: LGPL-2.1+
++
++#include <linux/cpu.h>
++#include <linux/cpumask.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqdesc.h>
++#include <linux/irqdomain.h>
++#include <linux/nodemask.h>
++#include <kunit/test.h>
++
++#include "internals.h"
++
++static irqreturn_t noop_handler(int irq, void *data)
++{
++	return IRQ_HANDLED;
++}
++
++static void noop(struct irq_data *data) { }
++static unsigned int noop_ret(struct irq_data *data) { return 0; }
++
++static int noop_affinity(struct irq_data *data, const struct cpumask *dest,
++			 bool force)
++{
++	irq_data_update_effective_affinity(data, dest);
++
++	return 0;
++}
++
++static struct irq_chip fake_irq_chip = {
++	.name           = "fake",
++	.irq_startup    = noop_ret,
++	.irq_shutdown   = noop,
++	.irq_enable     = noop,
++	.irq_disable    = noop,
++	.irq_ack        = noop,
++	.irq_mask       = noop,
++	.irq_unmask     = noop,
++	.irq_set_affinity = noop_affinity,
++	.flags          = IRQCHIP_SKIP_SET_WAKE,
++};
++
++static void irq_disable_depth_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	int virq, ret;
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, NULL);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	enable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static void irq_free_disabled_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	int virq, ret;
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, NULL);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	free_irq(virq, NULL);
++	KUNIT_EXPECT_GE(test, desc->depth, 1);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static void irq_shutdown_depth_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	struct irq_data *data;
++	int virq, ret;
++	struct irq_affinity_desc affinity = {
++		.is_managed = 1,
++		.mask = CPU_MASK_ALL,
++	};
++
++	if (!IS_ENABLED(CONFIG_SMP))
++		kunit_skip(test, "requires CONFIG_SMP for managed shutdown");
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, &affinity);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	data = irq_desc_get_irq_data(desc);
++	KUNIT_ASSERT_PTR_NE(test, data, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
++	KUNIT_EXPECT_TRUE(test, irqd_affinity_is_managed(data));
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	irq_shutdown_and_deactivate(desc);
++
++	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
++
++	KUNIT_EXPECT_EQ(test, irq_activate(desc), 0);
++#ifdef CONFIG_SMP
++	irq_startup_managed(desc);
++#endif
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	enable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static void irq_cpuhotplug_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	struct irq_data *data;
++	int virq, ret;
++	struct irq_affinity_desc affinity = {
++		.is_managed = 1,
++	};
++
++	if (!IS_ENABLED(CONFIG_SMP))
++		kunit_skip(test, "requires CONFIG_SMP for CPU hotplug");
++	if (!get_cpu_device(1))
++		kunit_skip(test, "requires more than 1 CPU for CPU hotplug");
++	if (!cpu_is_hotpluggable(1))
++		kunit_skip(test, "CPU 1 must be hotpluggable");
++
++	cpumask_copy(&affinity.mask, cpumask_of(1));
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, &affinity);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &fake_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	data = irq_desc_get_irq_data(desc);
++	KUNIT_ASSERT_PTR_NE(test, data, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
++	KUNIT_EXPECT_TRUE(test, irqd_affinity_is_managed(data));
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	KUNIT_EXPECT_EQ(test, remove_cpu(1), 0);
++	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
++	KUNIT_EXPECT_GE(test, desc->depth, 1);
++	KUNIT_EXPECT_EQ(test, add_cpu(1), 0);
++
++	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	enable_irq(virq);
++	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static struct kunit_case irq_test_cases[] = {
++	KUNIT_CASE(irq_disable_depth_test),
++	KUNIT_CASE(irq_free_disabled_test),
++	KUNIT_CASE(irq_shutdown_depth_test),
++	KUNIT_CASE(irq_cpuhotplug_test),
++	{}
++};
++
++static struct kunit_suite irq_test_suite = {
++	.name = "irq_test_cases",
++	.test_cases = irq_test_cases,
++};
++
++kunit_test_suite(irq_test_suite);
++MODULE_DESCRIPTION("IRQ unit test suite");
++MODULE_LICENSE("GPL");
 
