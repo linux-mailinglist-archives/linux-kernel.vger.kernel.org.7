@@ -1,160 +1,170 @@
-Return-Path: <linux-kernel+bounces-686056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AF4AD928E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:07:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9991CAD9289
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB4C1663BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7497E3B3820
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A313D1FBE9B;
-	Fri, 13 Jun 2025 16:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606901FFC5D;
+	Fri, 13 Jun 2025 16:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHhSb3a7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTbIjhbv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C261F4C8A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45C42E11D5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749830853; cv=none; b=iP2tjwkdi/nW8Huy/7n3TbqB0EOnzV2jWMLeuj8yTy5bJN79pnbpEV1doEhMYa9ZW9vR93P3B5+FLoEUabUyA3cu8VyX271zYRJ+Syi+WQaqFx2HqqsQ8+Kx8mFjCTVs/X5WcfBCqzgooJMDMcQgHrBGQMRydyDoLaAReCdqMY8=
+	t=1749830608; cv=none; b=YLvvCgjyCE3AXBgoq59oRSTJUesh1b44kctv3VjicIsV+UE/D5i9zlzjKjAgNfR2I5WEdPD95FkQKf8prNUCkc3qXzWFPoPSuT3bakSpe7kBuVkeIBoStVmZ60g3YoX1oasm1jBeLQdzjFxu4nnpcr+YvVZ3YbXYNoqrINuPRyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749830853; c=relaxed/simple;
-	bh=16qrPfYa0zQKVDAiotgJz0jchD2mvSFtFu2RcespcfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aIoIlnKT9pxgqvGUTFdNW0rNu2NymVt3CMiIlRcQzkuhjxj3xtfA3cc8VaBVUk6IKx5g5RSp418nKezwraYzeDH7zL8JCJgzad7ADbgV+IOuz9JsVkLQYvjCRLVd/ff9y59Aky/EbvfuJ+w5ZuEPUAEzmQ3K80mfdCQyKythDbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHhSb3a7; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749830852; x=1781366852;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=16qrPfYa0zQKVDAiotgJz0jchD2mvSFtFu2RcespcfA=;
-  b=QHhSb3a7QVBySRd+Tu4is4Gx0+0Kspy3Yv+2xIEOL+tWD7xVYQQ//cna
-   t2onXkINMb2AMkGQ98UH0PN7LfRpCh/oL01tIDCP9LthfixbL8vWH3O7C
-   BGCyatYXu86qZCAlH/JWFwbsYKoonGDDngJohFrbEjAbp8SlVweLPkv5G
-   uTc09cwiljGc8sd55kBRjLNA3Dgs+4yT76zQ2cpIs5HxsUzYMQhrxKElL
-   apAdqyKvIxkSfaOQilx6Q3tiCH/MEDbXW5tgsAivIOQ1YycUsVSNH45HV
-   OqnRnCivs1jLjOFfcVYKwuC67EL/1fdr1U2EmNP02QrGud82Vc43ygeLs
-   A==;
-X-CSE-ConnectionGUID: ETqjMHMcSQq3iYKo+dnkHw==
-X-CSE-MsgGUID: eQS5XxJpQde/xh+oKxWbeQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="77443014"
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="77443014"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 09:07:31 -0700
-X-CSE-ConnectionGUID: xwHcFgeoRZirfBXX7a1IWQ==
-X-CSE-MsgGUID: lYa/lK3nSY6cMrAse54m4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="152755224"
-Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.111.228]) ([10.125.111.228])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 09:02:26 -0700
-Message-ID: <9624b098-f3ab-4db7-8811-cab2c5cce351@intel.com>
-Date: Fri, 13 Jun 2025 09:02:25 -0700
+	s=arc-20240116; t=1749830608; c=relaxed/simple;
+	bh=hG1xBkodWlqX8knsQvDzVtwCU36MdgTYDKkhHWNjPSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j4/FfYWd8321bNSdlSqCKN724xLdmCfBtvqtwmdABdXIp3FlzTcN91d15XxnyhYNC51pItzP41gfJcIXj9wY5tUjw0yvDWcQD9DegfSNBUc/Njjbs1Wub7wzPnM7xiEbx5N7LwbivkCy713QPGHykR77dFuDzsqFMAvVhQJu1AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTbIjhbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 655E6C4CEE3;
+	Fri, 13 Jun 2025 16:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749830608;
+	bh=hG1xBkodWlqX8knsQvDzVtwCU36MdgTYDKkhHWNjPSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mTbIjhbv403WQAi4DQhff37b4AZJdRbbOsyAhYxEmvNGe5nqHK3GKZCI8clTkieZO
+	 SjPQH6KWEDyjFnx8L+ivKgXfl+1fEYOi5ad7nPWoKCC2Mvm2CDJo7qVwp/qXZOhYmC
+	 tYtbxnA2htUFOSeATzYOk4JoHzVKEJSJChnbgxl7/yAqSuHwKtLf82OEFbB8uJOg2J
+	 /aQohI2FCyxuNzXEhzmHdk1u3yj7KyFSsUY3b89ZjNWgEbGBSE/FpCL+df2eGoNAx7
+	 ZHvFOOA8wX/leY2BeRBUAyIIdIZPICGxhPn9j+4SJgez0K4ZF5uszIQPM9EOrvmGBZ
+	 afj84W/1P4/nQ==
+Date: Fri, 13 Jun 2025 19:03:21 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Alexander Graf <graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Pratyush Yadav <ptyadav@amazon.de>,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2] kho: initialize tail pages for higher order folios
+ properly
+Message-ID: <aExLyf9jWdO1gG0s@kernel.org>
+References: <20250613125916.39272-1-pratyush@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 08/12] perf/x86: Add APX in extended regs
-To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
- dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
- jolsa@kernel.org, alexander.shishkin@linux.intel.com,
- linux-kernel@vger.kernel.org
-Cc: dapeng1.mi@linux.intel.com, ak@linux.intel.com, zide.chen@intel.com
-References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
- <20250613134943.3186517-9-kan.liang@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250613134943.3186517-9-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613125916.39272-1-pratyush@kernel.org>
 
-On 6/13/25 06:49, kan.liang@linux.intel.com wrote:
-> +#define __x86_pmu_get_regs(_mask, _regs, _size)		\
-> +do {							\
-> +	if (mask & _mask && xcomp_bv & _mask) {		\
-> +		_regs = xsave;				\
-> +		xsave += _size;				\
-> +	}						\
-> +} while (0)
+On Fri, Jun 13, 2025 at 02:59:06PM +0200, Pratyush Yadav wrote:
+> From: Pratyush Yadav <ptyadav@amazon.de>
+> 
+> Currently, when restoring higher order folios, kho_restore_folio() only
+> calls prep_compound_page() on all the pages. That is not enough to
+> properly initialize the folios. The managed page count does not
+> get updated, the reserved flag does not get dropped, and page count does
+> not get initialized properly.
+> 
+> Restoring a higher order folio with it results in the following BUG with
+> CONFIG_DEBUG_VM when attempting to free the folio:
+> 
+>     BUG: Bad page state in process test  pfn:104e2b
+>     page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffffffffffffff pfn:0x104e2b
+>     flags: 0x2fffff80000000(node=0|zone=2|lastcpupid=0x1fffff)
+>     raw: 002fffff80000000 0000000000000000 00000000ffffffff 0000000000000000
+>     raw: ffffffffffffffff 0000000000000000 00000001ffffffff 0000000000000000
+>     page dumped because: nonzero _refcount
+>     [...]
+>     Call Trace:
+>     <TASK>
+>     dump_stack_lvl+0x4b/0x70
+>     bad_page.cold+0x97/0xb2
+>     __free_frozen_pages+0x616/0x850
+>     [...]
+> 
+> Combine the path for 0-order and higher order folios, initialize the
+> tail pages with a count of zero, and call adjust_managed_page_count() to
+> account for all the pages instead of just missing them.
+> 
+> In addition, since all the KHO-preserved pages get marked with
+> MEMBLOCK_RSRV_NOINIT by deserialize_bitmap(), the reserved flag is not
+> actually set (as can also be seen from the flags of the dumped page in
+> the logs above). So drop the ClearPageReserved() calls.
+> 
+> Fixes: fc33e4b44b271 ("kexec: enable KHO support for memory preservation")
+> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
 
-Ewww.
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-First of all, this doesn't work generally because of the previously
-mentioned alignment. Second, it's using xcomp_bv which doesn't tell you
-if XSAVES wrote the data.
+> ---
+> 
+> Changes in v2:
+> - Declare i in the loop instead of at the top.
+> 
+>  kernel/kexec_handover.c | 29 +++++++++++++++++------------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
+> 
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index eb305e7e61296..ca525f794f6be 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -157,11 +157,21 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
+>  }
+> 
+>  /* almost as free_reserved_page(), just don't free the page */
+> -static void kho_restore_page(struct page *page)
+> +static void kho_restore_page(struct page *page, unsigned int order)
+>  {
+> -	ClearPageReserved(page);
+> -	init_page_count(page);
+> -	adjust_managed_page_count(page, 1);
+> +	unsigned int nr_pages = (1 << order);
+> +
+> +	/* Head page gets refcount of 1. */
+> +	set_page_count(page, 1);
+> +
+> +	/* For higher order folios, tail pages get a page count of zero. */
+> +	for (unsigned int i = 1; i < nr_pages; i++)
+> +		set_page_count(page + i, 0);
+> +
+> +	if (order > 0)
+> +		prep_compound_page(page, order);
+> +
+> +	adjust_managed_page_count(page, nr_pages);
+>  }
+> 
+>  /**
+> @@ -179,15 +189,10 @@ struct folio *kho_restore_folio(phys_addr_t phys)
+>  		return NULL;
+> 
+>  	order = page->private;
+> -	if (order) {
+> -		if (order > MAX_PAGE_ORDER)
+> -			return NULL;
+> -
+> -		prep_compound_page(page, order);
+> -	} else {
+> -		kho_restore_page(page);
+> -	}
+> +	if (order > MAX_PAGE_ORDER)
+> +		return NULL;
+> 
+> +	kho_restore_page(page, order);
+>  	return page_folio(page);
+>  }
+>  EXPORT_SYMBOL_GPL(kho_restore_folio);
+> --
+> 2.47.1
+> 
 
-Last, this attempts to reimplement get_xsave_addr().
-
-I'd do something like this:
-
-	for (xfeature_nr in mask) {
-		void *src = get_xsave_addr(xsave, xfeature_nr);
-		void *dst = ... a function to map XFEATURE_MASK_APX
-				to perf_regs->apx_regs,
-		int size  = xstate_sizes(xfeature_nr);
-
-		if (!src)
-			continue;
-
-		memcpy(dst, src, size);
-	}
-
-That should handle *all* of the nastiness. The alignment, the init
-optimization. *Please* use get_xsave_addr() or one of the other helpers.
+-- 
+Sincerely yours,
+Mike.
 
