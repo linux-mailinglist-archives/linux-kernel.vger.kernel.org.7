@@ -1,119 +1,88 @@
-Return-Path: <linux-kernel+bounces-685656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCD7AD8CD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EE1AD8CD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D227816E392
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323DE3AAF86
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354D485C5E;
-	Fri, 13 Jun 2025 13:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC4F126C03;
+	Fri, 13 Jun 2025 13:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dIMjIfy+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MOUjajxb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e56n0mrM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2202A748F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34504A29;
+	Fri, 13 Jun 2025 13:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749820131; cv=none; b=C5RDcDSuQK35HRR5lLI7iN7RqpXNnWSYG32AEXqt4IPrUNdF+ovSw0wsDpDBvCdHG9xd0KejVmlF0tFpkfGbu5jhcmK7Mk/uy9OnXmkO+FnNV4MIm1WYq14+gJrHDxRUWd6CMgBxci12ZQ+OCOn8HgSr3wmtn4KVJsgVJko6/uI=
+	t=1749820219; cv=none; b=CPCMpdl5HpffhFCUsaQyQslfh3EH7fPK53hN3WDv/KMrYPztLcu8Jxb3EwS0AJqe9HX5j8uFRWw0KvDajMjdKaZnSRwXRXW8TmC19gkPWKGPD2TeWYBU3JLsap1ZYsJcOuFaYvVFKAZmjb2ODfWEYve9FAJ24Z4qGupaKSX7Jdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749820131; c=relaxed/simple;
-	bh=1LaYV7MhhzgJiUrta6PuXTkOikRroZ0koqMu6oLF2l8=;
+	s=arc-20240116; t=1749820219; c=relaxed/simple;
+	bh=ri5ndiBUENKgqpmMgaglIF1RnBdDS73JLM7+653Ze2w=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CL5Q5hLXqfAgLbKIdx/xbWlYi3gttpydLeGHffgh42zPEs7Sfav/en5PT32jrw1XAnNB1LUadJas6rkWTZSMtN++eRh1VpcqfB7jc4e2Kri7rFSCdym7CyE91ZeqKG/bjXKramSmoZHssoNPrVxSB7XM4XRVGfPGwU+6dfLCwXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dIMjIfy+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MOUjajxb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749820128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z31RB5aO5339q+fZJTs6E2r8Q/+Wcgh+80WzagvlQ7s=;
-	b=dIMjIfy+dfqOhy+YyMfSRsGc4NvTjdL6ai9RuUctaBX0j/eKQIj6HP18yLc3G76CpfWGgm
-	T7knTqtLpemWfFT1+4NNNRh8nm1ZPE0YHQdHK16B8jcl1z+zPli/1wfySRUi3j1I6VTmf9
-	5h3eO7Rg2FDHvLhtbJg4r5kG3KVTIRCK0KUSPbrmhO6v4Mc3ZrCuEQxX8wxpNr3GIdURK3
-	4yx/iv2bkT0VWQk/0loYDpEyx19C1BQEbSqRUkW1e5zgU3XMYh6aU0Kl/f47iaRf8PDEkO
-	bRek8bZyZlQCUHmfzgRMNGQzyXk4xKp8qiBC9bWYvOFrmGHDeu2Ws2mkIOC5Mw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749820128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z31RB5aO5339q+fZJTs6E2r8Q/+Wcgh+80WzagvlQ7s=;
-	b=MOUjajxb7iXFW1qFkqe+g05LO01nURwZ8T+Ela+rCHA1oNw2yQAcjSnySUclcw3bRalQWG
-	eNGjpcViv5MdljBw==
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>,
- linux-kernel@vger.kernel.org,
- jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] futex: don't leak robust_list pointer on exec race
-In-Reply-To: <CAH4c4jLjSBxbd3bqkdgcCSWqXURratANgnbq9negrSU283xHpg@mail.gmail.com>
-References: <20250607064444.4310-1-pranav.tyagi03@gmail.com>
- <87cybdp7to.ffs@tglx>
- <CAH4c4jLjSBxbd3bqkdgcCSWqXURratANgnbq9negrSU283xHpg@mail.gmail.com>
-Date: Fri, 13 Jun 2025 15:08:47 +0200
-Message-ID: <87frg3ss9s.ffs@tglx>
+	 MIME-Version:Content-Type; b=NzkA9HR6jigSRx2aVOKHyq8tr/394x74MuKrp2+5tVjZX4OFsaF6L1dhLD5YoCWeVmp6SdydZO8o7nOwIuyGl0o9OLNWfiRX+QcYCRw/5Cnff087VaDgDUFa5Q71qi1VivF8bAo05jRsTKjV2aVDnxcFccmb566z9eeZjKtRK4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e56n0mrM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67851C4CEE3;
+	Fri, 13 Jun 2025 13:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749820218;
+	bh=ri5ndiBUENKgqpmMgaglIF1RnBdDS73JLM7+653Ze2w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=e56n0mrM0NS66KDGywL3MWDqsT+E2fdGP3Zqpg+Bh/zEEk4rT8L2WV+7Hlb6LVpiq
+	 WdsHf9YMAhSkgI9U7gY56gJLZoh9NL4Q/5GGPOQy3L1qVn/4MrKvKgq880StlsQtCT
+	 KFJvtimV8CKnGfkOkRxWVJsFASPal4eVePiun/iMDxOX4gQTGH0B1xcdbDa8UBBhJt
+	 mscRADmphte3cK9xBYr8J1qEwQG13n2Jo/lXbk7TB8YJWhwnFTUiuIFSJiA+Qv1S7s
+	 tXkUttq6II+mT8GtWIuEDMve6wJCw3aQ41XEasXJuyQUi2NtkuijoqB9VDdOR1mJQq
+	 ED1RBDcyWfN7Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
+ <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,  Trevor
+ Gross <tmgross@umich.edu>,  Asahi Lina <lina@asahilina.net>,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 0/5] New trait OwnableRefCounted for ARef<->Owned
+ conversion.
+In-Reply-To: <20250502-unique-ref-v10-0-25de64c0307f@pm.me> (Oliver Mangold's
+	message of "Fri, 02 May 2025 09:02:22 +0000")
+References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Fri, 13 Jun 2025 15:10:10 +0200
+Message-ID: <87msabbxe5.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Jun 11 2025 at 19:33, Pranav Tyagi wrote:
-> On Mon, Jun 9, 2025 at 3:15=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
-> Does the revised version below address the concerns more effectively
-> or does it still need a bit more seasoning?
+Hi Oliver,
+
+Oliver Mangold <oliver.mangold@pm.me> writes:
+
+> This allows to convert between ARef<T> and Owned<T> by
+> implementing the new trait OwnedRefCounted.
 >
-> "Currently, sys_get_robust_list() and compat_get_robust_list() perform a
-> ptrace_may_access() check to verify if the calling task is allowed to
-> query another task=E2=80=99s robust_list pointer. However, this check is =
-racy
-> against a concurrent exec() in the target process.
+> This way we will have a shared/unique reference counting scheme
+> for types with built-in refcounts in analogy to Arc/UniqueArc.
 >
-> During exec(), a task's credentials and memory mappings can change, and
-> the task may transition from a non-privileged binary to a privileged one
-> (e.g., a setuid binary). If get_robust_list() performs ptrace_may_access()
-> before this transition, it may wrongly allow access to sensitive
-> information after the target becomes privileged.
->
-> To address this, a read lock is taken on signal->exec_update_lock prior
-> to invoking ptrace_may_access() and accessing the robust_list. This
-> ensures that the target task's exec state remains stable during the
-> check, allowing for consistent and synchronized validation of
-> credentials."
+> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
 
-That's way better, but it still does not explain what the consequences
-of the racy access are.
->>
->> You really did not have a better idea than copying all of that logic
->> into the compat code?
->
-> As I=E2=80=99m still learning, I wasn=E2=80=99t quite sure how to avoid
-> duplication there. Would factoring out the common logic into a helper fun=
-ction
-> be the right direction? I=E2=80=99d be grateful for your suggestion.
+Do you intend to send a new version of the series?
 
-Exactly.
 
-Thanks,
+Best regards,
+Andreas Hindborg
 
-        tglx
+
+
 
