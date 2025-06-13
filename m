@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-684924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E49AD81F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:42:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CFCAD81F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567F11898376
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BCA11898167
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32FE23D2A4;
-	Fri, 13 Jun 2025 03:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9879724DCF1;
+	Fri, 13 Jun 2025 03:44:26 +0000 (UTC)
 Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C551F16B;
-	Fri, 13 Jun 2025 03:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCAA23D2AE;
+	Fri, 13 Jun 2025 03:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749786148; cv=none; b=qha9KfeeuxB8I1xD29Z6LgDRRyExaYsigqBEFG2nu8H91xXJoajAd02I1TEpCeP1OjPMQVlQvoVS2vGVNfmdf7i/g2kw9+jNxf3Kcv9L6PWRJEk7JfQkExJgLyO3SsWRD6H2B9v1FkleRpjicqtXNMQCn5e2HTytDjDa23ov6Yw=
+	t=1749786266; cv=none; b=mXCCoLibGbDyerae20emlOhLrvm6ydbBXBXRuzPfVLgOJrQxMZAsufkpuWYsZPM8VV4cA8CoKB90BGRqeyT2QrlimLkfdaJ1uTBjCInUfFbH+V7idisSU79MotcQiqSdUWl0WEavxdKV9CeqLVvOhoPyWYW+D+ja2TkinCKspBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749786148; c=relaxed/simple;
-	bh=uN3poExD9aoddJwJu3j7FRjWcqXmaGlqiFzjd2VxEQM=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=WWGyL7K/WraqkauKgaRJv5sl2CnjqooUR+A6DBbFiITiDrY1JWpzLdeQmUCICQQdM0WaFY/3nG7YWVQvRhSuT7LViBZCjltCt/r5HtbcxmZ3lv3DuqvCMGYs70/aD7WF8NhwfKjC+PmVG3QQuF2ZMQsJNVbvrGQpOa7b3StNUK4=
+	s=arc-20240116; t=1749786266; c=relaxed/simple;
+	bh=WWiLEN4g4bvHfCYGGJ1cL9c4K/SFIqfTdeiHePcNoNk=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=ZwQe6URuSQ9yDntk3Mlp/xSjm9PDUlOwCF2DFoODjCxpg/Pa/Z8fvPEFqOCpBAjhtkxGqyHZrrElLEEMAwv6DCwy9OE6m+AqnEAZgWdtbuNiZ+1itGT7+4/mByTl2Bo3LNzMOoVNDGPS93iEm6B3UEIF0TpQ1ygt/LO6SuX0ItE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bJQFN1rYJz8R044;
-	Fri, 13 Jun 2025 11:42:16 +0800 (CST)
-Received: from njb2app06.zte.com.cn ([10.55.23.119])
-	by mse-fl2.zte.com.cn with SMTP id 55D3gAYv096848;
-	Fri, 13 Jun 2025 11:42:10 +0800 (+08)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bJQHm116Jz8RVF6;
+	Fri, 13 Jun 2025 11:44:20 +0800 (CST)
+Received: from njb2app07.zte.com.cn ([10.55.22.95])
+	by mse-fl1.zte.com.cn with SMTP id 55D3iCQe066165;
+	Fri, 13 Jun 2025 11:44:12 +0800 (+08)
 	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njy2app03[null])
+Received: from mapi (njb2app07[null])
 	by mapi (Zmail) with MAPI id mid204;
-	Fri, 13 Jun 2025 11:42:11 +0800 (CST)
-Date: Fri, 13 Jun 2025 11:42:11 +0800 (CST)
-X-Zmail-TransId: 2afb684b9e13143-dd3cc
+	Fri, 13 Jun 2025 11:44:13 +0800 (CST)
+Date: Fri, 13 Jun 2025 11:44:13 +0800 (CST)
+X-Zmail-TransId: 2aff684b9e8dffffffffcbc-d4f4e
 X-Mailer: Zmail v1.0
-Message-ID: <20250613114211728AwwnXMz8tICEzliAEt0t8@zte.com.cn>
+Message-ID: <20250613114413940fzngS9J_4rTlJabuvcRv1@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,147 +56,180 @@ Cc: <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
         <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
         <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
         <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIwqBsaW51eCBuZXh0IDEvM10gRG9jcy96aF9DTjogVHJhbnNsYXRlIG5ldGlmLW1zZy5yc3QKIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Subject: =?UTF-8?B?W1BBVENIwqBsaW51eCBuZXh0IDIvM10gRG9jcy96aF9DTjogVHJhbnNsYXRlIHhmcm1fcHJvYy5yc3QKIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 55D3gAYv096848
+X-MAIL:mse-fl1.zte.com.cn 55D3iCQe066165
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 684B9E18.000/4bJQFN1rYJz8R044
+X-Fangmail-MID-QID: 684B9E94.000/4bJQHm116Jz8RVF6
 
 From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-translate the "netif-msg.rst" into Simplified Chinese.
+translate the "xfrm_proc.rst" into Simplified Chinese.
 
-Update to commit c4d5dff60f0a("docs: networking: convert
- netif-msg.txt to ReST")
+Update to commit 304b44f0d5a4("xfrm: Add dir validation to
+ "in" data path lookup")
 
 Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
 Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
 ---
- .../translations/zh_CN/networking/index.rst   |  2 +-
- .../zh_CN/networking/netif-msg.rst            | 93 +++++++++++++++++++
- 2 files changed, 94 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/networking/netif-msg.rst
+ .../translations/zh_CN/networking/index.rst   |   2 +-
+ .../zh_CN/networking/xfrm_proc.rst            | 126 ++++++++++++++++++
+ 2 files changed, 127 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/networking/xfrm_proc.rst
 
 diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-index 07a3933afe92..4dd75ec27dec 100644
+index 4dd75ec27dec..4cf09b60b3f0 100644
 --- a/Documentation/translations/zh_CN/networking/index.rst
 +++ b/Documentation/translations/zh_CN/networking/index.rst
-@@ -22,6 +22,7 @@
-
+@@ -23,6 +23,7 @@
     msg_zerocopy
     napi.rst
-+   netif-msg
+    netif-msg
++   xfrm_proc
 
  Todolist:
 
-@@ -100,7 +101,6 @@ Todolist:
- *   netdev-features
- *   netdevices
- *   netfilter-sysctl
--*   netif-msg
- *   netmem
- *   nexthop-group-resilient
- *   nf_conntrack-sysctl
-diff --git a/Documentation/translations/zh_CN/networking/netif-msg.rst b/Documentation/translations/zh_CN/networking/netif-msg.rst
+@@ -146,7 +147,6 @@ Todolist:
+ *   x25
+ *   x25-iface
+ *   xfrm_device
+-*   xfrm_proc
+ *   xfrm_sync
+ *   xfrm_sysctl
+ *   xdp-rx-metadata
+diff --git a/Documentation/translations/zh_CN/networking/xfrm_proc.rst b/Documentation/translations/zh_CN/networking/xfrm_proc.rst
 new file mode 100644
-index 000000000000..4810a3f8fc7c
+index 000000000000..a2ae86c44707
 --- /dev/null
-+++ b/Documentation/translations/zh_CN/networking/netif-msg.rst
-@@ -0,0 +1,93 @@
++++ b/Documentation/translations/zh_CN/networking/xfrm_proc.rst
+@@ -0,0 +1,126 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +.. include:: ../disclaimer-zh_CN.rst
 +
-+:Original: Documentation/networking/netif-msg.rst
++:Original: Documentation/networking/xfrm_proc.rst
 +
 +:翻译:
 +
 +   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
 +
-+================
-+网络接口消息级别
-+================
++=================================
++XFRM proc - /proc/net/xfrm_* 文件
++=================================
 +
-+网络接口消息级别设置的设计方案。
-+
-+历史背景
-+--------
-+
-+调试消息接口的设计遵循并受制于向后兼容性及历史实践。理解其发展历史有助于把握
-+当前实践，并将其与旧版驱动代码相关联。
-+
-+自Linux诞生之初，每个网络设备驱动均包含一个本地整型变量以控制调试消息级别。
-+消息级别范围为0至7，数值越大表示输出越详细。
-+
-+消息级别的定义在3级之后未明确细化，但实际实现通常与指定级别相差±1。驱动程序
-+成熟后，冗余的详细级别消息常被移除。
-+
-+  - 0  最简消息，仅显示致命错误的关键信息。
-+  - 1  标准消息，初始化状态。无运行时消息。
-+  - 2  特殊介质选择消息，通常由定时器驱动。
-+  - 3  接口开启和停止消息，包括正常状态信息。
-+  - 4  Tx/Rx帧错误消息及异常驱动操作。
-+  - 5  Tx数据包队列信息、中断事件。
-+  - 6  每个完成的Tx数据包和接收的Rx数据包状态。
-+  - 7  Tx/Rx数据包初始内容。
-+
-+最初，该消息级别变量在各驱动中具有唯一名称（如"lance_debug"），便于通过
-+内核符号调试器定位和修改其设置。模块化内核出现后，变量统一重命名为"debug"，
-+并作为模块参数设置。
-+
-+这种方法效果良好。然而，人们始终对附加功能存在需求。多年来，以下功能逐渐
-+成为合理且易于实现的增强方案：
-+
-+  - 通过ioctl()调用修改消息级别。
-+  - 按接口而非驱动设置消息级别。
-+  - 对发出的消息类型进行更具选择性的控制。
-+
-+netif_msg 建议添加了这些功能，仅带来了轻微的复杂性增加和代码规模增长。
-+
-+推荐方案如下：
-+
-+  - 保留驱动级整型变量"debug"作为模块参数，默认值为'1'。
-+
-+  - 添加一个名为 "msg_enable" 的接口私有变量。该变量是位图而非级别，
-+    并按如下方式初始化::
-+
-+       1 << debug
-+
-+     或更精确地说::
-+
-+	debug < 0 ? 0 : 1 << min(sizeof(int)-1, debug)
-+
-+    消息应从以下形式更改::
-+
-+      if (debug > 1)
-+	   printk(MSG_DEBUG "%s: ...
-+
-+    改为::
-+
-+      if (np->msg_enable & NETIF_MSG_LINK)
-+	   printk(MSG_DEBUG "%s: ...
-+
-+消息级别命名对应关系
++作者：Masahide NAKAMURA <nakam@linux-ipv6.org>
 +
 +
-+  =========   ===================	============
-+  旧级别       名称			            位位置
-+  =========   ===================	============
-+    0         NETIF_MSG_DRV		0x0001
-+    1         NETIF_MSG_PROBE		0x0002
-+    2         NETIF_MSG_LINK		0x0004
-+    2         NETIF_MSG_TIMER		0x0004
-+    3         NETIF_MSG_IFDOWN		0x0008
-+    3         NETIF_MSG_IFUP		0x0008
-+    4         NETIF_MSG_RX_ERR		0x0010
-+    4         NETIF_MSG_TX_ERR		0x0010
-+    5         NETIF_MSG_TX_QUEUED	0x0020
-+    5         NETIF_MSG_INTR		0x0020
-+    6         NETIF_MSG_TX_DONE		0x0040
-+    6         NETIF_MSG_RX_STATUS	0x0040
-+    7         NETIF_MSG_PKTDATA		0x0080
-+  =========   ===================	============
++转换统计信息
++------------
++
++`xfrm_proc` 提供一组统计计数器，显示转换过程中丢弃的数据包及其原因。
++这些计数器属于Linux私有MIB的一部分，可通过 `/proc/net/xfrm_stat`
++查看。
++
++入站错误
++~~~~~~~~
++
++XfrmInError:
++	未匹配其他类别的所有错误
++
++XfrmInBufferError:
++	缓冲区不足
++
++XfrmInHdrError:
++	头部错误
++
++XfrmInNoStates:
++	未找到状态
++	（入站SPI、地址或SA的IPsec协议不匹配）
++
++XfrmInStateProtoError:
++	转换协议相关的错误
++	（如SA密钥错误）
++
++XfrmInStateModeError:
++	转换模式相关的错误
++
++XfrmInStateSeqError:
++    序列号错误
++	序列号超出窗口范围
++
++XfrmInStateExpired:
++	状态已过期
++
++XfrmInStateMismatch:
++	状态选项不匹配
++	（如UDP封装类型不匹配）
++
++XfrmInStateInvalid:
++	无效状态
++
++XfrmInTmplMismatch:
++	状态模板不匹配
++	（如入站SA正确但SP规则错误）
++
++XfrmInNoPols:
++	未找到状态的对应策略
++	（如入站SA正确但无SP规则）
++
++XfrmInPolBlock:
++	丢弃的策略
++
++XfrmInPolError:
++	错误的策略
++
++XfrmAcquireError:
++	状态未完全获取即被使用
++
++XfrmFwdHdrError:
++	转发路由禁止
++
++XfrmInStateDirError:
++	状态方向不匹配
++	（输入路径查找到输出状态，预期是输入状态或者无方向）
++
++出站错误
++~~~~~~~~
++XfrmOutError:
++	未匹配其他类别的所有错误
++
++XfrmOutBundleGenError:
++	捆绑包生成错误
++
++XfrmOutBundleCheckError:
++	捆绑包校验错误
++
++XfrmOutNoStates:
++	未找到状态
++
++XfrmOutStateProtoError:
++	转换协议特定错误
++
++XfrmOutStateModeError:
++	转换模式特定错误
++
++XfrmOutStateSeqError:
++	序列号错误
++	（序列号溢出）
++
++XfrmOutStateExpired:
++	状态已过期
++
++XfrmOutPolBlock:
++	丢弃策略
++
++XfrmOutPolDead:
++	失效策略
++
++XfrmOutPolError:
++	错误策略
++
++XfrmOutStateInvalid:
++	无效状态（可能已过期）
++
++XfrmOutStateDirError:
++	状态方向不匹配（输出路径查找到输入状态，预期为输出状态或无方向）
 -- 
 2.25.1
 
