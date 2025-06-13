@@ -1,292 +1,208 @@
-Return-Path: <linux-kernel+bounces-685101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00CDAD844F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:37:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEF7AD8451
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324163A25BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5F5165D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C432DFA3A;
-	Fri, 13 Jun 2025 07:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139B62E2F1A;
+	Fri, 13 Jun 2025 07:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PlUCwHJG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J++g9obP"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D402D0278
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800202; cv=fail; b=W2DIL+rWepN3LMgMWCnMKiDTLJNoQEONlAlWJZS7Dz/rsGcsVJFrwDdzd4smeqc3Mns2dK3sTqJIo+kSboyRwWCR4wINcJJje5KNVgaKijsySs+TCnpw19CP/WAAeeicBm59y4sYxmR3l+D749p/l5Rx8yE3pJG2tc29Jj3/cZA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800202; c=relaxed/simple;
-	bh=IAiPDKDHTC5sNQq8Sj+cOnpwfO2Vm884Rvkpb+tpC/o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rbu6dcYt4lwX+IQdCJXq66aH0Rh/Gddox9qU4bcCXrEeDfT6vXj6VOieRVOu9J0p7b4FjcwINzKVG62gYELb3Pdw8DrhtJFBNpRJt3O+yqH/LBeg0e5Gm3LkGlnfQ0TvkajpwzCuxOs7QZwBgD3NppymlJnU9fpdpBB1Nj2YTos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PlUCwHJG; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749800201; x=1781336201;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=IAiPDKDHTC5sNQq8Sj+cOnpwfO2Vm884Rvkpb+tpC/o=;
-  b=PlUCwHJGhre38GKaeWcTN+1qhQCEmWqSgB6YIwwDgd5BXQyBvuOn8gO5
-   g2BcFT/ZmkyNUU8l9DiUBL0y83bdbmutAq0qkmkkYtLi1S7muKQs30mku
-   rxQSLNhn/iAGPJJ2/0OYiG5YrOuTWZKdeE5FWgCpTUMDi7vpRNW77El1A
-   LNm2j+Qtg9OwB9I1sBEVOQ8Z6ew+kvBsNjsnpEnqEYxpPr6Cco9m4rwL9
-   ZS1CIofGLEUHqqPR7WPfx/1rCEUAEtdnSeqXE44Cb4HU6w1Fisr7ajueU
-   HEKg0hesAc5Rb29L6ycl86gIwC6s0lrKuCmAAxis0xCiN1ShwbOZUhpmT
-   A==;
-X-CSE-ConnectionGUID: mM99d/zQSJ626Mfg3hOAcg==
-X-CSE-MsgGUID: rlkXNRwlSASEHxBaJf708g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="51927376"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="51927376"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:36:40 -0700
-X-CSE-ConnectionGUID: vOjxpx9+TYa9KUL6EKsf7g==
-X-CSE-MsgGUID: uryrwITwTYucXZAb8D/lMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="147633859"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:36:39 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 13 Jun 2025 00:36:39 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 13 Jun 2025 00:36:39 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.66)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 13 Jun 2025 00:36:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X2YxuMpxSQr3RWBEaUMNxFhQhXa/APaBmIjnjIRglyk1TOcBQ8JwQoUUGYXQJ77w/TGpOXpOz/nyoA51TjsFcwSIOyaHCAFxGy5IPwPzN/HvLGNr5Xx+zJEGB1PiiAOauS1udsH4uoSdU9AztwtTG1bElm9i8VXk3jLR9PVghFm84p8JHhndTZtxYyl5N8SCeZtSxoeQ4HC3Vi+NSOKpi/e5DIeL5akAurBLa/ZTVBb5tSv+RNns5pBZLez+nhkoRwCdFytnKsjqj/NS2I5bi176mx+T/POgMbDs77Pe3u93BlR7MRw1RxuTRUhkWqOUhbEkV6AGG8p267t8aCupyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mT/6KouluPvz9HWKyo9zcKuSmWsMLV/OP5cETSTtMw0=;
- b=Nubyb7THk7J6dCuj7tj1WSvAYQK5oNuRi0e+vVgigGQMJamxgqoe6wsB9vm0HtJ82iyZ2LWfdj3QX05zTSn2cxvPEj8UJlQXwD/nRev86IIUTO4n4rjyRxW5dZlozJV0PIMEhy8Flnb+9jIUcQmlA66wEInk8ExLcIlpKW2IBjtJgClQHVObUqgU8pxjI2LqQfF1Nab0mFcGqIPe0nRVU9coceFgfKs1PrxL0U1GV8/oFUgmCWv5GNd+gVMFftzKIJy9aBP0koNYLMtaw/V1+cZ6zX4KiioMKQUzj2RdKyFLphFnG0g0FcbrYkK45nbZX/IyvGreymZwjgSxTqMfPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SJ1PR11MB6202.namprd11.prod.outlook.com (2603:10b6:a03:45b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.29; Fri, 13 Jun
- 2025 07:36:31 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8835.025; Fri, 13 Jun 2025
- 07:36:30 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "ddutile@redhat.com" <ddutile@redhat.com>, "Liu, Yi L"
-	<yi.l.liu@intel.com>, "peterz@infradead.org" <peterz@infradead.org>,
-	"jsnitsel@redhat.com" <jsnitsel@redhat.com>, "praan@google.com"
-	<praan@google.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>, "baolu.lu@linux.intel.com"
-	<baolu.lu@linux.intel.com>
-Subject: RE: [PATCH v1 07/12] iommu/arm-smmu-v3: Implement
- arm_smmu_get_viommu_size and arm_vsmmu_init
-Thread-Topic: [PATCH v1 07/12] iommu/arm-smmu-v3: Implement
- arm_smmu_get_viommu_size and arm_vsmmu_init
-Thread-Index: AQHb2WHzLJ2ABt636UCLQu+hzyE9l7P/MiKAgACXFACAAO+RsA==
-Date: Fri, 13 Jun 2025 07:36:30 +0000
-Message-ID: <BN9PR11MB52768A39F3D0594B3A79686A8C77A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1749488870.git.nicolinc@nvidia.com>
- <55b1d69b2cceb685d4eb728a7a53572a9147993a.1749488870.git.nicolinc@nvidia.com>
- <BN9PR11MB52764E40612C1293699E43F98C74A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <aEsL2mxfO0x3isog@nvidia.com>
-In-Reply-To: <aEsL2mxfO0x3isog@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ1PR11MB6202:EE_
-x-ms-office365-filtering-correlation-id: cc4ee7de-9b15-46a0-0281-08ddaa4d03ba
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?YPisDWgf5RgSeJH6GVLM5/YmxH1Mkc/qQF4kPJ4JA2gJrjVpRIwvZzMhGWsA?=
- =?us-ascii?Q?2Ev+32jqExpNTnwcsJEN/VG11yRaU9cIFarFELTjDK8UB88N2dLNO6JJvXDT?=
- =?us-ascii?Q?3PM6nu2PjZvp49BnTF01WXw7h0vwb2JE0lUy4HihHQneghkmM+FkbpKd5yeR?=
- =?us-ascii?Q?OX1IgCFJmNAJO7+NVq2FZUfsFBwobgybFdS1PwXWo+LnDYDeHDpJ/qZ0xNJ+?=
- =?us-ascii?Q?3yRuN+d9Y4qKor8dGpx87mH9pFre6csRSf0jwg9l30O8Lyawhat+qVP2Y1Bd?=
- =?us-ascii?Q?l/FHBbAENn1d7xDnIyw+MtoepVzAJNsp7j2V2ESOs0Y0fN5zN376Z1NeFz9Y?=
- =?us-ascii?Q?fbiHfurN5DGFMrUNnbA+BngZypRt6I6ValuTCP+dp3iU5RKL4irPyoX1i3gk?=
- =?us-ascii?Q?MGA+W9LxH7XAIykNDTHy00FZU3ac/kyKw1DVhENiYVLnujqFcP8kpv5EryJr?=
- =?us-ascii?Q?gSd2nBShshrJGypBraT9D7LPvZTUXDJzNmx48vjgfyAcdkpUA0xgJ470fnEE?=
- =?us-ascii?Q?wHXwLRubQbJJ9+aGLpF7WFBp0Mz2n1qPG8ryFrMtOo0bLCUbhNPPn4AJ/eKJ?=
- =?us-ascii?Q?DDW21La8ZKcJald0IaZg6jx42npBp5sBnuXSyaLz/tqWXQwvDX6tfKrnBOyc?=
- =?us-ascii?Q?QUyfg8DW18bFGzY5S4iy/cLNbXW5bMTqV04zmvwhmYmlASkqD2DEvtR0mgKV?=
- =?us-ascii?Q?x/s4f29Tejd94BGq7pUhb+AttR/fMoy2dACJ6mkXYBlxu9ragfjLf2FvgxAc?=
- =?us-ascii?Q?lzmpt4lsJTxr4UIInlYeGqrYksb6Am6OSV4FDKFPtuc6/pAphqgSvYNLTods?=
- =?us-ascii?Q?VTin0NrGd3ddvA7gFr9Kpv+Kt60Q5BtHi+c7Ajor8UiGmsnIwl4dlXWdSnfk?=
- =?us-ascii?Q?c3QyOsAMGj9/1Pr35KI7i4pOHBuJBRrRM4tWHBGrxWGagyXTW1TYc99kMx3i?=
- =?us-ascii?Q?WfIRbOyJDqpy/HgI+Hw+YbYy64fTSBmUZJBf23SFL4/h6mh39Zt3Hl9kj95/?=
- =?us-ascii?Q?vK8f19ot8PUS7X2sX1ofwHNtQDoo0la+86e4eMbhUSfrtQHq/SpF+D6GkuW9?=
- =?us-ascii?Q?JtwILnTryprgs0uns4kPeb0Qxwud+aivzGy+jVDjrhVyn3rCY+g759UtrXPC?=
- =?us-ascii?Q?iNxYLWopflK79IHJKNb8pFkO5FIzoZVTkgp5swhelzIN3f6WzplobqMBRln2?=
- =?us-ascii?Q?jIOBl3FUopIf0bHocLo2SHHSgDgAyOe2AaB+s64La7JflmtDNwYDXnPKQaDD?=
- =?us-ascii?Q?Obb2OWP6p5mZM496zXO9x9rjmL7NntXZmTyD8M4fXD+BVUCHz5ZvOK/+MNyL?=
- =?us-ascii?Q?gp7A9mHW0mjLmd33DmunSwKd75L2mXpowEAhKY+nPCF9iUqj0Rp7eAEVPjVq?=
- =?us-ascii?Q?c0HyxQZY/4CoiBYnpFU+Bl7cw4HLaYZfwW7Ai7QYXP9A0iq9QEL1qjunwRZq?=
- =?us-ascii?Q?l9S4VqCQKrlmHcuXRZX36WatowZ1q169OevPT4d8n6f7jtlsDIim2A=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?HnO5l2hseF20G3JuD2b+6L5A1JD8mZjpR/qceZeITUuCbVT6xgsXD9YSXcIw?=
- =?us-ascii?Q?s3CAP8sIyhAFG4Nmt1Fcyy9AmXsyLnR0INNe2CC3DQ3ob+aGVnDDrg2bb1+L?=
- =?us-ascii?Q?uOALdxKZWakARLFHgfma3FWAps7XjGLsaxrIjwxuoLi/d8aTC55BEs8k1hRe?=
- =?us-ascii?Q?XbvN2sgBvY0WwNwrRfMp6o2NW83P26A4whOeczAq901I5ow1CD4qRRRETJmZ?=
- =?us-ascii?Q?Zs9mIRMah6S1arPokPFH/G0HNYnkWS+VgKcdAKnhItwT3C3i0TX9/yIB7JZ8?=
- =?us-ascii?Q?m3INBUAkGpgNvi1doEimAocBtsx/dXy0bN5j66+JC+WqHk1IT1moPwG39o0c?=
- =?us-ascii?Q?1eSJECE/zyYJas3X0EsKFxmhkA+++q08fGcNNStChPyR8LJPNc0kNZlQe5Dg?=
- =?us-ascii?Q?rFE7P22izj3jAxc8hv0wegMSi1liC8Ex/mdAFNNN4K+GStC0JLXqrD7/3hOv?=
- =?us-ascii?Q?6YSlrXElNsatkEhMhOOzwO0lB/mIL0GC009jb57nJmS5fc4UomwynDZDgr+G?=
- =?us-ascii?Q?Ps6urFkBfDq5NQutY9rsR0uSthEYnPS+SjF9mlhwt8B30C0qAm1lNTDIOuN0?=
- =?us-ascii?Q?9CP/yubWfF+C1QOPxl5hBdmOds3gbSlXnhLQTJLwdxkYIaxOJt8ngBqo4XoG?=
- =?us-ascii?Q?5UCg9JAPTonIcUaqxT0v1gNIYuKiTv2adyBkcNu3XK22P1MgW9uG0Yv/TCNv?=
- =?us-ascii?Q?+irXY8pRYTgV8FE6ZxtigAf7N5sQd3WWmp2YXQ5u+5+4moaM7TmrUb2aPNRo?=
- =?us-ascii?Q?G/le1Ue5X2oYOSRDHrD0+/j7onpUU9gQiN2+kyGbP2+yh1nzsf5xXE8UWS7d?=
- =?us-ascii?Q?ZnTFI1Bk7e92pAK12vsDrAYE2P+qIcqF3iRaGqIsFc9KpkVUdE9FDn6g/TfY?=
- =?us-ascii?Q?bQbgd4dqSUaVDw4Gj6u5yzHmpmWufWnVyR8NGwC5Dan0wG+WrVC/Cg5JcgU+?=
- =?us-ascii?Q?m5O1bqzKNlXUGoUMMNOOWZ9J9SA6rPzzj0eOtS7yYg+HhRxDZOJfrkevS9jn?=
- =?us-ascii?Q?RKNcYX4EZHH9e3vRpkxA9iBzrHDJetxw254y8jlHj3NZspdIN7zrr2+gwEx2?=
- =?us-ascii?Q?7niLQn5TQTHUM07CBRkREVpWsyXZQeauONLENwME9UglQ0fOjviIhJjUmbKI?=
- =?us-ascii?Q?3hMFGmDiwV/yBLb3rUkmtpDTDgA1h2xTElIbNRRdFzZYdU3Bh6h0Ceabhxaw?=
- =?us-ascii?Q?4YIoB7vyzrOWjOW7LAwxg1/AAKQ4OAHIChpJtVkhY2z3cOcw+A4AvcFZCOaq?=
- =?us-ascii?Q?SH1B6SMHrbFQvKsLR1UI0H8boD40qaP9009L+OOzygbYL9CNuvM9vEsWO5zI?=
- =?us-ascii?Q?IAIxmlh7K/4tUKTzW9A/eAzcT6QpeeY+ooQwn83YxVDZOWU80u73kBoUbXeX?=
- =?us-ascii?Q?y9m1q9caNt02GiK+eOaDw8/0IbH3oWbDNE6/JBlDTOVbSuGOt6Vl4a71JVD5?=
- =?us-ascii?Q?h7qkmBIeGivB47BDfm6DgScp1cd8Z2is7AK9JjefmtlFh3l0rRkdVwIvznoS?=
- =?us-ascii?Q?CrhWyx45nlPGTzckik50T7IsTZHyt2Cgg/K0XIDk631KalN98lmvCcszTzSW?=
- =?us-ascii?Q?dE6xqCdRXTwVAmSKzir59JRFVsW0Ty591+WJI+U9?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE042D3A7C;
+	Fri, 13 Jun 2025 07:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749800232; cv=none; b=IzIznQxOU+RT2pCb12utdBAEWLFNB8Gd/z+JMKQIFxqgEOwDzEkptfl9kky5NvtbeOXdH7Kj0UMVURulwdG8XA26Pax6CFQ3TZ5xAFuEzVXlFHtb7hgKMKBJUgJy0uuOSGZENT+4kL40jZZ278DRePGQoXvLuOVT6ZvRJUq5zuE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749800232; c=relaxed/simple;
+	bh=lgZkCQolcGVeoldt7I+qAyGjXtMl8kWBTaIhmRsz7bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pHrm2AflLcLEi3DVBOho18L4v1LecTcfnOqQjMy1zSHvS9Hha6FDQPKt65EGejC5e7G4Q7IUEKIMvpItln+Z7dkCzCb+8jRuWLdQwNrIFtthNFgRXMBNqldXoAkV2oC8RcUs8F3ognv1tnrASku/AcrbaulOEANPefRY+Qivs9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J++g9obP; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b42935293so1220141fa.1;
+        Fri, 13 Jun 2025 00:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749800228; x=1750405028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1JMXW+Fubsd2ScoNgRtDk/k43gI4z7MQw3P6LblrECY=;
+        b=J++g9obPQSt1Dm7C9KY3y71YVuBb5YCb/BC4GhTd6g4+yA+2U0w3uywkqJZgjTaImb
+         BxLiWHWBfPbdXXN49HICKbvX3GOWs1N06gCO7wYCXQFYgbDk+9VcR0iOFU+f4wylrG5g
+         vGLyPcr1QwN6iwW2CVJUhiCVcKssvJKXIblbYEcYjmaM3odb7mjllId7/eR2CH4B3eoX
+         C0lesccJ78Fq92XLyGC8pwQKDPa9NBfenFoXT/9+6WtcQyMAkgHqFkE6WuPVshA0F76z
+         7wZdH0dcZ/pp5oQTDrXmxlbEqpurtheiSo80cse4EOLyJ5dKxpOWMhH5FQQ2Q9Mp7y1m
+         GAvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749800228; x=1750405028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1JMXW+Fubsd2ScoNgRtDk/k43gI4z7MQw3P6LblrECY=;
+        b=Xb33getp1lbxY4flcmNXvT9VznveK+vp1j2kT8j/DSVA8hfo7WipMzA+tWP5itW+kf
+         HHNpOYqBHvvy3/c0OLIZWNWTJ9EaFlg86GsteZuWLtCggmzc0xM3Dmrpwn1T558rEFbF
+         TdArNfHs817mCClI/REwCLmUXa3oGYLjWf3wmXVfj7xMHtKR1Z+uvpiE3urWxOCPzYBj
+         LfeRQiufovp8//hBIOZozJxudWXGLnxH+N2JmqlTz6kybWwU3cA69+VDUbWHTg41xe72
+         kRBtX0UplT2UnVLkm0rfSIYhzieaAdhUP/38QkxXjbFwLU6YmILhwxL9F2WmQdrZQhg+
+         dGOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3lHuSpPTP/wj+5zNw07CVlehwC6E6bvnXv79YeMEwjeJ3TlvcHlpmAcyikHKM+GbtR/diBAbeHKV+PJj2@vger.kernel.org, AJvYcCViQlbQsfLSMEhp+giKsrAhNH+WlFMBC8uWqlL/jD4GWMSnLYVDyvfP+XvAieiJ4XXz70Hrk7YH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye2YshHNf6yqi2boCE/fY5Lb1MdFlPwQXtvTwGrHmVuXZUaG+m
+	GVrQqvxOPfKnKxOCW4Q4t6ZfTT8vtLYHVMvIfmMLMkHnihuuSg676VfRVcDJAlYlKhM4aaWBmOM
+	iujW+mctoIf4BePtyGGaq1+ALbysFsnmgqMQnfBVhDA==
+X-Gm-Gg: ASbGncsl/3oYuQ+81DyMR3Cl0DHZxWk5kD2nSg2gWYtAvryLrvN619StF4lABMKg9MO
+	kXQlq5zzGBFRBJNGoTVAFCH5M/0+LTnkDng6fOVpRVB3HDSeFjBs0aZaOBA3j6q4FKvW+KBiUmV
+	wBrwkbSer+j+FKJ5FR0STCacl8GiDAqh1JYCe54T7Yavk=
+X-Google-Smtp-Source: AGHT+IFMuNXpkWg337BKT0ddarpu8Q4pCBucJjSwDblfnCzSGAj33wZ3yIdKu2WNBM7imca3M/FSbtyTNri2JvwjQi4=
+X-Received: by 2002:a2e:a781:0:b0:32a:de39:eb4c with SMTP id
+ 38308e7fff4ca-32b3ea8365emr4291071fa.18.1749800227901; Fri, 13 Jun 2025
+ 00:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc4ee7de-9b15-46a0-0281-08ddaa4d03ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2025 07:36:30.7811
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nzIECLd8umLHMsiFcvU7glxXb3E+xSAO6iWSVp5ZakBg+++qoIMezVtCRZfJCbSBkrYIn9sB+zJ3B5IEH/kXiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6202
-X-OriginatorOrg: intel.com
+References: <20250612103743.3385842-1-youngjun.park@lge.com>
+ <20250612103743.3385842-3-youngjun.park@lge.com> <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
+ <CAKEwX=PsGKS5JHqQ-G29Fg8xLssPhM+E-4wV_QakhqrDOsV36g@mail.gmail.com>
+ <CAMgjq7Aq1LW9wFgyQ4oCS5Su23X62S+5ZW_d5OydJj-pp2n21Q@mail.gmail.com>
+ <CAKEwX=PD+P_wugkAJ83ti6YRo4-6QNM7HDFs+KDURVwx2JrnZg@mail.gmail.com> <aEvPBSObBrrQCsa3@yjaykim-PowerEdge-T330>
+In-Reply-To: <aEvPBSObBrrQCsa3@yjaykim-PowerEdge-T330>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 13 Jun 2025 15:36:49 +0800
+X-Gm-Features: AX0GCFvxU12N2ikQf07wfssB5TNdh0YDBnXk-zYOmBRR-5m8A5AUKNKIwDo2D0g
+Message-ID: <CAMgjq7BzQ8bKKXuHB=TiQnkdSdCuABXrRf8Z8w2QkjpD44jdgA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm: swap: apply per cgroup swap priority
+ mechansim on swap layer
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shikemeng@huaweicloud.com, bhe@redhat.com, baohua@kernel.org, 
+	chrisl@kernel.org, muchun.song@linux.dev, iamjoonsoo.kim@lge.com, 
+	taejoon.song@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Friday, June 13, 2025 1:18 AM
->=20
-> On Thu, Jun 12, 2025 at 08:20:30AM +0000, Tian, Kevin wrote:
-> > > From: Nicolin Chen <nicolinc@nvidia.com>
-> > > Sent: Tuesday, June 10, 2025 1:14 AM
+On Fri, Jun 13, 2025 at 3:11=E2=80=AFPM YoungJun Park <youngjun.park@lge.co=
+m> wrote:
+>
+> On Thu, Jun 12, 2025 at 01:08:08PM -0700, Nhat Pham wrote:
+> > On Thu, Jun 12, 2025 at 11:20=E2=80=AFAM Kairui Song <ryncsn@gmail.com>=
+ wrote:
 > > >
-> > > +int arm_smmu_get_viommu_size(enum iommu_viommu_type
-> > > viommu_type,
-> > > +			     struct device *dev, size_t *viommu_size)
-> > > +{
-> > > +	struct arm_smmu_master *master =3D dev_iommu_priv_get(dev);
-> > > +	struct arm_smmu_device *smmu =3D master->smmu;
-> > > +
-> > > +	if (!(smmu->features & ARM_SMMU_FEAT_NESTING))
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > > +	/*
-> > > +	 * FORCE_SYNC is not set with FEAT_NESTING. Some study of the
-> > > exact HW
-> > > +	 * defect is needed to determine if arm_vsmmu_cache_invalidate()
-> > > needs
-> > > +	 * any change to remove this.
-> > > +	 */
-> > > +	if (WARN_ON(smmu->options &
-> > > ARM_SMMU_OPT_CMDQ_FORCE_SYNC))
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > > +	/*
-> > > +	 * Must support some way to prevent the VM from bypassing the
-> > > cache
-> > > +	 * because VFIO currently does not do any cache maintenance.
-> > > canwbs
-> > > +	 * indicates the device is fully coherent and no cache maintenance =
-is
-> > > +	 * ever required, even for PCI No-Snoop. S2FWB means the S1 can't
-> > > make
-> > > +	 * things non-coherent using the memattr, but No-Snoop behavior is
-> > > not
-> > > +	 * effected.
-> > > +	 */
-> > > +	if (!arm_smmu_master_canwbs(master) &&
-> > > +	    !(smmu->features & ARM_SMMU_FEAT_S2FWB))
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > > +	if (viommu_type !=3D IOMMU_VIOMMU_TYPE_ARM_SMMUV3)
-> > > +		return -EOPNOTSUPP;
+> > > On Fri, Jun 13, 2025 at 1:28=E2=80=AFAM Nhat Pham <nphamcs@gmail.com>=
+ wrote:
+> > > >
+> > > > On Thu, Jun 12, 2025 at 4:14=E2=80=AFAM Kairui Song <ryncsn@gmail.c=
+om> wrote:
+> > > > >
+> > > > > On Thu, Jun 12, 2025 at 6:43=E2=80=AFPM <youngjun.park@lge.com> w=
+rote:
+> > > > > >
+> > > > > > From: "youngjun.park" <youngjun.park@lge.com>
+> > > > > >
+> > > > >
+> > > > > Hi, Youngjun,
+> > > > >
+> > > > > Thanks for sharing this series.
+> > > > >
+> > > > > > This patch implements swap device selection and swap on/off pro=
+pagation
+> > > > > > when a cgroup-specific swap priority is set.
+> > > > > >
+> > > > > > There is one workaround to this implementation as follows.
+> > > > > > Current per-cpu swap cluster enforces swap device selection bas=
+ed solely
+> > > > > > on CPU locality, overriding the swap cgroup's configured priori=
+ties.
+> > > > >
+> > > > > I've been thinking about this, we can switch to a per-cgroup-per-=
+cpu
+> > > > > next cluster selector, the problem with current code is that swap
+> > > >
+> > > > What about per-cpu-per-order-per-swap-device :-? Number of swap
+> > > > devices is gonna be smaller than number of cgroups, right?
+> > >
+> > > Hi Nhat,
+> > >
+> > > The problem is per cgroup makes more sense (I was suggested to use
+> > > cgroup level locality at the very beginning of the implementation of
+> > > the allocator in the mail list, but it was hard to do so at that
+> > > time), for container environments, a cgroup is a container that runs
+> > > one type of workload, so it has its own locality. Things like systemd
+> > > also organize different desktop workloads into cgroups. The whole
+> > > point is about cgroup.
 > >
-> > it's more intuitive to check it first.
->=20
-> Agreed. But I kinda intentionally left it here. The SMMU driver
-> will have something like an impl_op->get_viommu_size in the HW
-> queue series. That can simply insert a piece:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> @@ -415,6 +415,12 @@ int arm_smmu_get_viommu_size(enum
-> iommu_viommu_type viommu_type,
->             !(smmu->features & ARM_SMMU_FEAT_S2FWB))
->                 return -EOPNOTSUPP;
->=20
-> +       if (smmu->impl_ops && smmu->impl_ops->vsmmu_size &&
-> +           viommu_type =3D=3D smmu->impl_ops->vsmmu_type) {
-> +               *viommu_size =3D smmu->impl_ops->vsmmu_size;
-> +               return 0;
-> +       }
-> +
->         if (viommu_type !=3D IOMMU_VIOMMU_TYPE_ARM_SMMUV3)
->                 return -EOPNOTSUPP;
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Yeah I know what cgroup represents. Which is why I mentioned in the
+> > next paragraph that are still making decisions based per-cgroup - we
+> > just organize the per-cpu cache based on swap devices. This way, two
+> > cgroups with similar/same priority list can share the clusters, for
+> > each swapfile, in each CPU. There will be a lot less duplication and
+> > overhead. And two cgroups with different priority lists won't
+> > interfere with each other, since they'll target different swapfiles.
+> >
+> > Unless we want to nudge the swapfiles/clusters to be self-partitioned
+> > among the cgroups? :) IOW, each cluster contains pages mostly from a
+> > single cgroup (with some stranglers mixed in). I suppose that will be
+> > very useful for swap on rotational drives where read contiguity is
+> > imperative, but not sure about other backends :-?
+> > Anyway, no strong opinions to be completely honest :) Was just
+> > throwing out some ideas. Per-cgroup-per-cpu-per-order sounds good to
+> > me too, if it's easy to do.
+>
+> Good point!
+> I agree with the mention that self-partitioned clusters and duplicated pr=
+iority.
+> One concern is the cost of synchronization.
+> Specifically the one incurred when accessing the prioritized swap device
+> From a simple performance perspective, a per-cgroup-per-CPU implementatio=
+n
+> seems favorable - in line with the current swap allocation fastpath.
+>
+> It seems most reasonable to carefully compare the pros and cons of the
+> tow approaches.
+>
+> To summaraize,
+>
+> Option 1. per-cgroup-per-cpu
+> Pros: upstream fit. performance.
+> Cons: duplicate priority(some memory structure consumtion cost),
+> self partioned cluster
+>
+> Option 2. per-cpu-per-order(per-device)
+> Pros: Cons of Option1
+> Cons: Pros of Option1
+>
+> It's not easy to draw a definitive conclusion right away,
+> I should also evaluate other pros and cons that may arise during actual
+> implementation.
+> so I'd like to take some time to review things in more detail
+> and share my thoughs and conclusions in the next patch series.
+>
+> What do you think, Nhat and Kairui?
 
-Oh I see.
+Ah, I think what might be best fits here is, each cgroup have a pcp
+device list,  and each device have a pcp cluster list:
 
->=20
-> Otherwise, this following patch has to move the type check again.
->=20
-> > btw does it make sense to also add below here?
-> > 	if (s2_parent->smmu !=3D master->smmu)
-> > 		return ERR_PTR(-EINVAL);
->=20
-> I can't find a legit reason to forward the s2_parent to run this
-> sanity. "struct device *" is forwarded since the driver needs to
-> know the smmu pointer: A for the compatibility checks; b for the
-> smmu->impl_ops mentioned above.
->=20
+folio -> mem_cgroup -> swap_priority (maybe a more generic name is
+better?) -> swap_device_pcp (recording only the *si per order)
+swap_device_info -> swap_cluster_pcp (cluster offset per order)
 
-yes
+And if mem_cgroup -> swap_priority is NULL, fallback to a global
+swap_device_pcp.
+
+This seems to fit what Nhat suggested, and easy to implement, since
+both si and folio->memcg are accessible easily.
 
