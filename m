@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-684807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA686AD8075
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:47:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D84CAD806D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC942189905E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:47:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8728F16DE44
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA321DE4C2;
-	Fri, 13 Jun 2025 01:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A911DE4E3;
+	Fri, 13 Jun 2025 01:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jz70MgVY"
-Received: from out199-7.us.a.mail.aliyun.com (out199-7.us.a.mail.aliyun.com [47.90.199.7])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="SAVjJQ1t"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24EB72636;
-	Fri, 13 Jun 2025 01:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53261155725;
+	Fri, 13 Jun 2025 01:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749779214; cv=none; b=deMp2DVSMwQEGH69VNlElWPICMzb7q3Uu+Z1ruTXSsNuT7poRmB+NwVh/lNx2mw9O+ReC9MnVTbphJtiPm+JeUBf1vd7+iSRuU1Fcvr6FQ+IaqOpemFpFvVsKDTEQlaHOPjUvaF8kikZUvQAs/qZGsVIiaYesnR/RMouNICpJoU=
+	t=1749778973; cv=none; b=ZD/kIuE4GB8B6S/n5jgixhweT7EItDhYoGtIY0PNK4W/o5mCqiobop3H2Z5WP6fpN+Y91hDx0jeO+E8pyo3jrZnTt/hvz8We7EQxI59Q3K2mFp0z/5JGivRYmMs4PrmvXnsIBCST0IRzMOr4vZwsJvaCD4ZfK4zJinsagIQjqng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749779214; c=relaxed/simple;
-	bh=E0r94BR3E6A0HCGt3cREJiiePlVg/qmmZSqcR0FneOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N5p/hRAIpzHFx4pOJ28geZzok4/Dnpx8YqaCXyDArmeewGtlx6WVZvEhe5B94tTqYr6gCNtuxJwjSkduyYIOgWwdP1H12AcAw0Bm601sP/38kZsAsb+ndIxOnxMucA8+RO0+c6t8dzj2beDavhOEkJnvp1CO5RNvfa6iaURSDak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jz70MgVY; arc=none smtp.client-ip=47.90.199.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749779194; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=CSzFqjAOdYOhtCVpEGFFODIRgXuSQjCJncahjlXIPOY=;
-	b=jz70MgVYyiYpxaOzwt7VFlXT7nxkmfp9DoJJDiMH0KyCQUZ9cOd98j5lByJS3/OkXg7lnhx6Zis1NgZmPSxLjAl5ww5W49GT4vqJB1T51XyZsiFgKWgPUqpFy78l5MnyCzgk+Iq/9dmN4xn+fNYJzFuniOMWRPKMfoFVuG5rruM=
-Received: from 30.74.144.147(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wdic67h_1749778874 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Jun 2025 09:41:15 +0800
-Message-ID: <28221305-14de-4e46-a9f4-8bf90c7b32c0@linux.alibaba.com>
-Date: Fri, 13 Jun 2025 09:41:14 +0800
+	s=arc-20240116; t=1749778973; c=relaxed/simple;
+	bh=tLzU6/YncIma45YYmBLecwFz7bOFDq/gxS/2axTLZGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=He27zTqpJwQrsR28a48ICv6jCRK2wSrrBMjFZBIbWxrFpkh43WZFO3Nbw4GoECQH62bW/gILleph4cji2FMOouYpVVXFY0RnJ9VhfsybH94PLM3NkNWGDqZ8IzX9LtQhhskP1oQK4zAsxb1sQ45giulz8byKqXo7rPRnvmNVGFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=SAVjJQ1t; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/YsHuhFMK2Ld2dcwyKaSNTxrpFLRS6RlejH9OKuA/eg=;
+	b=SAVjJQ1tBeMju1DMkOjVOy3pjosvQPsZfbFEAOZx+cRnHqbiV+y/m5pO4OxLBV
+	G8Nw9FA5TsCVis34LPiCVD8CMgMUik8JTZdO0itfFjPzed0H0d1atWHwkYh6IUN5
+	HqIRZMHCI6T7PUoopJlJ8hz5+ktjf8ZeAYGRcn06R5dBU=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3nzvWgUtoaZmIAA--.34451S3;
+	Fri, 13 Jun 2025 09:41:44 +0800 (CST)
+Date: Fri, 13 Jun 2025 09:41:42 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Frank Li <frank.li@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v17 0/7] firmware: imx: driver for NXP
+ secure-enclave
+Message-ID: <aEuB1qgd6aVl0i7i@dragon>
+References: <20250426-imx-se-if-v17-0-0c85155a50d1@nxp.com>
+ <aEqMSG8k+NpQ7ROH@dragon>
+ <AM9PR04MB86048A698B03E974CFD3DB489574A@AM9PR04MB8604.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests: khugepaged: fix the shmem collapse failure
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, shuah@kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <c16d1d452aa876b449324d12df6465677158a711.1749697399.git.baolin.wang@linux.alibaba.com>
- <AFC17CA1-DF5A-48F0-8E63-E139005F5880@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <AFC17CA1-DF5A-48F0-8E63-E139005F5880@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM9PR04MB86048A698B03E974CFD3DB489574A@AM9PR04MB8604.eurprd04.prod.outlook.com>
+X-CM-TRANSID:M88vCgD3nzvWgUtoaZmIAA--.34451S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYJPEUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwVrZWhLXLObUwAAsE
 
-
-
-On 2025/6/12 23:46, Zi Yan wrote:
-> On 11 Jun 2025, at 23:54, Baolin Wang wrote:
+On Thu, Jun 12, 2025 at 09:42:46AM +0000, Pankaj Gupta wrote:
+> Hi Shawn,
 > 
->> When running the khugepaged selftest for shmem (./khugepaged all:shmem),
->> I encountered the following test failures:
->> "
->> Run test: collapse_full (khugepaged:shmem)
->> Collapse multiple fully populated PTE table.... Fail
->> ...
->> Run test: collapse_single_pte_entry (khugepaged:shmem)
->> Collapse PTE table with single PTE entry present.... Fail
->> ...
->> Run test: collapse_full_of_compound (khugepaged:shmem)
->> Allocate huge page... OK
->> Split huge page leaving single PTE page table full of compound pages... OK
->> Collapse PTE table full of compound pages.... Fail
->> "
->>
->> The reason for the failure is that, it will set MADV_NOHUGEPAGE to prevent
->> khugepaged from continuing to scan shmem VMA after khugepaged finishes
->> scanning in the wait_for_scan() function. Moreover, shmem requires a refault
->> to establish PMD mappings.
->>
->> However, after commit 2b0f922323cc, PMD mappings are prevented if the VMA is
+> To test it on MX93, you need additional patches on top of these.
 > 
-> Can you add the title of the commit? It is easier to understand the context.
+> The plan was to send the next patch-set to enable the support for MX93, once
+> these got merged.
 > 
-> 2b0f922323cc ("mm: don't install PMD mappings when THPs are disabled by the hw/process/vma")
+> If you suggest, I can share the patche-set to enable MX93, as an attachment
+> to you only.
 
-Sure.
+Yes, please.  I would like to test the driver before it gets merged,
+thanks!
 
-> 
->> set with MADV_NOHUGEPAGE flag, so shmem cannot establish PMD mappings during
->> refault.
->>
->> To fix this issue, we can set the MADV_NOHUGEPAGE flag after the shmem refault.
->> With this fix, the shmem test case passes.
->>
->> Fixes: 2b0f922323cc ("mm: don't install PMD mappings when THPs are disabled by the hw/process/vma")
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   tools/testing/selftests/mm/khugepaged.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
->> index 8a4d34cce36b..d462f62d8116 100644
->> --- a/tools/testing/selftests/mm/khugepaged.c
->> +++ b/tools/testing/selftests/mm/khugepaged.c
->> @@ -561,8 +561,6 @@ static bool wait_for_scan(const char *msg, char *p, int nr_hpages,
->>   		usleep(TICK);
->>   	}
->>
->> -	madvise(p, nr_hpages * hpage_pmd_size, MADV_NOHUGEPAGE);
->> -
->>   	return timeout == -1;
->>   }
->>
-> I assume you are going to just remove this madvise based on your discussion
-> with David. With that, feel free to add Reviewed-by: Zi Yan <ziy@nvidia.com>
+Shawn
 
-Thanks.
 
