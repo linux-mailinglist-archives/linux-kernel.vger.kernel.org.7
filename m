@@ -1,196 +1,113 @@
-Return-Path: <linux-kernel+bounces-686503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2064CAD987B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC80BAD987E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16CA4A27B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:08:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41801167619
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A6728FAAB;
-	Fri, 13 Jun 2025 23:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDF528EA52;
+	Fri, 13 Jun 2025 23:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WQrD3AGd"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aQ1pcHAc"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0902798EF;
-	Fri, 13 Jun 2025 23:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4C279DD6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 23:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749856062; cv=none; b=d9asnONznc0dyht4pP7jHLr5XiQdnAQj3EV4rgTrCxM25j/AMm/U/P8xDwSUYaYGgXC0sOVAuDafcSsgNGnIsyCvCEeZq5bT/urnIPE57gr/wNSpi6u4VaonvyZR749LxpPvk8FIuhDB2bIEdg6abPZbGAdiRAUPIs2EjKd3HXU=
+	t=1749856136; cv=none; b=WxkFjKod4nhnVkQUiosYo5QPrzPG6AYL5JF4k4zZpjsKZu6P21CM+JDsCVvIMBt3vFHy8LJLEk56Nja/T3SBGRu0V/fMOMIWUnPO09gm9Mh+ouBnr6UcQCejmm2csW6fRNIqPdzE5o20q58oQwQK72O40z8jVvX0xdty/Vrxnt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749856062; c=relaxed/simple;
-	bh=5LBmNvxGQVphTBm+dhvh3993X6dnlRF+TMf6MHhy5xI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S1UV5PdmhU6EJlHqRfw0uEjxj/ukV8NoErX86ghwFht0/alIJCjzJ4prbt2QLCjgnIb1EFIj9lzbLgh0WvsZhcE3V4nKd/tVGIpPt5tmT8D6J9L/+R6N8RcJckSa3TY75wwC6O0zEz2kfyKAit6r/cMI2QzThcUxoJXK/AYufd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WQrD3AGd; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=waQo5q91jU8Ji7flII4J5+MFXZhCzcoj/TS8hqA7oVQ=; b=WQrD3AGd8Ew03Pa6
-	GjvTc8x4Y+t+pUy1C2N1njppwCWMEBFmRE+zmRqQArYR4JS3JF/6i0mXBznS6Gv0C6XdR29EA1pHx
-	42NwtvJpSSLgR3Fd4XP0+OSIZpZKnqgImYpSM/bcaOoYPEnNzIdzBGvQmBTQG0L5MtZwCNbUgQC2z
-	DC7vmIfpMWHYxKmNIwoKTKu9GMdLjo+/Uu9goVvBVlBgJlRTMsihvXo3U7Nxq0miyx1uaDfN33XME
-	L62K8QnbUtZhCzrmfPglJDFLtB9OQShfqf2gn9OGZ6ABa0TIOBB7a5oX8SYYXph1KQWKqTtjvycPT
-	XhyqWqe2F2/q5d3/ZA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uQDUj-009ZoB-08;
-	Fri, 13 Jun 2025 23:07:33 +0000
-From: linux@treblig.org
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	eperezma@redhat.com,
-	xuanzhuo@linux.alibaba.com
-Cc: kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/2] vhost: vringh: Remove unused functions
-Date: Sat, 14 Jun 2025 00:07:31 +0100
-Message-ID: <20250613230731.573512-3-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250613230731.573512-1-linux@treblig.org>
-References: <20250613230731.573512-1-linux@treblig.org>
+	s=arc-20240116; t=1749856136; c=relaxed/simple;
+	bh=r27H9F1hEUtupyvfgSfrvSGbuCAXF2LgasX0jrzicYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oev5uVVKNSnRGXKCaSk0bxU7iOSAjAZKW+5KQqjKugjgwCMOrb+T+W2vgD6TNv+wPQsr/t4mdVybP4q8I8/JwZd4PjzxO87FH/y5wDtK0XT9BXjYyAOIfM5/N4j+wP+Rmib5coAze9A75/brcQCEbg1NCZ8F8Cp9CdqE+eFSfRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aQ1pcHAc; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d81310a9-13e8-47b4-8ad7-0f831b5aa9e8@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749856132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hJbziJaWkSfc7eJvEsy2hlaI0p2HI21DTada3PKoxUM=;
+	b=aQ1pcHAcIgb+M7oyofZrcUYV81nmfElqYYBX1DAhtW9V54Yr88+Yhs7YcUiry1UklyWuqQ
+	+taC5FOziFa5Nx4TfwAw/I3w2tfc4PTs/ZSHAv1Z99DqUH/W1Pr+uCbTjuMl9okwVnfz8V
+	AP9OFxZRVrSK850RcsZtk0peexbIXTE=
+Date: Fri, 13 Jun 2025 16:08:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 15/23] ACPI: scan: Update honor list for RPMI System
+ MSI
+To: Anup Patel <apatel@ventanamicro.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Len Brown <lenb@kernel.org>,
+ Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak
+ <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Anup Patel
+ <anup@brainfault.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250611062238.636753-1-apatel@ventanamicro.com>
+ <20250611062238.636753-16-apatel@ventanamicro.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <20250611062238.636753-16-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-The functions:
-  vringh_abandon_kern()
-  vringh_abandon_user()
-  vringh_iov_pull_kern() and
-  vringh_iov_push_kern()
-were all added in 2013 by
-commit f87d0fbb5798 ("vringh: host-side implementation of virtio rings.")
-but have remained unused.
-
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/vhost/vringh.c | 61 ------------------------------------------
- include/linux/vringh.h |  7 -----
- 2 files changed, 68 deletions(-)
-
-diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
-index 67a028d6fb5f..c99070da39a6 100644
---- a/drivers/vhost/vringh.c
-+++ b/drivers/vhost/vringh.c
-@@ -779,22 +779,6 @@ ssize_t vringh_iov_push_user(struct vringh_iov *wiov,
- }
- EXPORT_SYMBOL(vringh_iov_push_user);
- 
--/**
-- * vringh_abandon_user - we've decided not to handle the descriptor(s).
-- * @vrh: the vring.
-- * @num: the number of descriptors to put back (ie. num
-- *	 vringh_get_user() to undo).
-- *
-- * The next vringh_get_user() will return the old descriptor(s) again.
-- */
--void vringh_abandon_user(struct vringh *vrh, unsigned int num)
--{
--	/* We only update vring_avail_event(vr) when we want to be notified,
--	 * so we haven't changed that yet. */
--	vrh->last_avail_idx -= num;
--}
--EXPORT_SYMBOL(vringh_abandon_user);
--
- /**
-  * vringh_complete_user - we've finished with descriptor, publish it.
-  * @vrh: the vring.
-@@ -998,51 +982,6 @@ int vringh_getdesc_kern(struct vringh *vrh,
- }
- EXPORT_SYMBOL(vringh_getdesc_kern);
- 
--/**
-- * vringh_iov_pull_kern - copy bytes from vring_iov.
-- * @riov: the riov as passed to vringh_getdesc_kern() (updated as we consume)
-- * @dst: the place to copy.
-- * @len: the maximum length to copy.
-- *
-- * Returns the bytes copied <= len or a negative errno.
-- */
--ssize_t vringh_iov_pull_kern(struct vringh_kiov *riov, void *dst, size_t len)
--{
--	return vringh_iov_xfer(NULL, riov, dst, len, xfer_kern);
--}
--EXPORT_SYMBOL(vringh_iov_pull_kern);
--
--/**
-- * vringh_iov_push_kern - copy bytes into vring_iov.
-- * @wiov: the wiov as passed to vringh_getdesc_kern() (updated as we consume)
-- * @src: the place to copy from.
-- * @len: the maximum length to copy.
-- *
-- * Returns the bytes copied <= len or a negative errno.
-- */
--ssize_t vringh_iov_push_kern(struct vringh_kiov *wiov,
--			     const void *src, size_t len)
--{
--	return vringh_iov_xfer(NULL, wiov, (void *)src, len, kern_xfer);
--}
--EXPORT_SYMBOL(vringh_iov_push_kern);
--
--/**
-- * vringh_abandon_kern - we've decided not to handle the descriptor(s).
-- * @vrh: the vring.
-- * @num: the number of descriptors to put back (ie. num
-- *	 vringh_get_kern() to undo).
-- *
-- * The next vringh_get_kern() will return the old descriptor(s) again.
-- */
--void vringh_abandon_kern(struct vringh *vrh, unsigned int num)
--{
--	/* We only update vring_avail_event(vr) when we want to be notified,
--	 * so we haven't changed that yet. */
--	vrh->last_avail_idx -= num;
--}
--EXPORT_SYMBOL(vringh_abandon_kern);
--
- /**
-  * vringh_complete_kern - we've finished with descriptor, publish it.
-  * @vrh: the vring.
-diff --git a/include/linux/vringh.h b/include/linux/vringh.h
-index af8bd2695a7b..49e7cbc9697a 100644
---- a/include/linux/vringh.h
-+++ b/include/linux/vringh.h
-@@ -175,9 +175,6 @@ int vringh_complete_multi_user(struct vringh *vrh,
- 			       const struct vring_used_elem used[],
- 			       unsigned num_used);
- 
--/* Pretend we've never seen descriptor (for easy error handling). */
--void vringh_abandon_user(struct vringh *vrh, unsigned int num);
--
- /* Do we need to fire the eventfd to notify the other side? */
- int vringh_need_notify_user(struct vringh *vrh);
- 
-@@ -235,10 +232,6 @@ int vringh_getdesc_kern(struct vringh *vrh,
- 			u16 *head,
- 			gfp_t gfp);
- 
--ssize_t vringh_iov_pull_kern(struct vringh_kiov *riov, void *dst, size_t len);
--ssize_t vringh_iov_push_kern(struct vringh_kiov *wiov,
--			     const void *src, size_t len);
--void vringh_abandon_kern(struct vringh *vrh, unsigned int num);
- int vringh_complete_kern(struct vringh *vrh, u16 head, u32 len);
- 
- bool vringh_notify_enable_kern(struct vringh *vrh);
--- 
-2.49.0
-
+On 6/10/25 11:22 PM, Anup Patel wrote:
+> From: Sunil V L <sunilvl@ventanamicro.com>
+>
+> The RPMI System MSI interrupt controller (just like PLIC and APLIC)
+> needs to probed prior to devices like GED which use interrupts provided
+> by it. Also, it has dependency on the SBI MPXY mailbox device.
+>
+> Add HIDs of RPMI System MSI and SBI MPXY mailbox devices to the honor
+> list so that those dependencies are handled.
+>
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>   drivers/acpi/scan.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index fb1fe9f3b1a3..54181b03b345 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -858,6 +858,8 @@ static const char * const acpi_honor_dep_ids[] = {
+>   	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
+>   	"RSCV0001", /* RISC-V PLIC */
+>   	"RSCV0002", /* RISC-V APLIC */
+> +	"RSCV0005", /* RISC-V SBI MPXY MBOX */
+> +	"RSCV0006", /* RISC-V RPMI SYSMSI */
+>   	"PNP0C0F",  /* PCI Link Device */
+>   	NULL
+>   };
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
