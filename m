@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-685715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CB6AD8D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:46:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3CFAD8D76
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBFC1BC1270
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:45:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6273A78B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541701A4F12;
-	Fri, 13 Jun 2025 13:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZNY5xUJM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r7r6it5Q"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F200519DF8B;
-	Fri, 13 Jun 2025 13:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3421C7005;
+	Fri, 13 Jun 2025 13:44:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D491C5D62
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822233; cv=none; b=P0qPn6lEl43PP9MpxyQFcBzP8NEGqAZoZFv5471TgWL0xf44tbmgXNQ6Kj6Lhi3nhzRnV7bpn4NzcK87toVS+jxGzEu3lx8Y4kP7Xa+02GmKMROKDY3Vf7OU/mul/GvTd/7R/xpo+h8HjwKD6+rmr640VKpdmHWESyEnRRAiVEc=
+	t=1749822244; cv=none; b=Qi4BJlVocZvzF5RvejlDnXW3sJ4SZsYUo19MFdC6UFWMrRoLWAP5t44GbOs43Jwng6HJtZzm03azySOMY/x0pgVKLpfSkAmBc0HMRaRRhb4rdeTlH3sSr4p6r3fTn+caI6LATTVim0Hv+fpC8+2XY/RHFblsYdP6MaAcxo7m2Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822233; c=relaxed/simple;
-	bh=iuq70Qtl2TwSbyhOXfgpjjZYlKdn19Srq/EMIvt7ARw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NhvEA7vUOR5tE3alC99fKEY2u4KwWF44SZDohDzK63gjMpn8cV5bpJNWnqX5NuouxJnDRdyk+yvJRoygt8ZjqONOmSZd5ldJwZtC71LfUqEsZne6kg31zluUX+pcn+cajck5vBtPmOpJiR1oFvIIOwPvAAD8Re5u2Sozc6dr6rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZNY5xUJM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r7r6it5Q; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 13 Jun 2025 13:43:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749822229;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMCRxCsdWqhdYORoetpIzc7qzdfVAVCzvKhKY4mALuk=;
-	b=ZNY5xUJM5tE1BAv+oudmS6zYIEbaXJpAuCcYO8dIesRC6yYgWIR+OK/FfJHMBn20x9xXDh
-	Ds+F00b7DpFsIrAWRuqsL62STV17fzrf6o1sGsJRer12WIj2GZSQuln7BeAJfayvcPF6/z
-	kwesee94rsIY8o1m9oxzz5zjBaxJ1e9/7fLR55Ct98b2bS3jH7bo5VlUP3NkyyJyydiJB0
-	GE56xzA2IZkyD4DYM3/ReJjQ8vjaOMcFAhItzAa+m4aBfAuqHCAaLVwPoA5hA/iT+HtvUC
-	K2yV49ccKp2u0ca2rd9lBo1v77QkJbfA3Zs5lq4jJG+S8PzCcQHPYhGDBJlLqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749822229;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMCRxCsdWqhdYORoetpIzc7qzdfVAVCzvKhKY4mALuk=;
-	b=r7r6it5QNIg8R5iupLmAeiVrT0EvUtTMxtyKZSmTURy4DzYeIsnGFwzFiIpH/Y3QjMi+Y3
-	FH+Tj4Fdj4HlimAg==
-From: "tip-bot2 for Gyeyoung Baek" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/urgent] genirq/irq_sim: Initialize work context pointers properly
-Cc: Gyeyoung Baek <gye976@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250612124827.63259-1-gye976@gmail.com>
-References: <20250612124827.63259-1-gye976@gmail.com>
+	s=arc-20240116; t=1749822244; c=relaxed/simple;
+	bh=7MSAvGRzUlN7RR6bZKcYszvVyTrxOmKJmopD4hHQ4Pk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=errfyyUZkfOAvNVWxKK8JEcD6XvkJlteE8P0QXp0XftEMTw0tUrx/nAHm9wqH/NYyKhWxbyk5iXEER6ctYinP2uL0QYp8uyL9Ztuqg1lYs6ENsa3Tdow+FvQPBE2vjF8V4lwHHrOcBCSdgL+C17hY+RB03sB2mFNUUpHTOCrfPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D264F2B;
+	Fri, 13 Jun 2025 06:43:41 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.48])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 89B9A3F59E;
+	Fri, 13 Jun 2025 06:43:56 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	catalin.marinas@arm.com,
+	will@kernel.org
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	suzuki.poulose@arm.com,
+	steven.price@arm.com,
+	gshan@redhat.com,
+	linux-arm-kernel@lists.infradead.org,
+	yang@os.amperecomputing.com,
+	ryan.roberts@arm.com,
+	anshuman.khandual@arm.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v3 0/2] Enable permission change on arm64 kernel block mappings
+Date: Fri, 13 Jun 2025 19:13:50 +0530
+Message-Id: <20250613134352.65994-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174982222851.406.8757318075182400850.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/urgent branch of tip:
+This series paves the path to enable huge mappings in vmalloc space and
+linear map space by default on arm64. For this we must ensure that we can
+handle any permission games on the kernel (init_mm) pagetable. Currently,
+__change_memory_common() uses apply_to_page_range() which does not support
+changing permissions for block mappings. We attempt to move away from this
+by using the pagewalk API, similar to what riscv does right now; however,
+it is the responsibility of the caller to ensure that we do not pass a
+range overlapping a partial block mapping; in such a case, the system must
+be able to support splitting the range (which can be done on BBM2 systems).
 
-Commit-ID:     8a2277a3c9e4cc5398f80821afe7ecbe9bdf2819
-Gitweb:        https://git.kernel.org/tip/8a2277a3c9e4cc5398f80821afe7ecbe9bdf2819
-Author:        Gyeyoung Baek <gye976@gmail.com>
-AuthorDate:    Thu, 12 Jun 2025 21:48:27 +09:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 13 Jun 2025 15:36:35 +02:00
+This series is tied with Yang Shi's attempt [1] at using huge mappings
+in the linear mapping in case the system supports BBML2, in which case
+we will be able to split the linear mapping if needed without break-before-make.
+Thus, Yang's series, IIUC, will be one such user of my series; suppose we
+are changing permissions on a range of the linear map backed by PMD-hugepages,
+then the sequence of operations should look like the following:
 
-genirq/irq_sim: Initialize work context pointers properly
+split_range(start)
+split_range(end);
+___change_memory_common(start, end);
 
-Initialize `ops` member's pointers properly by using kzalloc() instead of
-kmalloc() when allocating the simulation work context. Otherwise the
-pointers contain random content leading to invalid dereferencing.
+However, this series can be used independently of Yang's; since currently
+permission games are being played only on pte mappings (due to apply_to_page_range
+not supporting otherwise), this series provides the mechanism for enabling
+huge mappings for various kernel mappings like linear map and vmalloc.
 
-Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250612124827.63259-1-gye976@gmail.com
----
- kernel/irq/irq_sim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1] https://lore.kernel.org/all/20250304222018.615808-1-yang@os.amperecomputing.com/
 
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 1a3d483..ae4c9cb 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -202,7 +202,7 @@ struct irq_domain *irq_domain_create_sim_full(struct fwnode_handle *fwnode,
- 					      void *data)
- {
- 	struct irq_sim_work_ctx *work_ctx __free(kfree) =
--				kmalloc(sizeof(*work_ctx), GFP_KERNEL);
-+				kzalloc(sizeof(*work_ctx), GFP_KERNEL);
- 
- 	if (!work_ctx)
- 		return ERR_PTR(-ENOMEM);
+v2->v3:
+ - Drop adding PGWALK_NOLOCK, instead have a new lockless helper
+ - Merge patch 1 and 2 from v2
+ - Add a patch *actually* enabling vmalloc-huge permission change
+
+v1->v2:
+ - Squash patch 2 and 3
+ - Add comment describing the responsibility of the caller to ensure no
+   partial overlap with block mapping
+ - Add comments and return -EINVAL at relevant places to document the usage
+   of PGWALK_NOLOCK (Lorenzo)
+ - Nest walk_kernel_page_table_range() with lazy_mmu calls, instead of
+   doing so only per PTE level, fix bug in the PTE callback, introduce
+   callbacks for all pagetable levels, use ptdesc_t instead of unsigned
+   long, introduce ___change_memory_common and use them for direct map
+   permission change functions (Ryan)
+
+v1:
+https://lore.kernel.org/all/20250530090407.19237-1-dev.jain@arm.com/
+
+Dev Jain (2):
+  arm64: pageattr: Use pagewalk API to change memory permissions
+  arm64: pageattr: Enable huge-vmalloc permission change
+
+ arch/arm64/mm/pageattr.c | 161 ++++++++++++++++++++++++++++++---------
+ include/linux/pagewalk.h |   3 +
+ mm/pagewalk.c            |  26 +++++++
+ 3 files changed, 155 insertions(+), 35 deletions(-)
+
+-- 
+2.30.2
+
 
