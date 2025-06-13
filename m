@@ -1,164 +1,158 @@
-Return-Path: <linux-kernel+bounces-685183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986C3AD8533
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:03:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE60FAD8536
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8ABC188A182
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7E41891EBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C419DF62;
-	Fri, 13 Jun 2025 08:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="rGsB++Qe"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C60E24C084;
+	Fri, 13 Jun 2025 08:02:41 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7522DA755;
-	Fri, 13 Jun 2025 08:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749801741; cv=pass; b=jSY5hl+kJoE/zVvsOtbr9jGBiCcXTf8Yi1STu/s/Y9d0wl1T4xnaLwOpYOHSWL3cDvnJn8tGMbhwglntYJLp54GDvYK8ZWDhCiGw8EOsI6FcByueH3TXERyoQ1a72xjqHQSO6KGDflVFXGya5NYOCfHEsWjDZm/AyZJ+72422uQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749801741; c=relaxed/simple;
-	bh=IriJbLd3oW21fvlp51YbALvpgoBSDDPr2ACz05AwQb8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qb8w4d9+Iev0SOyJ9LyLV1EjcMjZd7FVeetdELaNJqAGGnYchdj4RebMWWxH/LhprS9Pj989cYfeLpvclNha0VoU6X8CbWOqaLczlkduBC2XfjhesP60APN7qMG4sNmF8HY5aTCVyeJqihCQWqGq+vB06TJKWBjsYSVMIX5RCW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=rGsB++Qe; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1749801707; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BeYh0vqVWvMsZH2jhwqNWP0o2xljKxT0qmmEyR8a3x1dXIjsO6mau0NqMB8fs9S/XFOMfAOBWntFIwRmNhPDW6xvBJ/uC/bDc6jhp4DSsmSixTOVEnJUr3qDhF6qXhRaFzILbLnNeKjSypKQ3ztP+X9r8z7e3/FK9Ay9JELE2GQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749801707; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=IriJbLd3oW21fvlp51YbALvpgoBSDDPr2ACz05AwQb8=; 
-	b=HPnZ1qGJ7DTdrwINps2F2lH8tIh2Vr+P59gp5y9Rmu4KewkXnvFyRdmc6X7K0bWaLtYqV+oB8O95rGVvihBiRinTvIzfD5/7SvFDglaiIeYrV6cIu44e78Y5ehLG08/x42zAJjUN8Wl1ned7T5LxXJsd6fqrWThYNSLf3xEaKpo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749801707;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=IriJbLd3oW21fvlp51YbALvpgoBSDDPr2ACz05AwQb8=;
-	b=rGsB++Qe5OLSz6rEIGPzgSBLlPY4ps0FFHo3O2RKLHtaKsV85LeAOTh/twHZzFAo
-	wrH9bLSteSUHmLWWXgff6MoGXTBdRNXRUknrOWJBvU4BLx/qONmIF1aJO4OtO/SfzuN
-	P3JkEZrKMHG4Wzln0QSmYnk8qG3+2/56xTrJ4hHx2+ZBjrik/fNxcKaFknYG1xXcSoR
-	Hy9Be8CiGu4ICxCpqLRQG8PpNHiMaOyqiRPpM8f8y/8CkhD+RuZQQTdGFtzybJ5JOsp
-	saOrRj2LZLVndqi2kgs9GP82qfv29LD8vj1yZRZd00JALrvcpQY6vyCHkmlMP+NR4jw
-	kOD6/J9SJg==
-Received: by mx.zohomail.com with SMTPS id 1749801704443553.1069514426033;
-	Fri, 13 Jun 2025 01:01:44 -0700 (PDT)
-Message-ID: <40fc8f3fec4da0ed2b59e8d2612345fb42b1fdd3.camel@icenowy.me>
-Subject: Re: [PATCH net v2] dt-bindings: net: ethernet-controller: Add
- informative text about RGMII delays
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chaoyi Chen
- <chaoyi.chen@rock-chips.com>, Matthias Schiffer
- <matthias.schiffer@ew.tq-group.com>, Heiner Kallweit
- <hkallweit1@gmail.com>,  netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 13 Jun 2025 16:01:37 +0800
-In-Reply-To: <f82a86d3-6e06-4f24-beb5-68231383e635@lunn.ch>
-References: <20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch>
-	 <e4db4e6f0a5a42ceacacc925adbe13747a6f948e.camel@icenowy.me>
-	 <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
-	 <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
-	 <aEFmNMSvffMvNA8I@shell.armlinux.org.uk>
-	 <84c534f9dbfa7c82300863cd40e5a9b6e6e29411.camel@icenowy.me>
-	 <ba7b290d-0cd1-4809-822a-bfe902684d7e@lunn.ch>
-	 <9ebe16a8d33e00c39c142748a1ea6fff96b9565a.camel@icenowy.me>
-	 <aElArNHIwm1--GUn@shell.armlinux.org.uk>
-	 <fc7ad44b922ec931e935adb96dcc33b89e9293b0.camel@icenowy.me>
-	 <f82a86d3-6e06-4f24-beb5-68231383e635@lunn.ch>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B562DA772;
+	Fri, 13 Jun 2025 08:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749801761; cv=none; b=OcFnwPgl3/pUFWTYQ1WDpPXYbqSVB1pTKW/w8WlXFiLSN4fnHhB0cV5URGC97aFLIEc1qWvcy8Eejbf2dc0EEPw0BO/VENCmw1eSI8qJqbHVQFX12wjKy+tU1W6lowsGK9YN9rHaJPvvEKR0q8YUkMlqxz/VaO6tDmgeg50r+qE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749801761; c=relaxed/simple;
+	bh=F+O1Z+Mot7lZF6wg2R1SqPqi0jvS0szJQYkBterefi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YsqChHfsyxkwPPMSHPpPMIakcUh9HQHFGZU4R+t6iA/QojR7GqBwODspCi97bTO9AcvqqJKQIhnKlmjQ7ah0tVTj9p/mhVwv0xpIr55wNcU3uhcPBlV5RWfrueP7yTto5Gct/G8bUH5YWWwzR/ceyVdYlC+InvWm5bK8tH/KelU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.111] (p57bd96bf.dip0.t-ipconnect.de [87.189.150.191])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 6D47B61E647A3;
+	Fri, 13 Jun 2025 10:02:09 +0200 (CEST)
+Message-ID: <a67b2409-334b-4712-b31d-efcbd2e216f5@molgen.mpg.de>
+Date: Fri, 13 Jun 2025 10:02:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] md/raid1,raid10: fix IO handle for REQ_NOWAIT
+To: Zheng Qixing <zhengqixing@huaweicloud.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ zhengqixing@huawei.com
+References: <20250612132141.358202-1-zhengqixing@huaweicloud.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250612132141.358202-1-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-=E5=9C=A8 2025-06-11=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 17:28 +0200=EF=BC=
-=8CAndrew Lunn=E5=86=99=E9=81=93=EF=BC=9A
-> > Well in fact I have an additional question: when the MAC has any
-> > extra
-> > [tr]x-internal-delay-ps property, what's the threshold of MAC
-> > triggering patching phy mode? (The property might be only used for
-> > a
-> > slight a few hundred ps delay for tweak instead of the full 2ns
-> > one)
->=20
-> Maybe you should read the text.
->=20
-> The text says:
->=20
-> =C2=A0 In the MAC node, the Device Tree properties 'rx-internal-delay-ps'
-> =C2=A0 and 'tx-internal-delay-ps' should be used to indicate fine tuning
-> =C2=A0 performed by the MAC. The values expected here are small. A value
-> of
-> =C2=A0 2000ps, i.e 2ns, and a phy-mode of 'rgmii' will not be accepted by
-> =C2=A0 Reviewers.
->=20
-> So a few hundred ps delay is fine. The MAC is not providing the 2ns
-> delay, the PHY needs to do that, so you don't mask the value.
+Dear Zheng,
 
-Thus if the MAC delay is set to 1xxx ps (e.g. 1800ps), should the MAC
-do the masking?
 
-What should be the threshold? 1ns?
+Thank you for the patch.
 
->=20
-> > > > Well I can't find the reason of phy-mode being so designed
-> > > > except
-> > > > for
-> > > > leaky abstraction from phylib.
-> > >=20
-> > > I have no idea what that sentence means, sorry.
-> >=20
-> > Well, I mean the existence of rgmii-* modes is coupled with the
-> > internal of phylib, did I get it right?
->=20
-> This is the external API of phylib, it has nothing to do with the
-> internals of phylib.
->=20
-> /**
-> =C2=A0* phy_attach - attach a network device to a particular PHY device
-> =C2=A0* @dev: network device to attach
-> =C2=A0* @bus_id: Bus ID of PHY device to attach
-> =C2=A0* @interface: PHY device's interface
-> =C2=A0*
-> =C2=A0* Description: Same as phy_attach_direct() except that a PHY bus_id
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0 string is passed instead of a pointer to =
-a struct phy_device.
-> =C2=A0*/
-> struct phy_device *phy_attach(struct net_device *dev, const char
-> *bus_id,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 phy_interface_t interface)
->=20
-> interface tells the PHY how it should configure its interface.
->=20
-> If you follow the guidelines, the PHY adds the delay if needed, you
-> get interface =3D=3D phy-mode. However, interface and phy-mode are
-> different things. phy-mode describes the hardware, the PCB. interface
-> tells the PHY what to do. There are legitimate cases where
-> interface !=3D phy-mode.
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Andrew
+Am 12.06.25 um 15:21 schrieb Zheng Qixing:
+> From: Zheng Qixing <zhengqixing@huawei.com>
+> 
+> IO with REQ_NOWAIT should not set R1BIO_Uptodate when it fails,
+> and bad blocks should also be cleared when REQ_NOWAIT IO succeeds.
 
+It’d be great if you could add an explanation for the *should*. Why 
+should it not be done?
+
+Do you have a reproducer for this?
+
+> Fixes: 9f346f7d4ea7 ("md/raid1,raid10: don't handle IO error for REQ_RAHEAD and REQ_NOWAIT")
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> ---
+>   drivers/md/raid1.c  | 11 ++++++-----
+>   drivers/md/raid10.c |  9 +++++----
+>   2 files changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 19c5a0ce5a40..a1cddd24b178 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -455,13 +455,13 @@ static void raid1_end_write_request(struct bio *bio)
+>   	struct md_rdev *rdev = conf->mirrors[mirror].rdev;
+>   	sector_t lo = r1_bio->sector;
+>   	sector_t hi = r1_bio->sector + r1_bio->sectors;
+> -	bool ignore_error = !raid1_should_handle_error(bio) ||
+> -		(bio->bi_status && bio_op(bio) == REQ_OP_DISCARD);
+> +	bool discard_error = bio->bi_status && bio_op(bio) == REQ_OP_DISCARD;
+
+Excuse my ignorance. What is the difference between ignore and discard?
+
+>   	/*
+>   	 * 'one mirror IO has finished' event handler:
+>   	 */
+> -	if (bio->bi_status && !ignore_error) {
+> +	if (bio->bi_status && !discard_error &&
+> +	    raid1_should_handle_error(bio)) {
+>   		set_bit(WriteErrorSeen,	&rdev->flags);
+>   		if (!test_and_set_bit(WantReplacement, &rdev->flags))
+>   			set_bit(MD_RECOVERY_NEEDED, &
+> @@ -507,12 +507,13 @@ static void raid1_end_write_request(struct bio *bio)
+>   		 * check this here.
+>   		 */
+>   		if (test_bit(In_sync, &rdev->flags) &&
+> -		    !test_bit(Faulty, &rdev->flags))
+> +		    !test_bit(Faulty, &rdev->flags) &&
+> +		    (!bio->bi_status || discard_error))
+>   			set_bit(R1BIO_Uptodate, &r1_bio->state);
+>   
+>   		/* Maybe we can clear some bad blocks. */
+>   		if (rdev_has_badblock(rdev, r1_bio->sector, r1_bio->sectors) &&
+> -		    !ignore_error) {
+> +		    !bio->bi_status) {
+>   			r1_bio->bios[mirror] = IO_MADE_GOOD;
+>   			set_bit(R1BIO_MadeGood, &r1_bio->state);
+>   		}
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b74780af4c22..1848947b0a6d 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -458,8 +458,8 @@ static void raid10_end_write_request(struct bio *bio)
+>   	int slot, repl;
+>   	struct md_rdev *rdev = NULL;
+>   	struct bio *to_put = NULL;
+> -	bool ignore_error = !raid1_should_handle_error(bio) ||
+> -		(bio->bi_status && bio_op(bio) == REQ_OP_DISCARD);
+> +	bool discard_error = bio->bi_status && bio_op(bio) == REQ_OP_DISCARD;
+> +	bool ignore_error = !raid1_should_handle_error(bio) || discard_error;
+>   
+>   	dev = find_bio_disk(conf, r10_bio, bio, &slot, &repl);
+>   
+> @@ -522,13 +522,14 @@ static void raid10_end_write_request(struct bio *bio)
+>   		 * check this here.
+>   		 */
+>   		if (test_bit(In_sync, &rdev->flags) &&
+> -		    !test_bit(Faulty, &rdev->flags))
+> +		    !test_bit(Faulty, &rdev->flags) &&
+> +		    (!bio->bi_status || discard_error))
+>   			set_bit(R10BIO_Uptodate, &r10_bio->state);
+>   
+>   		/* Maybe we can clear some bad blocks. */
+>   		if (rdev_has_badblock(rdev, r10_bio->devs[slot].addr,
+>   				      r10_bio->sectors) &&
+> -		    !ignore_error) {
+> +		    !bio->bi_status) {
+>   			bio_put(bio);
+>   			if (repl)
+>   				r10_bio->devs[slot].repl_bio = IO_MADE_GOOD;
+
+
+Kind regards,
+
+Paul
 
