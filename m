@@ -1,163 +1,171 @@
-Return-Path: <linux-kernel+bounces-686016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223FBAD91FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:52:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE40AD9192
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0591E52FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:52:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3871BC444E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1412211A23;
-	Fri, 13 Jun 2025 15:50:52 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEE620DD40;
-	Fri, 13 Jun 2025 15:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D911F4625;
+	Fri, 13 Jun 2025 15:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HP+PCI1p"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D501EEA47;
+	Fri, 13 Jun 2025 15:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749829852; cv=none; b=Tgs9oHBCwEGanwB66KZ1I/pg08f1L46f6/jSmNK7DK1HHcDun1YrboMAhzNpyD1P/qRKPNbNRVRQ9AMdTWk1RorA9PMrMRmxonA3O/UXneg1+mVb+jW0kQS2M9ei5FXobT930jBNvC1rclELDyc113QNjBq19fnwQeH/hF0I++k=
+	t=1749829104; cv=none; b=l55P2Oeq38l0qFR+Nl4BFkSgtZbO2GVKiA8zJtYv6YUt1UGLnLwC6Y5yggbyYCP/OcwxaHtQ69f7cSSII2wIVKvx6GK/9u3dCLbrrzVh6nRbzmIp/Ms1IGmRhWXGc9eHP6ojp8FEpOsOtLv9mG5S0I/2dsi76E0tdlIUgY51snM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749829852; c=relaxed/simple;
-	bh=VBm68IbYDQlcJwzAKKX7XTkORSsL7QzafbqZ2PWnfeo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GTueP5Z9kZrB+aeMhqcaL9p9SS9Rgg5ja9RfWF/2TES4ppVGsol9DX4muvpsrFuUhiB6JandkjC2WkUzux6mI5tLcjw/qWWLJte2QeOYLvyZAUDzZk1O7NomnyX+SlvtJO+VY+sdXJ1GRMPC1plkJ2fyoG0vibh292j+J+qeOTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bJk6V0jCdz9swJ;
-	Fri, 13 Jun 2025 17:37:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id jWHcplSs7NHT; Fri, 13 Jun 2025 17:37:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bJk6Q4gjTz9st0;
-	Fri, 13 Jun 2025 17:37:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9BDA48B769;
-	Fri, 13 Jun 2025 17:37:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Rb6hNhlGZvAw; Fri, 13 Jun 2025 17:37:18 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 31AC48B77C;
-	Fri, 13 Jun 2025 17:37:18 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v2 4/4] ALSA: pcm: Convert snd_pcm_sync_ptr() to user_access_begin/user_access_end()
-Date: Fri, 13 Jun 2025 17:37:11 +0200
-Message-ID: <0aff11ade645339ed659f9b97da4e0a535041db3.1749828169.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1749828169.git.christophe.leroy@csgroup.eu>
-References: <cover.1749828169.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1749829104; c=relaxed/simple;
+	bh=HQhTZfTnw4diVZnHhB7ZoGRrWk9EQDmPViI90O1QwPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r+tM1otCyOo9rcYN+AEDpoXDwdqV5HHolGO13VhDEqO2e0q4eeDudSwEVRQyqr3q7U4FFnTP/VuU6r/p/dhvXjHRhcHpA+l7XzkrcOmoIRZmLAEi16eDpn4Za+830pwB6sN4oaHAntuFKipSc3HuE4VWDK0HsP/WuKaBSDzWYX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HP+PCI1p; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a375e72473so1410695f8f.0;
+        Fri, 13 Jun 2025 08:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749829101; x=1750433901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wci3OULWlGFVwJ58oYx/jmZbLNoBsgngvOoZDnSz/1o=;
+        b=HP+PCI1p2WndYBorGxD0G72q7j3QdzuvcFRtKgRln+9DJsUJMW/XpODPJ2ADnKryMw
+         /fmh0c9U0aIc8r7taRf3Yu3hkYkYxiIAX5GEXz8coBaTSoWmK6iLMnhJ1qcI2emkaXTn
+         CjUxgruPMQBVPAO5tBjYYPvb5dMcpLX11DHPCAlVoz01owY7itpbY7VMSCs1ulO7QjAO
+         WG8DyHDvF8eEa40mH5wu4egRk9gWK4eNBAMq2UFt/C8EBNQyl1vaXJ3GlV3yvv6j8+6l
+         COmC0HWTFIQMpyXxeSpHuJdoQPdH1+qqAFzAn+LgD+yDS0K8SySKQHx9sHFk11P8gUb1
+         Y0dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749829101; x=1750433901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wci3OULWlGFVwJ58oYx/jmZbLNoBsgngvOoZDnSz/1o=;
+        b=DViOGAcnPVEYvQ31/U6IXxI3NUS6j3n/1RJ8QsvfM9UA6p31ld8SMvftPqs6x2/Mha
+         vCNWSTPy24ABMryH92E0RqNiGUX3UnUjkdJd74+eFPyUViojNrB6cVQpLb/q2IQ54yaX
+         cSinGFKKf7FbGl7HFjgtmUQT6tDgNRGwPhuB1udT4hzo48ODUQP5K++FJQY9quOoUQIs
+         uIJdUvszCvB/IkUa7uFQ6PZZZpVVE0LvZ3yio7XSJvMPbd3rpGEy9+AQ43/mSF0LvzvR
+         Ie0f+Zm7HHoqWVyejTjW1hHU1xkRyJdF9aDfN510Yl4UBm6ese6Nwf4dNbUqByWgAp7/
+         wd0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNIVbZ//jtnLBVpd3QEWlt1UoIABjvcS4DQmfp81Pc0lsYD63cJ7jIy0i3QWiHBXDRuJzOxeX7mdli@vger.kernel.org, AJvYcCVFWLrUCz9j3TXAD4TlCggzyFwQEu3h+J8net6hcpGNcuwBg3AvHtm2Oifv0Q60ldcgroD6sJq33hCvnTf1@vger.kernel.org, AJvYcCVhjly38mA8nCQ1f3FeVMnQXOg4hVOnPFdilGSixJ6RR/hD5YKtHoccGdqmv0YYnAlm+KSBh8sQqOEym0yIEs68wKo=@vger.kernel.org, AJvYcCWMmll+UlWzQs5rVG+xJuiKlRaTHFsPidpI8Nf97uEzlWLtU0NPNMNkFj7Rp1+Z9S3HpNMP4jwCcibW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgF+D8fOUCoyPUITcdWrEky5De3DOgaaRmCpWT6m1X90lpJwU4
+	i9mN3P72OqrIsuQd0okUrQ+8hA0TRqVxYIe/9SjcTzyJNfxoHKVyof5Pwmjf83FIJkWMHIFI9yx
+	JaNCiawnIAKMQBFeDLBsc+io9tuXEc0o=
+X-Gm-Gg: ASbGncsmIujHSql7BtgCkfQD5NjSOhX6AX37cRx31+Etsc+vY44cBO9hEME3faqmc6h
+	XBhTTgNgHNxCzeo9M/RDEl/1Ob0ibt8K6aEV1lebaiqQCJplKHQcVCNNtpj11ItVYkqxUgl4Q3I
+	ksgpx4VAdNdTyP5QT4bH1JFNOlE9Dkj0sYyCQE7K79Ye8=
+X-Google-Smtp-Source: AGHT+IEMrjsiK9P909xoQb43iNVR6qh9Ty1yLTa5JLGU6Mssh8oQxVdmG4OaKVUa4OkcVm1Om/tDr6y6PKQ/juNx3+8=
+X-Received: by 2002:a05:6000:2c0f:b0:3a4:ef2c:2e03 with SMTP id
+ ffacd0b85a97d-3a5723a2c47mr224793f8f.33.1749829100900; Fri, 13 Jun 2025
+ 08:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749829028; l=3615; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=VBm68IbYDQlcJwzAKKX7XTkORSsL7QzafbqZ2PWnfeo=; b=ATJzTdt+6UCojlfTymIkOnWF5cTZ9voZv/8igg5qs1ggdznb+SngDRntbXrFW+XzvYR3si2fa JHv/2MQqFYoB2hfSkibeG3oGzi18h3H/QI+dcVKMnZqxORX56ney2Eh
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+References: <20250609232253.514220-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWoWqrMKgNSYN_NDOtROD-SAq7ProhREPJTEBTOPCeH=A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWoWqrMKgNSYN_NDOtROD-SAq7ProhREPJTEBTOPCeH=A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 13 Jun 2025 16:37:55 +0100
+X-Gm-Features: AX0GCFvZCGvYpOP-G07AbNUHUOwIj4rYaSPCHj8y71th97TvgAtpMZZM4unZwDg
+Message-ID: <CA+V-a8sBhF-FwV0BXCxpHkuhdAg5YcwDsWPFRPSV_BdmNpLWYA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: renesas,sdhi: Document RZ/T2H and
+ RZ/N2H support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user()
-are converted to user_access_begin/user_access_end(),
-snd_pcm_sync_ptr_get_user() is more efficient than a raw get_user()
-followed by a copy_from_user(). And because copy_{to/from}_user() are
-generic functions focussed on transfer of big data blocks to/from user,
-snd_pcm_sync_ptr_put_user() is also more efficient for small amont of
-data.
+Hi Geert,
 
-So use snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user() in
-snd_pcm_sync_ptr() too.
+Thank you for the review.
 
-snd_pcm_ioctl_sync_ptr_buggy() is left as it is because the conversion
-wouldn't be straigh-forward due to the workaround it provides.
+On Thu, Jun 12, 2025 at 4:47=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 10 Jun 2025 at 01:23, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add SDHI bindings for the Renesas RZ/T2H (a.k.a R9A09G077) and RZ/N2H
+> > (a.k.a R9A09G087) SoCs. Use `renesas,sdhi-r9a09g057` as a fallback sinc=
+e
+> > the SD/MMC block on these SoCs is identical to the one on RZ/V2H(P),
+> > allowing reuse of the existing driver without modifications.
+> >
+> > Update the binding schema to reflect differences: unlike RZ/V2H(P),
+> > RZ/T2H and RZ/N2H do not require the `resets` property and use only a
+> > single clock instead of four.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > @@ -129,59 +131,75 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > -              - renesas,sdhi-r9a09g057
+> > -              - renesas,rzg2l-sdhi
+> > +              - renesas,sdhi-r9a09g077
+> > +              - renesas,sdhi-r9a09g087
+> >      then:
+> >        properties:
+> > +        resets: false
+> >          clocks:
+> > -          items:
+> > -            - description: IMCLK, SDHI channel main clock1.
+> > -            - description: CLK_HS, SDHI channel High speed clock which=
+ operates
+> > -                           4 times that of SDHI channel main clock1.
+> > -            - description: IMCLK2, SDHI channel main clock2. When this=
+ clock is
+> > -                           turned off, external SD card detection cann=
+ot be
+> > -                           detected.
+> > -            - description: ACLK, SDHI channel bus clock.
+> > +          description: ACLK, SDHI channel bus clock.
+>
+> According to the documentation, this is the SDHI high speed clock...
+>
+Agreed, I will update it to `CLKHS, SDHI channel High speed clock.`
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- sound/core/pcm_native.c | 38 ++++++++++++++++++--------------------
- 1 file changed, 18 insertions(+), 20 deletions(-)
+> > +          maxItems: 1
+> >          clock-names:
+> > -          items:
+> > -            - const: core
+> > -            - const: clkh
+> > -            - const: cd
+> > -            - const: aclk
+> > -      required:
+> > -        - clock-names
+> > -        - resets
+> > +          const: aclk
+>
+> ... i.e. clkhs.
+s/clkhs/clkh
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 5ba2fbc0f0f7..b7880ca01cd9 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -3094,45 +3094,43 @@ static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
- 			    struct snd_pcm_sync_ptr __user *_sync_ptr)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct snd_pcm_sync_ptr sync_ptr;
- 	volatile struct snd_pcm_mmap_status *status;
- 	volatile struct snd_pcm_mmap_control *control;
-+	u32 sflags;
-+	struct snd_pcm_mmap_control scontrol;
-+	struct snd_pcm_mmap_status sstatus;
- 	int err;
- 
--	memset(&sync_ptr, 0, sizeof(sync_ptr));
--	if (get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags)))
-+	if (snd_pcm_sync_ptr_get_user(sflags, scontrol, _sync_ptr))
- 		return -EFAULT;
--	if (copy_from_user(&sync_ptr.c.control, &(_sync_ptr->c.control), sizeof(struct snd_pcm_mmap_control)))
--		return -EFAULT;	
- 	status = runtime->status;
- 	control = runtime->control;
--	if (sync_ptr.flags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
-+	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
- 		err = snd_pcm_hwsync(substream);
- 		if (err < 0)
- 			return err;
- 	}
- 	scoped_guard(pcm_stream_lock_irq, substream) {
--		if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_APPL)) {
--			err = pcm_lib_apply_appl_ptr(substream,
--						     sync_ptr.c.control.appl_ptr);
-+		if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL)) {
-+			err = pcm_lib_apply_appl_ptr(substream, scontrol.appl_ptr);
- 			if (err < 0)
- 				return err;
- 		} else {
--			sync_ptr.c.control.appl_ptr = control->appl_ptr;
-+			scontrol.appl_ptr = control->appl_ptr;
- 		}
--		if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_AVAIL_MIN))
--			control->avail_min = sync_ptr.c.control.avail_min;
-+		if (!(sflags & SNDRV_PCM_SYNC_PTR_AVAIL_MIN))
-+			control->avail_min = scontrol.avail_min;
- 		else
--			sync_ptr.c.control.avail_min = control->avail_min;
--		sync_ptr.s.status.state = status->state;
--		sync_ptr.s.status.hw_ptr = status->hw_ptr;
--		sync_ptr.s.status.tstamp = status->tstamp;
--		sync_ptr.s.status.suspended_state = status->suspended_state;
--		sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
-+			scontrol.avail_min = control->avail_min;
-+		sstatus.state = status->state;
-+		sstatus.hw_ptr = status->hw_ptr;
-+		sstatus.tstamp = status->tstamp;
-+		sstatus.suspended_state = status->suspended_state;
-+		sstatus.audio_tstamp = status->audio_tstamp;
- 	}
--	if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_APPL))
-+	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
- 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
--	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
-+	if (snd_pcm_sync_ptr_put_user(sstatus, scontrol, _sync_ptr))
- 		return -EFAULT;
- 	return 0;
- }
--- 
-2.47.0
-
+Cheers,
+Prabhakar
 
