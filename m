@@ -1,172 +1,172 @@
-Return-Path: <linux-kernel+bounces-685308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13575AD87D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:29:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EE7AD87DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC921895A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:30:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1757D7A54D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEC92C15B6;
-	Fri, 13 Jun 2025 09:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XHHurhqz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yklLGTdN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XHHurhqz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yklLGTdN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71D029CB24;
+	Fri, 13 Jun 2025 09:29:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEBE291C17
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AB3291C20;
+	Fri, 13 Jun 2025 09:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806968; cv=none; b=ZikknnF6thImd/hhoo7csTwkZFJIpRhXEVESAUN4vsznZtuinDgviv7A5nAh9tUgJhqBnAb/NajqogDmm63Gzjy/UuU50bH3kmWPHBBnlR0xyLffDTP+fLcGTr0IN87I9CWMccaphkyTtNzA+Pk/HJ4z8Zf2paE2a79y/tnU8SI=
+	t=1749806992; cv=none; b=US7ARzxGSxY/QppRTpkOWbjMW1l5mTXU5wLCFZtwEmaOYcRB/pcPKvPOCGatuUx5ojhTRMwSUA3sU4RSwVBNp6O59jPBEdEKgMKIDd3STrJ+SMjqzcYtGz3Vx8kdgBKCZPta4pkcT7annXPPFOadkjLTUJixBwZUB0tgvx7gM8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806968; c=relaxed/simple;
-	bh=aaWU0JbRBgJpEiuAAKKpR0HniuEKPBx62vLLuPv5jcc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IofQE7Nd77mKYru9SGRiXSirEsw9So58/5fLGf1iNRyP3/OSJPlSVLYEXKgAIQdaMEUIqd3Q14UDIqfSp6mDCFiBJI6Kk5oQ+bzOg2ULzMAbWLink4UnvPoU6VkhmMjLJ7ulC5/sW8Mr8Qu5oqpieeWnoGEcj8gJ5NCp/ADoY7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XHHurhqz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yklLGTdN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XHHurhqz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yklLGTdN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B9311F7F7;
-	Fri, 13 Jun 2025 09:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749806963; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=72rtZU9GPUCX6PrpkBBfovdIHSFV6jLcLA2KhXYzn7A=;
-	b=XHHurhqzQ7lHaxDJMcutUKIg/R/gLJcWMndGnSXfm3w9lF0Kh11U3VyRnW8kPdyw34Sv9h
-	K6QSUfc4ODnwptBFyXqK2gLWnaK08u6wMLqktiWpQSGEJ0DUklE/rdoXn82HJSfq1+KGB2
-	IFLo9BBcCh+gT6fxohNqV1+msbuE4Y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749806963;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=72rtZU9GPUCX6PrpkBBfovdIHSFV6jLcLA2KhXYzn7A=;
-	b=yklLGTdNEzPOLGMCIFlLpbe509WfQuwTWxUr3TEiaiaPPNRfq4a5oa1YRUo2Brzv+xHSMV
-	nXJfYUuNGZgjalBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749806963; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=72rtZU9GPUCX6PrpkBBfovdIHSFV6jLcLA2KhXYzn7A=;
-	b=XHHurhqzQ7lHaxDJMcutUKIg/R/gLJcWMndGnSXfm3w9lF0Kh11U3VyRnW8kPdyw34Sv9h
-	K6QSUfc4ODnwptBFyXqK2gLWnaK08u6wMLqktiWpQSGEJ0DUklE/rdoXn82HJSfq1+KGB2
-	IFLo9BBcCh+gT6fxohNqV1+msbuE4Y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749806963;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=72rtZU9GPUCX6PrpkBBfovdIHSFV6jLcLA2KhXYzn7A=;
-	b=yklLGTdNEzPOLGMCIFlLpbe509WfQuwTWxUr3TEiaiaPPNRfq4a5oa1YRUo2Brzv+xHSMV
-	nXJfYUuNGZgjalBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E5B76137FE;
-	Fri, 13 Jun 2025 09:29:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rTHMNnLvS2hZOwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 13 Jun 2025 09:29:22 +0000
-Date: Fri, 13 Jun 2025 11:29:22 +0200
-Message-ID: <878qlwrnv1.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 3/3] ALSA: pcm: Convert snd_pcm_sync_ptr() to user_access_begin/user_access_end()
-In-Reply-To: <79b86a0618328ba1d0cb5cf4011fd73ac6900e8f.1749724478.git.christophe.leroy@csgroup.eu>
-References: <7baa34d4046c7750799b11830d38a46f8b581765.1749724478.git.christophe.leroy@csgroup.eu>
-	<79b86a0618328ba1d0cb5cf4011fd73ac6900e8f.1749724478.git.christophe.leroy@csgroup.eu>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1749806992; c=relaxed/simple;
+	bh=dTFe4i14xDT19JSJo8KCeKJsJ0q9GY1gJEdMW/eHGHw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rYh/kBDAoJ4O+QspnLbtCaooFJeZKR8/t4GHFWd605UcYrEQPXqdCR24ofezuYnlj9/m5KVC6zm2N4eBgYt4pmgZaH0dQzWcmMDzSIz06XfQSVfMHAuJzbNgXyKLJWB1gqQxLxjc2RCzENIJbQaJxuR2qoNxdJzl9WzXKytD/q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bJYyM5MHfzYQvlF;
+	Fri, 13 Jun 2025 17:29:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B75C21A1538;
+	Fri, 13 Jun 2025 17:29:46 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBHrGCJ70toVayHPQ--.51121S3;
+	Fri, 13 Jun 2025 17:29:46 +0800 (CST)
+Subject: Re: [PATCH] md/raid1,raid10: fix IO handle for REQ_NOWAIT
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, song@kernel.org
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, zhengqixing@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250612132141.358202-1-zhengqixing@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <dfbb5d06-68aa-9acc-a13c-0863f5a25193@huaweicloud.com>
+Date: Fri, 13 Jun 2025 17:29:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-7.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -7.30
+MIME-Version: 1.0
+In-Reply-To: <20250612132141.358202-1-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHrGCJ70toVayHPQ--.51121S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF4xuw45Gr47XF4xZrW3Awb_yoW5tr48p3
+	yUGa9Yv39rGFWUu3WDtFWUZayF9w4Ygay7C3yUJ34xXas09FZ8Aa1DJ34YgF4DXrWfuw4a
+	q3ZYgw4DCFWayFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUot
+	CzDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, 12 Jun 2025 12:51:05 +0200,
-Christophe Leroy wrote:
+Hi,
+
+ÔÚ 2025/06/12 21:21, Zheng Qixing Ð´µÀ:
+> From: Zheng Qixing <zhengqixing@huawei.com>
 > 
-> Now that snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user()
-> are converted to user_access_begin/user_access_end(),
-> snd_pcm_sync_ptr_get_user() is more efficient than a raw get_user()
-> followed by a copy_from_user(). And because copy_{to/from}_user() are
-> generic functions focussed on transfer of big data blocks to/from user,
-> snd_pcm_sync_ptr_put_user() is also more efficient for small amont of
-> data.
+> IO with REQ_NOWAIT should not set R1BIO_Uptodate when it fails,
+> and bad blocks should also be cleared when REQ_NOWAIT IO succeeds.
 > 
-> So use snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user() in
-> snd_pcm_sync_ptr() too.
+> Fixes: 9f346f7d4ea7 ("md/raid1,raid10: don't handle IO error for REQ_RAHEAD and REQ_NOWAIT")
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> ---
+>   drivers/md/raid1.c  | 11 ++++++-----
+>   drivers/md/raid10.c |  9 +++++----
+>   2 files changed, 11 insertions(+), 9 deletions(-)
 > 
-> In order to have snd_pcm_mmap_status32 similar to snd_pcm_mmap_status,
-> replace to tsamp_{sec/nsec} and audio_tstamp_{sec/nsec} by equivalent
-> struct __snd_timespec.
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 19c5a0ce5a40..a1cddd24b178 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -455,13 +455,13 @@ static void raid1_end_write_request(struct bio *bio)
+>   	struct md_rdev *rdev = conf->mirrors[mirror].rdev;
+>   	sector_t lo = r1_bio->sector;
+>   	sector_t hi = r1_bio->sector + r1_bio->sectors;
+> -	bool ignore_error = !raid1_should_handle_error(bio) ||
+> -		(bio->bi_status && bio_op(bio) == REQ_OP_DISCARD);
+> +	bool discard_error = bio->bi_status && bio_op(bio) == REQ_OP_DISCARD;
+>   
+>   	/*
+>   	 * 'one mirror IO has finished' event handler:
+>   	 */
+> -	if (bio->bi_status && !ignore_error) {
+> +	if (bio->bi_status && !discard_error &&
+> +	    raid1_should_handle_error(bio)) {
+>   		set_bit(WriteErrorSeen,	&rdev->flags);
+>   		if (!test_and_set_bit(WantReplacement, &rdev->flags))
+>   			set_bit(MD_RECOVERY_NEEDED, &
+> @@ -507,12 +507,13 @@ static void raid1_end_write_request(struct bio *bio)
+>   		 * check this here.
+>   		 */
+>   		if (test_bit(In_sync, &rdev->flags) &&
+> -		    !test_bit(Faulty, &rdev->flags))
+> +		    !test_bit(Faulty, &rdev->flags) &&
+> +		    (!bio->bi_status || discard_error))
+>   			set_bit(R1BIO_Uptodate, &r1_bio->state);
+
+BTW, for nowait, the error value returned to user should be -EAGAIN, not
+-EIO, you'd better cook another patch to change this.
+
+Thanks,
+Kuai
+
+>   
+>   		/* Maybe we can clear some bad blocks. */
+>   		if (rdev_has_badblock(rdev, r1_bio->sector, r1_bio->sectors) &&
+> -		    !ignore_error) {
+> +		    !bio->bi_status) {
+>   			r1_bio->bios[mirror] = IO_MADE_GOOD;
+>   			set_bit(R1BIO_MadeGood, &r1_bio->state);
+>   		}
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b74780af4c22..1848947b0a6d 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -458,8 +458,8 @@ static void raid10_end_write_request(struct bio *bio)
+>   	int slot, repl;
+>   	struct md_rdev *rdev = NULL;
+>   	struct bio *to_put = NULL;
+> -	bool ignore_error = !raid1_should_handle_error(bio) ||
+> -		(bio->bi_status && bio_op(bio) == REQ_OP_DISCARD);
+> +	bool discard_error = bio->bi_status && bio_op(bio) == REQ_OP_DISCARD;
+> +	bool ignore_error = !raid1_should_handle_error(bio) || discard_error;
+>   
+>   	dev = find_bio_disk(conf, r10_bio, bio, &slot, &repl);
+>   
+> @@ -522,13 +522,14 @@ static void raid10_end_write_request(struct bio *bio)
+>   		 * check this here.
+>   		 */
+>   		if (test_bit(In_sync, &rdev->flags) &&
+> -		    !test_bit(Faulty, &rdev->flags))
+> +		    !test_bit(Faulty, &rdev->flags) &&
+> +		    (!bio->bi_status || discard_error))
+>   			set_bit(R10BIO_Uptodate, &r10_bio->state);
+>   
+>   		/* Maybe we can clear some bad blocks. */
+>   		if (rdev_has_badblock(rdev, r10_bio->devs[slot].addr,
+>   				      r10_bio->sectors) &&
+> -		    !ignore_error) {
+> +		    !bio->bi_status) {
+>   			bio_put(bio);
+>   			if (repl)
+>   				r10_bio->devs[slot].repl_bio = IO_MADE_GOOD;
 > 
-> snd_pcm_ioctl_sync_ptr_buggy() is left as it is because the conversion
-> wouldn't be straigh-forward do to the workaround it provides.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Through a quick glance, all patches look almost fine, but one favor to
-ask: this patch contains the convert from s32/s32 pair to struct
-__snd_timespec.  It should be factored out to a prerequisite patch
-instead of burying in a big change.
-
-I'm asking it because this timepsec definition is very confusing (and
-complex) due to historical reasons, and it should be handled with a
-special care.
-IIUC, struct __snd_timespec is always s32/s32 for the kernel code, so
-the conversion must be fine.  This needs to be commented in the
-commit.
-
-
-Thanks!
-
-Takashi
 
