@@ -1,88 +1,90 @@
-Return-Path: <linux-kernel+bounces-686307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB441AD95BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABB1AD95C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15B21BC3E3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BE11E011D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61430242D67;
-	Fri, 13 Jun 2025 19:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1172F244676;
+	Fri, 13 Jun 2025 19:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cV4Z/+Io"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tt+LjpM5"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2423FE7;
-	Fri, 13 Jun 2025 19:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE508242D9C;
+	Fri, 13 Jun 2025 19:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749843795; cv=none; b=SLZ/W+SBLTZjFVYE7M4GAKdXh5KyDyho9Tabucinp7yORr59Rvfw39QwrfYg3qdYH+dyzyNNdWVKO7nESBeuA+UUqSjvIlaUqjuC2NIF48mvJjsRDHtp3rfLvEAbJFpS3aRfEX/icj7yQDrXIEreQaVnwCxKFGUoMLa0g7t9220=
+	t=1749843819; cv=none; b=q14K8RE8wEaPemuPf76r7NfMb6U7/mMHclZvxRlojzjxRykzZX9mpfeZ3otKwb2Zf0t3YPgXr6qrgYnP9fYcIn0OyLAVJcL1Jw28HzyF/oOyFUTpGUc4fkHWd0dMgcnsRSayC+HmLs9fM/pU9AbBoYwYp89M+WeAOWcJpBE0hSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749843795; c=relaxed/simple;
-	bh=gWaM2SwWG/RzB3IQhP4sXhYbKHVGU+CduuDqU1xoFbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T64gqQx/KMCuu2lFW//WHySlhqD0ZhkSuGH46OLLRtI1saUaFZ48girPfATHGU4eBXfqhka+FuvD/Hw1o+NNXcH2exj9xISPSmSqQxU6cKo5PzHKqkdcOhzFQ7oE5YW2LelEDy4SKR08Qciy2OjrESCJd4rUHvK3YrP1bTVF55E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cV4Z/+Io; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1749843819; c=relaxed/simple;
+	bh=ZaoZKZQZADem2BCfh2iMDReIBn0a8RhtRJb8n9Q2ESk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MSga+L7pQryMjy0X8bFi6h1X9HjSPZ1tnHxx0pzhTZTwsjHnOThPw4WVFlVcqqKYxKsNM/bjD+4XUc0p99O2wZnUwH9XgY3wLaesZBHbMxrCdpLVirIIDzn7ikQzN13tuCw0XGXOegRKs1ESXYS4TeVZqcLE11KKbXiMEKOqQuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tt+LjpM5; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo4787162a12.3;
-        Fri, 13 Jun 2025 12:43:14 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-adb2bb25105so424391166b.0;
+        Fri, 13 Jun 2025 12:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749843792; x=1750448592; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749843816; x=1750448616; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JVnXDO8P8TTyy5ZMGp74R4GEWT4MAhPxsWXUOSUBcps=;
-        b=cV4Z/+IoKU9SwAXqZxVWqaHq1Lwx3w+bav64GDT9TwOf1/uWGH1Jqy8XB5sS6yGwM7
-         vzKZ05qG7ng8mDz1vhN2beM3oYVy67O3Soa50c3LTVcjzsYMLIDOXtWUbfGmsjS+YGsy
-         P8zyOP5fSWqxKboRjvnYYHL1HwIDG9tXcJhDb5TzdBxFlAOgFafp79EBBoDrH5ejz/Sh
-         AC9KJ3a/BgJVKVdLzOVr3UsOiqxBk/EnuXxJyDNxF/N8UV4qnIMmjX8IwXHIj8sCoyAJ
-         z1P0MqPIr1E1Rg62CMaG4uNYPju6XFJA3QRiUxbSTFK/p1DoHHQu/gFxYx4r+qNLubr9
-         qdQg==
+        bh=dgt/50QF/JqAiUR0QT0950rpV9eyWAU1dWz6lsV+G/U=;
+        b=Tt+LjpM5OGXDxEHnXr8oifw6YZxGUx2XnZsMbRlRUbwp+6pTJv+5hmN5MA5EPdUbFK
+         JeSDWUT0+F3pst8qeXFfR0mWlTOnG2LAZMGrsib578VunZ8psJxEnOtvZeezmbEbOBvL
+         QJ2KX0j2OBVrMAXWGYCHVTvEL07tch0/lpUjxN9W+KJ+SII+eEXsojBvhxDIMIrpFBHy
+         vKNc2A9ICgrdrly2pG7Q/g2C+b7m4yMFiLPeC4WjAbw37xqW01qlBkzEwREekQ7Zutls
+         I8x/HfkwFKIg/oi4CbGq/vOxoNUsOcgVw57xuHVlq6DofvS8RXQF34m01vG95wjwwSzP
+         j2vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749843792; x=1750448592;
+        d=1e100.net; s=20230601; t=1749843816; x=1750448616;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JVnXDO8P8TTyy5ZMGp74R4GEWT4MAhPxsWXUOSUBcps=;
-        b=Lu7D+F24gjePP0UxGOhGTyBwObvepXLbVivCmHqZ6dsL3hCi4KAnLEa6Nc7ZIvOEX1
-         vbl1DTC6TDLzDiVHOPIkNOW9YbcqToHIPzGwxHQACaS7Dn0RwP0K19yNZieRaRNmB0iM
-         8X3GwbkLQJUZNXUEHGvJhPIUhw+dDmAi8pXNSdOMZVB69jv659TThq8bwnkeUoa4u70l
-         Nk6ibI1eRA58BSfkcoRuYYVzu3uKLzOI0KN8IXsWz7bVBB9hu193CgJvWFiT2b4JMVG/
-         D4P61WGlPEMYuduy9fyMNTOajYIPusS0Xn9+CUzua8zKMQxs8XJ8Ige2Zka/oeKxBeDl
-         1rZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9baJg2gHAoKmo7LJIVx9YpT+Z6NQgOfZ8nXNHUcPEOXn/8OJ1vqUT4GAycJXejDca/28815NxLqY454mVqQ==@vger.kernel.org, AJvYcCUBihFoV4BaEtFRBFiyIjk5MDW8IoALPE/zj5ZxI1E6a58/LTq2njHSIFmAcfMbQXbUF02j9mTsLVholoVY@vger.kernel.org, AJvYcCX6piUBCJlCWj+xEXDCnwl47rPUmV/qF4Q1EsjSE4v9cdMA/UD4aRMGoT7F+LgtRtTQ1Lm4fj7p9XJT@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb3ds+RGm2kvz9k2qFg17ytxQavHkvM8SCeQJXcBhFaBhlb3QJ
-	PqVmsqxiwm89ygh4U4CM39+qXYsFeWvRe3Q55+gXEN68mS18ZBdvHw5YzlDeyotdjgY=
-X-Gm-Gg: ASbGncs2dnFWHNkB5u3gz46dEGc8ax7NeutmfOPMMxI9wPTFKEPVT201Oe2oB6weJiI
-	lH8qs4d6LPDF09AMJJcCHO0qSm7VXJVBjVG1U1g9yBOl3oI85Xep7/L/zUOGw22i1SMBVui1L4u
-	TQAWfSWQkY+fMYN23+CarbUKwxH6OYDpIk93pJ2tyepg/LyqC0C/h7DZ3orkjBsOHI3ebSzd7jq
-	NmvG6dGXriD0VZd91Jw9z3XB4/aP3iNCqpKeiqxW0hEUZpGPVBSsIGor5R7Poxv9SqZf1QAXf2y
-	aJ8D2c8iy5HLIVVXyw3oaqiUDHCHAKcPov0jlBhZn8opGEfwqiG+icM/ZXoGo9fDCg==
-X-Google-Smtp-Source: AGHT+IEea1UCROg9VWoHOogW+rzKLVn6Eb9YuxISnCP3IOJmiBzBCZd+dWoG38r40j+VpjnkqgwJHw==
-X-Received: by 2002:a17:907:7f92:b0:ad8:959c:c55d with SMTP id a640c23a62f3a-adfad2a1efbmr48350466b.2.1749843792507;
-        Fri, 13 Jun 2025 12:43:12 -0700 (PDT)
-Received: from ainazi.fritz.box ([2001:9e8:1ad:9f00:925:9e86:49c5:c55f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adecd50da29sm161053166b.72.2025.06.13.12.43.11
+        bh=dgt/50QF/JqAiUR0QT0950rpV9eyWAU1dWz6lsV+G/U=;
+        b=BHjIha6L1vgB5f6JsahkzMsQ0Ezlo5ef9BN5CjRfsrAUqDBWrp7poHAG3Ge4ttsV6j
+         oj6nYoTm2G0ZhfTt1MdhcFrLmtppuGTkIjRQYWOPn2e/bO/t8etoJQGaLtOWG05Onnun
+         ZWbBxOht89XhHMfxI19SgKi0rzXLFnGY65+O1pTG9y//tmrfS1OU0eQbBr92cdr38lFw
+         v3M2X4mlLPl73RlIUz83uR5ayULNb6xWyj+m2AsBeKCQ6omCKPZaruzAepWeGxAOSlLr
+         dHjSczJHOBdDD27wONgN2VBhPqRE5lzBq3QSS0dzyuY3DRcPZSbgBKA1jtTazIeXTE6k
+         PmbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQM2f54c0jw6MZd7AIw6QFImd20zgtU60nAJTtTBaq5Jlw8GmfzmRshHriix1ISx+z8U0rcfJ0UFOKjAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXw0utYVsFA5A5ou2QKbxm20GJ3vThQ9YPzqpZYGpiLRP+RKx7
+	Qk1S8FagrzFit8W/qtjNmP0ybX1yZYpvOvcqT6WMcq7gB0JzVxhMreoT7i6HMg==
+X-Gm-Gg: ASbGncsz/DR/Rv+FEDIY2bSLblZJWZTgORaL85WNXALLOlwo5XDzsBC7ZxsZEoihGv7
+	zlEUhCO9giVVspL/OKpSn+UaHcfyTZaLLgC4xBSSAnRtTGhih/4UqEnGI8NYPw0FnXKD9tmHDYw
+	r9oKWpxTDghRkcfMyAJBUWeLbHMDdkYciirTOaJd9n0gjyxjWabFXiZvxgS2/QFx3zVG7WKkB/d
+	Xqp7eU3dTYUnPR2cZm1mL8T2ZmbmoanB5NFubJHNg+MGbIsNm+J10pcRgMK+ylbS/Mk4WezAm9T
+	AZ6uInr16xLSTxwPnchqNrHp2464YgyJJXGdfeEEy9653ZsjAJZeKAr41qA5g2zyBydl6HkWO5l
+	FZfq+hkJDizkVN2aGKZxQ8qw=
+X-Google-Smtp-Source: AGHT+IFpVmmbzidAFPH6s1at1uCKqw6CJ9ipqwmnxcHj1rMJRNOo8Y5nrc4qCBez3R9Guw5kAWM57w==
+X-Received: by 2002:a17:907:785:b0:ade:7512:d9ba with SMTP id a640c23a62f3a-adfad358c88mr43903366b.26.1749843815851;
+        Fri, 13 Jun 2025 12:43:35 -0700 (PDT)
+Received: from playground.localdomain ([82.79.237.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159e24sm176836466b.34.2025.06.13.12.43.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 12:43:12 -0700 (PDT)
-From: Shinjo Park <peremen@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM MAILING LIST),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Shinjo Park <peremen@gmail.com>
-Subject: [PATCH] ARM: dts: qcom: pm8921: add vibrator device node
-Date: Fri, 13 Jun 2025 21:42:53 +0200
-Message-ID: <20250613194253.20080-1-peremen@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Fri, 13 Jun 2025 12:43:35 -0700 (PDT)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-sound@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: SOF: imx8: add core shutdown operation for imx8/imx8x
+Date: Fri, 13 Jun 2025 15:43:10 -0400
+Message-Id: <20250613194310.1128733-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,32 +93,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the same definition as pm8058.dtsi. Since vibrator is used only by
-some devices, disable it by default and let it be enabled explicitly.
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Signed-off-by: Shinjo Park <peremen@gmail.com>
+Currently, the DSP core from i.MX8QM/i.MX8QXP is able to operate while the
+firmware image is being loaded. Because of this, the DSP may change the
+content of the firmware data just after it was loaded, thus leading to the
+data having unexpected values when the DSP is reset (via run()).
+
+Fix this by implementing the core_shutdown() operation that will put the
+DSP in stall during suspend(). The stall will be removed during the run()
+opertion, thus guaranteeing that the DSP core will not be able to run
+while the firmware image is being loaded.
+
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
- arch/arm/boot/dts/qcom/pm8921.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/sof/imx/imx8.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom/pm8921.dtsi b/arch/arm/boot/dts/qcom/pm8921.dtsi
-index 058962af3005..535cb6a2543f 100644
---- a/arch/arm/boot/dts/qcom/pm8921.dtsi
-+++ b/arch/arm/boot/dts/qcom/pm8921.dtsi
-@@ -17,6 +17,12 @@ pwrkey@1c {
- 			pull-up;
- 		};
+diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
+index a40a8047873e..b73dd91bd529 100644
+--- a/sound/soc/sof/imx/imx8.c
++++ b/sound/soc/sof/imx/imx8.c
+@@ -40,6 +40,19 @@ struct imx8m_chip_data {
+ 	struct reset_control *run_stall;
+ };
  
-+		pm8921_vibrator: vibrator@4a {
-+			compatible = "qcom,pm8921-vib";
-+			reg = <0x4a>;
-+			status = "disabled";
-+		};
++static int imx8_shutdown(struct snd_sof_dev *sdev)
++{
++	/*
++	 * Force the DSP to stall. After the firmware image is loaded,
++	 * the stall will be removed during run() by a matching
++	 * imx_sc_pm_cpu_start() call.
++	 */
++	imx_sc_pm_cpu_start(get_chip_pdata(sdev), IMX_SC_R_DSP, false,
++			    RESET_VECTOR_VADDR);
 +
- 		pm8921_mpps: mpps@50 {
- 			compatible = "qcom,pm8921-mpp",
- 				     "qcom,ssbi-mpp";
++	return 0;
++}
++
+ /*
+  * DSP control.
+  */
+@@ -281,11 +294,13 @@ static int imx8_ops_init(struct snd_sof_dev *sdev)
+ static const struct imx_chip_ops imx8_chip_ops = {
+ 	.probe = imx8_probe,
+ 	.core_kick = imx8_run,
++	.core_shutdown = imx8_shutdown,
+ };
+ 
+ static const struct imx_chip_ops imx8x_chip_ops = {
+ 	.probe = imx8_probe,
+ 	.core_kick = imx8x_run,
++	.core_shutdown = imx8_shutdown,
+ };
+ 
+ static const struct imx_chip_ops imx8m_chip_ops = {
 -- 
-2.48.1
+2.34.1
 
 
