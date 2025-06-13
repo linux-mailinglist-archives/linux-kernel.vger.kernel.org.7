@@ -1,216 +1,185 @@
-Return-Path: <linux-kernel+bounces-685564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6D4AD8B5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:56:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981A4AD8A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D21885F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51537189B7BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830EC2D6626;
-	Fri, 13 Jun 2025 11:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FEA2D540C;
+	Fri, 13 Jun 2025 11:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2ov20/T"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="h4k+d6V+"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012037.outbound.protection.outlook.com [52.101.126.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5AF275B0D;
-	Fri, 13 Jun 2025 11:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749815732; cv=none; b=jdC9H+PAUbhVxEE4Cg3j21bRxKo2UiZhGZ0b/YWZiF9YhM4DhLAyoAYcBZQFVRPwwE43a27d//RNqbmrPAWRw9wRkHOgjlJRmiUaOBoqBRQk1NsCvgiyDiOheE5fOpN9PXVnAJJ0Sd7MQlns56TJBukag06JfQo3zr2KUnN74Qc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749815732; c=relaxed/simple;
-	bh=Sb5LOSkAwHk54c+c6zP3tGvl033zIanBvTqjdyRTILM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=ORgr6wLWN1r472Usyl3td4l8NK34/fRkpoKS+U0kFxOfiO8YdCCE65TTccwOokBUdlkH7RMycZeAj3/27XC7xONsTUh/FKWMZddZm2rKyDqr1oNwEOwFfOpxiwCswXEESf4hNO7YPcDDLd0ivS922Ea71osUHrHIJEBI/h2UqCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2ov20/T; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so17484075e9.1;
-        Fri, 13 Jun 2025 04:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749815729; x=1750420529; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ufE8HslboBgiS0ch8804+mkzD75VUbk5YRlVLPLoQRA=;
-        b=k2ov20/T+cSy0umWVitQG+013KJvbv63xH44HZyXyYMwrHFPsPBn1DAXszsZVt2uxz
-         LX2PLVb/daxktPoeXzMPD415tW2EGeZEUDd6thhWuUQoIh/CLSwh6Dz0N5jCP2BJ2Muf
-         vB2LzfwJkoGb+WnBXq+t2hllNH6Xu7ysrXeuHLJlzhJcytrLF+8H7TVfTjPezo7WMZ4V
-         +nwILPHcroEwtTAx4zI1ZrKwKT4/Vcx5pGQuxkPk6SRKzAgEXfhUr++bNzOf11WxFLXd
-         aZFQNkwrFGw0V4yG1VzneLIw8LW0OhiR22WHol3V6JqNS78Hr3V7D0SjUIl0WhaLlzRv
-         6PgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749815729; x=1750420529;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ufE8HslboBgiS0ch8804+mkzD75VUbk5YRlVLPLoQRA=;
-        b=bJfDgDrZhMEXF8/Pb+1lfcwCHIalCbEJD+MzgLH5xxQ+YUQRTFa7EQgdmiRYIhAOyu
-         DZfYPkQRkXQatlo8LLf1pAvo6ltZrQqgK31/xpNtbGvc5CwLmnJ5xe+p0A9BW+2FigN/
-         z7z6ML+fCBbdkVqutsBsyzumg9zE22mRF2tcNlELHiiE4MnUn6mX1DNflMfoVeFO2zjR
-         h3sBtQAZdpOmcyVGGlehbq63amHstRnFKBEqsu//ghYxC/R8g7CFifIpUm7TezMWG/5d
-         4U5izYhthblVovegtuhPhcGAYN5vlSJ27nC07wc7ghvzj/X7vwhfmZmrxNhU3b0wn029
-         0AbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGazShPTTewCaJMAx1z0LQkyQM/6ZXSiHpkZsz7oUzG96TAs93BEVbyLIy5Me2CGUCM74pFEDvjJoPTHY=@vger.kernel.org, AJvYcCWMTOYQj3qB3CssPw54Z44kSKBH0rEqdGoPJfWisrvcgkt0xTzF9YYs0VXHqL8tPJMLrRkpLhIj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm2dU+/rrFTzM6jE2xmJXKche2dzmUnAcHT9sx9PH4wQ9ktbdR
-	o2f5ztc2D155xRCZSM1rogGwODdN87NXQzM0s8WlxegGVvrWWdFjitgufb754+s2
-X-Gm-Gg: ASbGnctPyhbFQUJmJOMhM4gDqoYFdMdijkysmV7F9hoxLycCUxCariv+WCEBsWqKXtN
-	loaei+wM9YyWMclYSUG3CKv+SKdEIglJdS6UFHGGP9z2t38/KGoqJebQZtnAt2nA0Z3t1TKJr8x
-	w9bG84Mk7sRjnXBJImZWAH3y5PSZF15NkEiSCgnusF2Lx9A0AbPsnDxE5uBmabqs2EsyRG42vZB
-	KduP2t2DMe+PjHiCAINdFeg5oAP4Lg6lj8T6g6wV4QXK31w+xkVZDLoES/fimIDHd2B4/UuYvfy
-	yb70NUYxi9kwDQK/iQ3AqAuR7sbJvlqu98YmoEyf4mfLrOFvXp1Qedu8RarWBSXK38v0euHrPxs
-	=
-X-Google-Smtp-Source: AGHT+IGUe7DjzHHSFplul/ar5RfAw7b4aYzc9kQ5lrIT8AkHKhhxkXNesyYzYlzEDkL2JyHmPvem9w==
-X-Received: by 2002:a05:600c:a49:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-4533499e98fmr33137635e9.0.1749815729086;
-        Fri, 13 Jun 2025 04:55:29 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:75e0:f7f7:dffa:561e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e195768sm50645645e9.0.2025.06.13.04.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 04:55:28 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  linux-kernel@vger.kernel.org,  Akira Yokosawa
- <akiyks@gmail.com>,  "David S. Miller" <davem@davemloft.net>,  Ignacio
- Encinas Rubio <ignacio@iencinas.com>,  Marco Elver <elver@google.com>,
-  Shuah Khan <skhan@linuxfoundation.org>,  Eric Dumazet
- <edumazet@google.com>,  Jan Stancek <jstancek@redhat.com>,  Paolo Abeni
- <pabeni@redhat.com>,  Ruben Wauters <rubenru09@aol.com>,
-  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
-  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
-  stern@rowland.harvard.edu,  Breno Leitao <leitao@debian.org>
-Subject: Re: [PATCH v2 00/12] Don't generate netlink .rst files inside
- $(srctree)
-In-Reply-To: <cover.1749723671.git.mchehab+huawei@kernel.org>
-Date: Fri, 13 Jun 2025 12:05:56 +0100
-Message-ID: <m27c1foq97.fsf@gmail.com>
-References: <cover.1749723671.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC80B2D5405;
+	Fri, 13 Jun 2025 11:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749812973; cv=fail; b=tWFrQ5XrNzbAu3LfWfwhNpbqRz2ICC3EjMDHvG1LvPZMg0YPe7a8WY0LIBZ2OL/NU8tFPWaOBfU2MbvfswJmy8ttj3/ApVC7YjsfwlWLjWXBOnW+xk51Bt98pt7Zpw5rP2YbgNRBO/rrtEohW8ZeF9LRn4Lftgp/DoDQ4pf69LY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749812973; c=relaxed/simple;
+	bh=7Fw3wtJ73vv3Qgm/3GkbI4mQR4gPkrDSmIWryYYMxS8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QjOuv8ljCvEArZa8+MjPyjuupPNGIY5HUtDg5VSNils0EvYKLzjKKME/nEQnw4yC/WZHHuMLbZLEx2CFPZ6vaqLE/Rk6CgKrpEFOnQm+jVlPwbFHLgysD78zap/BWGjYbmPQqqZVWBqRJNdXQ7lKC02GXvtYx9WJqcynmRZkgZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=h4k+d6V+; arc=fail smtp.client-ip=52.101.126.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pfyq41+PUvQ4foxrnDW7G+Cv7P/PVbKDXeNZL5fr3E+Bx97aodZPAA6mO18E1Bbh65Vzh2NHykkOVmryHpwgH88U/Vu9ShtkTTlowXUJZqKWKNVHx/6jCverMET/I6eXs/OU3pPTYTXW9GW6oaS/3aOdI6l6c09AC3Iw4vA06HmshYpR/tjvbpLNdw/4KAp4BCJlfViwi60f7mEyrLkiEoSoBNpOEx+tX6hcrePVB8gDux4c7TpOCUimy5D5SARkyX2vv8quBQqiYHPT42WU44Ji6evUDEz/pzHkxpLIdM3llvYOP3svS6HeOxgteLD9lfzJcSMmwjczWygNvD0F/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DtMBj33Sx1oAMqINRFAH5h963S3E6ZA3nRC5DmVePTA=;
+ b=FsFGmY9pbNqRuxE4U6YCDk+notS9//yy/OwbAMPa0myiENc2vPI0t0mn18I7LcJfTwIkcY9gFDnVdKLWwaip41t3tch5OaOe1WQJnCOvAcbou/h+5weH9SVOks0I8Y+MnLgQQt1DyY51ia3D4+Ll+/ZX/pmQd3/OgfbaHK6nFp4QVsGlCFs3an4uPbho5TKQKnxOG1CjGsKqvF4RQPDB/9/kVfCzNf9/K1+oHNMTCt7S4QoggmBZjIXps5vrlE2oK/dpW1MHhX5NvgiyHeLqwggar49z/E6kvJGvHSctykZOEU9QcWs1Ja3cfMyWmFYNo5HSqZRytuC8xgP2UfBAuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DtMBj33Sx1oAMqINRFAH5h963S3E6ZA3nRC5DmVePTA=;
+ b=h4k+d6V+icWoKqoAxKGOM46onww5lRlZsN3AsXB5hvriUWSXqiLt4IVUM4gSbIzomV0rFfCuLF3VgoQYIOaAifj4bK2tZvd5qhgXDoyAbaLGrQico8iHXKqJ3CcsCpBu5RGdaZGjXQp15wiqlH1ZPO+FYe2guOPUZfX+8GWgY4JlzVCb7iwX/QEO9+nNf/gX1lUQLaScfFHJnI68PAXXUVG0gTDb+0M74E1N9oB8S5/wz0p6ZWe9Gtyd8AtEanNvk54sLkCYKNW2mqyBNsK1YNkqu0MbN9ExEYPQuJkeDsjo0z+T/MIFexkNqbgO2UghGN86SJeJ2rin7Z9StKVcew==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SG2PR06MB4802.apcprd06.prod.outlook.com (2603:1096:4:169::8) by
+ TYSPR06MB7344.apcprd06.prod.outlook.com (2603:1096:405:9b::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8813.29; Fri, 13 Jun 2025 11:09:26 +0000
+Received: from SG2PR06MB4802.apcprd06.prod.outlook.com
+ ([fe80::685f:929d:f06c:a349]) by SG2PR06MB4802.apcprd06.prod.outlook.com
+ ([fe80::685f:929d:f06c:a349%3]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
+ 11:09:26 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH v1] i2c: lpi2c: convert to use secs_to_jiffies()
+Date: Fri, 13 Jun 2025 19:06:38 +0800
+Message-Id: <20250613110649.3283336-1-liyuesong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0026.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::16) To SG2PR06MB4802.apcprd06.prod.outlook.com
+ (2603:1096:4:169::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PR06MB4802:EE_|TYSPR06MB7344:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6364c83f-8d0c-4558-b777-08ddaa6ac2aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZAG5UpNG4jDEhZlYHg7IlulPsEV8PFsySc12eJdKEKed+yAEg711B8YOrq+/?=
+ =?us-ascii?Q?vCfZLC+tdXnAea+OAuIBkUigRONdIaBVniXGa+NkwclnYWdvxPYM90e6Zv6h?=
+ =?us-ascii?Q?P9uLvAPhQ7CSmZnIRQx5IBjX2N4vr9JYjPk4gydtUS82LIm8auwIMaooQlY0?=
+ =?us-ascii?Q?OUrT99x/3e8imIAgCNyTIjAHJ/O9iuZ0vaDjG64837ZeiljpXzpFblgznGdh?=
+ =?us-ascii?Q?/COyR9RLXgbDFMqCeHIsq5zSN7CE0GBZmzNaXEGnEBMA7m292dwotL0x+H5N?=
+ =?us-ascii?Q?1/Uno35R3z+szmgNp+t0qzLqFds8peqv/LRdTNitwwA/cZPw0EevnA9db9k6?=
+ =?us-ascii?Q?zV+cNCH0eliLv4W9wQKYQQtbNzfP2t6IskQgv2K4/qLiTNAW8p2gvA2svWJJ?=
+ =?us-ascii?Q?Sv+ykmlH5r6U2YseDe/SP37PBa52mfM4U5T8UgnJzEgNkIdjAVAHA4LsBpkY?=
+ =?us-ascii?Q?kggT6zGx5/y/NlI6bdDnk/HyuhzUXeQo2E5gYs9ca9jASXICF3J61T01F1P1?=
+ =?us-ascii?Q?WSwm01tMjyDSWrwBfZwmLXnilX9lkap5aaz6BI5h1j2mvvjUHznzBJXXq35g?=
+ =?us-ascii?Q?+rg8F/K40IQRDrxeSpn9t08HGVls4fRoBtE14VjD1lbH5U1U39J99GtmGZPL?=
+ =?us-ascii?Q?j1jYESQsxJpx3HWfB0fJKAxAK3jV+gjEHST5nvcRM8uNTIhsemu9UpHuyyfe?=
+ =?us-ascii?Q?yZsD0AjZKTBFrLatjPHY8lJ6L6wQ0k6O0ys0ZRYpy0VWP5nnIEzR1h4Jt+Xf?=
+ =?us-ascii?Q?yHc4KigA6v/htpk//O6YHYTAWHkRArtKW9Ay/RIaon4psVp2cyjsijrSNHMc?=
+ =?us-ascii?Q?szYYpUNhwvN3vmPDTl3WfopCx4SkaABSInTMJGlY+U8kh5nFX+ur7cxJxw1R?=
+ =?us-ascii?Q?N8jQhICQioeg0sCEBWm9DNabqrDRw131JD8XfJiF6AAIbURC8KWwz4jARdup?=
+ =?us-ascii?Q?0T/Z1TjHfHL/wwamsapnzA8R8T4CoQPD7eiFcdgdr/jDsdsKZVX6d54ItD46?=
+ =?us-ascii?Q?UPRgN4Hft8mbPTmv0tEDo6ZFm3TM2HWcO/qMgK6C2Ga76FLJA+Co7F0ccl/Y?=
+ =?us-ascii?Q?heWfirPTVHORVFujXgW7yRmoRfgSDBeRp5UWD8Qb66r9cVp3V3WfaEruLB1p?=
+ =?us-ascii?Q?6F4jz6MIlGKW0xRP5Qac+INGm3iF8JSDyIlBPJukuAt9rszUUxF7ZNbS4e7/?=
+ =?us-ascii?Q?n/hoKFpF7+FkJPugxLu9mnNcZDyK2T45/N8TtKZlJBvE9Rr7JwYC0h6D27eW?=
+ =?us-ascii?Q?CPCsBd82NBTKB8rH2qEqp4nAx4ZLeBxkUCjfanEP1lTYoGvgq7afrnKUESEJ?=
+ =?us-ascii?Q?N+sz3SMatlFzDjRbZqs4mXmgmd43aW50LDw7T49kbseNbgGYtFn6MFzrlP2/?=
+ =?us-ascii?Q?SyY01dndTdhxraTIXXyRs0n7i3hDrlvzaESkzuYy2QzHjyKILcUJElmpeNhW?=
+ =?us-ascii?Q?TVU0mzZhTHNTvsehUhVfaacsrrdVFvK0SA317kCM1baH6qYSLGqrH52hFTBV?=
+ =?us-ascii?Q?O3DDC6P/5/tnNnI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB4802.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VzmykN5X/bhC2rBh00nOTaIIsqx/8pnjO3p2xBiD3lg/BrrqoWcXsywCObD5?=
+ =?us-ascii?Q?hYO5Zh1a4Rs+QP/9sJLwezxM5tbZ1CKoRN4UkHai9Tuulsx361KqwWV8PEyt?=
+ =?us-ascii?Q?D+sy7iCpKpILTHLSmsbN4zdQmSORjKMyeofVyU6ASvOcazJpw2ZPavt3qOXM?=
+ =?us-ascii?Q?ZteKCZ2CqcY8gkYbd+WNGewamiBox/2vUcBTftHZTWVxTday1XKg98gLkKND?=
+ =?us-ascii?Q?8h8KU02/EMbetEBo/7pa2BN4PP5J1NA1hJxpcdyQz47VhhIl8s3Udv1xoqTF?=
+ =?us-ascii?Q?sXDxooGgjBN8MeTcFPbkKshmggBiVGt0J7A4dZLp8kkYOOZXvaZK4IaDvc7Z?=
+ =?us-ascii?Q?LJgK6xnlIy0MfCoOmNiver1ZOV3RVp2D+mcKLLP4yuHCB0TOgGdY1CWnxz+2?=
+ =?us-ascii?Q?s0ErVfDXcNdI+rpEx4iv7ZvGpjkw5iYQL4EruplIaDykY/Sh5+TDn+k2g5yr?=
+ =?us-ascii?Q?7GoNBzfHX0GtCfrAScnq//V5Cn454vKdlb6FQ7BSVgvngUORT+o0jI7FXYf5?=
+ =?us-ascii?Q?cpjSD2Pf5THsefwZQ2T3wuy3pCL8F1QnKfFJoDeJvMpaHAwRj3Fisb5aBPzx?=
+ =?us-ascii?Q?4xs0/jB5He2xzZFoSUkRPhjXU8H+YQf8LE8CCIXZ+dlBi/Q7RCPm+eyKCzvv?=
+ =?us-ascii?Q?r+Lvmn+8vt1GzGnJldb0o0V3I214SR7ZZB+6/8+MQjA01V7yvWJLus65REd/?=
+ =?us-ascii?Q?jrPOh4fS2kbx1zIpaCOXMNJaXighfZifFtGq4pImvWCldtknyHCdUG/tlwna?=
+ =?us-ascii?Q?sjmed2b9RlRjPomScuUcNqyS7PDTcCkjUA5cUcN5muVoX+n7k+cXJRCfZPQT?=
+ =?us-ascii?Q?9aD5KjEr02KE8HmnU/QikRWC0PM31DVRLih3+US0S+duS4MxQiiF/lLQMvMH?=
+ =?us-ascii?Q?iVagUBJj5miVRMbQ05ivIZjWlLP7Wxlc+zREmn0eiDUAgOWHC7FBHYyQcuOJ?=
+ =?us-ascii?Q?oo6ruC5sBloqSN6umoMDCRLmrDGLHOswcIp6eB/IVi6Po6e+ExFwYEPRz3/U?=
+ =?us-ascii?Q?7X11ZV6+Q7DrVpkvMoI5RhBOVoOzDUjZ2BYUCkWiG5Sw4cKoMb4AufjlsJ2M?=
+ =?us-ascii?Q?uArlVNtAuZtp8dXymWzPgiF5498DJKXKJcHZZ1oxRSsfj82YpwNHm+Efx/Pc?=
+ =?us-ascii?Q?QUaEfI34mudt3XQeYlC+K+P6MqB2xTzZ67cRCJNYnE0N8gx5XJbp3gRj2Ygf?=
+ =?us-ascii?Q?GB7RJhcqG8WI3FajEkDr2BfQGFmUoLsqeZzBh3j900+tj4+7DAtI3lIguVpO?=
+ =?us-ascii?Q?IRmK7QE8YbaX9WR81j3zveJExZSkHMkECjS+nIUTSv0kp76Ij24zt52Dy8bU?=
+ =?us-ascii?Q?HjZCeYV5wRxnSzH2iDq0Z3nlY+KAn3mHb6YiumR3mu1tzalonhLz42050Lug?=
+ =?us-ascii?Q?3EnAcY1V/MAWtVlw034JuLo4PawioBf4lxIPCgcs0eD/jZjLuqeRQHW7msdB?=
+ =?us-ascii?Q?D/uKeKBg8BkXUTF+OujaWuQO9+GmWW2AkcJ0VoVO+zuYosxwPblZZASS2e+1?=
+ =?us-ascii?Q?aIY+trU3zejytLiX2JT+TkeER82n90mkI8a/DVnFno8/7J9yMJXa7v73v2U1?=
+ =?us-ascii?Q?t8vlGair+RNrwWCSWwcRR9yhSYeC7CChI546DcDb?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6364c83f-8d0c-4558-b777-08ddaa6ac2aa
+X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB4802.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 11:09:26.8306
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AiI+rKyy9lxoM7ogv6hBLT3psF+PWw2t5DmURJxqcFUmeDUIYiOiFJhTCYfJ6Sg8HhTvaEQbV2oBN4xaRC3C/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7344
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
+use it to avoid scaling the time to msec.
 
-> As discussed at:
->    https://lore.kernel.org/all/20250610101331.62ba466f@foz.lan/
->
-> changeset f061c9f7d058 ("Documentation: Document each netlink family")
-> added a logic which generates *.rst files inside $(srctree). This is bad when
-> O=<BUILDDIR> is used.
->
-> A recent change renamed the yaml files used by Netlink, revealing a bad
-> side effect: as "make cleandocs" don't clean the produced files, symbols 
-> appear duplicated for people that don't build the kernel from scratch.
->
-> There are some possible solutions for that. The simplest one, which is what
-> this series address, places the build files inside Documentation/output. 
-> The changes to do that are simple enough, but has one drawback,
-> as it requires a (simple) template file for every netlink family file from
-> netlink/specs. The template is simple enough:
->
->         .. kernel-include:: $BUILDDIR/networking/netlink_spec/<family>.rst
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+---
+ drivers/i2c/busses/i2c-imx-lpi2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think we could skip describing this since it was an approach that has
-now been dropped.
+diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+index 342d47e67586..dfdfc23551ab 100644
+--- a/drivers/i2c/busses/i2c-imx-lpi2c.c
++++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+@@ -563,7 +563,7 @@ static int lpi2c_imx_dma_timeout_calculate(struct lpi2c_imx_struct *lpi2c_imx)
+ 	time += 1;
+ 
+ 	/* Double calculated time */
+-	return msecs_to_jiffies(time * MSEC_PER_SEC);
++	return secs_to_jiffies(time);
+ }
+ 
+ static int lpi2c_imx_alloc_rx_cmd_buf(struct lpi2c_imx_struct *lpi2c_imx)
+-- 
+2.34.1
 
-> Part of the issue is that sphinx-build only produces html files for sources
-> inside the source tree (Documentation/). 
->
-> To address that, add an yaml parser extension to Sphinx.
->
-> It should be noticed that this version has one drawback: it increases the
-> documentation build time. I suspect that the culprit is inside Sphinx
-> glob logic and the way it handles exclude_patterns. What happens is that
-> sphinx/project.py uses glob, which, on my own experiences, it is slow
-> (due to that, I ended implementing my own glob logic for kernel-doc).
->
-> On the plus side, the extension is flexible enough to handle other types
-> of yaml files, as the actual yaml conversion logic is outside the extension.
-
-I don't think the extension would handle anything other than the Netlink
-yaml specs, and I don't think that should be a goal of this patchset.
-
-> With this version, there's no need to add any template file per netlink/spec
-> file. Yet, the Documentation/netlink/spec.index.rst require updates as
-> spec files are added/renamed/removed. The already-existing script can
-> handle it automatically by running:
->
->             tools/net/ynl/pyynl/ynl_gen_rst.py -x  -v -o Documentation/netlink/specs/index.rst
-
-I think this can be avoided by using the toctree glob directive in the
-index, like this:
-
-=============================
-Netlink Family Specifications
-=============================
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   *
-
-This would let you have a static index file.
-
-> ---
->
-> v2:
-> - Use a Sphinx extension to handle netlink files.
->
-> v1:
-> - Statically add template files to as networking/netlink_spec/<family>.rst
->
-> Mauro Carvalho Chehab (12):
->   tools: ynl_gen_rst.py: create a top-level reference
->   docs: netlink: netlink-raw.rst: use :ref: instead of :doc:
-
-I suggest combining the first 2 patches.
-
->   docs: netlink: don't ignore generated rst files
-
-Maybe leave this patch to the end and change the description to be a
-cleanup of the remants of the old approach.
-
-Further comments on specific commits
-
->   tools: ynl_gen_rst.py: make the index parser more generic
->   tools: ynl_gen_rst.py: Split library from command line tool
->   scripts: lib: netlink_yml_parser.py: use classes
->   tools: ynl_gen_rst.py: do some coding style cleanups
->   scripts: netlink_yml_parser.py: improve index.rst generation
->   docs: sphinx: add a parser template for yaml files
->   docs: sphinx: parser_yaml.py: add Netlink specs parser
-
-Please combine these 2 patches. The template patch just introduces noise
-into the series and makes it harder to review.
-
->   docs: use parser_yaml extension to handle Netlink specs
->   docs: conf.py: don't handle yaml files outside Netlink specs
->
->  .pylintrc                                     |   2 +-
->  Documentation/Makefile                        |  17 -
->  Documentation/conf.py                         |  17 +-
->  Documentation/netlink/specs/index.rst         |  38 ++
->  Documentation/networking/index.rst            |   2 +-
->  .../networking/netlink_spec/.gitignore        |   1 -
->  .../networking/netlink_spec/readme.txt        |   4 -
->  Documentation/sphinx/parser_yaml.py           |  80 ++++
->  .../userspace-api/netlink/netlink-raw.rst     |   6 +-
->  scripts/lib/netlink_yml_parser.py             | 394 ++++++++++++++++++
->  tools/net/ynl/pyynl/ynl_gen_rst.py            | 378 +----------------
->  11 files changed, 544 insertions(+), 395 deletions(-)
->  create mode 100644 Documentation/netlink/specs/index.rst
->  delete mode 100644 Documentation/networking/netlink_spec/.gitignore
->  delete mode 100644 Documentation/networking/netlink_spec/readme.txt
->  create mode 100755 Documentation/sphinx/parser_yaml.py
->  create mode 100755 scripts/lib/netlink_yml_parser.py
 
