@@ -1,413 +1,104 @@
-Return-Path: <linux-kernel+bounces-685883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD3CAD8FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C42BAD8FE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 098F2166E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCFC83B3B77
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8881C3C18;
-	Fri, 13 Jun 2025 14:42:55 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5588D1AA1DA;
+	Fri, 13 Jun 2025 14:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gU3VhMCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FAC1A76AE;
-	Fri, 13 Jun 2025 14:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B2119C558;
+	Fri, 13 Jun 2025 14:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825774; cv=none; b=JMl4OyKtpL3iI6pslp17eYRVQ6H1U9ZzemFNTcmepBwfi07gfdyYFBVYWV6A3UesNQHNy75ZzTKHn8Hq4In5UFaK7MjykhHL82t1Jm35JRuutt0iABfc6eK4yx+CQBiqjBe52btbeHQP4f3Ql5hd9w0ARKkiHWu9vQbM2eojJas=
+	t=1749825807; cv=none; b=fxMW2gkdzmUTGe2JK+MCpDLl3YzqW7O9MmETx/lesFITIB8XjMiitBGZZcu2L2sTFk56eQrmVpdfyjkC3d5NwPTOPro+IpyvU7+W2tCyYoqmVTQKFM0ZAz6cad3ZvefH+uKxEn02hNBC3HdVCQLIReOuNGrhoAMrl6iq8ekQoOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825774; c=relaxed/simple;
-	bh=zNSItPiMcI4v/nvELFQJ9buQognVR0LRfdwUYdA7JTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kdBbhFmz9QmjJeO0n/YjD/isNILwyO4vL2bQP87Awvt0P1IyERre7P99zgBtaerjZs7qGaUNyaDmDUHqi62AqPx6BClFLbkRmH6r29QnWjOA6GCMiRxB1nWvIVzkxVr/19jC+9j0wzlO/Upas4lgzrNYtIr6PtyBa3XnQ9AKMrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 4AD61BB03F;
-	Fri, 13 Jun 2025 14:42:44 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 630861C;
-	Fri, 13 Jun 2025 14:42:41 +0000 (UTC)
-Date: Fri, 13 Jun 2025 10:42:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- llvm@lists.linux.dev
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
- Schier <nicolas.schier@linux.dev>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 0/5] tracepoints: Add warnings for unused tracepoints
- and trace events
-Message-ID: <20250613104240.509ff13c@batman.local.home>
-In-Reply-To: <20250613102834.539bd849@batman.local.home>
-References: <20250612235827.011358765@goodmis.org>
-	<20250613102834.539bd849@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749825807; c=relaxed/simple;
+	bh=FhXXXGmaRCUAiRGRLmZdTk6rfR0K44mNdX06Z2gh+Dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKibdeTfSvs/+uvh82jgdreqLcoImVry47q/xrjUOVDoI6eDGHbfCTkEWrqhGzAI1abWeMj6aSSfndjgYon5XrKxpGADcP4ra7ISsvrWbxrcKj+i6PJThvLmv5WoWbbyOFE9L9wJ2D4r+avItw2JjmHmK+bG5ZIXwbUGZyR8Pt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gU3VhMCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C1EC4CEE3;
+	Fri, 13 Jun 2025 14:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749825807;
+	bh=FhXXXGmaRCUAiRGRLmZdTk6rfR0K44mNdX06Z2gh+Dg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gU3VhMCvbEUpkeYtCm1sdiEbZCDtGB0/CaVg498QB4KCpsaQjBatRuDSK6B3/TBq5
+	 LSrgWYiWAwWHVtD6pvP6Py13HIq+0odrKGJrw82l7KmXE9n+C2oLTOepY6ratFP9ep
+	 YPat9WUK1PGkA83Y+YmS9m5Lt2c/OqN1Q8NqiZh3GWRnM/JEpWRgnN2jQN/u+5I77z
+	 FH4YUNHjEfcJNrRFfsYO1VRmfGO+eEayCERolh84NFhe5IMYVAm7yZwe703o7UiFp5
+	 lqAuKH45uxbeysx065G8tS23ws7+G3LN5HbQoPDXKhmOwRoCkQzOzcXgFrwWklKnvM
+	 uZ63XxBS2i8/Q==
+Date: Fri, 13 Jun 2025 15:43:20 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>, Vivian Wang <uwu@dram.page>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: Add support for SpacemiT
+ K1
+Message-ID: <20250613-charbroil-backlands-7cf485ac7f59@spud>
+References: <20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn>
+ <20250613-net-k1-emac-v1-1-cc6f9e510667@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="MP_/xB7r9y84J_G.DlS_P53lw5b"
-X-Rspamd-Queue-Id: 630861C
-X-Stat-Signature: omq3hajmpzo3ob4drj5o4h13adurdfe6
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19doMhSzneEzGuG6B8X7pg0zB3jxon5srI=
-X-HE-Tag: 1749825761-133021
-X-HE-Meta: U2FsdGVkX1+xSdW4RT4iCL3xaAa4KmDyXuBqJMj3ZV6NY1gosoLvuIj4UG51QLMtlTI/gwH4pOn0Nuq2rt+7m1GWGgmUFhz/dohTzI4b1RNUWYXq7Hl+ppWhmkCv4TKDdnhRAr6moOjtlgIG8UcL0BmNq/y5nAqE/ezK/2snNCIw/NsN1vilgo8HhxN0D0TME1eFsgXeKvtneZzDk2qWQNGTxbBP58CT4zTkgyhTrx9gB4IA4N9j6+quoko7j9oBAoto302Ys1yfRRsnr/X4A10L1Iz/3sv0dqWnTcYxx5I0z6zo92kjwA87H8p+dD0VM3/VGINtYoki6uEwCoLy78aP2ezGRfB0d+HSgBX7okQFTZE36isYl6t8aJlmHzX5EXnoVkHaOoY=
-
---MP_/xB7r9y84J_G.DlS_P53lw5b
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DrcNRgrkpAYQRveH"
 Content-Disposition: inline
-
-On Fri, 13 Jun 2025 10:28:34 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> And each DEFINE_EVENT() is approximately 1296 bytes.
->   ((19559 - 2069) - 5819) / 9
-
-Interesting enough, just raw tracepoints are not much better. I updated
-the header file (attached) to have 10 of these, and compiled that.
-
-DECLARE_TRACE(size_event_1,
-        TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-        TP_ARGS(A, B));
-
-The result is:
-
-   text    data     bss     dec     hex filename
-    629    1440       0    2069     815 no-events.ko
-  44837   15424       0   60261    eb65 trace-events.ko
-  11495    8064       0   19559    4c67 define-events.ko
-  10865    4408       0   15273    3ba9 declare-trace.ko
-
-Where each DECLARE_TRACE() ends up being 1320 bytes.
-  (15273 - 2069) / 10
-
-This is slightly bigger than a DEFINE_EVENT(), but that's also because
-the DEFINE_EVENT() shares some of the tracepoint creation in the
-DECLARE_EVENT_CLASS(), where as that work is done fully in the
-DECLARE_TRACE().
-
--- Steve
-
---MP_/xB7r9y84J_G.DlS_P53lw5b
-Content-Type: text/x-chdr
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=size_events.h
+In-Reply-To: <20250613-net-k1-emac-v1-1-cc6f9e510667@iscas.ac.cn>
 
 
-/* SPDX-License-Identifier: GPL-2.0 */
-#undef TRACE_SYSTEM
-#define TRACE_SYSTEM event-sizes 
+--DrcNRgrkpAYQRveH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#undef TRACE_SYSTEM_VAR
-#define TRACE_SYSTEM_VAR event_sizes
+On Fri, Jun 13, 2025 at 10:15:07AM +0800, Vivian Wang wrote:
+> The Ethernet MACs on SpacemiT K1 appears to be a custom design. SpacemiT
+> refers to them as "EMAC", so let's just call them "spacemit,k1-emac".
+>=20
+> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
 
-#if !defined(_SIZE_EVENT_H) || defined(TRACE_HEADER_MULTI_READ)
-#define _SIZE_EVENT_H
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-#include <linux/tracepoint.h>
+--DrcNRgrkpAYQRveH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-#ifndef SIZE_EVENT_DEFINED
-#define SIZE_EVENT_DEFINED
-struct size_event_struct {
-	unsigned long a;
-	unsigned long b;
-};
-#endif
+-----BEGIN PGP SIGNATURE-----
 
-#define DEFINE_EVENT_SIZES 0
-#define DEFINE_FULL_EVENTS 0
-#define DEFINE_JUST_TRACEPOINTS 1
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEw5CAAKCRB4tDGHoIJi
+0mUZAQDOqutaHQTNkzdtMom2o9B3nbuwKSuSLIduFjJKalvmiwD/YsHTvrRH0WFf
+qgTLhLoSPa5oUwkptRwAi4wYwCtGHA8=
+=4VR+
+-----END PGP SIGNATURE-----
 
-#if DEFINE_EVENT_SIZES
-
-TRACE_EVENT(size_event_1,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-
-#if DEFINE_FULL_EVENTS
-TRACE_EVENT(size_event_2,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_3,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_4,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_5,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_6,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_7,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_8,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_9,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-TRACE_EVENT(size_event_10,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B),
-	TP_STRUCT__entry(
-		__field(	unsigned long,	Aa)
-		__field(	unsigned long,	Ab)
-		__field(	unsigned long,	Ba)
-		__field(	unsigned long,	Bb)
-	),
-	TP_fast_assign(
-		__entry->Aa = A->a;
-		__entry->Ab = A->b;
-		__entry->Ba = B->a;
-		__entry->Bb = B->b;
-	),
-	TP_printk("Aa=%ld Ab=%ld Ba=%ld Bb=%ld",
-		__entry->Aa, __entry->Ab, __entry->Ba, __entry->Bb)
-);
-#else /* !DEFINE_FULL_EVENTS */
-DEFINE_EVENT(size_event_1, size_event_2,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_3,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_4,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_5,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_6,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_7,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_8,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_9,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DEFINE_EVENT(size_event_1, size_event_10,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-#endif /* !DEFINE_FULL_EVENTS */
-
-#elif DEFINE_JUST_TRACEPOINTS
-
-DECLARE_TRACE(size_event_1,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_2,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_3,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_4,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_5,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_6,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_7,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_8,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_9,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-
-DECLARE_TRACE(size_event_10,
-	TP_PROTO(struct size_event_struct *A, struct size_event_struct *B),
-	TP_ARGS(A, B));
-#endif /* DEFINE_EVENT_SIZES && DEFINE_JUST_TRACEPOINTS */
-
-#endif
-
-/***** NOTICE! The #if protection ends here. *****/
-
-
-#undef TRACE_INCLUDE_PATH
-#undef TRACE_INCLUDE_FILE
-#define TRACE_INCLUDE_PATH .
-#define TRACE_INCLUDE_FILE size_events 
-#include <trace/define_trace.h>
-
---MP_/xB7r9y84J_G.DlS_P53lw5b--
+--DrcNRgrkpAYQRveH--
 
