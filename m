@@ -1,250 +1,194 @@
-Return-Path: <linux-kernel+bounces-685019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8686AAD8323
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03ADFAD8326
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D42B1899B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 06:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7F218990DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 06:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3C025B2E2;
-	Fri, 13 Jun 2025 06:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738BB2580D1;
+	Fri, 13 Jun 2025 06:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hp/ACLjC"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mPaTwfQ0"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011032.outbound.protection.outlook.com [40.107.130.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A8825A351;
-	Fri, 13 Jun 2025 06:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749795484; cv=none; b=Liq4PdJoVq/OxNN4ssWXpcwqcoS46qM1LXmA1sNJWih9utuorOrYNrbmZV4+4iGPcxpGW3UhkQkcHuDd7Rf5tADRbVIRamawbxFPyeOsxdz2zvxRVzYqnnFaJ2ZOc5a6cVGaZa+nEL3GcNHpjAC66Ronv0pfXuAoPxdLlinrHgg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749795484; c=relaxed/simple;
-	bh=0niJSDKSOXEOs7ASseKgdsRjkom/g5n+i1aWk+pBLA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+X0Q2z19ilHdv+ciQ+pZWOzjewjXuTP1g7fE9PlEa04kFoe0ESh12pPzFnxhdJcYIb7bz57j+sxCZksvKyikF2kyg2UJlue6UrJtV8Lak6OsP1gdOlqZPQ0Zber3mqouiTpfifLfyoiE1xmaxyeH+CwNKC36uqDGk/tBa/3RJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hp/ACLjC; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso1442513b3a.2;
-        Thu, 12 Jun 2025 23:18:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749795482; x=1750400282; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NEQ+oF0djJWq9SDDZsOf15v0QosPMJkF2diyCZV/7No=;
-        b=hp/ACLjCT2STBCYw1rAUn9a03AKtBfU59d0JUmAoyv6ZA/5B+y9aWzyqbEEEq5EIBl
-         1Bd8nu1FzwAp5wuzzG/5g96ntCVSaABeizb7edEQw1RRDPtOoPDXiOveJO1X8dnOeY78
-         jLwlz1xWIQ9wSBVwjE6rJHdzVqcOzbx0l36nYqBkW/jacxAMsjPE0h+x8GqIfMqE3ouv
-         mPxuUbvY5iInb25tY1SXZC5pCvV4jKRSfmv8AWjB9/A2mvSx065TSLNNVGot0fqai3QU
-         9vRtuhKinQeEEX7fzYj3J2KTcd+5RZOYGpsmz8BPjoDSgZLYvPYxhpcv92YjH4HZCG0h
-         Ma6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749795482; x=1750400282;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEQ+oF0djJWq9SDDZsOf15v0QosPMJkF2diyCZV/7No=;
-        b=UuPy/0Tt2miECqjjahAIToNhiMd4XQE4GwUgTKdhbIliMt2m0gqyXd5lXhxdftsoU4
-         AvE/Pm++uCng9u6voG+/ZG4w+7Bhggnk/3XSbNu9c8G8alw+9ixvaxoNGKZ2h0n+bA6o
-         zZqp2SaJRxNvSJFhP3tr2tK23F8gxWoLkHEJxFTBGOOr+xkBfWGae34EnDkDKwHGlb6K
-         HRL4MqnRBd5HPI1k6I84DdhmlI4VR8pu0CI8LwduO7uAKxCWjoHaxIAwOhef/hFzi90I
-         P3V1b1vVNCbZnZEAUnSDqe/wfXDxnsuz26QB3c1yMMLmqpbTU+e8z23z/TYtxDkcLOW4
-         DxCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCGsInBS21/PtLjGRE+KvogNd8VlNRXTJFIpuJdM+soitCwEhPhH/28K5Ozgc77c8hIz8AXM12T1M9Z0cg@vger.kernel.org, AJvYcCVg1bvlgi7i+6A4nZ7skPcRBd7CFPKoy8Un9XOIiD6K30CXThOCR5i44MH7kOApwzvFQ7gJ4NaO1UfF@vger.kernel.org, AJvYcCXHZm0GIn4YEGk4rgJGVCMccyZh1L8C2WwjpYtlUb+8MNJUTAKtw1bubsaiGn6xsIL0naKryccWwrua17s=@vger.kernel.org, AJvYcCXy7FnOIhUN1hkZMOC5+doNcTUg/Dxm5Tzq53XovFqStAN2D8nuCRaDnEECYbKruwZG+OTJv/Ok@vger.kernel.org
-X-Gm-Message-State: AOJu0YyowCBhFK1lGwdZS0gJkDFgC383/MvH1NeL2JhpvQpbM89m4OS/
-	573BrM4O18KIreT3Sj97skPJI34NCvGGeCSTU1yBLpl+Rcoo/EgXyECN
-X-Gm-Gg: ASbGncuW48ZRbiNS6CV51NKS8Y2FtuBWrKQtLfG2W9Rnf2SktVzLAqwbNEGkjWptdkZ
-	6JgShxXdpUDH2jM8oV0WrbZghSKGoILk2UsUDVyAnjpsK/mywrK/DywYIdhntnrXHYQgTwa26VO
-	lkHyaB0nYBv75mXbyB/BDGXZoYLwZbHAS8hxi7Eh+vItKSXwa0fSRbX3pvVOLPDAlXJ64mL5Bdd
-	9f1HtlOL1ejFoL88GwIDCziDeYOHcMa8mSMij/IOQmNmzvYtQouP0ipSWA4RoulLZlYkjxNT0ND
-	r3frbPdBRaHM/bX+gzVmrJySA5oaxcx9H2rUHZ2l9tN8KkVcr7awaFtJIudMUpuxLBfeaKkoMlE
-	5oR/+S4LVfZZ7LQ==
-X-Google-Smtp-Source: AGHT+IH1HPtc0JXAOofq/MfGoBAYE2uisZmm5JgOcucJHvZbbB84Lgn8PnCj5aG8zasbQuNo0uRr9Q==
-X-Received: by 2002:a05:6a00:21d1:b0:746:2c7f:b271 with SMTP id d2e1a72fcca58-7488f641129mr2407868b3a.9.1749795482279;
-        Thu, 12 Jun 2025 23:18:02 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7489000531esm804843b3a.41.2025.06.12.23.18.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 23:18:01 -0700 (PDT)
-Date: Fri, 13 Jun 2025 14:17:58 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Robert Pang <robertpang@google.com>
-Cc: corbet@lwn.net, colyli@kernel.org, kent.overstreet@linux.dev,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-bcache@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw, stable@vger.kernel.org
-Subject: Re: [PATCH 1/8] lib min_heap: Add equal-elements-aware sift_down
- variant
-Message-ID: <aEvCljo6GPRRvWuO@visitorckw-System-Product-Name>
-References: <20250610215516.1513296-1-visitorckw@gmail.com>
- <20250610215516.1513296-2-visitorckw@gmail.com>
- <CAJhEC05pmnTd9mROTazKMFzSO+CcpY8au57oypCiXGaqhpA_2Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B867024C076;
+	Fri, 13 Jun 2025 06:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749795578; cv=fail; b=oc39SzkgGiB71J3NnK8onur2uo6y28PhiDzwC3GWeoZ44l5sFtSmKEiyA44MfJoea9WrznjhdzjO17IbGtaW9KKI0l40rYZW0XWqwMgX3RXuZS4uDWRFmaaqoMVXX/go/nXw7yRdIr6KnDg+XlUb049cpNUQjNkT8GJBhgykjPk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749795578; c=relaxed/simple;
+	bh=L7eFe/vkTCihrnEBB0ryO/9IweNsE5yGn1DP0KOXSuE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BryMix4WxKw0haASmxOStAPprTC/g2JMMEx/Xav2qxsVjw9+0weUIGy607MMAx3EEF0bXgmaaKPKdDUZh3Z56Xjw9Pavr/d95PAINuH4UUXNCxJRJ/8FfsgOY3N9Od/L1LGuE0XUETOy8g1aOZ15ctIeLEfDyFhoLE0id9jN6Oo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mPaTwfQ0; arc=fail smtp.client-ip=40.107.130.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hCrPMmL2IWhV7b9yOskoICoNGkJjE28lCC3wdssNSXBxHcTp3JfvO0rVUlA0VLX+ztCTnhD6V07hDcFyA+hK94IOJDs8pAnXi+iBHrUuNk+E1PDB7q+TqxsR9lHXD+h/pJ7HSLZCPWQe6r+4kpjGuZ8AXVR6UKYqsCx9Et314a/AbiUKd4gqOX0HCsrru4X1J8l/BRdH+w6uAOHup9DmcUCJ6GMkp3Src06XKogEcWE3CXh2dVRCLmBqfapd74SXZHPLPM1y+FR9K4xIvvuSOoUpUUInjxaOAyqujdvp4o6MScDMw06DICd0oSKR3fymBfoPy1WxHkSvbwQ4LlZypA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L7eFe/vkTCihrnEBB0ryO/9IweNsE5yGn1DP0KOXSuE=;
+ b=E7mujCYtwpSCGiPF/8wggY1FeuGAe2DGZJcdSyRiokpkMXBsCasv5RT71KDCqd7XE290Nsp6UxmFd8E2ZF98QNMzbtBzel2pj4BYysemqZ0MHpL7APzSlpwtEOMi/0C7J7cdELLC1OAPRj3sG0xT9TJLxv5XwI5UaZXhXzZgu54z/uz7gjrkNgFy/xa7u1MGZZ6njwYWorAOuM5DSGiyyLnATMP6HUpj0Mk+NldOw1jBsTRTBINTXjN3bsWWZ81ALjX2D0olGKZFdmb65T4mMLkojfAFqorfIywtKA94tATKFz6C3SW+t4xNmSjrZY4WEkoepxfAc/pTm8KmTtVa/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L7eFe/vkTCihrnEBB0ryO/9IweNsE5yGn1DP0KOXSuE=;
+ b=mPaTwfQ03dW1MX9gMltmjBvJD5GgEDtj32zSzPYg9ROIcxMPSZfSnVcIdo65CAyqpcdVVXc8WZwHO+Z+U3nKYif/ByOMhBBNJnXl/MXiPu8WgFWlTjSd1uoyTBSHUktKq+whDspnM1XoUL2Wv7++JCHOkqyBthmwLPSVbIN5g6YxJ+PEfbxRCyrpDfvKf9hB8LtkfqrdKWsl4s6m6Br4ha6RTkHariRVGvb2amrlSJ1GdaJpBQREIiE1Lwy7t7OcP5ncpWnBl5LgpgLJwhnkozNW6gJZIm8DbuVeypODBwMTmP3vguf2shseqV1N3UG34wp4gRwfr62Sp/oo7QVb+A==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DU2PR04MB8919.eurprd04.prod.outlook.com (2603:10a6:10:2e2::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.26; Fri, 13 Jun
+ 2025 06:19:32 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
+ 06:19:32 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, Frank Li <frank.li@nxp.com>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
+	<richardcochran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>
+Subject: RE: [PATCH net-next v2 00/10] net: fec: cleanups, update quirk,
+ update IRQ naming
+Thread-Topic: [PATCH net-next v2 00/10] net: fec: cleanups, update quirk,
+ update IRQ naming
+Thread-Index: AQHb26TivZOeKKspFk6yDO45rmPXWrQAnl/Q
+Date: Fri, 13 Jun 2025 06:19:32 +0000
+Message-ID:
+ <PAXPR04MB8510C523E90B33C2CD15DAEF8877A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250612-fec-cleanups-v2-0-ae7c36df185e@pengutronix.de>
+ <20250612-nostalgic-elk-of-vigor-fc7df7-mkl@pengutronix.de>
+In-Reply-To: <20250612-nostalgic-elk-of-vigor-fc7df7-mkl@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|DU2PR04MB8919:EE_
+x-ms-office365-filtering-correlation-id: eb8161b0-ad8e-41ab-0c9d-08ddaa4242fb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MlFQUi8rWTZlcWFJbWFOQW9aMmVSSE9FMkw0ejgxMWhyYktuM2tpZGN1NHp3?=
+ =?utf-8?B?LzEvZ1liU3dJM3kyc28waHRCVjZsbE5Selg2Q0N0VEoxeTRETXMraE52OW9U?=
+ =?utf-8?B?N0FXTitLakVRNzE5QjJQTU9WeEdXaW0xR2lDZmxBMHNrazN4KzYyMGFPRk9z?=
+ =?utf-8?B?V1ExdHRDMVp3clZjRFdGR3hoaEtNV29xelJQaDBIcHE4akZVS3JrVE9zU1VS?=
+ =?utf-8?B?a3owZmJXWnJ0K3Iyb0hBWmxmK1ZPVzZobWlGUWhHckF6d1lNOGFkdURaREZT?=
+ =?utf-8?B?cTM4Zm5qbk54NG8rZnJ6anQ5VEIrUGpYb1EvOVY1eXo0M3NLSkd6MVVNczMx?=
+ =?utf-8?B?Slg4QnVSZUZuazRmbmo3OHg1TnltMnJZTnQ5b2lreXpaUDJJeTBGcExJZWRW?=
+ =?utf-8?B?WnhqTjJHWDdYaEZvN2RkeGhYOXh6eDNjRHZDZjVOQ291YWhiRXBnb0ZwQWMy?=
+ =?utf-8?B?ZjVZREtPc2N5azZmNU5ON1R3RXM0Q0xYdHFkY3hJZEJ6WlVpRHJWNDlpYTZm?=
+ =?utf-8?B?MVc3eVJQbFg2c1hTaVk5c1Q4Z0JuT01MSnF3N1QydFRoN01RUWUzT0RYckp4?=
+ =?utf-8?B?VVR4S3JhdzMva3dZSEg0VnVnanlBWlhzb0lzeURPSXNESU4vMXZPbTVNemln?=
+ =?utf-8?B?NXJXMHhydzM1Y0F6RnEyTlBrMk0zL201bDR4L3VmcE5oRjNuRXVRV2MwdTBK?=
+ =?utf-8?B?MjlWRk8zbjl4S1owWEdIOGJCcUpkdFJIU2dCV04rNmZIUUdoZ3oxa3U3VGgw?=
+ =?utf-8?B?OG5obVdlQ3JHOHVTRHYxa0wwYnpNNU1XQXdYS0dkLzlqL1FBWXk4WEo2M2tN?=
+ =?utf-8?B?c1BlMkkwUzIrcGVCellpVFVCalhwQURaWWIxZnNCVFp5TkRhMmtyVEtWWk10?=
+ =?utf-8?B?c25OZEVqakVDOGRMc3daanpybkR1ZHNwa21NQS9RVE9YNS9uZFNCMTdGZnY1?=
+ =?utf-8?B?dnB3U0xrSHpXMGV0TWxmOS9rcjVlLzdrM2s3eFBDd05jTFFNM1ZhY3Z4eTBH?=
+ =?utf-8?B?d29GUGlWSUJwNVlzWklHSTdrbGxjSTR1a0lhUUIzWERxc3JzbVB6V2ZNYm10?=
+ =?utf-8?B?SW9rZTQxMnBNTlJRMkp0TFd2emthdVZnWGhNd2ZCSGlMZzlMT3k5c1ZBMHZi?=
+ =?utf-8?B?UGNnNDF6TkFXRWNXNjVPR3gwTGRpSVpKSjNPMHNwY3ZJOGtxZnc0d3RTS01p?=
+ =?utf-8?B?aGpoSis3ZnYxZ3RjdkhKSS9LUVlCS2RJeUpXa3BCbHRBSmJNeVRKbGY1dFBW?=
+ =?utf-8?B?dzZwQWJ5N2cvUEg0UkQvY3pLVnBkVFZGUmtDSVQ1bTNYUE05cFkyMUd5VHl2?=
+ =?utf-8?B?VElkWm56bFB2VGY3L0hYQkJGMGRaN3g4ckV5WmovSlQ0eXdRbFZqaWE5Wkt1?=
+ =?utf-8?B?Y2xwK1F6eUMvL2FneTBsTTZvS1l5RmlQcFZwTVlSY2IxVThzOVhldjE3dE1E?=
+ =?utf-8?B?WUVONUFtTk9wY3k5cmJBMkZZYVBqcVpMaGhmbVU2OXZuUW9uQzR4YVdBb1JW?=
+ =?utf-8?B?K3poWmswOGhpMW00MDZtSXhjRGhFTEVVampybko5U0JZd2xodkRVMTZnSXdv?=
+ =?utf-8?B?OUMzWnMzeEoxWnBZYi8vY3d5WW5ETzhXcWs1cmxuZERLbEVXRTNWM2NVSkVM?=
+ =?utf-8?B?SHZBWWd5V0RXNlFiZXUzUWJFR2x3dDM0Nm1BSy9JemhXV1dFd21MZmkzK1Yx?=
+ =?utf-8?B?dE1oV0xBbUdOWFZkQ0pjTlU4SWw4ejd5cTFEMVZRK3F1aHFqbTd2a3R2Umk4?=
+ =?utf-8?B?aWltMHcyM0RSWmFsdnB2MUk2bWtPK01XUXhPbWJLaTNkSG4vTGxycmZYT0ZU?=
+ =?utf-8?B?bUJkZ29FNzMycUVHc01XSDVlcWJDNlA2NU9idXc3UVNJTnZDTk1telZyMDJ6?=
+ =?utf-8?B?L0JLWnhkemtWVGJ5NlMwa2FRWGVmSWp4NEFKNTc4SWZvMVpyWll2SWFEbmpa?=
+ =?utf-8?B?alZVRkVJSnpHUnR3aFlYc2lRYzF4cHpNdCtuSVFSYTVaYjJNR2p1SGY5djlC?=
+ =?utf-8?B?ckhrUW5WODNnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aFVYbHlsN3R4S1BvSkxIUVhId3BzSFIzeDhaMWJhVXpINXBCRXJoNTdVMFZ0?=
+ =?utf-8?B?MjdCOVlvdW5XaWt4YStYaFp1U1ZGQmdlVGRpcEJCRzlJTnpFRTNyU2l6ZWZn?=
+ =?utf-8?B?VUZORFhWbVZCaEE3cERhZ0d1N3R0anFzVzJUSHhVNFVEcnYwaFRiVXcrb1Vn?=
+ =?utf-8?B?bDNlTFcwZnEySHc0c3Z0d1lCU0haekpsRUVDMjFhZzdLOWx4WGd4WXJzZis4?=
+ =?utf-8?B?c1JzeTJSQXZGaXFDRDdjMGRqUGpSeUN3UUQ3dExuQ1FWKzVOUk1UbkYzYU1I?=
+ =?utf-8?B?VFFwUGt1bGtET24waTVvS1AxSndXT3BHNnIra0pXRXQxNDFuK2pJTkNndi96?=
+ =?utf-8?B?eWk0Q3cyYitWS0x5TmEvb1A1TVRkTC8vdm5LVXVnYXBjVXFGM3VyZGJoWUM4?=
+ =?utf-8?B?V25XSWcxdFBLcndqOUFRN20xU0l0L1lhK1hkbWFNcHVQcjBxZTRIaWZlbVRs?=
+ =?utf-8?B?dmZmSW9GN0V6QVVoMWllQ3RrcVgxUVZvZktVbnZNNnMyUlZuTVF0aG1HbGcz?=
+ =?utf-8?B?cXNSenFCYVdkZldiZFdFQm5rT3V3UGx3ejNjYzEzS3RhZmZ0ckpTS2NzWWdl?=
+ =?utf-8?B?bWpleis2TEJnOHk0c2JyZmJyUC9jaVFxWkV6RnVSOFVESVdPK0QweE1iZEpt?=
+ =?utf-8?B?V3Y3OGM5OXVaVjUyY2JKWGM4MnBnVGVKbzdDN1dnbHMrOVNGaENaOHE3aGtG?=
+ =?utf-8?B?eEM5c2JJOFc4SjFOWGJNOUhLUExhVzY3SmhoMjRuY01DQ01LaDdlMDNjelJi?=
+ =?utf-8?B?dkxwZ0Z2Nk5iTW9rQmFhenJnTFpIcUZrVGtWR2xMSXVDRHVjSncyR3FOMFBW?=
+ =?utf-8?B?Ulk5UTZHRjRUTWhZMnlobEFWZGxqYk4wR0hMR2ZrK1FpdlkzVDdRaEVjd0lB?=
+ =?utf-8?B?WDg0NkZVSkU3SHFmNTE1T1RrK0JGVWZpa2NpYVJHeHBmSVMyNHBZWnNuMFY1?=
+ =?utf-8?B?VjZSVHFzTFZKK0JoeGo4eTZqWHpreWdLUUFTT1JIVjVidDZ1eTU3Z3M4K3g5?=
+ =?utf-8?B?N1ppUzdIcEcxVFMyZ1F0MEpvYXRlY2hpNGtOMVFqUG5FcE1QaVdwTUdaWTNS?=
+ =?utf-8?B?SndQbGV0UnRBbFhncVdJMnY2SjZLcGxpVWYvVUZPVVJsV2pSdlh5N2hYZDF5?=
+ =?utf-8?B?c0hZejdIMzJwQ3BTUFMvVnJDdDZCNUpJbmNlL2l0Q2dFOG0vbFlRRmtudnMy?=
+ =?utf-8?B?a24zVXM3L1lpZ0cyK1o4eDV6MWRsMy9nazNkMWs4VTFPd1Vqbmt0blJsb05S?=
+ =?utf-8?B?K3lacTlnaVdkR2JqREdBOEtua2NPVzBSYTVUQms3NVhqdk0yMHVZR3UxNWk4?=
+ =?utf-8?B?cWdXSlhVSzh1aVRYb0FrdWJHN3dGeWk2N05lR1diZi95aVA3U2xPOGd4bi95?=
+ =?utf-8?B?NUpSODVPUmhsNDE2U3pLeWtDY3FlY3dQSW5TYmZLcDFQWTlROWgvdDYxeW0w?=
+ =?utf-8?B?NzMwbHZkYllmOXZ0M2dXQkRKbVFpOHllZG9IN3liaU1aN0REb2tRbTZyQUlY?=
+ =?utf-8?B?bERKSzRGcGpDS0Y2Ynlua3NQUHVLVDlCWXh3N0ova3JkR21pRk11dFpQWmd5?=
+ =?utf-8?B?eG1vQ29pbTJzYVVzWjhUTlVpQ2l0a0ZxNjZWaGtZRDhqY240em5ZbWR6U2tO?=
+ =?utf-8?B?UWxpZVJOeG8yc0dZT3R1c01lYkNnVHNHaEJXRWFKOHE3QTZYT0ZyUXNkUU5F?=
+ =?utf-8?B?OTgvdWJrdU0yblhyMmdpQlFoYm14NXc1d3lVbHVxSDVNVHAvSmFnN0gvNnQr?=
+ =?utf-8?B?ZVo5SHNqUm9DNU8vR2JJUkZ6TFhBd0tRSFpwUnNjcHBTNlVxMW9kZlhaaDBG?=
+ =?utf-8?B?akdmR0JNZlZGdkRvYTV6NEE4Q1JSZVlxNVNSZXNhL1RBWUZ4UzIzSm5NR3Nr?=
+ =?utf-8?B?VldpWFpoRTEvcUxPMmVxcU8zVnJqYjFBNk1KMGNLeHVFNEVIRmhwNnZmbDU4?=
+ =?utf-8?B?Mk9VSDZFb2JYZ0JUQ25KRmlqSUhuMldZelRlaStZdENicGppMGhiUVI2bjF6?=
+ =?utf-8?B?UjBEYmlMeDY4aHZ3enN6M3JoNTNUd01OWVRRSUNFbnlGdWNtYnE3Tm5GWmJN?=
+ =?utf-8?B?UGVJcEhXRGM4L0hGQy8vY3BzUWRiZlZMRXBDZTVFM2J6ckF3N2FkRXdSbTMr?=
+ =?utf-8?Q?wDWw=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJhEC05pmnTd9mROTazKMFzSO+CcpY8au57oypCiXGaqhpA_2Q@mail.gmail.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb8161b0-ad8e-41ab-0c9d-08ddaa4242fb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2025 06:19:32.4231
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: n6GjpvvQRruH/iB6mKwLOLFgEBfWaGedRjZ312F6c/unVsCv4wiPGIW6Aj89PTf/Qiv88RPt7ec6NZsGBnvU/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8919
 
-On Thu, Jun 12, 2025 at 10:00:14PM +0900, Robert Pang wrote:
-> Hi Kuan-Wei
-> 
-> Thanks for this patch series to address the bcache latency regression.
-> I tested it but results show regression still remains. Upon review of
-> the patch changes, I notice that the min_heap_sift_down_eqaware_inline
-> #define macro in this patch may have been mapped incorrectly:
-> 
-> +#define min_heap_sift_down_eqaware_inline(_heap, _pos, _func, _args)   \
-> +       __min_heap_sift_down_inline(container_of(&(_heap)->nr,
-> min_heap_char, nr), _pos,        \
-> +                                   __minheap_obj_size(_heap), _func, _args)
-> 
-> I changed it to map to its "eqaware" counterpart like this and the
-> regression does not happen again.
-> 
-> +#define min_heap_sift_down_eqaware_inline(_heap, _pos, _func, _args)   \
-> +       __min_heap_sift_down_eqaware_inline(container_of(&(_heap)->nr,
-> min_heap_char, nr), _pos,        \
-> +                                   __minheap_obj_size(_heap), _func, _args)
-> 
-> Do you think this correction is appropriate?
-> 
-That's definitely my mistake.
-Thanks for testing and pointing it out.
-I'll fix the typo in the next version.
-
-Regards,
-Kuan-Wei
-
-> Best regards
-> Robert Pang
-> 
-> On Wed, Jun 11, 2025 at 6:55 AM Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-> >
-> > The existing min_heap_sift_down() uses the bottom-up heapify variant,
-> > which reduces the number of comparisons from ~2 * log2(n) to
-> > ~1 * log2(n) when all elements are distinct. However, in workloads
-> > where the heap contains many equal elements, this bottom-up variant
-> > can degenerate and perform up to 2 * log2(n) comparisons, while the
-> > traditional top-down variant needs only O(1) comparisons in such cases.
-> >
-> > To address this, introduce min_heap_sift_down_eqaware(), a top-down
-> > heapify variant optimized for scenarios with many equal elements. This
-> > variant avoids unnecessary comparisons and swaps when elements are
-> > already equal or in the correct position.
-> >
-> > Cc: stable@vger.kernel.org # 6.11+
-> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > ---
-> >  include/linux/min_heap.h | 51 ++++++++++++++++++++++++++++++++++++++++
-> >  lib/min_heap.c           |  7 ++++++
-> >  2 files changed, 58 insertions(+)
-> >
-> > diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-> > index 79ddc0adbf2b..b0d603fe5379 100644
-> > --- a/include/linux/min_heap.h
-> > +++ b/include/linux/min_heap.h
-> > @@ -292,6 +292,52 @@ void __min_heap_sift_down_inline(min_heap_char *heap, size_t pos, size_t elem_si
-> >         __min_heap_sift_down_inline(container_of(&(_heap)->nr, min_heap_char, nr), _pos,        \
-> >                                     __minheap_obj_size(_heap), _func, _args)
-> >
-> > +/*
-> > + * Sift the element at pos down the heap.
-> > + *
-> > + * Variants of heap functions using an equal-elements-aware sift_down.
-> > + * These may perform better when the heap contains many equal elements.
-> > + */
-> > +static __always_inline
-> > +void __min_heap_sift_down_eqaware_inline(min_heap_char * heap, size_t pos, size_t elem_size,
-> > +                                        const struct min_heap_callbacks *func, void *args)
-> > +{
-> > +       void *data = heap->data;
-> > +       void (*swp)(void *lhs, void *rhs, void *args) = func->swp;
-> > +       /* pre-scale counters for performance */
-> > +       size_t a = pos * elem_size;
-> > +       size_t b, c, smallest;
-> > +       size_t n = heap->nr * elem_size;
-> > +
-> > +       if (!swp)
-> > +               swp = select_swap_func(data, elem_size);
-> > +
-> > +       for (;;) {
-> > +               b = 2 * a + elem_size;
-> > +               c = b + elem_size;
-> > +               smallest = a;
-> > +
-> > +               if (b >= n)
-> > +                       break;
-> > +
-> > +               if (func->less(data + b, data + smallest, args))
-> > +                       smallest = b;
-> > +
-> > +               if (c < n && func->less(data + c, data + smallest, args))
-> > +                       smallest = c;
-> > +
-> > +               if (smallest == a)
-> > +                       break;
-> > +
-> > +               do_swap(data + a, data + smallest, elem_size, swp, args);
-> > +               a = smallest;
-> > +       }
-> > +}
-> > +
-> > +#define min_heap_sift_down_eqaware_inline(_heap, _pos, _func, _args)   \
-> > +       __min_heap_sift_down_inline(container_of(&(_heap)->nr, min_heap_char, nr), _pos,        \
-> > +                                   __minheap_obj_size(_heap), _func, _args)
-> > +
-> >  /* Sift up ith element from the heap, O(log2(nr)). */
-> >  static __always_inline
-> >  void __min_heap_sift_up_inline(min_heap_char *heap, size_t elem_size, size_t idx,
-> > @@ -433,6 +479,8 @@ void *__min_heap_peek(struct min_heap_char *heap);
-> >  bool __min_heap_full(min_heap_char *heap);
-> >  void __min_heap_sift_down(min_heap_char *heap, size_t pos, size_t elem_size,
-> >                           const struct min_heap_callbacks *func, void *args);
-> > +void __min_heap_sift_down_eqaware(min_heap_char *heap, size_t pos, size_t elem_size,
-> > +                                 const struct min_heap_callbacks *func, void *args);
-> >  void __min_heap_sift_up(min_heap_char *heap, size_t elem_size, size_t idx,
-> >                         const struct min_heap_callbacks *func, void *args);
-> >  void __min_heapify_all(min_heap_char *heap, size_t elem_size,
-> > @@ -455,6 +503,9 @@ bool __min_heap_del(min_heap_char *heap, size_t elem_size, size_t idx,
-> >  #define min_heap_sift_down(_heap, _pos, _func, _args)  \
-> >         __min_heap_sift_down(container_of(&(_heap)->nr, min_heap_char, nr), _pos,       \
-> >                              __minheap_obj_size(_heap), _func, _args)
-> > +#define min_heap_sift_down_eqaware(_heap, _pos, _func, _args)  \
-> > +       __min_heap_sift_down_eqaware(container_of(&(_heap)->nr, min_heap_char, nr), _pos,       \
-> > +                            __minheap_obj_size(_heap), _func, _args)
-> >  #define min_heap_sift_up(_heap, _idx, _func, _args)    \
-> >         __min_heap_sift_up(container_of(&(_heap)->nr, min_heap_char, nr),       \
-> >                            __minheap_obj_size(_heap), _idx, _func, _args)
-> > diff --git a/lib/min_heap.c b/lib/min_heap.c
-> > index 96f01a4c5fb6..2225f40d0d7a 100644
-> > --- a/lib/min_heap.c
-> > +++ b/lib/min_heap.c
-> > @@ -27,6 +27,13 @@ void __min_heap_sift_down(min_heap_char *heap, size_t pos, size_t elem_size,
-> >  }
-> >  EXPORT_SYMBOL(__min_heap_sift_down);
-> >
-> > +void __min_heap_sift_down_eqaware(min_heap_char *heap, size_t pos, size_t elem_size,
-> > +                                 const struct min_heap_callbacks *func, void *args)
-> > +{
-> > +       __min_heap_sift_down_eqaware_inline(heap, pos, elem_size, func, args);
-> > +}
-> > +EXPORT_SYMBOL(__min_heap_sift_down_eqaware);
-> > +
-> >  void __min_heap_sift_up(min_heap_char *heap, size_t elem_size, size_t idx,
-> >                         const struct min_heap_callbacks *func, void *args)
-> >  {
-> > --
-> > 2.34.1
-> >
+PiBPbiAxMi4wNi4yMDI1IDE2OjE1OjUzLCBNYXJjIEtsZWluZS1CdWRkZSB3cm90ZToNCj4gPiBU
+aGlzIHNlcmllcyBmaXJzdCBjbGVhbnMgdXAgdGhlIGZlYyBkcml2ZXIgYSBiaXQgKHR5cG9zLCBv
+YnNvbGV0ZQ0KPiA+IGNvbW1lbnRzLCBhZGQgbWlzc2luZyBoZWFkZXIgZmlsZXMsIHJlbmFtZSBz
+dHJ1Y3QsIHJlcGxhY2UgbWFnaWMNCj4gPiBudW1iZXIgYnkgZGVmaW5lcykuDQo+ID4NCj4gPiBU
+aGUgbmV4dCAyIHBhdGNoZXMgdXBkYXRlIHRoZSBvcmRlciBvZiBJUlFzIGluIHRoZSBkcml2ZXIg
+YW5kIGdpdmVzDQo+ID4gdGhlbSBuYW1lcyB0aGF0IHJlZmxlY3QgdGhlaXIgZnVuY3Rpb24uDQo+
+IA0KPiBEb2ghIFRoZXNlIDIgcGF0Y2hlcyBoYXZlIGJlZW4gcmVtb3ZlZCwgSSdsbCBzZW5kIGFu
+IHVwZGF0ZWQgc2VyaWVzIHRvbW9ycm93Lg0KPiANCg0KInVwZGF0ZSBJUlEgbmFtaW5nIiBuZWVk
+cyB0byBiZSByZW1vdmVkIGZyb20gdGhlIHN1YmplY3QgYXMgd2VsbC4NCg0K
 
