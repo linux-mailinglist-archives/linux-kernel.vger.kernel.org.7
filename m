@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-685879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70481AD8FC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:41:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D9CAD8FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337DD17A785
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B46A7A739C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BA01E1DFE;
-	Fri, 13 Jun 2025 14:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F8A199FAB;
+	Fri, 13 Jun 2025 14:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvEmwf1l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLfplMoX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5A019D88F;
-	Fri, 13 Jun 2025 14:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D819192B84;
+	Fri, 13 Jun 2025 14:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825637; cv=none; b=diPrwT0QoAT5mdi1Tcbvwr6sWMRc5UJ7rZ7f0tVPuFT8crsWNF9y3O8tyrRWuJ8tSlqhZFGU58ik3FnEbeUibOo7do9rZfwmxNivmaQza/lIllSivxhVyC2oVfqh0o7pqS1uLSuuMZZN4CiDKFzPYCyVGbc3crKK0WtL6XzMOfA=
+	t=1749825538; cv=none; b=Y0B4ZKTRHbKUKKk0JnPMqP8OyMocoYwf8KPgKFpwPLkbZmLb9++hLxqgLXxKG4/KaL3C7ul72i7YgoHVjRh6jJ942xAP9WZea+rMG9GBoIFoR4VElJ7Ytq9oUz4nhRKaK0mGUOp22dFlfcFb4pOaSVZ2SVPs/Ob0HajtyXwuFeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825637; c=relaxed/simple;
-	bh=ukElmnGXQREfqKEweQO3U9N27ypBuMm6P/e+FMdR3F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLXb0SuxQCphNiBZDw3PaF9YwFBO+GZShPD/fmTZtoZle0pl94XFWrIax/ALAj7XHR6i2W0+OwY1e9MYw6hk77PWs4d/94saNpFS9BGo2Cabn83CDEtTjo0nLps7eByj7gyfwB0gQTBJ32oA02BAyLtTKVOwiBzf/2Ko8cChSFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvEmwf1l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68948C4CEE3;
-	Fri, 13 Jun 2025 14:40:36 +0000 (UTC)
+	s=arc-20240116; t=1749825538; c=relaxed/simple;
+	bh=xrFkZTYOl+Mqw+MnXtAP1z+pwD14ChtvOblUtxTfkXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNOlFDDvdI4t8q67j30sRW8MtlnLmUGY0TUmK2fIloXjEw0uuXHp9SzUgi9RPxKj9rrWzcX4HsE+3MgmJ817lrytGyJXYFZskZ+lQQ0GF7mVwAB1tre17zqKgP4nR4OsxXHHg4H9UyemKhKuFvcS6AKCSJPIvoFf0/yG/FzRrpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLfplMoX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C81DC4CEE3;
+	Fri, 13 Jun 2025 14:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749825637;
-	bh=ukElmnGXQREfqKEweQO3U9N27ypBuMm6P/e+FMdR3F0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rvEmwf1lFXDM9ZvmgPspADE8tJL4IEhvgbU8HfVx3ZPiT1i6its39cdN+G03Fq8P9
-	 S8EbS+WBHsW8CfZqPrsK1wbrPADgopSFt0qBFkOnNw2CH1xXO8K4CjCh3cXg8hoe5t
-	 IyazDn1qIEJGAPuxiLjorBKH68Dun7qzyX1ld6KCFGw4S9/53ArQscRaUAsDTWlthn
-	 2k6fnhUycmeeQV/Ouk6AWU9gZafBdu3G+QHQtPVLyNJc/9FMpeqNkx3d7SCi5L6rgw
-	 R8uz40PlByH7dA9RQ+IAC2JIoeiM0lst0rcEqT+CfmO5J3yplYv1AkICKuEVrdWwOE
-	 EZtkBkxTrKy0g==
-Date: Fri, 13 Jun 2025 20:08:26 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
-	David Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v3 10/62] KVM: SVM: Add helper to deduplicate code for
- getting AVIC backing page
-Message-ID: <dgpb6ukrgoo63o3tikrwectvq5l5dcu7k7fskdkyxtr5lmbshg@eb7y7fzwc6wp>
-References: <20250611224604.313496-2-seanjc@google.com>
- <20250611224604.313496-12-seanjc@google.com>
+	s=k20201202; t=1749825538;
+	bh=xrFkZTYOl+Mqw+MnXtAP1z+pwD14ChtvOblUtxTfkXM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gLfplMoX1JV+9xs3L9h7WbHAZKEUMGWzRVo/cvt7qFp7WFa428Sa9mEQeyuD6BZNC
+	 wPX/cSbiKhDONQXokSzlLtoE/U17YsIwR+TDoGEJE9dWSv+fcWtbqVxxBwWjO+DJJa
+	 3dxO1dRtj9c8uYiZ8ag36JsN58gRPyGK/HhQI0yIlWTNyT0keXpzt8zx0czPv6hOqf
+	 smgg1swTkfLvqYvye/u4buKy5LPsz2ATtXQxZBLivVWK3VNpk+A3LJLVyjWrgfomC2
+	 3YxiZGqmcSsRpHFxvUiW78up/4oJP+ASvVU1CZkYyUczff5odNKkdpKjSue5gi26uw
+	 4wHAp0jc0sfXA==
+From: Sven Peter <sven@kernel.org>
+To: Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Sven Peter <sven@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Nick Chan <towinchenmi@gmail.com>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: apple: Move touchbar mipi {address,size}-cells from dtsi to dts
+Date: Fri, 13 Jun 2025 16:38:47 +0200
+Message-Id: <174982533895.547352.2988220636703408038.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250611-display-pipe-mipi-warning-v1-1-bd80ba2c0eea@kernel.org>
+References: <20250611-display-pipe-mipi-warning-v1-1-bd80ba2c0eea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611224604.313496-12-seanjc@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 11, 2025 at 03:45:13PM -0700, Sean Christopherson wrote:
-> Add a helper to get the physical address of the AVIC backing page, both
-> to deduplicate code and to prepare for getting the address directly from
-> apic->regs, at which point it won't be all that obvious that the address
-> in question is what SVM calls the AVIC backing page.
+
+On Wed, 11 Jun 2025 15:18:53 +0000, Sven Peter wrote:
+> Move the {address,size}-cells property from the (disabled) touchbar screen
+> mipi node inside the dtsi file to the model-specific dts file where it's
+> enabled to fix the following W=1 warnings:
 > 
-> No functional change intended.
+> t8103.dtsi:404.34-433.5: Warning (avoid_unnecessary_addr_size): /soc/dsi@228600000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+> t8112.dtsi:419.34-448.5: Warning (avoid_unnecessary_addr_size): /soc/dsi@228600000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
 > 
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/svm/avic.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> [...]
 
-LGTM.
-Reviewed-by: Naveen N Rao (AMD) <naveen@kernel.org>
+Applied, thanks!
 
-- Naveen
+[1/1] arm64: dts: apple: Move touchbar mipi {address,size}-cells from dtsi to dts
+      commit: 08a0d93c353bd55de8b5fb77b464d89425be0215
 
+Best regards,
+-- 
+Sven Peter <sven@kernel.org>
 
