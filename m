@@ -1,202 +1,475 @@
-Return-Path: <linux-kernel+bounces-685856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE013AD8F95
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:31:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49186AD8F9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6835B18867ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C56F3B0290
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C0018C03F;
-	Fri, 13 Jun 2025 14:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B59E1946DA;
+	Fri, 13 Jun 2025 14:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CVTQexvX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wq70cfaT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C708EAF1;
-	Fri, 13 Jun 2025 14:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749824976; cv=fail; b=heQLvLdB9Mt+qqpNzjviN1zdtpfxGTuDpoGMuGORqoBSj9b2RN2E5XSFG6kb5x2k3PfHFHw9KIyseHCKSWmh41khXlrzIhDjlrBaAueUuwxerZbb5RUuWPPCb/VjAwXnWylVG16/mQtecHa2xTTUocF5vgtOSk42xL8VkawsM5c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749824976; c=relaxed/simple;
-	bh=fw8m+7TdTp24J2v0w5wZmXW61zFUktn2P8Us6JIyHMI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NFOcO+f05cDah60W/LZ/g95A8MMerTPsr+R9SODIO16uzOB+AfZTMILIQgd+jkHLO5QSCJgOuEXn3YnKnZAMdPzL4H0D1zyWeu1UV9U/YwtufAkx7D6vi9RNeD30Uqrzp5A36kn42AMx49kFi+4Q7QYq4HBPzqq59FpFkugsTnE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CVTQexvX; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749824974; x=1781360974;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=fw8m+7TdTp24J2v0w5wZmXW61zFUktn2P8Us6JIyHMI=;
-  b=CVTQexvXxvrSEbeBu+/WgaxrNSbPCjy95vEHum7Hh7vJLRynr25CjtY3
-   reoaisEnAWVccdply0rkQsGkSj2LFvnS8lduwYwjFgoIDKEXtUSVHEQfF
-   rl+Mdo3mjk7f6h3k493qtWHwm+JfXh/6mXy06bJs4MVO2kicFVAmdillt
-   fuiMwTogaeCsfApqxXZ/EE2FGz88F3l/wHUy5hLotZu5riG63xaheMAFw
-   3PbKkSVqwQfWtstMdNX5gy10C0NNhhuCPfpNWU7UCv3LYXjtrsOJHlQdy
-   6EUUkoWavQuiaxvrkUoFoWRB5/ayyA0Gid0ypxtCy8fJrYO6Ol3mipir6
-   Q==;
-X-CSE-ConnectionGUID: c1Yd3wpqQjuiJWVCnvMJag==
-X-CSE-MsgGUID: QUmelyQATxSx753aDAFtCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="52136556"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="52136556"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:29:33 -0700
-X-CSE-ConnectionGUID: 3+JA9g0gTWaDYRXu1NQrTg==
-X-CSE-MsgGUID: F6dGBt9rTfChpAmOFmB2Sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="153130556"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:29:32 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 13 Jun 2025 07:29:32 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 13 Jun 2025 07:29:32 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.66)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 13 Jun 2025 07:29:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DTJiUB0SmkJt541nmC19c8zOWYhZLgTRMBeT59Uv9ETQ0KDVOoyHKr4A8twe8C2EhNEjzAEFM/14QTbuhmKbB2OjSSved9nYj1zDAJUYzo8IvloGiWD22ARWt3hRANM+aRAUPt2IfqIwCqSMU/mkB7RCc7nnlOXHDMFh+N/pUN4gQzQcSEWJgBIEBrRFxO3AOgi6dugUPeByUeHrgeMWwf8as3A6jaYhZpfZgwOGyjRnp6bjJzx5PXOKiisJn8coLB1MwbfUyCBvlaGD5a5pjq/tT+8CsRds1YWE5eZo5xUhPjx73RHFbu/FEHgu55RlvF0SlKP582qqG140Hxm61A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9ep7Yeludjg8ij5LPYg5QcDUFMIRnZNqy5ZlVIKgbgk=;
- b=kZrKi1t9cJPz98jGIfMl6GmGAgquWEw8HyMWC/LkTgcWdmXk2rkEHWu4nmExweLG1PN0cEKd4dRn4zBBV3qWjDaurKuIpnNbnOubTKWH6MTlKKJoeBiVVlCpDSok0ubiG8eYdnlo6muvJqMawNgmIIgCSfOXaDyh/UFLIjcyOfyiTztk88FNpeHRRGenjVpjrFVxDFD+rbnFtl7PazdBvxP90FVlIrg8V41Xe2QxVyF2QhfgvZIbaYoGtdnWw532C/FAbejPUj7uc+6M8CITBYx2DH6G2CU9399Q87MMltb1asltnsqoMBv1lkXA7VMSTgyc7Rp/k36ArHuF5vkMDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by PH3PPF7708D4D9D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.29; Fri, 13 Jun
- 2025 14:29:29 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::19ef:ed1c:d30:468f]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::19ef:ed1c:d30:468f%4]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
- 14:29:28 +0000
-Date: Fri, 13 Jun 2025 09:30:40 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Li Ming <ming.li@zohomail.com>, <dave@stgolabs.net>,
-	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <shiju.jose@huawei.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Li Ming
-	<ming.li@zohomail.com>
-Subject: Re: [PATCH v2 1/1] cxl/edac: Fix potential memory leak issues
-Message-ID: <684c361017c6b_2230d9294a2@iweiny-mobl.notmuch>
-References: <20250613011648.102840-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250613011648.102840-1-ming.li@zohomail.com>
-X-ClientProxiedBy: MW4PR04CA0245.namprd04.prod.outlook.com
- (2603:10b6:303:88::10) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF4D2E11B7;
+	Fri, 13 Jun 2025 14:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749825189; cv=none; b=cxD3aIo3TysAYZhPGtBn9Eq0+szIFM/aRLkMKFyBEvjMVvnWWYSP3obPAeuhhV/913z85GI+y0Ahv//TofATMkAkCROKY7F3J1oj3686c+EC3E/NIyY6Pxs02P4MDK8TVQf7GfVnwJ3sRdAxIwXc1Asj3VX71wQk0WIBujhAKd4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749825189; c=relaxed/simple;
+	bh=+tGBh2xEXyza6ldfEuLaYVOyjFoxkRAurInMANakuI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUHNz1xGQhu4GZ/DQJO+xxaT2vrJI3+gfmQBPuJI2iPYCBeR9oDEwB1d3VAvCdywK5YIErDBRDGwkc7G5BwF/O5guK3u8G0FwqJOEaX8xpppX1zJkWWQf+6c7TcspbVZgyOBm1NRswSORJm0APvF5auatSffiVaaVjaKCGSUhPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wq70cfaT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=OZdLTKOM+SyNN/BzmASFxjmQtXgHRiiVdbzYVC+5Q1U=; b=wq70cfaTCu0rFr5CfCeK/6sqUf
+	WgaegOZzmKLcFM1WEOQYpf33BOoTBa+KbzzcS45bdON7r+WYo91rTTKikpVElQ+mV4HxedRKcij7E
+	D4GIY5s+Mup6iPes52ehmNCDlHNH1zrkWE3UTbOnxepuSiFzgzehKulaKU8vqb6kix50=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uQ5ST-00Fj6r-01; Fri, 13 Jun 2025 16:32:41 +0200
+Date: Fri, 13 Jun 2025 16:32:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>, Vivian Wang <uwu@dram.page>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <7dfcfb04-8a7f-4884-9c91-413a6fb2a56b@lunn.ch>
+References: <20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn>
+ <20250613-net-k1-emac-v1-2-cc6f9e510667@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|PH3PPF7708D4D9D:EE_
-X-MS-Office365-Filtering-Correlation-Id: cfbb8a18-8f55-4046-cb5a-08ddaa86b48c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?SkbiBfOXnRVpH8xj+CiqJHalsnKwPRs0Ts4j5EkwBOsIsPTTCSAiyFdw4ZqQ?=
- =?us-ascii?Q?Jw96CX/+sBV9NwoR7YMHWdKHVAG42l4lfxZxZxlB0+zsOF+KLFZSReYfqNdb?=
- =?us-ascii?Q?NBd/YYTbpIHEyhFIaztH13/9qrMF9RqlzdpULDn2LcJZcxL2nWOWbz5orVuQ?=
- =?us-ascii?Q?Ow+LOWfgm2i1H2OsjuCCx4JEE3bVYwzwdH1Vt+ByVUQUblLU6u87Dnfcgj/S?=
- =?us-ascii?Q?CN5elNg/sABct4NfTEIKuJGGR1k8Rw+24oKb0xuEZYG7Pgmf4spO0ed9Qoql?=
- =?us-ascii?Q?it4leqYyjYqwd9VBHPr+doO62hxOLUsh8dK1cfU3uFipkgaRQoIt2cIH/6TA?=
- =?us-ascii?Q?0ZQjnJCjzp8UYOLhsUh/HEG6+5IrNipwxzlcRicSRIcb/F4MRT2IXCqlK9PI?=
- =?us-ascii?Q?7sjTZCPh0LiksTlUkJbm2JvCpVAZd3U/PPMsZJEiAqxKaZ1722MSGbRJkh6M?=
- =?us-ascii?Q?x/Va2aOsktDU2svT0+cYxajNk0Il1g5uYGNEO2TT1HapSHgbAtHquNlWDp9W?=
- =?us-ascii?Q?9OVM9G0r3NmTx+M8qkIsDtKHo/+38pWm1ZmH1yd9YG+DsdIXWZM4zn0aoUwg?=
- =?us-ascii?Q?YJnsqLCz/Nz5BW1RvcORpeezSv5NBACJPgwbbxR6Xo6jvF6F7tb8ZvLRAyRw?=
- =?us-ascii?Q?awg0wgnAg37kqUX2j3B8FGw7xAFt4QCZ3bqA6db3NF+NCl4X61TcmxIysOa6?=
- =?us-ascii?Q?dRKm+xhIjzUfl9GakvWb7/G8cWmufdWl5w0iZfG1SUE7t5sknrkkOqfSzeo6?=
- =?us-ascii?Q?+CAotS37YwvrCCYPBGCwNeWKu0kaVQKS4K24oUTkPZpHIfKnZ+30ysR1hB6B?=
- =?us-ascii?Q?L/p9sHoA1A7R5CXgmKSicswP4d2g62lRJYHlmR/Po7ZKqSRcIVb9fkFDi7WD?=
- =?us-ascii?Q?I18ZR12pyiyeQIEuPYuJWhMmKC1jQC+SgakTqZ7qjXDrEoeNCbs5bjTM0TwS?=
- =?us-ascii?Q?tLSJHcqbZH+ZL1s7xJmBSjbvz28vOZ/MpZdNK66Bo9jOiFjjTmj1HcqmTvcx?=
- =?us-ascii?Q?zbsFhu45tzSzWeONJhb8D5aX637gxltAxEOguFmB1bJSqLDR9XOy8Plku3qr?=
- =?us-ascii?Q?xarwZOjUan1li/MmY4TkNhkyv9A5uBVMkHSLPD9F9+QwNiXLtCflU89PV84k?=
- =?us-ascii?Q?dUXlDVTgYJzB0tmG5VZjAVVMGL0Ie0oiGHdWSyZIo7YJY2+CRYzqt8cexBFu?=
- =?us-ascii?Q?NzPsJ+fJzogXJeDfrN6qtne3IarlEgquodgpWqTSweDLzBQ9bu2t8ilp0r7x?=
- =?us-ascii?Q?jAZQuuB+JUfH3egiNa9jqal5AnYw5LmI2UEKgjZnmk0fR593mek914BHy8p4?=
- =?us-ascii?Q?6sdwsHzePHD55iAIHTU55vEAL65Qatnb1p/QqTDQ+UimU3IL/pN7uXA0SHJI?=
- =?us-ascii?Q?J5M5uspiKUlgBTHnKqN7axOnTyNnaDf/PUXG7kFjdklirCFovpQ3Gqs7vu7g?=
- =?us-ascii?Q?DDuciCP9siE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6Mb4SSX7z2tLKGiNUFGNvzbXGG5GMD3aOL2PsXTSxiWE644AnjqRbzIIU5mu?=
- =?us-ascii?Q?HH99N3MGfRsbRviVXAt1KA/D4sJXmJGmHLgb8jGy5rP5xCtgqiW+P2gN8OBZ?=
- =?us-ascii?Q?ybFaGdvv4e5ydVPGu/DRhgRCRle4AZa6XVPeFDugITdRBO+VfXrzWxryK6FS?=
- =?us-ascii?Q?phdymtZSTY/3VnflZ2vw8EW5pA61mOSAaeQA71C/sEEjnKhOG7zjq5sz/VPZ?=
- =?us-ascii?Q?EY/dtn9y9y2aUbtz+80VT1kgSBoFzLD4gNoD0SJXkCtckUmnkvMv9+4B+1ye?=
- =?us-ascii?Q?yh68biSXE1gBzu/O/sicpDYknKo9qEh95dK1OSCvTCrad9AdoVOUph61PUoz?=
- =?us-ascii?Q?jSt2l6AvaMwl6Uymj0BsMNdkaX1xljURs3mtgC/su6clvtfzIgQoSah+W7VW?=
- =?us-ascii?Q?HuidXWz63JqFDW9/pufuBIi6bHTzgmRyJrthK3CLqBo+eblTwTncAL674NZE?=
- =?us-ascii?Q?X7OtWUBIwzodRHcNKd6dCnWug+o3+ZrVWX6DKkFh1PeNP+8vot3wuhnC5TU2?=
- =?us-ascii?Q?ANxdk4CfTc6/RaGVQBasLEqJ5nmQhjuRvGHfOBZqIOIJteg1RGx8c5W4Xiz0?=
- =?us-ascii?Q?7mqcBUrXJv3/lntwU9NSZsk3G+xO89pz+uY5R2AiGaEgd+rnC4gDxPYMAB+V?=
- =?us-ascii?Q?OieHLfPMvmVO/LLqLl9FhNhb/OoZe3VK2+blGX8pt9Is+dXxiYVti0R8k+zB?=
- =?us-ascii?Q?PAZ0lMU8G/mrzoY5ZLBdkRCDZXe6muI3d3B1dNdaExlefo8e+QO6J/isqwot?=
- =?us-ascii?Q?hdS+LXC1cFWUpZc2UZCK2BFzaz1yp7mhWj6ymPACqbl4XpWP9Meou/GZPASe?=
- =?us-ascii?Q?8XzanD7HIvAVXigYUky9yv7w1SnoZDzUfvAlzuIqTbEyx01gUY+bo8XsGql4?=
- =?us-ascii?Q?S6Y287quDHOaba/sX0zMahd43zA9Pg17B3IdIVTKWUKhMUKBLOaVNJfRymZH?=
- =?us-ascii?Q?YjJ/aVK1FKXFgDpn23rQUrOW1KAmOsN+VAPBDD6pCwV1Pgo2h5pRatNAQZVA?=
- =?us-ascii?Q?fCPZlVFEF7EDfLuKjJMXNg9PxX7N9iGvf8nJzbQMj43ik7sItovIGO8pl5xE?=
- =?us-ascii?Q?LcZ78+zR1lCtcpg5MayZdPZDydVub5rRltcZwQJLdwixea+mi3XjDce445dj?=
- =?us-ascii?Q?Tq6V7A2Dm583iaf/bJGSC46MJEHIEDJdItmi1fHToGKE3tC6qjHZsDXrThab?=
- =?us-ascii?Q?kXxBx0NsY2ZQQ2kp9sc/JhuW/CNQKKMlPWtbfapIaRZ1m3Mbhwgipw/p+gUd?=
- =?us-ascii?Q?Q8BiUel6i5P/eU5+IMQ+z+0V5VunS0phnAfBM7FuHT4GKrIdiH8gDZjdWsaK?=
- =?us-ascii?Q?qlkOOtG8DeM8gY+D0gUrumJtRIYKMXHbHyQeEzV+n9ZmHCV9Q26HVMMz268v?=
- =?us-ascii?Q?YXuObPTvg8o9fh9Az4EpjfwWC7FJ9b+SQXz0nTbSL3rEfsje1hgTrDBlKrhJ?=
- =?us-ascii?Q?KNnSp9nm1SMTjY6wsEL245JmtzWojW4i9bZFI4d+u8JD5wLDuu0cDCUaIFR9?=
- =?us-ascii?Q?cYPmSjmhe8E4pfWMi1xP4VPNfK0UMFXw0ptKbKDQtJ6odZUdopyKo9Summhd?=
- =?us-ascii?Q?8+vkW9NsScOOrF4bn5d71bgMcT9zs21bRRxMGie0?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfbb8a18-8f55-4046-cb5a-08ddaa86b48c
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 14:29:28.9081
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WqR8Pd3eEpMcUXFMXN5Eo5mSLMS7ARKdn0pp6ZFre06zvaBRuVEsQYNcXwaa4DPJ4FOaVnN8T3q96lJaXcoWqA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF7708D4D9D
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613-net-k1-emac-v1-2-cc6f9e510667@iscas.ac.cn>
 
-Li Ming wrote:
-> In cxl_store_rec_gen_media() and cxl_store_rec_dram(), use kmemdup() to
-> duplicate a cxl gen_media/dram event to store the event in a xarray by
-> xa_store(). The cxl gen_media/dram event allocated by kmemdup() should
-> be freed in the case that the xa_store() fails.
-> 
-> Fixes: 0b5ccb0de1e2 ("cxl/edac: Support for finding memory operation attributes from the current boot")
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-> Tested-by: Shiju Jose <shiju.jose@huawei.com>
-> Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
+> +static inline void emac_wr(struct emac_priv *priv, u32 reg, u32 val)
+> +{
+> +	writel(val, priv->iobase + reg);
+> +}
+> +
+> +static inline int emac_rd(struct emac_priv *priv, u32 reg)
+> +{
+> +	return readl(priv->iobase + reg);
+> +}
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+I only took a very quick look at the code. I'm sure there are more
+issues....
 
-[snip]
+Please do not user inline functions in a .c file. Let the compiler
+decide.
+
+> +static void emac_alloc_rx_desc_buffers(struct emac_priv *priv);
+> +static int emac_phy_connect(struct net_device *dev);
+> +static void emac_tx_timeout_task(struct work_struct *work);
+
+No forward declarations. Move the code around so they are not needed.
+
+> +static int emac_ioctl(struct net_device *ndev, struct ifreq *rq, int cmd)
+> +{
+> +	int ret = -EOPNOTSUPP;
+> +
+> +	if (!netif_running(ndev))
+> +		return -EINVAL;
+> +
+> +	switch (cmd) {
+> +	case SIOCGMIIPHY:
+> +	case SIOCGMIIREG:
+> +	case SIOCSMIIREG:
+
+There is no need to test for these values. Just call phy_mii_ioctl()
+and it will only act on IOCTLs it knows.
+
+> +		if (!ndev->phydev)
+> +			return -EINVAL;
+> +		ret = phy_mii_ioctl(ndev->phydev, rq, cmd);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return ret;
+> +}
+> +static int emac_up(struct emac_priv *priv)
+> +{
+> +	struct platform_device *pdev = priv->pdev;
+> +	struct net_device *ndev = priv->ndev;
+> +	int ret;
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +	pm_runtime_get_sync(&pdev->dev);
+> +#endif
+
+You don't need this #ifdef, there is a stub function is PM_SLEEP is
+not enabled.
+
+> +
+> +	ret = emac_phy_connect(ndev);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "emac_phy_connect failed\n");
+> +		goto err;
+> +	}
+> +
+> +	emac_init_hw(priv);
+> +
+> +	emac_set_mac_addr(priv, ndev->dev_addr);
+> +	emac_configure_tx(priv);
+> +	emac_configure_rx(priv);
+> +
+> +	emac_alloc_rx_desc_buffers(priv);
+> +
+> +	if (ndev->phydev)
+> +		phy_start(ndev->phydev);
+
+Is it possible to not have a PHY? emac_phy_connect() seems to return
+an error if it cannot find one.
+
+> +static int emac_down(struct emac_priv *priv)
+> +{
+> +	struct platform_device *pdev = priv->pdev;
+> +	struct net_device *ndev = priv->ndev;
+> +
+> +	netif_stop_queue(ndev);
+> +
+> +	if (ndev->phydev) {
+> +		phy_stop(ndev->phydev);
+> +		phy_disconnect(ndev->phydev);
+> +	}
+> +
+> +	priv->link = false;
+> +	priv->duplex = DUPLEX_UNKNOWN;
+> +	priv->speed = SPEED_UNKNOWN;
+> +
+> +	emac_wr(priv, MAC_INTERRUPT_ENABLE, 0x0);
+> +	emac_wr(priv, DMA_INTERRUPT_ENABLE, 0x0);
+> +
+> +	free_irq(priv->irq, ndev);
+> +
+> +	napi_disable(&priv->napi);
+> +
+> +	emac_reset_hw(priv);
+> +	netif_carrier_off(ndev);
+
+phylib will of done this when phy_stop() is called. Let phylib manage
+the carrier. The only thing you probably need is netif_carrier_off()
+in probe().
+
+> +static int emac_change_mtu(struct net_device *ndev, int mtu)
+> +{
+> +	struct emac_priv *priv = netdev_priv(ndev);
+> +	u32 frame_len;
+> +
+> +	if (netif_running(ndev)) {
+> +		netdev_err(ndev, "must be stopped to change MTU\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	frame_len = mtu + ETHERNET_HEADER_SIZE + ETHERNET_FCS_SIZE;
+> +
+> +	if (frame_len < MINIMUM_ETHERNET_FRAME_SIZE ||
+> +	    frame_len > EMAC_RX_BUF_4K) {
+> +		netdev_err(ndev, "Invalid MTU setting\n");
+> +		return -EINVAL;
+> +	}
+
+If you set ndev->mtu_max and ndev->mtu_min, the core will check this
+for you.
+
+> +static void emac_reset(struct emac_priv *priv)
+> +{
+> +	if (!test_and_clear_bit(EMAC_RESET_REQUESTED, &priv->state))
+> +		return;
+> +	if (test_bit(EMAC_DOWN, &priv->state))
+> +		return;
+> +
+> +	netdev_err(priv->ndev, "Reset controller\n");
+> +
+> +	rtnl_lock();
+> +	netif_trans_update(priv->ndev);
+> +	while (test_and_set_bit(EMAC_RESETING, &priv->state))
+> +		usleep_range(1000, 2000);
+
+Don't do endless loops waiting for the hardware. It may never
+happen. Please use something from iopoll.h
+
+> +static int emac_mii_read(struct mii_bus *bus, int phy_addr, int regnum)
+> +{
+> +	struct emac_priv *priv = bus->priv;
+> +	u32 cmd = 0;
+> +	u32 val;
+> +
+> +	cmd |= phy_addr & 0x1F;
+> +	cmd |= (regnum & 0x1F) << 5;
+> +	cmd |= MREGBIT_START_MDIO_TRANS | MREGBIT_MDIO_READ_WRITE;
+> +
+> +	emac_wr(priv, MAC_MDIO_DATA, 0x0);
+> +	emac_wr(priv, MAC_MDIO_CONTROL, cmd);
+> +
+> +	if (readl_poll_timeout(priv->iobase + MAC_MDIO_CONTROL, val,
+> +			       !((val >> 15) & 0x1), 100, 10000))
+> +		return -EBUSY;
+
+readl_poll_timeout() returns an error code. Don't replace it.
+
+> +static void emac_adjust_link(struct net_device *dev)
+> +{
+> +	struct emac_priv *priv = netdev_priv(dev);
+> +	struct phy_device *phydev = dev->phydev;
+> +	bool link_changed = false;
+> +	u32 ctrl;
+> +
+> +	if (!phydev)
+> +		return;
+
+How does that happen?
+
+> +	if (phydev->link) {
+> +		ctrl = emac_rd(priv, MAC_GLOBAL_CONTROL);
+> +
+> +		/* Update duplex and speed from PHY */
+> +
+> +		if (phydev->duplex != priv->duplex) {
+> +			link_changed = true;
+> +
+> +			if (!phydev->duplex)
+> +				ctrl &= ~MREGBIT_FULL_DUPLEX_MODE;
+> +			else
+> +				ctrl |= MREGBIT_FULL_DUPLEX_MODE;
+> +			priv->duplex = phydev->duplex;
+> +		}
+> +
+> +		if (phydev->speed != priv->speed) {
+> +			link_changed = true;
+> +
+> +			ctrl &= ~MREGBIT_SPEED;
+> +
+> +			switch (phydev->speed) {
+> +			case SPEED_1000:
+> +				ctrl |= MREGBIT_SPEED_1000M;
+> +				break;
+> +			case SPEED_100:
+> +				ctrl |= MREGBIT_SPEED_100M;
+> +				break;
+> +			case SPEED_10:
+> +				ctrl |= MREGBIT_SPEED_10M;
+> +				break;
+> +			default:
+> +				netdev_err(dev, "Unknown speed: %d\n",
+> +					   phydev->speed);
+> +				phydev->speed = SPEED_UNKNOWN;
+> +				break;
+> +			}
+> +
+> +			if (phydev->speed != SPEED_UNKNOWN)
+> +				priv->speed = phydev->speed;
+> +		}
+> +
+> +		emac_wr(priv, MAC_GLOBAL_CONTROL, ctrl);
+> +
+> +		if (!priv->link) {
+> +			priv->link = true;
+> +			link_changed = true;
+> +		}
+> +	} else if (priv->link) {
+> +		priv->link = false;
+> +		link_changed = true;
+> +		priv->duplex = DUPLEX_UNKNOWN;
+> +		priv->speed = SPEED_UNKNOWN;
+> +	}
+> +
+> +	if (link_changed)
+> +		phy_print_status(phydev);
+
+Can this ever be false?
+
+> +static int emac_phy_connect(struct net_device *ndev)
+> +{
+> +	struct emac_priv *priv = netdev_priv(ndev);
+> +	struct device *dev = &priv->pdev->dev;
+> +	struct phy_device *phydev;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	ret = of_get_phy_mode(dev->of_node, &priv->phy_interface);
+> +	if (ret) {
+> +		dev_err(dev, "No phy-mode found");
+> +		return ret;
+> +	}
+> +
+> +	np = of_parse_phandle(dev->of_node, "phy-handle", 0);
+> +	if (!np && of_phy_is_fixed_link(dev->of_node))
+> +		np = of_node_get(dev->of_node);
+> +	if (!np) {
+> +		dev_err(dev, "No PHY specified");
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = emac_phy_interface_config(priv);
+> +	if (ret)
+> +		goto err_node_put;
+> +
+> +	phydev = of_phy_connect(ndev, np, &emac_adjust_link, 0,
+> +				priv->phy_interface);
+> +	if (IS_ERR_OR_NULL(phydev)) {
+> +		dev_err(dev, "Could not attach to PHY\n");
+> +		ret = phydev ? PTR_ERR(phydev) : -ENODEV;
+> +		goto err_node_put;
+> +	}
+> +
+> +	dev_info(dev, "%s: attached to PHY (UID 0x%x) Link = %d\n", ndev->name,
+> +		 phydev->phy_id, phydev->link);
+
+Don't spam the log. Only output something if something unexpected
+happens, an error etc.
+
+> +static int emac_mdio_init(struct emac_priv *priv)
+> +{
+> +	struct device *dev = &priv->pdev->dev;
+> +	struct device_node *mii_np;
+> +	struct mii_bus *mii;
+> +	int ret;
+> +
+> +	mii_np = of_get_child_by_name(dev->of_node, "mdio-bus");
+> +	if (!mii_np) {
+> +		if (of_phy_is_fixed_link(dev->of_node)) {
+> +			if ((of_phy_register_fixed_link(dev->of_node) < 0))
+> +				return -ENODEV;
+> +
+> +			return 0;
+> +		}
+> +
+> +		dev_err(dev, "no %s child node found", "mdio-bus");
+
+Why is that an error?
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (!of_device_is_available(mii_np)) {
+> +		ret = -ENODEV;
+> +		goto err_put_node;
+> +	}
+> +
+> +	mii = devm_mdiobus_alloc(dev);
+> +	priv->mii = mii;
+> +
+> +	if (!mii) {
+> +		ret = -ENOMEM;
+> +		goto err_put_node;
+> +	}
+> +	mii->priv = priv;
+> +	mii->name = "emac mii";
+> +	mii->read = emac_mii_read;
+> +	mii->write = emac_mii_write;
+> +	mii->parent = dev;
+> +	mii->phy_mask = 0xffffffff;
+> +	snprintf(mii->id, MII_BUS_ID_SIZE, "%s", priv->pdev->name);
+> +
+> +	ret = devm_of_mdiobus_register(dev, mii, mii_np);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to register mdio bus.\n");
+> +		goto err_put_node;
+> +	}
+> +
+> +	priv->phy = phy_find_first(mii);
+> +	if (!priv->phy) {
+> +		dev_err(dev, "no PHY found\n");
+> +		ret = -ENODEV;
+
+Please don't use phy_find_first(). Use phy-handle to point to the phy.
+
+> +static void emac_ethtool_get_regs(struct net_device *dev,
+> +				  struct ethtool_regs *regs, void *space)
+> +{
+> +	struct emac_priv *priv = netdev_priv(dev);
+> +	u32 *reg_space = space;
+> +	int i;
+> +
+> +	regs->version = 1;
+> +
+> +	memset(reg_space, 0x0, EMAC_REG_SPACE_SIZE);
+
+Is that needed?
+
+> +static int emac_get_link_ksettings(struct net_device *ndev,
+> +				   struct ethtool_link_ksettings *cmd)
+> +{
+> +	if (!ndev->phydev)
+> +		return -ENODEV;
+> +
+> +	phy_ethtool_ksettings_get(ndev->phydev, cmd);
+
+phy_ethtool_get_link_ksettings().
+
+> +	if (priv->tx_delay > EMAC_MAX_DELAY_PS) {
+> +		dev_err(&pdev->dev, "tx-internal-delay-ps delay too large, clamped");
+
+Please return -EINVAL;
+
+> +		priv->tx_delay = EMAC_MAX_DELAY_PS;
+> +	}
+> +
+> +	if (priv->rx_delay > EMAC_MAX_DELAY_PS) {
+> +		dev_err(&pdev->dev, "rx-internal-delay-ps delay too large, clamped");
+
+and here. The device tree is broken, and we want the developer to
+notice and fix it. The easiest way to do that is to refuse to load the
+driver.
+
+> +		priv->rx_delay = EMAC_MAX_DELAY_PS;
+> +	}
+> +
+> +	if (priv->tx_delay || priv->rx_delay) {
+
+Why the if () ?
+
+> +		priv->tx_delay = delay_ps_to_unit(priv->tx_delay);
+> +		priv->rx_delay = delay_ps_to_unit(priv->rx_delay);
+> +
+> +		/* Show rounded result here for convenience */
+> +		dev_info(&pdev->dev,
+> +			 "MAC internal delay: TX: %u ps, RX: %u ps",
+> +			 delay_unit_to_ps(priv->tx_delay),
+> +			 delay_unit_to_ps(priv->rx_delay));
+
+Please don't. 
+
+> +static void emac_shutdown(struct platform_device *pdev)
+> +{
+> +}
+
+Since it is empty, is it needed?
+
+	Andrew
 
