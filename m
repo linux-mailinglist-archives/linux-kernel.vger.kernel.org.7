@@ -1,174 +1,121 @@
-Return-Path: <linux-kernel+bounces-684752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF77BAD7FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:47:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68624AD7FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD941895FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E651705FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC769145323;
-	Fri, 13 Jun 2025 00:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D693318FDBD;
+	Fri, 13 Jun 2025 00:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWHdOwG5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B8cr8o/F"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285F4A48
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 00:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56798F66
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 00:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749775662; cv=none; b=si73i7+lyf1z7AWC2uAcxpgBU1HFbX+cEZTbiw5VbBiFBv24Ra91PUyo4POCC/aLevD/fbA+5R3T57dosXX4A46J3rW6H7CIUQlI/fePz2FToys+Ojk6CI5boNiFSim3AAScaD3Syb4VDQrOpPsIU2WbCvz1/5I3oUjEhzhdDOk=
+	t=1749775725; cv=none; b=gD8fnq5b/Mq4ne8M/ThSNLr0s7mEllg55MA3kc+2UZLZF42D+h3ufNyE7iZsy7wTAGH9Y7ypwB55XYV1ofbTf5x028dBDQ+hB+aTu2XV2pIjbGOBDmsQ/O5F94GUj9vUJq9HbVRdO3FVJOVrK/lpXjRgb6EtVKKnRHJMgwxga/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749775662; c=relaxed/simple;
-	bh=FcwAaUnFzLm16huHjizGe95MQwCLo8XGRMUUruWoPVg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GeyCGM3ny+SlNfFJni6JVNqhHwIAPVoM3oBMpublnRPfiU9fWON+Djhjetb5I+cVoBIITdgMXP72T3e3yZbySxPBlPBDiZ6eeUdJvMEQPUjwpLBMW2idpVKOV7VX7cCNYODxVHxA3e6rmRpyPuV7ySnphNPf1w/i5COW0Jn9CT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWHdOwG5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96CC8C4CEEA;
-	Fri, 13 Jun 2025 00:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749775661;
-	bh=FcwAaUnFzLm16huHjizGe95MQwCLo8XGRMUUruWoPVg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=HWHdOwG5fGCvoZ49mhZwo4E9DXck8Oz8r0w31CBPt18AjO4MpfcIrFxRWBhve3lP9
-	 cmyVSDOLrvV5NbRPF2jP8b9fbEXnFecMlRvcDapqsejU8Bi/avxo0LipQUmFEymapS
-	 YD6V3mzWB5FvhN8C1Y/OzqLCNx+pgFcTlT81jHl73iYHMHkJDkfiw00+Zqstcpldkm
-	 sAqEBgKVy+zZ++1xyI77WmMgvA8BGYsEdJP+jex+u7ueRTHFjnHgX/58JtrwxraOUh
-	 spQFP35GxU6O8gfhey8/LwW+5aguAflbQAuF9RL4HxRqA6KX1YH2y+lvg9mNGIr6ub
-	 ighIGGihzzCYw==
-Message-ID: <b3ecfa66-31c4-435e-918b-097c385848bf@kernel.org>
-Date: Fri, 13 Jun 2025 08:47:47 +0800
+	s=arc-20240116; t=1749775725; c=relaxed/simple;
+	bh=LB8mSVywGvWaSBPY/GjjFungJt8/fYCcQjgsVzy4/p8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rYOe9JoUl22EtbjPKSNy97OMVn8QwHE67PKZEOaa2C9VPsLtJIYNUz+ZaQ9WK59w9/fGBsir/P61xqZuf6WrUSqJ3Aiqa1Z/rG4yuLJp4a/pxhdYdlIozfDgqlRv0/VoroonbRa/YDVM2L4HUCbqdA6LZABSUuRP4w+IoDpIYzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B8cr8o/F; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235f6b829cfso12942005ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:48:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749775723; x=1750380523; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8PJsPHC6knGCf+CEUrmtkCTljPrq27G15x2HFHSsAN4=;
+        b=B8cr8o/F+kJwjytYaEiHRjsuH+SuEcvv7T7lFMpmAARDQrjeMl8BYcgLJu1D4VRC3p
+         3yBXYILON+Y+bVT89KBwO9O2ZAA2LjCt0uqbbj/seP+UDIOUyOdK5QsNnCBqOXev/tfm
+         yxawCVpfUJfNDNIv+SrPUJiPuHaqQiwPriY6R+b/y1bs2I7kA5euvv6x8NhhJq/e58Ox
+         pkVjgMr4p6X1mmeBy2G+o19i5Z++AQlh4bah/cpukHDYFobkSx4InSSpbcUGOm6Rq5L5
+         4cYl4rMhOt90nVLDPxmScWWICp7mQWpKC3DqORfxJOwNNn8Ney77nRaKKxuNuz4PyQ5L
+         rnNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749775723; x=1750380523;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8PJsPHC6knGCf+CEUrmtkCTljPrq27G15x2HFHSsAN4=;
+        b=rTNa21C0VWSVQ5qKSDGbBGRpiJsykXeQCXuqrg5V6jOgOOzeH3VXWeGEAso0kOY7AO
+         FHM1CteAtYEBc/etZSWIn+vs6NLJSBuk/kwvqD8F9P2cspfyo5Og7oEAI8T6beXmbmwx
+         LjgO0pPm+zykOo1kZSQEOOwD/iAx1aJq1F52DrCRqcqhQ0PDqgSTptG3pgLwMIdq6/n5
+         tcJ1ZFiwEw/AqqyQ7Iv7Po6eMHs8FB8a5O5D6IPuy0+ipu9SsAYUPbWIP3gsck19Ba7P
+         20r6SfyZb1lD0WP6UtAsCArMozhfun2jRKBvGbY1eaOeUEuMpUWcEom8MtLcXqxto+Aw
+         qwsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsV/nGK09M43L10uaJXnOC/WTopsSeJ+ixWQkaYFBG45jWf8PPymKiqKCxGNza9SmnUPQvwA/e4L3djkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLe/Xn7iyi5dR5cCZuvfWFV3ZeU5d9ZI9WKLygndtbnwmooxV/
+	hP3z4Do0XooAy9zDNvrhk+SJNV0hL8w02qO4vjyzKnGuNS8Llxorz8EiVbM2ufgohIn2j4pbDts
+	GM3V2kA==
+X-Google-Smtp-Source: AGHT+IHnKlUMQsIFSTkamH/iyOOJa7EJ04RrETO6pUkWI2akoUEmrJ34o5FjHMKGcbiu7zur8PxdT4jBka8=
+X-Received: from pga4.prod.google.com ([2002:a05:6a02:4f84:b0:b2f:b737:6afb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d490:b0:234:ed31:fc9b
+ with SMTP id d9443c01a7336-2365dc2344emr14032545ad.36.1749775723185; Thu, 12
+ Jun 2025 17:48:43 -0700 (PDT)
+Date: Thu, 12 Jun 2025 17:48:41 -0700
+In-Reply-To: <44cb77805d1d05f7a28a50fc16e4d2d73aca88f3.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] f2fs: use ioprio hint for hot and pinned files
-To: Daniel Lee <chullee@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250611233706.572784-1-chullee@google.com>
- <20250611233706.572784-3-chullee@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250611233706.572784-3-chullee@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250611213557.294358-1-seanjc@google.com> <20250611213557.294358-5-seanjc@google.com>
+ <44cb77805d1d05f7a28a50fc16e4d2d73aca88f3.camel@intel.com>
+Message-ID: <aEt1aXPhivCJZbyE@google.com>
+Subject: Re: [PATCH v2 04/18] KVM: x86: Drop superfluous kvm_hv_set_sint() =>
+ kvm_hv_synic_set_irq() wrapper
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2025/6/12 7:37, Daniel Lee wrote:
-> Apply the `ioprio_hint` to set `F2FS_IOPRIO_WRITE` priority
-> on files identified as "hot" at creation and on files that are
-> pinned via ioctl.
+On Thu, Jun 12, 2025, Kai Huang wrote:
+> On Wed, 2025-06-11 at 14:35 -0700, Sean Christopherson wrote:
+> > Drop the superfluous kvm_hv_set_sint() and instead wire up ->set() directly
+> > to its final destination, kvm_hv_synic_set_irq().  Keep hv_synic_set_irq()
+> > instead of kvm_hv_set_sint() to provide some amount of consistency in the
+> > ->set() helpers, e.g. to match kvm_pic_set_irq() and kvm_ioapic_set_irq().
+> > 
+> > kvm_set_msi() is arguably the oddball, e.g. kvm_set_msi_irq() should be
+> > something like kvm_msi_to_lapic_irq() so that kvm_set_msi() can instead be
+> > kvm_set_msi_irq(), but that's a future problem to solve.
 > 
-> Signed-off-by: Daniel Lee <chullee@google.com>
-> ---
->   fs/f2fs/f2fs.h  | 21 +++++++++++++++++++++
->   fs/f2fs/file.c  |  3 +++
->   fs/f2fs/namei.c | 11 +++++++----
->   3 files changed, 31 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 162d79a3c1a5..0b05b3b6386b 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3441,6 +3441,27 @@ static inline void set_file(struct inode *inode, int type)
->   	f2fs_mark_inode_dirty_sync(inode, true);
->   }
->   
-> +static inline int get_ioprio(struct inode *inode)
-> +{
-> +	return F2FS_I(inode)->ioprio_hint;
-> +}
-> +
-> +static inline void set_ioprio(struct inode *inode, int level)
-> +{
-> +	if (get_ioprio(inode) == level)
-> +		return;
-> +	F2FS_I(inode)->ioprio_hint = level;
-> +	f2fs_mark_inode_dirty_sync(inode, true);
+> Agreed on kvm_msi_to_lapic_irq(), but isn't kvm_msi_set_irq() a matter match
+> to kvm_{pic/ioapic/hv_synic}_set_irq()?  :-)
 
-We don't need to mark inode dirty? IIRC, .ioprio_hint is just in-memory variable?
+Yes, the problem is that kvm_set_msi() is used by common code, i.e. could actually
+be kvm_arch_set_msi_irq().  I'm not entirely sure churning _that_ much code is
+worth the marginal improvement in readability.
 
-> +}
-> +
-> +static inline void clear_ioprio(struct inode *inode)
-> +{
-> +	if (get_ioprio(inode) == 0)
-> +		return;
-> +	F2FS_I(inode)->ioprio_hint = 0;
-> +	f2fs_mark_inode_dirty_sync(inode, true);
-
-Ditto,
-
-> +}
-> +
->   static inline void clear_file(struct inode *inode, int type)
->   {
->   	if (!is_file(inode, type))
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 4fd45e94661a..95a3b4b59dd1 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3496,6 +3496,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->   
->   	if (!pin) {
->   		clear_inode_flag(inode, FI_PIN_FILE);
-> +		clear_ioprio(inode);
->   		f2fs_i_gc_failures_write(inode, 0);
->   		goto done;
->   	} else if (f2fs_is_pinned_file(inode)) {
-> @@ -3529,6 +3530,8 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->   	}
->   
->   	set_inode_flag(inode, FI_PIN_FILE);
-> +	file_set_hot(inode);
-> +	set_ioprio(inode, F2FS_IOPRIO_WRITE);
->   	ret = F2FS_I(inode)->i_gc_failures;
->   done:
->   	f2fs_update_time(sbi, REQ_TIME);
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 07e333ee21b7..0f96a0b86c40 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -191,9 +191,10 @@ static void set_compress_new_inode(struct f2fs_sb_info *sbi, struct inode *dir,
->   }
->   
->   /*
-> - * Set file's temperature for hot/cold data separation
-> + * Set file's temperature (for hot/cold data separation) and
-> + * I/O priority, based on filename extension
->    */
-> -static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
-> +static void set_file_temp_prio(struct f2fs_sb_info *sbi, struct inode *inode,
->   		const unsigned char *name)
->   {
->   	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
-> @@ -212,8 +213,10 @@ static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
->   
->   	if (i < cold_count)
->   		file_set_cold(inode);
-> -	else
-> +	else {
->   		file_set_hot(inode);
-> +		set_ioprio(inode, F2FS_IOPRIO_WRITE);
-> +	}
->   }
->   
->   static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
-> @@ -317,7 +320,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
->   		set_inode_flag(inode, FI_INLINE_DATA);
->   
->   	if (name && !test_opt(sbi, DISABLE_EXT_IDENTIFY))
-> -		set_file_temperature(sbi, inode, name);
-> +		set_file_temp_prio(sbi, inode, name);
->   
->   	stat_inc_inline_xattr(inode);
->   	stat_inc_inline_inode(inode);
-
+$ git grep -w kvm_set_msi
+arch/arm64/kvm/vgic/vgic-irqfd.c:               e->set = kvm_set_msi;
+arch/arm64/kvm/vgic/vgic-irqfd.c: * kvm_set_msi: inject the MSI corresponding to the
+arch/arm64/kvm/vgic/vgic-irqfd.c:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
+arch/loongarch/kvm/irqfd.c: * kvm_set_msi: inject the MSI corresponding to the
+arch/loongarch/kvm/irqfd.c:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
+arch/loongarch/kvm/irqfd.c:             e->set = kvm_set_msi;
+arch/powerpc/kvm/mpic.c:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
+arch/powerpc/kvm/mpic.c:                e->set = kvm_set_msi;
+arch/riscv/kvm/vm.c:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
+arch/riscv/kvm/vm.c:            e->set = kvm_set_msi;
+arch/riscv/kvm/vm.c:            return kvm_set_msi(e, kvm, irq_source_id, level, line_status);
+arch/s390/kvm/interrupt.c:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e, struct kvm *kvm,
+arch/x86/kvm/irq_comm.c:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
+arch/x86/kvm/irq_comm.c:                e->set = kvm_set_msi;
+include/linux/kvm_host.h:int kvm_set_msi(struct kvm_kernel_irq_routing_entry *irq_entry, struct kvm *kvm,
+virt/kvm/irqchip.c:     return kvm_set_msi(&route, kvm, KVM_USERSPACE_IRQ_SOURCE_ID, 1, false);
 
