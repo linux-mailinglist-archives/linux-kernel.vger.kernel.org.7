@@ -1,187 +1,145 @@
-Return-Path: <linux-kernel+bounces-685509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E145AD8AA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF14BAD8AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E03C189D42C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 843F816E361
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AC32D8DB1;
-	Fri, 13 Jun 2025 11:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D66926B761;
+	Fri, 13 Jun 2025 11:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5SsUNlb"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzYVU4Oo"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F02279DA5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE60118BC0C;
+	Fri, 13 Jun 2025 11:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749814666; cv=none; b=LuJN3ZBAv72gcDRBUa3GsBLhnPzalmLcgrduoAML1z/P+AbFozcrnkC2qBgdLfEXoRF97+4QoJoAg9F0KQP5u5hu1pFCRLFSjY63BooAI7Z7huCek9Ev43zkRw+NulFmVDhXYugzAwyx9K4d7wxd/nEAYTojIefidLwsCWsE0s8=
+	t=1749814830; cv=none; b=IzF926XhTICNJJpZrs9ZBy/kCWqQtxDmfKBAfUNaFeXcokWz+JYWFYG+wNlNsrz/q4i2qT231eHKWoQAqB0JNWYV4lrCcz8w+/yuitvCcJ5FdtAuIwlQgULszu4QwwHLg4NuiYXx8WRCvMbcl9o4IvLe5IVMcSwDZbsv7LGngFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749814666; c=relaxed/simple;
-	bh=9nOSWkmKXGxZeCKeJfHc4BTvtEPmtKmuPEyXTrCEXE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYRaEKKNJpQ4+g0UwwVf+Et/URnl/89XVHm08C9rAcG/VtxYCLH+L7UGDJ4uuefPbGbOwXHQpIQOTj1RsbSLeiIkV634oKq8FEpKsmj2y4jXC8Qvb5ghBDUlQq6y6Ha1rhKgBUnFrZAImY3c4e2orLi3HoTyyDF2bgK3nMBHjRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5SsUNlb; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1749814830; c=relaxed/simple;
+	bh=V5lJ2hIWhnXFQV4a3+LkhInaDQElio8+MoOpY/eeLAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hYXo7v+H8QLQVoWlOy8GARmXKsEr4Neu6+9WQoQS3qTnFi4wahIPhQyBxhOwcw/3jUDkG7p1Pv1gWQpn3Yrd9SxRmW/bqyHUmJMIzLH0uutwmgRwSkvPrj6KL4451l2aZHsfRllJfHOCeHoeUa+SfYH7seDN8I/d6qJYNnms8lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzYVU4Oo; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3122a63201bso1975500a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 04:37:44 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a365a6804eso1275327f8f.3;
+        Fri, 13 Jun 2025 04:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749814664; x=1750419464; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKGg0bB1/QQAEHL8cmKXw80iv4zUBwrxD0VPEgJGB1c=;
-        b=G5SsUNlbZdpTr6yWGmJA50GoUYeEdVRDIO8W8EQtDv5YgG2Ouf3oX76kLA3SqaiiER
-         ReuivOQLX6UuHUaEpayxecR+U1z0l0CRsWqN+Z869DEIqHPwzf8/bhX+kwgdpgoCkg6B
-         CGOzfhkeAhDGQJjXFr2BIYX8raZ8xIWOoqiIrb4/7CYf78sUbBC4//JArHNflVdfUrat
-         OcNBsCueXFpb6GZ/b9PyZ08coxfoQzs6RL98ZqqT0tOrf0kFpgOJbuAwPJl5zP84287D
-         M9U7coFIzqOhm3kpT0Dr1oPXU3WgI4xWYTQQbBO13zqjMM7I+spneN1KfYLuxaDldLxg
-         sahw==
+        d=gmail.com; s=20230601; t=1749814827; x=1750419627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/aXRE5967yTKLP6D/tyJ5JjE1OuczocY84JxX/Tj4Ns=;
+        b=DzYVU4Oo54vGRxo5rwmX2Q+J337YT62nK7O9m5lmOeuQbLghgKi/jRjf8rSkoNBayb
+         HrT/hFumyUMMOEnm+TPDOUG9nptI9opSzHIMZL/UYe/I0rOd052PNJJfWg9CJC6vbgn4
+         vPVieTkU/T1aoes4LKnsh+9fWah3XapGobiR2X42aDL2n5cojrvLhIAk4iSaKsFBnrS7
+         3/5lizcTR+GuKRgI76bCwmB2RHHPxYwFiW1q+q5aM+6ghrhLryACYLMWMrA/VbZyXZJD
+         xE9oPNM/VstN6DfkCdvTcDAHwFpH8SGbr7F5Svk3U8CWeZM3l50Qbp5BgYLbuci0js8z
+         5w5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749814664; x=1750419464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jKGg0bB1/QQAEHL8cmKXw80iv4zUBwrxD0VPEgJGB1c=;
-        b=iKvVZl4/KeRtNRDG7AAxQKKGcgBcYrpIYnvdd2N724B31Ix7cuaPH/GnBDhmKc4EQo
-         5+OcduHq3t4Wr6eo2oltOlS3D3U4aYNB2pWPMgwBvVt+EnR5fKuZaV3GyxExRr+h3JPn
-         SkIMa10zEw5paascN2Bc9TTkc9Z1VkfMw5zzQepKMyT5h2Pzx6oZ2BZYSAVgUUOMXPU4
-         ZWUfXdLpeXPbeCV7fmfRi+AJLIw6MifCJ30TY4F19b4/nIzDu5tz1/Tw3A1RtsjYjxsG
-         jn58KRR6sW687IJHOtB4wdVcvg7Mc1v+k5u6fgad9jCEnQ2JHJwOZoiMjXBeogi0X1xz
-         +TLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgEVB4FFJKXlNjjgX5ylEzm7Y06FQ8xzq05h1/eFufequyeBk8zrsFVJDYFvjCQkWXfyFrWtSV6SgVpFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzODd73Nh4jcUH8h8siBs3HT+TE6/IbuTqja/Br44qHnyyCZ+uD
-	0AoCnDNhtTdSRh4ZEj5X7nRgjHv/kV+WXK2/ky/xLxIHK9Bg9dmrs+67
-X-Gm-Gg: ASbGnctnBT3lV9DfpXytYbpIxN1yKO7ZMYNrW26nS6uwkj6eMJzWrlnSYCYw8d+Ssu7
-	eI5xN9w8zp8EGqgNXot97cnyS3WSSFvtxI6ILCn4nenMvBlXe32miAxWFP49EBqWk4giId6X8nj
-	sYoZuU/81GsI0lFGKsfcjuekvyPO1lmcxkQrtPdH3Dto9ZtuModTlvg8NyD/0Ob/J7xMYaQ/0ZV
-	RjY+q9J5DUNdqPo/7F9WPoQApE2YG6xoVpPkq+xGWe6UJBmvJrsf7qxFpZcEGlfGf99YAq7cEtl
-	QQXNIGGWTUDdTwEZLsCaLSiqZMbrq7KR9FHLvAIjClczAAPhZ/4s/0JVRyy78cql8Bx4txYpgm4
-	rfeI=
-X-Google-Smtp-Source: AGHT+IEtO7AJctbwySDiG4IYWUnqbCXmYhViiO2826Yp+/7UzXYJWcG/B84cs6yfhKmrpN1By8fMng==
-X-Received: by 2002:a17:90b:4b41:b0:312:18e:d930 with SMTP id 98e67ed59e1d1-313d9eaec51mr3970567a91.19.1749814663686;
-        Fri, 13 Jun 2025 04:37:43 -0700 (PDT)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:10a9:4163:7b48:3809])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365decaf4csm12097125ad.218.2025.06.13.04.37.41
+        d=1e100.net; s=20230601; t=1749814827; x=1750419627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/aXRE5967yTKLP6D/tyJ5JjE1OuczocY84JxX/Tj4Ns=;
+        b=gpO/2qgnnRTw4pQutkF4zPdfCzBYExIVfAFdXAJvXkDZUajy1if0Bdb6LkpTuv67YW
+         QPNi2r9+A1BlFpePqXxe65EtJW5lCPZ18K3NcQ9NB8H8scRsgeSEbONUf+IVn0ASk1WZ
+         pEdsySNNXvoW6k5WdOM8TtgR6NW04y51UqYzYbvbNy3H5x7PIvyokzfrDknNE75bMaDd
+         3XTDO7EufZWfSAYbmwU2kyRyyiZNZP/2gkBOvi6DN2lCOtKl0Qhtozv4QbnWtUgvTxam
+         ZMblZJUPq2vBAVEk1/VPs2RhsSFHmLHnB0cLTYHf77KBq3jez0jcLNZuK1H8P58Tb6uK
+         i67g==
+X-Forwarded-Encrypted: i=1; AJvYcCWTZb/iPxLQWIEWpIAIh6vHE7gskRVruruSkbxR8b1aipRz2bN+q7qET3a+5bCHGSyrHzM54rpJW08VqoQ6@vger.kernel.org, AJvYcCXPtKBvG9w137m0Se4UXj/XTYYSkNzQc1EKQCwXbrAQpwCTunKDPaiIWyQKp3jfDOj5kfOsTULqy5dD@vger.kernel.org, AJvYcCXxSJct44XpgYyr/A/tz6DANhEQrr/MtBWOSPrBy3fkHrQ2mxct1aTpBaxlSwhjBu1BV8cv5w7fBMBd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHsUGy7glji+ekcOxCmp2cxOlUtqvdKz8gJfKUNKiBCpxVcfS9
+	yO7cAEFuk6zp1jsVEmvmoNxIFyKHb0IXC1EyPzSKXftaS0r3BG69tfbm
+X-Gm-Gg: ASbGncvOlNtOeZSw5PHXeVR6ruF9MXjdCBJLLNfe3v1GAIrjPr3Od8/Mv9VdOi9sA2W
+	XY6IIFi8ekE3qpsxWBiLFnpH+dpm2njTGE0bSiPhKQBk5jjfRxe+ngWANI3DjN/vchMaMf/DRf6
+	VJPAV/p5se91SVkqPnyy6z4DDNwEK8zHh9M8+3J+IPyR2NVqS+58HWnaeI6/A4podrYFX0en8Bi
+	mqLFJ72JaDwpII2SEb39nsMIZdrbOhAJZk89aFRC8QAZzQBbvw8XrgJHg3MwawMZauALnJWO8tQ
+	KvG3u5tuQT3L26aDfQ8HryN3Kpz4g8BrBxahnvVhXRa5SYi8seiR7L3OyUcHcGyDYW6zVrRxHqJ
+	xEtjup/EFug==
+X-Google-Smtp-Source: AGHT+IEE3kM/7AcFNS8iE41ovrbVwXmY7+gABrFFMNoyszVhhCCWXMOf5WyqimbXn8T0FdDf7rIYFA==
+X-Received: by 2002:a05:6000:2003:b0:3a5:2cb5:63fa with SMTP id ffacd0b85a97d-3a568655c20mr2646170f8f.2.1749814826981;
+        Fri, 13 Jun 2025 04:40:26 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:2c2d:5496:6768:592])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54aeasm2171519f8f.14.2025.06.13.04.40.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 04:37:43 -0700 (PDT)
-Date: Fri, 13 Jun 2025 19:37:39 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yury Norov <yury.norov@gmail.com>, linux@rasmusvillemoes.dk,
-	jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org,
-	eleanor15x@gmail.com, visitorckw@gmail.com, jserv@ccns.ncku.edu.tw,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [RFC PATCH 2/2] clocksource: Use cpumask_first_but() in
- clocksource_verify_choose_cpus()
-Message-ID: <aEwNg-chMazUvS6-@vaxr-BM6660-BM6360>
-References: <20250613033447.3531709-1-richard120310@gmail.com>
- <20250613033447.3531709-3-richard120310@gmail.com>
- <aEuw7ls9hieUv_Ox@yury>
- <87ldpvsyr8.ffs@tglx>
+        Fri, 13 Jun 2025 04:40:26 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Chris Brandt <chris.brandt@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andy Shevchenko <andy@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/6] Add RIIC support for RZ/T2H and RZ/N2H SoCs
+Date: Fri, 13 Jun 2025 12:38:33 +0100
+Message-ID: <20250613113839.102994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ldpvsyr8.ffs@tglx>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 12:48:43PM +0200, Thomas Gleixner wrote:
-> Yury!
-> 
-> On Fri, Jun 13 2025 at 01:02, Yury Norov wrote:
-> > This exact change has already been submitted by me and is under review.
-> >
-> > https://lore.kernel.org/all/20250604232550.40491-2-yury.norov@gmail.com/
-> >
-> > I don't understand why are you undercutting my work, and moreover do it 
-> > for the second time.
-> >
-> > For the first time you submitted something that duplicates my another
-> > patch from the exact same series. John Stultz has pointed that, so you're
-> > surely aware.
-> >
-> > https://lore.kernel.org/all/CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com/
-> >
-> > Kernel development process implies that one makes sure that his work
-> > is unique and doesn't break someone else's development, at one's best
-> > knowledge.
-> >
-> > What you're doing not only breaks this rule. You're in fact trying to
-> > get credit for the work that is done by someone else. This is the
-> > definition of fraud.
-> >
-> > I cannot make sure that any other patches from you are unique and
-> > written by actually you. Therefore, I will not take your work anymore.
-> >
-> > I encourage everyone else to be careful working with I Hsing Cheng
-> > and check his patches for uniqueness, at minimum.  
-> 
-> There is absolutely no justification for accusing Hsin of fraud or other
-> nasty intentions.
-> 
-> It's sufficient to point him to your series and tell him that it's
-> already been dealt with.
-> 
-> I deal with redundant and conflicting patches every other day. That's part
-> of how open source development works and it's trivial enough to either
-> pick one of the patches or ask the involved parties to sort the
-> conflicts out.
-> 
-> Thanks,
-> 
->         tglx
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hello Thomas,
+Hi All,
 
-Thanks for your word, really appreciate it.
-Though I can understand abit why Yury was annoyed for this patch, at the
-patch [1] I sent earlier, it already collide with Yury's patch, he did
-paste the link of his patch for me, but I only take a look at the patch
-in the link, not the whole patch series.
-And then I send this patch, again collide with his work, if it were me, I
-might feel the same like alittle bit of offended.
+This patch series adds support for I2C Bus Interface (RIIC) found on
+the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs. The RIIC
+IP on these SoCs is similar to that on the RZ/V2H(P) SoC but has some
+differences in interrupt handling and does not require resets.
 
-I send this patch because after I send this patch [2] , I think of
-Kuan-Wei's patch [3] months ago and see there might be a use case here,
-so I ask Kuan-Wei whether I can pick up his work.
+v2->v3:
+- Replaced `Transmit Error` -> `Transfer Error`
+- Fixed the order of interrupts in the DT binding
+  documentation to match the HW manual.
 
-I admit I wasn't paying attention to detail enough when looking at other's
-work, neither did I subscribe the mailing list cuz I don't want my mail
-box to be exploded with mails that aren't sent to me.
+v1-> v2:
+- Added Acked-by, Reviewed-by and Tested-by tags.
+- Listed the interrupts in the order as mentioned in the
+  HW manual.
+- Renamed the interrupt names to match the HW manual.
+- Initialized the members of `riic_of_data` in the order they are
+  declared in the struct.
 
-My workflow for patches was making sure it works as expected, and then
-use scripts to check patch format, get maintainers, and then send it. I
-know there's always room for improvments or something I might've done
-inappropriately, that's why I always send the first patch with RFC tag.
+Cheers,
+Prabhakar
 
-That's the whole story, I am sorry to Yury, but again I think the
-accusation is too over, like I said earlier, if I mean to steal
-someone's work, why would I send it directly to the author ?
+Lad Prabhakar (6):
+  dt-bindings: i2c: renesas,riic: Move ref for i2c-controller.yaml to
+    the end
+  dt-bindings: i2c: renesas,riic: Document RZ/T2H support
+  dt-bindings: i2c: renesas,riic: Document RZ/N2H support
+  i2c: riic: Pass IRQ desc array as part of OF data
+  i2c: riic: Move generic compatible string to end of array
+  i2c: riic: Add support for RZ/T2H SoC
 
-Still, I respect Yury and his professions, months ago he gave me many
-suggesetions and help in another patch.
+ .../devicetree/bindings/i2c/renesas,riic.yaml | 105 ++++++++++++------
+ drivers/i2c/busses/i2c-riic.c                 |  54 +++++++--
+ 2 files changed, 117 insertions(+), 42 deletions(-)
 
-That's why I send my patch [2] to him to asked him for some comments
-even though he's not in the maintainers list of that file.
-I would never want to offend someone I respect, I hope he can
-understand.
-
-[1]: https://lore.kernel.org/lkml/20250611104506.2270561-1-richard120310@gmail.com/
-[2]: https://lore.kernel.org/lkml/20250609194611.690678-1-richard120310@gmail.com/
-[3]: https://lore.kernel.org/lkml/20250117142658.297325-1-visitorckw@gmail.com/
-
-Best regards,
-I Hsin Cheng
-
+-- 
+2.49.0
 
 
