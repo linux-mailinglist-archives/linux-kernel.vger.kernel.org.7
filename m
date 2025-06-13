@@ -1,234 +1,383 @@
-Return-Path: <linux-kernel+bounces-685361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF35AD889A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:56:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D64AD888C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C914C16E5A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ED577A557C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623DC2C15B2;
-	Fri, 13 Jun 2025 09:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79602C15AC;
+	Fri, 13 Jun 2025 09:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Jx9Pmm"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgwWZzCd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D1E2C158B;
-	Fri, 13 Jun 2025 09:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0724291C3F;
+	Fri, 13 Jun 2025 09:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749808597; cv=none; b=F8y2ANaFEiM0T34XMwGLhs7GOgW+3uGeCLlSFoYbrePbxaSGnIDkLjUya+shaxkpCM2EBORkKAHb0voa9mSGqZiNDarwoffonQj/Z7inlQL8NzaAXPVTwuA3oOCdFpVpNYtTeoecRc6SWKKz8MReLzXu6vJoHj6TZ3hS4QEGL0w=
+	t=1749808483; cv=none; b=JhXr3crPJ0eVKipYGzIymLSF7uTD4wNnZPknqHG6WN+5oKpB4YyYEhFHy+81xEHOdNbcL/rXvolyza3ph9uNnvQ/VEcpHnlmTdrC8Ohcl4eGWGIMntYlTXwuZpaTgSYYoQlHY8cO92IklafQMPSwFjuSbPKiFrQxrkYW+QUab04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749808597; c=relaxed/simple;
-	bh=bPxha2Xcu3gnmDgJ+sO40rP34w3Cu8XjpqJ9R4eEoQE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JsB2pqGEb8OLerU8W3nz1xyo6d9hXFonbUb1b4+f0BsT2XYeLnfXNQQTyC3VtTnG0KecI+10hcwqr/6c0YFUiqGAj44ZizYnnXnyYbwOr12+SpLIVv2IAs0F9XAROU5IrPlHEJHXJzX0hMZbkQomkG2XzWH8aZH0X8NlN88loII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0Jx9Pmm; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a524caf77eso278694f8f.3;
-        Fri, 13 Jun 2025 02:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749808594; x=1750413394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nce6Ym0vqjs78qejFB/GFy83NREwUyPEHp0148HaRg8=;
-        b=d0Jx9PmmTZ+ZGNXo6QEs+PON7TBaSV3Gq6kISJaoBtuk/mfDjfZjbqfAklNxUMgnZF
-         lVbCcsSQQ3WfVbiR3Rs5U079bREmH77JPh7Pz3WKlCiV31rW0MfDspJK6tLC7S42+HJr
-         ra+eA0b/ZaBk8qqqxEmJzqcdqBqMmO5u+AJChkD6l7GVSnvtWN4+BG3xCrX3Z7c9Tj9r
-         5H/KyZcHBN5pEgrENJoOINfSx9hNEdU0YVFYfLM28Q8vLKfkHXSHeA7+kOFYgqh7diyZ
-         CP0H4VQ1+2GjSzuKbDJBmx1ZIRyQjDGIzthDn96mj0t1pme9NMayf33xBf+fvcez8RSu
-         gGmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749808594; x=1750413394;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nce6Ym0vqjs78qejFB/GFy83NREwUyPEHp0148HaRg8=;
-        b=jS8j41CZK56lWXHoQgEXjQJoZsYT/n5jIlK1hK2+36GCp9Y7VOQH/pEkpwrnm6lSME
-         gRK5nqbEo1v3/g3O6IKkIA0i1UihqoVTcCvHJYZRTsGN1vziINaek6t9jbOk9ROWzjVd
-         T0qaxvFZbtvzWcsLQ5NdmNLv0d/jiolbWBLxA694nWhPsQ/OjMpfXNU7/vEIRBrmT1W3
-         nGsCD597Phm02Ev6+cll+6ZXgSL+zjJKJWrFbD8Qx4+Vidaid+faV+zi0x37PkvZDW6n
-         EE+0m60R4Uv85YqiuP3LninJSWRiJAWw4+xKaHV3HJEoedPPky3YKytjonp3Ja54Bw6Y
-         YR1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVagZ4z8FaAmB0BbRYoR5dlmPj7KEpNThg+/CSP2UKLwqxcFbnpn2a8eqa7pVKxFWGd9xfvhdA30FjxC8c=@vger.kernel.org, AJvYcCXhqSLioqLysuYtET6bnY2FLVcDl6xjQ1lOz9aY2cnEXOuTAIg1zYqXvBHIKGv4g7nqyX7dYMjd@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywolg5fT1fcNOLU8aZbWPyVRX9dHrRKvWJlY/gEGShKzQZ0H688
-	zhdBwt5v7dr+oX9bOMCY6BZHIzfT+vuVAdJT/BHt3hO4xbKuZpzIgOBO
-X-Gm-Gg: ASbGnct0d32pwR41/xSnSbZzNA+QZO64fXoUhDZdc863oMBUeyFjm+yaUijl4ZwZTFJ
-	01r2YNe08EGTgiPRtAUCOKD34VnFe4FGM4PhcJLcW202QCk18+DrInOHgEPTsrMJWg5D+x1hGiP
-	g98vuq6h0JZp0MvswLXKQYnOuBW8kH5UbAtNCkzH3HJoTMlp32AZbdaQACJbhzytZzuHmc8iKAu
-	vnSC9JDgdH34zMM1126TIdkan+5iuBABB5i4kj8pJIFHQGvUCiCkGUGwIb2IQXDRCSrWxJSkkTY
-	uagxleksHmH8tkfiOI9G1rF3+YRDvcs5u3Ezz0vkSHY/QSSQIUikKhP/Foj7mIcRhRdBmG7rFSF
-	S1z4F4Hzj5E1RAWuK9JKaKJhXQCmAY6ks2kJPc5+RlxVRVRqHm6fWAALNavmgiJWR9jHqZmeF1A
-	==
-X-Google-Smtp-Source: AGHT+IEziPQdq0KF6UI5r4uYSQ+fvzC2O/JjbNzzT8lc5Gibr2CfkffMVFgazAI3BwVOyYBJIIl3ng==
-X-Received: by 2002:a05:600c:a10b:b0:439:9a40:aa27 with SMTP id 5b1f17b1804b1-45334b2b435mr6180485e9.5.1749808593874;
-        Fri, 13 Jun 2025 02:56:33 -0700 (PDT)
-Received: from thomas-precision3591.home (2a01cb00014ec300ef49063bf04e52e9.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:ef49:63b:f04e:52e9])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4531febf905sm88978955e9.0.2025.06.13.02.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 02:56:33 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Chris Snook <chris.snook@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] (drivers/ethernet/atheros/atl1) test DMA mapping for error code
-Date: Fri, 13 Jun 2025 11:54:08 +0200
-Message-ID: <20250613095516.116486-1-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250612183234.51a959e9@kernel.org>
-References: <20250612183234.51a959e9@kernel.org>
+	s=arc-20240116; t=1749808483; c=relaxed/simple;
+	bh=7S40Zuc2TNAecTyadpX90VMiKscvd9zWpUm96dO61pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fn8wuoYWVQClAHs3prM8igRin71Rqtc+hrUX4PaT8YR2n2weC/tYxC4SefHUJfsM+OuaSXYsCouIHLYLIC4t04e3NnnZQvg8OSybuZ81xscOYSEOxIS50WyiVZOgW1TVl0FjyhB8r+sDKQTqicv4FJJVSFEVUL/tBzNp4oxJy3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgwWZzCd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14343C4CEE3;
+	Fri, 13 Jun 2025 09:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749808482;
+	bh=7S40Zuc2TNAecTyadpX90VMiKscvd9zWpUm96dO61pk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IgwWZzCduhTWWVz0Ik0YoXpB8DwGFZHsTowAQDDHQVYhQv9QRP34IURI4Hl9yCc29
+	 4FlZxQ2xGoW39/quqB0hicrkzjFGe/Iim73kY7UdEr5popAOvhGPe+hej2bdOUGzzz
+	 NCFidSOWEI6m1Yy8pRAA5+KJ5oPRZ26qrLNWEhxBte0vywQJIcqitbBfmPICZeWUtf
+	 DBbBwNtxjtxEmoJ3kTn+WjaFCpezmZplSZdZK//Zrcetp8lu6MfuITyXXmwUJ/zkIe
+	 O1VLGw+kvQJANu1osi+nLeWlr0UQZ9okqtAaCaipvC9FcpoC8G9iFHKlozVAC5vzQK
+	 AZv9VAeaeADpg==
+Message-ID: <576ca6bb-291c-458e-9703-46e7d2f43bbe@kernel.org>
+Date: Fri, 13 Jun 2025 11:54:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] pci: aspeed: Add ASPEED PCIe host controller driver
+To: Jacky Chou <jacky_chou@aspeedtech.com>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, vkoul@kernel.org, kishon@kernel.org,
+ linus.walleij@linaro.org, p.zabel@pengutronix.de,
+ linux-aspeed@lists.ozlabs.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org
+Cc: elbadrym@google.com, romlem@google.com, anhphan@google.com,
+ wak@google.com, yuxiaozhang@google.com, BMC-SW@aspeedtech.com
+References: <20250613033001.3153637-1-jacky_chou@aspeedtech.com>
+ <20250613033001.3153637-8-jacky_chou@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250613033001.3153637-8-jacky_chou@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-According to Shuah Khan[1], all `dma_map()` functions should be tested
-before using the pointer. This patch checks for errors after all `dma_map()`
-calls.
+On 13/06/2025 05:30, Jacky Chou wrote:
+> Introduce PCIe Root Complex driver for ASPEED SoCs. Support RC
+> initialization, reset, clock, IRQ domain, and MSI domain setup.
+> Implement platform-specific setup and register configuration for
+> ASPEED. And provide PCI config space read/write and INTx/MSI
+> interrupt handling.
+> 
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+>  drivers/pci/controller/Kconfig       |   13 +
+>  drivers/pci/controller/Makefile      |    1 +
+>  drivers/pci/controller/pcie-aspeed.c | 1039 ++++++++++++++++++++++++++
+>  3 files changed, 1053 insertions(+)
+>  create mode 100644 drivers/pci/controller/pcie-aspeed.c
+> 
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index 886f6f43a895..f6b5eea3b570 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -216,6 +216,19 @@ config PCIE_MT7621
+>  	help
+>  	  This selects a driver for the MediaTek MT7621 PCIe Controller.
+>  
+> +config PCIE_ASPEED
+> +	bool "ASPEED PCIe controller"
+> +	depends on PCI
 
-In `atl1_alloc_rx_buffers()`, the buffer is deallocated ans marked as such.
+depends ARCH_ASPEED || COMPILE_TEST
 
-In `atl1_tx_map()`, the arleady dma_mapped buffers are de-mapped and an error
-is returned.
+> +	depends on OF || COMPILE_TEST
+> +	select PCI_MSI_ARCH_FALLBACKS
+> +	help
+> +	  Enable this option to add support for the PCIe controller
+> +	  found on ASPEED SoCs.
+> +	  This driver provides initialization and management for PCIe
+> +	  Root Complex functionality, including interrupt and MSI support.
+> +	  Select Y if your platform uses an ASPEED SoC and requires PCIe
+> +	  connectivity.
+> +
+>  config PCI_HYPERV_INTERFACE
+>  	tristate "Microsoft Hyper-V PCI Interface"
+>  	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI
+> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
+> index 038ccbd9e3ba..1339f88e153d 100644
+> --- a/drivers/pci/controller/Makefile
+> +++ b/drivers/pci/controller/Makefile
+> @@ -39,6 +39,7 @@ obj-$(CONFIG_PCI_LOONGSON) += pci-loongson.o
+>  obj-$(CONFIG_PCIE_HISI_ERR) += pcie-hisi-error.o
+>  obj-$(CONFIG_PCIE_APPLE) += pcie-apple.o
+>  obj-$(CONFIG_PCIE_MT7621) += pcie-mt7621.o
+> +obj-$(CONFIG_PCIE_ASPEED) += pcie-aspeed.o
+>  
+>  # pcie-hisi.o quirks are needed even without CONFIG_PCIE_DW
+>  obj-y				+= dwc/
+> diff --git a/drivers/pci/controller/pcie-aspeed.c b/drivers/pci/controller/pcie-aspeed.c
+> new file mode 100644
+> index 000000000000..c745684a7f9b
+> --- /dev/null
+> +++ b/drivers/pci/controller/pcie-aspeed.c
+> @@ -0,0 +1,1039 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2025 Aspeed Technology Inc.
+> + */
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/kernel.h>
+> +#include <linux/msi.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of_platform.h>
 
-[1] https://events.static.linuxfound.org/sites/events/files/slides/Shuah_Khan_dma_map_error.pdf
+Where do you use it?
 
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/net/ethernet/atheros/atlx/atl1.c | 39 ++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+> +#include <linux/of_address.h>
 
-diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
-index cfdb546a09e7..d3cd51ccf621 100644
---- a/drivers/net/ethernet/atheros/atlx/atl1.c
-+++ b/drivers/net/ethernet/atheros/atlx/atl1.c
-@@ -1869,6 +1869,14 @@ static u16 atl1_alloc_rx_buffers(struct atl1_adapter *adapter)
- 		buffer_info->dma = dma_map_page(&pdev->dev, page, offset,
- 						adapter->rx_buffer_len,
- 						DMA_FROM_DEVICE);
-+		if (dma_mapping_error(&pdev->dev, buffer_info->dma)) {
-+			buffer_info->alloced = 0;
-+			buffer_info->skb = NULL;
-+			buffer_info->dma = 0;
-+			kfree_skb(skb);
-+			adapter->soft_stats.rx_dropped++;
-+			break;
-+		}
- 		rfd_desc->buffer_addr = cpu_to_le64(buffer_info->dma);
- 		rfd_desc->buf_len = cpu_to_le16(adapter->rx_buffer_len);
- 		rfd_desc->coalese = 0;
-@@ -2183,7 +2191,7 @@ static int atl1_tx_csum(struct atl1_adapter *adapter, struct sk_buff *skb,
- 	return 0;
- }
- 
--static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
-+static int atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 	struct tx_packet_desc *ptpd)
- {
- 	struct atl1_tpd_ring *tpd_ring = &adapter->tpd_ring;
-@@ -2195,12 +2203,14 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 	unsigned int f;
- 	int retval;
- 	u16 next_to_use;
-+	u16 first_mapped;
- 	u16 data_len;
- 	u8 hdr_len;
- 
- 	buf_len -= skb->data_len;
- 	nr_frags = skb_shinfo(skb)->nr_frags;
- 	next_to_use = atomic_read(&tpd_ring->next_to_use);
-+	first_mapped = next_to_use;
- 	buffer_info = &tpd_ring->buffer_info[next_to_use];
- 	BUG_ON(buffer_info->skb);
- 	/* put skb in last TPD */
-@@ -2216,6 +2226,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
- 						offset, hdr_len,
- 						DMA_TO_DEVICE);
-+		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
-+			goto dma_err;
- 
- 		if (++next_to_use == tpd_ring->count)
- 			next_to_use = 0;
-@@ -2242,6 +2254,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 								page, offset,
- 								buffer_info->length,
- 								DMA_TO_DEVICE);
-+				if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
-+					goto dma_err;
- 				if (++next_to_use == tpd_ring->count)
- 					next_to_use = 0;
- 			}
-@@ -2254,6 +2268,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
- 						offset, buf_len,
- 						DMA_TO_DEVICE);
-+		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
-+			goto dma_err;
- 		if (++next_to_use == tpd_ring->count)
- 			next_to_use = 0;
- 	}
-@@ -2277,6 +2293,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 			buffer_info->dma = skb_frag_dma_map(&adapter->pdev->dev,
- 				frag, i * ATL1_MAX_TX_BUF_LEN,
- 				buffer_info->length, DMA_TO_DEVICE);
-+			if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
-+				goto dma_err;
- 
- 			if (++next_to_use == tpd_ring->count)
- 				next_to_use = 0;
-@@ -2285,6 +2303,22 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
- 
- 	/* last tpd's buffer-info */
- 	buffer_info->skb = skb;
-+
-+	return 0;
-+
-+ dma_err:
-+	while (first_mapped != next_to_use) {
-+		buffer_info = &tpd_ring->buffer_info[first_mapped];
-+		dma_unmap_page(&adapter->pdev->dev,
-+			       buffer_info->dma,
-+			       buffer_info->length,
-+			       DMA_TO_DEVICE);
-+		buffer_info->dma = 0;
-+
-+		if (++first_mapped == tpd_ring->count)
-+			first_mapped = 0;
-+	}
-+	return -ENOMEM;
- }
- 
- static void atl1_tx_queue(struct atl1_adapter *adapter, u16 count,
-@@ -2419,7 +2453,8 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
- 		}
- 	}
- 
--	atl1_tx_map(adapter, skb, ptpd);
-+	if (atl1_tx_map(adapter, skb, ptpd))
-+		return NETDEV_TX_BUSY;
- 	atl1_tx_queue(adapter, count, ptpd);
- 	atl1_update_mailbox(adapter);
- 	return NETDEV_TX_OK;
--- 
-2.43.0
+Where do you use it?
 
+
+> +#include <linux/of_irq.h>
+
+Where do you use it?
+
+
+> +#include <linux/of_pci.h>
+
+Where do you use it?
+
+> +#include <linux/pci.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include <linux/irq.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/workqueue.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +
+
+
+
+...
+
+> +
+> +static int aspeed_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct pci_host_bridge *host;
+> +	struct aspeed_pcie *pcie;
+> +	struct device_node *node = dev->of_node;
+> +	const void *md = of_device_get_match_data(dev);
+
+Not void, but specific type. This is not Javascript, we have here types.
+
+> +	int irq, ret;
+> +
+> +	if (!md)
+> +		return -ENODEV;
+> +
+> +	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+> +	if (!host)
+> +		return -ENOMEM;
+> +
+> +	pcie = pci_host_bridge_priv(host);
+> +	pcie->dev = dev;
+> +	pcie->tx_tag = 0;
+> +	platform_set_drvdata(pdev, pcie);
+> +
+> +	pcie->platform = md;
+> +	pcie->host = host;
+> +
+> +	pcie->reg = devm_platform_ioremap_resource(pdev, 0);
+> +
+> +	of_property_read_u32(node, "msi_address", &pcie->msi_address);
+> +	of_property_read_u32(node, "linux,pci-domain", &pcie->domain);
+> +
+> +	pcie->cfg = syscon_regmap_lookup_by_phandle(dev->of_node, "aspeed,pciecfg");
+> +	if (IS_ERR(pcie->cfg))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->cfg), "Failed to map pciecfg base\n");
+> +
+> +	pcie->pciephy = syscon_regmap_lookup_by_phandle(node, "aspeed,pciephy");
+> +	if (IS_ERR(pcie->pciephy))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->pciephy), "Failed to map pciephy base\n");
+> +
+> +	pcie->h2xrst = devm_reset_control_get_exclusive(dev, "h2x");
+> +	if (IS_ERR(pcie->h2xrst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->h2xrst), "Failed to get h2x reset\n");
+> +
+> +	pcie->perst = devm_reset_control_get_exclusive(dev, "perst");
+> +	if (IS_ERR(pcie->perst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->perst), "Failed to get perst reset\n");
+> +
+> +	ret = pcie->platform->setup(pdev);
+> +	if (ret)
+> +		goto err_setup;
+> +
+> +	host->sysdata = pcie;
+> +
+> +	ret = aspeed_pcie_init_irq_domain(pcie);
+> +	if (ret)
+> +		goto err_irq_init;
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		goto err_irq;
+> +
+> +	ret = devm_request_irq(dev, irq, aspeed_pcie_intr_handler, IRQF_SHARED, dev_name(dev),
+> +			       pcie);
+> +	if (ret)
+> +		goto err_irq;
+> +
+> +	pcie->clock = clk_get(dev, NULL);
+
+Huh...
+
+> +	if (IS_ERR(pcie->clock))
+> +		goto err_clk;
+> +	ret = clk_prepare_enable(pcie->clock);
+
+devm_clk_get_enabled.
+
+> +	if (ret)
+> +		goto err_clk_enable;
+> +
+> +	ret = pci_host_probe(host);
+> +	if (ret)
+> +		goto err_clk_enable;
+> +
+> +	return 0;
+> +
+> +err_clk_enable:
+> +	clk_put(pcie->clock);
+> +err_clk:
+> +err_irq:
+> +	aspeed_pcie_irq_domain_free(pcie);
+> +err_irq_init:
+> +err_setup:
+> +	return dev_err_probe(dev, ret, "Failed to setup PCIe RC\n");
+> +}
+> +
+> +static void aspeed_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct aspeed_pcie *pcie = platform_get_drvdata(pdev);
+> +
+> +	if (pcie->clock) {
+> +		clk_disable_unprepare(pcie->clock);
+> +		clk_put(pcie->clock);
+> +	}
+> +
+> +	pci_stop_root_bus(pcie->host->bus);
+> +	pci_remove_root_bus(pcie->host->bus);
+> +	aspeed_pcie_irq_domain_free(pcie);
+> +}
+> +
+> +static struct aspeed_pcie_rc_platform pcie_rc_ast2600 = {
+
+This should be const. Why it cannot?
+
+> +	.setup = aspeed_ast2600_setup,
+> +	.reg_intx_en = 0x04,
+> +	.reg_intx_sts = 0x08,
+> +	.reg_msi_en = 0x20,
+> +	.reg_msi_sts = 0x28,
+> +};
+> +
+> +static struct aspeed_pcie_rc_platform pcie_rc_ast2700 = {
+
+This should be const. Why it cannot?
+
+> +	.setup = aspeed_ast2700_setup,
+> +	.reg_intx_en = 0x40,
+> +	.reg_intx_sts = 0x48,
+> +	.reg_msi_en = 0x50,
+> +	.reg_msi_sts = 0x58,
+> +};
+> +
+> +static const struct of_device_id aspeed_pcie_of_match[] = {
+> +	{ .compatible = "aspeed,ast2600-pcie", .data = &pcie_rc_ast2600 },
+> +	{ .compatible = "aspeed,ast2700-pcie", .data = &pcie_rc_ast2700 },
+> +	{}
+> +};
+> +
+> +static struct platform_driver aspeed_pcie_driver = {
+> +	.driver = {
+> +		.name = "aspeed-pcie",
+> +		.suppress_bind_attrs = true,
+
+Why?
+
+> +		.of_match_table = aspeed_pcie_of_match,
+> +	},
+> +	.probe = aspeed_pcie_probe,
+> +	.remove = aspeed_pcie_remove,
+
+So how exactly remove can be triggered?
+
+> +};
+> +
+> +module_platform_driver(aspeed_pcie_driver);
+> +
+> +MODULE_AUTHOR("Jacky Chou <jacky_chou@aspeedtech.com>");
+> +MODULE_DESCRIPTION("ASPEED PCIe Root Complex");
+> +MODULE_LICENSE("GPL");
+
+
+Best regards,
+Krzysztof
 
