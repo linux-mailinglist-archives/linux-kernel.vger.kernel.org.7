@@ -1,137 +1,201 @@
-Return-Path: <linux-kernel+bounces-686371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE0DAD9682
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:37:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FA5AD969D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE3E1BC0A26
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA1017CD78
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C5924BBE4;
-	Fri, 13 Jun 2025 20:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0E3247DEA;
+	Fri, 13 Jun 2025 20:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="1k+WjMuK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TQKKtzvk"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/eGh3uk"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454E41EEA47;
-	Fri, 13 Jun 2025 20:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431D8230277
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 20:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749847058; cv=none; b=HDkEe0Lt54QG1xpIe5SLqXNDv+u+0AtlqCK/cDv7CoCTyQYAbhW8fNLUlLa4ow9SSq06OPiPQm30pvA6Qxy2oe/87NXsjNEath0RcNQH6udD/JWkXthjMBqHN4xsdfsIvRLjF9XsQs34cq8VAnSwrSfg/UqgaOh5IlgBRH6kjKQ=
+	t=1749847381; cv=none; b=MNnBeq5bJfMwct3GplkHP14GX4BVZD0qeDMLNexrEIIpn6BIRQuoHyGR5Cd03gGL4f9ROz3FxEeCqxDUMZv0Sn9BP5c6Mli/K1mna3FIJcXCyobb+C/nnGEgNNpb0Akmi6S33HHT73xjg+tElfRmPfFzWIdbpLoEaskN3G+pNqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749847058; c=relaxed/simple;
-	bh=CsX8xpMqWyr/rItlW7gwCYmjEsPqTfqg9p4t2K0l59s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IIrK8Ne09CzKaV0unDahOk6iskKZnCB/Sd/ApiMmXa4zT4fhwOIlz6ZKRTNm+FscvvJINpYydlGRC5PpVVqVP0P/N0GJ2aoesmtfQJ0gOQySOKyDUBYv0dL4hLXag1HBN4OXeYs4aXeijlvFybj6jrY/3NRvoKh0w59IIbJm4Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=1k+WjMuK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TQKKtzvk; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E1AE225400AA;
-	Fri, 13 Jun 2025 16:37:33 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 13 Jun 2025 16:37:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1749847053;
-	 x=1749933453; bh=38fc6baiLFupD6hkdl0qPcWi2dveS7upeTlkKkc7Bvo=; b=
-	1k+WjMuKesWaiMgSIbdi448G+8Ovf+aYM5AwQnmqi8/IJPcgS3SjihcwRDyaxs1g
-	6e9ZcfPsjEmkZW009oU34uQ3jrIA1b8SN0AEHIgR8O74WMzX0uUD7cbjo7j+24ck
-	x4BDRcF/36Kf5wZOpX77MYGrlM6I/yMm4ougpfJzGzoF+Btcjv+sFrXlPd6ckTK4
-	+avG1M9KIrvTpI4G70QjUeFj1AAYh6wBXge43FVbreZJpTQdvBn6THTdDtFLia/9
-	u99sYubN6vZdhIgwiy0MqayL7PDtVIX45cvXcCxSSkvie23NTwqdpSg5qg9p8Gfb
-	AdVuecc6NIpZu6F3Gd75WA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749847053; x=
-	1749933453; bh=38fc6baiLFupD6hkdl0qPcWi2dveS7upeTlkKkc7Bvo=; b=T
-	QKKtzvkDUoDxI8fsrKTXDxXaPYzpiQDlB9p9ck0rZT3S+vW204lmFBY6N15MCCGW
-	1+4TcsaOLf4gxmQQ/w0CViHaelvD8ZpJlQF/mBPwe96kSex7Rgurx0WIcJJmt7fA
-	+h/TzsfQEd0Mn+6NrA8OBCelz5MOAgePxRtlYYorgdw3U78eswB9EO36om0sU6Wi
-	JG8Vfg54B79x2gA6hV/PBslRKzGenWrern8yEEBB/muvNBn2lnl4xBi6pjLo/xzL
-	vJ7cABQZQ5inCLKndOLig5JFtmLjCRNhI9vKRjFT6xd7cK4p+6LIUo7xc2dzoCB9
-	Sz5k3mABLZKuRkryp7oFA==
-X-ME-Sender: <xms:DIxMaDVl8SkMWwLS5eFCILZ5tju7LoF5262rWxQLWS4kJgAbVU8h2Q>
-    <xme:DIxMaLnRh0e-qIdyoZgZ8PCUNsMEadsJgTgDf5K53g1SIn7FUSZmPgGW-Mxq_q489
-    SmOEfgAVBBqH4Uq6Rs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddukeelvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegulhgvtghhnhgvrhessggrhihlih
-    gsrhgvrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthho
-    pegrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtoheplh
-    hinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtg
-    hpthhtohepshgvsggrshhtihgvnhdrsghouhhruggvlhhinhesshgrvhhoihhrfhgrihhr
-    vghlihhnuhigrdgtohhmpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:DIxMaPbZLDcLwtPKub_5gHdfUoeMa7YCnTlJhjDeyapj3n49qpQQQw>
-    <xmx:DIxMaOU9l1HDb2GiSjZBopVK1VwfEaUOFGzedbuaNiCsWv3YjQoPcw>
-    <xmx:DIxMaNncYIDE_LUEMtYJouRPNewJ-XhDX2V2MBJqArhNxnuUdaHhAg>
-    <xmx:DIxMaLeam_ZVzR3f5HZJgUFAHF2tesxxvgpBncraBPYrClwGVZrc3Q>
-    <xmx:DYxMaDKJKkEK6AlbZgzDf6j2kLVUTjMCOLTZqpUo03BPKRKOMOYczYTP>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D72DF700062; Fri, 13 Jun 2025 16:37:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1749847381; c=relaxed/simple;
+	bh=fyAW/nTTib/lx1q/OpSv//6vzUS3nVFT/oyLaCqjOE4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WbxUdi4Rj7M8oJ+VNaKVf311QhIBwwOI2xou70jeVUy93HfBjtZb9+qrPflvH5x7CcLEi2M+yZtYj5K5Lym3NvWmmOf1ZBydmSC5lnTgHEjqeqsfWgk4VC7k9niJHq7MZbxWzFeAOl6zLqE2TrC0SS5nWeDPmbG40ov4EsyibvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/eGh3uk; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-adb4e36904bso496911466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749847377; x=1750452177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hL3bPOZiCumThELDqvwKH3aWWnHVUJPiuyMpNFx7dA=;
+        b=K/eGh3ukCMIhmrW0KyJkEr7eM8d5HJ19l1KQn2Vf+hUmOPBLumoLcgnvAxz4KvFISy
+         9RkzQj0NxtzR8Oyo9EIFVs1Jq1etxMNfov8mw9DZXo5RQVSUGJqWY8kLCuZK61euEZ9H
+         aw3SsKk9QnJNwbqqydN6dzW2nTuvS4on2TId6B25Jo5b25ueJ6UJiYDO3pJtFEpeWDRI
+         opOlv4XR1akStUo1OdHOnHDCfT9kBxVN/bWEZQKrxrET/Nd88Aja83hGKhz79Dd6BguC
+         jcx7i1adveiCBb+UV396pt/5O503NcsLExqpHh5lBnJppTe/QRu29zt2il/xb2xHMEho
+         pE9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749847377; x=1750452177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4hL3bPOZiCumThELDqvwKH3aWWnHVUJPiuyMpNFx7dA=;
+        b=DaUo9Cn5Vv1Wy0wQLF4fGbUFXi4O2irn6839xGTdTshjQ4vfzPWbggZivbOUCyHzGc
+         hYQcdB169SsQQ7CTliDO4VUV61+C3ileX9oGgTf+zN2WYHBfOXU7R1WVPSowqlfnPmju
+         BAnWdYMIyPmRudhtA51PGk/EedXwjdYQIhUldHyG1bLPCfHLMLo4rNLl30WDo0PtTlch
+         FhdKwJ60nwOI6Nmy1hohydD5JdhFfnwYV3uPCUtksB35QBJWDOeoALYgRPiE2g0YEAAc
+         zQvsv1Lu7glDFQARFTSpFZ/N34deiFzy+hH5PI3T5vGzwm+ewfcuKC2hroRbfjuMrIyE
+         8oTA==
+X-Forwarded-Encrypted: i=1; AJvYcCX26l0YJjgTq4jpLeItBPBGvA9iXc6ov88Ftrg93gwFvAxZgogW4JxS6XEx5D9dn7g0Sddw1J6pJupfjX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCyWuYOvvml0VdQbdyoYbw3HliFMo1zeWiKl0G6cuUHCEpRfKG
+	tFezdeSiCJdxzc3RyHGF6vqdc7gwqMuFuuOiTeETwLAJGRYIgum28vTxrMMW59myyJq7GZeDUJV
+	zP0+mqlxDsVBKyidPopKqWEE5FqkGhYI=
+X-Gm-Gg: ASbGncvE/vQRE467158EXY2xISfIKBQkYpla+uaCcM/s33siDmijReLv6qv0b4dSXzi
+	W5JV+UE0BpizDMDiUKTkJgzHIlpIMLXh8+XfGFjGWB7c5qekFtOlHWGD1ZjLFRkbuhpj/baFKQ7
+	MxqQWm3t/dKEpKjEiZfjpW2yCy9/yPLHObAVmLAd0juQ==
+X-Google-Smtp-Source: AGHT+IHs1rFLtd5Dyf296bDQtnWpyPbmXlE6lQX0psbVbCQn+LYSDEDdvBqxQCr3f3jMNK4CbR7c5otykkAdap5nzIc=
+X-Received: by 2002:a17:907:962a:b0:adb:7f8:9ec2 with SMTP id
+ a640c23a62f3a-adfad682f5fmr50158466b.53.1749847377370; Fri, 13 Jun 2025
+ 13:42:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T096d278615d9b919
-Date: Fri, 13 Jun 2025 22:37:02 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "David Lechner" <dlechner@baylibre.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Sebastien Bourdelin" <sebastien.bourdelin@savoirfairelinux.com>
-Message-Id: <b0859b25-0e95-4966-a433-5757d8bd9e6a@app.fastmail.com>
-In-Reply-To: <20250613-gpio-set-array-helper-v5-0-273fab50cc8e@baylibre.com>
-References: <20250613-gpio-set-array-helper-v5-0-273fab50cc8e@baylibre.com>
-Subject: Re: [PATCH v5 0/3] bus: ts-nbus: use gpiod_multi_set_value_cansleep
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 14 Jun 2025 06:42:46 +1000
+X-Gm-Features: AX0GCFvBYudheTPQsPErwJpRx7FcK8QPcnYVNFFml7BF63WDlP4W812XArPXbDU
+Message-ID: <CAPM=9twFdWPhCA7-6yY27xkdnecxRJXOF5Ni8iDc9Oa5QOtukw@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.16-rc2
+To: Linus Torvalds <torvalds@linux-foundation.org>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025, at 20:55, David Lechner wrote:
-> This is what remains from "gpiolib: add gpiod_multi_set_value_cansleep"
-> that didn't get applied yet for the bus subsystem. So I have changed
-> the subject line accordingly.
->
-> Arnd,
->
-> There was no maintainer listed in MAINTAINERS for the ts-nbus driver
-> and it looks like you have picked up patches for it in the past. Could
-> you please pick up these as well?
+Hi Linus,
 
-Sure, no problem, just a few things:
+Quiet week, only two PRs came my way, xe has a couple of fixes and
+then a bunch of fixes across the board, vc4 probably fixes the biggest
+problem,
 
-- These are all cleanups that can wait until 6.17, right?
-- I see the driver has no in-tree users, and apparently never
-  were. There is a imx28-ts4600.dts file that should reference
-  it but doesn't. Do we have any indication that the driver works?
-  Added Sebastien to Cc as well for clarification.
-- it would help me if you can send the patches to soc@kernel.org
-  for me to pick up, as that ensures I don't forget them.
+Regards,
+Dave.
 
-     Arnd
+drm-fixes-2025-06-14:
+drm fixes for 6.16-rc2
+
+vc4:
+- Fix infinite EPROBE_DEFER loop in vc4 probing.
+
+amdxdna:
+- Fix amdxdna firmware size.
+
+meson:
+- modesetting fixes
+
+sitronix:
+- Kconfig fix for st7171-i2c.
+
+dma-buf:
+- Fix -EBUSY WARN_ON_ONCE in dma-buf
+
+udmabuf:
+- Use dma_sync_sgtable_for_cpu in udmabuf.
+
+xe:
+- Fix regression disallowing 64K SVM migration
+- Use a bounce buffer for WA BB
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494=
+:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-06-14
+
+for you to fetch changes up to 1364af9cb2c5716f1905113cc84ff77ddf16a22e:
+
+  Merge tag 'drm-misc-fixes-2025-06-12' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+(2025-06-13 14:57:09 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.16-rc2
+
+vc4:
+- Fix infinite EPROBE_DEFER loop in vc4 probing.
+
+amdxdna:
+- Fix amdxdna firmware size.
+
+meson:
+- modesetting fixes
+
+sitronix:
+- Kconfig fix for st7171-i2c.
+
+dma-buf:
+- Fix -EBUSY WARN_ON_ONCE in dma-buf
+
+udmabuf:
+- Use dma_sync_sgtable_for_cpu in udmabuf.
+
+xe:
+- Fix regression disallowing 64K SVM migration
+- Use a bounce buffer for WA BB
+
+----------------------------------------------------------------
+Christian K=C3=B6nig (1):
+      dma-buf: fix compare in WARN_ON_ONCE
+
+Dave Airlie (2):
+      Merge tag 'drm-xe-fixes-2025-06-12' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'drm-misc-fixes-2025-06-12' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+
+Gabriel Dalimonte (1):
+      drm/vc4: fix infinite EPROBE_DEFER loop
+
+Lizhi Hou (1):
+      accel/amdxdna: Fix incorrect PSP firmware size
+
+Lucas De Marchi (1):
+      drm/xe/lrc: Use a temporary buffer for WA BB
+
+Maarten Lankhorst (1):
+      drm/xe/svm: Fix regression disallowing 64K SVM migration
+
+Marek Szyprowski (1):
+      udmabuf: use sgtable-based scatterlist wrappers
+
+Martin Blumenstingl (3):
+      drm/meson: fix debug log statement when setting the HDMI clocks
+      drm/meson: use vclk_freq instead of pixel_freq in debug print
+      drm/meson: fix more rounding issues with 59.94Hz modes
+
+Nathan Chancellor (1):
+      drm/sitronix: st7571-i2c: Select VIDEOMODE_HELPERS
+
+ drivers/accel/amdxdna/aie2_psp.c           |  4 +--
+ drivers/dma-buf/dma-buf.c                  |  2 +-
+ drivers/dma-buf/udmabuf.c                  |  5 ++-
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c |  2 +-
+ drivers/gpu/drm/meson/meson_vclk.c         | 55 ++++++++++++++++++--------=
+----
+ drivers/gpu/drm/sitronix/Kconfig           |  1 +
+ drivers/gpu/drm/vc4/vc4_hdmi.c             | 12 +++----
+ drivers/gpu/drm/xe/xe_lrc.c                | 24 ++++++++++---
+ drivers/gpu/drm/xe/xe_svm.c                |  2 +-
+ 9 files changed, 68 insertions(+), 39 deletions(-)
 
