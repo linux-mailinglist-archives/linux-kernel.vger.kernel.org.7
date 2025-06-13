@@ -1,513 +1,172 @@
-Return-Path: <linux-kernel+bounces-684756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BA2AD7FBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E33AD7FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF83716F917
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:51:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DAD3B69C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DCB18FDBD;
-	Fri, 13 Jun 2025 00:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F297191F8C;
+	Fri, 13 Jun 2025 00:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="nhCO0/6n"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023120.outbound.protection.outlook.com [40.107.44.120])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wffKGVBe"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F781E50E;
-	Fri, 13 Jun 2025 00:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65A51E50E;
+	Fri, 13 Jun 2025 00:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749775874; cv=fail; b=WS6tO7OMuJ5Ojbrf0sy1W3wt2yHlw1xxRUNNRgMYCw1fFZ9BlbJQUB9oAXAniqe0D4ofHI6F9BsWcXhSEZDHzVqYw1Z32M//cOgG7xCPBBucEKwZevDM314nXMCE1oScbhl8fBnvOaaPYx0Ld1vnA1L+uwdNVhsLy9q4VIr8gmo=
+	t=1749775968; cv=fail; b=qi4HNgEPwHtEpN0KZg1c+2OcmBSwaENK6jpuk3xAWtTWY1njHwJQodF1RWcghpT9HRWmOWN21updlLHxBy7Zrgtiu14TpLt/z63MQyS4q3fsFsUZQ4xszlouTQ8SGS6sBBBOK/9ERc8w1Yq8NKKDN7xC4tWJYVBhFyT1lp2HoUA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749775874; c=relaxed/simple;
-	bh=Nnbiax+9q41Y7QE6YozPtUBJNds9GzuwrfY0tNgYVLc=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dlUzrQ2WxmiVuiquw9ZsvgM4pjQtqmQpvtm/rZODSp7Gw8KCadigWx6Wjg5ayffgzf5UahLm8POz/jqSZ3EHgP9oFgVbZNN2+pta5mvRYs1lanZEvh2H6Rw6GO7IplxnHi+kOBL2iJ5hIdHjgrU5Zt4PIbgdVEAeX6TtZNqvhUI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=nhCO0/6n; arc=fail smtp.client-ip=40.107.44.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+	s=arc-20240116; t=1749775968; c=relaxed/simple;
+	bh=HpuDl1SEmGIlYdhZpbPMA2Q4gDHwurufPNACPSZtt30=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FGLy6JyKdJbkEz0zyvlz7W1cDn+0lPtqhSN3r+E8ryxkp0sKUP8C7hcfMew7Bt7B/+6+7kJZY5tpJL0M5Jj8IRttWG7cza05QUnPRJos4wHS2EwgCNcan+4Pu29zIe7/tu7yXC5GC8Z31elrRI6f8I+853uWAvq2M+R+DTwKp7s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wffKGVBe; arc=fail smtp.client-ip=40.107.93.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oPPb3wa1IO+sOZpQF+mW6Ok3axMgDJTdCvXC7mDgwJ0CEJRZTewAEygy5aVLdooZEocdkVsklCVvBI10WiB3somhMLNKEsWA632m26vdX9t7OSedHAPmxtKBpTweeb+QAaHItfDF1zNuoFqmYZXH2gcILPDVIR+VrtnuXLxEymFOVLRQbulD5HZQIlGQrd21bSURGqjMMRtMw05vInIVxXBtFh3DkkdJSSQ2sBALohm79LI1WdzmB8JsCoLkLwsQke/nd3POyOnmw3ILdmezXjWyvluYS1IiReDLfSwxdPpBY+UvsmS1O/tf+OMIDP61ll+ExwG3eXxF8PGBetlemQ==
+ b=wN12/HjjKSYT2z/tJpQ364Ux8/lABRe9XmxXUzJXJrS1wsjN6h3QuIyWLS7LukDbCepxhVXzV1yniVbXgyV0LwRuTXTAyy4VqmU+xL/sL5s7GVvRPPfvUBBGREzCpqbvHvfrjoxdpxaQ6nk4cTazZqLvZmRaFpIJCvBEUx4oRIenFd6Z+puLK9BCNNlcrn32YGHX4jlBlGDVbw4JsO9/GxqREkBs4qHo8yCKHw1ooWIwpGNMFtN0VdD0rmumGddDi9hCSTK2fe16shEFdbzwGHv0CSaIkl7iGcais4cqcZTHOiLIjB42h5PA79RHRvEdyk2QqfzsIfPMR/RoGHU9mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rF2gWYnCPO0N7heFWCaon+Sa4g2bRmlBhii9uvItDuI=;
- b=Qv4RTzlcRXIGNSe6SugUoyMSUOhEXt7OlOUAbhX5VG/Pi72Ugc9wS3VqqQupv0XO19X6KGaO45iclia3P+W3bWXgzjwY7TfI3oeHbTlzCB2aE0oaccE5NEi+5XqXHsAZ7kFFQuU1h/y4p24m5X3lXQ3PZw38LI1vHW0heHo/jMLK/Fs/bJeIUAo/Vb6sed531yAYkXPPqBn0sgHIEEh9qb89Kh8C4xLQeMHGW+zDvo0A3DdX5F5hjeiW1psnALZlSK/KhLMhJtQAfSLLOrMgOrmirE0Q09qIoznwobZj0j5riFPuGW5128f210A76TBVML92pQbsxeWbRLEuXOBPnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
+ bh=iynutVJuAqCvLIk2pXOitkNAY2g0ZBEcvhtmIVeU6dk=;
+ b=U81mvPsfZSj7J4vn8IOyxS+39nCjPgxrZc/T1lbcC5N2Q8TeGiZibCAY4rH6WgY5BdHINQ6DuX2vkdfvcIAVWOwVpS9goUbMgLEDWhDg7eogWpdJ4XO4r2YEyMtFOCCflJ0gTIKT7SNgav175nVADv8bJx8hbhM+b7DrsmeJyYFb2EezKykZjQzyTh/kUveoUhAQWDKuSTsfNJCszCR85GoNTYPVSMAbYj9teoBtgpjhcSHN1L1ZCEzbQ1xpDKeXBiGKBs5Ww6psMybKSTmnFkkGlIRPYoF4gAxLh/bOTLVnY0G5V5es2HfvkDTQsrQM+FmuBPAgY2iJF2Jux7wVAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rF2gWYnCPO0N7heFWCaon+Sa4g2bRmlBhii9uvItDuI=;
- b=nhCO0/6n3mgczcHWb6LxBIhzJxw0G3fASFDLTq2nIOQtsV7WVrXCYcn6vTyha3YKoB5LiVVCM5R111+fejT3W8XhwmfbbrGsOKOMpQO8MpT/GW7+4lcG0lIKawGbrXjfWHaHp2t3qNUFiUaN+G+QuXXRAxpAatBOTxcFrKTjAcjAPQ0FiEpp+OLGDxgB+m8NKui/APpuiwFhYZezzaoVgW8z9FPySUlHKC/74NAUKN0H+61jVhLVZdpa2T0ZyrsuuatrX9vPnoCRZRSretOjIoIntsOTDqx5OtyA1WQf8psbP1KH69E4a1C0f3rNLmOejU7w+H7WypX9M2Gy/VWsvw==
-Received: from TYZPR06MB6568.apcprd06.prod.outlook.com (2603:1096:400:45f::6)
- by JH0PR06MB6296.apcprd06.prod.outlook.com (2603:1096:990:c::5) with
+ bh=iynutVJuAqCvLIk2pXOitkNAY2g0ZBEcvhtmIVeU6dk=;
+ b=wffKGVBepSibJDJIRGsj2AteYhf9QWsx523395WS7NTUwJSh+LsYuvKwnuwxyTlxiGJNwjTysxQnV+juYkztekXoxnqYQa1+/W1FfsRkFzOjl/CP8T09FN9IoVNiOaUyYn67VKiBrwnQ6EQWvQ0zRaImoH8rThK6D1LoQMi2ulc=
+Received: from BN9PR03CA0763.namprd03.prod.outlook.com (2603:10b6:408:13a::18)
+ by SJ0PR12MB8114.namprd12.prod.outlook.com (2603:10b6:a03:4e8::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.23; Fri, 13 Jun
- 2025 00:51:05 +0000
-Received: from TYZPR06MB6568.apcprd06.prod.outlook.com
- ([fe80::72b8:dce5:355b:e84b]) by TYZPR06MB6568.apcprd06.prod.outlook.com
- ([fe80::72b8:dce5:355b:e84b%5]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
- 00:51:05 +0000
-From: Jammy Huang <jammy_huang@aspeedtech.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "joel@jms.id.au" <joel@jms.id.au>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] mailbox: aspeed: add mailbox driver for AST27XX
- series SoC
-Thread-Topic: [PATCH v3 2/2] mailbox: aspeed: add mailbox driver for AST27XX
- series SoC
-Thread-Index: AQHb2eeI4a5F3MN24Eu/ozXuvO4n07QAO/MAgAAJjEA=
-Date: Fri, 13 Jun 2025 00:51:04 +0000
-Message-ID:
- <TYZPR06MB6568BA93BCEEBEE3B9DE15EBF177A@TYZPR06MB6568.apcprd06.prod.outlook.com>
-References: <20250610091026.49724-1-jammy_huang@aspeedtech.com>
-	 <20250610091026.49724-3-jammy_huang@aspeedtech.com>
- <13b88c1e404a9abe5cfae6673cb93e0b020e3524.camel@codeconstruct.com.au>
-In-Reply-To:
- <13b88c1e404a9abe5cfae6673cb93e0b020e3524.camel@codeconstruct.com.au>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR06MB6568:EE_|JH0PR06MB6296:EE_
-x-ms-office365-filtering-correlation-id: f04c6692-4038-45b6-60b6-08ddaa14606b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|7416014|1800799024|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?GsVCL3O88Yb7Xst653ZAx/dJXxD2+aJwsTg2dzNlEQ6WWg+qkSyPoh4fEk?=
- =?iso-8859-1?Q?MW8gFDaBuYuV25XoGIIPqvCSWiDZgdmcApXQAc5h6rWOs4pqKJd1JxrsZr?=
- =?iso-8859-1?Q?BgK+defI6ivEEdUgpjMTsmnwxtF9eQhh+G7Zt6llaxgU7V6Qg6QP+ssKJA?=
- =?iso-8859-1?Q?4GmppscbO4Xn2bErlQvIqP2G3MBQvlijASh/lyTxNz+goqShRtvPp+Y2qO?=
- =?iso-8859-1?Q?qV5GBmsO+ts/eMSokev/Y0D5PZiyfkkxL8Q8vVE9ECEM9d3wak8BTv+zHZ?=
- =?iso-8859-1?Q?1kCCrouS+kPCWEm66CCsMX4KvOx4FIyw684jCXhbMycaiNapS0FBFviHQy?=
- =?iso-8859-1?Q?ICis66HEDPJ5e2ScwlbAXG20SW8Vug17OxILM5YvHWodbdThW4VO0UgS3n?=
- =?iso-8859-1?Q?AwHIXZfNkFf5RKXC/iyz6XuxDisB2CfbUlMbvpd+cP2xk2bJqpbxT4DlDC?=
- =?iso-8859-1?Q?Uk8+jbhTva2BTsRGulbJXwGA1V0FNfDybc99pQE9ye7BAnAcWLrDZplpZS?=
- =?iso-8859-1?Q?omVwOHbEcYBqArdWKxiC6WrIGfehUlWtQVEjnVjOpSSpvrTibk1DznR5dE?=
- =?iso-8859-1?Q?PEO35MAaM5Wv5ex5PdfpqOVwkYsMCBBIXRjL1TDq7jJvxEh0ISNDCH1atK?=
- =?iso-8859-1?Q?7rFmoT+8UR+LLvv3O8XZx9Ds257cmKCi5P1TLFeVSzPtoNGIjQgykHlnYa?=
- =?iso-8859-1?Q?bfBtd0fwFRIuyT03jFEicA2SH5XA2I2/EdrybhXsJPpwylRhRAznBEjUsx?=
- =?iso-8859-1?Q?k3okvd+iCookNkbwg8fw2swMLrVC0OS20UtlFbXzRmUEmd1t2bwlQyAdXA?=
- =?iso-8859-1?Q?XIeUPPhXIasG8L1Ta1Cz4NRWwtGmodihdUb80ZwvKNwmXDFhDVYiPRd6Kd?=
- =?iso-8859-1?Q?CLn9v6NdAnJ9C7U+VMsuzgROfoxwFkUucy4KSyHwYAppLwhaeH2h8aNZPr?=
- =?iso-8859-1?Q?kz+kgsejJJKVLzoXd8JX/AtfUJ+L1PPPQpYzxLimmP8bvyZgQNngpFd3b9?=
- =?iso-8859-1?Q?vQpz5jvrEfAliRISj/O4VDXChE6uwLhiQOu87FVlzHbzZrgjUw9pHAhFRq?=
- =?iso-8859-1?Q?WxNCpD1OQ7Ew6hjjrzYK/oeJulq8SqMUvmQbF6NExXaYRXHrsxQ94krZ53?=
- =?iso-8859-1?Q?OVRX72eboLjyGyPidLlkM+PkCh3NptOYduLRRdAEKjINrkFv0Yd6VY/ZSb?=
- =?iso-8859-1?Q?RhB4SIoP+LHPkLmUlV0u2iJ784GB3YzUJb4/f1pAWmAWZNud3MEJhDhJpr?=
- =?iso-8859-1?Q?mC+zDlJGMLrpnJCbp4xlAuug/9CQdr4TYDeC4RR36t/q85RoIVVQZA+I+N?=
- =?iso-8859-1?Q?CjKsy+zALmcVvXO3IedzaEuOnNfvkVTfMfDwU8AAsc1ZP36EE83l6/pied?=
- =?iso-8859-1?Q?DflSBKijLeyGqnK+H2YsmwHdqHEvwkDhzA3sWMW9SIvUiHnHa2LSn7A3bq?=
- =?iso-8859-1?Q?oRC0ZGplG0R4dga+h4NWZvt84rIARBUANvMkgHivZjoPsSlmLhiTju4/Kr?=
- =?iso-8859-1?Q?UY6gng09Wb1TLphbyyOuwSvEk+IR2bBCbMs0DawoTYvgbdGu/z8zmfTdjn?=
- =?iso-8859-1?Q?8Fxi3BY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6568.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?FHqIIrfcn+I8YvEUaJXolRVHuwNUVcz1i+eU14vn5UQPfYDA2mluO4FSE0?=
- =?iso-8859-1?Q?tmUJAYzVcFKW4Znuj46EatD5MHczydE91LqSFm6bKGQXfBmphrLA/LWgKH?=
- =?iso-8859-1?Q?dyj36nHWltzTlIBvoTOMj/chMWp4zY8HRo/IadZg4B1sD5LBxk51+AfsQP?=
- =?iso-8859-1?Q?P7Z++QhgerBe+kF/3rYS4XMJObyRKP6CH79f1l1FTdhlIJvlwTBtJMOs/X?=
- =?iso-8859-1?Q?xsASuqQkDyrhTyUkzFmii+lE1fPImTZaexyONLk8hxS8avF66a49EBcCSt?=
- =?iso-8859-1?Q?o8157X3Hr1GxBTvqoIsUseJmxnhKZndGVWKCd4AR68aMyyehKl+DU1oFgQ?=
- =?iso-8859-1?Q?/deF4kKGeogzAe/4Tn3uD+nL8cn9OtC2tImq6agvB7cINs+gRkpzdQVTgW?=
- =?iso-8859-1?Q?/cZgPuHmb66RQkc6FhUoA3377LR9kvfN5bLWahsTtbajYnbhmMZwgqbtmY?=
- =?iso-8859-1?Q?+YGPFj4YzhyEx4+rWcCmtBcQ3FDzwp3i/2gRvHxZH7C6b9av4L27Kz6Dcq?=
- =?iso-8859-1?Q?fKgQxQ3YOA4l3PoondrEnJYdvsVitfcy34nvJfEVA5c/Yeo8CW2Kfb9pfE?=
- =?iso-8859-1?Q?+3Am/Wg4882t1J8cF3OyhFTznixyN22BIxQYo/KQuPv29r3CPLR1XzAiAx?=
- =?iso-8859-1?Q?FzLq3hj2FY90m8M5fPMfY8nvQBBBUnUAs26X3BUChTg9y9pNd45LTU4TwQ?=
- =?iso-8859-1?Q?hEfhxoKlZzYyJ8BuTIFTYXXyJiPzkWQ1LLYAJD8N+OyBLLsn1PmAPacVtJ?=
- =?iso-8859-1?Q?hI9Osvn+WBYOpPfrMhRflmUv+89qbuSmrNBEeKKddD2NEvIWZ56kfX6SXz?=
- =?iso-8859-1?Q?m5EWneCUvN5wk49dPzYumYYL2XcjaCp0VXlRnFYmT3Qik85/8DdbgYVEla?=
- =?iso-8859-1?Q?xgvcgR8hn0NYSQVItB2nbzxOovvkOPhzOHrGWsIx5bGW8V6KzfUl1fJY8u?=
- =?iso-8859-1?Q?Eq8c5SWCbZGEFQU4a3ndHwvn3h9u291tN+YzIwvM79vNKYtyXwqJnvlaCA?=
- =?iso-8859-1?Q?ntqj1iiGJqVCHNvpCPUaiztV0iRpiVvkFbNfmQOkfS1mlnWFLhwLvXDLvg?=
- =?iso-8859-1?Q?chneezf+vsppG1Az3/h91SOKD+rU/2OnCnIupucShk+pujSk2eXqpdrtd9?=
- =?iso-8859-1?Q?M/S6SoyV4A+PG7zIDGBMcxZVbSGlC0VmDT7dfjyL0zIFmw3VJvODcq0UJ7?=
- =?iso-8859-1?Q?spAIF2LhdLX8dl+RnUzsRsB0M7HDHHNsh7o4D26Sf7QjpS6DrS0wz+zE3D?=
- =?iso-8859-1?Q?YbT+JkVE/+Rox8IMwv7nQYyvNfcm7sc3hLpvBz7sr6FkzbgynykFmg08O6?=
- =?iso-8859-1?Q?0Lauk5DoUIDd3MDrLVDH1WOcCvByjCDRZnbqOeQN2YcORtajvAuumwgtzU?=
- =?iso-8859-1?Q?VfN8iL0iK+wpgraTGhvLo1CAHqD7qaDhXgu3rfVd4ajOplVi2oHeTfnAbl?=
- =?iso-8859-1?Q?ZB/IPepmJiJfCaRjMCx1qM6NqFCSuRChgphRzMnSRobOsdYXvYG/ulpCs4?=
- =?iso-8859-1?Q?SMpQnV2Dc6J+y4ubBy7quoSR+APphKE6RJqyah0EpAeY3JdWLpQbilrrDh?=
- =?iso-8859-1?Q?sNB0elmPJ3ogi7RdkHbg49/oe677UY8Ocg80LksiPJlOcykfVazavlMWlJ?=
- =?iso-8859-1?Q?3vTLXYCYamNW6qBKD6JD/EKgG8cjCn0R9RUxpGJ2K6FEBsMbFRQNq6Dw?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ 2025 00:52:41 +0000
+Received: from BN2PEPF000055DB.namprd21.prod.outlook.com
+ (2603:10b6:408:13a:cafe::d4) by BN9PR03CA0763.outlook.office365.com
+ (2603:10b6:408:13a::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.17 via Frontend Transport; Fri,
+ 13 Jun 2025 00:52:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF000055DB.mail.protection.outlook.com (10.167.245.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8857.0 via Frontend Transport; Fri, 13 Jun 2025 00:52:41 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 12 Jun 2025 19:52:39 -0500
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <linux-edac@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <yazen.ghannam@amd.com>,
+	<mario.limonciello@amd.com>, <avadhut.naik@amd.com>, reox
+	<mailinglist@reox.at>
+Subject: [PATCH] EDAC/amd64: Correct number of UMCs for Family 19h Models 70h-7fh
+Date: Fri, 13 Jun 2025 00:51:35 +0000
+Message-ID: <20250613005233.2330627-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6568.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f04c6692-4038-45b6-60b6-08ddaa14606b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2025 00:51:04.9741
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DB:EE_|SJ0PR12MB8114:EE_
+X-MS-Office365-Filtering-Correlation-Id: 38bfda78-d558-4e63-b8ff-08ddaa1499de
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?A+RZg1NnM1k/qZffB63NIO0wBd945nepTq62USLC/Otv1/GcIGgKb958XWSY?=
+ =?us-ascii?Q?Lk49sr9gSJ0HSWVRGZwMsU28yWQ2a0MTWC2UVk+tm56aykJ5KkF6BX54n33e?=
+ =?us-ascii?Q?wEEIIrgU2b4RKCKJzBrr6xyZXlx839UaXafnQJK8+uGF7MsDXDQbtEoRhK+w?=
+ =?us-ascii?Q?u0zU6Ic0Y7PAG41vk9aCZ8B/mfeHzlwuaf60eYOWMcY3tOxz4MdYXDX4DhqF?=
+ =?us-ascii?Q?qpDTD/klFX3E21r8UE8te2d2axkt6XBTebn54dBg9h0HsCwOpVCv1JjoryUK?=
+ =?us-ascii?Q?5aXBYbyzalhl4/d3fLtY6Y9o2QIm4L5uTvDBOn43O9kWTNPnbjmcFJsWqakv?=
+ =?us-ascii?Q?PtWY71Ge/t/jbm5wpbTzBEB8M7uDk1Wgz76HsxaSnCxiCh6dxpRps5+htijK?=
+ =?us-ascii?Q?ILCxw5FI+EKLdrxdrd7xKwT1j3JT9dG77Ev/zJvzIh+1x2KGyvHNGsBNaudL?=
+ =?us-ascii?Q?zwmXqJd1LGOSpZtFjO11Om2VCiOyi151Dtg9zpxP/BAEZoHZjtV7K4v3lH0q?=
+ =?us-ascii?Q?2jt1Ku7jTJd4VsQh3TLNz3reh7pG5D0p7AxSthoFT4JlHKe4jpVJbPXiDo7b?=
+ =?us-ascii?Q?qT7iGd0+bws67QgqWilbODUYSHYwzHRLTVZQBl6iUuMaDwuz8RxnX8Ll+x6P?=
+ =?us-ascii?Q?/TTzUBVYSB4khId5eiV8hfDkrnYv5jZa5RcaRyKQI+QW0HQbLu4xNqINDoj8?=
+ =?us-ascii?Q?Xobggjb/MwzJGoXateAJlF8yYD4oXD/bQlQWCKJYD9vo1QIzs9o9j0uHDWbU?=
+ =?us-ascii?Q?USqjcqklwKFEQRI41re3bfRtDMhhWKiDeyNei1ARVqssgoU3KfXrVFK5ZIpD?=
+ =?us-ascii?Q?lCX8wf7YbtnequyJp4iGFwR7xkrRK8ILcW2jpKm93b2ogqVVg9vz5/+R8N6U?=
+ =?us-ascii?Q?PjaaFDoHgELdq0X73keIPw7eEvfNMByDjOIvU7SKIN3dDK3vSSz14etwkLaq?=
+ =?us-ascii?Q?30H7SxgFNUv4Tc4AYzHB/xQng2ZIcoAMpjCtdnus5mLoLp5WOAOAE21e84Ai?=
+ =?us-ascii?Q?sHWQcllItmadgDabYHAcVSIpB1PU2AUFlwhmFerfAUEYtxtRnUIci4mBYot+?=
+ =?us-ascii?Q?NhFKAWeokGbfdJzW4cD4a2UsSFLp3U9wRbuB2ZPRjb9Fu/9QPAquULz3OvDC?=
+ =?us-ascii?Q?aFP1Rm/Dfpp7wj43kxmIIGQVbjOxKHUK5ozGvFIkzScMQX8i+JR8900oKW2H?=
+ =?us-ascii?Q?WmvCAQ5Ia0nwkkUN+GdvUkh0eWgi5Y+O9Ym/NdblIJVjleQAnQNjIQLo/hO7?=
+ =?us-ascii?Q?7TmJyvacjSHRwQ0wcNSTqKAmx0iG6WEO91Ks6dmO0M2qfuZ+SyPYSk2FQwmW?=
+ =?us-ascii?Q?XoPKc7RKTK915TL9/eZW3PvFOZuHE9R0FfAcWD8LrK9UbHqL24yxqEIHRq1U?=
+ =?us-ascii?Q?mZDgu2e8WdzYLJk1hZJVoqNmF78uIVMzDaVHrzXfTaPvoV3WUjsqllarjGBF?=
+ =?us-ascii?Q?EWPYk8cHu0/Fw4dKD1uxFnVSUdFZBmvHSsg/QpuwjMbGAog4v7/RUPrrLxil?=
+ =?us-ascii?Q?Ncj5mBrK0HMk9Olc0UdWK9DelODFTdEUm6TU?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 00:52:41.3635
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: B/5WKWI/VoHdQ4Jcui9Net82Ee6FuwthUV6K9+Q9REXZA+qp61nt4M99o9GcYxJKFzinoqQEr7RATkQRojsEHsLAGU8D+aFpyMAAtTE+dHM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6296
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38bfda78-d558-4e63-b8ff-08ddaa1499de
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DB.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8114
 
-Hello Andrew,
+AMD's Family 19h-based Models 70h-7fh support 4 UMCs per processor die.
 
-You can find it in chapter of ast2700 datasheet below.
-  III Function Registers -> 12 Inter Processors Communication (IPC)
+The amd64_edac module, however, assumes only 2 UMCs are supported since
+max_mcs variable for the models has not been explicitly set to 4. The
+same results in incomplete or incorrect memory information being logged
+to dmesg by the module during initialization in some instances.
 
-Regards,
-Jammy Huang
+Fixes: 6c79e42169fe ("EDAC/amd64: Add support for ECC on family 19h model 60h-7Fh")
+Reported-by: reox <mailinglist@reox.at>
+Closes: https://lore.kernel.org/all/27dc093f-ce27-4c71-9e81-786150a040b6@reox.at/
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+Cc: stable@kernel.org
+---
+ drivers/edac/amd64_edac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->=20
-> Hi Jammy,
->=20
-> As far as I can tell this controller isn't documented in the datasheet fo=
-r the
-> AST2700. Can you point me to the right place? Or, can we get the
-> documentation updated?
->=20
-> On Tue, 2025-06-10 at 17:10 +0800, Jammy Huang wrote:
-> > > Add mailbox controller driver for AST27XX SoCs, which provides
-> > > independent tx/rx mailbox between different processors. There are 4
-> > > channels for each tx/rx mailbox and each channel has an 32-byte FIFO.
-> > >
-> > > Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
-> > > ---
-> > > =A0drivers/mailbox/Kconfig=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 8 ++
-> > > =A0drivers/mailbox/Makefile=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 2 +
-> > > =A0drivers/mailbox/ast2700-mailbox.c | 226
-> > > ++++++++++++++++++++++++++++++
-> > > =A03 files changed, 236 insertions(+)
-> > > =A0create mode 100644 drivers/mailbox/ast2700-mailbox.c
-> > >
-> > > diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig index
-> > > 68eeed660a4a..1c38cd570091 100644
-> > > --- a/drivers/mailbox/Kconfig
-> > > +++ b/drivers/mailbox/Kconfig
-> > > @@ -340,4 +340,12 @@ config THEAD_TH1520_MBOX
-> > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 kernel is running, and E902 core used for=
- power
-> management
-> > > among other
-> > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 things.
-> > >
-> > > +config AST2700_MBOX
-> > > +=A0=A0=A0=A0=A0=A0=A0tristate "ASPEED AST2700 IPC driver"
-> > > +=A0=A0=A0=A0=A0=A0=A0depends on ARCH_ASPEED || COMPILE_TEST
-> > > +=A0=A0=A0=A0=A0=A0=A0help
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0 Mailbox driver implementation for ASPEED AS=
-T27XX SoCs.
-> > > +This driver
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0 can be used to send message between differe=
-nt processors
-> in SoC.
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0 The driver provides mailbox support for sen=
-ding interrupts
-> > > +to the
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0 clients. Say Y here if you want to build th=
-is driver.
-> > > =A0endif
-> > > diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-> > > index 13a3448b3271..9a9add9a7548 100644
-> > > --- a/drivers/mailbox/Makefile
-> > > +++ b/drivers/mailbox/Makefile
-> > > @@ -72,3 +72,5 @@ obj-$(CONFIG_QCOM_CPUCP_MBOX)=A0+=3D
-> qcom-cpucp-mbox.o
-> > > =A0obj-$(CONFIG_QCOM_IPCC)=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0+=3D qcom-ipcc.o
-> > >
-> > > =A0obj-$(CONFIG_THEAD_TH1520_MBOX)=A0=A0=A0=A0=A0=A0=A0=A0+=3D mailbo=
-x-th1520.o
-> > > +
-> > > +obj-$(CONFIG_AST2700_MBOX)=A0=A0=A0=A0=A0+=3D ast2700-mailbox.o
-> > > diff --git a/drivers/mailbox/ast2700-mailbox.c
-> > > b/drivers/mailbox/ast2700-mailbox.c
-> > > new file mode 100644
-> > > index 000000000000..0ee10bd3a6e1
-> > > --- /dev/null
-> > > +++ b/drivers/mailbox/ast2700-mailbox.c
-> > > @@ -0,0 +1,226 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Copyright Aspeed Technology Inc. (C) 2025. All rights reserved
-> > > +*/
-> > > +
-> > > +#include <linux/interrupt.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/iopoll.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/mailbox_controller.h> #include <linux/module.h>
-> > > +#include <linux/of.h> #include <linux/platform_device.h> #include
-> > > +<linux/slab.h>
-> > > +
-> > > +/* Each bit in the register represents an IPC ID */ #define
-> > > +IPCR_TX_TRIG=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A00x00 #define
-> IPCR_TX_ENABLE=A0=A0=A0=A0=A0=A0=A0=A0=A00x04
-> > > +#define IPCR_RX_ENABLE=A0=A0=A0=A0=A0=A0=A0=A0=A00x104 #define
-> IPCR_TX_STATUS
-> > > +0x08 #define IPCR_RX_STATUS=A0=A0=A0=A0=A0=A0=A0=A0=A00x108
-> #define=A0 RX_IRQ(n)
-> > > +BIT(0 + 1 * (n)) #define=A0 RX_IRQ_MASK=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A00xf #define
-> > > +IPCR_TX_DATA=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A00x10 #define
-> IPCR_RX_DATA=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A00x110
-> > > +
-> > > +struct ast2700_mbox_data {
-> > > +=A0=A0=A0=A0=A0=A0=A0u8 num_chans;
-> > > +=A0=A0=A0=A0=A0=A0=A0u8 msg_size;
-> > > +};
-> > > +
-> > > +struct ast2700_mbox {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct mbox_controller mbox;
-> > > +=A0=A0=A0=A0=A0=A0=A0const struct ast2700_mbox_data *drv_data;
-> > > +=A0=A0=A0=A0=A0=A0=A0void __iomem *regs;
-> > > +=A0=A0=A0=A0=A0=A0=A0u32 *rx_buff;
-> > > +};
-> > > +
-> > > +static inline int ch_num(struct mbox_chan *chan) {
-> > > +=A0=A0=A0=A0=A0=A0=A0return chan - chan->mbox->chans; }
-> > > +
-> > > +static inline int ast2700_mbox_tx_done(struct ast2700_mbox *mb, int
-> > > +idx) {
-> > > +=A0=A0=A0=A0=A0=A0=A0return !(readl(mb->regs + IPCR_TX_STATUS) & BIT=
-(idx)); }
-> > > +
-> > > +static irqreturn_t ast2700_mbox_irq(int irq, void *p) {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct ast2700_mbox *mb =3D p;
-> > > +=A0=A0=A0=A0=A0=A0=A0void __iomem *data_reg;
-> > > +=A0=A0=A0=A0=A0=A0=A0int num_words;
-> > > +=A0=A0=A0=A0=A0=A0=A0u32 *word_data;
-> > > +=A0=A0=A0=A0=A0=A0=A0u32 status;
-> > > +=A0=A0=A0=A0=A0=A0=A0int n;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0/* Only examine channels that are currently ena=
-bled. */
-> > > +=A0=A0=A0=A0=A0=A0=A0status =3D readl(mb->regs + IPCR_RX_ENABLE) &
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 readl(mb->regs + IPCR_=
-RX_STATUS);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0if (!(status & RX_IRQ_MASK))
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return IRQ_NONE;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0for (n =3D 0; n < mb->mbox.num_chans; ++n) {
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0struct mbox_chan *chan =
-=3D &mb->mbox.chans[n];
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (!(status & RX_IRQ(n=
-)))
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0continue;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0for (data_reg =3D mb->r=
-egs + IPCR_RX_DATA +
-> > > +mb->drv_data->msg_size * n,
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 word_data =
-=3D chan->con_priv,
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 num_words =
-=3D (mb->drv_data->msg_size /
-> > > +sizeof(u32));
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 num_words;=
- num_words--, data_reg +=3D
-> > > +sizeof(u32), word_data++)
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0*word_data =3D readl(data_reg);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0mbox_chan_received_data=
-(chan, chan->con_priv);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0/* The IRQ can be clear=
-ed only once the FIFO is
-> > > +empty. */
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0writel(RX_IRQ(n), mb->r=
-egs + IPCR_RX_STATUS);
-> > > +=A0=A0=A0=A0=A0=A0=A0}
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0return IRQ_HANDLED;
-> > > +}
-> > > +
-> > > +static int ast2700_mbox_send_data(struct mbox_chan *chan, void
-> > > +*data) {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct ast2700_mbox *mb =3D
-> dev_get_drvdata(chan->mbox->dev);
-> > > +=A0=A0=A0=A0=A0=A0=A0void __iomem *data_reg;
-> > > +=A0=A0=A0=A0=A0=A0=A0u32 *word_data;
-> > > +=A0=A0=A0=A0=A0=A0=A0int num_words;
-> > > +=A0=A0=A0=A0=A0=A0=A0int idx =3D ch_num(chan);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0if (!(readl(mb->regs + IPCR_TX_ENABLE) & BIT(id=
-x))) {
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0dev_warn(mb->mbox.dev, =
-"%s: Ch-%d not enabled
-> > > +yet\n", __func__, idx);
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -EBUSY;
-> > > +=A0=A0=A0=A0=A0=A0=A0}
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0if (!(ast2700_mbox_tx_done(mb, idx))) {
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0dev_warn(mb->mbox.dev, =
-"%s: Ch-%d last data has
-> not
-> > > +finished\n", __func__, idx);
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -EBUSY;
-> > > +=A0=A0=A0=A0=A0=A0=A0}
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0for (data_reg =3D mb->regs + IPCR_TX_DATA +
-> > > +mb->drv_data->msg_size * idx,
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 num_words =3D (mb->drv_data->msg_s=
-ize / sizeof(u32)),
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 word_data =3D (u32 *)data;
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 num_words; num_words--, data_reg +=
-=3D sizeof(u32),
-> > > +word_data++)
->=20
-> The readability of this is not great. Can you try to improve it? At least=
- put each
-> header statement on its own line (at the moment the condition statement i=
-s on
-> the same line as the increment statement).
->=20
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0writel(*word_data, data=
-_reg);
->=20
-> I'm not super familiar with the mailbox subsystem, but I feel some
-> commentary on the data size and alignment assumptions would be helpful,
-> given the APIs are all `void *` without a length parameter.
->=20
-> Should you define a type for clients to submit?
->=20
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0writel(BIT(idx), mb->regs + IPCR_TX_TRIG);
-> > > +=A0=A0=A0=A0=A0=A0=A0dev_dbg(mb->mbox.dev, "%s: Ch-%d sent\n", __fun=
-c__, idx);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0return 0;
-> > > +}
-> > > +
-> > > +static int ast2700_mbox_startup(struct mbox_chan *chan) {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct ast2700_mbox *mb =3D
-> dev_get_drvdata(chan->mbox->dev);
-> > > +=A0=A0=A0=A0=A0=A0=A0int idx =3D ch_num(chan);
-> > > +=A0=A0=A0=A0=A0=A0=A0void __iomem *reg =3D mb->regs + IPCR_RX_ENABLE=
-;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0writel_relaxed(readl_relaxed(reg) | BIT(idx), r=
-eg);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0return 0;
-> > > +}
-> > > +
-> > > +static void ast2700_mbox_shutdown(struct mbox_chan *chan) {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct ast2700_mbox *mb =3D
-> dev_get_drvdata(chan->mbox->dev);
-> > > +=A0=A0=A0=A0=A0=A0=A0int idx =3D ch_num(chan);
-> > > +=A0=A0=A0=A0=A0=A0=A0void __iomem *reg =3D mb->regs + IPCR_RX_ENABLE=
-;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0writel_relaxed(readl_relaxed(reg) & ~BIT(idx), =
-reg);
->=20
-> Why are we using relaxed operations for startup and shutdown? If this is =
-valid
-> a comment would be helpful.
->=20
-> > > +}
-> > > +
-> > > +static bool ast2700_mbox_last_tx_done(struct mbox_chan *chan) {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct ast2700_mbox *mb =3D
-> dev_get_drvdata(chan->mbox->dev);
-> > > +=A0=A0=A0=A0=A0=A0=A0int idx =3D ch_num(chan);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0return ast2700_mbox_tx_done(mb, idx) ? true : f=
-alse; }
-> > > +
-> > > +static const struct mbox_chan_ops ast2700_mbox_chan_ops =3D {
-> > > +=A0=A0=A0=A0=A0=A0=A0.send_data=A0=A0=A0=A0=A0=A0=3D ast2700_mbox_se=
-nd_data,
-> > > +=A0=A0=A0=A0=A0=A0=A0.startup=A0=A0=A0=A0=A0=A0=A0=A0=3D ast2700_mbo=
-x_startup,
-> > > +=A0=A0=A0=A0=A0=A0=A0.shutdown=A0=A0=A0=A0=A0=A0=A0=3D ast2700_mbox_=
-shutdown,
-> > > +=A0=A0=A0=A0=A0=A0=A0.last_tx_done=A0=A0=A0=3D ast2700_mbox_last_tx_=
-done, };
-> > > +
-> > > +static int ast2700_mbox_probe(struct platform_device *pdev) {
-> > > +=A0=A0=A0=A0=A0=A0=A0struct ast2700_mbox *mb;
-> > > +=A0=A0=A0=A0=A0=A0=A0const struct ast2700_mbox_data *drv_data;
-> > > +=A0=A0=A0=A0=A0=A0=A0struct device *dev =3D &pdev->dev;
-> > > +=A0=A0=A0=A0=A0=A0=A0int irq, ret;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0if (!pdev->dev.of_node)
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -ENODEV;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0drv_data =3D (const struct ast2700_mbox_data
-> > > +*)device_get_match_data(&pdev->dev);
->=20
-> There's no need for the cast here, device_get_match_data() returns `const=
- void
-> *`.
->=20
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0mb =3D devm_kzalloc(dev, sizeof(*mb), GFP_KERNE=
-L);
-> > > +=A0=A0=A0=A0=A0=A0=A0if (!mb)
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -ENOMEM;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0mb->mbox.chans =3D devm_kcalloc(&pdev->dev,
-> > > +drv_data->num_chans,
-> > >
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 sizeof(*mb->mbox.c
-> hans),
-> > > +GFP_KERNEL);
-> > > +=A0=A0=A0=A0=A0=A0=A0if (!mb->mbox.chans)
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -ENOMEM;
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0for (int i =3D 0; i < drv_data->num_chans; i++)=
- {
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0mb->mbox.chans[i].con_p=
-riv =3D devm_kcalloc(dev,
-> > > +drv_data->msg_size,
-> > >
-> +
->=20
-> > > +sizeof(u8), GFP_KERNEL);
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (!mb->mbox.chans[i].=
-con_priv)
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0return -ENOMEM;
-> > > +=A0=A0=A0=A0=A0=A0=A0}
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0platform_set_drvdata(pdev, mb);
-> > > +
-> > > +=A0=A0=A0=A0=A0=A0=A0mb->regs =3D devm_platform_ioremap_resource(pde=
-v, 0);
-> > > +=A0=A0=A0=A0=A0=A0=A0if (IS_ERR(mb->regs))
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return PTR_ERR(mb->regs=
-);
->=20
-> Just checking the controller doesn't require any clock or reset configura=
-tion
-> before we access it?
->=20
-> Andrew
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 90f0eb7cc5b9..390f5756b66e 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -3879,6 +3879,7 @@ static int per_family_init(struct amd64_pvt *pvt)
+ 			break;
+ 		case 0x70 ... 0x7f:
+ 			pvt->ctl_name			= "F19h_M70h";
++			pvt->max_mcs			= 4;
+ 			pvt->flags.zn_regs_v2		= 1;
+ 			break;
+ 		case 0x90 ... 0x9f:
+
+base-commit: 855b5de2e562c07d6cda4deb08d09dc2e0e2b18d
+-- 
+2.43.0
+
 
