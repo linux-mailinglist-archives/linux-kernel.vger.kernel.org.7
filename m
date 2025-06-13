@@ -1,149 +1,161 @@
-Return-Path: <linux-kernel+bounces-685342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB850AD884C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7936FAD8860
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0541A1897C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7AE3BB8D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A232C3770;
-	Fri, 13 Jun 2025 09:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806752E1740;
+	Fri, 13 Jun 2025 09:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEsrf4HL"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCQ+ArOM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9457A2C375F;
-	Fri, 13 Jun 2025 09:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCF12DECBE;
+	Fri, 13 Jun 2025 09:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749807922; cv=none; b=gXUqN5U+ioMF9vR+JEnDAVasspmIIh0nfSh6O8EkoX50zA0beKWO70rrhgT86mi/46YsugK8nPx4HiBgDYkmT8Ufg+PnLmdAv+hwLKGxj1W/vmzd21mZRiJkKFJ7ZEsxYGl84Aqrd6zzyP0EUt0zGri0SwIXLSvOXae9JWQvYz4=
+	t=1749807936; cv=none; b=DEpJ3CUEJJxeFkVAdvEX2EDEHPzVgy1Xpdb0k5FtVVm+KBX6hEiGp+ig73z5T05XFJDSVCu344+3/BlFF0oyfT667F2uBVUwlsdIGWAqJJggpG34i1pwjKgPD8e6AYdPy+wwjVFSNzHPEEWMUxHcqGd4yqNEO1JxbZsO/zN9NcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749807922; c=relaxed/simple;
-	bh=2bAxLZdmW+dB6hgjHfQTeJYs5D2kkGbxxoTra19Jy04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hqc+aRuvnctxVwb410d16WzeIOTPNN2kuqmC3OC2p54Mk+/kvZM5mw8c0NDUld1TY6cRC5gpiEMv17b0qcNDR+KZbxO5ocHGAJfN/L/xQMYAfQAoJX6sqPVB5fo3lJFBdDgNEgpOlDTXfDc1p8bsXfv91gopS5MbIqFsLT46+bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iEsrf4HL; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5534f3722caso2269894e87.0;
-        Fri, 13 Jun 2025 02:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749807917; x=1750412717; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oxrGh0fCLnQwX4nzD6CTGfjfOhrw6Z6qm6oKUUOWy6s=;
-        b=iEsrf4HL//j5UXUqUNl8z7hwoQQoXzsJSph8cF8Fxeg0leH7tU7aVy+DdCZCH9/+KD
-         KbL4RAWarGUCSBSmRtOrRGcG03E0RZ2NvhQexojSAQn14X84+w3nDbN7LKvyFc+gKGtd
-         oZ/2zNpqmIzQRKF/taXxz5FnrBPFgdKCee6Hurdm3JIeIMLK5WkU+9dMJGxqRY0JWx7o
-         txIqJDUsdKMqKJ49sDZeVmLDerwC7twVzdrihAAa4bH5hBaPIat/KwQtSXmPUi8yQhNw
-         I293HwRsTBNq417Kf3Cy5OxCeB5si1No8HwJcyr1hCK/sesy+kVdrVCbPt4CsC9h3Jgu
-         aTYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749807917; x=1750412717;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxrGh0fCLnQwX4nzD6CTGfjfOhrw6Z6qm6oKUUOWy6s=;
-        b=NVYLWYsSHxBQoXYJZ8iOZXm9y2DhsJFnqSKVqm5uVWykU0+KXmECTKKaR71BV46Q18
-         j94j9KdgGObTeNF2Hsq69/fKWLcZf7uV3TTFZ4qcj1Iime+otmXhgucQFGYk+a7oFBzo
-         mvYwQoGasjCO/NZpW/9mN6UwtG00O4G1/Pz5RDI6v7r7FAHJBrxNsrHCs2xAMdymgOqg
-         3fcnATJqdUOkUH7m058ieAfhuHHxtim+p+12k86/cNHLXuykgGK7gsUhMp2da4H1U6sD
-         N24YKZWMP1EcHhlHijM9m/v+7P1YMozH9gc+xBpE35kSscTsSDa9ue57JQz/F7bsyOJb
-         E17g==
-X-Forwarded-Encrypted: i=1; AJvYcCUhPkL4RzEbcMlvTDNNWu1pimcHgzt/xBuWhTl4gI3P070GXdjQ+++gLN6+pJXzmnYF3PJR2HTET2aa0r/gYMY=@vger.kernel.org, AJvYcCVRsyw5jHReG6PLH1iat+WCRqTHRV6vKypZPRl6A4cP3xRZjc85QvgVf416hsdvQ3jWW46cFIbCNqkL8AE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTWRwr7bfuZXZHP15UzYf+M33ppWfBnXzXk95/rWEvlvRClw55
-	JJ6XDCOIVNVQsCKwdOx6jAnhrZ+AgLGA/FChfdETsSuhNMmlzii2i+cO
-X-Gm-Gg: ASbGncuPskoDELSbkVO+gXBgSJalIgftORRtyQVTcBfkRqZAaSWPxB6I0QdUE6h/bZZ
-	o2x4NgfZw9+FFJ27Qpj7r2PzFlNIoD9zphKZjy7kpr7fj/yGGoRFBsiso8FBbqhRjE4QWFMcbFe
-	QJjwEU6s/LLxIUErUf5rTvmot46ZJQ7E/COMBxRDoBk/yfFmWzBn0/O7ospPsOBfDc4gh0cQT55
-	xEFp+3PkN29prLlfzvgzDa1y78JtxK6pPfktesgnhkDOCvJmSIv5Oq934MJV0Ij4qK0zvBZ0WAw
-	JDZp7+7N8BI9OpfnXgM/joT928QO3j8kCiR0XQm2TQQvjOTDdY8BYhY0xVbVWuwpel5W7AIQjXy
-	ozVUrV/z+ikuzX4YLRQO7phe1QI9GHYuVwQGHniY=
-X-Google-Smtp-Source: AGHT+IHiJOoevlgKdwDSnmotX6IPm3Uj1/yrY7CfWWn7/KrZu7vk47zHN6lD4iwOK4EjOUhVQcIvWQ==
-X-Received: by 2002:a05:6512:114e:b0:553:2f61:58eb with SMTP id 2adb3069b0e04-553af96f227mr619887e87.49.1749807916268;
-        Fri, 13 Jun 2025 02:45:16 -0700 (PDT)
-Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1f7799sm381819e87.229.2025.06.13.02.45.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 02:45:15 -0700 (PDT)
-Message-ID: <0b71832f-f3a9-4109-baa1-f29a8327d872@gmail.com>
-Date: Fri, 13 Jun 2025 12:45:14 +0300
+	s=arc-20240116; t=1749807936; c=relaxed/simple;
+	bh=KZ0BWcWO/Nnu1q5NglmWAod4+nGJ2WWcd5CNjfdsUO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9EoiobhyFhlJHavrBmsG1n+E6i3WdZmYFHOznN4EK5SPkXrYWe2NMjFT40hEIOxrFOoVlfGVl2pzfj5BMW6Gk/oEb7Qmc6rpJjsZOgtRzjDCBhO27CRVCaPJ/tKePnxZAtQLRgi8I7+/lN6ecOXCKPM9qlOSk2AI7QpeBOkCcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCQ+ArOM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7727C4CEEB;
+	Fri, 13 Jun 2025 09:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749807936;
+	bh=KZ0BWcWO/Nnu1q5NglmWAod4+nGJ2WWcd5CNjfdsUO4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aCQ+ArOMfZ8sj9/trk2RN4zzQmNDRm57UcCwHqzSNmBb3apdfrSNyzaknWyYLRPjh
+	 6E3L22twogCDgusyUyZzDGlDING27CHkfgVwL7Qfe5BDfSkbBp55e6vFTCsUCYhfWa
+	 iFB8yIknypSzugsOXAz7FH6q/xY/0xFIUp7GlroH+Qbv1fuibs4wDOAL+dnSd7SmBh
+	 PUekiEcVEkwP6WVmzgXHMenCSFCR5E17+KZjgA7/phOXpz9JEn4cTHyKgpHeTYwm+V
+	 Fhc+PM/4QdvEhSmY2I4S88xQ+fYARMAcOlJnmoU94LA5kiKThUq2MTXDYd0v0NZdZI
+	 bcsXM5H49D58w==
+Date: Fri, 13 Jun 2025 11:45:22 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Shreeya Patel <shreeya.patel@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Qin Jian <qinjian@cqplus1.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+	linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH 17/20] PCI: dw-rockchip: switch to HWORD_UPDATE macro
+Message-ID: <aEvzMnxgsjfryCOo@ryzen>
+References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
+ <20250612-byeword-update-v1-17-f4afb8f6313f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] rust: dma: add as_slice/write functions for
- CoherentAllocation
-To: Alexandre Courbot <acourbot@nvidia.com>, dakr@kernel.org
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
- rust-for-linux@vger.kernel.org,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- Petr Tesarik <petr@tesarici.cz>, Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Sui Jingfeng <sui.jingfeng@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
- Michael Kelley <mhklinux@outlook.com>
-References: <20250602085444.1925053-1-abdiel.janulgue@gmail.com>
- <20250602085444.1925053-4-abdiel.janulgue@gmail.com>
- <DAC2ILD2DSIZ.3TF8W39X5DDH8@nvidia.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <DAC2ILD2DSIZ.3TF8W39X5DDH8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612-byeword-update-v1-17-f4afb8f6313f@collabora.com>
 
-On 02/06/2025 16:05, Alexandre Courbot wrote:
-> On Mon Jun 2, 2025 at 5:53 PM JST, Abdiel Janulgue wrote:
->> Add unsafe accessors for the region for reading or writing large
->> blocks of data.
->>
->> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
->> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Hello Nicolas,
+
+On Thu, Jun 12, 2025 at 08:56:19PM +0200, Nicolas Frattaroli wrote:
 > 
-> A couple remaining nits/questions below, but FWIW:
+> PCIE_CLIENT_RC_MODE/PCIE_CLIENT_EP_MODE was another field that wasn't
+> super clear on what the bit field modification actually is. As far as I
+> can tell, switching to RC mode doesn't actually write the correct value
+> to the field if any of its bits have been set previously, as it only
+> updates one bit of a 4 bit field.
 > 
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->> +
->> +    /// Writes data to the region starting from `offset`. `offset` is in units of `T`, not the
->> +    /// number of bytes.
-> 
-> Reading this sentence it occured to me that `offset` may be ambiguous
-> here, as in my mind it rings as being in bytes unit. How about using
-> `index` throughout the file?
+> Replace it by actually writing the full values to the field, using the
+> new HWORD_UPDATE macro, which grants us the benefit of better
+> compile-time error checking.
 
-Thanks! I don't have any strong opinion about this, I think it's enough 
-that the subsequent paragraph makes it clear that the unit is in bytes 
-unit? In any case, this could this be updated later after the merge?
+The current code looks like this:
+#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE_BIT(0x40)
+#define  PCIE_CLIENT_EP_MODE            HIWORD_UPDATE(0xf0, 0x0)
 
->> +    /// ```
->> +    pub unsafe fn write(&self, src: &[T], offset: usize) -> Result {
-> 
-> Can this function be written by leveraging `as_slice_mut` and
-> `clone_from_slice`?
+The device_type field is defined like this:
+4'h0: PCI Express endpoint
+4'h1: Legacy PCI Express endpoint
+4'h4: Root port of PCI Express root complex
 
-using `slice::clone_from_slice` would enforce the length of the coherent 
-allocation to be always the same as src data. Not sure if that is what 
-we want. Also, instead of just a straight memcpy, this would go through 
-a 2-step layer (a call to `slice::from_raw_parts_mut` and then the 
-`slice::clone_from_slice` itself)?.
+The reset value of the device_type field is 0x0 (EP mode).
+
+So switching between RC mode / EP mode should be fine.
+
+But I agree, theoretically there could be a bug if e.g. bootloader
+has set the device_type to 0x1 (Legacy EP).
+
+So if you want, you could send a patch:
+-#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE_BIT(0x40)
++#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE(0xf0, 0x40)
+
+With:
+Fixes: 0e898eb8df4e ("PCI: rockchip-dwc: Add Rockchip RK356X host controller driver")
+
+But I also think that your current patch is fine as-is.
+
+I do however think that you can drop this line:
++#define  PCIE_CLIENT_MODE_LEGACY       0x1U
+
+Since the define is never used.
 
 
-Regards,
-Abdiel
+Also, is there any point in adding the U suffix?
+
+Usually you see UL or ULL suffix, when that is needed, but there actually
+seems to be extremely few hits of simply U suffix:
+$ git grep 0x1U | grep -v UL
+
+
+Kind regards,
+Niklas
 
