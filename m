@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-685839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CD9AD8F6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6CCAD8F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F53B3B6F56
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76303BA115
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259831537DA;
-	Fri, 13 Jun 2025 14:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6C31547E7;
+	Fri, 13 Jun 2025 14:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dq460isC"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cdGpqlWh"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0222E11DA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172BE18F2DF
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749824423; cv=none; b=pxDjo+Ra91AStXYDAayq1J+FAP2Qs+FR0cBSdOqPk/xBDG+/IBZca6up+p4NUPucu7yyT/6BkeaddIei46Z1wy6cF2+ilTRi7/b75DKJB5tAitKoqKbUIs2TjyZr90EvlE18RnPYmDCHopZRb64qshW93KwT/W6TLsIztPxy7H8=
+	t=1749824443; cv=none; b=po+VEWwPVi7DW9zK8fl9TwjrIos8gXJcjC5oR/kKpddUKzI96jHGDgAr84nW4dEuxwPwHxZlg3DCUnUscAyHNCpMi13t3NoSrlw3EpC5MfEunr29HMY9JcGAEuQuJwzCLUUAMVaUF1qQ5NQN6W3RWWtx/H1tguTLc+2t0arftLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749824423; c=relaxed/simple;
-	bh=2uFIeI8r05kfQpJw2EctCJW9fBZRFPD2SvqXy7M+oXI=;
+	s=arc-20240116; t=1749824443; c=relaxed/simple;
+	bh=kv1f/hNYa1plr+nIIidlV+b2spVNxEsefZHdz8jWfaA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sN3Bh69gSuE3/Mfr4zh/Kpj4s8MIOoQtAgDRG2dF4U9mmNnUuUY8vxfELpEWdZseLEojzCqE6nXLEJEXdtbxRZhKwtCoXFka9SJrmBeONVbMxhukAo5dAbNdUIL2tqiMwJatH7pEbQPk9IyHX1EJ6s2nqAI3z+tx2oKJ5lgVVV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dq460isC; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-40905ae04e4so652290b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:20:20 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=asc2kzDkny5s62DzeL8l5aMbspKC14kdgEVrpp5uPBVXmXtK/OpFJS+QCLCQ9w7R6O/dwgrsl7qFE/niXqFZblByTfzvw+mM5bZW06gMrzmJ+Re3cU52sLzxQp1BALty5JkTyNv3L/KnoUi+l/iMPhliBh1MS7uzFY0nC4y49vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cdGpqlWh; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso1480165f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749824419; x=1750429219; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749824438; x=1750429238; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kDMCRDo0cthC7kWsPEVosDcgak2W50xC/1nlZdkqQZo=;
-        b=dq460isCA9pcd/W6ZqryGaVpT2neAaxbRwU+FzBvHEkiuTC9Bo5GvoOTVQZiwnAqlF
-         /ad5H0JKdiGip3w9q/4/eHXHsLlcJhlFQ7Q0k7y7snpCGKLzp5iD7yFtnpMIPs6YCant
-         g41HKW38kDs5ixRJKS1yxbB7VwTjssDaMqEwX1zTDTV/ANlFuy48DYh9eB+T9cg2K3Wy
-         aXL2rp3huMcv1qtJ5qLHIw/KMud+Bi4Dqz4LbUILa2Unsu+553po5xomidKN4vJsU8Vo
-         Trv46lhRe26nzuAIRpR4Vt/m3OGb0/7xNbFNyu4urmuSufeYdCOhgkyu+N3E5053u2we
-         tgCQ==
+        bh=i4mYyZ+2tTkkCoL3k1TKqHg7lSWacSP72TFpyhWIgbk=;
+        b=cdGpqlWhs4QxY2Y5nRfZyKIdS++zLpr9DaOp8VmmzNrHDbkYI18BPEU2L3hd/waaFx
+         1wJcppnAAJddTIfPilNpHUyQm3x2xteyv7btSqWn/WlxeuK6x9GeDmYYz6TjO+Z/1yPY
+         H+qWxIQPfGE46YUtvHV+x5wRI0zkwvtE+vPNFyzCjXb0E5MXlc9eKflSMREE+hJyA4LZ
+         dv3MGcdco1qA5YsgW/mvF6HRwAq7hDz/KXRlR+MBIvs+xQtwHXDF12cx21D9xU/xs01O
+         F+kaN/B7SawErRKCe4HscnutxhRLMnsr8Mz7N9Jv5yXhBglwbWgrPF9gz67ciJuQnVaK
+         NhCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749824419; x=1750429219;
+        d=1e100.net; s=20230601; t=1749824438; x=1750429238;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kDMCRDo0cthC7kWsPEVosDcgak2W50xC/1nlZdkqQZo=;
-        b=ZS+qgZWUt0uxtAQQOpbpVujQb9DWRXj7d+tk2w1+NnrWZLY2A1obQ1ifYZpZsiL+5M
-         o3GRORAStAPECPfXFzbsKiIowl44Q9bnX7DD1tsEEsWBrcKDPwQ3tW3EMf6QH2gDTnjO
-         s+g+OxIyPpumPMYsMMWy5OcN+I0RLq9NzvxE6lzZ5z7H4ZnNwC32OF/vPXTEvMkFW5rX
-         XWlRCvpet5SJwEC5NX9O8qAQA/fWK9OSAV3TYAAFidyjHJs6IwNRrBFA4NcJH2wT759l
-         0Zmas+2p3hZidLBSJJl+l1RdP0ypH9tDgPOXIH//hwS5GJjyTnwUKukMYns3GldfJc5c
-         WMgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxULCoJ9uDMvQZVnij/O8B1cVviKfDw1WhnqGgQlz0mNjLPPlc8m/fDcCYoBcachcYUnqsFIY/D98/Zkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+e1EG0I8CJH9iLxq3nAV9owz/GNhFsJMTmH9HdNjUVlWAM8Nl
-	B0klMPMZiXHr1ABb8tcvC08yfnxmn1nTsZMBgJ+6/IL/mJSdMfVG76JLlxBNT3q4LlA=
-X-Gm-Gg: ASbGncvDHVgy8XPl5+eCz26izIHEipya73xPCf2j++kQUgFGofLIS1t4B+q12dpvpzP
-	DBqdpgIiFA+Hw/JVn4ncMjSUcmBW0zRL+31WK+xoqG8X70eh1kT0gsJfpWHsd0SQ1WVRheZ9tCf
-	n0QRADzwc78+G0SSI46Z06Z40cQdYYKYAbEF8w/Mgtf6JzZYiKV6p9EQbLpfGWgUKn3NVZQJzmY
-	0OYxAI3fWJ+1f1eBcjSLQNp3h2wKqGNtMGWTWswrFjbNTKp8U/leWZtIR6ITaWUJcUomcbhQme5
-	9Xp5r2W4Xwjs4pypOZU/KwDBtcI+uERRxiZAP/AL8V+QkTfPjnwKaATNXrF1eQ6FCC5HYZn2wp+
-	wDjRoA1rNk5x+DIOdW6Q3EAScLehrXdkdWEuE
-X-Google-Smtp-Source: AGHT+IFl7ASvsW2CdtBJYRdyTIxxAl3o0mUNGo3YJ7/40+1WMA2qlDXnf0YcleUYlBiHZ4WCMkw10w==
-X-Received: by 2002:a05:6808:11c4:b0:403:3660:4130 with SMTP id 5614622812f47-40a723a0f4dmr2119575b6e.27.1749824419481;
-        Fri, 13 Jun 2025 07:20:19 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4647:c57:a73c:39d8? ([2600:8803:e7e4:1d00:4647:c57:a73c:39d8])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a28401fffsm219284a34.15.2025.06.13.07.20.18
+        bh=i4mYyZ+2tTkkCoL3k1TKqHg7lSWacSP72TFpyhWIgbk=;
+        b=biZCR1Pg/iUYUsZ6GdzcW/exlGUzamuOMt3fC3JmRIu8INnBvUj0DnvCw5b1oXxogj
+         yScutQEDPp6I0J1YsNHQ5xeIuZXmk3IKDjjJhO+iNdd2d8fxvqdL4tcsIChqHF9rhj0r
+         WQ51cqytqEB9fOV0J2l0NFlJLvLsoV4JQLnC9fwTbZvfUVzg6VROd/2XP/Q1qKv2/0G6
+         Vjdd9r5K69XrDYGcInCyqDKH5t/sbMxReJxMiRIv43wmkC9+m1g4M+YfGT1FOdYHcSOZ
+         fQA0iqvdrRXQXQoMeZp4u85O0jmzbLtNG59ahncHP32XhtrjEb1tvsbhWXHPqIAyHA20
+         Rk6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWes4b6xyWiCdJFSXQzCRrvneYKh8joDuCWHluUVV0J4YyMJ+WCkPckLBbGrHcwMbSLgLG2V27z4OTFGVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwanzJCOnTD6iGhpxPKSck+P8wmOUxV1EriiDKW7WAtJNEOnhnR
+	pT6fVgPxe84ZvSOgDgfyrYzvLb8ftRtIPetnAKzQMedTLwb2spd18GVjGRSmWTOUk+Q=
+X-Gm-Gg: ASbGnctAH5R/o7Mp4Bvk68zRHLJWYhp0nO0dgu9DuGk2yptSs8LW8fQ/yyYyZ6TOfaz
+	//59x3CwuSj6DzpvpJ0H6FBUkf2QkKDy5uxB0JHC5srcu6yC8ssre8ni75uT8dH8b99GmDRgI2I
+	EOh0ZBx7Uup5XP1AdQIvASLQ7YK6dkoEWcdWFB1GTxkTU+DykrFRHV70GG/FgVnHRIGf0V4Ljzn
+	V+lBj3F5Ik7tddujD1PVLRv88p7GffMdwB6fT29s2QVoPjEVxbQ/4UP13FwT+R0ZfGKWuNJP6Ol
+	0aVQQHUyqFY8FDA5gFdApNr7uySxs/g2Rgecfdl1+0ad2sI67/5SHn2fAqYY59cmKMEzlw3YdqH
+	RxXg3hbSipl2rGOsKsyo89THyCGg=
+X-Google-Smtp-Source: AGHT+IHKpd3gkAfLo6eOiMysNrK5s5pbt4yXFjsI7TgTM+VJCoP0aU+9dffIVA6j7xP98PniNPjEAw==
+X-Received: by 2002:a05:6000:26c2:b0:3a3:652d:1638 with SMTP id ffacd0b85a97d-3a568717afemr2779241f8f.48.1749824438442;
+        Fri, 13 Jun 2025 07:20:38 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a633ddsm2510693f8f.26.2025.06.13.07.20.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 07:20:19 -0700 (PDT)
-Message-ID: <4923f49f-273f-4166-94bc-afe39618672c@baylibre.com>
-Date: Fri, 13 Jun 2025 09:20:18 -0500
+        Fri, 13 Jun 2025 07:20:38 -0700 (PDT)
+Message-ID: <68d6ee51-3cd6-4e2c-8a72-6885bc33cb1a@linaro.org>
+Date: Fri, 13 Jun 2025 15:20:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,101 +81,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] dt-bindings: spi: zynqmp-qspi: Split the bus
-To: Sean Anderson <sean.anderson@linux.dev>, Mark Brown <broonie@kernel.org>,
- Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>,
- linux-arm-kernel@lists.infradead.org,
- Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
- linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>
-References: <20250116232118.2694169-1-sean.anderson@linux.dev>
- <20250116232118.2694169-2-sean.anderson@linux.dev>
- <9f40295b-484a-48e8-b053-ff8550e589d7@baylibre.com>
- <46a7eba6-a705-4543-b967-e83ccc89e7d4@linux.dev>
- <6afc379a-2f9f-4462-ae30-ef6945a83236@baylibre.com>
- <dbe26b36-a10c-4afb-88ad-a6f7f9bff440@linux.dev>
+Subject: Re: [PATCH 5/5] media: venus: core: Add qcm2290 DT compatible and
+ resource data
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+ quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ stanimir.varbanov@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250613140402.3619465-1-jorge.ramirez@oss.qualcomm.com>
+ <20250613140402.3619465-6-jorge.ramirez@oss.qualcomm.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <dbe26b36-a10c-4afb-88ad-a6f7f9bff440@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250613140402.3619465-6-jorge.ramirez@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/12/25 6:44 PM, Sean Anderson wrote:
-> Hi David,
+On 13/06/2025 15:04, Jorge Ramirez-Ortiz wrote:
+> Add a qcm2290 compatible binding to the venus core.
 > 
-> I am (finally!) getting around to doing v2 of this series, and I ran
-> into a small problem with your proposed solution.
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/venus/core.c | 39 ++++++++++++++++++++++++
+>   1 file changed, 39 insertions(+)
 > 
-> On 1/23/25 16:59, David Lechner wrote:
->> ---
->> From: David Lechner <dlechner@baylibre.com>
->> Date: Thu, 23 Jan 2025 15:35:19 -0600
->> Subject: [PATCH 2/2] spi: add support for multi-bus controllers
->>
->> Add support for SPI controllers with multiple physical SPI buses.
->>
->> This is common in the type of controller that can be used with parallel
->> flash memories, but can be used for general purpose SPI as well.
->>
->> To indicate support, a controller just needs to set ctlr->num_buses to
->> something greater than 1. Peripherals indicate which bus they are
->> connected to via device tree (ACPI support can be added if needed).
->>
->> In the future, this can be extended to support peripherals that also
->> have multiple SPI buses to use those buses at the same time by adding
->> a similar bus flags field to struct spi_transfer.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>  drivers/spi/spi.c       | 26 +++++++++++++++++++++++++-
->>  include/linux/spi/spi.h | 13 +++++++++++++
->>  2 files changed, 38 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
->> index 10c365e9100a..f7722e5e906d 100644
->> --- a/drivers/spi/spi.c
->> +++ b/drivers/spi/spi.c
->> @@ -2364,7 +2364,7 @@ static void of_spi_parse_dt_cs_delay(struct device_node *nc,
->>  static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
->>  			   struct device_node *nc)
->>  {
->> -	u32 value, cs[SPI_CS_CNT_MAX];
->> +	u32 value, buses[8], cs[SPI_CS_CNT_MAX];
->>  	int rc, idx;
->>  
->>  	/* Mode (clock phase/polarity/etc.) */
->> @@ -2379,6 +2379,29 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
->>  	if (of_property_read_bool(nc, "spi-cs-high"))
->>  		spi->mode |= SPI_CS_HIGH;
->>  
->> +	rc = of_property_read_variable_u32_array(nc, "spi-buses", buses, 1,
->> +						 ARRAY_SIZE(buses));
->> +	if (rc < 0 && rc != -EINVAL) {
->> +		dev_err(&ctlr->dev, "%pOF has invalid 'spi-buses' property (%d)\n",
->> +			nc, rc);
->> +		return rc;
->> +	}
->> +
->> +	if (rc == -EINVAL) {
->> +		/* Default when property is omitted. */
->> +		spi->buses = BIT(0);
-> 
-> For backwards compatibility, the default bus for CS 1 on gqspi must be 1
-> and not 0. Ideally there would be some hook for the master to fix things
-> up when the slaves are probed, but that doesn't seem to exist. I was
-> thinking about doing this with OF changesets. Do you have any better
-> ideas?
-> 
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> index 736ef53d988d..f1f211ca1ce2 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -1062,6 +1062,44 @@ static const struct venus_resources sc7280_res = {
+>   	.enc_nodename = "video-encoder",
+>   };
+>   
+> +static const struct freq_tbl qcm2290_freq_table[] = {
+> +	{ 352800, 240000000 },	/* 1920x1088 @ 30 + 1280x720 @ 30 */
+> +	{ 244800, 133000000 },	/* 1920x1088 @ 30 */
+> +};
+> +
+> +static const struct bw_tbl qcm2290_bw_table_dec[] = {
+> +	{ 244800, 2128000, 0, 2128000, 0}, /* 1920x1088 @ 30 */
+> +};
+> +
+> +static const struct venus_resources qcm2290_res = {
+> +	.freq_tbl = qcm2290_freq_table,
+> +	.freq_tbl_size = ARRAY_SIZE(qcm2290_freq_table),
+> +	.bw_tbl_dec = qcm2290_bw_table_dec,
+> +	.bw_tbl_dec_size = ARRAY_SIZE(qcm2290_bw_table_dec),
+> +	.clks = { "core", "iface", "bus", "throttle" },
+> +	.clks_num = 4,
+> +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
+> +	.vcodec_clks_num = 2,
+> +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
+> +	.vcodec_pmdomains_num = 2,
+> +	.opp_pmdomain = (const char *[]) { "cx" },
+> +	.vcodec_num = 1,
+> +	.hfi_version = HFI_VERSION_6XX_LITE,
+> +	.vpu_version = VPU_VERSION_AR50_LITE,
+> +	.max_load = 352800,
+> +	.num_vpp_pipes = 1,
+> +	.vmem_id = VIDC_RESOURCE_NONE,
+> +	.vmem_size = 0,
+> +	.vmem_addr = 0,
+> +	.cp_start = 0,
+> +	.cp_size = 0x70800000,
+> +	.cp_nonpixel_start = 0x1000000,
+> +	.cp_nonpixel_size = 0x24800000,
+> +	.dma_mask = 0xe0000000 - 1,
+> +	.fwname = "qcom/venus-6.0/venus.mbn",
+> +	.dec_nodename = "video-decoder",
 
-Does this work? 
+No encoder - you declared one in the schema.
 
-		spi->buses = BIT(cs[0]);
+I think this should be:
 
-(would have to move all the new code after cs[0] is assigned of course)
+         .dec_nodename = "video-decoder",
+         .enc_nodename = "video-encoder",
+
+> +};
+> +
+>   static const struct of_device_id venus_dt_match[] = {
+>   	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
+>   	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
+> @@ -1072,6 +1110,7 @@ static const struct of_device_id venus_dt_match[] = {
+>   	{ .compatible = "qcom,sc7180-venus", .data = &sc7180_res, },
+>   	{ .compatible = "qcom,sc7280-venus", .data = &sc7280_res, },
+>   	{ .compatible = "qcom,sm8250-venus", .data = &sm8250_res, },
+> +	{ .compatible = "qcom,qcm2290-venus", .data = &qcm2290_res, },
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, venus_dt_match);
+---bod
+
 
