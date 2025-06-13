@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-685028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B21AD8348
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:38:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740A2AD8363
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 08:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994B11885C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 06:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD533B866E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 06:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2C4258CEC;
-	Fri, 13 Jun 2025 06:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pv7YBXXO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB6521B19D;
-	Fri, 13 Jun 2025 06:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC772580E2;
+	Fri, 13 Jun 2025 06:51:33 +0000 (UTC)
+Received: from lynxeye.de (ns.lynxeye.de [87.118.118.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9E71369B4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.118.118.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749796724; cv=none; b=akPyjVVemZmL1HfxDB7Toolg33x8bhDUi78BKIcdlZe/tBl1VPLnfVzEXHMrAAncScLTsfNCuaryWwxYaZmpMw1N1l384zRQHp6RhUyMbhzB6halyPhxvwgT5mqoOl++nzVXml9AslUsbWUoAXsF/t9t77ZWFC8r9XlfOFebD/o=
+	t=1749797493; cv=none; b=eVsfa6mARN6lRsWSbS/UqLL6u85TDhcvZVa/r12crQXRMUQAA2xtQMPDLUjBcq7pNA9Nv5/7NJw8XLQD4GHl7GIuxoeXJqCFx+sIOdPODky2KhVOvYljWkPxZ8YUtRc+Ep0UYk6X4buy9W8SMj7051IQf/kiyhWU/IE7OlN4nm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749796724; c=relaxed/simple;
-	bh=tROfEO8euW7h0JprdW23sw/j5uJHnALwGHFYIu1qnIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+Gm7nDbdKj9VT9nRIO/roYF/Dzqu/zg0EOghpGKFJ15OimeJ9PYccAOFcrX74k6DD1SmknNEXSZsF65kw3RPcyJKsvncag6FS2GC8mVDsZiZaZDsqmgOuoSpem2Fup3orc/ZQ0Zfpf2dXTneVjG+D6S+pF5+giqHozdbxUN/pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pv7YBXXO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A305C4CEE3;
-	Fri, 13 Jun 2025 06:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749796722;
-	bh=tROfEO8euW7h0JprdW23sw/j5uJHnALwGHFYIu1qnIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pv7YBXXOJmQxXTV4jr0t1k2py0pGy6WO1Uo1f3lcTcLD9104WQCKyIgfI35DgY/9p
-	 rfjfU30z4XBKgfl6pUeyzHKm+HtNj5lL5aWGofUPsuBPfLL5+9yRtIPFtjlcZPStd/
-	 y8xYDdlOne5pTOMq3uyVKb1zYRb6gOo0wkGCj/RKGDWDtF1aNUaDDIi4Nvl64R2s6O
-	 d3QcUqlqGQeLCbj7m4Z89cesssF+y7i368gvbMXyTWB9F1sFWF71x2ODjBjjtgUxXx
-	 8iHbINVDEoozAApgAAxxS/WpQamaZCxwPLmHp7NQv/iZR0G92fP8OGeqjzE3ySTbcm
-	 W8GU9Yk0CGgIw==
-Date: Fri, 13 Jun 2025 12:08:31 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com, 
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org, yue.wang@amlogic.com, 
-	pali@kernel.org, neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com, 
-	khilman@baylibre.com, jbrunet@baylibre.com, martin.blumenstingl@googlemail.com, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v4 1/2] PCI: Configure root port MPS during host probing
-Message-ID: <co2q55j4mk2ux7af4sj6snnfomditwizg5jevg6oilo3luby5z@6beqtbn3l432>
-References: <20250510155607.390687-1-18255117159@163.com>
- <20250510155607.390687-2-18255117159@163.com>
+	s=arc-20240116; t=1749797493; c=relaxed/simple;
+	bh=jlaQWs5Ao5KQ+C/dqA2LJVzp1+88z/vOnnIU8kVMirY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RjjNvXii5ipoMdo/KnFQizyjn1VYRQl4SEIRXmvxgdvLstlDaMB8/IFf5zqHRJghv1QJQFLoja6jIwG2Z6gCRlo0levU3Qf8o9lz482UNPLgs1a/QBYTbRPtaEw38o9VvM1mgGTduFLa3hPGAcLblPTEBbjGoOIXjU/xaIn8ZPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lynxeye.de; spf=none smtp.mailfrom=lynxeye.de; arc=none smtp.client-ip=87.118.118.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lynxeye.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lynxeye.de
+Received: by lynxeye.de (Postfix, from userid 501)
+	id B8D54E74071; Fri, 13 Jun 2025 08:41:12 +0200 (CEST)
+X-Spam-Level: 
+Received: from [192.168.178.25] (a89-182-68-6.net-htp.de [89.182.68.6])
+	by lynxeye.de (Postfix) with ESMTPSA id 01D37E7400A;
+	Fri, 13 Jun 2025 08:41:10 +0200 (CEST)
+Message-ID: <4616baf23cf75bf64a6997410f806d7d449ca42b.camel@lynxeye.de>
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: fix REFCLK setting
+From: Lucas Stach <dev@lynxeye.de>
+To: Doug Anderson <dianders@chromium.org>, Jayesh Choudhary
+ <j-choudhary@ti.com>,  Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Michael Walle <mwalle@kernel.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>,  Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst	 <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Fri, 13 Jun 2025 08:41:10 +0200
+In-Reply-To: <CAD=FV=XTjEVfNtAOww1=UXbAknXNzWd0fcB5UMBEJrO2gt_hvg@mail.gmail.com>
+References: <20250528132148.1087890-1-mwalle@kernel.org>
+	 <CAD=FV=WfV1Kr5hFSqf=t0OS3qFSGfQ3_+LQ-57nMKHXRSYvZ-w@mail.gmail.com>
+	 <9272e36e-e764-4007-9d9e-8e09b9c08d34@ti.com>
+	 <c0027ff0e63bcc0fd21aab37af991baf@kernel.org>
+	 <affbef6e-f253-4dbb-bf64-3cc7d244acbb@ti.com>
+	 <CAD=FV=W8RNcZvg5zgL1wDRmaH_eXrc79YQsMr9Be5HVtOWwwcw@mail.gmail.com>
+	 <CAD=FV=XTjEVfNtAOww1=UXbAknXNzWd0fcB5UMBEJrO2gt_hvg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250510155607.390687-2-18255117159@163.com>
 
-On Sat, May 10, 2025 at 11:56:06PM +0800, Hans Zhang wrote:
-> Current PCIe initialization logic may leave root ports operating with
-> non-optimal Maximum Payload Size (MPS) settings. While downstream device
-> configuration is handled during bus enumeration, root port MPS values
-> inherited from firmware or hardware defaults might not utilize the full
-> capabilities supported by the controller hardware. This can result is
-> uboptimal data transfer efficiency across the PCIe hierarchy.
-> 
-> During host controller probing phase, when PCIe bus tuning is enabled,
-> the implementation now configures root port MPS settings to their
-> hardware-supported maximum values. By iterating through bridge devices
-> under the root bus and identifying PCIe root ports, each port's MPS is
-> set to 128 << pcie_mpss to match the device's maximum supported payload
-> size.
+Am Donnerstag, dem 12.06.2025 um 15:31 -0700 schrieb Doug Anderson:
+> Hi,
+>=20
+> On Thu, Jun 12, 2025 at 10:52=E2=80=AFAM Doug Anderson <dianders@chromium=
+.org> wrote:
+> >=20
+> > Hi,
+> >=20
+> > On Thu, Jun 12, 2025 at 12:35=E2=80=AFAM Jayesh Choudhary <j-choudhary@=
+ti.com> wrote:
+> > >=20
+> > > > > If refclk is described in devicetree node, then I see that
+> > > > > the driver modifies it in every resume call based solely on the
+> > > > > clock value in dts.
+> > > >=20
+> > > > Exactly. But that is racy with what the chip itself is doing. I.e.
+> > > > if you don't have that usleep() above, the chip will win the race
+> > > > and the refclk frequency setting will be set according to the
+> > > > external GPIOs (which is poorly described in the datasheet, btw),
+> > > > regardless what the linux driver is setting (because that I2C write
+> > > > happens too early).
+> > >=20
+> > > I am a little confused here.
+> > > Won't it be opposite?
+> > > If we have this delay here, GPIO will stabilize and set the register
+> > > accordingly?
+> > >=20
+> > > In the driver, I came across the case when we do not have refclk.
+> > > (My platform does have a refclk, I am just removing the property from
+> > > the dts node to check the affect of GPIO[3:1] in question because clo=
+ck
+> > > is not a required property for the bridge as per the bindings)
+> > >=20
+> > > In the ti_sn65dsi86_probe(), before we read SN_DEVICE_ID_REGS,
+> > > when we go to resume(), we do not do enable_comms() that calls
+> > > ti_sn_bridge_set_refclk_freq() to set SN_DPPLL_SRC_REG.
+> > > I see that register read for SN_DEVICE_ID_REGS fails in that case.
+> > >=20
+> > > Adding this delay fixes that issue. This made me think that we need
+> > > the delay for GPIO to stabilize and set the refclk.
+> >=20
+> > FWIW, it's been on my plate for a while to delete the "no refclk"
+> > support. The chip is really hard to use properly without a refclk and
+> > I'm not at all convinced that the current code actually works properly
+> > without a refclk. I'm not aware of any current hardware working this
+> > way. I know we had some very early prototype hardware ages ago that
+> > tried it and we got it limping along at one point, but the driver
+> > looked _very_ different then. I believe someone on the lists once
+> > mentioned trying to do something without a refclk and it didn't work
+> > and I strongly encouraged them to add a refclk.
+>=20
+> Actually, I may have to eat my words here. I double-checked the dts
+> and I see there's at least two mainline users
+> ("meson-g12b-bananapi-cm4-mnt-reform2.dts" and
+> "/imx8mq-mnt-reform2.dts") that don't seem to be specifying a `refclk`
+> to `ti,sn65dsi86`.
+>=20
+> Neil / Lucas: is that correct? ...and it actually works?
+>=20
+The description is correct, the refclock is not connected on the reform
+baseboard.
 
-I don't think the above statement is accurate. This patch is not iterating
-through the bridges and you cannot identify root ports using that. What this
-patch does is, it checks whether the device is root port or not and if it is,
-then it sets the MPS to MPSS (hw maximum) if PCIE_BUS_TUNE_OFF is not set.
+It sort of works, as-in AUX channel is not working before the display
+link is up to provide a reference clock and I guess that also means HPD
+is broken. On the reform the connected panel is described as a simple
+panel with a fixed mode, not using the EDID from panel.
 
-> The Max Read Request Size (MRRS) is subsequently adjusted through
-> existing companion logic to maintain compatibility with PCIe
-> specifications.
-> 
-> Explicit initialization at host probing stage ensures consistent PCIe
-> topology configuration before downstream devices perform their own MPS
-> negotiations. This proactive approach addresses platform-specific
-> requirements where controller drivers depend on properly initialized
-> root port settings, while maintaining backward compatibility through
-> PCIE_BUS_TUNE_OFF conditional checks. Hardware capabilities are fully
-> utilized without altering existing device negotiation behaviors.
-> 
-> Suggested-by: Niklas Cassel <cassel@kernel.org>
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->  drivers/pci/probe.c | 72 ++++++++++++++++++++++++++-------------------
->  1 file changed, 41 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 364fa2a514f8..1f67c03d170a 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2149,6 +2149,37 @@ int pci_setup_device(struct pci_dev *dev)
->  	return 0;
->  }
->  
-> +static void pcie_write_mps(struct pci_dev *dev, int mps)
-> +{
-> +	int rc;
-> +
-> +	if (pcie_bus_config == PCIE_BUS_PERFORMANCE) {
-> +		mps = 128 << dev->pcie_mpss;
-> +
-> +		if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT &&
-> +		    dev->bus->self)
-> +
-> +			/*
-> +			 * For "Performance", the assumption is made that
-> +			 * downstream communication will never be larger than
-> +			 * the MRRS.  So, the MPS only needs to be configured
-> +			 * for the upstream communication.  This being the case,
-> +			 * walk from the top down and set the MPS of the child
-> +			 * to that of the parent bus.
-> +			 *
-> +			 * Configure the device MPS with the smaller of the
-> +			 * device MPSS or the bridge MPS (which is assumed to be
-> +			 * properly configured at this point to the largest
-> +			 * allowable MPS based on its parent bus).
-> +			 */
-> +			mps = min(mps, pcie_get_mps(dev->bus->self));
-> +	}
-> +
-> +	rc = pcie_set_mps(dev, mps);
-> +	if (rc)
-> +		pci_err(dev, "Failed attempting to set the MPS\n");
-> +}
-> +
->  static void pci_configure_mps(struct pci_dev *dev)
->  {
->  	struct pci_dev *bridge = pci_upstream_bridge(dev);
-> @@ -2178,6 +2209,16 @@ static void pci_configure_mps(struct pci_dev *dev)
->  		return;
->  	}
->  
-> +	/*
-> +	 * Unless MPS strategy is PCIE_BUS_TUNE_OFF (don't touch MPS at all),
-> +	 * start off by setting root ports' MPS to MPSS. Depending on the MPS
-> +	 * strategy, and the MPSS of the devices below the root port, the MPS
-> +	 * of the root port might get overridden later.
-> +	 */
-> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
-> +	    pcie_bus_config != PCIE_BUS_TUNE_OFF)
-> +		pcie_write_mps(dev, 128 << dev->pcie_mpss);
-
-I believe you can just use "pcie_set_mps(dev, 128 << dev->pcie_mpss)" directly
-and avoid moving pcie_write_mps() around.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Lucas
 
