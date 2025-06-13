@@ -1,234 +1,238 @@
-Return-Path: <linux-kernel+bounces-686396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3832AD96D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:03:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96BBAD96D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977003B2685
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E8D4A0E34
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF50725C839;
-	Fri, 13 Jun 2025 21:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42676260564;
+	Fri, 13 Jun 2025 21:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="Dz6Vluvr"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpY20LQc"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A64F25A620
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 21:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9252A26A0E3;
+	Fri, 13 Jun 2025 21:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749848526; cv=none; b=LEx2X8363J/oRn88evEJqUX6ybqps3IPYm2TeAb90vcJVN4kz+VavsRo/7uiscIpHnLZXa4Q3mKaBWre9rQwAGIf73JjGHrcMJ5k1f7gzzYXkV/xDXz/dmA5OhwnVuiYic9NbqwDZdaq6VjB5hceIIDfYXEbVW1uEe+Y31i3gRA=
+	t=1749848614; cv=none; b=t5sMv/wS/jEFZklLyjbeyRMOn6oH9NXps6J2b1aUa5CneU5v8ull0Rkcx+8CdbKBeHJ8rVpXju6lDGm8rY9TFSi34jdnA+NjToBmR1gvhA5JqCzKYC95/+0AnlBYSPm7v3j1gLtINeY/0ICeBquaSmsz9oxEi5NFWVnWPCJtYds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749848526; c=relaxed/simple;
-	bh=OIllGYSRU0SJagDHwnIsOjgKnsaQsAcmzSKro1vqi5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A2o3tehTAO638I5A5CmGqpgjhhtoHuH84B2WsqSM3zP5c8A3vdvHXSeqasigsRP4c2eddWgFzbFsI1djjO2D26ergjUZ3bQ9NfAw8m/T8S2hIi6CybRAg7kc2y14JZFJUs0Zyd4akszmaqw5XIyajmXBZl6rvzHqEfdBblkIsiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=Dz6Vluvr; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ddca4ce408so10072925ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:02:03 -0700 (PDT)
+	s=arc-20240116; t=1749848614; c=relaxed/simple;
+	bh=IyzwKXOWUU8N4gJ4oYPEoooee64bDvtK5035+V25JGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uiI8X9Xy9M7HQhmlLcy2C6l/jvqZb4DO3OL6L04HGZLxHkqWEwoezcoCi1kP8vMkCyfB0oNyvUOv3wWx60C34ViQPl0awD7qfhDiDXSe7kNMAwgxPXPPcK/rrXrRz4f8WYOeNK5kQgTs3lVa2huDL/91L/SgXX1a3dlHxi1hyG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpY20LQc; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ade750971f2so316611966b.2;
+        Fri, 13 Jun 2025 14:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749848523; x=1750453323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749848611; x=1750453411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1gD7pkEGUFZ2r04BWnG63uJj9JKyQG3lB1lEXTm5IZo=;
-        b=Dz6VluvrM1hykyqlUNUI/954JuMPmKJy/Z0SmRnX8t1Rrn+amy2NGV0ELcBChICYIT
-         8bUERs5y2MGql4CXas1Xjb5zeUdc3VUTZFpmJ4vTxJIpYEwIcahMXQBc1SyeE29w6Vip
-         ptXoq/SEkiFNOWIgjrXk2a0Rt2CChYGupHMd+ClZWZIc4aHN31hGWm+VpNXyaIuPAEe9
-         dLEJle9KauOikUkuOARMa1kgDlYTQtCpcmtq77ygnMYfJLetmLZ0cic/QJqPEFxrCUjm
-         lZj3qbY0CL7W6ZDmHXQ5x9rg3WKgK+OsvO2PU0T8j40anakF4Fo9UkRZMDVBnqn1I+az
-         j2Pg==
+        bh=4R5mc6uUx7bSRT5odrTZCsHFmbha7bqUvNpknNdXdSs=;
+        b=DpY20LQcQ79NCetQbCfPu5A03ktc4GOwtcmY3ZX1v0e9pFoIlIxKi0rifhX5qzYt9E
+         /+9kdjv1Ecm48qQWXA7AGO4Jo1li1MhJmNyj6blBs6KY0ouZQ7iLGrMPHOhn0DboxIUo
+         0ieY/mJBOAUIzaVxueTvQAAQxneJb8Kj+6PXSOI+zrbKdXf9Mo6vUP/Kt1+OykJFUH2o
+         k8Fc5OXA0P/NMd4+LacjyMdFDIJjsLiNIX/sLKemWDgxHg+NcPY0JhEvmjcvzydFe3o/
+         1QeFPnP0xJs5VjennlbllMrf10fm2jbOjujU32YcEF5q0eYoOfBwqtnO8L0YqBAjLzMd
+         HMQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749848523; x=1750453323;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749848611; x=1750453411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1gD7pkEGUFZ2r04BWnG63uJj9JKyQG3lB1lEXTm5IZo=;
-        b=IMEG/vJsVIM1rzk+0eVqCXBiTN8cU1HcA9klycfhtSDCGaVMQAbJj0Rzc8uVHBleD4
-         UMXpa8Y7Zkqad1eVGWLaEpV50JXHZTMgfRcngSYbCNNN0q3wYzB0T9zmTJ4oRUxdZ3XF
-         aiT6kmsjY8Pcak8qvJ+SUjKhb96zEco12Txl1maqglFt6nubMH5/d7L3C47hr1e3XZ3d
-         +B1x7axs3zdLPDwEqGgldaERX4nK3Yv+2qxPDK+wpxI8igRfDb1PWCPiexMbFyC7sOpj
-         /IAWoDjMhC74tR/7S0ZWrNYPOhuqOO4YCc+rHbNsesUUDrw4/ByGySTlioVDnp373k/x
-         DwdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQGkyXaUXKWC1WcGVSFuEZ7KAucj+Lbmi9K5z+VXssf1H36j5p2wzJ6h0gJ0HDLRsc0fodvn5z0ct9+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOiEt4r/1grvz31Eps6YYErwdFswlrZo1HT6mloQkoVSR9HKIK
-	Vm209WBzX6thgAVjgXV0ZUDblPXhAv6ezawQ32qY6teczva39O+aVexmzd+FbNSxA2A=
-X-Gm-Gg: ASbGncswf3gtKIDnydYKhPi8RBYpAN2UoHETqIA3igcCbKUlGwIuZhRxxPKNh7dzyOP
-	4HZiAWmcFO3vMupBKdB1M+80LUlO0lSn1KvqqvOnvne7W5qQi74B4pY4NtjYQDp82gPhHT9EQo4
-	N37osGtyraSlMALNDbeJ7b5m16YqaxJiQzemO2DZUXFEtKNfr/Dby+n4p6RGVK8xVpE+Xx48/TN
-	7JCeXGGrS/Dk1fduXqTV/0QBFjlEkvM9HaJx7QpHdFKMT5qtJFHjJXdpL5zSSm/2RVtF6GLNWwo
-	xy9S+GUB6wzVCqLzYB5i56bMVvSdvMT/C/DEUpyS4Flqw6Tsdp+MRQVzXNAdWx7GbkVZu+lBDja
-	TFIKzPP1nkriGD1ZWTDpcpfCqtpVY8Jk=
-X-Google-Smtp-Source: AGHT+IHXDat6NE+msKniBMkBKXzQ5OntQfEKX4Deb7fPFCE8SSfiXNxgPbBb3SmZKFUe07JWv37/DA==
-X-Received: by 2002:a05:6e02:194f:b0:3dd:ebb5:5370 with SMTP id e9e14a558f8ab-3de07d3404bmr14113915ab.22.1749848523112;
-        Fri, 13 Jun 2025 14:02:03 -0700 (PDT)
-Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de019b44b3sm4996315ab.10.2025.06.13.14.02.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 14:02:02 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: lee@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dlan@gentoo.org
-Cc: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	troymitchell988@gmail.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] riscv: dts: spacemit: define regulator constraints
-Date: Fri, 13 Jun 2025 16:01:49 -0500
-Message-ID: <20250613210150.1468845-7-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250613210150.1468845-1-elder@riscstar.com>
-References: <20250613210150.1468845-1-elder@riscstar.com>
+        bh=4R5mc6uUx7bSRT5odrTZCsHFmbha7bqUvNpknNdXdSs=;
+        b=N+GFvu9u+O89t3qutgsdqnvoX/hv1BA/M77zxgIQXoaA/pChizqwgsbzKlhk4TEhot
+         vYGPlqp095LGB3Uwf00QuS/kKOHgz8wTf5bsAT4WYx3uuvJvlcgNXINs2NNTAxEKs9cc
+         qApMLcVqhb2G2bccHYE/4d67CHBxq/3aSJCYg3RI3E6RZNQkFpWo1uxQLX27AQC0e6iz
+         6QvHdGmACm/TO4i73nmyymaoKMg67Wf+V/SB/tVMOLgH6BAWRzYjSZpM0nM6sOwfZEAL
+         dGZLdrJd3V0M4AAZPaICxneG3hHBI9XVKszSGFUANuq0R9R/PQXtNHMoP2N1LoUXEoJm
+         7chA==
+X-Forwarded-Encrypted: i=1; AJvYcCWg7ZMD1wuxOIkFVEMfwFyd1Yp8MvAo4ehbcvJJLqBs+VeJ+TlUk8GlfJ1aYR4oU18epUcN+1HyeIKeaHoZ@vger.kernel.org, AJvYcCXbPJ9Jd4V3C4cPvgQUnhVDnNB7hpsy+KzWsF6xlAi+GuGzHGygYaP1Ph10Ad1N//N4Q0SPX0gl6Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPuLUkRwKjE93qJgidz8pudYros+2O120ByPlk9Li20pAz46sL
+	LJnPFJGNOrr1HxlnK7QKaIsZLGGJi1rVmBjPR9TiLaxWFzmCvp8MXMluTZd2mSWW9ikJ0uZnPZX
+	CuXH6maGPEdwyQoUGQnjeHv8mfXP1eX0=
+X-Gm-Gg: ASbGnctXS1InEi6nutolniNUiYx/rBs2zLtAomOtKBj+aoWFON2mWrwxngWZ5LCk1um
+	mRx7kgYTpg6czAj1sUJzPCKpBISmgOiytTPDFzDwodbi/ybTims93gCyCjr0UOV+Iv6sndITP62
+	vZT4Z5+ruCw1LeDQSCMpMrTICHSRretDocqmx0Sp7FIqU=
+X-Google-Smtp-Source: AGHT+IGAJCWhpIZ5cBm4LAFsrDxyQjCv6z7IHjNQdgw7ZYReNFJnO6KlSLetdJXWDmAzvC8PGJ1qHs/aNr0Q9jJbSVQ=
+X-Received: by 2002:a17:907:3d16:b0:adb:229f:6b71 with SMTP id
+ a640c23a62f3a-adfad29dd95mr60119666b.5.1749848610511; Fri, 13 Jun 2025
+ 14:03:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
+ <20250613-losd-3-inv-icm42600-add-wom-support-v4-1-7e5f554201bf@tdk.com>
+ <aEvhZiXHLLIRe41-@smile.fi.intel.com> <FR3P281MB17578B82AC67F49552E24EB3CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+ <aEwfUMgLTnQxOh_k@smile.fi.intel.com> <aEwfgP3tiio52Rj-@smile.fi.intel.com>
+ <FR3P281MB1757AEF932A3CE2AB9637046CE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+ <aEw4q3p12q1iI7vC@smile.fi.intel.com> <aEw9Yxhodwhh8BT6@smile.fi.intel.com> <FR3P281MB175722266C119B719FCE9E6CCE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+In-Reply-To: <FR3P281MB175722266C119B719FCE9E6CCE77A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 14 Jun 2025 00:02:52 +0300
+X-Gm-Features: AX0GCFvL8R2aNRCEB9bzIup3Cgf6bvQBDKQQ_tT_IOLmq8KP1Z-ailvQKGnsuNQ
+Message-ID: <CAHp75VeS8XQbcTaDFLUYTcd4SEdfoVOd4-mht6NGk__exSD0Vg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] iio: imu: inv_icm42600: add WoM support
+To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Define basic constraints for the regulators in the SpacemiT P1 PMIC,
-as implemented in the Banana Pi BPI-F3.
+On Fri, Jun 13, 2025 at 8:14=E2=80=AFPM Jean-Baptiste Maneyrol
+<Jean-Baptiste.Maneyrol@tdk.com> wrote:
+ >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> >Sent: Friday, June 13, 2025 17:01
+> >On Fri, Jun 13, 2025 at 05:41:47PM +0300, Andy Shevchenko wrote:
+> >> On Fri, Jun 13, 2025 at 01:43:58PM +0000, Jean-Baptiste Maneyrol wrote=
+:
+> >> > >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> >> > >Sent: Friday, June 13, 2025 14:54
+> >> > >On Fri, Jun 13, 2025 at 03:53:36PM +0300, Andy Shevchenko wrote:
+> >> > >> On Fri, Jun 13, 2025 at 12:46:46PM +0000, Jean-Baptiste Maneyrol =
+wrote:
+> >> > >> > >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> >> > >> > >Sent: Friday, June 13, 2025 10:29
+> >> > >> > >On Fri, Jun 13, 2025 at 09:34:26AM +0200, Jean-Baptiste Maneyr=
+ol via B4 Relay wrote:
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- .../boot/dts/spacemit/k1-bananapi-f3.dts      | 104 ++++++++++++++++++
- 1 file changed, 104 insertions(+)
+...
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 8003c8173a2aa..0f9a7f7a6c8b6 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -60,7 +60,111 @@ pmic@41 {
- 		compatible = "spacemit,p1";
- 		reg = <0x41>;
- 		interrupts = <64>;
-+		vin-supply = <&reg_vcc_4v>;
- 		status = "okay";
-+
-+		regulators {
-+			buck1 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3450000>;
-+				regulator-ramp-delay = <5000>;
-+				regulator-always-on;
-+			};
-+
-+			buck2 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3450000>;
-+				regulator-ramp-delay = <5000>;
-+				regulator-always-on;
-+			};
-+
-+			buck3 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-ramp-delay = <5000>;
-+				regulator-always-on;
-+			};
-+
-+			buck4 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <5000>;
-+				regulator-always-on;
-+			};
-+
-+			buck5 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3450000>;
-+				regulator-ramp-delay = <5000>;
-+				regulator-always-on;
-+			};
-+
-+			buck6 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3450000>;
-+				regulator-ramp-delay = <5000>;
-+				regulator-always-on;
-+			};
-+
-+			aldo1 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+			};
-+
-+			aldo2 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+
-+			aldo3 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+
-+			aldo4 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+
-+			dldo1 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+			};
-+
-+			dldo2 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+
-+			dldo3 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+
-+			dldo4 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-always-on;
-+			};
-+
-+			dldo5 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+
-+			dldo6 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-always-on;
-+			};
-+
-+			dldo7 {
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+		};
- 	};
- };
- 
--- 
-2.45.2
+> >> > >> > >Overall, looking to this patch again, I think it would be bett=
+er to prepend it
+> >> > >> > >by replacing *int*_t types by the respective uXX ones. Because=
+ in this patch
+> >> > >> > >we add dozens of new ones which increases an unneeded churn in=
+ the future.
+> >> > >> > >
+> >> > >> > In my opinion, to respect the rule don't mix *int*_t and uXX ty=
+pes, it is better
+> >> > >> > to keep *int*_t types. If it need to be changed, we can change =
+afterward the
+> >> > >> > whole driver types with a replace tool and send it in a separat=
+e patch.
+> >> > >>
+> >> > >> It will be never ending story, sorry. We need someone to solve th=
+is tech debt.
+> >> > >> And since this patch adds more than 3 new users of it, I think it=
+'s a candidate
+> >> > >> to embrace the burden.
+> >> > >
+> >> > >For your convenience I can mock-up a change...
+> >> >
+> >> > It looks like there's something I don't understand in the kernel Doc=
+umentation about
+> >> > types then.
+> >> > Quoting Documentation/process/coding-style.rst, section 5.d:
+> >> > ---
+> >> > New types which are identical to standard C99 types, in certain exce=
+ptional circumstances.
+> >> >
+> >> > Although it would only take a short amount of time for the eyes and =
+brain to become accustomed
+> >> > to the standard types like uint32_t, some people object to their use=
+ anyway.
+> >> >
+> >> > Therefore, the Linux-specific u8/u16/u32/u64 types and their signed =
+equivalents which are
+> >> > identical to standard types are permitted -- although they are not m=
+andatory in new code
+> >> > of your own.
+> >> >
+> >> > When editing existing code which already uses one or the other set o=
+f types, you should
+> >> > conform to the existing choices in that code.
+> >> > ---
+> >> >
+> >> > My understanding is that uXX are not mandatory for new code. You can=
+ use types like *int*_t.
+> >> > But you need to conform afterward to the existing choice. That's why=
+ this driver was
+> >> > done initially with *int*_t types, and that patches are conforming t=
+o this choice.
+> >>
+> >> This part of the documentation has a lot of room for different interpr=
+etations.
+> >> One [1] may consider this as uXX superior, another, like you, that it'=
+s okay
+> >> to use.  In any case Greg KH prefers uXX over uintXX_t. And he is also=
+ in
+> >> the chain of maintainers here. Feel free to amend the Documentation. B=
+ut
+> >> be sure all stakeholders will see your proposal (like Greg KH and othe=
+r
+> >> key maintainers).
+> >>
+> >> > By looking at all Linux drivers, there are plenty of them using *int=
+*_t, even
+> >> > inside iio:
+> >>
+> >> $ git grep -l 'u\?int[0-9][0-9]\?_t' -- drivers/iio/ | wc -l
+> >> 59
+> >>
+> >> $ git ls-files drivers/iio*.c | wc -l
+> >> 640
+> >>
+> >> Less than 10%.
+> >>
+> >> > Then, why it is mandatory to change this driver to use uXX instead?
+> >>
+> >> TO be consistent. With the above wording in the documentation I may ar=
+gue that
+> >> entire subsystem should be consistent and at least in IIO we have tons=
+ of patch
+> >> series that are against the whole subsystem to do one style change or =
+another
+> >> (look at the recent memset() vs. {} for initialisation).
+> >>
+> >> [1] https://urldefense.com/v3/__https://lore.kernel.org/all/2025040918=
+0953.398686-1-matchstick@neverthere.org/__;!!FtrhtPsWDhZ6tw!DVTvkgDsymM7132=
+dB-wjei-s0JxYiivZxtzEHfWjsrn_6toqTXA__hm2nPUh7jmectCXcP9Z3OAh0hMm-WD6eQAHOt=
+diGbYQqsw$[lore[.]kernel[.]org]
+> >
+> >Oh, this [2] is golden!
+> >You may found support for your arguments and for mine in that thread, bu=
+t the
+> >bottom line is: what do maintainers of IIO prefer? (Taking into account =
+that it
+> >goes via Greg KH)
+> >
+> >[2]: https://urldefense.com/v3/__https://lore.kernel.org/all/20210423230=
+609.13519-1-alx.manpages@gmail.com/__;!!FtrhtPsWDhZ6tw!DVTvkgDsymM7132dB-wj=
+ei-s0JxYiivZxtzEHfWjsrn_6toqTXA__hm2nPUh7jmectCXcP9Z3OAh0hMm-WD6eQAHOtdiuFc=
+54eI$[lore[.]kernel[.]org]
+>
+> If this is required, I can do it. I would just want to know if this is ma=
+ndatory
+> since we already have a couple of drivers merged using standard types and
+> other drivers planned to be merged.
 
+Let's wait for others to speak up. Especially maintainers.
+
+> Can I do it in the same series or should it be in a separate patch before=
+ this
+> series?
+
+Same series, just a prerequisite patch. Note, I have one locally, I
+just need to send it and you can use it, but the reason why I haven't
+sent is the same =E2=80=94 I want to know the official position of the IIO
+subsystem about this.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
