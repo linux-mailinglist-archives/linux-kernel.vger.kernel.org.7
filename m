@@ -1,99 +1,140 @@
-Return-Path: <linux-kernel+bounces-685581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76089AD8B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:07:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CDDAD8BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C08C7AD8F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E891893874
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5B422688C;
-	Fri, 13 Jun 2025 12:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9B92E0B68;
+	Fri, 13 Jun 2025 12:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGqxvvHo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="RvMTR4n1"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FF4234977;
-	Fri, 13 Jun 2025 12:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488022616C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749816439; cv=none; b=VWn3jHSEmdfwVA7vUSY6hzxX+VqO4jMr0Ks01LUEZzZ237X3h/hCw0FbyxhR4e7bf7hHTBWxn7gSZPJxW7GpqK+0AEZM8iewN58X67I7J4gohnIizf2itrJxzpHevIi099oR8jeeTPNK1VJMP/8hfYYe53C2pkWiV2zfRtR45lI=
+	t=1749816464; cv=none; b=LgrZbU5kxbMLTfA+6BoA1UBrTl8Db46/ZdbTsH/h4CUv+UqtbcI6B0HbtHwyBjOQ4KHGlFZZf4BGFB0MwWZYbI3AEgVYv1xqLOVup8VaALN6s03quK+Jl45POmNv/2jniU+RH/c+I5e3DIDvYbRPF+tuouDD6WnddG61dCM0ecc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749816439; c=relaxed/simple;
-	bh=8ySbe6JV0Y+P+RmUTxWhQwivlgHTIuT1wt/1QL3WCm4=;
+	s=arc-20240116; t=1749816464; c=relaxed/simple;
+	bh=dw+/2d23CWYaflUCx8yRKTMFvgtfvTK0Uw26ZiXjycM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ublyUAI7Hp1M8ksK1x6AxwPlwlfn6Sw6GiJzA9b2lVMbd/VuCcd8vR1HczQnbI9IrOLYE96T97TqCBG3fiHnhi+YNFpXra+NxcjZbygiOClkL+e60lYZ7GALWsi5rDEP5U4cxsZWzujud3X6TcndXBtPPsDNxdSXCwPBsX6EZBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGqxvvHo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32EDC4CEE3;
-	Fri, 13 Jun 2025 12:07:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749816439;
-	bh=8ySbe6JV0Y+P+RmUTxWhQwivlgHTIuT1wt/1QL3WCm4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jGqxvvHoyEd+dUVqMs3b+ANqbx8ct9LrHirSLwK9uExcBu4S5jAU4/ioawDK/UUZE
-	 JkaD+y3B4pnp5YOyHhpLAs7seLVjlFBIJMJ8pYPSz9qdj/Kb95UklYHx/Y3EyllQ/F
-	 ztbpRhpFVyH9xMJRDMyPLxNdZocAnjJR0SplkK8HPVZVpa0pe5aM/UpyMd5lY6Fw1d
-	 1+MIM2Losr481QQ2OB1hWrNsQiXd9ZJRj/9Uw58WMgJHplm1JmRMcSlybDnrBWu5Kc
-	 e2z7uI/9x4JJmTswXY7ixS8Zj48RBXm65Z+dRwpUg1hb8AF9Gpjm7LWH0EUReyAekN
-	 ZD5M572VvqJhA==
-Date: Fri, 13 Jun 2025 13:07:14 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Julien Panis <jpanis@baylibre.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] regulator: tps6594-regulator: refactor variant
- descriptions
-Message-ID: <14694267-175d-4566-ae74-da58ebca08b5@sirena.org.uk>
-References: <20250613114518.1772109-1-mwalle@kernel.org>
- <20250613114518.1772109-7-mwalle@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9edJ1fOP94cNAAn4JlDenFZPzsu0koprs6bF9R2vLRUBjST3v6GN/Ko3Qf1IlUF2+lgGboub7b3MZ9YIHeF9Rh8BGBf5w57ITzp0FpuCNXPjw/F976Sv/S5Crx/g4dzi6gK08h89apnl8E0RZLOiSKeF4AGnbZ5MudkvKCFfGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=RvMTR4n1; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so1192172f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 05:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1749816459; x=1750421259; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=acAtLseFdOzXV3/vSQyIZE2n086nZk8lcarjj4fTGN8=;
+        b=RvMTR4n1UrjRqNKwmHuENPKn3T8acwu52R5cI/RHsYQtkRaLUgVl+P87T1VUcVOjKR
+         gcVXVzHJoSsJSItZmZ9sT21h2goqykeHpxvo06Ze5NoZa6O84wCx//IGw0c0imGWWaqU
+         7MJWfDQsDEHj40yAFsi0rTowJeYKcDHeyTfq+ZN000xjXCP1EJ29XYuFFg4lK6TFdzmm
+         gsW03rzUREo+ISUB1IgX4j2B5krOwn+rj389KJ7Ystg0cxZ02vEii+3tkmeWQTPE6gcd
+         IfpZqhdjg5oDp66R8na1Nu9D3ZZd9XwYW/Omqh+gyxuJZupufcOZZWO98fAEjYH7k6cA
+         BnDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749816459; x=1750421259;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=acAtLseFdOzXV3/vSQyIZE2n086nZk8lcarjj4fTGN8=;
+        b=sE6BD0+/TXMIB3n5TKS8GXfJXTGWHNoFjPIMFkhQqvebL5kDLnWa5g8owwMhB4P2lB
+         2+M9Qrf1KyrsunyJlsuNBvS+HNNsFStETMWI1f9bJ+0ibk5riXkfp+zvsz3xl5nND/jm
+         e5TkCVcmDvQp2Jp9GwtA7kSd5EcBuroxRIxysgUTm/V97H6LaANoAcnhm9M2ZGGivgsc
+         585qukr4a7iJFBGYC0YJLot8mVukTdria+7+wb6BhhleW3wxXGehZriXhJt6yQsj4uiU
+         7sz6cWvuFKQwIPtvH+7SY9eQG91Ncn/CFyGvkObJDpZtG2+5Fgns2G7/5UZf9kR1Focq
+         /X8A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1qWMCgpr7aJcIBVmu+YiSthsscyTC07cR2eEd7el5JpStMU9XRGGYyamv5EpSsF/gLKggpttWpbgRZmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrx4+15Wf9HKDkb/mi363Hklq+BzzpzAAcVnHJ0ERtmEXjHmH/
+	I0NpmsIK+fvFCPAyuGX27lsTKHSUOB9P4vD+t3SdfaXi7sAwXBxlsIzmloN9DwMKF0eIlbfygrO
+	aMksC/R8=
+X-Gm-Gg: ASbGncvL8H/An18I8yesh9ciImCrRobe1T2wTOe/XQof+d3EQ7gRsrF0V/P0DiIu1bb
+	3VxJtM5wdHdUUM0JO7TUHQM66n+PbaQLU+VZgEAEoQ/6hlBoFsxbg3yTzuB3Al3qM5KgGJEGH+R
+	FGk23tcTA7mFFa9qEekQUwoA+IfaPhD/kYgDq/ZF5YspO7aEh2g63oXIFp2K3KxTwi0nAFaqJ3v
+	wgX9ujsor6dxnIT6jhLjYE0SfKzIs88M+MtAGX2x5Zn6HaoBg+XCaa2Bw8UJRBEfehFGYAIJb3h
+	vi8/rqGX4gd3LXAW4H/I9UPI+BGFnwKMZmkGK51KZzZpnqKf73TYZXVSgt0UjUKM1hHNtJxX
+X-Google-Smtp-Source: AGHT+IFwnfrbQNhYn+RKjvnvWq1fAt1wi2tjoULYiVKtV8KdDn2x97sSGXlAbKnPKoBdZNwQjgkRXA==
+X-Received: by 2002:a05:6000:1ace:b0:3a4:f723:3e73 with SMTP id ffacd0b85a97d-3a5686709d3mr2590339f8f.16.1749816459324;
+        Fri, 13 Jun 2025 05:07:39 -0700 (PDT)
+Received: from MacBook-Air.local ([5.100.243.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532dea15b0sm51167755e9.11.2025.06.13.05.07.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 05:07:38 -0700 (PDT)
+Date: Fri, 13 Jun 2025 15:07:35 +0300
+From: Joe Damato <joe@dama.to>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: Taehee Yoo <ap420073@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH net-next v1] net: amt: convert to use secs_to_jiffies
+Message-ID: <aEwUh3A3gvj64v0a@MacBook-Air.local>
+Mail-Followup-To: Joe Damato <joe@dama.to>, Yuesong Li <liyuesong@vivo.com>,
+	Taehee Yoo <ap420073@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+References: <20250613102014.3070898-1-liyuesong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3ftoSe9ZUrOvHQHK"
-Content-Disposition: inline
-In-Reply-To: <20250613114518.1772109-7-mwalle@kernel.org>
-X-Cookie: Use extra care when cleaning on stairs.
-
-
---3ftoSe9ZUrOvHQHK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250613102014.3070898-1-liyuesong@vivo.com>
 
-On Fri, Jun 13, 2025 at 01:45:17PM +0200, Michael Walle wrote:
-> Instead of using conditionals or tri state operators throughout the
-> .probe() provide a description per variant. This will make it much
-> easier to add new variants later.
+On Fri, Jun 13, 2025 at 06:20:12PM +0800, Yuesong Li wrote:
+> Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
+> use it to avoid scaling the time to msec.
+> 
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+> ---
+>  drivers/net/amt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/amt.c b/drivers/net/amt.c
+> index 734a0b3242a9..fb130fde68c0 100644
+> --- a/drivers/net/amt.c
+> +++ b/drivers/net/amt.c
+> @@ -979,7 +979,7 @@ static void amt_event_send_request(struct amt_dev *amt)
+>  	amt->req_cnt++;
+>  out:
+>  	exp = min_t(u32, (1 * (1 << amt->req_cnt)), AMT_MAX_REQ_TIMEOUT);
+> -	mod_delayed_work(amt_wq, &amt->req_wq, msecs_to_jiffies(exp * 1000));
+> +	mod_delayed_work(amt_wq, &amt->req_wq, secs_to_jiffies(exp));
+>  }
+>  
+>  static void amt_req_work(struct work_struct *work)
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Seems fine, but minor nit on the commit message -- when referring to commit
+you should include the one-liner as per the documentation [1].
 
---3ftoSe9ZUrOvHQHK
-Content-Type: application/pgp-signature; name="signature.asc"
+For example, maybe something like:
 
------BEGIN PGP SIGNATURE-----
+  Since commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()"), ...
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhMFHEACgkQJNaLcl1U
-h9Dznwf/fLsXMIUAaHRjYZFj4t8rya4bxjXo0pZ9IplvXEBg7j5KV3+Ses5E+/mL
-2E5dPBhh/kDt9XUA+JYAOar7DjbaPah4Y9fDwqshQL2aNI1kbuhXxpq9UQawK80y
-+DHckjMAejH6HjT1KDvBvi7Se746PSVbhE8DHVhTbyClOyKwDuri4FFl8+COXtJv
-ZvpKJLNw9rK5SxhZD3piuPxktbjdiO2Jjb4jwqFJFU9LEBrUQ4Fj6iDmeX2T+3a5
-s+Fagjqai6PbmxOSf4VyLohDS8NoDfvqBhsknlfm/7VZkUJA1/0RyczcEVGFtL4Q
-gOFYoGeaqNIZqJrb2smV7+zCjlgf2A==
-=Y4QJ
------END PGP SIGNATURE-----
+Otherwise:
 
---3ftoSe9ZUrOvHQHK--
+Reviewed-by: Joe Damato <joe@dama.to>
+
+[1]: https://www.kernel.org/doc/html/v6.15/process/submitting-patches.html
 
