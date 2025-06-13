@@ -1,213 +1,229 @@
-Return-Path: <linux-kernel+bounces-685976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B861CAD914D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB32AD9154
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD471E23F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7951C3A927E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC4B1EB5DD;
-	Fri, 13 Jun 2025 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656FE1E8353;
+	Fri, 13 Jun 2025 15:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fTZxQpsn"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744EF1E51FA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 15:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="W8lGPEDx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322E71B424F;
+	Fri, 13 Jun 2025 15:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749828540; cv=none; b=h+X74E9GFwxcM+eeyStPwtziCgZmLlVJ5uUX3xOkTh10rJpao/E1O4s5DuIwfQMhhh9DhLe4ln+iJuBxyQPYJ29DgRl6YS68uuwxWDIcu63Ej0vz5Rx3bAyRbjEfxbP9O5V44m01/uchODNkLUaI4Qu5bM8d5T47+XmxfznTfWg=
+	t=1749828717; cv=none; b=XcZ53CfuR3+8PfszZJrSzg0ZwAvrg1vF3IDYZHcRmFuZ9WsOWAQDHN7Xvl981ltCQs71A2dpJ3P5AbUfRYRo4Q6ncBBgKUsYSAUW1PbMVBIriG5uVnIwqZREGTP12+XopSL7vztltNH8bvm8LfzouobJ9YkTZfT5bung5zxXPM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749828540; c=relaxed/simple;
-	bh=X079tyiC6j0ZdiMIK4gOPei70Tw5RKe51eAS+6Dan9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A72rpGEKo46aEqWNv+G4qxadinWAsXMIN63wTwLuvgSchKcuDMVwWOUjbe+nsDtd8WLT25WFjC2FwRwn/p/Qo1sqMvgUxmvEMY+725bLUFwTUyp7cCTzwkzxTZihbXM24U0vZmB/MIl2YACRAbCAwiNmYKvKRSILRrlAH23J6H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fTZxQpsn; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e81f311a86fso2123697276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 08:28:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749828537; x=1750433337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RYiQRuwhOfYD8gVzgR1jp9U1VSoD6Bt4ofrpbI2Hh+w=;
-        b=fTZxQpsnLWNJmIeU1bimWyViEDzYZoAdEBvxRAluDWnE2QWsWnalw2aD2WDTCRYiwk
-         isfOOoNbFSJaI6q9ie4GPFZi0cq3Oz15Df5pXLwiHTn1q6+MWl4uR/JXyolQm+4LZN+g
-         1eshsr8Nl95wIJRUoTX49GuE2U9UPXupON7jZYtlNzCDJHWyUvH5W/2KkW0ug4tzlY7z
-         Dm+/2L21Uop3Wljbpx4oFPzZsWu8Woh1+G4Wua2YML1fWHaAtFRiS1kl27Nk4oUC3tCH
-         IuHMFO0tENqrcVpJwacrrHDlwwk5gEpaRM5arSqpLIHj9OQIwQTMACAHG8zXfvzYU2xB
-         Qbsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749828537; x=1750433337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RYiQRuwhOfYD8gVzgR1jp9U1VSoD6Bt4ofrpbI2Hh+w=;
-        b=VtGRo42Jo4q1DdAxV9OOhLCKa1tEAEszpuKwA2pGMED4y9e5JdC3hynCdzXkHABV8d
-         Y9GJuRkEKHzGvGHOglT9Hm65mr/p/h5MAO4OdsKbcuDTqwUObuWmyQBgN6O3VpNVuFpU
-         0Dl/mPWvgFuN5BotKo9E6NxRy8DltKzhAAQ3D9YKAEnmwYYSvSZiXPkVRaX7iMSokFqH
-         dTyxV7y655BdJzJv+0/pEeDGQZC0tLl2PQRy9K6zQbBdcGFvuYYU7oY6nNLolIMnM8+O
-         9GBpJhwRJHDP8C26VZryd5qcgqJRqyD4R2eoDhTFQcqvWQKJs/yUT88VkfUrOVPjFRAE
-         esbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Te4HnVQUYy7ncQrjkLlpovRjgYkbAd34qyjHGJ66EzBDyqSb5zlEliBpagXZf3xBrW901hB0lrg1gUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+rosG+9hLUzFuig4J/AUAh/xLACAi592y1FgDN5zkOMMQRTnA
-	uMjHuOBhSihCYvA/YS0X5bVtiDADSddTxwdUi9d3ZljIvdFsa1x+GhBEI8VzV1oVnURJNkhg3oC
-	T54p9POYACuv1MircM/qz28UH5ZZEpPdqVKHfM3pQ
-X-Gm-Gg: ASbGncuMWehf+weQ3RKnQk6NiurwS7ERxTpn8I2t0M6945lF0tzSeH+NEeuTZiFLz9j
-	uqMLoFN+YhANvXSG6U034TKY1T9ECdATpXDWcMsDDuu9mel6XEsOe7vVyQ1ycEiIG5pGcU7Tbyz
-	j1YtXlRgX+VmLIefyunfyGe5Lz46Rk3E+a1Y1Kg17utco=
-X-Google-Smtp-Source: AGHT+IHAM7TIeCsgU1Wds2vBZ0OPyAgzBs8nTML+ZqkrzmDnQLVACyv894zfs5/H9eigreQUvH2pJpyDzVXsqgs4HVw=
-X-Received: by 2002:a05:6902:1501:b0:e81:69be:6388 with SMTP id
- 3f1490d57ef6-e822ac9c0bfmr211439276.39.1749828537346; Fri, 13 Jun 2025
- 08:28:57 -0700 (PDT)
+	s=arc-20240116; t=1749828717; c=relaxed/simple;
+	bh=39OJrVgYkt2pbn5Ca38HYkVcpBgtJKtkv7FSzbSoOB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=chhldE4/kaduiXIjTpneOdGm3P/Y9EF5mmv4Bmjn8jMt0Mn5nyIcDenLoAE/sibgajtSllbiy7c9p/HuU9bi8L0w7UOZjX4sYXv75s7kEUNDkfREIztRwtDqhWwYm1f7stkOCmjdXlbiANLShQK+9imz7Fz6EjH0jucY2WdNS/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=W8lGPEDx; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=5NrQGEgPHc7OkD7NNgqkynvWlZ+jmCbXo3ptECvtkyA=;
+	b=W8lGPEDx7LESJxpUb5VJPClUujkjL1q6IcJemBE/+s8uUCG+le4HuLjIiSP08i
+	00jHcgFvqQ0eJyxPIFB1t7Kknu8YOUsVHY2D5XfYCqTCqotfmJmMYSpCqmT+c/b6
+	o7CKAx2RlyzPFwUe3SO6ZnCHGxX11y86maPP0ZSxrlSCM=
+Received: from [192.168.71.94] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBX3ZU1RExoruMjIQ--.51583S2;
+	Fri, 13 Jun 2025 23:31:02 +0800 (CST)
+Message-ID: <1e3ba7e1-dad3-4728-85d2-276945119ab0@163.com>
+Date: Fri, 13 Jun 2025 23:31:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202505151451.638C22B@keescook> <87ecwopofp.fsf@email.froward.int.ebiederm.org>
- <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
- <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook>
- <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
- <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
- <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
- <20250612212626.GA166079@mail.hallyn.com> <40CCFDE0-A0DC-4F4E-8621-206F53D9225B@kernel.org>
-In-Reply-To: <40CCFDE0-A0DC-4F4E-8621-206F53D9225B@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 13 Jun 2025 11:28:46 -0400
-X-Gm-Features: AX0GCFvlLiGFQLQW5tofuZrL-olApvaLyUTQIv_CthVQiMzqD9L3OJiRvhqwEJc
-Message-ID: <CAHC9VhSMmNafbxLqP3j=nOra7OjHiECg6gUsWUuETWcZ01GrmA@mail.gmail.com>
-Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
-To: Kees Cook <kees@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Richard Guy Briggs <rgb@redhat.com>, 
-	Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org, 
-	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org, 
-	Christian Brauner <christian@brauner.io>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] PCI: Configure root port MPS during host probing
+To: Niklas Cassel <cassel@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ heiko@sntech.de, manivannan.sadhasivam@linaro.org, yue.wang@amlogic.com,
+ pali@kernel.org, neil.armstrong@linaro.org, robh@kernel.org,
+ jingoohan1@gmail.com, khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20250510155607.390687-1-18255117159@163.com>
+ <20250510155607.390687-2-18255117159@163.com>
+ <co2q55j4mk2ux7af4sj6snnfomditwizg5jevg6oilo3luby5z@6beqtbn3l432>
+ <aEwRAZgLJUECbGz6@ryzen>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aEwRAZgLJUECbGz6@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wBX3ZU1RExoruMjIQ--.51583S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Aw1rKr4fGr1UCr17uw1xKrg_yoWxGF1xpa
+	y5Ga1SyFykGry3GanFv3W09r1Ygr93Zry3Jr98J340v3Z0yF17JrWYkr4rCas7GrZ3Aa42
+	vrn0qryxu3ZYvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgvtZUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgtro2hMOpDXRQAAsl
 
-On Thu, Jun 12, 2025 at 9:48=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
-> On June 12, 2025 2:26:26 PM PDT, "Serge E. Hallyn" <serge@hallyn.com> wro=
-te:
-> >On Tue, Jun 10, 2025 at 08:18:56PM -0400, Paul Moore wrote:
-> >> On Wed, May 21, 2025 at 11:36=E2=80=AFAM Jann Horn <jannh@google.com> =
-wrote:
-> >> > On Wed, May 21, 2025 at 5:27=E2=80=AFPM Eric W. Biederman <ebiederm@=
-xmission.com> wrote:
-> >> > > Jann Horn <jannh@google.com> writes:
-> >> > >
-> >> > > > On Wed, May 21, 2025 at 12:13=E2=80=AFAM Eric W. Biederman
-> >> > > > <ebiederm@xmission.com> wrote:
-> >> > >
-> >> > > > Looks good to me overall, thanks for figuring out the history of=
- this
-> >> > > > not-particularly-easy-to-understand code and figuring out the ri=
-ght
-> >> > > > fix.
-> >> > > >
-> >> > > > Reviewed-by: Jann Horn <jannh@google.com>
-> >> > > >
-> >> > > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_b=
-inprm *bprm, const struct file *file)
-> >> > > >>         /* Process setpcap binaries and capabilities for uid 0 =
-*/
-> >> > > >>         const struct cred *old =3D current_cred();
-> >> > > >>         struct cred *new =3D bprm->cred;
-> >> > > >> -       bool effective =3D false, has_fcap =3D false, is_setid;
-> >> > > >> +       bool effective =3D false, has_fcap =3D false, id_change=
-d;
-> >> > > >>         int ret;
-> >> > > >>         kuid_t root_uid;
-> >> > > >>
-> >> > > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_b=
-inprm *bprm, const struct file *file)
-> >> > > >>          *
-> >> > > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no =
-new privs.
-> >> > > >>          */
-> >> > > >> -       is_setid =3D __is_setuid(new, old) || __is_setgid(new, =
-old);
-> >> > > >> +       id_changed =3D !uid_eq(new->euid, old->euid) || !in_gro=
-up_p(new->egid);
-> >> > > >
-> >> > > > Hm, so when we change from one EGID to another EGID which was al=
-ready
-> >> > > > in our groups list, we don't treat it as a privileged exec? Whic=
-h is
-> >> > > > okay because, while an unprivileged user would not just be allow=
-ed to
-> >> > > > change their EGID to a GID from their groups list themselves thr=
-ough
-> >> > > > __sys_setregid(), they would be allowed to create a new setgid b=
-inary
-> >> > > > owned by a group from their groups list and then execute that?
-> >> > > >
-> >> > > > That's fine with me, though it seems a little weird to me. setgi=
-d exec
-> >> > > > is changing our creds and yet we're not treating it as a "real" =
-setgid
-> >> > > > execution because the execution is only granting privileges that
-> >> > > > userspace could have gotten anyway.
-> >> > >
-> >> > > More than could have gotten.  From permission checking point of vi=
-ew
-> >> > > permission that the application already had.  In general group bas=
-ed
-> >> > > permission checks just check in_group_p, which looks at cred->fsgi=
-d and
-> >> > > the group.
-> >> > >
-> >> > > The logic is since the effective permissions of the running execut=
-able
-> >> > > have not changed, there is nothing to special case.
-> >> > >
-> >> > > Arguably a setgid exec can drop what was egid, and if people have
-> >> > > configured their permissions to deny people access based upon a gr=
-oup
-> >> > > they are in that could change the result of the permission checks.=
-  If
-> >> > > changing egid winds up dropping a group from the list of the proce=
-ss's
-> >> > > groups, the process could also have dropped that group with setres=
-gid.
-> >> > > So I don't think we need to be concerned about the combination of
-> >> > > dropping egid and brpm->unsafe.
-> >> > >
-> >> > > If anyone sees a hole in that logic I am happy to change the check
-> >> > > to !gid_eq(new->egid, old->egid), but I just can't see a way chang=
-ing
-> >> > > egid/fsgid to a group the process already has is a problem.
-> >> >
-> >> > I'm fine with leaving your patch as-is.
-> >>
-> >> Aside from a tested-by verification from Max, it looks like everyone
-> >> is satisfied with the v2 patch, yes?
-> >>
-> >> Serge, I see you've reviewed this patch, can I assume that now you
-> >> have a capabilities tree up and running you'll take this patch?
-> >
-> >I can take another look and consider taking it on Monday, but until
-> >then I'm effectively afk.
->
-> I'd rather this go via the execve/binfmt tree. I was waiting for -rc2 bef=
-ore putting it into -next. I can do Sunday night after it's out. :)
 
-I'm not going to argue either way on this, that's between you and
-Serge, but as the entire patch is located within commoncap.c and that
-is part of the capabilities code which Serge maintains, can you
-explain why this should go via the execve/binfmt tree and not the
-capabilities tree?
 
---=20
-paul-moore.com
+On 2025/6/13 19:52, Niklas Cassel wrote:
+> On Fri, Jun 13, 2025 at 12:08:31PM +0530, Manivannan Sadhasivam wrote:
+>> On Sat, May 10, 2025 at 11:56:06PM +0800, Hans Zhang wrote:
+>>> Current PCIe initialization logic may leave root ports operating with
+>>> non-optimal Maximum Payload Size (MPS) settings. While downstream device
+>>> configuration is handled during bus enumeration, root port MPS values
+>>> inherited from firmware or hardware defaults might not utilize the full
+>>> capabilities supported by the controller hardware. This can result is
+>>> uboptimal data transfer efficiency across the PCIe hierarchy.
+>>>
+>>> During host controller probing phase, when PCIe bus tuning is enabled,
+>>> the implementation now configures root port MPS settings to their
+>>> hardware-supported maximum values. By iterating through bridge devices
+>>> under the root bus and identifying PCIe root ports, each port's MPS is
+>>> set to 128 << pcie_mpss to match the device's maximum supported payload
+>>> size.
+>>
+>> I don't think the above statement is accurate. This patch is not iterating
+>> through the bridges and you cannot identify root ports using that. What this
+>> patch does is, it checks whether the device is root port or not and if it is,
+>> then it sets the MPS to MPSS (hw maximum) if PCIE_BUS_TUNE_OFF is not set.
+> 
+> Correct.
+> Later, when the bus is walked, if any downstream device does not support
+> the MPS value currently configured in the root port, pci_configure_mps()
+> will reduce the MPS in the root port to the max supported by the downstream
+> device.
+> 
+> So even we start off by setting MPS in the root port to the max supported
+> by the root port, it might get reduced later on.
+> 
+> 
+
+Dear Mani and Niklas,
+
+Is it okay to modify the commit message as follows? The last paragraph 
+remains unchanged.
+
+
+
+Current PCIe initialization logic may leave root ports operating with
+non-optimal Maximum Payload Size (MPS) settings. While downstream device
+configuration is handled during bus enumeration, root port MPS values
+inherited from firmware or hardware defaults might not utilize the full
+capabilities supported by the controller hardware. This can result in
+suboptimal data transfer efficiency across the PCIe hierarchy.
+
+During host controller probing phase, when PCIe bus tuning is enabled,
+the implementation now configures root port MPS settings to their
+hardware-supported maximum values. Specifically, when configuring the MPS
+for a PCIe device, if the device is a root port and the bus tuning is not
+disabled (PCIE_BUS_TUNE_OFF), the MPS is set to 128 << dev->pcie_mpss to
+match the device's maximum supported payload size. The Max Read Request
+Size (MRRS) is subsequently adjusted through existing companion logic to
+maintain compatibility with PCIe specifications.
+
+Note that this initial setting of the root port MPS to the maximum might
+be reduced later during the enumeration of downstream devices if any of
+those devices do not support the maximum MPS of the root port.
+
+>>
+>>> The Max Read Request Size (MRRS) is subsequently adjusted through
+>>> existing companion logic to maintain compatibility with PCIe
+>>> specifications.
+>>>
+>>> Explicit initialization at host probing stage ensures consistent PCIe
+>>> topology configuration before downstream devices perform their own MPS
+>>> negotiations. This proactive approach addresses platform-specific
+>>> requirements where controller drivers depend on properly initialized
+>>> root port settings, while maintaining backward compatibility through
+>>> PCIE_BUS_TUNE_OFF conditional checks. Hardware capabilities are fully
+>>> utilized without altering existing device negotiation behaviors.
+>>>
+>>> Suggested-by: Niklas Cassel <cassel@kernel.org>
+>>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>>> ---
+>>>   drivers/pci/probe.c | 72 ++++++++++++++++++++++++++-------------------
+>>>   1 file changed, 41 insertions(+), 31 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+>>> index 364fa2a514f8..1f67c03d170a 100644
+>>> --- a/drivers/pci/probe.c
+>>> +++ b/drivers/pci/probe.c
+>>> @@ -2149,6 +2149,37 @@ int pci_setup_device(struct pci_dev *dev)
+>>>   	return 0;
+>>>   }
+>>>   
+>>> +static void pcie_write_mps(struct pci_dev *dev, int mps)
+>>> +{
+>>> +	int rc;
+>>> +
+>>> +	if (pcie_bus_config == PCIE_BUS_PERFORMANCE) {
+>>> +		mps = 128 << dev->pcie_mpss;
+>>> +
+>>> +		if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT &&
+>>> +		    dev->bus->self)
+>>> +
+>>> +			/*
+>>> +			 * For "Performance", the assumption is made that
+>>> +			 * downstream communication will never be larger than
+>>> +			 * the MRRS.  So, the MPS only needs to be configured
+>>> +			 * for the upstream communication.  This being the case,
+>>> +			 * walk from the top down and set the MPS of the child
+>>> +			 * to that of the parent bus.
+>>> +			 *
+>>> +			 * Configure the device MPS with the smaller of the
+>>> +			 * device MPSS or the bridge MPS (which is assumed to be
+>>> +			 * properly configured at this point to the largest
+>>> +			 * allowable MPS based on its parent bus).
+>>> +			 */
+>>> +			mps = min(mps, pcie_get_mps(dev->bus->self));
+>>> +	}
+>>> +
+>>> +	rc = pcie_set_mps(dev, mps);
+>>> +	if (rc)
+>>> +		pci_err(dev, "Failed attempting to set the MPS\n");
+>>> +}
+>>> +
+>>>   static void pci_configure_mps(struct pci_dev *dev)
+>>>   {
+>>>   	struct pci_dev *bridge = pci_upstream_bridge(dev);
+>>> @@ -2178,6 +2209,16 @@ static void pci_configure_mps(struct pci_dev *dev)
+>>>   		return;
+>>>   	}
+>>>   
+>>> +	/*
+>>> +	 * Unless MPS strategy is PCIE_BUS_TUNE_OFF (don't touch MPS at all),
+>>> +	 * start off by setting root ports' MPS to MPSS. Depending on the MPS
+>>> +	 * strategy, and the MPSS of the devices below the root port, the MPS
+>>> +	 * of the root port might get overridden later.
+>>> +	 */
+>>> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
+>>> +	    pcie_bus_config != PCIE_BUS_TUNE_OFF)
+>>> +		pcie_write_mps(dev, 128 << dev->pcie_mpss);
+>>
+>> I believe you can just use "pcie_set_mps(dev, 128 << dev->pcie_mpss)" directly
+>> and avoid moving pcie_write_mps() around.
+> 
+> +1
+> 
+
+Mani and Niklas,
+
+Thank you very much for your review and suggestions. Will change.
+
+Best regards,
+Hans
+
+
+> 
+> Kind regards,
+> Niklas
+
 
