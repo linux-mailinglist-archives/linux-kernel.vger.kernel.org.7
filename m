@@ -1,99 +1,110 @@
-Return-Path: <linux-kernel+bounces-685315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2636AD87EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:32:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608AEAD877F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314937ACB22
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:30:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAF317B11C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A71291C14;
-	Fri, 13 Jun 2025 09:32:02 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91977279DD4;
+	Fri, 13 Jun 2025 09:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="lMifu4a6"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F4C22068B;
-	Fri, 13 Jun 2025 09:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747322DA753;
+	Fri, 13 Jun 2025 09:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749807121; cv=none; b=S67DCjM+/xXEsKC3FToKQiDAVsxvvwfXtrKa1j97x7XEpHy7biWqqMYI7mQvC+YIQbYr0CvBqXfXmzK4HY4dUDrfHXpps7GKSuvxC3qAJHa/3CYToEwTqQMvoFT16SLhn/H8DQofv53EZHI9xhI3lqh1iBJqlFF85XipvaGSUUY=
+	t=1749806209; cv=none; b=V4bU+qs+PBt5o4FxiEpzSk9oW83ywpDaLqj01e1Rg3/GVjW3K/8YQeL3qCCqfQ6hdieD6/rI+PEk6PiGSghRKavx08OmOxKvhIneTmLpgqhvemkexWe3YxpTTsfeRnN5kpsskxHbpIGLdJwadXMLX8wOE9EJEe2oANJKZteH/KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749807121; c=relaxed/simple;
-	bh=u1Q0+s3T5umlFn+juNk5Wq/JMU2Na1ItP9FA+jfEWXg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BEqeRe4G1URY1V64+B9+GD7OB/9hYeg4jqB9B3tVCiiyVY8Xky4Z/QwmCsVGvefWz+FkidrwveQNQoWcMlR7JxaICRiDHd7n+4JiG7sTOX1rMWG8/Jo0jxoezo0tHM2lqAJyvkWkHNOA5k3TYJGbPTS2htrRLJbaozJ+nssR1F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJYfH4R0wzKHNBK;
-	Fri, 13 Jun 2025 17:15:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F01E51A0FE9;
-	Fri, 13 Jun 2025 17:15:49 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl9F7EtomqqGPQ--.29762S3;
-	Fri, 13 Jun 2025 17:15:49 +0800 (CST)
-Subject: Re: [PATCH v2] md/raid1: Fix stack memory use after return in
- raid1_reshape
-To: Wang Jinchao <wangjinchao600@gmail.com>, Yu Kuai
- <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250611090203.271488-1-wangjinchao600@gmail.com>
- <5143c5c3-3a77-919f-0d38-8adb0e8923e9@huaweicloud.com>
- <06935480-a959-4e3f-8e41-286d7f54754a@gmail.com>
- <9c7d5e66-4f5f-b984-c291-f19c3d568b85@huaweicloud.com>
- <938b0969-cace-4998-8e4a-88d445c220b1@gmail.com>
- <8a876d8f-b8d1-46c0-d969-cbabb544eb03@huaweicloud.com>
- <726fe46d-afd5-4247-86a0-14d7f0eeb3b3@gmail.com>
- <c328bc72-0143-d11c-2345-72d307920428@huaweicloud.com>
- <9275145b-3066-41e5-a971-eba219ef0d3c@gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <a4f9b5a2-bf83-482e-e1fe-589f9ff004a1@huaweicloud.com>
-Date: Fri, 13 Jun 2025 17:15:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749806209; c=relaxed/simple;
+	bh=JvXRxWo86OXDBk2ZyHGvr7t32N/IGnu9bOmgh+9I2HE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kv7//7NVfHNxgBiMsTdUPU99DoRA0Zt/aQTO3Ifb94+eD0qmFnW1kPUTW2RuRu8Cs9eIBxsCVAkyeCxcM3GUaN5CP8IAGjSTlrDeXF4iGrRcjlxydxWc2Qooq9jSpzWmbZS8/BR9kds2x9TTlZUQHcVdS6Oq78AGhf//1+ay7Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=lMifu4a6; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D8IOEk002141;
+	Fri, 13 Jun 2025 02:16:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=G5KoRAnZUPZZQGP0oxC9d6JUk
+	CUEKSK8pPBaJhC/9yA=; b=lMifu4a6QraFdztb7W57zpDyAvrttgxaecBBXc5qh
+	PDeDg7729rjVlG/BmmUiaKsCUT92oTk9YFjl/4PgJRzjLLWdDvv4o4zMcjnwul3q
+	M17NEHEEJ/YQb1ZigcZYR8gib0hO/nV+B1YIcQ0UwXt0RSO7NALZx0g2/hP7Fxrm
+	hHhL4ugSdbQgyF69IeRd7G/QczxVcSDj32d5s5oDFJS357tTQfFVbbfNUok+qP5L
+	tv+XIlQSSTzYKrcFDD8By4rHSZqBXYT6I4MCcJOshEznwHV0KGxA5P6diC3poXh8
+	hreX31TmFp1w+pi097O0tj7ZeAT3j94Jm1Az+REijMz+g==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 478gbt83xy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Jun 2025 02:16:30 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 13 Jun 2025 02:16:29 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 13 Jun 2025 02:16:29 -0700
+Received: from b9e1f7b84bd3 (HY-LT91368.marvell.com [10.29.24.116])
+	by maili.marvell.com (Postfix) with SMTP id BD9E25B6926;
+	Fri, 13 Jun 2025 02:16:27 -0700 (PDT)
+Date: Fri, 13 Jun 2025 09:16:25 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Jun Miao <jun.miao@intel.com>, <oneukum@suse.com>,
+        <netdev@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] net: usb: Convert tasklet API to new bottom half
+ workqueue mechanism
+Message-ID: <aEvsaUrhXgFzvtzZ@b9e1f7b84bd3>
+References: <20250610145403.2289375-1-jun.miao@intel.com>
+ <20250612185131.2dc7218a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9275145b-3066-41e5-a971-eba219ef0d3c@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl9F7EtomqqGPQ--.29762S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYk7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0
-	xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF
-	0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF9a9DUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250612185131.2dc7218a@kernel.org>
+X-Authority-Analysis: v=2.4 cv=X9tSKHTe c=1 sm=1 tr=0 ts=684bec6e cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=07d9gI8wAAAA:8 a=VwQbUJbxAAAA:8 a=5NWDvjWUo4JBtSxIGnEA:9 a=CjuIK1q_8ugA:10
+ a=e2CUPOnPG4QKp8I52DXD:22 a=lhd_8Stf4_Oa5sg58ivl:22
+X-Proofpoint-ORIG-GUID: LWkoPQ7xeq6PzxOuIVZ-dsBOhUfy6FQF
+X-Proofpoint-GUID: LWkoPQ7xeq6PzxOuIVZ-dsBOhUfy6FQF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDA2OCBTYWx0ZWRfX9O52cA8d0gLt jwI6NM+BEHy2GNmUzRtWzASRP4pA7qZtBOaX3CdwuP+UT+zfjoZZWppD5MJmXYeufY2UbhHonT8 4gj+OdqvjLMNiiXyILwZelgYC2vjI+FrmlvCxP0nS/F2J5Z0yxDcKpoEG3PdmvGJeOHLvIUraZS
+ I1OJRQ/C/dQyRrOe14oQLf7/NgNFhqgPIpOj+dIMIYc8Cdt6RRVH7y5GbKIrVw+YL16ZZJ9cLpf dRNdwirfAWgWG37VBgDHV48PnHWu1AMGqxkUdsn6WPa2j1834VrEQaFu8sj+xOJQpAhEeTsz8/6 sGXET778dtuXsX0136LIjmRQmt2FVsa43S9E1e8uVOPS0T8UNtFRxe7iWUzu55KyNi/Yb2VSt/w
+ jykZc2Gj2xfyW+CXf97O7J0vOSsllHjyu928TtK+4jYIj5W+Cn4XGpN8H+xL7s9QraxpAwhQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
 
-Hi,
-
-在 2025/06/12 20:21, Wang Jinchao 写道:
-> BTW, I feel raid1_reshape can be better coding with following：
-
-And another hint:
-
-The poolinfo can be removed directly, the only other place to use it
-is r1buf_pool, and can covert to pass in conf or &conf->raid_disks.
+On 2025-06-13 at 01:51:31, Jakub Kicinski (kuba@kernel.org) wrote:
+> On Tue, 10 Jun 2025 22:54:03 +0800 Jun Miao wrote:
+> > -			if (rx_alloc_submit(dev, GFP_ATOMIC) == -ENOLINK)
+> > +			if (rx_alloc_submit(dev, GFP_NOIO) == -ENOLINK)
+> 
+> Sorry, I think Subbaraya mislead you. v1 was fine.
+> If we want to change the flags (which Im not sure is correct) it should
+> be a separate commit. Could you repost v1? There is no need to attribute
+Yeah hence asked to correct me if wrong.
+GFP_ATOMIC has to be there - "this patchset implements BH workqueues
+which are like regular workqueues but executes work items in the BH
+(softirq) context" from:
+https://lwn.net/Articles/960020/
 
 Thanks,
-Kuai
-
+Sundeep
+> reviewers with Suggested-by tags. They can send their review tags if
+> they so wish.
+> -- 
+> pw-bot: cr
 
