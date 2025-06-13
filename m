@@ -1,87 +1,89 @@
-Return-Path: <linux-kernel+bounces-685871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954B8AD8FB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:38:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70481AD8FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5974A1674D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337DD17A785
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685C61993B9;
-	Fri, 13 Jun 2025 14:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BA01E1DFE;
+	Fri, 13 Jun 2025 14:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0NS+mN8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvEmwf1l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2E42E11D6;
-	Fri, 13 Jun 2025 14:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5A019D88F;
+	Fri, 13 Jun 2025 14:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825500; cv=none; b=YBDXW8y0X3Qt23sNc1Eq+GUvCNOZwzxua/xF09lB724Pt5w7lV8M6KcdbjQXnSAjfDJkr7ozJ2YhEkCPBFJnpaDrVxtGqgUkjXRisSH1nBH7saGmPC4HvHYx2anOqYyYJP3nRUE1+QCVQrWulofKgCC9bpqjFBTStdB+iSWJGsk=
+	t=1749825637; cv=none; b=diPrwT0QoAT5mdi1Tcbvwr6sWMRc5UJ7rZ7f0tVPuFT8crsWNF9y3O8tyrRWuJ8tSlqhZFGU58ik3FnEbeUibOo7do9rZfwmxNivmaQza/lIllSivxhVyC2oVfqh0o7pqS1uLSuuMZZN4CiDKFzPYCyVGbc3crKK0WtL6XzMOfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825500; c=relaxed/simple;
-	bh=72UKJbZgygU3I/7FaNc+D1AwlBQQCsQR3FH9DEz2Bjw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BvPbDkBAjPFpSvuVZWyX2xaGcewkVX6ozskTMhjhL/X2BH8wmWDnvsVoBs0rOSErpwkyj91WxlN4nUOztwzboEQ68aVh/tKJnxq88qFjRj1q5ZlBV6B2Zd2Y491s8LuUnnHJmO2Kx+/Jo1Zqv6y+ZhjcQQRSeMwucTpVFLhX0fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0NS+mN8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA6CEC4CEE3;
-	Fri, 13 Jun 2025 14:38:17 +0000 (UTC)
+	s=arc-20240116; t=1749825637; c=relaxed/simple;
+	bh=ukElmnGXQREfqKEweQO3U9N27ypBuMm6P/e+FMdR3F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLXb0SuxQCphNiBZDw3PaF9YwFBO+GZShPD/fmTZtoZle0pl94XFWrIax/ALAj7XHR6i2W0+OwY1e9MYw6hk77PWs4d/94saNpFS9BGo2Cabn83CDEtTjo0nLps7eByj7gyfwB0gQTBJ32oA02BAyLtTKVOwiBzf/2Ko8cChSFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvEmwf1l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68948C4CEE3;
+	Fri, 13 Jun 2025 14:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749825500;
-	bh=72UKJbZgygU3I/7FaNc+D1AwlBQQCsQR3FH9DEz2Bjw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u0NS+mN8VCm4FKZwvLmvdn8xaDq9PJGtAn4HpElss4XdTXDrBW6bMr4C+yYQO0Lm0
-	 tBZrgumJJHZi/a0DYkLgTvGcBx/+B9FkVxNs6KKsQ7Z48YXuHQ1ELCrxDGT0n+ZfHZ
-	 f7q2ucRnB0fpTwiOnAn78gmPhc1zLH3kpUX7ghVhqmNm8AqW5D/wtxJV00AlNrMWCm
-	 DUMOm4eP7buiAYzEnoVLSUGMyi8cR1svDggvdzhmJiX2fGlLbFzhG2ztbd6lj/9QWC
-	 kbDCwB8Og/kulnim7UGJERtyTCmO7tVwGWSxLtDTZvwrz+70ZTX5SD8k7bXP9gpDMD
-	 JA0HaiKUfIALQ==
-From: Sven Peter <sven@kernel.org>
-To: Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: apple: Drop {address,size}-cells from SPI NOR
-Date: Fri, 13 Jun 2025 16:38:11 +0200
-Message-Id: <174982533895.547352.10071865015714260186.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250610-apple-dts-warnings-v1-1-70b53e8108a0@kernel.org>
-References: <20250610-apple-dts-warnings-v1-1-70b53e8108a0@kernel.org>
+	s=k20201202; t=1749825637;
+	bh=ukElmnGXQREfqKEweQO3U9N27ypBuMm6P/e+FMdR3F0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rvEmwf1lFXDM9ZvmgPspADE8tJL4IEhvgbU8HfVx3ZPiT1i6its39cdN+G03Fq8P9
+	 S8EbS+WBHsW8CfZqPrsK1wbrPADgopSFt0qBFkOnNw2CH1xXO8K4CjCh3cXg8hoe5t
+	 IyazDn1qIEJGAPuxiLjorBKH68Dun7qzyX1ld6KCFGw4S9/53ArQscRaUAsDTWlthn
+	 2k6fnhUycmeeQV/Ouk6AWU9gZafBdu3G+QHQtPVLyNJc/9FMpeqNkx3d7SCi5L6rgw
+	 R8uz40PlByH7dA9RQ+IAC2JIoeiM0lst0rcEqT+CfmO5J3yplYv1AkICKuEVrdWwOE
+	 EZtkBkxTrKy0g==
+Date: Fri, 13 Jun 2025 20:08:26 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
+	David Matlack <dmatlack@google.com>
+Subject: Re: [PATCH v3 10/62] KVM: SVM: Add helper to deduplicate code for
+ getting AVIC backing page
+Message-ID: <dgpb6ukrgoo63o3tikrwectvq5l5dcu7k7fskdkyxtr5lmbshg@eb7y7fzwc6wp>
+References: <20250611224604.313496-2-seanjc@google.com>
+ <20250611224604.313496-12-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611224604.313496-12-seanjc@google.com>
 
-
-On Tue, 10 Jun 2025 19:19:24 +0000, Sven Peter wrote:
-> Fix the following warning by dropping #{address,size}-cells from the SPI
-> NOR node which only has a single child node without reg property:
+On Wed, Jun 11, 2025 at 03:45:13PM -0700, Sean Christopherson wrote:
+> Add a helper to get the physical address of the AVIC backing page, both
+> to deduplicate code and to prepare for getting the address directly from
+> apic->regs, at which point it won't be all that obvious that the address
+> in question is what SVM calls the AVIC backing page.
 > 
-> spi1-nvram.dtsi:19.10-38.4: Warning (avoid_unnecessary_addr_size): /soc/spi@235104000/flash@0: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+> No functional change intended.
 > 
-> 
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/avic.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 
-Applied, thanks!
+LGTM.
+Reviewed-by: Naveen N Rao (AMD) <naveen@kernel.org>
 
-[1/1] arm64: dts: apple: Drop {address,size}-cells from SPI NOR
-      commit: 811a909978bf59caa25359e0aca4e30500dcff26
+- Naveen
 
-Best regards,
--- 
-Sven Peter <sven@kernel.org>
 
