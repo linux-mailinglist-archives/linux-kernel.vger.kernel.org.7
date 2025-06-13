@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-686108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBFEAD9322
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:48:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E432AD9330
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DF03A561F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D58F189A91F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B9E1FCCEB;
-	Fri, 13 Jun 2025 16:48:30 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09D81E00A0
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BC121882B;
+	Fri, 13 Jun 2025 16:50:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3D715A87C;
+	Fri, 13 Jun 2025 16:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749833310; cv=none; b=VWL5R4elaq0LphhvNbp0y7I2TgA8Y9sJtTE4D7+C0Bmjf7lJ49b0qgDA9gPCTzN0mR4Y76e9kIc62RdTfwutPC3xiUQead5T8M48D8n+wlsXXntfWcniI8N69x7mmb/aPP3wlHapfXoF/LT4yro+d0T8POxuOqa44LHyYz674gE=
+	t=1749833429; cv=none; b=IENNzv0tPurCN5Zt8ngXn6ZEvX3ZK2ZazGkX9eRj13U+my5lW5pYZmmo7ehLNqZUOgxiLwo1EmYU0YfxTazx/oyhbtsajBcCb5MHjPH6PBKvwpEhue+mv9Viy9SX3fD5P97Fkl3k3FwbyK9WCTwC7ACXBgw4kAso31KFueY9fM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749833310; c=relaxed/simple;
-	bh=Rp7vJTlMPsaoen5NOBgjQfwezWAotk4TV69xzCO7TNQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MjSSbbT7Smsw45VjkGQRMZf6g2WFOdD17Djk9pB873DuGbsDQQ+xoXDcVQGOMpwnpQyDycmeuGVzQcAYh/Abn9vwf8ArA7PXq4hmQMyVap2xMBPOA2OhAQqI7grtO9GrmOgJV5wNfi3IKi4uxx+HhoOxlor96flUXQRN4gDwHig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so60239755ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:48:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749833308; x=1750438108;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nUBlTmct8R22pPkzLTix51atGwB3+I8WO1dU4QJBzjk=;
-        b=uNMlIui7cUfNk1kGNYCoRDp5E9zbxmu1cMfuNTA8Ys2161Fjb7OOHBDiqD1q64UmzQ
-         UfzDbaCnTxn0LWcvKe3JuhXQyZQsuulY7GriLOHTGggmg2P5/jAumXlxuCZnBgcPQZDp
-         iHc7lQCyQ9ydUWXI/IBtDs+cUSgavIEoNFpXFEoaedA4NMQgrga+UKtIpXApY0jhMaC1
-         OspwI7lUpT5D+SVE9jsPDwoowUxAqQbvB6a7W6JPwdke2+4aMoYVSs9POhCUD/FswUcW
-         FKm3AdLuYbE/3gbUkdUbaDT9xV7lsroEKzo1cg8Sn0AyV0dxANuSwPmzMePvR9ReThyd
-         c19w==
-X-Forwarded-Encrypted: i=1; AJvYcCVf9/eEqkcUlwOILO7EVrallD2Luwl0L3ZQUof8KoNilC86F3swBaDwDJ/B3oU/+hk7YNNxygp5WJ+klNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXWjyIOeJBbpzd4/Z3fo/Cw9qgNeDftOfIVUgpAxIyq2QfaBnl
-	Ki7QKRxnY9oKQXxJEObOTwAXXsc5v4YhIOhq2C8vvnVnUW7/fowOp0oAUm/f4ycwrKapK8k7ybg
-	ab4+cyc4TMKVlBQl720xjZRowsiuEL1eyBOmPt0VVb857R0Dgm/+Aqe5hQvo=
-X-Google-Smtp-Source: AGHT+IE2fqAVde6MrvtCnAC4SuVWHIlQw+FwU8+kzEz67aL6Ahlu7EHoBf2WFhN3lVy9ywM1JHWJdwsJrKUwldbDSiIRDuDdovku
+	s=arc-20240116; t=1749833429; c=relaxed/simple;
+	bh=7bhRMmk/rqBBya6D/yZgVdiqWytle+3/P0OHnRbqkE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g9Km91Li3RINnrlUSYGRvoP9flskxbcRRSwuhJp3LGl+mR6dW6R1bRQCodnsBfLe6ITnEhgMTNU5hne8QrOwBdVR/03OMy3UzoPkvM+GjhtRFxoOPEyBU42bD0lUAFimVPMZDFnhBVQIQYsPrcwGaHTaS3kwrS2T++aSahi9Lpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B22231C0A;
+	Fri, 13 Jun 2025 09:50:06 -0700 (PDT)
+Received: from [10.57.28.131] (unknown [10.57.28.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 534A23F673;
+	Fri, 13 Jun 2025 09:50:22 -0700 (PDT)
+Message-ID: <2e022f4e-4c87-4da1-9d02-f7a3ae7c5798@arm.com>
+Date: Fri, 13 Jun 2025 17:50:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2b:b0:3dd:d746:25eb with SMTP id
- e9e14a558f8ab-3de07cd170amr3843025ab.16.1749833307733; Fri, 13 Jun 2025
- 09:48:27 -0700 (PDT)
-Date: Fri, 13 Jun 2025 09:48:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684c565b.a00a0220.279073.0014.GAE@google.com>
-Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel NULL pointer
- dereference in bch2_btree_update_start
-From: syzbot <syzbot+2f3859bd28f20fa682e6@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/11] arm64: defconfig: Enable Apple Silicon drivers
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Vinod Koul <vkoul@kernel.org>, =?UTF-8?Q?Martin_Povi=C5=A1er?=
+ <povik+lin@cutebit.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
+ linux-input@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-sound@vger.kernel.org
+References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
+ <20250612-apple-kconfig-defconfig-v1-11-0e6f9cb512c1@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250612-apple-kconfig-defconfig-v1-11-0e6f9cb512c1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2025-06-12 10:11 pm, Sven Peter wrote:
+> Enable drivers for hardware present on Apple Silicon machines.
+> The power domain and interrupt driver should be built-it since these are
+> critical for the system to boot, the rest can be build as modules.
 
-syzbot found the following issue on:
+Nit: I'd be tempted to put this patch first, just in case anyone 
+bisecting with "make defconfig" in their process lands in the middle and 
+suddenly loses some drivers (although arguably them going from "=y" to 
+"=m" could still be a surprise, but at least a bit less so).
 
-HEAD commit:    19272b37aa4f Linux 6.16-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a7f682580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8409c4d4e51ac27
-dashboard link: https://syzkaller.appspot.com/bug?extid=2f3859bd28f20fa682e6
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-userspace arch: arm64
+[...]
+> @@ -1504,6 +1520,7 @@ CONFIG_ARCH_TEGRA_194_SOC=y
+>   CONFIG_ARCH_TEGRA_234_SOC=y
+>   CONFIG_TI_PRUSS=m
+>   CONFIG_OWL_PM_DOMAINS=y
+> +CONFIG_APPLE_PMGR_PWRSTATE=y
 
-Unfortunately, I don't have any reproducer for this issue yet.
+If this is critical for any Apple platform to work then it would 
+probably make sense to explicitly select it from ARCH_APPLE, as is done 
+for APPLE_AIC...
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/92d22b0c6493/disk-19272b37.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3fb0142bb63a/vmlinux-19272b37.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3d5f3836ae42/Image-19272b37.gz.xz
+>   CONFIG_RASPBERRYPI_POWER=y
+>   CONFIG_IMX_SCU_PD=y
+>   CONFIG_QCOM_CPR=y
+> @@ -1567,6 +1584,7 @@ CONFIG_QCOM_PDC=y
+>   CONFIG_QCOM_MPM=y
+>   CONFIG_TI_SCI_INTR_IRQCHIP=y
+>   CONFIG_TI_SCI_INTA_IRQCHIP=y
+> +CONFIG_APPLE_AIC=y
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2f3859bd28f20fa682e6@syzkaller.appspotmail.com
+...which I think means this would already be redundant.
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-Mem abort info:
-  ESR = 0x0000000086000006
-  EC = 0x21: IABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x06: level 2 translation fault
-user pgtable: 4k pages, 48-bit VAs, pgdp=000000014106a000
-[0000000000000000] pgd=0800000128c8b403, p4d=0800000128c8b403, pud=0800000132b39403, pmd=0000000000000000
-Internal error: Oops: 0000000086000006 [#1]  SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 7230 Comm: syz.5.20 Not tainted 6.16.0-rc1-syzkaller-g19272b37aa4f #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : 0x0
-lr : mempool_alloc_noprof+0x150/0x3f4 mm/mempool.c:402
-sp : ffff80009dc06c80
-x29: ffff80009dc06d80 x28: 0000000000000000 x27: 1fffe0001ee507df
-x26: 0000000000092800 x25: ffff700013b80d9c x24: ffff0000f7283ef0
-x23: 0000000000092c40 x22: ffff0000f7283ef8 x21: 0000000000000400
-x20: 1fffe0001ee507de x19: ffff0000f7283ea0 x18: 00000000ffffffff
-x17: ffff800093215000 x16: ffff80008051b344 x15: ffff800092d9eb80
-x14: ffff0000c4812910 x13: ffff800093014c08 x12: ffff0000c4812930
-x11: 0000000000008004 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : 0000000000000000 x7 : ffff800080b774a8 x6 : 0000000000000000
-x5 : 0000000000000020 x4 : ffff80009dc06a20 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000092800
-Call trace:
- 0x0 (P)
- bch2_btree_update_start+0x488/0x1398 fs/bcachefs/btree_update_interior.c:1212
- bch2_btree_node_rewrite+0x190/0xd34 fs/bcachefs/btree_update_interior.c:2226
- bch2_move_btree+0x538/0xa8c fs/bcachefs/move.c:1145
- bch2_scan_old_btree_nodes+0x80/0x21c fs/bcachefs/move.c:1266
- bch2_data_job+0x570/0x7cc fs/bcachefs/move.c:1404
- bch2_data_thread+0xb4/0x1cc fs/bcachefs/chardev.c:315
- kthread+0x5fc/0x75c kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-Code: ???????? ???????? ???????? ???????? (????????) 
----[ end trace 0000000000000000 ]---
+Thanks,
+Robin.
 
+>   CONFIG_RESET_GPIO=m
+>   CONFIG_RESET_IMX7=y
+>   CONFIG_RESET_QCOM_AOSS=y
+> @@ -1640,6 +1658,7 @@ CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU=m
+>   CONFIG_NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU=m
+>   CONFIG_MESON_DDR_PMU=m
+>   CONFIG_NVMEM_LAYOUT_SL28_VPD=m
+> +CONFIG_NVMEM_APPLE_EFUSES=m
+>   CONFIG_NVMEM_IMX_OCOTP=y
+>   CONFIG_NVMEM_IMX_OCOTP_ELE=m
+>   CONFIG_NVMEM_IMX_OCOTP_SCU=y
+> 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
