@@ -1,78 +1,168 @@
-Return-Path: <linux-kernel+bounces-686189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9405AD9423
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:05:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485A8AD9445
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06A41E3B44
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E8A3BCBBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D502309B5;
-	Fri, 13 Jun 2025 18:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3DF22E00E;
+	Fri, 13 Jun 2025 18:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMm5aTwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="C1yEc/3+"
+Received: from buffalo.tulip.relay.mailchannels.net (buffalo.tulip.relay.mailchannels.net [23.83.218.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50865225A3D;
-	Fri, 13 Jun 2025 18:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749837863; cv=none; b=rt+np+niSy4mheZf2PW+XgbokQg9opGkneleMHTaToeVz7x1j3qjqBseOWnz7GnNflHI5K8hr7g3FWoqLBRhrlMh9wru0njq45vRx8h/5mkyBhgoFh4S5SzuOxp2/eJZfoTUxwMdgNORfxiFR8aqICaWQbo8bZ1YsrWA9VXDBUM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749837863; c=relaxed/simple;
-	bh=QoWL+WLjv4+FfD13sRd00iIwab26JFHdbKgK4m9ZyNo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BD7VOCEFKyyFuSqjh1VL9tWkQtlTFO3r3/JdexVBJWq57gVgpE1mR+e7NxeWnl0U6zEUi8XyJ3ool6LOe1UKYtwp2kyfuJ15oijxwMJxDFQdO3juqUZRo26po/bnJja3iS0Gp6nQLacnEijMi3U2EC8CEs73FqHx7gLBWP3cs2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMm5aTwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20487C4CEE3;
-	Fri, 13 Jun 2025 18:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749837863;
-	bh=QoWL+WLjv4+FfD13sRd00iIwab26JFHdbKgK4m9ZyNo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=cMm5aTwnPZaqMUP5SaQBhlSIMtGwx+tIjzktITjwhVrH3QZtXAkHN4QSLI0CN8cpv
-	 ctdW20kwxLywF+oPifr4MScKssh5lSpZYnDVomJGY10BMFgGV1l/giQ4H5OamRlybl
-	 qk/hc+Fx+krvrBayyw2/QSvcp2tznCOFfW1e9uDuB311y8E/Oe/K4ekdxICb/YHx49
-	 Ib3T82iOL46ouL5U9DPxUZHa25EuS8yi5ImvHIIUg9aNR6nF2D/FH2yV2xjvbcX2Ln
-	 QQg3gfiHw58IBknyX5xOGEVdW2z/1ovDz2jY88/EZ/9z5pSs+RKeB8VFXpJ1IRCJmM
-	 zhmA6TxAYki4A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADFE380AAD0;
-	Fri, 13 Jun 2025 18:04:53 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aEupSzhTI4h8kz-5@gondor.apana.org.au>
-References: <aEupSzhTI4h8kz-5@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aEupSzhTI4h8kz-5@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p4
-X-PR-Tracked-Commit-Id: 40a98e702b528c631094f2e524d309faf33dc774
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ad6159087fbbd754bfe940bd62b6322307925faa
-Message-Id: <174983789254.834702.8944781738634806282.pr-tracker-bot@kernel.org>
-Date: Fri, 13 Jun 2025 18:04:52 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAAF1FAC50;
+	Fri, 13 Jun 2025 18:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749838539; cv=pass; b=p37lokPdmrfIU28AQ/oz98XvqARXBOffUr0r+0Hp9R/iZHefV70b2yHLd58ESPA1JcUzNYvskTShEnzUu1cB5reiSfSQbhw80h9UNbjLmedNPcvUiLyARyWE/sJtTFkQmYaJQhomRV/BPntQK51J7BLbns/vsOTiBu7JwkZXq2E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749838539; c=relaxed/simple;
+	bh=LUrCrKkDYX/6NVCPx+kge0VavIImLKCir7xCevaMB20=;
+	h=From:Subject:Message-Id:MIME-Version:Content-Type:To:Cc:Date; b=Z+PJlOYlf7j+/Iw2HVjFqdlZ+WPE6yP+qvMISykxYKkA7K66Y4/DUnPFfB05tOwONbatDWim6SexjepXPIw0OWbdFRwKkw/FHA3p1cllJYD4QFf4YBRFRS+dKYv9xtRIZyTIFP4qp1b+aPv4I4P2NgazkCiW1NvCM8MDqLksuxM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=C1yEc/3+; arc=pass smtp.client-ip=23.83.218.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 304984E5CDC;
+	Fri, 13 Jun 2025 17:50:23 +0000 (UTC)
+Received: from fr-int-smtpout9.hostinger.io (100-125-233-42.trex-nlb.outbound.svc.cluster.local [100.125.233.42])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 1DA2F4E60A6;
+	Fri, 13 Jun 2025 17:50:14 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1749837016; a=rsa-sha256;
+	cv=none;
+	b=qOBQL5PQwb/dni3S81DpgWibxcJcKUHQWVMIQ9VeMjNzW2nLJnwZc2Yw2GxnzEjjEWP4uV
+	Dg4bTNPevHCEzyfyNkzNpBOYuRhSxrXaISPuLJAB0wke2xaOWG8ByAm1ofFqNVxNTKJaS0
+	FLYgtNfA++97JPO7MWFHU+qD6XJ+nOmCj9vNVa/+3IZsNva/tX4kfnTGB7lYplIeEC5+c5
+	s3uSaL3mooz3lieqSfTS6xUwky3DHFeQ5Mmtg7jxfZ03tXrSmLuKp17YwKN0oBfZEb1ZTR
+	dbXwzwF+Oqp9j8agfWoLTIUN4ns3Cklqmc10dJFAlcgg6P1GX97PPhW0hzJ+Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1749837016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
+	bh=AWWl9p0qJrCVlYqvg6a7tQNgHptNPJxlUXIbGVPJHi8=;
+	b=PlKFC5IgUp5VJBssKPtZgexemZLkyyRU8GeWb6+xuYVuysUNzpGnnvmq5qi8JKp9dUO3VT
+	/5TGGCoUa0C6YSknmBuLNXBAUsmqsq8dqoHJkntsRIVZpgNfNyp0IBjEX2vPoiSja36NLV
+	Ajw0PbdNb7LmaFdbHu/PbD/7/PE5D/mGNSGA9/17VpGyZ4ulKpq6adYqnYeNO4w6nK9DQE
+	whVYoHQl/QJ60tjKoaAwHlWEJx+ORJ4XC/WDOCtE9VCBRlzeRZ4dUW42Dmg34frkwhpPJe
+	kNZ78eVf58dMW1fDnw7dw5qL44lkoksSuc4qd5EcVaJDRnuoe1AU/eGsW5XvDg==
+ARC-Authentication-Results: i=1;
+	rspamd-5859dfb5d9-9fv9s;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Plucky-Unite: 2064cfd77a905cba_1749837019652_944131949
+X-MC-Loop-Signature: 1749837019652:2132242319
+X-MC-Ingress-Time: 1749837019651
+Received: from fr-int-smtpout9.hostinger.io (fr-int-smtpout9.hostinger.io
+ [89.116.146.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.125.233.42 (trex/7.0.3);
+	Fri, 13 Jun 2025 17:50:19 +0000
+Received: from [172.17.0.2] (unknown [36.79.97.133])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4bJn3f418HzH9gKb;
+	Fri, 13 Jun 2025 17:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
+	s=hostingermail-a; t=1749837010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AWWl9p0qJrCVlYqvg6a7tQNgHptNPJxlUXIbGVPJHi8=;
+	b=C1yEc/3+OwYyng96pwwZCWyHwWENG+g1gPnoL/TMz6axh173MPDrVxFn5s4YwyMRG9d3Lv
+	oTetBR1dWyLZMpFU3eiVqQVynQztj0jX8eimL4n0KUSbqVgDTW7qEFI3pgA4nVHVUfM8Ol
+	FRvxmHlfzCNZt0w+09cOQpdWxqMCxH/LRpkgwt9/LtHtHB9LRodeKxpYJN9FzChtv7sFuw
+	h3yet5xlr5MSxGb62XjHe/T2n+W4Rh8qeeAusWYZRRv/hrLBjopXFPfc3gDXiLnyx53Rl9
+	6T/ZBnFkl1zER2xtyVeP7v3Z0oNkOUycVUuL21dBwcAjTUdM2hcATHOA9yH3wA==
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+Subject: [PATCH 0/5] Add support for Sony Xperia SP
+Message-Id: <20250614-msm8960-sdcard-v1-0-ccce629428b6@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHlkTGgC/x3MMQqAMAxA0atIZgNpUVGvIg7FRs1QlQREKN7d4
+ viG/zMYq7DBWGVQvsXkPApcXcGyh2NjlFgMnnxLHTlMlvqhI7S4BI3I3kVuhhB6bqBEl/Iqzz+
+ c5vf9AFKgjRNgAAAA
+X-Change-ID: 20250601-msm8960-sdcard-e21de49aa8e4
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Antony Kurniawan Soemardi <linux@smankusors.com>, 
+ Max Shevchenko <wctrl@proton.me>, Rudraksha Gupta <guptarud@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749837006; l=1855;
+ i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
+ bh=LUrCrKkDYX/6NVCPx+kge0VavIImLKCir7xCevaMB20=;
+ b=IVUFmJPqR5Ky4KGfiZfSL2rObsRm49tahel7j2dGjq3aOVye0N7qlBmpTUX5OtJbcV0lYiHQf
+ vvlJdmSYDm2BtJL2fSqjeWhj5h3EcwOqLMAliWM1O0IQj9LK2b9Cc2R
+X-Developer-Key: i=linux@smankusors.com; a=ed25519;
+ pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
+Date: Fri, 13 Jun 2025 17:50:06 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=Vv1xAP2n c=1 sm=1 tr=0 ts=684c64d2 a=/sUT9SOQbq9tkq2xjVjq6Q==:117 a=/sUT9SOQbq9tkq2xjVjq6Q==:17 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=2cXSbqf0HCtMDuU6HZcA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+X-CM-Envelope: MS4xfIoD/sm9VMovFuu71Wfr7lPiGO9nVd4gBakO7WWSwOU9RstjhuA4lwp8SIYgISJrzh5F2+gmg6i8zaIUvhmGqciHbU00tPVrA8rFQcdHrpWxB0KakOkO Cl8au8NKKZHwHn9bV3YcbHl5P6k3UHTpD+dPwwozYb16ZSfiCBuIngEuZLZ9Kw5soCo91xZrbkDcu+8Px4L2OI1C75jO2TBKn9U3NNk/oNefVe+HpyQ1vFwP oKpuB3Dro/nSUo1NqiZffLShQAxwyoMaoYMVL4nV8KxBgljFNrCIn8JKVfke18KoOwkyEWJ50PwIXdefhNJbhjD2HtdTMIutzigrnyN92xjYHTjsRHUWzaAV vgndqDdHVtH/KAT4stR60MD448e3sQGl2UfgsZWtGLR5Mw2Ac/eVkxiFeAAcJaMmsvjZSVdCCZHhBlihFXhb7NefHDucV2FlkuVZ+aprm654kY0rkiAhkuti S7s9kacH67YU8+h8nY1Vd+9m/arRkCcDzalbqubDPn94jG6cpDk7GJMKxSs=
+X-AuthUser: linux@smankusors.com
 
-The pull request you sent on Fri, 13 Jun 2025 12:30:03 +0800:
+This patch series adds initial support for the Sony Xperia SP (codename:
+sony-huashan), a smartphone based on the Qualcomm MSM8960T SoC. The
+MSM8960T is a variant of the MSM8960 featuring an upgraded GPU (Adreno
+320 instead of Adreno 225) and a slightly overclocked CPU (1.7GHz
+instead of 1.5GHz).
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p4
+The following changes are included:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ad6159087fbbd754bfe940bd62b6322307925faa
+1. Adding sdcc3 pinctrl states to ensure micro SD card functionality.
+2. Adding gsbi8 node and serial configuration for the MSM8960 SoC.
+3. Disabling unused gsbi1 and gsbi5 nodes in the MSM8960 SoC device
+   tree.
+4. Documentation for the Sony Xperia SP.
+5. Initial device tree support for the Sony Xperia SP, including serial
+   console, GPIO keys, PM8921 keypad, eMMC, micro SD card, and USB OTG.
 
-Thank you!
+This patch series has been tested on the non-LTE variant of the
+Xperia SP.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+---
+Antony Kurniawan Soemardi (5):
+      ARM: dts: qcom: msm8960: add sdcc3 pinctrl states
+      ARM: dts: qcom: msm8960: add gsbi8 and its serial configuration
+      ARM: dts: qcom: msm8960: disable gsbi1 and gsbi5 nodes in msm8960 dtsi
+      dt-bindings: arm: qcom: add Sony Xperia SP
+      ARM: dts: qcom: add device tree for Sony Xperia SP
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   7 +
+ arch/arm/boot/dts/qcom/Makefile                    |   1 +
+ arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi      |  38 +++
+ .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   |   5 +
+ .../boot/dts/qcom/qcom-msm8960-sony-huashan.dts    | 361 +++++++++++++++++++++
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           |  26 ++
+ 6 files changed, 438 insertions(+)
+---
+base-commit: 8630c59e99363c4b655788fd01134aef9bcd9264
+change-id: 20250601-msm8960-sdcard-e21de49aa8e4
+
+Best regards,
+--
+Antony Kurniawan Soemardi <linux@smankusors.com>
+
 
