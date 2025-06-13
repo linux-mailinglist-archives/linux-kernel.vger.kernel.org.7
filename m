@@ -1,49 +1,66 @@
-Return-Path: <linux-kernel+bounces-685595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5062AD8BDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:16:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02DAAD8BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23113169E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:16:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB4B1895FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4275A2D5C7A;
-	Fri, 13 Jun 2025 12:15:57 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B702E1730;
+	Fri, 13 Jun 2025 12:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sdckog3d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A288C275B1D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ACC27281E;
+	Fri, 13 Jun 2025 12:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749816956; cv=none; b=hrg06jRXOpPo81hpLVh/Q5Kfs+NQKDiOV9HEPTuuEonkcLz8q/rZPr+3BqCnhGHgAHH9vPXnvBAgfZDdUTQITQ9ur47I1J9QI6/rvgfLZIM1/kXw3w36VoYvS7TIr9ZJkX6TCKY4dVeD1ZaFxC4v6KbzHBDv+XFMREDQWNeul74=
+	t=1749817081; cv=none; b=bZV6dObUfTmezG0Lr1pf1T9cELLD0r400Wq38vrgYRLopsBP+mVCylILROhzVamSbmVc49jZq+Ob+6GCs+ZoDo1lFJqJjqajR8jKZRF6A/sbIAeG3lP0uVn7EHQL0kimRqt0EMASH1krLT58HGUW8fMiIJZnJpLwh/KJVrNVXm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749816956; c=relaxed/simple;
-	bh=BJ11s9pRdhe85oZrgviwyD/bBqyGZbl5ISnhBqENcvY=;
+	s=arc-20240116; t=1749817081; c=relaxed/simple;
+	bh=gXzoRb7uJ+yYbBWIj96AUPad1dMJkavyCS+pd5PmGms=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VqXrZhMOskD6rqQUzOcGAfCyCsc+Z625ijfGTKlq7UxTn2kiBsM4F0X9QvmirkPVL/Ot3oXRII/+4C8VNrMxeiwYc+AaFxdVI/Ipz1hddl7eM/oLTly+rwnh3MgtWADW5i/Loi+a9wNBTqDew5hE/kg+veRugXS0q7mFYUQFV98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 6AC841D3317;
-	Fri, 13 Jun 2025 12:15:53 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 97F7B2000E;
-	Fri, 13 Jun 2025 12:15:51 +0000 (UTC)
-Date: Fri, 13 Jun 2025 08:17:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org, Gao
- Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>
-Subject: Re: Unused trace event in erofs
-Message-ID: <20250613081728.6212a554@gandalf.local.home>
-In-Reply-To: <0baf3fa2-ed77-4748-b5ee-286ce798c959@linux.alibaba.com>
-References: <20250612224906.15000244@batman.local.home>
-	<0baf3fa2-ed77-4748-b5ee-286ce798c959@linux.alibaba.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=fiWXT/iMcYx3KspEKbPYBx65VbfAMkg6GXjaQwA38XbcOXT/6gW9eW5WYkGUsvZ7eQixHj95UEELmCJDyDUWvEEaKKcY69IMZYciHxDIHXSuA/ZmAg4LYKDv9iJQQKXbhKJA5BTG5qgIKzLjAO8rpqM96DpEuo3SnX6NhKdf7HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sdckog3d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC4AC4CEE3;
+	Fri, 13 Jun 2025 12:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749817080;
+	bh=gXzoRb7uJ+yYbBWIj96AUPad1dMJkavyCS+pd5PmGms=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Sdckog3dBHS2nYXbzy8edite6b3n+fFL1jbXQ7QLacd3jS4cRTzrHXcaBB8pOhtPz
+	 RZ/+/8examrUcMmbIo+znU7tMMyh1GYBaURivhVeXLe5riNDTrg5+fM/m0RSNaUZkN
+	 911w9r0EmC7jgf+hz48nah/ykx8t/yW8mvinju0hHwFEyTbnJsgy3w+qJ9/WLLCb/8
+	 1DltTz/jsEu5pbPSx4LKSpPt++06kzZP7NaAhP1M1pxAqqdtP6q3WMc66Satp8tuSV
+	 XX59vS3cdqsMICezAEC1eSAYrpbSq3RLGpnR1V8ij7riQbiDITX8Vvhbk1FuKoaY5H
+	 waD/oUGGEZVhQ==
+Date: Fri, 13 Jun 2025 14:17:53 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, "Akira Yokosawa"
+ <akiyks@gmail.com>, "Breno Leitao" <leitao@debian.org>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Ignacio
+ Encinas Rubio" <ignacio@iencinas.com>, "Jan Stancek" <jstancek@redhat.com>,
+ "Marco Elver" <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Ruben
+ Wauters" <rubenru09@aol.com>, "Shuah Khan" <skhan@linuxfoundation.org>,
+ joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, netdev@vger.kernel.org,
+ peterz@infradead.org, stern@rowland.harvard.edu
+Subject: Re: [PATCH v2 05/12] tools: ynl_gen_rst.py: Split library from
+ command line tool
+Message-ID: <20250613141753.565276eb@foz.lan>
+In-Reply-To: <m234c3opwn.fsf@gmail.com>
+References: <cover.1749723671.git.mchehab+huawei@kernel.org>
+	<440956b08faee14ed22575bea6c7b022666e5402.1749723671.git.mchehab+huawei@kernel.org>
+	<m234c3opwn.fsf@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,64 +68,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 97F7B2000E
-X-Stat-Signature: infzwy15dda57cgcg4d9ditmeebzkrft
-X-Rspamd-Server: rspamout07
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18BtDgKuXNZPoYBnFNGThqX5YGBtgfzf9o=
-X-HE-Tag: 1749816951-862733
-X-HE-Meta: U2FsdGVkX195zLSu+DbhYIomwGRc115YpbM2ycknmYQf2F2pGL3U8iMbkxESzO1a7e1SbWMLyeZUWsDn0+MwpfMm1VYAGVFkOGA5/0F+ZULmLOgJg6at3Pq9PTU+6HoN6Oex5p2OqUhC6tN5pyzbr5wJ8FHCNQVZQwhecbTK/s4NCZOHHD0Ya+pRdqKyIIPbYa/ojOfUFsIDt1UTwygssTgnXqGnOotPzYKO6urya1NQm4hSerex9xZqz2cCXu3Z6qygVLplU0VspUcQCoojYiWXlkM0hXc+tDg/ke4KyWpJL1U7tn9o1nOoH6kEbH/rjPoY/QCgz5/6QTutImtz/gPwSEx2bAuX
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Jun 2025 14:08:32 +0800
-Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+Em Fri, 13 Jun 2025 12:13:28 +0100
+Donald Hunter <donald.hunter@gmail.com> escreveu:
 
-> Hi Steven,
-> 
-> On 2025/6/13 10:49, Steven Rostedt wrote:
-> > I have code that will trigger a warning if a trace event is defined but
-> > not used[1]. It gives a list of unused events. Here's what I have for
-> > erofs:
-> > 
-> > warning: tracepoint 'erofs_destroy_inode' is unused.  
-> 
-> I'm fine to remove it, also I wonder if it's possible to disable
-> erofs tracepoints (rather than disable all tracepoints) in some
-> embedded use cases because erofs tracepoints might not be useful for
-> them and it can save memory (and .ko size) as you said below.
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+>=20
+> > As we'll be using the Netlink specs parser inside a Sphinx
+> > extension, move the library part from the command line parser.
+> >
+> > No functional changes.
+> >
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  scripts/lib/netlink_yml_parser.py  | 391 +++++++++++++++++++++++++++++
+> >  tools/net/ynl/pyynl/ynl_gen_rst.py | 374 +-------------------------- =
+=20
+>=20
+> I think the library code should be put in tools/net/ynl/pyynl/lib
+> because it is YNL specific code. Maybe call it rst_generator.py
 
-You can add #ifdef around them.
+We had a similar discussion before when we switched get_abi and
+kernel-doc to Python. On that time, we opted to place all shared
+Python libraries under scripts/lib.
 
-Note, the "up to around 5K" means it can add up to that much depending on
-what you have configured. The TRACE_EVENT() macro (and more specifically
-the DECLARE_EVENT_CLASS() which TRACE_EVENT() has), is where all the bloat
-is. I generates unique code for each trace event that prints it, parses it,
-records it, the event fields, and has code specific for perf, ftrace and BPF.
+=46rom my side, I don't mind having them on a different place,
+but I prefer to see all Sphinx extensions getting libraries from
+the same base directory.
 
-The DEFINE_EVENT() which can be used to make several events that are
-similar use the same DECLARE_EVENT_CLASS() only takes up around 250 bytes.
-One reason I tell people to use DECLARE_EVENT_CLASS() when you have similar events.
+Jon,
 
-There's also a DEFINE_EVENT_PRINT() that can use an existing
-DECLARE_EVENT_CLASS() but update the "printk" section. That adds some more
-code (the creation of the print function) but still much smaller than the
-DECLARE_EVENT_CLASS(). But this requires the tracepoint function (what the
-code calls) must have the same prototype.
+What do you think?
 
-> 
-> > 
-> > Each trace event can take up to around 5K in memory regardless if they
-> > are used or not. Soon there will be warnings when they are defined but
-> > not used. Please remove any unused trace event or at least hide it
-> > under an #ifdef if they are used within configs. I'm planning on adding
-> > these warning in the next merge window.  
-> 
-> If you don't have some interest to submit a removal patch, I will post
-> a patch later.
-
-Please make the patch. There's too many for me to do them all.
-
-Thanks!
-
--- Steve
+Thanks,
+Mauro
 
