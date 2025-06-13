@@ -1,140 +1,312 @@
-Return-Path: <linux-kernel+bounces-686226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF850AD94B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60913AD94B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BF947AEC96
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B6A1E4F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C52A2472B0;
-	Fri, 13 Jun 2025 18:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D7E22F774;
+	Fri, 13 Jun 2025 18:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Yl39qKKt"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iIudVBeN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D05E23FC54
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 18:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE812AE6D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 18:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749840269; cv=none; b=VP6MQvhxh1Ty6aJeYK6h1A8x4Saouozety/OkTm0D12Q/xC+FZZanelpsdwk2T+xMOMyqbrV2tzEaWdSPW8T0kWcOzVB0eFDgwYjMWLq9Ja2dDiJLteazdQV8NmIP64SY/fdf5OLoDH4M1RKGP9GQaZ05p270B5OfXvKVPjNK5M=
+	t=1749840341; cv=none; b=lIz0awSIh1S592FxGlQI9Kmlwy6ySO6OipegBTh+MNlO6jhNIm785pENoqNsEMq8dMocGuyoWIDFjdf7uPG0VdJjmXXNBPawu7GF1OAEr+RVbTJQ3VLUIvuZuKKF4nsIgSejCohEecLyMvFS4wMIvbq1buMnromz1WewPasV1rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749840269; c=relaxed/simple;
-	bh=3b7axUpbAuU9SlpN71lwKlTvySJnDInVui/A5UkWlDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=L6cV9n2M3BpHhb+M2Bw9Ku4rz0J8zcnkM+EAUqt6UMsHOGChZCyegyR3n+EI+Oqm626wQdjRYVGodun8Df4UUZrFy7je89OWOyyw99Aob7p9WWvG3+7lGXTi/M0CavupOitg4WHg1PO5wbhcCRy1PfXEatsJkjwhPQcYTHgicZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Yl39qKKt; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b2f0faeb994so2731363a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1749840267; x=1750445067; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZHeYqEVybulKIAJ/SLz1vtqwVOqbhPS/lmlXAmsbCt8=;
-        b=Yl39qKKttWEwqolcMtqmQ2xv+ecmtcQ03Wvdq8hTRriZ+lJe+oGPu0umwbHYbVmsvH
-         XPQHsg0g6jAoSDHlaaGRpZyAR80ALCXQVbmtmnvorTQhSvgzGYMc2bZDIfdTtAGyd6p4
-         oHMc4VFlDBNMN2btR6xMXmzrTPlxiwq4WEOcE=
+	s=arc-20240116; t=1749840341; c=relaxed/simple;
+	bh=tkxEEQqCnXWYqSLdU2GqmuB8hosbzsWWGVdjof65Hic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZC4j8BzGpMeWTcgZLGWoKVoQAE6Ulmc/67xkRCtSpVKRjRixeesKkG7TePy/9UY/z5hInce+1+r/ZphUWRmk5D2qZBrGLRaVmU8whzoFBicXhWk5gYf1k2dHqklHWw973dCfvbuBYI5ZM8+amo70AiHqQVnsRoE29vpVH9p9H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iIudVBeN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749840337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dleQCoAtSSBdBCiR900BFEh9O2XlUfclwDFjT5jtdZ0=;
+	b=iIudVBeN1ODI6CJNXfzF7/MqbeYlpaYsiJLzZDHopsbiyUtlpOpXIiST7jB1VH+H93y0Ct
+	xw1VW2vobuXLJgjR0dx7LM52TqM2pfgzZmwLRYcFu/5E1QGUfcJ3smMlN3ki7pAVB9jRW9
+	Y36nKffOPxCS9Z6kXzM3koMpnjgapKs=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-JbKYDoFfMTeb4GdlNZgrkw-1; Fri, 13 Jun 2025 14:45:36 -0400
+X-MC-Unique: JbKYDoFfMTeb4GdlNZgrkw-1
+X-Mimecast-MFC-AGG-ID: JbKYDoFfMTeb4GdlNZgrkw_1749840336
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d097fd7b32so568274685a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:45:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749840267; x=1750445067;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZHeYqEVybulKIAJ/SLz1vtqwVOqbhPS/lmlXAmsbCt8=;
-        b=Uc/qiqa18A/56+K/9NnFvaAHgQTwt8kTspQ4zksBDg2T5PsqVvhGefmqi7sp5nKbt4
-         mKBmD8Xm7gINYCsopAKzGtqE2TARosB37M21nObFOaD9mCdAZKkQyorJz11wolpWc+Dl
-         VqhK6WX7ulrJtuEGUmysDiXqaKDieDc3dH6qe0w3TdOBBlR0GDoD+WOorHu0ph7nVpph
-         Iq8CIxGyET/etZ0nD+U/lf13WTlIwe8JqGqX/6thZ9v7ibXqgA2zpDA6scoteQjihz/1
-         q6E6Ay6ARsZ5Vxi5jgQO447YTNr3Mr72fNRsar8XoYQ2w48E0QsvI8GhLVdkl060bpoO
-         bJPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuJptE35XRUJlaAQdOq1ctaWzG2DxxkPqRi+JtMFJX6kop0bhQR2XjV937lUhsQEj/d2+snbyVKBgJN7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgJHnmFdTSUbcQxJkOaiY6yi7wKqPTax0pyd1T0QAOw0pQ51X7
-	vTIXERFOVpK1H1IywPg7kUew+whM/lb/d2qcJBIEaIwgw13+Vh2H0QHXftFdcjoUNQ==
-X-Gm-Gg: ASbGncuSH0PLWZcCeT/Lb2cOjkGWxoOw/xe5zfMwF6YkJvtvJa/P0Cg/FLYc6intkp3
-	52HycRtzrLlLydsBTuCK36Y5LKwMgHgZdQ8qBzkgIu2CwSSJTzZahHgBA5drvbdKsX5F+PXZgHe
-	8PvUG0963hRiB1+k7oySW+KNcxw6lO+Xv332TfClaTZ+aeSQc0Bv0GMKWcrdKTbbMfJ2f86be1w
-	/CxWDr+xis7PC9dsiS68PXok+kDhGBqHpKQHTbVgDV7fdNDhVnkJ/qo8Pod3j0vDRzBjS7LXiFC
-	kpkHzlcbbKeGZkBFmG08cm1xP+7UOwbg72K/3sh8dOT+iQa7MRtiyueBvYchlGYgpwkvROjZ4x6
-	TBjONOlGRP8GbJetrqFk6mBUVvw==
-X-Google-Smtp-Source: AGHT+IE3l/ieo58PZuP/VXIQXaNY72ns5eLc69FqJbf0YSdSZl1/lgIYYyrYbd3f+TjZzr4aXsSomQ==
-X-Received: by 2002:a17:90b:4cd1:b0:311:f2f6:44ff with SMTP id 98e67ed59e1d1-313f1db806fmr1227482a91.17.1749840266701;
-        Fri, 13 Jun 2025 11:44:26 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1bca4c7sm3729100a91.3.2025.06.13.11.44.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 11:44:23 -0700 (PDT)
-Message-ID: <d995799f-b4d9-4c90-a1a0-2e8e212a6b59@broadcom.com>
-Date: Fri, 13 Jun 2025 11:44:22 -0700
+        d=1e100.net; s=20230601; t=1749840336; x=1750445136;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dleQCoAtSSBdBCiR900BFEh9O2XlUfclwDFjT5jtdZ0=;
+        b=JHHjUDSV6HhIuTo+LLt6l6GPuGJ4s1ihwVakpdsUo06zVlZwKJK6W89b3M94/9+M1G
+         CK/TSKr+mkxtZIUvDmoF26oBWPo5pzKwV2hQWN/tQygA/5YeirDmSMDMBcISGTO3Hqc6
+         ZDfSPFizdloRW9ntsYwXcFZTlCXCXgzebqMMsJe0C+MWXLmuBEw6hW3JdxhAs8lq0T5C
+         5Xn/Dn8Ztb1h5k14VijyyjKbdLc+/1OtstGiianYsz6O4NMOXofEVLR6DnVSpCx3Seci
+         kCyxHswd4NMhACAXtR/ApBx5bOI+r4ry4wymIqDKLLXATaSRIKYOs1YQ/yDkp+Py68nv
+         Twng==
+X-Gm-Message-State: AOJu0YyUtVpqAqKUeZe4qa4sPX2dV/Ad0ZVqZp/9N656ZiVmi7bezCs7
+	XMNJVnnaMu1apPwFn0xwyoTw2sBpuyTD8eL9MEWk06p840Tj19kl2gIiV94qADWTl6e05Vj7ev3
+	nRnYKXsIh/QSni6dliVocpFx2iSUC4rXuKSK5BGNqBPssefujs0kVgbyXSKjKn5R/Pg==
+X-Gm-Gg: ASbGnctfcgF2Nv4Yv9rDs515jsisD2BPPkdqUjg6BqSmK2xPXSxC88ubQm5PiKkBK4X
+	f4UjRvUarpcFpXVuuFQRg8bszFPhBKtIIyIaP7sjm3pUAaX9ROHXQBHLobIcAx24CmmdFYBZswB
+	vsfPWpT/C9wnpP4JZtjzmKJPX/C5jLtVBassM2W8lMV91KF9XK+Z5nWQtPwPD4x2eWZhkW5oRXm
+	pIHrvfitUvNXtXuNnw9Fsr8hhDuIUZnFR7Dax4Zkf01QHJlo1ACNnsuaFbEyElrvhC75+ckP8jA
+	wkM7zgXVBoOLSQ==
+X-Received: by 2002:a05:620a:319b:b0:7d3:8566:e9ad with SMTP id af79cd13be357-7d3c6cda22amr73139585a.34.1749840335912;
+        Fri, 13 Jun 2025 11:45:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKzDCn4nojCIkAe3r6d+k+rYFyD6aXK6Jgcdcld1OPnByWZTDIhVjfVBp6BIIZpji/HLnesg==
+X-Received: by 2002:a05:620a:319b:b0:7d3:8566:e9ad with SMTP id af79cd13be357-7d3c6cda22amr73135785a.34.1749840335471;
+        Fri, 13 Jun 2025 11:45:35 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8dc92e8sm206411085a.5.2025.06.13.11.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 11:45:34 -0700 (PDT)
+Date: Fri, 13 Jun 2025 14:45:31 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Zi Yan <ziy@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Alex Mastro <amastro@fb.com>, David Hildenbrand <david@redhat.com>,
+	Nico Pache <npache@redhat.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>
+Subject: Re: [PATCH 3/5] mm: Rename __thp_get_unmapped_area to
+ mm_get_unmapped_area_aligned
+Message-ID: <aExxy3WUp6gZx24f@x1.local>
+References: <20250613134111.469884-1-peterx@redhat.com>
+ <20250613134111.469884-4-peterx@redhat.com>
+ <08193194-3217-4c43-923e-c72cdbbd82e7@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: brcmstb-avs: Fully open-code compatible for
- grepping
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Markus Mayer <mmayer@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250613071643.46754-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250613071643.46754-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <08193194-3217-4c43-923e-c72cdbbd82e7@lucifer.local>
 
-On 6/13/25 00:16, Krzysztof Kozlowski wrote:
-> It is very useful to find driver implementing compatibles with `git grep
-> compatible`, so driver should not use defines for that string, even if
-> this means string will be effectively duplicated.
+On Fri, Jun 13, 2025 at 04:36:57PM +0100, Lorenzo Stoakes wrote:
+> On Fri, Jun 13, 2025 at 09:41:09AM -0400, Peter Xu wrote:
+> > This function is pretty handy for any type of VMA to provide a size-aligned
+> > VMA address when mmap().  Rename the function and export it.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> This isn't a great commit message, 'to provide a size-aligned VMA address when
+> mmap()' is super unclear - do you mean 'to provide an unmapped address that is
+> also aligned to the specified size'?
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+I sincerely don't know the difference, not a native speaker here..
+Suggestions welcomed, I can update to whatever both of us agree on.
+
+> 
+> I think you should also specify your motive, renaming and exporting something
+> because it seems handy isn't sufficient justifiation.
+> 
+> Also why would we need to export this? What modules might want to use this? I'm
+> generally not a huge fan of exporting things unless we strictly have to.
+
+It's one of the major reasons why I sent this together with the VFIO
+patches.  It'll be used in VFIO patches that is in the same series.  I will
+mention it in the commit message when repost.
+
+> 
+> >
+> > About the rename:
+> >
+> >   - Dropping "THP" because it doesn't really have much to do with THP
+> >     internally.
+> 
+> Well the function seems specifically tailored to the THP use. I think you'll
+> need to further adjust this.
+
+Actually.. it is almost exactly what I need so far.  I can justify it below.
+
+> 
+> >
+> >   - The suffix "_aligned" imply it is a helper to generate aligned virtual
+> >     address based on what is specified (which can be not PMD_SIZE).
+> 
+> Ack this is sensible!
+> 
+> >
+> > Cc: Zi Yan <ziy@nvidia.com>
+> > Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > Cc: Dev Jain <dev.jain@arm.com>
+> > Cc: Barry Song <baohua@kernel.org>
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  include/linux/huge_mm.h | 14 +++++++++++++-
+> >  mm/huge_memory.c        |  6 ++++--
+> >  2 files changed, 17 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 2f190c90192d..706488d92bb6 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> 
+> Why are we keeping everything in huge_mm.h, huge_memory.c if this is being made
+> generic?
+> 
+> Surely this should be moved out into mm/mmap.c no?
+
+No objections, but I suggest a separate discussion and patch submission
+when the original function resides in huge_memory.c.  Hope it's ok for you.
+
+> 
+> > @@ -339,7 +339,10 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+> >  unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
+> >  		unsigned long len, unsigned long pgoff, unsigned long flags,
+> >  		vm_flags_t vm_flags);
+> > -
+> > +unsigned long mm_get_unmapped_area_aligned(struct file *filp,
+> > +		unsigned long addr, unsigned long len,
+> > +		loff_t off, unsigned long flags, unsigned long size,
+> > +		vm_flags_t vm_flags);
+> 
+> I echo Jason's comments about a kdoc and explanation of what this function does.
+> 
+> >  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
+> >  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+> >  		unsigned int new_order);
+> > @@ -543,6 +546,15 @@ thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
+> >  	return 0;
+> >  }
+> >
+> > +static inline unsigned long
+> > +mm_get_unmapped_area_aligned(struct file *filp,
+> > +			     unsigned long addr, unsigned long len,
+> > +			     loff_t off, unsigned long flags, unsigned long size,
+> > +			     vm_flags_t vm_flags)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> >  static inline bool
+> >  can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+> >  {
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 4734de1dc0ae..52f13a70562f 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -1088,7 +1088,7 @@ static inline bool is_transparent_hugepage(const struct folio *folio)
+> >  		folio_test_large_rmappable(folio);
+> >  }
+> >
+> > -static unsigned long __thp_get_unmapped_area(struct file *filp,
+> > +unsigned long mm_get_unmapped_area_aligned(struct file *filp,
+> >  		unsigned long addr, unsigned long len,
+> >  		loff_t off, unsigned long flags, unsigned long size,
+> >  		vm_flags_t vm_flags)
+> > @@ -1132,6 +1132,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
+> >  	ret += off_sub;
+> >  	return ret;
+> >  }
+> > +EXPORT_SYMBOL_GPL(mm_get_unmapped_area_aligned);
+> 
+> I'm not convinced about exporting this... shouldn't be export only if we
+> explicitly have a user?
+> 
+> I'd rather we didn't unless we needed to.
+> 
+> >
+> >  unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
+> >  		unsigned long len, unsigned long pgoff, unsigned long flags,
+> > @@ -1140,7 +1141,8 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
+> >  	unsigned long ret;
+> >  	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
+> >
+> > -	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE, vm_flags);
+> > +	ret = mm_get_unmapped_area_aligned(filp, addr, len, off, flags,
+> > +					   PMD_SIZE, vm_flags);
+> >  	if (ret)
+> >  		return ret;
+> >
+> > --
+> > 2.49.0
+> >
+> 
+> So, you don't touch the original function but there's stuff there I think we
+> need to think about if this is generalised.
+> 
+> E.g.:
+> 
+> 	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
+> 		return 0;
+> 
+> This still valid?
+
+Yes.  I want this feature (for VFIO) to not be enabled on 32bits, and not
+enabled with compat syscals.
+
+> 
+> 	/*
+> 	 * The failure might be due to length padding. The caller will retry
+> 	 * without the padding.
+> 	 */
+> 	if (IS_ERR_VALUE(ret))
+> 		return 0;
+> 
+> This is assuming things the (currently single) caller will do, that is no longer
+> an assumption you can make, especially if exported.
+
+It's part of core function we want from a generic helper.  We want to know
+when the va allocation, after padded, would fail due to the padding. Then
+the caller can decide what to do next.  It needs to fail here properly.
+
+> 
+> Actually you maybe want to abstract the whole of thp_get_unmapped_area_vmflags()
+> no? As this has a fallback mode?
+> 
+> 	/*
+> 	 * Do not try to align to THP boundary if allocation at the address
+> 	 * hint succeeds.
+> 	 */
+> 	if (ret == addr)
+> 		return addr;
+
+This is not a fallback. This is when user specified a hint address (no
+matter with / without MAP_FIXED), if that address works then we should
+reuse that address, ignoring the alignment requirement from the driver.
+This is exactly the behavior VFIO needs, and this should also be the
+suggested behavior for whatever new drivers that would like to start using
+this generic helper.
+
+> 
+> What was that about this no longer being relevant to THP? :>)
+> 
+> Are all of these 'return 0' cases expected by any sensible caller? It seems like
+> it's a way for thp_get_unmapped_area_vmflags() to recognise when to fall back to
+> non-aligned?
+
+Hope above justfies everything.  It's my intention to reuse everything
+here.  If you have any concern on any of the "return 0" cases in the
+function being exported, please shoot, we can discuss.
+
+Thanks,
+
 -- 
-Florian
+Peter Xu
+
 
