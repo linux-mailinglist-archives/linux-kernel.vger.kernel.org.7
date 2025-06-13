@@ -1,189 +1,132 @@
-Return-Path: <linux-kernel+bounces-686284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C962AD9573
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:24:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96384AD957F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2353D3A7331
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 593A61E31A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67621291C0C;
-	Fri, 13 Jun 2025 19:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CB02C08AD;
+	Fri, 13 Jun 2025 19:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cYfTCe6B"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WQEdxli9"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE87D248869
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3403E2C08A9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749842385; cv=none; b=kgrAHHEwiTVtg0GQaqw9P8+hiRjU/cP3H7xIwm+hQvkcuhTyf2oMoMdoBt8GInWX+/r79nyFX2T/ofC4Mx+6uBFPCmRUA2qciaN6EOd/WPs2rtOeyymwBzFu5dPZw/GvvK51knl/IlSPtI0Z8lic6D6jX2N7JfhielFmiNaRO8E=
+	t=1749842530; cv=none; b=hw/L1mgdFdr9CglPn4/Q9VWPpLkXihJ2rLrkhWvutNO/v26syvZExzEu1UhX0M+8G4/fOVJLL51CqA/gcGgBNU6x8Ai9hVRss7eDYOHOoi/+UtagPE8wYnd+dHf1huPl0+9ak7AUI63Q9OzWnWfidVZ7WMVbuFxnj/zs12lVKIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749842385; c=relaxed/simple;
-	bh=pM17luptOPApGFcmRyWk1htxZ0mNvfQwmub7ljr5iN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nn9Fho2qL15gN23Oex6/siM95hYi+bkDQYwfraDbKTmvY9UmWvHK+tF7ONVf1TBuMqkV3T53HivQlbH3SQCuWD7JVPuCA69bdVLdfTd06Tgy8NrBTUjORsg9yqNw7fq7Ca7MZFR39Ks3Tl7VLTRZgVACxOO4hi059IMoWulTVc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cYfTCe6B; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a58ef58a38so30491cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749842383; x=1750447183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ls4Y9HoT9VEjZR6n9L8mMlDWt5VvuU4t30VU2btZu64=;
-        b=cYfTCe6BSap1DF4SsVBI841wROw4zSvbrq/0JCSnzXSJicRhZYepPjyOkmDrwtmRKX
-         XLl62YpTdzbSkzwjEPYKQj5uBssIsQAWHwvxQS/Di0OUXys5i6XHvsmOOD30EUFTN3Y7
-         uwNhHbIyQ7k2CIlNpqnwkEUqj9rsQiv6fB11urZ0i8rS3ztJeKcX51lAXBUqDn3WpCDy
-         guZttu+N++AU4QECKygrXiqNjbTwxz9hgZZJPv25pK0ljGb84kooDVQqapnozCW1gxqB
-         qrYsgJi57gqeAUQq5cGDVS2TXW8Ws+FfR3OLK/jDeTjdKujoS1mUQQzoykto2/SV1gJF
-         uEKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749842383; x=1750447183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ls4Y9HoT9VEjZR6n9L8mMlDWt5VvuU4t30VU2btZu64=;
-        b=OW6/4NIqeG2JpMP5w9IItpMk+kmsQ9Ua72gVTCX1HJk8FKChAWIXEeCdKZtUJhfzKW
-         nPgA9cfw9LQIRazQQkHo4He0b5XIuedtHKwzdfKyRADJlci0wbaNRnuvcyksEwt8PJoL
-         xocDMsLQKqLxCCrBpWZNQ2lnkmkdC+kAUKvcpdTfeLvb/m4k9XAM+kSHqLM6qwCOpnCc
-         i1us88B1TCendPWGzvhtNFyvm4vDQ5+RhIdBBaU+Cb2jJomD/eX4lEY2yYIoGn4/MOOJ
-         vmADFMlXEV0qjlVAV4NujrhHXsDyFJdrkT/zPZIFBJYLStlxN5ULzvS4Eq6Aw7g7EMwg
-         yWzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwVcf1iu+fxnVdQ2c3rbGZWfkh7dNZrKjEd7EAyjxDClNYTtOk/rWSRtIbGfx8S8IOKgzSI6xNsdJYyUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKVByPUt0KMq3OLlzgZMCGnEQdU66+zeFhAVhumDyEW0MxFeoN
-	ZC/ZFTd0T0fdd8jlTulnj9G6ZUitmJmVSjahjG0Ohs9Er19PHooRPgXUsCKwlNHUz6qEzgfP7p2
-	4dcP3aSehoGZX6gGbqZ3vUpPfnyDrbreZrZ5DbVFl
-X-Gm-Gg: ASbGncsWa6DCbKJrLpLKHOghwstv9xwS8ZlSbEryGbXhGkY+hFry9CRcZfmaAkeh+wi
-	1WrJw78Y2kEPZXKef2z7OkyDmHYi/x8Sh6emhAUqnoo4HtevpghCDwfPQ5vqg0s89XWU2eEFyiT
-	e5isNjO+KowsgK/vhvE18zoguL0eYAso2vvWVzeGiYtXa8urxvuQI6
-X-Google-Smtp-Source: AGHT+IHbm2b0b8YGHX28r7f2pzl1NXSMck+kvuJZCJIVk1NshA3nbRdTcXcdIfx+F3Jou0xe6PXvnume9QxDaU2tiYc=
-X-Received: by 2002:a05:622a:1829:b0:476:f1a6:d8e8 with SMTP id
- d75a77b69052e-4a73c737c96mr390081cf.11.1749842382290; Fri, 13 Jun 2025
- 12:19:42 -0700 (PDT)
+	s=arc-20240116; t=1749842530; c=relaxed/simple;
+	bh=kjdeLQU96dEYYDcyMl6ECRH4RlehZZk75+Aic5a86Vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=geFhS8F5kligMW1+FHY1e68h1ksTXAICJpsXEOlv8iJJR62IbC9mJtGX6vRHS0MTO0W5IyDKyY2I/uZTKwdNCdC7XXTpiJSMsX8sR9PbXnE4euHNa7zsJD6pqpJ7bKWuYlwQBP47X90h2Bu9fI8qPwtp0YYGR44dzeO08vszDO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WQEdxli9; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=E6Mm2OZZbDcANLdcVoLPbdCB0G9e+9yLUnHB36mTR2g=; b=WQEdxli9+XHoUl7bByr454segW
+	j7YtPixs8XKBqvoC1Bd66PzaaLsN+uoJ6qfcNeQw/Cpk0rC7OEPN6ymL9ci0aIwRY8fVw2eTKr6Wb
+	HjTL6l+MMuGCFJ8nd2soUHlkzXInMsIOTFtZobJnyxE3oxWrB572xxCYCLNvjFM0pe6c9rM9anJru
+	WeCrGG22ej4xNYIE3t97bMFbY3iBANwOrUxBjht95/EIxAdpWIl6zqmsqYlE0SQRecEn/EpIf7Hrm
+	mzsuKTekqOk8V+7JVAjUt27fnPzWSB0RQSMZzrVZ5avbmVCF4boMn8WVMPjMCTIchGlriJeFH3VyI
+	RtFD9UAw==;
+Received: from [191.204.192.64] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uQ9yC-003AtJ-0R; Fri, 13 Jun 2025 21:21:44 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	linux-nvme@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Eugen Hristev <eugen.hristev@collabora.com>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RESEND] nvme-pci: refresh visible attrs after being checked
+Date: Fri, 13 Jun 2025 16:21:01 -0300
+Message-ID: <20250613192102.1873918-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1749779391.git.gehao@kylinos.cn>
-In-Reply-To: <cover.1749779391.git.gehao@kylinos.cn>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 13 Jun 2025 12:19:31 -0700
-X-Gm-Features: AX0GCFuV7BnvCEvakQqnTD_G0pwn3IuNvCBiUSnYUaTsvkP-nXz7XbXoATM8nbs
-Message-ID: <CAJuCfpHhVhAEPqGXR=b6gdykZTtZsOA7cXX2CJKcX3TX++bs6w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] mm: Restrict the static definition of the per-CPU
- variable _shared_alloc_tag to s390 and alpha architectures only
-To: Hao Ge <hao.ge@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Kent Overstreet <kent.overstreet@linux.dev>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-s390@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025 at 8:06=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
->
-> From: Hao Ge <gehao@kylinos.cn>
->
-> Recently discovered this entry while checking kallsyms on ARM64:
-> ffff800083e509c0 D _shared_alloc_tag
->
-> If ARCH_NEEDS_WEAK_PER_CPU is not defined((it is only defined for
-> s390 and alpha architectures),there's no need to statically define
-> the percpu variable _shared_alloc_tag. As the number of CPUs
-> increases,the wasted memory will grow correspondingly.
->
-> Therefore,we need to implement isolation for this purpose.
->
-> However,currently ARCH_NEEDS_WEAK_PER_CPU is a #define and
-> is enclosed within the #if defined(MODULE) conditional block.
->
-> When building the core kernel code for s390 or alpha architectures,
-> ARCH_NEEDS_WEAK_PER_CPU remains undefined (as it is gated
-> by #if defined(MODULE)). However,when building modules for these
-> architectures,the macro is explicitly defined.
->
-> Therefore,we need to make ARCH_NEEDS_WEAK_PER_CPU a Kconfig option.
-> And replace all instances of ARCH_NEEDS_WEAK_PER_CPU in the kernel
-> code with MODULE_NEEDS_WEAK_PER_CPU,MODULE_NEEDS_WEAK_PER_CPU might
-> be a more accurate description,because it was only needed for modules.
-> Then,when defining the percpu variable _shared_alloc_tag,wrap it with the
-> CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition.
->
-> The following version can be regarded as the most original version:
-> https://lore.kernel.org/all/20250529073537.563107-1-hao.ge@linux.dev/
-> But unfortunately,it caused build errors on s390.
-> Based on Suren's guidance and suggestions,
-> I've refined it into this patch series.
-> Many thanks to Suren for his patient instruction.
+From: Eugen Hristev <eugen.hristev@collabora.com>
 
-I think the first two patches in your patchset should be merged together.
+The sysfs attributes are registered early, but the driver does not
+know whether they are needed or not at that moment.
+For the cmb attributes, commit
+e917a849c3fc ("nvme-pci: refresh visible attrs for cmb attributes")
+solved this problem by calling `nvme_update_attrs` after mapping the cmb.
+However the issue persists for the hmb attributes.
+To solve the problem, moved the call to `nvme_update_attrs` after
+`nvme_setup_host_mem` is called, the one that sets up the hmb, in probe
+and in reset_work functions.
 
->
-> Verify:
->      1. On Arm64:
->         nm vmlinux | grep "_shared_alloc_tag",no output is returned.
->      2. On S390:
->         Compile tested.
->         nm vmlinux | grep "_shared_alloc_tag"
->         00000000015605b4 r __crc__shared_alloc_tag
->         0000000001585fef r __kstrtab__shared_alloc_tag
->         0000000001586897 r __kstrtabns__shared_alloc_tag
->         00000000014f6548 r __ksymtab__shared_alloc_tag
->         0000000001a8fa28 D _shared_alloc_tag
->         nm net/ceph/libceph.ko | grep "_shared"
->         U _shared_alloc_tag
->      3. On alpha
->         Compile tested.
->         nm vmlinux | grep "_shared_alloc_tag"
->         fffffc0000b080fa r __kstrtab__shared_alloc_tag
->         fffffc0000b07ee7 r __kstrtabns__shared_alloc_tag
->         fffffc0000adee98 r __ksymtab__shared_alloc_tag
->         fffffc0000b83d38 D _shared_alloc_tag
->         nm crypto/cryptomgr.ko | grep "_share"
->         U _shared_alloc_tag
->
-> v2:
->     Heiko pointed out that when defining MODULE_NEEDS_WEAK_PER_CPU,
->     the CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition in the v1 version
->     should be removed,as it is always true for s390 and alpha
->     architectures.And He also pointed out that patches 2-4 need to
->     be merged into one patch. Modify the code according to the suggestion=
-s
->     and update the corresponding commit message.
->
-> Hao Ge (3):
->   mm/Kconfig: add ARCH_NEEDS_WEAK_PER_CPU Option and enable it for
->     s390/alpha
->   mm: replace ARCH_NEEDS_WEAK_PER_CPU with MODULE_NEEDS_WEAK_PER_CPU
->   mm/alloc_tag: add the CONFIG_ARCH_NEEDS_WEAK_PER_CPU macro when
->     statically defining the percpu variable _shared_alloc_tag
->
->  arch/alpha/Kconfig              | 1 +
->  arch/alpha/include/asm/percpu.h | 2 +-
->  arch/s390/Kconfig               | 1 +
->  arch/s390/include/asm/percpu.h  | 2 +-
->  include/linux/alloc_tag.h       | 6 +++---
->  include/linux/percpu-defs.h     | 4 ++--
->  lib/alloc_tag.c                 | 2 ++
->  mm/Kconfig                      | 4 ++++
->  8 files changed, 15 insertions(+), 7 deletions(-)
->
-> --
-> 2.25.1
->
+Fixes: e917a849c3fc ("nvme-pci: refresh visible attrs for cmb attributes")
+Fixes: 86adbf0cdb9e ("nvme: simplify transport specific device attribute handling")
+Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: André Almeida <andrealmeid@igalia.com>
+---
+This commit was reviewed a long time ago but was never merged. This is
+just a resend rebased on top of v6.16-rc1.
+
+v1: https://lore.kernel.org/lkml/01020191b7b7adc0-bca16d06-b051-4ce2-bfee-c8038a62462f-000000@eu-west-1.amazonses.com/
+---
+ drivers/nvme/host/pci.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 8ff12e415cb5..320aaa41ec39 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2101,8 +2101,6 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 	if ((dev->cmbsz & (NVME_CMBSZ_WDS | NVME_CMBSZ_RDS)) ==
+ 			(NVME_CMBSZ_WDS | NVME_CMBSZ_RDS))
+ 		pci_p2pmem_publish(pdev, true);
+-
+-	nvme_update_attrs(dev);
+ }
+ 
+ static int nvme_set_host_mem(struct nvme_dev *dev, u32 bits)
+@@ -3010,6 +3008,8 @@ static void nvme_reset_work(struct work_struct *work)
+ 	if (result < 0)
+ 		goto out;
+ 
++	nvme_update_attrs(dev);
++
+ 	result = nvme_setup_io_queues(dev);
+ 	if (result)
+ 		goto out;
+@@ -3343,6 +3343,8 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (result < 0)
+ 		goto out_disable;
+ 
++	nvme_update_attrs(dev);
++
+ 	result = nvme_setup_io_queues(dev);
+ 	if (result)
+ 		goto out_disable;
+-- 
+2.49.0
+
 
