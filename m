@@ -1,204 +1,216 @@
-Return-Path: <linux-kernel+bounces-685457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2800AD89F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:04:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6D4AD8B5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E942A17AFED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D21885F1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC022C15A5;
-	Fri, 13 Jun 2025 11:04:40 +0000 (UTC)
-Received: from mail-qt1-f208.google.com (mail-qt1-f208.google.com [209.85.160.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830EC2D6626;
+	Fri, 13 Jun 2025 11:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2ov20/T"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6D12C15B7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5AF275B0D;
+	Fri, 13 Jun 2025 11:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749812679; cv=none; b=exeHySrkdMMpDHYhiwEpSFqR9pFRoY5Z5/oW+ui8wvHyZazGmJevRsjVGBWd8NRfvOWw33Yv4LE91fdtHJE+/VY+d10Q3TUrkDbUuMXa1J9tNzvjdL09qAXWyeintDQldugkS2DInYds5G7/qq0SC4VFxEhzhO/Dnu8rBdXvgoA=
+	t=1749815732; cv=none; b=jdC9H+PAUbhVxEE4Cg3j21bRxKo2UiZhGZ0b/YWZiF9YhM4DhLAyoAYcBZQFVRPwwE43a27d//RNqbmrPAWRw9wRkHOgjlJRmiUaOBoqBRQk1NsCvgiyDiOheE5fOpN9PXVnAJJ0Sd7MQlns56TJBukag06JfQo3zr2KUnN74Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749812679; c=relaxed/simple;
-	bh=gkF11Vi2FrQD3WOhk2A71W/Qr3tehY8WiasNwBSxfKs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HW+EKOrW1xjwewc5W9iETsmdANYFcrND3yf8Cf6jhkBxxl+/7SRKDIiTspJ5tjJo1RpJZvBbTiWAAy/MLu4DRHfxvDTRhWuN1FPSiLF90xF7vXmoyrprqfzx7Q7Uq7IOd9MPHggmuVNkvtNVZRiQ+i5+NgbYilXoGZu5PpVO1QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.160.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-qt1-f208.google.com with SMTP id d75a77b69052e-4a442d07c5fso46313411cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 04:04:37 -0700 (PDT)
+	s=arc-20240116; t=1749815732; c=relaxed/simple;
+	bh=Sb5LOSkAwHk54c+c6zP3tGvl033zIanBvTqjdyRTILM=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=ORgr6wLWN1r472Usyl3td4l8NK34/fRkpoKS+U0kFxOfiO8YdCCE65TTccwOokBUdlkH7RMycZeAj3/27XC7xONsTUh/FKWMZddZm2rKyDqr1oNwEOwFfOpxiwCswXEESf4hNO7YPcDDLd0ivS922Ea71osUHrHIJEBI/h2UqCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2ov20/T; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so17484075e9.1;
+        Fri, 13 Jun 2025 04:55:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749815729; x=1750420529; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ufE8HslboBgiS0ch8804+mkzD75VUbk5YRlVLPLoQRA=;
+        b=k2ov20/T+cSy0umWVitQG+013KJvbv63xH44HZyXyYMwrHFPsPBn1DAXszsZVt2uxz
+         LX2PLVb/daxktPoeXzMPD415tW2EGeZEUDd6thhWuUQoIh/CLSwh6Dz0N5jCP2BJ2Muf
+         vB2LzfwJkoGb+WnBXq+t2hllNH6Xu7ysrXeuHLJlzhJcytrLF+8H7TVfTjPezo7WMZ4V
+         +nwILPHcroEwtTAx4zI1ZrKwKT4/Vcx5pGQuxkPk6SRKzAgEXfhUr++bNzOf11WxFLXd
+         aZFQNkwrFGw0V4yG1VzneLIw8LW0OhiR22WHol3V6JqNS78Hr3V7D0SjUIl0WhaLlzRv
+         6PgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749812677; x=1750417477;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cpTGQab/U0D39e0o1gC8NFB6KS8WTusESL+/4+GxDfk=;
-        b=OBj9zS4NVNUV5r6r3B/2JrECRtjcai2LNbWZ390BszLAKeb3Mn3v5OQ89/0rhyeCK9
-         JpA8RQV0t+s5t76rwGPZOjTrY3MgUTD4mEQ82TN01/2XI4SmfhgPA1XtQRXpipUjOR8m
-         IUIiIT9y4zuiLCW/Qk0Unom35ZHBzsEP3MkRL5W+bhSacmWifxW2Ohlk4hjjG8Gt1sDP
-         agHRK9yWmrbJCFWCyFAob/pWiMms597i5QokzB3VGOGNptLPrZzdzPy55q2bjyspkJk+
-         0J2Cd4cLf206hih1GzwN8SCWweQ590OxuI6BZlbsraGavoeKbv92WC5b3AT6umoe7pM4
-         Zwmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb/fWwceQLcKAJRT7jsZ08NQsz2H1WX79RTeyI2JrKy8E8ks/qLyNVedgZnpxiVut5jiNSmDnkReWKMnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdK0CD0MxFpwZ9hxdd2FfU66A+YkQrABg25FlADctbEN51U6B1
-	lTTjnlM45BhrIsWHWNj1oEdRsCKThujGC2aL5y4qygfhgoFflQj1LS5w7uZ4RHCEJF5heSI597k
-	lVVDaWLAVacpACevXO4BesL1p82hTWkEVe5LosVIJXlqi0Obo8V4p6OANtqE=
-X-Google-Smtp-Source: AGHT+IE7vKBDsqsTe9tHa2v3D5xyEFZfFh8AgoWKXonoKkwkytcSrBCab9bQcAfYQtkx2BzSyr8Nj5Z3SMd9RArnwFJC2/edQ0I6
+        d=1e100.net; s=20230601; t=1749815729; x=1750420529;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ufE8HslboBgiS0ch8804+mkzD75VUbk5YRlVLPLoQRA=;
+        b=bJfDgDrZhMEXF8/Pb+1lfcwCHIalCbEJD+MzgLH5xxQ+YUQRTFa7EQgdmiRYIhAOyu
+         DZfYPkQRkXQatlo8LLf1pAvo6ltZrQqgK31/xpNtbGvc5CwLmnJ5xe+p0A9BW+2FigN/
+         z7z6ML+fCBbdkVqutsBsyzumg9zE22mRF2tcNlELHiiE4MnUn6mX1DNflMfoVeFO2zjR
+         h3sBtQAZdpOmcyVGGlehbq63amHstRnFKBEqsu//ghYxC/R8g7CFifIpUm7TezMWG/5d
+         4U5izYhthblVovegtuhPhcGAYN5vlSJ27nC07wc7ghvzj/X7vwhfmZmrxNhU3b0wn029
+         0AbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGazShPTTewCaJMAx1z0LQkyQM/6ZXSiHpkZsz7oUzG96TAs93BEVbyLIy5Me2CGUCM74pFEDvjJoPTHY=@vger.kernel.org, AJvYcCWMTOYQj3qB3CssPw54Z44kSKBH0rEqdGoPJfWisrvcgkt0xTzF9YYs0VXHqL8tPJMLrRkpLhIj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm2dU+/rrFTzM6jE2xmJXKche2dzmUnAcHT9sx9PH4wQ9ktbdR
+	o2f5ztc2D155xRCZSM1rogGwODdN87NXQzM0s8WlxegGVvrWWdFjitgufb754+s2
+X-Gm-Gg: ASbGnctPyhbFQUJmJOMhM4gDqoYFdMdijkysmV7F9hoxLycCUxCariv+WCEBsWqKXtN
+	loaei+wM9YyWMclYSUG3CKv+SKdEIglJdS6UFHGGP9z2t38/KGoqJebQZtnAt2nA0Z3t1TKJr8x
+	w9bG84Mk7sRjnXBJImZWAH3y5PSZF15NkEiSCgnusF2Lx9A0AbPsnDxE5uBmabqs2EsyRG42vZB
+	KduP2t2DMe+PjHiCAINdFeg5oAP4Lg6lj8T6g6wV4QXK31w+xkVZDLoES/fimIDHd2B4/UuYvfy
+	yb70NUYxi9kwDQK/iQ3AqAuR7sbJvlqu98YmoEyf4mfLrOFvXp1Qedu8RarWBSXK38v0euHrPxs
+	=
+X-Google-Smtp-Source: AGHT+IGUe7DjzHHSFplul/ar5RfAw7b4aYzc9kQ5lrIT8AkHKhhxkXNesyYzYlzEDkL2JyHmPvem9w==
+X-Received: by 2002:a05:600c:a49:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-4533499e98fmr33137635e9.0.1749815729086;
+        Fri, 13 Jun 2025 04:55:29 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:75e0:f7f7:dffa:561e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e195768sm50645645e9.0.2025.06.13.04.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 04:55:28 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  linux-kernel@vger.kernel.org,  Akira Yokosawa
+ <akiyks@gmail.com>,  "David S. Miller" <davem@davemloft.net>,  Ignacio
+ Encinas Rubio <ignacio@iencinas.com>,  Marco Elver <elver@google.com>,
+  Shuah Khan <skhan@linuxfoundation.org>,  Eric Dumazet
+ <edumazet@google.com>,  Jan Stancek <jstancek@redhat.com>,  Paolo Abeni
+ <pabeni@redhat.com>,  Ruben Wauters <rubenru09@aol.com>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
+  stern@rowland.harvard.edu,  Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH v2 00/12] Don't generate netlink .rst files inside
+ $(srctree)
+In-Reply-To: <cover.1749723671.git.mchehab+huawei@kernel.org>
+Date: Fri, 13 Jun 2025 12:05:56 +0100
+Message-ID: <m27c1foq97.fsf@gmail.com>
+References: <cover.1749723671.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164d:b0:3dd:d746:25eb with SMTP id
- e9e14a558f8ab-3de00bf6f74mr26720675ab.16.1749812666276; Fri, 13 Jun 2025
- 04:04:26 -0700 (PDT)
-Date: Fri, 13 Jun 2025 04:04:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684c05ba.050a0220.be214.029e.GAE@google.com>
-Subject: [syzbot] [hfs?] INFO: task hung in hfs_mdb_commit (3)
-From: syzbot <syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-syzbot found the following issue on:
+> As discussed at:
+>    https://lore.kernel.org/all/20250610101331.62ba466f@foz.lan/
+>
+> changeset f061c9f7d058 ("Documentation: Document each netlink family")
+> added a logic which generates *.rst files inside $(srctree). This is bad when
+> O=<BUILDDIR> is used.
+>
+> A recent change renamed the yaml files used by Netlink, revealing a bad
+> side effect: as "make cleandocs" don't clean the produced files, symbols 
+> appear duplicated for people that don't build the kernel from scratch.
+>
+> There are some possible solutions for that. The simplest one, which is what
+> this series address, places the build files inside Documentation/output. 
+> The changes to do that are simple enough, but has one drawback,
+> as it requires a (simple) template file for every netlink family file from
+> netlink/specs. The template is simple enough:
+>
+>         .. kernel-include:: $BUILDDIR/networking/netlink_spec/<family>.rst
 
-HEAD commit:    19272b37aa4f Linux 6.16-rc1
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d5ca0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=162faeb2d1eaefb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=6bdbdd12cf8cdbc66466
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1113ca82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125a29d4580000
+I think we could skip describing this since it was an approach that has
+now been dropped.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/63fc98170cdb/disk-19272b37.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7f53e0c9076b/vmlinux-19272b37.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/249526f4900a/bzImage-19272b37.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cafdeb8d4eab/mount_0.gz
+> Part of the issue is that sphinx-build only produces html files for sources
+> inside the source tree (Documentation/). 
+>
+> To address that, add an yaml parser extension to Sphinx.
+>
+> It should be noticed that this version has one drawback: it increases the
+> documentation build time. I suspect that the culprit is inside Sphinx
+> glob logic and the way it handles exclude_patterns. What happens is that
+> sphinx/project.py uses glob, which, on my own experiences, it is slow
+> (due to that, I ended implementing my own glob logic for kernel-doc).
+>
+> On the plus side, the extension is flexible enough to handle other types
+> of yaml files, as the actual yaml conversion logic is outside the extension.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com
+I don't think the extension would handle anything other than the Netlink
+yaml specs, and I don't think that should be a goal of this patchset.
 
-INFO: task kworker/0:0:9 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc1-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:27336 pid:9     tgid:9     ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: events_long flush_mdb
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5396 [inline]
- __schedule+0x16a2/0x4cb0 kernel/sched/core.c:6785
- __schedule_loop kernel/sched/core.c:6863 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6878
- io_schedule+0x81/0xe0 kernel/sched/core.c:7723
- bit_wait_io+0x11/0xd0 kernel/sched/wait_bit.c:247
- __wait_on_bit_lock+0xe9/0x4f0 kernel/sched/wait_bit.c:90
- out_of_line_wait_on_bit_lock+0x123/0x170 kernel/sched/wait_bit.c:117
- lock_buffer include/linux/buffer_head.h:434 [inline]
- hfs_mdb_commit+0xb0d/0x1160 fs/hfs/mdb.c:325
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+> With this version, there's no need to add any template file per netlink/spec
+> file. Yet, the Documentation/netlink/spec.index.rst require updates as
+> spec files are added/renamed/removed. The already-existing script can
+> handle it automatically by running:
+>
+>             tools/net/ynl/pyynl/ynl_gen_rst.py -x  -v -o Documentation/netlink/specs/index.rst
 
-Showing all locks held in the system:
-2 locks held by kworker/0:0/9:
- #0: ffff88801a481548 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
- #0: ffff88801a481548 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
- #1: ffffc900000e7bc0 ((work_completion)(&(&sbi->mdb_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #1: ffffc900000e7bc0 ((work_completion)(&(&sbi->mdb_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-6 locks held by kworker/u8:7/4455:
-2 locks held by getty/5585:
- #0: ffff888030f560a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+I think this can be avoided by using the toctree glob directive in the
+index, like this:
 
-=============================================
+=============================
+Netlink Family Specifications
+=============================
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:470
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
-Code: cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d a3 55 29 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffffff8de07d80 EFLAGS: 000002c2
-RAX: 19cf73c379472d00 RBX: ffffffff81974f68 RCX: 19cf73c379472d00
-RDX: 0000000000000001 RSI: ffffffff8d96d7bc RDI: ffffffff8be1af40
-RBP: ffffffff8de07ea8 R08: ffff8880b8632f5b R09: 1ffff110170c65eb
-R10: dffffc0000000000 R11: ffffed10170c65ec R12: ffffffff8f9fdef0
-R13: 0000000000000000 R14: 0000000000000000 R15: 1ffffffff1bd2a50
-FS:  0000000000000000(0000) GS:ffff888125c86000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0bd9123130 CR3: 000000002f7b4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:749
- default_idle_call+0x74/0xb0 kernel/sched/idle.c:117
- cpuidle_idle_call kernel/sched/idle.c:185 [inline]
- do_idle+0x1e8/0x510 kernel/sched/idle.c:325
- cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:423
- rest_init+0x2de/0x300 init/main.c:744
- start_kernel+0x47d/0x500 init/main.c:1101
- x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
- x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
- common_startup_64+0x13e/0x147
- </TASK>
+.. toctree::
+   :maxdepth: 1
+   :glob:
 
+   *
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This would let you have a static index file.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> ---
+>
+> v2:
+> - Use a Sphinx extension to handle netlink files.
+>
+> v1:
+> - Statically add template files to as networking/netlink_spec/<family>.rst
+>
+> Mauro Carvalho Chehab (12):
+>   tools: ynl_gen_rst.py: create a top-level reference
+>   docs: netlink: netlink-raw.rst: use :ref: instead of :doc:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I suggest combining the first 2 patches.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>   docs: netlink: don't ignore generated rst files
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Maybe leave this patch to the end and change the description to be a
+cleanup of the remants of the old approach.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Further comments on specific commits
 
-If you want to undo deduplication, reply with:
-#syz undup
+>   tools: ynl_gen_rst.py: make the index parser more generic
+>   tools: ynl_gen_rst.py: Split library from command line tool
+>   scripts: lib: netlink_yml_parser.py: use classes
+>   tools: ynl_gen_rst.py: do some coding style cleanups
+>   scripts: netlink_yml_parser.py: improve index.rst generation
+>   docs: sphinx: add a parser template for yaml files
+>   docs: sphinx: parser_yaml.py: add Netlink specs parser
+
+Please combine these 2 patches. The template patch just introduces noise
+into the series and makes it harder to review.
+
+>   docs: use parser_yaml extension to handle Netlink specs
+>   docs: conf.py: don't handle yaml files outside Netlink specs
+>
+>  .pylintrc                                     |   2 +-
+>  Documentation/Makefile                        |  17 -
+>  Documentation/conf.py                         |  17 +-
+>  Documentation/netlink/specs/index.rst         |  38 ++
+>  Documentation/networking/index.rst            |   2 +-
+>  .../networking/netlink_spec/.gitignore        |   1 -
+>  .../networking/netlink_spec/readme.txt        |   4 -
+>  Documentation/sphinx/parser_yaml.py           |  80 ++++
+>  .../userspace-api/netlink/netlink-raw.rst     |   6 +-
+>  scripts/lib/netlink_yml_parser.py             | 394 ++++++++++++++++++
+>  tools/net/ynl/pyynl/ynl_gen_rst.py            | 378 +----------------
+>  11 files changed, 544 insertions(+), 395 deletions(-)
+>  create mode 100644 Documentation/netlink/specs/index.rst
+>  delete mode 100644 Documentation/networking/netlink_spec/.gitignore
+>  delete mode 100644 Documentation/networking/netlink_spec/readme.txt
+>  create mode 100755 Documentation/sphinx/parser_yaml.py
+>  create mode 100755 scripts/lib/netlink_yml_parser.py
 
