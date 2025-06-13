@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-685446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8D3AD89D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790C9AD89C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438A31891FBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C96D17616E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9E82D4B78;
-	Fri, 13 Jun 2025 10:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/Rlg/sW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2474A2D29CA;
+	Fri, 13 Jun 2025 10:44:34 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA012C15B0;
-	Fri, 13 Jun 2025 10:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1E12D1F5F;
+	Fri, 13 Jun 2025 10:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749811881; cv=none; b=LER4b4DoKovlx1MgLXN9+jCy+5wM/65ZkIEap1R5eBD9E1r2kpty82WcFlsATWVRogztlRjBECT26jsubkgDFPwIC9NszjVdtFudHBBZq7koH/4PFnVRx+nHAhNMjVNpYQPFs+em60KDoMV8gn5+f3tGpxiq9ibyYx161tp+o/A=
+	t=1749811473; cv=none; b=jm6LZnd0hHeXSVxiqCsPIK60t0cT+niiqUUIOUxnOxlwCG0diLIhpFRI+6y0Jax312fxOO1b2zoFwx/TK5wsTrCOOcABFWyxT29L1vBYuHZgdzeNnB0xR29Lmyy/EEWyA8auOIlsl6Wc2xNulgoU4KctdHL9feRhgTOWFnySL8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749811881; c=relaxed/simple;
-	bh=EciE3//NCfIsA4Ol8/HoACr+mWBPUyiZqVRyI1XWzEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B6fm2Nj41RJ/CNYuSeqqkjF/ZydpDBXXRA4P/KlzgGEBFGdyMtKYY7brfpXgxyvBZ1XkroFr+LFe/twwyz7ARAVIPubDFqXLlifwp6MxVwYM8rzV6qaT7bzPDjx3ow/8QYWCsk3VDlyQucqXfl5tnnBwnir2aE8ovoEE+mQ5x2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/Rlg/sW; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749811879; x=1781347879;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EciE3//NCfIsA4Ol8/HoACr+mWBPUyiZqVRyI1XWzEQ=;
-  b=Y/Rlg/sWA3TcPlWst0ZV7MldqzpQt6dIXs5rCOyYqsc2mNXknXSSJ+Xw
-   qT2/PvddciFA3MMA/0gkXgvFd7JmcurpmuiEdM3Ba7sKwlsGxhI0diA2J
-   FQPGgIYzCdCezZeLcyNmV9uP181Atns3XyQIaCM8F/0YvOTValx5Mp27Y
-   CcIf9dl8tlHNTPgCVajd3fbBwnZnpc12zMspdqXA+LR1TmWdqLBqFhmPE
-   wNg6sw2FYLxDG8moc9FQVwyX2RjLBZ+Laj1M+cuXeyWrWouAXD4CznpuL
-   sNRg1xgeTEeZ9irsUeswpWcWUagLq4RZHNYpdGxA25c6dnHwGQ5dBP93C
-   A==;
-X-CSE-ConnectionGUID: CLA6K1zWQx6zkRWO/55NFQ==
-X-CSE-MsgGUID: O8VYBQcHTYS4qaFXAoVqSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="55823426"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="55823426"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 03:51:18 -0700
-X-CSE-ConnectionGUID: u6CjAHYBRKOI1F1Vwmiv5Q==
-X-CSE-MsgGUID: CkffUuZ/TOa0uAWa89ht1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="152691358"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa005.fm.intel.com with ESMTP; 13 Jun 2025 03:51:15 -0700
-Date: Fri, 13 Jun 2025 18:44:14 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
-	git@xilinx.com, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Moritz Fischer <mdf@kernel.org>, Rob Herring <robh@kernel.org>,
-	Tom Rix <trix@redhat.com>, Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:FPGA MANAGER FRAMEWORK" <linux-fpga@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: fpga: Also describe clock for gpio
-Message-ID: <aEwA/pFuvbP+acSY@yilunxu-OptiPlex-7050>
-References: <8407ef56b11632c1a7abfce8a4534ed8a8ed56cc.1749809570.git.michal.simek@amd.com>
+	s=arc-20240116; t=1749811473; c=relaxed/simple;
+	bh=nRQZXFMlQ/F7stDH46h8oaoA80Lvp6SfsRdvBG+hgfI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:CC:
+	 In-Reply-To:Content-Type; b=bZdAhE+b9k5VzDZidh3x/JItqbyZ3l0MfyKz9/kItB0Qc2cb2+C1HdmfC0DoD7TVQOsUl/z0jFGPvqAqa38tI92/E2+fQ4ayWoxVVNKllzgFAH7ytskdUExxS5GpZSV5utPF5lGHPqxzwhVPmRJOTqabHcgTiCj9jaqIxhGm5J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bJbZ11ZvMz1GDmn;
+	Fri, 13 Jun 2025 18:42:17 +0800 (CST)
+Received: from kwepemp200004.china.huawei.com (unknown [7.202.195.99])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3B663180064;
+	Fri, 13 Jun 2025 18:44:22 +0800 (CST)
+Received: from [10.174.186.66] (10.174.186.66) by
+ kwepemp200004.china.huawei.com (7.202.195.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 13 Jun 2025 18:44:21 +0800
+Message-ID: <a4435153-eb55-4160-9b46-aa937cffa575@huawei.com>
+Date: Fri, 13 Jun 2025 18:44:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8407ef56b11632c1a7abfce8a4534ed8a8ed56cc.1749809570.git.michal.simek@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] smb: client: fix first failure in negotiation after server
+ reboot
+From: "zhangjian (CG)" <zhangjian496@huawei.com>
+To: <stfrench@microsoft.com>, <smfrench@gmail.com>, <longli@microsoft.com>,
+	<wangzhaolong1@huawei.com>, <metze@samba.org>, <dhowells@redhat.com>,
+	<pc@manguebit.org>
+References: <32686cd5-f149-4ea4-a13f-8b1fbb2cca44@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-cifs@vger.kernel.org>
+In-Reply-To: <32686cd5-f149-4ea4-a13f-8b1fbb2cca44@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemp200004.china.huawei.com (7.202.195.99)
 
-On Fri, Jun 13, 2025 at 12:12:52PM +0200, Michal Simek wrote:
-> Axi gpio is going to have clocks as required property that's why it should
-> be also described in bindings which are using axi gpio node.
-> 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
-> 
-> Changes in v2:
-> - New patch to fix reported as issue by the second patch
-> - https://lore.kernel.org/r/174954437576.4177094.15371626866789542129.robh@kernel.org
-> 
->  Documentation/devicetree/bindings/fpga/fpga-region.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.yaml b/Documentation/devicetree/bindings/fpga/fpga-region.yaml
-> index 77554885a6c4..7d2d3b7aa4b7 100644
-> --- a/Documentation/devicetree/bindings/fpga/fpga-region.yaml
-> +++ b/Documentation/devicetree/bindings/fpga/fpga-region.yaml
-> @@ -316,6 +316,7 @@ examples:
->          reg = <0x40000000 0x10000>;
->          gpio-controller;
->          #gpio-cells = <2>;
-> +        clocks = <&clk>;
+After fabc4ed200f9, server_unresponsive add a condition to check whether 
+client need to reconnect depending on server->lstrp. When client failed 
+to reconnect in 180s, client will abort connection and update server->lstrp 
+for the last time. In the following scene, server->lstrp is too 
+old, which may cause failure for the first negotiation.
 
-This file is mainly for fpga-region bindings. So I don't think we have
-to strictly align with the example IP block binding every time it has
-an update.
+client                                                 | server
+-------------------------------------------------------+------------------
+mount to cifs server                                   |
+ls                                                     |
+                                                       | reboot
+    stuck for 180s and return EHOSTDOWN                |
+    abort connection and update server->lstrp          |
+                                                       | sleep 21s
+                                                       | service smb restart
+ls                                                     |
+    smb_negotiate                                      |
+        server_unresponsive cause reconnect [in cifsd] |
+        ( tcpStatus == CifsInNegotiate &&              |
+	            jiffies > server->lstrp + 20s )        |
+        cifs_sync_mid_result return EAGAIN             |
+    smb_negotiate return EHOSTDOWN                     |
+ls failed                                              |
 
-Thanks,
-Yilun
+The condition (tcpStatus == CifsInNegotiate && jiffies > server->lstrp + 20s)
+expect client stay in CifsInNegotiate state for more than 20s. So we update 
+server->lstrp before last switching into CifsInNegotiate state to avoid 
+this failure.
 
->        };
->      };
->  
-> -- 
-> 2.43.0
-> 
-> 
+Fixes: fabc4ed200f9 ("smb: client: fix hang in wait_for_response() for 
+negproto")
+Signed-off-by: zhangjian <zhangjian496@huawei.com>
+---
+ fs/smb/client/connect.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+index 28bc33496..f9aef60f1 100644
+--- a/fs/smb/client/connect.c
++++ b/fs/smb/client/connect.c
+@@ -4193,6 +4193,7 @@ cifs_negotiate_protocol(const unsigned int xid, struct cifs_ses *ses,
+ 		return 0;
+ 	}
+ 
++	server->lstrp = jiffies;
+ 	server->tcpStatus = CifsInNegotiate;
+ 	spin_unlock(&server->srv_lock);
+ 
+-- 
+2.33.0
 
