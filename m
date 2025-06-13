@@ -1,128 +1,171 @@
-Return-Path: <linux-kernel+bounces-685942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1181AAD90C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:06:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3B6AD90CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C241D1E3829
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FB73A3DB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A241DF73A;
-	Fri, 13 Jun 2025 15:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4DTK97L"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D52E1DED5F;
+	Fri, 13 Jun 2025 15:08:26 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0541A5BBD;
-	Fri, 13 Jun 2025 15:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F40149DE8;
+	Fri, 13 Jun 2025 15:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749827197; cv=none; b=Q7jbf6v9N0YBp2THoVRC6ScL6AViwH8DJUeikKPLSovHww7H1UMcCVknI1hv644ra4M3Nvey/Hhm3MlwZTq3ixlUGlaaGh7widuMkn48aCIYF8R+GXcGYS+mCTWfGwU275cKmSA4Hrvy05x94EGP0T82Gn5CFDi180lahseBj08=
+	t=1749827305; cv=none; b=ljrQsn3CMxZQmnuda7/evhKom97yWZiptQgXC8bKb17qPHEHVYImI3nXgr+m+RFHf8rTvPE93iyS1mnhzFa02J7pzjvP/JshDY0gdNWChXGK9uJB0YXuUZ651LSIewAQA34TUovYdF9CkDem9vm/H+e77Z45We+xzhFbWSP3s1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749827197; c=relaxed/simple;
-	bh=DzWuE22vL1YP8zSHbfP7Qpjs9nzrUqlrq34nmlb01RA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNei1UugsVTWfi1mrETIKjjkTIvr7xTSmqI9XAd3XFMz+HhCD+xtyz8ZXz91GuoDvPX49yCXV9dLeRjash23oC/sRmi4pCmop5KVN9VvvM64qs3YMXDbx5lAZ7kkKAZcgVSR3sYufuw3r9vhYKo1udykCm2Be8ad+PxAY5Cdm/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4DTK97L; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-312e747d2d8so2911456a91.0;
-        Fri, 13 Jun 2025 08:06:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749827195; x=1750431995; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4uBBexglmDg860eeLxvF6Ft+pxKPH1DbiU+A4sUq4Hk=;
-        b=Q4DTK97L+suPraLAIsC2rcBJ2DUN/4QqJuQvBfJMeGUYXeAXlhElIFj4DLWm2/Yocs
-         cQtJMsLAIjuIjRX9snM9lZLw97yoPr5VEwK/hzHpwup54qeNh3lv20Oz5N952F/nMbyB
-         qLHFOg6Pjh7acykg613UJx83PLDy8C4HAoqD0zFC5X8CH+gcDyWzdwctxrOtDMONdsJi
-         9QxCVz0EwVhUb7QkzmKo0tRADoqCY7ra25/LMlf827XEy+UNNWekt7DjlaMg3Ebn8aUg
-         G0A/aNvlUsmYc0fV9PhabK+mk+mHs6+BjhCNagzblpAum037HFiKeeRhNBQ7C9H7+MqL
-         JvEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749827195; x=1750431995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4uBBexglmDg860eeLxvF6Ft+pxKPH1DbiU+A4sUq4Hk=;
-        b=YtpmqofNICL5zdbEODPOLNYKKT/1Urq8NqEjBwQzqjqAMUst7xCEH4xR/3+jjFE4O2
-         r3ySsjbliA5VN2LGMDMBnoQ+mbYHPcGE1Z2zEZ0RuObvNnEuajJiv6aEa4DlJ7GTwoah
-         xd1clxePGwrh2oV2ssg2xBvO+RlMj4Ib7ofNXW9XPjLW2SrfK6M3/cWwI2nmc02tllbO
-         OOSvesbJgHraLK4KVCfc1eBJVqzmrNqjxxtFFppAxKiCqR5pdRo500bVRrX6F2Bf5Di9
-         hdrkecREqBOKwCBiToyzWq3vsn3GQHcWEvC4XoEvXQLpDcK5CZ8dTaKNAOrPJ5A+4BTl
-         CpVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrLB/Fui9LzUt/rTrZ8gcO9EPqR+zx3AXQ1Is1tVbh2wr8UREGTE/bBQLQ5G+Qd9jmvxQvnZjKhNxqfME=@vger.kernel.org, AJvYcCWef66kSLNOtfyXI5nyPK2QuHpf94SGS32SNZi4SnJUFh+EX9nVySwjWPmKZrsc2ZneTLcUXg65HrPU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZwgI/7qg5/3znD63E2SBAMnreAwGBdXHNBffGqCp67i2ZypSm
-	H4x8FmfWhh0W0y1tPc0d3pofJFaKz2RL6kx9ozhn0qifq4ojLdeIahdy
-X-Gm-Gg: ASbGncutUkrap6ihKP9zEmvSHjnrbtuz1peZfBMutVs8vYdoGdJV8WuC2pNlqmp6+Px
-	L1uNHOGNG29iMDLH4AxS/xmG+tIPC3U8bo6cr6i3QLEVMUYMojUlZb1nPpDKZFWsQTm7LpOgkYV
-	oRz572pdFv+kGunK9nzsXpvrUjMqAH5jaRkLLg1FkdC85H1JQzhrB2U2OSumG48B9ZKS2j9wsOh
-	k11rAkcmp9GGtqv6jo3hv3s5Hnpz60qw5swF8fcdhcE+BneHU1MESgB4Om0TpyKSij6bJelFCN1
-	6M5ga5U/Bm4+6y7Onh2T3CXgxi7PZixhCE5LJrk+zvPgWYebL3mlbmYNKeRi
-X-Google-Smtp-Source: AGHT+IHrDxh6U4VAfIfK65vuTtcjHspUUqpNcD7PvyW2ItZ3xJVTxhDo3I8Q61np12P96HXNsZ4NXw==
-X-Received: by 2002:a17:90a:e184:b0:2fa:42f3:e3e4 with SMTP id 98e67ed59e1d1-313e9036d04mr1456076a91.3.1749827194621;
-        Fri, 13 Jun 2025 08:06:34 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:838f::dead:c001])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1b499cbsm3885857a91.26.2025.06.13.08.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 08:06:34 -0700 (PDT)
-Date: Fri, 13 Jun 2025 12:06:28 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: linux-rockchip@lists.infradead.org
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RESEND RFC PATCH v4 5/5] phy: rockchip-pcie: Adjust read mask and
- write
-Message-ID: <b32c8e4e0e36c03ae72bff13926d8bdd9131c838.1749827015.git.geraldogabriel@gmail.com>
-References: <cover.1749827015.git.geraldogabriel@gmail.com>
+	s=arc-20240116; t=1749827305; c=relaxed/simple;
+	bh=vnWsm4LRUsXGvvlcvq/aWEudAYhnE6+wMQQnlbygm8o=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=swzJ6zO4ZxoQLkc/bQfQyEShBSoLp7rMU33yXVX4DwJtKLh5OAwo5n4/uQ/hp0ULDO0wDt8/J9hz6tJF3sofdENoEQiDBh9xhUVIdghsuPmrNxvoYnAt7xfXPGSxw9fohgnFSbdjvIZJgESV6gssZ2nz8K/AInSZT7KKywY8sEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:58800)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uQ60r-00DYaa-Ow; Fri, 13 Jun 2025 09:08:13 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:44690 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uQ60q-00A6I1-O7; Fri, 13 Jun 2025 09:08:13 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Paul Moore <paul@paul-moore.com>,  Jann Horn <jannh@google.com>,
+  Richard Guy Briggs <rgb@redhat.com>,  "Serge E. Hallyn"
+ <serge@hallyn.com>,  Kees Cook <kees@kernel.org>,  jmorris@namei.org,
+  Andy Lutomirski <luto@kernel.org>,  morgan@kernel.org,  Christian Brauner
+ <christian@brauner.io>,  linux-security-module@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+	<878qmxsuy8.fsf@email.froward.int.ebiederm.org>
+	<202505151451.638C22B@keescook>
+	<87ecwopofp.fsf@email.froward.int.ebiederm.org>
+	<CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
+	<87wmagnnhq.fsf@email.froward.int.ebiederm.org>
+	<202505201319.D57FDCB2A@keescook>
+	<87frgznd74.fsf_-_@email.froward.int.ebiederm.org>
+	<CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
+	<87zff6gf17.fsf@email.froward.int.ebiederm.org>
+	<CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
+	<CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
+	<CAKPOu+-S5C59X8zW=6keYAsHecketOBzMbb3XXDnLTc0X1nBhA@mail.gmail.com>
+Date: Fri, 13 Jun 2025 10:07:44 -0500
+In-Reply-To: <CAKPOu+-S5C59X8zW=6keYAsHecketOBzMbb3XXDnLTc0X1nBhA@mail.gmail.com>
+	(Max Kellermann's message of "Wed, 11 Jun 2025 16:23:56 +0200")
+Message-ID: <87jz5fbry7.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1749827015.git.geraldogabriel@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-XM-SPF: eid=1uQ60q-00A6I1-O7;;;mid=<87jz5fbry7.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX19DS5hI3QZXTnlYT7NATr6IQyCR/t/vFwc=
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4714]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Max Kellermann <max.kellermann@ionos.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 550 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 4.3 (0.8%), b_tie_ro: 2.9 (0.5%), parse: 1.29
+	(0.2%), extract_message_metadata: 15 (2.6%), get_uri_detail_list: 2.4
+	(0.4%), tests_pri_-2000: 5 (0.9%), tests_pri_-1000: 2.1 (0.4%),
+	tests_pri_-950: 1.02 (0.2%), tests_pri_-900: 0.79 (0.1%),
+	tests_pri_-90: 55 (9.9%), check_bayes: 53 (9.7%), b_tokenize: 6 (1.2%),
+	 b_tok_get_all: 8 (1.5%), b_comp_prob: 2.7 (0.5%), b_tok_touch_all: 33
+	(6.0%), b_finish: 0.69 (0.1%), tests_pri_0: 454 (82.6%),
+	check_dkim_signature: 0.44 (0.1%), check_dkim_adsp: 13 (2.4%),
+	poll_dns_idle: 0.38 (0.1%), tests_pri_10: 2.3 (0.4%), tests_pri_500: 7
+	(1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, christian@brauner.io, morgan@kernel.org, luto@kernel.org, jmorris@namei.org, kees@kernel.org, serge@hallyn.com, rgb@redhat.com, jannh@google.com, paul@paul-moore.com, max.kellermann@ionos.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-Section 17.6.10 of the RK3399 TRM "PCIe PIPE PHY registers Description"
-defines asynchronous strobe TEST_WRITE which should be enabled then
-disabled and seems to have been copy-pasted as of current. Adjust it.
-While at it, adjust read mask which should be the same as write mask.
+Max Kellermann <max.kellermann@ionos.com> writes:
 
-Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
----
- drivers/phy/rockchip/phy-rockchip-pcie.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> On Wed, Jun 11, 2025 at 2:19=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+>> Aside from a tested-by verification from Max, it looks like everyone
+>> is satisfied with the v2 patch, yes?
+>
+> Sorry for the delay. I tested Eric's v2 patch and it solves my
+> problem. His patch is nearly identical to mine, it's only a bit more
+> intrusive by removing the weird __is_setXid functions that never made
+> sense. I welcome that; I wasn't confident enough to do that and tried
+> to make the least intrusive patch.
+>
+> Eric, I'm glad you changed your mind and no longer consider my work
+> "pure nonsense" and "pointless".
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockchip/phy-rockchip-pcie.c
-index 48bcc7d2b33b..35d2523ee776 100644
---- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-+++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-@@ -30,9 +30,9 @@
- #define PHY_CFG_ADDR_SHIFT    1
- #define PHY_CFG_DATA_MASK     0xf
- #define PHY_CFG_ADDR_MASK     0x3f
--#define PHY_CFG_RD_MASK       0x3ff
-+#define PHY_CFG_RD_MASK       0x3f
- #define PHY_CFG_WR_ENABLE     1
--#define PHY_CFG_WR_DISABLE    1
-+#define PHY_CFG_WR_DISABLE    0
- #define PHY_CFG_WR_SHIFT      0
- #define PHY_CFG_WR_MASK       1
- #define PHY_CFG_PLL_LOCK      0x10
--- 
-2.49.0
+As you pointed out in that case my analysis of your code was incorrect.
+
+Further I wrote this patch when I finally realized what is going on and
+that the case you are dealing with is an actual bug in the current
+code and not some kind of enhancement or extension.
+
+> But one problem remains: in the same email, you demanded evidence that
+> userspace doesn't depend on the current behavior. However, in your
+> patch description, you hand-waved that away by "I don't expect anyone
+> to care". What happened to that?
+
+
+The analysis of __is_setuid and __is_setgid that allowed me to remove
+them helped quite a lot.
+
+The analysis makes it clear that the code change is semantically safe
+so we don't loose anything by not mucking with permissions.
+
+The analysis shows the code is good comprehension and maintenance and
+not just for your case.  It also makes it clear why not supporting your
+case is a bug, and frankly a regression in the current code. (A 20 year
+old regression so that doesn't carry much weight but still a
+regression).
+
+A related analysis in another parallel thread mostly concluded that for
+brpm->unsafe in general it is a better user experience to terminate the
+exec with a permission error instead of continuing the exec.  Exception
+ptrace.
+
+Part of my resistance was the initial reading that your change was
+trying to escape the unsafe downgrading of permissions, instead of
+showing that it was safe to keep the permissions.
+
+With the reminder that no one should even be exercising the permission
+downgrading case, it became clear that changing the little bit that is
+safe should not affect may users at all.
+
+Failing the exec rather than downgrading permissions will also make
+a good test to see if anyone cares about this functionality.  I do still
+believe we should tread carefully.
+
+Hopefully that makes things clear.
+
+Eric
 
 
