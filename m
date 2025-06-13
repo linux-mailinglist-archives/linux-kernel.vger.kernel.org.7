@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-685322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7842FAD8808
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:35:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E35BAD8876
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0DC73B7098
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD151189812C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2785291C33;
-	Fri, 13 Jun 2025 09:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="HB6cxMbu"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE312C1599;
+	Fri, 13 Jun 2025 09:50:52 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6040279DDE;
-	Fri, 13 Jun 2025 09:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EB41E0DE8;
+	Fri, 13 Jun 2025 09:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749807233; cv=none; b=oKAIArbZ5X7RtLKBPByahkcNRdStaDegx026+x49YDbLiesDpNptUd/h3ip4hTLL9deHZhLn/zUEiyL9xLzkAJ4Nrh2NVDS6+T3jdZlQmV1ugA8lGApGEJsTEKaYK6a/SfFU7Tzu40HcHN91yWpHLs7TyBrROT/7Jns0i1PaLVM=
+	t=1749808251; cv=none; b=c0uJCFwb4OrMfeswTTAmpeJ3JMqlQC+YhmOzRuatZXZWbbNhs30FBRwuChCPaN85X9FRzdgybUPgkZJlYFNNokSIAbx/kunu1Lu1i5kzCKcuH6eR+2uxSUHvA9icBMejxWHY/qIdX1mz+I9c5hAjtXf7sYVd52qeLqBQJO5ZMtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749807233; c=relaxed/simple;
-	bh=Eqp+V72EaWNPkZw4qjCDr556H/HNa3qOlLz/oQ2LYwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttWRooqZ+Fhsagnzz1yQS2qZ20V/7qz9vYNooPC3XB8PaH0ZI34hPF4fV102BEM11XZsuMDNFGBqqQ0RsoQ97geaN6ix4K15E4Gua2KCTw0sSRumSXeII/qURuy+42xWBF2cLacNcE/NnpDKcbNxLGnAi/rWvpcpOTh7GiW58qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=HB6cxMbu; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RJ9X0kaBblbNG+aXoLy8U3PCQzc+sowmQF/zXxcEjiA=; b=HB6cxMbu2/d1Vxe9k+FnVdQXFj
-	aTJD7F26yZ5qI/urpQYXZV9CWqeiRKaAk7geieB9vEvYglwJ9Zpk/I4Hf4jjWdEUk1uhn5Om3kHS7
-	f111l4Wq7E8Ql2//cf2dpBhpPvP+7AWuE7esZNVXL80czXFgPDGOOsc9+Vf6ciA9ChdGkNAejUYl5
-	mE4G+domQ3LuBvF+mQZdGKGo9k7bdmek0PzVsgmp0oqJnqDIOfQkVMZzZok3e654sv2gd0ki9+WOj
-	b8hNSoaYGjl121BDcBWvhdfzh3FDhlUfOoaioR64+7VLSrko/zIhjESkNM3qDvWgudUEotTaYSPSo
-	YcizbaGg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uQ0n2-00Csua-0T;
-	Fri, 13 Jun 2025 17:33:37 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Jun 2025 17:33:36 +0800
-Date: Fri, 13 Jun 2025 17:33:36 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Cc: clabbe.montjoie@gmail.com, davem@davemloft.net,
-	linux-crypto@vger.kernel.org, wens@csie.org,
-	jernej.skrabec@gmail.com, samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] crypto: sun8i-ce - fix nents passed to dma_unmap_sg()
-Message-ID: <aEvwcABHs8tV9SHN@gondor.apana.org.au>
-References: <20250519151350.3442981-1-ovidiu.panait.oss@gmail.com>
+	s=arc-20240116; t=1749808251; c=relaxed/simple;
+	bh=2SxLHN8+izHSO99LNfa9CAd7o+biTDAqyFK75kRDWk4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I3gG26V5xOgV6Ilx3l2lltu+wWhu06sWW2sl8YAuuQxgm5ESYraoYfBKmnqV/gWzLtg+sKCQk+aExz/gCUQJCio/1uajzlCGIj+7GjS/ftiif9grpuauVwEGk/8chpiJvKQQxNQi4c7tQlAjIGK9wmRMCMtZOMmyd8HMfUNyIKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bJZ0q6dqXzYl4KT;
+	Fri, 13 Jun 2025 17:31:55 +0800 (CST)
+Received: from a017.hihonor.com (10.68.27.165) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
+ 2025 17:33:55 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a017.hihonor.com
+ (10.68.27.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
+ 2025 17:33:55 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Fri, 13 Jun 2025 17:33:55 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: Christoph Hellwig <hch@infradead.org>
+CC: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, "kraxel@redhat.com"
+	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
+	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "amir73il@gmail.com"
+	<amir73il@gmail.com>, "benjamin.gaignard@collabora.com"
+	<benjamin.gaignard@collabora.com>, "Brian.Starkey@arm.com"
+	<Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>,
+	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "wangbintian(BintianWang)"
+	<bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, liulu 00013167
+	<liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
+Subject: RE: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Topic: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Index: AQHb1G1ol+FT389RFkuW+lwB3adoKrPw4BKAgAADywCAAAF8AIAE6kCg//+rigCABEW6AIAA1IFwgAFUd4CABPdqMA==
+Date: Fri, 13 Jun 2025 09:33:55 +0000
+Message-ID: <34c2dbc06d074ffbb8f920418636bafc@honor.com>
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org> <5d36abace6bf492aadd847f0fabc38be@honor.com>
+ <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
+ <aEZkjA1L-dP_Qt3U@infradead.org> <761986ec0f404856b6f21c3feca67012@honor.com>
+ <aEg0aYQJ9h_tyum9@infradead.org>
+In-Reply-To: <aEg0aYQJ9h_tyum9@infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519151350.3442981-1-ovidiu.panait.oss@gmail.com>
 
-On Mon, May 19, 2025 at 06:13:48PM +0300, Ovidiu Panait wrote:
-> In sun8i_ce_cipher_unprepare(), dma_unmap_sg() is incorrectly called with
-> the number of entries returned by dma_map_sg(), rather than using the
-> original number of entries passed when mapping the scatterlist.
-> 
-> To fix this, stash the original number of entries passed to dma_map_sg()
-> in the request context.
-> 
-> Fixes: 0605fa0f7826 ("crypto: sun8i-ce - split into prepare/run/unprepare")
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-> ---
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+DQo+IA0KPiBPbiBNb24sIEp1biAwOSwgMjAyNSBhdCAwOTozMjoyMEFNICswMDAwLCB3YW5ndGFv
+IHdyb3RlOg0KPiA+IEFyZSB5b3Ugc3VnZ2VzdGluZyBhZGRpbmcgYW4gSVRFUl9ETUFCVUYgdHlw
+ZSB0byBpb3ZfaXRlciwNCj4gDQo+IFllcy4NCg0KTWF5IEkgY2xhcmlmeTogRG8gYWxsIGRpc2sg
+b3BlcmF0aW9ucyByZXF1aXJlIGRhdGEgdG8gcGFzcyB0aHJvdWdoDQptZW1vcnkgKHJlYWRpbmcg
+aW50byBtZW1vcnkgb3Igd3JpdGluZyBmcm9tIG1lbW9yeSk/IEluIHRoZSBibG9jayBsYXllciwN
+CnRoZSBiaW8gc3RydWN0dXJlIHVzZXMgYmlvX2lvdl9pdGVyX2dldF9wYWdlcyB0byBjb252ZXJ0
+IGl0ZXJfdHlwZQ0Kb2JqZWN0cyBpbnRvIG1lbW9yeS1iYWNrZWQgYmlvX3ZlYyByZXByZXNlbnRh
+dGlvbnMuDQpIb3dldmVyLCBzb21lIGRtYWJ1ZnMgYXJlIG5vdCBtZW1vcnktYmFzZWQsIG1ha2lu
+ZyBwYWdlLXRvLWJpb192ZWMNCmNvbnZlcnNpb24gaW1wb3NzaWJsZS4gVGhpcyBzdWdnZXN0cyBh
+ZGRpbmcgYSBjYWxsYmFjayBmdW5jdGlvbiBpbg0KZG1hX2J1Zl9vcHMgdG8gaGFuZGxlIGRtYWJ1
+Zi0gdG8tYmlvX3ZlYyBjb252ZXJzaW9uLg0KDQpJbnRlcmVzdGluZ2x5LCBpZiBzdWNoIGEgY2Fs
+bGJhY2sgZXhpc3RzLCB0aGUgbmVlZCBmb3IgYSBkZWRpY2F0ZWQNCklURVJfRE1BQlVGIHR5cGUg
+bWlnaHQgZGlzYXBwZWFyLiBXb3VsZCB5b3UgbGlrZSB0byBkaXNjdXNzIHBvdGVudGlhbA0KaW1w
+bGVtZW50YXRpb24gdHJhZGVvZmZzIGhlcmU/DQoNClJlZ2FyZHMsDQpXYW5ndGFvLg0K
 
