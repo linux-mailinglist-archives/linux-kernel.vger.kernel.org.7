@@ -1,215 +1,234 @@
-Return-Path: <linux-kernel+bounces-685357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2549FAD8884
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF35AD889A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B343B20B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:52:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C914C16E5A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED202C159F;
-	Fri, 13 Jun 2025 09:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623DC2C15B2;
+	Fri, 13 Jun 2025 09:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HM4OzTYn"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Jx9Pmm"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230582C1580;
-	Fri, 13 Jun 2025 09:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D1E2C158B;
+	Fri, 13 Jun 2025 09:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749808387; cv=none; b=OgZelyDMbg+JpJwCSfsiwqpvY50egvGIFu8LZ5hrmJc0/l8mRQbG0Kkzs7/CnRsNEcO89b6l6LcKdoTfsIK2HhiglEl5fKIlXV3HhJ59FQym0TCHluAPgDaTSb6aIEtBv4fIXLcMKE7ywxfE4GWovzAfzIJTk5ZWrcI8MJSmh7k=
+	t=1749808597; cv=none; b=F8y2ANaFEiM0T34XMwGLhs7GOgW+3uGeCLlSFoYbrePbxaSGnIDkLjUya+shaxkpCM2EBORkKAHb0voa9mSGqZiNDarwoffonQj/Z7inlQL8NzaAXPVTwuA3oOCdFpVpNYtTeoecRc6SWKKz8MReLzXu6vJoHj6TZ3hS4QEGL0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749808387; c=relaxed/simple;
-	bh=hUJxX0q5CFfsXoIHx51jTmVpqXAJOxfYSA5FvAAMvgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u614ledyjH05X0Hvk/1kjUVv0L5Xi887MAnfWjtNpb7H9hVuL3MQfTqIyg0bbJtQmY2IEAdNwB/gm2eLiLaZ/Q6jtJdtpteADGmCR8XeCPPUYAODK6x0iwboatzb5EjFuEBrwWD6GdmaaZHylWKkgpGUO9TgK/zZm6Je+Z7b9fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HM4OzTYn; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1749808597; c=relaxed/simple;
+	bh=bPxha2Xcu3gnmDgJ+sO40rP34w3Cu8XjpqJ9R4eEoQE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JsB2pqGEb8OLerU8W3nz1xyo6d9hXFonbUb1b4+f0BsT2XYeLnfXNQQTyC3VtTnG0KecI+10hcwqr/6c0YFUiqGAj44ZizYnnXnyYbwOr12+SpLIVv2IAs0F9XAROU5IrPlHEJHXJzX0hMZbkQomkG2XzWH8aZH0X8NlN88loII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0Jx9Pmm; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4531e146a24so12556125e9.0;
-        Fri, 13 Jun 2025 02:53:04 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a524caf77eso278694f8f.3;
+        Fri, 13 Jun 2025 02:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749808383; x=1750413183; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xyo+7GGR+jO4iGOBW4Z/TKY9eY6R1F/muL7R/tMtDNs=;
-        b=HM4OzTYnZ+yyKuNOM3YeBEIHQf54ebB7fKWNHD0XFfLiNfrKOxBHE9WpWPkpx9InAg
-         3LJELmuSCctMye6w9/XX/KFDaQP8niURdjAEDQUZhYuQe38DAO9uW8EbbFSHn0EVDh5T
-         37fVGrRQuOrRopdJXkTpE3FKBDmG/GbxmSjy3Qv4UsTNp34b5cOM7inWRYisWBWWhahu
-         BATfALT/WcQbrTk/bGNCWCyDzgYBOCmyxfi692gotl+zzmQy9fOBAFt2e6PcK2t9h6rl
-         CD0p5sAuOu1HcJAYKQiXkCKBUvQZZehLvLSUPQn4NCy6A4yZqtyTgr4K9V92lLc9E617
-         n1ww==
+        d=gmail.com; s=20230601; t=1749808594; x=1750413394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nce6Ym0vqjs78qejFB/GFy83NREwUyPEHp0148HaRg8=;
+        b=d0Jx9PmmTZ+ZGNXo6QEs+PON7TBaSV3Gq6kISJaoBtuk/mfDjfZjbqfAklNxUMgnZF
+         lVbCcsSQQ3WfVbiR3Rs5U079bREmH77JPh7Pz3WKlCiV31rW0MfDspJK6tLC7S42+HJr
+         ra+eA0b/ZaBk8qqqxEmJzqcdqBqMmO5u+AJChkD6l7GVSnvtWN4+BG3xCrX3Z7c9Tj9r
+         5H/KyZcHBN5pEgrENJoOINfSx9hNEdU0YVFYfLM28Q8vLKfkHXSHeA7+kOFYgqh7diyZ
+         CP0H4VQ1+2GjSzuKbDJBmx1ZIRyQjDGIzthDn96mj0t1pme9NMayf33xBf+fvcez8RSu
+         gGmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749808383; x=1750413183;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xyo+7GGR+jO4iGOBW4Z/TKY9eY6R1F/muL7R/tMtDNs=;
-        b=nBG/LvXy9cVhy9refBh3yyMh5lNc3PJ18GeFrS/J4hcF7+uFMljSWWM8XcB8ztpQtf
-         E/N7cFIpAjDyCVIxMgN427LXVKvqNL3GImdJ9XK0hxpF68o4/x5GuSfAH/at6akwGZXX
-         wns75vpT9nYBxMj52+95w7UYAuVluk3DiqduK16P5++ziPkHvytX1sPVGF4m5P3EChM2
-         9AJ37bXBeKWkc1auqW+fiGek1jn9egn5DHbg52Q42cvT/NSxB/TuyqPZjzCJ4bElbbvv
-         LjOFDZSXV7DPxb3hocvyLNDjQcHW6iXXIBzNShQ6Weqsg5d5HJrb8UFTzg9LuzL3WZVf
-         Y98g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/vCsSSDbY+nZ0s3qZYSIR6MmbOP+jsjKUnNhf22yIhtidJjOTx10jp9cogz6iSKe3s8VzZOqpaqBhRc0=@vger.kernel.org, AJvYcCXVgZjB7xIsTXYl+Ue8z5blfKy74jx9XOaPae8c2WfoAG19PiVFDSfdtl749BdAibOaxGFL8qXK2ZIBhKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygYPCozpLUxscD5A4ysx6nQ5j0lyDGmzynVi0rely2Hx+t17KE
-	DLQogX92g40MLOU7y/Njbz7BvKP0bZFfDdKm06sOdMg88r4xEPnTXyv2
-X-Gm-Gg: ASbGnctehMnfFUkeE5nkgwmCPn8hz+LknSsnBjoHa6RaE6JAAEFlHVKRyFS5oHc/Xvr
-	T235apPM0LjmkYSg9QyVGhdYgTBh/sCQ4lCEccwHIGLqSwzBT+ZBGBhd9dhTMns8ZQMFYVa9p2T
-	/uTkKv95UY2oFE8wy5voNbL4fkegmmndSBX8e2tGpZdKsom+ZryE5zg4y8mvsmIb0lCbvshz+DM
-	OqFdh1yK+uXG07n/pELXtGoeVGSsLp3QjJK5lnRzKcKT1O8YwPtGL7HEyPC1LoyCiwN5xksiBcb
-	N3J3nn/3QFhMpoocDtf/Lpao4bRGChxRqzSc33JSFHBTIXPdQmkSddVCb54jeSdy/c1H
-X-Google-Smtp-Source: AGHT+IFdb7Ay3ozgwpgU4ZdzOdTPlDR45RKqzBhxzOQnxYFLKBh3pa+w++/vw82iseUkRveafMPbyw==
-X-Received: by 2002:a05:600c:1906:b0:451:e394:8920 with SMTP id 5b1f17b1804b1-45334b76ae0mr20407155e9.27.1749808383142;
-        Fri, 13 Jun 2025 02:53:03 -0700 (PDT)
-Received: from [192.168.0.100] ([188.27.131.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e13c19esm47183345e9.25.2025.06.13.02.53.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 02:53:02 -0700 (PDT)
-Message-ID: <e882896f-1350-4f6e-a878-361a6e72426b@gmail.com>
-Date: Fri, 13 Jun 2025 12:52:49 +0300
+        d=1e100.net; s=20230601; t=1749808594; x=1750413394;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nce6Ym0vqjs78qejFB/GFy83NREwUyPEHp0148HaRg8=;
+        b=jS8j41CZK56lWXHoQgEXjQJoZsYT/n5jIlK1hK2+36GCp9Y7VOQH/pEkpwrnm6lSME
+         gRK5nqbEo1v3/g3O6IKkIA0i1UihqoVTcCvHJYZRTsGN1vziINaek6t9jbOk9ROWzjVd
+         T0qaxvFZbtvzWcsLQ5NdmNLv0d/jiolbWBLxA694nWhPsQ/OjMpfXNU7/vEIRBrmT1W3
+         nGsCD597Phm02Ev6+cll+6ZXgSL+zjJKJWrFbD8Qx4+Vidaid+faV+zi0x37PkvZDW6n
+         EE+0m60R4Uv85YqiuP3LninJSWRiJAWw4+xKaHV3HJEoedPPky3YKytjonp3Ja54Bw6Y
+         YR1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVagZ4z8FaAmB0BbRYoR5dlmPj7KEpNThg+/CSP2UKLwqxcFbnpn2a8eqa7pVKxFWGd9xfvhdA30FjxC8c=@vger.kernel.org, AJvYcCXhqSLioqLysuYtET6bnY2FLVcDl6xjQ1lOz9aY2cnEXOuTAIg1zYqXvBHIKGv4g7nqyX7dYMjd@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywolg5fT1fcNOLU8aZbWPyVRX9dHrRKvWJlY/gEGShKzQZ0H688
+	zhdBwt5v7dr+oX9bOMCY6BZHIzfT+vuVAdJT/BHt3hO4xbKuZpzIgOBO
+X-Gm-Gg: ASbGnct0d32pwR41/xSnSbZzNA+QZO64fXoUhDZdc863oMBUeyFjm+yaUijl4ZwZTFJ
+	01r2YNe08EGTgiPRtAUCOKD34VnFe4FGM4PhcJLcW202QCk18+DrInOHgEPTsrMJWg5D+x1hGiP
+	g98vuq6h0JZp0MvswLXKQYnOuBW8kH5UbAtNCkzH3HJoTMlp32AZbdaQACJbhzytZzuHmc8iKAu
+	vnSC9JDgdH34zMM1126TIdkan+5iuBABB5i4kj8pJIFHQGvUCiCkGUGwIb2IQXDRCSrWxJSkkTY
+	uagxleksHmH8tkfiOI9G1rF3+YRDvcs5u3Ezz0vkSHY/QSSQIUikKhP/Foj7mIcRhRdBmG7rFSF
+	S1z4F4Hzj5E1RAWuK9JKaKJhXQCmAY6ks2kJPc5+RlxVRVRqHm6fWAALNavmgiJWR9jHqZmeF1A
+	==
+X-Google-Smtp-Source: AGHT+IEziPQdq0KF6UI5r4uYSQ+fvzC2O/JjbNzzT8lc5Gibr2CfkffMVFgazAI3BwVOyYBJIIl3ng==
+X-Received: by 2002:a05:600c:a10b:b0:439:9a40:aa27 with SMTP id 5b1f17b1804b1-45334b2b435mr6180485e9.5.1749808593874;
+        Fri, 13 Jun 2025 02:56:33 -0700 (PDT)
+Received: from thomas-precision3591.home (2a01cb00014ec300ef49063bf04e52e9.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:ef49:63b:f04e:52e9])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4531febf905sm88978955e9.0.2025.06.13.02.56.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 02:56:33 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] (drivers/ethernet/atheros/atl1) test DMA mapping for error code
+Date: Fri, 13 Jun 2025 11:54:08 +0200
+Message-ID: <20250613095516.116486-1-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250612183234.51a959e9@kernel.org>
+References: <20250612183234.51a959e9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] media: rc: ir-spi: constrain carrier frequency
-To: Sean Young <sean@mess.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250611112348.3576093-1-demonsingur@gmail.com>
- <20250611112348.3576093-3-demonsingur@gmail.com>
- <aEnifhd1M6oJjy1S@gofer.mess.org>
- <24d63ec4-a037-46fd-bbc1-9be2bef34c2b@gmail.com>
- <aEsycgtDxrypTU0v@gofer.mess.org> <aEs0Qr3O5myydP_L@gofer.mess.org>
- <94bc5863-f831-47b6-8bfd-57a807c8fe23@gmail.com>
- <aEvvu2sez981pM6Q@gofer.mess.org>
-From: Cosmin Tanislav <demonsingur@gmail.com>
-Content-Language: en-US
-In-Reply-To: <aEvvu2sez981pM6Q@gofer.mess.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+According to Shuah Khan[1], all `dma_map()` functions should be tested
+before using the pointer. This patch checks for errors after all `dma_map()`
+calls.
 
+In `atl1_alloc_rx_buffers()`, the buffer is deallocated ans marked as such.
 
-On 6/13/25 12:30 PM, Sean Young wrote:
-> On Thu, Jun 12, 2025 at 11:20:28PM +0300, Cosmin Tanislav wrote:
->> On 6/12/25 11:10 PM, Sean Young wrote:
->>> On Thu, Jun 12, 2025 at 09:02:59PM +0100, Sean Young wrote:
->>>> On Wed, Jun 11, 2025 at 11:35:21PM +0300, Cosmin Tanislav wrote:
->>>>> On 6/11/25 11:09 PM, Sean Young wrote:
->>>>>> On Wed, Jun 11, 2025 at 02:23:44PM +0300, Cosmin Tanislav wrote:
->>>>>>> Carrier frequency is currently unconstrained, allowing the SPI transfer
->>>>>>> to be allocated and filled only for it to be later rejected by the SPI
->>>>>>> controller since the frequency is too large.
->>>>>>>
->>>>>>> Add a check to constrain the carrier frequency inside
->>>>>>> ir_spi_set_tx_carrier().
->>>>>>>
->>>>>>> Also, move the number of bits per pulse to a macro since it is not used
->>>>>>> in multiple places.
->>>>>>>
->>>>>>> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
->>>>>>> ---
->>>>>>>     drivers/media/rc/ir-spi.c | 6 +++++-
->>>>>>>     1 file changed, 5 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/drivers/media/rc/ir-spi.c b/drivers/media/rc/ir-spi.c
->>>>>>> index 50e30e2fae22..bf731204c81e 100644
->>>>>>> --- a/drivers/media/rc/ir-spi.c
->>>>>>> +++ b/drivers/media/rc/ir-spi.c
->>>>>>> @@ -21,6 +21,7 @@
->>>>>>>     #define IR_SPI_DRIVER_NAME		"ir-spi"
->>>>>>>     #define IR_SPI_DEFAULT_FREQUENCY	38000
->>>>>>> +#define IR_SPI_BITS_PER_PULSE		16
->>>>>>>     struct ir_spi_data {
->>>>>>>     	u32 freq;
->>>>>>> @@ -70,7 +71,7 @@ static int ir_spi_tx(struct rc_dev *dev, unsigned int *buffer, unsigned int coun
->>>>>>>     	memset(&xfer, 0, sizeof(xfer));
->>>>>>> -	xfer.speed_hz = idata->freq * 16;
->>>>>>> +	xfer.speed_hz = idata->freq * IR_SPI_BITS_PER_PULSE;
->>>>>>>     	xfer.len = len * sizeof(*tx_buf);
->>>>>>>     	xfer.tx_buf = tx_buf;
->>>>>>> @@ -98,6 +99,9 @@ static int ir_spi_set_tx_carrier(struct rc_dev *dev, u32 carrier)
->>>>>>>     	if (!carrier)
->>>>>>>     		return -EINVAL;
->>>>>>> +	if (carrier * IR_SPI_BITS_PER_PULSE > idata->spi->max_speed_hz)
->>>>>>> +		return -EINVAL;
->>>>>>
->>>>>> Just a nitpick.
->>>>>>
->>>>>> I think carrier * IR_SPI_BITS_PER_PULSE could overflow, and then the check
->>>>>> wouldn't work. It might be better to do:
->>>>>>
->>>>>> 	if (carrier > idata->spi->max_speed_hz / IR_SPI_BITS_PER_PULSE)
->>>>>>
->>>>>> However since IR_SPI_BITS_PER_PULSE is 16, which is just a shift left by 4,
->>>>>> I don't think this can be abused in any useful way.
->>>>>>
->>>>>
->>>>> I have another concern regarding overflow, inside ir_spi_tx().
->>>>>
->>>>> DIV_ROUND_CLOSEST() is called with buffer[i] * idata->freq and 1000000.
->>>>> buffer[i] comes from userspace, it's the number of microseconds for this
->>>>> pulse. It's unsigned int. lirc core already checks that each element
->>>>> is not bigger than 500000 microseconds. Issue is, at 500000, it would
->>>>> take a carrier frequency as low as 8590 to overflow the unsigned int.
->>>>
->>>> Interesting, you are right.
->>>>
->>>>> Maybe it would make sense to switch this one to mult_frac()? But we
->>>>> would lose rounding.
->>>>>
->>>>> mult_frac(buffer[i], idata->freq, 1000000)
->>>>>
->>>>> Optionally, we could cast buffer[i] to u64/unsigned long long, and use
->>>>> DIV_ROUND_CLOSEST_ULL.
->>>>>
->>>>> DIV_ROUND_CLOSEST_ULL((u64)buffer[i] * idata->freq, 1000000)
->>>>>
->>>>> Let me know what you think.
->>>>
->>>> I've given it some thought and I'm not sure there is a better solution. It's
->>>> an edge case of course, but we should deal with it correctly.
->>>
->>> Actually could we use check_mul_overflow() for this?
->>>
->>
->> I think we're better off using DIV_ROUND_CLOSEST_ULL(), since after the
->> multiplication, there's a division by 1000000, which might bring us back
->> in 32-bit territory, even if the multiplication overflowed. If we use
->> check_mul_overflow(), we would just invalidate a case that would have
->> worked fine.
-> 
-> I don't have a strong opinion on this, but in the current code the overflow
-> is not detected and garbage is sent, right?
-> 
+In `atl1_tx_map()`, the arleady dma_mapped buffers are de-mapped and an error
+is returned.
 
-Yes, that's the current situation. idata->freq can be at most 8590
-knowing buffer[i] is limited to 500000:
+[1] https://events.static.linuxfound.org/sites/events/files/slides/Shuah_Khan_dma_map_error.pdf
 
-0xFFFFFFFF / 500000 ~= 8590
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/net/ethernet/atheros/atlx/atl1.c | 39 ++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-If we switch to u64 for the multiplication, idata->freq can be larger
-than the u32 max value without overflowing the multiplication:
-
-0xFFFFFFFFFFFFFFFF / 500000 ~= 36893488147420 > 4294967295 (u32 limit)
-
-Now, knowing that buffer[i] is max 500000, and freq is u32,
-the max value of the whole DIV_ROUND_CLOSEST_ULL() call would be:
-
-500000 * 0xFFFFFFFF / 1000000 ~= 2147483648
-
-Which fits fine in u32, seeing how 500000 is half of 1000000.
-
-> 
-> Sean
+diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
+index cfdb546a09e7..d3cd51ccf621 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl1.c
++++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+@@ -1869,6 +1869,14 @@ static u16 atl1_alloc_rx_buffers(struct atl1_adapter *adapter)
+ 		buffer_info->dma = dma_map_page(&pdev->dev, page, offset,
+ 						adapter->rx_buffer_len,
+ 						DMA_FROM_DEVICE);
++		if (dma_mapping_error(&pdev->dev, buffer_info->dma)) {
++			buffer_info->alloced = 0;
++			buffer_info->skb = NULL;
++			buffer_info->dma = 0;
++			kfree_skb(skb);
++			adapter->soft_stats.rx_dropped++;
++			break;
++		}
+ 		rfd_desc->buffer_addr = cpu_to_le64(buffer_info->dma);
+ 		rfd_desc->buf_len = cpu_to_le16(adapter->rx_buffer_len);
+ 		rfd_desc->coalese = 0;
+@@ -2183,7 +2191,7 @@ static int atl1_tx_csum(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	return 0;
+ }
+ 
+-static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
++static int atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	struct tx_packet_desc *ptpd)
+ {
+ 	struct atl1_tpd_ring *tpd_ring = &adapter->tpd_ring;
+@@ -2195,12 +2203,14 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	unsigned int f;
+ 	int retval;
+ 	u16 next_to_use;
++	u16 first_mapped;
+ 	u16 data_len;
+ 	u8 hdr_len;
+ 
+ 	buf_len -= skb->data_len;
+ 	nr_frags = skb_shinfo(skb)->nr_frags;
+ 	next_to_use = atomic_read(&tpd_ring->next_to_use);
++	first_mapped = next_to_use;
+ 	buffer_info = &tpd_ring->buffer_info[next_to_use];
+ 	BUG_ON(buffer_info->skb);
+ 	/* put skb in last TPD */
+@@ -2216,6 +2226,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+ 						offset, hdr_len,
+ 						DMA_TO_DEVICE);
++		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++			goto dma_err;
+ 
+ 		if (++next_to_use == tpd_ring->count)
+ 			next_to_use = 0;
+@@ -2242,6 +2254,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 								page, offset,
+ 								buffer_info->length,
+ 								DMA_TO_DEVICE);
++				if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++					goto dma_err;
+ 				if (++next_to_use == tpd_ring->count)
+ 					next_to_use = 0;
+ 			}
+@@ -2254,6 +2268,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+ 						offset, buf_len,
+ 						DMA_TO_DEVICE);
++		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++			goto dma_err;
+ 		if (++next_to_use == tpd_ring->count)
+ 			next_to_use = 0;
+ 	}
+@@ -2277,6 +2293,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 			buffer_info->dma = skb_frag_dma_map(&adapter->pdev->dev,
+ 				frag, i * ATL1_MAX_TX_BUF_LEN,
+ 				buffer_info->length, DMA_TO_DEVICE);
++			if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++				goto dma_err;
+ 
+ 			if (++next_to_use == tpd_ring->count)
+ 				next_to_use = 0;
+@@ -2285,6 +2303,22 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 
+ 	/* last tpd's buffer-info */
+ 	buffer_info->skb = skb;
++
++	return 0;
++
++ dma_err:
++	while (first_mapped != next_to_use) {
++		buffer_info = &tpd_ring->buffer_info[first_mapped];
++		dma_unmap_page(&adapter->pdev->dev,
++			       buffer_info->dma,
++			       buffer_info->length,
++			       DMA_TO_DEVICE);
++		buffer_info->dma = 0;
++
++		if (++first_mapped == tpd_ring->count)
++			first_mapped = 0;
++	}
++	return -ENOMEM;
+ }
+ 
+ static void atl1_tx_queue(struct atl1_adapter *adapter, u16 count,
+@@ -2419,7 +2453,8 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
+ 		}
+ 	}
+ 
+-	atl1_tx_map(adapter, skb, ptpd);
++	if (atl1_tx_map(adapter, skb, ptpd))
++		return NETDEV_TX_BUSY;
+ 	atl1_tx_queue(adapter, count, ptpd);
+ 	atl1_update_mailbox(adapter);
+ 	return NETDEV_TX_OK;
+-- 
+2.43.0
 
 
