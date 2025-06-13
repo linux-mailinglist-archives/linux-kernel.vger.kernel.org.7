@@ -1,136 +1,215 @@
-Return-Path: <linux-kernel+bounces-685273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D36AD8764
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FBAAD875E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFEE91899A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C02189C525
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B51291C31;
-	Fri, 13 Jun 2025 09:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ACC279DC1;
+	Fri, 13 Jun 2025 09:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ByRxffdd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8tlO3Sw"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E29F291C14
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82AB279DB7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749805972; cv=none; b=jSVWZinmVJljFS3muxLREQrcb+RUe19BjKKMYD+UMPlv+I9Qi+DqdDNK6Ez3PcGdh0zscqHaTXAxyvdxTsl1dKeE+YiOwNFZVX2VRD6q/yZvdQH1AwMH7GFAN528mb5od9cffPJzPnVn3WRzZemEmpnWZl8DaIDfmbiYuncQ8kE=
+	t=1749805951; cv=none; b=t4KcPRwjYLXcIm2jfBCj4qRpvVRrORAjjyhcuBpooR36rGLszolmlQZbQafCdNEI7yuD87LJIoD8ByrDNrD/OblqKamQSjHcOCwBosGXDCuXH50RTr+0+3/bwf0vdZ5H0Kk25VBhBPNFrGViMQfoSRFZrLN7+qOvOTP0Zy+NjOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749805972; c=relaxed/simple;
-	bh=JcZ4v19gX2kUFkdvzaLdGHNOAFxQMJzu6s2oOhupzVw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rQRUtw3w2CijNz5pipCwjQbQXOO90gfyIHb4eVUlnU8sUPdYxpr5jHEGEiG/NJdaR518G6zgzR4AnoYj30/ePlyg7hNphXCwlqopYEtA/ohwh1CC+qnLHZ4sQE9AxFIqpl/9akswlQFtLV/Mc54Sa7QEznBWfXOg8+NA2i9o3yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ByRxffdd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749805969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9V5v2hhS92vtruQ6W0aiyerjvfoOKjhsrOu0VjY3DpQ=;
-	b=ByRxffdd2NswtltRAV0A4VfJRFwuNtyX5PLAaajd8tN4EkgCoOcgG/o1JPbAzVbEZX8bKX
-	MU6ZMxmqObgG2v84qUg0fWqLJY6nFKmpjASyN1y1JQSdn0w5+o+3oNO//n8+ekngtQK06l
-	cAIr177ca5meqMkGnKjH2hHZQRtclSs=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-540--sMewVAcOK2nStRvnldmcg-1; Fri,
- 13 Jun 2025 05:12:44 -0400
-X-MC-Unique: -sMewVAcOK2nStRvnldmcg-1
-X-Mimecast-MFC-AGG-ID: -sMewVAcOK2nStRvnldmcg_1749805963
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03E091956094;
-	Fri, 13 Jun 2025 09:12:43 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.102])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 55B0E195E348;
-	Fri, 13 Jun 2025 09:12:39 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@redhat.org>
-Subject: [RESEND PATCH v13 1/3] sched: Add prev_sum_exec_runtime support for RT, DL and SCX classes
+	s=arc-20240116; t=1749805951; c=relaxed/simple;
+	bh=rhBgtIz5rbF4vZpFi/4hzu5iAms/cKtPyMWFvJqcEMU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eGLyZcO4ZhXX4T4L2A0Suce7htV5EXFQAenhcJ4eYZ3pvWlaGz8XGrzkrCQM2Hla06Mgp5LGYVKxaDTSscXQCk2aalDGYvlHuOLW8RZqWx7JpZMJS7U/KKvPGS9BHraR4RT1Kv7+8IuxUuzw/aHifxaJSFgOd/xByWpbUUXOkVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V8tlO3Sw; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451d3f72391so24899115e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749805948; x=1750410748; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yaEX4dDgKDNxKZX0+vcnih4XjDWoAZY8oCSw4SAHFH8=;
+        b=V8tlO3SwRlknI3jgXnyOSk6WaUnBTGw00l5DTX5LpBcwuZJHrn0w+R/AEUY2FKjh7i
+         0F7zqd0bRK00EWKdkW678WFj8m+bhB+nqKQUrYeyNb1roJVvsApTqAYm+w2E4nLKp5tF
+         E/qmK+Ml4eFPPnXI+jYs4W3DL3OotV8+0/ZC45gjTGNvv89XXh+CmgS6eiCLNYmclK2r
+         GegUi3G5qvpCIa2o518lst7FTjLkFX/RHL2bmuTdUtSD0aU2yGSE6VfKU9pch+Lckclc
+         fTvGuD/8ccZCAK/ikSC7zaxC/xL7iAfIwCOBYEzRrw2BLsrUIb8G+RXr3BVP1K0MHb16
+         8cVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749805948; x=1750410748;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yaEX4dDgKDNxKZX0+vcnih4XjDWoAZY8oCSw4SAHFH8=;
+        b=kpImn/k3RI7hl8Lxe8OmTg5Cl3ZfRu2ZJSBDCuY7yoFEQguN5HCovU52jv9qs3X8Fb
+         PHdfTKGQeFGkTZywXATlsztRnLV0XtopM+PH8k+7EWrPTEyQZs+ba1+NZxS81aOPw4eA
+         538WOQHVjFchGxg+NmH3tSsayILeXb1haizJxOwNwnITbiZOzPP0qYwcZ0SLRpIKfPiH
+         IVg8eTgAUBsb0H+vD0n5oJCwm8tFl6QPzSSLjlsPfhaMtDmqVOrDQt9YLNDoRnaFIk+b
+         HXrNIgKqGUjtJfWu0j9RoJ+SjaEKpACb+DjXBYNvpP1kxYnfy2AzxDHV0MOD5g3zbzi5
+         ekcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo2joJfQvQI/JjFyi4e+3oF1FDwnm4gC+y6gmcns+vpvwf7/G8zB0kfhiqSAnptN7Kaip1eT+6PxxjRts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEn7VjmlkQU/ljgcA9j0pUpWvFdJn2cRAhf8j8g8H1HKEM78S+
+	J4/5Y3lehTO0GJ2Y8eT6nAJh3h9rJSSb+1V2Ig1e6av5Ou22klPni/CgIAmr2oo8gQk=
+X-Gm-Gg: ASbGncu4tHsdC67szkfmw/FWoOfw0540PJp9MyeiV+g8eeRcv1jLRFUNAOomQgSOl5T
+	1ejYOD4+XM6K4wfoh12Vc+xvnLGjFI/MPy1DIqGkSjYTGwj1aTqYSPNXYO2XEuHRbR1sKeLlUmy
+	ZOpgx/lzS3uTMNoXutLYU7JIFbiidbd407z4mHPWm0QHh4OTfOIrY776hjqYrZONNmZgWYJegFz
+	vgiZqoJWh8hJpR4sIA5+vqD4HMOk+mxSXVLfw+uDNQPSxr4gMPyNFu8M/AUBtVYg29gfG6qYTkB
+	zd5xFKTrEKXr0tyziTwniRgp8KitkBn0dCXyiJ9/Ce7eSQyX65KmXR0hWMwQekwb8jMBPpBVmzK
+	RrdITqD2bhy7i5gIk0HDw1QxkWM1mgoDTPQ1wKvhmMEi5fsKMOA==
+X-Google-Smtp-Source: AGHT+IGfNqq5N/dXfqPTy6lk5lwkJCrvfc3vLmcZOn5YDfPCKU4e2XDDXROymQQp9fqDHIQhZiR3NQ==
+X-Received: by 2002:a05:600c:34c7:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-45334ad3f41mr21047235e9.11.1749805948257;
+        Fri, 13 Jun 2025 02:12:28 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae? ([2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2446b0sm45162715e9.21.2025.06.13.02.12.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 02:12:27 -0700 (PDT)
+Message-ID: <9455a4e1-6352-4832-ac9f-2816f889c3a4@linaro.org>
 Date: Fri, 13 Jun 2025 11:12:26 +0200
-Message-ID: <20250613091229.21500-2-gmonaco@redhat.com>
-In-Reply-To: <20250613091229.21500-1-gmonaco@redhat.com>
-References: <20250613091229.21500-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 9/9] arm64: dts: exynos: ExynosAutov920: add USB and
+ USB SS combo phy nodes
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
+ m.szyprowski@samsung.com, s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250613055613.866909-1-pritam.sutar@samsung.com>
+ <CGME20250613055106epcas5p46a2e5e2d6f0e8811644643f6282fd9ca@epcas5p4.samsung.com>
+ <20250613055613.866909-10-pritam.sutar@samsung.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250613055613.866909-10-pritam.sutar@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The fair scheduling class relies on prev_sum_exec_runtime to compute the
-duration of the task's runtime since it was last scheduled. This value
-is currently not required by other scheduling classes but can be useful
-to understand long running tasks and take certain actions (e.g. during a
-scheduler tick).
+On 13/06/2025 07:56, Pritam Manohar Sutar wrote:
+> Update the USB 3.1 DRD controller and USB31DRD phy nodes to support
+> SS combo phy for this soc.
+> 
+> The USB 3.1 DRD controller has the following features:
+> * DWC3 compatible
+> * compliant with both USB device 3.1 and USB device 2.0 standards
+> * compliant with USB host 3.1 and USB host 2.0 standards
+> * supports USB device 3.1 and USB device 2.0 interfaces
+> * supports USB host 3.1 and USB host 2.0 interfaces
+> * full-speed (12 Mbps) and high-speed (480 Mbps) modes with USB device
+>    2.0 interface
+> * super-speed (5 Gbps) mode with USB device 3.1 Gen1 interface
+> * super-speed plus (10 Gbps) mode with USB device 3.1 Gen2 interface
+> * single USB port which can be used for USB 3.1 or USB 2.0
+> * on-chip USB PHY transceiver
+> * supports up to 16 bi-directional endpoints
+> * compliant with xHCI 1.1 specification
+> 
+> USB3.1 SSP+(10Gbps) is supported in this commit and SS phy in combo
+> phy only supports PIPE3 interface and it is added in index 0 of SS phy.
+> UTMI+ and PIPE3 PHY interfaces are specified in "phys" property,
+> UTMI+ (index 0 HS phy) and PIPE3 (index 0 SS phy).
+> 
+> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> ---
+>   .../arm64/boot/dts/exynos/exynosautov920-sadk.dts |  4 ++++
+>   arch/arm64/boot/dts/exynos/exynosautov920.dtsi    | 15 +++++++++++++--
+>   2 files changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> index a21386bd9af3..40588f7c9998 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> @@ -88,6 +88,10 @@ &xtcxo {
+>   };
+>   
+>   /* usb */
+> +&usbdrd31_ssphy {
+> +	status = "okay";
+> +};
+> +
+>   &usbdrd31_hsphy {
+>   	status = "okay";
+>   };
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index 4efc005cae80..5ee7fad346b9 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -1048,6 +1048,17 @@ pinctrl_hsi1: pinctrl@16450000 {
+>   			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
+>   		};
+>   
+> +		usbdrd31_ssphy: phy@16480000 {
+> +			compatible = "samsung,exynosautov920-usb31drd-ssphy";
+> +			reg = <0x16480000 0x0200>;
+> +			clocks = <&cmu_hsi1 CLK_MOUT_HSI1_NOC_USER>,
+> +				 <&cmu_hsi1 CLK_MOUT_HSI1_USBDRD>;
+> +			clock-names = "phy", "ref";
+> +			#phy-cells = <1>;
+> +			samsung,pmu-syscon = <&pmu_system_controller>;
+> +			status = "disabled";
+> +		};
+> +
+>   		usbdrd31_hsphy: phy@16490000 {
+>   			compatible = "samsung,exynosautov920-usbdrd-hsphy";
+>   			reg = <0x16490000 0x0200>;
+> @@ -1109,8 +1120,8 @@ usbdrd31_dwc3: usb@0 {
+>   					 <&cmu_hsi1 CLK_MOUT_HSI1_USBDRD>;
+>   				clock-names = "ref", "susp_clk";
+>   				interrupts = <GIC_SPI 491 IRQ_TYPE_LEVEL_HIGH>;
+> -				phys = <&usbdrd31_hsphy 0>;
+> -				phy-names = "usb2-phy";
+> +				phys = <&usbdrd31_hsphy 0>, <&usbdrd31_ssphy 0>;
+> +				phy-names = "usb2-phy", "usb3-phy";
+>   				snps,has-lpm-erratum;
+>   				snps,dis_u2_susphy_quirk;
+>   				snps,dis_u3_susphy_quirk;
 
-Add support for prev_sum_exec_runtime to the RT, deadline and sched_ext
-classes by simply assigning the sum_exec_runtime at each set_next_task.
+I think at least patch 6 & 9 should be squashed.
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- kernel/sched/deadline.c | 1 +
- kernel/sched/ext.c      | 1 +
- kernel/sched/rt.c       | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ad45a8fea245e..8387006396c8a 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2389,6 +2389,7 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, bool first)
- 	p->se.exec_start = rq_clock_task(rq);
- 	if (on_dl_rq(&p->dl))
- 		update_stats_wait_end_dl(dl_rq, dl_se);
-+	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
- 
- 	/* You can't push away the running task */
- 	dequeue_pushable_dl_task(rq, p);
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 2c41c78be61eb..75772767f87d2 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3255,6 +3255,7 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, bool first)
- 	}
- 
- 	p->se.exec_start = rq_clock_task(rq);
-+	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
- 
- 	/* see dequeue_task_scx() on why we skip when !QUEUED */
- 	if (SCX_HAS_OP(sch, running) && (p->scx.flags & SCX_TASK_QUEUED))
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index e40422c370335..2c70ff2042ee9 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1693,6 +1693,7 @@ static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool f
- 	p->se.exec_start = rq_clock_task(rq);
- 	if (on_rt_rq(&p->rt))
- 		update_stats_wait_end_rt(rt_rq, rt_se);
-+	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
- 
- 	/* The running task is never eligible for pushing */
- 	dequeue_pushable_task(rq, p);
--- 
-2.49.0
-
+Neil
 
