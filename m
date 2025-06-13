@@ -1,109 +1,88 @@
-Return-Path: <linux-kernel+bounces-685296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A83AAD87B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D79EAD87B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7BE17C401
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41FB1893827
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DA528135D;
-	Fri, 13 Jun 2025 09:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3778C291C05;
+	Fri, 13 Jun 2025 09:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hmNMrVhl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNo4cM+5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1151B19049B;
-	Fri, 13 Jun 2025 09:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9441C24DD1A;
+	Fri, 13 Jun 2025 09:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806700; cv=none; b=QLfik75T9OT6xLfi5Vy6eJu82oymtjuzQr2vn3ko38/Y6pJr1Wbyd8SFaXquDSEYXfPn9BMJrSb5hrP55sYXa3hZZ6eU867dxJbWH1M1HNElymwO/iQ9/naPQ4JdItKTP/r8Ziu5LtsE3QiUo0rxa6nnAT59hSAme1sN5VtKNVo=
+	t=1749806741; cv=none; b=KtONEp44NXAh5zIRoolr8SuDk5WFs6iwPfJtHdMMexvY5cg/gcYz1MdnCfoOLT/co1j4iMGfpnVgbtmnrdh+Osy8vrkLBWSRpZpObPrrtQ68myOtK57Rt+jzxEo7DcVcflZEK11MWKRS2SzYu63EZr9jVPWSX8AeSaP3zaHziQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806700; c=relaxed/simple;
-	bh=2rdfYYv854C7M7g8ZFsIspD82wwfXyRvy4/0FUJvoxY=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ggpArF8F/qAxHroprYMxtgcODKaWkRNlpPLJ7ru0re3igjQgI46bR5Dz5SPPD5zol8rTIwrdZ4VoJUTSUU7WEf3HcVKaNu3IbO9SmV/GVap2oORkpSiMtlAzXQ+vnsUxIRm3AjzqJ45sNKqSdojwb4UUT5UxzfpxSGUcppuYyqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hmNMrVhl; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749806699; x=1781342699;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2rdfYYv854C7M7g8ZFsIspD82wwfXyRvy4/0FUJvoxY=;
-  b=hmNMrVhlQrnH5P3103vBdTf7XVuo/axMqp2QV48VTIq3essI4J1V6gAk
-   mqepqAic2zcnRotezgjOohS7DQRKLB5B938ZIwbCMAYO/6AzuJiqUZo0R
-   3S0kItLAB6/XyUnsdenfoRXiPvgLYNNdOfbhIMkrOdbf3hL7uwJp3UgWD
-   gGH9G4VfRgTCBL7oJMJj3zNp6h5R3bnnzPzVOeTt59wo+Mmc+2f1PUrqw
-   RT9WqgepFsIYC9c13TcnVEz60i5FVpZp9Sb5Y475cOLiFNJXh9KeB84vp
-   eK+iU2STYpFToIxMjSRD6yUFeBHfWdlbybSXoC0YcQDtuqEXk42FkP5QE
-   Q==;
-X-CSE-ConnectionGUID: C0B9wv6oSw2/dNk+ptJDxg==
-X-CSE-MsgGUID: VSZLAIZ+Q2ODzgTJpIL4AA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="54639585"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="54639585"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 02:24:59 -0700
-X-CSE-ConnectionGUID: Akm7th/yT72xATCP9Tw2uw==
-X-CSE-MsgGUID: x93kd78ZRW+6noZ70evQmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="152937851"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Jun 2025 02:24:56 -0700
-From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>,
-	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Subject: [PATCH] fpga: altera-cvp: Add FPGA Configuration Framework dependency
-Date: Fri, 13 Jun 2025 17:24:14 +0800
-Message-Id: <20250613092414.3198092-1-kuhanh.murugasen.krishnan@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749806741; c=relaxed/simple;
+	bh=Q79Q0wJ80wAUt812TKUrCQwFzZWf1wf8H78inR8+4Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S1ghjK1nwhpSNWxjW8ftkSRV771uPu9d9Fa870g33IqPLzqzj013jujoI7aiHNMZKeXhl7dHOPGK27H12VsKb9RToelntPx1+O/A/SOxUtkGJTGnL5Defn59UG5eVeT3phoVfz/GFxAOIQYt7lqURmvMAHD8vY+z5Z0RV9y+yEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNo4cM+5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2AF0C4CEE3;
+	Fri, 13 Jun 2025 09:25:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749806741;
+	bh=Q79Q0wJ80wAUt812TKUrCQwFzZWf1wf8H78inR8+4Wo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DNo4cM+5mzh5Qo9WBpVpnLDCpZnGTw020BZN/LZhvbCtkJMkhqZod3dbS0sx5dXMR
+	 N5s1DCeCJZYeTqZESUszBvrWPcPUQ+w4jEQxetpKnzHr8JbNuOtbqmdgEcx++xMwe3
+	 2y2Evq6gmIUF1yVjfTApds5GtoAWwb9DYZpKTfe7R8fn8/3NaBos9s59d3Vhmn1jjU
+	 IWTq4nufDSmBJ8Q3nJSUN8X0BahLQuYDBfTKDtutvfmO/XmsTVjKdaYWcNs4CmYSF5
+	 ZtjBCoVNrPmdyuU8bT9qyAhpNSG7ecC32hEOvjyuCsPkjgB1FJzjDPYUv8PSMFkRKK
+	 1+ufqLRg5rKVQ==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Arnd Bergmann <arnd@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joyce Ooi <joyce.ooi@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: altera: remove unused 'node' variable
+Date: Fri, 13 Jun 2025 14:55:28 +0530
+Message-ID: <174980672103.33830.4953083744774912018.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250521163329.2137973-1-arnd@kernel.org>
+References: <20250521163329.2137973-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
 
-Altera CvP FPGA Manager driver depends on FPGA
-Configuration Framework drivers to be loaded in
-the kernel. Updating FPGA_MGR_ALTERA_CVP in Kconfig
-depends on to include FPGA.
+On Wed, 21 May 2025 18:29:48 +0200, Arnd Bergmann wrote:
+> This variable is only used when CONFIG_OF is enabled:
+> 
+> drivers/pci/controller/pcie-altera.c: In function 'altera_pcie_init_irq_domain':
+> drivers/pci/controller/pcie-altera.c:855:29: error: unused variable 'node' [-Werror=unused-variable]
+>   855 |         struct device_node *node = dev->of_node;
+> 
+> Use dev_fwnode() in place of of_node_to_fwnode() to avoid this.
+> 
+> [...]
 
-Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
----
- drivers/fpga/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 37b35f58f0df..6f741348bfbc 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -47,7 +47,7 @@ config FPGA_MGR_ALTERA_PS_SPI
- 
- config FPGA_MGR_ALTERA_CVP
- 	tristate "Altera CvP FPGA Manager"
--	depends on PCI
-+	depends on PCI && FPGA
- 	help
- 	  FPGA manager driver support for Arria-V, Cyclone-V, Stratix-V,
- 	  Arria 10 and Stratix10 Altera FPGAs using the CvP interface over PCIe.
+[1/1] pci: altera: remove unused 'node' variable
+      commit: 693594d0e5d8d236fc4172c864afdcbe6993a2bd
+
+Best regards,
 -- 
-2.25.1
-
+Manivannan Sadhasivam <mani@kernel.org>
 
