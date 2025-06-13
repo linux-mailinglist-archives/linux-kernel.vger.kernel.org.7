@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-685468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1E8AD8A12
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773EEAD8A15
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DFDD174673
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E093BA792
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9A72D5C6E;
-	Fri, 13 Jun 2025 11:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AEB2D8767;
+	Fri, 13 Jun 2025 11:12:27 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525902D320C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CC52D4B78
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749813145; cv=none; b=P7ePpLBsC9NwSMW1cwS9VWvIUTHUMkbPXovyES+ns5oL6Y0ClDWRFTiD9eCPT8KsMlse+MhRVpHqUHGL0nhC4dGj4/ABU1SlMi+rOd3yNlkGwisTXKZeIoA5FTrnjMV7BEP2UwZSmJsn9VWIlrEKX6nCzjzRI+5ECNGVfLq75p8=
+	t=1749813147; cv=none; b=A+E7g1e1SBeycCv3a6H16VI7v6akXn9+ybj6eMLM0oitXW2JrRgTSYJXKOVp6VoJeo8ImYV6X1HKHPBUA8HzAp/092sRo3B91+xmBAQFPYowFoO+cFjXaUDDgUxh5juFfEFMOm4eCgWsNIiHeGP80/cr/TVymeRZlaM2gsc9YOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749813145; c=relaxed/simple;
-	bh=w0v50HIU2Vj2JQBBTN8UA4VKSZwTuBf0d2cykfkU/iM=;
+	s=arc-20240116; t=1749813147; c=relaxed/simple;
+	bh=dRxBMxxhLreYClrZY8rUIKdfpH7BRzMk7Jy/+D1IEdM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W+QdNy75Mf9diRyTbsoaa+59v2A4UuCbGKkedpkdelHmAfPpOj7Kj4iqxahGIo89iWj9Qh5GrNjqCyMPqb6SGivr33OE166rCUlelYTlcnGd2LMNzT4mq7XZA24DCDD+KDJUIxI0bYdjqWE6Gs2RIWhBOC5sRIILi1K4YjuFfxM=
+	 MIME-Version; b=H+1S1v2QKjwNAc+zxxbJV/GGLNWQp5DYT287Ap/2EwF2gLwklvtSFmtQ92k7qNVPwKpcYwDPgA0B9aWfnKxVewDEUvN4kS1YGG8LnFNB3/cn++MsWN5rRWDL6i+Zlsa0kgGrHK2GhTZvrU6pC6bTqUoEFwLf0OmSHF73euf+pHg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59C431D6F;
-	Fri, 13 Jun 2025 04:12:03 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C59661D70;
+	Fri, 13 Jun 2025 04:12:04 -0700 (PDT)
 Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 899263F59E;
-	Fri, 13 Jun 2025 04:12:22 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EC6F63F59E;
+	Fri, 13 Jun 2025 04:12:23 -0700 (PDT)
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: will@kernel.org,
@@ -42,9 +42,9 @@ Cc: will@kernel.org,
 	linux-kernel@vger.kernel.org,
 	sudeep.holla@arm.com,
 	Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 2/3] arm64: Enable EFI secret area Securityfs support
-Date: Fri, 13 Jun 2025 12:11:52 +0100
-Message-ID: <20250613111153.1548928-3-suzuki.poulose@arm.com>
+Subject: [PATCH 3/3] arm64: acpi: Enable ACPI CCEL support
+Date: Fri, 13 Jun 2025 12:11:53 +0100
+Message-ID: <20250613111153.1548928-4-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250613111153.1548928-1-suzuki.poulose@arm.com>
 References: <20250613111153.1548928-1-suzuki.poulose@arm.com>
@@ -56,48 +56,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable EFI COCO secrets support. Provide the ioremap_encrypted() support required
-by the driver.
+ACPI CCEL memory area is reported as Non-Volatile storage area. Map it as
+PAGE_KERNEL.
 
 Cc: Sami Mujawar <sami.mujawar@arm.com>
 Cc: Will Deacon <will@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
 Cc: Steven Price <steven.price@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/io.h          | 4 ++++
- drivers/virt/coco/efi_secret/Kconfig | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/acpi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 82276282a3c7..83e03abbb2ca 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -274,6 +274,10 @@ int arm64_ioremap_prot_hook_register(const ioremap_prot_hook_t hook);
- #define ioremap_np(addr, size)	\
- 	ioremap_prot((addr), (size), __pgprot(PROT_DEVICE_nGnRnE))
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index b9a66fc146c9..f52439d411a0 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -356,6 +356,11 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
+ 			prot = PAGE_KERNEL_RO;
+ 			break;
  
++		case EFI_ACPI_MEMORY_NVS:
++			/* Non-volatile storage, required for CCEL */
++			prot = PAGE_KERNEL;
++			break;
 +
-+#define ioremap_encrypted(addr, size)	\
-+	ioremap_prot((addr), (size), PAGE_KERNEL)
-+
- /*
-  * io{read,write}{16,32,64}be() macros
-  */
-diff --git a/drivers/virt/coco/efi_secret/Kconfig b/drivers/virt/coco/efi_secret/Kconfig
-index 4404d198f3b2..94d88e5da707 100644
---- a/drivers/virt/coco/efi_secret/Kconfig
-+++ b/drivers/virt/coco/efi_secret/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config EFI_SECRET
- 	tristate "EFI secret area securityfs support"
--	depends on EFI && X86_64
-+	depends on EFI && (X86_64 || ARM64)
- 	select EFI_COCO_SECRET
- 	select SECURITYFS
- 	help
+ 		case EFI_ACPI_RECLAIM_MEMORY:
+ 			/*
+ 			 * ACPI reclaim memory is used to pass firmware tables
 -- 
 2.43.0
 
