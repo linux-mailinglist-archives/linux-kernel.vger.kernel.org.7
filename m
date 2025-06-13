@@ -1,160 +1,159 @@
-Return-Path: <linux-kernel+bounces-686520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1281CAD98AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:29:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62634AD98B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E8C1BC4A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01AA94A14A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F8828FA93;
-	Fri, 13 Jun 2025 23:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="iKF1+zMd"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79B028DB73;
+	Fri, 13 Jun 2025 23:30:36 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAAC28F92E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 23:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE00E192584
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 23:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749857310; cv=none; b=G3cjLqJCuieXi1WfWoAKS4QqvCxMvSUi37PfPFg+M3B/QdFeFrMFIaEJjBsHFT9mIf7BBy26RVFIuSAaUZb52jXqrp9GKKsANvgOhLj+zg3jd95wJIAQqcypNLxedW0j+pEtDo3GBclbYZfGHNEaTfsC1zbEldH3+LTDuPzJiLA=
+	t=1749857436; cv=none; b=IHTy4sQ7Q5t8cmtE+/Go+vVZugC6WRZjAZQMMrbIMaqxhp7w0VO6FchaqO1njqemW4sQHvMPH/t00FjQ7CFGCjfYIQD8IBpVEy7ts3/qfmCpS5jpR2cecHAgnhWsWF1/slfRVbEOw71eoQaqsc9ZrJlZ4J01dmPn8Y7f1OfUPuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749857310; c=relaxed/simple;
-	bh=2Mqj1erFnz6eSrH6OrYi/A52QDuDNTJKYtEZmzU2yFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gXe9M19sFGGMJf2sj0o3Q7eACoDcQXTQwiXB8YIKCQD52JOVP3TBwuRfUKSU+iQXgR27Ahh/Yt6qOehtuPE1iil+TGLjV2/nvjgsnr0xjrf+KStZgoMv/n16K+Kf46Zg2Y1A4/+2FKE0d5tBSJTf62V36tJIH++xAjvCGzFPlV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=iKF1+zMd; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-234b9dfb842so27523525ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1749857309; x=1750462109; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tVIgyEp369YGSVHAgR24zVsOgiLYMbHVkjFj8orXwT0=;
-        b=iKF1+zMduC7foWTxBH0wHi+rI2pWqqgb5zRu38wBo75Hl+3ScSzHJmEiHoWM8n4QMi
-         338Cus5pyywdK8dU3XONx/uQn2JBQLhO9Q3n6FRWtmHQi8zkpVB75LMkirekZN/vMk4m
-         CzDkMQDJWve08SJw6MwySepiC8USf/6Egwi4k=
+	s=arc-20240116; t=1749857436; c=relaxed/simple;
+	bh=0abnlyb7tMAEy1Y0XS37gQsAYKpdOw5VGv59YK1IzDs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=X5awtPkz2LdMNH46nm95VPl+A/YlwlDPPOoeqnq6kuYDQDSswwuqIQeTSF2tQ3ex/t9c2uzWJ05hzmirHThTe4wO0ReBPuSCalsTOIc0+KekKyMUfXMfnuvWpO7QLjnFYbk2ELtR3nbU+8RZRzjAOE4GHL72O7+EdsaTcanFm7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddc0a6d4bdso36432435ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:30:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749857309; x=1750462109;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tVIgyEp369YGSVHAgR24zVsOgiLYMbHVkjFj8orXwT0=;
-        b=wpIQyYhCndEPC4PiCMibKBC7SV8Mu1BIAr2qgTPDyp2Fnuk9rS/1FiaIgGgHgynAzi
-         unSOUDzZBsndXu92YP8Bi3ccudwst5NPCgpM2iLEFmY7rkR1KWbP7w/hsB1UFCQNv5UH
-         THED40gTaB2zjicEaNG1dVDUvEUSh19D4HthtEE4MC+q8ItCs5vjAj6vg9krzMp/NdGU
-         sj+IbXjVuzJwj25Eda0TycMl3bkvxCXwlZaAMVLfrLgK04LIpq/uYUiKm9X3KX8OZNYm
-         9lpJv3rrYbhOdimosep0iOtXPtV+JXeEuUit0yQXwiVSDG2tvwDSGJi9D6LL0PUttNWg
-         Q0Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG6xgFbEQT7yuNIVe7QzMS1qD3GsTaymXRprPGom+GfMHM09fv3USHTtNri/JhVcrZhu3upHZQRLrQzaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwusJ4H2uPBfnH09QJCYX6a+1dqbtIF6k5/CMifm+m/G6M4Bl+X
-	ijqaS6O2r0p0VNdxRjZEGuuD67qK9JImGblj1G8pogxot3Mrg77+Z6K6GbB2M6xxnQ==
-X-Gm-Gg: ASbGncuZAeAuj0FywkvOCtBjhl7ZUUbkqKfDSeDJDo1aQI/6lwYpNCh8eEMPAKD27Qk
-	1XwHudSjlgleNGYpdq2Q8IdBo/fd6ikPfofiP6DBIDoSfOgxtZNoZezv/ljIqWByrvFfX73eoSC
-	N+LzeTrAVlBx8Ibm81txJQoFOudaNlO09O2IPgLuVK/16VcfXp+PiwLTWy8J2FveK/OLI+uoe61
-	ndcoZdH5Fjb4/pd6LjhDuSL9UQTb0kewlCXgX1rf9/54QShg5ZAPtz95t07M3LzhwNysXxbTQSh
-	1iHQCbgKQZDgIyyLFBxe4zO4OKHJzuXZkluJzYYpbARMUWPZRTTCvliRdZhxXuhKValYzXB3TF5
-	B+Zc2KMF/VVKrz7PXYjfjPbkRag==
-X-Google-Smtp-Source: AGHT+IFRMv4pLDDHZkU3igLGyfy5y+yaEPSSBvXVtQJ9pTX4uJU4gfxC9bWCYgV8MTIXuT7DWuR7ng==
-X-Received: by 2002:a17:902:d543:b0:234:db06:ad1 with SMTP id d9443c01a7336-2366b16cd2dmr19148195ad.0.1749857308692;
-        Fri, 13 Jun 2025 16:28:28 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deaaa15sm20255465ad.173.2025.06.13.16.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 16:28:27 -0700 (PDT)
-Message-ID: <eab9cfc5-9751-4415-ab9b-527a3af40a62@broadcom.com>
-Date: Fri, 13 Jun 2025 16:28:26 -0700
+        d=1e100.net; s=20230601; t=1749857434; x=1750462234;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vF7xs1A3Q2dAycwY5p/OJbr9P/yojYK9Yt6rhyL/AFs=;
+        b=tacbmj2ny1i53FybO0jl+ZXUkG6HkN0UIVHuZtlbtx36Nc37LBSCz6n4mSuF/zjhOW
+         lZFdMd6wpYPgzBS9STsgz1TEl4+NHppnQg/X7515J7lJ5zU3LLKl810YFjGW0JRZgZOb
+         pZ2BkXeRPlZLWlEJ0vlf/tTCq+bDkG+LmioH3c10LsUrb8wgM3Z5tvwEslSV0gNzFZho
+         slnVr+iy9DCGcfP5Mwupd9UGMdDSpbMb4WsFsAv/Q1GswjPCMFhuTCJ94VpI3VGQbFkz
+         UOe6tliAtqZYycpjJEWZ4RAotO3i5nBsrlH0A8RNWbpGc39hD2md1HR/6K9CH9qJBvej
+         UOzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFPV0N92IR8G+lcoEGYd0nDLiT3K3KcQoujMH2iLbTTWOhdJ3m/z7BV8nqIlBQWvkro3zmu298++ruacA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS8b6ofnQGhEJMVBJX3f+i11SEZM4tKR5Kg5/7hKdH084T6ysx
+	+CBjULh9LlrTJYbHjUOL4vWCL96HtxYCJlhRWQ7ls35AqSMpK3CY4BCcDC09sC7SjIjYyegXLKl
+	UEw2gKOpMpauTTHoR12FKBnvByh9a3TGR/J1FwD/RXopx10nVmkGDZ+ReV14=
+X-Google-Smtp-Source: AGHT+IGRAA9OJyHdZx3olCjGPopW4j7o8RyPYuTFqvQIi0A6jUryimHBx8pugZDlISqy0X3182xYzFab7qTndPBx+vXNFNIaT6dB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] PCI: brcmstb: Add panic/die handler to driver
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
- jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250613220843.698227-1-james.quinlan@broadcom.com>
- <20250613220843.698227-3-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250613220843.698227-3-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:168b:b0:3dc:7cc1:b731 with SMTP id
+ e9e14a558f8ab-3de07c21db4mr17551605ab.0.1749857433818; Fri, 13 Jun 2025
+ 16:30:33 -0700 (PDT)
+Date: Fri, 13 Jun 2025 16:30:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <684cb499.a00a0220.c6bd7.0010.GAE@google.com>
+Subject: [syzbot] [iomap?] [erofs?] WARNING in iomap_iter (5)
+From: syzbot <syzbot+d8f000c609f05f52d9b5@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/13/25 15:08, Jim Quinlan wrote:
-> Whereas most PCIe HW returns 0xffffffff on illegal accesses and the like,
-> by default Broadcom's STB PCIe controller effects an abort.  Some SoCs --
-> 7216 and its descendants -- have new HW that identifies error details.
-> 
-> This simple handler determines if the PCIe controller was the cause of the
-> abort and if so, prints out diagnostic info.  Unfortunately, an abort still
-> occurs.
-> 
-> Care is taken to read the error registers only when the PCIe bridge is
-> active and the PCIe registers are acceptable.  Otherwise, a "die" event
-> caused by something other than the PCIe could cause an abort if the PCIe
-> "die" handler tried to access registers when the bridge is off.
-> 
-> Example error output:
->    brcm-pcie 8b20000.pcie: Error: Mem Acc: 32bit, Read, @0x38000000
->    brcm-pcie 8b20000.pcie:  Type: TO=0 Abt=0 UnspReq=1 AccDsble=0 BadAddr=0
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+Hello,
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+syzbot found the following issue on:
+
+HEAD commit:    27605c8c0f69 Merge tag 'net-6.16-rc2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=171079d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3a936e3316f9e2dc
+dashboard link: https://syzkaller.appspot.com/bug?extid=d8f000c609f05f52d9b5
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1725310c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115e0e82580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-27605c8c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c55edb669703/vmlinux-27605c8c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e12830584492/bzImage-27605c8c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/36391cabb242/mount_2.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=165e0e82580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d8f000c609f05f52d9b5@syzkaller.appspotmail.com
+
+erofs (device loop0): EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!
+erofs (device loop0): mounted with root inode @ nid 36.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5317 at fs/iomap/iter.c:33 iomap_iter_done fs/iomap/iter.c:33 [inline]
+WARNING: CPU: 0 PID: 5317 at fs/iomap/iter.c:33 iomap_iter+0x87c/0xdf0 fs/iomap/iter.c:113
+Modules linked in:
+CPU: 0 UID: 0 PID: 5317 Comm: syz-executor245 Not tainted 6.16.0-rc1-syzkaller-00101-g27605c8c0f69 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:iomap_iter_done fs/iomap/iter.c:33 [inline]
+RIP: 0010:iomap_iter+0x87c/0xdf0 fs/iomap/iter.c:113
+Code: cc cc cc e8 a6 eb 6b ff 90 0f 0b 90 e9 31 f8 ff ff e8 98 eb 6b ff 90 0f 0b 90 bd fb ff ff ff e9 ad fb ff ff e8 85 eb 6b ff 90 <0f> 0b 90 e9 22 fd ff ff e8 77 eb 6b ff 90 0f 0b 90 e9 53 fd ff ff
+RSP: 0018:ffffc9000d08f808 EFLAGS: 00010293
+RAX: ffffffff8254736b RBX: ffffc9000d08f920 RCX: ffff88803a692440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000074
+RBP: 1ffff92001a11f2a R08: ffffea00010c5277 R09: 1ffffd4000218a4e
+R10: dffffc0000000000 R11: fffff94000218a4f R12: 0000000000000074
+R13: 0000000000000000 R14: ffffc9000d08f950 R15: 1ffff92001a11f25
+FS:  0000555562dab380(0000) GS:ffff88808d252000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffeb97cc968 CR3: 0000000043323000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_fiemap+0x117/0x530 fs/iomap/fiemap.c:79
+ ioctl_fiemap fs/ioctl.c:220 [inline]
+ do_vfs_ioctl+0x16d3/0x1990 fs/ioctl.c:841
+ __do_sys_ioctl fs/ioctl.c:905 [inline]
+ __se_sys_ioctl+0x82/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbc6028fe59
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffccc462b68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbc6028fe59
+RDX: 0000200000000580 RSI: 00000000c020660b RDI: 0000000000000005
+RBP: 00007fbc603045f0 R08: 0000555562dac4c0 R09: 0000555562dac4c0
+R10: 00000000000001ca R11: 0000000000000246 R12: 00007ffccc462b90
+R13: 00007ffccc462db8 R14: 431bde82d7b634db R15: 00007fbc602d903b
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
