@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-685455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D56AAD89F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:03:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9EEAD8A4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E7F18978DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:03:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E71A178DB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6772D5C66;
-	Fri, 13 Jun 2025 11:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="W74bGSVu"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2935D2D5408;
-	Fri, 13 Jun 2025 11:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB362E3395;
+	Fri, 13 Jun 2025 11:20:36 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07CF2E0B79;
+	Fri, 13 Jun 2025 11:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749812602; cv=none; b=j1OtCSqZCq6A0MJ02tR9tkoNA2HsEQ0zjAEdUqYzvOD/ryav393UMfnH/rNUXjA5DO540c10hagw7JO0naUQ9x4UX7dJ4SIA3MZE8QUDxRbRjfOcg7Zlg33qY3Uix52PIZRzqD5Mq293fjPlcf92JvqllUl+vmHchfPaYy14WnM=
+	t=1749813635; cv=none; b=LCV9xHHyhnO8XjK+zP6F1fXge9UJXtHuP5yGYXxcQP79EJ4qBdeCF1L8+wDgy4haU986w8FJIURDkmFf+PmOb0/SXgvEs0wjOrpLmmr3XRl1tHX5gowDgts3FtlksN5Iip5onVHN5X/3D6X+LOdrP9xYnZQAnf6jrXfzbQc3OLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749812602; c=relaxed/simple;
-	bh=xSacqbNIg/9oGP/awU7ktqaXCqSMSf5bNRHv9Vu8nMU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=s0ZQfL6Relm506/TF2Y0xoN633jGOHXVATeQPbXMygYBXXV9+1YLh3Ds7ETrxCHXR0iTOiseqbsF/m2mBoXGJdVtQFw7fxBYysIg/R1x1n8slw1/6HSbNszNexq5bFM+P43ghpHFrRTulbFhW2f8MMpaThB+cP2ehgy4zQ6dkjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=W74bGSVu; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 0CB3B25F8B;
-	Fri, 13 Jun 2025 13:03:18 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id vCIuwyLbpHdc; Fri, 13 Jun 2025 13:03:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1749812582; bh=xSacqbNIg/9oGP/awU7ktqaXCqSMSf5bNRHv9Vu8nMU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=W74bGSVu8Tkpq7tIWHOgrW5bDW+opJlr9W6rbqBkSHFmg1nBgI1YXJ3qYYlPHqkHc
-	 5XRB08DesTbYTA2e600cDbpii29hkzuDYpEj1arI8OmQ2fNroCbMoWsVyIKpvdHY9L
-	 dvFT2OqNJKZWZJhMm+l6KYlG+I0NdDgE73rEmo7MeFGe7IQQxVd7cML6QGj28V6Mg4
-	 8OHWi77df+UfFnNnHne80ZmAgOJC66QxL3tiZJ10dAIg4Ac+D10tgwTjaybRjZzVz0
-	 wUrOaLpZCMyL3t9ygNw/9PgziZxlrHLT2wHqtrvuEhMZKOr2p6FgHOkXIIRvfIxGIt
-	 F/u/xfLvxfdsw==
+	s=arc-20240116; t=1749813635; c=relaxed/simple;
+	bh=4ORPoEmUrrRcxmN7XshtQHXsvTt3IceYcN2rLTizFKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NhDs5lFfCjBvYINO6nmyBML0Ow5A3cmMvN7bKqE4qa7Of33tbldqTapo0CZkj0a105iN5+mTofg/Dk2DKVNEvryMGML+Y5cDWpZ35jnCtB+nvNiTUUr0RO2BFb73/UZbO5HehZZdx3hs3ugX01TcsbWzqPgD+vbM3PrDQGvgfMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bJc2151R8z9sqS;
+	Fri, 13 Jun 2025 13:03:05 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 2EYXYIC_ssC4; Fri, 13 Jun 2025 13:03:05 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bJc214Bzmz9sl0;
+	Fri, 13 Jun 2025 13:03:05 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8B7A58B77B;
+	Fri, 13 Jun 2025 13:03:05 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Gd6ZZdiQooSp; Fri, 13 Jun 2025 13:03:05 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 067608B769;
+	Fri, 13 Jun 2025 13:03:04 +0200 (CEST)
+Message-ID: <2df61bbf-76f6-4932-a347-7820350a156e@csgroup.eu>
+Date: Fri, 13 Jun 2025 13:03:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Jun 2025 11:03:01 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang
- <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jessica
- Zhang <jessica.zhang@oss.qualcomm.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm: panel: add support for Samsung S6E8AA5X01 panel
- controller
-In-Reply-To: <84ee6388-92af-49c8-988b-b79ed1453d5e@suse.de>
-References: <20250612-panel-samsung-s6e8aa5x01-v1-0-06dcba071ea6@disroot.org>
- <20250612-panel-samsung-s6e8aa5x01-v1-2-06dcba071ea6@disroot.org>
- <84ee6388-92af-49c8-988b-b79ed1453d5e@suse.de>
-Message-ID: <84663a88789b993a1cab8c55af4e03a7@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/3] ALSA: pcm: Convert snd_pcm_sync_ptr() to
+ user_access_begin/user_access_end()
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>,
+ Mark Brown <broonie@kernel.org>
+References: <7baa34d4046c7750799b11830d38a46f8b581765.1749724478.git.christophe.leroy@csgroup.eu>
+ <79b86a0618328ba1d0cb5cf4011fd73ac6900e8f.1749724478.git.christophe.leroy@csgroup.eu>
+ <878qlwrnv1.wl-tiwai@suse.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <878qlwrnv1.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-06-13 09:39, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 12.06.25 um 16:52 schrieb Kaustabh Chakraborty:
->> Samsung S6E8AA5X01 is an AMOLED MIPI DSI panel controller. Implement
->> a basic panel driver for such panels.
+
+
+Le 13/06/2025 à 11:29, Takashi Iwai a écrit :
+> On Thu, 12 Jun 2025 12:51:05 +0200,
+> Christophe Leroy wrote:
 >>
->> The driver also initializes a backlight device, which works by changing
->> the panel's gamma values and aid brightness levels appropriately, with
->> the help of look-up tables acquired from downstream kernel sources.
+>> Now that snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user()
+>> are converted to user_access_begin/user_access_end(),
+>> snd_pcm_sync_ptr_get_user() is more efficient than a raw get_user()
+>> followed by a copy_from_user(). And because copy_{to/from}_user() are
+>> generic functions focussed on transfer of big data blocks to/from user,
+>> snd_pcm_sync_ptr_put_user() is also more efficient for small amont of
+>> data.
 >>
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-
-[...]
-
->> +
->> +static void s6e8aa5x01_mcs_protect(struct mipi_dsi_multi_context *dsi,
->> +				   struct s6e8aa5x01_ctx *ctx, bool protect)
+>> So use snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user() in
+>> snd_pcm_sync_ptr() too.
+>>
+>> In order to have snd_pcm_mmap_status32 similar to snd_pcm_mmap_status,
+>> replace to tsamp_{sec/nsec} and audio_tstamp_{sec/nsec} by equivalent
+>> struct __snd_timespec.
+>>
+>> snd_pcm_ioctl_sync_ptr_buggy() is left as it is because the conversion
+>> wouldn't be straigh-forward do to the workaround it provides.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 > 
-> I found this interface confusing. Rather split it up into .  It also does two different things AFAICT.
-> 
-> - The mcs_mutex protects against concurrent access from update_status and enable
+> Through a quick glance, all patches look almost fine, but one favor to
+> ask: this patch contains the convert from s32/s32 pair to struct
+> __snd_timespec.  It should be factored out to a prerequisite patch
+> instead of burying in a big change.
 
-mcs_mutex is meant to prevent any early access protection of the MCS commands.
-Suppose there are two functions, A and B, accessing MCS.
+Shall I understand you prefer this series over the more simple "ALSA: 
+pcm: Convert snd_pcm_ioctl_sync_ptr_{compat/x32} to 
+user_access_begin/user_access_end()" patch ?
 
-ENTRY: A()
-(access protection disabled)
-...
+I'm asking because I was myself not sure about the benefit of such two 
+big macros over the other proposal in terms of readability.
 
-ENTRY: B()
-(access protection disabled)
-...
-(access protection enabled)
-EXIT: B()
-
-[!] cannot access MCS commands here anymore
-(access protection enabled)
-EXIT: A()
-
-And to avoid such errors a mutex is provided.
 
 > 
-> - MSC_ACCESSPROT enable access to hardware state.
-> 
-> Maybe try this:
-> 
-> - Move msc_mutex into the callers, so that ->update_status and ->enable acquire and release the lock.
-> 
-> - Move MCS_ACCESSPROT into ->enable and ->disable and leave it accessible, if the hardware allows that.
+> I'm asking it because this timepsec definition is very confusing (and
+> complex) due to historical reasons, and it should be handled with a
+> special care.
+> IIUC, struct __snd_timespec is always s32/s32 for the kernel code, so
+> the conversion must be fine.  This needs to be commented in the
+> commit.
 
-Yeah this is a good idea, I'll try it.
 
->> +{
->> +	if (protect) {
->> +		mipi_dsi_dcs_write_seq_multi(dsi, MCS_ACCESSPROT, 0xa5, 0xa5);
->> +		mutex_unlock(&ctx->mcs_mutex);
->> +	} else {
->> +		mutex_lock(&ctx->mcs_mutex);
->> +		mipi_dsi_dcs_write_seq_multi(dsi, MCS_ACCESSPROT, 0x5a, 0x5a);
->> +	}
->> +}
->> +
->> +static int s6e8aa5x01_update_brightness(struct backlight_device *backlight)#
-> 
-> Maybe call this function s6e8aa5x01_update_status() to match the callback.
-> 
->> +{
->> +	struct mipi_dsi_multi_context dsi = { .dsi = bl_get_data(backlight) };
->> +	struct s6e8aa5x01_ctx *ctx = mipi_dsi_get_drvdata(dsi.dsi);
->> +	u16 lvl = backlight->props.brightness;
-> 
-> backlight_get_brightness() here ?
-> 
-> 
-> I think you should also check panel->enabled and return if false. AFAIU there will be no gamma changes on disabled hardware anyway.
->
+Sure I will do that.
 
-The enable function is never executed when the panel is disabled. This is
-because flag checking is done by drm_panel anyway. See drm_panel_enable()
-in drivers/gpu/drm/drm_panel.c [1]
-
->> +
->> +static int s6e8aa5x01_probe(struct mipi_dsi_device *dsi)
->> +{
->> +	struct device *dev = &dsi->dev;
->> +	struct s6e8aa5x01_ctx *ctx;
->> +	int ret;
->> +
->> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> 
-> You're possibly using the instance after the hardware device has been removed. Alloc with drmm_kzalloc() or you might end up with UAF errors.
-
-Hmm, none of the panel drivers are using drmm_kzalloc(), or even any
-drmm_*(). Are you sure I must use it?
-
->> +	ret = devm_mutex_init(dev, &ctx->mcs_mutex);
-> 
-> You're taking this mutex in DRM code, so rather use drmm_mutex_init() here.
-
-(The comment by me above applies here too)
-
-> 
-> Best regards
-> Thomas
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/drm_panel.c#n209
+Christophe
 
