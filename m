@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-685285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5F4AD878C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:19:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA4CAD87A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9388A17A683
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1730017F42E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E03279DBC;
-	Fri, 13 Jun 2025 09:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D68A291C23;
+	Fri, 13 Jun 2025 09:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YC3jf+X5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="II8lr8ls"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A49A256C73
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228F02C15B7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806359; cv=none; b=eJWtExCfauVh1IovOCwlL54ftXlT/PksQf914kuqNpDVkKyCf1tArPGtm1LFCSHbXJ4mMa6yw15yOrWvOUAP77F7ajJGp+SLnnCP8SqsUSsaW7cAKA3fy+zMVxEcO0LPwWR3k+ejhcxr7wFPMM4OWNrne8ClPDMmM8dWXVhN7FI=
+	t=1749806392; cv=none; b=rPopSOSJXDKlKxfQKnq0RVIiKT2wVzxDMVBlmVrmF6uWbVLCRrxcKdYsQHWHRoju9F//NX6ruEmKHe97n/Lg4K/zxsKlBlcAJoWIPVcRZloKBDbngaiQ8FiExdLLTx9DyrScB9HRhjZwBRQB1pDyyS88GbYD0ruA6t6tWBRKabs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806359; c=relaxed/simple;
-	bh=X3SwZk0+NdKsQFVzTHHhqIypNM0XSedRlaB6ZhBrFsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mg9446HRIoMigHFp7RqUqrNlBAGpURVLP20Pq+Qa0JW8CIT1j6GOrK8k8SC/nacNMeeUtUEB8QCLHaoyIlYKGWzzoNKueXz2SehJQY6RmTzfBGNNwbTAwudTL0HvQC1Vh5E7c8nAiXpOu7b5FA0A6izwGVh0WBpzq572CIwY8i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YC3jf+X5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749806356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6ps891XYmeXGQVsKHCLRiO18tAsNa4cpsxg3MfRd4RQ=;
-	b=YC3jf+X5PxDgNFnKlixmLy/Bor2IizySqaNb/8IncOn8AD4Mqltk61mdXKOsi56doHIa1Z
-	kV1Pw84LpLkU8ZrSsbHKx21gryEu/b41hiEfCqcGIs8SQfci363+0VscSEAacrvMxQullK
-	mPF7zigln1s2TvEsIR6pQHbXiRjTQAE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-358-db6WsfvhOkO4AZTnmsBseg-1; Fri, 13 Jun 2025 05:19:15 -0400
-X-MC-Unique: db6WsfvhOkO4AZTnmsBseg-1
-X-Mimecast-MFC-AGG-ID: db6WsfvhOkO4AZTnmsBseg_1749806354
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451dda846a0so13953815e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:19:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749806354; x=1750411154;
+	s=arc-20240116; t=1749806392; c=relaxed/simple;
+	bh=vA2zESw0UZVtSv/afmxb/qpu0fOOiy8mfjZOlskXQW4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jMTrJLv8wgCotBrNbfWh+eyx0JN7bGlN2y3iT6rOZGf9wdeDCkFD+wRLtu887r9HBG/gQjhQQK9XkVWyE3l6yCMxRlSsbu/jVoqbeTqBERTe7Au9UVdUnJu6IB1eoVrk7tosEttlJwU3hwEICz6VD8s855fjH5+M1CUghEAOWu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=II8lr8ls; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4f379662cso1670459f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749806388; x=1750411188; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0qFn07GB/hGI+Ctu/nW6cDAKtjk0DCxKbD/zvlW1KZ4=;
+        b=II8lr8lsIwDnWgSsns0npsr2rwHAJYZ81g/GsvkZrbuk1pAj6G/XC8A0Ao7a9MXdgL
+         9zrEPuQ5JLobXmZogYL8LacA+6eXceu8lL+E+724aKaIZ8l050494Nu0qFmpWfqIPacf
+         s2gg6JM2yX7oBITJ+rtNhDVs1jUdRc7PEbO09dwI1MolYjoOu7tMD+XVsv5bXN7bvBuB
+         AeCCuZ8EsEZae8hrTj4nXNbV2hIMwBmu+FVGX7I5YyqVbxEcjRj+wzcHdaLbg6tK2k2L
+         g8T1YA7CFCdWxjX7MjqkxAYZ9VJkSRZtWJXW01c0BKEAcj6F2QfNHKpRK5/jT6TRBb4o
+         iWsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749806388; x=1750411188;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=6ps891XYmeXGQVsKHCLRiO18tAsNa4cpsxg3MfRd4RQ=;
-        b=hMsoYwZlitmJOpGht33hIN6hpqYL/rywhEmgrEZo6xHipEPqE8qfudkFwHjUlGoUNb
-         Hv4j/sI5JTjoFYNm/ObiDCy1hjiRvGYj+W6ZFKNcnUHAvhC/VTC/iFupu3xYnxt2r/A8
-         nQmnnNiCvb2mZXEI+fGxhUx4ZW1XPWrNNeSuT139/Gmrci6Q0NXSahg+uYW1Uh6eHnZu
-         CreSiz+c2wapm6yOhIz5GCJkY38sQXBHTPQlZPA4pAh+yqhsN9BVFsuix3zvVNg6ClRQ
-         860/0nj3hEfKcy4z/C+s4lApWucQvOBHHo6Uw0pQlgwN7WUIln+BmL87bw9pVbxQBXri
-         uTqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHJYuP1uIPvagVZ+7o60FvTJMXHIE8X+M3TemJDoAilN03BQ+3Qh4l4zuvyyuN/pudG/F5b3DojcR6i9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9lnjgGf4avW79oQJPmDA5NqJFx+cZlK5E7kE8OyB+O7YVHh6W
-	QIhl4WayBjyddQ4uevdpbsMK0oW7wvtbTsr9n/NpcBQa/Z5vyudhgxbG6uaULGmtq8/C0PwoqKy
-	GO/foXAZxlls0miOHOJxiginJtxWsmHvAD3xg7cgQhfVY/k7J0Ptr1x8oPOmKHG5R6g==
-X-Gm-Gg: ASbGnctOnO6wGF0ugUVZjgfM1ACljubrJUWv8bsbJ1f7CTxCwE3AUUUqA2R/hsus43S
-	qBynVRPzrqt53TU5I4xt0bJyAficD+nbLgbT19PJDKGNbEC27k4LhaJ0R6+69+ovDPAFtQU8UVE
-	QSWQrXy23hB8prQ1ukOzdio/S9m1VrMmxWlgqsRjtb2LES/KBkF8T1ZmvLguSFwSihf/9duvbJj
-	ToBbKNJe8CtZV9HvF1x3Xfbxxa6WQbhnGKUao9rgmHufTWW1eIQa4adlDekBOROjjuHRXC4/Vtd
-	jNXRg+5riW0CcVcLIrsjllipnYeTS2RHKJQaaSKspB5nl09x1CqO4yfHPhF8PM/9UKsspobeb8z
-	yl0RD1mfW8crTIEc/C2q9TeNOyFXD9JuElPSRcg452gKZf3LqyA==
-X-Received: by 2002:a05:6000:2312:b0:3a5:3bdd:6cfe with SMTP id ffacd0b85a97d-3a56871784bmr2001982f8f.26.1749806353902;
-        Fri, 13 Jun 2025 02:19:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFB0wUkGvgtukzllv0pkrwV3nUyJ0DyvtgCso3AdZqNtiUYhQOEQyHdJ6RuP49T0sKMOQsbbQ==
-X-Received: by 2002:a05:6000:2312:b0:3a5:3bdd:6cfe with SMTP id ffacd0b85a97d-3a56871784bmr2001954f8f.26.1749806353542;
-        Fri, 13 Jun 2025 02:19:13 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1a:3700:2982:b5f7:a04e:4cb4? (p200300d82f1a37002982b5f7a04e4cb4.dip0.t-ipconnect.de. [2003:d8:2f1a:3700:2982:b5f7:a04e:4cb4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a7e980sm1741051f8f.41.2025.06.13.02.19.12
+        bh=0qFn07GB/hGI+Ctu/nW6cDAKtjk0DCxKbD/zvlW1KZ4=;
+        b=ZSIQaUOsQMt/gw4tRufbP8qKBm/3w87npmPnPYp0kTskjuy1YCCL9ZfR3zFkakPst/
+         UpfibwA389kvw8AO2FXHMRzEb78yJiiG7tYvjYsO1p7imVgsbbZ392le3ewaEMbe9eMw
+         o6NEDajw+2E83mxKIhkIsE2KO+ZZbR5x1JrIHxxV+rJKbgX56HSvvozYi66AmI8cw/gL
+         Uz0knigSMSjpnii3y+XntP4nXuHhHM+r8Znee3Ub7wHKWrp6mmwvGGxCH0ycaHRMnuK4
+         yHKSmZfjvuiGwtjnTlGMiAYMBY8OyuR2+gVpsLyYCIP0+j47COJKClpn+CUzvcCDfbkN
+         Avug==
+X-Forwarded-Encrypted: i=1; AJvYcCUJR+kIi8jhQvBYoxgP4WRtAtX5ZoFB9UsZhAx8UuyuqmG7G4LANMnDYIP2Mj/Y2buAQ+RrbmxKTbLhlGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMYdJc/UHGP3+zkRKEjSrv48tSK2H1cPiJfoMWAAHrXObV6WF9
+	SWA4VMf02mkvzhXLRj8Q76hpA/U+iqrVzKh7f/VjrwEa3Qf27b4HxQY5OOe+iRI1GT4OORPmy01
+	YOmhVE30=
+X-Gm-Gg: ASbGncspZvYauEhsSxe1MjW0avEbbYnuVAWgCO+SKytmuWqI9GvwECa3coypasDNoQo
+	Z6sn12KpMbjTKUD9zV8fSJ4HyGK34IXaEEgy+cGCJowGvlsFYHKilmaAmylvJ5b5cmDP8t9KdT+
+	UNIuBqWrlzBzUdefgRtI49cwN+30Hi/5E5nKZFBug3C33vEkOUUWC1vKPRgq1c251YuzVhxZ3j2
+	btGn02+AHZgqanV4atTKhM/AftUBgt1eFR7PRJQC07bncECTvyqXCRlq/X74vcZm7B6ADzMzpOR
+	Jd8Pc/akyNoQtkHaS3LfTox/9K9CLeElZlROD8F56KCcJoVrKiCk9OzU84HJpblG2V2MkCGUPU2
+	sazqCkpCbvF2RrIWOHNDsm7g+N2Ho+sWULsqBcqM=
+X-Google-Smtp-Source: AGHT+IH4oACk1bsfV6amSlitKrCgpQJnJ/K1MhkDAlenMtB1mkbBDDmt16i+/PumTX/+HB7PsCie1A==
+X-Received: by 2002:a05:6000:2913:b0:3a4:fea6:d49f with SMTP id ffacd0b85a97d-3a5687709c5mr2132132f8f.49.1749806388333;
+        Fri, 13 Jun 2025 02:19:48 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae? ([2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a734b5sm1816612f8f.33.2025.06.13.02.19.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 02:19:13 -0700 (PDT)
-Message-ID: <925cdfc4-7878-4572-9a4d-9b99d149a652@redhat.com>
-Date: Fri, 13 Jun 2025 11:19:11 +0200
+        Fri, 13 Jun 2025 02:19:47 -0700 (PDT)
+Message-ID: <8c13ed70-6464-4b70-b45c-a336d5c6d4fa@linaro.org>
+Date: Fri, 13 Jun 2025 11:19:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,108 +84,330 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] kdump: wait for DMA to finish when using CMA
-To: Andrew Morton <akpm@linux-foundation.org>, Jiri Bohac <jbohac@suse.cz>
-Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
- Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
- Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
- linux-kernel@vger.kernel.org, David Hildenbrand <dhildenb@redhat.com>,
- Michal Hocko <mhocko@suse.cz>
-References: <aEqnxxfLZMllMC8I@dwarf.suse.cz> <aEqpgDIBndZ5LXSo@dwarf.suse.cz>
- <20250612164735.76a1ea9a156cd254331ffdc4@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250612164735.76a1ea9a156cd254331ffdc4@linux-foundation.org>
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] phy: cadence: Sierra: Add PCIe + USB PHY multilink
+ configuration
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, vkoul@kernel.org,
+ kishon@kernel.org, christophe.jaillet@wanadoo.fr, sjakhade@cadence.com,
+ bwawrzyn@cisco.com, u.kleine-koenig@baylibre.com,
+ krzysztof.kozlowski@linaro.org
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com
+References: <20250610130133.2102196-1-s-vadapalli@ti.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250610130133.2102196-1-s-vadapalli@ti.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13.06.25 01:47, Andrew Morton wrote:
-> On Thu, 12 Jun 2025 12:18:40 +0200 Jiri Bohac <jbohac@suse.cz> wrote:
+On 10/06/2025 15:01, Siddharth Vadapalli wrote:
+> From: Swapnil Jakhade <sjakhade@cadence.com>
 > 
->> When re-using the CMA area for kdump there is a risk of pending DMA
->> into pinned user pages in the CMA area.
->>
->> Pages residing in CMA areas can usually not get long-term pinned and
->> are instead migrated away from the CMA area, so long-term pinning is
->> typically not a concern. (BUGs in the kernel might still lead to
->> long-term pinning of such pages if everything goes wrong.)
->>
->> Pages pinned without FOLL_LONGTERM remain in the CMA and may possibly
->> be the source or destination of a pending DMA transfer.
->>
->> Although there is no clear specification how long a page may be pinned
->> without FOLL_LONGTERM, pinning without the flag shows an intent of the
->> caller to only use the memory for short-lived DMA transfers, not a transfer
->> initiated by a device asynchronously at a random time in the future.
->>
->> Add a delay of CMA_DMA_TIMEOUT_SEC seconds before starting the kdump
->> kernel, giving such short-lived DMA transfers time to finish before
->> the CMA memory is re-used by the kdump kernel.
->>
->> Set CMA_DMA_TIMEOUT_SEC to 10 seconds - chosen arbitrarily as both
->> a huge margin for a DMA transfer, yet not increasing the kdump time
->> too significantly.
+> Add register sequences for PCIe + USB multilink configuration for
+> Sierra PHY.
 > 
-> Oh.  10s sounds a lot.  How long does this process typically take?
+> Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
 > 
-> It's sad to add a 10s delay for something which some systems will never
-> do.  I wonder if there's some simple hack we can add.  Like having a
-> global flag which gets set the first time someone pins a CMA page
+> Hello,
+> 
+> This patch is based on linux-next tagged next-20250610.
+> 
+> Regards,
+> Siddharth.
+> 
+>   drivers/phy/cadence/phy-cadence-sierra.c | 180 +++++++++++++++++++++++
+>   1 file changed, 180 insertions(+)
+> 
+> diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
+> index 45a5c00843bf..74613382ccb0 100644
+> --- a/drivers/phy/cadence/phy-cadence-sierra.c
+> +++ b/drivers/phy/cadence/phy-cadence-sierra.c
+> @@ -58,8 +58,11 @@
+>   #define SIERRA_CMN_PLLLC1_GEN_PREG			0xC2
+>   #define SIERRA_CMN_PLLLC1_FBDIV_INT_PREG		0xC3
+>   #define SIERRA_CMN_PLLLC1_DCOCAL_CTRL_PREG		0xC5
+> +#define SIERRA_CMN_PLLLC1_MODE_PREG			0xC8
+> +#define SIERRA_CMN_PLLLC1_LF_COEFF_MODE1_PREG		0xC9
+>   #define SIERRA_CMN_PLLLC1_LF_COEFF_MODE0_PREG		0xCA
+>   #define SIERRA_CMN_PLLLC1_CLK0_PREG			0xCE
+> +#define SIERRA_CMN_PLLLC1_BWCAL_MODE1_PREG		0xCF
+>   #define SIERRA_CMN_PLLLC1_BWCAL_MODE0_PREG		0xD0
+>   #define SIERRA_CMN_PLLLC1_SS_TIME_STEPSIZE_MODE_PREG	0xE2
+>   
+> @@ -1541,6 +1544,137 @@ static void cdns_sierra_phy_remove(struct platform_device *pdev)
+>   	cdns_sierra_clk_unregister(phy);
+>   }
+>   
+> +/* USB refclk 100MHz, 20b, SuperSpeed opt2, ext ssc, PLL LC1, multilink */
+> +static const struct cdns_reg_pairs usb_100_ext_ssc_plllc1_cmn_regs[] = {
+> +	{0x002D, SIERRA_CMN_PLLLC1_FBDIV_INT_PREG},
+> +	{0x2086, SIERRA_CMN_PLLLC1_LF_COEFF_MODE1_PREG},
+> +	{0x2086, SIERRA_CMN_PLLLC1_LF_COEFF_MODE0_PREG},
+> +	{0x1005, SIERRA_CMN_PLLLC1_CLK0_PREG},
+> +	{0x0000, SIERRA_CMN_PLLLC1_BWCAL_MODE1_PREG},
+> +	{0x0000, SIERRA_CMN_PLLLC1_BWCAL_MODE0_PREG},
+> +	{0x0000, SIERRA_CMN_PLLLC1_SS_TIME_STEPSIZE_MODE_PREG}
+> +};
+> +
+> +/* USB refclk 100MHz, 20b, SuperSpeed opt2, int ssc, PLL LC1, multilink */
+> +static const struct cdns_reg_pairs usb_100_int_ssc_plllc1_cmn_regs[] = {
+> +	{0x002D, SIERRA_CMN_PLLLC1_FBDIV_INT_PREG},
+> +	{0x000E, SIERRA_CMN_PLLLC1_MODE_PREG},
+> +	{0x1005, SIERRA_CMN_PLLLC1_CLK0_PREG}
+> +};
+> +
+> +static const struct cdns_reg_pairs usb_100_ml_ln_regs[] = {
+> +	{0xFE0A, SIERRA_DET_STANDEC_A_PREG},
+> +	{0x000F, SIERRA_DET_STANDEC_B_PREG},
+> +	{0x55A5, SIERRA_DET_STANDEC_C_PREG},
+> +	{0x69AD, SIERRA_DET_STANDEC_D_PREG},
+> +	{0x0241, SIERRA_DET_STANDEC_E_PREG},
+> +	{0x0010, SIERRA_PSM_LANECAL_DLY_A1_RESETS_PREG},
+> +	{0x0014, SIERRA_PSM_A0IN_TMR_PREG},
+> +	{0x001D, SIERRA_PSM_A3IN_TMR_PREG},
+> +	{0x0004, SIERRA_PSC_LN_A3_PREG},
+> +	{0x0004, SIERRA_PSC_LN_IDLE_PREG},
+> +	{0x001F, SIERRA_PSC_TX_A0_PREG},
+> +	{0x0007, SIERRA_PSC_TX_A1_PREG},
+> +	{0x0003, SIERRA_PSC_TX_A2_PREG},
+> +	{0x0003, SIERRA_PSC_TX_A3_PREG},
+> +	{0x0FFF, SIERRA_PSC_RX_A0_PREG},
+> +	{0x0619, SIERRA_PSC_RX_A1_PREG},
+> +	{0x0003, SIERRA_PSC_RX_A2_PREG},
+> +	{0x0001, SIERRA_PSC_RX_A3_PREG},
+> +	{0x0606, SIERRA_PLLCTRL_FBDIV_MODE01_PREG},
+> +	{0x0001, SIERRA_PLLCTRL_SUBRATE_PREG},
+> +	{0x0003, SIERRA_PLLCTRL_GEN_A_PREG},
+> +	{0x0406, SIERRA_PLLCTRL_GEN_D_PREG},
+> +	{0x5211, SIERRA_PLLCTRL_CPGAIN_MODE_PREG},
+> +	{0x00CA, SIERRA_CLKPATH_BIASTRIM_PREG},
+> +	{0x2512, SIERRA_DFE_BIASTRIM_PREG},
+> +	{0x0000, SIERRA_DRVCTRL_ATTEN_PREG},
+> +	{0x823E, SIERRA_CLKPATHCTRL_TMR_PREG},
+> +	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE1_PREG},
+> +	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE0_PREG},
+> +	{0x7B3C, SIERRA_CREQ_CCLKDET_MODE01_PREG},
+> +	{0x023F, SIERRA_RX_CTLE_MAINTENANCE_PREG},
+> +	{0x3232, SIERRA_CREQ_FSMCLK_SEL_PREG},
+> +	{0x0000, SIERRA_CREQ_EQ_CTRL_PREG},
+> +	{0xCC44, SIERRA_CREQ_EQ_OPEN_EYE_THRESH_PREG},
+> +	{0x8452, SIERRA_CTLELUT_CTRL_PREG},
+> +	{0x4121, SIERRA_DFE_ECMP_RATESEL_PREG},
+> +	{0x4121, SIERRA_DFE_SMP_RATESEL_PREG},
+> +	{0x0002, SIERRA_DEQ_PHALIGN_CTRL},
+> +	{0x3200, SIERRA_DEQ_CONCUR_CTRL1_PREG},
+> +	{0x5064, SIERRA_DEQ_CONCUR_CTRL2_PREG},
+> +	{0x0030, SIERRA_DEQ_EPIPWR_CTRL2_PREG},
+> +	{0x5A5A, SIERRA_DEQ_ERRCMP_CTRL_PREG},
+> +	{0x02F5, SIERRA_DEQ_OFFSET_CTRL_PREG},
+> +	{0x02F5, SIERRA_DEQ_GAIN_CTRL_PREG},
+> +	{0xA9A9, SIERRA_DEQ_VGATUNE_CTRL_PREG},
+> +	{0x0014, SIERRA_DEQ_GLUT0},
+> +	{0x0014, SIERRA_DEQ_GLUT1},
+> +	{0x0014, SIERRA_DEQ_GLUT2},
+> +	{0x0014, SIERRA_DEQ_GLUT3},
+> +	{0x0014, SIERRA_DEQ_GLUT4},
+> +	{0x0014, SIERRA_DEQ_GLUT5},
+> +	{0x0014, SIERRA_DEQ_GLUT6},
+> +	{0x0014, SIERRA_DEQ_GLUT7},
+> +	{0x0014, SIERRA_DEQ_GLUT8},
+> +	{0x0014, SIERRA_DEQ_GLUT9},
+> +	{0x0014, SIERRA_DEQ_GLUT10},
+> +	{0x0014, SIERRA_DEQ_GLUT11},
+> +	{0x0014, SIERRA_DEQ_GLUT12},
+> +	{0x0014, SIERRA_DEQ_GLUT13},
+> +	{0x0014, SIERRA_DEQ_GLUT14},
+> +	{0x0014, SIERRA_DEQ_GLUT15},
+> +	{0x0014, SIERRA_DEQ_GLUT16},
+> +	{0x0BAE, SIERRA_DEQ_ALUT0},
+> +	{0x0AEB, SIERRA_DEQ_ALUT1},
+> +	{0x0A28, SIERRA_DEQ_ALUT2},
+> +	{0x0965, SIERRA_DEQ_ALUT3},
+> +	{0x08A2, SIERRA_DEQ_ALUT4},
+> +	{0x07DF, SIERRA_DEQ_ALUT5},
+> +	{0x071C, SIERRA_DEQ_ALUT6},
+> +	{0x0659, SIERRA_DEQ_ALUT7},
+> +	{0x0596, SIERRA_DEQ_ALUT8},
+> +	{0x0514, SIERRA_DEQ_ALUT9},
+> +	{0x0492, SIERRA_DEQ_ALUT10},
+> +	{0x0410, SIERRA_DEQ_ALUT11},
+> +	{0x038E, SIERRA_DEQ_ALUT12},
+> +	{0x030C, SIERRA_DEQ_ALUT13},
+> +	{0x03F4, SIERRA_DEQ_DFETAP_CTRL_PREG},
+> +	{0x0001, SIERRA_DFE_EN_1010_IGNORE_PREG},
+> +	{0x3C01, SIERRA_DEQ_TAU_CTRL1_FAST_MAINT_PREG},
+> +	{0x3C40, SIERRA_DEQ_TAU_CTRL1_SLOW_MAINT_PREG},
+> +	{0x1C08, SIERRA_DEQ_TAU_CTRL2_PREG},
+> +	{0x0033, SIERRA_DEQ_PICTRL_PREG},
+> +	{0x0330, SIERRA_CPICAL_TMRVAL_MODE0_PREG},
+> +	{0x01FF, SIERRA_CPICAL_PICNT_MODE1_PREG},
+> +	{0x0009, SIERRA_CPI_OUTBUF_RATESEL_PREG},
+> +	{0x3232, SIERRA_CPICAL_RES_STARTCODE_MODE23_PREG},
+> +	{0x0005, SIERRA_LFPSDET_SUPPORT_PREG},
+> +	{0x000F, SIERRA_LFPSFILT_NS_PREG},
+> +	{0x0009, SIERRA_LFPSFILT_RD_PREG},
+> +	{0x0001, SIERRA_LFPSFILT_MP_PREG},
+> +	{0x8013, SIERRA_SDFILT_H2L_A_PREG},
+> +	{0x8009, SIERRA_SDFILT_L2H_PREG},
+> +	{0x0024, SIERRA_RXBUFFER_CTLECTRL_PREG},
+> +	{0x0020, SIERRA_RXBUFFER_RCDFECTRL_PREG},
+> +	{0x4243, SIERRA_RXBUFFER_DFECTRL_PREG}
+> +};
+> +
+> +static const struct cdns_sierra_vals usb_100_ext_ssc_plllc1_cmn_vals = {
+> +	.reg_pairs = usb_100_ext_ssc_plllc1_cmn_regs,
+> +	.num_regs = ARRAY_SIZE(usb_100_ext_ssc_plllc1_cmn_regs),
+> +};
+> +
+> +static const struct cdns_sierra_vals usb_100_int_ssc_plllc1_cmn_vals = {
+> +	.reg_pairs = usb_100_int_ssc_plllc1_cmn_regs,
+> +	.num_regs = ARRAY_SIZE(usb_100_int_ssc_plllc1_cmn_regs),
+> +};
+> +
+> +static const struct cdns_sierra_vals usb_100_ml_ln_vals = {
+> +	.reg_pairs = usb_100_ml_ln_regs,
+> +	.num_regs = ARRAY_SIZE(usb_100_ml_ln_regs),
+> +};
+> +
+>   /* SGMII PHY PMA lane configuration */
+>   static const struct cdns_reg_pairs sgmii_phy_pma_ln_regs[] = {
+>   	{0x9010, SIERRA_PHY_PMA_XCVR_CTRL}
+> @@ -2513,6 +2647,11 @@ static const struct cdns_sierra_data cdns_map_sierra = {
+>   				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+>   				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+>   			},
+> +			[TYPE_USB] = {
+> +				[NO_SSC] = &pcie_phy_pcs_cmn_vals,
+> +				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+> +				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+> +			},
+>   		},
+>   	},
+>   	.pma_cmn_vals = {
+> @@ -2532,11 +2671,20 @@ static const struct cdns_sierra_data cdns_map_sierra = {
+>   				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
+>   				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
+>   			},
+> +			[TYPE_USB] = {
+> +				[NO_SSC] = &pcie_100_no_ssc_plllc_cmn_vals,
+> +				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
+> +				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
+> +			},
+>   		},
+>   		[TYPE_USB] = {
+>   			[TYPE_NONE] = {
+>   				[EXTERNAL_SSC] = &usb_100_ext_ssc_cmn_vals,
+>   			},
+> +			[TYPE_PCIE] = {
+> +				[EXTERNAL_SSC] = &usb_100_ext_ssc_plllc1_cmn_vals,
+> +				[INTERNAL_SSC] = &usb_100_int_ssc_plllc1_cmn_vals,
+> +			},
+>   		},
+>   		[TYPE_SGMII] = {
+>   			[TYPE_NONE] = {
+> @@ -2573,11 +2721,20 @@ static const struct cdns_sierra_data cdns_map_sierra = {
+>   				[EXTERNAL_SSC] = &ml_pcie_100_ext_ssc_ln_vals,
+>   				[INTERNAL_SSC] = &ml_pcie_100_int_ssc_ln_vals,
+>   			},
+> +			[TYPE_USB] = {
+> +				[NO_SSC] = &ml_pcie_100_no_ssc_ln_vals,
+> +				[EXTERNAL_SSC] = &ml_pcie_100_ext_ssc_ln_vals,
+> +				[INTERNAL_SSC] = &ml_pcie_100_int_ssc_ln_vals,
+> +			},
+>   		},
+>   		[TYPE_USB] = {
+>   			[TYPE_NONE] = {
+>   				[EXTERNAL_SSC] = &usb_100_ext_ssc_ln_vals,
+>   			},
+> +			[TYPE_PCIE] = {
+> +				[EXTERNAL_SSC] = &usb_100_ml_ln_vals,
+> +				[INTERNAL_SSC] = &usb_100_ml_ln_vals,
+> +			},
+>   		},
+>   		[TYPE_SGMII] = {
+>   			[TYPE_NONE] = {
+> @@ -2620,6 +2777,11 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
+>   				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+>   				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+>   			},
+> +			[TYPE_USB] = {
+> +				[NO_SSC] = &pcie_phy_pcs_cmn_vals,
+> +				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+> +				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+> +			},
+>   		},
+>   	},
+>   	.phy_pma_ln_vals = {
+> @@ -2655,11 +2817,20 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
+>   				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
+>   				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
+>   			},
+> +			[TYPE_USB] = {
+> +				[NO_SSC] = &pcie_100_no_ssc_plllc_cmn_vals,
+> +				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
+> +				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
+> +			},
+>   		},
+>   		[TYPE_USB] = {
+>   			[TYPE_NONE] = {
+>   				[EXTERNAL_SSC] = &usb_100_ext_ssc_cmn_vals,
+>   			},
+> +			[TYPE_PCIE] = {
+> +				[EXTERNAL_SSC] = &usb_100_ext_ssc_plllc1_cmn_vals,
+> +				[INTERNAL_SSC] = &usb_100_int_ssc_plllc1_cmn_vals,
+> +			},
+>   		},
+>   		[TYPE_SGMII] = {
+>   			[TYPE_PCIE] = {
+> @@ -2693,11 +2864,20 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
+>   				[EXTERNAL_SSC] = &ti_ml_pcie_100_ext_ssc_ln_vals,
+>   				[INTERNAL_SSC] = &ti_ml_pcie_100_int_ssc_ln_vals,
+>   			},
+> +			[TYPE_USB] = {
+> +				[NO_SSC] = &ti_ml_pcie_100_no_ssc_ln_vals,
+> +				[EXTERNAL_SSC] = &ti_ml_pcie_100_ext_ssc_ln_vals,
+> +				[INTERNAL_SSC] = &ti_ml_pcie_100_int_ssc_ln_vals,
+> +			},
+>   		},
+>   		[TYPE_USB] = {
+>   			[TYPE_NONE] = {
+>   				[EXTERNAL_SSC] = &usb_100_ext_ssc_ln_vals,
+>   			},
+> +			[TYPE_PCIE] = {
+> +				[EXTERNAL_SSC] = &usb_100_ml_ln_vals,
+> +				[INTERNAL_SSC] = &usb_100_ml_ln_vals,
+> +			},
+>   		},
+>   		[TYPE_SGMII] = {
+>   			[TYPE_PCIE] = {
 
-We would likely have to do that for any GUP on such a page (FOLL_GET | 
-FOLL_PIN), both from gup-fast and gup-slow.
-
-Should work, but IMHO can be optimized later, on top of this series.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Looks good:
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
