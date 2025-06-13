@@ -1,154 +1,237 @@
-Return-Path: <linux-kernel+bounces-685894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5E4AD9009
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:49:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94317AD9010
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 614027A2E2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F517188A8E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D7E10F9;
-	Fri, 13 Jun 2025 14:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED012E406;
+	Fri, 13 Jun 2025 14:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rVsnaivI"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evBQHyr8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2754A9444
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AB79444;
+	Fri, 13 Jun 2025 14:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826155; cv=none; b=tTIxlEiP6ypyV+lpPAtAEDJATYX7Pqg7C4SL8DeSc/JmswMAl9ixUWHDEG7gZ+zhHjlSyp8pjeVnxcE9NO7CyrENIP+nZnDzqs9MCrYMQPDQg3REpeEr27nZfUZkUkAi3vLctlPxmG+UdzJBPTBNGhASuAq/kx4lOuObyktMR0Y=
+	t=1749826207; cv=none; b=XtO84etifkCO65GB4ud6gj5yZObjFzRdLm0nioj4l+ppvXdF2JsytyV+roI5Ex2ZZCFqemjmZiTdKqex9ZTDKZH4YW1MaRJeucm+kKT7ZITfeLpvwjRqRq0AiIsFXrefGMuAWbo2nVX52nUzb86auAV1xcFU7TktESNsVMTIwPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826155; c=relaxed/simple;
-	bh=2cJno2Hoj8gBQakrsjFx1WU6qLvNRnglSPMrwyBSsfw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OpUTArr6thCpFb9Kfhbs408sdNpQdioppTZ3Wwy4v+2OGjERoActE7P8qTOsYuV/sp9HUt4dlrnAFzSmt3WVyFTRIDLI9Kx6g8DBHq+hdunktqtBcPcXkuX/Fuq60SPmkHSWVrU3/66HCAuiML9HnOhgipELWp3OK+RFVzp5vlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rVsnaivI; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453066fad06so17178725e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749826152; x=1750430952; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2cJno2Hoj8gBQakrsjFx1WU6qLvNRnglSPMrwyBSsfw=;
-        b=rVsnaivIXxckmHKkmEdauL+K9MnYezTJZ4JKghLmBef49U3l1sGT2L+nKfYOvTor3U
-         mZA2IWvhNwOiSuyRVYdpFRjnMPV6b8rCkqP4DHpowjrhEhrFGoCWj9vxJIbiSo0Vb2Vo
-         Lv43QVid+50SdqVOwt9fMR6ia0hgeF8vqqzucF/5CedOEGwP+u5bz03I0vbc7UuMB2x7
-         YHVsreRiIS49pa1bO+clZRn2EeTfsysRfTIybW5YlH1NNlesKwDOnW2zM2oC7/0ZEjik
-         T7FTmW/7ZOgch4nMvTmU9UTifZypG1x+TeNgbDYyOpeiDWyIAqrX7IelXLUbYFSMNw/F
-         +nlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749826152; x=1750430952;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2cJno2Hoj8gBQakrsjFx1WU6qLvNRnglSPMrwyBSsfw=;
-        b=A7CPK2PC9/iVUqj1omVnGzXSzQLebn4w4zflYvznFMb4Rn5dJhKdgJJMlBFWk51pnm
-         YhSfxCLjDqDsuz6clWAAPpavNXOGIZRFwT6YVMohbFdcVkOfBmHc3UH00oDS8gmWLhcN
-         PyMExRIdA1asFluoZjbo1Q/7rv5Kg1iqSvTnWAQ23XZeGrXxAr9sSknYyKrmdAbkBGv0
-         76Yoe9AgsJNjMj7PzU+5rzV3UUU/39XJQwr/KTl1iVgpRxlpvmEQyvIJ/KhRR5Tkcn6h
-         FZ4jNj5/v536yWXBYXg9ohO9sjh4Ru9NB481KDxKtydJGhDpPW9TGihvsGE0HDvtrVSY
-         Ie1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXRFqZyEpmhEOd2NQ/QgI1i91yRbxIRhhdX+fcBBg1WoNobRmlHMUfESQphttem4yc+g2xVqudKW6Jvr0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWIqbemLLAiZkurrYX7dC1KCZGyJoYwImwaUzKSXtKZEOS98om
-	I70J+g8eYCKAyz5XtrHw0TuGHSJ7KEbZ7qDzchNlo2lHKxt/nERiNmcJnefBIzTj0rE=
-X-Gm-Gg: ASbGncvTxYOBcorzyOC9XaZnrZwWr1Qm4pojGskCwwtQgsX0nZWkAd0zacXA4Zn1u85
-	SJdt6Dz3otmh0U0FrN2e9Q1bvv9bi5UFkEvBqW1MT4Ylu9XrVy4rRgi0vOYqbwkO4yGF0MiEYl3
-	7Z2L/8Fu9gMJE6iw3Dik7Pg1B98i9mcwXtjScuWoAT3keO5Gi3nxAk6iWYrTEyESTMfHHmwb2Yt
-	6JrvR27dwNUpsNCIB85OuonoMGf+PUvSPJuJFL94Y0pzXbzhNljyzhmKE/VMTMB87xreqWFMOWl
-	IP3HhkCg5nxsJFvu7mKuPRcpneEoami8Yz59KedvqyFE+UFBbhXe0P2bhaMr6Op3YQ==
-X-Google-Smtp-Source: AGHT+IHGGsFtFCfbuYCXq3oL8odq3HLL7l0GwRKDXbGKH51pl4haYPNqSjXxdeo1IqvXv5YDBnxJAw==
-X-Received: by 2002:a05:6000:250c:b0:3a5:2cca:6054 with SMTP id ffacd0b85a97d-3a572367c51mr3741f8f.4.1749826152548;
-        Fri, 13 Jun 2025 07:49:12 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b5c372sm2510723f8f.89.2025.06.13.07.49.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 07:49:12 -0700 (PDT)
-Message-ID: <05b9862c9a8f11bf7d7c8afdf60ecff30716a196.camel@linaro.org>
-Subject: Re: [PATCH 07/17] mfd: sec-common: Instantiate s2mpg10 bucks and
- ldos separately
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski	
- <brgl@bgdev.pl>, Peter Griffin <peter.griffin@linaro.org>, Will McVicker	
- <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Date: Fri, 13 Jun 2025 15:49:10 +0100
-In-Reply-To: <20250613141902.GI897353@google.com>
-References: <20250604-s2mpg1x-regulators-v1-0-6038740f49ae@linaro.org>
-	 <20250604-s2mpg1x-regulators-v1-7-6038740f49ae@linaro.org>
-	 <20250613141902.GI897353@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1749826207; c=relaxed/simple;
+	bh=kGZKovHZAOMAY4BdLaB6MT6J2cwBbIHh1UlazvQlbCI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=o2zWv4wDaUMDMKu58AI7dpFJv6B+6jkMpYjNYPDOGwX/h3X4RbySzk/qPNQ6nCkkhtxvT5xjcQ4a2d+GH3jqOXnYNEBsxi2S1yPNQ1hCGSW3D6wd6yup2/mc0oaq99HEoVxBzJcgnekE2qufT+kgJ/HrlTP2PZrXaeEVqLDNkao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evBQHyr8; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749826206; x=1781362206;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=kGZKovHZAOMAY4BdLaB6MT6J2cwBbIHh1UlazvQlbCI=;
+  b=evBQHyr8jFfCZM3J+gQdIZIXmlTqTjeeMggYZdwk7b477cvogMFNbLp7
+   Ium/0rWHaVmw2WrL81I4oYSN1AqQex5Nt16P4mBpNQQxRO5dtwxbI7who
+   6+iqodntR/1mnCgC4RPE0uV0nM8MRbOTE6qudoM4LkyFAnIVwj8fFKlBP
+   McrHlV6DvL0aVCfzp+4QESpClbQcpiqJirM/W9WzDCM6i0PKAIJI69cXw
+   62nCXG5ey3BFeZlMCEbp+kT9MaHkFOyl6TUck2cnB3oIZmOdMMe//0Duz
+   WiM5ObBXTPo52t3/Z1H3i4r4aHSCwZWeJdcU/r8AyXad223Qz1BG69aWA
+   Q==;
+X-CSE-ConnectionGUID: rLku5JqYRsurMN3iiZumxw==
+X-CSE-MsgGUID: JY5LCvacRceBaRmlipOeqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="55844493"
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="55844493"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:50:03 -0700
+X-CSE-ConnectionGUID: nKyBa/ycQQeHYgj4/TeZgA==
+X-CSE-MsgGUID: Mn1CZcZJRcuBRsZIkU8k+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
+   d="scan'208";a="178742234"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.102])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:49:58 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 13 Jun 2025 17:49:54 +0300 (EEST)
+To: "Derek J. Clark" <derekjohn.clark@gmail.com>
+cc: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>, 
+    Jonathan Corbet <corbet@lwn.net>, Mario Limonciello <superm1@kernel.org>, 
+    Luke Jones <luke@ljones.dev>, Xino Ni <nijs1@lenovo.com>, 
+    Zhixin Zhang <zhangzx36@lenovo.com>, Mia Shao <shaohz1@lenovo.com>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>, 
+    "Cody T . H . Chiu" <codyit@gmail.com>, John Martens <johnfanv2@gmail.com>, 
+    Kurt Borja <kuurtb@gmail.com>, platform-driver-x86@vger.kernel.org, 
+    linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 0/6] platform/x86: Add Lenovo WMI Gaming Series
+ Drivers
+In-Reply-To: <8933A696-ABA4-4C79-90D3-347016B26911@gmail.com>
+Message-ID: <a9faa172-de05-8af6-1fdb-bae50849e087@linux.intel.com>
+References: <20250609185027.7378-1-derekjohn.clark@gmail.com> <facbb66b-ea34-bc57-d673-adb84f79fb8d@linux.intel.com> <8933A696-ABA4-4C79-90D3-347016B26911@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-1542103684-1749826194=:948"
 
-Hi Lee,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks for your review!
+--8323328-1542103684-1749826194=:948
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Fri, 2025-06-13 at 15:19 +0100, Lee Jones wrote:
-> On Wed, 04 Jun 2025, Andr=C3=A9 Draszik wrote:
+On Fri, 13 Jun 2025, Derek J. Clark wrote:
+
 >=20
-> > Bucks can conceivably be used as supplies for LDOs, which means we need
-> > to instantiate them separately from each other so that the supply-
-> > consumer links can be resolved successfully at probe time.
-> >=20
-> > By doing so, the kernel will defer and retry instantiating the LDOs
-> > once BUCKs have been created while without this change, it can be
-> > impossible to mark BUCKs as LDO supplies. This becomes particularly
-> > an issue with the upcoming support for the S2MPG11 PMIC, where
-> > typically certain S2MP10/11 buck rails supply certain S2MP11/10 LDO
-> > rails.
-> >=20
-> > The platform_device's ::id field is used to inform the regulator driver
-> > which type of regulators (buck or ldo) to instantiate.
 >=20
-> I'm confused.
+> On June 13, 2025 2:07:14 AM PDT, "Ilpo J=C3=A4rvinen" <ilpo.jarvinen@linu=
+x.intel.com> wrote:
+> >On Mon, 9 Jun 2025, Derek J. Clark wrote:
+> >
+> >> Adds support for the Lenovo "Gaming Series" of laptop hardware that us=
+e
+> >> WMI interfaces that control various power settings. There are multiple=
+ WMI
+> >> interfaces that work in concert to provide getting and setting values =
+as
+> >> well as validation of input. Currently only the "Gamezone", "Other
+> >> Mode", and "LENOVO_CAPABILITY_DATA_01" interfaces are implemented, but
+> >> I attempted to structure the driver so that adding the "Custom Mode",
+> >> "Lighting", and other data block interfaces would be trivial in later
+> >> patches.
+> >>=20
+> >> This driver attempts to standardize the exposed sysfs by mirroring the
+> >> asus-armoury driver currently under review. As such, a lot of
+> >> inspiration has been drawn from that driver.
+> >> https://lore.kernel.org/platform-driver-x86/20250319065827.53478-1-luk=
+e@ljones.dev/#t
+> >>=20
+> >> The drivers have been tested by me on the Lenovo Legion Go and Legion =
+Go
+> >> S.
+> >>=20
+> >> Suggested-by: Mario Limonciello <superm1@kernel.org>
+> >> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> >> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> >> ---
+> >> v12:
+> >>  - Fix warnings from make W=3D1
+> >> v11:
+> >> v10:
+> >> https://lore.kernel.org/platform-driver-x86/20250515182224.8277-1-dere=
+kjohn.clark@gmail.com/
+> >> v9:
+> >> https://lore.kernel.org/platform-driver-x86/20250508235217.12256-1-der=
+ekjohn.clark@gmail.com/
+> >> v8:
+> >> https://lore.kernel.org/platform-driver-x86/20250505010659.1450984-1-d=
+erekjohn.clark@gmail.com/
+> >> v7:
+> >> https://lore.kernel.org/platform-driver-x86/20250503000142.1190354-1-d=
+erekjohn.clark@gmail.com/
+> >> v6:
+> >> https://lore.kernel.org/platform-driver-x86/20250428012029.970017-1-de=
+rekjohn.clark@gmail.com/
+> >> v5:
+> >> https://lore.kernel.org/platform-driver-x86/20250408012815.1032357-1-d=
+erekjohn.clark@gmail.com/
+> >> v4:
+> >> https://lore.kernel.org/platform-driver-x86/20250317144326.5850-1-dere=
+kjohn.clark@gmail.com/
+> >> v3:
+> >> https://lore.kernel.org/platform-driver-x86/20250225220037.16073-1-der=
+ekjohn.clark@gmail.com/
+> >> v2:
+> >> https://lore.kernel.org/platform-driver-x86/20250102004854.14874-1-der=
+ekjohn.clark@gmail.com/
+> >> v1:
+> >> https://lore.kernel.org/platform-driver-x86/20241217230645.15027-1-der=
+ekjohn.clark@gmail.com/
+> >>=20
+> >> Derek J. Clark (6):
+> >>   platform/x86: Add lenovo-wmi-* driver Documentation
+> >>   platform/x86: Add lenovo-wmi-helpers
+> >>   platform/x86: Add Lenovo WMI Events Driver
+> >>   platform/x86: Add Lenovo Capability Data 01 WMI Driver
+> >>   platform/x86: Add Lenovo Gamezone WMI Driver
+> >>   platform/x86: Add Lenovo Other Mode WMI Driver
+> >>=20
+> >>  .../wmi/devices/lenovo-wmi-gamezone.rst       | 203 ++++++
+> >>  .../wmi/devices/lenovo-wmi-other.rst          | 108 +++
+> >>  MAINTAINERS                                   |  12 +
+> >>  drivers/platform/x86/Kconfig                  |  41 ++
+> >>  drivers/platform/x86/Makefile                 |   5 +
+> >>  drivers/platform/x86/lenovo-wmi-capdata01.c   | 302 ++++++++
+> >>  drivers/platform/x86/lenovo-wmi-capdata01.h   |  25 +
+> >>  drivers/platform/x86/lenovo-wmi-events.c      | 196 ++++++
+> >>  drivers/platform/x86/lenovo-wmi-events.h      |  20 +
+> >>  drivers/platform/x86/lenovo-wmi-gamezone.c    | 409 +++++++++++
+> >>  drivers/platform/x86/lenovo-wmi-gamezone.h    |  20 +
+> >>  drivers/platform/x86/lenovo-wmi-helpers.c     |  74 ++
+> >>  drivers/platform/x86/lenovo-wmi-helpers.h     |  20 +
+> >>  drivers/platform/x86/lenovo-wmi-other.c       | 665 +++++++++++++++++=
++
+> >>  drivers/platform/x86/lenovo-wmi-other.h       |  16 +
+> >>  15 files changed, 2116 insertions(+)
+> >>  create mode 100644 Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+> >>  create mode 100644 Documentation/wmi/devices/lenovo-wmi-other.rst
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.c
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.h
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-events.c
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-events.h
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.c
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.h
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-helpers.c
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-helpers.h
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-other.c
+> >>  create mode 100644 drivers/platform/x86/lenovo-wmi-other.h
+> >
+> >Hi Derek,
+> >
+> >Could you please rebase this on top of for-next placing the files under=
+=20
+> >lenovo/ folder which we just created. I could have easily changed the=20
+> >placement of the files themselves, but making the Kconfig & Makefile=20
+> >changes into the new files while applying would have been more=20
+> >complicated. It is better you do it so I won't end up messing up anythin=
+g.
+> >
+> >There's the lenovo-target in lenovo/Makefile which will auto add the=20
+> >'lenovo-' prefix to the files so you can basically rename the files like=
+=20
+> >this:
+> >
+> >drivers/platform/x86/lenovo-wmi-other.c ->
+> >drivers/platform/x86/lenovo/wmi-other.c
+> >
+> >...and add them using that lenovo-target.
+> >
 >=20
-> There is nothing that differentiates the two, so why do you need to?
+> Sure. I'm on travel so it may be a few days. I'll attempt to get it done =
+today if I can though.
 
-On gs101, we have two PMICs, s2mpg10 and s2mpg11. Several s2mpg10 LDOs
-are consumers of various s2mpg10 bucks & s2mpg10 bucks, and several
-s2mpg11 LDOs are also supplied by various s2mpg10 bucks & s2mpg11 bucks.
+Take your time, we're at -rc1 at this point so we'll have plenty of time=20
+in this cycle still. :-)
 
-So we have a circular dependency here. LDOs of one PMIC depend on bucks
-of the other.
+> Should I change the docs at all for this?
 
-If all s2mpg10 rails are handled by the same instance of the s2mpg10
-regulator driver, probe will defer (and ultimately fail), because the
-supplies to the LDOs can not be resolved during probe.
+I quickly browsed through the documentation patch and I didn't notice
+anything there that would need to be changed.
 
-The same goes for s2mpg11.
+But, MAINTAINERS entries of the code files should be updated as well to=20
+reflect the new location, those are usually easy to forget.
 
-The result is that neither driver can probe successfully (unless you're
-_extremely_ lucky due to parallel probing, but we can not rely on that,
-of course).
+--=20
+ i.
 
-By splitting LDO and buck rails into separate instances, this circular
-dependency is gone, the buck-instance of each respective driver can probe,
-which then allows the LDO instance of the other driver to probe.
-
-Does that answer the question, or did I misunderstand it?
-
-
-Cheers,
-Andre'
-
+--8323328-1542103684-1749826194=:948--
 
