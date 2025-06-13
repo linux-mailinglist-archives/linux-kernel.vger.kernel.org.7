@@ -1,75 +1,268 @@
-Return-Path: <linux-kernel+bounces-684798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D1FAD8059
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:32:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75AB2AD805F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153993B27EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6713B1CB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E991D8E07;
-	Fri, 13 Jun 2025 01:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A211DE3AC;
+	Fri, 13 Jun 2025 01:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sy1C8XhS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mIRJkkGB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A4F2F4317;
-	Fri, 13 Jun 2025 01:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88D02F4317;
+	Fri, 13 Jun 2025 01:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749778356; cv=none; b=MbCmg3jTLwfkFHLWVp/0HApTQ5KbMNLiXOBELc2whsPfrwtrINJFoOL/MdnugHFy9QcyJrrr75oxnItj4n0qs+nLVlkdEnwIC08LfCMi1/LjxtDucSg91zqcKP6f1vIsiPPeO26XHmZx6MDPS+5nc6akOEhnNcs5FT7D6QGR2pI=
+	t=1749778671; cv=none; b=Yi/9331RVK9zcd0PmR2MR0jVEZKryamG6j8teDcPdqtisG3lczf4lhW6Ej4pkERCqJAskXux/mFuvak5RGrrzJiFaShNmSFeP3DL7A7aB+6/uXsSNBovT13EeiEu3LWrj+lpr9T41+kiNqrA4asGZ0Oi68/2ohaMJnRDO9RkHGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749778356; c=relaxed/simple;
-	bh=gRJU3XqgcGq9/qTNTjyXU0nsOx7CKZlGWoNnKB8LoFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O0WnDHw47CvF4m3OtfPF+ZSz9aQesN4Lx27JMPTNt8GqAx/dThf6/BdacF5xCUwa3jLLWkzpNK8bnj0E7u6i9Oofx2/ppxHVpiSrCTQt2YC+2hWANcBzqHGNcWvk2FZLOQ0Wua9NMtAbuxkZyahj+Y/AfgvJGm2+Xro9H6mmqkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sy1C8XhS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879BCC4CEF1;
-	Fri, 13 Jun 2025 01:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749778356;
-	bh=gRJU3XqgcGq9/qTNTjyXU0nsOx7CKZlGWoNnKB8LoFo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sy1C8XhS/8l6N5BLjORFAN5Z5CTIBVtAvx8cuhDwhfFV5iI3CLrN5K4qUerqYePER
-	 cclzA0bnMQB0uxZ3dtc/eUMTXddTP/QulqZ2gyMafq+Twmp9MOLQiXVXH9pxmbZNaR
-	 puIkEJ5OZvPRCArrRCu0jJdE7plXCAl6WB4Tcu+LeIyC0P9/X7lsxab0EgZM7phMNo
-	 Mrs53pjn9OdLInykvTtga9e3sYTs/rwz8aR7qYnyIkTbUNoIm+Ll6QhD3lt5mDmwGp
-	 8+YFi5do69enNNxm9BPfdsrJget+BQVgKJtQwgnDw8+e7xTaf3vtRwvlnaY4AhKjni
-	 JFM5gX2ruEb4Q==
-Date: Thu, 12 Jun 2025 18:32:34 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-Cc: Thomas Fourier <fourier.thomas@gmail.com>, Chris Snook
- <chris.snook@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] (drivers/ethernet/atheros/atl1) test DMA mapping for
- error code
-Message-ID: <20250612183234.51a959e9@kernel.org>
-In-Reply-To: <87jz5gyitp.fsf@posteo.net>
-References: <20250612150542.85239-2-fourier.thomas@gmail.com>
-	<87jz5gyitp.fsf@posteo.net>
+	s=arc-20240116; t=1749778671; c=relaxed/simple;
+	bh=JdjnJoXwFxt6MMfWyhD6AFSzvj1/Y0xGVzxgB2RjyrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MnVI9p8s7ShRTvjD1QGUZ7yqfhKiG1kZaj228Tq5E7pS58xSDLiE7lO9nL1vE8mvbtbnw4kPcgm4P1bBJ3eTsZ9FKjzc1M604Z8cioQTeZa+FYHUZhpLu+42w1hAd42AwWNo2fkyq1MPlf43wp963jY11FJuKTu9UKJ+wpdQZak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mIRJkkGB; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749778669; x=1781314669;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JdjnJoXwFxt6MMfWyhD6AFSzvj1/Y0xGVzxgB2RjyrI=;
+  b=mIRJkkGB/oySdw12JUl0ig7bxbwsI0iYAVcZ2GAh1lb4cBhUD3c3RZGy
+   3LruHngWmQIClUzBV1++OAjn5Wq3s6+39yKfnaCKCty2IbmUu6RK9+ntX
+   kTMa2a7zExWqXSfu57L0Do57Vt4jG3j5V0Bw9Mmy3xBbU5F8YGEpmFaN/
+   cjGAROsroORequrQUhtub4XCA2/sFjNHHzt7Tsf2OnNZeL7bRKzDzxPGA
+   UDPGxqG09w306hG6pA4Iw4eVZnxGQuoVbI7mWigjZgLrpxB3hwHzc9+3k
+   UmqSOK1lgV55piVQqXkUW8o4SmYfAKpL1iaMd7jSlzT7D+mR2JAD2GWse
+   g==;
+X-CSE-ConnectionGUID: mE0k6qDUQY+p5nOKpQaGLw==
+X-CSE-MsgGUID: PAVzREJbRMW6EumGlFa35w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="62636945"
+X-IronPort-AV: E=Sophos;i="6.16,232,1744095600"; 
+   d="scan'208";a="62636945"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 18:37:48 -0700
+X-CSE-ConnectionGUID: znXLCPfZRoCR9YShTX4t8Q==
+X-CSE-MsgGUID: sFI1Seh4SgWrdP8kE1Hf1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,232,1744095600"; 
+   d="scan'208";a="147566287"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 18:37:45 -0700
+Message-ID: <0d1e9a86-41aa-46dd-812b-308db5861b16@linux.intel.com>
+Date: Fri, 13 Jun 2025 09:37:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] KVM: x86: Deduplicate MSR interception enabling and
+ disabling
+To: Chao Gao <chao.gao@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: seanjc@google.com, pbonzini@redhat.com
+References: <20250612081947.94081-1-chao.gao@intel.com>
+ <20250612081947.94081-2-chao.gao@intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250612081947.94081-2-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Jun 2025 17:24:02 +0000 Charalampos Mitrodimas wrote:
-> This doesn't seem to build. You can also see it here[1].
-> 
-> [1]: https://patchwork.kernel.org/project/netdevbpf/patch/20250612150542.85239-2-fourier.thomas@gmail.com/
 
-Please don't share links to the patchwork checks.
-Confirm its not a false positive and copy the output into the email.
-Patchwork checks are *not* a public CI for people to yolo their
-untested code into. Sharing links may give such impression.
+On 6/12/2025 4:19 PM, Chao Gao wrote:
+> Extract a common function from MSR interception disabling logic and create
+> disabling and enabling functions based on it. This removes most of the
+> duplicated code for MSR interception disabling/enabling.
+>
+> No functional change intended.
+>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>  arch/x86/kvm/svm/svm.c | 23 +++++++++--------------
+>  arch/x86/kvm/svm/svm.h | 10 +---------
+>  arch/x86/kvm/vmx/vmx.c | 25 +++++++++----------------
+>  arch/x86/kvm/vmx/vmx.h | 10 +---------
+>  4 files changed, 20 insertions(+), 48 deletions(-)
+>
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 5453478d1ca3..cc5f81afd8af 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -685,21 +685,21 @@ static bool msr_write_intercepted(struct kvm_vcpu *vcpu, u32 msr)
+>  	return svm_test_msr_bitmap_write(msrpm, msr);
+>  }
+>  
+> -void svm_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+> +void svm_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type, bool enable)
+>  {
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+>  	void *msrpm = svm->msrpm;
+>  
+>  	/* Don't disable interception for MSRs userspace wants to handle. */
+>  	if (type & MSR_TYPE_R) {
+> -		if (kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
+> +		if (!enable && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
+>  			svm_clear_msr_bitmap_read(msrpm, msr);
+>  		else
+>  			svm_set_msr_bitmap_read(msrpm, msr);
+>  	}
+>  
+>  	if (type & MSR_TYPE_W) {
+> -		if (kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
+> +		if (!enable && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
+>  			svm_clear_msr_bitmap_write(msrpm, msr);
+>  		else
+>  			svm_set_msr_bitmap_write(msrpm, msr);
+> @@ -709,19 +709,14 @@ void svm_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+>  	svm->nested.force_msr_bitmap_recalc = true;
+>  }
+>  
+> -void svm_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+> +void svm_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+>  {
+> -	struct vcpu_svm *svm = to_svm(vcpu);
+> -	void *msrpm = svm->msrpm;
+> -
+> -	if (type & MSR_TYPE_R)
+> -		svm_set_msr_bitmap_read(msrpm, msr);
+> -
+> -	if (type & MSR_TYPE_W)
+> -		svm_set_msr_bitmap_write(msrpm, msr);
+> +	svm_set_intercept_for_msr(vcpu, msr, type, false);
+> +}
+>  
+> -	svm_hv_vmcb_dirty_nested_enlightenments(vcpu);
+> -	svm->nested.force_msr_bitmap_recalc = true;
+> +void svm_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+> +{
+> +	svm_set_intercept_for_msr(vcpu, msr, type, true);
+>  }
+>  
+>  void *svm_alloc_permissions_map(unsigned long size, gfp_t gfp_mask)
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 8d3279563261..faa478d9fc62 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -696,15 +696,7 @@ void svm_complete_interrupt_delivery(struct kvm_vcpu *vcpu, int delivery_mode,
+>  
+>  void svm_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type);
+>  void svm_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type);
+> -
+> -static inline void svm_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr,
+> -					     int type, bool enable_intercept)
+> -{
+> -	if (enable_intercept)
+> -		svm_enable_intercept_for_msr(vcpu, msr, type);
+> -	else
+> -		svm_disable_intercept_for_msr(vcpu, msr, type);
+> -}
+> +void svm_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type, bool enable);
+>  
+>  /* nested.c */
+>  
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 277c6b5b5d5f..559261b18512 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -3952,7 +3952,7 @@ static void vmx_msr_bitmap_l01_changed(struct vcpu_vmx *vmx)
+>  	vmx->nested.force_msr_bitmap_recalc = true;
+>  }
+>  
+> -void vmx_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+> +void vmx_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type, bool enable)
+>  {
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>  	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
+> @@ -3963,35 +3963,28 @@ void vmx_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+>  	vmx_msr_bitmap_l01_changed(vmx);
+>  
+>  	if (type & MSR_TYPE_R) {
+> -		if (kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
+> +		if (!enable && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
+>  			vmx_clear_msr_bitmap_read(msr_bitmap, msr);
+>  		else
+>  			vmx_set_msr_bitmap_read(msr_bitmap, msr);
+>  	}
+>  
+>  	if (type & MSR_TYPE_W) {
+> -		if (kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
+> +		if (!enable && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
+>  			vmx_clear_msr_bitmap_write(msr_bitmap, msr);
+>  		else
+>  			vmx_set_msr_bitmap_write(msr_bitmap, msr);
+>  	}
+>  }
+>  
+> -void vmx_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+> +void vmx_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+>  {
+> -	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> -	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
+> -
+> -	if (!cpu_has_vmx_msr_bitmap())
+> -		return;
+> -
+> -	vmx_msr_bitmap_l01_changed(vmx);
+> -
+> -	if (type & MSR_TYPE_R)
+> -		vmx_set_msr_bitmap_read(msr_bitmap, msr);
+> +	vmx_set_intercept_for_msr(vcpu, msr, type, false);
+> +}
+>  
+> -	if (type & MSR_TYPE_W)
+> -		vmx_set_msr_bitmap_write(msr_bitmap, msr);
+> +void vmx_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
+> +{
+> +	vmx_set_intercept_for_msr(vcpu, msr, type, true);
+>  }
+>  
+>  static void vmx_update_msr_bitmap_x2apic(struct kvm_vcpu *vcpu)
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index a26fe3d9e1d2..31acd8c726e3 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -388,21 +388,13 @@ void vmx_ept_load_pdptrs(struct kvm_vcpu *vcpu);
+>  
+>  void vmx_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type);
+>  void vmx_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type);
+> +void vmx_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type, bool enable);
+>  
+>  u64 vmx_get_l2_tsc_offset(struct kvm_vcpu *vcpu);
+>  u64 vmx_get_l2_tsc_multiplier(struct kvm_vcpu *vcpu);
+>  
+>  gva_t vmx_get_untagged_addr(struct kvm_vcpu *vcpu, gva_t gva, unsigned int flags);
+>  
+> -static inline void vmx_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr,
+> -					     int type, bool value)
+> -{
+> -	if (value)
+> -		vmx_enable_intercept_for_msr(vcpu, msr, type);
+> -	else
+> -		vmx_disable_intercept_for_msr(vcpu, msr, type);
+> -}
+> -
+>  void vmx_update_cpu_dirty_logging(struct kvm_vcpu *vcpu);
+>  
+>  /*
+
+The change looks good to me. 
+
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+
+Just curious, is there a preference on using these 3 interfaces? When
+should we use the disable/enable interfaces? When should be we use the set
+interface?  or no preference?
+
+
 
