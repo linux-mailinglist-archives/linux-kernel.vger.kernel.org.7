@@ -1,250 +1,378 @@
-Return-Path: <linux-kernel+bounces-685537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D065AD8B20
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:48:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE98AD8AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 393871E4528
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A49189E7F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7A72ECEAD;
-	Fri, 13 Jun 2025 11:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1DE2DFA27;
+	Fri, 13 Jun 2025 11:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gy3mxKtn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dPKPmXui"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515042E7F0E;
-	Fri, 13 Jun 2025 11:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30092D8798
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 11:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749814967; cv=none; b=AxFUYCCynBo46xf/5JQaw8tOb8MZqlFW4u59VeNu89ssSBvILV9RAcv8/DrF5+Kl1XSxcIlyS2ZhZ57ysLfWkgAg0ysscGU9UeWmOyv0iTCKcbAmio86S+HT1jFyVJdfOyLu/ixj0GDI3niTaFo844iW+nHIKC/qYsN4jr4GjQ4=
+	t=1749814959; cv=none; b=JW3zQd6hpmqESpNud4WRGRqFrEhMYo31iaBFpJ+fkMGK3PUlx1RObFqt0s/y+p7laH7vQjbxHpdYAeqx/cwcu3TLzFhmzO6GnOPS8YRD+ycT36llr0tmXGm8qT7d4CZiOv/Zg3dkEUgWVA1K/byqVNF9OAzBW/0LWMzp807iNbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749814967; c=relaxed/simple;
-	bh=YBkjGXm+GCy8o/xx1o50ol5uO7XCwqyBr79mwHQ/z4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F/NLc+ox9zW5/e65YRhe98XGdHhN/tmbS1UueCq3/l+pMLQjVSnKFngI+nrjyWg1XO+f0feXGcS3y5xN6RyPix5jcE8abW6iA89ODSZFOdgRGBSRoxAUSLJxnFd64GlQkrRbxCWzzvDrZSxd9qxBOEov2v3gNe8rAJWnR97W1r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gy3mxKtn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD90DC4CEFC;
-	Fri, 13 Jun 2025 11:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749814966;
-	bh=YBkjGXm+GCy8o/xx1o50ol5uO7XCwqyBr79mwHQ/z4o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Gy3mxKtnerMdNmaAfxLjcCdYev3j4LJ4Ma6S4xmXIuYZOG5rTcqSp0P2bRHTcy7p3
-	 Q9XbPn9aViuqPD94eHh5mePfrxKwfdO7i1SHNE9dNOkIH+Vui3LO7z8csPWQqnIkhm
-	 dBzRPx2+UYNo/UsfKSPD6YnB40Xu2cuBZfAnko6dOv/IC/ydzWYY/NNUWLBzIUJ2YD
-	 D+rn48dAvUPrssNOtTYiC5OfHMtzPvyVATuWmTz6n7Arh6x4Jz54HMIw7GZ073lPpL
-	 bjRdJpknjpciPMeJ5Trr37i0QpZNlbMzlA+vgsC3X6qXhowmDSdOm1kBJn4vqIYxMU
-	 0jS65AuRqEnEA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uQ2o1-00000005dFP-0XeS;
-	Fri, 13 Jun 2025 13:42:45 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Marco Elver" <elver@google.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	Jakub Kicinski <mchehab+huawei@kernel.org>,
-	Simon Horman <mchehab+huawei@kernel.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v3 11/16] docs: use parser_yaml extension to handle Netlink specs
-Date: Fri, 13 Jun 2025 13:42:32 +0200
-Message-ID: <931e46a6fdda4fa67df731b052c121b9094fbd8a.1749812870.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749812870.git.mchehab+huawei@kernel.org>
-References: <cover.1749812870.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1749814959; c=relaxed/simple;
+	bh=j+WpPPNJFVv5cc8th/z2eLNPWQbQU7n97BO8H4n+ffk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mCdaisrn24hb6wTNmIlJLEbLwesEJLy8+zDLpDVkP6uFHqIAHsa4Mnb3H7Bs3LCkHrjWDCHTG354dIJGIEuFS2Zfj+tezAzAL3cvU5UBM2xJrq/BElE8Z5103vBT6oXrkD2xiC7WVa7YasmsvUVSUJe56qz4KmNONi0psLSucTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dPKPmXui; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a36748920cso1958431f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 04:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749814955; x=1750419755; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MvwEhGPx6wb8xbrbsUHrrq52O4YNiUINr5fVID9eklE=;
+        b=dPKPmXuiGOVeHOs5gcat0XHSdBSmIQ3XEmr8rDTHAei2Y0eGSxxTSflxbWbZ0WwSVN
+         1UiOxhrzK2BRPt1HIik2FDNA9nuC616I5eZKlBxFlvLmkT3jDlYFGL0GDit3KRvk9O8Z
+         s5Mar8l8bsKH9BfJlD7kWunPaa+w5W3D5J0ohgH13yE3ZXQqSK1kIXhTD3ou/Z+yjz/i
+         qv0x5ExnLJtZU05htDP4VsFjVf2sGlmUiMPduGR+jDogBMAYFcmWTlInyk22X0m9P0xG
+         0vEZaUwx5aj2oU+4t+s0B8ir0JwUxdleRs+v1cV+wcDW4Xi90Gm/iokgu3RFBgdXRn7U
+         PZYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749814955; x=1750419755;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MvwEhGPx6wb8xbrbsUHrrq52O4YNiUINr5fVID9eklE=;
+        b=rpbxc+T+CbTv8eO8wWR4a7pXMVDmY7hMoLxD3kV2ykVnXnRTpJqEofFQiTfneAiK+n
+         3fABeEbbs1ZzlPR26LrlD0J7DK8hWHzfuFUOXQcyHwkzqEurtG6ddoTRhXu9NY9b10Wv
+         yCu0hF0KiMmG70PacSLHGmrYhqZk9YI85M3iMHUX/8qb7pEZML1nWwQU3O2JYITx3M3Q
+         FY/3PyU85PcMGnX9RvjOH+35wy8sjo0VElDj/F1iempzNKsw8tgmpbKfIF+DnMJhcvQ6
+         xFhDlHJIru/2jC6QWhXaT3+oUlXYostua3hIfD6CitHH7aCUrq1vGhGXmzTTS+MI6SRY
+         ex8w==
+X-Gm-Message-State: AOJu0YxlbHF0gomnGrnIuAId7DPxjIs8kL7/EaD+HhGw0Lf4/aaLYNnZ
+	tFfDmoy6HRrsl8SlNDLbjim6GjKhpGbwWEvTe6lwLCs29aoUX0QAZjycKxeodcBJMWY=
+X-Gm-Gg: ASbGnctVmXZTaIgVoHBTJ4l9XZseSbmMQ+B/1lFeyP/MBqUgelquw+zZ3W9DZFkjv/1
+	lDlQojhztR50xvdUOqCmOey5g3zMwkJZdMQG3E5jiu7H999XjMdz18Aq1mpqLv644i/M8qjecsd
+	f48C5bKfyHyV7DTpLXzRb2TXavvOU7V+a8qWRoP32o6sRfM3naQjXbYLIRho0XDv8pv96f8DxP6
+	eS+wNmZqSP9iKrys+YhWFEuTjM3pZrILwkGxWjfxPgTrd2s2ASCchTGiWoGuObS4jidyP69PZgC
+	IFQKrcxZTiYGyxgYeMsy9UAkB8+E/DUJ8ADpHLIPncndtyk++VSu9ump5FaXFeSPbCV2cHyQebq
+	rgR9RdrmuNSnC/GwaVEXYyWLpl2U=
+X-Google-Smtp-Source: AGHT+IFHSX81XGRTonZWsTCONugCLIzvlTJnwuwWqkN66G3W6Veq1ddBm9U4o0xZRHNlrQelgSceTw==
+X-Received: by 2002:a05:6000:4205:b0:3a5:3e64:1ac4 with SMTP id ffacd0b85a97d-3a5687665e0mr2632048f8f.33.1749814955260;
+        Fri, 13 Jun 2025 04:42:35 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b08e21sm2136681f8f.52.2025.06.13.04.42.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 04:42:34 -0700 (PDT)
+Message-ID: <59944b49-67dd-43a8-b6a4-a1ad0b9baa59@linaro.org>
+Date: Fri, 13 Jun 2025 12:42:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/4] media: dt-bindings: Add qcom,msm8939-camss
+To: vincent.knecht@mailoo.org, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250613-camss-8x39-vbif-v5-0-a002301a7730@mailoo.org>
+ <20250613-camss-8x39-vbif-v5-3-a002301a7730@mailoo.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250613-camss-8x39-vbif-v5-3-a002301a7730@mailoo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
-This way, no .rst files would be written to the Kernel source
-directories.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/Makefile                        | 17 ---------
- Documentation/conf.py                         | 11 +++---
- Documentation/netlink/specs/index.rst         | 38 +++++++++++++++++++
- Documentation/networking/index.rst            |  2 +-
- .../networking/netlink_spec/readme.txt        |  4 --
- Documentation/sphinx/parser_yaml.py           |  2 +-
- 6 files changed, 46 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/netlink/specs/index.rst
- delete mode 100644 Documentation/networking/netlink_spec/readme.txt
-
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index d30d66ddf1ad..9185680b1e86 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -102,22 +102,6 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
- 		cp $(if $(patsubst /%,,$(DOCS_CSS)),$(abspath $(srctree)/$(DOCS_CSS)),$(DOCS_CSS)) $(BUILDDIR)/$3/_static/; \
- 	fi
- 
--YNL_INDEX:=$(srctree)/Documentation/networking/netlink_spec/index.rst
--YNL_RST_DIR:=$(srctree)/Documentation/networking/netlink_spec
--YNL_YAML_DIR:=$(srctree)/Documentation/netlink/specs
--YNL_TOOL:=$(srctree)/tools/net/ynl/pyynl/ynl_gen_rst.py
--
--YNL_RST_FILES_TMP := $(patsubst %.yaml,%.rst,$(wildcard $(YNL_YAML_DIR)/*.yaml))
--YNL_RST_FILES := $(patsubst $(YNL_YAML_DIR)%,$(YNL_RST_DIR)%, $(YNL_RST_FILES_TMP))
--
--$(YNL_INDEX): $(YNL_RST_FILES)
--	$(Q)$(YNL_TOOL) -o $@ -x
--
--$(YNL_RST_DIR)/%.rst: $(YNL_YAML_DIR)/%.yaml $(YNL_TOOL)
--	$(Q)$(YNL_TOOL) -i $< -o $@
--
--htmldocs texinfodocs latexdocs epubdocs xmldocs: $(YNL_INDEX)
--
- htmldocs:
- 	@$(srctree)/scripts/sphinx-pre-install --version-check
- 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,html,$(var),,$(var)))
-@@ -184,7 +168,6 @@ refcheckdocs:
- 	$(Q)cd $(srctree);scripts/documentation-file-ref-check
- 
- cleandocs:
--	$(Q)rm -f $(YNL_INDEX) $(YNL_RST_FILES)
- 	$(Q)rm -rf $(BUILDDIR)
- 	$(Q)$(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/userspace-api/media clean
- 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 12de52a2b17e..add6ce78dd80 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -45,7 +45,7 @@ needs_sphinx = '3.4.3'
- extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include',
-               'kfigure', 'sphinx.ext.ifconfig', 'automarkup',
-               'maintainers_include', 'sphinx.ext.autosectionlabel',
--              'kernel_abi', 'kernel_feat', 'translations']
-+              'kernel_abi', 'kernel_feat', 'translations', 'parser_yaml']
- 
- # Since Sphinx version 3, the C function parser is more pedantic with regards
- # to type checking. Due to that, having macros at c:function cause problems.
-@@ -143,10 +143,11 @@ else:
- # Add any paths that contain templates here, relative to this directory.
- templates_path = ['sphinx/templates']
- 
--# The suffix(es) of source filenames.
--# You can specify multiple suffix as a list of string:
--# source_suffix = ['.rst', '.md']
--source_suffix = '.rst'
-+# The suffixes of source filenames that will be automatically parsed
-+source_suffix = {
-+        '.rst': 'restructuredtext',
-+        '.yaml': 'yaml',
-+}
- 
- # The encoding of source files.
- #source_encoding = 'utf-8-sig'
-diff --git a/Documentation/netlink/specs/index.rst b/Documentation/netlink/specs/index.rst
-new file mode 100644
-index 000000000000..ca0bf816dc3f
---- /dev/null
-+++ b/Documentation/netlink/specs/index.rst
-@@ -0,0 +1,38 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. NOTE: This document was auto-generated.
-+
-+.. _specs:
-+
-+=============================
-+Netlink Family Specifications
-+=============================
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   conntrack
-+   devlink
-+   dpll
-+   ethtool
-+   fou
-+   handshake
-+   lockd
-+   mptcp_pm
-+   net_shaper
-+   netdev
-+   nfsd
-+   nftables
-+   nl80211
-+   nlctrl
-+   ovpn
-+   ovs_datapath
-+   ovs_flow
-+   ovs_vport
-+   rt-addr
-+   rt-link
-+   rt-neigh
-+   rt-route
-+   rt-rule
-+   tc
-+   tcp_metrics
-+   team
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index ac90b82f3ce9..b7a4969e9bc9 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -57,7 +57,7 @@ Contents:
-    filter
-    generic-hdlc
-    generic_netlink
--   netlink_spec/index
-+   ../netlink/specs/index
-    gen_stats
-    gtp
-    ila
-diff --git a/Documentation/networking/netlink_spec/readme.txt b/Documentation/networking/netlink_spec/readme.txt
-deleted file mode 100644
-index 030b44aca4e6..000000000000
---- a/Documentation/networking/netlink_spec/readme.txt
-+++ /dev/null
-@@ -1,4 +0,0 @@
--SPDX-License-Identifier: GPL-2.0
--
--This file is populated during the build of the documentation (htmldocs) by the
--tools/net/ynl/pyynl/ynl_gen_rst.py script.
-diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
-index eb32e3249274..cdcafe5b3937 100755
---- a/Documentation/sphinx/parser_yaml.py
-+++ b/Documentation/sphinx/parser_yaml.py
-@@ -55,7 +55,7 @@ class YamlParser(Parser):
-         fname = document.current_source
- 
-         # Handle netlink yaml specs
--        if re.search("/netlink/specs/", fname):
-+        if re.search("netlink/specs/", fname):
-             if fname.endswith("index.yaml"):
-                 msg = self.netlink_parser.generate_main_index_rst(fname, None)
-             else:
--- 
-2.49.0
-
+On 13/06/2025 10:33, Vincent Knecht via B4 Relay wrote:
+> From: Vincent Knecht <vincent.knecht@mailoo.org>
+> 
+> Add bindings for qcom,msm8939-camss in order to support the camera
+> subsystem for MSM8939.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+> ---
+>   .../bindings/media/qcom,msm8939-camss.yaml         | 254 +++++++++++++++++++++
+>   1 file changed, 254 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8939-camss.yaml b/Documentation/devicetree/bindings/media/qcom,msm8939-camss.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9fbb4b204ac8728b822864ad8336aa9d826d6b5b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,msm8939-camss.yaml
+> @@ -0,0 +1,254 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,msm8939-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm MSM8939 Camera Subsystem (CAMSS)
+> +
+> +maintainers:
+> +  - Vincent Knecht <vincent.knecht@mailoo.org>
+> +
+> +description:
+> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,msm8939-camss
+> +
+> +  reg:
+> +    maxItems: 11
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csi_clk_mux
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csiphy0
+> +      - const: csiphy0_clk_mux
+> +      - const: csiphy1
+> +      - const: csiphy1_clk_mux
+> +      - const: ispif
+> +      - const: vfe0
+> +      - const: vfe0_vbif
+> +
+> +  clocks:
+> +    maxItems: 24
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ahb
+> +      - const: csi0
+> +      - const: csi0_ahb
+> +      - const: csi0_phy
+> +      - const: csi0_pix
+> +      - const: csi0_rdi
+> +      - const: csi1
+> +      - const: csi1_ahb
+> +      - const: csi1_phy
+> +      - const: csi1_pix
+> +      - const: csi1_rdi
+> +      - const: csi2
+> +      - const: csi2_ahb
+> +      - const: csi2_phy
+> +      - const: csi2_pix
+> +      - const: csi2_rdi
+> +      - const: csi_vfe0
+> +      - const: csiphy0_timer
+> +      - const: csiphy1_timer
+> +      - const: ispif_ahb
+> +      - const: top_ahb
+> +      - const: vfe0
+> +      - const: vfe_ahb
+> +      - const: vfe_axi
+> +
+> +  interrupts:
+> +    maxItems: 7
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: ispif
+> +      - const: vfe0
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    items:
+> +      - description: VFE GDSC - Video Front End, Global Distributed Switch
+> +          Controller.
+> +
+> +  vdda-supply:
+> +    description:
+> +      Definition of the regulator used as 1.2V analog power supply.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    patternProperties:
+> +      "^port@[0-1]$":
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +              bus-type:
+> +                enum:
+> +                  - 4 # MEDIA_BUS_TYPE_CSI2_DPHY
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - iommus
+> +  - power-domains
+> +  - vdda-supply
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,gcc-msm8939.h>
+> +
+> +    isp@1b00020 {
+> +        compatible = "qcom,msm8939-camss";
+> +
+> +        reg = <0x01b00020 0x10>,
+> +              <0x01b08000 0x100>,
+> +              <0x01b08400 0x100>,
+> +              <0x01b08800 0x100>,
+> +              <0x01b0ac00 0x200>,
+> +              <0x01b00030 0x4>,
+> +              <0x01b0b000 0x200>,
+> +              <0x01b00038 0x4>,
+> +              <0x01b0a000 0x500>,
+> +              <0x01b10000 0x1000>,
+> +              <0x01b40000 0x200>;
+> +
+> +        reg-names = "csi_clk_mux",
+> +                    "csid0",
+> +                    "csid1",
+> +                    "csid2",
+> +                    "csiphy0",
+> +                    "csiphy0_clk_mux",
+> +                    "csiphy1",
+> +                    "csiphy1_clk_mux",
+> +                    "ispif",
+> +                    "vfe0",
+> +                    "vfe0_vbif";
+> +
+> +        clocks = <&gcc GCC_CAMSS_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI0_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI0_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI0PHY_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI0PIX_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI0RDI_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI1_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI1_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI1PHY_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI1PIX_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI1RDI_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI2_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI2_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI2PHY_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI2PIX_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI2RDI_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI_VFE0_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI0PHYTIMER_CLK>,
+> +                 <&gcc GCC_CAMSS_CSI1PHYTIMER_CLK>,
+> +                 <&gcc GCC_CAMSS_ISPIF_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_TOP_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_VFE0_CLK>,
+> +                 <&gcc GCC_CAMSS_VFE_AHB_CLK>,
+> +                 <&gcc GCC_CAMSS_VFE_AXI_CLK>;
+> +
+> +        clock-names = "ahb",
+> +                      "csi0",
+> +                      "csi0_ahb",
+> +                      "csi0_phy",
+> +                      "csi0_pix",
+> +                      "csi0_rdi",
+> +                      "csi1",
+> +                      "csi1_ahb",
+> +                      "csi1_phy",
+> +                      "csi1_pix",
+> +                      "csi1_rdi",
+> +                      "csi2",
+> +                      "csi2_ahb",
+> +                      "csi2_phy",
+> +                      "csi2_pix",
+> +                      "csi2_rdi",
+> +                      "csi_vfe0",
+> +                      "csiphy0_timer",
+> +                      "csiphy1_timer",
+> +                      "ispif_ahb",
+> +                      "top_ahb",
+> +                      "vfe0",
+> +                      "vfe_ahb",
+> +                      "vfe_axi";
+> +
+> +        interrupts = <GIC_SPI 51 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 52 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 153 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 78 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 55 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
+> +
+> +        interrupt-names = "csid0",
+> +                          "csid1",
+> +                          "csid2",
+> +                          "csiphy0",
+> +                          "csiphy1",
+> +                          "ispif",
+> +                          "vfe0";
+> +
+> +        iommus = <&apps_iommu 3>;
+> +
+> +        power-domains = <&gcc VFE_GDSC>;
+> +
+> +        vdda-supply = <&reg_1v2>;
+> +
+> +        ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            port@1 {
+> +                reg = <1>;
+> +
+> +                csiphy1_ep: endpoint {
+> +                    data-lanes = <0 2>;
+> +                    remote-endpoint = <&sensor_ep>;
+> +                };
+> +            };
+> +        };
+> +    };
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
