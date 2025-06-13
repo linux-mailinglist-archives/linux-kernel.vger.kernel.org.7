@@ -1,214 +1,203 @@
-Return-Path: <linux-kernel+bounces-685787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192FAAD8EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C88AAD8E98
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6EA1E4A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CFE3A7798
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED652E7F01;
-	Fri, 13 Jun 2025 13:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRUMvw6W"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F7A19B5B1;
-	Fri, 13 Jun 2025 13:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80FD2E6D2F;
+	Fri, 13 Jun 2025 13:55:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AF619047A;
+	Fri, 13 Jun 2025 13:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822975; cv=none; b=Hxfg+3AlrkG1u5+c4CCid8TmgBQaQSt7tpRGBBSk993IHkTAEzSYxamm5DDdAuQhBohAk84VNczM5R4oMQSiTMTL6Dm7DD25KFLHSRxpKYwGIQouraU8nr0nzkmdbuzAHayhGBfCNZm4b5dFq+Q3xVyWgyP4+hLnAeitIKLWhtc=
+	t=1749822906; cv=none; b=qEPc3qbgezMqvF70dIuATB+qc/TzSKG+myOt3UjXfGr93fRKjFZRpNBjhsYXDDIw1esj7r66YqHnwMXS5/n2Lvb01tJuPSjrwPRZhxsTKXWWtCCoOGjVBjo8z+o3X8r3/fSx73bZatNSsx7bxGmG1+O5PPkufMP9a0NoHIf+mtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822975; c=relaxed/simple;
-	bh=5+kbWDXXq4IG8sDuXqes6a43G6RDWXt2POCGQmcpyOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VQ7RrU1SMlgtKb2iiiUfZKID63qg6gnjEpXcQrwSr5b6J3RJKFne4CNTbGhZszHpw5z2BsAfpMvl0IRcvzyPHNl4AuMHLEpHW1pv792quk5DbRI7FYIM2VnhMl2QdZS6Tw4pXIeR5AxjNI1AdIpyWAri83W/xua7YDMJkL/MzjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRUMvw6W; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442fda876a6so18932965e9.0;
-        Fri, 13 Jun 2025 06:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749822971; x=1750427771; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuauSSTqx1TDFESDgGFVyFslKTU+wwALp8k7RA41ffM=;
-        b=jRUMvw6WisV+ILtgTMas4DgTJTEiYQxV3Hzm/l6ykxsTgDHvOCUOPS8k3g+w0A4xdy
-         BFyQBSBWqBDBV6oC8wAHQqZaNQkdCfxzno+K4BitIkbEefOJGICEHN+nA8cXz98uwtmb
-         p6Gt1VQGdlBHoJyVBWw8gfnPhaCk79nYQ0Ar4XXNGIRSahDM25kV3HHUaJq3SLwX9vGw
-         77/07mrhdMuymd7F7J/jj6uIfkC23xUtqMsTqCWgXoML4G66pRiRH6xsDTYNqdT4X2MC
-         VK2rpCkCJq0kAQJ7ND8TR8s7FZDvOIBX9swBFGE9pORDqetlnT3wJpbmwlA4BK9PX3lg
-         YUug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822971; x=1750427771;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iuauSSTqx1TDFESDgGFVyFslKTU+wwALp8k7RA41ffM=;
-        b=MoPAFXQhCzafSyAOmmoB1DxNuil7ZX104/ush2znxxIaupQLZBZLBotkQlvZZ2Jx7H
-         eCr0IfM4TlJehTxdYYU6G7bSiPTAXLWowpN9iZlS8EQwTuIUGHdt45Va9Yu7aoops5YG
-         4rNrLXZAz2DK6KKzWJKIT3cSWpNj/qTcZNvSXPSUnrMuDPYiAO7fHxXvyNRxzTZYyYZ5
-         uGijrT6tzbjsj0iIH+9rTNSvRjQhsypXRgutBFbVFYbp5gKqdmo4gHvQ/OsK/oZxgf8v
-         wgAwUV14/My6UYSGxbN+cRToR4R6zcEAZTTeSxwxin+d/E4bIoJw24rfyKRTPQblC6Ya
-         FCYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtRKb+5/v1k4mo9JaiM2JOX9zp4iSCIbIartapHopbinSE8bxO+9mPDKpjGVea4C10wwpFE/0LDTMN1NWi3to=@vger.kernel.org, AJvYcCWk48ICRaf2wdB3pwYQDYtLwp++BlBdMI4VE4jvjIPLAO5f0UGH8qAIitX5IpcrzyYJZ9iwtMrzi35e@vger.kernel.org, AJvYcCXEFuLNC7rb+Rq8iOJkETTCtoNAwXuSJuVbhHQxoWBi0pPYVJpzU6uAA/fSnZwZVnr+ssEhv3McUDh5/cda@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz+27auW6SsGqhycFQ9jjm6RwYjx6ZI0dZ8UFK3ZnRbIsx3HHy
-	VWmxOQbpzw/W9KXMqeXASFAW6bR/RuRHFvaV5DHCNcrGPSPGbTryVSrZ
-X-Gm-Gg: ASbGncvHr1zSEMMmzsI8Oyvnqk+jY8VcWQzcbMM5BXVO3zZ1k6xL68G7/gHWx8AO2m+
-	xB2pfhMjEqqL/IRchN2FNlX7cN8hESxljJV8jfl4whPD3mOps9tvXEs27Dw9jaK0X4lTDfzxbjN
-	FW8LWmC5wR8EcCmfGpm5oIuDo6OazRk5oIqv98c5NQEMmgY83VavzyM7WhYIk0FqXQlWYsp7b7+
-	bzxQKagKfdutzaevgfT7bn+LPJxDS9bH6wPDwDBywpXRUMbMz1xVTiQB1d7pQbYbWDJFU5BSGeI
-	E5KyfTVUUSNuL4a8AKaL2BK9QsIsdkFu4YU+sRzy4F/6J+GpNTr/VIkj3WjFCib4P50xxpP1tRn
-	VhaiNznvGPj3OWG5vIWXdt7huCdjlaGGS8kSF
-X-Google-Smtp-Source: AGHT+IGTzyy552+tppB1feCaA+V2C1A6hMR43WFjhXbodmqD/BBCl9OoHG4w6shHYXb2kVogl4oGFQ==
-X-Received: by 2002:a05:600c:3f16:b0:450:d104:29eb with SMTP id 5b1f17b1804b1-45334ab20e4mr31162545e9.5.1749822971229;
-        Fri, 13 Jun 2025 06:56:11 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e195768sm53600045e9.0.2025.06.13.06.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:56:10 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v6 6/6] samples: rust: add ACPI match table example to platform driver
-Date: Fri, 13 Jun 2025 14:54:07 +0100
-Message-ID: <20250613135407.1233005-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
-References: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
+	s=arc-20240116; t=1749822906; c=relaxed/simple;
+	bh=ENX9QtWbYw4Rxu2kw33jFBDaHiweTvxpiRQiKM+M9rg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJL9v8S3AAGFeCNuGcmvE0k1QAsJ5ZoPDt1eQij0FNFeIh6k2XeAZOR2ynpdS5tEqyvamD3j4nQQNZ2zJZy8o6DzCvHfX326vfjogliVkntlGZSnakBsf3gFwFo5l5GKbzFLl/9+b3kBV72PAS1PfCNip70XgpZ/3Xk7Vp4cOHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 775451C0A;
+	Fri, 13 Jun 2025 06:54:42 -0700 (PDT)
+Received: from [10.57.28.131] (unknown [10.57.28.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A0C03F59E;
+	Fri, 13 Jun 2025 06:54:52 -0700 (PDT)
+Message-ID: <1437fe89-341b-4b57-b1fa-a0395081e941@arm.com>
+Date: Fri, 13 Jun 2025 14:54:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/20] bitfield: introduce HWORD_UPDATE bitfield macros
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang
+ <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-pm@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+ kernel@collabora.com, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
+ <20250612-byeword-update-v1-1-f4afb8f6313f@collabora.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250612-byeword-update-v1-1-f4afb8f6313f@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Extend the Rust sample platform driver to probe using device/driver name
-matching, OF ID table matching, or ACPI ID table matching.
+On 2025-06-12 7:56 pm, Nicolas Frattaroli wrote:
+> Hardware of various vendors, but very notably Rockchip, often uses
+> 32-bit registers where the upper 16-bit half of the register is a
+> write-enable mask for the lower half.
+> 
+> This type of hardware setup allows for more granular concurrent register
+> write access.
+> 
+> Over the years, many drivers have hand-rolled their own version of this
+> macro, usually without any checks, often called something like
+> HIWORD_UPDATE or FIELD_PREP_HIWORD, commonly with slightly different
+> semantics between them.
+> 
+> Clearly there is a demand for such a macro, and thus the demand should
+> be satisfied in a common header file.
+> 
+> Add two macros: HWORD_UPDATE, and HWORD_UPDATE_CONST. The latter is a
+> version that can be used in initializers, like FIELD_PREP_CONST. The
+> macro names are chosen to not clash with any potential other macros that
+> drivers may already have implemented themselves, while retaining a
+> familiar name.
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- samples/rust/rust_driver_platform.rs | 71 +++++++++++++++++++++++++++-
- 1 file changed, 70 insertions(+), 1 deletion(-)
+Nit: while from one angle it indeed looks similar, from another it's 
+even more opaque and less meaningful than what we have already. 
+Personally I cannot help but see "hword" as "halfword", so logically if 
+we want 32+32-bit or 8+8-bit variants in future those would be 
+WORD_UPDATE() and BYTE_UPDATE(), right? ;)
 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8b42b3cfb363..35d5067aa023 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -2,7 +2,7 @@
- 
- //! Rust Platform driver sample.
- 
--use kernel::{c_str, device::Core, of, platform, prelude::*, types::ARef};
-+use kernel::{acpi, c_str, device::Core, of, platform, prelude::*, types::ARef};
- 
- struct SampleDriver {
-     pdev: ARef<platform::Device>,
-@@ -17,9 +17,78 @@ struct SampleDriver {
-     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
- );
- 
-+// ACPI match table test
-+//
-+// This demonstrates how to test an ACPI-based Rust platform driver using QEMU
-+// with a custom SSDT.
-+//
-+// Steps:
-+//
-+// 1. **Create an SSDT source file** (`ssdt.dsl`) with the following content:
-+//
-+//     ```asl
-+//     DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
-+//     {
-+//         Scope (\_SB)
-+//         {
-+//             Device (T432)
-+//             {
-+//                 Name (_HID, "TEST4321")  // ACPI hardware ID to match
-+//                 Name (_UID, 1)
-+//                 Name (_STA, 0x0F)        // Device present, enabled
-+//                 Name (_CRS, ResourceTemplate ()
-+//                 {
-+//                     Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
-+//                 })
-+//             }
-+//         }
-+//     }
-+//     ```
-+//
-+// 2. **Compile the table**:
-+//
-+//     ```sh
-+//     iasl -tc ssdt.dsl
-+//     ```
-+//
-+//     This generates `ssdt.aml`
-+//
-+// 3. **Run QEMU** with the compiled AML file:
-+//
-+//     ```sh
-+//     qemu-system-x86_64 -m 512M \
-+//         -enable-kvm \
-+//         -kernel path/to/bzImage \
-+//         -append "root=/dev/sda console=ttyS0" \
-+//         -hda rootfs.img \
-+//         -serial stdio \
-+//         -acpitable file=ssdt.aml
-+//     ```
-+//
-+//     Requirements:
-+//     - The `rust_driver_platform` must be present either:
-+//         - built directly into the kernel (`bzImage`), or
-+//         - available as a `.ko` file and loadable from `rootfs.img`
-+//
-+// 4. **Verify it worked** by checking `dmesg`:
-+//
-+//     ```
-+//     rust_driver_platform TEST4321:00: Probed with info: '0'.
-+//     ```
-+//
-+// This demonstrates ACPI table matching using a custom ID in QEMU with a minimal SSDT
-+
-+kernel::acpi_device_table!(
-+    ACPI_TABLE,
-+    MODULE_ACPI_TABLE,
-+    <SampleDriver as platform::Driver>::IdInfo,
-+    [(acpi::DeviceId::new(c_str!("TEST4321")), Info(0))]
-+);
-+
- impl platform::Driver for SampleDriver {
-     type IdInfo = Info;
-     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
- 
-     fn probe(
-         pdev: &platform::Device<Core>,
--- 
-2.43.0
+It's also confounded by "update" not actually having any obvious meaning 
+at this level without all the implicit usage context. FWIW my suggestion 
+would be FIELD_PREP_WM_U16, such that the reader instantly sees 
+"FIELD_PREP with some additional semantics", even if they then need to 
+glance at the kerneldoc for clarification that WM stands for writemask 
+(or maybe WE for write-enable if people prefer). Plus it then leaves 
+room to easily support different sizes (and potentially even bonkers 
+upside-down Ux_WM variants?!) without any bother if we need to.
+
+Thanks,
+Robin.
+
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>   include/linux/bitfield.h | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 47 insertions(+)
+> 
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 6d9a53db54b66c0833973c880444bd289d9667b1..b90d88db7405f95b78cdd6f3426263086bab5aa6 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -8,6 +8,7 @@
+>   #define _LINUX_BITFIELD_H
+>   
+>   #include <linux/build_bug.h>
+> +#include <linux/limits.h>
+>   #include <linux/typecheck.h>
+>   #include <asm/byteorder.h>
+>   
+> @@ -142,6 +143,52 @@
+>   		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))	\
+>   	)
+>   
+> +/**
+> + * HWORD_UPDATE() - prepare a bitfield element with a mask in the upper half
+> + * @_mask: shifted mask defining the field's length and position
+> + * @_val:  value to put in the field
+> + *
+> + * HWORD_UPDATE() masks and shifts up the value, as well as bitwise ORs the
+> + * result with the mask shifted up by 16.
+> + *
+> + * This is useful for a common design of hardware registers where the upper
+> + * 16-bit half of a 32-bit register is used as a write-enable mask. In such a
+> + * register, a bit in the lower half is only updated if the corresponding bit
+> + * in the upper half is high.
+> + */
+> +#define HWORD_UPDATE(_mask, _val)					 \
+> +	({								 \
+> +		__BF_FIELD_CHECK(_mask, ((u16) 0U), _val,		 \
+> +				 "HWORD_UPDATE: ");			 \
+> +		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask)) | \
+> +		((_mask) << 16);					 \
+> +	})
+> +
+> +/**
+> + * HWORD_UPDATE_CONST() - prepare a constant bitfield element with a mask in
+> + *                        the upper half
+> + * @_mask: shifted mask defining the field's length and position
+> + * @_val:  value to put in the field
+> + *
+> + * HWORD_UPDATE_CONST() masks and shifts up the value, as well as bitwise ORs
+> + * the result with the mask shifted up by 16.
+> + *
+> + * This is useful for a common design of hardware registers where the upper
+> + * 16-bit half of a 32-bit register is used as a write-enable mask. In such a
+> + * register, a bit in the lower half is only updated if the corresponding bit
+> + * in the upper half is high.
+> + *
+> + * Unlike HWORD_UPDATE(), this is a constant expression and can therefore
+> + * be used in initializers. Error checking is less comfortable for this
+> + * version.
+> + */
+> +#define HWORD_UPDATE_CONST(_mask, _val)					  \
+> +	(								  \
+> +		FIELD_PREP_CONST(_mask, _val) |				  \
+> +		(BUILD_BUG_ON_ZERO(const_true((u64) (_mask) > U16_MAX)) + \
+> +		 ((_mask) << 16))					  \
+> +	)
+> +
+>   /**
+>    * FIELD_GET() - extract a bitfield element
+>    * @_mask: shifted mask defining the field's length and position
+> 
 
 
