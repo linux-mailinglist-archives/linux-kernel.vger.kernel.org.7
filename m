@@ -1,589 +1,256 @@
-Return-Path: <linux-kernel+bounces-685421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B09BAD8980
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63E1AD88B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAE71710EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFA33A9E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983502D2384;
-	Fri, 13 Jun 2025 10:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DFA2C3774;
+	Fri, 13 Jun 2025 10:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GKhlpo3J"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VDZYZR/8"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012047.outbound.protection.outlook.com [52.101.71.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4416F2D2382
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749810497; cv=none; b=Qp4DjeZfH00FudpBWT9RdBNOGdmm2IAI4Uh29nGphrIC7/gX/9Yn2jhUpa44yiGAzTyehZuIWYGH76En52Xc4JaGd9uy7LShoIr5WdSGBokBQHUdKgRjgg3Yqkdmi7/5wmxM+GsLXp2A0TtVlBQrHCbXc1EzCI2y3wBZtIWdHj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749810497; c=relaxed/simple;
-	bh=L+l/CUlXYKHdo2S1Xm/T8wWqJa0P+WxdUHX1bwBJKuY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=nFR9NHpCzkZXL0fbLwI9Z0AcWDPoTza1jprmnpLuuFIQeJAL9lgjL25huEcdWBcEB8dm8I0NNntSXOAlzsCZJLuCN6YmS6IxgKaUfZ81W3c6nBfPocOj3oUY6O3xLLMOA28ubEyDON2H9hy+PMeCxQ0BWjOPMrFMcDDQ01vRhuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GKhlpo3J; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250613102812epoutp0264122ce3e6d97b49153f699480bc6020~Ik18wYALj0617406174epoutp02B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:28:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250613102812epoutp0264122ce3e6d97b49153f699480bc6020~Ik18wYALj0617406174epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749810492;
-	bh=XFjtB0pW6tGVJfA0KceLKHbGvXE3/ySSaiXjJcdn7X0=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=GKhlpo3JF/Gfze8g4zn4XDeLlB6++UT0qrnmQdFQ8B6pve00GPesxDmOKQVxpo0p9
-	 wPTY5Kgast5k0rpB8gEeUubIb7D3vEiHJyi5HlEJZsxS3vDSb8V4YOHfwIyaUxsZFl
-	 97zIWQvvWn/xQzXFZmm7hwNvl0+FWfmXScmqlI9s=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250613102811epcas5p496f8f78e5d2fca45eebaea6ee8d5b006~Ik18AeflD1496114961epcas5p40;
-	Fri, 13 Jun 2025 10:28:11 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bJbFj4xkxz6B9mK; Fri, 13 Jun
-	2025 10:28:09 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250613061230epcas5p12c0a029edba39133fc0be22cb0aa1e09~IhWsp7ag10704107041epcas5p1B;
-	Fri, 13 Jun 2025 06:12:30 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250613061229epsmtip195b14527b12542d3a7f95eb5ed59db5f~IhWrYd2qn1749817498epsmtip1i;
-	Fri, 13 Jun 2025 06:12:29 +0000 (GMT)
-From: Faraz Ata <faraz.ata@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rosa.pila@samsung.com, Faraz Ata <faraz.ata@samsung.com>
-Subject: [PATCH v1] arm64: dts: exynos: Add DT node for all SPI ports
-Date: Fri, 13 Jun 2025 11:52:08 +0530
-Message-Id: <20250613062208.978641-1-faraz.ata@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41A6189BB0;
+	Fri, 13 Jun 2025 10:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749809147; cv=fail; b=ZWrP0d4iPmWUWBZWa/6z/HwTKs2JvlBuckhk6oI9UXqyiXipRJ3vIC5J4eLnP7yyZZQkD6Eq1WTmdCqAEql3DABA5fCjZH/JSXTfH6C5F9cXo94r4Z5bPFxC53g75Lp1AdzqEVw7muwxNZssYNE+ox8FbKx8KhI8RINGHLE7/n0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749809147; c=relaxed/simple;
+	bh=9WJaUCGkWGrjlz/VugcKtuIzQL1zcRX/VbWa3ibu7lU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VSjNvTV2Y6dJ/Fgv7uLmhFHfWEI/wsvpYpOLCdMZ6sR3dJJVndAcl50sLeV5jqQapg2I1qx1lyWt93kKws+21sCurUtEoRx6WFgWVFrLUUacv2ScoB5glTj9fBb+p8Z2z5JVXq1tCrIq9E6w57e3v9sslqvTlX4NXX+C6fozhyQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VDZYZR/8; arc=fail smtp.client-ip=52.101.71.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xaxKoxmHnLSTF2PuuQ8RIF3CYaPRJ1/T3+ZGXuH2AVdyAsjFbw71GvtjjebxigLEQ/9wnKJSf5btbkhQRN6typ/8mCaowQfAexbPT/u5j+IQTHB1PQSSjAdG1AYiIE7F1jCUbKbyiA2sRswBc2PawzSzXaDkWTrPtP8nmHmnGKj6uJcfCNk8HE5xBZzdDnrSz1PhPPbFLELNIfljtn38tMssN3qcn/kOtlqTtbLZpQTM5wYeXkFWRxSx//8vCYRGr4uOOjabhMa0DBZWHJHqSxpPm3ZcUSIqWY+j9Vub46ih8wAfS0IvcEJ18GWjJQv8CLBWCnjo3v6q2sg6KB4/NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EP1qAjWPTNOSFlnv1KdFQenJ78MrI9mcZoWHWMsliQY=;
+ b=huionPsr9tT1G+uuDx2twgVVC34EGCn3YDFPFKcpsswIv2Bu03qBqJDy/clBV0Y4DWiSh5gQkVrS2AYyr0jn43/CO3mw18fsIJcmkgAMvYyhSI27SGndg29h3bf2PMBtfQVsJXgz5TLuL8dr65JXE6BA0NS53QVn7qeNiHnrsrkyfDw6X0pTSwwcNrx6ixZ3YI2VCZrnz+WQE3Zk85s5E3FxgSC6KdF+lVRtpV80LsZcnzgs6WyDQVhzG6GGM7BwdqpnJwZENE3VCPvxt0I5E11E0/sAIgASS9O48n0V2eIhjBaABr3cl8qka+14mNRSiSvTDixEaIRBvCx9JDg9ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EP1qAjWPTNOSFlnv1KdFQenJ78MrI9mcZoWHWMsliQY=;
+ b=VDZYZR/8jhpAl7Bf8jRL9uPreJ5yT4TRV9Qy5c79zu8+ShYIGu/kiL4eKjcGlKLbs2sgh4XrHOW0wNT11dgV/qvUoINXMLIEjD/QGt+J0+Yecqf6qsc2knlqXiC2EGVrwkgfJSgP7DfzufOdKawrQnp/UzZeE4FtlgeK9tuvY+yO217qrPe11tOkGH8ZHAtbDpD491pqc7dlkBfGEvQQ9mCTEtQ51amhLiGexBZrfZ1HKX9NClxupAK/vcnifyYpNquk/gfaFkmgQtle+vh6fgmZqwwQ7RdmhqHDAHjLJw9UpEgKPCUH7lNwhpJaqpGJ2czocnIwOCFBvuMeOdl+mg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
+ by GVXPR04MB10681.eurprd04.prod.outlook.com (2603:10a6:150:226::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.30; Fri, 13 Jun
+ 2025 10:05:41 +0000
+Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
+ ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
+ ([fe80::261e:eaf4:f429:5e1c%7]) with mapi id 15.20.8813.018; Fri, 13 Jun 2025
+ 10:05:41 +0000
+From: Joy Zou <joy.zou@nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	ulf.hansson@linaro.org,
+	richardcochran@gmail.com,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-pm@vger.kernel.org,
+	frank.li@nxp.com,
+	ye.li@nxp.com,
+	ping.bai@nxp.com,
+	peng.fan@nxp.com,
+	aisheng.dong@nxp.com,
+	xiaoning.wang@nxp.com
+Subject: [PATCH v5 0/9] Add i.MX91 platform support
+Date: Fri, 13 Jun 2025 18:02:46 +0800
+Message-Id: <20250613100255.2131800-1-joy.zou@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0002.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::21) To AS4PR04MB9386.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4e9::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250613061230epcas5p12c0a029edba39133fc0be22cb0aa1e09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250613061230epcas5p12c0a029edba39133fc0be22cb0aa1e09
-References: <CGME20250613061230epcas5p12c0a029edba39133fc0be22cb0aa1e09@epcas5p1.samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|GVXPR04MB10681:EE_
+X-MS-Office365-Filtering-Correlation-Id: a30d8ab0-fc5c-4393-4dc7-08ddaa61da6e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ER4wbpnDw4cnvuh1eW16LRtApO5y1k+Tter62x60hSM0nKmK1zXsRt4cutuy?=
+ =?us-ascii?Q?l6ZsMC3qjUqN7WnAgwEsVDUU91Z31vp5VLSI/G67K28d2/Cmncoc4o+Fm9Pa?=
+ =?us-ascii?Q?q/eH8rgYZ5pF0n520Zj5JvH5QWkGoOTBlfFZHqJDtA+D3EASqVyKhsCQwS6d?=
+ =?us-ascii?Q?Z04+YfxZOwTBGIhHoYqRdN6swPn909SpNFaerG3B3rnSav5wyy8rYKSSyPrG?=
+ =?us-ascii?Q?+a7AsefDiYIzhHLX7yRBdmHBK9XTpEMN5PKqEfgDAeSE3CGJG5sm9aGBpnJL?=
+ =?us-ascii?Q?fUN4A7Ms9jpSW2rKXeaWdis3z7WAAgYzUY8TWS04pnyU9naGJ7K7XLxGQWpQ?=
+ =?us-ascii?Q?aHyUisAsNH1W7Oxi086bUls8tOE4uIvkcuyFrSe9KbjYYjFlq61HW+1/nKii?=
+ =?us-ascii?Q?z7BEmwimGIbM/uxlWmyKmoFF5fM43N2xUdoqoYbanh6v49jA10iwekuUL2UZ?=
+ =?us-ascii?Q?lK7LM3v9l5xxL6WPcMp5r8X8XK2w+hy1bxtdlGYZUE7W+ED1qkEOFK5Gc0Du?=
+ =?us-ascii?Q?8Bx5u/okHscqeLvS6U9paZkXQVbaDUGfefLDe9vIeH5PrvWTmXvj+snwL2h1?=
+ =?us-ascii?Q?F+hYvTPOTt+rlQ/6K7w/XgG/B9z1PiNbPcf4YIgHjXmva9fc7FfstOLi4b/b?=
+ =?us-ascii?Q?5DNPvjauzX0v7gkzgxxXjjK99tvvbxJTs1+j4XfrObSSAZzPcdu+NOBui7QI?=
+ =?us-ascii?Q?qH18F+B+/NB1YPZPQg14gJNUf1DSxsYHM4SOpJM6auERrijSuJof2hAZEBJx?=
+ =?us-ascii?Q?fhCtk37PUQmDdNBFrRCqa2vIPIfIxlEEVMbPSdnxoDyJyCL4eAcoSuL4SUBN?=
+ =?us-ascii?Q?bqeanC1/9D5xufG+h2RRkBvZtIGc5kbPo/8ll29W+GGUsXJxV0b3bcEwjXWv?=
+ =?us-ascii?Q?NwQ0+QRyqlgo+mZ0lwJr5bPqBpQZQSRIssgb+f6S0ZOz/OdpgS3qtijxIu9u?=
+ =?us-ascii?Q?J5sF0udCvkQvP0z+nLWDAXec473GjrMrP7Np3FaRdmnz9d46MRp64X0/hRox?=
+ =?us-ascii?Q?w0ZLUNdHymEwspHNfBI8hu3YVjLe6zNRSATbEhl6Q/bfx/Pd/rdHXxkTiIN3?=
+ =?us-ascii?Q?3Hskf4G1X0HExqIVk2FY09FdAxaoqbN00E4lVyIykvhCtSzo2e1rgayBrdnl?=
+ =?us-ascii?Q?zmDzOtjQmn9CIf4MtctA2FCo5fjLvZhe4A3g+dgTcUKO06TafaZmfGeucbQF?=
+ =?us-ascii?Q?nbIO+EEv0WyU966U66Bn869Z/DdC00LI19V5ncnzgwtoeL+q2lwvvMwSH43y?=
+ =?us-ascii?Q?iiH3FmnWcBTtEHEzdDHuJ2/t9LOhHysLvgwMQ6zJTy8/B5W2tldC4aQwzN27?=
+ =?us-ascii?Q?thybeywFLBETvO0z6a0uYkOeSqpEu6gjEbMwnoJJi3JtoYbnQ9xLLPM+p8lP?=
+ =?us-ascii?Q?BFt1THp1vLenZCRugM3m592ulCTKu0qg71aWBjqBfUlAI6zoPriNzNLkHJKb?=
+ =?us-ascii?Q?lsjztsam+VL0D5zaBexYRl/PRAIE234wM2UbN2Xr0x2Vg0cEif7sll5kpQnO?=
+ =?us-ascii?Q?rJXTbE0zevx+QCk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ff2uX0WfSI3iL40U4Lxt+5jJ33bC1nPY9Ai4Yi9t9wTYOJUEd5CZkSbSngOv?=
+ =?us-ascii?Q?bzkjZFNKYunDOXLZHmmcQws67L85WKT+JeoOmIAOC9LiaooaQrvNE5fvXm/L?=
+ =?us-ascii?Q?M9RGlt/P6hyPGSZFHG5MUqzadEmBaobGaNS+AQg8Ey5TIksoYwZ4X42OuYYh?=
+ =?us-ascii?Q?4Wa2K7StJWITj4i+uDATuh/d9fN7PPyydGInOeaWq2cGyBJxRxufdb6oCLdZ?=
+ =?us-ascii?Q?xfVHGN0xBdIP2AR+hr0ckFNDINn6mdPrnUit0wEGvgtt1TmqhS6iy331Jt+C?=
+ =?us-ascii?Q?YNxSiSHvN4ztU1LimIUU1d7vAP2jhMrext5aOCvWMZQerPj6jgVgM6U4/RAC?=
+ =?us-ascii?Q?KYWHj6fvXD7rxXjGG4gEjDSqNpkI/NIu5LkAVySsZ7wTJvp9Gz/7RZpN5ABQ?=
+ =?us-ascii?Q?ZrpamyzeOn9VlmVYeeLGid1JrJdE3qqrS055GiebWUFs1zL+nW4kjxNNNN9w?=
+ =?us-ascii?Q?Z9dFXdX98cEAT92+Ar0tIMyJCnuFNt3WJn2urblKZkgRh2p8zkgVZvHjsr5a?=
+ =?us-ascii?Q?Va0hjiEYTHQLUdJ2aqxitjkbhr9TNUm/21AOyxklZ+rSpiPdSIDP8gPL7JR/?=
+ =?us-ascii?Q?Ym7xDHcusW1n6fTNv+KwFsuN0e/JTatLOICkUfgBajFQ8DTkgcRf5UhVMbP8?=
+ =?us-ascii?Q?1buaJZj+pjrMfqbeI7xE3X75AfMX470SKULh1dBbkrMW2wgbiuQiUZLlUezh?=
+ =?us-ascii?Q?MTp6bFJxY6FhEIifL0e04lXl2RUYgwIXBreCp+yJoDZ+GtHECQwT0EZYwnQb?=
+ =?us-ascii?Q?TrQgd36Su/xIpCyUQZBK0MxF6wYkGtPOxwA51RMyk3uhUBgkIYRyoWMe8s7f?=
+ =?us-ascii?Q?j3Na3tdu1CCCpow16M3uRhc6uLshNnAzF97+i/UxyL4vh6FeVzph9Sm6xHcV?=
+ =?us-ascii?Q?Yefv9qDYY03nDDC6Jwa0TqHqTO8ATYSe5iYSIfIE8pw5f95GdmqsXtYgMpe9?=
+ =?us-ascii?Q?AAoLoBWsDlSYJKZ610Gm8KHoSrnUgvKSY3WiZTHZn8/SjNmC7f6snWRdW70Q?=
+ =?us-ascii?Q?bXKCS7ohzmsmK6z6C9ZROPEUrpBytU1iSoN+Vg99+E4QEwyyaQHh/hNwCdDl?=
+ =?us-ascii?Q?kFdYEnGIyyqgarJ2eWbnAV4zyzCjzO0J4SsWZD9zoFC0XWvT174WPVt/Afv8?=
+ =?us-ascii?Q?otRK0sLr3kBpoVADN1rafuzOc8O5R3mroui3aLwaPfK4kFH6yHOacmdfExiE?=
+ =?us-ascii?Q?HpizTLhPWLd69/0t85J+WMYLVtRrUw5xfBfiqL9u2nxtGV3VSbOssDH5eWiA?=
+ =?us-ascii?Q?bQEWkCCKpr/JxYAg6OzzsJlWifZfkfMbha7O//lD4lOd1kMVCw53Lx4YQpjt?=
+ =?us-ascii?Q?pp20AFYlFAtR2OOKC6BmL8xQ+wWcnPYaJ8AZgPdPn4gzHmlYqSRFZ52Cl6b2?=
+ =?us-ascii?Q?5Aps0oMYyiYJwmHFU+sEJSaH2Fe+e/rQJqnOH+PgKhc8Xh4LKjl2egHEcYbF?=
+ =?us-ascii?Q?X++/87eOL4bj3N6rJB2cTGqK539YE18yLmy3yZLqysK38mzDV+rJHyc20n2e?=
+ =?us-ascii?Q?btdqiZUT6p8DyJPn7g9mjwpa/BWCF0FdNTbqLtRwZfbWcN1gI/4ZzNx0xIc/?=
+ =?us-ascii?Q?zX0+ZVn4E6HiA6PqmYLE29VtpTq9RUQUKSEpKzwp?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a30d8ab0-fc5c-4393-4dc7-08ddaa61da6e
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 10:05:41.2575
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0wXLFGpoBTw+jXfSxCpt0dwyqMo/Zdc4XY6OwIE+gLgPWzMxi0/Wil6ek9bM+j78
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10681
 
-Universal Serial Interface (USI) supports three serial protocol
-like uart, i2c and spi. ExynosAutov920 has 18 instances of USI.
-Add spi nodes for all the instances.
+The design of i.MX91 platform is very similar to i.MX93.
+Extracts the common parts in order to reuse code.
 
-Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+The mainly difference between i.MX91 and i.MX93 is as follows:
+- i.MX91 removed some clocks and modified the names of some clocks.
+- i.MX91 only has one A core.
+- i.MX91 has different pinmux.
+- i.MX91 has updated to new temperature sensor same with i.MX95.
+
 ---
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 361 ++++++++++++++++++
- 1 file changed, 361 insertions(+)
+Changes for v5:
+- rename imx93.dtsi to imx91_93_common.dtsi.
+- move imx93 specific part from imx91_93_common.dtsi to imx93.dtsi.
+- modify the imx91.dtsi to use imx91_93_common.dtsi.
+- add new the imx93-blk-ctrl binding and driver patch for imx91 support.
+- add new net patch for imx91 support.
+- change node name codec and lsm6dsm into common name audio-codec and
+  inertial-meter, and add BT compatible string for imx91 board dts.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 2cb8041c8a9f..aa4798b1363c 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -455,6 +455,26 @@ serial_0: serial@10880000 {
- 				samsung,uart-fifosize = <256>;
- 				status = "disabled";
- 			};
-+
-+			spi_0: spi@10880000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10880000 0x30>;
-+				interrupts = <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi0_bus &spi0_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 1>, <&pdma0 0>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <256>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_1: usi@108a00c0 {
-@@ -484,6 +504,26 @@ serial_1: serial@108a0000 {
- 				samsung,uart-fifosize = <256>;
- 				status = "disabled";
- 			};
-+
-+			spi_1: spi@108a0000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x108a0000 0x30>;
-+				interrupts = <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi1_bus &spi1_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI01_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 3>, <&pdma0 2>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <256>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_2: usi@108c00c0 {
-@@ -513,6 +553,26 @@ serial_2: serial@108c0000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_2: spi@108c0000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x108c0000 0x30>;
-+				interrupts = <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi2_bus &spi2_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI02_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 5>, <&pdma0 4>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_3: usi@108e00c0 {
-@@ -542,6 +602,26 @@ serial_3: serial@108e0000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_3: spi@108e0000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x108e0000 0x30>;
-+				interrupts = <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi3_bus &spi3_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI03_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 7>, <&pdma0 6>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_4: usi@109000c0 {
-@@ -571,6 +651,26 @@ serial_4: serial@10900000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_4: spi@10900000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10900000 0x30>;
-+				interrupts = <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi4_bus &spi4_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI04_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 9>, <&pdma0 8>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_5: usi@109200c0 {
-@@ -600,6 +700,26 @@ serial_5: serial@10920000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_5: spi@10920000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10920000 0x30>;
-+				interrupts = <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi5_bus &spi5_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI05_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 11>, <&pdma0 10>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_6: usi@109400c0 {
-@@ -629,6 +749,26 @@ serial_6: serial@10940000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_6: spi@10940000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10940000 0x30>;
-+				interrupts = <GIC_SPI 776 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi6_bus &spi6_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI06_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 13>, <&pdma0 12>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_7: usi@109600c0 {
-@@ -658,6 +798,26 @@ serial_7: serial@10960000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_7: spi@10960000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10960000 0x30>;
-+				interrupts = <GIC_SPI 778 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi7_bus &spi7_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI07_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 15>, <&pdma0 14>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_8: usi@109800c0 {
-@@ -687,6 +847,27 @@ serial_8: serial@10980000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_8: spi@10980000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10980000 0x30>;
-+				interrupts = <GIC_SPI 780 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi8_bus &spi8_cs_func>;
-+				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-+					 <&cmu_peric0 CLK_DOUT_PERIC0_USI08_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma0 17>, <&pdma0 16>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
-+
- 		};
- 
- 		pwm: pwm@109b0000 {
-@@ -752,6 +933,26 @@ serial_9: serial@10c8000 {
- 				samsung,uart-fifosize = <256>;
- 				status = "disabled";
- 			};
-+
-+			spi_9: spi@10c80000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10c80000 0x30>;
-+				interrupts = <GIC_SPI 787 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi9_bus &spi9_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI09_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 1>, <&pdma1 0>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <256>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_10: usi@10ca00c0 {
-@@ -781,6 +982,26 @@ serial_10: serial@10ca0000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_10: spi@10ca0000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10ca0000 0x30>;
-+				interrupts = <GIC_SPI 789 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi10_bus &spi10_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI10_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 3>, <&pdma1 2>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_11: usi@10cc00c0 {
-@@ -810,6 +1031,26 @@ serial_11: serial@10cc0000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_11: spi@10cc0000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10cc0000 0x30>;
-+				interrupts = <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi11_bus &spi11_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI11_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 5>, <&pdma1 4>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_12: usi@10ce00c0 {
-@@ -839,6 +1080,26 @@ serial_12: serial@10ce0000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_12: spi@10ce0000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10ce0000 0x30>;
-+				interrupts = <GIC_SPI 793 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi12_bus &spi12_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI12_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 7>, <&pdma1 6>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_13: usi@10d000c0 {
-@@ -868,6 +1129,26 @@ serial_13: serial@10d00000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_13: spi@10d00000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10d00000 0x30>;
-+				interrupts = <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi13_bus &spi13_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI13_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 9>, <&pdma1 8>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_14: usi@10d200c0 {
-@@ -897,6 +1178,26 @@ serial_14: serial@10d20000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_14: spi@10d20000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10d20000 0x30>;
-+				interrupts = <GIC_SPI 797 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi14_bus &spi14_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI14_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 11>, <&pdma1 10>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_15: usi@10d400c0 {
-@@ -926,6 +1227,26 @@ serial_15: serial@10d40000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_15: spi@10d40000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10d40000 0x30>;
-+				interrupts = <GIC_SPI 799 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi15_bus &spi15_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI15_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 13>, <&pdma1 12>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_16: usi@10d600c0 {
-@@ -955,6 +1276,26 @@ serial_16: serial@10d60000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_16: spi@10d60000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10d60000 0x30>;
-+				interrupts = <GIC_SPI 801 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi16_bus &spi16_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI16_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 15>, <&pdma1 14>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		usi_17: usi@10d800c0 {
-@@ -984,6 +1325,26 @@ serial_17: serial@10d80000 {
- 				samsung,uart-fifosize = <64>;
- 				status = "disabled";
- 			};
-+
-+			spi_17: spi@10d80000 {
-+				compatible = "samsung,exynosautov920-spi",
-+					     "samsung,exynos850-spi";
-+				reg = <0x10d80000 0x30>;
-+				interrupts = <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&spi17_bus &spi17_cs_func>;
-+				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-+					 <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
-+				clock-names = "spi", "spi_busclk0";
-+				samsung,spi-src-clk = <0>;
-+				dmas = <&pdma1 17>, <&pdma1 16>;
-+				dma-names = "tx", "rx";
-+				num-cs = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				fifo-depth = <64>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		cmu_top: clock-controller@11000000 {
+Changes for v4:
+- Add one imx93 patch that add labels in imx93.dtsi
+- modify the references in imx91.dtsi
+- modify the code alignment
+- remove unused newline
+- delete the status property
+- align pad hex values
+
+Changes for v3:
+- Add Conor's ack on patch #1
+- format imx91-11x11-evk.dts with the dt-format tool
+- add lpi2c1 node
+
+Changes for v2:
+- change ddr node pmu comaptible
+- remove mu1 and mu2
+- change iomux node compatible and enable 91 pinctrl
+- refine commit message for patch #2
+- change hex to lowercase in pinfunc.h
+- ordering nodes with the dt-format tool
+
+Joy Zou (8):
+  dt-bindings: soc: imx-blk-ctrl: add i.MX91 blk-ctrl compatible
+  arm64: dts: freescale: rename imx93.dtsi to imx91_93_common.dtsi
+  arm64: dts: imx93: move i.MX93 specific part from imx91_93_common.dtsi
+    to imx93.dtsi
+  arm64: dts: imx91: add i.MX91 dtsi support
+  arm64: dts: freescale: add i.MX91 11x11 EVK basic support
+  arm64: defconfig: enable i.MX91 pinctrl
+  pmdomain: imx93-blk-ctrl: mask DSI and PXP PD domain register on
+    i.MX91
+  net: stmmac: imx: add i.MX91 support
+
+Pengfei Li (1):
+  dt-bindings: arm: fsl: add i.MX91 11x11 evk board
+
+ .../devicetree/bindings/arm/fsl.yaml          |    6 +
+ .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     |   55 +-
+ arch/arm64/boot/dts/freescale/Makefile        |    1 +
+ .../boot/dts/freescale/imx91-11x11-evk.dts    |  878 ++++++++++
+ arch/arm64/boot/dts/freescale/imx91-pinfunc.h |  770 +++++++++
+ arch/arm64/boot/dts/freescale/imx91.dtsi      |  124 ++
+ .../boot/dts/freescale/imx91_93_common.dtsi   | 1215 ++++++++++++++
+ arch/arm64/boot/dts/freescale/imx93.dtsi      | 1412 ++---------------
+ arch/arm64/configs/defconfig                  |    1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-imx.c   |    2 +
+ drivers/pmdomain/imx/imx93-blk-ctrl.c         |   15 +
+ 11 files changed, 3166 insertions(+), 1313 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91_93_common.dtsi
+
 -- 
-2.34.1
+2.37.1
 
 
