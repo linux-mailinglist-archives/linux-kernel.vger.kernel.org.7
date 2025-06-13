@@ -1,78 +1,164 @@
-Return-Path: <linux-kernel+bounces-684883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0282BAD8155
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:04:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC72AD815C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD52A175D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:04:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D24C3B8205
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CC1242D64;
-	Fri, 13 Jun 2025 03:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D8224DD0B;
+	Fri, 13 Jun 2025 03:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OxsZzx0Q"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LgrxKJal"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314AC18DB1A;
-	Fri, 13 Jun 2025 03:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5812475CD
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 03:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749783861; cv=none; b=MFZ8EioWoz4Rm05bWR9Zd+2HTcZze8hduXjNuz0FhwAqb14Slwte7QjtcXWZ0N8DY2JzPAXpfgiVWeG0e52U4cvnRjfefVXj/VEwwBN8sgVNhuxHxcAm+TyNDV2cvud3DCTIg2RmAkXMMey85JiktARSN32GuDn0uefjRi0j4vA=
+	t=1749783975; cv=none; b=JmbWBOvCenIqnG9URzWjaA7+pWE2e3vsoi5RClMHa8S/TAmB77KUhloeOBmIR7X06BqXsMKwdVAnjX+xhCvdml5oN0aX5UeB+cNe9vmimZnK1NYx3LmMdFo7TMWgMVgELqEJLF+Fu/9580rRbKUJSCkwMIVy+oumb4iVKkeYR2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749783861; c=relaxed/simple;
-	bh=b+WBJALyCdn7uQ8UwOQm1wki4o//U+MZ1hPIT/kf9vY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MqrGfHSM43ZmU/oQxLQg0rcGwhgVTr2fmgt9fL1Qglj2Mdzb9wp+iiWLraHlPY89aRrwd8cljnfH0Il5RG0xVBaaTjFeASzu2MOFAS+ojzPozaMgF7qBol9/cYX3xEioqafU5q0E4JDtvig9eWj6TkIJAHk5yfP5GP0hhN+hyuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OxsZzx0Q; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mHaNPjVdIOAREGXcLUPdHns4K44mWe2ogcbuFk3vZW8=; b=OxsZzx0Qi3rgpFqe1HZKxC/CCn
-	0OJDj5lSoBFLbNUt1ObrTrojco0zVvooEK/h0pVEtn7SnRu9pWZZgU6EL+YpoCxGDs9AT/kjqRKK7
-	yZjorjvsuupZASMWebuz2d3siRgsEAzEHlGT8b9ldiWAKKH+TMMS/Jn3TNIb90HuA/EnCPyj4ehn0
-	9QRhy5RsBPy3UB+fnIjdJqYq3k/rFqevPuDlhbkdig/eRCzfly9NhQCcJwPMzZDBpQtjobkc6FvSu
-	BFY/LkRY/Wy1/nCHC5fpY8XYFK+GUhch4pp9MRmnxA4t8JMmChYxo9DMAeaI86YbZYdfGdE83Rfbc
-	QYzhXJ8w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPuiH-00000005HyZ-1TNk;
-	Fri, 13 Jun 2025 03:04:17 +0000
-Date: Fri, 13 Jun 2025 04:04:17 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>,
-	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] proc_sysctl: remove RCU annotations for accessing
- ->sysctl
-Message-ID: <20250613030417.GG1647736@ZenIV>
-References: <174978315268.608730.1330012617868311392@noble.neil.brown.name>
+	s=arc-20240116; t=1749783975; c=relaxed/simple;
+	bh=z/S/D9daR3gFo9LIj+phlnAKojrB4QkRIZNduYVKywA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N+SwL1R/ObN3InHBvKL4smZF7b11fZxczbqZhGxkIoHvSdY4BjgKlD9fFC36+8diSMlOS+u9QWwtlHOA1hBfp1F8mV16/+un191WJQ19WJtffnxcsQJXdFbPnR1pTxFM6UhTxw/Su4Z4wu6kFkYH+dimep8q0kTCdpkXtN/gc50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LgrxKJal; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749783960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=79H2iL8yRwKJxUH4hjS5H+3mFY7cHIskQpfR41dr/Cg=;
+	b=LgrxKJalnpIHKcvOlQxpXXyh23cer9UoHbXSdNiEqoufevAn+K+9zSSRAV3qDd8E7mLFGE
+	nRt0/+48wUlaIxLLqLgw/0EeMV1zxXkjL4GPu2A1JEJqnQTF/YVeidIlraSL4UoKPPIZxr
+	tIHFuCX5/f844z+Yp+t/YGzKBDlO2YY=
+From: Hao Ge <hao.ge@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Hao Ge <hao.ge@linux.dev>,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v2 0/3] mm: Restrict the static definition of the per-CPU variable _shared_alloc_tag to s390 and alpha architectures only
+Date: Fri, 13 Jun 2025 11:05:04 +0800
+Message-Id: <cover.1749779391.git.gehao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174978315268.608730.1330012617868311392@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jun 13, 2025 at 12:52:32PM +1000, NeilBrown wrote:
-> 
-> The ->sysctl field of a procfs inode is only set when the inode is
-> created, and when it is being evicted.  In both these cases there cannot
-> be concurrent accesses and so using RCU_INIT_POINTER() and
-> rcu_dereference() is misleading.
+From: Hao Ge <gehao@kylinos.cn>
 
-Wait a minute.  Why can't there be concurrent accesses?  ->evict_inode()
-is *before* RCU delay, not after it.
+Recently discovered this entry while checking kallsyms on ARM64:
+ffff800083e509c0 D _shared_alloc_tag
 
-Sure, you can't hit it from d_alloc_parallel(), but you very much can
-in normal dcache lookup...
+If ARCH_NEEDS_WEAK_PER_CPU is not defined((it is only defined for
+s390 and alpha architectures),there's no need to statically define
+the percpu variable _shared_alloc_tag. As the number of CPUs
+increases,the wasted memory will grow correspondingly.
+
+Therefore,we need to implement isolation for this purpose.
+
+However,currently ARCH_NEEDS_WEAK_PER_CPU is a #define and
+is enclosed within the #if defined(MODULE) conditional block.
+
+When building the core kernel code for s390 or alpha architectures,
+ARCH_NEEDS_WEAK_PER_CPU remains undefined (as it is gated
+by #if defined(MODULE)). However,when building modules for these
+architectures,the macro is explicitly defined.
+
+Therefore,we need to make ARCH_NEEDS_WEAK_PER_CPU a Kconfig option.
+And replace all instances of ARCH_NEEDS_WEAK_PER_CPU in the kernel
+code with MODULE_NEEDS_WEAK_PER_CPU,MODULE_NEEDS_WEAK_PER_CPU might
+be a more accurate description,because it was only needed for modules.
+Then,when defining the percpu variable _shared_alloc_tag,wrap it with the
+CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition.
+
+The following version can be regarded as the most original version:
+https://lore.kernel.org/all/20250529073537.563107-1-hao.ge@linux.dev/
+But unfortunately,it caused build errors on s390.
+Based on Suren's guidance and suggestions,
+I've refined it into this patch series.
+Many thanks to Suren for his patient instruction.
+
+Verify:
+     1. On Arm64:
+        nm vmlinux | grep "_shared_alloc_tag",no output is returned.
+     2. On S390:
+        Compile tested.
+        nm vmlinux | grep "_shared_alloc_tag"
+        00000000015605b4 r __crc__shared_alloc_tag
+        0000000001585fef r __kstrtab__shared_alloc_tag
+        0000000001586897 r __kstrtabns__shared_alloc_tag
+        00000000014f6548 r __ksymtab__shared_alloc_tag
+        0000000001a8fa28 D _shared_alloc_tag
+        nm net/ceph/libceph.ko | grep "_shared"
+        U _shared_alloc_tag
+     3. On alpha
+        Compile tested.
+        nm vmlinux | grep "_shared_alloc_tag"
+        fffffc0000b080fa r __kstrtab__shared_alloc_tag
+        fffffc0000b07ee7 r __kstrtabns__shared_alloc_tag
+        fffffc0000adee98 r __ksymtab__shared_alloc_tag
+        fffffc0000b83d38 D _shared_alloc_tag
+        nm crypto/cryptomgr.ko | grep "_share"
+        U _shared_alloc_tag
+
+v2:
+    Heiko pointed out that when defining MODULE_NEEDS_WEAK_PER_CPU,
+    the CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition in the v1 version
+    should be removed,as it is always true for s390 and alpha
+    architectures.And He also pointed out that patches 2-4 need to
+    be merged into one patch. Modify the code according to the suggestions
+    and update the corresponding commit message.
+
+Hao Ge (3):
+  mm/Kconfig: add ARCH_NEEDS_WEAK_PER_CPU Option and enable it for
+    s390/alpha
+  mm: replace ARCH_NEEDS_WEAK_PER_CPU with MODULE_NEEDS_WEAK_PER_CPU
+  mm/alloc_tag: add the CONFIG_ARCH_NEEDS_WEAK_PER_CPU macro when
+    statically defining the percpu variable _shared_alloc_tag
+
+ arch/alpha/Kconfig              | 1 +
+ arch/alpha/include/asm/percpu.h | 2 +-
+ arch/s390/Kconfig               | 1 +
+ arch/s390/include/asm/percpu.h  | 2 +-
+ include/linux/alloc_tag.h       | 6 +++---
+ include/linux/percpu-defs.h     | 4 ++--
+ lib/alloc_tag.c                 | 2 ++
+ mm/Kconfig                      | 4 ++++
+ 8 files changed, 15 insertions(+), 7 deletions(-)
+
+-- 
+2.25.1
+
 
