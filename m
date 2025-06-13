@@ -1,266 +1,260 @@
-Return-Path: <linux-kernel+bounces-685501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA4EAD8A96
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F2A6AD8A99
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E2FC1E38D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC5A1E4656
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E732E7F08;
-	Fri, 13 Jun 2025 11:32:07 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7B22DFA3A;
+	Fri, 13 Jun 2025 11:32:58 +0000 (UTC)
+Received: from FR6P281CU001.outbound.protection.outlook.com (mail-germanywestcentralazon11020086.outbound.protection.outlook.com [52.101.171.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52A62E7625;
-	Fri, 13 Jun 2025 11:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749814326; cv=none; b=HlRDCT581ALV5+Bmh5bPKZsEiuc/wmLu4IXlsxAKxgVTECLu0VRpc3r55dmAxelqguTPgIpypyAN9x9XGAicEHk/hHsfClWKrVK1rmSHMwMlwHQPCJ85PkU3jxR/x40F4+2IioUDMS3ThVDOt1jtgR292TY4+e8vBC8rqcGokZY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749814326; c=relaxed/simple;
-	bh=5v/1hL/ALMXFWvwHghT7FERfuc6HtTVh0PFSKcLiZac=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XmIOJ2lCFgK51olmTdEGv9TFwh+aRt+LCmArx3YGheC0NETQUa8LQ7qDkCNMFQwNNaCG1jGSg2kKg2cIgak29MEI6yWAE594GTncIQyBDqTfMxSGvzH339juDZMwI0MdPzEFLH+X+SL6ZynFSGHmvmQ+0cEjYA8xt86LEPKTU9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-acb5ec407b1so328390866b.1;
-        Fri, 13 Jun 2025 04:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749814323; x=1750419123;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AFyrorJHtIadhR2WZLtoMNadK7UpAA+1kioSAElIigY=;
-        b=WRnIjvB3Nv1R7Up6O3NhJxPrZigKvM2BS5L/oY5DH/2p6i4tlOzmTFRy0QkjPFpPzx
-         Jgc5q+sfaBIFX3tgfXUA/xedYFu8nRG/ZncqZLZnGO7J1Khccf34W2m3CrVHEj9ge/gf
-         ViHpMJU8iM6YyLH+G29v/OgROvrNJhij4nJxxtP65m5CDtkZSHTHLOOJzfh6Dr2rGWmf
-         2MgRczmAJ8T7nbdV2RGaviZgP3M7AT81w50ZME3sIywd7w2tqzvLjLJgG0DKNAcLeGiY
-         lnAZ2jNmXAeTUC5XdeDd8HUMWi4N54j4rpa4eBNh49LkF3dF8x3YZi7k8p5wuSBuJDTb
-         Y/Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5UDWFRmxD/7HlAjwDcB0XuRvlipkDraz0HPdUsLalD98jhzK6iP5YQkM4UukkTCES7RKAUjYZCvCfNhk=@vger.kernel.org, AJvYcCXIifHh4fyNx9FaZRZ5wwwyCcOsfSFRHXQhuVfKaAaJfRhMnOaLMK7KSI+gc4IzEZnXs6+P4i7ibWTXSTU1Fs+Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YznfkqO8qkNEjSWw8pQ11qcVgEkBYbDQl/916ZryjXXwYDmTmyW
-	86jrHMJeTThNBwD8n0aKsUXybjl4hkwT+6I4A1rn5Z9cvvtMnre8u8HsInlK5A==
-X-Gm-Gg: ASbGncvVXq4HB9+4h0Pgqa21mVV4BGE61H3vEU/bfsdQrXO7x5BJ3R5tINJUEXJK9z0
-	fcLNmhVtUTL/Q6MFcR1Aj6/RU0two6NBYEAC0amwBWw6DxyTEGOPUMFgYcsZGmGKykOI/FXguXc
-	jG2crlKfEW67bIDR9F2+JiUz8b0JQ0OaLhyqqDUtzueGJvIE4ODy93YWKCgxrBMGIS9YKBeU170
-	P9GN/sxMw+Eu5AjtN8V5DRgR9cYhl+ChIp6yc6zryD3VGn813BiW6VdClh4LaeW9Q1VKw9Hjjw7
-	+ByiHnptLumWmYqVUAbqfSxKnoxc5L2LZY2VTjVQGxZ2RrXr7EnC4QHreJowuvwq
-X-Google-Smtp-Source: AGHT+IE86EKMksqdrSTrjdwcwtxQBLt3kKhK3FPtOHFNpO6HlR6OunsYgQr09TKPN0G8jkm2FfYzRQ==
-X-Received: by 2002:a17:907:60d6:b0:ade:7512:d9ba with SMTP id a640c23a62f3a-adec56499bdmr274510066b.26.1749814322614;
-        Fri, 13 Jun 2025 04:32:02 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec815992bsm116199566b.13.2025.06.13.04.32.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 04:32:02 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 13 Jun 2025 04:31:37 -0700
-Subject: [PATCH net-next v3 8/8] selftests: net: add netconsole test for
- cmdline configuration
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DB02D2392;
+	Fri, 13 Jun 2025 11:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.171.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749814377; cv=fail; b=hTnRXBjc/LTr6PK0GsU+rdmsJy2ykRjZsdw3Z2Ma3R2olE55M5OlKpwHh1vWS5fx+15eZ6RBqoHuatIUHiZzOofUsek3rCCRkxFY5rPp9KXOrd8s/KYGeIwWXxAFP26GgsVDCbogHaNLuDbHFPvmZtb7bIn4pZT0FHZ1l7l11dQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749814377; c=relaxed/simple;
+	bh=RL2M+dWkd1N8vOEpSZkFVDtIhDBPvIav4VlMlVKyKf8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EV6NLlSACwxWJFH2Ejk+3ZnEi9HWCDsVdsJDhvYqeL6dm3XxpS/auRL7rluJU4M4uO2+/EW6Nrh5YyTh7ynAJEqoTYedxwVaUQnsAbnmMcEsrd5K0hpSVgBithK2iRV9HvmnXnaV3UQjfkxNP2yFR24D07bYvQGPLzaWt3zp2es=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siewert.io; spf=pass smtp.mailfrom=siewert.io; arc=fail smtp.client-ip=52.101.171.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siewert.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siewert.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sdoje+ykIXYUVFxwU6fcKDHqILno8aa1FVQykq8Ti9SuQvM/ISjbAwwh/t57lRoK6c57Zbgy9aXMpzPaDBMkAEISrKkkLLWZgbpk/bibNMAIbYNs4pjVHBRPM8JoDPXgiPSEH8N3IEjItPIM+FOr1fdfVQi1IEougKPUi6qTV0n3x97a+RBoY22zcC3H/Qj0CDmrUWtokIGjA4iY8dM+fXfBCeyoqMPts+IX/+9sk06NEYP7bIrBwXHbXGr354UfqiJyvA5aiR5XnbSa/AMycWeGkSUM9M7rvRqoaK7J83vGZuDG7dW1XLLKaFjQ6rCfPP6P2kC+0Tve1futPg3zrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5Cyh4VpoXpDR7H7wMROPA5fQDZuu9l3MTgcyBHzsMac=;
+ b=lrmCscIyeGcqEM2lwskUHMVZvlM+zOU+oRegxvfV/I8CraPpK1fCsP0CFFxxBo7b+2UA/qQvdylqeplypGmXGrpgVnNDaUVL6zGRPg34SpRST9J29bXFunvW9OR6kHBJ5NB+f4dKc/gR3YFJwtGUxnmZbaXJuhWG2k3owg62hsAdw7yEHdTgzB3UNR6C9+RBAqu7PApV9euHra54pdGsKjPQqIoV1+WRuohmmg2cAB503XDQEDRUSlcD0CkW7p+6JmJTf9EqBYjfMnOYTSDxVeLr3nq+3faDW+sRgZxEL1xWCL3drTQA3eD/0F4+CxFywklE76apgfR7vcjlYcUZ4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siewert.io; dmarc=pass action=none header.from=siewert.io;
+ dkim=pass header.d=siewert.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siewert.io;
+Received: from FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::182)
+ by FR4P281MB4229.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:126::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.25; Fri, 13 Jun
+ 2025 11:32:52 +0000
+Received: from FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::6ec7:ece3:1787:5e48]) by FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::6ec7:ece3:1787:5e48%6]) with mapi id 15.20.8835.019; Fri, 13 Jun 2025
+ 11:32:52 +0000
+Message-ID: <5e748017-460c-4ff6-a86f-81cf4580684d@siewert.io>
+Date: Fri, 13 Jun 2025 13:32:50 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: aspeed: Log error if SCU protection is active
+Content-Language: en-GB
+To: Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>,
+ linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250612151900.32874-1-tan@siewert.io>
+ <2cfe3813b7e330ba43f20a882c0c5035751fc7f0.camel@codeconstruct.com.au>
+From: Tan Siewert <tan@siewert.io>
+In-Reply-To: <2cfe3813b7e330ba43f20a882c0c5035751fc7f0.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0079.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::9) To FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d18:2::182)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250613-rework-v3-8-0752bf2e6912@debian.org>
-References: <20250613-rework-v3-0-0752bf2e6912@debian.org>
-In-Reply-To: <20250613-rework-v3-0-0752bf2e6912@debian.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
- gustavold@gmail.com
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5920; i=leitao@debian.org;
- h=from:subject:message-id; bh=5v/1hL/ALMXFWvwHghT7FERfuc6HtTVh0PFSKcLiZac=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoTAwl9aFDYw33vVuP4gISRyabn1e94uoNoqrLK
- mHPhWbPNQ6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaEwMJQAKCRA1o5Of/Hh3
- bZgAD/9vTsG+hAxU5w8AYPcmQleIqYKpT8hxQWBTTMlYIP5YkqTKI5qF+6wX3a912fK/RG9F4rS
- nNnVItg8wauR6g1ryk/juX1MaD87Yj7QSTZ5JN34Bep23rR2KCwbRDQUpI1t8cZ98d4TbQnLyRo
- fIUakeG+tJs8MaDBEQaGEsMIk4B5EHE2CoCtJQbPIfOrf684V9G3uWhHuxnPxGZwFWOt8esC5OF
- 5GXdXdHS+yn2Wv0pKYHG5MV/9KHWbhuvdJx+RRp6+V0p4JaK3MTHh5A3KyWr/NjFn36h/rpjloc
- kKw6mWJGoIUtkF8OlO9fGROrMtcWV9gJ7yw4VQu0qR0b4MlYQXecsNmLRtyVpj5tNwzJuurvjeG
- dwfhTiASM2tlzllOawlCEYMs3modrThP4T3JjDZ/RLqIvt+WWIuevKilIj2RHl5kmCzOYQCioGb
- haW2PUZXinGnhTHnESt5cDB4fh4Dwnge2mME7xV3peBkRuJxckJkTCAnbeUCtEJEK45VdY3BWJ9
- qhbJzel0eOQ5NZ8e6AYXCrbdjGE3CYlDrpbO6khjVLANi459/a/Slt+6tmdg0JYmGcDAmdkRm16
- gJVcXFedLBXGcCu9NwtSOSbbDxtHelBnSdhrnUV9A7bweUGqZqBWkjc7FINRS5XWr6DlZPFsFY/
- jUry8x3ymSymRhg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: FR3PPFB3D0CF1D2:EE_|FR4P281MB4229:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b04015b-ce5a-47cf-1d88-08ddaa6e0850
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QWxyL0k4K0ZQeWtsSEl0ai83QnJqd0tkV3VRS0U5dTdiaTBXUXNWMEFQSjU0?=
+ =?utf-8?B?Rkk0MlFtZGF1WHZpd3pJQkZ6ZmwxTDlvOHZwQlVSMjZoK2xFOFRzL1E0VUVx?=
+ =?utf-8?B?bndSeHoyV1YzZ1lHMG5yUjhwczR4V2ExYXkvOENYUFgwQmY4Vi82ZUhXMjBt?=
+ =?utf-8?B?SGozQVJtZGFBU3BldkV4RXd5NzJqVzRDZnVPN1F0ZTdXWkhTNDAxaVAydVZ2?=
+ =?utf-8?B?RGt5V3IvanVSS3UxN2dvWGxNQndSb0pnQjBCYTNEWWhpRnA1RjB0ZmtxVURz?=
+ =?utf-8?B?UTNRak9pVmxQZEYrT2E2WjlEc2NvdnNPTHRoNWZRcG9XYURpTDRyZjBlVnBG?=
+ =?utf-8?B?TlJ4WWpHU25RYzJ2RkV0VjJoMGY0U2p6a2ZZZW1ZV0NxNUt2bk5FcEUrUy9J?=
+ =?utf-8?B?SFNONEYxaUQ3RHhKNTFZRVVQUHJjSW9JVmF6SnErRHFwWDlnR3pzSWhpdzZ4?=
+ =?utf-8?B?SWlVVm95aFF6N2dRWVVoRis4ZlZjdElDbkVGS1dUcEwzckphY2o4c0Q5VzVi?=
+ =?utf-8?B?YlFhV3kvTVQ2cUp1d2Z2T05wT2lLVTAyYjhqSTNqR0UxOGo0WjhJZkdSZWlZ?=
+ =?utf-8?B?aUt5TXRpSGlnWjgzb1FtNHFmcjFGRjFpeHVkWVplZU10bDVobDJPYXdMcXMx?=
+ =?utf-8?B?WnZybXkvME15Yno1RWViQW51SEpUMXFid2VhWWFCcTdlUUpvU3dhVmNrUURx?=
+ =?utf-8?B?Y0ZkLzRtZ2Y3SnhoYVdSaEZzUEtsVHZRWjV3ZHJZQTQySkZ3MmVOeHJGVU91?=
+ =?utf-8?B?TkVZVHM4OHRZZUNMWGhYSjlTRmpYRnpyMFRVUHVjZ1p6VjhMeG5LRXlKcWtC?=
+ =?utf-8?B?bGFUVEpGRmpUd011cXRSQlJNYnd1RjlQbk9haG0vUExVeGtIcHAyRFBTbU9m?=
+ =?utf-8?B?bUU2TVpFbTU2ZUVlVDQ5WUpRRk9JYXFjd0hoVC96V1BzT2txeCtsNUVJYVQv?=
+ =?utf-8?B?a3RIWGM3TXVRNk9GcVJHY0Q1ZWlMNjVKS2hNMkZOUllwVVlUaVFZOStSMHNJ?=
+ =?utf-8?B?YWhHMEMvbUxaR1g4aEJPKzVNeXJJbVB1SFU1UUlYMWJKYVV2cVoyWGI3M0E2?=
+ =?utf-8?B?RHVuNFJXQlUvVjZOUytKenA5N0Q2VXVjem1lMlI2YVVSeFo4SXNUZzgxRmpJ?=
+ =?utf-8?B?VFpVZXRoNzMvVFlGZHBDY1RBOThUNjUzT2xveE0rKzZsaG1OOFZTWGUweHdu?=
+ =?utf-8?B?c1Q4OVlKREdjYnFXbkxpcDlVSkh3Wm9nS3hYd01sTzBNN0g4dDBQenJVTC95?=
+ =?utf-8?B?NWJHb056UWR2THNWNk9mL0txT1RGNlpNTERZK1hRNUpFNjhJd3ZmMEwvNE5F?=
+ =?utf-8?B?aXVpT2dtR1hXc2JpTHBGYVVudjcrQkdtbXBlQXJPNXhWaEZ2WVFDSDg3dDht?=
+ =?utf-8?B?ME4xVCtGRkRTQWxSbVEwa0I3ckdXTjJvdmlSdTFLNXdIZXVmSUpLQ1JMNElL?=
+ =?utf-8?B?Mm5oS3pwL1Q4UlhDMTJpcTJMdkF1aVdHbXd4SUNHQ0FkbE90U0NnYkpIQUlz?=
+ =?utf-8?B?M0xFVS9NZEtLSWpxeEhzWjZUK3FLOHRVVmdoSW1vR21QMzZwS3RGNUNrQWNy?=
+ =?utf-8?B?eWN1SW54bkdvWFBGYkVoV2RVZjI1VCtXS3RrQ0FuRzZEb092UzlUSTJLZnZP?=
+ =?utf-8?B?VXhYRU1Id04xTXh6LzVGWjhOQTRzT3ROcFc0K1BpUzl2SFlrY0Z6NUFzNTRR?=
+ =?utf-8?B?SHc2TFgxVzNsQXlsVVozRmZ3KzZJRXZ1S0U4WlIyWXZhZERtVEY1K096NTFk?=
+ =?utf-8?B?VVNaQUY0OEpQR2pOdDZQamRnNER3UnZBZmIrTUI3Nmh6cVJKcW4vc092NjVC?=
+ =?utf-8?B?dFRaRDhhaWU4Y29HYnZ0bzVzWTFxWHd5dVdaaTIxb28zN2lXT24xWkRFTDNo?=
+ =?utf-8?B?eTlBNkFGWUZtTjhlRHYxQmFQa3A4WEtBN3h4VEVZT2ljaHQ0K0J3RTgwSXNE?=
+ =?utf-8?Q?oJU9f5RdW08=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UWhNWmQxMERsWHdCcWE5NWxNWE9Fb25naWVsVXVOS21sTzlZNEsyRnc1UThy?=
+ =?utf-8?B?SzIrQjBlRDR4UzdmVGJxRmROL0ptTy9DaG9xY29UY3o5R3kvM2RXZmpXZkhr?=
+ =?utf-8?B?RS9LY3RQMXUyQlJ0NGpXcmsxMmZqR2taWDVCcGZaZzRTVDMzVUlRNjBoWUVi?=
+ =?utf-8?B?TFgwSk5pR2xQMWFacDBGdS8zMTA5UmxSK1k4ZzFoVk5JREpsZE92aVZpVGFY?=
+ =?utf-8?B?UEVobzNreDNvRjlOMWdEcFBxeEpncCtoTGpzTng3RXdpT3Flck01SWJHTHph?=
+ =?utf-8?B?Y3JmZjhraW9lMGg3OVp2VTRCb083V0RJWktuQ1Iwb3lYRm1FeHZWYnFLTUta?=
+ =?utf-8?B?NTFndjdSeG5FdTBrOEpsUFV1bVJucXV3WTB4UmVuT3QrVFRmajNZZFRweG5J?=
+ =?utf-8?B?U3AwYnVzQkJYeHhjWUNMc2g3S0E1alc2MlBQSU5CUThWVjNzMmt5ME5jUTFl?=
+ =?utf-8?B?NVgwaCtpaG1NcUhra25PRmQzK1V5MXhkMThQaVBxR2pKcGtxSWhLaWtIa0ww?=
+ =?utf-8?B?c3JSQ25tN1hxSlJRd0xVbXpqK1BIWXB4MnIzSEFPRmt3eUE4WFAzVEtKTHBh?=
+ =?utf-8?B?YmYzYmlOSVgzSUw1Y1FkRXdYYXY4RUZESkJJNTR5YzZOZ1lZV2JaNndhQXFM?=
+ =?utf-8?B?Sll3WnFvMWJMTDZlcUZ0bFpYakxlUXRTTlRCYnBIa0F0eU81VW0xRmxXbis5?=
+ =?utf-8?B?VllkYS95UmN3U1F3c3l4bXFlY3VQaVZ4OXd6L21rd3RjdWhZdjdPOU05TFkv?=
+ =?utf-8?B?bFRVSWZCYytJcU8valc3emJ6Qk54U2I1TTNVUm4rcHM5TzVLM0FPaHoxYk9X?=
+ =?utf-8?B?VTlQTFpNWklmczNUZnBPRU5JekhtVUlLNXQvaTRPZ09BbkJNYU1TMzZYVDg5?=
+ =?utf-8?B?TGFBRXNjeC84cnlCVk5SZWNqNDJYa2hRcEVQdUpIT1BEV3Bha1hNQjg2cGEv?=
+ =?utf-8?B?Vnc3dXpXOE1OU2pXck40cER0SFdFSGtSNGJQMFZQOUFFc0tjUEk3QnpMbUZ2?=
+ =?utf-8?B?bGgvZER6U2V2b2VJSWRkQWdNNCtNVUZTdm5OMkJnWXo0K0ptVDY1TFl0Z2RM?=
+ =?utf-8?B?Q29meTFBTVRQZ25NU2NHR1BTTWhSeVVYVklTMHVVM0ROakE5blhjbGtoZzZJ?=
+ =?utf-8?B?RDJGMkwrbndhYi9OR2dJSXkxMlhQYXhHK01QSW01Uy9DcHNoWC9jUEd3RkdR?=
+ =?utf-8?B?Tjl3V2hnYUlaN2hMZFNLdFljZmpFa0xEZWF5NnFycHNuMVU4dGUvUU1BVUt4?=
+ =?utf-8?B?c005Wi82SXpJZ055dVE1TkNyWmhUR2kwQTAzVTJhT1R1S1hxcmtXQlhaazhY?=
+ =?utf-8?B?MXErayt5WFFBWldZMkRia003ZVRSOFVZRGVpSmYraWpSUUJ3Qy9SRlpPSGdU?=
+ =?utf-8?B?SXNCbUZBMHgzT0o4em9mSXV2V0xOZ2hWcEowcXYrQzNDODdONURtcmVyVzdF?=
+ =?utf-8?B?TzF5VFloYkhpUWU5Y0Qweng0Tjd5b2R3QmJTVk9waVJnbjZnWExsUTE4UnhQ?=
+ =?utf-8?B?Q3lyTG1UTnRNM2s5elpUVy81QU5HaUpXMmhGTzNXdjVMcUc1UGdZM295cktv?=
+ =?utf-8?B?ME1hOTNoU1RxR3RlMmhuWlh0ZTF6eUMweDM3MjlobDVPWHl4NjN2czU0dENX?=
+ =?utf-8?B?bkxldDJWMDJoMDF5VlROYi8zYTliWGQxT2NxcG14eUd3SE1vcjZjb21TSGhM?=
+ =?utf-8?B?b242N1RQMXJQOWE3cUJpRDluSmxxKzVMaFNSNkFTNElaeVMzeFBWU20xbXFI?=
+ =?utf-8?B?aUlOOTJOYVpmQ3JxRnpkdjd2d1pWQjhRZFdyUWtvVDI1cmNqSE5aRDJCVE1F?=
+ =?utf-8?B?ZTlkRzBYYUR0YzFYN291MklDOUphTGlZblNsV3psaHBWYldKUXlGOXNYaVZT?=
+ =?utf-8?B?UW1kOUVvOTlsUk14b0xEQlV1Z1MrUG55NUtUb2xpNHFHbHNMaWJxaHpVY0FU?=
+ =?utf-8?B?aVc5VVNvWk5tdkVKVUZxZzFkcml6cnF1aGRnVElaUUlCeWdWWStCb0pPcDAv?=
+ =?utf-8?B?cWE4SzNlcWZhc3dqYkFIQlJLSVovWlQzaW11WURVcEdsYTZQMGF0alFrMUdM?=
+ =?utf-8?B?cTBaQTlVU2x3SUEzbVR4b2hEd20rdGJtTmxUNFF6cm5ISjNuaUtUb3Azd2w3?=
+ =?utf-8?Q?Bko8=3D?=
+X-OriginatorOrg: siewert.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b04015b-ce5a-47cf-1d88-08ddaa6e0850
+X-MS-Exchange-CrossTenant-AuthSource: FR3PPFB3D0CF1D2.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 11:32:52.1585
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e8b4abbe-444b-4835-b8fd-87ac97451a7e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JqvLD5TJTUofic2UhLvWsJbcAho/NFbVYjfwJGK0EnG7aYQ4vE00+f158JOTtRcA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR4P281MB4229
 
-Add a new selftest to verify netconsole module loading with command
-line arguments. This test exercises the init_netconsole() path and
-validates proper parsing of the netconsole= parameter format.
+On 13.06.25 08:01, Andrew Jeffery wrote:
+> On Thu, 2025-06-12 at 17:18 +0200, Tan Siewert wrote:
+>> ASPEED pinctrl and other drivers accessing SCU registers rely on the
+>> bootloader to unlock the SCU before handing over to the kernel.
+>>
+>> However, some userspace scripts may re-enable SCU protection via
+>> /dev/mem,
+>>
+> 
+> Hmm, if this was caused by poking /dev/mem, then I'm not sure I'm in
+> favour of it. The source of your problem wasn't apparent to me in our
+> off-list discussion.
 
-The test:
-- Loads netconsole module with cmdline configuration instead of
-  dynamic reconfiguration
-- Validates message transmission through the configured target
-- Adds helper functions for cmdline string generation and module
-  validation
+This was only an example of what I've already seen on GA firmware, but 
+it could also be done by some custom out-of-tree driver.
 
-This complements existing netconsole selftests by covering the
-module initialization code path that processes boot-time parameters.
-This test is useful to test issues like the one described in [1].
+> "Don't do that" :/
 
-Link: https://lore.kernel.org/netdev/Z36TlACdNMwFD7wv@dev-ushankar.dev.purestorage.com/ [1]
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- tools/testing/selftests/drivers/net/Makefile       |  1 +
- .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 39 +++++++++++++---
- .../selftests/drivers/net/netcons_cmdline.sh       | 52 ++++++++++++++++++++++
- 3 files changed, 86 insertions(+), 6 deletions(-)
+I agree on that ^^
 
-diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-index be780bcb73a3b..bd309b2d39095 100644
---- a/tools/testing/selftests/drivers/net/Makefile
-+++ b/tools/testing/selftests/drivers/net/Makefile
-@@ -12,6 +12,7 @@ TEST_GEN_FILES := \
- TEST_PROGS := \
- 	napi_id.py \
- 	netcons_basic.sh \
-+	netcons_cmdline.sh \
- 	netcons_fragmented_msg.sh \
- 	netcons_overflow.sh \
- 	netcons_sysdata.sh \
-diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-index 598279139a6e5..3fcf85a345969 100644
---- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-+++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-@@ -121,6 +121,17 @@ function create_dynamic_target() {
- 	echo 1 > "${NETCONS_PATH}"/enabled
- }
- 
-+# Generate the command line argument for netconsole following:
-+#  netconsole=[+][src-port]@[src-ip]/[<dev>],[tgt-port]@<tgt-ip>/[tgt-macaddr]
-+function create_cmdline_str() {
-+	DSTMAC=$(ip netns exec "${NAMESPACE}" \
-+		 ip link show "${DSTIF}" | awk '/ether/ {print $2}')
-+	SRCPORT="1514"
-+	TGTPORT="6666"
-+
-+	echo "netconsole=\"+${SRCPORT}@${SRCIP}/${SRCIF},${TGTPORT}@${DSTIP}/${DSTMAC}\""
-+}
-+
- # Do not append the release to the header of the message
- function disable_release_append() {
- 	echo 0 > "${NETCONS_PATH}"/enabled
-@@ -173,13 +184,9 @@ function listen_port_and_save_to() {
- 		socat UDP-LISTEN:"${PORT}",fork "${OUTPUT}"
- }
- 
--function validate_result() {
-+# Only validate that the message arrived properly
-+function validate_msg() {
- 	local TMPFILENAME="$1"
--	local FORMAT=${2:-"extended"}
--
--	# TMPFILENAME will contain something like:
--	# 6.11.1-0_fbk0_rc13_509_g30d75cea12f7,13,1822,115075213798,-;netconsole selftest: netcons_gtJHM
--	#  key=value
- 
- 	# Check if the file exists
- 	if [ ! -f "$TMPFILENAME" ]; then
-@@ -192,6 +199,17 @@ function validate_result() {
- 		cat "${TMPFILENAME}" >&2
- 		exit "${ksft_fail}"
- 	fi
-+}
-+
-+# Validate the message and userdata
-+function validate_result() {
-+	local TMPFILENAME="$1"
-+
-+	# TMPFILENAME will contain something like:
-+	# 6.11.1-0_fbk0_rc13_509_g30d75cea12f7,13,1822,115075213798,-;netconsole selftest: netcons_gtJHM
-+	#  key=value
-+
-+	validate_msg "${TMPFILENAME}"
- 
- 	# userdata is not supported on basic format target,
- 	# thus, do not validate it.
-@@ -267,3 +285,12 @@ function pkill_socat() {
- 	pkill -f "${PROCESS_NAME}"
- 	set -e
- }
-+
-+# Check if netconsole was compiled as a module, otherwise exit
-+function check_netconsole_module() {
-+	if modinfo netconsole | grep filename: | grep -q builtin
-+	then
-+		echo "SKIP: netconsole should be compiled as a module" >&2
-+		exit "${ksft_skip}"
-+	fi
-+}
-diff --git a/tools/testing/selftests/drivers/net/netcons_cmdline.sh b/tools/testing/selftests/drivers/net/netcons_cmdline.sh
-new file mode 100755
-index 0000000000000..ad2fb8b1c4632
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/netcons_cmdline.sh
-@@ -0,0 +1,52 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# This is a selftest to test cmdline arguments on netconsole.
-+# It exercises loading of netconsole from cmdline instead of the dynamic
-+# reconfiguration. This includes parsing the long netconsole= line and all the
-+# flow through init_netconsole().
-+#
-+# Author: Breno Leitao <leitao@debian.org>
-+
-+set -euo pipefail
-+
-+SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-+
-+source "${SCRIPTDIR}"/lib/sh/lib_netcons.sh
-+
-+check_netconsole_module
-+
-+modprobe netdevsim 2> /dev/null || true
-+rmmod netconsole 2> /dev/null || true
-+
-+# The content of kmsg will be save to the following file
-+OUTPUT_FILE="/tmp/${TARGET}"
-+
-+# Check for basic system dependency and exit if not found
-+# check_for_dependencies
-+# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
-+echo "6 5" > /proc/sys/kernel/printk
-+# Remove the namespace and network interfaces
-+trap do_cleanup EXIT
-+# Create one namespace and two interfaces
-+set_network
-+# Create the command line for netconsole, with the configuration from the
-+# function above
-+CMDLINE="$(create_cmdline_str)"
-+
-+# Load the module, with the cmdline set
-+modprobe netconsole "${CMDLINE}"
-+
-+# Listed for netconsole port inside the namespace and destination interface
-+listen_port_and_save_to "${OUTPUT_FILE}" &
-+# Wait for socat to start and listen to the port.
-+wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
-+# Send the message
-+echo "${MSG}: ${TARGET}" > /dev/kmsg
-+# Wait until socat saves the file to disk
-+busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
-+# Make sure the message was received in the dst part
-+# and exit
-+validate_msg "${OUTPUT_FILE}"
-+
-+exit "${ksft_pass}"
+>> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+>> index 774f8d05142f..81680c032b3c 100644
+>> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+>> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+>> @@ -28,6 +28,8 @@
+>>   #define SIG_EXPR_LIST_DECL_SINGLE SIG_EXPR_LIST_DECL_SESG
+>>   #define SIG_EXPR_LIST_DECL_DUAL SIG_EXPR_LIST_DECL_DESG
+>>   
+>> +#define SCU_UNLOCKED_VALUE 0x00000001
+> 
+> Bit of a nit-pick but I'm not sure this is worthwhile, or that the
+> leading zeros are necessary. I'd be tempted just to use the constant
+> '1' directly inline ...
 
--- 
-2.47.1
+This was more of a convenience to make it obvious that the "unlocked" 
+value is meant here (as per the datasheet). The leading zeros are 
+unnecessary, yes.
+
+>> +
+>>   /*
+>>    * The "Multi-function Pins Mapping and Control" table in the SoC datasheet
+>>    * references registers by the device/offset mnemonic. The register macros
+>> @@ -36,6 +38,7 @@
+>>    * reference registers beyond those dedicated to pinmux, such as the system
+>>    * reset control and MAC clock configuration registers.
+>>    */
+>> +#define SCU00           0x00 /* Protection Key Register */
+>>   #define SCU2C           0x2C /* Misc. Control Register */
+>>   #define SCU3C           0x3C /* System Reset Control/Status Register */
+>>   #define SCU48           0x48 /* MAC Interface Clock Delay Setting */
+>> @@ -2582,6 +2585,24 @@ static int aspeed_g4_sig_expr_set(struct aspeed_pinmux_data *ctx,
+>>                  if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP2)
+>>                          continue;
+>>   
+>> +               /*
+>> +                * The SCU should be unlocked, with SCU00 returning 0x01.
+>> +                * However, it may have been locked, e.g. by a
+>> +                * userspace script using /dev/mem.
+>> +                */
+>> +               u32 value;
+>> +
+>> +               ret = regmap_read(ctx->maps[desc->ip], SCU00, &value);
+>> +
+>> +               if (ret < 0)
+>> +                       return ret;
+>> +
+>> +               if (value != SCU_UNLOCKED_VALUE) {
+> 
+> ... i.e. `if (value != 1)` here
+> 
+>> +                       dev_err(ctx->dev,
+>> +                               "SCU protection is active, cannot continue\n");
+>> +                       return -EPERM;
+>> +               }
+>> +
+> 
+> Doing this test for each value in the signal expression seems a bit
+> excessive.
+
+Ack
+
+> I was suggesting we only print the warning if we detect the writes
+> failed to stick (this is checked towards the end of e.g.
+> aspeed_g4_sig_expr_set())
+
+Ayy, thanks for pointing this out! I overlooked the 
+`aspeed_sig_expr_eval` check at the end which definitely suits this case.
+
+Cheers,
+Tan
 
 
