@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-684816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C5BAD8090
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9191EAD8095
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B6F1899199
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A52A189601F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 01:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7769C1DF987;
-	Fri, 13 Jun 2025 01:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB461DFDA5;
+	Fri, 13 Jun 2025 01:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tQylNxta"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KoKJfTsv"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401532F4317
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 01:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AF52F4317;
+	Fri, 13 Jun 2025 01:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749779598; cv=none; b=bmIHXzJ/A7OGHAJ63MIU8+w9JGiax09hGClg2kRq5Bj4kkubxY93ScMjdj7wZDoGIczbjwTCxLRSZQOCvI91TIaqBLnPKCPuVvn+7eTFp+ql4heKPvdLAjPsUkl/ChQXZ7JugjTXT+w070dQNhZPhfb7JKy0wxBTTWWiyzhSxtI=
+	t=1749779665; cv=none; b=BJDAcPOY+uBfYPPMWUdQnIJg1ZJwtYxzt6JbzTjIPC3sWSfILKfVl7Mwav+ShFnLg9lV8HGV5o1OZqePtD0gO4ppDU2EhjcGIGfWqQhtIdOaQ+EJFGaxui6C64HWX6+yhdOLMLmb/gchGAesvQ3FKpU8RRra7WyJ0Q3sGDVUdaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749779598; c=relaxed/simple;
-	bh=q2CeiThjXnBn+PX0vpfkOk8gxArW4doBcjm6JOl6Xd4=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=TkY5x72TvF0ht2EAsU+i1C+SgiZQtaxpLElrXmqXrj9YKaVs+4e7+YRSMPRgDeR5MuCuvBpzjBt6JViSUkViD+qpPA/LFwqRbzvQjukbWe+0Txuz1NKhqcZR291SMpqnP1IFjnWOXAOGhKrTln67auUseWi93XRVaQ73azaRW9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tQylNxta; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749779592; h=Message-ID:Subject:Date:From:To;
-	bh=5Oe5PaQlPk7LtILWAf2eOzYErXMVWS9+usSmUJzI5Dc=;
-	b=tQylNxtaR2P7w5byKAgb+jUb12BRRt1IVVZqcRDVi4YQxIN85Z4H7hhjpeS8XSr191m8wnkb+ZffU2BxdzyKlENlzctkrWc9mvKiyljYuwXYfjHWZ12hof2oDVkAsz3zgycpJ3+Ba8SYGErAZmMW9YigpNPRp/hOudSf2Quh7XI=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WdifYuV_1749779592 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Jun 2025 09:53:12 +0800
-Message-ID: <1749779585.8414617-4-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH] virtio: document ENOSPC
-Date: Fri, 13 Jun 2025 09:53:05 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Parav Pandit <parav@nvidia.com>,
- Jason Wang <jasowang@redhat.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <2e6ec46b8d5e6755be291cec8e2ec57ef286e97b.1748356035.git.mst@redhat.com>
-In-Reply-To: <2e6ec46b8d5e6755be291cec8e2ec57ef286e97b.1748356035.git.mst@redhat.com>
+	s=arc-20240116; t=1749779665; c=relaxed/simple;
+	bh=BqjIpdginw9NC7ExbOtPr97LIc8KfK4HJH29cdXKdiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fy26vdWoDo2Db7su7smMsuxqPfFw2mKsXYeUAqJekQgjJmpD3pFF14eTUEqqMaQL83eJ9N5QYTDPHWIOofY1qqNbEAnXm8ZgOam6wUm9ZRwixAwWTeiH+Q02bNpUI+hfPshfQTVpl/oRkzduoB3PROnor6sLXPX4sLHxf2k74Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KoKJfTsv; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nitBGWC5QXGVNWEJB7UYqmTPWWJE9Kq229DjqjXCLDk=; b=KoKJfTsvGREwu86gPNpsXQ+v0m
+	AyprPavaHCJP04R4ddTmcmK611o+o2nsGbU+2qp5Iwp4swoTBnL0in/NhqkFHEDGSqGFFkEZKxdaR
+	B+9dt/QBPyvdt6u7WFiNxhLiVtXUyi0tSCUDFSKOCuCb9hf4DhKOjLB036M4Q+v44oaKdAw2mtBU4
+	QQc9f63h+tm8otuNefOpUHfIktRIIwSKNUCJKpT6VZi9GZm06Ut3PGVkmyysrQNJpxDDo2GLwsNIs
+	O1ExxsQdsFJQyqIBk7Qkdo7R5t6X6VSqpw/7pDgxgP/i28+9xxzI/+0MVidjvktBmKbea6wwZeOin
+	fxH1JcoQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPtcb-00000004cII-0FNJ;
+	Fri, 13 Jun 2025 01:54:21 +0000
+Date: Fri, 13 Jun 2025 02:54:21 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>,
+	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] proc_sysctl: Fix up ->is_seen() handling
+Message-ID: <20250613015421.GD1647736@ZenIV>
+References: <174977507817.608730.3467596162021780258@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174977507817.608730.3467596162021780258@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, 27 May 2025 10:27:19 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> drivers handle ENOSPC specially since it's an error one can
-> get from a working VQ. Document the semantics.
->
-> Reported-by: Parav Pandit <parav@nvidia.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+On Fri, Jun 13, 2025 at 10:37:58AM +1000, NeilBrown wrote:
+> 
+> Some sysctl tables can provide an is_seen() function which reports if
+> the sysctl should be visible to the current process.  This is currently
+> used to cause d_compare to fail for invisible sysctls.
+> 
+> This technique might have worked in 2.6.26 when it was implemented, but
+> it cannot work now.  In particular if ->d_compare always fails for a
+> particular name, then d_alloc_parallel() will always create a new dentry
+> and pass it to lookup() resulting in a new inode for every lookup.  I
+> tested this by changing sysctl_is_seen() to always return 0.  When
+> all sysctls were still visible and repeated lookups (ls -li) reported
+> different inode numbers.
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-
-> ---
->  drivers/virtio/virtio_ring.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index b784aab66867..97ab0cce527d 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -2296,6 +2296,10 @@ static inline int virtqueue_add(struct virtqueue *_vq,
->   * at the same time (except where noted).
->   *
->   * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
-> + *
-> + * NB: ENOSPC is a special code that is only returned on an attempt to add a
-> + * buffer to a full VQ. It indicates that some buffers are outstanding and that
-> + * the operation can be retried after some buffers have been used.
->   */
->  int virtqueue_add_sgs(struct virtqueue *_vq,
->  		      struct scatterlist *sgs[],
-> --
-> MST
->
+What do you mean, "name"?
 
