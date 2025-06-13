@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-686087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919E2AD92E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:35:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F47AD92E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98FC91BC077F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F81B1E3A98
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5249A211A0D;
-	Fri, 13 Jun 2025 16:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1675821147D;
+	Fri, 13 Jun 2025 16:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="najrXMw2";
-	dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b="p2LAhlLT"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Olh/xIyA"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1842E11B5;
-	Fri, 13 Jun 2025 16:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749832505; cv=pass; b=TKWUsrVTO5fSgU5WmXYpiZms7ornwYpix0wF9ATcGbKAgOhpnOmclrkCIEdeMf+u5SjC6w/ef1ShZ06ZT+fVBZPzYzRRf/+nM1o6ZvkxHt5rSoq3/GvfOFunxZiHxOkdxWiB1ZUSIjYIt6IVY0h+d3+SQ+05G+WkfU8Chc/+CTg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749832505; c=relaxed/simple;
-	bh=JH7+5xcP0Gxy40aZWNJIxfN8DceUAl68OpLJLha0Qss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=idE2JB9XRkaLo4n8RIuoDoW3Rx93FVq+Czz9QNKVtGrm0bfd+AgkaegJt87I+sqjZYj1e5w/nSOzWEKWnOkCVcd9+F8JN+ifu2ivICW6iL7QM8pa0fuSohybvBamD4WAOQj6HBWD4/XyWufW2fsefeDIQ//rOcNTnbi0DOzc2K4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=najrXMw2; dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b=p2LAhlLT; arc=pass smtp.client-ip=85.215.255.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-ARC-Seal: i=1; a=rsa-sha256; t=1749832488; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=YEUIGp/kETBI6M2oLy+dhlduCnG1F194AG016SwkQHeKh4HLaVJXRsaYIM0UgMIO69
-    w/nQXXBb1F4gAIq7ThOlX+oMw5ThXtG2ubJgwYz71I3RF/xkEe5IDFZFO1+UOybp+GrU
-    AeOdoO9eCiyQBYbujA1RXMxeMoBCtgn/696mrdP7tPbNyLaaXPNUqYCKoy8KJehqLh+7
-    PkbeRa4eYFj9fhR5dLBaQS5BfjP1CiEi+DPle1PAdkPqpTgk59DEVT62m54tsN5GeuQz
-    pax4RZJCw6OL5B3f+7CCKqcgBf8X3qbKFS9PJIV7ErXgzkIN2SaFlnBp2FNcNHVk2jOK
-    xThQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1749832488;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=7ay36h4xp3J0JHjWRZu5rdj9y5vlRyjYR8YhExn3xUI=;
-    b=OGk9EFcSNu4xyt9f6Lk1dESSWi5DN8DIE0zaHAzSi2Dp0mK6YIRkEmgd7iF6IVgIrE
-    SG6CS2GApLkKrJU9fWP9nsfc1otA/WriPqJczVZ07e3BFjP0KbgZK6Jc066/C+tpqmcK
-    X/9Yk2Rt75mhDafsQXPhQwihhv581gHmyQBCFtJV5ZCVRNezWqpztk1mTvNbsgFPul90
-    fG8QP01S3QIaABmbaFfU58+IZuvUc6CLWrr+KS2pnxrrb6fpl8japOn1+q/HVlqk+9gU
-    SiTnPU5og/jbKJA3VM+MwGvi1CzTi6BV87b6s3MjFmmd8b5fbnTCIMu7RBvBYv3KbJkT
-    a2lw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1749832488;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=7ay36h4xp3J0JHjWRZu5rdj9y5vlRyjYR8YhExn3xUI=;
-    b=najrXMw2MMFXu4+7P4o+wnKQsGj2uJTlbmLMLMEwn8gAlSIzdbgtrCdOnYBd99+KI+
-    sl4Il0zJJolSo265Gf4OAfAokOgigZFO4v05AbqHjfVv83O6Hv09fy61EUVBmWN7td+F
-    U6lzQrqqayoTbixcm8bJm5unM1tP4zwdyrMJhkcE5aT1CtIfMPeKESRQEPny5yS+sOVp
-    6HyWTUGpblzXL9gCjQRe9m9zP1rRHtPzMQ3OYw/J2mou5t8SXtAHCBmdc0QnHNBdkWej
-    vn7v7R8r0/yfNz9tM0y+ZxUACCARI79Lc2F/LkBw4CFJ4iF0CDHDkMd3JNO2v91Nrzu/
-    qKJQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1749832488;
-    s=strato-dkim-0003; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=7ay36h4xp3J0JHjWRZu5rdj9y5vlRyjYR8YhExn3xUI=;
-    b=p2LAhlLTCa+gMKHcYr86RN4e9cQeYSyoTMaeQDccLU6W0Lv5q3R0kK18SZhTsfJeWF
-    EM2oiw/oYzen8dgWSDAQ==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDYJfScBm5T"
-Received: from tauon.localnet
-    by smtp.strato.de (RZmta 51.3.0 DYNA|AUTH)
-    with ESMTPSA id f29bbf15DGYkxsw
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 13 Jun 2025 18:34:46 +0200 (CEST)
-From: Stephan Mueller <smueller@chronox.de>
-To: David Howells <dhowells@redhat.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Simo Sorce <simo@redhat.com>,
- torvalds@linux-foundation.org, Paul Moore <paul@paul-moore.com>,
- James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@cloudflare.com>,
- Clemens Lang <cllang@redhat.com>, David Bohannon <dbohanno@redhat.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: Module signing and post-quantum crypto public key algorithms
-Date: Fri, 13 Jun 2025 18:34:46 +0200
-Message-ID: <11297298.5MRjnR8RnV@tauon>
-In-Reply-To:
- <01f2f3171dd0f1cd9dcb496ac66bc6903767a2d2.camel@HansenPartnership.com>
-References:
- <501216.1749826470@warthog.procyon.org.uk>
- <01f2f3171dd0f1cd9dcb496ac66bc6903767a2d2.camel@HansenPartnership.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A94E20297D;
+	Fri, 13 Jun 2025 16:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749832523; cv=none; b=VbTqvFH4NMIatDju5FsYRZec8cXPTslnPxN44O7nvmePV7F3pEAINaoPPBbyKy4M6eNFnLhmWNnOSFM4KMLGxQh2oOSmIKXPCFoUJIY1iIHSltBHGLG3mBTg+idR2bJUttZ0nEDrwc6M+nSKwm0frgnmV5gYwopZPVv9oDSdSdQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749832523; c=relaxed/simple;
+	bh=QXE8CKFwmIeb+JPAQUReJotkuCcr6O5N8pxWfDgAg1c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pnlCh7YldDXPsYgfZOBhCsBAlnZQd4avyRmOYVt8fbPHUDTLE2UBNkOhhtYhHatRdkg9+3aWKWPLKMwuoUEv9zCm3CiP5lBSgISNDaEFMQX16yRtNu9yhZ0jkpkokZpCvRnWnjbNwcx1tfWcsCKJDoeag5hiPKFKt7WeeQMx8/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olh/xIyA; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-312116d75a6so2114124a91.3;
+        Fri, 13 Jun 2025 09:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749832521; x=1750437321; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHPrpo9d42nRJm72Dq1MnICc6IUuyfQPRBp7KXTIMQ4=;
+        b=Olh/xIyAOI1IXUkpB0UgFWAOtNYq+AcIofwCd9Opc0LBO4IX6esV39SnyQ9fksa11Z
+         2cDtKZeSG1QGLshmmWqOij2R5ehI75+okNuqaQXEQnXEAYyISUefsSYObmEkXRq0jg4o
+         hoJ7KwscBSW3qs1VZNDmKkCXLPy0GfJxsSVHJc/+I6CblortqkrkfrZjvlUT0MleKegt
+         NqlycJiqtdnB5ngMY/0kacEYUnjgL+bDcU6GU4qowuJ6Bm/fHfyX5utWEYWzj8RUnCn7
+         ohpzKfc3BJDNiS3SIgSBPKCGUgSSV3LthLEE+U/Rq34HCH2y0+uQI7QD09EgsOMeZ/GI
+         j2dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749832521; x=1750437321;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FHPrpo9d42nRJm72Dq1MnICc6IUuyfQPRBp7KXTIMQ4=;
+        b=apAAWp1J1tflonUXU7d+5r5BKEemHi8SyC1ErpAZb0gnN7HORo3vUrfNXOuqTJT76g
+         3XTsbeKv3O3QjtLH1bOO3onYCFlqZew89AMT+YTzHdH6WLZRuCo8F4mLgQ6skfq3Fg+S
+         iK5hnxDnLwr5So+8G6VQyATW3CNIl0Qz3zVhRVlVkgthCG1OTA1xpUs4Kh8reGfG8/Rr
+         IeJy6ouGM4uoTG//FiJC3Yb+bc9QToQuCw5twpHUvG22sPIcNOg23CSAq/qN8y+ZWF24
+         IPiIxa+GxW9F5OO1FrpdTk6HMB0H9ggsr3Sw/vTvC8mgKJXpaGANj+c8Zzfezs5348jE
+         s7RA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9/s8xlSyQe0w86nGmosU8mLpEgYbnPwnVbMpl9SGYF3lq6V5Oa0y6EXv4laFsWtqWsRMUwIL+cHJzoSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpft0Tt2oChOFd5kAmzkJ6dJLMzBEgswAKF3ye84IzpEcJOs8a
+	RHjeF79hEd2y8XFqNwVgxA06h8phFenmf6FWpAKQpPegbynD/WCcKYWJ
+X-Gm-Gg: ASbGnct9FMFrmmAbSXwIwlW4D3n0CqeQGVgF/xNrlmY8dX5fILdiT5t7kfJm7B/gs2B
+	gpVTURGRWa3G/Bw5ZwNYY5c4gjPvof5AvoUDgfB95VR69XuqQsZtF+7qgPhd40k9J8I7yBXMZ06
+	ekDXTs8nxJ8iqMZJIfXinG/xEQgwXWgTTXPFxBPA7x821/3qbtPYPZtikAprO36loWL8/TJ7qAH
+	BX9PqpYsNIy/KfDeHsp0HtJ1Bt0PjTGKpLJPU4U1OvQaOMm5SFWcAZvNgdATT67H7YoSqRWMqeO
+	vLdjPgnwszxp+tMNK+q6FBBIr09A8r7IZr5muxKKZmKuhysUat+yujJge+Il9AB1A3HmJOJD7PM
+	NWTluj5TxJl3UvdJ9Wn7l
+X-Google-Smtp-Source: AGHT+IGIuAqQa292qV7dqgToWK54149pBTrBaPodmpn2s350eBZtY87Pv6smrPbvL/pWn7OY37TTsA==
+X-Received: by 2002:a17:90b:1c04:b0:30a:4874:5397 with SMTP id 98e67ed59e1d1-313f1ca7f9cmr519630a91.9.1749832521202;
+        Fri, 13 Jun 2025 09:35:21 -0700 (PDT)
+Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1b5a85dsm3568672a91.38.2025.06.13.09.35.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 09:35:20 -0700 (PDT)
+From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+Date: Fri, 13 Jun 2025 13:35:04 -0300
+Subject: [PATCH] arm64: dts: freescale: imx8mp-toradex-smarc: add fan
+ cooling levels
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250613-tdx-smarc-imx8mp-fan-cooling-level-v1-1-59aae8fee2db@toradex.com>
+X-B4-Tracking: v=1; b=H4sIADdTTGgC/x3NTQqDMBBA4avIrB3Q1KTqVUoXMRntQH4kKRIQ7
+ 25w+W3eOyFTYsowNyckOjhzDBV924D56bARsq0G0QnZqf6Ff1swe50Msi+j33HVAU2MjsOGjg5
+ yuKi3UFKTMMMENbQnWrk8k8/3um7Lrur0dAAAAA==
+X-Change-ID: 20250613-tdx-smarc-imx8mp-fan-cooling-level-b67265ae2c49
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
+X-Mailer: b4 0.14.2
 
-Am Freitag, 13. Juni 2025, 18:13:43 Mitteleurop=C3=A4ische Sommerzeit schri=
-eb James=20
-Bottomley:
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-Hi James,
+The fan controller on this board cannot work in automatic mode, and
+requires software control, the reason is that it has no temperature
+sensor connected.
 
-> > The good news is that Stephan Mueller has an implemementation that
-> > includes
-> >=20
-> > kernel bits that we can use, or, at least, adapt:
-> > 	https://github.com/smuellerDD/leancrypto/
->=20
-> So the only hybrid scheme in there is dilithium+25519 which doesn't
-> quite fit the bill (although I'm assuming dilithium+448 could easily be
-> implemented)
+Given that this board is a development kit and does not have any
+specific fan, add a default single cooling level that would enable the
+fan to spin with a 100% duty cycle, enabling a safe default.
 
-Dilithium-ED448 just landed. One bug to squash though.
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ciao
-Stephan
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts b/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
+index 55b8c5c14fb4f3e7407243760ac01b0aca0dacf5..5f233304cea747d3f04a748265f96696668c9d6b 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
+@@ -213,6 +213,7 @@ fan_controller: fan@18 {
+ 		#pwm-cells = <2>;
+ 
+ 		fan {
++			cooling-levels = <255>;
+ 			pwms = <&fan_controller 40000 PWM_POLARITY_INVERTED>;
+ 		};
+ 	};
 
+---
+base-commit: 1a2ad59da68dd294f994efbf68c5d671f6b42fad
+change-id: 20250613-tdx-smarc-imx8mp-fan-cooling-level-b67265ae2c49
+
+Best regards,
+-- 
+João Paulo Gonçalves <joao.goncalves@toradex.com>
 
 
