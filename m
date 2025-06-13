@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-685065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C1BAD83B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29EAAD83D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76F018973D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7780E3A1D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD331274657;
-	Fri, 13 Jun 2025 07:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZwQHguT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BC4274FDA;
+	Fri, 13 Jun 2025 07:11:06 +0000 (UTC)
+Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A10727466E;
-	Fri, 13 Jun 2025 07:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CFC1DF268
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749798561; cv=none; b=aEqK7BbV6VkYZPnPp8xSUG1U204pOyZmYoEZlTxOak6N9IviAQkj1UPXx8wfaRnzlU1KIG/0UkQD0OlHx7VM9FSP0clwnlHPv4pdct+cNmt2mcHSVGla/c49PbMPFAdp2yHH2pK1CRoFLdo9DcJUewa+qLp6Fa6OO9tKSHCBHsw=
+	t=1749798665; cv=none; b=SjVWlggyCkq77kkQHNpgcDX8c2OwTvta4YC/V9bfIiXjl0CVlmUwjgwMdWtsw0gda/qQHZtduxUOLQpseY1qiUFRWwJExJK/TjWVQtaOhLEyRvjnPOX5CiKoP0ZFLpHyHjoZSnS79qEOUNWx2rBtDdgWuz4dQKF8JdfYYvD82nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749798561; c=relaxed/simple;
-	bh=Mb1jyZOQPN9JATWBbLyCYwDfAwrKONx5/T3Sp8j0edM=;
+	s=arc-20240116; t=1749798665; c=relaxed/simple;
+	bh=YmQRwLeplfR8Z0cr1iI/OSU1EFcSFHPSi4tlQU+eg2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBmJvkLH1e8HLDtEW2GG3nOHxKvNOSjhb2Bb60Gt7RB7Z/wLLPyyKJTbdb7jcQ+r2WpqyrOHcxSkesp0SNrhMFkyzJg69x2/8KNbUOaomyc/+sd59VW2TXQz1Qn9gmwYTGLD4DMNg8n5nAKXsyMbT5pBwfPSHVSqqpd3VGXx4Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZwQHguT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5FBC4CEE3;
-	Fri, 13 Jun 2025 07:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749798560;
-	bh=Mb1jyZOQPN9JATWBbLyCYwDfAwrKONx5/T3Sp8j0edM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IZwQHguTjI+NHlRsb7p7gV+3FKXQu+3OLuSJEcdfaIGSV2gdb7kqoFAuVmO8RtoGy
-	 YSexCJqBy9HH7z6rdB4ncYzn0sQJRQ2tIiiLI5ZXtXrafaSwzkhpuKJwwGzteOqeat
-	 rx3apaWgVPrAvilPBQz6dzvdLUAKHsKAsozM3OeLx7/tavaDMgbS7P+DWMLygIShXu
-	 nul2JIp5r1GNuDRSlJY7y47EjVAvEn+Vs3TAZqL21edg5qr7OOx7oHmbVUrnEeGsQF
-	 aHAae6TGanDR7WGD/rRzPzvCTYS4ReA4IrmXNdwwuuF5LsOxycNtOQjalBmowu8hg8
-	 SAgXKROHdhbWQ==
-Date: Fri, 13 Jun 2025 09:09:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Sangwon Jee <jeesw@melfas.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/5] dt-bindings: input: melfas-mip4: convert to
- dtschema
-Message-ID: <20250613-big-firefly-of-aptitude-a88cbe@kuoka>
-References: <20250613-mip4-touchkey-v2-0-9bbbe14c016d@disroot.org>
- <20250613-mip4-touchkey-v2-1-9bbbe14c016d@disroot.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMpmBcKbBr1wMMkaNRsWDpmDMa70pn4rBNzZpOwWaPz1fqLg+1vRBS9YPk7idvcC0G8/z0n3zvKvJGCa+sef549H4fQ5IvnUt3C4YGLDHujglzQpDMjMfUr9/4Kfg/lPkHgt0csDEVkHRRA8Jh7P5iWo4OfN7R38TK00KEhFbWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.103 with ESMTP; 13 Jun 2025 16:11:01 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Fri, 13 Jun 2025 16:11:01 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	shikemeng@huaweicloud.com, bhe@redhat.com, baohua@kernel.org,
+	chrisl@kernel.org, muchun.song@linux.dev, iamjoonsoo.kim@lge.com,
+	taejoon.song@lge.com, gunho.lee@lge.com
+Subject: Re: [RFC PATCH 2/2] mm: swap: apply per cgroup swap priority
+ mechansim on swap layer
+Message-ID: <aEvPBSObBrrQCsa3@yjaykim-PowerEdge-T330>
+References: <20250612103743.3385842-1-youngjun.park@lge.com>
+ <20250612103743.3385842-3-youngjun.park@lge.com>
+ <CAMgjq7BJE9ALFG4N8wb-hdkC+b-8d1+ckXL9D6pbbfgiXfuzPA@mail.gmail.com>
+ <CAKEwX=PsGKS5JHqQ-G29Fg8xLssPhM+E-4wV_QakhqrDOsV36g@mail.gmail.com>
+ <CAMgjq7Aq1LW9wFgyQ4oCS5Su23X62S+5ZW_d5OydJj-pp2n21Q@mail.gmail.com>
+ <CAKEwX=PD+P_wugkAJ83ti6YRo4-6QNM7HDFs+KDURVwx2JrnZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,22 +59,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250613-mip4-touchkey-v2-1-9bbbe14c016d@disroot.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKEwX=PD+P_wugkAJ83ti6YRo4-6QNM7HDFs+KDURVwx2JrnZg@mail.gmail.com>
 
-On Fri, Jun 13, 2025 at 01:11:33AM GMT, Kaustabh Chakraborty wrote:
-> Port the documentation file melfas_mip4.txt over to melfas,mip4_ts.yaml.
+On Thu, Jun 12, 2025 at 01:08:08PM -0700, Nhat Pham wrote:
+> On Thu, Jun 12, 2025 at 11:20 AM Kairui Song <ryncsn@gmail.com> wrote:
+> >
+> > On Fri, Jun 13, 2025 at 1:28 AM Nhat Pham <nphamcs@gmail.com> wrote:
+> > >
+> > > On Thu, Jun 12, 2025 at 4:14 AM Kairui Song <ryncsn@gmail.com> wrote:
+> > > >
+> > > > On Thu, Jun 12, 2025 at 6:43 PM <youngjun.park@lge.com> wrote:
+> > > > >
+> > > > > From: "youngjun.park" <youngjun.park@lge.com>
+> > > > >
+> > > >
+> > > > Hi, Youngjun,
+> > > >
+> > > > Thanks for sharing this series.
+> > > >
+> > > > > This patch implements swap device selection and swap on/off propagation
+> > > > > when a cgroup-specific swap priority is set.
+> > > > >
+> > > > > There is one workaround to this implementation as follows.
+> > > > > Current per-cpu swap cluster enforces swap device selection based solely
+> > > > > on CPU locality, overriding the swap cgroup's configured priorities.
+> > > >
+> > > > I've been thinking about this, we can switch to a per-cgroup-per-cpu
+> > > > next cluster selector, the problem with current code is that swap
+> > >
+> > > What about per-cpu-per-order-per-swap-device :-? Number of swap
+> > > devices is gonna be smaller than number of cgroups, right?
+> >
+> > Hi Nhat,
+> >
+> > The problem is per cgroup makes more sense (I was suggested to use
+> > cgroup level locality at the very beginning of the implementation of
+> > the allocator in the mail list, but it was hard to do so at that
+> > time), for container environments, a cgroup is a container that runs
+> > one type of workload, so it has its own locality. Things like systemd
+> > also organize different desktop workloads into cgroups. The whole
+> > point is about cgroup.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  .../bindings/input/touchscreen/melfas,mip4_ts.yaml | 55 ++++++++++++++++++++++
->  .../bindings/input/touchscreen/melfas_mip4.txt     | 20 --------
->  2 files changed, 55 insertions(+), 20 deletions(-)
+> Yeah I know what cgroup represents. Which is why I mentioned in the
+> next paragraph that are still making decisions based per-cgroup - we
+> just organize the per-cpu cache based on swap devices. This way, two
+> cgroups with similar/same priority list can share the clusters, for
+> each swapfile, in each CPU. There will be a lot less duplication and
+> overhead. And two cgroups with different priority lists won't
+> interfere with each other, since they'll target different swapfiles.
+> 
+> Unless we want to nudge the swapfiles/clusters to be self-partitioned
+> among the cgroups? :) IOW, each cluster contains pages mostly from a
+> single cgroup (with some stranglers mixed in). I suppose that will be
+> very useful for swap on rotational drives where read contiguity is
+> imperative, but not sure about other backends :-? 
+> Anyway, no strong opinions to be completely honest :) Was just
+> throwing out some ideas. Per-cgroup-per-cpu-per-order sounds good to
+> me too, if it's easy to do.
 
-You need to fix MAINTAINERS as well. With that:
+Good point!
+I agree with the mention that self-partitioned clusters and duplicated priority.
+One concern is the cost of synchronization.
+Specifically the one incurred when accessing the prioritized swap device
+From a simple performance perspective, a per-cgroup-per-CPU implementation
+seems favorable - in line with the current swap allocation fastpath.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+It seems most reasonable to carefully compare the pros and cons of the           
+tow approaches.
 
-Best regards,
-Krzysztof
+To summaraize,
 
+Option 1. per-cgroup-per-cpu
+Pros: upstream fit. performance. 
+Cons: duplicate priority(some memory structure consumtion cost), 
+self partioned cluster 
+
+Option 2. per-cpu-per-order(per-device)
+Pros: Cons of Option1
+Cons: Pros of Option1
+
+It's not easy to draw a definitive conclusion right away, 
+I should also evaluate other pros and cons that may arise during actual 
+implementation.
+so I'd like to take some time to review things in more detail 
+and share my thoughs and conclusions in the next patch series.
+
+What do you think, Nhat and Kairui?
 
