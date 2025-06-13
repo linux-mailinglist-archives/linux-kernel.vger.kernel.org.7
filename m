@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-686510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D887AD989F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 296BFAD98A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 01:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B936217B4E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394324A1430
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 23:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5570628EA76;
-	Fri, 13 Jun 2025 23:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F8928ECDA;
+	Fri, 13 Jun 2025 23:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kpWZehQL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OiHM8R8b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123A4239E85
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 23:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A75B8F6C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 23:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749856891; cv=none; b=f/DmFH8r1wNXI79XpmZu0TmYB2M6clnVR13OLgwoLyyeYerJE3qvG31zq2gEjgXiR1t24ORFMqpcsIKv1gbpsoeSV4Z1fRi+Z7aN0lcpNo4XdzPvS/76UdTcF/N1uHI+GVFmLY/++sdNwaRjfWs5y0kV9/71NPgCAu+kQMenZAc=
+	t=1749857288; cv=none; b=P2eNpJ0tj6tk4tzz94sSCbMlaKkgXaXAZHIsmUw6qBTbPxiz19Xj+oM9kP+utEpuM+uOfpnyttdPzG5DuIYJBTXGvcProuC1fCGVK4rApvPPnRxxPgqSNeioWEyVm5bkj3iJGk7HWABcauB5rtFQR3FdDnb9CRSyOWsmO9gWmFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749856891; c=relaxed/simple;
-	bh=CkQw8hEYOjzT7iA+OJ9iPhX2fX0r83O60TEUigKhQlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AR7mhidIyzrPWUuThjX0lSP/hCEIdoKqsAt95teqZyDkUOQE7+S2aysvYb5ws1rFIdUmTNAxRFfz3VMVXoTsfC/i3P4WN8abr+zXV5p8xCncxjrbgQ0X7RTazEmY2JbZR4YGlRe6oUf9WXKkdmoBJL0jwtUrtpV0L3vABLH1Ppk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kpWZehQL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749856890; x=1781392890;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=CkQw8hEYOjzT7iA+OJ9iPhX2fX0r83O60TEUigKhQlg=;
-  b=kpWZehQLNV6schf0GVnIFDYiYZLHDGr8ojBduzgpDL+yl1aBoqZfena+
-   TnrDgMAhYQnlTJWBIsNEfz/iPWQIO6zAsX7Dtv2nldVuSVwCf/O3aeSfL
-   xOkOTGm8qf4hNAwqXWVvZBKEeZD5KJ+56jGu6oezPFumrwQ+VkoOH1yJ+
-   YBIABkOi0hEgBj7M3TAtyb+p20/PMUMQgUY1eCPD5zGO/l5p/BZbtZvpM
-   NmtL8ADHL7BvK+xS20Xvnq/nNkdRZtXlcZrnoYK788k6f5QICNHUhn3+d
-   vC9YccdBeVG94c4QV3iDxas/cpREwgqpVSTKhnm/l02pMJ/thOrK1ZwKW
-   g==;
-X-CSE-ConnectionGUID: FduROf89SAi+Ixl9jDQwcQ==
-X-CSE-MsgGUID: UbQZ5wq1RQe6n7XYoJFQ5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="55883035"
-X-IronPort-AV: E=Sophos;i="6.16,235,1744095600"; 
-   d="scan'208";a="55883035"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 16:21:29 -0700
-X-CSE-ConnectionGUID: u8oyM5ZFQEGoSSbyTTNGGQ==
-X-CSE-MsgGUID: erUIcK6iQZS5DAQFiqUFSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,235,1744095600"; 
-   d="scan'208";a="153117013"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Jun 2025 16:21:28 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uQDiA-000D54-1I;
-	Fri, 13 Jun 2025 23:21:26 +0000
-Date: Sat, 14 Jun 2025 07:20:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Subject: drivers/char/ipmi/ipmi_watchdog.c:1251:2: warning: 'strcpy' source
- argument is the same as destination
-Message-ID: <202506140756.EFXXvIP4-lkp@intel.com>
+	s=arc-20240116; t=1749857288; c=relaxed/simple;
+	bh=+ZAohITBQjhk2/GF2fXLN09ph7yDQI5CSf7zJSY9S38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzNXjVMTpgxeSNYxtRzspxNIlMM3dnCBbHgLoSDRy+jXHz+ZRTTRjXZP4ohsJ7Gg9ZAyqdqahdZnuhZG6xRlkUANY3Ef76BUA7c+JxB1xzUBCrlgm/nScaTeJMcJD/5nApbwOIqilI2nt1W9rYpi6nqjeQj0D49pMgs62GCTups=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OiHM8R8b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749857286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BbaPuiNOYQFpAXePmauqapWTH5XyW5Y8p/T1f3wRJsk=;
+	b=OiHM8R8b95K+7Giml87IM7825ufdRkGz5fZNfoa9amYMtn8v91oXMqqiUBBkvdz7KJhbR3
+	Tin4X5rXmMoNdQ+agC4Nkyl5JpjcmwaJcs+4YwU5m5O+39rrrSCo3ruZb/lo8sb4quNLtu
+	lGYruiWMqnqS07/u1HClUhp74gtN28E=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-Z2KglNonOXSKoQwqPeImcg-1; Fri,
+ 13 Jun 2025 19:28:03 -0400
+X-MC-Unique: Z2KglNonOXSKoQwqPeImcg-1
+X-Mimecast-MFC-AGG-ID: Z2KglNonOXSKoQwqPeImcg_1749857281
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 099EE195608F;
+	Fri, 13 Jun 2025 23:28:01 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.64.52])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 10741180035C;
+	Fri, 13 Jun 2025 23:27:57 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v5 0/7] rust/hrtimer: Various hrtimer + time additions
+Date: Fri, 13 Jun 2025 19:22:21 -0400
+Message-ID: <20250613232754.451450-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   18531f4d1c8c47c4796289dbbc1ab657ffa063d2
-commit: de6b4f99010ad22f0242f1fc0f75c0752a56e9bb s390/string: Remove strcpy() implementation
-date:   6 weeks ago
-config: s390-randconfig-002-20250614 (https://download.01.org/0day-ci/archive/20250614/202506140756.EFXXvIP4-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250614/202506140756.EFXXvIP4-lkp@intel.com/reproduce)
+This is a collection of various bindings that I added to hrtimer when I
+was originally getting it ready to be used in rvkms. I've mostly been
+waiting for Andreas's hrtimer series to go upstream before submitting
+these.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506140756.EFXXvIP4-lkp@intel.com/
+All of these are currently being used within rvkms for vblank emulation.
 
-All warnings (new ones prefixed by >>):
+Based on top of Fujita's patch series "rust: time: Convert hrtimer to
+use Instant and Delta":
 
-   drivers/char/ipmi/ipmi_watchdog.c: In function 'ipmi_wdog_init':
->> drivers/char/ipmi/ipmi_watchdog.c:1251:2: warning: 'strcpy' source argument is the same as destination [-Wrestrict]
-    1251 |  strcpy(preop, inval);
-         |  ^~~~~~~~~~~~~~~~~~~~
-   drivers/char/ipmi/ipmi_watchdog.c:1231:2: warning: 'strcpy' source argument is the same as destination [-Wrestrict]
-    1231 |  strcpy(preaction, inval);
-         |  ^~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/char/ipmi/ipmi_watchdog.c:1207:2: warning: 'strcpy' source argument is the same as destination [-Wrestrict]
-    1207 |  strcpy(action, inval);
-         |  ^~~~~~~~~~~~~~~~~~~~~
+  https://lkml.org/lkml/2025/6/10/1045
+
+Previous versions:
+  Version 1: https://lkml.org/lkml/2025/4/2/1474
+  Version 2: https://lkml.org/lkml/2025/4/15/1750
+  Version 3 (only a revision of one patch): https://lkml.org/lkml/2025/4/15/1780
+  Version 4: https://lkml.org/lkml/2025/4/29/1715
+
+Lyude Paul (7):
+  rust: hrtimer: Document the return value for HrTimerHandle::cancel()
+  rust: hrtimer: Add HrTimerInstant
+  rust: hrtimer: Add HrTimer::raw_forward() and forward()
+  rust: hrtimer: Add HrTimerCallbackContext and ::forward()
+  rust: time: Add Instant::from_nanos()
+  rust: hrtimer: Add HrTimer::raw_cb_time()
+  rust: hrtimer: Add forward_now() to HrTimer and HrTimerCallbackContext
+
+ rust/kernel/time.rs                 |  21 +++
+ rust/kernel/time/hrtimer.rs         | 200 +++++++++++++++++++++++++++-
+ rust/kernel/time/hrtimer/arc.rs     |   9 +-
+ rust/kernel/time/hrtimer/pin.rs     |   9 +-
+ rust/kernel/time/hrtimer/pin_mut.rs |  12 +-
+ rust/kernel/time/hrtimer/tbox.rs    |   9 +-
+ 6 files changed, 252 insertions(+), 8 deletions(-)
 
 
-vim +/strcpy +1251 drivers/char/ipmi/ipmi_watchdog.c
-
-^1da177e4c3f41 Linus Torvalds 2005-04-16  1234  
-cc4673eecdcc4a Corey Minyard  2005-11-07  1235  static int preop_op(const char *inval, char *outval)
-cc4673eecdcc4a Corey Minyard  2005-11-07  1236  {
-cc4673eecdcc4a Corey Minyard  2005-11-07  1237  	if (outval)
-cc4673eecdcc4a Corey Minyard  2005-11-07  1238  		strcpy(outval, preop);
-cc4673eecdcc4a Corey Minyard  2005-11-07  1239  
-cc4673eecdcc4a Corey Minyard  2005-11-07  1240  	if (!inval)
-cc4673eecdcc4a Corey Minyard  2005-11-07  1241  		return 0;
-cc4673eecdcc4a Corey Minyard  2005-11-07  1242  
-cc4673eecdcc4a Corey Minyard  2005-11-07  1243  	if (strcmp(inval, "preop_none") == 0)
-^1da177e4c3f41 Linus Torvalds 2005-04-16  1244  		preop_val = WDOG_PREOP_NONE;
-cc4673eecdcc4a Corey Minyard  2005-11-07  1245  	else if (strcmp(inval, "preop_panic") == 0)
-^1da177e4c3f41 Linus Torvalds 2005-04-16  1246  		preop_val = WDOG_PREOP_PANIC;
-cc4673eecdcc4a Corey Minyard  2005-11-07  1247  	else if (strcmp(inval, "preop_give_data") == 0)
-^1da177e4c3f41 Linus Torvalds 2005-04-16  1248  		preop_val = WDOG_PREOP_GIVE_DATA;
-cc4673eecdcc4a Corey Minyard  2005-11-07  1249  	else
-cc4673eecdcc4a Corey Minyard  2005-11-07  1250  		return -EINVAL;
-cc4673eecdcc4a Corey Minyard  2005-11-07 @1251  	strcpy(preop, inval);
-cc4673eecdcc4a Corey Minyard  2005-11-07  1252  	return 0;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  1253  }
-^1da177e4c3f41 Linus Torvalds 2005-04-16  1254  
-
-:::::: The code at line 1251 was first introduced by commit
-:::::: cc4673eecdcc4a918e4d8796295d798b5e98d602 [PATCH] ipmi: watchdog parms in sysfs
-
-:::::: TO: Corey Minyard <minyard@acm.org>
-:::::: CC: Linus Torvalds <torvalds@g5.osdl.org>
-
+base-commit: 61ff71163cf6d869f326a32b3d9afb157a78f734
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
