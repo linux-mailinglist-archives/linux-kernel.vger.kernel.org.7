@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-685702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D76AD8D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:42:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2F7AD8D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71AAE3AC42E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:41:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41C417F841
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DAD1A08DB;
-	Fri, 13 Jun 2025 13:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37401E04BD;
+	Fri, 13 Jun 2025 13:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dDs1l449"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a96OmX46"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C1F198E81
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCA819CD17
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822086; cv=none; b=HtN9kPQkIky4YyV/0Nxfl0fpak/afUMwdtxcHJM7+oyuHA1A3yLCYxqaFItj15YhKi+GZntcolB7wfPOZ1Kgnk/UVV82fSGRfZ2VAtitaCYXLMiHFu8soc/cZeMynseNOpBsIeSI+AezNe/B2XbKcH56q8BzdSjkzkBShZ0Tt7c=
+	t=1749822087; cv=none; b=nrxWIBmb0NYlgXlb4/D4Yse19QHKNMxbRJphuk0FM0lSUJr7m+ZXqZzsRtCZSyNQIlk3vBJvjkTdeuWu7E53bLAOznmyrrCqDZD9K9aiClRJDtmzbWqjxhDtO900ukkGrSC6Y0e9ZhwV1+8C+RjmMwSzyY+sSUD5HJtQORFtNCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822086; c=relaxed/simple;
-	bh=IG4FGgbLqBxGp2REQK9VMac2EIQLzuWAExl8Q4V6oog=;
+	s=arc-20240116; t=1749822087; c=relaxed/simple;
+	bh=dpUMDqRxYyy7EaOTCpbZ2yM1jpnDsm+aUl6N3AthocU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JjKEygQpPQ640U5+Twy0KzTQNiPrdxAjp0sZC6GB9xkpdUnXRpyTOE9zu164LOsQaVWmg67BqP6FbDLXvOmEZZEo/FAQ5iMxxFu+2tTM+NZKdesiXqdp+5WOAzJrkFh8/w55ti/GSLOpjyBKxuBAJBvquWIqxSD61RCbT7pKzc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dDs1l449; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=dD042Lhh7kHYkRKg9EltZtGZkVNuBXC14GUtc3FDrqK2aj9wgbVifWHme62wQlIj9xFGIUMXA/sVJ3r9SvODFhP2tLoYJFaEo9hYulm7QYgNijQh9KKcgC119DWUEljUUnR6Fc6mGKEPCSJIXSHcmHPCMiY4dV/lDpSaDyiT6WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a96OmX46; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749822083;
+	s=mimecast20190719; t=1749822085;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=v/F+9x18GPW2fMOX0xB9ZVXh7FNtANzBJLNRs0BqoEY=;
-	b=dDs1l4492mDuV6Q8jCpSPfGVB2xRLgwKgnCi8UT8kSFeaAJPlQIhM5pD8JK3egdgNUyote
-	XSnm7TseQn94+SG1Rk5DtVeJOK8QPRxOgbt5hlcUXRSNChDOgnncMDRRX5eOGRBR+ka7MD
-	9B0i22oVcY843feKY4oDdzfY7EpynuA=
+	bh=srvKo/GW1EbJBPf9Cl0G9P4CrJB0MZAkcimCCvUCpgo=;
+	b=a96OmX46C9eye53EyEderJilc6ft4WSjYYJZEQgaQqC7A8Ueh8tcv/pH2gv2sCNysEeagO
+	Owz1MDexk3a7o10ARiptNkIgcwLIAsmn10WKI7TAOIwdiM++Agw5vRTck8aW7pg/TodfBD
+	tcNn3KwyX5hhFfuU09UNv7NHTnoQhK0=
 Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
  [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-eylsNshfPSa450f6MxbVBQ-1; Fri, 13 Jun 2025 09:41:22 -0400
-X-MC-Unique: eylsNshfPSa450f6MxbVBQ-1
-X-Mimecast-MFC-AGG-ID: eylsNshfPSa450f6MxbVBQ_1749822082
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5bb68b386so685978085a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:41:22 -0700 (PDT)
+ us-mta-650-_Dn6ugkjNSOa30tOK8kkSg-1; Fri, 13 Jun 2025 09:41:24 -0400
+X-MC-Unique: _Dn6ugkjNSOa30tOK8kkSg-1
+X-Mimecast-MFC-AGG-ID: _Dn6ugkjNSOa30tOK8kkSg_1749822084
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d2107d6b30so328118185a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:41:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822081; x=1750426881;
+        d=1e100.net; s=20230601; t=1749822083; x=1750426883;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v/F+9x18GPW2fMOX0xB9ZVXh7FNtANzBJLNRs0BqoEY=;
-        b=H0Jy+NFHYsO89ZT2Jp54g0Ou6+W0uZt41tfKJRFixFQOYbCrYKe23dPlw1AP3Xp4Bq
-         aw5FlbDnKwVDsokvSk5C0z7AIqzwCgFb0hB/KseW/8uCQYJa8lLeCs3GyxAj5cafPWZE
-         yDxWj3ZPyY+X33FKSPY/iF0epn9DTjiF78y4nAd+NiZAyzOdi7reJPs9yYVwB937J7aG
-         fiYqLyEXQPpH8Trfmu9vO/h9hy+SHt9rYHNp0Qi5q6TuuxDb24F8/dNnLeA5uPftBA1b
-         BjDUP9ZVA4m2aNx0jOgaLVKVZAcwm3Exh2Uhp5oX/19B3K1z1WesASoKu7s44de6f2jp
-         Wrqw==
-X-Gm-Message-State: AOJu0Yw8yLOuaqjfygxyWIUrevOMWksPXJlbe/+5YwsnaNB0jHD7ITpp
-	LQTrEXRwC88JpnZD4YAsI2ibXqnAcxWYpff6G+RNfTT88Iqq4nxiW6i6Zc4VkVeKGxcBrNw+TiF
-	DKP8ajeR0o+Haj5VVODLQujnP2DwyB/s8knN4ad4oAANkUifkLWZoEvy9haER3kWKVsiPsvc9W8
-	QD9G3A5C6As7ruUW97c41l8hpsf/vqRuZagJxoqi2Dz3WVwRI=
-X-Gm-Gg: ASbGnctv3N/UtmZk+XIS7OIgf257oehxgHYmPaqzQ8qwBiRjqW0R6LCPIY1kziOe88/
-	LKfr7IpU+YAoABQHY2nDtoSkykCpaByJQxNMwG3oZizalpfOshPM6CAhJiEZYOJXfKyz0DvL5fv
-	bv6LPya6jVMlag1PGXdcUojVgF1NXpe09R62BT945ACw57YJuskV6lyfppskFqtr0S2iErQ3yn4
-	4OLa+1o33RgLNajVG9jiOgYd2k4r7SmRMvZG9QSI41qUrlE4tILXbgqOTNRvlMyqKRqtNe4pgZl
-	Ow5U1CEZuL8=
-X-Received: by 2002:a05:620a:2628:b0:7d3:ad22:7851 with SMTP id af79cd13be357-7d3bc47c25bmr596013085a.54.1749822081385;
-        Fri, 13 Jun 2025 06:41:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IED+auoBj/loYopQZCrkvQWTc00gLx9IMXiqmfkt7NzTeF6mlRUzM1RQY37rgcn1p4Rs3RbhA==
-X-Received: by 2002:a05:620a:2628:b0:7d3:ad22:7851 with SMTP id af79cd13be357-7d3bc47c25bmr596008385a.54.1749822080787;
-        Fri, 13 Jun 2025 06:41:20 -0700 (PDT)
+        bh=srvKo/GW1EbJBPf9Cl0G9P4CrJB0MZAkcimCCvUCpgo=;
+        b=myjrwccsrEy/Ty6Dr0C6VgplOYNaMAEfJ2+UwUkFdq4KmVE0QihdKXK56uuNiCKcwv
+         gBESZUtD1+hGk+qyYZ9didrlkbHDlHYQvh6oq/ZQ7Hcc5B2S4eRd184y6NAHZKqktwVk
+         bDPWCi4985PDoEDNTajK8LXq6jZFBFiVpsAfQgaktvXEn4fcRtAugcVAoF+CEdAIQanM
+         sllTzB0VJY5aZbIj7eMk7GNehc7Df9Oma9umBKBOLJfI4YmuqjZ2KjcQt5Rn//tEWH2M
+         PvgIjlapDHt5kxpijbVcPicCV41ukg6SW0+w5s7S2+rSYoIDFc1wbDV4ncui7Ar/7+LQ
+         xqsA==
+X-Gm-Message-State: AOJu0YxH66FQX3lyzSRK1eJWGBSQpl47L+y/s2qVqr4kmpQK+9dfjsK5
+	EZ+H//NGgSBAeGqo/uAB54Zcb0dt+9Gqfy4nzjsJ0ZRfKtz/KKCR/IGYRgIWto++oQzKIfJUNLo
+	pLdxlcZg6fy09VpjbrIKGn0TdmpyDtiTX0uxnE/Off0+ErV5WujsXUhzYpUWsRMYxpfLHyEsoeF
+	yW0YXgf+Q3c7RF2z5rmTkA5gvQznkEYgl33IMXO8tPM+X22Ak=
+X-Gm-Gg: ASbGnctnYMJv7VJO5OyA9H+m8Jw3VnS6ytjpQN/f7psn8YGcHmF3YLrtcRCPFh2uuGt
+	LV90eBnZ7oOk9CeChaxoKsvPakyRjSPupYBFGWkZa11ijPgHQqSEW1+FKr/I3iWPrUxUzd0N1p8
+	neIThtHtPAlcMB9BFuKSX3UU4cGlMQ4qilB63/RhB6cniWCyT9ewZMRZi3v0y7OIJ6evpU4d3K2
+	drkhd88hzOl2D++HIeL59QCBngkAsNr3Ktu6ZuQ3hH6ZgSB1Z+I/oDtjJ6qtsU/8z5UWUHzDTiX
+	vIPqf+ig18o=
+X-Received: by 2002:a05:620a:2627:b0:7cd:3f01:7c83 with SMTP id af79cd13be357-7d3bc44a1f9mr399254285a.39.1749822083063;
+        Fri, 13 Jun 2025 06:41:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGy9xhb6Ir/WTjwOiKTV6R2xWTKghNAist5R7llcPyhmuhj1jELKcIWu8eGBTg4hcMRpO8q+w==
+X-Received: by 2002:a05:620a:2627:b0:7cd:3f01:7c83 with SMTP id af79cd13be357-7d3bc44a1f9mr399250685a.39.1749822082633;
+        Fri, 13 Jun 2025 06:41:22 -0700 (PDT)
 Received: from x1.com ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8ee3f72sm171519285a.94.2025.06.13.06.41.19
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8ee3f72sm171519285a.94.2025.06.13.06.41.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:41:19 -0700 (PDT)
+        Fri, 13 Jun 2025 06:41:21 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -89,16 +89,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Alex Mastro <amastro@fb.com>,
 	David Hildenbrand <david@redhat.com>,
 	Nico Pache <npache@redhat.com>,
-	peterx@redhat.com,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>
-Subject: [PATCH 3/5] mm: Rename __thp_get_unmapped_area to mm_get_unmapped_area_aligned
-Date: Fri, 13 Jun 2025 09:41:09 -0400
-Message-ID: <20250613134111.469884-4-peterx@redhat.com>
+	peterx@redhat.com
+Subject: [PATCH 4/5] vfio: Introduce vfio_device_ops.get_unmapped_area hook
+Date: Fri, 13 Jun 2025 09:41:10 -0400
+Message-ID: <20250613134111.469884-5-peterx@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613134111.469884-1-peterx@redhat.com>
 References: <20250613134111.469884-1-peterx@redhat.com>
@@ -110,93 +104,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This function is pretty handy for any type of VMA to provide a size-aligned
-VMA address when mmap().  Rename the function and export it.
+Add a hook to vfio_device_ops to allow sub-modules provide virtual
+addresses for an mmap() request.
 
-About the rename:
+Note that the fallback will be mm_get_unmapped_area(), which should
+maintain the old behavior of generic VA allocation (__get_unmapped_area).
+It's a bit unfortunate that is needed, as the current get_unmapped_area()
+file ops cannot support a retval which fallbacks to the default.  So that
+is needed both here and whenever sub-module will opt-in with its own.
 
-  - Dropping "THP" because it doesn't really have much to do with THP
-    internally.
-
-  - The suffix "_aligned" imply it is a helper to generate aligned virtual
-    address based on what is specified (which can be not PMD_SIZE).
-
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Barry Song <baohua@kernel.org>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/linux/huge_mm.h | 14 +++++++++++++-
- mm/huge_memory.c        |  6 ++++--
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ drivers/vfio/vfio_main.c | 18 ++++++++++++++++++
+ include/linux/vfio.h     |  7 +++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2f190c90192d..706488d92bb6 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -339,7 +339,10 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
- 		unsigned long len, unsigned long pgoff, unsigned long flags,
- 		vm_flags_t vm_flags);
--
-+unsigned long mm_get_unmapped_area_aligned(struct file *filp,
-+		unsigned long addr, unsigned long len,
-+		loff_t off, unsigned long flags, unsigned long size,
-+		vm_flags_t vm_flags);
- bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
- int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order);
-@@ -543,6 +546,15 @@ thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
- 	return 0;
+diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+index 1fd261efc582..19db8e58d223 100644
+--- a/drivers/vfio/vfio_main.c
++++ b/drivers/vfio/vfio_main.c
+@@ -1354,6 +1354,23 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
+ 	return device->ops->mmap(device, vma);
  }
  
-+static inline unsigned long
-+mm_get_unmapped_area_aligned(struct file *filp,
-+			     unsigned long addr, unsigned long len,
-+			     loff_t off, unsigned long flags, unsigned long size,
-+			     vm_flags_t vm_flags)
++static unsigned long vfio_device_get_unmapped_area(struct file *file,
++						   unsigned long addr,
++						   unsigned long len,
++						   unsigned long pgoff,
++						   unsigned long flags)
 +{
-+	return 0;
++	struct vfio_device_file *df = file->private_data;
++	struct vfio_device *device = df->device;
++
++	if (!device->ops->get_unmapped_area)
++		return mm_get_unmapped_area(current->mm, file, addr,
++					    len, pgoff, flags);
++
++	return device->ops->get_unmapped_area(device, file, addr, len,
++					      pgoff, flags);
 +}
 +
- static inline bool
- can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
- {
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 4734de1dc0ae..52f13a70562f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1088,7 +1088,7 @@ static inline bool is_transparent_hugepage(const struct folio *folio)
- 		folio_test_large_rmappable(folio);
- }
+ const struct file_operations vfio_device_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.open		= vfio_device_fops_cdev_open,
+@@ -1363,6 +1380,7 @@ const struct file_operations vfio_device_fops = {
+ 	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
+ 	.mmap		= vfio_device_fops_mmap,
++	.get_unmapped_area = vfio_device_get_unmapped_area,
+ };
  
--static unsigned long __thp_get_unmapped_area(struct file *filp,
-+unsigned long mm_get_unmapped_area_aligned(struct file *filp,
- 		unsigned long addr, unsigned long len,
- 		loff_t off, unsigned long flags, unsigned long size,
- 		vm_flags_t vm_flags)
-@@ -1132,6 +1132,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
- 	ret += off_sub;
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(mm_get_unmapped_area_aligned);
+ static struct vfio_device *vfio_device_from_file(struct file *file)
+diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+index 707b00772ce1..48fe71c61ed2 100644
+--- a/include/linux/vfio.h
++++ b/include/linux/vfio.h
+@@ -108,6 +108,7 @@ struct vfio_device {
+  * @dma_unmap: Called when userspace unmaps IOVA from the container
+  *             this device is attached to.
+  * @device_feature: Optional, fill in the VFIO_DEVICE_FEATURE ioctl
++ * @get_unmapped_area: Optional, provide virtual address hint for mmap()
+  */
+ struct vfio_device_ops {
+ 	char	*name;
+@@ -135,6 +136,12 @@ struct vfio_device_ops {
+ 	void	(*dma_unmap)(struct vfio_device *vdev, u64 iova, u64 length);
+ 	int	(*device_feature)(struct vfio_device *device, u32 flags,
+ 				  void __user *arg, size_t argsz);
++	unsigned long (*get_unmapped_area)(struct vfio_device *device,
++					   struct file *file,
++					   unsigned long addr,
++					   unsigned long len,
++					   unsigned long pgoff,
++					   unsigned long flags);
+ };
  
- unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
- 		unsigned long len, unsigned long pgoff, unsigned long flags,
-@@ -1140,7 +1141,8 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
- 	unsigned long ret;
- 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
- 
--	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE, vm_flags);
-+	ret = mm_get_unmapped_area_aligned(filp, addr, len, off, flags,
-+					   PMD_SIZE, vm_flags);
- 	if (ret)
- 		return ret;
- 
+ #if IS_ENABLED(CONFIG_IOMMUFD)
 -- 
 2.49.0
 
