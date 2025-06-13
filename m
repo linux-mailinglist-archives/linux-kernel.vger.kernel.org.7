@@ -1,112 +1,127 @@
-Return-Path: <linux-kernel+bounces-686028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD05AD9214
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1757BAD921A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E511E5CEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55FA1E61A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF0020CCE3;
-	Fri, 13 Jun 2025 15:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CD420459A;
+	Fri, 13 Jun 2025 15:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7Mp/0+k"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFPoa516"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9912046A6;
-	Fri, 13 Jun 2025 15:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714991FF1C4;
+	Fri, 13 Jun 2025 15:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749830052; cv=none; b=l+NO/gwNgtjgdtfUcho+Go18M/09fEUcpPGxf5/ztrAt6lwd6CKZHf2AI5SqxWnVYv3wAd0//nAiryFn/7X3FKnNits/I+4DgGOmRadHtWElJqkyeq2TX38vC5M2fbRi38tTxP37JB1H9fD8GOtErVJEK9EYjMXdEv+xTfruukM=
+	t=1749830100; cv=none; b=A2VCQPICeoj9kH0MtLNy0UZpPNeE4plJU3WbtVtjZF6fPcHpGE4czzhcBQNCLr0slvuodpAhM91JPa3SYEAGnkW3oiYnmkwNh1Ytu2p0WvJlG56fx+psSNcayX/bEJfSlRFnXjTiw+BVIkgQc5r1kAhbZ8xRRarP5yxtymNXMKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749830052; c=relaxed/simple;
-	bh=F1JnVw0p0/51zuxC+hsf+LFfBL2DoEB/4Xq9imp2Vs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qzAtTw6JFBOd6z+kMT2s/eVN75nGWRREkthrsVJlCmuJd71eODYbRB9yPhiiBoSDFOKGg37fJuicWaoi8GoPBXN/1cDytDooe/JUQJI5uQpbAGHmAF5XQx2rbfS7sle+ta2G1k07L8l4VwbTijoNSi2eAEJC+rmqAzS+O+Qw2rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7Mp/0+k; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-312a806f002so293796a91.3;
-        Fri, 13 Jun 2025 08:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749830050; x=1750434850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F1JnVw0p0/51zuxC+hsf+LFfBL2DoEB/4Xq9imp2Vs8=;
-        b=a7Mp/0+kGrVIhz+rxPUTcEQrpY8ZkD9ccB+xbXDY9My9r51EOW6o9d+lNGVTwIfeDQ
-         VUT2B6qLiFLzLwqfm8YA8MOcx6SGuQc7i2a7hki54XlQ1UM0AyUww33OF6WuzYkowF00
-         D9cO+BxRGQJHrl8AjQexZPl+6MbfNL3/QiKyUADNiZ1fDcGzQwuz7fswgsAH+TPSobEN
-         +RFgvlv4ujjKTh1CsmAuFssT0lhCuVCPUl1QW1aJPB7owh5hLHkUAYKInmKrQnfJNZwd
-         Dr2+El01EQzSjye6Sj6KwsQ905e8pN7Ay7iTTe/2ohAo5Sju0ARcxF8HB9ua6wkQZ9lv
-         M6LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749830050; x=1750434850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F1JnVw0p0/51zuxC+hsf+LFfBL2DoEB/4Xq9imp2Vs8=;
-        b=nvLsWymRLazGFnNPeCPY3GkThYLqpOEkqfCwxTMfQ6iFXWR4SSjnBGCFV49x/nkVSb
-         ws6rM1vqciqVPgzyxxiCwYCwRo8WK+cz5ldbyAWh67q9Is1EqWBiHyDuKQU0fJaFUGft
-         FW8mvumt+nIyTs4DeLbHjCcNR2mC13SUxM+S9LRyPYiiWx1kY3e6HxDnaq7FS/6pjAZV
-         nRaDBLFcpTzghSt1/FEZiDmeRfXtzxJJCg9m62w+0lNIjJlmlWyvzPAMValzfy7Kg2m9
-         Emt1giODosq6iG1Ja6w0sGQAXTMSZod9tTlorV0iJbYAf1eS/kK7DKHytuMdKEJmMUMC
-         ZPXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXssqckI9asF1WrZZ+3s/afpr4EIpO9coj5B8p4SYnfDrsxchN6aybWk98MEjFyYUT99LCg3OWro0aDr8=@vger.kernel.org, AJvYcCVcNbOpT8TvEOZwEtgJiEoRS72mDmMzzTNbIyspHutuLQbVbuPKiXcqy9IKRXsGPip/43IR2RA/KU4GrenC3UI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmP16iosWvuTdsN3OkKk045sM6x3Px/cg230zJI4JCm+1ZVkoo
-	QEZrXD/E7d0GVXLJV/CJaW+CaSpbr1TtLC2o/2BmQszQ//v6VtSJXHYz9d5nQYPsCLVMET7ImAe
-	HWZmEsUItAabG7vXVpgFRwAzxJHK292U=
-X-Gm-Gg: ASbGncusyXDIGdPDzk+gcFlte/9Eeir1iepMVVl4vvhhexekfYlnM4DJ7ZP6Y0XBkyV
-	4zd18oo4ZFJJjWZeiSTc/1Xab8SFHq57U1OebtXb7AyJ+o/clt8H3YQQJ8KdP9TYsAyZhJm15Qc
-	8PsO6xQgby2XLNYenhdMR8sf7XZs1n5mitBQW8tRS8gQo=
-X-Google-Smtp-Source: AGHT+IEutSGhzrVzZp353DQsvucoRhfU9Pb9eKBmICJwzNO/eIqSsKoJ9xbqFNRSpRh941H1RajsZFy9JNia6i0i1HE=
-X-Received: by 2002:a17:90b:43:b0:312:25dd:1c8b with SMTP id
- 98e67ed59e1d1-313f1c77faamr121787a91.2.1749830050438; Fri, 13 Jun 2025
- 08:54:10 -0700 (PDT)
+	s=arc-20240116; t=1749830100; c=relaxed/simple;
+	bh=txoIyDrG2vubdoOdTiTdmcJQb8y7qy5caM50Zd8G8to=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=civ7wAVSSRrQNNQIKVpUL+/GP7hbtxYZ2WfH8rTPjH2gO2Fs1pitLNRMCNsmm4HEsjM0eeN/aOXaatVlD7GfE7touHrF0cidM7uNM1VMeXA6QvaSx8m7znWkRyyQQtxGmIzD5vD3x+chyzoV8zdpIRYJ7oXE1hYDFK+Ev1Ucwko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFPoa516; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42EBC4CEED;
+	Fri, 13 Jun 2025 15:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749830099;
+	bh=txoIyDrG2vubdoOdTiTdmcJQb8y7qy5caM50Zd8G8to=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gFPoa516Ela1DPXpH0f6/CS5GkNUbZK3nAYpFk07eqEgd3MKAhYJpF0s0lR7On5mh
+	 mTRs3hEkjNSmkoYXNNxat0V6bY1VSuL9RUaPNvJuo+3M4NxXHk18J9uIsBuF7BfZSP
+	 LT2mpCyuW/nNNqy98L7h2qv/SXJaaEYTKmk9KlAx8hO5gtnc+f8HFC2H9FWk4DGBfW
+	 6JdxNAw5ZVa4sVUYSYyFngUyMNeio0PIqep0t3E5XJuUwayNZIlc1Um9AsPD8fsgtD
+	 LX9RVvGngHT5S7OMOIWzgnwkmg0oDRjT3tctQgL7cXq2tYr8yGsydjYdO2oCDGOE4x
+	 7e6vKtWFkarMA==
+Date: Fri, 13 Jun 2025 10:54:58 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	vkoul@kernel.org, kishon@kernel.org, linus.walleij@linaro.org,
+	p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org, elbadrym@google.com, romlem@google.com,
+	anhphan@google.com, wak@google.com, yuxiaozhang@google.com,
+	BMC-SW@aspeedtech.com
+Subject: Re: [PATCH 5/7] ARM: dts: aspeed-g6: Add PCIe RC node
+Message-ID: <20250613155458.GA962010@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612121817.1621-1-dakr@kernel.org> <20250612121817.1621-3-dakr@kernel.org>
-In-Reply-To: <20250612121817.1621-3-dakr@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 13 Jun 2025 17:53:57 +0200
-X-Gm-Features: AX0GCFuWyLCVdATo6M3ik_x21S8Y1NYHfUwmkMyJqdnnsONzWmYGNZz6toH3roc
-Message-ID: <CANiq72kfO6qM=14Fx__DFTvdKJrn_sT26QVyK_NFEkdvunW4HQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] rust: revocable: indicate whether `data` has been
- revoked already
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613033001.3153637-6-jacky_chou@aspeedtech.com>
 
-On Thu, Jun 12, 2025 at 2:18=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> Return a boolean from Revocable::revoke() and Revocable::revoke_nosync()
-> to indicate whether the data has been revoked already.
->
-> Return true if the data hasn't been revoked yet (i.e. this call revoked
-> the data), false otherwise.
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Fri, Jun 13, 2025 at 11:29:59AM +0800, Jacky Chou wrote:
+> The AST2600 has one PCIe RC, and add the relative configure regmap.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> +			pcie0: pcie@1e7700c0 {
+> +				compatible = "aspeed,ast2600-pcie";
+> +				device_type = "pci";
+> +				reg = <0x1e7700c0 0x40>;
+> +				linux,pci-domain = <0>;
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+> +				bus-range = <0x80 0xff>;
+> +
+> +				ranges = <0x01000000 0x0 0x00018000 0x00018000 0x0 0x00008000
+> +					  0x02000000 0x0 0x70000000 0x70000000 0x0 0x10000000>;
+> +
+> +				status = "disabled";
+> +
+> +				resets = <&syscon ASPEED_RESET_H2X>,
+> +					 <&syscon ASPEED_RESET_PCIE_RC_O>;
+> +				reset-names = "h2x", "perst";
 
-It could help those reading the Git log later on to mention the use
-case comes with the next commit (i.e. the "why").
+PERST# is clearly a per-Root Port item since it's a signal on the PCIe
+connector.  Can you separate this and any other per-Root Port things
+into a Root Port stanza to leave open the possibility of future
+hardware that supports multiple Root Ports in the RC?
 
-Cheers,
-Miguel
+> +				clocks = <&syscon ASPEED_CLK_GATE_BCLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&pinctrl_pcierc1_default>;
+> +
+> +				#interrupt-cells = <1>;
+> +				msi-parent = <&pcie0>;
+> +				msi-controller;
+> +				msi_address = <0x1e77005c>;
+> +
+> +				aspeed,ahbc = <&ahbc>;
+> +				aspeed,pciecfg = <&pcie_cfg>;
+> +				aspeed,pciephy = <&pcie_phy1>;
+> +
+> +				interrupt-map-mask = <0 0 0 7>;
+> +				interrupt-map = <0 0 0 1 &pcie_intc0 0>,
+> +						<0 0 0 2 &pcie_intc0 1>,
+> +						<0 0 0 3 &pcie_intc0 2>,
+> +						<0 0 0 4 &pcie_intc0 3>;
+> +				pcie_intc0: interrupt-controller {
+> +					interrupt-controller;
+> +					#address-cells = <0>;
+> +					#interrupt-cells = <1>;
+> +				};
+> +			};
+> +
+>  			gfx: display@1e6e6000 {
+>  				compatible = "aspeed,ast2600-gfx", "syscon";
+>  				reg = <0x1e6e6000 0x1000>;
+> -- 
+> 2.43.0
+> 
 
