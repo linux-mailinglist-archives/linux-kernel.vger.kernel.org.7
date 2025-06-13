@@ -1,246 +1,153 @@
-Return-Path: <linux-kernel+bounces-684833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70697AD80D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:13:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6DDAD80C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6806C3B7740
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B453B6F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FFD1F12E9;
-	Fri, 13 Jun 2025 02:12:54 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84F81EB19B;
+	Fri, 13 Jun 2025 02:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZWQdhMxB"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7621A01B9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A72D1D5CC6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749780774; cv=none; b=l0dbNvV145zuTtx5RATNxUvYrDdjDj9BXkRvcUhfd9phEcQEZ4xJkxfCi/zhmG0AqEZubDqyrbXGU35WbrQHCVA0PNhxNCk+LlaL+EWqFwUwRlHNPFYQnK2J9VvbMDTg8D6B0bQKW8JXzSRhUuIktqHshiM0UX0hQGgGpe/kuxA=
+	t=1749780421; cv=none; b=j0VhiQZEesQpwnyfVXwcnXqJYxtS2rcFYHaUlQfNKfs51Y6/R371McE1NZ1eh9cf0/lJsLmICGM8RfIakf139oG91MKgWIn1Ey3/8QlKsfq7vkjV+4NYlnUtyGwT39ytyUsZ3xc4nNLwporLdSQaGnaVdcv7AwWSdXmQ1nhNlQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749780774; c=relaxed/simple;
-	bh=U5TFIeTq+bxCbMPWoKoEBgxfuhXcMhbM7OWZKVTWBx4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iQ+yfZy77jhFVbKllL1mZN3MjwpD+flrO638sQ3qwXYQRewMzCivhImt4awQ2lLw+vGBEnwUuEfDDwKWdcPDHigliXxNO3hVo3CtUXD30/TUBclsqU7P9F+q6bd7MEAg0RC73ynqVj06kZf5bIw7Xamd+PjehLV2BSTa5B3bNO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-	by SHSQR01.spreadtrum.com with ESMTP id 55D1pk83030165
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:51:46 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 55D1p0qG026367;
-	Fri, 13 Jun 2025 09:51:00 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bJMjK1876z2NtGrn;
-	Fri, 13 Jun 2025 09:47:49 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Fri, 13 Jun 2025 09:50:57 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>, <baocong.liu@unisoc.com>
-Subject: [PATCH 1/2] f2fs: compress: change the first parameter of page_array_{alloc,free} to sbi
-Date: Fri, 13 Jun 2025 09:50:44 +0800
-Message-ID: <1749779445-29125-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1749780421; c=relaxed/simple;
+	bh=nCxKwbZk4e1A1IebS659hmsoseH4KT29iPS1HkLVXXE=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=KuXs1PV9NWxDzNYLiQ4CXdnBSe2bIWlx2tbFoyFGi2kYa97djuGWErM9O8ShShBo7aP8A0tU9WhZQZpSmU6VC4n6974JDN+uccCYynkWB+90FNKLMEr8MLneCnwS1/HjnyKAoKmAAig4o0GpEemNK3kdXEVrbt6+UxvpP5GqmDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZWQdhMxB; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 55D1p0qG026367
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749780407;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q1hLQZrnvipPz+3ANyt0Y2ORYvaf1oK6TEmtgPjNftQ=;
+	b=ZWQdhMxBz57PYxRverZ/XRcz6H+dQXt7NKN9SaTlFGJhoWD4jfvwxj6X+zJKrAyWbB+SA+
+	vi/v3h8YQA3YqNin1MBts/UKWsfmcyXTDBjquOHqqLy8Auo6ekiXI06v1yOMkEyOyxIbYn
+	H6rgxpz18e6WBJkXXXYVt8j+63/0zfE=
+Date: Fri, 13 Jun 2025 02:06:45 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yajun Deng" <yajun.deng@linux.dev>
+Message-ID: <2d5322bce3f450da329e5e146bf0a850afa55fe4@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH RESEND net-next v2] net: phy: Add c45_phy_ids sysfs
+ directory entry
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <737294c1-258f-4780-80f8-e7a72e887f8b@lunn.ch>
+References: <20250612143532.4689-1-yajun.deng@linux.dev>
+ <737294c1-258f-4780-80f8-e7a72e887f8b@lunn.ch>
+X-Migadu-Flow: FLOW_OUT
 
-No logic changes, just cleanup and prepare for fixing the UAF issue
-in f2fs_free_dic.
+June 12, 2025 at 11:31 PM, "Andrew Lunn" <andrew@lunn.ch> wrote:
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
----
- fs/f2fs/compress.c | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index b3c1df9..832a484 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -23,20 +23,18 @@
- static struct kmem_cache *cic_entry_slab;
- static struct kmem_cache *dic_entry_slab;
- 
--static void *page_array_alloc(struct inode *inode, int nr)
-+static void *page_array_alloc(struct f2fs_sb_info *sbi, int nr)
- {
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	unsigned int size = sizeof(struct page *) * nr;
- 
- 	if (likely(size <= sbi->page_array_slab_size))
- 		return f2fs_kmem_cache_alloc(sbi->page_array_slab,
--					GFP_F2FS_ZERO, false, F2FS_I_SB(inode));
-+					GFP_F2FS_ZERO, false, sbi);
- 	return f2fs_kzalloc(sbi, size, GFP_NOFS);
- }
- 
--static void page_array_free(struct inode *inode, void *pages, int nr)
-+static void page_array_free(struct f2fs_sb_info *sbi, void *pages, int nr)
- {
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	unsigned int size = sizeof(struct page *) * nr;
- 
- 	if (!pages)
-@@ -149,13 +147,13 @@ int f2fs_init_compress_ctx(struct compress_ctx *cc)
- 	if (cc->rpages)
- 		return 0;
- 
--	cc->rpages = page_array_alloc(cc->inode, cc->cluster_size);
-+	cc->rpages = page_array_alloc(F2FS_I_SB(cc->inode), cc->cluster_size);
- 	return cc->rpages ? 0 : -ENOMEM;
- }
- 
- void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
- {
--	page_array_free(cc->inode, cc->rpages, cc->cluster_size);
-+	page_array_free(F2FS_I_SB(cc->inode), cc->rpages, cc->cluster_size);
- 	cc->rpages = NULL;
- 	cc->nr_rpages = 0;
- 	cc->nr_cpages = 0;
-@@ -622,6 +620,7 @@ static void *f2fs_vmap(struct page **pages, unsigned int count)
- 
- static int f2fs_compress_pages(struct compress_ctx *cc)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(cc->inode);
- 	struct f2fs_inode_info *fi = F2FS_I(cc->inode);
- 	const struct f2fs_compress_ops *cops =
- 				f2fs_cops[fi->i_compress_algorithm];
-@@ -642,7 +641,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
- 	cc->nr_cpages = DIV_ROUND_UP(max_len, PAGE_SIZE);
- 	cc->valid_nr_cpages = cc->nr_cpages;
- 
--	cc->cpages = page_array_alloc(cc->inode, cc->nr_cpages);
-+	cc->cpages = page_array_alloc(sbi, cc->nr_cpages);
- 	if (!cc->cpages) {
- 		ret = -ENOMEM;
- 		goto destroy_compress_ctx;
-@@ -716,7 +715,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
- 		if (cc->cpages[i])
- 			f2fs_compress_free_page(cc->cpages[i]);
- 	}
--	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-+	page_array_free(sbi, cc->cpages, cc->nr_cpages);
- 	cc->cpages = NULL;
- destroy_compress_ctx:
- 	if (cops->destroy_compress_ctx)
-@@ -1340,7 +1339,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 	cic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
- 	cic->inode = inode;
- 	atomic_set(&cic->pending_pages, cc->valid_nr_cpages);
--	cic->rpages = page_array_alloc(cc->inode, cc->cluster_size);
-+	cic->rpages = page_array_alloc(sbi, cc->cluster_size);
- 	if (!cic->rpages)
- 		goto out_put_cic;
- 
-@@ -1442,13 +1441,13 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 	spin_unlock(&fi->i_size_lock);
- 
- 	f2fs_put_rpages(cc);
--	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-+	page_array_free(sbi, cc->cpages, cc->nr_cpages);
- 	cc->cpages = NULL;
- 	f2fs_destroy_compress_ctx(cc, false);
- 	return 0;
- 
- out_destroy_crypt:
--	page_array_free(cc->inode, cic->rpages, cc->cluster_size);
-+	page_array_free(sbi, cic->rpages, cc->cluster_size);
- 
- 	for (--i; i >= 0; i--) {
- 		if (!cc->cpages[i])
-@@ -1469,7 +1468,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 		f2fs_compress_free_page(cc->cpages[i]);
- 		cc->cpages[i] = NULL;
- 	}
--	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
-+	page_array_free(sbi, cc->cpages, cc->nr_cpages);
- 	cc->cpages = NULL;
- 	return -EAGAIN;
- }
-@@ -1499,7 +1498,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
- 		end_page_writeback(cic->rpages[i]);
- 	}
- 
--	page_array_free(cic->inode, cic->rpages, cic->nr_rpages);
-+	page_array_free(sbi, cic->rpages, cic->nr_rpages);
- 	kmem_cache_free(cic_entry_slab, cic);
- }
- 
-@@ -1640,7 +1639,7 @@ static int f2fs_prepare_decomp_mem(struct decompress_io_ctx *dic,
- 	if (!allow_memalloc_for_decomp(F2FS_I_SB(dic->inode), pre_alloc))
- 		return 0;
- 
--	dic->tpages = page_array_alloc(dic->inode, dic->cluster_size);
-+	dic->tpages = page_array_alloc(F2FS_I_SB(dic->inode), dic->cluster_size);
- 	if (!dic->tpages)
- 		return -ENOMEM;
- 
-@@ -1700,7 +1699,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
- 	if (!dic)
- 		return ERR_PTR(-ENOMEM);
- 
--	dic->rpages = page_array_alloc(cc->inode, cc->cluster_size);
-+	dic->rpages = page_array_alloc(sbi, cc->cluster_size);
- 	if (!dic->rpages) {
- 		kmem_cache_free(dic_entry_slab, dic);
- 		return ERR_PTR(-ENOMEM);
-@@ -1721,7 +1720,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
- 		dic->rpages[i] = cc->rpages[i];
- 	dic->nr_rpages = cc->cluster_size;
- 
--	dic->cpages = page_array_alloc(dic->inode, dic->nr_cpages);
-+	dic->cpages = page_array_alloc(sbi, dic->nr_cpages);
- 	if (!dic->cpages) {
- 		ret = -ENOMEM;
- 		goto out_free;
-@@ -1751,6 +1750,7 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
- 		bool bypass_destroy_callback)
- {
- 	int i;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dic->inode);
- 
- 	f2fs_release_decomp_mem(dic, bypass_destroy_callback, true);
- 
-@@ -1762,7 +1762,7 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
- 				continue;
- 			f2fs_compress_free_page(dic->tpages[i]);
- 		}
--		page_array_free(dic->inode, dic->tpages, dic->cluster_size);
-+		page_array_free(sbi, dic->tpages, dic->cluster_size);
- 	}
- 
- 	if (dic->cpages) {
-@@ -1771,10 +1771,10 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
- 				continue;
- 			f2fs_compress_free_page(dic->cpages[i]);
- 		}
--		page_array_free(dic->inode, dic->cpages, dic->nr_cpages);
-+		page_array_free(sbi, dic->cpages, dic->nr_cpages);
- 	}
- 
--	page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
-+	page_array_free(sbi, dic->rpages, dic->nr_rpages);
- 	kmem_cache_free(dic_entry_slab, dic);
- }
- 
--- 
-1.9.1
 
+>=20
+>=20>=20
+>=20> +#define MMD_INDICES \
+> >=20
+>=20>  + _(1) _(2) _(3) _(4) _(5) _(6) _(7) _(8) \
+> >=20
+>=20>  + _(9) _(10) _(11) _(12) _(13) _(14) _(15) _(16) \
+> >=20
+>=20>  + _(17) _(18) _(19) _(20) _(21) _(22) _(23) _(24) \
+> >=20
+>=20>  + _(25) _(26) _(27) _(28) _(29) _(30) _(31)
+> >=20
+>=20
+> Is 0 not valid?
+>=20
+
+Yes,=20the MMD starts at 1. See "include/uapi/linux/mdio.h".
+
+> >=20
+>=20> +#define MMD_DEVICE_ID_ATTR(n) \
+> >=20
+>=20>  +static ssize_t mmd##n##_device_id_show(struct device *dev, \
+> >=20
+>=20>  + struct device_attribute *attr, char *buf) \
+> >=20
+>=20>  +{ \
+> >=20
+>=20>  + struct phy_device *phydev =3D to_phy_device(dev); \
+> >=20
+>=20>  + return sysfs_emit(buf, "0x%.8lx\n", \
+> >=20
+>=20>  + (unsigned long)phydev->c45_ids.device_ids[n]); \
+> >=20
+>=20>  +} \
+> >=20
+>=20>  +static DEVICE_ATTR_RO(mmd##n##_device_id)
+> >=20
+>=20
+> This macro magic i can follow, you see this quite a bit in the kernel.
+>=20
+
+Okay.
+
+>=20>=20
+>=20> +
+> >=20
+>=20>  +#define _(x) MMD_DEVICE_ID_ATTR(x);
+> >=20
+>=20>  +MMD_INDICES
+> >=20
+>=20>  +#undef _
+> >=20
+>=20>  +
+> >=20
+>=20>  +static struct attribute *phy_mmd_attrs[] =3D {
+> >=20
+>=20>  + #define _(x) &dev_attr_mmd##x##_device_id.attr,
+> >=20
+>=20>  + MMD_INDICES
+> >=20
+>=20>  + #undef _
+> >=20
+>=20>  + NULL
+> >=20
+>=20>  +};
+> >=20
+>=20
+> If i squint at this enough, i can work it out, but generally a much
+>=20
+>=20more readable KISS approach is taken, of just invoking a macro 32
+>=20
+>=20times. See mdio_bus.c as an example.
+>=20
+
+Okay.
+
+>=20 Andrew
+>=20
+>=20---
+>=20
+>=20pw-bot: cr
+>
 
