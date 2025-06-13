@@ -1,177 +1,113 @@
-Return-Path: <linux-kernel+bounces-685818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C68DAD8F3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 684D1AD8F31
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06CB81BC7F35
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37D61C206A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D74C27F732;
-	Fri, 13 Jun 2025 14:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpmlYs1G"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D93C2E11C1;
+	Fri, 13 Jun 2025 14:07:45 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FED275B0F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6F92E11AF;
+	Fri, 13 Jun 2025 14:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749823588; cv=none; b=ANlNvHtgTrd4IwcEcHglfhGqUDGQLgRw0QhK+c+xyuylH4RSI/uFLR3513VOlHsNP+Hj+byQIPMVa6TKBERWv6F5Hzkq/x2M9OxWVYEzDHvj6IyAExHlhhsl/V2ThmGe9oyDtmnh/d0Tohj3OJHhNcZcqDdr0WRJ0NtjpSPv7u4=
+	t=1749823664; cv=none; b=qperekl3gXH0AtLxAYkrfc1bwJBhP8kTwx1LbCtu80VcTWThS9jnlbkO6YRQfhCTf6WjlmSDumYbaxO2VoQ3AaeklEuxmPrVh3aHvI2KggC7f/aSuR+NzQC38S9SMSzNkUPRxo59kSsRF6k1+eQUum8R4Uz8QwjFctTNOqwBLs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749823588; c=relaxed/simple;
-	bh=KbUlGtpfhdEZom8VAmFrDXTGJwRDxsPYiWV9ksPDsMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qAD6+2Vu4p5RLQygJbFAOGxr2lYAKryitaxkmOG/FdQLLUlfnY0DtrjlFXXuUakkMIoQp5XOaA7wTBOeufN/WR0/GmZBYmrgMsNXkjlJqmXvUL+NEFjnkOexYhjBsGEDAyuxp2zcoXfXqSSlh+lZgAc02Og75PFEVTVq+gKoXoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hpmlYs1G; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so1809056f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749823585; x=1750428385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xUn/T2v9DcG34w0Q+hYirGCU74t68lTP6XWgRwe314k=;
-        b=hpmlYs1GiAoWTOQCu6ldv6fqocvJYrBFraiTudtOB2hwSV3+QAp93Z+yA7GJZ5KS0n
-         DS+SAXzGhYfiXggSDIG1cfzLawqoidMXt46FJcvIkxYIhXNk3W8S9TeA+1sZ9aOSvCKq
-         SiH6547GXK3nhQmt+VPJnMFu3Q/+vtitGfibWhO80KtKSS27iu5FFqb49gzZsw5YEm2j
-         YFxB15qepUYgJCR8/SW51jfcTRauUaPuRF2cF6muhvFnu9mmLndj1FN3FS9hpP1QN+g0
-         7DoIVyUnxTiQA8G7Px/jY2F3UYELv0ICg4sd1AMUN0H/O5JUpgQyclz+EzIDShTopOAI
-         WzBg==
+	s=arc-20240116; t=1749823664; c=relaxed/simple;
+	bh=98ZVYdyeftVKt25WNUg09UDBycu4YRaJnE7MO/w6+nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1Cx3g5/4RwBmyfwQZ2eHojeF2t19I4mdUVhFEn/9eJMVh0hrWhg1WevHiTPxhFqqPK7LJcwPNmonTlLdTvTkPq7v/WFuJWt5v7+Qt3bEcJiBqOnjAamG9vYlfxLM/p/0oByZoRxJCIxxurbn2ZKwA45x2sbaBs8JIVJ678baZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-addda47ebeaso415182566b.1;
+        Fri, 13 Jun 2025 07:07:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749823585; x=1750428385;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xUn/T2v9DcG34w0Q+hYirGCU74t68lTP6XWgRwe314k=;
-        b=tvgIComwNLmy/gQctGLzG61IERsC1tV+IXBKTIwreulOOU/2dqLW9vV2D5Bs077OFV
-         kQ8OFWGjFixKV07f+QOjVnU1hohgUmRTIBywRe3amm3n3AoI36pVU42cq6+y7NnXtn/O
-         bev14dDgvccfNltN0ARxWZc3YRb9g+Hu5vvMOcsc/CPP+PPnpRbNIoUl7K8/UVHI0GDn
-         o9U8LpgOpf9sqSeYEk0b4jGczSkrlylvqxbiddCH+G0H63pGxOFJz3xH1vvA+wbT0Bsu
-         5sj3mSxR1PJJi02/Ek6KHzHROLsa5eM4slmc4M4O2UpkaepWNdnwHOjDTqveka3ONTH2
-         iIcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfD8ROYEGWqXqLhO85w/eW619QJxkxHdECkEG+UxRlM78yRCbLfupQizgXGPBCkjQbwd+SGTn6ALCwIOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWHt7POvusxDbmYEPTdY04taz2HE82jPRUwxXlAg9uxPZVavvw
-	QwoSh+c2QOLaaPhjo57JsEpdgMWIryBnUaN9N99z1GlG7Zk9p/7DG1YRqtulgTV0QOY=
-X-Gm-Gg: ASbGncvlL8jWHyjTiXe306gF0A3O8tJEXi6EeY5ohY9Hg11h+DHhY98SSYDDFnbQZNE
-	EG513p2rrUZldpoAJaiMD9+yT3cQVYbefXhsEzyOkatCNUvbmbainyg18NpbSppAOWAP0XG0RMj
-	zIVAvIyXwZG/jNh4QmqF+n6rQMQ0bfHjwrWJE0ZJrHuAV5JKbrVFTgvK/PHrWgflasfX5OsCpY+
-	eb/qgAppU4wW16gm0ENKXQF07OgNnpz3sU/Ca7FhUmUUm+tiv9nuBQT08U7zmfPA2MqUUcmIYkM
-	L8n5zdzqosr3gj2WhgFsS45Zear1Zi4S1T3xbMQqTAur44c46y3lch1upn1sxbwkqk/OgaV/22+
-	kEMt2//ImKhmJs7Ix4t8RC3GgYtg=
-X-Google-Smtp-Source: AGHT+IH1fMP2KnFNWRoIIFgpfDxW7MxNb1uMSxg0eL6l8twtoQZjitcGVI8/ENMR8PDgAtAlfuMQQg==
-X-Received: by 2002:a05:6000:2505:b0:3a4:ef00:a7b9 with SMTP id ffacd0b85a97d-3a56868319emr2894882f8f.12.1749823584788;
-        Fri, 13 Jun 2025 07:06:24 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a73a7bsm2525723f8f.36.2025.06.13.07.06.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 07:06:24 -0700 (PDT)
-Message-ID: <81a65ea6-2f46-4d11-9a3f-50664da78eea@linaro.org>
-Date: Fri, 13 Jun 2025 15:06:23 +0100
+        d=1e100.net; s=20230601; t=1749823661; x=1750428461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Url/5N94LiQKOE3bJONgPHIYMexxPTde/HXvGPstc/o=;
+        b=Qbe7vX2k1zetseNpY4lzMgPOhg+I0oagWmG/42M7XlZPD70+O3ZLKun0RUIGssrzbY
+         MPjruIM+zC2RfZPlPLhbM+MVhjqCqGD+8Ydj60e0+TfF9GaKEPpctkDuoQMjdOWMFhns
+         qhd+mJyk0cgAPp2vw0t2UbdiGoEaqufGko1gJ5c8NwwTxVpydJ399b/f2VPcjYGzaZkH
+         hPoCa2QzGdxIOD1+OLocUcY81mr5FHwmrFObktgF8fN2ydEBYg59fkYHPxkjvQ6thAxm
+         aQfLKnz1svddMQQz8lK9EfplxakwgZBKAwYmfMN6mGKBdfqTlWe9O1Lg+zkywQphRAoK
+         vfIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQUjEdBSKfGr37GeT8AvSp06PZpJAut1rU8vXKV5z7QbEpOdRoCDniUT6aE7nGHpOO37+QxDfO+8nwuOI=@vger.kernel.org, AJvYcCUmIwnK8yfTiqxjGf1muNBG7jmSGBVxR5v/61WgF87p2V2lxv5iDdHGX2uF0jK7TDt9Fe6UvhVv@vger.kernel.org, AJvYcCWr1YMGvEZo6ynpS7gXTnVtdqwZ/APPDug9yhlWr8CMIaLcujBovhtF2U+1T0MCVuKHl7l00EpIDEuQeEc/eDpp@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr2MzyflO58w3I5LYNvpcxJbxGEM/r1od/YyJHLC70YddX1kfS
+	Z4OshKP1WAFJn2eUmy3kaw41EF7yWUJtNgEq4C7zrbJFuYJSUy9bkqOJ
+X-Gm-Gg: ASbGncuQ0T31+pzfGRx8m4ulGz6+Bly7SdaxLqTAWxhsbICuXPIezroyHsZQu6NswCQ
+	mmCQaj7n6iF9eHOoszaw52np54VvsUh6bYOboutJM6n3411bW9x+dySRpRh2dF7Ke+HkXdbmue9
+	Ji6+5HUb1ZPckE8ak+CZfFCsDAKeFJ1PNZPclQYVE/aVvc9iamiF/zUPhy5mCMTOXd1lJzgOLb0
+	fiKTPP5xkv9Vjw1Jrcp4kVxp0XrdjrLjCTq96ZCIexPwRpBaiQYh/esX+CqGsQe3PiYyccF6dLj
+	0sZQGbZRh2RAPrm5FgZouKiJeoejg15qVBWFnHS8L6E2nUjGbPE/
+X-Google-Smtp-Source: AGHT+IGhGNptWBx8bwCI6iKzNxTW3g0jXNopjXbjCLhHLLFHedcVEJLkyXdvwH3V3UYpMqHOIXFeWA==
+X-Received: by 2002:a17:906:c144:b0:ade:4295:a814 with SMTP id a640c23a62f3a-adec5d7028fmr302726366b.53.1749823660975;
+        Fri, 13 Jun 2025 07:07:40 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec89880e4sm134448666b.177.2025.06.13.07.07.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 07:07:40 -0700 (PDT)
+Date: Fri, 13 Jun 2025 07:07:38 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	ast@kernel.org
+Subject: Re: [PATCH net-next RFC] selftests: net: add netpoll basic
+ functionality test
+Message-ID: <aEwwqhrx848hSh4k@gmail.com>
+References: <20250612-netpoll_test-v1-1-4774fd95933f@debian.org>
+ <684b8e8abb874_dcc45294a5@willemb.c.googlers.com.notmuch>
+ <aEwd9oLRnxna97JK@gmail.com>
+ <684c2b0770919_10740f29412@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arch: arm64: dts: qcom: qcm2290: Add venus video node
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
- quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- stanimir.varbanov@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250613140402.3619465-1-jorge.ramirez@oss.qualcomm.com>
- <20250613140402.3619465-3-jorge.ramirez@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250613140402.3619465-3-jorge.ramirez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <684c2b0770919_10740f29412@willemb.c.googlers.com.notmuch>
 
-On 13/06/2025 15:03, Jorge Ramirez-Ortiz wrote:
-> Add DT entries for the qcm2290 venus encoder/decoder.
+On Fri, Jun 13, 2025 at 09:43:35AM -0400, Willem de Bruijn wrote:
+> Breno Leitao wrote:
+
+> > > > +def check_traffic_flowing(cfg: NetDrvEpEnv, netdevnl: NetdevFamily) -> int:
+> > > > +    """Check if traffic is flowing on the interface"""
+> > > > +    stat1 = get_stats(cfg, netdevnl)
+> > > > +    time.sleep(1)
+> > > 
+> > > Can the same be learned with sufficient precision when sleeping
+> > > for only 100 msec? As tests are added, it's worth trying to keep
+> > > their runtime short.
+> > 
+> > 100%. In fact, I don't need to wait for 1 seconds. In fact, we don't
+> > even need to check for traffic flowing after the traffic started. I've
+> > just added it to help me do develop the test.
+> > 
+> > We can either reduce it to 100ms or just remove it from the loop,
+> > without prejudice to the test itself. Maybe reducing it to 100 ms might
+> > help someone else that might debug this in the future, while just
+> > slowing down ITERATIONS * 0.1 seconds !?
 > 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcm2290.dtsi | 53 +++++++++++++++++++++++++++
->   1 file changed, 53 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> index f49ac1c1f8a3..af2c1f66fe07 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> @@ -1628,6 +1628,59 @@ adreno_smmu: iommu@59a0000 {
->   			#iommu-cells = <2>;
->   		};
->   
-> +		venus: video-codec@5a00000 {
-> +			compatible = "qcom,qcm2290-venus";
-> +			reg = <0 0x5a00000 0 0xff000>;
-> +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			power-domains = <&gcc GCC_VENUS_GDSC>,
-> +					<&gcc GCC_VCODEC0_GDSC>,
-> +					<&rpmpd QCM2290_VDDCX>;
-> +			power-domain-names = "venus", "vcodec0", "cx";
-> +			operating-points-v2 = <&venus_opp_table>;
-> +
-> +			clocks = <&gcc GCC_VIDEO_VENUS_CTL_CLK>,
-> +				 <&gcc GCC_VIDEO_AHB_CLK>,
-> +				 <&gcc GCC_VENUS_CTL_AXI_CLK>,
-> +				 <&gcc GCC_VIDEO_THROTTLE_CORE_CLK>,
-> +				 <&gcc GCC_VIDEO_VCODEC0_SYS_CLK>,
-> +				 <&gcc GCC_VCODEC0_AXI_CLK>;
-> +			clock-names = "core", "iface", "bus", "throttle",
-> +				      "vcodec0_core", "vcodec0_bus";
-> +
-> +			memory-region = <&pil_video_mem>;
-> +			iommus = <&apps_smmu 0x860 0x0>,
-> +				 <&apps_smmu 0x880 0x0>,
-> +				 <&apps_smmu 0x861 0x04>,
-> +				 <&apps_smmu 0x863 0x0>,
-> +				 <&apps_smmu 0x804 0xE0>;
-> +
-> +			interconnects = <&mmnrt_virt MASTER_VIDEO_P0 0 &bimc SLAVE_EBI1 0>,
-> +					<&bimc MASTER_APPSS_PROC 0 &config_noc SLAVE_VENUS_CFG 0>;
-> +			interconnect-names = "video-mem", "cpu-cfg";
-> +
-> +			venus_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +				opp-133000000 {
-> +					opp-hz = /bits/ 64 <133000000>;
-> +					required-opps = <&rpmpd_opp_low_svs>;
-> +				};
-> +
-> +				opp-240000000 {
-> +					opp-hz = /bits/ 64 <240000000>;
-> +					required-opps = <&rpmpd_opp_svs>;
-> +				};
-> +			};
-> +
-> +			video-decoder {
-> +				compatible = "venus-decoder";
-> +			};
-> +
-> +			video-encoder {
-> +				compatible = "venus-encoder";
-> +			};
+> That makes sense. Or only keep it in DEBUG mode?
 
-These should be dropped in favour of static config in the driver.
+Even better, I will move it to DEBUG mode.
 
-> +		};
-> +
->   		mdss: display-subsystem@5e00000 {
->   			compatible = "qcom,qcm2290-mdss";
->   			reg = <0x0 0x05e00000 0x0 0x1000>;
-
----
-bod
+Thanks!
 
