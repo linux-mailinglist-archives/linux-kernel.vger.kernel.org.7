@@ -1,139 +1,161 @@
-Return-Path: <linux-kernel+bounces-685112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F70AD845B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8EAAD84BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 542567AA0B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6161716E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BA12DFA3B;
-	Fri, 13 Jun 2025 07:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C056C2C15BD;
+	Fri, 13 Jun 2025 07:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="giBakqLL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="APVoq9S8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PbUsx0ia"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA8A2E6D1F;
-	Fri, 13 Jun 2025 07:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4401A279DB0;
+	Fri, 13 Jun 2025 07:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800238; cv=none; b=MDnKHIZjqBVWjTvIndwvGxaMHz2LGOycBaBZohFsMgK1H9wP7Zm91UmWAZjpeoMUja7TZqfb/Zwj9M9pqG83FIYporwxS1GJ6fL7jjeGhXfR3NFqhDeCpiX3TKeEZF0sWO21jNr1nNOVM4G7MYIiP6Yongofe6/PLcwfH+G38tk=
+	t=1749800268; cv=none; b=evXyOa6UsTzwylwHp1oa9IzrX6uIXpJs9dN4uCNLJ6nONYa2fZQXY7+COWpOXT5N2zAVqRydOXTqe1hrtCJ0Xbui5Z63lZ58SW/Rz/ZAVvo4pQUTQTAcWkODCNhQWXE7ddFcIEPlYfA05avkw/SwrRt2XhIxwa5HvKSHU+aLYiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800238; c=relaxed/simple;
-	bh=n8RGjjnkkuldS8rW6nK+AuyZymoYFUJUJ+HcJ4J807w=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aL7dAGR1SOUyVlLf5UEWzkjy4zZR8sNbc3qhfk/R7RSU/NSpHSX/yJuGwKQCzW8BRfTIGEzy/ZqR6hTQZz5sSVfBrczNVSwEtsCvRWTi/+es4u+YBz9hdKr2MTio6tAqdWrIJg0Q8bP8PQuX/z26UHKB5HPlvzYXCDW0hRFRFV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=giBakqLL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=APVoq9S8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 13 Jun 2025 07:37:14 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749800235;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1749800268; c=relaxed/simple;
+	bh=xUaD/nsPE2GIzcFHMYPMvnTmtq7voSyUCXhca+/WzNw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UftfqWy7mpQlf1ENBeDEvLTl/LX3k5GnVTokaBmN/6NgWlwMmYi7HzhQXQH4O8Z+sabePiAEHsTwS3UAlevT7f9gepMlr9SaJvIjUu626Ufc3liiQWP9GkblEOL7NRAns3V4CwKPEYZX1xMcvbLSLCoCkmOVcRWy3fgrqADnZSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PbUsx0ia; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A5C3D4451B;
+	Fri, 13 Jun 2025 07:37:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749800263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DtXzndXqQJoWN9/9oNVG8rhnzsGOsU7qA7JbvD0N67M=;
-	b=giBakqLLsadUNmcJVPOmgpphdBPFichkTDjQ7Y4EDeQ4hSztxQjrTLFVjVITe2RwxDbh7t
-	UCJdhP6xjvUkTO8tZWRLH4EhtgUVz7kWSq3tjmOCg6iqCsCPcWgLo7XRI1tvru38JU+BWy
-	CNQZOypLmhd+7pjEYeM0calQsemq5FSzwZusEgPGCX2fmby1aSHvgQ4lJhkqgV9QFm4qc3
-	Yd6O5fCn58rpxcYL/2W0T2RnPeA2mIc0b5p8W4wR3k1r2Fl1EvRi91ps4bKP9uREuDHjYI
-	hNemKTzdMxKS0OqKgIYQA76UQ4Yg8LcefDwKoSWeNN00k6TUmf2V8Gjvx4zgAw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749800235;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DtXzndXqQJoWN9/9oNVG8rhnzsGOsU7qA7JbvD0N67M=;
-	b=APVoq9S8ULL0oUNlo08lBLXkevsKCOcvRfyPAMjeQ3dkTgobzsPkc5M1mw8OuHW6u/dke4
-	DlpMhlIiNz5dM8DQ==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/smp: Use the SMP version of
- sched_update_asym_prefer_cpu()
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>,
- Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250528080924.2273858-34-mingo@kernel.org>
-References: <20250528080924.2273858-34-mingo@kernel.org>
+	bh=eeLleyfYulrm7/2JkDlmDKQ+W0qM+PQ6c1Xd/a6HciU=;
+	b=PbUsx0iacezWvrE6A20Xyl+42FRd0/58MVH7JIf9elFbkDG3eJJOpPGahhO/fOwo06e7Gb
+	v1In1Q/JhMx10WL0FVaMQLv8yM7qi6hl4gjHJBEBAadUl1AlxaXU/7UanahRe8NY82lPHT
+	RIaBdWnX4B0AsjT9RnzYiuAtLL1q9vrkkVxg0R0brkQ9Wd4kPpfHCimyNG1cFEFCLp+eo+
+	aZJ1YSyI68DwRMuA/gSfC4kdCpB5pK58wK19PUAQ6eYzrFh0n+serqJ33z6xPgAI6tCkyK
+	jpHHzO+7YONhWsDauoIHYDC0ETlCR6ocSRSRHBCtmX/Qt7CSafBTpS9Q9PAfjQ==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Date: Fri, 13 Jun 2025 09:37:14 +0200
+Subject: [PATCH bpf 5/7] bpf/powerpc64: use define for max regs count used
+ for arguments
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174980023420.406.3320852878387182188.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250613-deny_trampoline_structs_on_stack-v1-5-5be9211768c3@bootlin.com>
+References: <20250613-deny_trampoline_structs_on_stack-v1-0-5be9211768c3@bootlin.com>
+In-Reply-To: <20250613-deny_trampoline_structs_on_stack-v1-0-5be9211768c3@bootlin.com>
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Menglong Dong <imagedong@tencent.com>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Pu Lehui <pulehui@huawei.com>, Puranjay Mohan <puranjay@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddujeefjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrroculdgvuefrhfcuhfhouhhnuggrthhiohhnmdcuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleejkeetffefveelgeeklefhtefhgfeigeduveffjeehleeifeefjedtudejgeeunecukfhppedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehinhgvthepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekhedphhgvlhhopegludelvddrudeikedruddrudeljegnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeehkedprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghgohhruggvvghvsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtthhopehlihhnuhigq
+ dhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhtmhefvdesshhtqdhmugdqmhgrihhlmhgrnhdrshhtohhrmhhrvghplhihrdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrthhorhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtohepmhihkhholhgrlhesfhgsrdgtohhmpdhrtghpthhtohepshhvvghnsheslhhinhhugidrihgsmhdrtghomh
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-The following commit has been merged into the sched/core branch of tip:
+powerpc allows using up to 8 registers to pass arguments between function
+calls. This value is hardcoded in multiple places, use a define for this
+value.
 
-Commit-ID:     6c8d251621c131274fa05b46fc138f296b00f6e4
-Gitweb:        https://git.kernel.org/tip/6c8d251621c131274fa05b46fc138f296b00f6e4
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 28 May 2025 10:09:14 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 13 Jun 2025 08:47:21 +02:00
-
-sched/smp: Use the SMP version of sched_update_asym_prefer_cpu()
-
-Simplify the scheduler by making CONFIG_SMP=y code in
-sched_update_asym_prefer_cpu() unconditional.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lore.kernel.org/r/20250528080924.2273858-34-mingo@kernel.org
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 ---
- kernel/sched/topology.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/powerpc/net/bpf_jit_comp.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index f2c1016..8e06b1d 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1323,7 +1323,6 @@ next:
- /* Update the "asym_prefer_cpu" when arch_asym_cpu_priority() changes. */
- void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
+diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
+index c0684733e9d6ac79b4cf653bf1b9ad40eb3e1aca..d313920a42c2310c6b5deab6d82e13af49c8ecb1 100644
+--- a/arch/powerpc/net/bpf_jit_comp.c
++++ b/arch/powerpc/net/bpf_jit_comp.c
+@@ -22,6 +22,8 @@
+ 
+ #include "bpf_jit.h"
+ 
++#define MAX_REGS_FOR_ARGS	8
++
+ /* These offsets are from bpf prog end and stay the same across progs */
+ static int bpf_jit_ool_stub, bpf_jit_long_branch_stub;
+ 
+@@ -613,7 +615,7 @@ static void bpf_trampoline_save_args(u32 *image, struct codegen_context *ctx, in
+ 	param_save_area_offset += STACK_FRAME_MIN_SIZE; /* param save area is past frame header */
+ 
+ 	for (int i = 0; i < nr_regs; i++) {
+-		if (i < 8) {
++		if (i < MAX_REGS_FOR_ARGS) {
+ 			EMIT(PPC_RAW_STL(_R3 + i, _R1, regs_off + i * SZL));
+ 		} else {
+ 			EMIT(PPC_RAW_LL(_R3, _R1, param_save_area_offset + i * SZL));
+@@ -626,7 +628,7 @@ static void bpf_trampoline_save_args(u32 *image, struct codegen_context *ctx, in
+ static void bpf_trampoline_restore_args_regs(u32 *image, struct codegen_context *ctx,
+ 					     int nr_regs, int regs_off)
  {
--#ifdef CONFIG_SMP
- 	int asym_prefer_cpu = cpu;
- 	struct sched_domain *sd;
- 
-@@ -1373,7 +1372,6 @@ void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
- 
- 		WRITE_ONCE(sg->asym_prefer_cpu, asym_prefer_cpu);
- 	}
--#endif /* CONFIG_SMP */
+-	for (int i = 0; i < nr_regs && i < 8; i++)
++	for (int i = 0; i < nr_regs && i < MAX_REGS_FOR_ARGS; i++)
+ 		EMIT(PPC_RAW_LL(_R3 + i, _R1, regs_off + i * SZL));
  }
  
- /*
+@@ -725,7 +727,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+ 	 *
+ 	 * Reserve space for at least 8 registers for now. This can be optimized later.
+ 	 */
+-	bpf_frame_size += (nr_regs > 8 ? nr_regs : 8) * SZL;
++	bpf_frame_size +=
++		(nr_regs > MAX_REGS_FOR_ARGS ? nr_regs : MAX_REGS_FOR_ARGS) *
++		SZL;
+ 
+ 	/* Room for struct bpf_tramp_run_ctx */
+ 	run_ctx_off = bpf_frame_size;
+
+-- 
+2.49.0
+
 
