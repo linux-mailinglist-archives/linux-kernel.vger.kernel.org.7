@@ -1,110 +1,179 @@
-Return-Path: <linux-kernel+bounces-685281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608AEAD877F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:17:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9BCAD87A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAF317B11C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 196321E24E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91977279DD4;
-	Fri, 13 Jun 2025 09:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0FB2D2396;
+	Fri, 13 Jun 2025 09:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="lMifu4a6"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="l0EYy131"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747322DA753;
-	Fri, 13 Jun 2025 09:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F082D1925;
+	Fri, 13 Jun 2025 09:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806209; cv=none; b=V4bU+qs+PBt5o4FxiEpzSk9oW83ywpDaLqj01e1Rg3/GVjW3K/8YQeL3qCCqfQ6hdieD6/rI+PEk6PiGSghRKavx08OmOxKvhIneTmLpgqhvemkexWe3YxpTTsfeRnN5kpsskxHbpIGLdJwadXMLX8wOE9EJEe2oANJKZteH/KI=
+	t=1749806394; cv=none; b=G6GsFLwY9XxQ3V+nT8Wc4ENDaOWzeKZTEVTWIapZbNocBMCbEvjjiwELeEUi/vJubXcd45X2x/vegFmndJ6OTRVeh7BE+28iplwIekpjcyuRT8PQWjAh8XKJi0RC/TFUrGlAVZXqlz1U50RiebWpoJKwVjwGUHpzRZTmrX5/4hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806209; c=relaxed/simple;
-	bh=JvXRxWo86OXDBk2ZyHGvr7t32N/IGnu9bOmgh+9I2HE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kv7//7NVfHNxgBiMsTdUPU99DoRA0Zt/aQTO3Ifb94+eD0qmFnW1kPUTW2RuRu8Cs9eIBxsCVAkyeCxcM3GUaN5CP8IAGjSTlrDeXF4iGrRcjlxydxWc2Qooq9jSpzWmbZS8/BR9kds2x9TTlZUQHcVdS6Oq78AGhf//1+ay7Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=lMifu4a6; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D8IOEk002141;
-	Fri, 13 Jun 2025 02:16:30 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=G5KoRAnZUPZZQGP0oxC9d6JUk
-	CUEKSK8pPBaJhC/9yA=; b=lMifu4a6QraFdztb7W57zpDyAvrttgxaecBBXc5qh
-	PDeDg7729rjVlG/BmmUiaKsCUT92oTk9YFjl/4PgJRzjLLWdDvv4o4zMcjnwul3q
-	M17NEHEEJ/YQb1ZigcZYR8gib0hO/nV+B1YIcQ0UwXt0RSO7NALZx0g2/hP7Fxrm
-	hHhL4ugSdbQgyF69IeRd7G/QczxVcSDj32d5s5oDFJS357tTQfFVbbfNUok+qP5L
-	tv+XIlQSSTzYKrcFDD8By4rHSZqBXYT6I4MCcJOshEznwHV0KGxA5P6diC3poXh8
-	hreX31TmFp1w+pi097O0tj7ZeAT3j94Jm1Az+REijMz+g==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 478gbt83xy-1
+	s=arc-20240116; t=1749806394; c=relaxed/simple;
+	bh=eSPaUX0IwRpTLM4F+myz4KxqOF32by2adNXL3LNEiOY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WYe/69nQ+O42QIlUhBZUROo4RwUCeBV7sqSbLxQzaSwx9C4lSaekTK0x/oqvCc54qvALrHDQlZboBfrJ1ekugFZphEokAiMCzHaWqC/NVnn7A/6tpsFm/BYWTQXLITWqXc617yp0kM6bryHT9HLmseLnbK2sSO+1/+WoZ6wBIb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=l0EYy131; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D7c4xp008338;
+	Fri, 13 Jun 2025 11:19:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=Vnicx9a1Zb9ppihc6I1gjF
+	DxnfKbaasLmfaIMBzs9KY=; b=l0EYy131EKtPrUPHElsrqIvau1VW7lfRP5tf5y
+	ZDMX1KsW+ikvm3rPl93csXNCHBzwuFVRD8uPFuSchVLmG3OkYMeoF/B84S1//q5q
+	HmWy3TZeF2rzq/YU42ap2fDexQO2O7fczQ3YaJpS8MCGXJGSrYvL3GfGH9rw/SYf
+	8bicZ/KRVK/SQn76XvzK2rbhFk68OW4ESCYQ8HDyX42ASYuaPEV1Z/FJ8Chy5ZzS
+	GNQ/Hh9uKcr2VLlPlGDaPT5+Mr5ZnutfVW5RsCyFSCn9otOOX6tuPXhH0hXK2SiT
+	aDxV1z2VOjdwCkr2BypjUtvyDFFTqQLm4QSNqAi9a/ghzm3g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474aumw756-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Jun 2025 02:16:30 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 13 Jun 2025 02:16:29 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 13 Jun 2025 02:16:29 -0700
-Received: from b9e1f7b84bd3 (HY-LT91368.marvell.com [10.29.24.116])
-	by maili.marvell.com (Postfix) with SMTP id BD9E25B6926;
-	Fri, 13 Jun 2025 02:16:27 -0700 (PDT)
-Date: Fri, 13 Jun 2025 09:16:25 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Jun Miao <jun.miao@intel.com>, <oneukum@suse.com>,
-        <netdev@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] net: usb: Convert tasklet API to new bottom half
- workqueue mechanism
-Message-ID: <aEvsaUrhXgFzvtzZ@b9e1f7b84bd3>
-References: <20250610145403.2289375-1-jun.miao@intel.com>
- <20250612185131.2dc7218a@kernel.org>
+	Fri, 13 Jun 2025 11:19:38 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 30F4440055;
+	Fri, 13 Jun 2025 11:18:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C0992BAD2A2;
+	Fri, 13 Jun 2025 11:17:18 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
+ 2025 11:17:18 +0200
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
+ 2025 11:17:18 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v17 0/6] Introduction of a remoteproc tee to load signed firmware
+Date: Fri, 13 Jun 2025 11:16:44 +0200
+Message-ID: <20250613091650.2337411-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250612185131.2dc7218a@kernel.org>
-X-Authority-Analysis: v=2.4 cv=X9tSKHTe c=1 sm=1 tr=0 ts=684bec6e cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=07d9gI8wAAAA:8 a=VwQbUJbxAAAA:8 a=5NWDvjWUo4JBtSxIGnEA:9 a=CjuIK1q_8ugA:10
- a=e2CUPOnPG4QKp8I52DXD:22 a=lhd_8Stf4_Oa5sg58ivl:22
-X-Proofpoint-ORIG-GUID: LWkoPQ7xeq6PzxOuIVZ-dsBOhUfy6FQF
-X-Proofpoint-GUID: LWkoPQ7xeq6PzxOuIVZ-dsBOhUfy6FQF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDA2OCBTYWx0ZWRfX9O52cA8d0gLt jwI6NM+BEHy2GNmUzRtWzASRP4pA7qZtBOaX3CdwuP+UT+zfjoZZWppD5MJmXYeufY2UbhHonT8 4gj+OdqvjLMNiiXyILwZelgYC2vjI+FrmlvCxP0nS/F2J5Z0yxDcKpoEG3PdmvGJeOHLvIUraZS
- I1OJRQ/C/dQyRrOe14oQLf7/NgNFhqgPIpOj+dIMIYc8Cdt6RRVH7y5GbKIrVw+YL16ZZJ9cLpf dRNdwirfAWgWG37VBgDHV48PnHWu1AMGqxkUdsn6WPa2j1834VrEQaFu8sj+xOJQpAhEeTsz8/6 sGXET778dtuXsX0136LIjmRQmt2FVsa43S9E1e8uVOPS0T8UNtFRxe7iWUzu55KyNi/Yb2VSt/w
- jykZc2Gj2xfyW+CXf97O7J0vOSsllHjyu928TtK+4jYIj5W+Cn4XGpN8H+xL7s9QraxpAwhQ
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
 
-On 2025-06-13 at 01:51:31, Jakub Kicinski (kuba@kernel.org) wrote:
-> On Tue, 10 Jun 2025 22:54:03 +0800 Jun Miao wrote:
-> > -			if (rx_alloc_submit(dev, GFP_ATOMIC) == -ENOLINK)
-> > +			if (rx_alloc_submit(dev, GFP_NOIO) == -ENOLINK)
-> 
-> Sorry, I think Subbaraya mislead you. v1 was fine.
-> If we want to change the flags (which Im not sure is correct) it should
-> be a separate commit. Could you repost v1? There is no need to attribute
-Yeah hence asked to correct me if wrong.
-GFP_ATOMIC has to be there - "this patchset implements BH workqueues
-which are like regular workqueues but executes work items in the BH
-(softirq) context" from:
-https://lwn.net/Articles/960020/
 
-Thanks,
-Sundeep
-> reviewers with Suggested-by tags. They can send their review tags if
-> they so wish.
-> -- 
-> pw-bot: cr
+Main updates from version V16[1]:
+- rebase on Linux Kernel v6.16-rc1,
+- fix double space typos.
+
+More details are available in each patch commit message.
+
+[1] https://lore.kernel.org/linux-remoteproc/CANLsYky=AAnQ3P6J9E9R1=ufVKpGniiVTkfSeaq5J_7E=qN65g@mail.gmail.com/
+
+Tested-on: commit 19272b37aa4f ("Linux 6.16-rc1")
+
+Description of the feature:
+--------------------------
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating
+and loading the remoteproc firmware image in an Arm secure context.
+
+1) Principle:
+
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
+
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
+
+2) Format of the signed image:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact. The user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (6):
+  remoteproc: core: Introduce rproc_pa_to_va helper
+  remoteproc: Add TEE support
+  remoteproc: Introduce release_fw optional operation
+  dt-bindings: remoteproc: Add compatibility for TEE support
+  remoteproc: stm32: Create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/remoteproc_core.c          |  52 ++
+ drivers/remoteproc/remoteproc_internal.h      |   6 +
+ drivers/remoteproc/remoteproc_tee.c           | 619 ++++++++++++++++++
+ drivers/remoteproc/stm32_rproc.c              | 139 +++-
+ include/linux/remoteproc.h                    |   4 +
+ include/linux/remoteproc_tee.h                |  90 +++
+ 9 files changed, 935 insertions(+), 44 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_tee.c
+ create mode 100644 include/linux/remoteproc_tee.h
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.25.1
+
 
