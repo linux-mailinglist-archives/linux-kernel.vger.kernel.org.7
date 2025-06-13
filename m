@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-685704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2F7AD8D55
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC13AD8D58
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41C417F841
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D221BC0027
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37401E04BD;
-	Fri, 13 Jun 2025 13:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496412D5404;
+	Fri, 13 Jun 2025 13:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a96OmX46"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZfCuYgeM"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCA819CD17
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0771C84A6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822087; cv=none; b=nrxWIBmb0NYlgXlb4/D4Yse19QHKNMxbRJphuk0FM0lSUJr7m+ZXqZzsRtCZSyNQIlk3vBJvjkTdeuWu7E53bLAOznmyrrCqDZD9K9aiClRJDtmzbWqjxhDtO900ukkGrSC6Y0e9ZhwV1+8C+RjmMwSzyY+sSUD5HJtQORFtNCg=
+	t=1749822090; cv=none; b=ds+qA00adsD40KbVoljSLICOM6glR8RNbSrG+rmYX2/TNJnQs29bOwYG/EnjR0TH6jKgKvCVZmYrIgD7PqHFpHOc6zYRb+AJXvygCQaxhU5Zthz5Vm9NZHM/6S7XAVCMHs3BpGiIg6TbnxP9XBgpk2tdmx2JgXV8c3k2gwNwfB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822087; c=relaxed/simple;
-	bh=dpUMDqRxYyy7EaOTCpbZ2yM1jpnDsm+aUl6N3AthocU=;
+	s=arc-20240116; t=1749822090; c=relaxed/simple;
+	bh=/Hj2o0NKvMzVIjNKTfgbctNmnmS2OLsACrglt6/q3Wg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dD042Lhh7kHYkRKg9EltZtGZkVNuBXC14GUtc3FDrqK2aj9wgbVifWHme62wQlIj9xFGIUMXA/sVJ3r9SvODFhP2tLoYJFaEo9hYulm7QYgNijQh9KKcgC119DWUEljUUnR6Fc6mGKEPCSJIXSHcmHPCMiY4dV/lDpSaDyiT6WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a96OmX46; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=c99i6SDWy+xMRGCV9P3s5z+i5rHFdLwc4KyTrF+Qf0SEMEn1wKxn7GF4FIkmuDGbnqCKLkbqrD2RAtFT5OttHSMxq0kojZq+Ezlm/1Lg+O3GogjQJXGkldLrJeYfcVZBLNkDbezlm2y1zesQ01NOmMy2MoUD7om6XzXemNpjFDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZfCuYgeM; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749822085;
+	s=mimecast20190719; t=1749822087;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=srvKo/GW1EbJBPf9Cl0G9P4CrJB0MZAkcimCCvUCpgo=;
-	b=a96OmX46C9eye53EyEderJilc6ft4WSjYYJZEQgaQqC7A8Ueh8tcv/pH2gv2sCNysEeagO
-	Owz1MDexk3a7o10ARiptNkIgcwLIAsmn10WKI7TAOIwdiM++Agw5vRTck8aW7pg/TodfBD
-	tcNn3KwyX5hhFfuU09UNv7NHTnoQhK0=
+	bh=1Rg4eLLEgx6FDFHzHNf6mLR85Vz7bTkf4DxmFxHRoP8=;
+	b=ZfCuYgeMNZ5rlCEGHfvR5+089zXLLFvmoUujnRc+4SaUyJr9OFZu2RZV7aRDYy6XK5j8rv
+	MamZT8XLNbScf8PML+w1e/NIpg0oDH5QGJdQ/M5rFcV3ZY+AhoL7nyLUmZ1S5nsol2rqOQ
+	o+iQ6NmP8Geuau+fMBJGXH+XFEeCsdc=
 Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
  [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-_Dn6ugkjNSOa30tOK8kkSg-1; Fri, 13 Jun 2025 09:41:24 -0400
-X-MC-Unique: _Dn6ugkjNSOa30tOK8kkSg-1
-X-Mimecast-MFC-AGG-ID: _Dn6ugkjNSOa30tOK8kkSg_1749822084
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d2107d6b30so328118185a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:41:24 -0700 (PDT)
+ us-mta-692-PQMQZBN9MWOzi7p0GDseqg-1; Fri, 13 Jun 2025 09:41:26 -0400
+X-MC-Unique: PQMQZBN9MWOzi7p0GDseqg-1
+X-Mimecast-MFC-AGG-ID: PQMQZBN9MWOzi7p0GDseqg_1749822085
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d2107d6b30so328121085a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 06:41:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749822083; x=1750426883;
+        d=1e100.net; s=20230601; t=1749822085; x=1750426885;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=srvKo/GW1EbJBPf9Cl0G9P4CrJB0MZAkcimCCvUCpgo=;
-        b=myjrwccsrEy/Ty6Dr0C6VgplOYNaMAEfJ2+UwUkFdq4KmVE0QihdKXK56uuNiCKcwv
-         gBESZUtD1+hGk+qyYZ9didrlkbHDlHYQvh6oq/ZQ7Hcc5B2S4eRd184y6NAHZKqktwVk
-         bDPWCi4985PDoEDNTajK8LXq6jZFBFiVpsAfQgaktvXEn4fcRtAugcVAoF+CEdAIQanM
-         sllTzB0VJY5aZbIj7eMk7GNehc7Df9Oma9umBKBOLJfI4YmuqjZ2KjcQt5Rn//tEWH2M
-         PvgIjlapDHt5kxpijbVcPicCV41ukg6SW0+w5s7S2+rSYoIDFc1wbDV4ncui7Ar/7+LQ
-         xqsA==
-X-Gm-Message-State: AOJu0YxH66FQX3lyzSRK1eJWGBSQpl47L+y/s2qVqr4kmpQK+9dfjsK5
-	EZ+H//NGgSBAeGqo/uAB54Zcb0dt+9Gqfy4nzjsJ0ZRfKtz/KKCR/IGYRgIWto++oQzKIfJUNLo
-	pLdxlcZg6fy09VpjbrIKGn0TdmpyDtiTX0uxnE/Off0+ErV5WujsXUhzYpUWsRMYxpfLHyEsoeF
-	yW0YXgf+Q3c7RF2z5rmTkA5gvQznkEYgl33IMXO8tPM+X22Ak=
-X-Gm-Gg: ASbGnctnYMJv7VJO5OyA9H+m8Jw3VnS6ytjpQN/f7psn8YGcHmF3YLrtcRCPFh2uuGt
-	LV90eBnZ7oOk9CeChaxoKsvPakyRjSPupYBFGWkZa11ijPgHQqSEW1+FKr/I3iWPrUxUzd0N1p8
-	neIThtHtPAlcMB9BFuKSX3UU4cGlMQ4qilB63/RhB6cniWCyT9ewZMRZi3v0y7OIJ6evpU4d3K2
-	drkhd88hzOl2D++HIeL59QCBngkAsNr3Ktu6ZuQ3hH6ZgSB1Z+I/oDtjJ6qtsU/8z5UWUHzDTiX
-	vIPqf+ig18o=
-X-Received: by 2002:a05:620a:2627:b0:7cd:3f01:7c83 with SMTP id af79cd13be357-7d3bc44a1f9mr399254285a.39.1749822083063;
-        Fri, 13 Jun 2025 06:41:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGy9xhb6Ir/WTjwOiKTV6R2xWTKghNAist5R7llcPyhmuhj1jELKcIWu8eGBTg4hcMRpO8q+w==
-X-Received: by 2002:a05:620a:2627:b0:7cd:3f01:7c83 with SMTP id af79cd13be357-7d3bc44a1f9mr399250685a.39.1749822082633;
-        Fri, 13 Jun 2025 06:41:22 -0700 (PDT)
+        bh=1Rg4eLLEgx6FDFHzHNf6mLR85Vz7bTkf4DxmFxHRoP8=;
+        b=nhuVQPielATYPvVAcNTmV5lN3hzumqd2aTinZemJLvLgZSu/rAJdKwGvlsn/jBxQZN
+         3RmxuhkaeBraK+kHOvwaO7ymkbb0wFQKci06XSJKjctOnyzZCcCWkk5WddKIwbTlma60
+         V1ia91Vn/RQJIO7rGzS2TXV7MO+OY1CJmXqSldZrNfSAP342ZZvKQbRQC93lSm5+Sv1A
+         mgHtIOEjwbtRBljRF2RKJKUcSVDI3kirIUCUL4YErKF/wEYc66PRnCbqetdyRAzuCjgY
+         wtdU1yiJNUw5gz17DYlENHVOtI4ZQub//wuKI4CTApu8nDjK07l9T7rdSzAHXgb/vm/t
+         7ksg==
+X-Gm-Message-State: AOJu0Yy/hMdeiBl/EuQCQBwdgix45wIO+PG07PJKybSEUkVOlrdYuTXv
+	BMQAe+2LGJ0U5SNeKw6FHY2yRL/RPl6Qu1WlrThxZFWdxdH/PaLZdq3h74bThJrHX9otfzL9Zea
+	dQA/+99f2zQ2FLv4twRyUAPv4Ll9szNeHL39Hl6aZSvfFNfnl+56xTEnIGCzUm6uMTvd7V+yFVb
+	y9xN5Y73NE9PeUlhE0gsgmca8fVyuUhaKBSswAWrzoVkD6/gw=
+X-Gm-Gg: ASbGncvJh0ii+aSgSpSuwp2ZwCdlsq1NnLkCBUdnBxiQ8lAYmGLSrBWwhEC9IjqreFu
+	3d5cy8dl4LHJbGVYEqF8UNFvDcGa18//j6P6HVkkpbTA/zNVEwIUMmnCk9RZ45MDxun6bOY63Rh
+	8Ir7YXiauok1vqATYJD7r5RaK1gR3TDVAZdWgm+om1myuIYuOAuRSX/1QAWOtohdBkztozYC1zm
+	wNOI8PvYPih4XclrijMFxkuPCaq5aZ5KU5dhwVbHlPW25TXiahuQSmNSm2hIy+BQdXnVR2TrNYH
+	PlKJp+xyPnc=
+X-Received: by 2002:a05:620a:1721:b0:7d3:aad4:6f87 with SMTP id af79cd13be357-7d3bc37ba17mr568289585a.7.1749822084980;
+        Fri, 13 Jun 2025 06:41:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqZxKV2mT6BD/bi39sPGRhzywu281UAzYUirAEIW40JfRfajmXwptkVPgbiPNtRrb6I7XH6g==
+X-Received: by 2002:a05:620a:1721:b0:7d3:aad4:6f87 with SMTP id af79cd13be357-7d3bc37ba17mr568285785a.7.1749822084512;
+        Fri, 13 Jun 2025 06:41:24 -0700 (PDT)
 Received: from x1.com ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8ee3f72sm171519285a.94.2025.06.13.06.41.20
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8ee3f72sm171519285a.94.2025.06.13.06.41.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 06:41:21 -0700 (PDT)
+        Fri, 13 Jun 2025 06:41:23 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -90,9 +90,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	David Hildenbrand <david@redhat.com>,
 	Nico Pache <npache@redhat.com>,
 	peterx@redhat.com
-Subject: [PATCH 4/5] vfio: Introduce vfio_device_ops.get_unmapped_area hook
-Date: Fri, 13 Jun 2025 09:41:10 -0400
-Message-ID: <20250613134111.469884-5-peterx@redhat.com>
+Subject: [PATCH 5/5] vfio-pci: Best-effort huge pfnmaps with !MAP_FIXED mappings
+Date: Fri, 13 Jun 2025 09:41:11 -0400
+Message-ID: <20250613134111.469884-6-peterx@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613134111.469884-1-peterx@redhat.com>
 References: <20250613134111.469884-1-peterx@redhat.com>
@@ -104,82 +104,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a hook to vfio_device_ops to allow sub-modules provide virtual
-addresses for an mmap() request.
+This patch enables best-effort mmap() for vfio-pci bars even without
+MAP_FIXED, so as to utilize huge pfnmaps as much as possible.  It should
+also avoid userspace changes (switching to MAP_FIXED with pre-aligned VA
+addresses) to start enabling huge pfnmaps on VFIO bars.
 
-Note that the fallback will be mm_get_unmapped_area(), which should
-maintain the old behavior of generic VA allocation (__get_unmapped_area).
-It's a bit unfortunate that is needed, as the current get_unmapped_area()
-file ops cannot support a retval which fallbacks to the default.  So that
-is needed both here and whenever sub-module will opt-in with its own.
+Here the trick is making sure the MMIO PFNs will be aligned with the VAs
+allocated from mmap() when !MAP_FIXED, so that whatever returned from
+mmap(!MAP_FIXED) of vfio-pci MMIO regions will be automatically suitable
+for huge pfnmaps as much as possible.
 
+To achieve that, a custom vfio_device's get_unmapped_area() for vfio-pci
+devices is needed.
+
+Note that MMIO physical addresses should normally be guaranteed to be
+always bar-size aligned, hence the bar offset can logically be directly
+used to do the calculation.  However to make it strict and clear (rather
+than relying on spec details), we still try to fetch the bar's physical
+addresses from pci_dev.resource[].
+
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- drivers/vfio/vfio_main.c | 18 ++++++++++++++++++
- include/linux/vfio.h     |  7 +++++++
- 2 files changed, 25 insertions(+)
+ drivers/vfio/pci/vfio_pci.c      |  3 ++
+ drivers/vfio/pci/vfio_pci_core.c | 65 ++++++++++++++++++++++++++++++++
+ include/linux/vfio_pci_core.h    |  6 +++
+ 3 files changed, 74 insertions(+)
 
-diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-index 1fd261efc582..19db8e58d223 100644
---- a/drivers/vfio/vfio_main.c
-+++ b/drivers/vfio/vfio_main.c
-@@ -1354,6 +1354,23 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
- 	return device->ops->mmap(device, vma);
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index 5ba39f7623bb..d9ae6cdbea28 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -144,6 +144,9 @@ static const struct vfio_device_ops vfio_pci_ops = {
+ 	.detach_ioas	= vfio_iommufd_physical_detach_ioas,
+ 	.pasid_attach_ioas	= vfio_iommufd_physical_pasid_attach_ioas,
+ 	.pasid_detach_ioas	= vfio_iommufd_physical_pasid_detach_ioas,
++#ifdef CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP
++	.get_unmapped_area	= vfio_pci_core_get_unmapped_area,
++#endif
+ };
+ 
+ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+index 6328c3a05bcd..835bc168f8b7 100644
+--- a/drivers/vfio/pci/vfio_pci_core.c
++++ b/drivers/vfio/pci/vfio_pci_core.c
+@@ -1641,6 +1641,71 @@ static unsigned long vma_to_pfn(struct vm_area_struct *vma)
+ 	return (pci_resource_start(vdev->pdev, index) >> PAGE_SHIFT) + pgoff;
  }
  
-+static unsigned long vfio_device_get_unmapped_area(struct file *file,
-+						   unsigned long addr,
-+						   unsigned long len,
-+						   unsigned long pgoff,
-+						   unsigned long flags)
++#ifdef CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP
++/*
++ * Hint function to provide mmap() virtual address candidate so as to be
++ * able to map huge pfnmaps as much as possible.  It is done by aligning
++ * the VA to the PFN to be mapped in the specific bar.
++ *
++ * Note that this function does the minimum check on mmap() parameters to
++ * make the PFN calculation valid only. The majority of mmap() sanity check
++ * will be done later in mmap().
++ */
++unsigned long vfio_pci_core_get_unmapped_area(struct vfio_device *device,
++					      struct file *file,
++					      unsigned long addr,
++					      unsigned long len,
++					      unsigned long pgoff,
++					      unsigned long flags)
 +{
-+	struct vfio_device_file *df = file->private_data;
-+	struct vfio_device *device = df->device;
++	struct vfio_pci_core_device *vdev =
++		container_of(device, struct vfio_pci_core_device, vdev);
++	struct pci_dev *pdev = vdev->pdev;
++	unsigned long ret, phys_len, req_start, phys_addr;
++	unsigned int index;
 +
-+	if (!device->ops->get_unmapped_area)
-+		return mm_get_unmapped_area(current->mm, file, addr,
-+					    len, pgoff, flags);
++	index = pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
 +
-+	return device->ops->get_unmapped_area(device, file, addr, len,
-+					      pgoff, flags);
++	/* Currently, only bars 0-5 supports huge pfnmap */
++	if (index >= VFIO_PCI_ROM_REGION_INDEX)
++		goto fallback;
++
++	/* Bar offset */
++	req_start = (pgoff << PAGE_SHIFT) & ((1UL << VFIO_PCI_OFFSET_SHIFT) - 1);
++	phys_len = PAGE_ALIGN(pci_resource_len(pdev, index));
++
++	/*
++	 * Make sure we at least can get a valid physical address to do the
++	 * math.  If this happens, it will probably fail mmap() later..
++	 */
++	if (req_start >= phys_len)
++		goto fallback;
++
++	phys_len = MIN(phys_len, len);
++	/* Calculate the start of physical address to be mapped */
++	phys_addr = pci_resource_start(pdev, index) + req_start;
++
++	/* Choose the alignment */
++	if (IS_ENABLED(CONFIG_ARCH_SUPPORTS_PUD_PFNMAP) && phys_len >= PUD_SIZE) {
++		ret = mm_get_unmapped_area_aligned(file, addr, len, phys_addr,
++						   flags, PUD_SIZE, 0);
++		if (ret)
++			return ret;
++	}
++
++	if (phys_len >= PMD_SIZE) {
++		ret = mm_get_unmapped_area_aligned(file, addr, len, phys_addr,
++						   flags, PMD_SIZE, 0);
++		if (ret)
++			return ret;
++	}
++
++fallback:
++	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
 +}
++EXPORT_SYMBOL_GPL(vfio_pci_core_get_unmapped_area);
++#endif
 +
- const struct file_operations vfio_device_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		= vfio_device_fops_cdev_open,
-@@ -1363,6 +1380,7 @@ const struct file_operations vfio_device_fops = {
- 	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
- 	.compat_ioctl	= compat_ptr_ioctl,
- 	.mmap		= vfio_device_fops_mmap,
-+	.get_unmapped_area = vfio_device_get_unmapped_area,
- };
- 
- static struct vfio_device *vfio_device_from_file(struct file *file)
-diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-index 707b00772ce1..48fe71c61ed2 100644
---- a/include/linux/vfio.h
-+++ b/include/linux/vfio.h
-@@ -108,6 +108,7 @@ struct vfio_device {
-  * @dma_unmap: Called when userspace unmaps IOVA from the container
-  *             this device is attached to.
-  * @device_feature: Optional, fill in the VFIO_DEVICE_FEATURE ioctl
-+ * @get_unmapped_area: Optional, provide virtual address hint for mmap()
-  */
- struct vfio_device_ops {
- 	char	*name;
-@@ -135,6 +136,12 @@ struct vfio_device_ops {
- 	void	(*dma_unmap)(struct vfio_device *vdev, u64 iova, u64 length);
- 	int	(*device_feature)(struct vfio_device *device, u32 flags,
- 				  void __user *arg, size_t argsz);
-+	unsigned long (*get_unmapped_area)(struct vfio_device *device,
-+					   struct file *file,
-+					   unsigned long addr,
-+					   unsigned long len,
-+					   unsigned long pgoff,
-+					   unsigned long flags);
- };
- 
- #if IS_ENABLED(CONFIG_IOMMUFD)
+ static vm_fault_t vfio_pci_mmap_huge_fault(struct vm_fault *vmf,
+ 					   unsigned int order)
+ {
+diff --git a/include/linux/vfio_pci_core.h b/include/linux/vfio_pci_core.h
+index fbb472dd99b3..e59699e01901 100644
+--- a/include/linux/vfio_pci_core.h
++++ b/include/linux/vfio_pci_core.h
+@@ -119,6 +119,12 @@ ssize_t vfio_pci_core_read(struct vfio_device *core_vdev, char __user *buf,
+ 		size_t count, loff_t *ppos);
+ ssize_t vfio_pci_core_write(struct vfio_device *core_vdev, const char __user *buf,
+ 		size_t count, loff_t *ppos);
++unsigned long vfio_pci_core_get_unmapped_area(struct vfio_device *device,
++					      struct file *file,
++					      unsigned long addr,
++					      unsigned long len,
++					      unsigned long pgoff,
++					      unsigned long flags);
+ int vfio_pci_core_mmap(struct vfio_device *core_vdev, struct vm_area_struct *vma);
+ void vfio_pci_core_request(struct vfio_device *core_vdev, unsigned int count);
+ int vfio_pci_core_match(struct vfio_device *core_vdev, char *buf);
 -- 
 2.49.0
 
