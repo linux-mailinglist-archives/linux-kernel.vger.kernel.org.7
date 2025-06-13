@@ -1,111 +1,241 @@
-Return-Path: <linux-kernel+bounces-685258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7925AD8633
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:02:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44525AD8636
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07E217279D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE811168EA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9C1279DA6;
-	Fri, 13 Jun 2025 09:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4D4276038;
+	Fri, 13 Jun 2025 09:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TJC+HIwQ"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="HA4ilFFs"
+Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5572DA751;
-	Fri, 13 Jun 2025 09:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86212DA772;
+	Fri, 13 Jun 2025 09:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749805362; cv=none; b=l6JbK8Y/Ll3SKku9coQu2ZHVm9FpsmtJcpQ7h/W2EnfNDnBZczZWc3e7uMUZz5uvTbd1Yc9UVT8yFElAw3QxDZJzBhcZUI7LcpirpCA9ystFF67JlpjVnA1AGhd6jURz1SpOf9y9soes4hkTFkFyUEGsqTaJ5QQm4wTLBYdxJQw=
+	t=1749805446; cv=none; b=W2ISYzJZaOIZLxOOKPVosr0Xh5N2e4kt7teMhwCt6kUhoqbW9HGEpurmwqp4cXIRJOAxOIWevqd/fsriyHZV0mPI68zbvMmkzqSUilXJtoUgUNzLyUDJfJVXVfAtUbYMKzUzRDMzRsoT9WtoOEX9+TKZQyNIkhDHMuShnSN4RJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749805362; c=relaxed/simple;
-	bh=Iu6PP0aeFHgxr8x/QF4l4Q7vhV0Xw+zRs3mVruxMCto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V5SPWcpiIzSYIqzhJJNwQN8bI4b8ve0jZEiHQb4oWd11ZTLexX49ownCDmQVufK234e6dJzdfxG4kaxLy8aJsYh//mMZ1Cj0maMKozGMemAgYZ9bOwiB9NiznwBdbe2fVKvreXu668q7Py8hPVI8+GBCOq8n4V/dR9huDCr359I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TJC+HIwQ; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D7x6wD001805;
-	Fri, 13 Jun 2025 11:02:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	dhCZHLOoz/DA9KLk72kzXl6//47HjrLiscmsJROqQU4=; b=TJC+HIwQFnR8RuRE
-	wppUKNBTKL3/NwpFH9nE0ngb/rqF9Lu/ileLRgMIYn9UyLjZyEKItkKvekDrpNco
-	CH2Ar921nY18Xdl/0P13yXdoS1ZBzpkgQY+25liPF5pVzK8R6E9CTtow/QLDHGU6
-	yPdG0oZwXpqhwfLaDOymuGleYwO6An1dIpbs9rOSkv8i7GQoffy8c3UWJ+uMlfvM
-	tauK1RzCWrm/luM7ZBmnYOHOabBLRh89Nw6WHyd9Vc/fcI6/JJ5bdV1tgLduLKaj
-	fzoB7FPeV6Etip+hdlvBfqPA2PiZJrvr7H+x16QQsMmf1UpyJFlDeSmTAZ3RplPw
-	qdJ18Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474ajaktns-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Jun 2025 11:02:23 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8DF594005E;
-	Fri, 13 Jun 2025 11:01:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DA3C7B9447F;
-	Fri, 13 Jun 2025 11:01:04 +0200 (CEST)
-Received: from [10.48.86.103] (10.48.86.103) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
- 2025 11:01:04 +0200
-Message-ID: <8f4c2f36-71af-4c84-bcee-2554cea991d0@foss.st.com>
-Date: Fri, 13 Jun 2025 11:01:03 +0200
+	s=arc-20240116; t=1749805446; c=relaxed/simple;
+	bh=zJwTtQSAa5HRrIuQh+CUXWejQR70jOTRCIqBI7Qzsts=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Btio7jwhuZPv4OI/MI2eX+92N9oJojrKP7nXLdBcwZN+3PjfjOUOZ5ZZJgaYBN+UTWmANQaxHSeJnKC7FKx3JwWgtn2U2OUAfBEZdQ6BX592SlSQouQ4rPwjKP2cnKKB4lVAWbiKF2+Q4Zy7UtHCfvigN6r2Tt/RFTyuIItxq+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=HA4ilFFs; arc=none smtp.client-ip=131.188.11.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1749805435; bh=pk/YSiR8kM1WyBitG6y7PF5HVEEOKlm6+fhKP2kx/MI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
+	 Subject;
+	b=HA4ilFFsazSE0lY3YWiIRtVqOpFirpENabSxQo9qgtS1eclQw2fghvxUl0tvQd5Ee
+	 i8TJ/XFKC2F9qDhSlI3jJ7lkpnANVO+N4bYSitZVLIS7DTVs+qof25dC10MdADjqzP
+	 hB33CLu8APK7zhyAOuY1nEDNNxSw1wopnygNR5ubNt5BkmdVvicb5bAPDm3Yd111Gk
+	 f6BADQBTtPOmyhmWzVP8sQ6qZzhZHbHZMmGTlYhRSN3IGg8e7g9ZhdKEtGI58ZpVB2
+	 kwlTCg6XfzlO0KmfzYATBuLapLIcczz9syNoTNN6ROQ5lDteUgRfuoP4yo+H5thUkz
+	 szUnhyq9pLzHg==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bJYNW4mJPzPk28;
+	Fri, 13 Jun 2025 11:03:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 37.201.192.232
+Received: from luis-tp.. (ip-037-201-192-232.um10.pools.vodafone-ip.de [37.201.192.232])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1/h3Rf647JUjgakCq1chLzWuoo8oIF5ed8=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bJYNS2JjLzPkBF;
+	Fri, 13 Jun 2025 11:03:52 +0200 (CEST)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Luis Gerhorst <luis.gerhorst@fau.de>
+Subject: [PATCH bpf-next v2] bpf: Remove redundant free_verifier_state()/pop_stack()
+Date: Fri, 13 Jun 2025 11:01:58 +0200
+Message-ID: <20250613090157.568349-2-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <19f50af28e3a90cbd24b2325da8025e47f221739.camel@gmail.com>
+References: <19f50af28e3a90cbd24b2325da8025e47f221739.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
-To: Eric Biggers <ebiggers@kernel.org>, <linux-fscrypt@vger.kernel.org>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>, <ceph-devel@vger.kernel.org>
-References: <20250611205859.80819-1-ebiggers@kernel.org>
-Content-Language: en-US
-From: Maxime MERE <maxime.mere@foss.st.com>
-In-Reply-To: <20250611205859.80819-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This patch removes duplicated code.
 
-On 6/11/25 22:58, Eric Biggers wrote:
-> To protect users from these buggy and seemingly unhelpful drivers that I
-> have no way of testing, let's make fscrypt not use them.  Unfortunately
-> there is no direct support for doing so in the Crypto API, but we can
-> achieve something very close to it by disallowing algorithms that have
-> ASYNC, ALLOCATES_MEMORY, or KERN_DRIVER_ONLY set.
+Eduard points out [1]:
 
-I agree that software drivers are more efficient and less prone to bugs 
-than hardware drivers. However, I would like to highlight the fact that 
-certain ST products (the STM32MP2x series) have features that allow the 
-loading of a secret key via an internal bus from a Secure OS to the CRYP 
-peripheral (usable by the kernel). This enables cryptographic operations 
-to be delegated to the non-secure side (the kernel) without exposing the 
-key.
+    Same cleanup cycles are done in push_stack() and push_async_cb(),
+    both functions are only reachable from do_check_common() via
+    do_check() -> do_check_insn().
 
-If fscrypt no longer supports hardware drivers, then this type of 
-functionality could not be used, which I find unfortunate because it is 
-something that might interest users.
+    Hence, I think that cur state should not be freed in push_*()
+    functions and pop_stack() loop there is not needed.
 
+This would also fix the 'symptom' for [2], but the issue also has a
+simpler fix which was sent separately. This fix also makes sure the
+push_*() callers always return an error for which
+error_recoverable_with_nospec(err) is false. This is required because
+otherwise we try to recover and access the stale `state`.
 
-cheers,
+Moving free_verifier_state() and pop_stack(..., pop_log=false) to happen
+after the bpf_vlog_reset() call in do_check_common() is fine because the
+pop_stack() call that is moved does not call bpf_vlog_reset() with the
+pop_log=false parameter.
 
-Maxime
+[1] https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com/
+[2] https://lore.kernel.org/all/68497853.050a0220.33aa0e.036a.GAE@google.com/
+
+Reported-by: Eduard Zingerman <eddyz87@gmail.com>
+Link: https://lore.kernel.org/all/b6931bd0dd72327c55287862f821ca6c4c3eb69a.camel@gmail.com/
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+---
+
+Changes since v1:
+- Move free_verifier_state() and pop_stack() into free_state() and
+  remove err label in push_*() altogether (incl. comment), both
+  suggested by Eduard
+- Link to v1: https://lore.kernel.org/bpf/20250611211431.275731-1-luis.gerhorst@fau.de/
+
+ kernel/bpf/verifier.c | 37 +++++++++++--------------------------
+ 1 file changed, 11 insertions(+), 26 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index c378074516cf..5f4e0a8b20f8 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2097,7 +2097,7 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
+ 
+ 	elem = kzalloc(sizeof(struct bpf_verifier_stack_elem), GFP_KERNEL);
+ 	if (!elem)
+-		goto err;
++		return NULL;
+ 
+ 	elem->insn_idx = insn_idx;
+ 	elem->prev_insn_idx = prev_insn_idx;
+@@ -2107,12 +2107,12 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
+ 	env->stack_size++;
+ 	err = copy_verifier_state(&elem->st, cur);
+ 	if (err)
+-		goto err;
++		return NULL;
+ 	elem->st.speculative |= speculative;
+ 	if (env->stack_size > BPF_COMPLEXITY_LIMIT_JMP_SEQ) {
+ 		verbose(env, "The sequence of %d jumps is too complex.\n",
+ 			env->stack_size);
+-		goto err;
++		return NULL;
+ 	}
+ 	if (elem->st.parent) {
+ 		++elem->st.parent->branches;
+@@ -2127,12 +2127,6 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
+ 		 */
+ 	}
+ 	return &elem->st;
+-err:
+-	free_verifier_state(env->cur_state, true);
+-	env->cur_state = NULL;
+-	/* pop all elements and return */
+-	while (!pop_stack(env, NULL, NULL, false));
+-	return NULL;
+ }
+ 
+ #define CALLER_SAVED_REGS 6
+@@ -2864,7 +2858,7 @@ static struct bpf_verifier_state *push_async_cb(struct bpf_verifier_env *env,
+ 
+ 	elem = kzalloc(sizeof(struct bpf_verifier_stack_elem), GFP_KERNEL);
+ 	if (!elem)
+-		goto err;
++		return NULL;
+ 
+ 	elem->insn_idx = insn_idx;
+ 	elem->prev_insn_idx = prev_insn_idx;
+@@ -2876,7 +2870,7 @@ static struct bpf_verifier_state *push_async_cb(struct bpf_verifier_env *env,
+ 		verbose(env,
+ 			"The sequence of %d jumps is too complex for async cb.\n",
+ 			env->stack_size);
+-		goto err;
++		return NULL;
+ 	}
+ 	/* Unlike push_stack() do not copy_verifier_state().
+ 	 * The caller state doesn't matter.
+@@ -2887,19 +2881,13 @@ static struct bpf_verifier_state *push_async_cb(struct bpf_verifier_env *env,
+ 	elem->st.in_sleepable = is_sleepable;
+ 	frame = kzalloc(sizeof(*frame), GFP_KERNEL);
+ 	if (!frame)
+-		goto err;
++		return NULL;
+ 	init_func_state(env, frame,
+ 			BPF_MAIN_FUNC /* callsite */,
+ 			0 /* frameno within this callchain */,
+ 			subprog /* subprog number within this prog */);
+ 	elem->st.frame[0] = frame;
+ 	return &elem->st;
+-err:
+-	free_verifier_state(env->cur_state, true);
+-	env->cur_state = NULL;
+-	/* pop all elements and return */
+-	while (!pop_stack(env, NULL, NULL, false));
+-	return NULL;
+ }
+ 
+ 
+@@ -22934,6 +22922,11 @@ static void free_states(struct bpf_verifier_env *env)
+ 	struct bpf_scc_info *info;
+ 	int i, j;
+ 
++	WARN_ON_ONCE(!env->cur_state);
++	free_verifier_state(env->cur_state, true);
++	env->cur_state = NULL;
++	while (!pop_stack(env, NULL, NULL, false));
++
+ 	list_for_each_safe(pos, tmp, &env->free_list) {
+ 		sl = container_of(pos, struct bpf_verifier_state_list, node);
+ 		free_verifier_state(&sl->state, false);
+@@ -23085,14 +23078,6 @@ static int do_check_common(struct bpf_verifier_env *env, int subprog)
+ 
+ 	ret = do_check(env);
+ out:
+-	/* check for NULL is necessary, since cur_state can be freed inside
+-	 * do_check() under memory pressure.
+-	 */
+-	if (env->cur_state) {
+-		free_verifier_state(env->cur_state, true);
+-		env->cur_state = NULL;
+-	}
+-	while (!pop_stack(env, NULL, NULL, false));
+ 	if (!ret && pop_log)
+ 		bpf_vlog_reset(&env->log, 0);
+ 	free_states(env);
+
+base-commit: af91af33c16853c569ca814124781b849886f007
+-- 
+2.49.0
+
 
