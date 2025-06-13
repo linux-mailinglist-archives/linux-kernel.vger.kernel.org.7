@@ -1,247 +1,335 @@
-Return-Path: <linux-kernel+bounces-686268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C444DAD9542
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:19:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C171AD9506
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94F51BC29B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D491BC0AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846772E62DD;
-	Fri, 13 Jun 2025 19:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465BD231832;
+	Fri, 13 Jun 2025 19:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CH1tQ+Dx"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v2xDjngk"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E34D2E3363
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861B42E11BB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749842083; cv=none; b=uwGNsbGm1mWHYKmB259yWceT1yJWzpmdbs3sAuFH7HIslCe1oy5+HQ+391RsdTjHK9qLSKrQfH5kgzCWq+aj6lNl+eKgqH7++lCGx4b03XKntcJ6ItZfhACgrIyWIDbb441Cdelmyd+qFhb0PVPib3GKY/qOdqhq4QYwUKYVA5M=
+	t=1749842044; cv=none; b=HNFFs3m+uALOAsk1fJehS6cWQeiEeu33Eo8OCKpohv4MVHW4vkrHgDM/EPrxrB9yR86Vk/DMrZw0VHAW3xdOiANYayMplYGPK/5v/T+lOnWcdBFr+N0an9uGU/GC8Zdk5cSb/Lk7GfeyRwNlRTBmz7RkTG9wSaVXsVOaaXPBku0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749842083; c=relaxed/simple;
-	bh=gB7leVldU3Q+/K2dvULRGODaLqYXhPw7nhUc71aLv2Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XVg8EfDN1SqlVJPaVQ85aI4RVA9N4D9qGnO+DEM3VGrP7ntWBFD2QarDOmc8YcY5fZS48hwubBD1TVWHQH8BX6p688HUo59wSsNk6ZSzTC/0pl9Ya9UOs7ytCrKjjQN/WxU52cp6KdXG7C5pCbWDnhvWXbrmqJhxOr62sqPC328=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CH1tQ+Dx; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b00e4358a34so1595689a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749842081; x=1750446881; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9p4glGj+JFvfl5WfXSVa1QcEpc+ehsxYbyir+NTtj2U=;
-        b=CH1tQ+Dx1obdt7QJvYbrt+zwR06qPUcMMXwWvb82HlN0QkGUCL7TW3/DknEZ1HDTe9
-         gB5n++qW3Z8/e+34rQW5HGbTEA0trGeZ4IBLWOI7UnAyyTazFilIAzaM3Lces7HvVt8l
-         2XOln7GtFidn9IUopgU1qrcGZ+8+Qf05Signjg1OJbF+HN/V9w6oiQ69YvO7cRyinpGP
-         OSIxyuH9J2nvQtz7lChf/8OMRK8p1RZ3p9+BS5+Xk+uuZxUBwEzbkNVM4UE68Yj4IAzZ
-         J2PMyBNUZYCvT8HVcmhcW3qdalxcTwQsYA56BIUGOsGSzqq/8X8QcGskGlTpsS7EZfL1
-         VS2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749842081; x=1750446881;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9p4glGj+JFvfl5WfXSVa1QcEpc+ehsxYbyir+NTtj2U=;
-        b=Rewh150AOaKvDVy7pLoyCxmo4fdbeB9zQP3lW1Mh9bvyC0ItquzLZCQ2wKmHWm+KVD
-         jBoeCzsOpNPChYS/epSjNJJzSAN3OBsWY2IdFbAoExoEGGnpBcL4kQRkXQ3VVX0ajyUJ
-         Sbt6xeOAQeA/bzUyV0Vo+9oS5ctXP0hbn/G9sn366DKPS2SZ95SKNt4qhbqkBbL57Gk9
-         MPgNNiJ7cgc3U3C5TiEyfwHrY5Z9vRA7GkfeajOVRdiiss2oIk8oqJI+WVg4f3BQdR6p
-         LGC1aXy93FVnen1JjeNGrRKeTNkpmdDXGrqFPyDGhTtbzWdzPlI42LOhM5bGDBJRIFLZ
-         yIxA==
-X-Gm-Message-State: AOJu0YxJjatChfz7v8Hhb49noWtdpymY/ivEPcKkBmcowsyRzUr2dAVX
-	hxg0XoBJPofF0xdj/xYvBFYQNlUbxT93QRH89+AqOTJdZyp+PmCDMul/yNEOkOy/Zb9gSuAy8g4
-	TvQ==
-X-Google-Smtp-Source: AGHT+IHfouRTUogXGPkW4ugX6w/2YUe1t4Q6+8l6WO+bVjHwKE9QByebDntsgccifWGOIya/D+bam5qG5A==
-X-Received: from pjbsr4.prod.google.com ([2002:a17:90b:4e84:b0:313:2ad9:17ec])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d0a:b0:312:18e:d930
- with SMTP id 98e67ed59e1d1-313f1d4e217mr956309a91.19.1749842081564; Fri, 13
- Jun 2025 12:14:41 -0700 (PDT)
-Date: Fri, 13 Jun 2025 12:13:46 -0700
-In-Reply-To: <20250613191359.35078-1-sagis@google.com>
+	s=arc-20240116; t=1749842044; c=relaxed/simple;
+	bh=kA4jhqp4xBUNaxg/pjNO8NYIx+j2PDUAkyr5hujtTvE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WU4yNWoRK9qhsbFXpAHbF4sK4GmKQEKli/I/DcRDTq9fIj2AHTYXh+QQOQejsnnKINZ+7Bjf1LeW54mzl6bMn0iBxYqHB/7a1a2x5+sKfr78GQfaP2qPma2NVb+wSueO4WRdNzZWsT7KV3wYTkZf7IOi46dAJ7AKchKOs8FL8Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v2xDjngk; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c3400787-7279-4a50-a61a-92a100b3b4b9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749842030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nMLY4DUZwczzWxX+mHe4l4o0st/9I1jgbNlgxZD7LaY=;
+	b=v2xDjngkqnMOazJSUlqgaQsgSXXpA93WGGhUq8DjjLk1zCK+nhxQkqb5YR6ZToXdoSQfyC
+	+YaL9O+WQKi+9bQcKwRunZ1e3zFsfqjWZQe8F+93kheOLwjPxVUWs/HEtc3YMcm9QFJoy/
+	9QhIY4dMRPpt6B0hx4/bmrYTPA7tGCI=
+Date: Fri, 13 Jun 2025 20:13:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250613191359.35078-1-sagis@google.com>
-X-Mailer: git-send-email 2.50.0.rc2.692.g299adb8693-goog
-Message-ID: <20250613191359.35078-20-sagis@google.com>
-Subject: [PATCH v7 19/30] KVM: selftests: TDX: Add TDX MMIO writes test
-From: Sagi Shahar <sagis@google.com>
-To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Sagi Shahar <sagis@google.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH net-next v9 06/14] dpll: zl3073x: Fetch invariants during
+ probe
+To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
+Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Shannon Nelson <shannon.nelson@amd.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+References: <20250612200145.774195-1-ivecera@redhat.com>
+ <20250612200145.774195-7-ivecera@redhat.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250612200145.774195-7-ivecera@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The test verifies MMIO writes of various sizes from the guest to the host.
+On 12/06/2025 21:01, Ivan Vecera wrote:
+> Several configuration parameters will remain constant at runtime,
+> so we can load them during probe to avoid excessive reads from
+> the hardware.
+> 
+> Read the following parameters from the device during probe and store
+> them for later use:
+> 
+> * enablement status and frequencies of the synthesizers and their
+>    associated DPLL channels
+> * enablement status and type (single-ended or differential) of input pins
+> * associated synthesizers, signal format, and enablement status of
+>    outputs
+> 
+> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> ---
+>   drivers/dpll/zl3073x/core.c | 248 +++++++++++++++++++++++++++++++
+>   drivers/dpll/zl3073x/core.h | 286 ++++++++++++++++++++++++++++++++++++
+>   drivers/dpll/zl3073x/regs.h |  65 ++++++++
+>   3 files changed, 599 insertions(+)
+> 
+> diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
+> index 60344761545d8..3a57c85f902c4 100644
+> --- a/drivers/dpll/zl3073x/core.c
+> +++ b/drivers/dpll/zl3073x/core.c
+> @@ -6,6 +6,7 @@
+>   #include <linux/dev_printk.h>
+>   #include <linux/device.h>
+>   #include <linux/export.h>
+> +#include <linux/math64.h>
+>   #include <linux/module.h>
+>   #include <linux/netlink.h>
+>   #include <linux/regmap.h>
+> @@ -376,6 +377,25 @@ int zl3073x_poll_zero_u8(struct zl3073x_dev *zldev, unsigned int reg, u8 mask)
+>   					ZL_POLL_SLEEP_US, ZL_POLL_TIMEOUT_US);
+>   }
+>   
+> +int zl3073x_mb_op(struct zl3073x_dev *zldev, unsigned int op_reg, u8 op_val,
+> +		  unsigned int mask_reg, u16 mask_val)
+> +{
+> +	int rc;
+> +
+> +	/* Set mask for the operation */
+> +	rc = zl3073x_write_u16(zldev, mask_reg, mask_val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Trigger the operation */
+> +	rc = zl3073x_write_u8(zldev, op_reg, op_val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Wait for the operation to actually finish */
+> +	return zl3073x_poll_zero_u8(zldev, op_reg, op_val);
+> +}
+> +
+>   /**
+>    * zl3073x_devlink_info_get - Devlink device info callback
+>    * @devlink: devlink structure pointer
+> @@ -484,6 +504,229 @@ struct zl3073x_dev *zl3073x_devm_alloc(struct device *dev)
+>   }
+>   EXPORT_SYMBOL_NS_GPL(zl3073x_devm_alloc, "ZL3073X");
+>   
+> +/**
+> + * zl3073x_ref_state_fetch - get input reference state
+> + * @zldev: pointer to zl3073x_dev structure
+> + * @index: input reference index to fetch state for
+> + *
+> + * Function fetches information for the given input reference that are
+> + * invariant and stores them for later use.
+> + *
+> + * Return: 0 on success, <0 on error
+> + */
+> +static int
+> +zl3073x_ref_state_fetch(struct zl3073x_dev *zldev, u8 index)
+> +{
+> +	struct zl3073x_ref *input = &zldev->ref[index];
+> +	u8 ref_config;
+> +	int rc;
+> +
+> +	/* If the input is differential then the configuration for N-pin
+> +	 * reference is ignored and P-pin config is used for both.
+> +	 */
+> +	if (zl3073x_is_n_pin(index) &&
+> +	    zl3073x_ref_is_diff(zldev, index - 1)) {
+> +		input->enabled = zl3073x_ref_is_enabled(zldev, index - 1);
+> +		input->diff = true;
+> +
+> +		return 0;
+> +	}
+> +
+> +	guard(mutex)(&zldev->multiop_lock);
+> +
+> +	/* Read reference configuration */
+> +	rc = zl3073x_mb_op(zldev, ZL_REG_REF_MB_SEM, ZL_REF_MB_SEM_RD,
+> +			   ZL_REG_REF_MB_MASK, BIT(index));
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Read ref_config register */
+> +	rc = zl3073x_read_u8(zldev, ZL_REG_REF_CONFIG, &ref_config);
+> +	if (rc)
+> +		return rc;
+> +
+> +	input->enabled = FIELD_GET(ZL_REF_CONFIG_ENABLE, ref_config);
+> +	input->diff = FIELD_GET(ZL_REF_CONFIG_DIFF_EN, ref_config);
+> +
+> +	dev_dbg(zldev->dev, "REF%u is %s and configured as %s\n", index,
+> +		input->enabled ? "enabled" : "disabled",
+> +		input->diff ? "differential" : "single-ended");
+> +
+> +	return rc;
+> +}
+> +
+> +/**
+> + * zl3073x_out_state_fetch - get output state
+> + * @zldev: pointer to zl3073x_dev structure
+> + * @index: output index to fetch state for
+> + *
+> + * Function fetches information for the given output (not output pin)
+> + * that are invariant and stores them for later use.
+> + *
+> + * Return: 0 on success, <0 on error
+> + */
+> +static int
+> +zl3073x_out_state_fetch(struct zl3073x_dev *zldev, u8 index)
+> +{
+> +	struct zl3073x_out *out = &zldev->out[index];
+> +	u8 output_ctrl, output_mode;
+> +	int rc;
+> +
+> +	/* Read output configuration */
+> +	rc = zl3073x_read_u8(zldev, ZL_REG_OUTPUT_CTRL(index), &output_ctrl);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Store info about output enablement and synthesizer the output
+> +	 * is connected to.
+> +	 */
+> +	out->enabled = FIELD_GET(ZL_OUTPUT_CTRL_EN, output_ctrl);
+> +	out->synth = FIELD_GET(ZL_OUTPUT_CTRL_SYNTH_SEL, output_ctrl);
+> +
+> +	dev_dbg(zldev->dev, "OUT%u is %s and connected to SYNTH%u\n", index,
+> +		out->enabled ? "enabled" : "disabled", out->synth);
+> +
+> +	guard(mutex)(&zldev->multiop_lock);
+> +
+> +	/* Read output configuration */
+> +	rc = zl3073x_mb_op(zldev, ZL_REG_OUTPUT_MB_SEM, ZL_OUTPUT_MB_SEM_RD,
+> +			   ZL_REG_OUTPUT_MB_MASK, BIT(index));
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Read output_mode */
+> +	rc = zl3073x_read_u8(zldev, ZL_REG_OUTPUT_MODE, &output_mode);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Extract and store output signal format */
+> +	out->signal_format = FIELD_GET(ZL_OUTPUT_MODE_SIGNAL_FORMAT,
+> +				       output_mode);
+> +
+> +	dev_dbg(zldev->dev, "OUT%u has signal format 0x%02x\n", index,
+> +		out->signal_format);
+> +
+> +	return rc;
+> +}
+> +
+> +/**
+> + * zl3073x_synth_state_fetch - get synth state
+> + * @zldev: pointer to zl3073x_dev structure
+> + * @index: synth index to fetch state for
+> + *
+> + * Function fetches information for the given synthesizer that are
+> + * invariant and stores them for later use.
+> + *
+> + * Return: 0 on success, <0 on error
+> + */
+> +static int
+> +zl3073x_synth_state_fetch(struct zl3073x_dev *zldev, u8 index)
+> +{
+> +	struct zl3073x_synth *synth = &zldev->synth[index];
+> +	u16 base, m, n;
+> +	u8 synth_ctrl;
+> +	u32 mult;
+> +	int rc;
+> +
+> +	/* Read synth control register */
+> +	rc = zl3073x_read_u8(zldev, ZL_REG_SYNTH_CTRL(index), &synth_ctrl);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Store info about synth enablement and DPLL channel the synth is
+> +	 * driven by.
+> +	 */
+> +	synth->enabled = FIELD_GET(ZL_SYNTH_CTRL_EN, synth_ctrl);
+> +	synth->dpll = FIELD_GET(ZL_SYNTH_CTRL_DPLL_SEL, synth_ctrl);
+> +
+> +	dev_dbg(zldev->dev, "SYNTH%u is %s and driven by DPLL%u\n", index,
+> +		synth->enabled ? "enabled" : "disabled", synth->dpll);
+> +
+> +	guard(mutex)(&zldev->multiop_lock);
 
-Co-developed-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Sagi Shahar <sagis@google.com>
----
- .../selftests/kvm/include/x86/tdx/tdx.h       |  2 +
- tools/testing/selftests/kvm/lib/x86/tdx/tdx.c | 14 +++
- tools/testing/selftests/kvm/x86/tdx_vm_test.c | 85 ++++++++++++++++++-
- 3 files changed, 100 insertions(+), 1 deletion(-)
+Not a strong suggestion, but it would be good to follow netdev style
+(same for some previous functions):
 
-diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
-index fa0b24873a8f..2fd67c3e5128 100644
---- a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
-+++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
-@@ -25,5 +25,7 @@ uint64_t tdg_vp_vmcall_instruction_wrmsr(uint64_t index, uint64_t value);
- uint64_t tdg_vp_vmcall_instruction_hlt(uint64_t interrupt_blocked_flag);
- uint64_t tdg_vp_vmcall_ve_request_mmio_read(uint64_t address, uint64_t size,
- 					    uint64_t *data_out);
-+uint64_t tdg_vp_vmcall_ve_request_mmio_write(uint64_t address, uint64_t size,
-+					     uint64_t data_in);
- 
- #endif // SELFTEST_TDX_TDX_H
-diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
-index 8bf41e667fc1..d61940fe7df4 100644
---- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
-+++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
-@@ -123,3 +123,17 @@ uint64_t tdg_vp_vmcall_ve_request_mmio_read(uint64_t address, uint64_t size,
- 
- 	return ret;
- }
-+
-+uint64_t tdg_vp_vmcall_ve_request_mmio_write(uint64_t address, uint64_t size,
-+					     uint64_t data_in)
-+{
-+	struct tdx_hypercall_args args = {
-+		.r11 = TDG_VP_VMCALL_VE_REQUEST_MMIO,
-+		.r12 = size,
-+		.r13 = MMIO_WRITE,
-+		.r14 = address,
-+		.r15 = data_in,
-+	};
-+
-+	return __tdx_hypercall(&args, 0);
-+}
-diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-index 563f1025c8a3..6ad675a93eeb 100644
---- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-+++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-@@ -804,6 +804,87 @@ void verify_mmio_reads(void)
- 	printf("\t ... PASSED\n");
- }
- 
-+void guest_mmio_writes(void)
-+{
-+	uint64_t mmio_test_addr = TDX_MMIO_TEST_ADDR | tdx_s_bit;
-+	uint64_t ret;
-+
-+	ret = tdg_vp_vmcall_ve_request_mmio_write(mmio_test_addr, 1, 0x12);
-+	tdx_assert_error(ret);
-+
-+	ret = tdg_vp_vmcall_ve_request_mmio_write(mmio_test_addr, 2, 0x1234);
-+	tdx_assert_error(ret);
-+
-+	ret = tdg_vp_vmcall_ve_request_mmio_write(mmio_test_addr, 4, 0x12345678);
-+	tdx_assert_error(ret);
-+
-+	ret = tdg_vp_vmcall_ve_request_mmio_write(mmio_test_addr, 8, 0x1234567890ABCDEF);
-+	tdx_assert_error(ret);
-+
-+	/* Make sure host and guest are synced to the same point of execution */
-+	tdx_test_report_to_user_space(MMIO_SYNC_VALUE);
-+
-+	/* Write across page boundary. */
-+	ret = tdg_vp_vmcall_ve_request_mmio_write(PAGE_SIZE - 1, 8, 0);
-+	tdx_assert_error(ret);
-+
-+	tdx_test_success();
-+}
-+
-+/*
-+ * Verifies guest MMIO writes.
-+ */
-+void verify_mmio_writes(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	uint64_t byte_8;
-+	uint32_t byte_4;
-+	uint16_t byte_2;
-+	uint8_t byte_1;
-+
-+	vm = td_create();
-+	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-+	vcpu = td_vcpu_add(vm, 0, guest_mmio_writes);
-+	td_finalize(vm);
-+
-+	printf("Verifying TD MMIO writes:\n");
-+
-+	tdx_run(vcpu);
-+	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 1, MMIO_WRITE);
-+	byte_1 = *(uint8_t *)(vcpu->run->mmio.data);
-+
-+	tdx_run(vcpu);
-+	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 2, MMIO_WRITE);
-+	byte_2 = *(uint16_t *)(vcpu->run->mmio.data);
-+
-+	tdx_run(vcpu);
-+	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 4, MMIO_WRITE);
-+	byte_4 = *(uint32_t *)(vcpu->run->mmio.data);
-+
-+	tdx_run(vcpu);
-+	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 8, MMIO_WRITE);
-+	byte_8 = *(uint64_t *)(vcpu->run->mmio.data);
-+
-+	TEST_ASSERT_EQ(byte_1, 0x12);
-+	TEST_ASSERT_EQ(byte_2, 0x1234);
-+	TEST_ASSERT_EQ(byte_4, 0x12345678);
-+	TEST_ASSERT_EQ(byte_8, 0x1234567890ABCDEF);
-+
-+	tdx_run(vcpu);
-+	TEST_ASSERT_EQ(tdx_test_read_report_from_guest(vcpu), MMIO_SYNC_VALUE);
-+
-+	td_vcpu_run(vcpu);
-+	TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_SYSTEM_EVENT);
-+	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], TDG_VP_VMCALL_INVALID_OPERAND);
-+
-+	tdx_run(vcpu);
-+	tdx_test_assert_success(vcpu);
-+
-+	kvm_vm_free(vm);
-+	printf("\t ... PASSED\n");
-+}
-+
- int main(int argc, char **argv)
- {
- 	ksft_print_header();
-@@ -811,7 +892,7 @@ int main(int argc, char **argv)
- 	if (!is_tdx_enabled())
- 		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
- 
--	ksft_set_plan(11);
-+	ksft_set_plan(12);
- 	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
- 			 "verify_td_lifecycle\n");
- 	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
-@@ -834,6 +915,8 @@ int main(int argc, char **argv)
- 			 "verify_guest_hlt\n");
- 	ksft_test_result(!run_in_new_process(&verify_mmio_reads),
- 			 "verify_mmio_reads\n");
-+	ksft_test_result(!run_in_new_process(&verify_mmio_writes),
-+			 "verify_mmio_writes\n");
- 
- 	ksft_finished();
- 	return 0;
--- 
-2.50.0.rc2.692.g299adb8693-goog
+https://docs.kernel.org/process/maintainer-netdev.html#using-device-managed-and-cleanup-h-constructs
+
+"Use of guard() is discouraged within any function longer than 20 lines,
+scoped_guard() is considered more readable. Using normal lock/unlock is 
+still (weakly) preferred."
+
+> +
+> +	/* Read synth configuration */
+> +	rc = zl3073x_mb_op(zldev, ZL_REG_SYNTH_MB_SEM, ZL_SYNTH_MB_SEM_RD,
+> +			   ZL_REG_SYNTH_MB_MASK, BIT(index));
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* The output frequency is determined by the following formula:
+> +	 * base * multiplier * numerator / denominator
+> +	 *
+> +	 * Read registers with these values
+> +	 */
+> +	rc = zl3073x_read_u16(zldev, ZL_REG_SYNTH_FREQ_BASE, &base);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = zl3073x_read_u32(zldev, ZL_REG_SYNTH_FREQ_MULT, &mult);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = zl3073x_read_u16(zldev, ZL_REG_SYNTH_FREQ_M, &m);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = zl3073x_read_u16(zldev, ZL_REG_SYNTH_FREQ_N, &n);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Check denominator for zero to avoid div by 0 */
+> +	if (!n) {
+> +		dev_err(zldev->dev,
+> +			"Zero divisor for SYNTH%u retrieved from device\n",
+> +			index);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Compute and store synth frequency */
+> +	zldev->synth[index].freq = div_u64(mul_u32_u32(base * m, mult), n);
+> +
+> +	dev_dbg(zldev->dev, "SYNTH%u frequency: %u Hz\n", index,
+> +		zldev->synth[index].freq);
+> +
+> +	return rc;
+> +}
+> +
+[...]
 
 
