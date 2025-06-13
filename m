@@ -1,106 +1,109 @@
-Return-Path: <linux-kernel+bounces-685352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E35BAD8876
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:51:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DC3AD8811
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD151189812C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:51:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C371881D33
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE312C1599;
-	Fri, 13 Jun 2025 09:50:52 +0000 (UTC)
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3183291C27;
+	Fri, 13 Jun 2025 09:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="rOWYkXid"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EB41E0DE8;
-	Fri, 13 Jun 2025 09:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86E24BD1A;
+	Fri, 13 Jun 2025 09:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749808251; cv=none; b=c0uJCFwb4OrMfeswTTAmpeJ3JMqlQC+YhmOzRuatZXZWbbNhs30FBRwuChCPaN85X9FRzdgybUPgkZJlYFNNokSIAbx/kunu1Lu1i5kzCKcuH6eR+2uxSUHvA9icBMejxWHY/qIdX1mz+I9c5hAjtXf7sYVd52qeLqBQJO5ZMtw=
+	t=1749807377; cv=none; b=Kn+VBasPbvGRZZHG8AKllLmg/TNsdB9+DYr8JfjXo2FMciTGChc9OQzK5jqtHQD5Q1nHOl6o5iP08NspmlX6KSr2MYITbbRmYsLzlmj/OkuOIsUX2KKH4eMLRQsAggfxar2i1mp40ebVQ2+Cb0MLbOUfI+jRj3y7eYORqzMvFJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749808251; c=relaxed/simple;
-	bh=2SxLHN8+izHSO99LNfa9CAd7o+biTDAqyFK75kRDWk4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=I3gG26V5xOgV6Ilx3l2lltu+wWhu06sWW2sl8YAuuQxgm5ESYraoYfBKmnqV/gWzLtg+sKCQk+aExz/gCUQJCio/1uajzlCGIj+7GjS/ftiif9grpuauVwEGk/8chpiJvKQQxNQi4c7tQlAjIGK9wmRMCMtZOMmyd8HMfUNyIKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w002.hihonor.com (unknown [10.68.28.120])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bJZ0q6dqXzYl4KT;
-	Fri, 13 Jun 2025 17:31:55 +0800 (CST)
-Received: from a017.hihonor.com (10.68.27.165) by w002.hihonor.com
- (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
- 2025 17:33:55 +0800
-Received: from a010.hihonor.com (10.68.16.52) by a017.hihonor.com
- (10.68.27.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
- 2025 17:33:55 +0800
-Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
- a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
- Fri, 13 Jun 2025 17:33:55 +0800
-From: wangtao <tao.wangtao@honor.com>
-To: Christoph Hellwig <hch@infradead.org>
-CC: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, "kraxel@redhat.com"
-	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
-	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "amir73il@gmail.com"
-	<amir73il@gmail.com>, "benjamin.gaignard@collabora.com"
-	<benjamin.gaignard@collabora.com>, "Brian.Starkey@arm.com"
-	<Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>,
-	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "wangbintian(BintianWang)"
-	<bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, liulu 00013167
-	<liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
-Subject: RE: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Thread-Topic: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Thread-Index: AQHb1G1ol+FT389RFkuW+lwB3adoKrPw4BKAgAADywCAAAF8AIAE6kCg//+rigCABEW6AIAA1IFwgAFUd4CABPdqMA==
-Date: Fri, 13 Jun 2025 09:33:55 +0000
-Message-ID: <34c2dbc06d074ffbb8f920418636bafc@honor.com>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
- <aD72alIxu718uri4@infradead.org> <5d36abace6bf492aadd847f0fabc38be@honor.com>
- <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
- <aEZkjA1L-dP_Qt3U@infradead.org> <761986ec0f404856b6f21c3feca67012@honor.com>
- <aEg0aYQJ9h_tyum9@infradead.org>
-In-Reply-To: <aEg0aYQJ9h_tyum9@infradead.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1749807377; c=relaxed/simple;
+	bh=Ns10xPiktRlEhZz0m1QXNynNw6e3w7+yxtmCtvE1GlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8pp26xauQiohaKLBc7JkavzxgVAOpm+BwFz5Bpylk5ykAiMVC6G0CYWJRnunFqlG3SPIc7PluOSu7SF/lnHBaajnfp0+AfBabLf267dp0sTNZe79UFmtHzMx4HFwQonxJeMZVfqvdg2Mm27nsjXRaic22YUt195VSRVfe3XjOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=rOWYkXid; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=J710XCWaUNQIV1THRMGx0lwVtu60XlriSgjoReft8g0=; b=rOWYkXid7/mLVZpctBhg6/2+9Q
+	nyZjKxVF8WPtVRCY0JdLcaaamO2uvsDcyJ2PB68Hvk8Rv3X0aHzK6qeGlZJVMdGkEjpwkNJhLqE03
+	9MUJD49b8kQx6DhiO1hGXJquQcE4PGF7kvlTq5Cs99X5hF1VS8CuJAEu5fWt6vYBxyLu2KscDDQ/W
+	/r/Dc407EhaynybMH6PW8fHzPiDar5h6icZn0VPakLzT27sTFMoiD53JVZwOn2A/HPbQHU5AY9Wv/
+	kafHfEqQjm5B3EhwXwYBIZTi3DV3kkIwEhjdefzWRN4E5iODgs+K0bXC8ORafOzriNAXS3hORNpRr
+	Ti44VQrA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uQ0pN-00Ct2F-2g;
+	Fri, 13 Jun 2025 17:36:02 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Jun 2025 17:36:01 +0800
+Date: Fri, 13 Jun 2025 17:36:01 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: bbrezillon@kernel.org, schalla@marvell.com, davem@davemloft.net,
+	giovanni.cabiddu@intel.com, linux@treblig.org,
+	bharatb.linux@gmail.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4 v4] crypto: octeontx2: Fix hang and address alignment
+ issues
+Message-ID: <aEvxARwwLxwBO1Zj@gondor.apana.org.au>
+References: <20250522100627.175210-1-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522100627.175210-1-bbhushan2@marvell.com>
 
-DQo+IA0KPiBPbiBNb24sIEp1biAwOSwgMjAyNSBhdCAwOTozMjoyMEFNICswMDAwLCB3YW5ndGFv
-IHdyb3RlOg0KPiA+IEFyZSB5b3Ugc3VnZ2VzdGluZyBhZGRpbmcgYW4gSVRFUl9ETUFCVUYgdHlw
-ZSB0byBpb3ZfaXRlciwNCj4gDQo+IFllcy4NCg0KTWF5IEkgY2xhcmlmeTogRG8gYWxsIGRpc2sg
-b3BlcmF0aW9ucyByZXF1aXJlIGRhdGEgdG8gcGFzcyB0aHJvdWdoDQptZW1vcnkgKHJlYWRpbmcg
-aW50byBtZW1vcnkgb3Igd3JpdGluZyBmcm9tIG1lbW9yeSk/IEluIHRoZSBibG9jayBsYXllciwN
-CnRoZSBiaW8gc3RydWN0dXJlIHVzZXMgYmlvX2lvdl9pdGVyX2dldF9wYWdlcyB0byBjb252ZXJ0
-IGl0ZXJfdHlwZQ0Kb2JqZWN0cyBpbnRvIG1lbW9yeS1iYWNrZWQgYmlvX3ZlYyByZXByZXNlbnRh
-dGlvbnMuDQpIb3dldmVyLCBzb21lIGRtYWJ1ZnMgYXJlIG5vdCBtZW1vcnktYmFzZWQsIG1ha2lu
-ZyBwYWdlLXRvLWJpb192ZWMNCmNvbnZlcnNpb24gaW1wb3NzaWJsZS4gVGhpcyBzdWdnZXN0cyBh
-ZGRpbmcgYSBjYWxsYmFjayBmdW5jdGlvbiBpbg0KZG1hX2J1Zl9vcHMgdG8gaGFuZGxlIGRtYWJ1
-Zi0gdG8tYmlvX3ZlYyBjb252ZXJzaW9uLg0KDQpJbnRlcmVzdGluZ2x5LCBpZiBzdWNoIGEgY2Fs
-bGJhY2sgZXhpc3RzLCB0aGUgbmVlZCBmb3IgYSBkZWRpY2F0ZWQNCklURVJfRE1BQlVGIHR5cGUg
-bWlnaHQgZGlzYXBwZWFyLiBXb3VsZCB5b3UgbGlrZSB0byBkaXNjdXNzIHBvdGVudGlhbA0KaW1w
-bGVtZW50YXRpb24gdHJhZGVvZmZzIGhlcmU/DQoNClJlZ2FyZHMsDQpXYW5ndGFvLg0K
+On Thu, May 22, 2025 at 03:36:23PM +0530, Bharat Bhushan wrote:
+> First patch of the series fixes possible infinite loop.
+> 
+> Remaining three patches fixes address alignment issue observed
+> after "9382bc44b5f5 arm64: allow kmalloc() caches aligned to the
+>        smaller cache_line_size()"
+> 
+> First 3 patches applies to Linux version 6.5 onwards.
+> Patch-4 applies to Linux version 6.8 onwards
+> 
+> v3->v4:
+>  - Again fixed memory size calculation as per review comment
+> 
+> v2->v3:
+>  - Align DMA memory to ARCH_DMA_MINALIGN as that is mapped as
+>    bidirectional
+> 
+> v1->v2:
+>  - Fixed memory padding size calculation as per review comment
+> 
+> Bharat Bhushan (4):
+>   crypto: octeontx2: add timeout for load_fvc completion poll
+>   crypto: octeontx2: Fix address alignment issue on ucode loading
+>   crypto: octeontx2: Fix address alignment on CN10K A0/A1 and OcteonTX2
+>   crypto: octeontx2: Fix address alignment on CN10KB and CN10KA-B0
+> 
+>  .../marvell/octeontx2/otx2_cpt_reqmgr.h       | 125 +++++++++++++-----
+>  .../marvell/octeontx2/otx2_cptpf_ucode.c      |  51 ++++---
+>  2 files changed, 130 insertions(+), 46 deletions(-)
+> 
+> -- 
+> 2.34.1
+
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
