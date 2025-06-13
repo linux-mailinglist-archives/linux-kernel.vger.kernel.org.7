@@ -1,107 +1,119 @@
-Return-Path: <linux-kernel+bounces-684725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B07AD7F53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:02:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0B5AD7F5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D7617E318
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C257188FDD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 00:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7358528E;
-	Fri, 13 Jun 2025 00:02:00 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAD51D52B;
+	Fri, 13 Jun 2025 00:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R3ohBsyk"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74F12F431C;
-	Fri, 13 Jun 2025 00:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F9C79F2
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 00:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749772920; cv=none; b=UXShx2eeSLMYtrnlSJ/zDO2k32h48cZC/Q7FVH4hH7dOMwsS/vKoqkOW9NRz8BPzfgvM+WLlqPs6VKhd59Af71Y5EeO0TF6AxKE29D8udYIyWm9gXFTc6u1WAyJwDb7MrdkHMwAimTDaihOu7eCVezlPNltT6xFayPNJGPBSyfM=
+	t=1749773025; cv=none; b=dxp1JptKLkt6B34V8dRxGzdbx/K3NW429h8AeeHSyG5FMWvu3AMLTkLMSkeluQVLQpJzvq3Ucy+sj4iC7qIY/w4ZrCNUw2OyULSY6xc/1+hXSRdoPzG600gIpFAsYlRYXm0/Pskzl6TnWSBpAsvzP615BzladixVx6PRhyfxMo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749772920; c=relaxed/simple;
-	bh=o9CR3EhjQ+ZZzTzS7T0mZi/CsjrJv1pHR8dgVz8Pstk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=QLnsRnSSwsU2ZMOB1l8u6Xm6K6fDgBpgpTNsxM0/GgzZ4VAZkFWazUGs5K07zHk1m9PIRAvFxTquiG+XvMk53G6S9CITBl2XVmeRcpzt+YgO5pSM3U1+5R665epJbkP9JZRfZe6bfG26QzIUph+Tj1jF7lJyc/QHn4LSxxdqqDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 19A1F1A041C;
-	Fri, 13 Jun 2025 00:01:55 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id CE4C120028;
-	Fri, 13 Jun 2025 00:01:52 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uPrtJ-00000001wnd-1nuZ;
-	Thu, 12 Jun 2025 20:03:29 -0400
-Message-ID: <20250613000329.286479259@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 12 Jun 2025 19:58:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org,
- llvm@lists.linux.dev
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 5/5] tracing: Call trace_ftrace_test_filter() for the event
-References: <20250612235827.011358765@goodmis.org>
+	s=arc-20240116; t=1749773025; c=relaxed/simple;
+	bh=pzH8pMXUcalp6pDfuzsK2/D2VK/1SBdaD4K20Qy+vNk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YPgMo1pL8dlN1dSocvfVH7rQdDxvXOMkdWmkwDFy09BnNLiKd+o5+TKmledGAG9R7QcVIeX01yDq2MN09k5w6RTr3ysR3R0aTcLz8+qcGRSLpixrEBVlm73gKNxhC6W0MijRtnx1f0HkRQZJuqQv0nF6qlRG24PYFA9y9AUSvN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R3ohBsyk; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-551efd86048so1391824e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 17:03:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749773022; x=1750377822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pzH8pMXUcalp6pDfuzsK2/D2VK/1SBdaD4K20Qy+vNk=;
+        b=R3ohBsykmXpeEX//EHoia/Cbn50mv2FL2fOoz4wLFsdblAa9Eqvp5ziDxdL9DYvjMd
+         xQWB3GTSQnua7MxxuE/jjj00t3vSmJfXuCVCVIWWP3ogWm2tTC76XdrUURU2jJlNEHpf
+         qMPz4zb2BI93nMi3QJFvv/kQ47HXeyiyVyZ8htiztBbge62bLni/GqNwUqvrjjooa7HS
+         5LZDQXZbARhvYOUPL1nV+cVVL5GjV6jYPXnDfuzZVoLmfTDEWUiIdTWsBJMzx+cPejH3
+         o6X0ium5r7HAuVatROrOLRTgt+hs5tBguGP2mGSolteWzApQrVHBYFX504C4l3g8HfYv
+         tFuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749773022; x=1750377822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pzH8pMXUcalp6pDfuzsK2/D2VK/1SBdaD4K20Qy+vNk=;
+        b=VM7HCSNLGrtXQqlK5hh8gtCGg+WRLztBSjvtLe9gmh7oC60BPmk10fg30yiivy5iFd
+         PWYkFLWnTQqJZhsDfTL7PqXQky0X/XD5oibfzWwyqi0m632JcSmk571xiVoqtHWk6637
+         8NwVJHpECn3+TwRNdkUHpG7PHo14gvUe9Uwir5oU4MjpkPT0yGMBxMqSU+3TfKTIp3rk
+         6Ixm+K6pt7+FRDuyLyHmnMyrXgkVRCGjLyNw4SvOI5s/xTz5TfKkY7tvstJXnHEzf9eI
+         nv/wZm7rcqr2JfYZM8Z0djqWD3QNX+XmAOUQqUH9ylIb0dxNzwJA4XqD6RUAvbb5ZI6d
+         Mdxw==
+X-Gm-Message-State: AOJu0YyUVNlkbXrm3C3AL0rfRFG9xWkCUU9M/vF5fuRYXbBYwPDa7X9Q
+	x4kIA+X9J4boE3V+ejNB/zDDp/zpdxbXmpQNmnDeS8KV7guy0n5Ehtb/vY4yE85SIGVi/Eggxf5
+	iVUqC4JLnnFFcOdOosmiwWyu+AhI6/jGeNkL79oU=
+X-Gm-Gg: ASbGncuP7Hn/PgTSM/h0+GIz3Rs0JhQ4QseISoYYyIfxID7sy1Se5d097FMw7gdys07
+	0ZoZn74CJCXezgXLbF64nptUAJjVzZPIF1g9NGUVySYpDt23/6EETgFGvWp+Lyi+BwsD/0QtVUi
+	i4IQtPhV1J97WbVKWyuegC0iFnnpA4diXna1kjnE68rVgJtJNwmsm6ZXm9hQERiLmZT/v6XhORZ
+	jOCPX9A9bY=
+X-Google-Smtp-Source: AGHT+IHCryRchnM7kCKhNYJZSBNu7zRh8pUHzqHQ0apcweZpI5BCqRoJWSeLJsU3qoa5bR5qdbcwHv+BrtrUbRsXMC4=
+X-Received: by 2002:a05:6512:1381:b0:553:35f5:7aac with SMTP id
+ 2adb3069b0e04-553af9bbf01mr179570e87.48.1749773021612; Thu, 12 Jun 2025
+ 17:03:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Stat-Signature: diua5zcqp9iczdgnfp1grmz7rqzmt3wr
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: CE4C120028
-X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX185jXjmEA5Il45s1+YOC9oxdiG1nQiFu4I=
-X-HE-Tag: 1749772912-115042
-X-HE-Meta: U2FsdGVkX1/9VScq6F1KmsgKUwBx7tW3d18olEMu635z4LH5QTHhZRhaSj4Nq44JUK/H3mU6rrMHNMTEA+SEwgG9SUd1ws44w/ZX4VjbEV1ejEOp4H+qlyxGuRFRr202al68PP9VkgBefYO6indgUyF7Seciuq8ZyKL3bqe5Kd9QkM8L1RiVqgiYmzvuxD+zjYRpRgTA1PslzjSv6egrWAJWLyE17IdcwB9WozTg8Xow80zlT+fINToknGQg7G3L7QnD0z5EM7Yoj/Ah3s8PehiUoi9jxeuuLNBYwHIIHVyF6gz7p7OwXEpIxjGMTwanOQriU0Q5IXzcFBFjYfuvT6dxJ8IMym4Uh/smzB/tD6SsWdE4C2tE3935tKNsd8jLFc+/U7Vgfe5U5nc+XcEZbg==
+References: <20250519082042.742926976@linutronix.de> <20250519083025.842476378@linutronix.de>
+In-Reply-To: <20250519083025.842476378@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 12 Jun 2025 17:03:30 -0700
+X-Gm-Features: AX0GCFvdBUhjhbTIICZQJsoZZ6tQWm4NpoXbd06TKsPSSSZ0mvn1EVyJNHREOXY
+Message-ID: <CANDhNCoqYhFNfuyArrt0Sj7sWoLNsVJUn7YCUuxEL8nFrZPHog@mail.gmail.com>
+Subject: Re: [patch V2 04/26] timekeeping: Introduce timekeeper ID
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
+	Antoine Tenart <atenart@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Mon, May 19, 2025 at 1:33=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+>
+> As long as there is only a single timekeeper, there is no need to clarify
+> which timekeeper is used. But with the upcoming reusage of the timekeeper
+> infrastructure for auxiliary clock timekeepers, an ID is required to
+> differentiate.
+>
+> Introduce an enum for timekeeper IDs, introduce a field in struct tk_data
+> to store this timekeeper id and add also initialization. The id struct
+> field is added at the end of the second cachline, as there is a 4 byte ho=
+le
+> anyway.
+>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>
 
-The trace event filter bootup self test tests a bunch of filter logic
-against the ftrace_test_filter event, but does not actually call the
-event. Work is being done to cause a warning if an event is defined but
-not used. To quiet the warning call the trace event under an if statement
-where it is disabled so it doesn't get optimized out.
+Acked-by: John Stultz <jstultz@google.com>
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_filter.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index ea8b364b6818..79621f0fab05 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -2902,6 +2902,10 @@ static __init int ftrace_test_event_filter(void)
- 	if (i == DATA_CNT)
- 		printk(KERN_CONT "OK\n");
- 
-+	/* Need to call ftrace_test_filter to prevent a warning */
-+	if (!trace_ftrace_test_filter_enabled())
-+		trace_ftrace_test_filter(1, 2, 3, 4, 5, 6, 7, 8);
-+
- 	return 0;
- }
- 
--- 
-2.47.2
-
-
+thanks
+-john
 
