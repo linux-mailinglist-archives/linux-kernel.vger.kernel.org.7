@@ -1,214 +1,136 @@
-Return-Path: <linux-kernel+bounces-684931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4CAAD81FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8BCAD8203
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92CB3B785F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3681898458
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 03:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9BA232392;
-	Fri, 13 Jun 2025 03:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFmSxlnc"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7285724BD1F;
+	Fri, 13 Jun 2025 03:55:30 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29A31B0413
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 03:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739401F4615
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 03:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749786767; cv=none; b=JS0/X8uP3jDS7FS9QR+mx8a6xBtqgPA1YligY28q/CQhCQ26iPTQ1xVP8GnfqMmLkBDBiQj+20dBzbupUrFZsC2SSvlFCFduWIIts2su5qze4hOesBd5GerW2hySFZdkF0/d6S118MOi1/bOiT5MOMJ3M6jjPSY795yp6+if7bk=
+	t=1749786930; cv=none; b=ee+r1d6S6H/TgkDwbjW+rZv+ozwU1pqgvJjApIqRE2Sy9TZQm4TbhFbqomcVKV5KR0AvaylI2Wa8ZoqKsOQwUsOxxGBUGmptZ4K4jaZrn5Q0nZ2JCw9duw1dVUnjihukG17lVBguaoYVOvqiroJmtKG0i47xJjS8iJ5pDuKwVKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749786767; c=relaxed/simple;
-	bh=PCnqi5sVLD/Rz88yz5R4xSG2M0Y9Jq4pzJDU3PPIIMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ow38hr0aT103rZh1RZPpVG0ISB7n7H7zitdb5JK1nCkwsia0y0cQuANq2anrvW8z0zh/5nLZi7Rp4YKvM56BBJDnlzsbxdQJlccdPQYkgTZatstiMBsplQeIVagO3D6OC8c11SCVQec771fZZ264/HdFK8us3KsoHazRb999vvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFmSxlnc; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b2fc93728b2so1329379a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 20:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749786765; x=1750391565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/BJcwG5cjEd6RoVlGatwHPsYMBzQlGVzeAkVl5gfwcA=;
-        b=LFmSxlnc2DokWtbOVp0VAEq2ubn2zYuTXG2VJKlZUTn6pWtuuPudhWR43aXvu7JzEj
-         j0rJnjTPix7JDb/A9TiTlMGXdElg8X6GpRBvEJi/nCOzNNaRLzgLzG4noNVyOlFOVY1W
-         Ac7KUUJN5m0SshIyELpFO9coZgI9savELvj/R/g6ruaYvWFxm+NTMcLlD7uu7fZGjn4b
-         +OFouP6QIu6oU4NG4//L6tb3yyfpcz0Mb4y7av/pCqv1H3gCPz7PIivIsqVBtSyeKZ+c
-         LgZj0tnBTLdkRdbPRzZ0nBEWOvIrjfuzvoBr4Zf/11joVAze+8M/rfae7SmY3JwySHLm
-         4xpg==
+	s=arc-20240116; t=1749786930; c=relaxed/simple;
+	bh=qY03oD9pQAa3IISvj8XLNNgFgADXWwWNPfESJaGE2fI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AH1aDjEMB/JQp17L3ON/eV/6+qNjiqK57GT/DNk0e6CJ3gXOiPZsNhTBSHjNLVYXqqdTrsval+czpzkbhUPg/C1mgv6zWx5uH8ibds/jmEDvNR0ZYZCwUcANeVK2uPC5bSN0JmXWXcDimdPeVEVICblXt8inOsNC8AlXK1u5MpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddd97c04f4so22966645ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 20:55:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749786765; x=1750391565;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/BJcwG5cjEd6RoVlGatwHPsYMBzQlGVzeAkVl5gfwcA=;
-        b=NkqKvkcJnsygBr7m4GTqFvlOQhepJUnYcHrsTLzBYaMvXYSxECD1w5Qn+S70z2UTdI
-         +ZITy2o4c1TWULO8urCKTRQBaak9Ar//Jo+fvlmQozdIdNI1DlzVfxq+gPei9AR4b5sY
-         dZEGu5s3Hp6Gv5zj0a+w1DLMMBClCj1a05cwcdYzIT6Mucut0Br09FirRRyC9aHMv3UM
-         UIUNBTAbSPMPu/PNL+xyaBbhJVkODx0+sWghDEEzUkF1PsUHJCQJS5Jfd0e2v2k/VZmo
-         lv6pvrynPA62nAOX35VFVaIiEOk+ovjAMycuF0B3GKzjD7uB+ApGhP4GBejxPcn82xjY
-         e0Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsnvHFbP1r9ufv/iupgUNor93gFKgiCtX9zZoW2hb22Uy3MYythcydD9WBlREcOnhNhgFr601At3KF71w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhHv3NsTOfyrJFnsfZ3/WlL1d29q5xjwk7W7xDQKYqUABYJdz9
-	iE+PRJZGk92lCs5Mf+8x31gABgYVGEbiJrpXVDnCKlKmNY/J21QVK2Sv
-X-Gm-Gg: ASbGncsF0DqWVENUqAJMIdosN/eMEe4+nQAKpOxf1SzxTv6xp6xJOUSxxze8vtIEo2q
-	CIo1g4N8dILQH+782tUwH8mw+vmTloZk4rANHNDAG0akFFIxJjlVy4Q47DLYiPbo81UHXtLpNR4
-	i1DyEETvp6+9OzdihDYrVtx/2RK/COMUjE47eklG1cI6HCiqCQKvChT7lkmWiuYckyBuQ84TKy9
-	XvgK1bmKAHMsaXjz3Xf5GGvwlo18dUZE/OX2puz6rjAMRdjmZiQsQ6fKftfXLcbkXzsHA9tEZ55
-	h5mi/97iyv6BOSdggdPcYITLldjuwBZATTTYvHswseW/skgg281ZcHDaO2H5LaexYZ+ALdfiCdv
-	9Kfowp0FsY0ad9KU=
-X-Google-Smtp-Source: AGHT+IEMlMcFeu+56I8EdU4CSHOQVBz5TmparClkfG4A6JtMLI6BFWTm09zEB1uwzM3j/ltzKMrJ9w==
-X-Received: by 2002:a17:903:3204:b0:22e:6cc6:cf77 with SMTP id d9443c01a7336-2365de40addmr22682765ad.53.1749786765169;
-        Thu, 12 Jun 2025 20:52:45 -0700 (PDT)
-Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:873:d810:9d97:1c69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365dea7d82sm4982105ad.146.2025.06.12.20.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 20:52:44 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: jstultz@google.com
-Cc: tglx@linutronix.de,
-	sboyd@kernel.org,
-	yury.norov@gmail.com,
-	linux-kernel@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [PATCH v5] clocksource: Replace loop within clocks_calc_mult_shift() with __fls() for calculation of "sftacc"
-Date: Fri, 13 Jun 2025 11:52:39 +0800
-Message-ID: <20250613035239.3571301-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1749786927; x=1750391727;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yb6avLsT0g3rzbxvD4mRQdkm7OEs0CmFViXGqnZt+8Y=;
+        b=dHqSW5vW0NPzRPQ5IW25WWHFThQQoo/Bpk+wxJGTI0yWAxpvJmy/AjVwzQ9jJkEphZ
+         yWxGVtrj4TXyAMN1Q+gs+BduSWvQaNXKm/uoq5rw2EkOTqVX1+sqU8q9Dppi751de5mE
+         UpIkYUuNJcsAhKA3Ag/0x2ANC/2jPQVP5JnNwn4K5TdUFFlJRXvgk2zHFyUc2wtv3Tvz
+         KTV+5nyyw/E+MinL4JpN/P4ciWEIm6VtDA1TPk5wI2B0Vue57SnjmgxY1O57Tz8XM6gB
+         MN+JvspdmDcHhEak5NZR1jxL3jpx/Tzha5gAx1q4HKqKP2DKuKHR2dCKJdKPz41yqTVQ
+         OAyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrjKaNNOiOvefZkpGFuF1uDplHnl6Hi/wZtcW/gU43gaDLhRgPq+Z8ZqPvBn7nX/dl4aII1XbIiopo6N4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxpggieQdNT20SsD1wGXf1diZwemPIYM3YqP1gXELeBg/gTMlI
+	oWYnkCBPPUXwjIBKUg1y0s5+4oHnvz6RK+klhY12UPyHbfwcp2belbBP7IDduM4paHMgHzTQ/7T
+	Lx3cnktXezI6S9pH0WkICgGnmCNK47IwRau0Y2WMtOSdrQaKz4Ro53HPI8sw=
+X-Google-Smtp-Source: AGHT+IHNPlWbZSAWP23VXzSrk/tytzpAvA08+936W284FJ25YUje6mGEdssB07Y9vzuRXRwdiGS0y0MW8EffxLxNZgO2wBqfceBX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:178d:b0:3dc:87c7:a5b5 with SMTP id
+ e9e14a558f8ab-3de00ad78d0mr16418475ab.3.1749786927736; Thu, 12 Jun 2025
+ 20:55:27 -0700 (PDT)
+Date: Thu, 12 Jun 2025 20:55:27 -0700
+In-Reply-To: <000000000000dbcd0f061f911231@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <684ba12f.a00a0220.279073.0009.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] WARNING in cfg80211_scan_done
+From: syzbot <syzbot+189dcafc06865d38178d@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Utilize "__fls()" in replacement of while loop counting
-for the decremenet of "sftacc". They're equivalent in computation result
-but the former is more effective.
+syzbot has found a reproducer for the following issue on:
 
-"__fls()" will return the bit number of the last set bit of
-"tmp", which is 0-based index. Plus 1 to convert it into bit width as
-desired.
+HEAD commit:    19272b37aa4f Linux 6.16-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e239d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8409c4d4e51ac27
+dashboard link: https://syzkaller.appspot.com/bug?extid=189dcafc06865d38178d
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e239d4580000
 
-Note that only the lowest 32 bits of "tmp" is taken into consideration
-of the operation, since it was already shifted right by 32 bits, the
-topmost 32 bits should remain 0, only the lowest 32 bits are possible to
-be non-zero.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/92d22b0c6493/disk-19272b37.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3fb0142bb63a/vmlinux-19272b37.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3d5f3836ae42/Image-19272b37.gz.xz
 
-This change is tested against a test script [1].
-Run the test 10 times for each version of implementation and take the
-average. The result shown that with this change, the operation overhead
-of "clocks_calc_mult_shift()" can be reduced around 99.7% .
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+189dcafc06865d38178d@syzkaller.appspotmail.com
 
------------------------------
-| old version | new version |
------------------------------
-|  11500.6 ns |       44 ns |
------------------------------
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 2225 at net/wireless/scan.c:1182 cfg80211_scan_done+0x2c8/0x4b0 net/wireless/scan.c:1181
+Modules linked in:
+CPU: 1 UID: 0 PID: 2225 Comm: kworker/u8:12 Not tainted 6.16.0-rc1-syzkaller-g19272b37aa4f #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: events_unbound cfg80211_wiphy_work
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : cfg80211_scan_done+0x2c8/0x4b0 net/wireless/scan.c:1181
+lr : cfg80211_scan_done+0x2c8/0x4b0 net/wireless/scan.c:1181
+sp : ffff8000a14d77c0
+x29: ffff8000a14d7820 x28: ffff0000c7570700 x27: 1fffe00019a1e20c
+x26: 1ffff0001429aef8 x25: dfff800000000000 x24: ffff0000c75701b8
+x23: ffff0000cd0f1060 x22: ffff0000c75729f0 x21: ffff0000cd0f1070
+x20: ffff8000a14d77e0 x19: ffff0000cd0f1000 x18: 1fffe00033807876
+x17: ffff80008f55e000 x16: ffff80008ae5617c x15: 0000000000000002
+x14: 1ffff0001429aefc x13: 0000000000000000 x12: 0000000000000000
+x11: ffff70001429aefe x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000cc293d00 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : ffff8000a14d77f0 x4 : ffff0000cd0f1080 x3 : ffff80008a530eec
+x2 : 0000000000000010 x1 : ffff80008b492da0 x0 : 0000000000000001
+Call trace:
+ cfg80211_scan_done+0x2c8/0x4b0 net/wireless/scan.c:1181 (P)
+ __ieee80211_scan_completed+0x4ec/0xae0 net/mac80211/scan.c:501
+ ieee80211_scan_work+0x140/0x18c4 net/mac80211/scan.c:1177
+ cfg80211_wiphy_work+0x2a8/0x48c net/wireless/core.c:435
+ process_one_work+0x7e8/0x155c kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3321 [inline]
+ worker_thread+0x958/0xed8 kernel/workqueue.c:3402
+ kthread+0x5fc/0x75c kernel/kthread.c:464
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
+irq event stamp: 1301622
+hardirqs last  enabled at (1301621): [<ffff8000830764a8>] class_irqsave_destructor include/linux/irqflags.h:266 [inline]
+hardirqs last  enabled at (1301621): [<ffff8000830764a8>] __free_object+0x528/0x71c lib/debugobjects.c:524
+hardirqs last disabled at (1301622): [<ffff80008ae5160c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (1301568): [<ffff80008644576c>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (1301568): [<ffff80008644576c>] nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
+softirqs last  enabled at (1301568): [<ffff80008644576c>] nsim_dev_trap_report_work+0x67c/0x9fc drivers/net/netdevsim/dev.c:851
+softirqs last disabled at (1301566): [<ffff8000864456e4>] spin_lock_bh include/linux/spinlock.h:356 [inline]
+softirqs last disabled at (1301566): [<ffff8000864456e4>] nsim_dev_trap_report drivers/net/netdevsim/dev.c:816 [inline]
+softirqs last disabled at (1301566): [<ffff8000864456e4>] nsim_dev_trap_report_work+0x5f4/0x9fc drivers/net/netdevsim/dev.c:851
+---[ end trace 0000000000000000 ]---
 
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+
 ---
-Changelog:
-
-v1 -> v2:
-	- Refine commit message to explain more about "why"
-	- Check the frequency of "clocks_calc_mult_shift()" get called,
-	  it's not in hotpath on my machine, refine the commit message
-to avoid overselling it
-	- Add comments for the code to explain the implementation in
-	  more detail
-	- Handle case for "tmp == 0" to avoid undefined behavior
-
-v2 -> v3:
-	- Use "find_last_bit()" instead of "__builtin_clz()"
-	- Convert the type of "tmp" to "const unsigned long *" when
-	  sending into the function
-	- Highlight in the comment that only the lowest 32 bits part
-	  of "tmp" is taken into consideration
-
-v3 -> v4:
-	- Use "__fls()" since "tmp" is of type u64, not cpumask
-	- Refine commit messages to match the current implementation
-
-v4 -> v5:
-	- Update commit header to mention the use of __fls()
-
-[1]:
-static int __init test_init(void)
-{
-    u32 mult, shift;
-    u32 from, to, maxsec;
-    ktime_t start_time, end_time, total_time;
-    pr_info("Starting clocks_calc_mult_shift simple test\n");
-
-    start_time = ktime_get();
-    // Test with parameters from 1 to 1000
-    for (from = 1; from <= 1000; from += 100) {
-        for (to = 1; to <= 1000; to += 100) {
-            for (maxsec = 1; maxsec <= 10; maxsec++) {
-
-                clocks_calc_mult_shift(&mult, &shift, from, to, maxsec);
-            }
-        }
-    }
-
-    end_time = ktime_get();
-    total_time = ktime_to_ns(ktime_sub(end_time, start_time));
-
-    pr_info("Test completed\n");
-    pr_info("Total execution time: %lld ns \n", total_time);
-    return 0;
-}
-
-The test is running in the form of kernel module.
-The test machine is running ubuntu 24.04 on x86_64 machine with kernel
-version of v6.14.0, CPU type is AMD Ryzen 7 5700X3D 8-Core Processor.
-
-Best regards,
-I Hsin Cheng.
----
- kernel/time/clocksource.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 2a7802ec480c..1e3dc68c696d 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -66,10 +66,19 @@ clocks_calc_mult_shift(u32 *mult, u32 *shift, u32 from, u32 to, u32 maxsec)
- 	 * range:
- 	 */
- 	tmp = ((u64)maxsec * from) >> 32;
--	while (tmp) {
--		tmp >>=1;
--		sftacc--;
--	}
-+
-+	/*
-+	 * Decrement "sftacc" by the number of bits needed to represent "tmp".
-+	 * Using "__fls(tmp) + 1" to get the bit width:
-+	 * - __fls(tmp) returns the bit number of the last set bit
-+	 * - Plus 1 to convert 0-based index into bit width as desired
-+	 *
-+	 * Note: Only the lowest 32 bits of "tmp" is taken into consideration,
-+	 *		 since it was already shifted right by 32 bits, the topmost 32
-+	 *		 bits are guaranteed to be 0.
-+	 */
-+	if (tmp)
-+		sftacc -= __fls(tmp) + 1;
- 
- 	/*
- 	 * Find the conversion shift/mult pair which has the best
--- 
-2.43.0
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
