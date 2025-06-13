@@ -1,130 +1,85 @@
-Return-Path: <linux-kernel+bounces-685977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC82AD9152
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49ACBAD9156
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B467F1BC3E20
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE781BC4257
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 15:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9167B1E5729;
-	Fri, 13 Jun 2025 15:31:27 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212EF1E5729;
+	Fri, 13 Jun 2025 15:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rT8Pr90a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3F12E11C6;
-	Fri, 13 Jun 2025 15:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE072E11C6;
+	Fri, 13 Jun 2025 15:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749828687; cv=none; b=KZSRSFyzI8NETzN3tV/vKpJq3mm0wK4v91yD0ghAnqU15oVm6XafMR0bbm6MOyXw0aYp0v+Mvb1egRZiNnqTq8avc2LaFQrKP1uAaE9aDVujHgnkhfii0UONtbB0GsG+gYTxET3A17NpHSgZBXH6RuMSuhADUpxRaUrCw/Oun4c=
+	t=1749828786; cv=none; b=C8umc/6FqM38BVY0qlVRbUhUgM3uihCoMU4b7fnRgLKA+wlyIjyUaNKt+1i+8jnmOCx/UP5xh7thblNyZczwY3wXqxoSfBFAJfqIPy4TTmrvD2NywdFYBkfa5DcrPSB1m6nzTN0lX6KbPiKFObgeTuo5rBUyuIuMo6F2Zfgcj7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749828687; c=relaxed/simple;
-	bh=0V4cVz67m6bKVOXrmjwkE61NWMpQGCWLJTNBsxSMtl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rb1/gjjQSbNxQ/I7QNUC/balUcdBLvOzuN1Pn8surk5WBmMYIlyS3YU5/5M1pKo3VG8Gm+pP++1Z/M/4dwU24wzV8LZX8cXcJG9MJiFccieEgYa+5j/q/4+Fny8sn3E08V3gmWIz3pahhVotQQ2cl4P23kSYLBSfk7s2a9aA4Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 8BC38BCFF0;
-	Fri, 13 Jun 2025 15:31:22 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 627751A;
-	Fri, 13 Jun 2025 15:31:20 +0000 (UTC)
-Date: Fri, 13 Jun 2025 11:31:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Carlos Maiolino <cem@kernel.org>, Christoph
- Hellwig <hch@lst.de>
-Subject: Re: [PATCH 00/14] xfs: Remove unused trace events
-Message-ID: <20250613113119.24943f6d@batman.local.home>
-In-Reply-To: <20250613150855.GQ6156@frogsfrogsfrogs>
-References: <20250612212405.877692069@goodmis.org>
-	<20250613150855.GQ6156@frogsfrogsfrogs>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749828786; c=relaxed/simple;
+	bh=TxSx9uI/el5NQN7lNloQxdE5TP1Wr5TQHhVJmFCBOG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=bfQ5ghqhMPQI6EfK19nn5zbVLCG23duGWDDIp0Jouu195wcb9i+xvPVNIiZqH2C7mJ2CHe174B2dR2jwUI3vzB57+wcQCWuwjQvo9rcX5wTsoPPLRUSlbOUClqHLpfm124obs9Cu6ukE7Bw3KOYtmMXDsGz1v28zRJNfn7qWH7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rT8Pr90a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D731AC4CEE3;
+	Fri, 13 Jun 2025 15:33:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749828786;
+	bh=TxSx9uI/el5NQN7lNloQxdE5TP1Wr5TQHhVJmFCBOG8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=rT8Pr90a3Y+G7AJRhxHZ+op0+llAi2hzmxKOc4Pxx/9kkgcGFb94XiTUXYxqlM4vj
+	 f6F/gacH/EzBxBGIxPnDDY8khbnhXoEN8uVRvEG3yOrdX8qndBus4qAO1VHF6h9QO3
+	 rc4AB/jJUlLA+oXWsDmiMzuJZe0kBXmUNizbrMVoAESY7SkuR3YQyAW8Isyb8a4mHF
+	 TtSyXpgiC+U0QFlNDcW3jOZuve69bcKXZSzbWLbkI3NeJ0EjqwVmX6uOdpldMX0RsA
+	 kNzvC9v97WUqSKKRhKE7Wa53RwBS6OLMRxkmoJPQQRZkDlz8F77Sxuyx8bdLyVFcC1
+	 IsMk34Ki5+ATw==
+Date: Fri, 13 Jun 2025 10:33:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Graham Whyte <grwhyte@linux.microsoft.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
+	shyamsaini@linux.microsoft.com, code@tyhicks.com, Okaya@kernel.org,
+	bhelgaas@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
+Message-ID: <20250613153304.GA959741@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 627751A
-X-Stat-Signature: iqh69rybaagf6c4x8yf7aeabzf93kcgc
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18lGmiFOzahpOVgXIaZy/KKDFrEpTuTzQc=
-X-HE-Tag: 1749828680-25266
-X-HE-Meta: U2FsdGVkX1+tf6ETOK1PqRkVQ1pHs1OKlNOvo2HOGrdo7daD1E1/mHgku5l7FD6zFf7oRJzKOFAHudSzUzyQ4BzcjJSMn7Ag9ElcYJ2hp8bHgdY8iIZOUXlRfeuBDjPtnNuyPoydRtNwrxrEligHNBfVoqwTDlu+80BBlKSBRO7FBncnv1KgqxzBnREaLBzUS5hTNI/BG3wo+iR45gz/PyCf4n2wrMBahRf/kjI5OTtxxueVsqMKy9E9YU93/R7l+BU3Yo8m+74gWbCpcNJwANRIwJaD8KcHdCS3Lq5LgMPxunuAGRUpHbBPWIswtOUfpoA6EmrWuA02nYSM34ODcK9AOmA3V+lT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57ad1095-89ba-4044-91ce-1ab37bcc79dd@linux.microsoft.com>
 
-On Fri, 13 Jun 2025 08:08:55 -0700
-"Darrick J. Wong" <djwong@kernel.org> wrote:
-
-> On Thu, Jun 12, 2025 at 05:24:05PM -0400, Steven Rostedt wrote:
+On Thu, Jun 12, 2025 at 09:41:45AM -0700, Graham Whyte wrote:
+> On 6/11/2025 11:31 PM, Christoph Hellwig wrote:
+> > On Wed, Jun 11, 2025 at 01:08:21PM -0700, Graham Whyte wrote:
+> >> We can ask our HW engineers to implement function readiness but we need
+> >> to be able to support exiting products, hence why posting it as a quirk.
 > > 
-> > Trace events take up to 5K in memory for text and meta data. I have code that  
+> > Your report sounds like it works perfectly fine, it's just that you
+> > want to reduce the delay.  For that you'll need to stick to the standard
+> > methods instead of adding quirks, which are for buggy hardware that does
+> > not otherwise work.
 > 
-> Under what circumstances do they eat up that much memory?  And is that
-> per-class?  Or per-tracepoint?
+> Bjorn, what would you recommend as next steps here?
 
-I just did an analysis of this:
+This is a tough call and I don't pretend to have an obvious answer.  I
+understand the desire to improve performance.  On the other hand, PCI
+has been successful over the long term because devices adhere to
+standardized ways of doing things, which makes generic software
+possible.  Quirks degrade that story, of course, especially when there
+is an existing standardized solution that isn't being used.  I'm not
+at all happy about vendors that decide against the standard solution
+and then ask OS folks to do extra work to compensate.
 
-  https://lore.kernel.org/lkml/20250613104240.509ff13c@batman.local.home/T/#md81abade0df19ba9062fd51ced4458161f885ac3
-
-A TRACE_EVENT() is about 5K, and each DEFINE_EVENT() is about 1K.
-
-> 
-> > will trigger a warning when it detects unused tracepoints. The XFS file
-> > system contains many events that are not called. Most of them used to be called
-> > but due to code refactoring the calls were removed but the trace events stayed
-> > behind.
-> > 
-> > Some events were added but never used. If they were recent, I just reported
-> > them, but if they were older, this series simply removes them.  
-> 
-> TBH it'd be really nice if there was /something/ in the build path that
-> would complain about disused tracepoints.  I often put in tracepoints
-> while developing a feature, then the code gets massively rewritten
-> during review, and none of us remember to rip out the orphaned traces...
-> 
-
-That's exactly what I'm doing. In the thread I did the analysis, it has
-code that triggers a warning for unused events. I'm currently cleaning
-them up (and asking others to do it too), so that I can add that code
-without triggering all the current unused tracepoints.
-
-Feel free to take those patches and it will warn at build time. Note,
-it currently only works for built in code, so you have to build your
-module as a built in and not a module.
-
-> > One is called only when CONFIG_COMPACT is defined, so an #ifdef was placed
-> > around it.
-> > 
-> > A couple are only called in #if 0 code (left as a reminder to fix it), so
-> > those events are wrapped by a #if 0 as well (with a comment).
-> > 
-> > Finally, one event is supposed to be a trace event class, but was created with
-> > the TRACE_EVENT() macro and not the DECLARE_EVENT_CLASS() macro. This works
-> > because a TRACE_EVENT() is simply a DECLARE_EVENT_CLASS() and DEFINE_EVENT()
-> > where the class and event have the same name. But as this was a mistake, the
-> > event created should not exist.
-> > 
-> > Each patch is a stand alone patch. If you ack them, I can take them in my
-> > tree, or if you want, you can take them. I may be adding the warning code to
-> > linux-next near the end of the cycle, so it would be good to have this cleaned
-> > up before hand. As this is removing dead code, it may be even OK to send them
-> > to Linus as a fix.  
-> 
-> ...oh, you /do/ have a program and it's coming down the pipeline.
-> Excellent <tents fingers>. :)
-
-Ah you did notice ;-)
-
--- Steve
+Bjorn
 
