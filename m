@@ -1,314 +1,178 @@
-Return-Path: <linux-kernel+bounces-686161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C20CAD93CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DEC5AD93D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223581BC0383
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC551BC29CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 17:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F2422578A;
-	Fri, 13 Jun 2025 17:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A02224B07;
+	Fri, 13 Jun 2025 17:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tbD0YO+U"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JKSfXSSb"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93412132111;
-	Fri, 13 Jun 2025 17:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749836133; cv=fail; b=W7htNGKFyNk0FdNsvKgDqWYPNE0BiVODaxc0ni/JnFmFSHg/CrHF/pxa2CoQ0GmlsSuqsS6UErQUQ6fbfqMnB9JpolWsgLz5vO4I9h4y3e2dJ/QY5kCPUmRFfiwb+F3TQL1VxkIkICSUM7AR05Ixf8TiXrGlNOWmRJ0951X/8SU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749836133; c=relaxed/simple;
-	bh=LpZaHfGO4rwQwA62pqUFyh97Mcq1zLMnlN8bMNZfaBQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VlkdaRMQeUjncBkcfDXkU/vYevrfopnedYmFhpMvBrc/n3PLkp0AvPQzTepRLjFarW2hXSKGMW7dzSAjtiJPY/tUVWHO/WtCdr2mcm44c+WjFmNOL8tuqXQL7iPHuVCS0iUpUnbXWqrID7ar7RZ9yC25GSgDvE5fKaM0m67aVKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tbD0YO+U; arc=fail smtp.client-ip=40.107.93.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mIxAGLpPgt5OZl5YvRkjeCRpBVs1TMlzJH1h5SIc3i3ggclinNXJl+ByrK0DSW3v+EX9IFnWES/kMZLL2ahegdMVyg+N9sWTAFhGwSBiSRJ8a7AffYE3Y+96ZDnBM2bO/qc7MxNe0AruLJWb6rkvMSOB9BTEDmzPOQ6HG8tZfhXKoxQYwhi8dn1UhB/khYDAEDNAQdkWz/y7QxEBtYZVs7vFtEP5wWJrmQzPNnBOy6+SmilrO8zMDwMCacCzmKJ74aakkIlT8GRBoRDtMIz8XHWtOGWh49nvW5llSNKy9+pdDwDlUcMmGZPNLZWqwmzueHGWnASmtUzQ9+YJrBo28Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6cINPyb2NTHR88aD711CjKx1Vz1pFkDrT453wsJ6uI8=;
- b=ICy8PRGOjIPDpQ+LxPuUUuL+4PgLyUvdLRYqW8SW1e6rSwRzhBl9EFdrsJqQOmq7odZOggeCb9HVu7NRULH1pC3P+2lGXClNnvePoodrvIi7VMDMGAH67y8lBUMBRb4GvaqPD57eyE7yfYEvoDzicUfx+7w+bx6dUyMrYsEGykXGjLtsaHdT6QkmzVxoCii3mP3ParAfRqUZndjKPuKy2HlhWlZKKcJHWiRtreHs1X/z9P+Zgugnn9U015jlXtmo3W+F+RFroP0syz6mfmcsXoubIDcBeWJjh+mKUxzJADFr2bXRMRX3QT7RQe6hgpYlT9oe08ok8BhMMVK9lHr2MQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6cINPyb2NTHR88aD711CjKx1Vz1pFkDrT453wsJ6uI8=;
- b=tbD0YO+U+WAbCBxqNpmWbbCl9XZvYtC7HSCosOLZ8Bla5F473pfhYRRBj9vUQfHTfeuR8V6UZa5rlWw4b/VyBCQyR+ujPsRX4WupNJwptNZ4GqqM1gLpAdFpV0dCtBmOTxYefXuwqfHg88o6+vIm5tX9dtvK6b8PqQ84a4XtPih+muCcOI0I+Z76LMBxgCaagGUFCrptrfMRsCQH7ao9s6XgrUT6y2BY6MYg8V9MnPo4vw6jdlcLnm32JlSjXkU+CpoNv0uY4Ix5kq74TooPNqma/mkNsF2Aq+S30Z4N0GNtcrPdsjZ0YVRVxpnrM/+vLqDOJbC+qSoIEBzYscmaZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DM4PR12MB6423.namprd12.prod.outlook.com (2603:10b6:8:bd::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.19; Fri, 13 Jun 2025 17:35:27 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.8792.034; Fri, 13 Jun 2025
- 17:35:26 +0000
-Message-ID: <a8200977-689d-4041-936b-3a92eac1bbe9@nvidia.com>
-Date: Fri, 13 Jun 2025 13:35:23 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/10] Add a deadline server for sched_ext tasks
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>,
- bpf@vger.kernel.org
-References: <20250613051734.4023260-1-joelagnelf@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <20250613051734.4023260-1-joelagnelf@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR04CA0002.namprd04.prod.outlook.com
- (2603:10b6:208:d4::15) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E913D2135DE;
+	Fri, 13 Jun 2025 17:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749836259; cv=none; b=mxC/SpoKYjpGIG3ssbtx311Yf0Djm88s3jTL4dHxnvcDarw00NtGm4FvGF+O3vU6plfYU+3SObyBuWEGRUXfDnoFKOQ62iizKAASIXlPlbnB23MibsQxpWjTv/jcHohzddOkYixTRF/u2Tlv493wVDopOLbH2+CIqrJRSQTFR2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749836259; c=relaxed/simple;
+	bh=RCHzA/w1RDDF7+L88gYrHyusz6EWsbz4ORoB6/zmq00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NWjADukGCqcn+Kvs3Ogybr9nXAn23SRHvTS4d8T8kJkQBRUxGdFRe8wpynZ0GYw4aPTPIItfJ4SX3FMXJPgnvo0I/CT/KUx7qJVl7l9ySfoVzuvwLNqQ7ZfzmsYksk+iOzG8KxIxEN6rNIP6Rw9LAQspwFzLSeeIbCRfdJlE88U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JKSfXSSb; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55DHaqHM3883025
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 13 Jun 2025 10:36:54 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55DHaqHM3883025
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025052101; t=1749836220;
+	bh=kPSMyvkHiVSMixJXEZQhsjiAeIt3rBCyb1wBlVTjgBw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JKSfXSSb47/SY2ZIbaNLIFq7kcFFnamgnNP9sthLAomRa1SP4bq8+T3ZAaTU/taT5
+	 qsETGYLFo3gpwg6f/xm9tdJzc81qap42U/jho+nQczfV0Z95LmBdRNrN+PgkOZwTnx
+	 gCTfaFCv1yLNGJRDlx776ZXDEH5hed6G4T8RjNzHNE5eZZLlhmtdTqKFw/dSgRgsBb
+	 zc1eNI2Y10yZth86fyBoD5DjcjKAfHWXemmitGLU+oxzUdIuJTORQCJ1zrMUdOXJBH
+	 oCOhjsJPpQyiMI+8Q4Z+KG4XI2WjofmAb6ye8NGziiQ3WETv6FfybnGE4VkdpuiNEC
+	 Zs4u1pE6vAlUA==
+Message-ID: <0d2e6039-943a-4b7a-ab8d-29049cb02a90@zytor.com>
+Date: Fri, 13 Jun 2025 10:36:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DM4PR12MB6423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 936606e4-c73e-4b34-7f9e-08ddaaa0aee2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2RZVWFUb0lidGNYdGhzL3NmaGNDS05SZk8rT1lCd0M5SitWWUZBV0d1R2RZ?=
- =?utf-8?B?a1ZndVNPZVd1TXdOVGxRV0lTMjVSMHBVek5hajM1YVE1VWp6djZpRmR5cldU?=
- =?utf-8?B?MWxQbnhRN2RrSVhlL1RkV3pTZUZVTm90UUU5SXV2MENLUFFjMVZDVVdsem14?=
- =?utf-8?B?MytkZTlBL0JqaXpsOGc3QXNtQUdWZTVqZ2pSa01jcVRCdTdQcVFLRDJoOCtM?=
- =?utf-8?B?emQ4c3RQclFaai82NjB1OUx6T0x6ZFdCN2NXV3d2bTZ4SmdpVURuVEprbjNY?=
- =?utf-8?B?dmVOUmJTMjllejlXYUF1VXBZL3kyYit6NmQyc29hUzlOVDJvZk5GTWxzdDA2?=
- =?utf-8?B?WG9kazBDWXNOQnRRSjl5K3UvMm9aQVVYTVJnSStKa0NFKzQ0YjdJNmRNTGxw?=
- =?utf-8?B?VWlZT09XRThMc2ttanpEMGk5QmVQeFFyRWdUZG5BeEtGVmJFc3RlbVdUdWp3?=
- =?utf-8?B?d0FaMEdKTkNaNmIybStCRHlUVGVTNkdlNGtaNXlVSmpTZ3gydXpINStwY3E3?=
- =?utf-8?B?dWpmYmd6RjNUUCtZdExoc25OYmlvUUhjdEZXRUVHdHR1MUZ6b0YzOTRtRVVY?=
- =?utf-8?B?NVJtQ01XQ05BbnRCKzFibDJ0RTRITE4wbVJrQzdZUTBSeURhQ3FSL0RWUU1W?=
- =?utf-8?B?T1pScHJBTFNCemRqYlcwNEQ5cWw4OGMwcmlpSVE3dEo0Tk1peUxGb2UzVzZC?=
- =?utf-8?B?WFh6MG9TRllxYmd0UkV6WEsvYkVnZWgvMHNIR3VRUUJ0R2M5ZFlXdlk2Q1Z6?=
- =?utf-8?B?R2gyTENkb205VXE0d0Q0TUY0TzZrUG5WYlhIN1JPZnNqS0NybSt1NkRwZ2tC?=
- =?utf-8?B?VFRTTjhwd3FCTEIxMEFMdVZKRk83Q2NnKy9nRGExSnVsTnpBY01WeGRmY0E5?=
- =?utf-8?B?cE5jQk1aNkV2RkdCQytzWDllMkprcWRyZXNZR2N2MjhVbzRoRnFpZDJpV1Rz?=
- =?utf-8?B?NkVheGNwSnROeUxCekVPSWtIQ25xckJTaW5LN0QxQi8zUVM2SFdOZm50QXR1?=
- =?utf-8?B?Mkt4QVNRdzBMUmxhZVdIcnlWdWV0OSs4Q3ZRZUMzb1J2Kzh0SmFsN3MxNmh3?=
- =?utf-8?B?Z3N6c2JleTMrRVp4Y1dpL0NTYUZRN09FTW5iUWJMaS9hTktoeXp4N2ptc0xQ?=
- =?utf-8?B?WTdRbDQ1ZkZqR0p0eHRXRHlEQ1JwRkMzUnNzRll6MnI5V2VLZEJQTVBxRWRZ?=
- =?utf-8?B?TG54MzVLQ0VOMVNCamcvcm1yMzlyTjZTRzY4V1BhZTVhc1FJOU1md3Y0MEJK?=
- =?utf-8?B?MEhhYWVDZmhmYUFpZm9NMlBNVHRTNkZaVmw2RmVqMnhPR1k4SkhMUVFjS21z?=
- =?utf-8?B?bkFqa2xVT3ExanVucERDcFRrMCs4L1VKZ2hXaWxubkZGWmZhU0o0cXdZMzQ1?=
- =?utf-8?B?RnJPWnY1YTNtcitoUW80QXllNzJyVE5LcmxBb3krQ2lmTm14Ry9tTlkxcXZE?=
- =?utf-8?B?QzhIZXR5dUJMRExiUzlZeUR0bFV6d29yajZ2ME5NL1N6U0s3ZW1HbThpODFh?=
- =?utf-8?B?bE9WMG1EWk9raUtUWm9OcitHMmtlRng5MXNYZjlZbUdvR1BZbExtVTg5eTk0?=
- =?utf-8?B?cHp5djBDVHJZeDQyelRoU1EwS2tWL1NzUUJqZ0YwOXBtanNrak5EVGNXVlVQ?=
- =?utf-8?B?TUhvdmVoWEpsU1FiYzZrT2tRQ3gvTFFXUERmTUorTHlDamlhSlQ0Ri9jZVFu?=
- =?utf-8?B?V1VUU01QZkQxclMvd3l1cjNnd2NhaENYY2lYcVFhUzZkeTJ3QWJ4K1JkQ0do?=
- =?utf-8?B?Lyt4QnJwVUM3K2hNV2Mya1pycTZ5cTR0aHdVYlViMUNlczBwT2hkZER6SHQy?=
- =?utf-8?B?aGpucGVQRTZMTm94ZzJHVGN0TnBEL1BtV3ZIVWNEVHVQWXpmTDUrdFg4REVG?=
- =?utf-8?B?aWVWdlZEWjFUbnNKWENicmlyWUc2OG9tR0JqeXRPNDkzWDhrWUJiMHNvS3RB?=
- =?utf-8?Q?wGfC1rdntl0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmgyckprNVBYRjFBcm8vRHhKK01aZThXOHJhN0gzcTVOemxhWWZSL1UrWCtY?=
- =?utf-8?B?YzhxTkZXOHBObEVUcGljeGxzcTNTRmFiTmp2eno5VDY2bTFYY2dNc09QNEN2?=
- =?utf-8?B?SjhnU3JzTmtZb3hScEwzQ3pySjA3M0dLeHFScEZRV3ljOVAxQU4wd1cxZVZQ?=
- =?utf-8?B?WkU3ZU1FbG9PVlN6WHJJazVjbmxZZ2h1TS9laHZHRlE0bEVMRVJNK20zeHNK?=
- =?utf-8?B?WEFSQnVuVFJrckdVb3ZLbFhYcFVveXJ3Q29vd2E1MGZhT05PT2pzd0drbTZY?=
- =?utf-8?B?TlBoRFNoVDhGK1hxU0FLbk1WOW5oUGZOR0dmOXpYWk53dlMxOWlxMnU2Q01p?=
- =?utf-8?B?MVAwdmZINmtKMHhobExhV2hDQ0Z3MTlhN3I2S0psQkRDZXlmeEpSY1kwTURZ?=
- =?utf-8?B?dFJJV1Jua0xnU3EvQnZrU1ZTQ0JnV3RaWi9uTGdkMXVkZjdvNnVoOWFudnk2?=
- =?utf-8?B?ZlBTZGNNbVl6SWlIeklGcWhOSCtCdEdVaXUwTm94S3N1WHVrT2c1VE9UK3NX?=
- =?utf-8?B?SVNTTjZoWjVJL05rTVdOSDM0b1dIazIwbEFCM09yWVFZMXM3VG5aTThrTk5C?=
- =?utf-8?B?eitlckRFcVhzUU95ZjlKS0JOOWlMQmwrTnVCeS9OOUw3Z3lSeTlCV1RoM1Vw?=
- =?utf-8?B?K012MFJlSHlJaThkbGtvSU5iUnZHLzNtbWNDZHRIZzZvRHgxUUx1akkzeTlt?=
- =?utf-8?B?ZWtBbFVvWUNPU2dpRE9jS3hzRTA5Q2ZBQzV3R0xOSkNPTUZqUXloR0krZXBv?=
- =?utf-8?B?YktHWkRzcWpMSkNWdEpHLzNMcThEM0ZXSFhiYU5MYnlUbHFXYXo2b2hSYzhy?=
- =?utf-8?B?dTJQTzduQ2dpakRybE9yR3lIVnpPUGJXeExwTUFEV2sxNHIwa2hnejJXZnhk?=
- =?utf-8?B?c0FXWUhzT2xVUHdCQnJ4aTlUR0x3eEVJQXFkZ3g2MFdIK2MwaWVnYU8yZUU4?=
- =?utf-8?B?Y0R3V0dBUnFTRHY5bzFFaHFLcTFwdHA4SjhaSE1vb0d5alM4QjM4cHBLQlNC?=
- =?utf-8?B?Nmk5WHVIQjJrdFB4V1JBdEZTc3ErVTc0K2pucjMxSGFBWE54bkJSNU10a2hR?=
- =?utf-8?B?Z3B5UUQ5ek9ncVp2MWhuSnE3UDBUVWR5enMwL0dJNlhNaENYcmdSWFpTWmlV?=
- =?utf-8?B?OFFEb000Uk9wR0J1NWtmTEJabE1PWGVQd1BZWmZCak0rdXZ3MlpoSENtaU5B?=
- =?utf-8?B?WEx4NFhQbmJsNWVkUDJ0aEVEMEVHWGVVL2Y2TGVJQi9jOExPVU1lWFJvTWNB?=
- =?utf-8?B?UHpqYlBFa0lYV21zVEFheUtIM0NZQ1d6ZlNhb0hVbXFINHltMjZEMnRDeWZ4?=
- =?utf-8?B?MVoxL0lQeEVNeG9jc3ZqN1N6RXdHeTVxZUhmMDFMdGk3SUpnNDFUWjlqNEwy?=
- =?utf-8?B?ay9scnZTTnQ2WXhHSUt4VktadlFsVFY4VUN4NVZweFgvUjVRUU5GRWozTHl4?=
- =?utf-8?B?VUNPZWdkb0R0R1Bnd3cxNlZyWlROSzhLOWZGTitnV3NTL3laa3Jod29tcHpC?=
- =?utf-8?B?TXVaSTVmb0o4UUd1emdpRkpERW8ySjRnd01JVTQ4Ujh6czVJK210Ujg1M3Mw?=
- =?utf-8?B?bUlVZFRIUWhXWEhKekJZREdpdXJqQ29uL1J0RTlZU2ZtK3lHTTRBRXVTVzhU?=
- =?utf-8?B?d2hjK2dqLytPdTdJZVdZRFJKUzVic2JrVE1obU4xSm1NRmNSclhOanFJelFZ?=
- =?utf-8?B?MlNrQUhiTncrY214Z2c0b3ppYnhnUWNNM1d5bGM1Y2Rqc29CR0dzR2FpbGdD?=
- =?utf-8?B?dkpWL1kwZjMrNnlkUE5UQ05QY09aZkF3aEtLOXVwY0xEM0d4aklreE90YS9k?=
- =?utf-8?B?dXBFMGErTm1MSVZYKzhlaFlpVm12ZHdhSHJZUXVpLzFXcFJsQWd0cUxaRGlF?=
- =?utf-8?B?SHA5QWRTR1NaMkJQR3BFYUREbUFyc2h3QTYvL2VzSllJYzNnRVBERFlxUlBi?=
- =?utf-8?B?ajdmbVZCZmVzcnBmUlVRaGg2Y1B4cnB1OFhPdVBsRDJ0YkVVQ1ZUZG9yQUp0?=
- =?utf-8?B?aW1YNHhEWURneVlmanFCWTUxL2R5M0hrYzJkQjFtRE42aE9aRzJyZFMxR2Y1?=
- =?utf-8?B?ZHNFRFIrS29KQ0hqL1hnMnc2VGNEZ2E3SjZsRXVGeEF2ZlU1b0JCUi9SWitL?=
- =?utf-8?Q?9/6P0m46zXZCe+Wfa2hfirjUK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 936606e4-c73e-4b34-7f9e-08ddaaa0aee2
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 17:35:26.4134
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vHeEW6mRVY/McLifo9hRakhjGpzxX6Vdh4fZIddMHafk4ZURhWfFC0XbKUrdoSbhwtu3AZNcbLCKejrtfGLj6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6423
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] x86/traps: Initialize DR7 by writing its
+ architectural reset value
+To: Sean Christopherson <seanjc@google.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, brgerst@gmail.com,
+        tony.luck@intel.com, fenghuay@nvidia.com
+References: <20250613070118.3694407-1-xin@zytor.com>
+ <20250613070118.3694407-3-xin@zytor.com>
+ <20250613071536.GG2273038@noisy.programming.kicks-ass.net>
+ <aEwxcVzQubz3BmmJ@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
+ 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
+ Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
+ bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
+ raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
+ VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
+ wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
+ 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
+ NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
+ tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
+ v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
+ sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
+ QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
+ wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
+ oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
+ vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
+ MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
+ g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
+ cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
+ jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
+ Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
+ m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
+ bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
+ JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
+ /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
+ OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
+ dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
+ 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
+ Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
+ PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
+ gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
+ l75w1xInsg==
+In-Reply-To: <aEwxcVzQubz3BmmJ@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 6/13/2025 1:17 AM, Joel Fernandes wrote:
-> sched_ext tasks currently are starved by RT hoggers especially since RT
-> throttling was replaced by deadline servers to boost only CFS tasks. Several
-> users in the community have reported issues with RT stalling sched_ext tasks.
-> Add a sched_ext deadline server as well so that sched_ext tasks are also
-> boosted and do not suffer starvation.
+On 6/13/2025 7:10 AM, Sean Christopherson wrote:
+> On Fri, Jun 13, 2025, Peter Zijlstra wrote:
+>> On Fri, Jun 13, 2025 at 12:01:16AM -0700, Xin Li (Intel) wrote:
+>>
+>>> While at it, replace the hardcoded debug register number 7 with the
+>>> existing DR_CONTROL macro for clarity.
+>>
+>> Yeah, not really a fan of that... IMO that obfuscates the code more than
+>> it helps, consider:
 > 
-> A kselftest is also provided to verify the starvation issues are now fixed.
+> +1, and NAK to the KVM changes.
+
+I guess I was too aggressive to make overkill changes in a bug-fixing
+patch, which will be back-ported.
+
+I will revise the patch set to focus on bug fixing first.
+
+> Pretty much everything in KVM deals with the
+> "raw" names.  The use of dr6 and dr7 is pervasive throughout the VMX and SVM
+> architectures:
 > 
-> Btw, there is still something funky going on with CPU hotplug and the
-> relinquish patch. Sometimes the sched_ext's hotplug self-test locks up
-> (./runner -t hotplug). Reverting that patch fixes it, so I am suspecting
-> something is off in dl_server_remove_params() when it is being called on
-> offline CPUs.
+>   vmcs.GUEST_DR7
+>   vmcb.save.dr6
+>   vmcb.save.dr7
+> 
+> And is cemented in KVM's uAPI:
+> 
+>   kvm_debug_exit_arch.dr6
+>   kvm_debug_exit_arch.dr7
+>   kvm_debugregs.dr6
+>   kvm_debugregs.dr7
+> 
+> Using DR_STATUS and DR_CONTROL is not an improvement when everything else is using
+> '6' and '7'.  E.g. I skipped the changelog and was very confused by the '6' =>
+> DR_STATUS change in the next patch.
+> 
+> And don't even think about renaming the prefixes on these :-)
 
-I think I got somewhere here with this sched_ext hotplug test but still not
-there yet. Juri, Andrea, Tejun, can you take a look at the below when you get a
-chance?
+I did think about changing DR6_ to DR_STATUS_ and DR7_ to DR_CONTROL_ ;)
 
-In the hotplug test, when the CPU is brought online, I see the following warning
-fire [1]. Basically, dl_server_apply_params() fails with -EBUSY due to overflow
-checks.
-
-@@ -1657,8 +1657,7 @@ void dl_server_start(struct sched_dl_entity *dl_se)
-                u64 runtime =  50 * NSEC_PER_MSEC;
-                u64 period = 1000 * NSEC_PER_MSEC;
-
--               dl_server_apply_params(dl_se, runtime, period, 1);
--
-+               WARN_ON_ONCE(dl_server_apply_params(dl_se, runtime, period, 1));
-                dl_se->dl_server = 1;
-                dl_se->dl_defer = 1;
-                setup_new_dl_entity(dl_se);
-
-I dug deeper, and it seems CPU 1 was previously brought offline and then online
-before the warning happened during *that onlining*. During the onlining,
-enqueue_task_scx() -> dl_server_start() was called but dl_server_apply_params()
-returned -EBUSY.
-
-In dl_server_apply_params() -> __dl_overflow(), it appears dl_bw_cpus()=0 and
-cap=0. That is really odd and probably the reason for warning. Is that because
-the CPU was offlined earlier and is not yet attached to the root domain?
-
-The problem also comes down to why does this happen only when calling my
-dl_server_remove_params() only and not otherwise, and why on earth is
-dl_bw_cpus() returning 0. There's at least 2 other CPUs online at the time.
-
-Anyway, other than this mystery, I fixed all other bandwidth-related warnings
-due to dl_server_remove_params() and the updated patch below [2].
-
-[1] Warning:
-
-[   11.878005] DL server bandwidth overflow on CPU 1: dl_b->bw=996147, cap=0,
-total_bw=0, old_bw=0, new_bw=52428, dl_bw_cpus=0
-[   11.878356] ------------[ cut here ]------------
-[   11.878528] WARNING: CPU: 0 PID: 145 at
-               kernel/sched/deadline.c:1670 dl_server_start+0x96/0xa0
-[   11.879400] Sched_ext: hotplug_cbs (enabled+all), task: runnable_at=+0ms
-
-       [   11.879404] RIP: 0010:dl_server_start+0x96/0xa0
-[   11.879732] Code: 53 10 75 1d 49 8b 86 10 0c 00 00 48 8b
-[   11.882510] Call Trace:
-[   11.882592]  <TASK>
-[   11.882685]  enqueue_task_scx+0x190/0x280
-[   11.882802]  ttwu_do_activate+0xaa/0x2a0
-[   11.882925]  try_to_wake_up+0x371/0x600
-[   11.883047]  cpuhp_bringup_ap+0xd6/0x170
-
-       [   11.883172]  cpuhp_invoke_callback+0x142/0x540
-
-              [   11.883327]  _cpu_up+0x15b/0x270
-[   11.883450]  cpu_up+0x52/0xb0
-[   11.883576]  cpu_subsys_online+0x32/0x120
-[   11.883704]  online_store+0x98/0x130
-[   11.883824]  kernfs_fop_write_iter+0xeb/0x170
-[   11.883972]  vfs_write+0x2c7/0x430
-
-       [   11.884091]  ksys_write+0x70/0xe0
-[   11.884209]  do_syscall_64+0xd6/0x250
-[   11.884327]  ? clear_bhb_loop+0x40/0x90
-
-       [   11.884443]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-
-[2]: Updated patch "sched/ext: Relinquish DL server reservations when not needed":
-https://git.kernel.org/pub/scm/linux/kernel/git/jfern/linux.git/commit/?h=sched/scx-dlserver-boost-rebase&id=56581c2a6bb8e78593df80ad47520a8399055eae
-
-thanks,
-
- - Joel
-
+However it seems that DR7_ and DR6_ are de facto prefixes in the kernel
+code, and everyone appears to recognize their intended use.  It's better
+for me to leave them as-is.
 
 > 
-> v2->v3:
->  - Removed code duplication in debugfs. Made ext interface separate.
->  - Fixed issue where rq_lock_irqsave was not used in the relinquish patch.
->  - Fixed running bw accounting issue in dl_server_remove_params.
+> #define DR6_BUS_LOCK   (1 << 11)
+> #define DR6_BD		(1 << 13)
+> #define DR6_BS		(1 << 14)
+> #define DR6_BT		(1 << 15)
+> #define DR6_RTM		(1 << 16)
+> /*
+>   * DR6_ACTIVE_LOW combines fixed-1 and active-low bits.
+>   * We can regard all the bits in DR6_FIXED_1 as active_low bits;
+>   * they will never be 0 for now, but when they are defined
+>   * in the future it will require no code change.
+>   *
+>   * DR6_ACTIVE_LOW is also used as the init/reset value for DR6.
+>   */
+> #define DR6_ACTIVE_LOW	0xffff0ff0
+> #define DR6_VOLATILE	0x0001e80f
+> #define DR6_FIXED_1	(DR6_ACTIVE_LOW & ~DR6_VOLATILE)
 > 
-> Link to v1: https://lore.kernel.org/all/20250315022158.2354454-1-joelagnelf@nvidia.com/
-> Link to v2: https://lore.kernel.org/all/20250602180110.816225-1-joelagnelf@nvidia.com/
-> 
-> Andrea Righi (1):
->   selftests/sched_ext: Add test for sched_ext dl_server
-> 
-> Joel Fernandes (9):
->   sched/debug: Fix updating of ppos on server write ops
->   sched/debug: Stop and start server based on if it was active
->   sched/deadline: Clear the defer params
->   sched: Add support to pick functions to take rf
->   sched: Add a server arg to dl_server_update_idle_time()
->   sched/ext: Add a DL server for sched_ext tasks
->   sched/debug: Add support to change sched_ext server params
->   sched/deadline: Add support to remove DL server bandwidth
->   sched/ext: Relinquish DL server reservations when not needed
-> 
->  include/linux/sched.h                         |   2 +-
->  kernel/sched/core.c                           |  19 +-
->  kernel/sched/deadline.c                       |  78 +++++--
->  kernel/sched/debug.c                          | 171 +++++++++++---
->  kernel/sched/ext.c                            | 108 ++++++++-
->  kernel/sched/fair.c                           |  15 +-
->  kernel/sched/idle.c                           |   4 +-
->  kernel/sched/rt.c                             |   2 +-
->  kernel/sched/sched.h                          |  13 +-
->  kernel/sched/stop_task.c                      |   2 +-
->  tools/testing/selftests/sched_ext/Makefile    |   1 +
->  .../selftests/sched_ext/rt_stall.bpf.c        |  23 ++
->  tools/testing/selftests/sched_ext/rt_stall.c  | 213 ++++++++++++++++++
->  13 files changed, 579 insertions(+), 72 deletions(-)
->  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
->  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
-> 
+> #define DR7_BP_EN_MASK	0x000000ff
+> #define DR7_GE		(1 << 9)
+> #define DR7_GD		(1 << 13)
+> #define DR7_FIXED_1	0x00000400
+> #define DR7_VOLATILE	0xffff2bff
 
 
