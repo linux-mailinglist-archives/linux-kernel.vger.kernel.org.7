@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-685077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ABFAD83D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:13:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00283AD83F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBCA167FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336E03AE8F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977FE2749F9;
-	Fri, 13 Jun 2025 07:12:41 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B129F2C3268;
+	Fri, 13 Jun 2025 07:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MlqHmZpo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3BE274677
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E552C3253;
+	Fri, 13 Jun 2025 07:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749798761; cv=none; b=a9Kde6E+upZXxJzqaOnAEf2/f4cYmvzkv2SX3vXm8SscxSFACwj9c9Fxt3/mucptgKitNsc/321Xc4OjQHRelqMNQQbew6NraVKHODsftb/6LfFPnjvxmGZ1yehMkiDQMg+FJJnRDjPewtUUdJ0rf59l/p7s+kx1qT4+9BZ8/HU=
+	t=1749799256; cv=none; b=ADunU6U2SZZdov7HKL/e0uG+xAryw773HHoZ1uH7JICqQ37vz79cJQv8MRx6EvdjyDF4zrwgxZ1jcal5R6bJtdxXSlBxZ7slWqPjrm5JJhe03JOwpLaKks/0oAznkNKuolKRBwKKjkSdsqU6FuGKTF0u5Lw5qGfi/bDjJeEggM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749798761; c=relaxed/simple;
-	bh=sWyWIfwI7kTzqivc7bTrOqy9Tj8LyGdscPOXHhGCi4s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rx0XYLc1tO/wvBBtQ2OJJdrNOrVgC1D5fcPIuIl0+9vrXTZkqlEe+52lxmTpSwQEzF/dYCdDxb7v455/bxtCDhbCaENG/lRLvh0JzwfA5JJDaN17rHkRqy5vHET0VP+1WanWJEEYyMglXyjzhcA8Fbf818S2rlgI3wUyYiMe8RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86f4f032308so357063839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 00:12:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749798757; x=1750403557;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=juhYk1wKYKfUnaUV/pQ8ZEVYMZB94Oi+kC5HvDlYkTc=;
-        b=vmarQzM/kAYaTbbugDole9YcTgqMNYcf8sjdZgy3DCs1pM4w5K9pWDxv0wct7xZLQw
-         h8stO9klirb31fQ5dmNCuUp8QJAUk+8HRsCac/jKCDUpSlaUVZaRXxUz4kd7Ovwtpje7
-         LPtlOrwnh1cwcXsIzXJOlevtUxA0QZq38W1AXB008EEy6HMzK1iBnTf5F6NpA+vQGjjw
-         REpwjkc5w7Z9busv4lnx6J8/Fjv3SBxgbQ+JPmxGH4AkRy3+Oz9DgenfQxzihVOLqJ4k
-         qxwAfpeEyG+wwW7qLnXGAtAHnNeTAtR8xpdOI00jKFl0qlXnbIQgrjpl8/lux1ligPyt
-         70Og==
-X-Forwarded-Encrypted: i=1; AJvYcCUIcnGYzR+WW8yavYEtHo3xqxfU3mAeodnhpQy/NWcnQbODReO3KFaIOaDTMbGgJ3sjkxa/SVUd1lvTPJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNO/clvR/T9H+SwWrYenr54bOkHKp1HRbtIAN5hR1hS0149L8X
-	hv0jq6Q58czZnlZPfxMbm+5PXUjzHim4aVYXqA01yO09RX+puvYB9B3J6yRjAaUBsz6Rpst0Ml7
-	xObEAScLSFWgnFNfOKDKm4i4xNcda/p7Cdrvl/tS2Vcn96ivAJ7v7XyeGpAk=
-X-Google-Smtp-Source: AGHT+IGBwD/2/C4kc9h6TIClenfR5iYoIenohZ5RomSbIQ0maGl/dTNKfi63zAkyRk+LR/aAQ38VdNauGcbMCQtdfWzn00FnCnPE
+	s=arc-20240116; t=1749799256; c=relaxed/simple;
+	bh=7oG7PdaLuoIzjD9feldhuWnbLoPMo98j5mUEc/aR7hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H20nOZ3NFIbkPUdlZe5l3kjbIwr44gH6LknIMTZO1aDbHopv1DYqYhO7NtoBwHIl0jZ5WebvM/XxmPjJDt+WI8mIquxrhsknmLpWCNUHFjkTl/hcjxrY/SDZmau4v5fbv49FbK0jE3FIICnJ42uh2/3tjrb9bayKuOHdcLBpS68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MlqHmZpo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JwBBviHmEevVyR2yj/WBOAB/USjZOit0uE7ec1Txdc0=; b=MlqHmZpomiTv3FPCm1DCY51m56
+	OYYRsGs7+U885FPv6c1qKomXmBCLuMhytGmdKXeuFS7WLrUdZPZ26v21Sp7IOeRkUg7qyafptJutm
+	MOvGEK21SHP7yYXfZMYIL+sBZY/snLgixEuyg1Hn7yGoGHycKPj8Oh1ZNvTrV0yrgwbmEtEte2ywI
+	WrmqiLE551VDECZmGdVUH97hbrk8qoEBOz3OXCY1wbTfUJ14qWitpF/+5bvwsnN3qdN/oXy4t7VYw
+	jY7A9VfnlHvn/bs9/MRKaDRyRVD5dhxZIVtiMdbCdxFOWpmXr1arhP2Ts/AAfiEIgULpel3VcDXTc
+	VtC8Dstw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPydV-0000000CgPh-27uq;
+	Fri, 13 Jun 2025 07:15:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2857030BC59; Fri, 13 Jun 2025 09:15:36 +0200 (CEST)
+Date: Fri, 13 Jun 2025 09:15:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, brgerst@gmail.com, tony.luck@intel.com,
+	fenghuay@nvidia.com
+Subject: Re: [PATCH v1 2/3] x86/traps: Initialize DR7 by writing its
+ architectural reset value
+Message-ID: <20250613071536.GG2273038@noisy.programming.kicks-ass.net>
+References: <20250613070118.3694407-1-xin@zytor.com>
+ <20250613070118.3694407-3-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2196:b0:3dd:ecc8:9773 with SMTP id
- e9e14a558f8ab-3de00c0951fmr18522855ab.19.1749798757590; Fri, 13 Jun 2025
- 00:12:37 -0700 (PDT)
-Date: Fri, 13 Jun 2025 00:12:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684bcf65.050a0220.be214.029b.GAE@google.com>
-Subject: [syzbot] [bpf?] WARNING in do_check
-From: syzbot <syzbot+a36aac327960ff474804@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613070118.3694407-3-xin@zytor.com>
 
-Hello,
+On Fri, Jun 13, 2025 at 12:01:16AM -0700, Xin Li (Intel) wrote:
 
-syzbot found the following issue on:
+> While at it, replace the hardcoded debug register number 7 with the
+> existing DR_CONTROL macro for clarity.
 
-HEAD commit:    1c66f4a3612c bpf: Fix state use-after-free on push_stack()..
-git tree:       bpf-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1346ed70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=73696606574e3967
-dashboard link: https://syzkaller.appspot.com/bug?extid=a36aac327960ff474804
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1392610c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a9ee0c580000
+Yeah, not really a fan of that... IMO that obfuscates the code more than
+it helps, consider:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2ddb1df1c757/disk-1c66f4a3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6a318fc92af0/vmlinux-1c66f4a3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/76c58dddcb6c/bzImage-1c66f4a3.xz
+> -	get_debugreg(dr7, 7);
+> +	get_debugreg(dr7, DR_CONTROL);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a36aac327960ff474804@syzkaller.appspotmail.com
+and:
 
-------------[ cut here ]------------
-verifier bug: add backedge: no SCC in verification path, insn_idx 9(1)
-WARNING: CPU: 1 PID: 5838 at kernel/bpf/verifier.c:1970 add_scc_backedge kernel/bpf/verifier.c:1969 [inline]
-WARNING: CPU: 1 PID: 5838 at kernel/bpf/verifier.c:1970 is_state_visited kernel/bpf/verifier.c:19417 [inline]
-WARNING: CPU: 1 PID: 5838 at kernel/bpf/verifier.c:1970 do_check+0xda21/0xdba0 kernel/bpf/verifier.c:19861
-Modules linked in:
-CPU: 1 UID: 0 PID: 5838 Comm: syz-executor286 Not tainted 6.15.0-syzkaller-g1c66f4a3612c #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:add_scc_backedge kernel/bpf/verifier.c:1969 [inline]
-RIP: 0010:is_state_visited kernel/bpf/verifier.c:19417 [inline]
-RIP: 0010:do_check+0xda21/0xdba0 kernel/bpf/verifier.c:19861
-Code: 01 90 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 06 84 c0 0f 85 2b 01 00 00 41 8b 75 00 48 c7 c7 20 49 91 8b e8 d0 05 ad ff 90 <0f> 0b 90 90 e9 27 fe ff ff e8 11 5d e9 ff e8 3c 10 4d 00 ba 38 00
-RSP: 0018:ffffc900043eeec0 EFLAGS: 00010246
-RAX: 53f7659fb2f02200 RBX: ffffc900043ef180 RCX: ffff8880257d1e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: ffffc900043ef2c8 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfaa44 R12: ffff88801c7a4b00
-R13: ffff88801c7a4b54 R14: 1ffff110038f496a R15: 0000000000000000
-FS:  000055556bd6a380(0000) GS:ffff888125d54000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000ebea398 CR3: 00000000713fa000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_check_common+0x18fa/0x2460 kernel/bpf/verifier.c:23086
- do_check_main kernel/bpf/verifier.c:23177 [inline]
- bpf_check+0x110e2/0x1a240 kernel/bpf/verifier.c:24530
- bpf_prog_load+0x1318/0x1930 kernel/bpf/syscall.c:2972
- __sys_bpf+0x5f1/0x860 kernel/bpf/syscall.c:5978
- __do_sys_bpf kernel/bpf/syscall.c:6085 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6083 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6083
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f37a741f569
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe3011bf08 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007ffe3011c0d8 RCX: 00007f37a741f569
-RDX: 0000000000000094 RSI: 0000200000000840 RDI: 0000000000000005
-RBP: 00007f37a7492610 R08: 00007ffe3011c0d8 R09: 00007ffe3011c0d8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffe3011c0c8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+> -	for (i = 0; i < 8; i++) {
+> -		/* Ignore db4, db5 */
+> -		if ((i == 4) || (i == 5))
+> -			continue;
+> +	/* Control register first */
+> +	set_debugreg(DR7_RESET_VALUE, DR_CONTROL);
+> +	set_debugreg(0, DR_STATUS);
+>  
+> +	/* Ignore db4, db5 */
+> +	for (i = DR_FIRSTADDR; i <= DR_LASTADDR; i++)
 
+I had to git-grep DR_{FIRST,LAST}ADDR to double check this was correct :(
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Also, you now write them in the order:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  dr7, dr6, /* dr4, dr5 */, dr0, dr1, dr2, dr3
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+My OCD disagrees with this :-)
 
