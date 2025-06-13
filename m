@@ -1,292 +1,185 @@
-Return-Path: <linux-kernel+bounces-686247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B26BAD9501
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB344AD9509
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 21:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD0F1E348A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32F13AB72A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 19:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E6623BCE2;
-	Fri, 13 Jun 2025 19:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9670A239E85;
+	Fri, 13 Jun 2025 19:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="buj9gY8E"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qcheD9VV"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32019146A72
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41008E555
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749841918; cv=none; b=tzX+IwgMhjSuUKyxmbfruiWJsS+MetctYgFpxZ698AYaY5PF29r/qi+drFzcailmUla/6iaRzUnWzIJDg638VdyZOW/81pHAeObnX7hxWWizWDHR7+sdCkC49AnZ+nBUfj156hYr5ScgUoB8C7xFDF+FeESwIkiBeqj2dluDA/o=
+	t=1749842054; cv=none; b=sLLc0nfnGpg0ujXPHYD+T8Ks3YoT0xyIp6asyqqNfxCtuZ/1Uj2+I8ENCMKlWgd0YxtdrNKnpkNiXhmntBSuiuBs7caz+cJlK/ZZI7031o4oxOyugw87gGmTG5l/RKKfY/vtaLJAyLwnxwNKR36bBO1xtFVmOWQXz/OW8yjgcls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749841918; c=relaxed/simple;
-	bh=SGtE0l1MW17H7LDg5MmX9lFL2Ia41F3/cPofyObujdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LH++ihrHFg0u/mtkD9euksmdaHIhvzyAzfsYUQzRjFbuKhKe/PffEgcjVyVAyXux6Neayf2CfB2ELXQLT2O0nZJAZWodz7WrW3xn2vcUlHQnHqryVYyBOC3wBYz16grf+3iMqdkLdg8XfbLHlMWRHTpKmTf+d42wfhOMZwSjWfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=buj9gY8E; arc=none smtp.client-ip=209.85.160.176
+	s=arc-20240116; t=1749842054; c=relaxed/simple;
+	bh=E5qL4848nhxlQoZifQwBiH5+0qjVgqck0htkV9GuQXg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XP3l6t3sYcEQIkbONHz7Ca/YplOOtRtcGW/rFueGdzpS2BI6cr3Xf7iLuary30/GX0pcZVhc4tR0cXEk1n0fWXSitUFLJLeJihchZ+SnanuEZ5byqdk3tu9jg1tPoA5rh0enp/LzPbW/N1crohQXD5yHCsRef4K+rlV6Jznqv68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qcheD9VV; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47e9fea29easo68911cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:11:56 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-740270e168aso2107183b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 12:14:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749841916; x=1750446716; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3MLioFcu25SrzT1JXLpM40JWU5zBFcetADxV3Ug7jaY=;
-        b=buj9gY8EZPI/uPl9AwToUmtpRBDqog+TuIhxb7fT2ZG4nDAtJ4G2dX1IuK4cLIgGUa
-         5Oti0y56pUT4rxJanyI5H3a5cykOT279dro0NawPaEoi3vdKu0WHOSSMWheOpwkzWqe7
-         7Fl0ALYbgRUzmwxD2qxMozCgeKjl3xpS1Z3BYG/1QeoDShLH4ER73vgjNwEnXtIarf6m
-         TklXnR7EHqF81PRbjqE/GRZ5PyrzGrODGjL/VccDfxaTfMSFcP1bcpUY8ePnrBgdf//v
-         eHs2p2KSoM8LAKvRoNENIy2pnC4AVBuXEvZkT8kLsUOoKoMducW4OAXGvgCIrkgW/qjd
-         Q9yQ==
+        d=google.com; s=20230601; t=1749842052; x=1750446852; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UEuA+8UJ9Tc4ZgBRsZcUNhOteyKujcYr6hfqjPHDiBU=;
+        b=qcheD9VVSDRL9w0EwsBRAlezG/k/SCzqrMoeNyul71H8KyFPpwiGpK+Z2pFRIqjy6W
+         u0gpKaUKxn8N06Bk6ZxAMHUxb0P0k8WrN7kFWx1lX++dJTOaR1yInkV0CyNoo6QSd9A5
+         8ugZuR3S0VHYhcOC0I0yCkg1/2JIwLGE4yAgU6OpQEkiBhBbAb31xxsm2CNWTqcudfei
+         GAxNusuxcp3gyCtNQb6vKsWiHSymD7Ift7upxdd00lIzdRBksQrTZjqHkf8t/dnz4Zr/
+         Rp2s16QnSoayVU79gtFUIZLOuwFk49qPxfKgcTxlmAhgeWAE/nFhbKzgDIwYDpmSO2xn
+         jwJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749841916; x=1750446716;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3MLioFcu25SrzT1JXLpM40JWU5zBFcetADxV3Ug7jaY=;
-        b=xIClCUphlJrNFIykOoOY0teorQB/6hSjNi1lboNYOb1rlkG31ejYSv5FnF0ufBzEsF
-         8J2gCBGI27uxmYjPUeupCEBPAyUb29K6+2pyfR3gu6CpiopFvkBbj3N70vARNHqoa9fm
-         fGtXLghtoFQ3Vug5pTVx7NBcGvi4bFywcN3x6OPENB61NpslkCxC6iWqd74eAetw8aEq
-         0KngkY5qYOwH33Mbwcl/1V5NsESvZ5GYnf65I2njSb1GDwd9vJamGQhIOKSjE+6dM5G5
-         WU+SIPfWGi2Gm0PRRN6G5f8sr/QaftPRsN+KClIfxN/nGG1gnCrQmYMTbRz5ID2xJ9mY
-         B12w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtS9ePR1ZV+0Q5Ky5gSgyTb8dggRZ8F3iNHWVw8qPk+8GeQrglVdQAs5xw7Z2mKWLo6b5T+Bpbr7DlQWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqXmCt9gZ+ZsN6qUQ5u5zPjkk65lG2/0IF6s3gf2Dve8x1YwPl
-	MG4eE2GxaD7WKfzEq4NR/gUNXF6WjR2q6w4/CHkTrHCxCg04j1oC05h8XGNl3pb4yPxFAU4Dk00
-	B/ta7ITSXyhoOvPulC8Lxb1i/j4VOsQknoP6EMC0u
-X-Gm-Gg: ASbGnctwVyMxRnvlu8ssUM7Q6EJOo2SzeuAvZWql+FoOTJb4VUQ9IqVJiRwwueha/qC
-	fkaWIrTTEZarHl4GatRjHwCh5phjX+SL41V0FjkY21SLu00qLsU9xqLK3l3QQffQd/q7AcE+jse
-	DBB3VpdOQJAjxW22kEyNnyUtLkF3Z57QHQmDKxU0p5xQ==
-X-Google-Smtp-Source: AGHT+IFvnQIut+5bnSYDZt2/+KLVzB00ESAWF3T/ASeTAbTQtzNN2t7bhybaTsWELXSkO5KBPEuQ4qfCSd8Vl9SZ45Q=
-X-Received: by 2002:a05:622a:118a:b0:494:763e:d971 with SMTP id
- d75a77b69052e-4a73c74bad2mr380121cf.23.1749841915704; Fri, 13 Jun 2025
- 12:11:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749842052; x=1750446852;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UEuA+8UJ9Tc4ZgBRsZcUNhOteyKujcYr6hfqjPHDiBU=;
+        b=iS+7LxrRH9XIFs6HTJ8WDN7goresW7eEBQLi2nYCnxWmljBDu3iq/EGmMeMSrSaNLP
+         cWjp1nzPbjDS833FNdQqrY0wAt3QjwmFz8OW3LawI0baYaPZsCIH/gjhp+7WsXfnXrPJ
+         IyDgMkMocnkSi+x0GCjhDODsHunYXCVPdwNFxmktKE2fDXFzt0kreCWWzHN3AGUFfuH1
+         0OfufMzhxWdKokMX3+yDiiSbwSeE1PvEmM4wWEkliDdmvIDb95GhwlhM3J+/QD9ncMO7
+         HxVXsJvmCGgr/bfeF9dVNultyXY2RxM3FWTWGMIy80xAtAnkcj6kRRiZDd/frJOVes9n
+         5fZQ==
+X-Gm-Message-State: AOJu0YzZJs5rL+9Y5LJG9uj2DGYIQD5z4OXVCd1SIdLo6F2gdAd2f7d+
+	HSDoA2ebt1OX1IKuQLHzGtIUVG2E2cP2fUMLCuKWtKIdojIwZjwIPzlrMWmz0OrQEfeVqMBx7uY
+	uZg==
+X-Google-Smtp-Source: AGHT+IFG326e6cz9aqxiBddfpig3D4ht+CdC730H44desqWNSe7m7gFGvUu4mLiDJ+v2WIsgrLNmXn0ePw==
+X-Received: from pfbhx21.prod.google.com ([2002:a05:6a00:8995:b0:747:a9de:9998])
+ (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6300:41:b0:21a:ed12:bdf9
+ with SMTP id adf61e73a8af0-21fbd525bf9mr562909637.17.1749842052493; Fri, 13
+ Jun 2025 12:14:12 -0700 (PDT)
+Date: Fri, 13 Jun 2025 12:13:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250604231151.799834-1-surenb@google.com> <e1863f40-39ab-4e5b-984a-c48765ffde1c@lucifer.local>
-In-Reply-To: <e1863f40-39ab-4e5b-984a-c48765ffde1c@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 13 Jun 2025 12:11:43 -0700
-X-Gm-Features: AX0GCFvFrVv3MRasBZx4Viw_BkVYZSdZQVHNBuDMFpy95J_U6Iwdmy5s59K2S_Y
-Message-ID: <CAJuCfpFCucv9+-MBtaqbA3=omb8rT2jJ5_vjdtX7DZLzN3xG6A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] use per-vma locks for /proc/pid/maps reads and PROCMAP_QUERY
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc2.692.g299adb8693-goog
+Message-ID: <20250613191359.35078-1-sagis@google.com>
+Subject: [PATCH v7 00/30] TDX KVM selftests
+From: Sagi Shahar <sagis@google.com>
+To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Sagi Shahar <sagis@google.com>, Roger Wang <runanwang@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 8:01=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Hi Suren,
->
-> I promised I'd share VMA merging scenarios so we can be absolutely sure w=
-e have
-> all cases covered, I share that below. I also included information on spl=
-it.
+This is v7 of the TDX selftests now that the base TDX patches have been
+accepted.
 
-Thanks Lorenzo! This is great and very helpful.
+This series is based on v6.16-rc1
 
->
-> Hopefully this is useful! And maybe we can somehow put in a comment or co=
-mmit
-> msg or something somewhere? Not sure if a bit much for that though :)
+No major changes from v6 asside from rebasing.
 
-I'll see if I can add a short version into my next cover letter.
-
->
-> Note that in all of the below we hold exclusive mmap, vma + rmap write lo=
-cks.
->
-> ## Merge with change to EXISTING VMA
->
-> ### Merge both
->
->                       start    end
->                          |<---->|
->                  |-------********-------|
->                    prev   middle   next
->                   extend  delete  delete
->
-> 1. Set prev VMA range [prev->vm_start, next->vmend)
-> 2. Overwrite prev, middle, next nodes in maple tree with prev
-> 3. Detach middle VMA
-> 4. Free middle VMA
-> 5. Detach next VMA
-> 6. Free next VMA
-
-This case should be fine with per-vma locks while reading
-/proc/pid/maps. In the worst case we will report some of the original
-vmas before the merge and then the final merged vma, so prev might be
-seen twice but no gaps should be observed.
-
->
-> ### Merge left full
->
->                        start        end
->                          |<--------->|
->                  |-------*************
->                    prev     middle
->                   extend    delete
->
-> 1. Set prev VMA range [prev->vm_start, end)
-> 2. Overwrite prev, middle nodes in maple tree with prev
-> 3. Detach middle VMA
-> 4. Free middle VMA
-
-Same as the previous case. Worst case we report prev twice - once
-before the merge, once after the merge.
-
->
-> ### Merge left partial
->
->                        start   end
->                          |<---->|
->                  |-------*************
->                    prev     middle
->                   extend  partial overwrite
->
-> 1. Set prev VMA range [prev->vm_start, end)
-> 2. Set middle range [end, middle->vm_end)
-> 3. Overwrite prev, middle (partial) nodes in maple tree with prev
-
-We might report prev twice here and this might cause us to retry if we
-see a temporary gap between old prev and new middle vma. But retry
-should handle this case, so I think we are good here.
-
->
-> ### Merge right full
->
->                start        end
->                  |<--------->|
->                  *************-------|
->                     middle     next
->                     delete    extend
->
-> 1. Set next range [start, next->vm_end)
-> 2. Overwrite middle, next nodes in maple tree with next
-> 3. Detach middle VMA
-> 4. Free middle VMA
-
-Worst case we report middle twice.
-
->
-> ### Merge right partial
->
->                    start    end
->                      |<----->|
->                  *************-------|
->                     middle     next
->                     shrink    extend
->
-> 1. Set middle range [middle->vm_start, start)
-> 2. Set next range [start, next->vm_end)
-> 3. Overwrite middle (partial), next nodes in maple tree with next
-
-Worse case we retry and report middle twice.
-
->
-> ## Merge due to introduction of proposed NEW VMA
->
-> These cases are easier as there's no existing VMA to either remove or par=
-tially
-> adjust.
->
-> ### Merge both
->
->                        start     end
->                          |<------>|
->                  |-------..........-------|
->                    prev  (proposed)  next
->                   extend            delete
->
-> 1. Set prev VMA range [prev->vm_start, next->vm_end)
-> 2. Overwrite prev, next nodes in maple tree with prev
-> 3. Detach next VMA
-> 4. Delete next VMA
-
-Worst case we report prev twice after retry.
-
->
-> ### Merge left
->
->                        start     end
->                          |<------>|
->                  |-------..........
->                    prev  (proposed)
->                   extend
->
-> 1. Set prev VMA range [prev->vm_start, end)
-> 2. Overwrite prev node in maple tree with newly extended prev
-
-Worst case we report prev twice.
-
->
-> (This is what's used for brk() and bprm_mm_init() stack relocation in
-> relocate_vma_down() too)
->
-> ### Merge right
->
->                        start     end
->                          |<------>|
->                          ..........-------|
->                          (proposed)  next
->                                     extend
->
-> 1. Set next VMA range [start, next->vm_end)
-> 2. Overwrite next node in maple tree with newly extended next
-
-This will show either a legit gap + original next or the extended next
-with no gap. Both ways we are fine.
-
->
-> ## Split VMA
->
-> If new below:
->
->                     addr
->                 |-----.-----|
->                 | new .     |
->                 |-----.-----|
->                      vma
-> Otherwise:
->
->                     addr
->                 |-----.-----|
->                 |     . new |
->                 |-----.-----|
->                      vma
->
-> 1. Duplicate vma
-> 2. If new below, set new range to [vma-vm_start, addr)
-> 3. Otherwise, set new range to [addr, vma->vm_end)
-> 4. If new below, Set vma range to [addr, vma->vm_end)
-> 5. Otherwise, set vma range to [vma->vm_start, addr)
-> 6. Partially overwrite vma node in maple tree with new
-
-These are fine too. We will either report before-split view or after-split =
-view.
 Thanks,
-Suren.
 
->
-> Cheers, Lorenzo
+Changes from v6:
+- Rebased on top of v6.16-rc1
+
+Ackerley Tng (12):
+  KVM: selftests: Add function to allow one-to-one GVA to GPA mappings
+  KVM: selftests: Expose function that sets up sregs based on VM's mode
+  KVM: selftests: Store initial stack address in struct kvm_vcpu
+  KVM: selftests: Add vCPU descriptor table initialization utility
+  KVM: selftests: TDX: Use KVM_TDX_CAPABILITIES to validate TDs'
+    attribute configuration
+  KVM: selftests: TDX: Update load_td_memory_region() for VM memory
+    backed by guest memfd
+  KVM: selftests: Add functions to allow mapping as shared
+  KVM: selftests: KVM: selftests: Expose new vm_vaddr_alloc_private()
+  KVM: selftests: TDX: Add support for TDG.MEM.PAGE.ACCEPT
+  KVM: selftests: TDX: Add support for TDG.VP.VEINFO.GET
+  KVM: selftests: TDX: Add TDX UPM selftest
+  KVM: selftests: TDX: Add TDX UPM selftests for implicit conversion
+
+Erdem Aktas (3):
+  KVM: selftests: Add helper functions to create TDX VMs
+  KVM: selftests: TDX: Add TDX lifecycle test
+  KVM: selftests: TDX: Add TDX HLT exit test
+
+Isaku Yamahata (1):
+  KVM: selftests: Update kvm_init_vm_address_properties() for TDX
+
+Roger Wang (1):
+  KVM: selftests: TDX: Add TDG.VP.INFO test
+
+Ryan Afranji (2):
+  KVM: selftests: TDX: Verify the behavior when host consumes a TD
+    private memory
+  KVM: selftests: TDX: Add shared memory test
+
+Sagi Shahar (10):
+  KVM: selftests: TDX: Add report_fatal_error test
+  KVM: selftests: TDX: Adding test case for TDX port IO
+  KVM: selftests: TDX: Add basic TDX CPUID test
+  KVM: selftests: TDX: Add basic TDG.VP.VMCALL<GetTdVmCallInfo> test
+  KVM: selftests: TDX: Add TDX IO writes test
+  KVM: selftests: TDX: Add TDX IO reads test
+  KVM: selftests: TDX: Add TDX MSR read/write tests
+  KVM: selftests: TDX: Add TDX MMIO reads test
+  KVM: selftests: TDX: Add TDX MMIO writes test
+  KVM: selftests: TDX: Add TDX CPUID TDVMCALL test
+
+Yan Zhao (1):
+  KVM: selftests: TDX: Test LOG_DIRTY_PAGES flag to a non-GUEST_MEMFD
+    memslot
+
+ tools/testing/selftests/kvm/Makefile.kvm      |    8 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   36 +
+ .../selftests/kvm/include/x86/kvm_util_arch.h |    1 +
+ .../selftests/kvm/include/x86/processor.h     |    2 +
+ .../selftests/kvm/include/x86/tdx/td_boot.h   |   83 ++
+ .../kvm/include/x86/tdx/td_boot_asm.h         |   16 +
+ .../selftests/kvm/include/x86/tdx/tdcall.h    |   54 +
+ .../selftests/kvm/include/x86/tdx/tdx.h       |   67 +
+ .../selftests/kvm/include/x86/tdx/tdx_util.h  |   23 +
+ .../selftests/kvm/include/x86/tdx/test_util.h |  133 ++
+ tools/testing/selftests/kvm/lib/kvm_util.c    |   74 +-
+ .../testing/selftests/kvm/lib/x86/processor.c |   97 +-
+ .../selftests/kvm/lib/x86/tdx/td_boot.S       |  100 ++
+ .../selftests/kvm/lib/x86/tdx/tdcall.S        |  163 +++
+ tools/testing/selftests/kvm/lib/x86/tdx/tdx.c |  243 ++++
+ .../selftests/kvm/lib/x86/tdx/tdx_util.c      |  643 +++++++++
+ .../selftests/kvm/lib/x86/tdx/test_util.c     |  187 +++
+ .../selftests/kvm/x86/tdx_shared_mem_test.c   |  129 ++
+ .../testing/selftests/kvm/x86/tdx_upm_test.c  |  461 ++++++
+ tools/testing/selftests/kvm/x86/tdx_vm_test.c | 1254 +++++++++++++++++
+ 20 files changed, 3734 insertions(+), 40 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/td_boot.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/td_boot_asm.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdcall.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdcall.S
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+ create mode 100644 tools/testing/selftests/kvm/x86/tdx_shared_mem_test.c
+ create mode 100644 tools/testing/selftests/kvm/x86/tdx_upm_test.c
+ create mode 100644 tools/testing/selftests/kvm/x86/tdx_vm_test.c
+
+-- 
+2.50.0.rc2.692.g299adb8693-goog
+
 
