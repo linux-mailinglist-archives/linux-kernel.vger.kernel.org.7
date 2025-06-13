@@ -1,177 +1,95 @@
-Return-Path: <linux-kernel+bounces-686062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B6DAD92A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:11:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C0BAD92EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA387B05D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0828188A71E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581C620B7F9;
-	Fri, 13 Jun 2025 16:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8421F5430;
+	Fri, 13 Jun 2025 16:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0Zz/aeR"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="RjF8sb8C"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DAD1E5206;
-	Fri, 13 Jun 2025 16:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6094C20F09B
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 16:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749831053; cv=none; b=PObyLV2a92vBjXhz7w5MefTYBQ21nqYPP/rSlDqjcvzvpoprmtWCn5l4KjMBMFfFADAQr823E67k5kHFs57C+sKI5MDct2hiZ5v/RvSsjCPVMJ+Yb+zBRh6w8eHd5AeCk0s9AA5LwDZPy78Wjsd4w4DSB9C6pAE1KGOM2tGYWIg=
+	t=1749832722; cv=none; b=V7ee2ttgrC+d7cVFUa/I9JoXeAToIy0aDJIUliyPV2E3SI4lLvSRMBXdFesP2iGCcPWz5ONsw9aSPYKPcTFd5qg9xdDz9hZpGSyFdSAJvRttI8aI1g00wCIUC82R1jI34Q/3cC49TXaKRSlimwHOLB+YR58l2KIXlQMeHD8tBKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749831053; c=relaxed/simple;
-	bh=z+WePBzk4w5ikJl5l/DmIwsQJR4VLsERLZLA5wpvpHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JF9oxrVcWHBhJxz3WMvS4y1rpwuSPUv7LjwAW5ry06H1iPSIscu9yvdzDRAf/dpUdl01HetBP9uDySOvdgarvRDqLeiLR42A3PmHTByGH9YYK044g9f5MQc6gGaTfML30CemldCDHkPu8fvaXLhdQebtpecepLCqX43SXGPJKjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0Zz/aeR; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so13021545e9.2;
-        Fri, 13 Jun 2025 09:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749831050; x=1750435850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DILrWX2YuLVPKDXNXPwayp6eHkUI1DUjfPvT2x/52No=;
-        b=A0Zz/aeRT5Jo+wSgW0+xG74Wir+VX5uAzyrnsg9bYXipbJhY0EkOlPcK4Ckxj75L2L
-         lHuC2ZU33hHL2m4G0XUfT9vxtuXJX+rreBewh71fG/b9mmOwUKthUlVW3oqN+pJlfCAI
-         fEKN/6PUUR9tyR4Roae07onCgrLNebLcbSvfBAqL4pjdFfyH5/IDNi6VKEQOw4W87ZHg
-         WY9czVbAW6bPcvgOOg39U4zK+DhYnFzsdy7cwtjqGqYZftRAmoKyQerehkoADA+xydAB
-         cu9WpdhDwKCtkhNsA33ASiuOfc2M3kSk8G+Km3cg8X0F08GEl8PHx7yD4S5lj+Tagmzn
-         hj8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749831050; x=1750435850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DILrWX2YuLVPKDXNXPwayp6eHkUI1DUjfPvT2x/52No=;
-        b=AaIeaPGv/BgeSRotOt+7bhRrxzUBGG+MLs4sidfXN2Kk7QRYa+N6TvjD8EDHsHmUba
-         MVVZPEb8JrAr7WseycayaH1jClnRJbr/fZ2bCxBqPTD85RDkhA4GHPiQ6sByb3DjqvDn
-         qElLBODmWHMKk0qQpZpx8M5KpnsUcthLk2ekUVAUkH1lSN7FvXjvwFoifPTzX+L7XPee
-         Iok3iYXGxE+DRX246Wgo4LuSxemMwM6I8Nx7YJdkMndB0Nz6L4M60NwzMHyQABKXY5xs
-         DoQaMpYK3bd8f8xBbhY7NW7AZuFXLSe5NSYtTKv/LXdRC4c8Qt6P+Qx/ssb9TjCLc/rW
-         aKfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe5rFeFNoyncD6vn26fnkmGKYyOBVxlqUpX8NhPOB+0oaeWeDwl3W3AbFDE1qCHfgPOKI=@vger.kernel.org, AJvYcCVgmC1LwvSg4QpPfWFk6uoZdAjXk5E6gOf2n29ZKpn2ihtPcB928IZ/sc3QsnLc/XAoYEIxzZGY@vger.kernel.org, AJvYcCX+eSpip8Q3IJJcbIGI5sECdP2/CkLxi9FYAez6Ft8xhu5ZueAUAXZ5T8KODKGs9u1RFBP2833EhgUGpmBV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHOEI7u7h4KGZydoF257nMoxYg2G4oE3uxDA8+rnhJbjW/i1wQ
-	3GSnY9yezNyPH+AFcZQ+qCp7BQgpnTFu1Ul9ig1HgV6DvhZCqWmQAkgZkrxrSuDEhgJ5IsQ41cO
-	/pytIGaZY65ydSCwllqX+rAnT7n8s/Tk=
-X-Gm-Gg: ASbGncvp1nP1wzNcPr+aUQRlWFJBIyGKa6X/aohXZfFDcfDCdURyfXd4Mn/4t2FJ8Zv
-	QXrm3/RDt7TGJIPJ6L2MiwGZJGC7GjNBjz9RIlCYG35J7Gab51pILpJURSXwazX70nEfnj4+Xld
-	oY4tZax+f0r6ZcZjDxAhV9+n1gaNii6BYmqyDayzcZABCGKDhytEfpS4huazJB8VNK1xB8BDZ4
-X-Google-Smtp-Source: AGHT+IHvQ9887CxdzTMcRoXeEnar7nGslX8aj5s2kzSmDQQlLukEzU6+YCFYK4flojxTe5ApiQs2oZJ0aOQNmI9cr3A=
-X-Received: by 2002:a05:600c:1c29:b0:43d:5ec:b2f4 with SMTP id
- 5b1f17b1804b1-4533ca55bc0mr2375445e9.10.1749831049931; Fri, 13 Jun 2025
- 09:10:49 -0700 (PDT)
+	s=arc-20240116; t=1749832722; c=relaxed/simple;
+	bh=roc1nCKlU6+zFLiSIX/Jhl/yRTEwG8T8BaH8kRNG7Js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIGnneJ2fAUBbBN+/G57eP4oAO/sT5j4paD3fyVfLIkAK7vNeU63Dh0GqJkUpwZoV+8jkL4T+IU/ZJvkZ3mbSWfYrjglOb74UMvXTRYPDYKblQXp8c4m0blqi6oV95rPFI39/CZXsm/GYVuB8PZBrR3nqVArXZwkKg2i//O13qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=RjF8sb8C; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 25465 invoked from network); 13 Jun 2025 18:11:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1749831112; bh=pQ8jSxcfR6n8gUoPxMTzQFYregg2HENhHGC+FgDSA2o=;
+          h=From:To:Cc:Subject;
+          b=RjF8sb8CrbdHhCC6jDD9N7HMHFV5isWVNKCOTeUPxLqKKbrDDvuy2lywNs3KZueX5
+           AngMFD65LIXZU2CDnQqMj+/CofqapTbbJsAj/vwSEIzqSpB/t4wxzXpA3WUNDiNI24
+           pqrW0a8f7ltcbJtx+e+IhOR94DASfoedAiNQR0kLLHuPcKxkc2lhElzAf4aQ/0E4Fu
+           6zQ7hhPFsWWNOpCAveQjXSj4jUWac/G6CvtF1hlQ52/ukeQkNIlmK/x+E8G1CTB4p3
+           EraebbWEmF4TYdfnsfOfFpAv4Iu7kyGrO++t7RTqogDZAlnZoRe+DBDcz3fuF2QxtA
+           U0NVtm2hM8z6A==
+Received: from 89-64-3-149.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.149])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <liyuesong@vivo.com>; 13 Jun 2025 18:11:52 +0200
+Date: Fri, 13 Jun 2025 18:11:51 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] wifi: iwlegacy: convert to use secs_to_jiffies()
+Message-ID: <20250613161151.GA205720@wp.pl>
+References: <20250612021446.3465972-1-liyuesong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <684bcf65.050a0220.be214.029b.GAE@google.com> <3c89e1105e611812ae86fb6aafd346be4445e055.camel@gmail.com>
-In-Reply-To: <3c89e1105e611812ae86fb6aafd346be4445e055.camel@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 13 Jun 2025 09:10:38 -0700
-X-Gm-Features: AX0GCFtsmhm4IcqZGd5BCX0XnZXe1ySkkEYzz3GResZBxUbVEx99pnvuB5kzGXU
-Message-ID: <CAADnVQKRsUcPkWBBA0442jakf-6dr9n9dii9pjSsSyqRS6NcgA@mail.gmail.com>
-Subject: Re: [syzbot] [bpf?] WARNING in do_check
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: syzbot <syzbot+a36aac327960ff474804@syzkaller.appspotmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Network Development <netdev@vger.kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612021446.3465972-1-liyuesong@vivo.com>
+X-WP-MailID: d62c7ddc87a6b367d150880345504c38
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [keMB]                               
 
-On Fri, Jun 13, 2025 at 12:56=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.co=
-m> wrote:
->
-> On Fri, 2025-06-13 at 00:12 -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    1c66f4a3612c bpf: Fix state use-after-free on push_stac=
-k()..
-> > git tree:       bpf-next
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1346ed70580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D73696606574=
-e3967
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Da36aac327960f=
-f474804
-> > compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07=
-757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1392610c5=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11a9ee0c580=
-000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/2ddb1df1c757/d=
-isk-1c66f4a3.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/6a318fc92af0/vmli=
-nux-1c66f4a3.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/76c58dddcb6c=
-/bzImage-1c66f4a3.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+a36aac327960ff474804@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
->
-> Fwiw, here is a repro converted to selftest.
-> I'll take detailed look on Friday:
->
-> SEC("socket")
-> __naked void syzbot_repro(void)
-> {
->         asm volatile (
->         "r8 =3D 0xff80;"
->         "r1 =3D 0xff110001085a0800 ll;"
->         "r2 =3D 20;"
->         "r3 =3D 0;"
->         "call %[bpf_ktime_get_ns];"
-> "1:"
->         "w9 =3D w10;"
->         "if r9 >=3D 0xff4ad400 goto 2f;"
->         "may_goto +13;"
->         "r2 =3D 0;"
->         "*(u8 *)(r10 -16) =3D r9;"
-> "2:"
->         "if r9 s< 0x1004 goto 3f;"
->         "lock *(u32 *)(r10 -16) +=3D r10;"
->         "r6 =3D r8;"
->         "r8 +=3D -8;"
->         "r4 =3D r10;"
-> "3:"
->         "r6 +=3D -16;"
->         "r2 =3D 8;"
->         "r2 =3D 0xff110001085a05d8 ll;"
->         "r5 =3D 8;"
->         "if w8 & 0x76 goto 1b;"
+On Thu, Jun 12, 2025 at 10:14:44AM +0800, Yuesong Li wrote:
+> Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
+> use it to avoid scaling the time to msec.
+> 
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
 
-I suspect this might be the fix:
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index c378074516cf..e76eb0322912 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -23950,6 +23950,7 @@ static bool can_jump(struct bpf_insn *insn)
-        case BPF_JSLT:
-        case BPF_JSLE:
-        case BPF_JCOND:
-+       case BPF_JSET:
-                return true;
-        }
+> ---
+>  drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> index 8e58e97a148f..24a39a968db0 100644
+> --- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> +++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> @@ -1382,7 +1382,7 @@ il4965_hdl_stats(struct il_priv *il, struct il_rx_buf *rxb)
+>  	 * we get a thermal update even if the uCode doesn't give us one
+>  	 */
+>  	mod_timer(&il->stats_periodic,
+> -		  jiffies + msecs_to_jiffies(recalib_seconds * 1000));
+> +		  jiffies + secs_to_jiffies(recalib_seconds));
+>  
+>  	if (unlikely(!test_bit(S_SCANNING, &il->status)) &&
+>  	    (pkt->hdr.cmd == N_STATS)) {
+> -- 
+> 2.34.1
+> 
 
