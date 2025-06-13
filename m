@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-685293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA4CAD87A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E43AD87B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1730017F42E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:20:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D15617C180
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D68A291C23;
-	Fri, 13 Jun 2025 09:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61A9279DA8;
+	Fri, 13 Jun 2025 09:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="II8lr8ls"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j457JkK2"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228F02C15B7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C8624DD1A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806392; cv=none; b=rPopSOSJXDKlKxfQKnq0RVIiKT2wVzxDMVBlmVrmF6uWbVLCRrxcKdYsQHWHRoju9F//NX6ruEmKHe97n/Lg4K/zxsKlBlcAJoWIPVcRZloKBDbngaiQ8FiExdLLTx9DyrScB9HRhjZwBRQB1pDyyS88GbYD0ruA6t6tWBRKabs=
+	t=1749806647; cv=none; b=KTFpOPN8n0au8KzWfHyZnOjg2vxSJ25rN0LklcVLm9+RF9tkpnrUA3F2nVCvH6MrT4GgrJ3+fOhjqZDTQ8O2zpoOJ52tbR0HfExecYa7AidJhpiooK011sG0SLCRD1pZfAOZbCZAPF6masMAnRAPAGSlY7I4RyVENjaYgLQpyeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806392; c=relaxed/simple;
-	bh=vA2zESw0UZVtSv/afmxb/qpu0fOOiy8mfjZOlskXQW4=;
+	s=arc-20240116; t=1749806647; c=relaxed/simple;
+	bh=i9WIQ8B26v3g3iQ7hPXRuMd+m/Bn5Io8zx93F8to93U=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jMTrJLv8wgCotBrNbfWh+eyx0JN7bGlN2y3iT6rOZGf9wdeDCkFD+wRLtu887r9HBG/gQjhQQK9XkVWyE3l6yCMxRlSsbu/jVoqbeTqBERTe7Au9UVdUnJu6IB1eoVrk7tosEttlJwU3hwEICz6VD8s855fjH5+M1CUghEAOWu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=II8lr8ls; arc=none smtp.client-ip=209.85.221.44
+	 In-Reply-To:Content-Type; b=ja5JyB4HvojM8P58j96R11WfUMtvu8k95GHaPmijpEJtUE6NTyh8T3iqlT8LDTdWt5sHTKMLBzxALEa/ghbUJ65eSCst/F2R9axTPVWOuZ5PEpdc84WgxNXmPcQMEHt9RGdMuhzIGRLxa+8i0jSasabnjsBRTIMPbMi8EyNknyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j457JkK2; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4f379662cso1670459f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:19:49 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45310223677so16462375e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:24:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749806388; x=1750411188; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749806644; x=1750411444; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0qFn07GB/hGI+Ctu/nW6cDAKtjk0DCxKbD/zvlW1KZ4=;
-        b=II8lr8lsIwDnWgSsns0npsr2rwHAJYZ81g/GsvkZrbuk1pAj6G/XC8A0Ao7a9MXdgL
-         9zrEPuQ5JLobXmZogYL8LacA+6eXceu8lL+E+724aKaIZ8l050494Nu0qFmpWfqIPacf
-         s2gg6JM2yX7oBITJ+rtNhDVs1jUdRc7PEbO09dwI1MolYjoOu7tMD+XVsv5bXN7bvBuB
-         AeCCuZ8EsEZae8hrTj4nXNbV2hIMwBmu+FVGX7I5YyqVbxEcjRj+wzcHdaLbg6tK2k2L
-         g8T1YA7CFCdWxjX7MjqkxAYZ9VJkSRZtWJXW01c0BKEAcj6F2QfNHKpRK5/jT6TRBb4o
-         iWsA==
+        bh=i9WIQ8B26v3g3iQ7hPXRuMd+m/Bn5Io8zx93F8to93U=;
+        b=j457JkK2MjO6IYZvuQFomlUcSwx20vYNE8VEUUAnb3OMUtyYjRPYAJguaYLFso9vPh
+         2b8sNml227hUR7/35MaKJWl2yfuWRB9RvpRAWSIb6DP81pBKSK5MMuXyzFmsHq8cmbwQ
+         zDsh0E0R+BkjevzPwqCZrDZmr3SOBzDyF8EXLBbY0tXjrWW8xxf1anGCs+fmptSaf3H/
+         nS0S47GxuqoYYO+ABhIv7aUu68tNILwMwf1NjymKHrFV20uxInhZ1FTIpb+KqfbJqgxC
+         0+LJcuGTDHaKhBiyk240HnKT4S0ilfz/9+eqrGzp9OpBM90DFaqcZLbzvNiAAQAwJzuD
+         HmJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749806388; x=1750411188;
+        d=1e100.net; s=20230601; t=1749806644; x=1750411444;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=0qFn07GB/hGI+Ctu/nW6cDAKtjk0DCxKbD/zvlW1KZ4=;
-        b=ZSIQaUOsQMt/gw4tRufbP8qKBm/3w87npmPnPYp0kTskjuy1YCCL9ZfR3zFkakPst/
-         UpfibwA389kvw8AO2FXHMRzEb78yJiiG7tYvjYsO1p7imVgsbbZ392le3ewaEMbe9eMw
-         o6NEDajw+2E83mxKIhkIsE2KO+ZZbR5x1JrIHxxV+rJKbgX56HSvvozYi66AmI8cw/gL
-         Uz0knigSMSjpnii3y+XntP4nXuHhHM+r8Znee3Ub7wHKWrp6mmwvGGxCH0ycaHRMnuK4
-         yHKSmZfjvuiGwtjnTlGMiAYMBY8OyuR2+gVpsLyYCIP0+j47COJKClpn+CUzvcCDfbkN
-         Avug==
-X-Forwarded-Encrypted: i=1; AJvYcCUJR+kIi8jhQvBYoxgP4WRtAtX5ZoFB9UsZhAx8UuyuqmG7G4LANMnDYIP2Mj/Y2buAQ+RrbmxKTbLhlGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMYdJc/UHGP3+zkRKEjSrv48tSK2H1cPiJfoMWAAHrXObV6WF9
-	SWA4VMf02mkvzhXLRj8Q76hpA/U+iqrVzKh7f/VjrwEa3Qf27b4HxQY5OOe+iRI1GT4OORPmy01
-	YOmhVE30=
-X-Gm-Gg: ASbGncspZvYauEhsSxe1MjW0avEbbYnuVAWgCO+SKytmuWqI9GvwECa3coypasDNoQo
-	Z6sn12KpMbjTKUD9zV8fSJ4HyGK34IXaEEgy+cGCJowGvlsFYHKilmaAmylvJ5b5cmDP8t9KdT+
-	UNIuBqWrlzBzUdefgRtI49cwN+30Hi/5E5nKZFBug3C33vEkOUUWC1vKPRgq1c251YuzVhxZ3j2
-	btGn02+AHZgqanV4atTKhM/AftUBgt1eFR7PRJQC07bncECTvyqXCRlq/X74vcZm7B6ADzMzpOR
-	Jd8Pc/akyNoQtkHaS3LfTox/9K9CLeElZlROD8F56KCcJoVrKiCk9OzU84HJpblG2V2MkCGUPU2
-	sazqCkpCbvF2RrIWOHNDsm7g+N2Ho+sWULsqBcqM=
-X-Google-Smtp-Source: AGHT+IH4oACk1bsfV6amSlitKrCgpQJnJ/K1MhkDAlenMtB1mkbBDDmt16i+/PumTX/+HB7PsCie1A==
-X-Received: by 2002:a05:6000:2913:b0:3a4:fea6:d49f with SMTP id ffacd0b85a97d-3a5687709c5mr2132132f8f.49.1749806388333;
-        Fri, 13 Jun 2025 02:19:48 -0700 (PDT)
+        bh=i9WIQ8B26v3g3iQ7hPXRuMd+m/Bn5Io8zx93F8to93U=;
+        b=TPSLco6ZrfboXJ6DhmCeqkZ2jsz6Vdeuje4Gn/TMZf9bAGm3GbPJWH/ymwIEh0SZ5r
+         +gJjS18tnPrEwMJRB5/O+E0LpRecsa87mWexPHvBPSj+JDAmXDAAiHmPLS0NvPKy7GU2
+         Y/X6tsiumX5pyu2lryCda05Z+124fd5yb8v1IJ5e/tMwURgOkvW1/PWzqtqjrx4bSykX
+         CFH1hhhcWthy+NTsKHNo+SKX5vELNA7YGhbsZ8sRpsuKf4LVrkPo9QdS/XzChcsdkC+P
+         yZ8ZMG61BNHpcKfXDuLyNbG2hwz4g2VH3/Qgi81qsRsNzytent03Y/uOn/3bfUSRnsm8
+         a03g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9jh2uq6pdVu8ysAhaxgrTcrE9TRGrO+gXCepbIuwlL82jPqu2wj82qMkhftd6x70aWk5m3u9tdr4KxvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM6X5450sjvB/4QRIIxR2ImmuNyhQVVbLbkENFopyhuAEkKgS0
+	bfPhQOy36qw+exjcWy9pNQgyt68gWGjAlM9nMRozMWRHzoKQaDAn42XtwBWBefalxXI=
+X-Gm-Gg: ASbGncszDGie3xs996iMgdKvunhJjKJ3e3nuRP7voelxUUXBu5Wljp1cFcGLIwgfdrZ
+	Z+WyLnIAcU8AwzsRyPz/BMEtPEsRXRcMhJizFrcPt9T7QwbTHV97ot8t7XkJEBTEJppnxTpoVDw
+	y6WGrHsZhiwuaX/FPDo0v9C+t8YW4mVu+enl2q4tCwiHlfrQjDkU8qOMQzhV4+HPad8e0twM0vY
+	c4Q/Y95905y1lzhj6JGyBV15xNPoCSYF3DfMlqYyMqrFIJVMDgQwMMgW8xJpfgosyDvIGG0zRL4
+	ctf1rVJwPscnw94hGBj+1+rAOnadeP9ASDR/jswl3XrfXjU6Yz8u1pJkmtzPxoRk7CBzzf0i4IC
+	qoPC1D+RaulKqrEejEYXQ81HJKOFN41azRtd79cc=
+X-Google-Smtp-Source: AGHT+IFEllrIyFQhVlhIg25FleSEFjCUqz576wC2S+zE6MQNuYV/zd1Su/X37UQDZj/RPRCylVYhIQ==
+X-Received: by 2002:a05:600c:1f12:b0:442:e109:3027 with SMTP id 5b1f17b1804b1-45334b26917mr19276035e9.24.1749806644048;
+        Fri, 13 Jun 2025 02:24:04 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae? ([2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a734b5sm1816612f8f.33.2025.06.13.02.19.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b09148sm1807237f8f.58.2025.06.13.02.24.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 02:19:47 -0700 (PDT)
-Message-ID: <8c13ed70-6464-4b70-b45c-a336d5c6d4fa@linaro.org>
-Date: Fri, 13 Jun 2025 11:19:47 +0200
+        Fri, 13 Jun 2025 02:24:03 -0700 (PDT)
+Message-ID: <5b759f1a-fd74-4bcd-8f15-aa0d6ec6d9d4@linaro.org>
+Date: Fri, 13 Jun 2025 11:24:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,15 +85,24 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: neil.armstrong@linaro.org
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] phy: cadence: Sierra: Add PCIe + USB PHY multilink
- configuration
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, vkoul@kernel.org,
- kishon@kernel.org, christophe.jaillet@wanadoo.fr, sjakhade@cadence.com,
- bwawrzyn@cisco.com, u.kleine-koenig@baylibre.com,
- krzysztof.kozlowski@linaro.org
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com
-References: <20250610130133.2102196-1-s-vadapalli@ti.com>
+Subject: Re: [PATCH v2 3/3] drm/msm/adreno: Check for recognized GPU before
+ bind
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Alexey Klimov <alexey.klimov@linaro.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <lumag@kernel.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250609182439.28432-1-robin.clark@oss.qualcomm.com>
+ <20250609182439.28432-4-robin.clark@oss.qualcomm.com>
+ <DAKOKYU9O323.M7OSA1CFHQWX@linaro.org>
+ <1bf920c8-245b-40c3-bce1-ec5194b30fd9@oss.qualcomm.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -121,293 +129,152 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20250610130133.2102196-1-s-vadapalli@ti.com>
+In-Reply-To: <1bf920c8-245b-40c3-bce1-ec5194b30fd9@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 
-On 10/06/2025 15:01, Siddharth Vadapalli wrote:
-> From: Swapnil Jakhade <sjakhade@cadence.com>
-> 
-> Add register sequences for PCIe + USB multilink configuration for
-> Sierra PHY.
-> 
-> Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> 
-> Hello,
-> 
-> This patch is based on linux-next tagged next-20250610.
-> 
-> Regards,
-> Siddharth.
-> 
->   drivers/phy/cadence/phy-cadence-sierra.c | 180 +++++++++++++++++++++++
->   1 file changed, 180 insertions(+)
-> 
-> diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
-> index 45a5c00843bf..74613382ccb0 100644
-> --- a/drivers/phy/cadence/phy-cadence-sierra.c
-> +++ b/drivers/phy/cadence/phy-cadence-sierra.c
-> @@ -58,8 +58,11 @@
->   #define SIERRA_CMN_PLLLC1_GEN_PREG			0xC2
->   #define SIERRA_CMN_PLLLC1_FBDIV_INT_PREG		0xC3
->   #define SIERRA_CMN_PLLLC1_DCOCAL_CTRL_PREG		0xC5
-> +#define SIERRA_CMN_PLLLC1_MODE_PREG			0xC8
-> +#define SIERRA_CMN_PLLLC1_LF_COEFF_MODE1_PREG		0xC9
->   #define SIERRA_CMN_PLLLC1_LF_COEFF_MODE0_PREG		0xCA
->   #define SIERRA_CMN_PLLLC1_CLK0_PREG			0xCE
-> +#define SIERRA_CMN_PLLLC1_BWCAL_MODE1_PREG		0xCF
->   #define SIERRA_CMN_PLLLC1_BWCAL_MODE0_PREG		0xD0
->   #define SIERRA_CMN_PLLLC1_SS_TIME_STEPSIZE_MODE_PREG	0xE2
->   
-> @@ -1541,6 +1544,137 @@ static void cdns_sierra_phy_remove(struct platform_device *pdev)
->   	cdns_sierra_clk_unregister(phy);
->   }
->   
-> +/* USB refclk 100MHz, 20b, SuperSpeed opt2, ext ssc, PLL LC1, multilink */
-> +static const struct cdns_reg_pairs usb_100_ext_ssc_plllc1_cmn_regs[] = {
-> +	{0x002D, SIERRA_CMN_PLLLC1_FBDIV_INT_PREG},
-> +	{0x2086, SIERRA_CMN_PLLLC1_LF_COEFF_MODE1_PREG},
-> +	{0x2086, SIERRA_CMN_PLLLC1_LF_COEFF_MODE0_PREG},
-> +	{0x1005, SIERRA_CMN_PLLLC1_CLK0_PREG},
-> +	{0x0000, SIERRA_CMN_PLLLC1_BWCAL_MODE1_PREG},
-> +	{0x0000, SIERRA_CMN_PLLLC1_BWCAL_MODE0_PREG},
-> +	{0x0000, SIERRA_CMN_PLLLC1_SS_TIME_STEPSIZE_MODE_PREG}
-> +};
-> +
-> +/* USB refclk 100MHz, 20b, SuperSpeed opt2, int ssc, PLL LC1, multilink */
-> +static const struct cdns_reg_pairs usb_100_int_ssc_plllc1_cmn_regs[] = {
-> +	{0x002D, SIERRA_CMN_PLLLC1_FBDIV_INT_PREG},
-> +	{0x000E, SIERRA_CMN_PLLLC1_MODE_PREG},
-> +	{0x1005, SIERRA_CMN_PLLLC1_CLK0_PREG}
-> +};
-> +
-> +static const struct cdns_reg_pairs usb_100_ml_ln_regs[] = {
-> +	{0xFE0A, SIERRA_DET_STANDEC_A_PREG},
-> +	{0x000F, SIERRA_DET_STANDEC_B_PREG},
-> +	{0x55A5, SIERRA_DET_STANDEC_C_PREG},
-> +	{0x69AD, SIERRA_DET_STANDEC_D_PREG},
-> +	{0x0241, SIERRA_DET_STANDEC_E_PREG},
-> +	{0x0010, SIERRA_PSM_LANECAL_DLY_A1_RESETS_PREG},
-> +	{0x0014, SIERRA_PSM_A0IN_TMR_PREG},
-> +	{0x001D, SIERRA_PSM_A3IN_TMR_PREG},
-> +	{0x0004, SIERRA_PSC_LN_A3_PREG},
-> +	{0x0004, SIERRA_PSC_LN_IDLE_PREG},
-> +	{0x001F, SIERRA_PSC_TX_A0_PREG},
-> +	{0x0007, SIERRA_PSC_TX_A1_PREG},
-> +	{0x0003, SIERRA_PSC_TX_A2_PREG},
-> +	{0x0003, SIERRA_PSC_TX_A3_PREG},
-> +	{0x0FFF, SIERRA_PSC_RX_A0_PREG},
-> +	{0x0619, SIERRA_PSC_RX_A1_PREG},
-> +	{0x0003, SIERRA_PSC_RX_A2_PREG},
-> +	{0x0001, SIERRA_PSC_RX_A3_PREG},
-> +	{0x0606, SIERRA_PLLCTRL_FBDIV_MODE01_PREG},
-> +	{0x0001, SIERRA_PLLCTRL_SUBRATE_PREG},
-> +	{0x0003, SIERRA_PLLCTRL_GEN_A_PREG},
-> +	{0x0406, SIERRA_PLLCTRL_GEN_D_PREG},
-> +	{0x5211, SIERRA_PLLCTRL_CPGAIN_MODE_PREG},
-> +	{0x00CA, SIERRA_CLKPATH_BIASTRIM_PREG},
-> +	{0x2512, SIERRA_DFE_BIASTRIM_PREG},
-> +	{0x0000, SIERRA_DRVCTRL_ATTEN_PREG},
-> +	{0x823E, SIERRA_CLKPATHCTRL_TMR_PREG},
-> +	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE1_PREG},
-> +	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE0_PREG},
-> +	{0x7B3C, SIERRA_CREQ_CCLKDET_MODE01_PREG},
-> +	{0x023F, SIERRA_RX_CTLE_MAINTENANCE_PREG},
-> +	{0x3232, SIERRA_CREQ_FSMCLK_SEL_PREG},
-> +	{0x0000, SIERRA_CREQ_EQ_CTRL_PREG},
-> +	{0xCC44, SIERRA_CREQ_EQ_OPEN_EYE_THRESH_PREG},
-> +	{0x8452, SIERRA_CTLELUT_CTRL_PREG},
-> +	{0x4121, SIERRA_DFE_ECMP_RATESEL_PREG},
-> +	{0x4121, SIERRA_DFE_SMP_RATESEL_PREG},
-> +	{0x0002, SIERRA_DEQ_PHALIGN_CTRL},
-> +	{0x3200, SIERRA_DEQ_CONCUR_CTRL1_PREG},
-> +	{0x5064, SIERRA_DEQ_CONCUR_CTRL2_PREG},
-> +	{0x0030, SIERRA_DEQ_EPIPWR_CTRL2_PREG},
-> +	{0x5A5A, SIERRA_DEQ_ERRCMP_CTRL_PREG},
-> +	{0x02F5, SIERRA_DEQ_OFFSET_CTRL_PREG},
-> +	{0x02F5, SIERRA_DEQ_GAIN_CTRL_PREG},
-> +	{0xA9A9, SIERRA_DEQ_VGATUNE_CTRL_PREG},
-> +	{0x0014, SIERRA_DEQ_GLUT0},
-> +	{0x0014, SIERRA_DEQ_GLUT1},
-> +	{0x0014, SIERRA_DEQ_GLUT2},
-> +	{0x0014, SIERRA_DEQ_GLUT3},
-> +	{0x0014, SIERRA_DEQ_GLUT4},
-> +	{0x0014, SIERRA_DEQ_GLUT5},
-> +	{0x0014, SIERRA_DEQ_GLUT6},
-> +	{0x0014, SIERRA_DEQ_GLUT7},
-> +	{0x0014, SIERRA_DEQ_GLUT8},
-> +	{0x0014, SIERRA_DEQ_GLUT9},
-> +	{0x0014, SIERRA_DEQ_GLUT10},
-> +	{0x0014, SIERRA_DEQ_GLUT11},
-> +	{0x0014, SIERRA_DEQ_GLUT12},
-> +	{0x0014, SIERRA_DEQ_GLUT13},
-> +	{0x0014, SIERRA_DEQ_GLUT14},
-> +	{0x0014, SIERRA_DEQ_GLUT15},
-> +	{0x0014, SIERRA_DEQ_GLUT16},
-> +	{0x0BAE, SIERRA_DEQ_ALUT0},
-> +	{0x0AEB, SIERRA_DEQ_ALUT1},
-> +	{0x0A28, SIERRA_DEQ_ALUT2},
-> +	{0x0965, SIERRA_DEQ_ALUT3},
-> +	{0x08A2, SIERRA_DEQ_ALUT4},
-> +	{0x07DF, SIERRA_DEQ_ALUT5},
-> +	{0x071C, SIERRA_DEQ_ALUT6},
-> +	{0x0659, SIERRA_DEQ_ALUT7},
-> +	{0x0596, SIERRA_DEQ_ALUT8},
-> +	{0x0514, SIERRA_DEQ_ALUT9},
-> +	{0x0492, SIERRA_DEQ_ALUT10},
-> +	{0x0410, SIERRA_DEQ_ALUT11},
-> +	{0x038E, SIERRA_DEQ_ALUT12},
-> +	{0x030C, SIERRA_DEQ_ALUT13},
-> +	{0x03F4, SIERRA_DEQ_DFETAP_CTRL_PREG},
-> +	{0x0001, SIERRA_DFE_EN_1010_IGNORE_PREG},
-> +	{0x3C01, SIERRA_DEQ_TAU_CTRL1_FAST_MAINT_PREG},
-> +	{0x3C40, SIERRA_DEQ_TAU_CTRL1_SLOW_MAINT_PREG},
-> +	{0x1C08, SIERRA_DEQ_TAU_CTRL2_PREG},
-> +	{0x0033, SIERRA_DEQ_PICTRL_PREG},
-> +	{0x0330, SIERRA_CPICAL_TMRVAL_MODE0_PREG},
-> +	{0x01FF, SIERRA_CPICAL_PICNT_MODE1_PREG},
-> +	{0x0009, SIERRA_CPI_OUTBUF_RATESEL_PREG},
-> +	{0x3232, SIERRA_CPICAL_RES_STARTCODE_MODE23_PREG},
-> +	{0x0005, SIERRA_LFPSDET_SUPPORT_PREG},
-> +	{0x000F, SIERRA_LFPSFILT_NS_PREG},
-> +	{0x0009, SIERRA_LFPSFILT_RD_PREG},
-> +	{0x0001, SIERRA_LFPSFILT_MP_PREG},
-> +	{0x8013, SIERRA_SDFILT_H2L_A_PREG},
-> +	{0x8009, SIERRA_SDFILT_L2H_PREG},
-> +	{0x0024, SIERRA_RXBUFFER_CTLECTRL_PREG},
-> +	{0x0020, SIERRA_RXBUFFER_RCDFECTRL_PREG},
-> +	{0x4243, SIERRA_RXBUFFER_DFECTRL_PREG}
-> +};
-> +
-> +static const struct cdns_sierra_vals usb_100_ext_ssc_plllc1_cmn_vals = {
-> +	.reg_pairs = usb_100_ext_ssc_plllc1_cmn_regs,
-> +	.num_regs = ARRAY_SIZE(usb_100_ext_ssc_plllc1_cmn_regs),
-> +};
-> +
-> +static const struct cdns_sierra_vals usb_100_int_ssc_plllc1_cmn_vals = {
-> +	.reg_pairs = usb_100_int_ssc_plllc1_cmn_regs,
-> +	.num_regs = ARRAY_SIZE(usb_100_int_ssc_plllc1_cmn_regs),
-> +};
-> +
-> +static const struct cdns_sierra_vals usb_100_ml_ln_vals = {
-> +	.reg_pairs = usb_100_ml_ln_regs,
-> +	.num_regs = ARRAY_SIZE(usb_100_ml_ln_regs),
-> +};
-> +
->   /* SGMII PHY PMA lane configuration */
->   static const struct cdns_reg_pairs sgmii_phy_pma_ln_regs[] = {
->   	{0x9010, SIERRA_PHY_PMA_XCVR_CTRL}
-> @@ -2513,6 +2647,11 @@ static const struct cdns_sierra_data cdns_map_sierra = {
->   				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
->   				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
->   			},
-> +			[TYPE_USB] = {
-> +				[NO_SSC] = &pcie_phy_pcs_cmn_vals,
-> +				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
-> +				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
-> +			},
->   		},
->   	},
->   	.pma_cmn_vals = {
-> @@ -2532,11 +2671,20 @@ static const struct cdns_sierra_data cdns_map_sierra = {
->   				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
->   				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
->   			},
-> +			[TYPE_USB] = {
-> +				[NO_SSC] = &pcie_100_no_ssc_plllc_cmn_vals,
-> +				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
-> +				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
-> +			},
->   		},
->   		[TYPE_USB] = {
->   			[TYPE_NONE] = {
->   				[EXTERNAL_SSC] = &usb_100_ext_ssc_cmn_vals,
->   			},
-> +			[TYPE_PCIE] = {
-> +				[EXTERNAL_SSC] = &usb_100_ext_ssc_plllc1_cmn_vals,
-> +				[INTERNAL_SSC] = &usb_100_int_ssc_plllc1_cmn_vals,
-> +			},
->   		},
->   		[TYPE_SGMII] = {
->   			[TYPE_NONE] = {
-> @@ -2573,11 +2721,20 @@ static const struct cdns_sierra_data cdns_map_sierra = {
->   				[EXTERNAL_SSC] = &ml_pcie_100_ext_ssc_ln_vals,
->   				[INTERNAL_SSC] = &ml_pcie_100_int_ssc_ln_vals,
->   			},
-> +			[TYPE_USB] = {
-> +				[NO_SSC] = &ml_pcie_100_no_ssc_ln_vals,
-> +				[EXTERNAL_SSC] = &ml_pcie_100_ext_ssc_ln_vals,
-> +				[INTERNAL_SSC] = &ml_pcie_100_int_ssc_ln_vals,
-> +			},
->   		},
->   		[TYPE_USB] = {
->   			[TYPE_NONE] = {
->   				[EXTERNAL_SSC] = &usb_100_ext_ssc_ln_vals,
->   			},
-> +			[TYPE_PCIE] = {
-> +				[EXTERNAL_SSC] = &usb_100_ml_ln_vals,
-> +				[INTERNAL_SSC] = &usb_100_ml_ln_vals,
-> +			},
->   		},
->   		[TYPE_SGMII] = {
->   			[TYPE_NONE] = {
-> @@ -2620,6 +2777,11 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
->   				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
->   				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
->   			},
-> +			[TYPE_USB] = {
-> +				[NO_SSC] = &pcie_phy_pcs_cmn_vals,
-> +				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
-> +				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
-> +			},
->   		},
->   	},
->   	.phy_pma_ln_vals = {
-> @@ -2655,11 +2817,20 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
->   				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
->   				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
->   			},
-> +			[TYPE_USB] = {
-> +				[NO_SSC] = &pcie_100_no_ssc_plllc_cmn_vals,
-> +				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
-> +				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
-> +			},
->   		},
->   		[TYPE_USB] = {
->   			[TYPE_NONE] = {
->   				[EXTERNAL_SSC] = &usb_100_ext_ssc_cmn_vals,
->   			},
-> +			[TYPE_PCIE] = {
-> +				[EXTERNAL_SSC] = &usb_100_ext_ssc_plllc1_cmn_vals,
-> +				[INTERNAL_SSC] = &usb_100_int_ssc_plllc1_cmn_vals,
-> +			},
->   		},
->   		[TYPE_SGMII] = {
->   			[TYPE_PCIE] = {
-> @@ -2693,11 +2864,20 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
->   				[EXTERNAL_SSC] = &ti_ml_pcie_100_ext_ssc_ln_vals,
->   				[INTERNAL_SSC] = &ti_ml_pcie_100_int_ssc_ln_vals,
->   			},
-> +			[TYPE_USB] = {
-> +				[NO_SSC] = &ti_ml_pcie_100_no_ssc_ln_vals,
-> +				[EXTERNAL_SSC] = &ti_ml_pcie_100_ext_ssc_ln_vals,
-> +				[INTERNAL_SSC] = &ti_ml_pcie_100_int_ssc_ln_vals,
-> +			},
->   		},
->   		[TYPE_USB] = {
->   			[TYPE_NONE] = {
->   				[EXTERNAL_SSC] = &usb_100_ext_ssc_ln_vals,
->   			},
-> +			[TYPE_PCIE] = {
-> +				[EXTERNAL_SSC] = &usb_100_ml_ln_vals,
-> +				[INTERNAL_SSC] = &usb_100_ml_ln_vals,
-> +			},
->   		},
->   		[TYPE_SGMII] = {
->   			[TYPE_PCIE] = {
-
-Looks good:
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+T24gMTIvMDYvMjAyNSAxODowOCwgS29ucmFkIER5YmNpbyB3cm90ZToNCj4gT24gNi8xMi8y
+NSA2OjA0IFBNLCBBbGV4ZXkgS2xpbW92IHdyb3RlOg0KPj4gT24gTW9uIEp1biA5LCAyMDI1
+IGF0IDc6MjQgUE0gQlNULCBSb2IgQ2xhcmsgd3JvdGU6DQo+Pj4gSWYgd2UgaGF2ZSBhIG5l
+d2VyIGR0YiB0aGFuIGtlcm5lbCwgd2UgY291bGQgZW5kIHVwIGluIGEgc2l0dWF0aW9uIHdo
+ZXJlDQo+Pj4gdGhlIEdQVSBkZXZpY2UgaXMgcHJlc2VudCBpbiB0aGUgZHRiLCBidXQgbm90
+IGluIHRoZSBkcml2ZXJzIGRldmljZQ0KPj4+IHRhYmxlLiAgV2UgZG9uJ3Qgd2FudCB0aGlz
+IHRvIHByZXZlbnQgdGhlIGRpc3BsYXkgZnJvbSBwcm9iaW5nLiAgU28NCj4+PiBjaGVjayB0
+aGF0IHdlIHJlY29nbml6ZSB0aGUgR1BVIGJlZm9yZSBhZGRpbmcgdGhlIEdQVSBjb21wb25l
+bnQuDQo+Pj4NCj4+PiB2MjogdXNlICVwT0YNCj4+Pg0KPj4+IFNpZ25lZC1vZmYtYnk6IFJv
+YiBDbGFyayA8cm9iaW4uY2xhcmtAb3NzLnF1YWxjb21tLmNvbT4NCj4+PiAtLS0NCj4+PiAg
+IGRyaXZlcnMvZ3B1L2RybS9tc20vYWRyZW5vL2FkcmVub19kZXZpY2UuYyB8IDI5ICsrKysr
+KysrKysrKysrKysrKy0tLS0NCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9tc20vbXNtX2Rydi5j
+ICAgICAgICAgICAgICB8ICAyICstDQo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9n
+cHUuaCAgICAgICAgICAgICAgfCAgMSArDQo+Pj4gICAzIGZpbGVzIGNoYW5nZWQsIDI2IGlu
+c2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL21zbS9hZHJlbm8vYWRyZW5vX2RldmljZS5jIGIvZHJpdmVycy9ncHUv
+ZHJtL21zbS9hZHJlbm8vYWRyZW5vX2RldmljZS5jDQo+Pj4gaW5kZXggNzc4ZTZhZTdmMTM3
+Li4wZDEyNDU0YjFmMmUgMTAwNjQ0DQo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21zbS9h
+ZHJlbm8vYWRyZW5vX2RldmljZS5jDQo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21zbS9h
+ZHJlbm8vYWRyZW5vX2RldmljZS5jDQo+Pj4gQEAgLTE3OCw2ICsxNzgsMjYgQEAgc3RhdGlj
+IGludCBmaW5kX2NoaXBpZChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsIHVpbnQzMl90ICpj
+aGlwaWQpDQo+Pj4gICAJcmV0dXJuIDA7DQo+Pj4gICB9DQo+Pj4gICANCj4+PiArYm9vbCBh
+ZHJlbm9faGFzX2dwdShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpDQo+Pj4gK3sNCj4+PiAr
+CWNvbnN0IHN0cnVjdCBhZHJlbm9faW5mbyAqaW5mbzsNCj4+PiArCXVpbnQzMl90IGNoaXBf
+aWQ7DQo+Pj4gKwlpbnQgcmV0Ow0KPj4+ICsNCj4+PiArCXJldCA9IGZpbmRfY2hpcGlkKG5v
+ZGUsICZjaGlwX2lkKTsNCj4+PiArCWlmIChyZXQpDQo+Pj4gKwkJcmV0dXJuIGZhbHNlOw0K
+Pj4+ICsNCj4+PiArCWluZm8gPSBhZHJlbm9faW5mbyhjaGlwX2lkKTsNCj4+PiArCWlmICgh
+aW5mbykgew0KPj4+ICsJCXByX3dhcm4oIiVwT0Y6IFVua25vd24gR1BVIHJldmlzaW9uOiAl
+IkFEUkVOT19DSElQSURfRk1UIlxuIiwNCj4+PiArCQkJbm9kZSwgQURSRU5PX0NISVBJRF9B
+UkdTKGNoaXBfaWQpKTsNCj4+PiArCQlyZXR1cm4gZmFsc2U7DQo+Pj4gKwl9DQo+Pj4gKw0K
+Pj4+ICsJcmV0dXJuIHRydWU7DQo+Pj4gK30NCj4+PiArDQo+Pj4gICBzdGF0aWMgaW50IGFk
+cmVub19iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2
+b2lkICpkYXRhKQ0KPj4+ICAgew0KPj4+ICAgCXN0YXRpYyBzdHJ1Y3QgYWRyZW5vX3BsYXRm
+b3JtX2NvbmZpZyBjb25maWcgPSB7fTsNCj4+PiBAQCAtMTg4LDE4ICsyMDgsMTcgQEAgc3Rh
+dGljIGludCBhZHJlbm9fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2Ug
+Km1hc3Rlciwgdm9pZCAqZGF0YSkNCj4+PiAgIAlpbnQgcmV0Ow0KPj4+ICAgDQo+Pj4gICAJ
+cmV0ID0gZmluZF9jaGlwaWQoZGV2LT5vZl9ub2RlLCAmY29uZmlnLmNoaXBfaWQpOw0KPj4+
+IC0JaWYgKHJldCkNCj4+PiArCS8qIFdlIHNob3VsZG4ndCBoYXZlIGdvdHRlbiB0aGlzIGZh
+ciBpZiB3ZSBjYW4ndCBwYXJzZSB0aGUgY2hpcF9pZCAqLw0KPj4+ICsJaWYgKFdBUk5fT04o
+cmV0KSkNCj4+PiAgIAkJcmV0dXJuIHJldDsNCj4+DQo+PiBJIGp1c3QgaGl0IHRoaXMgd2l0
+aCBsaW51eC1uZXh0IG9uIHFyYjIyMTAgUkIxIFsxXS4NCj4+DQo+PiBJcyBpdCBleHBlY3Rl
+ZCBhbiB3YXJuaW5nIG5vdyBvciBkbyB3ZSBtaXNzIHNvbWUgZGV2aWNlIHRyZWUgdXBkYXRl
+cyBvbg0KPj4gbGludXgtbmV4dCBmb3IgUkIxPw0KPj4NCj4+IEkgZG9uJ3QgcmVjYWxsIHNl
+ZWluZyBzdWNoIHdhcm5pbmdzIHByZXZpb3VzbHkuDQo+Pg0KPj4gVGhhbmtzLA0KPj4gQWxl
+eGV5DQo+Pg0KPj4gWzFdOg0KPj4NCj4+ICAgbXNtX2RwdSA1ZTAxMDAwLmRpc3BsYXktY29u
+dHJvbGxlcjogYm91bmQgNWU5NDAwMC5kc2kgKG9wcyBkc2lfb3BzIFttc21dKQ0KPj4gICAt
+LS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0NCj4+ICAgV0FSTklORzogQ1BV
+OiAwIFBJRDogMjQyIGF0IGRyaXZlcnMvZ3B1L2RybS9tc20vYWRyZW5vL2FkcmVub19kZXZp
+Y2UuYzoyMjQgYWRyZW5vX2JpbmQrMHg5MC8weDEyMCBbbXNtXQ0KPj4gICBNb2R1bGVzIGxp
+bmtlZCBpbjogcTZhc21fZGFpIHE2cm91dGluZyBxNmFmZV9kYWkgcTZhZG0gcTZhc20gcTZh
+ZmVfY2xvY2tzIHNuZF9xNmRzcF9jb21tb24gcTZhZmUgcTZjb3JlIGFwciBwZHJfaW50ZXJm
+YWNlIHFydHJfc21kIHFjb21fcGRfbWFwcGVyIHFjb21fcGRyX21zZyBtY3AyNTF4ZmQgYXRo
+MTBrX3Nub2Mgc25kX3NvY193c2E4ODF4X2kyYyBzbmRfc29jX3dzYTg4MXhfY29tbW9uIGNh
+bl9kZXYgbG9udGl1bV9sdDk2MTF1eGMoKykgYXRoMTBrX2NvcmUgYXRoIG1hYzgwMjExIGhj
+aV91YXJ0IGJ0cWNhIGJ0YmNtIGxpYmFyYzQgbXNtIHNuZF9zb2Nfc204MjUwIHFydHIgYmx1
+ZXRvb3RoIGRybV9leGVjIHNuZF9zb2NfcWNvbV9zZHcgcWNvbV9xNnY1X3BhcyBsbGNjX3Fj
+b20gc25kX3NvY19xY29tX2NvbW1vbiBsbWggcWNvbV93ZHQgb2NtZW0gY2ZnODAyMTEgZWNk
+aF9nZW5lcmljIHFjb21fcGlsX2luZm8gcGluY3RybF9zbTYxMTVfbHBhc3NfbHBpIGdwdV9z
+Y2hlZCBlY2MgZHJtX2Rpc3BsYXlfaGVscGVyIHJma2lsbCBxY29tX3E2djUgcGluY3RybF9s
+cGFzc19scGkgcWNvbV9zeXNtb24gcHdyc2VxX2NvcmUgbHBhc3NjY19zbTYxMTUgZGlzcGNj
+X3FjbTIyOTAgcWNvbV9jb21tb24gc25kX3NvY19scGFzc192YV9tYWNybyBjZWMgc25kX3Nv
+Y19scGFzc19yeF9tYWNybyBkcm1fZHBfYXV4X2J1cyBzbmRfc29jX2xwYXNzX3R4X21hY3Jv
+IHFjb21fZ2xpbmtfc21lbSBncHVjY19xY20yMjkwIHNuZF9zb2NfcG00MTI1IG1kdF9sb2Fk
+ZXIgc25kX3NvY19scGFzc19tYWNyb19jb21tb24gcW1pX2hlbHBlcnMgc25kX3NvY19wbTQx
+MjVfc2R3IHNvdW5kd2lyZV9xY29tIHJlZ21hcF9zZHcgc2xpbWJ1cyBxY29tX3BtaWNfdGNw
+bSBxY29tX3VzYl92YnVzX3JlZ3VsYXRvciBkcm1fY2xpZW50X2xpYiB0Y3BtIHJ0Y19wbTh4
+eHggc25kX3NvY193Y2RfbWJoYyBhdXhfaHBkX2JyaWRnZSBxY29tX3BvbiBxY3J5cHRvIHNv
+dW5kd2lyZV9idXMgc2hhMjU2IHFjb21fc3RhdHMgZ3BpDQo+PiAgICBzcGlfZ2VuaV9xY29t
+IGkyY19xY29tX2dlbmkgcnBtc2dfY3RybCBsaWJzaGEyNTZfZ2VuZXJpYyBsaWJzaGEyNTYg
+cnBtc2dfY2hhciBxY29tX3JuZyBzaGEyNTZfYXJtNjQgYXV0aGVuYyBpY2NfYndtb24gcGh5
+X3Fjb21fcW1wX3VzYmMgbGliZGVzIHR5cGVjIHBoeV9xY29tX3F1c2IyIGRpc3BsYXlfY29u
+bmVjdG9yIGkyY19ncGlvIHJtdGZzX21lbSBkcm1fa21zX2hlbHBlciBzb2NpbmZvIGZ1c2Ug
+ZHJtIGJhY2tsaWdodCBkbV9tb2QgaXBfdGFibGVzIHhfdGFibGVzIGlwdjYNCj4+ICAgQ1BV
+OiAwIFVJRDogMCBQSUQ6IDI0MiBDb21tOiAodWRldi13b3JrZXIpIE5vdCB0YWludGVkIDYu
+MTYuMC1yYzEtbmV4dC0yMDI1MDYxMi0wMDAyNS1nMGNlMGQzOTc0MzMzLWRpcnR5ICMyIFBS
+RUVNUFQNCj4+ICAgSGFyZHdhcmUgbmFtZTogUXVhbGNvbW0gVGVjaG5vbG9naWVzLCBJbmMu
+IFJvYm90aWNzIFJCMSAoRFQpDQo+PiAgIHBzdGF0ZTogNjAwMDAwMDUgKG5aQ3YgZGFpZiAt
+UEFOIC1VQU8gLVRDTyAtRElUIC1TU0JTIEJUWVBFPS0tKQ0KPj4gICBwYyA6IGFkcmVub19i
+aW5kKzB4OTAvMHgxMjAgW21zbV0NCj4+ICAgbHIgOiBhZHJlbm9fYmluZCsweDUwLzB4MTIw
+IFttc21dDQo+PiAgIHNwIDogZmZmZjgwMDA4MTNmMzU4MA0KPj4gICB4Mjk6IGZmZmY4MDAw
+ODEzZjM1ODAgeDI4OiBmZmZmMDAwMDA4YWU4ODAwIHgyNzogZmZmZjAwMDAwN2M2MzcwMA0K
+Pj4gICB4MjY6IGZmZmZjYTRhMjgxNGI4NjAgeDI1OiBmZmZmMDAwMDA4YjI2ODgwIHgyNDog
+ZmZmZmNhNGEyNDkyMjAwMA0KPj4gICB4MjM6IGZmZmZjYTRhMjQ5MjI5ZDggeDIyOiBmZmZm
+MDAwMDA5ODM4ODAwIHgyMTogZmZmZjAwMDAwOGIyNjg4MA0KPj4gICB4MjA6IGZmZmYwMDAw
+MDJjZTQ0MTAgeDE5OiBmZmZmY2E0YTI0OTVhNzEwIHgxODogMDAwMDAwMDAwMDAwMDAwNg0K
+Pj4gICB4MTc6IDZmNWY2OTczNjQyMDczNzAgeDE2OiA2ZjI4MjA2OTczNjQyZTMwIHgxNTog
+MDcyMDA3MjAwNzIwMDcyMA0KPj4gICB4MTQ6IDAwMDAwMDAwMDAwMDAwMDAgeDEzOiAwMDAw
+MDAwMDAwMDAwMDAwIHgxMjogMDEwMTAxMDEwMTAxMDEwMQ0KPj4gICB4MTE6IDdmN2Y3Zjdm
+N2Y3ZjdmN2YgeDEwOiBmZmZmY2E0YTI4NjZlMWIyIHg5IDogMDAwMDAwMDAwMDAwMDAwMg0K
+Pj4gICB4OCA6IDAxMDEwMTAxMDEwMTAxMDEgeDcgOiA3ZjdmN2Y3ZjdmN2Y3ZjdmIHg2IDog
+ZmVmZWZlZmYyZjM4MzEzMQ0KPj4gICB4NSA6IGZmZmYwMDAwN2ZjMWI5NjggeDQgOiAwMDAw
+MDAwMDAwMDAwMDAwIHgzIDogMDAwMDAwMDAwMDAwMDAxZQ0KPj4gICB4MiA6IDAwMDAwMDAw
+MDAwMDAwMDEgeDEgOiAwMDAwMDAwMDA3MDAwMjAwIHgwIDogZmZmZmNhNGEyNDk1YTcxMA0K
+Pj4gICBDYWxsIHRyYWNlOg0KPj4gICAgYWRyZW5vX2JpbmQrMHg5MC8weDEyMCBbbXNtXSAo
+UCkNCj4+ICAgIGNvbXBvbmVudF9iaW5kX2FsbCsweDEwMC8weDIzYw0KPj4gICAgbXNtX2Ry
+bV9iaW5kKzB4MTQ4LzB4M2UwIFttc21dDQo+PiAgICB0cnlfdG9fYnJpbmdfdXBfYWdncmVn
+YXRlX2RldmljZSsweDE2Yy8weDFlMA0KPj4gICAgX19jb21wb25lbnRfYWRkKzB4YTQvMHgx
+NzQNCj4+ICAgIGNvbXBvbmVudF9hZGQrMHgxNC8weDIwDQo+PiAgICBkc2lfZGV2X2F0dGFj
+aCsweDIwLzB4MzQgW21zbV0NCj4+ICAgIGRzaV9ob3N0X2F0dGFjaCsweDU4LzB4OTggW21z
+bV0NCj4+ICAgIGRldm1fbWlwaV9kc2lfYXR0YWNoKzB4MzQvMHg5MA0KPj4gICAgbHQ5NjEx
+dXhjX2F0dGFjaF9kc2kuaXNyYS4wKzB4OTQvMHgxMjQgW2xvbnRpdW1fbHQ5NjExdXhjXQ0K
+Pj4gICAgbHQ5NjExdXhjX3Byb2JlKzB4NTY4LzB4NjA0IFtsb250aXVtX2x0OTYxMXV4Y10N
+Cj4+ICAgIGkyY19kZXZpY2VfcHJvYmUrMHgxNTgvMHgzMmMNCj4+ICAgIHJlYWxseV9wcm9i
+ZSsweGJjLzB4MmI0DQo+PiAgICBfX2RyaXZlcl9wcm9iZV9kZXZpY2UrMHg3OC8weDEyMA0K
+Pj4gICAgZHJpdmVyX3Byb2JlX2RldmljZSsweDNjLzB4MTU0DQo+PiAgICBfX2RyaXZlcl9h
+dHRhY2grMHg5MC8weDFhMA0KPj4gICAgYnVzX2Zvcl9lYWNoX2RldisweDY4LzB4YjgNCj4+
+ICAgIGRyaXZlcl9hdHRhY2grMHgyNC8weDMwDQo+PiAgICBidXNfYWRkX2RyaXZlcisweGU0
+LzB4MjA4DQo+PiAgICBkcml2ZXJfcmVnaXN0ZXIrMHg2OC8weDEyNA0KPj4gICAgaTJjX3Jl
+Z2lzdGVyX2RyaXZlcisweDQ4LzB4Y2MNCj4+ICAgIGx0OTYxMXV4Y19kcml2ZXJfaW5pdCsw
+eDIwLzB4MTAwMCBbbG9udGl1bV9sdDk2MTF1eGNdDQo+PiAgICBkb19vbmVfaW5pdGNhbGwr
+MHg2MC8weDFkNA0KPj4gICAgZG9faW5pdF9tb2R1bGUrMHg1NC8weDIzYw0KPj4gICAgbG9h
+ZF9tb2R1bGUrMHgxNzMwLzB4MWNjMA0KPj4gICAgaW5pdF9tb2R1bGVfZnJvbV9maWxlKzB4
+NzQvMHhhMA0KPj4gICAgX19hcm02NF9zeXNfZmluaXRfbW9kdWxlKzB4MTMwLzB4MmY4DQo+
+PiAgICBpbnZva2Vfc3lzY2FsbCsweDQ4LzB4MTA0DQo+PiAgICBlbDBfc3ZjX2NvbW1vbi5j
+b25zdHByb3AuMCsweGMwLzB4ZTANCj4+ICAgIGRvX2VsMF9zdmMrMHgxYy8weDI4DQo+PiAg
+ICBlbDBfc3ZjKzB4MmMvMHg4MA0KPj4gICAgZWwwdF82NF9zeW5jX2hhbmRsZXIrMHgxMGMv
+MHgxMzgNCj4+ICAgIGVsMHRfNjRfc3luYysweDE5OC8weDE5Yw0KPj4gICAtLS1bIGVuZCB0
+cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0tLS0NCj4+ICAgYWRyZW5vIDU5MDAwMDAuZ3B1OiBz
+dXBwbHkgdmRkIG5vdCBmb3VuZCwgdXNpbmcgZHVtbXkgcmVndWxhdG9yDQo+PiAgIGFkcmVu
+byA1OTAwMDAwLmdwdTogc3VwcGx5IHZkZGN4IG5vdCBmb3VuZCwgdXNpbmcgZHVtbXkgcmVn
+dWxhdG9yDQo+PiAgIG1zbV9kcHUgNWUwMTAwMC5kaXNwbGF5LWNvbnRyb2xsZXI6IGJvdW5k
+IDU5MDAwMDAuZ3B1IChvcHMgYTN4eF9vcHMgW21zbV0pDQo+PiAgIFtkcm06ZHB1X2ttc19o
+d19pbml0OjExNzNdIGRwdSBoYXJkd2FyZSByZXZpc2lvbjoweDYwMDUwMDAwDQo+PiAgIGR1
+bW15IDEtMDA0NTogTm8gY2FjaGUgdXNlZCB3aXRoIHJlZ2lzdGVyIGRlZmF1bHRzIHNldCEN
+Cj4+ICAgW2RybV0gSW5pdGlhbGl6ZWQgbXNtIDEuMTIuMCBmb3IgNWUwMTAwMC5kaXNwbGF5
+LWNvbnRyb2xsZXIgb24gbWlub3IgMA0KPj4gICBtc21fZHB1IDVlMDEwMDAuZGlzcGxheS1j
+b250cm9sbGVyOiBbZHJtOmFkcmVub19yZXF1ZXN0X2Z3IFttc21dXSBsb2FkZWQgcWNvbS9h
+NzAyX3NxZS5mdyBmcm9tIG5ldyBsb2NhdGlvbg0KPiANCj4gTG9va3MgbGlrZSB3ZSBzaG91
+bGQgYmUgZG9pbmcgdGhpcyBpbnN0ZWFkDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL21zbS9hZHJlbm8vYWRyZW5vX2RldmljZS5jIGIvZHJpdmVycy9ncHUvZHJtL21z
+bS9hZHJlbm8vYWRyZW5vX2RldmljZS5jDQo+IGluZGV4IDVlNzMwNzU2NzIzOS4uMTZlN2Fj
+NDQ0ZWZkIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbXNtL2FkcmVuby9hZHJl
+bm9fZGV2aWNlLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21zbS9hZHJlbm8vYWRyZW5v
+X2RldmljZS5jDQo+IEBAIC0yMjEsNyArMjIxLDcgQEAgc3RhdGljIGludCBhZHJlbm9fYmlu
+ZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0
+YSkNCj4gICANCj4gICAgICAgICAgaW5mbyA9IGFkcmVub19pbmZvKGNvbmZpZy5jaGlwX2lk
+KTsNCj4gICAgICAgICAgLyogV2Ugc2hvdWxkbid0IGhhdmUgZ290dGVuIHRoaXMgZmFyIGlm
+IHdlIGRvbid0IHJlY29nbml6ZSB0aGUgR1BVOiAqLw0KPiAtICAgICAgIGlmICghV0FSTl9P
+TihpbmZvKSkNCj4gKyAgICAgICBpZiAoV0FSTl9PTighaW5mbykpDQo+ICAgICAgICAgICAg
+ICAgICAgcmV0dXJuIC1FTlhJTzsNCj4gICANCj4gICAgICAgICAgY29uZmlnLmluZm8gPSBp
+bmZvOw0KPiANCg0KVGhpcyBkb2VzIHRoZSB0cmljayBhbmQgZml4ZXMgdGhlIGNyYXNoIHdo
+ZW4gc2VudCB0byBDSToNClRlc3RlZC1ieTogTmVpbCBBcm1zdHJvbmcgPG5laWwuYXJtc3Ry
+b25nQGxpbmFyby5vcmc+DQoNClRoYW5rcywNCk5laWwNCg0KPiANCj4gS29ucmFkDQo+IA0K
+DQo=
 
