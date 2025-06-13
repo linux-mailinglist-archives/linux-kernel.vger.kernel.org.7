@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-685866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31CDAD8FAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72478AD8FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A3A17AE9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9348C18919B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684EA19DF8B;
-	Fri, 13 Jun 2025 14:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8030F198E8C;
+	Fri, 13 Jun 2025 14:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXey7G72"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EObp1vTw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FFD18FDBD;
-	Fri, 13 Jun 2025 14:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82EB190679;
+	Fri, 13 Jun 2025 14:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825393; cv=none; b=OZBe7TEhfSg/JayXJX5nb9AKQstrgYT5vIRtDW5kFMcL9MVGmt43r759bVmt1ZhVjVjoSL6TAzeoFC+fbFTEXx6MHCcitAKQC1HuBvaz1fTF3BinAcwDvS+iiIykUAqrRwnXe7Qa8m/IulozK4RtXFpVieyWzsHiszSzhwAK8N0=
+	t=1749825449; cv=none; b=qYXVkc5h0orPGdLt73wa1eDyxfG304a1lBatoqYCxyjCON0KflZiBX4qKqlBUD4U4KKWdxOYYbkSy+1QlJDnMwnBu8RkRlRI/Ptc3gN8myh16hnSLy4ELpCumc9zL38x1vZt5t4KPXb9BO+7M2belBcCWwWEUhVVQbzYUsjVlG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825393; c=relaxed/simple;
-	bh=UK2lJlz2LCjhQudxqPQDGhW8klEAjhwowG06LslQSUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuTI9iGqlJggYWEREkfLFGgPrh2FdNvLcLiTfvab6EK30eITP1sWYWD2Ai9yn81+lyroDKYDxnEqXgc/Cspyv4hucRzT4Igy/WKAbsuF725xezkRRFGRgrBpmhyD0Rw+aYWjoresd8m8P/x0Dqis/CpBe9O3N+igMLfZjVseGDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXey7G72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8E9C4CEE3;
-	Fri, 13 Jun 2025 14:36:30 +0000 (UTC)
+	s=arc-20240116; t=1749825449; c=relaxed/simple;
+	bh=i35Blln3gEa4SQHbL2VvB+ztpaiUcqNUVdy5ebPitJk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gi8EHTBsmYSpNbJFEQWAkTPpZjqYnnMk20scv+2uE5FsPhpBo/BhC82UXC8UNVbnp+rDCWQB4RyuLjohHROtmupZjrud+CyLXWqX/4BoHSfRamlJRdU+p7vlmZ1uJBEpaomcoi6IcR88BfckzWk4tnJo+llUUouUh5av6VnZYJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EObp1vTw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F96C4CEE3;
+	Fri, 13 Jun 2025 14:37:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749825393;
-	bh=UK2lJlz2LCjhQudxqPQDGhW8klEAjhwowG06LslQSUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UXey7G72HGtYGGVpC1CdwXhlq9L90TvyO+p8PUW6Gy+i5rqtKzJdkqBrnA3ukajqJ
-	 Hl/7+yGoUyY/CnBr7JzEKlrfUdoKQEKWbY4a/gUCXHinJUfR27DM43c4rpALOxbFl6
-	 k8dPE+VvqUHhjknC/lwlxYTcrHXJ8ARzN6qVrOC+8kodUeHLB+ez2oMCdk5Gf/dEi4
-	 yECThuEu9PMcPSnkYo2FfZSHwoqTFACX3nbPCFm3NhJzq4dX5TYKwyBonp105nEjD7
-	 cFutdZGfLq3j0CLb3DeMcwOQqboD7lN+j0VJbcHvJ7ZWrY/oTI7KYZ6xbzTs9odFpF
-	 aZFCpiezL4Wag==
-Date: Fri, 13 Jun 2025 15:36:28 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	s=k20201202; t=1749825447;
+	bh=i35Blln3gEa4SQHbL2VvB+ztpaiUcqNUVdy5ebPitJk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EObp1vTwmIjdcn/t6ZGh1gZJC4KwqSfesjWJnZfRt8ARYLRrqALgK1azomN+h6WVI
+	 j5t2crKErpAUJ9tYg8dMfe7H9OORa2MvGrFTUsSm+nq+Kt8dnA8UWeVO7Srnhp+eIT
+	 3mKPnDt3ZY+gVqaeRCwZy4kcvtPp4O9iosGNELdqx9Ilp2r81m+EM0kNDBab6S7Oab
+	 LDXkijQNgiPuEitbm/OLqvTBY3Kb/ZkELC70doQ0ZyLyQCv20EntCvUudqtcPyECVr
+	 cItT4FkqPxYc4xbWUCuru9EUGI0sD6uxecIO9mNe5MCo+zBeVX3D/N6P1VAIJtnm2N
+	 Gz1DOJTnCT5Mg==
+From: Sven Peter <sven@kernel.org>
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Farouk Bouabid <farouk.bouabid@cherry.de>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: hwmon: amc6821: Add cooling levels
-Message-ID: <20250613-eternal-resonant-90e254e1e7c2@spud>
-References: <20250613-b4-amc6821-cooling-device-support-v4-0-a8fc063c55de@toradex.com>
- <20250613-b4-amc6821-cooling-device-support-v4-1-a8fc063c55de@toradex.com>
+	Mark Kettenis <kettenis@openbsd.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: apple: t8103: Fix PCIe BCM4377 nodename
+Date: Fri, 13 Jun 2025 16:37:13 +0200
+Message-Id: <174982533895.547352.6090659751733022479.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250611-arm64_dts_apple_wifi-v1-1-fb959d8e1eb4@jannau.net>
+References: <20250611-arm64_dts_apple_wifi-v1-1-fb959d8e1eb4@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="SLtA+ltvLcySd3/R"
-Content-Disposition: inline
-In-Reply-To: <20250613-b4-amc6821-cooling-device-support-v4-1-a8fc063c55de@toradex.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---SLtA+ltvLcySd3/R
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 11 Jun 2025 22:30:31 +0200, Janne Grunau wrote:
+> Fix the following `make dtbs_check` warnings for all t8103 based devices:
+> 
+> arch/arm64/boot/dts/apple/t8103-j274.dtb: network@0,0: $nodename:0: 'network@0,0' does not match '^wifi(@.*)?$'
+>         from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
+> arch/arm64/boot/dts/apple/t8103-j274.dtb: network@0,0: Unevaluated properties are not allowed ('local-mac-address' was unexpected)
+>         from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
+> 
+> [...]
 
-On Fri, Jun 13, 2025 at 10:42:38AM -0300, Jo=E3o Paulo Gon=E7alves wrote:
-> From: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
->=20
-> The fan can be used as a cooling device, add a description of the
-> `cooling-levels` property and restrict the maximum value to 255, which
-> is the highest PWM duty cycle supported by the AMC6821 fan controller.
->=20
-> Signed-off-by: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+Applied, thanks!
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+[1/1] arm64: dts: apple: t8103: Fix PCIe BCM4377 nodename
+      commit: ac1daa91e9370e3b88ef7826a73d62a4d09e2717
 
---SLtA+ltvLcySd3/R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEw3bAAKCRB4tDGHoIJi
-0rneAP9ayr/LfVHhlHHfjMakBX/nJT1pcblHAYhuwfn/j+jRUgD+Lw1rJEgWeDY9
-Ha24jYgTf6Bh3WdwPMPz37Qqu2eYywg=
-=qA05
------END PGP SIGNATURE-----
-
---SLtA+ltvLcySd3/R--
+Best regards,
+-- 
+Sven Peter <sven@kernel.org>
 
