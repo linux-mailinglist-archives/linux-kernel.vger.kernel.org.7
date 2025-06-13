@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-684969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB00AD8278
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:22:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1010EAD827A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD733B528D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:22:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949A37B0064
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 05:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54D524EF88;
-	Fri, 13 Jun 2025 05:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D71D24EAAF;
+	Fri, 13 Jun 2025 05:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrKae9ic"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imVTQ/Yd"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96391E0DE8;
-	Fri, 13 Jun 2025 05:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8311FDA89
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 05:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749792151; cv=none; b=srPoO/m4PoSoCDgIiKOm4DJCaP05Xi8NoUW4ccqDzgJ9CH2ezgAjWtwbW/b9XJv73Yf0UIEPsrYVsU+CW67DwQwAwj2QcwIKRZWk7/xw42Fr1DpJ1+38XyY3Q0VTkxEkP1J1LD3qXDSzJm8AqkNn2LrE6//GGTzGrZcAGUDGVWI=
+	t=1749792182; cv=none; b=R3AGG/N5oklKzxA6nRar3moMTKyXEYZ5k3yv2prYTs+TL9xYgHRbo4SikHZoQKwScgzhVbkFCX0gZNasC/l56Od4BpAGQw7CLfIUFuwLtAPDUvvfTg9HaAuUMgV710BIuvYCwWWkw05lFBgI1D4Y8JZUQK1TfxUtI6ABNsgoQho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749792151; c=relaxed/simple;
-	bh=DzWuE22vL1YP8zSHbfP7Qpjs9nzrUqlrq34nmlb01RA=;
+	s=arc-20240116; t=1749792182; c=relaxed/simple;
+	bh=CzfUoU/F6OeWFirpLwxi5VsjH9jIIE4t1ioTm3n+IkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvXRInun31NdoFVNXT1Asf/VZk+XctHCAdXxRA2ZOoLqQ/Ah0v/NMah2RhWSxXrUW3PI7gR467/p/duWoIRdBxY7rgTyJYxeePYU2sUOJwlthMWCIp3VHjRPo4VM6YNWttHPSffRfg2ilOyqv6o4mFbdtVf0PR7HvISSPmSA09M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrKae9ic; arc=none smtp.client-ip=209.85.214.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTZXqNqZW/EQxAKWBrzDVFfcGLHdPkp7iV6kf9OCrZ+ccuLbGo6E3LJaN7OwD2vvN48ThRm0NZRk62szG95C/hnFoa/2FzOSk6XVlAmiMctEImhGdfeuGwYEMnwYcKjpqANf0CtznxXI4Tn8IQbO7dgclWfDDQUOqT2RtCYq078=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imVTQ/Yd; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-235ae05d224so24975465ad.1;
-        Thu, 12 Jun 2025 22:22:29 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2351227b098so14418965ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 22:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749792149; x=1750396949; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749792180; x=1750396980; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4uBBexglmDg860eeLxvF6Ft+pxKPH1DbiU+A4sUq4Hk=;
-        b=nrKae9icIGGTKWfOHcxCnwgpIeLEmerAeM8lKMpD2aJ46mZz0Qkd/+rRRjDd4KKmSR
-         pR85IsKz0FrVFxXg+GHIB5XFx5WoMnN1+6sqR/AGNsecsk75EzcXeW3Yygk/yMRh0EDz
-         bufxofyfQwBItu1ylbBrQ+8TzHIjEYc299alYRFJob9zT6JH8r8pOfMPWkrozSrr/wS8
-         CJKYoGHn7F2eaB8eYVtgXPU2ADmxvxtZRdqzcXGMfq8m0GrweS78+0w9VNxKFS0r0dsC
-         1WEQUnd/hvtVdPjBuExs1mSonxXxaBYFJi5KW/6Uqg6yhM0IzmYwV2IiD349usEy1u/S
-         lBhg==
+        bh=MvMoFYwoxd+5v+JlYcXvt8KEYE3zUwaZzStFo0AwJ1g=;
+        b=imVTQ/YdX29phlxBMPLj+ZWdTw6h8S2Ri1fbt4GfVognFvrL5XUzyS1aXQWBUIc/P2
+         MDFSFthb9/orgZwG5I7KfyE9wjVVW273DQdpUX7kHNRhqOolaceay1/On0mrfnqkM9a9
+         MNUhWY137ElS9rBhDkUv/bFbRraEtQ4BmXqnutIe33oWPRk2jl5mK5/5v+Erqzc4+sRr
+         w+2kpNFQOxM4QDzXrVc6uGYXLIj5tV1QeNq7E3fi5kLGoKO7ENskJmfKI6l+g712LkSl
+         r0lHiVXg4wCySPaNSEX5dXbLoTeON0bwVuiVtO3ThMqV8dHaRg/cbkScw6TTXwwnTaAK
+         u66g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749792149; x=1750396949;
+        d=1e100.net; s=20230601; t=1749792180; x=1750396980;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4uBBexglmDg860eeLxvF6Ft+pxKPH1DbiU+A4sUq4Hk=;
-        b=TY9BC/K4VB1p5db3xlzocYTL6W+SkHo3HMTQdD/DKyFx3u6c86Jg9cFr7nqXVHrxnx
-         dOuVOMs4xb+9so4CIBMmBJMVQatDJNbEHBgBNZt4TALeKJy+ZA3eqC+4q861u4aEezFa
-         vjZOHkewJs72QcBih43O17FtAEtIlTyl4sxO8yWoMp+RLpNw00+omfpcIO8I36YBdVBI
-         qqhexGWVkoNrh4kD25y4uSQOT40pHg6sNwPPOm71Bs5KYzR+DTWSx4yRu+D58gNtqMse
-         5TNxoMus6Wo0yrUEx9+PjizPX7udFqJJLOW9z8bQaHovQQRBJ3/Dv/KqDgj7vhSXCTQu
-         Vk0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTCdF7vsh0/Mp9WhkqlwBw8J4nsA3GtKOtpz5HCJ19bUfzIvjDlGY6HzdLfgr3mCg1ykgYREEpDq7g@vger.kernel.org, AJvYcCWCEe1AFil6+t9eRe5kIYN5t02eX2omZsVmjnuDwjXvX4LmUD98t4/H3fr8dBABUWo3nK+G9EyYvSiF9/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZv6qmOa5smntr2PhTS5JnajCyaMANoDcGFclUOBzkix5Ed9UM
-	XmlanOa0M0XwN5V2sbmcQ8sO2dG5D1VyAIoFl0cuSPMI4OMAkziSYbBW
-X-Gm-Gg: ASbGncu+w/P5jOy5CKKknmyQEiRZHPkvStAUfkuTr7lzs6x26mFA4cNKeVm5MMLXR3J
-	xoyurNPpr5C9iylqD43H+jr9f0v0lbr5iKZV0qXeHeAea4gyl5Jn6YG8VAXo8PNq/ImkHpTjBiS
-	JA6SQtSbXLbXl0ECOLzd3/hwbhpPCQu631G2idPMvCokHQb8KTMpyQDz6fKDda2N6rZ3yUnrKxD
-	+w176BZgnrZ2KR8QakwI/lrkgbm72AwW3cF2hAAOlcr/NNusN09JkCbSOaMxqrTh5Gu6EcT9oWX
-	0Y9Ecfysp7ToLqQaRCxiOxz7Tp+0eLZmGY0gAL1Yw06ODLkFZA==
-X-Google-Smtp-Source: AGHT+IFpkN3auFoUSur2HmEifJee1D0zvlbAS430sg92+kqbhRCmj5VMxWFWrFOefv7KFe5llBsOQg==
-X-Received: by 2002:a17:902:ec8b:b0:235:1b50:7245 with SMTP id d9443c01a7336-2365f876f73mr16933175ad.7.1749792148844;
-        Thu, 12 Jun 2025 22:22:28 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:7667::dead:c001])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de78565sm6223145ad.124.2025.06.12.22.22.25
+        bh=MvMoFYwoxd+5v+JlYcXvt8KEYE3zUwaZzStFo0AwJ1g=;
+        b=wZunO5r6dcqfMFSa7G3am+TJEh6Jp3V4hoznifrRKsq4v3nm6TTfgcJByV1GfL5CKr
+         bweWgD5QrnXpuOMjsPpImnnQAhzRHzo+Lpt1giQlp6igD+YQPAPFQxCnmJAWBkQmEMSP
+         IEn0icFir4pzWPA0BscuU0LjikBn5EdED5xT9W24RpUuOJDBRyuKqc9c5MSDsHnzb6fl
+         CueSB0UepsBaTZbodYtk5LbAQl2EOid/bX73FcOEMJRcluUTfwxoh4ySCYfZauPS1uM5
+         w9F/hFXPDrduEmWEGASn1H+SIHggu9iDRCuUMNeITylDAWcmEIuWWF83ftvQSZnZDfRt
+         oAkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCBn/4z6djpiA41xw7BClkFbU9K598GI7Jyj/9eYrt8ReUVCgDL4mvzpA5zp6tLIjDHTMJVOINeri0eVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyso9RD7cN6Zt4K7w6+9sJ7D1bjWQGHA6VG/bjPJGM4xJIlAMHl
+	0WsWdYiclp+PCnUCc7oq+1jZoSYk+atwgSruwTU0YIs5zue8gm70cnFm
+X-Gm-Gg: ASbGnctc+XQimKFHCt1vEMIjWkzYTy7z3oh97A3mKuAn7Eoh2GmcoNwU5n21mzabbXb
+	BPm0qBRNWxKVpiIK9/2ClXNKPrLCOXToMM2L/4tr0OxQwbGBddTsojN8G/pYXKJXy72orFehUJB
+	7U0JYhH666ziUlYcj8UQYRsn0yKXlKOQ4nrmBRVWJYgDmk4ZRrXhLszMYn/TrItCCTf/7wwWfRl
+	kpjPA5lH/86cN1MontOTbnh4kuy58fuuZo66mvyUhN+uWOQiWI0JP2m2us4+EVt/E2b69cJxgDz
+	Xwxp2jbyCa2t+c6NxaHum1NFFiATMyJ542QclF6zubyy5oFKuXnC13KrHsxJOefRpzF4RT5w1Do
+	VSy8=
+X-Google-Smtp-Source: AGHT+IH/+q1AAngn1g1v5S0pRF3/srqeZGaw+VXxABBS2AqgAEONOjQel6ro0wVKKJxQ8DwpOzCG5Q==
+X-Received: by 2002:a17:902:ccc2:b0:234:cc7c:d2e8 with SMTP id d9443c01a7336-2365dc0f622mr23088165ad.37.1749792180339;
+        Thu, 12 Jun 2025 22:23:00 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:f20f:da05:7371:bb5c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365dfc56a7sm6232405ad.233.2025.06.12.22.22.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 22:22:28 -0700 (PDT)
-Date: Fri, 13 Jun 2025 02:22:22 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: linux-rockchip@lists.infradead.org
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 5/5] phy: rockchip-pcie: Adjust read mask and write
-Message-ID: <e8bc1e12ad3c7c38bfef25e696ffbec2b25f312c.1749791474.git.geraldogabriel@gmail.com>
-References: <cover.1749791474.git.geraldogabriel@gmail.com>
+        Thu, 12 Jun 2025 22:22:59 -0700 (PDT)
+Date: Fri, 13 Jun 2025 13:22:55 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux@rasmusvillemoes.dk, jstultz@google.com, tglx@linutronix.de,
+	sboyd@kernel.org, linux-kernel@vger.kernel.org,
+	eleanor15x@gmail.com, visitorckw@gmail.com, jserv@ccns.ncku.edu.tw,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [RFC PATCH 2/2] clocksource: Use cpumask_first_but() in
+ clocksource_verify_choose_cpus()
+Message-ID: <aEu1r12L_34Lxsgp@vaxr-BM6660-BM6360>
+References: <20250613033447.3531709-1-richard120310@gmail.com>
+ <20250613033447.3531709-3-richard120310@gmail.com>
+ <aEuw7ls9hieUv_Ox@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,35 +92,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1749791474.git.geraldogabriel@gmail.com>
+In-Reply-To: <aEuw7ls9hieUv_Ox@yury>
 
-Section 17.6.10 of the RK3399 TRM "PCIe PIPE PHY registers Description"
-defines asynchronous strobe TEST_WRITE which should be enabled then
-disabled and seems to have been copy-pasted as of current. Adjust it.
-While at it, adjust read mask which should be the same as write mask.
+On Fri, Jun 13, 2025 at 01:02:38AM -0400, Yury Norov wrote:
+> I Hsin,
+> 
+> This exact change has already been submitted by me and is under review.
+> 
+> https://lore.kernel.org/all/20250604232550.40491-2-yury.norov@gmail.com/
+> 
+> I don't understand why are you undercutting my work, and moreover do it 
+> for the second time.
+> 
+> For the first time you submitted something that duplicates my another
+> patch from the exact same series. John Stultz has pointed that, so you're
+> surely aware.
+> 
+> https://lore.kernel.org/all/CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com/
+> 
+> Kernel development process implies that one makes sure that his work
+> is unique and doesn't break someone else's development, at one's best
+> knowledge.
+> 
+> What you're doing not only breaks this rule. You're in fact trying to
+> get credit for the work that is done by someone else. This is the
+> definition of fraud.
+> 
+> I cannot make sure that any other patches from you are unique and
+> written by actually you. Therefore, I will not take your work anymore.
+> 
+> I encourage everyone else to be careful working with I Hsing Cheng
+> and check his patches for uniqueness, at minimum.  
+> 
+> NAKed-by: Yury Norov <yury.norov@gmail.com>
+> 
+> Thanks,
+> Yury
+>
 
-Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
----
- drivers/phy/rockchip/phy-rockchip-pcie.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hello Yury,
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockchip/phy-rockchip-pcie.c
-index 48bcc7d2b33b..35d2523ee776 100644
---- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-+++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-@@ -30,9 +30,9 @@
- #define PHY_CFG_ADDR_SHIFT    1
- #define PHY_CFG_DATA_MASK     0xf
- #define PHY_CFG_ADDR_MASK     0x3f
--#define PHY_CFG_RD_MASK       0x3ff
-+#define PHY_CFG_RD_MASK       0x3f
- #define PHY_CFG_WR_ENABLE     1
--#define PHY_CFG_WR_DISABLE    1
-+#define PHY_CFG_WR_DISABLE    0
- #define PHY_CFG_WR_SHIFT      0
- #define PHY_CFG_WR_MASK       1
- #define PHY_CFG_PLL_LOCK      0x10
--- 
-2.49.0
+Sorry to make troubles, I didn't mean to do this, I wasn't aware that
+you've send the same work and nor do I mean to interrupt your work. I
+didn't have the habit to check others patches regularly, I'm sorry for
+that.
 
+I just saw Kuan-Wei's patch from months ago and I asked him whether I
+can continue that work, and he agrees, so I try to do something from
+there.
+
+Again sorry for causing troubles, I'll make sure to look for others
+patches first before submitting them.
+
+Sincerely sorry for this.
+
+Thanks,
+I Hsin Cheng
+
+> On Fri, Jun 13, 2025 at 11:34:47AM +0800, I Hsin Cheng wrote:
+> > Utilize cpumask_first_but() helper instead of first using
+> > cpumask_first() and then cpumask_next(). The logic is the same here,
+> > using the new helper will make it more conscious.
+> > 
+> > Use bloat-o-meter to check the impact on code size, the result is the
+> > same, does not have positive impact nor negative impact.
+> > 
+> > $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
+> > add/remove: 0/0 grow/shrink: 0/0 up/down: 0/0 (0)
+> > Function                                     old     new   delta
+> > Total: Before=22590709, After=22590709, chg +0.00%
+> > 
+> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> > ---
+> > Generally speaking, I think this is just a small tweak on the code,
+> > making it more readable. However, no benefit in code size or performance
+> > as the implementation behind the helper is in fact the same as the one
+> > used here.
+> > 
+> > Maybe more tests should be done to ensure the change is solid, I hope to
+> > seek some suggestions from everyone who has any ideas, or this is enough
+> > then it's good.
+> > 
+> > Best regards,
+> > I Hsin Cheng
+> > ---
+> >  kernel/time/clocksource.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+> > index bb48498ebb5a..12ff0c048570 100644
+> > --- a/kernel/time/clocksource.c
+> > +++ b/kernel/time/clocksource.c
+> > @@ -323,9 +323,7 @@ static void clocksource_verify_choose_cpus(void)
+> >  		return;
+> >  
+> >  	/* Make sure to select at least one CPU other than the current CPU. */
+> > -	cpu = cpumask_first(cpu_online_mask);
+> > -	if (cpu == smp_processor_id())
+> > -		cpu = cpumask_next(cpu, cpu_online_mask);
+> > +	cpu = cpumask_first_but(cpu_online_mask, smp_processor_id());
+> >  	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
+> >  		return;
+> >  	cpumask_set_cpu(cpu, &cpus_chosen);
+> > -- 
+> > 2.43.0
 
