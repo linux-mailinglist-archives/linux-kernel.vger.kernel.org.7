@@ -1,261 +1,192 @@
-Return-Path: <linux-kernel+bounces-685619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E0DAD8C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:41:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D5EAD8C5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2247E3A68F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2D51E1746
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF628494;
-	Fri, 13 Jun 2025 12:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CD39476;
+	Fri, 13 Jun 2025 12:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OlEp+BOn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N91ii9A3"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E824C62;
-	Fri, 13 Jun 2025 12:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2884C97;
+	Fri, 13 Jun 2025 12:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749818502; cv=none; b=TDwmU2GqYp9TgmYS905Z3DzH8dn1OM98akOeg3ildABfKubl5eEwwp26hzsZvFCJJwu6pWtnXZqgBpxGbtpJU5tXIKRds48MRM0aPyEJheeaUrEmB+yrugVMO+mk7rsbNb0mwehvsJnJX9sBrA6hwaSDAH/HdRTXyK8H7z2vfwg=
+	t=1749818638; cv=none; b=UACYAQS2ml0eWEbs7n7yfBMWhlsp47vRM/tDK1/WxDgNS76aOWtxpX6jXeTov5wr8Zv4D6OdUFqt0kHmCkB2vfVc6aLauX2BQp5IpWleApArZyw4tzAS86cDbjc9RzHMGzXF6w6eAFFaIwpodi18z8FKFJG8Ad85SpDBRxwLAdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749818502; c=relaxed/simple;
-	bh=giTLJ+/2RucH/mkRA5+WDxp59D+0mIMggRIn0VNkEv4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hsMMaYX+mch9y1goVgn8W8q/TyJTCMBH11iHtv8VCh1Qdm6Bgri9y/sMKCg1R9TyZLxHBf4ayamLDspXVJpPD4EyttpIxYMWYqTophSbb2wTLhYa4IxxCCMglDWzlE0GM6McKZzpNG78GWUL6VJ5rVrYdUTSeWioMqFDQLeDGZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OlEp+BOn; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749818501; x=1781354501;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=giTLJ+/2RucH/mkRA5+WDxp59D+0mIMggRIn0VNkEv4=;
-  b=OlEp+BOnaww7ekBQzluPItDcrZxD/CKKRnqx3XZsI+n0nk5Ehsz4+XGP
-   5Q5PY03qY6kS+d3j49XpagSaXiaFT//VT8huFdg/cpUgIJdT/T5I9IB6M
-   HEINZ9sflBIs6CmaTN7r/o0BjC5Ho/IsYNx8B0dSYo4TYDNp52Bx5QdCk
-   c+rVO/8PGeUMD8aWPo8giWMZL/4YRtY4YW11cUl9gwT2YZ89HA8Ga+z+E
-   1o1DhHJtDkmQ4E6OhWJzLTj+IMr/rSz0oPZNS83A9NqGGzucsXG0vspT1
-   Qf+5Ux+R8icAJIL3otOm02oiey/UDp1b/l74xw5rGyOHmmTLyNTfRtPNT
-   Q==;
-X-CSE-ConnectionGUID: azB1cd1PQ5KugktCkPM7AQ==
-X-CSE-MsgGUID: eRyoq8J0TYGz2WzekQsN5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="51950724"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="51950724"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:41:40 -0700
-X-CSE-ConnectionGUID: n8tF8Yz0QwiCWknZ06KL+g==
-X-CSE-MsgGUID: vMnjFekSRBC0d5y9HQttIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="153110069"
-Received: from ubuntu.bj.intel.com ([10.238.156.109])
-  by orviesa005.jf.intel.com with ESMTP; 13 Jun 2025 05:41:37 -0700
-From: Jun Miao <jun.miao@intel.com>
-To: kuba@kernel.org,
-	oneukum@suse.com,
-	sbhatta@marvell.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jun.miao@intel.com,
-	qiang.zhang@linux.dev
-Subject: [PATCH v1] net: usb: Convert tasklet API to new bottom half workqueue mechanism
-Date: Fri, 13 Jun 2025 20:43:18 +0800
-Message-Id: <20250613124318.2451947-1-jun.miao@intel.com>
-X-Mailer: git-send-email 2.32.0
+	s=arc-20240116; t=1749818638; c=relaxed/simple;
+	bh=zpDVdjYhK2I8xsbQtHeIQ7//k3NZkgd5iBenS9Sm588=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FzAJDzVxd7sk1eCqPt+ajGNEHsIWizwdvGmgXPRsdqt8/nqwz9SlHQhZdVpMJvgfsY48P8vanwBJgoUff3eslONS/Rq2WSECwTlEc9czctEjXFUXBMVeEbsoOi5T6hnLhxQIHSyRNokCIWjrmlVaNKk/zCX4TKg+8XPjD/IEXLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N91ii9A3; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cf214200so17927525e9.1;
+        Fri, 13 Jun 2025 05:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749818635; x=1750423435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QSzXWhN/raBWTiTPkiF0KQOC1xc4h5AJxVQUi0l6KqY=;
+        b=N91ii9A3BimgrjxCR8lpTaXs1KELczJFTHFSf0XYrlq5ckKYawkhSAO81pAvQ2vKW1
+         QkT9n8TLtI/zPQkoJCf0s/MOPOVGICD8PEvvdb06rBrWdA8DLLH8uUOANeia0QFIO72a
+         6AnRKzSwRPZZl2zjme96EZwhqYTKfBKgIjuWl1ipiWwFKDWzX5nQH7m18+ZcxTDQAc/u
+         FxzkLGzR/qDSq8EV0/9+++4PkS4jmR5iOyiZ0byDrGfS2h3aXtnDOnbay5n7264L8+Tm
+         40JB3mJPwr8Ujk7wNQR4aN4xcrmzrjpsYR0uDHcje4mOB1Km1jJ9v5cInBNAUXzxFMq9
+         lJUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749818635; x=1750423435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QSzXWhN/raBWTiTPkiF0KQOC1xc4h5AJxVQUi0l6KqY=;
+        b=Ks0jgiMyHGBtrD+mEKtbEqRYjRlJlJAJ2c8VtCOh0vEtV7wM1D+56Wk+Qb5dLOZojv
+         kR5SVFdIMQexLOQeUwqhKCJHGNnGNZCaQf/IcljNwqpiCIPa5X/y+7e/Mvh/V/RDTnwH
+         ureDsmdXFVd2p7opJvX/eOwe1hdS5+jBpdNlMcnCNgGLN68ysifJHVF6E5B+//VD83DF
+         qqREizB3dFIYfv0bPcp3mjJEeH0GsqG2KTRnuGEsTwDvTIzPnUvwIAeMwfg/EGGJdOY7
+         qoUtP+l68nW7T8//0qV9BWs00IOUrHVzvpXrdCAZMDwLpAtkbfaxAYVulhgqfK0eJU3l
+         rtAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaGdo3Adi8MNOw+lzfwgk1NiHiO/hZsUsrCTeTQ9stv+ZYR/2bjtuNkDGf7yXAKbTsT41rTtYAirwLw/MH@vger.kernel.org, AJvYcCVB+m/WeAFM0jXqxbHG8swW7bwjec2z3mffWTUbZWbgcTcnVcaoxMGzYWKYlLSVkOXt7eu/h/n16Od+@vger.kernel.org, AJvYcCVX2AsD9dzTpzdCdhDs57EXh2VvSXRrgZBL7Ex2Kvek1TKaGrwEcuFiiSi3YH8n4VSUf7IWjEJIUGvw@vger.kernel.org, AJvYcCWHSW1sesKKv0gKAxLIrInr96QsmYFwRpGsP9JFAKavtnzY4KzHXHMsSQI7y86fxqwPmFj1GwJo0Mk/JXwSjoLmxYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1jl01fGtkSjC9JBxpz3wrZGjmV1EgeXp/fDmOF6ygSqsue8Vv
+	SxWBqksF1664KeO7l41ycU/v/70quwvQB7S5vMRqUSsbqQ3YhvBOZJvnB3/XJuCWOtJ9+KE09qf
+	QGUZGzwppgAn9g1aoWlPTuJxpC/x5NjI=
+X-Gm-Gg: ASbGnct87D6jaTH6g3CYNvdQ+/OJgVn3ruGf3iBV7VZT6kD8ArXwtry02P0NaJwlKJR
+	VCERyoK/zs43KxQ3qGppwwdJuyMrnTOokmFChuM5Pl5tfdDyE5bYQBsD4oJprnXdEzbGFFxCLX/
+	30oi1c9dVmh1vqDJSarppeWtFn1Ob8e/qqsCNcJ3dwB7y74TnalFAGa8cDJZsCiLfyKGvmVF1oY
+	Gtwv1o47VAM9Q==
+X-Google-Smtp-Source: AGHT+IEgP77ApvkePGUXbDz5b2URG0Tqka6fWKxmrlHoPPjLt6eXfMRuQsc3BlD+NOvRaghPFy/NaAhZ9nDY7Waa6rE=
+X-Received: by 2002:a05:600c:c162:b0:439:9424:1b70 with SMTP id
+ 5b1f17b1804b1-45339a3b38cmr16993865e9.30.1749818634634; Fri, 13 Jun 2025
+ 05:43:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250609203656.333138-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUyce8qxwStb-adR=ywJRdPynOSdZn9DV106VRptaa67w@mail.gmail.com>
+In-Reply-To: <CAMuHMdUyce8qxwStb-adR=ywJRdPynOSdZn9DV106VRptaa67w@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 13 Jun 2025 13:43:27 +0100
+X-Gm-Features: AX0GCFsk-_bL3wETvaMr4BaAQMx3wbt70A6JfaYg8NsgwG6lufDuRSiVfN-lk_k
+Message-ID: <CA+V-a8s_9WeKJPvyi5-eAVAR2t-z03iC2niFUP-OJgkc-yhD-A@mail.gmail.com>
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: Add initial SoC DTSI for RZ/N2H SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Migrate tasklet APIs to the new bottom half workqueue mechanism. It
-replaces all occurrences of tasklet usage with the appropriate workqueue
-APIs throughout the usbnet driver. This transition ensures compatibility
-with the latest design and enhances performance.
+Hi Geert,
 
-Signed-off-by: Jun Miao <jun.miao@intel.com>
----
- drivers/net/usb/usbnet.c   | 36 ++++++++++++++++++------------------
- include/linux/usb/usbnet.h |  2 +-
- 2 files changed, 19 insertions(+), 19 deletions(-)
+Thank you for the review.
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index c04e715a4c2a..566127b4e0ba 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -461,7 +461,7 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
- 
- 	__skb_queue_tail(&dev->done, skb);
- 	if (dev->done.qlen == 1)
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	spin_unlock(&dev->done.lock);
- 	spin_unlock_irqrestore(&list->lock, flags);
- 	return old_state;
-@@ -549,7 +549,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 		default:
- 			netif_dbg(dev, rx_err, dev->net,
- 				  "rx submit, %d\n", retval);
--			tasklet_schedule (&dev->bh);
-+			queue_work(system_bh_wq, &dev->bh_work);
- 			break;
- 		case 0:
- 			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-@@ -709,7 +709,7 @@ void usbnet_resume_rx(struct usbnet *dev)
- 		num++;
- 	}
- 
--	tasklet_schedule(&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 
- 	netif_dbg(dev, rx_status, dev->net,
- 		  "paused rx queue disabled, %d skbs requeued\n", num);
-@@ -778,7 +778,7 @@ void usbnet_unlink_rx_urbs(struct usbnet *dev)
- {
- 	if (netif_running(dev->net)) {
- 		(void) unlink_urbs (dev, &dev->rxq);
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- }
- EXPORT_SYMBOL_GPL(usbnet_unlink_rx_urbs);
-@@ -861,14 +861,14 @@ int usbnet_stop (struct net_device *net)
- 	/* deferred work (timer, softirq, task) must also stop */
- 	dev->flags = 0;
- 	timer_delete_sync(&dev->delay);
--	tasklet_kill(&dev->bh);
-+	disable_work_sync(&dev->bh_work);
- 	cancel_work_sync(&dev->kevent);
- 
- 	/* We have cyclic dependencies. Those calls are needed
- 	 * to break a cycle. We cannot fall into the gaps because
- 	 * we have a flag
- 	 */
--	tasklet_kill(&dev->bh);
-+	disable_work_sync(&dev->bh_work);
- 	timer_delete_sync(&dev->delay);
- 	cancel_work_sync(&dev->kevent);
- 
-@@ -955,7 +955,7 @@ int usbnet_open (struct net_device *net)
- 	clear_bit(EVENT_RX_KILL, &dev->flags);
- 
- 	// delay posting reads until we're fully open
--	tasklet_schedule (&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 	if (info->manage_power) {
- 		retval = info->manage_power(dev, 1);
- 		if (retval < 0) {
-@@ -1123,7 +1123,7 @@ static void __handle_link_change(struct usbnet *dev)
- 		 */
- 	} else {
- 		/* submitting URBs for reading packets */
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- 
- 	/* hard_mtu or rx_urb_size may change during link change */
-@@ -1198,11 +1198,11 @@ usbnet_deferred_kevent (struct work_struct *work)
- 		} else {
- 			clear_bit (EVENT_RX_HALT, &dev->flags);
- 			if (!usbnet_going_away(dev))
--				tasklet_schedule(&dev->bh);
-+				queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
--	/* tasklet could resubmit itself forever if memory is tight */
-+	/* workqueue could resubmit itself forever if memory is tight */
- 	if (test_bit (EVENT_RX_MEMORY, &dev->flags)) {
- 		struct urb	*urb = NULL;
- 		int resched = 1;
-@@ -1224,7 +1224,7 @@ usbnet_deferred_kevent (struct work_struct *work)
- fail_lowmem:
- 			if (resched)
- 				if (!usbnet_going_away(dev))
--					tasklet_schedule(&dev->bh);
-+					queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
-@@ -1325,7 +1325,7 @@ void usbnet_tx_timeout (struct net_device *net, unsigned int txqueue)
- 	struct usbnet		*dev = netdev_priv(net);
- 
- 	unlink_urbs (dev, &dev->txq);
--	tasklet_schedule (&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 	/* this needs to be handled individually because the generic layer
- 	 * doesn't know what is sufficient and could not restore private
- 	 * information if a remedy of an unconditional reset were used.
-@@ -1547,7 +1547,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
- 
- /*-------------------------------------------------------------------------*/
- 
--// tasklet (work deferred from completions, in_irq) or timer
-+// workqueue (work deferred from completions, in_irq) or timer
- 
- static void usbnet_bh (struct timer_list *t)
- {
-@@ -1601,16 +1601,16 @@ static void usbnet_bh (struct timer_list *t)
- 					  "rxqlen %d --> %d\n",
- 					  temp, dev->rxq.qlen);
- 			if (dev->rxq.qlen < RX_QLEN(dev))
--				tasklet_schedule (&dev->bh);
-+				queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 		if (dev->txq.qlen < TX_QLEN (dev))
- 			netif_wake_queue (dev->net);
- 	}
- }
- 
--static void usbnet_bh_tasklet(struct tasklet_struct *t)
-+static void usbnet_bh_workqueue(struct work_struct *work)
- {
--	struct usbnet *dev = from_tasklet(dev, t, bh);
-+	struct usbnet *dev = from_work(dev, work, bh_work);
- 
- 	usbnet_bh(&dev->delay);
- }
-@@ -1742,7 +1742,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
- 	skb_queue_head_init (&dev->txq);
- 	skb_queue_head_init (&dev->done);
- 	skb_queue_head_init(&dev->rxq_pause);
--	tasklet_setup(&dev->bh, usbnet_bh_tasklet);
-+	INIT_WORK (&dev->bh_work, usbnet_bh_workqueue);
- 	INIT_WORK (&dev->kevent, usbnet_deferred_kevent);
- 	init_usb_anchor(&dev->deferred);
- 	timer_setup(&dev->delay, usbnet_bh, 0);
-@@ -1971,7 +1971,7 @@ int usbnet_resume (struct usb_interface *intf)
- 
- 			if (!(dev->txq.qlen >= TX_QLEN(dev)))
- 				netif_tx_wake_all_queues(dev->net);
--			tasklet_schedule (&dev->bh);
-+			queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
-diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
-index 0b9f1e598e3a..208682f77179 100644
---- a/include/linux/usb/usbnet.h
-+++ b/include/linux/usb/usbnet.h
-@@ -58,7 +58,7 @@ struct usbnet {
- 	unsigned		interrupt_count;
- 	struct mutex		interrupt_mutex;
- 	struct usb_anchor	deferred;
--	struct tasklet_struct	bh;
-+	struct work_struct	bh_work;
- 
- 	struct work_struct	kevent;
- 	unsigned long		flags;
--- 
-2.32.0
+On Thu, Jun 12, 2025 at 3:59=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add initial SoC DTSI for Renesas RZ/N2H ("R9A09G087") SoC, below are
+> > the list of blocks added:
+> > - EXT CLKs
+> > - 4X CA55
+> > - SCIF
+> > - CPG
+> > - GIC
+> > - ARMv8 Timer
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > @@ -0,0 +1,135 @@
+> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +/*
+> > + * Device Tree Source for the RZ/N2H SoC
+> > + *
+> > + * Copyright (C) 2025 Renesas Electronics Corp.
+> > + */
+> > +
+> > +#define RZN2H_PINS_PER_PORT    8
+> > +
+> > +/*
+> > + * Create the pin index from its bank and position numbers and store i=
+n
+> > + * the upper 16 bits the alternate function identifier
+> > + */
+> > +#define RZN2H_PORT_PINMUX(b, p, f)     ((b) * RZN2H_PINS_PER_PORT + (p=
+) | ((f) << 16))
+> > +
+> > +/* Convert a port and pin label to its global pin index */
+> > +#define RZN2H_GPIO(port, pin)  ((port) * RZN2H_PINS_PER_PORT + (pin))
+>
+> These 3 defines belong in the (future) patch that adds the pinctrl node.
+>
+Ok, I'll make it to the later patch.
 
+> > +       timer {
+> > +               compatible =3D "arm,armv8-timer";
+> > +               interrupts-extended =3D <&gic GIC_PPI 13 IRQ_TYPE_LEVEL=
+_LOW>,
+> > +                                     <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_L=
+OW>,
+> > +                                     <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_L=
+OW>,
+> > +                                     <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_L=
+OW>,
+> > +                                     <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_L=
+OW>;
+> > +               interrupt-names =3D "sec-phys", "phys", "virt", "hyp-ph=
+ys", "hyp-virt";
+>
+> Thanks, this brought to my attention that the node in the posted RZ/T2H
+> patch is wrong ;-)
+>
+I have some fixup patches for T2H which apply on v10, maybe I'll post them.
+
+Cheers,
+Prabhakar
+
+> > +       };
+> > +};
+>
+> The rest LGTM, so with the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+>
 
