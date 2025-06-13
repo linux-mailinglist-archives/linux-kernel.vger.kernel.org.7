@@ -1,171 +1,129 @@
-Return-Path: <linux-kernel+bounces-685371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA06AD88BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:06:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE97AD88DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495CA3AE324
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCCF5189D3E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5D72D238C;
-	Fri, 13 Jun 2025 10:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBEE2D2392;
+	Fri, 13 Jun 2025 10:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AUxQTGpH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="McazfDgL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AUxQTGpH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="McazfDgL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kD6LEarE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916E12D2385
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42972C15B3;
+	Fri, 13 Jun 2025 10:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749809154; cv=none; b=Mkw0GqNLKwg2u9B7OSpsBeBWxBl+ocvD7ZcohlfWfdvYRLJs4N55+47xigDxaTOYwuluvcvxVyOUbgCSSnnLZBYYgxxl5yabLCGrpn6JnENzoxKj5QAIRSaNlbKcgcxgHkWObTKkHOk0YyPwK6mcRiyyqw9Gq5qYjhn6Qalywyg=
+	t=1749809312; cv=none; b=kgf1pfX3WTxcR+2py/e3y/PLt+8GGY+pnYfKuCTuo1heDR29BO/27X5JL3Var1ViBIaEE/43AoD92redrnX6kEbRFj4M5YsHtqZUsZnSzS+eNN2oP/XFehU/eePg/4+y7ZW9fRnnrgoOKhaQ4q6YI+C6ppjW5ZluTG/xiARj96U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749809154; c=relaxed/simple;
-	bh=rhDLxmUzdOZYUfItTP8OK56cRWXrFwbW9geC0CFGdP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQQ4d1bP4BEZ+Jhctyok5wQJdkiDDSiLet6Xq2QHpwQk3xBoVAl1nNhG9iQAotAPIgy6E+DpntoXIVBBqU54W5zEaTwCs/abhFGlMStKLR+KKorTBEDRX701OACxgLsyd/fx9OYEIPzTpGQlAxe5xKpnzukxn0hxOoE3Kga/Mns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AUxQTGpH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=McazfDgL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AUxQTGpH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=McazfDgL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1749809312; c=relaxed/simple;
+	bh=s4XVAtXusftoKHAg337hEJV0678SCfgl4e9tbX5giyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DIfBTm2XMdW8fIXiaW/jGzjHWP/Jw7GP6tT1Ty6KOKDab5R6P/9pCYYrbIAZJPJqwWXnWJYsE71XN0rNvL+iAsXlCe/6LeVVyFOOtoaRIX9eke/sy8cbms/P7R9iEa1iYTjInniNEb9psI/Wk78o+6KG3A7N1RlXp9l2nHz6Aes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kD6LEarE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1749809308;
+	bh=s4XVAtXusftoKHAg337hEJV0678SCfgl4e9tbX5giyo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kD6LEarEzpWs4xLCDq8R3pAuynqJ4ZeqL34E45wr5koEtk0OLXpj99IXiZOPcwdQb
+	 p5Iq05L9iBR7ggI0J3pXeWkLfxIzC3OBARgVEp3jK9TAr7ALCYeI+ySY9dPlZghRWd
+	 Ds1PASLejz3jlgX4r4PjG++FYlwy8Rc8gu87Mn+GzZ600aDAYXtVO74+/IlhFnWIk9
+	 Hv+q+thA08ckoQ1i+NLj6LtKv1PkVv0h2O7VdtYvDkBvbwpwpjDynfZcaz8HA01UMZ
+	 HDx/hbVFOzgW4uB7GNYiYaXRC4ZeSjf1z4oyAriMshNGBeBv5R1piYPogkUgCzKZ70
+	 JMEyPwRHQDWzQ==
+Received: from [192.168.1.90] (unknown [212.93.144.165])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1EBB211A3;
-	Fri, 13 Jun 2025 10:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749809150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yylb4hQBQz+313tMAgSXb+o5BrsghwEgTj4lXT/ErSM=;
-	b=AUxQTGpHfDmyp6nP8y3adCtgnnmgQLgsrXD2thiHYWJAs13uk4cz2sw7w6mwcmf6xlFE/x
-	78ZHtKvcri9X3Jzfb9Uph3W2rke/No4PPqndm36DJ8cqneHHFP6F/JlMhEDRGJGiRF69vY
-	aG9Vt4YyZTaAGbODExfACESncYY9H34=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749809150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yylb4hQBQz+313tMAgSXb+o5BrsghwEgTj4lXT/ErSM=;
-	b=McazfDgLm2nyQWLrw7vZrxeMy0PGWiIrxr560pkIfWN9+E4Q/VMaJXWKBMWUI3BanlXLyY
-	kE3AOjw42CVPHQBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749809150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yylb4hQBQz+313tMAgSXb+o5BrsghwEgTj4lXT/ErSM=;
-	b=AUxQTGpHfDmyp6nP8y3adCtgnnmgQLgsrXD2thiHYWJAs13uk4cz2sw7w6mwcmf6xlFE/x
-	78ZHtKvcri9X3Jzfb9Uph3W2rke/No4PPqndm36DJ8cqneHHFP6F/JlMhEDRGJGiRF69vY
-	aG9Vt4YyZTaAGbODExfACESncYY9H34=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749809150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yylb4hQBQz+313tMAgSXb+o5BrsghwEgTj4lXT/ErSM=;
-	b=McazfDgLm2nyQWLrw7vZrxeMy0PGWiIrxr560pkIfWN9+E4Q/VMaJXWKBMWUI3BanlXLyY
-	kE3AOjw42CVPHQBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A87D013782;
-	Fri, 13 Jun 2025 10:05:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8rEeKf73S2idRgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 13 Jun 2025 10:05:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 65B90A09B0; Fri, 13 Jun 2025 12:05:50 +0200 (CEST)
-Date: Fri, 13 Jun 2025 12:05:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Luis Henriques <luis@igalia.com>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
-Message-ID: <rkbycxlik4jcgyebnxqgxues5c4m44rthezk3rqot7ti4mlzkb@dttwxxk7kehk>
-References: <87tt4u4p4h.fsf@igalia.com>
- <20250612094101.6003-1-luis@igalia.com>
- <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
- <3gvuqzzyhiz5is42h4rbvqx43q4axmo7ehubomijvbr5k25xgb@pwjvfuttjegk>
- <87v7p06dgv.fsf@igalia.com>
- <CAGudoHGfa28YwprFpTOd6JnuQ7KAP=j36et=u5VrEhTek0HFtQ@mail.gmail.com>
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 914CA17E0C18;
+	Fri, 13 Jun 2025 12:08:26 +0200 (CEST)
+Message-ID: <5a1b4a52-2d6e-4270-82ac-494afe5c6556@collabora.com>
+Date: Fri, 13 Jun 2025 13:08:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGfa28YwprFpTOd6JnuQ7KAP=j36et=u5VrEhTek0HFtQ@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[igalia.com:email,suse.com:email]
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/20] drm/rockchip: dw_hdmi_qp: switch to HWORD_UPDATE
+ macro
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang
+ <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
+References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
+ <20250612-byeword-update-v1-10-f4afb8f6313f@collabora.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20250612-byeword-update-v1-10-f4afb8f6313f@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 12-06-25 23:35:09, Mateusz Guzik wrote:
-> On Thu, Jun 12, 2025 at 8:07 PM Luis Henriques <luis@igalia.com> wrote:
-> > > I guess the commit message could be improved. Something like:
-> > >
-> > > The assert in function file_seek_cur_needs_f_lock() can be triggered very
-> > > easily because there are many users of vfs_llseek() (such as overlayfs)
-> > > that do their custom locking around llseek instead of relying on
-> > > fdget_pos(). Just drop the overzealous assertion.
-> >
-> > Thanks, makes more sense.
-> >
-> > Christian, do you prefer me to resend the patch or is it easier for you to
-> > just amend the commit?  (Though, to be fair, the authorship could also be
-> > changed as I mostly reported the issue and tested!)
-> >
+On 6/12/25 9:56 PM, Nicolas Frattaroli wrote:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
 > 
-> How about leaving a trace in the code.
+> Replace this driver's HIWORD_UPDATE with the HWORD_UPDATE from
+> bitfield.h. While at it, disambiguate the write GRF write to SOC_CON7 by
+> splitting the definition into the individual bitflags. This is done
+> because HWORD_UPDATE shifts the value for us according to the mask, so
+> writing the mask to itself to enable two bits is no longer something
+> that can be done. It should also not be done, because it hides the true
+> meaning of those two individual bit flags.
 > 
-> For example a comment of this sort in place of the assert:
-> Note that we are not guaranteed to be called after fdget_pos() on this
-> file obj, in which case the caller is expected to provide the
-> appropriate locking.
+> HDMI output with this patch has been tested on both RK3588 and RK3576.
+> On the former, with both present HDMI connectors.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-I'm not opposed to that.
+This looks good and works fine on Radxa ROCK 5B (RK3588).  Will also
+verify on RK3576 as soon as I get a board (expected next week).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
