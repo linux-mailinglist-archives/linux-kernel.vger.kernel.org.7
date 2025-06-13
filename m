@@ -1,187 +1,122 @@
-Return-Path: <linux-kernel+bounces-685588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3432AD8BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:10:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8019AAD8BA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69957188D0BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39BE3B8B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E8C22DA0C;
-	Fri, 13 Jun 2025 12:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB732E0B63;
+	Fri, 13 Jun 2025 12:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="iYPe6hd7"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GVFePW/J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B66275AE6;
-	Fri, 13 Jun 2025 12:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749816576; cv=pass; b=Le78KBEX/aorHl+bjUZlYc9NG7Ou+vznzefU+/Iec9tujTi+ivo7WK8MS9MeBHDtJ03enlZNL5hdzW9XvX7kF+M5pr12V2YD0kAUmmwW8KxRb+I4BCUzkL6mm+dLqXWRDFAPRq77D2vNpwJPU+l5j6TuWzbQqnsT8Zb1vJWpgF0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749816576; c=relaxed/simple;
-	bh=tWxzlB7gvAwvQ4TxzPO+xifFWwtGtqkUHJoJ1LVl9CE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rUOsPQtDG30lH6TtGo3ThkGp1aYzhk0jMiHSC8Af6lapOC+jDWcHm+pdkQYFgEwXDkc6mlCTGDd+UiAwc+A34o3+5yUfa9aeR9tYwR+RgmVopcdMnj/si65SXM72YHizj6in1wnRVxfbPHZ7jdQ2RohtSHGNMxMukcZ6MueYHc0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=iYPe6hd7; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749816504; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HxsUUIkbJLHor7xQVOxFnKjQL2tcvAU/8U7uOGAT8YJ5SzkaPujbsMSqqr80mMJL7/C6qPJ5R72AJZZz4V+WGvRuhbDD8RcEdYVp0T3jFCWzPUWFNNQ68W3mkdPx/uRz9Q8CO9KUVnMiuh0wlCTVhHSoXI4LkoQwVLhFcDXTcHE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749816504; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oC6j4XXPtFnpNI59vFPxucp8Atnh3iWQ7iCtDWJTvGo=; 
-	b=A1ATiiZZKeXR51mKcGYEcu+ievsJrJBhXTLF5fKN6m6uGlmf+gN+qSW/4BgN2DXa3+ihmm5IDJ0LMQYccMcRuItr2vNHq1tFXK2h6DApxhwbIV2hxsLhxWB7MZeQnM9wPRrdMCbbUDX2/hY046rowLcFe6wBngVN1Vd+mah2Cyc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749816504;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=oC6j4XXPtFnpNI59vFPxucp8Atnh3iWQ7iCtDWJTvGo=;
-	b=iYPe6hd7lzD5NmEuVNlPJNUR1sBcQMTEzgFULW5ZE1tzhGuUUZmsrhquSUKDA+Cs
-	I90mwM0EoNm4PSiTntzA6phjzUyTdMpluFlcfHK8TNliE3+1AYflsiylQRbXHpwn2NL
-	nJ0riWRwAIxWd/I6yzJxEXtQHSBfMYaBpXVI3PVg=
-Received: by mx.zohomail.com with SMTPS id 1749816501559794.9356716993168;
-	Fri, 13 Jun 2025 05:08:21 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 17/20] PCI: dw-rockchip: switch to HWORD_UPDATE macro
-Date: Fri, 13 Jun 2025 14:08:08 +0200
-Message-ID: <12129790.nUPlyArG6x@workhorse>
-In-Reply-To: <aEvzMnxgsjfryCOo@ryzen>
-References:
- <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
- <20250612-byeword-update-v1-17-f4afb8f6313f@collabora.com>
- <aEvzMnxgsjfryCOo@ryzen>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8A32DFA3A;
+	Fri, 13 Jun 2025 12:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749816500; cv=none; b=QzcQW5dQhk7D7Qc0kuBiLZacexrQ3Kki0QtxfpcOlBrJi12eI8Np1Fw5vzb8xmsKzV138lupHMGqTjNEzZbbNEnsBlBazreOqBjuauSQV8GkbX1oAMi/V/VBiPAsdiNTzAaCHy6HZ3B4sLDYWaB0G0+xtv4ymRgOCzyKYNc+bII=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749816500; c=relaxed/simple;
+	bh=YqWiCERgiEikzOrbIVaSoUp1Cig2dZoekYsziOR1oVg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jatS+ypYe0wY1r38nh/biG/CQF5KI3DU+Qs0PHDur9gcIsSxLLxaEmub6usFUi4EtwoO0Ct9LK1htGqEN5kAHmdKOGRy0nbBvo+MEerl2/95IXAdgKiAQ1rCAS/iT6UKVcCkxaSbZQ5n+rUUonzn49E3I6yVsQdhXsyERLkg7wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GVFePW/J; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749816499; x=1781352499;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=YqWiCERgiEikzOrbIVaSoUp1Cig2dZoekYsziOR1oVg=;
+  b=GVFePW/JKNeZCEUcVtBdo2OubrhaEBaQ+1uPIh5BmC/jUhJ/Fa9APtt6
+   nEoFxmuXYC7kzFlrcP0UlpKBmhWm1gQsuCdhkkwgWSS0zeIpk9kIN0Xmf
+   c/iO4ZPeh3amjUB5UpbdvuNBoy0PGNefTD7s4mRsVVuVu7uDOAsGXZ2b9
+   UFdn4EqxdXL40lelPZdX10nO0nlJ0+dREaAgejM8lSMRar2+4F3V37Hk4
+   2TOzHlmlrr0DxEKif2J8p4h34f4PNd0VZBRGLGvVnKelU9zQDZtIimP27
+   pNJXsCtJSHhr1pUGEXOhs4+d8v91VqMyeD9iRmKVq8tkJIUt1Gpfx93H2
+   g==;
+X-CSE-ConnectionGUID: saW4ljieRcGquqCr2uekcQ==
+X-CSE-MsgGUID: cbMMBi0dTEq7ZKmCFfltrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="51746180"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="51746180"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:08:18 -0700
+X-CSE-ConnectionGUID: nNN8x/ZORjSKHn3Ig+R5Cw==
+X-CSE-MsgGUID: bwvzuqkSSYW4XyGVTAicuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="151634791"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.102])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 05:08:16 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 13 Jun 2025 15:08:13 +0300 (EEST)
+To: Ivan Hu <ivan.hu@canonical.com>
+cc: Hans de Goede <hdegoede@redhat.com>, jesse.huang@portwell.com.tw, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: portwell-ec: Move watchdog device under
+ correct platform hierarchy
+In-Reply-To: <20250613082614.28929-1-ivan.hu@canonical.com>
+Message-ID: <18d60b6c-80c0-85e8-79f5-a41d8a757a46@linux.intel.com>
+References: <20250613082614.28929-1-ivan.hu@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
+On Fri, 13 Jun 2025, Ivan Hu wrote:
 
-On Friday, 13 June 2025 11:45:22 Central European Summer Time Niklas Cassel wrote:
-> Hello Nicolas,
+> Without explicitly setting a parent for the watchdog device, the device is
+> registered with a NULL parent. This causes device_add() (called internally
+> by devm_watchdog_register_device()) to register the device under
+> /sys/devices/virtual, since no parent is provided. The result is:
 > 
-> On Thu, Jun 12, 2025 at 08:56:19PM +0200, Nicolas Frattaroli wrote:
-> > 
-> > PCIE_CLIENT_RC_MODE/PCIE_CLIENT_EP_MODE was another field that wasn't
-> > super clear on what the bit field modification actually is. As far as I
-> > can tell, switching to RC mode doesn't actually write the correct value
-> > to the field if any of its bits have been set previously, as it only
-> > updates one bit of a 4 bit field.
-> > 
-> > Replace it by actually writing the full values to the field, using the
-> > new HWORD_UPDATE macro, which grants us the benefit of better
-> > compile-time error checking.
+> DEVPATH=/devices/virtual/watchdog/watchdog0
 > 
-> The current code looks like this:
-> #define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE_BIT(0x40)
-> #define  PCIE_CLIENT_EP_MODE            HIWORD_UPDATE(0xf0, 0x0)
+> To fix this, assign &pdev->dev as the parent of the watchdog device before
+> calling devm_watchdog_register_device(). This ensures the device is
+> associated with the Portwell EC platform device and placed correctly in
+> sysfs as:
 > 
-> The device_type field is defined like this:
-> 4'h0: PCI Express endpoint
-> 4'h1: Legacy PCI Express endpoint
-> 4'h4: Root port of PCI Express root complex
+> DEVPATH=/devices/platform/portwell-ec/watchdog/watchdog0
 > 
-> The reset value of the device_type field is 0x0 (EP mode).
-> 
-> So switching between RC mode / EP mode should be fine.
-> 
-> But I agree, theoretically there could be a bug if e.g. bootloader
-> has set the device_type to 0x1 (Legacy EP).
-> 
-> So if you want, you could send a patch:
-> -#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE_BIT(0x40)
-> +#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE(0xf0, 0x40)
-> 
-> With:
-> Fixes: 0e898eb8df4e ("PCI: rockchip-dwc: Add Rockchip RK356X host controller driver")
-> 
-> But I also think that your current patch is fine as-is.
-> 
-> I do however think that you can drop this line:
-> +#define  PCIE_CLIENT_MODE_LEGACY       0x1U
-> 
-> Since the define is never used.
-
-Will do
-
-> 
-> 
-> Also, is there any point in adding the U suffix?
-> 
-> Usually you see UL or ULL suffix, when that is needed, but there actually
-> seems to be extremely few hits of simply U suffix:
-> $ git grep 0x1U | grep -v UL
-
-Sort of. Literals without the U suffix are considered signed iirc, and
-operating with them and then left-shifting the result can run into issues
-if you shift their bits into the sign bit. In the patch at [1] I needed to
-quell a compiler warning about signed long overflows with a U suffix. This
-should only ever really be a problem for anything that gets shifted up to
-bit index 31 I believe, and maybe there's a better way to handle this in
-the macro itself with an explicit cast to unsigned, but explicit casts
-give me the ick. I'm also open to changing it to an UL, which will have
-the same effect, and has more precedent.
-
-> 
-> 
-> Kind regards,
-> Niklas
+> This aligns the device hierarchy with expectations and avoids misplacement
+> under the virtual class.
 > 
 
-Best Regards,
-Nicolas Frattaroli
+This is missing the Fixes tag.
 
-Link: https://lore.kernel.org/all/20250612-byeword-update-v1-7-f4afb8f6313f@collabora.com/ [1]
+> Signed-off-by: Ivan Hu <ivan.hu@canonical.com>
+> ---
+>  drivers/platform/x86/portwell-ec.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/x86/portwell-ec.c b/drivers/platform/x86/portwell-ec.c
+> index 8b788822237b..3e019c51913e 100644
+> --- a/drivers/platform/x86/portwell-ec.c
+> +++ b/drivers/platform/x86/portwell-ec.c
+> @@ -236,6 +236,7 @@ static int pwec_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	ec_wdt_dev.parent = &pdev->dev;
+>  	ret = devm_watchdog_register_device(&pdev->dev, &ec_wdt_dev);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "failed to register Portwell EC Watchdog\n");
+> 
 
+-- 
+ i.
 
 
