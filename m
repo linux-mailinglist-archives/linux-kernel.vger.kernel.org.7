@@ -1,152 +1,120 @@
-Return-Path: <linux-kernel+bounces-685904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13740AD9025
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:52:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898E8AD901C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC49B1E0AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:52:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3DD7AE2D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55DB1C9DC6;
-	Fri, 13 Jun 2025 14:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0122C1A0BC9;
+	Fri, 13 Jun 2025 14:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G3sOHVTr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YqnOd9/U"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9704C9444;
-	Fri, 13 Jun 2025 14:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CF915573F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826313; cv=none; b=gWf8OINN49QtwFFu8alNq/OZV1tLSTVqH5esf4iaWRx6OXiSvaQfdWHm08+qYB0qcR5U70kA964zAuLNDm0T4N/kJu3iMTbMSzPpMn3hxvnjvWhT+XVQUxhu+8cL9RQvPuWEo+HjAYPlZKnnGU88P3B/b/ulI5sODxzpVW9NvUU=
+	t=1749826262; cv=none; b=HjbUPl3DikW5EgkMPchf0kYXxJlIpVrkvMXrQx9mQTl9gHL+30ZJEintvTydramH/2nYftstxszdomvh58FDX2dtKl7q+PzJHOQHz/9cfvdwQdAGIBzhMmr7W67Bhx5/ADr2l4dLoWy07qng4PDVzoeRfqxz0ZFr61WhxNlmIbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826313; c=relaxed/simple;
-	bh=uE0ZDwVkukg/QxjYkXVtj4KHDh7Mopm+MTwTfQzQK6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kshckPI/FkHLebbBHxNqPNgTBc9u6g7+bJuGUDa3m3s8IKoOWboE4Y4AE3d1e5mcz8t7uFBAzKSnnljue0QtKfj9EBFkq4iJ4QdUlImm4e1q8PjwLqf+bIDdkMjk8ytlcN7WLolUWypBt2c9KW9Mtx166bzmGkbSar2a5Ygz69Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G3sOHVTr; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749826311; x=1781362311;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uE0ZDwVkukg/QxjYkXVtj4KHDh7Mopm+MTwTfQzQK6E=;
-  b=G3sOHVTr6ZyjDJs3R9LKFjg66VB6vu9nSQCxkeTds16IcseEDgMnH8XI
-   AOy+p3G74+CVYuR7RVdBYyz3nwVjcmpHoz0Radi7X+5mLenW38DDT4BHz
-   krXiP2GZG9YywFTTrb00M5rr7S8bYCmEry91eti13UTBIFYGnM5vWyfKn
-   k6a50fpZsvcSSbwddXnTwGBe8bfyd6dvvqFs0upvtFxLY9npdnYTWGuzN
-   7tLfkBw7qW5JDTosZvynNEPq2vBudH6mVy1UxBDhuceodVLyeBmj47A3w
-   AVu28sM3ftaB7syus2hEMWt2MYjr8PCiq2RYa/wqRWbMIhE9txc9eGxSY
-   Q==;
-X-CSE-ConnectionGUID: Lc4Nij40SZOq8R/9jqdZbw==
-X-CSE-MsgGUID: 8F4kckI1QBa5eSLbuCpBCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="52192246"
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="52192246"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 07:51:51 -0700
-X-CSE-ConnectionGUID: kh3lcKhgT6KCXynKXf8Keg==
-X-CSE-MsgGUID: FiP3cSsoQ5CGmvHLgaAtiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,234,1744095600"; 
-   d="scan'208";a="148392187"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 13 Jun 2025 07:51:46 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uQ5kt-000Cic-1d;
-	Fri, 13 Jun 2025 14:51:43 +0000
-Date: Fri, 13 Jun 2025 22:50:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sean Anderson <sean.anderson@linux.dev>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Daniel Golle <daniel@makrotopia.org>,
-	Simon Horman <horms@kernel.org>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [net-next PATCH v6 09/10] net: macb: Support external PCSs
-Message-ID: <202506132226.hNuGyG9l-lkp@intel.com>
-References: <20250610233642.3588414-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1749826262; c=relaxed/simple;
+	bh=WXGpMxHygcfzTELJGLmTF9Qa1p/d89Zbk7jdPDFTfug=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=M5Mb+zx9tcbMf0+Z9bZ1dg3T+Lwh0ydUk0IMG4D5fXOHoxQAIDxcDEJN2DTICU+twuf4o7rdCPIt7Da0A6kQRpr0Udhvt6YbJumJN5sNM6t+PsJfqxRpBVhrJapgfNjDbf22qj++etAzwFdH6JdsI6nqj3olcr3YWwBORgycri8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YqnOd9/U; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-450cfb79177so13665905e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:51:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749826259; x=1750431059; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WXGpMxHygcfzTELJGLmTF9Qa1p/d89Zbk7jdPDFTfug=;
+        b=YqnOd9/UpYAnk/h4wt4ESiDSiT5nVw7RACJYscBjYQDxN0GdH8A9a0ZuWry6z1zjhc
+         4mjAGAIue6oT9uCpJLe7DmUUaU53Kf5QzcEdkUYQvA7XB8+Z1NiGhhb8p/mO4tG80NO3
+         xIxv0VXeBQYEkwogxSkYmzXMZz9ZmsN41zyvGjGN1S2WQXpaAz3B9wIsNee8z98iVkt7
+         zSZZUyPHcTSlr2Rew41CTVIkUygNGoUp2YOAnpEbBnQsQhcj+VBATL2wsBOwa6V9J5YA
+         AleyU+8mps2ajjwiFYie/ANBDUVW46mgRgCFqbsCKqFrk6mJWOpnHWFhiD3wDuK/GVkj
+         IEiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749826259; x=1750431059;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WXGpMxHygcfzTELJGLmTF9Qa1p/d89Zbk7jdPDFTfug=;
+        b=WJimQclqJBo4+X4J9DusaZqa1c3Ge+9rGUMeCJ6R9BjYDl4Ky0Q5gEvLz5+dOXLpfe
+         IuMz5XEv4HQB9p06UVBCHlqLFF6MB5LrGpMD9FTVv8Caf0AnAtkHFW8e6nfzMJD64JVR
+         YNeDIkQG3EQE888jPuI2M2hP0XFBnZeKyt6SC0hb9lMqdj/8jzUsyQrg5+AUDd+zj10C
+         1T2/auDyJ16RabylQ8E42RDqpHOU8IrReHLR3AhBvq6/oDUjTMoD74/n4fIyoJ/EFLyM
+         Gkfg4mr8FH+SZV3mWLq+IHqfm9yGWhCbdPG2QWfKog3doEyeqrxhEXXuxPm1kv99m/MS
+         n6Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgKzDKBdYzHwDyGXXVSdxjI7mdOj1T+3b4IG4iZSZ0GzursOpAlGbFHuivBjSNb8O+Po+5BLwunxIU0lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHpCgHN+fu4BJVaqPtonpm3OQUDHpgEn9fCQ5ztk4ZgJQx9Hic
+	KthbqETxNo/nqSbtTDsge7T3bf7/wmdRIKi7mlEIzPv3Zjgpxt+2F3I4sZ3juIYJXHg=
+X-Gm-Gg: ASbGncuXdNOcQmfEek4QHed1rGP4JpQ4osRafUkhjKIxJyx6trHhhI3nPX06R6+k/AK
+	oLjt1zmUnHZfyYo6SQHw6ic/1Des7FDmsocHxKWAXqnTiqYL6pmkluecyLkfXk4fQNRD3c0o5qB
+	jaVAcev/xkQgbtk5yKBomPb052mQOPXObUKOfoKxnPvP6626fKNYwlnm6CW2rQueJADNROnDd5f
+	ahEu70eG1jCEik7K9c3Hk5Or60zISFM65vOgN3VSCT2CJ8a8xoIDjbUgrSlix1JaYI1XqZBTLB+
+	e+Z7jBpaA8E6GnLcGvA1PqtqKkbS6Rx/ecJ8hpIdrAa0ylNIsiak2+2T5EBsYBj4XxMauBieve3
+	v3IM=
+X-Google-Smtp-Source: AGHT+IGJ34DzRWm1T2gZxcoEWSQEcbIW5w0AwTNiA/GS5kJjbzV7TTazO9AA/zJ8635JEJWkBn/LUw==
+X-Received: by 2002:a05:6000:2893:b0:3a5:2fe2:c9e1 with SMTP id ffacd0b85a97d-3a56876abe1mr3243520f8f.30.1749826258845;
+        Fri, 13 Jun 2025 07:50:58 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7213:c700:c8e2:ba7d:a1c6:463f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54d1fsm2562363f8f.2.2025.06.13.07.50.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 07:50:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610233642.3588414-1-sean.anderson@linux.dev>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Jun 2025 15:50:57 +0100
+Message-Id: <DALHN1EOXETI.3BLGEY3KMN4HD@linaro.org>
+Cc: <freedreno@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+ "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Rob Clark" <robdclark@gmail.com>, "Sean Paul"
+ <sean@poorly.run>, "Konrad Dybcio" <konradybcio@kernel.org>, "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
+ "Marijn Suijten" <marijn.suijten@somainline.org>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "open list"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm: Fix inverted WARN_ON() logic
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Rob Clark" <robin.clark@oss.qualcomm.com>,
+ <dri-devel@lists.freedesktop.org>
+X-Mailer: aerc 0.20.0
+References: <20250613144144.27945-1-robin.clark@oss.qualcomm.com>
+In-Reply-To: <20250613144144.27945-1-robin.clark@oss.qualcomm.com>
 
-Hi Sean,
+On Fri Jun 13, 2025 at 3:41 PM BST, Rob Clark wrote:
+> We want to WARN_ON() if info is NULL.
+>
+> Suggested-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Fixes: 0838fc3e6718 ("drm/msm/adreno: Check for recognized GPU before bin=
+d")
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 
-kernel test robot noticed the following build warnings:
+You forgot Reported-by tag.
 
-[auto build test WARNING on net-next/main]
+Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sean-Anderson/dt-bindings-net-Add-Xilinx-PCS/20250611-143544
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250610233642.3588414-1-sean.anderson%40linux.dev
-patch subject: [net-next PATCH v6 09/10] net: macb: Support external PCSs
-config: xtensa-randconfig-r062-20250613 (https://download.01.org/0day-ci/archive/20250613/202506132226.hNuGyG9l-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250613/202506132226.hNuGyG9l-lkp@intel.com/reproduce)
+Was the series where it is applied already merged?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506132226.hNuGyG9l-lkp@intel.com/
+[..]
 
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/net/ethernet/cadence/macb_main.c:24:
-   include/linux/pcs.h: In function 'pcs_get_by_fwnode_compat':
-   include/linux/pcs.h:201:16: error: implicit declaration of function '_pcs_get_tail' [-Werror=implicit-function-declaration]
-     201 |         return _pcs_get_tail(dev, fwnode, NULL);
-         |                ^~~~~~~~~~~~~
->> include/linux/pcs.h:201:16: warning: returning 'int' from a function with return type 'struct phylink_pcs *' makes pointer from integer without a cast [-Wint-conversion]
-     201 |         return _pcs_get_tail(dev, fwnode, NULL);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +201 include/linux/pcs.h
-
-56201bc1ac71fc Sean Anderson 2025-06-10  187  
-56201bc1ac71fc Sean Anderson 2025-06-10  188  #ifdef CONFIG_OF_DYNAMIC
-56201bc1ac71fc Sean Anderson 2025-06-10  189  struct phylink_pcs *
-56201bc1ac71fc Sean Anderson 2025-06-10  190  pcs_get_by_fwnode_compat(struct device *dev, struct fwnode_handle *fwnode,
-56201bc1ac71fc Sean Anderson 2025-06-10  191  			 int (*fixup)(struct of_changeset *ocs,
-56201bc1ac71fc Sean Anderson 2025-06-10  192  				      struct device_node *np, void *data),
-56201bc1ac71fc Sean Anderson 2025-06-10  193  			 void *data);
-56201bc1ac71fc Sean Anderson 2025-06-10  194  #else
-56201bc1ac71fc Sean Anderson 2025-06-10  195  static inline struct phylink_pcs *
-56201bc1ac71fc Sean Anderson 2025-06-10  196  pcs_get_by_fwnode_compat(struct device *dev, struct fwnode_handle *fwnode,
-56201bc1ac71fc Sean Anderson 2025-06-10  197  			 int (*fixup)(struct of_changeset *ocs,
-56201bc1ac71fc Sean Anderson 2025-06-10  198  				      struct device_node *np, void *data),
-56201bc1ac71fc Sean Anderson 2025-06-10  199  			 void *data)
-56201bc1ac71fc Sean Anderson 2025-06-10  200  {
-56201bc1ac71fc Sean Anderson 2025-06-10 @201  	return _pcs_get_tail(dev, fwnode, NULL);
-56201bc1ac71fc Sean Anderson 2025-06-10  202  }
-56201bc1ac71fc Sean Anderson 2025-06-10  203  #endif
-56201bc1ac71fc Sean Anderson 2025-06-10  204  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Alexey
 
