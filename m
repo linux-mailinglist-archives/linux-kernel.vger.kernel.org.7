@@ -1,143 +1,215 @@
-Return-Path: <linux-kernel+bounces-686326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFE1AD95F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:12:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E294AAD960E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 22:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86B73B9BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558811E539E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4759F242D9E;
-	Fri, 13 Jun 2025 20:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB889248881;
+	Fri, 13 Jun 2025 20:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b="OIgDRmNG"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFI6SJF/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1354C2343B6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 20:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA602472B0
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 20:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749845561; cv=none; b=fd/RcctUxzEAMOpc8yOet2Boqnov65Ln0zeHFi0kr/u3GGJFM8ArHriqWFOLfkgjefDluxlC0qLj1ohGN4Q+FZvtfWg7Ua+zkGDBGhluZvT8BsYja0TJOi4Y0/cikulkefFRShIqkYOAJgmpvw2Il1PCqWcVrMg9kW+PTd6924w=
+	t=1749845640; cv=none; b=gw8UVLxvo/aYndaq6Uhfn0rZjE08JzIgp8cqL3vlqjgEDudh1VF2Jch9a9lBic5EbPSGoNalXnmM/0NJHgaecSOIzTI4vwIyWCmZSsIbHeLmLOXV0KDImEJ7O0uM+R+qoab10kLbOHloDG3i0+lVXzga6Sr//cdjZ63icfSI5N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749845561; c=relaxed/simple;
-	bh=iyGFDId6gNGGAgQ3Tspa6TixUr1kWvUB+RXOYO05TZE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SyZYbceamqbSj0XbYp5+zwjMCo+DlywaUECOQJpACXCuftszN8f3EoDoJgZ12un2QD833Pu3eXruxWHO1wF/bTwMgPgftEdaLk9i8iDGN/AQViMnnDYrHxSVzoqk/9b9c8x0IxPZQiqohGtW5uqgzsAavtTIBdLIjOQ3mrCefsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech; spf=pass smtp.mailfrom=neon.tech; dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b=OIgDRmNG; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neon.tech
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so4175939a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neon.tech; s=google; t=1749845558; x=1750450358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NweKF8SVH3injbfSiS2fNVqMZQ6C6K10QpkWTAAVIKo=;
-        b=OIgDRmNGeKzw/3vBMT+6UjAK1VTHfoRvaT5mpKXyfe5ocdDMkLOMXV/MJHelMhGeUG
-         AuBUUUMRWGtZdgLafMcwDjajuMtTcagxyk0F8dPFFNG9aCX4I759BLk2HdIWx6GJl2Xw
-         koijXseWKn64X3y75S2epVvU6ulVeEjQVfQW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749845558; x=1750450358;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NweKF8SVH3injbfSiS2fNVqMZQ6C6K10QpkWTAAVIKo=;
-        b=lbnWx8JvnRd9BNCt833ZhEpxKIqvj/ZNH898R3ut9iROO+8QtgHRdJqGE/gJncjrsC
-         Xw3KPwwgPpHdRBabCBsRcL2lNQjbpcCW0UT+LWvVRnn7xtWym+AJCrI9fojt78Q1sVPu
-         Jg7MpXIX3jI7uu9RnVjYIKdCpHRLzIXBTJ0Fjj9bKmt8lU4xvp1l4XGrVv6s7JhfqQC4
-         ydgu6JU974jH5zmg1QTkzNUI3iaD7op81Lan1wHrKqAeWOP9xeDwyAjgd8v/WSxswPx9
-         uJC/QNklDg8LPssoORzdV1pcyudVexq2KQpaV1Tb3CKvgt+kP3SGbTHrMl0XM5MBhveV
-         2N8A==
-X-Gm-Message-State: AOJu0YypeBkge9EG17qyezJXY5iUR/NFJeQVu7w2bXgyYuIMTPL5mn4Z
-	vybO5T4oaujhNQzB9L6sDip63blBjENle14v2XwxazWVdZM2YBTmZCLot1381NssbrXyXVCoDfU
-	MD6bOoYc=
-X-Gm-Gg: ASbGncvZetVtCpfa/MVy/FluTYZfkou/BVVGHs6hu6l7KzCSX8Tp0a51go26s+dQKI3
-	Z56+Ziu3tm6of4oYaMLdBztY6dvQmed4KdTCtRQNPFu3Z0Tuf8k+bF5JwUuG0qek3DpJLFqIxu+
-	WIalEy09LDWbU7eJlEO7ZA1tYeZ+fXijzyVEhiq5yMmD312gKb8Go5/aax7f3rjQz+ahV/hQ5jt
-	b5GEz/wRmNtHlEdWowNvV16PNBuDRSxfs0+u1BKKuNGHeVHS5cbCY4oRP/2cg8g8ZKgEbfMBdcj
-	K0jr8LD+pRtY/aA/nWynwc7QfdX/XS5IGLPfm0axi1unuqJ8x9rycvHFbHZilPQhBA==
-X-Google-Smtp-Source: AGHT+IHZOIdE98Xx/meIwe4RQMdXHRB+vSVgcGbiS6IiDa0l13qNjjNb8DTbd8V27rMfCiXEpAIELg==
-X-Received: by 2002:a05:6402:d0b:b0:607:3344:6ef1 with SMTP id 4fb4d7f45d1cf-608d0979c1emr379552a12.29.1749845557982;
-        Fri, 13 Jun 2025 13:12:37 -0700 (PDT)
-Received: from [192.168.86.142] ([84.65.228.220])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48a8bf8sm1640985a12.11.2025.06.13.13.12.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 13:12:37 -0700 (PDT)
-Message-ID: <a7a5d7e9-76cf-4b3f-ad31-19f8a239ee53@neon.tech>
-Date: Fri, 13 Jun 2025 21:12:36 +0100
+	s=arc-20240116; t=1749845640; c=relaxed/simple;
+	bh=MDRu6yPWJY4+fErAYhdY1muQ1QaTDRZmWKOPvibaRVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WA1LGFPZQ+8sJNCHp/oYVpQfVwIqrDZROdda9nIJhS0OMNRholPnyAMDtNzwR45CEOHYPaH6DaG54RMIgdLSNFI4lOwIQOh8WdGl3siKPMeYnGEEUB90kHWEthNjM4JNQ2jIyS3Rf1V3i/nRH5vFbpfiBo1kLQuQ1s8KvFMG9Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFI6SJF/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7236C4CEE3;
+	Fri, 13 Jun 2025 20:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749845639;
+	bh=MDRu6yPWJY4+fErAYhdY1muQ1QaTDRZmWKOPvibaRVE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TFI6SJF/I2Rgyz/5einOWGEo1TPSj1LY0z0vDXvrnA39kAZehH6gjQsBvQoaTBK1f
+	 3ufBuf/J3rgsf00Raum/KPbRg9QFqvtQLFLsHM01CYtNXUN7Lf2YTlA3Yttgd6H2Yc
+	 jX/k7TcK6Io5tvouwQKL6XkpEXKCrCk0ydJU10bLMOYNzND8WCetENof6+GIzRd4li
+	 V1ondGerX6dUgHh6MwMYsG6sT+GZLlHSfhBKUcLTh5XZ3axNtuGCqKlCJjVKocOyNq
+	 fxCvVZ3tumZzKFUd4eAfPIrX3rOrJf4Q3J3SMum8J3vMgjrkU1eoVCBPFzWT89Nsd1
+	 UJgn6Ocq4c15w==
+Date: Fri, 13 Jun 2025 17:13:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Yicong Yang <yangyicong@hisilicon.com>
+Cc: Ali Saidi <alisaidi@amazon.com>, Leo Yan <leo.yan@linaro.org>,
+	Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jinqian Yang <yangjinqian1@huawei.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: perf usage of arch/arm64/include/asm/cputype.h
+Message-ID: <aEyGg98z-MkcClXY@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v4 4/4] x86/mm: Use GFP_KERNEL for alloc_low_pages() after
- boot
-From: Em Sharnoff <sharnoff@neon.tech>
-To: linux-kernel@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org
-Cc: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- Oleg Vasilev <oleg@neon.tech>, Arthur Petukhovsky <arthur@neon.tech>,
- Stefan Radig <stefan@neon.tech>, Misha Sakhnov <misha@neon.tech>
-References: <7d0d307d-71eb-4913-8023-bccc7a8a4a3d@neon.tech>
-Content-Language: en-US
-In-Reply-To: <7d0d307d-71eb-4913-8023-bccc7a8a4a3d@neon.tech>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Currently it's GFP_ATOMIC. GFP_KERNEL seems more correct.
+Hi,
 
-From Ingo M. [1]
+tools/perf (and other tools/ living code) uses a file from the kernel, a
+copy, so that we don't break its build when something changes in the
+kernel that tooling uses.
 
-> There's no real reason why it should be GFP_ATOMIC AFAICS, other than
-> some historic inertia that nobody bothered to fix.
+There is this tools/perf/check-headers.sh that does the "copy coherency
+check", while trying to act on such a warning I stumbled on the report
+below.
 
-and previously Mike R. [2]
+More details at:
 
-> The few callers that effectively use page allocator for the direct map
-> updates are gart_iommu_init() and memory hotplug. Neither of them
-> happen in an atomic context so there is no reason to use GFP_ATOMIC
-> for these allocations.
->
-> Replace GFP_ATOMIC with GFP_KERNEL to avoid using atomic reserves for
-> allocations that do not require that.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
 
-[1]: https://lore.kernel.org/all/aEE6_S2a-1tk1dtI@gmail.com/
-[2]: https://lore.kernel.org/all/20211111110241.25968-5-rppt@kernel.org/
 
-Signed-off-by: Em Sharnoff <sharnoff@neon.tech>
----
-Changelog:
-- v2: Add this patch
-- v3: No changes
-- v4: No changes
----
- arch/x86/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you could please take a look at this that would be great, the initial
+copy was made at:
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 1dc8fbd8cb63..80eddcef992b 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -131,7 +131,7 @@ __ref void *alloc_low_pages(unsigned int num)
- 		unsigned int order;
- 
- 		order = get_order((unsigned long)num << PAGE_SHIFT);
--		return (void *)__get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
-+		return (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
- 	}
- 
- 	if ((pgt_buf_end + num) > pgt_buf_top || !can_use_brk_pgt) {
--- 
-2.39.5
+commit 1314376d495f2d79cc58753ff3034ccc503c43c9
+Author: Ali Saidi <alisaidi@amazon.com>
+Date:   Thu Mar 24 18:33:20 2022 +0000
+
+    tools arm64: Import cputype.h
+    
+    Bring-in the kernel's arch/arm64/include/asm/cputype.h into tools/
+    for arm64 to make use of all the core-type definitions in perf.
+    
+    Replace sysreg.h with the version already imported into tools/.
+    
+    Committer notes:
+    
+    Added an entry to tools/perf/check-headers.sh, so that we get notified
+    when the original file in the kernel sources gets modified.
+    
+    Tester notes:
+    
+    LGTM. I did the testing on both my x86 and Arm64 platforms, thanks for
+    the fixing up.
+    
+    Signed-off-by: Ali Saidi <alisaidi@amazon.com>
+    Tested-by: Leo Yan <leo.yan@linaro.org>
+
+- Arnaldo
+
+⬢ [acme@toolbx perf-tools]$ m
+rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
+make: Entering directory '/home/acme/git/perf-tools/tools/perf'
+  BUILD:   Doing 'make -j32' parallel build
+Warning: Kernel ABI header differences:
+  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+
+Auto-detecting system features:
+...                                   libdw: [ on  ]
+...                                   glibc: [ on  ]
+...                                  libelf: [ on  ]
+...                                 libnuma: [ on  ]
+...                  numa_num_possible_cpus: [ on  ]
+...                                 libperl: [ on  ]
+...                               libpython: [ on  ]
+...                               libcrypto: [ on  ]
+...                             libcapstone: [ on  ]
+...                               llvm-perf: [ on  ]
+...                                    zlib: [ on  ]
+...                                    lzma: [ on  ]
+...                               get_cpuid: [ on  ]
+...                                     bpf: [ on  ]
+...                                  libaio: [ on  ]
+...                                 libzstd: [ on  ]
+
+  INSTALL libsubcmd_headers
+  INSTALL libperf_headers
+  INSTALL libapi_headers
+  INSTALL libsymbol_headers
+  INSTALL libbpf_headers
+  INSTALL binaries
+  INSTALL tests
+  INSTALL libperf-jvmti.so
+  INSTALL libexec
+  INSTALL perf-archive
+  INSTALL perf-iostat
+  INSTALL perl-scripts
+  INSTALL python-scripts
+  INSTALL dlfilters
+  INSTALL perf_completion-script
+  INSTALL perf-tip
+make: Leaving directory '/home/acme/git/perf-tools/tools/perf'
+ 18: 'import perf' in python                                         : Ok
+⬢ [acme@toolbx perf-tools]$ cp arch/arm64/include/asm/cputype.h tools/arch/arm64/include/asm/cputype.h
+⬢ [acme@toolbx perf-tools]$ m
+rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
+make: Entering directory '/home/acme/git/perf-tools/tools/perf'
+  BUILD:   Doing 'make -j32' parallel build
+Warning: Kernel ABI header differences:
+  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+
+Auto-detecting system features:
+...                                   libdw: [ on  ]
+...                                   glibc: [ on  ]
+...                                  libelf: [ on  ]
+...                                 libnuma: [ on  ]
+...                  numa_num_possible_cpus: [ on  ]
+...                                 libperl: [ on  ]
+...                               libpython: [ on  ]
+...                               libcrypto: [ on  ]
+...                             libcapstone: [ on  ]
+...                               llvm-perf: [ on  ]
+...                                    zlib: [ on  ]
+...                                    lzma: [ on  ]
+...                               get_cpuid: [ on  ]
+...                                     bpf: [ on  ]
+...                                  libaio: [ on  ]
+...                                 libzstd: [ on  ]
+
+  INSTALL libsubcmd_headers
+  INSTALL libperf_headers
+  INSTALL libapi_headers
+  INSTALL libsymbol_headers
+  INSTALL libbpf_headers
+  CC      /tmp/build/perf-tools/util/arm-spe.o
+util/arm-spe.c: In function ‘arm_spe__synth_ds’:
+util/arm-spe.c:885:43: error: passing argument 1 of ‘is_midr_in_range_list’ makes pointer from integer without a cast [-Wint-conversion]
+  885 |                 if (is_midr_in_range_list(midr, data_source_handles[i].midr_ranges)) {
+      |                                           ^~~~
+      |                                           |
+      |                                           u64 {aka long unsigned int}
+In file included from util/arm-spe.c:37:
+util/../../arch/arm64/include/asm/cputype.h:306:53: note: expected ‘const struct midr_range *’ but argument is of type ‘u64’ {aka ‘long unsigned int’}
+  306 | bool is_midr_in_range_list(struct midr_range const *ranges);
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+util/arm-spe.c:885:21: error: too many arguments to function ‘is_midr_in_range_list’; expected 1, have 2
+  885 |                 if (is_midr_in_range_list(midr, data_source_handles[i].midr_ranges)) {
+      |                     ^~~~~~~~~~~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+util/../../arch/arm64/include/asm/cputype.h:306:6: note: declared here
+  306 | bool is_midr_in_range_list(struct midr_range const *ranges);
+      |      ^~~~~~~~~~~~~~~~~~~~~
+make[4]: *** [/home/acme/git/perf-tools/tools/build/Makefile.build:85: /tmp/build/perf-tools/util/arm-spe.o] Error 1
+make[3]: *** [/home/acme/git/perf-tools/tools/build/Makefile.build:142: util] Error 2
+make[2]: *** [Makefile.perf:798: /tmp/build/perf-tools/perf-util-in.o] Error 2
+make[1]: *** [Makefile.perf:290: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools/tools/perf'
+⬢ [acme@toolbx perf-tools]$ 
+
 
 
