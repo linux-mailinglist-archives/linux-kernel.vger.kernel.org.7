@@ -1,712 +1,364 @@
-Return-Path: <linux-kernel+bounces-686231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1700AD94C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D937AD94C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 20:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11821894548
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4D9188EE70
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 18:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BDE230BEE;
-	Fri, 13 Jun 2025 18:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D08235364;
+	Fri, 13 Jun 2025 18:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8fnr1FB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKSRbwtF"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4601A254C;
-	Fri, 13 Jun 2025 18:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4449233159;
+	Fri, 13 Jun 2025 18:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749840564; cv=none; b=AmgcJGkzBe6hvsobX8LHnoBSQS3FL2I2d3IQdznCMI9Y3TqRIqVUh53UNPXS9lQFN178fiw3GOxkQ7O4lPGecV/k8WZA6y/hE6KhwuKyGPEh322vJA2BsFt7drUNqr8SD9qRpRleslMonuwLJnsBGN+/ej/jiNxeAmgAKm+XtaE=
+	t=1749840639; cv=none; b=YVtnM8Jpei5fNFGsDFNW37FyivYhuzUQLkvOy+BdQ18TV927NxIEvr7GTN8I+tACwThWtbGIac373+NzMT/k5NA229LPASu2yGtkytKtpn5rjuZnfHTZ02NOMwhqwP1SvDt/blYcbQ/5MR2GaZvQ+V68kXR9OzP2RT5F1ophIwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749840564; c=relaxed/simple;
-	bh=Yul0x1DrECLshgFjLIE51vPUKu4ioT0DdsqOpLIn+DY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=siJr8643E4Kf6ZZBSugizizQeqIx1EgpLpRmZ5wW2YKhC1FB5APL0scgZXG+05mFfiqpa/D9Dy9UOEIQTKm8U1pEyaY+ujEwFCbhroXZN5xRI/v+zVGC8ZIm0GNAj2S/bNVW7Yzf0K+X4z223/mvkvoCBnrvzQcSFmVhLwvHhS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8fnr1FB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE008C4CEE3;
-	Fri, 13 Jun 2025 18:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749840563;
-	bh=Yul0x1DrECLshgFjLIE51vPUKu4ioT0DdsqOpLIn+DY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=L8fnr1FBDmYwiGnQcmO6FAmbVnQ65klkuv3yp66e9DjAYsghmVjEva5c2l+8PvUUE
-	 XVvcLgn7fpo2+xe07mUegcN3Cx4+Uz4F6rZ6r8MRI7E6D1NORW7aWSRIPBaOTQ1Drv
-	 qA5wPhGW6qMmXCFBZ/L9U0rVALWq/Tmq1ggi4CeVpv4tOzXh1lqa6ha8NDl2NIC4lP
-	 NV7gjyWSp31F2zqQiQaVAHrWPDpYS+dRxFFPCrPb+xRvCYceHDZVa9ufRbgUWIe9L/
-	 LpK9dlqXrANgGD7cTy+mwvrOtFP2G/lzN74h82yauW89Nz3V3myweDR6hYANPCOxri
-	 ITz+ClfVs4SmA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Jason A . Donenfeld " <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v2] lib/crypto: explicitly include <linux/export.h>
-Date: Fri, 13 Jun 2025 11:48:14 -0700
-Message-ID: <20250613184814.50173-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749840639; c=relaxed/simple;
+	bh=vOJoLHa2gnZMY8Ii+Yxcw8/mzZATpgoYQs1ixFqDEVA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=gE25crCDVfu5plCZthXw1JzLsRXCC9DTGtW9upLW/qNqAxW8lo7pLPAX9iXE5J2z+wP0Mm0x8S0wos5UfOkeLPt8bmbdHVAVS43wb7Spq9edIePoUy1jYgKdIUuVeHDr6vVGemgozlrt0+QY2dyPS+DZCXBHciE1Kkn6pkqIUQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKSRbwtF; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d38b84984dso386934085a.0;
+        Fri, 13 Jun 2025 11:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749840636; x=1750445436; darn=vger.kernel.org;
+        h=in-reply-to:subject:autocrypt:from:content-language:references:cc
+         :to:user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ssas791YCXeKD/QD+JlJCVMdCAPoseQHAAr8HsPhqJM=;
+        b=TKSRbwtFbvLD7Qr8Tv0P4HGpN2GzPntER55jHjfeOiUOLzDMeG6kvUQNcny3vUpxB4
+         x+wiylrDFmKXYXPkFkNhz+U4Sgxs2HQz24sgwU1ueNAa0kevTfxwb4FBVGla9/d2y8NH
+         IDuou4I5jzonWQCp8TlJG8++BnnCckYYjiNizCxHlYv0pbjTMZu3HjbmkOUszqPRKp5g
+         5CjvWH3i+qaNNausGfI/SIxeImBBVw/xujYBx61bnN1S4mGOb/wtePL3wLgQQ8wnK4+F
+         cLgv2701sNpuNkMx2w1MBm2FFnAYhkBjolXolHyoKk92NqUGBsR2nMZbHo1d+u77aiav
+         0peQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749840636; x=1750445436;
+        h=in-reply-to:subject:autocrypt:from:content-language:references:cc
+         :to:user-agent:mime-version:date:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ssas791YCXeKD/QD+JlJCVMdCAPoseQHAAr8HsPhqJM=;
+        b=nT3l6S58B709wV8ySqpLEKpTmA9fbP2hs8Pv1MEGEmSlcTvGJSkFWEGcei2m8GNKz0
+         r7GObssPsfoVlRzyVb3FgxutQWuqA4OpZdrdWTwOLYWuA6RzEK59MU3RuBH7EarvpMOx
+         +0SaMSoFc5WVRqTM9zwJMuoRO4pVD/AA7LVnHfPVmiQXj7+I63rzA+G2njC6quxtzn8+
+         wFQT4D6Ebd3N7qLPl+mIJiCbhqgqA0brzz4ZZcUgA0bHZKVWMe3w0XsLdCjzEWtrgcG7
+         zOf2h2wioYtm27eUxadgoagAQMgahMVqqBGXL4oVzZI8lqg07TKCv1AbMnGLU3kjbt7z
+         vTHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnaLOLCmW1qJ7L/jin11B0dAFAC0jxLGeDU+F/DY9Z/9BK18KT6rJPK/AiSl9eiTlmsoi9lu10UAhFAFQ=@vger.kernel.org, AJvYcCWRygxjaai86+Iymt8C0ernr+vMtxrSjwH+OU+KAw1UK9sqhF7f9sMy+bsly1MFsVy262ZJFvMsDtFI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzU8y6Wni9ofbXQaIyqVGHg2ElU+LksL854pnfYVsMMMcaGgGr
+	wj33iyNi6cZeqMaSOsX2grItYzF8V3PxaFnWOoOjrm3+EUjKA6PpnacV
+X-Gm-Gg: ASbGncuMrb+gQZ02NOJ5AjE+1wXC9tHsWe0hBc+uuLd4Vvqy9Mu+4mttgVmVmbe9L+b
+	kCtlXnHfipQp/EM/uzlTnBAZUoJ6SBaGnNn37A+6YUw+/QwgpK4LM3r6bCf4cDnXgW+MaD1nDkA
+	NmI2jEbFkQIqRLejLLpzi3J47qYOCLzsT7rmkK9GPbDkSe33x7TYvfWe9o/fdiDeOfdx+oM0pPS
+	vMTZWvUddtRdpBykHsJGcsz3c1Kklb/W+CdsmDiLIQc3tqK6aPPSaYt5rwGACwpCXFSQ29zs33n
+	N2fBf+M5nuUZ2tfktps1+dS2oe9/j2SyE27ApSuH+aBAYX06x7RL9fyXeojclLBdcr6ghlxEP1q
+	P/w==
+X-Google-Smtp-Source: AGHT+IEMXtw/Ah6KNxMdjC6SeMqIZcruyHPplmMh9NTFdcpBcc3v52YYh7xDRoVcF1IT5KrTdD5JBw==
+X-Received: by 2002:a05:620a:4085:b0:7ce:ca97:a6bf with SMTP id af79cd13be357-7d3c6ce53ccmr83023585a.41.1749840636357;
+        Fri, 13 Jun 2025 11:50:36 -0700 (PDT)
+Received: from [10.138.10.6] ([89.187.178.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8e0535csm205804985a.41.2025.06.13.11.50.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 11:50:35 -0700 (PDT)
+Message-ID: <6b661c62-c322-4f2b-8e4a-da1d5c5e48a1@gmail.com>
+Date: Fri, 13 Jun 2025 14:50:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, virtualization@lists.linux.dev,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, devel@spectrum-os.org,
+ Alyssa Ross <hi@alyssa.is>, Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+References: <c40da5dc-44c0-454e-8b1d-d3f42c299592@gmail.com>
+ <20250613181345.GA1350149@myrica>
+Content-Language: en-US
+From: Demi Marie Obenour <demiobenour@gmail.com>
+Autocrypt: addr=demiobenour@gmail.com; keydata=
+ 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
+ +MYSfkEjBz0E8CLOcAw7JIwAaeBT
+Subject: Re: Virtio interrupt remapping
+In-Reply-To: <20250613181345.GA1350149@myrica>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------0ETCOYWHDk5RxNgLbpT3afON"
 
-From: Eric Biggers <ebiggers@google.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------0ETCOYWHDk5RxNgLbpT3afON
+Content-Type: multipart/mixed; boundary="------------Ek0jj2uxDXMmtwViAPvvUiRK";
+ protected-headers="v1"
+From: Demi Marie Obenour <demiobenour@gmail.com>
+To: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, virtualization@lists.linux.dev,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, devel@spectrum-os.org,
+ Alyssa Ross <hi@alyssa.is>, Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Message-ID: <6b661c62-c322-4f2b-8e4a-da1d5c5e48a1@gmail.com>
+Subject: Re: Virtio interrupt remapping
+References: <c40da5dc-44c0-454e-8b1d-d3f42c299592@gmail.com>
+ <20250613181345.GA1350149@myrica>
+In-Reply-To: <20250613181345.GA1350149@myrica>
 
-Fix build warnings with W=1 that started appearing after
-commit a934a57a42f6 ("scripts/misc-check: check missing #include
-<linux/export.h> when W=1").
+--------------Ek0jj2uxDXMmtwViAPvvUiRK
+Content-Type: multipart/mixed; boundary="------------409V4M9fXd47lv2pMEw2XfDL"
 
-While at it, also sort the include lists alphabetically.  (Keep
-asm/irqflags.h last, as otherwise it doesn't build on alpha.)
+--------------409V4M9fXd47lv2pMEw2XfDL
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This handles all of lib/crypto/, but not arch/*/lib/crypto/.  The
-exports in arch/*/lib/crypto/ will go away when the code is properly
-integrated into lib/crypto/ as planned.
+On 6/13/25 14:13, Jean-Philippe Brucker wrote:
+> Hi,
+>=20
+> On Fri, Jun 13, 2025 at 01:08:07PM -0400, Demi Marie Obenour wrote:
+>> I=E2=80=99m working on virtio-IOMMU interrupt remapping for Spectrum O=
+S [1],
+>> and am running into a problem.  All of the current interrupt remapping=
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+>> drivers use __init code during initialization, and I=E2=80=99m not sur=
+e how to
+>> plumb the struct virtio_device * into the IOMMU initialization code.
+>>
+>> What is the proper way to do this, where =E2=80=9Cproper=E2=80=9D mean=
+s that it doesn=E2=80=99t
+>> do something disgusting like =E2=80=9Cstuff the virtio device in a glo=
+bal
+>> variable=E2=80=9D?
+>=20
+> I'm not familiar at all with interrupt remapping, but I suspect a major=
 
-v2: keep asm/irqflags.h last, to avoid build error on alpha
-    (https://lore.kernel.org/all/202506140001.CtqYqDPn-lkp@intel.com/)
+> hurdle will be device probing order: the PCI subsystem probes the
+> virtio-pci transport device relatively late during boot, and the virtio=
 
----
- lib/crypto/aes.c                | 1 +
- lib/crypto/aescfb.c             | 7 +++----
- lib/crypto/aesgcm.c             | 5 ++---
- lib/crypto/arc4.c               | 1 +
- lib/crypto/blake2s-generic.c    | 9 +++++----
- lib/crypto/blake2s.c            | 9 +++++----
- lib/crypto/chacha.c             | 7 ++++---
- lib/crypto/chacha20poly1305.c   | 8 ++++----
- lib/crypto/curve25519-generic.c | 1 +
- lib/crypto/des.c                | 7 +++----
- lib/crypto/gf128mul.c           | 1 +
- lib/crypto/libchacha.c          | 7 +++----
- lib/crypto/memneq.c             | 3 ++-
- lib/crypto/mpi/mpi-add.c        | 2 ++
- lib/crypto/mpi/mpi-bit.c        | 2 ++
- lib/crypto/mpi/mpi-cmp.c        | 2 ++
- lib/crypto/mpi/mpi-mul.c        | 2 ++
- lib/crypto/mpi/mpi-pow.c        | 2 ++
- lib/crypto/mpi/mpi-sub-ui.c     | 2 ++
- lib/crypto/mpi/mpicoder.c       | 3 ++-
- lib/crypto/mpi/mpiutil.c        | 2 ++
- lib/crypto/poly1305-donna32.c   | 3 ++-
- lib/crypto/poly1305-donna64.c   | 3 ++-
- lib/crypto/poly1305-generic.c   | 1 +
- lib/crypto/poly1305.c           | 1 +
- lib/crypto/sha1.c               | 6 +++---
- lib/crypto/sha256-generic.c     | 1 +
- lib/crypto/sha256.c             | 1 +
- lib/crypto/sm3.c                | 1 +
- lib/crypto/utils.c              | 3 ++-
- 30 files changed, 65 insertions(+), 38 deletions(-)
+> driver probes the virtio-iommu device afterwards, at which point we can=
 
-diff --git a/lib/crypto/aes.c b/lib/crypto/aes.c
-index eafe14d021f5a..b57fda3460f1b 100644
---- a/lib/crypto/aes.c
-+++ b/lib/crypto/aes.c
-@@ -3,10 +3,11 @@
-  * Copyright (C) 2017-2019 Linaro Ltd <ard.biesheuvel@linaro.org>
-  */
- 
- #include <crypto/aes.h>
- #include <linux/crypto.h>
-+#include <linux/export.h>
- #include <linux/module.h>
- #include <linux/unaligned.h>
- 
- /*
-  * Emit the sbox as volatile const to prevent the compiler from doing
-diff --git a/lib/crypto/aescfb.c b/lib/crypto/aescfb.c
-index 437613265e14f..035140b2e7789 100644
---- a/lib/crypto/aescfb.c
-+++ b/lib/crypto/aescfb.c
-@@ -3,15 +3,14 @@
-  * Minimal library implementation of AES in CFB mode
-  *
-  * Copyright 2023 Google LLC
-  */
- 
--#include <linux/module.h>
--
--#include <crypto/algapi.h>
- #include <crypto/aes.h>
--
-+#include <crypto/algapi.h>
-+#include <linux/export.h>
-+#include <linux/module.h>
- #include <asm/irqflags.h>
- 
- static void aescfb_encrypt_block(const struct crypto_aes_ctx *ctx, void *dst,
- 				 const void *src)
- {
-diff --git a/lib/crypto/aesgcm.c b/lib/crypto/aesgcm.c
-index 277824d6b4af7..57e631a8ea3f3 100644
---- a/lib/crypto/aesgcm.c
-+++ b/lib/crypto/aesgcm.c
-@@ -3,16 +3,15 @@
-  * Minimal library implementation of GCM
-  *
-  * Copyright 2022 Google LLC
-  */
- 
--#include <linux/module.h>
--
- #include <crypto/algapi.h>
- #include <crypto/gcm.h>
- #include <crypto/ghash.h>
--
-+#include <linux/export.h>
-+#include <linux/module.h>
- #include <asm/irqflags.h>
- 
- static void aesgcm_encrypt_block(const struct crypto_aes_ctx *ctx, void *dst,
- 				 const void *src)
- {
-diff --git a/lib/crypto/arc4.c b/lib/crypto/arc4.c
-index 838812d182164..4e950e1e66d08 100644
---- a/lib/crypto/arc4.c
-+++ b/lib/crypto/arc4.c
-@@ -6,10 +6,11 @@
-  *
-  * Jon Oberheide <jon@oberheide.org>
-  */
- 
- #include <crypto/arc4.h>
-+#include <linux/export.h>
- #include <linux/module.h>
- 
- int arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len)
- {
- 	int i, j = 0, k = 0;
-diff --git a/lib/crypto/blake2s-generic.c b/lib/crypto/blake2s-generic.c
-index 09682136b57c6..9828176a2efec 100644
---- a/lib/crypto/blake2s-generic.c
-+++ b/lib/crypto/blake2s-generic.c
-@@ -7,15 +7,16 @@
-  * Information: https://blake2.net/
-  *
-  */
- 
- #include <crypto/internal/blake2s.h>
--#include <linux/types.h>
--#include <linux/string.h>
--#include <linux/kernel.h>
--#include <linux/init.h>
- #include <linux/bug.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
- #include <linux/unaligned.h>
- 
- static const u8 blake2s_sigma[10][16] = {
- 	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
- 	{ 14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3 },
-diff --git a/lib/crypto/blake2s.c b/lib/crypto/blake2s.c
-index b0f9a678300b3..f6ec68c3dcdae 100644
---- a/lib/crypto/blake2s.c
-+++ b/lib/crypto/blake2s.c
-@@ -7,16 +7,17 @@
-  * Information: https://blake2.net/
-  *
-  */
- 
- #include <crypto/internal/blake2s.h>
--#include <linux/types.h>
--#include <linux/string.h>
-+#include <linux/bug.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/init.h>
--#include <linux/bug.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
- 
- static inline void blake2s_set_lastblock(struct blake2s_state *state)
- {
- 	state->f[0] = -1;
- }
-diff --git a/lib/crypto/chacha.c b/lib/crypto/chacha.c
-index ced87dd31a97f..5962e65c5a9fd 100644
---- a/lib/crypto/chacha.c
-+++ b/lib/crypto/chacha.c
-@@ -3,17 +3,18 @@
-  * The "hash function" used as the core of the ChaCha stream cipher (RFC7539)
-  *
-  * Copyright (C) 2015 Martin Willi
-  */
- 
-+#include <crypto/chacha.h>
-+#include <linux/bitops.h>
- #include <linux/bug.h>
--#include <linux/kernel.h>
- #include <linux/export.h>
--#include <linux/bitops.h>
-+#include <linux/export.h>
-+#include <linux/kernel.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
--#include <crypto/chacha.h>
- 
- static void chacha_permute(struct chacha_state *state, int nrounds)
- {
- 	u32 *x = state->x;
- 	int i;
-diff --git a/lib/crypto/chacha20poly1305.c b/lib/crypto/chacha20poly1305.c
-index e29eed49a5a14..0b49d6aedefdd 100644
---- a/lib/crypto/chacha20poly1305.c
-+++ b/lib/crypto/chacha20poly1305.c
-@@ -5,20 +5,20 @@
-  * This is an implementation of the ChaCha20Poly1305 AEAD construction.
-  *
-  * Information: https://tools.ietf.org/html/rfc8439
-  */
- 
--#include <crypto/chacha20poly1305.h>
- #include <crypto/chacha.h>
-+#include <crypto/chacha20poly1305.h>
- #include <crypto/poly1305.h>
- #include <crypto/utils.h>
--
--#include <linux/unaligned.h>
--#include <linux/kernel.h>
-+#include <linux/export.h>
- #include <linux/init.h>
-+#include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-+#include <linux/unaligned.h>
- 
- static void chacha_load_key(u32 *k, const u8 *in)
- {
- 	k[0] = get_unaligned_le32(in);
- 	k[1] = get_unaligned_le32(in + 4);
-diff --git a/lib/crypto/curve25519-generic.c b/lib/crypto/curve25519-generic.c
-index de7c99172fa25..f8aa70c9f5598 100644
---- a/lib/crypto/curve25519-generic.c
-+++ b/lib/crypto/curve25519-generic.c
-@@ -8,10 +8,11 @@
-  *
-  * Information: https://cr.yp.to/ecdh.html
-  */
- 
- #include <crypto/curve25519.h>
-+#include <linux/export.h>
- #include <linux/module.h>
- 
- const u8 curve25519_null_point[CURVE25519_KEY_SIZE] __aligned(32) = { 0 };
- const u8 curve25519_base_point[CURVE25519_KEY_SIZE] __aligned(32) = { 9 };
- 
-diff --git a/lib/crypto/des.c b/lib/crypto/des.c
-index d3423b34a8e9b..a906070136dc3 100644
---- a/lib/crypto/des.c
-+++ b/lib/crypto/des.c
-@@ -5,25 +5,24 @@
-  * DES & Triple DES EDE Cipher Algorithms.
-  *
-  * Copyright (c) 2005 Dag Arne Osvik <da@osvik.no>
-  */
- 
-+#include <crypto/des.h>
-+#include <crypto/internal/des.h>
- #include <linux/bitops.h>
- #include <linux/compiler.h>
- #include <linux/crypto.h>
- #include <linux/errno.h>
-+#include <linux/export.h>
- #include <linux/fips.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/types.h>
--
- #include <linux/unaligned.h>
- 
--#include <crypto/des.h>
--#include <crypto/internal/des.h>
--
- #define ROL(x, r) ((x) = rol32((x), (r)))
- #define ROR(x, r) ((x) = ror32((x), (r)))
- 
- /* Lookup tables for key expansion */
- 
-diff --git a/lib/crypto/gf128mul.c b/lib/crypto/gf128mul.c
-index fbe72cb3453a5..2a34590fe3f10 100644
---- a/lib/crypto/gf128mul.c
-+++ b/lib/crypto/gf128mul.c
-@@ -47,10 +47,11 @@
-  This file provides fast multiplication in GF(2^128) as required by several
-  cryptographic authentication modes
- */
- 
- #include <crypto/gf128mul.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- 
- #define gf128mul_dat(q) { \
-diff --git a/lib/crypto/libchacha.c b/lib/crypto/libchacha.c
-index ebcca381e248a..26862ad90a964 100644
---- a/lib/crypto/libchacha.c
-+++ b/lib/crypto/libchacha.c
-@@ -3,16 +3,15 @@
-  * The ChaCha stream cipher (RFC7539)
-  *
-  * Copyright (C) 2015 Martin Willi
-  */
- 
--#include <linux/kernel.h>
--#include <linux/export.h>
--#include <linux/module.h>
--
- #include <crypto/algapi.h> // for crypto_xor_cpy
- #include <crypto/chacha.h>
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
- 
- void chacha_crypt_generic(struct chacha_state *state, u8 *dst, const u8 *src,
- 			  unsigned int bytes, int nrounds)
- {
- 	/* aligned to potentially speed up crypto_xor() */
-diff --git a/lib/crypto/memneq.c b/lib/crypto/memneq.c
-index a2afd10349c92..44daacb8cb513 100644
---- a/lib/crypto/memneq.c
-+++ b/lib/crypto/memneq.c
-@@ -57,13 +57,14 @@
-  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
--#include <linux/unaligned.h>
- #include <crypto/algapi.h>
-+#include <linux/export.h>
- #include <linux/module.h>
-+#include <linux/unaligned.h>
- 
- /* Generic path for arbitrary size */
- static inline unsigned long
- __crypto_memneq_generic(const void *a, const void *b, size_t size)
- {
-diff --git a/lib/crypto/mpi/mpi-add.c b/lib/crypto/mpi/mpi-add.c
-index 3015140d48602..c0375c1672fa3 100644
---- a/lib/crypto/mpi/mpi-add.c
-+++ b/lib/crypto/mpi/mpi-add.c
-@@ -9,10 +9,12 @@
-  *	 way the data is stored; this is to support the abstraction
-  *	 of an optional secure memory allocation which may be used
-  *	 to avoid revealing of sensitive data due to paging etc.
-  */
- 
-+#include <linux/export.h>
-+
- #include "mpi-internal.h"
- 
- int mpi_add(MPI w, MPI u, MPI v)
- {
- 	mpi_ptr_t wp, up, vp;
-diff --git a/lib/crypto/mpi/mpi-bit.c b/lib/crypto/mpi/mpi-bit.c
-index 934d813113606..b3d0e7ddbc03d 100644
---- a/lib/crypto/mpi/mpi-bit.c
-+++ b/lib/crypto/mpi/mpi-bit.c
-@@ -16,10 +16,12 @@
-  * You should have received a copy of the GNU General Public License
-  * along with this program; if not, write to the Free Software
-  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
-  */
- 
-+#include <linux/export.h>
-+
- #include "mpi-internal.h"
- #include "longlong.h"
- 
- #define A_LIMB_1 ((mpi_limb_t) 1)
- 
-diff --git a/lib/crypto/mpi/mpi-cmp.c b/lib/crypto/mpi/mpi-cmp.c
-index ceaebe181cd70..b42929296bcef 100644
---- a/lib/crypto/mpi/mpi-cmp.c
-+++ b/lib/crypto/mpi/mpi-cmp.c
-@@ -16,10 +16,12 @@
-  * You should have received a copy of the GNU General Public License
-  * along with this program; if not, write to the Free Software
-  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
-  */
- 
-+#include <linux/export.h>
-+
- #include "mpi-internal.h"
- 
- int mpi_cmp_ui(MPI u, unsigned long v)
- {
- 	mpi_limb_t limb = v;
-diff --git a/lib/crypto/mpi/mpi-mul.c b/lib/crypto/mpi/mpi-mul.c
-index 7e6ff1ce3e9b6..d79f186ad90bc 100644
---- a/lib/crypto/mpi/mpi-mul.c
-+++ b/lib/crypto/mpi/mpi-mul.c
-@@ -9,10 +9,12 @@
-  *	 way the data is stored; this is to support the abstraction
-  *	 of an optional secure memory allocation which may be used
-  *	 to avoid revealing of sensitive data due to paging etc.
-  */
- 
-+#include <linux/export.h>
-+
- #include "mpi-internal.h"
- 
- int mpi_mul(MPI w, MPI u, MPI v)
- {
- 	mpi_size_t usize, vsize, wsize;
-diff --git a/lib/crypto/mpi/mpi-pow.c b/lib/crypto/mpi/mpi-pow.c
-index 67fbd4c2503d0..9e695a3bda3a0 100644
---- a/lib/crypto/mpi/mpi-pow.c
-+++ b/lib/crypto/mpi/mpi-pow.c
-@@ -11,12 +11,14 @@
-  *	 to avoid revealing of sensitive data due to paging etc.
-  *	 The GNU MP Library itself is published under the LGPL;
-  *	 however I decided to publish this code under the plain GPL.
-  */
- 
-+#include <linux/export.h>
- #include <linux/sched.h>
- #include <linux/string.h>
-+
- #include "mpi-internal.h"
- #include "longlong.h"
- 
- /****************
-  * RES = BASE ^ EXP mod MOD
-diff --git a/lib/crypto/mpi/mpi-sub-ui.c b/lib/crypto/mpi/mpi-sub-ui.c
-index b41b082b5f3e3..0edcdbd24833a 100644
---- a/lib/crypto/mpi/mpi-sub-ui.c
-+++ b/lib/crypto/mpi/mpi-sub-ui.c
-@@ -30,10 +30,12 @@
-  * You should have received copies of the GNU General Public License and the
-  * GNU Lesser General Public License along with the GNU MP Library.  If not,
-  * see https://www.gnu.org/licenses/.
-  */
- 
-+#include <linux/export.h>
-+
- #include "mpi-internal.h"
- 
- int mpi_sub_ui(MPI w, MPI u, unsigned long vval)
- {
- 	if (u->nlimbs == 0) {
-diff --git a/lib/crypto/mpi/mpicoder.c b/lib/crypto/mpi/mpicoder.c
-index dde01030807de..47f6939599b33 100644
---- a/lib/crypto/mpi/mpicoder.c
-+++ b/lib/crypto/mpi/mpicoder.c
-@@ -17,12 +17,13 @@
-  * along with this program; if not, write to the Free Software
-  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
-  */
- 
- #include <linux/bitops.h>
--#include <linux/count_zeros.h>
- #include <linux/byteorder/generic.h>
-+#include <linux/count_zeros.h>
-+#include <linux/export.h>
- #include <linux/scatterlist.h>
- #include <linux/string.h>
- #include "mpi-internal.h"
- 
- #define MAX_EXTERN_MPI_BITS 16384
-diff --git a/lib/crypto/mpi/mpiutil.c b/lib/crypto/mpi/mpiutil.c
-index 979ece5a81d25..7f2db830f4043 100644
---- a/lib/crypto/mpi/mpiutil.c
-+++ b/lib/crypto/mpi/mpiutil.c
-@@ -16,10 +16,12 @@
-  * You should have received a copy of the GNU General Public License
-  * along with this program; if not, write to the Free Software
-  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
-  */
- 
-+#include <linux/export.h>
-+
- #include "mpi-internal.h"
- 
- /****************
-  * Note:  It was a bad idea to use the number of limbs to allocate
-  *	  because on a alpha the limbs are large but we normally need
-diff --git a/lib/crypto/poly1305-donna32.c b/lib/crypto/poly1305-donna32.c
-index 0a4a2d99e3654..b66131b3f6d4b 100644
---- a/lib/crypto/poly1305-donna32.c
-+++ b/lib/crypto/poly1305-donna32.c
-@@ -4,13 +4,14 @@
-  *
-  * This is based in part on Andrew Moon's poly1305-donna, which is in the
-  * public domain.
-  */
- 
-+#include <crypto/internal/poly1305.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/unaligned.h>
--#include <crypto/internal/poly1305.h>
- 
- void poly1305_core_setkey(struct poly1305_core_key *key,
- 			  const u8 raw_key[POLY1305_BLOCK_SIZE])
- {
- 	/* r &= 0xffffffc0ffffffc0ffffffc0fffffff */
-diff --git a/lib/crypto/poly1305-donna64.c b/lib/crypto/poly1305-donna64.c
-index 530287531b2ee..8a72a5a849446 100644
---- a/lib/crypto/poly1305-donna64.c
-+++ b/lib/crypto/poly1305-donna64.c
-@@ -4,13 +4,14 @@
-  *
-  * This is based in part on Andrew Moon's poly1305-donna, which is in the
-  * public domain.
-  */
- 
-+#include <crypto/internal/poly1305.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/unaligned.h>
--#include <crypto/internal/poly1305.h>
- 
- void poly1305_core_setkey(struct poly1305_core_key *key,
- 			  const u8 raw_key[POLY1305_BLOCK_SIZE])
- {
- 	u64 t0, t1;
-diff --git a/lib/crypto/poly1305-generic.c b/lib/crypto/poly1305-generic.c
-index a73f700fa1fb8..71a16c5c538b4 100644
---- a/lib/crypto/poly1305-generic.c
-+++ b/lib/crypto/poly1305-generic.c
-@@ -6,10 +6,11 @@
-  *
-  * Based on public domain code by Andrew Moon and Daniel J. Bernstein.
-  */
- 
- #include <crypto/internal/poly1305.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
- void poly1305_block_init_generic(struct poly1305_block_state *desc,
- 				 const u8 raw_key[POLY1305_BLOCK_SIZE])
-diff --git a/lib/crypto/poly1305.c b/lib/crypto/poly1305.c
-index 5f2f2af3b59f8..a6dc182b6c22d 100644
---- a/lib/crypto/poly1305.c
-+++ b/lib/crypto/poly1305.c
-@@ -7,10 +7,11 @@
-  * Based on public domain code by Andrew Moon and Daniel J. Bernstein.
-  */
- 
- #include <crypto/internal/blockhash.h>
- #include <crypto/internal/poly1305.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- 
-diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
-index ebb60519ae939..6d809c3088be3 100644
---- a/lib/crypto/sha1.c
-+++ b/lib/crypto/sha1.c
-@@ -4,16 +4,16 @@
-  * and to avoid unnecessary copies into the context array.
-  *
-  * This was based on the git SHA1 implementation.
-  */
- 
--#include <linux/kernel.h>
-+#include <crypto/sha1.h>
-+#include <linux/bitops.h>
- #include <linux/export.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/bitops.h>
- #include <linux/string.h>
--#include <crypto/sha1.h>
- #include <linux/unaligned.h>
- 
- /*
-  * If you have 32 registers or more, the compiler can (and should)
-  * try to change the array[] accesses into registers. However, on
-diff --git a/lib/crypto/sha256-generic.c b/lib/crypto/sha256-generic.c
-index a16ad4f25ebb7..2968d95d04038 100644
---- a/lib/crypto/sha256-generic.c
-+++ b/lib/crypto/sha256-generic.c
-@@ -10,10 +10,11 @@
-  * Copyright (c) 2002 James Morris <jmorris@intercode.com.au>
-  * Copyright (c) 2014 Red Hat Inc.
-  */
- 
- #include <crypto/internal/sha2.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- 
-diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
-index 107e5162507a7..6bfa4ae8dfb59 100644
---- a/lib/crypto/sha256.c
-+++ b/lib/crypto/sha256.c
-@@ -11,10 +11,11 @@
-  * Copyright (c) 2014 Red Hat Inc.
-  */
- 
- #include <crypto/internal/blockhash.h>
- #include <crypto/internal/sha2.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- 
- /*
-diff --git a/lib/crypto/sm3.c b/lib/crypto/sm3.c
-index efff0e267d84d..c6b9ad8a3ac66 100644
---- a/lib/crypto/sm3.c
-+++ b/lib/crypto/sm3.c
-@@ -7,10 +7,11 @@
-  * Copyright (C) 2017 Gilad Ben-Yossef <gilad@benyossef.com>
-  * Copyright (C) 2021 Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-  */
- 
- #include <crypto/sm3.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- 
-diff --git a/lib/crypto/utils.c b/lib/crypto/utils.c
-index 87da2a6dd161e..dec381d5e9065 100644
---- a/lib/crypto/utils.c
-+++ b/lib/crypto/utils.c
-@@ -3,13 +3,14 @@
-  * Crypto library utility functions
-  *
-  * Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
-  */
- 
--#include <linux/unaligned.h>
- #include <crypto/utils.h>
-+#include <linux/export.h>
- #include <linux/module.h>
-+#include <linux/unaligned.h>
- 
- /*
-  * XOR @len bytes from @src1 and @src2 together, writing the result to @dst
-  * (which may alias one of the sources).  Don't call this directly; call
-  * crypto_xor() or crypto_xor_cpy() instead.
+> call viommu_probe() and inspect the device features and config.  This c=
+an
+> be quite late in userspace if virtio and virtio-iommu get loaded as
+> modules (which distros tend to do).>=20
+> The way we know to hold off initializing dependent devices before the
+> IOMMU is ready is by reading the firmware tables. In devicetree the
+> "msi-parent" and "msi-map" properties point to the interrupt remapping
+> device, so by reading those Linux knows to wait for the probe of the
+> remapping device before setting up those endpoints. The ACPI VIOT
+> describes this topology as well, although at the moment it does not hav=
+e
+> separate graphs for MMU and interrupts, like devicetree does (could
+> probably be added to the spec if needed, but I'm guessing the topologie=
+s
+> may be the same for a VM).  If the interrupt infrastructure supports
+> probe deferral, then that's probably the way to go.
 
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
--- 
-2.49.0
+I don't see any examples of probe deferral in the codebase.  Would it
+instead be possible to require virtio-iommu (and thus virtio) to be
+built-in rather than modules?
 
+CCing the IRQ and PCI maintainers as well.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+--------------409V4M9fXd47lv2pMEw2XfDL
+Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49y
+B+l2nipdaq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYf
+bWpr/si88QKgyGSVZ7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/
+UorR+FaSuVwT7rqzGrTlscnTDlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7M
+MPCJwI8JpPlBedRpe9tfVyfu3euTPLPxwcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9H
+zx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR6h3nBc3eyuZ+q62HS1pJ5EvU
+T1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl5FMWo8TCniHynNXs
+BtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2Bkg1b//r
+6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nS
+m9BBff0Nm0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQAB
+zTxEZW1pIE9iZW5vdXIgKElUTCBFbWFpbCBLZXkpIDxhdGhlbmFAaW52aXNpYmxl
+dGhpbmdzbGFiLmNvbT7CwY4EEwEIADgWIQR2h02fEza6IlkHHHGyiLVf/5wiwQUC
+X6YJvQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCyiLVf/5wiwWRhD/0Y
+R+YYC5Kduv/2LBgQJIygMsFiRHbR4+tWXuTFqgrxxFSlMktZ6gQrQCWe38WnOXkB
+oY6n/5lSJdfnuGd2UagZ/9dkaGMUkqt+5WshLFly4BnP7pSsWReKgMP7etRTwn3S
+zk1OwFx2lzY1EnnconPLfPBc6rWG2moA6l0WX+3WNR1B1ndqpl2hPSjT2jUCBWDV
+rGOUSX7r5f1WgtBeNYnEXPBCUUM51pFGESmfHIXQrqFDA7nBNiIVFDJTmQzuEqIy
+Jl67pKNgooij5mKzRhFKHfjLRAH4mmWZlB9UjDStAfFBAoDFHwd1HL5VQCNQdqEc
+/9lZDApqWuCPadZN+pGouqLysesIYsNxUhJ7dtWOWHl0vs7/3qkWmWun/2uOJMQh
+ra2u8nA9g91FbOobWqjrDd6x3ZJoGQf4zLqjmn/P514gb697788e573WN/MpQ5XI
+Fl7aM2d6/GJiq6LC9T2gSUW4rbPBiqOCeiUx7Kd/sVm41p9TOA7fEG4bYddCfDsN
+xaQJH6VRK3NOuBUGeL+iQEVF5Xs6Yp+U+jwvv2M5Lel3EqAYo5xXTx4ls0xaxDCu
+fudcAh8CMMqx3fguSb7Mi31WlnZpk0fDuWQVNKyDP7lYpwc4nCCGNKCj622ZSocH
+AcQmX28L8pJdLYacv9pU3jPy4fHcQYvmTavTqowGnM08RGVtaSBNYXJpZSBPYmVu
+b3VyIChsb3ZlciBvZiBjb2RpbmcpIDxkZW1pb2Jlbm91ckBnbWFpbC5jb20+wsF4
+BBMBAgAiBQJafgNKAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyiLVf
+/5wiwYa/EACv8a2+MMou9cSCNoZBQaU+fTmyzft9hUE+0d5W2UY1RY3OsjFIzm9R
+/4SVccfsqOYLEo+S0vQMIIIqFEq3FCpXXwPzyimotps05VA8U3Bd7yseojFygOgK
+sAMOAee2RCaDDOnoJue01dfZMzzHPO/TVdp3OvnpWipfv5G1Xg96rwbhMLE3tg6N
+xwAHa31Bv4/Xq8CJOoIWvx6fcmZQpz01/lSvsYn0KrfEbTKkuUf0vM9JrCTCP2oz
+VNN5BYzqaq2M4r+jmSyeXLim922VOWqGkUEQ85BSEemqrRS06IU6NtEMsF8EWt/b
+hWjk/9GDKTcnpdJHTrMxTspExBiNrvpI2t+YPU5B/dJJAUxvmhFrbSIbdB8umBZs
+I3AMYrEmpAbh5x7jEjoskUC7uN3o9vpg1oCLS2ePDLtAtyBtbHnkA4xGD7ar8mem
+xpH9lY/i+sC6CyyIUWcUDnnagKyJP0m9ks0GLsTeOCA0bft2XA6rD6aaCnMUsndT
+ctrab42CV5XypjmC4U1rPJ8JQJUh1/3P48/8sMH+3krxpJ06KNWNFaUbaMTGiltZ
+7x9DngklSYrX0T+2G4kVXNmjaljwkoLahwLla2gUWwBSyofXdqyhQdwZsp01KXNQ
+UCyT/Pg+aDcm/E7OMV3d4lf7g/CSxiX2GSEe6BlhSz+Lmd7ZJ3g32M1ARGVtaSBN
+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
+EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
+=3Dx94R
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------409V4M9fXd47lv2pMEw2XfDL--
+
+--------------Ek0jj2uxDXMmtwViAPvvUiRK--
+
+--------------0ETCOYWHDk5RxNgLbpT3afON
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmhMctoACgkQszaHOrMp
+8lOvBBAAh8KgX6d3oz8RWKXcHQG6DrdVlgotwhqJPPl1VZ3hW2/BKnXohAuKth1/
+zMfrbBYjJbD0ehx7riLKWFVbOCRoGV2P23GXVopqlFRuu6+q36KRrWOakjIm2g8O
+87Z5YRiXN855M2UBxv64217Zp8HUmB2bnA3kqF9KWLFLNCzJMjMONHJZ0lQeFhZH
+Lzv4vhKeY65D4NAygC/uJegvSS1CCqihKkRNE15hUmga5eGLQi1ufD/HxudA28Ps
+Jd80rrqosp24380c/zpQ2yzAFkZ64qHbzTyioLmIFGbKYrIb+B3JW1/ROMzU69Ue
+88Df1Xfktq90LenkDeDJJjI0c5qxTxEE6N+uq/mkJ69Aw2zAu/1iBCidlkOa+AEB
+muG8ausoSxIvFGab8WkfAeBZnEZkXI5znAMi4uFD2tCtnqPTtNn8re2UtW5wknqz
+8vp8HxsA2ujn43NOqz/Felzpcq/HhYKFlcz875FWZNUyNlUtTxC9bCKt3CVUNvn7
+PXkM4yTfC14O9JMuiRy7o9FVk4eSUpnTqiLkPdRAJfOMGDzDAzWYP59Nxx/WEis6
+Rk82FGWdPTqy/YjiBe0M3K/3gSYnE/DcnEaCAKgfiV8IIKFifdPSM+kI7sSCcBN1
+O3I9+lohiKkEbrANtw9cOfJWkJ93EEEkuP3UbdGKTmuwLDj+Dos=
+=L13m
+-----END PGP SIGNATURE-----
+
+--------------0ETCOYWHDk5RxNgLbpT3afON--
 
