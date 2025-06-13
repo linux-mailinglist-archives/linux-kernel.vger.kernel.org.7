@@ -1,118 +1,270 @@
-Return-Path: <linux-kernel+bounces-685445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720B8AD89D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A75AD89D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 12:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D6F188F70A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:49:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2EB517B066
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 10:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182BF2D29CA;
-	Fri, 13 Jun 2025 10:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0428F2D4B5D;
+	Fri, 13 Jun 2025 10:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ugJabBhH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="21kYq2+B"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A0KZniRP"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09022C15B0
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD772C15B0
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 10:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749811728; cv=none; b=Cu8OakgRWyeNB+yfqOo1xKfwntKDelysL4hawWm77GfCRlJAwPPy2xDmcsWTgL+nTYtbfpyokhGGfmuaxh3taWglF/9CEXjNSnURMWxaU7MTK5++K3tInvY/eo/GhLBppwDju9beiBVhvQLxWzCM9QXUIN1j62S2oYd1xnQWu+s=
+	t=1749811980; cv=none; b=LpQuWJne6nnJina9sDdB7JSfBbk9SwQ933E07sNO8jcmgnTur8xrkASFjMeEEuy5qqml9O8lH4p0nYk0D7mtpsh2uf4Nzbvn1ISg61dpGSdnWm4uuZ7BZSwUIaJZDKZSCE9mMtm8NwKwG/30cg+aroeHWdUtPq6X9YdT80XGD0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749811728; c=relaxed/simple;
-	bh=8FoUBY39YWLYR5zMkSvqogVDZoelGOlIN3A2H7Y4LS8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pgHTCR2yefNUoxTQEZdDiikn34gUDfZUlfadQ12OC6+Eom4VkA/sY5kj4AXf273szLlVtqKIY+FjTNwuiqzM2vjkB7IcXejHC7eG4i6HAj9mjLOEKamY9EkTbSY5qREnpnumJ5H6ksv4S+14dRHwx1GVQXy9nsnE7ciX3DlwUes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ugJabBhH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=21kYq2+B; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749811725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQHIscwFPFdzo5VbdA29wmcTnji85y17xI4a/67wplg=;
-	b=ugJabBhHkJx4S7eRqku0M6vVNaSQmadWBmK4E6zG7KdS22AAve2spf96BAkybifJg57kCq
-	Qxs8KsfNKg7ScCh9h2T85Iw3etjevlCrQFcr6+wIUVIPc0S7fUBBBYoFGeMQlArt0n3Y59
-	QW538+ukxLlon3iBWtay6Q1GPiZ3VESJ8geGYVCfboZO7Fif5axd0BoHBLC20paSXDIGnb
-	mYbI/IjeUNjlOnCMvU+BbEiGLHAH9eMU8Eoxz8j+Bsv4Th7feJ85lQxqF19VBfekLczrL3
-	3ncY3vJsoCnknizlNL+87utywxOezEhxqz+8+5EEWW1XaKd57MtfcXOngW3EeQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749811725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQHIscwFPFdzo5VbdA29wmcTnji85y17xI4a/67wplg=;
-	b=21kYq2+B3lN0T0GM4taq8XefVW1tPHK87juKaFp28l+QnP0MAO9yv3QXgKI6mDcqMzlSj+
-	UU/2qV39NOlasJDg==
-To: Yury Norov <yury.norov@gmail.com>, I Hsin Cheng <richard120310@gmail.com>
-Cc: linux@rasmusvillemoes.dk, jstultz@google.com, sboyd@kernel.org,
- linux-kernel@vger.kernel.org, eleanor15x@gmail.com, visitorckw@gmail.com,
- jserv@ccns.ncku.edu.tw, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [RFC PATCH 2/2] clocksource: Use cpumask_first_but() in
- clocksource_verify_choose_cpus()
-In-Reply-To: <aEuw7ls9hieUv_Ox@yury>
-References: <20250613033447.3531709-1-richard120310@gmail.com>
- <20250613033447.3531709-3-richard120310@gmail.com> <aEuw7ls9hieUv_Ox@yury>
-Date: Fri, 13 Jun 2025 12:48:43 +0200
-Message-ID: <87ldpvsyr8.ffs@tglx>
+	s=arc-20240116; t=1749811980; c=relaxed/simple;
+	bh=dATxbca+ASPlW96U0TtaJ9IYiEu9l+L7yn537Xj305s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPQsMaLMESK5Nek4V4G85DTbuNDHJeREQ4fQUk1Ef3IYhr7EanZ5Dv7SAlG/EQVM8Uzqc8X9PFDoEEQDVNetI8XAINoqFo1hx2+JVX+km+T1KDZP/RUy8c7XOQMC1rcqZcGEma3pq6Q5+RAJCTN9sZl1R/53IcV8oI2tDqMqBIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A0KZniRP; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a54836cb7fso1260505f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 03:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749811975; x=1750416775; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DgWvQag2QGzdzZH71/CBz+H5MGX3oMtaddibtY3jjg8=;
+        b=A0KZniRPtIf+/Dk4oZqLCVOk7dzRtrYgyq5fdGaFbZidLLdkFG28l1bair95aKNug+
+         k0QuN5Sa0MLF3PZSjNrmUlwivQI9HEvkRVeyEuguwUZGU41sFrrTl0ndu4dGkDmrTtRD
+         TDUS/BVuI8r7cpB1aKmXgyXNZx7VH7iVkE7tidVTnREetfWaGEvciB25r/LvhjgWhQu/
+         kKsu6/40ySOkjMu0WnbITbnRufgNgXaCRQhqNAI9gjiyCY10DYvdZYE6iOLpSMvt7uTt
+         6ko3L8oNgCoFSfDyn68uewSFFUnFg4Z935ogrJ8rwXvQXN+MZC3yqsRPN/Har2jghieK
+         Rwhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749811975; x=1750416775;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DgWvQag2QGzdzZH71/CBz+H5MGX3oMtaddibtY3jjg8=;
+        b=ZlRlfSAFUvFKvPNhKV6gbuidir4ZbKF/6iIZFZnngoczBkV95zYGQCNk5b0eft35dx
+         PiQX4/UBtjnQSWn/FwvWNbuYo/h01jiBrmuWOgCHz6+cavUwwH83lJUBFCgDBJCfyHAq
+         PkeXunH52+6UNewt5w5I0wdYtF4uo9ID+oZHTZSSNCcn4waI4/UjcbObspmAk7R1h7t8
+         VTWJksHfHDcJMj8nDieVCE3PKYd1Ac3VuyRC4MGttSRDUYFHyolpnWD5MVBGYWefHfB1
+         WUt2t6WnTLFmwOCvxQw1oeSm58vEuH+J6vyDf8so2ZbZm8WIVo1VqDczkBPwvIivDceF
+         JwdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh6nZyPbX8qzvTUREyz7yA5WsVhXhjYMV8bK8xhV++g9NXxQnqQRJKtv6rNqVxmV2h9IJCmAdAdHFYOUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+JfweW6vPI4ZntCThtlod2myo6O6ZO9uXMlbn7DTcCTs4zmT
+	1xvDWuTMZ/cT/uZzkjYuv5Z55f2IwjmyTw6PfJS0qxjo0d0ESVbk3vhnAXu96ME/IoQ=
+X-Gm-Gg: ASbGncuzD5tvXBqnYh1Qa4iikZfLTCCVpV1LkQY7r1BsexriYAjCnRqLcE54GLVKKLC
+	SgcrwlqkX1gMLvFpa3SPjNPkydZVSARN5Xr4RW14nkArTk9Ww7rnW+Zi+AbVtnIa+aW5pwP/4Lx
+	ke622DaKOGBTKxs8zGNfLYnCzPSFIEkGoHF9RkaRVyr5rYRc71e37qdbqH5Q+eptTupvlwrlrKS
+	+sx4TraPZF4pmxG3RtYl7pVfyFklF45xvNvlis/O/UvaLa9Upl815qUFu5xyrIeYL6UhA2fEIwB
+	I59CVT1YZpPK9Gug0+nCwPI3vK7oy1Hrr+tf2CE0w6OUSE3iIAexFx8IcK91Sc7B
+X-Google-Smtp-Source: AGHT+IHJOeLrZP5NvvZh4tWyIjAn3K7bzr2Vcb2r/+QXO+h/w0YFHvsR1/KLQStT6Bew+1GfqtSw2g==
+X-Received: by 2002:a05:6000:2582:b0:3a4:f722:f00b with SMTP id ffacd0b85a97d-3a5686e4287mr1798399f8f.11.1749811975195;
+        Fri, 13 Jun 2025 03:52:55 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900060c5sm1273973b3a.45.2025.06.13.03.52.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 03:52:54 -0700 (PDT)
+Date: Fri, 13 Jun 2025 12:52:35 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-um@lists.infradead.org
+Subject: Re: [PATCH 4/7] drivers: serial: kgdboc: Check CON_SUSPENDED instead
+ of CON_ENABLED
+Message-ID: <aEwC81RhvveGP73Y@pathway.suse.cz>
+References: <20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com>
+ <20250606-printk-cleanup-part2-v1-4-f427c743dda0@suse.com>
+ <CAD=FV=XXQyZLYKoszj68ZGFDY=9-cmEUp406WeOeSBVZOHyUHw@mail.gmail.com>
+ <f962e9bab3dc8bf5cae1c7e187a54fb96a543d51.camel@suse.com>
+ <CAD=FV=XFeokpbMUFjAc0OkwJ97vR8aB+4GbnFxRKymvpEY3gnA@mail.gmail.com>
+ <aErcrCKcsi9cpANY@pathway.suse.cz>
+ <CAD=FV=WFWviPPR6VWmsN2-+vzRDoU6oTNH=EP6z1usG4EDR3+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=WFWviPPR6VWmsN2-+vzRDoU6oTNH=EP6z1usG4EDR3+w@mail.gmail.com>
 
-Yury!
+On Thu 2025-06-12 16:16:09, Doug Anderson wrote:
+> Hi,
+> 
+> On Thu, Jun 12, 2025 at 6:57 AM Petr Mladek <pmladek@suse.com> wrote:
+> >
+> > > > > > @@ -577,7 +577,8 @@ static int __init kgdboc_earlycon_init(char
+> > > > > > *opt)
+> > > > > >         console_list_lock();
+> > > > > >         for_each_console(con) {
+> > > > > >                 if (con->write && con->read &&
+> > > > > > -                   (con->flags & (CON_BOOT | CON_ENABLED)) &&
+> > > > > > +                   (con->flags & CON_BOOT) &&
+> > > > > > +                   ((con->flags & CON_SUSPENDED) == 0) &&
+> > > > >
+> > > > > I haven't tried running the code, so I could easily be mistaken,
+> > > > > but...
+> > > > >
+> > > > > ...the above doesn't seem like the correct conversion. The old
+> > > > > expression was:
+> > > > >
+> > > > > (con->flags & (CON_BOOT | CON_ENABLED))
+> > > > >
+> > It is easy to get confused by the register_console() code. And
+> > it has been even worse some years ago.
+> >
+> > Anyway, the current code sets CON_ENABLED for all registered
+> > consoles, including CON_BOOT consoles. The flag is cleared only
+> > by console_suspend()[*] or unregister_console().
+> >
+> > IMHO, kgdboc_earlycon_init() does not need to care about
+> > console_suspend() because the kernel could not be suspended
+> > during boot. Does this makes sense?
+> 
+> Yeah, makes sense to me.
+> 
+> > Resume:
+> >
+> > I would remove the check of CON_ENABLED or CON_SUSPENDED
+> > from kgdboc_earlycon_init() completely.
+> >
+> > IMHO, we should keep the check of CON_BOOT because we do not
+> > want to register "normal" console drivers as kgdboc_earlycon_io_ops.
+> > It is later removed by kgdboc_earlycon_deinit(). I guess
+> > that the code is not ready to handle a takeover from normal
+> > to normal (even the same) console driver.
+> 
+> I'm not sure I understand your last sentence there. In general the
+> code handling all of the possible handoff (or lack of handoff) cases
+> between kgdboc_earlycon and regular kgdboc is pretty wacky. At one
+> point I thought through it all and tried to test as many scenarios as
+> I could and I seem to remember trying to model some of the behavior on
+> how earlycon worked. If something looks broken here then let me know.
 
-On Fri, Jun 13 2025 at 01:02, Yury Norov wrote:
-> This exact change has already been submitted by me and is under review.
->
-> https://lore.kernel.org/all/20250604232550.40491-2-yury.norov@gmail.com/
->
-> I don't understand why are you undercutting my work, and moreover do it 
-> for the second time.
->
-> For the first time you submitted something that duplicates my another
-> patch from the exact same series. John Stultz has pointed that, so you're
-> surely aware.
->
-> https://lore.kernel.org/all/CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com/
->
-> Kernel development process implies that one makes sure that his work
-> is unique and doesn't break someone else's development, at one's best
-> knowledge.
->
-> What you're doing not only breaks this rule. You're in fact trying to
-> get credit for the work that is done by someone else. This is the
-> definition of fraud.
->
-> I cannot make sure that any other patches from you are unique and
-> written by actually you. Therefore, I will not take your work anymore.
->
-> I encourage everyone else to be careful working with I Hsing Cheng
-> and check his patches for uniqueness, at minimum.  
+Later update: The code is safe. The scenario below does not exist,
+	      see the "WAIT:" section below.
 
-There is absolutely no justification for accusing Hsin of fraud or other
-nasty intentions.
 
-It's sufficient to point him to your series and tell him that it's
-already been dealt with.
+I am not familiar with the kgdb init code. I thought about the
+following scenario:
 
-I deal with redundant and conflicting patches every other day. That's part
-of how open source development works and it's trivial enough to either
-pick one of the patches or ask the involved parties to sort the
-conflicts out.
+1. kgdboc_earlycon_init() registers some struct console via
 
-Thanks,
+	kgdboc_earlycon_io_ops.cons = con;
+	pr_info("Going to register kgdb with earlycon '%s'\n", con->name);
+	if (kgdb_register_io_module(&kgdboc_earlycon_io_ops) != 0) {
 
-        tglx
+   and sets
+
+		earlycon_orig_exit = con->exit;
+		con->exit = kgdboc_earlycon_deferred_exit;
+
+
+2. Later, configure_kgdboc() would find some "preferred" console
+   and register it via
+
+	for_each_console_srcu(cons) {
+		int idx;
+		if (cons->device && cons->device(cons, &idx) == p &&
+		    idx == tty_line) {
+			kgdboc_io_ops.cons = cons;
+[...]
+	err = kgdb_register_io_module(&kgdboc_io_ops);
+
+   , where kgdb_register_io_module would call deinit for the
+   previously registered kgdboc_earlycon_io_ops:
+
+	if (old_dbg_io_ops) {
+		old_dbg_io_ops->deinit();
+		return 0;
+	}
+
+   , where kgdboc_earlycon_deinit() might call the .exit() callback
+
+		kgdboc_earlycon_io_ops.cons->exit(kgdboc_earlycon_io_ops.cons);
+
+
+BANG: If both "kgdboc_earlycon_io_ops" and "kgdboc_io_ops" pointed to
+      the same struct console then this might call .exit() callback
+      for a console which is still being used.
+
+      But I am wrong, see below.
+
+WAIT:
+
+I have got all the pieces together when writing this mail).
+I see that the code is safe, namely:
+
+static void kgdboc_earlycon_deinit(void)
+{
+	if (!kgdboc_earlycon_io_ops.cons)
+		return;
+
+	if (kgdboc_earlycon_io_ops.cons->exit == kgdboc_earlycon_deferred_exit)
+		/*
+		 * kgdboc_earlycon is exiting but original boot console exit
+		 * was never called (AKA kgdboc_earlycon_deferred_exit()
+		 * didn't ever run).  Undo our trap.
+		 */
+		kgdboc_earlycon_io_ops.cons->exit = earlycon_orig_exit;
+	else if (kgdboc_earlycon_io_ops.cons->exit)
+		/*
+		 * We skipped calling the exit() routine so we could try to
+		 * keep using the boot console even after it went away.  We're
+		 * finally done so call the function now.
+		 */
+		kgdboc_earlycon_io_ops.cons->exit(kgdboc_earlycon_io_ops.cons);
+
+	kgdboc_earlycon_io_ops.cons = NULL;
+}
+
+It calls kgdboc_earlycon_io_ops.cons->exit() only when
+unregister_console() tried to call the original con->exit()
+which was reassigned to kgdboc_earlycon_deferred_exit()...
+
+Updated resume:
+
+It looks to me that even normal console can be used by
+kgdboc_earlycon_io_ops and we could remove even the check
+of the CON_BOOT flag.
+
+My expectation:
+
+If a "struct console" is registered then the driver is used
+by printk() and it should be safe even for kgdboc_earlycon,
+as long as it has both "con->write" and "con->read" callbacks.
+
+So the check in kgdboc_earlycon_init() might be:
+
+	for_each_console(con) {
+		if (con->write && con->read &&
+		    (!opt || !opt[0] || strcmp(con->name, opt) == 0))
+			break;
+	}
+
+Heh, I hope that you were able to follow my thoughts and I did not
+create even bigger confusion.
+
+Best Regards,
+Petr
 
