@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-685900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898E8AD901C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DC5AD9024
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3DD7AE2D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED39D3AB53F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0122C1A0BC9;
-	Fri, 13 Jun 2025 14:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652D41AD3FA;
+	Fri, 13 Jun 2025 14:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YqnOd9/U"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYCjanIC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CF915573F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 14:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D45433A5;
+	Fri, 13 Jun 2025 14:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826262; cv=none; b=HjbUPl3DikW5EgkMPchf0kYXxJlIpVrkvMXrQx9mQTl9gHL+30ZJEintvTydramH/2nYftstxszdomvh58FDX2dtKl7q+PzJHOQHz/9cfvdwQdAGIBzhMmr7W67Bhx5/ADr2l4dLoWy07qng4PDVzoeRfqxz0ZFr61WhxNlmIbo=
+	t=1749826295; cv=none; b=r+mt9NKRvY+QvbIt0M3pHoZTW7qzwwz2AvBK4Nt9MVlAJfUgeVu0IyImqidC02Oq4jrWgJ+mCnKwSLKuiVHD+yXmEej37q4M3gQC02SAZ4fSpk+8o6j1KfzAKevtjRD2FUxVDJqLtJ+VguV1ZKlGOiki1cPbJIJmPCagaVPJVrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826262; c=relaxed/simple;
-	bh=WXGpMxHygcfzTELJGLmTF9Qa1p/d89Zbk7jdPDFTfug=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=M5Mb+zx9tcbMf0+Z9bZ1dg3T+Lwh0ydUk0IMG4D5fXOHoxQAIDxcDEJN2DTICU+twuf4o7rdCPIt7Da0A6kQRpr0Udhvt6YbJumJN5sNM6t+PsJfqxRpBVhrJapgfNjDbf22qj++etAzwFdH6JdsI6nqj3olcr3YWwBORgycri8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YqnOd9/U; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-450cfb79177so13665905e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749826259; x=1750431059; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WXGpMxHygcfzTELJGLmTF9Qa1p/d89Zbk7jdPDFTfug=;
-        b=YqnOd9/UpYAnk/h4wt4ESiDSiT5nVw7RACJYscBjYQDxN0GdH8A9a0ZuWry6z1zjhc
-         4mjAGAIue6oT9uCpJLe7DmUUaU53Kf5QzcEdkUYQvA7XB8+Z1NiGhhb8p/mO4tG80NO3
-         xIxv0VXeBQYEkwogxSkYmzXMZz9ZmsN41zyvGjGN1S2WQXpaAz3B9wIsNee8z98iVkt7
-         zSZZUyPHcTSlr2Rew41CTVIkUygNGoUp2YOAnpEbBnQsQhcj+VBATL2wsBOwa6V9J5YA
-         AleyU+8mps2ajjwiFYie/ANBDUVW46mgRgCFqbsCKqFrk6mJWOpnHWFhiD3wDuK/GVkj
-         IEiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749826259; x=1750431059;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WXGpMxHygcfzTELJGLmTF9Qa1p/d89Zbk7jdPDFTfug=;
-        b=WJimQclqJBo4+X4J9DusaZqa1c3Ge+9rGUMeCJ6R9BjYDl4Ky0Q5gEvLz5+dOXLpfe
-         IuMz5XEv4HQB9p06UVBCHlqLFF6MB5LrGpMD9FTVv8Caf0AnAtkHFW8e6nfzMJD64JVR
-         YNeDIkQG3EQE888jPuI2M2hP0XFBnZeKyt6SC0hb9lMqdj/8jzUsyQrg5+AUDd+zj10C
-         1T2/auDyJ16RabylQ8E42RDqpHOU8IrReHLR3AhBvq6/oDUjTMoD74/n4fIyoJ/EFLyM
-         Gkfg4mr8FH+SZV3mWLq+IHqfm9yGWhCbdPG2QWfKog3doEyeqrxhEXXuxPm1kv99m/MS
-         n6Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgKzDKBdYzHwDyGXXVSdxjI7mdOj1T+3b4IG4iZSZ0GzursOpAlGbFHuivBjSNb8O+Po+5BLwunxIU0lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHpCgHN+fu4BJVaqPtonpm3OQUDHpgEn9fCQ5ztk4ZgJQx9Hic
-	KthbqETxNo/nqSbtTDsge7T3bf7/wmdRIKi7mlEIzPv3Zjgpxt+2F3I4sZ3juIYJXHg=
-X-Gm-Gg: ASbGncuXdNOcQmfEek4QHed1rGP4JpQ4osRafUkhjKIxJyx6trHhhI3nPX06R6+k/AK
-	oLjt1zmUnHZfyYo6SQHw6ic/1Des7FDmsocHxKWAXqnTiqYL6pmkluecyLkfXk4fQNRD3c0o5qB
-	jaVAcev/xkQgbtk5yKBomPb052mQOPXObUKOfoKxnPvP6626fKNYwlnm6CW2rQueJADNROnDd5f
-	ahEu70eG1jCEik7K9c3Hk5Or60zISFM65vOgN3VSCT2CJ8a8xoIDjbUgrSlix1JaYI1XqZBTLB+
-	e+Z7jBpaA8E6GnLcGvA1PqtqKkbS6Rx/ecJ8hpIdrAa0ylNIsiak2+2T5EBsYBj4XxMauBieve3
-	v3IM=
-X-Google-Smtp-Source: AGHT+IGJ34DzRWm1T2gZxcoEWSQEcbIW5w0AwTNiA/GS5kJjbzV7TTazO9AA/zJ8635JEJWkBn/LUw==
-X-Received: by 2002:a05:6000:2893:b0:3a5:2fe2:c9e1 with SMTP id ffacd0b85a97d-3a56876abe1mr3243520f8f.30.1749826258845;
-        Fri, 13 Jun 2025 07:50:58 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7213:c700:c8e2:ba7d:a1c6:463f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54d1fsm2562363f8f.2.2025.06.13.07.50.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 07:50:58 -0700 (PDT)
+	s=arc-20240116; t=1749826295; c=relaxed/simple;
+	bh=a9gFEcNHOIC/Oz4QB/0+6Gj9TjA8O4O73SG5pKhkDQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Or+vk7ngd6lUblBmOG9umtWVZSHt/NQBU7pXdIFowB6vgJSaSRXI9DnlmiVQweIRovd9LDCJJafMEVtxGh8br4RFUpmsmPs3vNvHlYi5KRZxAulMrh7XrkCOHTWyHffTy9i9AMz/n840ahnKeOe/dpfk+q0DuTN5jsIqHlV+4CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYCjanIC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEACFC4CEE3;
+	Fri, 13 Jun 2025 14:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749826295;
+	bh=a9gFEcNHOIC/Oz4QB/0+6Gj9TjA8O4O73SG5pKhkDQA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UYCjanIC9/ogE7BdmHldhYndikxkMFKyqq9mPw6xl6mpfeCU8xq4U0zUWklx3SSvr
+	 e9WbsvU7oIvvYCBptqhLerjURuJCA8xnaDTABdNeXAy1B09nrKLDsh9BrqfYzGwq8f
+	 0mQMRj2FmejGCqqaDhkK4ShurJ5BQTHmLtsrpI61urwamObAs/mE0q4BWwC/J7kl+n
+	 uv3mVq6uKsGRsdSa89jxh6Y5KWaPihaeIP4MerLNjVzuGAF7xWZ6ujHlPCnVWGME6b
+	 yp0xmWbNhmK4FlxYgcpDJvquONpj1F5m9bl0mHgZIFU6AyPzdK3I+xfWmlHTCZfIGV
+	 2ZwEwxOvLUDkw==
+Date: Fri, 13 Jun 2025 07:51:08 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+	x86@kernel.org, Jason@zx2c4.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH 07/16] crypto: sha512 - replace sha512_generic with
+ wrapper around SHA-512 library
+Message-ID: <20250613145108.GB1287@sol>
+References: <20250611020923.1482701-8-ebiggers@kernel.org>
+ <aEjo6YZn59m5FnZ_@gondor.apana.org.au>
+ <20250611033957.GA1484147@sol>
+ <aEj8J3ZIYEFp_XT4@gondor.apana.org.au>
+ <20250611035842.GB1484147@sol>
+ <20250613053624.GA163131@sol>
+ <aEu5cyDOMcKteW_b@gondor.apana.org.au>
+ <20250613055439.GB163131@sol>
+ <CAMj1kXEDCRfCgvtuhRc+a=m1kVt-zkcCqi_=_WOFTmt4Hz2gGg@mail.gmail.com>
+ <aEvjrhkLnB_GEKnV@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Jun 2025 15:50:57 +0100
-Message-Id: <DALHN1EOXETI.3BLGEY3KMN4HD@linaro.org>
-Cc: <freedreno@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
- "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Rob Clark" <robdclark@gmail.com>, "Sean Paul"
- <sean@poorly.run>, "Konrad Dybcio" <konradybcio@kernel.org>, "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
- "Marijn Suijten" <marijn.suijten@somainline.org>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "open list"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm: Fix inverted WARN_ON() logic
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Rob Clark" <robin.clark@oss.qualcomm.com>,
- <dri-devel@lists.freedesktop.org>
-X-Mailer: aerc 0.20.0
-References: <20250613144144.27945-1-robin.clark@oss.qualcomm.com>
-In-Reply-To: <20250613144144.27945-1-robin.clark@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEvjrhkLnB_GEKnV@gondor.apana.org.au>
 
-On Fri Jun 13, 2025 at 3:41 PM BST, Rob Clark wrote:
-> We want to WARN_ON() if info is NULL.
->
-> Suggested-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Fixes: 0838fc3e6718 ("drm/msm/adreno: Check for recognized GPU before bin=
-d")
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+On Fri, Jun 13, 2025 at 04:39:10PM +0800, Herbert Xu wrote:
+> On Fri, Jun 13, 2025 at 09:38:11AM +0200, Ard Biesheuvel wrote:
+> >
+> > Perhaps I am just slow, but could you please explain again what the
+> > point is of all these changes?
+> > 
+> > Where is h/w accelerated ahash being used to the extent that it
+> > justifies changing all this existing code to accommodate it?
+> 
+> There are two separate changes.
+> 
+> First of all the export format is being made consistent so that
+> any hardware hash can switch over to a software fallback after
+> it has started, e.g., in the event of a memory allocation failure.
+> 
+> The partial block API handling on the other hand is about simplifying
+> the drivers so that they are less error-prone.
 
-You forgot Reported-by tag.
+Is it perhaps time to reconsider your plan, given that it's causing problems for
+the librarification effort which is much more useful, and also most of the
+legacy hardware offload drivers seem to be incompatible with it too?
 
-Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
-
-Was the series where it is applied already merged?
-
-[..]
-
-Thanks,
-Alexey
+- Eric
 
