@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-685098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02999AD8441
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E305AD8415
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3296E189C0AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91F93A0EFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 07:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459852E6D21;
-	Fri, 13 Jun 2025 07:34:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629B22D1911
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 07:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599872D1925;
+	Fri, 13 Jun 2025 07:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0cnVtUt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDC8238C26;
+	Fri, 13 Jun 2025 07:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800094; cv=none; b=iEGPjAza/9NHxBKtKncVe4TG1L1n4cmNSKClQsNwvBpvBzX/aMMF6JY+Jeftozrttapre/udjU5YH+ppD81Y9bRjJCAnuIXiGDOfBGDNsjYETGChB64QlvNU3tDjl/Q17GJrjXuBKkhy7bvvpgCpHrRtqNcRJRq54cT6HLaNH0g=
+	t=1749800072; cv=none; b=kaWiwQjaVnLpA4rfvZUzmfMfmEZjqIgN4TtHREBG2MAOzXfcWEquBi6zSYC6MOEKpfvQJSWhmJXDBwud+OlumPUzQXBx6l+YnxQL27qcCHVoAXoTeODdDliG7GpBhXKe+V8n4cB9JMJ7vkGLGIGgKgW4iVgIZTtvM8xZ4NVi+SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800094; c=relaxed/simple;
-	bh=Y1JO6yRUdnYicdtcwizD05rpMEa4fyvqEy46XDzFCsA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZJ98xi5tmTPDcSNjAa8XJOoPZq8MRapZdWRVm7gQ3A4lhlOtD/WY7BwDD1dffWbOfrI++5YNUZZm47e//VtTxOIIjyVQbtvM8hAZtVPbbflDXrS2ekUK589er+ekBgFEUbffARZ7CRNv4+JW7j9oRMOw2ERkpFs8QQjlrZ3Nn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 481BD1D6F;
-	Fri, 13 Jun 2025 00:34:30 -0700 (PDT)
-Received: from [192.168.178.71] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDAB43F59E;
-	Fri, 13 Jun 2025 00:34:48 -0700 (PDT)
-Message-ID: <64ae41a7-2c06-4082-a4d6-0db5b635ea01@arm.com>
-Date: Fri, 13 Jun 2025 09:34:22 +0200
+	s=arc-20240116; t=1749800072; c=relaxed/simple;
+	bh=TwO64dudIgSMsHCJyLSriUaJU7jxFNj2lwY1rcJ4tMI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kLPCP58aIIoDza3pjrdAD2eNS0tN5ExxIzlNaVIC+RkrUaNWDAfSDrhZryF46p7ZQc39zDmmBSWTOVeM8mmDevKxvUn4mUvHAoA6QtAhZjYXpaCIqZxgT8Guwc/XmccCAzLtQpvEK13k+sgFMSUZPjKRufeROOLK/9PqL23C3PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0cnVtUt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3CECAC4CEE3;
+	Fri, 13 Jun 2025 07:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749800072;
+	bh=TwO64dudIgSMsHCJyLSriUaJU7jxFNj2lwY1rcJ4tMI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=j0cnVtUti3K+VmYaVL8loJotzc2iwSugPx8Lpms2yx8Q22sTLU03+2xeMvPSxgBBC
+	 2bO8H0kp+p12c6Ckvkw7ot1sLl8fUCGNxoZfgl66YZdO76erPF0xkIO0VocQk1Gg0t
+	 fkWVKADCt05PyfPMTMawdwKcXiqGCZxxgDtxVSsnIV2Yz2m7GOOmOi2sHwkSACaFe4
+	 p4Fn4aHjTVPJBZJR7It0CHlvEyEqNbb7bi34Lqz/GySEufTspBx0C58gCKNwYdAr2u
+	 EDpGubrbkTvnaS8y/brewhPiXlEL9Th7CSL4AEJKDUwu1CEYiNFfAY+gf5V8bXZ+yn
+	 5YGYMAxD70RAw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBB6C61DB2;
+	Fri, 13 Jun 2025 07:34:32 +0000 (UTC)
+From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
+Subject: [PATCH v4 0/2] Add support for WoM (Wake-on-Motion) feature
+Date: Fri, 13 Jun 2025 09:34:25 +0200
+Message-Id: <20250613-losd-3-inv-icm42600-add-wom-support-v4-0-7e5f554201bf@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH 5/5] sched: Add ttwu_queue support for delayed tasks
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, clm@meta.com
-Cc: linux-kernel@vger.kernel.org
-References: <20250520094538.086709102@infradead.org>
- <20250520101727.984171377@infradead.org>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250520101727.984171377@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIHUS2gC/5XNvQ7CIBSG4VsxzB5zeqA/OHkfxqEUUKItDVTUm
+ N676KJuOr7f8Hx3Fk1wJrL14s6CSS46P+QQywXrDu2wN+B0bkZIJRIhnHzUwMENCVzXC6oQodU
+ aLr6HeB5HHybAitAaK7UizrI0BmPd9fWy3eU+uDj5cHudpuK5/uenAhCkkry2sqlkKTaTPq463
+ 7OnnugtiqL8TaQsaiOFtkqSqs23yD/F5jeRZ7FuiwZbi6TshzjP8wO80NbpeAEAAA==
+X-Change-ID: 20250220-losd-3-inv-icm42600-add-wom-support-0620fef9db23
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749800071; l=2005;
+ i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
+ bh=TwO64dudIgSMsHCJyLSriUaJU7jxFNj2lwY1rcJ4tMI=;
+ b=Pmoj3isAVCMsHd+CoUSknvOHXDcqng1pbj168wEOv4VwC4WH0CffPaQ+h59eUfroh23ux1DkL
+ MTpT4/X8u6vA8XkIbHdpWLAUCoP2m50YmEL+gnHUMcvaUysmaZLS0FV
+X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
+ pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
+X-Endpoint-Received: by B4 Relay for
+ jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
+X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Reply-To: jean-baptiste.maneyrol@tdk.com
 
-On 20/05/2025 11:45, Peter Zijlstra wrote:
+Similar to feature present in older chip, it compares the magnitude of
+the last 2 accel samples against a threshold and returns an interrupt
+even if the value is higher.
 
-[...]
+WoM maps best to accel x|y|z ROC event. This series add system wakeup
+functionality if WoM is on and wakeup is enabled when system suspends.
 
-> @@ -3830,12 +3859,41 @@ void sched_ttwu_pending(void *arg)
->  	update_rq_clock(rq);
->  
->  	llist_for_each_entry_safe(p, t, llist, wake_entry.llist) {
-> +		struct rq *p_rq = task_rq(p);
-> +		int ret;
-> +
-> +		/*
-> +		 * This is the ttwu_runnable() case. Notably it is possible for
-> +		 * on-rq entities to get migrated -- even sched_delayed ones.
-> +		 */
-> +		if (unlikely(p_rq != rq)) {
-> +			rq_unlock(rq, &rf);
-> +			p_rq = __task_rq_lock(p, &rf);
+This series also prepare the driver for supporting further APEX
+features like pedometer, tilt, ... It introduces an apex structure that
+will hold all APEX settings and track the enable state.
 
-I always get this fairly early with TTWU_QUEUE_DELAYED enabled, related
-to p->pi_lock not held in wakeup from interrupt.
+Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+---
+Changes in v4:
+- Avoid mix of gotos and scoped_guard()
+- Invert conditionals for better code readability
+- Switch to use devm_device_init_wakeup()
+- Several code readabilities improvements
+- Link to v3: https://lore.kernel.org/r/20250418-losd-3-inv-icm42600-add-wom-support-v3-0-7a180af02bfe@tdk.com
 
-[   36.175285] WARNING: CPU: 0 PID: 162 at kernel/sched/core.c:679 __task_rq_lock+0xf8/0x128
-[   36.176021] Modules linked in:
-[   36.176187] CPU: 0 UID: 0 PID: 162 Comm: (udev-worker) Tainted: G W 6.15.0-00005-gcacccfab15bd-dirty #59 PREEMPT 
-[   36.176587] Tainted: [W]=WARN
-[   36.176727] Hardware name: linux,dummy-virt (DT)
-[   36.176964] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   36.177301] pc : __task_rq_lock+0xf8/0x128
-[   36.177576] lr : __task_rq_lock+0xf4/0x128
-...
-[   36.181314] Call trace:
-[   36.181510]  __task_rq_lock+0xf8/0x128 (P)
-[   36.181824]  sched_ttwu_pending+0x2d8/0x378
-[   36.182020]  __flush_smp_call_function_queue+0x138/0x37c
-[   36.182222]  generic_smp_call_function_single_interrupt+0x14/0x20
-[   36.182440]  ipi_handler+0x254/0x2bc
-[   36.182585]  handle_percpu_devid_irq+0xa8/0x2d4
-[   36.182780]  handle_irq_desc+0x34/0x58
-[   36.182942]  generic_handle_domain_irq+0x1c/0x28
-[   36.183109]  gic_handle_irq+0x40/0xe0
-[   36.183289]  call_on_irq_stack+0x24/0x64
-[   36.183441]  do_interrupt_handler+0x80/0x84
-[   36.183647]  el1_interrupt+0x34/0x70
-[   36.183795]  el1h_64_irq_handler+0x18/0x24
-[   36.184002]  el1h_64_irq+0x6c/0x70
+Changes in v3:
+- Rewrites following code review
+- Link to v2: https://lore.kernel.org/r/20250415-losd-3-inv-icm42600-add-wom-support-v2-0-de94dfb92b7e@tdk.com
 
-[...]
+Changes in v2:
+- change struct order to avoir DMA overflow
+- separate wom enable/disable in 2 functions
+- delete mutex rework
+- Link to v1: https://lore.kernel.org/r/20250220-losd-3-inv-icm42600-add-wom-support-v1-0-9b937f986954@tdk.com
 
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2313,6 +2313,7 @@ static inline int task_on_rq_migrating(s
->  #define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
->  
->  #define WF_ON_CPU		0x0100
+---
+Jean-Baptiste Maneyrol (2):
+      iio: imu: inv_icm42600: add WoM support
+      iio: imu: inv_icm42600: add wakeup functionality for Wake-on-Motion
 
-Looks like there is no specific handling for WF_ON_CPU yet?
+ drivers/iio/imu/inv_icm42600/inv_icm42600.h        |  56 +++-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c  | 292 ++++++++++++++++++++-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c |   2 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c   |  97 ++++++-
+ 4 files changed, 433 insertions(+), 14 deletions(-)
+---
+base-commit: 4c6073fec2fee4827fa0dd8a4ab4e6f7bbc05ee6
+change-id: 20250220-losd-3-inv-icm42600-add-wom-support-0620fef9db23
 
-> +#define WF_DELAYED		0x0200
+Best regards,
+-- 
+Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
 
-[...]
 
 
