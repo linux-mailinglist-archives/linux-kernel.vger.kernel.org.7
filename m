@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-685566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6468DAD8B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA230AD8A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EAD3188BC33
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98D4189BE27
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991D52E2F14;
-	Fri, 13 Jun 2025 11:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE902D5C99;
+	Fri, 13 Jun 2025 11:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMrA+9bE"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLSqHlGA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513D92E0B5B;
-	Fri, 13 Jun 2025 11:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF62D5C88;
+	Fri, 13 Jun 2025 11:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749815737; cv=none; b=awc8o4apGSrHZwgLvbFAKJ4bE6PPg/TLUOnT33FSi0B9EugACj8f53Pe5ZAY0NYNAfvEa65tQGBOQexrwObUHdT8X4m3kF6epWBhrnQ+/2maRKUoHLY33XQ366cHDk65ySrkSRcPrHk1pC+FUhdZFuq6UwIE6QrVM6qysmHrN7o=
+	t=1749813676; cv=none; b=UyawX48MzfJEz2t9GbH+04edJfox2FVsI7/SmbzO0J0CXs9jZ5mEnqimzFCQgn59UcjmbktJX3Ilw1ZoTODLMFxUw+KpWFhrqYpd6Qfl4Kzvc4q2AoGl7YHb+UHGhAABss+MDxrs+qitklo6t3zTXGW0KvT5EhB+DKCaMW0SZyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749815737; c=relaxed/simple;
-	bh=Ci7710RjJSELOL+1/2aPBQoHM+FZu2LTyHSsddj27FE=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=ke77fxshc2L49XDm3dqgeVG6iXkU8DxJLipM+NFDAnuMblHHgfgXDqC521VSl4Fop9gBjUZfBrXMKy6xHD+nmJFZ4CR1CfGjwjh/a9arH+1FsZKRn+sLcHDF28mM3NJUCVv7dHbBjCKsBHjol4Eh808UbMqt7j9ptZ9q7PTL4Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMrA+9bE; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d3f72391so26536115e9.3;
-        Fri, 13 Jun 2025 04:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749815734; x=1750420534; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uL5y/ewTTMQ7/ta7feOWe7CZOUk7g4FBbNi0PxftJG0=;
-        b=GMrA+9bEWblntAdDLO/iRvlH4v0xDnbd0mfNh5/zC1NZKkWBQmjO0/QeHFnWiUsxm7
-         hpyIqLXFT28+ZjhxEdP9sPI9Cbq/DuUSazSlzYO1xm5Sz0V6qy2+6omT6h+aPaC7Pu0+
-         6gJW92Ny4bPhVJ18r+kBViYzGjJZyA/TikHv6n0kyFVF1Gps9eB/J3y2nSuFOIQ5UHL2
-         7cLfU26vpSEyzNVojFg6oHS2yXe1ZnO+dyajo5asC6EhofIgQXXIis2o2g/Gm91IaW+h
-         G3T/b3XfCLsbYJKzCTwux1xsoSm0wsPexTGZ3lP7xiIuJQG6mRZK7C8ejlx7pF3G/hJS
-         0Q+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749815734; x=1750420534;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uL5y/ewTTMQ7/ta7feOWe7CZOUk7g4FBbNi0PxftJG0=;
-        b=H5GOFwK6nk0yx7GYNCElA+riSxSLveFjQlbfwoeiS9vMDOxzQ+vuDnY6m1B4tiwV4o
-         yTL/kyqBlESeaE4IV64CWo1szVmvQPfT2mYbHoRdIuIdYGqzZpSBuK1oUYCEkU3ZLxIO
-         pK+3RB32UjHbkByUfq5huwQEIoLZtKdn6kshr05I7/mLb3kRhEmQGqYTNiTTc8cU1E9Q
-         zoP9XqisOJoxMnnNDDJ3hNf/Ofx3NkH7Mm9n3ReTkTEl0csuO0PkTMkmkOyfhRepTl6a
-         7BYnlaqfeOHQ2oGQiYGEi0fELFO2J81JHG5D137U8X6oa1rinbDwpfQ62YY0nrY2VTDw
-         pSiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVawf1p4AqFP52U1gZVaWLxxZU05SpAXzL3NVYNrkujIMuESbkgDHjjyQJ4NaAHCvwfzM4Bw2oUMlIBsdQ=@vger.kernel.org, AJvYcCXD4mWqPuagF3vl1Edy2cbxAzoT3AVqEi+qXA0oAywvSQKBUe4ZxIxNDjwVJx7qf0rOyU4P4kmD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhE/W30Fch57bYJuHV0winEstw4AJb3Jzc4VB3LvygKQPhS0MO
-	6gridwCe9lxIW5eGE0Mj3OAkOnx2SXbKiQ4AHMNbBL/AMcdiJDJcJvDp
-X-Gm-Gg: ASbGnctDKXlGAGZBbwkgmVqJUTlBge6rq4D9H67cZk6DCSAfQGEEXoKy1ggB8MSFsq0
-	CFPgAu5kkkhItzKhenxbo/6wO4moQyAtdmfCK8rWWLvbj4LosFnaO5asjz6TMslrrbakvKmj1FZ
-	LXwhHtAHfhcO+A4wiejzMxHLkJh7x0rXYaDNJ1nAeRsPQSRqWvAwQXDwNheT6Hvsfsc81fL10gY
-	oas1dJ9T2lrxM0UHaL6DrsNz6tsTc2ytfL4vYzXsWFUaZEwfnzNQlfEZ01/31Z90nJyCnur3fcx
-	nimeUOjMAfREy2B2bUNcjyYd1AFbou5/8yJNIOydvLu9R8T/vKS5ZwY8vHghMOvs/qz2d+x0CF8
-	=
-X-Google-Smtp-Source: AGHT+IGMtOD0UDTm67fkmitVK21heePsVMtSrnMkraeiIzLg5EK6P4byBT359avt25zMBKAJPT5CUA==
-X-Received: by 2002:a05:600c:34c7:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-45334ad3f41mr27165075e9.11.1749815733431;
-        Fri, 13 Jun 2025 04:55:33 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:75e0:f7f7:dffa:561e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e261ebdsm52187085e9.39.2025.06.13.04.55.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 04:55:32 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
- Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
-  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
-  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
-Subject: Re: [PATCH v2 06/12] scripts: lib: netlink_yml_parser.py: use classes
-In-Reply-To: <08ac4b3457b99037c7ec91d7a2589d4c820fd63a.1749723671.git.mchehab+huawei@kernel.org>
-Date: Fri, 13 Jun 2025 12:20:33 +0100
-Message-ID: <m2y0tvnb0e.fsf@gmail.com>
-References: <cover.1749723671.git.mchehab+huawei@kernel.org>
-	<08ac4b3457b99037c7ec91d7a2589d4c820fd63a.1749723671.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1749813676; c=relaxed/simple;
+	bh=VzCFaO5EvYXj74XVYWA+TK4eC3sDvKCDu0tRrR2diUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfQDizQluI0bqt+IhiPn/GRjBHY3XZEMf8Ig6cES5iFHh8GwPkcq9bYmJSc5KhPZr8FgvhKoS39bXGvlGjanktORPJvUsBVzy1elvZXzeGDBogj2Qb+FKq15xdSRv/Ogs9N3u+iKwhdUqIWlOG/fou4/dFHpkMopSCevC9fOMls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLSqHlGA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4A9C4CEE3;
+	Fri, 13 Jun 2025 11:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749813675;
+	bh=VzCFaO5EvYXj74XVYWA+TK4eC3sDvKCDu0tRrR2diUs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PLSqHlGA4oFY7mIM9i1/yuPltk0mRTbczmVu7zwjFyKb+QsgPbYjCzg0fmtemLDgR
+	 +6pNPgIfDn7eGopIeFbAcv/QY6vyfK5Nhn+9CSUT08bjach1A3i8rers9l2BnhQOSP
+	 wMG+4NNTQEb9fl8RNjDp0Kirok6t1mHDBikifzKx3aDEhb2SOaIzMnovaNh2O9FLIm
+	 w6DJVH5o5BOzJubdRFwcNd3/QIukgb4MlqPWlDo04U73JBXz8y7c82ofHnquaNu9QW
+	 6WzSw84oSBS+X2ewcPJ+RPmFraxdkLlBcM9Qch+50eTZbls4NZ61G8jDcSOPs6m0eQ
+	 6OAfvA6ly768w==
+Date: Fri, 13 Jun 2025 12:21:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	patches@opensource.cirrus.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
+Subject: Re: [PATCH] ASoC: wm8524: Remove the constraints of rate
+Message-ID: <db0f3982-b99e-4d90-8c28-9d49c3c5e478@sirena.org.uk>
+References: <20250613035216.1924353-1-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WdELm66K4STULC2W"
+Content-Disposition: inline
+In-Reply-To: <20250613035216.1924353-1-shengjiu.wang@nxp.com>
+X-Cookie: Use extra care when cleaning on stairs.
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-> As we'll be importing netlink parser into a Sphinx extension,
-> move all functions and global variables inside two classes:
->
-> - RstFormatters, containing ReST formatter logic, which are
->   YAML independent;
-> - NetlinkYamlParser: contains the actual parser classes. That's
->   the only class that needs to be imported by the script or by
->   a Sphinx extension.
+--WdELm66K4STULC2W
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suggest a third class for the doc generator that is separate from the
-yaml parsing. The yaml parsing should really be refactored to reuse
-tools/net/ynl/pyynl/lib/nlspec.py at some point.
+On Fri, Jun 13, 2025 at 11:52:16AM +0800, Shengjiu Wang wrote:
 
-> With that, we won't pollute Sphinx namespace, avoiding any
-> potential clashes.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> WM8524 is a codec which can only work in slave mode, the bit clock and
+> frame sync clock are from cpu dai, if there is any constraint, the
+> constraint should be from cpu dai, no need to add constraint in codec
+> side.
+
+No, there is a need here - the constraint is enforcing that the ratio
+between the MCLK and sample rate is within spec which is a common
+requirement for audio performance. =20
+
+> On the other hand, with the constraint of rate in codec requires the
+> sysclk to be fixed, which brings unnecessary limitations on sound card
+> usage.
+
+A common pattern is to only enforce constraints once a sysclk is
+configured.
+
+--WdELm66K4STULC2W
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhMCaYACgkQJNaLcl1U
+h9Bf9wf/bPtLXfmMvk8+lyQL0YwP1a4IdU6IgeLX4/7IwkqhztZoXBDjzcO5zp1a
+Gf+55kWmz/3Kp5H0i/kiV1plI5RBKQDy8JYlFP7O852FqcFjKEs++yxUfVUC3ULC
+g4CXglMJU/X+oN3qbnt3xGWTUym5B2T0FZJv8WH3pmg40mOMelu5N0iveFcNW+U1
+FFWyz/PCq3Mi9Yd7/SB0zBljM30eUPEj4zzcl9Ms/19KFDZ4vw1k8jNphhc00REu
+pgjFWovuNBtRJaBIlDOF/4KiyxeobGkLOK24gbkJlLx3nwf91ZFzRoD6mPnJu2e0
+RWA+Mg1WMqWls5q1NWvO5Mnnhs628Q==
+=w10j
+-----END PGP SIGNATURE-----
+
+--WdELm66K4STULC2W--
 
