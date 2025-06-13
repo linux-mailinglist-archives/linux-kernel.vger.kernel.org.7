@@ -1,150 +1,159 @@
-Return-Path: <linux-kernel+bounces-684840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-684834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8E9AD80F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:20:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27681AD80D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 04:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6301E18998A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709A63B7CAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 02:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8FB1FDA6A;
-	Fri, 13 Jun 2025 02:20:07 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9BD1EEA5D;
+	Fri, 13 Jun 2025 02:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="KCzhBJrz"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CAC1EF391;
-	Fri, 13 Jun 2025 02:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833EE1ADC73
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 02:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749781206; cv=none; b=Z/kfgUAcnOPhRFYU9f61cVbNfPSrvz1S6js23NHZShrStkbCObCv5gBD3kejRvklkr1nIZXHWJ73VVzZ2Em/HCwHVZYwsH1BuiK574YKuyNiaMTKGWQX4nwv49CKLrB5R6VOOybwdqo64oO5x010XAsIqMVsmP4vu1AoRPNK5uk=
+	t=1749780970; cv=none; b=sSg2Uor9uDnNY32Gj3JwJVPFLV0XqSAA4uAECaD5YWsqZhQ4YOs3rfvSWDvUNauzILCyvlNU3U+y2Yr3oSHIygrJPZ+2dp7c2dnMsDnDkPEZMchns8KOI9v0yFojp8wX/Aj6eWoil0/z5cBDPONV/R9rOrLasfhPtmTct1k6nlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749781206; c=relaxed/simple;
-	bh=9H77K1wXIVMrkUEhdLbj9zONFcFfIqerrrUftTrchLI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qtLw8UGlnXLd3UoJYxT1L6mzMbOdFiOHiobEr7yuCilqhIaQNncYPqqbeVmJgHbmsecgAX6UHna0WSYjC2Fqn/qMqsFbmRNsFOcgxzZyqtCUP4DvuTjOsSmA5FkDl38BcV5e88onuakEUoDclrjAq/VAhyvHwJ/egol5IpS5VhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [127.0.0.2] (unknown [210.73.43.2])
-	by APP-01 (Coremail) with SMTP id qwCowABXB9aviktoIvMtBg--.44541S6;
-	Fri, 13 Jun 2025 10:19:28 +0800 (CST)
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-Date: Fri, 13 Jun 2025 10:15:10 +0800
-Subject: [PATCH net-next 4/4] riscv: dts: spacemit: Add Ethernet support
- for BPI-F3
+	s=arc-20240116; t=1749780970; c=relaxed/simple;
+	bh=bq8ZvLLY3sBFobFVReFNoN1iLHim74L7lvCBMNa9U60=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nz3yzjo8rMZ7sy198qVbt+AyKA2yAzL9wpC+28GCjT/i8QdExzzdsAxRZkZJs4SaBOMfswNJUFNr6a5soIoK4+hs6PQBjM1MMDoKyNYEMkJz9v3l0q0ZvEmR7wQJUZ1FokqeKFmviwSFrrCg+Te8INF8p1G+e5jsh0OZIooKdQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=KCzhBJrz; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fae04a3795so16944136d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jun 2025 19:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749780967; x=1750385767; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hkp2SwT2RePaCxrYCauyGX41s3IGrIg/X27XfJMOji4=;
+        b=KCzhBJrzuBKajrJZ8jRIIiCPju9sJWppE3KqgUceDOLFz4m4AzNlM1dFDT1vyIEbIm
+         apoUIPOTwGXqfWOzCsaRiUGyFNMZNm3C3rz/jfdE+1vwmVvtAbapfh3mdT/Bs71ERN7S
+         CIVnTi0PUpuxAnlHM5tfXHaxqqzBw68LLUeAJSuxDO1ORDpWhsxqSdTFO5GUNoC3BxIx
+         9QmHoPR0csnoN672QnrhE1IDXsRA/IOp7SUerRhCKk6gsMTp6IBLPY5A323Ul/VDAbfq
+         WSlI+eXK4rkDx4Zc1MBMhcZBnqkM+Irh0WEtqppVk/ZJ6oEkEkPJCViqGbiGXL53q+uW
+         tXBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749780967; x=1750385767;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkp2SwT2RePaCxrYCauyGX41s3IGrIg/X27XfJMOji4=;
+        b=WhYbxZWdsA/fom/8l7QJZGIMI8GrTHjC9fdC9zH2pMRq9im0DA//0sxUdakPJG9EVJ
+         JT2sMA+UtXp9t8+tCi+xPuoPk7Q/0qa3QvsREy764oh7Fyx2oycKhouo60KoemEUVy2p
+         BAwMZ4pmoX4dfc6AtkW/cPHZfNAQQQ62t2LxZgeL4Bvov9ODehqEUtvN+TLjzgvVztRP
+         FdxZsjGODZPn+7fjpSoQAWhzeOcwBqlz06SGisoAtr2F4S0TdvGSw1Mlkc7C3/qY7TvO
+         n/tGKZ4iyffDxdkEY4INr0z9KeZDlVKmOovvSTMQUboL9yLA64vgxbTVwXLEQzzsDFqm
+         YykA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSx4hivIHytN4N9aj4hY9+Qskq9sb+MQqjQnzVFjLgGCCsyopIyTQx2BFCnx+p5K5Qp+yZKYpu5qhxkB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDawyfdOwGdCxh+k3wNgB5aTi21heb6jpiL+KI1Ico8rpNgKF8
+	faZe6RxsTNdiH0rZZSVFdPcii+J7fuNTcbgaHR6omC8SWZSE3wcUp3rEB+vUo8YIm2E=
+X-Gm-Gg: ASbGncvQufP5bzteN+V2I7M0xeHevZVnas1iiYOObr00hbgzLSw4icup4yFOc6WzGmU
+	Fz67aTt8Zx3QotBpxwtIwljYFyL5705mx4s0CbCJWOtm95CzkZR4IPGbRBeLwTPC/kXfgxh5ofh
+	8DlKQuVdb2TRdafq8yYMN+3FRVTgKdUF/TyhPsyBkEW4tHSSOQM/simCBY38ECwkGa7+/JU1ygp
+	rvHpKVOHUn65jmAMqo/oLuLaOEoeMM6ei3e6l1xBFhYtSkZWrgzUFYJgsOp4TGPQRICR1OsCjVK
+	t/4ZEog5UXM60g3bztPI8CqyjQcvu97sfXY6NWF8rbJdYHgtB1KSdCgy7cAxJmDSe7gq7KO7ESK
+	cFKSTs9V2XA8c/ikIi03ODgGWpQ==
+X-Google-Smtp-Source: AGHT+IEPrCYVuYaf2snbGSL6nYTSnkJ5v4bgC7WUqyASAClJfsf2Fn+WgQFF908p7KrLOpj+L5tcig==
+X-Received: by 2002:a05:6214:230a:b0:6e8:fbb7:6764 with SMTP id 6a1803df08f44-6fb3e629659mr19306186d6.45.1749780967455;
+        Thu, 12 Jun 2025 19:16:07 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb35c895f2sm16333826d6.116.2025.06.12.19.16.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 19:16:07 -0700 (PDT)
+Message-ID: <d7f7dc4c-5d2a-4f63-9451-5e4d2e53cf1b@riscstar.com>
+Date: Thu, 12 Jun 2025 21:16:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: k1: check for transfer error
+To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+ dlan@gentoo.org
+Cc: linux-i2c@vger.kernel.org, spacemit@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Troy Mitchell <troy.mitchell@linux.dev>
+References: <20250612225627.1106735-1-elder@riscstar.com>
+ <aEuI9-QWCv6CRUyX@troy-wujie14pro-arch>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aEuI9-QWCv6CRUyX@troy-wujie14pro-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250613-net-k1-emac-v1-4-cc6f9e510667@iscas.ac.cn>
-References: <20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn>
-In-Reply-To: <20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Russell King <linux@armlinux.org.uk>, Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Vivian Wang <uwu@dram.page>, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-CM-TRANSID:qwCowABXB9aviktoIvMtBg--.44541S6
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ary5JF47JFyxWw1UGrW7Arb_yoW8Wr1Dpr
-	WYkFs3urWDGr1Syw43Zryq9r4fGan5XrZ5G343uF1rJ3yqvF90vw15Kwn7tr1DWrW5X345
-	Wr4xtFWUur1qkw7anT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUH214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F4U
-	JVW0owAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4
-	CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvj
-	eVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I
-	1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4U
-	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr
-	0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7sREMmh5UUUU
-	U==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-Banana Pi BPI-F3 uses an RGMII PHY for each port and uses GPIO for PHY
-reset.
+On 6/12/25 9:12 PM, Troy Mitchell wrote:
+> On Thu, Jun 12, 2025 at 05:56:25PM -0500, Alex Elder wrote:
+>> If spacemit_i2c_xfer_msg() times out waiting for a message transfer to
+>> complete, or if the hardware reports an error, it returns a negative
+>> error code (-ETIMEDOUT, -EAGAIN, -ENXIO. or -EIO).
+>>
+>> The sole caller of spacemit_i2c_xfer_msg() is spacemit_i2c_xfer(),
+>> which is the i2c_algorithm->xfer callback function.  It currently
+>> does not save the value returned by spacemit_i2c_xfer_msg().
+>>
+>> The result is that transfer errors go unreported, and a caller
+>> has no indication anything is wrong.
+>>
+>> When this code was out for review, the return value *was* checked
+>> in early versions.  But for some reason, that assignment got dropped
+>> between versions 5 and 6 of the series, perhaps related to reworking
+>> the code to merge spacemit_i2c_xfer_core() into spacemit_i2c_xfer().
+>>
+>> Simply assigning the value returned to "ret" fixes the problem.
+>>
+>> Fixes: 5ea558473fa31 ("i2c: spacemit: add support for SpacemiT K1 SoC")
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> Reviewed-by: Troy Mitchell <troymitchell988@gmail.com>
+>> ---
+>> v2: Added Troy's Reviewed-by
+> Hi Alex, you added the changelog, but the subject line
+> doesn't have the "V2" suffix. Is this a mistake?
 
-Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
----
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 46 +++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Yes it's a mistake.  I contemplated sending an immediate
+"oops, this was v2!!!" but opted to wait until someone
+like you asked about it.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 816ef1bc358ec490aff184d5915d680dbd9f00cb..6b841dacb61ec6592339f174267f4936c0579597 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -35,3 +35,49 @@ &uart0 {
- 	pinctrl-0 = <&uart0_2_cfg>;
- 	status = "okay";
- };
-+
-+&eth0 {
-+	phy-handle = <&rgmii0>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac0_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <0>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii0: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&eth1 {
-+	phy-handle = <&rgmii1>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac1_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <250>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(115) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii1: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
+This *is* version 2, and I made the updates I describe.
 
--- 
-2.49.0
+					-Alex
+> 
+>              - Troy
+> 
+>>
+>>   drivers/i2c/busses/i2c-k1.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+>> index 5965b4cf6220e..b68a21fff0b56 100644
+>> --- a/drivers/i2c/busses/i2c-k1.c
+>> +++ b/drivers/i2c/busses/i2c-k1.c
+>> @@ -477,7 +477,7 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
+>>   
+>>   	ret = spacemit_i2c_wait_bus_idle(i2c);
+>>   	if (!ret)
+>> -		spacemit_i2c_xfer_msg(i2c);
+>> +		ret = spacemit_i2c_xfer_msg(i2c);
+>>   	else if (ret < 0)
+>>   		dev_dbg(i2c->dev, "i2c transfer error: %d\n", ret);
+>>   	else
+>>
+>> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+>> -- 
+>> 2.45.2
+>>
 
 
