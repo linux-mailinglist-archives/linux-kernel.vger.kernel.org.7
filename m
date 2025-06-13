@@ -1,228 +1,167 @@
-Return-Path: <linux-kernel+bounces-685330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143A1AD8823
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60998AD8832
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2E9189751A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:42:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F071E11D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 09:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86C029B233;
-	Fri, 13 Jun 2025 09:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UIfsEZZi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p1jbw5ZQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UIfsEZZi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p1jbw5ZQ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23942C158E;
+	Fri, 13 Jun 2025 09:44:02 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87729291C25
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 09:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A897D238C06;
+	Fri, 13 Jun 2025 09:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749807741; cv=none; b=E/NWeRGyOAY9TqGdUzB76GLVoTVCb0yo1fGV1bERi5CXgcml1jQKgrEnRcy/dGB5K8/geUI/KNSXFkhyiuCYeMq2lLnbHCuRbLnsBUXbYz+yYr20vb8rMrRvUT17GRADIswDJjcBWBvO3jMNp1Z3J7J6iC4Mvfy5lmybX8SvmEQ=
+	t=1749807842; cv=none; b=AnxrIl0I3JQI1Ao0Sr+JKY4V5S9xarxVYQX0WTNUJZIDYFMVDOnk3PHZo6RsyaSdRBqCEsBR1IA5CY5xl0JjFM6JfH26ZSivqM5FHSko0t+a2mBSMAzuiudnqeGDqmZQ66e5mlDg3GbvYz24wZl85YtKsEhrC8xOuIJOeRpFVpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749807741; c=relaxed/simple;
-	bh=Fgb6wnysN63y1b2pgmr1er7TXwdkZlxsNrNLLAaFZ6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heVP6DlNGpKFMwgnCjhkHVTl37yhuKram6DnoYoheVB1AnvR/C5PCa/33BtNwu2hx3Z2nbduy8lw//H6rdeEz5gQjE3ECqUOv3SuAZpExQfK/9+byyNw4QhNx85TQAll8jli/qYBH7G1s/txbXfALKZxCPnnj1tdZ4bns7/kzcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UIfsEZZi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p1jbw5ZQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UIfsEZZi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p1jbw5ZQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A95B41F78E;
-	Fri, 13 Jun 2025 09:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749807737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz3N8H62Scka+0A9NkxhFIl4TdftpD6QSLaVuMv/lvk=;
-	b=UIfsEZZiF8yYJJuG1DFOoIUo+/kdtCLI91u/QbzaYg2jdPALNC0naI8tcsYHKuT2jiPW2N
-	2Qvfe/Giw8KhwvbYeahbV/kEUIAHv4ZHJCfuheqCS3xORwTMRuBtI7m2t9FUKNxQLQpvz9
-	PoxwZHgIz6CpN0qiCOJhEUVN2+TaQbc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749807737;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz3N8H62Scka+0A9NkxhFIl4TdftpD6QSLaVuMv/lvk=;
-	b=p1jbw5ZQmKflhB0NSIzqlUcvBvHz2gH7Dq8g0mk+LI8s270uPnaJaKqXpWs7cJxQoiSzQS
-	i9lwEMGul7h/q7Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UIfsEZZi;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=p1jbw5ZQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749807737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz3N8H62Scka+0A9NkxhFIl4TdftpD6QSLaVuMv/lvk=;
-	b=UIfsEZZiF8yYJJuG1DFOoIUo+/kdtCLI91u/QbzaYg2jdPALNC0naI8tcsYHKuT2jiPW2N
-	2Qvfe/Giw8KhwvbYeahbV/kEUIAHv4ZHJCfuheqCS3xORwTMRuBtI7m2t9FUKNxQLQpvz9
-	PoxwZHgIz6CpN0qiCOJhEUVN2+TaQbc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749807737;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz3N8H62Scka+0A9NkxhFIl4TdftpD6QSLaVuMv/lvk=;
-	b=p1jbw5ZQmKflhB0NSIzqlUcvBvHz2gH7Dq8g0mk+LI8s270uPnaJaKqXpWs7cJxQoiSzQS
-	i9lwEMGul7h/q7Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E3D2137FE;
-	Fri, 13 Jun 2025 09:42:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7Wc+JnnyS2gpPwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 13 Jun 2025 09:42:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 436D1A09B0; Fri, 13 Jun 2025 11:42:17 +0200 (CEST)
-Date: Fri, 13 Jun 2025 11:42:17 +0200
-From: Jan Kara <jack@suse.cz>
-To: Wei Gao <wegao@suse.com>
-Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2] ext2: Handle fiemap on empty files to prevent EINVAL
-Message-ID: <mxios5pbq3vq5267on4vnt5siozd4nap5w7wemsd2vlxoooexd@ia2ezhdu7ujq>
-References: <20250612142855.2678267-1-wegao@suse.com>
- <20250613152402.3432135-1-wegao@suse.com>
+	s=arc-20240116; t=1749807842; c=relaxed/simple;
+	bh=5qTng8w94cZ0pqhP00XAbIUVrscsHqDDRFScVMngN6c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tZ4j/CKxIr8JTtq3xs49G1mXRONCRSUvOya8zPe5efvnDENQo335VqytTsWr5oiz/N4Uysux5WRBxwGQicPspgBRu+qQHccvJNy1I5tp9TqvyZ6OgrnVj9Jl8pw09c+0Dk9SgQwrNvlkWgR94sRZMbkfRlHhx4CEXFE0QR9lBVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bJZCT3tmzzYm7yk;
+	Fri, 13 Jun 2025 17:41:09 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
+ 2025 17:43:09 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
+ 2025 17:43:09 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Fri, 13 Jun 2025 17:43:08 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: Christoph Hellwig <hch@infradead.org>, =?iso-8859-1?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>
+CC: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, "kraxel@redhat.com"
+	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
+	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "amir73il@gmail.com"
+	<amir73il@gmail.com>, "benjamin.gaignard@collabora.com"
+	<benjamin.gaignard@collabora.com>, "Brian.Starkey@arm.com"
+	<Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>,
+	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "wangbintian(BintianWang)"
+	<bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, liulu 00013167
+	<liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
+Subject: RE: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Topic: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Index: AQHb1G1ol+FT389RFkuW+lwB3adoKrPw4BKAgAADywCAAAF8AIAE6kCg//+rigCABEW6AIAA1IFwgAEnIgCAAC4PgIAE+w3w
+Date: Fri, 13 Jun 2025 09:43:08 +0000
+Message-ID: <80ce3ec9104c4f0abbcb589b03a5f3c7@honor.com>
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org> <5d36abace6bf492aadd847f0fabc38be@honor.com>
+ <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
+ <aEZkjA1L-dP_Qt3U@infradead.org> <761986ec0f404856b6f21c3feca67012@honor.com>
+ <d86a677b-e8a7-4611-9494-06907c661f05@amd.com>
+ <aEg1BZj-HzbgWKsx@infradead.org>
+In-Reply-To: <aEg1BZj-HzbgWKsx@infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613152402.3432135-1-wegao@suse.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: A95B41F78E
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.01
-X-Spam-Level: 
-
-On Fri 13-06-25 11:18:38, Wei Gao wrote:
-> Previously, ext2_fiemap would unconditionally apply "len = min_t(u64, len,
-> i_size_read(inode));", When inode->i_size was 0 (for an empty file), this
-> would reduce the requested len to 0. Passing len = 0 to iomap_fiemap could
-> then result in an -EINVAL error, even for valid queries on empty files.
-> 
-> Link: https://github.com/linux-test-project/ltp/issues/1246
-> Signed-off-by: Wei Gao <wegao@suse.com>
-
-...
-
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index 30f8201c155f..591db2b4390a 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -895,9 +895,15 @@ int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  		u64 start, u64 len)
->  {
->  	int ret;
-> +	u64 i_size;
->  
->  	inode_lock(inode);
-> -	len = min_t(u64, len, i_size_read(inode));
-> +
-> +	i_size = i_size_read(inode);
-> +
-> +	if (i_size > 0)
-> +		len = min_t(u64, len, i_size_read(inode));
 
 
-Thanks! This would actually lead to excessively slow fiemap for 0-length
-files. So what I've ended up with is attached modification of your patch.
 
-> +
->  	ret = iomap_fiemap(inode, fieinfo, start, len, &ext2_iomap_ops);
->  	inode_unlock(inode);
->  
-> -- 
-> 2.49.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
----
+> On Tue, Jun 10, 2025 at 12:52:18PM +0200, Christian K=F6nig wrote:
+> > >> dma_addr_t/len array now that the new DMA API supporting that has
+> > >> been merged.  Is there any chance the dma-buf maintainers could
+> > >> start to kick this off?  I'm of course happy to assist.
+> >
+> > Work on that is already underway for some time.
+> >
+> > Most GPU drivers already do sg_table -> DMA array conversion, I need
+> > to push on the remaining to clean up.
+>=20
+> Do you have a pointer?
+>=20
+> > >> Yes, that's really puzzling and should be addressed first.
+> > > With high CPU performance (e.g., 3GHz), GUP (get_user_pages)
+> > > overhead is relatively low (observed in 3GHz tests).
+> >
+> > Even on a low end CPU walking the page tables and grabbing references
+> > shouldn't be that much of an overhead.
+>=20
+> Yes.
+>=20
+> >
+> > There must be some reason why you see so much CPU overhead. E.g.
+> > compound pages are broken up or similar which should not happen in the
+> > first place.
+>=20
+> pin_user_pages outputs an array of PAGE_SIZE (modulo offset and shorter
+> last length) array strut pages unfortunately.  The block direct I/O code =
+has
+> grown code to reassemble folios from them fairly recently which did speed
+> up some workloads.
+>=20
+> Is this test using the block device or iomap direct I/O code?  What kerne=
+l
+> version is it run on?
+Here's my analysis on Linux 6.6 with F2FS/iomap.
 
-From a099b09a3342a0b28ea330e405501b5b4d0424b4 Mon Sep 17 00:00:00 2001
-From: Wei Gao <wegao@suse.com>
-Date: Fri, 13 Jun 2025 11:18:38 -0400
-Subject: [PATCH] ext2: Handle fiemap on empty files to prevent EINVAL
+Comparing udmabuf+memfd direct read vs dmabuf direct c_f_r:
+Systrace: On a high-end 3 GHz CPU, the former occupies >80% runtime vs
+<20% for the latter. On a low-end 1 GHz CPU, the former becomes CPU-bound.
+Perf: For the former, bio_iov_iter_get_pages/get_user_pages dominate
+latency. The latter avoids this via lightweight bvec assignments.
+|- 13.03% __arm64_sys_read
+|-|- 13.03% f2fs_file_read_iter
+|-|-|- 13.03% __iomap_dio_rw
+|-|-|-|- 12.95% iomap_dio_bio_iter
+|-|-|-|-|- 10.69% bio_iov_iter_get_pages
+|-|-|-|-|-|- 10.53% iov_iter_extract_pages
+|-|-|-|-|-|-|- 10.53% pin_user_pages_fast
+|-|-|-|-|-|-|-|- 10.53% internal_get_user_pages_fast
+|-|-|-|-|-|-|-|-|- 10.23% __gup_longterm_locked
+|-|-|-|-|-|-|-|-|-|- 8.85% __get_user_pages
+|-|-|-|-|-|-|-|-|-|-|- 6.26% handle_mm_fault
+|-|-|-|-|- 1.91% iomap_dio_submit_bio
+|-|-|-|-|-|- 1.64% submit_bio
 
-Previously, ext2_fiemap would unconditionally apply "len = min_t(u64, len,
-i_size_read(inode));", When inode->i_size was 0 (for an empty file), this
-would reduce the requested len to 0. Passing len = 0 to iomap_fiemap could
-then result in an -EINVAL error, even for valid queries on empty files.
+|- 1.13% __arm64_sys_copy_file_range
+|-|- 1.13% vfs_copy_file_range
+|-|-|- 1.13% dma_buf_copy_file_range
+|-|-|-|- 1.13% system_heap_dma_buf_rw_file
+|-|-|-|-|- 1.13% f2fs_file_read_iter
+|-|-|-|-|-|- 1.13% __iomap_dio_rw
+|-|-|-|-|-|-|- 1.13% iomap_dio_bio_iter
+|-|-|-|-|-|-|-|- 1.13% iomap_dio_submit_bio
+|-|-|-|-|-|-|-|-|- 1.08% submit_bio
 
-Link: https://github.com/linux-test-project/ltp/issues/1246
-Signed-off-by: Wei Gao <wegao@suse.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/20250613152402.3432135-1-wegao@suse.com
----
- fs/ext2/inode.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Large folios can reduce GUP overhead but still significantly slower
+than dmabuf to bio_vec conversion.
 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 30f8201c155f..177b1f852b63 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -895,9 +895,19 @@ int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		u64 start, u64 len)
- {
- 	int ret;
-+	loff_t i_size;
- 
- 	inode_lock(inode);
--	len = min_t(u64, len, i_size_read(inode));
-+	i_size = i_size_read(inode);
-+	/*
-+	 * iomap_fiemap() returns EINVAL for 0 length. Make sure we don't trim
-+	 * length to 0 but still trim the range as much as possible since
-+	 * ext2_get_blocks() iterates unmapped space block by block which is
-+	 * slow.
-+	 */
-+	if (i_size == 0)
-+		i_size = 1;
-+	len = min_t(u64, len, i_size);
- 	ret = iomap_fiemap(inode, fieinfo, start, len, &ext2_iomap_ops);
- 	inode_unlock(inode);
- 
--- 
-2.43.0
+Regards,
+Wangtao.
 
 
