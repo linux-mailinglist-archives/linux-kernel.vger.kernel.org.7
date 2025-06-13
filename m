@@ -1,89 +1,99 @@
-Return-Path: <linux-kernel+bounces-685863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9CAAD8FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:36:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31CDAD8FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BC53AFF26
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A3A17AE9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E9519309C;
-	Fri, 13 Jun 2025 14:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684EA19DF8B;
+	Fri, 13 Jun 2025 14:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USDM4MbY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXey7G72"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD871CFBC;
-	Fri, 13 Jun 2025 14:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FFD18FDBD;
+	Fri, 13 Jun 2025 14:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749825359; cv=none; b=VYINeVGc1DKeZnZehop5oORUIWo2/PpQcrzAv+B2zk+yTebR9twPtjNQ3s5rKqN+2Pz9h6VzgiKk16NT4c9X1GdWNHJdSm+n3vBEr81q8fi59jCGonYZtNOTxBuHbCZ7naPkOOd0nDevCOZvrN3jbqxAyXd3frZMOQ3rzjWeBVc=
+	t=1749825393; cv=none; b=OZBe7TEhfSg/JayXJX5nb9AKQstrgYT5vIRtDW5kFMcL9MVGmt43r759bVmt1ZhVjVjoSL6TAzeoFC+fbFTEXx6MHCcitAKQC1HuBvaz1fTF3BinAcwDvS+iiIykUAqrRwnXe7Qa8m/IulozK4RtXFpVieyWzsHiszSzhwAK8N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749825359; c=relaxed/simple;
-	bh=u9idUxV2zmQa9sIXvRNYlgPFzi8ArR1OUQCb35Bkex8=;
+	s=arc-20240116; t=1749825393; c=relaxed/simple;
+	bh=UK2lJlz2LCjhQudxqPQDGhW8klEAjhwowG06LslQSUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1L3a5Mjca46wrhlXaxeE9hg5bVmmzE+VHk69qdZ+cbXnz1TQ1BWskz3SK2XWQwKrGAxyerTY1i8Pjy0RL5FXF161iGtxpvGaQSI7XVoyXfKF9x93JwbykvR+5SbNABnZRUySAv8dXQZP3/Sq+fT1nFnvecs4pCdlhuVWL3Cx9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USDM4MbY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75325C4CEE3;
-	Fri, 13 Jun 2025 14:35:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuTI9iGqlJggYWEREkfLFGgPrh2FdNvLcLiTfvab6EK30eITP1sWYWD2Ai9yn81+lyroDKYDxnEqXgc/Cspyv4hucRzT4Igy/WKAbsuF725xezkRRFGRgrBpmhyD0Rw+aYWjoresd8m8P/x0Dqis/CpBe9O3N+igMLfZjVseGDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXey7G72; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8E9C4CEE3;
+	Fri, 13 Jun 2025 14:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749825359;
-	bh=u9idUxV2zmQa9sIXvRNYlgPFzi8ArR1OUQCb35Bkex8=;
+	s=k20201202; t=1749825393;
+	bh=UK2lJlz2LCjhQudxqPQDGhW8klEAjhwowG06LslQSUU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USDM4MbYr9cIjo4r5hforAVQm7boY+23nNng1U+u6+mzjc+BOhuPe0w5B1giAmL4J
-	 M4Iyd7aM2UAMPuMLxqiSaE2JQtfTxgJbNfzgCsY3AtHC42Wm40qtS+tSAWkOctdwFU
-	 QVazYkY/jm7y2Y4T8yn5hz/FCsC0TI8ZD3QYzujyOjlyO+Edb9H0FBkVL7lZuCkSl1
-	 cJP1VO/Lt09nY9nV3RzQECGZIo38UmpqpFLwzUxi77T+B3RMXKH9MVbh9wsrh9vg0P
-	 iI6f2XFHhRTassNoB0heYbeKdB8uIb/GjW5jN2yYT+fdztKcOZ71UehN70wTJTCYEG
-	 ytjgLK8aFrDxQ==
-Date: Fri, 13 Jun 2025 15:35:54 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matthias Fend <matthias.fend@emfend.at>,
-	Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
-	Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: (subset) [PATCH] MAINTAINERS: adjust file entry in TPS6131X
- FLASH LED DRIVER
-Message-ID: <20250613143554.GK897353@google.com>
-References: <20250527065434.202622-1-lukas.bulwahn@redhat.com>
- <174982475603.946253.15625144456457817574.b4-ty@kernel.org>
+	b=UXey7G72HGtYGGVpC1CdwXhlq9L90TvyO+p8PUW6Gy+i5rqtKzJdkqBrnA3ukajqJ
+	 Hl/7+yGoUyY/CnBr7JzEKlrfUdoKQEKWbY4a/gUCXHinJUfR27DM43c4rpALOxbFl6
+	 k8dPE+VvqUHhjknC/lwlxYTcrHXJ8ARzN6qVrOC+8kodUeHLB+ez2oMCdk5Gf/dEi4
+	 yECThuEu9PMcPSnkYo2FfZSHwoqTFACX3nbPCFm3NhJzq4dX5TYKwyBonp105nEjD7
+	 cFutdZGfLq3j0CLb3DeMcwOQqboD7lN+j0VJbcHvJ7ZWrY/oTI7KYZ6xbzTs9odFpF
+	 aZFCpiezL4Wag==
+Date: Fri, 13 Jun 2025 15:36:28 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: hwmon: amc6821: Add cooling levels
+Message-ID: <20250613-eternal-resonant-90e254e1e7c2@spud>
+References: <20250613-b4-amc6821-cooling-device-support-v4-0-a8fc063c55de@toradex.com>
+ <20250613-b4-amc6821-cooling-device-support-v4-1-a8fc063c55de@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SLtA+ltvLcySd3/R"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <174982475603.946253.15625144456457817574.b4-ty@kernel.org>
+In-Reply-To: <20250613-b4-amc6821-cooling-device-support-v4-1-a8fc063c55de@toradex.com>
 
-On Fri, 13 Jun 2025, Lee Jones wrote:
 
-> On Tue, 27 May 2025 08:54:34 +0200, Lukas Bulwahn wrote:
-> > Commit 0d12bb1a7fb6 ("dt-bindings: leds: Add Texas Instruments TPS6131x
-> > flash LED driver") adds the device-tree binding file ti,tps61310.yaml,
-> > whereas the commit b338a2ae9b31 ("leds: tps6131x: Add support for Texas
-> > Instruments TPS6131X flash LED driver") from the same patch series adds the
-> > section TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER in MAINTAINERS,
-> > referring to the file ti,tps6131x.yaml. Note the subtle difference between
-> > the two file names. Hence, ./scripts/get_maintainer.pl --self-test=patterns
-> > complains about a broken reference.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] MAINTAINERS: adjust file entry in TPS6131X FLASH LED DRIVER
->       commit: 3bc1740d3157c9a9d30614371400f490dbbffd62
+--SLtA+ltvLcySd3/R
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I added the missing Fixes: tag for you.
+On Fri, Jun 13, 2025 at 10:42:38AM -0300, Jo=E3o Paulo Gon=E7alves wrote:
+> From: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+>=20
+> The fan can be used as a cooling device, add a description of the
+> `cooling-levels` property and restrict the maximum value to 255, which
+> is the highest PWM duty cycle supported by the AMC6821 fan controller.
+>=20
+> Signed-off-by: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
 
--- 
-Lee Jones [李琼斯]
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--SLtA+ltvLcySd3/R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEw3bAAKCRB4tDGHoIJi
+0rneAP9ayr/LfVHhlHHfjMakBX/nJT1pcblHAYhuwfn/j+jRUgD+Lw1rJEgWeDY9
+Ha24jYgTf6Bh3WdwPMPz37Qqu2eYywg=
+=qA05
+-----END PGP SIGNATURE-----
+
+--SLtA+ltvLcySd3/R--
 
