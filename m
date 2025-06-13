@@ -1,299 +1,191 @@
-Return-Path: <linux-kernel+bounces-685773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A159BAD8E72
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:02:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D56DAD8E82
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 16:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A79D3A89F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 14:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7C31E4491
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F52D6626;
-	Fri, 13 Jun 2025 13:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B452D9EFC;
+	Fri, 13 Jun 2025 13:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NdOkcykB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JFjl4Q+8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o96Nzw7P";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NbaSZyMh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eVEysA6P"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5763B2BF079
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1F82D9EF9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 13:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749822623; cv=none; b=eHLKOm5JIJIOdlQ3HUe6RupbKnhRkuxzazRtsdO7lNEA4e49b9n5FZBU32X2z+gdA0PuqmUJEaa3S5J2U5qXAOMEh23tqonpZQTPUG3dPJRvsRIMG4WfkncKwsi5k3Nw+k6w7dowvVxpPtlilVU3AFXkR4aAp1OkzZkSNTsGKl0=
+	t=1749822604; cv=none; b=M8nu8Qq6jE+yZ3EsKiZLqNCB6uG2OcbcH/PUAEB9Dqglr8/H6jpuK1YAXcF43wzKaJS2z9x/jsHvW3H2mTepjnkxDD+gvM4hZXa4DFzipaOsCUot7ToXzDRW9U3YPam67XHxuCZ7yy58lemnX96QJ8WnOKh+RknB3ykEAcdjY8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749822623; c=relaxed/simple;
-	bh=L+oybvM8m2kMnFTwzhYuivmdWwqoG89QEMSYZi2Md7A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Dmbj0bb96m6dlH7QiADT6MyMy7vCeaWEl4gPOFBvQD0qUVVC+U/y38IlS0e1WG7MQ6r/gvd/5nloFgR4lhDBR+clm845oSf9e4Z3LY1NZqqAIiTvbieq3AKf6bt5gRCdbeGomBDuoai5PIU1Nv06YQmV/iZ8dTOUs8lcYaMYfPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NdOkcykB; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749822621; x=1781358621;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L+oybvM8m2kMnFTwzhYuivmdWwqoG89QEMSYZi2Md7A=;
-  b=NdOkcykBfg13uvWH47owlbhoPhHGnDfdSTMhDWXTAwDzlAQ0dZuiJoRI
-   UPqnctAROxewkpSbIrcF3Oh44xt5KMTdD9h3hT5r+SezxpYC0XGz76WI2
-   m4XVZRn7JowDm+6c5q83g5J6LzKJv0Y+3+iWFalJTa6l66VC/LoRpnHwo
-   /w9sUrrH1wqJX4XNVgse5DH+DJwstHlwsxW3Oc1XcErPWIye11VF2SF8m
-   UkOoTJRP1pYCYiHXxS0gaBZ9I2IWNhn99ISbAs7BgDqfEpnT10/HZzG3c
-   zoFqe4LSHnghYkaSN1biX0YswLzfjaWDYuuP0R/txj1KyX4wJNpk2bbIB
-   A==;
-X-CSE-ConnectionGUID: KJ1KWz8ySRO20D4qT83Uww==
-X-CSE-MsgGUID: 80QC9EllQ0CF0aRRZEk4+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="55837598"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="55837598"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 06:50:21 -0700
-X-CSE-ConnectionGUID: xhUTbX4RTNayPBRTAAe8gQ==
-X-CSE-MsgGUID: 7tE5aZitTCe+hKZHSeWISQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="171017631"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Jun 2025 06:50:21 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	tglx@linutronix.de,
-	dave.hansen@linux.intel.com,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	jolsa@kernel.org,
-	alexander.shishkin@linux.intel.com,
-	linux-kernel@vger.kernel.org
-Cc: dapeng1.mi@linux.intel.com,
-	ak@linux.intel.com,
-	zide.chen@intel.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [RFC PATCH 08/12] perf/x86: Add APX in extended regs
-Date: Fri, 13 Jun 2025 06:49:39 -0700
-Message-Id: <20250613134943.3186517-9-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250613134943.3186517-1-kan.liang@linux.intel.com>
-References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1749822604; c=relaxed/simple;
+	bh=48Btmq48StA+CNIKojo0XJZQ2ucjHK2q9m1cr1JmpC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StysjiGWTWRSyjWvXHKdX+v9DHh1sCKGFGZOZGr4lcJR3L8D3Fg/0VjruODKzg7OxOh0FE1g8eWwsccaCsfQvgF9zE58LILJLv6vwG+DdJEdb6JabkXZhzEh106nea43siSQ3ZKFmUZ0HwaXI062Fkb0sVMDeySyQYpwkhulN4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JFjl4Q+8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o96Nzw7P; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NbaSZyMh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eVEysA6P; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id ECA3A1F397;
+	Fri, 13 Jun 2025 13:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749822599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
+	b=JFjl4Q+8AQh3LwubknOdgVD4oUmh/ajNptA0CrIeZKCCvmOXloT8lUDyYG+1tNPeQWM3jv
+	BLIHQfk/uEkLXQA+j5MHUnsYNPvk/h8jfEH0Diex3gDY1oavFRzRBmzRjSQieqP9jYKzsY
+	8pHGvZ/oLdcexdUNfJQ9/H7KdHhD57c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749822599;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
+	b=o96Nzw7PtgzWpMVZQFmTXHcKaN74FiNyCjJ+V8KDPdlG237umtLqeLOLvbEX2pTAJtefK8
+	NoSyXdSxlk/8anCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NbaSZyMh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eVEysA6P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749822597; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
+	b=NbaSZyMh2LIU02VlY3UXMG0lONn/VkG1qtlN1zCkfDwjYs+DM0S4mem9gjq4P1zmqkLmDh
+	YVclMWgVBTbaXTR/GzcLBnP66qNBEvTk3rrA224aJdYofXtjFExAGEfDRoX5mGE4EXBD8K
+	ANJw+A6+MtTJz7uS40K/npORwMS65BU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749822597;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=isd0zIYqD3QWm/e2mMHa02LcMAiVEgUmouA78tywbwM=;
+	b=eVEysA6Ptqu/+c6G9EG/hmLqxlRPje3ZL7uIEDYEnzE4yugEDcubXkv7uHVQ5Kw+so46xd
+	ClyMP9aLEV0tJ/AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA7A9137FE;
+	Fri, 13 Jun 2025 13:49:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ng2tMoQsTGhFCwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Fri, 13 Jun 2025 13:49:56 +0000
+Date: Fri, 13 Jun 2025 15:49:46 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alistair Popple <apopple@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v3 2/3] mm/huge_memory: don't mark refcounted folios
+ special in vmf_insert_folio_pmd()
+Message-ID: <aEwseqmFrpNO5NJC@localhost.localdomain>
+References: <20250613092702.1943533-1-david@redhat.com>
+ <20250613092702.1943533-3-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613092702.1943533-3-david@redhat.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: ECA3A1F397
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Fri, Jun 13, 2025 at 11:27:01AM +0200, David Hildenbrand wrote:
+> Marking PMDs that map a "normal" refcounted folios as special is
+> against our rules documented for vm_normal_page(): normal (refcounted)
+> folios shall never have the page table mapping marked as special.
+> 
+> Fortunately, there are not that many pmd_special() check that can be
+> mislead, and most vm_normal_page_pmd()/vm_normal_folio_pmd() users that
+> would get this wrong right now are rather harmless: e.g., none so far
+> bases decisions whether to grab a folio reference on that decision.
+> 
+> Well, and GUP-fast will fallback to GUP-slow. All in all, so far no big
+> implications as it seems.
+> 
+> Getting this right will get more important as we use
+> folio_normal_page_pmd() in more places.
+> 
+> Fix it by teaching insert_pfn_pmd() to properly handle folios and
+> pfns -- moving refcount/mapcount/etc handling in there, renaming it to
+> insert_pmd(), and distinguishing between both cases using a new simple
+> "struct folio_or_pfn" structure.
+> 
+> Use folio_mk_pmd() to create a pmd for a folio cleanly.
+> 
+> Fixes: 6c88f72691f8 ("mm/huge_memory: add vmf_insert_folio_pmd()")
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Tested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Support APX as the extended registers. It can be configured in the
-sample_ext_regs_intr/user.
+Altough we have it quite well explained here in the changelog, maybe
+having a little comment in insert_pmd() noting why pmds mapping normal
+folios cannot be marked special would be nice.
 
-Only the PMU with PERF_PMU_CAP_EXTENDED_REGS2 supports the feature.
-The value can be retrieved via the XSAVES.
+But just saying :-)
 
-Define several macros to simplify the code.
+Reviewed-by: Oscar salvador <osalvador@suse.de>
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/core.c                | 48 +++++++++++++++++++--------
- arch/x86/events/perf_event.h          |  4 +++
- arch/x86/include/asm/perf_event.h     |  1 +
- arch/x86/include/uapi/asm/perf_regs.h | 21 +++++++++++-
- arch/x86/kernel/perf_regs.c           |  5 +++
- 5 files changed, 65 insertions(+), 14 deletions(-)
+ 
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 91039c0256b3..67f62268f063 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -408,6 +408,14 @@ set_ext_hw_attr(struct hw_perf_event *hwc, struct perf_event *event)
- 
- static DEFINE_PER_CPU(void *, ext_regs_buf);
- 
-+#define __x86_pmu_get_regs(_mask, _regs, _size)		\
-+do {							\
-+	if (mask & _mask && xcomp_bv & _mask) {		\
-+		_regs = xsave;				\
-+		xsave += _size;				\
-+	}						\
-+} while (0)
-+
- static void x86_pmu_get_ext_regs(struct x86_perf_regs *perf_regs, u64 mask)
- {
- 	void *xsave = (void *)ALIGN((unsigned long)per_cpu(ext_regs_buf, smp_processor_id()), 64);
-@@ -426,10 +434,8 @@ static void x86_pmu_get_ext_regs(struct x86_perf_regs *perf_regs, u64 mask)
- 	xsave += FXSAVE_SIZE + XSAVE_HDR_SIZE;
- 
- 	/* The XSAVES instruction always uses the compacted format */
--	if (mask & XFEATURE_MASK_YMM && xcomp_bv & XFEATURE_MASK_YMM) {
--		perf_regs->ymmh_regs = xsave;
--		xsave += XSAVE_YMM_SIZE;
--	}
-+	__x86_pmu_get_regs(XFEATURE_MASK_YMM, perf_regs->ymmh_regs, XSAVE_YMM_SIZE);
-+	__x86_pmu_get_regs(XFEATURE_MASK_APX, perf_regs->apx_regs, sizeof(struct apx_state));
- }
- 
- static void release_ext_regs_buffers(void)
-@@ -457,6 +463,8 @@ static void reserve_ext_regs_buffers(void)
- 
- 	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_YMM))
- 		size += XSAVE_YMM_SIZE;
-+	if (x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_APX))
-+		size += sizeof(struct apx_state);
- 
- 	/* XSAVE feature requires 64-byte alignment. */
- 	size += 64;
-@@ -642,6 +650,13 @@ int x86_pmu_max_precise(void)
- 	return precise;
- }
- 
-+#define check_ext_regs(_type)					\
-+do {								\
-+	if (x86_pmu_get_event_num_ext_regs(event, _type) &&	\
-+	    !(x86_pmu.ext_regs_mask & BIT_ULL(_type)))		\
-+		return -EINVAL;					\
-+} while (0)
-+
- int x86_pmu_hw_config(struct perf_event *event)
- {
- 	if (event->attr.precise_ip) {
-@@ -726,9 +741,8 @@ int x86_pmu_hw_config(struct perf_event *event)
- 		if (event_has_extended_regs2(event)) {
- 			if (!(event->pmu->capabilities & PERF_PMU_CAP_EXTENDED_REGS2))
- 				return -EINVAL;
--			if (x86_pmu_get_event_num_ext_regs(event, X86_EXT_REGS_YMM) &&
--			    !(x86_pmu.ext_regs_mask & BIT_ULL(X86_EXT_REGS_YMM)))
--				return -EINVAL;
-+			check_ext_regs(X86_EXT_REGS_YMM);
-+			check_ext_regs(X86_EXT_REGS_APX);
- 		}
- 	}
- 	return x86_setup_perfctr(event);
-@@ -1775,6 +1789,16 @@ x86_pmu_perf_get_regs_user(struct perf_sample_data *data,
- 	return x86_regs_user;
- }
- 
-+#define init_ext_regs_data(_type, _regs, _mask, _size)		\
-+do {								\
-+	num = x86_pmu_get_event_num_ext_regs(event, _type);	\
-+	if (num) {						\
-+		_regs = NULL;					\
-+		mask |= _mask;					\
-+		data->dyn_size += num * _size * sizeof(u64);	\
-+	}							\
-+} while (0)
-+
- void x86_pmu_setup_regs_data(struct perf_event *event,
- 			     struct perf_sample_data *data,
- 			     struct pt_regs *regs,
-@@ -1818,12 +1842,10 @@ void x86_pmu_setup_regs_data(struct perf_event *event,
- 		mask |= XFEATURE_MASK_SSE;
- 	}
- 
--	num = x86_pmu_get_event_num_ext_regs(event, X86_EXT_REGS_YMM);
--	if (num) {
--		perf_regs->ymmh_regs = NULL;
--		mask |= XFEATURE_MASK_YMM;
--		data->dyn_size += num * PERF_X86_EXT_REG_YMMH_SIZE * sizeof(u64);
--	}
-+	init_ext_regs_data(X86_EXT_REGS_YMM, perf_regs->ymmh_regs,
-+			   XFEATURE_MASK_YMM, PERF_X86_EXT_REG_YMMH_SIZE);
-+	init_ext_regs_data(X86_EXT_REGS_APX, perf_regs->apx_regs,
-+			   XFEATURE_MASK_APX, PERF_X86_EXT_REG_APX_SIZE);
- 
- 	mask &= ~ignore_mask;
- 	if (mask)
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 911916bc8e36..1c40b5d9c025 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -690,6 +690,7 @@ enum {
- enum {
- 	X86_EXT_REGS_XMM = 0,
- 	X86_EXT_REGS_YMM,
-+	X86_EXT_REGS_APX,
- };
- 
- #define PERF_PEBS_DATA_SOURCE_MAX	0x100
-@@ -1328,6 +1329,9 @@ static inline int get_num_ext_regs(u64 *ext_regs, unsigned int type)
- 	case X86_EXT_REGS_YMM:
- 		mask = GENMASK_ULL(PERF_REG_X86_YMMH15, PERF_REG_X86_YMMH0);
- 		return hweight64(ext_regs[0] & mask);
-+	case X86_EXT_REGS_APX:
-+		mask = GENMASK_ULL(PERF_REG_X86_R31, PERF_REG_X86_R16);
-+		return hweight64(ext_regs[0] & mask);
- 	default:
- 		return 0;
- 	}
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index c30571f4de26..9e4d60f3a9a2 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -594,6 +594,7 @@ struct x86_perf_regs {
- 	struct pt_regs	regs;
- 	u64		*xmm_regs;
- 	u64		*ymmh_regs;
-+	u64		*apx_regs;
- };
- 
- extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
-diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
-index f37644513e33..e23fb112faac 100644
---- a/arch/x86/include/uapi/asm/perf_regs.h
-+++ b/arch/x86/include/uapi/asm/perf_regs.h
-@@ -74,11 +74,30 @@ enum perf_event_x86_ext_regs {
- 	PERF_REG_X86_YMMH14,
- 	PERF_REG_X86_YMMH15,
- 
--	PERF_REG_X86_EXT_REGS_MAX = PERF_REG_X86_YMMH15,
-+	/* APX Registers */
-+	PERF_REG_X86_R16,
-+	PERF_REG_X86_R17,
-+	PERF_REG_X86_R18,
-+	PERF_REG_X86_R19,
-+	PERF_REG_X86_R20,
-+	PERF_REG_X86_R21,
-+	PERF_REG_X86_R22,
-+	PERF_REG_X86_R23,
-+	PERF_REG_X86_R24,
-+	PERF_REG_X86_R25,
-+	PERF_REG_X86_R26,
-+	PERF_REG_X86_R27,
-+	PERF_REG_X86_R28,
-+	PERF_REG_X86_R29,
-+	PERF_REG_X86_R30,
-+	PERF_REG_X86_R31,
-+
-+	PERF_REG_X86_EXT_REGS_MAX = PERF_REG_X86_R31,
- };
- 
- enum perf_event_x86_ext_reg_size {
- 	PERF_X86_EXT_REG_YMMH_SIZE	= 2,
-+	PERF_X86_EXT_REG_APX_SIZE	= 1,
- 
- 	/* max of PERF_REG_X86_XXX_SIZE */
- 	PERF_X86_EXT_REG_SIZE_MAX	= PERF_X86_EXT_REG_YMMH_SIZE,
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index f12ef60a1a8a..518497bafdf0 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -82,6 +82,11 @@ static u64 perf_ext_reg_value(struct pt_regs *regs, int idx,
- 						    idx - PERF_REG_X86_YMMH0,
- 						    perf_regs->ymmh_regs,
- 						    PERF_X86_EXT_REG_YMMH_SIZE);
-+		case PERF_REG_X86_R16 ... PERF_REG_X86_R31:
-+			return __perf_ext_reg_value(ext, ext_size,
-+						    idx - PERF_REG_X86_R16,
-+						    perf_regs->apx_regs,
-+						    PERF_X86_EXT_REG_APX_SIZE);
- 		default:
- 			WARN_ON_ONCE(1);
- 			*ext_size = 0;
 -- 
-2.38.1
-
+Oscar Salvador
+SUSE Labs
 
