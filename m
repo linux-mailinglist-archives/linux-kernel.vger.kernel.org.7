@@ -1,184 +1,149 @@
-Return-Path: <linux-kernel+bounces-685561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-685570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E8AAD8B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:56:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D50AD8B72
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 13:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AE13AE095
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7AA1666BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Jun 2025 11:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4671B275B05;
-	Fri, 13 Jun 2025 11:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4BF2E7645;
+	Fri, 13 Jun 2025 11:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aw8bXodJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3Ct2zNx"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F702275AEC;
-	Fri, 13 Jun 2025 11:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E842E7621;
+	Fri, 13 Jun 2025 11:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749815560; cv=none; b=AaBspT4OT+WcXLCWpN59k0YQsAVnt08p5VBxcxCL1FSWXVnQi/gxF2fNOwUn4cXn80Q7/3+65DJR66WLlPlphf2cbje7ONdLX0xNYNWHedyDnlw1/PKKf5tQl9YlDU2dYQWh/aanxYGyj/KeZKIvGAJWxmGs1nS2JIjCppBtREo=
+	t=1749815753; cv=none; b=m4JM3yCYYXyHUc9ZHj/OEvrin3R4j0hIIMXR7u10ChBlUGCP0U1HvyCg/kolHLujfj7AoC10kfXdK/gqQmAzJT1/aOzX7p7WmmGDBQ4VEfUmgx1EGAACBYF4DvqAn42bJEUlnBw4tiyZKnCkitXDELHur4TksJzqAvWTWiiSzgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749815560; c=relaxed/simple;
-	bh=9Ib3i1mlFKicVwKiPGf5NRYHamJ2n8eOcsjuXffXj54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzXMnCe1ZM8YDq4HAgWinI/Y1Zg7FAmI5xxVU4AFPCoENXqvSBUD/kRa5CsfqdWjxdxUeV4IZokteMxcweGAnkRyPFh2yHvwl2jXI9ksJxNpHJ+nGOPLIgxKrt1C/r8Ie7R+H6xdNWC1qvPd8YpT4s/xySwIJL032GqQI8LJQDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aw8bXodJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3680CC4CEE3;
-	Fri, 13 Jun 2025 11:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749815560;
-	bh=9Ib3i1mlFKicVwKiPGf5NRYHamJ2n8eOcsjuXffXj54=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aw8bXodJydbeLxjxs9CS/1ymdxGC+nk/uG6P0DwTJYpW42Pg/5BHWY+BJi5zY2cph
-	 LKHTsRogZ8cDXCb/AGkccXPdupEBA3Ah84vP4n+51iTDbEwRj00qU77a4uUHOCw+dQ
-	 lnvzOuTJRixDvWsz/46CN4nXvGvstFtySvo/iVuwszfFmwpXdTX4FmiqNhqbUvvFLZ
-	 J2BSZ+yTPCkuHm6UqmrUuIOEuWfSgydKa9JUjRMSu3uRcbiIIJPnDNrIhn7wfg9b43
-	 n3qU/sG/nuANHXA8sduV69dpVBZTlX5yi68+CoSdIcI3cTPulotnddlGKqRm5Nx7Gf
-	 LDrFtJaEuhFtQ==
-Date: Fri, 13 Jun 2025 13:52:33 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org, kw@linux.com,
-	bhelgaas@google.com, heiko@sntech.de,
-	manivannan.sadhasivam@linaro.org, yue.wang@amlogic.com,
-	pali@kernel.org, neil.armstrong@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 1/2] PCI: Configure root port MPS during host probing
-Message-ID: <aEwRAZgLJUECbGz6@ryzen>
-References: <20250510155607.390687-1-18255117159@163.com>
- <20250510155607.390687-2-18255117159@163.com>
- <co2q55j4mk2ux7af4sj6snnfomditwizg5jevg6oilo3luby5z@6beqtbn3l432>
+	s=arc-20240116; t=1749815753; c=relaxed/simple;
+	bh=kDHzDpgYMT9BX3ib7Jt5mtCoGJdm2oP5AXFagcKzZpI=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=u7Qr4PurAZM5bBMRni+qJjuWVPNufnCmxZGNurLOGC2NFABAj//4teOvBR6tikQ8huzuewV72tAxaBcFkhaOkVZ6pmcejJC0PLGq5Hai4IlYst/QeXsxlCkUvKXK/qeFphfwwHx0xIUcWQFcQ+pFGr3yzU4THJk6A90fmTO4t18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3Ct2zNx; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso1277396f8f.0;
+        Fri, 13 Jun 2025 04:55:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749815750; x=1750420550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Hj+Kuj4ajGUXyFsALB4EF9wgie9c+yJaBbr7r88UdqI=;
+        b=X3Ct2zNx3dE8l0W6UQGDGZsKurORFhoVtr2ptXleK2zvMTQ+pver6f7lozst7bOzmL
+         LaXc0PPtf0OYjfw+FPtg/ipabsoB7GzR0efiwZFIQt3s3G5B94iffBqLCQtPX7WqX/7N
+         REoUzRX41DvSyYIKbfhuET8bGWxnc9kGM1rjbP8XbQB0i+FIVNnOdxZdvq/eLX9FezN1
+         Vu7cKI5A2BVMcyzTInrgATPuXqUiYQcpDLtnZZjBwMjFTgw2LKvNrrDQx+YHurhnZsI7
+         fLe0DqXtELVCuKhdOXIDrDzje3ZgWVH7+WgfvenzqlGFurS2zYL9G6InSmUC92juITVD
+         wa+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749815750; x=1750420550;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hj+Kuj4ajGUXyFsALB4EF9wgie9c+yJaBbr7r88UdqI=;
+        b=Lec9pf8/o7En/RsjjWrdOCWnhX9eOEjf6optxIhbmabj7V4bQ3+gTRkcERjGjqvBnl
+         1nJA5V74ZX4xole/9cp6yEOGmtPFa48wyZmo7ti108iDiBKONjZbkMqZyxCGdVu7IOZb
+         JYp778FqrdnPekLO7RWRV2FsUQztn1IUj0FLAs1qaKbXvcHECyQOsNpQ4bLO5YSBK821
+         vY5RRrHP4DYDX/i508fcpt1PPyJVu0yqZreLoRAF7buzF99fCljVTslMiDIYIJmKqOxi
+         tALL32UsxItRXnWRGhX87dUe90Xn2mKZQqi/rsX7nUUQf/yFsSwzEBFPzV5HVDAWDaXq
+         chMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk9g9fVDquf4d26u500M3fww/Yse0XTaCtyVSINtM4PDC2/vYeUQCUL+GUAFe2eK0fG1u+b2rWpB3ZjeQ=@vger.kernel.org, AJvYcCW6bWMeUlYUyvWJiQhvyK6zegRxGmAJfHg1SNshPxOzpF70g2uwt3XFVndDTHeFl+WMIY/vleD9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlPM9eVp129sfpMtDRWz3lC5EM33UiGRQntTybApdzJI7Wp1Aa
+	9HQ99AzKeGd7+VvNsqDRLMmu2KLt/rJ7Qq+NQ2HLlzgEnN78wxVkoedk
+X-Gm-Gg: ASbGncvNtjLIQQDa/yjLwZL+dGVTwrtgipnBP8k4Tk1Zagjvvp9eT5vmu/N6nCqarFc
+	Q85mZ/k9rX7Ew2c5TnUYisBTcIwUh7hClL5UggRIEiLnJCsNEwenEjC+Tg5386DcZ4PBQevw9Sj
+	9alLaLPTcjHJid5ZtKefZu8f6rqsGh0DMOJnKnOwmhE4MKqDl/sVtosOypu2VCt9xBCoA/uVJo0
+	6wHL27WyJkmw2o0qVeC7eUPkGodYw+Tg3euFPC1NPb9ZP2tBCvgQmbf5dzOC7liCb7aNsc/neYm
+	+VZ1cb9oOPD6ai1iQF05v3ksAXjxqAVGqD3+W4iWnyHtr8ZXdnDt1P1B3LVRchsJKgRtxIZTq9M
+	=
+X-Google-Smtp-Source: AGHT+IGbaooFKQ20QFU1kZYymRa3Ue0gA9srqwzYyuAtJsiw7seBWEUCQrPm6Zfl385iai6WGcQtdA==
+X-Received: by 2002:a05:6000:1ac6:b0:3a5:2beb:7493 with SMTP id ffacd0b85a97d-3a568656099mr2747920f8f.9.1749815749896;
+        Fri, 13 Jun 2025 04:55:49 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:75e0:f7f7:dffa:561e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b087f8sm2177157f8f.53.2025.06.13.04.55.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 04:55:47 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
+ Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH v2 12/12] docs: conf.py: don't handle yaml files outside
+ Netlink specs
+In-Reply-To: <d4b8d090ce728fce9ff06557565409539a8b936b.1749723671.git.mchehab+huawei@kernel.org>
+Date: Fri, 13 Jun 2025 12:52:35 +0100
+Message-ID: <m2h60jn9j0.fsf@gmail.com>
+References: <cover.1749723671.git.mchehab+huawei@kernel.org>
+	<d4b8d090ce728fce9ff06557565409539a8b936b.1749723671.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <co2q55j4mk2ux7af4sj6snnfomditwizg5jevg6oilo3luby5z@6beqtbn3l432>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 12:08:31PM +0530, Manivannan Sadhasivam wrote:
-> On Sat, May 10, 2025 at 11:56:06PM +0800, Hans Zhang wrote:
-> > Current PCIe initialization logic may leave root ports operating with
-> > non-optimal Maximum Payload Size (MPS) settings. While downstream device
-> > configuration is handled during bus enumeration, root port MPS values
-> > inherited from firmware or hardware defaults might not utilize the full
-> > capabilities supported by the controller hardware. This can result is
-> > uboptimal data transfer efficiency across the PCIe hierarchy.
-> > 
-> > During host controller probing phase, when PCIe bus tuning is enabled,
-> > the implementation now configures root port MPS settings to their
-> > hardware-supported maximum values. By iterating through bridge devices
-> > under the root bus and identifying PCIe root ports, each port's MPS is
-> > set to 128 << pcie_mpss to match the device's maximum supported payload
-> > size.
-> 
-> I don't think the above statement is accurate. This patch is not iterating
-> through the bridges and you cannot identify root ports using that. What this
-> patch does is, it checks whether the device is root port or not and if it is,
-> then it sets the MPS to MPSS (hw maximum) if PCIE_BUS_TUNE_OFF is not set.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Correct.
-Later, when the bus is walked, if any downstream device does not support
-the MPS value currently configured in the root port, pci_configure_mps()
-will reduce the MPS in the root port to the max supported by the downstream
-device.
+> The parser_yaml extension already has a logic to prevent
+> handing all yaml documents. However, if we don't also exclude
+> the patterns at conf.py, the build time would increase a lot,
+> and warnings like those would be generated:
+>
+>     Documentation/netlink/genetlink.yaml: WARNING: o documento n=C3=A3o e=
+st=C3=A1 inclu=C3=ADdo em nenhum toctree
+>     Documentation/netlink/genetlink-c.yaml: WARNING: o documento n=C3=A3o=
+ est=C3=A1 inclu=C3=ADdo em nenhum toctree
+>     Documentation/netlink/genetlink-legacy.yaml: WARNING: o documento n=
+=C3=A3o est=C3=A1 inclu=C3=ADdo em nenhum toctree
+>     Documentation/netlink/index.rst: WARNING: o documento n=C3=A3o est=C3=
+=A1 inclu=C3=ADdo em nenhum toctree
+>     Documentation/netlink/netlink-raw.yaml: WARNING: o documento n=C3=A3o=
+ est=C3=A1 inclu=C3=ADdo em nenhum toctree
+>
+> Add some exclusion rules to prevent that.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/conf.py | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/conf.py b/Documentation/conf.py
+> index add6ce78dd80..b8668bcaf090 100644
+> --- a/Documentation/conf.py
+> +++ b/Documentation/conf.py
+> @@ -222,7 +222,11 @@ language =3D 'en'
+>=20=20
+>  # List of patterns, relative to source directory, that match files and
+>  # directories to ignore when looking for source files.
+> -exclude_patterns =3D ['output']
+> +exclude_patterns =3D [
+> +	'output',
+> +	'devicetree/bindings/**.yaml',
+> +	'netlink/*.yaml',
+> +]
 
-So even we start off by setting MPS in the root port to the max supported
-by the root port, it might get reduced later on.
+Please merge this with the earlier patch that changes these lines so
+that the series doesn't contain unnecessary intermediate steps.
 
-
-> 
-> > The Max Read Request Size (MRRS) is subsequently adjusted through
-> > existing companion logic to maintain compatibility with PCIe
-> > specifications.
-> > 
-> > Explicit initialization at host probing stage ensures consistent PCIe
-> > topology configuration before downstream devices perform their own MPS
-> > negotiations. This proactive approach addresses platform-specific
-> > requirements where controller drivers depend on properly initialized
-> > root port settings, while maintaining backward compatibility through
-> > PCIE_BUS_TUNE_OFF conditional checks. Hardware capabilities are fully
-> > utilized without altering existing device negotiation behaviors.
-> > 
-> > Suggested-by: Niklas Cassel <cassel@kernel.org>
-> > Signed-off-by: Hans Zhang <18255117159@163.com>
-> > ---
-> >  drivers/pci/probe.c | 72 ++++++++++++++++++++++++++-------------------
-> >  1 file changed, 41 insertions(+), 31 deletions(-)
-> > 
-> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > index 364fa2a514f8..1f67c03d170a 100644
-> > --- a/drivers/pci/probe.c
-> > +++ b/drivers/pci/probe.c
-> > @@ -2149,6 +2149,37 @@ int pci_setup_device(struct pci_dev *dev)
-> >  	return 0;
-> >  }
-> >  
-> > +static void pcie_write_mps(struct pci_dev *dev, int mps)
-> > +{
-> > +	int rc;
-> > +
-> > +	if (pcie_bus_config == PCIE_BUS_PERFORMANCE) {
-> > +		mps = 128 << dev->pcie_mpss;
-> > +
-> > +		if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT &&
-> > +		    dev->bus->self)
-> > +
-> > +			/*
-> > +			 * For "Performance", the assumption is made that
-> > +			 * downstream communication will never be larger than
-> > +			 * the MRRS.  So, the MPS only needs to be configured
-> > +			 * for the upstream communication.  This being the case,
-> > +			 * walk from the top down and set the MPS of the child
-> > +			 * to that of the parent bus.
-> > +			 *
-> > +			 * Configure the device MPS with the smaller of the
-> > +			 * device MPSS or the bridge MPS (which is assumed to be
-> > +			 * properly configured at this point to the largest
-> > +			 * allowable MPS based on its parent bus).
-> > +			 */
-> > +			mps = min(mps, pcie_get_mps(dev->bus->self));
-> > +	}
-> > +
-> > +	rc = pcie_set_mps(dev, mps);
-> > +	if (rc)
-> > +		pci_err(dev, "Failed attempting to set the MPS\n");
-> > +}
-> > +
-> >  static void pci_configure_mps(struct pci_dev *dev)
-> >  {
-> >  	struct pci_dev *bridge = pci_upstream_bridge(dev);
-> > @@ -2178,6 +2209,16 @@ static void pci_configure_mps(struct pci_dev *dev)
-> >  		return;
-> >  	}
-> >  
-> > +	/*
-> > +	 * Unless MPS strategy is PCIE_BUS_TUNE_OFF (don't touch MPS at all),
-> > +	 * start off by setting root ports' MPS to MPSS. Depending on the MPS
-> > +	 * strategy, and the MPSS of the devices below the root port, the MPS
-> > +	 * of the root port might get overridden later.
-> > +	 */
-> > +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
-> > +	    pcie_bus_config != PCIE_BUS_TUNE_OFF)
-> > +		pcie_write_mps(dev, 128 << dev->pcie_mpss);
-> 
-> I believe you can just use "pcie_set_mps(dev, 128 << dev->pcie_mpss)" directly
-> and avoid moving pcie_write_mps() around.
-
-+1
-
-
-Kind regards,
-Niklas
+>  # The reST default role (used for this markup: `text`) to use for all
+>  # documents.
 
