@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-686798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F03AD9BEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 11:54:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0353CAD9BF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 11:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3E017AF03
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 09:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54A617B05E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 09:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097E12580E1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278692586EB;
 	Sat, 14 Jun 2025 09:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLHpyKVy"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFYWjRt1"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0468A1DE3A8
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 09:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8378D200BBC
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 09:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749894859; cv=none; b=Kpt90MlvIkCH5kmcqjZQyJbNzPJfaFMmsiYWqzGEiP7eFvby4JNRzSktk0gX5bYXJyZMttRzks6inFOJOXPX8a5UxNkY1Bzlbf5KRT4ZHX5f41jiIHlE+o24wuzzaJ7R5Sg1PxoFCsPynqYoDlR0n1d2Z/qw95qlewIkcL1FBME=
+	t=1749894859; cv=none; b=LFnY3bK8bpBrciJHLFXZRFOaARaQwcap/IoFeGtR2cMyvtUCBxj5D5cEBcR5X9qvTYPAJNxLH+KqBIBVJZu+9Z2hEb3w+jpzz5VO+PeRviKidlme/ldSZTr5wCjUSYT1ILyrcYvD+eYRR+79GF2TTvvgWVcIN/MEfyXy8ciEPJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749894859; c=relaxed/simple;
-	bh=n94r1iGKEr3TiNgolTbPj8u7MorHH7FIByppBdcWdKA=;
+	bh=Z5hzu1KYGp1QiejfFXW9fK6Q53roitRAH7xYYDd4dnY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kZnKmM72dftfplYx10xJ48+vb9hTIkf920EA/0YQh+EqWHMxXv/LN13OHXDVtG4JyhZN3Q3db+ORCPcmReQThVoRpRUa8qFhjAqGHd3U530cPfdpXLaEpJJZUT75PI2Kxn5bao/AkSO/YSn07srqLT994ZgjNb2mSQt+Ul/zJDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLHpyKVy; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=pyzeAPzYwjJ9HgqW+MwmnTVFHIdJsyeWyHjSoN8A7l7DVIMUEY7SwpP+FqbC+51r4qjI2+suMVwUtOxC/IBwn364DC7g8qlOu/JNzva2VIDJwb7pXWAGAE8EMkgzGqVl6lbzLWH2ZYFt58Lh7Gn6ilexhTxMruH1NYu/7p6oE5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFYWjRt1; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4533bf4d817so4220165e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 02:54:16 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a575a988f9so257819f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 02:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749894855; x=1750499655; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749894856; x=1750499656; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zEnTZdM/nEO25TyhM2GgCtjBibybJT5d1uMDui3gNg8=;
-        b=OLHpyKVyGYpP7/iUeDEi4asxly6SC3AoKjknM7+u74jKjiasvv1SCSszSLtCqjPKM4
-         xaA1UK5pcedzQI7vC648qLyMm/Qti4DD0Dm2sTEZPJVKSqvv1RXISe9eAi7Wfh0Ovywv
-         Wfp835gyzn1jCQB2+mLJQmn+frQ9IrBGFLNHrVL1q/W1RMlO0kdutD5xsgopc+cLwIy3
-         f9bpPUM+/eUW3T+svLy4SdhXhrRm19uufC2tRgew0gWA2cKhGWOPJ5A2M6p8NBnUyQbS
-         UX15GSE9Qjb9ZRh0xeOJRMNm7X9h/H2MnET3J3guXcOKSW0DosGNEEtX8ixg9ZNyrpyd
-         PL+g==
+        bh=pdx9zr3Z1yBW7Zs2OBAHWfDA624/sOwZdHmBJOvy5iU=;
+        b=NFYWjRt1lIltFpZj386tOhNELwUym8YwqKluwNwvX7reTemKhFBLMqdB8t1OKPHfH/
+         QeRKp9Fc/xPnSWRewSsDFdfC4/RKbkPe5Dn+NtE3bCBc0SfC5CMZiNQcwuxgI67iifpK
+         5k5Au4qS1kKxYx6VPzilUQ8ikgpawE3ghbcq7v4JTHZLCXuyRZ2YN4iEWKE12nO7UpZQ
+         timY48Jk6plax6+zz0RCUtUT3d4HhDWIG6nFszz8osBqQozaoj7x27sNHDdI7ZwjM5pI
+         NyS5LLg+setEVIzeWr5IZeG3Fc7ykF4Qp/wWp229xfggcsf6wcPZl9r5amlKJOJW+8zv
+         yrCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749894855; x=1750499655;
+        d=1e100.net; s=20230601; t=1749894856; x=1750499656;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zEnTZdM/nEO25TyhM2GgCtjBibybJT5d1uMDui3gNg8=;
-        b=F9UDUc2UQ53QUC0IPwp1/eZ/icAPeGCOVy9AdtIlyCpOAvGdf/p8sh7de9JZ/K9Fy3
-         /MfRxHpJH2CxrNBisMaMdkq2n3O2sN7jOpDLNmShhfNsIJoQwJ9Jb8CHfS1JnozI3jox
-         ibW6yDHp7MfjuyibGDBt1CjBUFc67nKJtjH6/CbW3REYV49QUs7Sxb46rRqdHQgtVWO7
-         21M6oq4rN/6eMONcA0xwnMuwgJfRDelPAdi7c695++IwtSNWW4UPChZY8EGcXsvZSqAz
-         STHEMdMT4IJWDoFAi97D8VEzqYEG2WpdWhpaOZGo5C2feGCuCMT2RvSD0yhdkGA/awXk
-         OuQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJQQdkgsvIbFpJ/WRul+Eo356D8oitoza8/1uSr/UOoFHysVDFvIqOf7bKL/TaLpvD+CniN+7ptUphMSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPUsX6JvyxqrcQ3lr2dzuk5naKX5OrNnwrEsELub9TBl2/JgLe
-	b5TJRTNvfrcP8FdgRqMQPCtacGMZdnPX/meqEtLeOO/cTm/XSmUj4AGK
-X-Gm-Gg: ASbGncv+hJ+tODUWIPwmFOej1xTcn4FbZFndaE3KxFghzn6TeQhN5+4MfdWPwXi3znd
-	8qX4jgvRYZQMV8dGa6EuMq+O32lzwzoGs9J7axV8PT3GqeOPp4uAIKZWITtIjKkapQqCt1ZPDLJ
-	jDDjB0t9NPyy+l8yjVxjZ8VI6DFbRiHwHa+u0lPJbLO4CFuBLtiJl+aA+EpWzVeyODFbvxtSD3C
-	TT5nwexrlCrDyRJ5ZBUrorJyXRIBClkfsefAAKbbfUi84sBpJDeWWo8iUCV7exqJiLZqdARHkkE
-	16O+IlOg1yVfFKUf1eHF4HSryNixKpSQPqUhZUsFmYNnL2dqtfW3jEAYpU6dW7MRZkhcq+FiSRW
-	ZdUnfj5Ju8RR5oH+Yz4fW4fWa/4sV1KYNlaxoU/5rjKY=
-X-Google-Smtp-Source: AGHT+IGG7FXFstBCaJSZ99EkRoiD5VoPJ9Uqi8ywctGye8MRdWYs7O71NT1/WI1+uaJ0oiJ5K4lMeQ==
-X-Received: by 2002:a05:6000:2486:b0:3a5:52d4:5b39 with SMTP id ffacd0b85a97d-3a572398ea5mr2411614f8f.8.1749894855151;
+        bh=pdx9zr3Z1yBW7Zs2OBAHWfDA624/sOwZdHmBJOvy5iU=;
+        b=OLkf8cvCkhSKZRtWLx+EGXB7mYLTYTRYRpuS27QhlSj4vYBn+kPVEPlJQsSQiuuXR4
+         i8x/Duryzx+u69c24ZFp+FAFfzswiPr85mdnajjMrW/zM0qt/turCNYYs9saSF+z96Gv
+         i6q6f4PYadU1s/x77gKS4/jEksWDpZ1eJHpPjVwKk34zaxPH9S5229+rRP2XnXvot8ff
+         hmZajaZHw9wo9Oo54386w7l4gRyRqLdexakTxpicMvLLaCJtK8lY6M1ydSAU7KQcw6pj
+         VkjKrKLIf5Tdbj85ZWm4FrLcgUkjWkTfW0DpzDoxo5qv2aj+W23sFy19c6d3f/DQ7FYi
+         WBtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUhhOzIoN22YJMuCI/ZavEBGW+Xjjp9VutXBQy1pDyAyrq+vTkUXXAzXeCnOyFRQCiVjrOjXtf+mCTlu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe/BKFUZjCamaWh0BlKVep1+ifRpD8jByfEsu894pPNfoOymvi
+	cVOb4ftfHO9tNSouMIUz4eiccflhKGbEeMpLOz+vSXYA7/kEw6nukNj4GnkmTQ==
+X-Gm-Gg: ASbGncuy53HM/WwpfXgYzPt+YIYkv8uqdcik8eRwq1+p2zkw+fp4aMTvZIzzsR1Vzij
+	qk9Rhot64ThL1Q+ocxbDzqmA9a+Q+HkzZwBgjDbTqdMNM+pfSOX6N32in/AbEsroN00tKezbrYy
+	tfx0UIjnY2lBrj7yfeLlfYzluw3kov0J7EWyFF1xYSRuaT3jdezL3i977HqAq25NF+XiTFwUVd2
+	CK/PvtZIhrBnAb35I9JfyoGdFJqMhrem5+yX3Nn2mG9RXmS1ycYrrFKSCwv70gMo5vh1SURg4DU
+	QkCgjCmSPNOFyAUpKt1EIv/ZDf4rbijy7F5kQz82sR4X8sE1HuJsLbh+i6uSubObSmpvFUv97Gt
+	mSHIlURCHGG1I5ws6j2IhE912lPTvSHLXS1F7Rb6ub2lBm158Q6f0hw==
+X-Google-Smtp-Source: AGHT+IFRtCg+wzVm0vQk2uN9Kk18ZSaVFYJ73nA85I0SubpmWS1UwpViZSgDcDNPhMQlI0jm5e1mWw==
+X-Received: by 2002:a05:6000:2003:b0:3a4:dd02:f565 with SMTP id ffacd0b85a97d-3a572397756mr2468489f8f.3.1749894855664;
         Sat, 14 Jun 2025 02:54:15 -0700 (PDT)
 Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b19b32sm4869444f8f.67.2025.06.14.02.54.14
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b19b32sm4869444f8f.67.2025.06.14.02.54.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Jun 2025 02:54:14 -0700 (PDT)
+        Sat, 14 Jun 2025 02:54:15 -0700 (PDT)
 From: David Laight <david.laight.linux@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org
@@ -81,9 +81,9 @@ Cc: David Laight <david.laight.linux@gmail.com>,
 	Oleg Nesterov <oleg@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v3 next 05/10] lib: Add tests for mul_u64_u64_div_u64_roundup()
-Date: Sat, 14 Jun 2025 10:53:41 +0100
-Message-Id: <20250614095346.69130-6-david.laight.linux@gmail.com>
+Subject: [PATCH v3 next 06/10] lib: test_mul_u64_u64_div_u64: Test both generic and arch versions
+Date: Sat, 14 Jun 2025 10:53:42 +0100
+Message-Id: <20250614095346.69130-7-david.laight.linux@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250614095346.69130-1-david.laight.linux@gmail.com>
 References: <20250614095346.69130-1-david.laight.linux@gmail.com>
@@ -95,182 +95,148 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replicate the existing mul_u64_u64_div_u64() test cases with round up.
-Update the shell script that verifies the table, remove the comment
-markers so that it can be directly pasted into a shell.
+Change the #if in div64.c so that test_mul_u64_u64_div_u64.c
+can compile and test the generic version (including the 'long multiply')
+on architectures (eg amd64) that define their own copy.
 
-Rename the divisor from 'c' to 'd' to match mul_u64_add_u64_div_u64().
+Test the kernel version and the locally compiled version on all arch.
+Output the time taken (in ns) on the 'test completed' trace.
 
-It any tests fail then fail the module load with -EINVAL.
+For reference, on my zen 5, the optimised version takes ~220ns and the
+generic version ~3350ns.
+Using the native multiply saves ~200ns and adding back the ilog2() 'optimisation'
+test adds ~50ms.
 
 Signed-off-by: David Laight <david.laight.linux@gmail.com>
 ---
 
-Changes for v3:
-- Rename 'c' to 'd' to match mul_u64_add_u64_div_u64()
+New patch for v3, replacing changes in v1 that were removed for v2.
 
- lib/math/test_mul_u64_u64_div_u64.c | 122 +++++++++++++++++-----------
- 1 file changed, 73 insertions(+), 49 deletions(-)
+ lib/math/div64.c                    |  8 +++--
+ lib/math/test_mul_u64_u64_div_u64.c | 48 ++++++++++++++++++++++++-----
+ 2 files changed, 47 insertions(+), 9 deletions(-)
 
+diff --git a/lib/math/div64.c b/lib/math/div64.c
+index 7850cc0a7596..22433e5565c4 100644
+--- a/lib/math/div64.c
++++ b/lib/math/div64.c
+@@ -178,13 +178,15 @@ EXPORT_SYMBOL(div64_s64);
+  * Iterative div/mod for use when dividend is not expected to be much
+  * bigger than divisor.
+  */
++#ifndef iter_div_u64_rem
+ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
+ {
+ 	return __iter_div_u64_rem(dividend, divisor, remainder);
+ }
+ EXPORT_SYMBOL(iter_div_u64_rem);
++#endif
+ 
+-#ifndef mul_u64_add_u64_div_u64
++#if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
+ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+ {
+ 	if (WARN_ONCE(!d, "%s: division of (%#llx * %#llx + %#llx) by zero, returning 0",
+@@ -196,7 +198,7 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+ 		return 0;
+ 	}
+ 
+-#if defined(__SIZEOF_INT128__)
++#if defined(__SIZEOF_INT128__) && !defined(test_mul_u64_add_u64_div_u64)
+ 
+ 	/* native 64x64=128 bits multiplication */
+ 	u128 prod = (u128)a * b + c;
+@@ -270,5 +272,7 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+ 
+ 	return res;
+ }
++#if !defined(test_mul_u64_add_u64_div_u64)
+ EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
+ #endif
++#endif
 diff --git a/lib/math/test_mul_u64_u64_div_u64.c b/lib/math/test_mul_u64_u64_div_u64.c
-index 58d058de4e73..ea5b703cccff 100644
+index ea5b703cccff..f0134f25cb0d 100644
 --- a/lib/math/test_mul_u64_u64_div_u64.c
 +++ b/lib/math/test_mul_u64_u64_div_u64.c
-@@ -10,61 +10,73 @@
- #include <linux/printk.h>
- #include <linux/math64.h>
+@@ -73,21 +73,34 @@ done
  
--typedef struct { u64 a; u64 b; u64 c; u64 result; } test_params;
-+typedef struct { u64 a; u64 b; u64 d; u64 result; uint round_up;} test_params;
- 
- static test_params test_values[] = {
- /* this contains many edge values followed by a couple random values */
--{                0xb,                0x7,                0x3,               0x19 },
--{         0xffff0000,         0xffff0000,                0xf, 0x1110eeef00000000 },
--{         0xffffffff,         0xffffffff,                0x1, 0xfffffffe00000001 },
--{         0xffffffff,         0xffffffff,                0x2, 0x7fffffff00000000 },
--{        0x1ffffffff,         0xffffffff,                0x2, 0xfffffffe80000000 },
--{        0x1ffffffff,         0xffffffff,                0x3, 0xaaaaaaa9aaaaaaab },
--{        0x1ffffffff,        0x1ffffffff,                0x4, 0xffffffff00000000 },
--{ 0xffff000000000000, 0xffff000000000000, 0xffff000000000001, 0xfffeffffffffffff },
--{ 0x3333333333333333, 0x3333333333333333, 0x5555555555555555, 0x1eb851eb851eb851 },
--{ 0x7fffffffffffffff,                0x2,                0x3, 0x5555555555555554 },
--{ 0xffffffffffffffff,                0x2, 0x8000000000000000,                0x3 },
--{ 0xffffffffffffffff,                0x2, 0xc000000000000000,                0x2 },
--{ 0xffffffffffffffff, 0x4000000000000004, 0x8000000000000000, 0x8000000000000007 },
--{ 0xffffffffffffffff, 0x4000000000000001, 0x8000000000000000, 0x8000000000000001 },
--{ 0xffffffffffffffff, 0x8000000000000001, 0xffffffffffffffff, 0x8000000000000001 },
--{ 0xfffffffffffffffe, 0x8000000000000001, 0xffffffffffffffff, 0x8000000000000000 },
--{ 0xffffffffffffffff, 0x8000000000000001, 0xfffffffffffffffe, 0x8000000000000001 },
--{ 0xffffffffffffffff, 0x8000000000000001, 0xfffffffffffffffd, 0x8000000000000002 },
--{ 0x7fffffffffffffff, 0xffffffffffffffff, 0xc000000000000000, 0xaaaaaaaaaaaaaaa8 },
--{ 0xffffffffffffffff, 0x7fffffffffffffff, 0xa000000000000000, 0xccccccccccccccca },
--{ 0xffffffffffffffff, 0x7fffffffffffffff, 0x9000000000000000, 0xe38e38e38e38e38b },
--{ 0x7fffffffffffffff, 0x7fffffffffffffff, 0x5000000000000000, 0xccccccccccccccc9 },
--{ 0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff, 0xfffffffffffffffe },
--{ 0xe6102d256d7ea3ae, 0x70a77d0be4c31201, 0xd63ec35ab3220357, 0x78f8bf8cc86c6e18 },
--{ 0xf53bae05cb86c6e1, 0x3847b32d2f8d32e0, 0xcfd4f55a647f403c, 0x42687f79d8998d35 },
--{ 0x9951c5498f941092, 0x1f8c8bfdf287a251, 0xa3c8dc5f81ea3fe2, 0x1d887cb25900091f },
--{ 0x374fee9daa1bb2bb, 0x0d0bfbff7b8ae3ef, 0xc169337bd42d5179, 0x03bb2dbaffcbb961 },
--{ 0xeac0d03ac10eeaf0, 0x89be05dfa162ed9b, 0x92bb1679a41f0e4b, 0xdc5f5cc9e270d216 },
-+{                0xb,                0x7,                0x3,               0x19, 1 },
-+{         0xffff0000,         0xffff0000,                0xf, 0x1110eeef00000000, 0 },
-+{         0xffffffff,         0xffffffff,                0x1, 0xfffffffe00000001, 0 },
-+{         0xffffffff,         0xffffffff,                0x2, 0x7fffffff00000000, 1 },
-+{        0x1ffffffff,         0xffffffff,                0x2, 0xfffffffe80000000, 1 },
-+{        0x1ffffffff,         0xffffffff,                0x3, 0xaaaaaaa9aaaaaaab, 0 },
-+{        0x1ffffffff,        0x1ffffffff,                0x4, 0xffffffff00000000, 1 },
-+{ 0xffff000000000000, 0xffff000000000000, 0xffff000000000001, 0xfffeffffffffffff, 1 },
-+{ 0x3333333333333333, 0x3333333333333333, 0x5555555555555555, 0x1eb851eb851eb851, 1 },
-+{ 0x7fffffffffffffff,                0x2,                0x3, 0x5555555555555554, 1 },
-+{ 0xffffffffffffffff,                0x2, 0x8000000000000000,                0x3, 1 },
-+{ 0xffffffffffffffff,                0x2, 0xc000000000000000,                0x2, 1 },
-+{ 0xffffffffffffffff, 0x4000000000000004, 0x8000000000000000, 0x8000000000000007, 1 },
-+{ 0xffffffffffffffff, 0x4000000000000001, 0x8000000000000000, 0x8000000000000001, 1 },
-+{ 0xffffffffffffffff, 0x8000000000000001, 0xffffffffffffffff, 0x8000000000000001, 0 },
-+{ 0xfffffffffffffffe, 0x8000000000000001, 0xffffffffffffffff, 0x8000000000000000, 1 },
-+{ 0xffffffffffffffff, 0x8000000000000001, 0xfffffffffffffffe, 0x8000000000000001, 1 },
-+{ 0xffffffffffffffff, 0x8000000000000001, 0xfffffffffffffffd, 0x8000000000000002, 1 },
-+{ 0x7fffffffffffffff, 0xffffffffffffffff, 0xc000000000000000, 0xaaaaaaaaaaaaaaa8, 1 },
-+{ 0xffffffffffffffff, 0x7fffffffffffffff, 0xa000000000000000, 0xccccccccccccccca, 1 },
-+{ 0xffffffffffffffff, 0x7fffffffffffffff, 0x9000000000000000, 0xe38e38e38e38e38b, 1 },
-+{ 0x7fffffffffffffff, 0x7fffffffffffffff, 0x5000000000000000, 0xccccccccccccccc9, 1 },
-+{ 0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff, 0xfffffffffffffffe, 0 },
-+{ 0xe6102d256d7ea3ae, 0x70a77d0be4c31201, 0xd63ec35ab3220357, 0x78f8bf8cc86c6e18, 1 },
-+{ 0xf53bae05cb86c6e1, 0x3847b32d2f8d32e0, 0xcfd4f55a647f403c, 0x42687f79d8998d35, 1 },
-+{ 0x9951c5498f941092, 0x1f8c8bfdf287a251, 0xa3c8dc5f81ea3fe2, 0x1d887cb25900091f, 1 },
-+{ 0x374fee9daa1bb2bb, 0x0d0bfbff7b8ae3ef, 0xc169337bd42d5179, 0x03bb2dbaffcbb961, 1 },
-+{ 0xeac0d03ac10eeaf0, 0x89be05dfa162ed9b, 0x92bb1679a41f0e4b, 0xdc5f5cc9e270d216, 1 },
- };
- 
- /*
-  * The above table can be verified with the following shell script:
-- *
-- * #!/bin/sh
-- * sed -ne 's/^{ \+\(.*\), \+\(.*\), \+\(.*\), \+\(.*\) },$/\1 \2 \3 \4/p' \
-- *     lib/math/test_mul_u64_u64_div_u64.c |
-- * while read a b c r; do
-- *   expected=$( printf "obase=16; ibase=16; %X * %X / %X\n" $a $b $c | bc )
-- *   given=$( printf "%X\n" $r )
-- *   if [ "$expected" = "$given" ]; then
-- *     echo "$a * $b / $c = $r OK"
-- *   else
-- *     echo "$a * $b / $c = $r is wrong" >&2
-- *     echo "should be equivalent to 0x$expected" >&2
-- *     exit 1
-- *   fi
-- * done
-+
-+#!/bin/sh
-+sed -ne 's/^{ \+\(.*\), \+\(.*\), \+\(.*\), \+\(.*\), \+\(.*\) },$/\1 \2 \3 \4 \5/p' \
-+    lib/math/test_mul_u64_u64_div_u64.c |
-+while read a b d r d; do
-+  expected=$( printf "obase=16; ibase=16; %X * %X / %X\n" $a $b $d | bc )
-+  given=$( printf "%X\n" $r )
-+  if [ "$expected" = "$given" ]; then
-+    echo "$a * $b  / $d = $r OK"
-+  else
-+    echo "$a * $b  / $d = $r is wrong" >&2
-+    echo "should be equivalent to 0x$expected" >&2
-+    exit 1
-+  fi
-+  expected=$( printf "obase=16; ibase=16; (%X * %X + %X) / %X\n" $a $b $((d-1)) $d | bc )
-+  given=$( printf "%X\n" $((r + d)) )
-+  if [ "$expected" = "$given" ]; then
-+    echo "$a * $b +/ $d = $(printf '%#x' $((r + d))) OK"
-+  else
-+    echo "$a * $b +/ $d = $(printf '%#x' $((r + d))) is wrong" >&2
-+    echo "should be equivalent to 0x$expected" >&2
-+    exit 1
-+  fi
-+done
-+
   */
  
- static int __init test_init(void)
+-static int __init test_init(void)
++static u64 test_mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d);
++
++static int __init test_run(unsigned int fn_no, const char *fn_name)
  {
-+	int errors = 0;
-+	int tests = 0;
++	u64 start_time;
+ 	int errors = 0;
+ 	int tests = 0;
  	int i;
  
- 	pr_info("Starting mul_u64_u64_div_u64() test\n");
-@@ -72,19 +84,31 @@ static int __init test_init(void)
+-	pr_info("Starting mul_u64_u64_div_u64() test\n");
++	start_time = ktime_get_ns();
+ 
  	for (i = 0; i < ARRAY_SIZE(test_values); i++) {
  		u64 a = test_values[i].a;
  		u64 b = test_values[i].b;
--		u64 c = test_values[i].c;
-+		u64 d = test_values[i].d;
+ 		u64 d = test_values[i].d;
  		u64 expected_result = test_values[i].result;
--		u64 result = mul_u64_u64_div_u64(a, b, c);
-+		u64 result = mul_u64_u64_div_u64(a, b, d);
-+		u64 result_up = mul_u64_u64_div_u64_roundup(a, b, d);
+-		u64 result = mul_u64_u64_div_u64(a, b, d);
+-		u64 result_up = mul_u64_u64_div_u64_roundup(a, b, d);
++		u64 result, result_up;
 +
-+		tests += 2;
- 
- 		if (result != expected_result) {
--			pr_err("ERROR: 0x%016llx * 0x%016llx / 0x%016llx\n", a, b, c);
-+			pr_err("ERROR: 0x%016llx * 0x%016llx / 0x%016llx\n", a, b, d);
- 			pr_err("ERROR: expected result: %016llx\n", expected_result);
- 			pr_err("ERROR: obtained result: %016llx\n", result);
-+			errors++;
++		switch (fn_no) {
++		default:
++			result = mul_u64_u64_div_u64(a, b, d);
++			result_up = mul_u64_u64_div_u64_roundup(a, b, d);
++			break;
++		case 1:
++			result = test_mul_u64_add_u64_div_u64(a, b, 0, d);
++			result_up = test_mul_u64_add_u64_div_u64(a, b, d - 1, d);
++			break;
 +		}
-+		expected_result += test_values[i].round_up;
-+		if (result_up != expected_result) {
-+			pr_err("ERROR: 0x%016llx * 0x%016llx +/ 0x%016llx\n", a, b, d);
-+			pr_err("ERROR: expected result: %016llx\n", expected_result);
-+			pr_err("ERROR: obtained result: %016llx\n", result_up);
-+			errors++;
+ 
+ 		tests += 2;
+ 
+@@ -106,15 +119,36 @@ static int __init test_init(void)
  		}
  	}
  
--	pr_info("Completed mul_u64_u64_div_u64() test\n");
--	return 0;
-+	pr_info("Completed mul_u64_u64_div_u64() test, %d tests, %d errors\n",
-+		tests, errors);
-+	return errors ? -EINVAL : 0;
+-	pr_info("Completed mul_u64_u64_div_u64() test, %d tests, %d errors\n",
+-		tests, errors);
+-	return errors ? -EINVAL : 0;
++	pr_info("Completed %s() test, %d tests, %d errors, %llu ns\n",
++		fn_name, tests, errors, ktime_get_ns() - start_time);
++	return errors;
++}
++
++static int __init test_init(void)
++{
++	pr_info("Starting mul_u64_u64_div_u64() test\n");
++	if (test_run(0, "mul_u64_u64_div_u64"))
++		return -EINVAL;
++	if (test_run(1, "test_mul_u64_u64_div_u64"))
++		return -EINVAL;
++	return 0;
  }
  
  static void __exit test_exit(void)
+ {
+ }
+ 
++/* Compile the generic mul_u64_add_u64_div_u64() code */
++#define div64_u64 div64_u64
++#define div64_s64 div64_s64
++#define iter_div_u64_rem iter_div_u64_rem
++
++#undef mul_u64_add_u64_div_u64
++#define mul_u64_add_u64_div_u64 test_mul_u64_add_u64_div_u64
++#define test_mul_u64_add_u64_div_u64 test_mul_u64_add_u64_div_u64
++
++#include "div64.c"
++
+ module_init(test_init);
+ module_exit(test_exit);
+ 
 -- 
 2.39.5
 
