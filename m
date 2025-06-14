@@ -1,222 +1,150 @@
-Return-Path: <linux-kernel+bounces-687081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20843AD9FBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 22:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6131EAD9FD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 23:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE02F175D95
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9995D3A826C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 21:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA442E6D11;
-	Sat, 14 Jun 2025 20:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96621FBCBE;
+	Sat, 14 Jun 2025 21:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GX/bNeDb"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="PYpHPuW+"
+Received: from skyblue.cherry.relay.mailchannels.net (skyblue.cherry.relay.mailchannels.net [23.83.223.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C16C199237;
-	Sat, 14 Jun 2025 20:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749933456; cv=none; b=OwALRsxDU9CH0LiTVaeLvrkuOBhfoHo6OrXefewiyUSYh3Rs9xNhem4BJia2VRLTJySc534P+Xfu/IAHDGh07KtWvRh5xjY/wGfN//l/TgQMXxhuxOn4TciL+6fJcaEO+T/8oOGqSBCFy2n9zeFDp8GoWyFDHXRdL4HZY34IOuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749933456; c=relaxed/simple;
-	bh=9pmEfXdk7iL9pS5LSQiBkiVD0ofCpgQ2sH3AdVhSmWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5Jo0aV4VbxCnHoB8JOsh8UMH1rd7bd87hYowr1nXHB802vWJT0UYUk1myCFxCUB88/BhaTJcGuI092bD/VggjBi3mFenVWjKKVIflheGmhx+Y1CdOKq1mTHc5l5tP3NBo/vRvyytRoAbZyClfMexSScNk1EOcyWAe6OoJvT8rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GX/bNeDb; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=+jgDBcJCGkYhFUceW2ssi64QZJrhtciHErgU+KLdRxc=; b=GX/bNeDbUTcLdsfq
-	e9twea0F5c6+Ca7aBDgmw1qrYt3uvkGd1pzgaIqIaqpINact2wAVOOXb/nAtnEfYcb4SIki2Q6olN
-	yLr89iNgWJmbUvoZyxVNhDmfFS1Ac0M7vn7Zd8O4ndALD7yOC6dG7PvOY6aJeycwxf5RTljlu/tTp
-	KLn4o//oufU66eyzChPyNUNTcUmBBlJrrtgTIFR5IvQmQ74HeXLDLLS96/k28W2GOybheBaQ/ExcY
-	yA2cBbm3M0tSgRiabzqLqedRGwhFiQ0mBCVf7S210mfC3fFck+6EZpSVlnOGxWFYGQLJXXHdRWWGW
-	63L0bhk8xUyo6V5NYA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uQXcy-009fVm-2Q;
-	Sat, 14 Jun 2025 20:37:24 +0000
-From: linux@treblig.org
-To: ming.qian@nxp.com,
-	eagle.zhou@nxp.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: amphion: Remove unused functions
-Date: Sat, 14 Jun 2025 21:37:23 +0100
-Message-ID: <20250614203723.22632-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCBB1DF754;
+	Sat, 14 Jun 2025 21:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749935085; cv=pass; b=LE8w7cHuUzZ84DGpMKf8rZRLB+sI52BOZwMIwQm82S1nxYASaDM6GGvJ+vTWldaevI1bteTj9nPyKQCh1+mSgwkfRxuF8/bg3k0ZJbkqlE+ipL/kKsrZ7nwaY9IHl0Kx2rqYKOjawQY9eG3pprhAwHYKPy7AlTZ8EdCFOCjM2jk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749935085; c=relaxed/simple;
+	bh=aUUaE4NhMLfYjb5tlu3Ha6V9SwZlsMYGAgxjipHxw4I=;
+	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Date; b=EteY6xWBxQmsdimNW511OSIyzswRlmoVdY0VeabLuL/G8NCHJRREC8wtZWshuRSkh/e02XdduzMsWPMW5qrwwYcJYVF3mLhHh4+qALTk7Kjgy4hWC/nO8ytQ34moOkT/Vv6QWs6wsdASZU+f4EUWVBAT+16G69TZhQr6MtWPD8w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=PYpHPuW+; arc=pass smtp.client-ip=23.83.223.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 24E638282C;
+	Sat, 14 Jun 2025 20:46:49 +0000 (UTC)
+Received: from nl-srv-smtpout9.hostinger.io (100-122-111-239.trex-nlb.outbound.svc.cluster.local [100.122.111.239])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 7B43982738;
+	Sat, 14 Jun 2025 20:46:46 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1749934008; a=rsa-sha256;
+	cv=none;
+	b=Huqvw8ESWMB2oV0X2shpXR8AkhjB+YXFWFGRik0klXZio/pc9Bt3wz6fJtva+/Q/ivqlff
+	nRClhpzZgxracJDDXhlOXic+BPc5uGATyURwGN4S4+XXZNaTt2XcVjXPw/2VcNaSk7nUXz
+	5tX/1RiOKiKOlPuWEzADxmXFl258BHng+AzKDbW0DHCurB5TByL2ryQeSN7rki6vUIsfzz
+	TSMZ1sqjErx+wt0iJ7kdFMenYcJkLFxcrn8ImRqNen6IOLGvhMHEHvrChOieQR6krugBDl
+	HiRmfiex5cvIaAtcocNmpP2pdU55QSRn0d7w1ch4jslBsAo9binNwcw6yEOI8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1749934008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=nc9RQbA6Qr/3xcPmMSkDvEjfC4L5GrtayuofOPkowxk=;
+	b=enkplhHldFoJZftwfAjNd0f8Ralw9Ft47qRPuZQ2zasLit/EDF+2IZBCpbyjb0jxpqs5wX
+	H/xGdThc6i4hKQTka1o61pO5Cso9/BmTUHAV8YsJqZe934U8BUGNRMjSM6lkNj0bGEG3sI
+	lHABvWFYla0Pji9gyokn2wjO+vGeFWOOP8FjjBG+rkGdw5MhXo00oCUglSBcg5JT12Nac6
+	D30drPjKrduD6RWqxnP3KiUfoLI9h9CNK6NIXVJU+xFMlsXhSIKtgBI0sVrzQJOu81k1Vz
+	duRQ3bwHWZN9Zb/oXPBtN5V/hteBA//1o7MJRiVphiVv7/z1bsLFym1wUG8UGQ==
+ARC-Authentication-Results: i=1;
+	rspamd-6c978647c4-jdf4g;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Troubled-Language: 2c94c34f46bc3083_1749934008892_1470621371
+X-MC-Loop-Signature: 1749934008892:2968209260
+X-MC-Ingress-Time: 1749934008892
+Received: from nl-srv-smtpout9.hostinger.io (nl-srv-smtpout9.hostinger.io
+ [45.87.82.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.122.111.239 (trex/7.0.3);
+	Sat, 14 Jun 2025 20:46:48 +0000
+Received: from [IPV6:2001:448a:c020:61e:a05e:28b:9589:bb9c] (unknown [IPv6:2001:448a:c020:61e:a05e:28b:9589:bb9c])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4bKSwy1JtvzGY3Xw;
+	Sat, 14 Jun 2025 20:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
+	s=hostingermail-a; t=1749934004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nc9RQbA6Qr/3xcPmMSkDvEjfC4L5GrtayuofOPkowxk=;
+	b=PYpHPuW+9Sy74tyWQZMtgmwyvh/06ORmI6hY7bqGM85zVMQMsPh0zSH3IrM27BcdQTCrp5
+	cHxSvMzjrUsSquNoRamoif8Rh28HqwA1hoNtbPsaecLcrWvwd/NJ/7grLtENywaRNZUkGN
+	BRKg5KQDi4Zte5WLz2fKJ/4/ZHIBRVJjVhCrAZSAgRG0PJSoqr7VifAJlKLR+12T+ry80w
+	9GLgGSd9VCL0FnOaseJvkmYkh7o79qRMGpCHjh17Gqs/c3gnMSzxLssp/n5A4dB7aJ+VVO
+	JeeemOwsjWxfM1lJ6H9C7YhKIYr/7TgewjaAZXYDmdFM6aNI3DBz2H+fI9PJGA==
+Message-ID: <39a7153e-1a4f-4dfc-a190-3b3370646d47@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] ARM: dts: qcom: add device tree for Sony Xperia SP
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Max Shevchenko <wctrl@proton.me>,
+ Rudraksha Gupta <guptarud@gmail.com>
+References: <20250614-msm8960-sdcard-v1-0-ccce629428b6@smankusors.com>
+ <20250614-msm8960-sdcard-v1-5-ccce629428b6@smankusors.com>
+ <f1284637-7650-498a-b850-b5140c47e4e0@oss.qualcomm.com>
+Content-Language: en-US
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+In-Reply-To: <f1284637-7650-498a-b850-b5140c47e4e0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sat, 14 Jun 2025 20:46:41 +0000 (UTC)
+X-CM-Envelope: MS4xfDeE0ELiuEu2M8UaCSNvCRotIlBz44mVrMfLIJV/xzL0WhtmdRREte1mo3Sx7wRF4/zI0iHcPkkpO9tX6JixlapXBSXzHNUPbITVtradTeFiXMKSH0MO 26G4+5tnqqUA3srLGWYPz6+A6zSu3D+rwQvKw94kw6XSEMuUC0ksxrsPrAVV3jquYs+d8XlOaH0CzxHXlFn3fQmn2HwZOg234qTeoHfpXtujfes7ZRSn4B7l +IMtpG8xj6bKIfCx07JfFw6MhgCmilP95Tn8zSRJhlsjE5gSHWD0Dk9SPXjbYfF2+xPHQDn8z0NgjAyH4yHwxViy1h40bLJabYJgtrYgwR3BULL28BClfl9k WE+895I6z/QgHBMDwEXKSTwdOv2p9WHn2kkE+Ms3O+q6nVTBBjJAjQEFIgrVCVXAFpl6Vq99H8mLKcannboLucYngMd8K13oRJQIiBeF1MXkhSnPD14TiCr3 tPohPvRoJ2nB0T7az0zymyjlY6UH/XhmmN0wxq2z5WVahKh8DdNbmqWofx/OEdvO2FhtYKS9PAPPr9+WdK0xGziMxE1MLA4D5Zmxbvpl/mNC0GjcSaXjBbxh HEcbHILtnxhtxB7u92/QZo2utpFUwzLIVFrAcTy05P5Mga9JK6zZa6UttfhzWqwUbdw=
+X-CM-Analysis: v=2.4 cv=MNgym9Zl c=1 sm=1 tr=0 ts=684ddfb4 a=9ilccl3s0Xgo97xrQrTJyQ==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Gbw9aFdXAAAA:8 a=K4FVrWBemn9qIp-mdykA:9 a=QEXdDO2ut3YA:10 a=9vIz8raoGPyDa4jBFAYH:22
+X-AuthUser: linux@smankusors.com
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 6/15/2025 1:36 AM, Konrad Dybcio wrote:
+> IIUC (and that's a 10yo range memory), SP had some eyebrow-rising boot
+> flow (some partitions were non-standard?) - could you please add a
+> paragraph about it in the commit message if that's the case, and maybe
+> include a short how-to on booting the thing?
+Is it acceptable to provide the pmOS wiki link in the commit message 
+instead?
+https://wiki.postmarketos.org/wiki/Sony_Xperia_SP_(sony-huashan)
 
-The functions:
-  vpu_color_get_default()
-  vpu_color_check_full_range()
-  vpu_color_check_primaries()
-  vpu_color_check_transfers()
-  vpu_color_check_matrix()
+Or should I include a paragraph explaining it? It might be lengthy since
+I'd need to add download links for the mkelf and the RPM blob.
 
-have been unused since 2022's
-commit 1925665ef403 ("media: amphion: remove redundant check of
-colorspace in venc_s_fmt")
+But in a nutshell, concatenate the kernel with the DTB, create a SonyELF
+boot image, and then boot it.
 
-The (empty) function vpu_mbox_enable_rx() has been unused since it
-was added in 2022 by the
-commit 61cbf1c1fa6d ("media: amphion: implement vpu core communication
-based on mailbox")
+> As for the code.. I don't really have comments other than please
+> keep a \n before 'status', other things seem rather in order.. If
+> the dt checker doesn't complain, I don't see any logical wrongs
+>
+> Konrad
+Thanks for the review. Going to sent the second version later.
 
-Remove them.
+As for the other things... well in my opinion it's not kinda in order,
+especially the nodes ordering at qcom-msm8960.dtsi. Welp that might be
+a separate patch I think...
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/platform/amphion/vpu_color.c   | 73 --------------------
- drivers/media/platform/amphion/vpu_helpers.h |  5 --
- drivers/media/platform/amphion/vpu_mbox.c    |  4 --
- drivers/media/platform/amphion/vpu_mbox.h    |  1 -
- 4 files changed, 83 deletions(-)
 
-diff --git a/drivers/media/platform/amphion/vpu_color.c b/drivers/media/platform/amphion/vpu_color.c
-index 4ae435cbc5cd..7c0ab8289a7b 100644
---- a/drivers/media/platform/amphion/vpu_color.c
-+++ b/drivers/media/platform/amphion/vpu_color.c
-@@ -108,76 +108,3 @@ u32 vpu_color_cvrt_full_range_i2v(u32 full_range)
- 
- 	return V4L2_QUANTIZATION_LIM_RANGE;
- }
--
--int vpu_color_check_primaries(u32 primaries)
--{
--	return vpu_color_cvrt_primaries_v2i(primaries) ? 0 : -EINVAL;
--}
--
--int vpu_color_check_transfers(u32 transfers)
--{
--	return vpu_color_cvrt_transfers_v2i(transfers) ? 0 : -EINVAL;
--}
--
--int vpu_color_check_matrix(u32 matrix)
--{
--	return vpu_color_cvrt_matrix_v2i(matrix) ? 0 : -EINVAL;
--}
--
--int vpu_color_check_full_range(u32 full_range)
--{
--	int ret = -EINVAL;
--
--	switch (full_range) {
--	case V4L2_QUANTIZATION_FULL_RANGE:
--	case V4L2_QUANTIZATION_LIM_RANGE:
--		ret = 0;
--		break;
--	default:
--		break;
--	}
--
--	return ret;
--}
--
--int vpu_color_get_default(u32 primaries, u32 *ptransfers, u32 *pmatrix, u32 *pfull_range)
--{
--	u32 transfers;
--	u32 matrix;
--	u32 full_range;
--
--	switch (primaries) {
--	case V4L2_COLORSPACE_REC709:
--		transfers = V4L2_XFER_FUNC_709;
--		matrix = V4L2_YCBCR_ENC_709;
--		break;
--	case V4L2_COLORSPACE_470_SYSTEM_M:
--	case V4L2_COLORSPACE_470_SYSTEM_BG:
--	case V4L2_COLORSPACE_SMPTE170M:
--		transfers = V4L2_XFER_FUNC_709;
--		matrix = V4L2_YCBCR_ENC_601;
--		break;
--	case V4L2_COLORSPACE_SMPTE240M:
--		transfers = V4L2_XFER_FUNC_SMPTE240M;
--		matrix = V4L2_YCBCR_ENC_SMPTE240M;
--		break;
--	case V4L2_COLORSPACE_BT2020:
--		transfers = V4L2_XFER_FUNC_709;
--		matrix = V4L2_YCBCR_ENC_BT2020;
--		break;
--	default:
--		transfers = V4L2_XFER_FUNC_DEFAULT;
--		matrix = V4L2_YCBCR_ENC_DEFAULT;
--		break;
--	}
--	full_range = V4L2_QUANTIZATION_LIM_RANGE;
--
--	if (ptransfers)
--		*ptransfers = transfers;
--	if (pmatrix)
--		*pmatrix = matrix;
--	if (pfull_range)
--		*pfull_range = full_range;
--
--	return 0;
--}
-diff --git a/drivers/media/platform/amphion/vpu_helpers.h b/drivers/media/platform/amphion/vpu_helpers.h
-index 0eaddb07190d..84d16eb39650 100644
---- a/drivers/media/platform/amphion/vpu_helpers.h
-+++ b/drivers/media/platform/amphion/vpu_helpers.h
-@@ -54,10 +54,6 @@ static inline u8 vpu_helper_read_byte(struct vpu_buffer *stream_buffer, u32 pos)
- 	return pdata[pos % stream_buffer->length];
- }
- 
--int vpu_color_check_primaries(u32 primaries);
--int vpu_color_check_transfers(u32 transfers);
--int vpu_color_check_matrix(u32 matrix);
--int vpu_color_check_full_range(u32 full_range);
- u32 vpu_color_cvrt_primaries_v2i(u32 primaries);
- u32 vpu_color_cvrt_primaries_i2v(u32 primaries);
- u32 vpu_color_cvrt_transfers_v2i(u32 transfers);
-@@ -66,7 +62,6 @@ u32 vpu_color_cvrt_matrix_v2i(u32 matrix);
- u32 vpu_color_cvrt_matrix_i2v(u32 matrix);
- u32 vpu_color_cvrt_full_range_v2i(u32 full_range);
- u32 vpu_color_cvrt_full_range_i2v(u32 full_range);
--int vpu_color_get_default(u32 primaries, u32 *ptransfers, u32 *pmatrix, u32 *pfull_range);
- 
- int vpu_find_dst_by_src(struct vpu_pair *pairs, u32 cnt, u32 src);
- int vpu_find_src_by_dst(struct vpu_pair *pairs, u32 cnt, u32 dst);
-diff --git a/drivers/media/platform/amphion/vpu_mbox.c b/drivers/media/platform/amphion/vpu_mbox.c
-index c2963b8deb48..b2ac8de6a2d9 100644
---- a/drivers/media/platform/amphion/vpu_mbox.c
-+++ b/drivers/media/platform/amphion/vpu_mbox.c
-@@ -109,7 +109,3 @@ void vpu_mbox_send_msg(struct vpu_core *core, u32 type, u32 data)
- 	mbox_send_message(core->tx_data.ch, &data);
- 	mbox_send_message(core->tx_type.ch, &type);
- }
--
--void vpu_mbox_enable_rx(struct vpu_dev *dev)
--{
--}
-diff --git a/drivers/media/platform/amphion/vpu_mbox.h b/drivers/media/platform/amphion/vpu_mbox.h
-index 79cfd874e92b..8b7aea4f606c 100644
---- a/drivers/media/platform/amphion/vpu_mbox.h
-+++ b/drivers/media/platform/amphion/vpu_mbox.h
-@@ -11,6 +11,5 @@ int vpu_mbox_request(struct vpu_core *core);
- void vpu_mbox_free(struct vpu_core *core);
- void vpu_mbox_send_msg(struct vpu_core *core, u32 type, u32 data);
- void vpu_mbox_send_type(struct vpu_core *core, u32 type);
--void vpu_mbox_enable_rx(struct vpu_dev *dev);
- 
- #endif
--- 
-2.49.0
-
+Thanks,
+Antony K. S.
 
