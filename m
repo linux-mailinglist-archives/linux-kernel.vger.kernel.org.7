@@ -1,89 +1,106 @@
-Return-Path: <linux-kernel+bounces-686939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F13AD9D84
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 16:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D70AD9D87
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 16:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5928178339
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 14:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1EB1178FE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 14:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344552D8784;
-	Sat, 14 Jun 2025 14:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="dTE4CLCm"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA852E338B;
+	Sat, 14 Jun 2025 14:35:14 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4E61CAA4;
-	Sat, 14 Jun 2025 14:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1D42DECB0
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 14:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749911486; cv=none; b=PcvLx3MSpCtZvdh3Pz4pnUngJjkmGsDjhZ9SHW3N0zxBZm2dOZ1IXgTlzBHwCWdY+GSrBZSDrW0q/e3XN8E78aXDspMo2SHkpWuL+s1LdVefBBkGCQEZp4rk2fTrxU2opsQG6zMpjRQQlO5k9sqxbOgaifoTaqUu2yi6UFCfxAA=
+	t=1749911714; cv=none; b=B+uziYOqY5H0p4UoXIkvqpo0aA0aPoPpcKq0AHFq3/Ouo2piVWaiwDIjFxfk6XGPIcPOcXvJna87sCPdPryJlcdAvDCQdzTbCI//9peImVUIN/GHa4nxHFQJpBYNGwbcV/RrsRqTHmw3GRi1y4bnwdAsZb5yFVAmmP5q22GDLgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749911486; c=relaxed/simple;
-	bh=nkZfACPbAZYiMo0yba8y/ZNVqELFDNwH2ijh2AR8nig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1uo9iIkRqRVciLUmg8vNxUXjUPdhQlQSmoWMbCIGo62coGxlfmcM/HqTGtk5y0dJjKITl2eHKAlGW46exE4x4em4NfnG8StqfxisJJUQS7LaL25rphJWVPaNpB9zhpQBT9PkLOK4OP03jFfKPkxueGSGbj1cwZs+/CpMMiJrmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=dTE4CLCm; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.14])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 2BB4E552F527;
-	Sat, 14 Jun 2025 14:31:19 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2BB4E552F527
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1749911479;
-	bh=vezHVgus5Nj2g1IeYhLAF3M4Cc0sGwErYshdPXsCNIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dTE4CLCm9fLLXAyEtPxYcwpVrSDQQ8+AZBUS7t+OV0F6esV9Qk7FeT4+Y+OY59XOC
-	 hKZdQERA+2llYBJxiUeRX1DdGRkpXopWJ8eGhYoxPcaLjasaEgOvhFfw7dkQgW0G+c
-	 2VZMfb+fYama65bAwIMB3sgywPL3XND8R3GKe/t8=
-Date: Sat, 14 Jun 2025 17:31:19 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Takashi Iwai <tiwai@suse.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
-	Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH 0/3] ASoC: amd: fixes for runtime private data memory
- leaks
-Message-ID: <ikzadk3upz2uh2zbnamycs2ua6qmhsdok34xsvygdcwqy3hzbk@epeuts7j5htr>
-References: <20250530164425.119102-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1749911714; c=relaxed/simple;
+	bh=6v7iKCaGXBl/sCIYDYhT3XaQSdPX7ulIlQka7azF4j4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZGUZVqhwqGZk4s1TsLCZsyh+7d17dQksSKWPYE2SagU7nPYOM2X3AEWTvl57kmIIPt93mY7uZKGgkzT6RgsDbyO3lUmQ4fASQrdvVnJvuwujabLf0KTIJj9Nd2GjPBIV13hU5T8iT8lrjAFRkR1hM6CQjMuGo4oBrq1y7s31eaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bKJZv6Yffz10WrC;
+	Sat, 14 Jun 2025 22:30:31 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6002B140121;
+	Sat, 14 Jun 2025 22:35:04 +0800 (CST)
+Received: from localhost.huawei.com (10.90.31.46) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 14 Jun 2025 22:34:55 +0800
+From: Qinxin Xia <xiaqinxin@huawei.com>
+To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>
+CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <xiaqinxin@huawei.com>
+Subject: [RESEND PATCH v4 0/4] dma-mapping: benchmark: Add support for dma_map_sg
+Date: Sat, 14 Jun 2025 22:34:50 +0800
+Message-ID: <20250614143454.2927363-1-xiaqinxin@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250530164425.119102-1-pchelkin@ispras.ru>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On Fri, 30. May 19:44, Fedor Pchelkin wrote:
-> Here follows a set of related patches regarding leaks of memory referenced
-> to by runtime->private_data pointers in amd soc drivers.
+Modify the framework to adapt to more map modes, add benchmark
+support for dma_map_sg, and add support sg map mode in ioctl.
 
-Hi,
+The result:
+[root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
+dma mapping mode: DMA_MAP_SG_MODE
+dma mapping benchmark: threads:8 seconds:30 node:-1 dir:FROM_DEVICE granule/sg_nents: 8
+average map latency(us):1.4 standard deviation:0.3
+average unmap latency(us):1.3 standard deviation:0.3
+[root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
+dma mapping mode: DMA_MAP_SINGLE_MODE
+dma mapping benchmark: threads:8 seconds:30 node:-1 dir:FROM_DEVICE granule/sg_nents: 8
+average map latency(us):1.0 standard deviation:0.3
+average unmap latency(us):1.3 standard deviation:0.5
 
-a ping on the series..
+---
+Changes since V3:
+- Address the comments from Barry, change mode to a more specific namespace.
+- Link: https://lore.kernel.org/all/20250509020238.3378396-1-xiaqinxin@huawei.com/
 
-Thanks!
+Changes since V2:
+- Address the comments from Barry and ALOK, some commit information and function
+  input parameter names are modified to make them more accurate.
+- Link: https://lore.kernel.org/all/20250506030100.394376-1-xiaqinxin@huawei.com/
 
-> 
-> Fedor Pchelkin (3):
->   ASoC: amd: acp6x-pdm-dma: free pdm device data on closing
->   ASoC: amd: acp3x-pcm-dma: free runtime private data on closing
->   ASoC: amd: acp3x-pdm-dma: free pdm device data on closing
-> 
->  sound/soc/amd/raven/acp3x-pcm-dma.c  | 2 +-
->  sound/soc/amd/renoir/acp3x-pdm-dma.c | 2 ++
->  sound/soc/amd/yc/acp6x-pdm-dma.c     | 2 ++
->  3 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.49.0
-> 
+Changes since V1:
+- Address the comments from Barry, added some comments and changed the unmap type to void.
+- Link: https://lore.kernel.org/lkml/20250212022718.1995504-1-xiaqinxin@huawei.com/
+
+
+Qinxin Xia (4):
+  dma-mapping: benchmark: Add padding to ensure uABI remained consistent
+  dma-mapping: benchmark: modify the framework to adapt to more map
+    modes
+  dma-mapping: benchmark: add support for dma_map_sg
+  selftests/dma: Add dma_map_sg support for dma_map_benchmark
+
+ include/linux/map_benchmark.h                 |  46 +++-
+ kernel/dma/map_benchmark.c                    | 225 ++++++++++++++++--
+ .../testing/selftests/dma/dma_map_benchmark.c |  16 +-
+ 3 files changed, 252 insertions(+), 35 deletions(-)
+
+-- 
+2.33.0
+
 
