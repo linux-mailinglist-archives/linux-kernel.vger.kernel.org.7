@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-686611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8B2AD99B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 04:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB43AD99CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 04:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F10189F2D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 02:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8D31BC439F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 02:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F501527B4;
-	Sat, 14 Jun 2025 02:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E2XxgT1H"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BD41BEF7E;
+	Sat, 14 Jun 2025 02:46:41 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F933D984
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 02:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A83C1B85CC;
+	Sat, 14 Jun 2025 02:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749869058; cv=none; b=JtvxIR0IGGlivzwlcJe/ICTgKhIY67QQUJ7Ksnb4KJxPBjAeg9hZrD8kB62W0CqO7qsqUvTU4yDE5X9aeCnzmSwXUVKFoipvW1k/tFs7+KMBCbbQjLwy3TpebKUBddBlImsXN6ISlbtIAkDFDP5B87+1CafaSL0HiHq7OQY8rrc=
+	t=1749869201; cv=none; b=svuQGl3+TVL57YrZz4wH+HqjJZ1oP3T017BIUgfUfQ5FQemopxqQFyaFm/2D0Ls8uj8W5yfM+wBjdgGIApPUwc/VsUqJcon6BgTG3hDjY6hcaJSfFh61WnwwlRWEgdGIlolshZZjgpBWaESyhwpbFuJn15mdttjDZpqIfvCLH3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749869058; c=relaxed/simple;
-	bh=O4Gjahtz+bxdj0DKMQ4kZN+PrAiDLTI94bb1mdd/Cbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpaEmoZGJdHp7akxFNP/VUUk1lXAUPTZgwl5aLS5M9TquIl68rjd7repfaoG1yiHMuJykUWplKXcHTviwfosx/GoX5OPJkh5t/8+GdIrB1la1R2lUv7O08NfPJIvg5gyu9hB3PHJdmQLULI/sMfKhIiZtFzSA72AlITC7xnWQKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E2XxgT1H; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553b5165cf5so919940e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749869054; x=1750473854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X+VVpcsl+muuyX4iIii+C7p1j2iHR4sQbFNMEzoTLU4=;
-        b=E2XxgT1HxT7FSUpEn8ysa1zHdHbZi5M9fNCN3RbK7/WGW1e0+PC7/pGxJnls4o0UV1
-         sccHriYtwK4E6JvHhXqnZCt926LobA350QLKmu1gqM0PswAKyMQzO4Z33s8LP4/LhjPr
-         xEE1ruOc9Hh8Ef6QOVwTl60vzP3ss0ZFd15jb6JBJwUW1E8pCN/aaobHIWUHao9nKP1M
-         DLhbqKY+fMrB9WNdImUSszEcCDVsq8pkGWfp6OhvIIKJYlz7jJgV3FCbKtltH4T1cjUk
-         9HgfLs9B9Fp5Q05QE1jeqHrR8e9u1sgZDOQua6xn5yPId/wUDcgyMrCZc3BhX4AlM8AP
-         yDZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749869054; x=1750473854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X+VVpcsl+muuyX4iIii+C7p1j2iHR4sQbFNMEzoTLU4=;
-        b=hr+OxkfBIbRb/GFujzdx3Po96Ks/braXdqr2chDHL7iAB4skJn/h8ew/MGc1jCDNwt
-         T/i4lyAtNMoMK4B3zPLIUZbqxfNxaIho1sanaNQHTf0DYlXI7gtnCJRUQeSFZWQlUJQ1
-         8b6pglbCjMrquf+6Dcw069m6NZ2TzoUpaANJjaWeddZ6d/BIfSL97rvXPZySXww4vOp6
-         gHuY7eNLAZSLKk0PNi5oHGJ958uNzaiONz+7Yr/tFKDYY6JWlUFUmYhNA0MTD+35+lkJ
-         4973JpuZe9KRsYxwpU2rQ16JdBaXUJB3uuwcbenORX3cAJMFVVzyO0LO9FD8KX5e2uOl
-         1PIw==
-X-Gm-Message-State: AOJu0Yws1cPrlmkvoLfxEv5DBS9NNLsiKCoY6Rs2/6tV0BrXSolA6s17
-	IqYM/4l2jc3qWQwsKWYpfFfqdJlVMHgC8yEeyZDSu3XpVZXjIMY+YYU/FK1f3E40799AaqXtie4
-	ffWeZN4TQMHvdablnXyTYnsAsjJrIgIENKeWWVSmiejRfGuJKnElbHL2lRw==
-X-Gm-Gg: ASbGncv675f0zXOItZvok0NzGpKN/7snYuPAJ+7wiyT/TvpQAZqt7Ox2xfSfE8QJ1bV
-	M9g4wY43HIqx/nBOAfGUdH8D/dV3bAQ/t4IM4D0LYqaW6i0F/MMbmUjfvadWhbMSXfWiwKuTKki
-	NLcv7Hyb3pVpk86aMy0B/1m/ggYaxHVpef/hyCqDd8QovepdccDMxaX84wbNZBDy03/5vBAUk=
-X-Google-Smtp-Source: AGHT+IGbFFoZybtkp0Y/GQQp8/WX/yBotzfDB3op3RjVDqzFnitxh+FqmA8M91LPnefNN4doUzykzHdc6tkb9Ck/vSY=
-X-Received: by 2002:a05:6512:1110:b0:54b:117b:b54b with SMTP id
- 2adb3069b0e04-553b6f48f9amr321300e87.54.1749869054018; Fri, 13 Jun 2025
- 19:44:14 -0700 (PDT)
+	s=arc-20240116; t=1749869201; c=relaxed/simple;
+	bh=JTGYm6UQO3uJQdmBqdagt34oi1y0i3cjdt18QncFRfU=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=foN1BIt3PcY3Bxb9wCFja5H1dA8Ni41Lb6Q3X7xcXcJEG/I1Y+SFd0UgkuDkEqK/etrYymRwD+uiTrRW0Ffx1HIHAek3kTkaDU559wng5i1zA1ys59fh2hKMvev5Dzm6Zz6tfMdRLMwVE+RlCwDkjrfLxSl+TKTh1DX4++F2KEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 292601D8A02;
+	Sat, 14 Jun 2025 02:45:40 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 3C63E20027;
+	Sat, 14 Jun 2025 02:45:37 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uQGvL-00000002Slx-35II;
+	Fri, 13 Jun 2025 22:47:15 -0400
+Message-ID: <20250614024605.597728558@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 13 Jun 2025 22:46:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v10 00/11] perf: Support the deferred unwinding infrastructure
+X-Rspamd-Queue-Id: 3C63E20027
+X-Stat-Signature: o7up5jaqfrdapzm3wke17esxama9ztag
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18U5bFLLoM8EQRnOl0ObCKv5h9zLCk7uPI=
+X-HE-Tag: 1749869137-556071
+X-HE-Meta: U2FsdGVkX1+WbTfRvDXPowhnOP/iAPpJ8ft41ICC/Z+tIkKrSU8BHurmZxM5KNn7S8rHXZAGgawtwaAHxkB0gvyDdtqGUhx5O6DcfK/NImgm/jItLoUkQmXSaSA+wNGytE88+wa6cUk36iPeWIwMDWAcNae0gaJH0FhyOb+grTj/eVUOgkUYKJ4MCYJ23xyWapcL129p0PsYd93/t1JK6x1ZYDOaOkOZFsv09ec9A0zblvI5uobZzYcbWSo3hLEzyCp7Qr8+dD87j/rCrBb11MMzQOlc/5whewXL0BbQzfCD5t1hkeIOODKlKf7RuS6ow2+UmK6LG46GwM6Z54XXkmadeRnu0zIQpYy9ja0RXcpMn+DEK5OFhc/A1EfCz0nx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250519082042.742926976@linutronix.de> <20250519083026.533486349@linutronix.de>
-In-Reply-To: <20250519083026.533486349@linutronix.de>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 13 Jun 2025 19:44:02 -0700
-X-Gm-Features: AX0GCFvPx10G5uykSJcgREAWzXpCFlb93ccf244qqpPfz4iEKngJswaZ55LDR8k
-Message-ID: <CANDhNCrMBaHhyrr3=kq=nyAp2iGhkJgKMqwO8+KeeYaZdbSa3A@mail.gmail.com>
-Subject: Re: [patch V2 15/26] timekeeping: Add AUX offset to struct timekeeper
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
-	Antoine Tenart <atenart@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 19, 2025 at 1:33=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> This offset will be used in the time getters of auxiliary clocks. It is
-> added to the "monotonic" clock readout.
->
-> As auxiliary clocks do not utilize the offset fields of the core time
-> keeper, this is just an alias for offs_tai, so that the cache line layout
-> stays the same.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  include/linux/timekeeper_internal.h |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> ---
-> --- a/include/linux/timekeeper_internal.h
-> +++ b/include/linux/timekeeper_internal.h
-> @@ -67,6 +67,7 @@ struct tk_read_base {
->   * @offs_real:                 Offset clock monotonic -> clock realtime
->   * @offs_boot:                 Offset clock monotonic -> clock boottime
->   * @offs_tai:                  Offset clock monotonic -> clock tai
-> + * @offs_aux:                  Offset clock monotonic -> clock AUX
->   * @coarse_nsec:               The nanoseconds part for coarse time gett=
-ers
->   * @id:                                The timekeeper ID
->   * @tkr_raw:                   The readout base structure for CLOCK_MONO=
-TONIC_RAW
-> @@ -139,7 +140,10 @@ struct timekeeper {
->         struct timespec64       wall_to_monotonic;
->         ktime_t                 offs_real;
->         ktime_t                 offs_boot;
-> -       ktime_t                 offs_tai;
-> +       union {
-> +               ktime_t         offs_tai;
-> +               ktime_t         offs_aux;
-> +       };
 
-Probably could use a clarifying comment similar to what you have in
-the commit message "auxiliary clocks do not utilize the offset fields
-of the core time keeper"
+This is based on top of the deferred unwind core patch series:
 
-Otherwise,
- Acked-by: John Stultz <jstultz@google.com>
+  https://lore.kernel.org/linux-trace-kernel/20250611005421.144238328@goodmis.org/
 
-thanks
--john
+Which is based on top of v6.16-rc1.
+
+This series implements the perf interface to use deferred user space stack
+tracing. This version fixes a few issues from v9 and addresses the comments
+from v8 where as v9 was just a rebase.
+
+Changes since v9: https://lore.kernel.org/linux-trace-kernel/20250611013421.040264741@goodmis.org/
+
+- Remove CONFIG_HAVE_PERF_CALLCHAIN_DEFERRED as it is never used.
+
+- Fixed up the synchronization of rcuwait for cpu deferred events.
+
+- Added more comments to describe how the unwind deferred works.
+
+- Tagged the cpu_events with __rcu and added rcu annotation.
+ 
+
+Josh Poimboeuf (5):
+      perf: Remove get_perf_callchain() init_nr argument
+      perf: Have get_perf_callchain() return NULL if crosstask and user are set
+      perf: Simplify get_perf_callchain() user logic
+      perf: Skip user unwind if the task is a kernel thread
+      perf: Support deferred user callchains
+
+Namhyung Kim (4):
+      perf tools: Minimal CALLCHAIN_DEFERRED support
+      perf record: Enable defer_callchain for user callchains
+      perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+      perf tools: Merge deferred user callchains
+
+Steven Rostedt (2):
+      perf: Use current->flags & PF_KTHREAD instead of current->mm == NULL
+      perf: Support deferred user callchains for per CPU events
+
+----
+ include/linux/perf_event.h                |  14 +-
+ include/uapi/linux/perf_event.h           |  19 +-
+ kernel/bpf/stackmap.c                     |   8 +-
+ kernel/events/callchain.c                 |  49 ++--
+ kernel/events/core.c                      | 420 +++++++++++++++++++++++++++++-
+ tools/include/uapi/linux/perf_event.h     |  19 +-
+ tools/lib/perf/include/perf/event.h       |   7 +
+ tools/perf/Documentation/perf-script.txt  |   5 +
+ tools/perf/builtin-script.c               |  92 +++++++
+ tools/perf/util/callchain.c               |  24 ++
+ tools/perf/util/callchain.h               |   3 +
+ tools/perf/util/event.c                   |   1 +
+ tools/perf/util/evlist.c                  |   1 +
+ tools/perf/util/evlist.h                  |   1 +
+ tools/perf/util/evsel.c                   |  39 +++
+ tools/perf/util/evsel.h                   |   1 +
+ tools/perf/util/machine.c                 |   1 +
+ tools/perf/util/perf_event_attr_fprintf.c |   1 +
+ tools/perf/util/sample.h                  |   3 +-
+ tools/perf/util/session.c                 |  78 ++++++
+ tools/perf/util/tool.c                    |   2 +
+ tools/perf/util/tool.h                    |   4 +-
+ 22 files changed, 757 insertions(+), 35 deletions(-)
 
