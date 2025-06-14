@@ -1,94 +1,169 @@
-Return-Path: <linux-kernel+bounces-686683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A36BAD9A7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:43:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF10AD9A8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 501D0168C0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C48189729C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44741E521E;
-	Sat, 14 Jun 2025 06:42:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF1124B26;
-	Sat, 14 Jun 2025 06:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D941E5219;
+	Sat, 14 Jun 2025 06:50:37 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A3A2AE99;
+	Sat, 14 Jun 2025 06:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749883378; cv=none; b=NvZIuMmgR1Rnn5SAYrVXEJghCiInOoZeDZ029JUmZfR4hnxFT1vLMTqOpExxfnRnq0c8VbYJPzu2hNe/lAoTsFmJkFwF6vgoxAsn9oUHpc+G2HHJb9GnkPqpkapzpldyaR9ib9NGjq1MO3gZNsQshTDx/ZNVX5ukI6lxYiyz3vk=
+	t=1749883837; cv=none; b=Cb7IGHkvfvMhBJgbFTYCrFnQUw5GDb6N8MsTb1wU/pVNwQ14ZC5g08pNVJa6jElhgWmwpZeNi0/plraQ9glSg5e6wiN/pjJjrHSLcBwi5hp7O313WG0cF767tqQfcNzfGQOMf7z7jFFJeV37fAxS1dErf81S9AwdVKBpoZJ/yWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749883378; c=relaxed/simple;
-	bh=4YqGbpV/g5u5p8esWq4nz+FafNFM8aKGbIiewSNmH5Q=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lKs5KoL20sEevC1+Mb4dOCVmIQcqW2RSl2PWi3AyhZFlcXj0NplTYY8JcKU5GtkbxWcKLGD1zLKZBgItDU0nhnRgzOJQcT9AEHP+k7lvtEV5hH3QZ7DjTcU/9SX0inth9fU+7Y9SLK2XN5NiKSVrQjtC8lcb5QRve/vxNVFHvVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bK6CM2XtfzKHN13;
-	Sat, 14 Jun 2025 14:42:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B1FAC1A12F8;
-	Sat, 14 Jun 2025 14:42:53 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXvGDsGU1oqPbiPQ--.43722S3;
-	Sat, 14 Jun 2025 14:42:53 +0800 (CST)
-Subject: Re: [PATCH] md/raid5: unset WQ_CPU_INTENSIVE for raid5 unbound
- workqueue
-To: Ryo Takakura <ryotkkr98@gmail.com>, song@kernel.org, tj@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250601013702.64640-1-ryotkkr98@gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f8b3e248-4d37-9828-032b-33aa7b0f7724@huaweicloud.com>
-Date: Sat, 14 Jun 2025 14:42:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749883837; c=relaxed/simple;
+	bh=b+ZNK9H+MGbconJey2jD2y8seac9nVP4q217lbRq7W4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qa0fvy9ozrM7TPxTmEz5WRZ62e/6CGsN/9CzTrRki1iLSpgC3+kpV6PIrvlb5GwV9uOmZUxEhpqihcE55u+G/O+rhhftav7Gb88WL2rceEIrJo6IBwMyGEM8HLm432hrvvz/Be9XS7l/SJSJ5lTLkaqUONTIwbwNHYeM9zwxn2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bK6Cz2hnVz9t0K;
+	Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id nzJiJVWnwwT0; Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bK6Cz1jFTz9t0H;
+	Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 353E18B77B;
+	Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id rpo6pN8d7mWZ; Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BCE058B769;
+	Sat, 14 Jun 2025 08:43:22 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH v3 0/4] ALSA: pcm: Convert SNDRV_PCM_IOCTL_SYNC_PTR to user_access_begin/user_access_end()
+Date: Sat, 14 Jun 2025 08:43:13 +0200
+Message-ID: <cover.1749883041.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250601013702.64640-1-ryotkkr98@gmail.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749883393; l=4713; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=b+ZNK9H+MGbconJey2jD2y8seac9nVP4q217lbRq7W4=; b=LKyYrK0DlNR6aTIHoEmvIpc7BaxFRlaNMYY0kH7LUAkeVzoBPw3szJ7OXhhUT2gm5Q8dXeypn 3cQAAhKIJHODOeBk8pkfFhNys5NCZKJe05ts30wOinxe70bTLJqipIi
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXvGDsGU1oqPbiPQ--.43722S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYx7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
-	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxv
-	r21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
-	VFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-ÔÚ 2025/06/01 9:37, Ryo Takakura Ð´µÀ:
-> When specified with WQ_CPU_INTENSIVE, the workqueue doesn't
-> participate in concurrency management. This behaviour is already
-> accounted for WQ_UNBOUND workqueues given that they are assigned
-> to their own worker threads.
-> 
-> Unset WQ_CPU_INTENSIVE as the use of flag has no effect when
-> used with WQ_UNBOUND.
-> 
-> Signed-off-by: Ryo Takakura<ryotkkr98@gmail.com>
-> ---
+This series converts all variants of SNDRV_PCM_IOCTL_SYNC_PTR to 
+user_access_begin/user_access_end() in order to reduce the CPU load
+measured in function snd_pcm_ioctl.
 
-Applied to md-6.16
+With the current implementation, "perf top" reports a high load in
+snd_pcm_iotcl(). Most calls to that function are SNDRV_PCM_IOCTL_SYNC_PTR.
 
-Thanks
-Kuai
+    14.20%  test_perf           [.] engine_main
+==> 12.86%  [kernel]            [k] snd_pcm_ioctl
+    11.91%  [kernel]            [k] finish_task_switch.isra.0
+     4.15%  [kernel]            [k] snd_pcm_group_unlock_irq.part.0
+     4.07%  libc.so.6           [.] __ioctl_time64
+     3.58%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin_generic
+     3.37%  [kernel]            [k] sys_ioctl
+     2.96%  libasound.so.2.0.0  [.] snd_pcm_hw_avail_update
+     2.73%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin
+     2.58%  [kernel]            [k] system_call_exception
+     1.93%  libasound.so.2.0.0  [.] sync_ptr1
+     1.85%  libasound.so.2.0.0  [.] snd_pcm_unlock
+     1.84%  libasound.so.2.0.0  [.] snd_pcm_mmap_begin
+     1.83%  libasound.so.2.0.0  [.] bad_pcm_state
+     1.68%  libasound.so.2.0.0  [.] snd_pcm_mmap_avail
+     1.67%  libasound.so.2.0.0  [.] snd_pcm_avail_update
+
+A tentative was done with going via intermediaire structs on stack to
+replace the multiple get_user() and put_user() with copy_from_user()
+and copy_to_user(). But copy_from_user() calls _copy_from_user() and
+copy_to_user() calls _copy_to_user(). Both then call __copy_tofrom_user().
+In total it is 16.4% so it is worse than before.
+
+    14.47%  test_perf           [.] engine_main
+    12.00%  [kernel]            [k] finish_task_switch.isra.0
+==>  8.37%  [kernel]            [k] snd_pcm_ioctl
+     5.44%  libc.so.6           [.] __ioctl_time64
+     5.03%  [kernel]            [k] snd_pcm_group_unlock_irq.part.0
+==>  4.86%  [kernel]            [k] __copy_tofrom_user
+     4.62%  [kernel]            [k] sys_ioctl
+     3.22%  [kernel]            [k] system_call_exception
+     2.42%  libasound.so.2.0.0  [.] snd_pcm_mmap_begin
+     2.31%  [kernel]            [k] fdget
+     2.23%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin_generic
+     2.19%  [kernel]            [k] syscall_exit_prepare
+     1.92%  libasound.so.2.0.0  [.] snd_pcm_mmap_avail
+     1.86%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin
+     1.68%  libasound.so.2.0.0  [.] snd_pcm_hw_avail_update
+==>  1.67%  [kernel]            [k] _copy_from_user
+     1.66%  libasound.so.2.0.0  [.] bad_pcm_state
+==>  1.53%  [kernel]            [k] _copy_to_user
+     1.40%  libasound.so.2.0.0  [.] sync_ptr1
+
+With this series which uses unsafe_put_user() and unsafe_get_user(),
+the load is significantly reduced:
+
+    17.46%  test_perf           [.] engine_main
+     9.14%  [kernel]            [k] finish_task_switch.isra.0
+==>  4.92%  [kernel]            [k] snd_pcm_ioctl
+     3.99%  [kernel]            [k] snd_pcm_group_unlock_irq.part.0
+     3.71%  libc.so.6           [.] __ioctl_time64
+     3.61%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin_generic
+     2.72%  libasound.so.2.0.0  [.] sync_ptr1
+     2.65%  [kernel]            [k] system_call_exception
+     2.46%  [kernel]            [k] sys_ioctl
+     2.43%  [kernel]            [k] __rseq_handle_notify_resume
+     2.34%  [kernel]            [k] do_epoll_wait
+     2.30%  libasound.so.2.0.0  [.] __snd_pcm_mmap_commit
+     2.14%  libasound.so.2.0.0  [.] __snd_pcm_avail
+     2.04%  libasound.so.2.0.0  [.] snd_pcm_hw_avail_update
+     1.89%  libasound.so.2.0.0  [.] snd_pcm_lock
+     1.84%  libasound.so.2.0.0  [.] snd_pcm_mmap_avail
+     1.76%  libasound.so.2.0.0  [.] __snd_pcm_avail_update
+     1.61%  libasound.so.2.0.0  [.] bad_pcm_state
+     1.60%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin
+     1.49%  libasound.so.2.0.0  [.] query_status_data
+
+Since v2:
+- Fix macros to skip user_read_access_end() when user_read_access_begin() failed
+- Fix some tabulations for properly aligning backslashes
+
+Since RFC:
+- Added a cover letter to summarize some of the measurements done on and around the RFC
+- Fixed relevant checkpatch feedback
+- Split last patch in two
+
+Christophe Leroy (4):
+  ALSA: pcm: refactor copy from/to user in SNDRV_PCM_IOCTL_SYNC_PTR
+  ALSA: pcm: Convert SNDRV_PCM_IOCTL_SYNC_PTR to
+    user_access_begin/user_access_end()
+  ALSA: pcm: Replace [audio_]tstamp_[n]sec by struct __snd_timespec in
+    struct snd_pcm_mmap_status32
+  ALSA: pcm: Convert snd_pcm_sync_ptr() to
+    user_access_begin/user_access_end()
+
+ sound/core/pcm_compat.c | 14 +-----
+ sound/core/pcm_native.c | 98 ++++++++++++++++++++++++++---------------
+ 2 files changed, 64 insertions(+), 48 deletions(-)
+
+-- 
+2.47.0
 
 
