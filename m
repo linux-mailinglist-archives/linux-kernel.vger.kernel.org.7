@@ -1,61 +1,96 @@
-Return-Path: <linux-kernel+bounces-686787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858F0AD9BCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 11:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A86A9AD9BC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 11:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B53C17C4C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 09:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D2317C7D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 09:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DF92580E2;
-	Sat, 14 Jun 2025 09:31:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B983D298CA6;
+	Sat, 14 Jun 2025 09:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+k6FHmW"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13C3155CBD;
-	Sat, 14 Jun 2025 09:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C00F50F;
+	Sat, 14 Jun 2025 09:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749893509; cv=none; b=GTO9hPFcCoCQEE7Fwd2rpEiJw00yLQIaOobCdoYvvZ2Dk240C9roxiIdwZCNvKHjqLzdHFrn4tx/UrzvuFIhRujSSgySX+rAQu2EiEjhg7NBhtkM1u5o0Kk0/zyxflV6mbPN5Gu2a6p9b5qpr0yyQqHpU1HrW8v5G282sLLtVQs=
+	t=1749893242; cv=none; b=fLO3QJWRzmNYrFbAJ6f/1OC8U2/Jjz7l0VJtgfZKFIX0x8Ev/m/g0P+YQU/aRtZ0bTFB6NNyiyNmmkqRReSX5pAovA3QYdJhzv45jZVZhH6micrEbXXP7GApZuq5MHyViF6lQ4o7Ho8Z8qSLyHsUpSJNuq/IAcTpxMBCYzhgTCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749893509; c=relaxed/simple;
-	bh=m157EbdqaysdWSxG7epQ+w2dupFLoeJrQFDqv9WR4ww=;
+	s=arc-20240116; t=1749893242; c=relaxed/simple;
+	bh=jqiRf5jpsYfPahTWJgkrFQNqWCksHEG0UZ4QVuvztrQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s8YK7mzduUhILdOnSr98HDEwSI/mVOozIbJ6IEM9o/ulp4VcHCmnCZbCKECczACbVL2y0WQg+tg5+DFx5dg0w3cVMWtwob9Td3MlkPj0d9c0MHCtqIKfoHL6RO39RQZC19MuDJa48+zAlm65kGsXBQfl5sJQrckwEUPQi6lwWCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bK9y95WlrzYQvP4;
-	Sat, 14 Jun 2025 17:31:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B95C51A17A7;
-	Sat, 14 Jun 2025 17:31:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAni19zQU1oHxfvPQ--.9099S9;
-	Sat, 14 Jun 2025 17:31:44 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: ming.lei@redhat.com,
-	yukuai3@huawei.com,
-	tj@kernel.org,
-	josef@toxicpanda.com,
-	axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	cgroups@vger.kernel.org,
+	 MIME-Version; b=j6vs80v0EcNQPp4BElSgHFGm+2mMuzHxE8zTlq/7moN30zl3ERAtgblpY8n1F31jTfjqO9Yqdcrk6rpB0udgXq8HphiTWcJk0HOVChUT7Ay4oX3/U1ZqKLjvz5Yy5b2rOErTB1mR14tzX+uy1pBAWkXWhGGzQPPLT5uFkKhzKzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+k6FHmW; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4531898b208so3362235e9.3;
+        Sat, 14 Jun 2025 02:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749893238; x=1750498038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TUaqaUgH0UpGeWeQjj9qkPhsCQex5dp5zI7Y8+I2rfg=;
+        b=A+k6FHmWfO89Sb5f8z6C9E8rhhRFYs55TecOQRPuyQXwAnUmsma5QkkmFh8MxdNJLg
+         pwupPv8WyVjige0F1GRlGHORrz2pGUeNBPLb9GZwOBpgc6HeU5jMEGTAkyvdyxBW/oGl
+         fgKNDuomfN2z2JNmPFS62yQeEClyAHFgVtW3CWMDxA1mxX4+7+X/FZQMMmYgY5y6AVf6
+         wN72jNzm4Fr9jfc/K/wPm+EAixPyGaxTQtSEVKfs3LpMnmU4igkkE5EEVDHfZq7KTxsF
+         BmrCdbQiKM3uqsShavsnep6DpHTwCy/m/LBwF7bVaP5q24s2fH0Nk0DpoKtFJftg+bhA
+         rRtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749893238; x=1750498038;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TUaqaUgH0UpGeWeQjj9qkPhsCQex5dp5zI7Y8+I2rfg=;
+        b=kVCn5E1wMJd7MLEILiYmGeaSrtOLEnZdaDDgMaaOi+y6x+iVtluMidgmxJ9vyuOENI
+         dlP3PFg0/jz8w3wzGTkOGCH/vrNjyO1I/4FpvhUx6tyuNaYzA1oj2CyvCcwExvT3YD5Z
+         GTgtFidQrKFPFG8xMreYk32PV5KhtuyEJcgf+SMNZ3hpFokzq77seOfrhzBtRuv+P+VE
+         FtjlEDAPJgh8Kc/05cKu/MQ6u5tkrD+x3H95GxdkM6hXWnHLeS7O8UGcdsGBn42aFGG/
+         Nutroi2DK1s5oqWZT4O7X2JhrAdzex10cGbEV7txzfQr5xETBSRv68ldX4Y7V3d3MHn+
+         V+tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMGHGlbMmy9Deiinv9tNmJMm1hMGf3hTUKEmjb1ymcYlUTPn0yosRgCnLHiJ+C+f+faXh3aCNU8tA=@vger.kernel.org, AJvYcCUNRd62HDWbr5XpExIRHVewxwTiw/pe7IRE11UYKo2y3vWfGv21t9cVh0OrsSojONGIgdzcWWUx68ntJSkp@vger.kernel.org, AJvYcCWlG5BLQzH3y8eR0EU8S/dF0E9o4zMrqWrSgNFNLbSwXi93WFuZwNEK4/Fmcqc54XULRL8g4Og2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxndJERXaVuXLuJKbffRHBYGOye9idVxBbOYiEV2JRw3aRpDB21
+	NNMO4zbHwLjBpMByHxJeFEivi31J+M/85PVLxPyh98AjMJUu+dO8KFWb
+X-Gm-Gg: ASbGncuGsac1gH35SlxHvG4ThtMbxXYERe/Bbwb2JgpxAHCE37TL/OiMlmM/wpJHfER
+	iFRweKe+UFTfyUzMuE341/6/1xFFawsIGBEW086jPZCiBuPj1HV+WfOlkcfB0Wzmw4VfNyxgOQk
+	D7KSdOrb/LjqOBb2O8EYdNcJvP7OZ8hbJRHC8ABmpuuWh9o+Wtm19K/Rtn+vxu99KXlE/N45pf4
+	E9g0zSZPVjmWYCJIkCDyrye7saLzWlZGwE/tfl/go2JnObpe5kdQCbks/lAnmkwrqG583g6n3nc
+	tsXLuylUzoWaQUoZ4XlCZEu87H/GrIftrzGCi58Zgkf2l5i6JAdGRvZrqg1+FErGgum6CYaFF4T
+	76k/7LzmrTo0WF4NLidXLfJc=
+X-Google-Smtp-Source: AGHT+IEfK2VfdfII4a8PmobQm62IARGV9PWo2PsX1rgO8gX9H/p2lHjac8gP+KLtjqM/7XwoJuYptg==
+X-Received: by 2002:a05:600c:3494:b0:442:fac9:5e2f with SMTP id 5b1f17b1804b1-4533ca4b453mr10177735e9.2.1749893238049;
+        Sat, 14 Jun 2025 02:27:18 -0700 (PDT)
+Received: from localhost.localdomain ([154.182.223.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532ddd29ffsm77545825e9.0.2025.06.14.02.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Jun 2025 02:27:17 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+To: corbet@lwn.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: abdelrahmanfekry375@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH RFC v2 5/5] blk-mq-sched: support request batch dispatching for sq elevator
-Date: Sat, 14 Jun 2025 17:25:28 +0800
-Message-Id: <20250614092528.2352680-6-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250614092528.2352680-1-yukuai1@huaweicloud.com>
-References: <20250614092528.2352680-1-yukuai1@huaweicloud.com>
+	netdev@vger.kernel.org,
+	skhan@linuxfoundation.com
+Subject: [PATCH v2 1/2] docs: net: sysctl documentation cleanup
+Date: Sat, 14 Jun 2025 12:25:42 +0300
+Message-Id: <20250614092542.66138-1-abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250612162954.55843-2-abdelrahmanfekry375@gmail.com>
+References: <20250612162954.55843-2-abdelrahmanfekry375@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,157 +98,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAni19zQU1oHxfvPQ--.9099S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF45Cr43KrW3tFW3Zr1DJrb_yoW5ur45pF
-	4rGa1YkryqqFnFqFy3Aw47J3W5J3yI9r9rWrW3Kr43JFs7Xrsxt3WrJa4UJF4xJr4rCFsr
-	ur4DWFyDuF1Iva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-	WIevJa73UjIFyTuYvjfUo73vUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+Changes in v2:
+- Deleted space before colon for consistency
+- Standardized more boolean representation (0/1 with enabled/disabled)
 
-Before this patch, each context will hold a global lock to dispatch one
-request at a time, which introduce intense lock competition:
-
-lock
-ops.dispatch_request
-unlock
-
-Hence support dispatch a batch of requests while holding the lock to
-reduce lock contention.
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
 ---
- block/blk-mq-sched.c | 55 ++++++++++++++++++++++++++++++++++++++++----
- block/blk-mq.h       | 21 +++++++++++++++++
- 2 files changed, 72 insertions(+), 4 deletions(-)
+ Documentation/networking/ip-sysctl.rst | 47 ++++++++++++++++++++------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index 990d0f19594a..d7cb88c8e8c7 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -101,6 +101,49 @@ static bool elevator_can_dispatch(struct sched_dispatch_ctx *ctx)
- 	return true;
- }
+diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
+index 0f1251cce314..68778532faa5 100644
+--- a/Documentation/networking/ip-sysctl.rst
++++ b/Documentation/networking/ip-sysctl.rst
+@@ -8,14 +8,16 @@ IP Sysctl
+ ==============================
  
-+static void elevator_dispatch_requests(struct sched_dispatch_ctx *ctx)
-+{
-+	struct request *rq;
-+	int budget_token[BUDGET_TOKEN_BATCH];
-+	int count;
-+	int i;
-+
-+	while (true) {
-+		if (!elevator_can_dispatch(ctx))
-+			return;
-+
-+		count = blk_mq_get_dispatch_budgets(ctx->q, budget_token);
-+		if (count <= 0)
-+			return;
-+
-+		elevator_lock(ctx->e);
-+		for (i = 0; i < count; ++i) {
-+			rq = ctx->e->type->ops.dispatch_request(ctx->hctx);
-+			if (!rq) {
-+				ctx->run_queue = true;
-+				goto err_free_budgets;
-+			}
-+
-+			blk_mq_set_rq_budget_token(rq, budget_token[i]);
-+			list_add_tail(&rq->queuelist, &ctx->rq_list);
-+			ctx->count++;
-+			if (rq->mq_hctx != ctx->hctx)
-+				ctx->multi_hctxs = true;
-+
-+			if (!blk_mq_get_driver_tag(rq)) {
-+				i++;
-+				goto err_free_budgets;
-+			}
-+		}
-+		elevator_unlock(ctx->e);
-+	}
-+
-+err_free_budgets:
-+	elevator_unlock(ctx->e);
-+	for (; i < count; ++i)
-+		blk_mq_put_dispatch_budget(ctx->q, budget_token[i]);
-+}
-+
- static bool elevator_dispatch_one_request(struct sched_dispatch_ctx *ctx)
- {
- 	struct request *rq;
-@@ -202,10 +245,14 @@ static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
- 	else
- 		max_dispatch = hctx->queue->nr_requests;
+ ip_forward - BOOLEAN
+-	- 0 - disabled (default)
+-	- not 0 - enabled
++	- 0 (disabled)
++	- not 0 (enabled)
  
--	do {
--		if (!elevator_dispatch_one_request(&ctx))
--			break;
--	} while (ctx.count < max_dispatch);
-+	if (!hctx->dispatch_busy && blk_queue_sq_sched(ctx.q))
-+		elevator_dispatch_requests(&ctx);
-+	else {
-+		do {
-+			if (!elevator_dispatch_one_request(&ctx))
-+				break;
-+		} while (ctx.count < max_dispatch);
-+	}
+ 	Forward Packets between interfaces.
  
- 	return elevator_finish_dispatch(&ctx);
- }
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index affb2e14b56e..450c16a07841 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -37,6 +37,7 @@ enum {
- };
+ 	This variable is special, its change resets all configuration
+ 	parameters to their default state (RFC1122 for hosts, RFC1812
+ 	for routers)
++
++	Default: 0 (disabled)
  
- #define BLK_MQ_CPU_WORK_BATCH	(8)
-+#define BUDGET_TOKEN_BATCH	(8)
+ ip_default_ttl - INTEGER
+ 	Default value of TTL field (Time To Live) for outgoing (but not
+@@ -75,7 +77,7 @@ fwmark_reflect - BOOLEAN
+ 	If unset, these packets have a fwmark of zero. If set, they have the
+ 	fwmark of the packet they are replying to.
  
- typedef unsigned int __bitwise blk_insert_t;
- #define BLK_MQ_INSERT_AT_HEAD		((__force blk_insert_t)0x01)
-@@ -262,6 +263,26 @@ static inline int blk_mq_get_dispatch_budget(struct request_queue *q)
- 	return 0;
- }
+-	Default: 0
++	Default: 0 (disabled)
  
-+static inline int blk_mq_get_dispatch_budgets(struct request_queue *q,
-+					      int *budget_token)
-+{
-+	int count = 0;
+ fib_multipath_use_neigh - BOOLEAN
+ 	Use status of existing neighbor entry when determining nexthop for
+@@ -368,7 +370,7 @@ tcp_autocorking - BOOLEAN
+ 	queue. Applications can still use TCP_CORK for optimal behavior
+ 	when they know how/when to uncork their sockets.
+ 
+-	Default : 1
++	Default: 1 (enabled)
+ 
+ tcp_available_congestion_control - STRING
+ 	Shows the available congestion control choices that are registered.
+@@ -407,6 +409,12 @@ tcp_congestion_control - STRING
+ 
+ tcp_dsack - BOOLEAN
+ 	Allows TCP to send "duplicate" SACKs.
 +
-+	while (count < BUDGET_TOKEN_BATCH) {
-+		int token = 0;
++	Possible values:
++		- 0 (disabled)
++		- 1 (enabled)
 +
-+		if (q->mq_ops->get_budget)
-+			token = q->mq_ops->get_budget(q);
++	Default: 1 (enabled)
+ 
+ tcp_early_retrans - INTEGER
+ 	Tail loss probe (TLP) converts RTOs occurring due to tail
+@@ -623,6 +631,8 @@ tcp_no_metrics_save - BOOLEAN
+ 	increases overall performance, but may sometimes cause performance
+ 	degradation.  If set, TCP will not cache metrics on closing
+ 	connections.
 +
-+		if (token < 0)
-+			return count;
++	Default: 0 (disabled)
+ 
+ tcp_no_ssthresh_metrics_save - BOOLEAN
+ 	Controls whether TCP saves ssthresh metrics in the route cache.
+@@ -684,6 +694,8 @@ tcp_retrans_collapse - BOOLEAN
+ 	Bug-to-bug compatibility with some broken printers.
+ 	On retransmit try to send bigger packets to work around bugs in
+ 	certain TCP stacks.
 +
-+		budget_token[count++] = token;
-+	}
++	Default: 1 (enabled)
+ 
+ tcp_retries1 - INTEGER
+ 	This value influences the time, after which TCP decides, that
+@@ -739,6 +751,8 @@ tcp_rmem - vector of 3 INTEGERs: min, default, max
+ 
+ tcp_sack - BOOLEAN
+ 	Enable select acknowledgments (SACKS).
 +
-+	return count;
-+}
++	Default: 1 (enabled)
+ 
+ tcp_comp_sack_delay_ns - LONG INTEGER
+ 	TCP tries to reduce number of SACK sent, using a timer
+@@ -766,7 +780,7 @@ tcp_backlog_ack_defer - BOOLEAN
+ 	one ACK for the whole queue. This helps to avoid potential
+ 	long latencies at end of a TCP socket syscall.
+ 
+-	Default : true
++	Default: 1 (enabled)
+ 
+ tcp_slow_start_after_idle - BOOLEAN
+ 	If set, provide RFC2861 behavior and time out the congestion
+@@ -781,7 +795,7 @@ tcp_stdurg - BOOLEAN
+ 	Most hosts use the older BSD interpretation, so if you turn this on
+ 	Linux might not communicate correctly with them.
+ 
+-	Default: FALSE
++	Default: 0 (disabled)
+ 
+ tcp_synack_retries - INTEGER
+ 	Number of times SYNACKs for a passive TCP connection attempt will
+@@ -1018,6 +1032,10 @@ tcp_tw_reuse_delay - UNSIGNED INTEGER
+ 
+ tcp_window_scaling - BOOLEAN
+ 	Enable window scaling as defined in RFC1323.
++	- 0 (disabled)
++	- 1 (enabled)
 +
- static inline void blk_mq_set_rq_budget_token(struct request *rq, int token)
- {
- 	if (token < 0)
++	Default: 1 (enabled)
+ 
+ tcp_shrink_window - BOOLEAN
+ 	This changes how the TCP receive window is calculated.
+@@ -1160,7 +1178,7 @@ tcp_plb_enabled - BOOLEAN
+ 	congestion measure (e.g. ce_ratio). PLB needs a congestion measure to
+ 	make repathing decisions.
+ 
+-	Default: FALSE
++	Default: 0 (disabled)
+ 
+ tcp_plb_idle_rehash_rounds - INTEGER
+ 	Number of consecutive congested rounds (RTT) seen after which
+@@ -1352,7 +1370,7 @@ cipso_rbm_optfmt - BOOLEAN
+ 
+ 	Default: 0
+ 
+-cipso_rbm_structvalid - BOOLEAN
++cipso_rbm_strictvalid - BOOLEAN
+ 	If set, do a very strict check of the CIPSO option when
+ 	ip_options_compile() is called.  If unset, relax the checks done during
+ 	ip_options_compile().  Either way is "safe" as errors are caught else
+@@ -1543,7 +1561,7 @@ icmp_ignore_bogus_error_responses - BOOLEAN
+ 	If this is set to TRUE, the kernel will not give such warnings, which
+ 	will avoid log file clutter.
+ 
+-	Default: 1
++	Default: 1 (enabled)
+ 
+ icmp_errors_use_inbound_ifaddr - BOOLEAN
+ 
+@@ -1560,7 +1578,7 @@ icmp_errors_use_inbound_ifaddr - BOOLEAN
+ 	then the primary address of the first non-loopback interface that
+ 	has one will be used regardless of this setting.
+ 
+-	Default: 0
++	Default: 0 (disabled)
+ 
+ igmp_max_memberships - INTEGER
+ 	Change the maximum number of multicast groups we can subscribe to.
+@@ -1933,10 +1951,15 @@ mcast_resolicit - INTEGER
+ 
+ disable_policy - BOOLEAN
+ 	Disable IPSEC policy (SPD) for this interface
++
++	Default: 0
++
+ 
+ disable_xfrm - BOOLEAN
+ 	Disable IPSEC encryption on this interface, whatever the policy
+ 
++	Default: 0
++
+ igmpv2_unsolicited_report_interval - INTEGER
+ 	The interval in milliseconds in which the next unsolicited
+ 	IGMPv1 or IGMPv2 report retransmit will take place.
+@@ -1951,11 +1974,15 @@ igmpv3_unsolicited_report_interval - INTEGER
+ 
+ ignore_routes_with_linkdown - BOOLEAN
+         Ignore routes whose link is down when performing a FIB lookup.
++
++        Default: 0 (disabled)
+ 
+ promote_secondaries - BOOLEAN
+ 	When a primary IP address is removed from this interface
+ 	promote a corresponding secondary IP address instead of
+ 	removing all the corresponding secondary IP addresses.
++
++	Default: 0 (disabled)
+ 
+ drop_unicast_in_l2_multicast - BOOLEAN
+ 	Drop any unicast IP packets that are received in link-layer
 -- 
-2.39.2
+2.25.1
 
 
