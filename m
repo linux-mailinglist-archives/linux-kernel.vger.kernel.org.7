@@ -1,162 +1,197 @@
-Return-Path: <linux-kernel+bounces-687070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AA0AD9F94
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 21:54:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D1DAD9F9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 22:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 920733AAEBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 19:54:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D5CD174F52
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2CA2E6D37;
-	Sat, 14 Jun 2025 19:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FFD2E6D19;
+	Sat, 14 Jun 2025 20:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nAFi5kK1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="hFx2L96U"
+Received: from mx4.sberdevices.ru (mx5.sberdevices.ru [95.181.183.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F0D148830
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 19:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20D61BD9C1;
+	Sat, 14 Jun 2025 20:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.181.183.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749930871; cv=none; b=Is2gixqPKmCkJ0dkBZPAC3llEnXx0Apgnq+Y7nfmYySDCGFpozQAQU1DKPJfD4+U/RDnLivwNacFYykKFxYRivbv/mJSTUT0ZqEX5JSE/25QlwglWTJqYmJMAp+JwOwe+ysl4fhXuR9jqHJN0uL5vk6/WMixehytP4RR8CISdfQ=
+	t=1749931484; cv=none; b=n+sEtdN9kUcSl3Y1aFX9wWI+L3LPgRmwxfEqbIrEwjeR2JvKjATfNdBzso7vYpXOdUuyAU7qFfLSdGcboXgbWOG6gEMzSvdR7/dbd999w2tvIcd1MidJ28NkgBOaTW1xcnuVeAzQkM7leJhWIQt1Tp1gjTfim9f4PyJqIMzWyg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749930871; c=relaxed/simple;
-	bh=dkojOmJxr5zlSsVyIjL1aFGE71TCfhlwwA0JPuvDwxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/lO9KZE7jgwWym8guj84HiNApBV8NsamBjOJq/W1uyl82SFfhehG3qABsOsbIj5M7iIT2F5CtV4kWOXiAaoojE/tMv1Gen5/l7K+gKS+A5acC4aEkzPSToxTM5Xeyr2/1K8aSkEEBy+gSHYFDX/Xwrcd9xFxfmkZMvUG4oZ2Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nAFi5kK1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55EFmSOE007285
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 19:54:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cxFuTlLUJL74lCTydZFM1J9TTXFA3EkUjAUJE8RBdOg=; b=nAFi5kK1gJ4y9AJk
-	hV6AGURdqH0M/uCSTEN5aLxDIDacO3Ffc3bzhvjRQQt454rLOIGYBTW56DYu5iRP
-	m3uS/flgBC8IS2XJZYc+t0H0DUgLMiSHIuwdrd/2pt83tXjRrUVWT6z3GR8TkZp/
-	9ZvzqN2KsBEa2pt/Z1Je3P1Ahl8s4gq75GVghywJlfoNw2KgOucz1FFucD9/bOFZ
-	BtUEB53y5Jk8S3Bd/0M9T3e19O4Udu1bxoUvgmVXsJRq8NNMdeRZ8i+LKi39A5eZ
-	RSNArIVSvXBi3tXI+g5vAlZG/AHbwY+KaBQfGc8RW4o9HC1tH2T/O40FqitYqw0u
-	WAxeVA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791fsrxrm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 19:54:28 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a6f59d5ac6so6259811cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 12:54:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749930848; x=1750535648;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cxFuTlLUJL74lCTydZFM1J9TTXFA3EkUjAUJE8RBdOg=;
-        b=FSZINhzW/OMnHzlI8jsHoZPpISnKHE1uhsaTp3c2gUpTCllIc6gA/NtIQuAovFk5aN
-         KYOosXDYyCoXBeFlBxcZWB3R93o2q/EgA8Kjrg4WBL+xi2jFEjTbhoacE6Stm3pIX2eC
-         iUaigc2dR6P4UYJfSOQWXRLDNxV690KcC9e/s6ME6PzqlDrolJ2xJbKMlaHDZzZnBHYk
-         s7IxHh+h9qvjARzx8NHMuyV7bjAoiOjClS1jX/LBXTPfXkzqrwQxDxtJ88Gi3ZYjpQKz
-         QR43Q7yoGv4B/g/esmzNZekLVbE36ttNuLe0EXRmGewKC6/pBV3b4+yiYb4SAB/Db7NL
-         RIbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuL7XQoG8XmwkBhT7dVULJzGp90VrsoOjQQ2p+tni9NXDAxOt+85EmNIk/wIcRsG9Ymw9kUHgCDcSYwDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaicOKHDUAca3sqD151yaPMzE4rPPD8fZCeX37Oj4SuzDVWoCf
-	33u0bdtCvv9of1dWITralNtgpo6ALS+c+cB0fPKS4U9SgOw+vDp6fECifbOy5DRMeO7T8sMdoc6
-	EcQ/3UtI9v2Q9eNnQgnDzagSi/fLd4LdO4g9KS91unFCr+zMHSia4XULnovVVb+MvGwOnqgun+A
-	k=
-X-Gm-Gg: ASbGncth6Mrbj1OQBLaq9ByKLmCVGrHaBqNtd3PnCNprKR66D78qEogH6dWzA0dXh86
-	ltDQQFbAuWigW5pSqtiOvYpi5a3KetJ+UGl7AE7p1rQXEEkcA24+/iNd253oft3Vw2xXZEKFQNe
-	58JG84JFKisxleNwFFjAGYYRmi1MvwcSCtGoS8n2ks1c/vNaDNiYLeQJyBsC+eWaxnj5C6tFvfS
-	SdOWq4Jvco6s8/pUxRczj/VX5CcOHSVOAlkOlufi1gfJCpRXF5xgR7dhsYKMWeBIspvNUrbqxsi
-	sEpg4JoPQL1mPKdWZenMPEOcTC2C0znetI7rLnDFJa3jaADbedwbvIa3ZZtBZ+NhAawdmKKjOx7
-	sat8=
-X-Received: by 2002:a05:622a:199e:b0:4a6:fd26:45de with SMTP id d75a77b69052e-4a73c5c1cbfmr23618591cf.12.1749930848317;
-        Sat, 14 Jun 2025 12:54:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpYLl1OjQ8NY63WwPuMd6FHnvexEg1pNbcnCIaqlxdYhOPswPO6imf7MUgR6eBjDMKpzS3Pw==
-X-Received: by 2002:a05:622a:199e:b0:4a6:fd26:45de with SMTP id d75a77b69052e-4a73c5c1cbfmr23618431cf.12.1749930847930;
-        Sat, 14 Jun 2025 12:54:07 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec88feb23sm355867266b.96.2025.06.14.12.54.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Jun 2025 12:54:07 -0700 (PDT)
-Message-ID: <fbedfcb3-a326-4357-8d10-3be925e5df8f@oss.qualcomm.com>
-Date: Sat, 14 Jun 2025 21:54:05 +0200
+	s=arc-20240116; t=1749931484; c=relaxed/simple;
+	bh=xDyiDkqI+6Jh4dg7snH1KiCvSL7d1xKQq1jnCxP4SlU=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=UtnpzzFrw+9LG5ZVKBKQbONuUHFY3+uZ/CS+9puQYtfd3MRJL5kN34l74ecGoVDPCXtO45K7PThh2g7CvvIGJNSlRPAJGttd2AZDeuMS6WTmXfoP1AtG2Rsvqbdw342efaXEu8Uk7YGZtRCKSpfOyJ3HlGGEBIP0JHu7INJb7sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=hFx2L96U; arc=none smtp.client-ip=95.181.183.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-antispam-ksmg-gc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx4.sberdevices.ru (Postfix) with ESMTP id 1C037240003;
+	Sat, 14 Jun 2025 22:58:32 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru 1C037240003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=post; t=1749931112;
+	bh=UG4CF9q1j/oRpKNMhpMazbWB8ZDUb6oPscWBiNgiuCI=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
+	b=hFx2L96UfC6dRiBb2ILhrWl39vaTfJrDSuidVGlgcvYITA5OPUTRmGxgvJtG3CoYP
+	 +KJIMS7cegVJCmoGwDgIrpl8uL7Zv3W+yExuN/NHyk4bFjV3ahs4+eus2RWBRX2Byp
+	 jjfROX9So/2+Td9BN0jkYg8QezeYAsQSUD5g00WUQf1hjy+B7xWlVkyal+NNSWS9aV
+	 cUmYkKUaEI7xSXklR/Vsin6wA4VkP8mKCAyfQwP/JgF26M5TdZN/C+L/sZ+twjw4LY
+	 DPHsM8hnh5sXk9uiuCHhTDEOuCE/fh2vHjnaYPSyhjcAHazBdWGBC6uwlzAJs71WEB
+	 s2a/LM8+nVREQ==
+Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
+	by mx4.sberdevices.ru (Postfix) with ESMTPS;
+	Sat, 14 Jun 2025 22:58:31 +0300 (MSK)
+Message-ID: <4d554466-f862-f465-f0e8-e4b749050319@salutedevices.com>
+Date: Sat, 14 Jun 2025 22:58:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: add
- Bluetooth support
-To: jens.glathe@oldschoolsolutions.biz,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Anthony Ruhier <aruhier@mailbox.org>
-References: <20250610-slim7x-bt-v2-1-0dcd9d6576e9@oldschoolsolutions.biz>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250610-slim7x-bt-v2-1-0dcd9d6576e9@oldschoolsolutions.biz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE0MDE2NiBTYWx0ZWRfXxHnHB2VcU3zL
- LKyCXXkYHJPlC5YYhj6/H56djCbO0PX3+qCiWWZGWzFjhi8TMaZLUiA4aZkbcLXATnjnMEXeNPv
- 0D4bsdzi1UIeWiAl6gTgEQmcYPZhuUNW719QWTujw6XoNIZPsv2WX61yaBiHa2rBHPZ2gS6VArM
- secYAbVCSFmSdsp5nNsb7KgxyA8QuWAuZgUBqI9l7oBRNw+fP9zcXgKsBj63kT4v6WvW067lqE3
- jmpg580ijGQxB5lCnFiaPiNlQyajx+Aq5ESoG3CtOUq9o1LbcieZ9Jgkpy9uYLkLPRTRRjjXu84
- eIwbAKqWNSfO95rZms+Dudzz8A6+PNp4lBkFVBLjyEIxu+hSLPp9WFgeeqlAzomikYH/Ix8ahKq
- Ya0ohgWFUMAcBEAFojc7Di7d+ZYSfuFssI7N7bWIW970pPpo9r3Bt0oaR4ppT8zwdm6JGiHC
-X-Proofpoint-ORIG-GUID: 7MnupDrlN8-J6u_YQANoRNbC4pd-T5BG
-X-Authority-Analysis: v=2.4 cv=OLIn3TaB c=1 sm=1 tr=0 ts=684dd374 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=gxl3bz0cAAAA:8 a=b3CbU_ItAAAA:8 a=gXSpMBu-KZCXFNnvIZ4A:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22 a=kiRiLd-pWN9FGgpmzFdl:22 a=Rv2g8BkzVjQTVhhssdqe:22
-X-Proofpoint-GUID: 7MnupDrlN8-J6u_YQANoRNbC4pd-T5BG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-14_08,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0
- suspectscore=0 phishscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506140166
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <oxffffaa@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: [PATCH v2] Bluetooth: hci_sync: fix double free in,
+ 'hci_discovery_filter_clear()'
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: p-exch-cas-a-m2.sberdevices.ru (172.24.201.210) To
+ p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Info: LuaCore: 62 0.3.62 e2af3448995f5f8a7fe71abf21bb23519d0f38c3, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 194041 [Jun 14 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/14 19:37:00 #27565334
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-On 6/10/25 6:59 PM, Jens Glathe via B4 Relay wrote:
-> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> 
-> To enable Bluetooth pwrseq appears to be required for the WCN7850.
-> Add the nodes from QCP.
-> Add uart14 for the BT interface.
-> 
-> Tested-by: Anthony Ruhier <aruhier@mailbox.org>
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> ---
-> This patch adds the Bluetooth support for the WCN7850 card on this laptop.
-> Since WCN7850 is supposed to need pwrseq, also added this from the QCP.
-> 
-> This is also part of my tree [1] for the Yoga Slim 7X.
-> definition for the pwrseq and regulators.
-> 
-> [1] https://github.com/jglathe/linux_ms_dev_kit/blob/jg/ubuntu-qcom-x1e-6.15.0-jg-6/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts 
-> ---
-> Changes in v2:
-> - rebased to next-20250610
-> - added tested-by from Anthony Ruhier
-> - Link to v1: https://lore.kernel.org/r/20250426-slim7x-bt-v1-1-d68f961af886@oldschoolsolutions.biz
-> ---
+Function 'hci_discovery_filter_clear()' frees 'uuids' array and then
+sets it to NULL. There is a tiny chance of the following race:
 
-I'm mildly confused given the multitude of options - but does this
-check +Stephan's M.2 description appropriateness check?
+'hci_cmd_sync_work()'
 
-Konrad
+ 'update_passive_scan_sync()'
+
+   'hci_update_passive_scan_sync()'
+
+     'hci_discovery_filter_clear()'
+       kfree(uuids);
+
+       <-------------------------preempted-------------------------------->
+                                           'start_service_discovery()'
+
+                                             'hci_discovery_filter_clear()'
+                                               kfree(uuids); // DOUBLE FREE
+
+       <-------------------------preempted-------------------------------->
+
+      uuids = NULL;
+
+To fix it let's add locking around 'kfree()' call and NULL pointer
+assignment. Otherwise the following backtrace fires:
+
+[ ] ------------[ cut here ]------------
+[ ] kernel BUG at mm/slub.c:547!
+[ ] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+[ ] CPU: 3 UID: 0 PID: 246 Comm: bluetoothd Tainted: G O 6.12.19-kernel #1
+[ ] Tainted: [O]=OOT_MODULE
+[ ] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ ] pc : __slab_free+0xf8/0x348
+[ ] lr : __slab_free+0x48/0x348
+...
+[ ] Call trace:
+[ ]  __slab_free+0xf8/0x348
+[ ]  kfree+0x164/0x27c
+[ ]  start_service_discovery+0x1d0/0x2c0
+[ ]  hci_sock_sendmsg+0x518/0x924
+[ ]  __sock_sendmsg+0x54/0x60
+[ ]  sock_write_iter+0x98/0xf8
+[ ]  do_iter_readv_writev+0xe4/0x1c8
+[ ]  vfs_writev+0x128/0x2b0
+[ ]  do_writev+0xfc/0x118
+[ ]  __arm64_sys_writev+0x20/0x2c
+[ ]  invoke_syscall+0x68/0xf0
+[ ]  el0_svc_common.constprop.0+0x40/0xe0
+[ ]  do_el0_svc+0x1c/0x28
+[ ]  el0_svc+0x30/0xd0
+[ ]  el0t_64_sync_handler+0x100/0x12c
+[ ]  el0t_64_sync+0x194/0x198
+[ ] Code: 8b0002e6 eb17031f 54fffbe1 d503201f (d4210000) 
+[ ] ---[ end trace 0000000000000000 ]---
+
+Fixes: ad383c2c65a5 ("Bluetooth: hci_sync: Enable advertising when LL privacy is enabled")
+Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+---
+ Changelog v1->v2:
+ * Don't call 'hci_dev_lock()' in 'update_passive_scan_sync()' as it
+   triggers deadlock. Instead of that - add spinlock which protects
+   freeing code.
+
+ include/net/bluetooth/hci_core.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 54bfeeaa09959..f8eeb15acdcfa 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -29,6 +29,7 @@
+ #include <linux/idr.h>
+ #include <linux/leds.h>
+ #include <linux/rculist.h>
++#include <linux/spinlock.h>
+ 
+ #include <net/bluetooth/hci.h>
+ #include <net/bluetooth/hci_sync.h>
+@@ -92,6 +93,7 @@ struct discovery_state {
+ 	u16			uuid_count;
+ 	u8			(*uuids)[16];
+ 	unsigned long		name_resolve_timeout;
++	spinlock_t		lock;
+ };
+ 
+ #define SUSPEND_NOTIFIER_TIMEOUT	msecs_to_jiffies(2000) /* 2 seconds */
+@@ -878,6 +880,7 @@ static inline void iso_recv(struct hci_conn *hcon, struct sk_buff *skb,
+ 
+ static inline void discovery_init(struct hci_dev *hdev)
+ {
++	spin_lock_init(&hdev->discovery.lock);
+ 	hdev->discovery.state = DISCOVERY_STOPPED;
+ 	INIT_LIST_HEAD(&hdev->discovery.all);
+ 	INIT_LIST_HEAD(&hdev->discovery.unknown);
+@@ -892,8 +895,11 @@ static inline void hci_discovery_filter_clear(struct hci_dev *hdev)
+ 	hdev->discovery.report_invalid_rssi = true;
+ 	hdev->discovery.rssi = HCI_RSSI_INVALID;
+ 	hdev->discovery.uuid_count = 0;
++
++	spin_lock(&hdev->discovery.lock);
+ 	kfree(hdev->discovery.uuids);
+ 	hdev->discovery.uuids = NULL;
++	spin_unlock(&hdev->discovery.lock);
+ }
+ 
+ bool hci_discovery_active(struct hci_dev *hdev);
+-- 
+2.30.1
+
 
