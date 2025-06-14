@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-686687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF10AD9A8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:50:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA8FAD9A91
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C48189729C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:50:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 542BC7AE8F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D941E5219;
-	Sat, 14 Jun 2025 06:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7311F1531;
+	Sat, 14 Jun 2025 06:51:03 +0000 (UTC)
 Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A3A2AE99;
-	Sat, 14 Jun 2025 06:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ADF1F5827;
+	Sat, 14 Jun 2025 06:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749883837; cv=none; b=Cb7IGHkvfvMhBJgbFTYCrFnQUw5GDb6N8MsTb1wU/pVNwQ14ZC5g08pNVJa6jElhgWmwpZeNi0/plraQ9glSg5e6wiN/pjJjrHSLcBwi5hp7O313WG0cF767tqQfcNzfGQOMf7z7jFFJeV37fAxS1dErf81S9AwdVKBpoZJ/yWc=
+	t=1749883863; cv=none; b=K22aJIXKRvDht8gTJy+hmGLC/2iPflHOCRtb0CNzQrCq8oXZnY2MFJQswhz01vbzDDu/Cs1nfxV+7dmxUdhCHWjVss0pytfuXlPCGzYA4Nxe+q+Ihh3W/3Yqgeak5EdIC5I2Pi6rX22xteEBHOA9K+X1gVmFdr3lh8jHvuCjUp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749883837; c=relaxed/simple;
-	bh=b+ZNK9H+MGbconJey2jD2y8seac9nVP4q217lbRq7W4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qa0fvy9ozrM7TPxTmEz5WRZ62e/6CGsN/9CzTrRki1iLSpgC3+kpV6PIrvlb5GwV9uOmZUxEhpqihcE55u+G/O+rhhftav7Gb88WL2rceEIrJo6IBwMyGEM8HLm432hrvvz/Be9XS7l/SJSJ5lTLkaqUONTIwbwNHYeM9zwxn2A=
+	s=arc-20240116; t=1749883863; c=relaxed/simple;
+	bh=5vrwlCVOy4jeGa33bcqO+2rR3nBMx3HvtoPGJ2RWsVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=g8wzJ8ASfDUSLS/0qAZ7GysbReX7bC6EJe+QLLa7HePkqG6/hZoQUbNyiGVUNhWBl1+prqMpOpRbZ7NPu3XYaZSx7R07tX7cgnq30e3du8xM+kNEw5BRKNhpSmTlWRDIOXbS/rUBUP14oTmeDjyJjTWKM3r/BilmH4KKV2Bme20=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bK6Cz2hnVz9t0K;
-	Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4bK6Cv5hzLz9st4;
+	Sat, 14 Jun 2025 08:43:23 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
 	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id nzJiJVWnwwT0; Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+	with ESMTP id L409-xjRegJR; Sat, 14 Jun 2025 08:43:23 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bK6Cz1jFTz9t0H;
-	Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bK6Cv4yr6z9st0;
+	Sat, 14 Jun 2025 08:43:23 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 353E18B77B;
-	Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A5CF68B77D;
+	Sat, 14 Jun 2025 08:43:23 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id rpo6pN8d7mWZ; Sat, 14 Jun 2025 08:43:27 +0200 (CEST)
+	with ESMTP id 2HnLZ9cTI1KL; Sat, 14 Jun 2025 08:43:23 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BCE058B769;
-	Sat, 14 Jun 2025 08:43:22 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2AE5F8B77B;
+	Sat, 14 Jun 2025 08:43:23 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>
@@ -53,116 +54,140 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-sound@vger.kernel.org,
 	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v3 0/4] ALSA: pcm: Convert SNDRV_PCM_IOCTL_SYNC_PTR to user_access_begin/user_access_end()
-Date: Sat, 14 Jun 2025 08:43:13 +0200
-Message-ID: <cover.1749883041.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v3 1/4] ALSA: pcm: refactor copy from/to user in SNDRV_PCM_IOCTL_SYNC_PTR
+Date: Sat, 14 Jun 2025 08:43:14 +0200
+Message-ID: <f8b77932bb9ce96148ae5c3953e7ee44fa2359f8.1749883041.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <cover.1749883041.git.christophe.leroy@csgroup.eu>
+References: <cover.1749883041.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749883393; l=4713; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=b+ZNK9H+MGbconJey2jD2y8seac9nVP4q217lbRq7W4=; b=LKyYrK0DlNR6aTIHoEmvIpc7BaxFRlaNMYY0kH7LUAkeVzoBPw3szJ7OXhhUT2gm5Q8dXeypn 3cQAAhKIJHODOeBk8pkfFhNys5NCZKJe05ts30wOinxe70bTLJqipIi
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749883393; l=5425; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=5vrwlCVOy4jeGa33bcqO+2rR3nBMx3HvtoPGJ2RWsVU=; b=rwQl9AMrqvh5oH5kZMNKZrKoFsFn3IJbM+1z73rWcyEdrgr7WLHnyshXLGTwKvv3nkI5vm4Ps cMag2oQb0xcBHxFROdgngbmJgC0fIEgl3FGMciwNyxRA4XCPT7uDsLH
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-This series converts all variants of SNDRV_PCM_IOCTL_SYNC_PTR to 
-user_access_begin/user_access_end() in order to reduce the CPU load
-measured in function snd_pcm_ioctl.
+In an effort of optimising SNDRV_PCM_IOCTL_SYNC_PTR ioctl which
+is a hot path, lets first refactor the copy from and to user
+with macros.
 
-With the current implementation, "perf top" reports a high load in
-snd_pcm_iotcl(). Most calls to that function are SNDRV_PCM_IOCTL_SYNC_PTR.
+This is done with macros and not static inline fonctions because
+types differs between the different versions of snd_pcm_sync_ptr()
+like functions.
 
-    14.20%  test_perf           [.] engine_main
-==> 12.86%  [kernel]            [k] snd_pcm_ioctl
-    11.91%  [kernel]            [k] finish_task_switch.isra.0
-     4.15%  [kernel]            [k] snd_pcm_group_unlock_irq.part.0
-     4.07%  libc.so.6           [.] __ioctl_time64
-     3.58%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin_generic
-     3.37%  [kernel]            [k] sys_ioctl
-     2.96%  libasound.so.2.0.0  [.] snd_pcm_hw_avail_update
-     2.73%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin
-     2.58%  [kernel]            [k] system_call_exception
-     1.93%  libasound.so.2.0.0  [.] sync_ptr1
-     1.85%  libasound.so.2.0.0  [.] snd_pcm_unlock
-     1.84%  libasound.so.2.0.0  [.] snd_pcm_mmap_begin
-     1.83%  libasound.so.2.0.0  [.] bad_pcm_state
-     1.68%  libasound.so.2.0.0  [.] snd_pcm_mmap_avail
-     1.67%  libasound.so.2.0.0  [.] snd_pcm_avail_update
+First step is to refactor only snd_pcm_ioctl_sync_ptr_compat() and
+snd_pcm_ioctl_sync_ptr_x32() as it would be a performance
+regression for snd_pcm_sync_ptr() and snd_pcm_ioctl_sync_ptr_buggy()
+for now. They may be refactored after next patch.
 
-A tentative was done with going via intermediaire structs on stack to
-replace the multiple get_user() and put_user() with copy_from_user()
-and copy_to_user(). But copy_from_user() calls _copy_from_user() and
-copy_to_user() calls _copy_to_user(). Both then call __copy_tofrom_user().
-In total it is 16.4% so it is worse than before.
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ sound/core/pcm_compat.c | 14 ++------------
+ sound/core/pcm_native.c | 42 +++++++++++++++++++++++++++++------------
+ 2 files changed, 32 insertions(+), 24 deletions(-)
 
-    14.47%  test_perf           [.] engine_main
-    12.00%  [kernel]            [k] finish_task_switch.isra.0
-==>  8.37%  [kernel]            [k] snd_pcm_ioctl
-     5.44%  libc.so.6           [.] __ioctl_time64
-     5.03%  [kernel]            [k] snd_pcm_group_unlock_irq.part.0
-==>  4.86%  [kernel]            [k] __copy_tofrom_user
-     4.62%  [kernel]            [k] sys_ioctl
-     3.22%  [kernel]            [k] system_call_exception
-     2.42%  libasound.so.2.0.0  [.] snd_pcm_mmap_begin
-     2.31%  [kernel]            [k] fdget
-     2.23%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin_generic
-     2.19%  [kernel]            [k] syscall_exit_prepare
-     1.92%  libasound.so.2.0.0  [.] snd_pcm_mmap_avail
-     1.86%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin
-     1.68%  libasound.so.2.0.0  [.] snd_pcm_hw_avail_update
-==>  1.67%  [kernel]            [k] _copy_from_user
-     1.66%  libasound.so.2.0.0  [.] bad_pcm_state
-==>  1.53%  [kernel]            [k] _copy_to_user
-     1.40%  libasound.so.2.0.0  [.] sync_ptr1
-
-With this series which uses unsafe_put_user() and unsafe_get_user(),
-the load is significantly reduced:
-
-    17.46%  test_perf           [.] engine_main
-     9.14%  [kernel]            [k] finish_task_switch.isra.0
-==>  4.92%  [kernel]            [k] snd_pcm_ioctl
-     3.99%  [kernel]            [k] snd_pcm_group_unlock_irq.part.0
-     3.71%  libc.so.6           [.] __ioctl_time64
-     3.61%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin_generic
-     2.72%  libasound.so.2.0.0  [.] sync_ptr1
-     2.65%  [kernel]            [k] system_call_exception
-     2.46%  [kernel]            [k] sys_ioctl
-     2.43%  [kernel]            [k] __rseq_handle_notify_resume
-     2.34%  [kernel]            [k] do_epoll_wait
-     2.30%  libasound.so.2.0.0  [.] __snd_pcm_mmap_commit
-     2.14%  libasound.so.2.0.0  [.] __snd_pcm_avail
-     2.04%  libasound.so.2.0.0  [.] snd_pcm_hw_avail_update
-     1.89%  libasound.so.2.0.0  [.] snd_pcm_lock
-     1.84%  libasound.so.2.0.0  [.] snd_pcm_mmap_avail
-     1.76%  libasound.so.2.0.0  [.] __snd_pcm_avail_update
-     1.61%  libasound.so.2.0.0  [.] bad_pcm_state
-     1.60%  libasound.so.2.0.0  [.] __snd_pcm_mmap_begin
-     1.49%  libasound.so.2.0.0  [.] query_status_data
-
-Since v2:
-- Fix macros to skip user_read_access_end() when user_read_access_begin() failed
-- Fix some tabulations for properly aligning backslashes
-
-Since RFC:
-- Added a cover letter to summarize some of the measurements done on and around the RFC
-- Fixed relevant checkpatch feedback
-- Split last patch in two
-
-Christophe Leroy (4):
-  ALSA: pcm: refactor copy from/to user in SNDRV_PCM_IOCTL_SYNC_PTR
-  ALSA: pcm: Convert SNDRV_PCM_IOCTL_SYNC_PTR to
-    user_access_begin/user_access_end()
-  ALSA: pcm: Replace [audio_]tstamp_[n]sec by struct __snd_timespec in
-    struct snd_pcm_mmap_status32
-  ALSA: pcm: Convert snd_pcm_sync_ptr() to
-    user_access_begin/user_access_end()
-
- sound/core/pcm_compat.c | 14 +-----
- sound/core/pcm_native.c | 98 ++++++++++++++++++++++++++---------------
- 2 files changed, 64 insertions(+), 48 deletions(-)
-
+diff --git a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
+index a42ec7f5a1da..17540020ac2f 100644
+--- a/sound/core/pcm_compat.c
++++ b/sound/core/pcm_compat.c
+@@ -418,9 +418,7 @@ static int snd_pcm_ioctl_sync_ptr_x32(struct snd_pcm_substream *substream,
+ 	if (snd_BUG_ON(!runtime))
+ 		return -EINVAL;
+ 
+-	if (get_user(sflags, &src->flags) ||
+-	    get_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    get_user(scontrol.avail_min, &src->c.control.avail_min))
++	if (snd_pcm_sync_ptr_get_user(sflags, scontrol, src))
+ 		return -EFAULT;
+ 	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
+ 		err = snd_pcm_hwsync(substream);
+@@ -450,15 +448,7 @@ static int snd_pcm_ioctl_sync_ptr_x32(struct snd_pcm_substream *substream,
+ 	}
+ 	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
+ 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
+-	if (put_user(sstatus.state, &src->s.status.state) ||
+-	    put_user(sstatus.hw_ptr, &src->s.status.hw_ptr) ||
+-	    put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec) ||
+-	    put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec) ||
+-	    put_user(sstatus.suspended_state, &src->s.status.suspended_state) ||
+-	    put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec) ||
+-	    put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec) ||
+-	    put_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    put_user(scontrol.avail_min, &src->c.control.avail_min))
++	if (snd_pcm_sync_ptr_put_user(sstatus, scontrol, src))
+ 		return -EFAULT;
+ 
+ 	return 0;
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index ecb71bf1859d..1f8f6d95b18c 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -3052,6 +3052,34 @@ static inline int snd_pcm_hwsync(struct snd_pcm_substream *substream)
+ 	return snd_pcm_delay(substream, NULL);
+ }
+ 
++#define snd_pcm_sync_ptr_get_user(__f, __c, __ptr) ({				\
++	int __err = 0;								\
++	typeof(*(__ptr)) __user *__src = (__ptr);				\
++										\
++	if (get_user(__f, &src->flags) ||					\
++	    get_user(__c.appl_ptr, &__src->c.control.appl_ptr) ||		\
++	    get_user(__c.avail_min, &__src->c.control.avail_min))		\
++		__err = -EFAULT;						\
++	__err;									\
++})
++
++#define snd_pcm_sync_ptr_put_user(__s, __c, __ptr) ({				\
++	int __err = 0;								\
++	typeof(*(__ptr)) __user *__src = (__ptr);				\
++										\
++	if (put_user(__s.state, &__src->s.status.state) ||			\
++	    put_user(__s.hw_ptr, &__src->s.status.hw_ptr) ||			\
++	    put_user(__s.tstamp.tv_sec, &__src->s.status.tstamp_sec) ||		\
++	    put_user(__s.tstamp.tv_nsec, &__src->s.status.tstamp_nsec) ||	\
++	    put_user(__s.suspended_state, &__src->s.status.suspended_state) ||	\
++	    put_user(__s.audio_tstamp.tv_sec, &__src->s.status.audio_tstamp_sec) ||	\
++	    put_user(__s.audio_tstamp.tv_nsec, &__src->s.status.audio_tstamp_nsec) ||	\
++	    put_user(__c.appl_ptr, &__src->c.control.appl_ptr) ||		\
++	    put_user(__c.avail_min, &__src->c.control.avail_min))		\
++		__err = -EFAULT;						\
++	__err;									\
++})
++
+ static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
+ 			    struct snd_pcm_sync_ptr __user *_sync_ptr)
+ {
+@@ -3165,9 +3193,7 @@ static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
+ 	if (snd_BUG_ON(!runtime))
+ 		return -EINVAL;
+ 
+-	if (get_user(sflags, &src->flags) ||
+-	    get_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    get_user(scontrol.avail_min, &src->c.control.avail_min))
++	if (snd_pcm_sync_ptr_get_user(sflags, scontrol, src))
+ 		return -EFAULT;
+ 	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
+ 		err = snd_pcm_hwsync(substream);
+@@ -3200,15 +3226,7 @@ static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
+ 	}
+ 	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
+ 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
+-	if (put_user(sstatus.state, &src->s.status.state) ||
+-	    put_user(sstatus.hw_ptr, &src->s.status.hw_ptr) ||
+-	    put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec) ||
+-	    put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec) ||
+-	    put_user(sstatus.suspended_state, &src->s.status.suspended_state) ||
+-	    put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec) ||
+-	    put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec) ||
+-	    put_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    put_user(scontrol.avail_min, &src->c.control.avail_min))
++	if (snd_pcm_sync_ptr_put_user(sstatus, scontrol, src))
+ 		return -EFAULT;
+ 
+ 	return 0;
 -- 
 2.47.0
 
