@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-686925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E350AD9D57
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 16:15:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B208DAD9D5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 16:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9737178856
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 14:15:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BE67ABA93
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 14:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6C22D9ED4;
-	Sat, 14 Jun 2025 14:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FBD2D9EFC;
+	Sat, 14 Jun 2025 14:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4BdxzNZ"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="I4/m7bDY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MVXXa0lL"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDBFBA2D;
-	Sat, 14 Jun 2025 14:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0783D994;
+	Sat, 14 Jun 2025 14:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749910538; cv=none; b=TDXtrhYWkVT4FmC9Kqi4IjNj4eRh2O8u25rw/QG+M+k5w98NBUYxchcxOUPpYx+N4Hr1UWpA+6hCq1M6iFB60JVUx7gxGrgYtoZPqmjDLpFpJOr2TXSImB7QcUsRBi8ECdYtprqAy7plT0YsYR22TRWz9iv2lpp6BnppQDy42mo=
+	t=1749910581; cv=none; b=FHpCYZz4LvzDDaU7E7uk0okbJp1pTzs956UZVltyRXqgIAgQQr/MlpfPP4cDRK1gVW1TCTBstEH8p3k7Ag3rtZ86J4taCn1HBWuH4fujanI228W/De66PT2LwJB8KEAuPX4HmY6kizi2v0p6VMPBHl/15c43xSHHh5h9k8fCME4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749910538; c=relaxed/simple;
-	bh=DCmUzencsMsnMaFx/4U/i7fCe25jewj1ptzTPHuZXrg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQrJ47HpAqaHEUHfFtS7FZL5CEaUFrI3UWYiOB2Un0QcvWDxykJAsCqeCQmdRBWjHmNChotsAJGxdpQ+i+gBXfrEmcvtgSdRiuYN8MIrQd4qCf7h13HqjSVrWhDNTECS/dh/0+wQpKGefbAT/5WNj1cBlD+Zepvt0qx09/cZRYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4BdxzNZ; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-40a6692b75cso2162702b6e.1;
-        Sat, 14 Jun 2025 07:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749910536; x=1750515336; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V212NBLelySDp+6/CyeJaC/8PZkKsYoStFWQx4jyJv0=;
-        b=P4BdxzNZvQYl0LFplGrz7lFcCyH2VDRiV1wAtlTS2LZ4sHh2IZMsfefZkT55swTr1/
-         UDL5duafN7cBRAbNFB0v9i4vtluyJO+jxHrbr6DvA2uNQnlRdjhzWBc1cEtjRQaVBWHA
-         0Wts33em6zLAFZYqofs5jSaXvaR3802MNc7lN7XHIk350kHVDd1reS64HSy36nm/QFC5
-         cNYlHtaSvnSFKdkde7X4G1KZ0ZnqD61jIbggZnelwcxk0dL5gXIKOJp+RuHcf7Hf9TPU
-         SUDLUzzDo10MYhYCVzRc31K4EzQlPb4eJqGv9JgZlkciC7oNnb5P3uzU068Vrmg1Emro
-         6CKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749910536; x=1750515336;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V212NBLelySDp+6/CyeJaC/8PZkKsYoStFWQx4jyJv0=;
-        b=ol7yqg+J7bit8kA5vebqJQm4XjN0iZygrDZ5w+SGZPILiKdpGieGa/RDVPsc4zcQ0o
-         o9qKl67JvFnTxcX29OmC0kq//LDy0gjJ98IEdSR26u3YrKNjf1HTeCTgtK5iNLrKg3Di
-         H5etER1dAUUmsbz4zS2J65YSt/SVIx+GUTzjfmPMbvTRImEr5dWjpe1yC4PfFVd7KgYw
-         n5efEypfsQiUtmhrm/xTP4WGf8+brTUgRxQbWXgVqDinkcGnw8ZI3uUwt487wAUbXoAq
-         FSrmAj6iqPspqOJ2VtKby0runOkOa5QeIVfVHYdpX46IxoaLPmX45kobuhWpZwqj9KnU
-         9SUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWpvMQG0WToEXlVpXpvbG79Q/AcUDaxMKgbniz//L4UHUhlM7CKnvEckwbKI+prxNp9shCZkBc+Dy+D0I=@vger.kernel.org, AJvYcCWrFymQ9CLiQ3u2R2+Cg0Ue4PvqizJ/LMl7eL24Jj71a0wgnRvf8SLvXxvD/PAk1u57s6Y8cNhv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIKhnTGQue7mdpehwq9Tuxa30nkb2jBYTomqRSLXGET+WkHKHj
-	VX42VsCy8ani3sOYD1Pp3a2HtLfF00ybXDgweZr35ZU9DX5dNW9c79jQyxY+9/wNUkdaVnkaBSn
-	N3zQJ8ouPLPH/v0a7Cy8IhkfrHbDCpfw=
-X-Gm-Gg: ASbGncsxtgPAwi0dNDtlggoIaTpH97w72EZ5i70WMU8BwRUCQDa9nXSiCwifbsTYA80
-	Xu727TUBp/sqV0zHg4XdmcdHwA7KMmxmAIWfHMkTU8ZAAxdKeNoi5s/0r7dcJTZ1sMUTh0bLdA8
-	d7gLdO2aKjXmzL9AeUB514MzFMQND8YkhDhuiu+UrgUOnT/rPTMFI2j3yhdWv138xd1KEwFdsFj
-	Q32nSNxeWWX
-X-Google-Smtp-Source: AGHT+IE7Id5T+q892mpAZrQTdRJVM/iBsvIslk9IkOAbJoYWxBoUYMFvgoYdDkNU0o3h51zEcveta5gNqzJQn1eG0z4=
-X-Received: by 2002:a05:6808:211a:b0:404:1898:1a0b with SMTP id
- 5614622812f47-40a7c19e067mr2049349b6e.31.1749910536255; Sat, 14 Jun 2025
- 07:15:36 -0700 (PDT)
+	s=arc-20240116; t=1749910581; c=relaxed/simple;
+	bh=U4yQSxX+QVuomLBEgf9sZIWfa+E/mb0wq5uOSJVml1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r5ao28/T0WMw2/qnFv/uiciD7MgwMXmK/8RVfoopvw7UzqXfVzUfsymCN/msfLnlrdQdKW9nUxC1Uf9QZl6hSjNgU7tce6Kbu9gOgWIR9iB6DaF0XrK28ggRbT6OjNgGEJjPzU0spKJWpZCD/PplWLac4hsrYdD+wWI7v9Czh/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=I4/m7bDY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MVXXa0lL; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A0CF9114013C;
+	Sat, 14 Jun 2025 10:16:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Sat, 14 Jun 2025 10:16:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1749910576; x=1749996976; bh=/D
+	LDU2vpZE4NqKLhZ3pPTKEfAWUacf8pnN0p4apvaLs=; b=I4/m7bDYo2T4tPJaGB
+	m70xwpWJEOlAaCx1fJ9DvrK+n5xcRSoyaB5U6Yg+aAZYCdPM9e/XcGEa5Vi+1Y/9
+	bBRwYIrlqDQD7xd965jNArVnU9V+HFiU32n8CHEd5IKd9Cn5jbCJffAI2sCRiRGe
+	URX0hBE3WepyQtUHxGPdiKZjcdjh9D7SLMrrJG3nLqi4DWyYK1vAIEmxg308Jm99
+	rrWTe11Iqsi6UxONQYVHkxPWMO2zYShDLyWpDZV6Dbhj56oBxSbDkLJkS5WadfpN
+	dxEG25m5URZTRpnj5tbVX6I8CRTM8WWu3ovt49qSDeZx78xnd6g7LNKKqL2kX8jO
+	onhw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1749910576; x=1749996976; bh=/DLDU2vpZE4NqKLhZ3pPTKEfAWUa
+	cf8pnN0p4apvaLs=; b=MVXXa0lL4vE8DDTaDHYksn59gyjhw9UgE9Nn7JX7biGO
+	/Y+fHu3a7VWOCsUhG6UXKJhdT0gY/Hoz+HB5hscX+XGuVS3aMo5zZs2DURTLX38v
+	ddzw9Dxy+cryWd/l8mhivSBTrWPoBNSsJaQBxxvb1Lt8K8IG27atQMWZdvC9YNpx
+	ZQ+a/tR1FHzB6ElGUj8ds7O2AeLRIRVjN5c0IK4cIaJCp6fgiOk1fX+i5JR+UpxV
+	JQt/UZ3AtQaok7z/gIRlf0yryDjkQCbeYEOCs/nwBu6D8zrzS+Y0N6X7hk89AsZt
+	Aos+wVVuMvmNkbTNaHFe9yoEltLs3L0Ml5/rGqT3BA==
+X-ME-Sender: <xms:L4RNaM04i2XTPUQLr_mEluTWj5CoqUAQ7rK1kaWJoL32RbjII5gbmg>
+    <xme:L4RNaHF5Qbyj7yvP6qrr6LK3uBKJmX7GgDG27cR8vpZcrQ15EQPc5WaPRf2PRvoLY
+    ilH9G3YyswqMnimHXo>
+X-ME-Received: <xmr:L4RNaE6TiOQSOhflTT_By0bWdGluotdpqLCxTy8DU7XsKBMjTFXsvg8YIjJEDvBg77EVYsKknW9-XI_yzAdxiYp0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvuddthecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffogggtgfesthekredtredtjeen
+    ucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvg
+    hrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthht
+    vghrnhepheduleetteekgffffedufeeuvdejiedvkefhveeifeegffehledtvdevhfefte
+    egnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhi
+    khhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpth
+    htohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgthhgvhhgrsgeskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvg
+    hrrdgsvgdprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgv
+    lhdrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrthesihguvggrsh
+    honhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsoh
+    gtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhikhhlrghsrdhsoh
+    guvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvg
+X-ME-Proxy: <xmx:L4RNaF04SrdGAlGjiFxI-1N88GBZCe3hKqJSPzaRSu5dL26FPq3BsA>
+    <xmx:L4RNaPFRPZFf1JXp7SKAdgeHvxXOZkw9MHXlCgwQQ1hy2EVIP7RqjA>
+    <xmx:L4RNaO8Fzfc9uHBYPZ8mOhTNR8prXO6XZ0a3H_SHJR5ibYN-5TUJ1A>
+    <xmx:L4RNaEnSkeIip2sbl87U9irhurdU3AG6Gh3qkstErxQVtQrlugafNA>
+    <xmx:MIRNaPRzctdiqoeAs58aiI0VZ4y7DFs1subTMWnqJ6Z1jbDiGfJ6mtoB>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 14 Jun 2025 10:16:15 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/3] media: rcar-vin: Generate FRAME_SYNC events
+Date: Sat, 14 Jun 2025 16:15:42 +0200
+Message-ID: <20250614141545.2860860-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1749891128.git.mchehab+huawei@kernel.org> <31466ece9905956c2e1a3d3fc744cfc272df5d88.1749891128.git.mchehab+huawei@kernel.org>
-In-Reply-To: <31466ece9905956c2e1a3d3fc744cfc272df5d88.1749891128.git.mchehab+huawei@kernel.org>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Sat, 14 Jun 2025 15:15:25 +0100
-X-Gm-Features: AX0GCFu7jgqlSlj61VjuypZSCCHHVOKVJwT6Cqt0Oc5ACuVVfK8OEx-nZWS3V3c
-Message-ID: <CAD4GDZxPTFmKeNqRZBxW1ij6Gy0L3hrbB6q9G6WdFb8h6Zhr=g@mail.gmail.com>
-Subject: Re: [PATCH v4 07/14] tools: ynl_gen_rst.py: move index.rst generator
- to the script
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Akira Yokosawa <akiyks@gmail.com>, Breno Leitao <leitao@debian.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Ignacio Encinas Rubio <ignacio@iencinas.com>, Jan Stancek <jstancek@redhat.com>, 
-	Marco Elver <elver@google.com>, Paolo Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, joel@joelfernandes.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org, 
-	stern@rowland.harvard.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 14 Jun 2025 at 09:56, Mauro Carvalho Chehab
-<mchehab+huawei@kernel.org> wrote:
->
-> The index.rst generator doesn't really belong to the parsing
-> function. Move it to the command line tool, as it won't be
-> used elsewhere.
->
-> While here, make it more generic, allowing it to handle either
-> .yaml or .rst as input files.
+Hi,
 
-I think this patch can be dropped from the series, if instead you
-remove the index generation code before refactoring into a library.
+This series extend the VIN interrupt handling to be able to generate 
+FRAME_SYNC events. Having these events in user-space is a great help to 
+know when a sensor starts to expose a new frame.
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  scripts/lib/netlink_yml_parser.py  | 101 ++++++++---------------------
->  tools/net/ynl/pyynl/ynl_gen_rst.py |  28 +++++++-
+Patch 1/3 and 2/3 prepays the existing interrupt infrastructure to 
+support more then "frame captured" interrupts. While patch 3/3 enables 
+and checks for VSYNC detection and generates the new event.
+
+The feature is tested on Gen2, Gen3 and Gen4 and all devices correctly 
+generate FRAME_SYNC events.
+
+Niklas Söderlund (3):
+  media: rcar-vin: Fold interrupt helpers into only callers
+  media: rcar-vin: Check for correct capture interrupt event
+  media: rcar-vin: Generate FRAME_SYNC events
+
+ .../platform/renesas/rcar-vin/rcar-dma.c      | 54 ++++++++++---------
+ .../platform/renesas/rcar-vin/rcar-v4l2.c     |  2 +
+ 2 files changed, 32 insertions(+), 24 deletions(-)
+
+-- 
+2.49.0
+
 
