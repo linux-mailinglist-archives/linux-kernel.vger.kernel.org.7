@@ -1,206 +1,224 @@
-Return-Path: <linux-kernel+bounces-686682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD0FAD9A77
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1709AD9A8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D151682E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276713B22BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D571E493C;
-	Sat, 14 Jun 2025 06:39:49 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E582E11AC;
-	Sat, 14 Jun 2025 06:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB1F1EF0BE;
+	Sat, 14 Jun 2025 06:50:44 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B462AE99;
+	Sat, 14 Jun 2025 06:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749883188; cv=none; b=LHuCY0yHckWR3msGHo9wF2lzYkK2Ip0dcv+BN5i2BWYovDnyGG0FIPeFAZ5ZJvLQBYr5gVNtO/SINLbR+r3QCccBHDYj3POikTdNlzgdKkwhN6qPdrhbi+XgDy2NAQ5V/60eo+Hcrw6LKM3NSvzrU8S7v/m2OrS8h7WG03ndi9Q=
+	t=1749883844; cv=none; b=CW61WRRC+9MXQtcQW9GNmnStLRCc37qpTdaeXrsk99dOV/PI8FrcMUKzpq1UzQvdG41Cu1kqNgWgIQc55FWiHpVsHI6XCaicnsUAMpCDd3+3uPyLR9AeXT3EDF4uhSRBVmucVO5mSccvhR6cXFQOhgYC3QDxMVJForjm6lmk/U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749883188; c=relaxed/simple;
-	bh=SCox8lr4gGRLh7STx7rHQzTr4Nx4TX7IMe6u/F4zl+c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=NNT3cvZnYIfCeoqg7Eah3kIlUCrug03LQfKwPRQ1qdIQpMdeNCUnYwl2Cqpkmy8mNWLM9joplHDlkaEtYYAp2U/xp2w7cI8dolaOiulNyMDzMbzyyKnI6E31QoCgZDrG6Zzdg/pD4uT2Ai9J67gS0eUMbev5zBV/WnMo37sv+gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bK67f5vGczKHN1v;
-	Sat, 14 Jun 2025 14:39:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2AB8C1A0E9E;
-	Sat, 14 Jun 2025 14:39:41 +0800 (CST)
-Received: from zhengqixing$huaweicloud.com ( [10.174.178.72] ) by
- ajax-webmail-APP4 (Coremail) ; Sat, 14 Jun 2025 14:39:41 +0800 (GMT+08:00)
-Date: Sat, 14 Jun 2025 14:39:41 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: zhengqixing@huaweicloud.com
-To: "Paul Menzel" <pmenzel@molgen.mpg.de>
-Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, zhengqixing@huawei.com
-Subject: Re: [PATCH] md/raid1,raid10: fix IO handle for REQ_NOWAIT
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240919(7cc4060a) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-afc14d85-da06-4a9c-b40d-9d3adbbd040a-huawei.com
-In-Reply-To: <a67b2409-334b-4712-b31d-efcbd2e216f5@molgen.mpg.de>
-References: <20250612132141.358202-1-zhengqixing@huaweicloud.com>
- <a67b2409-334b-4712-b31d-efcbd2e216f5@molgen.mpg.de>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1749883844; c=relaxed/simple;
+	bh=RXdRlqrzkHwdspiS3GswJcRBvsVV9K0QQBjOfj7XgxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k5dlIDFKy7qbIEV1TV0uc/WZPBM/Ajkkfnk7Yl7WTD0nI9JiaYyXTINQfnL93Hy4PxH/3g+FAIVBlI31k2KaxJ5e17GhYOxw3WkFiL2pQMnwqZDfg//9QuFqFZGh8XVxeu8ylpo4YAlfBjx3XNcIFzEkthlQIe7aSg+Fw16FwQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bK6CG1Fjwz9ssb;
+	Sat, 14 Jun 2025 08:42:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id VlcHCjVCsa-V; Sat, 14 Jun 2025 08:42:50 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bK6CF6lkGz9sr6;
+	Sat, 14 Jun 2025 08:42:49 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D4AE78B77B;
+	Sat, 14 Jun 2025 08:42:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id N9xhgXOKRyuy; Sat, 14 Jun 2025 08:42:49 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4723A8B769;
+	Sat, 14 Jun 2025 08:42:49 +0200 (CEST)
+Message-ID: <941293fc-de40-4143-9a5b-fa262736abee@csgroup.eu>
+Date: Sat, 14 Jun 2025 08:42:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1c8296f3.647.1976d2a57fc.Coremail.zhengqixing@huaweicloud.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:gCh0CgA3mV0tGU1oVLziPQ--.32743W
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/1tbiAgATEmhL3Alp+gA
-	Bsn
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3GIAIbVAYFVCjjxCrMI
-	AIbVAFxVCF77xC64kEw24lV2xY67C26IkvcIIF6IxKo4kEV4DvcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] ALSA: pcm: Convert SNDRV_PCM_IOCTL_SYNC_PTR to
+ user_access_begin/user_access_end()
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>
+References: <cover.1749828169.git.christophe.leroy@csgroup.eu>
+ <abb97ecdf9af8a9a63b03e59ff7ac338f6ce83f4.1749828169.git.christophe.leroy@csgroup.eu>
+ <87msabr3up.wl-tiwai@suse.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <87msabr3up.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-SGVsbG8gUGF1bCwKCgrlnKggMjAyNS82LzEzIDE2OjAyLCBQYXVsIE1lbnplbCDlhpnpgZM6CiZn
-dDsgRGVhciBaaGVuZywKJmd0OwomZ3Q7CiZndDsgVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCiZn
-dDsKJmd0OyBBbSAxMi4wNi4yNSB1bSAxNToyMSBzY2hyaWViIFpoZW5nIFFpeGluZzoKJmd0OyZn
-dDsgRnJvbTogWmhlbmcgUWl4aW5nIDx6aGVuZ3FpeGluZ0BodWF3ZWkuY29tPgomZ3Q7Jmd0Owom
-Z3Q7Jmd0OyBJTyB3aXRoIFJFUV9OT1dBSVQgc2hvdWxkIG5vdCBzZXQgUjFCSU9fVXB0b2RhdGUg
-d2hlbiBpdCBmYWlscywKJmd0OyZndDsgYW5kIGJhZCBibG9ja3Mgc2hvdWxkIGFsc28gYmUgY2xl
-YXJlZCB3aGVuIFJFUV9OT1dBSVQgSU8gc3VjY2VlZHMuCiZndDsKJmd0OyBJdOKAmWQgYmUgZ3Jl
-YXQgaWYgeW91IGNvdWxkIGFkZCBhbiBleHBsYW5hdGlvbiBmb3IgdGhlICpzaG91bGQqLiBXaHkg
-CiZndDsgc2hvdWxkIGl0IG5vdCBiZSBkb25lPwomZ3Q7CiZndDsgRG8geW91IGhhdmUgYSByZXBy
-b2R1Y2VyIGZvciB0aGlzPwomZ3Q7CgpJZiB3ZSBzZXQgUjFCSU9fVXB0b2RhdGUgd2hlbiBJTyB3
-aXRoIFJFUV9OT1dBSVQgZmFpbHMsIHRoZSByZXF1ZXN0IHdpbGwgCnJldHVybiBhIHN1Y2Nlc3Mu
-CgpCdXQgYWN0dWFsbHkgaXQgc2hvdWxkIHJldHVybiBCTEtfU1RTX0lPRVJSIG9yIEJMS19TVFNf
-QUdBSU4sIHJpZ2h0PwoKCiZndDsmZ3Q7IEZpeGVzOiA5ZjM0NmY3ZDRlYTcgKCJtZC9yYWlkMSxy
-YWlkMTA6IGRvbid0IGhhbmRsZSBJTyBlcnJvciBmb3IgCiZndDsmZ3Q7IFJFUV9SQUhFQUQgYW5k
-IFJFUV9OT1dBSVQiKQomZ3Q7Jmd0OyBTaWduZWQtb2ZmLWJ5OiBaaGVuZyBRaXhpbmcgPHpoZW5n
-cWl4aW5nQGh1YXdlaS5jb20+CiZndDsmZ3Q7IC0tLQomZ3Q7Jmd0OyAmbmJzcDsgZHJpdmVycy9t
-ZC9yYWlkMS5jJm5ic3A7IHwgMTEgKysrKysrLS0tLS0KJmd0OyZndDsgJm5ic3A7IGRyaXZlcnMv
-bWQvcmFpZDEwLmMgfCZuYnNwOyA5ICsrKysrLS0tLQomZ3Q7Jmd0OyAmbmJzcDsgMiBmaWxlcyBj
-aGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQomZ3Q7Jmd0OwomZ3Q7Jmd0
-OyBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZC9yYWlkMS5jIGIvZHJpdmVycy9tZC9yYWlkMS5jCiZn
-dDsmZ3Q7IGluZGV4IDE5YzVhMGNlNWE0MC4uYTFjZGRkMjRiMTc4IDEwMDY0NAomZ3Q7Jmd0OyAt
-LS0gYS9kcml2ZXJzL21kL3JhaWQxLmMKJmd0OyZndDsgKysrIGIvZHJpdmVycy9tZC9yYWlkMS5j
-CiZndDsmZ3Q7IEBAIC00NTUsMTMgKzQ1NSwxMyBAQCBzdGF0aWMgdm9pZCByYWlkMV9lbmRfd3Jp
-dGVfcmVxdWVzdChzdHJ1Y3QgYmlvIAomZ3Q7Jmd0OyAqYmlvKQomZ3Q7Jmd0OyAmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgc3RydWN0IG1kX3JkZXYgKnJkZXYgPSBjb25mLSZndDttaXJy
-b3JzW21pcnJvcl0ucmRldjsKJmd0OyZndDsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-IHNlY3Rvcl90IGxvID0gcjFfYmlvLSZndDtzZWN0b3I7CiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyBzZWN0b3JfdCBoaSA9IHIxX2Jpby0mZ3Q7c2VjdG9yICsgcjFfYmlv
-LSZndDtzZWN0b3JzOwomZ3Q7Jmd0OyAtJm5ic3A7Jm5ic3A7Jm5ic3A7IGJvb2wgaWdub3JlX2Vy
-cm9yID0gIXJhaWQxX3Nob3VsZF9oYW5kbGVfZXJyb3IoYmlvKSB8fAomZ3Q7Jmd0OyAtJm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IChiaW8tJmd0O2JpX3N0YXR1cyAm
-YW1wOyZhbXA7IGJpb19vcChiaW8pID09IFJFUV9PUF9ESVNDQVJEKTsKJmd0OyZndDsgKyZuYnNw
-OyZuYnNwOyZuYnNwOyBib29sIGRpc2NhcmRfZXJyb3IgPSBiaW8tJmd0O2JpX3N0YXR1cyAmYW1w
-OyZhbXA7IGJpb19vcChiaW8pID09IAomZ3Q7Jmd0OyBSRVFfT1BfRElTQ0FSRDsKJmd0OwomZ3Q7
-IEV4Y3VzZSBteSBpZ25vcmFuY2UuIFdoYXQgaXMgdGhlIGRpZmZlcmVuY2UgYmV0d2VlbiBpZ25v
-cmUgYW5kIGRpc2NhcmQ/CgoKUkVRX09QX0RJU0NBUkQgaXMgYSBvcGVyYXRpb24gdHlwZSB3aGls
-ZSBSRVFfTk9XQUlUIGlzIGp1c3QgYSByZXF1ZXN0IGZsYWcuCgpUaGVzZSB0d28gY2FuIGJlIGNv
-bWJpbmVkIHRvZ2V0aGVyLiBJTyB3aXRoIFJFUV9OT1dBSVQgY2FuIGZhaWwgZWFybHksIGV2ZW4K
-CnRob3VnaCB0aGUgc3RvcmFnZSBtZWRpdW0gaXMgZmluZS4gU28sIHdlIGJldHRlciBoYW5kbGUg
-dGhpcyB0eXBlIG9mIAplcnJvciBzcGVjaWFsbHkuCgoKSSBob3BlIHRoaXMgY2xhcmlmaWVzIHlv
-dXIgZG91YnRzLgoKCiZndDsKJmd0OyZndDsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-IC8qCiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAqICdvbmUg
-bWlycm9yIElPIGhhcyBmaW5pc2hlZCcgZXZlbnQgaGFuZGxlcjoKJmd0OyZndDsgJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ICovCiZndDsmZ3Q7IC0mbmJzcDsmbmJzcDsmbmJz
-cDsgaWYgKGJpby0mZ3Q7Ymlfc3RhdHVzICZhbXA7JmFtcDsgIWlnbm9yZV9lcnJvcikgewomZ3Q7
-Jmd0OyArJm5ic3A7Jm5ic3A7Jm5ic3A7IGlmIChiaW8tJmd0O2JpX3N0YXR1cyAmYW1wOyZhbXA7
-ICFkaXNjYXJkX2Vycm9yICZhbXA7JmFtcDsKJmd0OyZndDsgKyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByYWlkMV9zaG91bGRfaGFuZGxlX2Vycm9yKGJpbykpIHsK
-Jmd0OyZndDsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7IHNldF9iaXQoV3JpdGVFcnJvclNlZW4sJm5ic3A7Jm5ic3A7Jm5ic3A7ICZhbXA7cmRl
-di0mZ3Q7ZmxhZ3MpOwomZ3Q7Jmd0OyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKCF0ZXN0X2FuZF9zZXRfYml0KFdhbnRSZXBsYWNlbWVu
-dCwgJmFtcDtyZGV2LSZndDtmbGFncykpCiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBz
-ZXRfYml0KE1EX1JFQ09WRVJZX05FRURFRCwgJmFtcDsKJmd0OyZndDsgQEAgLTUwNywxMiArNTA3
-LDEzIEBAIHN0YXRpYyB2b2lkIHJhaWQxX2VuZF93cml0ZV9yZXF1ZXN0KHN0cnVjdCBiaW8gCiZn
-dDsmZ3Q7ICpiaW8pCiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAqIGNoZWNrIHRoaXMgaGVyZS4KJmd0OyZndDsgJm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-ICovCiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyBpZiAodGVzdF9iaXQoSW5fc3luYywgJmFtcDtyZGV2LSZndDtmbGFncykgJmFt
-cDsmYW1wOwomZ3Q7Jmd0OyAtJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ICF0ZXN0X2JpdChGYXVsdHksICZhbXA7cmRldi0m
-Z3Q7ZmxhZ3MpKQomZ3Q7Jmd0OyArJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ICF0ZXN0X2JpdChGYXVsdHksICZhbXA7cmRl
-di0mZ3Q7ZmxhZ3MpICZhbXA7JmFtcDsKJmd0OyZndDsgKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAoIWJpby0mZ3Q7Ymlf
-c3RhdHVzIHx8IGRpc2NhcmRfZXJyb3IpKQomZ3Q7Jmd0OyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
-c2V0X2JpdChSMUJJT19VcHRvZGF0ZSwgJmFtcDtyMV9iaW8tJmd0O3N0YXRlKTsKJmd0OyZndDsg
-Jm5ic3A7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyAvKiBNYXliZSB3ZSBjYW4gY2xlYXIgc29tZSBiYWQgYmxvY2tzLiAqLwomZ3Q7Jmd0OyAm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYg
-KHJkZXZfaGFzX2JhZGJsb2NrKHJkZXYsIHIxX2Jpby0mZ3Q7c2VjdG9yLCAKJmd0OyZndDsgcjFf
-YmlvLSZndDtzZWN0b3JzKSAmYW1wOyZhbXA7CiZndDsmZ3Q7IC0mbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgIWlnbm9yZV9l
-cnJvcikgewomZ3Q7Jmd0OyArJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ICFiaW8tJmd0O2JpX3N0YXR1cykgewomZ3Q7Jmd0
-OyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcjFfYmlvLSZndDtiaW9zW21pcnJvcl0gPSBJT19NQURF
-X0dPT0Q7CiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBzZXRfYml0KFIxQklPX01hZGVH
-b29kLCAmYW1wO3IxX2Jpby0mZ3Q7c3RhdGUpOwomZ3Q7Jmd0OyAmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgfQomZ3Q7Jmd0OyBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9tZC9yYWlkMTAuYyBiL2RyaXZlcnMvbWQvcmFpZDEwLmMKJmd0OyZndDsgaW5k
-ZXggYjc0NzgwYWY0YzIyLi4xODQ4OTQ3YjBhNmQgMTAwNjQ0CiZndDsmZ3Q7IC0tLSBhL2RyaXZl
-cnMvbWQvcmFpZDEwLmMKJmd0OyZndDsgKysrIGIvZHJpdmVycy9tZC9yYWlkMTAuYwomZ3Q7Jmd0
-OyBAQCAtNDU4LDggKzQ1OCw4IEBAIHN0YXRpYyB2b2lkIHJhaWQxMF9lbmRfd3JpdGVfcmVxdWVz
-dChzdHJ1Y3QgYmlvIAomZ3Q7Jmd0OyAqYmlvKQomZ3Q7Jmd0OyAmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsgaW50IHNsb3QsIHJlcGw7CiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyBzdHJ1Y3QgbWRfcmRldiAqcmRldiA9IE5VTEw7CiZndDsmZ3Q7ICZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBzdHJ1Y3QgYmlvICp0b19wdXQgPSBOVUxMOwomZ3Q7Jmd0
-OyAtJm5ic3A7Jm5ic3A7Jm5ic3A7IGJvb2wgaWdub3JlX2Vycm9yID0gIXJhaWQxX3Nob3VsZF9o
-YW5kbGVfZXJyb3IoYmlvKSB8fAomZ3Q7Jmd0OyAtJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7IChiaW8tJmd0O2JpX3N0YXR1cyAmYW1wOyZhbXA7IGJpb19vcChiaW8p
-ID09IFJFUV9PUF9ESVNDQVJEKTsKJmd0OyZndDsgKyZuYnNwOyZuYnNwOyZuYnNwOyBib29sIGRp
-c2NhcmRfZXJyb3IgPSBiaW8tJmd0O2JpX3N0YXR1cyAmYW1wOyZhbXA7IGJpb19vcChiaW8pID09
-IAomZ3Q7Jmd0OyBSRVFfT1BfRElTQ0FSRDsKJmd0OyZndDsgKyZuYnNwOyZuYnNwOyZuYnNwOyBi
-b29sIGlnbm9yZV9lcnJvciA9ICFyYWlkMV9zaG91bGRfaGFuZGxlX2Vycm9yKGJpbykgfHwgCiZn
-dDsmZ3Q7IGRpc2NhcmRfZXJyb3I7CiZndDsmZ3Q7ICZuYnNwOyAmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsgZGV2ID0gZmluZF9iaW9fZGlzayhjb25mLCByMTBfYmlvLCBiaW8sICZhbXA7
-c2xvdCwgJmFtcDtyZXBsKTsKJmd0OyZndDsgJm5ic3A7IEBAIC01MjIsMTMgKzUyMiwxNCBAQCBz
-dGF0aWMgdm9pZCByYWlkMTBfZW5kX3dyaXRlX3JlcXVlc3Qoc3RydWN0IAomZ3Q7Jmd0OyBiaW8g
-KmJpbykKJmd0OyZndDsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7ICogY2hlY2sgdGhpcyBoZXJlLgomZ3Q7Jmd0OyAmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgKi8KJmd0
-OyZndDsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7IGlmICh0ZXN0X2JpdChJbl9zeW5jLCAmYW1wO3JkZXYtJmd0O2ZsYWdzKSAmYW1wOyZhbXA7
-CiZndDsmZ3Q7IC0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgIXRlc3RfYml0KEZhdWx0eSwgJmFtcDtyZGV2LSZndDtmbGFn
-cykpCiZndDsmZ3Q7ICsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgIXRlc3RfYml0KEZhdWx0eSwgJmFtcDtyZGV2LSZndDtm
-bGFncykgJmFtcDsmYW1wOwomZ3Q7Jmd0OyArJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ICghYmlvLSZndDtiaV9zdGF0dXMg
-fHwgZGlzY2FyZF9lcnJvcikpCiZndDsmZ3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBzZXRfYml0
-KFIxMEJJT19VcHRvZGF0ZSwgJmFtcDtyMTBfYmlvLSZndDtzdGF0ZSk7CiZndDsmZ3Q7ICZuYnNw
-OyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
-LyogTWF5YmUgd2UgY2FuIGNsZWFyIHNvbWUgYmFkIGJsb2Nrcy4gKi8KJmd0OyZndDsgJm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGlmIChyZGV2
-X2hhc19iYWRibG9jayhyZGV2LCByMTBfYmlvLSZndDtkZXZzW3Nsb3RdLmFkZHIsCiZndDsmZ3Q7
-ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByMTBfYmlvLSZndDtzZWN0b3JzKSAmYW1wOyZhbXA7
-CiZndDsmZ3Q7IC0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgIWlnbm9yZV9lcnJvcikgewomZ3Q7Jmd0OyArJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-ICFiaW8tJmd0O2JpX3N0YXR1cykgewomZ3Q7Jmd0OyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgYmlv
-X3B1dChiaW8pOwomZ3Q7Jmd0OyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKHJlcGwpCiZndDsm
-Z3Q7ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByMTBfYmlv
-LSZndDtkZXZzW3Nsb3RdLnJlcGxfYmlvID0gSU9fTUFERV9HT09EOwomZ3Q7CiZndDsKJmd0OyBL
-aW5kIHJlZ2FyZHMsCiZndDsKJmd0OyBQYXVsCgoKUmVnYXJkcywKClpoZW5nCgo8L3poZW5ncWl4
-aW5nQGh1YXdlaS5jb20+PC96aGVuZ3FpeGluZ0BodWF3ZWkuY29tPg==
+
+
+Le 13/06/2025 à 18:41, Takashi Iwai a écrit :
+> On Fri, 13 Jun 2025 17:37:09 +0200,
+> Christophe Leroy wrote:
+>>
+>> With user access protection (Called SMAP on x86 or KUAP on powerpc)
+>> each and every call to get_user() or put_user() performs heavy
+>> operations to unlock and lock kernel access to userspace.
+>>
+>> SNDRV_PCM_IOCTL_SYNC_PTR is a hot path which is called really often
+>> and needs to run as fast as possible.
+>>
+>> To improve performance, perform user accesses by blocks using
+>> user_access_begin/user_access_end() and unsafe_get_user()/
+>> unsafe_put_user().
+>>
+>> Before the patch the 9 calls to put_user() at the end of
+>> snd_pcm_ioctl_sync_ptr_compat() imply the following set of
+>> instructions about 9 times (access_ok - enable user - write - disable
+>> user):
+>>      0.00 :   c057f858:       3d 20 7f ff     lis     r9,32767
+>>      0.29 :   c057f85c:       39 5e 00 14     addi    r10,r30,20
+>>      0.77 :   c057f860:       61 29 ff fc     ori     r9,r9,65532
+>>      0.32 :   c057f864:       7c 0a 48 40     cmplw   r10,r9
+>>      0.36 :   c057f868:       41 a1 fb 58     bgt     c057f3c0 <snd_pcm_ioctl+0xbb0>
+>>      0.30 :   c057f86c:       3d 20 dc 00     lis     r9,-9216
+>>      1.95 :   c057f870:       7d 3a c3 a6     mtspr   794,r9
+>>      0.33 :   c057f874:       92 8a 00 00     stw     r20,0(r10)
+>>      0.27 :   c057f878:       3d 20 de 00     lis     r9,-8704
+>>      0.28 :   c057f87c:       7d 3a c3 a6     mtspr   794,r9
+>> ...
+>>
+>> A perf profile shows that in total the 9 put_user() represent 36% of
+>> the time spent in snd_pcm_ioctl() and about 80 instructions.
+>>
+>> With this patch everything is done in 13 instructions and represent
+>> only 15% of the time spent in snd_pcm_ioctl():
+>>
+>>      0.57 :   c057f5dc:       3d 20 dc 00     lis     r9,-9216
+>>      0.98 :   c057f5e0:       7d 3a c3 a6     mtspr   794,r9
+>>      0.16 :   c057f5e4:       92 7f 00 04     stw     r19,4(r31)
+>>      0.63 :   c057f5e8:       93 df 00 0c     stw     r30,12(r31)
+>>      0.16 :   c057f5ec:       93 9f 00 10     stw     r28,16(r31)
+>>      4.95 :   c057f5f0:       92 9f 00 14     stw     r20,20(r31)
+>>      0.19 :   c057f5f4:       92 5f 00 18     stw     r18,24(r31)
+>>      0.49 :   c057f5f8:       92 bf 00 1c     stw     r21,28(r31)
+>>      0.27 :   c057f5fc:       93 7f 00 20     stw     r27,32(r31)
+>>      5.88 :   c057f600:       93 36 00 00     stw     r25,0(r22)
+>>      0.11 :   c057f604:       93 17 00 00     stw     r24,0(r23)
+>>      0.00 :   c057f608:       3d 20 de 00     lis     r9,-8704
+>>      0.79 :   c057f60c:       7d 3a c3 a6     mtspr   794,r9
+>>
+>> Note that here the access_ok() in user_write_access_begin() is skipped
+>> because the exact same verification has already been performed at the
+>> beginning of the fonction with the call to user_read_access_begin().
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> 
+> Hm, with this patch, I got a compile warning:
+> 
+> sound/core/snd-pcm.o: warning: objtool: .altinstr_replacement+0x12: redundant UACCESS disable
+
+Oops. My mistake.
+
+Objtool doesn't check that on powerpc and I only checked build on x86 
+and arm64 by cross-compiling pcm_native.o. Should have done a complete 
+build.
+
+user_read_access_end() has to be skipped when user_read_access_begin() 
+fails. Need to add a second label for that in the macros. Will send an 
+updated version of this patch. Have to send the entire series again 
+because change to patch 2 conflicts with patch 3.
+
+Christophe
+
+> 
+> It's with gcc-13.3.1.
+> 
+> 
+> Takashi
+> 
+>> ---
+>>   sound/core/pcm_native.c | 42 +++++++++++++++++++++++++----------------
+>>   1 file changed, 26 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+>> index 20326aa377b0..fd69eea935b2 100644
+>> --- a/sound/core/pcm_native.c
+>> +++ b/sound/core/pcm_native.c
+>> @@ -3053,30 +3053,40 @@ static inline int snd_pcm_hwsync(struct snd_pcm_substream *substream)
+>>   }
+>>   
+>>   #define snd_pcm_sync_ptr_get_user(__f, __c, __ptr) ({				\
+>> -	int __err = 0;								\
+>> +	__label__ failed;							\
+>> +	int __err = -EFAULT;							\
+>>   	typeof(*(__ptr)) __user *__src = (__ptr);					\
+>>   										\
+>> -	if (get_user(__f, &src->flags) ||					\
+>> -	    get_user(__c.appl_ptr, &__src->c.control.appl_ptr) ||		\
+>> -	    get_user(__c.avail_min, &__src->c.control.avail_min))		\
+>> -		__err = -EFAULT;						\
+>> +	if (!user_read_access_begin(__src, sizeof(*__src)))			\
+>> +		goto failed;							\
+>> +	unsafe_get_user(__f, &__src->flags, failed);				\
+>> +	unsafe_get_user(__c.appl_ptr, &__src->c.control.appl_ptr, failed);	\
+>> +	unsafe_get_user(__c.avail_min, &__src->c.control.avail_min, failed);	\
+>> +	__err = 0;								\
+>> +failed:										\
+>> +	user_read_access_end();							\
+>>   	__err;									\
+>>   })
+>>   
+>>   #define snd_pcm_sync_ptr_put_user(__s, __c, __ptr) ({				\
+>> -	int __err = 0;								\
+>> +	__label__ failed;							\
+>> +	int __err = -EFAULT;							\
+>>   	typeof(*(__ptr)) __user *__src = (__ptr);					\
+>>   										\
+>> -	if (put_user(__s.state, &__src->s.status.state) ||			\
+>> -	    put_user(__s.hw_ptr, &__src->s.status.hw_ptr) ||			\
+>> -	    put_user(__s.tstamp.tv_sec, &__src->s.status.tstamp_sec) ||		\
+>> -	    put_user(__s.tstamp.tv_nsec, &__src->s.status.tstamp_nsec) ||	\
+>> -	    put_user(__s.suspended_state, &__src->s.status.suspended_state) ||	\
+>> -	    put_user(__s.audio_tstamp.tv_sec, &__src->s.status.audio_tstamp_sec) ||	\
+>> -	    put_user(__s.audio_tstamp.tv_nsec, &__src->s.status.audio_tstamp_nsec) ||	\
+>> -	    put_user(__c.appl_ptr, &__src->c.control.appl_ptr) ||		\
+>> -	    put_user(__c.avail_min, &__src->c.control.avail_min))		\
+>> -		__err = -EFAULT;						\
+>> +	if (!user_write_access_begin(__src, sizeof(*__src)))			\
+>> +		goto failed;							\
+>> +	unsafe_put_user(__s.state, &__src->s.status.state, failed);		\
+>> +	unsafe_put_user(__s.hw_ptr, &__src->s.status.hw_ptr, failed);		\
+>> +	unsafe_put_user(__s.tstamp.tv_sec, &__src->s.status.tstamp_sec, failed);\
+>> +	unsafe_put_user(__s.tstamp.tv_nsec, &__src->s.status.tstamp_nsec, failed);		\
+>> +	unsafe_put_user(__s.suspended_state, &__src->s.status.suspended_state, failed);		\
+>> +	unsafe_put_user(__s.audio_tstamp.tv_sec, &__src->s.status.audio_tstamp_sec, failed);	\
+>> +	unsafe_put_user(__s.audio_tstamp.tv_nsec, &__src->s.status.audio_tstamp_nsec, failed);	\
+>> +	unsafe_put_user(__c.appl_ptr, &__src->c.control.appl_ptr, failed);	\
+>> +	unsafe_put_user(__c.avail_min, &__src->c.control.avail_min, failed);	\
+>> +	__err = 0;								\
+>> +failed:										\
+>> +	user_write_access_end();						\
+>>   	__err;									\
+>>   })
+>>   
+>> -- 
+>> 2.47.0
+>>
+
 
