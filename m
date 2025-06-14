@@ -1,120 +1,210 @@
-Return-Path: <linux-kernel+bounces-687060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2B9AD9F72
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 21:27:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FABBAD9F77
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 21:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69561898D74
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 19:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 509AF3B8C2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 19:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9922E6D32;
-	Sat, 14 Jun 2025 19:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C262E763D;
+	Sat, 14 Jun 2025 19:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jaox7Cc+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gu4kqTYo"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D3A1E00A0
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 19:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA87156C6F;
+	Sat, 14 Jun 2025 19:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749929248; cv=none; b=AqH9h8q7ZyuNxO8DUWtbmnnhpzCc0gXnFSM9S009BExCVns5fQOCQFaGLH06tbns2pSRiqcT8emiAvEKaSMpdotDo5MdQ2FoZAM58dTJ6U8sGkly8E99RzGohmIJWIA6zNfeo18Fu9n4Lk2dgoKyzYqR62MI+iy0VkUbAFigNgQ=
+	t=1749929380; cv=none; b=tQneqedaYijVXL73Kj9lvAfYulm13vi9euH4uEWd08FmTgAeguHKIRY3G2QqytYnbYM3y3N4Y3jVhOMT5d6vjYUseN7t+Z0Wxc0e3A1OwePphtsZ8vpnBD16L9wh0X8XO1r71NblnhkPJZSx2ahDSbVbD5s9ixPVyURTZMysqbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749929248; c=relaxed/simple;
-	bh=NjxtDFHeDZvxl23HhxgRg1zZ5eip1hkirM6cI7Fu2/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QNQhMN3u/jj9bZk5GcvPtgy/xiaWv+HIf8zaIaNC5+xrmG+4b+sSCfTR/soUX4eDiFqomiExobqUXnzXRSqIAEj0FPnIlnSE/QjnbDwJZnAthPlLJkbY30y8uJcVe2GSwX3cZnMJuYGo9lh4sHPSlc4znbUYearYDK3C726UFQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jaox7Cc+; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749929246; x=1781465246;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=NjxtDFHeDZvxl23HhxgRg1zZ5eip1hkirM6cI7Fu2/8=;
-  b=Jaox7Cc+BJRGm8F4PYvcgWKIUqvplepPtcRDfkRu9jFlc2LP1MsI3j3M
-   1WnvlYJDw+Mo5C5Na5+pdCz/gOri5yN2CmGykjQ9ZWtf4jY2DOwhB1+rZ
-   /U2CKM6OSsXPfGVEB3QD2chleFZQ3a9TdUQFZX3qwDQ+FdejUt4Cx5TCT
-   EyDGPDiqTxFIhFaOkMSILapZYXRQ97If6PcOqr2w/OXd/+sMrW88W5CMi
-   1oyH3bgr0BPYiAP9/7U2G/HTQe2VAkH5aQ7UfjKep6SAT7XOzL4eW4rRW
-   q8U0ayPUcJNnfWYvLFCfjSdZafe6tzvpXoZxmjC9ldftWdfOP4bZXXICP
-   w==;
-X-CSE-ConnectionGUID: XG+nnUqNTZasqi8YDEdo9w==
-X-CSE-MsgGUID: eAFSetwySkmQ/A7zCfrqzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11464"; a="52040055"
-X-IronPort-AV: E=Sophos;i="6.16,237,1744095600"; 
-   d="scan'208";a="52040055"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2025 12:27:26 -0700
-X-CSE-ConnectionGUID: uBQsa8H9Qne+rLyoqYRJkQ==
-X-CSE-MsgGUID: TnBQl4OsSGWQCAxjcYVOzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,237,1744095600"; 
-   d="scan'208";a="148088791"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 14 Jun 2025 12:27:23 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uQWXB-000Dnq-0S;
-	Sat, 14 Jun 2025 19:27:21 +0000
-Date: Sun, 15 Jun 2025 03:26:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Benjamin Chan <benjamin.chan@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>
-Subject: drivers/platform/x86/amd/amd_isp4.c:154:28: error: incomplete
- definition of type 'struct module'
-Message-ID: <202506150313.UHoIoVhR-lkp@intel.com>
+	s=arc-20240116; t=1749929380; c=relaxed/simple;
+	bh=GWZseLWsS//zsX21MW0UUkqllIe3UMAz7mnhotza1/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ExRmipb/WwgSJpvv++j1RwluC5RaHl5bSkky/SuW4Nzs1z322A0OrsxmvPSwq08WBy4Refl+lPiA4P2JkMU8Gc6204LmFvaCdy/VVdxAcW3YoyI+O6+Gtc5mHP3tyaj2KDM6cP6ZREGIS6Wb6fyPlcEhMOVgMTRcYmZ3K79Zp1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gu4kqTYo; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a581401c-01e1-45b6-a55e-0361185114ff@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749929375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xN5d4MLrE2OQ8z204hwuo+c3IAo79fmudrGii3bZ0SQ=;
+	b=gu4kqTYosEX2z8Jawy6sUn46pmdpjICOMDHx+kLeGU0mzgiTJ4fVGt/ibuHu5MUM0+R9Mu
+	P1YwF+4/pf/EbxfN6DYizSvGglPO8OCBpveXpJNJdfdrPY0huFfbinUlr/3016VVYNgXIj
+	mWnCv6Up2cMXDw/23G+K2QwBYkzdvd0=
+Date: Sat, 14 Jun 2025 12:29:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   8c6bc74c7f8910ed4c969ccec52e98716f98700a
-commit: 90b85567e45736b662d034be536a76ba0f4c7ca8 platform/x86: Add AMD ISP platform config for OV05C10
-date:   4 weeks ago
-config: x86_64-buildonly-randconfig-001-20250615 (https://download.01.org/0day-ci/archive/20250615/202506150313.UHoIoVhR-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250615/202506150313.UHoIoVhR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506150313.UHoIoVhR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/platform/x86/amd/amd_isp4.c:154:28: error: incomplete definition of type 'struct module'
-     154 |         return !strcmp(adap->owner->name, "i2c_designware_amdisp");
-         |                        ~~~~~~~~~~~^
-   arch/x86/include/asm/alternative.h:99:8: note: forward declaration of 'struct module'
-      99 | struct module;
-         |        ^
-   1 error generated.
+Subject: Re: [PATCH v2 10/12] RISC-V: KVM: Add vmid field to struct
+ kvm_riscv_hfence
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250613065743.737102-1-apatel@ventanamicro.com>
+ <20250613065743.737102-11-apatel@ventanamicro.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <20250613065743.737102-11-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-vim +154 drivers/platform/x86/amd/amd_isp4.c
-
-   151	
-   152	static inline bool is_isp_i2c_adapter(struct i2c_adapter *adap)
-   153	{
- > 154		return !strcmp(adap->owner->name, "i2c_designware_amdisp");
-   155	}
-   156	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 6/12/25 11:57 PM, Anup Patel wrote:
+> Currently, the struct kvm_riscv_hfence does not have vmid field
+> and various hfence processing functions always pick vmid assigned
+> to the guest/VM. This prevents us from doing hfence operation on
+> arbitrary vmid hence add vmid field to struct kvm_riscv_hfence
+> and use it wherever applicable.
+>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>   arch/riscv/include/asm/kvm_tlb.h |  1 +
+>   arch/riscv/kvm/tlb.c             | 30 ++++++++++++++++--------------
+>   2 files changed, 17 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/kvm_tlb.h b/arch/riscv/include/asm/kvm_tlb.h
+> index cd00c9a46cb1..f67e03edeaec 100644
+> --- a/arch/riscv/include/asm/kvm_tlb.h
+> +++ b/arch/riscv/include/asm/kvm_tlb.h
+> @@ -19,6 +19,7 @@ enum kvm_riscv_hfence_type {
+>   struct kvm_riscv_hfence {
+>   	enum kvm_riscv_hfence_type type;
+>   	unsigned long asid;
+> +	unsigned long vmid;
+>   	unsigned long order;
+>   	gpa_t addr;
+>   	gpa_t size;
+> diff --git a/arch/riscv/kvm/tlb.c b/arch/riscv/kvm/tlb.c
+> index 6fc4361c3d75..349fcfc93f54 100644
+> --- a/arch/riscv/kvm/tlb.c
+> +++ b/arch/riscv/kvm/tlb.c
+> @@ -237,49 +237,43 @@ static bool vcpu_hfence_enqueue(struct kvm_vcpu *vcpu,
+>   
+>   void kvm_riscv_hfence_process(struct kvm_vcpu *vcpu)
+>   {
+> -	unsigned long vmid;
+>   	struct kvm_riscv_hfence d = { 0 };
+> -	struct kvm_vmid *v = &vcpu->kvm->arch.vmid;
+>   
+>   	while (vcpu_hfence_dequeue(vcpu, &d)) {
+>   		switch (d.type) {
+>   		case KVM_RISCV_HFENCE_UNKNOWN:
+>   			break;
+>   		case KVM_RISCV_HFENCE_GVMA_VMID_GPA:
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_gvma_vmid(nacl_shmem(), vmid,
+> +				nacl_hfence_gvma_vmid(nacl_shmem(), d.vmid,
+>   						      d.addr, d.size, d.order);
+>   			else
+> -				kvm_riscv_local_hfence_gvma_vmid_gpa(vmid, d.addr,
+> +				kvm_riscv_local_hfence_gvma_vmid_gpa(d.vmid, d.addr,
+>   								     d.size, d.order);
+>   			break;
+>   		case KVM_RISCV_HFENCE_VVMA_ASID_GVA:
+>   			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_vvma_asid(nacl_shmem(), vmid, d.asid,
+> +				nacl_hfence_vvma_asid(nacl_shmem(), d.vmid, d.asid,
+>   						      d.addr, d.size, d.order);
+>   			else
+> -				kvm_riscv_local_hfence_vvma_asid_gva(vmid, d.asid, d.addr,
+> +				kvm_riscv_local_hfence_vvma_asid_gva(d.vmid, d.asid, d.addr,
+>   								     d.size, d.order);
+>   			break;
+>   		case KVM_RISCV_HFENCE_VVMA_ASID_ALL:
+>   			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_vvma_asid_all(nacl_shmem(), vmid, d.asid);
+> +				nacl_hfence_vvma_asid_all(nacl_shmem(), d.vmid, d.asid);
+>   			else
+> -				kvm_riscv_local_hfence_vvma_asid_all(vmid, d.asid);
+> +				kvm_riscv_local_hfence_vvma_asid_all(d.vmid, d.asid);
+>   			break;
+>   		case KVM_RISCV_HFENCE_VVMA_GVA:
+>   			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_RCVD);
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_vvma(nacl_shmem(), vmid,
+> +				nacl_hfence_vvma(nacl_shmem(), d.vmid,
+>   						 d.addr, d.size, d.order);
+>   			else
+> -				kvm_riscv_local_hfence_vvma_gva(vmid, d.addr,
+> +				kvm_riscv_local_hfence_vvma_gva(d.vmid, d.addr,
+>   								d.size, d.order);
+>   			break;
+>   		default:
+> @@ -336,10 +330,12 @@ void kvm_riscv_hfence_gvma_vmid_gpa(struct kvm *kvm,
+>   				    gpa_t gpa, gpa_t gpsz,
+>   				    unsigned long order)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_GVMA_VMID_GPA;
+>   	data.asid = 0;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = gpa;
+>   	data.size = gpsz;
+>   	data.order = order;
+> @@ -359,10 +355,12 @@ void kvm_riscv_hfence_vvma_asid_gva(struct kvm *kvm,
+>   				    unsigned long gva, unsigned long gvsz,
+>   				    unsigned long order, unsigned long asid)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_VVMA_ASID_GVA;
+>   	data.asid = asid;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = gva;
+>   	data.size = gvsz;
+>   	data.order = order;
+> @@ -374,10 +372,12 @@ void kvm_riscv_hfence_vvma_asid_all(struct kvm *kvm,
+>   				    unsigned long hbase, unsigned long hmask,
+>   				    unsigned long asid)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_VVMA_ASID_ALL;
+>   	data.asid = asid;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = data.size = data.order = 0;
+>   	make_xfence_request(kvm, hbase, hmask, KVM_REQ_HFENCE,
+>   			    KVM_REQ_HFENCE_VVMA_ALL, &data);
+> @@ -388,10 +388,12 @@ void kvm_riscv_hfence_vvma_gva(struct kvm *kvm,
+>   			       unsigned long gva, unsigned long gvsz,
+>   			       unsigned long order)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_VVMA_GVA;
+>   	data.asid = 0;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = gva;
+>   	data.size = gvsz;
+>   	data.order = order;
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
