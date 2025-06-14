@@ -1,154 +1,142 @@
-Return-Path: <linux-kernel+bounces-686941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C5AAD9D86
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 16:35:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3FEAD9DDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 16:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2549A189AAD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 14:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918DB189B75C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 14:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71C72E2EE6;
-	Sat, 14 Jun 2025 14:35:10 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662892E173A;
+	Sat, 14 Jun 2025 14:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dhTZ7alw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532732DECB0
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 14:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC3D101C8;
+	Sat, 14 Jun 2025 14:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749911710; cv=none; b=FGyuaiGaH3P0SqpsBUKOo/0C/npRISkqbNCEUyrzFK1rp7dtxmIJftVZaf8VkzRogJAVScECLJUe7jpX5KUXWEHj+47kKxBM/b+RbGzPBcYjny9gM8T75/+ecp5+nZXRHiukla/pWkcgGR4XIZKa8fzoLWC01/FE8gWErpqZ4t8=
+	t=1749912423; cv=none; b=PdaD/cDWpwZDKP7tCgk5kUakwYXGjIUuG5YstkXNElzyOBxfTskJ3wyiosc4ulNaX9eHxK+/SpUeYSY+rl6pSxjbRikLTLYVlHbl2IV1tQaToV0mvPI2AnPC1Gop2eqoYst+vhLWAJhYNDLEkq4rS+eTGVEsov52kuhGwUol5fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749911710; c=relaxed/simple;
-	bh=XngLg+UTC2r+gkvpHZBWpkkEKwZaiIp7X3MAB3zKVGk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J/it8TXLaxqT39oInJA20rp5AmcbFsIEnz/ioKP5eqvw02bF5hVk6XH4E5d7AVP9r+nW2kT4yzbNA4nKPD2ZSOpLflF0HiRGnJXRND8XIS2fqsrrccuAWGXu9c6DYy8R0cMz4E8TddyRNQVKsr3igYZ25tczjhJM97+41vk8nu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bKJfp6rPgztSLv;
-	Sat, 14 Jun 2025 22:33:54 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0948B140154;
-	Sat, 14 Jun 2025 22:35:06 +0800 (CST)
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 14 Jun 2025 22:35:05 +0800
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <xiaqinxin@huawei.com>
-Subject: [RESEND PATCH v4 4/4] selftests/dma: Add dma_map_sg support for dma_map_benchmark
-Date: Sat, 14 Jun 2025 22:34:54 +0800
-Message-ID: <20250614143454.2927363-5-xiaqinxin@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250614143454.2927363-1-xiaqinxin@huawei.com>
-References: <20250614143454.2927363-1-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1749912423; c=relaxed/simple;
+	bh=yszUTL4SUmgXliViH82bafHq+QCIDg65TrpXnQFrs0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHtDuGg4cJgwDJohl/pM67gun+WgvFjD/7YXgvuOO4vTWPUqnuYsLHAk1QtDuVE4aEUbHN1GgeZgqj4uBcDbpBeZaz+T9t251I6a+TK5KaYdogCARSPknG0sSrpFHNZm8L+8zmoblneVI8QuuX5xBUM3sE+c6UxSvS+liiEsauQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dhTZ7alw; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749912422; x=1781448422;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yszUTL4SUmgXliViH82bafHq+QCIDg65TrpXnQFrs0U=;
+  b=dhTZ7alwqPuEkM3IVYAOhS4y0FQ2anVsYRME8JIWNfZLypZ83nnEP4/W
+   fmgne5p6kiHqYMTVzFTyAlXBQHghbsiPEWXm5XBCqWsZHOCxzUiIW45Vz
+   rTXTA+wa7b9J8vDD3fogpZ2z/0yEBt+bupi62nGDkcUW7QmF8XbHHjgjP
+   SzLFqyfawM2Uib/rnZLj846yvA850UaEycvUWKV5sjyHfDoTwli635x3o
+   CdhH5SKnhSW3rIYXoouqYcb/Xq3nW7+UkuJyVq4721ik+2Q4npfSuHMR1
+   SjTitrCvHHHFlEEYIspSM7woFjA7LYBr/mXKBBiijznh6FLk3kxMFBeD0
+   g==;
+X-CSE-ConnectionGUID: o1qbXmmjSPqkBoVzdeMlKg==
+X-CSE-MsgGUID: vkbkCotfQaS6f8Fnp12QdA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11464"; a="74640700"
+X-IronPort-AV: E=Sophos;i="6.16,236,1744095600"; 
+   d="scan'208";a="74640700"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2025 07:47:01 -0700
+X-CSE-ConnectionGUID: oOtMxOXRQ6+xe094Y20BGg==
+X-CSE-MsgGUID: f+RlwJaZRj6dVdN1G84eLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,236,1744095600"; 
+   d="scan'208";a="147967921"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 14 Jun 2025 07:46:58 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uQS9n-000Das-1S;
+	Sat, 14 Jun 2025 14:46:55 +0000
+Date: Sat, 14 Jun 2025 22:46:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kvm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Zi Yan <ziy@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Alex Mastro <amastro@fb.com>, David Hildenbrand <david@redhat.com>,
+	Nico Pache <npache@redhat.com>, peterx@redhat.com
+Subject: Re: [PATCH 4/5] vfio: Introduce vfio_device_ops.get_unmapped_area
+ hook
+Message-ID: <202506142215.koMEU2rT-lkp@intel.com>
+References: <20250613134111.469884-5-peterx@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613134111.469884-5-peterx@redhat.com>
 
-Support for dma_map_sg, add option '-m' to distinguish mode.
+Hi Peter,
 
-i) Users can set option '-m' to select mode:
-   DMA_MAP_BENCH_SINGLE_MODE=0, DMA_MAP_BENCH_SG_MODE:=1
-   (The mode is also show in the test result).
-ii) Users can set option '-g' to set sg_nents
-    (total count of entries in scatterlist)
-    the maximum number is 1024. Each of sg buf size is PAGE_SIZE.
-    e.g
-    [root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
-    dma mapping mode: DMA_MAP_BENCH_SG_MODE
-    dma mapping benchmark: threads:8 seconds:30 node:-1
-    dir:FROM_DEVICE granule/sg_nents: 8
-    average map latency(us):1.4 standard deviation:0.3
-    average unmap latency(us):1.3 standard deviation:0.3
-    [root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
-    dma mapping mode: DMA_MAP_BENCH_SINGLE_MODE
-    dma mapping benchmark: threads:8 seconds:30 node:-1
-    dir:FROM_DEVICE granule/sg_nents: 8
-    average map latency(us):1.0 standard deviation:0.3
-    average unmap latency(us):1.3 standard deviation:0.5
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Barry Song <baohua@kernel.org>
-Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- tools/testing/selftests/dma/dma_map_benchmark.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+[auto build test ERROR on akpm-mm/mm-everything]
 
-diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
-index b12f1f9babf8..c37cbc7e8766 100644
---- a/tools/testing/selftests/dma/dma_map_benchmark.c
-+++ b/tools/testing/selftests/dma/dma_map_benchmark.c
-@@ -27,6 +27,7 @@ int main(int argc, char **argv)
- 	int fd, opt;
- 	/* default single thread, run 20 seconds on NUMA_NO_NODE */
- 	int threads = 1, seconds = 20, node = -1;
-+	int map_mode = DMA_MAP_BENCH_SINGLE_MODE;
- 	/* default dma mask 32bit, bidirectional DMA */
- 	int bits = 32, xdelay = 0, dir = DMA_MAP_BIDIRECTIONAL;
- 	/* default granule 1 PAGESIZE */
-@@ -34,7 +35,7 @@ int main(int argc, char **argv)
- 
- 	int cmd = DMA_MAP_BENCHMARK;
- 
--	while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:")) != -1) {
-+	while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:m:")) != -1) {
- 		switch (opt) {
- 		case 't':
- 			threads = atoi(optarg);
-@@ -57,11 +58,20 @@ int main(int argc, char **argv)
- 		case 'g':
- 			granule = atoi(optarg);
- 			break;
-+		case 'm':
-+			map_mode = atoi(optarg);
-+			break;
- 		default:
- 			return -1;
- 		}
- 	}
- 
-+	if (map_mode >= DMA_MAP_BENCH_MODE_MAX) {
-+		fprintf(stderr, "invalid map mode, DMA_MAP_BENCH_SINGLE_MODE:%d, DMA_MAP_BENCH_SG_MODE:%d\n",
-+			DMA_MAP_BENCH_SINGLE_MODE, DMA_MAP_BENCH_SG_MODE);
-+		exit(1);
-+	}
-+
- 	if (threads <= 0 || threads > DMA_MAP_MAX_THREADS) {
- 		fprintf(stderr, "invalid number of threads, must be in 1-%d\n",
- 			DMA_MAP_MAX_THREADS);
-@@ -111,13 +121,15 @@ int main(int argc, char **argv)
- 	map.dma_dir = dir;
- 	map.dma_trans_ns = xdelay;
- 	map.granule = granule;
-+	map.map_mode = map_mode;
- 
- 	if (ioctl(fd, cmd, &map)) {
- 		perror("ioctl");
- 		exit(1);
- 	}
- 
--	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule: %d\n",
-+	printf("dma mapping mode: %d\n", map_mode);
-+	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule/sg_nents: %d\n",
- 			threads, seconds, node, dir[directions], granule);
- 	printf("average map latency(us):%.1f standard deviation:%.1f\n",
- 			map.avg_map_100ns/10.0, map.map_stddev/10.0);
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Xu/mm-Deduplicate-mm_get_unmapped_area/20250613-214307
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250613134111.469884-5-peterx%40redhat.com
+patch subject: [PATCH 4/5] vfio: Introduce vfio_device_ops.get_unmapped_area hook
+config: sh-randconfig-002-20250614 (https://download.01.org/0day-ci/archive/20250614/202506142215.koMEU2rT-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250614/202506142215.koMEU2rT-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506142215.koMEU2rT-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/vfio/vfio_main.c: In function 'vfio_device_get_unmapped_area':
+>> drivers/vfio/vfio_main.c:1367:24: error: implicit declaration of function 'mm_get_unmapped_area'; did you mean 'get_unmapped_area'? [-Werror=implicit-function-declaration]
+    1367 |                 return mm_get_unmapped_area(current->mm, file, addr,
+         |                        ^~~~~~~~~~~~~~~~~~~~
+         |                        get_unmapped_area
+   cc1: some warnings being treated as errors
+
+
+vim +1367 drivers/vfio/vfio_main.c
+
+  1356	
+  1357	static unsigned long vfio_device_get_unmapped_area(struct file *file,
+  1358							   unsigned long addr,
+  1359							   unsigned long len,
+  1360							   unsigned long pgoff,
+  1361							   unsigned long flags)
+  1362	{
+  1363		struct vfio_device_file *df = file->private_data;
+  1364		struct vfio_device *device = df->device;
+  1365	
+  1366		if (!device->ops->get_unmapped_area)
+> 1367			return mm_get_unmapped_area(current->mm, file, addr,
+  1368						    len, pgoff, flags);
+  1369	
+  1370		return device->ops->get_unmapped_area(device, file, addr, len,
+  1371						      pgoff, flags);
+  1372	}
+  1373	
+
 -- 
-2.33.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
