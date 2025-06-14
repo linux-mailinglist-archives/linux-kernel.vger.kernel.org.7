@@ -1,251 +1,239 @@
-Return-Path: <linux-kernel+bounces-686752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90AC3AD9B49
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 10:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2991CAD9B71
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 10:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53EA43B6846
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E9FA3BB512
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA172980A1;
-	Sat, 14 Jun 2025 08:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B825296168;
+	Sat, 14 Jun 2025 08:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dram.page header.i=@dram.page header.b="SPrAeDlN"
-Received: from kuriko.dram.page (kuriko.dram.page [65.108.252.55])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="b6XWLLvp"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362691F4295;
-	Sat, 14 Jun 2025 08:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD6F38384;
+	Sat, 14 Jun 2025 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749890282; cv=none; b=p04QUbtK4SzpgwmMN6cvM86WwwMLMtK/QUCnUrL3VEyJW4G1S01JKY3f7yoPCH6SPQcyL1+Om0rb7hoX4ed+9XzgPkuR5joFVq1gCDbBVUUpb+8E7cuV2UqeP6rvCeQA0tGlW0/sGdM94oWvdckyBytMznC76c4vbZMq4i0d5LE=
+	t=1749890349; cv=none; b=jVjwcRw158STzojMJEeLoGFDMbNIeDFhp6cQeomDskpsoE1/OBgyIJm1sAhbJwUJZ2ZfuL97V1EBTpJiP/gPFy7clxfuisrB+X7QtGZbNuv6QhNuaY+pcTBRddea9BTLP0l2sfO1owmlKo4om6hYGBD90eSv7ydyv0SkedPvWgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749890282; c=relaxed/simple;
-	bh=QmVJFUSgwhoO26kXAq78Til/4V6ltLSDjxI6LJFEZPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RREzOY/w75Ur/Jl8YEm8lsF7dURLYyCb8Ap/UBPUBBDTGj3P8tGaOa9aq+vMncQt8R3/CSHKAxO0JDcGMfW+HBtFR/QkQ10PUa6p+IgdFMBcbd9A15HxwHaCY2gPbINAe+l6NCPAiqLyy34/OsoLcAd0YXnGCfDNmafVhzBxUjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dram.page; spf=pass smtp.mailfrom=dram.page; dkim=pass (1024-bit key) header.d=dram.page header.i=@dram.page header.b=SPrAeDlN; arc=none smtp.client-ip=65.108.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dram.page
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dram.page
-Message-ID: <2496104d-8eed-4d20-bfef-84beb8c4488f@dram.page>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dram.page; s=mail;
-	t=1749890278; bh=JfoqOGf4PRFQHFFeAQ7pJGRWNKKuIJYUM00ZQiFU31Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=SPrAeDlNXmaoNuoai8gQ+4GYWqXi7SHVmV5JLzzmw6Yf0BsBqvXfAbxy9HnnkmagZ
-	 rs86x4Sm1BQ0wmGBWtav/H7Eo6niWBKq/FW5bkzcEjx8Dcv0kO4Li4Abqbp9Z64m5p
-	 49C4Byrwroa4C8Kz7xjtQJEBAmFSvZuqkfCxaftU=
-Date: Sat, 14 Jun 2025 16:37:45 +0800
+	s=arc-20240116; t=1749890349; c=relaxed/simple;
+	bh=y53vcfzBA/QLo9DPgUEzYxoqQBapXTxQQEW5PJv4IwU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=KQPPUiMSqWz3OevJILpJIf/MfPzFLxxkb59kdFzYA7wFY1Fias3fy3ykPjkdUVY9M1egzV0zKwE7qFxBccamQMvYMR3U1Z9pPbgnBN8EdPfZg7r4tugVpBaFHGuWPPYmVUMgo8r9sPzFIprfFHR4CHHNzQLvJKDLF9GXhm1Js+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=b6XWLLvp; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1749890314; x=1750495114; i=frank-w@public-files.de;
+	bh=9TEZAlxDa5acq01LkdKBavZd5R2cJglwAlEtuKPbdhw=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=b6XWLLvpxRRTsTMRLcvZYMJgXxX7kjINssuIoBGMmhx3foxTEDx6mmFGRLLVoKCP
+	 fW2VOKo2yh3Siv/zZXZjLMWn7FdW+ZD8E8xMGgGkVB8Hctxciy4obcUoMq9uLXyEA
+	 yYGKywXSTtjwPVuCLi/O79ejcT5KRJndtwPoZH92hFVRx8H6YkodTRWyVOPhaU6w4
+	 VTiNcMrz4ftrOp99nrLnl02nYd0ylfMQFDYflYGR83Z748i7zm7HvywW4XelaOZCD
+	 xCoFjL1PxxLd7valEDwRCjBRhbsALraIR8oOeWxsJaRV3tx6EltBDgrW+iEyp5bib
+	 QqbLqFBUk1oDlCbyFQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([80.245.76.73]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N5mGH-1utOnC3FFr-014PR0; Sat, 14
+ Jun 2025 10:38:33 +0200
+Date: Sat, 14 Jun 2025 10:38:28 +0200
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Lorenzo Bianconi <lorenzo@kernel.org>, Frank Wunderlich <linux@fw-web.de>
+CC: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org
+Subject: Re: [net-next v1] net: ethernet: mtk_eth_soc: support named IRQs
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <aE0pav5c8Ji1Q7br@lore-rh-laptop>
+References: <20250613191813.61010-1-linux@fw-web.de> <aE0pav5c8Ji1Q7br@lore-rh-laptop>
+Message-ID: <E6B6CB88-4B47-455D-9554-DE9BFC209454@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 5/8] riscv: dts: spacemit: Add dma bus and PDMA node for
- K1 SoC
-To: Guodong Xu <guodong@riscstar.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, dlan@gentoo.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- p.zabel@pengutronix.de, drew@pdp7.com, emil.renner.berthing@canonical.com,
- inochiama@gmail.com, geert+renesas@glider.be, tglx@linutronix.de,
- hal.feng@starfivetech.com, joel@jms.id.au, duje.mihanovic@skole.hr,
- Ze Huang <huangze@whut.edu.cn>, elder@riscstar.com,
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev
-References: <20250611125723.181711-1-guodong@riscstar.com>
- <20250611125723.181711-6-guodong@riscstar.com>
- <2b17769e-2620-4f22-9ea5-f15d4adcb27b@dram.page>
- <CAH1PCMaC+imcMZCFYtRdmH6ge=dPgnANn_GqVfsGRS=+YhyJCw@mail.gmail.com>
-Content-Language: en-US
-From: Vivian Wang <uwu@dram.page>
-In-Reply-To: <CAH1PCMaC+imcMZCFYtRdmH6ge=dPgnANn_GqVfsGRS=+YhyJCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JrsbjBGKMLoUdsIVKIdsdqQcm6qpyk4B31BbV7S4fPZu//cUl8L
+ bKal6c09RHgy6BMsl4qTcr4MykN42AZ5qAqgwBfze5B9g4ZtfwKwC/B2xU6xHNxpaCq8px/
+ 9mLj4heIYgyGi/FqypAGm9EXPI+EX8ugIxmk5+2IUqiaHURvZuBrKNSmzS1c7ampIwXoupK
+ ijiHJbP6ouhIoCa+iP1Fw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ECGvj57vr6I=;c0DD0gTvw/5BlGkR573YNjwkx+N
+ 3u3W2cfu8RnujnCaZK95hIbJ390YtJCSQNUQWykUI9vMD0EtIm2VYmETV4RJ/z7AsHEBchf61
+ VPVbwqdB/sHXzZzANjOuHnJIMflNuY4SCgUZs6lm8hzXU/N99gqILNv3r9qkUMJQDbBJ8t+lj
+ SC/y1PuHeeX0WNDS4yZvQer+PDbOHqTxI/hmGuBkNCGfty3llNvzenVKBT0J3RcmTHVpOdsQP
+ MPPpBy5zi5+ySHKJ1gyPYdfEdPG9Zo44um6RD+dGNQA/J4r4K9ZbBMDV23cALWi/2jP0AIlMJ
+ /Qtm3HgxHBGzakvpv73HIUQWSd2VXOCmV7a5TQIvawwwekSfKMFROg+U7w+yGIUa368NJBDQl
+ 9OjGhO1L0taFZXogrbvq7JazACJ4z4ULMUr4IC+i1HdY37z03/7NxmeJN9EEkSmhQllLjN+YC
+ gorl/BFJahXWO9AJg7vFlWEJVgFO/XLgclq5FgDneN2u6VrQX5SR6AC6wHejKzzIyPlwgrK2H
+ t2eT8HC9a3hRe12RXan+3y3Pzrkz88d5Zz+H/pyWrILVtp5iHgrmDH5X4c47tT9TmrgIJj+h9
+ m9BkSgTIYYTiEmLiSCEp5os17hmpI2anh8wJ2gJ41tl2CLirhB4rYUgvEJClYXzF9E1jAZZ6n
+ tTVAw2jUFfiwVhutDYarzPGJafVNQK6qvWPlLud0bpSuvLZW3sYGp+A5pMkhcZBICzwSqTPpo
+ 9OAmSsBKa/JU6oe1+mE1EsaUIl7pFaWUmscDbGSYuJdRowuNGC6U6LzLGGcstF2bV1K+VCBez
+ znPfZ3gfge2HJgDeOIfvTydqXuZafy1NtVfN+U3Je0OqMuAbvACoTBhEP55ph33VWMyvZ9/5B
+ rffHdqJk6Nh4c1r/btIUkAzsTX7NA4ml18uvNAFBl48gWJmY4i7JZwOichIhGhyWiUEV+xRZa
+ pe/iATx1uFbPZ6U/C0E6zmqlOCEGlWRj4UkUG9oa29/XzF2yg3q7O3XVmPD9RhtPgo093JMXO
+ CY964iv7xP8n9SaFGPlFv5irn92B9dxrJpHcVDLhMSrdp9+q/BjnSCN3Bzf7jLQHQjUzDYzNo
+ 66FCLw29hBMthGs7WBPbc8njjVTAUeiYI8hEEwtBe8ZWC5jOfUe9hKTnLdmrNVFfeDC5IMkN/
+ CMeCSxgaX7IWbNBMW+O5W888hckik7oIdPoEKXAqEDiD7/TIdUjwY/k0zGpCnI/4sDnYJlL8l
+ nv2xcFea4dShyr21HyCcj855hTYa1hqjQF2lg/qgmAyPTd0Dzx6DycCTKPboaP3ZnTJUktHSF
+ 0kxFS1VI9R2ouLIg9iWDRSuScMcv2MLdRPAOhv4Xskftrb0i5sBFTwA0+KbrzsbBqW44azFCz
+ sREW+FT/XILopPLfZ5LrwP/na5jKaD6ES70RFAeqczwSdVGyj/J9+eRI8YIBK+dsFhGMW8l6F
+ WbmeFfPiuKjgYnRB3KnJiI2OZrKZQesbsAu1R+W+hU7/4wJJs8nPFqT3UVaUGYetrX2Tu6wb2
+ PdObTjxupyfRrUKmXaMwmzMAF6wrEa5fpyH/rXjLqamMWu5e+M1+UjD7E8RkknwqE5Fn7u57X
+ 7vWTGCIQygX8sSCYWqDkhfrZVyDa/wAkVH6XfSiTK1GDmBbsRe+YDLfkM+uE2fCItLqphGO06
+ nj8Mx1ERwFXuM77GT0+5SIhu/anE3VFYygj3OPLXiezbLgafO1w3j2U2Lf245udUaDnsqtbAB
+ qSGsEs42lxyHYjoyf60USDcYiFl8zbwcZ0g0mVWFLngF1EA2lExOQmQH1dSW3ZzldUNwkhjUW
+ ydOqcOsfmGjlosA7aWQJoganGFrj4KqgtjQk3B6Xbnz+QeRp7z6eQ9KfvQMc6hAk9pOYdyeWF
+ 1CTqkIJVKD5iIaoopWq1sEViseLD6aprPxfdddGdRt54GJUFC5Qz84j87U9znGLi9u6xvnEdR
+ ZMK0znvdv2i4zIfZddV/oozPhcJnQ5pekXW+c66VCeGI5ViZUNNzTZVpNpxDcN23r5oP0dc5Q
+ qfC2JI/5s0m08I8lc4WusSMDlSJzjl1mU9YaTQGIFIiIFBlKmaRWXPCyuc2XngFphpgyYrwbD
+ X/d8ULjnay8gvlHHXqe8dEoRiODjQlf+fI2ErRIhyCKFXD926F3Q2Njf8BUyKd6wMWcGhfKWO
+ wV+JTkcCjNSj0BErgDhdOOQc26sCHUzi1GmIMxIFn2cAviGntYBKW5mblEflFlKQUxvcrmjsb
+ Bqt3ogmEGJJvMJhfKSnLHnNT4XXUnYL1RVOQw0IFeTBt9nBozeJMiIbYSFDrXh21E2mctgGqI
+ RSH8vRAJq+HF+pC5KlO7nhIPuOuSiQWJqYXh9JjbEkQ3QJ3LZY8A/Z3ya37uqz98yNWjIBTQo
+ jlR0emMU0ydWcn2nnLMyTSZINwXkvFVKG3fiy3VauPNa8ZAt5IDiEUuOQE/YzPvHJzmgiR83c
+ 71MtKl9WTieWLDYJyGIcjls2pkHqSQT9nfC8Ld8u9UccWjNiwfCN4Kp6flAecfnicO9FFfCuV
+ /pOIHi+HrgGL8/qY05JYONIJZW5YasjaN5vqdlaudoxoV76EjoF0miRkTZjC00JLCIC9UjRk4
+ CqamLthbkQB7ryEa4sAiPf3w6i4Ualmtsg3sOdFAdoADyMusLblw0emsEvquMfgoN79iMcmon
+ DbkTNqcEBdNx7u36Dwpx77zG7bUb+7gdkpa/Jeyx1RzEL29dmw3iuddhUK48/hb6lazKOVGbS
+ 6FVMGkq6sH5UUVZ+SxrKF5y9hmcQh1CnUrhauYv4vJlLd1zjbvia1aLQ3mbrmPLrNLJm3PoLS
+ icKJyh9G9ukI5/yMMAfAPwhxbprzNdbKpV8KJg+9TGEebDUXXcbKrLvQ6rsCTeA/EhTzSTSDI
+ Ax9jqflBhK22W4n70lXNdGE5diAiRtI7iecd7BrrK7X38K2p2wI3JY+E6Zel94j216k7io6Ev
+ qNPTSgyOMtl84uOQ0GqXULfDfsrRMh+33zCJpXRqzmDGFvGh9pig6oORC2Cng2DyWLMbYZEDa
+ GoIkpbDdOofR0MxdSP5lErmF1pjlRwLSZbwOOJcIZW55ESJleUtObVSE5nAaCfHYJ77NpSEoz
+ 1UxEzOqE4nytmYh8LLneOPi4TaXolXaN08Aflg7SyUzzxmIlcBCD5ZR36XT7vhuQb2Ds72BvT
+ ThLOoEPiLOrSj6ALYWjpzd6BQHcQ0QLJ3+3K64GLOGzupmrDc3ddzNBZNg8DXhaCRVCzbviao
+ OOA2lc1DIeKpK5Q3
 
-[Resent to get rid of HTML. This is my last try.]
-
-On 6/14/25 10:53, Guodong Xu wrote:
-> On Fri, Jun 13, 2025 at 11:07 AM Vivian Wang<uwu@dram.page> wrote:
->> Hi Guodong,
->>
->> On 6/11/25 20:57, Guodong Xu wrote:
->>> <snip>
->>>
->>> -                     status = "disabled";
->>> +             dma_bus: bus@4 {
->>> +                     compatible = "simple-bus";
->>> +                     #address-cells = <2>;
->>> +                     #size-cells = <2>;
->>> +                     dma-ranges = <0x0 0x00000000 0x0 0x00000000 
->>> 0x0 0x80000000>,
->>> +                                  <0x1 0x00000000 0x1 0x80000000 
->>> 0x3 0x00000000>;
->>> +                     ranges;
->>>                };
->> Can the addition of dma_bus and movement of nodes under it be extracted
->> into a separate patch, and ideally, taken up by Yixun Lan without going
->> through dmaengine? Not specifically "dram_range4", but all of these
->> translations affects many devices on the SoC, including ethernet and
-> It was not my intention to add all the separate memory mapping buses into
-> one patch. I'd prefer to add them when there is at least one user.
-> The k1.dtsi at this moment, as I checked, has no real user beside the
-> so-called "dram_range4" in downstream vendor kernel (ie. dma_bus in this
-> patch). And that is what I did: grouping devices which share the same
-> dma address mapping as pdma0 into one single separated bus.
+Am 14=2E Juni 2025 09:48:58 MESZ schrieb Lorenzo Bianconi <lorenzo@kernel=
+=2Eorg>:
+>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>>=20
+>> Add named interrupts and keep index based fallback for exiting devicetr=
+ees=2E
+>>=20
+>> Currently only rx and tx IRQs are defined to be used with mt7988, but
+>> later extended with RSS/LRO support=2E
+>>=20
+>> Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
+>> ---
+>>  drivers/net/ethernet/mediatek/mtk_eth_soc=2Ec | 24 +++++++++++++------=
+--
+>>  1 file changed, 15 insertions(+), 9 deletions(-)
+>>=20
+>> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc=2Ec b/drivers/ne=
+t/ethernet/mediatek/mtk_eth_soc=2Ec
+>> index b76d35069887=2E=2Efcec5f95685e 100644
+>> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc=2Ec
+>> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc=2Ec
+>> @@ -5106,17 +5106,23 @@ static int mtk_probe(struct platform_device *pd=
+ev)
+>>  		}
+>>  	}
+>> =20
+>> -	for (i =3D 0; i < 3; i++) {
+>> -		if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT) && i > 0)
+>> -			eth->irq[i] =3D eth->irq[0];
+>> -		else
+>> -			eth->irq[i] =3D platform_get_irq(pdev, i);
+>> -		if (eth->irq[i] < 0) {
+>> -			dev_err(&pdev->dev, "no IRQ%d resource found\n", i);
+>> -			err =3D -ENXIO;
+>> -			goto err_wed_exit;
+>> +	eth->irq[1] =3D platform_get_irq_byname(pdev, "tx");
+>> +	eth->irq[2] =3D platform_get_irq_byname(pdev, "rx");
 >
-> The other buses, even if I add them, would be empty.
+>Hi Frank,
 >
-> What the SpacemiT team agreed upon so far, is the naming of these 
-> separated
-> buses. I listed them here for future reference purposes.
+>doing so you are not setting eth->irq[0] for MT7988 devices but it is act=
+ually
+>used in mtk_add_mac() even for non-MTK_SHARED_INT devices=2E I guess we c=
+an reduce
+>the eth->irq array size to 2 and start from 0 even for the MT7988 case=2E
+>What do you think?
+
+Hi Lorenzo,
+
+Thank you for reviewing my patch
+
+I had to leave flow compatible with this:
+
+<https://github=2Ecom/frank-w/BPI-Router-Linux/blob/bd7e1983b9f0a69cf47cc9=
+b9631138910d6c1d72/drivers/net/ethernet/mediatek/mtk_eth_soc=2Ec#L5176>
+
+Here the irqs are taken from index 1 and 2 for
+ registration (!shared_int else only 0)=2E So i avoided changing the
+ index,but yes index 0 is unset at this time=2E
+
+I guess the irq0 is not really used here=2E=2E=2E
+I tested the code on bpi-r4 and have traffic
+ rx+tx and no crash=2E
+ imho this field is not used on !shared_int
+ because other irq-handlers are used and
+ assigned in position above=2E
+
+It looks like the irq[0] is read before=2E=2E=2Ethere is a
+ message printed for mediatek frame engine
+ which uses index 0 and shows an irq 102 on
+ index way and 0 on named version=2E=2E=2Ebut the
+ 102 in index way is not visible in /proc/interrupts=2E
+So imho this message is misleading=2E
+
+Intention for this patch is that irq 0 and 3 on
+ mt7988 (sdk) are reserved (0 is skipped on=20
+!shared_int and 3 never read) and should imho
+ not listed in devicetree=2E For further cleaner
+ devicetrees (with only needed irqs) and to
+ extend additional irqs for rss/lro imho irq
+ names make it better readable=2E
+
+>Regards,
+>Lorenzo
 >
-> If needed, I can send that in a RFC patchset, of course; or as a normal
-> PATCH, if Yixun is ok with that. However, please note, that would mean 
-> more
-> merging dependencies: PDMA dts, ethernet dts, usb dts, will have to 
-> depend
-> on this base 'buses' PATCH.
->
-> Again, I prefer we add our own 'bus' when there is a need.
->
-> +       soc {
-> +               storage_bus: bus@0 {
-> +                       /* USB, SDH storage controllers */
-> +                       dma-ranges = <0x0 0x00000000 0x0 0x00000000
-> 0x0 0x80000000>;
-> +               };
-> +
-> +               multimedia_bus: bus@1 {
-> +                       /* VPU, GPU, DPU */
-> +                       dma-ranges = <0x0 0x00000000 0x0 0x00000000
-> 0x0 0x80000000>,
-> +                                    <0x0 0x80000000 0x1 0x00000000
-> 0x3 0x80000000>;
-> +               };
-> +
-> +               pcie_bus: bus@2 {
-> +                       /* PCIe controllers */
-> +                       dma-ranges = <0x0 0x00000000 0x0 0x00000000
-> 0x0 0x80000000>,
-> +                                    <0x0 0xb8000000 0x1 0x38000000
-> 0x3 0x48000000>;
-> +               };
-> +
-> +               camera_bus: bus@3 {
-> +                       /* ISP, CSI, imaging devices */
-> +                       dma-ranges = <0x0 0x00000000 0x0 0x00000000
-> 0x0 0x80000000>,
-> +                                    <0x0 0x80000000 0x1 0x00000000
-> 0x1 0x80000000>;
-> +               };
-> +
-> +               dma_bus: bus@4 {
-> +                       /* DMA controller, and users */
-> +                       dma-ranges = <0x0 0x00000000 0x0 0x00000000
-> 0x0 0x80000000>,
-> +                                    <0x1 0x00000000 0x1 0x80000000
-> 0x3 0x00000000>;
-> +               };
-> +
-> +               network_bus: bus@5 {
-> +                       /* Ethernet, Crypto, JPU */
-> +                       dma-ranges = <0x0 0x00000000 0x0 0x00000000
-> 0x0 0x80000000>,
-> +                                    <0x0 0x80000000 0x1 0x00000000
-> 0x0 0x80000000>;
-> +               };
-> +
-> +       }; /* soc */
-
-Ah, I didn't know the names were already decided.
-
-However, I still think we should at least separate the patch into two in 
-the same series, one adding the bus node and handling existing nodes, 
-and another adding the new node under it. This way, say someone starts 
-working on Crypto, they can simply depends on the first bus patch 
-without having to pull in the new node.
-
-I still prefer having a canonical buses patch though.
-
-If we're going to agree here on what the buses should look, I also have 
-two nitpicks, just so we get this sorted: Firstly, I think storage_bus 
-should be removed. Anything using storage_bus is already handled by 
-simply using 32-bit-only DMA, which is the default anyway. @Ze Huang: 
-Your USB controller falls under it, what do you think?
-
-Also, as suggested the node names must not have a made up unit address. 
-"bus@1" is inappropriate because they have no reg. The simple-bus schema 
-allows the node name to have a prefix like "foo-bus" [1] [2], so it 
-should be like:
-
-/* DMA controller, and users */
-dma_bus: dma-bus {
-     compatible = "simple-bus";
-     ranges;
-     #address-cells = <2>;
-     #size-cells = <2>;
-     dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>,
-              <0x1 0x00000000 0x1 0x80000000 0x3 0x00000000>;
-};
-
-(Pardon the formatting; I don't know if the tabs survived Thunderbird.)
-
-[1]:https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/simple-bus.yaml 
-
-[2]:https://github.com/devicetree-org/dt-schema/commit/bab67075926b8bdc4093edbb9888aaa5bd8befd5 
+>> +	if (eth->irq[1] < 0 || eth->irq[2] < 0) {
+>> +		for (i =3D 0; i < 3; i++) {
+>> +			if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT) && i > 0)
+>> +				eth->irq[i] =3D eth->irq[0];
+>> +			else
+>> +				eth->irq[i] =3D platform_get_irq(pdev, i);
+>> +
+>> +			if (eth->irq[i] < 0) {
+>> +				dev_err(&pdev->dev, "no IRQ%d resource found\n", i);
+>> +				err =3D -ENXIO;
+>> +				goto err_wed_exit;
+>> +			}
+>>  		}
+>>  	}
+>> +
+>>  	for (i =3D 0; i < ARRAY_SIZE(eth->clks); i++) {
+>>  		eth->clks[i] =3D devm_clk_get(eth->dev,
+>>  					    mtk_clks_source_name[i]);
+>> --=20
+>> 2=2E43=2E0
+>>=20
 
 
-Well, that is the reason I wanted the bus things to be its own patch: I 
-think the DT maintainers should review these once and for all, not six 
-separate times as the drivers come in.
-
->> USB3. See:
->>
->> https://lore.kernel.org/all/20250526-b4-k1-dwc3-v3-v4-2-63e4e525e5cb@whut.edu.cn/ 
->>
->> https://lore.kernel.org/all/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn/ 
->>
->>
->> (I haven't put eth{0,1} under dma_bus5 because in 6.16-rc1 there is
->> none, but ideally we should fix this.)
-> So, as you are submitting the first node(s) under network_bus: bus@5, you
-> should have this added into your patchset, instead of sending out with 
-> none.
-I hope we can agree on what the bus nodes look like before we do that 
-separately.
-> The same logic goes to USB too, Ze Huang was in the same offline call, 
-> and
-> I would prefer that we move in a coordinated way.
-
-I hope so as well, but "we" here should include DT maintainers.
-
-Please consider my suggestions.
-
-Vivian "dramforever" Wang
-
->> DMA address translation does not depend on PDMA. It would be best if we
->> get all the possible dma-ranges buses handled in one place, instead of
->> everyone moving nodes around.
-> No, you should do it in your patchset, when you add the eth0 and eth1 
-> nodes,
-> they will be the first in, as I said, "network_bus". I don't expect
-> any 'moving nodes around'.
->
->> @Ze Huang: This affects your "MBUS" changes as well. Please take a look,
->> thanks.
->>
->>> gpio: gpio@d4019000 {
->>> @@ -792,3 +693,124 @@ pwm19: pwm@d4022c00 {
->>>                };
->>>        };
->>>   };
->>> +
->>> +&dma_bus {
->>>
->>> <snip>
+regards Frank
 
