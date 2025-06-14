@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-686993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038A7AD9EA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D339DAD9ED7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B3A173FAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 18:07:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8ECF3B5956
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 18:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3D21DE2CF;
-	Sat, 14 Jun 2025 18:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AB219F42D;
+	Sat, 14 Jun 2025 18:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lCtsRgBE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/L3dAMvu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evv4wWK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C7B2AE84
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 18:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE7D2E6D36;
+	Sat, 14 Jun 2025 18:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749924472; cv=none; b=reBu0fuMysYpsxkcXdGAyOF1i1WkC2c/hbz0TO861qJSWiZUPCN7dwcHEgPr4uWxuIj56CL9e/jiJ0D2LKH0Qkt/Xp1S0jVJgzklmUNzV6mfR22c893KhRiC7+2KVfN+SKZf+zcGG2LBAfi8DkylXA5BU9K0Ts4umG9XMHdKuH0=
+	t=1749924620; cv=none; b=tHGRCwgsw35LYEw4viLzjCxI+DDyLNwEcrdAOFSdPZKjRc7smFS1S4AMpSX96BKvVrTob6fKjOkTZjClRi/86ZHmnw+bEWftWHDuT/CK9CumYhaNuJWNAswHuGrJrnphEGxnP2CMVBYrTnX/9huL4JYetDmyas/9YQ3Mu8K7vV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749924472; c=relaxed/simple;
-	bh=4SL5yngTiq2JOffVG78b7UMa10jtZ2nmLMXfBc1TnD4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F9UJEfxoDgZgEd8r8qniBEqp4qTssAAilL0yt5cfB143o4dbxqfa8C5r5mF8q+sJiyuXG5ExmrWoHfDYnltK8cxxfBiMkN7YIm1KPdi3FAy0TbaNHB5Pp9eH5BWxkFpsFGU1THslK8q4n09m9ZBaz6SURMFX57nRoA0XeoU+0Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lCtsRgBE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/L3dAMvu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749924462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PoEWSPEJColYYpUTWwh6q4aeFjYSSu1x97Dp1YIxOfY=;
-	b=lCtsRgBEIdXC/f+eJDNs/TJKUUbNx/Ot/dOaPFD1sXTM00xnFCdgAqeU9x9vRKN6jGH4Qu
-	uz1yKLJV60r0+1oNgt7B71kDSZV2p+l5w0mUI5bLrFsMBJqiC9aQHfLkyf28eJ3IUf/Hz6
-	fZ/jNkS+XVL08shRTOzWK1uQ9PisdjUni3Cf8go1tSgirZ0lyp7XyTD6JbdUCD+KZ0tNgB
-	IyYChctGQAY2DAW6ERxVla1RAt9fa6yGxE+UwieoRVX/K+BQxjse6Xs2H6wFMpQ5H5XDpA
-	7v6GT5aZar+KiLYinSnWKEFdVDp5KeRUOfkpsXV63czzhJz+MIZxh7vZblVWbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749924462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PoEWSPEJColYYpUTWwh6q4aeFjYSSu1x97Dp1YIxOfY=;
-	b=/L3dAMvuMxlV1dYqUH+gmfJ3MlUpT48Mv6kyr4YcxhfGRGFhmqykcdzdKaPojh7bQ36snA
-	cNpk5XWu8oDx7kBw==
-To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org, John
- Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: "Yury Norov [NVIDIA]" <yury.norov@gmail.com>
-Subject: Re: [PATCH RESEND 0/2] clocksource: Use better cpumask API where
- appropriate
-In-Reply-To: <20250614155031.340988-1-yury.norov@gmail.com>
-References: <20250614155031.340988-1-yury.norov@gmail.com>
-Date: Sat, 14 Jun 2025 20:07:41 +0200
-Message-ID: <87y0tunqmq.ffs@tglx>
+	s=arc-20240116; t=1749924620; c=relaxed/simple;
+	bh=IE8/Uli/qsBI9dvp1hGsfJ9TZoJWuUmzTTFmGM2UdtI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=AU08jPWy6u3AxI0G8Pdf6wOElvmQU106BAYUiJ9ealIUOCodeiWSBiT4fyPtFbfRd/J0q7/QagKDar1JVFgZxyqz3cahi8Wce3bWvxfsc6pwYuF036Kf/mMM3RR479FkpNDocjrPTGuwXlsB1zZupck9hWQDqLHPTkW4sqgKmlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evv4wWK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6037FC4CEEB;
+	Sat, 14 Jun 2025 18:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749924620;
+	bh=IE8/Uli/qsBI9dvp1hGsfJ9TZoJWuUmzTTFmGM2UdtI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=evv4wWK1xuHbPt6pet7e0wsxvXKQABhaxABq8/sOsaXwv6a8cbUwWXJ2QTl1gN6dr
+	 OCtP2DSTP5ee77s1w6mcueh7mz4lfz20QEx5boYhay7gPKi3BjF1oxeljMk/VjrixT
+	 ilGCWXTvyHA+LmMq8XjPObF/NdYsLwbC2GPYJgbUTFMumJED6wtRSdwLsdcPcPN0e9
+	 9/OK2lZ4wPpCsxXUxuAEJLyRBeMgTdVgDPPIjWJ9nw222WA2x4xg8L5fd37xkzRz0a
+	 g30O3P53pAnQz2449SvwfyjGXf+5G8/g36nNw0Z+INgkqemutOB1E2bP9kh70SRf1p
+	 g+Yn2RgOSuoSQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0B8380AAD0;
+	Sat, 14 Jun 2025 18:10:50 +0000 (UTC)
+Subject: Re: [GIT PULL] hotfixes for 6.16-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250613215955.17731b1cd27ad5230f0962ca@linux-foundation.org>
+References: <20250613215955.17731b1cd27ad5230f0962ca@linux-foundation.org>
+X-PR-Tracked-List-Id: <linux-mm.kvack.org>
+X-PR-Tracked-Message-Id: <20250613215955.17731b1cd27ad5230f0962ca@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-06-13-21-56
+X-PR-Tracked-Commit-Id: bb666b7c27073b986b75699e51a7102910f58060
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 27b9989b87119da2f33f2c0fcbb8984ab4ebdf1a
+Message-Id: <174992464963.1140315.16929489980925009784.pr-tracker-bot@kernel.org>
+Date: Sat, 14 Jun 2025 18:10:49 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, mm-commits@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-On Sat, Jun 14 2025 at 11:50, Yury Norov wrote:
-> From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
->
-> The dedicated API works better and improves on readability
->
-> Resend: drop 'fix opencoded...' wording (Tomas)
+The pull request you sent on Fri, 13 Jun 2025 21:59:55 -0700:
 
-This is not a resend as you changed the change log, so it's V3.
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-06-13-21-56
 
-Resend is only for unmodified versions where you got no feedback and did
-not change anything.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/27b9989b87119da2f33f2c0fcbb8984ab4ebdf1a
 
-And in the RESEND case you have to keep the version number so stuff can
-be identified as resend of a particular version.
+Thank you!
 
-People have scripts which depend on submitters following the
-rules. Chasing stuff by hand is just waste of time.
-
-Thanks,
-
-        tglx
-
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
