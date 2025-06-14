@@ -1,187 +1,176 @@
-Return-Path: <linux-kernel+bounces-686764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A41AD9B9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 10:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC652AD9BA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 11:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C82317E03A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4FF170B50
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 09:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1642D6633;
-	Sat, 14 Jun 2025 08:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF401F582C;
+	Sat, 14 Jun 2025 09:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jnxo2kga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OxXIYpnD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2DhGvnmi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WvmSNZ5x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w4agyddh"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18AC298CD1;
-	Sat, 14 Jun 2025 08:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5CF19DF5B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 09:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749891378; cv=none; b=OV9fKLXoU7xnTiyvxBhvVlm8yvDD6p49h0zfuGdsqTzMhLFVLn1W+U9oDtOVeJzikL7Zb95u2JlZwqamv2cRKcE6jtT3YaS++86K83fuMCghvlbqlnHNWgpW6Oo5y+bhkYJ4GBT/iRvjI+JRQrr5aRsvEnFGrmwaWtXt5D514k8=
+	t=1749892082; cv=none; b=V/oqV2zoFgnYe5Acg0Vh9WgNksQZ/rNWjGCJkzUiehJNxn+D+YaoAER1Zx1SehB0doJz7nF6uRYwq17lnik6ZRXX3qsYXpOFIuXJ9NMOYlHapKXrqjZpPD5O0BbW4PCthAJ6aIBTuOXfGbkaJk50X0/aTwsD3p0zyhVPjD/imPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749891378; c=relaxed/simple;
-	bh=JDTK8ds5rMEZTW9f7Wpcip/tbHM6fMKUON4aC7f9ZTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CNgSSJ2D4Pa1wATKOEFlGZzGQMfaZ8bgvgiOClGSe5AsuB7aFlY2Q12vPMAqlG2nF1B+vSwgA4GEHlG9rvl1WobIJfJaVPEbjMv5xLNepdmtm14oMXZUP0bDRmQ8VsyOYQspj5buLrEI0jD3eSmdgKsmazL/0BV+5AjiD5ltGyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jnxo2kga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793A4C116C6;
-	Sat, 14 Jun 2025 08:56:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749891378;
-	bh=JDTK8ds5rMEZTW9f7Wpcip/tbHM6fMKUON4aC7f9ZTc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Jnxo2kgabhDXzSpfzf0kdqlxjfXWeYV1fURoZiC0VQCicHOQ5U2te0gdTHk3o9Ghd
-	 +iaOdCab93EbQ3V3PMSsF26JYOTOuz0XqNDIWWCtBY/TUNc5jKw6qpZuOGOQYIMRXu
-	 WgVIcuqRmhvWPCYM7YxMpZ/vQGEUeFVuNz9fYIqCVfzUtzgn+DJ1rYFxGyX2v/NXcH
-	 hMZuoVBRB3SLs58H7PaZN3m1jNV+1FngQcfVKuR2stYZEzncKvEi6ViR6GDKApdm82
-	 SjIMRWmXG5X7WRKZ+siT8E0DKGhWRiEcIvOzISR/vmarQaL7wzPOWiQKap07Ns03hx
-	 S3TvudT1JdLpg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uQMgS-000000064bX-2vAc;
-	Sat, 14 Jun 2025 10:56:16 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Marco Elver" <elver@google.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v4 14/14] docs: conf.py: properly handle include and exclude patterns
-Date: Sat, 14 Jun 2025 10:56:08 +0200
-Message-ID: <2238d93ac08f9e6d3e88e0edfc6f58d13f5f9b68.1749891128.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749891128.git.mchehab+huawei@kernel.org>
-References: <cover.1749891128.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1749892082; c=relaxed/simple;
+	bh=pNk+Dp8/kXHtxpd8NF5C4HG9zKIHwuOtlbhRxcdUYD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mq810BX+4fDJhpfcVhIRwC8gGIRCIzezfFlsh05n1w0J9XB7MULcWMqAEhzBYrWVgbEYoSL2y+JxPe6+oKrwRuLLg1XJZwyeaaXIiV96cFqb2fvpuEyXC66Hau6EdpJTDy6+qYRVhUCUV9/EkNp1xqmderHDw+vWz34uuPEZcPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OxXIYpnD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2DhGvnmi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WvmSNZ5x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w4agyddh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 73D581F387;
+	Sat, 14 Jun 2025 09:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749892079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8urkubVfkTkvBWlqzjAWlocH28bSNYcyUT7sZNvTQpU=;
+	b=OxXIYpnDCbtok7Fyrqlb8iBaaHaUtycZBlNCjh9X2G5aCA1zg7/3a2vG1FaVUCWZsUB5VR
+	4tuIKqK3KDPawcTH5zXvkGCBP8goHybCNIQc92uGr4cGec6bIPtUObwML0eKaUqE1pL+vN
+	HDn29gaCtpeNa/7QqJSH6GnqO6PULkA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749892079;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8urkubVfkTkvBWlqzjAWlocH28bSNYcyUT7sZNvTQpU=;
+	b=2DhGvnmiWslnN2l3uiT48H9uAv2T8PLfRNEuhNXZjflZgZXLPFdDCRh6jp4iBhtP67wCQI
+	YC1a78H/w3l8vZBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WvmSNZ5x;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=w4agyddh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749892077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8urkubVfkTkvBWlqzjAWlocH28bSNYcyUT7sZNvTQpU=;
+	b=WvmSNZ5xbD6A3CkPktKEG6H4avmmFwOsnSi53VciGSWLw6VNFn0+LV2ABkYavLwk8DTRlz
+	j3zzyJMkY8mPhtycfeQqaBSO87I79zMnaQSueKA8SnQiLVpSF05yXC6Dr8enKye/S9fns4
+	xdMMnnEnvaSOBkv81NZXNKtGibKWIlw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749892077;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8urkubVfkTkvBWlqzjAWlocH28bSNYcyUT7sZNvTQpU=;
+	b=w4agyddhJSF5Ourx0AnrkKNeyXmWmxTnqRXv7BRshqTaQxsezDLIVorVeMxEY9wrbOqhgi
+	JY/LlXqlx0S5N4Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EEB7D139E2;
+	Sat, 14 Jun 2025 09:07:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lV1iN+s7TWgiLgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Sat, 14 Jun 2025 09:07:55 +0000
+Date: Sat, 14 Jun 2025 11:07:50 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	James Houghton <jthoughton@google.com>,
+	Peter Xu <peterx@redhat.com>, Gavin Guo <gavinguo@igalia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] mm,hugetlb: Document the reason to lock the folio in
+ the faulting path
+Message-ID: <aE075ld-fOyMipcJ@localhost.localdomain>
+References: <20250612134701.377855-1-osalvador@suse.de>
+ <20250612134701.377855-3-osalvador@suse.de>
+ <44f0f1cc-307a-46e3-9e73-8b2061e4e938@redhat.com>
+ <aEw0dxfc5n8v1-Mp@localhost.localdomain>
+ <ffeeb3d2-0e45-43d1-b2e1-a55f09b160f5@redhat.com>
+ <aEychl8ZkJDG1-5K@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEychl8ZkJDG1-5K@localhost.localdomain>
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 73D581F387
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-When one does:
-	make SPHINXDIRS="netlink/specs" htmldocs
+On Fri, Jun 13, 2025 at 11:47:50PM +0200, Oscar Salvador wrote:
+> Maybe it's because it's Friday, but I'm confused as to why 
+> do_pte_missing()->do_fault()->do_cow_fault() holds the lock while do_wp_page() doesn't
+> although it might the file's page we have to copy. 
 
-the build would break because a statically-defined pattern
-like:
+Scratch that, I see my confusion.
+The first time we map the file privately, the folio must remain stable.
+But if we already mapped it privately before (R/O), and we write fault on it,
+we don't need to be stable (e.g: uptodated).
 
-	include_patterns = [
-		...
-		'netlink/specs/*.yaml',
-	]
+But I think my comment on hugetlb_no_page() still holds, because
 
-would be pointing to Documentation/netlink/specs/netlink/specs,
-as the path there is relative. Also, when SPHINXDIRS is used,
-the exclude_pattern = [ "output" ] is also wrong.
+hugetlb_fault->hugetlb_no_page->hugetlb_wp 
 
-Fix conf.py to generate relative include/exclude patterns,
-relative to the SOURCEDIR sphinx-dir parameter.
+would be similar to do_pte_missing->do_cow, and in do_cow we hold both
+the reference and the lock.
+Were we might not need the lock is in hugetlb_fault->hugetlb_wp, which
+would be similar to do_wp_page()->wp_page_copy.
+Of course we will need to take it if it is an anonymous folio because we need
+to check the re-use case.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/conf.py | 58 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 46 insertions(+), 12 deletions(-)
+So, it gets complicated because hugetlb_no_page() needs to call
+hugetlb_wp() with the lock held in case it is a pagecache folio, and
+and the same time hugetlb_wp() needs to take the lock if it us an anonymous
+one for the re-use case.
+So, all in all, I think that it is easier when both callers of hugetlb_wp()
+hold the lock, so we do not have to do weird dances, and document why it is done.
 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 62a51ac64b95..be678bdf95d4 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -17,6 +17,52 @@ import os
- import sphinx
- import shutil
- 
-+# Location of Documentation/ directory
-+doctree = os.path.abspath('.')
-+
-+# List of patterns that don't contain directory names, in glob format.
-+include_patterns = ['**.rst']
-+exclude_patterns = []
-+
-+# List of patterns that contain directory names in glob format.
-+dyn_include_patterns = ['netlink/specs/**.yaml']
-+dyn_exclude_patterns = ['output']
-+
-+def setup(app):
-+    """
-+    On Sphinx, all directories are relative to what it is passed as
-+    SOURCEDIR parameter for sphinx-build. Due to that, all patterns
-+    that have directory names on it need to be dynamically set, after
-+    converting them to a relative patch.
-+
-+    As Sphinx doesn't include any patterns outside SOURCEDIR, we should
-+    exclude relative patterns that start with "../".
-+    """
-+
-+    sourcedir = app.srcdir  # full path to the source directory
-+    builddir = os.environ.get("BUILDDIR")
-+
-+    # setup include_patterns dynamically
-+    for p in dyn_include_patterns:
-+        full = os.path.join(doctree, p)
-+
-+        rel_path = os.path.relpath(full, start = app.srcdir)
-+        if rel_path.startswith("../"):
-+            continue
-+
-+        app.config.include_patterns.append(rel_path)
-+
-+    # setup exclude_patterns dynamically
-+    for p in dyn_exclude_patterns:
-+        full = os.path.join(doctree, p)
-+
-+        rel_path = os.path.relpath(full, start = app.srcdir)
-+        if rel_path.startswith("../"):
-+            continue
-+
-+        app.config.exclude_patterns.append(rel_path)
-+
-+
- # helper
- # ------
- 
-@@ -220,18 +266,6 @@ language = 'en'
- # Else, today_fmt is used as the format for a strftime call.
- #today_fmt = '%B %d, %Y'
- 
--# List of patterns, relative to source directory, that match files and
--# directories.
--include_patterns = [
--	'**.rst',
--	'netlink/specs/*.yaml',
--]
--
--# patterns to ignore when looking for source files.
--exclude_patterns = [
--	'output',
--]
--
- # The reST default role (used for this markup: `text`) to use for all
- # documents.
- #default_role = None
+
 -- 
-2.49.0
-
+Oscar Salvador
+SUSE Labs
 
