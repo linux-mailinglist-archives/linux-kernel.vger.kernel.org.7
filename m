@@ -1,78 +1,115 @@
-Return-Path: <linux-kernel+bounces-687006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E16AD9EDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E98AD9EDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4D03B48A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 18:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F53175842
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 18:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C32E92A2;
-	Sat, 14 Jun 2025 18:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265E54A0C;
+	Sat, 14 Jun 2025 18:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9IOP1D2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m5dftfq4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J0pKpUa4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57142E88A5;
-	Sat, 14 Jun 2025 18:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177652E11CB;
+	Sat, 14 Jun 2025 18:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749924630; cv=none; b=nF7KO9d39Axl2wck3+Pe5CtnoMW4DYygk/Tx/mgZFbbl6LD9GaG9B0uyRjfVmnX6hyi37uK3Kf/T+tHo85nb0Y8BlW63LSmj/A2/h3FcsCEqlk4bYdb25Xu6ndm4Sc3w31BZQzyPwArt56n+jRLPjkjSBgQF/yhbd8Y1ZfRyfNk=
+	t=1749924795; cv=none; b=k4W4mM+9JkqXjqO1KWzuraYMFD0iABEEmrv6whs8QEy3H+aO41TPQRGT1TrxwvoiqzRII2pE7RNVmOlXKCIe/FEQfzuObWs8vl3cDSmhFGKXGcMK1bpJGXhOsZ41OeLgRU62K+fwAuw+Lw1O90N2vSKbE2CJx7pI1bn5h5rotRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749924630; c=relaxed/simple;
-	bh=W3ZVegxa7zn5SI3FjmlI2uyVT/C8vLjZUrmPAlIfOxs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HfwKGIP0owUbUgB9dCvvzuINFmNhj7tmCRbjaqNsdQoL9cMTe4OomI9RuKv7XjCIwseVf1ya2OySjKgfsljrdjmUbXgZGu3Z8XkMVUXV2KtmnSp8z6F08lLYNPiumY3YhAu2eyZgjQDsD48yaP6UwSKjXN8MbEjgBebYxc/l5QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9IOP1D2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73D5C4CEEB;
-	Sat, 14 Jun 2025 18:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749924629;
-	bh=W3ZVegxa7zn5SI3FjmlI2uyVT/C8vLjZUrmPAlIfOxs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=A9IOP1D2IuwffTZLJrcjVTO40ASNEdKVzfbUFJKDE3uQJ4nOPX3/gn7RC5f8ySOMz
-	 kEVUviUJ6v4NXwWzMTgArwSCNUXOHJhxUqXq23EWORiF0O+aTkVcekLen5WN1HO96r
-	 nbPCPK0il0mBrYY2eGyApoNcXwzMAelUJXPKtg9l1GbFGjDKHU+fyXj5/EVwB7wxAv
-	 ukIF+hi05kckr0WsnV/CgouDKe2f3GzirIGU8uVCizKbbkqoO9AzyZMaTXtS1I5FqP
-	 fBpFAbbcM/BTpELaC4D9ZPH4yrlqxlZ96Ds4GyeOc5Gd7hLaMdyJuyTVIkvIzgvIK9
-	 4gOKIo5ch0ruQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B82380AAD0;
-	Sat, 14 Jun 2025 18:11:00 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5msg0f6EP24x6dQyt8CbGs9OD6EzQV7rOW0=8gkfLFvJ=w@mail.gmail.com>
-References: <CAH2r5msg0f6EP24x6dQyt8CbGs9OD6EzQV7rOW0=8gkfLFvJ=w@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5msg0f6EP24x6dQyt8CbGs9OD6EzQV7rOW0=8gkfLFvJ=w@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc1-smb3-client-fixes
-X-PR-Tracked-Commit-Id: 72dd7961a4bb4fa1fc456169a61dd12e68e50645
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8c6bc74c7f8910ed4c969ccec52e98716f98700a
-Message-Id: <174992465903.1140315.12648802612461512920.pr-tracker-bot@kernel.org>
-Date: Sat, 14 Jun 2025 18:10:59 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+	s=arc-20240116; t=1749924795; c=relaxed/simple;
+	bh=rlmbF4zigqLq6m1FmysOfquTnG8xp6m9P7s7mkUUx8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tVYQsXzCoZRt/jkyRm4a7eg5/0OYY/5KjRyF8hIwGcfYvwRqTDIJ1tFobwQFOpcRV1HErTwE3RQcMttKThCBBWdh/1LnKWeGGBCWXw4C4RXfR/ouW/vsQ4Jz2QjobU2YigyCnjM96BKhOh0xUHWTFZP8X/awhTS+h1I61vueoHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m5dftfq4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J0pKpUa4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 14 Jun 2025 20:13:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749924792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlmbF4zigqLq6m1FmysOfquTnG8xp6m9P7s7mkUUx8o=;
+	b=m5dftfq4HEtKgx+K919pvAHVnLGK1Lcxv7bu0rVqUD7P9eLCtqR4IfIZygyL4ghqBzXPmp
+	51YXYE/WwVi1t3RMRft7CADmxsVvAZYai8wGEDZxPZbz5hcWXICJbLyqq3ojONE6CuJYZK
+	XfaU4wjxHdtWowog0Lrj4tOVbA6In1wQSCejaNrPC0UGpLX2vLLbEo8DWpmijJmyY4l7wS
+	bVAdIWnX/7ydikgKZeO25+bnAee/Fke1HVfEPM8oTmzEOah75nu9yYStQgIsttt4MRoEVD
+	7uLcp9WllmcL1hoCwBzAx3Xs0udVg85uVDoNv6tKxU509RjjY5ld6UAwn+/vEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749924792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlmbF4zigqLq6m1FmysOfquTnG8xp6m9P7s7mkUUx8o=;
+	b=J0pKpUa47IxJcLnVy/GIcFx4ZphfRJEEZVrA8f1PqJqm5HaLAEU1tszcYHvTjTQU97F+AB
+	ZhOLOngoQQXonaBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Marc =?utf-8?Q?Str=C3=A4mke?= <marc.straemke@eltropuls.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: Latency spikes on V6.15.1 Preempt RT and maybe related to intel
+ IGB
+Message-ID: <20250614181310.08nm0KnL@linutronix.de>
+References: <cb0d6ffc-acb3-4974-8f93-c86a6479109b@eltropuls.de>
+ <20250613145434.T2x2ML8_@linutronix.de>
+ <522704b0-5a35-42c3-9bcc-627b487b740c@eltropuls.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <522704b0-5a35-42c3-9bcc-627b487b740c@eltropuls.de>
 
-The pull request you sent on Sat, 14 Jun 2025 11:13:49 -0500:
+On 2025-06-14 14:59:43 [+0200], Marc Str=C3=A4mke wrote:
+> Hello Sebastian,
+Hi,
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc1-smb3-client-fixes
+> Am 13.06.2025 um 16:54 schrieb Sebastian Andrzej Siewior:
+> > > I have attached my config for reference.
+> > There is nothing wrong with it. You might want to disable NO_HZ (and use
+> > PERIODIC) and use HZ=3D250 (or less)
+>=20
+> I am a bit puzzled by that. Most advise I have read suggests disabling the
+> periodic ticks to decrease jitter in an RT Application. What is the trade=
+off
+> here?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8c6bc74c7f8910ed4c969ccec52e98716f98700a
+TICK =3D periodic does HZ timer interrupts a second. Each timer interrupt
+serves possible timer_list timers within the kernel (not user space
+timers such as clock_nanosleep()/ sleep from userland - those are
+scheduled accurate). It also does some time keeping and accounting.
 
-Thank you!
+TICK =3D nohz makes it possible to skip ticks if the CPU is idle. A
+notebook CPU which has nothing to do and goes idle could stay longer
+idle because the HZ interrupt will not wake it up on the next tick. So
+it can stay longer idle and safe energy.
+If the CPU does not go idle the timer tick fires every tick.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+TICK =3D no_hz_full you can disable the tick if the CPU remains in
+userland for longer period of time. Remains in userland means it does
+not call into the kernel.
+
+State tracking is higher with nohz, higher with no_hz_full. Most RT
+applications are periodic. Cyclictest should show you lower numbers with
+periodic than with nohz.
+
+You can monitor the timer interrupts in /proc/interrupts and compare an
+idle CPU vs one that runs an application (which does a busy loop).
+
+> Marc
+
+Sebastian
 
