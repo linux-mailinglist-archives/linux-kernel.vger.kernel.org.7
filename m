@@ -1,374 +1,249 @@
-Return-Path: <linux-kernel+bounces-686622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F5BAD99CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 04:48:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F17AD99D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 04:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E21E1BC46B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 02:48:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C784A224E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 02:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59361C84D2;
-	Sat, 14 Jun 2025 02:46:42 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904D413D24D;
+	Sat, 14 Jun 2025 02:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcTO8UeM"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E96A1714C6;
-	Sat, 14 Jun 2025 02:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40DF2E11A3
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 02:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749869202; cv=none; b=kvPzB+kCOgUXlkILQylk1cmWTZFiPnkq5aWKIPVD1oNpPmv8h2bSX5NEIzpxCBd9zYvo6STu7x2sUsDnwRohbkvKi9i0NqfAd5JkVYetpV4Y2VkLxNiCsgMUXGEhpOQjwRKt4M3OoAQx04OGzDo9FwcFMFDguks/7wW9Wh2YW+Q=
+	t=1749869453; cv=none; b=nmS8Xh0lO3G815D0EKspXgXsyfhJJ+jiVtcYceVbK1Tccqu6vjMeKbsz5cV0c2k2SG+sefZByQNSjD4P5SHXpf/YK4w1etnX0L5nS7GytXWpSwHkKa5nRRGYmT2n0/jb/iToayGEm2sh+KcsE88nUzkxpcMkRrvhCc7g8s/kx+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749869202; c=relaxed/simple;
-	bh=oHPYUeSh9kzOTuyf9BuaYRfYud04q8z+PPKjT187KuE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=r8j8hNvWWT4NNesrW0fcTdx3Mq3Yudq6bWusvM6kRp7JZzN6DFqpSFgBMzxrUrvdh2LU2urVo+WQiZNpS2CS6t/GHwFEaK47GFSRt/bvtR91HXlBcA+iwSelG7rtBLjx9tg1WJHhMTdZqcgbmcBn0nkDQaGr7asQvwsfs8NtFGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id ACA421D8A23;
-	Sat, 14 Jun 2025 02:45:41 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 5BDC61D;
-	Sat, 14 Jun 2025 02:45:38 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uQGvN-00000002SrN-2g3S;
-	Fri, 13 Jun 2025 22:47:17 -0400
-Message-ID: <20250614024717.485067717@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 13 Jun 2025 22:46:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v10 11/11] perf tools: Merge deferred user callchains
-References: <20250614024605.597728558@goodmis.org>
+	s=arc-20240116; t=1749869453; c=relaxed/simple;
+	bh=1mMthxwuY7zU8b7bASinv8URUT4ZVfo4sQhOgoow08g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TEHo5CJQBB/NFnsf0bkFB9jKKyIMcc2gwSzBPl5rsmcjd4DvHgoybk+bhsh6TsHqEdELl/9cH9+3PRzDGtEh7eveBUgdqdcPUWUw7liMsYQH+S/38nM9zy+5l+sw/MiEyWXaLFLbR8bz0A8+CffLwm31zFGpnB3N0nqXCsqDw0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcTO8UeM; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad88d77314bso591769066b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jun 2025 19:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749869450; x=1750474250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=reW5LCT7F0G44H+pooztus/zBkKfkR0anUQESqlGGXg=;
+        b=WcTO8UeMN8jHtzoITVRqTAXVwqn+ojHLfyQMwvxTXeOcPC6GLgPrOXuxcl2EZuG1Kx
+         9jXdjESeDRWymr2uzPSzCqiefd7nj/JuPGJSj1cn7uLFbKkwFvL9260tSXB48cLKYzVw
+         HeLD+ZqjLNnZ0ru5v6q5sBbdajyqA7xOy8gb/J6YIwOm11G0CYaW171ux8xKtae9HaTK
+         lkI2cC4hFIac8S3DXgERzH5cD6amNk8m0nKKP3HgZrLGpPKyIayMEjXiPCqMJ7VK7J+4
+         l4fPjhKvGcDLokWZ7Ep28zxfORtecBu4qpj4xW5/gD2ochAgYKoYt5h4Fx9OBG+mGNw0
+         8Z6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749869450; x=1750474250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=reW5LCT7F0G44H+pooztus/zBkKfkR0anUQESqlGGXg=;
+        b=okXwO52Uj3nxMFOuZFYtWbRBI8xW1Pw1qNaYvQSO1cejSDQYJ6HwczK3YQhKll1Tq/
+         Kfak3NDDA3McSpCsqsoKeBG+G33YeVleCQsS6ohFQeXQuT41XqaKRUUUU+rei4yP54ph
+         7suj/Er6Y1pEDZJzusQWAcBd8L90kbzX7EBtpwd8O5Tt3A04Rgh9EQqeaB9qahoPMgZK
+         NtD17/gGY0r1cl3B2mkjntCQnjYaWcjbl/hYMCHPrjJIWIREnjsXfxDDhPCpD/yNKukD
+         Het0IXqeMXwY3wmQgTgWFEry+CjG9vWKYLXgw6molU5XrsXkKBJOiqXPObd5luwLwala
+         FuwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOKms0TVReMNk7zljMrDifm57YN7I/mkG8UKVs/UODjlhrGjGIIXfQJJEvyM3W8CmTsN3CuiwWZC1bTDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybaVEYxPfEVgFmtZOiva+2n9Y+QhfxiCybrJ26lne/1Vxa3A5J
+	AL//VSfjcx4LWDi4KoYipDsG2f2myd3UkCRel8AfVaqbXIF3qTCgDygGg6H1ZEXxyL61ZVRc8+i
+	zQatuFe5JfTacCLBmGH3fzqz7/w4CWVI=
+X-Gm-Gg: ASbGncsDNFNjCeIeC6/lVtMPJTWG6t9QLpCEAPBhxQSpJVQh0SpzI1JV2QQ6pJuNaq3
+	oU/RZhKF/ziTxVLR0SEFkYb9T25Vi+PuqzZ712pe4PZDavDttW76QxdyDHmgfoCrrfqawjAYfUU
+	BK37dWZABXlceNqKivJ6+fILYqjdCXmA4LxwXtuDTAOV0=
+X-Google-Smtp-Source: AGHT+IF/Q0o6Yl7zNwQgrK7c7P+nIiKSAwskEsw51/vaH4NuCZSSwKShmLHUv0Fyz0Ihla6ndeFaxUGInwUaR7icFVE=
+X-Received: by 2002:a17:907:3e08:b0:ad2:4da6:f58c with SMTP id
+ a640c23a62f3a-adfad594f01mr129675266b.46.1749869449968; Fri, 13 Jun 2025
+ 19:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Rspamd-Queue-Id: 5BDC61D
-X-Stat-Signature: ijroagg5ig85u8btobwznmtcxpue9xfn
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19rK+EZsfr9Gol72m3kILHhNPMi8cDVOCg=
-X-HE-Tag: 1749869138-94611
-X-HE-Meta: U2FsdGVkX189k8e56rWX/lo2DvgAYB+2WJFW+wNQSJKMZyxKm7sPy8cYIC5EKzQg00101NVIaAU0O/NxHcHGBaGH4mLq7SeNdFW+tBGr0PBO6eKtYwLB8NYoAOS16CbG/Uwdtq99WaRfaRZslC8pllHqIoOoIOF7wHvA9KgopNEwtZXfVRw9oSjhkFf0wjr3ygL9Qi1kHkhygTnbMeuazNCkOi6bLth/QEX8BSKIRu32XDBLC90KQquKd+B+F5hUjpLc371wKVtDCfnNr2M1uNA8ZdNQRlIKGPw+sgc98Q4urdvnsgdltKWIK6qenQnZNvPiL+xm8BhnucBSgzrMu+nKr+BYew32U8mNAnWx9/bQ8s8bUuXP/bik8arVz58BwY8+XT84pFivc0xK8mpKXVKNZ9PwJsQalI57NkroH68=
+References: <cover.1749731531.git.zhoubinbin@loongson.cn> <aEzFPdYEvbkaH_B5@mail.minyard.net>
+In-Reply-To: <aEzFPdYEvbkaH_B5@mail.minyard.net>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Sat, 14 Jun 2025 10:50:37 +0800
+X-Gm-Features: AX0GCFv4h7xWDH3ozZIWsx0a_f5_jGW6ZYKf82T8TFw1i_6zr_wtJ3dRp7i1A-w
+Message-ID: <CAMpQs4L66sXLdj6+ebMXcwq4i+XVi+AmwBbQSx0-EuULNJ5XeQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] LoongArch: Add Loongson-2K BMC support
+To: corey@minyard.net
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Lee Jones <lee@kernel.org>, Corey Minyard <minyard@acm.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io, 
+	kexybiscuit@aosc.io, wangyao@lemote.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Namhyung Kim <namhyung@kernel.org>
+Hi Corey:
 
-Save samples with deferred callchains in a separate list and deliver
-them after merging the user callchains.  If users don't want to merge
-they can set tool->merge_deferred_callchains to false to prevent the
-behavior.
+On Sat, Jun 14, 2025 at 8:41=E2=80=AFAM Corey Minyard <corey@minyard.net> w=
+rote:
+>
+> On Fri, Jun 13, 2025 at 02:43:38PM +0800, Binbin Zhou wrote:
+> > Hi all:
+> >
+> > This patch set introduces the Loongson-2K BMC.
+> >
+> > It is a PCIe device present on servers similar to the Loongson-3 CPUs.
+> > And it is a multifunctional device (MFD), such as display as a sub-func=
+tion
+> > of it.
+>
+> I've asked this before, but I haven't gotten a answer, I don't think.
+>
+> Is this really a multi-function device?  Is there (or will there be)
+> another driver that uses the MFD code?
 
-With previous result, now perf script will show the merged callchains.
+I am very sorry, I may have overlooked your previous question.
 
-  $ perf script
-  perf     801 [000]    18.031793:          1 cycles:P:
-          ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
-          ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
-          ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
-          ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
-          ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
-          ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
-          ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
-          ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
-          ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
-          ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
-          ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
-          ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
-          ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
-              7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
-  ...
+And I also may not have a thorough understanding of multifunction devices.
 
-The old output can be get using --no-merge-callchain option.
-Also perf report can get the user callchain entry at the end.
+The Loongson-2K BMC device provides two functions: display and IPMI.
+For display, we pass the simplefb_platform_data parameter and register
+the simpledrm device, as shown in patch-1.
 
-  $ perf report --no-children --percent-limit=0 --stdio -q -S __intel_pmu_enable_all.isra.0
-  # symbol: __intel_pmu_enable_all.isra.0
-       0.00%  perf     [kernel.kallsyms]
-              |
-              ---__intel_pmu_enable_all.isra.0
-                 perf_ctx_enable
-                 event_function
-                 remote_function
-                 generic_exec_single
-                 smp_call_function_single
-                 event_function_call
-                 perf_event_for_each_child
-                 _perf_ioctl
-                 perf_ioctl
-                 __x64_sys_ioctl
-                 do_syscall_64
-                 entry_SYSCALL_64
-                 __GI___ioctl
+Therefore, I think this should be considered a multifunction device.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/perf/Documentation/perf-script.txt |  5 ++
- tools/perf/builtin-script.c              |  5 +-
- tools/perf/util/callchain.c              | 24 +++++++++
- tools/perf/util/callchain.h              |  3 ++
- tools/perf/util/evlist.c                 |  1 +
- tools/perf/util/evlist.h                 |  1 +
- tools/perf/util/session.c                | 63 +++++++++++++++++++++++-
- tools/perf/util/tool.c                   |  1 +
- tools/perf/util/tool.h                   |  1 +
- 9 files changed, 102 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 28bec7e78bc8..03d112960632 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -527,6 +527,11 @@ include::itrace.txt[]
- 	The known limitations include exception handing such as
- 	setjmp/longjmp will have calls/returns not match.
- 
-+--merge-callchains::
-+	Enable merging deferred user callchains if available.  This is the
-+	default behavior.  If you want to see separate CALLCHAIN_DEFERRED
-+	records for some reason, use --no-merge-callchains explicitly.
-+
- :GMEXAMPLECMD: script
- :GMEXAMPLESUBCMD:
- include::guest-files.txt[]
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index a6f8209256fe..b50442cca540 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3775,6 +3775,7 @@ int cmd_script(int argc, const char **argv)
- 	bool header_only = false;
- 	bool script_started = false;
- 	bool unsorted_dump = false;
-+	bool merge_deferred_callchains = true;
- 	char *rec_script_path = NULL;
- 	char *rep_script_path = NULL;
- 	struct perf_session *session;
-@@ -3928,6 +3929,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Guest code can be found in hypervisor process"),
- 	OPT_BOOLEAN('\0', "stitch-lbr", &script.stitch_lbr,
- 		    "Enable LBR callgraph stitching approach"),
-+	OPT_BOOLEAN('\0', "merge-callchains", &merge_deferred_callchains,
-+		    "Enable merge deferred user callchains"),
- 	OPTS_EVSWITCH(&script.evswitch),
- 	OPT_END()
- 	};
-@@ -4183,7 +4186,7 @@ int cmd_script(int argc, const char **argv)
- 	script.tool.throttle		 = process_throttle_event;
- 	script.tool.unthrottle		 = process_throttle_event;
- 	script.tool.ordering_requires_timestamps = true;
--	script.tool.merge_deferred_callchains = false;
-+	script.tool.merge_deferred_callchains = merge_deferred_callchains;
- 	session = perf_session__new(&data, &script.tool);
- 	if (IS_ERR(session))
- 		return PTR_ERR(session);
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index d7b7eef740b9..6d423d92861b 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -1828,3 +1828,27 @@ int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 	}
- 	return 0;
- }
-+
-+int sample__merge_deferred_callchain(struct perf_sample *sample_orig,
-+				     struct perf_sample *sample_callchain)
-+{
-+	u64 nr_orig = sample_orig->callchain->nr - 1;
-+	u64 nr_deferred = sample_callchain->callchain->nr;
-+	struct ip_callchain *callchain;
-+
-+	callchain = calloc(1 + nr_orig + nr_deferred, sizeof(u64));
-+	if (callchain == NULL) {
-+		sample_orig->deferred_callchain = false;
-+		return -ENOMEM;
-+	}
-+
-+	callchain->nr = nr_orig + nr_deferred;
-+	/* copy except for the last PERF_CONTEXT_USER_DEFERRED */
-+	memcpy(callchain->ips, sample_orig->callchain->ips, nr_orig * sizeof(u64));
-+	/* copy deferred use callchains */
-+	memcpy(&callchain->ips[nr_orig], sample_callchain->callchain->ips,
-+	       nr_deferred * sizeof(u64));
-+
-+	sample_orig->callchain = callchain;
-+	return 0;
-+}
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 86ed9e4d04f9..89785125ed25 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -317,4 +317,7 @@ int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 				    struct perf_sample *sample, int max_stack,
- 				    bool symbols, callchain_iter_fn cb, void *data);
- 
-+int sample__merge_deferred_callchain(struct perf_sample *sample_orig,
-+				     struct perf_sample *sample_callchain);
-+
- #endif	/* __PERF_CALLCHAIN_H */
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index dcd1130502df..1d5f50f83b31 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -83,6 +83,7 @@ void evlist__init(struct evlist *evlist, struct perf_cpu_map *cpus,
- 	evlist->ctl_fd.ack = -1;
- 	evlist->ctl_fd.pos = -1;
- 	evlist->nr_br_cntr = -1;
-+	INIT_LIST_HEAD(&evlist->deferred_samples);
- }
- 
- struct evlist *evlist__new(void)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 85859708393e..d2895c8be167 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -86,6 +86,7 @@ struct evlist {
- 		int	pos;	/* index at evlist core object to check signals */
- 	} ctl_fd;
- 	struct event_enable_timer *eet;
-+	struct list_head deferred_samples;
- };
- 
- struct evsel_str_handler {
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index e6be01459352..21b0958e8229 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1277,6 +1277,56 @@ static int evlist__deliver_sample(struct evlist *evlist, const struct perf_tool
- 					    per_thread);
- }
- 
-+struct deferred_event {
-+	struct list_head list;
-+	union perf_event *event;
-+};
-+
-+static int evlist__deliver_deferred_samples(struct evlist *evlist,
-+					    const struct perf_tool *tool,
-+					    union  perf_event *event,
-+					    struct perf_sample *sample,
-+					    struct machine *machine)
-+{
-+	struct deferred_event *de, *tmp;
-+	struct evsel *evsel;
-+	int ret = 0;
-+
-+	if (!tool->merge_deferred_callchains) {
-+		evsel = evlist__id2evsel(evlist, sample->id);
-+		return tool->callchain_deferred(tool, event, sample,
-+						evsel, machine);
-+	}
-+
-+	list_for_each_entry_safe(de, tmp, &evlist->deferred_samples, list) {
-+		struct perf_sample orig_sample;
-+
-+		ret = evlist__parse_sample(evlist, de->event, &orig_sample);
-+		if (ret < 0) {
-+			pr_err("failed to parse original sample\n");
-+			break;
-+		}
-+
-+		if (sample->tid != orig_sample.tid)
-+			continue;
-+
-+		evsel = evlist__id2evsel(evlist, orig_sample.id);
-+		sample__merge_deferred_callchain(&orig_sample, sample);
-+		ret = evlist__deliver_sample(evlist, tool, de->event,
-+					     &orig_sample, evsel, machine);
-+
-+		if (orig_sample.deferred_callchain)
-+			free(orig_sample.callchain);
-+
-+		list_del(&de->list);
-+		free(de);
-+
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+
- static int machines__deliver_event(struct machines *machines,
- 				   struct evlist *evlist,
- 				   union perf_event *event,
-@@ -1305,6 +1355,16 @@ static int machines__deliver_event(struct machines *machines,
- 			return 0;
- 		}
- 		dump_sample(evsel, event, sample, perf_env__arch(machine->env));
-+		if (sample->deferred_callchain && tool->merge_deferred_callchains) {
-+			struct deferred_event *de = malloc(sizeof(*de));
-+
-+			if (de == NULL)
-+				return -ENOMEM;
-+
-+			de->event = event;
-+			list_add_tail(&de->list, &evlist->deferred_samples);
-+			return 0;
-+		}
- 		return evlist__deliver_sample(evlist, tool, event, sample, evsel, machine);
- 	case PERF_RECORD_MMAP:
- 		return tool->mmap(tool, event, sample, machine);
-@@ -1364,7 +1424,8 @@ static int machines__deliver_event(struct machines *machines,
- 		return tool->aux_output_hw_id(tool, event, sample, machine);
- 	case PERF_RECORD_CALLCHAIN_DEFERRED:
- 		dump_deferred_callchain(evsel, event, sample);
--		return tool->callchain_deferred(tool, event, sample, evsel, machine);
-+		return evlist__deliver_deferred_samples(evlist, tool, event,
-+							sample, machine);
- 	default:
- 		++evlist->stats.nr_unknown_events;
- 		return -1;
-diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-index e1d60abb4e41..61fdba70b0a4 100644
---- a/tools/perf/util/tool.c
-+++ b/tools/perf/util/tool.c
-@@ -245,6 +245,7 @@ void perf_tool__init(struct perf_tool *tool, bool ordered_events)
- 	tool->cgroup_events = false;
- 	tool->no_warn = false;
- 	tool->show_feat_hdr = SHOW_FEAT_NO_HEADER;
-+	tool->merge_deferred_callchains = true;
- 
- 	tool->sample = process_event_sample_stub;
- 	tool->mmap = process_event_stub;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 9987bbde6d5e..d06580478ab1 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -87,6 +87,7 @@ struct perf_tool {
- 	bool		cgroup_events;
- 	bool		no_warn;
- 	bool		dont_split_sample_group;
-+	bool		merge_deferred_callchains;
- 	enum show_feature_header show_feat_hdr;
- };
- 
--- 
-2.47.2
+>
+> If nothing else is going to use this, then it's really not a
+> multi-function device and all the code can go into the IPMI directory.
+> That simplifies maintenance.
+>
+> If it is a multi-function device, then I want two separate Kconfig
+> items, one for the MFD and one for the IPMI portion.  That way it's
+> ready and you don't have to bother about the IPMI portion when
+> adding the other device.
+>
+> All else looks good, I think.
+>
+> -corey
+>
+> >
+> > For IPMI, according to the existing design, we use software simulation =
+to
+> > implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
+> >
+> > Also since both host side and BMC side read and write kcs status, we us=
+e
+> > fifo pointer to ensure data consistency.
+> >
+> > For the display, based on simpledrm, the resolution is read from a fixe=
+d
+> > position in the BMC since the hardware does not support auto-detection
+> > of the resolution. Of course, we will try to support multiple
+> > resolutions later, through a vbios-like approach.
+> >
+> > Especially, for the BMC reset function, since the display will be
+> > disconnected when BMC reset, we made a special treatment of re-push.
+> >
+> > Based on this, I will present it in four patches:
+> > patch-1: BMC device PCI resource allocation.
+> > patch-2: BMC reset function support
+> > patch-3: IPMI implementation
+> >
+> > Thanks.
+> >
+> > -------
+> > V4:
+> > - Add Reviewed-by tag;
+> > - Change the order of the patches.
+> > Patch (1/3):
+> >   - Fix build warning by lkp: Kconfig tristate -> bool
+> >     - https://lore.kernel.org/all/202505312022.QmFmGE1F-lkp@intel.com/
+> >  - Update commit message;
+> >  - Move MFD_LS2K_BMC after MFD_INTEL_M10_BMC_PMCI in Kconfig and
+> >    Makefile.
+> > Patch (2/3):
+> >   - Remove unnecessary newlines;
+> >   - Rename ls2k_bmc_check_pcie_connected() to
+> >     ls2k_bmc_pcie_is_connected();
+> >   - Update comment message.
+> > Patch (3/3):
+> >   - Remove unnecessary newlines.
+> >
+> > Link to V3:
+> > https://lore.kernel.org/all/cover.1748505446.git.zhoubinbin@loongson.cn=
+/
+> >
+> > V3:
+> > Patch (1/3):
+> >  - Drop "MFD" in title and comment;
+> >  - Fromatting code;
+> >  - Add clearer comments.
+> > Patch (2/3):
+> >  - Rebase linux-ipmi/next tree;
+> >  - Use readx()/writex() to read and write IPMI data instead of structur=
+e
+> >    pointer references;
+> >  - CONFIG_LOONGARCH -> MFD_LS2K_BMC;
+> >  - Drop unused output.
+> > Patch (3/3):
+> >  - Inline the ls2k_bmc_gpio_reset_handler() function to ls2k_bmc_pdata_=
+initial();
+> >  - Add clearer comments.
+> >  - Use proper multi-line commentary as per the Coding Style documentati=
+on;
+> >  - Define all magic numbers.
+> >
+> > Link to V2:
+> > https://lore.kernel.org/all/cover.1747276047.git.zhoubinbin@loongson.cn=
+/
+> >
+> > V2:
+> > - Drop ls2kdrm, use simpledrm instead.
+> > Patch (1/3):
+> >  - Use DEFINE_RES_MEM_NAMED/MFD_CELL_RES simplified code;
+> >  - Add resolution fetching due to replacing the original display
+> >    solution with simpledrm;
+> >  - Add aperture_remove_conflicting_devices() to avoid efifb
+> >    conflict with simpledrm.
+> > Patch (3/3):
+> >  - This part of the function, moved from the original ls2kdrm to mfd;
+> >  - Use set_console to implement the Re-push display function.
+> >
+> > Link to V1:
+> > https://lore.kernel.org/all/cover.1735550269.git.zhoubinbin@loongson.cn=
+/
+> >
+> > Binbin Zhou (3):
+> >   mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
+> >   mfd: ls2kbmc: Add Loongson-2K BMC reset function support
+> >   ipmi: Add Loongson-2K BMC support
+> >
+> >  drivers/char/ipmi/Makefile       |   1 +
+> >  drivers/char/ipmi/ipmi_si.h      |   7 +
+> >  drivers/char/ipmi/ipmi_si_intf.c |   3 +
+> >  drivers/char/ipmi/ipmi_si_ls2k.c | 189 ++++++++++++
+> >  drivers/mfd/Kconfig              |  12 +
+> >  drivers/mfd/Makefile             |   2 +
+> >  drivers/mfd/ls2kbmc-mfd.c        | 485 +++++++++++++++++++++++++++++++
+> >  7 files changed, 699 insertions(+)
+> >  create mode 100644 drivers/char/ipmi/ipmi_si_ls2k.c
+> >  create mode 100644 drivers/mfd/ls2kbmc-mfd.c
+> >
+> >
+> > base-commit: cd2e103d57e5615f9bb027d772f93b9efd567224
+> > --
+> > 2.47.1
+> >
 
 
+--=20
+Thanks.
+Binbin
 
