@@ -1,139 +1,119 @@
-Return-Path: <linux-kernel+bounces-686566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB9EAD9931
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 02:44:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEF1AD9938
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 02:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30EF1BC1E19
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 00:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962301BC20CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 00:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B1F1DA4E;
-	Sat, 14 Jun 2025 00:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37354AEE0;
+	Sat, 14 Jun 2025 00:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u/e9RR/r"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuDwH3bC"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928A9F4F1
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 00:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD81721348;
+	Sat, 14 Jun 2025 00:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749861868; cv=none; b=C5Oi/O54D9gIudKZtzcIxy7EYQF2KF9lWLG5gPir2UsnFPFM9vMgBX7hGIpV31NV5xFDDzWPyj2YJXfAaNnnNyBMIWIu3u2mA7Oy/+V1IvBtyZlq26PJm3jq1bjfJ0vPt6mCR1VHKP3dPrCclJKdTyGB8DsehQVkP4khGkNZrK0=
+	t=1749861896; cv=none; b=Ze5TfYe2ksb5+4LnYFTaTGWK+Cl+6/EakTpFcT/ng3DIzktx3QUAVZozFLIV2U6iS2hjlxqeQUgr+oSLFb/l3MztmUWg4hJ/tfnftgm+4nq+aJHrTElwJDDRvfxToZId1FTnrkcCFEhBKD9n13/Z3e6Ygk1p25zBUV2JXfted4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749861868; c=relaxed/simple;
-	bh=29cRgpEIn9i77ft2ErJCGJTeGJHKAHEj16jzFLOkDO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nyh1kjZoaHDZdao1kTZO6AIVbWpfb5b737pD6k9pDa02t8XqRpyJOOi14m5Tv/UlShfBZ7KbIfiakWVnj+Rpn8ym7mZon1IrfpCmyOfkyMmSiRMxS+P9Q5O4+ZRPA2RSHgzUBt4FkjoPU7YcDp02nD2wmcLpeHUr7Pe8/WraebE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u/e9RR/r; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <422c5677-48d1-41be-b128-595829c27167@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749861853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EXuSTcUn0J6P+iqyqyqHY+kzA3pvndl/3kAQ7RECPmE=;
-	b=u/e9RR/rxfXPFPycnlPVQqNrU5k0V5o6T4a0vCElbgKU5CYulJQONn820Lt+bxrHKt3EJj
-	9HC0jaQ//KBjncZGpnjDfEzSqPcZs914149pSwPRty719isCXS245ZnwGFUdJjeAcsJvWy
-	YIWig0jncgm0xUQ2x57lRJYqQf2oUeE=
-Date: Fri, 13 Jun 2025 17:43:51 -0700
+	s=arc-20240116; t=1749861896; c=relaxed/simple;
+	bh=QjxExhgrl9lF8XR8OVzaUuJbjCmCwGrqDlGqJiLGARQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OjhMBeqMHy8+h6XqmsW1QAN0I73o3L/DC/+vBJormOfCgwSRxLzdqI1f1Xyvb2NV9dhGhVL7wmGBz0fATV8+jlSALJ3C+RMlVrMvyvDiRdz4vRaUNbPjBJCer0p8zsOMezaylCAcr0kArFSgmkI9aEAs5k7b9zaOVTFVSBuSiOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuDwH3bC; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70e2b601a6bso28262647b3.0;
+        Fri, 13 Jun 2025 17:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749861894; x=1750466694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4BvcwXUpYpF53aglFHdWaMYuKTVfMzFy1gAx/zcHH8=;
+        b=TuDwH3bCPeXEKvs7AIbigTWOggHd9N6iWElg2TA02oRY3M6tq0bmulspS5x2nL4Q+f
+         ld84JW923Dv3bEmL+7TlrUb6aTJ0dGptDvxxXJM0R5UnlBB2MG9zps83A76VTYSM7GjS
+         lPOlTwfmEhKLQIhzMsSqZK4Y+cIl21u7tH2TSAIGONZ/JbOHQApWZgjZpCBOMwDFlYoq
+         0BKrqh8B+XI5iGnkZoeCPcqN+PSn8RSpGl+kem9MN4X1pPXBWIczVT/GfwZK22CACjYi
+         4MvvKckwZwAr5VcZPbVz60P9H1ZZTiDBHtBqoKD1lzx8xMgBtj4YmxL64OQYgXydvI9J
+         s/cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749861894; x=1750466694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q4BvcwXUpYpF53aglFHdWaMYuKTVfMzFy1gAx/zcHH8=;
+        b=vLad17RvFEM8niWmvGRUQW/F37yuzqtibzH71SyYffLuwwyTSu5AMzZrj1ryjPPHCL
+         0slWX638XSAokXyPL1DFjNmOntooUCE3efKBB7agNVsVb3kw62YGUkdO83mQay0DocVr
+         8mwmM3afyVhB1TwJfiy9c+jpzggBvFkx7VywNqQiw00vh8iXSuSujVMUp18593bZ1+dy
+         /7B9Jj63M9JzwuprFuflu2biV+BiMmRwJXOs+4qhfK10dMXOojubydw3coBsTE3SrqGQ
+         DqWyVNoc2gYLrOBWYmbQYqFPnmmPFgSSVte6pRsVLPB8RHhRKMN5Mg62CzOfZpGdKEGU
+         +WgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrg3xPD00rCvknnHD42WyItnAUgGY92k7swrkQlh1R8wiIcxdv76Zo2Ef4EwT4iZfQcFnzZxCjm6uVhw==@vger.kernel.org, AJvYcCXRghmuJhamHgYSRqqF7aA78k/ZCQDZeDq+isgpedbeIsYQiZMr4X9blO5MWhgyFU4dJrGfyjFjW+7aQMFT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO5WPfAdeZB/2V63TVFixU0FjV1eS0glFUWUOwZe8evBMcV85O
+	L8k+dmtC/Ucn0R7jguspUJAqSiC50cEWwVgE0sr3nyeGRJSDxuHrTLs9
+X-Gm-Gg: ASbGncu3JM3bbrB4Xisgkq2t2hsz1A8EaSkjOB9W+OaE/7gg6ZIaNDkf+1ru0N2smHz
+	yct9lnOa8Z3FlIaOfjV0GrL4HSxY7Q+M70G5qjI2yI+BXhuJ351DEIXx0Vv2a5yWmn+FFrSzFPz
+	LRVv6q8XdY/wqBFkSmWB9K5F2tqz24Sj/wcqB4oCbuKGygyIVnn7ciqKprOKzO2X15MPVA7vJrE
+	lVhEkEmQpvUxfEoswUkkxgaFpn7I7zD1aZsxUOGVIfDYg5//IsNml2GxHwDCqgy/RxbBSbpvQOg
+	wEcM6pGk9OlZ/SFGWNrYaVAKk0m1YDwNTKgF/C3WArIJtggOb3tQmgK36ndXRbvkVsG9hJdN1fU
+	E
+X-Google-Smtp-Source: AGHT+IGjLtwBG/qb8tTfi+EFfpRRiPz60v6QAyBpoxShxESQKaqfAUJV/kdfD3XI+ycQZ6HE2YHScw==
+X-Received: by 2002:a05:690c:6c8d:b0:70c:c013:f2f with SMTP id 00721157ae682-71175492805mr22391947b3.35.1749861893645;
+        Fri, 13 Jun 2025 17:44:53 -0700 (PDT)
+Received: from trojai4.cs.purdue.edu ([128.210.0.165])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71152793dfcsm8421807b3.67.2025.06.13.17.44.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 17:44:53 -0700 (PDT)
+From: Alex Guo <alexguo1023@gmail.com>
+To: deller@gmx.de
+Cc: tzimmermann@suse.de,
+	alexguo1023@gmail.com,
+	gonzalo.silvalde@gmail.com,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fbdev: sstfb: Fix potential divide by zero
+Date: Fri, 13 Jun 2025 20:44:50 -0400
+Message-Id: <20250614004450.3096366-1-alexguo1023@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 06/12] RISC-V: KVM: Implement
- kvm_arch_flush_remote_tlbs_range()
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250613065743.737102-1-apatel@ventanamicro.com>
- <20250613065743.737102-7-apatel@ventanamicro.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Atish Patra <atish.patra@linux.dev>
-In-Reply-To: <20250613065743.737102-7-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+Variable var->pixclock can be set by user. In case it equals to
+ zero, divide by zero would occur in sstfb_check_var. Similar
+crashes have happened in other fbdev drivers. We fix this by
+checking whether 'pixclock' is zero.
 
-On 6/12/25 11:57 PM, Anup Patel wrote:
-> The kvm_arch_flush_remote_tlbs_range() expected by KVM core can be
-> easily implemented for RISC-V using kvm_riscv_hfence_gvma_vmid_gpa()
-> hence provide it.
->
-> Also with kvm_arch_flush_remote_tlbs_range() available for RISC-V, the
-> mmu_wp_memory_region() can happily use kvm_flush_remote_tlbs_memslot()
-> instead of kvm_flush_remote_tlbs().
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->   arch/riscv/include/asm/kvm_host.h | 2 ++
->   arch/riscv/kvm/mmu.c              | 2 +-
->   arch/riscv/kvm/tlb.c              | 8 ++++++++
->   3 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index ff1f76d6f177..6162575e2177 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -43,6 +43,8 @@
->   	KVM_ARCH_REQ_FLAGS(5, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
->   #define KVM_REQ_STEAL_UPDATE		KVM_ARCH_REQ(6)
->   
-> +#define __KVM_HAVE_ARCH_FLUSH_REMOTE_TLBS_RANGE
-> +
->   #define KVM_HEDELEG_DEFAULT		(BIT(EXC_INST_MISALIGNED) | \
->   					 BIT(EXC_BREAKPOINT)      | \
->   					 BIT(EXC_SYSCALL)         | \
-> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> index 29f1bd853a66..a5387927a1c1 100644
-> --- a/arch/riscv/kvm/mmu.c
-> +++ b/arch/riscv/kvm/mmu.c
-> @@ -344,7 +344,7 @@ static void gstage_wp_memory_region(struct kvm *kvm, int slot)
->   	spin_lock(&kvm->mmu_lock);
->   	gstage_wp_range(kvm, start, end);
->   	spin_unlock(&kvm->mmu_lock);
-> -	kvm_flush_remote_tlbs(kvm);
-> +	kvm_flush_remote_tlbs_memslot(kvm, memslot);
->   }
->   
->   int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
-> diff --git a/arch/riscv/kvm/tlb.c b/arch/riscv/kvm/tlb.c
-> index da98ca801d31..f46a27658c2e 100644
-> --- a/arch/riscv/kvm/tlb.c
-> +++ b/arch/riscv/kvm/tlb.c
-> @@ -403,3 +403,11 @@ void kvm_riscv_hfence_vvma_all(struct kvm *kvm,
->   	make_xfence_request(kvm, hbase, hmask, KVM_REQ_HFENCE_VVMA_ALL,
->   			    KVM_REQ_HFENCE_VVMA_ALL, NULL);
->   }
-> +
-> +int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm, gfn_t gfn, u64 nr_pages)
-> +{
-> +	kvm_riscv_hfence_gvma_vmid_gpa(kvm, -1UL, 0,
-> +				       gfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT,
-> +				       PAGE_SHIFT);
-> +	return 0;
-> +}
+Signed-off-by: Alex Guo <alexguo1023@gmail.com>
+---
+ drivers/video/fbdev/sstfb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-LGTM. However, I noticed that kvm_flush_remote_tlbs_range doesn't 
-increment remote_tlb_flush_requests/remote_tlb_flush stat counter.
-
-So we would be losing those stats here. Do you know if there is a 
-specific reason behind not supporting the stat counters in the *tlbs_range
-function ?
-
-Otherwise,
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
+diff --git a/drivers/video/fbdev/sstfb.c b/drivers/video/fbdev/sstfb.c
+index 2ea947f57efb..fd387ca8401b 100644
+--- a/drivers/video/fbdev/sstfb.c
++++ b/drivers/video/fbdev/sstfb.c
+@@ -359,7 +359,7 @@ static int sstfb_check_var(struct fb_var_screeninfo *var,
+ 	int tiles_in_X, real_length;
+ 	unsigned int freq;
+ 
+-	if (sst_calc_pll(PICOS2KHZ(var->pixclock), &freq, &par->pll)) {
++	if (var->pixclock && sst_calc_pll(PICOS2KHZ(var->pixclock), &freq, &par->pll)) {
+ 		printk(KERN_ERR "sstfb: Pixclock at %ld KHZ out of range\n",
+ 				PICOS2KHZ(var->pixclock));
+ 		return -EINVAL;
+-- 
+2.34.1
 
 
