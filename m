@@ -1,296 +1,350 @@
-Return-Path: <linux-kernel+bounces-686755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DB4AD9B73
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 10:48:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E94AD9BB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 11:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E2507AD1E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA90188CA75
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 09:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FA91F4C89;
-	Sat, 14 Jun 2025 08:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EaKnhP38"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D9C29827C;
+	Sat, 14 Jun 2025 09:18:48 +0000 (UTC)
+Received: from smtprelay08.ispgateway.de (smtprelay08.ispgateway.de [134.119.228.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FCB3D76
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 08:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B9D4C85;
+	Sat, 14 Jun 2025 09:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.119.228.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749890874; cv=none; b=a8P8WaHYVNfED6hsOHAaqpZRZwjCoX59lj+JY+mNOOfJBK3wHywhpTM8DWdfVhQMlJgbuH5HLptZeN1c4l4xGlM/aER0PLgunvOi53TKz2zs4nXqL8jTAEOP1PYPvASGyt4+pAewEOIBESpuc+ydUNI5/KIlXJ+hMoOkcZLuZFI=
+	t=1749892728; cv=none; b=uWnBH+L9MWSHxjKRWG2FAjyYuHZPI27PXrh4GN/FEyohvr+wcSBlUBC+2OjWhvOjvAzqIrO8E8/gzyO0DPjzD6ovVCDijLVEdwLhDoGuZa/+wbC9b78dI02if2pcp7Y0D2pX4WSzOxNVHl5Z1J1T7Ifhy621DzyTRecYXwVMy4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749890874; c=relaxed/simple;
-	bh=1zE5dRa2pTIbWgRSSsDZnGOGsw/ocPUokv7v0pIjIFw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qp2CeUnhexHBVS9An0CR+UOIkarnGAMUmZWJVk8spBnMs1fe0l4KDd3Ffm8w8vlLOpooXQDFCWITf8DDhqVcB/iMmOfDlVqSUF9MG6XPiRidWMG69yw4qGSBBUrDQEuijLEBWg2Q/LbWueW17gvaOOUZ10IsGliTSie1enVa8d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EaKnhP38; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2c37558eccso2123493a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jun 2025 01:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749890871; x=1750495671; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UmexxkUsMlwsDUZqAJqCu3m0c/NmHuIKmfWQMr16+98=;
-        b=EaKnhP387HPxMz+v2EokKyUuVq4bU1AODHLU30fPwsjDyoe2k5Afx+6rqeZ55J0qXR
-         rRC6eo6ZElSArzfyeL/44EFOgSTD3/lx09M0JIIPFIVavok8yXzRqRJ5B/GQINzheuEg
-         CIOkXYvZQtrl9AKsEl23Nm8AmxNAqsxVOlhOgABSDR8MHt51lZdE97tq13NA50NGa9vR
-         UepjMnRC9DNG+/h4KprRw79ZECflhPPSgJvd1d0QFQFx9fmESbV/n9wBD6MP26bZWiBC
-         cKntigUIrZ60KZhTj2wcasQLN/D2p/W9EQgSlNZPQGn83WQomDi5Uq5M4eNTBZmpHPJI
-         EBwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749890871; x=1750495671;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UmexxkUsMlwsDUZqAJqCu3m0c/NmHuIKmfWQMr16+98=;
-        b=ewp2WknVxDa2hOm7mWe4JLuxGALoB6cwxdkTn9zHi+PiGn/VTCxyXvcMi5nbgEFYSO
-         Xnsoe6LFYlHzermGgJ3I9mQK6g+4gGzf2h7KFTHv9NT9dzGQMIYYQSSMi2NpVtqaBBJG
-         w1Xuz55IEeCQlGh++2XGtTDfsACDqjIA1eK3UqzSL41P3Wm1ZbHxVlCvTIrDtMERm1q9
-         nb1YgYCi/UQXL08gmbkqIncGnf/aIRW3ggf6JbcKFqOR6vlbV950hg0T/u6DGkwBG6QB
-         94cAwDNojdQbpftRe8cghBLF9pW9EgwTr/KO68U9I7dH7UAQSxk4nDoxMIupkxkjwABU
-         ou5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxQR5cb4qjzRY0XnUezXPzzNC+1MdkF2aa0TpGXelrSEC9qjM5q7Mfkrhi2X5vrmQ0KYLuwOokN1kO40U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjIQRSwTtYMhvTGY78sM3Nw/3b+64dT9e+XyzRZdkGnGwaiCZM
-	U60b/V4cfhRkHsGpQlZ0545BBKxzTlMWJxF7hcgoM6T1PWLQxYi145rNda0o2WXaoi024tJY68a
-	Zh6bY6kd/7kioGA==
-X-Google-Smtp-Source: AGHT+IFCKUfKSAYv//yvPxISNKnOAsmR1cCjTxj8W//eQP2JArQ4PikZxQbSriVlh2ufnFQbzVsf0UUzOE9QZQ==
-X-Received: from pgqw8.prod.google.com ([2002:a65:6948:0:b0:b2f:5b01:af42])
- (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:6481:b0:21c:faa4:9ab9 with SMTP id adf61e73a8af0-21fbd631592mr3401257637.22.1749890871693;
- Sat, 14 Jun 2025 01:47:51 -0700 (PDT)
-Date: Sat, 14 Jun 2025 16:47:11 +0800
+	s=arc-20240116; t=1749892728; c=relaxed/simple;
+	bh=Ip5Ol0lWLu0pbJtBmRBRClJoQMo3CNchCiqpPvL6MsQ=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=jpI22qhLIs5IycwO6yER9OYODmGbhLecIWKhmEH4M52kgQmjbd7n7MNV5vYswQmd1OlxiHclvIRL+Qx6JK0s4eMmVy+JNNMxcC7FbHRRUewASesOMa8/J2oWSELecZiJZVyME16ip20p8matxfht9gNfZvP1/YwA04OYyS/T7Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eltropuls.de; spf=pass smtp.mailfrom=eltropuls.de; arc=none smtp.client-ip=134.119.228.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eltropuls.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eltropuls.de
+Received: from [87.79.10.98] (helo=mail.eltropuls.de)
+	by smtprelay08.ispgateway.de with esmtpa (Exim 4.98)
+	(envelope-from <marc.straemke@eltropuls.de>)
+	id 1uQMd1-000000003Aj-22ja;
+	Sat, 14 Jun 2025 10:52:43 +0200
+Received: from [172.24.1.180] (unknown [94.31.68.213])
+	by mail.eltropuls.de (Postfix) with ESMTPSA id 6EC00FFAD3;
+	Sat, 14 Jun 2025 10:52:42 +0200 (CEST)
+Content-Type: multipart/mixed; boundary="------------yFsLyO37gXCriFP4WsyRkCxE"
+Message-ID: <97638b0b-cd96-40e2-9dc2-5e6f767b90a4@eltropuls.de>
+Date: Sat, 14 Jun 2025 10:52:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <20250614084711.2654593-2-davidgow@google.com>
-Subject: [PATCH] kunit: Adjust kunit_test timeout based on test_{suite,case} speed
-From: David Gow <davidgow@google.com>
-To: Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: Ujwal Jain <ujwaljain@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Latency spikes on V6.15.1 Preempt RT and maybe related to intel?
+ IGB
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+References: <20250613145434.T2x2ML8_@linutronix.de>
+ <E1uQ6I0-000000003aa-37uJ@smtprelay05.ispgateway.de>
+ <20250613195838.0-gZ6bqS@linutronix.de>
+From: =?UTF-8?Q?Marc_Str=C3=A4mke?= <marc.straemke@eltropuls.de>
+In-Reply-To: <20250613195838.0-gZ6bqS@linutronix.de>
+X-Df-Sender: Y2F0Y2hhbGxfbWFpbEBlbHRyb3B1bHMuZXU=
 
-From: Ujwal Jain <ujwaljain@google.com>
+This is a multi-part message in MIME format.
+--------------yFsLyO37gXCriFP4WsyRkCxE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Currently, the in-kernel kunit test case timeout is 300 seconds. (There
-is a separate timeout mechanism for the whole test execution in
-kunit.py, but that's unrelated.) However, tests marked 'slow' or 'very
-slow' may timeout, particularly on slower machines.
+Sebastian,
 
-Implement a multiplier to the test-case timeout, so that slower tests
-have longer to complete:
-- DEFAULT -> 1x default timeout
-- KUNIT_SPEED_SLOW -> 3x default timeout
-- KUNIT_SPEED_VERY_SLOW -> 12x default timeout
+i tried that in the past (rtla top auto analysis). But i do not really 
+understand the result:
 
-A further change is planned to allow user configuration of the
-default/base timeout to allow people with faster or slower machines to
-adjust these to their use-cases.
+rtla timerlat hit stop tracing
+## CPU 1 hit stop tracing, analyzing it ##
+   IRQ handler delay:                                         0.00 us 
+(0.00 %)
+   IRQ latency:                                             709.25 us
+   Blocking thread:
+                               ip:3567
+     Blocking thread stack trace
+                 -> timerlat_irq
+                 -> __hrtimer_run_queues
+                 -> hrtimer_interrupt
+                 -> __sysvec_apic_timer_interrupt
+                 -> sysvec_apic_timer_interrupt
+                 -> asm_sysvec_apic_timer_interrupt
+                 -> igb_update_mc_addr_list
+                 -> igb_set_rx_mode
+                 -> __dev_change_flags
+                 -> netif_change_flags
+                 -> do_setlink.constprop.0
+                 -> rtnl_newlink
+                 -> rtnetlink_rcv_msg
+                 -> netlink_rcv_skb
+                 -> netlink_unicast
+                 -> netlink_sendmsg
+                 -> ____sys_sendmsg
+                 -> ___sys_sendmsg
+                 -> __sys_sendmsg
+                 -> do_syscall_64
+                 -> entry_SYSCALL_64_after_hwframe
+------------------------------------------------------------------------
+      IRQ latency:                                          709.25 us (100%)
 
-Signed-off-by: Ujwal Jain <ujwaljain@google.com>
-Co-developed-by: David Gow <davidgow@google.com>
-Signed-off-by: David Gow <davidgow@google.com>
----
- include/kunit/try-catch.h  |  1 +
- lib/kunit/kunit-test.c     |  9 +++++---
- lib/kunit/test.c           | 46 ++++++++++++++++++++++++++++++++++++--
- lib/kunit/try-catch-impl.h |  4 +++-
- lib/kunit/try-catch.c      | 29 ++----------------------
- 5 files changed, 56 insertions(+), 33 deletions(-)
 
-diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
-index 7c966a1adbd3..d4e1a5b98ed6 100644
---- a/include/kunit/try-catch.h
-+++ b/include/kunit/try-catch.h
-@@ -47,6 +47,7 @@ struct kunit_try_catch {
- 	int try_result;
- 	kunit_try_catch_func_t try;
- 	kunit_try_catch_func_t catch;
-+	unsigned long timeout;
- 	void *context;
- };
- 
-diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-index d9c781c859fd..387cdf7782f6 100644
---- a/lib/kunit/kunit-test.c
-+++ b/lib/kunit/kunit-test.c
-@@ -43,7 +43,8 @@ static void kunit_test_try_catch_successful_try_no_catch(struct kunit *test)
- 	kunit_try_catch_init(try_catch,
- 			     test,
- 			     kunit_test_successful_try,
--			     kunit_test_no_catch);
-+			     kunit_test_no_catch,
-+			     300 * msecs_to_jiffies(MSEC_PER_SEC));
- 	kunit_try_catch_run(try_catch, test);
- 
- 	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-@@ -75,7 +76,8 @@ static void kunit_test_try_catch_unsuccessful_try_does_catch(struct kunit *test)
- 	kunit_try_catch_init(try_catch,
- 			     test,
- 			     kunit_test_unsuccessful_try,
--			     kunit_test_catch);
-+			     kunit_test_catch,
-+			     300 * msecs_to_jiffies(MSEC_PER_SEC));
- 	kunit_try_catch_run(try_catch, test);
- 
- 	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-@@ -129,7 +131,8 @@ static void kunit_test_fault_null_dereference(struct kunit *test)
- 	kunit_try_catch_init(try_catch,
- 			     test,
- 			     kunit_test_null_dereference,
--			     kunit_test_catch);
-+			     kunit_test_catch,
-+			     300 * msecs_to_jiffies(MSEC_PER_SEC));
- 	kunit_try_catch_run(try_catch, test);
- 
- 	KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
-diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-index 146d1b48a096..002121675605 100644
---- a/lib/kunit/test.c
-+++ b/lib/kunit/test.c
-@@ -373,6 +373,46 @@ static void kunit_run_case_check_speed(struct kunit *test,
- 		   duration.tv_sec, duration.tv_nsec);
- }
- 
-+/* Returns timeout multiplier based on speed.
-+ * DEFAULT:		    1
-+ * KUNIT_SPEED_SLOW:        3
-+ * KUNIT_SPEED_VERY_SLOW:   12
-+ */
-+static int kunit_timeout_mult(enum kunit_speed speed)
-+{
-+	switch (speed) {
-+	case KUNIT_SPEED_SLOW:
-+		return 3;
-+	case KUNIT_SPEED_VERY_SLOW:
-+		return 12;
-+	default:
-+		return 1;
-+	}
-+}
-+
-+static unsigned long kunit_test_timeout(struct kunit_suite *suite, struct kunit_case *test_case)
-+{
-+	int mult = 1;
-+	/*
-+	 * TODO: Make the default (base) timeout configurable, so that users with
-+	 * particularly slow or fast machines can successfully run tests, while
-+	 * still taking advantage of the relative speed.
-+	 */
-+	unsigned long default_timeout = 300;
-+
-+	/*
-+	 * The default test timeout is 300 seconds and will be adjusted by mult
-+	 * based on the test speed. The test speed will be overridden by the
-+	 * innermost test component.
-+	 */
-+	if (suite->attr.speed != KUNIT_SPEED_UNSET)
-+		mult = kunit_timeout_mult(suite->attr.speed);
-+	if (test_case->attr.speed != KUNIT_SPEED_UNSET)
-+		mult = kunit_timeout_mult(test_case->attr.speed);
-+	return mult * default_timeout * msecs_to_jiffies(MSEC_PER_SEC);
-+}
-+
-+
- /*
-  * Initializes and runs test case. Does not clean up or do post validations.
-  */
-@@ -527,7 +567,8 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
- 	kunit_try_catch_init(try_catch,
- 			     test,
- 			     kunit_try_run_case,
--			     kunit_catch_run_case);
-+			     kunit_catch_run_case,
-+			     kunit_test_timeout(suite, test_case));
- 	context.test = test;
- 	context.suite = suite;
- 	context.test_case = test_case;
-@@ -537,7 +578,8 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
- 	kunit_try_catch_init(try_catch,
- 			     test,
- 			     kunit_try_run_case_cleanup,
--			     kunit_catch_run_case_cleanup);
-+			     kunit_catch_run_case_cleanup,
-+			     kunit_test_timeout(suite, test_case));
- 	kunit_try_catch_run(try_catch, &context);
- 
- 	/* Propagate the parameter result to the test case. */
-diff --git a/lib/kunit/try-catch-impl.h b/lib/kunit/try-catch-impl.h
-index 203ba6a5e740..6f401b97cd0b 100644
---- a/lib/kunit/try-catch-impl.h
-+++ b/lib/kunit/try-catch-impl.h
-@@ -17,11 +17,13 @@ struct kunit;
- static inline void kunit_try_catch_init(struct kunit_try_catch *try_catch,
- 					struct kunit *test,
- 					kunit_try_catch_func_t try,
--					kunit_try_catch_func_t catch)
-+					kunit_try_catch_func_t catch,
-+					unsigned long timeout)
- {
- 	try_catch->test = test;
- 	try_catch->try = try;
- 	try_catch->catch = catch;
-+	try_catch->timeout = timeout;
- }
- 
- #endif /* _KUNIT_TRY_CATCH_IMPL_H */
-diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-index 6bbe0025b079..d84a879f0a78 100644
---- a/lib/kunit/try-catch.c
-+++ b/lib/kunit/try-catch.c
-@@ -34,31 +34,6 @@ static int kunit_generic_run_threadfn_adapter(void *data)
- 	return 0;
- }
- 
--static unsigned long kunit_test_timeout(void)
--{
--	/*
--	 * TODO(brendanhiggins@google.com): We should probably have some type of
--	 * variable timeout here. The only question is what that timeout value
--	 * should be.
--	 *
--	 * The intention has always been, at some point, to be able to label
--	 * tests with some type of size bucket (unit/small, integration/medium,
--	 * large/system/end-to-end, etc), where each size bucket would get a
--	 * default timeout value kind of like what Bazel does:
--	 * https://docs.bazel.build/versions/master/be/common-definitions.html#test.size
--	 * There is still some debate to be had on exactly how we do this. (For
--	 * one, we probably want to have some sort of test runner level
--	 * timeout.)
--	 *
--	 * For more background on this topic, see:
--	 * https://mike-bland.com/2011/11/01/small-medium-large.html
--	 *
--	 * If tests timeout due to exceeding sysctl_hung_task_timeout_secs,
--	 * the task will be killed and an oops generated.
--	 */
--	return 300 * msecs_to_jiffies(MSEC_PER_SEC); /* 5 min */
--}
--
- void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- {
- 	struct kunit *test = try_catch->test;
-@@ -85,8 +60,8 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- 	task_done = task_struct->vfork_done;
- 	wake_up_process(task_struct);
- 
--	time_remaining = wait_for_completion_timeout(task_done,
--						     kunit_test_timeout());
-+	time_remaining = wait_for_completion_timeout(
-+		task_done, try_catch->timeout);
- 	if (time_remaining == 0) {
- 		try_catch->try_result = -ETIMEDOUT;
- 		kthread_stop(task_struct);
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
+I do not really understand where the IRQ/Preemption disabling is 
+happening. What would the next thing be to do? Function (graph?) tracing 
+on all the functions visible in the backtrace?
 
+
+I tried to look at the event race output starting with the call to 
+igb_set_rx_mode. I have attached the trace with all events and a 
+function filter on igb on only the cpu executing ip.  I cannot 
+understand what is happening between timestasmp 700.149995 and the IRQ 
+disable event on 700.150795....
+
+
+Thanks for your help,
+
+Marc
+
+
+
+Am 13.06.2025 um 21:58 schrieb Sebastian Andrzej Siewior:
+> On 2025-06-13 17:26:15 [+0200], marc.straemke wrote:
+>> Thanks Sebastian, I will do that tomorrow.To confirm: Just pure event
+>> tracing without the function tracer? (After enabling the sched
+>> events)Regards,Marc
+> The event tracing should narrow down which of the tasks cause the spike.
+> So if you say it is the ip comment then you should see ip.
+> Step two would be the function tracer to narrow it down further. You
+> could start right away with the function tracer to see where the big gap
+> is.
+> rtla could speed up the whole process (via the timerlat auto analysis).
+>
+> Sebastian
+--------------yFsLyO37gXCriFP4WsyRkCxE
+Content-Type: text/plain; charset=UTF-8; name="trace_after_igb_set_rx_mode"
+Content-Disposition: attachment; filename="trace_after_igb_set_rx_mode"
+Content-Transfer-Encoding: base64
+
+ICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIC4uLjEuICAgNzAwLjE0OTk5NDogcHJl
+ZW1wdF9kaXNhYmxlOiBjYWxsZXI9X19sb2NhbF9iaF9kaXNhYmxlX2lwKzB4NzYvMHhlMCBw
+YXJlbnQ9X19sb2NhbF9iaF9kaXNhYmxlX2lwKzB4NzYvMHhlMAogICAgICAgICAgICAgIGlw
+LTQ5MzEgICAgWzAwMV0gLi4uMTEgICA3MDAuMTQ5OTk0OiBwcmVlbXB0X2VuYWJsZTogY2Fs
+bGVyPV9fbG9jYWxfYmhfZGlzYWJsZV9pcCsweDc2LzB4ZTAgcGFyZW50PV9fbG9jYWxfYmhf
+ZGlzYWJsZV9pcCsweDc2LzB4ZTAKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIGIu
+Li4zICAgNzAwLjE0OTk5NDogaWdiX3NldF9yeF9tb2RlIDwtX19kZXZfY2hhbmdlX2ZsYWdz
+CiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBiLi4uMyAgIDcwMC4xNDk5OTU6IGtt
+YWxsb2M6IGNhbGxfc2l0ZT1pZ2Jfc2V0X3J4X21vZGUrMHg0ZjgvMHg1YTAgcHRyPTAwMDAw
+MDAwYjBiNGU1YzggYnl0ZXNfcmVxPTEyIGJ5dGVzX2FsbG9jPTE2IGdmcF9mbGFncz1HRlBf
+QVRPTUlDfF9fR0ZQX1pFUk8gbm9kZT0tMSBhY2NvdW50ZWQ9ZmFsc2UKICAgICAgICAgICAg
+ICBpcC00OTMxICAgIFswMDFdIGIuLi4zICAgNzAwLjE0OTk5NTogaWdiX3VwZGF0ZV9tY19h
+ZGRyX2xpc3QgPC1pZ2Jfc2V0X3J4X21vZGUKICAgICAgICAgICAgICBpcC00OTMxICAgIFsw
+MDFdIERuLi4zICAgNzAwLjE1MDc5NTogaXJxX2Rpc2FibGU6IGNhbGxlcj1pcnFlbnRyeV9l
+bnRlcisweDJhLzB4NjAgcGFyZW50PTB4MAogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAw
+MV0gRG5oLjMgICA3MDAuMTUwNzk1OiBwcmVlbXB0X2Rpc2FibGU6IGNhbGxlcj1zeXN2ZWNf
+cmVzY2hlZHVsZV9pcGkrMHgyNC8weDEzMCBwYXJlbnQ9c3lzdmVjX3Jlc2NoZWR1bGVfaXBp
+KzB4MjQvMHgxMzAKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIERuaC4zICAgNzAw
+LjE1MDc5NTogcmVzY2hlZHVsZV9lbnRyeTogdmVjdG9yPTI1MwogICAgICAgICAgICAgIGlw
+LTQ5MzEgICAgWzAwMV0gRE5oLjMgICA3MDAuMTUwNzk1OiByZXNjaGVkdWxlX2V4aXQ6IHZl
+Y3Rvcj0yNTMKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIEROaC4zICAgNzAwLjE1
+MDc5NjogcHJlZW1wdF9lbmFibGU6IGNhbGxlcj1zeXN2ZWNfcmVzY2hlZHVsZV9pcGkrMHg4
+ZC8weDEzMCBwYXJlbnQ9c3lzdmVjX3Jlc2NoZWR1bGVfaXBpKzB4OGQvMHgxMzAKICAgICAg
+ICAgICAgICBpcC00OTMxICAgIFswMDFdIEROLjEzICAgNzAwLjE1MDc5NjogcHJlZW1wdF9k
+aXNhYmxlOiBjYWxsZXI9aXJxZW50cnlfZXhpdCsweDY0LzB4NzAgcGFyZW50PWlycWVudHJ5
+X2V4aXQrMHg2NC8weDcwCiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBETi4xMyAg
+IDcwMC4xNTA3OTY6IGlycV9lbmFibGU6IGNhbGxlcj1wcmVlbXB0X3NjaGVkdWxlX2lycSsw
+eDNiLzB4ZTAgcGFyZW50PTB4MAogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRE4u
+MTMgICA3MDAuMTUwNzk2OiBpcnFfZGlzYWJsZTogY2FsbGVyPWlycWVudHJ5X2VudGVyKzB4
+MmEvMHg2MCBwYXJlbnQ9MHgwCiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBETmgx
+MyAgIDcwMC4xNTA3OTc6IGNhbGxfZnVuY3Rpb25fc2luZ2xlX2VudHJ5OiB2ZWN0b3I9MjUx
+CiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBETmgyMyAgIDcwMC4xNTA3OTg6IGlw
+aV9zZW5kX2NwdTogY3B1PTEgY2FsbHNpdGU9aXJxX3dvcmtfcXVldWVfb24rMHgxMDkvMHgx
+MjAgY2FsbGJhY2s9cnRvX3B1c2hfaXJxX3dvcmtfZnVuYysweDAvMHhhMAogICAgICAgICAg
+ICAgIGlwLTQ5MzEgICAgWzAwMV0gRE5oMTMgICA3MDAuMTUwNzk4OiBjYWxsX2Z1bmN0aW9u
+X3NpbmdsZV9leGl0OiB2ZWN0b3I9MjUxCiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAx
+XSBETi4xMyAgIDcwMC4xNTA3OTg6IGlycV9lbmFibGU6IGNhbGxlcj1hc21fc3lzdmVjX2Nh
+bGxfZnVuY3Rpb25fc2luZ2xlKzB4MWEvMHgyMCBwYXJlbnQ9MHgwCiAgICAgICAgICAgICAg
+aXAtNDkzMSAgICBbMDAxXSBETi4xMyAgIDcwMC4xNTA3OTk6IGlycV9kaXNhYmxlOiBjYWxs
+ZXI9aXJxZW50cnlfZW50ZXIrMHgyYS8weDYwIHBhcmVudD0weDAKICAgICAgICAgICAgICBp
+cC00OTMxICAgIFswMDFdIEROaDEzICAgNzAwLjE1MDc5OTogaXJxX3dvcmtfZW50cnk6IHZl
+Y3Rvcj0yNDYKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIEROaDEzICAgNzAwLjE1
+MDc5OTogaXJxX3dvcmtfZXhpdDogdmVjdG9yPTI0NgogICAgICAgICAgICAgIGlwLTQ5MzEg
+ICAgWzAwMV0gRE4uMTMgICA3MDAuMTUwODAwOiBpcnFfZW5hYmxlOiBjYWxsZXI9YXNtX3N5
+c3ZlY19pcnFfd29yaysweDFhLzB4MjAgcGFyZW50PTB4MAogICAgICAgICAgICAgIGlwLTQ5
+MzEgICAgWzAwMV0gRE4uMTMgICA3MDAuMTUwODAwOiBpcnFfZGlzYWJsZTogY2FsbGVyPWly
+cWVudHJ5X2VudGVyKzB4MmEvMHg2MCBwYXJlbnQ9MHgwCiAgICAgICAgICAgICAgaXAtNDkz
+MSAgICBbMDAxXSBETmgxMyAgIDcwMC4xNTA4MDA6IGxvY2FsX3RpbWVyX2VudHJ5OiB2ZWN0
+b3I9MjM2CiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBETmgyMyAgIDcwMC4xNTA4
+MDE6IGhydGltZXJfY2FuY2VsOiBocnRpbWVyPTAwMDAwMDAwMzA5M2E3OTgKICAgICAgICAg
+ICAgICBpcC00OTMxICAgIFswMDFdIEROaDEzICAgNzAwLjE1MDgwMTogaHJ0aW1lcl9leHBp
+cmVfZW50cnk6IGhydGltZXI9MDAwMDAwMDAzMDkzYTc5OCBmdW5jdGlvbj1ocnRpbWVyX3dh
+a2V1cCBub3c9NzAwMTQ1MzY4OTc3CiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBE
+TmgzMyAgIDcwMC4xNTA4MDI6IHNjaGVkX3dha2luZzogY29tbT1jeWNsaWN0ZXN0IHBpZD00
+ODkzIHByaW89OSB0YXJnZXRfY3B1PTAwMQogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAw
+MV0gRE5oNDMgICA3MDAuMTUwODAyOiBzY2hlZF9zdGF0X3NsZWVwOiBjb21tPWN5Y2xpY3Rl
+c3QgcGlkPTQ4OTMgZGVsYXk9MTIyMzIzOSBbbnNdCiAgICAgICAgICAgICAgaXAtNDkzMSAg
+ICBbMDAxXSBETmg0MyAgIDcwMC4xNTA4MDM6IHNjaGVkX3dha2V1cDogY29tbT1jeWNsaWN0
+ZXN0IHBpZD00ODkzIHByaW89OSB0YXJnZXRfY3B1PTAwMQogICAgICAgICAgICAgIGlwLTQ5
+MzEgICAgWzAwMV0gRE5oMTMgICA3MDAuMTUwODAzOiBocnRpbWVyX2V4cGlyZV9leGl0OiBo
+cnRpbWVyPTAwMDAwMDAwMzA5M2E3OTgKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFd
+IEROaDIzICAgNzAwLjE1MDgwMzogaHJ0aW1lcl9jYW5jZWw6IGhydGltZXI9MDAwMDAwMDAx
+ZGE3Mzc2NwogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRE5oMTMgICA3MDAuMTUw
+ODAzOiBocnRpbWVyX2V4cGlyZV9lbnRyeTogaHJ0aW1lcj0wMDAwMDAwMDFkYTczNzY3IGZ1
+bmN0aW9uPXRpY2tfbm9oel9oYW5kbGVyIG5vdz03MDAxNDUzNjg5NzcKICAgICAgICAgICAg
+ICBpcC00OTMxICAgIFswMDFdIEROaDEzICAgNzAwLjE1MDgwNDogc29mdGlycV9yYWlzZTog
+dmVjPTEgW2FjdGlvbj1USU1FUl0KICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIERO
+aDEzICAgNzAwLjE1MDgwNDogcmN1X3V0aWxpemF0aW9uOiBTdGFydCBzY2hlZHVsZXItdGlj
+awogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRE5oMTMgICA3MDAuMTUwODA1OiBy
+Y3VfdXRpbGl6YXRpb246IEVuZCBzY2hlZHVsZXItdGljawogICAgICAgICAgICAgIGlwLTQ5
+MzEgICAgWzAwMV0gRE5oMTMgICA3MDAuMTUwODA1OiByZWFkX21zcjogZTgsIHZhbHVlIDE3
+ODdmZjcyMjljCiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBETmgxMyAgIDcwMC4x
+NTA4MDU6IHJlYWRfbXNyOiBlNywgdmFsdWUgMTc3ZGFhOGZkNTUKICAgICAgICAgICAgICBp
+cC00OTMxICAgIFswMDFdIEROaDIzICAgNzAwLjE1MDgwNTogc2NoZWRfc3RhdF9ydW50aW1l
+OiBjb21tPWlwIHBpZD00OTMxIHJ1bnRpbWU9MTIyNjYzNiBbbnNdCiAgICAgICAgICAgICAg
+aXAtNDkzMSAgICBbMDAxXSBETmgxMyAgIDcwMC4xNTA4MDg6IGhydGltZXJfZXhwaXJlX2V4
+aXQ6IGhydGltZXI9MDAwMDAwMDAxZGE3Mzc2NwogICAgICAgICAgICAgIGlwLTQ5MzEgICAg
+WzAwMV0gRE5oMjMgICA3MDAuMTUwODA4OiBocnRpbWVyX3N0YXJ0OiBocnRpbWVyPTAwMDAw
+MDAwMWRhNzM3NjcgZnVuY3Rpb249dGlja19ub2h6X2hhbmRsZXIgZXhwaXJlcz03MDAxNDYw
+MDAwMDAgc29mdGV4cGlyZXM9NzAwMTQ2MDAwMDAwIG1vZGU9QUJTCiAgICAgICAgICAgICAg
+aXAtNDkzMSAgICBbMDAxXSBETmgxMyAgIDcwMC4xNTA4MDk6IGxvY2FsX3RpbWVyX2V4aXQ6
+IHZlY3Rvcj0yMzYKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIEROLjMzICAgNzAw
+LjE1MDgwOTogc2NoZWRfd2FraW5nOiBjb21tPWt0aW1lcnMvMSBwaWQ9MzEgcHJpbz05OCB0
+YXJnZXRfY3B1PTAwMQogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRE4uNDMgICA3
+MDAuMTUwODA5OiBzY2hlZF9zdGF0X3NsZWVwOiBjb21tPWt0aW1lcnMvMSBwaWQ9MzEgZGVs
+YXk9MzM0OTg5OCBbbnNdCiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBETi40MyAg
+IDcwMC4xNTA4MTA6IHNjaGVkX3dha2V1cDogY29tbT1rdGltZXJzLzEgcGlkPTMxIHByaW89
+OTggdGFyZ2V0X2NwdT0wMDEKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIEROLjEz
+ICAgNzAwLjE1MDgxMDogaXJxX2VuYWJsZTogY2FsbGVyPWFzbV9zeXN2ZWNfYXBpY190aW1l
+cl9pbnRlcnJ1cHQrMHgxYS8weDIwIHBhcmVudD0weDAKICAgICAgICAgICAgICBpcC00OTMx
+ICAgIFswMDFdIEROLjEzICAgNzAwLjE1MDgxMDogaXJxX2Rpc2FibGU6IGNhbGxlcj1fX3Nj
+aGVkdWxlKzB4NjdmLzB4MTA4MCBwYXJlbnQ9MHgwCiAgICAgICAgICAgICAgaXAtNDkzMSAg
+ICBbMDAxXSBETi4xMyAgIDcwMC4xNTA4MTA6IHJjdV91dGlsaXphdGlvbjogU3RhcnQgY29u
+dGV4dCBzd2l0Y2gKICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIEROLjIzICAgNzAw
+LjE1MDgxMDogcmN1X3ByZWVtcHRfdGFzazogcmN1X3ByZWVtcHQgOTM2MjggNDkzMQogICAg
+ICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRE4uMTMgICA3MDAuMTUwODExOiByY3VfdXRp
+bGl6YXRpb246IEVuZCBjb250ZXh0IHN3aXRjaAogICAgICAgICAgICAgIGlwLTQ5MzEgICAg
+WzAwMV0gRE4uMjMgICA3MDAuMTUwODExOiBzY2hlZF9zdGF0X3J1bnRpbWU6IGNvbW09aXAg
+cGlkPTQ5MzEgcnVudGltZT00MDM3IFtuc10KICAgICAgICAgICAgICBpcC00OTMxICAgIFsw
+MDFdIEROLjIzICAgNzAwLjE1MDgxMjogc2NoZWRfc3RhdF93YWl0OiBjb21tPWN5Y2xpY3Rl
+c3QgcGlkPTQ4OTMgZGVsYXk9NzQzNCBbbnNdCiAgICAgICAgICAgICAgaXAtNDkzMSAgICBb
+MDAxXSBELi4yMyAgIDcwMC4xNTA4MTM6IHNjaGVkX3N0YXRfd2FpdDogY29tbT1pcCBwaWQ9
+NDkzMSBkZWxheT0wIFtuc10KICAgICAgICAgICAgICBpcC00OTMxICAgIFswMDFdIEQuLjMz
+ICAgNzAwLjE1MDgxNDogaHJ0aW1lcl9zdGFydDogaHJ0aW1lcj0wMDAwMDAwMDg3Njk3ZDE0
+IGZ1bmN0aW9uPWluYWN0aXZlX3Rhc2tfdGltZXIgZXhwaXJlcz03MDA0NjQ5NzgwODYgc29m
+dGV4cGlyZXM9NzAwNDY0OTc4MDg2IG1vZGU9UkVMfEhBUkQKICAgICAgICAgICAgICBpcC00
+OTMxICAgIFswMDFdIEQuLjMzICAgNzAwLjE1MDgxNDogaHJ0aW1lcl9jYW5jZWw6IGhydGlt
+ZXI9MDAwMDAwMDA5NjkyMTIzMAogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRC4u
+MzMgICA3MDAuMTUwODE1OiBocnRpbWVyX2NhbmNlbDogaHJ0aW1lcj0wMDAwMDAwMDg3Njk3
+ZDE0CiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBELi4zMyAgIDcwMC4xNTA4MTY6
+IGhydGltZXJfc3RhcnQ6IGhydGltZXI9MDAwMDAwMDA5NjkyMTIzMCBmdW5jdGlvbj1kbF90
+YXNrX3RpbWVyIGV4cGlyZXM9NzAxMDk0ODU3MTMzIHNvZnRleHBpcmVzPTcwMTA5NDg1NzEz
+MyBtb2RlPUFCU3xIQVJECiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAxXSBEcC4yMyAg
+IDcwMC4xNTA4MTY6IHNjaGVkX3N3aXRjaDogcHJldl9jb21tPWlwIHByZXZfcGlkPTQ5MzEg
+cHJldl9wcmlvPTEyMCBwcmV2X3N0YXRlPVIrID09PiBuZXh0X2NvbW09Y3ljbGljdGVzdCBu
+ZXh0X3BpZD00ODkzIG5leHRfcHJpbz05CiAgICAgICAgICAgICAgaXAtNDkzMSAgICBbMDAx
+XSBEcC4yMyAgIDcwMC4xNTA4MTc6IHRsYl9mbHVzaDogcGFnZXM6LTEgcmVhc29uOmZsdXNo
+IG9uIHRhc2sgc3dpdGNoICgwKQogICAgICAgICAgICAgIGlwLTQ5MzEgICAgWzAwMV0gRHAu
+MjMgICA3MDAuMTUwODE3OiB4ODZfZnB1X3JlZ3NfZGVhY3RpdmF0ZWQ6IHg4Ni9mcHU6IDAw
+MDAwMDAwZGQ4NGI1ZmIgbG9hZDogMCB4ZmVhdHVyZXM6IDIgeGNvbXBfYnY6IDgwMDAwMDAw
+MDAwMDAwMDcKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGROLjMuICAgNzAwLjE1
+MDgxODogc2NoZWRfc3RhdF9ydW50aW1lOiBjb21tPWN5Y2xpY3Rlc3QgcGlkPTQ4OTMgcnVu
+dGltZT04NzQ3IFtuc10KICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGROLjMuICAg
+NzAwLjE1MDgxOTogc2NoZWRfbWlncmF0ZV90YXNrOiBjb21tPXJjdV9wcmVlbXB0IHBpZD0x
+NyBwcmlvPTk4IG9yaWdfY3B1PTEgZGVzdF9jcHU9MAogICAgICBjeWNsaWN0ZXN0LTQ4OTMg
+ICAgWzAwMV0gZE4uMy4gICA3MDAuMTUwODE5OiBzY2hlZF93YWtlX2lkbGVfd2l0aG91dF9p
+cGk6IGNwdT0wCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSBkTi4xLiAgIDcwMC4x
+NTA4MjA6IGlycV9lbmFibGU6IGNhbGxlcj1maW5pc2hfdGFza19zd2l0Y2guaXNyYS4wKzB4
+YjEvMHgzMDAgcGFyZW50PTB4MAogICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gZE4u
+MS4gICA3MDAuMTUwODIwOiBpcnFfZGlzYWJsZTogY2FsbGVyPWlycWVudHJ5X2VudGVyKzB4
+MmEvMHg2MCBwYXJlbnQ9MHgwCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSBkTmgx
+LiAgIDcwMC4xNTA4MjA6IGNhbGxfZnVuY3Rpb25fc2luZ2xlX2VudHJ5OiB2ZWN0b3I9MjUx
+CiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSBkTmgyLiAgIDcwMC4xNTA4MjE6IGNz
+ZF9xdWV1ZV9jcHU6IGNwdT0wIGNhbGxzaXRlPWlycV93b3JrX3F1ZXVlX29uKzB4YzYvMHgx
+MjAgZnVuYz1ydG9fcHVzaF9pcnFfd29ya19mdW5jIGNzZD0wMDAwMDAwMGUyYThkNTA2CiAg
+ICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSBkTmgyLiAgIDcwMC4xNTA4MjE6IGlwaV9z
+ZW5kX2NwdTogY3B1PTAgY2FsbHNpdGU9aXJxX3dvcmtfcXVldWVfb24rMHhjNi8weDEyMCBj
+YWxsYmFjaz1nZW5lcmljX3NtcF9jYWxsX2Z1bmN0aW9uX3NpbmdsZV9pbnRlcnJ1cHQrMHgw
+LzB4MjAKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGROaDEuICAgNzAwLjE1MDgy
+MTogY2FsbF9mdW5jdGlvbl9zaW5nbGVfZXhpdDogdmVjdG9yPTI1MQogICAgICBjeWNsaWN0
+ZXN0LTQ4OTMgICAgWzAwMV0gZE4uMS4gICA3MDAuMTUwODIyOiBpcnFfZW5hYmxlOiBjYWxs
+ZXI9YXNtX3N5c3ZlY19jYWxsX2Z1bmN0aW9uX3NpbmdsZSsweDFhLzB4MjAgcGFyZW50PTB4
+MAogICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gLk4uMS4gICA3MDAuMTUwODIyOiBw
+cmVlbXB0X2VuYWJsZTogY2FsbGVyPWRvX25hbm9zbGVlcCsweDcyLzB4MTkwIHBhcmVudD1k
+b19uYW5vc2xlZXArMHg3Mi8weDE5MAogICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0g
+Lk4uMS4gICA3MDAuMTUwODIyOiBwcmVlbXB0X2Rpc2FibGU6IGNhbGxlcj1kb19uYW5vc2xl
+ZXArMHg3Mi8weDE5MCBwYXJlbnQ9ZG9fbmFub3NsZWVwKzB4NzIvMHgxOTAKICAgICAgY3lj
+bGljdGVzdC00ODkzICAgIFswMDFdIGROLjEuICAgNzAwLjE1MDgyMjogaXJxX2Rpc2FibGU6
+IGNhbGxlcj1fX3NjaGVkdWxlKzB4NjdmLzB4MTA4MCBwYXJlbnQ9MHgwCiAgICAgIGN5Y2xp
+Y3Rlc3QtNDg5MyAgICBbMDAxXSBkTi4xLiAgIDcwMC4xNTA4MjI6IHJjdV91dGlsaXphdGlv
+bjogU3RhcnQgY29udGV4dCBzd2l0Y2gKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFd
+IGROLjEuICAgNzAwLjE1MDgyMjogcmN1X3V0aWxpemF0aW9uOiBFbmQgY29udGV4dCBzd2l0
+Y2gKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGQuLjEuICAgNzAwLjE1MDgyMzog
+aXJxX2VuYWJsZTogY2FsbGVyPV9fc2NoZWR1bGUrMHhiNWUvMHgxMDgwIHBhcmVudD0weDAK
+ICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIC4uLjEuICAgNzAwLjE1MDgyMzogcHJl
+ZW1wdF9lbmFibGU6IGNhbGxlcj1kb19uYW5vc2xlZXArMHg3Mi8weDE5MCBwYXJlbnQ9ZG9f
+bmFub3NsZWVwKzB4NzIvMHgxOTAKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIC4u
+Li4uICAgNzAwLjE1MDgyMzogc3lzX2V4aXQ6IE5SIDIzMCA9IDAKICAgICAgY3ljbGljdGVz
+dC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgyMzogaXJxX2Rpc2FibGU6IGNhbGxl
+cj1zeXNjYWxsX2V4aXRfdG9fdXNlcl9tb2RlKzB4MWM0LzB4MjQwIHBhcmVudD0weDAKICAg
+ICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgyNDogaXJxX2Vu
+YWJsZTogY2FsbGVyPXN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHhlNC8weDI0MCBwYXJl
+bnQ9MHgwCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSAuLi4uLiAgIDcwMC4xNTA4
+MjQ6IHJzZXFfdXBkYXRlOiBjcHVfaWQ9MSBub2RlX2lkPTAgbW1fY2lkPTAKICAgICAgY3lj
+bGljdGVzdC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgyNDogaXJxX2Rpc2FibGU6
+IGNhbGxlcj1zeXNjYWxsX2V4aXRfdG9fdXNlcl9tb2RlKzB4MjAzLzB4MjQwIHBhcmVudD0w
+eDAKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgyNTog
+eDg2X2ZwdV9yZWdzX2FjdGl2YXRlZDogeDg2L2ZwdTogMDAwMDAwMDBmZjQ5MmY4NSBsb2Fk
+OiAxIHhmZWF0dXJlczogMiB4Y29tcF9idjogODAwMDAwMDAwMDAwMDAwNwogICAgICBjeWNs
+aWN0ZXN0LTQ4OTMgICAgWzAwMV0gZC4uLi4gICA3MDAuMTUwODI1OiBpcnFfZW5hYmxlOiBj
+YWxsZXI9c3lzY2FsbF9leGl0X3RvX3VzZXJfbW9kZSsweDdjLzB4MjQwIHBhcmVudD0weDAK
+ICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgzMDogaXJx
+X2Rpc2FibGU6IGNhbGxlcj1kb19zeXNjYWxsXzY0KzB4NDUvMHgxYTAgcGFyZW50PTB4MAog
+ICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gZC4uLi4gICA3MDAuMTUwODMwOiBpcnFf
+ZW5hYmxlOiBjYWxsZXI9ZG9fc3lzY2FsbF82NCsweDRhLzB4MWEwIHBhcmVudD0weDAKICAg
+ICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIC4uLi4uICAgNzAwLjE1MDgzMTogc3lzX2Vu
+dGVyOiBOUiAxICg0LCA3ZjY0MDMyMGUyYzAsIDIxLCA3ZjY0MDMyMGQ1YjUsIDAsIDY0KQog
+ICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gLi4uMS4gICA3MDAuMTUwODMyOiBwcmVl
+bXB0X2Rpc2FibGU6IGNhbGxlcj12ZnNfd3JpdGUrMHgzMDYvMHg0MzAgcGFyZW50PXZmc193
+cml0ZSsweDMwNi8weDQzMAogICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gLi4uMS4g
+ICA3MDAuMTUwODMyOiBwcmVlbXB0X2VuYWJsZTogY2FsbGVyPXZmc193cml0ZSsweDMyOC8w
+eDQzMCBwYXJlbnQ9dmZzX3dyaXRlKzB4MzI4LzB4NDMwCiAgICAgIGN5Y2xpY3Rlc3QtNDg5
+MyAgICBbMDAxXSAuLi4uLiAgIDcwMC4xNTA4MzI6IHRyYWNpbmdfbWFya193cml0ZTogaGl0
+IGxhdGVuY3kgdGhyZXNob2xkICg3NTkgPiA3MDApCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAg
+ICBbMDAxXSAuLi4xLiAgIDcwMC4xNTA4MzM6IHByZWVtcHRfZGlzYWJsZTogY2FsbGVyPXZm
+c193cml0ZSsweDEyZi8weDQzMCBwYXJlbnQ9dmZzX3dyaXRlKzB4MTJmLzB4NDMwCiAgICAg
+IGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSAuLi4xLiAgIDcwMC4xNTA4MzM6IHByZWVtcHRf
+ZW5hYmxlOiBjYWxsZXI9dmZzX3dyaXRlKzB4MTUxLzB4NDMwIHBhcmVudD12ZnNfd3JpdGUr
+MHgxNTEvMHg0MzAKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIC4uLjEuICAgNzAw
+LjE1MDgzMzogcHJlZW1wdF9kaXNhYmxlOiBjYWxsZXI9ZnB1dCsweDFmLzB4OTAgcGFyZW50
+PWZwdXQrMHgxZi8weDkwCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSAuLi4xLiAg
+IDcwMC4xNTA4MzM6IHByZWVtcHRfZW5hYmxlOiBjYWxsZXI9ZnB1dCsweDNmLzB4OTAgcGFy
+ZW50PWZwdXQrMHgzZi8weDkwCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSAuLi4u
+LiAgIDcwMC4xNTA4MzM6IHN5c19leGl0OiBOUiAxID0gMzMKICAgICAgY3ljbGljdGVzdC00
+ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgzNDogaXJxX2Rpc2FibGU6IGNhbGxlcj1z
+eXNjYWxsX2V4aXRfdG9fdXNlcl9tb2RlKzB4MWM0LzB4MjQwIHBhcmVudD0weDAKICAgICAg
+Y3ljbGljdGVzdC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgzNDogaXJxX2VuYWJs
+ZTogY2FsbGVyPXN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHg3Yy8weDI0MCBwYXJlbnQ9
+MHgwCiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSBkLi4uLiAgIDcwMC4xNTA4MzQ6
+IGlycV9kaXNhYmxlOiBjYWxsZXI9ZG9fc3lzY2FsbF82NCsweDQ1LzB4MWEwIHBhcmVudD0w
+eDAKICAgICAgY3ljbGljdGVzdC00ODkzICAgIFswMDFdIGQuLi4uICAgNzAwLjE1MDgzNDog
+aXJxX2VuYWJsZTogY2FsbGVyPWRvX3N5c2NhbGxfNjQrMHg0YS8weDFhMCBwYXJlbnQ9MHgw
+CiAgICAgIGN5Y2xpY3Rlc3QtNDg5MyAgICBbMDAxXSAuLi4uLiAgIDcwMC4xNTA4MzQ6IHN5
+c19lbnRlcjogTlIgMSAoNSwgNTU1NmQ4NThhNDYxLCAyLCA3ZjY0MDMyMGQ1YjUsIDAsIDY0
+KQogICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gLi4uMS4gICA3MDAuMTUwODM1OiBw
+cmVlbXB0X2Rpc2FibGU6IGNhbGxlcj12ZnNfd3JpdGUrMHgzMDYvMHg0MzAgcGFyZW50PXZm
+c193cml0ZSsweDMwNi8weDQzMAogICAgICBjeWNsaWN0ZXN0LTQ4OTMgICAgWzAwMV0gLi4u
+MS4gICA3MDAuMTUwODM1OiBwcmVlbXB0X2VuYWJsZTogY2FsbGVyPXZmc193cml0ZSsweDMy
+OC8weDQzMCBwYXJlbnQ9dmZzX3dyaXRlKzB4MzI4LzB4NDMwCg==
+
+--------------yFsLyO37gXCriFP4WsyRkCxE--
 
