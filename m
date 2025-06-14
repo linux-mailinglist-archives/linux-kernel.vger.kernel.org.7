@@ -1,93 +1,58 @@
-Return-Path: <linux-kernel+bounces-687080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC8CAD9FB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 22:25:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20843AD9FBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 22:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79163B80B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE02F175D95
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 20:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DB12E88A3;
-	Sat, 14 Jun 2025 20:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA442E6D11;
+	Sat, 14 Jun 2025 20:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQShtxQp"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GX/bNeDb"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B1F2E7F11;
-	Sat, 14 Jun 2025 20:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C16C199237;
+	Sat, 14 Jun 2025 20:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749932675; cv=none; b=mkXriSITcwm3HglnPrJb6TwaEfWBAmBOffhI2zCgA+Q2kuCwOpymnM6nqYjlhboHaAz+RsRAwa9RgMZEg40v4fnVJPOwxRpClO0x7W3Pec8+eX0Rs72bw50WT2AbywfPGeTBaAShJUXKslMYlNyGHBLoRynihz3RV8vLqMIu8zo=
+	t=1749933456; cv=none; b=OwALRsxDU9CH0LiTVaeLvrkuOBhfoHo6OrXefewiyUSYh3Rs9xNhem4BJia2VRLTJySc534P+Xfu/IAHDGh07KtWvRh5xjY/wGfN//l/TgQMXxhuxOn4TciL+6fJcaEO+T/8oOGqSBCFy2n9zeFDp8GoWyFDHXRdL4HZY34IOuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749932675; c=relaxed/simple;
-	bh=/nPUNYT0M9vpqDN2YDJhl+LtGIFZwutUWruPsgjSrZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WSi8NhxI/GeJh/mxRm9hgI5/Xb54sUJuFS8yMY6saNDDqTH5eSbS0VhOs9qWACdqtAKiEDlNxJcR/hOdSy9we3zTLhDHudvaRsTKn/HeKmTPIv6+jucOF01xk26CyibUSvP5oayIPJGfLAucK6aSjPO5sAMEe7l/a15s1TJky1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQShtxQp; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7489dfb71a8so745357b3a.1;
-        Sat, 14 Jun 2025 13:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749932673; x=1750537473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BeLfvqj/4d+vVfQI829QhhRWfMlVlhJ0oopKK5Rq8XM=;
-        b=MQShtxQpH1bX/qrZKnIPRpsBg5/Q4YBHR1EVC0qmx1xYO7tfMKEQ9QW9fiWMuXnpsv
-         LVLLnnX3w+L4SHIztjrwJG3eNeFrT9dfUDupn/e1IQOJf2sFi6BUHRaRPmR/PjznW616
-         rXiMS+8xYs9MntkAwXqrbShHlRt+oOjZAAK9W6VC8ahlyPR58TqQkEPwsK7I/bLdGaND
-         SmdY+BlZ6Ha+QXn2z8juGapoYE2T8rHAjhFgjJZnG5Je4PgIcW8reb54/fMsoluFQGQx
-         oxsAAVPo01qR5DknBKeOR5npSl8klIwErijsvkYM/fNe8Knhyd0Ba3hiR9K/phlA9Ff9
-         FaJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749932673; x=1750537473;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BeLfvqj/4d+vVfQI829QhhRWfMlVlhJ0oopKK5Rq8XM=;
-        b=xOBtdUtwXLs0AI/yabb8oC6d0nI5D97VCthrzNYncgmyzHJZUmBBSMTmejHJJXEfIJ
-         ecei9bXlJwpQMJshEGKBWLnHYsPLDdyiRoKD0e3mtMlfuRPJ0m0vVLB+i6I71LcQnkhB
-         IygzYc0eA2Gr5m6zA8tHmGzfQJ9Y1Ov8xnKV9EIESIrIa/xdCbC7o5p3nZkK4LEAMZZ6
-         3okcC9F8fAEdMm3Xsw2rF+SUHgAM78OdrSygezVskb2hfLVHejucdLiZ63R+22L9FGVH
-         QGnxjHv8AWSNepppZhsas3aPEgCudMJtowsHcvWQuGlowfV0dOxnB/bi/KxgKG7oQNpT
-         LBWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1duL68Qzbq8vwqFuX5MCKHuuJhhUVYmotgCUoFLD4qzPfuvdQE9GvAOOPAyITeBcpyV8nIp/AEOIZUjk=@vger.kernel.org, AJvYcCWFeuR2OuNjaSYrxe5ONgYjyAuB5RSxIGtKqgML00RtXnZdLOUAoAMLTTQ9+R+d0yhle60If9pZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjFTrAJXuC+rEfEMTt6v3eoXtM4QO8Pih7MRCB7oxckmPzEFDO
-	srhBp5mEEXR1WwlWpiQX6o3MwtUc14ZDkehF8YMAScHtYj14e9WTUzvr
-X-Gm-Gg: ASbGncszHPbcSHmvMWnEGRSOZSfm7WyylZyoEGRi40esyrbeAUwC17vaxAdb7Sz79fx
-	wQmiv34AGzTBp1tCuQZ03Un5HRBZVK7kuTKTzSYu32Lk+az4Z8VHV4pUtm1Zg/sV3iZ9EDhCRwR
-	h1Jn5tW3q7IiuSUgTkzap4TUrl30ZFNuRvt1BaE1nHzgMZEZHOuNdyRd9dvjD3kZbS+pree152I
-	kQwI61ziZWTmfe4futE9B6K43r3AbPHFDdoEj5i+UQFUelnPjiznB8K0J3/SoC6K8Hu6YEKWNPu
-	xnrXVqudg8sn7MssDR7fj3koQVnkHFZeG+RDRtZtIF2HxE1vPRAXArWxGklxiG+HlEl4ipb0dbH
-	s6Lnn4Q2Wz04j/y0Eq1W8ZHLyuHg=
-X-Google-Smtp-Source: AGHT+IEX1VdCB0tSnpuHFmmxai4lc5c2Hfil5CzoES0bMZ28X1GSLrHf67e2/uSKtVP7/y6myFqe/w==
-X-Received: by 2002:a05:6a00:2186:b0:748:33f3:8da8 with SMTP id d2e1a72fcca58-7489cfc2976mr4323401b3a.5.1749932673105;
-        Sat, 14 Jun 2025 13:24:33 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900d738esm3863351b3a.177.2025.06.14.13.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Jun 2025 13:24:32 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: akpm@linux-foundation.org,
-	colyli@kernel.org,
-	kent.overstreet@linux.dev,
-	robertpang@google.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 3/3] bcache: Remove unnecessary select MIN_HEAP
-Date: Sun, 15 Jun 2025 04:23:53 +0800
-Message-Id: <20250614202353.1632957-4-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250614202353.1632957-1-visitorckw@gmail.com>
-References: <20250614202353.1632957-1-visitorckw@gmail.com>
+	s=arc-20240116; t=1749933456; c=relaxed/simple;
+	bh=9pmEfXdk7iL9pS5LSQiBkiVD0ofCpgQ2sH3AdVhSmWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5Jo0aV4VbxCnHoB8JOsh8UMH1rd7bd87hYowr1nXHB802vWJT0UYUk1myCFxCUB88/BhaTJcGuI092bD/VggjBi3mFenVWjKKVIflheGmhx+Y1CdOKq1mTHc5l5tP3NBo/vRvyytRoAbZyClfMexSScNk1EOcyWAe6OoJvT8rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GX/bNeDb; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=+jgDBcJCGkYhFUceW2ssi64QZJrhtciHErgU+KLdRxc=; b=GX/bNeDbUTcLdsfq
+	e9twea0F5c6+Ca7aBDgmw1qrYt3uvkGd1pzgaIqIaqpINact2wAVOOXb/nAtnEfYcb4SIki2Q6olN
+	yLr89iNgWJmbUvoZyxVNhDmfFS1Ac0M7vn7Zd8O4ndALD7yOC6dG7PvOY6aJeycwxf5RTljlu/tTp
+	KLn4o//oufU66eyzChPyNUNTcUmBBlJrrtgTIFR5IvQmQ74HeXLDLLS96/k28W2GOybheBaQ/ExcY
+	yA2cBbm3M0tSgRiabzqLqedRGwhFiQ0mBCVf7S210mfC3fFck+6EZpSVlnOGxWFYGQLJXXHdRWWGW
+	63L0bhk8xUyo6V5NYA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uQXcy-009fVm-2Q;
+	Sat, 14 Jun 2025 20:37:24 +0000
+From: linux@treblig.org
+To: ming.qian@nxp.com,
+	eagle.zhou@nxp.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: amphion: Remove unused functions
+Date: Sat, 14 Jun 2025 21:37:23 +0100
+Message-ID: <20250614203723.22632-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,47 +61,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-After reverting the transition to the generic min heap library, bcache
-no longer depends on MIN_HEAP. The select entry can be removed to
-reduce code size and shrink the kernel's attack surface.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This change effectively reverts the bcache-related part of commit
-92a8b224b833 ("lib/min_heap: introduce non-inline versions of min heap
-API functions").
+The functions:
+  vpu_color_get_default()
+  vpu_color_check_full_range()
+  vpu_color_check_primaries()
+  vpu_color_check_transfers()
+  vpu_color_check_matrix()
 
-This is part of a series of changes to address a performance
-regression caused by the use of the generic min_heap implementation.
+have been unused since 2022's
+commit 1925665ef403 ("media: amphion: remove redundant check of
+colorspace in venc_s_fmt")
 
-As reported by Robert, bcache now suffers from latency spikes, with
-P100 (max) latency increasing from 600 ms to 2.4 seconds every 5
-minutes. These regressions degrade bcache's effectiveness as a
-low-latency cache layer and lead to frequent timeouts and application
-stalls in production environments.
+The (empty) function vpu_mbox_enable_rx() has been unused since it
+was added in 2022 by the
+commit 61cbf1c1fa6d ("media: amphion: implement vpu core communication
+based on mailbox")
 
-Link: https://lore.kernel.org/lkml/CAJhEC05+0S69z+3+FB2Cd0hD+pCRyWTKLEOsc8BOmH73p1m+KQ@mail.gmail.com
-Fixes: 866898efbb25 ("bcache: remove heap-related macros and switch to generic min_heap")
-Fixes: 92a8b224b833 ("lib/min_heap: introduce non-inline versions of min heap API functions")
-Reported-by: Robert Pang <robertpang@google.com>
-Closes: https://lore.kernel.org/linux-bcache/CAJhEC06F_AtrPgw2-7CvCqZgeStgCtitbD-ryuPpXQA-JG5XXw@mail.gmail.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/md/bcache/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/platform/amphion/vpu_color.c   | 73 --------------------
+ drivers/media/platform/amphion/vpu_helpers.h |  5 --
+ drivers/media/platform/amphion/vpu_mbox.c    |  4 --
+ drivers/media/platform/amphion/vpu_mbox.h    |  1 -
+ 4 files changed, 83 deletions(-)
 
-diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
-index d4697e79d5a3..b2d10063d35f 100644
---- a/drivers/md/bcache/Kconfig
-+++ b/drivers/md/bcache/Kconfig
-@@ -5,7 +5,6 @@ config BCACHE
- 	select BLOCK_HOLDER_DEPRECATED if SYSFS
- 	select CRC64
- 	select CLOSURES
--	select MIN_HEAP
- 	help
- 	Allows a block device to be used as cache for other devices; uses
- 	a btree for indexing and the layout is optimized for SSDs.
+diff --git a/drivers/media/platform/amphion/vpu_color.c b/drivers/media/platform/amphion/vpu_color.c
+index 4ae435cbc5cd..7c0ab8289a7b 100644
+--- a/drivers/media/platform/amphion/vpu_color.c
++++ b/drivers/media/platform/amphion/vpu_color.c
+@@ -108,76 +108,3 @@ u32 vpu_color_cvrt_full_range_i2v(u32 full_range)
+ 
+ 	return V4L2_QUANTIZATION_LIM_RANGE;
+ }
+-
+-int vpu_color_check_primaries(u32 primaries)
+-{
+-	return vpu_color_cvrt_primaries_v2i(primaries) ? 0 : -EINVAL;
+-}
+-
+-int vpu_color_check_transfers(u32 transfers)
+-{
+-	return vpu_color_cvrt_transfers_v2i(transfers) ? 0 : -EINVAL;
+-}
+-
+-int vpu_color_check_matrix(u32 matrix)
+-{
+-	return vpu_color_cvrt_matrix_v2i(matrix) ? 0 : -EINVAL;
+-}
+-
+-int vpu_color_check_full_range(u32 full_range)
+-{
+-	int ret = -EINVAL;
+-
+-	switch (full_range) {
+-	case V4L2_QUANTIZATION_FULL_RANGE:
+-	case V4L2_QUANTIZATION_LIM_RANGE:
+-		ret = 0;
+-		break;
+-	default:
+-		break;
+-	}
+-
+-	return ret;
+-}
+-
+-int vpu_color_get_default(u32 primaries, u32 *ptransfers, u32 *pmatrix, u32 *pfull_range)
+-{
+-	u32 transfers;
+-	u32 matrix;
+-	u32 full_range;
+-
+-	switch (primaries) {
+-	case V4L2_COLORSPACE_REC709:
+-		transfers = V4L2_XFER_FUNC_709;
+-		matrix = V4L2_YCBCR_ENC_709;
+-		break;
+-	case V4L2_COLORSPACE_470_SYSTEM_M:
+-	case V4L2_COLORSPACE_470_SYSTEM_BG:
+-	case V4L2_COLORSPACE_SMPTE170M:
+-		transfers = V4L2_XFER_FUNC_709;
+-		matrix = V4L2_YCBCR_ENC_601;
+-		break;
+-	case V4L2_COLORSPACE_SMPTE240M:
+-		transfers = V4L2_XFER_FUNC_SMPTE240M;
+-		matrix = V4L2_YCBCR_ENC_SMPTE240M;
+-		break;
+-	case V4L2_COLORSPACE_BT2020:
+-		transfers = V4L2_XFER_FUNC_709;
+-		matrix = V4L2_YCBCR_ENC_BT2020;
+-		break;
+-	default:
+-		transfers = V4L2_XFER_FUNC_DEFAULT;
+-		matrix = V4L2_YCBCR_ENC_DEFAULT;
+-		break;
+-	}
+-	full_range = V4L2_QUANTIZATION_LIM_RANGE;
+-
+-	if (ptransfers)
+-		*ptransfers = transfers;
+-	if (pmatrix)
+-		*pmatrix = matrix;
+-	if (pfull_range)
+-		*pfull_range = full_range;
+-
+-	return 0;
+-}
+diff --git a/drivers/media/platform/amphion/vpu_helpers.h b/drivers/media/platform/amphion/vpu_helpers.h
+index 0eaddb07190d..84d16eb39650 100644
+--- a/drivers/media/platform/amphion/vpu_helpers.h
++++ b/drivers/media/platform/amphion/vpu_helpers.h
+@@ -54,10 +54,6 @@ static inline u8 vpu_helper_read_byte(struct vpu_buffer *stream_buffer, u32 pos)
+ 	return pdata[pos % stream_buffer->length];
+ }
+ 
+-int vpu_color_check_primaries(u32 primaries);
+-int vpu_color_check_transfers(u32 transfers);
+-int vpu_color_check_matrix(u32 matrix);
+-int vpu_color_check_full_range(u32 full_range);
+ u32 vpu_color_cvrt_primaries_v2i(u32 primaries);
+ u32 vpu_color_cvrt_primaries_i2v(u32 primaries);
+ u32 vpu_color_cvrt_transfers_v2i(u32 transfers);
+@@ -66,7 +62,6 @@ u32 vpu_color_cvrt_matrix_v2i(u32 matrix);
+ u32 vpu_color_cvrt_matrix_i2v(u32 matrix);
+ u32 vpu_color_cvrt_full_range_v2i(u32 full_range);
+ u32 vpu_color_cvrt_full_range_i2v(u32 full_range);
+-int vpu_color_get_default(u32 primaries, u32 *ptransfers, u32 *pmatrix, u32 *pfull_range);
+ 
+ int vpu_find_dst_by_src(struct vpu_pair *pairs, u32 cnt, u32 src);
+ int vpu_find_src_by_dst(struct vpu_pair *pairs, u32 cnt, u32 dst);
+diff --git a/drivers/media/platform/amphion/vpu_mbox.c b/drivers/media/platform/amphion/vpu_mbox.c
+index c2963b8deb48..b2ac8de6a2d9 100644
+--- a/drivers/media/platform/amphion/vpu_mbox.c
++++ b/drivers/media/platform/amphion/vpu_mbox.c
+@@ -109,7 +109,3 @@ void vpu_mbox_send_msg(struct vpu_core *core, u32 type, u32 data)
+ 	mbox_send_message(core->tx_data.ch, &data);
+ 	mbox_send_message(core->tx_type.ch, &type);
+ }
+-
+-void vpu_mbox_enable_rx(struct vpu_dev *dev)
+-{
+-}
+diff --git a/drivers/media/platform/amphion/vpu_mbox.h b/drivers/media/platform/amphion/vpu_mbox.h
+index 79cfd874e92b..8b7aea4f606c 100644
+--- a/drivers/media/platform/amphion/vpu_mbox.h
++++ b/drivers/media/platform/amphion/vpu_mbox.h
+@@ -11,6 +11,5 @@ int vpu_mbox_request(struct vpu_core *core);
+ void vpu_mbox_free(struct vpu_core *core);
+ void vpu_mbox_send_msg(struct vpu_core *core, u32 type, u32 data);
+ void vpu_mbox_send_type(struct vpu_core *core, u32 type);
+-void vpu_mbox_enable_rx(struct vpu_dev *dev);
+ 
+ #endif
 -- 
-2.34.1
+2.49.0
 
 
