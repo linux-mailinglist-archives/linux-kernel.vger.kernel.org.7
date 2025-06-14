@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-686690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-686684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FACAD9A8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201F8AD9A82
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 08:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B2E3B8D9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCB3A189DB02
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Jun 2025 06:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD411DEFE1;
-	Sat, 14 Jun 2025 06:50:54 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0921EDA02;
-	Sat, 14 Jun 2025 06:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FF81E5B64;
+	Sat, 14 Jun 2025 06:44:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0E923DE;
+	Sat, 14 Jun 2025 06:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749883854; cv=none; b=kvm4qqYWf70AlVgSOPDbR1riQwTfrM7ebAMAS38RjpJ6Q0EcHvGfX4b5z4xOCE/NvNWCqHeEgq1RLjpR6y6ZVr19FUIVIjJRlJ3MDqYfoYCGVKPRb5291rb87honVtq5BsPnrs5mD7kc5Ics3zXoLDsnYpdGsBhRKGlE2l14Wvk=
+	t=1749883497; cv=none; b=XhIFvxFkRIj7w+s/A4KcXPzIt43RYT6axDm24LjQ4aEeRQsAD8Re26wQDVK5cr4DOAEdOvQA9U67ErUysO9pEsjEOw5M2S4cSPR756PGYC9X7x7BzlCtvvp4jzmrJx+gl6OJmAKzyTlPASBZgVpLkfNEjgIces8Qut+aZDvengI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749883854; c=relaxed/simple;
-	bh=jgfZugwghp2JlIjkP+brwrtVHOqmSVyXqYoNE696IOg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rEM2agCzX5fPIuUo693508j70JjrM/MCEobGQAb5Lv0kug6wRxJJKlMgaSOFay25zNydXsyVpNRWuAkE1XKFMneRnkFRYxG3H3w5PWum14s3rPMz7jO3GRuwmT8xSZDiCOSrqDlLNJMcDd6z+Ve598oB90uBeOzFURNOdJj1ogI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bK6Cy21Trz9syj;
-	Sat, 14 Jun 2025 08:43:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id A7-nfL4VEBL3; Sat, 14 Jun 2025 08:43:26 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bK6Cw6f1Lz9syQ;
-	Sat, 14 Jun 2025 08:43:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DF9808B77C;
-	Sat, 14 Jun 2025 08:43:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id IRFdjwNIQ8pl; Sat, 14 Jun 2025 08:43:24 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 74BCB8B77B;
-	Sat, 14 Jun 2025 08:43:24 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v3 4/4] ALSA: pcm: Convert snd_pcm_sync_ptr() to user_access_begin/user_access_end()
-Date: Sat, 14 Jun 2025 08:43:17 +0200
-Message-ID: <6ce6bc4da498ea7ea2be5f279b374370b1613b13.1749883041.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1749883041.git.christophe.leroy@csgroup.eu>
-References: <cover.1749883041.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1749883497; c=relaxed/simple;
+	bh=Jy1nSQ7r/pyShcJrvt4lMFfaq587W/OtliNaZYNxyRI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ssEcRsZrAdmYcz1vWNPUv4fzhY9ayZyBg3vdU6nlYDxtJ+3TiyCPn6jjmM5WeCQgLpGxcEAhupMZvcrYz62JnQnlrVJI1SHHvlEgEqPHxVLIjyQyPDjQP4Hu2isW4w+e+fwmAkQQHSTZWiyadx5n95wmtYh2JUPm1VpVkeXDmXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bK6Fc47H7zYQvlY;
+	Sat, 14 Jun 2025 14:44:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8B6961A0AD5;
+	Sat, 14 Jun 2025 14:44:51 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBXu19iGk1oABvjPQ--.61665S3;
+	Sat, 14 Jun 2025 14:44:51 +0800 (CST)
+Subject: Re: [PATCH v3] md/raid1: Fix stack memory use after return in
+ raid1_reshape
+To: Wang Jinchao <wangjinchao600@gmail.com>, Song Liu <song@kernel.org>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250612112901.3023950-1-wangjinchao600@gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <09e06a94-5cb1-3afc-34b3-200becdc8e12@huaweicloud.com>
+Date: Sat, 14 Jun 2025 14:44:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749883394; l=3615; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=jgfZugwghp2JlIjkP+brwrtVHOqmSVyXqYoNE696IOg=; b=BrHy+Chki7RelxAKtji7NaCi7jwbSjSvpGKGmfSim8KyqAAv7OIf2MPyP/hkx4k7Se9m7a3CD z4DXP83zRYVDpUed2aN7gwZfe63dBK9DNNOyybLBgi3u5uqotuftqqU
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+In-Reply-To: <20250612112901.3023950-1-wangjinchao600@gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXu19iGk1oABvjPQ--.61665S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFy8Zr1DJw1xKw4kWFyfZwb_yoWkuFbEga
+	s8ta4furyYgFyrGFWjyryDZrWIka93AF1UGF1Ygrsxu3yFyrW7Zw4IvFy5Xr1fuw45Kr4U
+	Ja1UW3WUAryj9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1yE_t
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Now that snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user()
-are converted to user_access_begin/user_access_end(),
-snd_pcm_sync_ptr_get_user() is more efficient than a raw get_user()
-followed by a copy_from_user(). And because copy_{to/from}_user() are
-generic functions focussed on transfer of big data blocks to/from user,
-snd_pcm_sync_ptr_put_user() is also more efficient for small amont of
-data.
+ÔÚ 2025/06/12 19:28, Wang Jinchao Ð´µÀ:
+> In the raid1_reshape function, newpool is
+> allocated on the stack and assigned to conf->r1bio_pool.
+> This results in conf->r1bio_pool.wait.head pointing
+> to a stack address.
+> Accessing this address later can lead to a kernel panic.
+> 
+> Example access path:
+> 
+> raid1_reshape()
+> {
+> 	// newpool is on the stack
+> 	mempool_t newpool, oldpool;
+> 	// initialize newpool.wait.head to stack address
+> 	mempool_init(&newpool, ...);
+> 	conf->r1bio_pool = newpool;
+> }
+> 
+> raid1_read_request() or raid1_write_request()
+> {
+> 	alloc_r1bio()
+> 	{
+> 		mempool_alloc()
+> 		{
+> 			// if pool->alloc fails
+> 			remove_element()
+> 			{
+> 				--pool->curr_nr;
+> 			}
+> 		}
+> 	}
+> }
+> 
+> mempool_free()
+> {
+> 	if (pool->curr_nr < pool->min_nr) {
+> 		// pool->wait.head is a stack address
+> 		// wake_up() will try to access this invalid address
+> 		// which leads to a kernel panic
+> 		return;
+> 		wake_up(&pool->wait);
+> 	}
+> }
+> 
+> Fix:
+> reinit conf->r1bio_pool.wait after assigning newpool.
+> 
+> Signed-off-by: Wang Jinchao<wangjinchao600@gmail.com>
+> ---
 
-So use snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user() in
-snd_pcm_sync_ptr() too.
+Applied to md-6.16, with a fix tag:
+Fixes: afeee514ce7f ("md: convert to bioset_init()/mempool_init()")
 
-snd_pcm_ioctl_sync_ptr_buggy() is left as it is because the conversion
-wouldn't be straigh-forward due to the workaround it provides.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- sound/core/pcm_native.c | 38 ++++++++++++++++++--------------------
- 1 file changed, 18 insertions(+), 20 deletions(-)
-
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index b7339c9ebb1f..1eab940fa2e5 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -3096,45 +3096,43 @@ static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
- 			    struct snd_pcm_sync_ptr __user *_sync_ptr)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct snd_pcm_sync_ptr sync_ptr;
- 	volatile struct snd_pcm_mmap_status *status;
- 	volatile struct snd_pcm_mmap_control *control;
-+	u32 sflags;
-+	struct snd_pcm_mmap_control scontrol;
-+	struct snd_pcm_mmap_status sstatus;
- 	int err;
- 
--	memset(&sync_ptr, 0, sizeof(sync_ptr));
--	if (get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags)))
-+	if (snd_pcm_sync_ptr_get_user(sflags, scontrol, _sync_ptr))
- 		return -EFAULT;
--	if (copy_from_user(&sync_ptr.c.control, &(_sync_ptr->c.control), sizeof(struct snd_pcm_mmap_control)))
--		return -EFAULT;	
- 	status = runtime->status;
- 	control = runtime->control;
--	if (sync_ptr.flags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
-+	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
- 		err = snd_pcm_hwsync(substream);
- 		if (err < 0)
- 			return err;
- 	}
- 	scoped_guard(pcm_stream_lock_irq, substream) {
--		if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_APPL)) {
--			err = pcm_lib_apply_appl_ptr(substream,
--						     sync_ptr.c.control.appl_ptr);
-+		if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL)) {
-+			err = pcm_lib_apply_appl_ptr(substream, scontrol.appl_ptr);
- 			if (err < 0)
- 				return err;
- 		} else {
--			sync_ptr.c.control.appl_ptr = control->appl_ptr;
-+			scontrol.appl_ptr = control->appl_ptr;
- 		}
--		if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_AVAIL_MIN))
--			control->avail_min = sync_ptr.c.control.avail_min;
-+		if (!(sflags & SNDRV_PCM_SYNC_PTR_AVAIL_MIN))
-+			control->avail_min = scontrol.avail_min;
- 		else
--			sync_ptr.c.control.avail_min = control->avail_min;
--		sync_ptr.s.status.state = status->state;
--		sync_ptr.s.status.hw_ptr = status->hw_ptr;
--		sync_ptr.s.status.tstamp = status->tstamp;
--		sync_ptr.s.status.suspended_state = status->suspended_state;
--		sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
-+			scontrol.avail_min = control->avail_min;
-+		sstatus.state = status->state;
-+		sstatus.hw_ptr = status->hw_ptr;
-+		sstatus.tstamp = status->tstamp;
-+		sstatus.suspended_state = status->suspended_state;
-+		sstatus.audio_tstamp = status->audio_tstamp;
- 	}
--	if (!(sync_ptr.flags & SNDRV_PCM_SYNC_PTR_APPL))
-+	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
- 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
--	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
-+	if (snd_pcm_sync_ptr_put_user(sstatus, scontrol, _sync_ptr))
- 		return -EFAULT;
- 	return 0;
- }
--- 
-2.47.0
+Thanks,
+Kuai
 
 
