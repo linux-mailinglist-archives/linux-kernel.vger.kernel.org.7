@@ -1,94 +1,92 @@
-Return-Path: <linux-kernel+bounces-687256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7F0ADA203
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 16:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A40D9ADA209
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 16:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B8B1890AF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 14:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA4D1890D60
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 14:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D9326A0B3;
-	Sun, 15 Jun 2025 14:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433B926B74B;
+	Sun, 15 Jun 2025 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XlzopJKf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V48fO4Qf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5851C19F422
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 14:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B4426B2A1
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 14:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749996454; cv=none; b=kFo3qZYpyy5uorluRnml6dangNJTWwXReVZtmvA3MLUaYFBh/rGWhzU3wqhslMTSu4dkowSo/JRZQqPQAhkaQlCkj46+i4BKaUPYl/zejUfd0ZDfAO8wbvfAcoNk77HRgcdjqQqGm5jEHQRamLizp3or5eKjU6UOwZU87hXywcs=
+	t=1749996498; cv=none; b=LRPTmm6MgCeU31xHVVxr91lQIE+qVXMcsnQJPc5N0JUKcnIi71ngrn1hwknqJ5sEgdUFNpC/+IlTEnp0tLUoJqqn9CEe1tmNBbbT0vvpG6vc0ua+fF9j/sY5BfuOBq5AB6ZotAoi/amKXL0GDwg4oxXAiwsfj/JU6ahiLRFhwdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749996454; c=relaxed/simple;
-	bh=jepLbbOJGxCtAqyma/HZzE4xJ9rkrsv4QZicL7bfPcw=;
+	s=arc-20240116; t=1749996498; c=relaxed/simple;
+	bh=ZMkuY8utSlgX4E1TJgbabBifoab9L056uppzdIxIscI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IJDB/J6+wseeE5CM2gE1HpljjXU8aRo1lif+0UZKl9/43nLrh3kCKz/Fof4rClgA7a89J0LXrciRaSurq2HWcLB07SS2l+5/gKzTU51neB1SzJIpOtcaHVR3PFZDBmj+pVN6JweLqUKdQASdwm5A3Xv65IIBN0Lydaj8HP0PTiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XlzopJKf; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=EcED/lUpCkku7hpzeBLbImEc2N0YJUKlCKICKbrr7rppbYVCT1FKpbcB4x5jWIuHhPKWmo3rKmAtnIcbabYLc8cod6wGWFzJDL3Ln+ywIbwRz1hbeB8FWmOb67o5mAMJWfqHgqkHr/PSz0EAB3mpFgUe+1qemoU3g0YJ3LjNWtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V48fO4Qf; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749996451;
+	s=mimecast20190719; t=1749996493;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cpvfPquWEoPv1qftMnP3EaVgh/vM8Dl1IeS2VTYnWq8=;
-	b=XlzopJKf2KCNoJJGmvZY3lyv1wtr9QXPa3DigoPZjP7m1tjOyuuS6y1rdJNZ4In72GR1/E
-	wQplwqoey/5nsPBsC8QkU/z+20Is4X7WrwVmFWNDwjfDxGrrscaNycy3Ii698pO7htda6S
-	9PCr5R7SUQ/ZuMNhIlTMLouNl22eGt8=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=x5F9RD1nifDmIVXEq5JzNevYty30dQQi6BLivh0kLXI=;
+	b=V48fO4QfWtcUvSEhdmitTSvVSNskna/VkYzmUAWjEe7y8XvHRpDplaMkhBNA9AzIKUEHK4
+	XORtwIBlWRwr1aKu4ooRiw4T59yWWPFPIq3AYqsk9HfARNbAKQmVnucM5tCyUzWSP6Q032
+	srbhV3YS2SbrhSZDcstIz9Rq5iXDgys=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-9riIoy3GOBOMYs_NJha2Cg-1; Sun, 15 Jun 2025 10:07:29 -0400
-X-MC-Unique: 9riIoy3GOBOMYs_NJha2Cg-1
-X-Mimecast-MFC-AGG-ID: 9riIoy3GOBOMYs_NJha2Cg_1749996449
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7cf6c53390eso354623385a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 07:07:29 -0700 (PDT)
+ us-mta-690-Iv84DjtcNDeSWPK_pHHM6A-1; Sun, 15 Jun 2025 10:08:12 -0400
+X-MC-Unique: Iv84DjtcNDeSWPK_pHHM6A-1
+X-Mimecast-MFC-AGG-ID: Iv84DjtcNDeSWPK_pHHM6A_1749996492
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c7c30d8986so1292800485a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 07:08:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749996449; x=1750601249;
+        d=1e100.net; s=20230601; t=1749996492; x=1750601292;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cpvfPquWEoPv1qftMnP3EaVgh/vM8Dl1IeS2VTYnWq8=;
-        b=uK8tIRiHOAR3+dBA5QsWxfP8zerSmsPUyxlLYhyYBXjukDbdG4uu+6RrG/gc2G6VVH
-         EojwSJbNAg6GiM+36NUTt9FYe9q2XxHZbQ+1tytzZUgDTapVB700vRe0Lt3UC2vvpaxl
-         wr8Qg4mml0Ac/qGTa06ou9aSKWUzn3aelCW1L6mID5FvOjEx17GO/CCAHaJXyj4eZWRr
-         Y2OlpAyXt6IC49hgpTgNNjtAyYws80yGkhtKyJWgkQJCO+ux0cECe3GeA8WEZ7Yr/HAq
-         1Vk1j9ioXqmyzrlfjC6aKY8tqNptG1M4cdTgyEw+kjDgXySGknW5mLCDXszu+HSrt20G
-         rFhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF5djw/0jkLdD8e/k8NwJGdhw2L1UeqRlr+VwpKlkRLXJpt/aJzT5Vk5KM5K1ArCxs6aEqNRO814HxvVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMaCK7E0QRHC3dLx18p71lzrpzaQyP0gUbt2LxXbyYKtHf80LX
-	j09m/jktpUdaE37KK70LH0vQ9liSnXOnWf5oGKZ3gLuNQltbXAnoiAK+tpvbYqVOnOhHRMUed0I
-	xqjfbsNxWUwhAHkNeVZlV37FY8qHxKXF1k/v2hD8LhEsSZix6DT7Xy+XOKBEejxt6vm3ahuO2cF
-	oqbncsh1lGJFubiG4YKv3ShMFPseom5hsnJClGdYsw
-X-Gm-Gg: ASbGncuRcI0Jfhe9XNGwCj/yL/01vWKTybfmTzvkuv81UXCHVILHlJfrvBP4PN/6dnx
-	/8hAROP8uLkgs0GfxyudReVWAdgv+R3iT70HFXN3LjESFmMPpLi/z79hlNkvlRQshmh4Z9BEbqJ
-	4xTcMw
-X-Received: by 2002:a05:620a:370f:b0:7c5:6678:ab18 with SMTP id af79cd13be357-7d3c6cf11efmr684336985a.42.1749996448792;
-        Sun, 15 Jun 2025 07:07:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQfd3Jg+za2A2otcwQoRQPivaXBv48NJhSap+53dPBVNEvIqD8CTtK5u8X5NDCCMNb0CRWiye3EoWlyPRqsDE=
-X-Received: by 2002:a05:620a:370f:b0:7c5:6678:ab18 with SMTP id
- af79cd13be357-7d3c6cf11efmr684333885a.42.1749996448345; Sun, 15 Jun 2025
- 07:07:28 -0700 (PDT)
+        bh=x5F9RD1nifDmIVXEq5JzNevYty30dQQi6BLivh0kLXI=;
+        b=B/5FAFYGyyhwiAqFeCJwfl2ntGGVm3HArh1T3vq8rl/zqeGCb5BRMhGi4qf+YqXXp1
+         CpQngG5xcH8dhZsGPVvZYu3nST+bT4TDzelv4M7H3L0sdQnbq/7b9NEjA4unvqMXL8dZ
+         d1hDRfKUf0s9nnQW9A0tqRzyZdmKt5ACNeFxJvOfZ4rhpshTDoBOUKtCeytykCcBpeno
+         POLVSV699U1fSNkaO042MVKczJOfGs01aAnjxnCJr2S3Nltqz3dyJ/32iAdQPHCbBQ7w
+         ZUnuUkSeTo4elZy1g58fbZK7wX0HM5wRF2e3I17u610fmnGf5VQclomVXCn8fOm7bCQs
+         LFEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHYYVP/AB63rRR2iSxZMo0oes6x0vtyTCozAjDsnSB8xy7ciPPPWCxGWcLuqE/E5XRhE3Xa7MjZ9uuje0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2oKOSyuNrxv0T7E6dAV6osWwpZDyi3OIVyHYXfGwCL9xQGK03
+	bSlXTwUBp6tSKqMx2Xfqz0Q7ma1uFvbmHqZB9HxoetzcyvvfppltucY6lDrVbydP0jhdQqfEkPy
+	knlOesoPspNNBEJ1bMz1pnVw+KKo8Wk9vqNkEf0ak/pwRi1HWq7qAUZQrVo89rVWWNOYDOLGVel
+	jz7WNzoEcaAyQfhlPKNlqroOXfjbrJRGuTt8CZB5kY
+X-Gm-Gg: ASbGncvLW4t7Oze8De5iNSjMJSvxdxNRhgrFVV2zy/z6lQH7b87t2WGQPrrJuVHKPKG
+	MKSYEh0hY5Slq0xSHmyHWEIgoD38i2vabczlZ4Kwxpb3P5VlFSbxLD89r6vZJyXObp+VsxDBLHI
+	7mnRmh
+X-Received: by 2002:a05:620a:424b:b0:7c5:562d:ccf4 with SMTP id af79cd13be357-7d3c6c04a42mr976767485a.4.1749996491839;
+        Sun, 15 Jun 2025 07:08:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx0K+fxFSP4BqeDRz0y+o/8CQcKF4SvXSEuhhUCRwUNvz+In8dyZXZqILXiqwaViRTlSKW5mWNGj/EecyaUpU=
+X-Received: by 2002:a05:620a:424b:b0:7c5:562d:ccf4 with SMTP id
+ af79cd13be357-7d3c6c04a42mr976764285a.4.1749996491522; Sun, 15 Jun 2025
+ 07:08:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609073430.442159-1-lulu@redhat.com> <20250609073430.442159-4-lulu@redhat.com>
- <20250612022053-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250612022053-mutt-send-email-mst@kernel.org>
+References: <20250609073430.442159-1-lulu@redhat.com> <20250612022012-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250612022012-mutt-send-email-mst@kernel.org>
 From: Cindy Lu <lulu@redhat.com>
-Date: Sun, 15 Jun 2025 22:06:51 +0800
-X-Gm-Features: AX0GCFuavf4F9QSSduL1i-CbZH_0D6GbiTWvUTGYMpPvjCVBJlOzCw6TvLbCB5c
-Message-ID: <CACLfguVUnpxCczJ5NdtWdiDVSsYDNG6XPFGdjqdgwncX4y74UA@mail.gmail.com>
-Subject: Re: [PATCH v11 3/3] vhost: Add configuration controls for vhost
- worker's mode
+Date: Sun, 15 Jun 2025 22:07:34 +0800
+X-Gm-Features: AX0GCFswiCco_DauL--0e2ckwRlj1O7zbAgJChjHQQatloXrMYTxWULtZX6JYno
+Message-ID: <CACLfguVOmz5dzvX+08X_0bBQP1iEoxjX=eh=id3mWGtjSodSrQ@mail.gmail.com>
+Subject: Re: [PATCH v11 0/3] vhost: Add support of kthread API
 To: "Michael S. Tsirkin" <mst@redhat.com>
 Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
 	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
@@ -96,224 +94,100 @@ Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 2:31=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+On Thu, Jun 12, 2025 at 2:20=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
  wrote:
 >
-> On Mon, Jun 09, 2025 at 03:33:09PM +0800, Cindy Lu wrote:
-> > This patch introduces functionality to control the vhost worker mode:
+> On Mon, Jun 09, 2025 at 03:33:06PM +0800, Cindy Lu wrote:
+> > In this series, a new UAPI is implemented to allow
+> > userspace applications to configure their thread mode.
+>
+>
+> > Changelog v2:
+> >  1. Change the module_param's name to enforce_inherit_owner, and the de=
+fault value is true.
+> >  2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
 > >
-> > - Add two new IOCTLs:
-> >   * VHOST_SET_FORK_FROM_OWNER: Allows userspace to select between
-> >     task mode (fork_owner=3D1) and kthread mode (fork_owner=3D0)
-> >   * VHOST_GET_FORK_FROM_OWNER: Retrieves the current thread mode
-> >     setting
+> > Changelog v3:
+> >  1. Change the module_param's name to inherit_owner_default, and the de=
+fault value is true.
+> >  2. Add a structure for task function; the worker will select a differe=
+nt mode based on the value inherit_owner.
+> >  3. device will have their own inherit_owner in struct vhost_dev
+> >  4. Address other comments
 > >
-> > - Expose module parameter 'fork_from_owner_default' to allow system
-> >   administrators to configure the default mode for vhost workers
+> > Changelog v4:
+> >  1. remove the module_param, only keep the UAPI
+> >  2. remove the structure for task function; change to use the function =
+pointer in vhost_worker
+> >  3. fix the issue in vhost_worker_create and vhost_dev_ioctl
+> >  4. Address other comments
 > >
-> > - Add KConfig option CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL to
-> >   control the availability of these IOCTLs and parameter, allowing
-> >   distributions to disable them if not needed
+> > Changelog v5:
+> >  1. Change wakeup and stop function pointers in struct vhost_worker to =
+void.
+> >  2. merging patches 4, 5, 6 in a single patch
+> >  3. Fix spelling issues and address other comments.
 > >
-> > - The VHOST_NEW_WORKER functionality requires fork_owner to be set
-> >   to true, with validation added to ensure proper configuration
+> > Changelog v6:
+> >  1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
+> >  2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FR=
+OM_OWNER
+> >  3. reuse the function __vhost_worker_flush
+> >  4. use a ops sturct to support worker relates function
+> >  5. reset the value of inherit_owner in vhost_dev_reset_owner.
 > >
-> > Signed-off-by: Cindy Lu <lulu@redhat.com>
->
->
-> getting there. yet something to improve.
->
-> > ---
-> >  drivers/vhost/Kconfig      | 17 +++++++++++++++
-> >  drivers/vhost/vhost.c      | 44 ++++++++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/vhost.h | 25 ++++++++++++++++++++++
-> >  3 files changed, 86 insertions(+)
+> > Changelog v7:
+> >  1. add a KConfig knob to disable legacy app support
+> >  2. Split the changes into two patches to separately introduce the ops =
+and add kthread support.
+> >  3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
+> >  4. Rebased on the latest kernel
+> >  5. Address other comments
 > >
-> > diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> > index 020d4fbb947c..49e1d9dc92b7 100644
-> > --- a/drivers/vhost/Kconfig
-> > +++ b/drivers/vhost/Kconfig
-> > @@ -96,3 +96,20 @@ config VHOST_CROSS_ENDIAN_LEGACY
-> >         If unsure, say "N".
+> > Changelog v8:
+> >  1. Rebased on the latest kernel
+> >  2. Address some other comments
 > >
-> >  endif
-> > +
-> > +config CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL
-> > +     bool "Enable CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL"
-> > +     default n
-> > +     help
-> > +       This option enables two IOCTLs: VHOST_SET_FORK_FROM_OWNER and
-> > +       VHOST_GET_FORK_FROM_OWNER. These allow userspace applications
-> > +       to modify the vhost worker mode for vhost devices.
-> > +
-> > +       Also expose module parameter 'fork_from_owner_default' to allow=
- users
-> > +       to configure the default mode for vhost workers.
-> > +
-> > +       By default, `CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL` is set to =
-`n`,
-> > +       which disables the IOCTLs and parameter.
-> > +       When enabled (y), users can change the worker thread mode as ne=
-eded.
-> > +
-> > +       If unsure, say "N".
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index 37d3ed8be822..903d9c3f6784 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -43,6 +43,11 @@ module_param(max_iotlb_entries, int, 0444);
-> >  MODULE_PARM_DESC(max_iotlb_entries,
-> >       "Maximum number of iotlb entries. (default: 2048)");
-> >  static bool fork_from_owner_default =3D true;
->
-> Add empty lines around ifdef to make it clear what code do they
-> delimit.
->
->
-> > +#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL
-> > +module_param(fork_from_owner_default, bool, 0444);
-> > +MODULE_PARM_DESC(fork_from_owner_default,
-> > +              "Set task mode as the default(default: Y)");
-> > +#endif
+> > Changelog v9:
+> >  1. Rebased on the latest kernel.
+> >  2. Squashed patches 6=E2=80=917.
+> >  3. Squashed patches 2=E2=80=914.
+> >  4. Minor fixes in commit log
 > >
-> >  enum {
-> >       VHOST_MEMORY_F_LOG =3D 0x1,
-> > @@ -1019,6 +1024,13 @@ long vhost_worker_ioctl(struct vhost_dev *dev, u=
-nsigned int ioctl,
-> >       switch (ioctl) {
-> >       /* dev worker ioctls */
-> >       case VHOST_NEW_WORKER:
-> > +             /*
-> > +              * vhost_tasks will account for worker threads under the =
-parent's
-> > +              * NPROC value but kthreads do not. To avoid userspace ov=
-erflowing
-> > +              * the system with worker threads fork_owner must be true=
-.
-> > +              */
-> > +             if (!dev->fork_owner)
-> > +                     return -EFAULT;
->
-> An empty line here would make the code clearer.
->
-> >               ret =3D vhost_new_worker(dev, &state);
-> >               if (!ret && copy_to_user(argp, &state, sizeof(state)))
-> >                       ret =3D -EFAULT;
-> > @@ -1136,6 +1148,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev,=
- struct vhost_iotlb *umem)
+> > Changelog v10:
+> >  1.Add support for the module_param.
+> >  2.Squash patches 3 and 4.
+> >  3.Make minor fixes in the commit log.
+> >  4.Fix the mismatched tabs in Kconfig.
+> >  5.Rebase on the latest kernel.
 > >
-> >       vhost_dev_cleanup(dev);
+> > Changelog v11:
+> >  1.make the module_param under Kconfig
+> >  2.Make minor fixes in the commit log.
+> >  3.change the name inherit_owner to fork_owner
+> >  4.add NEW ioctl VHOST_GET_FORK_FROM_OWNER
+> >  5.Rebase on the latest kernel
 > >
-> > +     dev->fork_owner =3D fork_from_owner_default;
-> >       dev->umem =3D umem;
-> >       /* We don't need VQ locks below since vhost_dev_cleanup makes sur=
-e
-> >        * VQs aren't running.
-> > @@ -2289,6 +2302,37 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsign=
-ed int ioctl, void __user *argp)
-> >               goto done;
-> >       }
+> > Tested with QEMU with kthread mode/task mode/kthread+task mode
 > >
-> > +#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL
-> > +     u8 fork_owner;
->
-> Do not declare variables in the middle of a scope please.
-> This one is not needed in this scope, so just move it down
-> to within if (yes you will repeat the declaration twice then).
+> > Cindy Lu (3):
+> >   vhost: Add a new parameter in vhost_dev to allow user select kthread
+> >   vhost: Reintroduce kthread mode support in vhost
+> >   vhost: Add configuration controls for vhost worker's mode
 >
 >
+> All of this should be squashed in a single patch.
 >
-> > +
-> > +     if (ioctl =3D=3D VHOST_SET_FORK_FROM_OWNER) {
-> > +             /*fork_owner can only be modified before owner is set*/
->
-> bad comment style.
->
-> > +             if (vhost_dev_has_owner(d)) {
-> > +                     r =3D -EBUSY;
-> > +                     goto done;
-> > +             }
-> > +             if (copy_from_user(&fork_owner, argp, sizeof(u8))) {
->
-> get_user is a better fit for this. In particular, typesafe.
->
->
-> > +                     r =3D -EFAULT;
-> > +                     goto done;
-> > +             }
-> > +             if (fork_owner > 1) {
->
-> so 0 and 1 are the only legal values?
-> maybe add an enum or defines in the header then.
->
->
-> > +                     r =3D -EINVAL;
-> > +                     goto done;
-> > +             }
-> > +             d->fork_owner =3D (bool)fork_owner;
->
->                 !!fork_owner is shorter and idiomatic.
->
-> > +             r =3D 0;
-> > +             goto done;
-> > +     }
-> > +     if (ioctl =3D=3D VHOST_GET_FORK_FROM_OWNER) {
-> > +             fork_owner =3D d->fork_owner;
-> > +             if (copy_to_user(argp, &fork_owner, sizeof(u8))) {
->
-> put_user
->
-Thanks, Micheal. I'll address all above comments and send a revised version=
-.
+Sure will do
 Thanks
 cindy
-> > +                     r =3D -EFAULT;
-> > +                     goto done;
-> > +             }
-> > +             r =3D 0;
-> > +             goto done;
-> > +     }
-> > +#endif
-> >       /* You must be the owner to do anything else */
-> >       r =3D vhost_dev_check_owner(d);
-> >       if (r)
-> > diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> > index d4b3e2ae1314..e51d6a347607 100644
-> > --- a/include/uapi/linux/vhost.h
-> > +++ b/include/uapi/linux/vhost.h
-> > @@ -235,4 +235,29 @@
-> >   */
-> >  #define VHOST_VDPA_GET_VRING_SIZE    _IOWR(VHOST_VIRTIO, 0x82,       \
-> >                                             struct vhost_vring_state)
-> > +
-> > +/**
-> > + * VHOST_SET_FORK_FROM_OWNER - Set the fork_owner flag for the vhost d=
-evice,
-> > + * This ioctl must called before VHOST_SET_OWNER.
-> > + * Only available when CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL=3Dy
-> > + *
-> > + * @param fork_owner: An 8-bit value that determines the vhost thread =
-mode
-> > + *
-> > + * When fork_owner is set to 1(default value):
-> > + *   - Vhost will create vhost worker as tasks forked from the owner,
-> > + *     inheriting all of the owner's attributes.
-> > + *
-> > + * When fork_owner is set to 0:
-> > + *   - Vhost will create vhost workers as kernel threads.
-> > + */
-> > +#define VHOST_SET_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
-> > +
-> > +/**
-> > + * VHOST_GET_FORK_OWNER - Get the current fork_owner flag for the vhos=
-t device.
-> > + * Only available when CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL=3Dy
-> > + *
-> > + * @return: An 8-bit value indicating the current thread mode.
-> > + */
-> > +#define VHOST_GET_FORK_FROM_OWNER _IOR(VHOST_VIRTIO, 0x84, __u8)
-> > +
-> >  #endif
+> >
+> >  drivers/vhost/Kconfig      |  17 +++
+> >  drivers/vhost/vhost.c      | 234 ++++++++++++++++++++++++++++++++++---
+> >  drivers/vhost/vhost.h      |  22 ++++
+> >  include/uapi/linux/vhost.h |  25 ++++
+> >  4 files changed, 280 insertions(+), 18 deletions(-)
+> >
 > > --
 > > 2.45.0
 >
