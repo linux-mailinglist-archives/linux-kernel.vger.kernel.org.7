@@ -1,75 +1,68 @@
-Return-Path: <linux-kernel+bounces-687275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8588ADA237
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 17:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4359ADA23A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 17:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E24D16F59D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 15:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E866D3AE7FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 15:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C301CAA6C;
-	Sun, 15 Jun 2025 15:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0952B25E456;
+	Sun, 15 Jun 2025 15:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="U6K+sQPA"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bKvtJ6u9"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE431B423C;
-	Sun, 15 Jun 2025 15:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647BB25E47E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 15:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749999839; cv=none; b=Cm3RC8TPTWU4c06lOACxk8EUUwZbNdYJzlavJuAkkVPxLkZV8q6Z2lC0ha4VvYXWYroPyX9+/QPdGq1OXpU8pUcc2qdaqVuJ+O6u5g4MJU8B4FeTbrsG5YJiWC4mqzbORUH9DZvGMMyDvIb/ZptqGThM59arSmu2xt6i3sLttNM=
+	t=1749999956; cv=none; b=MHkNo9qTe7kLu1BDSibTtv1Ux1PxIP07ZqQoxflinLIxgss5TiVhe9gb+izFwh72Mzd20E8h7w+Gg0BKkfP7Dy9Ngsuqggtm8lWZi2FQmJirziR1ISptu0d9u3a06FzwCnjpPXOWKFmCzGwhJx0coXhJetSK341GxSjy9Xr9C8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749999839; c=relaxed/simple;
-	bh=zNruei/Wq6DKudfKhgOlK/LAw0QNeY727tGMxqK5EFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hCrPj6CLiJpyQhH6hOrh5R0z1DvV5gbWvRb7hJSRsgFpi2Whcu9RHQElmdyu811AamN6qcJBoASAMVuqmx0yG0r92lppfq82YHsrytXvswVrEcV7jhfZ5372trrNiF4HKxnprh2F/NYfE+UkMFPzFiJhv5Ilr/H4gUhjH3+eWGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=U6K+sQPA; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout1.routing.net (Postfix) with ESMTP id 693CA3FF6D;
-	Sun, 15 Jun 2025 15:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1749999829;
+	s=arc-20240116; t=1749999956; c=relaxed/simple;
+	bh=9x5d0MuH0alaGnZtLVJbiwg3/L6hyK1sziXN8OX+yS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uw591tG3UePoja5tLV5j5/PiTAWjLqUk7RgG5h9ziMfj/LHMpKYw5c1mMKS3Qmg5mrMp9k63uzODz/G6895inMFppsN1d9uHGRjGikaUOhIHzzBUaDKlKXEEYwG6hW+2Uqx+YSTmNtYjsTMaMhzIbuH76xdL64DbHhDCYkfZ/z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bKvtJ6u9; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749999942;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMCo+VFbKtuUjRwVkhv/z0zUgSXTtEAWBF4/x1hCKa8=;
-	b=U6K+sQPA5/Dakm2sC94GpFCh+jFoVm5cqODuYLmxyarK2SX5IitN5I997cJETNty7qAZBB
-	y7bO8ywAeRW2z2TI+hiVhu3mqDPAZFlTn3p3KZ/ODOXwUaJdA1Mtox/0z+Z/uaa5hNTUbN
-	v2/z7RhKKDPOLvjmt2N5ouJXXUsxF7o=
-Received: from frank-u24.. (fttx-pool-217.61.157.124.bambit.de [217.61.157.124])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 2E55C122704;
-	Sun, 15 Jun 2025 15:03:49 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	netdev@vger.kernel.org,
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Xi5PEas38TLaRRKxnR4rXfoajkd7D2bySyWzaXWpC2A=;
+	b=bKvtJ6u9UmcUuUnsvV7wKQo4hMfeR3bPLWoEOVDvhy6/SkgL5L6diqee9HBwXsRnIOBGcW
+	PM1bVPb/zfkfKHa/luoQ9n24nVe3XpxcciJEeMETl12LaD5HreCUvHfnJGLRgBY86pA569
+	B0ml9SI4x9degePeM/O3+9ohHsPTKcs=
+From: Tao Chen <chen.dylane@linux.dev>
+To: song@kernel.org,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Simon Horman <horms@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [net-next v3 3/3] net: ethernet: mtk_eth_soc: change code to skip first IRQ completely
-Date: Sun, 15 Jun 2025 17:03:18 +0200
-Message-ID: <20250615150333.166202-4-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250615150333.166202-1-linux@fw-web.de>
-References: <20250615150333.166202-1-linux@fw-web.de>
+	linux-trace-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v2 1/2] bpf: Add show_fdinfo for uprobe_multi
+Date: Sun, 15 Jun 2025 23:05:13 +0800
+Message-ID: <20250615150514.418581-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,57 +70,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Frank Wunderlich <frank-w@public-files.de>
+Show uprobe_multi link info with fdinfo, the info as follows:
 
-On SoCs without MTK_SHARED_INT capability (mt7621 + mt7628) the first
-IRQ (eth->irq[0]) was read but never used. Skip reading it now too.
+link_type:	uprobe_multi
+link_id:	9
+prog_tag:	e729f789e34a8eca
+prog_id:	58
+type:	uprobe_multi
+uprobe_cnt:	3
+pid:	0
+path:	/home/dylane/bpf/tools/testing/selftests/bpf/test_progs
+offset:	0xa69ed7
+ref_ctr_offset:	0x0
+cookie:	3
+offset:	0xa69ee2
+ref_ctr_offset:	0x0
+cookie:	1
+offset:	0xa69eed
+ref_ctr_offset:	0x0
+cookie:	2
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 11 ++++++++---
- drivers/net/ethernet/mediatek/mtk_eth_soc.h |  4 ++--
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ kernel/trace/bpf_trace.c | 48 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 9aec67c9c6d7..4d7de282b940 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -3346,10 +3346,15 @@ static int mtk_get_irqs(struct platform_device *pdev, struct mtk_eth *eth)
- 		return 0;
+Change list:
+  v1 -> v2:
+    - replace 'func_cnt' with 'uprobe_cnt'.(Andrii)
+    - print func name is more readable and security for kprobe_multi.(Alexei)
+  v1:
+  https://lore.kernel.org/bpf/20250612115556.295103-1-chen.dylane@linux.dev
+
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 24b94870b50..9a8ca8a8e2b 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -3157,10 +3157,58 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
+ 	return err;
+ }
  
- 	for (i = 0; i < MTK_ETH_IRQ_MAX; i++) {
--		if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT) && i > 0)
--			eth->irq[i] = eth->irq[MTK_ETH_IRQ_SHARED];
-+		if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT)) {
-+			if (i == 0)
-+				eth->irq[MTK_ETH_IRQ_SHARED] = platform_get_irq(pdev, i);
-+			else
-+				eth->irq[i] = eth->irq[MTK_ETH_IRQ_SHARED];
-+		} else if (i < 2)  //skip the 1st and 4th IRQ on !MTK_SHARED_INT
-+			eth->irq[i] = platform_get_irq(pdev, i + 1);
- 		else
--			eth->irq[i] = platform_get_irq(pdev, i);
-+			continue;
++#ifdef CONFIG_PROC_FS
++static void bpf_uprobe_multi_show_fdinfo(const struct bpf_link *link,
++					 struct seq_file *seq)
++{
++	struct bpf_uprobe_multi_link *umulti_link;
++	char *p, *buf;
++
++	umulti_link = container_of(link, struct bpf_uprobe_multi_link, link);
++
++	buf = kmalloc(PATH_MAX, GFP_KERNEL);
++	if (!buf)
++		return;
++
++	p = d_path(&umulti_link->path, buf, PATH_MAX);
++	if (IS_ERR(p)) {
++		kfree(buf);
++		return;
++	}
++
++	seq_printf(seq,
++		   "type:\t%s\n"
++		   "uprobe_cnt:\t%u\n"
++		   "pid:\t%u\n"
++		   "path:\t%s\n",
++		   umulti_link->flags == BPF_F_UPROBE_MULTI_RETURN ?
++					 "uretprobe_multi" : "uprobe_multi",
++		   umulti_link->cnt,
++		   umulti_link->task ? task_pid_nr_ns(umulti_link->task,
++			   task_active_pid_ns(current)) : 0,
++		   p);
++
++	for (int i = 0; i < umulti_link->cnt; i++) {
++		seq_printf(seq,
++			   "offset:\t%#llx\n"
++			   "ref_ctr_offset:\t%#lx\n"
++			   "cookie:\t%llu\n",
++			   umulti_link->uprobes[i].offset,
++			   umulti_link->uprobes[i].ref_ctr_offset,
++			   umulti_link->uprobes[i].cookie);
++	}
++
++	kfree(buf);
++}
++#endif
++
+ static const struct bpf_link_ops bpf_uprobe_multi_link_lops = {
+ 	.release = bpf_uprobe_multi_link_release,
+ 	.dealloc_deferred = bpf_uprobe_multi_link_dealloc,
+ 	.fill_link_info = bpf_uprobe_multi_link_fill_link_info,
++#ifdef CONFIG_PROC_FS
++	.show_fdinfo = bpf_uprobe_multi_show_fdinfo,
++#endif
+ };
  
- 		if (eth->irq[i] < 0) {
- 			dev_err(&pdev->dev, "no IRQ%d resource found\n", i);
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-index 6b1208d05f79..ff2ae3c80179 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -643,8 +643,8 @@
- #define MTK_MAC_FSM(x)		(0x1010C + ((x) * 0x100))
- 
- #define MTK_ETH_IRQ_SHARED	0
--#define MTK_ETH_IRQ_TX		1
--#define MTK_ETH_IRQ_RX		2
-+#define MTK_ETH_IRQ_TX		0
-+#define MTK_ETH_IRQ_RX		1
- #define MTK_ETH_IRQ_MAX		3
- 
- struct mtk_rx_dma {
+ static int uprobe_prog_run(struct bpf_uprobe *uprobe,
 -- 
-2.43.0
+2.48.1
 
 
