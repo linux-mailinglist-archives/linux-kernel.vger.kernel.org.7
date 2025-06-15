@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-687335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3589ADA301
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 20:37:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CF0ADA308
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 20:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD55F3AF7BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 18:36:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0550516E242
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 18:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF9727B4FA;
-	Sun, 15 Jun 2025 18:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E14927CB02;
+	Sun, 15 Jun 2025 18:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BJFxof5e"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBPtFxhS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF4F261388;
-	Sun, 15 Jun 2025 18:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C1127BF95;
+	Sun, 15 Jun 2025 18:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750012623; cv=none; b=hs5DCdyWbEjZDGv2VswIsNRfWy7kPkW/MpHl7hUvzDP+BwmmVBeJ2nOgTJcSJfdSqbP3s8LErRsKnQgxNQB3tA0A6ecODHPej2nEThL+lN6glpfI4CDnmoTZ97C/3dlp4FvG+H8yt5wH7pgjnYTYlbP0FpcD1ByiPYmoyESUMvE=
+	t=1750013226; cv=none; b=nQBKTC5rc6Kk+M+QzUWUM6Ug9p6LJ3fiqkqd03pbnBca/5pB7iNXmqxPtiCTeFjh3vD6PmDQDgYecXjTOulj99KpMeBDMP4AWBWTOopOHgkbNaSCr4CPtv3orxz9exSZ3+ZeU+2EJyqATkmUk6obyVPPwaidoHjs1WL5XyEfgZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750012623; c=relaxed/simple;
-	bh=XQMKv+8Ij0F6buYkfRuRLQkC1Su8tTx1szV1QCNicYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=riuoFKREqfMS3lvTyOcZY0Xkt/YmAgumRrxODPEI/dbxJdTzL/9x5HvoJycDNbwzX/JESVLis7pMnyRUdADDN86zNdo18sYhbGD9Zr2uDuS6PsCryTU6/Hxc9Y0Kqyo1y+KPYKBj3xuuKbgboMwF03NR3Yc2GH/lqNenFU3FB2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BJFxof5e; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=RVAZvd/zLDzaceTSC6FoHp8KiZ3t/hEM3+Zjok0zqoY=; b=BJFxof5eXTLmFGzFh0cuzXi5Sv
-	4OBY5pUBDwl52+UqPOuW6nkC1AcmQQ3uGIdUXbzY7Chp0O2frvaIQ12lPgW84RlRDTgxprWGADhXY
-	0hErHzxqLuytqcNlrh7sY+lEfvw6Om2g93hoTCAxIROVYYnrMf7yzZfo1JK+WYw1gt9aB6N/6SpgD
-	8HVjZGzmatcFwGxEApwXDLREmO+dJm6Q/KTsqs1+Xs6g/3h8MMtvPMFg8x+nKaUUK3ZjBHbV7ApD4
-	jWFiPZ8s+KkYHUVBZubs8CCa5l94uHllXeEno/vPuTLkBIEHFR7dOwG+7Qnp0c8/jkwS5zReFGCri
-	jxO9cFFw==;
-Received: from [50.53.25.54] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQsE0-00000002jpL-2lkw;
-	Sun, 15 Jun 2025 18:37:00 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Jim Cromie <jim.cromie@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH] i2c: scx200_acb: add depends on HAS_IOPORT
-Date: Sun, 15 Jun 2025 11:36:58 -0700
-Message-ID: <20250615183659.902110-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750013226; c=relaxed/simple;
+	bh=5b3uNryP074LRzS0e8lRw21Ibl8znCFGJk8dG32zXQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2w4MYW2vJCtPQcnzMs8C37/SmewTwzXzd6Sd6TVE89eHo4yzn8VS6qFmYA+TqZ9vU2iiqn/ks+oUR7AbCZxjpAaua8eTLNAfcPZ4S8XQLn0QkbNZS74amdp/p6Zh4VV4TmHcK6hFAxC6ltVLxX1CNcwrzmGhGWrM1Delb+Ldk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBPtFxhS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA633C4CEE3;
+	Sun, 15 Jun 2025 18:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750013226;
+	bh=5b3uNryP074LRzS0e8lRw21Ibl8znCFGJk8dG32zXQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dBPtFxhSJMUXxmaT/KxQ35nsgIcXL/g9ImLlDTQb++SUrhRAv5BrYEyhMzlivQTnA
+	 b5r6qgTgn/HKGqJKv8iIJZIrBrbSU8quRUHzUx02dyadCT/fXANUmLE4BYuuyerOk5
+	 syWDFFmKz8D7g32RagfLqYXxRSTC1HcHir74l/R1J5sHSjE1peKYYs60gZCL3eQPFb
+	 cTq1v0r+DKJnH6n9ApPtKk3wepQy940tpEOG1qlya7EY3CViKAzbLFJr2wnU1AGoVG
+	 WMCEPfl0m7mcUWeu5p5Yg2rrbz49hc8W2AJ7VRhT2wOOyNch3zWfyN/nLXRv7u5Cna
+	 suPZqRSuvlvJQ==
+Date: Sun, 15 Jun 2025 11:46:38 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+	x86@kernel.org, Jason@zx2c4.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH] crypto: ahash - Stop legacy tfms from using the set_virt
+ fallback path
+Message-ID: <20250615184638.GA1480@sol>
+References: <aEjo6YZn59m5FnZ_@gondor.apana.org.au>
+ <20250611033957.GA1484147@sol>
+ <aEj8J3ZIYEFp_XT4@gondor.apana.org.au>
+ <20250611035842.GB1484147@sol>
+ <20250613053624.GA163131@sol>
+ <aEu5cyDOMcKteW_b@gondor.apana.org.au>
+ <20250613055439.GB163131@sol>
+ <aEvmmr0huGGd2Psv@gondor.apana.org.au>
+ <20250615031807.GA81869@sol>
+ <CAMj1kXGd93Kg0Vs8ExLhK=fxhRBASU9sOPfgYUogv+rwVqgUsg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGd93Kg0Vs8ExLhK=fxhRBASU9sOPfgYUogv+rwVqgUsg@mail.gmail.com>
 
-The scx200_acb driver uses inb()/outb() without depending on HAS_IOPORT,
-which leads to build errors since kernel v6.13-rc1:
-commit 6f043e757445 ("asm-generic/io.h: Remove I/O port accessors
-for HAS_IOPORT=n")
+On Sun, Jun 15, 2025 at 09:22:51AM +0200, Ard Biesheuvel wrote:
+> On Sun, 15 Jun 2025 at 05:18, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> ...
+> > After disabling the crypto self-tests, I was then able to run a benchmark of
+> > SHA-256 hashing 4096-byte messages, which fortunately didn't encounter the
+> > recursion bug.  I got the following results:
+> >
+> >     ARMv8 crypto extensions: 1864 MB/s
+> >     Generic C code: 358 MB/s
+> >     Qualcomm Crypto Engine: 55 MB/s
+> >
+> > So just to clarify, you believe that asynchronous hash drivers like the Qualcomm
+> > Crypto Engine one are useful, and the changes that you're requiring to the
+> > CPU-based code are to support these drivers?
+> >
+> 
+> And this offload engine only has one internal queue, right? Whereas
+> the CPU results may be multiplied by the number of cores on the soc.
+> It would still be interesting how much of this is due to latency
+> rather than limited throughput but it seems highly unlikely that there
+> are any message sizes large enough where QCE would catch up with the
+> CPUs. (AIUI, the only use case we have in the kernel today for message
+> sizes that are substantially larger than this is kTLS, but I'm not
+> sure how well it works with crypto_aead compared to offload at a more
+> suitable level in the networking stack, and this driver does not
+> implement GCM in the first place)
+> 
+> On ARM socs, these offload engines usually exist primarily for the
+> benefit of the verified boot implementation in mask ROM, which
+> obviously needs to be minimal but doesn't have to be very fast in
+> order to get past the first boot stages and hand over to software.
+> Then, since the IP block is there, it's listed as a feature in the
+> data sheet, even though it is not very useful when running under the
+> OS.
 
-Add the HAS_IOPORT dependency to prevent the build errors.
+With 1 MiB messages, I get 1913 MB/s with ARMv8 CE and 142 MB/s with QCE.
 
-(Found in ARCH=um allmodconfig builds)
+(BTW, that's single-buffer ARMv8 CE.  My two-buffer code is over 3000 MB/s.)
 
-drivers/i2c/busses/scx200_acb.c: In function ‘scx200_acb_reset’:
-include/asm-generic/io.h:596:15: error: call to ‘_outb’ declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+I then changed my benchmark code to take full advantage of the async API and
+submit as many requests as the hardware can handle.  (This would be a best-case
+scenario for QCE; in many real use cases this is not possible.)  Result with QCE
+was 58 MB/s with 4 KiB messages or 155 MB/s for 1 MiB messages.
 
-drivers/i2c/busses/scx200_acb.c:224:26: note: in expansion of macro ‘inb’
-include/asm-generic/io.h:542:14: error: call to ‘_inb’ declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
-  224 |                 status = inb(ACBST);
+So yes, QCE seems to have only one queue, and even that one queue is *much*
+slower than just using the CPU.  It's even slower than the generic C code.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Jim Cromie <jim.cromie@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org
----
- drivers/i2c/busses/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And until I fixed it recently, the Crypto API defaulted to using QCE instead of
+ARMv8 CE.
 
---- lnx-616-rc1.orig/drivers/i2c/busses/Kconfig
-+++ lnx-616-rc1/drivers/i2c/busses/Kconfig
-@@ -1530,7 +1530,7 @@ config I2C_XGENE_SLIMPRO
- 
- config SCx200_ACB
- 	tristate "Geode ACCESS.bus support"
--	depends on X86_32 && PCI
-+	depends on X86_32 && PCI && HAS_IOPORT
- 	help
- 	  Enable the use of the ACCESS.bus controllers on the Geode SCx200 and
- 	  SC1100 processors and the CS5535 and CS5536 Geode companion devices.
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494 # v6.16-rc1
+But this seems to be a common pattern among the offload engines.
+I noticed a similar issue with Intel QAT, which I elaborate on in this patch:
+https://lore.kernel.org/r/20250615045145.224567-1-ebiggers@kernel.org
+
+- Eric
 
