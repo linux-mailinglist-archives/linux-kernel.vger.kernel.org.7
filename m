@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-687261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DEF7ADA20D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 16:11:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94F3ADA213
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 16:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC77D16EF81
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 14:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611E3188EF97
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 14:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B8A266F1D;
-	Sun, 15 Jun 2025 14:11:47 +0000 (UTC)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55A213DBA0;
+	Sun, 15 Jun 2025 14:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GG1aF//A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B657D31A60
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 14:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271FD1E89C;
+	Sun, 15 Jun 2025 14:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749996707; cv=none; b=dFOJxf1NjihoYG8+zMfOhLAxt3hoPuld8zMq+RUCCFhfKBpALNI+UPTiSCWftIcH8q9gGEhuq2q/1wACxWT4+uswm/NqjaAVryuSy4djKEG7w+0eS1nYrPOf9+/UBgTb1d/jERXDdm7hsf17SFHJf0GIzwC78LinvmFU4AXTMNs=
+	t=1749997692; cv=none; b=lDgIVLh664+H9iSkBzBsdAsYN93U2WBFxbSDhixiay+6cvxD8nKhf6i5KIcfY2XBNeypy6+VHZqajS3CzuEXiHl4QzraJjhnxb5Z1UQUdKXpLfT8ENGVk03UwmYJrEECMrJk9LPht8bTMInviFAMdSkfvnjqqJJn/t/JNuUdHyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749996707; c=relaxed/simple;
-	bh=j09xSvhYvcfJYpTTYoVZvzPhGa2m5l1X1PCJL7zKBBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i54K4PCa04AmyIXB/SemPHfopuoc01L7cBrhuvN/MMo5NvJDmKH+AsBzB4Xr2jx2uI0ZOEKLP2UEWCdzSuuAW7E6jlTzZlOk4akGXobZL9UItmm3gDlf5+jryvQQ+entSceFMLV1Y3ff0SQV8Oumpjj/TxsxkB3mlv/1NVAdBzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-313290ea247so669793a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 07:11:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749996705; x=1750601505;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LGYFIbfhwG/ewJSvY1vT2DTH4BojWvMhmzCrf4rviWI=;
-        b=ivQKIHjM+7rwsTv1+dQ6ew5u2/7aIoMocVLR3D5Yxpe/JC9DVwt4PLiSOOtqByCHuZ
-         Ij/ShxXBIIeVKUvTX52b5T7jO0BN+Xt6QxpyRqGnnLmMbvtvjhZqOj0DDMSLlXPjPmC1
-         Q4ZEo+LSiD+FeEi6vntvr8SIKug3lIhUeqn07YiBhpZQrdOf248EVIWOjja08mAC3BTp
-         El3dmOVo9cM96hHgxpNdTeiMwUc85eog1DNInUJUi60mFodZWN01NdvLkz36GUJ/aZkT
-         jq2+s+4ApKJ7X32jm1OlywgXcSLpvVxkK7Jn5cqT8ThRZMx0LgvFj7NLGrFJ2ne8ZlQj
-         paQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc4SmOLzNWdr+hITZsEt2TJdaGlXT6kw8S9JvoUQN5p/d7/i4zEUwrcUQ3grFTEszjnmaXtF9g31NvW9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQNSkI1fxMwBvX+Qceqpx6RKhxXPy6wsaiJDInF6hPThFh6i6H
-	9Ku/sDfrL0z5OK4YqowzjI3IvkbpWdrO44t+JJ83yfw/escBuA8UQiiN
-X-Gm-Gg: ASbGnct05BVrD69ZhvRxGL2w8N0BCjLV8A1UvjkPVEAQE0jw0liRiBmcWPB5+sALOqY
-	7ey73WhY0XkdHHXOKCeUsG7w2XznnFLbTj3Lq9odoGXNyEHKvat3ha0N6B/YU2qna+KiV/JvARH
-	r0ZgmaZY5ysC7af6xVQ9NrZPXYJcx9WWF+7591HZn4rnc0zHYK/VmcJfzTbyb3jSowYE2Zz4Af5
-	IwrFOxwK5k5JJTFFNdn75CR/BgYooiX+nu4i2g2ylcgXHSu8wXiTvTSVSH7r1auRUBqPBcJy22e
-	eorrbpguWjsqiKcNvJPc3SGgr8xlmzJpQp14dKuFmptda0BTIlaZvgT7hUOspLDqBnNG
-X-Google-Smtp-Source: AGHT+IGGa9UpaHH1Yj95UONqu/2rdm8o9/Vcg4vz+0U3koVu0uwN1twEJ1XBEWaDhjWWABQPAGIbfg==
-X-Received: by 2002:a17:90b:540d:b0:312:1d2d:18f8 with SMTP id 98e67ed59e1d1-313f1e50e63mr3448982a91.7.1749996705027;
-        Sun, 15 Jun 2025 07:11:45 -0700 (PDT)
-Received: from localhost.localdomain ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de783a8sm44233375ad.99.2025.06.15.07.11.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Jun 2025 07:11:44 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH] arm/probes/uprobes: Remove redundant preempt_disable/enable around kmap_atomic
-Date: Sun, 15 Jun 2025 14:11:30 +0000
-Message-ID: <20250615141129.653384-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1749997692; c=relaxed/simple;
+	bh=d+bEPGbZ32eRHBPWuFiJZbVDZF3W4zfier/8Do1YGOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbsO5sgxAsn+2OgmYzCqQ9CUKIm8B1oMnYFq8Bc4EbFed64fTynSTG2ZzXT76VImzBs8MNfFx4QzJsC3YemS4Xs6TJVjrtr/K1/DhIDVQPGfn2jW/JYDgdg1eLFo4SMzhM7+qu92kEoM6P1TRcwGIapdCxUktQJu8c1kqcUlDJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GG1aF//A; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749997690; x=1781533690;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d+bEPGbZ32eRHBPWuFiJZbVDZF3W4zfier/8Do1YGOY=;
+  b=GG1aF//AC3rNwzu1negs4HhaOAvx78m/hk5fBQRinOwBdpliWymm5XL1
+   P+y3Ty9D0H6V5gG9LEhe9ARBS/5oOoIKVTNzBR7VShqJUuNP2m9uebkws
+   MEIyaHvMVvEz/LE4w4q5FzLqfJ8ueaXXxweeJm+bIp4gL7ip1qscZ1jg5
+   pNRKF5uGXD8hE9KI2loBztaeBA7WgnOxdDRilSMCGRK0OR2jI31Ofj9Qa
+   ESIaLjjdmF7SVCLg7kSd0anDR2IzwTO4t4WDpvd1C9SiZ3NVfMxxJQe+B
+   Ka2dSDy0FXwmHx3ep465p6i2qxBnW+MQegTwwF3W/d9mpGRHM7e2mX/4w
+   g==;
+X-CSE-ConnectionGUID: AcFlUfmOSWysnKmSY8C7uQ==
+X-CSE-MsgGUID: GnKJ7zyPRZ2IOVud9bufOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="52287161"
+X-IronPort-AV: E=Sophos;i="6.16,239,1744095600"; 
+   d="scan'208";a="52287161"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 07:28:10 -0700
+X-CSE-ConnectionGUID: +Bx5D87HRlaAf4Hdy+Sc4w==
+X-CSE-MsgGUID: 37ZCB5gwTWeQI0uyayMB9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,239,1744095600"; 
+   d="scan'208";a="148631282"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 15 Jun 2025 07:28:08 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uQoL7-000EMm-1l;
+	Sun, 15 Jun 2025 14:28:05 +0000
+Date: Sun, 15 Jun 2025 22:27:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prashant Malani <pmalani@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Prashant Malani <pmalani@google.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Dont read counters for idle CPUs
+Message-ID: <202506152245.BJAubGbp-lkp@intel.com>
+References: <20250614003601.1600784-1-pmalani@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250614003601.1600784-1-pmalani@google.com>
 
-The 'kmap_atomic' API implicitly disables preemption for the duration
-of its use. It merely cleans up the code by removing unnecessary
-operations, making it clearer and efficient.
+Hi Prashant,
 
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- arch/arm/probes/uprobes/core.c | 4 ----
- 1 file changed, 4 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
-index 885e0c5e8c20..ebd17af0d865 100644
---- a/arch/arm/probes/uprobes/core.c
-+++ b/arch/arm/probes/uprobes/core.c
-@@ -116,16 +116,12 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
- 	void *xol_page_kaddr = kmap_atomic(page);
- 	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
- 
--	preempt_disable();
--
- 	/* Initialize the slot */
- 	memcpy(dst, src, len);
- 
- 	/* flush caches (dcache/icache) */
- 	flush_uprobe_xol_access(page, vaddr, dst, len);
- 
--	preempt_enable();
--
- 	kunmap_atomic(xol_page_kaddr);
- }
- 
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.16-rc1 next-20250613]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Prashant-Malani/cpufreq-CPPC-Dont-read-counters-for-idle-CPUs/20250614-083659
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20250614003601.1600784-1-pmalani%40google.com
+patch subject: [PATCH] cpufreq: CPPC: Dont read counters for idle CPUs
+config: riscv-defconfig (https://download.01.org/0day-ci/archive/20250615/202506152245.BJAubGbp-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250615/202506152245.BJAubGbp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506152245.BJAubGbp-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "idle_cpu" [drivers/cpufreq/cppc_cpufreq.ko] undefined!
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
