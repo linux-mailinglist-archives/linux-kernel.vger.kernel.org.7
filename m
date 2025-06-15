@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-687326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A153ADA2E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 20:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A9BADA2EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 20:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D3FB16C9B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 18:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C82C516CAA2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 18:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378D827C863;
-	Sun, 15 Jun 2025 18:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838327586F;
+	Sun, 15 Jun 2025 18:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="hMgbqJv+"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="O24iTfzZ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A20190692;
-	Sun, 15 Jun 2025 18:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907AD27CB34;
+	Sun, 15 Jun 2025 18:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750010421; cv=none; b=lI6VJ4fS2AjfjovxGNTyz7F4OxL6GCg7M9INkgnCnKoUcmmB10pkJIjsML6CpyTwY2+GA2g1/ET9+X+KuLvDjqKp8wHrvjZiTdcjfkaCweRO5rgoFXmKzqGpgG0TcpMUtBYkrihhYB0iS+A0NkA2hQtRFz7dj165FCUtK8/sOVw=
+	t=1750010427; cv=none; b=bRlBesCjZcFEdmwgZcS+qF17LFeis+h6roiAYFFZsVGORMzGHvQDxlU+WFIS0D9rc19RBUtn0yUqSY15H8pUEgDaHwUAKNb5F7MxNHRnXrQPRoHyrYr6GgQ43zoGcdhEIRBfvzw3Zv+8Kkldln5rghYI5CGxTmWJh9UOuFkRwfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750010421; c=relaxed/simple;
-	bh=ot8uIteUOAnwSh605l4urrVUFkFF6SddtMFsgpG1W8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RaSyO5Fj6ufZRW+XI9L+4QcJ+9XyMP75N6zNB+PSgYuUboY210ZE83dQ4rDrVTb/YhNYf3AgieIianzGhknXSXtUUmVhOHJvxbxTvY6VtXFUH84mnjLZ94Lt5M3bQBMVfAH8yLYNPugFkAbrjRzZl6ZsXw4jtt6CIjZe9fckaus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=hMgbqJv+; arc=none smtp.client-ip=212.227.15.18
+	s=arc-20240116; t=1750010427; c=relaxed/simple;
+	bh=NolHWbALg3zLTKBRVQrJRfmueZ379LRJLk7yYnSPC7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=e+Fbj2b1kA8Td5JbLuBKytlphNH6Ht2TW5TPjsGxmJrGCRhA5kBHecaisWAM4xoM5gG33EF+4MAcQbDm4olHRHNKuSbnGOTKZwOQy7x70BjnywK3hQ9LEbLxoisNmOXbhq8e/WGrMK+Pp4krVMzcOvPYWrZ4jh0mQDDkbBM7+0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=O24iTfzZ; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1750010409; x=1750615209; i=w_armin@gmx.de;
-	bh=PZn8SH59LZb0DLM0g7DFC/+47l9qd5T4BVNH0SSVyXw=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1750010412; x=1750615212; i=w_armin@gmx.de;
+	bh=rY1SZR0SXcbDi7r/Xq4aVGkeUAfIaJwwf2n+V38AgEo=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=hMgbqJv+TqN288PbCnTF6n8U3+g+IIuJSt9Xm5Ld1GNB8s9+geqZMgna9dIlOp4k
-	 XvgXFYsNWxU1gGHhSs3qn0FSP1b4f1eemX72URfXkaqZco1mYTiyGD7rfMWmTQNnm
-	 uhpy1MvZTkBsLe6fWE4zA/1j4BAK1X1xEa2R4v7+Sa9TGF44Wjcq4Jnknfv+z9Tct
-	 qPpL8N+lchNfxdgjJfp9xhXEUlo/73WCw6xEzvj/UVSVEUbRnHZBuUpg2FUlBpOd1
-	 WZdPiLVqy0heR/Mg+RvW/v5GrJAKGvhogl6nf36GuwSbym3BF0teNuvjlod7DZuG7
-	 kDp6eexpxAKl4E5EBQ==
+	b=O24iTfzZIPkZBf1Wt9J6SLdHZN26dZxExRofHprZIKoxhjCUiPKHS03m0iNuHSyC
+	 9QbIwb0zVD7r03tCAd6NcoFe1eEDxquJNw0tHIuMf7RW73DSEpUvWipmwhIjjOoOL
+	 /l8ZTZ2D9BLddWKiIN2rRB5oHRsg1I7qyScvPj/dXE7Yxt+u+aIdykoSEqExAATVg
+	 0u45XIJAshWLmzY+k2BNm2j3p/PEYfmCCPsqOCC/3aZFcsbuX2Nd2Vwc4SRpJ4/2l
+	 ygW84CvBKLpCr57ydNSAfmwbhLt08urwjSxpZ2YjLwPqjeJ2jBuVPRoXfxNx8UFmQ
+	 DqYElFJTX9m+D007MQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MUowV-1uHtVI0SOX-00TAJz; Sun, 15 Jun 2025 20:00:09 +0200
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MPXhA-1uDCQ52OKg-00OEi2; Sun, 15 Jun 2025 20:00:11 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: ilpo.jarvinen@linux.intel.com,
 	hdegoede@redhat.com,
@@ -57,10 +58,12 @@ To: ilpo.jarvinen@linux.intel.com,
 Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	platform-driver-x86@vger.kernel.org
-Subject: [RFC PATCH 0/3] platform/x86: Add support for Uniwill laptop features
-Date: Sun, 15 Jun 2025 19:59:54 +0200
-Message-Id: <20250615175957.9781-1-W_Armin@gmx.de>
+Subject: [RFC PATCH 1/3] platform/x86: Add Uniwill WMI driver
+Date: Sun, 15 Jun 2025 19:59:55 +0200
+Message-Id: <20250615175957.9781-2-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250615175957.9781-1-W_Armin@gmx.de>
+References: <20250615175957.9781-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,135 +71,584 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JG1aL1ItmR9iA1mL9TIl/CusRLK8Hp/6zdhq45pBmnmR7pNbi0j
- GCuKg97L8tPGVZtvkmaoxUyh4u33v/r7TFKj3Vre4iNvOcmSfVkPcCilzSyrlO/Y8zQhgvR
- 3M9AZSg/znoYEvmTNGCWmzUf4SNTdbV9RFKAwJ32vcgTBeACS4RLowzAAVbpvlskUDEnTL3
- XFHguHhfD8ylVdm1DwmRA==
+X-Provags-ID: V03:K1:am2M34eNJIROjDY67Y9N8kNCSXKkqyIX9ZXh8CKYSBBkNrXraz3
+ 7xknbm+vl487S22ZSWEm8FpzTSvo/hxHf9Tp40uLnWSfeSoL7p9oHQuZfcH9QAXyhDGlaY6
+ crsx949gDr8UFFxZGtQ7VeSs3HzNsfdZJloJF7NLW7lkJNKS/j9om8rqJ7sUgHYvuqt+Uli
+ 30FduTAEF4JtgHLj4iKAA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1HjlbNrzGg8=;itZQeUIE3EHRcJLQX4REk0F4ku3
- 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
+UI-OutboundReport: notjunk:1;M01:P0:mtE439L3U4U=;RqDUGKbjWZC5oDP+sD7aaxS55Ic
+ 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
+ FJlJeVx9gGWFN7Oe
 
-This patch series adds support for the various features found on
-laptops manufactured by Uniwill. Those features are:
+Add a new driver for handling WMI events on Uniwill laptops.
+The driver sadly cannot use the WMI GUID for autoloading since Uniwill
+just copied it from the Windows driver example.
 
- - battery charge limiting
- - RGB lightbar control
- - hwmon support
- - improved hotkey support
- - keyboard-related settings
+The driver is reverse-engineered based on the following information:
+- https://github.com/pobrn/qc71_laptop
+- https://github.com/tuxedocomputers/tuxedo-drivers
+- various OEM software
 
-This patch series is based on the following out-of-tree drivers:
-
- - https://github.com/pobrn/qc71_laptop
- - https://github.com/tuxedocomputers/tuxedo-drivers
-
-Additionally the OEM software of the Intel Nuc x15 was
-reverse-engineered to have a better understanding about the underlying
-hardware interface.
-
-The first patch introduces the uniwill-wmi driver used for handling
-WMI events on Uniwill devices. Due to a grave design error inside the
-underlying WMI firmware interface (the WMI GUID was copied from the
-Windows driver samples and is thus not unique) the driver cannot be
-autoloaded. Instead drivers using this module will load it as an
-module dependency.
-
-The second patch introduces the uniwill-laptop driver that does the
-majority of the work. This driver talks to the embedded controller
-yet another WMI interface to control the various features. Sadly this
-WMI firmware interfaces suffers from the exact same issue (the WMI
-GUID is not unique) and thus a DMI whitelist has to be used for
-loading the driver.
-
-The last patch finally adds some documentation for configuring and
-using both drivers.
-
-Special thanks go to:
-
- - github user cyear for bring up this topic on the lm-sensors issue
-   tracker and being the tester for various prototype versions
- - github user dumingqiao for testing the battery, lightbar and
-   keyboard-related features
- - Tuxedo computers for giving advice on how to design the userspace
-   interface
-
-I send this series as an RFC to gather feedback and to request any
-involved developers if they want to have their Co-developed-by tags
-on the final patch series.
-
-Armin Wolf (3):
-  platform/x86: Add Uniwill WMI driver
-  platform/x86: Add Uniwill laptop driver
-  Documentation: laptops: Add documentation for uniwill laptops
-
- .../ABI/testing/sysfs-driver-uniwill-laptop   |   53 +
- Documentation/admin-guide/laptops/index.rst   |    1 +
- .../admin-guide/laptops/uniwill-laptop.rst    |   68 +
- Documentation/wmi/devices/uniwill-laptop.rst  |  109 ++
- Documentation/wmi/devices/uniwill-wmi.rst     |   52 +
- MAINTAINERS                                   |   17 +
- drivers/platform/x86/Kconfig                  |    2 +
- drivers/platform/x86/Makefile                 |    3 +
- drivers/platform/x86/uniwill/Kconfig          |   49 +
- drivers/platform/x86/uniwill/Makefile         |    8 +
- drivers/platform/x86/uniwill/uniwill-laptop.c | 1477 +++++++++++++++++
- drivers/platform/x86/uniwill/uniwill-wmi.c    |  178 ++
- drivers/platform/x86/uniwill/uniwill-wmi.h    |  122 ++
- 13 files changed, 2139 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-uniwill-laptop
- create mode 100644 Documentation/admin-guide/laptops/uniwill-laptop.rst
- create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
+Reported-by: cyear <chumuzero@gmail.com>
+Closes: https://github.com/lm-sensors/lm-sensors/issues/508
+Closes: https://github.com/Wer-Wolf/uniwill-laptop/issues/3
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ Documentation/wmi/devices/uniwill-wmi.rst  |  52 ++++++
+ MAINTAINERS                                |   8 +
+ drivers/platform/x86/Kconfig               |   2 +
+ drivers/platform/x86/Makefile              |   3 +
+ drivers/platform/x86/uniwill/Kconfig       |  32 ++++
+ drivers/platform/x86/uniwill/Makefile      |   7 +
+ drivers/platform/x86/uniwill/uniwill-wmi.c | 177 +++++++++++++++++++++
+ drivers/platform/x86/uniwill/uniwill-wmi.h | 122 ++++++++++++++
+ 8 files changed, 403 insertions(+)
  create mode 100644 Documentation/wmi/devices/uniwill-wmi.rst
  create mode 100644 drivers/platform/x86/uniwill/Kconfig
  create mode 100644 drivers/platform/x86/uniwill/Makefile
- create mode 100644 drivers/platform/x86/uniwill/uniwill-laptop.c
  create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
  create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
 
+diff --git a/Documentation/wmi/devices/uniwill-wmi.rst b/Documentation/wmi=
+/devices/uniwill-wmi.rst
+new file mode 100644
+index 000000000000..232fa8349611
+=2D-- /dev/null
++++ b/Documentation/wmi/devices/uniwill-wmi.rst
+@@ -0,0 +1,52 @@
++.. SPDX-License-Identifier: GPL-2.0-or-later
++
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++Uniwill WMI event driver (uniwill-wmi)
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++Introduction
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++Many notebooks manufactured by Uniwill (either directly or as ODM) provid=
+e an WMI-based
++event interface for various platform events like hotkeys. This interface =
+is used by the
++``uniwill-wmi`` driver to react to hotkey presses.
++
++WMI interface description
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
++
++The WMI interface description can be decoded from the embedded binary MOF=
+ (bmof)
++data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
++
++::
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"),
++   Description("Class containing event generated ULong data"),
++   guid("{ABBC0F72-8EA1-11d1-00A0-C90629100000}")]
++  class AcpiTest_EventULong : WmiEvent {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, write, Description("ULong Data")] uint32 ULong;
++  };
++
++Most of the WMI-related code was copied from the Windows driver samples, =
+which unfortunately means
++that the WMI-GUID is not unique. This makes the WMI-GUID unusable for aut=
+oloading.
++
++WMI event data
++--------------
++
++The WMI event data contains a single 32-bit value which is used to indica=
+te various platform events.
++Many non-hotkey events are not directly consumed by the driver itself, bu=
+t are instead handled by
++the ``uniwill-laptop`` driver.
++
++Reverse-Engineering the Uniwill WMI event interface
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
++
++The driver logs debug messages when receiving a WMI event. Thus enabling =
+debug messages will be
++useful for finding unknown event codes.
++
++Special thanks go to github user `pobrn` which developed the
++`qc71_laptop <https://github.com/pobrn/qc71_laptop>`_ driver on which thi=
+s driver is partly based.
++The same is true for Tuxedo Computers, which developed the
++`tuxedo-drivers <https://github.com/tuxedocomputers/tuxedo-drivers>`_ pac=
+kage which also served as
++a foundation for this driver.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c14614613377..53876ec2d111 100644
+=2D-- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25496,6 +25496,14 @@ L:	linux-scsi@vger.kernel.org
+ S:	Maintained
+ F:	drivers/ufs/host/ufs-renesas.c
+=20
++UNIWILL WMI DRIVER
++M:	Armin Wolf <W_Armin@gmx.de>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	Documentation/wmi/devices/uniwill-wmi.rst
++F:	drivers/platform/x86/uniwill/uniwill-wmi.c
++F:	drivers/platform/x86/uniwill/uniwill-wmi.h
++
+ UNSORTED BLOCK IMAGES (UBI)
+ M:	Richard Weinberger <richard@nod.at>
+ R:	Zhihao Cheng <chengzhihao1@huawei.com>
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 43055df44827..ba9d65f01332 100644
+=2D-- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -65,6 +65,8 @@ config HUAWEI_WMI
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called huawei-wmi.
+=20
++source "drivers/platform/x86/uniwill/Kconfig"
++
+ config UV_SYSFS
+ 	tristate "Sysfs structure for UV systems"
+ 	depends on X86_UV
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 0530a224bebd..1549c56ced91 100644
+=2D-- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -107,6 +107,9 @@ obj-$(CONFIG_TOSHIBA_WMI)	+=3D toshiba-wmi.o
+ # before toshiba_acpi initializes
+ obj-$(CONFIG_ACPI_TOSHIBA)	+=3D toshiba_acpi.o
+=20
++# Uniwill
++obj-y				+=3D uniwill/
++
+ # Inspur
+ obj-$(CONFIG_INSPUR_PLATFORM_PROFILE)	+=3D inspur_platform_profile.o
+=20
+diff --git a/drivers/platform/x86/uniwill/Kconfig b/drivers/platform/x86/u=
+niwill/Kconfig
+new file mode 100644
+index 000000000000..5f1ea3e9e72f
+=2D-- /dev/null
++++ b/drivers/platform/x86/uniwill/Kconfig
+@@ -0,0 +1,32 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Uniwill X86 Platform Specific Drivers
++#
++
++menuconfig X86_PLATFORM_DRIVERS_UNIWILL
++	bool "Uniwill X86 Platform Specific Device Drivers"
++	depends on X86_PLATFORM_DEVICES
++	help
++	  Say Y here to get to see options for device drivers for various
++	  Uniwill X86 platforms, including many OEM laptops originally
++	  manufactured by Uniwill.
++	  This option alone does not add any kernel code.
++
++	  If you say N, all options in this submenu will be skipped and disabled=
+.
++
++if X86_PLATFORM_DRIVERS_UNIWILL
++
++config UNIWILL_WMI
++	tristate "Uniwill WMI Event Driver"
++	default m
++	depends on ACPI_WMI
++	depends on INPUT
++	select INPUT_SPARSEKMAP
++	help
++	  This driver adds support for various hotkey events on Uniwill laptops,
++	  like rfkill and other special buttons. It also supports many OEM lapto=
+ps
++	  originally manufactured by Uniwill.
++
++	  If you have such a laptop, say Y or M here.
++
++endif
+diff --git a/drivers/platform/x86/uniwill/Makefile b/drivers/platform/x86/=
+uniwill/Makefile
+new file mode 100644
+index 000000000000..a5a300be63f3
+=2D-- /dev/null
++++ b/drivers/platform/x86/uniwill/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Makefile for linux/drivers/platform/x86/uniwill
++# Uniwill X86 Platform Specific Drivers
++#
++
++obj-$(CONFIG_UNIWILL_WMI)	+=3D uniwill-wmi.o
+diff --git a/drivers/platform/x86/uniwill/uniwill-wmi.c b/drivers/platform=
+/x86/uniwill/uniwill-wmi.c
+new file mode 100644
+index 000000000000..b95a0d68ce6a
+=2D-- /dev/null
++++ b/drivers/platform/x86/uniwill/uniwill-wmi.c
+@@ -0,0 +1,177 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Linux hotkey driver for Uniwill notebooks.
++ *
++ * Copyright (C) 2025 Armin Wolf <W_Armin@gmx.de>
++ */
++
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/export.h>
++#include <linux/input.h>
++#include <linux/input/sparse-keymap.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/notifier.h>
++#include <linux/printk.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++#include <linux/wmi.h>
++
++#include "uniwill-wmi.h"
++
++#define DRIVER_NAME		"uniwill-wmi"
++#define UNIWILL_EVENT_GUID	"ABBC0F72-8EA1-11D1-00A0-C90629100000"
++
++struct uniwill_wmi_data {
++	struct mutex input_lock;	/* Protects input sequence during notify */
++	struct input_dev *input_device;
++};
++
++static BLOCKING_NOTIFIER_HEAD(uniwill_wmi_chain_head);
++
++static const struct key_entry uniwill_wmi_keymap[] =3D {
++	/* Reported via keyboard controller */
++	{ KE_IGNORE,	UNIWILL_OSD_CAPSLOCK,			{ KEY_CAPSLOCK }},
++	{ KE_IGNORE,	UNIWILL_OSD_NUMLOCK,			{ KEY_NUMLOCK }},
++
++	/* Reported when the user locks/unlocks the super key */
++	{ KE_IGNORE,	UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE,	{ KEY_UNKNOWN }},
++	{ KE_IGNORE,	UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE,	{ KEY_UNKNOWN }},
++
++	/* Reported in manual mode when toggling the airplane mode status */
++	{ KE_KEY,	UNIWILL_OSD_RFKILL,			{ KEY_RFKILL }},
++
++	/* Reported when user wants to cycle the platform profile */
++	{ KE_IGNORE,	UNIWILL_OSD_PERFORMANCE_MODE_TOGGLE,	{ KEY_UNKNOWN }},
++
++	/* Reported when the user wants to toggle the microphone mute status */
++	{ KE_KEY,	UNIWILL_OSD_MIC_MUTE,			{ KEY_MICMUTE }},
++
++	/* Reported when the user locks/unlocks the Fn key */
++	{ KE_IGNORE,	UNIWILL_OSD_FN_LOCK,			{ KEY_FN_ESC }},
++
++	/* Reported when the user wants to toggle the brightness of the keyboard=
+ */
++	{ KE_KEY,	UNIWILL_OSD_KBDILLUMTOGGLE,		{ KEY_KBDILLUMTOGGLE }},
++
++	/* FIXME: find out the exact meaning of those events */
++	{ KE_IGNORE,	UNIWILL_OSD_BAT_CHARGE_FULL_24_H,	{ KEY_UNKNOWN }},
++	{ KE_IGNORE,	UNIWILL_OSD_BAT_ERM_UPDATE,		{ KEY_UNKNOWN }},
++
++	/* Reported when the user wants to toggle the benchmark mode status */
++	{ KE_IGNORE,	UNIWILL_OSD_BENCHMARK_MODE_TOGGLE,	{ KEY_UNKNOWN }},
++
++	{ KE_END }
++};
++
++int uniwill_wmi_register_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_register(&uniwill_wmi_chain_head, nb);
++}
++EXPORT_SYMBOL_NS_GPL(uniwill_wmi_register_notifier, "UNIWILL");
++
++int uniwill_wmi_unregister_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_unregister(&uniwill_wmi_chain_head, nb);
++}
++EXPORT_SYMBOL_NS_GPL(uniwill_wmi_unregister_notifier, "UNIWILL");
++
++static void devm_uniwill_wmi_unregister_notifier(void *data)
++{
++	struct notifier_block *nb =3D data;
++
++	uniwill_wmi_unregister_notifier(nb);
++}
++
++int devm_uniwill_wmi_register_notifier(struct device *dev, struct notifie=
+r_block *nb)
++{
++	int ret;
++
++	ret =3D uniwill_wmi_register_notifier(nb);
++	if (ret < 0)
++		return ret;
++
++	return devm_add_action_or_reset(dev, devm_uniwill_wmi_unregister_notifie=
+r, nb);
++}
++EXPORT_SYMBOL_NS_GPL(devm_uniwill_wmi_register_notifier, "UNIWILL");
++
++static void uniwill_wmi_notify(struct wmi_device *wdev, union acpi_object=
+ *obj)
++{
++	struct uniwill_wmi_data *data =3D dev_get_drvdata(&wdev->dev);
++	u32 value;
++	int ret;
++
++	if (obj->type !=3D ACPI_TYPE_INTEGER)
++		return;
++
++	value =3D obj->integer.value;
++
++	dev_dbg(&wdev->dev, "Received WMI event %u\n", value);
++
++	ret =3D blocking_notifier_call_chain(&uniwill_wmi_chain_head, value, NUL=
+L);
++	if (ret =3D=3D NOTIFY_BAD)
++		return;
++
++	mutex_lock(&data->input_lock);
++	sparse_keymap_report_event(data->input_device, value, 1, true);
++	mutex_unlock(&data->input_lock);
++}
++
++static int uniwill_wmi_probe(struct wmi_device *wdev, const void *context=
+)
++{
++	struct uniwill_wmi_data *data;
++	int ret;
++
++	data =3D devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	ret =3D devm_mutex_init(&wdev->dev, &data->input_lock);
++	if (ret < 0)
++		return ret;
++
++	dev_set_drvdata(&wdev->dev, data);
++
++	data->input_device =3D devm_input_allocate_device(&wdev->dev);
++	if (!data->input_device)
++		return -ENOMEM;
++
++	ret =3D sparse_keymap_setup(data->input_device, uniwill_wmi_keymap, NULL=
+);
++	if (ret < 0)
++		return ret;
++
++	data->input_device->name =3D "Uniwill WMI hotkeys";
++	data->input_device->phys =3D "wmi/input0";
++	data->input_device->id.bustype =3D BUS_HOST;
++
++	return input_register_device(data->input_device);
++}
++
++/*
++ * We cannot fully trust this GUID since Uniwill just copied the WMI GUID
++ * from the Windows driver example, and others probably did the same.
++ *
++ * Because of this we cannot use this WMI GUID for autoloading.
++ */
++static const struct wmi_device_id uniwill_wmi_id_table[] =3D {
++	{ UNIWILL_EVENT_GUID, NULL },
++	{ }
++};
++
++static struct wmi_driver uniwill_wmi_driver =3D {
++	.driver =3D {
++		.name =3D DRIVER_NAME,
++		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
++	},
++	.id_table =3D uniwill_wmi_id_table,
++	.probe =3D uniwill_wmi_probe,
++	.notify =3D uniwill_wmi_notify,
++	.no_singleton =3D true,
++};
++module_wmi_driver(uniwill_wmi_driver);
++
++MODULE_AUTHOR("Armin Wolf <W_Armin@gmx.de>");
++MODULE_DESCRIPTION("Uniwill notebook hotkey driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/platform/x86/uniwill/uniwill-wmi.h b/drivers/platform=
+/x86/uniwill/uniwill-wmi.h
+new file mode 100644
+index 000000000000..41662ece0675
+=2D-- /dev/null
++++ b/drivers/platform/x86/uniwill/uniwill-wmi.h
+@@ -0,0 +1,122 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Linux hotkey driver for Uniwill notebooks.
++ *
++ * Copyright (C) 2025 Armin Wolf <W_Armin@gmx.de>
++ */
++
++#ifndef UNIWILL_WMI_H
++#define UNIWILL_WMI_H
++
++#define UNIWILL_OSD_CAPSLOCK			0x01
++#define UNIWILL_OSD_NUMLOCK			0x02
++#define UNIWILL_OSD_SCROLLLOCK			0x03
++
++#define UNIWILL_OSD_TOUCHPAD_ON			0x04
++#define UNIWILL_OSD_TOUCHPAD_OFF		0x05
++
++#define UNIWILL_OSD_SILENT_MODE_ON		0x06
++#define UNIWILL_OSD_SILENT_MODE_OFF		0x07
++
++#define UNIWILL_OSD_WLAN_ON			0x08
++#define UNIWILL_OSD_WLAN_OFF			0x09
++
++#define UNIWILL_OSD_WIMAX_ON			0x0A
++#define UNIWILL_OSD_WIMAX_OFF			0x0B
++
++#define UNIWILL_OSD_BLUETOOTH_ON		0x0C
++#define UNIWILL_KEY_BLUETOOTH_OFF		0x0D
++
++#define UNIWILL_OSD_RF_ON			0x0E
++#define UNIWILL_OSD_RF_OFF			0x0F
++
++#define UNIWILL_OSD_3G_ON			0x10
++#define UNIWILL_OSD_3G_OFF			0x11
++
++#define UNIWILL_OSD_WEBCAM_ON			0x12
++#define UNIWILL_OSD_WEBCAM_OFF			0x13
++
++#define UNIWILL_OSD_BRIGHTNESSUP		0x14
++#define UNIWILL_OSD_BRIGHTNESSDOWN		0x15
++
++#define UNIWILL_OSD_RADIOON			0x1A
++#define UNIWILL_OSD_RADIOOFF			0x1B
++
++#define UNIWILL_OSD_POWERSAVE_ON		0x31
++#define UNIWILL_OSD_POWERSAVE_OFF		0x32
++
++#define UNIWILL_OSD_MENU			0x34
++
++#define UNIWILL_OSD_MUTE			0x35
++#define UNIWILL_OSD_VOLUMEDOWN			0x36
++#define UNIWILL_OSD_VOLUMEUP			0x37
++
++#define UNIWILL_OSD_MENU_2			0x38
++
++#define UNIWILL_OSD_LIGHTBAR_ON			0x39
++#define UNIWILL_OSD_LIGHTBAR_OFF		0x3A
++
++#define UNIWILL_OSD_KB_LED_LEVEL0		0x3B
++#define UNIWILL_OSD_KB_LED_LEVEL1		0x3C
++#define UNIWILL_OSD_KB_LED_LEVEL2		0x3D
++#define UNIWILL_OSD_KB_LED_LEVEL3		0x3E
++#define UNIWILL_OSD_KB_LED_LEVEL4		0x3F
++
++#define UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE	0x40
++#define UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE	0x41
++
++#define UNIWILL_OSD_MENU_JP			0x42
++
++#define UNIWILL_OSD_CAMERA_ON			0x90
++#define UNIWILL_OSD_CAMERA_OFF			0x91
++
++#define UNIWILL_OSD_RFKILL			0xA4
++
++#define UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED	0xA5
++
++#define UNIWILL_OSD_LIGHTBAR_STATE_CHANGED	0xA6
++
++#define UNIWILL_OSD_FAN_BOOST_STATE_CHANGED	0xA7
++
++#define UNIWILL_OSD_LCD_SW			0xA9
++
++#define UNIWILL_OSD_FAN_OVERTEMP		0xAA
++
++#define UNIWILL_OSD_DC_ADAPTER_CHANGED		0xAB
++
++#define UNIWILL_OSD_BAT_HP_OFF			0xAC
++
++#define UNIWILL_OSD_FAN_DOWN_TEMP		0xAD
++
++#define UNIWILL_OSD_BATTERY_ALERT		0xAE
++
++#define UNIWILL_OSD_TIMAP_HAIERLB_SW		0xAF
++
++#define UNIWILL_OSD_PERFORMANCE_MODE_TOGGLE	0xB0
++
++#define UNIWILL_OSD_KBDILLUMDOWN		0xB1
++#define UNIWILL_OSD_KBDILLUMUP			0xB2
++
++#define UNIWILL_OSD_BACKLIGHT_LEVEL_CHANGE	0xB3
++#define UNIWILL_OSD_BACKLIGHT_POWER_CHANGE	0xB4
++
++#define UNIWILL_OSD_MIC_MUTE			0xB7
++
++#define UNIWILL_OSD_FN_LOCK			0xB8
++#define UNIWILL_OSD_KBDILLUMTOGGLE		0xB9
++
++#define UNIWILL_OSD_BAT_CHARGE_FULL_24_H	0xBE
++
++#define UNIWILL_OSD_BAT_ERM_UPDATE		0xBF
++
++#define UNIWILL_OSD_BENCHMARK_MODE_TOGGLE	0xC0
++
++#define UNIWILL_OSD_KBD_BACKLIGHT_CHANGED	0xF0
++
++struct notifier_block;
++
++int uniwill_wmi_register_notifier(struct notifier_block *nb);
++int uniwill_wmi_unregister_notifier(struct notifier_block *nb);
++int devm_uniwill_wmi_register_notifier(struct device *dev, struct notifie=
+r_block *nb);
++
++#endif /* UNIWILL_WMI_H */
 =2D-=20
 2.39.5
 
