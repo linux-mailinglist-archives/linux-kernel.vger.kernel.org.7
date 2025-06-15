@@ -1,183 +1,204 @@
-Return-Path: <linux-kernel+bounces-687257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E696ADA206
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 16:08:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7730ADA20B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 16:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543C63AF11B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 14:07:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D7B7A34ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 14:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCD826AA8F;
-	Sun, 15 Jun 2025 14:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3313C26B09A;
+	Sun, 15 Jun 2025 14:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UK+pMT03"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pbMixVVr"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2072.outbound.protection.outlook.com [40.107.101.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E394265603
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 14:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749996492; cv=none; b=OlNlf4w8mY/uBke3EKZ5Qwb/+B9JBcx/W9aoYXPk38RPbtsO8YHNNWcl3MRG46thsivi7xrmSY9Msyi8zEo5iY/6bqPWm1vmcO5G2UP8Hg8PapJ7L3WmasmRc+uguiADcm45h/4QxQSOau3sHlnZpa319I6WrOG9xqbtSDZIz1U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749996492; c=relaxed/simple;
-	bh=CcL2R9L1qSAoAE6fzuBvMZlTzcPa+YWzy/4ZbcilH78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=a/7PQbXSA4snI/JHA6ufduKdwntyaHBM1sBM/ZC+aZHVCNmmbZWQ5wLisGNlKWGBxZvmY3Pr+z4HpnoWgB0SiU/q9pIqWRx0RizCxjahXCXrEsLJNIpO9Gkv27stTYxUCL229EDznMCVs+LBY/0s4zjoOFMFFtu4sByNqmXZz+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UK+pMT03; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-86cf9f7abc4so301041639f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 07:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749996488; x=1750601288; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Ev2ncarzcapzq2egHLqNpb8FWb96CW9+NpRTLqU6sro=;
-        b=UK+pMT03aN/yT4oo2cwII4ivoIEx6dJpqE96eNDKlCxXn4bbvgs+k00YhXQ4nwNbS6
-         bytk8rbqH8S9D2t+s8ELpN4COTaD0f+KdUR3r8hvHzfF7m5sY84FLfP0S+o3HT31+NkJ
-         P0IzZMWP3YcAcrPGpwG/Shtxu01wNZ8uQGVxDGwALPbQsQLmWvwIXYw7EAN40gANgB92
-         WTAq+KAHmTYp4b3Fn0/aZuCXtz+eoMRDFABQXdNrdjC7iDo27QFmry6dH4gCF3qVfyU3
-         iqzXZ90uF1or6wf1BKKVHChE5QS6gKImJaGUcsJFDn0Wt3lA65sl8z4KMbvIi2o31O5P
-         dpFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749996488; x=1750601288;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ev2ncarzcapzq2egHLqNpb8FWb96CW9+NpRTLqU6sro=;
-        b=etTx5WofITFfInJJCCR9vdYPeZmYW42ooJr2Ed1SYitRiLatdH6WL45ptt0TiDF5Eh
-         AXPjZkzacmiS9tJzJEGEtSgov/g753isoesiJtx8D29qq82bOXSmw5i4/8BmmPP3vffo
-         ndZyfv0HmsZm7UoDyziPYUlaJzPNBh7pYMgFqwcp1L/Em11vHhED+XPJ/vMhwdJcZGTo
-         MPq14+5lHGAil8dQdR6x8DseuLA/7mz+mo7aIaT89O+eDot/DtVdpRR6YoE39q+fvplJ
-         5pdV7udVfnAKtQMohxhv4S2vU1XZeg/SSWtAXxJAzeKPcRu/SZMC5B7BINbqwmAnkd4/
-         ffgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZVVmnoL6K2KlxOEnoXXhhd7GpRrslxwH9VZPK2hTItASYA7+aOeh1qo1/EsDdUMHIXzgKgYwcBDj6BcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt5TK4k/LzcT6UkGFMA8EAfpjhKQmvmYWHodkpJ7bn0M6yEf73
-	Fv19sD7cg/zHTq5kTRr9dncg7NpTUokgp2nIKG6BoM9HTt55liP/UCxuzRxwZMcfkq0=
-X-Gm-Gg: ASbGnctBQJyL/9j1SyAT7hKYZBWzQU4/Nzgq7OJx5eQNBCgEdIKhUUJFhYN5RWo5hoq
-	0GPH9CN4PJ27oePMTK6zUzqvfJUa7qXVKkNi4LZk9SiLcn36zcU7UBnCZ0UvM4kAf22eQwC3V5u
-	N8TjPA5F1ObXxwGVqN5iBkztfJsogUAkBuTia5LkksCInqCvNUxDlNk0MFwwi2/ukojYk1bsjmX
-	PfuQ0B19bM5Mbzeobef48rYFSHBeCtt4SlDnXyXEGVKEehdmX8IQaSkiyFief+tr/moyt59AROu
-	2tP2eDtBqH4Fv1nC722qnf6jAtr+tQr8ohmF7yHdDGJ6PZlww2GlBt1j50M=
-X-Google-Smtp-Source: AGHT+IErB8q9zdosjAiGP3Jl++mmQSh6Dlt7tVdsOt8nIx8SP2s3DHMmWgKfGAaatM16VWyTNNFHDw==
-X-Received: by 2002:a05:6602:1513:b0:86d:5f:aef4 with SMTP id ca18e2360f4ac-875dec75b32mr657114939f.0.1749996488205;
-        Sun, 15 Jun 2025 07:08:08 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149c68bc2sm1268818173.80.2025.06.15.07.08.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Jun 2025 07:08:07 -0700 (PDT)
-Message-ID: <7103fcd2-904d-42ac-b5f4-e821697b72f0@kernel.dk>
-Date: Sun, 15 Jun 2025 08:08:06 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AD4265603;
+	Sun, 15 Jun 2025 14:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749996523; cv=fail; b=H7GCW6dwb18BlQNsfTRyq1O2/nFM/al33BzJwgiZ6rlYrMq+HS2RyBJzwtUkXT+YY2BFZfqpDTgtwN5HQLKKfpJOKn989e7+H5/CQikphuZ3aB+efhiK96cwEAqGq0D6dA3uGsoJwR6j+MX4pd+ZB9nbNEjP9T2uTVoFb4U+q9k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749996523; c=relaxed/simple;
+	bh=2ONn2kCFENdWqpK0E+Rlml+7goMKNTNeCos3MCXAMAA=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=VZzSRSGCVJSE6W4qIlVGNP5/L8Hm6J3DJtBfk07tzUm8492dZT/pcG8jJHfUzIhnZswipddPgmAV4i0IhyYswiT+i3w9SZeltmPk2RabC/HKxozIdd/VQ12+u/sMrAzGd+cvFBS1prPvqZNrBy73G3Ta7VDd03KaBr26W49RFM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pbMixVVr; arc=fail smtp.client-ip=40.107.101.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D3Lvxdf//sSJ0bG45QvPXuSUMD3OWht1WeUcfQ0R0lvM5feal0XZwTLeizP6ZLPyqm3fMtWEJ7v3yCv4l4LEx+jwgwq9dIGKgfV1M+jc7TWOTHOBjAQjfnueEs9EWPly7Cc0TzDc6c+iOBMzzTPQCxF9Sdx7WT9rKHrM8+qUU29T7BvMhXLJ3vnW3aXP1bgIKK1V6kEqVodXGPa5yPZtGJWdRdAKHtRcSa01khtOS/OzbUuLLC+pzUD5VJqEIlOstF9bp+BjRunwgwwHeq/7ouXnkKaIaXdYaZ2QU5yS4/X6nSq+uCqDfilrBZViHnfst9ie5p3Vx4UEOkZRpf1Ltw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6HByH++y6Cpu9XCQeileHiuhBnQhlHEwAqTQUXD8/sw=;
+ b=wo4bp9mF6C+slrRQjJ9fM/j1sB/fQbiG5/byhKzlfhCpwgBYZM213IdY5z4CGe3FSss4bCwWREIfK1TIvoE2R79rSfml64UrqVc9Ltrmt7KzEkxQ0MS9MDk2thQbyPDGq5Qc57VhKxxrwr8SWOcRxgtuSNKTF0XVcDdjqcy7/vCeRkqyHNPa3+QWsY5ryL73PSTkzlDDrh45n1Wu6VhTPO7z/427dodTWbp/JhXidbiXRzVDsleTjPL44jUQTiOckZwTBN+yCbe1eWc42vmark5UOEUyQMegJvpBoQQ/xoSEQQQyovaJJOf2pvVLsV+6X5EXyXUfxiqFEEhMugKEfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6HByH++y6Cpu9XCQeileHiuhBnQhlHEwAqTQUXD8/sw=;
+ b=pbMixVVroPQ3+1fOwlHCqQv6io4BtL5Sp4jVxTlzE6o7aKCqq4sCy2GfVZpyCH+5ikUP5Ol3VPWmunmB2zEni3P2tmpdQAPX9IXTjk+sHTdnk4uQTS7rB4WdNaZfQERRDXsgQWzBnn71ZymAj1oJyuBzGOVJzanozOP82ONBZqBsVOsqLuUrv65BsxFC20nLitbrXs6NbIdpdhT+gUk90f1IQzKjide3BKKmPFQVbd5f3gvxcVJJ3OpoLvCwSLnqkWklgPsz3VAxAqh3TOp2Loe3/qZ3G6gjOO5lgF5uRS4mej8RPmzZbRSETclbyl1KvANAQkZdIzlzZ/82X+1q6A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH2PR12MB9460.namprd12.prod.outlook.com (2603:10b6:610:27f::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Sun, 15 Jun
+ 2025 14:08:39 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8835.027; Sun, 15 Jun 2025
+ 14:08:38 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 15 Jun 2025 23:08:35 +0900
+Message-Id: <DAN5ZONHV9OX.1S5KRJJ0VFVB4@nvidia.com>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] rust: str: implement `Borrow` and `BorrowMut`
+ for `CString`
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250615-borrow_impls-v3-0-621736de7f29@nvidia.com>
+ <20250615-borrow_impls-v3-4-621736de7f29@nvidia.com>
+ <CANiq72kmN1iK=AD0yzj5TyMGJowaFzGMZjEXfUM3TCSRJkYuNQ@mail.gmail.com>
+ <DAN5JZIZEIIR.3DJEY70B1TZJT@nvidia.com>
+ <CANiq72keko32qoc9OHnQsJx8ae50c2x=kij6r_gkwpdF-9n6jw@mail.gmail.com>
+In-Reply-To: <CANiq72keko32qoc9OHnQsJx8ae50c2x=kij6r_gkwpdF-9n6jw@mail.gmail.com>
+X-ClientProxiedBy: TYCP286CA0010.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:26c::18) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] WARNING in io_register_clone_buffers
-To: syzbot <syzbot+cb4bf3cb653be0d25de8@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <684e77bd.a00a0220.279073.0029.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <684e77bd.a00a0220.279073.0029.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH2PR12MB9460:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96a1c8c6-e576-4664-6432-08ddac162017
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UHNpUUZFMTc1R0E2bStxVDhLczRhZTc1UnNMSXluTGp3TGJUTXhuZzlUU3R3?=
+ =?utf-8?B?S1kzMkNDbWxKT3dqbVZOT3RwQTAxZjA5ZENnTFh5aCtYVkxqYjJZd3NWa3F3?=
+ =?utf-8?B?M1NuWTRlK2NaVmgxckdvSTRDQWlDZERRaFA4MUxuYkN0MHVzSmdYZE15T3JK?=
+ =?utf-8?B?YndjTkN5QmtXY3lpSVFnUVo0Z3lpb05QTlpRSUM1TVNwNUZkcVVINFU4Z0tN?=
+ =?utf-8?B?YStvR2pKVTFvUU5yeGw1a3dHSlNFOGk1ZUtjSjNzN29HTUM4QldtakRkZGpw?=
+ =?utf-8?B?Tk95MkM5ZXRsWGNmdUV6Q0xxZitXOXNPNWg0TGJBdmI2N2RQWC9IRDJnbjY2?=
+ =?utf-8?B?WjFYNlpmcnRZR3dvc3lkbmNhSGp3UzdqeEFZWUZ1MEVubm8vYms1UEhZa1Y5?=
+ =?utf-8?B?eVhlYmp2RjhVdlRKTEMwbnpqdTBZL1lLc1dGdWQ1ZHBzeDZiRUpUQjRxTXVy?=
+ =?utf-8?B?VXZIRDVCYUJTNVZIaFpXWVZoN2c5K1RDVWpZMHl5QTdBdHpzOGFucjI0aGtB?=
+ =?utf-8?B?NjNkSmEwbFN6aFZBS29PWVRyNGVCWTJWN0tyWGtSdmJTTWZUWHlPUTNFMUww?=
+ =?utf-8?B?eUFnZDZGSlJ4WnRKSU5tVy82VTg4aGZjbjJsNktGS1cwZGVSM1F1d1hxV0F1?=
+ =?utf-8?B?TDdJQWw2NlhTT292b0NDMGorMmhYYTkwNE5xOUtSRTdDV3hRampZemR3dW03?=
+ =?utf-8?B?SC94S1BzeEhJSm93bzZTMG11My93QlRuZ3RtbVE3a1NKTmJDOVAxVTZVQ0dv?=
+ =?utf-8?B?RUVaODhWRGZ3THhvYUIxYytvTVRRUzlWL1lhM0Q3a1k2YnJWUnNjeGpKV3Jl?=
+ =?utf-8?B?YVdLMEcyY2tYNWdRVkhoWS9qZXhRQjBhQW9EZFlBTmpTZU80d2F2Q0piUUtP?=
+ =?utf-8?B?QzNGMURpLzFjaWg4RWNyMU5lOGNiTEJ0bUM3RjhTRkltTGNPR1FrYjlaaW16?=
+ =?utf-8?B?VTFzdE9nYWJjUHhYRTZINUNWcE5VNE1NUldWZGlDSThzVzhkamQxZFFvYnFs?=
+ =?utf-8?B?aWVZc0luN0hRQ1h3UE0xTVhTWVBJUWk4Y1Q4TDI2a0lHRWd0VG5xSGVrc3BM?=
+ =?utf-8?B?MFBHWlJXTlA2N2FDNWdHV3JPWEJqMnFFdXh6M091UXR0clZpSmhremZoZmlr?=
+ =?utf-8?B?ckRoa05LZy95d2pZM1BoTmhEUXcySTF3T1BKNFZoSU82dnZWVkRxSXlGMk50?=
+ =?utf-8?B?UTQzZ2NVVXhXWCtMQVZJcHUxRWxkbjh6RXBEMFoxOUZKcmhra1MrUENOVDRn?=
+ =?utf-8?B?N1ZDZGg3ZUMyeTlRNmpvSGNoNzlzQ0FvZTZzWUpLajV3cmdCUGsrMU5UbURV?=
+ =?utf-8?B?MjcrMUxDcGFPZDNUV1BFVVFxbVArdmtNemljTWJVaWYrRjI0dGQrNmNvZys2?=
+ =?utf-8?B?RWYwbHVpQzU0Y1hlaEt6bkNUczRhSE5wT25DeklJdW4zOFVOZ1QybWVjR01m?=
+ =?utf-8?B?NEJZK0xucmZpekp4ODVKL2VFVThSZmdXNHo3Q01mV2ROVXVaREdRS0JJMFBI?=
+ =?utf-8?B?WiswMCtBTzFNbE5hMnRoQjU0UVAybnVaUDVWeWEwN0pJUytDNktVaGRyTEhv?=
+ =?utf-8?B?V0w4c0ZDeWIyR1RuZEpPeHMzTVZPTjI3QlZFZnFsTy8xNmlCb3pJOFhxZWhZ?=
+ =?utf-8?B?NkY3aDlENitlMHZnVFRKRlZLVXhHdE1LVnBpQWpSMXlWVmNKMC9xR3Z5YzdT?=
+ =?utf-8?B?N3RicmQ3ZFY5bmM5eXZPalVJak9LUS9LeHZvd0JNeGlTTHFFaFJPQlNWck02?=
+ =?utf-8?B?Ly9UWkNoVE5Ld0Izbk4zR2xvUzZBeWtZeU1rQktWbWc0NXNoc3FjZDladGpx?=
+ =?utf-8?B?b0dDTHZlTzRLcG1yVzU1L3lhQUJCUE5hd25YKytxVyt6cE5SdnJYQ0g0RnBI?=
+ =?utf-8?B?c0Y1MFBnRDMwWUQwbWFZZ2ZMOHEvd0l1b0ZOQXpRaDNjdDhlb1ZreUFuMkRH?=
+ =?utf-8?Q?8F8SKmcrj9Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UTRqQjZTRFc3RDE5eG1EbDB6Z0ZtUUdldzNpNDZVRXE0djlTMGljeVRpclpB?=
+ =?utf-8?B?L0tvZ2ZyQkF1S0Z3V0lsL3M4ZGxMdnpLU0Z5VHJ6NmFJVmVxV0x3Z1oyTUZK?=
+ =?utf-8?B?S05Lb2VHSm5PdU5vK3RFWk5melpGK2VsMzJkbitLQ3FOZ25WcUgxeUJ5UTA5?=
+ =?utf-8?B?UFJsNy9FWDB5bmg5ZHZTT0szQjFkUGU1T2Zua292Ni9udVQ3b1Q4c1dYc2Zy?=
+ =?utf-8?B?T0p0Q1RRTTBhK0k4WVgzWEV3NGFhRWlENHVRMTN3Yk1CbEZ1RXl1eHRJL2tm?=
+ =?utf-8?B?VDJIb2t1Z1JNakJZd0JRRXF0c0ZqUGtlZmd6ODJDUzgzOXo5bTRlcm1Za1dX?=
+ =?utf-8?B?eGxqVEFFR1hOMmEwcGNHcnMzWDY2VEdHV0w0eVJvY2gwSnhxWC92YUFqTGU4?=
+ =?utf-8?B?VjZmWFRrT1IwK3cxUVhHSnZGSTdFZWdjM3FPWEJ3d3hON2YwSDdCc1BqUnJM?=
+ =?utf-8?B?ZUxiV1BLMHdUZGhNSWgxemVoVWNiR3BOMTZaSGxoT3A2YnR2eGNuTmtMaTB3?=
+ =?utf-8?B?elVlOUl6TnJXYTZHZEFuekc4SlVsOEhvN2FIRVk5cGVuU1J0Q2dMVW53TTNV?=
+ =?utf-8?B?bktXM2RJaTVXczBCbXpzQWhQZnRFOGxvaG9EaEl5TzUwZU85MmlFcXRwT2Rm?=
+ =?utf-8?B?R3lmakd6OTU0ZHR4OFovSlJVTkNJQ1ZrcGRvZHlXUzFyNVFhSGdBNDBUMmNy?=
+ =?utf-8?B?UDdmYk9XbDdjYU1CSml3RXdLcFVNL1dhNXNEVlpWS3N1Z1g5VDBKM2F5MXFR?=
+ =?utf-8?B?alVQS1M5bW9Vbnk4L2s5TEMxM1Z5Um02NXRmb1pJcnVzSWpwS081ZWhjMmha?=
+ =?utf-8?B?TDkvTU95SkVhbnZGMWVsL2R2bWV4cU9BakNuby9qZHhwc3p6UjY4b1piRUtP?=
+ =?utf-8?B?K1liSEo5YzBLZXZHaGJkeGZQREVaZkFqbnQ5cUhLRVBFT2VWL1o5dVVUa2pJ?=
+ =?utf-8?B?ZWQ0YnZBTGloeGZEQ2RzV01PQ2NCMTdCRmNpQ3BVdFFkK0ZJb3lmUXB4VFg3?=
+ =?utf-8?B?b0RNUkpoZlZLc1NvNVp6bnVkcEM5VmpZdkYybjBGeTJCaGhhRWhTTWtMZjJ2?=
+ =?utf-8?B?ajlrcVZwYnV3dHlZb0xLbTRob09LU0tSMVM1UFZGNnM5eFNSczAvZnB3RENY?=
+ =?utf-8?B?aVZCSEJ2YVVFcUZwUnRnbE9XeE5Qc2VseHNBNjlNRDBlYWRjOWpKQWc1TEox?=
+ =?utf-8?B?VDdGL0lTM1pkVGdaQ1E2QVFRRmNJcldLaXUrNVkrVUhyT1hGak9kb3V6Z3JK?=
+ =?utf-8?B?YzA1RElyRDVLcDhibDRjcDVQWEZaRlJWaWRpU09PTVFkdGRIZ2QwMVhPSC92?=
+ =?utf-8?B?Qk52ZHk0YnA1Z3NIQkJ2dkZUR2dtYTc4elZxK3ZlVjQ1L2xtTkFuUGxSbmlE?=
+ =?utf-8?B?WnlNd1V3VWxXbUxCTlpCcGIxQWlyZWFORGwxdUw3UDM1eDFOTTZXN0VBellm?=
+ =?utf-8?B?OWxwbjlSY1RiYUdaaUxQcFV1UUdSOUFCSmU5QUtyZnRGVW1qeUdIaWxtMjBG?=
+ =?utf-8?B?QVBXbWdsZlRkYmY5REJmUlAvVTdCWlZ2MTR4UDdaQW91UE8rQnFzMFN2aUo3?=
+ =?utf-8?B?SFg5MGFvZDZ6YnY1ZWxId3JFVzl6dHJxWlFkVHZzNzBtVUdNcG9RekxjQUVK?=
+ =?utf-8?B?b3NGdHBPRzBEazFJcHA5eTJJcU40eXlyT1lPbFVqaFF1d2Q2K0JNd2Jrcm9n?=
+ =?utf-8?B?M01haldlMnd1bmRnTTBITUJmUDFiOEJOMWpTa3dHN0RVWGV0MmFZQ0ZrU0FN?=
+ =?utf-8?B?MHBDbFBUTEs1L1Y4Qnd4Y3VMQ2JHeGE5TU1QeHRaUEVrd1hJTjZEUmd2bVdu?=
+ =?utf-8?B?azJLdWtVR2Qyd3daeEdpaXlBT3NjZ3BReUFFcE1jZktIWWl0Q2RNUTdBYmNq?=
+ =?utf-8?B?V0pmVWxjNDZnNDRFVGJMNVdlZXN5RHBrVU9CNGF5a1pDMytob3pEMnlWbTBJ?=
+ =?utf-8?B?WGYrd0hjam1SbFJKMmFwclo5TTM5ZVdLaHI3cTBXa05yaTN2WTJZcURieE9h?=
+ =?utf-8?B?elhhTzZCei9VRnZ1OGxSY1lYck1XRUdySHk5Q3Q0VnZTa0JRaHZCK2l1TnFQ?=
+ =?utf-8?B?TzV0Y0ZYdFNrNEh6NTF6RUN1aWNvMmVpZmNVdER5WDMweGRwNFFKVDZ5UHFz?=
+ =?utf-8?B?Ykw5cEtCNXYxTXJtU3owdTluNjlUUzFRRW8rWEZDOWxEZWUxenkzT1d6RUpV?=
+ =?utf-8?Q?P/YmY5ISyEmyCq+PLwKcDnHzHbAxfpYowB8SkLXr9CJR?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96a1c8c6-e576-4664-6432-08ddac162017
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2025 14:08:38.7598
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qtlfmp0jOQseQwsvwuPMqizAKtc6o5sV6rFw5qAaag+m3nqieDXhhVoNXMMI/JIA2rYQ0wF5HiUylClq+u0j+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9460
 
-On 6/15/25 1:35 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    d7fa1af5b33e Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13db6682580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=89c13de706fbf07a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cb4bf3cb653be0d25de8
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15cab60c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c9a60c580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/da97ad659b2c/disk-d7fa1af5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/659e123552a8/vmlinux-d7fa1af5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6ec5dbf4643e/Image-d7fa1af5.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cb4bf3cb653be0d25de8@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 6488 at mm/slub.c:5024 __kvmalloc_node_noprof+0x520/0x640 mm/slub.c:5024
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6488 Comm: syz-executor312 Not tainted 6.15.0-rc7-syzkaller-gd7fa1af5b33e #0 PREEMPT 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : __kvmalloc_node_noprof+0x520/0x640 mm/slub.c:5024
-> lr : __do_kmalloc_node mm/slub.c:-1 [inline]
-> lr : __kvmalloc_node_noprof+0x3b4/0x640 mm/slub.c:5012
-> sp : ffff80009cfd7a90
-> x29: ffff80009cfd7ac0 x28: ffff0000dd52a120 x27: 0000000000412dc0
-> x26: 0000000000000178 x25: ffff7000139faf70 x24: 0000000000000000
-> x23: ffff800082f4cea8 x22: 00000000ffffffff x21: 000000010cd004a8
-> x20: ffff0000d75816c0 x19: ffff0000dd52a000 x18: 00000000ffffffff
-> x17: ffff800092f39000 x16: ffff80008adbe9e4 x15: 0000000000000005
-> x14: 1ffff000139faf1c x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff7000139faf21 x10: 0000000000000003 x9 : ffff80008f27b938
-> x8 : 0000000000000002 x7 : 0000000000000000 x6 : 0000000000000000
-> x5 : 00000000ffffffff x4 : 0000000000400dc0 x3 : 0000000200000000
-> x2 : 000000010cd004a8 x1 : ffff80008b3ebc40 x0 : 0000000000000001
-> Call trace:
->  __kvmalloc_node_noprof+0x520/0x640 mm/slub.c:5024 (P)
->  kvmalloc_array_node_noprof include/linux/slab.h:1065 [inline]
->  io_rsrc_data_alloc io_uring/rsrc.c:206 [inline]
->  io_clone_buffers io_uring/rsrc.c:1178 [inline]
->  io_register_clone_buffers+0x484/0xa14 io_uring/rsrc.c:1287
->  __io_uring_register io_uring/register.c:815 [inline]
->  __do_sys_io_uring_register io_uring/register.c:926 [inline]
->  __se_sys_io_uring_register io_uring/register.c:903 [inline]
->  __arm64_sys_io_uring_register+0x42c/0xea8 io_uring/register.c:903
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->  el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> irq event stamp: 370
-> hardirqs last  enabled at (369): [<ffff8000801fc600>] local_daif_restore+0x1c/0x3c arch/arm64/include/asm/daifflags.h:75
-> hardirqs last disabled at (370): [<ffff80008adb9eb8>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
-> softirqs last  enabled at (294): [<ffff8000803cf71c>] softirq_handle_end kernel/softirq.c:425 [inline]
-> softirqs last  enabled at (294): [<ffff8000803cf71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-> softirqs last disabled at (289): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
-> ---[ end trace 0000000000000000 ]---
+On Sun Jun 15, 2025 at 10:57 PM JST, Miguel Ojeda wrote:
+> On Sun, Jun 15, 2025 at 3:48=E2=80=AFPM Alexandre Courbot <acourbot@nvidi=
+a.com> wrote:
+>>
+>> I thought I could get away with it since it is in a test, and clippy
+>> does not seem to complain about it, but...
+>
+> Hmm... It should:
+>
+> error: unsafe block missing a safety comment
+>     --> rust/doctests_kernel_generated.rs:7973:24
+>      |
+> 7973 | let foo_borrowed =3D Foo(unsafe {
+> CStr::from_bytes_with_nul_unchecked_mut(&mut str_data) });
+>      |
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>
+> Do you have the doctests enabled? i.e. CONFIG_RUST_KERNEL_DOCTESTS=3Dy
 
-Max buffer count is validated, but buffer count + offset is not.
-That can lead to attempting to do a big alloc, below should
-fix it.
-
-
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index c592ceace97d..94a9db030e0e 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1177,6 +1177,8 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
- 		return -EINVAL;
- 	if (check_add_overflow(arg->nr, arg->dst_off, &nbufs))
- 		return -EOVERFLOW;
-+	if (nbufs > IORING_MAX_REG_BUFFERS)
-+		return -EINVAL;
- 
- 	ret = io_rsrc_data_alloc(&data, max(nbufs, ctx->buf_table.nr));
- 	if (ret)
-
--- 
-Jens Axboe
+... and that's what I was missing. ^_^; Thanks!
 
