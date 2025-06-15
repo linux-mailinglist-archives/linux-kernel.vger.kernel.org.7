@@ -1,99 +1,129 @@
-Return-Path: <linux-kernel+bounces-687372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88330ADA389
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 22:32:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F98DADA39B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 22:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980A17A64FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 20:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8FBD188E6E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Jun 2025 20:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8108D27E7FD;
-	Sun, 15 Jun 2025 20:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ACE283145;
+	Sun, 15 Jun 2025 20:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cWX7SIHv"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7ArhAgM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510354A33;
-	Sun, 15 Jun 2025 20:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C2F29A2;
+	Sun, 15 Jun 2025 20:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750019539; cv=none; b=MysIKgXOjg6Puqx79dUCkDH0suCmlDPWcJAXN4mteeerJLUwl8HCvj3i+wej9O4VHV3z/SHRoUtmZwycVgEsXsvULj/wAgw2V4J1QVFXKdYi+2ggt+AEjVTIwdpzwOAfu0DIESMc3hFKrai2Zou+exhuC7RMMv9vzXw8dRq+P/c=
+	t=1750019750; cv=none; b=eGkja5ZMu74rHINySrQQ6HBP0wwZsziJDXKiIXIpCKYM4HpPGMe4JdP1/1v5WKXEwXqzGhrvOZJ63o9W/6EzRb2qJz+n3DksckUB0oi4T4LwL3uFhqvbMMljUiD3Zl2h5V0Yiv8rx7ZvsHI6+AeVJwQdFdqlsS0+1XXMn3KYdNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750019539; c=relaxed/simple;
-	bh=ipOLP6LLsrl4oKuhTrsXI2JwHthOndb/e7QX0jG2D7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f3Un6Fpi3RUY5h3zoORsTR7Q/hxFv4ShYzcJsI8G5aHiYK53cjhRJNx+i8as08HICiZ4BM3Q8H20RPsxTGLi6iRqH9YZ8VPhaQ/sxbHCIGkMW+N6OdFjTssQ7yOmqMU22JYGs8yCsD/L0zYDiPpu/bZz2TQ0d2Vas6LVGavdQoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cWX7SIHv; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=36hN1hq1+Wf5IthuRmh5VmMSvRMked2DbK5JEoEMcys=; b=cWX7SIHvgsHsqd3nj4FhTC8epZ
-	JhPDYH5KDwPe/fxzFsgmwc+IjFvZWjgKEWFz3HV7txe4Ierz1+8vU8zGXBPh9dpf5e1BYRrpQPwaJ
-	YGZgmfyi3qVIx4JViW3qzjEySEE1gDmojKoNT0HHpsXio9q5gRJZc879MJSJvkjgqwkbrxai1WFr3
-	6CzmyFPAff3CLSGplqy1ADmF+q3g5jfgmdLsO3wrX7mf+yoKC2xdvtO6c5kVSWNBYmVFX5ZBQxolv
-	tqQhq8uuqURaE6cqqP0wD6KVgNdeNqgbEdGg6vUpyEuwzUNlKBtflTSla6jUSnhG7Ti0VaFcTSe24
-	PqkjvFPg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQu1Q-0000000FDVS-299m;
-	Sun, 15 Jun 2025 20:32:09 +0000
-Message-ID: <d86a489c-8895-43c2-9968-1c0c6972c828@infradead.org>
-Date: Sun, 15 Jun 2025 13:32:04 -0700
+	s=arc-20240116; t=1750019750; c=relaxed/simple;
+	bh=SBC2qdWRPcC2wPKUJVvs1+BF12UOwaCCeZuIbZRDQZg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hJZDVmA+AH0ESKZwwccjHOeiHtPWSkY/CCo+BQm9nVXSG+X3oRCGquLTCqw0tztWpfU/8US07R/G9X+2N2dY/ljYMgrxrmFh84eedFl81ZD4mHlmrHHG2Zl7J6ywS/gHNK2Yn2C5v9SwNoMP10EldkIWHxw5BXP9rY/ywKJfQTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7ArhAgM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44EA1C4CEE3;
+	Sun, 15 Jun 2025 20:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750019749;
+	bh=SBC2qdWRPcC2wPKUJVvs1+BF12UOwaCCeZuIbZRDQZg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=j7ArhAgMJq/WhC8y5Xwvuvw6YwMNI+p0TA+QDk9V9zWiYMMnVTyah5mMwCn+8Yqob
+	 9GUtoH9sTQJVGE2wQZ0c+1nW8gA/kEfM/tYV/jNIYLhBUBbIpw5a9E04mO7ImUy7Dg
+	 eTXejvho+/Bfx/QuSELev+u5v0P6IETG25ORS/yd16K25wUR7bAZUY3zZbsatztiEJ
+	 9hPrDvLt7OckVVPvAjbAWnVay0tyMUOiOmK71kd4+Wn3Gp6snQBO1KBj5zXGo2ojyW
+	 65cnirzfwkAA9CH1HmEquz7wlGvH7ZVOaKy/dqEhCUtNz3bRJ1gNBSNP4Ob0Z3i8XL
+	 j1AgRIIyPkQ6A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BD2C71151;
+	Sun, 15 Jun 2025 20:35:49 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v2 0/4] arm64: dts: qcom: msm8976-longcheer-l9360: Add
+ initial device tree
+Date: Sun, 15 Jun 2025 22:35:02 +0200
+Message-Id: <20250615-bqx5plus-v2-0-72b45c84237d@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] platform/x86: Add Uniwill WMI driver
-To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
- wse@tuxedocomputers.com, ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20250615175957.9781-1-W_Armin@gmx.de>
- <20250615175957.9781-2-W_Armin@gmx.de>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250615175957.9781-2-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHYuT2gC/0XMQQ6CMBCF4auQWVvTDkKNK+9hWEAZZBID2IEGJ
+ b27lcS4/F9evg2EPJPAJdvAU2DhcUiBhwxcXw93UtymBtRY6NKgap5rMT0WUa1FMqYrztY6SPf
+ JU8frTt2q1D3LPPrXLgfzXX9I/keCUVph47A95VbburzWE89vcf2RFqhijB9P0WBxogAAAA==
+X-Change-ID: 20250612-bqx5plus-d72e11f5877c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750019747; l=1306;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=SBC2qdWRPcC2wPKUJVvs1+BF12UOwaCCeZuIbZRDQZg=;
+ b=OHSlQmNFjvIRKLd4dGtpIC39Fiza3MjyiAjR8nEKqyJxjjXzYoNLnhhxuEosVwmXYi/LozfHd
+ 1wDqJ3NJr3CD60afO8lKntyR2bmhTs/sgS5PhM5WTaPz8nINmB8XCFu
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
+This dts adds support for BQ Aquaris X5 Plus (Longcheer L9360) released
+in 2016.
 
+Add a device tree with initial support for:
 
-On 6/15/25 10:59 AM, Armin Wolf wrote:
-> diff --git a/Documentation/wmi/devices/uniwill-wmi.rst b/Documentation/wmi/devices/uniwill-wmi.rst
-> new file mode 100644
-> index 000000000000..232fa8349611
-> --- /dev/null
-> +++ b/Documentation/wmi/devices/uniwill-wmi.rst
-> @@ -0,0 +1,52 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +======================================
-> +Uniwill WMI event driver (uniwill-wmi)
-> +======================================
-> +
-> +Introduction
-> +============
-> +
-> +Many notebooks manufactured by Uniwill (either directly or as ODM) provide an WMI-based
+- GPIO keys
+- NFC
+- SDHCI
+- Status LED
+- Touchscreen
 
-                                                                              a WMI-based
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v2:
+- Add Fixes and R-b tag
+- Move sdc2 GPIO definitions into msm8976.dtsi (new patch)
+- Remove comments from rmi4 nodes
+- Don't touch tz-app memory region. Currently, the bigger size seems
+  not necessary.
+- Link to v1: https://lore.kernel.org/r/20250613-bqx5plus-v1-0-2bc2d43707a6@apitzsch.eu
 
-> +event interface for various platform events like hotkeys. This interface is used by the
-> +``uniwill-wmi`` driver to react to hotkey presses.
+---
+André Apitzsch (4):
+      arm64: dts: qcom: msm8976: Make blsp_dma controlled-remotely
+      dt-bindings: arm: qcom: Add MSM8976 BQ Aquaris X5 Plus
+      arm64: dts: qcom: msm8976: Add sdc2 GPIOs
+      arm64: dts: qcom: msm8976-longcheer-l9360: Add initial device tree
 
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   5 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ .../boot/dts/qcom/msm8976-longcheer-l9360.dts      | 490 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8976.dtsi              |  38 ++
+ 4 files changed, 534 insertions(+)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20250612-bqx5plus-d72e11f5877c
 
+Best regards,
 -- 
-~Randy
+André Apitzsch <git@apitzsch.eu>
+
 
 
