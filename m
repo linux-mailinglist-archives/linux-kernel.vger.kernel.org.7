@@ -1,308 +1,112 @@
-Return-Path: <linux-kernel+bounces-687808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40523ADA97F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:32:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9C6ADA978
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771C83AB6C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555CF1894BAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C8D1FCFFB;
-	Mon, 16 Jun 2025 07:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793B81E3762;
+	Mon, 16 Jun 2025 07:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DC1i+2um"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKFulSnI"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45F81F869F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8949D1DA53;
+	Mon, 16 Jun 2025 07:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750059106; cv=none; b=FHL+jbAmyfjkL2WfxJ/+aCIU1oMfqZv/NxIs4tV9XhCyrylH3jf2KaFW9CreBwtdvK6lHHEBdfF+Pc5c9iwsTTksHgAPVXGC4oFG+JrTlrCW8USj9YthysgCPtB0dRyc4W+VlQCKY25K3ljn9VfwQty4b80l2FAJJmVgv4YVWRk=
+	t=1750059073; cv=none; b=uqDjIECDDEBOd9hUCngabutt7KISXhRIeOeOLfJvMOYeCUFKFi9g+EnnAW6amg93JvxkjHxiGLSDDZ3VREzTGuhWBmZuUKf9YCrZRH1C7pI/qot8idsO+vAK+Ep069rjaQr4HdnQM3WzPEzGFB4HTufEgRFp80QqvMww+AkkHHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750059106; c=relaxed/simple;
-	bh=ee5HiIoIsa3WDFCUyUGDDZltzjB7Oew/byuJhXXlAlI=;
+	s=arc-20240116; t=1750059073; c=relaxed/simple;
+	bh=cheEarIyKVJUARXwRvLdgflVQA3knWwTd0Aeo5HkwRs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nSfrxKtpBdsBKChkNVn40UrCAYC+m3lHZ5hMcqnwEU3rSC0UqkxVoCxLZsh96esZSlMH4mY4ip5GoR9d3h4dgicDyJphJwSHFB4L1h/xSUAqWDpVJXQ+gRb0LXqlqZTBJZz5ytryhMVNlI0sU/G6Qg9Js20wTqqPpTeV+wi+MgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DC1i+2um; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3de18fdeab0so5127155ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:31:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=JZSXd3sFcIF0E+43rmbRInUN9Km+ZQxP2Im1dHbGx7rMnqaJSJXnhRiCNnIYCNLT/+vCqfdOn0eosQxZL0QVIFNplXrOSNd9ih780Mvcs0bHIm4Mb8cE3dz3pPQ3Eh3gpOcH5S7Gw1jkEefweoqipGiKw/ms53t6lHfsdR8xocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKFulSnI; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-af51596da56so3509844a12.0;
+        Mon, 16 Jun 2025 00:31:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1750059103; x=1750663903; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750059072; x=1750663872; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EQxXH/0dmAKUHVoHoL5MncVmJUg8FbHf/SfAogCBA2o=;
-        b=DC1i+2umUVfKRl3dV5GPu22ngrs1sm0QAx+hY6GxzRuTxJz2aEVXBVY21zCsxxxAb3
-         xQ7OnZYKqww37y7xbgOG9IasDUprZUWYFUg0EZ4MElZo6BmPrlMHfFMz5ewViqQiXtWr
-         /+kx131zxEmT0q/ZfGhXZmZzXXUWLkGa88xBOnl1w1EhoTa9j0IhgDRIKQKB+e2cHZaE
-         +dJ//AYrH56dqdU2azxMFshlEHAKGit9qUbhCcCEVP/Tbj5P5zE1/M4AtQ7TENXxPDBt
-         Wsj+Oref7Aunzg2G6havYh6dekCCPT/Diu8Z8ZalOmwWyhPA2KJHD+yvV/aEF/B2yHpy
-         yAcA==
+        bh=cheEarIyKVJUARXwRvLdgflVQA3knWwTd0Aeo5HkwRs=;
+        b=MKFulSnIWH4GvPNkt1OHFWo+qB4zTZ0WcKLLAvIGzn0Lhff/rrYuOHx3N1qQ16HBzH
+         spEgY/sGDmfDZEqHiyolcP0CzEdM2cF5nMCw5nH/25r71yZJXb4VIEskkbfEhBjbiCoR
+         yeSamMoJ3dixoySedJxw5cxrq8iyun3CbKhO+sSLWxqjo91cwdBhTpcXwMRMQHrMcki5
+         pwc3nouzzYzKv+/XauOdbnq6VCHkTovo6TavAlvkaf4NBYRkzAU2NPkMrhBbBrJYZeuK
+         Xh4N2q9O1Ba6JKQafXYlvxFzYA6bHmj2uZ7Ub5OvL6saMEhiXRFUjgaYmzlNonxOr2gz
+         mORg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750059103; x=1750663903;
+        d=1e100.net; s=20230601; t=1750059072; x=1750663872;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EQxXH/0dmAKUHVoHoL5MncVmJUg8FbHf/SfAogCBA2o=;
-        b=HaX8cxgmP5iMOSw0CxQwng/pW4nDSwNdqerQw+8XbjPBZlmP3w48YeRFw3UnldfMid
-         lsb1GbvKpIEYCKxRJDHxuCdyqTRK28jtn6yCGuV99xHr2/lwXJkRjV8b2/hO6VTTypQ4
-         xrDGvYzN4H/nfja+7Jas9Iu2wZRl45AxGqFl5D/vqiPmlX+Ux96h57M4TE1gF9AjnI8p
-         0CaUqg7HiUpk4HHasLeakWTO98bEt7iN/qUAWQT/1VDSnDlzzeXA0z4rItWWiftUdhNW
-         3YKoQ/FAdEScGylLGUeH09vm3xs6KgJNUgGewX85qDFTyMH+i87ubDP2gb2MFpZ+ad1A
-         fskg==
-X-Forwarded-Encrypted: i=1; AJvYcCWetrEYVaKMJMKO6OfJIS++N6AVQVfx4+Ss8bNE5+moVG0LCFY2udeKuVU88BnAJepA11cEV4k/AyUSQj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsPBuHiCYCVupWNzCZ1+UQRl42wcqueVQuCPlgpmHBHGltjU0S
-	yLQMWaX6zz4XKqs6wBM58SbrwbeFtqWf89JNRCuqQp9l5kdK+hfIR4zLqn+gWF1u9N/2AdG1ew/
-	TLdUO/58BJrnbdxGtPSAlWxp57CD06dP2wqBQHMHdtA==
-X-Gm-Gg: ASbGncutK6twj7usny6L24CMK4d58TbjgL+40u5ZhGEJmur+ybW/H1eJ9ZJDJdaZ9Cy
-	UtNkg/RTT8/2vlin9jxuoe0z7mg/Lyp68UR23EVVaJYrxMZ8WrPT4B/McAYAl9IVXNMEgZ+b65r
-	q3we3hxIXMijtVfoaUaFyLK80kHCBO3j30aJfp2O/yqlhqnA==
-X-Google-Smtp-Source: AGHT+IEjHI16GxKyLasfzKkpzXfv5K8fdxEJHSmO2c+vsZ5EW3jLub+wreQ1LSFrfqb50SzP3xXNNY/tkYcEG9qkkXQ=
-X-Received: by 2002:a05:6e02:1445:b0:3dc:87c7:a5b5 with SMTP id
- e9e14a558f8ab-3de07c2710fmr92538565ab.3.1750059102855; Mon, 16 Jun 2025
- 00:31:42 -0700 (PDT)
+        bh=cheEarIyKVJUARXwRvLdgflVQA3knWwTd0Aeo5HkwRs=;
+        b=FfYz1b6h2QxD2/Rih+qDRqW8R3LpswNZTahLmOKDaNbhcjRqHnW268UX/fl7JQRMPG
+         RJd3MLDBNNfiSvInKjdSn+uHsipMQPYDArGTNB0IZajX48JvHcKOIkCq+GoomZzDtmEP
+         5xVH0zOEc8k6XWe6jLVjh8NDsw9l1LRrZ5MeUXaoB70A4v53FsmqSH9YfSnqfT7i0Rxb
+         MM7P6nus8L4Js/uEeR0su+gP+6F8mPRqq/S42GU4B6lEb5+hp5mmiJz/IfPdLnSsW0/b
+         bUgcru7krzmaUrwy4JMRH//eDWvyH3VwuUazpF3NQzvtcvLi2KhVNRMz0PaAn3UVP8Ke
+         uJ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUpij9ltFNsKjunJ++0VekxzXKjClcdWIuwSRHUWdg6LCeJeuKGbMEUwfeytj7+/WvhPyVX/+zmZSK4tfw=@vger.kernel.org, AJvYcCWwoVQsgvgpuipoboxX+pUZGVvDPzkIrSJ/2ERi2SUWGc6FDh9Kzw/Zofj6W38uZvE8Ryp7wU8ie5cc9II=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjwtjyCPIK1iWMNGQ0u1w9OSSPvEZxsDK6gJqYSdlAQWMJw3C6
+	KA8Q8I5wtiMB1cUQM8GAuk9lnbUVvHU54B0FhiyCsVG9lN+UGjsSrPG9m/jD4eSz+MMInThmBEg
+	nYrFGMkmrS+r4NITwm5aBqh8zBHdZz64=
+X-Gm-Gg: ASbGncuFl7CPMTuFJK40gzwVaq3LGS1oeWjTvn30ukrPOTspmyvU+H3tVSDTMPuNoYG
+	tXQ7BSDMkJfEeH5h4o0649UlmCJR18yk+ky7u0s1bNFEQBKP8yr+OJifYtQ2gjTodStPB0DZRQ2
+	Ou1ReBw990LJWdukIAsK8WMrLX35hwCS1dXLvSX90a
+X-Google-Smtp-Source: AGHT+IFAqYUd3QpiI+ATQMIggtddyd5pZ5byJDm+wKZp9c0vvh4+WvPZLenvvopWZ+I4insDVZLiVfMwAJbeqfnmCkc=
+X-Received: by 2002:a17:90a:c107:b0:311:fc8b:31b5 with SMTP id
+ 98e67ed59e1d1-313f1ca1398mr15200699a91.14.1750059071687; Mon, 16 Jun 2025
+ 00:31:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604-v5_user_cfi_series-v17-0-4565c2cf869f@rivosinc.com> <20250604-v5_user_cfi_series-v17-15-4565c2cf869f@rivosinc.com>
-In-Reply-To: <20250604-v5_user_cfi_series-v17-15-4565c2cf869f@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Mon, 16 Jun 2025 15:31:31 +0800
-X-Gm-Features: AX0GCFv07zIy78CxiGqhmmuXUJ1bc3WRbaeMC8WS8lGUU29aYh3F-BEq_8IQZZA
-Message-ID: <CANXhq0pRXX_OMW2g2ui-k7Z_ZT+5a8Sra8oE28nBh5B9K2L5bQ@mail.gmail.com>
-Subject: Re: [PATCH v17 15/27] riscv/traps: Introduce software check exception
- and uprobe handling
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
-	rust-for-linux@vger.kernel.org
+References: <20250613194310.1128733-1-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250613194310.1128733-1-laurentiumihalcea111@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Mon, 16 Jun 2025 10:33:13 +0300
+X-Gm-Features: AX0GCFtn0hwbvtz7t5if-ZTv1RrgsBJVVoHPdrySbGFc57a2cboCkTDRMjfm2ao
+Message-ID: <CAEnQRZBHF4dwTEcaz2VQE9UYCu9aVapV4fuRtTXhvBdDDkZDWg@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: SOF: imx8: add core shutdown operation for imx8/imx8x
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 5, 2025 at 1:17=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> wr=
-ote:
+On Fri, Jun 13, 2025 at 10:43=E2=80=AFPM Laurentiu Mihalcea
+<laurentiumihalcea111@gmail.com> wrote:
 >
-> zicfiss / zicfilp introduces a new exception to priv isa `software check
-> exception` with cause code =3D 18. This patch implements software check
-> exception.
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >
-> Additionally it implements a cfi violation handler which checks for code
-> in xtval. If xtval=3D2, it means that sw check exception happened because=
- of
-> an indirect branch not landing on 4 byte aligned PC or not landing on
-> `lpad` instruction or label value embedded in `lpad` not matching label
-> value setup in `x7`. If xtval=3D3, it means that sw check exception happe=
-ned
-> because of mismatch between link register (x1 or x5) and top of shadow
-> stack (on execution of `sspopchk`).
->
-> In case of cfi violation, SIGSEGV is raised with code=3DSEGV_CPERR.
-> SEGV_CPERR was introduced by x86 shadow stack patches.
->
-> To keep uprobes working, handle the uprobe event first before reporting
-> the CFI violation in software-check exception handler. Because when the
-> landing pad is activated, if the uprobe point is set at the lpad
-> instruction at the beginning of a function, the system triggers a softwar=
+> Currently, the DSP core from i.MX8QM/i.MX8QXP is able to operate while th=
 e
-> -check exception instead of an ebreak exception due to the exception
-> priority, then uprobe can't work successfully.
+> firmware image is being loaded. Because of this, the DSP may change the
+> content of the firmware data just after it was loaded, thus leading to th=
+e
+> data having unexpected values when the DSP is reset (via run()).
 >
-> Co-developed-by: Zong Li <zong.li@sifive.com>
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/include/asm/asm-prototypes.h |  1 +
->  arch/riscv/include/asm/entry-common.h   |  2 ++
->  arch/riscv/kernel/entry.S               |  3 ++
->  arch/riscv/kernel/traps.c               | 51 +++++++++++++++++++++++++++=
-++++++
->  4 files changed, 57 insertions(+)
+> Fix this by implementing the core_shutdown() operation that will put the
+> DSP in stall during suspend(). The stall will be removed during the run()
+> opertion, thus guaranteeing that the DSP core will not be able to run
+> while the firmware image is being loaded.
 >
-> diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include=
-/asm/asm-prototypes.h
-> index cd627ec289f1..5a27cefd7805 100644
-> --- a/arch/riscv/include/asm/asm-prototypes.h
-> +++ b/arch/riscv/include/asm/asm-prototypes.h
-> @@ -51,6 +51,7 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_u);
->  DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
->  DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
->  DECLARE_DO_ERROR_INFO(do_trap_break);
-> +DECLARE_DO_ERROR_INFO(do_trap_software_check);
->
->  asmlinkage void handle_bad_stack(struct pt_regs *regs);
->  asmlinkage void do_page_fault(struct pt_regs *regs);
-> diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/a=
-sm/entry-common.h
-> index b28ccc6cdeea..34ed149af5d1 100644
-> --- a/arch/riscv/include/asm/entry-common.h
-> +++ b/arch/riscv/include/asm/entry-common.h
-> @@ -40,4 +40,6 @@ static inline int handle_misaligned_store(struct pt_reg=
-s *regs)
->  }
->  #endif
->
-> +bool handle_user_cfi_violation(struct pt_regs *regs);
-> +
->  #endif /* _ASM_RISCV_ENTRY_COMMON_H */
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 978115567bca..8d25837a9384 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -474,6 +474,9 @@ SYM_DATA_START_LOCAL(excp_vect_table)
->         RISCV_PTR do_page_fault   /* load page fault */
->         RISCV_PTR do_trap_unknown
->         RISCV_PTR do_page_fault   /* store page fault */
-> +       RISCV_PTR do_trap_unknown /* cause=3D16 */
-> +       RISCV_PTR do_trap_unknown /* cause=3D17 */
-> +       RISCV_PTR do_trap_software_check /* cause=3D18 is sw check except=
-ion */
->  SYM_DATA_END_LABEL(excp_vect_table, SYM_L_LOCAL, excp_vect_table_end)
->
->  #ifndef CONFIG_MMU
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 8ff8e8b36524..64388370e1ad 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -354,6 +354,57 @@ void do_trap_ecall_u(struct pt_regs *regs)
->
->  }
->
-> +#define CFI_TVAL_FCFI_CODE     2
-> +#define CFI_TVAL_BCFI_CODE     3
-> +/* handle cfi violations */
-> +bool handle_user_cfi_violation(struct pt_regs *regs)
-> +{
-> +       unsigned long tval =3D csr_read(CSR_TVAL);
-> +       bool is_fcfi =3D (tval =3D=3D CFI_TVAL_FCFI_CODE && cpu_supports_=
-indirect_br_lp_instr());
-> +       bool is_bcfi =3D (tval =3D=3D CFI_TVAL_BCFI_CODE && cpu_supports_=
-shadow_stack());
-> +
-> +       /*
-> +        * Handle uprobe event first. The probe point can be a valid targ=
-et
-> +        * of indirect jumps or calls, in this case, forward cfi violatio=
-n
-> +        * will be triggered instead of breakpoint exception.
-> +        */
-> +       if (is_fcfi && probe_breakpoint_handler(regs))
-> +               return true;
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Hi  Deepak,
-Sorry for missing something earlier. I think we would like to clear
-sstatus.SPELP in the uprobe handling case. For example:
-
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index c2ea999c1167..e8492bb57e09 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -349,8 +349,10 @@ bool handle_user_cfi_violation(struct pt_regs *regs)
-        bool is_fcfi =3D (tval =3D=3D CFI_TVAL_FCFI_CODE &&
-cpu_supports_indirect_br_lp_instr());
-        bool is_bcfi =3D (tval =3D=3D CFI_TVAL_BCFI_CODE &&
-cpu_supports_shadow_stack());
-
--       if (is_fcfi && probe_breakpoint_handler(regs))
-+       if (is_fcfi && probe_breakpoint_handler(regs)) {
-+               regs->status =3D regs->status & ~SR_ELP;
-                return true;
-+       }
-
-        if (is_fcfi || is_bcfi) {
-                do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
-
-
-When a user mode CFI violation occurs, the ELP state should be 1, and
-the system traps into supervisor mode. During this trap, sstatus.SPELP
-is set to 1, and the ELP state is reset to 0. If we don=E2=80=99t clear
-sstatus.SPELP, the ELP state will become 1 again after executing the
-sret instruction. As a result, the system might trigger another
-forward CFI violation upon executing the next instruction in the user
-program, unless it happens to be a lpad instruction.
-
-The previous patch was tested on QEMU, but QEMU does not set the
-sstatus.SPELP bit to 1 when a forward CFI violation occurs. Therefore,
-I suspect that QEMU might also require some fixes.
-
-Thanks
-
-> +
-> +       if (is_fcfi || is_bcfi) {
-> +               do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
-> +                             "Oops - control flow violation");
-> +               return true;
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +/*
-> + * software check exception is defined with risc-v cfi spec. Software ch=
-eck
-> + * exception is raised when:-
-> + * a) An indirect branch doesn't land on 4 byte aligned PC or `lpad`
-> + *    instruction or `label` value programmed in `lpad` instr doesn't
-> + *    match with value setup in `x7`. reported code in `xtval` is 2.
-> + * b) `sspopchk` instruction finds a mismatch between top of shadow stac=
-k (ssp)
-> + *    and x1/x5. reported code in `xtval` is 3.
-> + */
-> +asmlinkage __visible __trap_section void do_trap_software_check(struct p=
-t_regs *regs)
-> +{
-> +       if (user_mode(regs)) {
-> +               irqentry_enter_from_user_mode(regs);
-> +
-> +               /* not a cfi violation, then merge into flow of unknown t=
-rap handler */
-> +               if (!handle_user_cfi_violation(regs))
-> +                       do_trap_unknown(regs);
-> +
-> +               irqentry_exit_to_user_mode(regs);
-> +       } else {
-> +               /* sw check exception coming from kernel is a bug in kern=
-el */
-> +               die(regs, "Kernel BUG");
-> +       }
-> +}
-> +
->  #ifdef CONFIG_MMU
->  asmlinkage __visible noinstr void do_page_fault(struct pt_regs *regs)
->  {
->
-> --
-> 2.43.0
->
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
