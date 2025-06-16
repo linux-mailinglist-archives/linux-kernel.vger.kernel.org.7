@@ -1,137 +1,182 @@
-Return-Path: <linux-kernel+bounces-689005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318A7ADBA8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0507ADBA8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFE4D172D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:06:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA53173AE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB29F20E007;
-	Mon, 16 Jun 2025 20:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62412882BF;
+	Mon, 16 Jun 2025 20:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MwygWuha"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987E71F5847;
-	Mon, 16 Jun 2025 20:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="X4eg9QPP"
+Received: from forward205b.mail.yandex.net (forward205b.mail.yandex.net [178.154.239.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75961F873E;
+	Mon, 16 Jun 2025 20:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750104385; cv=none; b=UFUc5H/LfImWO2h/7t59yiIjLWqCiM1Vz67hu9sFa1pB3HraBwBuS3h1esXivFwYC+Xahw8SJPm8rKt3/zHR8StguRaC4lQtvsT/3mj2/ZZfnfDhlAEm39C1QL965pbI7GmibPv5tH299Zz+y52kHxpAe7ikmd1z3vUXzLqS8Gs=
+	t=1750104509; cv=none; b=ThGv2Lqq9V0ppR4zxgj+AhBxH+nT5vntbSq+6viflNynmTdqqTbBlROBdGGuSq9cYmY6vQ4xhgA2nDNbXeOCLgs8k6C+3599ZNH8GFP4m2VkUeACR/Ll/uptwGgWs+wnfRybQ+OTwdUCEPPzNfiZKa393CI9e6dRrjICDvQ6e4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750104385; c=relaxed/simple;
-	bh=DxKYfW2Y3BQiZFIE+AMWe+NyrlGjHl/jlQm63dGeKuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RMB7E08JIyZZXakdDLGdci7ItBoRFNfTEY2Y6E/dU9bYWL6WOi8Nk16NqPMicWW7ONcJ0v55nNpzLQsMotM+Sj6QmqR9z+uYncRp5Fydch31ZFfmRRXYoDGmZ4A3aXTyXW5gSacroSaHt79H7MxF+7OzqjANr3tMajKZHwEBl1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MwygWuha; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.1.24] (unknown [20.236.11.42])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A030C21176C6;
-	Mon, 16 Jun 2025 13:06:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A030C21176C6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1750104381;
-	bh=RWf4U2IMgfXaKMSLGJUCrHvubnG0tLPF0JXW2PD8mi0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MwygWuhajk7TGYV1hsriMnPH/Z615YS+VR6NW/7XY+ka4XNr/WLH2QUZibl6KRgys
-	 duta2oQez2pfYwZQIs/JdGdS7BHRSYlkI3IaA2ECLv+a5lZnTkfKCJiuOuMTv1PfU1
-	 VHKF/NIqb+R7AbxYyEWJNa2pTcbblAVqovZtzrig=
-Message-ID: <38127f1a-3761-48c7-8e95-1f677d6bd7b3@linux.microsoft.com>
-Date: Mon, 16 Jun 2025 13:06:20 -0700
+	s=arc-20240116; t=1750104509; c=relaxed/simple;
+	bh=+LwYjfXJzueB7HaMa0+cHKiOwLTDmmJ5whlPzH24Ljg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RLo6eVQDtnYMDUlNotik/C2SAH1qbZm4Rx+hVxaRS+VnQHg/UHIo3v/j0qDjxwPn4R66ebEnpkdi9Vc05bU+mMT4Z/2EaLsP3SxfsyqVqHzGEJZA5ZPOSQ8rCi+AOnUUKYgVD9qNS+bjgH2qggUWI4A0sFgXRRMPFiG3HjvtlV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=X4eg9QPP; arc=none smtp.client-ip=178.154.239.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d101])
+	by forward205b.mail.yandex.net (Yandex) with ESMTPS id 6624363755;
+	Mon, 16 Jun 2025 23:01:30 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2ea3:0:640:da3e:0])
+	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 4C7D660B5F;
+	Mon, 16 Jun 2025 23:01:22 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 91SLuw2LfuQ0-4O6sO5JM;
+	Mon, 16 Jun 2025 23:01:21 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750104081;
+	bh=NrkI11pzc6I77alUozshicWIJzB5Sj6lRW/o0Skdp4o=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=X4eg9QPPya0bErN2fEvwvQAuok5HbTxXBj9oGTok0h3/McMt/QHBimmY5aC3Nyq7u
+	 ZsISnjmFZUR7kjw6A63RWim88VnCN2nVspX/ZO2CTCCBOrjEl2wUVKohdeIxKUahES
+	 9xPufU6USArAvMJiypLF7KFnL28n0v6++qbuzAog=
+Authentication-Results: mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: onur-ozkan <work@onurozkan.dev>
+To: linux-clk@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	onur-ozkan <work@onurozkan.dev>
+Subject: [PATCH] Various improvements on clock abstractions
+Date: Mon, 16 Jun 2025 23:01:03 +0300
+Message-ID: <20250616200103.24245-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] PCI: hv: Do not do vmbus initialization on baremetal
-To: Michael Kelley <mhklinux@outlook.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
- <kw@linux.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
- "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
- "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
- "x86@kernel.org" <x86@kernel.org>
-References: <1749599526-19963-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1749599526-19963-2-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB41574163515870DB8E430C56D475A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41574163515870DB8E430C56D475A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/11/2025 4:06 PM, Michael Kelley wrote:
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Tuesday, June 10, 2025 4:52 PM
->>
->> From: Mukesh Rathor <mrathor@linux.microsoft.com>
-> 
-> The patch Subject line is confusing to me. Perhaps this better captures
-> the intent:
-> 
->  "PCI: hv: Don't load the driver for the root partition on a bare-metal hypervisor"
-> 
+A few changes to improve the clock abstractions and make them a little
+more idiomatic:
 
-Thanks, that does make more sense.
+1. `impl Hertz` functions are now constant and compile-time evaluable.
+2. `Hertz` conversions are now done with constant variables, which should
+    make them more readable.
+3. `con_id` is handled in a single line using `map_or` instead of using
+    nested if-else blocks.
 
->>
->> init_hv_pci_drv() is not relevant for root partition on baremetal as there
->> is no vmbus. On nested (with a Windows L1 root), vmbus is present.
-> 
-> This needs more precision. init_hv_pci_drv() isn't what is
-> "not relevant". It's the entire driver that doesn't need to be loaded
-> because the root partition on a bare-metal hypervisor doesn't use
-> VMBus. It's only when the root partition is running on a nested
-> hypervisor that it uses VMBus, and hence may need the Hyper-V
-> PCI driver to be loaded.
-> 
+Signed-off-by: onur-ozkan <work@onurozkan.dev>
+---
+ rust/kernel/clk.rs | 42 +++++++++++++++++++-----------------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
 
-I'll update it so it is clearer, thanks.
-
->>
->> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> ---
->>  drivers/pci/controller/pci-hyperv.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
->> index b4f29ee75848..4d25754dfe2f 100644
->> --- a/drivers/pci/controller/pci-hyperv.c
->> +++ b/drivers/pci/controller/pci-hyperv.c
->> @@ -4150,6 +4150,9 @@ static int __init init_hv_pci_drv(void)
->>  	if (!hv_is_hyperv_initialized())
->>  		return -ENODEV;
->>
->> +	if (hv_root_partition() && !hv_nested)
->> +		return -ENODEV;
->> +
->>  	ret = hv_pci_irqchip_init();
->>  	if (ret)
->>  		return ret;
->> --
->> 2.34.1
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+index 6041c6d07527..fbcea31dbcca 100644
+--- a/rust/kernel/clk.rs
++++ b/rust/kernel/clk.rs
+@@ -30,39 +30,43 @@
+ pub struct Hertz(pub c_ulong);
+ 
+ impl Hertz {
++    const KHZ_TO_HZ: c_ulong = 1_000;
++    const MHZ_TO_HZ: c_ulong = 1_000_000;
++    const GHZ_TO_HZ: c_ulong = 1_000_000_000;
++
+     /// Create a new instance from kilohertz (kHz)
+-    pub fn from_khz(khz: c_ulong) -> Self {
+-        Self(khz * 1_000)
++    pub const fn from_khz(khz: c_ulong) -> Self {
++        Self(khz * Self::KHZ_TO_HZ)
+     }
+ 
+     /// Create a new instance from megahertz (MHz)
+-    pub fn from_mhz(mhz: c_ulong) -> Self {
+-        Self(mhz * 1_000_000)
++    pub const fn from_mhz(mhz: c_ulong) -> Self {
++        Self(mhz * Self::MHZ_TO_HZ)
+     }
+ 
+     /// Create a new instance from gigahertz (GHz)
+-    pub fn from_ghz(ghz: c_ulong) -> Self {
+-        Self(ghz * 1_000_000_000)
++    pub const fn from_ghz(ghz: c_ulong) -> Self {
++        Self(ghz * Self::GHZ_TO_HZ)
+     }
+ 
+     /// Get the frequency in hertz
+-    pub fn as_hz(&self) -> c_ulong {
++    pub const fn as_hz(&self) -> c_ulong {
+         self.0
+     }
+ 
+     /// Get the frequency in kilohertz
+-    pub fn as_khz(&self) -> c_ulong {
+-        self.0 / 1_000
++    pub const fn as_khz(&self) -> c_ulong {
++        self.0 / Self::KHZ_TO_HZ
+     }
+ 
+     /// Get the frequency in megahertz
+-    pub fn as_mhz(&self) -> c_ulong {
+-        self.0 / 1_000_000
++    pub const fn as_mhz(&self) -> c_ulong {
++        self.0 / Self::MHZ_TO_HZ
+     }
+ 
+     /// Get the frequency in gigahertz
+-    pub fn as_ghz(&self) -> c_ulong {
+-        self.0 / 1_000_000_000
++    pub const fn as_ghz(&self) -> c_ulong {
++        self.0 / Self::GHZ_TO_HZ
+     }
+ }
+ 
+@@ -132,11 +136,7 @@ impl Clk {
+         ///
+         /// [`clk_get`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_get
+         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+-            let con_id = if let Some(name) = name {
+-                name.as_ptr()
+-            } else {
+-                ptr::null()
+-            };
++            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
+ 
+             // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
+             //
+@@ -304,11 +304,7 @@ impl OptionalClk {
+         /// [`clk_get_optional`]:
+         /// https://docs.kernel.org/core-api/kernel-api.html#c.clk_get_optional
+         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+-            let con_id = if let Some(name) = name {
+-                name.as_ptr()
+-            } else {
+-                ptr::null()
+-            };
++            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
+ 
+             // SAFETY: It is safe to call [`clk_get_optional`] for a valid device pointer.
+             //
+-- 
+2.49.0
 
 
