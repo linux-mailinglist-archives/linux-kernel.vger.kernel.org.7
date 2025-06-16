@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-688990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF1BADBA4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:43:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3CEADBA55
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C063A50AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1917F189087E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451DA289E2C;
-	Mon, 16 Jun 2025 19:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200F32874E1;
+	Mon, 16 Jun 2025 19:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cx2HqPE5"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAQ5/FJy"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0091E2602
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 19:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E771E1E1D;
+	Mon, 16 Jun 2025 19:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750102987; cv=none; b=JyRES+/5n5+yqwXqJSNMqQWK5BQHJJX13dk7/hSDufL0zvNzPkRZjL1S7X+l9nn+fWSsFvOd8Jz4nj4zOTNle9EOoCfwVshKWX54S5LqI48C5ch6oKO39BsQttSolA7qRZR5J2J5H5lDeGNF/EB0GslmfPTmq/hk6Tbqeh8KK0o=
+	t=1750103483; cv=none; b=lcj2ZeRGtgKl81YxAuanICDwlxHc0Fp3OVHpJnDOmmtIC83TtyYWZVnljI3gjecAGW4mREUBwTFfwKncVclIyDZSXG23/q0iermQWtbVC5zOhbxxFdlczZNUyqAXkZJZwqYpyM2ebB/Q+R636nYEkfJC49cFqVOAgCg88bpJQi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750102987; c=relaxed/simple;
-	bh=4GXtdJIt4heRHXVxGyZI7LVV8sINiu3XKNwn1Nmm8ac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxBw1P+8wTa5iCZWdFXeUBsR6bqceQSkfyoiVhm1gEKN4FKuJePDQlWoYkoWBkfZ1FeLum8bWsdlHHPrQwR7joi2SjdOd13cOKFGFYUAgt+RTjLi7dfgz7yC4VZHqAxzB7TQGv7epPguoPpdWTFExt+FdqeK2A1FSdhyB4ZlVn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cx2HqPE5; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-73972a54919so4270266b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:43:05 -0700 (PDT)
+	s=arc-20240116; t=1750103483; c=relaxed/simple;
+	bh=IFXcxDM9pgKU0OocNcFji54k0TH9pV4m21cMlj4+kcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qtP51lAAbN3s4YePGgiMpA/pND2qqyLujc/x42CtC5ZhfQ7T8JsogRf99B+RkKNaoWdi13LRSxgOLhkNID77WNWq5MR2YAi4ItuWtQbJq8e/n0YHlD5AhZIm43mqQfHQXIvMiStiRBSnA/nd4DPlahH8pbvmZc0lj8wQs+HYlT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAQ5/FJy; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b0db0b6a677so4523765a12.2;
+        Mon, 16 Jun 2025 12:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750102985; x=1750707785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wt5vEBoX/7CZPzuyH4aIpdA7WQr2k5uAvo+zHY/RWMw=;
-        b=cx2HqPE5ITLOKP+itfe2BXrgNdhPZb+jEZjU9WLTxUjfKorOhsZI/s3nZcfRBUGcCs
-         0M1rnl3tlnbtaN+cdbPnTTykvmIWwvFFnqoGE+yXkGeeeLmQz6WCqU2ywL4Hb1NcYBZZ
-         I+y9YWS4PuB47HnC5QhIQDgVZA5PAVnsseRow=
+        d=gmail.com; s=20230601; t=1750103481; x=1750708281; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1kZ2DRrGUR7QsNSeLGbTWtBPiubGAHbShPimdlaNxWI=;
+        b=bAQ5/FJyq3bZ6oO/ed7q+w1r3lrf5yXiZCPvnC+ciO+2HDkiFZ3CicvaqRyVzAaaaH
+         0o9zUFmI9SWx/Be4WgGfYrLumN0jT7YJMvruMIDVP+FUgR3uEvQJs5cizxnTHtxWyn6t
+         2jz3LS5ONS/gNti2AMRLXv+lK8et290/mKxRfzkS2r92hapBe4GvblUbiWrYl2n8DTHb
+         AqK6lDs/GndPx43+QxdygrhJtVcjob7CjRMRcn+9l6bNsviGYhOiQzlgktrpth8PDQJJ
+         msl9k9kh+FFFPxANisvvIy5QMcmjR361rkP4T9xtLtdvpaxz2/mRVwUbAWLTO9MtBaWg
+         FBDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750102985; x=1750707785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wt5vEBoX/7CZPzuyH4aIpdA7WQr2k5uAvo+zHY/RWMw=;
-        b=ZzZ2DZkuLSIodcZwPdsCgqyMPiAa+Rv/1F8Zinh/81J3QFw+MwDZENwgOhMa2SwD3k
-         zpv6+x6kIrVQBHs8LZeFdybBiBmbm3m1TmaYGddMh3RwjvA3uEr0Q44vn1XajgZwiWDo
-         YixK3uXiO1PcevVZ3FY1M9qCJ1i74v8OVAsgw/EKkAa1eFr/F0IDJUyJaP3nxqRpXs74
-         9xkBX247iSmBgI7oyyhbam5PCMsInTgYj6Ylk/WGU3KUausC5G3XgOUjiwqZiwwADcHl
-         yg8T3RPNC4OUyquodroIK4ObZi37j6WdWYAPPlLjKbQT0dmbnzFcaDUfZLkhlQUfkWUo
-         /aiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc4BoZK2/1jqWqEWKasEGVLAvQcXEy2he1oOnRA3gcSAOCuVPtRFG2NQJjIbbxUF1jNxe9ww2z3TdLzXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgO0DPqEpMMGyP7JGII5Ux2INZFkAugGCRf0Xn4EMieJGuINje
-	5hywGODADD0rsZzv2thNDqxrTVD1pfVIlaCBOvwu7gxRhVV5Gmi87SJ65gPY2wNqh4459KajWWH
-	DTCA1XqWxRE+nFozWfUxJ5cRmHGD4BquT5DsW0DKl
-X-Gm-Gg: ASbGnct5gky48t4sJMb7W0i+vfz2GZ+g2aNA7fngbAxBdi1cTG0vT7hcOn4gWYco8vN
-	aHHue5NbQamPbatY54D08NpfYqV/MN5NkKm2SDqrtjGKjFuW5epx98WH6OAjtxe4eRIoHGKpvil
-	KzrbUaQ+fXdJ4mxmB3oRD7WpRtDu01XX6yWfmkshHZzw==
-X-Google-Smtp-Source: AGHT+IHg3+dqJWa4H+fZqAabDzILCcABfw73ZiZnurFMysI5YMbqJFlOWJudAKNQbZsNaHnRlMJ68o95/n7AayxSldk=
-X-Received: by 2002:a05:6a00:3a04:b0:736:d297:164 with SMTP id
- d2e1a72fcca58-7489cf6aad9mr14779236b3a.1.1750102984856; Mon, 16 Jun 2025
- 12:43:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750103481; x=1750708281;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1kZ2DRrGUR7QsNSeLGbTWtBPiubGAHbShPimdlaNxWI=;
+        b=pr3IXNX+JxY2x5rl04EbEkVBVzNwNjuiEQJ6k70s8Vyhig1/Szac3CIJ00q3sYnFwK
+         P+hIFxQycQeaGEHTn2x5WKx1kHXUBLEkzFOmpBS9Cl56JDjQpJGEA7Gnbbka/KK2ya/z
+         YxKH4TJO6Cnqx3BsKznlB8tPyCz58yU9JRo/ffkUJsccC/PhGmgQgb76VpSwWNcQzJG8
+         0XmBLv6vGp7UdkcqD3TGVkxXpWEqa1mQqI09vAIN9160MhqTJ3e/W7fyuBTVXRK44XWv
+         djaj8MaCgbxDF5/NaWmswQSocxeSP8LhB8jntYxbmcv2CM5OT2ediFkOqq4rlUxlQBFg
+         t54g==
+X-Forwarded-Encrypted: i=1; AJvYcCUShrKpZt+aBp5gTDliIE2X0wOF92vBv7/6HZsAW3bnMBsEpU3mHNtmyCLUSh2kn/UWhuR5Y8YxUds=@vger.kernel.org, AJvYcCXrg9+U9Z7p+RdAJBNay84y/5CP7CzwszFR8w0gT9OhsILXhyw71Ab3ywV5BkNV14uVfwXDMLlMMH+btTEa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQLJ6Cu3p/r8y+7MY9/reYVfV5iUN4yA6fGHGj+3QS6Hh481Ap
+	ijd08KvbEqJOVwRikuzE5ySCnzdTPfMqP/tAbKwpUAagM1OiTZAKyIfC+vbBaw==
+X-Gm-Gg: ASbGnculNXiizhe6rVSbNm57TwdVOEB+VIe9eNeclPg4UPO0EE7sYs5vyi6zpW2OwGs
+	pExcXx74VWQxZlB/OUg8lzw0btKMguVQfHe5WtKBu8XKlwlrp/P3cjDEbS86it/ZHt+CE8ek1hW
+	NyyW+dtdPB/9CYanHYRHxckIZlJ+4OTGVLY6LrufN6t8du0AFYFqpSy67hTw3/nuNqQnr4eFGWA
+	pkUqx4LVGy7OWxGXkJvKtYiI/XH4i4o5XZf7VA0BPeycG9ogi0l4a/n9/f6fZyUs3DpoXsyZwWR
+	TtWYoEnXCsay7yyc7J8UT8qI0dRgO2j7T/cRDt+1TIBEIQCI+XgjWgvEmH781Aj09w==
+X-Google-Smtp-Source: AGHT+IF8qBNhRy32BR7c1mQ/1+zzbHKQNi8eo5Kfz6Cmd8PRQK5CNCK6AcspJ9Wblm2fcbC4M36Etw==
+X-Received: by 2002:a17:90b:2d47:b0:312:db8f:9a09 with SMTP id 98e67ed59e1d1-313f1c380f7mr20083938a91.14.1750103481075;
+        Mon, 16 Jun 2025 12:51:21 -0700 (PDT)
+Received: from itsmeut ([103.215.237.35])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1b59ed4sm9078880a91.39.2025.06.16.12.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 12:51:20 -0700 (PDT)
+Date: Tue, 17 Jun 2025 01:21:16 +0530
+From: Utkarsh Singh <utkarsh.singh.em@gmail.com>
+To: linux-bcachefs@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kent.overstreet@linux.dev, corbet@lwn.net
+Subject: [PATCH] docs: bcachefs: fix spelling of 'hierarchy' in idle_work.rst
+Message-ID: <aFB1tGW3Iwf0isZ3@itsmeut>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616133147.1835939-1-akuchynski@chromium.org>
- <20250616133147.1835939-7-akuchynski@chromium.org> <2025061623-ammonium-outskirts-e89e@gregkh>
-In-Reply-To: <2025061623-ammonium-outskirts-e89e@gregkh>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Mon, 16 Jun 2025 21:42:53 +0200
-X-Gm-Features: AX0GCFtdGIjZUFsa_hlqAkw8MFj1EgMmaIch8V2HBLolVrJ7BiBJkQmysNKbhAw
-Message-ID: <CAMMMRMebxSLorxTRzre6MDEn0bdC3hrNVQzZyf0NH=TNUk+YGw@mail.gmail.com>
-Subject: Re: [PATCH 06/10] Revert "usb: typec: displayport: Receive DP Status
- Update NAK request exit dp altmode"
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Guenter Roeck <groeck@chromium.org>, Pooja Katiyar <pooja.katiyar@intel.com>, 
-	Badhri Jagan Sridharan <badhri@google.com>, RD Babiera <rdbabiera@google.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jun 16, 2025 at 4:15=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Jun 16, 2025 at 01:31:43PM +0000, Andrei Kuchynski wrote:
-> > This reverts commit b4b38ffb38c91afd4dc387608db26f6fc34ed40b.
-> >
-> > The commit introduced a deadlock with the cros_ec_typec driver.
-> > The deadlock occurs due to a recursive lock acquisition of
-> > `cros_typec_altmode_work::mutex`.
-> > The call chain is as follows:
-> > 1. cros_typec_altmode_work() acquires the mutex
-> > 2. typec_altmode_vdm() -> dp_altmode_vdm() ->
-> > 3. typec_altmode_exit() -> cros_typec_altmode_exit()
-> > 4. cros_typec_altmode_exit() attempts to acquire the mutex again
-> >
-> > This revert is considered safe as no other known driver sends back
-> > DP_CMD_STATUS_UPDATE command with the NAK flag.
-> >
-> > Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
-> > ---
-> >  drivers/usb/typec/altmodes/displayport.c | 4 ----
-> >  1 file changed, 4 deletions(-)
->
-> Why isn't this being sent as a separate patch for 6.16-final?  And why
-> not put a fixes: line?
->
+From fe1a12fe8f5342e576b37c51aae101b52fc5f528 Mon Sep 17 00:00:00 2001
+From: Utkarsh Singh <utkarsh.singh.em@gmail.com>
+Date: Tue, 17 Jun 2025 01:10:56 +0530
+Subject: [PATCH] [PATCH] docs: bcachefs: fix spelling of 'hierarchy' in
+ idle_work.rst
 
-Hi Greg,
+Signed-off-by: Utkarsh Singh <utkarsh.singh.em@gmail.com>
+---
+ Documentation/filesystems/bcachefs/future/idle_work.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The issue will emerge only after this series is applied, so 6.16
-remains secure as this code is not executable.
-I will submit it as a separate patch, with the relevant tags included.
+diff --git a/Documentation/filesystems/bcachefs/future/idle_work.rst b/Documentation/filesystems/bcachefs/future/idle_work.rst
+index 59a332509dcd..8421b2ab65a2 100644
+--- a/Documentation/filesystems/bcachefs/future/idle_work.rst
++++ b/Documentation/filesystems/bcachefs/future/idle_work.rst
+@@ -11,10 +11,10 @@ idle" so the system can go to sleep. We don't want to be dribbling out
+ background work while the system should be idle.
+ 
+ The complicating factor is that there are a number of background tasks, which
+-form a heirarchy (or a digraph, depending on how you divide it up) - one
++form a hierarchy or a digraph, depending on how you divide it up) - one
+ background task may generate work for another.
+ 
+-Thus proper idle detection needs to model this heirarchy.
++Thus proper idle detection needs to model this hierarchy.
+ 
+ - Foreground writes
+ - Page cache writeback
+@@ -51,7 +51,7 @@ IDLE REGIME
+ When the system becomes idle, we should start flushing our pending work
+ quicker so the system can go to sleep.
+ 
+-Note that the definition of "idle" depends on where in the heirarchy a task
++Note that the definition of "idle" depends on where in the hierarchy a task
+ is - a task should start flushing work more quickly when the task above it has
+ stopped generating new work.
+ 
+-- 
+2.34.1
 
-Thanks,
-Andrei
 
