@@ -1,189 +1,135 @@
-Return-Path: <linux-kernel+bounces-687829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E44ADA9BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:44:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADBEADA9BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A7197A6926
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83DDA1896BDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561E02139B5;
-	Mon, 16 Jun 2025 07:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE1E21171B;
+	Mon, 16 Jun 2025 07:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b="Cirxe2KQ"
-Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bB22ruTR"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29992116E7;
-	Mon, 16 Jun 2025 07:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7422204863
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750059792; cv=none; b=O7j1ni1k/Os+9ocp+svZ00caOwkPuugSb706OTXDg9x4BBL+Nk5eBP1M7YpGthM19WglqLhyKGcFmSLppcTCREx7vggCCoto3jhCjyKIL1skbFAP+KpDUZgjsfn+z3f06v+EvQiBJKFhlN32hg4mkDgrp4LB6suDEGp85Z/eG8E=
+	t=1750059784; cv=none; b=JwK2Skq238JYWaE09m71ZZzz0sczcNG8FaoLpqkUfpIsxYcxMetLbtg5gE//Ac+mKtfHz2ucpm6oVjNBXHS1H3lir/pVptl1cmM4bhTGfcXMFsU5QQ3bpNtMe+8rnumG0IxDeu5cttj82nthd3hHMvL+3DVowEMckrjfDZwjXNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750059792; c=relaxed/simple;
-	bh=sdOv8I5FszEKtA9uQQNoGfF6Znmcu/87+GwqjzHPmG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GhgW5U8q2Nq1P0wDByEtvTFewfFz+Pb+TeLu/18jYQJhvIl/E81dZOwo9ApeKA9lLNAgh4mK1p9m9ZKXq9Ns+Mokbq9CorNQgrsbBprsM7Kw6Hn1saZgnC5roQbLqmNX9HXRLvi8w+Q2DePefYjNO+yg/gDqOlzd1rUSeDsR5tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl; spf=pass smtp.mailfrom=jjverkuil.nl; dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b=Cirxe2KQ; arc=none smtp.client-ip=185.233.34.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jjverkuil.nl
-Received: from smtp.freedom.nl (unknown [10.10.4.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by dane.soverin.net (Postfix) with ESMTPS id 4bLMRh5cr2z1BNS;
-	Mon, 16 Jun 2025 07:42:56 +0000 (UTC)
-Received: from smtp.freedom.nl (smtp.freedom.nl [10.10.4.108]) by freedom.nl (Postfix) with ESMTPSA id 4bLMRh0HYlz2xTl;
-	Mon, 16 Jun 2025 07:42:56 +0000 (UTC)
-Authentication-Results: smtp.freedom.nl;
-	dkim=pass (2048-bit key; unprotected) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.a=rsa-sha256 header.s=soverin1 header.b=Cirxe2KQ;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jjverkuil.nl;
-	s=soverin1; t=1750059776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ji9EjV2f/+C+4sR5G+qqR2R1PnJeGvOchiXD3Nn58Fo=;
-	b=Cirxe2KQR/k/ycrZxTIx0eGE8pkP0AzTROZeEbuA0xnkO+xORVklOKhHf/q9GOt22EGF+Z
-	9k9cZ32LUZ6sCqC+wcJu627YMLkJOndkYloRnFfQ+z/jGb3qn2+N/TfT9X9nDVtFJn9n6X
-	thp/2uuspI3+BwdroQMeB7e/IKpM00roSeOG19CS5EljDL50jvU9dPssGonbfLlFCkc4DY
-	kUF5MwI4DJ/rfnqIi7mpTbhxeOG1PvwaAth9j1vT5hjSdW4dQ6Z1xjPg6fGq0E2VXS9ICZ
-	csT9WlZpTlFlgpyUqdaNC2dtJoW8cHmCWppCabGJbaikMClTDtG35lyM1qNCfA==
-X-CM-Analysis: v=2.4 cv=d/oPyQjE c=1 sm=1 tr=0 ts=684fcb00 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=0Q78ZbYSvavFInoFntYA:9 a=QEXdDO2ut3YA:10
-Message-ID: <1f014140-a4fe-400c-8ba8-3ad0a42375d8@jjverkuil.nl>
-Date: Mon, 16 Jun 2025 09:42:55 +0200
+	s=arc-20240116; t=1750059784; c=relaxed/simple;
+	bh=XmwoZ/1rXiFFhp5Ery36mi7aKpTwkqPeml15koxIPs4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PWHxA4fOoucCTjVURWBeRq/l02g2tOkyPLV5qR1P6ktgcjOvoCvh8N9wz0GsEH2l6uIV0mmLZlX5Zd+GE3qc+OzYZDL2zA9c4y+na4g/BCitk+u/fAEJ2AxmMFwvxqDo1CZsxqnUrB0iRpVSzNdOvB7pfv/PqXIX8Zo1H5Nw2Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bB22ruTR; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a375e72473so2345792f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750059781; x=1750664581; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WTU9Zax5kLpMeKPmyeLAiww8adzxErGgDJ424AqFWP8=;
+        b=bB22ruTR1CRc4zosTiyYLHOhV3+wlgE6YQfD1gSlbnsY7MzW3GJSqvCD0uKJfmiJJe
+         m6pCkdGQ/T+N6n8F6RuGTLmLowFvLkv3FMxD81Uh/o3nBDazSZWqKPIiKyVEFroHMlFb
+         ReDTckMqu7lxNCq89O446IvHrRd+8wqNeJjqAMj6U46r4UhcxSrRT1mYFLnWd5PT4iki
+         JZl47NO10bZSaR1CnBh9/Z7Tm5yEZJwwcDwBpOHii5QtKYRNZ4hcRy/1sAtTSAJVdS79
+         u1R+oM8OnLCi/jUmhQlPZ1pPOqTb3ib+jlrnnEL6m6/b5mf2uARkKnipb40vNIhA+fM3
+         uGRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750059781; x=1750664581;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WTU9Zax5kLpMeKPmyeLAiww8adzxErGgDJ424AqFWP8=;
+        b=kR+4xHHuSlAxG7C+KL25KbjKCHIf9KgfFXYh/o5Z8WSMpQDydYRvEyKTNAUmD/gow3
+         bOOGYbm/4y38BpyGABLyncMNekfEEdZea+Sz4eUbH7Bml8iPpwiu+uBvMoQXESyIAfED
+         Jd7vlSVrvPHZNaZCxnAWIa3xlo2ITUwh2jiAe3ozVIGpv1vOmPxop8RaW5AeW1Uhl0vJ
+         3JU8NRjOwDqhYsAvl7r0SkpldtBnL8SPBGelLQbiRmDZ691rIErlyHMhlJqC03ty9fRu
+         OYIZQld4/O1wGq+Zy5Ouef6aWkHDNuzTWmY7xCcgj2D/tAq1dh/X2EUkHLLKY42kpVzU
+         piiQ==
+X-Gm-Message-State: AOJu0YyNv6mUSq0EHRRytvvc5uRIYdYgSo8CUOf942FaWVLXKdKFQWMt
+	FQ4uCkL0O4XjuI/FfW4XTsLoG5MyNDeFejtNtyOmiPqxOq2BKTfoo2sKlq7vohFrfn6CVPes3dU
+	jXVpr11A=
+X-Gm-Gg: ASbGncsW8Bvunedcelk3Hthv3kTUPRDh/iKzr1VUY6roKE/x8GuVNjFJYEUAKVrOVYL
+	hzAs/vnJl/1otKNz9FHQcZoriFttrHKucca9OCat23bymoAmZzH5LwCKl7i/QKR8xUzD4E5qXlY
+	fuuIrLey/S+wdx09Lc8n1y1jUGXWOXqV2DQ3fjdy8Fi6iX/dgfSdYEiJW9PZT8HA84Fbm1S9QhE
+	MmNnNA7HHjmXUhHSTvcrOLmW8TYBmk/aA+x4ePtqd6af/eVokC2C8+QjZHqXc6DHrPJerF31eQ/
+	akJnRSpRJZ4IQFKonnqbwhSZ8Wd+s58lvGTqsjuuAGMgyNk3LW0muIPQASLsOjc=
+X-Google-Smtp-Source: AGHT+IGNJS0KEiSwDJqSBbXx8uRkNhJkRtvXE4ajBKXtNWO8NPC5+V6AIpPTIVHjojheL91aJSa8eg==
+X-Received: by 2002:a05:6000:25c5:b0:3a5:26eb:b4af with SMTP id ffacd0b85a97d-3a572373c7fmr6714675f8f.18.1750059780880;
+        Mon, 16 Jun 2025 00:43:00 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4238:f8a4:c034:8590])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54d1fsm10151340f8f.2.2025.06.16.00.42.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 00:43:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-kernel@vger.kernel.org,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	tglx@linutronix.de,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Keerthy <j-keerthy@ti.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] gpio: Use dev_fwnode()
+Date: Mon, 16 Jun 2025 09:42:58 +0200
+Message-ID: <175005977568.15490.4738567496048769972.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250611104348.192092-6-jirislaby@kernel.org>
+References: <20250611104348.192092-1-jirislaby@kernel.org> <20250611104348.192092-6-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 4/4] media: gc2145: Fix the RGB MBUS format
-To: Maxime Ripard <mripard@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Mats Randgaard <matrandg@cisco.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hans Verkuil <hans.verkuil@cisco.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>
-References: <20250612-csi-bgr-rgb-v1-0-dc8a309118f8@kernel.org>
- <20250612-csi-bgr-rgb-v1-4-dc8a309118f8@kernel.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hans@jjverkuil.nl>
-Autocrypt: addr=hans@jjverkuil.nl; keydata=
- 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
-In-Reply-To: <20250612-csi-bgr-rgb-v1-4-dc8a309118f8@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spampanel-Class: ham
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 12/06/2025 14:53, Maxime Ripard wrote:
-> The GalaxyCore GC2145 is an MIPI-CSI2 sensor. is an HDMI to MIPI-CSI2
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Is it a sensor or an HDMI-to-CSI bridge? This looks like a copy-and-paste
-mistake.
 
-Regards,
+On Wed, 11 Jun 2025 12:43:34 +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> 
+> [...]
 
-	Hans
+Applied, thanks!
 
-> bridge. Among others, it support the MIPI-CSI2 RGB565 format, listed in
-> the driver as MEDIA_BUS_FMT_RGB565_1X16.
-> 
-> Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB565_1X16 to
-> V4L2_PIX_FMT_RGB565.
-> 
-> However, V4L2_PIX_FMT_RGB565 is defined as having its color components
-> in the R, G and B order, from left to right. MIPI-CSI2 however defines
-> the RGB565 format with blue first.
-> 
-> This essentially means that the R and B will be swapped compared to what
-> V4L2_PIX_FMT_RGB565 defines.
-> 
-> The proper MBUS format would be BGR565, so let's use that.
-> 
-> Fixes: 03cc7fefbb09 ("media: i2c: gc2145: Galaxy Core GC2145 sensor support")
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/media/i2c/gc2145.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/gc2145.c b/drivers/media/i2c/gc2145.c
-> index ba02161d46e723d14e8670ef89ba10b270d7d178..12ce1c7aa0a9e028bd7d4c84356e0e166294a1f6 100644
-> --- a/drivers/media/i2c/gc2145.c
-> +++ b/drivers/media/i2c/gc2145.c
-> @@ -579,11 +579,11 @@ static const struct gc2145_format supported_formats[] = {
->  		.colorspace	= V4L2_COLORSPACE_SRGB,
->  		.datatype	= MIPI_CSI2_DT_YUV422_8B,
->  		.output_fmt	= 0x03,
->  	},
->  	{
-> -		.code		= MEDIA_BUS_FMT_RGB565_1X16,
-> +		.code		= MEDIA_BUS_FMT_BGR565_1X16,
->  		.colorspace	= V4L2_COLORSPACE_SRGB,
->  		.datatype	= MIPI_CSI2_DT_RGB565,
->  		.output_fmt	= 0x06,
->  		.switch_bit	= true,
->  	},
-> @@ -696,11 +696,11 @@ static int gc2145_init_state(struct v4l2_subdev *sd,
->  	struct v4l2_rect *crop;
->  
->  	/* Initialize pad format */
->  	format = v4l2_subdev_state_get_format(state, 0);
->  	gc2145_update_pad_format(gc2145, &supported_modes[0], format,
-> -				 MEDIA_BUS_FMT_RGB565_1X16,
-> +				 MEDIA_BUS_FMT_BGR565_1X16,
->  				 V4L2_COLORSPACE_SRGB);
->  
->  	/* Initialize crop rectangle. */
->  	crop = v4l2_subdev_state_get_crop(state, 0);
->  	*crop = supported_modes[0].crop;
-> 
+[1/1] gpio: Use dev_fwnode()
+      https://git.kernel.org/brgl/linux/c/7b2c2f1eb3914f5214a5b2ae966d7d7bb0057582
 
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
