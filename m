@@ -1,83 +1,258 @@
-Return-Path: <linux-kernel+bounces-688466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23250ADB2C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:00:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DB6ADB2BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D46FA3A78D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F90018883EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295542877F3;
-	Mon, 16 Jun 2025 13:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805452877EC;
+	Mon, 16 Jun 2025 13:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UE9qhnox"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8ULzQPh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8321F2BEFE3;
-	Mon, 16 Jun 2025 13:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D9D2877C3;
+	Mon, 16 Jun 2025 13:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750082234; cv=none; b=WhaPbZivmZHk2ByELu9JlLT9rNbqpSuXsDJHiEniTl5y5r7fD12oJU1KOnlBeqOmFE3J5+vQmCG9+w3Kh66tNDSG6XPL2q5ykK/NaYJUHjYa66QCSbc+FLEVdq/Ncli79zb2IcWM1y7t1m2ArqWqsGz75vuN18FFsDn1i8e2uxo=
+	t=1750082260; cv=none; b=F1v1Cll742yvFFip+XH5C0iGMHCit0Ritlozu9y8MA8mBB/e3utJuFjsVXuDDL5Ph80PFb0vL81JIesVtApONqlgUru8L8Tmb0rIzb3xnLbxAXVcI3WfGbFBDqmykk5zJw8AVI0t/JyRx393IxMnTA2RCemeGZX3gvguPURhv70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750082234; c=relaxed/simple;
-	bh=Hk7Va6Iu364kbEVxUitn8McLv5eF7J6RIuH3M1AERsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0VzSau54rP+Lv+NxMevu3YT4kg/ga5Nk6/W3TY5yrDfAXjLbLs5RpUOmbp9sreYG9Gup+HIcWtXosPfbQswxuv1EAJF8TdmB3+IRXrv/ONSuLMrSXj5t/2YVkl7cisCkFVMwr5d7FRtXCC5soumRnUTq8WPSVxBwfaqXds36jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UE9qhnox; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B69C4CEEA;
-	Mon, 16 Jun 2025 13:57:11 +0000 (UTC)
+	s=arc-20240116; t=1750082260; c=relaxed/simple;
+	bh=NyizBTDfDWXK6sw8uHD082UVWglR8ES2/VkYsuwaR4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sm4rxNXAhttsOerwuPaZ8lu5cwfImgC5dxr6MpwHpMbHeI1EOaOeVqKeLCSlMoNcRv/sjLoo9YJcYxyVK+1qkn0Stp9xIUipPdS0y78P5ghlcgHAt17pkQXUMo+7JtEb75R9JhOvN+BoKGU8D6C5Tsqq37+7RTgRnZGZTnfF6vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8ULzQPh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30632C4CEF5;
+	Mon, 16 Jun 2025 13:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750082234;
-	bh=Hk7Va6Iu364kbEVxUitn8McLv5eF7J6RIuH3M1AERsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UE9qhnoxXCy7fn7Vkg4R8LGvz1WsK4S0q+UOFp4Q28sm6seV5+oPaWpvdGvwff3KQ
-	 cAOgU6Koid7IA9a06+w/va8VYZLjc8+X/LMP2AeK15Ya8jQN6zfL7gUISBucY+QDQZ
-	 Ne/owr9ilELQreDyVs/XkDYNZRRlnFb81Yfvyeq2+Cjwc1DwWkWjJExhz4Yfxhn0wj
-	 E/Mr4bCiaNR1K3tYvq0CyKX/j4/Gt880kcXT0Ugf5/BZhg1jqBE03n090NgCEl+oT3
-	 sX5jk1NGT6kTmPcN1e5P6izNhkaZ30hI8/aMZ1DNiiJIjT1mTTd1Ua6jf35Ydy+lv8
-	 K+ubGkgi/FIFA==
-Date: Mon, 16 Jun 2025 14:57:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Thompson <davthompson@nvidia.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, asmaa@nvidia.com,
-	u.kleine-koenig@baylibre.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1] mlxbf_gige: emit messages during open and
- probe failures
-Message-ID: <20250616135710.GA6918@horms.kernel.org>
-References: <20250613174228.1542237-1-davthompson@nvidia.com>
+	s=k20201202; t=1750082260;
+	bh=NyizBTDfDWXK6sw8uHD082UVWglR8ES2/VkYsuwaR4w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H8ULzQPh/xdtTiMfI3eihUsGI91soNyJ6AwSVhjKDO4IOJN3V4MbJf8Fy4Hjq/oPp
+	 2Nz2B/U4yIFMJwmnbkUKrRHPQlmnGxkQzpjpiCeObGnKgdgWNzsVdGM/wnAIfKzp77
+	 OsClgdjfqK9hC7ntKJziHbTNlOcBTkzZtkxBTl+MoNrw4Prth4u5dv8z+GPcY3x8+Z
+	 U2k1ZLAOc0Hf27lZEchtd7fnehD5vtVw0ubzu82UT3OAUYvJ2sHBVW6ZPHM2SMa5/b
+	 3BkA+Ysg02RQ/8M/W2p7dGMiij+LRkAAw0f9T5daEgcrGL2oTSRbJk3qI+xDTglt9P
+	 Rxa8e8y8zLkiw==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad89ee255easo836057666b.3;
+        Mon, 16 Jun 2025 06:57:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSMzq7zjG0+pq767/j8rNRPoNC3p3dbsKCBBq5/iwKc36CQCJ4NftP82wnfaR5bzqXkHJA9VB5I4pr@vger.kernel.org, AJvYcCVuOgM4yom8JPJYbOg2SN3VRtAXK9gFJuZn7zUZr7nuPDf2DRJy9PoGNw6fHc92by+RUmWSYZeGi1QePTbn@vger.kernel.org, AJvYcCVwanjuhQLiqdYS85HR6yv3NYS26HDXK4/fieeR/FNdiF86OkhijwETWnHHizckFkgne70tT6udkF3EqA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzkxk/QZJsXJZRYXUDt1a4D99+DaGSxK6kva1x80WqFvt/st52U
+	C8HlnQW2PJrUsnKqmJEiW+NSDabqMuZQwR5qPN3zdB5S0gEjCWgElbYkkIj3nCmqPKSqVfVyYi7
+	85EWE2tbmZjl3nSfIl8Ds4zc5p7oMSQ==
+X-Google-Smtp-Source: AGHT+IHpdF6x/V/pazyqhO2sJpaXwkib8ZBd2w1M4Ij3Nkk6Wn/WfgezoqePwqWHQsTrHmBU64Y1n8FFZazVHIrz33o=
+X-Received: by 2002:a17:907:7241:b0:ad2:3f9a:649f with SMTP id
+ a640c23a62f3a-adfad60d405mr821849566b.42.1750082258737; Mon, 16 Jun 2025
+ 06:57:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613174228.1542237-1-davthompson@nvidia.com>
+References: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com>
+ <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-4-341502d38618@axiado.com>
+In-Reply-To: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-4-341502d38618@axiado.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 16 Jun 2025 08:57:26 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJpb7wFw3DqX504LyS2PGbQxQfbBKh9VfCY8j7G9YKXiw@mail.gmail.com>
+X-Gm-Features: AX0GCFuQPys5Thxu-nqBA43dpX9szemYIEtdKd5xHzL7MleeMvIzogZHZdn5g7w
+Message-ID: <CAL_JsqJpb7wFw3DqX504LyS2PGbQxQfbBKh9VfCY8j7G9YKXiw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] arm64: dts: axiado: Add initial support for AX3000
+ SoC and eval board
+To: Harshit Shah <hshah@axiado.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 05:42:28PM +0000, David Thompson wrote:
-> The open() and probe() functions of the mlxbf_gige driver
-> check for errors during initialization, but do not provide
-> details regarding the errors. The mlxbf_gige driver should
-> provide error details in the kernel log, noting what step
-> of initialization failed.
-> 
-> Signed-off-by: David Thompson <davthompson@nvidia.com>
+On Sun, Jun 15, 2025 at 11:32=E2=80=AFPM Harshit Shah <hshah@axiado.com> wr=
+ote:
+>
+> Add initial device tree support for the AX3000 SoC and its evaluation
+> platform. The AX3000 is a multi-core SoC featuring 4 Cortex-A53 cores,
+> Secure Vault, AI Engine and Firewall.
+>
+> This commit adds support for Cortex-A53 CPUs, timer, UARTs, and I3C
+> controllers on the AX3000 evaluation board.
+>
+> Signed-off-by: Harshit Shah <hshah@axiado.com>
+> ---
+>  arch/arm64/boot/dts/Makefile              |   1 +
+>  arch/arm64/boot/dts/axiado/Makefile       |   2 +
+>  arch/arm64/boot/dts/axiado/ax3000.dtsi    | 584 ++++++++++++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/axiado/ax3000_evk.dts |  72 ++++
+>  4 files changed, 659 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 79b73a21ddc22b17308554e502f8207392935b45..47dd8a1a7960d179ee28969a1=
+d6750bfa0d73da1 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -9,6 +9,7 @@ subdir-y +=3D amlogic
+>  subdir-y +=3D apm
+>  subdir-y +=3D apple
+>  subdir-y +=3D arm
+> +subdir-y +=3D axiado
+>  subdir-y +=3D bitmain
+>  subdir-y +=3D blaize
+>  subdir-y +=3D broadcom
+> diff --git a/arch/arm64/boot/dts/axiado/Makefile b/arch/arm64/boot/dts/ax=
+iado/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..eb5e08ba0f39c32cdbfd586d9=
+82849a80da30160
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/axiado/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_ARCH_AXIADO) +=3D ax3000_evk.dtb
+> diff --git a/arch/arm64/boot/dts/axiado/ax3000.dtsi b/arch/arm64/boot/dts=
+/axiado/ax3000.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d5d84986d18efe9dfbb446cee=
+e42fc4e4dbf95d0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/axiado/ax3000.dtsi
+> @@ -0,0 +1,584 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (c) 2021-25 Axiado Corporation (or its affiliates). All rig=
+hts reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/memreserve/ 0x3c0013a0 0x00000008;    /* cpu-release-addr */
+> +/ {
+> +       compatible =3D "axiado,ax3000";
 
-Hi David,
+Drop. As this is not valid and overridden anyways.
 
-I do have some reservations about the value of printing
-out raw err values. But I also see that the logging added
-by this patch is consistent with existing code in this driver.
-So in that context I agree this is appropriate.
+> +       interrupt-parent =3D <&gic500>;
+> +
+> +       aliases {
+> +               i3c0 =3D &i3c0;
+> +               i3c1 =3D &i3c1;
+> +               i3c2 =3D &i3c2;
+> +               i3c3 =3D &i3c3;
+> +               i3c4 =3D &i3c4;
+> +               i3c5 =3D &i3c5;
+> +               i3c6 =3D &i3c6;
+> +               i3c7 =3D &i3c7;
+> +               i3c8 =3D &i3c8;
+> +               i3c9 =3D &i3c9;
+> +               i3c10 =3D &i3c10;
+> +               i3c11 =3D &i3c11;
+> +               i3c12 =3D &i3c12;
+> +               i3c13 =3D &i3c13;
+> +               i3c14 =3D &i3c14;
+> +               i3c15 =3D &i3c15;
+> +               i3c16 =3D &i3c16;
+> +               serial0 =3D &uart0;
+> +               serial1 =3D &uart1;
+> +               serial2 =3D &uart2;
+> +               serial3 =3D &uart3;
+> +       };
+> +
+> +       cpus {
+> +               #address-cells =3D <2>;
+> +               #size-cells =3D <0>;
+> +
+> +               cpu0: cpu@0 {
+> +                       device_type =3D "cpu";
+> +                       compatible =3D "arm,cortex-a53";
+> +                       reg =3D <0x0 0x0>;
+> +                       enable-method =3D "spin-table";
+> +                       cpu-release-addr =3D <0x0 0x3c0013a0>;
+> +                       d-cache-size =3D <0x8000>;
+> +                       d-cache-line-size =3D <64>;
+> +                       d-cache-sets =3D <128>;
+> +                       i-cache-size =3D <0x8000>;
+> +                       i-cache-line-size =3D <64>;
+> +                       i-cache-sets =3D <256>;
+> +                       next-level-cache =3D <&l2>;
+> +               };
+> +
+> +               cpu1: cpu@1 {
+> +                       device_type =3D "cpu";
+> +                       compatible =3D "arm,cortex-a53";
+> +                       reg =3D <0x0 0x1>;
+> +                       enable-method =3D "spin-table";
+> +                       cpu-release-addr =3D <0x0 0x3c0013a0>;
+> +                       d-cache-size =3D <0x8000>;
+> +                       d-cache-line-size =3D <64>;
+> +                       d-cache-sets =3D <128>;
+> +                       i-cache-size =3D <0x8000>;
+> +                       i-cache-line-size =3D <64>;
+> +                       i-cache-sets =3D <256>;
+> +                       next-level-cache =3D <&l2>;
+> +               };
+> +
+> +               cpu2: cpu@2 {
+> +                       device_type =3D "cpu";
+> +                       compatible =3D "arm,cortex-a53";
+> +                       reg =3D <0x0 0x2>;
+> +                       enable-method =3D "spin-table";
+> +                       cpu-release-addr =3D <0x0 0x3c0013a0>;
+> +                       d-cache-size =3D <0x8000>;
+> +                       d-cache-line-size =3D <64>;
+> +                       d-cache-sets =3D <128>;
+> +                       i-cache-size =3D <0x8000>;
+> +                       i-cache-line-size =3D <64>;
+> +                       i-cache-sets =3D <256>;
+> +                       next-level-cache =3D <&l2>;
+> +               };
+> +
+> +               cpu3: cpu@3 {
+> +                       device_type =3D "cpu";
+> +                       compatible =3D "arm,cortex-a53";
+> +                       reg =3D <0x0 0x3>;
+> +                       enable-method =3D "spin-table";
+> +                       cpu-release-addr =3D <0x0 0x3c0013a0>;
+> +                       d-cache-size =3D <0x8000>;
+> +                       d-cache-line-size =3D <64>;
+> +                       d-cache-sets =3D <128>;
+> +                       i-cache-size =3D <0x8000>;
+> +                       i-cache-line-size =3D <64>;
+> +                       i-cache-sets =3D <256>;
+> +                       next-level-cache =3D <&l2>;
+> +               };
+> +
+> +               l2: l2-cache0 {
+> +                       compatible =3D "cache";
+> +                       cache-size =3D <0x100000>;
+> +                       cache-unified;
+> +                       cache-line-size =3D <64>;
+> +                       cache-sets =3D <1024>;
+> +                       cache-level =3D <2>;
+> +               };
+> +       };
+> +
+> +       timer:timer {
+> +               compatible =3D "arm,armv8-timer";
+> +               interrupt-parent =3D <&gic500>;
+> +               interrupts =3D <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_HIGH>;
+> +               arm,cpu-registers-not-fw-configured;
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Drop. Not valid for arm64. And new platforms should fix the firmware anyway=
+s.
 
-...
+Rob
 
