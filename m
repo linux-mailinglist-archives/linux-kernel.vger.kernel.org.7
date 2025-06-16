@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-688774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F3EADB6E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E716BADB6F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF311653A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F1B1881AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E52A2877EC;
-	Mon, 16 Jun 2025 16:29:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E30288C05;
+	Mon, 16 Jun 2025 16:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RPsvXvg7"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89035287504
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E564F27380B;
+	Mon, 16 Jun 2025 16:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091345; cv=none; b=hkVc1qVG9pZjh7J+zCjdktHAlur+P9ElEmNGP5HXKl43+LPERhfLpKrDaMYA8xt/3FPud/2oEfV9zuI6py5TIGnRbedp4ReA7MXRZxm2dTCDSS7VEQDcLluTEmVdzNoKwYARUh8ehweZ1TJQ0jKZKf/V22iYSf0YY8kC5qf8VXo=
+	t=1750091451; cv=none; b=eW7qhgw19HlGjWVUge4EG+i0SBYxTiLKv4YACvJZ6ZLldkObI9S66/PybrVnl6Kh7dEFm3PFBOZEARFxDbQefH366+0NWc5PaT1FiXK2aZi0ngu5FaOnjCGYzG0ForGD5/TH8eIOkNWLZk1OqCZuvBkyPQEU0lTO5FiCmd4Cyxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091345; c=relaxed/simple;
-	bh=qC2JJc8oLz/wuRI5z95eL9hZEUfbnG5ebD4ygNvdWPY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UpE2UZLajp3XnVtjtpoTmLGX3AMQwh4QUmbBaUOvOQOtGL+j72herQxCLOSzhgQdl0UNA1ypkvWWzV62bMCKiO7gWtGRk+dxjT2My3/SaMAciIfM25ys6XB6BOEbDlzdyU5Mk9hisg0oC0PKDadg1rLodXwaNwR+pbZ6ZN1V1ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87313ccba79so796556039f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750091342; x=1750696142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIYKLO3NzupddnawzZGOgSru0CSjOdttxGvsiXMCd3E=;
-        b=EupY9cJX//eikTuiQyxII0gySGYQUn5fAHvP53OHpsZE1e/UVM27iEDPwBbZcz0JAR
-         UDWpaSF+rbUmx94Ml2JLRZfUfctJxDJ8xnTRZYU0a43lvyYSrLQwNd/JYBXXlC60Pnlj
-         Ri3zjHDIDcNkXKzeG35h8Unl9nAdp0YbgRtnFrVgEGzUtthuT1oRRy2fBhhPwSpkBq3w
-         Y/Q9z6r7kG/KIuMvACeZi4VVb4/Fcxs8GthMiJmVL+uhazGkOstaz9GWNFlJzgBOwFAG
-         IpFVuniyEWCQF65exarnAQJOb2CSD1Hnjt3demAIaC+Zwi+AzbLMBleOpXE2ll4iHQYO
-         oOxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVatZeb6ac29sP5dZPVZH7As+V0TPNl8NgpHcecPo+DW1nFPzUEZKnIxR5d0p9LW7tsZacLFGSGd3I0F9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaKDfv75IKhu2QL2QpXtWOZodmHaK33g67TjAuB0gmNhYMGWeF
-	cFvEPTqZi2fCJD7HRL9PNMR3wcu+uRTM8xzPui0FAW3Y20q/hr5cfV+kp31AqR7GTyppndE+jpB
-	pNX/T+hDodddrCAdMmRyHLhPU3vx3iImKrhjLMqG8ItBaYuB0IovtVEAaiIs=
-X-Google-Smtp-Source: AGHT+IGDbuNdkdtLz+5wHUqK0NbbRNRWbePSGHgIWgJqBZI96024WMMpFXI6xEPhCKq02qj+Fl3YU6lT4MuDTUjhotDx472LaRLt
+	s=arc-20240116; t=1750091451; c=relaxed/simple;
+	bh=QgXJBSQFf7sG4UygYxutmen9Bm3kVzRMUMSk/9Q6Ilg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GYbq1fi73f06vgMT8eJd7wrX8hPpRcJOM5wauH6DYkpr+79wv8C0i4cZ/dGpKyX/CYRM2vnJBqxIZMUPOPkEuJrXYAzYqi5pza2gPMtcviUA/Izbho/7n+iuJZoolytd5H9k9WxgKauqdexwtk98OnpQVPDrXnGVJF3Lb/OOQRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RPsvXvg7; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.172] (mob-5-90-141-184.net.vodafone.it [5.90.141.184])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 349A7752;
+	Mon, 16 Jun 2025 18:30:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750091436;
+	bh=QgXJBSQFf7sG4UygYxutmen9Bm3kVzRMUMSk/9Q6Ilg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=RPsvXvg7hV78lcu59D86pGPYmwOF/mjBaX+9vn03/Np7kvS+HoopRLkeFWw9PXaoy
+	 JzEPvyqsuRnIlHEbfRtx6ZvIhbU1VY0a5XWHTwyYlEH4SjILQHXUR5EmYZCDlzhwjF
+	 ETNTBh2RD1vnjk7/w6r/YkVKQV6CPHyZl6AD8pA4=
+From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/2] media: vsp1: Detect display list wrong usage
+ patterns
+Date: Mon, 16 Jun 2025 18:30:36 +0200
+Message-Id: <20250616-vsp1_dl_list_count-v2-0-7d3f43fb1306@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154c:b0:3d4:244b:db1d with SMTP id
- e9e14a558f8ab-3de07c69dcamr104633975ab.6.1750091342663; Mon, 16 Jun 2025
- 09:29:02 -0700 (PDT)
-Date: Mon, 16 Jun 2025 09:29:02 -0700
-In-Reply-To: <2000ca95-5d23-4146-879c-0b6de0da2837@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6850464e.a70a0220.395abc.01e6.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING: refcount bug in hdm_disconnect
-From: syzbot <syzbot+d175ca7205b4f18390b1@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKxGUGgC/32NUQrCMBBEr1L220iymEr98h5SSpqsdqEmJalBK
+ bm7sQfw8w0zbzZIFJkSXJoNImVOHHwFPDRgJ+MfJNhVBpSopcZO5LSowc3DzGkdbHj5VSjdOjw
+ bdHpUUIdLpDu/d+mtrzzVaoif/SOrX/pXl5WQ4iRt6ySh1B1e2ZFJwY/BRHe04Ql9KeULlBKMQ
+ rsAAAA=
+X-Change-ID: 20250529-vsp1_dl_list_count-156d27a2d5b1
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1625;
+ i=jacopo.mondi+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=QgXJBSQFf7sG4UygYxutmen9Bm3kVzRMUMSk/9Q6Ilg=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBoUEa3HhgvyRerQ/e9ErvfmmCEyIxNzNeOkr7e5
+ Otn9zlN3VeJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaFBGtwAKCRByNAaPFqFW
+ PLG+EACCoLspxSGfoB/6hopSHTAuNzsq1LTMSCMYNvQw3kgYeGvtAMCaGLUPNBafE6KtaOadF1B
+ NJu/L60STUBp628DnyWd635gmVucAlPFMU9rAQT+CuIcXcvcC6eJJz7KlRpHOVi5almGi9BB5Ch
+ /zyRkAP1rVnDSCqIfjptA+jsinDNYJAL40KnCZPCmLCKwlOPDq0h0OBGIZn1QxXkiriUkcFQbFb
+ 652w9TZV26VgRKvt6F1eZPz9RqKEtTealEu/ja1KonQWi7MSjlZaoak01WQ2/7zK1TtPmgNxayW
+ 50yLa9djnQhjZy3E6orEb8Kk5fWmScIsYjkCk96WYrFgKvVFwGRCNCL0yYDrfM3IlMA36DVJGkF
+ /HUIXrdBcVn2JS9F5kIwVe2DZYXlse1lovTlhjT50yeNsW4T9cqVz7Zl6dffyr9yKDFRaQ+y4E3
+ sPryOkqBGvsXyLDvij2F5n120+xWBUNjfmI0Qrgh3RfbM8haJWa3Rrom4el6HKedKTP/d5lozPV
+ qTEe0ik6bV2finK038jI0qv+zaRr18qswDKrNHtb/Zq1iATKS1PNh9axXzAc1Z6WgMY6ia/Eipq
+ 2KzrG250GkH8aFjShiGVdGhRtf9DaE0y+nwM6xSQ/UZTyH00kmYN8yHHbY23ccDOFjpqi/JbGGM
+ cerpgZ2FLbMps6g==
+X-Developer-Key: i=jacopo.mondi+renesas@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-Hello,
+The VSP1 library driver offers support for programming the VSP
+using display lists.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Display lists are created in a pool and users can get them and use them
+to program the VSP. Once done the display list shall be returned to
+the display list pool.
 
-Reported-by: syzbot+d175ca7205b4f18390b1@syzkaller.appspotmail.com
-Tested-by: syzbot+d175ca7205b4f18390b1@syzkaller.appspotmail.com
+The correct management of the display list pool is left to the user
+of the helpers, and it's helpful to add a few checks to detect invalid
+usage patterns, such as a double release or a non-returned display list.
 
-Tested on:
+Add two counters to detect double releases of a display list, and a
+counter to the display list to make sure that once it is reset all the
+display lists have been returned.
 
-commit:         e04c78d8 Linux 6.16-rc2
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d1e90c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0bf3fa2eaaa1809
-dashboard link: https://syzkaller.appspot.com/bug?extid=d175ca7205b4f18390b1
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14edee82580000
+Tested with vsp-tests
+170 tests: 165 passed, 0 failed, 5 skipped
 
-Note: testing is done by a robot and is best-effort only.
+However I got a (hopefully unrelated) warning:
+
+[  795.547528] [<000000007d841fd6>] vsp1_irq_handler
+[  795.552448] Disabling IRQ #43
+[  795.653324] vsp1 fea20000.vsp: Underrun occurred at WPF1 (total underruns 1)
+
+Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+---
+Changes in v2:
+- Use a boolean to keep track of DL state
+- minor changes
+- Link to v1: https://lore.kernel.org/r/20250529-vsp1_dl_list_count-v1-0-40c6d0e20592@ideasonboard.com
+
+---
+Jacopo Mondi (2):
+      media: vsp1: vsp1_dl: Detect double list release
+      media: vsp1: vsp1_dl: Count display lists
+
+ drivers/media/platform/renesas/vsp1/vsp1_dl.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+---
+base-commit: 4d2c3d70799f5eb210003613766bbd113bbebc1a
+change-id: 20250529-vsp1_dl_list_count-156d27a2d5b1
+
+Best regards,
+-- 
+Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+
 
