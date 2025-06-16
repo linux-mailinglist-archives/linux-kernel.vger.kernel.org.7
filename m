@@ -1,152 +1,299 @@
-Return-Path: <linux-kernel+bounces-688050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EE1ADAD06
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A176ADAD0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DAC3AF160
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:07:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86097161469
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37D72698AE;
-	Mon, 16 Jun 2025 10:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA68E27932D;
+	Mon, 16 Jun 2025 10:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AoX6/She"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="turY0Mg0"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E94D27F016
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929262777E5;
+	Mon, 16 Jun 2025 10:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750068444; cv=none; b=kl9veiuMnyCqmFvVzQ0YbuSyniScTiYXZpSqawL3qWkXiNBjzjarffOfHFRbrcOg3Ssb+Pdas10mtQXGKbqxonGkeljPwdo451f1AwOEl+ttuCVjy6tstMKGG0FqgcHF4sDnA7a084LA/uIYRBV32ZKa3qnqF8TAUmBCL7WPZWU=
+	t=1750068540; cv=none; b=gqwU9s2dXvkXLWPyYmX1EVTPKF4BeYrzdDrgffscnx4qm1c31j0iOqrfeuQz+rl6PahB6n5ZKywRza+B+zRZyiLc5Wv7mumaXu/Zl9plbDegPQTE8RRqijcuZZfeuHx06dHzZ+uhQyVKIx5HyPoaqKfO+k7NzUBVa1oUTD3RwsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750068444; c=relaxed/simple;
-	bh=Lq8cqU8VINtW1dQLGxAYS6afiJNutTYBDkfPOaltG2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QMApZ3t636tEV76mnVC1xE6ZHUXgZv2Bj5H8Cctbf7xmn3PFJBO8xVUOPyQQscXcJDraz67JkrMEKz2xgFL7VJZe7+/XQnFITR3Z2sIm+aOY3+UmJ4qHDYzjc7hJ401dvaI30R5pgLShAsuEEzPATfjPU3o3bw35a/itxlhLKMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AoX6/She; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G8RdQC011453;
-	Mon, 16 Jun 2025 10:06:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UWZKq+facjiaX5VfIZfoLXvS21EBNXNgcqPrsZk1JJM=; b=AoX6/ShezdTds7wN
-	yxpRHPu32orf1q3lL+KUAAiRIBWKh1zpp6fok/TRhDb0pja9VsVyQ9RBNUrZY+rV
-	EvuGGSc5maMpBIF3X2pZyoe3p4PaihhJArw+0ykn6kHjXHnX+12DDbibTc1S+vSY
-	eyl1uFFJJSxa6MzUpiaX32KQQAoSZsL09vNPpE5XsGeZ/gkrRl7B8rKKgUbTXRxy
-	q10OaE90DHdyrsY7sQXohkxVC5AnRrfbYyDl2pA02M9Qayb0UK1jEFmh6Bn9KhjX
-	8AmNt9UnLESAPGeU0OudDKXm8uCC5QlzOIzOsDRLUWtWzf5W9HrNEI3yuhZ/XwFz
-	yDaGzQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 479qp5jnbg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 10:06:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55GA6itq030847
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 10:06:44 GMT
-Received: from [10.253.8.97] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Jun
- 2025 03:06:39 -0700
-Message-ID: <0c0a9c7a-f36e-4500-bbea-3a22a04431b3@quicinc.com>
-Date: Mon, 16 Jun 2025 18:06:36 +0800
+	s=arc-20240116; t=1750068540; c=relaxed/simple;
+	bh=zC8uwDAoMmaSBSLwSRHW41TakWNQQJg2FZeLHWrPNec=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dQSiQfnVfPrjf+TmvCKz6VfzWoP9jmiJuIyuGKDwQBInbkoKBH80AzS9SmYJa27L6HK3HX0LFQYsTbQfgwQnPXFvEYxnahonbZJMpW5bh8OTQFAk5j9bOqaPp/B4Dj7a3bRMAFNU+XsWaxkRr7UKZbVsv0ooi8sz3q1lyS8vad4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=turY0Mg0; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bLQgz507Bz9sqj;
+	Mon, 16 Jun 2025 12:08:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1750068527; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o3szePmqcHJryvA1er9S8PcvbfWuy6iFHHcrJVIXtWM=;
+	b=turY0Mg0O+tfBX/no06qt5IutDn3NPSQsTsTMZLHDtwvFlKz/4uzFzCZFRqpfJxH9n633Q
+	XIsvXO9v4YQCXe396xopdx0KS90FHEEc+blHCSQjyeOWFjOhyx0NkFCQPThCrSG3kExsUu
+	Qrguz8OgAbVZg8LZJImDkC1jI4+99RqUbMC7hsxu6JDuGzPhpIHjdVuw5o+vmxZm6d1uCn
+	1UGZ2i1P04hU9S/uHS0rnZe9Q/A73/5BlueoyH2/yBf9yilf4X/rkn8Ormy/8T1VgsHewi
+	eCamfwEtewpBO6OKYaAWlIvTKAMfFYkE3yLyoEXQ3tIWZevQPXDHHdcLt5BRyQ==
+Message-ID: <d1ecec0124edcf70f682e91e52f3f349c7a1b33c.camel@mailbox.org>
+Subject: Re: [RFC PATCH 1/6] drm/sched: Avoid memory leaks with cancel_job()
+ callback
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, phasta@kernel.org, Lyude
+ Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Matthew Brost
+ <matthew.brost@intel.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Pierre-Eric Pelloux-Prayer
+ <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Mon, 16 Jun 2025 12:08:40 +0200
+In-Reply-To: <18cd6b1f-8872-4a16-9ceb-50fd1ecfea39@igalia.com>
+References: <20250603093130.100159-2-phasta@kernel.org>
+	 <20250603093130.100159-3-phasta@kernel.org>
+	 <62ff8ddb-b2f1-4e52-a026-290561ab5337@igalia.com>
+	 <f4f326a0ecb98a9996919c3f827b3247b8207feb.camel@mailbox.org>
+	 <18cd6b1f-8872-4a16-9ceb-50fd1ecfea39@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] Add FIELD_MODIFY() helper
-To: Marc Zyngier <maz@kernel.org>
-CC: Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        "Nicolas
- Palix" <nicolas.palix@imag.fr>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-        "Joey
- Gouly" <joey.gouly@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <cocci@inria.fr>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.linux.dev>, <andrew@lunn.ch>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>
-References: <20250612-field_modify-v4-0-ae4f74da45a6@quicinc.com>
- <86sek5cane.wl-maz@kernel.org>
-Content-Language: en-US
-From: Luo Jie <quic_luoj@quicinc.com>
-In-Reply-To: <86sek5cane.wl-maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9SYfzjF3RGzccne1WkjDRTBZRqXR4qMQ
-X-Proofpoint-ORIG-GUID: 9SYfzjF3RGzccne1WkjDRTBZRqXR4qMQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA2NCBTYWx0ZWRfX7UrecK1eCq0L
- 8jXrAGXhthDm1V6AVytgr3qliiXHjBZaL76sRZ3phJrAmJasaSNIHGzGBFhBFi9o5IyFk+xr73/
- IhE0N4gFcbqzn7S0S7Y52KjoBgJTd6vDBFJ3S0u8Ezjm7BywP5onFsmIJfz5KtGQHVhXmdvLKDh
- HhVLEaxXzBMod9Q38nM1Mu16s4l1HX+23Cpf2phN6fdQqmVOmOQE77cCrvquRNryXNGm2E0cfrJ
- YsohgekeAGt6tReiCse3CCm8omb3spIjoUQVI38+9g6ghiU4z1+Vb7SKKDrKHKR/oxWt1t89JMq
- Y7xkqAqi8zKGKRpOOG+X+UF8egA/sye8lBvBpkwGGcAPhX1Ivjfo7H2hFERpSSFfMKN+oAUW6CB
- cjdJ4ljTU/jmgXd3d51GgsVlOh8j6vcM2f64dVA3ksVJFgMn0VPWdcBpNXSVQsIQoxGFMit0
-X-Authority-Analysis: v=2.4 cv=fMc53Yae c=1 sm=1 tr=0 ts=684fecb4 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=r701-TsZq3b5Q2E7mLQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_04,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506160064
+X-MBO-RS-META: xugczu8yqt6ag77z8f3qkcye1jaikzbn
+X-MBO-RS-ID: 549f6941f9059223189
 
+On Mon, 2025-06-16 at 10:27 +0100, Tvrtko Ursulin wrote:
+>=20
+> On 12/06/2025 15:20, Philipp Stanner wrote:
+> > On Thu, 2025-06-12 at 15:17 +0100, Tvrtko Ursulin wrote:
+> > >=20
+> > > On 03/06/2025 10:31, Philipp Stanner wrote:
+> > > > Since its inception, the GPU scheduler can leak memory if the
+> > > > driver
+> > > > calls drm_sched_fini() while there are still jobs in flight.
+> > > >=20
+> > > > The simplest way to solve this in a backwards compatible manner
+> > > > is
+> > > > by
+> > > > adding a new callback, drm_sched_backend_ops.cancel_job(),
+> > > > which
+> > > > instructs the driver to signal the hardware fence associated
+> > > > with
+> > > > the
+> > > > job. Afterwards, the scheduler can savely use the established
+> > > > free_job()
+> > > > callback for freeing the job.
+> > > >=20
+> > > > Implement the new backend_ops callback cancel_job().
+> > > >=20
+> > > > Suggested-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> > >=20
+> > > Please just add the link to the patch here (it is only in the
+> > > cover
+> > > letter):
+> > >=20
+> > > Link:
+> > > https://lore.kernel.org/dri-devel/20250418113211.69956-1-tvrtko.ursul=
+in@igalia.com/
+> >=20
+> > That I can do, sure
+>=20
+> Cool, with that, for this patch:
+>=20
+> Acked-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+>=20
+> > > And you probably want to take the unit test modifications from
+> > > the
+> > > same
+> > > patch too. You could put them in the same patch or separate.
+> >=20
+> > Necessary adjustments for the unit tests are already implemented
+> > and
+> > are waiting for review separately, since this can be done
+> > independently
+> > from this entire series:
+> >=20
+> > https://lore.kernel.org/dri-devel/20250605134154.191764-2-phasta@kernel=
+.org/
+>=20
+> For me it would make most sense to fold that into 2/6 from this
+> series.=20
+> I don't see it making sense as standalone. So if you could repost the
+> series with it integrated I will give it a spin and can review that=20
+> patch at least.
 
+It does make sense as an independent patch, because it is: independent.
+It improves the unit tests in a way that they become a better role
+model for the driver callbacks. All fences always must get signaled,
+which is not the case there currently. Unit tests serve as a reference
+implementation for new users, which is why I am stressing that point.
 
-On 6/12/2025 10:11 PM, Marc Zyngier wrote:
-> On Thu, 12 Jun 2025 14:46:07 +0100,
-> Luo Jie <quic_luoj@quicinc.com> wrote:
->>
->> Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
->> macros. It is functionally similar as xxx_replace_bits(), but adds
->> the compile time checking to catch incorrect parameter type errors.
->>
->> This series also converts the four instances of opencoded FIELD_MODIFY()
->> that are found in the core kernel files, to instead use the new
->> FIELD_MODIFY() macro. This is achieved with Coccinelle, by adding
->> the script field_modify.cocci.
->>
->> The changes are validated on IPQ9574 SoC which uses ARM64 architecture.
->>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> 
-> I already indicated that the *pre-existing* set of helpers are enough
-> for what we want to do, that we *already* use them for KVM/arm64, and
-> that I didn't need nor want two ways to do the same thing in the same
-> code base.
-> 
-> My opinion hasn't changed on that front, and I don't see a point in
-> these patches.
-> 
-> 	M.
-> 
+If you disagree with that patch's content, please answer on it
 
-OK. I will drop the ARM64 patches and only keep the coccinelle script
-patch in the next version.
+P.
+
+>=20
+> Regards,
+>=20
+> Tvrtko
+>=20
+> >=20
+> > Thx
+> > P.
+> >=20
+> > >=20
+> > > Regards,
+> > >=20
+> > > Tvrtko
+> > >=20
+> > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > > > ---
+> > > > =C2=A0=C2=A0 drivers/gpu/drm/scheduler/sched_main.c | 34
+> > > > ++++++++++++++++-----
+> > > > -----
+> > > > =C2=A0=C2=A0 include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 +++++++
+> > > > =C2=A0=C2=A0 2 files changed, 30 insertions(+), 13 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> > > > b/drivers/gpu/drm/scheduler/sched_main.c
+> > > > index d20726d7adf0..3f14f1e151fa 100644
+> > > > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > > > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > > > @@ -1352,6 +1352,18 @@ int drm_sched_init(struct
+> > > > drm_gpu_scheduler
+> > > > *sched, const struct drm_sched_init_
+> > > > =C2=A0=C2=A0 }
+> > > > =C2=A0=C2=A0 EXPORT_SYMBOL(drm_sched_init);
+> > > > =C2=A0=C2=A0=20
+> > > > +static void drm_sched_kill_remaining_jobs(struct
+> > > > drm_gpu_scheduler
+> > > > *sched)
+> > > > +{
+> > > > +	struct drm_sched_job *job, *tmp;
+> > > > +
+> > > > +	/* All other accessors are stopped. No locking
+> > > > necessary.
+> > > > */
+> > > > +	list_for_each_entry_safe_reverse(job, tmp, &sched-
+> > > > > pending_list, list) {
+> > > > +		sched->ops->cancel_job(job);
+> > > > +		list_del(&job->list);
+> > > > +		sched->ops->free_job(job);
+> > > > +	}
+> > > > +}
+> > > > +
+> > > > =C2=A0=C2=A0 /**
+> > > > =C2=A0=C2=A0=C2=A0 * drm_sched_fini - Destroy a gpu scheduler
+> > > > =C2=A0=C2=A0=C2=A0 *
+> > > > @@ -1359,19 +1371,11 @@ EXPORT_SYMBOL(drm_sched_init);
+> > > > =C2=A0=C2=A0=C2=A0 *
+> > > > =C2=A0=C2=A0=C2=A0 * Tears down and cleans up the scheduler.
+> > > > =C2=A0=C2=A0=C2=A0 *
+> > > > - * This stops submission of new jobs to the hardware through
+> > > > - * drm_sched_backend_ops.run_job(). Consequently,
+> > > > drm_sched_backend_ops.free_job()
+> > > > - * will not be called for all jobs still in
+> > > > drm_gpu_scheduler.pending_list.
+> > > > - * There is no solution for this currently. Thus, it is up to
+> > > > the
+> > > > driver to make
+> > > > - * sure that:
+> > > > - *
+> > > > - *=C2=A0 a) drm_sched_fini() is only called after for all submitte=
+d
+> > > > jobs
+> > > > - *=C2=A0=C2=A0=C2=A0=C2=A0 drm_sched_backend_ops.free_job() has be=
+en called or
+> > > > that
+> > > > - *=C2=A0 b) the jobs for which drm_sched_backend_ops.free_job() ha=
+s
+> > > > not
+> > > > been called
+> > > > - *=C2=A0=C2=A0=C2=A0=C2=A0 after drm_sched_fini() ran are freed ma=
+nually.
+> > > > - *
+> > > > - * FIXME: Take care of the above problem and prevent this
+> > > > function
+> > > > from leaking
+> > > > - * the jobs in drm_gpu_scheduler.pending_list under any
+> > > > circumstances.
+> > > > + * This stops submission of new jobs to the hardware through
+> > > > &struct
+> > > > + * drm_sched_backend_ops.run_job. If &struct
+> > > > drm_sched_backend_ops.cancel_job
+> > > > + * is implemented, all jobs will be canceled through it and
+> > > > afterwards cleaned
+> > > > + * up through &struct drm_sched_backend_ops.free_job. If
+> > > > cancel_job is not
+> > > > + * implemented, memory could leak.
+> > > > =C2=A0=C2=A0=C2=A0 */
+> > > > =C2=A0=C2=A0 void drm_sched_fini(struct drm_gpu_scheduler *sched)
+> > > > =C2=A0=C2=A0 {
+> > > > @@ -1401,6 +1405,10 @@ void drm_sched_fini(struct
+> > > > drm_gpu_scheduler
+> > > > *sched)
+> > > > =C2=A0=C2=A0=C2=A0	/* Confirm no work left behind accessing device
+> > > > structures
+> > > > */
+> > > > =C2=A0=C2=A0=C2=A0	cancel_delayed_work_sync(&sched->work_tdr);
+> > > > =C2=A0=C2=A0=20
+> > > > +	/* Avoid memory leaks if supported by the driver. */
+> > > > +	if (sched->ops->cancel_job)
+> > > > +		drm_sched_kill_remaining_jobs(sched);
+> > > > +
+> > > > =C2=A0=C2=A0=C2=A0	if (sched->own_submit_wq)
+> > > > =C2=A0=C2=A0=C2=A0		destroy_workqueue(sched->submit_wq);
+> > > > =C2=A0=C2=A0=C2=A0	sched->ready =3D false;
+> > > > diff --git a/include/drm/gpu_scheduler.h
+> > > > b/include/drm/gpu_scheduler.h
+> > > > index e62a7214e052..81dcbfc8c223 100644
+> > > > --- a/include/drm/gpu_scheduler.h
+> > > > +++ b/include/drm/gpu_scheduler.h
+> > > > @@ -512,6 +512,15 @@ struct drm_sched_backend_ops {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+* and it's time to clean it up.
+> > > > =C2=A0=C2=A0=C2=A0	 */
+> > > > =C2=A0=C2=A0=C2=A0	void (*free_job)(struct drm_sched_job *sched_job=
+);
+> > > > +
+> > > > +	/**
+> > > > +	 * @cancel_job: Used by the scheduler to guarantee
+> > > > remaining jobs' fences
+> > > > +	 * get signaled in drm_sched_fini().
+> > > > +	 *
+> > > > +	 * Drivers need to signal the passed job's hardware
+> > > > fence
+> > > > with
+> > > > +	 * -ECANCELED in this callback. They must not free the
+> > > > job.
+> > > > +	 */
+> > > > +	void (*cancel_job)(struct drm_sched_job *sched_job);
+> > > > =C2=A0=C2=A0 };
+> > > > =C2=A0=C2=A0=20
+> > > > =C2=A0=C2=A0 /**
+> > >=20
+> >=20
+>=20
+
 
