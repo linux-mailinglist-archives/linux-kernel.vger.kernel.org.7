@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-687644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDFF1ADA763
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:08:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46858ADA789
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0611D3A4111
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0243A2E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6041C861D;
-	Mon, 16 Jun 2025 05:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NsrY6JIM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3021863E;
-	Mon, 16 Jun 2025 05:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1621C861D;
+	Mon, 16 Jun 2025 05:20:37 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4C71B041A;
+	Mon, 16 Jun 2025 05:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750050476; cv=none; b=Yz6PYj9t0169bV44mZOkrpAoZuvpbHY80KYMMuOPrFrk/xPEZdlhwDVzoC23Gnfb/GVphgYcMiJJwcpVDxIJwRe5u/hf99bLKqxiBnLTQadb7zxCeoOjglclmWa9CF39gySgFpV3tl+Wjgu33c8d4xoLZuYfNJtNwhOPZpvlnjE=
+	t=1750051237; cv=none; b=XzzyZEx0nMvtPZIp3uLPusYwioo/SWLmH7H1MboqMMts6FMIdG+7IWpNyg3mXk3qxj2CEi9DA7RAXViEil2M+VomsWm2FmiXXKVm2TsSZduE3i4owF2JzlBBqGfqrZrI/RUfWN7eqPX5a9oDGaNOFjNeerY8OYAIDkx6CpHWRPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750050476; c=relaxed/simple;
-	bh=7d4ARgVTOI6j5fUCeEFue/yQN5ISC2xiuED/XNFOYZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KNU3LCT7ewiWzCvT9GmrHABzOcAD0tMA4wpPorY1si9B6eIVonp00+db8840qv9vZ1OfVjislRHmmR8Kg/auCMJywcB9Z55ESu+LOX8cc8ciY9KlUCGhKb6oa/Xhu6Xpaupb9W2PQj07UKZwvsIypFooM1v/dZ33Ojbzn6O8BAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NsrY6JIM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNH7lU003033;
-	Mon, 16 Jun 2025 05:07:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LG1DruV5us004oEXjXeEWd09Q+FV9MdQYIAAnTRm6ao=; b=NsrY6JIMbu523Umh
-	ZfT7NUFJ5xZtJRD4p2pw3WYI/YqptavI+g0VEdarYY3Q9Ahiyx6+H4mf3V5R5PFK
-	//pVxDbkeuBeAvsTeKWnqotFjDN5K5iogcqHyKHFfDWDIv2TVYy2cU9c0XY2KXYm
-	hfQZI5fzHOXzVAZu+1dr4EO8wgaX99H1v6M/bcub24oF/oSndBYuZWMEUpfC/5ra
-	TJdZyGQJUZVQgsa6KDMY8+Sakr8fHWNvRHBGzaEoaCYSClWKsvJvq5YGACBQlyth
-	Ena5lhgbpDJGtq63YntEoK5JcDCOI7rSQYAY+B2q5SWirARArhNRM9SrnZ77NWWT
-	kaZecA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791crk2qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 05:07:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55G57KGj003709
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 05:07:20 GMT
-Received: from [10.216.9.13] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 15 Jun
- 2025 22:07:13 -0700
-Message-ID: <4143e209-7701-44d2-b9f0-dbe646542376@quicinc.com>
-Date: Mon, 16 Jun 2025 10:37:09 +0530
+	s=arc-20240116; t=1750051237; c=relaxed/simple;
+	bh=xZfMpcaAJypo8xW2lO2HU1GylS4Dp/zzkpIUOwMDvWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EETGQLGe4spZW4qfQl9FMlCOWKL8CqF7Jgy3whTz2fCQYP17oD1XWy7yMKO0s6cCVALNmKM6hQMDNgak6wg0YrVZtxp7+SHO5TdP/EvKJoTPhHmMXv5SbGZVn/ZtiXN+55XsSRNQy0OAjWo+Qj/+Yo5JUSn+Cg0TVaCGwaVDRtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bLJ620D1Tz9sv8;
+	Mon, 16 Jun 2025 07:12:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id RSs8tuDgJhFH; Mon, 16 Jun 2025 07:12:25 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bLJ616KWPz9st4;
+	Mon, 16 Jun 2025 07:12:25 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CB2868B764;
+	Mon, 16 Jun 2025 07:12:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Rr37r5e5VLCk; Mon, 16 Jun 2025 07:12:25 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 67F758B763;
+	Mon, 16 Jun 2025 07:12:25 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] ALSA: pcm: Replace [audio_]tstamp_[n]sec by struct __snd_timespec64 in struct snd_pcm_mmap_status_x32
+Date: Mon, 16 Jun 2025 07:12:23 +0200
+Message-ID: <e46139ed61bc52fab51babadb8b656fa1aa15506.1750050658.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Support for Adreno X1-45 GPU
-To: <rob.clark@oss.qualcomm.com>, Akhil P Oommen <akhilpo@oss.qualcomm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        "Dmitry
- Baryshkov" <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>
-References: <20250607-x1p-adreno-v1-0-a8ea80f3b18b@oss.qualcomm.com>
- <CACSVV01A8aqyoM4KYuUYVXTHnM1egn5-4UxqPrQVVjuvxxbC6g@mail.gmail.com>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <CACSVV01A8aqyoM4KYuUYVXTHnM1egn5-4UxqPrQVVjuvxxbC6g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750050743; l=1658; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=xZfMpcaAJypo8xW2lO2HU1GylS4Dp/zzkpIUOwMDvWU=; b=At18Z5Fc4zdB3x4w6XOU3pi1TVg75/+RxtbjV66c1LgIcr60frXVBJv1tni34PzNdunz11+Ye jnDuRaIAbKbC3D9+WM9Ha3jLIEcRzlL7OoqfFg24xwk+DsZ1ywp9fMF
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: p20DTFGx5sjMNBbGJteEwPmMiXWb8CjM
-X-Authority-Analysis: v=2.4 cv=BoedwZX5 c=1 sm=1 tr=0 ts=684fa689 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=e5mUnYsNAAAA:8
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=aVaGKPbtQoTzMs4lowsA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-GUID: p20DTFGx5sjMNBbGJteEwPmMiXWb8CjM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDAzMiBTYWx0ZWRfX8Bh76SsUtogs
- mfGW/AwkRHGK+2P8cfAgzoD0TMtKJfz2AlGZO7oeySnyM+ymbhQFWQWpDoMUJG5c0VNBj4dF4FJ
- qYkmh4znPXd/uIuKNYv117/4oLVnmxoemloFlNas/Sbv/B5yT20dD8SMTxmoSw+VW96IVwewU4l
- ofGuWwK2gXGdzwo8rGq80VX8qYMMRlp99R2PW4/o41QYOyTV3Tqxr4hOAypKJjlpId8vrVW71ue
- yJ7wUgX3ThYXMGrxP4Gp7bkmvEtQUI5ITYT0tH9+2ES+WcN0nyuuaDoxtFEVMyYHZGj0QVOT0HT
- GW6Htbhvy/0MwZWaEm3GM1I11DuDHEbCpb1HekTpOCQdTNgUJ8WNMi9IQ+UapzTRX8sJfz2a0Ys
- h5qqfhAk1T9ln0ZTfg4G69JrUTmURnqu4JU0Enw2hO9Snkkgp4ovVyCJmYUsXAqBqxvVEQst
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_02,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
- mlxlogscore=949 bulkscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
- spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506160032
 
-On 6/8/2025 8:51 PM, Rob Clark wrote:
-> On Sat, Jun 7, 2025 at 7:15 AM Akhil P Oommen <akhilpo@oss.qualcomm.com> wrote:
->>
->> Add support for X1-45 GPU found in X1P41200 chipset (8 cpu core
->> version). X1-45 is a smaller version of X1-85 with lower core count and
->> smaller memories. From UMD perspective, this is similar to "FD735"
->> present in Mesa.
->>
->> Tested Glmark & Vkmark on Debian Gnome desktop.
->>
->> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> 
-> fyi, mesa part: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/35404
+To match struct __snd_pcm_mmap_status and enable reuse of
+snd_pcm_sync_ptr_get_user() and snd_pcm_sync_ptr_put_user() by
+snd_pcm_sync_ptr() replace tstamp_sec and tstamp_nsec fields by
+a struct __snd_timespec64 in struct snd_pcm_mmap_status_x32.
+Do the same with audio_tstamp_sec and audio_tstamp_nsec.
 
-fyi, gpu firmwares: https://lore.kernel.org/linux-firmware/e036373e-0356-4fa1-b39b-78eaf02179d6@oss.qualcomm.com/T/#u
+This is possible because struct snd_pcm_mmap_status_x32 is packed
+and __SND_STRUCT_TIME64 is always defined for kernel which means
+struct __snd_timespec64 is always defined as struct __kernel_timespec
+which is:
 
--Akhil
+	struct __kernel_timespec {
+		long long tv_sec;
+		long long tv_nsec;
+	};
 
-> 
-> BR,
-> -R
-> 
->> ---
->> Akhil P Oommen (3):
->>       arm64: defconfig: Enable X1P42100_GPUCC driver
->>       drm/msm/adreno: Add Adreno X1-45 support
->>       arm64: dts: qcom: Add GPU support to X1P42100 SoC
->>
->>  arch/arm64/boot/dts/qcom/x1e80100.dtsi    |   7 ++
->>  arch/arm64/boot/dts/qcom/x1p42100-crd.dts |   4 +
->>  arch/arm64/boot/dts/qcom/x1p42100.dtsi    | 121 +++++++++++++++++++++++++++++-
->>  arch/arm64/configs/defconfig              |   1 +
->>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c |  38 ++++++++++
->>  5 files changed, 170 insertions(+), 1 deletion(-)
->> ---
->> base-commit: b3bded85d838336326ce78e394e7818445e11f20
->> change-id: 20250603-x1p-adreno-219da2fd4ca4
->>
->> Best regards,
->> --
->> Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: a0f3992ee86e ("ALSA: pcm: Replace [audio_]tstamp_[n]sec by struct __snd_timespec in struct snd_pcm_mmap_status32")
+Closes: https://lore.kernel.org/all/20250616130126.08729b84@canb.auug.org.au/
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+Might be squashed with a0f3992ee86e if you happen to rebase sound tree.
+---
+ sound/core/pcm_compat.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
+index 17540020ac2f..54eb9bd8eb21 100644
+--- a/sound/core/pcm_compat.c
++++ b/sound/core/pcm_compat.c
+@@ -377,12 +377,10 @@ struct snd_pcm_mmap_status_x32 {
+ 	s32 pad1;
+ 	u32 hw_ptr;
+ 	u32 pad2; /* alignment */
+-	s64 tstamp_sec;
+-	s64 tstamp_nsec;
++	struct __snd_timespec64 tstamp;
+ 	snd_pcm_state_t suspended_state;
+ 	s32 pad3;
+-	s64 audio_tstamp_sec;
+-	s64 audio_tstamp_nsec;
++	struct __snd_timespec64 audio_tstamp;
+ } __packed;
+ 
+ struct snd_pcm_mmap_control_x32 {
+-- 
+2.47.0
 
 
