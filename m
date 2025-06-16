@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-688094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B95ADAD9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:42:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137C5ADADA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35DDA16F9F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:42:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14F437A4454
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87836298CDE;
-	Mon, 16 Jun 2025 10:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1129B8D8;
+	Mon, 16 Jun 2025 10:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSKCP//v"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QL2l8BCu"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F25A2882D1;
-	Mon, 16 Jun 2025 10:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C048298CDC
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750070552; cv=none; b=ltMUobAUSbKp+oea08+qGUxGeW/BBOTnFgmvBewxPiZc7zLhPLzqQuqox4Gih29opJxBpYcKnyMBhnPEwJPAPtGpW7Ir0ycM+6x7LdlecI3Q6CieBB7926JcZqU8Pr0Vovg8Z7iAkGR2yUktPe6PFJpVOJBFoMJ9S+5tF9uE/f4=
+	t=1750070703; cv=none; b=sDjAX8N07A7ebFIuI3mRwq4Qq84NxELBzThocaU45iKSaS91bLRYnzCa+Esevg9FbtlpbbgMhEk+BWi4CFbu+tA/8Sjtq328bZCSLuVNN/oegNbHr9oqz7C6hHCs8RjYLFQuAhT8o1ixu9GOSswA62bG8fJ0PxH40PGMBQOIWF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750070552; c=relaxed/simple;
-	bh=Fhsd6q/hRQwGHerpb6eGxJc9LhHttkXql2QisPijFJE=;
+	s=arc-20240116; t=1750070703; c=relaxed/simple;
+	bh=J6R6SWEsvDm+66dPzlD87SecGN7m0uU0XfqGXWlTaok=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bRYZlj0H+O7RKkkwlPqhzbBt1KKgFF/2vStgWKnis8m30bQGpnWi7FLZJ7GxnPuvMlcZ2TrF/tOmWoc+J+aZgSL82jYsgcW9SGmp3zxUR65LXw2xdIiElcASL2MJMLj51d5aX/COW4AMhr7AVP2nLeaYIBWZn2/WNQOQGQwiBy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSKCP//v; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-313154270bbso4761166a91.2;
-        Mon, 16 Jun 2025 03:42:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=TIKZSV5nOBDbwQSqHn9RxvRRC8n33UbzDpoeDZlnhGtkXspficjKlC1gXM1CDW+VuJFKpYh++HqshqkLctGR6DOhGS93rsIfRP3cO3MNhthMwgwaZT0VqmNAxYzV18odernoXNpMkXMKmjBfMma9k5plOGneuGYT299E8FEMoNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QL2l8BCu; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3da76aea6d5so284575ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 03:45:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750070551; x=1750675351; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1750070701; x=1750675501; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WTabLOpgCLwYv8rCyGl7CwHdWBc3RbnKBwJmaj/inH4=;
-        b=aSKCP//vWWy0YD8hp+qyF6BLWe/Q/GrrXqTGhG+m/P5rd4rbuxQcT5UxkPPydnlhoI
-         /Dt6bJVGOq1wsZ2YjKke80N92Jl5Ng3rLB4R3IrC8X6YVT6NGOJeYcMWSnPaUKolFeKj
-         dhg+ey2f5s/6317NO668N2HSgujmHfICAqmSXfTa0+oyCn8TrNK3Solwmcnazjp0rrsa
-         1lGh5kM/GncY8AHhueB/joyLaaK5BRvpkqxG27uCCJaYxs7L2Y/MvP6RlxL+4tDpC8fi
-         ThR/crcV2QAWtk0msCpmuxEsTaRa5/xoAxLEBMJ0HA1ONJMkIfz6owMzyyd72/AvljCp
-         LIGg==
+        bh=J6R6SWEsvDm+66dPzlD87SecGN7m0uU0XfqGXWlTaok=;
+        b=QL2l8BCuuqGwweka0fNcZGQ5qz/9RCBbGooX/S6U1RIabI326JTQ5xK+3h6djPMSJq
+         UT3zG4OgsvH+ZQzdoh5BNpK3oFAORbdbRPu/SIWo1aiBXT4TUPC/bVH+kTFVCD3Kk1Jl
+         LU4SI78z25ymBzjV2cDW4J/lrLbh+fiTLsOCyfbXcXVleC0qQlxxYZCD9W5C45cg/kQZ
+         CBxNSgIdg+moJRABEQPxJPKwqWoWy7iNC7k0KmzOozhqlHpxGiJoHIH85SdgTZ5tj//n
+         iYFmVqSf3FvSFLONeW3dOXATl41GJbNZk+Mbl9CKTPvfr6wfxaI5q3SDLTYJR+DIe3UB
+         h8Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750070551; x=1750675351;
+        d=1e100.net; s=20230601; t=1750070701; x=1750675501;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WTabLOpgCLwYv8rCyGl7CwHdWBc3RbnKBwJmaj/inH4=;
-        b=PmNoVLXXWsmaP3U6PS6bDCLxLJon/sI2aNtq9FCmCvSwLXN8KwgY9rpMESS3pmCVsY
-         gbXPg1pCibdiFfdrDKNzrD+T/R9N9RjMo3hr/XkP5Kr3QDvmbYdkfLZ9HgSnHXNj04GV
-         JB/OGRNPt5sWULIxDDAO66ho/UytixcH3Y4ehSXWgUjMCM2/reuBUe8rhOS5yXgH0FIJ
-         jBOhAKjhNkg977hoendaTyc0F57phXswBg0PUUhUV7u/yaY024hLGy8KQMkvMlED1w3u
-         ZnDb+2YxDIHgHVH+uTyEK82EebT9u1/AzJDLIg1ZMOZ5dPm6Y1lCvi0x1ANy3gmlofR6
-         to4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCHiROmXg4Wbj+lEayKrSNj3Rr+XvTwaed1Nff9exmEklWJgVf/qHtw/b4ifP/Qp4GCBcw0Rt6MIPvmiGW@vger.kernel.org, AJvYcCVrW9vCDF4gF0KwheaWqe1SvdPFvyUVveVEFZofQubNVqzPYbfNJ95+1b9gk4OY3YVbn8ewMmzszrs=@vger.kernel.org, AJvYcCW/+LVksse1U09VZvjRzKSfZVCwNdYYfg+ZNGq2xXRovymcUz3xJVlc8vgSNkcwZgb24U+6XmuL44Nh@vger.kernel.org, AJvYcCXoseujehnXre7adIKylkcqdgvYDKlJXrt9L731y+JkcyZhv/iDJlpRUxnGCpsxy52WfDZXewIR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzknPGGYKnsoD38FY6RKwXNIEJzv94LiJaTBFQLn88IGDMTTHs
-	Ny4jZYS0DcGQNEkifRlSljW128D4Y49v0MiEQ8IH4lMOl1bm5CQGbOA+W1fucWmZLZ+Cil8rhlC
-	bZM1XrDQIMoiWRamFZ/GfwSyEDphjZY0=
-X-Gm-Gg: ASbGncu61VsoK3flVucSS8ycECdvfuELtR4z95tlVlzjMbXUox3YbnXNNzwezzcLMbl
-	aYKvvODmVjybdjYnfEZQ4dSFgU/HZOdPegAKanJnQ2oWJD0Fs6LF78LKvN99tl9VsmRSUDj/g/b
-	Gh+OLIE3mJ8/xSsDf/vxORiJABoLMtTJJTz6NNEf0n
-X-Google-Smtp-Source: AGHT+IGdvq4Jz7wCl7O5nLF8AdUqsnNZK/jUgiSEfeGbfX1YCA4ekJ6+LuyEXZu02NW4N5RvWGmagNrrauMC8JexM5M=
-X-Received: by 2002:a17:90b:274d:b0:311:9e59:7aba with SMTP id
- 98e67ed59e1d1-313f1be899bmr14937709a91.2.1750070550782; Mon, 16 Jun 2025
- 03:42:30 -0700 (PDT)
+        bh=J6R6SWEsvDm+66dPzlD87SecGN7m0uU0XfqGXWlTaok=;
+        b=QmEtxrWKj5PVN0rZlYY+hDSzBfDK2VSq4ugJHzq66Qkx+HFvzXFCPf4DYMonkuE+DR
+         rfosWyMAh7VSqeLxzV7OpLi+LvTzOY1Sg3yuMuSKr7b1d7iou9yjgTEk77RcTLtH3Gze
+         0P7qQuhfyoO9fIeIKs5pnt6HPevrCtIri2i3TyeO1+8AR7hQsmVj24HTCp9UCSjXdoKi
+         /Mnfo9E/iyGQCns5slTJSeZngvOGPmRt+0yf31lvRyNLJFNuqI+fmFDY4AC0MHhLsgxg
+         BBmDCAt8PV9WM7XFH8b0fbmeUaQWZC4cv3sdms1UIjKO9KR4s8VIqpb342UAkIPbIn0l
+         uy2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUPqfdCkfCdG/qyxxJjtMZGc3mR0itOQWQZ08DEXXjTkyBOiMasyPSwWramhssAb1eFQeDRYHtIz5Eg4Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFA/qOe3RBagQOaRt8GK7nxAXzRa/RcIqAD7uqYOhAa7mFMkjj
+	Wx+FmCMPFHm4mlhdMJn+XkisdDSH/XiT/emJ+0Br/XPZkdl72yz8EySOzm/wBhQPD6thp6yDlQv
+	x8XR42RTDLJK3Sp6hx77KB5X5Q+31ur/iineYqwbt
+X-Gm-Gg: ASbGncvwsLD4Poc7sa71a8/aFn+uHQ9He/wV4Wcvl83YvpU7rcgiO04FceJ2iWFtGIj
+	43i3fsRoXnUaR4U3Z2ZrdgRLjdcI9lv9QiPCKXFqRWAZX4/85CsKYk28RCJmHPCUy2kBUVVPodw
+	7zI1LsavRvVIOFRn3q2BrO/ZLA2x27xyZbJBRbnGXiDOiz
+X-Google-Smtp-Source: AGHT+IGZ5j8v3Ocn8ObEJWFaqu0zHRUBhHJbRBl19pWYIGlLXaQ5CvYChKdFLMs6JM1wUgSUPI1j2DL9dy/hVkqNSNo=
+X-Received: by 2002:a05:6e02:1d9b:b0:3dd:a4b7:c737 with SMTP id
+ e9e14a558f8ab-3de09fc2b9emr4525975ab.19.1750070701158; Mon, 16 Jun 2025
+ 03:45:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613100255.2131800-1-joy.zou@nxp.com> <20250613100255.2131800-5-joy.zou@nxp.com>
-In-Reply-To: <20250613100255.2131800-5-joy.zou@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 16 Jun 2025 13:44:31 +0300
-X-Gm-Features: AX0GCFu6L7Akim9BySCPjWCa7aS9JinLbW1qVZSuSXFVwqMzcBMNsyM6unHsnmE
-Message-ID: <CAEnQRZAp8TX84AygSjWGx-cNiLyZXZwUx5C-DLDuyB6hO3gXMw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/9] arm64: dts: imx93: move i.MX93 specific part from
- imx91_93_common.dtsi to imx93.dtsi
-To: Joy Zou <joy.zou@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, catalin.marinas@arm.com, 
-	will@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, 
-	ulf.hansson@linaro.org, richardcochran@gmail.com, kernel@pengutronix.de, 
-	festevam@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-pm@vger.kernel.org, frank.li@nxp.com, ye.li@nxp.com, ping.bai@nxp.com, 
-	peng.fan@nxp.com, aisheng.dong@nxp.com, xiaoning.wang@nxp.com
+References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
+ <CAP-5=fXSwgxMc+uh=PBAFh4Zm96tL5RDyKPOJ8Q40O4s=EaArA@mail.gmail.com> <20250616102945.GA17431@willie-the-truck>
+In-Reply-To: <20250616102945.GA17431@willie-the-truck>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 16 Jun 2025 03:44:49 -0700
+X-Gm-Features: AX0GCFsxy4AselWH-HXbNdNUVS0F-38THElPX6b9gGbKXhJTBrfP3qqVF_lXcMI
+Message-ID: <CAP-5=fVjJyV2eA1aDnk6cqAhJGc9FZVyHhP7-f=1OyWmzxjN8w@mail.gmail.com>
+Subject: Re: [PATCH RESEND v7 00/21] drivers/perf: apple_m1: Add Apple A7-A11,
+ T2 SoC support
+To: Will Deacon <will@kernel.org>
+Cc: Nick Chan <towinchenmi@gmail.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 1:08=E2=80=AFPM Joy Zou <joy.zou@nxp.com> wrote:
+On Mon, Jun 16, 2025 at 3:29=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
 >
-> Move i.MX93 specific part from imx91_93_common.dtsi to imx93.dtsi.
+> On Mon, Jun 16, 2025 at 02:36:18AM -0700, Ian Rogers wrote:
+> > On Sun, Jun 15, 2025 at 6:32=E2=80=AFPM Nick Chan <towinchenmi@gmail.co=
+m> wrote:
+> > >
+> > > This series adds support for the CPU PMU in the older Apple A7-A11, T=
+2
+> > > SoCs. These PMUs may have a different event layout, less counters, or
+> > > deliver their interrupts via IRQ instead of a FIQ. Since some of thos=
+e
+> > > older SoCs support 32-bit EL0, counting for 32-bit EL0 also need to
+> > > be enabled by the driver where applicable.
+> > >
+> > > Patch 1 adds the DT bindings.
+> > > Patch 2-7 prepares the driver to allow adding support for those
+> > > older SoCs.
+> > > Patch 8-12 adds support for the older SoCs.
+> > > Patch 13-21 are the DT changes.
+> > >
+> > > Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> >
+> > Hi Nick,
+> >
+> > This is substantial work and it looks good to me. Do you know why
+> > there's been little progress on landing these patches? Buggy Apple ARM
+> > PMU support in the kernel has led to reworking the perf tool. It seems
+> > best that we can have the best drivers possible.
 >
-> Signed-off-by: Joy Zou <joy.zou@nxp.com>
-> ---
->  .../boot/dts/freescale/imx91_93_common.dtsi   | 140 +---------------
->  arch/arm64/boot/dts/freescale/imx93.dtsi      | 155 ++++++++++++++++++
->  2 files changed, 157 insertions(+), 138 deletions(-)
+> You reworked the perf tool to support these things? Why? These changes
+> are targetting chips in old iPhones afaict (as opposed to "Apple Silicon"=
+).
+> I think that (a) most people don't particularly care about them and (b)
+> they're not fully supported _anyway_ because of crazy stuff like [1].
+
+I was meaning that we reworked the perf tool to work around the Apple
+ARM PMU driver expecting to work as if it were an uncore rather than a
+core PMU driver. More context here:
+"[REGRESSION] Perf (userspace) broken on big.LITTLE systems since v6.5"
+https://lore.kernel.org/lkml/08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st=
+/
+But in general it would be nice Apple ARM PMU support were well loved.
+I think we went 2 or 3 minor releases with the perf tool not working,
+threats of substantial reverts to avoid the PMU driver bug being
+exposed, etc.
+As for which Apple ARM devices should have perf support, it seems the
+more the merrier.
+
+Thanks,
+Ian
+
+> Will
 >
-> diff --git a/arch/arm64/boot/dts/freescale/imx91_93_common.dtsi b/arch/ar=
-m64/boot/dts/freescale/imx91_93_common.dtsi
-> index 64cd0776b43d..da4c1c0699b3 100644
-> --- a/arch/arm64/boot/dts/freescale/imx91_93_common.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx91_93_common.dtsi
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->  /*
-> - * Copyright 2022 NXP
-> + * Copyright 2025 NXP
-
-This should  be Copyright 2022,2025 NXP,  as per NXP internal guidelines.
-
-Am I missing something?
-
-thanks,
-Daniel.
+> [1] https://lore.kernel.org/r/20240909091425.16258-1-towinchenmi@gmail.co=
+m
 
