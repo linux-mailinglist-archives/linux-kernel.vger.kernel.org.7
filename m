@@ -1,180 +1,200 @@
-Return-Path: <linux-kernel+bounces-688740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63114ADB67A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:18:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7098CADB683
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED8C3B3244
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:18:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17DF116C70C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F4286404;
-	Mon, 16 Jun 2025 16:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B3827E047;
+	Mon, 16 Jun 2025 16:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YQiRguyq"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oz+rVnva"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAE6283FC4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45200269CF0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750090707; cv=none; b=au9JQmJJp4kmqRlVr3sjXrJPKyaBeRVjrk9pvJDPdKaCOtDkGjqVSKV4u/UklZy9hUDEbm1TBKN15eE4TyVemERakZKszajES0P79UULhgUk9YcgQ6sHRjsGfo8YJs9rPW84YsGbyI/qkz7AFqQK5uh0ijUCTDPPMUHDMBytoBU=
+	t=1750090849; cv=none; b=YjewtI9rmOs2zQ9tyHYpXuZHFwujUyr2Wkcba7SMgJLN1IljdKTLpBjNT8Ud7S1ftTCWoBDr4PyOOlGKH788AeqEOxj22RwnVle7bzJqTk91B8Zm1z7F8tEhJCKD1ltYs/4rZxuNkd9sqkJqnNhf6dUyUM5+RwiufqloOwUYT+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750090707; c=relaxed/simple;
-	bh=5dxQ60As8s/8rmI2TuFgJPch2gZ+j1BB1ZNS7po3vgM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Djl1jCCEF10S9cq9AkhExMRmtPd1XF5u6C+0mKXzYJqP+kjFyOhyDfLsiKNu1KgQVG7ksJBs+4r2hucwlXkMBnQNYF9E0HXYHwbAyK6Az1fvfh4zgzlJVmxSFRI8giQ4wyO7WfBg6HKC66gtVBQ6zRjRLT3rfijs0zBaqrnjpAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YQiRguyq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1750090849; c=relaxed/simple;
+	bh=7/6Zk5ECIk3ufJzj3zBNdmjp956e/2BkawTbTwbQ77I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ucrTEnHmNoG3xB9Eyz/q5GWbyakfCK7WnfXIDfUxt4K5X9wRTi1mygRR4hYm7XKfbMyPbwhaXGYq1MuJoV5QpMhpai4H+eiLQbFTjMTaafb5O1vZZf7c9+x7e1VSVDhwBwmPaUD0LiHRv2wrLX0JUSmd806Vb91DHMf96Q11xlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oz+rVnva; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G8lrEX005319
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:18:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=lenjTOuIiqQxj1snFC9JaLJ/
-	OZ0qD8QNh76r2FAzoEI=; b=YQiRguyq5DL80RlloScVAfpw9lTcjLnppkegCMZa
-	XA3bRC9ogFQHNt0RhUOL4ceODzfvxjFD+qsYDyDR9S+0aXDgcR0xXljWFrqGLb4C
-	XXJrG/LV3wDn2zt6EEFhv0eJrpT1T9+/S7oeaJ6BIMPsmW1YfIDF8FAyjXz8mtu/
-	cOQeBKOuYMJXOYM0Z9wCaK40w2Ueu2rS4YwrMBEFstW0GQSFzU9SjqfXigg1iUK3
-	QTZw4yT9ff3MdaU7YNg5I8GUPNgCKRHtCKHOMvzkgMUpEJqt6JLRvMg27m4uOycB
-	NBZBWDuqz48C74/lMeLP2BSmHTR4cAYc+R4Jt8KR7dzDpw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ag231b8b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:18:24 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5cd0f8961so1056557885a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:18:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750090704; x=1750695504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lenjTOuIiqQxj1snFC9JaLJ/OZ0qD8QNh76r2FAzoEI=;
-        b=iVQcYq2GFqfySIfDhbRNJuIl5ENgIaUqHEqrJbSjdHyfnWP2OnC1VgctXG0t+1OVbm
-         ba2xTksGnxVslJDoKwSKqnkQ1onnqJgTo7+V8p5aasX1H9TNReHq4gRiqYmYQvQ60uRF
-         Gh+qR/8PKnUuZ8NFbtTs+1wH147Th6V3BggoxjQMagL7in8fSZpXuhLHZ3fHuH+Bgu6O
-         euYLfDC8dnlfhfHyY9+L3Uq0s6DgFji6BCLHNYKeKxA1Z4M73RmElG41UJ2P1kur1w0+
-         43cMA39p14EFPzON1B5MIFZDyof3tMEUcTDkvp8JrWZX5LjwT2ZkRi7FYRKjfmS0a8vE
-         /+Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRSrRJshDisOmlFS0RG9jr5UNifiokDU3FzeQOrJhK+aaL1vkve/3r4Bkjg9/Ajd8AKBlJrVPQ7/VVcls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIiyRZJbIRHevv/KZAZ83eVTtUog+DOZkksXuCc2OjyAO1QwXQ
-	zxfdZzxZvz71EP5YMPQGVfYq7INQbQL/hrT4J2ijaCLCuembae6EG4/MB8yngG5lN1trFUkAu1q
-	TZez4pLHkugZBFAIxoYaXcFxkV/c1WSjyFSvtv6I3OcjoyFeAOkAYNHIXVw2MkHjtBfY=
-X-Gm-Gg: ASbGncswLz+F5ZoBc4tbzwqwNxheDgoISp3nEUvNQ7Fi5KWLZXjSwVvmTMxj4U51QLq
-	AEyih2DsUFrwNSq4gx9syZnvGmpertcW34J4FpngA5mM2OILWM+jYxtDwT2jVNN42oDLhmg6Xjv
-	v7WkSJp5i62za4mp96cJaTC1Osj+Q+BfkDLdFB6pG7jvkqFF7Y0oJx316/pOabgrGsp1C6an90h
-	+Vl6ejGfLDlmx0ATVDKVbTOMm21psrBkvccGVkysjdAaa1BIMWfQbbaZJsLYMR/KvEzmQKk2RcI
-	mZoJarpr6LFbholAPmzFJa2RCqRFfGMR495CadCZsIVdIHD/DF/Emz1Itg==
-X-Received: by 2002:a05:620a:450b:b0:7d3:b9b6:f1b9 with SMTP id af79cd13be357-7d3c6cd6c86mr1518729985a.26.1750090703916;
-        Mon, 16 Jun 2025 09:18:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYH0Bi1Qj/amsWCd72LYxFHGoIlfM8IzTVbUpM+all+BJ6C4oqXrBLJLX310yA58Ug9cHwug==
-X-Received: by 2002:a05:620a:450b:b0:7d3:b9b6:f1b9 with SMTP id af79cd13be357-7d3c6cd6c86mr1518724785a.26.1750090703338;
-        Mon, 16 Jun 2025 09:18:23 -0700 (PDT)
-Received: from trex (132.red-79-144-190.dynamicip.rima-tde.net. [79.144.190.132])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e13d014sm149938815e9.24.2025.06.16.09.18.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 09:18:22 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Mon, 16 Jun 2025 18:18:21 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, quic_vgarodia@quicinc.com,
-        quic_dikshita@quicinc.com, bryan.odonoghue@linaro.org,
-        mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, stanimir.varbanov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: media: venus: Add qcm2290 dt schema
-Message-ID: <aFBDzWLkKC9MWGoC@trex>
-References: <20250613140402.3619465-1-jorge.ramirez@oss.qualcomm.com>
- <20250613140402.3619465-2-jorge.ramirez@oss.qualcomm.com>
- <6f4e715f-1c73-450e-b7eb-92781b7fa050@kernel.org>
- <aFATp3zoSgkrj3YX@trex>
- <a76789cf-afe1-4d91-afdf-65c3af5ad11f@kernel.org>
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G8knX0003269;
+	Mon, 16 Jun 2025 16:19:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	T9tIP/nA/ojXJcuyJ7abvo5FqmtLH8FMyCSjTHFOwIo=; b=oz+rVnvay4RqXGaS
+	su8jq0wu9WXgxbf9OoseSyuYta6ZWUAJSPlLeM58oqxumqdhqscJ0Pv8gVNkoOKe
+	Q2FbHkEUSELviRgZd8coHNHpuClo6vXzerTWu2drelH23T+C5eZNlHYjELedcVd6
+	wLVBSMSYaBFBtmOPn4D25VoQ0gf3wYNHKMpg2LjrMw6wqlrzh04FWZfNA0w/vIuA
+	1v6J1VpHHDrMPYsdS5H33Ac4eVhRxi+5czLsoIb14u2lbXp704FdKraw3XNcV8gC
+	hvlrrYlMFQio/KiaLUbC9FUiw4L+rlmVJsTKIkYAWOxOg8KXf5oW2fiXUgCSZUEo
+	oh+Mkg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ag231bbb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 16:19:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55GGJI4h019496
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 16:19:18 GMT
+Received: from [10.253.36.28] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Jun
+ 2025 09:19:13 -0700
+Message-ID: <79355a26-c901-40a4-8a90-096da1380d9f@quicinc.com>
+Date: Tue, 17 Jun 2025 00:19:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a76789cf-afe1-4d91-afdf-65c3af5ad11f@kernel.org>
-X-Proofpoint-ORIG-GUID: I3ocZUJCWs8zTKCx2jJeXBfei8KS_YIA
-X-Authority-Analysis: v=2.4 cv=edY9f6EH c=1 sm=1 tr=0 ts=685043d0 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=wjE3nLva0YkvARyJ+Gfmxg==:17
- a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=4oi7HMmTljfVUEt6n0wA:9
- a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDEwNiBTYWx0ZWRfX3gtJhEtDzoks
- lpZ8xQ/YD8w7I2TsigcSvtfAyYFvNzx7u76/wC9wgJ7d5bApfnW3hgqV4AgLEU3LvxTK6NBJuMm
- +iJY3NQ5sbMCsRZg06T/3CetF0H9r58wicQbEcKsr44J6uWRnBuMZdq69BwvT/AaP1jAgvjJ/XR
- 1pRwUO9/16kTQePtiBcLljzesBm77Ww8Pkivn3VR9XeJHBbWcsbiZWE0mLfRtq/CkwU1bl8MATT
- iQO9h0wHg+X0O5T1PvAJ8YfiQ5Xw9JhYhcaolRnJ1LvvRDCDgcSd2a6Ce65BzJ6gz22yWSMc5ai
- CENVqiSHUyQU002qfSrGiAxWLgd42wNHPGc7uu3ULK05rjcBVP7+xWzN2nnpNYy6QXZYlp/wSvk
- iNO8FHRb0cqRIV5ECbjpXHFq8G1XdLCiq9/pMif9sy0agfdlrdIOIF9vj6GFuySkWAoDeLNC
-X-Proofpoint-GUID: I3ocZUJCWs8zTKCx2jJeXBfei8KS_YIA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH v4 2/5] arm64: tlb: Convert the opencoded field
+ modify
+To: Will Deacon <will@kernel.org>
+CC: Markus Elfring <Markus.Elfring@web.de>, <cocci@inria.fr>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Joey Gouly <joey.gouly@arm.com>, Julia Lawall
+	<Julia.Lawall@inria.fr>,
+        Kiran Kumar C.S.K <quic_kkumarcs@quicinc.com>,
+        "Lei
+ Wei" <quic_leiwei@quicinc.com>, Marc Zyngier <maz@kernel.org>,
+        Nicolas Palix
+	<nicolas.palix@imag.fr>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Pavithra R
+	<quic_pavir@quicinc.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Suruchi Agarwal <quic_suruchia@quicinc.com>,
+        Suzuki Poulose
+	<suzuki.poulose@arm.com>,
+        Yury Norov <yury.norov@gmail.com>, Zenghui Yu
+	<yuzenghui@huawei.com>,
+        <quic_linchen@quicinc.com>
+References: <20250612-field_modify-v4-0-ae4f74da45a6@quicinc.com>
+ <20250612-field_modify-v4-2-ae4f74da45a6@quicinc.com>
+ <3537a4ce-b5e8-44d5-a884-70a81562068d@web.de>
+ <94b40ff2-9e9e-4eea-8a66-87d8976aeb70@quicinc.com>
+ <20250616104109.GA17500@willie-the-truck>
+Content-Language: en-US
+From: Luo Jie <quic_luoj@quicinc.com>
+In-Reply-To: <20250616104109.GA17500@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WwhEiw-vE7EU9ByCs0vSwvvuPqtNiw5R
+X-Authority-Analysis: v=2.4 cv=edY9f6EH c=1 sm=1 tr=0 ts=68504407 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=YgwN3AOMAAAA:8
+ a=GpepFeYYm93ioQPZbdsA:9 a=QEXdDO2ut3YA:10 a=ztR1XV6QG-NWxUt1dNgd:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDEwNiBTYWx0ZWRfX2SsQ7Egy1Lgq
+ 3PaG3WWwqmwPWB7U2f/+vnv3tUT+SKiRLHYsRcjVhI4b8LiBO6MvmBJcjUH8ZJxHEb+gBAvI+s6
+ iY4lCjthHgCoKlh2shbP4SevA2I8VNDkzN4s6TCFRYT6Zf04af2/ZM/RYTYT+fmFdEZBeJjrbGE
+ qPRY7tX8guFGIL01aSHti2m0PxdfXLkVVYbqttNmJtQnqLPfP3i3YLdhP+AfCpc6vFSB6Q6dxws
+ acstCiAVOYJ9Rcrx71lJeMui+AzbWvo7frgc0ARX5S8m0n2RIsLgzpAzBhWVLXdxf36WV9QpvCE
+ Xjg8+4BoWsbJREsDLPgDjgqIDv4Lu0ObzneNCJ9zE6GSW8iYQw7U5kAnYpbbSXVKalp6bb36L9o
+ ZpF3FCgP2wA2hpyqxf3/Nou54p4aGFtvzl26R/UmPXs7u0dApb+bmPdUQU/iFvK58rJGdGZr
+X-Proofpoint-GUID: WwhEiw-vE7EU9ByCs0vSwvvuPqtNiw5R
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-16_08,2025-06-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0
+ impostorscore=0 mlxscore=0 clxscore=1015 mlxlogscore=859 malwarescore=0
  phishscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2506160106
 
-On 16/06/25 16:41:44, Krzysztof Kozlowski wrote:
-> On 16/06/2025 14:52, Jorge Ramirez wrote:
-> >>
-> >>> +  The Venus AR50_LITE IP is a video encode and decode accelerator present
-> >>> +  on Qualcomm platforms
-> >>> +
-> >>> +allOf:
-> >>> +  - $ref: qcom,venus-common.yaml#
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    const: qcom,qcm2290-venus
-> >>> +
-> >>> +  power-domains:
-> >>> +    minItems: 2
-> >>> +    maxItems: 3
-> >>> +
-> >>> +  power-domain-names:
-> >>> +    minItems: 2
-> >>
-> >> Why is this flexible? Either you have two or three. Not mixed.
-> > 
-> > please check 5b380f242f360256c96e96adabeb7ce9ec784306
+
+
+On 6/16/2025 6:41 PM, Will Deacon wrote:
+> On Mon, Jun 16, 2025 at 06:37:41PM +0800, Luo Jie wrote:
+>>
+>>
+>> On 6/13/2025 4:15 AM, Markus Elfring wrote:
+>>> I see further refinement possibilities for such a change description.
+>>>
+>>>
+>>>> Replace below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
+>>>> - reg &= ~MASK;
+>>>> - reg |= FIELD_PREP(MASK, val);
+>>>
+>>> * How do you think about to omit leading minus characters?
+>>>
+>>> * Subsequent blank line?
+>>>
+>>>
+>>>> More information about semantic patching is available at
+>>>> http://coccinelle.lip6.fr/
+>>>
+>>> I suggest to omit this information here (and in similar patches).
+>>>
+>>> Regards,
+>>> Markus
+>>
+>> Thank you for your suggestions. The current commit message was generated
+>> by the following patch mode command:
+>> ```
+>> make coccicheck MODE=patch COCCI=scripts/coccinelle/misc/field_modify.cocci
+>> V=1
+>> ```
+>> However, as I understand, the discussion on the ARM patches (between
+>> Russel/Marc/Yury) has concluded that the ARM arch changes may not be
+>> adding value over the current code, so I will drop the ARM patches
+>> in the next version.
 > 
-> This does not explain why this is optional HERE. You cannot use for a
-> new platform an argument that some existing platform was changed in
-> ABI-preserving way.
-
-thanks for quick the follow up.
-
-but bear with me please because I dont follow - why can the same logic
-be used - it being applicable - and therefore result in a definition
-similar to those other platforms?
-
-how would I capture such a requirement if not as done in this patch?
-
+> Well, hang on a second. From what I can tell, the objections haven't
+> been specific to arch/arm{,64}/. You haven't really explained why this
+> new helper is needed and what value it brings over the existing set of
+> functionality.
 > 
-> BTW, also subject prefixes needs fixing. For DTS: it is never "arch".
-
-right, that is for patch 2 but ok, will fix there.
-
-> For this patch: wrong order (see DT submitting patches).
-
-yep, that is addressed in the next series
-
-TIA!
-
+> So maybe start there, rather than dropping the parts that attracted the
+> comments to start with?
 > 
-> Best regards,
-> Krzysztof
+> Will
+
+FIELD_MODIFY is similar to uxx_replace_bits() for in-memory bit field
+modification, but with the added advantage of strict parameter type
+checking at compile time.
+
+Previous discussions (in patch series v3) among Russell, Marc, and Yury
+focused on whether there is any added advantage of using FIELD_MODIFY()
+(possibility of size overflow checking) for the specific cases being
+modified by the patch series inside arm64. For the one case where enum
+was being used, it was originally thought that there may be a
+possibility of size overflow due to 32bit size used by the compiler for
+the enum. However it was identified that the kernel's compiler already
+uses 64bit types for enum if the number of bits used with the enum is
+more than 32 (the code in this case used more than 32 bits).So, it seems
+that there is no additional benefit of using FIELD_MODIFY() in the
+specific cases in arm64/.
+
+Please note that the current ARM64 code using FIELD_PREP() also supports
+strict parameter checking at compile time. Both FIELD_PREP and
+FIELD_MODIFY utilize `__BF_FIELD_CHECK()` to support this compile-time
+parameter validation.
+
 
