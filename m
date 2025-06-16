@@ -1,304 +1,213 @@
-Return-Path: <linux-kernel+bounces-688750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84902ADB6A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:23:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0831ADB6B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7866B16231A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681133B730F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC0D28688E;
-	Mon, 16 Jun 2025 16:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA56286D70;
+	Mon, 16 Jun 2025 16:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIgDSVZM"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cs.wisc.edu header.i=@cs.wisc.edu header.b="OJnxSFdU"
+Received: from mx0b-007b0c01.pphosted.com (mx0b-007b0c01.pphosted.com [205.220.177.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690712882A7;
-	Mon, 16 Jun 2025 16:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750090888; cv=none; b=Eo8SwtFPUpdn7RMzxyIJeBsj5wsq182v/83JfJzVLtFpGnAExFLQ4isEysy2VnaWjVVV8dV4GkVUCF+4QZYV0Bxkkc6ytBiWoKCUE22mGY/i8pG1fkSFIz99NM0w1YSAx7xtWlLX3/EABcuTzNGAWuGVAjnh+cJAqOo0+xhTCx0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750090888; c=relaxed/simple;
-	bh=jrPADGdQVSlhHaHu88CYeq9ejs0dqL4pa8LW21dVeyc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yx5znTORn2/7M+NpqzZNzdn/PYP7pk1HZqLwhzlyCMYiGjfl8AzVkVOl37knOFn6/Bx193wZLHtukvMcm5wcXOLq0abOvAlZ9H40iYqjP+hmeYf/tHbrTTZcpJblnYN3W6RyajuJZUxJtIRbpyNLX6Wb0Trqj4pQsw6ymQ/Xp2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIgDSVZM; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-742caef5896so3883224b3a.3;
-        Mon, 16 Jun 2025 09:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750090885; x=1750695685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sO4neuwpUVoDLsDzSFLxxvkPcabDlga25iey737Q9/w=;
-        b=DIgDSVZMVKlcDQOrCBx2yD8jc+qu2I5hi5rihPTE8J2bKmZviE1uxRccVtl9QgbOlW
-         nWB43BcT0vEOIqKW58yTrR9kPSuJYyfwXz28cI7cL7DTqi7+/8MVu5Jp1rXO6NM8m8+C
-         iS0bhyAzirGuzoQ3lRkf6WZTKoXkPhQ7zWkCwZGQNYNzcVGC/ySaTD5E29rHQYpk4mvc
-         afvURfNibRWL6+OzEkXJDoKRXB7V+Mc+KvBOZflrSIhAOxSTw6gMuzasDUtwDEMtpAc1
-         pDDAN0RZJMViWZ4jcOXL79dMKXfy5UiXw8z6iXygmC9lDC9313mczDYbSViYf1ZCZd0T
-         E+zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750090885; x=1750695685;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sO4neuwpUVoDLsDzSFLxxvkPcabDlga25iey737Q9/w=;
-        b=SBzSyK4RmydkVruVvYRXImrW/SJEfTB+fb6tiJUQdUQVNqB0q56DGxu1KCHK7EDUPS
-         QdX0pv41IGtwW4LbtikeskW5WlF9us/Tk/xC4ow9sjjyw3px5PxUlK26lfwAwmnvtaDB
-         uJykPZLrG0eKJtljbfsF94Xbl1MwkLQPPGXh693DGw+aWdkUbvUke/NLYuCaopdRDHkz
-         R+Y7kmfSLpBFzyx3swo8L7wSDKJ4Jt7ViifNqtiKOrd1EvV++OHh6WhX1VPjFy/1J9C6
-         YZ8GRWNlTJ6UGLrQpEbrLL/kPZ0xlOcsbe4i9MeFn+gzMuKBu0HvNc/tqNtBH1zkfZ2s
-         6MQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW476xAK2jRZUYkQO6vkC3V75zD2iMMr9uGJk+jvrXZ+nXXE5g17CeHz/3fnxPVG/fan7bfFiISGQPdmc=@vger.kernel.org, AJvYcCWd7Tnb3RssJtk5VwVoyL3aIE/XrViQPvZn/xIAma/PghIh1c9JmGk7Sua+4n+ZnBGFuwPrNYp9cwEibULfIVDy@vger.kernel.org, AJvYcCXvsAzTohF//KmOmhABP77xUHSaHoMJtSqhcyiIv0uMoMzoz9iBWquAuA0Q0TfndSCW7cLsq/SRBC57DA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz18Q9XVIJWWbTldEk9q5UnoM1sTd/BXkiy/HmV0ESBs1tG4I0C
-	lxyyAhl7Rk3GN6Mb/cJkyFH5ri3AqWCyEIaggKz3q7W3FfGhDIOBK6A0MIYW
-X-Gm-Gg: ASbGncvbQG4ozLS3GhwpoMT1HJXxsBZqdFD7Yg3/NRCqjmPswC0F+gdrO+KhO8BSlJ6
-	3aVGAh0WCS4aT+ESwm95f+nXfPII9Q32Ndjdcxct9VAGoAt+P4thJ090ivUgB+X8Xsr3WzHgbms
-	OaiL08vUEJWkLKiXBOb3Twg7kFEqocXWXFb17Couud/7QrWg0QM4a4EkLJit87hOqCUci8MH10U
-	Mve12mKnPg16eXYVebBK2xVBgEyeRGkUkLMRdHeC+OdhuhyDk8YfwsXGmFiQPz/vmB3l3uxAUmN
-	+nwPQ0OxFO2ioHAeFwp+GLwdqA5+qxIfltJaVkckpF6YgKaDiuFtRbzsAx2RsuO4MUlkpl50P6T
-	5GLUw/QCZ9/uF8A5S4yVAIxE=
-X-Google-Smtp-Source: AGHT+IEOIXk6H1jA9Q65lqOc49Vxlq3eijftqFKHC9WFXfMVrfJD9h7cj/ckYq+gS695PQbgjakP3Q==
-X-Received: by 2002:a05:6a00:ad6:b0:740:a85b:7554 with SMTP id d2e1a72fcca58-7489cdebe1emr12838444b3a.2.1750090885308;
-        Mon, 16 Jun 2025 09:21:25 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-748900ad2absm7002127b3a.110.2025.06.16.09.21.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 09:21:24 -0700 (PDT)
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	skalluru@marvell.com,
-	manishc@marvell.com,
-	andrew+netdev@lunn.ch,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	ajit.khaparde@broadcom.com,
-	sriharsha.basavapatna@broadcom.com,
-	somnath.kotur@broadcom.com,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	tariqt@nvidia.com,
-	saeedm@nvidia.com,
-	louis.peens@corigine.com,
-	shshaikh@marvell.com,
-	GR-Linux-NIC-Dev@marvell.com,
-	ecree.xilinx@gmail.com,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	shuah@kernel.org,
-	tglx@linutronix.de,
-	mingo@kernel.org,
-	ruanjinjie@huawei.com,
-	idosch@nvidia.com,
-	razor@blackwall.org,
-	petrm@nvidia.com,
-	kuniyu@google.com,
-	sdf@fomichev.me,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-rdma@vger.kernel.org,
-	oss-drivers@corigine.com,
-	linux-net-drivers@amd.com,
-	linux-kselftest@vger.kernel.org,
-	leon@kernel.org,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: [PATCH net-next v5 5/6] netdevsim: remove udp_ports_sleep
-Date: Mon, 16 Jun 2025 09:21:16 -0700
-Message-ID: <20250616162117.287806-6-stfomichev@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250616162117.287806-1-stfomichev@gmail.com>
-References: <20250616162117.287806-1-stfomichev@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88EA20FAA4;
+	Mon, 16 Jun 2025 16:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750090903; cv=fail; b=EKI3c5rF458bHfs3QmRjoWbTIW+oB3xMCh/wb4+m76AzO1QHY/oJO9jUHuglc7+LU+CHRbt14fvSwp7TzJSTvyualQuFrOkSx8qM5Wxvxcb1/i/1iBDp9mWwXPmgeEC1IWLgQ4FEay9NcoT5eoEWOn2gxTSBPNOoUl/rwR4gN+M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750090903; c=relaxed/simple;
+	bh=OGAaE8OaKbi+AyyBIrvuPej0uuYtas/eGeFEAgRNoo8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pDCnWSATioHWtR+jZSC+e0gbHESv4r+NqjADYVt/Nh6YOkZEVc4EJ0orK54IERVkkbdasaVG/FXGDs29Rr+YRHjD/hfleiGmBpPjdArMrxhretiKibU7pYs/m/BVveaq49niQJD6nKWNK/geymQBfgfZkpmUbxo6RauZiwl787o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs.wisc.edu; spf=pass smtp.mailfrom=cs.wisc.edu; dkim=pass (2048-bit key) header.d=cs.wisc.edu header.i=@cs.wisc.edu header.b=OJnxSFdU; arc=fail smtp.client-ip=205.220.177.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs.wisc.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.wisc.edu
+Received: from pps.filterd (m0316044.ppops.net [127.0.0.1])
+	by mx0b-007b0c01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G9xHFU026144;
+	Mon, 16 Jun 2025 11:21:21 -0500
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2047.outbound.protection.outlook.com [40.107.220.47])
+	by mx0b-007b0c01.pphosted.com (PPS) with ESMTPS id 479r3mxnw1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 11:21:20 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mF7sVi+Atle7vnEi5FeRI1MYQtVikO2W4UTv/R4DDaZbz/3+CoU7D1QMI4zQFBZ8CHoSxczapQDlvaQH2hk61kQJcK2RgMcidLYBVriyVNqAdTKcUIGE+mnqslUeGOku3uYRkaQotFe6BXh18ePLIYhaXCkestni+vniRe0HjzeTIpwAv5UAWmGuLEQLPIJqXEbxzaZmtIcGjQWKsM9fweEKMfMn5c0RJD1/cyX1T0ZE1F0K8sGN8i4bUkFJw/SBgKVyVCvwTxMBmQdTjiUpN9pLCV+46OjM2kNijXqt097NjftDJdamrDst7DHDmpjmqMuyya04kkVLbuv+R6681A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XBPNDlqk/0RPWmHq/WeQOtDPphwEPFt4OFdsO4KZwNo=;
+ b=i6najaP/l00EBLGHKjHd9jrBUsmNCNgOU//5VzbuCwqpADqYnfmy9So+uyF8d0z/jYQFcjohl7QzNMm6p2i5rvb7/APkrSynstYBySFBqDGBc23P8fpEUmzYYs28LTCFsgKBpRNEic+9FO/eggVaBuYuykFUjPJJ7f7Wx0kiCyP1BOc9wcAtYXyRlM1NecP+Lsn/GdvpTEZecS0E8UlblwQP9vQVBsay1X786MczUwKItzu4MTDxD+9W7vtR8xrMP96sz4ToD8vGxjveiMgFlyGoAJ+g5IHrODsF7EgLegLrAkVr2mcTzW/Xvt55nFnhcX959mClBjQDVLe0Du+x6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cs.wisc.edu; dmarc=pass action=none header.from=cs.wisc.edu;
+ dkim=pass header.d=cs.wisc.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs.wisc.edu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XBPNDlqk/0RPWmHq/WeQOtDPphwEPFt4OFdsO4KZwNo=;
+ b=OJnxSFdUJ6BTCSGoBFZ2NVZ9PREsVlJD4jCN3T4Q3IjgMhoiSG69az3f6LEqbUf86ly4rN8jGUvt0xYLgONcknjU3EsNENbbN/U4Ygnm1ZxIBmOh7L4g0wYk1NUXbXJ+N7sWwoDGBjSHUQBirDZ/DV7Zujc3vnrHUb9DTt1+MLWr4deeBeDlsME8YVHX1HiYwAUrwPRhmjrOZuDVeYwcpFUkyC70YYxUfN9NM2VVrNQFhyAdxHxdz0YNUvyKICcDOmH1bnEvqMnT7tVH7eaEsJW09cMW+lChqv1AwAobi4KtNC+hr2A9ASHh2X9InFoRj5BOkvF5XcQgFfOATYp0/Q==
+Received: from DS7PR06MB6808.namprd06.prod.outlook.com (2603:10b6:5:2d2::10)
+ by MWHPR06MB10248.namprd06.prod.outlook.com (2603:10b6:303:27f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
+ 2025 16:21:18 +0000
+Received: from DS7PR06MB6808.namprd06.prod.outlook.com
+ ([fe80::76b2:e1c8:9a15:7a1c]) by DS7PR06MB6808.namprd06.prod.outlook.com
+ ([fe80::76b2:e1c8:9a15:7a1c%7]) with mapi id 15.20.8835.027; Mon, 16 Jun 2025
+ 16:21:18 +0000
+Message-ID: <f3eb815b-8c47-4001-b6e6-ec47ae10b288@cs.wisc.edu>
+Date: Mon, 16 Jun 2025 11:21:17 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] docs/vfs: update references to i_mutex to i_rwsem
+To: Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+References: <666eabb6-6607-47f4-985a-0d25c764b172@cs.wisc.edu>
+ <fd087bc3-879f-4444-b4ad-601a3632d138@cs.wisc.edu>
+ <fduatokkcmrhtndxbmkcarycto5su7gb7jfkcb53gvzflj5o5a@itnis2jwtdt6>
+Content-Language: en-US
+From: Junxuan Liao <ljx@cs.wisc.edu>
+In-Reply-To: <fduatokkcmrhtndxbmkcarycto5su7gb7jfkcb53gvzflj5o5a@itnis2jwtdt6>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR17CA0012.namprd17.prod.outlook.com
+ (2603:10b6:610:53::22) To DS7PR06MB6808.namprd06.prod.outlook.com
+ (2603:10b6:5:2d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR06MB6808:EE_|MWHPR06MB10248:EE_
+X-MS-Office365-Filtering-Correlation-Id: eede4652-bf3d-4d73-e1c2-08ddacf1d322
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|41320700013|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Mjl6T3dkUEptb3VpSCtzaTJaY0syQ1QvSFpYcDFwZHJKTWxVWEZBUFlYU1U4?=
+ =?utf-8?B?OTdiOTVEMDRMMHgwUXlPUmRBSWdBU2Y1Z015cFdFeU1oZ2RBSC9Vdjc5b0RD?=
+ =?utf-8?B?bDUwVkRTeDBCNTEzV3p3VnN0QmRYTWFaTndSeC91MlhuZlZJa2hSSE1jc2xz?=
+ =?utf-8?B?V2NMTDRGMUo3WHNHMlRCQ2tRU0pyaFp2WXQrcjBRSUVhUVBjOUJGTC9SSDBn?=
+ =?utf-8?B?Y3FISTBHMkdwRXVNd2M2WGQ5RDNGWFZBR2oreDBNNldZdzdJVDFyVmkwd2R3?=
+ =?utf-8?B?RExmMVVCcjRVdTVLZ1NIaEc3RFdWN0hLNVhNNWo1L2xvTitJTkE0N3V5ZUda?=
+ =?utf-8?B?ZE95cmdVRVVrZ0lCc2ZrVDB5ekhvVjBWSGZMTFVBQ1F3VEh2ZWhFV0pheUd5?=
+ =?utf-8?B?RXJYR3lucE5TVlZGK2V3RnlLVVZGM2E1eGpmaFIwVU9UZWxIWm4wQ0IzNGFH?=
+ =?utf-8?B?T1lITDF6UEZ3NnFKRmo0NUFBTE81QVlXaXN2dVJ0QUVWUUk3cUxEZWlyQndP?=
+ =?utf-8?B?VFJieVhnSWJsdVl6cEJHSXgxZ0twRkVSZmpVS1k3T1gwamx3QzFMb21xTVRx?=
+ =?utf-8?B?RHZVSFloeG83UU9ra21EbDV5dDFDcWdteFNMdUlBc1pWRnpUdm1mVy8yNWNS?=
+ =?utf-8?B?V1lRNzNSenU0NGZZRVdQbFROcGRXNGNHcjBnVFhiODRKMFZMbnVBMzdQTzFS?=
+ =?utf-8?B?bU9id3ZMZnlucmFIWU0zUjMyWWlKbzNLdVRhaHhvVE8yWXBwVXUxSGdqUlVV?=
+ =?utf-8?B?YS93VmNBa2NFMC9zb2V6TU5rMkp6bnUrYk1tMEdON2RTSG9jTGFKWGVJZ285?=
+ =?utf-8?B?S2M4bXV5L05vTHdsZm05N1lSN3cxM1JNbEFpSkNvdUtTc1ZSVHNjc3NJTEts?=
+ =?utf-8?B?c291cXUxNlp4YURLUzJVcTBUVlZSTU1ocTJ3WFFDSjd0cEhVWjBWVzRmdEJk?=
+ =?utf-8?B?c2hUUEluTUc0cTh2ck83Q3Q0Rnd3K1Q5dXNPb0NYSkRyZzhzL2w0MGpGOUZp?=
+ =?utf-8?B?eVEwR0VkMmxzWWF1TVRSKzRKSURSNW53ZEQ5YUhEVXVrK1ROaE9XVVAxQnkz?=
+ =?utf-8?B?aWtuQlM1ekJHd2M4ZGtNazZ4bWJQTlVYRUNVV054bUZzMHR4MU85bVNUeVJ4?=
+ =?utf-8?B?cXdDYmtqTGpXTW00QjNIN2Q0ZzBTdytMRmVXOTlENThVelR2MWZDczhiTUJq?=
+ =?utf-8?B?R1l4UTJFNFl0YVE4dVcxUE9sSmNJcmxIaVN2TkYvTzVUZnowRDFmRTRNNW4x?=
+ =?utf-8?B?WmVFbmpERXRydElwbzNNK3JxdEpHRHlaWVZoMGdXNG5xeTRYYkc1NlRaTEJu?=
+ =?utf-8?B?bDIwUFVFcy9wbndDNnplOUJEd0NGMiswbTZMQldDa3FSbDg4VmpDT2NqN3dX?=
+ =?utf-8?B?NFYydUFrNGlBK3ByVVQ5VzVJOENLYmdKZEJPdGlrc1A3d2dvNitJSUpxelN0?=
+ =?utf-8?B?S3A2Z2FhU0NWcWtOZ3F0RGg3MFJQL1hHSkhIV3I1R2dNdGFUQ2ZFRytUTXdn?=
+ =?utf-8?B?M3kzRXhzbGdYRHBkNUlGMzV6ZzRzZ1RiRG5raWhmN1NHeDBQV00xTWU0N3Qw?=
+ =?utf-8?B?R20xOWkrQmFadzZaZXhiNVFpZEN0TnBmQlVnRmI4aWNtcGZ4YXZ6SmNWM0VG?=
+ =?utf-8?B?K3pPMzk1eVZldlVPSHQzbE9NRnFScHlpb1dSVFBKZlZpamlsMDFHeEc0Sm1D?=
+ =?utf-8?B?d3dCWFgxL1A5ZDFoVlRYZTh1UXBHbUJBSXhzZlNCRFo5aWJ6VzN0NHlXU0Ri?=
+ =?utf-8?B?andTejYrZzB4QmFET1FUZGFvb2RVYjdFQVJnUmwwVHk5dUFLb1d5RVQ1RzFI?=
+ =?utf-8?B?VDg2cUFBWTl3ek82ODZHNWpCeGF0cGhaeFZEZnlXUUtVOTFCOWUyWmI0MXFi?=
+ =?utf-8?B?dnJpV3R6c2kyZDdVR1lDN1hYZmtxTGlLZUxPaWdKdEtBN25oQkdqU205Uy82?=
+ =?utf-8?Q?8864o1bfX6k=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR06MB6808.namprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(41320700013)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dWVoYldYcGZWYXFtNGI5OE44TGFnQUFoM2FDMzhpcUxDcHpzQ3BNem9hZ0Rk?=
+ =?utf-8?B?ck94bDVZNE5UeDN2dFFhMHZnOVUzNmo1TFVTSUsvenoyR0FEOWFGSndoSVVZ?=
+ =?utf-8?B?UnRGR3VlTEtzcy9vNGdueUZvbStEaForNWpiUW5ibDZYdnJhUm5sN0swVkdT?=
+ =?utf-8?B?MjdrQy9NYU9SaFFrREc4VUlIRzgzWThyNFY4R2E2dUhBMzRWb0xGWXpRWWJv?=
+ =?utf-8?B?clhySkRiWG9qemU1MnVMSGs0ek9LVnN2R2hxczR6MGVGRHpxemV3dmZzalpu?=
+ =?utf-8?B?RnF3NkFtdkJJb0FqaERHZkFKdUk5SkNjZUFqQUNUYytYVlNTQkVzdGdFdFdO?=
+ =?utf-8?B?RnZ1Qi9JR0ZYWTFqMkpPQnNyMUxJL3ZKOTlDakdWOFdsdHppNkhvM0xsSEFR?=
+ =?utf-8?B?MGprMGllZlFNZFgzNVRLNG5yOE9MQWNqOGhYRjh4MWxvU1NpRnZCZ3ZiYWdB?=
+ =?utf-8?B?cVdBTzUweWE3WmxVOW9tejE0NTNFZnhlU0Q2OXlCRnM1T0FTR3JXbUxxeVlk?=
+ =?utf-8?B?eHI3T1NlZEVMdHh1MXY0cXlETklQeGVjckRrd295UWJvNkkyTHZxSzFsb29i?=
+ =?utf-8?B?dmpFR244d2ZWRHg4dWoxRU1IUjA2T1JNTk9pU0RzQTVBYkNJTHVyWC9hWVpZ?=
+ =?utf-8?B?UDh3MXRIUnFYdVE0N2hGcm13aGh2b3lnLysySUdRTHlNSTBBV3ZNdTM4MzNn?=
+ =?utf-8?B?MFlTWFRiMVQxaEQyK3dvTmhHZEFYVXhDdFZ5VVlSdVBNNmpqVkJlb3lNSDI2?=
+ =?utf-8?B?clJDZVlCemQ5bzdydm03VUd0SklPOW8ydlR1aGJYaStONlEwb0lmanJDNEpH?=
+ =?utf-8?B?UDVjejkxdExwa1N6VlY3N1JkK2h2YWZkSmJTaXhqNFdiU0JyYldXaTI1REFJ?=
+ =?utf-8?B?dWNSOW5BaUZkR1c1UFhkcCtBeGlMdHZiNmRWS3NkV2lOTWQ2eFY0UXRqMGV3?=
+ =?utf-8?B?djVsVnl4TkZDeEFRaWxkTVl1RWlxQzN4NzVxTDdtV25uZ0pJZUF3RjNnbm1K?=
+ =?utf-8?B?ZXMwMGZVQUo2RldGbUR1blp1YUJkeUZHc29RMlRoZUk5RTF3cENpU2xSSHVZ?=
+ =?utf-8?B?amgwM1JvNmNFV2xmVitRWHgxYjFyUEtWT1NOYThLWldSQUdKZFA5S1RMeWdY?=
+ =?utf-8?B?ai9MZ2pGUC90YzBsOEZRcmt0Y2M5R2pwb0NycWpOYXNYSTJ5L2xxdnhOSVdh?=
+ =?utf-8?B?ZGJYbzZIa0lvWGUxMExINzZaSjRXTW9acFhjS0ZUTUxlb1Mxd1EwM3hCRFJN?=
+ =?utf-8?B?LzBkUEcybGpBekhSL2ZpMEN4UnBsS0lpNlhpUkNHd2ovamZFMjhHQS8yMFEy?=
+ =?utf-8?B?YzZjS2h4bTIrRVl4K1EvNWhSNEg0UWxQa2lUYndXTFJOREJCNEhObFFoM1d2?=
+ =?utf-8?B?a2VOVXovK1NIaU1oM0lUUVZjSWo4NzhOMnJ5K2cvbzcrZ2x1WXh6eTVlcHBG?=
+ =?utf-8?B?OElEVFJaMnNUR1hrb0ZnVU1sd1ZkMXd0UUllU1JVWnRvc2ZOQzhEbVVhaW42?=
+ =?utf-8?B?NWlySXI0WEQvR0lUQXRXM3MwOWZxLzd2dkR5OGJZS2krK3UrZ0xKTWg2bzJJ?=
+ =?utf-8?B?WmJ1RmtwZE5VejVYaHZHVTY1UUtXQ29ZaVhFMHRRb2QvT2ZCMkJreTQ0Q25W?=
+ =?utf-8?B?RWxOcFZxcitSMjAxZGhndUNvUGJjSktkY3JBWkFxaTZIK2M4Nm5BVHQrRC9T?=
+ =?utf-8?B?SWhZN1B0QnBlbkhLRktPbFo2S0toWDBjV3hTQlFLRFliWHpkNG9obzZnSFhu?=
+ =?utf-8?B?QklSL0JSZ2hrV0dSVUE5cklkYUVHaFlQbmtFQ0ZuWEZaYzNySjYzQ1BZQTZw?=
+ =?utf-8?B?N3JsU1JjaDhLRmVtYmF1TGk5eFloZVdNVURYQXoyVVcvcitzVmZNZit5WnVN?=
+ =?utf-8?B?KzJhTzRpcXNXRnMyMGIvUm54Ly9oWnFRcHBWWTdXZDQ4WWplQzFCQXRrTmlk?=
+ =?utf-8?B?aXBqSngyVGdibnhuWktINWFUbS93ZTB2UnFBN216RUJ5eUhBQkFKSk5ROG5w?=
+ =?utf-8?B?cklLb3d1UjN4b0N3NGJOM2RlWU5KNCtvWWQwKzh4Q2p2NFFUNXc5ODZxaDRy?=
+ =?utf-8?B?citFb0o5bFpGRU1kQkhUeEU0V3pKdUdSYTRXSGdldmx3M0JHK3hHckxYNXlp?=
+ =?utf-8?B?bVpuR0x5SlluT3RwcEFhdXpadlVtNXhORlFVZW90K3VNd04ySmNGS0ZZUVJF?=
+ =?utf-8?Q?q2yBAF3VOgrqfp8IkcYCzn2/Axq22faP0N/kzOHhxUJ2?=
+X-OriginatorOrg: cs.wisc.edu
+X-MS-Exchange-CrossTenant-Network-Message-Id: eede4652-bf3d-4d73-e1c2-08ddacf1d322
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR06MB6808.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 16:21:18.7354
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2ca68321-0eda-4908-88b2-424a8cb4b0f9
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5F8Xxfo/1wpFcJOKuuuhgaiiIblAuRhlBq388ZJ+ThPO2/sEBjv0AFq4aP9814Ko+CmBtQDH70CCPvJmQxpKYg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR06MB10248
+X-Authority-Analysis: v=2.4 cv=AvDu3P9P c=1 sm=1 tr=0 ts=68504480 cx=c_pps a=YTCy/NNc/GbGYbKR6UHGQw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=3-xYBkHg-QkA:10 a=1E0aQHB0DHgRhcW9lg4A:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
+X-Proofpoint-GUID: WMUGXZgA1nYSSCk59tpKNUq3GQC4PSy7
+X-Proofpoint-ORIG-GUID: WMUGXZgA1nYSSCk59tpKNUq3GQC4PSy7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDEwNiBTYWx0ZWRfXxXlkkJRGEUn1 gyEUmWbhhc4HRm/q0wE65NbNiUe314ivyfiHhfr9YyCTTb+NZbWpb98qw5E7kXWJREakUFRgpmA bKtaLCnn+pmChqlSZpM8hPnPOBQ4A8rdu09vmvqDBUppFNUWFWC1rf8SJ+b4T3F332aK623MJ3q
+ UJs4ESI3k1+IIRrfDHwAo1JezVXpCyatqrpOhf1Wv7m5BrWB4csmh5qBTfajqh/KOLzr+jgNmEg R5AfxizHDa8CJMSZ8HlBt3qK4e3gKcj0UP7YJzaHECxeyn19p9gYRjW7HiM+H/X3etMIhHI12cY Qiqpr7xoUifvrYQTBCShFvbzasDgwvXUxxzWttkwVvC2LGRaKlWWhdX2lwuawTKuWj4vmBJeT3i
+ sEcY7HwsVDDXasNi27gwi4Gurjubds+FF+1QUl6K14yUkquocTKuIUdclxeKiqQZwYqoBUTI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_08,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=900
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0 mlxscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506160106
 
-Now that there is only one path in udp_tunnel, there is no need to
-have udp_ports_sleep knob. Remove it and adjust the test.
 
-Cc: Michael Chan <michael.chan@broadcom.com>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
----
- drivers/net/netdevsim/netdevsim.h             |  2 --
- drivers/net/netdevsim/udp_tunnels.c           |  8 -------
- .../drivers/net/netdevsim/udp_tunnel_nic.sh   | 23 +------------------
- 3 files changed, 1 insertion(+), 32 deletions(-)
 
-diff --git a/drivers/net/netdevsim/netdevsim.h b/drivers/net/netdevsim/netdevsim.h
-index d04401f0bdf7..511ed72a93ce 100644
---- a/drivers/net/netdevsim/netdevsim.h
-+++ b/drivers/net/netdevsim/netdevsim.h
-@@ -131,7 +131,6 @@ struct netdevsim {
- 	struct nsim_macsec macsec;
- 	struct {
- 		u32 inject_error;
--		u32 sleep;
- 		u32 __ports[2][NSIM_UDP_TUNNEL_N_PORTS];
- 		u32 (*ports)[NSIM_UDP_TUNNEL_N_PORTS];
- 		struct dentry *ddir;
-@@ -342,7 +341,6 @@ struct nsim_dev {
- 		bool ipv4_only;
- 		bool shared;
- 		bool static_iana_vxlan;
--		u32 sleep;
- 	} udp_ports;
- 	struct nsim_dev_psample *psample;
- 	u16 esw_mode;
-diff --git a/drivers/net/netdevsim/udp_tunnels.c b/drivers/net/netdevsim/udp_tunnels.c
-index 10cbbf1c584b..89fff76e51cf 100644
---- a/drivers/net/netdevsim/udp_tunnels.c
-+++ b/drivers/net/netdevsim/udp_tunnels.c
-@@ -18,9 +18,6 @@ nsim_udp_tunnel_set_port(struct net_device *dev, unsigned int table,
- 	ret = -ns->udp_ports.inject_error;
- 	ns->udp_ports.inject_error = 0;
- 
--	if (ns->udp_ports.sleep)
--		msleep(ns->udp_ports.sleep);
--
- 	if (!ret) {
- 		if (ns->udp_ports.ports[table][entry]) {
- 			WARN(1, "entry already in use\n");
-@@ -47,8 +44,6 @@ nsim_udp_tunnel_unset_port(struct net_device *dev, unsigned int table,
- 	ret = -ns->udp_ports.inject_error;
- 	ns->udp_ports.inject_error = 0;
- 
--	if (ns->udp_ports.sleep)
--		msleep(ns->udp_ports.sleep);
- 	if (!ret) {
- 		u32 val = be16_to_cpu(ti->port) << 16 | ti->type;
- 
-@@ -170,7 +165,6 @@ int nsim_udp_tunnels_info_create(struct nsim_dev *nsim_dev,
- 		       GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
--	ns->udp_ports.sleep = nsim_dev->udp_ports.sleep;
- 
- 	if (nsim_dev->udp_ports.sync_all) {
- 		info->set_port = NULL;
-@@ -213,6 +207,4 @@ void nsim_udp_tunnels_debugfs_create(struct nsim_dev *nsim_dev)
- 			    &nsim_dev->udp_ports.shared);
- 	debugfs_create_bool("udp_ports_static_iana_vxlan", 0600, nsim_dev->ddir,
- 			    &nsim_dev->udp_ports.static_iana_vxlan);
--	debugfs_create_u32("udp_ports_sleep", 0600, nsim_dev->ddir,
--			   &nsim_dev->udp_ports.sleep);
- }
-diff --git a/tools/testing/selftests/drivers/net/netdevsim/udp_tunnel_nic.sh b/tools/testing/selftests/drivers/net/netdevsim/udp_tunnel_nic.sh
-index 92c2f0376c08..4c859ecdad94 100755
---- a/tools/testing/selftests/drivers/net/netdevsim/udp_tunnel_nic.sh
-+++ b/tools/testing/selftests/drivers/net/netdevsim/udp_tunnel_nic.sh
-@@ -266,7 +266,6 @@ for port in 0 1; do
- 	echo $NSIM_ID > /sys/bus/netdevsim/new_device
-     else
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
- 	echo 1 > $NSIM_DEV_SYS/new_port
-     fi
-     NSIM_NETDEV=`get_netdev_name old_netdevs`
-@@ -350,23 +349,11 @@ old_netdevs=$(ls /sys/class/net)
- port=0
- echo $NSIM_ID > /sys/bus/netdevsim/new_device
- echo 0 > $NSIM_DEV_SYS/del_port
--echo 1000 > $NSIM_DEV_DFS/udp_ports_sleep
- echo 0 > $NSIM_DEV_SYS/new_port
- NSIM_NETDEV=`get_netdev_name old_netdevs`
- 
- msg="create VxLANs"
--exp0=( 0 0 0 0 ) # sleep is longer than out wait
--new_vxlan vxlan0 10000 $NSIM_NETDEV
--
--modprobe -r vxlan
--modprobe -r udp_tunnel
--
--msg="remove tunnels"
--exp0=( 0 0 0 0 )
--check_tables
--
--msg="create VxLANs"
--exp0=( 0 0 0 0 ) # sleep is longer than out wait
-+exp0=( `mke 10000 1` 0 0 0 )
- new_vxlan vxlan0 10000 $NSIM_NETDEV
- 
- exp0=( 0 0 0 0 )
-@@ -428,7 +415,6 @@ echo 0 > $NSIM_DEV_SYS/del_port
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -486,7 +472,6 @@ echo 1 > $NSIM_DEV_DFS/udp_ports_sync_all
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -543,7 +528,6 @@ echo 0 > $NSIM_DEV_SYS/del_port
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -573,7 +557,6 @@ echo 1 > $NSIM_DEV_DFS/udp_ports_ipv4_only
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -634,7 +617,6 @@ echo 0 > $NSIM_DEV_SYS/del_port
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -690,7 +672,6 @@ echo 0 > $NSIM_DEV_SYS/del_port
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -750,7 +731,6 @@ echo 0 > $NSIM_DEV_SYS/del_port
- for port in 0 1; do
-     if [ $port -ne 0 ]; then
- 	echo 1 > $NSIM_DEV_DFS/udp_ports_open_only
--	echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
-     fi
- 
-     echo $port > $NSIM_DEV_SYS/new_port
-@@ -809,7 +789,6 @@ echo $NSIM_ID > /sys/bus/netdevsim/new_device
- echo 0 > $NSIM_DEV_SYS/del_port
- 
- echo 0 > $NSIM_DEV_DFS/udp_ports_open_only
--echo 1 > $NSIM_DEV_DFS/udp_ports_sleep
- echo 1 > $NSIM_DEV_DFS/udp_ports_shared
- 
- old_netdevs=$(ls /sys/class/net)
+On 6/16/25 5:10 AM, Jan Kara wrote:
+> Otherwise the changes look good to me.
+
+Thanks! Just for clarification, is the __d_move comment accurate? i.e.
+Does it assume the two i_rwsem's are locked in shared mode?
+
 -- 
-2.49.0
-
+Junxuan
 
