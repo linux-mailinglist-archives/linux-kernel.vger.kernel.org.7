@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-688408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE308ADB21A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:36:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E76ADB21B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81C618880D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FF5116F902
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997FA2E7644;
-	Mon, 16 Jun 2025 13:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CFB2EB5DD;
+	Mon, 16 Jun 2025 13:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VGrkzcjH"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L+s8sUSS"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0EA2877C3
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8DA2DBF77
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080804; cv=none; b=Fmi3/d2ao5StZ+a61guV+/BieY+fqivu0Oazi12CMucRVF+9Kh+v4kRe99QcJQ4q/Qkbsbq+Z1DcT7yF3M9MoBB0PXiRyz1AuliMG/+ZmSkumgInl/7Jn6r/vK7Tw6ui2Ian3DZS2HHYjTETNgXlhAke9K1kMydCk/w6MRKHuc8=
+	t=1750080807; cv=none; b=lxPgfL/jhY/gxuca7uZXZZeBYB8qZcFZr2jPO/NoZ+8IfSGxMzyhFXOEJmehxYoyKAt9EdBEQzOSucL6jeLyAhEwO7P6AWIA0FyPlUPH/Das8J2B0muIr+cCezcEhyNrjFBKHIVNF/Liytpn9CZm7h387UrOeo37x0gOUgzfwhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080804; c=relaxed/simple;
-	bh=0PHI8c4cGupy6mr00/69MtbHFn0M40BQMFD2F7JuKUM=;
+	s=arc-20240116; t=1750080807; c=relaxed/simple;
+	bh=p39s08lBsdKyWiPzDRau2EzpDZFXgqJHAiwGMuq/Nwk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NKgLT4EFAp9vL8geiKeh4e5teYGneSxJgg1Bh6r9XtaJhZ368k57oXpztHHUjvqg1O9D+Ry613xNTAx76qgxulUqJa7YSdnE78xRMxHGfZmdc31Kynksso12Tw7ogZXJUk2QFJmJqjbr9ReHUNH+oL4upxj/24i33ialChZUyQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VGrkzcjH; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=mGI/qDqxmmJyemdqghuShnd2uIqaBI3d5RaxVXovARQikF0Y0qdJGT6KRcfZGEUNoiWFuDh65Vrb0HWL+MbYFRJVnbVtlgPXPrH06ew0Ml6R16QVhXLia2wb9ZUk6nI5KBgZZuU9nU+l3xDWjNUt1lVl3ZhqBJ2/Lq2lWRXcrM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L+s8sUSS; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6070293103cso7859647a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:33:22 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso8229768a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750080801; x=1750685601; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1750080804; x=1750685604; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zhqvBCRWi83ljiiFIoIKKjzL3JwEFntoAes/MRvHbvg=;
-        b=VGrkzcjHJcxoKsVJO/hC0a5HRDzdSXGHs+xUtbV+PUKcnazteRKOU0/azSgJN7RpfK
-         pp6D8TdJ/tYgGBJibvmMEIYYnBUAlU9lI7b2llWcotjEk1LeUS40amFJBWGGZQWdCYQm
-         CgziL5y2yVh33bW8QCckwfwZKuQMruphZJlsU=
+        bh=iRxqEsXbtVo0LTo1eLfkdMCcKn/6qpCdwe4jbm1dkIM=;
+        b=L+s8sUSSF/Udpc2RkSiAVy5YerjD1X0adZ3u36b69fv6wfyOYFbxbDVj/LGqq0gAst
+         78jPhM7PY4undtTcqLg7rXKt1/A523FOJct926umc43ZdjUQDwp/PjZjFlqAakRYVjtp
+         IXeg5h/zOg+F0XF6/IPiPvXTp79mDzaJ3hTco=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750080801; x=1750685601;
+        d=1e100.net; s=20230601; t=1750080804; x=1750685604;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zhqvBCRWi83ljiiFIoIKKjzL3JwEFntoAes/MRvHbvg=;
-        b=HXw4DiJ14B8FPoJDfgS+KXNy9BeL7ETJ2IyG8tMdRKBLnu6gk/b2uxbKnYkUO7oEX5
-         6IdM//vmT/OlZqQYyv+gGx7DN4uUPKq9hsf4ZijqADf3+ZtnXqJLDZgoF/Jd+/S23RoY
-         Ks1VIVaNjkzG5dRJTlNVPBZgafc14Rs8hIOEk6+GRcoPQW0RJXzqsk7gOqzYSGOwyQ9N
-         mZl5pKAUueuZekTx7hy+rsIpPx8Ncl4NOyrUJpABaNxlyrr2W2xF9HefjsX8GCxMtd9R
-         Ld0G21w0aMpVIEVTDjhsGLR0+kfF/rwVV92fSOwBtfKe3iKQVo5NDBHj0hzBX/5k+zuf
-         DBVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpLGRZLgmem8Hrwwf+2GqjqkWHI4//tEJXn1v3hqXbNRHKgzs4PwHiKdj4byP9/f8qWR08ZVcrVdpygDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoHsj/8KE9AG8yWXBPNUjAgIPfD/J98/8oqtx7m1PrlinJjPP6
-	tC1/NYkVxV+IBvNU1/fUr3xw7ThOnm17+858/lHH8uugHw6iDL4l7mAHukqmogcUsg==
-X-Gm-Gg: ASbGncvWZJ3HyczHpxdRPUE6omwM77j4OBx/PRJy2+qzF7cHrudjCes44uOFNt2GZuY
-	A1q3bmFe4e5cXRgj1bY9tZJYITFpNPKqpgoTXMr4YZx/MA3bvOV1iqL74p/Y1ossUaBQotbJggD
-	L+Wgaq9ENJarmT8ujFm+EYqQLTR3yMLHFLBvd5GnLYr/IOQ89j7fC8SvUtC5ha2sgCK3Emqy4We
-	ShvC0HkGwnF/yQ5C0E9Lv825gstKk2f3WZ/Q+rrW23r0FqqZC0R8zUrKQr7SeD7BJjzue45EeUg
-	uyffcR8/96/RE7ZfW3EitVsDj9cnsRpb9Hq+yVAMg1tD4L5ThIP2p+asYaZVUbXxSG6WkieJVJr
-	JgoKeGVkrCmbyoE8zgfEU3mLUS/rqEtH866pJG08VtwaYyb34BJEl1xMQTsgglEC1km00
-X-Google-Smtp-Source: AGHT+IHfbJubtALYX705aMPJAZLadxG+o3H7c51K1HROrB1vOE0jaYQjb3BtZP2Tk8Y8fXZXY/12hQ==
-X-Received: by 2002:a05:6402:13d4:b0:606:e754:62bb with SMTP id 4fb4d7f45d1cf-608d09e3938mr8395397a12.28.1750080800769;
-        Mon, 16 Jun 2025 06:33:20 -0700 (PDT)
+        bh=iRxqEsXbtVo0LTo1eLfkdMCcKn/6qpCdwe4jbm1dkIM=;
+        b=YsVEEIjWZPqcYKXImCZiI6PA7BieOGXNKMRdflrKYyZSfY1IlO7Hak8Iw4Y590I9fj
+         4lLb82cmKSjbrrtVJxIt/9tzriTdjwIBpYnpBF6jESZVIxBPtCSC94nKlJ03iww5Wof5
+         xip32XJdNJWUTyZDCAVq/wgmMmMZSA3Q83Z34t+kRZBZrsX+WzS3cEgJ+XlAAIvxb1Ro
+         Dy52hosLkQ6UiZ0s1MOx1TXj+5cYmKFvlkBaX4O+x9iOn0U2zmw5pVPMe2EmX9MUpas9
+         klvFmgWoYYbVgWWnMiU9NBji0FyyeLcuk/ZYXDfnycZ3gUp4N+thX8wYMn9QsSlTZbGi
+         0sbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlbcLZgAczJKG0DcbXszSwpOAky1tCzelDBCrSZzXwapNe64R40qJ1mmJLpQg4RvTvWezhJMcgl9+HzOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH9g3HIL99HPk3PpomrQLQGW1HlmOnNuTr2BJgvbgO8dMfWfha
+	RV6CIMV9G8GOoA0Y4EKMrytM2oGuR+zIb94FJu/aQvOXvV8mFFTpV4LCKJEOSxwxxg==
+X-Gm-Gg: ASbGncuO7sx7P8vV8doufvrTOL52OApVVcwH8lws10RxP/yz7/L9TQMe94z6wLS1dVd
+	M+Mswu50Qlv2rNhqtwbz8xVndbS57u+PTRsJwf5vib/s2YHT5uhntnD1vQn5U+nnITtimcEsTpp
+	TTLq1JCBPGELwcwqo96BvgbMFd19JW6GvaKEP412ouxvrsF81ebiEDMi6xcWca1IKifZBXYSRbC
+	2S6qIWfy+wgV/B8JQysKGUYD3klKDcTymQGomduN3kKsqXPVL3uLEk83l+kcJ3Z/RImSzwzY3t5
+	L6uM63lCmglQtkF1FFxiWCiG0Ei0YWCSh2RwlB8sANzPeaMRcVlqqXArM6W8NOSBBuC6YoFzfex
+	eFjbshuYbpRC4V7Nwx816deLrYcaLVeeDzbrXSFxXqplePeK/iHvYH0KJMQ==
+X-Google-Smtp-Source: AGHT+IHW7N4V3Xmd80K442egDP5c14Z4Wwz41/QwxRTZ4VwR1xjfYPTBJjTabMbR2EIyF9mo+GlBTw==
+X-Received: by 2002:a05:6402:348f:b0:602:225e:1d46 with SMTP id 4fb4d7f45d1cf-608d0835bf5mr8908309a12.3.1750080802251;
+        Mon, 16 Jun 2025 06:33:22 -0700 (PDT)
 Received: from akuchynski.c.googlers.com.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a94ce7sm6036664a12.58.2025.06.16.06.33.20
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a94ce7sm6036664a12.58.2025.06.16.06.33.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 06:33:20 -0700 (PDT)
+        Mon, 16 Jun 2025 06:33:21 -0700 (PDT)
 From: Andrei Kuchynski <akuchynski@chromium.org>
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
 	Dmitry Baryshkov <lumag@kernel.org>,
@@ -85,9 +85,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	chrome-platform@lists.linux.dev,
 	Andrei Kuchynski <akuchynski@chromium.org>
-Subject: [PATCH 07/10] usb: typec: Report altmode entry status via callback
-Date: Mon, 16 Jun 2025 13:31:44 +0000
-Message-ID: <20250616133147.1835939-8-akuchynski@chromium.org>
+Subject: [PATCH 08/10] usb: typec: ucsi: displayport: Propagate DP altmode entry result
+Date: Mon, 16 Jun 2025 13:31:45 +0000
+Message-ID: <20250616133147.1835939-9-akuchynski@chromium.org>
 X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
 In-Reply-To: <20250616133147.1835939-1-akuchynski@chromium.org>
 References: <20250616133147.1835939-1-akuchynski@chromium.org>
@@ -99,102 +99,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Type-C mode selection logic requires feedback on the result of an
-alternate mode entry attempt.
-Call the `typec_mode_selection_altmode_complete()` callback to provide
-this final success or failure status.
+The `DP_CMD_CONFIGURE` VDM is the final step in the DisplayPort alternate
+mode entry sequence. Reporting the error code from this command back to
+the Type-C mode selection logic allows the detailed result to be propagated
+to user space.
 
 Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
 ---
- drivers/usb/typec/altmodes/displayport.c | 13 +++++++++++--
- drivers/usb/typec/altmodes/thunderbolt.c |  6 ++++++
- include/linux/usb/typec_tbt.h            |  3 +++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ drivers/usb/typec/ucsi/displayport.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
-index ac84a6d64c2f..946f61b57fa0 100644
---- a/drivers/usb/typec/altmodes/displayport.c
-+++ b/drivers/usb/typec/altmodes/displayport.c
-@@ -274,16 +274,20 @@ static void dp_altmode_work(struct work_struct *work)
- 		header = DP_HEADER(dp, svdm_version, DP_CMD_STATUS_UPDATE);
- 		vdo = 1;
- 		ret = typec_altmode_vdm(dp->alt, header, &vdo, 2);
--		if (ret)
-+		if (ret) {
- 			dev_err(&dp->alt->dev,
- 				"unable to send Status Update command (%d)\n",
- 				ret);
-+			typec_mode_selection_altmode_complete(dp->alt, ret);
-+		}
- 		break;
- 	case DP_STATE_CONFIGURE:
- 		ret = dp_altmode_configure_vdm(dp, dp->data.conf);
--		if (ret)
-+		if (ret) {
- 			dev_err(&dp->alt->dev,
- 				"unable to send Configure command (%d)\n", ret);
-+			typec_mode_selection_altmode_complete(dp->alt, ret);
-+		}
- 		break;
- 	case DP_STATE_CONFIGURE_PRIME:
- 		ret = dp_altmode_configure_vdm_cable(dp, dp->data_prime.conf);
-@@ -397,6 +401,9 @@ static int dp_altmode_vdm(struct typec_altmode *alt,
- 			dp->data.conf = 0;
- 			ret = dp_altmode_configured(dp);
+diff --git a/drivers/usb/typec/ucsi/displayport.c b/drivers/usb/typec/ucsi/displayport.c
+index 8aae80b457d7..6f754e696d93 100644
+--- a/drivers/usb/typec/ucsi/displayport.c
++++ b/drivers/usb/typec/ucsi/displayport.c
+@@ -241,7 +241,9 @@ static int ucsi_displayport_vdm(struct typec_altmode *alt,
  			break;
-+		case DP_CMD_STATUS_UPDATE:
-+			ret = *(int *)vdo;
-+			break;
- 		default:
- 			break;
- 		}
-@@ -407,6 +414,8 @@ static int dp_altmode_vdm(struct typec_altmode *alt,
- 
- 	if (dp->state != DP_STATE_IDLE)
- 		schedule_work(&dp->work);
-+	else if (ret || cmd == DP_CMD_CONFIGURE)
-+		typec_mode_selection_altmode_complete(dp->alt, ret);
- 
- err_unlock:
- 	mutex_unlock(&dp->lock);
-diff --git a/drivers/usb/typec/altmodes/thunderbolt.c b/drivers/usb/typec/altmodes/thunderbolt.c
-index 6eadf7835f8f..697ab6060652 100644
---- a/drivers/usb/typec/altmodes/thunderbolt.c
-+++ b/drivers/usb/typec/altmodes/thunderbolt.c
-@@ -242,6 +242,9 @@ static int tbt_altmode_vdm(struct typec_altmode *alt,
- 			else if (tbt->plug[TYPEC_PLUG_SOP_P])
- 				tbt->state = TBT_STATE_SOP_P_EXIT;
- 			break;
-+		case TBT_CMD_STATUS_UPDATE:
-+			typec_mode_selection_altmode_complete(alt, 0);
-+			break;
- 		}
- 		break;
- 	case CMDT_RSP_NAK:
-@@ -249,6 +252,9 @@ static int tbt_altmode_vdm(struct typec_altmode *alt,
- 		case CMD_ENTER_MODE:
- 			dev_warn(&alt->dev, "Enter Mode refused\n");
- 			break;
-+		case TBT_CMD_STATUS_UPDATE:
-+			typec_mode_selection_altmode_complete(alt, *(int *)vdo);
-+			break;
- 		default:
- 			break;
- 		}
-diff --git a/include/linux/usb/typec_tbt.h b/include/linux/usb/typec_tbt.h
-index 55dcea12082c..57cbda5292bb 100644
---- a/include/linux/usb/typec_tbt.h
-+++ b/include/linux/usb/typec_tbt.h
-@@ -24,6 +24,9 @@ struct typec_thunderbolt_data {
- 	u32 enter_vdo;
- };
- 
-+/* TBT3 alt mode specific commands */
-+#define TBT_CMD_STATUS_UPDATE		VDO_CMD_VENDOR(0)
-+
- /* TBT3 Device Discover Mode VDO bits */
- #define TBT_MODE			BIT(0)
- #define TBT_ADAPTER(_vdo_)		FIELD_GET(BIT(16), _vdo_)
+ 		case DP_CMD_CONFIGURE:
+ 			dp->data.conf = *data;
+-			if (ucsi_displayport_configure(dp)) {
++			dp->data.error = ucsi_displayport_configure(dp);
++			if (dp->data.error) {
++				dp->vdo_data = &dp->data.error;
+ 				dp->header |= VDO_CMDT(CMDT_RSP_NAK);
+ 			} else {
+ 				dp->header |= VDO_CMDT(CMDT_RSP_ACK);
 -- 
 2.50.0.rc1.591.g9c95f17f64-goog
 
