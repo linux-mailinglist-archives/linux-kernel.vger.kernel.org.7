@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-688697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B4BADB5E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:52:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D86ADB5E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1F43B2E01
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1073188F86F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA502690D9;
-	Mon, 16 Jun 2025 15:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78045269B08;
+	Mon, 16 Jun 2025 15:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="O00Z0Mng"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwApcJfx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5538A267713;
-	Mon, 16 Jun 2025 15:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750089081; cv=pass; b=NxlhIcnt1+T0WoboHIzqcbvvNbFcF72W8OdIU7gpVigf4sz5YU8gOrs2rGSBquOkFFzYNnfkZ2d99yLx38TZRfmQM/c+fNyNuX2g/KNqrXjl8fY8JlEkKa88GtxiUv4qPxTb8wRWUPWTibLKZlL9ZZZRqRZRozlZYK+g2bCmMnE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750089081; c=relaxed/simple;
-	bh=LW6LRKly7A8iUbEbNuN5rTz2Cd6cxVcFdGxKG8bb1RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCNDmFGICNaUa7tbh7rOO5OoKFNE2x6JmtIib370LhQ0QDzZbnxUN/hbBGStk6mE8ZBPwYBj5B/MGp0h/YvswzUx/tyCiFCOtO5b+vSHFFi2f/KUXn6ZqUfHibibnaEAenyA6lWXvigY1pi8eEz6vVtNdDoy/NHI04vC39IqQZ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=O00Z0Mng; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750089056; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CuDhxF78VIhhVcLLbtIDA2g0A3JRBwHgpImUgZeiW4qRpCpfJhMRtz9J7W9/puxsWBKS2acfafaaOewvv4xu4LVPozJ7XRFtOezMnAxj7ClBNDEEwJCQ0Ch+NjBHNxVysZS/2VczSP1P0vTDsE1lkxK3KyTiMGvcAXj1zlViM6s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750089056; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=170kxITiahI0WLlzh73GbaAad8nEI7X1qHMVlhx8xgg=; 
-	b=hqKte0ENBFTvga3/nAdinwK6t+q6u3A5RAWGBNgVnX9QLBqT7VaAzL89uiBQzxJAVtYrpwnloyQGdNg2Q8Y7D9rjI8S+WLMgjmpLaxvUpGj7zar4BLkP56KNdtAIMcT6ldRRpJpG39V4tRI6nyjYBkdpmVyXS+zNiE6bsIpk8MA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750089056;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=170kxITiahI0WLlzh73GbaAad8nEI7X1qHMVlhx8xgg=;
-	b=O00Z0MngrOahDkUAGWl2DFdJ+tJUMdAR2SM/vqPLM48emFpW6jWhyqfnh5pCpf1s
-	+pT89k0SmwDB8LXI6AlbYd/0BdXSFRVUsz2T9jedNf4PMpibuiRBBn1r7LsFbMYe/qY
-	+RmeU2GonGGrlMu9bQz7IfqYznSwDPBkLtiZwUeQ=
-Received: by mx.zohomail.com with SMTPS id 1750089054716172.7304639178068;
-	Mon, 16 Jun 2025 08:50:54 -0700 (PDT)
-Message-ID: <2d251d7c-7906-4a66-9791-7f71e7a4b54d@collabora.com>
-Date: Mon, 16 Jun 2025 17:50:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD1326463A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750089060; cv=none; b=UFi+IFonyooGQ1InexIGDcMHrfdhvckWXy8AqbrtAUJLs4V01Qe9fAAWgnpchKEadeHMoxlrSJVVdGXQkXga1A/pGW+rELF77oPFG5uBfQobZywNHa//Jo6pU1REb75V9ix+DLzmoJ3NhFEA+4FF5qCbWTKFcneMXmxLDAuWd5g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750089060; c=relaxed/simple;
+	bh=puAp8vVie1YZJSKL4nqENUKM1UhshsrnW2fbHlvQVD4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=geZ1CMxEtozgiWG1eRgSbjj6pxZBCHtd5fqOjS+CxlAv6K+qcmlfj/2rOe3eWJGQDQ3byVRji+pdVeG2Ke0U4ebheDKFx6L2Pvy3wdGja70y5Qo5YC5Zfo7YaPcYFsOoXCQpPeWAblVHaq3VMhOmpMCsNR8K00N4rVTgjspj/f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwApcJfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00D43C4CEEA;
+	Mon, 16 Jun 2025 15:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750089060;
+	bh=puAp8vVie1YZJSKL4nqENUKM1UhshsrnW2fbHlvQVD4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gwApcJfxXI5EecMPOvsLEHPdVVOG7C8bWtQgMkHX4nPQsMF6CA6rXkttMhYZB6dG7
+	 bvpWVQvYni0/EIJ3aK8AwJtTvGmMXrMqYVVbOpVMMsiUNa3Im31e0/k3YTlElbD8Tx
+	 9hM+23C7wHExMxkwATc2Cn+RB0RBS/4VLJKpvizBiHQOgt+LrFOsR6skj7GNBQWWzp
+	 auISFRscYFITRcuTB+Uzf60R+Ysr7o05hYXNA1ChGZN0iLZANbIqIP1vjjcl09YAjW
+	 ua+UWgZ45k6FZqPdpobK5OeMVmJWvGj4X4nnrgRjfIalXTzQ/k1lWnW2HvQqJCNezv
+	 71F4HTc6TsCzw==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-kernel@vger.kernel.org, wens@kernel.org, quentin.schulz@cherry.de
+In-Reply-To: <20250606190418.478633-1-heiko@sntech.de>
+References: <20250606190418.478633-1-heiko@sntech.de>
+Subject: Re: [PATCH] regulator: fan53555: add enable_time support and
+ soft-start times
+Message-Id: <175008905873.262451.9164441451650062773.b4-ty@kernel.org>
+Date: Mon, 16 Jun 2025 16:50:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: iommu: verisilicon: Add binding for VSI
- IOMMU
-To: Conor Dooley <conor@kernel.org>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- nicolas.dufresne@collabora.com, p.zabel@pengutronix.de, mchehab@kernel.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- kernel@collabora.com
-References: <20250616145607.116639-1-benjamin.gaignard@collabora.com>
- <20250616145607.116639-3-benjamin.gaignard@collabora.com>
- <20250616-winter-strict-db98f85db22d@spud>
- <5c971c09-c398-40a3-9ed5-ec38b6645e1d@collabora.com>
- <20250616-contempt-remix-5af2b7281cbd@spud>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20250616-contempt-remix-5af2b7281cbd@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-08c49
 
+On Fri, 06 Jun 2025 21:04:18 +0200, Heiko Stuebner wrote:
+> The datasheets for all the fan53555 variants (and clones using the same
+> interface) define so called soft start times, from enabling the regulator
+> until at least some percentage of the output (i.e. 92% for the rk860x
+> types) are available.
+> 
+> The regulator framework supports this with the enable_time property
+> but currently the fan53555 driver does not define enable_times for any
+> variant.
+> 
+> [...]
 
-Le 16/06/2025 à 17:42, Conor Dooley a écrit :
-> On Mon, Jun 16, 2025 at 05:30:44PM +0200, Benjamin Gaignard wrote:
->> Le 16/06/2025 à 17:14, Conor Dooley a écrit :
->>> On Mon, Jun 16, 2025 at 04:55:50PM +0200, Benjamin Gaignard wrote:
->>>> Add a device tree binding for the Verisilicon (VSI) IOMMU. This IOMMU sits
->>>> in front of hardware encoder and decoder blocks on SoCs using Verisilicon IP,
->>>> such as the Rockchip RK3588.
->>>>
->>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>>> ---
->>>>    .../bindings/iommu/verisilicon,iommu.yaml     | 71 +++++++++++++++++++
->>>>    1 file changed, 71 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
->>>> new file mode 100644
->>>> index 000000000000..acef855fc61d
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
->>>> @@ -0,0 +1,71 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/iommu/verisilicon,iommu.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Verisilicon IOMMU
->>>> +
->>>> +maintainers:
->>>> +  - Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>>> +
->>>> +description: |+
->>>> +  A Versilicon iommu translates io virtual addresses to physical addresses for
->>>> +  its associated video decoder.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    oneOf:
->>>> +      - items:
->>>> +          - const: verisilicon,iommu
->>> You're missing a soc-specific compatible at the very least here, but is
->>> there really no versioning on the IP at all? I'd be surprised if
->>> verisilicon only produced exactly one version of an iommu IP.
->> I only aware this version of the iommu for the moment.
-> "for the moment", yeah. Is there any information that could be used to
-> version this available?
+Applied to
 
-The hardware block isn't documented in the TRM so I don't know if there is a version
-field or something like that.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
->
->> Does adding verisilicon,rk3588-iommu sound good for you ?
-> It'd be "rockchip,rk3588-iommu", but sure.
+Thanks!
 
-"rockchip,rk3588-iommu" is already use for other MMUs in rk3588.
+[1/1] regulator: fan53555: add enable_time support and soft-start times
+      commit: 8acfb165a492251a08a22a4fa6497a131e8c2609
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
