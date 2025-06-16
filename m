@@ -1,135 +1,146 @@
-Return-Path: <linux-kernel+bounces-687965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC2AADAB82
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A505EADAB89
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EEF43A4A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D945C188F281
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA01F270ECB;
-	Mon, 16 Jun 2025 09:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D084272E45;
+	Mon, 16 Jun 2025 09:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NJjjWtui"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QeTLjma9"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83ED20D4F8
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444D622F764
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750064996; cv=none; b=faHq6tAQ9m0OpP0RwGiUbHKkCzCD//2PyGyCFiHmXYw/BX1cvZYP6jii1ILYnXix5yxzDYK32i4P/onUwdIFQOxyUnROTBrxjh2dPBgLViDSukH4WGWqd50Dkq9nXCr9RFunz3D9e5yi/thMrUrfqdxG46J9JeKw9XTrG9zJg8w=
+	t=1750065046; cv=none; b=Ww7c1dHKelNHzOkaX9lpnk8jMiCCu6zUEHnnSpUrNK7GkCw184zNrBW9JLYOV4hgCs+zUg8KALABHBxyHvoqAVWA675FLlS6T0pR8d47vS53jHhQRs91ch4ek6T6XNzPeXJPr6KTvCkwYpoQtaa7XO1nz0LiSowklXMPObBPt5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750064996; c=relaxed/simple;
-	bh=3rrLsFGRkgwqakiZkwY9lo4QrXlqLwVthtdYujqyOVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=YUQAFOFebW4IkPz5EcwnDROpfFrouJDuvYoegx7aXSQ4K2aMYPiys1XTfSnhDOSOrpHJxIbbx9vq3SIaUUf1qGcmm6vwZuLq7J41rPI9xSaTTwAjv+9y1nw07jq0LGpieYMnhY2YbvTzgVbO5YQ6BfBCitepilARvOv+VIL3VM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NJjjWtui; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250616090945euoutp0249071111059cc782053f64af467de364~JetTtoya11953619536euoutp02z
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:09:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250616090945euoutp0249071111059cc782053f64af467de364~JetTtoya11953619536euoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750064985;
-	bh=Z0yVDNlBuUeI2U5G9pnG88sUo+3LU8vld6YvrIkhECY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=NJjjWtuiH8rQP1rLO+Qn29ldm7aH/ChlGrzo5voO7FGEzkE4eRwYtrAghrMJ1qEdP
-	 pYXMDPXEvc2SPnERO/SvJoRqMWNMp9pPt5+Fk5/14cuWB2tFCkCnyX/0IA0ziX3vRw
-	 E3glhShhovdXx4zJ4e/ZUFX1+Bhtz2spsF/SNLmQ=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250616090944eucas1p1ffc6fcf91024df239946d55f78cd73ab~JetTDE54A2755827558eucas1p16;
-	Mon, 16 Jun 2025 09:09:44 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250616090943eusmtip1582353473f82f3f625b89a1041e9e149~JetR4HUmp2738727387eusmtip1M;
-	Mon, 16 Jun 2025 09:09:43 +0000 (GMT)
-Message-ID: <9765c970-55cc-4413-9fd0-5e0cdfa900fa@samsung.com>
-Date: Mon, 16 Jun 2025 11:09:42 +0200
+	s=arc-20240116; t=1750065046; c=relaxed/simple;
+	bh=SwWEvDaGj1H3eOVuukiaSaEPHd7lZiuo8sRHZvD7nY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5pKm45BG1PdPS03MZOoCYmOyQEfDFetBpBNGaALnCajsQw6XFUNe+6DA9j0azHaY7s3d5EB+bdHsW7M2Lxfw5nOVxOvIiEQbeehRrouy8dvNMZ6e+ZEf0l8QaChgp3zRIv7ItnYEFXx5hOxF9pyipO+PvmjMS2j+kFtw7JTWLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QeTLjma9; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5532a30ac45so4061453e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750065043; x=1750669843; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dmDMMMFI5G4DNwFWGn674MZ5D9eFoURbFcL3QvAF4Ig=;
+        b=QeTLjma9gn5dGBch89jyBaqcj8KgX5NiNqQwcHs8G5cvaw06cb9bZkpJ8STzi5kSdG
+         JVW2+7wpHPSn9w3hB2AJyf6wuSExYzSMtGO6o/1p7yfcJi6KsbnvPa40Xcu2H7UtlUE/
+         29K7pR9ROGGDBVW74OXhCtAGTtk7EQ0PX8/NDFD9QUWP0vZiZtCXC2d75gNELPwxmXbh
+         YQxJeSXNTnEEkYDS+wNgOYfV2rteAbB0sAo3rHdv2pCU0jIX57QIjCDT6rFyxnzVrh4I
+         VaebVZgyoM4Q7ngwBnV0le0DQ7NbZvVeTyFnEWCMxhQ8I7xbMVl0rlYfNH8/jVwTqQcY
+         jhcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750065043; x=1750669843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dmDMMMFI5G4DNwFWGn674MZ5D9eFoURbFcL3QvAF4Ig=;
+        b=dwk0Afb1c2W3fSUuqf9q0iV0/PaAtSJeQbs5mQxt8prFJJbFXlAjcTfcjWwWXlwrhS
+         Kt360nEvF1WwdNn04ZPKZMH5VMGNk43JDk51DHIYIwOflTSTIUn8gFVx+Kr+XUAcjcgg
+         ZAN987KQyHS7StNE/qyT6eZgqtBhxSwOKIUK6g5lx0ja6waf+QsIUItKN/XROaGrTk27
+         IUETt0wvAcZpyjUjkFlZeSCl2uiqXpr043eT/glRoyCFC5rZb785//uzhj1n+C56F+/Z
+         Gmx0gs8Hthcwh/J7INPtrUbLFOoE8qDqBN2B567z8iGbRahOZuxfWFrLBuYsiMRZe/Dm
+         /2OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmlAliY9n5j+D7I4JUNDrtGQrMI+llWnltfJCaN+4RxNgCTchcKXxtBHDhJetmAncHayHvdR4fif/SZRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAEWK0rgNEkG0UMKPCVzeyS9QzJdoD1BpsjHmt0LxSNgre2i2/
+	kUcJkKYllhIxxTEVErpKAoGlPqfIGtAnf+51VFcRJEHwsBcTWv4ngChjxbVcxiTHIhTGKmWefWF
+	wg05OaNhA2EYTnV7+OoroC/QMsg5fqL5bF3FvO7VCBg==
+X-Gm-Gg: ASbGncueSr793qHh16PYOZG3WRXaWIGWGcUQxKKlBHl6/EbpXGpTYNgFwsTf6LyQWw9
+	4Q1x/J6BKRyeU+suk3mL49JzQuOCvRP+0RNeuhfTXuK1c+McXBNHoa4nIFSSdBI5I3T5aXxRQbv
+	Fyg1LHohs1l/fn4tiLABILJhRmuXUwcRb7HIibXXWMleKZVz5ezjToAPzpy/viLnlBz83ykILRT
+	9w=
+X-Google-Smtp-Source: AGHT+IHuGL7ppu54TT/M3Hxiz/E57PX/ijwwJDHxeHuWrcclls/KmfWg30WiaNhrMMlcrNDHFrl4pCAUL311IM7bJx0=
+X-Received: by 2002:a05:6512:1053:b0:553:29cc:c49c with SMTP id
+ 2adb3069b0e04-553b6810d6bmr2008050e87.7.1750065043405; Mon, 16 Jun 2025
+ 02:10:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] drm/imagination: Enable PowerVR driver for
- RISC-V
-To: kernel test robot <lkp@intel.com>, Drew Fustini <drew@pdp7.com>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, Matt Coster
-	<matt.coster@imgtec.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
-	Szyprowski <m.szyprowski@samsung.com>
-Cc: Paul Gazzillo <paul@pgazz.com>, Necip Fazil Yildiran
-	<fazilyildiran@gmail.com>, oe-kbuild-all@lists.linux.dev,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+References: <CGME20250614180909eucas1p2a34e3242fb42f7fd25e4038c291276ff@eucas1p2.samsung.com>
+ <20250614-apr_14_for_sending-v4-0-8e3945c819cd@samsung.com> <20250614-apr_14_for_sending-v4-3-8e3945c819cd@samsung.com>
+In-Reply-To: <20250614-apr_14_for_sending-v4-3-8e3945c819cd@samsung.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 16 Jun 2025 11:10:31 +0200
+X-Gm-Features: AX0GCFundfu1_DbYfr4amG4ZmgyhqyYCcYsn5RbDrpDylY7Och28dfv5wtCxrQQ
+Message-ID: <CAMRc=MdrvZ0_3aWcmhYZP4CxOVbuYjL66iLPHKkDt=vCP7VN-Q@mail.gmail.com>
+Subject: Re: [PATCH v4 3/8] pmdomain: thead: Instantiate GPU power sequencer
+ via auxiliary bus
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, 
+	Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <202506151839.IKkZs0Z0-lkp@intel.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250616090944eucas1p1ffc6fcf91024df239946d55f78cd73ab
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250615105256eucas1p21dba29a1450757d9201b2a9c7f0e34e8
-X-EPHeader: CA
-X-CMS-RootMailID: 20250615105256eucas1p21dba29a1450757d9201b2a9c7f0e34e8
-References: <20250614-apr_14_for_sending-v4-8-8e3945c819cd@samsung.com>
-	<CGME20250615105256eucas1p21dba29a1450757d9201b2a9c7f0e34e8@eucas1p2.samsung.com>
-	<202506151839.IKkZs0Z0-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Jun 14, 2025 at 8:09=E2=80=AFPM Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> In order to support the complex power sequencing required by the TH1520
+> GPU, the AON power domain driver must be responsible for initiating the
+> corresponding sequencer driver. This functionality is specific to
+> platforms where the GPU power sequencing hardware is controlled by the
+> AON block.
+>
+> Extend the AON power domain driver to check for the presence of the
+> "gpu-clkgen" reset in its own device tree node.
+>
+> If the property is found, create and register a new auxiliary device.
+> This device acts as a proxy that allows the dedicated `pwrseq-thead-gpu`
+> auxiliary driver to bind and take control of the sequencing logic.
+>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
 
+[snip]
 
-On 6/15/25 12:51, kernel test robot wrote:
-> Hi Michal,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on 4774cfe3543abb8ee98089f535e28ebfd45b975a]
-> 
-> url:    https://protect2.fireeye.com/v1/url?k=6c3bc994-0cd954c9-6c3a42db-000babd9f1ba-30c2378fa012fc4a&q=1&e=c39c960c-4d5f-44d7-aed7-0097394dfc81&u=https%3A%2F%2Fgithub.com%2Fintel-lab-lkp%2Flinux%2Fcommits%2FMichal-Wilczynski%2Fpower-sequencing-Add-T-HEAD-TH1520-GPU-power-sequencer-driver%2F20250615-021142
-> base:   4774cfe3543abb8ee98089f535e28ebfd45b975a
-> patch link:    https://lore.kernel.org/r/20250614-apr_14_for_sending-v4-8-8e3945c819cd%40samsung.com
-> patch subject: [PATCH v4 8/8] drm/imagination: Enable PowerVR driver for RISC-V
-> config: riscv-kismet-CONFIG_DRM_GEM_SHMEM_HELPER-CONFIG_DRM_POWERVR-0-0 (https://download.01.org/0day-ci/archive/20250615/202506151839.IKkZs0Z0-lkp@intel.com/config)
-> reproduce: (https://download.01.org/0day-ci/archive/20250615/202506151839.IKkZs0Z0-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202506151839.IKkZs0Z0-lkp@intel.com/
-> 
-> kismet warnings: (new ones prefixed by >>)
->>> kismet: WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM_HELPER when selected by DRM_POWERVR
->    WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM_HELPER
->      Depends on [n]: HAS_IOMEM [=y] && DRM [=y] && MMU [=n]
+> +
+> +static int th1520_pd_pwrseq_gpu_init(struct device *dev)
+> +{
+> +       struct auxiliary_device *adev;
+> +       int ret;
+> +
+> +       /*
+> +        * Correctly check only for the property's existence in the DT no=
+de.
+> +        * We don't need to get/claim the reset here; that is the job of
+> +        * the auxiliary driver that we are about to spawn.
+> +        */
+> +       if (of_property_match_string(dev->of_node, "reset-names",
+> +                                    "gpu-clkgen") < 0)
 
-I believe this is triggered because RISC-V can be compiled without MMU
-support, while MMU support is mandatory for ARM64.
+If you use device_property_match_string() here, you don't need to pull
+in of.h. It's typically preferred to use the top-level abstraction
+unless not possible.
 
-Would an acceptable fix be to require an explicit dependency on the MMU,
-like so?
+[snip]
 
-depends on (ARM64 || RISCV) && MMU
-
->      Selected by [y]:
->      - DRM_POWERVR [=y] && HAS_IOMEM [=y] && (ARM64 || RISCV [=y]) && DRM [=y] && PM [=y]
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Thanks,
+Bartosz
 
