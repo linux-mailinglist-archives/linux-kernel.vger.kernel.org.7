@@ -1,167 +1,198 @@
-Return-Path: <linux-kernel+bounces-688633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74141ADB4F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:10:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76D3ADB50B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D9C3A3A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3419A3AB35B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6BB220F2D;
-	Mon, 16 Jun 2025 15:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B88F220F34;
+	Mon, 16 Jun 2025 15:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RG62Ss4j"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PX/3X52x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65AE21CC62;
-	Mon, 16 Jun 2025 15:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974331EA7E1;
+	Mon, 16 Jun 2025 15:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750086626; cv=none; b=b+s6aOkvjun/KcIzCVUwTFwuP9/qqgnesHMgHdlKUrRoh36Aud4AxntJCcKwnZJDdjQUjwwmfbS1ZR6knyTvU9QGThEoFLSv0uAiE3qk7goC9OQwjxIytNs2iaf50UEuHRop25S8B+n0WDbEfA5OQbqJ9FNXz2UwOopgZT3ABA0=
+	t=1750086853; cv=none; b=c3i/AA3LvXPum3ucU59ALJBNrvj6dO4J4KlF3sbxu1rUHyPt6gUfdCr02iTsbR6zbk+mTWrssuH3Ma3IXst9aPSI7jJTupX+dJB9QX5sDGJACX9YuujLhZgrT2jIJnT79utjJL65pleXLI+7oNKcxid4L6UUTYxDYDTKsj2IBXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750086626; c=relaxed/simple;
-	bh=RZzvzM4eiYM27hilaciIAXpUAjaPu4+qUEmVbRlxeBE=;
+	s=arc-20240116; t=1750086853; c=relaxed/simple;
+	bh=oVNq1HKgH5AsdLLp2/oc3d/YzPzDQJprNg0ypJQvF5g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WauK6JGfuaRikXcUYdk6jvMWPIGRnvmWYxjbDtheZHYXE1FBVwkGra1XWMUhmdEJ5ble6n2YDQfAc7RxtqLfRqcMQSQE2mFYTAhKy98QPwbbMIAKbBdL/QVTCROZs0cr8xLhB5rtgns/Gmm+z9iQ6QhWVeO9tKqw1r1/jgW/QLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RG62Ss4j; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a4bb155edeso56906321cf.2;
-        Mon, 16 Jun 2025 08:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750086624; x=1750691424; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QuXW45htkba2pIeBftDBnPXWTaUJHA1XfpgAsyJV+Og=;
-        b=RG62Ss4jvYGznzBHK9ae9h2eMY8F/LG1i7JwhL9VwnRReKd0Z9TOQ6hECwGP+j55xE
-         SCTlUMwfBVHT1nTSPiky4L1t9DwksYrmxFT7poiJZmC5WoPBygtRnn26SAWTFQZsPICA
-         ksto4FWUwG3R7QVngq8zqaseGjIPVrmziWXnQGVvmDE2G07YoogjX6gVG8R4UJx4OnwZ
-         zCpQX7DEuHkMqfQre0Fxnpy+OjIvIdefmkssrkg+6XiIx2Xjz3u/AtabkgEQmaZxqTob
-         2GoHK0UbhWlxtA+VYjhbTWJX5S/OZXawxrY2EMBYX5k+8oQoHLj5Lnnnbgv9O7bKJi+h
-         WlJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750086624; x=1750691424;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QuXW45htkba2pIeBftDBnPXWTaUJHA1XfpgAsyJV+Og=;
-        b=tLybQD0PqtZeot/zVpepFRGVFvKqp2B3iO7TkLC8oE5wPY4yX4BRnvnx1RA3dCvlTU
-         SABywizHpSuqppHgG2j2prxd01Rdltk+aaNMeQfFo1IhhNoFY4Pyffqw0qAGBTZ+jF9I
-         i7YSfsH6eCpJ9YcNaGdl+PRGVqe/pEW1dWX744s987FzFiWC3udNx03IxWKqEsD+BwW3
-         tli3CiALPU2Rv2Ctv395Y0JScc/Sa38rEWWtTfI0yK51HF6xjmf73DvhkfN6O7VrpGOD
-         jGCSyfoqJrrd2bBano45pTyo9aBphr5oSu8m1AMzak3q2+9b8qlMbzl7RhFUjpJLLZSC
-         EVDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBR1uw/QLdKxippAigxkiA0loRzKPy0/Qsl7DUsP6r8O36pyw0jDci49QT7VIljwceMH/8/eQiN32rV10XM5c=@vger.kernel.org, AJvYcCUKncWVLLZgpvoJgVSkEm4RdpGNd1IJUQqLPgTZB18FQip4O0eUGJb9f4he+nmZakI8G26hIo5bE+1jvkwM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEfRaWWP8SxuqzNMAQXAQA8mZu1esQ3JYGjfmNBgACh0geosmv
-	pmQhvCybMC3UAT6T2D3fDJAYkWN/ba/hpkTfVRniVQJwLkZ31nhw9lPP
-X-Gm-Gg: ASbGncvETiJJgvq6j4GIcIt0wPYWBno04TTZ6vVxvRcg0oVsnRZFCOK347XcqrwsvYg
-	IzA3iXqvGDB/y+kVZEfoxc2vRcwhzkjmdFED4YpZqmtqNjeXmV7UQDhmbKRaiuw8Gr5K1SERxvO
-	v0QDyJzLfS0m9CDcBSt1jc5He9Q2DlLOZuFe6W1QpSxvtywu5eNPIOaOKtjDWd/08TpXx/ZdJxo
-	tnA41bJK8lnUCAhrDlFO82YaWtJWyjUD9vg0+hh8/VzkE91DXXe63HI7v1gjHs+CJfwuRTLyQQP
-	mIVCscEmgnu2LWOpIEpjET7GxWsXSB9gb+Tv26iBZcXBwmrfztJJ2EPKki7CecgrcKZ96AwGp43
-	fTZGRdMJ8vaBc2FXV6BjaNbW16nqZOARbjhJrkXtiHYOXvSypA+Lt
-X-Google-Smtp-Source: AGHT+IE0PMbp746QELpTEqL0FaZd1BSOkzwAGuLnlMOTgBtFx+zGdrT6NozMIu5+49uagpPGCj1R0g==
-X-Received: by 2002:a05:622a:11c1:b0:4a3:96b7:2a73 with SMTP id d75a77b69052e-4a73c533a1cmr149271881cf.16.1750086623760;
-        Mon, 16 Jun 2025 08:10:23 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a4e7edasm50259891cf.67.2025.06.16.08.10.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 08:10:23 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 010BA1200043;
-	Mon, 16 Jun 2025 11:10:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 16 Jun 2025 11:10:23 -0400
-X-ME-Sender: <xms:3jNQaMam1l4lU6UzCECzFtRoLsQHNlNBa0a_XD1VRz1K2ocmgfFNvg>
-    <xme:3jNQaHYCufXQzEkwvfvI4IaWatRf9Hg5hKlMPguPTQiK-1d07ugZxK-W-XZ5ojiLw
-    dAA-JGDQl_-xqZRFw>
-X-ME-Received: <xmr:3jNQaG9oJGhrap4PSdi0wMB5UWp1IslDdx_6p4OSh7aRH4OSjcCZbUV37Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvieeludcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeeipdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehlsghulhifrghhnhesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehlihhnrghrohdrohhrghdprhgt
-    phhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhukhgrshdrsghulhifrghhnhesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtohepsghoqhhunhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:3jNQaGqdi9rhhVp0IVL6p_lzXWCycdqAytkKHkRNllTUlUQQ4GMjIA>
-    <xmx:3jNQaHoG28Kq6fdDeDFxPifsejbxxIr6A1IerDjDvsZOUP1EfavT6Q>
-    <xmx:3jNQaET6cQSoPOqKDgP11VYkIoY-7Cwd6Uz3ScEMBySFEB5qXaIxUg>
-    <xmx:3jNQaHo4rmw52rw9YZ8sivGWK_kvQTLb36FlCil8X5wE2NfBELku5Q>
-    <xmx:3jNQaM50FLKxbvAhj899Ro1Ju35ihfZHXhlqjHeqb2kXwkCwlf4OWnCA>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Jun 2025 11:10:22 -0400 (EDT)
-Date: Mon, 16 Jun 2025 08:10:21 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in CPU HOTPLUG
-Message-ID: <aFAz3eKz2gDk9B1N@Mac.home>
-References: <20250616140108.39335-1-lukas.bulwahn@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJ267jELFd3zfl2fNAm3Ogv3rOzqVGlTsjn0OqUdTxv8DrnK37Lb6RA3+Qavm0dPa2mQ1Kz6cKHLGm85gIdGlObZOedHp7dHWUIF2EM1NUeLl+iOsB/QGQjUIHY5rLRSt7whQsBKby8VIl9SwAfYzFOwf3NW9jRWTorr/8hhaEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PX/3X52x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D51C4CEED;
+	Mon, 16 Jun 2025 15:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750086853;
+	bh=oVNq1HKgH5AsdLLp2/oc3d/YzPzDQJprNg0ypJQvF5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PX/3X52xu3kaMjy4O0uJXkY0H6d569uWQLxiivcPb8otZdkmozLr37/eGCZohQ17T
+	 oFoOccSPG+bsR4FgnAe+PubjvwayN/Ks4Bxez77C+J1E9sArCYo02bUlZY1f3Ak2lI
+	 MZZQctzQzyq9iMWROBGPEXG6ffe2ekqloegWqLh6gd2ThRxY40gocWRFxoBwo0eIPA
+	 CAubRuQxNHcH2O1rCBpaj2oZ62ToeHGbFpmKzN66ez/+r1KVb1HvKKdA+GZbtjte3b
+	 JiDdx7JsZI6Ly49Sr/bsk1R9Dujl1wNEAHvF+wMs9s4uEV5apub+euT2LSRC8SW//l
+	 O9mX5WdLzDAsg==
+Date: Mon, 16 Jun 2025 16:14:07 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+	nicolas.dufresne@collabora.com, p.zabel@pengutronix.de,
+	mchehab@kernel.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH 2/5] dt-bindings: iommu: verisilicon: Add binding for VSI
+ IOMMU
+Message-ID: <20250616-winter-strict-db98f85db22d@spud>
+References: <20250616145607.116639-1-benjamin.gaignard@collabora.com>
+ <20250616145607.116639-3-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9fJcQZWqMIbTgGsZ"
+Content-Disposition: inline
+In-Reply-To: <20250616145607.116639-3-benjamin.gaignard@collabora.com>
+
+
+--9fJcQZWqMIbTgGsZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250616140108.39335-1-lukas.bulwahn@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 16, 2025 at 04:01:08PM +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit c7f005f70d22 ("rust: cpu: Add CpuId::current() to retrieve current
-> CPU ID") adds the file rust/helpers/cpu.c, and intends to add a file entry
-> for that file in the MAINTAINERS section CPU HOTPLUG. However, the added
-> file entry is rust/helper/cpu.c; note the subtle difference between the two
-> file names. Hence, ./scripts/get_maintainer.pl --self-test=patterns
-> complains about a broken reference.
-> 
-> Adjust the file entry to the intended file.
-> 
-> Fixes: c7f005f70d22 ("rust: cpu: Add CpuId::current() to retrieve current CPU ID")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-
-Regards,
-Boqun
-
+On Mon, Jun 16, 2025 at 04:55:50PM +0200, Benjamin Gaignard wrote:
+> Add a device tree binding for the Verisilicon (VSI) IOMMU. This IOMMU sits
+> in front of hardware encoder and decoder blocks on SoCs using Verisilicon=
+ IP,
+> such as the Rockchip RK3588.
+>=20
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ec49e1973425..c23665ac3b3d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6263,7 +6263,7 @@ F:	include/linux/cpuhotplug.h
->  F:	include/linux/smpboot.h
->  F:	kernel/cpu.c
->  F:	kernel/smpboot.*
-> -F:	rust/helper/cpu.c
-> +F:	rust/helpers/cpu.c
->  F:	rust/kernel/cpu.rs
->  
->  CPU IDLE TIME MANAGEMENT FRAMEWORK
-> -- 
-> 2.49.0
-> 
+>  .../bindings/iommu/verisilicon,iommu.yaml     | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/verisilicon,i=
+ommu.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iommu/verisilicon,iommu.ya=
+ml b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
+> new file mode 100644
+> index 000000000000..acef855fc61d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
+> @@ -0,0 +1,71 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iommu/verisilicon,iommu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Verisilicon IOMMU
+> +
+> +maintainers:
+> +  - Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> +
+> +description: |+
+> +  A Versilicon iommu translates io virtual addresses to physical address=
+es for
+> +  its associated video decoder.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: verisilicon,iommu
+
+You're missing a soc-specific compatible at the very least here, but is
+there really no versioning on the IP at all? I'd be surprised if
+verisilicon only produced exactly one version of an iommu IP.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Core clock
+> +      - description: Interface clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: iface
+
+Why "aclk" rather than core, to match the description?
+
+> +
+> +  "#iommu-cells":
+> +    const: 0
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - "#iommu-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    bus {
+> +      #address-cells =3D <2>;
+> +      #size-cells =3D <2>;
+> +
+> +      vsi_mmu: iommu@fdca0000 {
+
+The "vsi_mmu" label can be dropped here, it has no users.
+
+Cheers,
+Conor.
+
+> +        compatible =3D "verisilicon,iommu";
+> +        reg =3D <0x0 0xfdca0000 0x0 0x600>;
+> +        interrupts =3D <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH 0>;
+> +        clocks =3D <&cru ACLK_AV1>, <&cru PCLK_AV1>;
+> +        clock-names =3D "aclk", "iface";
+> +        #iommu-cells =3D <0>;
+> +      };
+> +    };
+> --=20
+> 2.43.0
+>=20
+
+--9fJcQZWqMIbTgGsZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFA0vwAKCRB4tDGHoIJi
+0vT6AQC6scfk381tN82ARmoQ+PHZMrSLuYi9ck4P/3vTospnlgEA8JzI7GkSRolM
+exwAAerU1ffK1uHS3p3k6fwqqJumHgY=
+=9xSJ
+-----END PGP SIGNATURE-----
+
+--9fJcQZWqMIbTgGsZ--
 
