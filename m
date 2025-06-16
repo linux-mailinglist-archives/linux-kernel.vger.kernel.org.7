@@ -1,95 +1,212 @@
-Return-Path: <linux-kernel+bounces-688946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74149ADB911
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1C0ADB919
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58D61888101
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D501188B82B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC927289838;
-	Mon, 16 Jun 2025 18:49:30 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E88289E08;
+	Mon, 16 Jun 2025 18:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HXgtuKYU"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D38C21D585;
-	Mon, 16 Jun 2025 18:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E855C21D585
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 18:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750099770; cv=none; b=q/0MvrjRXGQZUn+hxAUMtWL9cL6TCKRWhF6apAjY9pM2lHL4ROxYf2m533ZAsKk16MPKlS9/xo6j92Jy7EHt11DZXTH0WkxAfP1lYF+tHkgfD/+kEITb4mVEz+koTep+VR7Vap0I0s+6tMh1/KOAJ8fT1gbS/tw6YmCqvUS1vTA=
+	t=1750099849; cv=none; b=aGvi4OGnMW+wMe7f9IFUd/DyvZOJnNTYyRl0gQjsQiFC/N2oXuG91xZI5ctTZZyDzpbkBYq57A6P8/MCDlm+y1JNl6Lm9N7gmfqk/XaqbT7bJNCXyx6qqYOhFTADwjSujvzLoKSOqxtRtYzx5y+nk6C6y4RCVJGLEOanKcSujvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750099770; c=relaxed/simple;
-	bh=e2+gGferSX8MzCRr/wdVC35vO7/qOrA9rBZTd6DAXcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZTmOMr4n1UQY2kkRIT4eznBc+3Wzr82EIvu20roHZttiiDIC5dneLJ/YyC5hMIMKtQ5Rymux7+dm9oRu1Pt78v3x7mOf0k/wtMSa8Y/DvL51dRpTQSFkh0964I5TaZkkrsgMIgiN9jcJl7Rw+FUaizvBY70VgipZqhtxZswxg3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 19DD41D700C;
-	Mon, 16 Jun 2025 18:49:27 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 32E8C20010;
-	Mon, 16 Jun 2025 18:49:25 +0000 (UTC)
-Date: Mon, 16 Jun 2025 14:49:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] alarmtimer: Hide alarmtimer_suspend event when
- RTC_CLASS is not configured
-Message-ID: <20250616144924.4f102c6b@batman.local.home>
-In-Reply-To: <871prnr3pq.ffs@tglx>
-References: <20250612095828.6d75dfa3@batman.local.home>
-	<871prnr3pq.ffs@tglx>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750099849; c=relaxed/simple;
+	bh=0j/zmiRTNVg7EOV9uK1BI3IIyRKsfZk1bKAGOLuyWQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=f17PEDpz9iitUcElP1nX5F0e2rthyB0XtwY/1BkEBFH7vzOrCjXW1gs+CVwX9pAMaBc3FSaMEHaJvIGxJQzlWi8QRg8Cs+6iiQFs1Z2ythBF1lYSnhD/Eo9mmgcYR/Vo9LXUsWvwS7qV5H2aP9PlHq21ZnlBI3cLS9vgfsifcd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HXgtuKYU; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250616185045euoutp01019fadcdba2dbf5bfcfe675cb6c55146~Jmolz3Duv1582515825euoutp01K
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 18:50:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250616185045euoutp01019fadcdba2dbf5bfcfe675cb6c55146~Jmolz3Duv1582515825euoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750099845;
+	bh=RpP2wDPoANn6hbq6/IU7H6R4ymwfkUd1lBtxRssgpxg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=HXgtuKYUh8YOQyQo91vA+qT4El3cb+jVPyP21y2ZTw42FifSSk8p2Duc4xvwAuyE+
+	 K1bHEQ+MjXyRTuM+mUFJt5q7AUR5lq1rzfclPDjZlNux/bNkGGmkf0bBXIsOKd0Wnv
+	 pvUpmbMiiOYc9Khw/cK57CgCrGso0q81WWVlcCVE=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250616185043eucas1p19d2115087823eac1a2fa36fdb6c7cfca~Jmokc0_PY2023320233eucas1p1A;
+	Mon, 16 Jun 2025 18:50:43 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250616185042eusmtip251ec7824b4cba255d6ebe61eb60deb26~JmojYMGUT3160031600eusmtip2J;
+	Mon, 16 Jun 2025 18:50:42 +0000 (GMT)
+Message-ID: <6176cae6-012e-4dc7-9445-058478bfe758@samsung.com>
+Date: Mon, 16 Jun 2025 20:50:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 7ix8epkpm8b65atrcneneu179udj35ew
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 32E8C20010
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18+z4SHUCnJGyGYyuIyGuFT35MrIeuR2zI=
-X-HE-Tag: 1750099765-383951
-X-HE-Meta: U2FsdGVkX1/fNFC16wjOW3B7Voq+n+2bOPD5hsAonvZxE6lPQlcsR82VETRoemcns719Vh6zKEXW1UB9PGYmf5YnK3lch+pt6cHrE5mGDH9TDmQlH0issgSXwWaTG08LWG7D0lSjH2uWUbVW8IkGS0bhMuJfUKcQPRDcWkyp0N+29gG+w265WLo61ttUpV5A45cbLDgsVMZW3VStRVReabXu3KLFatT8RXD80cxscu4BG/ELo5DbTSntUXFRyLykWYnVfy8275TAEWQiX85nYZnjGkjcPv7SIe+gcikFRmHNRr7rvEoflleNXIqREQmZikiNXk1mah5oGWKAPw0gCyBtJ5A3+cBB4/h7YX8e1jua6U7EvTgPcs/szHq08iODzw9yRghwPgNQb+3miLLKFm0MLZUZplkE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/8] drm/imagination: Use pwrseq for TH1520 GPU power
+ management
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Matt Coster
+	<matt.coster@imgtec.com>, Frank Binns <frank.binns@imgtec.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, Matt Coster
+	<matt.coster@imgtec.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <CAMRc=MfdBd6HBwM4F1TcjDvwbOJ03kxgRk4hJQ8HFK7Wz2XBAg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250616185043eucas1p19d2115087823eac1a2fa36fdb6c7cfca
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250614180911eucas1p16c9fb4a8160253c253f623bec2529f70
+X-EPHeader: CA
+X-CMS-RootMailID: 20250614180911eucas1p16c9fb4a8160253c253f623bec2529f70
+References: <CGME20250614180911eucas1p16c9fb4a8160253c253f623bec2529f70@eucas1p1.samsung.com>
+	<20250614-apr_14_for_sending-v4-0-8e3945c819cd@samsung.com>
+	<20250614-apr_14_for_sending-v4-4-8e3945c819cd@samsung.com>
+	<CAMRc=MfdBd6HBwM4F1TcjDvwbOJ03kxgRk4hJQ8HFK7Wz2XBAg@mail.gmail.com>
 
-On Fri, 13 Jun 2025 18:44:33 +0200
-Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> On Thu, Jun 12 2025 at 09:58, Steven Rostedt wrote:
-> > From: Steven Rostedt <rostedt@goodmis.org>
-> >
-> > The trace event alarmtimer_suspend is only called when RTC_CLASS is not
-> > defined.  
+
+On 6/16/25 11:40, Bartosz Golaszewski wrote:
+> On Sat, Jun 14, 2025 at 8:09 PM Michal Wilczynski
+> <m.wilczynski@samsung.com> wrote:
+>>
+>> Update the Imagination PVR DRM driver to leverage the pwrseq framework
+>> for managing the power sequence of the GPU on the T-HEAD TH1520 SoC.
+>>
+>> To cleanly handle the TH1520's specific power requirements in the
+>> generic driver, this patch implements the "driver match data" pattern. A
+>> has_pwrseq flag in a new pvr_soc_data struct is now associated with
+>> thead,th1520-gpu compatible string in the of_device_id table.
+>>
+>> At probe time, the driver checks this flag. If true, it calls
+>> devm_pwrseq_get("gpu-power"), requiring a valid sequencer and deferring
+>> probe on failure. In this mode, all power and reset control is delegated
+>> to the pwrseq provider. If the flag is false, the driver skips this
+>> logic and falls back to its standard manual power management. Clock
+>> handles are still acquired directly by this driver in both cases for
+>> other purposes like devfreq.
+>>
+>> The runtime PM callbacks, pvr_power_device_resume() and
+>> pvr_power_device_suspend(), are modified to call pwrseq_power_on() and
+>> pwrseq_power_off() respectively when the sequencer is present.  A helper
+>> function, pvr_power_off_sequence_manual(), is introduced to encapsulate
+>> the manual power-down logic.
+>>
+>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
 > 
-> s/not//
+> [snip]
 > 
-> No?
+>>
+>> +static int pvr_power_off_sequence_manual(struct pvr_device *pvr_dev)
+>> +{
+>> +       int err;
+>> +
+>> +       err = reset_control_assert(pvr_dev->reset);
+>> +
+>> +       clk_disable_unprepare(pvr_dev->mem_clk);
+>> +       clk_disable_unprepare(pvr_dev->sys_clk);
+>> +       clk_disable_unprepare(pvr_dev->core_clk);
+>> +
+>> +       return err;
+>> +}
+>> +
+>>  int
+>>  pvr_power_device_suspend(struct device *dev)
+>>  {
+>> @@ -252,11 +266,10 @@ pvr_power_device_suspend(struct device *dev)
+>>                         goto err_drm_dev_exit;
+>>         }
+>>
+>> -       clk_disable_unprepare(pvr_dev->mem_clk);
+>> -       clk_disable_unprepare(pvr_dev->sys_clk);
+>> -       clk_disable_unprepare(pvr_dev->core_clk);
+>> -
+>> -       err = reset_control_assert(pvr_dev->reset);
+>> +       if (pvr_dev->pwrseq)
+>> +               err = pwrseq_power_off(pvr_dev->pwrseq);
+>> +       else
+>> +               err = pvr_power_off_sequence_manual(pvr_dev);
+>>
+>>  err_drm_dev_exit:
+>>         drm_dev_exit(idx);
+>> @@ -276,44 +289,55 @@ pvr_power_device_resume(struct device *dev)
+>>         if (!drm_dev_enter(drm_dev, &idx))
+>>                 return -EIO;
+>>
+>> -       err = clk_prepare_enable(pvr_dev->core_clk);
+>> -       if (err)
+>> -               goto err_drm_dev_exit;
+>> +       if (pvr_dev->pwrseq) {
+>> +               err = pwrseq_power_on(pvr_dev->pwrseq);
+>> +               if (err)
+>> +                       goto err_drm_dev_exit;
+>> +       } else {
+>> +               err = clk_prepare_enable(pvr_dev->core_clk);
+>> +               if (err)
+>> +                       goto err_drm_dev_exit;
+>>
+>> -       err = clk_prepare_enable(pvr_dev->sys_clk);
+>> -       if (err)
+>> -               goto err_core_clk_disable;
+>> +               err = clk_prepare_enable(pvr_dev->sys_clk);
+>> +               if (err)
+>> +                       goto err_core_clk_disable;
+>>
+>> -       err = clk_prepare_enable(pvr_dev->mem_clk);
+>> -       if (err)
+>> -               goto err_sys_clk_disable;
+>> +               err = clk_prepare_enable(pvr_dev->mem_clk);
+>> +               if (err)
+>> +                       goto err_sys_clk_disable;
+>>
+> 
+> In order to decrease the number of if-elses, would it make sense to
+> put the "manual" and "pwrseq" operations into their own separate
+> functions and then store addresses of these functions in the device
+> match data struct as function pointers (instead of the has_pwrseq
+> flag)? This way we'd just call them directly.
 
-Ah yeah.
+Hi Bartosz,
+
+Thanks for the suggestion. That sounds good. I can rework the patch to
+use function pointers instead of the flag. 
+
+Matt, as the maintainer of this code, do you have a preference on this?
+Let me know what you think.
 
 > 
-> > As every event created can create up to 5K of text and meta data
-> > regardless if it is called or not it should not be created and waste
-> > memory. Hide the event when CONFIG_RTC_CLASS is not defined.
-> >
-> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> Bart
 > 
-> Other than that:
-> 
-> Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
-Thanks!
-
--- Steve
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
