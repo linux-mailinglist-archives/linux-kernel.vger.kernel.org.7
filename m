@@ -1,106 +1,152 @@
-Return-Path: <linux-kernel+bounces-688236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDC7ADAFD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2AEADAFD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 611993A969C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A333A2AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E6C2E4278;
-	Mon, 16 Jun 2025 12:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548632E4258;
+	Mon, 16 Jun 2025 12:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+eWInOZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QabkmsMZ"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387362E426E;
-	Mon, 16 Jun 2025 12:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E2C2E4252
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750075567; cv=none; b=fl6X4xrCgUO0DmM4MTQfAbvluXgxXgMMKy5Jjeo0nd+oubg6IZVCi0EMfo2xpOVZ+Hr3d0eZrnr+UBTCMLat/EAExZ4zE6HM2rYkwS4agg3vw/Qao9K+PHDGbXV4Dwlq9Qm+VhbVycSFDN8EDey55KWlfCQfE/Nbj9w1bfDhBQE=
+	t=1750075604; cv=none; b=Lb7xcDw/l2KFEJSapTIOdzaTXiro1FXrLmZTTjaAKk4zyv6Igznpyiqpf9nHNQ48siCPmr/ZitPFzPJZxsneWxuahK0GWPK8mH0+I5KN4urinpe1PlDUV7MxPsTYw5er8bjvmsxECkkA1HM9kxEuBaU5sIZh15eIARH85kFFxTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750075567; c=relaxed/simple;
-	bh=81KHwSljmnJTPeKJj2v4TDvROMlMHB1LsZuqXD9yw+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvui4VhHok32iLQsZT1xI0pO1poLB0LPH8bED//7gZ/qksCN3tyZJxw/Vu4755D43bz/mWTX9M5eLTD5xBteVX0r9XPeUsDUf1w9H9zYD26W8NLG6OEtvHFFZ1AkK/89pUDsyf9xvU7oVrsy4ERAmD3TzS+AvmMfLogyMmRh9OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+eWInOZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA7BC4CEEF;
-	Mon, 16 Jun 2025 12:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750075566;
-	bh=81KHwSljmnJTPeKJj2v4TDvROMlMHB1LsZuqXD9yw+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S+eWInOZdvCl4lZ2CWY38xdR5eYCTJcNKTAnyS3GFOAPfHu5KcLyPfAfFt9E1Z/iM
-	 zL4kNwxq5CGlYbQgJTngT7eFRMmCqjUbq98xK84hR4QhycXQy9+UMrB4xEtQ1fOGGI
-	 FTR70AG1J76Oa3yS6t4+6L8Kt2fZKTE4aiwUFewv8MyZD44moVINTOJWiUQSlm5e6e
-	 eSJhjEtTifLRpcoNETlrkJeC630FnG7oCX1lHVbzK7J3jwqmc+w94/AHBYyWdiXmYq
-	 uS34HK6gnBciniIiuXgSGXZwZEuuvmxj7kKrkiXnHZ/pIr7aOJ9Hl9xnM1q4Zhbfu1
-	 FcxKTAZY428Dg==
-Date: Mon, 16 Jun 2025 13:06:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: James Clark <james.clark@linaro.org>, olteanv@gmail.com,
-	oe-kbuild-all@lists.linux.dev, arnd@arndb.de,
-	larisa.grigore@nxp.com, Frank.li@nxp.com, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
-Subject: Re: [PATCH] dma-mapping: Stub out dma_{alloc,free,map}_pages() API
-Message-ID: <5f1ca0ac-b66c-4b92-8f69-027c2468b117@sirena.org.uk>
-References: <202506160036.t9VDxF6p-lkp@intel.com>
- <20250616111749.316413-1-james.clark@linaro.org>
- <20250616112927.GA21689@lst.de>
+	s=arc-20240116; t=1750075604; c=relaxed/simple;
+	bh=IbZZvF1YeIlcvUq/+fdnzFkqnxbyQDarbgl2bwQ6gi0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Rcnx9Tgg25XEZtcFkbMnixLTYKkG9dA72dpTH9KUhVEMpv6XWob/bfL5PnRS6NnQiGUHZsFoDVpWO7idbREocEPUhJKq5BP3gyulwgAL01YXsmdhB22eWCge22GRFh4ZZ8MrFvThp11Hl5H0bocSNeP/TaBIQ5Pasou537GFhJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QabkmsMZ; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6faf66905adso23754366d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:06:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750075601; x=1750680401; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TpU5wAMG3sQlhcsZQZqrmEByJp0SllVR0AKHGW2r9qE=;
+        b=QabkmsMZGZGM7UgddHYe/E4Rf0XLN+OpoVp43UzJQbcPCZX1sYJqXP/7+APpyrcQPO
+         h8icBlzTk1OClCCdvR+LlvUBMJk4EhIWnDjqLxpxgm2XKstO/tldaFNWkn0uGcycLrx6
+         ai064qmkabXS/rR/6/k9uLwyqzpSBXk0IXMFNKbyNaz/NrpUnoZqPp3/XQzFK5lXpNEd
+         HLrYWt53ripbyDSjBtkvEtHoaxrZqKdaErx9sqezsNxbbpUBwNyzXr4WxtWNCwE94jKj
+         6CAB+cOxWL9ye54RESo2WjiDCy/mXcrgBH4tfsmvJbWYGv5zpM0i2jlblADRy0ri4Oxb
+         /AsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750075601; x=1750680401;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TpU5wAMG3sQlhcsZQZqrmEByJp0SllVR0AKHGW2r9qE=;
+        b=GCMau54moQue4tk2wow+vm0CFr1yRMRwvRWngGi9SMUBeqjeeL1DwR6sXrGVOyog26
+         HoFTYdpNqdAOHvsUO5r6IOcbrUk64b8zLSAT3NEUROW3CY0Hw9Ens5/gX5pdn+fxdqpk
+         wX8/0Kv1MdvUW+24t3TWy1bKvEtSvrwmH4tPZrK1bljzuCJdLZOdZqVsawnKlCcNu8CS
+         0XV/sG/3mdtroD3S3muRwDmnQOs/Jbpl662Th7ZQEh29pxlbjiCxZOpHuhyIPamRobDh
+         fpMDFHl5Inz9LhI/N5ZmmemSqEJuvg6qwnHjxWehNwL8QpbeFMmh4pclOxy1axaScEcU
+         0/Eg==
+X-Gm-Message-State: AOJu0YyUsMrbHK8UiCt5zVGPhK3VGHnvtGV2KEh+SZfXk/5H5Rtz23gu
+	QRPm5ap2WNwNhKdClxspuPQPXfqEaJUDz63mpicf6LiP2oV3XWdmP38TS2aOwGbg09WhvinND6n
+	tYMtprBROMlMDcLMGHOvoLGN4E7ksuhP0vUKVJG6YxS5FjnaGUIFQNEAj5A==
+X-Gm-Gg: ASbGnctsZIW/1x93t1yZfTnYAo8Ci3UaD3B4S/XPEmJ/wZ+qMcglB67MoO+1kYSmIbX
+	vD9br7fqJhcJq7dx/Cb1NMGgL8b2BkbF+/61CDf1wjIYQ4pMUuti03yi5dwhKCNHof/MJUSxPmr
+	qA8BbDY46cVMuoDoZUhPmWGvPxTUvXM5KmXdPMak0l0HEST65ghvA2aDPhqirFIE5HBnPzIE89n
+	DIF
+X-Google-Smtp-Source: AGHT+IFeUKnKrR3PiU9rxHEIRNQyrCJR8n4GoHXj1LshKjqrOlDxmNum5ASc/NWBGVeJbSNt1PqkzC0aodOI1wfeH5o=
+X-Received: by 2002:a05:6214:500c:b0:6fa:c6ad:1618 with SMTP id
+ 6a1803df08f44-6fb4776e76cmr143231416d6.27.1750075601411; Mon, 16 Jun 2025
+ 05:06:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yQrkc45Aa466PEFE"
-Content-Disposition: inline
-In-Reply-To: <20250616112927.GA21689@lst.de>
-X-Cookie: Keep out of the sunlight.
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 16 Jun 2025 17:36:29 +0530
+X-Gm-Features: AX0GCFs0r1nB19T1N_2PPwY-kXlE37v4o6Iuua4hbniHaojK4KFbc8YBvkBv6Uc
+Message-ID: <CA+G9fYuDOnN6TrcVYcMZT5UPNc34mOHQZsfyFvpq+Ndhz8p48w@mail.gmail.com>
+Subject: next-20250616: S390 gcc-8 allnoconfig mm mempool.c In function remove_element
+To: open list <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Regression while building S390 with the Linux next-20250616
+with gcc-8 the following kernel warnings found.
 
---yQrkc45Aa466PEFE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Regressions found on S390
+ -  build/gcc-8-lkftconfig-allnoconfig
+ -  build/gcc-8-lkftconfig-hardening
 
-On Mon, Jun 16, 2025 at 01:29:27PM +0200, Christoph Hellwig wrote:
-> On Mon, Jun 16, 2025 at 12:17:49PM +0100, James Clark wrote:
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
 
-> > The implementations are in mapping.c which requires HAS_DMA so stub them
-> > out if not present. This is required for some drivers to pass randconfig
-> > builds.
+First seen on the next-20250616
+Good: next-20250613
+Bad:  next-20250616
 
-> No.  Just add the proper IS_ENABLED checks in the callers.  While these
-> kinds of stubs used to be popular they are really nasty in that the
-> calls unexpectedly just fail without the right depends.
+Build regression: S390 gcc-8 allnoconfig mm mempool.c In function remove_element
 
-The issue with HAS_DMA is that essentially all platforms have and rely
-on DMA.  This ends up just being painful noise from the buildbots when
-they do randconfigs rather than something useful.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
---yQrkc45Aa466PEFE
-Content-Type: application/pgp-signature; name="signature.asc"
+## Build errors
+mm/mempool.c: In function 'remove_element':
+include/linux/compiler_types.h:497:20: warning: asm operand 0 probably
+doesn't match constraints
+ #define asm_inline asm __inline
+                    ^~~
+arch/s390/include/asm/bug.h:12:2: note: in expansion of macro 'asm_inline'
+  asm_inline volatile(     \
+  ^~~~~~~~~~
+arch/s390/include/asm/bug.h:43:2: note: in expansion of macro '__EMIT_BUG'
+  __EMIT_BUG("", 0);    \
+  ^~~~~~~~~~
+include/asm-generic/bug.h:77:57: note: in expansion of macro 'BUG'
+ #define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
+                                                         ^~~
+mm/mempool.c:149:2: note: in expansion of macro 'BUG_ON'
+  BUG_ON(pool->curr_nr < 0);
+  ^~~~~~
+include/linux/compiler_types.h:497:20: error: impossible constraint in 'asm'
+ #define asm_inline asm __inline
+                    ^~~
 
------BEGIN PGP SIGNATURE-----
+## Source
+* Kernel version: 6.16.0-rc2
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: 050f8ad7b58d9079455af171ac279c4b9b828c11
+* Git describe: next-20250616
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250616/
+* Architectures: S390
+* Toolchains: gcc-8
+* Kconfigs: allnoconfig
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhQCKcACgkQJNaLcl1U
-h9D0eQf/ePoOXoqCP5feLeTghxn9bOAHGZSj2dGtDODfvqyZChR5qZwlk59nXu4y
-HSyVPkGL7MobX4QBk7cBPljYfeJ6Lpk3hiuEKtnZY5WvFjy2FvZ21tA2fTwIxpNL
-kKW8oPUtgyOLBKcWdDz2B4NN9aXYjpddRfAOWAKZPtydxp/baZEg8y/N4IDsi+Q/
-P2L0LeP+zoaAW0IKPYSXWi4ORETJv3xB85enYrY/wqvF3LCLWdJcuWUMSwDqUfdW
-Mc2+X9wZ3XR2coA27TcOcM0ac37VQgwKR8rSt9a5o8UED8Dk5CUwSQoOhFRpgoLn
-66xG5r35MfMl2roIb0Uc8iasLxamDw==
-=OEz+
------END PGP SIGNATURE-----
+## Build S390
+* Build log: https://qa-reports.linaro.org/api/testruns/28763376/log_file/
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250616/build/gcc-8-allnoconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0wQbvgatYAbcvC2OTZls5D91/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0wQbvgatYAbcvC2OTZls5D91/config
 
---yQrkc45Aa466PEFE--
+## Steps to reproduce on S390
+ - tuxmake --runtime podman --target-arch s390 --toolchain gcc-8
+--kconfig allnoconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
