@@ -1,98 +1,174 @@
-Return-Path: <linux-kernel+bounces-688314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEF6ADB0B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A27ADB117
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B77631721D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34DE41679DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2488292B2D;
-	Mon, 16 Jun 2025 12:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4787E292B5C;
+	Mon, 16 Jun 2025 13:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKM+PDe6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="q6Y9idkP"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069B3285CBC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71982E427E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750078566; cv=none; b=DZhKvVvT2gg0CxE+2prUef/ER8vgXJzSGQVtD+8mwl4c3kfOexJ2Q1ok82dzA5IjOF1Egz7mheSt56K+8P26A1I9PV6up0LmrS1vfePn7M82ncufw/G2szDp9+/2b8r/5A9vm2DJ0R2rPUdp+2alRgBRpOltHGyZQse+eYgAxqA=
+	t=1750079186; cv=none; b=kkUG1W8esvzZV1+ctTDIgrgRZ+OzU7ZgfxDP+s+hPj/Uj6WSoZ6nuFj3jlUexetiE3nSe/KvGkqUsi78Fm6z2BZXBXKn4JAZ2sfIOmZjAR8LFKCE5OgOV0Hox+tWvjxgLCXPaOqfJoGo+lpBGyBFeT35NvPhmxiU3nNi8tzm+H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750078566; c=relaxed/simple;
-	bh=spYR/2xvF+MKkfbF3T4H8ZiASBq5PM0aP8gj+hYX5xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tRXrx3NfmUeIyndE1o/Cit1e9casUIwd4+Pgkmlid5IzOrZAyLd6OR7l15r9YHPOM0HZpV1DLw/dnmrCmpUJo74whdsDxuzR323Smm+T9KQWOtM35bZtExkrEoqPENeSkiTGYtaqxUqKtNRNPGJ1x1gyqiLzWQWU3JrrNT6a2Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKM+PDe6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF48FC4CEEA;
-	Mon, 16 Jun 2025 12:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750078565;
-	bh=spYR/2xvF+MKkfbF3T4H8ZiASBq5PM0aP8gj+hYX5xk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKM+PDe6B26U3+HuDJMqmAsTAWa2DzNlpTuY3RYu4R2Be2sofu+JWv5tIjNjbSJ7P
-	 LadpZRYVGXa9SOoqtEdGBiVsiZKla7Dvba9rZSGlDawXQY0ygmf+nFEcLSmlK+hfyY
-	 fMkBoCOlwztQgfNsPccigLGVhEcCltszLMZhhf/LmCWCdp/XM1hqKOw6Feb/G/MRf9
-	 4h5v1v8AFknIXp5F38hIud1SdIg2rZIczqgxzT6gf1Fgoc9/OEHBLPmXUypCw+TzqW
-	 PN2I/GYvRbCrXGr7fP+JUh9O+z1AXn7niqiZPrjIS93p4+l/cPB479aEZJlW6GQJxb
-	 gxxOlfXKR7U2g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uR9Nb-0000000020W-16pB;
-	Mon, 16 Jun 2025 14:56:03 +0200
-Date: Mon, 16 Jun 2025 14:56:03 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH] arm64: defconfig: fix renamed Qualcomm EUSB2 PHY symbol
-Message-ID: <aFAUYwB8IqZKFMT6@hovoldconsulting.com>
-References: <20250616103252.32642-1-johan+linaro@kernel.org>
- <fdcbaaed-c088-4ccb-8897-bd69080a3346@linaro.org>
- <6232e835-921d-4855-8b10-8f873a4e3c30@linaro.org>
+	s=arc-20240116; t=1750079186; c=relaxed/simple;
+	bh=BtjsCricPsiRwMVD5AfCwbuZCCElOO1xuxYeG3PfGb0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QOF3yCrCMf+7yJY2Jbryq8QRD0RUU58Rg2yZm7cCBO1DnmalEELs6WZkb4ynnd8WvxWhVOkX3qQD0CiiK1PBTJO0UtF4bPhC3bgwB5/nRMRwimriX/gmQZd9ZI3Wt6ZLMnwoBlZpzfYRhPHYYJH+J31ZPrOx2P4w7md8SjNa8Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=q6Y9idkP; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bLVPG38zCz9sdG;
+	Mon, 16 Jun 2025 14:56:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1750078578; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z0McVc7X6YbwKGJstVkFtBBrm4Pgr9VGcIDoTIXEPD8=;
+	b=q6Y9idkPzqdf1g5JQSD+kZLBywbaWRW1Ekcgjg6In5N0eCQXWBFWvzPFBUr6yeG9zbuZyg
+	YxXeJkJht7K8b2n1Jtjx/NcnrRDTY6p448zlr64aEZKnYcn2Exlzvt1WVchdV+8ZFYE6ly
+	QOgCxWBLjkFiz2RHqUe07D4Ed+FXDXSC+mGje31ma4obT1JQja1iBdcv52SNe89sEMnjhF
+	R5/PeLFG86XduCOfDoxaCqjT+aFvHgYHmLAZ+cTO66bNjLaDGWmAyjdwbEmrUpVUlO2wvK
+	I15mbJhw5J/CU5QY2di+cQT2mwTo/8+AgO7ptIlhHy/a168b4eQhPb6DPHPPpA==
+Message-ID: <e7c3a8a33d00409935f4d43b40aa19c2c146e996.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched/tests: Make timedout_job callback a better
+ role model
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: =?ISO-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>, Danilo Krummrich
+	 <dakr@kernel.org>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: Philipp Stanner <phasta@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>,  Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,  Pierre-Eric Pelloux-Prayer
+ <pierre-eric.pelloux-prayer@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Date: Mon, 16 Jun 2025 14:56:13 +0200
+In-Reply-To: <723c98e2-cf75-4565-b78b-711b3022d44d@igalia.com>
+References: <20250605134154.191764-2-phasta@kernel.org>
+	 <e1b65491-781c-48f7-9368-58d7ede91b12@igalia.com> <aE_8lDuMFFhJBeUY@pollux>
+	 <723c98e2-cf75-4565-b78b-711b3022d44d@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6232e835-921d-4855-8b10-8f873a4e3c30@linaro.org>
+X-MBO-RS-META: 4q3k3hist7scuj7ju4oeyyef6cyo9etf
+X-MBO-RS-ID: 05c311bc11569575a33
 
-On Mon, Jun 16, 2025 at 01:23:08PM +0200, Krzysztof Kozlowski wrote:
-> On 16/06/2025 13:20, Krzysztof Kozlowski wrote:
-> > On 16/06/2025 12:32, Johan Hovold wrote:
-> >> The Qualcomm Synopsis EUSB2 PHY driver was recently renamed along with
-> >> its Kconfig symbol but the defconfig was never updated (which breaks USB
-> >> on a number of Qualcomm platforms).
-> >>
-> >> Fixes: 8d3b5f637546 ("phy: move phy-qcom-snps-eusb2 out of its vendor sub-directory")
-> >> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> >> Cc: Vinod Koul <vkoul@kernel.org>
-> >> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > 
-> > Thanks. This was sent on the lists some time ago and since a week is
-> > already in pending-fixes. Should be in coming RC as well.
-> 
-> Uh, now I noticed that due some other work I put it on different fixes
-> branch and that fixes branch was not feeding pending-fixes. That's my
-> bad, I need to fix my workflow.
-> 
-> It was in linux-next, though.
+On Mon, 2025-06-16 at 09:49 -0300, Ma=C3=ADra Canal wrote:
+> Hi Danilo,
+>=20
+> On 16/06/25 08:14, Danilo Krummrich wrote:
+> > On Mon, Jun 16, 2025 at 11:57:47AM +0100, Tvrtko Ursulin wrote:
+> > > Code looks fine, but currently nothing is broken and I disagree
+> > > with the
+> > > goal that the _mock_^1 components should be role models. The idea
+> > > is to
+> > > implement as little in the mock components as it is required to
+> > > exercise the
+> > > tested functionality.
+> >=20
+> > No, please consider the following.
+> >=20
+> > =C2=A0=C2=A0 1) When we write tests for common infrastructure we should=
+ be
+> > testing things
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as close as possible to how we intend re=
+al code to use this
+> > infrastructure.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Relying on internals in creative ways is=
+ likely to underrun
+> > this testing.
+>=20
+> Regarding unit testing (and KUnit is a unit testing framework), the
+> core
+> principle is that individual components of the code should be tested
+> in
+> isolation to validate that they perform as expected.
+>=20
+> The "units" should be tested independently and we use those mocks to
+> simulate dependencies, ensuring that the test focuses solely on the
+> unit
+> under scrutiny.
+>=20
+> If we introduce more things into the mock, we end up losing the
+> isolation.
 
-Ah, good. I did search the list but apparently only lkml so I missed
-that one.
+That depends on what those "things" are.
 
-Johan
+In the presented case, the unit tests are just as isolated as before.
+The particular test case itself is not even modified and it will still
+do exactly one thing: See if the job actually timed out as expected.
+
+The added overhead in the mock component is merely the guarantee that
+the fence gets signaled and that the job is removed from the mock
+component's list at the appropriate place.
+
+0 downside, documentation upside.
+
+Each unit test still tests exactly 1 functionality.
+
+
+> The mock scheduler, from what I understand, is not suppose to
+> be a reference design or even something close to a driver.=C2=A0
+
+We here in DRM define what it is supposed to be.
+
+And since the scheduler has been infinitely abused and misused, at
+least having one official, simple example "this is how you're supposed
+to do it" is desirable, wouldn't you say so?
+
+
+P.
+
+>  It should
+> remain just a mock, a minimal interface to test the scheduler's
+> internals.
+>=20
+> Best Regards,
+> - Ma=C3=ADra
+>=20
+> >=20
+> > =C2=A0=C2=A0 2) Being close to a reference design is a good thing, why
+> > wouldn't we want
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 that? The reality is that people *will* =
+look at this code for
+> > reference.
+> >=20
+> > > Also, there are various ways drivers use the scheduler API.
+> > > Trying to make
+> > > the mock scheduler a reference driver implementation would only
+> > > be able to
+> > > make it a reference for one possible use.
+> >=20
+> > Why? Nothing prevents us from covering all of them eventually.
+> >=20
+> > If for now, we just implement one of them, that's better than none,
+> > so why not?
+>=20
+
 
