@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-688868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111ECADB82E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8FAADB822
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A8C1675A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0813A031C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D2F289839;
-	Mon, 16 Jun 2025 17:53:00 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF28288CB1;
+	Mon, 16 Jun 2025 17:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="gpYq4SO4"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4219E288C2D;
-	Mon, 16 Jun 2025 17:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C361287512;
+	Mon, 16 Jun 2025 17:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750096380; cv=none; b=RCU7tCw0fgzlG/YJcRltPrUj6HZpyAGoICeq7gJ+P9eAGja97R5xT4wcbCWc4NvcF0SIcKNawLueuH/Vw6mv5EPiimt8LnJh/aMI7j5obFbsSbihhCI1sFkIGhCzRApCmrbvC+INUHxw6N8UP2K5iyCvT/ApjsVk1TN2A8Wg6zE=
+	t=1750096348; cv=none; b=GG0YT2SPsy8aXvowU09sRhSSdqjZ3ZsUeNeIe11ZDCYyAznfKtLjuYLYWZEhWTUfjQ11gCo2IYFfonyxziN7W9z+7PLGpIxHTyNSOHrMEcwZpcr/Enu1zfzq19z5QFy1FGfckHZnB2uVaQcmK0a1SBTxh6lRQp7tgmY+F/ODFEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750096380; c=relaxed/simple;
-	bh=GkX6+5ssbSsWC2eRweu5p5dS6b/weFQGhxl3Vz1yWm4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=scRzjFWl2njWgnCzZ04rY67l5OFJNlDrHObsiZsM0GoTGZmYnP/oir+EaSFiefQxExxaLe1wyc3MUJp3l+7YQ2fgvfuVryGrVu5Lq1Ojfkn9oizaG+e50YL+WVtWte633ILTUqhKPBArGDDp4XkBN84q4A3WOLLZ6yGO02GGmKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 98518C0AF9;
-	Mon, 16 Jun 2025 17:52:56 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id CFDA12002C;
-	Mon, 16 Jun 2025 17:52:54 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uRE0w-00000001KZ6-3XJ8;
-	Mon, 16 Jun 2025 13:52:58 -0400
-Message-ID: <20250616175258.691664401@goodmis.org>
-User-Agent: quilt/0.68
-Date: Mon, 16 Jun 2025 13:51:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Carlos  Maiolino <cem@kernel.org>,
- Christoph Hellwig <hch@lst.de>,
- "Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH v2 13/13] xfs: change xfs_xattr_class from a TRACE_EVENT() to
- DECLARE_EVENT_CLASS()
-References: <20250616175146.813055227@goodmis.org>
+	s=arc-20240116; t=1750096348; c=relaxed/simple;
+	bh=g+HwPP9ZIb15NvMhIr+CPbozu6dGSLfBz7OsV9vYGrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1+JmCWY8NyqxmBycR3EvFque0hUQ+x7fSVgGM9KNzG26/sDCpq7FTVff5oX3t/+qLH+zzwEMM8RulsKA99qgzM0ZZLDED9CfLTo7NdssTwoIXofbYRHm84GbmWOhWPQEkRyZvGwj6FE9cxMERQa2PkH7NcGARnxEkj+trmIW2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=gpYq4SO4; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bLcyq33LHz9tSG;
+	Mon, 16 Jun 2025 19:52:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1750096339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U80w8z7BB4L7OCfBpTuzF9uuk8qIENMB0ofD4rcuGa0=;
+	b=gpYq4SO4iiyKNpezJWHa+j/YfswRSZbwFLtuhYuTL3DP9NhfuBwXl3rBauMFpBYWKoXaLy
+	6EWbnFUwLZABQotOqFCr5fJAX1YKX4/whhZNQJz8KixNPQtbKMLbIIsFAUrywRY/ig+8mn
+	7nPcH0k2Qm13BpQ9W/bpd9vcsMUXZQV2WRQXZvdd313tLCmSYFFXVUPdpyXLcPLx6TIZIy
+	ej64GXidw4LGDQ+nbLWPofbWRq3YKhiVO8DWBjJ5Zoz6Uuh8xCgY7+tlvYvn0FPGzNHnRE
+	mC0UF1J5ka9vOSfygWyvj1xUEO3xaw/EvtqY8mJihqr++3CsbSIXOX4GciKUyw==
+Date: Mon, 16 Jun 2025 23:22:15 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	lv.zheng@intel.com
+Subject: Re: [RFC PATCH] ACPI / sysfs: Replace deprecated strcpy() with
+ strscpy()
+Message-ID: <4euirck7yxqxlnzfwus7xfhpxre5q7ck5nhumvj7vdw2ha35mm@dtrhqeyl5tob>
+References: <20250616174748.2799-1-listout@listout.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Rspamd-Queue-Id: CFDA12002C
-X-Stat-Signature: 6151eycwd9aj61x8fugb3hnroagoiz49
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19GNZDWZ6rXSZs0MgWJEFXBUVhlRJNZ5b4=
-X-HE-Tag: 1750096374-804361
-X-HE-Meta: U2FsdGVkX1+g5hTChwKkEzGc6weI1MJjDnZc/XzwPe7Mykeii7LOaV5B+syfA7Zl0zJ6NUf6pv49P1IZ89eBtI94uTBoT/jLlWB26uu+EeNbBhvXSr2gngHPGIV+yAtoRtO+dwLs4z0L7GnlBKbp8cf7Xm0pGaoIIpSrJs45tQ/gjUacW8fxzL8b9jhWLHm/iUGRSwFQhBZcp7UBd9lQqtz8Mlt3JOkvZoS9iSzhbQqlbb8aCyZs/tMHyot7vmZqeVoU6nP1eAZcZFL2qc9DNpgBcbEf/mO4jEgBb97lizzVEFRKwCzvEt9ZGJxs9baTbxngz1//Kh48zSyuXEStKdTMtyHCGMMt2gn8aj7CgGcndRXmB1SiZK+Nwq2eIkE4tQ0FfbIredHRI+PhKSeAfw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250616174748.2799-1-listout@listout.xyz>
+X-Rspamd-Queue-Id: 4bLcyq33LHz9tSG
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 16.06.2025 23:17, Brahmajit Das wrote:
+...
+> ---
+>  drivers/acpi/sysfs.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
+> index a48ebbf768f9..4005c9faf14f 100644
+> --- a/drivers/acpi/sysfs.c
+> +++ b/drivers/acpi/sysfs.c
+> @@ -181,10 +181,9 @@ static int param_set_trace_method_name(const char *val,
+>  
+>  	/* This is a hack.  We can't kmalloc in early boot. */
+>  	if (is_abs_path)
+> -		strcpy(trace_method_name, val);
+> +		strscpy(trace_method_name, val);
+>  	else {
+> -		trace_method_name[0] = '\\';
+> -		strcpy(trace_method_name+1, val);
+> +		scnprintf(trace_method_name, sizeof(trace_method_name), "%c%s", '\\', val);
 
-xfs_xattr_class was accidentally created as a TRACE_EVENT() instead of a
-class with DECLARE_EVENT_CLASS().
+Maybe something like would be better
+ -		trace_method_name[0] = '\\';
+ -		strcpy(trace_method_name+1, val);
+ +		scnprintf(trace_method_name, sizeof(trace_method_name+1), "%c%s", '\\', val);
 
-Note, TRACE_EVENT() is just defined as:
-
- #define TRACE_EVENT(name, proto, args, tstruct, assign, print) \
-	DECLARE_EVENT_CLASS(name,			       \
-			     PARAMS(proto),		       \
-			     PARAMS(args),		       \
-			     PARAMS(tstruct),		       \
-			     PARAMS(assign),		       \
-			     PARAMS(print));		       \
-	DEFINE_EVENT(name, name, PARAMS(proto), PARAMS(args));
-
-The difference between TRACE_EVENT() and DECLARE_EVENT_CLASS() is that
-TRACE_EVENT() also creates an event with the class name.
-
-Switch xfs_xattr_class over to being a class and not an event as it is not
-called directly, and that event with the class name takes up unnecessary
-memory.
-
-Fixes: e47dcf113ae3 ("xfs: repair extended attributes")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- fs/xfs/scrub/trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
-index d7c4ced47c15..1e6e9c10cea2 100644
---- a/fs/xfs/scrub/trace.h
-+++ b/fs/xfs/scrub/trace.h
-@@ -2996,7 +2996,7 @@ DEFINE_EVENT(xrep_pptr_salvage_class, name, \
- DEFINE_XREP_PPTR_SALVAGE_EVENT(xrep_xattr_salvage_pptr);
- DEFINE_XREP_PPTR_SALVAGE_EVENT(xrep_xattr_insert_pptr);
- 
--TRACE_EVENT(xrep_xattr_class,
-+DECLARE_EVENT_CLASS(xrep_xattr_class,
- 	TP_PROTO(struct xfs_inode *ip, struct xfs_inode *arg_ip),
- 	TP_ARGS(ip, arg_ip),
- 	TP_STRUCT__entry(
 -- 
-2.47.2
-
-
+Regards,
+listout
 
