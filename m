@@ -1,42 +1,58 @@
-Return-Path: <linux-kernel+bounces-687666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA57ADA788
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:20:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C10DADA75F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB5413A2462
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684FB188F819
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52581BD9D0;
-	Mon, 16 Jun 2025 05:20:10 +0000 (UTC)
-Received: from invmail3.skhynix.com (exvmail3.skhynix.com [166.125.252.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0361C6FFD
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4AF1C5F23;
+	Mon, 16 Jun 2025 05:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ghnfkWtR"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0313E1863E;
+	Mon, 16 Jun 2025 05:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750051210; cv=none; b=LYasRCRslfXQpCP4Ts9QbSOAebUlfD0D9sYE5WeETSa515tL4WRqEhdYF4QyNKhSWVEsyyGSZxE7PUzoiKY3spKXIh5L7IS2enh31376WWjfn7Kdc+U7OuSEHJe34knaPtMxRZaVktySoBDx1nyQzjPPg+ZnsZxgB20FsB7+DUM=
+	t=1750050416; cv=none; b=QpAxdvqtr9bFDaIJfz/Xg9HFQuiGXPG8C4ElGWM9+/hBWSMe5UFgP7PIyS0tZUnA9+Ox4KLWjwkIl9cWsYsW7tSLD0Yqq0BVqa+MCADZqwUT9yTHTSFp+rbDpTQNDZhkhx5MF/hbR69XDB1c2Vdkugpsc460G1znyFeHSXOq1+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750051210; c=relaxed/simple;
-	bh=JrW8Defnv9C+f6j1+bXA2jfDux3oXg+snPiQYB0vyWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kLagfYv1IWlO+UXrjluKeEJu1QAC74NWfREsOfERCmw1RLuDpCwHfsQzsXFkQHm2YDb+DEohjY24SWIfZ5YY8fIlXQolhfsRqVTmd/tMMtM9zom9i/m6515wJn3DGo8vyfeCeXnU57NJDK25+RDOYh9IIt67Hl4Z441Nmp7C2gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc59-03fff7000000aab6-65-684fa5f8c482
-From: "yohan.joung" <yohan.joung@sk.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	pilhyun.kim@sk.com,
-	"yohan.joung" <yohan.joung@sk.com>
-Subject: [PATCH v2] f2fs: enable tuning of boost_zoned_gc_percent via sysfs
-Date: Mon, 16 Jun 2025 14:04:44 +0900
-Message-ID: <20250616050445.1492-1-yohan.joung@sk.com>
-X-Mailer: git-send-email 2.49.0.windows.1
+	s=arc-20240116; t=1750050416; c=relaxed/simple;
+	bh=cA3SwmYgYeSIyOV2poq56YF76ctfNib2sQffxNFTYNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n2WKfV3aWqCJ1GyrO1Xu28JYJK6LM/W+XLfAvEDUI2ABxOhhCMbVcLkJkOLekAWjFFJWZyVPSWYnrcAWTy3sf2pg8hIlOV8n8cMaRfPRgH5+OoZyR9A4K4z/Ggu0LhfMGGMZN4j4GPVg+ro0GFz7ZQ01GeTu7F8UNkr6yzFT+0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ghnfkWtR; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1750050410; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=R5GJYlkXT0vSw2Kc0ay2ukzCBmnnFXXk54xXv2Y6mic=;
+	b=ghnfkWtRBN2py6eYOj+JEYDUA5ZtoozP4y6ILy4Rc4yRuqyE93ZN6Zoj2y8FTsuGKJQz4jHs5m2hHrMyxW/Iwi7IgZcZKU92RzqYztzSSpRR5ckTAnLGfYvZnE3vUiBWF3xRxdGrUJB0NUCq1Hfv2u54vItfjl7Jaumcw0aZcmo=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WdrrnGW_1750050408 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 16 Jun 2025 13:06:49 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: brauner@kernel.org,
+	shuah@kernel.org,
+	will@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com,
+	xueshuai@linux.alibaba.com,
+	catalin.marinas@arm.com,
+	mark.rutland@arm.com
+Subject: [RESEND PATCH] selftests/pidfd: align stack to fix SP alignment exception
+Date: Mon, 16 Jun 2025 13:06:48 +0800
+Message-ID: <20250616050648.58716-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,67 +60,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsXC9ZZnoe6Ppf4ZBlcOClicnnqWyeLJ+lnM
-	FpcWuVtc3jWHzYHFY9OqTjaP3Qs+M3l83iQXwBzFZZOSmpNZllqkb5fAlbHrzzmWgp2cFavP
-	9rI0MH5i72Lk5JAQMJG4u6mZGcZu/fSaBcRmE9CQ+NPbCxYXEdCUONI5E6iei4NZoI1Rov1o
-	EytIQljAW2LCulYmEJtFQFVi7pHNYM28AmYSC3YfYYEYqimx48t5Joi4oMTJmU/A4swC8hLN
-	W2dDLb7LKtH82QDClpQ4uOIGywRG3llIWmYhaVnAyLSKUSQzryw3MTPHWK84O6MyL7NCLzk/
-	dxMjMJyW1f6J3MH47ULwIUYBDkYlHt4DW/0yhFgTy4orcw8xSnAwK4nwLj4BFOJNSaysSi3K
-	jy8qzUktPsQozcGiJM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cAYdugiN1/9r1/zmMzSfN9e
-	P3s96Ni1HRs+rebrW6W9RqHbbvX5/YfmZU3Wu6NqsPym4LYfIgtS7vvK3zr2uEPleovalBnB
-	N05kZIo7GCRw1S/U+Zn8/Na5J/elMt/eXyD9+t/Om9ZGMuEvebI/+cnPW/WdRUru9vtjPn1N
-	VXsTfnxyCZPhW/j+uhJLcUaioRZzUXEiAOffXNIjAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFJMWRmVeSWpSXmKPExsXCNUNlju6Ppf4ZBvceMVmcnnqWyeLJ+lnM
-	FpcWuVtc3jWHzWLC3KtMFu+33mN0YPPYtKqTzWP3gs9MHt9ue3h83iQXwBLFZZOSmpNZllqk
-	b5fAlbHrzzmWgp2cFavP9rI0MH5i72Lk5JAQMJFo/fSaBcRmE9CQ+NPbywxiiwhoShzpnAlU
-	w8XBLNDGKNF+tIkVJCEs4C0xYV0rE4jNIqAqMffIZrBmXgEziQW7j7BADNWU2PHlPBNEXFDi
-	5MwnYHFmAXmJ5q2zmScwcs1CkpqFJLWAkWkVo0hmXlluYmaOmV5xdkZlXmaFXnJ+7iZGYIgs
-	q/0zaQfjt8vuhxgFOBiVeHgPbPXLEGJNLCuuzD3EKMHBrCTCu/gEUIg3JbGyKrUoP76oNCe1
-	+BCjNAeLkjivV3hqgpBAemJJanZqakFqEUyWiYNTqoFR4Og8/fAd5sfmBSguKPFb86La5dZZ
-	SfG0hLUb3nlMKpp7yP/CPjd+6/amPyfieIXXcF5SKd/DzGbY+NLUdkF/z4M7z/0jV27WEptl
-	dJL1k7S/Snucmo5HlRX3FuVso/91Jxbr1ucmnN7zKb90x+Z594oeqRqvOBhYJFrE5nR346qM
-	FvbUwsNKLMUZiYZazEXFiQCNihNPDQIAAA==
-X-CFilter-Loop: Reflected
 
-to allow users to dynamically tune
-the boost_zoned_gc_percent parameter
+The pidfd_test fails on the ARM64 platform with the following error:
 
-Signed-off-by: yohan.joung <yohan.joung@sk.com>
+    Bail out! pidfd_poll check for premature notification on child thread exec test: Failed
+
+When exception-trace is enabled, the kernel logs the details:
+
+    #echo 1 > /proc/sys/debug/exception-trace
+    #dmesg | tail -n 20
+    [48628.713023] pidfd_test[1082142]: unhandled exception: SP Alignment, ESR 0x000000009a000000, SP/PC alignment exception in pidfd_test[400000+4000]
+    [48628.713049] CPU: 21 PID: 1082142 Comm: pidfd_test Kdump: loaded Tainted: G        W   E      6.6.71-3_rc1.al8.aarch64 #1
+    [48628.713051] Hardware name: AlibabaCloud AliServer-Xuanwu2.0AM-1UC1P-5B/AS1111MG1, BIOS 1.2.M1.AL.P.157.00 07/29/2023
+    [48628.713053] pstate: 60001800 (nZCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=-c)
+    [48628.713055] pc : 0000000000402100
+    [48628.713056] lr : 0000ffff98288f9c
+    [48628.713056] sp : 0000ffffde49daa8
+    [48628.713057] x29: 0000000000000000 x28: 0000000000000000 x27: 0000000000000000
+    [48628.713060] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+    [48628.713062] x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000400e80
+    [48628.713065] x20: 0000000000000000 x19: 0000000000402650 x18: 0000000000000000
+    [48628.713067] x17: 00000000004200d8 x16: 0000ffff98288f40 x15: 0000ffffde49b92c
+    [48628.713070] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+    [48628.713072] x11: 0000000000001011 x10: 0000000000402100 x9 : 0000000000000010
+    [48628.713074] x8 : 00000000000000dc x7 : 3861616239346564 x6 : 000000000000000a
+    [48628.713077] x5 : 0000ffffde49daa8 x4 : 000000000000000a x3 : 0000ffffde49daa8
+    [48628.713079] x2 : 0000ffffde49dadc x1 : 0000ffffde49daa8 x0 : 0000000000000000
+
+According to ARM ARM D1.3.10.2 SP alignment checking:
+
+> When the SP is used as the base address of a calculation, regardless of
+> any offset applied by the instruction, if bits [3:0] of the SP are not
+> 0b0000, there is a misaligned SP.
+
+To fix it, align the stack with 16 bytes.
+
+Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
 ---
- fs/f2fs/gc.h    | 3 ++-
- fs/f2fs/sysfs.c | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ tools/testing/selftests/pidfd/pidfd_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 5c1eaf55e127..11fba7636af7 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -194,6 +194,7 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
- static inline bool need_to_boost_gc(struct f2fs_sb_info *sbi)
+diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
+index c081ae91313a..ec161a7c3ff9 100644
+--- a/tools/testing/selftests/pidfd/pidfd_test.c
++++ b/tools/testing/selftests/pidfd/pidfd_test.c
+@@ -33,7 +33,7 @@ static bool have_pidfd_send_signal;
+ static pid_t pidfd_clone(int flags, int *pidfd, int (*fn)(void *))
  {
- 	if (f2fs_sb_has_blkzoned(sbi))
--		return !has_enough_free_blocks(sbi, LIMIT_BOOST_ZONED_GC);
-+		return !has_enough_free_blocks(sbi,
-+				sbi->gc_thread->boost_zoned_gc_percent);
- 	return has_enough_invalid_blocks(sbi);
- }
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 75134d69a0bd..6c26b5e10c8f 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -628,6 +628,11 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
+ 	size_t stack_size = 1024;
+-	char *stack[1024] = { 0 };
++	char *stack[1024] __attribute__((aligned(16))) = {0};
  
-+	if (!strcmp(a->attr.name, "gc_boost_zoned_gc_percent")) {
-+		if (t > 100)
-+			return -EINVAL;
-+	}
-+
- #ifdef CONFIG_F2FS_IOSTAT
- 	if (!strcmp(a->attr.name, "iostat_enable")) {
- 		sbi->iostat_enable = !!t;
+ #ifdef __ia64__
+ 	return __clone2(fn, stack, stack_size, flags | SIGCHLD, NULL, pidfd);
 -- 
-2.33.0
+2.39.3
 
 
