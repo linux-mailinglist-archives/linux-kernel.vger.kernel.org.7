@@ -1,87 +1,225 @@
-Return-Path: <linux-kernel+bounces-688893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A807ADB88C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:10:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339EBADB88F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5A4188B4D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019F33A3BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8228934C;
-	Mon, 16 Jun 2025 18:10:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A61428935D;
+	Mon, 16 Jun 2025 18:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6brB4q8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AE02BF016
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 18:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B273A2BF016;
+	Mon, 16 Jun 2025 18:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750097408; cv=none; b=CVu7mZENK8d7VwMQp2DRwMhsqnC9ItWz3s1gYK31Og2Qv6RitBWYOvLeGFx54oUjQaofSUOG+HG1/gN3luwLuhoD8sYFe15t0wot6i3iVyJsNjcrnEQ1FhQE2fRYYbJ52VERkC4D710k5deer7bQPd/T2V2n2pcYszidx6LgqQA=
+	t=1750097448; cv=none; b=MDxoc9+DKzKTZhxis/k6rKpfyyX2tAerkd/lunsOfHAAjnauOenPZuZBMgvs6XN7Ewk+QVgPbLxGWEPWqngWenGLux01rrL3Iej8fp6AyQi8ESZuXa6L9lNO3wfPqYlEwdVA+42ythJdgnyNXwSeEHyxM0gu0cnGEfVSFFQBUNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750097408; c=relaxed/simple;
-	bh=f3SR+c7V00e/776lUDhQaIpBjgbmR4CMGjTGNyIzOAM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=M3Hins7ppE3doAdPIKoNFrxFaBXti4PMubN9nQc0Dqhcp1Ef9Xtv4azMYZCwTZCXax+mpxYVfIH7Sk0kJJgo6Dn2QQJfmiLtTbw2jWa2FQ4kcQzoWTT5WRHx5sTJl/yrgqICPCKuXcZjvKYi1YEPYTEjSJBzOta1dC4AV9/Yldc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86463467dddso518548539f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:10:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750097406; x=1750702206;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQCx4IC5gpDB58blS838hR8n4LTlblpZhOuxvsbvlUY=;
-        b=hRRzQnBWGY57Kvd5krWhtGy4bpZwCZ/wELinWmsHdZpyRXIyENEzXXeY5RU9adlyNo
-         W5d4Loo25wVa/QgyvJqCVtVq8ZXQkT7tg+/2ekwrTbw0wMrcFPoon2rhZUdGOOGqDkYS
-         A9bxQlgyjyAJ9Ten1S/uJjBProF29H9jeaNyuRf1a1G9YVgmyA5Hc33UuCxTkKbDzx6G
-         g6sQxhPJ3eXYeid3lYXit2dATht7NJquCVkCbrexRTnq+VaZPQL+0YfezPybxcQZG6bc
-         vlpThGNZE1J4XLYR4mZTpJlaiNxtLaD365Cvh0BRxjLqWHDJ61gf7i6bFY4mru3B8SXF
-         GZXg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4H5VVvXigfkprFOGcqqbbd3601m15BKcgqKRj4+xuIGP4tyoSM3+oztoRdfYwqsT2+DWJr44RDlGMaSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx/rHVKy46cPQhOn0wtotPklsyXkRCQ47K/MGS20OcpbQFKdkx
-	1WEELFcyG+4ynbD1fe3pZgXlp/JfLGDKWlPERTGdmHiDSyJWY4Alz8TlT+Td3aiBaP06GL+94Qe
-	XTPQQLerOPRAkmKOpAa32NJcJT10q7OpwYSv7aEkghubHJdMnfgWxOgtfe0w=
-X-Google-Smtp-Source: AGHT+IEC/QG92AyqVE5oYs+tTrPUmhAowJMr/2Fl304s8I259Fe1ytHhEl7ZOGobkY4bmTLj5CgMe7bWLr+v9UHvi9Ql1O3N9C8E
+	s=arc-20240116; t=1750097448; c=relaxed/simple;
+	bh=zcp3hWxFI7bS6tJM2iENzfDvEXGjKBN6nai3nvOKFZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SgLS1yCmgVDzqNj5sYJRWPTIsw45yVUTUqVKZ3jOEKd/qHS1IuJQfPDJAPeqkXPVQiOgJsZXEZCOkpTMmmdxSEoZ/yjhhGjVC3azhjBtpl1gstUvokL7vAseIMtmGZhB2wqL1Efq6r8AmUoziHnIZemgOkBSszc+KJLYaedYTdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6brB4q8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF9CC4CEEA;
+	Mon, 16 Jun 2025 18:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750097448;
+	bh=zcp3hWxFI7bS6tJM2iENzfDvEXGjKBN6nai3nvOKFZ4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=O6brB4q8wPVw8z58AEOHqUKdrCd1b3HuM7igj6aJqfRhklOIN64o+cGfnyiPppmcs
+	 i+TLKqEn1nS0Fgw9mXY0UItkNj0wQ2dB6vmZ2FQkjeTl856L67k15NsdOyWiP50bS8
+	 Zzl3MyjclOJVTx5dtHrJBvODChOKgk+c5wVy1ethxL3+rCDr/qDklQitV2KUfuulLg
+	 zHBRcDVbmiQDaqYnRjWtWsBR3aEOmu/u7ZOONg7lVWwZekNS4wWGptIO4heYPajVAV
+	 ANMvzKsFTyeX2gbCcDpFCbmIxIl6XSpfwzDseIBeSTGcV601JcbGdoUwji8QUeO67x
+	 k7Ep8UVakl+bw==
+Date: Mon, 16 Jun 2025 08:10:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, David Ahern <dsahern@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jason Xing <kerneljasonxing@gmail.com>
+Subject: [PATCH v3 net-next] net: tcp: tsq: Convert from tasklet to BH
+ workqueue
+Message-ID: <aFBeJ38AS1ZF3Dq5@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154b:b0:3dd:a13c:b663 with SMTP id
- e9e14a558f8ab-3de07cc2086mr101236865ab.14.1750097405840; Mon, 16 Jun 2025
- 11:10:05 -0700 (PDT)
-Date: Mon, 16 Jun 2025 11:10:05 -0700
-In-Reply-To: <d8f04f74-283e-4acf-9e42-94fc0a047228@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68505dfd.050a0220.2608ac.0008.GAE@google.com>
-Subject: Re: [syzbot] [usb?] stack segment fault in __usb_hcd_giveback_urb
-From: syzbot <syzbot+9a4aec827829942045ff@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+The only generic interface to execute asynchronously in the BH context is
+tasklet; however, it's marked deprecated and has some design flaws. To
+replace tasklets, BH workqueue support was recently added. A BH workqueue
+behaves similarly to regular workqueues except that the queued work items
+are executed in the BH context.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This patch converts TCP Small Queues implementation from tasklet to BH
+workqueue.
 
-Reported-by: syzbot+9a4aec827829942045ff@syzkaller.appspotmail.com
-Tested-by: syzbot+9a4aec827829942045ff@syzkaller.appspotmail.com
+Semantically, this is an equivalent conversion and there shouldn't be any
+user-visible behavior changes. While workqueue's queueing and execution
+paths are a bit heavier than tasklet's, unless the work item is being queued
+every packet, the difference hopefully shouldn't matter.
 
-Tested on:
+My experience with the networking stack is very limited and this patch
+definitely needs attention from someone who actually understands networking.
 
-commit:         44a5ab7a Merge tag 'powerpc-6.16-3' of git://git.kerne..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a48370580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f72e140c622500d
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a4aec827829942045ff
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=175515d4580000
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net> (maintainer:NETWORKING [IPv4/IPv6])
+Cc: David Ahern <dsahern@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org> (maintainer:NETWORKING [GENERAL])
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org (open list:NETWORKING [TCP])
+---
+v3: Refreshed on top of net-next/main (8909f5f4ecd5 ("net: stmmac:
+qcom-ethqos: add ethqos_pcs_set_inband()")).
 
-Note: testing is done by a robot and is best-effort only.
+ include/net/tcp.h     |    2 +-
+ net/ipv4/tcp.c        |    2 +-
+ net/ipv4/tcp_output.c |   36 ++++++++++++++++++------------------
+ 3 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 5078ad868fee..feb7ac89a67c 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -321,7 +321,7 @@ extern struct proto tcp_prot;
+ #define TCP_DEC_STATS(net, field)	SNMP_DEC_STATS((net)->mib.tcp_statistics, field)
+ #define TCP_ADD_STATS(net, field, val)	SNMP_ADD_STATS((net)->mib.tcp_statistics, field, val)
+ 
+-void tcp_tasklet_init(void);
++void tcp_tsq_work_init(void);
+ 
+ int tcp_v4_err(struct sk_buff *skb, u32);
+ 
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index f64f8276a73c..d84e8d5ff5e4 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -5243,6 +5243,6 @@ void __init tcp_init(void)
+ 	tcp_v4_init();
+ 	tcp_metrics_init();
+ 	BUG_ON(tcp_register_congestion_control(&tcp_reno) != 0);
+-	tcp_tasklet_init();
++	tcp_tsq_work_init();
+ 	mptcp_init();
+ }
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 3ac8d2d17e1f..a39275dad489 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -1066,15 +1066,15 @@ static unsigned int tcp_established_options(struct sock *sk, struct sk_buff *skb
+  * needs to be reallocated in a driver.
+  * The invariant being skb->truesize subtracted from sk->sk_wmem_alloc
+  *
+- * Since transmit from skb destructor is forbidden, we use a tasklet
++ * Since transmit from skb destructor is forbidden, we use a BH work item
+  * to process all sockets that eventually need to send more skbs.
+- * We use one tasklet per cpu, with its own queue of sockets.
++ * We use one work item per cpu, with its own queue of sockets.
+  */
+-struct tsq_tasklet {
+-	struct tasklet_struct	tasklet;
++struct tsq_work {
++	struct work_struct	work;
+ 	struct list_head	head; /* queue of tcp sockets */
+ };
+-static DEFINE_PER_CPU(struct tsq_tasklet, tsq_tasklet);
++static DEFINE_PER_CPU(struct tsq_work, tsq_work);
+ 
+ static void tcp_tsq_write(struct sock *sk)
+ {
+@@ -1104,14 +1104,14 @@ static void tcp_tsq_handler(struct sock *sk)
+ 	bh_unlock_sock(sk);
+ }
+ /*
+- * One tasklet per cpu tries to send more skbs.
+- * We run in tasklet context but need to disable irqs when
++ * One work item per cpu tries to send more skbs.
++ * We run in BH context but need to disable irqs when
+  * transferring tsq->head because tcp_wfree() might
+  * interrupt us (non NAPI drivers)
+  */
+-static void tcp_tasklet_func(struct tasklet_struct *t)
++static void tcp_tsq_workfn(struct work_struct *work)
+ {
+-	struct tsq_tasklet *tsq = from_tasklet(tsq,  t, tasklet);
++	struct tsq_work *tsq = container_of(work, struct tsq_work, work);
+ 	LIST_HEAD(list);
+ 	unsigned long flags;
+ 	struct list_head *q, *n;
+@@ -1181,15 +1181,15 @@ void tcp_release_cb(struct sock *sk)
+ }
+ EXPORT_IPV6_MOD(tcp_release_cb);
+ 
+-void __init tcp_tasklet_init(void)
++void __init tcp_tsq_work_init(void)
+ {
+ 	int i;
+ 
+ 	for_each_possible_cpu(i) {
+-		struct tsq_tasklet *tsq = &per_cpu(tsq_tasklet, i);
++		struct tsq_work *tsq = &per_cpu(tsq_work, i);
+ 
+ 		INIT_LIST_HEAD(&tsq->head);
+-		tasklet_setup(&tsq->tasklet, tcp_tasklet_func);
++		INIT_WORK(&tsq->work, tcp_tsq_workfn);
+ 	}
+ }
+ 
+@@ -1203,11 +1203,11 @@ void tcp_wfree(struct sk_buff *skb)
+ 	struct sock *sk = skb->sk;
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	unsigned long flags, nval, oval;
+-	struct tsq_tasklet *tsq;
++	struct tsq_work *tsq;
+ 	bool empty;
+ 
+ 	/* Keep one reference on sk_wmem_alloc.
+-	 * Will be released by sk_free() from here or tcp_tasklet_func()
++	 * Will be released by sk_free() from here or tcp_tsq_workfn()
+ 	 */
+ 	WARN_ON(refcount_sub_and_test(skb->truesize - 1, &sk->sk_wmem_alloc));
+ 
+@@ -1229,13 +1229,13 @@ void tcp_wfree(struct sk_buff *skb)
+ 		nval = (oval & ~TSQF_THROTTLED) | TSQF_QUEUED;
+ 	} while (!try_cmpxchg(&sk->sk_tsq_flags, &oval, nval));
+ 
+-	/* queue this socket to tasklet queue */
++	/* queue this socket to BH workqueue */
+ 	local_irq_save(flags);
+-	tsq = this_cpu_ptr(&tsq_tasklet);
++	tsq = this_cpu_ptr(&tsq_work);
+ 	empty = list_empty(&tsq->head);
+ 	list_add(&tp->tsq_node, &tsq->head);
+ 	if (empty)
+-		tasklet_schedule(&tsq->tasklet);
++		queue_work(system_bh_wq, &tsq->work);
+ 	local_irq_restore(flags);
+ 	return;
+ out:
+@@ -2639,7 +2639,7 @@ static bool tcp_small_queue_check(struct sock *sk, const struct sk_buff *skb,
+ 	if (refcount_read(&sk->sk_wmem_alloc) > limit) {
+ 		/* Always send skb if rtx queue is empty or has one skb.
+ 		 * No need to wait for TX completion to call us back,
+-		 * after softirq/tasklet schedule.
++		 * after softirq schedule.
+ 		 * This helps when TX completions are delayed too much.
+ 		 */
+ 		if (tcp_rtx_queue_empty_or_single_skb(sk))
 
