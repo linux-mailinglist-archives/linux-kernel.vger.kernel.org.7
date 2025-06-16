@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-688776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686BCADB6EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:31:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 185B2ADB703
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4A7C164314
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:31:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAFF418920F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE9E288517;
-	Mon, 16 Jun 2025 16:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCD7288528;
+	Mon, 16 Jun 2025 16:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxBtrlgy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aXVGMXHF"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B73264A85;
-	Mon, 16 Jun 2025 16:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B5D2877F3
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091450; cv=none; b=L9QqioAwcKtDnlm/9sEmrnxgurwLzm+FYxSWGHzQ8LcBUYuzbaJULAO5n8qeSezQJRlsUL1BD67LfgLGy3Lj4Sgmqrui4xj3n4qK2EWBaTka4QZjM+QN8Lj5/6c+JuJv03GM8GH+NfHzQ9YK7kWWHE+DdckRZcy9PNSQjmOD1LI=
+	t=1750091467; cv=none; b=KCU9z2/+ZKwUX507bLMWnx93twsMezQfSWRZ0ClLSOeDRIjhzpxyg3Nj9wcqnqdqveMYudPiKAAasABibOFC70ELw/lHZqVgTLk0GGl5Kzg9B0QAcT2Lj8CqKf676/WoHyPLYbHmarMuBqElijVjPoCtrBGyTp3e7LQX15bfoUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091450; c=relaxed/simple;
-	bh=tEbrrBPamW7MT/SxnwKmIuHVJnO2tf+zHhE1P4jeIPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QOx4O+Of5aCnttGjH//SmSZhlUYm9eAAG5CwGuh9DsrakdR/qWFnmWJZDqZ7MEGS6ZzLzp0MCTh1hxxayMQq4E0lMwOlR+i/43pZVXAgu9kod/ahZ+s+YrkQdQu8JweMBNZc2cj64uqIGHiN27sITUtS4yZCDUGxCeICdsefAeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxBtrlgy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1062AC4CEEA;
-	Mon, 16 Jun 2025 16:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750091449;
-	bh=tEbrrBPamW7MT/SxnwKmIuHVJnO2tf+zHhE1P4jeIPs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sxBtrlgyyZL34AwgxPokLe+cV1d1wV431iiNGfmbZsrAFv0M/1D4HSu1VHbXBTG0P
-	 /jlRayOYfuGFPOLTZ/H6jQGdXM+wuGju6tvRMPX8I4cQOf26pAjD9bLnwbQ3yDZxBX
-	 brhck7TnmBPASOpyX4bbaVn8MQlYbQuUXXixcpfaVQPIYgZV+uINpDauiBP1hHBBPO
-	 AgCygjeVH35uL0caKZOWtpvAD3uzSAJ+bKOnFc693rFcxxCG4PHHtRyv+J56K8YiBJ
-	 7CtRCx8zxX3f2qJgI0z0RSBEh8pMJQmdXz8tZLB6ZQC1Ro899ptCb9ykumJbOCU5p8
-	 9dtkX/dYxJYfA==
-Date: Mon, 16 Jun 2025 09:30:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
- <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v13 02/13] net: pse-pd: Add support for
- reporting events
-Message-ID: <20250616093048.0a0ff1aa@kernel.org>
-In-Reply-To: <20250616141012.31305f81@kmaincent-XPS-13-7390>
-References: <20250610-feature_poe_port_prio-v13-0-c5edc16b9ee2@bootlin.com>
-	<20250610-feature_poe_port_prio-v13-2-c5edc16b9ee2@bootlin.com>
-	<20250614121843.427cfc42@kernel.org>
-	<20250616135722.2645177e@kmaincent-XPS-13-7390>
-	<20250616141012.31305f81@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1750091467; c=relaxed/simple;
+	bh=Cm5virMos3DWSgEmZWrzNg6yYqKXWG/OooADfpRNMoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ePt5LpCU3UrtuTY+PVaBdlfnbQexHPDvHtVClMRfftGahAnPgYv30ct5IrE2FxKpuillm5vYg8xDr94P+QV2xgHXVU2gYc4mUn1HlOKG2w1XHcwBShEn5hXmm3uqQsSmqmjVHNteBVhC6EMy/Rsh/MZfCWVsVrqhQFEM3f7aPQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aXVGMXHF; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3de210e6076so19525ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:31:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750091465; x=1750696265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kq/FoSaNMIyl/e8Lf2VrD4cN1FNaINRo1rslH1GJtZk=;
+        b=aXVGMXHFDNIdamTBXGyFDooUOkgIcehe1c9zCRDwcG3iO7dd9vX1VhSDFn0ZTd+1Yc
+         P4OO54ifsgBmc/IScj+QI7NfH9gaOKvFrB7KtOwrRwCmBSE0bU86ORvNgQcGZg2SZagD
+         viBf293ZGafydCCPkzlqeEcWcBgACvWuWxE2dU5zjvwNioBG14Y6RU16NM3iToPzCUQq
+         3KBW20KjXzmsluI7dL2swVibsz6i3Bty6tHXd4jw1LuEZsrK5x/SOLixR9iICV2i2NdS
+         ZtVvV6m0Cgv1b1nqP5kk1s6+hFPjIJDv5hfZb3Im2tGvDAuGmk6K9gT5QZJj4Cbf7NnI
+         eIhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750091465; x=1750696265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kq/FoSaNMIyl/e8Lf2VrD4cN1FNaINRo1rslH1GJtZk=;
+        b=GH5PTe/c1FXiU+nqOWQsTlVEklwK9/p9fxkgWOlpGESkTs58AV7MuNwD8y1ipq9MKD
+         p0vezSjNyZ7mrJkP3LHJ4NHw4zgGvLXNqZ9FIs0Xa+xhTP8gbftWrbZjc/4NNSEv5m7Y
+         KvaZCip6fuJASYjpLPjkW2TUYf/q8B08kxCmIdg76ZYZHFcETOLHKApFw5jTuawJq2UH
+         kv85z1kUi67ujz/5oRoNMtH08shofRPcZk1sYSVpQtxofKMHU7qcle3by3etTyK0x4ra
+         hYtIpd+zXKC207HQHNhZKM7JrM3EH94+23kCiW/c9TvQ/3dJrvWwib7GR0qFTEgXNeA+
+         4ddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw3jX3MXOGnHTaYxTEVuSilbvVAREoQYblJfeaHj7I5ov02aMBWQRdkXDZ7z6/35Q9r8UDacJp081r2Cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRukdkMLPYX2rtpO1R7f592UYBFCKkdypq1vP+FW38AHLFIXSn
+	seEdRVdDERB7/ltNz+uVLzM/q4dE8o9qeLbbLTMt8hJDXwmb0eCFmqBbxrcnKARezgtOA4EP5H2
+	G0J3RaNWAhMrMtS3aSyF9lBdIwDEJVotMp8JbGYwV
+X-Gm-Gg: ASbGncvWqPo4YRXPqszOO0OBkgoQ2tTGjP6vMBIsTXZuffV2c4X3rPn4JYbyltaG7+Q
+	PtpGEM3e3XQ7dmmZx+bIFYsIjAm1EliVQ2hZnghnv3QAfZk767GI2EUc4kX3Li/mXBDMod4iqdq
+	wXvrrzsKOpr07A28gKp+TQjWGX/i1bH8pX6XZFOehIoIwWrPpWvYmHBm+AysBvi0svPIDEort6X
+	l/GI1N7
+X-Google-Smtp-Source: AGHT+IGHSwvj2lv1V7O9rVJ1zs/I6lV6OAxCiaPZhFpbO2SixxEQ+9O1rvzKl6msJvPcZ2is64kPuSZ5+2UJLLns3iM=
+X-Received: by 2002:a05:6e02:219d:b0:3dd:c9e4:d475 with SMTP id
+ e9e14a558f8ab-3de08e32e89mr6183305ab.22.1750091465130; Mon, 16 Jun 2025
+ 09:31:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250614004108.1650988-1-irogers@google.com> <20250614004108.1650988-2-irogers@google.com>
+ <CAP-5=fUz6ViPHDdS9GCAEYUN39L4MpAnRR4CzJWggg0S8vn39A@mail.gmail.com> <aFBFOBUhHnF87R9q@x1>
+In-Reply-To: <aFBFOBUhHnF87R9q@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 16 Jun 2025 09:30:53 -0700
+X-Gm-Features: AX0GCFvE9nrOqBE66rQ8Ea547F5mV_NdM-Lcl5er8Z_7hgpu_f6HZqD3TrsPnK4
+Message-ID: <CAP-5=fWcKkdoP=i9zZMWtHWZ=XWWR_DLKVWEZ8vfxr11j9YADA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] perf evsel: Missed close when probing hybrid core PMUs
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Michael Petlan <mpetlan@redhat.com>, Andi Kleen <ak@linux.intel.com>, 
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 16 Jun 2025 14:10:12 +0200 Kory Maincent wrote:
-> psec = pse_control_find_by_id(pcdev, i, &tracker);
-> rtnl_lock();
-> if (psec && psec->attached_phydev &&
->     psec->attached_phydev->attached_dev)
-> 	ethnl_pse_send_ntf(psec->attached_phydev->attached_dev, notifs,
-> 			   &extack);
-> rtnl_unlock();
-> pse_control_put(psec);
+On Mon, Jun 16, 2025 at 9:24=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Jun 16, 2025 at 09:04:41AM -0700, Ian Rogers wrote:
+> > On Fri, Jun 13, 2025 at 5:41=E2=80=AFPM Ian Rogers <irogers@google.com>=
+ wrote:
+> > > Add missing close to avoid leaking perf events. In past perfs this
+> > > mattered little as the function was just used by perf list. As the
+> > > function is now used to detect hybrid PMUs leaking the perf event is
+> > > somewhat more painful.
+>
+> > Given this leads to leaking perf events on hybrid systems it would be
+> > nice to land this 1 liner in the next v6.15 rc pull request fixes if
+> > possible.
+>
+> Sure.
+>
+> Just one nit: while looking at:
+>
+> void evsel__close(struct evsel *evsel)
+> {
+>         if (evsel__is_retire_lat(evsel))
+>                 evsel__tpebs_close(evsel);
+>         perf_evsel__close(&evsel->core);
+>         perf_evsel__free_id(&evsel->core);
+> }
+>
+> And then:
+>
+> void evsel__delete(struct evsel *evsel)
+> {
+>         if (!evsel)
+>                 return;
+>
+>         evsel__exit(evsel);
+>         free(evsel);
+> }
+>
+> and:
+>
+> void evsel__exit(struct evsel *evsel)
+> {
+>         assert(list_empty(&evsel->core.node));
+>         assert(evsel->evlist =3D=3D NULL);
+>         if (evsel__is_retire_lat(evsel))
+>                 evsel__tpebs_close(evsel);
+> <SNIP>
+>
+> I think that tpebs_close could be done just at evsel__close(), no?
+>
+> The way it works I think there is no problem with calling it now twice,
+> but it fits better in evsel__close().
 
-You can add another helper for clarity:
+Agreed. It'd be nice if we could assert that it was closed given this
+has been a problem. Retirement latency events are pretty unusual so
+I'm not overly worried about needing this :-)
 
-pse_control_get_netdev()
-{
-	ASSERT_RTNL();
-
-	if (!psec || !psec->attached_phydev)
-		return NULL
-	return psec->attached_phydev->attached_dev;
-}
-
-psec = pse_control_find_by_id(pcdev, i, &tracker);
-rtnl_lock();
-netdev = pse_control_get_netdev(psec);
-if (netdev)
-	ethnl_pse_send_ntf(netdev, notifs, &extack);
-rtnl_unlock();
-pse_control_put(psec);
-
-?
+Thanks,
+Ian
 
