@@ -1,297 +1,203 @@
-Return-Path: <linux-kernel+bounces-688973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730FDADB97E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:21:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F898ADB963
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA1C3B36C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210F517336B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D3028A1CD;
-	Mon, 16 Jun 2025 19:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69881288C09;
+	Mon, 16 Jun 2025 19:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="MlAR+TVO"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WLIPey96"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011035.outbound.protection.outlook.com [40.107.130.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8928C28937D;
-	Mon, 16 Jun 2025 19:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750101657; cv=none; b=onAep6RSUO44VFjdHWTUmGUw36SE+YbogzOdssGLJkNaCepju9yEzwbBzVHO1faO2Jtmc4b97Mafx/ytLNqSjuIuMuhZPMTnee7siX7ZBx3PYiwwWw7KEwu3EXo3WEJwNYxLbYiZdizozTYygZ26y3E4Y51LIAlhC/BwkZq8cBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750101657; c=relaxed/simple;
-	bh=axNIAB/C6jkDTgjQBx60qehyaTss7JGdiBObM6fIxF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o74JPrv5B6p6HG67LPmft89+3iwLubdRezJuCa0A//o2cMsKDfpUDFL2XmIKRCAi7oC3NTvmUNyT+LuXuEcCZBZT2kI6/58TVs8y6KFSZNkfPgNUPM3955k1H7f2+JPyOcGullFBQ5RmgNK7QDVowLVfk3aq2ubNXHAmi3rz2U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=MlAR+TVO; arc=none smtp.client-ip=217.72.192.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1750101647; x=1750706447; i=christian@heusel.eu;
-	bh=vWAwD/gglL+XzNx4ZE+OLzKqaXpxiSmNcafe/8jSO5U=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MlAR+TVORkUBc1M50CPILIc1WVlvKcCedsR4Ol7SKNWOssKzTwBkw1tfKav1pDX8
-	 TRisLZqgXvsltp+Ji+lAxxk2E0OkzFq5Ja9ORm8DvhLTJ3nk6Fl9yoyqFlXsS6wZE
-	 iz6gVoWEmnFYmgJ0RNirrB5jtHguBNBMTojzJAgUdmMO9ZLur3y8DnKC/eg9pfOZc
-	 OGzbzrYdVyDYCvJxxUN5Y23kfrxc71PYcYn5R84G7pC9DhkAj6gi18N6SoScsadpt
-	 SN2vLCJWtppn6kU7t31+up/jt8LW2dWJ/x+KdE++Ve8UtONx60ybmullxSDWo5YJG
-	 qX7K0XEryWDcuNBX9w==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([80.187.66.155]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N8G6I-1unIRg0e9Y-00rsbO; Mon, 16 Jun 2025 21:14:44 +0200
-Date: Mon, 16 Jun 2025 21:14:39 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: clang-built-linux <llvm@lists.linux.dev>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>, 
-	Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, jackmanb@google.com
-Subject: Re: clang: selftests/mm gup_longterm error while loading shared
- libraries liburing.so.2 cannot open shared object file No such file or
- directory
-Message-ID: <7c101fe5-7c73-4916-a832-d656511eeab8@heusel.eu>
-References: <CA+G9fYssELHcYKwgGNBMLrfeKZa9swGdLrH7gxqzd4P0kaOiZg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442CE35947;
+	Mon, 16 Jun 2025 19:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750101354; cv=fail; b=aqAtd1KhL2xjkx8AXHcbfTWK5gCVLYvo+8bAeMa80kWZ3iy4YXNVnBX0LVUaxZpoW9HBoL62R7fogO72HcaXXLEekBBzw2qJOgzn8yCbQsOfPHklwnc1zIuPnHhzfclxKCgTOPIiAz1kSEIwdDrRVaMICIwM8oaJPDT5eIg+hAU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750101354; c=relaxed/simple;
+	bh=42V+eNYxXBdNwB+oXo9Y5icTM4EC7/rrKXNdmnozEzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iyjspz4Hwn1kbjrmvniMChMsy+fA+ujfkPd1LVp2XcyLQ69Rt6NMCdlgQF48iwM1oSTh+ocXaGXC3xiKWp+34X84Y7npduHqYJ1ZBs2KkSR9EiXqdbR//imUXOWmmWq46bcV7CVLZYbQW3t0PVS0p+oyn+/gDuHwkGS3kwMowvI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WLIPey96; arc=fail smtp.client-ip=40.107.130.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kbwsz3TdLd83hseLA+CxUIyLI3W4ntzlBQm3PP4jbPYFjHZBI+hC4S+utZ4Dz799AixivUHVqiK1pSmr5DDobg4sm40FccR++vh6vsReExJ6LRKA//3vFzq2u8DEicjtTObZVPrrqb7JxTFSbxTYnb0t2mHjwJ5xuNrqXckvpquV+6BJqoCmvzVYHX0RAj2sMiMHZ/PzExUT1nsl4NecXWy6u8BayNFFYjXLAV0IRW7+agdUY1hnLlfHbfsK9e73BxphLeYPZvbjekxSZ6vyY9X2c8aUhtQ1gi8ce0tzR5BSO/rhCKkXA9d7NMEYKJHeUCIuy1C4Q7wCfi1qVhcVYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iPk8pPzS2UeRIYVc0QbMqFQzkXLxlPr8rR5HhKhKjVM=;
+ b=hohhVdd8wQqSMdXtK42IFT+Sqy8YmYRC+/b+WsFD9AJkPX/pG3O+AaHrW3L/JYLyukHZ95EL/ojIIGdDh50SGJl9tp/OBbnA8TvZp7bWKXoD5CX8gQMmTx7W+raeLRA/C5s4ingOeRTk0iqB5JjGETwBBQAFMiJY7dFUVUU0u5c6KCrFrvDaQgCNBvi+yZ4cncJFhEveYaqyZl8JzYiXvv2I3ZatH9FSPEVL0pktaA36hpCpJvnhcKgfwl2TG7e9JckBoJ2evddMnxxK8wH+DZEQkv3gVlWAy4SyvoUSfNfmfgKl1Fhko92OsTgAejlWuKG5MA7VHoCNEGdDyH2Zig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iPk8pPzS2UeRIYVc0QbMqFQzkXLxlPr8rR5HhKhKjVM=;
+ b=WLIPey96/fgwEHAeEerQW2vpFiSZgfcgMpml4HkRIaaTuVujR+YYF6L+XrLBjpEK9UEh+6Obs85vrnI2tzwolWNPOb1GzwX0qIsCv3DkopTDlvQfwCbLOetsjWEbxnak4uh0BE6/V/6RSHjzo600dnghMtifAgSqwZzRnUa4f53M3K1we1KETm+Bs18xmDUzcyW0i2SqTzrcuv9T52wH4kbJcjsmXgz1yId+bjiiGaMa5tqPG7bnzfkMxJ6OuFQtL39jb1inkI9PDP8Z0p2jzV/62EljlaAlA9F9z4GxqQE43Qkxv6y9A2rkmQPoSkqo/ZRiX6SEpbM858VqusQs3w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA2PR04MB10423.eurprd04.prod.outlook.com (2603:10a6:102:41c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
+ 2025 19:15:47 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8835.026; Mon, 16 Jun 2025
+ 19:15:47 +0000
+Date: Mon, 16 Jun 2025 15:15:40 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] PCI: imx6: Correct the epc feature of i.MX8M chips
+Message-ID: <aFBtXDyBep+0wyJR@lizhi-Precision-Tower-5810>
+References: <20250616083744.2672632-1-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616083744.2672632-1-hongxing.zhu@nxp.com>
+X-ClientProxiedBy: PH7PR10CA0001.namprd10.prod.outlook.com
+ (2603:10b6:510:23d::23) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ifj2fqs4sl63qpb"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYssELHcYKwgGNBMLrfeKZa9swGdLrH7gxqzd4P0kaOiZg@mail.gmail.com>
-X-Provags-ID: V03:K1:pjn8XBlqfHHtOY72HbeSefm8Rf/7BdJhV7MoRC2aUUryDa1n66a
- ABaLBzLk0y3//12UpZsoLd2/LKAlG9KBi9+UfpGW1NB1E/3kYYr1okeWMICCXaPk10z25wk
- GmSIrqflP0XnNLS4DmSUQg3QxPN8t3E7zLo0OnvqUzvhV+I+6SkuGhs8lYECSwJnbPpzeab
- 45uKoJ8iPPQWFWScrd/Zg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SlavsgczDwk=;IWiRp/j7s5zo6lFg0OjNh6OQePo
- Kb514vk/gPWqumXbDt/bzWIm02m4PPP2eKDzOSXGiBL6rl6aOwQE6Op58/QAFLy+s2pq6QDIq
- 8BWeBAkGbRW3KCiPPfhALunLnEf2lxczNRfbL4r+cLarqspbYjp6NgS37prto2kJpyCGsbNlT
- GmtyS5B1RmrZeDphIzohK+UrppNn7AwUHLEX/+vqiMoU0SWSnmMwPxcUj/fOxNRsS36EyOxsS
- r7IxkFHbhUE2TszaK/ywUFch6KBN/t8SX0FQl9YgCU4CNW2SEXFPdcS6e5cpm5wxyuI/wxt+V
- 9CbSyXvgH9EZPZ4/BBbU6DSS8DapKjK11UO4G/Ge7s88jkJ12I3hjmq85K4rk/ydlE3M4tnzU
- PzuPGjUHqUms42JZUIWBI8yLAXUUmUgTdjex/+jSmfsC270EgDBzQ7WeFcHm5XOtfiNIEVFcE
- 2sc2m6t8ZY0fYRPLi/IvPo+P6XONXC1PR8kOqb2qYwdrMXPFp8l/RT5j8GE2g2c/Fx5Bn06d0
- xjcZ5wbHTlFsErb7RIs2xohoQaGTt5B0vMZOCiaDlcu+qsGPpGWd1bjvuujOOXbyBgqZEMkoU
- fahSHFlcdMEr5zGbljwyjL+7PUv9PP7Sh6SaqkX8yZ73lYacz/xrQr67mflLIfANJ1jn+WRTE
- ROv3ksG4YvLQQey+NotUQVrBjf1f4OJOHBXgYkS2aavfFnGzdY8GxFJc7W6tR2rEIiCVRkHpD
- x8OVkXd+turOhdWwGo8FHHduyJctkYX7PLjHfLAkycX3zOmbnWpuFpG8oKqZVr/MKDtcFTHr4
- WplNw/Vn610zQ/c75pQRJSU4oQAbdA6fkgZDyawW4N4isT3hVf67PN6u7Q+RpGrE6TE1De4Dx
- Oxf5TojYBgYrvTEhcLMcicxeKqOkNFq2BP5fsljEc4BEJ2KQlk3y/ZuFhjaAZ85uSXEoxWV2Q
- PaMsO87ankUosuwGEhp6SHAJdOp9NLdUuqR7l53WC0uCTcGU/Zg1BkD0BKiIMayL6nxpmgx/Z
- p9bbm/MVjd9w6PnOVCyaEwnGnmymGvgED+6Uw2sbU2xws/1AT7bN+0Hx74qigdGbx9Ba1WpYi
- 9zR/b8bv8uZjBXOaA78UAOyQzWaEJLUqTc254JWfBs1bblwAbdeFlzmgo7pgxs2vYpJ9TTFsT
- DqBj/uk4s5ehBi67PjxnTzg3PdUBfQaGQ3NiDJmUGR+GyHujiadVv+6uqEWkPp9+VTvwJGmmU
- +Hk9QIkzCkTV4ufFoQAf2E/F475ATXvAmwOWveIDCsr76m/uYXHHDEFQsaUVwGrGJfZQJj9s6
- vf2pV5BnnAfhLqILvjfiMIdmZTfMxD+ftqk7020mo4PpbIKfKkBkYHp0IlwmiS7Yz2SkqAUAT
- DrwX4ENd7pU8NOiTvLJXIQPYx38qHSaqRvpIz0a4iyW89WLlDu8WzkkFzd
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA2PR04MB10423:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff66ce1a-a056-4feb-c78f-08ddad0a3323
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|376014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OL6ebglVQ1cHlEFprGB8Lq08F77pitjN9/Nthu+wf7Uj4w9FjmdnknIKvhGu?=
+ =?us-ascii?Q?gfP24/V3Jl0mkC+fjMxRkGSnl4/0VHfFkMllsHBw8WK9nU1tpCACqdnOkZ66?=
+ =?us-ascii?Q?LQFxaxmnKIV5M+j4hAbiN97Y0hvchZuXXw6aPURu7NTaVc5wmqvrGgS3+txC?=
+ =?us-ascii?Q?nV5iwlpIYqhz7Io/VShdawepP9maSD9WZ+M4KEJjHB62qFXoNYivNM/SidlS?=
+ =?us-ascii?Q?Eiz3r9pEJjN/sNJln2fIyEehw1L6Fy2hdiuOc3pJ5AsjAYn0NY2ZDk8WjdMQ?=
+ =?us-ascii?Q?gCEKFIOY/RQWBTgiI1o7g0SyyZSU1m6PH7/C0UcVI53UR0f81qfqXLLwZ2oM?=
+ =?us-ascii?Q?5Drjc2CZn83S2lyfKpNBYewQVv/hUyKIYDe9sMeNem0x6h3lCWCTBxrHOC7u?=
+ =?us-ascii?Q?+bebAZGaLiY/L5DrzRoEg7AF/wukp8E30RiaVWl9+n9REeWKkh0N/bLk4mDv?=
+ =?us-ascii?Q?xKqZvDHBcvgJQqokDSG0GtgJN8NC+4X6jMqUx5eycIml0y5UuAHWHPWrvKVn?=
+ =?us-ascii?Q?HJPlkGfTkXou3DtRD3WIEcu9PJznwIushoh/IsvwhMWm/2e+GP2x1VL8wLTB?=
+ =?us-ascii?Q?awlMHOWGAkkNdz1aynyVMnwhfwal10rWX5YfwJdE7PALcsd0rATme9vcsumS?=
+ =?us-ascii?Q?xZPIKY15ndCtdh21rAoVUKcN8ZognIhEOIjscNq/uoQv8+0mE38KYWHybRJV?=
+ =?us-ascii?Q?HCz1QRa8Hj9QbEXGF0hkfEv8bhVvC3/OWMpkA1mQKeqbFsBsQALHQL8mghpU?=
+ =?us-ascii?Q?OSLpPY5Ie655lCLgcfrDy18R8NkUQWbo4TEEI/SBXv/sMqN9F2mjSKymyjqx?=
+ =?us-ascii?Q?xClMoqlxlpKjjpBctyq5Wy+n6w5HBLg+gjeQKFKYEg7NrChIi5EmUOA7KU+5?=
+ =?us-ascii?Q?8aOwcnQPqi0qVOGl+j2/AgnkK5+fWsdTxGTH1hgi7WEGmkg9XJ3Pr/gMiFV+?=
+ =?us-ascii?Q?Np7A/vPUHs/F7rzH8Sk7GaUMpV8NZ5TFov5EQRwfOceWMrmjvMpa4EKvYJyZ?=
+ =?us-ascii?Q?Y8XEWJSJfHIDogxeAeSuj0WAG48iDdoplT4atzJiP90k+PCONTtvZ6GzTjDL?=
+ =?us-ascii?Q?2PJr3Yavvs7TmLj6it3Prxf9Q8SZicVjwJVeVs8cMTkhZZNhbI9aZUj2zp7m?=
+ =?us-ascii?Q?zOZvY2llKRYCyRWx3UT1zOgDHsn68cs26GNTVfG+zwT4YiqwtfhB1m5YR058?=
+ =?us-ascii?Q?R4YuewvcdyuN2X+4+ul/BxyGyOprTMc+ZQ30s6V/bDCLqWJuE76K6hD0yzBw?=
+ =?us-ascii?Q?L471gwJTi6QfkD4tzSumxtQYMWO28MGUPKykHuTqrGkZLUv0t2bDM53qIf1V?=
+ =?us-ascii?Q?vSPg4qWhDbZjmedyLl25NpDCQzm7r5Jx6ckatoXa3UniDFKedyZefU4Q34sB?=
+ =?us-ascii?Q?MQBPH72JRnI42iiWMsS2ZFyRsqr0OinI6cStKXUjGBrD6qFD2TqvRjJu3wRZ?=
+ =?us-ascii?Q?sdfooWxHd88A7R06O3v8NoWBZRegDOgNP/Ehr876JMUz+R//RjVllQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eUvCHSI0zg8BLI0lIiMdDZ9bb+fDg3m7b1WA4V+etVbInWJWbXvwQMZsKEEX?=
+ =?us-ascii?Q?RbOtRQPjytU10YwhM0/5VxC8pbcqb+9NI2fMgaBb8qqaGlJbNsr7Zu010N0L?=
+ =?us-ascii?Q?CxiY3z94Q6dMEf6ZklBKEtYNGH30+gihcBaHNJ+x28GX7b/xtWeVBZ5spFce?=
+ =?us-ascii?Q?ce3aHrxkKzVfOHh9QTwe4kReQb/Dp92lpvOS7qwUr64ufUNuskejSs+jUQzm?=
+ =?us-ascii?Q?b73dlY+fQfMjfrBXIvVYpXgtiCdzZrIEHCse9sP4j2oY1oFP3eatVFO/V5ut?=
+ =?us-ascii?Q?FhpE56uHvmnYiedW/QvGsbUH98o6wGteX40+1+cGDVWbQF+U1HbCCuQDAPNZ?=
+ =?us-ascii?Q?f01Ch2UkPl+j7fVkt1dNyp8QVOEMSxzIDRBz8poK3OdrCJuZHV/kiR/hEd3z?=
+ =?us-ascii?Q?hj9q5u/z+GxE6x6+qIDVHRwnF90eiB/LwaCOnMaWbOiB/tvjJY3jymDe9bdQ?=
+ =?us-ascii?Q?rFa85V13mzuVBQ3jAIoUeZcJmLhYOCw9K04sicRmdiN2tZSf8Ibp9KymrLCn?=
+ =?us-ascii?Q?3rvu5EeGhUKE9R161MTrXZQTcJ+eLCqIScrtW8pjPmK3klf44RFz5udKkRxz?=
+ =?us-ascii?Q?OwMOsWqlTUzmQ9wK4qI5Z+yC32TzL6VHP/CA4jgdTpbl5NAYbJPKkpwBsu8y?=
+ =?us-ascii?Q?zUWPe9Neq6ym2T+tc5c8C7U6MgJpLjzaI5tcC23tdfBfMvgPO0CTyoN957oV?=
+ =?us-ascii?Q?tBykU78ibvVUC3d7MNLAYnOc3s0EHu2a6C06hoqvm6Eg2eJukkc1mL9DTTux?=
+ =?us-ascii?Q?KcHpvlkFYQZym/YGInKb2Tlc01AzmZ7TkUAW6SL+TxRTGeF9CQqCVXk64WlV?=
+ =?us-ascii?Q?JRQj+eEfBBwnIBmQNA2NX9n0d0Xe//DIUNro4KoxVskB2Ez7bEjNewe1MXWx?=
+ =?us-ascii?Q?5fnx+5Rk+Zo9tQNF9BN/m4rGyGCgYs4crFjo3k0ZYDtn/dnYYKttPyc6KwuV?=
+ =?us-ascii?Q?lv7pYYPpRlKTLv2eS2JR3AF5yX1Q0I92lqFhscdwvGWSPCGKoOow9w83t/ym?=
+ =?us-ascii?Q?cDkP54zW4/clCCmfnQ1h1GgjW+e1/y+IXr1/kw6SElhQKK9TNFbQyNIHPyfL?=
+ =?us-ascii?Q?R5YB2So4O/lfWSKQPLMYI/7fZvyV7eEX7NvMrg9OEFf292Bl4j+eNdR7cWls?=
+ =?us-ascii?Q?TuFKrhU769ojBaDBb5ULWMYMxoxNVh1vfXcyFITA4MGwbUIU4xgGWcr/jp3t?=
+ =?us-ascii?Q?BlXrANM7Lpbh6bYuwSXbmDqKm6wFUT2PSdT59YIPhEeXfUOEVfvUhmWg/Z6+?=
+ =?us-ascii?Q?wbc5Ha7oVSi14CQdgegoUQsv2PkeqS0gpe22cj8owX7NuMguBis/rNO1P5Ti?=
+ =?us-ascii?Q?nYbOYPq2B0WEjMLs9u36I2PRHDwJpC0QqUXCYMJc0PjPmqan0NGxFZa2uMSr?=
+ =?us-ascii?Q?YIF74JSxfpMtHmW+f3xo+6NVK0wZlRUXK6BJ/n202GGW9MpjOAx6dhEVldyq?=
+ =?us-ascii?Q?BqcYoSena8+HHOnWf7NJdXknUT10XdviCTPkReghpZ33tlsafplATDuCfZnM?=
+ =?us-ascii?Q?AAnF8OA00V15+zIpRnC01e/YlUq8X4ijuI349MZgTKfSEJxfMDnAoTX+GkFw?=
+ =?us-ascii?Q?IldYLC81kAmyCJnF3jY=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff66ce1a-a056-4feb-c78f-08ddad0a3323
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 19:15:47.7833
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kCoa6AphA2FkEbf4LTZX+FQcDXisqZ6LMNEFeKk3oplBy0Dvc+VNhkVbxHC19NEjqBhfHM+j6u997dkad+asVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10423
 
+On Mon, Jun 16, 2025 at 04:37:44PM +0800, Richard Zhu wrote:
+> i.MX8MQ PCIes have three 64-bit BAR0/2/4 capable and programmable BARs.
+> But i.MX8MM and i.MX8MP PCIes only have BAR0/BAR2 64bit programmable
+> BARs, and one 256 bytes size fixed BAR4.
+>
+> Correct the epc featue for i.MX8MM and i.MX8MP PCIes here.
 
---2ifj2fqs4sl63qpb
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: clang: selftests/mm gup_longterm error while loading shared
- libraries liburing.so.2 cannot open shared object file No such file or
- directory
-MIME-Version: 1.0
+Add:
 
-On 25/06/16 11:02PM, Naresh Kamboju wrote:
-> The following test regressions noticed while running selftests/mm gup_lon=
-gterm
-> test cases on Dragonboard-845c, Dragonboard-410c, rock-pi-4, qemu-arm64 a=
-nd
-> qemu-x86_64 this build have required selftest/mm/configs included and too=
-lchain
-> is clang nightly.
->=20
-> Regressions found on Dragonboard-845c, Dragonboard-410c, rock-pi-4,
-> qemu-arm64 and qemu-x86_64
->   -  selftests mm gup_longterm fails
->=20
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducibility? Yes
->=20
-> Test regression: selftests mm gup_longterm error while loading shared
-> libraries liburing.so.2 cannot open shared object file No such file or
-> directory
-> Test regression: selftests mm cow error while loading shared libraries
-> liburing.so.2 cannot open shared object file No such file or directory
+i.MX8MQ is the same as i.MX8QXP, so set i.MX8MQ's epc_features to
+imx8q_pcie_epc_features.
 
-These do not really look like kernel regressions, rather like a bug in
-the userspace testing tool =F0=9F=A4=94 Could it be that the tests were not
-rebuilt for the new liburing or that the dependency is not installed in
-the test environment?
-
-> Test regression: selftests mm mlock-random-test exit=3D139
-> Test regression: selftests mm pagemap_ioctl exit=3D1
-> Test regression: selftests mm guard_regions file hole_punch
->=20
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->=20
->=20
-> ## Test log
-> Linux version 6.15.0-next-20250606 (tuxmake@tuxmake) (Debian clang
-> version 21.0.0 (++20250602112323+c5a56f74fef7-1~exp1~20250602112342.1487),
-> Debian LLD 21.0.0) #1 SMP PREEMPT @1749190532
->=20
-> running ./gup_longterm
-> ----------------------
-> ./gup_longterm: error while loading shared libraries: liburing.so.2:
-> cannot open shared object file: No such file or directory
-> [FAIL]
->  not ok 14 gup_longterm # exit=3D127
->=20
-> ./cow: error while loading shared libraries: liburing.so.2: cannot
-> open shared object file: No such file or directory
-> [FAIL]
-> not ok 50 cow # exit=3D127
->=20
-> running ./mlock-random-test
-> ---------------------------
-> TAP version 13
-> 1..2
-> [  311.408456] traps: mlock-random-te[21661] general protection fault
-> ip:7f63210dbf0f sp:7ffdff6fca28 error:0 in
-> libc.so.6[adf0f,7f6321056000+165000]
-> [FAIL]
-> not ok 23 mlock-random-test # exit=3D139
->=20
-> running ./pagemap_ioctl
->=20
-> ...
-> ok 53 Huge page testing: only two middle pages dirty
-> ok 54 # SKIP Hugetlb shmem testing: all new pages must not be written (di=
-rty)
-> ok 55 # SKIP Hugetlb shmem testing: all pages must be written (dirty)
-> ok 56 # SKIP Hugetlb shmem testing: all pages dirty other than first
-> and the last one
-> ok 57 # SKIP Hugetlb shmem testing: PM_SCAN_WP_MATCHING | PM_SCAN_CHECK_W=
-PASYNC
-> ok 58 # SKIP Hugetlb shmem testing: only middle page dirty
-> ok 59 # SKIP Hugetlb shmem testing: only two middle pages dirty
-> ok 60 # SKIP Hugetlb mem testing: all new pages must not be written (dirt=
-y)
-> ok 61 # SKIP Hugetlb mem testing: all pages must be written (dirty)
-> ok 62 # SKIP Hugetlb mem testing: all pages dirty other than first and
-> the last one
-> ok 63 # SKIP Hugetlb mem testing: PM_SCAN_WP_MATCHING |
-> PM_SCAN_CHECK_WPASYNC[  241.731600] run_vmtests.sh (456): drop_caches:
-> 3
-> ok 64 # SKIP Hugetlb mem testing: only middle page dirty
-> ok 65 # SKIP Hugetlb mem testing: only two middle pages dirty
-> Bail out! uffd-test creation failed 12 Cannot allocate memory
-> 12 skipped test(s) detected. Consider enabling relevant config options
-> to improve coverage.
-> Planned tests !=3D run tests (115 !=3D 65)
-> Totals: pass:53 fail:0 xfail:0 xpass:0 skip:12 error:0
-> [FAIL]
-> # not ok 48 pagemap_ioctl # exit=3D1
->=20
-> running ./guard-regions
-> ...
-> RUN           guard_regions.file.hole_punch ...
-> guard-regions.c:1905:hole_punch:Expected madvise(&ptr[3 * page_size],
-> 4 * page_size, MADV_REMOVE) (-1) =3D=3D 0 (0)
-> hole_punch: Test terminated by assertion
->          FAIL  guard_regions.file.hole_punch
-> not ok 80 guard_regions.file.hole_punch
->=20
->=20
-> ## Source
-> * Kernel version: 6.16.0-rc2
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next=
-/linux-next.git
-> * Git sha: 050f8ad7b58d9079455af171ac279c4b9b828c11
-> * Git describe: next-20250616
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250616/
-> * Architectures: arm64, x86_64
-> * Test environments: Dragonboard-845c, Dragonboard-410c,  rock-pi-4,
-> qemu-arm64, qemu-x86_64 and x86
-> * Toolchains: clang nightly
-> * Kconfigs: selftest/mm/config+defconfig+
->=20
-> ## Test
-> * Test log: https://qa-reports.linaro.org/api/testruns/28766026/log_file/
-> * Test log 2: https://qa-reports.linaro.org/api/testruns/28743077/log_fil=
-e/
-> * Build details:
-> https://regressions.linaro.org/lkft/linux-next-master/next-20250616/kself=
-test-mm/mm_run_vmtests_sh_gup_longterm/
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0=
-viPHafKAe0u89drIv5fcwu2/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0viPHafKAe0u89d=
-rIv5fcwu2/config
->=20
->=20
-> ## Steps to reproduce
->   - tuxrun \
->    --runtime podman \
->    --device qemu-x86_64 \
->    --boot-args rw  \
->    --kernel https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0wm=
-Vl0eHb9koWyQYC7myXjpX/bzImage
-> \
->    --rootfs https://storage.tuxboot.com/debian/20250605/trixie/amd64/root=
-fs.ext4.xz
-> \
->    --modules https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0w=
-mVl0eHb9koWyQYC7myXjpX/modules.tar.xz
-> /usr/ \
->    --parameters MODULES_PATH=3D/usr/ \
->    --parameters
-> SQUAD_URL=3Dhttps://qa-reports.linaro.org//api/submit/lkft/linux-next-mas=
-ter/next-20250616/env/
-> \
->    --parameters SKIPFILE=3Dskipfile-lkft.yaml \
->    --parameters
-> KSELFTEST=3Dhttps://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0wm=
-Vl0eHb9koWyQYC7myXjpX/kselftest.tar.xz
-> \
->    --image docker.io/linaro/tuxrun-dispatcher:v1.2.2 \
->    --tests kselftest-mm \
->    --timeouts boot=3D15
->=20
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>
+> Fixes: 75c2f26da03f ("PCI: imx6: Add i.MX PCIe EP mode support")
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 5a38cfaf989b..9754cc6e09b9 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1385,6 +1385,8 @@ static const struct pci_epc_features imx8m_pcie_epc_features = {
+>  	.msix_capable = false,
+>  	.bar[BAR_1] = { .type = BAR_RESERVED, },
+>  	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = SZ_256, },
+> +	.bar[BAR_5] = { .type = BAR_RESERVED, },
+>  	.align = SZ_64K,
+>  };
+>
+> @@ -1912,7 +1914,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+>  		.mode_off[1] = IOMUXC_GPR12,
+>  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
+> -		.epc_features = &imx8m_pcie_epc_features,
+> +		.epc_features = &imx8q_pcie_epc_features,
+>  		.init_phy = imx8mq_pcie_init_phy,
+>  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+>  	},
 > --
-> Linaro LKFT
-> https://lkft.linaro.org
->=20
-
---2ifj2fqs4sl63qpb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmhQbR4ACgkQwEfU8yi1
-JYXNhBAA4J8IfYyoS8afSaTdCPF1zLiPorF6mZuTwefTndUd//Zm6nOhBHsU4KsV
-YQDbZUMUV0IGXSZ0leI7mb4TVVg+y1Xn4p35uNKfykilbUpuXZz/y4toLJMuFG73
-abD+pXJQK9bGnZOeTocm45uwbeUnAq4VcwPaI2vAmaIXZkde1ca4G9gXonk077au
-rko4E9+W2gCHNKoNqsVrJ5BRTGrxAKkWKYMiO1TuIhodrNmLikk+vmyR68hVY4bl
-TcYp1BDhioojMtP/4KwgXY1e1jbUvGDdG/rrRiPYEWNiVNx33LsTu/o0Hj8SbxgA
-cFPJM5UiSPY0Yy9jVGgoTjcIU4Il1PsH4kscqvneaXpKEkGk/SP0l57xUmc87+S8
-MtA5IC72mwxVbOgtPEqBcbpT6Q7HvFlTVEZSwfFcJk6wW7cbMJjKFCEPm1lR1sqK
-Pcii1RpfY8iSAeXcDu7t0PjAR1/W+2SzfrVdXrgteaFR+MJDPjPxyocEjrS+59jT
-FIwOBTg836WK1382cwXplao891izLPG4A3oLZhPUNKucadmRHlODJlSvOnZGxOFJ
-+Xlkh01E2yHt/wUTmYG04gDEuA9GU9Ile50LBsntFQpH2wbYVtPM7GS3VBOyRhvE
-iXtUBSHyWH3bH5nmkc7mgmd5iVlQGWmPRYgzPYv+XDddgyiz0fo=
-=w13D
------END PGP SIGNATURE-----
-
---2ifj2fqs4sl63qpb--
+> 2.37.1
+>
 
