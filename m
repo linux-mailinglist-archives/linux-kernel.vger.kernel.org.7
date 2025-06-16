@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-687672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EF1ADA792
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:23:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1829BADA794
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C453ACCFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD816E971
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380E91DD0D4;
-	Mon, 16 Jun 2025 05:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CEC1D5ABA;
+	Mon, 16 Jun 2025 05:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PbAGG67y";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TurtwCKH"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jLHBEdlg";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NGnB67Uf"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B6F1C1F2F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C083D1D5170
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750051403; cv=fail; b=HHwenI8Q/YqTf6OsAMo4yEn82Gx+5TzGB6Wx3c79rspmhpaoyT59slDgZgAW0OqM+LvjyHcQXMr8UDw+F1man9tMNiuENw9u+Xi/aNLJO/keZ8fyBfQUqrZ6YsJS1wGPHpwTf42G5uvsW3cr8JjV4WH4lB/AE0uHhMC47K7XDKo=
+	t=1750051404; cv=fail; b=i2vGhuAiblEvKJoR5kwF0ay1NUrWmfeA7LW8HIlW+7+9F+M1OSIFEOO3DQdS4EN+ZvwNoHOmIKdiD0J/MWOm4tg1eilCiGcq/r0/OWU/wjUiKWFkfSC0w4DuUzdaoHKCHNdpUKy1E9waV2MBjLIFRw++BKUkfFmbjg2xYjNsTjg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750051403; c=relaxed/simple;
-	bh=NqqYGfMJMAYm9SnENqg6t2b3xunBMZ6Ys2pzTc5QHCk=;
+	s=arc-20240116; t=1750051404; c=relaxed/simple;
+	bh=8/CHcg0/hTJBTx+kT9mJAhZ6tENMvz/lpnfkzC4tMYY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pDzWrAA004fnRzZBRXlaOcCvQlLQxfCc6EIrs7Fdc3oiyKC8JvcuieIijglZuVvV1UOz8RfxieW5e6HPXCsxmLULtwmktyeIxwQ+r9g52aPMF9yNJuLs81rjYRVrNHZGBuwAiIYZjzLanzNsiXm8aOzwreY4sFPNSWKI9uzmjM8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PbAGG67y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TurtwCKH; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Type:MIME-Version; b=Nrq9FjVU1F6iuIUAgglw1FJhu/NS/bSchuqo1GWvP7Zllcy4SAnirBvgl15kNkHlmmSr93vjSqwJC7b6YzyZ+HpdOC17qLMRxgUNG+bShl3duUMnYmAXvEOxc1AvILYZLZXoMjb+DMIangrGcFRitUqf0McAnvXmoSK1wsZJc9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jLHBEdlg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NGnB67Uf; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNP2jk014888;
-	Mon, 16 Jun 2025 05:22:36 GMT
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNcUMb016915;
+	Mon, 16 Jun 2025 05:22:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=BLtj2DEAlnxGKa8Y6OktlMYpnu8htJq/wvAHLDvC6s0=; b=
-	PbAGG67y/tzzoxTPvun8O/JDOyeshLih/kk4+u2GLM9gWtPpmNOEaxciw86+F2vf
-	1CczR6awAmWAa9JWrTirMJLmAH04YwCTKwVLjvvZMtVs6AuEe5C/KlatDfbkQoAw
-	YK5uUFUBDmOhgMK285lTjiX0Llyc19fL5v1/wm5zV0A64O4wMEWgRDfuxljrGnHI
-	CgcTUukzr8mVKCR2a+6bvyPsUeK6EM3Ju+RZegZZg+3d1hR9/36dq+ZEsM5FV1LE
-	r6ECHobIRX5x1ERXURRkzY+JUL2cHmlQmSG5G+DomVTe4/4H2xuUklP2Lg/xEkrU
-	7THnJMfV+pNbTSbJnf4DIw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4790yd1p5m-1
+	corp-2025-04-25; bh=KjietmktbsMhZBgvNSUEiDvNza5sYb9DSBoSut45yuk=; b=
+	jLHBEdlglmTj0Yfdax/n5/1yd/IWTnTBSrN7+GzzenqXpvUiIEvYwUisYg9WRsiv
+	ECHUEJJJP0W/cliRAMEdGX7twIaursE2rKuQZ2deGiDA23CzNd2kyfQYBP/G12ro
+	tjZstqchGhfuv4BupDfOuurXbPMnj5uuxvCi3tkLbeyy3mly+C97jEZLWw+NgvIf
+	08AxA0Qvfskmc9f1Zh8CVA7hJMokLSO+2R2dWLiM0QFSt1LXzEAIjGKn3N8nhBcT
+	c9nWTpf5MjUZg5GJ3jCilYinDtBgtst0juaPJw/6lwQnjH19qRQ3CHHaFX22D8OW
+	SYQZ3Bv9SC8+cqEhVWOF4Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47914ehp53-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Jun 2025 05:22:35 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55G451Xc036267;
-	Mon, 16 Jun 2025 05:22:34 GMT
-Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012023.outbound.protection.outlook.com [40.107.200.23])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 478yhdxw9f-1
+	Mon, 16 Jun 2025 05:22:39 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55G3A3eS034385;
+	Mon, 16 Jun 2025 05:22:38 GMT
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010007.outbound.protection.outlook.com [52.101.61.7])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 478yh777be-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Jun 2025 05:22:34 +0000
+	Mon, 16 Jun 2025 05:22:38 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RulXiNAgLWd4Q6Oqd/5zRZ/lzKdyX9rKXqDaKrxr+9unmvseZE8Xd9sq4j4Gzb+7wWxD8e47C6mTJ2Q/nTNXR05WXPHVyxLaC9JezpB9zz9QSkYO0M3kmyx8AqVTz/vgDPB/Vo90V5YJmEqZt30yYPnDH6nPHzW9gaEVqKS3hpGtC+5+K2JYyE2bWYrixyCghEnAz6yZxve2Vbf7AiPq2649LaqXWwB1CkTmAI5dQFKz6q/MYaloN46IftLKrtwPDolTwfMVfaCIhmWvwIVhEyCSzdYOE1FNHE/hs4kM9ov8FpTiGNHm+zqcakVtGfKyW8Y3FfVAYxeONvjh/IHcUw==
+ b=HhTJpexBXpqI+mj5TfuZ+iGZO16tCdhdkxgsB1gN0kkd6FWE16YrXvzTGrZc1WeYYASY9cuI8C0m7iiBJKpqCtReRGkhi3jNlGyuL9oAuk1Y5LiEQ6FbMp+PEHSoHMo5UJUMhodhwIbVvAnqiWnOkJrCbeHeBAS+Q3H01LbnVoefRm0zjVwX/LmCpabqhcRd3kLMzW3tsGT1zySxjb3FFrjGL2hZCPTpnVJRuacMb95XvKRYHr92ZFiYrtpw25E5gKS3G10FDZpAOrP5euz/5eXybjR2JmbmwApmYyykwiShTcmEVlsyyoQ5kN5wlHEHpSbWcF/infpBlyfivTJIpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BLtj2DEAlnxGKa8Y6OktlMYpnu8htJq/wvAHLDvC6s0=;
- b=jmAIUDQfP90O4hyqk27Bq1M1tx7ZsJtrB4eOPWUCur32OG+exqiJjd4fyXV+sFeK1Ku23z3uCatkpdovF1Z53PB3wqdNuHuo0f4vrGgzuE5lvmEwrPn5NWyxPhnXYkAhz8uBuegwzW2Sn3kIQd5T1gTSHs86IMmnFI/3Ftu/1+Hyxr86eI50/qtrhBYHNYyB5cCyOJQMIxFjjJ7iSh5dB09G+9wg0MvaWyQP4YNxTvfgxGdAy98oh1yhAmz8IsrVRhb9vG3BS3DLlFaG1EVAp1oDAyHvRupp7F6H9eeX3ojTqPpDmA+aNEgdLscV97I7l/9oRPHcp0b9MeiioUVZnw==
+ bh=KjietmktbsMhZBgvNSUEiDvNza5sYb9DSBoSut45yuk=;
+ b=CPGgFfvmF9+C4IBVw/Zg/t+V2OlZd0trsmTv3HrGib7hHDlUe2LKHKkpiC9JDpsGrDWhFuhVjNjVYH7QyKAEnb0FSHLH5z7h7Gy7OPNlmF4dx9IW8ZQXJLEbNYOulk4n5VY9iEgiD2Lpr2+5boJ9GEX98ZWJ6lrwup/hQ2nEiBYHRAZYBNRX/dW31rfKlkhv0cBTq4BarzYZEVOMf/eGEcVAFeYtK3c91PWBIU+ZVZifWtTVq69dIBIkcQeaVuoIKGnzpI8iznOFBScvxSXW9vYDnGKn4gR22FD9KzoaXUat3ewmukIs9zHKQuzV6zwoGLfKpoa43tWT9VbQJ7VmnA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BLtj2DEAlnxGKa8Y6OktlMYpnu8htJq/wvAHLDvC6s0=;
- b=TurtwCKHptL8knZUqJ8a63QehPoP9miwCoSlXRjTnsKRU4rImfS4zNJCxKvi4p0stV4CdHJowaK/Qbo/FYWb32tZ8kA+knPyL2C8+PZsDL0l6/nwWeo/uHGQbbSmWbOFDR6itLjVcAExIC7QuNfSX0YjMxIzhX8oixTvXUQMK4g=
+ bh=KjietmktbsMhZBgvNSUEiDvNza5sYb9DSBoSut45yuk=;
+ b=NGnB67Uf33iJxxvKJ5nC/eVitXmUdFzWMTQhrC+haUPmFSg4bM9FQysZAy7M/0ypnu+ZbchX3F7b8PPfCEuMXMAiYbqW214V10ybORuuIOvZy6R55870RwqI1PxkaWfWwtUaZY0E9eswWmDll5zhG+1w8DCdkJjnI61AmN9WKmc=
 Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
  by SA1PR10MB6389.namprd10.prod.outlook.com (2603:10b6:806:255::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Mon, 16 Jun
- 2025 05:22:32 +0000
+ 2025 05:22:33 +0000
 Received: from CO6PR10MB5409.namprd10.prod.outlook.com
  ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
  ([fe80::25a9:32c2:a7b0:de9e%6]) with mapi id 15.20.8678.028; Mon, 16 Jun 2025
- 05:22:32 +0000
+ 05:22:33 +0000
 From: Ankur Arora <ankur.a.arora@oracle.com>
 To: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
 Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
@@ -87,16 +87,16 @@ Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
         tglx@linutronix.de, willy@infradead.org, jon.grimm@amd.com,
         bharata@amd.com, raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
         konrad.wilk@oracle.com, ankur.a.arora@oracle.com
-Subject: [PATCH v4 03/13] perf bench mem: Move mem op parameters into a structure
-Date: Sun, 15 Jun 2025 22:22:13 -0700
-Message-Id: <20250616052223.723982-4-ankur.a.arora@oracle.com>
+Subject: [PATCH v4 04/13] perf bench mem: Pull out init/fini logic
+Date: Sun, 15 Jun 2025 22:22:14 -0700
+Message-Id: <20250616052223.723982-5-ankur.a.arora@oracle.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20250616052223.723982-1-ankur.a.arora@oracle.com>
 References: <20250616052223.723982-1-ankur.a.arora@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: MW4P221CA0023.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::28) To CO6PR10MB5409.namprd10.prod.outlook.com
+X-ClientProxiedBy: MW4P223CA0029.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:303:80::34) To CO6PR10MB5409.namprd10.prod.outlook.com
  (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -106,291 +106,369 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|SA1PR10MB6389:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb407d0f-af5a-478e-1ab7-08ddac95cb88
+X-MS-Office365-Filtering-Correlation-Id: 28afbe1b-b06e-4a4e-22ec-08ddac95cc73
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZIfg65dZ+c8PoxgkD4YaKLN9FGGq71UL71QMHN9knbDdsJvRqyUc7bC7get5?=
- =?us-ascii?Q?gjVTYpeNRMmWVABjwjc8jRzrqtCJd/gZPE2XN9INeKI/+ThBAEygTSycAn/b?=
- =?us-ascii?Q?BoHpexhoh+REfQbmB47zY+4RGJM2s7BaJLpAcqSDqGnaoA9oGLlwQuhoGJFu?=
- =?us-ascii?Q?cyNz8QjSSyWE+QtKxeXstktgDvWCNSUXeriFtN8CCJjeA5+/mjJDTPQxs0q/?=
- =?us-ascii?Q?daciYZroh79ZzKRCKYWjlZx6g9OZgtYoqwdMpB41lR2CCunBM4kuxaWo0zZk?=
- =?us-ascii?Q?HtLkj3xqpjsB65+ricuYY+BPBkAs681E7xbA4getZL6YH+x4t+RIjtBbLEpe?=
- =?us-ascii?Q?AoVjUe+LSi0mrwHfk2eGgbQSq7DARAOarVHCFIrp6Cb8WRfxvrcJ8nn1z6nN?=
- =?us-ascii?Q?UdWbxfYxuTy2cmFke0k0oe9k0fJsU6MWnXAG0F3TTf+me6T06CZnWHXfQIxH?=
- =?us-ascii?Q?cPx41CXADkZMwNOV21RG+IOK4ScJEau3wNofG49gc1xU9RT7b6GO20ZFsb+Y?=
- =?us-ascii?Q?knuIq0zooWi/94WhcgEB/ZASpv6Y2+4R4Vl4JPUdwCoAG3dkl+tD3BIPSsuH?=
- =?us-ascii?Q?9sGyf0Zad2BoI0IVresAhHMh4vu4nRqMmQ0lij/nDkHExZ0sdZxT2BosdBzI?=
- =?us-ascii?Q?+8PFRqzP8ikK1E/kXgj4A40BohV1XtZjzXUfh6Uo+VHi+ZxPleUFQxcCtoci?=
- =?us-ascii?Q?jJU64PO+LKcfd1VndoJBu10xw9TKPYdd6b5iN0bt/6icafDewy0rJFo6B+Zd?=
- =?us-ascii?Q?UxaY5+mDEeHBoTKItlJgk+If2GX2ve4jodBSh/NaRuwpTKbBqKBRil6lUXmB?=
- =?us-ascii?Q?oBlpUCZHaFmt4Tn7KAEiVzfB6HyhvydF4oj8nKtoqxCp6pul5XexEOyVUaYB?=
- =?us-ascii?Q?18RjcwDbQUkepYSN2bZ0bhTa4L/+S13rgWhK/blv8U+erhpzdZqo1yXtk4Cn?=
- =?us-ascii?Q?0Aom4YAf8aZVsUO1TcuCZnDiFTwj0Pur67Z0ylpSVebm0argy4DbgLyB0n1d?=
- =?us-ascii?Q?m2Xn0dEDD/wIrjTJ7R30v6QpItcVOKWK2EZpXzg+5xm9n3jEWQl52C68b47W?=
- =?us-ascii?Q?EvwMhPBcsQug2m8XyFq7exXo1RnroeMs5Ir+vtnX9uASCFO0c0I59WA8qfac?=
- =?us-ascii?Q?G0pSoFihYXMaAetLG3zzyiZBE8QcG3W3iFejMov2a7AlJKF/lPKsGmckvTer?=
- =?us-ascii?Q?pT9erVTkjyPWoppICHWgSl+btQrmJ8a7wmBVAqH7ugfZS737WDoeaNYn92V1?=
- =?us-ascii?Q?b+qNeKQFf3S7iqliJsuT/ifdSauDXnaXhH6dXwfbi2NqZiLZLzFTu+Mrcm6V?=
- =?us-ascii?Q?IQm3LYTLrXUK0ODtFxVL3C0rEZbEgM2ughUg9nhpOlkOc+kyS1eo8ga202//?=
- =?us-ascii?Q?qYJTR9EWYnxGclDOLguRP+dAN2J3Tbdml+4SpDkVaDFlVf6+PQ=3D=3D?=
+	=?us-ascii?Q?6Lj0QYddUfvdqf+1FHenuNfCAU4fCsJF/M+v29MPCrwGgDk+2mP3n8RaMjXr?=
+ =?us-ascii?Q?aC1VE3pCspTxn3bEme44iyi5hbIfX0E3ELlMOvI5R7kI5F+WQQBpGjnUYbYo?=
+ =?us-ascii?Q?1qDn/l040GCY3yG31N+xCJYcCR6P7I87VtZhmxuSt2VEMIT2Ye603et2Km+A?=
+ =?us-ascii?Q?AxrPGGuGbZm82RvJ1+jOSIfNEMkLRvbtd7U0XYwaHvBDhuEsbbNUezIfGVBZ?=
+ =?us-ascii?Q?wkY70QYkanNix58G4dzxhP4rbHlQNTjGlrndGKURlPSujeH+N0OPh+oCepfF?=
+ =?us-ascii?Q?29lybpIhSJZqpU3m1zHZ9hVyJXeNdySeHpjWIAuPtOqU4C//Dvo6dT9dMSJC?=
+ =?us-ascii?Q?b1hMySYB2h09WRy1h/5XjHKKrX6Vf+EYQrhzlMRw1jrGejX0i8oQppLjIUGs?=
+ =?us-ascii?Q?Dkpxw4TB0AhN5KhG4ReuSar5A4gEWbZjcB9577Z14GzM+VpBoANaD1mT27UQ?=
+ =?us-ascii?Q?dfaG9+H7Ttf53e+mnr35nxYr+o2bwshNSaKfJ+zAyXj3jXt2NYuwywKVf9iz?=
+ =?us-ascii?Q?GrzvJwwUJCoNMKlJMV2oEkP+ne5wPJf0p4Cn4qZxGtNq9AFBIYbMFfOlDp9m?=
+ =?us-ascii?Q?N42VIIZ5RaFVDzAXVqrfdjOz14NP7/CaAr5w2Fruu4SdkQlMfax0JoU59lC6?=
+ =?us-ascii?Q?uafN+r6dL5ORp8swWq+rE25qgXXRjLCLwGbocsM+2hMLhIEXJ7x4UUahsaWu?=
+ =?us-ascii?Q?qHgqgPU5OvEjhvvfk6+6s83WFPwt57MDioOTLCaO0kcBkhABpplxyEFiUSA1?=
+ =?us-ascii?Q?6EJaq5gXnMuaEz5ujO4PvGGaCPCHdZT1F4qhgB1WLwamzoSvJff55GydQQXb?=
+ =?us-ascii?Q?M42gkukUI32PAOACxKXHEriNS1R4F6QXPMmc1p10ns1Sdaji15mlvu1cVqB+?=
+ =?us-ascii?Q?OnycAgES6tlI8zAEBhkjra1DX5tGFoK1tToVdpgVsvYG/NhT2ugojCQSzjv+?=
+ =?us-ascii?Q?HAX2k0WERx8oWVQbE8yoGzyxHl6m0In52UhwNNCEehdADsWIYIa/l9RDe/ol?=
+ =?us-ascii?Q?bwSXILJC0uO5tqiZmijCKRa2lH9KkcpBJTS6q7sWbQQ0fRxRN2hjwPXqTLAs?=
+ =?us-ascii?Q?vGb+xEWMNz+Tg6Te69GJpBUb9GlCEs4ikI87R/P+J67SfhzzpdcjIwMphWVo?=
+ =?us-ascii?Q?8hprL3kN9PPv/sjXIVvG6XjBM5XRlAIV65jgx7BlLgbsQkHeBVF2zJnzQ6SL?=
+ =?us-ascii?Q?zlrbYp5ykGpsiXa7QlVN9B16JTwpWURkMoFA9c2Q6hZjntRc7kBTkkPoSGFC?=
+ =?us-ascii?Q?6UeaAvfMvgyQv2+VDkS8DCJSujluIGi/Anzi+8B9ylzXY/bqNQdxTKrfWZSR?=
+ =?us-ascii?Q?1UzUNK2EY95E7aVCLlJ9JyJChTmScp+lmFHnCWWJhjxTqbMXjp0XRz3RG0E8?=
+ =?us-ascii?Q?U6BXs+lSf0OkaTzZEVXF9qCERhJaQYjkfzBzzYcbktw2e/Pu0oDIee/4ejSa?=
+ =?us-ascii?Q?eHCxs0opaXibL/TBsIe1JKnnUG/UWKvT+N6/UsDjPwDtcqQOyRQg/sjkUhdS?=
+ =?us-ascii?Q?wCGSE2BJ50vwGoxhB/V7rBRaMlqtPyo4oMLdM/oulNBSe5EvA1bmJKxzu4D3?=
+ =?us-ascii?Q?vULoqVios0f8DJXXCcV5Qe/4mXuRz40wy1z8y7lfaonQtyg5siQRRL5mMEpf?=
+ =?us-ascii?Q?JXkyQxNbjnU7elN+caHXXQ2DsosL+z4AfwDrTckDYDdJ8riPEN+qgKOEMFo+?=
+ =?us-ascii?Q?EpJUYzK+Bd+OSSZcCCOOUTMgHrH1PLSgwx5RQd2FPGv49ppv?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M7QMvC6f0xd4jVT2usS37al14nU5pyXd+mQ7s5odCs3264meV7htHQmtVhhI?=
- =?us-ascii?Q?WHf/lM1AB4PNMOVQ8lZ3NlMniD8qzI7/IywDWEuJ5YLLxM+OwEP2SWbpq5o2?=
- =?us-ascii?Q?UPdwu1WW7SaKB3WHdqJ+SoX9bUM66deZEYGLAHbJo2UpfoYbXaG0C+nAJBv5?=
- =?us-ascii?Q?r8EYoMeMOzsScEZ+riLT8FdHjaNBZQ0TuudtLZsfiiU6PvcFJbkzbr4t7+6U?=
- =?us-ascii?Q?0M3XgGgx3XUNV8BoURWhYYfH3jpIZPc4OPZwKVZQB/Ug3zx1X+Bb1yitK0ZL?=
- =?us-ascii?Q?kQd2LAh91Ba54EvUAFS1rjVH6523tSLeeqkcgsZuMfzFGMkhI70ci+JX2wJi?=
- =?us-ascii?Q?j8/pNFxM446iDQuu9OaD5NIms2WI/GtYtlFW3n0iZQD8yYUBlIcijwUcO3CN?=
- =?us-ascii?Q?8EZc1YYHn0A34XehltJHWqDqO/xgkkgD0pdnsCwh9pxeTmJ+gVeLrGYAVW+9?=
- =?us-ascii?Q?jsL70iOWJWlaZqKX/nFwoAOZEcbVmNcwyOIYYqlfJ6Tg4lvxKVIPPExIz7qv?=
- =?us-ascii?Q?spj2kkcwTTuYucKchVKkewNSq2XxzrkW2rxXTD6o6ad3l6xZrPYQ0FAfRkuL?=
- =?us-ascii?Q?qBKML3R2HwUYXTBOzPig6ppN5vW4HZPkZAppU+Fm8XwF+Do6ZbYrBeaqJe1X?=
- =?us-ascii?Q?nhd1sZH5KiZoYQVrjOHAvGexcABqHl4WoDPLryK3p4H+qTznEbM6ixsHqsgL?=
- =?us-ascii?Q?PAbGvzGthDYslbb1Jf7mI0C201+J2tpUceol5PrIevWixGQU5XlQ+zn5BNNT?=
- =?us-ascii?Q?nCixGkaxyhyyrQtjDqvqTA16xacVLCL/hRe87JJHBC0UwaVnRQEsaJDBbtuQ?=
- =?us-ascii?Q?bHrQDMPWBPjeNMXH09R/Z4rsNesN9e0jw9LJMh+kHST0Tt1wUaOlRV5zRI8i?=
- =?us-ascii?Q?iKNmMv75LDhpjT048quLxPMFWgukj+6uLQ97RZx+rjtqB4gj0IXPKLmgU/t6?=
- =?us-ascii?Q?hnoirrQuibQDAXlEJN3WPQugNsw+9k2IjtAlxjM45WYrfiQOJRtzxOYx+YBe?=
- =?us-ascii?Q?isTak1xTqKabpG+1wwR2WDRmPYKMeZgZuYaTCjEuTKhUSpoQHjkzJmHhrvrZ?=
- =?us-ascii?Q?UIlxu/t9XETpzwFsW05e1pRU3YtzuC7YkzYMnidAELPbMGusalwuoXa52NUy?=
- =?us-ascii?Q?sj7srLm7Sm8hkGa1oIPMi2AFFZwUnwQ/Cot0sd3zUU+/0OZzVWr7nzMngLTL?=
- =?us-ascii?Q?Aw4gKoWHIGgY5MzS2+wRnq5ZFHqx7UCrQASMpIcRVxaodXH7BjoypJIj3B7E?=
- =?us-ascii?Q?WmXeREyL4/sh78aAgTTJfWXfXw0Q6QltbhutFCtFfmf5XTwiWVDYmawQ64hW?=
- =?us-ascii?Q?9ltYGlQmWTuC41SVmV/CEIOgt2djg//ybrXP4rE1vgcQy+aQoOMnDkPt6Ppx?=
- =?us-ascii?Q?N2I8gbrHfbIimP1HtpzmjmvHt7A85U7YalYMX/OdmsKF8OZevB3KeztoRlei?=
- =?us-ascii?Q?UaBfyxcvsBj+C6jk/FmnYbLKBdmeaysmTmQhZMmTFAHjXyT26tOJ0BsZ/okS?=
- =?us-ascii?Q?YIRfC+x4mPNgCeksxIkDWna/XPmU/n/27UR6v7HO9po3nWRNXorXieA96DVp?=
- =?us-ascii?Q?IZYFYdvs1uJ3h2FPM4V8Y24n6ANiG/dRlVO0ytD2V/Jh9HNaIOdi1nHlBMtC?=
- =?us-ascii?Q?Wg=3D=3D?=
+	=?us-ascii?Q?cNG9S51PjY1/dGi6ZCHkqSE69Husq+QS5MI6G/DJyPLOIoPG9og+/z+Dsp1T?=
+ =?us-ascii?Q?pHeaRtR+GL8VWxQ4nJ0Kxho1XiBAf3hTkLJPKkNADdV6ZQK7fQiWthIYq7xE?=
+ =?us-ascii?Q?ilwr415NSok7DcHkeDfVm1Y7htTNfL/QKqJJu4iV1HfBOBxga/lNmC3kdxFS?=
+ =?us-ascii?Q?6F7lhXfFKGiJ5ODR3LSBlziAvo0ynbJjgsjmrpTNqw2NGZuuRVvt7ROH68Vu?=
+ =?us-ascii?Q?iU1tAJNCQb2XWumqz9/cAPNyt66U402gsG7G6/Uojy141S9dVBOIFqrJDAyu?=
+ =?us-ascii?Q?Q0jMugeUzSwCRHYWCaP04Bhdlc2RRtZ4vSVKFAFLDwhifTI+OswivVO5EPEB?=
+ =?us-ascii?Q?5TH5BKVIXM8m9J9WTBRdzK+FT+PfzkmVqomN6wCTCCKYm104znb85U+HTDqO?=
+ =?us-ascii?Q?PzDuL7SNedhBw5zzu7ABxw4WVUTZhTdF2luK9dsmSqH3tLd/J9VxUPwpTbAm?=
+ =?us-ascii?Q?DSSnMSVeIcN+6uPn8gzQSD7Ag7Ii/uQdKJATYw11ijmtc54iAPNR8zFO+UBl?=
+ =?us-ascii?Q?2M5Y0mHfSMBNdVb9rDeZP77vSG/4WKHP+QeipAVlFzlW5mNs1pnErYnZOutW?=
+ =?us-ascii?Q?Z15fzh8oS+RQF4yuwOaWsDxp2gakZiCP+XRmxX2WQcTYpUhuKMSkBYwuiiyB?=
+ =?us-ascii?Q?rvIGgH05mB58MI3bmapj1ERR9F7QteWaKwnXYQqLXSnl1whcXB93Y8xi3XHu?=
+ =?us-ascii?Q?K89n3CE1pb6H7objQuB9VKm98dtAjojCMbOQ9XDhc8j9udYUp4Kkc4XKMPIH?=
+ =?us-ascii?Q?ewEWH2Gc0lDYtCsyLJVq/9sHO8SrlRmjZrd/t/YTDkSt8hNLrXc8puf/PLzW?=
+ =?us-ascii?Q?jxRPDDXElxD94BdGAxOiSWETAoogWHIFFOsBgRCGEuS1aBcRcbwBscWf6QRj?=
+ =?us-ascii?Q?Obda+6XbT2bBCzvfVcTyVnAaSs2b+fjIi0WI7VZryrS4CvfFGi8mcNf/kpLG?=
+ =?us-ascii?Q?J/5RYFXz9sp8imecUYfmzAEb2dTm4yhjJUVop74lwySUP/WY9z0vkKhEK7u5?=
+ =?us-ascii?Q?i+sdoYpBNhqwzEW7w32zJ/DRWc1e9aKDQJRphHEUOGwAmBxWseDrFvqehcZb?=
+ =?us-ascii?Q?shNUItnUDgQJXP//kTBHahn2MjG4K+1pcdvav2PvNC0BiocMH52mPPNiAxo6?=
+ =?us-ascii?Q?BWEeXoAM8Rt6lNnesCfqCn1LCwxQ1J/vYc1mas4CUGwEzigMXeE94yoTKAEv?=
+ =?us-ascii?Q?Kh+DbKArRDX27PAXHUHbasCTdo/08a1HztP7DEl+n5AyScpp22oUm8hIrSiE?=
+ =?us-ascii?Q?LX+fm21MRKTSj4pTh1ohE4IeQFz56ewWyY5Sd86VsIdZKs1ZqaamkDTYqbK4?=
+ =?us-ascii?Q?sGzPZnJ+MSSfttczQJwU6KncinoNMZiMaDmskisFyaAIdZAFMVp+LmI3YwXC?=
+ =?us-ascii?Q?EXZqX3VqpOWSHG1nCLrGJ3iUaD0nDtSoUUKHsXvRht4LxT+J2jnPn7C9gX+y?=
+ =?us-ascii?Q?wqVnZ94u/2LNRhdD9fgXgItbFVaUrrcnNz90dj59Sbw9nSsbvy9ZMHjq3C+P?=
+ =?us-ascii?Q?y2/H1ok9WsoEcsN7Abbca9Rt0CvKtHAf8iAoOf2F3+t7gsLVW905mKKJdj0U?=
+ =?us-ascii?Q?UP0qtVqR4l5GC64/dJvIDSSWPLg4vSE1xhvIb68n3aJfd4e7HgX+QtcqBem2?=
+ =?us-ascii?Q?yw=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	eq1oRmxRlUvFCZ4pB+7dVcAF2HbqjhUZOqUvB6BMuCIkQy6/qMRcX9bZw42LYqB3APbTXSB3ErXu1qgGtJW22S488s23jsPrL5O02pDOp8J6eFNX8VO0aP/wqknpDGaMDNnTacgU7K/rZDhHSG63HzYetyLE0NVPBwaeH3PQ1OzPH6xfkRjcZupzYPPEhCreSvpwysO2SZT+VV3fPYRGovnMqUy9EzjZKaDiHJAcLPJ2TnYcRsHmKgl2JJctZYp98w17aEFYm+wTAown9kHv1cBF4WpqlM88IezWqbUBF060T+gFf+2fvsOb+LSx2IkmG2TR7Tos4T01Q32GDtuaakJG8zO/ejt7Q0hcli2BM12EXEQ/U6c3RXDiFx1AzHTmn0JyG55L7bCmsxyI2dAn6fbTdDp0OvBjDUoJ4A1aqWSAuXGP/hDycBMzGH+FU6A2TUpR+rciouUrLWvS6Hj7zru+qxkuBd42ANm2hmy/QUVgC6NL5MCmD+2P+YJCOVfoQnpNrim7jJk1nzC1mqyPpbyld6p49RVEHnD7TCDZvYNNn7tCQYXOduc418DgmLp9xR/dKuvuUuHgzvqtIDCRmFmNajLqdySeNdN9BS4KsCY=
+	r3TsxDeK0Afay/ol/pDw0RUKuA62Fr/ky7+7vy7PhSV25F2iAxFuhh6ZH4PkS42qlliLcLeCUS5hWZRMcn69bIgQjXTB/nqDBDIBEXPjTi3PlFLtsNBUubBt/2rHTpzsHBf1UINuzAwKfBaXuNrpEN0aMrluED3P3q6SNKmxlrO1HhJLbfhbkbf8z5ZblgF7Wu9ScRykZAp46AYb4wGnlYtDXFYJzWByNdrmhU2iX9z7YmNHUVpk5GuRwKUsjrYw2oAsUMNdP9s67K2US+N4cMZZwnhpJqsZ9KI8qAB0dRjuwJuCvW+i38VQlKiGT0eFhsVpI5D+gxXm/G6Ys11R2LHZ8fNca5tfTb5ivUUUPMce1mGUQZIJ/8LJJl0rxM3kRSzOMiWkmzW8j3kvzPJXLVD83+7w5mWWSgikgbfHhKhGXw0PtjOuYC4puLnxovwizgNel+NhmJYEPc3+EC+jZNKMu9zChObABk2oNpvk954Drc2v2ISIBMtfeB1CBj82wLkfOqbL1A75PV0d7GYbfaRT6J4qXqMEqXiddLQAilIClR0VEvDA9PjeHOR6UR5jDpDXdOqo2C40DHvopees3iwDBTf0I+3rLN2sbO0aWGk=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb407d0f-af5a-478e-1ab7-08ddac95cb88
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28afbe1b-b06e-4a4e-22ec-08ddac95cc73
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 05:22:32.2478
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 05:22:33.7636
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tYwZTL37cEkWNC/1tyrEiOlnpXv6kUXLBGPnxMMLG9YV0DERkTYQUh2rb6YgWG9p0d+/2yH2klLlEBjBDH4juciF2MeGALkLGUKGUkZYi9w=
+X-MS-Exchange-CrossTenant-UserPrincipalName: /dvGES9AZzaLKrAa2+Hqxh5TH8eaHaZa1q5lENX0JXYRY0dgHGN7J2GUM41RplaYLjBI2r0ZfidRXzCVIMPZZRsFcVgr8HSPl+jtzleIXlM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6389
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-16_02,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2505160000 definitions=main-2506160033
-X-Proofpoint-GUID: X4dbj25eNj_01FzTyNVb06tiArLG-ugI
-X-Proofpoint-ORIG-GUID: X4dbj25eNj_01FzTyNVb06tiArLG-ugI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDAzMyBTYWx0ZWRfX0Azg5dVS+miv I+kj80Grvr7xQlqdS10izIN3hgE/hF92yni+NvcnUc30oeDopdlHq7WwW8zjPVtzJ8h7mm1VbuH 3SzEweaUVBNz7sz8sZXNGUtyBRtgf1vmDM6CfyYpp2sf1w32UqMZr9G+K+Eprj9FpgSrYsH2JE1
- MphFGKWzVc2Vcrg6q22PLza5GxmDGR5kjNjigyVd7FawNeyhc4mKGYJQD6MP36kcN/Aec68BJlc rsTV/T+cBbve9/Mo5LCfG+Kl7yECcxIKwnpyPI5PIQ8e/D/1P8DcaLFg5aaQsUqVB0XW3OsjVoa fkPctzAFFMV9cFI3w/yFfGfP4BHhfkDu962UJSjnQR3Y0qY19XmuUBqFXeLqtopa5QsrCr0EQPB
- 2nukHPtVfOrolaO76G6xxeoQ7thtbMyjF1yu1rx5k5ax1EekSg+kXfIc9k7zspJNoyKRE8ax
-X-Authority-Analysis: v=2.4 cv=XZGJzJ55 c=1 sm=1 tr=0 ts=684faa1b b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=_WLpKjk4XQ775Vi3V00A:9 cc=ntf awl=host:14714
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDAzMyBTYWx0ZWRfX10E2wUUCLd7t BeKnBxF0tUYvABdRjRLHczGbevMh/w4LuDaJHCVQC8bYE3wHPolNGYXDUU0YIPo4RhkR2iDKtxb k2CTCnCN4JdDxLKra4rOxyLsYu2xi54iApwkMt/xHgsMIPK1HalljeqeX3kpFpDjYrPBOOiVHiw
+ 4DV3w8ZKNKTH9KVt/z/ZP5WYxjKkXwnIYbvSJEaInjBL0OQFHPwgc7y1v/bXZ5+xO6HmXhvR30m o711AmC7WAMjLFGuKhq8Grehv4ir8RFTHr98cHfQ/VS5Lqn+cYMD+tSmeAu7EjOrelQkZW0q24F zmqEw2YvLc65CaPbWPRjgN5pg7JEWttE0KnT8A8lDoGcoRIM8G15te5Ppbyu9qIEzAeG/xnDu+o
+ mXC6VJyyNNlQrooDJTjbOO/c+YPPzyOUMJMJLlbxshvL694jpUKCDMBCiMH9/z77fQMyq0jB
+X-Authority-Analysis: v=2.4 cv=U4CSDfru c=1 sm=1 tr=0 ts=684faa1f cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=TbKJQeBsitzCtKh9844A:9
+X-Proofpoint-GUID: hBf01fPJl4BzSTJMqZmgwpUJ3YpiaOQW
+X-Proofpoint-ORIG-GUID: hBf01fPJl4BzSTJMqZmgwpUJ3YpiaOQW
 
-Move benchmark function parameters inside struct bench_params.
+No functional change.
 
 Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 ---
- tools/perf/bench/mem-functions.c | 63 +++++++++++++++++---------------
- 1 file changed, 34 insertions(+), 29 deletions(-)
+ tools/perf/bench/mem-functions.c             | 103 +++++++++++++------
+ tools/perf/bench/mem-memcpy-arch.h           |   2 +-
+ tools/perf/bench/mem-memcpy-x86-64-asm-def.h |   4 +
+ tools/perf/bench/mem-memset-arch.h           |   2 +-
+ tools/perf/bench/mem-memset-x86-64-asm-def.h |   4 +
+ 5 files changed, 81 insertions(+), 34 deletions(-)
 
 diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
-index b8f020379197..fb17d36a6f6c 100644
+index fb17d36a6f6c..06d3ee6f5d69 100644
 --- a/tools/perf/bench/mem-functions.c
 +++ b/tools/perf/bench/mem-functions.c
-@@ -30,7 +30,7 @@
- 
- static const char	*size_str	= "1MB";
- static const char	*function_str	= "all";
--static int		nr_loops	= 1;
-+static unsigned int	nr_loops	= 1;
- static bool		use_cycles;
- static int		cycles_fd;
- 
-@@ -42,7 +42,7 @@ static const struct option options[] = {
- 	OPT_STRING('f', "function", &function_str, "all",
- 		    "Specify the function to run, \"all\" runs all available functions, \"help\" lists them"),
- 
--	OPT_INTEGER('l', "nr_loops", &nr_loops,
-+	OPT_UINTEGER('l', "nr_loops", &nr_loops,
- 		    "Specify the number of loops to run. (default: 1)"),
- 
- 	OPT_BOOLEAN('c', "cycles", &use_cycles,
-@@ -56,6 +56,12 @@ union bench_clock {
- 	struct timeval	tv;
+@@ -62,15 +62,31 @@ struct bench_params {
+ 	unsigned int	nr_loops;
  };
  
-+struct bench_params {
-+	size_t		size;
-+	size_t		size_total;
-+	unsigned int	nr_loops;
++struct bench_mem_info {
++	const struct function *functions;
++	int (*do_op)(const struct function *r, struct bench_params *p,
++		     void *src, void *dst, union bench_clock *rt);
++	const char *const *usage;
++	bool alloc_src;
 +};
 +
++typedef bool (*mem_init_t)(struct bench_mem_info *, struct bench_params *,
++			   void **, void **);
++typedef void (*mem_fini_t)(struct bench_mem_info *, struct bench_params *,
++			   void **, void **);
  typedef void *(*memcpy_t)(void *, const void *, size_t);
  typedef void *(*memset_t)(void *, int, size_t);
  
-@@ -134,17 +140,19 @@ static double timeval2double(struct timeval *ts)
- 
- struct bench_mem_info {
- 	const struct function *functions;
--	union bench_clock (*do_op)(const struct function *r, size_t size, void *src, void *dst);
-+	union bench_clock (*do_op)(const struct function *r, struct bench_params *p,
-+				   void *src, void *dst);
- 	const char *const *usage;
- 	bool alloc_src;
+ struct function {
+ 	const char *name;
+ 	const char *desc;
+-	union {
+-		memcpy_t memcpy;
+-		memset_t memset;
++	struct {
++		mem_init_t init;
++		mem_fini_t fini;
++		union {
++			memcpy_t memcpy;
++			memset_t memset;
++		};
+ 	} fn;
  };
  
--static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t size, size_t size_total)
-+static void __bench_mem_function(struct bench_mem_info *info, struct bench_params *p,
-+				 int r_idx)
+@@ -138,37 +154,24 @@ static double timeval2double(struct timeval *ts)
+ 			printf(" %14lf GB/sec\n", x / K / K / K);	\
+ 	} while (0)
+ 
+-struct bench_mem_info {
+-	const struct function *functions;
+-	union bench_clock (*do_op)(const struct function *r, struct bench_params *p,
+-				   void *src, void *dst);
+-	const char *const *usage;
+-	bool alloc_src;
+-};
+-
+ static void __bench_mem_function(struct bench_mem_info *info, struct bench_params *p,
+ 				 int r_idx)
  {
  	const struct function *r = &info->functions[r_idx];
  	double result_bps = 0.0;
  	union bench_clock rt = { 0 };
--	void *src = NULL, *dst = zalloc(size);
-+	void *src = NULL, *dst = zalloc(p->size);
+-	void *src = NULL, *dst = zalloc(p->size);
++	void *src = NULL, *dst = NULL;
  
  	printf("# function '%s' (%s)\n", r->name, r->desc);
  
-@@ -152,7 +160,7 @@ static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t
- 		goto out_alloc_failed;
+-	if (dst == NULL)
+-		goto out_alloc_failed;
+-
+-	if (info->alloc_src) {
+-		src = zalloc(p->size);
+-		if (src == NULL)
+-			goto out_alloc_failed;
+-	}
++	if (r->fn.init && r->fn.init(info, p, &src, &dst))
++		goto out_init_failed;
  
- 	if (info->alloc_src) {
--		src = zalloc(size);
-+		src = zalloc(p->size);
- 		if (src == NULL)
- 			goto out_alloc_failed;
- 	}
-@@ -160,23 +168,23 @@ static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t
  	if (bench_format == BENCH_FORMAT_DEFAULT)
  		printf("# Copying %s bytes ...\n\n", size_str);
  
--	rt = info->do_op(r, size, src, dst);
-+	rt = info->do_op(r, p, src, dst);
+-	rt = info->do_op(r, p, src, dst);
++	if (info->do_op(r, p, src, dst, &rt))
++		goto out_test_failed;
  
  	switch (bench_format) {
  	case BENCH_FORMAT_DEFAULT:
- 		if (use_cycles) {
--			printf(" %14lf cycles/byte\n", (double)rt.cycles/(double)size_total);
-+			printf(" %14lf cycles/byte\n", (double)rt.cycles/(double)p->size_total);
- 		} else {
--			result_bps = (double)size_total/timeval2double(&rt.tv);
-+			result_bps = (double)p->size_total/timeval2double(&rt.tv);
- 			print_bps(result_bps);
- 		}
+@@ -194,11 +197,11 @@ static void __bench_mem_function(struct bench_mem_info *info, struct bench_param
  		break;
- 
- 	case BENCH_FORMAT_SIMPLE:
- 		if (use_cycles) {
--			printf("%lf\n", (double)rt.cycles/(double)size_total);
-+			printf("%lf\n", (double)rt.cycles/(double)p->size_total);
- 		} else {
--			result_bps = (double)size_total/timeval2double(&rt.tv);
-+			result_bps = (double)p->size_total/timeval2double(&rt.tv);
- 			printf("%lf\n", result_bps);
- 		}
- 		break;
-@@ -198,8 +206,7 @@ static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t
- static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *info)
- {
- 	int i;
--	size_t size;
--	size_t size_total;
-+	struct bench_params p = { 0 };
- 
- 	argc = parse_options(argc, argv, options, info->usage, 0);
- 
-@@ -211,17 +218,17 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
- 		}
  	}
  
--	size = (size_t)perf_atoll((char *)size_str);
--	size_total = (size_t)size * nr_loops;
--
--	if ((s64)size <= 0) {
-+	p.nr_loops = nr_loops;
-+	p.size = (size_t)perf_atoll((char *)size_str);
-+	if ((s64)p.size <= 0) {
- 		fprintf(stderr, "Invalid size:%s\n", size_str);
- 		return 1;
- 	}
-+	p.size_total = (size_t)p.size * p.nr_loops;
- 
- 	if (!strncmp(function_str, "all", 3)) {
- 		for (i = 0; info->functions[i].name; i++)
--			__bench_mem_function(info, i, size, size_total);
-+			__bench_mem_function(info, &p, i);
- 		return 0;
- 	}
- 
-@@ -240,7 +247,7 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
- 		return 1;
- 	}
- 
--	__bench_mem_function(info, i, size, size_total);
-+	__bench_mem_function(info, &p, i);
- 
- 	return 0;
++out_test_failed:
+ out_free:
+-	free(src);
+-	free(dst);
++	if (r->fn.fini) r->fn.fini(info, p, &src, &dst);
+ 	return;
+-out_alloc_failed:
++out_init_failed:
+ 	printf("# Memory allocation failed - maybe size (%s) is too large?\n", size_str);
+ 	goto out_free;
  }
-@@ -257,18 +264,17 @@ static void memcpy_prefault(memcpy_t fn, size_t size, void *src, void *dst)
+@@ -264,8 +267,8 @@ static void memcpy_prefault(memcpy_t fn, size_t size, void *src, void *dst)
  	fn(dst, src, size);
  }
  
--static union bench_clock do_memcpy(const struct function *r, size_t size,
-+static union bench_clock do_memcpy(const struct function *r, struct bench_params *p,
- 				   void *src, void *dst)
+-static union bench_clock do_memcpy(const struct function *r, struct bench_params *p,
+-				   void *src, void *dst)
++static int do_memcpy(const struct function *r, struct bench_params *p,
++		     void *src, void *dst, union bench_clock *rt)
  {
  	union bench_clock start, end;
  	memcpy_t fn = r->fn.memcpy;
--	int i;
- 
--	memcpy_prefault(fn, size, src, dst);
-+	memcpy_prefault(fn, p->size, src, dst);
- 
- 	clock_get(&start);
--	for (i = 0; i < nr_loops; ++i)
--		fn(dst, src, size);
-+	for (unsigned int i = 0; i < p->nr_loops; ++i)
-+		fn(dst, src, p->size);
+@@ -277,16 +280,47 @@ static union bench_clock do_memcpy(const struct function *r, struct bench_params
+ 		fn(dst, src, p->size);
  	clock_get(&end);
  
- 	return clock_diff(&start, &end);
-@@ -305,22 +311,21 @@ int bench_mem_memcpy(int argc, const char **argv)
+-	return clock_diff(&start, &end);
++	*rt = clock_diff(&start, &end);
++
++	return 0;
++}
++
++static bool mem_alloc(struct bench_mem_info *info, struct bench_params *p,
++		      void **src, void **dst)
++{
++	bool failed;
++
++	*dst = zalloc(p->size);
++	failed = *dst == NULL;
++
++	if (info->alloc_src) {
++		*src = zalloc(p->size);
++		failed = failed || *src == NULL;
++	}
++
++	return failed;
++}
++
++static void mem_free(struct bench_mem_info *info __maybe_unused,
++		     struct bench_params *p __maybe_unused,
++		     void **src, void **dst)
++{
++	free(*dst);
++	free(*src);
++
++	*dst = *src = NULL;
+ }
+ 
+ struct function memcpy_functions[] = {
+ 	{ .name		= "default",
+ 	  .desc		= "Default memcpy() provided by glibc",
++	  .fn.init	= mem_alloc,
++	  .fn.fini	= mem_free,
+ 	  .fn.memcpy	= memcpy },
+ 
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
+-# define MEMCPY_FN(_fn, _name, _desc) {.name = _name, .desc = _desc, .fn.memcpy = _fn},
++# define MEMCPY_FN(_fn, _init, _fini, _name, _desc)	\
++	{.name = _name, .desc = _desc, .fn.memcpy = _fn, .fn.init = _init, .fn.fini = _fini },
+ # include "mem-memcpy-x86-64-asm-def.h"
+ # undef MEMCPY_FN
+ #endif
+@@ -311,8 +345,8 @@ int bench_mem_memcpy(int argc, const char **argv)
  	return bench_mem_common(argc, argv, &info);
  }
  
--static union bench_clock do_memset(const struct function *r, size_t size,
-+static union bench_clock do_memset(const struct function *r, struct bench_params *p,
- 				   void *src __maybe_unused, void *dst)
+-static union bench_clock do_memset(const struct function *r, struct bench_params *p,
+-				   void *src __maybe_unused, void *dst)
++static int do_memset(const struct function *r, struct bench_params *p,
++		     void *src __maybe_unused, void *dst, union bench_clock *rt)
  {
  	union bench_clock start, end;
  	memset_t fn = r->fn.memset;
--	int i;
- 
- 	/*
- 	 * We prefault the freshly allocated memory range here,
- 	 * to not measure page fault overhead:
- 	 */
--	fn(dst, -1, size);
-+	fn(dst, -1, p->size);
- 
- 	clock_get(&start);
--	for (i = 0; i < nr_loops; ++i)
--		fn(dst, i, size);
-+	for (unsigned int i = 0; i < p->nr_loops; ++i)
-+		fn(dst, i, p->size);
+@@ -328,7 +362,9 @@ static union bench_clock do_memset(const struct function *r, struct bench_params
+ 		fn(dst, i, p->size);
  	clock_get(&end);
  
- 	return clock_diff(&start, &end);
+-	return clock_diff(&start, &end);
++	*rt = clock_diff(&start, &end);
++
++	return 0;
+ }
+ 
+ static const char * const bench_mem_memset_usage[] = {
+@@ -339,10 +375,13 @@ static const char * const bench_mem_memset_usage[] = {
+ static const struct function memset_functions[] = {
+ 	{ .name		= "default",
+ 	  .desc		= "Default memset() provided by glibc",
++	  .fn.init	= mem_alloc,
++	  .fn.fini	= mem_free,
+ 	  .fn.memset	= memset },
+ 
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
+-# define MEMSET_FN(_fn, _name, _desc) { .name = _name, .desc = _desc, .fn.memset = _fn },
++# define MEMSET_FN(_fn, _init, _fini, _name, _desc) \
++	{.name = _name, .desc = _desc, .fn.memset = _fn, .fn.init = _init, .fn.fini = _fini },
+ # include "mem-memset-x86-64-asm-def.h"
+ # undef MEMSET_FN
+ #endif
+diff --git a/tools/perf/bench/mem-memcpy-arch.h b/tools/perf/bench/mem-memcpy-arch.h
+index 5bcaec5601a8..852e48cfd8fe 100644
+--- a/tools/perf/bench/mem-memcpy-arch.h
++++ b/tools/perf/bench/mem-memcpy-arch.h
+@@ -2,7 +2,7 @@
+ 
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
+ 
+-#define MEMCPY_FN(fn, name, desc)		\
++#define MEMCPY_FN(fn, init, fini, name, desc)		\
+ 	void *fn(void *, const void *, size_t);
+ 
+ #include "mem-memcpy-x86-64-asm-def.h"
+diff --git a/tools/perf/bench/mem-memcpy-x86-64-asm-def.h b/tools/perf/bench/mem-memcpy-x86-64-asm-def.h
+index 6188e19d3129..f43038f4448b 100644
+--- a/tools/perf/bench/mem-memcpy-x86-64-asm-def.h
++++ b/tools/perf/bench/mem-memcpy-x86-64-asm-def.h
+@@ -1,9 +1,13 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ 
+ MEMCPY_FN(memcpy_orig,
++	mem_alloc,
++	mem_free,
+ 	"x86-64-unrolled",
+ 	"unrolled memcpy() in arch/x86/lib/memcpy_64.S")
+ 
+ MEMCPY_FN(__memcpy,
++	mem_alloc,
++	mem_free,
+ 	"x86-64-movsq",
+ 	"movsq-based memcpy() in arch/x86/lib/memcpy_64.S")
+diff --git a/tools/perf/bench/mem-memset-arch.h b/tools/perf/bench/mem-memset-arch.h
+index 53f45482663f..278c5da12d63 100644
+--- a/tools/perf/bench/mem-memset-arch.h
++++ b/tools/perf/bench/mem-memset-arch.h
+@@ -2,7 +2,7 @@
+ 
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
+ 
+-#define MEMSET_FN(fn, name, desc)		\
++#define MEMSET_FN(fn, init, fini, name, desc)	\
+ 	void *fn(void *, int, size_t);
+ 
+ #include "mem-memset-x86-64-asm-def.h"
+diff --git a/tools/perf/bench/mem-memset-x86-64-asm-def.h b/tools/perf/bench/mem-memset-x86-64-asm-def.h
+index 247c72fdfb9d..80ad1b7ea770 100644
+--- a/tools/perf/bench/mem-memset-x86-64-asm-def.h
++++ b/tools/perf/bench/mem-memset-x86-64-asm-def.h
+@@ -1,9 +1,13 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ 
+ MEMSET_FN(memset_orig,
++	mem_alloc,
++	mem_free,
+ 	"x86-64-unrolled",
+ 	"unrolled memset() in arch/x86/lib/memset_64.S")
+ 
+ MEMSET_FN(__memset,
++	mem_alloc,
++	mem_free,
+ 	"x86-64-stosq",
+ 	"movsq-based memset() in arch/x86/lib/memset_64.S")
 -- 
 2.31.1
 
