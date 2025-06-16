@@ -1,111 +1,178 @@
-Return-Path: <linux-kernel+bounces-687927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698F9ADAAE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308F7ADAADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D6AB7A4F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7743A296A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F48A2737F1;
-	Mon, 16 Jun 2025 08:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A962426D4DA;
+	Mon, 16 Jun 2025 08:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fsYltiCq"
-Received: from out.smtpout.orange.fr (out-13.smtpout.orange.fr [193.252.22.13])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n9s1izY1"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87D81FFC6D;
-	Mon, 16 Jun 2025 08:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169B0189F56
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750062981; cv=none; b=Wd75/xLmPsMcR38yNX59C0sQUkzjSgJWYFiwbsakYQ/+w1K8zrU+TxCCZXEa/hXtSNie5UFHdXhc1OylS8Q5ch4DgoOAJ2k2XT8aGGOjbvFO1T7lW2Usytn9b10q1+672+gLh7BpABcbyBCBudIc7ky0m190ZPqXXOHHCMNgGfg=
+	t=1750062924; cv=none; b=FoK3E+10ArhH5GJX+qsjtaKSLPiM3ID1NuMQfjfb3GTB4vJ8vNR6NCa7xp9mtx98t5vEO8Ipg5CMj/qQsao67pZnH2I72reakCgSJTIjC3LUoY5Qvzd0haMbqbOwxlVbehn15wg/x6RsmtQeYa+G0NuHWFjFrIZ5pbBfaSIeGpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750062981; c=relaxed/simple;
-	bh=utrvK5z++4pWgL/XQzh0Lgu2WUPVRlcJZdqAcKgzPW8=;
+	s=arc-20240116; t=1750062924; c=relaxed/simple;
+	bh=jaVBmfhiO/gMUJCxr4WGTf3k2pGJTYD8tBDjkUnbMjg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TO0hVnBhuFaTJTCNscqenPL7vOugKiDqarc0eU0vEpcOJtVaPVDWgtttXVqP70ZFxgbuzWAmqi5MiJvwxMuaDuKh6RPw4fkEnv4QScrbaKsztJ/RnaRyDzknIO6IZuuiQxEN7tUCsbHpTjTnPfcoXUJLbS5mFTjZoTBIoMaIk80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fsYltiCq; arc=none smtp.client-ip=193.252.22.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id R5IeuW612OV6eR5Imu85m7; Mon, 16 Jun 2025 10:34:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1750062900;
-	bh=yljn2wE0jxa3Ta1cbirF7DuNbCTWHRKQYs9jILtQOYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fsYltiCqE50Oa0GcKzBw679uxCrG9XJtgv0kp7F4MUXqm0R8UF0EXWim5Uuo5kiX6
-	 UEh/FQSbHha17lgba4Cv4KclKCZGH2qFoo4SPm9yUvbpLOgNvncJU4R0s+pXIMD6d6
-	 OMEqNFAIcjYwZ+AqHO9wx6hJgT4zd2iLhIlYwz0vkq6KnXk8XKDtpL1ETYHOxuhSAq
-	 Ep1FK8MqIsTTUVgVtMfXXr5gc9/mSV1ppjYn3PWQIP5CnUPVRUE25Zs400PyTjDJbo
-	 HpqFPuRnsGxRHaXIoUGQ9TUtgZmem8cEgWGB8vBI5ej+BXdQ2Jd7XBBAjyepJjLITi
-	 iBH60L1r8VjNw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 16 Jun 2025 10:35:00 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <0b74cdf8-516a-4f13-928c-4d88307bf1ed@wanadoo.fr>
-Date: Mon, 16 Jun 2025 17:34:38 +0900
+	 In-Reply-To:Content-Type; b=TX0Q8rKSUI48FzSZAYiGl9MlUJMIUL+tlIpZuJdTpgY/usv2JDvLg2mTCCPRGcaW2OOhTnHcy4ufI51ao5MTc6zG85gX7tWwlTE1RePnjmk3iDNCvX7F5lF1NDsmYoVSHrILH6GxYy60mn6ZTx1bCaB05wzHqnmHLDGY4nTmwi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=n9s1izY1; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d4a28883-2aff-42dd-afe4-c5a42447ed0e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750062907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QKgw0q/b2wsEMiS8v+UPXQrLZWDcU2TmDlxSNErwZhE=;
+	b=n9s1izY1DgFXeYapdxjJWy2Y9bElYZA4F9H+Gw2gUs+VgMyWEytAWbwxpfwCN3BQUo06j5
+	kugONuIW0EAqmK1xABumKKsn2773yVZ0U5cj6Vd4vkybXCdsnYqlwR+Wy8fFYE4E8qs4l4
+	D0h+6ZUHdkmGxDVeN51DAqfhJYVJxzY=
+Date: Mon, 16 Jun 2025 16:34:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] net: can: mcp251x: propagate the return value of
- mcp251x_spi_write()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
-References: <20250616-gpiochip-set-rv-net-v2-0-cae0b182a552@linaro.org>
- <20250616-gpiochip-set-rv-net-v2-3-cae0b182a552@linaro.org>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250616-gpiochip-set-rv-net-v2-3-cae0b182a552@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH bpf-next v2 2/2] bpf: Add show_fdinfo for kprobe_multi
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: song@kernel.org, kpsingh@kernel.org, mattbobrowski@google.com,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, sdf@fomichev.me, haoluo@google.com,
+ rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20250615150514.418581-1-chen.dylane@linux.dev>
+ <20250615150514.418581-2-chen.dylane@linux.dev> <aE_KaH3DAo4-Yq7m@krava>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <aE_KaH3DAo4-Yq7m@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 16/06/2025 at 16:24, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+在 2025/6/16 15:40, Jiri Olsa 写道:
+> On Sun, Jun 15, 2025 at 11:05:14PM +0800, Tao Chen wrote:
+>> Show kprobe_multi link info with fdinfo, the info as follows:
+>>
+>> link_type:	kprobe_multi
+>> link_id:	3
+>> prog_tag:	e8225cbcc9cdffef
+>> prog_id:	29
+>> type:	kprobe_multi
+>> kprobe_cnt:	8
+>> missed:	0
+>> func:	bpf_fentry_test1+0x0/0x20
+>> cookie:	1
+>> func:	bpf_fentry_test2+0x0/0x20
+>> cookie:	7
+>> func:	bpf_fentry_test3+0x0/0x20
+>> cookie:	2
+>> func:	bpf_fentry_test4+0x0/0x20
+>> cookie:	3
+>> func:	bpf_fentry_test5+0x0/0x20
+>> cookie:	4
+>> func:	bpf_fentry_test6+0x0/0x20
+>> cookie:	5
+>> func:	bpf_fentry_test7+0x0/0x20
+>> cookie:	6
+>> func:	bpf_fentry_test8+0x0/0x10
+>> cookie:	8
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   kernel/trace/bpf_trace.c | 33 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 33 insertions(+)
+>>
+>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>> index 9a8ca8a8e2b..d060c61e4e4 100644
+>> --- a/kernel/trace/bpf_trace.c
+>> +++ b/kernel/trace/bpf_trace.c
+>> @@ -2623,10 +2623,43 @@ static int bpf_kprobe_multi_link_fill_link_info(const struct bpf_link *link,
+>>   	return err;
+>>   }
+>>   
+>> +#ifdef CONFIG_PROC_FS
+>> +static void bpf_kprobe_multi_show_fdinfo(const struct bpf_link *link,
+>> +					 struct seq_file *seq)
+>> +{
+>> +	struct bpf_kprobe_multi_link *kmulti_link;
+>> +	char sym[KSYM_NAME_LEN];
+>> +
+>> +	kmulti_link = container_of(link, struct bpf_kprobe_multi_link, link);
+>> +
+>> +	seq_printf(seq,
+>> +		   "type:\t%s\n"
+>> +		   "kprobe_cnt:\t%u\n"
+>> +		   "missed:\t%lu\n",
+>> +		   kmulti_link->flags == BPF_F_KPROBE_MULTI_RETURN ? "kretprobe_multi" :
+>> +					 "kprobe_multi",
+>> +		   kmulti_link->cnt,
+>> +		   kmulti_link->fp.nmissed);
+>> +
+>> +	for (int i = 0; i < kmulti_link->cnt; i++) {
+>> +		sprint_symbol(sym, kmulti_link->addrs[i]);
 > 
-> Add an integer return value to mcp251x_write_bits() and use it to
-> propagate the one returned by mcp251x_spi_write(). Return that value on
-> error in the request() GPIO callback.
+> I think you could use specifier to do the translation for you,
+> check Documentation/core-api/printk-formats.rst:
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>          %pS     versatile_init+0x0/0x110 [module_name]
+> 
 
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+I'll refer to that, thanks!
+
+> 
+> 
+>> +		seq_printf(seq,
+>> +			  "func:\t%s\n"
+>> +			  "cookie:\t%llu\n",
+>> +			  sym,
+>> +			  kmulti_link->cookies[i]
+>> +			  );
+> 
+> bracket should be on the previous line
+> 
+
+will fix it in v3, thanks.
+
+> jirka
+> 
+> 
+>> +	}
+>> +}
+>> +#endif
+>> +
+>>   static const struct bpf_link_ops bpf_kprobe_multi_link_lops = {
+>>   	.release = bpf_kprobe_multi_link_release,
+>>   	.dealloc_deferred = bpf_kprobe_multi_link_dealloc,
+>>   	.fill_link_info = bpf_kprobe_multi_link_fill_link_info,
+>> +#ifdef CONFIG_PROC_FS
+>> +	.show_fdinfo = bpf_kprobe_multi_show_fdinfo,
+>> +#endif
+>>   };
+>>   
+>>   static void bpf_kprobe_multi_cookie_swap(void *a, void *b, int size, const void *priv)
+>> -- 
+>> 2.48.1
+>>
 
 
-Yours sincerely,
-Vincent Mailhol
-
+-- 
+Best Regards
+Tao Chen
 
