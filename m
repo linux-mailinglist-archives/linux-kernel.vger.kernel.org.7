@@ -1,153 +1,179 @@
-Return-Path: <linux-kernel+bounces-688192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4609CADAEEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:44:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D0DADAEF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC72188AD07
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F62172BFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7EC2E6D36;
-	Mon, 16 Jun 2025 11:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C06D279903;
+	Mon, 16 Jun 2025 11:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k7iYKOZD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mYxvLLWL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9dV2Pfdd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mYxvLLWL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9dV2Pfdd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9DA29826A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD9C2D9EEB
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750074278; cv=none; b=S2PvwbMcHngV1RT5qIIMouC/Y6cyl4TdAFt/LDLZi87hXXnwlgyJ1tPWOfPJg4DUeYcntRirBjqH4v0NCh5pm18yrOGT+umKDzV6v3ZvZkHEKrvsENbBoYVbeZb2QDGQbkpcTSgbQ7lAKzOHSDdk0m+J4cOdmM60sQiI3dDQVuY=
+	t=1750074311; cv=none; b=nJF8F0ATTdlKPJeHoGfFb+Dra/RgVeZXtAJLrsG8dxby3RVINRIiWwyCW8mDh3Sr0OADD7lPIdv9Aidm6WV09na84byHzBRpWJps4imd2Gj8UwM0np6vjnjZ7erprDs18HbIThH30MCRCAGIYCTNc1+83ho2Av+jSE9KUF9T7f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750074278; c=relaxed/simple;
-	bh=SqNvndz7A9Zt7yPcqFNmLJBQM6AtUHxshTQy3ysSsRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fR48CuZWuGYxI50vMvF+LSLLoaUejMZNNXV1djgLmBfLI2rd+ewJatxP8LZVmmNiSNkmmW6pRXRkjiUQXI54slX9oYreR28s2WatKEohPy76GF6INsCC9gsGO2gSIJid8nWYrlVEFRoatjNGFAL7eV4P+GRZQ5jybG63gHhd094=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k7iYKOZD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G8uKaV032348
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:44:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aBwqXHaqOGLYdlWyP5aCWSTDntNxsctiiIHM3sIcSwE=; b=k7iYKOZDjeXvftUZ
-	VcALSh6MEOv7Ws+8QQMfj6hShQ1cOCO0aAmoBlLrHaBr+u0FaQYtxsTiMugkxAp/
-	zn/NaEg+D5Odva3c+e9YiJx3ORTAGELltdL0orhh1ogbEosFqMMYfSgECKGnvz06
-	7YZnzDoXYTQgRCr2jt7hsQOFLLDZYOwyoPvxS3/j2iqvbEBlQUiDA7wTje0MtvOz
-	+9w8SSC4mR9KmoOh0CeGMvCHl3b7LYb+z7i9V0TrUisEXu7FYHofMmMect8sCg9l
-	Xgf7CfSuDk8VxSYDKbvA7lLG8vzbftMsGXQN/KzNQcKpcE9Vk8SXZA1SY9+lbF9K
-	J+JMNA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791hfccnq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:44:36 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4a5a9791fa9so9746131cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 04:44:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750074275; x=1750679075;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aBwqXHaqOGLYdlWyP5aCWSTDntNxsctiiIHM3sIcSwE=;
-        b=LnLhWUzT8XAQcpGrHMSbm4KIeXihmlnvsE2LJHeib6V8fWsbKHt9bBKXodt115iWa1
-         cVyD6iWLgmZVIr92O9dNNVQMqsGLEGLAw95FGbHlJAIVo9X9d+ZWfPBfJpb8nYPCwE5l
-         PoGa614RrtFF4YV6IhRjJfOTz0qpnK1quYP2/Q6PoqBUcOgN0m8DoelehGVVwRIHcm+l
-         hkKsCsbVrtVk5sS/on2djDuaIyHolDITBUndGZJTAN7k7E1bi4LfVdQIglWJuil9TIiU
-         94blLZYI/waw7TNSy8i3VCzeaycFiTXJekmQtuXx8JzZ4wxhpTwVlHM2XCe4V0LEyWol
-         FihA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmIPQ8PG5cpPoGEfVjK2cbzFZFVSBoqBJteWCGzkQerSwZWPcdzJZMsboNIDG+P9pzEVR+N+cqBn5YmyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNLt43X5WBUZTvzzas0MuNKyCxyTx86+9CAkq7jJMraWLL4C+B
-	nJj6ufSqwj+tm6OVEGjpCUeZBkwYmF1lgP1rhYsoV36SiVoJsN6B/ryYwoCpEtk+9/hDdYVm1r7
-	1Scaui0rq3CkSkit6TzK6F5q89ksQ5mbXHMbuQavlL9XZtOOgHgb7J0gwFGUXvBCDWAA=
-X-Gm-Gg: ASbGncu5B0BRC+qZxYVgMrnQNhYMKt75IxsudkmkqM2VxUMtH0Y4oUDa/JTI4POkeOq
-	fq+8TgN1lYwdqg2vvOcwfhVvw8lEFdkbqtJv7cL4O/06DPCoitqUEuzMpd/KUCPL6pSO/R1ptnq
-	ZMrAE7GqnkLY4QtkNgoqcQbqDQjb2SLJQbJ9QUozbVbYJcKLQP97voq+sEF94vOg5kYaWKqFoWp
-	wA7MiZr/ckSLu2m2STG7pDFjnmXYZu2IQHowMb5ZA7bQclQ6SyKaiA33XcqA2CeYBAxHIF6w8Op
-	pgG1zqENwwOCBOB7dxWyhijv9r4MJ/eqF1PqNiGGC0/3am8Hgqhe3cqrjoLncRxsHTsKD0qaXzR
-	/sjg=
-X-Received: by 2002:ac8:5f53:0:b0:47a:ecd7:6714 with SMTP id d75a77b69052e-4a73c5a460bmr56637211cf.9.1750074274662;
-        Mon, 16 Jun 2025 04:44:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLYGv6rn1SzgWDD2ehrxqokbIF+2wTCG5SWoRKjsh1D8V6/aT4j9BPofzMk3ijGeS/grAFJA==
-X-Received: by 2002:ac8:5f53:0:b0:47a:ecd7:6714 with SMTP id d75a77b69052e-4a73c5a460bmr56637041cf.9.1750074274262;
-        Mon, 16 Jun 2025 04:44:34 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6097ad640bcsm332234a12.25.2025.06.16.04.44.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 04:44:33 -0700 (PDT)
-Message-ID: <bdb171c3-5395-414a-88cf-eb002af96804@oss.qualcomm.com>
-Date: Mon, 16 Jun 2025 13:44:31 +0200
+	s=arc-20240116; t=1750074311; c=relaxed/simple;
+	bh=Mvn/6G4LThIxW2CjjJfUiXbilMcuDA+zGxKWbasEcuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVQybNgZvH8hJ9a1y0xOL/ZeGcVBt1AnZ55o9O5ph55RfiGewzHr4v+nzj4X6idNHHTogfjVX7NhTanfSzhFpULY92tVjFq6D7X5h5n8ZZOHWmzaqBSoYR3Hpc2oV+Gg895Gi07jibauEXBBwBQIK4hUcEYbfFp6ZmnteJoi4H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mYxvLLWL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9dV2Pfdd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mYxvLLWL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9dV2Pfdd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 439861F45F;
+	Mon, 16 Jun 2025 11:45:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750074307; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cQ1bUAfux7Bc+S0s8QLpyx6GcxjzeCaMMaG6o/PQiwY=;
+	b=mYxvLLWL/MZGfYqrHTYfUBtRHsoSZxnndetQVTv+TwTJXRHQVyWupKD7jmtq9h4Rlzj1kx
+	XjptyYZcbhZWPCrYri6bjwP2gNeiVwXMQlT8wSHt62E5Bq8FFcAfAUTDgSNISUXWWcpGiU
+	umRResmrtQIe9I1NZL10Mq2VWhNTtl0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750074307;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cQ1bUAfux7Bc+S0s8QLpyx6GcxjzeCaMMaG6o/PQiwY=;
+	b=9dV2PfddyhFzzUXqVkx/nAfmaeqBz0jZKBnBQFbvzIO6jHtxuQ1IgGlPAr/33VYctMwnLr
+	51tSFgLI6jCQ9WCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mYxvLLWL;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9dV2Pfdd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750074307; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cQ1bUAfux7Bc+S0s8QLpyx6GcxjzeCaMMaG6o/PQiwY=;
+	b=mYxvLLWL/MZGfYqrHTYfUBtRHsoSZxnndetQVTv+TwTJXRHQVyWupKD7jmtq9h4Rlzj1kx
+	XjptyYZcbhZWPCrYri6bjwP2gNeiVwXMQlT8wSHt62E5Bq8FFcAfAUTDgSNISUXWWcpGiU
+	umRResmrtQIe9I1NZL10Mq2VWhNTtl0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750074307;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cQ1bUAfux7Bc+S0s8QLpyx6GcxjzeCaMMaG6o/PQiwY=;
+	b=9dV2PfddyhFzzUXqVkx/nAfmaeqBz0jZKBnBQFbvzIO6jHtxuQ1IgGlPAr/33VYctMwnLr
+	51tSFgLI6jCQ9WCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF00E13A6B;
+	Mon, 16 Jun 2025 11:45:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dL0lKMIDUGh7eQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 16 Jun 2025 11:45:06 +0000
+Date: Mon, 16 Jun 2025 13:45:05 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 03/10] mm,memory_hotplug: Implement numa node notifier
+Message-ID: <aFADwYs9LcyK5tVn@localhost.localdomain>
+References: <20250609092149.312114-1-osalvador@suse.de>
+ <20250609092149.312114-4-osalvador@suse.de>
+ <2bec8b53-f788-493e-a76e-1f804ed3aa0c@redhat.com>
+ <aE_WG6bnjtLBzCp8@localhost.localdomain>
+ <10c87a0e-c9fe-48fe-9bbd-16afd244b4ec@redhat.com>
+ <aE_a4_rGbMLJKBIs@localhost.localdomain>
+ <360f2f04-4542-4595-bf36-c45ed10335af@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qualcomm: phy-qcom-eusb2-repeater: Don't
- zero-out registers
-To: Luca Weiss <luca.weiss@fairphone.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250616-eusb2-repeater-tuning-v1-0-9457ff0fbf75@fairphone.com>
- <20250616-eusb2-repeater-tuning-v1-2-9457ff0fbf75@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250616-eusb2-repeater-tuning-v1-2-9457ff0fbf75@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA3MiBTYWx0ZWRfX5ePIzFxoJJUp
- GW/Vtfh6bsf6up/kCHibPzSBfHyk06u/l2v4MTQbp4D9YN0YJ+tmxzlhm1dm9wPdgbol87sh55F
- t86rya1N++BQy8v28Pph6aLhQhgeWdLLJmAHf7Opt/4FsUJq7uDTsWmAVkEP/VpPJQI6V797Nid
- KWqF7agS1DAVX/PygcFGmhXltXvT4XF5xMAE4yp6mF42K9DwE7mql+fjQdeg89Auq7Q62ZRTerR
- 4RLxNUH/je7pzKFh5yNPNGQRb37H8Er7ZGdEHNvUoscbalYSQHpTnLRwHJqcT671I10z39DzkNj
- AXpPhXfINx+ZSZ4YCZraIsU78UCdw1TkAMkfMB0GS9AYZB2Pe2QDVWXjaIOFql9WjUWv8ELQOAR
- F0Sg5czdzQmNeclj09ZBGYkuUDwoPHIeW9Vni+X1gltRoYnhBpKxaghct+2bNP8RLlzTlRQD
-X-Authority-Analysis: v=2.4 cv=VvEjA/2n c=1 sm=1 tr=0 ts=685003a4 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
- a=cispc58g6-s63dKQH_wA:9 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: V8bLV49GtAwndJ02aIS1qYee9luF-ZCw
-X-Proofpoint-ORIG-GUID: V8bLV49GtAwndJ02aIS1qYee9luF-ZCw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_05,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=875
- malwarescore=0 impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506160072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <360f2f04-4542-4595-bf36-c45ed10335af@redhat.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 439861F45F
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On 6/16/25 11:45 AM, Luca Weiss wrote:
-> Zeroing out registers does not happen in the downstream kernel, and will
-> "tune" the repeater in surely unexpected ways since most registers don't
-> have a reset value of 0x0.
-> 
-> Stop doing that and instead just set the registers that are in the init
-> sequence (though long term I don't think there's actually PMIC-specific
-> init sequences, there's board specific tuning, but that's a story for
-> another day).
-> 
-> Fixes: 99a517a582fc ("phy: qualcomm: phy-qcom-eusb2-repeater: Zero out untouched tuning regs")
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
+On Mon, Jun 16, 2025 at 10:52:31AM +0200, David Hildenbrand wrote:
+> Probably worth checking, to make sure we don't have accidental bugs in there
+> ...
 
-Riiight I thought this was effectively reverted already..
+I did a quick sweep, and we should be cool since users of the node notifier
+don't really use *_CANCEL* action. Only ADDED/REMOVED.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Now, users of memory notifier is a different story.
+E.g: page_ext will call offline_page_ext to mark the section->page_ext invalid.
 
-Konrad
+online_page_ext does:
+
+ base = alloc_page_ext(table_size, nid);
+ section->page_ext = (void *)base - page_ext_size * pfn;
+
+This is fine, I think, offline_page_ext will not mark it as INVALID because
+section->page_ext is NULL, so we just skip it.
+
+This is just one example. I checked some others like kasan and hyperv and they
+seem fine.
+And anyway, the we could already hit this situation with MEM_* notifiers, so
+nothing new.
+I'll just make sure to document it so new users take this into account.
+ 
+
+-- 
+Oscar Salvador
+SUSE Labs
 
