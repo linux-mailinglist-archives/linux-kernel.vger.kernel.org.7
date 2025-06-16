@@ -1,139 +1,207 @@
-Return-Path: <linux-kernel+bounces-688381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF4CADB1C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:26:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F705ADB1E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287C5188B348
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16C1188C623
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464102DBF7C;
-	Mon, 16 Jun 2025 13:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09A22BEFF3;
+	Mon, 16 Jun 2025 13:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XShyaIPv"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WoKnGQcE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442F82DBF5B;
-	Mon, 16 Jun 2025 13:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7BE2877F9;
+	Mon, 16 Jun 2025 13:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080352; cv=none; b=fWx35q/kopet3zvWsVD1GE+m6428N/Sz5DNoy/gR4oG2EG/PAhUJbfmggeo/k5KfbVqoPkwKv6ucTR/tC3D4I3v7rDQfSSrxfHFtYTUpqtfrkRD3p7UD+ldHoLlcrHXNzJxfqcllGcZ2sQpu8xyFR4igT4zUkshsKNlL1ICodMU=
+	t=1750080392; cv=none; b=kd7ygGz32Ll3mJiqz+I8wUlN4a2s/I/mWORGk9OCsk+kUqaZzZkcYwzrhbLUaqlAzaC31qVdKGjee5NmXfwOIMwjxM6liZSTEAXfv9ZEG2osPL+fTHf8cT1B7QNaNXleO5HLfNg1kDTuL5qmp6N7hAFVQ2bPhYFcI12XWc05a7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080352; c=relaxed/simple;
-	bh=td7khtP98l7Q2qh50OlQWBKZ7UZjfxc2FqvRip6lP7A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DATvBFFDmDkcBVJn39f2QdhzNmnrMgjyls85SgWvsWxMYg023h+JBJXcJ2kvXoU3rdIEqEkFfEKBVa8BBpZ3aREHfKRcjD9SOA9+G0p/dFWc0ByZrmS57DIDdl86hYAy0tbZboECrsigELmZMjG/K3rp79DuNfZj0l0PUygDzVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XShyaIPv; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7485bcb8b7cso3541467b3a.1;
-        Mon, 16 Jun 2025 06:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750080350; x=1750685150; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zPykcaldmChQZHEMlm465r/ktpDt3VnqSSRAnP0PM/8=;
-        b=XShyaIPvNRM8Y2D6HDn7WEJxwP5n9mFlRhyC8p+8PebSKKfpMeqOzNQJjRZWM5T8o4
-         461gTWfJEheFT/wj/aGJImHJjdrKB/HSnwrKt4kPnGwyLRXeuktLomjINshrZtReZBNY
-         2ECCht29r5fBoV4eavAt9EaH8osgTxpez08yLqFr16kAX5UKyKHwbsRxpzT/Ir/e7rKs
-         mphliHojSwAe9Sg9fFRT0w2mO619ul0jnJyVx7QOVMjaYE8xfKHSEwTVEN0XubTi12u6
-         ct5wQvmMcrO78LZZwvunIpoB0KVfyGx/EISp0yLQvpPsnBHXkb/kSP0US//Dd8gK3oFm
-         +9/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750080350; x=1750685150;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zPykcaldmChQZHEMlm465r/ktpDt3VnqSSRAnP0PM/8=;
-        b=WwnoHsHRkmrXs3ozbvJ0jvpxD4iMgnXiAsHRg1+/mTJMBCbpDvo8GJIMUteby9XGED
-         +U/5cEjLXbWt/fvFPTFmfhJdaB+uI8/Tu+LKa3gsUzhVnx7TBHMFVkuKmZCneJtq5JzC
-         DT37b2IyKk0XG2m1SqiWHnVNG06pbJdEsfR+YcH/aYs2k9PEwHsAoFw6YlHxvskGv9UJ
-         BNKdBlJ/Ab6dDpNreYPsUIlH4ge7K0QFTZ/lqvu7OfaUrxqFWlWEjzBjTXHaSh/Qp+mg
-         1LfX+aTVa5p+MGlvLV2f0Pw706TE3523tocJhI2Thwgswk859jM7wem4EUDX8qq2ltAE
-         rY2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWM4aGlMWmjNDpTrOrnGx+2rsvta5C7/41uqj3tuSmIkil+v0ADaDjPOSRUGT6bREgNrAo0+TLCbRPRBBc=@vger.kernel.org, AJvYcCX2Zome2nyOxoE4qQoMRXgp0RT/qokn61WzuiUKoetBwVcR0UJ/TE5udEC1/QPx1AmsRSbzBaby@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjBqHka7Mrm40Wq5I4kxfnCU1+48wTWIOg0xa8GimZFcg+oPSK
-	VecBoaLCnFYph7+4dU811Zy7ZInG5lO+64Oam96WFYpBAvkED9jN0tYT
-X-Gm-Gg: ASbGncsW2jQKQ3vnaoLh/ZYSJVaB6ldwsdc3uRv8Te/E+9Qv2UJBhUJfeNG/DrXgRKY
-	mFBlcCkvn/ml1EAGuSXrHfb6mU5XPdDxWu7TINnU9zA0M3k0hs+EtYa3hm3tgqvDUCdDXrzcX+A
-	o07tqC8EgWNY47EpaK1hAZW6NVyMsePu8Vjpmdlz2qZznyTPubh/nlx8gob45d8Zi4iXF88YgQd
-	TskPfNjC0iAlS9av4EWrGU6I2g0qckK7nLdTpiibEvRwTKuj/MgDdTHXDnbkFfdtv2OjsKQSWVl
-	MSKBZoxex0LX198xz+WBuy8f+NK2JS+uvhb0fvkB0e7mRpdWXxnAyUrm6zHXpGz7JUiN6g==
-X-Google-Smtp-Source: AGHT+IGGC0yG9eWTrvC96f40RZCC+M7NlH4ZHN5h3TAKdLDn6BgEURju/EiL6fGQTx8qNnzcyUZCzQ==
-X-Received: by 2002:a05:6a00:846:b0:73e:1e21:b653 with SMTP id d2e1a72fcca58-7489cf5a90fmr12310846b3a.5.1750080350538;
-        Mon, 16 Jun 2025 06:25:50 -0700 (PDT)
-Received: from localhost ([42.120.103.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488ffec9c6sm6750467b3a.9.2025.06.16.06.25.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 06:25:50 -0700 (PDT)
-From: Yuhao Jiang <danisjiang@gmail.com>
-To: ericvh@kernel.org,
-	lucho@ionkov.net,
-	asmadeus@codewreck.org
-Cc: linux_oss@crudebyte.com,
-	v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	security@kernel.org,
-	stable@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>
-Subject: [PATCH] net/9p: Fix buffer overflow in USB transport layer
-Date: Mon, 16 Jun 2025 21:25:39 +0800
-Message-ID: <20250616132539.63434-1-danisjiang@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750080392; c=relaxed/simple;
+	bh=W1ULqCjf8lfOUmBr3Wu+Ci3avbmtCxJZhQsdCwBauN4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Gvz/PWtjdoR1jjeR5ge6994fjisyqYF0LDvLtvRzgeyjM+yX4fSJKldhDnpZ4Kqg8buJ+X6xaxluOU9PFxuss+NvPXL6m+tEOrQlI3G8bospdFQlWUosAk2vD7Z46n5eJ69Jk5E26zH/U0ATWsnZG/WLtuQ6Qj/OxjGUDLAdBf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WoKnGQcE; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750080390; x=1781616390;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=W1ULqCjf8lfOUmBr3Wu+Ci3avbmtCxJZhQsdCwBauN4=;
+  b=WoKnGQcEmOCoeRDyW7m6RUcmIFk/LMv99Q2N6WTGyT4wMS1UhG/TAmfq
+   98UZYXGZh/G3UBjIJc6hmuGHK+y/BtuD+GJHuxFQ/2i0Gzt3Wb0ClrzUP
+   E18x8C6NoGmi1QrWvWUKsN/K8C0nIaUxmRJeHmor34U+7j0sJ6ewpiBxT
+   Vx0Wi0D0Mmqnp1BuP+YQVp80ymlp0goHIsQ5G38KeosKy5g+qNejC9hQE
+   qafOWZ0CpIuHfnjBn16bBXXkAVAeuC9ix+RcX5vrnQampIxDnhnMrwPnk
+   r0aDfiL/A6IqvJgZfJSR1ZDSYPInGQVTBiA7FD3WPUx36U6q5G3hUm0lk
+   A==;
+X-CSE-ConnectionGUID: l92DMQDAQXK842n4QgPt+w==
+X-CSE-MsgGUID: uQJ+HUUlRVenVVfzFtJIiw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="63255614"
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="63255614"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 06:26:29 -0700
+X-CSE-ConnectionGUID: sUy1hWcBTaOgchksDDuQnw==
+X-CSE-MsgGUID: y/Hym029QOuoVBlZiI68jA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="153426298"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.92])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 06:26:10 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Robin Murphy
+ <robin.murphy@arm.com>, Yury Norov <yury.norov@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaehoon Chung
+ <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Heiko
+ Stuebner <heiko@sntech.de>, Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang
+ <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Nicolas
+ Frattaroli <frattaroli.nicolas@gmail.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy?=
+ =?utf-8?Q?=C5=84ski?=
+ <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob
+ Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Chanwoo
+ Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-pm@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+ kernel@collabora.com, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 01/20] bitfield: introduce HWORD_UPDATE bitfield macros
+In-Reply-To: <3361713.44csPzL39Z@workhorse>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
+ <1437fe89-341b-4b57-b1fa-a0395081e941@arm.com> <aEw7LBpmkfOqZgf1@yury>
+ <3361713.44csPzL39Z@workhorse>
+Date: Mon, 16 Jun 2025 16:26:07 +0300
+Message-ID: <35d8c6372fb38f6d7e452c2e3b5a80327f20dae6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-A buffer overflow vulnerability exists in the USB 9pfs transport layer
-where inconsistent size validation between packet header parsing and
-actual data copying allows a malicious USB host to overflow heap buffers.
+On Mon, 16 Jun 2025, Nicolas Frattaroli <nicolas.frattaroli@collabora.com> wrote:
+> Hello,
+>
+> On Friday, 13 June 2025 16:52:28 Central European Summer Time Yury Norov wrote:
+>> On Fri, Jun 13, 2025 at 02:54:50PM +0100, Robin Murphy wrote:
+>> > On 2025-06-12 7:56 pm, Nicolas Frattaroli wrote:
+>> > > Hardware of various vendors, but very notably Rockchip, often uses
+>> > > 32-bit registers where the upper 16-bit half of the register is a
+>> > > write-enable mask for the lower half.
+>> > > 
+>> > > This type of hardware setup allows for more granular concurrent register
+>> > > write access.
+>> > > 
+>> > > Over the years, many drivers have hand-rolled their own version of this
+>> > > macro, usually without any checks, often called something like
+>> > > HIWORD_UPDATE or FIELD_PREP_HIWORD, commonly with slightly different
+>> > > semantics between them.
+>> > > 
+>> > > Clearly there is a demand for such a macro, and thus the demand should
+>> > > be satisfied in a common header file.
+>> > > 
+>> > > Add two macros: HWORD_UPDATE, and HWORD_UPDATE_CONST. The latter is a
+>> > > version that can be used in initializers, like FIELD_PREP_CONST. The
+>> > > macro names are chosen to not clash with any potential other macros that
+>> > > drivers may already have implemented themselves, while retaining a
+>> > > familiar name.
+>> > 
+>> > Nit: while from one angle it indeed looks similar, from another it's even
+>> > more opaque and less meaningful than what we have already. Personally I
+>> > cannot help but see "hword" as "halfword", so logically if we want 32+32-bit
+>> > or 8+8-bit variants in future those would be WORD_UPDATE() and
+>> > BYTE_UPDATE(), right? ;)
+>> > 
+>> > It's also confounded by "update" not actually having any obvious meaning at
+>> > this level without all the implicit usage context. FWIW my suggestion would
+>> > be FIELD_PREP_WM_U16, such that the reader instantly sees "FIELD_PREP with
+>> > some additional semantics", even if they then need to glance at the
+>> > kerneldoc for clarification that WM stands for writemask (or maybe WE for
+>> > write-enable if people prefer). Plus it then leaves room to easily support
+>> > different sizes (and potentially even bonkers upside-down Ux_WM variants?!)
+>> > without any bother if we need to.
+>> 
+>> I like the idea. Maybe even shorter: FIELD_PREP_WM16()?
+>> 
+>
+> I do think FIELD_PREP_WM16() is a good name. If everyone is okay with this
+> as a name, I will use it in v2 of the series. And by "everyone" I really
+> mean everyone should get their hot takes in before the end of the week,
+> as I intend to send out a v2 on either Friday or the start of next week
+> to keep the ball rolling, but I don't want to reroll a 20 patch series
+> with a trillion recipients more than is absolutely necessary.
 
-The issue occurs because:
-- usb9pfs_rx_header() validates only the declared size in packet header
-- usb9pfs_rx_complete() uses req->actual (actual received bytes) for memcpy
+I'd never guess what WM stands for in this context without looking it
+up, but I'll be happy if we have FIELD_PREP_ and 16 in there. So works
+for me.
 
-This allows an attacker to craft packets with small declared size (bypassing
-validation) but large actual payload (triggering overflow in memcpy).
+> To that end, I'd also like to get some other naming choices clarified.
+>
+> As I gathered, these two macros should best be placed in its own header.
+> Is include/linux/hw_bitfield.h a cromulent choice, or should we go with
+> include/linux/hw_bits.h?
 
-Add validation in usb9pfs_rx_complete() to ensure req->actual does not
-exceed the buffer capacity before copying data.
+I'll let y'all fight it out.
 
-Reported-by: Yuhao Jiang <danisjiang@gmail.com>
-Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
----
- net/9p/trans_usbg.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> Furthermore, should it be FIELD_PREP_WM16_CONST or FIELD_PREP_CONST_WM16?
+> I'm personally partial to the former.
 
-diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
-index 6b694f117aef..047a2862fc84 100644
---- a/net/9p/trans_usbg.c
-+++ b/net/9p/trans_usbg.c
-@@ -242,6 +242,15 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
- 	if (!p9_rx_req)
- 		return;
- 
-+	/* Validate actual received size against buffer capacity */
-+	if (req->actual > p9_rx_req->rc.capacity) {
-+		dev_err(&cdev->gadget->dev,
-+			"received data size %u exceeds buffer capacity %zu\n",
-+			req->actual, p9_rx_req->rc.capacity);
-+		p9_req_put(usb9pfs->client, p9_rx_req);
-+		return;
-+	}
-+
- 	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
- 
- 	p9_rx_req->rc.size = req->actual;
+Ditto.
+
+> And finally, is it okay if I leave out refactoring Intel's
+> _MASKED_FIELD() or should I see if I can at least replace its
+> implementation while I'm at it?
+
+I think you can just let us deal with that afterwards. You have enough
+users already.
+
+
+BR,
+Jani.
+
+
+>
+> For less opinionated changes, I'll also change all the `U` literal
+> suffixes to `UL` wherever I've added them. As I understand it, it doesn't
+> really make a difference in these instances, but `UL` is more prevalent
+> in the kernel.
+>
+> Kind regards,
+> Nicolas Frattaroli
+>
+>
+
 -- 
-2.43.0
-
+Jani Nikula, Intel
 
