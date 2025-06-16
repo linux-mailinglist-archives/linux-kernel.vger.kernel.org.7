@@ -1,145 +1,85 @@
-Return-Path: <linux-kernel+bounces-687553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325C9ADA677
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B952ADA67E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43D537A6B1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 02:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20CD13AF733
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 02:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDF728D8C0;
-	Mon, 16 Jun 2025 02:50:00 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42B228D8C0;
+	Mon, 16 Jun 2025 02:51:39 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F28AD58;
-	Mon, 16 Jun 2025 02:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C662A23AD;
+	Mon, 16 Jun 2025 02:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750042199; cv=none; b=Kurp4+1XRusrQhmGwDeI02Fo3CMl5sPsgyecljy4eFNDkgnOPQ9s9shwn5N9zrDHBDNqebDdF7jA9jjfdR4IcmE+PwErrrcy7Ba322tAvvBzYenpyjvx3HeS4o/mpkXCXx5Yx58gZ6B+tcHRby5iPcK9hs0RsYQu2PRjvaxKU3U=
+	t=1750042299; cv=none; b=EFZSLqBd4JwWRFuu8l9nZf6j3OOYGyT/QICB4bt3Qyb8CqhP6Yh5Dds142QLS7ua/5dDfmeMg3ZNSzk6NtNAegM9Li8aLxRm47NJSZksmT0XIeay6G4z7Rd5xlg97XumAof+BJ84mBp9OvKHuQXtayYKnVgPLWHPEy32rmTC8+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750042199; c=relaxed/simple;
-	bh=DYO+VmXbSPl0n+XcYwRnDBRDmHRWSTPQ63i0cRGdqws=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=WcVr4zKR9//CSfKD2lABl0QjtUhjlPikXm6uT1I458VIXVq/AfCxqJ/+fjeF0GnaoQIS3SvPujqdKuwjVkUAUJ0Xb9UG1IbEQ2RZCR3HNpMKu+iCBnXuD4EyFT8dygCXmXpgDCzZgrjupcrjlQqqZDyI5xPWjwQR3vTP0mvSVCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uQzuy-00FfCx-Fe;
-	Mon, 16 Jun 2025 02:49:52 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1750042299; c=relaxed/simple;
+	bh=t0PstE8Y3LGllZTQ5OPBIV0oLS9BFz+KoRlQLDjH+gQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=SqVSeB63ZFx9hN+cJ+Japw+aq/S97c2W3cJsXGQ1TxNtjvfLlBSI/YtqUIQT/ngcCv7Se9ZjE5BFMMweAzNT3i8sjVLBD/edDKC6/uOIRlMPUov2cWBA4FiUXKSuReMrz0B08ELb7ixtg3af7Xrcl9T38te2aE5bM1Kmk1ftvmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bLDww2wBvz1d1h9;
+	Mon, 16 Jun 2025 10:49:20 +0800 (CST)
+Received: from kwepemk200017.china.huawei.com (unknown [7.202.194.83])
+	by mail.maildlp.com (Postfix) with ESMTPS id DC557180450;
+	Mon, 16 Jun 2025 10:51:28 +0800 (CST)
+Received: from [10.174.178.219] (10.174.178.219) by
+ kwepemk200017.china.huawei.com (7.202.194.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 16 Jun 2025 10:51:27 +0800
+Subject: Re: [PATCH] virtio-crypto: Remove unused virtcrypto functions
+To: <linux@treblig.org>
+CC: <arei.gonglei@huawei.com>, <mst@redhat.com>, <jasowang@redhat.com>,
+	<xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<virtualization@lists.linux.dev>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250614000505.596563-1-linux@treblig.org>
+From: Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <16a17372-891b-28f6-b3bd-aa92b0557b90@huawei.com>
+Date: Mon, 16 Jun 2025 10:51:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Kees Cook" <kees@kernel.org>, "Joel Granados" <joel.granados@kernel.org>,
- linux-fsdevel@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH v3?] proc_sysctl: remove rcu_dereference() for accessing ->sysctl
-In-reply-to: <20250615235714.GG1880847@ZenIV>
-References: <175002843966.608730.14640390628578526912@noble.neil.brown.name>,
- <20250615235714.GG1880847@ZenIV>
-Date: Mon, 16 Jun 2025 12:49:51 +1000
-Message-id: <175004219130.608730.907040844486871388@noble.neil.brown.name>
+In-Reply-To: <20250614000505.596563-1-linux@treblig.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk200017.china.huawei.com (7.202.194.83)
 
-On Mon, 16 Jun 2025, Al Viro wrote:
-> On Mon, Jun 16, 2025 at 09:00:39AM +1000, NeilBrown wrote:
-> > 
-> > The rcu_dereference() call in proc_sys_compare() is problematic as
-> > ->d_compare is not guaranteed to be called with rcu_read_lock() held and
-> > rcu_dereference() can cause a warning when used without that lock.
-> > 
-> > Specifically d_alloc_parallel() will call ->d_compare() without
-> > rcu_read_lock(), but with ->d_lock to ensure stability.  In this case
-> > ->d_inode is usually NULL so the rcu_dereference() will normally not be
-> > reached, but it is possible that ->d_inode was set while waiting for
-> > ->d_lock which could lead to the warning.
+On 2025/6/14 8:05, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Huh?
+> virtcrypto_devmgr_get_first() and virtcrypto_dev_in_use() were added in
+> 2016 by
+> commit dbaf0624ffa5 ("crypto: add virtio-crypto driver")
 > 
-> There are two call sites of d_same_name() in d_alloc_parallel() - one
-> in the loop (under rcu_read_lock()) and another after the thing we
-> are comparing has ceased to be in-lookup.  The latter is under ->d_lock,
-> stabilizing everything (and it really can't run into NULL ->d_inode
-> for /proc/sys/ stuff).
-
-Ok, so ->d_inode will always be non-NULL here, so the rcu_dereference()
-will always cause a warning if that code is reached for a proc_sysctl dentry.
-
+> but have remained unused.
 > 
-> ->d_compare() instances are guaranteed dentry->d_lock or rcu_read_lock();
-> in the latter case we'll either recheck or validate on previously sampled
-> ->d_seq.  And the second call in d_alloc_parallel() is just that - recheck
-> under ->d_lock.
+> Remove them.
 > 
-> Just use rcu_dereference_check(...., spin_is_locked(&dentry->d_lock)) and
-> be done with that...
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/crypto/virtio/virtio_crypto_common.h |  2 --
+>  drivers/crypto/virtio/virtio_crypto_mgr.c    | 36 --------------------
+>  2 files changed, 38 deletions(-)
 
-We could - but that would be misleading.  And it would still cause a
-sparse warning because ->sysctl isn't marked __rcu.
-
-The reality is that ->sysctl does not need rcu protection.  There is no
-concurrent update except that it can be set to NULL which is pointless.
-
-For the entire public life of the inode - whenever ->d_compare could
-possibly run - there is precisely one "struct ctl_table_header"
-associated with the inode.
-
-Once we remove the unnecessary RCU_INIT_POINTER, the ->sysctl pointer is
-completely stable and not needing any protection at all.  So it would be
-misleading to leave the rcu_dereference{_check}() there.
-
-> 
-> The part where we have a somewhat wrong behaviour is not the second call
-> in d_alloc_parallel() - it's the first one.  Something like this
-> 
-> static int proc_sys_compare(const struct dentry *dentry,
-> 		unsigned int len, const char *str, const struct qstr *name)
-> {
-> 	struct ctl_table_header *head;
-> 	struct inode *inode;
-> 
-> 	if (name->len != len)
-> 		return 1;
-> 	if (memcmp(name->name, str, len))
-> 		return 1;
-> 
-> 	// false positive is fine here - we'll recheck anyway
-> 	if (d_in_lookup(dentry))
-> 		return 0;
-
-I wonder if it would be good to document that d_compare on a
-d_in_lookup() dentry will always be re-checked.  I agree this is a good
-way to avoid the possible duplicate dentries.
-
-But this is fixing a different problem than the one I'm trying to fix.
-I'm just trying to remove a possible warning and to do so in a way the
-makes the code consistent.
-
-Thanks,
-NeilBrown
-
-
-> 
-> 	inode = d_inode_rcu(dentry);
-> 	// we just might have run into dentry in the middle of __dentry_kill()
-> 	if (!inode)
-> 		return 1;
-> 	head = rcu_dereference_check(PROC_I(inode)->sysctl,
-> 				     spin_is_locked(&dentry->d_lock));
-> 	return !head || !sysctl_is_seen(head);
-> }
-> 
-
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 
