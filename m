@@ -1,56 +1,69 @@
-Return-Path: <linux-kernel+bounces-688686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57A3ADB5CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:47:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7F2ADB5D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FEAF189016D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53322188F5C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3A4283CAA;
-	Mon, 16 Jun 2025 15:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DF82853E9;
+	Mon, 16 Jun 2025 15:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYq4N3To"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsE/rIpQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F912820A7;
-	Mon, 16 Jun 2025 15:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581B71E22E9;
+	Mon, 16 Jun 2025 15:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750088732; cv=none; b=gt6d4cfT68A0PjoAraNbsPT4dyOUlKpN5LJZ3rnrUhDGqXOg8MLRlLIkTnpbEWsVpBKS1AquvIX7of0tICzgWnJcO3NjKiJOFdbyw9LO+eYRIrIozu99oUBSKwifTK/wzeY2JkSQYIgaS1v7T8bH9q9q8S+A6q1VYkxOrfivr4s=
+	t=1750088739; cv=none; b=Ph8Om0TZAdtnJ3VD2Cb2JW18J1Ils69XdPGigrLo0hUCbxAfkTQEHoN48rDtjxHbifXR16XbgS4qUkhVsoUvAXmAT/VleTZ35HEBxMQk9MqVRW9sjeoXGZ0T6KBJyNPreKZ33ll2lm1PuVw2zbYW6G/TII5q2sH1OORkbtswhGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750088732; c=relaxed/simple;
-	bh=eqJ2tUOlRedBHMVbikQn7vNqvx6tJ1bIb0c2oc4h4Tw=;
+	s=arc-20240116; t=1750088739; c=relaxed/simple;
+	bh=Phz8r6X/1/Hfio3qW3aeXo0QdX243igoFLB5Ql8EyIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mrv5FmdUUKETHNhxI1CcAAuk8BdbXuUnpa27zOJ4zzGWD3vcRJz1GFsd9RHHBdgNvVw6GErjpqmp7Mke0HivkZL7BcogSKb7exQh+nNQARLRX0bJKY9QPIBpFW219tKT+56TLJLM3N/lumjGdoQH31DuqbyR3z+OqZ0pW7Vd1xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYq4N3To; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0DC0C4CEEA;
-	Mon, 16 Jun 2025 15:45:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKQRdCGlAmfV44XUUNT+ix4My3xFWrxtvmokhOmPlzkx7/UNm+rjgI5QYdeKe/Bef33TslqA2azznUAOhcuaIK91NDPD98OYf7VwwgecBq9jLp9e1z8YgIlEKGSs+BQ+ellByj8eSJ7BJdgtv6ldgBwUWfZGny9lH1FZn+stgGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsE/rIpQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0BE0C4CEEA;
+	Mon, 16 Jun 2025 15:45:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750088732;
-	bh=eqJ2tUOlRedBHMVbikQn7vNqvx6tJ1bIb0c2oc4h4Tw=;
+	s=k20201202; t=1750088739;
+	bh=Phz8r6X/1/Hfio3qW3aeXo0QdX243igoFLB5Ql8EyIc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pYq4N3Tos+t+xCWWobu7NtpNPLamy0Su2zM4QYU7nSLMawYdD4/RxeMFgfM4dfmtw
-	 Js/SutomzUuW6mxoC5/sejZoBS5CA3OjoTRfurHpIc2kA5tBR2d/KlOquAHEFnjbat
-	 shHNUdr+KWbge266SdkeYD5U43gMLm9/8ZpjJ3vjID1U/iBsDQAIUoqhzCUvfz4frM
-	 gKMN8GL05cE2VciLKCQQs/1FpOzEiNj90+Ou7T1gvnZqXnZL6IQBuE2x35HWpS1Qbm
-	 jFo0B/a8OQmONb0+MDcxtw2dFb6sSn42B/g5ViWHmrSI2/7rgAh+K2wwxsUtH2MotX
-	 5viPbpdJNGf9A==
-Date: Mon, 16 Jun 2025 16:45:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, darren.kenny@oracle.com
-Subject: Re: [PATCH v2] selftests: nettest: Fix typo in log and error
- messages for clarity
-Message-ID: <20250616154528.GF6918@horms.kernel.org>
-References: <20250615084822.1344759-1-alok.a.tiwari@oracle.com>
+	b=RsE/rIpQgQubD9FD467llyTDjelw55TPUcdwrb3S1TXpCpXXNI43yrGPqDiR5nlqa
+	 5TaebA2IEx6SuLpxCLrzK+vChFuXE6GGqpTKbGmHVpDela40oSWhU99OzwUu1A8U2p
+	 ptnhDotPAzF1Irh4PN/v4rJURVqJYGkmrRRKP13lds41ykDKZgf4r7gi5Do6PdPXbD
+	 rfZacp+1dtK5Uq27l+OehTp3KZCDFi28e/6Zpha8lBtamt2+AJrZaCD4bHD0MrHjNc
+	 TNeuHUOHVTlHxeZz+OPK3UblpI1OCqbhTFAGFfeO+J7ndKOXZ1MeId9BrdXbWcoK4j
+	 DiE9RKF5pKoEg==
+Date: Mon, 16 Jun 2025 17:45:32 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Benno Lossin <lossin@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] rust: irq: add support for threaded IRQs and
+ handlers
+Message-ID: <aFA8HLREfMtZSh_u@pollux>
+References: <20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com>
+ <20250608-topics-tyr-request_irq-v4-4-81cb81fb8073@collabora.com>
+ <aEbTOhdfmYmhPiiS@pollux>
+ <5B3865E5-E343-4B5D-9BF7-7B9086AA9857@collabora.com>
+ <B4E43744-D3F5-4720-BC75-29C092BAF7A6@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,24 +72,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250615084822.1344759-1-alok.a.tiwari@oracle.com>
+In-Reply-To: <B4E43744-D3F5-4720-BC75-29C092BAF7A6@collabora.com>
 
-On Sun, Jun 15, 2025 at 01:48:12AM -0700, Alok Tiwari wrote:
-> This patch corrects several logging and error message in nettest.c:
-> - Corrects function name in log messages "setsockopt" -> "getsockopt".
-> - Closes missing parentheses in "setsockopt(IPV6_FREEBIND)".
-> - Replaces misleading error text ("Invalid port") with the correct
->   description ("Invalid prefix length").
-> - remove Redundant wording like "status from status" and clarifies
->   context in IPC error messages.
+On Mon, Jun 16, 2025 at 10:48:37AM -0300, Daniel Almeida wrote:
+> Hi Danilo,
 > 
-> These changes improve readability and aid in debugging test output.
+> > On 9 Jun 2025, at 13:24, Daniel Almeida <daniel.almeida@collabora.com> wrote:
+> > 
+> > Hi Danilo,
+> > 
+> >> On 9 Jun 2025, at 09:27, Danilo Krummrich <dakr@kernel.org> wrote:
+> >> 
+> >> On Sun, Jun 08, 2025 at 07:51:09PM -0300, Daniel Almeida wrote:
+> >>> +/// Callbacks for a threaded IRQ handler.
+> >>> +pub trait ThreadedHandler: Sync {
+> >>> +    /// The actual handler function. As usual, sleeps are not allowed in IRQ
+> >>> +    /// context.
+> >>> +    fn handle_irq(&self) -> ThreadedIrqReturn;
+> >>> +
+> >>> +    /// The threaded handler function. This function is called from the irq
+> >>> +    /// handler thread, which is automatically created by the system.
+> >>> +    fn thread_fn(&self) -> IrqReturn;
+> >>> +}
+> >>> +
+> >>> +impl<T: ?Sized + ThreadedHandler + Send> ThreadedHandler for Arc<T> {
+> >>> +    fn handle_irq(&self) -> ThreadedIrqReturn {
+> >>> +        T::handle_irq(self)
+> >>> +    }
+> >>> +
+> >>> +    fn thread_fn(&self) -> IrqReturn {
+> >>> +        T::thread_fn(self)
+> >>> +    }
+> >>> +}
+> >> 
+> >> In case you intend to be consistent with the function pointer names in
+> >> request_threaded_irq(), it'd need to be handler() and thread_fn(). But I don't
+> >> think there's a need for that, both aren't really nice for names of trait
+> >> methods.
+> >> 
+> >> What about irq::Handler::handle() and irq::Handler::handle_threaded() for
+> >> instance?
+> >> 
+> >> Alternatively, why not just
+> >> 
+> >> trait Handler {
+> >>  fn handle(&self);
+> >> }
+> >> 
+> >> trait ThreadedHandler {
+> >>  fn handle(&self);
+> >> }
+> >> 
+> >> and then we ask for `T: Handler + ThreadedHandler`.
+> > 
+> > Sure, I am totally OK with renaming things, but IIRC I've tried  Handler +
+> > ThreadedHandler in the past and found it to be problematic. I don't recall why,
+> > though, so maybe it's worth another attempt.
 > 
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
-> v1 ->v2
-> remove extra space
+> Handler::handle() returns IrqReturn and ThreadedHandler::handle() returns
+> ThreadedIrqReturn, which includes WakeThread, so these had to be separate
+> traits.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+Ok, that fine then. But I'd still prefer the better naming as mentioned above.
 
