@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-687871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FEBADAA47
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:08:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF8AADAA41
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019531894A92
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5919716337B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97849213E7B;
-	Mon, 16 Jun 2025 08:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C896120E315;
+	Mon, 16 Jun 2025 08:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="YRVYaOMf"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZNJaXv/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7DF211711;
-	Mon, 16 Jun 2025 08:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105B01DF759;
+	Mon, 16 Jun 2025 08:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750061271; cv=none; b=ElAeH65fn7ScdonQ9c0ZXytImU3Pu2GR97X1PmUToadfqtLalouBiOeAm5kjJoVwhL0/CdiLdOnH/MZlKyOwq4+W1skTJ/rQbilKBIq/GaAkdHhb9Ppose4Ej1jb4j1yPzFNhrPYYa7dkIwwP9EM/YgVHZk4xlIHlpMAmb7cGbY=
+	t=1750061264; cv=none; b=uGhzPz5HWkVqV9kvYw44Dh6QW18Ke8x5SwIIrVSLUxdGroOMD3Z78bHTgZOulFmTkqszGQmLDzD6gd+TgBsxK5D/DdRMKD/LhjH5jfmnAZ2BQtx5svBqZPvSgdubLK9pY1bqNkXlVhUVmvAJnWQSXxPbBhwTuOQLmr75XZAl2tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750061271; c=relaxed/simple;
-	bh=unkrt1I1aycK0USQscjU+zwYRYC1x0EAJV22XRofaLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ugwchjti/Lu0ImfJok9AK0jxYE0OgiXWRAldPShP1wrbIQa9j9V9oTDSdprdfBwipf1OcbmUaqbt15UFeN8r9TVBTClTo344OnCSD2ZChLSK6XthcW5Wr6uE8e/F18vr1D89feLKb0d7rtDA74HCc1y+XI72+SXd+GcjhEe8MZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=YRVYaOMf; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout1.routing.net (Postfix) with ESMTP id F19A93FC53;
-	Mon, 16 Jun 2025 08:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1750061267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r8f/+FnkJmV80G4mQhBXvToxseQ3gyhJ12ujdf6hNPk=;
-	b=YRVYaOMfzd+7prWkj42utAH6tzBV6u3ONURP+xaN3/DFVbAsj5qIV9Sl+/aAtzJk1+YF4E
-	xpK902rB8xQYxVHDyB1XBmFs8LjkMCEB/pQq298HcNEU1ZERLkL4YWUXnYUIuXwApbios2
-	d6HXxv8tNdhmIkUnEo5VCfYh7FNvngs=
-Received: from frank-u24.. (fttx-pool-194.15.87.210.bambit.de [194.15.87.210])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id B7F19122704;
-	Mon, 16 Jun 2025 08:07:46 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Simon Horman <horms@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	arinc.unal@arinc9.com
-Subject: [net-next v4 3/3] net: ethernet: mtk_eth_soc: change code to skip first IRQ completely
-Date: Mon, 16 Jun 2025 10:07:36 +0200
-Message-ID: <20250616080738.117993-4-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250616080738.117993-1-linux@fw-web.de>
-References: <20250616080738.117993-1-linux@fw-web.de>
+	s=arc-20240116; t=1750061264; c=relaxed/simple;
+	bh=TSsNADkDpkgz40HJTk8QPhRJ7cMeoAcVN2GUyJjB80U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KkJoBkqV6309MORuNFPXL6xM/cd4cQbbTxNVhGIo9Op0d8ogc92byAFZ2fyW/SEgtKL0d8W91owtMZm0cz8zzhncMKr0ao9TbKWUJIOQujuMf7infYVpZgtbXyqsnLuAVPxX0SvtJTYBmyei6EgweGMAN6F0hhkZ28Q4Jw8kZAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZNJaXv/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BDA5C4CEEE;
+	Mon, 16 Jun 2025 08:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750061263;
+	bh=TSsNADkDpkgz40HJTk8QPhRJ7cMeoAcVN2GUyJjB80U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iZNJaXv/ZMif7/Gm8k72eSukzHgYo7X3yFrmLLb5J4WF7iS4ej5feBfBezjdww4Pu
+	 nS92XxL+gGkthtfeJievUSrRC2w+zj8HlhMgVC/k9u07NiO4m0zFVs9OfjPPvCq8IQ
+	 HQ5O3se7Ir1O9J5zQEzzk3Jl689onhGSb5KSUK4+U7CZa02MtczaZpGA6eFoDEWx3Z
+	 waabFDZH39b0ILDLEiFLqmjnu89780jHAhiXXEsHohMciIRO6+m+9WU2AdLW5RXD4Y
+	 U0LjhMBi3G04xafT9XSkAuQ2ipEQhW7AlgDmfGztiSN3MHIxcK3L1oDBdfF9wFaxLO
+	 o5zksxeNB8QPw==
+Message-ID: <b9457391-9c09-4055-9daa-ee40c3648679@kernel.org>
+Date: Mon, 16 Jun 2025 10:07:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: gpio: gpio-xilinx: Mark clocks as
+ required property
+To: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com
+Cc: Xu Yilun <yilun.xu@intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Moritz Fischer <mdf@kernel.org>, Rob Herring <robh@kernel.org>,
+ Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ Srinivas Neeli <srinivas.neeli@amd.com>, Tom Rix <trix@redhat.com>,
+ Wu Hao <hao.wu@intel.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "moderated list:ARM/ZYNQ ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:FPGA MANAGER FRAMEWORK" <linux-fpga@vger.kernel.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <94151cfbcff5e4ae05894981c7e398b605d4b00a.1750059796.git.michal.simek@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <94151cfbcff5e4ae05894981c7e398b605d4b00a.1750059796.git.michal.simek@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On 16/06/2025 09:43, Michal Simek wrote:
+> On Microblaze platforms there is no need to handle clocks because the
+> system is starting with clocks enabled (can be described via fixed clock
+> node or clock-frequency property or not described at all).
+> With using soft IPs with SOC platforms there is mandatory to handle clocks
+> as is explained in commit 60dbdc6e08d6 ("dt-bindings: net: emaclite: Add
+> clock support").
+> That's why make clock as required in dt binding because it is present in
+> both configurations and should be described even there is no way how to
+> handle it on Microblaze systems.
+> 
+> There is also need to describe missing axi gpio clock in fpga-region.yaml
+> not to introduce new error when make dt_binding_check runs.
+> 
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> Reviewed-by: Xu Yilun <yilun.xu@intel.com> # fpga
+> ---
+> 
 
-On SoCs without MTK_SHARED_INT capability (mt7621 + mt7628) the first
-IRQ (eth->irq[0]) was read but never used. Do not read it and reduce
-the IRQ-count to 2 because of skipped index 0.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-v4:
-- drop >2 condition as max is already 2 and drop the else continue
-- update comment to explain which IRQs are taken in legacy way
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 20 ++++++++++++++++----
- drivers/net/ethernet/mediatek/mtk_eth_soc.h |  4 ++--
- 2 files changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 3ecb399dcf81..f3fcbb00822c 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -3341,16 +3341,28 @@ static int mtk_get_irqs(struct platform_device *pdev, struct mtk_eth *eth)
- {
- 	int i;
- 
-+	/* future SoCs beginning with MT7988 should use named IRQs in dts */
- 	eth->irq[MTK_ETH_IRQ_TX] = platform_get_irq_byname(pdev, "tx");
- 	eth->irq[MTK_ETH_IRQ_RX] = platform_get_irq_byname(pdev, "rx");
- 	if (eth->irq[MTK_ETH_IRQ_TX] >= 0 && eth->irq[MTK_ETH_IRQ_RX] >= 0)
- 		return 0;
- 
-+	/* legacy way:
-+	 * On MTK_SHARED_INT SoCs (MT7621 + MT7628) the first IRQ is taken from
-+	 * devicetree and used for rx+tx.
-+	 * On SoCs with non-shared IRQ the first was not used, second entry is
-+	 * TX and third is RX.
-+	 */
-+
- 	for (i = 0; i < MTK_ETH_IRQ_MAX; i++) {
--		if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT) && i > 0)
--			eth->irq[i] = eth->irq[MTK_ETH_IRQ_SHARED];
--		else
--			eth->irq[i] = platform_get_irq(pdev, i);
-+		if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT)) {
-+			if (i == 0)
-+				eth->irq[MTK_ETH_IRQ_SHARED] = platform_get_irq(pdev, i);
-+			else
-+				eth->irq[i] = eth->irq[MTK_ETH_IRQ_SHARED];
-+		} else {
-+			eth->irq[i] = platform_get_irq(pdev, i + 1);
-+		}
- 
- 		if (eth->irq[i] < 0) {
- 			dev_err(&pdev->dev, "no IRQ%d resource found\n", i);
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-index 96b724dca0e2..9d91fe721ad0 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -643,8 +643,8 @@
- #define MTK_MAC_FSM(x)		(0x1010C + ((x) * 0x100))
- 
- #define MTK_ETH_IRQ_SHARED	0
--#define MTK_ETH_IRQ_TX		1
--#define MTK_ETH_IRQ_RX		2
-+#define MTK_ETH_IRQ_TX		0
-+#define MTK_ETH_IRQ_RX		1
- #define MTK_ETH_IRQ_MAX		(MTK_ETH_IRQ_RX + 1)
- 
- struct mtk_rx_dma {
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
