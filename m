@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-688116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44391ADADD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6077ADADE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F613A6519
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B393AF81B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1FA29A9C9;
-	Mon, 16 Jun 2025 10:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D512BDC13;
+	Mon, 16 Jun 2025 11:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa/3r67e"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhflbkV1"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665620B80D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8C02641C3;
+	Mon, 16 Jun 2025 11:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750071399; cv=none; b=UN6qRY2uYAC0tftvSNXTEImKYjcvqSN0yGP8jpge7Gg1+9v4dhfc5/b/ZF+5qrZtqJP9Y4osUSwykWxFa2QcSje4KMRRotwUksihNBazzyu0pslrLxlp3sVqnWjztq41izenMq4RuDjb0mKXQYvEgHbTsDnawSfZ2CuIWe7dOz0=
+	t=1750071632; cv=none; b=DtLb8IOkNkcmU9IHOsjkvIRR3tpujZd08b2W/u9MZRCyzJUZ6TzNHlgR4G9/5mdQ70OU3N45/E9Rcbd3LnORCz2KBfvwwD4+3LQQj6dDck+pibcds9i3PVMqhI+9hB2Y/yfw/pA7IFh878afl47EyatpIzaq7soT1xeT983Ecwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750071399; c=relaxed/simple;
-	bh=CkOxFf7EE54QiWk3H3djGE1kHgl8sxStzqzBqhoUAzc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QSYcG5RhKuhYv7nZcntULPDrw0CtmwPeOYRTgWZ/VuEmdzHri0HNPzU9Bja4bxM09RMblfTPNm+uA7VIwaDSZxm03vJqgOOI8hrGYge/dPCcrCxbnwYoFwuK/uz3sTFctpvqTwCxi01Ii5LuXHZ+VlkM8tK3P34X/YqaskBpgyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa/3r67e; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1750071632; c=relaxed/simple;
+	bh=6z9NzNvBj8ioUHa19DGKBiny64vYpDpgrxx9Br4X40Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B1D3ezryo3Z+TKzLl9F94CNRqcXcC1ZVK0RakvsQxxilkP167X6teO6m2jgb7SPx5uWXUEtnUZxNZC0t2PYWTECM5DXbgtaIhfAypwa5b9r2rItSWKbP+U3iInYjxuunSY2Bi9TMd+Fli75+yQYIIyQW9ghJ4I3h+vYIFjEQTtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhflbkV1; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235ef62066eso64507735ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 03:56:37 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453442d3a15so1293385e9.0;
+        Mon, 16 Jun 2025 04:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750071397; x=1750676197; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750071629; x=1750676429; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BdDBWycVFIVV412Xw0TdxhPfgA72SVqwCO00BmRsjEc=;
-        b=Wa/3r67eAb/TEy3tbu3GEtPAd9ywP/Nyv7tqvpQY37812UIoLbL1bCu4h6EN0O7d4l
-         3xDwBF8ZH1FnX+LK4BCeg/7sdX1EHtdG1X4V13UynGpKwIM7xgrCW/fH6U53XqEXQoJZ
-         V+4Sd93vp7VRnj3WvjHkE3TsXbe32gD0Ze7o7MS6LUF9XY9QyIsLFGlTCHcQF/IiZIOt
-         r1JJRNNGR3rGIEgteGip54/NbaRX5pIyR4ceRvOskk0WjDM2AvqcbViEksl8bAaIvkYk
-         GWLZTbHckks8l4DJPasepAOl4dqWYNMErcW67YwHCAVq3W6vNka3JlwjGOUZ10D1GDAG
-         W4SA==
+        bh=9bqiSrhoIiWXRKRJpyDH6Ku/AH8RgOghRxqamwLvyLU=;
+        b=mhflbkV1n88kH3b68ibPeEBd4okzurc+4MKAc1s5yR/2xBSJd3T78mgoeAyp0qmrZT
+         kMQfK15rrfIHT2W6MzQzf/5r5M/Y9KHLIsvOyfQaVNM9UatrWMmVNTFegti7rmpF3+xq
+         ei+0/EyEhanj1P8rogYoR2busborb08fXJXOh90CptqIcy2a/JYFBKYpeUDrBWAvl0s2
+         oLCkoX34fvlmRx5ToPqaegESRKGcFeEISaUo8yl3nFQIoXOcKwmmGGUUz5n7dp62wmpN
+         tgqOa2twM1YdcJD21enBga7MOIjVkG0D01Y9R5Ar5KnCe+JabnUeEu66QHBEzRJ85iJE
+         sfBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750071397; x=1750676197;
+        d=1e100.net; s=20230601; t=1750071629; x=1750676429;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BdDBWycVFIVV412Xw0TdxhPfgA72SVqwCO00BmRsjEc=;
-        b=JX+MfcWd3FeigPOXdByp88q+tyMY9NmmiB3AhssnAZr9/Ug6yR3n9pnhiFdQ8ISDKG
-         huAWneRD+E4xpcQ1p9wDH90Ox98CZcj2gQvbmgC9vFOZ2pollO9MBH+abpVU5a4Spf7K
-         hVTdmt0FH3SeSyGB2TuGiMWUFXkQrPTyhyRhYAqr5O40TM2pDqhnJDzd5k0KXOeA0Ven
-         mY7qTYKjQF/RpemzI/Gy1dHtJs/YMomrFtO4LoLoZJ2YIdvoh7WXQhDPOG53no3hklKP
-         CrvopLkTATE83chQMf1zY+n3WDiJmMbGpeh2FAsgv4dnH4V9l3JC2BlF7YbNX3iiC5fa
-         JHvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVONK8QKZgyYPJGbx24YgAlu1IxnvimgtM8Tan566fFpatlNLh4k46qU5nxScfWUXEDAzWph+vqBAsibwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmXZijbFNiHRmK/gYDwM3Q5EB/8eP/qWaCnjHrKciLz1jBM4Yt
-	rYPXY5bgvEd+t0VzKYtcaMHHqFIXyrgU9ZIFFOHenAzvsRbjUNqdWQ8j
-X-Gm-Gg: ASbGncvQRG6Wd3fe/UcNo5N828QrBJyE7C7n4qNfgBzP/awZUDIR3+tw2WJcSMZC7lf
-	tkOowA7RgR7BUVkDx8U2byjXgmYpIY9fhFzNkWqDDRK8aLUxqyfXveLEq2HbCG6R7PBU9tpqik+
-	vKz/Lu/a0ONo/nU723fD7CslyDB1iGxgjNAruj6gweaKun929dnPiQSHkwTHpp9tISCUK/C1TRt
-	5p0QwKgbp9JBDHqym7DLJF0hcgOaCl4lXiOTAyix1Jm56PLvxkffJ0SO7BmDBf9wKOC6hvZA39P
-	1Lxdyv+7wfQfdg/crnKhZG8adrKUtXCmBBileDnQbNPq/gEq3vdIgr+2Ml6aAG3Broc4DzUOfgw
-	A/5J7nbQXPPLO1VKYtA==
-X-Google-Smtp-Source: AGHT+IHbTcVdwxhdfcP798T6pP1VsYxzzYGaXdvIwkCmRvnp/SY1JJEv6fQ/wVRyxzqBhML+XIv4lg==
-X-Received: by 2002:a17:902:ce81:b0:234:f1ac:c036 with SMTP id d9443c01a7336-2366b40b7c2mr115347415ad.50.1750071396733;
-        Mon, 16 Jun 2025 03:56:36 -0700 (PDT)
-Received: from manjaro.domain.name ([2401:4900:1c68:884c:5800:7324:c411:408d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deaaa15sm58456615ad.173.2025.06.16.03.56.33
+        bh=9bqiSrhoIiWXRKRJpyDH6Ku/AH8RgOghRxqamwLvyLU=;
+        b=QkJ/q3+p3QfsmpwJEY/wHdfYxzkPezll/2kMhRku7xgc2wVj3fANGgHr2G9tHrQTr5
+         kpYP6/EPgvmwKcp6M9PiiGtIypdaLkcu6vaC83IerhpHouSrN616jWqHj7twBDEE37cQ
+         f3ElINEn8JeiUUOenU32Qrs4MQ0cDLWHt2Grqui5fErOmyjVYaeYEwICdiDCcW0eBt24
+         9CJHmqHdpoDSFoA99AwiziipgufipVp0/QpZ6uvH18uWt/KWln0qL+OM7E+c/0vN/TwA
+         8Odopn2C6oDk5HQolrkwUR0fvaOveNBHlygDncpVy6eMJYw0hsQ7CV0bHlcH+W2V7cun
+         ppSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtN6PXHfWr23YDr1THV/WUrKZ2zBUYPVCOOp8zOE0GXhSbVpuBX9GDFfpj8XNK7KPCZOO7eE8YWsovHow=@vger.kernel.org, AJvYcCWF8XR5ps2kIKe+5IBqaJ1XJDDIpbg4/E9rcwgBGPGJYQ3JyKYiB3RCEoHRyo5fP/+mQv72eb2cobWjuF/fSSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdbKyyEPqRzSEXVXQKwtwnj4vK+fBJuK8okHlvblwNTBkbMz+C
+	LtB/3GCiSpgN31VydpukoNha+Tbti3GPivekOCO4pK+fqr4PKRFGBDQU//weScPC
+X-Gm-Gg: ASbGncsbEGOhgQQBdgpIAhQ7fgVX1TiTWo/hpBcmw3+eFYf5hthHIyTWk+gFwF58srF
+	l904K7ji3WMI7BFZoZ8+w4hfcF4NLfZJPCeXxwoIL2OgSnLJ5QzyRsGZ337FLOGT8Dt1JDLb27s
+	FRsYp81+qMtxa7UtQ+FMYrUoNat65FFWaDZ2mHYA1C0sovr5CRb/sgHuqCO/IEHkPXCSPHrJ2Bg
+	pxTYejUf0kALYFeyuQD9wwf0porM8dvJgiIAN9GfW0Y5IqkEh1Oz5FWgHuTnmmwM07Xl2fwpXOA
+	bNuaW8BX5PRDDPDg/VrMuYT6b9GFvCKQ2zx7WJpKqI/u/kMrQPLDfm/K4CvIDyV9pJ6REDMTGp6
+	FCNDk6FRQxRkG5hmLJo34E90v2JiPNtUDWx2toJeyz/N0E80BOrybo05dcz+dgrZc0N1+zqdmbu
+	M=
+X-Google-Smtp-Source: AGHT+IFP6IfBMjPk0Sy/UFfTQ8tgtMlunh5jZblveLko5YxX6LY6VgpRrVA339mdGWac2iuKaZopLg==
+X-Received: by 2002:a05:600c:35cc:b0:451:df07:f41e with SMTP id 5b1f17b1804b1-4533ca4d6bfmr28881245e9.1.1750071628498;
+        Mon, 16 Jun 2025 04:00:28 -0700 (PDT)
+Received: from thomas-precision3591.home (2a01cb00014ec30071b84413be10a7ee.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:71b8:4413:be10:a7ee])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453421fe188sm67869595e9.5.2025.06.16.04.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 03:56:36 -0700 (PDT)
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-To: agruenba@redhat.com
-Cc: skhan@linuxfoundation.org,
-	gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>
-Subject: [PATCH] fs/gfs2: use scnprintf() in show functions
-Date: Mon, 16 Jun 2025 16:26:26 +0530
-Message-ID: <20250616105626.372040-1-pranav.tyagi03@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Mon, 16 Jun 2025 04:00:28 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH rtw-next] wifi: rtlwifi: fix possible skb memory leak in `_rtl_pci_rx_interrupt()`.
+Date: Mon, 16 Jun 2025 12:56:30 +0200
+Message-ID: <20250616105631.444309-4-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,94 +89,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace all snprintf() instances with scnprintf(). snprintf() returns
-the number of bytes that would have been written had there been enough
-space. For sysfs attributes, snprintf() should not be used with the
-show() method. Instead use scnprintf() which returns the number of bytes
-actually written.
+The function `_rtl_pci_init_one_rxdesc()` can fail even when the new
+`skb` is passed because of a DMA mapping error.  If it fails, the `skb`
+is not saved in the rx ringbuffer and thus lost.
 
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Compile tested only
+
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 ---
- fs/gfs2/sys.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/pci.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
-index c3c8842920d2..25c1d71359ed 100644
---- a/fs/gfs2/sys.c
-+++ b/fs/gfs2/sys.c
-@@ -59,7 +59,7 @@ static struct kset *gfs2_kset;
- 
- static ssize_t id_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%u:%u\n",
-+	return scnprintf(buf, PAGE_SIZE, "%u:%u\n",
- 			MAJOR(sdp->sd_vfs->s_dev), MINOR(sdp->sd_vfs->s_dev));
- }
- 
-@@ -68,7 +68,7 @@ static ssize_t status_show(struct gfs2_sbd *sdp, char *buf)
- 	unsigned long f = sdp->sd_flags;
- 	ssize_t s;
- 
--	s = snprintf(buf, PAGE_SIZE,
-+	s = scnprintf(buf, PAGE_SIZE,
- 		     "Journal Checked:          %d\n"
- 		     "Journal Live:             %d\n"
- 		     "Journal ID:               %d\n"
-@@ -140,7 +140,7 @@ static ssize_t status_show(struct gfs2_sbd *sdp, char *buf)
- 
- static ssize_t fsname_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%s\n", sdp->sd_fsname);
-+	return scnprintf(buf, PAGE_SIZE, "%s\n", sdp->sd_fsname);
- }
- 
- static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
-@@ -150,7 +150,7 @@ static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
- 	buf[0] = '\0';
- 	if (uuid_is_null(&s->s_uuid))
- 		return 0;
--	return snprintf(buf, PAGE_SIZE, "%pUB\n", &s->s_uuid);
-+	return scnprintf(buf, PAGE_SIZE, "%pUB\n", &s->s_uuid);
- }
- 
- static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
-@@ -158,7 +158,7 @@ static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
- 	struct super_block *sb = sdp->sd_vfs;
- 	int frozen = (sb->s_writers.frozen == SB_UNFROZEN) ? 0 : 1;
- 
--	return snprintf(buf, PAGE_SIZE, "%d\n", frozen);
-+	return scnprintf(buf, PAGE_SIZE, "%d\n", frozen);
- }
- 
- static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -194,7 +194,7 @@ static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
- static ssize_t withdraw_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	unsigned int b = gfs2_withdrawing_or_withdrawn(sdp);
--	return snprintf(buf, PAGE_SIZE, "%u\n", b);
-+	return scnprintf(buf, PAGE_SIZE, "%u\n", b);
- }
- 
- static ssize_t withdraw_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -626,7 +626,7 @@ static struct attribute *lock_module_attrs[] = {
- 
- static ssize_t quota_scale_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%u %u\n",
-+	return scnprintf(buf, PAGE_SIZE, "%u %u\n",
- 			sdp->sd_tune.gt_quota_scale_num,
- 			sdp->sd_tune.gt_quota_scale_den);
- }
-@@ -679,7 +679,7 @@ static struct gfs2_attr tune_attr_##name = __ATTR(name, 0644, show, store)
- #define TUNE_ATTR_2(name, store)                                              \
- static ssize_t name##_show(struct gfs2_sbd *sdp, char *buf)                   \
- {                                                                             \
--	return snprintf(buf, PAGE_SIZE, "%u\n", sdp->sd_tune.gt_##name);      \
-+	return scnprintf(buf, PAGE_SIZE, "%u\n", sdp->sd_tune.gt_##name);     \
- }                                                                             \
- TUNE_ATTR_3(name, name##_show, store)
- 
+diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wireless/realtek/rtlwifi/pci.c
+index 472072630f8d..d080469264cf 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/pci.c
++++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
+@@ -805,13 +805,19 @@ static void _rtl_pci_rx_interrupt(struct ieee80211_hw *hw)
+ 		skb = new_skb;
+ no_new:
+ 		if (rtlpriv->use_new_trx_flow) {
+-			_rtl_pci_init_one_rxdesc(hw, skb, (u8 *)buffer_desc,
+-						 rxring_idx,
+-						 rtlpci->rx_ring[rxring_idx].idx);
++			if (!_rtl_pci_init_one_rxdesc(hw, skb, (u8 *)buffer_desc,
++						      rxring_idx,
++						      rtlpci->rx_ring[rxring_idx].idx)) {
++				if (new_skb)
++					dev_kfree_skb_any(skb);
++			}
+ 		} else {
+-			_rtl_pci_init_one_rxdesc(hw, skb, (u8 *)pdesc,
+-						 rxring_idx,
+-						 rtlpci->rx_ring[rxring_idx].idx);
++			if (!_rtl_pci_init_one_rxdesc(hw, skb, (u8 *)pdesc,
++						      rxring_idx,
++						      rtlpci->rx_ring[rxring_idx].idx)) {
++				if (new_skb)
++					dev_kfree_skb_any(skb);
++			}
+ 			if (rtlpci->rx_ring[rxring_idx].idx ==
+ 			    rtlpci->rxringcount - 1)
+ 				rtlpriv->cfg->ops->set_desc(hw, (u8 *)pdesc,
 -- 
-2.49.0
+2.43.0
 
 
