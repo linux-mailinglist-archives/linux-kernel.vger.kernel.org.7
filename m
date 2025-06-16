@@ -1,580 +1,213 @@
-Return-Path: <linux-kernel+bounces-687847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECABADA9F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B290FADA9FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A214B188AF04
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330543AC551
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD051FF7DC;
-	Mon, 16 Jun 2025 07:57:06 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232C6211479;
+	Mon, 16 Jun 2025 07:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="muqwbZSK"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010043.outbound.protection.outlook.com [52.101.84.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFFD101FF
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750060625; cv=none; b=gxce4R4hrEn5FLMbwkQnKCbLqrzWQhNvdikIMqHlJstYyUFNpys74OY0jJvohTLQpRSk87mPQqGuufFz53lErcvKFrfzGooh9OHUeGWInk60W56Cr56DBSw+hJr0dwaFB+Nu6+26m9Cwk2i4rvi7gfVZDO2an6K6JwCp5McweGI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750060625; c=relaxed/simple;
-	bh=+M677mgd/sSsdVkhH54Lqj1MBC357vHJ5VTrVt2r70o=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gOHnUuG2umdymAflHDW2/+S4X6ssvsz+dJ48BTzfENF9+zWMbPql9gf7ORSNJaVU9iUc3UZQwMPjJpR5s/oI3IYD1498k/yIzwOKhmISBr93o8ATdCEeDsgiJ3GySgr9SWdqf+B6knC6NBqQ3rdeCt/L3CLWIyQVxZTS/M5gD0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bLMjQ39Hlz1d1gq;
-	Mon, 16 Jun 2025 15:54:50 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 36B5F1402F3;
-	Mon, 16 Jun 2025 15:56:59 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 16 Jun 2025 15:56:59 +0800
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 16 Jun 2025 15:56:58 +0800
-CC: Ali Saidi <alisaidi@amazon.com>, Leo Yan <leo.yan@linaro.org>, Will Deacon
-	<will@kernel.org>, James Morse <james.morse@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Jinqian Yang <yangjinqian1@huawei.com>, "Douglas
- Anderson" <dianders@chromium.org>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, "Ian
- Rogers" <irogers@google.com>, James Clark <james.clark@linaro.org>, Jiri Olsa
-	<jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim
-	<namhyung@kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Shameerali Kolothum Thodi
-	<shameerali.kolothum.thodi@huawei.com>, Yicong Yang
-	<yangyicong@hisilicon.com>
-Subject: Re: perf usage of arch/arm64/include/asm/cputype.h
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <aEyGg98z-MkcClXY@x1>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <1762acd6-df55-c10b-e396-2c6ed37d16c1@huawei.com>
-Date: Mon, 16 Jun 2025 15:56:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21322040B6;
+	Mon, 16 Jun 2025 07:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750060641; cv=fail; b=fKtn1Fquj00j4yefyqJSpDXkoMqk2WZ11G5FYKKaRvGk5m+v3Uu+iZUZ577ssT4CaENgqcc2a1OrzDHWdqS3IYbKpTVWwpTd9WqeC+3OQj9G9mw8Hq9A0m28QIl05fCDx11oWCSogokP3XYFJX6WKb6e4bc12lk60iKBHyK/E1A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750060641; c=relaxed/simple;
+	bh=kgLVRavYalV0EGgrAwT/18x+npqJ4KaDeaw3sllHNeA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=iPivNWIEqgo8OIVo6r6snB4SwgQ6POwi+jl41KkCXcuT9JFjqTouCi9hGTkiNqDgjwsf8EfPVkL7XSya0E+RTa0hQ/oljPehiFNocgdvNczGt+ThlASgzjTy2G9wQoKuCmMVC168FIey7SqBVogc7d/SI3UJITgfPxkOkWEkQis=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=muqwbZSK; arc=fail smtp.client-ip=52.101.84.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TFPjGjtPmY+CmesjWL0dZDcguFqtC2KB8EacPAFizw6kH1EwPmlqybSqLFKlNk40DMeJL40vPoFlXVj75XWikRo/Pj5Rj6mEomWNUWQdCZjxUfCI6ybwubJJYV0dkEGgehMmManLQERZL/9974urwZmDciBi0MMLBiPkC3VHez5FTq6gfEUeUJZ3UzAJ8lUhOB8ljfARGctn47YR7s/cYqw/zifxe6ezE7xpVgLycPr7zmHa9xZYBdC53/cc3/oMHv3Su6GZGG5eNTvqyxfj8yfCbiwtBCZsvlCAuvKX+E+b4/naOwQnhuztmaSl+XyNaCg2a++E9Nc3Utz45win4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CVUsI5a+TvWIMYjUb0bRNUkBeZO499jcYSIFcViURkw=;
+ b=dZfKVusdidPFUWoBtm0/b7oKdheN6heexPzS8foDVe0JYZpItuSD11OmP9DrjeGETLP5Rogy14GBuDsG4TCKeNuMjNn/m7UWLNlwdKH6KufGCkqnZ+k/8u4I0UODHqJQ4wKkVid6CjPuOk4tdltJQ1qyr1E6TCLooHRNH+eiVdeAz1PQXYTldXzoieKClaWC3C71Gah/t45d8HMjZogobbBWT93F6YzyeaYoBof95DOyCrAXcjFFkNGwWp6tBE3wkRTcGm79Zpvi87cmRbKvHAsXAxAgtk6QtojZZQ1oVo/UwH9s+3oYrfK5Di2DupxNN7y0kYefKKilCcTeMlX7sA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=gmail.com smtp.mailfrom=axis.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CVUsI5a+TvWIMYjUb0bRNUkBeZO499jcYSIFcViURkw=;
+ b=muqwbZSK78ghSq2hPZyfTK5b8vJk9kW0trQG+7f8NN0IWv4XSna7JRuCJ/Xx1E30bMve9fsNJI1Oszdzx97LfSIXSeSsFNkfa46QQlokdllbh8Mu8N8NlN9wwgNbPVW65ZCRhxI4K528ekpiL2b/+EN4ETIWMu9hxWPqp12IG2I=
+Received: from AS9PR06CA0159.eurprd06.prod.outlook.com (2603:10a6:20b:45c::26)
+ by AS8PR02MB8493.eurprd02.prod.outlook.com (2603:10a6:20b:541::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
+ 2025 07:57:15 +0000
+Received: from AM1PEPF000252DD.eurprd07.prod.outlook.com
+ (2603:10a6:20b:45c:cafe::6b) by AS9PR06CA0159.outlook.office365.com
+ (2603:10a6:20b:45c::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.25 via Frontend Transport; Mon,
+ 16 Jun 2025 07:57:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM1PEPF000252DD.mail.protection.outlook.com (10.167.16.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8835.15 via Frontend Transport; Mon, 16 Jun 2025 07:57:15 +0000
+Received: from SE-MAILARCH01W.axis.com (10.20.40.15) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 16 Jun
+ 2025 09:57:10 +0200
+Received: from se-mail01w.axis.com (10.20.40.7) by SE-MAILARCH01W.axis.com
+ (10.20.40.15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 16 Jun
+ 2025 09:57:10 +0200
+Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 16 Jun 2025 09:57:10 +0200
+Received: from pc51235-2237.se.axis.com (pc51235-2237.se.axis.com [10.96.29.3])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 1101A258B;
+	Mon, 16 Jun 2025 09:57:10 +0200 (CEST)
+Received: by pc51235-2237.se.axis.com (Postfix, from userid 3319)
+	id 0CF0F411E6D2; Mon, 16 Jun 2025 09:57:10 +0200 (CEST)
+From: Johan Adolfsson <johan.adolfsson@axis.com>
+Subject: [PATCH v5 0/2] leds-lp50xx: Support reg to set multi_index.
+Date: Mon, 16 Jun 2025 09:57:07 +0200
+Message-ID: <20250616-led-fix-v5-0-f59c740831ab@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aEyGg98z-MkcClXY@x1>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFPOT2gC/13O3wqCMBQG8FeRXbeY58/UrnqP6GLOmYPKcCFF+
+ O5NgxzeHPgO5/dxPiK4wbsgDtlHDG70wff3GHiXCduZ+8VJ38QsQAErAJZX18jWvyQRtTUTcUl
+ GxOvH4OJ6aTqdY+58ePbDeyke83n762Cl/x1jLnPJ2mBVM5uitUfz8mFv+5uYK0ZIGMDKQCqpG
+ RRpBHQWNwxThivDyErdgK7UPMoNo5QlT1JkiEjcakumSNk0TV9N2oxjQgEAAA==
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, Jacek Anaszewski
+	<jacek.anaszewski@gmail.com>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, Johan Adolfsson <johan.adolfsson@axis.com>,
+	<kernel@axis.com>
+X-Mailer: b4 0.13.0
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM1PEPF000252DD:EE_|AS8PR02MB8493:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7434294a-80b1-4b02-51c0-08ddacab68b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d2NJOHZ3dy9PVmovcEpzM3dlR0RiQk9NT0JPbXRQemRZUWRFajNiaFpxQ1ZB?=
+ =?utf-8?B?bk1wMXgycWdzM3M3MG93VWZyOHc0a3lxZkpQeS9UdmkwaHliRmhFbHNMVkpY?=
+ =?utf-8?B?alZPaUs3ZTlLZDhNOHZ0bVJvZzIvQno5UDVCRmRuMGdhQXIxdWJqb2F3UzFP?=
+ =?utf-8?B?dDVMR0xXV09MQWZSQjBxQ05Ubk94RWY2TkZ1UzVPd2lCWlVnZTgyT3hUTDBQ?=
+ =?utf-8?B?aEdadTh5TkIrbllwN1huRi9Ubi8xeTJORGFKM1JuTUJWUktkTWtBKzlZNUVy?=
+ =?utf-8?B?alNwb0R6NlE4YkhHZE1nSUFXd3FRLzB4VGMrelRzSDNhZlFsR3RyZUFTa3pk?=
+ =?utf-8?B?akpjU2RheVN3WHJDSnArNHlwbVhBVmZZcGYySkFuV0dTRHk1RFFBQlA4OFlC?=
+ =?utf-8?B?QXBGL292dDBoYjVjejRLY0Q5UWVqaTQ2QXNvck1FcGcydlhDajJHOWVPVnVp?=
+ =?utf-8?B?Qzd5bUhmOFJPT1QxY0t4Uy8ycFA4VzJWc2hTaVhsRWVsSVpPQzF3UjVDSS84?=
+ =?utf-8?B?bWZ3eDhFVHAreTRTbkhxajd3Qjg5dmZ3dE5RTzN3MTJ1RElNZFk4ZFpsRmNZ?=
+ =?utf-8?B?d1MxcXBxaUVONEJhY25veEh1LzczaEUvMlFYTm81WmR3OXZaL0REa2RRaXZP?=
+ =?utf-8?B?TURzV3g1eGxYYjZzeWpXVHV5bENEVW5kSXd2bjAyMm50dE0xa2JKWk11TUpO?=
+ =?utf-8?B?YmZ4TWxKSVlnUVBzYTRDZSsyT3BINDR4dC9qcnRpMUdNL3FoMFdzOFZMa0xo?=
+ =?utf-8?B?dUZvYlZ6blk1QmNrN1VWWDUrNHJjc1grM2RoNWpNaXhTT3B5b1JjZ3JsbWFW?=
+ =?utf-8?B?YVpYMmpYSFFXd1JvVStIMVoxNGJKMHZyZGF4ZmpmSEZWYWdtZyt0c0NkQ1Ri?=
+ =?utf-8?B?bkJLMGVxZnJBbFN4UnV0UjBZUlBzanh6VUxZV0ExYy9FR3hxL1pnek5ia0M1?=
+ =?utf-8?B?WUF0dzA2V1dJNnNuZlpXSUF6THM4bXZuV3BRNjBDZnBlU0JCVUM5K0RwcDcx?=
+ =?utf-8?B?UEZmSlZPTlZKYjRCN1JKemw1UWZvV3ZSdm90K2hEY3hZZEpOZXFMUHRyTWN5?=
+ =?utf-8?B?LzB0ZDcvUmhGczVVS0d4VFVRSzd3dXQwME9kdmR1QzJhMld4TXlWbGdib29r?=
+ =?utf-8?B?M0x0OWh2c2JiN2RtMGVoa0NsV0sxdFhVSDdIaDlDSDg5WlozdUI4S2EvRE1U?=
+ =?utf-8?B?YzB2a0UvQll0MXU0cGk2bVN1K1NucU5sNFphQ3NnQWplM0ppUzB1YTRTRjd1?=
+ =?utf-8?B?VGkreUJwUHVwcGozanA1WjNTZzNhL2FwSmJPdnRkM0pYS2tvUFppK0EvZ3gv?=
+ =?utf-8?B?cHBTeEFJYkErRmpESHlDZ0tSR1lYazcyaUZoMDR2WS9uV0FHb2pKLzYxWmdM?=
+ =?utf-8?B?YnZGblBaNkY2VENUVE81NGNNSFQ3eGdzT1A0bExXS0tpYnZlRjE4b0JmNXRn?=
+ =?utf-8?B?dFp1ODNYSW5PNXVUZUkzMjNPSTNlN1dtL2ZlSUFER3d5a1N3em1RRms1Sk1B?=
+ =?utf-8?B?U1pZWVFkZkR5VEcwang5dktsbXEzUS9XZjRxZzluZktmMzkyR2tNYWkraVJG?=
+ =?utf-8?B?NFJKS2pyR3VHOXE1QVg5OEhLVnd2czhrMXkwb3h3S2NrL3MxQ0NoT2xGcnZF?=
+ =?utf-8?B?M1NnZjkyZTc4U0ZJZWo3azJSTWdJYWRPWmxkWkRxbEZwVUN1UEY3bHQ5YjhK?=
+ =?utf-8?B?TWM0aUVNTng1YzNCQ0x4RWlKSnhVSU43N1hlSWoyNklwa0Q5QmZVVjI4ZGh3?=
+ =?utf-8?B?alVvdlJhSWVIK0NOanF2YThNZGptbHBVdVpDV3pveURTQU4zaStNd1Fnb1E5?=
+ =?utf-8?B?a1o3SlJGWnY2dEpXZEc2TFczL284VzZWQjdwUG1yYSsrK0JmYnFjb21GNnhT?=
+ =?utf-8?B?akIrWmZpbmJjTzFBTnBsUStyYmNuU1ZiZ05mTGRHU3BGbGcxQm0wcXZRMFFG?=
+ =?utf-8?B?TjZVY0p3Z1JUZC9rVUhlUWx0YlBURTB3Y2pxKzZNaTVLZkVwTCsyRHkyNnVR?=
+ =?utf-8?B?dXhBdXZ5ZFQ1TGdDaHRneThuMU5BNmx2Ynl4S2I5bG1HTU1jYlBXZ25HSTBB?=
+ =?utf-8?Q?e138ol?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 07:57:15.2365
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7434294a-80b1-4b02-51c0-08ddacab68b8
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM1PEPF000252DD.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB8493
 
-+ linux-arm-kernel
+Since devicetree nodes are (sometimes?) processed in reverse order,
+support reg as the actual multi_index index so yo get well defined
+color order presented in the multi_index file.
+Not sure if reusing reg for this is the correct way or if another
+property such as "multi_index" or similar should be used instead.
+Looks like reg is used for similar things at least.
+Or should the whole "reverse the devicetree" problem be fixed instead?
+Update bindings to match implementation, and add description for the
+reg property.
 
-On 2025/6/14 4:13, Arnaldo Carvalho de Melo wrote:
-> Hi,
-> 
-> tools/perf (and other tools/ living code) uses a file from the kernel, a
-> copy, so that we don't break its build when something changes in the
-> kernel that tooling uses.
-> 
-> There is this tools/perf/check-headers.sh that does the "copy coherency
-> check", while trying to act on such a warning I stumbled on the report
-> below.
-> 
-> More details at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
-> 
-> 
-> If you could please take a look at this that would be great, the initial
-> copy was made at:
-> 
-> commit 1314376d495f2d79cc58753ff3034ccc503c43c9
-> Author: Ali Saidi <alisaidi@amazon.com>
-> Date:   Thu Mar 24 18:33:20 2022 +0000
-> 
->     tools arm64: Import cputype.h
->     
->     Bring-in the kernel's arch/arm64/include/asm/cputype.h into tools/
->     for arm64 to make use of all the core-type definitions in perf.
->     
->     Replace sysreg.h with the version already imported into tools/.
->     
->     Committer notes:
->     
->     Added an entry to tools/perf/check-headers.sh, so that we get notified
->     when the original file in the kernel sources gets modified.
->     
->     Tester notes:
->     
->     LGTM. I did the testing on both my x86 and Arm64 platforms, thanks for
->     the fixing up.
->     
->     Signed-off-by: Ali Saidi <alisaidi@amazon.com>
->     Tested-by: Leo Yan <leo.yan@linaro.org>
-> 
-> - Arnaldo
-> 
-> ⬢ [acme@toolbx perf-tools]$ m
-> rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
-> make: Entering directory '/home/acme/git/perf-tools/tools/perf'
->   BUILD:   Doing 'make -j32' parallel build
-> Warning: Kernel ABI header differences:
->   diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
->   diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
-> 
-> Auto-detecting system features:
-> ...                                   libdw: [ on  ]
-> ...                                   glibc: [ on  ]
-> ...                                  libelf: [ on  ]
-> ...                                 libnuma: [ on  ]
-> ...                  numa_num_possible_cpus: [ on  ]
-> ...                                 libperl: [ on  ]
-> ...                               libpython: [ on  ]
-> ...                               libcrypto: [ on  ]
-> ...                             libcapstone: [ on  ]
-> ...                               llvm-perf: [ on  ]
-> ...                                    zlib: [ on  ]
-> ...                                    lzma: [ on  ]
-> ...                               get_cpuid: [ on  ]
-> ...                                     bpf: [ on  ]
-> ...                                  libaio: [ on  ]
-> ...                                 libzstd: [ on  ]
-> 
->   INSTALL libsubcmd_headers
->   INSTALL libperf_headers
->   INSTALL libapi_headers
->   INSTALL libsymbol_headers
->   INSTALL libbpf_headers
->   INSTALL binaries
->   INSTALL tests
->   INSTALL libperf-jvmti.so
->   INSTALL libexec
->   INSTALL perf-archive
->   INSTALL perf-iostat
->   INSTALL perl-scripts
->   INSTALL python-scripts
->   INSTALL dlfilters
->   INSTALL perf_completion-script
->   INSTALL perf-tip
-> make: Leaving directory '/home/acme/git/perf-tools/tools/perf'
->  18: 'import perf' in python                                         : Ok
-> ⬢ [acme@toolbx perf-tools]$ cp arch/arm64/include/asm/cputype.h tools/arch/arm64/include/asm/cputype.h
-> ⬢ [acme@toolbx perf-tools]$ m
-> rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
-> make: Entering directory '/home/acme/git/perf-tools/tools/perf'
->   BUILD:   Doing 'make -j32' parallel build
-> Warning: Kernel ABI header differences:
->   diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
-> 
-> Auto-detecting system features:
-> ...                                   libdw: [ on  ]
-> ...                                   glibc: [ on  ]
-> ...                                  libelf: [ on  ]
-> ...                                 libnuma: [ on  ]
-> ...                  numa_num_possible_cpus: [ on  ]
-> ...                                 libperl: [ on  ]
-> ...                               libpython: [ on  ]
-> ...                               libcrypto: [ on  ]
-> ...                             libcapstone: [ on  ]
-> ...                               llvm-perf: [ on  ]
-> ...                                    zlib: [ on  ]
-> ...                                    lzma: [ on  ]
-> ...                               get_cpuid: [ on  ]
-> ...                                     bpf: [ on  ]
-> ...                                  libaio: [ on  ]
-> ...                                 libzstd: [ on  ]
-> 
->   INSTALL libsubcmd_headers
->   INSTALL libperf_headers
->   INSTALL libapi_headers
->   INSTALL libsymbol_headers
->   INSTALL libbpf_headers
->   CC      /tmp/build/perf-tools/util/arm-spe.o
-> util/arm-spe.c: In function ‘arm_spe__synth_ds’:
-> util/arm-spe.c:885:43: error: passing argument 1 of ‘is_midr_in_range_list’ makes pointer from integer without a cast [-Wint-conversion]
->   885 |                 if (is_midr_in_range_list(midr, data_source_handles[i].midr_ranges)) {
->       |                                           ^~~~
->       |                                           |
->       |                                           u64 {aka long unsigned int}
-> In file included from util/arm-spe.c:37:
-> util/../../arch/arm64/include/asm/cputype.h:306:53: note: expected ‘const struct midr_range *’ but argument is of type ‘u64’ {aka ‘long unsigned int’}
->   306 | bool is_midr_in_range_list(struct midr_range const *ranges);
->       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-> util/arm-spe.c:885:21: error: too many arguments to function ‘is_midr_in_range_list’; expected 1, have 2
->   885 |                 if (is_midr_in_range_list(midr, data_source_handles[i].midr_ranges)) {
->       |                     ^~~~~~~~~~~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> util/../../arch/arm64/include/asm/cputype.h:306:6: note: declared here
->   306 | bool is_midr_in_range_list(struct midr_range const *ranges);
->       |      ^~~~~~~~~~~~~~~~~~~~~
-> make[4]: *** [/home/acme/git/perf-tools/tools/build/Makefile.build:85: /tmp/build/perf-tools/util/arm-spe.o] Error 1
-> make[3]: *** [/home/acme/git/perf-tools/tools/build/Makefile.build:142: util] Error 2
-> make[2]: *** [Makefile.perf:798: /tmp/build/perf-tools/perf-util-in.o] Error 2
-> make[1]: *** [Makefile.perf:290: sub-make] Error 2
-> make: *** [Makefile:119: install-bin] Error 2
-> make: Leaving directory '/home/acme/git/perf-tools/tools/perf'
-> ⬢ [acme@toolbx perf-tools]$ 
-> 
-> 
-
-The changes should be introduced by arm64's errata management on live migration[1], specifically:
-- commit e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVIDR internally")
-  which changed the implementation of is_midr_in_range() that the MIDR to
-  test is always read on the current CPU. This isn't true in perf since
-  the MIDR is acquired from the perf.data.
-- commit c8c2647e69be ("arm64: Make  _midr_in_range_list() an exported function")
-  which moves the implementation out of the header file.
-
-Below patch should keep the copy coherency of cputype.h to implement the _midr_in_range_list()
-as before.
-
-[1] https://lore.kernel.org/all/20250221140229.12588-1-shameerali.kolothum.thodi@huawei.com/
-
-Thanks.
-
-From 44900e7d3d9fa34c817396275f55a2aab611cd32 Mon Sep 17 00:00:00 2001
-From: Yicong Yang <yangyicong@hisilicon.com>
-Date: Mon, 16 Jun 2025 15:18:11 +0800
-Subject: [PATCH] arm64: cputype: Allow copy coherency on cputype.h between
- tools/ and arch/
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-arch/arm64/include/asm/cputype.h is copied from arch/arm64 and used
-by perf to parsing vendor specific SPE packets according to the MIDR.
-The header diverge after errata management handling for VM live
-migration merged [1]:
-- commit e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVIDR internally")
-  which changed the implementation of is_midr_in_range() that the MIDR to
-  test is always read on the current CPU. This isn't true in perf since
-  the MIDR is acquired from the perf.data.
-- commit c8c2647e69be ("arm64: Make  _midr_in_range_list() an exported function")
-  which moves the implementation out of the header file.
-
-In order to allow copy coherency on cputype.h [2], implement
-is_midr_in_range_list() as before [1]. Introduce is_cpuid_in_range_list()
-for kernel space to test the MIDR of current running CPU is within the
-target MIDR ranges. Move cpu_errata_set_target_impl() and
-is_cpuid_in_range_list() to cpufeature.h since they're only used by
-errata management in the kernel space and don't needed by tools/.
-
-No funtional changes intended.
-
-[1] https://lore.kernel.org/all/20250221140229.12588-1-shameerali.kolothum.thodi@huawei.com/
-[2] https://lore.kernel.org/lkml/aEyGg98z-MkcClXY@x1/#t
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
 ---
- arch/arm64/include/asm/cpufeature.h           | 11 +++++
- arch/arm64/include/asm/cputype.h              | 40 +++++++++++--------
- arch/arm64/kernel/cpu_errata.c                | 30 +++++---------
- arch/arm64/kernel/cpufeature.c                |  6 +--
- arch/arm64/kernel/proton-pack.c               | 20 +++++-----
- arch/arm64/kvm/vgic/vgic-v3.c                 |  2 +-
- drivers/clocksource/arm_arch_timer.c          |  2 +-
- .../coresight/coresight-etm4x-core.c          |  2 +-
- 8 files changed, 60 insertions(+), 53 deletions(-)
+Changes in v5:
+- Fail if reg is not set.
+- Adjust devicetree schema, use items.
+- Link to v4: https://lore.kernel.org/r/20250526-led-fix-v4-0-33345f6c4a78@axis.com
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index c4326f1cb917..ba2d474fb393 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -1048,6 +1048,17 @@ static inline bool cpu_has_lpa2(void)
- #endif
- }
+Changes in v4:
+- Remove maxItems from devicetree schema, not compatible with minimum
+  and maximum.
+- Link to v3: https://lore.kernel.org/r/20250523-led-fix-v3-0-86d2690d2698@axis.com
 
-+struct target_impl_cpu {
-+	u64 midr;
-+	u64 revidr;
-+	u64 aidr;
-+};
-+
-+bool cpu_errata_set_target_impl(u64 num, void *impl_cpus);
-+
-+/* Different from is_midr_in_range() on using the MIDR of current CPU */
-+bool is_cpuid_in_range_list(struct midr_range const *ranges);
-+
- #endif /* __ASSEMBLY__ */
+Changes in v3:
+- Update To and Cc.
+- Rephrase bindings descriptions, add constraints.
+- Link to v2: https://lore.kernel.org/r/20250522-led-fix-v2-0-652046323ec3@axis.com
 
- #endif
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 661735616787..89fd197e2f03 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -251,16 +251,6 @@
+Changes in v2:
+- Avoid duplicate assignment. dev_err and return -EINVAL on error.
+- Update bindings doc.
+- Link to v1: https://lore.kernel.org/r/20250506-led-fix-v1-1-56a39b55a7fc@axis.com
 
- #define read_cpuid(reg)			read_sysreg_s(SYS_ ## reg)
+---
+Johan Adolfsson (2):
+      leds: leds-lp50xx: Handle reg to get correct multi_index
+      dt-bindings: leds: lp50xx: Document child reg, fix example
 
--/*
-- * The CPU ID never changes at run time, so we might as well tell the
-- * compiler that it's constant.  Use this function to read the CPU ID
-- * rather than directly reading processor_id or read_cpuid() directly.
-- */
--static inline u32 __attribute_const__ read_cpuid_id(void)
--{
--	return read_cpuid(MIDR_EL1);
--}
--
- /*
-  * Represent a range of MIDR values for a given CPU model and a
-  * range of variant/revision values.
-@@ -296,14 +286,30 @@ static inline bool midr_is_cpu_model_range(u32 midr, u32 model, u32 rv_min,
- 	return _model == model && rv >= rv_min && rv <= rv_max;
- }
+ .../devicetree/bindings/leds/leds-lp50xx.yaml        | 20 ++++++++++++++------
+ drivers/leds/leds-lp50xx.c                           | 11 ++++++++++-
+ 2 files changed, 24 insertions(+), 7 deletions(-)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250225-led-fix-444fb544584a
 
--struct target_impl_cpu {
--	u64 midr;
--	u64 revidr;
--	u64 aidr;
--};
-+static inline bool is_midr_in_range(u32 midr, struct midr_range const *range)
-+{
-+	return midr_is_cpu_model_range(midr, range->model,
-+				       range->rv_min, range->rv_max);
-+}
-
--bool cpu_errata_set_target_impl(u64 num, void *impl_cpus);
--bool is_midr_in_range_list(struct midr_range const *ranges);
-+static inline bool
-+is_midr_in_range_list(u32 midr, struct midr_range const *ranges)
-+{
-+	while (ranges->model)
-+		if (is_midr_in_range(midr, ranges++))
-+			return true;
-+	return false;
-+}
-+
-+/*
-+ * The CPU ID never changes at run time, so we might as well tell the
-+ * compiler that it's constant.  Use this function to read the CPU ID
-+ * rather than directly reading processor_id or read_cpuid() directly.
-+ */
-+static inline u32 __attribute_const__ read_cpuid_id(void)
-+{
-+	return read_cpuid(MIDR_EL1);
-+}
-
- static inline u64 __attribute_const__ read_cpuid_mpidr(void)
- {
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 59d723c9ab8f..531ae67c7086 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -27,38 +27,28 @@ bool cpu_errata_set_target_impl(u64 num, void *impl_cpus)
- 	return true;
- }
-
--static inline bool is_midr_in_range(struct midr_range const *range)
-+bool is_cpuid_in_range_list(struct midr_range const *ranges)
- {
-+	u32 midr = read_cpuid_id();
- 	int i;
-
- 	if (!target_impl_cpu_num)
--		return midr_is_cpu_model_range(read_cpuid_id(), range->model,
--					       range->rv_min, range->rv_max);
-+		return is_midr_in_range_list(midr, ranges);
-
--	for (i = 0; i < target_impl_cpu_num; i++) {
--		if (midr_is_cpu_model_range(target_impl_cpus[i].midr,
--					    range->model,
--					    range->rv_min, range->rv_max))
-+	for (i = 0; i < target_impl_cpu_num; i++)
-+		if (is_midr_in_range_list(midr, ranges))
- 			return true;
--	}
--	return false;
--}
-
--bool is_midr_in_range_list(struct midr_range const *ranges)
--{
--	while (ranges->model)
--		if (is_midr_in_range(ranges++))
--			return true;
- 	return false;
- }
--EXPORT_SYMBOL_GPL(is_midr_in_range_list);
-+EXPORT_SYMBOL_GPL(is_cpuid_in_range_list);
-
- static bool __maybe_unused
- __is_affected_midr_range(const struct arm64_cpu_capabilities *entry,
- 			 u32 midr, u32 revidr)
- {
- 	const struct arm64_midr_revidr *fix;
--	if (!is_midr_in_range(&entry->midr_range))
-+	if (!is_midr_in_range(midr, &entry->midr_range))
- 		return false;
-
- 	midr &= MIDR_REVISION_MASK | MIDR_VARIANT_MASK;
-@@ -92,7 +82,7 @@ is_affected_midr_range_list(const struct arm64_cpu_capabilities *entry,
- 			    int scope)
- {
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
--	return is_midr_in_range_list(entry->midr_range_list);
-+	return is_cpuid_in_range_list(entry->midr_range_list);
- }
-
- static bool __maybe_unused
-@@ -244,7 +234,7 @@ has_neoverse_n1_erratum_1542419(const struct arm64_cpu_capabilities *entry,
- 	const struct midr_range range = MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1);
-
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
--	return is_midr_in_range(&range) && has_dic;
-+	return is_cpuid_in_range_list(&range) && has_dic;
- }
-
- static const struct midr_range impdef_pmuv3_cpus[] = {
-@@ -276,7 +266,7 @@ static bool has_impdef_pmuv3(const struct arm64_cpu_capabilities *entry, int sco
- 	if (pmuver != ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
- 		return false;
-
--	return is_midr_in_range_list(impdef_pmuv3_cpus);
-+	return is_cpuid_in_range_list(impdef_pmuv3_cpus);
- }
-
- static void cpu_enable_impdef_pmuv3_traps(const struct arm64_cpu_capabilities *__unused)
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index b34044e20128..e89bed0e7358 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1807,7 +1807,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
- 	char const *str = "kpti command line option";
- 	bool meltdown_safe;
-
--	meltdown_safe = is_midr_in_range_list(kpti_safe_list);
-+	meltdown_safe = is_cpuid_in_range_list(kpti_safe_list);
-
- 	/* Defer to CPU feature registers */
- 	if (has_cpuid_feature(entry, scope))
-@@ -1877,7 +1877,7 @@ static bool has_nv1(const struct arm64_cpu_capabilities *entry, int scope)
-
- 	return (__system_matches_cap(ARM64_HAS_NESTED_VIRT) &&
- 		!(has_cpuid_feature(entry, scope) ||
--		  is_midr_in_range_list(nv1_ni_list)));
-+		  is_cpuid_in_range_list(nv1_ni_list)));
- }
-
- #if defined(ID_AA64MMFR0_EL1_TGRAN_LPA2) && defined(ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_LPA2)
-@@ -2082,7 +2082,7 @@ static bool cpu_has_broken_dbm(void)
- 		{},
- 	};
-
--	return is_midr_in_range_list(cpus);
-+	return is_cpuid_in_range_list(cpus);
- }
-
- static bool cpu_can_use_dbm(const struct arm64_cpu_capabilities *cap)
-diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-index edf1783ffc81..144441ad2aed 100644
---- a/arch/arm64/kernel/proton-pack.c
-+++ b/arch/arm64/kernel/proton-pack.c
-@@ -172,7 +172,7 @@ static enum mitigation_state spectre_v2_get_cpu_hw_mitigation_state(void)
- 		return SPECTRE_UNAFFECTED;
-
- 	/* Alternatively, we have a list of unaffected CPUs */
--	if (is_midr_in_range_list(spectre_v2_safe_list))
-+	if (is_cpuid_in_range_list(spectre_v2_safe_list))
- 		return SPECTRE_UNAFFECTED;
-
- 	return SPECTRE_VULNERABLE;
-@@ -331,7 +331,7 @@ bool has_spectre_v3a(const struct arm64_cpu_capabilities *entry, int scope)
- 	};
-
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
--	return is_midr_in_range_list(spectre_v3a_unsafe_list);
-+	return is_cpuid_in_range_list(spectre_v3a_unsafe_list);
- }
-
- void spectre_v3a_enable_mitigation(const struct arm64_cpu_capabilities *__unused)
-@@ -475,7 +475,7 @@ static enum mitigation_state spectre_v4_get_cpu_hw_mitigation_state(void)
- 		{ /* sentinel */ },
- 	};
-
--	if (is_midr_in_range_list(spectre_v4_safe_list))
-+	if (is_cpuid_in_range_list(spectre_v4_safe_list))
- 		return SPECTRE_UNAFFECTED;
-
- 	/* CPU features are detected first */
-@@ -864,7 +864,7 @@ static bool is_spectre_bhb_safe(int scope)
- 	if (scope != SCOPE_LOCAL_CPU)
- 		return all_safe;
-
--	if (is_midr_in_range_list(spectre_bhb_safe_list))
-+	if (is_cpuid_in_range_list(spectre_bhb_safe_list))
- 		return true;
-
- 	all_safe = false;
-@@ -917,17 +917,17 @@ static u8 spectre_bhb_loop_affected(void)
- 		{},
- 	};
-
--	if (is_midr_in_range_list(spectre_bhb_k132_list))
-+	if (is_cpuid_in_range_list(spectre_bhb_k132_list))
- 		k = 132;
--	else if (is_midr_in_range_list(spectre_bhb_k38_list))
-+	else if (is_cpuid_in_range_list(spectre_bhb_k38_list))
- 		k = 38;
--	else if (is_midr_in_range_list(spectre_bhb_k32_list))
-+	else if (is_cpuid_in_range_list(spectre_bhb_k32_list))
- 		k = 32;
--	else if (is_midr_in_range_list(spectre_bhb_k24_list))
-+	else if (is_cpuid_in_range_list(spectre_bhb_k24_list))
- 		k = 24;
--	else if (is_midr_in_range_list(spectre_bhb_k11_list))
-+	else if (is_cpuid_in_range_list(spectre_bhb_k11_list))
- 		k = 11;
--	else if (is_midr_in_range_list(spectre_bhb_k8_list))
-+	else if (is_cpuid_in_range_list(spectre_bhb_k8_list))
- 		k =  8;
-
- 	return k;
-diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
-index b9ad7c42c5b0..852f8d769244 100644
---- a/arch/arm64/kvm/vgic/vgic-v3.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3.c
-@@ -632,7 +632,7 @@ static const struct midr_range broken_seis[] = {
- static bool vgic_v3_broken_seis(void)
- {
- 	return ((kvm_vgic_global_state.ich_vtr_el2 & ICH_VTR_EL2_SEIS) &&
--		is_midr_in_range_list(broken_seis));
-+		is_cpuid_in_range_list(broken_seis));
- }
-
- /**
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 981a578043a5..c881ceb76ec2 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -842,7 +842,7 @@ static u64 __arch_timer_check_delta(void)
- 		{},
- 	};
-
--	if (is_midr_in_range_list(broken_cval_midrs)) {
-+	if (is_cpuid_in_range_list(broken_cval_midrs)) {
- 		pr_warn_once("Broken CNTx_CVAL_EL1, using 31 bit TVAL instead.\n");
- 		return CLOCKSOURCE_MASK(31);
- 	}
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 42e5d37403ad..2ea5ca6708d2 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -1280,7 +1280,7 @@ static void etm4_fixup_wrong_ccitmin(struct etmv4_drvdata *drvdata)
- 	 * recorded value for 'drvdata->ccitmin' to workaround
- 	 * this problem.
- 	 */
--	if (is_midr_in_range_list(etm_wrong_ccitmin_cpus)) {
-+	if (is_cpuid_in_range_list(etm_wrong_ccitmin_cpus)) {
- 		if (drvdata->ccitmin == 256)
- 			drvdata->ccitmin = 4;
- 	}
+Best regards,
 -- 
-2.24.0
-
+Johan Adolfsson <johan.adolfsson@axis.com>
 
 
