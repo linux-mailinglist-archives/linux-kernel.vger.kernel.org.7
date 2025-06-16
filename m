@@ -1,125 +1,104 @@
-Return-Path: <linux-kernel+bounces-687985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC90BADABDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:25:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0E2ADABB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB431892930
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:25:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A54A7A71B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527CA2749EE;
-	Mon, 16 Jun 2025 09:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5ZCpChom"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B84273804;
+	Mon, 16 Jun 2025 09:22:33 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A5A2741DF;
-	Mon, 16 Jun 2025 09:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993874A33;
+	Mon, 16 Jun 2025 09:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750065838; cv=none; b=rSTkvExBuOFyAwi7T/ke1JcDzFneWapaXZbNitCob5Gf6B5J8bcnvuxN0EAqrdPm4dfg33trhvdgKvenLpyn0rpYICvOHmuztyIyKyk3W1A8MESbZeVxbOusitIfvvcx/6yh5sahptPJAx9ytTYJyBo+aW66NZu7TIQdPumKZaU=
+	t=1750065753; cv=none; b=dITGGBEFByWs2w79Uvdl8GqE6FyiQpmEha91EqIqK7/3Gl9r0XPXeBJgu2C9IBdvXrbMv/Sny5xoAoqtGS+Z2KYBS6u+sEt9eOnMr9Iar8m9xVsRFONkF4Xv4PtroDDdg7BSZzsdol/0hjiXrAS+fhW2WA5XhcEc4A6zn94yEtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750065838; c=relaxed/simple;
-	bh=/NuocV6DaBQUjlKq/ncv6IUkpl7Y4xbpuZPctAEcTI8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nSGbik5Rpb5h8q4OsHm1MD8TC8kiIc+OeTkFN9VUXqWA8oa3NnKYkGJzQYkwGtLxGefYgdm6hXQ6MnpKvdX1v8v7jFMzpeW+fyeLKDo8pfYGaXsx80gVdEUIaihpiILyfMqkMdxAyP8HqyoY4UvHZadw1pYwBgQiU14dh2XppPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5ZCpChom; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G8ZTHg015551;
-	Mon, 16 Jun 2025 11:23:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	D7+OvSwoVVqlTBMuJc+wtSrz4tCpMidCNQSt7hN5EuU=; b=5ZCpChomjD8v6Dpd
-	BSAnGf7q4nAfcJfY0pqThRSytnvP2fFHENUwg0vr3dxsvaVgbeNxpOAaUuImM9BY
-	qSWd3CqntARsHX30eJ3Ane5ZfwcUVL3HYKX1NIaVEZNpka9fWSEDjKT78jN0LTTp
-	uQI+B3+uej8gnHaAEeNuUs9S4E6VnZSbHPOB21jt7VlaTvJy5xlIVBWl77UobqCv
-	s+R+jwlJrszondh2KF7jTv4/6Dym+dtjvWtuNGqXyp41HhCPgbvtFV8gSe+eDixl
-	7Cmft5m2p4g2E3RAemd847tDRuVFcJu4nVLHtC0W5PQQJ2Ixav6ImSrj/Yj8lwjb
-	+RbWaQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47afw1g9hw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 11:23:43 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5BAD04004F;
-	Mon, 16 Jun 2025 11:22:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2068AA7D8DB;
-	Mon, 16 Jun 2025 11:21:12 +0200 (CEST)
-Received: from localhost (10.252.14.42) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Jun
- 2025 11:21:11 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Mon, 16 Jun 2025 11:21:07 +0200
-Subject: [PATCH 6/6] dt-bindings: spi: stm32: deprecate `st,spi-midi-ns`
- property
+	s=arc-20240116; t=1750065753; c=relaxed/simple;
+	bh=sj0mm9m1O/8U8lkwTNwKNR/K+6FyXlt+/zWXc6yk2UM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=S9IQYM5vM4iXjgVpfRs/oypLpNRiO1CI0/xAubPoj5dmBjFJWGfGkI+sH6ibXjksqXNzvTz46IOw9kJpY/t4299hP2Dajh5X4uXdI+3ndRFkYbz7NpQ1NlegjzHkYiU/j63MV4NOfcMS2oaBfGpkcXqRjsjbRG63lk6zWk/Exv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 55G9LOLC071378;
+	Mon, 16 Jun 2025 17:21:24 +0800 (+08)
+	(envelope-from Zhengxu.Zhang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bLPYW2Cy6z2P49JG;
+	Mon, 16 Jun 2025 17:18:07 +0800 (CST)
+Received: from BJMBX01.spreadtrum.com (10.0.64.7) by BJMBX01.spreadtrum.com
+ (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 16 Jun
+ 2025 17:21:23 +0800
+Received: from BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7]) by
+ BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7%16]) with mapi id
+ 15.00.1497.048; Mon, 16 Jun 2025 17:21:22 +0800
+From: =?utf-8?B?5byg5pS/5petIChaaGVuZ3h1IFpoYW5nKQ==?=
+	<Zhengxu.Zhang@unisoc.com>
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
+        Cixi Geng
+	<cixi.geng@linux.dev>,
+        "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?546L55qTIChIYW9faGFvIFdhbmcp?= <Hao_hao.Wang@unisoc.com>,
+        =?utf-8?B?5byg5pS/5petIChaaGVuZ3h1IFpoYW5nKQ==?= <Zhengxu.Zhang@unisoc.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGV4ZmF0OiBmZGF0YXN5bmMgZmxhZyBzaG91bGQg?=
+ =?utf-8?B?YmUgc2FtZSBsaWtlIGdlbmVyaWNfd3JpdGVfc3luYygp?=
+Thread-Topic: [PATCH] exfat: fdatasync flag should be same like
+ generic_write_sync()
+Thread-Index: AQHb3CvF3g+Nw35RCU+Et+rOGeRoJrQA2ySngASsErA=
+Date: Mon, 16 Jun 2025 09:21:22 +0000
+Message-ID: <ebba6e12af06486cafa5e16a284b7d7e@BJMBX01.spreadtrum.com>
+References: <20250613062339.27763-1-cixi.geng@linux.dev>
+ <PUZPR04MB6316E8048064CB15DACDDE1B8177A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB6316E8048064CB15DACDDE1B8177A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250616-spi-upstream-v1-6-7e8593f3f75d@foss.st.com>
-References: <20250616-spi-upstream-v1-0-7e8593f3f75d@foss.st.com>
-In-Reply-To: <20250616-spi-upstream-v1-0-7e8593f3f75d@foss.st.com>
-To: Alain Volmat <alain.volmat@foss.st.com>, Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Valentin Caron <valentin.caron@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Erwan Leray <erwan.leray@foss.st.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>
-CC: <linux-spi@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_04,2025-06-13_01,2025-03-28_01
+X-MAIL:SHSQR01.spreadtrum.com 55G9LOLC071378
 
-The vendor `st,spi-midi-ns` property is no longer needed and
-has been deprecated in favor of a generic solution.
-
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-index 8fc17e16efb2..8b6e8fc009db 100644
---- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-@@ -115,6 +115,7 @@ properties:
-     maxItems: 4
- 
-   st,spi-midi-ns:
-+    deprecated: true
-     description: |
-       Only for STM32H7, (Master Inter-Data Idleness) minimum time
-       delay in nanoseconds inserted between two consecutive data frames.
-
--- 
-2.43.0
-
+DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IFl1ZXpoYW5nLk1vQHNv
+bnkuY29tIDxZdWV6aGFuZy5Nb0Bzb255LmNvbT4NCj4g5Y+R6YCB5pe26Ze0OiAyMDI15bm0Nuac
+iDEz5pelIDE4OjE0DQo+IOaUtuS7tuS6ujogQ2l4aSBHZW5nIDxjaXhpLmdlbmdAbGludXguZGV2
+PjsgbGlua2luamVvbkBrZXJuZWwub3JnOw0KPiBzajE1NTcuc2VvQHNhbXN1bmcuY29tDQo+IOaK
+hOmAgTogbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
+cm5lbC5vcmc7IOW8oOaUv+aXrQ0KPiAoWmhlbmd4dSBaaGFuZykgPFpoZW5neHUuWmhhbmdAdW5p
+c29jLmNvbT4NCj4g5Li76aKYOiBSZTogW1BBVENIXSBleGZhdDogZmRhdGFzeW5jIGZsYWcgc2hv
+dWxkIGJlIHNhbWUgbGlrZSBnZW5lcmljX3dyaXRlX3N5bmMoKQ0KPiANCj4gDQo+IA0KPiA+IGdl
+bmVyaWNfZmlsZV93cml0ZV9pdGVyKCksIHdoZW4gY2FsbGluZyBnZW5lcmljX3JpdGVfc3luYygp
+IGFuZA0KPiANCj4gcy9fcml0ZS9fd3JpdGUNCj4NCkkgd2lsbCBmaXggdGhpcyBieSBuZXh0IHBh
+dGNoLg0KPiA+IC0tLSBhL2ZzL2V4ZmF0L2ZpbGUuYw0KPiA+ICsrKyBiL2ZzL2V4ZmF0L2ZpbGUu
+Yw0KPiA+IEBAIC02MjUsNyArNjI1LDcgQEAgc3RhdGljIHNzaXplX3QgZXhmYXRfZmlsZV93cml0
+ZV9pdGVyKHN0cnVjdCBraW9jYiAqaW9jYiwNCj4gc3RydWN0IGlvdl9pdGVyICppdGVyKQ0KPiA+
+DQo+ID4gICAgICAgIGlmIChpb2NiX2lzX2RzeW5jKGlvY2IpICYmIGlvY2ItPmtpX3BvcyA+IHBv
+cykgew0KPiA+ICAgICAgICAgICAgICAgICBzc2l6ZV90IGVyciA9IHZmc19mc3luY19yYW5nZShm
+aWxlLCBwb3MsIGlvY2ItPmtpX3BvcyAtIDEsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBpb2NiLT5raV9mbGFncyAmIElPQ0JfU1lOQyk7DQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAoaW9jYi0+a2lfZmxhZ3MgJiBJT0NCX1NZTkMpID8gMCA6IDEpOw0K
+PiANCj4gSG93IGFib3V0IGNhbGxpbmcgZ2VuZXJpY193cml0ZV9zeW5jKCkgaW5zdGVhZCBvZiB2
+ZnNfZnN5bmNfcmFuZ2UoKSwgbGlrZSBpbg0KPiBnZW5lcmljX2ZpbGVfd3JpdGVfaXRlcigpPw0K
+VGhlIHNlY29uZCBhcmcgb2YgdmZzX2ZzeW5jX3JhbmdlICJwb3MiIG1heWJlIGNoYW5nZWQgYnkg
+dmFsaWRfc2l6ZSAoaWYgcG9zID4gdmFsaWRfc2l6ZSkuIA0KSXQgY2FuIG5vdCByZXBsYWNlIGJ5
+IGlvY2ItPmtpX3BvcyAtIHJldCAocmV0IGJ5IF9fZ2VuZXJpY19maWxlX3dyaXRlX2l0ZXIpLg0K
+U28gY3VycmVudCB3YXkgbWF5YmUgYmV0dGVyLg0K
 
