@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-688647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E14ADB541
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:25:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19CDADB551
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41193A6228
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF2BF7ABFA7
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A27274653;
-	Mon, 16 Jun 2025 15:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCD625A33A;
+	Mon, 16 Jun 2025 15:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QrrFgB9+"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D3C241685
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="N2uGulhZ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8911F0995;
+	Mon, 16 Jun 2025 15:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750087496; cv=none; b=nvlSEU6UtYEyUwU3jUAQT+fxPa6mKuFxm8dpbtjezxSrheXOf/abythNQlzDbQ/I+koNTzR/iSyOTq60cjqXlDcdi/YzZ/xnVazPTjE/WuaeBwNSyNNk78DDcowid8CvJyD+N3ItDoHRYi2aQC/x1Gc/Ns+8X4zB85BPTk3P2lY=
+	t=1750087538; cv=none; b=DJQhn06rDs393eEl3TjyzqzLzc6yeeai7AFGhtUgyvMwMeDgYFMueVTsq/g44wchGdbCsdB/nFeKhcE0laukmynq5Em5PqwKwoJriUoTc2EY/I7vwOc0yaGlj5W0Cu1wqnGv5J6Lsw9m9ABhruF11ZnvVEpHCXDvXYaoD7ElWto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750087496; c=relaxed/simple;
-	bh=c1fcbRjJ58/n6v45d0hGUAr9YIahYT5F9yuooQ1PvsY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E3VFXVh2+AVuKTvD8ZUkkpIAtUzlJUqF8JL7g1tDMTLFsk0H8xtGLSqEY2SMHqoJ0scXxO2e5NyWuLqcIJx5xji7tWD7XC2ylpTvSb6MB0Hsk/xJmIa7YCKe+4cNEOM+py32lNqvx1Z2vjt43p3IA4VSEoSx6IlNArO7ciBYJHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QrrFgB9+; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-551ed563740so5034868e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:24:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750087492; x=1750692292; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HLP+dzsQogEKVLSLXZuJGypFkFhYImTXNZozm06VbFk=;
-        b=QrrFgB9+kDog4SRjcMILPaD4HjBq5Q9dZHK3GtCw60wU4Ox5V9zKi5h5jqIyXoKMEr
-         3dHVwKo3gIT17kbw4bQQllfbOUaYL9yfmw/717k/9yxoYuJxMAm33Hg1yTeQaXO9uUs0
-         7yyCWQMSoAgM4RZDXlPZkAXCkCSpqGzBHbueQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750087492; x=1750692292;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HLP+dzsQogEKVLSLXZuJGypFkFhYImTXNZozm06VbFk=;
-        b=wDdUTNIFs4UcaTVQh/tC8ugov9w+viQbrVLIbiM+We2h7ghP+CTPOpMj82NFgxigQS
-         UaiysLrsUQfIjoJw1mJrLN2Ncjm81aGlgshiiCjcJ2PdXpMhXkVQNQXO5oqqAe4EwzGj
-         Dd9yhBGKTp4CRixab9HLe7utcp4ZnV+VjB585fhUR73kUPoUvtyq57VDaUbWSqKhpYz+
-         z/9reeF4A+zR0oDAsPJ3Gu/wDuWG94lO78y0td/OeJFfN23jKrbW+ce62y0NjauSsycI
-         OK/4RCWitfuGhcDbHMfGyG/6bxYB5ixfc93GhIcCjBG1zEav85/CzkIEP56z206S6jNA
-         bf1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAuZAtsGb/qyu2QViKjREZXNMDI+MmfWRBjneyz8PVflNZ5BsEtHVwLKcNk1sBNKuDtKAoKm3txsp71ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxETEZjSz/pEjdr1yX99MHc3p+yhlqS4WPWh8Xwf7jU6Bhj4WVN
-	lJ+I/8r1+Qb3gXPMVKH8Dhw6o8x1cyzSUVjV2w+yUnAQgdGZK+zt0gElynguwwBu5b2MXXuWZ6A
-	dD7fGsA==
-X-Gm-Gg: ASbGncsGW65wFFEfEqRWNY8eNqE6L+8GhljUDvZnVn9vEamC+RUaQ5VRwmqpLYhLQbK
-	og2Eu+5IyHA2XGM4QHd/0LJNB6eZlZq6SsXBVdTn44ULBPpM64YcoVhekgyLNtKrmwb21XcQh0A
-	mNK6dUf2Xn64t9UjwExQt/bn3xf3MkrDGlns5sffNpim+N42r/aPQe3b74nU6HdVkaC77VqzH4e
-	9TTN0Pe9rCRI3tdnBk7WQAYMVAFRvjOaNl0LCCScVjvyFB6nxkiHoN535wlYMtMZENeokauj/C1
-	eZ6C6s66secMYaREFsUxqgYsVAc7azZ9cfYBxHBS/BnqSqolCL/iGS0KMFkDJPnxIEHQKdrbUFH
-	B3sbDW4UWbAMNX0E0LCJaB75x5yaz7ykbHSfqPEw9jA==
-X-Google-Smtp-Source: AGHT+IHwrxVZaHqzzhsZCvCL26mk133FyEJL7YcfSwuEUUONI/k50br6D5fDapNxD/sPjvUNsvQtfw==
-X-Received: by 2002:a05:6512:1105:b0:553:2450:58a6 with SMTP id 2adb3069b0e04-553b6e75904mr2244348e87.1.1750087492221;
-        Mon, 16 Jun 2025 08:24:52 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1dbcf5sm1564271e87.190.2025.06.16.08.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 08:24:51 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 16 Jun 2025 15:24:42 +0000
-Subject: [PATCH v4 5/5] media: uvcvideo: Use prio state from v4l2_device
+	s=arc-20240116; t=1750087538; c=relaxed/simple;
+	bh=dqCC8ak/91Dzr4+3kecF6KVGO0oq/uGowumULvxPFCw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YIlkVHXIlJ65FZc0eLHwhDj3KaWgBMhNO8oG1Lz9idXCfvCwRjyIkpQAHMhSIWKNUV2dczqRS39L9tJ2BML5QZyPMPHYXPONTCVjBX1RQBSLDp0l/uJK4IoiJxn/g5/8nM6gm3ATrxXM93WyHgdobwfwT1fQU6FOWMeGuP/n2k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=N2uGulhZ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=yh
+	CLHY+Yn5QZ5riQsIqS3LeSsfbH4BcVgHt29CWBC98=; b=N2uGulhZDW3wO2TBkk
+	O8pJE5fVzrKggDDY/cSjM2i4EQ7/wLW8nEPrillstJMX22Shyljl3MB+G3kfT8o1
+	2sOdTzImUgNoGw7xFSisfo+J0sfvJS8D13EWuvOMWMdQjzA87T86ZxKqfrJ1t1IR
+	sBBMhoEdh6JaX7gyqapnwFQ5g=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDnr6ZcN1Bo7z_bIw--.19402S2;
+	Mon, 16 Jun 2025 23:25:17 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	jingoohan1@gmail.com,
+	mani@kernel.org
+Cc: robh@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH] PCI: endpoint: Use common PCI host bridge APIs for finding the capabilities
+Date: Mon, 16 Jun 2025 23:25:15 +0800
+Message-Id: <20250616152515.966480-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-uvc-fop-v4-5-250286570ee7@chromium.org>
-References: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
-In-Reply-To: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, Hans Verkuil <hans@jjverkuil.nl>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnr6ZcN1Bo7z_bIw--.19402S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFy5Ww4Utw4DWFyfGw1DAwb_yoW5JFyDpa
+	yrZry5Cr4UKF1Yq3ZxAFZxZr98ZFn8AFWUZ39xG3WSvr17Zry3W34IkFW5Kry7KF4jgrWf
+	KrsFyFWrWr1fGa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pELvKUUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwRuo2hQL1TsVQAAsw
 
-Currently, a UVC device can have multiple chains, and each chain maintains
-its own priority state. While this behavior is technically correct for UVC,
-uvcvideo is the *only* V4L2 driver that does not utilize the priority state
-defined within `v4l2_device`.
+Use the PCI core is now exposing generic macros for the host bridges to
+search for the PCIe capabilities, make use of them in the DWC EP driver.
 
-This patch modifies uvcvideo to use the `v4l2_device` priority state. While
-this might not be strictly "correct" for uvcvideo's multi-chain design, it
-aligns uvcvideo with the rest of the V4L2 drivers, providing "correct enough"
-behavior and enabling code cleanup in v4l2-core. Also, multi-chain
-devices are extremely rare, they are typically implemented as two
-independent usb devices.
-
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- drivers/media/usb/uvc/uvc_driver.c | 2 --
- drivers/media/usb/uvc/uvcvideo.h   | 1 -
- 2 files changed, 3 deletions(-)
+- Submissions based on the following patches:
+https://patchwork.kernel.org/project/linux-pci/patch/20250607161405.808585-1-18255117159@163.com/
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index accfb4ca3c72cb899185ddc8ecf4e29143d58fc6..e3795e40f14dc325e5bd120f5f45b60937841641 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1728,7 +1728,6 @@ static struct uvc_video_chain *uvc_alloc_chain(struct uvc_device *dev)
- 	INIT_LIST_HEAD(&chain->entities);
- 	mutex_init(&chain->ctrl_mutex);
- 	chain->dev = dev;
--	v4l2_prio_init(&chain->prio);
- 
- 	return chain;
+Recently, I checked the code and found that there are still some areas that can be further optimized.
+The above series of patches has been around for a long time, so I'm sending this one out for review
+as a separate patch.
+---
+ .../pci/controller/dwc/pcie-designware-ep.c   | 39 +++++++------------
+ 1 file changed, 14 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 0ae54a94809b..9f1880cc1925 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -69,37 +69,26 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
  }
-@@ -2008,7 +2007,6 @@ int uvc_register_video_device(struct uvc_device *dev,
- 	vdev->fops = fops;
- 	vdev->ioctl_ops = ioctl_ops;
- 	vdev->release = uvc_release;
--	vdev->prio = &stream->chain->prio;
- 	vdev->queue = &queue->queue;
- 	vdev->lock = &queue->mutex;
- 	if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 3e6d2d912f3a1cfcf63b2bc8edd3f86f3da305db..5ed9785d59c698cc7e0ac69955b892f932961617 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -354,7 +354,6 @@ struct uvc_video_chain {
- 						 * uvc_fh.pending_async_ctrls
- 						 */
+ EXPORT_SYMBOL_GPL(dw_pcie_ep_reset_bar);
  
--	struct v4l2_prio_state prio;		/* V4L2 priority state */
- 	u32 caps;				/* V4L2 chain-wide caps */
- 	u8 ctrl_class_bitmap;			/* Bitmap of valid classes */
- };
+-static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, u8 func_no,
+-				     u8 cap_ptr, u8 cap)
++static int dw_pcie_ep_read_cfg(void *priv, u8 func_no, int where, int size, u32 *val)
+ {
+-	u8 cap_id, next_cap_ptr;
+-	u16 reg;
+-
+-	if (!cap_ptr)
+-		return 0;
+-
+-	reg = dw_pcie_ep_readw_dbi(ep, func_no, cap_ptr);
+-	cap_id = (reg & 0x00ff);
+-
+-	if (cap_id > PCI_CAP_ID_MAX)
+-		return 0;
+-
+-	if (cap_id == cap)
+-		return cap_ptr;
++	struct dw_pcie_ep *ep = priv;
++
++	if (size == 4)
++		*val = dw_pcie_ep_readl_dbi(ep, func_no, where);
++	else if (size == 2)
++		*val = dw_pcie_ep_readw_dbi(ep, func_no, where);
++	else if (size == 1)
++		*val = dw_pcie_ep_readb_dbi(ep, func_no, where);
++	else
++		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 
+-	next_cap_ptr = (reg & 0xff00) >> 8;
+-	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
++	return PCIBIOS_SUCCESSFUL;
+ }
+ 
+ static u8 dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, u8 func_no, u8 cap)
+ {
+-	u8 next_cap_ptr;
+-	u16 reg;
+-
+-	reg = dw_pcie_ep_readw_dbi(ep, func_no, PCI_CAPABILITY_LIST);
+-	next_cap_ptr = (reg & 0x00ff);
+-
+-	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
++	return PCI_FIND_NEXT_CAP_TTL(dw_pcie_ep_read_cfg, PCI_CAPABILITY_LIST,
++				     cap, ep, func_no);
+ }
+ 
+ /**
 
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.50.0.rc1.591.g9c95f17f64-goog
+2.25.1
 
 
