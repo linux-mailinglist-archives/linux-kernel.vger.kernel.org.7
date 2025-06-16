@@ -1,287 +1,123 @@
-Return-Path: <linux-kernel+bounces-688003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFEBADAC27
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:40:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5E8ADABA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83582171AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02026171251
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272F3273D85;
-	Mon, 16 Jun 2025 09:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBBD27380E;
+	Mon, 16 Jun 2025 09:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="DONpaDgS";
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="Dc3SFebG"
-Received: from mx0b-009a6c02.pphosted.com (mx0b-009a6c02.pphosted.com [148.163.141.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csja2bDf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8812E11CF;
-	Mon, 16 Jun 2025 09:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.141.152
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750066842; cv=fail; b=dR6KNPQ6XnmNerVjvbsk/iN2ijQd0n56TUqvYx3cs3kDlNoYVUSUzx6QZG9KU4aOS4YOP4fk7HZUSKpSdweEyPVXB6wj2SaD7fBKzoisAkdUfSCqrJqeLEHmbvgOrzE0m/hW5CEZpW/js5axZzbgBLIVZe0v85IvQDdfQBfKvxc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750066842; c=relaxed/simple;
-	bh=Y55kk2woXzLnvEMKJZOwm7eYDGQlKNKFLLqHfU7ZUsU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IbhsrxYb5TdGc1cJfVqdhCemMyW4r8djxU1foTSNnfet0DPNxnU3kf6x7l9qt0+xD1YM9ngToHvA4oA4pHugeaOfDoUxLABEYUG9bGBWsYvmcTW6bAWyOBymT7LEzxkxSAeqPVb1P44nlfc8LCwe3Z2pIWE7IM+DRLHrOjiw4b8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=DONpaDgS; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=Dc3SFebG; arc=fail smtp.client-ip=148.163.141.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-Received: from pps.filterd (m0462408.ppops.net [127.0.0.1])
-	by mx0b-009a6c02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNA2vA029271;
-	Mon, 16 Jun 2025 17:15:07 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=20250420; bh=lY4tRoNk/eY68a+Ymm8sqTp
-	oYioW7Yn2xvhNPhPrCAE=; b=DONpaDgSQD1m5qHUhPNBheu76bNf9FvLsj8rF9m
-	FuDrshgt3aJBXOt53Wsq62CJLlmtFUCHNk3C9Z34jvBWRlgcCIUBOz++7QKQbkpO
-	dkTwDsqtUlqXAvVW4JwbOXh+UbyOkbnwUIh/L5EKFyNxJtO0k37vBWy1087h85T4
-	Lwp3FJoRCFNO3J8wwJHl6Q1nS4GsBUAuLT29PcSZQOMYEyuWkLfOR2fwLgI1eItJ
-	4UMV8B8PDSyJeTKAJcy8GV08UqOinrJToAQOM+QwcfSyAlkBopmZ1ZnjfGTTSFVF
-	o7A52lrUY5gMx8sUJwJrN5XnDeMHdA7yE7spPT/SbfYI3Zg==
-Received: from tydpr03cu002.outbound.protection.outlook.com (mail-japaneastazon11013045.outbound.protection.outlook.com [52.101.127.45])
-	by mx0b-009a6c02.pphosted.com (PPS) with ESMTPS id 479c8p9cwv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 17:15:06 +0800 (WST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YUyaKnP9zfwPIL6ZO4HFOIOQd5pTPW37etg2m77GBaw6vuVK1UD1g/tnQyujxCC2Kc9QXsfR8gYkohumks4rE4ycoWQ4MFZkpB0lwk9wsv8w8HPRMAE2KzlGUhPJytzqIh0ji0Xoqq/GErzo+Rwy6CLdlPSG/eJs6sswiiuC0IowioiGmZ4H7FA9fPTC8lqcs3oRTF3qk0JGM8+tA7dXuNAhlvi/4FycrFO6iFjijhKU/crhM5QO8aXm/GLkZka52eJtMWNY66C7Q4JqZXDxMf0E707ePO8uJ+gl6gKYXDrL/uDKmpqL1M1XrAfml5j4XMYTtk42fvRht89cWBweXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lY4tRoNk/eY68a+Ymm8sqTpoYioW7Yn2xvhNPhPrCAE=;
- b=TY6WIItIs1BrnXtoJdW6OBLGiND4GLJGgFvq5kxFBjqvqHH5TDj1NzeODnxBO1wVQdKcvpoNkMuH8HtRo7lR/e5x643qJ0n8w2tSn4A7OV3GgHR7amZMeAcxlai7iI7QYxRYzEMONL9v9N69h8dnHkkuEMS2e7+Vn7m4QjK06xpBRBxcunGtWjBxVXgIJaj1bSHg2XHzc7cDR00F7U5/On6KacuOPY+oHhR8ENeDiJwTtY9bvM2Gtravuw9S3McswgSiTNdxKtUFDra2g1yKzfDYR0goTA5Pl8Id34VgBO5wNXVX1zuYmS1g3pgcIipdf+RNTM9I1Q3jQ4N7ihyBbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lY4tRoNk/eY68a+Ymm8sqTpoYioW7Yn2xvhNPhPrCAE=;
- b=Dc3SFebG8wdfTNVF3wHdeaPB0jiZzHuVpTeq6rvotwmKw9kWyI63UVyeVqLMd49i6IwOknY4KDRqEm1DaHu4gG2f/KWABF45GZCkfq3jMerImSHLuZT6E6RJSTTjVIPwVaMptw3EsIPzsp6YvQmzfiNY95O1RGgD/GVoQpZU8bM90ZUE1cKi/crAb3W94i7AMG5JvlV5j28eV05vr3Gqh5huleLcrP4zmxI3grgY9oHVU3spvTEKsQQDCN8OEmes4ApHnoF36F4BO4MFPtVn51sNMXq0d4Y1hgJeCxc9u3QWFM5tZC/PW7U7ySQOcGmSupJfj+aoAArjcDXTLsqAwQ==
-Received: from TYCP286CA0110.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:29c::17)
- by TYZPR04MB7728.apcprd04.prod.outlook.com (2603:1096:405:77::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Mon, 16 Jun
- 2025 09:15:00 +0000
-Received: from TY2PEPF0000AB8A.apcprd03.prod.outlook.com
- (2603:1096:400:29c:cafe::48) by TYCP286CA0110.outlook.office365.com
- (2603:1096:400:29c::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.29 via Frontend Transport; Mon,
- 16 Jun 2025 09:14:59 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- TY2PEPF0000AB8A.mail.protection.outlook.com (10.167.253.8) with Microsoft
- SMTP Server id 15.20.8835.15 via Frontend Transport; Mon, 16 Jun 2025
- 09:14:58 +0000
-From: Marshall Zhan <Marshall_Zhan@wiwynn.com>
-To: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Marshall Zhan <marshall_zhan@wiwynn.com>,
-        Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] arm: dts: aspeed: yosemite4: add gpio name for uart mux sel
-Date: Mon, 16 Jun 2025 17:14:55 +0800
-Message-Id: <20250616091456.360388-1-Marshall_Zhan@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF211DB92A;
+	Mon, 16 Jun 2025 09:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750065560; cv=none; b=p6d/mFC1O/GLUQEC1Unf82mlmyMi2oT74apJMd3zYZzdHYDRx2Kt+S3Y8LShdm68l0o4VOTVuSfQ+5CbUTQXPIzppfIl2xXs+gbU7qZNbY9YD37b7p0RhXXSS/Zi5k2LujaVpUiqIZYJZNcs88hPXLf7dn2dM1t7s/FQB5MAJGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750065560; c=relaxed/simple;
+	bh=cIWgCue/aqvpSg/kLDSZwh6pFlaG1xIal/HdrKsv3tA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOvmAWPn8YqSCLoJ9pOUIZmc8m9au6iSsuydMWmFmOGQfSlYN4GMOeU0nqjblaCfcOq5hgSw4c/ZzawrZoO0xwDkDyFjsuA6lcMdshnFfjQVIt9ei1msBewkrxwusPL+N0oUNDHIWyvPlPJYVcLyIps3+RaTqjss97K/TcA/5dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csja2bDf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F7A5C4CEEE;
+	Mon, 16 Jun 2025 09:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750065560;
+	bh=cIWgCue/aqvpSg/kLDSZwh6pFlaG1xIal/HdrKsv3tA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=csja2bDfFVXwJHWt9Mv+cG/BZxIObuzgt1mBo5mgh8rbGQnTZx8gvAxRHHyOhFy0a
+	 G0scb5aTnlGOrkoLj/IIqrQGA0N8ZaYJX9swYbqcetVA1INH/BO9MUSky41vA2KPGK
+	 cKo+uLHW6PutUn58QN2K4C7n5nk69ibXq63hVOUr3jvP2KwxtVlfdKVtmiKG9IoKGL
+	 jLBItFuxKDmT2/lFbLFNKef/lPKlPn3lH2Rbe3HAXNZEyGdGy8EwIIk/PiBup1CzU5
+	 jwiHY3QOSItn6IStk4J0QihcCSTJm8VZI0T5Voic2AMx0PwPoBa6+CLR8vT8DddXsz
+	 PRLn3slXKLQgw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uR5zo-000000005ZR-2jKu;
+	Mon, 16 Jun 2025 11:19:17 +0200
+Date: Mon, 16 Jun 2025 11:19:16 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Depeng Shao <quic_depengs@quicinc.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH 2/2] media: qcom: camss: vfe: Fix registration sequencing
+ bug
+Message-ID: <aE_hlGHkRZqFFacR@hovoldconsulting.com>
+References: <20250612-linux-next-25-05-30-daily-reviews-v1-0-88ba033a9a03@linaro.org>
+ <20250612-linux-next-25-05-30-daily-reviews-v1-2-88ba033a9a03@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB8A:EE_|TYZPR04MB7728:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 884a3514-4189-4bb7-ffc4-08ddacb644b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?avmVhPjBM41LPKqd1SB27mc25gGMVZUObjijWsp62f6k3f0CQHKYtk7X589f?=
- =?us-ascii?Q?ONQn6YeDu03h7D2lzvRewOCAPW7GUnK2Ok3CcKBZj82UkBJei0IdFvA+tMr5?=
- =?us-ascii?Q?c6fM6AzQMFyA9WADGOHx7yadSHbQXLdNFve8wdCVua6NI1XGsH/mDY8jvmRH?=
- =?us-ascii?Q?HnPQ6aRceo4+1c0jp5PEiVP2EWppJ9APX9roPdDgxrSeSubvp3VHUKo9fQUj?=
- =?us-ascii?Q?wgEYGBDLAWEmpi2U6Wylga1/xyZZPzrpqmiKWPZB0x6bVM/zekjBBHpD53d9?=
- =?us-ascii?Q?nQfdfEtyQhh/HxozN6EouwDrTMYDDC+hCiiNwjs1EWL7zoW8N3ehZTPNzDdJ?=
- =?us-ascii?Q?Emg+dh3RfD6WtPYoaJRUV2CFoK8zKwNA+EynwPDE2o4SPeeE2XzFj5FjMJpQ?=
- =?us-ascii?Q?M+ATo1cBNvAK+wyVBrzw/RgNMIwJ5FapsKWl16uyP6IQIsePpJw5oac7+Rdr?=
- =?us-ascii?Q?a3uB7KEN3Udlb3w7LAI5UX0BwtdNMKBfmtOLov0ePr8bpRglyAf7U50Dmb9d?=
- =?us-ascii?Q?KEw/uChMzlx9e2PJBuXzBrkiMuzjOAuOtEsZWgis+kgrLIGx9cUh3iUMsgfQ?=
- =?us-ascii?Q?rqlWSD1hcHBj3JviC7aqTmeLJm8TuHc3W7s1vAZUlP7pWMdAxYYviGCrVy5h?=
- =?us-ascii?Q?3/QtahSTFI6Wn64J3wLUZc/2ymScgZK+BQUPQiHkGeo8J1jpWWNXtQGbEgVr?=
- =?us-ascii?Q?e+AgNIuxa/n925ltqfEH2QobmCnHAVGGKhm9hX77Bug/pK641DTRrISJqiHt?=
- =?us-ascii?Q?SQLpKBZkIELGdtE6crStmEZWEOXSJBiV0df4mWS5zU3/QC79qU+Yn8cE9raj?=
- =?us-ascii?Q?1ZGp3urJjtFlYC6mFgX1XPHo1pmR+eQlOwhqOR56piWxChgqjlcZRU5LnmIv?=
- =?us-ascii?Q?0i2/YXJNI4SIygMJMTAuTeeDbI1gOJCJxW70rzo01zjAgZePzZNmjloiI7Hf?=
- =?us-ascii?Q?EfTjrBmoXRyoogsAIhYMatokC2h+hd3xzP3c1jGKpTGdeVec9fdvR54k5tz+?=
- =?us-ascii?Q?TJlO7NUzsWyTPTiR0YRgQot4xUOVQls28rONLZoAOlm4UJPCpeIEjj9CL24q?=
- =?us-ascii?Q?wNCoq1Iv9FxcrEIs+9M/17gs5nT8eDv2mqabFMarzfkT5Y3tWweHxKQ1Fjgr?=
- =?us-ascii?Q?336WF08mVyNt4JqbTvmJHC/4yQh4aTOHmohxO5+8grw2dPLOZQQ2LiTJM6pz?=
- =?us-ascii?Q?RHN4hV7yBHtR0+lzYdd9DyfhmetvliaFHLJGq3LDXMuUMKjcMRxQLOFxeH1q?=
- =?us-ascii?Q?kal3K/d1y/CIGsnZ3DwDAWV1KRBZ5qXFCLU+UGnocZa3apmgv+2bm7fZCSWC?=
- =?us-ascii?Q?s3/Y49KDh/IZr0WCQoSG5dvyePahtuopP/WRlhaZPfF0UpbPWy/HZr/H4vXH?=
- =?us-ascii?Q?iRyAKrbaVRof6BppokBfeXG1OC17ZWkRK0oJOwUP7b3xZNmV0icUD4mzjuV6?=
- =?us-ascii?Q?pmfqOhy0jO164g3MVN74+gDbjuGbCQfKmESkZ1K7tIiLP7F1Z/kzEhJa3vmH?=
- =?us-ascii?Q?1N4Yg5LslkkFEdQaKyDgnmJsyZxx/GDzj5Ap?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	II/jeTvi59zmuYu5XCgvoogfLxb7nEFet4ShZA7i98XLWnsQ+IWtcT5mVyLjEiBoigWmtrAzgiQJi+oGwRXQ7jk8OqqHy4hYhmrt+vOIWYmXh37e2B6lvs5bi8eEQlFJfJa/iqUo9l8C74ZKTZv3/pknFoC7mcwtEJ/DY83yVFEmSx/S/3NJbcrH/uWtk0MJQzApLFaYTzpVhU0zHKDDaQboYv7xHQ8RLX/YCCVQApeOSlDEPCBVq6nsHz/KBhHuYdgzsurjwg4OkSXh6ii6BuXBTABrMyJn6VA584+tPKK755gu2mDGRS/wh9Ihyq1oNrcXeVnLwpxn+6JQXb+k1MPlwRMRS1z1bRu7REvwWakhR1eugHh07Tft/oM2GyBOSUOAKMDoenLhAv17Bl/J/W4vuFfSd4wNh9tDsK3YDcxAhnLe3BEBvsThJXxa60GlgjQj+SOl/CxB4wO/S8YypGy5dPqOwjen6gQ+TBBDKwcrr45jwNL8rD2gf0e7eop0H3gGYJCIh7qd0dY1melW5H2DeX+8OQJ+4E8NX93QP7nBAJcaf2qKVjOdLifx4UDcNdZgJjJRa1B4QkCrh191ssyxZWHKo0e38L9VV5H7T4O7UBRXBtUNC1L27Ee4ZDYO
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 09:14:58.8105
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 884a3514-4189-4bb7-ffc4-08ddacb644b1
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB8A.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB7728
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA2MCBTYWx0ZWRfX5TBu+/3lWU7z RLatCViGaRzuRIxQuRNsBJSDIwXxmQ9Q2hLnSxlg7eeZl3I8Y7dc8sljljGYzuWCKHx/P+NinFJ zErlKsnlxsRBPJpEbF95KFypomzd1ZZU+LZOesbcs5Cfels9hFRXGsLBF1hehdhXggUC5HduXRD
- RtpLocOEtB5TBUfRh2P/UQSTU8Ws8lSVlX+AnXLbO0kAPdvKqGMfv9Ho8uV8xN0bZ+4UtfgspsR 1fZoXWTsPMJ0rAcUPAKYh27A5lIGvWbTIIflZOcvPXVxs4s6nLpTy20zOPUXTp3jiz158vWFRqY wR8QlQESOpo9IJOa3QyitCjt1fTDa6OGbPT91CEx8Xj3tX/raGweFXPoGMKxoSOcmSCs6Qq7pgo
- y6pSVZio8V1cULbu7AQUtfkAlNQdwY/RRFsHLpfLJSAXn8us50ejdv4m0HlK+nVodFvwj4wb
-X-Proofpoint-GUID: ib88x8QJK4XdhIr5Q6t9LP24inT_YULf
-X-Proofpoint-ORIG-GUID: ib88x8QJK4XdhIr5Q6t9LP24inT_YULf
-X-Authority-Analysis: v=2.4 cv=f5tIBPyM c=1 sm=1 tr=0 ts=684fe09a cx=c_pps a=MMwkVYOn1OVg/tRQMohirg==:117 a=6rDDh2uRNVCE5HFPCIqeAA==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=6IFa9wvqVegA:10
- a=4AL28aEVfeMA:10 a=cPYzWk29AAAA:8 a=wO5IlNbkM71fJ84Eo3gA:9 a=oSR2DF9YFqZEN4IGatwP:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_04,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- mlxscore=0 malwarescore=0 priorityscore=1501 spamscore=0 bulkscore=0
- impostorscore=0 mlxlogscore=923 phishscore=0 lowpriorityscore=0
- clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
- definitions=main-2506160060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612-linux-next-25-05-30-daily-reviews-v1-2-88ba033a9a03@linaro.org>
 
-From: Marshall Zhan <marshall_zhan@wiwynn.com>
+On Thu, Jun 12, 2025 at 09:07:16AM +0100, Bryan O'Donoghue wrote:
+> msm_vfe_register_entities loops through each Raw Data Interface input line.
+> For each loop we add video device with its associated pads.
+> 
+> Once a single /dev/video0 node has been populated it is possible for
+> camss_find_sensor_pad to run. This routine scans through a list of media
+> entities taking a pointer pad = media_entity->pad[0] and assuming that
+> pointer is always valid.
+> 
+> It is possible for both the enumeration loop in msm_vfe_register_entities()
+> and a call from user-space to run concurrently.
+> 
+> Adding some deliberate sleep code into the loop in
+> msm_vfe_register_entities() and constructing a user-space program to open
+> every /dev/videoX node in a tight continuous loop, quickly shows the
+> following error.
+> 
+> [  691.074558] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
+> [  691.074933] Call trace:
+> [  691.074935]  camss_find_sensor_pad+0x74/0x114 [qcom_camss] (P)
+> [  691.074946]  camss_get_pixel_clock+0x18/0x64 [qcom_camss]
+> [  691.074956]  vfe_get+0xc0/0x54c [qcom_camss]
+> [  691.074968]  vfe_set_power+0x58/0xf4c [qcom_camss]
+> [  691.074978]  pipeline_pm_power_one+0x124/0x140 [videodev]
+> [  691.074986]  pipeline_pm_power+0x70/0x100 [videodev]
+> [  691.074992]  v4l2_pipeline_pm_use+0x54/0x90 [videodev]
+> [  691.074998]  v4l2_pipeline_pm_get+0x14/0x20 [videodev]
+> [  691.075005]  video_open+0x74/0xe0 [qcom_camss]
+> [  691.075014]  v4l2_open+0xa8/0x124 [videodev]
+> [  691.075021]  chrdev_open+0xb0/0x21c
+> [  691.075031]  do_dentry_open+0x138/0x4c4
+> [  691.075040]  vfs_open+0x2c/0xe8
 
-Add gpio line name to support multiplexed console
+> Taking the vfe->power_lock is not possible since
+> v4l2_device_register_subdev takes the mdev->graph_lock. Later on fops->open
+> takes the mdev->graph_lock followed by vfe_get() -> taking vfe->power_lock.
+> 
+> Introduce a simple enumeration_complete bool which is false initially and
+> only set true once in our init routine after we complete enumeration.
+> 
+> If user-space tries to interact with the VFE before complete enumeration it
+> will receive -EAGAIN.
 
-Signed-off-by: Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>
-Signed-off-by: Marshall Zhan <marshall_zhan@wiwynn.com>
----
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
+As Vladimir also pointed out, this is at best just papering over the
+issue.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 29f224bccd63..aae789854c52 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -189,6 +189,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT1_UART_SEL0","SLOT1_UART_SEL1",
-+				"SLOT1_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -235,6 +240,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT2_UART_SEL0","SLOT2_UART_SEL1",
-+				"SLOT2_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -281,6 +291,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT3_UART_SEL0","SLOT3_UART_SEL1",
-+				"SLOT3_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -327,6 +342,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT4_UART_SEL0","SLOT4_UART_SEL1",
-+				"SLOT4_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -373,6 +393,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT5_UART_SEL0","SLOT5_UART_SEL1",
-+				"SLOT5_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -419,6 +444,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT6_UART_SEL0","SLOT6_UART_SEL1",
-+				"SLOT6_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -465,6 +495,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT7_UART_SEL0","SLOT7_UART_SEL1",
-+				"SLOT7_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
-@@ -511,6 +546,11 @@ gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-line-names = "SLOT8_UART_SEL0","SLOT8_UART_SEL1",
-+				"SLOT8_UART_SEL2","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","",
-+				"","","","","","","","";
- 	};
- 
- 	gpio@23 {
--- 
-2.25.1
+You need to make sure the video device is not registered until it's
+ready to be used. That is the bug that needs fixing.
 
+Johan
 
