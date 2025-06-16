@@ -1,199 +1,99 @@
-Return-Path: <linux-kernel+bounces-688279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B08ADB058
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:37:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC28EADB04C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AA131679F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:37:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A0B167972
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9597B285CA5;
-	Mon, 16 Jun 2025 12:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFthRNVO"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351BA285CBB;
+	Mon, 16 Jun 2025 12:34:26 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E531DA60F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548C327380D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750077430; cv=none; b=PZV2Ar2KJZYBRcZLvGM2qu1w+xmYyvWw9tDWmlNeYRrHgF0LtfEsCyQNnzmAAi0SFQGtY2Q8ZzOj4PAG3knjrhBXF96/4Kc7uo6/VzsHRVyY0dgmJ+IW1ZbTMH7gWPF/q9P+ItCfyqvduOi/S8JJ1bR/jJtgNg71xtcwtbktWxk=
+	t=1750077265; cv=none; b=tcYyunw7SNu/AfI8rkeZRnO0ilPSGO/381k59tNKAtFCt7UZF/q4MJrkSgMEQNON64exS+OrJ17aa7XjObNWL7IXZTcY9ZIxACKQNAD4zqiHrGvHPBb2wf/Xcn7Gz2uvYazUOZPCCREgWgx0MUZWKPlsfWOXumr0BXkJzgPGJX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750077430; c=relaxed/simple;
-	bh=iqxpQ31NnIr15+hxa1grefLGXBJHd71+OgICHQ9pOd0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QL/WSl11ins6qxVWo2u8+hg8EdrKKejU7zwjXHrJKkTl3UQn2Pe274xf1zkGLnrJA0Src/6RuR3KeAecxMvuyu+xIMT62SESGj5aYxDXeFSimIsYiSDM8TEK9PbNwbrvrdqRQkpwXu4bGIcD3iuFGR4No57ZKmFyn1k3LJ1FVxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFthRNVO; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad93ff9f714so786164966b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750077427; x=1750682227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVrCDLR9+fe8Evk2gmSpRa1xvcJ0Jsx0A+L7DiKuD0M=;
-        b=DFthRNVOP3g5bfZr3oH+f4SKQxVfgOgJvATRoa+4wPO1p0TfR4iUUErf6zmHFeeRAr
-         0NrMDXGqK3pKUOXy2qO8+N0QBkfXVCK3GkZV6V0mGYXf3ZGI+c1ih+U/pBP7SsV4Cyso
-         w9wzTwF4lR0FNOG6aVgOLYP7IiZLE3vgcxLtnDrEaUrmL14WUQhcpw4Qeh3S/Z+m5mw9
-         xiVttEhttg9Qfjv4cAWVsR90nja0bgL+p8xq5zX4EPPMfzIgGOQdscmMfKzbJI44dT4c
-         AGxgi6GjuzaPJJLYJQG/6kYLsv55vzvmNkWA9viy7HurN31YljVi1kOQVOSBT1FEqEMv
-         a3Sg==
+	s=arc-20240116; t=1750077265; c=relaxed/simple;
+	bh=KZNprXaoNfoaHYjHemA6YofvAUOkORsU2bqHvO7dDUs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XYWhL1BBgEWy6bHYhay1TVQI1x/l6mTOdPSDk6WytpkcHEXtlsAFxeE6knJByiFg80w9+n8vfb9Vey18nugWQ7mrUESXeZuQpgpNF7u1XrN+g5q3p1PzRe5pxg5wY7EJ5u2jNTN9SYyQ5wu9cH+dSXEN+rqlyLnAJHg8WW78ZVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddd03db24dso37151465ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:34:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750077427; x=1750682227;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZVrCDLR9+fe8Evk2gmSpRa1xvcJ0Jsx0A+L7DiKuD0M=;
-        b=gExU03edpmSZOVmLBLB8KG3JO5L4vH3jK1lDJMcJnPOVHBJO4A8KRVblyEp0Eli6wE
-         na2wS/ggzDVwwjYhrr/2lEIlvOog/EalgY6mE6kR36chwaGrYtP/2uXljhyFNY/CnUDX
-         HrGy6dFdCwHrcgHR51UYIIehJSCT//Uzw0X9yh40f5+bEBjyREOEbB2UK5VohO+l4Fhk
-         M7tSXVU8S5WCawrf8a4F2z96R48vOkeIongD6FIgrLmkmTyRLuQYIvHhdHlfA/qf9dM6
-         eaNps3kNPBrq0U0LNO00hvLgw3fBS+Ty1p16JFoWKKmtFATAz6cogpUIzgY+HeB3xKyU
-         RMTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUs6wydWXGHDq6hf07VMIVBT4sXfTAFX7ACuJz0RcrEF4ndP1sE+NNL82HlbmJzK8E85AUb+J940NQrVjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6lQNXhTAJ66TIgN0/pxIz0aRB4zALfUASJ59EjNo8a+SwxpyW
-	bor6sQ0clKcbrdpZKWBmdVSL9cSE3na6HsoeGQM3g9pUkmOImFo2qhxc
-X-Gm-Gg: ASbGncskKVPx75bSPRrfKfQRV+6gQ2QwQSpudGUOtsv5+eQn3QPZSOIVGmAE1Ei6uw7
-	mmDc2wlhzTzcw7ETidUtPP6JGPOA3eO92RepkQL0sZA/2wJ8HFJqcn1jGPZDpmLnw8e6L5f1MFk
-	jI8ns3SbBkx7k5X490eI4r6RifabRKJP7IyGl7uHpQXoJh7JEQjdikSJEf4Pk0zUnA6xmtkJQWf
-	e38dZTmcgJq71iAtoDSYc5vB7+OegBHITf5+A9eW5L2DCuXDJyyoNTw2BeaKjJnIqKgkTubBZnu
-	tBVpRklRblQ9oVl9wfXm4Lk4aBAxtVrhr8jSNxBXm2tH7yN/XX2vtUElgBvolw4oPiy4FOGXElo
-	WRg==
-X-Google-Smtp-Source: AGHT+IEuYhJ950tKZ8R3D1FckqPYUE4h8XjhQkQHD0ltwNT6UUWZK7aIsz8//f3kzyOOQyzf1kmw3w==
-X-Received: by 2002:a17:906:6a1c:b0:ad4:d00f:b4ca with SMTP id a640c23a62f3a-adfad4f4e53mr829632566b.50.1750077427007;
-        Mon, 16 Jun 2025 05:37:07 -0700 (PDT)
-Received: from localhost.localdomain ([41.79.198.22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec89299c2sm652325066b.119.2025.06.16.05.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 05:37:06 -0700 (PDT)
-From: Khalid Ali <khaliidcaliy@gmail.com>
-X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Cc: hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	Khalid Ali <khaliidcaliy@gmail.com>
-Subject: [PATCH] x86/startup: Let the caller retrieve encryption mask
-Date: Mon, 16 Jun 2025 12:34:13 +0000
-Message-ID: <20250616123605.927-1-khaliidcaliy@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1750077263; x=1750682063;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EywSoWx1oh75bdKkhb/CF3mvca8guENbG+VQo+//llY=;
+        b=t8VQhZo5fAnJv2kTM4gDe3QD1FVlgbVkw77UNA+Zyq5yinBd5OkGLvORZHSjl8cRuA
+         F4UUUMAogbzt2oz3ZYaKEuaVp9unowttYf3c1B3u+zvD/VwFMnqBAZlyxrsz9JEGiX0Z
+         bhP3MwJmjqNNdq8Q3Td9KW1/md/7Cqt0ubxl+U3mhFZGVNxVX5M0Fvii51CcJJXAaiid
+         KsQm73Ypvpal9cMB36aOJwz1ZTfquXKjQJDDeDsujkosQcWH1H/zg5DeXmddUghqGwVo
+         GcEiPF72OErSUDPMFpgHcNZN0B6J3Wnwbt29YFMqUrFTmR99bVKqEIKwyDVKqEUcPQpa
+         vMFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbU0QwOLg7gRK9O+oFrPakoF7d324lIfahf7/kQFrLF6W8Md/V7MVrY8Gy9VV6DuSuCgKUQYliEj02ylk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuXM2G0T1f8QBNF31eb80u6yYm+EbkrETD8w/66B/z9uop1Paf
+	XquVKQVWC6TdGNBRi1k2U2t/A+Oh8VDLUjfMNPqNbrhjFIi2aeBoBiDEhQmx/5I6CwLUbuxBxbO
+	2YtzVJpE9oETCfVHTpVOyGQjo28O1WALu4Uq+aQ3etiHowpegJ41azMsklyc=
+X-Google-Smtp-Source: AGHT+IELIt9EJpzp0lXMB6qbr/z7PV1C/VGfrhZiQunu8N7r/BP9kLgcRjsJMR1aWG1N/ZdBaa3Twfku9bGlKYiuSPN8oW9SZGGG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:194f:b0:3dd:ebb5:5370 with SMTP id
+ e9e14a558f8ab-3de07d3404bmr99194745ab.22.1750077263538; Mon, 16 Jun 2025
+ 05:34:23 -0700 (PDT)
+Date: Mon, 16 Jun 2025 05:34:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68500f4f.050a0220.2608ac.0001.GAE@google.com>
+Subject: [syzbot] Monthly smc report (Jun 2025)
+From: syzbot <syzbot+list7085bff455d583cbad1e@syzkaller.appspotmail.com>
+To: jaka@linux.ibm.com, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Khalid Ali <khaliidcaliy@gmail.com>
+Hello smc maintainers/developers,
 
-Don't return encryption mask . This makes __startup_64() to handle
-doing the actual work including encrypting the kernel. The caller has
-already access to encryption mask and can directly retrieve it. On C
-code, the caller can call sme_get_me_mask() and include /arch/x86/include/asm/mem_encrypt.h
-directly while on assembly functions like startup_64 the "sme_me_mask"
-is directly accessible to them if CONFIG_AMD_MEM_ENCRYPT is set. This
-also makes consistent with the way secondary_startup_64_no_verify label
-is handled. On intel CPUs this is not even neccessary, so we should
-retrieve the mask only if CONFIG_AMD_MEM_ENCRYPT is set.
+This is a 31-day syzbot report for the smc subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/smc
 
-Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 10 issues are still open.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 340     Yes   general protection fault in smc_diag_dump_proto
+                  https://syzkaller.appspot.com/bug?extid=f69bfae0a4eb29976e44
+<2> 93      Yes   possible deadlock in smc_release
+                  https://syzkaller.appspot.com/bug?extid=621fd56ba002faba6392
+<3> 92      Yes   general protection fault in __smc_diag_dump (3)
+                  https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
+
 ---
- arch/x86/boot/startup/map_kernel.c | 11 +++--------
- arch/x86/include/asm/setup.h       |  2 +-
- arch/x86/kernel/head_64.S          | 12 +++++-------
- 3 files changed, 9 insertions(+), 16 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/boot/startup/map_kernel.c b/arch/x86/boot/startup/map_kernel.c
-index 332dbe6688c4..6fdb340e9147 100644
---- a/arch/x86/boot/startup/map_kernel.c
-+++ b/arch/x86/boot/startup/map_kernel.c
-@@ -30,7 +30,7 @@ static inline bool check_la57_support(void)
- 	return true;
- }
- 
--static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
-+static void __head sme_postprocess_startup(struct boot_params *bp,
- 						    pmdval_t *pmd,
- 						    unsigned long p2v_offset)
- {
-@@ -68,11 +68,6 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
- 		}
- 	}
- 
--	/*
--	 * Return the SME encryption mask (if SME is active) to be used as a
--	 * modifier for the initial pgdir entry programmed into CR3.
--	 */
--	return sme_get_me_mask();
- }
- 
- /*
-@@ -84,7 +79,7 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
-  * the 1:1 mapping of memory. Kernel virtual addresses can be determined by
-  * subtracting p2v_offset from the RIP-relative address.
-  */
--unsigned long __head __startup_64(unsigned long p2v_offset,
-+void __head __startup_64(unsigned long p2v_offset,
- 				  struct boot_params *bp)
- {
- 	pmd_t (*early_pgts)[PTRS_PER_PMD] = rip_rel_ptr(early_dynamic_pgts);
-@@ -213,5 +208,5 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
- 	for (; i < PTRS_PER_PMD; i++)
- 		pmd[i] &= ~_PAGE_PRESENT;
- 
--	return sme_postprocess_startup(bp, pmd, p2v_offset);
-+	 sme_postprocess_startup(bp, pmd, p2v_offset);
- }
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index 692af46603a1..29ea24bb85ff 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -50,7 +50,7 @@ extern unsigned long acpi_realmode_flags;
- 
- extern void reserve_standard_io_resources(void);
- extern void i386_reserve_resources(void);
--extern unsigned long __startup_64(unsigned long p2v_offset, struct boot_params *bp);
-+extern void __startup_64(unsigned long p2v_offset, struct boot_params *bp);
- extern void startup_64_setup_gdt_idt(void);
- extern void startup_64_load_idt(void *vc_handler);
- extern void early_setup_idt(void);
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 3e9b3a3bd039..8b50bdd90927 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -106,18 +106,16 @@ SYM_CODE_START_NOALIGN(startup_64)
- 
- 	/*
- 	 * Perform pagetable fixups. Additionally, if SME is active, encrypt
--	 * the kernel and retrieve the modifier (SME encryption mask if SME
--	 * is active) to be added to the initial pgdir entry that will be
--	 * programmed into CR3.
--	 */
-+	 * the kernel.
-+	 /
- 	movq	%r15, %rsi
- 	call	__startup_64
- 
- 	/* Form the CR3 value being sure to include the CR3 modifier */
--	leaq	early_top_pgt(%rip), %rcx
--	addq	%rcx, %rax
--
-+	leaq	early_top_pgt(%rip), %rax
-+	
- #ifdef CONFIG_AMD_MEM_ENCRYPT
-+	addq	sme_me_mask(%rip), %rax
- 	mov	%rax, %rdi
- 
- 	/*
--- 
-2.49.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
