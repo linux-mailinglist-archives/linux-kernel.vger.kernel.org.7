@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-687708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD3FADA7F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:06:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE7ADADA80D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153DB16D874
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0883B1890983
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025331DD0F6;
-	Mon, 16 Jun 2025 06:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A4B1DF26B;
+	Mon, 16 Jun 2025 06:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hofiwx60"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="t6jzsDIB"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25051C2335
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFC41DDC2B;
+	Mon, 16 Jun 2025 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750053972; cv=none; b=UakHWVvQOeSgFKjUIrKSMYWMjXxZn0li53daD2bBo/1b9yierQqmMat3x+aMgfoFsChk+398q2ZL/sNx2nlw2y2uOlO888sKPsJ8KjmDscQJfV3Snj0T2gvN8kHhuSjBC/caxQd2vH3WwCPenmPr70EW4XBOPjXNhmUhfDrNrM4=
+	t=1750054505; cv=none; b=DleU0Bvnql3/jCw2EZXvfCGNjWp/PoYylSilDsGO+z23uhg+veS6jOaqBQNk7lmsH+jjj1nMMQinRppBQLzUQyRI0z2ED/EYGNEdRKWogn2J80l+QATmnSm84apfZm29cJJKpw9U21K+dDn0hG3JEAsZ6gyVD+zFLHO4txarLFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750053972; c=relaxed/simple;
-	bh=WoYUkXX5dEjpc4Q8CoOZKqyAvikm7ooh9iJLKMzKBh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNe4eR2pmZUL236XnoHvCRqhv6z9Ybk/SkRFD4I4rjdpM7Z8Uzx/HFrfM05rSdM1lQaoOloTbexVOYxtPbw48+QmPf5JeNZQcbhjeQG5POTf6qwvud38wQ2xKksgPfRKSMt5BC9H2x2HwAhh7ROYbGETamaSG+OuOYmUp8FBk2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hofiwx60; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750053971; x=1781589971;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WoYUkXX5dEjpc4Q8CoOZKqyAvikm7ooh9iJLKMzKBh0=;
-  b=hofiwx60WZvOLHzpElIUoiCv9FTx7+fAAXovp0jLFHq5qfpnDcmn16ld
-   qq1ccvAoVqAA2dQ/32k6vzWQGSf/Ua+6u9QyNx94VBT0eUY1h0ffRf4Pv
-   lJSDpLIDFYXOdENgVKeSXXL8URw1HsgHqnaGj5aiw+pPYVILjp4BM620s
-   4ituuuKu5vUIrbjFXWoch7NDyl0phDmwEbGuerP6TctOviXD7uH60BLc0
-   ELPLJOY7lAtqsabewlvK9oyKPw8l4hqjTLiCGqO6h0dmJro2ZyTMecKvI
-   7660auQs3x4reeD4Dx0iSlGzREV2PsVlLmyZ59y/gsp5smMhr9PnyxCr0
-   w==;
-X-CSE-ConnectionGUID: YbcF3Wf+TAuTqepb3PZBsQ==
-X-CSE-MsgGUID: A3n7/r93Q/OpDhEL5hJpaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="52054631"
-X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
-   d="scan'208";a="52054631"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 23:06:10 -0700
-X-CSE-ConnectionGUID: A/Rc44HlRnaa603Q+EDAWA==
-X-CSE-MsgGUID: +ApACYJ3RIiM6TTrple6+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
-   d="scan'208";a="148839611"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Jun 2025 23:06:08 -0700
-Date: Mon, 16 Jun 2025 13:58:58 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [RFC PATCH] iommufd: Destroy vdevice on device unbind
-Message-ID: <aE+yopQb5T8VWk0i@yilunxu-OptiPlex-7050>
-References: <20250610065146.1321816-1-aneesh.kumar@kernel.org>
- <BN9PR11MB527606182417BB7A35349F598C74A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <yq5a8qlstht5.fsf@kernel.org>
+	s=arc-20240116; t=1750054505; c=relaxed/simple;
+	bh=U3gAWtas0w8lcd0mklJbeVTO6hyVioa32oso/5iwvYo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQapqyPfBAcDhS8liLKl2VHwz8E3kCm6tcH9aMXYYEzCil9jp7kioLqjdbfXtokNAPBesAoraPE8u2u5J1aNhzktwBiGXZm2y8G62ztZlNg8dXTv2gGDBwJotlWX+rEgHxyOYMEx+Ze7IoA8hTCs6jB4A7Fu3TTO7JhMV76Wz1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=t6jzsDIB; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost.localdomain (2.general.phlin.uk.vpn [10.172.194.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7C18A3F6D4;
+	Mon, 16 Jun 2025 06:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1750054144;
+	bh=vzI5ep9/sh3GCOqZmoaGn6MewpD6iKj4fiizSXxMo+g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=t6jzsDIBQbmnovZkpMrJrJfvfMiLt49gE3FqGsLDm6laMtiOPvZoDTKZP763VLOzV
+	 uQlsAAlkenGQq0e5YctDv9SzYSnLH16eRy3kYMT+WQAvWTAQbrCgZmvJGxFSGOWS6q
+	 g9bFXI4FFMB8q4Ajp+mMA1HYsRVJPtAKVprFTbhF+nfMSF6EjkD3MEadiae0b+/7tn
+	 bPvAGw1RzMKkIVJULKPNt9KhDDmDjA7clHRLv+6jUXjRJVo9JdrmznVI3qE6K/hWw8
+	 wvVOzHMJl8SX2vDSZogOKXDXngvqbdx9pBypSGkaHFOHzdcli+NAFXkUT0GfB2rDcK
+	 31sIagiUlRnBQ==
+From: Po-Hsu Lin <po-hsu.lin@canonical.com>
+To: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: shuah@kernel.org,
+	po-hsu.lin@canonical.com
+Subject: [PATCH 0/1] selftests/memfd: skip hugetlbfs test if not supported
+Date: Mon, 16 Jun 2025 14:04:22 +0800
+Message-Id: <20250616060423.2180088-1-po-hsu.lin@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq5a8qlstht5.fsf@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-> While vdevice objects can still be explicitly destroyed using
-> iommufd_destroy(), with this patch, if the idevice is still bound,
-> attempting to destroy the vdevice will return EBUSY.
+Check hugetlbfs support before starting tests in run_hugetlbfs_test.sh.
 
-I didn't get the necessity of this restriction. A vdev could not
-outlive idev, but it could be ended earlier than idev, isn't it?
+Otherwise on a system that does not support hugetlbfs the free huge
+pages availability check will fail with:
+  ./run_hugetlbfs_test.sh: line 47: [: -lt: unary operator expected
+  ./run_hugetlbfs_test.sh: line 60: 12577 Aborted                 (core dumped) ./memfd_test hugetlbfs
+  Aborted (core dumped)
 
-> 
-> In effect, the change ensures that once a vdevice is created, its
-> lifecycle is tied to that of the idevice.
+And it will left a fuse_mnt process behind, which may cause some
+unexpected issues.
+
+Patch tested with a kernel that does not have hugetlbfs support enabled
+and the test was skipped as expected.
+
+Po-Hsu Lin (1):
+  selftests/memfd: skip hugetlbfs test if not supported
+
+ tools/testing/selftests/memfd/run_hugetlbfs_test.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+-- 
+2.34.1
+
 
