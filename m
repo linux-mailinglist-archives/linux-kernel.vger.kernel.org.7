@@ -1,186 +1,361 @@
-Return-Path: <linux-kernel+bounces-688553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7CBADB3F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:34:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CCDADB3F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463E8163318
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADA63A73C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2835A204C1A;
-	Mon, 16 Jun 2025 14:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ABB2BEFEB;
+	Mon, 16 Jun 2025 14:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f52gPZ+p"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="E0sgt0Tx"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149E1FAC59
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87CC2BF00B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750084481; cv=none; b=JXFlZGMGET1aLgOs44hpD5gp5ps+HWCOQc9hC3uAnzWLJ5/L7fg4QRV2c2EMUbvRnHmArHEVuNjeMmf91D/WnX9K/OmHr39F05DSaDbIwn5L4aTMsbuK7XYrRgB/w9dBmEeeQoKCQuTHSIzps1D+Elx3umKr8QwpNPIalELz77E=
+	t=1750084351; cv=none; b=S+QUkVMpC1EoLgkO4+4Cko8vihmtNvEQMcQwpclON+Q1C108wAZ7Hwbl5zaXNMfFTNXahnw5iAPOBHI8LyIN7kf+ut37NI290HlzCzC3YyiVU76u6BhkJ5YLXcYq2DRbjsZIDiuKlIaMsrUjc6fQ8xFJcarwbu8OYAhtNgK0ooI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750084481; c=relaxed/simple;
-	bh=Wp7lzU5+Yj9+0iOBa9gILgVo4JRalw7QqSIh50BSyXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMuO1lF4u+1SwpB9PA9CCUzD9mF6dlzJ4pwyjWkn3pYbgCgDoxB9Qe3ffR6s6m2nOwnlLIW327a3bTVkt6NoDaYJtLQ51JtOT/xaHBPApltxhg8/P7O29PkLdjHqX7A+lzw5zpEpUWSAFMww5Q5ObsIAsgs/bnRQ7Z1PC7B4Vus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f52gPZ+p; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3de1875bfd4so3868645ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:34:37 -0700 (PDT)
+	s=arc-20240116; t=1750084351; c=relaxed/simple;
+	bh=mXtnEzO/AQsXD5F9xbtyvPg4mcL6gsQJ5aFsJnDhKKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UXpBha0st7R/1Ffra6PkwuROUzLqoDfRnI+oTKAlIbiuQKfvEu6+41Xj2004CmKVvLNiCceuGWqOW8C1j84MIFi2gajNmBwMOxQ7YbNUlWQlcomnVZ0ydxxrvSkPLjHOPtqEcRiHfTRs8pN5bZ1Xm3U/sA7KnhAGcIL3PKNIZT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=E0sgt0Tx; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2366e5e4dbaso14984605ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1750084477; x=1750689277; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yAgEh06Y08KkZqg3CyCAQ7ePxZ39WZ/hqPC07deIYhA=;
-        b=f52gPZ+pXtXFZf6BHiXStoym0Nuryta9L9RJhK6QBtTRpLEi5TeUVJXWmaTMujdffK
-         jGdO6GKLI3rtNPFRB0Gu8B+oR6kwp+oAOin1xBusseEwA7t2DMpzF+4LVskTTeM2k7kB
-         Ga5jrNQePAIimNeLhdlwSnBpPlyRBuK0DCAMA=
+        d=csie.ntu.edu.tw; s=google; t=1750084347; x=1750689147; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AwRGa0XFsqqIwrjVkk74Q1qsmmr8uiY3g/0R4Yfi5MQ=;
+        b=E0sgt0TxhN9TvoqeAF0rJ/XRYw1G9C4Oq1pJZRBQBUIOIkmt0ixfclcgsBiONVroDm
+         SAfIZkPvULDk6HD+sgilFMeu8MXyMQ/9QhmJmXgVNdzMCxXBw9CeDlh2EK08yKF9RF36
+         8jH+fnhMTbnF3ONr+Av3lFWYNn8YGpEGsXRcLM28wr5mtSP/qkTtWmyJ7vyxcr3iinXC
+         m/xOzxJqnwTlo6q8Hmrb55RIA7OaqLzdxoc9Pzo59+tZV+CJG0KpjlgeZXE/sw3g/p2b
+         oUsKNOrRUH2lDLUEl24b6gCyLftNUl5OzEVSD04wR7t1RVP8G6fqrEtkSI9R2G/ZdZ7x
+         3p1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750084477; x=1750689277;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yAgEh06Y08KkZqg3CyCAQ7ePxZ39WZ/hqPC07deIYhA=;
-        b=adJVoK3rmx9x7aLNamKpAXXjuOfZyO6cwpn0h12sEmZs8DichAVYmtXpS1K/siiO3q
-         Le9Y5lC509leI1F5DQELzILaNZqSy+BpMk5C4KUDmwgtjU9h2gn/qULijNykloQRRWlG
-         RB8MZrroNZHJpZ9BpG3PBeAhDWv2ix9nRK1naZkpzgNojAZmZJdZmY6flnxfeubKSkH7
-         yMx3pbA930BNQHYEZzPxc2IGy/hWMyCYurpFC5vTjE8doQYCNm0lCsyLWFbGAuEOSmYz
-         XP05ncgatedyYJ2bHF4vxVXMHIraz0rhYv/oABzhWWJLRNBWC72+NhanHmXzmxgb/sms
-         ewkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDpierN5v2yQomoNl/AgCaV1l2ODhQgF/kOQDbzlMrD7PRLg2sEmDQ2zJMUXLGpal7atACfit2pXH2bw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuC+N0VgA+v9D2ew4Xf48AhhLWEiunWkrawWQADhK3KlGDbjCR
-	qsiTTvsVzkViDv+Es7IXTJhQr/zwnG1SvN8zW21wViEXfnsdFbiRr3MEotG/DvGb+FQ=
-X-Gm-Gg: ASbGncvZ+y4WNZCC2+3uDVhLB8Pq0R7BbhLQsX5kAuLv0HY2YUnyaVyGIVgN7nX4Ojk
-	JcabsgLJnYLRR/aR5KPKeiofPsEREzXUP3Y2sR2dftB5FbL63KivH6cjpKSeLZUqXUo/+EOrJIH
-	CUN3194QJQM+ev9CRVv5oDh1sY8XdDBFFPeejzZfnrKdU165ooh8lg496EKtGFtwUhDNsQMA14l
-	KBfE6KTCMGCP06A5wO4plyVsGZ1Ke/0xt9iAnHs5XshPUSVGovugWUsq2dgP4e19EvKOeuoxIy7
-	qrwvLOsjs7rLGCDkoPF5U3ytZSbWUP4IS6tdk6RjiBIz+DLdMnn1WRlv9BjZ4EGUN2PltrXgQWd
-	32yTk3XOD
-X-Google-Smtp-Source: AGHT+IFWZyOfdBvtIeaX4r9KeyscEUamoohkuJbwWLO21ggJf2ui7LwN4OGcYTpGxVLP5r6618vpNg==
-X-Received: by 2002:a05:6e02:1a43:b0:3dd:d653:5a05 with SMTP id e9e14a558f8ab-3de07d01da0mr111772845ab.3.1750084477180;
-        Mon, 16 Jun 2025 07:34:37 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de134094f6sm9383095ab.9.2025.06.16.07.34.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 07:34:36 -0700 (PDT)
-Message-ID: <385a3bc1-2c0a-4a11-a802-ad02abafef1e@linuxfoundation.org>
-Date: Mon, 16 Jun 2025 08:34:35 -0600
+        d=1e100.net; s=20230601; t=1750084347; x=1750689147;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AwRGa0XFsqqIwrjVkk74Q1qsmmr8uiY3g/0R4Yfi5MQ=;
+        b=qWJj5/CHmwYPf5kWMhGEzl9u7KelQY6R2GjEgx+G1fia2z3KkUYvNEl2DDuF3w50Vr
+         5PKj3bdj6cqe63U/lP/NeGc3DXlwqhaB8++QR3zKIDgpyS4wuJn5N+AjBEpP9UaYzAu3
+         BmMoY1bVncS+43TOXLmr3yoxt08Ll3fsh7ogXT4qiDATrReqh76+cJycM46WHNkWZ46s
+         5c1US3hZsnGrRUfcYp2BnDgIAUfCio4xi3/qcj4QPLQGTPZTNiWp0k0vIKGo1h+D1NUX
+         YBnvoFXNVIgM9yoVAwKg4YlYznYrErCrZ02uTGV5T3oRveSkBLHtuXN7Cben0jSxYcHy
+         YcqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXh8LQCY3f12TkPjExHipSzfDJZjLHl68wz5vASYHbuu5NmwZKylo5Oa/Cx6SCXAiv9qucfJY78P2NlobE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX7mpRD2slkh+GBM+e822jjMSS3KLjCdx1Zqt6hr69kY6i0hDx
+	Xko9akx1cVfu0O/yhFHYBAVqasFkYHZ62f7wEO6OvNWHvY34EgVMfxViEYR8RSUxEsVYnRS7Jl2
+	ALG72Zz2oiZBPNFgyiXoehr+7eD5IGaf646pvVdDxEhkgcLFjtYc/ARr4fFk=
+X-Gm-Gg: ASbGncu92lafNAvx2Lk/e2Q3w+d7FNKcH/imHbQLFdoMfX1BRddg1j2sIEh0gy2OhQw
+	5FdUzzlec4ibeta65C63kdaAqmE5aoAZ1m1sSdVW4TGcSMOVJN05/m9h/1b3Gqzlf/t4G6IOaiL
+	wDkborG0KynJyQ3FC/Z8js6f1yftqirgmhGHA8uHCwY8aJqwwJkWHClFHJgWGREJG+DH2t6b4E8
+	ouOqR5Ju03bByRb3EG11JoNyg16NIQdCfCvKQWKk6y59HKPiTcYUgV9aUzfh7RYHNdzRQcy1/H0
+	ObgYjVIo0npLVZUF+6MA/YXRigr83FmS0S1gmPhs8bwCYHAwls0sleQS2+oh3x4/iEtau/l/yxg
+	M6dSSTDxHZSbw0DEgEJnTwXDl
+X-Google-Smtp-Source: AGHT+IEtkJExy6WPafNCco+WTYoFOLE/6qqMQggbf4cftPJzDAhAGmjRrQdyLE0tM9+TfIxVnZRz4w==
+X-Received: by 2002:a17:903:2ac7:b0:235:278c:7d06 with SMTP id d9443c01a7336-2366ae00e80mr158071555ad.8.1750084346886;
+        Mon, 16 Jun 2025 07:32:26 -0700 (PDT)
+Received: from zenbook (36-228-20-239.dynamic-ip.hinet.net. [36.228.20.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365dea8d1asm61456935ad.162.2025.06.16.07.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 07:32:26 -0700 (PDT)
+Date: Mon, 16 Jun 2025 22:34:58 +0800
+From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Jintack Lim <jintack@cs.columbia.edu>, 
+	Christoffer Dall <christoffer.dall@arm.com>
+Subject: Re: [PATCH] KVM: arm64: nv: Fix s_cpu_if->vgic_lr[] indexing in
+ vgic_v3_put_nested()
+Message-ID: <2p4urq6ij5zq77c7viydmqqaj2doeyja43khvcjgn5pkpe7saz@eyfvuykscn22>
+References: <20250614145721.2504524-1-r09922117@csie.ntu.edu.tw>
+ <86qzzkc5xa.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] clocksource: Use cpumask_first_but() in
- clocksource_verify_choose_cpus()
-To: I Hsin Cheng <richard120310@gmail.com>, Yury Norov <yury.norov@gmail.com>
-Cc: linux@rasmusvillemoes.dk, jstultz@google.com, tglx@linutronix.de,
- sboyd@kernel.org, linux-kernel@vger.kernel.org, eleanor15x@gmail.com,
- visitorckw@gmail.com, jserv@ccns.ncku.edu.tw,
- linux-kernel-mentees@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250613033447.3531709-1-richard120310@gmail.com>
- <20250613033447.3531709-3-richard120310@gmail.com> <aEuw7ls9hieUv_Ox@yury>
- <aEu1r12L_34Lxsgp@vaxr-BM6660-BM6360>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <aEu1r12L_34Lxsgp@vaxr-BM6660-BM6360>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86qzzkc5xa.wl-maz@kernel.org>
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-On 6/12/25 23:22, I Hsin Cheng wrote:
-> On Fri, Jun 13, 2025 at 01:02:38AM -0400, Yury Norov wrote:
->> I Hsin,
->>
->> This exact change has already been submitted by me and is under review.
->>
->> https://lore.kernel.org/all/20250604232550.40491-2-yury.norov@gmail.com/
->>
->> I don't understand why are you undercutting my work, and moreover do it
->> for the second time.
->>
->> For the first time you submitted something that duplicates my another
->> patch from the exact same series. John Stultz has pointed that, so you're
->> surely aware.
->>
->> https://lore.kernel.org/all/CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com/
->>
->> Kernel development process implies that one makes sure that his work
->> is unique and doesn't break someone else's development, at one's best
->> knowledge.
->>
->> What you're doing not only breaks this rule. You're in fact trying to
->> get credit for the work that is done by someone else. This is the
->> definition of fraud.
->>
->> I cannot make sure that any other patches from you are unique and
->> written by actually you. Therefore, I will not take your work anymore.
->>
->> I encourage everyone else to be careful working with I Hsing Cheng
->> and check his patches for uniqueness, at minimum.
->>
->> NAKed-by: Yury Norov <yury.norov@gmail.com>
->>
->> Thanks,
->> Yury
->>
+On Mon, Jun 16, 2025 at 11:54:57AM +0100, Marc Zyngier wrote:
+> On Sat, 14 Jun 2025 15:57:21 +0100,
+> Wei-Lin Chang <r09922117@csie.ntu.edu.tw> wrote:
+> > 
+> > s_cpu_if->vgic_lr[] is filled continuously from index 0 to
+> > s_cpu_if->used_lrs - 1, but vgic_v3_put_nested() is indexing it using
+> > the positions of the set bits in shadow_if->lr_map. So correct it.
+> > 
+> > Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+> > ---
+> >  arch/arm64/kvm/vgic/vgic-v3-nested.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+> > index 4f6954c30674..29741e3f077b 100644
+> > --- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
+> > +++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+> > @@ -343,7 +343,7 @@ void vgic_v3_put_nested(struct kvm_vcpu *vcpu)
+> >  	struct shadow_if *shadow_if = get_shadow_if();
+> >  	struct vgic_v3_cpu_if *s_cpu_if = &shadow_if->cpuif;
+> >  	u64 val;
+> > -	int i;
+> > +	int i, index = 0;
+> >  
+> >  	__vgic_v3_save_vmcr_aprs(s_cpu_if);
+> >  	__vgic_v3_deactivate_traps(s_cpu_if);
+> > @@ -368,10 +368,11 @@ void vgic_v3_put_nested(struct kvm_vcpu *vcpu)
+> >  		val = __vcpu_sys_reg(vcpu, ICH_LRN(i));
+> >  
+> >  		val &= ~ICH_LR_STATE;
+> > -		val |= s_cpu_if->vgic_lr[i] & ICH_LR_STATE;
+> > +		val |= s_cpu_if->vgic_lr[index] & ICH_LR_STATE;
+> >  
+> >  		__vcpu_sys_reg(vcpu, ICH_LRN(i)) = val;
+> > -		s_cpu_if->vgic_lr[i] = 0;
+> > +		s_cpu_if->vgic_lr[index] = 0;
+> > +		index++;
+> >  	}
+> >  
+> >  	shadow_if->lr_map = 0;
 > 
-> Hello Yury,
+> Nice catch, thanks a lot for tracking it down.
 > 
-> Sorry to make troubles, I didn't mean to do this, I wasn't aware that
-> you've send the same work and nor do I mean to interrupt your work. I
-> didn't have the habit to check others patches regularly, I'm sorry for
-> that.
-> 
-> I just saw Kuan-Wei's patch from months ago and I asked him whether I
-> can continue that work, and he agrees, so I try to do something from
-> there.
-> 
-> Again sorry for causing troubles, I'll make sure to look for others
-> patches first before submitting them.
-> 
-> Sincerely sorry for this.
-> 
-> Thanks,
-> I Hsin Cheng
-> 
->> On Fri, Jun 13, 2025 at 11:34:47AM +0800, I Hsin Cheng wrote:
->>> Utilize cpumask_first_but() helper instead of first using
->>> cpumask_first() and then cpumask_next(). The logic is the same here,
->>> using the new helper will make it more conscious.
->>>
->>> Use bloat-o-meter to check the impact on code size, the result is the
->>> same, does not have positive impact nor negative impact.
->>>
->>> $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
->>> add/remove: 0/0 grow/shrink: 0/0 up/down: 0/0 (0)
->>> Function                                     old     new   delta
->>> Total: Before=22590709, After=22590709, chg +0.00%
->>>
->>> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
->>> ---
->>> Generally speaking, I think this is just a small tweak on the code,
->>> making it more readable. However, no benefit in code size or performance
->>> as the implementation behind the helper is in fact the same as the one
->>> used here.
->>>
->>> Maybe more tests should be done to ensure the change is solid, I hope to
->>> seek some suggestions from everyone who has any ideas, or this is enough
->>> then it's good.
->>>
+> However, I think we should get rid of this double-indexing altogether,
+> or at least make it less error-prone. This thing is extremely fragile,
+> and it isn't the first time we are getting bitten with it.
 
-Thank you for explaining what transpired and clearing the misunderstanding.
-It can be difficult to figure if there is a duplicate patch unless you
-are closely watching the mailing lists - it is very hard to keep up.
+Hi Marc,
 
-Don't be discouraged with this experience. Continue to contribute.
+Yes agreed, making this more robust is better than just the bug fix.
+Thanks for the effort.
 
-thanks,
--- Shuah
+> 
+> Looking at the code, it becomes pretty obvious that the shadow index
+> is always the number of bits set in lr_map, and that we could
+> completely drop the 'index' thing if we simply counted these bits
+> (which isn't that expensive).
+> 
+> I came up with the (admittedly much bigger) following fix.
+> 
+> Thoughts?
+
+Just one nit below:
+
+> 
+> 	M.
+> 
+> From 2484950b8fc3b36cca32bf5e86ffe7975a43e0e7 Mon Sep 17 00:00:00 2001
+> From: Marc Zyngier <maz@kernel.org>
+> Date: Sun, 15 Jun 2025 16:11:38 +0100
+> Subject: [PATCH] KVM: arm64: nv: Fix tracking of shadow list registers
+> 
+> Wei-Lin reports that the tracking of shadow list registers is
+> majorly broken when resync'ing the L2 state after a run, as
+> we confuse the guest's LR index with the host's, potentially
+> losing the interrupt state.
+> 
+> While this could be fixed by adding yet another side index to
+> track it (Wei-Lin's fix), it may be better to refactor this
+> code to avoid having a side index altogether, limiting the
+> risk to introduce this class of bugs.
+> 
+> A key observation is that the shadow index is always the number
+> of bits in the lr_map bitmap. With that, the parallel indexing
+> scheme can be completely dropped.
+> 
+> While doing this, introduce a couple of helpers that abstract
+> the index conversion and some of the LR repainting, making the
+> whole exercise much simpler.
+> 
+> Reported-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Link: https://lore.kernel.org/r/20250614145721.2504524-1-r09922117@csie.ntu.edu.tw
+> ---
+>  arch/arm64/kvm/vgic/vgic-v3-nested.c | 81 ++++++++++++++--------------
+>  1 file changed, 42 insertions(+), 39 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+> index d22a8ad7bcc51..bd22e42ce9112 100644
+> --- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
+> +++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+> @@ -36,6 +36,11 @@ struct shadow_if {
+>  
+>  static DEFINE_PER_CPU(struct shadow_if, shadow_if);
+>  
+> +static int lr_map_idx_to_shadow_idx(struct shadow_if *shadow_if, int idx)
+> +{
+> +	return hweight64(shadow_if->lr_map & (BIT(idx) - 1));
+> +}
+> +
+>  /*
+>   * Nesting GICv3 support
+>   *
+> @@ -209,6 +214,29 @@ u64 vgic_v3_get_misr(struct kvm_vcpu *vcpu)
+>  	return reg;
+>  }
+>  
+> +static u64 translate_lr_hw_bit(struct kvm_vcpu *vcpu, u64 lr)
+
+I believe translate_lr_pintid() better describes what this function is
+doing.
+
+For everything else, I don't spot any issues after review.
+
+Reviewed-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+
+> +{
+> +	struct vgic_irq *irq;
+> +
+> +	if (!(lr & ICH_LR_HW))
+> +		return lr;
+> +
+> +	/* We have the HW bit set, check for validity of pINTID */
+> +	irq = vgic_get_vcpu_irq(vcpu, FIELD_GET(ICH_LR_PHYS_ID_MASK, lr));
+> +	/* If there was no real mapping, nuke the HW bit */
+> +	if (!irq || !irq->hw || irq->intid > VGIC_MAX_SPI)
+> +		lr &= ~ICH_LR_HW;
+> +
+> +	/* Translate the virtual mapping to the real one, even if invalid */
+> +	if (irq) {
+> +		lr &= ~ICH_LR_PHYS_ID_MASK;
+> +		lr |= FIELD_PREP(ICH_LR_PHYS_ID_MASK, (u64)irq->hwintid);
+> +		vgic_put_irq(vcpu->kvm, irq);
+> +	}
+> +
+> +	return lr;
+> +}
+> +
+>  /*
+>   * For LRs which have HW bit set such as timer interrupts, we modify them to
+>   * have the host hardware interrupt number instead of the virtual one programmed
+> @@ -217,58 +245,37 @@ u64 vgic_v3_get_misr(struct kvm_vcpu *vcpu)
+>  static void vgic_v3_create_shadow_lr(struct kvm_vcpu *vcpu,
+>  				     struct vgic_v3_cpu_if *s_cpu_if)
+>  {
+> -	unsigned long lr_map = 0;
+> -	int index = 0;
+> +	struct shadow_if *shadow_if;
+> +
+> +	shadow_if = container_of(s_cpu_if, struct shadow_if, cpuif);
+> +	shadow_if->lr_map = 0;
+>  
+>  	for (int i = 0; i < kvm_vgic_global_state.nr_lr; i++) {
+>  		u64 lr = __vcpu_sys_reg(vcpu, ICH_LRN(i));
+> -		struct vgic_irq *irq;
+>  
+>  		if (!(lr & ICH_LR_STATE))
+> -			lr = 0;
+> -
+> -		if (!(lr & ICH_LR_HW))
+> -			goto next;
+> -
+> -		/* We have the HW bit set, check for validity of pINTID */
+> -		irq = vgic_get_vcpu_irq(vcpu, FIELD_GET(ICH_LR_PHYS_ID_MASK, lr));
+> -		if (!irq || !irq->hw || irq->intid > VGIC_MAX_SPI ) {
+> -			/* There was no real mapping, so nuke the HW bit */
+> -			lr &= ~ICH_LR_HW;
+> -			if (irq)
+> -				vgic_put_irq(vcpu->kvm, irq);
+> -			goto next;
+> -		}
+> -
+> -		/* Translate the virtual mapping to the real one */
+> -		lr &= ~ICH_LR_PHYS_ID_MASK;
+> -		lr |= FIELD_PREP(ICH_LR_PHYS_ID_MASK, (u64)irq->hwintid);
+> +			continue;
+>  
+> -		vgic_put_irq(vcpu->kvm, irq);
+> +		lr = translate_lr_hw_bit(vcpu, lr);
+>  
+> -next:
+> -		s_cpu_if->vgic_lr[index] = lr;
+> -		if (lr) {
+> -			lr_map |= BIT(i);
+> -			index++;
+> -		}
+> +		s_cpu_if->vgic_lr[hweight64(shadow_if->lr_map)] = lr;
+> +		shadow_if->lr_map |= BIT(i);
+>  	}
+>  
+> -	container_of(s_cpu_if, struct shadow_if, cpuif)->lr_map = lr_map;
+> -	s_cpu_if->used_lrs = index;
+> +	s_cpu_if->used_lrs = hweight64(shadow_if->lr_map);
+>  }
+>  
+>  void vgic_v3_sync_nested(struct kvm_vcpu *vcpu)
+>  {
+>  	struct shadow_if *shadow_if = get_shadow_if();
+> -	int i, index = 0;
+> +	int i;
+>  
+>  	for_each_set_bit(i, &shadow_if->lr_map, kvm_vgic_global_state.nr_lr) {
+>  		u64 lr = __vcpu_sys_reg(vcpu, ICH_LRN(i));
+>  		struct vgic_irq *irq;
+>  
+>  		if (!(lr & ICH_LR_HW) || !(lr & ICH_LR_STATE))
+> -			goto next;
+> +			continue;
+>  
+>  		/*
+>  		 * If we had a HW lr programmed by the guest hypervisor, we
+> @@ -277,15 +284,13 @@ void vgic_v3_sync_nested(struct kvm_vcpu *vcpu)
+>  		 */
+>  		irq = vgic_get_vcpu_irq(vcpu, FIELD_GET(ICH_LR_PHYS_ID_MASK, lr));
+>  		if (WARN_ON(!irq)) /* Shouldn't happen as we check on load */
+> -			goto next;
+> +			continue;
+>  
+> -		lr = __gic_v3_get_lr(index);
+> +		lr = __gic_v3_get_lr(lr_map_idx_to_shadow_idx(shadow_if, i));
+>  		if (!(lr & ICH_LR_STATE))
+>  			irq->active = false;
+>  
+>  		vgic_put_irq(vcpu->kvm, irq);
+> -	next:
+> -		index++;
+>  	}
+>  }
+>  
+> @@ -368,13 +373,11 @@ void vgic_v3_put_nested(struct kvm_vcpu *vcpu)
+>  		val = __vcpu_sys_reg(vcpu, ICH_LRN(i));
+>  
+>  		val &= ~ICH_LR_STATE;
+> -		val |= s_cpu_if->vgic_lr[i] & ICH_LR_STATE;
+> +		val |= s_cpu_if->vgic_lr[lr_map_idx_to_shadow_idx(shadow_if, i)] & ICH_LR_STATE;
+>  
+>  		__vcpu_assign_sys_reg(vcpu, ICH_LRN(i), val);
+> -		s_cpu_if->vgic_lr[i] = 0;
+>  	}
+>  
+> -	shadow_if->lr_map = 0;
+>  	vcpu->arch.vgic_cpu.vgic_v3.used_lrs = 0;
+>  }
+>  
+> -- 
+> 2.39.2
+> 
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
