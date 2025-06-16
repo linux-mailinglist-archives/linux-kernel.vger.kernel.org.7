@@ -1,422 +1,245 @@
-Return-Path: <linux-kernel+bounces-688968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEC3ADB969
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:18:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B22ADB8B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CEF71740E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59C3518911CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196F7289808;
-	Mon, 16 Jun 2025 19:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB43289E12;
+	Mon, 16 Jun 2025 18:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Pi5XqV9R"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IYPl9JjM"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010070.outbound.protection.outlook.com [52.101.69.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22DD1E9B29;
-	Mon, 16 Jun 2025 19:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750101488; cv=none; b=hi5QvPg5cvpXduqOTU91PdTXvSIXHuQxxMnC80kbChsJgjwYvAWvLeD9zIKh3awHtiZXTmGr3DBQ5036+0TkTmCvs3zwr6V80ExAXGMJsbDy00ZriNq5e+GJWc9Xncack28KxKYnmlc9ejv1tb+5FUe0NaXnxVrq+culoXb2UQo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750101488; c=relaxed/simple;
-	bh=XGD4MtlMgY10wj/nEJyvE/7E+QKvtOTwmAU3PEog66M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QoxFI7aqj7wAT6gMNCgBeyNVATtLPeTcv+J2PeyyRTl9rvhPEVHnVLYAh28xxVMizNsRyLJePybmdXpSaYUS5wS53GTTiFZ9/Y+MZu44YB8Onta6yRGARbEmIfAZriHChgVpbOxAqMynRdpEJaq5/yCllyC0a/K81xNv8JhmKYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Pi5XqV9R; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 51DE1666F1B;
-	Mon, 16 Jun 2025 20:16:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1750097781;
-	bh=XGD4MtlMgY10wj/nEJyvE/7E+QKvtOTwmAU3PEog66M=;
-	h=From:Subject:Date;
-	b=Pi5XqV9RUgm67n4bbaRjbqLKpWZc1gJZ8n0sNdlcFupHwE3ZPWwySSJ3M9fVz5fwS
-	 FM4s7chp4IO8xwvqPs1CiWtKjF0kPzzkpsGtfz/y28Hy4EgHu6bicSwA3iINxybopt
-	 Kd2hQs5C5svA1R1HJWupwydbVL/IwGEzsWvvWDWNpVPuUaU/FZvRQfZQD9F8TbIW6a
-	 k6WwXEglYjLzTU3i294043fLXzmMfRT58N1v9XqGpONbLUCvX7De4m3KhkIGo0QDE9
-	 TUg0ZdxIF3AZEax2t5QvQflzzwNflUQGe6sLp3x6/FcN1z+XxMgi5bMnezLsB7lubp
-	 5wIj5emQB8lbg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Saravana Kannan <saravanak@google.com>
-Subject:
- [PATCH v1] driver core: Add device_link_test() for testing device link flags
-Date: Mon, 16 Jun 2025 20:16:21 +0200
-Message-ID: <2793309.mvXUDI8C0e@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED33289378;
+	Mon, 16 Jun 2025 18:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750097803; cv=fail; b=LCsxkl6R7sV27ZNhrMn3MzEDq+8SE6h+wVcsptMuGfZs+qnv5qxBaeBnAzNxNmFno+yBC0Mb86LWuiWPt5DwEpN+ZsitugQhoOy5ppxuy4Vrno/voxaBm4DFWXBuaCWSucjpdtZsns3FytOxFa0YdNIhpHzp2T+qvlYhYdZ9HxM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750097803; c=relaxed/simple;
+	bh=5tsRFBVxyyDirplPzyShSC4BJQwwXRlzdxNzhrao1Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RLHhhiVAXidwcbtlNuhwUQRGTkZhMirPzFcFvjPqH8UgkLJKINt1SgAcRF9lTpOMJ7/ROFTvlU6VtAwphYpB8D7pqntfZxMUIO4htP2mrGL48/I3N47Xx6puU5xCAv1Gf6KAbxTnCG26aNSk77LwP556Skyu93jNkUVCgPxCNyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IYPl9JjM reason="signature verification failed"; arc=fail smtp.client-ip=52.101.69.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gHjsWlqzhM5XQlsOrUBgNefwg/UariflqnGh3lRiIOJamqL/cyxyAIzdpE44ZWeEgIDloxAj2REd/zJDpMxxKoXVIST/F/l1R5oPTQ2ETuuSwAgl73ndhcyS88tgQzbuzX0gFMjC4isLQ7QFui/vOHdvone1+E0nwWEjFI0e/5ThufhaI3rF72tDEBLDzn7SEVIN0aAYbNa7WFfOtE1Prcv8Dk2z02AtyOa+NNE56BLlkR37mN0nb6VYQ/ZaN2dZixFPFXI8bDiiLwVAXiH5MGO8fLYxQlkWWaX+V2vc7Cqc+hb4Xm50K4YqYGMvih38xEoyf9r6oI/bVjVMIxWMGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QV7r0zhromraftUohQXkVkTPVwHgCQxQFNuI3G3rGwQ=;
+ b=Uz14L9mxAihrIRCSbmDBxePX1TCp9iEsyEp6L9RMJl4CEHAGo0gDgXRnLnorv474tVSQkN1xN/zPAsLpW4CGDvebv6M2dLQ8sfMrFTySmuRWRiVKKFVRmKsW3BrcQ1BO6VPWZLkRnqc9hUE0rBE1Guw4ZpK1WliKzIIG+NEWngGjMmZ/NkmQJOwRnwwu+Q0JRRGnbL8OB/rsh+sJk20xFug5GNe6SnzpEIZhNV3DTCF3JxLwMisk9qlh+ac3PEv4vjFRLVtQ/Rx195/KO4Qz38buocXdBdYqbhDKPZRwZQ/tb6FQ2PBqFLmF4BhwdOQ1Zy7KiJLk2xS/S25fBV/NqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QV7r0zhromraftUohQXkVkTPVwHgCQxQFNuI3G3rGwQ=;
+ b=IYPl9JjMpiMGVxhWc0h6M3dH6Lsju8hYmdeDQQ3RugsJQwyt0ts1gj3BW9qCfqLVi1hT189PtDRAsQ53XVifDFIaf0Zcly1d2l9l1swWPi2iKUOvMq4Ik3kHV06PHqKK5YxEn8+yNbeIrZdKsma3+ArNHvO8h3H7OaFhaJrxY73mgrzJOs2Q20e5gOreQfNw/RzF5xqmLxYB/ucfVGIWn/cjNKG9lzvetfe1CojXKMaMcxNj1CFpoldgQ6AjBqPimW7vZQzSTM9VUXOIiMz+IgBnRj1pYRFkHEJBWFsZnRInA3Fy/tc9uFUPLeUEKTNnYn75xX03uZt5A+g9cCKWpQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS4PR04MB9691.eurprd04.prod.outlook.com (2603:10a6:20b:4f4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.27; Mon, 16 Jun
+ 2025 18:16:38 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8835.026; Mon, 16 Jun 2025
+ 18:16:38 +0000
+Date: Mon, 16 Jun 2025 14:16:30 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/1] dt-bindings: media: convert fsl-vdoa.txt to yaml
+ format
+Message-ID: <aFBffjCXqA/dMn4Z@lizhi-Precision-Tower-5810>
+References: <20250411213601.3273670-1-Frank.Li@nxp.com>
+ <174448105342.1415739.9619142538994119426.robh@kernel.org>
+ <aC9xv08a5k5Pz1t+@lizhi-Precision-Tower-5810>
+ <b97c254c5169acb32b9f65f71b363a3eb1cfc8a2.camel@ndufresne.ca>
+ <8b18533170e7ba395c574de69768dcc27f718767.camel@ndufresne.ca>
+ <aC93vDMFM7LsoDD4@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aC93vDMFM7LsoDD4@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: PH8PR15CA0011.namprd15.prod.outlook.com
+ (2603:10b6:510:2d2::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTF/I4x6zZceSr9PpSvCQ9iNejtSEb4amLQZYAOrXMGCwU3OPukZULDXLJRB2Ru/igCon2RjW5s/5tXTxXUbO4u2LLgc7+RQyZFuID53nbnaLXshf7Pa7GSn7fhNSfsecRRfQR9H6mHErZLFTVqaoS6sdnnM8kaYymqvDuhRZnasowwmF/Rnd/HfXRMw8GQG4zUE946pZo1MLH0KQfwO9rAhzoVDoLNDvD5qlqXn+FdCjRcAcD9lZ1EYhHFXyhaXw2MYRV4OXUQwwmf4uDzEcvT1EWQxCzyuh/qXTaAk0v6gHJ0+W6gmwB5Mbo1ayn+BI43KxwcVPBhZWO9lE4ef5c1/euQ4KaRNQHGdVhPX8mDapgqVfveoUpoWLAopU18F9LCEEy6phOZuKEfhBW29Y1nQAThs1vm2F8TcE44ATqSbMbCk0lnGNHMAt32lMaQpprHHGkbz/KuWZlG16cwKS//pLy7mV5/s9Yve+wzMMYYFE2NHYyjBobBn8xlmtds6SZ6ULBNtM0fdg1oolyGnBAyMUAw/YfwbOut0/zLz0EOTrfuPS+K1HxlKP9qtYQerFpUrn1aQLp2GHNBv4PAjtRyy7lE8xCEtE69CD2FEqG4+bI6VYPAZHAHfooHQu0aeqv4jdBQojTGDQpcXTMx6iHgYx9HxpLCODcQOvnCNANgaMw
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS4PR04MB9691:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75200bee-8455-4507-d223-08ddad01efd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?NY+tIrLspy0ROrlwg0x2TJjzIOlqDtBy5WPM6qvtvhoJwFMp/mfljGCNRS?=
+ =?iso-8859-1?Q?sm2YBtTaHYzzO/3JSayx8k57PG/65aDWrbkFiYoF1EGKpfVaQ2gAPHpx5x?=
+ =?iso-8859-1?Q?jfZYb91XA+wlk8LetmEh0q7OgYCOMHm0QAmTDJqqJR5Mrc/ZCtHEdWfDmI?=
+ =?iso-8859-1?Q?fjoA5jHVL1rGeZdz86h/UYQwAJAlECjVc65W8sQ4A0OKp2L1WzrsdPYhuS?=
+ =?iso-8859-1?Q?YMHalt7tYuf1/2+wIxSIK8wSGxXBpxM7U4aM/2obXG2wp6gPSjProKBgZ9?=
+ =?iso-8859-1?Q?ZwG2QSVhoNO49wXXXyQ75L+YfXJWDEOxsx6ZnsbS6bB54ef3ZvYuu0Rm4b?=
+ =?iso-8859-1?Q?FZmORBXbxx0kar2XvOEPa1+hPjoUYHLczZIDng3Xvxp5Z6sgyLEfpd17JO?=
+ =?iso-8859-1?Q?LEJWY/eO4G9KbYl/ArWkslPypCTZSgPHY6mU8J1a4SbQkEHz/pr49Xuwm0?=
+ =?iso-8859-1?Q?q//nsItV1qFGgKBljx3m7cG6rOTXthxEIEMmcRbRd2t0OZeRE7w6xIQY0h?=
+ =?iso-8859-1?Q?+QntVWVZn3B4ZONBSSnWAloBPDC/G6P8sY+M/3q8yQiyElTPJHZfBjK8t6?=
+ =?iso-8859-1?Q?o4ZWnpXzHk7xPw3VOFHcN5EKrSofOyVQwvfTf3Tm2/79N3/xwUKcz4EdiG?=
+ =?iso-8859-1?Q?qZuDb6B0xjl/rGIBr8L2m7UlfwjXsssYXQUkCCts2hehzHRnrLRO5lEFQR?=
+ =?iso-8859-1?Q?nxobmOdmdfuXbX0+yY1GXI3YLr3HvUGbGohJI8L7LmPw1E32yhnQYIDsYx?=
+ =?iso-8859-1?Q?gPBd1p9FdQ58YtEoWnZNqjjDws+0oVzB94ishEBf1s7dGHH98vuMgJbVCY?=
+ =?iso-8859-1?Q?1+KZYX2//ikyiGINq6M9HIxBEmXGOa7R6oS80LUyIQviwTxpiOWLvpLkFd?=
+ =?iso-8859-1?Q?dk57Yj2fLXCz1THW9/JTbOieywxV0sNmRN5dU/bVZ6jMM+x7LlLe4fKYSh?=
+ =?iso-8859-1?Q?X2UwddFZuJdSMHos9cRmwm1wWotPrWXL1YQWMIfuM0Zfh9i1Pdp+zPaWBH?=
+ =?iso-8859-1?Q?cfkbzrbsvv+Rv8cUDYcp2tQDs/y24vtGTU1hW19bk0qoVf1w2ZYzNmRkqQ?=
+ =?iso-8859-1?Q?ZTMWzin/xheRrkmGVexwqLCl0l4IsKcF+YKhIExuwQwcYGMv+x8+9ufW1U?=
+ =?iso-8859-1?Q?nmt64ax22eaw/OUsj3YrGiXsiO/3OeK4niFygXcP/sveAMKiRtv8EGhsqU?=
+ =?iso-8859-1?Q?PEv5+no8HwqjjXG1dyKBKX9Na5xJuSEgbluCU5OvRT55dUHPdBfR38NCkr?=
+ =?iso-8859-1?Q?Wz6L0DJqWgdS0FcMrmUXZ7aXNJmKDzfT/qVzDeqvqapFZdNsN1gq8Wt6J0?=
+ =?iso-8859-1?Q?aY4sBEMnc5JZmVf1yJsDIyzMkmuz19/v2ISftwdQfWJFFvhsjUMG9PFn/s?=
+ =?iso-8859-1?Q?080uhu30vLSJAZra6LFWb1UWmaquTxq1qX+mrApV085DFmJE29yUbeg/1Y?=
+ =?iso-8859-1?Q?xY7TYj5kqwUAEYCOm6sQcb2g+jAdTrTfYdZKYqIjZhJSXhJE11ni2rh2i7?=
+ =?iso-8859-1?Q?weEFu3bHIPlD3MJw8nV/8Q/uaTxNWSYkrIZMvCnGp1Gw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?PSD5OdjPDThNrKvYLqsQSibHyBy95dTMXiqlIgAt2Im61qEY+LRAJLa2is?=
+ =?iso-8859-1?Q?gLMWjN9IGlN0ZgUlXqXdJ2dCvk/At0VqIGxzo5IH0p5Y78DDE2W2y0Pa/U?=
+ =?iso-8859-1?Q?sLKNzGNWE9RN2xkLQMAcY98coSHv8Tf3vXqnuV4gC3tl1IC0gOyVge+KFm?=
+ =?iso-8859-1?Q?tepvL7Sq3cNo98p+jjjAH8kXK9OiuSpfWIiJnrmjwV4jdgBCQv6staRjrC?=
+ =?iso-8859-1?Q?nh7yXWSdOs7gyI99OifVG8z09zCcGdMAdRoio+LJx4xtLn7Cx9+UHtxxGs?=
+ =?iso-8859-1?Q?TV8o1p3cPs11E7NVX5mSAZa00GuoyEpGSQeUiHalbdTTVLh75NgQvBEc59?=
+ =?iso-8859-1?Q?ew8sLCgM1Vc0XKdLnUi7SXuMT4NQ4z6SH80pDSZV3X4e8ToJyy6WBrh9NO?=
+ =?iso-8859-1?Q?QRTJRKhQjf0ALw/8TfT1/ktqNA8dWTbfEQwNjbuotL522ilNhxJj2unIl7?=
+ =?iso-8859-1?Q?9aLzSVJKK0dakelEWRFCBX+ZhKvIljUUThO/SH+xFzMR270Aff55rDQB2N?=
+ =?iso-8859-1?Q?K7TtUvIceBaBCf1pI8Oek3HhTSDnIOBuhAZ5673Y03tZyymAd4YjJoXycR?=
+ =?iso-8859-1?Q?DdK1G/yMBdftJTLG3evG1A5NHkCZ/Bo+BDpnod/9ge1mvDOP2Axk3IMaip?=
+ =?iso-8859-1?Q?drbkY5JrC2jS1ikqLZG9cyMLvfw9MwLPX1qoZmUxFJIuofnC3d6tk4lAfH?=
+ =?iso-8859-1?Q?VQkGX1iXgYTbxn7z8hskkLlcYrzlbsBS0k19wu78JR/mKjabdNo+zk9V/V?=
+ =?iso-8859-1?Q?ncXqrlR2o3ay/TtpIma3m2tQKnZTj3NJpuUw5Vq9bO7rkAH6B84Ia7PHAx?=
+ =?iso-8859-1?Q?6IPq7tBPRF69kE59g4IGcV4Y88cAoNeujQlF5TITvq+spluHeQn4HD/a1R?=
+ =?iso-8859-1?Q?oVMnycd4RWsnDweCfyUAIpnmoOapQDOAXP7gbYMhKHcH9go8ErnXJb0uFl?=
+ =?iso-8859-1?Q?iILRS2kY2EQAsfpKwt7Wcym+GiMoXp/yvrQYR47sQVH2xwV4mPsOAbz7DL?=
+ =?iso-8859-1?Q?usJMixaGeFnQU/6decgiSDlPdeW7Sd/Ffp7a/5yC55RB+UiP8jWWKTdqNv?=
+ =?iso-8859-1?Q?UMv16rgEi0lHjMYaxq/SJyEr7SDUsknHaA5ckqcdySbJ1Q0Sqv93N32fv9?=
+ =?iso-8859-1?Q?D7CGxPOC2eTuvApf9QxVhprxdcuDq33zf/k2PCvc16ZCQ4Nt22yWUmOqck?=
+ =?iso-8859-1?Q?hyUG4ezjqf2j+0569t1IY+WiZicnBFWIWL1IHyziuEgM5quOx7RIIfBXKZ?=
+ =?iso-8859-1?Q?nqcoUnFKqTX0TfOg6cpxKIMIOkSORPTSNX5cbf7Hw4FD8X+j3a+weur4M2?=
+ =?iso-8859-1?Q?TDKsdYIA/8iWHH0N6eiODV6i5KnxRCZk6BtfNV4EomODxm9euA1SgE/IsJ?=
+ =?iso-8859-1?Q?HTowdKY9tqcsSniCgz849ZCRsy96FxbFfa0sLXorA9sEKwO88uey/25Ibe?=
+ =?iso-8859-1?Q?F92I7DAHPrxxS2iMyIKtO/e31+N1WDzD/NCCD5ps1+JNI+/NAaT3wk24EK?=
+ =?iso-8859-1?Q?bkC1MATU02XCbQqs0+bO2TfUhFBjrZMmGFIp6m2NBeAqWbyIOL13lJyCWa?=
+ =?iso-8859-1?Q?xAfULBbKK1mfwhHj21fr22firj4GOKvL8jvdq9+ek0xIFWBTLZ/GKlOuL8?=
+ =?iso-8859-1?Q?LpI7zbebnn5Ls=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75200bee-8455-4507-d223-08ddad01efd2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 18:16:38.8582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uPLzF5K4kvG6vzoBmeGZWZ96OqwNiARsqzZDXcuGPRVCfqc0AS6QGN1PHzTnUSd6reen4po/r3SsSPcudoFQyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9691
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, May 22, 2025 at 03:15:08PM -0400, Frank Li wrote:
+> On Thu, May 22, 2025 at 03:06:01PM -0400, Nicolas Dufresne wrote:
+> > Hi again,
+> >
+> > Le jeudi 22 mai 2025 à 14:57 -0400, Nicolas Dufresne a écrit :
+> > > Hi Frank,
+> > >
+> > > Le jeudi 22 mai 2025 à 14:49 -0400, Frank Li a écrit :
+> > > > On Sat, Apr 12, 2025 at 01:04:14PM -0500, Rob Herring (Arm) wrote:
+> > > > >
+> > > > > On Fri, 11 Apr 2025 17:36:00 -0400, Frank Li wrote:
+> > > > > > Convert fsl-vdoa.txt to yaml format.
+> > > > > >
+> > > > > > Additional changes:
+> > > > > > - Add irq.h and imx6qdl-clock.h in example.
+> > > > > >
+> > > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > > > ---
+> > > > > >  .../bindings/media/fsl,imx6q-vdoa.yaml        | 42 +++++++++++++++++++
+> > > > > >  .../devicetree/bindings/media/fsl-vdoa.txt    | 21 ----------
+> > > > > >  2 files changed, 42 insertions(+), 21 deletions(-)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+> > > > > >  delete mode 100644 Documentation/devicetree/bindings/media/fsl-vdoa.txt
+> > > > > >
+> > > > >
+> > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > >
+> > > > All:
+> > > > 	Anyone pick this patch?
+> > >
+> > > Thanks for the highlight, this is stuff from before my time and I had not associated it
+> > > with CODA initially. I've picked it now.
+> >
+> > Actually, before I do so, any of the following warnings should be addressed ? I effectively don't
+> > see a clear entry for that bindings, but could have miss-read and there is a second warning,
+> > which based on having Rb is likely false positive ?
+>
+> The second warning is false alarm. When convert txt to yaml, only need update
+> MAINTAINS only when old txt entry already in MAINTAINERS.
+>
+> >
+> > ---
+> > [[ATTACHMENT|junit/./0001-dt-bindings-media-convert-fsl-vdoa.txt-to-yaml-forma.patch checkpatch.err.txt]]
+> > WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+> > #21:
+> > new file mode 100644
+> >
+> > WARNING: DT binding docs and includes should be a separate patch. See: Documentation/devicetree/bindings/submitting-
+> > patches.rst
+>
+> This one is check patch script issue. I met many similar issues at convert
+> txt to yaml.
 
-To avoid coding mistakes like the one fixed by commit 3860cbe23963 ("PM:
-sleep: Fix bit masking operation"), introduce device_link_test() for
-testing device link flags and use it where applicable.
+Nicolas Dufresne:
 
-No intentional functional impact.
+	Do you have still concern to pick up this patch?
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/core.c          |   73 +++++++++++++++++++++----------------------
- drivers/base/power/main.c    |    2 -
- drivers/base/power/runtime.c |    6 +--
- include/linux/device.h       |    5 ++
- 4 files changed, 45 insertions(+), 41 deletions(-)
+Frank Li
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -460,9 +460,9 @@
- 	struct device_link *link = to_devlink(dev);
- 	const char *output;
- 
--	if (link->flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
-+	if (device_link_test(link, DL_FLAG_AUTOREMOVE_SUPPLIER))
- 		output = "supplier unbind";
--	else if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER)
-+	else if (device_link_test(link, DL_FLAG_AUTOREMOVE_CONSUMER))
- 		output = "consumer unbind";
- 	else
- 		output = "never";
-@@ -476,7 +476,7 @@
- {
- 	struct device_link *link = to_devlink(dev);
- 
--	return sysfs_emit(buf, "%d\n", !!(link->flags & DL_FLAG_PM_RUNTIME));
-+	return sysfs_emit(buf, "%d\n", device_link_test(link, DL_FLAG_PM_RUNTIME));
- }
- static DEVICE_ATTR_RO(runtime_pm);
- 
-@@ -485,8 +485,7 @@
- {
- 	struct device_link *link = to_devlink(dev);
- 
--	return sysfs_emit(buf, "%d\n",
--			  !!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
-+	return sysfs_emit(buf, "%d\n", device_link_test(link, DL_FLAG_SYNC_STATE_ONLY));
- }
- static DEVICE_ATTR_RO(sync_state_only);
- 
-@@ -792,12 +791,12 @@
- 		if (link->consumer != consumer)
- 			continue;
- 
--		if (link->flags & DL_FLAG_INFERRED &&
-+		if (device_link_test(link, DL_FLAG_INFERRED) &&
- 		    !(flags & DL_FLAG_INFERRED))
- 			link->flags &= ~DL_FLAG_INFERRED;
- 
- 		if (flags & DL_FLAG_PM_RUNTIME) {
--			if (!(link->flags & DL_FLAG_PM_RUNTIME)) {
-+			if (!device_link_test(link, DL_FLAG_PM_RUNTIME)) {
- 				pm_runtime_new_link(consumer);
- 				link->flags |= DL_FLAG_PM_RUNTIME;
- 			}
-@@ -807,8 +806,8 @@
- 
- 		if (flags & DL_FLAG_STATELESS) {
- 			kref_get(&link->kref);
--			if (link->flags & DL_FLAG_SYNC_STATE_ONLY &&
--			    !(link->flags & DL_FLAG_STATELESS)) {
-+			if (device_link_test(link, DL_FLAG_SYNC_STATE_ONLY) &&
-+			    !device_link_test(link, DL_FLAG_STATELESS)) {
- 				link->flags |= DL_FLAG_STATELESS;
- 				goto reorder;
- 			} else {
-@@ -823,7 +822,7 @@
- 		 * update the existing link to stay around longer.
- 		 */
- 		if (flags & DL_FLAG_AUTOREMOVE_SUPPLIER) {
--			if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER) {
-+			if (device_link_test(link, DL_FLAG_AUTOREMOVE_CONSUMER)) {
- 				link->flags &= ~DL_FLAG_AUTOREMOVE_CONSUMER;
- 				link->flags |= DL_FLAG_AUTOREMOVE_SUPPLIER;
- 			}
-@@ -831,12 +830,12 @@
- 			link->flags &= ~(DL_FLAG_AUTOREMOVE_CONSUMER |
- 					 DL_FLAG_AUTOREMOVE_SUPPLIER);
- 		}
--		if (!(link->flags & DL_FLAG_MANAGED)) {
-+		if (!device_link_test(link, DL_FLAG_MANAGED)) {
- 			kref_get(&link->kref);
- 			link->flags |= DL_FLAG_MANAGED;
- 			device_link_init_status(link, consumer, supplier);
- 		}
--		if (link->flags & DL_FLAG_SYNC_STATE_ONLY &&
-+		if (device_link_test(link, DL_FLAG_SYNC_STATE_ONLY) &&
- 		    !(flags & DL_FLAG_SYNC_STATE_ONLY)) {
- 			link->flags &= ~DL_FLAG_SYNC_STATE_ONLY;
- 			goto reorder;
-@@ -940,7 +939,7 @@
- 
- static void device_link_put_kref(struct device_link *link)
- {
--	if (link->flags & DL_FLAG_STATELESS)
-+	if (device_link_test(link, DL_FLAG_STATELESS))
- 		kref_put(&link->kref, __device_link_del);
- 	else if (!device_is_registered(link->consumer))
- 		__device_link_del(&link->kref);
-@@ -1004,7 +1003,7 @@
- 		if (link->supplier->links.status == DL_DEV_DRIVER_BOUND) {
- 			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
- 		} else {
--			WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
-+			WARN_ON(!device_link_test(link, DL_FLAG_SYNC_STATE_ONLY));
- 			WRITE_ONCE(link->status, DL_STATE_DORMANT);
- 		}
- 	}
-@@ -1072,14 +1071,14 @@
- 	device_links_write_lock();
- 
- 	list_for_each_entry(link, &dev->links.suppliers, c_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
- 		if (link->status != DL_STATE_AVAILABLE &&
--		    !(link->flags & DL_FLAG_SYNC_STATE_ONLY)) {
-+		    !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY)) {
- 
- 			if (dev_is_best_effort(dev) &&
--			    link->flags & DL_FLAG_INFERRED &&
-+			    device_link_test(link, DL_FLAG_INFERRED) &&
- 			    !link->supplier->can_match) {
- 				ret = -EAGAIN;
- 				continue;
-@@ -1128,7 +1127,7 @@
- 		return;
- 
- 	list_for_each_entry(link, &dev->links.consumers, s_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 		if (link->status != DL_STATE_ACTIVE)
- 			return;
-@@ -1268,7 +1267,7 @@
- 	device_links_write_lock();
- 
- 	list_for_each_entry_safe(link, ln, &dev->links.suppliers, c_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
- 		if (link->status != DL_STATE_AVAILABLE) {
-@@ -1329,7 +1328,7 @@
- 	device_links_write_lock();
- 
- 	list_for_each_entry(link, &dev->links.consumers, s_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
- 		/*
-@@ -1345,7 +1344,7 @@
- 		WARN_ON(link->status != DL_STATE_DORMANT);
- 		WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
- 
--		if (link->flags & DL_FLAG_AUTOPROBE_CONSUMER)
-+		if (device_link_test(link, DL_FLAG_AUTOPROBE_CONSUMER))
- 			driver_deferred_probe_add(link->consumer);
- 	}
- 
-@@ -1357,11 +1356,11 @@
- 	list_for_each_entry_safe(link, ln, &dev->links.suppliers, c_node) {
- 		struct device *supplier;
- 
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
- 		supplier = link->supplier;
--		if (link->flags & DL_FLAG_SYNC_STATE_ONLY) {
-+		if (device_link_test(link, DL_FLAG_SYNC_STATE_ONLY)) {
- 			/*
- 			 * When DL_FLAG_SYNC_STATE_ONLY is set, it means no
- 			 * other DL_MANAGED_LINK_FLAGS have been set. So, it's
-@@ -1369,7 +1368,7 @@
- 			 */
- 			device_link_drop_managed(link);
- 		} else if (dev_is_best_effort(dev) &&
--			   link->flags & DL_FLAG_INFERRED &&
-+			   device_link_test(link, DL_FLAG_INFERRED) &&
- 			   link->status != DL_STATE_CONSUMER_PROBE &&
- 			   !link->supplier->can_match) {
- 			/*
-@@ -1421,10 +1420,10 @@
- 	struct device_link *link, *ln;
- 
- 	list_for_each_entry_safe_reverse(link, ln, &dev->links.suppliers, c_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
--		if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER) {
-+		if (device_link_test(link, DL_FLAG_AUTOREMOVE_CONSUMER)) {
- 			device_link_drop_managed(link);
- 			continue;
- 		}
-@@ -1436,7 +1435,7 @@
- 		if (link->supplier->links.status == DL_DEV_DRIVER_BOUND) {
- 			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
- 		} else {
--			WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
-+			WARN_ON(!device_link_test(link, DL_FLAG_SYNC_STATE_ONLY));
- 			WRITE_ONCE(link->status, DL_STATE_DORMANT);
- 		}
- 	}
-@@ -1461,7 +1460,7 @@
- 	device_links_write_lock();
- 
- 	list_for_each_entry(link, &dev->links.consumers, s_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
- 		/*
-@@ -1498,10 +1497,10 @@
- 	device_links_write_lock();
- 
- 	list_for_each_entry_safe(link, ln, &dev->links.consumers, s_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
--		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE_CONSUMER);
-+		WARN_ON(device_link_test(link, DL_FLAG_AUTOREMOVE_CONSUMER));
- 		WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
- 
- 		/*
-@@ -1510,7 +1509,7 @@
- 		 * has moved to DL_STATE_SUPPLIER_UNBIND.
- 		 */
- 		if (link->status == DL_STATE_SUPPLIER_UNBIND &&
--		    link->flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
-+		    device_link_test(link, DL_FLAG_AUTOREMOVE_SUPPLIER))
- 			device_link_drop_managed(link);
- 
- 		WRITE_ONCE(link->status, DL_STATE_DORMANT);
-@@ -1544,7 +1543,7 @@
- 	device_links_write_lock();
- 
- 	list_for_each_entry(link, &dev->links.consumers, s_node) {
--		if (!(link->flags & DL_FLAG_MANAGED))
-+		if (!device_link_test(link, DL_FLAG_MANAGED))
- 			continue;
- 
- 		if (link->status == DL_STATE_CONSUMER_PROBE
-@@ -1586,8 +1585,8 @@
- 	list_for_each_entry(link, &dev->links.consumers, s_node) {
- 		enum device_link_state status;
- 
--		if (!(link->flags & DL_FLAG_MANAGED) ||
--		    link->flags & DL_FLAG_SYNC_STATE_ONLY)
-+		if (!device_link_test(link, DL_FLAG_MANAGED) ||
-+		    device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
- 			continue;
- 
- 		status = link->status;
-@@ -1743,7 +1742,7 @@
- 
- static void fw_devlink_relax_link(struct device_link *link)
- {
--	if (!(link->flags & DL_FLAG_INFERRED))
-+	if (!device_link_test(link, DL_FLAG_INFERRED))
- 		return;
- 
- 	if (device_link_flag_is_sync_state_only(link->flags))
-@@ -1779,7 +1778,7 @@
- 	struct device_link *link = to_devlink(dev);
- 	struct device *sup = link->supplier;
- 
--	if (!(link->flags & DL_FLAG_MANAGED) ||
-+	if (!device_link_test(link, DL_FLAG_MANAGED) ||
- 	    link->status == DL_STATE_ACTIVE || sup->state_synced ||
- 	    !dev_has_sync_state(sup))
- 		return 0;
-@@ -2063,7 +2062,7 @@
- 		 * such due to a cycle.
- 		 */
- 		if (device_link_flag_is_sync_state_only(dev_link->flags) &&
--		    !(dev_link->flags & DL_FLAG_CYCLE))
-+		    !device_link_test(dev_link, DL_FLAG_CYCLE))
- 			continue;
- 
- 		if (__fw_devlink_relax_cycles(con_handle,
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1998,7 +1998,7 @@
- 	idx = device_links_read_lock();
- 
- 	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
--		if (!(link->flags & DL_FLAG_PM_RUNTIME))
-+		if (!device_link_test(link, DL_FLAG_PM_RUNTIME))
- 			continue;
- 
- 		if (!dev_pm_smart_suspend(link->supplier) &&
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -290,7 +290,7 @@
- 				device_links_read_lock_held()) {
- 		int retval;
- 
--		if (!(link->flags & DL_FLAG_PM_RUNTIME))
-+		if (!device_link_test(link, DL_FLAG_PM_RUNTIME))
- 			continue;
- 
- 		retval = pm_runtime_get_sync(link->supplier);
-@@ -1879,7 +1879,7 @@
- 
- 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
- 				device_links_read_lock_held())
--		if (link->flags & DL_FLAG_PM_RUNTIME) {
-+		if (device_link_test(link, DL_FLAG_PM_RUNTIME)) {
- 			link->supplier_preactivated = true;
- 			pm_runtime_get_sync(link->supplier);
- 		}
-@@ -1933,7 +1933,7 @@
-  */
- void pm_runtime_drop_link(struct device_link *link)
- {
--	if (!(link->flags & DL_FLAG_PM_RUNTIME))
-+	if (!device_link_test(link, DL_FLAG_PM_RUNTIME))
- 		return;
- 
- 	pm_runtime_drop_link_count(link->consumer);
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1162,6 +1162,11 @@
- void device_links_supplier_sync_state_resume(void);
- void device_link_wait_removal(void);
- 
-+static inline bool device_link_test(const struct device_link *link, u32 flags)
-+{
-+	return !!(link->flags & flags);
-+}
-+
- /* Create alias, so I can be autoloaded. */
- #define MODULE_ALIAS_CHARDEV(major,minor) \
- 	MODULE_ALIAS("char-major-" __stringify(major) "-" __stringify(minor))
-
-
-
+>
+> Frank
+>
+> >
+> > total: 0 errors, 2 warnings, 0 checks, 42 lines checked
+> > ---
+> >
+> > Nicolas
+> >
+> > >
+> > > regards,
+> > > Nicolas
+> > >
+> > > >
+> > > > Frank
+> > > > >
 
