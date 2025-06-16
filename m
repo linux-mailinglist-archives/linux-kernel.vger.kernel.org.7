@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-688045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAFEADACF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:05:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889C3ADACED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECB93A637B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 236707A6985
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059932264CB;
-	Mon, 16 Jun 2025 10:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WiPB4+5o"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FD827E066;
+	Mon, 16 Jun 2025 10:03:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43BD23B631
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8339928DEE0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750068214; cv=none; b=TBWRIe8vMtJ14d0+AfbelL/VUda5kfHg3UFKYRgp3VWUstqdAVla/fQoMJStvXCzxWD/ScbcEMfTMF/kq+N4bJHal6aR2Oa84ytSlWUsQg7G+5AgGfgHCv2FmCI8Lbjdu5JtqybfqHuuBHj0K6UWtj1uIEXlBZnEwpWtjadbRr4=
+	t=1750068186; cv=none; b=lfu0YXptJY/e29JrKzvy4Xq6TPFuPyrPeeyHMO0xSViHhNeCCBioTq16n6nWpRpVy3SH4DNFg38mk3IvcdZWE/kdXefs39v639hnXE+1DIRgjA+XCf8xgwUjyC+RtuJAJLPRM/adobIO0Mf2Y5ECi9ZjB7Ho3P5kZajZqDPazgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750068214; c=relaxed/simple;
-	bh=PF7BZIoYDMyPRkvSdxJ7qUwkAa3baF64lOFIGdPHG8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fjJHDSKdBa5xv3CLcCDZkrAkTfHKawRt7+Y8LbQ+Km4IHRieHTEk8+jK8m9HPiq8FvAhbOVMtSl12Co9XmdhAUbMi5o3mC2NIT0+vhx1hNJyxtUlSds8o6bQCIUXS7I98rzWxxYpEy0Y7+tQ5Qh93gXKcIThCB7CifbTrqCeEh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WiPB4+5o; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-234d3261631so28571565ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 03:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750068212; x=1750673012; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJ2MacCddp0V5gOqxFL2EbYLr6/fKZB7iWuwWhUYU38=;
-        b=WiPB4+5oQRttYdra/XOhZnlT0J19sPXiwZIat6s+N6xkber8B0N7fcoK+XFDsxftNx
-         P9f5viqR5ldN3d0V4kpZY+bc6lxT0Pwqt98kT0hyC03ZAwuxmmTi5W0Q1kgsGEJWuScz
-         DnCfUOELbrC0J0igWwsKQWCWXPDCYpQ3bP4sOVAnv/K9oTODAa1g2EEbSjSm/5vx+0YA
-         fi935e8yGnuTI2xTVcp0RKF7pUv4mTAr/6jYYztXpNqUxSl0IxMDwvup9Ymq/ND9kHj9
-         TbuRHtABJ5WTGM8FS1fcMtLkxOXreQA6hONh+IvlEVC/QtXB7fG6sPSYVP51Uxga/whR
-         WrAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750068212; x=1750673012;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iJ2MacCddp0V5gOqxFL2EbYLr6/fKZB7iWuwWhUYU38=;
-        b=iaxHpjg4TuNKPrdyPLO3c9++Thln3nZTl72gEdLEYUTkBWZHF/z6b2UUiZs2n9iAP7
-         MIkxw7hTeFtWQNDps+V/CiSfO04pzGfSGgSAa3zryCAMlBzbYB0E2F4CSCqc7hDuHmjV
-         ACKrBiv2l23ORzWGtFs7SRZhqzp0PonSjn9jbejEv3e346Nv1ZzD9MvPDa6uaQzqcX1B
-         vYMgUbfC6+UyoHTvaSPJUR9qAqgB5sla1VzbeWUEvoaHsUnhk/gWN3tYTVpDHrzCXkCD
-         hiX0Zx6a1SIdRQ7CDzCGQYLAloI4NkrGwkMRN0viII5EPrmFGMVfg1AkOb3y7us9JoF9
-         617w==
-X-Gm-Message-State: AOJu0YxDktfJygwmHL2awzOuf2XPgAWYGtg4fmoL6CDrtVrrhfrvoZMX
-	Jmt8JPxoLIa9DxoLWJweoNyXi3mLKvFr1CN1rGQZLd+SVHiQ6cWkGA+x
-X-Gm-Gg: ASbGncs30uGjkhlkxsuRj4BEA477vRjN6QioMakTUE8TwsdmNrBrkugRsPw53Del2nU
-	SXqn6wboltB/tKyVss8jlGPBO9pyAsnJjJLbbWC98Equi/yuvG4dk1XZkO+qLBdniDn42uHqtpI
-	hGQhaz1gxxj3zJNF1K6YxA61qDlJ0LqfdBn1rro9haHUZdRNwLWUuwG0Pc7SnrA3NGXX0NRNF1F
-	af3ej97z0yIwffpoaY56YGiJdZBMMBQbJLZ8JH6PbJtBfZGvKdM/uOTtT+BvUf3qwfaNfz1TY3C
-	83sFyFPg3atohLuYrXIjOKwx0i7mtGjavrgWT9lfuk7noliu8ULSW2xtZrhc4s/OlBTG6+KW4LR
-	91HQ6/iCPJtR4n726LWHP
-X-Google-Smtp-Source: AGHT+IGewYJENQDUKHNRYdYJMBvCnlNb9EkIWSxZaOgICbAExsnTBd7BTjE6HagiZ4edLiO6twkU3g==
-X-Received: by 2002:a17:903:1aeb:b0:234:8c64:7878 with SMTP id d9443c01a7336-2366b001630mr131380345ad.11.1750068211963;
-        Mon, 16 Jun 2025 03:03:31 -0700 (PDT)
-Received: from localhost.localdomain ([180.101.244.66])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de78169sm57327545ad.123.2025.06.16.03.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 03:03:31 -0700 (PDT)
-From: Tianxiang Peng <luminosity1999@gmail.com>
-X-Google-Original-From: Tianxiang Peng <txpeng@tencent.com>
-To: puwen@hygon.cn,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	Tianxiang Peng <txpeng@tencent.com>,
-	Hui Li <caelli@tencent.com>,
-	Hao Peng <flyingpeng@tencent.com>
-Subject: [PATCH] x86/cpu/hygon: fix missing resctrl_cpu_detect() in bsp_init helper
-Date: Mon, 16 Jun 2025 18:02:31 +0800
-Message-ID: <20250616100231.1238313-1-txpeng@tencent.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1750068186; c=relaxed/simple;
+	bh=lLM6PNG7dKx15HVc5tCO8LXy6xfPDli0bR1Pop3fY/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EnBapLSVdpC+GkoquQThlk0wgQ4kh3X+Oa5xIrPLG4qn1y94TreBICrf3AyefmehyYtMyHbmMYVct72U2pKcn5U00OzjKbrW/azPChLJcp5/Ng1JdSqbWEwLuXz8ItBZ85gdtVGG8LN2fUsZniMrQb1FVaY2as4qZRSQf2E40CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uR6g5-0002xJ-5k; Mon, 16 Jun 2025 12:02:57 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uR6g4-003mkZ-1v;
+	Mon, 16 Jun 2025 12:02:56 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uR6g4-00H0zN-1X;
+	Mon, 16 Jun 2025 12:02:56 +0200
+Date: Mon, 16 Jun 2025 12:02:56 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de,
+	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v4 2/3] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <aE_r0MB9rVdJeYkG@pengutronix.de>
+References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de>
+ <20250430-clk-cdce6214-v4-2-9f15e7126ac6@pengutronix.de>
+ <3ba53493700561923c4ea9ab53a1a272@kernel.org>
+ <aBsUObKHmJkBFN04@pengutronix.de>
+ <1f072e2e02bb6a66d10c50177e5c69a6@kernel.org>
+ <aBxbr8CyKmdZQobS@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBxbr8CyKmdZQobS@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Since upstream commit 923f3a2b48bdccb6a1d1f0dd48de03de7ad936d9
-("x86/resctrl: Query LLC monitoring properties once during boot"),
-resctrl_cpu_detect() has been moved from common cpu initialization
-code to vendor-specific bsp init helper, while hygon didn't put
-that call in their code.
+On Thu, May 08, 2025 at 09:22:23AM +0200, Sascha Hauer wrote:
+> On Wed, May 07, 2025 at 01:11:31PM -0700, Stephen Boyd wrote:
+> > Quoting Sascha Hauer (2025-05-07 01:05:13)
+> > > On Mon, May 05, 2025 at 10:50:49AM -0700, Stephen Boyd wrote:
+> > > > Quoting Sascha Hauer (2025-04-30 02:01:35)
+> > > > > diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> > > > > new file mode 100644
+> > > > > index 0000000000000..d4a3a3df9ceb9
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> > > > > @@ -0,0 +1,155 @@
+> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > +
+> > > > > +patternProperties:
+> > > > > +  '^clk@[0-1]$':
+> > > > > +    type: object
+> > > > > +    description:
+> > > > > +      optional child node that can be used to specify input pin parameters. The reg
+> > > > > +      properties match the CDCE6214_CLK_* defines.
+> > > > 
+> > > > Presumably the EEPROM is typically used to configure all this stuff? Do
+> > > > you actually need to program this from the kernel, or are you
+> > > > implementing all this for development purposes?
+> > > 
+> > > The EEPROM could be used to configure this. I don't know if the final
+> > > product will have the EEPROM programmed, but even if it is, should we
+> > > make this mandatory?
+> > 
+> > No I'm not asking about making the property/node required. I'm wondering
+> > if you're actually using these bindings. If they're not used then I
+> > worry we're putting a bunch of configuration in here that we'll never
+> > use.
+> 
+> At the moment we are using the device tree binding. I asked our customer if
+> they plan to use it in production as well.
 
-This triggers div-zero fault during early booting stage on our
-machines with X86_FEATURE_CQM* supported, where
-get_rdt_mon_resources() tries to calculate mon_l3_config with
-uninitialized boot_cpu_data.x86_cache_occ_scale.
+Answer from customer: We have no plans using the EEPROM
 
-Fix the missing resctrl_cpu_detect() in hygon bsp init helper.
+Sascha
 
-Signed-off-by: Tianxiang Peng <txpeng@tencent.com>
-Reviewed-by: Hui Li <caelli@tencent.com>
-Reviewed-by: Hao Peng <flyingpeng@tencent.com>
----
- arch/x86/kernel/cpu/hygon.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
-index 2154f12766fb..1fda6c3a2b65 100644
---- a/arch/x86/kernel/cpu/hygon.c
-+++ b/arch/x86/kernel/cpu/hygon.c
-@@ -16,6 +16,7 @@
- #include <asm/spec-ctrl.h>
- #include <asm/delay.h>
- #include <asm/msr.h>
-+#include <asm/resctrl.h>
- 
- #include "cpu.h"
- 
-@@ -117,6 +118,8 @@ static void bsp_init_hygon(struct cpuinfo_x86 *c)
- 			x86_amd_ls_cfg_ssbd_mask = 1ULL << 10;
- 		}
- 	}
-+
-+	resctrl_cpu_detect(c);
- }
- 
- static void early_init_hygon(struct cpuinfo_x86 *c)
 -- 
-2.43.5
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
