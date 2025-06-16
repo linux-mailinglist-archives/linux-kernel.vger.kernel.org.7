@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-687611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13E3ADA6FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:56:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C291ADA703
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A88188E98E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 03:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF123AF171
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC7B1A0BF1;
-	Mon, 16 Jun 2025 03:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9669119066B;
+	Mon, 16 Jun 2025 04:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Z+CnCxEH"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJ1peQkD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D9D72626;
-	Mon, 16 Jun 2025 03:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED27F46B5;
+	Mon, 16 Jun 2025 04:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750046192; cv=none; b=NDMo7ZU5a3MSUXyq4b3CxLQW1Z+LWuQGaqZFBelyW+aUyI1LwMA3n9aMjtX6rRr57FQem6axZH1gTWMPnd0s5swksaF1v493yKtRkfe7WO8g0V+Bl1JxgSuDkne7QvCCob3jIWkOwx7GbKFaKBh9ZW+Tdg3jMfCtUGKHAUMYhqI=
+	t=1750046446; cv=none; b=eRv8h7z/h2BDZmkmO3NAmRvTL90BmdjYnwQCxM3jciSYpoD6oCkygFCWnNoubtcOGz83YLTOeJjwEnxh+/ozR1rmr2j8XZIENvFNywm3ya3jFDpWbfr0AQbmKmUaggieZ+fFdepF5TvT7vT9Y0YB/VMkH48FbcDvZ1nSxVIlSSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750046192; c=relaxed/simple;
-	bh=KlSDBlmI+X5TdbQLbaiFZk4wvCLS0m5RcscOkbOnO2g=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=pWzwhtlXHtV0aXqkhhROVtkFPuhTk6kgirbC3VNreVRVBxwK5dNkxKO9ER7jJxivygVK4HoL+bXnOyAtzFPi4b5UuxE9LO5mhfHKdpm0BhGi8t4Gw8U9lUtC/UV1atYd8JEvklKlYflEgqlAtMSCln1tLHVFdgaOeyjpDz5TBns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Z+CnCxEH; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55G3uQqT54019997, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1750046186; bh=C3623BsTv5Mq9sG0ZdAgXIU8dPO3wMGnP8Fy2JSD8w4=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date;
-	b=Z+CnCxEHb1yWHLwswcJgonK0K2oMKu3+MFaX9Nf3+dKKVlllWQJ0dG8HGux3BHQgB
-	 EKYsoa1tVRz/n8JzJeYOZBgsYs7seLs8KbtxHtzKQIbSw4cxzKGtIi/g8gENtUbC3/
-	 PW6r1Q9xpeceuKWzIfdBHiLZKntHA+SBM7lUML8KGu7XFBwoBnrk07CZj0DYlACjQi
-	 tU6dby6DzCNKptSBK5X0GXP1bcokktn8pQr6tmYd/YVyGfx4d2aDY0dTKOjhVP2Ox/
-	 9fGFms3KJKcGwnIU0zk3V3pKPDMEK2xRa0S+TokRSwG/wlaTBncwXj0YEZI0QY8+RT
-	 m6tGzZLKBk1XA==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55G3uQqT54019997
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Jun 2025 11:56:26 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 16 Jun 2025 11:56:20 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 16 Jun
- 2025 11:56:19 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Thomas Fourier <fourier.thomas@gmail.com>
-CC: Thomas Fourier <fourier.thomas@gmail.com>,
-        Ping-Ke Shih
-	<pkshih@realtek.com>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH rtw-next] wifi: rtlwifi: fix possible skb memory leak in _rtl_pci_init_one_rxdesc()
-In-Reply-To: <20250613074014.69856-2-fourier.thomas@gmail.com>
-References: <9800869271a34ca3835743207c0a4109@realtek.com> <20250613074014.69856-2-fourier.thomas@gmail.com>
+	s=arc-20240116; t=1750046446; c=relaxed/simple;
+	bh=DNjwjD8hhxbYC5MpkZvfw4zJE0EdrDcAW1zA+Ae08dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwZ+pyWMVnvkWkKSIrU9AyCMzlLBQLa702l/Dv9JnhzVcyBSnT6ZiuFs5+pViSyaEjDTerXi0cQrGkIxPmwNqJNDqOqDG3uxB3gkWukce2wcXpUy638UT9yUHc+dpnDxVvsS38UpVULweq4ejIq6BlmztJs8eZcLEUspXpPBFYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJ1peQkD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFA7C4CEEA;
+	Mon, 16 Jun 2025 04:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750046445;
+	bh=DNjwjD8hhxbYC5MpkZvfw4zJE0EdrDcAW1zA+Ae08dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hJ1peQkDLOiv4Y+i8Uj6JDkRJBClMNSdzYWuoRgA7dIVv+UAlVomCsCTtYUBZtyva
+	 4MNPrL/3n8vaoFc5U8hEBPhOQb4sUKuGKtLVUqI4VgD1TblmpuTE/AEQn+B93J0kzO
+	 kfbw39TmzO/6Xl+JgG+CnP0OXYwDCBKI4r/f7WmyGchHF4WIB47S46tzh6gPrBr6Ji
+	 mifNCMklUd5rQniJfvFb8wCXYq0one4WJKHd3w7peLeZ98ULoBpl1ZNfm64PjbtHiy
+	 9HeUVguZMLVXO55sKzo0n7kQOBiMy3YdWE+JQm0T2Z5BdcTAqVuX+7hgpiO8w3OeeT
+	 wBJfc/6yd39Ng==
+Date: Sun, 15 Jun 2025 21:00:16 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Jason@zx2c4.com,
+	ardb@kernel.org, kent.overstreet@linux.dev
+Subject: Re: [PATCH] lib/crypto/poly1305: Fix arm64's poly1305_blocks_arch()
+Message-ID: <20250616040016.GA749462@sol>
+References: <20250616010654.367302-1-ebiggers@kernel.org>
+ <aE-PDfmowagPegen@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <3fd86a9b-532d-41c6-8366-73e8273d3267@RTEXMBS04.realtek.com.tw>
-Date: Mon, 16 Jun 2025 11:56:19 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aE-PDfmowagPegen@gondor.apana.org.au>
 
-Thomas Fourier <fourier.thomas@gmail.com> wrote:
-
-> When `dma_mapping_error()` is true, if a new `skb` has been allocated,
-> then it must be de-allocated.
+On Mon, Jun 16, 2025 at 11:27:09AM +0800, Herbert Xu wrote:
+> Eric Biggers <ebiggers@kernel.org> wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > For some reason arm64's Poly1305 code got changed to ignore the padbit
+> > argument.  As a result, the output is incorrect when the message length
+> > is not a multiple of 16 (which is not reached with the standard
+> > ChaCha20Poly1305, but bcachefs could reach this).  Fix this.
 > 
-> Compile tested only
+> Sorry, it was a cut-n-paste error since I copy the code from
+> the update function where the padbit is always 1.
 > 
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> > diff --git a/arch/arm64/lib/crypto/poly1305-glue.c b/arch/arm64/lib/crypto/poly1305-glue.c
+> > index 6a661cf048213..c9a74766785bd 100644
+> > --- a/arch/arm64/lib/crypto/poly1305-glue.c
+> > +++ b/arch/arm64/lib/crypto/poly1305-glue.c
+> > @@ -36,18 +36,18 @@ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
+> >        if (static_branch_likely(&have_neon)) {
+> >                do {
+> >                        unsigned int todo = min_t(unsigned int, len, SZ_4K);
+> > 
+> >                        kernel_neon_begin();
+> > -                       poly1305_blocks_neon(state, src, todo, 1);
+> > +                       poly1305_blocks_neon(state, src, todo, padbit);
+> 
+> This would do the wrong thing if someone ever tried to pad a
+> message more than 4K and called the block function with padbit == 0.
+> Fortunately it can't happen today as there is no digest interface
+> to poly1305.
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
+The final partial block is (and needs to be) processed with its own call to
+poly1305_blocks().
 
-76b3e5078d76 wifi: rtlwifi: fix possible skb memory leak in _rtl_pci_init_one_rxdesc()
+> Looking around it seems that this pattern is replicated across
+> all of our poly1305 implementations so it isn't a big deal.
+> 
+> I presume you will be picking this up via the lib/crypto tree?
 
----
-https://github.com/pkshih/rtw.git
+Yes.
 
+- Eric
 
