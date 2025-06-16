@@ -1,89 +1,129 @@
-Return-Path: <linux-kernel+bounces-688972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDDCADB97C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F29ADB97F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE681890E2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337951890BC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B64B289E17;
-	Mon, 16 Jun 2025 19:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C79E28937D;
+	Mon, 16 Jun 2025 19:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pw6lUFpi"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fyD7TudP"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA8F28937D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 19:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46623208
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 19:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750101650; cv=none; b=nAIur5zzfwidNRwNTvlQlsZo7ej4z9E82azq3qylAHuYTxWYx+PJdsxtaoVOfcgQsFW1tHuBbLNb7Ys8LAo4dOMGSPrB9Tg4zNN0KCtiFfjyV5nLPosGLEdD0ONaGA3Xbzr+rUw1MEWBK9LEpUOlKB8ULcGHt//2X6tro7vR3Wc=
+	t=1750101770; cv=none; b=Aj9vGsMxJAN55OLdkJPERcz2SQzgkzDoNRecKF2YERquxEnm4yKm73D3LyigSHc7SZ1GEDkW5zmM3xCXvAOOcc5Rzr5xJV1U/Qw++wJrPup7Mr0xff2A1x/Qtw/Z+90gBgyZSWvlMYc6uXdjB6nS4KH2T+tirM7bvDXHV4/U6bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750101650; c=relaxed/simple;
-	bh=HumAqwnOsGSWMa46buCT1W25Zg7tuj/RQxmzzbSfJWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BWJrKVTqB6df2zzOwfXEs3/G2QY3RLekQWcFVkqEIbpFwt2YZxbkVG3DKD/FbrBO0qemPG9Tb9FtwohJ/JHXDNFPCI49iBvL6cdx7306mbE1I7s10lqmuo7uqOR3oM/+9pKnMUwvdw0ssBi/81OuTpuntIxKfJhAlnZhZA33HFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pw6lUFpi; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 16 Jun 2025 12:20:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750101637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KCx8G8iB4GFG7YkzRAgMeNEZrvPEgTU8KFH3idAR55g=;
-	b=pw6lUFpivOAs6oOemvC5IEw3UOHeLHr5jtTonYoczi8z44yrYDdW+ohDx3uEyy8CzH1j9E
-	XKAil2+qZoqJzqkJx80vOoEcpxA62QGV8Me2Vy+G6Bb98Dpmj5xjuo9rIpd/+uiIMShywt
-	Wk7SwFw9gmHVHqzSDuAgjqgyApK6Tr0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	JP Kobryn <inwardvessel@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, 
-	Alexei Starovoitov <ast@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Harry Yoo <harry.yoo@oracle.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, bpf@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH v2 0/4] cgroup: nmi safe css_rstat_updated
-Message-ID: <qtudjvrdvbsz6rrygb5bt32dzps6ocwefhr5hyfgtam65jowdo@colgnna6ogqm>
-References: <20250611221532.2513772-1-shakeel.butt@linux.dev>
- <aFBfNRVAyE1FU9aQ@slm.duckdns.org>
+	s=arc-20240116; t=1750101770; c=relaxed/simple;
+	bh=9hhxjuVHW/AMec0AvMeQz2st0zAcM8k8nnpI9fp5XI4=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=HARNpBvlHkGZIj1kdVEqxGOOeMmA4vDr0p+f7PfhjEX/Tze2QDRfua9MHqQxh0Qhs00K5z8t1+PU2TtRCYLFlu+U11QaXrmlWq1/8gYx49YjExfFEGqK2NLHByTPgdq6yFoUnZhNs4AFKSn0r96D9Ialh6m8HqLyuZfDsd3PEJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fyD7TudP; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7d20451c016so275800685a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750101765; x=1750706565; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=K6BJ/nlNasBh+BLNr+Z4o9VCOjIdVxsUue+aQDwQLqU=;
+        b=fyD7TudPyJPLdKR7i6oUdDVgGQ3yKPzD8Ji11wd/ICHTD3WPDDxj+ofgx5dT5I8DV/
+         OrC2Z785Nr5V+v8lV/vLEeeOCAm2ytcd3Uj9878jH3EvApVyse28KfNEQcU7xbL9s2N0
+         5mb5iZ0ueRpzgGTmBdOqao5MUe4pN/KASSHmEkr8dbtuO2QAp0wkjDfVQKYSciuTxY8H
+         gwi31AaHXirJbGPVgmebq57jdePzPvhuAREvxn06PL1dwQWrZEYhYQNXagKjQ+kpq/Nu
+         0JF3peKT5HqtKK4DxruZFh5Nc5Nuj4FlU6OMUbewdJRDqjX66mJIa0EOrFUBGJNlhodb
+         RyYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750101765; x=1750706565;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K6BJ/nlNasBh+BLNr+Z4o9VCOjIdVxsUue+aQDwQLqU=;
+        b=ZeQ27yIwkmdRsQAvlI4DZ/9qJRxmSJtMcjyXWHTYke3Drkpvw/IHD67dG2HFqeQVKp
+         vNyxJX980e7EkDBHdwcRkdLfE4SFCBuAtmSYpcqNoBvXLU/G4CKvgyeCJ17DzSViPdbM
+         QTrtEJ9KOO9WxpBgQUR/BnwMGHPybK4PRxBjlLXzf1ZbJzGwuFEZRTySt6uZ5SAcqYux
+         CzhKH7qmI+OQWbBDRLiiE4ejSnyfQ4WN0zqTslsAiZ689Ng796m02MKMmI6TVrPLUhxA
+         3Afa3S3TmIxUaeXeYAzEnmkB1YsR7pykpWnD8LDwPJUllgrW3p4p14SPPcKT6S0FLGsb
+         cDIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd9Q/z6fm8hhzqKKl4y8GWJD0cZtXlARDg2f/k+s+eikmktQKfaQ0OgLCAo0V1doh/24TyovKUeebzJow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxe8PiSubT2DiyGgEg98amcHm0XUuBKhiaK0As0rOE7WCu2mPy
+	9IiSvFT/c3b2eTeyecNQVIwHfJzumD+Qo7FiOizzme+pIOsgM+fRHCh0Ez8y7/TxHNM=
+X-Gm-Gg: ASbGncsereQesSAdziJiiF92WyNMMRccN8ykk2tQn0WPgokJd0d+wodkg7IRr5bIXk/
+	MUhLK6DSvAiDVAz1NBAc3Y2/8QYjq3zhq2Euj6DMseAJD/SOLu/8xq++v9+/az8c/3TppGDTV6P
+	cDDMvs0LyJ4chsHP243h70SB/2uBhtLyoGU5KOV33iYVm5JpmyOxC3CODRbfZL9jqfoywyhAJgr
+	D49Tn3YAdFFjztiVYfKbqQIt/WZClc27mAY4dEEe4aWwZ6r0Oy1Rex4nq7UNfzEJTsYv4Nf/a+M
+	J1OxEXLsKqkbcNLdeeGsg3T6cj1BLkEzh923FUEYXGky1S0BBz+776m6YKy8ErIhkKf+Z5mpdz5
+	f4Nm11lh1UN4A43RQXELlTnUIMg==
+X-Google-Smtp-Source: AGHT+IHb/GH9T1CiNvMsdab+0Cf8gVtra2bbl1wdt8ZMgUruj8awkhnsgpBmwYNIiLHY5/28R00avA==
+X-Received: by 2002:a05:620a:25d4:b0:7d2:1199:d850 with SMTP id af79cd13be357-7d3c6c20de1mr1540632085a.24.1750101765490;
+        Mon, 16 Jun 2025 12:22:45 -0700 (PDT)
+Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a4b0cb9sm52789391cf.50.2025.06.16.12.22.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 12:22:45 -0700 (PDT)
+Date: Mon, 16 Jun 2025 15:22:44 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Andrew Morton <akpm@linux-foundation.org>, 
+    David Laight <david.laight.linux@gmail.com>
+cc: =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>, 
+    Oleg Nesterov <oleg@redhat.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mul_u64_u64_div_u64: fix the division-by-zero behavior
+Message-ID: <q246p466-1453-qon9-29so-37105116009q@onlyvoer.pbz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFBfNRVAyE1FU9aQ@slm.duckdns.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Jun 16, 2025 at 08:15:17AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Jun 11, 2025 at 03:15:28PM -0700, Shakeel Butt wrote:
-> > Shakeel Butt (4):
-> >   cgroup: support to enable nmi-safe css_rstat_updated
-> >   cgroup: make css_rstat_updated nmi safe
-> >   cgroup: remove per-cpu per-subsystem locks
-> >   memcg: cgroup: call css_rstat_updated irrespective of in_nmi()
-> 
-> The patches look good to me. How should it be routed? Should I take all
-> four, just the first three or would it better to route all through -mm?
-> 
+The current implementation forces a compile-time 1/0 division, which
+generates an undefined instruction (ud2 on x86) rather than a proper
+runtime division-by-zero exception.
 
-I would like all four to be together and since most of the code is in
-cgroup, cgroup tree makes more sense unless Andrew has different
-opinion.
+Change to trigger an actual div-by-0 exception at runtime, consistent
+with other division operations. Use a non-1 dividend to prevent the
+compiler from optimizing the division into a comparison.
 
-thanks,
-Shakeel
+Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+---
+
+Change from v1 (http://lore.kernel.org/all/q2o7r916-5601-11pn-30pn-8n5ns6p079o7@onlyvoer.pbz):
+- use OPTIMIZER_HIDE_VAR() in place of the open coded incantation.
+
+diff --git a/lib/math/div64.c b/lib/math/div64.c
+index 5faa29208bdb..bf77b9843175 100644
+--- a/lib/math/div64.c
++++ b/lib/math/div64.c
+@@ -212,12 +212,13 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
+ 
+ #endif
+ 
+-	/* make sure c is not zero, trigger exception otherwise */
+-#pragma GCC diagnostic push
+-#pragma GCC diagnostic ignored "-Wdiv-by-zero"
+-	if (unlikely(c == 0))
+-		return 1/0;
+-#pragma GCC diagnostic pop
++	/* make sure c is not zero, trigger runtime exception otherwise */
++	if (unlikely(c == 0)) {
++		unsigned long zero = 0;
++
++		OPTIMIZER_HIDE_VAR(zero);
++		return ~0UL/zero;
++	}
+ 
+ 	int shift = __builtin_ctzll(c);
+ 
 
