@@ -1,143 +1,140 @@
-Return-Path: <linux-kernel+bounces-689116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0477AADBC3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 23:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75285ADBC40
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 23:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5D43B0E8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750AF3B22A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922882367BA;
-	Mon, 16 Jun 2025 21:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2616221DB6;
+	Mon, 16 Jun 2025 21:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPIPpn0H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w+XP0ygq"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BB8225A40;
-	Mon, 16 Jun 2025 21:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EAE22068D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 21:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750110419; cv=none; b=qZ+o18Sr4iLjqXTYw1ctDr6rHw2l5y+dtosIHRE1bWfrUPhEnfRdjPhB34ddrAZiASDOTOpp1oqUWFwopEXIarBQ8zzKw3wmdhvcPR09lh3IoTy2lL2PtpG27CZg9HXiBMgvTt94MSii3w0AhgdDHk5yv2keOZt+Ww7DOzTZ0k4=
+	t=1750110449; cv=none; b=IeMwkQvWKarW3qJyWYi+CZfvFLidOUDl+CVIDzYghwydthA1R96MM0fHGqVo5v2ZWy+6JeP8+5hzff+u8iB3Wy98ujBBwcDoNPDj1unT+GK4kobmxo4XRA797bNXg8BM8bhw8JexRBdzCjDRP7IpSDIK+KuTGEzssVJr/NqxnFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750110419; c=relaxed/simple;
-	bh=A36aYuwtURoz40aiNwrEmviY+Zb8/EdLr3ClzFqkUdA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=r+k8ZxcmnHT0rFSbl1tufn65HWS7ifh9l6ZlS7p5k5KAG7aETELMOR0FXwVFzLB2LxzjBvHSj2aga1ATbikATmtUiD9Ik7Tbgd0PbopSAJ7jq3qXPWTfIDi4PdmhzPlU/41/aOTfkEAMUWSYn88LxNoLzpcNIR92j5bClSsc01w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPIPpn0H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C9EC4CEEF;
-	Mon, 16 Jun 2025 21:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750110418;
-	bh=A36aYuwtURoz40aiNwrEmviY+Zb8/EdLr3ClzFqkUdA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=oPIPpn0HPAZX2WYOYfblJ91P4xoMIpp4CA9H7IdDnH1nfJ3aeC5Afn1cMXZFXXZRB
-	 3a/47WrMOkRa0OG7OnNZWiniBgYMUmt0XnVSzr8nc9YZno6UsGOyIqBxcAxL79XwhO
-	 2orr7DtCCtKEvC1518QcqGRd7r+G+4do224nAZ9axY3eNYog4EhXz0euC1EH/ivgto
-	 yRxA1KTLq6bqy33XPpSeOQPsV2KLjRUX/6nmf3tGwUkWvWDMhBZR9DqeSCXZ2TWR1M
-	 BgzfAJCDx5h8QdVIFOv6yirQ2hFw8Nyg6NalWrFfzamid+zu5X5SiJrREJPf0t1xDy
-	 qIRFgB61clBPw==
-Date: Mon, 16 Jun 2025 16:46:57 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1750110449; c=relaxed/simple;
+	bh=z2qeyaEDa8QvsVY4HmYmJ2h1mEKFu6Hb5NQ1IlDbbqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0/pfzK5n736kKLn6+c977hSeHUx88IgUF4zoWNPIRde/FV+TCbeLck3jTL/gc01TuoGhhPbVUh3Cg7+9kJcTmheI1HO6MUT/WI5NK6KyBDVMvs2/JunNpgEpvnypA6HiWFlx3Gl8TN9qhk3dbsMWTvkBLXm9eUcBwzCkrlLM1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w+XP0ygq; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235ca5eba8cso58225ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750110447; x=1750715247; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b+7yTuFOYw/+OFN7i63Es/kgRcKQFjeHwd4HaCwCrWY=;
+        b=w+XP0ygqwHz1aXcB/otsdxPk8qNTDBvDqGyld3g/Ka1w6M+bL0ETNkyDQrhVaVgdqE
+         5uRKf9uAlbTNZJuVnxw7eS2OlepzkQw0ste5n/sq4KAGlCtmOqkpPN8bL4weUVf6hzQD
+         J3UacVmPIusbRx3n/aO3uiyDMfnndj2Ai+K0tj9eokd0jtGJXehGy2gwYaHWCGsWJ7Gm
+         6sVCfg3kTSvrLm1fJQvNlHEDEwa3zqGoYrpCv0bnIeWhbS7duWgrUaqG1XLExR5bqmcT
+         Cl8/J/ykSTCm/tG50ho4fQhJLgHsr+gYH3YXi5DuNGW80WCgymvLcZIMKusoiX0LJ6TD
+         uhiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750110447; x=1750715247;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b+7yTuFOYw/+OFN7i63Es/kgRcKQFjeHwd4HaCwCrWY=;
+        b=ZB4PsX8LLPH/wJZj0d2efZ9G+YlaoMzhrdYi90GZuFkIHeTJb9MZ+QXjAVHcEeKQEU
+         WtYIGhbp/7PBXDJdzr0kq33X1O4QGBqEWtuhM7hjHIsaPwHTcJJdAZ+CgwXKpkdz287U
+         YP5eHMgmN1PABDyXuw5yJPoz7z94D02AqVtyGIoEsG6VraAqU+ZFrXfcQq5LZbw14j+Z
+         F5Y0Ykhzv/1+kAWDmYXxnlRv5HbLiB1vQNScRw1WAGuuJYMDzkyrpFv5DG2O2qcfc9W0
+         MZ/NvS/H2mBsXtq3Iz/Rm451b2U+FB4LbVrG9K/EqnLukrS5YV5Q0Tg8wbOCPR2QXj5i
+         hUDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLI3yo3bOi8tDiiuTH8g+U4LbpRW7mOclOZRuCLxw2fSGG/2JIhx5BlB2yTqleN64ULqixz4mRt1GOTxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3F13u5Ws19J51P1Kh1rLhE/NrYAMmRCxKu3CtUBsHrrcRAAtN
+	5YSAT2Nt/9z8XUd5Xk9n55+F1oB7hFgsFlh34wneEzJI7R4OfOadr2O/LEiVHExMvw==
+X-Gm-Gg: ASbGncuR1aVQ3xc+ouwchsV0prGz+Am818YtAfirZslW4/Dh0WS7ui9mexYf6gHu/Uz
+	9J28dRacGV8l0+yqbRw+AluZ9OtK6syskSx11SmyY7I7yAm9ORQaiEMTOgwN5BsVsGf4CyTJo3O
+	BPiSVgHadds6sI5r3fOy/hFljuVa9kjgolzwYpNeI61lAfbC97RaFX2+geHeqlJV0xolaF3X/ux
+	NTGG42GI6BJHwqpCx4I9rUy5b6nXYgnnz4snLsH4kPCHTWF0DVTFF3O1KmXmu3GTDmG/Tq4JUYl
+	E9PqiK/Xd5yjxoTerc6WkgHHdoAGjagR9TLu3HeOTyM2rj7cTK7keIjHgDShSCml/nkJYJDLCm9
+	6yKDiIEz67j8RDQtd+Jfz7c+4GC9at18=
+X-Google-Smtp-Source: AGHT+IHag3rw8aX4ZKoeizjYKIh5qE5BVC5WmHX9g+TIQMgoMav4KZZJKeYmD/v1LvZQLFwcJimtlg==
+X-Received: by 2002:a17:903:1a27:b0:234:bf4:98ba with SMTP id d9443c01a7336-2366c5bf768mr6069465ad.6.1750110446641;
+        Mon, 16 Jun 2025 14:47:26 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1680c1esm6263160a12.48.2025.06.16.14.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 14:47:26 -0700 (PDT)
+Date: Mon, 16 Jun 2025 21:47:17 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, yi.l.liu@intel.com,
+	peterz@infradead.org, jsnitsel@redhat.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	baolu.lu@linux.intel.com
+Subject: Re: [PATCH v2 04/14] iommufd: Use enum iommu_veventq_type for type
+ in struct iommufd_veventq
+Message-ID: <aFCQ5fAn4FYXUr0G@google.com>
+References: <cover.1749882255.git.nicolinc@nvidia.com>
+ <208a260c100a00667d3799feaad1260745f96c6b.1749882255.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Ion Agorria <ion@agorria.com>, David Heidelberg <david@ixit.cz>, 
- Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Maxim Schwalm <maxim.schwalm@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
- devicetree@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250616073947.13675-1-clamor95@gmail.com>
-References: <20250616073947.13675-1-clamor95@gmail.com>
-Message-Id: <175011006248.2433980.10650629747156591552.robh@kernel.org>
-Subject: Re: [PATCH v1 0/2] ARM: tegra: Add device-tree for Asus Portable
- AiO P1801-T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <208a260c100a00667d3799feaad1260745f96c6b.1749882255.git.nicolinc@nvidia.com>
 
+On Fri, Jun 13, 2025 at 11:35:16PM -0700, Nicolin Chen wrote:
+> Replace unsigned init, to make it clear. No functional changes.
 
-On Mon, 16 Jun 2025 10:39:45 +0300, Svyatoslav Ryhel wrote:
-> Add a device-tree for the Asus Portable AiO P1801-T, which is a NVIDIA
-> Tegra30-based 2-in-1 detachable tablet, originally running Android.
-> 
-> Device tree contains "mstar,tsumu88adt3-lf-1" compatible, a simple bridge
-> which was submitted a while ago here [1] but was not applied yet.
-> 
-> [1] https://lore.kernel.org/lkml/CAPVz0n1udjVZY3400hYMY07DjNKfOt4bwpW6He6A4qo_3pXtqQ@mail.gmail.com/T/#mb50632e269d89275d97c485037da8893239b5410
-> 
-> Maxim Schwalm (1):
->   dt-bindings: arm: tegra: Add Asus Portable AiO P1801-T
-> 
-> Svyatoslav Ryhel (1):
->   ARM: tegra: Add device-tree for Asus Portable AiO P1801-T
-> 
->  .../devicetree/bindings/arm/tegra.yaml        |    4 +
->  arch/arm/boot/dts/nvidia/Makefile             |    1 +
->  .../boot/dts/nvidia/tegra30-asus-p1801-t.dts  | 2087 +++++++++++++++++
->  3 files changed, 2092 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dts
-> 
-> --
-> 2.48.1
-> 
-> 
+Nit: s/init/int
+
 > 
 
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250616 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250616073947.13675-1-clamor95@gmail.com:
-
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: hdmi@54280000 (nvidia,tegra30-hdmi): 'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-hdmi.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: hdmi@54280000 (nvidia,tegra30-hdmi): 'nvidia,ddc-i2c-bus' is a required property
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-hdmi.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: hdmi@54280000 (nvidia,tegra30-hdmi): 'nvidia,hpd-gpio' is a required property
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-hdmi.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: audio-codec@1c (realtek,rt5640): 'oneOf' conditional failed, one must be fixed:
-	'interrupts' is a required property
-	'interrupts-extended' is a required property
-	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5640.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: audio-codec@1c (realtek,rt5640): Unevaluated properties are not allowed ('clock-names', 'clocks', 'realtek,ldo1-en-gpios' were unexpected)
-	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5640.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /i2c@7000d000/pmic@2d: failed to match any schema with compatible: ['ti,tps65911']
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
-arch/arm/boot/dts/nvidia/tegra30-asus-p1801-t.dtb: /bridge: failed to match any schema with compatible: ['mstar,tsumu88adt3-lf-1']
-
-
-
-
-
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index 4619285c09b7..32f0631368e1 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -526,7 +526,7 @@ struct iommufd_veventq {
+>  	struct list_head node; /* for iommufd_viommu::veventqs */
+>  	struct iommufd_vevent lost_events_header;
+>  
+> -	unsigned int type;
+> +	enum iommu_veventq_type type;
+>  	unsigned int depth;
+>  
+>  	/* Use common.lock for protection */
+> @@ -581,7 +581,8 @@ iommufd_get_viommu(struct iommufd_ucmd *ucmd, u32 id)
+>  }
+>  
+>  static inline struct iommufd_veventq *
+> -iommufd_viommu_find_veventq(struct iommufd_viommu *viommu, u32 type)
+> +iommufd_viommu_find_veventq(struct iommufd_viommu *viommu,
+> +			    enum iommu_veventq_type type)
+>  {
+>  	struct iommufd_veventq *veventq, *next;
+>  
+> -- 
+> 2.43.0
+> 
 
