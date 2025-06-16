@@ -1,269 +1,262 @@
-Return-Path: <linux-kernel+bounces-688056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA896ADAD1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:13:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8F6ADAD22
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6AB18876A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:13:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44593165F8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F37275B04;
-	Mon, 16 Jun 2025 10:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yON3bbUg"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F82797A3;
+	Mon, 16 Jun 2025 10:15:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C8826D4E8
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F6627F000
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 10:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750068783; cv=none; b=e8nOc+Ket57WjPW/eMd96ZWPUmurLpmthc24fkK1zlVBAUU+bqDNSxldy4cLGpKuNgs9j9GGQdXQG0D31MFMB0uTUh9CttcTHoKFiJMI5gXXf58aoiKAqbFJGSXXSYjJQyL4hlTXSaN2COUUT/b24665qB58Djv7e0P51K0F9ps=
+	t=1750068946; cv=none; b=sr7Ur/gy6lLEPmm60s2z2Ig51pQW+k4uKBfx16uuPzxUxbURzk61ip5BEnn9kSWqOq9ON5p/9u+vYdpXh9lvG413NLcNXAUJ2ytyp1GDnXgTG0E5GibdgvEa0iZ3s/qXEwKY3opHg9oVzvZCk5MB4OSE0WmHnfud/7kdDkxow9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750068783; c=relaxed/simple;
-	bh=AGLdc8sUlEHbNtvihWlXNY6ZuP0jWSwRkeYw87Ib8XY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CrEF1EnwKtGdwCjW6x+pTlyp3UGFKVA/wtJl2Y0IjWfe/4efrp3z6cSkK5fWyGYs9PTtSoGPnLI5ABEvazY8EWBQRGJyFjDY7ZpoGllCatBfWBBAdoSUAOwWQmrmTqaxYwLzBuAdabf3GjlgSDoaJjyF55lb15PG67xQ5RU4kqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yON3bbUg; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad883afdf0cso843758766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 03:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750068779; x=1750673579; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cdiI/smVJOY0cX4ZuH0mmdvKWwyCh8vEN4C+U7z3NJo=;
-        b=yON3bbUgP1w5+T6Y/Ni6PASdj4tsCQEDqxhtU9QhVVo6DjgDSAehvo2KAwmvbApth8
-         9rcUPSlBFxXoD6r000Y9eiOYvtBF1qXx4QmjGBR0yEA38odxBl7YTuVgh8eUQSx06nRp
-         1xATpmwTZ20isOjCuvv7BLyQLxx7f50kwXD4kPzGye1LNkkIbI4MeeBLQawfGDBTRtdX
-         qnwT8mvXqISmZSJfWD1acIbD33XH9hMM2ShzxpvI3IOQDXw62KYS+iQOa7D5sWoxg3z9
-         dggldSrAvniHeB9kSgoS5Jyy4CRLMiKM/vHFRtn4TGbXGXVBnysIE/j4wzswjCvrVxaI
-         PW6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750068779; x=1750673579;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cdiI/smVJOY0cX4ZuH0mmdvKWwyCh8vEN4C+U7z3NJo=;
-        b=rpEmP0Si9iVFOO8/ouQR2YtwF17uIsuhiYW10GRGZbFxMFGeQt68H4KLqmmJkrndQy
-         mD09Ppx/f0IpkdG5YE0CX0UmdsIMuovn4YBm6HSOB6xFkciYnjCcS7qDiVx8cvmDwuGF
-         FuORHF2WAcbJWdRRdf3o12Y8jW1yJP5pP0kLl5z2NVDtgcVRbV1QuFkl52x3ovxf1Gbs
-         VdOKkSjnflKT8+AUgla32TLcau5UrygduOPaE1xWGV80NQkDbY5T3DZg9RvzKUhLP+kA
-         VPKRnHgDY0fpcoCL+JbVu5ClA65A4wXtTt/H5A12J7ymcbP57kf7200ZNW2wB2dx03uP
-         4UNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4r8F+iyiCVBIvB+qg8mKnDpDNT4mY+uUpHKo8zLkJhYAZKjOprQzn1jXDI7d36YnV9szpzAXNoAyIfAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypIQ8NbU1ekx7Yh7KJzmXdpRDFuyJr/tFMHUharPhvkK3skZ1z
-	iveVuS0uOgL2PqRm//4jqX13dD0resgS5zuQGUyj+9tO5NKI15mINx2pLqNe20eyYyc=
-X-Gm-Gg: ASbGncs8guBYGPgwFWyHaVfb63fPhCKzIHTXc7s/cKIiQhGHwemSXf/NnJkqy0BiwOI
-	tzFzXL0fig9o8r9DSLyPQapJAucoQCGSNlpnA90MhJkrfsbbLrgbiVG70GwTImFy50K0Pchk2Lm
-	kJntf9CGaawqBQ/NpgzA/fI2v15eXn37vN8qqUap5I1EvHQFYq1l0PjRlZ651/tw7hlRmCgfZZp
-	1SlTDVDHpi5xo1wuiDhMSvxT0EUJZSBC7wowR+mgIk9hE6yi/6BRip9nnnhvzEZ6boOVXl/Q8hb
-	E70A5sYVci5MoZ/CY8wEIY9w1F/9gPARLF43p4RBTf5eVJN1JZYmojY3aIOKLoco6rr8zmZqAui
-	DQZmZ
-X-Google-Smtp-Source: AGHT+IGarxBcmQbjxtZfqg39/812dZL7oJLKKdvVC7LLX0AVrEROcYWKaHBGWjIfiBnmq6KNQDjrVw==
-X-Received: by 2002:a17:907:db15:b0:ad5:8594:652e with SMTP id a640c23a62f3a-adfad469cf2mr788992566b.35.1750068779409;
-        Mon, 16 Jun 2025 03:12:59 -0700 (PDT)
-Received: from [192.168.0.33] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec897ac3dsm626980266b.155.2025.06.16.03.12.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 03:12:59 -0700 (PDT)
-Message-ID: <6a493968-744a-4fa2-803c-3f64a8e7225e@linaro.org>
-Date: Mon, 16 Jun 2025 13:12:58 +0300
+	s=arc-20240116; t=1750068946; c=relaxed/simple;
+	bh=VXr2AwR/uu7FdFB8EglkTnK7zEK8oCdqat8A4Ajh8pI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/eI7agdrDLJurcLywkjakEFAaAXDUM1MLtSmmVN5ynMpZqELVMu68v+bwJZ4sECnT3k/Yjh/6klIca5lTHFa4uSJO7iS6Rf2fcL4owK7VZlw8QDPT1eby2a5SDhPkb7IZeJMsta5txaAD1bnRqCrMvnsWMLDDeBe5XBH7slci4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bLQqK0PP5z6M4bq;
+	Mon, 16 Jun 2025 18:15:09 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1299C14050C;
+	Mon, 16 Jun 2025 18:15:41 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Jun
+ 2025 12:15:40 +0200
+Date: Mon, 16 Jun 2025 11:15:38 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Qinxin Xia <xiaqinxin@huawei.com>
+CC: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+	<yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<prime.zeng@huawei.com>, <fanghao11@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+Subject: Re: [RESEND PATCH v4 3/4] dma-mapping: benchmark: add support for
+ dma_map_sg
+Message-ID: <20250616111538.00007ff3@huawei.com>
+In-Reply-To: <20250614143454.2927363-4-xiaqinxin@huawei.com>
+References: <20250614143454.2927363-1-xiaqinxin@huawei.com>
+	<20250614143454.2927363-4-xiaqinxin@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH 09/14] genirq: add irq_kmemdump_register
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, corbet@lwn.net, mingo@redhat.com,
- rostedt@goodmis.org, john.ogness@linutronix.de, senozhatsky@chromium.org,
- pmladek@suse.com, peterz@infradead.org, mojha@qti.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, vincent.guittot@linaro.org,
- konradybcio@kernel.org, dietmar.eggemann@arm.com, juri.lelli@redhat.com,
- andersson@kernel.org
-References: <20250422113156.575971-1-eugen.hristev@linaro.org>
- <20250422113156.575971-10-eugen.hristev@linaro.org> <87h61wn2qq.ffs@tglx>
- <1331aa82-fee9-4788-abd9-ef741d00909e@linaro.org>
- <f916cf7f-6d0d-4d31-8e4b-24fc7da13f4d@linaro.org> <87ikkzpcup.ffs@tglx>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <87ikkzpcup.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
+
+On Sat, 14 Jun 2025 22:34:53 +0800
+Qinxin Xia <xiaqinxin@huawei.com> wrote:
+
+> Support for dma scatter-gather mapping and is intended for testing
+> mapping performance. It achieves by introducing the dma_sg_map_param
+> structure and related functions, which enable the implementation of
+> scatter-gather mapping preparation, mapping, and unmapping operations.
+> Additionally, the dma_map_benchmark_ops array is updated to include
+> operations for scatter-gather mapping. This commit aims to provide
+> a wider range of mapping performance test to cater to different scenarios.
+> 
+> Reviewed-by: Barry Song <baohua@kernel.org>
+> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+Main thing here is don't do the docs format in a patch that makes
+real changes. That hides what is really going on and makes review
+harder!
+
+Jonathan
+
+> ---
+>  include/linux/map_benchmark.h |  43 ++++++++++----
+>  kernel/dma/map_benchmark.c    | 103 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 134 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
+> index 020b3155c262..9e8ec59e027a 100644
+> --- a/include/linux/map_benchmark.h
+> +++ b/include/linux/map_benchmark.h
+> @@ -17,22 +17,41 @@
+>  
+>  enum {
+>  	DMA_MAP_BENCH_SINGLE_MODE,
+> +	DMA_MAP_BENCH_SG_MODE,
+>  	DMA_MAP_BENCH_MODE_MAX
+>  };
+>  
+> +/**
+> + * struct map_benchmark - Benchmarking data for DMA mapping operations.
+> + * @avg_map_100ns: Average map latency in 100ns.
+> + * @map_stddev: Standard deviation of map latency.
+> + * @avg_unmap_100ns: Average unmap latency in 100ns.
+> + * @unmap_stddev: Standard deviation of unmap latency.
+> + * @threads: Number of threads performing map/unmap operations in parallel.
+> + * @seconds: Duration of the test in seconds.
+> + * @node: NUMA node on which this benchmark will run.
+> + * @dma_bits: DMA addressing capability.
+> + * @dma_dir: DMA data direction.
+> + * @dma_trans_ns: Time for DMA transmission in ns.
+> + * @granule: Number of PAGE_SIZE units to map/unmap at once.
+> +	     In SG mode, this represents the number of scatterlist entries.
+> +	     In single mode, this represents the total size of the mapping.
+> + * @map_mode: Mode of DMA mapping.
+> + * @expansion: Reserved for future use.
+> + */
+>  struct map_benchmark {
+> -	__u64 avg_map_100ns; /* average map latency in 100ns */
+> -	__u64 map_stddev; /* standard deviation of map latency */
+> -	__u64 avg_unmap_100ns; /* as above */
+> +	__u64 avg_map_100ns;
+
+Do this docs format change in a precursor patch.  As done here
+we can't see easily what changed in adding the dma_map_sg support.
 
 
+> +	__u64 map_stddev;
+> +	__u64 avg_unmap_100ns;
+>  	__u64 unmap_stddev;
+> -	__u32 threads; /* how many threads will do map/unmap in parallel */
+> -	__u32 seconds; /* how long the test will last */
+> -	__s32 node; /* which numa node this benchmark will run on */
+> -	__u32 dma_bits; /* DMA addressing capability */
+> -	__u32 dma_dir; /* DMA data direction */
+> -	__u32 dma_trans_ns; /* time for DMA transmission in ns */
+> -	__u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
+> -	__u8  map_mode; /* the mode of dma map */
+> -	__u8 expansion[75];     /* For future use */
+> +	__u32 threads;
+> +	__u32 seconds;
+> +	__s32 node;
+> +	__u32 dma_bits;
+> +	__u32 dma_dir;
+> +	__u32 dma_trans_ns;
+> +	__u32 granule;
+> +	__u8  map_mode;
+> +	__u8 expansion[75];
+>  };
+>  #endif /* _KERNEL_DMA_BENCHMARK_H */
+> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+> index 05f85cf00c35..843be4dc0993 100644
+> --- a/kernel/dma/map_benchmark.c
+> +++ b/kernel/dma/map_benchmark.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/module.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/scatterlist.h>
+>  #include <linux/slab.h>
+>  #include <linux/timekeeping.h>
+>  
+> @@ -111,8 +112,110 @@ static struct map_benchmark_ops dma_single_map_benchmark_ops = {
+>  	.do_unmap = dma_single_map_benchmark_do_unmap,
+>  };
+>  
+> +struct dma_sg_map_param {
+> +	struct sg_table sgt;
+> +	struct device *dev;
+> +	void **buf;
+> +	u32 npages;
+> +	u32 dma_dir;
+> +};
+> +
+> +static void *dma_sg_map_benchmark_prepare(struct map_benchmark_data *map)
+> +{
+> +	struct scatterlist *sg;
+> +	int i;
+> +
+> +	struct dma_sg_map_param *params __free(kfree) = kzalloc(sizeof(*params), GFP_KERNEL);
 
-On 6/14/25 00:10, Thomas Gleixner wrote:
-> On Fri, Jun 13 2025 at 17:33, Eugen Hristev wrote:
->> On 5/7/25 13:27, Eugen Hristev wrote:
->>>> Let KMEMDUMP_VAR() store the size and the address of 'nr_irqs' in a
->>>> kmemdump specific section and then kmemdump can just walk that section
->>>> and dump stuff. No magic register functions and no extra storage
->>>> management for static/global variables.
->>>>
->>>> No?
->>>
->>> Thank you very much for your review ! I will try it out.
->>
->> I have tried this way and it's much cleaner ! thanks for the
->> suggestion.
-> 
-> Welcome.
-> 
->> The thing that I am trying to figure out now is how to do something
->> similar for a dynamically allocated memory, e.g.
->> void *p = kmalloc(...);
->> and then I can annotate `p` itself, it's address and size, but what I
->> would also want to so dump the whole memory region pointed out by p. and
->> that area address and size cannot be figured out at compile time hence I
->> can't instantiate a struct inside the dedicated section for it.
->> Any suggestion on how to make that better ? Or just keep the function
->> call to register the area into kmemdump ?
-> 
-> Right. For dynamically allocated memory there is obviously no compile
-> time magic possible.
-> 
-> But I think you can simplify the registration for dynamically allocated
-> memory significantly.
-> 
-> struct kmemdump_entry {
-> 	void			*ptr;
->         size_t			size;
->         enum kmemdump_uids	uid;
-> };
-> 
-> You use that layout for the compile time table and the runtime
-> registrations.
-> 
-> I intentionally used an UID as that avoids string allocation and all of
-> the related nonsense. Mapping UID to a string is a post processing
-> problem and really does not need to be done in the kernel. The 8
-> character strings are horribly limited and a simple 4 byte unique id is
-> achieving the same and saving space.
-> 
-> Just stick the IDs into include/linux/kmemdump_ids.h and expose the
-> content for the post processing machinery.
-> 
-> So you want KMEMDUMP_VAR() for the compile time created table to either
-> automatically create that ID derived from the variable name or you add
-> an extra argument with the ID.
+I'd keep style of previous patch and break this long line.
 
-First of all, thank you very much for taking the time to think about this !
+The mix of cleanup.h and gotos is sometimes problematic. I'm not sure I'd
+bother the the __free() in this case as the benefit is really small.
 
-In KMEMDUMP_VAR, I can use __UNIQUE_ID to derive something unique from
-the variable name for the table entry.
 
-The only problem with having something like
+> +	if (!params)
+> +		return NULL;
+> +
+> +	/*
+> +	 * Set the number of scatterlist entries based on the granule.
+> +	 * In SG mode, 'granule' represents the number of scatterlist entries.
+> +	 * Each scatterlist entry corresponds to a single page.
+> +	 */
+> +	params->npages = map->bparam.granule;
+> +	params->dma_dir = map->bparam.dma_dir;
+> +	params->dev = map->dev;
+> +	params->buf = kmalloc_array(params->npages, sizeof(*params->buf),
+> +				    GFP_KERNEL);
+> +	if (!params->buf)
+> +		goto out;
+> +
+> +	if (sg_alloc_table(&params->sgt, params->npages, GFP_KERNEL))
+> +		goto free_buf;
+> +
+> +	for_each_sgtable_sg(&params->sgt, sg, i) {
+> +		params->buf[i] = (void *)__get_free_page(GFP_KERNEL);
+> +		if (!params->buf[i])
+> +			goto free_page;
+> +
+> +		if (params->dma_dir != DMA_FROM_DEVICE)
+> +			memset(params->buf[i], 0x66, PAGE_SIZE);
 
-#define KMEMDUMP_VAR(sym) \
-	 static struct entry __UNIQUE_ID(kmemdump_entry_##sym) ...
+As in the previous - not sure this has the affect we want if
+we are doing multiple loops in the thread.
 
-is when calling it with e.g. `init_mm.pgd` which will make the `.`
-inside the name and that can't happen.
-So I have to figure a way to remove unwanted chars or pass a name to the
-macro.
+> +
+> +		sg_set_buf(sg, params->buf[i], PAGE_SIZE);
+> +	}
+> +
+> +	return_ptr(params);
+> +
+> +free_page:
+> +	while (i-- > 0)
+> +		free_page((unsigned long)params->buf[i]);
+> +
+> +	sg_free_table(&params->sgt);
+> +free_buf:
+> +	kfree(params->buf);
+> +out:
 
-I cannot do something like
-static  void * ptr = &init_mm.pgd;
-and then
-KMEMDUMP_VAR(ptr)
-because ptr's dereferencing can't happen at compile time to add it's
-value into the table entry.
+A label where there is nothing to do is usually better handled
+with early returns in the error paths.  Those are easier to
+review as reader doesn't need to go look for where anything is
+done.
 
-> 
-> kmemdump_init()
->         // Use a simple fixed size array to manage this
->         // as it avoids all the memory allocation nonsense
->         // This stuff is neither performance critical nor does allocating
->         // a few hundred entries create a memory consumption problem
->         // It consumes probably way less memory than the whole IDR/XARRAY allocation
->         // string duplication logic consumes text and data space.
-> 	kmemdump_entries = kcalloc(NR_ENTRIES, sizeof(*kmemdump_entries), GFP_KERNEL);
-> 
-> kmemdump_register(void *ptr, size_t size, enum kmemdump_uids uid)
-> {
->         guard(entry_mutex);
-> 
-> 	entry = kmemdump_find_empty_slot();
->         if (!entry)
->         	return;
-> 
->         entry->ptr = ptr;
->         entry->size = size;
->         entry->uid = uid;
-> 
->         // Make this unconditional by providing a dummy backend
->         // implementation. If the backend changes re-register all
->         // entries with the new backend and be done with it.
->         backend->register(entry);
-> }
-> 
-> kmemdump_unregister(void *ptr)
-> {
->         guard(entry_mutex);
->         entry = find_entry(ptr);
->         if (entry) {
->                 backend->unregister(entry);
->         	memset(entry, 0, sizeof(*entry);
->         }
-> }
-> 
-> You get the idea.
-> 
-> Coming back to the registration at the call site itself.
-> 
->        struct foo = kmalloc(....);
-> 
->        if (!foo)
->        		return;
-> 
->        kmemdump_register(foo, sizeof(*foo), KMEMDUMP_ID_FOO);
-> 
-> That's a code duplication shitshow. You can wrap that into:
-> 
->        struct foo *foo = kmemdump_alloc(foo, KMEMDUMP_ID_FOO, kmalloc, ...);
-> 
-> #define kmemdump_alloc(var, id, fn, ...)				\
-> 	({								\
->         	void *__p = fn(##__VA_ARGS__);				\
-> 									\
->                 if (__p)						\
->                 	kmemdump_register(__p, sizeof(*var), id);	\
-> 		__p;
->         })
-> 
 
-I was thinking into a new variant of kmalloc, like e.g. kdmalloc() which
-would be a wrapper over kmalloc and also register the region into
-kmemdump like you are suggesting.
-It would be like a `dumpable` kmalloc'ed memory.
-And it could take an optional ID , if missing, it could generate one.
+> +	return NULL;
+> +}
 
-However this would mean yet another k*malloc friend, and it would
-default to usual kmalloc if CONFIG_KMEMDUMP=n .
-I am unsure whether this would be welcome by the community
+> +static int dma_sg_map_benchmark_do_map(void *mparam)
+> +{
+> +	struct dma_sg_map_param *params = mparam;
+> +	int ret = 0;
+> +
+> +	int sg_mapped = dma_map_sg(params->dev, params->sgt.sgl,
+> +				   params->npages, params->dma_dir);
+> +	if (!sg_mapped) {
+> +		pr_err("dma_map_sg failed on %s\n", dev_name(params->dev));
+> +		ret = -ENOMEM;
+Similar comments to those in previous patch apply here as well.
 
-Let me know what you think.
+> +	}
+> +
+> +	return ret;
+> +}
 
-Thanks again !
-Eugen
-
-> or something daft like that. And provide the matching magic for the free
-> side.
-> 
-> Thoughts?
-> 
-> Thanks,
-> 
->         tglx
 
 
