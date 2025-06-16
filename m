@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-688456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CD1ADB294
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE272ADB29C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55FC165A3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C0B3AB8AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0B82E2EE9;
-	Mon, 16 Jun 2025 13:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025B52DF3F0;
+	Mon, 16 Jun 2025 13:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dsRoRfxL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="265VEO8k";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KJONCF02";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kMzdF76e"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xIV6D+Wh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="liphTJNP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WGghh4+k";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="39qVt0pe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADCD2E3395
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAE82877F0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750081977; cv=none; b=BhUfOyQWvCQsOVZUCBhS8WvYIL+G5LWUWVKmr1nSF0iJ3Hxhh1Bba6kqCQ86XTUfHvnJ0J9Vg4tgNKU6xbK0ojBVCvcX8BLJw25vjv6LBjX8LR6k8E/zY+783ntZJqvwJWlpLPOJbwM5Y1eQM4Eo4pemNzGOPWO3Zqekxd4djzQ=
+	t=1750081963; cv=none; b=aJAXeNDiWWDv7ey6fRSyWy6huGR33C7MYLzPjmoqKMxkFMBNlJlusrhj9FJ2wbgOUuJfnORT7ybJVeRoWOCDuNtCwTqMttBHbG7v6G4qtPwrgpfCMmA27/TjvUQoumlE5sY+vfr+SRMK++MRhZsEyX38ah+j1VXgGI2nQaEOoOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750081977; c=relaxed/simple;
-	bh=HZ7VTMFCZg/RrEaRfaqlQE/QwJsYgd6PCOTFvkwF/iE=;
+	s=arc-20240116; t=1750081963; c=relaxed/simple;
+	bh=uRIz+VXav4EQnfDauh+iPVhleicrhYK6zI5Z02XIkh0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PA6YwIAQfkSBnedWkMgQ0NRB+GnzibWr1uNl9svFWQJdS/jAnJ0PfmhVCXOhDbQ57eAnqTQx0+2Jw9PxHy4/F+CHMqN3iUDnrXbhD3HSiy8TL026Jhrbbe6qG/7eA/RLcpQhlNbt3tojH3dxfNT0hbUtzXN7H0mZS+V56yP01B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dsRoRfxL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=265VEO8k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KJONCF02; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kMzdF76e; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=htGpCAfNpBC42jxwi3o+nRWOm32MSvdZxtBVtR45gHQwfja/wnru7rDSLGZJtMo1rh6iGChaPgJGAmrTyuyDbpu5JWz9gZ2c+S1wJoNTASnnzh+5fJ5wFuKguD05jE81uRAIeTJndc/UNj40deBSlH+rOWWyqWQB3XpQL7WUSe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xIV6D+Wh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=liphTJNP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WGghh4+k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=39qVt0pe; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D02F1211AD;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D1AF71F798;
 	Mon, 16 Jun 2025 13:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750081946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750081943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MRexV9IJxfAwxsTfqVeSOlBNGRbyQpxEVLWIJJKw5mQ=;
-	b=dsRoRfxLKtdv4ei0VlI9LKBX3lMlgbWiiN6gO5OfSvYO+LCsV4vuZ6DL0Md2XBxPssLITI
-	Zk5DdTikuSv6OCt9uWoSFPb75/qDy5qAidLOBVkGKCcZE4kBD3nncmkKbtwHzzS18+pY+u
-	AbRU0Fyu3r58PRW+AVKSsm+nKW60uZE=
+	bh=qagJ6zCe/DEdOhtEMbQyUIS/FQ9HhC1GdKUsrS5yZsU=;
+	b=xIV6D+WhsqDqaE/Qc3IJuiR8aytdRnYm2XmoXoAI+IFWEoD9QYdQQ9Vfxu6j/1dIP/znkk
+	51tPdQRkGAMmUSVg9ghGqtE9kDeFcBogmQhG/hIEV9vL5xsMekW2oyF+gqwYb2PZE5aN9g
+	tasdJu8oekQ241iI4wpH95JCBt9FX0Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750081946;
+	s=susede2_ed25519; t=1750081943;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MRexV9IJxfAwxsTfqVeSOlBNGRbyQpxEVLWIJJKw5mQ=;
-	b=265VEO8kflQetmz3526mokfwA3LM9J1YPVjGovDCho9WDgYZCharHscG4O3k2m4HlyCnPU
-	tX8HYaZ9sDtFdEBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KJONCF02;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kMzdF76e
+	bh=qagJ6zCe/DEdOhtEMbQyUIS/FQ9HhC1GdKUsrS5yZsU=;
+	b=liphTJNPjGXXO6kOJLGvfrKz4kYBKWPgCH1+9WvwfEmV1nROEXjs6bMabunsNRRghj+RgG
+	MW1snmvmo2/YuhBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
 	t=1750081941; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MRexV9IJxfAwxsTfqVeSOlBNGRbyQpxEVLWIJJKw5mQ=;
-	b=KJONCF02BfvXEWl272lnT3aB8nUCYTAl6lmg7EwerSuQxGOft7+1D8VfjnqSEpLEEeobYl
-	iv4xepdLakJHQe4dZb+A4/BnOgkTqg4fAiu2mbGdbKkiIQqELfe3WiFWmMC7pYKl2zqT3u
-	aPToVr0HaAAPR3q0Zx0ZZAE43XElhes=
+	bh=qagJ6zCe/DEdOhtEMbQyUIS/FQ9HhC1GdKUsrS5yZsU=;
+	b=WGghh4+k5pLRsS48qNICFZG/0x2JFBJVjxJrgrw1kJaXCjiNzCH8WiLAWjVAgSvUVH91FC
+	a6N/O+YcMsX8WXUv7wQK7wdcO5ANJ0YGa+DUROwni4L/74xFgraD+rtulPZNj0fRX5bjTJ
+	F6BVC7INNT8myq5v8VqD7SJWsEK2OAQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
 	s=susede2_ed25519; t=1750081941;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MRexV9IJxfAwxsTfqVeSOlBNGRbyQpxEVLWIJJKw5mQ=;
-	b=kMzdF76es1pBSWQZTRpwT5U150VfurtN2gSD0NGMEanAKm2L56GDH+ZksvD878iLlSAYeq
-	UntEHt87DV/IH8AA==
+	bh=qagJ6zCe/DEdOhtEMbQyUIS/FQ9HhC1GdKUsrS5yZsU=;
+	b=39qVt0pePHsbAYTR/qddoMsoA9yo1rw04fWzP3nQ78RjdNUUChi4TsUt5Bj4YE5BysQ0FM
+	t1zNC5EIxNM+oCBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C015413AE7;
-	Mon, 16 Jun 2025 13:52:14 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6499C13AEB;
+	Mon, 16 Jun 2025 13:52:15 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QBVHLI4hUGhHLwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 16 Jun 2025 13:52:14 +0000
+	id EG/tFY8hUGhHLwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 16 Jun 2025 13:52:15 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Hildenbrand <david@redhat.com>,
@@ -99,9 +98,9 @@ Cc: David Hildenbrand <david@redhat.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v7 07/11] drivers,hmat: Use node-notifier instead of memory-notifier
-Date: Mon, 16 Jun 2025 15:51:50 +0200
-Message-ID: <20250616135158.450136-8-osalvador@suse.de>
+Subject: [PATCH v7 08/11] kernel,cpuset: Use node-notifier instead of memory-notifier
+Date: Mon, 16 Jun 2025 15:51:51 +0200
+Message-ID: <20250616135158.450136-9-osalvador@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250616135158.450136-1-osalvador@suse.de>
 References: <20250616135158.450136-1-osalvador@suse.de>
@@ -112,48 +111,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.51 / 50.00];
+X-Spamd-Result: default: False [-1.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RSPAMD_URIBL_FAIL(0.00)[oracle.com:query timed out,suse.cz:query timed out];
+	TAGGED_RCPT(0.00)[];
+	RSPAMD_URIBL_FAIL(0.00)[huawei.com:server fail,oracle.com:query timed out,suse.cz:query timed out];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.de:dkim,suse.de:mid,suse.de:email,oracle.com:email];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
+	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,huawei.com:email,oracle.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com]
 X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D02F1211AD
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -1.51
+X-Spam-Score: -1.30
 
-hmat driver is only concerned when a numa node changes its memory state,
-specifically when a numa node with memory comes into play for the first
-time, because it will register the memory_targets belonging to that numa
-node.
+cpuset is only concerned when a numa node changes its memory state,
+as it needs to know the current numa nodes with memory to keep
+an updated mems_allowed mask.
 So stop using the memory notifier and use the new numa node notifer
 instead.
 
@@ -163,36 +153,22 @@ Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 Acked-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/acpi/numa/hmat.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/cgroup/cpuset.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index 9d9052258e92..4958301f5417 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -962,10 +962,10 @@ static int hmat_callback(struct notifier_block *self,
- 			 unsigned long action, void *arg)
- {
- 	struct memory_target *target;
--	struct memory_notify *mnb = arg;
--	int pxm, nid = mnb->status_change_nid;
-+	struct node_notify *nn = arg;
-+	int pxm, nid = nn->nid;
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 83639a12883d..66c84024f217 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -4013,7 +4013,7 @@ void __init cpuset_init_smp(void)
+ 	cpumask_copy(top_cpuset.effective_cpus, cpu_active_mask);
+ 	top_cpuset.effective_mems = node_states[N_MEMORY];
  
--	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
-+	if (action != NODE_ADDED_FIRST_MEMORY)
- 		return NOTIFY_OK;
+-	hotplug_memory_notifier(cpuset_track_online_nodes, CPUSET_CALLBACK_PRI);
++	hotplug_node_notifier(cpuset_track_online_nodes, CPUSET_CALLBACK_PRI);
  
- 	pxm = node_to_pxm(nid);
-@@ -1118,7 +1118,7 @@ static __init int hmat_init(void)
- 	hmat_register_targets();
- 
- 	/* Keep the table and structures if the notifier may use them */
--	if (hotplug_memory_notifier(hmat_callback, HMAT_CALLBACK_PRI))
-+	if (hotplug_node_notifier(hmat_callback, HMAT_CALLBACK_PRI))
- 		goto out_put;
- 
- 	if (!hmat_set_default_dram_perf())
+ 	cpuset_migrate_mm_wq = alloc_ordered_workqueue("cpuset_migrate_mm", 0);
+ 	BUG_ON(!cpuset_migrate_mm_wq);
 -- 
 2.49.0
 
