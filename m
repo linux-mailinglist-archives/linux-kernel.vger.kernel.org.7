@@ -1,126 +1,134 @@
-Return-Path: <linux-kernel+bounces-688412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C01ADB235
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:39:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E48ADB1F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 450E53BB8BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A2A188CD47
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D2A2ED87A;
-	Mon, 16 Jun 2025 13:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07FB292B30;
+	Mon, 16 Jun 2025 13:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P5ba32G5"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nd38/hnG"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB212EACF3
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28AB2877F1;
+	Mon, 16 Jun 2025 13:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080808; cv=none; b=CeWmFMBft3oR022vYIGS143jUfJgeuaLU4RtOFfUftr2w+12teRvYYx1ftmtMzYaaiqXbr7rJ+oA+XnTAmjpGWy+XzJstQ5dItitkI5OOGAV6ienzR9uaY7b4yXja4tVMviraNCMH3Evznj9A5TeK6cjNKKVxmmjBLIZzASYqME=
+	t=1750080628; cv=none; b=tV0sAw9MFKoCyiBWhHI3nG10pJKcJIz7MapgCAt+tXM9z16NouP2ZohwKoQ5inZsh0QozCE141NlTt36rYxanCeqWdA7JeNS3Slu1EnIQX9ksVkQrIWVkB178xVVW/kvXhiXkQTGFpsajGfiNDkS/HmAPLETk4SkaCrXhIDu6G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080808; c=relaxed/simple;
-	bh=cMKsJUotDdosJ5GgRT61ngKqLnwH/Sc2vQwUb/JvwaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IgSMVOrXLbdEkfsiQND/f348gHi2DWU5WQ3gHhXueFxLynnyABajBVaRVZ+HjDhIEzWbp6rFrhg0QsDqPw2/kTyg1tzZjc4EjukEceTUiyNaSO4YKXhGF8FE5wgzwvM3tOgRgCQm46ieU61zZ+45A+YF+oTBRlyUZYEBXjHrju4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=P5ba32G5; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so6437275a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:33:26 -0700 (PDT)
+	s=arc-20240116; t=1750080628; c=relaxed/simple;
+	bh=eSGM/kHiThLG0+4KJzd+4iN5W6WU/gNP8I5Ybs3fFmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gWSKBFxoPvT01+cKXUNZ2Zt7Fm8fAaPqcAlycJcRISJUsPDLQJy86gxdoTBM0UR2Fvl24an8BFEJlOJ5y3PP/o93OYBCsRHjuNMDrkp9fbFyJJ/5HYMuTCKuAXi2+44BD88FTwJaBYz0rUg0vV6oqoh3XS6HW94EJeoy2JI+WU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nd38/hnG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2351227b098so36000105ad.2;
+        Mon, 16 Jun 2025 06:30:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750080805; x=1750685605; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750080626; x=1750685426; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Lc1xa9XGYazZdbig9CQp0aaqg5/Q33JTrH3v7YQaNmY=;
-        b=P5ba32G54XHUkHVqSLXc8+9deIRH3Ms0dsz+RUhfkLPMi20QlqGv4YQl1SIgT8bAZM
-         OwdoTo8TYSeerWtM8Tc67/+Kn9DTfmazu1tcQ6cVi5wwSuWcDZAP55wUqmMh1O1JejYF
-         qbYsCUyTFyXQGYzoj6h5JQjsFnjwxi113I3DI=
+        bh=c0hEZwGp1ZWclkFU1+i1qSi3AaZ5vIDWkPqR7hw0AQY=;
+        b=nd38/hnGbIgXuAnBMzEMtgM3u11yP9WGa1QlDSlfz4Cw0cuewS+eliFIag06GjKWsT
+         dWHMxr3LtmnVWSUAD0nzWLeWNLIsYp2aLxeaUJVaLeXbjXMCTnsJAeMQ9Tah8zZgeQAU
+         6GFXl9Y4uLhch/+4aVyVoLz1lmNDmmKDqL5UPJJNW4L170V+xWeIsBVt9F5lemAa8Hf7
+         eQZDLylC6DRQcVXLbG7Xk7G8QGxR6CHzgcCfZqynh6CQJZjo/ffLCx8W1cbIfKldT6JH
+         hddbLdMsN1yO1DClZoXo7INTiHDOpwZuvoa579vlanYvxgXL8BnFwcpQVug6nAQMptqk
+         xQAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750080805; x=1750685605;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750080626; x=1750685426;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Lc1xa9XGYazZdbig9CQp0aaqg5/Q33JTrH3v7YQaNmY=;
-        b=Or1Qhr3ncv9xegI/jV+S0QC2mi7niJ5VvWPpfNIvy9IXoIvhbG9v6BxbfloY/yyStT
-         3RHFESU41Q5kjadO7uIsEGD36oCt3LhcDWm+/OSVSjhe696CZTFN94QAXiekpDwgBo33
-         wmft69qcETIM5oIY38vNLgZw+wh2yl+6nRFCRlalrJhuNA/T1gPgDvQevOFhRmKsAGvt
-         1i5t55AHFMBi7o7H6lg1FdIOk08D6Ao92ZMd0mFfOxM76ZEXXANoV8NF1PkOZCaC2SlE
-         W9xf6eX2rrAGBkN0kmH2VnscR7hRjOrvbwRwdCPlHwDa4urtSyDLO+zj15MXFm/4fXjm
-         /jyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJXIp2R3iElJJ50/MxS7Re2+txkBgf4KRHeX+3lbHPeddInvjWFYaUORL3SDvnEOqEKYiUiKCvjiK3vEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLp/jEfhZNdLKHspJ9D+vHWzW9IjPR37ffl5hz29zRXaFn0EHY
-	RepFzDq3jwP8w8pB5jI+/PuxnSm0l8BfDNyuDCtwbNnYutrjHPXd7JL3LIfZX79D6g==
-X-Gm-Gg: ASbGncsbVR4kV2QyDMto+HDs24jC473Z6Xa3BR0j0jdpJN+jOApMXctI6Iykuo07vxl
-	BJzOZSRpwPs1NHXB6gKjt3T+T3Dsl58fuS1LEjCGr+5gHd1otbR1oGAojFhOzKR382D86uZxYno
-	72GkXO2SNcptcxYFNhLQfjjA5H0w6EXLj9DZprjhWC9m5+f/yfUxl2ZL734+2Sl0UyC6Cn0RLZ0
-	mPAxKmDK7n2nlI43D5AwIM8F4swbClVJl7vKb/ntEjKYlV7A3+NkhqaIgXVnCViD5/RbSWEr3A1
-	vRjwQG66amUIMks9wfupOEYLYR2+ruosXxDsy7fpd/BrtpBEMVua6niZ2Lp3fOtb5PShXJ47sUT
-	m5xpO694RzgeVZA50/eNIFkjYdN6QQr0Nhn8V1cgnZFw9zDCm7FeZMrRN5Q==
-X-Google-Smtp-Source: AGHT+IHw6+ZqjUiGtijKP7659AHwRHhXUfja1QVHvIcjre79jMfTDQp7kopiYwQiEAC5sFmbVRn9HQ==
-X-Received: by 2002:a05:6402:268d:b0:607:2e6b:47b2 with SMTP id 4fb4d7f45d1cf-608d0979e84mr9154566a12.26.1750080805113;
-        Mon, 16 Jun 2025 06:33:25 -0700 (PDT)
-Received: from akuchynski.c.googlers.com.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a94ce7sm6036664a12.58.2025.06.16.06.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 06:33:24 -0700 (PDT)
-From: Andrei Kuchynski <akuchynski@chromium.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Pooja Katiyar <pooja.katiyar@intel.com>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	RD Babiera <rdbabiera@google.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	Andrei Kuchynski <akuchynski@chromium.org>
-Subject: [PATCH 10/10] platform/chrome: cros_ec_typec: Report USB4 mode entry status via callback
-Date: Mon, 16 Jun 2025 13:31:47 +0000
-Message-ID: <20250616133147.1835939-11-akuchynski@chromium.org>
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-In-Reply-To: <20250616133147.1835939-1-akuchynski@chromium.org>
-References: <20250616133147.1835939-1-akuchynski@chromium.org>
+        bh=c0hEZwGp1ZWclkFU1+i1qSi3AaZ5vIDWkPqR7hw0AQY=;
+        b=WvVHgSeqXzlI5vTO+vUVC7TANnazP8k/oF1Z2zpp99w6uVD0hN2M7lR9KZnwyjxque
+         OIcxsJJ2F79lLm7qkxoN8OHjdl9u1v6m6t77jguezvHpvy9zkcyPOdNhuT6RFtUoUG70
+         GBOJ3KZFJNkhAnDoxNSBw4UMmeojBS3pDFSGDDkI0PBKu8Ia9QY8GXuLKGc+6wszxIZE
+         3+GUyrzDvmtEiWS64vmKtvDjurEImCbxTSY0RXo1EiG1Mj5bw8TTh8tHKFWjbG9Cp/Ho
+         2j8GLfb6u5HSsihYWgdmFU/jS2R4H0yZAxgL4RavNTMN6TNcLl10GKoWbPmre+gLhFap
+         syDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhCesORbqLDcGrJIP2pzUyvXuDtz9ySD4I0SZyyoS8fQQsumel7udaQBDZPUPzRJWRYMiJztSEw52R@vger.kernel.org, AJvYcCVq9z/LPEUvGrOL/NPCNQtxNoaOE5+KMAYBbPOjs31SaLYRE16e+xTKqHxKy3rHSGF3Q1W8CTLHc9EkAOVh@vger.kernel.org, AJvYcCXSiTXBEKr89ymkBI5y7kUuY6jPmmTl9uvAdc9fUbp0CwD0m6eRwIID9F+T47jpBK5vAr+no4wvVOY9YWBxZvaNvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs+Ks53YpL3QdBXZXLLKU3QN1vHChVQtIGWrhDv5LlmDxR5Fh7
+	vQSvBdsmC+oreNsM5SMinxKpcJIRZUYmHBbk7qqQJ2lR5HIgDjZSrMU6pKwTVBI3s2Im/vxT8CY
+	78G98i+JF7lSLt6LuMH+U+ZriXrN993Y=
+X-Gm-Gg: ASbGncvXjtPksqEqtDo4aSq1aJRbQnQJ9ayserr9Dr+I5TwYbET5UojCJ7grFI0DSeY
+	cQuJrhF3R63/P5P89jKjWRPYglCmlQHooMXJTKD64lsUW7eQn0kBeIT0KtZ5027/UPPRIgihpzL
+	KyowTGI06hAUxsSICiitQs1nMX/V/IHB1tqZkOH53E
+X-Google-Smtp-Source: AGHT+IHrnOe9BgEaf7IB6cKO8/zukFqN2HZ5IAYeo7rZcnUwyz06zgXtx6or4FKsocwZQxMzpq7RhmfRl7nR3WTEeSU=
+X-Received: by 2002:a17:903:228a:b0:235:1962:1bf4 with SMTP id
+ d9443c01a7336-2366b32ce3amr144470995ad.14.1750080625607; Mon, 16 Jun 2025
+ 06:30:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250606-imx95-rproc-1-v2-0-a2bd64438be9@nxp.com> <20250606-imx95-rproc-1-v2-2-a2bd64438be9@nxp.com>
+In-Reply-To: <20250606-imx95-rproc-1-v2-2-a2bd64438be9@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Mon, 16 Jun 2025 16:32:27 +0300
+X-Gm-Features: AX0GCFsogmtArdg5rIwFR58rkkFYwbGckSH0KHSur5wUDe92Y-KCqAhSavVUQsU
+Message-ID: <CAEnQRZCq45wzoDLd=_vPn8cNkiVrbYrg5LJwbZUSdRndRn_U_g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Add support for System
+ Manager API
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Type-C mode selection logic requires feedback on the result of USB4
-mode entry attempt. Call the `typec_mode_selection_usb4_complete()`
-callback to provide this final success or failure status.
+On Fri, Jun 6, 2025 at 4:57=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+> one Cortex-M7 core. The System Control Management Interface(SCMI)
+> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
+> Manager(SM) includes vendor extension protocols, Logical Machine
+> Management(LMM) protocol and CPU protocol and etc.
+>
+> There are three cases for M7:
+>  (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
+>  (2) M7 in a separate Logical Machine that Linux can control it using
+>      LMM protocol
+>  (3) M7 runs in same Logical Machine as A55, so Linux can control it
+>      using CPU protocol
+>
+> So extend the driver to using LMM and CPU protocol to manage the M7 core.
+>  - Add IMX_RPROC_SM to indicate the remote core runs on a SoC that
+>    has System Manager.
+>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(got
+>    from DTB), if same, use CPU protocol to start/stop. Otherwise, use
+>    LMM protocol to start/stop.
+>    Whether using CPU or LMM protocol to start/stop, the M7 status
+>    detection could use CPU protocol to detect started or not. So
+>    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
+>    status of M7.
+>  - For above case 1 and 2, Use SCMI_IMX_LMM_POWER_ON to detect whether
+>    the M7 LM is under control of A55 LM.
+>
+> Current setup relies on pre-Linux software(U-Boot) to do
+> M7 TCM ECC initialization. In future, we could add the support in Linux
+> to decouple U-Boot and Linux.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
----
- drivers/platform/chrome/cros_ec_typec.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index a4f338771094..c5a7f42ffb5a 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -698,6 +698,7 @@ static int cros_typec_configure_mux(struct cros_typec_data *typec, int port_num,
- 
- 	if (port->mux_flags & USB_PD_MUX_USB4_ENABLED) {
- 		ret = cros_typec_enable_usb4(typec, port_num, pd_ctrl);
-+		typec_mode_selection_usb4_complete(port->partner, ret);
- 	} else if (port->mux_flags & USB_PD_MUX_TBT_COMPAT_ENABLED) {
- 		ret = cros_typec_enable_tbt(typec, port_num, pd_ctrl);
- 		cros_typec_tbt_status_update(
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
-
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
