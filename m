@@ -1,200 +1,82 @@
-Return-Path: <linux-kernel+bounces-688956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61243ADB938
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:59:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D796EADB92C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D4B174456
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34449188FC7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2540128A72C;
-	Mon, 16 Jun 2025 18:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329E2289E10;
+	Mon, 16 Jun 2025 18:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="ISlyWYTH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OynJDX+q"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHkvQ2uh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8032728A1EA;
-	Mon, 16 Jun 2025 18:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8385C204C1A;
+	Mon, 16 Jun 2025 18:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750100320; cv=none; b=LOY24F32blCkbGxsXtOWVbu6TEIkxNGGjKYAKxmmTmkv1vtCzNXEPuNwLCFfLcu1C/1vpBoZjk8OvF1KhoxmxVLLYwLwjcnAW1kSriKB5yd3wxhKZa6GVgDbljquvexcR/r0mkRaY0aI+e17qHXjE+vZGVFGTb4UbHxfiiP1Q2g=
+	t=1750100260; cv=none; b=tKOUQJk8kLIIg8I6uu77y9xUdwPCr99ZEh1R0UXXAcu0kxGmI48AT1gWx10b7v2vx+jmlWffAgMf8skybaGrUH9sEVF9yPrZcEYw7klb4T80sO+V5sOL98IOCO7sUjEu7yUcPMn3BgeCFdWPllCxoUawltG/XoIpVTMuyzDZBRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750100320; c=relaxed/simple;
-	bh=8/3kpwgl1nPXMO09fd/PTQcu/r04UTaiOnNHiwPTx6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KIrOQyENmDP2iQHOLwQ6KFBql6UDl0x/V23HZeMRPV8KZO3d/oyaJkCzk7o4NIeHg9DM/yzDezHVL14m/4KBsNVmricytRT9tsJ3+uGMzdoJVUuTmkfpdF6IOu6cZ4LgvSXNaPQCidTm8h4NvNM6H+wcwG23XbQm8/rJuwqnZDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=ISlyWYTH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OynJDX+q; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id A1DFC1380397;
-	Mon, 16 Jun 2025 14:58:37 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 16 Jun 2025 14:58:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1750100317;
-	 x=1750186717; bh=CBlTK1NcwXwVEcjMtr0ZJRAk5aP5Rj0Kevz6K7/iAgg=; b=
-	ISlyWYTHLSbGoEItgZTIUA0814TsuGX4UBngSG4yDzbg+ziUvV1pBTa137/94Qoh
-	kBe0un47VLCiaOpaCLYFJ2mRqw2gxT6RMuTNEvMLFUjeEh1fyo+Ai+TN4F3RwOfz
-	b6c6hF0bin+xwocTLfL9KVOv7JEkVSG/WS6mTJ9mFAwHQnBNMzNLq//YLV8etqQ0
-	Jc5wO4886LkzcMdnC58PNjfim5TeYmAI9WfopvE2jooFHpqlqhy07qWCL65TEI64
-	tQ+BgZagMKcCFoPtOj8L7K+WPxbFiyHqm51QlSyYkaR0fYnSETCmUlvYstw0+3vK
-	e4SpWB9F0J0Qt5SDm6wK2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750100317; x=
-	1750186717; bh=CBlTK1NcwXwVEcjMtr0ZJRAk5aP5Rj0Kevz6K7/iAgg=; b=O
-	ynJDX+qnyMNd2fQq/jerwqs+skqBuFiTXGn8D4dMs7k+WUxTXFVO3PaBxmO1T7R5
-	6OXGEbtp23GFP8NKmIk30Do3FADfaFcglDQjm4cprN/2yi0Nzcihtwv3NGIa3zxC
-	whJxy8x17MihLhwlWHKgqCoz5pXH1lowz9h1CuHq007oCvvJvaAfEB+dJlGJ1lcI
-	fGDmC53IrjEckR/6VHxBqvnwfdaQzHBKbIohP2DbcSUgBjmIT/bXtbIUJiW8nDCI
-	g06NXuyv0HAhomPpSdmGk/WVeuuhJI6cdVr3HmuMwqMlnG3I4e0rRtbNvotFeFhx
-	Tg1446qRE+U5XZCQdTFbA==
-X-ME-Sender: <xms:XGlQaHHPTm-8jzdlWLCe8X_zbrpP1GWt6Im4ODtr22qbMsN8iwgwJA>
-    <xme:XGlQaEX1D7UPd6VxmPryg9eaBaITLfqcVaCjkt41fyICAquv1ZfLiTcsHK3BACsRR
-    UQixQF7FHzaKQDJY0g>
-X-ME-Received: <xmr:XGlQaJLEI1cSXqFzeul1JbyKnbNxTnQW_auP4k8v4gpZas-2rOMaFxNfhzqwyIcFq0s_gQtQISRpiZcWdpUTtaNNaA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvjeefiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredt
-    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
-    guvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgr
-    thhtvghrnhepheeigfeuveeutdefhfehgeekvedtleeuueekveefudehhffhjeffgfegff
-    elfeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
-    nhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtg
-    hpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgthhgvhhgrsges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlih
-    guvghrrdgsvgdprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhn
-    thgvlhdrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrthesihguvg
-    grshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqd
-    hsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgv
-    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhikhhlrghsrd
-    hsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgdprhgtphht
-    thhopehlrghurhgvnhhtrdhpihhntghhrghrthdorhgvnhgvshgrshesihguvggrshhonh
-    gsohgrrhgurdgtohhm
-X-ME-Proxy: <xmx:XGlQaFFKUVRFxjpBgi2KDLYymv5ePD282m8GirJl0ZisSv-3qGEDUg>
-    <xmx:XGlQaNUuUex9uBUeeuvgglGCly7RDlswVt7XRv2MkROH7AkakYUPmg>
-    <xmx:XGlQaAPr5vGNcqtTy07uPJi36hzWMF5ri8id3Brny-X6JYlTo8VshQ>
-    <xmx:XGlQaM1T2ClH4ABFgK6pZHtMQhhlLs447e8WYIA5ryXGb_MFpPHWdQ>
-    <xmx:XWlQaPj_tbRTzUfKUE-8w_Y2992ArYimlZKaW8qmnhlpI79Cezkvh9lN>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Jun 2025 14:58:36 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 3/3] media: rcar-vin: Generate FRAME_SYNC events
-Date: Mon, 16 Jun 2025 20:57:22 +0200
-Message-ID: <20250616185722.980722-4-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250616185722.980722-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20250616185722.980722-1-niklas.soderlund+renesas@ragnatech.se>
+	s=arc-20240116; t=1750100260; c=relaxed/simple;
+	bh=O3cwjLR1nWA9GzL+14mlgq2jH/1IszF/eakSRYB/Kgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTNAPjvm66va9zv0E9Eas3j0E/d4QKH08HvUidVLpmw/slHH4IKe0U/x6+Ocz9d8ksGXRSGbR0WxescFPZxKJYDEHygyNrf2gE6xkmBQfLUxPRSIfLbKDB4jKW4ZpFkpVRWDKxNj/0nDLZtmvi4dr/Th0DdK2P7Ccu5lbTwVriY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHkvQ2uh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A42F2C4CEEA;
+	Mon, 16 Jun 2025 18:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750100260;
+	bh=O3cwjLR1nWA9GzL+14mlgq2jH/1IszF/eakSRYB/Kgw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BHkvQ2uhb8xOzRj67T0Ov8ofLgTpkGDaoUNNrMhfYFye/9O7CmbrCPLfpN+CG8q9U
+	 VfMDagsOvJJFE/EfZOxStyLqGFCUmgjdZ0B2Hf1Ylp6Z7YyZUOp2M+GvAFXE/or+tU
+	 ZoqFCe6WW9Ly7ZglrCHd/fS93xB5dRE1wxsTHRqNYAm47n2Kr6WrqWkc4QMtj3oIC0
+	 GZbROuonYGM0HjsgU3pII6STo2vI3HlbuTVfYDOBz4nfmXJZ7YKN0nuS7mw04uK7B5
+	 Mj9T2gSVyCEi3Cme1b4saNTSylUhGIzYa2STGvZS9jtBMYpnpjzehljcSE1LhvkI3N
+	 vxa77LjNKkuvA==
+Date: Mon, 16 Jun 2025 18:57:37 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] LoongArch: Fix build warnings about export.h
+Message-ID: <20250616185737.GA23807@google.com>
+References: <20250608141509.157300-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250608141509.157300-1-chenhuacai@loongson.cn>
 
-Enable the VSYNC Rising Edge Detection interrupt and generate a
-FRAME_SYNC event form it. The interrupt is available on all supported
-models of the VIN (Gen2, Gen3 and Gen4).
+On Sun, Jun 08, 2025 at 10:15:09PM +0800, Huacai Chen wrote:
+> diff --git a/arch/loongarch/lib/crc32-loongarch.c b/arch/loongarch/lib/crc32-loongarch.c
+> index b37cd8537b45..db22c2ec55e2 100644
+> --- a/arch/loongarch/lib/crc32-loongarch.c
+> +++ b/arch/loongarch/lib/crc32-loongarch.c
+> @@ -11,6 +11,7 @@
+>  
+>  #include <asm/cpu-features.h>
+>  #include <linux/crc32.h>
+> +#include <linux/export.h>
+>  #include <linux/module.h>
+>  #include <linux/unaligned.h>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../media/platform/renesas/rcar-vin/rcar-dma.c  | 17 +++++++++++++++++
- .../media/platform/renesas/rcar-vin/rcar-v4l2.c |  2 ++
- 2 files changed, 19 insertions(+)
+You can drop the change to crc32-loongarch.c, as it would conflict with
+https://lore.kernel.org/r/20250601224441.778374-8-ebiggers@kernel.org/ and
+https://lore.kernel.org/r/20250612183852.114878-1-ebiggers@kernel.org/ which are
+in crc-next for 6.17 and already handle this issue.
 
-diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-index 19ff190f0fb2..b619d1436a41 100644
---- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-@@ -13,6 +13,7 @@
- #include <linux/interrupt.h>
- #include <linux/pm_runtime.h>
- 
-+#include <media/v4l2-event.h>
- #include <media/videobuf2-dma-contig.h>
- 
- #include "rcar-vin.h"
-@@ -114,10 +115,14 @@
- #define VNFC_S_FRAME		(1 << 0)
- 
- /* Video n Interrupt Enable Register bits */
-+#define VNIE_VFE		BIT(17)
-+#define VNIE_VRE		BIT(16)
- #define VNIE_FIE		BIT(4)
- #define VNIE_EFE		BIT(1)
- 
- /* Video n Interrupt Status Register bits */
-+#define VNINTS_VFS		BIT(17)
-+#define VNINTS_VRS		BIT(16)
- #define VNINTS_FIS		BIT(4)
- #define VNINTS_EFS		BIT(1)
- 
-@@ -889,6 +894,8 @@ static int rvin_setup(struct rvin_dev *vin)
- 
- 	/* Progressive or interlaced mode */
- 	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
-+	/* Enable VSYNC Rising Edge Detection. */
-+	interrupts |= VNIE_VRE;
- 
- 	/* Ack interrupts */
- 	rvin_write(vin, interrupts, VNINTS_REG);
-@@ -1040,6 +1047,16 @@ static irqreturn_t rvin_irq(int irq, void *data)
- 	rvin_write(vin, status, VNINTS_REG);
- 	handled = 1;
- 
-+	/* Signal Start of Frame. */
-+	if (status & VNINTS_VRS) {
-+		struct v4l2_event event = {
-+			.type = V4L2_EVENT_FRAME_SYNC,
-+			.u.frame_sync.frame_sequence = vin->sequence,
-+		};
-+
-+		v4l2_event_queue(&vin->vdev, &event);
-+	}
-+
- 	/* Nothing to do if nothing was captured. */
- 	capture = vin->format.field == V4L2_FIELD_NONE ||
- 		vin->format.field == V4L2_FIELD_ALTERNATE ?
-diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-index 9b1e3a9d3249..62eddf3a35fc 100644
---- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-@@ -489,6 +489,8 @@ static int rvin_subscribe_event(struct v4l2_fh *fh,
- 				const struct v4l2_event_subscription *sub)
- {
- 	switch (sub->type) {
-+	case V4L2_EVENT_FRAME_SYNC:
-+		return v4l2_event_subscribe(fh, sub, 2, NULL);
- 	case V4L2_EVENT_SOURCE_CHANGE:
- 		return v4l2_event_subscribe(fh, sub, 4, NULL);
- 	}
--- 
-2.49.0
-
+- Eric
 
