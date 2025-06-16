@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-689054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653DBADBB5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:42:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01BCADBB6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAAE8176151
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:42:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F7407A54CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0412101B3;
-	Mon, 16 Jun 2025 20:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0458212B28;
+	Mon, 16 Jun 2025 20:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxTyj02k"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCLQKVei"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B8620F063;
-	Mon, 16 Jun 2025 20:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BD11C860C;
+	Mon, 16 Jun 2025 20:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750106534; cv=none; b=hiTzbqnLpP8KrMIFYN0uvVxHhpFRjk9veNeIcWuORte9K+9Y4PXxUFFo2xQQYj9aet6dpRMsuWO4KLuqRDPC9cDaQ4jkZLE5axVvvN3YuIraVlpavUU1w75AIWK4Oa0opZnwiM2bPbVpRYL3jJ6rlENkxhp1hwDPbu8//0LnVCM=
+	t=1750106610; cv=none; b=Ne7lqFdvugeU0lF9kLgeWj3ENyEEOsfnYrjNqkBfOQLPPkSmq2QOfBgoDH4eECvhtZT3PbjPPY8IU/OdR3b1IQYGZENY6R9Cbbqwx7CM4LmVGP16La5oCV5fqnOa2GFLmzz6Y2B+a3YWYkAsz795YqDgiHoJuME67iYqO9WYjSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750106534; c=relaxed/simple;
-	bh=2MVarrKr3EH+WpTMw6UOQrd0Q+i2vTps24RzpVNiFso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=noARMcJIdK2LrbuQV6/dd46lrH3mpzlyRcO6Fq8cUkmqOdJlR0gLw3V1Qa9Zo2WSNNDtVBCBS/Qz2KWMU5k3js27YofyzaxOZyd4c0YsPtt37NSo7U+vi0g75sRyZau8YJdfI8sxOklJpcO4p+aypURSAyqy6C71kjhWdJgjIjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxTyj02k; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1750106610; c=relaxed/simple;
+	bh=MPROsdRxArwhnjbtN9ZftmZMxHEmEvfOk5+/jeQ8KB8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eM00kzWJJCv1PpXoRLaLXemWLPiG9uXGMwmPitArglDTqR81GOKdVoBtNFvDKlTmvLYbV3MZPzydo8tZSWijkWNcxqbIaEJPyWw6asPZr7Yx4xpMK+Q8e/VjKTzhfth4SUmlyKAp+iMTyH5x89SkHw7c8PvCYCUt69jd1FqrxuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCLQKVei; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-31384c8ba66so949683a91.1;
-        Mon, 16 Jun 2025 13:42:13 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a3db0666f2so112345681cf.1;
+        Mon, 16 Jun 2025 13:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750106533; x=1750711333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750106607; x=1750711407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2MVarrKr3EH+WpTMw6UOQrd0Q+i2vTps24RzpVNiFso=;
-        b=dxTyj02kNJH3XPk63pac3TX9gaOEd0JqoZPRTNXFCnXKMBK2wj9V2l9N66mQE8BWp8
-         4t0cu3pff+2/yeayZ0RMHpK8+dBtc24lDe0JN06oS0j74JFS8b5EITTmaD+Dgq5sVFBm
-         D5sFUJ9bjP2DhDDv7FkyiURiU6sRSMIxHQ7h5gSAJcHPAVSH82hnfFW6gsOLZ51qdBnc
-         Bpaq/bmzRbm+Q96Fhm2JDR6ErUiZrK1w0lk8mLQYQoMnryRMWL4dgpRsP5UUq/DyVzXT
-         U6XOFW7zC4YBK1BsemKofIxDo+u4fHjdhzeqe6AtYSAbpGyqw/nHIDH2dbruYVMuUgJf
-         QgaQ==
+        bh=eRWSTZ0XbChoIlsy92a3twWjGeU8UCDzFEMehFMQRMw=;
+        b=DCLQKVeijs9a7MDHZh0ZO1APAeggCjdfisQWGeTla5otMaEnuvrbRGV2YeUfa4HDyx
+         4o+DaonMI3F8G+oWlqI6tNLyeGAZFdINf4ftqWEilw+Tvahbg2r9tlsw/ZFbBRZGxMwb
+         O2yROIqHqjY9lt/m0OnzUB+UkJU7AovHdYh5CQfmUMXfr/s3uNFPDWu1p/D1gtNusxFt
+         /Qss8znxrOP4fgOSielYVCmzhxgG97ddYdPcXMQ2ZGf9pKBghvUrncDFBEa/I8SMWJA+
+         lImqhWvt7FE45hz9KNEgslCj45JZ5sk1mgDIf/UKzzjS3TvD7BhcaGZ1PKr2qOqWCdiG
+         K5FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750106533; x=1750711333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750106607; x=1750711407;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2MVarrKr3EH+WpTMw6UOQrd0Q+i2vTps24RzpVNiFso=;
-        b=Gu+34qoVE33hlvoaUiw2oqa8uzL84993p1Z1f6zvbA4W5n8enCRbunvEpFgLy920om
-         P7K5s88XD7wJGI+OU3e6H623Jl1fJRYAnPEGQ/DLHySBNXVxrX3pWM4g/cO76mWaf619
-         QQUaPaeUU0GksaZMh3pBIVNsOUK3uOe8376FNCvHGRKuhaDYmvkLKCqPbkE/TIkQejhT
-         AEWSFT81R1EEKaXFiU9ZKQZdWmTABQFd+eT7UVrHPZXJayntpuvo0dcyLZkpMhTKY+pK
-         gLACPxgYG+RMYH35fkHE4gp/7pWjAfvGe478Xb5ldeviHUUDiOLPSon6BJW/N3X0vphA
-         CUkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJB5VCcC3jg47Ei1dRkfP7qHX4PsZW54GvHzhhVeCCWHEt6VZoSjfXwXz6yl3pxVT/CE/KQTXaLVLdY3s=@vger.kernel.org, AJvYcCXdLLvPRGnbundEtVoZgG9cERcTz0Pa+9w2pf5qN1X4/QyFAj5SHNVZL6M9haF4VVRHDSokjIjxVPP2Ni2hW2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy21DPYV2bVloA84d72yDnjPib5SkVLnWxkuZo26cY1kcxNagKx
-	tlt8iHbYa9RzSGgeAy0ZSj8fPaYYM+hzV6JJa4FaYAM2xe2SOcp2tTrSV9oTNeF0B9iKC0OIiMr
-	HxqF8j1cmIBFTKNxtD4L+9w56X/D5G7M=
-X-Gm-Gg: ASbGncsxJj7aFQYiM1xZ73N+bzaoRB2fje0BbPlVmNl3wbfEaXwFOoiT8n6CFwUMp58
-	mTJba9jUBKjL2eVsEIoGLszBRDVcfqtRbljXhnCL7he++PrAgUZPeeVmHg9hwA+xRMr3M6P027w
-	YzMSfMQcnaptdczFVvzvtdwsqGiIC68wVTgnOGv8yNIng=
-X-Google-Smtp-Source: AGHT+IHT8KPEV+iHcXim5KqyrVjf4AwLU8n3C89nP9x1BEVWMWsnUJWaRFLYWGWmGwAFRN3v+/B4S3Ge4P5xHC9Lal0=
-X-Received: by 2002:a17:90b:268a:b0:310:cf92:7899 with SMTP id
- 98e67ed59e1d1-31425ae4ce3mr472462a91.3.1750106532749; Mon, 16 Jun 2025
- 13:42:12 -0700 (PDT)
+        bh=eRWSTZ0XbChoIlsy92a3twWjGeU8UCDzFEMehFMQRMw=;
+        b=UGfYZN275IcY6PP8fcp9CUsm4TkPEHeWkkdDRIalCfiXzlf84M/xTKnM/lE2OEPoHd
+         PVfonyM1FLZvQHzlk6gpqH6KVys0mSpLfs7kWF/x49MllcYIGQAhV/jAVhZUL91b5X7L
+         HhXk9Alkt8qpAgLan3P2NRcFKnEb22DnZKU/dwNpYRj6jbzwHUzaZfjy8y/V19tfxlWM
+         FtKGEtPV3z1neWf7bwAcCF+BkhNZZqcR/vUo0f+PAZNQMed4Yjp52gyco7zU7mAX2HuS
+         y8avM1hu0VX43wWlNJy+1Q4d/BlkV7XcTIx2P0fqdsE2bLxGWRZzP5J1a7XgJENqlNoh
+         hDQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqGjhKVGMBZklzOn+5mSZuz1Yj0lViFqNM+AOlzBtcP86HMPJgD4hClD0cizvYzhOzJOWLWb+g@vger.kernel.org, AJvYcCX/I9dHKxKObPslfEQ9dwnDrU3zjDWHUmm+LDOWQbrCUu6ojZy2yWyFmy0p5JPeF71zBeG9X9x0shFfpBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6V/EUdqwedkQDR4Y+BJDY8sluQTKVjqBagBqOdDF5aBPO7ZEy
+	rYbfKRuL8daZLQIBD/NU3l7ZZ7ISwWqigvUiWHOy5WlXBjQXnIRKLLHc
+X-Gm-Gg: ASbGncte25JCwsB8rnr4M8+crRUHQ/Iek56LI37zUCKiFjqa4OEY9aqThkeTnnMhxm3
+	nnW7Tu4Fbw1K66+Jk8DWb5/OmeNegXn4U6jZ2aWQaZxwoehDnK8fKXsenmuYdaXbKvgmarw+asD
+	idDbhOqhFFYlqa6jnQf65HAXLEeOB6TeDkF4EZO0dnoE1JgrZca+oAYlgNQftGwMJdRLs3qgK8C
+	4Hg3KAxySPNChi0nvvKwVL4cjbpvjMKS4FXWEw4BX8iQFF10XuV5OdAPKnNhhcmM7tz//Fj2DtJ
+	xDBSaPQIQLh6Gh2FZh+fDculf1XSRMeb/IdHgjaOYT3KS5BZ77VMIZ6X4FYU6acpN/YrzWLwJeu
+	QrMvbzAO3ScNxc8qz6Jg5bQe6sCccnvbapPWjRpUT0Q==
+X-Google-Smtp-Source: AGHT+IH7BnvrBt09eangwJrns+ePgz/UJrNeXwsBCjJZDAR2PEBxYpJLCZcb8nTbHvvK0S0/K2oXPw==
+X-Received: by 2002:ac8:7d0e:0:b0:4a6:c5ea:6fc with SMTP id d75a77b69052e-4a73c5b0a8bmr146135721cf.42.1750106607313;
+        Mon, 16 Jun 2025 13:43:27 -0700 (PDT)
+Received: from localhost.localdomain (syn-184-074-055-142.biz.spectrum.com. [184.74.55.142])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-4a72a52a1ddsm53655481cf.81.2025.06.16.13.43.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 13:43:26 -0700 (PDT)
+From: Robert Cross <quantumcross@gmail.com>
+To: andrew@lunn.ch
+Cc: bpf@vger.kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	olteanv@gmail.com,
+	pabeni@redhat.com,
+	quantumcross@gmail.com
+Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: fix external smi for mv88e6176
+Date: Mon, 16 Jun 2025 16:43:24 -0400
+Message-Id: <20250616204324.2542804-1-quantumcross@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <ad17b701-f260-473f-b96f-0668ce052e75@lunn.ch>
+References: <ad17b701-f260-473f-b96f-0668ce052e75@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250615072042.133290-1-christiansantoslima21@gmail.com>
- <CANiq72mnxRquFmjoJemb=3LSq+ZdUfs9J+HXTwM6AavprsVNUg@mail.gmail.com> <CABm2a9fVSGm+WWjdkAmJHUH9eH=Qx5efORKxyJtt0HnQrs0QHQ@mail.gmail.com>
-In-Reply-To: <CABm2a9fVSGm+WWjdkAmJHUH9eH=Qx5efORKxyJtt0HnQrs0QHQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 16 Jun 2025 22:42:00 +0200
-X-Gm-Features: AX0GCFtGeeEyfe06ypkz5KLQqKug3P3IchXOC3KBr6Wiay8_aCbTMa2-_9ua4iY
-Message-ID: <CANiq72=s6Ugqrf5Ot6fJOMyCug2XyvKpjFCzya_Mr5iBkpitLA@mail.gmail.com>
-Subject: Re: [PATCH v7] rust: transmute: Add methods for FromBytes trait
-To: Christian <christiansantoslima21@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht, 
-	richard120310@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 16, 2025 at 10:08=E2=80=AFPM Christian
-<christiansantoslima21@gmail.com> wrote:
->
-> I see, sorry.
+Imagine that, it just works when I set it up like that...
 
-No need to apologize! It is all fine :)
 
-> I noticed that core is used in other places, is it worth using as
-> default dependency since other people use it and reduce verbosity of
-> the code?
+And now I don't get concerning watchdog event messages probably from
+putting the chip and driver in an undefined state!
 
-Hmm... I am not sure I understand.
+[  145.839142] mv88e6085 gpio-0:04: Watchdog event: 0x003b
 
-Cheers,
-Miguel
+Thank you again!
 
