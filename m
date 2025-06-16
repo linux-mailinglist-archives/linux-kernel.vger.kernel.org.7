@@ -1,304 +1,132 @@
-Return-Path: <linux-kernel+bounces-688757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76342ADB6C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:26:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD22ADB61E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727643A9ED4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:24:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF95189030D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070E9286D6F;
-	Mon, 16 Jun 2025 16:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0463B285CBF;
+	Mon, 16 Jun 2025 16:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="qQ/vVQOs"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wdTGek4m"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4C8216E26;
-	Mon, 16 Jun 2025 16:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8432853E5
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091069; cv=none; b=rbyPAZtWmyeKuFohk2g4lkaIYUiJCTYkEfpmFG5jC1BntL4L4WcimShIcK5agVhQhjgooI0itTLiLeK084KnyuaDCZtsu3gDVW4UTqejtC3D5jtU3uvlQLiOTs5W25RRiukPamTOmx+DUOwIxdhMCxTmoAybI5sa/JBB4bVEaEg=
+	t=1750089896; cv=none; b=avKT6z9kBekCMLePoFrVmaYTFInOctK/R2DjE2bBIA8JJRelPPjmT1n+6WxadQqg0JukoxUmVssBW6h8wH1/Vht7d+Ri98fzcyOG8RPC8GoB0LcpncID7cTy3ufQ/2KJMLsPHSAPS0XALphrrwtCGLwUCf0AMp/LqYWXn2P6870=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091069; c=relaxed/simple;
-	bh=Uz857Oq2+oWLt5i1lXofzZcOyaFI4AsgP0/KjBuTWmM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U/2RQDkrNW0hIaWFi4QFbnCA1f2SO2NL8LKXDglcPcNb7C6Tlxbib0yGUqI4hUSeLbWtuWtfhEz+qZEMOuXZz8M+/fIP0zCL3MSqTZpqv0oMRHffm6VubYBYVZf4rlFvbgfzynSkPQzkCsMyZvpR311fdG8qeZq8f9FiT+j1kF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.com; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=qQ/vVQOs; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5AGwWrRi8jrgw3xUdQEuuEMteyOTsTLzOSwAaSI3km4=; b=qQ/vVQOsBoTKNxsqcSqzZmGLg9
-	hQyXsN7Q2dUb3Wn7gvf4rdHkEfzF05K0YIYbuLV3gY0n8sVhpTd4hO/RDFQgy8BkXUGMdFMtBIeZ3
-	CatTtdCsuMwvg1nS1BmMiJpobtv/blCC6TU0nUy9vXJvBEc1LSumR5hm7dlVG5KVaS3Zth3jKqUTT
-	RmF/qnVnZH2mtVAWSSXQsbN57U0uX01GdY3C93jRZshGZLWGwv+JfxIjJpfgKCGaLFQgJgSYivQcu
-	QY1N3KOcAXx6AxgH86Df6iXnlCA967X72vOrMprTm0/f1UVwEs/esxWhBCwxlXf2JqWFDT5cEC28Y
-	c8trnfXw==;
-Received: from [167.98.27.226] (helo=rainbowdash)
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1uRCGd-003LgT-Fm; Mon, 16 Jun 2025 17:01:04 +0100
-Received: from ben by rainbowdash with local (Exim 4.98.2)
-	(envelope-from <ben@rainbowdash>)
-	id 1uRCGe-00000008pcl-0aOx;
-	Mon, 16 Jun 2025 17:01:04 +0100
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 2/2] drivers/firware/tegra: add tracing to bpmp code
-Date: Mon, 16 Jun 2025 17:01:03 +0100
-Message-Id: <20250616160103.2105041-3-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.37.2.352.g3c44437643
-In-Reply-To: <20250616160103.2105041-1-ben.dooks@codethink.co.uk>
-References: <20250616160103.2105041-1-ben.dooks@codethink.co.uk>
+	s=arc-20240116; t=1750089896; c=relaxed/simple;
+	bh=CTXOaQxjF5s8cpOyCgodMvW5akYuAc8hUy1j3ISoOi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=XTOcqOV1B8xgyPGFAM8rV0/53Txq/8hSj3A4e45gGi0xokysbcPMc0PduDeawEZgxzxCgpLqcwoUVnEJS8DFHNQY8G0ZEzl5AuD4ds+rG7wRre97zelTpRRBiIWorp49oqgOcG/Yv9FQ4j6z5YcRs+v1eWvQH2TVfRcxSwsk+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wdTGek4m; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3de210e6076so13755ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750089894; x=1750694694; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JZRZa1Ua98kJCyhFA7LJvzcy8GOGnWbcpi55ofKuebY=;
+        b=wdTGek4m+HXIx4GeEUOq/DUtaSpqLaBzrtKTSVGpB/PPRoE5WFiM/kaDllxZivkCsf
+         RkmxHJrdJqqEpTlX8FFm/9xOs4XOizeZZ2sJ6IJIHZfQRuA/xaakOlkB0Tm+hhu6ICIc
+         0cfbnabhDP4uj6mQtZSVTmjZMFsZlPNMlJwHWZNz41DTke46t+Uxin7dldg7WVwIQJzA
+         0vn0wQSGHqEf0KvvfxJXkOzNZ52QO0yuu50vbhqu6vZd2TDQeBaoKirA9DMiiDZb7aYG
+         TjpYKR84+P0tZpC0bNL/vCyFN5nqJXzoluaPfyWCui5fSpN3SESYupnumFo2gdeY9ozV
+         SxoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750089894; x=1750694694;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JZRZa1Ua98kJCyhFA7LJvzcy8GOGnWbcpi55ofKuebY=;
+        b=ge3dG0gj1wzH7rK2Gleo0eaaIxQ+dPhix+VX5xh6XdT+f+vgfnIT3L26Udoe8Zuvt0
+         +oLV1NnDeTFeSOP2D6Jz8FHwvwCY9X+uqeFnfG5Hvag3R8tvCfNuXZlNrEIzS852455e
+         S19GCi3ur/p8VuaEHe8ysXtAnmtS8oljkylzmOHbhLBxT/bno8dupZiRhYA4TwrVlEoK
+         UNDNTFbqw+rZd38qS5nl9+7gK/ser5Lw+cI9oCty7oVwHlmwhrK/uB/8YRnbaqw01L4+
+         qFmdE5F1cDogvGvzB+icI6574k43w54tjODf7/MzKXLHd/6oKtbGxaedQGsPbarrcvLL
+         wC+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjsJEfQkLkNcSl7DWdqC1O+jpzle3ZifJfRZ6MWw6mmLAy+rX2///b5TFncfdILlcGlb25U8fKT6TNchU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxovqVjdoN07boM/82manQXVgEnboSQUvjdbEcrLnK+s1i66W1n
+	jl/CPsgNugtnKQppH7jMepc2rT2higBMNQ3NnW0YVTDwod7UrrUOrskMCpRT9D7oS6m0Oi6OxCP
+	DtrLmRaKysSVFd94qxBsLYkNbrXeGBP8F1LILC03NE02atecNOrAYTm68
+X-Gm-Gg: ASbGncseJzuSYeJIeZAvj2n3O+B3kg8H9AKavZ/eqRSp+NaY++jJSzGs/a3wIVTnH29
+	k/Xvw4p2r6pvN6t+kQ9ynOQpxH7Y6G9+uVsEVkgdpRFtEsCRyMEUEf4gAXoE3XZS1uLGoN8Zy6Y
+	8rpxbwZRGgEHlL582LiTu+wQsQImlI217G1pYpJNNHQ9Smbgv/CrTrOG98el0nMt8UFWO5IA==
+X-Google-Smtp-Source: AGHT+IG3s4dWQu5k75FFg5Yy95b2Uob76LNgIUsDXZ3AvKrlpHPFiygRDTyyDD1PQcX6Hb/G0QbUrYNCfpz1yIUcwM4=
+X-Received: by 2002:a05:6e02:3786:b0:3dd:c526:434f with SMTP id
+ e9e14a558f8ab-3de09fa7707mr5386615ab.9.1750089893690; Mon, 16 Jun 2025
+ 09:04:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: srv_ts003@codethink.com
+References: <20250614004108.1650988-1-irogers@google.com> <20250614004108.1650988-2-irogers@google.com>
+In-Reply-To: <20250614004108.1650988-2-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 16 Jun 2025 09:04:41 -0700
+X-Gm-Features: AX0GCFuZNNCRbeo7C9EMdLxcNcUJ_Vg7ND5sifhQ9SMwnI_SNioYAxkmOzjkhH4
+Message-ID: <CAP-5=fUz6ViPHDdS9GCAEYUN39L4MpAnRR4CzJWggg0S8vn39A@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] perf evsel: Missed close when probing hybrid core PMUs
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Andi Kleen <ak@linux.intel.com>, Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add trace points to the communications with the bpmp
+On Fri, Jun 13, 2025 at 5:41=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Add missing close to avoid leaking perf events. In past perfs this
+> mattered little as the function was just used by perf list. As the
+> function is now used to detect hybrid PMUs leaking the perf event is
+> somewhat more painful.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- drivers/firmware/tegra/bpmp.c     |  16 +++-
- include/trace/events/tegra_bpmp.h | 140 ++++++++++++++++++++++++++++++
- 2 files changed, 155 insertions(+), 1 deletion(-)
- create mode 100644 include/trace/events/tegra_bpmp.h
+Given this leads to leaking perf events on hybrid systems it would be
+nice to land this 1 liner in the next v6.15 rc pull request fixes if
+possible.
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index c3a1dc344961..b7c005990269 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -20,6 +20,9 @@
- 
- #include "bpmp-private.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/tegra_bpmp.h>
-+
- #define MSG_ACK		BIT(0)
- #define MSG_RING	BIT(1)
- #define TAG_SZ		32
-@@ -227,6 +230,7 @@ static ssize_t tegra_bpmp_channel_read(struct tegra_bpmp_channel *channel,
- unlock:
- 	up(&bpmp->threaded.lock);
- 
-+	trace_tegra_bpmp_channel_read(channel, data, size, ret, err);
- 	return err;
- }
- 
-@@ -240,6 +244,8 @@ static ssize_t __tegra_bpmp_channel_write(struct tegra_bpmp_channel *channel,
- 	if (data && size > 0)
- 		tegra_bpmp_mb_write(&channel->ob, data, size);
- 
-+	trace_tegra_bpmp_channel_write(channel, mrq, flags, data, size);
-+
- 	return tegra_bpmp_post_request(channel);
- }
- 
-@@ -350,8 +356,12 @@ int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
- 	if (err < 0)
- 		return err;
- 
--	return __tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
-+	err =  __tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
- 					 &msg->rx.ret);
-+
-+	trace_tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
-+				      &msg->rx.ret, err);
-+	return err;
- }
- EXPORT_SYMBOL_GPL(tegra_bpmp_transfer_atomic);
- 
-@@ -368,6 +378,8 @@ int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
- 	if (!tegra_bpmp_message_valid(msg))
- 		return -EINVAL;
- 
-+	trace_tegra_bpmp_transfer(bpmp, msg);
-+
- 	if (bpmp->suspended) {
- 		/* Reset BPMP IPC channels during resume based on flags passed */
- 		if (msg->flags & TEGRA_BPMP_MESSAGE_RESET)
-@@ -812,6 +824,7 @@ static int __maybe_unused tegra_bpmp_suspend(struct device *dev)
- {
- 	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
- 
-+	trace_tegra_bpmp_pm(bpmp, true);
- 	bpmp->suspended = true;
- 
- 	return 0;
-@@ -821,6 +834,7 @@ static int __maybe_unused tegra_bpmp_resume(struct device *dev)
- {
- 	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
- 
-+	trace_tegra_bpmp_pm(bpmp, false);
- 	bpmp->suspended = false;
- 
- 	if (bpmp->soc->ops->resume)
-diff --git a/include/trace/events/tegra_bpmp.h b/include/trace/events/tegra_bpmp.h
-new file mode 100644
-index 000000000000..63289e475951
---- /dev/null
-+++ b/include/trace/events/tegra_bpmp.h
-@@ -0,0 +1,140 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* tegra memory controller tracepoints
-+ *
-+ * Copyright (c) 2025 Codethink Ltd.
-+ * Ben Dooks <ben.dooks@codethink.co.uk>
-+ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM tegra_bpmp
-+
-+#if !defined(_TRACE_TEGRA_BPMP_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_TEGRA_BPMP_H
-+
-+#include <linux/tracepoint.h>
-+
-+#include <soc/tegra/bpmp.h>
-+
-+#ifdef CREATE_TRACE_POINTS
-+static inline const char *tegra_bpmp_mrq_name(unsigned mrq)
-+{
-+	switch (mrq) {
-+	case MRQ_PING: return "ping";
-+	case MRQ_QUERY_TAG: return "query-tag";
-+	case MRQ_THREADED_PING: return "threaded-ping";
-+	case MRQ_DEBUGFS: return "debugfs";
-+	case MRQ_RESET: return "reset";
-+	case MRQ_I2C: return "i2c";
-+	case MRQ_CLK: return "clk";
-+	case MRQ_QUERY_ABI: return "query-abi";
-+	case MRQ_THERMAL: return "thermal";
-+	case MRQ_CPU_VHINT: return "cpu-vhint";
-+	case MRQ_ABI_RATCHET: return "abi-ratchet";
-+	case MRQ_EMC_DVFS_LATENCY: return "emc-dvfs-latency";
-+	case MRQ_RINGBUF_CONSOLE: return "ringbuf-console";
-+	case MRQ_PG: return "pg";
-+	case MRQ_CPU_NDIV_LIMITS: return "cpu-ndiv-limits";
-+	case MRQ_STRAP: return "strap";
-+	case MRQ_UPHY: return "uphy";
-+	case MRQ_CPU_AUTO_CC3: return "cpu-auto-cc3";
-+	case MRQ_QUERY_FW_TAG: return "query-fw-tag";
-+	case MRQ_FMON: return "fwmon";
-+	case MRQ_EC: return "ec";
-+	case MRQ_DEBUG: return "debug";
-+	case MRQ_EMC_DVFS_EMCHUB: return "emc-dvfs-emchub";
-+	case MRQ_BWMGR: return "bwmgr";
-+	case MRQ_ISO_CLIENT: return "iso-client";
-+	case MRQ_EMC_DISP_RFL: return "emc-disp-rfl";
-+	case MRQ_TELEMETRY: return "telemetry";
-+	case MRQ_PWR_LIMIT: return "pwr-limit";
-+	case MRQ_GEARS: return "gears";
-+	case MRQ_BWMGR_INT: return "bwmgr-int";
-+	case MRQ_OC_STATUS: return "oc-status";
-+	}
-+
-+	return "";
-+}
-+
-+#define __pm_state(__s) ((__s) ? "suspended" : "active")
-+#endif /* CREATE_TRACE_POINTS */
-+
-+TRACE_EVENT(tegra_bpmp_pm,
-+	    TP_PROTO(struct tegra_bpmp *bpmp, bool suspend),
-+	    TP_ARGS(bpmp, suspend),
-+	    TP_STRUCT__entry(
-+		    __string(dev, dev_name(bpmp->dev))
-+		    __field(bool, suspend)
-+		    __field(bool, prev)),
-+	    TP_fast_assign(
-+		    __assign_str(dev);
-+		    __entry->prev = bpmp->suspended;
-+		    __entry->suspend = suspend;
-+		    ),
-+	    TP_printk("bpmp %s: pm %s to %s",
-+		      __get_str(dev),
-+		      __pm_state(__entry->prev), __pm_state(__entry->suspend))
-+);
-+
-+TRACE_EVENT(tegra_bpmp_transfer,
-+	    TP_PROTO(struct tegra_bpmp *bpmp,
-+		     struct tegra_bpmp_message *msg),
-+	    TP_ARGS(bpmp, msg),
-+	    TP_STRUCT__entry(
-+			     __string(dev, dev_name(bpmp->dev))
-+			     __field_struct(struct tegra_bpmp_message, msg)
-+	    ),
-+	    TP_fast_assign(
-+			   __assign_str(dev);
-+			   __entry->msg = *msg;
-+	    ),
-+	    TP_printk("bpmp %s: tx %px, %zd rx %px, %zd, mrq %u (%s), flags %lu",
-+		      __get_str(dev),
-+		      __entry->msg.tx.data, __entry->msg.tx.size,
-+		      __entry->msg.rx.data, __entry->msg.rx.size,
-+		      __entry->msg.mrq, tegra_bpmp_mrq_name(__entry->msg.mrq),
-+		      __entry->msg.flags)
-+);
-+
-+TRACE_EVENT(tegra_bpmp_channel_write,
-+	    TP_PROTO(struct tegra_bpmp_channel *channel,
-+		     unsigned int mrq, unsigned long flags,
-+		     const void *data, size_t size),
-+	    TP_ARGS(channel, mrq, flags, data, size),
-+	    TP_STRUCT__entry(
-+			     __field(unsigned int, index)
-+			     __field(unsigned int, mrq)
-+			     __field(unsigned long, flags)
-+			     ),
-+	    TP_fast_assign(
-+		    __entry->index = channel->index;
-+		    __entry->mrq = mrq;
-+		    __entry->flags = flags;
-+		    ),
-+	    TP_printk("channel %u: mrq %u (%s), flags %lu",
-+		      __entry->index,
-+		      __entry->mrq, tegra_bpmp_mrq_name(__entry->mrq),
-+		      __entry->flags)
-+);
-+
-+TRACE_EVENT(tegra_bpmp_channel_read,
-+	    TP_PROTO(struct tegra_bpmp_channel *channel,
-+		     void *data, size_t size, int *ret, int err),
-+	    TP_ARGS(channel, data, size, ret, err),
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int, index)
-+		    __field(int, ret)
-+		    __field(int, err)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->index = channel->index;
-+		    __entry->ret = ret ? *ret : -ENOENT;
-+		    __entry->err = err;
-+		    ),
-+	    TP_printk("channel %u: read returned %d, err %d",
-+		      __entry->index, __entry->ret, __entry->err)
-+);
-+
-+#endif /* _TRACE_TEGRA_BPMP_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
--- 
-2.37.2.352.g3c44437643
+Thanks,
+Ian
 
+> Fixes: b41f1cec91c3 ("perf list: Skip unsupported events")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/print-events.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/tools/perf/util/print-events.c b/tools/perf/util/print-event=
+s.c
+> index a786cbfb0ff5..83aaf7cda635 100644
+> --- a/tools/perf/util/print-events.c
+> +++ b/tools/perf/util/print-events.c
+> @@ -268,6 +268,7 @@ bool is_event_supported(u8 type, u64 config)
+>                         ret =3D evsel__open(evsel, NULL, tmap) >=3D 0;
+>                 }
+>
+> +               evsel__close(evsel);
+>                 evsel__delete(evsel);
+>         }
+>
+> --
+> 2.50.0.rc1.591.g9c95f17f64-goog
+>
 
