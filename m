@@ -1,203 +1,130 @@
-Return-Path: <linux-kernel+bounces-688004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C016ADAC2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:41:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D3DADAC45
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7383B4317
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:40:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD71188FE26
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C648327057B;
-	Mon, 16 Jun 2025 09:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93ACD274FCA;
+	Mon, 16 Jun 2025 09:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GWCt+dz+"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="p8UG9Rd8"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E8F20CCC9
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9DE27466A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750066867; cv=none; b=Q8zb2YydAFTG3H8HuFF/+ZoLhA7p/xOERk9EmRJHZUkF/qnkmJz5mjLpccvjvUT41cQofhEKkJu6BBvo4nXel10iwKjEeaTZEqcFPc2tTwNhsErzEckXcgQYkMC4n8wqDifKIGnFJ4Pn3eaEhMPR/yWr396Gh9kSPxmRBsBVqBU=
+	t=1750067160; cv=none; b=iLPIuZaeZ9sg0tCa6qY/S+lS6vqxAuuLZD7mvcS7zVV1zS43qxcT2BD7sqtWxFBDRxivyFhFjhNY6ZmmPEQtFSAtmR0ywYXTdxYg7jCXdqAYpBDmuM8fazOSq8DBh++iRikOQDgAQ5YGWn0SSJ5zasm0wKnogk31wJQVDDpEFRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750066867; c=relaxed/simple;
-	bh=7XgftMYlowI9omQsqIdx6iLF24jqn6RByllX2ehfs7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DD5Wgq3LMOtL4X8Y/ZlJIztwqqbzH+/EKZYN/jNwUvCTV6losaV1Vs86L+pyhVcVb7RBz5TAFacBmivC/6Sf3S34qhElML5Ae8143GetnBPsel/1E4B/a/cv5qQK8U2/5RZ9ujNmmGURkhKKMkLg15i5CILTF9ZTdz8q0kKaBuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GWCt+dz+; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553b82f3767so1830146e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:41:05 -0700 (PDT)
+	s=arc-20240116; t=1750067160; c=relaxed/simple;
+	bh=yg/Z605KkyVU+56JZHlueaasnOvYoTqeMlYl3QzL15E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V0bJIzZ9pUG9k5dST8m7DY9TJ3rZgiLElPKRW5yGJpT4OahW/2jTkWviKaRDi45VfWFswYZeSNbf5V2Gxm0kH/cu6ovw6uz9aoaAm0v2Oxpm1af/ftXAJTsbMRDZMHp19hnWNFO2GrSWJCdr0GYDg1zKHYRoP367k6aay65d2w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=p8UG9Rd8; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ade5a0442dfso809016966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750066864; x=1750671664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZadNMdHIaOPYoMnd8DCHGg9pjL54W3auftd8ZPyuMno=;
-        b=GWCt+dz+xgX1+HTKkjCZXjMRV7n/QHqw+aBcgYC0SnsqkYJ+sgXMWHq+ZWPK7LTaBt
-         6nDaEIBRp2k6IiutyYuXPyVWtkdUzKQPC6JVb/yqLe9ohmZTwjpKmEyq/ObkmEFY+DSw
-         P5AOU/CSqlA9EgMx4/2Fny+uOGdJDHYL9lfina9VfUCXtt6I6gzwQT4aqL2J6it+sQhu
-         JBNCNsUKihsXQ+BTfpoiIPx92h7mKGqRxX8gfTPf0EPH28J66pVnfWvj6pVI4B4ooTLR
-         xRrzNBIf3i5H/JOOezwkR9FSkCispNTrhpbBVC6jnh5LxSNTPbWZg1tJXIOs69qSOnXM
-         PI1A==
+        d=fairphone.com; s=fair; t=1750067156; x=1750671956; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wv5TZzXE1pnoqd59sPXctLTMd18ru0CNrepNvpJnV7Y=;
+        b=p8UG9Rd8e6xg2tEJ/OQLvkHv/K0MvrZ1fxcvINZAjD95zW3RD2we37oduXBgYK831c
+         tadIWKh4qxfNkVv4y1nJO9BAvmdT3PbAcgZiZTi+ot2iAq7N6dXyrTmkyGmSxkSqtBTC
+         nQjf3V5f+U9pljT2MmYGztzAfVkNB9d1PYAtFOXzo/iFjMF6bNOEUHWcw2DJoXi+Zlhr
+         mVD2jWR9SKRNUfJd7Q/CT9xFwn1aMKQZ3h34vD6Jje9tCElIb11evUUVs7YRG++BligC
+         TbCdb6zlYHui+p5L0A3OuXafLeJboUN/DDLpxnm298ttuSMRx2IAQ4W8f8YqBNhLbzn5
+         LCxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750066864; x=1750671664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZadNMdHIaOPYoMnd8DCHGg9pjL54W3auftd8ZPyuMno=;
-        b=CqJIDsW7lWaugBbfhm4oKdeyTSIa6u9G4qEhFTrUxYaXgaFRlM2rHA3bY7X3TQNUbP
-         Os6LzG2BeqxBdDAN6UJzR9GSYp/4Nbo03Pjm/Y7HNnCxsn6WzFT5o7VJcxdK+ahrpUny
-         WogP2AUBdxW4hErhkMjB76EHyignXZTcNmZoxPEi9FSTaxTjbdAALhgugjayWT57wvoN
-         36ebX9YYA3g27McjuwMWdSBSmImYoqv8GlcWW6OviB7wo/DkENvzijLWvAAxqWCPAf91
-         6/7eqxbNy8I+ZAkZ3Y/0o98IeEG9epeMaJQJcTQKjXXb2fBxNPQ0dINmuHJBV9jL/2bX
-         Bp+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXzXDgLSCjDgcHyfCj3pGDIHOSKpgJzwXfvrE6eIjR4A9Uw7XmD53zsBnOoXq9B7+tYBinor7+p6/A/6Go=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCoAzrvgsoW25sb6IBYQsAFaxPNPxhy8q+7d+CASHFYT6+PNvu
-	hSc2xFgBbgIhKdSc0R8tEUaxijMw8+nKzyXPLt9t/2ZyUQrMyGAO45VCiPD2zQDr4C+oqfe0xNC
-	JcxftKTHjJQWi0L6brMoc9j2TCHyJX2Z9OMi60/jGrA==
-X-Gm-Gg: ASbGncsMidgiNsX0X4DyDWlhsmafoQ/RO5Ycmlb5RupBE9Wle6DL6Het8ggRwNceEKC
-	LB7jga6KVab/dgZpAljhWx2nB9vKjx6Ktx/42bC4Bj86230t5SoeneZG+xQL1iDZLECgPesQjjR
-	hZv3T10Atyy3jBKntKKdgCzDOEJeMf4kJ1Nb6p7DlFWqd+NO4sreiOcF6KU4yeDL7Xnb7da+8SE
-	I0=
-X-Google-Smtp-Source: AGHT+IGQWWfUkusHDrOLuRcyzoECeHHGTF7H0pzgq8rg6Tj7LyO4hdSVch5xZMTnr/dQPwUpgGJMqB60ks8Us882nLo=
-X-Received: by 2002:a05:6512:12d1:b0:553:663d:7354 with SMTP id
- 2adb3069b0e04-553b6f31175mr1628391e87.48.1750066863507; Mon, 16 Jun 2025
- 02:41:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750067156; x=1750671956;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wv5TZzXE1pnoqd59sPXctLTMd18ru0CNrepNvpJnV7Y=;
+        b=Ha1ZxwOjR6HHBMhYvSY9VvXMGFmpkdg55ynzw4+yjtOXUOjpc0/dHDGsgg5v6isASh
+         xIBMaHiHFbCZcL5a4r0TzRdY7exuDrMs2020sFZr5GaE7vbaqvJnvmsjzI3dzpIkRcZi
+         k64jZE3yHkehilUBjuLAzETUELV4rkJHDmqSzOO8h/xPnj3AeM7qSJwDNqWF+bQ80+aO
+         KJW6sYsohnojW4G9m1CCs4XA4poIQGajfsqGoDYHoIITi/bFISV2hPcneujKHhQAWbMc
+         aQwMFjGGnyXaRsS/s+leo98OIk0QxPd1xGphLDkTbs5WRQvClCNkvIVSaU/hjQcMCE23
+         hr0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfbrX3K0erxwKlcwL4eEf/yKPUv8vR/NDF1lrlYVNHgOHv4pfioczGPZPFM4qhVH/79K8IuyF5jQWtwZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAAegosDdw5PK9gZyLQmYNGYdA3sZcjR9re64yYBvISYgJhSTw
+	bxCdWLR3tX43oTdWvXVJX+dyOb1QDPKLfy2T1jkYgY52OIsH4L9g2dsBHXEKe2Ax9gk=
+X-Gm-Gg: ASbGncsz4z2m545VIP8z8Hcnt/ygKAI2/5IPRRqt/M3t3YImnze1NvmYfjNTVVHJIJx
+	a5zA99hzYa5jaB+RJboMnXvjCGDnjye+5OG8ysvUhBrWeXpvHlwFUpg3J3EeOC1d9Tcc1zgI3Ge
+	hpSG27jAR5gkPUnthlLXf1E7mZ7NxBBccgurhCiCK9qHm6Y5zLN2ceeqoZCFOp8Rcq3ztByz7fH
+	ILLPMA8ZkZzZoOL+D6n6qXaeZmhknZRRM1G/CHSdQZQlaGM4lxCz58orjFfoSNVXGhH2pnob/jw
+	qE5+bzk6ZSCSqFL+wV1qMrYY10zJpDsW40C42BcsvQtRW+6YSobotUzIXuUaQa/ZTvA54lPqDqD
+	+DyVmmyd2yGXYyeO2gz2z327zApVJI3oWEDAVcyh/Hc4=
+X-Google-Smtp-Source: AGHT+IF1UCCT/9hU3wi3KuAvxeqhvZuI9qbh0Qqdl66L5+wsfuS8m2r+/KHpbcCfod5gb4crjQOdiA==
+X-Received: by 2002:a17:907:72d4:b0:ad5:55db:e411 with SMTP id a640c23a62f3a-adfad3eaca4mr807509666b.27.1750067156564;
+        Mon, 16 Jun 2025 02:45:56 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec81c0421sm613375666b.46.2025.06.16.02.45.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 02:45:56 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/2] Fix tuning on eUSB2 repeater
+Date: Mon, 16 Jun 2025 11:45:10 +0200
+Message-Id: <20250616-eusb2-repeater-tuning-v1-0-9457ff0fbf75@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250614180911eucas1p16c9fb4a8160253c253f623bec2529f70@eucas1p1.samsung.com>
- <20250614-apr_14_for_sending-v4-0-8e3945c819cd@samsung.com> <20250614-apr_14_for_sending-v4-4-8e3945c819cd@samsung.com>
-In-Reply-To: <20250614-apr_14_for_sending-v4-4-8e3945c819cd@samsung.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 16 Jun 2025 11:40:50 +0200
-X-Gm-Features: AX0GCFt1wszk0eSWs2NPgAoE3A4kwN-NyBJ_b5il4mUmGBJkPe4uMiqiWgyvPn0
-Message-ID: <CAMRc=MfdBd6HBwM4F1TcjDvwbOJ03kxgRk4hJQ8HFK7Wz2XBAg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/8] drm/imagination: Use pwrseq for TH1520 GPU power management
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, 
-	Matt Coster <matt.coster@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKbnT2gC/x3MQQ5AMBBG4avIrE2iFV24ilhU/WU2JVNEIu6us
+ fwW7z2UoYJMffWQ4pIsWyowdUVh9WkBy1xMtrFd44xjnHmyrNjhDygfZ5K0cOxc25rgJhM9lXZ
+ XRLn/7zC+7wdbt4NzZwAAAA==
+X-Change-ID: 20250616-eusb2-repeater-tuning-f56331c6b1fa
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750067155; l=953;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=yg/Z605KkyVU+56JZHlueaasnOvYoTqeMlYl3QzL15E=;
+ b=3GYemwlBi62KkKVXr1IAcK4akalZscChQtxjpoaSKQQ1Wl5RrGQtsumLggN6/gEGWykiP3ruh
+ uo1DCOtKVQJBbW5GvuxtStUCl9EdnWqu2TWea+fa92D6VCCaiMmSQJ6
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-On Sat, Jun 14, 2025 at 8:09=E2=80=AFPM Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
->
-> Update the Imagination PVR DRM driver to leverage the pwrseq framework
-> for managing the power sequence of the GPU on the T-HEAD TH1520 SoC.
->
-> To cleanly handle the TH1520's specific power requirements in the
-> generic driver, this patch implements the "driver match data" pattern. A
-> has_pwrseq flag in a new pvr_soc_data struct is now associated with
-> thead,th1520-gpu compatible string in the of_device_id table.
->
-> At probe time, the driver checks this flag. If true, it calls
-> devm_pwrseq_get("gpu-power"), requiring a valid sequencer and deferring
-> probe on failure. In this mode, all power and reset control is delegated
-> to the pwrseq provider. If the flag is false, the driver skips this
-> logic and falls back to its standard manual power management. Clock
-> handles are still acquired directly by this driver in both cases for
-> other purposes like devfreq.
->
-> The runtime PM callbacks, pvr_power_device_resume() and
-> pvr_power_device_suspend(), are modified to call pwrseq_power_on() and
-> pwrseq_power_off() respectively when the sequencer is present.  A helper
-> function, pvr_power_off_sequence_manual(), is introduced to encapsulate
-> the manual power-down logic.
->
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
+Update the dt-bindings to remove the 'default' tuning values, since they
+depend on the PMIC and are not guaranteed to be the same.
 
-[snip]
+And add a fix into the driver to not zero-out all tuning registers if
+they are not specified in the "init sequence", since zero is not the
+reset value for most parameter and will lead to very unexpected tuning.
 
->
-> +static int pvr_power_off_sequence_manual(struct pvr_device *pvr_dev)
-> +{
-> +       int err;
-> +
-> +       err =3D reset_control_assert(pvr_dev->reset);
-> +
-> +       clk_disable_unprepare(pvr_dev->mem_clk);
-> +       clk_disable_unprepare(pvr_dev->sys_clk);
-> +       clk_disable_unprepare(pvr_dev->core_clk);
-> +
-> +       return err;
-> +}
-> +
->  int
->  pvr_power_device_suspend(struct device *dev)
->  {
-> @@ -252,11 +266,10 @@ pvr_power_device_suspend(struct device *dev)
->                         goto err_drm_dev_exit;
->         }
->
-> -       clk_disable_unprepare(pvr_dev->mem_clk);
-> -       clk_disable_unprepare(pvr_dev->sys_clk);
-> -       clk_disable_unprepare(pvr_dev->core_clk);
-> -
-> -       err =3D reset_control_assert(pvr_dev->reset);
-> +       if (pvr_dev->pwrseq)
-> +               err =3D pwrseq_power_off(pvr_dev->pwrseq);
-> +       else
-> +               err =3D pvr_power_off_sequence_manual(pvr_dev);
->
->  err_drm_dev_exit:
->         drm_dev_exit(idx);
-> @@ -276,44 +289,55 @@ pvr_power_device_resume(struct device *dev)
->         if (!drm_dev_enter(drm_dev, &idx))
->                 return -EIO;
->
-> -       err =3D clk_prepare_enable(pvr_dev->core_clk);
-> -       if (err)
-> -               goto err_drm_dev_exit;
-> +       if (pvr_dev->pwrseq) {
-> +               err =3D pwrseq_power_on(pvr_dev->pwrseq);
-> +               if (err)
-> +                       goto err_drm_dev_exit;
-> +       } else {
-> +               err =3D clk_prepare_enable(pvr_dev->core_clk);
-> +               if (err)
-> +                       goto err_drm_dev_exit;
->
-> -       err =3D clk_prepare_enable(pvr_dev->sys_clk);
-> -       if (err)
-> -               goto err_core_clk_disable;
-> +               err =3D clk_prepare_enable(pvr_dev->sys_clk);
-> +               if (err)
-> +                       goto err_core_clk_disable;
->
-> -       err =3D clk_prepare_enable(pvr_dev->mem_clk);
-> -       if (err)
-> -               goto err_sys_clk_disable;
-> +               err =3D clk_prepare_enable(pvr_dev->mem_clk);
-> +               if (err)
-> +                       goto err_sys_clk_disable;
->
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Luca Weiss (2):
+      dt-bindings: phy: qcom,snps-eusb2-repeater: Remove default tuning values
+      phy: qualcomm: phy-qcom-eusb2-repeater: Don't zero-out registers
 
-In order to decrease the number of if-elses, would it make sense to
-put the "manual" and "pwrseq" operations into their own separate
-functions and then store addresses of these functions in the device
-match data struct as function pointers (instead of the has_pwrseq
-flag)? This way we'd just call them directly.
+ .../bindings/phy/qcom,snps-eusb2-repeater.yaml     |  3 --
+ drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c     | 63 +++++++++++-----------
+ 2 files changed, 32 insertions(+), 34 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250616-eusb2-repeater-tuning-f56331c6b1fa
 
-Bart
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
+
 
