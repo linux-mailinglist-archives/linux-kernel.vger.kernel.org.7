@@ -1,124 +1,307 @@
-Return-Path: <linux-kernel+bounces-689171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333C0ADBD43
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:52:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD86ADBD56
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A743B3EDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9689E7A661A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6728F2264B2;
-	Mon, 16 Jun 2025 22:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A6E2192E4;
+	Mon, 16 Jun 2025 22:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aPcgWDqN"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4lk8YjTz"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F284214C5B0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 22:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A4F14C5B0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 22:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750114336; cv=none; b=Bt3rhK8G9UBSUTTEGpp+/5bY1xhF4MY4ppEH+iOOOlkRyoG2eyZzxpp91kwJHmpLgcXUzDy9eetpucD2hqbpIH5Ldc6+UibcsikoCKe0bipV5nvY7BagdCshpeAbrHapC2g0R4m7lrzQ7n+YQ0YHno9EaMBnOGJ5GRqg3p1+1e0=
+	t=1750114564; cv=none; b=MdNHuO2HVbr/FMWLet8q+wrjFaD8SDQY3rLnBknmVdh2heMif5WM2xL24n1d69u0k8FVh8tfYsGMFt6ru+d/3b1efYmtEdPFSDPHSs7wdTcLKc2DMRmxKIrzxzRei1T/9khIzeVdN2RlvNhhtF866pcmBB6h5FUJzV4kiADO2dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750114336; c=relaxed/simple;
-	bh=PmDF/LX+MEY7yNxnBISXFQV1FTEkhwSQHKJS5tTjenI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ByRZq0sUR8TmhK2eBv0WEfRPEFfUyLtv1wfDUBiGgC3ppvvB7stE9YBoqtzfIYOdmvICqXPhHkL4v7PbSJ0hDFaVhjMHd/Az9Jo4UxEudrlZhb9gqzJbGIRWPlIjWMRKPQ7z2QegPXdG07XlfDsAnMuls9gPMNtKQK1mVOi5WlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aPcgWDqN; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1750114564; c=relaxed/simple;
+	bh=p0HFxJV+lPrVl3IsetQGPScX9Z2eu4Nipb7a6kuWLmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VzNFIQfQ1eCoTHPICMlbzwd0/yjZ3VJGeJqphLvmiRpk1Vx6ZiAILYe+IlZHE2vfARKYshmYniTAjVlPh8TaWV21mjNm8vcyHAuigxZPQ5S0UwrVLYlKSaiepxsffBQl+kEVfz69FIFCI6HmZy5bLUMRW0gYbG2xUFdqAYEto5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4lk8YjTz; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235ca5eba8cso65505ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:52:13 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a58197794eso44181cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750114333; x=1750719133; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jj6+mcpbE9V02qadLzbuN9y/flOOPMALPxxrYxqko6o=;
-        b=aPcgWDqNlyYS7EHeUOdGbiYb5ZaeCTaKT9VhYRuQ6Dw+l0SB/CQYZT6rd1SSHTU7M5
-         gSU9ScXizjrNSTQArjSAp3SENWuyhJfIekj6zqZvTiYyYUDefwe2HvNO/QRqKxbumCkV
-         SNjKLVC6ov45QbLrLvM7k8HuEbsul7mmPlL+QryvY9gFxTXwz9J1as7eHe4+nZwUdyVR
-         ieHIMIUgqXNvgMF/t0jQHDpOEEDX+rH2xrV8jbxRnj3yI/X7K9q5rkJH8yGiOm/9ZKR1
-         xAq1Q/bScY33e9xi6O3EDJ/bx82JW5OonFYa5QqQIajW9hgbnbRFGkKU+1FrjCac1Oog
-         LQhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750114333; x=1750719133;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1750114561; x=1750719361; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jj6+mcpbE9V02qadLzbuN9y/flOOPMALPxxrYxqko6o=;
-        b=bnI4e4VwaE7CLC/Ly4QrMf0AN2DlNl+2CkYK+SGgp3GF+nUxmx+meCvG3y5RxgL6MW
-         ZH0JQP9bwtPF6qKekBrcMF5vU0xk+/5x53ACYs5RBYT7+HfiPRL8SUqUyW1wf8Wwjzpo
-         WKt1IqvyqC8Mp3XCc4E7HohdW4Xls9NGFPjNJiIirOJx9ng4FgyCUqJw5nAgoDjVHsWP
-         sh/NUCFVZxbs8XiFE/uiM6ByiWmGA5n9Ywvuj/4JJNBueLgieZg5RY8b4tSso3h0fIOh
-         16lZo6vvxIiBVJ4Mp1kdFb+hSVMJMtQNiOaDUgFX9W6seTlN27QLXBL3Iz4d7zjySGEk
-         rJDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVviIG1gnDEr1BucydkKsEAR3H1AFA+g+S8fgQKTGb9iGQTIH2YtpCjslbwAAhlXUjAVjVRf9TQR0CjecA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEpyGmHUuAEt9fsZm9LyZR87v3TxqfO1m7ovqHrHWz8NfHL9Hq
-	g9jwI3YcqKsb7hQmxlB+UJIw1YRDJjStC9SnyUXF2c3Ceu+ZcFjEzx+RpGvpeJ1BKQ==
-X-Gm-Gg: ASbGncvFaRpHP/jG/E71EqpKCSDmJCgFmettcyVa2hrThoVcA6vE1MZWEBlRySmTmZC
-	DLyL08uEL0s9sb+0t7C4tZ4PDe+t1I29V/cezH9SB0BILuhPyuokVEWKoRh2vdLvkcxqCCOM5qH
-	pv88LRdQDY35yqcUtEtAAsuJIB6UBOvzoObA3hfPujGoCTVeFCrfYaJKJpTKKe0RV0jsFq1m1gP
-	59emMU2v1G8JbjLQBchE1IQzrOgvEhGWFN0onUmNHeORFVLr2fIPMH+X3qlizBohw8/Z6L7NvDH
-	UF2KKkvTgiFPllZx+YSCxkED/Ksui0CUSdziTBuznf8ZPNtPi+oAUA0hR8ZhL5TnDstTkqyDbrX
-	9hy1agAfu9QAocU8h41Aq
-X-Google-Smtp-Source: AGHT+IGlPE9uP1SbbWnzOuYOIe1eDG4YyhjqWGy1/roBJfbAZkNgrizH5BthvNw3ZPe4qwD5HsBoXA==
-X-Received: by 2002:a17:903:b45:b0:234:b2bf:e67f with SMTP id d9443c01a7336-2366eef0269mr5964675ad.9.1750114333086;
-        Mon, 16 Jun 2025 15:52:13 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b319dc80726sm3333506a12.68.2025.06.16.15.52.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 15:52:12 -0700 (PDT)
-Date: Mon, 16 Jun 2025 22:52:04 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org,
-	robin.murphy@arm.com, joro@8bytes.org, yi.l.liu@intel.com,
-	peterz@infradead.org, jsnitsel@redhat.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	baolu.lu@linux.intel.com
-Subject: Re: [PATCH v2 13/14] iommufd: Introduce iommufd_object_alloc_ucmd
- helpery
-Message-ID: <aFCgFPlz5dYlN8N2@google.com>
-References: <cover.1749882255.git.nicolinc@nvidia.com>
- <e7206d4227844887cc8dbf0cc7b0242580fafd9d.1749882255.git.nicolinc@nvidia.com>
+        bh=9sxJZ0FF/SMaJHy2nT2/WKSEvvRwEArRwRBCF/xeEms=;
+        b=4lk8YjTzBnW0lpqCzyYjqYxvv5ROpc3pLil1UI02P0yMQfPPAimvJjhAwe+I5UjvC1
+         BcWcMwhGMyWCB6GROHsH737hgy5DIX6VpRevO/iygiqm41un5fuFgYokz5ritTjz0YMJ
+         x683oFez2b7epmZoXQK4FgRw0w6MBtS21+QTal8Ir9EsSuiwE+kcbpFavmBQxIaIzpoi
+         VTY6SxvmKI7DjICCKYoQU3M7oZQR7ZoI/R1lfhyGnhg/atfPWSRmLtUI+6CFiMH7X4oJ
+         SWABhOARmoelrgSr5q1pQDwkmM6XHwRg9FcFcqK1Ti0bTTorQbY1/ydBjSGVvw1Fkt5b
+         gREQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750114561; x=1750719361;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9sxJZ0FF/SMaJHy2nT2/WKSEvvRwEArRwRBCF/xeEms=;
+        b=Ujk9J8iif6vPnkMcLSI0OqdcwGnvgFm0kHgqgWsE2HjKLN544Y9WswM1E/YbU6PRZu
+         FmAbpQPn8yqtF/J99ojhXmya2bhnGRlrU2fUWpMC/GzekUPnzrji0PEbVO4mNLirgnn8
+         Xj15SYEOh+hCbO8fHwjeras0BUrj1AGtJa2+4hNPgDq1Z2ToLTyvCYqFWeeKJMUZ6de2
+         Dfj/Gg0SdLWvn9UGElFC1u8x687DkntrNY4zu1zPB45QoxydGfkkJsPAYDfI5XGCfHbV
+         LAZAqs77dVAYqpr/9rn0oG0edzwzv10E27Nz2iqoQDhqzi1Cp9EMcQnbm6x52KL768Yd
+         imVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOvFI4rCTjN1DqIuuOCdhWNKMNVCvnBFNewzQtyH9YNGP+F7iDuA0uVyXlubhcBjBNyke/7ZXzuH4GLGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwECXPIqf4N4Ix6+SB48jae2488KAiA1nhpMGxFMFISsU6Q9CRZ
+	4nxcSXFt/ZczRe559qZP4s5wf4WzxZyv1HeYtDGm9T3pMUOMq94Bj92TozprkqpqDszOXWzfhog
+	iL6xpGTVD4dKel84oGSW8q4fF/6PojZZ/ZOwivPiK
+X-Gm-Gg: ASbGncsf42XHj1uG7i6aQdJsqhjc2X8Cx7+xe6O7bduoDnllEUSBx77hTUUxN3XBc+K
+	k3/o+Kv16r3Ar1k6D0hPqvIk2IOhgj8HiIjCqyQn6/JDZJS1nxQUXGc0jEATtowIlhiIgwwQyyL
+	a2KIrjNropRcNmSkGssbg5a1fB+j/dVErUjDibHHSVr1vLANL7YDz//MSPX/48fpgD0KNqQws0W
+	Q==
+X-Google-Smtp-Source: AGHT+IGIjS7iz+3YUbT9aghigQKmYQHtJkyMv5yyQ87XHTe9Ys39TLz90+dSPL7I7r0PdxINhIxF/1TBdd12QyHY53U=
+X-Received: by 2002:ac8:5f07:0:b0:4a6:fc57:b85a with SMTP id
+ d75a77b69052e-4a73d6b7478mr8535751cf.14.1750114561181; Mon, 16 Jun 2025
+ 15:56:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7206d4227844887cc8dbf0cc7b0242580fafd9d.1749882255.git.nicolinc@nvidia.com>
+References: <20250523095322.88774-1-chao.gao@intel.com> <20250523095322.88774-9-chao.gao@intel.com>
+In-Reply-To: <20250523095322.88774-9-chao.gao@intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Mon, 16 Jun 2025 17:55:50 -0500
+X-Gm-Features: AX0GCFvVbiaWGgCRII3OE08Te9sdtG7W4jpMtQeF78bEqoHGPUs-MDM7_o1KaSg
+Message-ID: <CAAhR5DGFxidA=MuhLrixdHv+D_=KYQquBE2quNCNMZvzijXLiw@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/20] x86/virt/seamldr: Implement FW_UPLOAD sysfs ABI
+ for TD-Preserving Updates
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org, 
+	seanjc@google.com, pbonzini@redhat.com, eddie.dong@intel.com, 
+	kirill.shutemov@intel.com, dave.hansen@intel.com, dan.j.williams@intel.com, 
+	kai.huang@intel.com, isaku.yamahata@intel.com, elena.reshetova@intel.com, 
+	rick.p.edgecombe@intel.com, Farrah Chen <farrah.chen@intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 11:35:25PM -0700, Nicolin Chen wrote:
-> An object allocator needs to call either iommufd_object_finalize() upon a
-> success or iommufd_object_abort_and_destroy() upon an error code.
-> 
-> To reduce duplication, store a new_obj in the struct iommufd_ucmd and call
-> iommufd_object_finalize/iommufd_object_abort_and_destroy() accordingly in
-> the main function.
-> 
-> Similar to iommufd_object_alloc() and __iommufd_object_alloc(), add a pair
-> of helpers: __iommufd_object_alloc_ucmd() and iommufd_object_alloc_ucmd().
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+On Fri, May 23, 2025 at 4:55=E2=80=AFAM Chao Gao <chao.gao@intel.com> wrote=
+:
+>
+> Implement a fw_upload interface to coordinate TD-Preserving updates. The
+> explicit file selection capabilities of fw_upload is preferred over the
+> implicit file selection of request_firmware() for the following reasons:
+>
+> a. Intel distributes all versions of the TDX module, allowing admins to
+> load any version rather than always defaulting to the latest. This
+> flexibility is necessary because future extensions may require reverting =
+to
+> a previous version to clear fatal errors.
+>
+> b. Some module version series are platform-specific. For example, the 1.5=
+.x
+> series is for certain platform generations, while the 2.0.x series is
+> intended for others.
+>
+> c. The update policy for TD-Preserving is non-linear at times. The latest
+> TDX module may not be TD-Preserving capable. For example, TDX module
+> 1.5.x may be updated to 1.5.y but not to 1.5.y+1. This policy is document=
+ed
+> separately in a file released along with each TDX module release.
+>
+> So, the default policy of "request_firmware()" of "always load latest", i=
+s
+> not suitable for TDX. Userspace needs to deploy a more sophisticated poli=
+cy
+> check (i.e. latest may not be TD-Preserving capable), and there is
+> potential operator choice to consider.
+>
+> Just have userspace pick rather than add kernel mechanism to change the
+> default policy of request_firmware().
+>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Tested-by: Farrah Chen <farrah.chen@intel.com>
 > ---
->  drivers/iommu/iommufd/iommufd_private.h | 26 +++++++++++++++++++++++++
->  drivers/iommu/iommufd/main.c            | 25 ++++++++++++++++++++++++
->  2 files changed, 51 insertions(+)
-> 
-> -- 
+>  arch/x86/Kconfig                |  2 +
+>  arch/x86/virt/vmx/tdx/seamldr.c | 77 +++++++++++++++++++++++++++++++++
+>  arch/x86/virt/vmx/tdx/seamldr.h |  2 +
+>  arch/x86/virt/vmx/tdx/tdx.c     |  4 ++
+>  4 files changed, 85 insertions(+)
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 8b1e0986b7f8..31385104a6ee 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1935,6 +1935,8 @@ config INTEL_TDX_HOST
+>  config INTEL_TDX_MODULE_UPDATE
+>         bool "Intel TDX module runtime update"
+>         depends on INTEL_TDX_HOST
+> +       select FW_LOADER
+> +       select FW_UPLOAD
+>         help
+>           This enables the kernel to support TDX module runtime update. T=
+his allows
+>           the admin to upgrade the TDX module to a newer one without the =
+need to
+> diff --git a/arch/x86/virt/vmx/tdx/seamldr.c b/arch/x86/virt/vmx/tdx/seam=
+ldr.c
+> index b628555daf55..da862e71ebce 100644
+> --- a/arch/x86/virt/vmx/tdx/seamldr.c
+> +++ b/arch/x86/virt/vmx/tdx/seamldr.c
+> @@ -8,6 +8,8 @@
+>
+>  #include <linux/cleanup.h>
+>  #include <linux/device.h>
+> +#include <linux/firmware.h>
+> +#include <linux/gfp.h>
+>  #include <linux/kobject.h>
+>  #include <linux/sysfs.h>
+>
+> @@ -32,6 +34,15 @@ struct seamldr_info {
+>         u8      reserved1[224];
+>  } __packed;
+>
+> +
+> +#define TDX_FW_STATE_BITS      32
+> +#define TDX_FW_CANCEL          0
+> +struct tdx_status {
+> +       DECLARE_BITMAP(fw_state, TDX_FW_STATE_BITS);
+> +};
+> +
+> +struct fw_upload *tdx_fwl;
+> +static struct tdx_status tdx_status;
+>  static struct seamldr_info seamldr_info __aligned(256);
+>
+>  static inline int seamldr_call(u64 fn, struct tdx_module_args *args)
+> @@ -101,3 +112,69 @@ int get_seamldr_info(void)
+>
+>         return seamldr_call(P_SEAMLDR_INFO, &args);
+>  }
+> +
+> +static int seamldr_install_module(const u8 *data, u32 size)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+> +static enum fw_upload_err tdx_fw_prepare(struct fw_upload *fwl,
+> +                                        const u8 *data, u32 size)
+> +{
+> +       struct tdx_status *status =3D fwl->dd_handle;
+> +
+> +       if (test_and_clear_bit(TDX_FW_CANCEL, status->fw_state))
+> +               return FW_UPLOAD_ERR_CANCELED;
+> +
+> +       return FW_UPLOAD_ERR_NONE;
+> +}
+> +
+> +static enum fw_upload_err tdx_fw_write(struct fw_upload *fwl, const u8 *=
+data,
+> +                                      u32 offset, u32 size, u32 *written=
+)
+> +{
+> +       struct tdx_status *status =3D fwl->dd_handle;
+> +
+> +       if (test_and_clear_bit(TDX_FW_CANCEL, status->fw_state))
+> +               return FW_UPLOAD_ERR_CANCELED;
+> +
+> +       /*
+> +        * No partial write will be returned to callers so @offset should
+> +        * always be zero.
+> +        */
+> +       WARN_ON_ONCE(offset);
+> +       if (seamldr_install_module(data, size))
+> +               return FW_UPLOAD_ERR_FW_INVALID;
+> +
+> +       *written =3D size;
+> +       return FW_UPLOAD_ERR_NONE;
+> +}
+> +
+> +static enum fw_upload_err tdx_fw_poll_complete(struct fw_upload *fwl)
+> +{
+> +       return FW_UPLOAD_ERR_NONE;
+> +}
+> +
+> +static void tdx_fw_cancel(struct fw_upload *fwl)
+> +{
+> +       struct tdx_status *status =3D fwl->dd_handle;
+> +
+> +       set_bit(TDX_FW_CANCEL, status->fw_state);
+> +}
+> +
+> +static const struct fw_upload_ops tdx_fw_ops =3D {
+> +       .prepare =3D tdx_fw_prepare,
+> +       .write =3D tdx_fw_write,
+> +       .poll_complete =3D tdx_fw_poll_complete,
+> +       .cancel =3D tdx_fw_cancel,
+> +};
+> +
+> +void seamldr_init(struct device *dev)
+> +{
+> +       int ret;
+> +
+> +       tdx_fwl =3D firmware_upload_register(THIS_MODULE, dev, "seamldr_u=
+pload",
+> +                                          &tdx_fw_ops, &tdx_status);
+> +       ret =3D PTR_ERR_OR_ZERO(tdx_fwl);
+> +       if (ret)
+> +               pr_err("failed to register module uploader %d\n", ret);
+> +}
+> diff --git a/arch/x86/virt/vmx/tdx/seamldr.h b/arch/x86/virt/vmx/tdx/seam=
+ldr.h
+> index 15597cb5036d..00fa3a4e9155 100644
+> --- a/arch/x86/virt/vmx/tdx/seamldr.h
+> +++ b/arch/x86/virt/vmx/tdx/seamldr.h
+> @@ -6,9 +6,11 @@
+>  extern struct attribute_group seamldr_group;
+>  #define SEAMLDR_GROUP (&seamldr_group)
+>  int get_seamldr_info(void);
+> +void seamldr_init(struct device *dev);
+>  #else
+>  #define SEAMLDR_GROUP NULL
+>  static inline int get_seamldr_info(void) { return 0; }
+> +static inline void seamldr_init(struct device *dev) { }
+>  #endif
+>
+>  #endif
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index aa6a23d46494..22ffc15b4299 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -1178,6 +1178,10 @@ static void tdx_subsys_init(void)
+>                 goto err_bus;
+>         }
+>
+> +       struct device *dev_root __free(put_device) =3D bus_get_dev_root(&=
+tdx_subsys);
 
-Acked-by: Pranjal Shrivastava <praan@google.com>
+dev_root definition here causes compilation error:
 
-> 2.43.0
-> 
+arch/x86/virt/vmx/tdx/tdx.c:1181:3: error: cannot jump from this goto
+statement to its label
+                goto err_bus;
+                ^
+arch/x86/virt/vmx/tdx/tdx.c:1184:17: note: jump bypasses
+initialization of variable with __attribute__((cleanup))
+        struct device *dev_root __free(put_device) =3D
+bus_get_dev_root(&tdx_subsys);
+
+> +       if (dev_root)
+> +               seamldr_init(dev_root);
+> +
+>         return;
+>
+>  err_bus:
+> --
+> 2.47.1
+>
+>
 
